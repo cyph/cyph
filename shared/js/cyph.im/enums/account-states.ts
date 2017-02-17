@@ -7,5 +7,6 @@ export enum AccountStates {
 	profile,
 	register,
 	settings,
-	files
+	files,
+	home
 }

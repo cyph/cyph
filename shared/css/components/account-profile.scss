@@ -7,11 +7,9 @@
 }
 
 .profile {
-	width: 100vh;
+	width: 100%;
 	margin-left: auto;
 	margin-right: auto;
-
-	@include vertical-align;
 
 	.profile-picture {
 		border-radius: 50%;

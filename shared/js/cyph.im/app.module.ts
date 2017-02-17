@@ -5,6 +5,7 @@ import {BrowserModule, Title} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {AccountContactsComponent} from '../cyph/components/account-contacts.component';
 import {AccountFilesComponent} from '../cyph/components/account-files.component';
+import {AccountHomeComponent} from '../cyph/components/account-home.component';
 import {AccountLoginComponent} from '../cyph/components/account-login.component';
 import {AccountProfileComponent} from '../cyph/components/account-profile.component';
 import {AccountRegisterComponent} from '../cyph/components/account-register.component';
@@ -55,6 +56,7 @@ import {TranslateDirective} from '../cyph/directives/translate.directive';
 import {AccountAuthService} from '../cyph/services/account-auth.service';
 import {AccountContactsService} from '../cyph/services/account-contacts.service';
 import {AccountFilesService} from '../cyph/services/account-files.service';
+import {AccountHomeService} from '../cyph/services/account-home.service';
 import {AccountProfileService} from '../cyph/services/account-profile.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
@@ -82,6 +84,7 @@ import {ChatRootComponent} from './chat-root.component';
 		AccountComponent,
 		AccountContactsComponent,
 		AccountFilesComponent,
+		AccountHomeComponent,
 		AccountLoginComponent,
 		AccountProfileComponent,
 		AccountRegisterComponent,
@@ -139,6 +142,7 @@ import {ChatRootComponent} from './chat-root.component';
 		AccountAuthService,
 		AccountContactsService,
 		AccountFilesService,
+		AccountHomeService,
 		AccountProfileService,
 		ConfigService,
 		DialogService,
