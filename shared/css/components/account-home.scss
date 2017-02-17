@@ -5,7 +5,8 @@ h1 {
 
 cyph-account-profile {
 	position: relative;
-    overflow: hidden;
+	overflow: hidden;
+
 	.profile {
 		width: 100% !important;
 		-webkit-transform: translateY(0%) !important;
@@ -15,9 +16,8 @@ cyph-account-profile {
 }
 
 cyph-account-contacts {
-    right: 0;
-    top: 0;
-    overflow: scroll !important;
-    position: absolute;
+	right: 0;
+	top: 0;
+	overflow: scroll !important;
+	position: absolute;
 }
-
