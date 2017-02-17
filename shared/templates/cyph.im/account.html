@@ -26,4 +26,9 @@
 		class='layout-fill layout-column flex'
 		*ngIf='appService.accountState === appService.accountStates.settings'
 	></cyph-account-settings>
+
+	<cyph-account-files
+		class='layout-fill layout-column flex'
+		*ngIf='appService.accountState === appService.accountStates.files'
+	></cyph-account-files>
 </div>
