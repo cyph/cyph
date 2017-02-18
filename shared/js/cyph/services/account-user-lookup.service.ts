@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
+import {userPresence} from '../account/enums';
 import {IUser} from '../account/iuser';
-import {AccountContactsService} from './account-contacts.service';
+import {util} from '../util';
 
 
 /**
@@ -8,9 +9,19 @@ import {AccountContactsService} from './account-contacts.service';
  */
 @Injectable()
 export class AccountUserLookupService {
+	/** @ignore */
+	public static DUMMY_USERS: IUser[]	= [
+
+	].map((user: {avatar: string; name: string; username: string}) => ({
+		avatar: user.avatar,
+		name: user.name,
+		status: userPresence[util.random(userPresence.length)],
+		username: user.username
+	}));
+
 	/** Tries to to get user object for the specified username. */
 	public async getUser (username: string) : Promise<IUser> {
-		const user	= AccountContactsService.DUMMY_CONTACTS.find(o => o.username === username);
+		const user	= AccountUserLookupService.DUMMY_USERS.find(o => o.username === username);
 
 		if (user) {
 			return user;

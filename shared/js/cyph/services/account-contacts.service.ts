@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {UserPresence, userPresence} from '../account/enums';
 import {IUser} from '../account/iuser';
-import {util} from '../util';
 import {AccountAuthService} from './account-auth.service';
+import {AccountUserLookupService} from './account-user-lookup.service';
 
 
 /**
@@ -10,16 +10,6 @@ import {AccountAuthService} from './account-auth.service';
  */
 @Injectable()
 export class AccountContactsService {
-	/** @ignore */
-	public static DUMMY_CONTACTS: IUser[]	= [
-
-	].map((user: {avatar: string; name: string; username: string}) => ({
-		avatar: user.avatar,
-		name: user.name,
-		status: userPresence[util.random(userPresence.length)],
-		username: user.username
-	}));
-
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
@@ -29,21 +19,27 @@ export class AccountContactsService {
 			return [];
 		}
 
-		return AccountContactsService.DUMMY_CONTACTS.sort((a, b) => {
-			const statusIndexA	= userPresence.indexOf(a.status);
-			const statusIndexB	= userPresence.indexOf(b.status);
+		return AccountUserLookupService.DUMMY_USERS.
+			filter(user =>
+				this.accountAuthService.user &&
+				user.username !== this.accountAuthService.user.username
+			).
+			sort((a, b) => {
+				const statusIndexA	= userPresence.indexOf(a.status);
+				const statusIndexB	= userPresence.indexOf(b.status);
 
-			return (
-				statusIndexA !== statusIndexB ?
-					statusIndexA < statusIndexB :
-					a.name !== b.name ?
-						a.name < b.name :
-						a.username < b.username
-			) ?
-				-1 :
-				1
-			;
-		});
+				return (
+					statusIndexA !== statusIndexB ?
+						statusIndexA < statusIndexB :
+						a.name !== b.name ?
+							a.name < b.name :
+							a.username < b.username
+				) ?
+					-1 :
+					1
+				;
+			})
+		;
 	}
 
 	constructor (
