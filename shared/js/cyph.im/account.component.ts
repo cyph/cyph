@@ -3,6 +3,7 @@ import * as Granim from 'granim';
 import {EnvService} from '../cyph/services/env.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {AppService} from './app.service';
+import {AccountStates} from './enums';
 
 /**
  * Angular component for the Cyph account screen.
@@ -13,6 +14,25 @@ import {AppService} from './app.service';
 	templateUrl: '../../templates/cyph.im/account.html'
 })
 export class AccountComponent implements OnInit {
+	/** Indicates whether the sidebar should take up the entire view. */
+	public get showOnlySidebar () : boolean {
+		return [
+			AccountStates.contacts
+		].filter(
+			state => state === this.appService.accountState
+		).length > 0;
+	}
+
+	/** Indicates whether sidebar should be displayed. */
+	public get sidebarVisible () : boolean {
+		return [
+			AccountStates.contacts,
+			AccountStates.home
+		].filter(
+			state => state === this.appService.accountState
+		).length > 0;
+	}
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		if (!this.envService.isWeb) {

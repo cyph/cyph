@@ -1,39 +1,49 @@
 <link rel='stylesheet' href='/lib/js/node_modules/animate.css/animate.css' />
 
-<div cyphNanoScroller>
+<div cyphNanoScroller class='layout-row'>
 	<canvas class='cyph-gradient'></canvas>
-	<cyph-account-contacts
-		class='layout-fill layout-column flex'
-		*ngIf='appService.accountState === appService.accountStates.contacts'
-	></cyph-account-contacts>
 
-	<cyph-account-login
-		class='layout-fill layout-column flex'
-		*ngIf='appService.accountState === appService.accountStates.login'
-	></cyph-account-login>
+	<div
+		class='layout-column'
+		[ngClass]='sidebarVisible ? "flex-66" : "flex"'
+		*ngIf='!showOnlySidebar'
+	>
+		<cyph-account-files
+			class='layout-fill'
+			*ngIf='appService.accountState === appService.accountStates.files'
+		></cyph-account-files>
 
-	<cyph-account-profile
-		class='layout-fill layout-column flex'
-		*ngIf='appService.accountState === appService.accountStates.profile'
-	></cyph-account-profile>
+		<cyph-account-home
+			class='layout-fill'
+			*ngIf='appService.accountState === appService.accountStates.home'
+		></cyph-account-home>
 
-	<cyph-account-register
-		class='layout-fill layout-column flex'
-		*ngIf='appService.accountState === appService.accountStates.register'
-	></cyph-account-register>
+		<cyph-account-login
+			class='layout-fill'
+			*ngIf='appService.accountState === appService.accountStates.login'
+		></cyph-account-login>
 
-	<cyph-account-settings
-		class='layout-fill layout-column flex'
-		*ngIf='appService.accountState === appService.accountStates.settings'
-	></cyph-account-settings>
+		<cyph-account-profile
+			class='layout-fill'
+			*ngIf='appService.accountState === appService.accountStates.profile'
+		></cyph-account-profile>
 
-	<cyph-account-files
-		class='layout-fill layout-column flex'
-		*ngIf='appService.accountState === appService.accountStates.files'
-	></cyph-account-files>
+		<cyph-account-register
+			class='layout-fill'
+			*ngIf='appService.accountState === appService.accountStates.register'
+		></cyph-account-register>
 
-	<cyph-account-home
-		class='layout-fill layout-column flex'
-		*ngIf='appService.accountState === appService.accountStates.home'
-	></cyph-account-home>
+		<cyph-account-settings
+			class='layout-fill'
+			*ngIf='appService.accountState === appService.accountStates.settings'
+		></cyph-account-settings>
+	</div>
+
+	<div
+		class='sidebar layout-column'
+		[ngClass]='showOnlySidebar ? "flex" : "flex-33"'
+		*ngIf='sidebarVisible'
+	>
+		<cyph-account-contacts></cyph-account-contacts>
+	</div>
 </div>

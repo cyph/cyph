@@ -3,10 +3,10 @@
  */
 export enum AccountStates {
 	contacts,
+	files,
+	home,
 	login,
 	profile,
 	register,
-	settings,
-	files,
-	home
+	settings
 }
