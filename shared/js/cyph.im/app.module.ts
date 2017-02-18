@@ -56,8 +56,8 @@ import {TranslateDirective} from '../cyph/directives/translate.directive';
 import {AccountAuthService} from '../cyph/services/account-auth.service';
 import {AccountContactsService} from '../cyph/services/account-contacts.service';
 import {AccountFilesService} from '../cyph/services/account-files.service';
-import {AccountHomeService} from '../cyph/services/account-home.service';
 import {AccountProfileService} from '../cyph/services/account-profile.service';
+import {AccountUserLookupService} from '../cyph/services/account-user-lookup.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
@@ -142,8 +142,8 @@ import {ChatRootComponent} from './chat-root.component';
 		AccountAuthService,
 		AccountContactsService,
 		AccountFilesService,
-		AccountHomeService,
 		AccountProfileService,
+		AccountUserLookupService,
 		ConfigService,
 		DialogService,
 		EnvService,

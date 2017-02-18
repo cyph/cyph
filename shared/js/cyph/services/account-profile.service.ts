@@ -10,11 +10,12 @@ import {AccountAuthService} from './account-auth.service';
  */
 @Injectable()
 export class AccountProfileService {
+	/** Tries to to get user object for the specified user. */
 	public async getProfile (
 		user: IUser|undefined = this.accountAuthService.user
 	) : Promise<Profile> {
 		if (!user) {
-			return new Profile();
+			throw new Error('Cannot get profile for unspecified user.');
 		}
 
 		const externalUsernames	= ['facebook', 'keybase', 'reddit', 'twitter'].

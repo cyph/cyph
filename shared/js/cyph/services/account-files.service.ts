@@ -10,13 +10,14 @@ import {AccountAuthService} from './account-auth.service';
 export class AccountFilesService {
 	/** @ignore */
 	private static DUMMY_FILES: IFile[]	= [
-		{ name: 'Test File', filetype: 'png', location: '/', size: 1337 }
+		{name: 'Test File', filetype: 'png', location: '/', size: 1337}
 	];
 
 	public get myFiles () : IFile[] {
-		if (!this.accountAuthService) {
+		if (!this.accountAuthService.authenticated) {
 			return [];
 		}
+
 		return AccountFilesService.DUMMY_FILES;
 	}
 

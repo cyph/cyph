@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountProfileService} from '../services/account-profile.service';
+import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {EnvService} from '../services/env.service';
 
 
@@ -19,6 +20,9 @@ export class AccountProfileComponent {
 
 		/** @see AccountProfileService */
 		public readonly accountProfileService: AccountProfileService,
+
+		/** @see AccountUserLookupService */
+		public readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService

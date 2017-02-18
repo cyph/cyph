@@ -2,13 +2,13 @@
  * Represents one file.
  */
 export interface IFile {
-	/** File name */
+	/** File name. */
 	name: string;
 
-	/** File type */
+	/** File type. */
 	filetype: string;
 
-	/** Where to find the file */
+	/** Where to find the file. */
 	location: string;
 
 	/** Size in bytes. */

@@ -11,10 +11,10 @@ import {AccountAuthService} from './account-auth.service';
 @Injectable()
 export class AccountContactsService {
 	/** @ignore */
-	private static DUMMY_CONTACTS: IUser[]	= [
+	public static DUMMY_CONTACTS: IUser[]	= [
 
-	].map((user: {avatar?: string; name: string; username: string}) => ({
-		avatar: user.avatar || '/img/logo.purple.icon.png',
+	].map((user: {avatar: string; name: string; username: string}) => ({
+		avatar: user.avatar,
 		name: user.name,
 		status: userPresence[util.random(userPresence.length)],
 		username: user.username
@@ -22,7 +22,7 @@ export class AccountContactsService {
 
 	/** List of contacts for current user. */
 	public get contacts () : IUser[] {
-		if (!this.accountAuthService) {
+		if (!this.accountAuthService.authenticated) {
 			return [];
 		}
 
