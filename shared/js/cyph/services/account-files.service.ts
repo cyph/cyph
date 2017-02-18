@@ -14,7 +14,7 @@ export class AccountFilesService {
 	];
 
 	public get myFiles () : IFile[] {
-		if (!this.accountAuthService.authenticated) {
+		if (!this.accountAuthService.user) {
 			return [];
 		}
 

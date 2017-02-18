@@ -15,7 +15,7 @@ export class AccountContactsService {
 
 	/** List of contacts for current user. */
 	public get contacts () : IUser[] {
-		if (!this.accountAuthService.authenticated) {
+		if (!this.accountAuthService.user) {
 			return [];
 		}
 
