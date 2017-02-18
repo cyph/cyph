@@ -159,7 +159,7 @@ RUN rm -rf ~/.gnupg
 
 
 # Temporary workaround for https://github.com/yarnpkg/yarn/issues/2692
-RUN echo -e 'Package: yarn\nPin: version 0.19.1-1\nPin-Priority: 1337' | sudo tee -a /etc/apt/preferences
+RUN echo 'Package: yarn\nPin: version 0.19.1-1\nPin-Priority: 1337' | sudo tee -a /etc/apt/preferences
 
 
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/firebase
