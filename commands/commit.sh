@@ -9,6 +9,11 @@ if [ "${1}" == '--block-failing-build' ] ; then
 	shift
 fi
 
+comment="${*}"
+if [ ! "${comment}" ] ; then
+	comment='commit.sh'
+fi
+
 rm .git/index.lock 2> /dev/null
 
 ./commands/keycache.sh
@@ -16,7 +21,7 @@ rm .git/index.lock 2> /dev/null
 git pull
 chmod -R 700 .
 git add .
-git commit -S -a -m "${*}"
+git commit -S -a -m "${comment}"
 
 # Automated cleanup and beautification
 
@@ -32,7 +37,7 @@ mv %.new %
 '
 
 chmod -R 700 .
-git commit -S -a -m "cleanup: ${*}"
+git commit -S -a -m "cleanup: ${comment}"
 
 if [ "${blockFailingBuild}" ] ; then
 	./commands/build.sh || exit 1
