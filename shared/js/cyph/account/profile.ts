@@ -1,3 +1,6 @@
+import {IUser} from './iuser';
+
+
 /**
  * Represents a user profile.
  */
@@ -9,6 +12,9 @@ export class Profile {
 	>();
 
 	constructor (
+		/** @see IUser */
+		public user: IUser,
+
 		/** Image URI for cover image. */
 		public coverImage: string = '',
 

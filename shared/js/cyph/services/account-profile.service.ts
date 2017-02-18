@@ -26,13 +26,20 @@ export class AccountProfileService {
 
 		if (user === this.accountAuthService.user) {
 			return new Profile(
+				user,
 				'/img/cyphphoto.jpg',
-				'I am you.',
+				user.username === 'ryan' ?
+					'Cofounder and CEO of Cyph' :
+					user.username === 'josh' ?
+						'Cofounder and COO of Cyph' :
+						'I am you.'
+				,
 				externalUsernames
 			);
 		}
 
 		return new Profile(
+			user,
 			'/img/metaimage.png',
 			`Hello, my name is ${user.name}.`,
 			externalUsernames

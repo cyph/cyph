@@ -1,4 +1,5 @@
-import {Component} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {Profile} from '../account/profile';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountProfileService} from '../services/account-profile.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
@@ -13,7 +14,27 @@ import {EnvService} from '../services/env.service';
 	styleUrls: ['../../css/components/account-profile.css'],
 	templateUrl: '../../../templates/account-profile.html'
 })
-export class AccountProfileComponent {
+export class AccountProfileComponent implements OnInit {
+	/** Username of profile owner. */
+	@Input() public username: string|undefined;
+
+	/** User profile. */
+	public profile: Profile|undefined;
+
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
+		try {
+			this.profile	= await this.accountProfileService.getProfile(
+				this.username ?
+					await this.accountUserLookupService.getUser(this.username) :
+					undefined
+			);
+		}
+		catch (_) {
+			/* TODO: handle profile not found. */
+		}
+	}
+
 	constructor (
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

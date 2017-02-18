@@ -1,7 +1,11 @@
-<div class='profile'>
-	<img class='profile-picture animated flipInX _1' src='/img/josh.jpg' alt='profile picture' />
-	<span class='name animated flipInX _2'>Baron Joshua Cyrus Boehm</span>
-	<span class='description animated flipInX _3'>Co-Founder and COO of Cyph</span>
+<div class='profile' *ngIf='profile'>
+	<img
+		class='profile-picture animated flipInX _1'
+		alt='Profile Picture'
+		[src]='profile.user.avatar'
+	/>
+	<span class='name animated flipInX _2'>{{profile.user.name}}</span>
+	<span class='description animated flipInX _3'>{{profile.description}}</span>
 	<div class='buttons'>
 		<md2-button
 			class='animated flipInX _4'
