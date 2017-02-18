@@ -3,6 +3,12 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
+blockFailingBuild=''
+if [ "${1}" == '--block-failing-build' ] ; then
+	blockFailingBuild=true
+	shift
+fi
+
 rm .git/index.lock 2> /dev/null
 
 ./commands/keycache.sh
@@ -27,5 +33,9 @@ mv %.new %
 
 chmod -R 700 .
 git commit -S -a -m "cleanup: ${*}"
+
+if [ "${blockFailingBuild}" ] ; then
+	./commands/build.sh || exit 1
+fi
 
 git push

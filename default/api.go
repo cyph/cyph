@@ -20,7 +20,7 @@ func init() {
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
-	handleFuncs("/preauth", Handlers{methods.POST: preAuth})
+	handleFuncs("/preauth/{id}", Handlers{methods.POST: preAuth})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
 	handleFuncs("/timestamp", Handlers{methods.GET: getTimestamp})
 
@@ -183,6 +183,11 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	}
 
 	id := sanitize(h.Vars["id"])
+
+	if !isValidCyphId(id) {
+		return "Invalid ID.", http.StatusForbidden
+	}
+
 	proFeatures := getProFeaturesFromRequest(h)
 	now := time.Now().Unix()
 	preAuthorizedCyph := &PreAuthorizedCyph{}
@@ -208,35 +213,33 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	channelDescriptor := ""
 	status := http.StatusOK
 
-	if len(id) == config.AllowedCyphIdLength && config.AllowedCyphIds.MatchString(id) {
-		if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
-			datastore.Delete(h.Context, preAuthorizedCyphKey)
+	if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
+		datastore.Delete(h.Context, preAuthorizedCyphKey)
 
-			oldValue := item.Value
-			item.Value = []byte{}
+		oldValue := item.Value
+		item.Value = []byte{}
 
-			if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
-				valueLines := strings.Split(string(oldValue), "\n")
-				timestamp, _ := strconv.ParseInt(valueLines[0], 10, 64)
+		if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
+			valueLines := strings.Split(string(oldValue), "\n")
+			timestamp, _ := strconv.ParseInt(valueLines[0], 10, 64)
 
-				if now-timestamp < config.NewCyphTimeout {
-					channelDescriptor = valueLines[1]
-				}
+			if now-timestamp < config.NewCyphTimeout {
+				channelDescriptor = valueLines[1]
 			}
-		} else {
-			channelDescriptor = sanitize(h.Request.FormValue("channelDescriptor"))
+		}
+	} else {
+		channelDescriptor = sanitize(h.Request.FormValue("channelDescriptor"))
 
-			if len(channelDescriptor) > config.MaxChannelDescriptorLength {
-				channelDescriptor = ""
-			}
+		if len(channelDescriptor) > config.MaxChannelDescriptorLength {
+			channelDescriptor = ""
+		}
 
-			if channelDescriptor != "" {
-				memcache.Set(h.Context, &memcache.Item{
-					Key:        id,
-					Value:      []byte(strconv.FormatInt(now, 10) + "\n" + channelDescriptor),
-					Expiration: config.MemcacheExpiration,
-				})
-			}
+		if channelDescriptor != "" {
+			memcache.Set(h.Context, &memcache.Item{
+				Key:        id,
+				Value:      []byte(strconv.FormatInt(now, 10) + "\n" + channelDescriptor),
+				Expiration: config.MemcacheExpiration,
+			})
 		}
 	}
 
@@ -261,8 +264,18 @@ func getTimestamp(h HandlerArgs) (interface{}, int) {
 }
 
 func preAuth(h HandlerArgs) (interface{}, int) {
-	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
-	id := sanitize(h.Request.PostFormValue("id"))
+	id := sanitize(h.Vars["id"])
+
+	if !isValidCyphId(id) {
+		return "Invalid ID.", http.StatusForbidden
+	}
+
+	var apiKey string
+	if authHeader, ok := h.Request.Header["Authorization"]; ok && len(authHeader) > 0 {
+		apiKey = sanitize(authHeader[0])
+	} else {
+		return "Must include an API key.", http.StatusForbidden
+	}
 
 	customer := &Customer{}
 	customerKey := datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)

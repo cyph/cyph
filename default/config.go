@@ -8,6 +8,7 @@ import (
 var config = struct {
 	AllowedCyphIds             *regexp.Regexp
 	AllowedCyphIdLength        int
+	AllowedHeaders             string
 	AllowedMethods             string
 	AllowedHosts               map[string]none
 	AnalId                     string
@@ -26,6 +27,8 @@ var config = struct {
 	regexp.MustCompile("[A-Za-z0-9]{7}"),
 
 	7,
+
+	"Access-Control-Request-Method,Authorization,X-Forwarded-For",
 
 	"GET,HEAD,POST,PUT,DELETE,OPTIONS",
 

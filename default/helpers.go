@@ -93,6 +93,10 @@ var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
 var prefineryKey = os.Getenv("PREFINERY_KEY")
 
+func isValidCyphId(id string) bool {
+	return len(id) == config.AllowedCyphIdLength && config.AllowedCyphIds.MatchString(id)
+}
+
 func generateApiKey() (string, error) {
 	bytes := make([]byte, config.ApiKeyByteLength)
 	if _, err := rand.Read(bytes); err != nil {
@@ -317,6 +321,7 @@ func initHandler(w http.ResponseWriter, r *http.Request) {
 	if ok || strings.HasSuffix(origin, ".pki.ws") || strings.HasSuffix(origin, ".cyph.ws") || appengine.IsDevAppServer() {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Credentials", "true")
+		w.Header().Add("Access-Control-Allow-Headers", config.AllowedHeaders)
 		w.Header().Add("Access-Control-Allow-Methods", config.AllowedMethods)
 		w.Header().Set("Strict-Transport-Security", config.HSTSHeader)
 	}
