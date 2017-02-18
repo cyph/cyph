@@ -1,63 +1,63 @@
 <div class='layout-fill layout-column flex'>
 	<h1>Contacts</h1>
-			<md2-list class='contacts' childClass='layout-column'>
-				<md2-list-item
-					class='contact layout-column'
-					childClass='layout-row'
-					*ngFor='let contact of accountContactsService.contacts; let i = index'
-					[attr.data-index]='i'
+	<md2-list class='contacts' childClass='layout-column'>
+		<md2-list-item
+			class='contact layout-column'
+			childClass='layout-row'
+			*ngFor='let contact of accountContactsService.contacts; let i = index'
+			[attr.data-index]='i'
+		>
+			<div class='wrapper layout-row layout-align-start-stretch flex animated flipInY _{{i}}'>
+				<div class='layout-column'>
+					<img
+						class='avatar'
+						[ngClass]='getStatus(contact.status)'
+						[src]='contact.avatar'
+						alt='User Avatar'
+					/>
+					<h4 class='status'>
+						{{getStatus(contact.status)}}
+					</h4>
+				</div>
+				<div class='user layout-column flex'>
+					<h2 class='name'>
+						{{contact.name}}
+					</h2>
+					<span class='username'>
+						{{contact.username}} 
+					</span>
+				</div>
+				<md2-button
+					cyphTranslate
+					class='layout-row'
+					ariaLabel='Send Message'
+					*ngIf='contact.status !== accountContactsService.userPresence.online'
 				>
-					<div class='wrapper layout-row layout-align-start-stretch flex animated flipInY _{{i}}'>
-						<div class='layout-column'>
-							<img
-								class='avatar'
-								[ngClass]='getStatus(contact.status)'
-								[src]='contact.avatar'
-								alt='User Avatar'
-							/>
-							<h4 class='status'>
-								{{getStatus(contact.status)}}
-							</h4>
-						</div>
-						<div class='user layout-column flex'>
-							<h2 class='name'>
-								{{contact.name}}
-							</h2>
-							<span class='username'>
-								{{contact.username}} 
-							</span>
-						</div>
-						<md2-button
-							cyphTranslate
-							class='layout-row'
-							ariaLabel='Send Message'
-							*ngIf='contact.status !== 3'
-						>
-							<i class='message material-icons' alt='Send Message'>email</i>
-						</md2-button>
-						<md2-button
-							cyphTranslate
-							class='layout-row'
-							ariaLabel='Send Message'
-							*ngIf='contact.status === 3'
-						>
-							<i class='chat material-icons' alt='Start Chat'>chat_bubble</i>
-						</md2-button>
-						<md2-button
-							cyphTranslate
-							class='layout-row'
-							ariaLabel='Video Call'
-						>
-							<i class='material-icons' alt='Video Call'>videocam</i>
-						</md2-button>
-						<md2-button
-							cyphTranslate
-							class='layout-row'
-							ariaLabel='Send File'
-						>
-							<i class='material-icons' alt='Send File'>attachment</i>
-						</md2-button>
-					</div>
-				</md2-list-item>
-			</md2-list>
+					<i class='message material-icons' alt='Send Message'>email</i>
+				</md2-button>
+				<md2-button
+					cyphTranslate
+					class='layout-row'
+					ariaLabel='Send Message'
+					*ngIf='contact.status === accountContactsService.userPresence.online'
+				>
+					<i class='chat material-icons' alt='Start Chat'>chat_bubble</i>
+				</md2-button>
+				<md2-button
+					cyphTranslate
+					class='layout-row'
+					ariaLabel='Video Call'
+				>
+					<i class='material-icons' alt='Video Call'>videocam</i>
+				</md2-button>
+				<md2-button
+					cyphTranslate
+					class='layout-row'
+					ariaLabel='Send File'
+				>
+					<i class='material-icons' alt='Send File'>attachment</i>
+				</md2-button>
+			</div>
+		</md2-list-item>
+	</md2-list>
 </div>

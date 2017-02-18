@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {userPresence} from '../account/enums';
+import {UserPresence, userPresence} from '../account/enums';
 import {IUser} from '../account/iuser';
 import {util} from '../util';
 import {AccountAuthService} from './account-auth.service';
@@ -19,6 +19,9 @@ export class AccountContactsService {
 		status: userPresence[util.random(userPresence.length)],
 		username: user.username
 	}));
+
+	/** @see UserPresence */
+	public readonly userPresence: typeof UserPresence	= UserPresence;
 
 	/** List of contacts for current user. */
 	public get contacts () : IUser[] {
