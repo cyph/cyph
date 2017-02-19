@@ -57,7 +57,7 @@
 				<md2-icon>attach_file</md2-icon>
 				<cyph-file-input
 					[accept]='fileAccept'
-					(change)='fileService.send($event)'
+					(change)='fileTransferService.send($event)'
 				></cyph-file-input>
 			</md2-button>
 		</div>

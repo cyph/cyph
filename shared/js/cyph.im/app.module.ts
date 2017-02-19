@@ -62,6 +62,7 @@ import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {FaviconService} from '../cyph/services/favicon.service';
+import {FileService} from '../cyph/services/file.service';
 import {MdDialogService} from '../cyph/services/material/md-dialog.service';
 import {MdToastService} from '../cyph/services/material/md-toast.service';
 import {NotificationService} from '../cyph/services/notification.service';
@@ -148,6 +149,7 @@ import {ChatRootComponent} from './chat-root.component';
 		DialogService,
 		EnvService,
 		FaviconService,
+		FileService,
 		MdDialogService,
 		MdToastService,
 		NotificationService,

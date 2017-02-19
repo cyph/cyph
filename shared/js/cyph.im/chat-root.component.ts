@@ -10,7 +10,7 @@ import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {FaviconService} from '../cyph/services/favicon.service';
-import {FileService} from '../cyph/services/file.service';
+import {FileTransferService} from '../cyph/services/file-transfer.service';
 import {P2PService} from '../cyph/services/p2p.service';
 import {ScrollService} from '../cyph/services/scroll.service';
 import {SessionService} from '../cyph/services/session.service';
@@ -29,7 +29,7 @@ import {SessionInitService} from './session-init.service';
 	providers: [
 		ChatService,
 		CyphertextService,
-		FileService,
+		FileTransferService,
 		P2PService,
 		ScrollService,
 		SessionService,

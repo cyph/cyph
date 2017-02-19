@@ -8,7 +8,7 @@ import {ChatService} from './js/cyph/services/chat.service';
 import {CyphertextService} from './js/cyph/services/cyphertext.service';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {EnvService} from './js/cyph/services/env.service';
-import {FileService} from './js/cyph/services/file.service';
+import {FileTransferService} from './js/cyph/services/file-transfer.service';
 import {P2PService} from './js/cyph/services/p2p.service';
 import {ScrollService} from './js/cyph/services/scroll.service';
 import {SessionService} from './js/cyph/services/session.service';
@@ -23,7 +23,7 @@ import {SessionInitService} from './session-init.service';
 	providers: [
 		ChatService,
 		CyphertextService,
-		FileService,
+		FileTransferService,
 		P2PService,
 		ScrollService,
 		SessionService,

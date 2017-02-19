@@ -23,6 +23,7 @@ import {TranslateDirective} from './js/cyph/directives/translate.directive';
 import {ConfigService} from './js/cyph/services/config.service';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {EnvService} from './js/cyph/services/env.service';
+import {FileService} from './js/cyph/services/file.service';
 import {MdDialogService} from './js/cyph/services/material/md-dialog.service';
 import {MdToastService} from './js/cyph/services/material/md-toast.service';
 import {NotificationService} from './js/cyph/services/notification.service';
@@ -70,6 +71,7 @@ import {VisibilityWatcherService} from './js/cyph/services/visibility-watcher.se
 		ConfigService,
 		DialogService,
 		EnvService,
+		FileService,
 		MdDialogService,
 		MdToastService,
 		NotificationService,

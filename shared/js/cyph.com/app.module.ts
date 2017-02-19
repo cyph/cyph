@@ -50,6 +50,7 @@ import {TranslateDirective} from '../cyph/directives/translate.directive';
 import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
+import {FileService} from '../cyph/services/file.service';
 import {MdDialogService} from '../cyph/services/material/md-dialog.service';
 import {MdSidenavService} from '../cyph/services/material/md-sidenav.service';
 import {MdToastService} from '../cyph/services/material/md-toast.service';
@@ -127,6 +128,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		ConfigService,
 		DialogService,
 		EnvService,
+		FileService,
 		MdDialogService,
 		MdSidenavService,
 		MdToastService,

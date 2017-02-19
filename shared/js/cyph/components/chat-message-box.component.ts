@@ -3,7 +3,7 @@ import * as $ from 'jquery';
 import * as tabIndent from 'tab-indent';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
-import {FileService} from '../services/file.service';
+import {FileTransferService} from '../services/file-transfer.service';
 import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
@@ -73,7 +73,7 @@ export class ChatMessageBoxComponent implements OnInit {
 	}[]	= [
 		{
 			fileAccept: this.fileAccept,
-			fileChange: ($event: File) => { this.fileService.send($event); },
+			fileChange: ($event: File) => { this.fileTransferService.send($event); },
 			icon: 'attach_file',
 			label: 'Send File or Photo',
 			tooltipDirection: 'left'
@@ -272,8 +272,8 @@ export class ChatMessageBoxComponent implements OnInit {
 		/** @see EnvService */
 		public readonly envService: EnvService,
 
-		/** @see FileService */
-		public readonly fileService: FileService,
+		/** @see FileTransferService */
+		public readonly fileTransferService: FileTransferService,
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,

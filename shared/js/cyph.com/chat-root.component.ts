@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ChatService} from '../cyph/services/chat.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {EnvService} from '../cyph/services/env.service';
-import {FileService} from '../cyph/services/file.service';
+import {FileTransferService} from '../cyph/services/file-transfer.service';
 import {P2PService} from '../cyph/services/p2p.service';
 import {ScrollService} from '../cyph/services/scroll.service';
 import {SessionService} from '../cyph/services/session.service';
@@ -18,7 +18,7 @@ import {LocalSessionService} from './local-session.service';
 		ChatService,
 		CyphertextService,
 		EnvService,
-		FileService,
+		FileTransferService,
 		LocalSessionService,
 		P2PService,
 		ScrollService,
