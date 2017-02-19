@@ -20,6 +20,7 @@ import {FooterComponent} from '../cyph/components/footer.component';
 import {HelpComponent} from '../cyph/components/help.component';
 import {LinkConnectionComponent} from '../cyph/components/link-connection.component';
 import {MarkdownComponent} from '../cyph/components/markdown.component';
+import {MdAutocompleteComponent} from '../cyph/components/material/md-autocomplete.component';
 import {MdButtonComponent} from '../cyph/components/material/md-button.component';
 import {MdCardContentComponent} from '../cyph/components/material/md-card-content.component';
 import {
@@ -106,6 +107,7 @@ import {ChatRootComponent} from './chat-root.component';
 		NotFoundComponent,
 		SignupFormComponent,
 		TranslateDirective,
+		MdAutocompleteComponent,
 		MdButtonComponent,
 		MdCardComponent,
 		MdCardContentComponent,

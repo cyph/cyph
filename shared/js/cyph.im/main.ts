@@ -19,6 +19,7 @@ import 'whatwg-fetch';
 import 'zone.js';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {HelpComponent} from '../cyph/components/help.component';
+import {MdAutocompleteComponent} from '../cyph/components/material/md-autocomplete.component';
 import {MdButtonComponent} from '../cyph/components/material/md-button.component';
 import {MdCardContentComponent} from '../cyph/components/material/md-card-content.component';
 import {
@@ -76,6 +77,10 @@ angular.
 		}
 	]).
 	config(config.angularConfig.config).
+	component(
+		MdAutocompleteComponent.title,
+		MdAutocompleteComponent.config
+	).
 	component(
 		MdButtonComponent.title,
 		MdButtonComponent.config
