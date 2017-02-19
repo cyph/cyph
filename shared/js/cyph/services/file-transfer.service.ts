@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {UIEvents} from '../files/enums';
 import {Files} from '../files/files';
 import {Transfer} from '../files/transfer';
@@ -23,7 +22,7 @@ export class FileTransferService {
 	/** @ignore */
 	private addImage (transfer: Transfer, plaintext: Uint8Array) : void {
 		this.chatService.addMessage(
-			`![](data:${transfer.fileType};base64,${potassiumUtil.toBase64(plaintext)})` +
+			`![](${this.fileService.toDataURI(plaintext, transfer.fileType)})` +
 				`\n\n#### ${transfer.name}`
 			,
 			transfer.author,

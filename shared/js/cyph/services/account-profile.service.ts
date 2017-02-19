@@ -3,6 +3,7 @@ import {IUser} from '../account/iuser';
 import {Profile} from '../account/profile';
 import {util} from '../util';
 import {AccountAuthService} from './account-auth.service';
+import {FileService} from './file.service';
 
 
 /**
@@ -46,8 +47,24 @@ export class AccountProfileService {
 		);
 	}
 
+	/** Sets the currently signed in user's profile photo. */
+	public async setProfilePhoto (file: File) : Promise<void> {
+		if (!this.accountAuthService.user) {
+			throw new Error('Must sign in to set profile photo.');
+		}
+
+		if (!this.fileService.isImage(file)) {
+			throw new Error('Profile photo must be an image.');
+		}
+
+		this.accountAuthService.user.avatar	= await this.fileService.getDataURI(file, true);
+	}
+
 	constructor (
 		/** @ignore */
-		private accountAuthService: AccountAuthService
+		private accountAuthService: AccountAuthService,
+
+		/** @ignore */
+		private readonly fileService: FileService
 	) {}
 }

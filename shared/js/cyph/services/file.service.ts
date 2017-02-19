@@ -90,9 +90,23 @@ export class FileService {
 		});
 	}
 
+	/**
+	 * Converts File object to base64 data URI.
+	 * @param file
+	 * @param image If true, file is processed as an image (compressed).
+	 */
+	public async getDataURI (file: File, image: boolean = this.isImage(file)) : Promise<string> {
+		return this.toDataURI(await this.getBytes(file, image), file.type);
+	}
+
 	/** Indicates whether a File object is an image. */
 	public isImage (file: File) : boolean {
 		return file.type.indexOf('image/') === 0;
+	}
+
+	/** Converts binary data to base64 data URI. */
+	public toDataURI (data: Uint8Array, fileType: string) : string {
+		return `data:${fileType};base64,${potassiumUtil.toBase64(data)}`;
 	}
 
 	constructor (
