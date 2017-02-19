@@ -44,6 +44,6 @@ export class AccountContactsService {
 
 	constructor (
 		/** @ignore */
-		private accountAuthService: AccountAuthService
+		private readonly accountAuthService: AccountAuthService
 	) {}
 }

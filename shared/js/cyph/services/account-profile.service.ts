@@ -62,7 +62,7 @@ export class AccountProfileService {
 
 	constructor (
 		/** @ignore */
-		private accountAuthService: AccountAuthService,
+		private readonly accountAuthService: AccountAuthService,
 
 		/** @ignore */
 		private readonly fileService: FileService
