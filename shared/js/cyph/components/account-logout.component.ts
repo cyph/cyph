@@ -2,8 +2,6 @@ import {Component} from '@angular/core';
 import {AccountAuthService} from '../services/account-auth.service';
 import {UrlStateService} from '../services/url-state.service';
 
-
-
 /**
  * Angular component for account home UI.
  */
@@ -13,9 +11,12 @@ import {UrlStateService} from '../services/url-state.service';
 	templateUrl: '../../../templates/account-logout.html'
 })
 export class AccountLogoutComponent {
-	public ngOnInit(){
+	public async ngOnInit () : Promise<void> {
 		this.accountAuthService.logout();
-		setTimeout(() => this.urlStateService.setUrl('account/login'), 1500);
+		setTimeout (
+			() => this.urlStateService.setUrl('account/login'),
+			1500
+		);
 	}
 	constructor (
 		/** @see AccountAuthService */
