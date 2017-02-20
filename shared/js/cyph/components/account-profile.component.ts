@@ -35,7 +35,7 @@ export class AccountProfileComponent implements OnInit {
 		}
 		catch (_) {
 			if (!this.accountAuthService.user) {
-				this.urlStateService.setUrl('/#account/login');
+				this.urlStateService.setUrl('account/login');
 			}
 		}
 	}

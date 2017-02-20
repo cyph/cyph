@@ -1,5 +1,7 @@
 import {Component} from '@angular/core';
 import {AccountAuthService} from '../services/account-auth.service';
+import {UrlStateService} from '../services/url-state.service';
+
 
 
 /**
@@ -13,9 +15,13 @@ import {AccountAuthService} from '../services/account-auth.service';
 export class AccountLogoutComponent {
 	public ngOnInit(){
 		this.accountAuthService.logout();
+		setTimeout(() => this.urlStateService.setUrl('account/login'), 1500);
 	}
 	constructor (
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
+
+		/** @see AccountAuthService */
+		public readonly urlStateService: UrlStateService
 	) {}
 }
