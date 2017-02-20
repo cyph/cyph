@@ -23,6 +23,11 @@
 			*ngIf='appService.accountState === appService.accountStates.login'
 		></cyph-account-login>
 
+		<cyph-account-logout
+			class='layout-fill'
+			*ngIf='appService.accountState === appService.accountStates.logout'
+		></cyph-account-logout>
+
 		<cyph-account-profile
 			class='layout-fill'
 			*ngIf='appService.accountState === appService.accountStates.profile'

@@ -7,6 +7,7 @@ import {AccountContactsComponent} from '../cyph/components/account-contacts.comp
 import {AccountFilesComponent} from '../cyph/components/account-files.component';
 import {AccountHomeComponent} from '../cyph/components/account-home.component';
 import {AccountLoginComponent} from '../cyph/components/account-login.component';
+import {AccountLogoutComponent} from '../cyph/components/account-logout.component';
 import {AccountProfileComponent} from '../cyph/components/account-profile.component';
 import {AccountRegisterComponent} from '../cyph/components/account-register.component';
 import {AccountSettingsComponent} from '../cyph/components/account-settings.component';
@@ -88,6 +89,7 @@ import {ChatRootComponent} from './chat-root.component';
 		AccountFilesComponent,
 		AccountHomeComponent,
 		AccountLoginComponent,
+		AccountLogoutComponent,
 		AccountProfileComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
