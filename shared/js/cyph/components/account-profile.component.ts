@@ -4,6 +4,9 @@ import {AccountAuthService} from '../services/account-auth.service';
 import {AccountProfileService} from '../services/account-profile.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {EnvService} from '../services/env.service';
+import {UrlStateService} from '../services/url-state.service';
+
+
 
 
 /**
@@ -31,7 +34,9 @@ export class AccountProfileComponent implements OnInit {
 			);
 		}
 		catch (_) {
-			/* TODO: handle profile not found. */
+			if (!this.accountAuthService.user) {
+				this.urlStateService.setUrl('/#account/login');
+			}
 		}
 	}
 
@@ -46,6 +51,9 @@ export class AccountProfileComponent implements OnInit {
 		public readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see AccountProfileService */
+		public readonly urlStateService: UrlStateService
 	) {}
 }
