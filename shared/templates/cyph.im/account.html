@@ -5,7 +5,7 @@
 
 	<div
 		class='layout-column'
-		[ngClass]='sidebarVisible ? "flex-66" : "flex"'
+		[ngClass]='sidebarVisible ? "flex-75" : "flex"'
 		*ngIf='!showOnlySidebar'
 	>
 		<cyph-account-files
@@ -46,7 +46,7 @@
 
 	<div
 		class='sidebar layout-column'
-		[ngClass]='showOnlySidebar ? "flex" : "flex-33"'
+		[ngClass]='showOnlySidebar ? "flex" : "flex-25"'
 		*ngIf='sidebarVisible'
 	>
 		<cyph-account-contacts></cyph-account-contacts>
