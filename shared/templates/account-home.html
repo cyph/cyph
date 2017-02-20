@@ -3,6 +3,14 @@
 		<div class='flex-50'></div>
 		<div class='flex-50'>
 			<h1>Home</h1>
+			<md2-button
+				class='logout'
+				cyphTranslate
+				(childClick)='accountAuthService.logout()'
+				[ariaLabel]='Logout'
+			>
+				<i class='material-icons' alt='Logout'>exit_to_app</i>
+			</md2-button>
 			<cyph-account-profile></cyph-account-profile>
 		</div>
 	</div>
