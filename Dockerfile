@@ -65,6 +65,8 @@ RUN echo '\
 	source /home/gibson/emsdk_portable/emsdk_env.sh > /dev/null 2>&1; \
 	source /home/gibson/.rvm/scripts/rvm; \
 \
+	export GIT_EDITOR="vim"; \
+\
 	export GOPATH="/home/gibson/go"; \
 	export CLOUDSDK_PYTHON="python2"; \
 	export CLOUD_PATHS="$( \
@@ -162,6 +164,8 @@ RUN rm -rf ~/.gnupg
 RUN echo 'Package: yarn\nPin: version 0.19.1-1\nPin-Priority: 1337' | sudo tee -a /etc/apt/preferences
 
 
+#CIRCLECI:RUN apt-get -y --force-yes update
+#CIRCLECI:RUN apt-get -y --force-yes upgrade
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/firebase
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/firebase-server
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/ts-node
