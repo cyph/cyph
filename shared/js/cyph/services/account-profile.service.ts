@@ -12,9 +12,13 @@ import {FileService} from './file.service';
 @Injectable()
 export class AccountProfileService {
 	/** Tries to to get user object for the specified user. */
-	public async getProfile (
-		user: IUser|undefined = this.accountAuthService.user
-	) : Promise<Profile> {
+	public async getProfile (user?: IUser) : Promise<Profile> {
+		await this.accountAuthService.ready;
+
+		if (!user) {
+			user	= this.accountAuthService.user;
+		}
+
 		if (!user) {
 			throw new Error('Cannot get profile for unspecified user.');
 		}
@@ -22,7 +26,7 @@ export class AccountProfileService {
 		const externalUsernames	= ['facebook', 'keybase', 'reddit', 'twitter'].
 			sort(() => util.random() > 0.5 ? -1 : 1).
 			slice(0, util.random(5)).
-			map(service => ({service, username: user.username}))
+			map(service => ({service, username: user ? user.username : ''}))
 		;
 
 		if (user === this.accountAuthService.user) {
