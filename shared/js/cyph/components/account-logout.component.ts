@@ -1,23 +1,25 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AccountAuthService} from '../services/account-auth.service';
 import {UrlStateService} from '../services/url-state.service';
+import {util} from '../util';
+
 
 /**
- * Angular component for account home UI.
+ * Angular component for account logout UI.
  */
 @Component({
 	selector: 'cyph-account-logout',
 	styleUrls: ['../../css/components/account-logout.css'],
 	templateUrl: '../../../templates/account-logout.html'
 })
-export class AccountLogoutComponent {
+export class AccountLogoutComponent implements OnInit {
+	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		this.accountAuthService.logout();
-		setTimeout (
-			() => this.urlStateService.setUrl('account/login'),
-			1500
-		);
+		await util.sleep(1500);
+		this.urlStateService.setUrl('account/login');
 	}
+
 	constructor (
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
