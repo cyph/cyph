@@ -43,7 +43,7 @@ export class AccountProfileComponent implements OnInit {
 		if (!this.accountAuthService.user) {
 			throw new Error('User not signed in');
 		}
-		return UserPresence[statusEnum]; 
+		return UserPresence[statusEnum];
 	}
 
 	constructor (

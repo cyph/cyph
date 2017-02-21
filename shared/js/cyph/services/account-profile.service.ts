@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {UserPresence} from '../account/enums';
 import {IUser} from '../account/iuser';
 import {Profile} from '../account/profile';
 import {util} from '../util';
