@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {UserPresence} from '../account/enums';
 import {Profile} from '../account/profile';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountProfileService} from '../services/account-profile.service';
@@ -36,6 +37,13 @@ export class AccountProfileComponent implements OnInit {
 				this.urlStateService.setUrl('account/login');
 			}
 		}
+	}
+
+	public getStatus (statusEnum: UserPresence) : String {
+		if (!this.accountAuthService.user) {
+			throw new Error('User not signed in');
+		}
+		return UserPresence[statusEnum]; 
 	}
 
 	constructor (

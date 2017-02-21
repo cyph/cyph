@@ -15,7 +15,7 @@ import {EnvService} from '../services/env.service';
 })
 export class AccountContactsComponent {
 	/** Returns string representation of status. */
-	public getStatus (statusEnum: UserPresence) : string {
+	public getStatus (statusEnum: UserPresence) : String {
 		return UserPresence[statusEnum];
 	}
 

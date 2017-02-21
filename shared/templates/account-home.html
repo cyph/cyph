@@ -1,15 +1,15 @@
 <div>
+	<md2-button
+		class='logout'
+		cyphTranslate
+		(childClick)='this.urlStateService.setUrl("account/logout")'
+	>
+		<i class='material-icons' alt='Logout'>exit_to_app</i>
+	</md2-button>
 	<div class='layout-row'>
 		<div class='flex-25'></div>
 		<div class='flex-75'>
 			<h1>Home</h1>
-			<md2-button
-				class='logout'
-				cyphTranslate
-				(childClick)='this.urlStateService.setUrl("account/logout")'
-			>
-				<i class='material-icons' alt='Logout'>exit_to_app</i>
-			</md2-button>
 			<cyph-account-profile></cyph-account-profile>
 		</div>
 	</div>
