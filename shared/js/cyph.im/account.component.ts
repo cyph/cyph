@@ -42,6 +42,10 @@ export class AccountComponent implements OnInit {
 
 		this.urlStateService.trigger();
 
+		if (this.envService.coBranded) {
+			return;
+		}
+
 		/* tslint:disable-next-line:no-unused-new */
 		new Granim({
 			direction: 'radial',
