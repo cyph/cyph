@@ -10,12 +10,12 @@
 				<div class='layout-column'>
 					<img
 						class='avatar'
-						[ngClass]='getStatus(contact.status)'
+						[ngClass]='userPresence[contact.status]'
 						[src]='contact.avatar'
 						alt='User Avatar'
 					/>
 					<h4 class='status'>
-						{{getStatus(contact.status)}}
+						{{userPresence[contact.status]}}
 					</h4>
 				</div>
 				<div class='user layout-column flex'>

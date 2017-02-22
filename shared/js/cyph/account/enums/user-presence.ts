@@ -7,11 +7,3 @@ export enum UserPresence {
 	offline,
 	online
 }
-
-/** UserPresence values in sorting order for UI. */
-export const userPresence	= [
-	UserPresence.online,
-	UserPresence.away,
-	UserPresence.busy,
-	UserPresence.offline
-];

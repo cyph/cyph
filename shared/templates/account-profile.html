@@ -1,7 +1,7 @@
 <div class='profile' *ngIf='profile'>
 	<img
 		class='profile-picture animated flipInX _1'
-		[ngClass]='getStatus(profile.user.status)'
+		[ngClass]='userPresence[profile.user.status]'
 		alt='Profile Picture'
 		[src]='profile.user.avatar'
 	/>

@@ -23,6 +23,9 @@ export class AccountProfileComponent implements OnInit {
 	/** User profile. */
 	public profile: Profile|undefined;
 
+	/** @see UserPresence */
+	public readonly userPresence: typeof UserPresence	= UserPresence;
+
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		try {
@@ -37,13 +40,6 @@ export class AccountProfileComponent implements OnInit {
 				this.urlStateService.setUrl('account/login');
 			}
 		}
-	}
-
-	public getStatus (statusEnum: UserPresence) : String {
-		if (!this.accountAuthService.user) {
-			throw new Error('User not signed in');
-		}
-		return UserPresence[statusEnum];
 	}
 
 	constructor (

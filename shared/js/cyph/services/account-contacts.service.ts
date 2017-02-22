@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {UserPresence, userPresence} from '../account/enums';
+import {UserPresence, userPresenceSorted} from '../account/enums';
 import {IUser} from '../account/iuser';
 import {AccountAuthService} from './account-auth.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
@@ -25,8 +25,8 @@ export class AccountContactsService {
 				user.username !== this.accountAuthService.user.username
 			).
 			sort((a, b) => {
-				const statusIndexA	= userPresence.indexOf(a.status);
-				const statusIndexB	= userPresence.indexOf(b.status);
+				const statusIndexA	= userPresenceSorted.indexOf(a.status);
+				const statusIndexB	= userPresenceSorted.indexOf(b.status);
 
 				return (
 					statusIndexA !== statusIndexB ?

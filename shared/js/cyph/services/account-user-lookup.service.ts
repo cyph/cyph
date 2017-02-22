@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {userPresence} from '../account/enums';
+import {userPresenceSorted} from '../account/enums';
 import {IUser} from '../account/iuser';
 import {util} from '../util';
 
@@ -15,7 +15,7 @@ export class AccountUserLookupService {
 	].map((user: {avatar: string; name: string; username: string}) => ({
 		avatar: user.avatar,
 		name: user.name,
-		status: userPresence[util.random(userPresence.length)],
+		status: userPresenceSorted[util.random(userPresenceSorted.length)],
 		username: user.username
 	}));
 

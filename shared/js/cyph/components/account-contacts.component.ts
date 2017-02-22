@@ -14,10 +14,8 @@ import {EnvService} from '../services/env.service';
 	templateUrl: '../../../templates/account-contacts.html'
 })
 export class AccountContactsComponent {
-	/** Returns string representation of status. */
-	public getStatus (statusEnum: UserPresence) : String {
-		return UserPresence[statusEnum];
-	}
+	/** @see UserPresence */
+	public readonly userPresence: typeof UserPresence	= UserPresence;
 
 	constructor (
 		/** @see AccountAuthService */
