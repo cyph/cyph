@@ -1,3 +1,31 @@
-h1 {
-	font-size: 32px;
+span {
+    font-family: Ubuntu;
+    text-align: center;
+	&.name {
+		font-size: 32px;
+		font-weight: 500;
+		font-family: Ubuntu;
+		text-align: center;
+	}
+	&.metadata {
+		font-size: 14px;
+	}
+}
+
+.wrapper {
+    margin: 5px;
+    padding: 15px;
+	.file {
+    	margin: 5px;
+	}
+}
+
+.metadata.layout-row {
+    margin-left: auto;
+    margin-right: auto;
+	span {
+		&.filetype {
+			margin-right: 10px;
+		}
+	}
 }
