@@ -167,7 +167,7 @@ const newCyphTest	= o => {
 				setOnerror();
 				return self.$ && $('cyph-link-connection:visible' /* '.message-box:visible' */)[0];
 			})),
-			150000
+			60000 // 150000
 		)
 	) /* .then(() => new Promise(resolve =>
 		setTimeout(resolve, 10000)
@@ -206,12 +206,12 @@ const newCyphTest	= o => {
 
 const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
 	/* Never run test suites concurrently, and never run the same
-		test suite more frequently than once every six hours */
+		test suite more frequently than once every ~~six hours~~ hour */
 	if (
 		testLock ||
 		(
 			!isNaN(testTimes[homeURL + newCyphURL]) &&
-			Date.now() - testTimes[homeURL + newCyphURL] < 21600000
+			Date.now() - testTimes[homeURL + newCyphURL] < 3600000 // 21600000
 		)
 	) {
 		return;
