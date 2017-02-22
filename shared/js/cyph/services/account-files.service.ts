@@ -17,6 +17,7 @@ export class AccountFilesService {
 		{name: 'Test File', filetype: 'png', location: '/', size: 1337}
 	];
 
+	/** Files owned by current user. */
 	public get myFiles () : IFile[] {
 		if (!this.accountAuthService.user) {
 			return [];
