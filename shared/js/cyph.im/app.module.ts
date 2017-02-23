@@ -11,6 +11,7 @@ import {AccountLogoutComponent} from '../cyph/components/account-logout.componen
 import {AccountProfileComponent} from '../cyph/components/account-profile.component';
 import {AccountRegisterComponent} from '../cyph/components/account-register.component';
 import {AccountSettingsComponent} from '../cyph/components/account-settings.component';
+import {AccountComponent} from '../cyph/components/account.component';
 import {ChatCyphertextComponent} from '../cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from '../cyph/components/chat-main.component';
 import {ChatMessageBoxComponent} from '../cyph/components/chat-message-box.component';
@@ -60,6 +61,7 @@ import {AccountContactsService} from '../cyph/services/account-contacts.service'
 import {AccountFilesService} from '../cyph/services/account-files.service';
 import {AccountProfileService} from '../cyph/services/account-profile.service';
 import {AccountUserLookupService} from '../cyph/services/account-user-lookup.service';
+import {AccountService} from '../cyph/services/account.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
@@ -74,7 +76,6 @@ import {UrlStateService} from '../cyph/services/url-state.service';
 import {UtilService} from '../cyph/services/util.service';
 import {VirtualKeyboardWatcherService} from '../cyph/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
-import {AccountComponent} from './account.component';
 import {AppComponent} from './app.component';
 import {ChatRootComponent} from './chat-root.component';
 
@@ -144,6 +145,7 @@ import {ChatRootComponent} from './chat-root.component';
 		UpgradeModule
 	],
 	providers: [
+		AccountService,
 		AccountAuthService,
 		AccountContactsService,
 		AccountFilesService,

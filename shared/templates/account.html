@@ -8,37 +8,37 @@
 	>
 		<cyph-account-files
 			class='layout-fill'
-			*ngIf='appService.accountState === appService.accountStates.files'
+			*ngIf='accountService.state === states.files'
 		></cyph-account-files>
 
 		<cyph-account-home
 			class='layout-fill'
-			*ngIf='appService.accountState === appService.accountStates.home'
+			*ngIf='accountService.state === states.home'
 		></cyph-account-home>
 
 		<cyph-account-login
 			class='layout-fill'
-			*ngIf='appService.accountState === appService.accountStates.login'
+			*ngIf='accountService.state === states.login'
 		></cyph-account-login>
 
 		<cyph-account-logout
 			class='layout-fill'
-			*ngIf='appService.accountState === appService.accountStates.logout'
+			*ngIf='accountService.state === states.logout'
 		></cyph-account-logout>
 
 		<cyph-account-profile
 			class='layout-fill'
-			*ngIf='appService.accountState === appService.accountStates.profile'
+			*ngIf='accountService.state === states.profile'
 		></cyph-account-profile>
 
 		<cyph-account-register
 			class='layout-fill'
-			*ngIf='appService.accountState === appService.accountStates.register'
+			*ngIf='accountService.state === states.register'
 		></cyph-account-register>
 
 		<cyph-account-settings
 			class='layout-fill'
-			*ngIf='appService.accountState === appService.accountStates.settings'
+			*ngIf='accountService.state === states.settings'
 		></cyph-account-settings>
 	</div>
 

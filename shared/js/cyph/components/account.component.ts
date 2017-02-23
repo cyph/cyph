@@ -1,35 +1,38 @@
 import {Component, OnInit} from '@angular/core';
 import * as Granim from 'granim';
-import {EnvService} from '../cyph/services/env.service';
-import {UrlStateService} from '../cyph/services/url-state.service';
-import {AppService} from './app.service';
-import {AccountStates} from './enums';
+import {States} from '../account/enums';
+import {AccountService} from '../services/account.service';
+import {EnvService} from '../services/env.service';
+import {UrlStateService} from '../services/url-state.service';
 
 /**
  * Angular component for the Cyph account screen.
  */
 @Component({
 	selector: 'cyph-account',
-	styleUrls: ['../css/components/cyph.im/account.css'],
-	templateUrl: '../../templates/cyph.im/account.html'
+	styleUrls: ['../../css/components/account.css'],
+	templateUrl: '../../../templates/account.html'
 })
 export class AccountComponent implements OnInit {
+	/** @see States */
+	public states: typeof States	= States;
+
 	/** Indicates whether the sidebar should take up the entire view. */
 	public get showOnlySidebar () : boolean {
 		return [
-			AccountStates.contacts
+			States.contacts
 		].filter(
-			state => state === this.appService.accountState
+			state => state === this.accountService.state
 		).length > 0;
 	}
 
 	/** Indicates whether sidebar should be displayed. */
 	public get sidebarVisible () : boolean {
 		return [
-			AccountStates.contacts,
-			AccountStates.home
+			States.contacts,
+			States.home
 		].filter(
-			state => state === this.appService.accountState
+			state => state === this.accountService.state
 		).length > 0;
 	}
 
@@ -70,8 +73,8 @@ export class AccountComponent implements OnInit {
 		/** @ignore */
 		private readonly urlStateService: UrlStateService,
 
-		/** @see AppService */
-		public readonly appService: AppService,
+		/** @see AccountService */
+		public readonly accountService: AccountService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService

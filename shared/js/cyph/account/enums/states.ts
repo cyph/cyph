@@ -1,7 +1,7 @@
 /**
  * Possible states of account UI.
  */
-export enum AccountStates {
+export enum States {
 	contacts,
 	files,
 	home,

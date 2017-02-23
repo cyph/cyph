@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {AccountStates} from '../../cyph.im/enums';
+import {States} from '../account/enums';
 
 
 /**
@@ -7,8 +7,8 @@ import {AccountStates} from '../../cyph.im/enums';
  */
 @Injectable()
 export class AccountService {
-	/** @see AccountStates */
-	public accountStates: typeof AccountStates	= AccountStates;
+	/** @see States */
+	public state: States|undefined;
 
 	constructor () {}
 }

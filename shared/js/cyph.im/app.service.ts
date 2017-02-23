@@ -1,10 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import * as $ from 'jquery';
+import {States as AccountStates} from '../cyph/account/enums';
+import {AccountService} from '../cyph/services/account.service';
 import {EnvService} from '../cyph/services/env.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
-import {AccountStates, States, urlSections} from './enums';
+import {States, urlSections} from './enums';
 
 
 /**
@@ -15,14 +17,8 @@ export class AppService {
 	/** @see States */
 	public state: States;
 
-	/** @see AccountStates */
-	public accountState: AccountStates|undefined;
-
 	/** @see States */
 	public states: typeof States				= States;
-
-	/** @see AccountStates */
-	public accountStates: typeof AccountStates	= AccountStates;
 
 	/** @ignore */
 	private onUrlStateChange (newUrlState: string) : void {
@@ -33,8 +29,8 @@ export class AppService {
 		const newUrlStateSplit: string[]	= newUrlState.split('/');
 
 		if (newUrlStateSplit[0] === urlSections.account) {
-			this.accountState	= (<any> AccountStates)[newUrlStateSplit[1]];
-			this.state		= States.account;
+			this.accountService.state	= (<any> AccountStates)[newUrlStateSplit[1]];
+			this.state					= States.account;
 		}
 		else if (newUrlState === this.urlStateService.states.notFound) {
 			this.state		= States.error;
@@ -51,6 +47,9 @@ export class AppService {
 		envService: EnvService,
 
 		titleService: Title,
+
+		/** @ignore */
+		private readonly accountService: AccountService,
 
 		/** @ignore */
 		private readonly urlStateService: UrlStateService
