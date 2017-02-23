@@ -1,12 +1,14 @@
 span {
-    font-family: Ubuntu;
-    text-align: center;
+	font-family: Ubuntu;
+	text-align: center;
+
 	&.name {
 		font-size: 32px;
 		font-weight: 500;
 		font-family: Ubuntu;
 		text-align: center;
 	}
+
 	&.metadata {
 		font-size: 14px;
 	}
@@ -19,6 +21,7 @@ span {
 		border: 3px solid rgba(57, 40, 89, 0.35) !important;
 		margin: 5px;
 		padding: 15px;
+
 		.file {
 			margin: 5px;
 		}
@@ -27,6 +30,7 @@ span {
 	.metadata.layout-row {
 		margin-left: auto;
 		margin-right: auto;
+
 		span {
 			&.filetype {
 				margin-right: 10px;
