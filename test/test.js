@@ -165,7 +165,10 @@ const newCyphTest	= o => {
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				setOnerror();
-				return self.$ && $('cyph-link-connection:visible' /* '.message-box:visible' */)[0];
+				return self.$ && $(
+					'body.load-complete cyph-link-connection:visible'
+					/* '.message-box:visible' */
+				)[0];
 			})),
 			60000 // 150000
 		)
