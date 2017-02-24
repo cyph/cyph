@@ -2,6 +2,7 @@
  * Possible states of account UI.
  */
 export enum States {
+	chat,
 	contacts,
 	files,
 	home,

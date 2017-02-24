@@ -39,6 +39,7 @@
 					class='layout-row'
 					ariaLabel='Send Message'
 					*ngIf='contact.status === userPresence.online'
+					(childClick)='accountService.state = states.chat'
 				>
 					<i class='chat material-icons' alt='Start Chat'>chat_bubble</i>
 				</md2-button>

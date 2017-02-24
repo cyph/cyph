@@ -6,6 +6,11 @@
 		[ngClass]='sidebarVisible ? "flex-75" : "flex"'
 		*ngIf='!showOnlySidebar'
 	>
+		<cyph-account-chat
+			class='layout-fill'
+			*ngIf='accountService.state === states.chat'
+		></cyph-account-chat>
+
 		<cyph-account-files
 			class='layout-fill'
 			*ngIf='accountService.state === states.files'

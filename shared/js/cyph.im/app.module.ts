@@ -3,6 +3,7 @@ import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {BrowserModule, Title} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
+import {AccountChatComponent} from '../cyph/components/account-chat.component';
 import {AccountContactsComponent} from '../cyph/components/account-contacts.component';
 import {AccountFilesComponent} from '../cyph/components/account-files.component';
 import {AccountHomeComponent} from '../cyph/components/account-home.component';
@@ -85,6 +86,7 @@ import {ChatRootComponent} from './chat-root.component';
  */
 @NgModule({
 	declarations: [
+		AccountChatComponent,
 		AccountComponent,
 		AccountContactsComponent,
 		AccountFilesComponent,

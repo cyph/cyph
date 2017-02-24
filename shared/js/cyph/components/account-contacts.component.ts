@@ -1,7 +1,8 @@
 import {Component} from '@angular/core';
-import {UserPresence} from '../account/enums';
+import {States, UserPresence} from '../account/enums';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountContactsService} from '../services/account-contacts.service';
+import {AccountService} from '../services/account.service';
 import {EnvService} from '../services/env.service';
 
 
@@ -17,7 +18,13 @@ export class AccountContactsComponent {
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
+	/** @see States */
+	public states: typeof States	= States;
+
 	constructor (
+		/** @see AccountService */
+		public readonly accountService: AccountService,
+
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
 

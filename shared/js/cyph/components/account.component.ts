@@ -29,6 +29,7 @@ export class AccountComponent implements OnInit {
 	/** Indicates whether sidebar should be displayed. */
 	public get sidebarVisible () : boolean {
 		return [
+			States.chat,
 			States.contacts,
 			States.home
 		].filter(
