@@ -238,7 +238,7 @@ mv golang.org/x/tools.tmp/go/loader golang.org/x/tools/go/
 rm -rf golang.org/x/tools.tmp
 find golang.org/x/tools -name '*test*' -exec rm -rf {} \; 2> /dev/null
 
-find . -type f -name '*_test.go' -exec rm {} \;
+find . -type f -name '*test.go' -exec rm {} \;
 find . -type f -name '*.go' -exec sed -i 's|func main|func functionRemoved|g' {} \;
 
 
