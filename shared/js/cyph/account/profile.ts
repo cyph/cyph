@@ -1,3 +1,4 @@
+import {util} from '../util';
 import {IUser} from './iuser';
 
 
@@ -21,8 +22,17 @@ export class Profile {
 		/** Description. */
 		public description: string = '',
 
-		externalUsernames: {service: string; username: string}[] = []
+		externalUsernames?: {service: string; username: string}[]
 	) {
+		/* Mock external usernames for now */
+		if (!externalUsernames) {
+			externalUsernames	= ['facebook', 'keybase', 'reddit', 'twitter'].
+				sort(() => util.random() > 0.5 ? -1 : 1).
+				slice(0, util.random(5)).
+				map(service => ({service, username: user ? user.username : ''}))
+			;
+		}
+
 		for (const o of externalUsernames) {
 			this.externalUsernames.set(<any> o.service, o.username);
 		}

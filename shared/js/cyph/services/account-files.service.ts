@@ -19,7 +19,7 @@ export class AccountFilesService {
 
 	/** Files owned by current user. */
 	public get myFiles () : IFile[] {
-		if (!this.accountAuthService.user) {
+		if (!this.accountAuthService.current) {
 			return [];
 		}
 

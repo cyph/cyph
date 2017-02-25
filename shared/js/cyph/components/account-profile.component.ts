@@ -29,16 +29,17 @@ export class AccountProfileComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		try {
-			this.profile	= await this.accountProfileService.getProfile(
-				this.username ?
-					await this.accountUserLookupService.getUser(this.username) :
-					undefined
-			);
+			this.profile	= !this.username ?
+				this.accountAuthService.current :
+				await this.accountProfileService.getProfile(
+					await this.accountUserLookupService.getUser(this.username)
+				)
+			;
 		}
-		catch (_) {
-			if (!this.accountAuthService.user) {
-				this.urlStateService.setUrl('account/login');
-			}
+		catch (_) {}
+
+		if (!this.profile) {
+			this.urlStateService.setUrl('account/login');
 		}
 	}
 

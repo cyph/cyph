@@ -12,14 +12,14 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 export class AccountContactsService {
 	/** List of contacts for current user. */
 	public get contacts () : IUser[] {
-		if (!this.accountAuthService.user) {
+		if (!this.accountAuthService.current) {
 			return [];
 		}
 
 		return AccountUserLookupService.DUMMY_USERS.
 			filter(user =>
-				this.accountAuthService.user &&
-				user.username !== this.accountAuthService.user.username
+				this.accountAuthService.current &&
+				user.username !== this.accountAuthService.current.user.username
 			).
 			sort((a, b) => {
 				const statusIndexA	= userPresenceSorted.indexOf(a.status);
