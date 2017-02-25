@@ -10,17 +10,17 @@ mkdir -p ~/lib/js ~/tmplib/js
 cd ~/tmplib/js
 
 yarn add --ignore-platform --ignore-scripts \
-	@angular/common@next \
-	@angular/compiler@next \
-	@angular/compiler-cli@next \
-	@angular/core@next \
-	@angular/forms@next \
-	@angular/http@next \
-	@angular/platform-browser@next \
-	@angular/platform-browser-dynamic@next \
-	@angular/platform-server@next \
-	@angular/router@next \
-	@angular/upgrade@next \
+	@angular/common@^4.0.0-rc \
+	@angular/compiler@^4.0.0-rc \
+	@angular/compiler-cli@^4.0.0-rc \
+	@angular/core@^4.0.0-rc \
+	@angular/forms@^4.0.0-rc \
+	@angular/http@^4.0.0-rc \
+	@angular/platform-browser@^4.0.0-rc \
+	@angular/platform-browser-dynamic@^4.0.0-rc \
+	@angular/platform-server@^4.0.0-rc \
+	@angular/router@^4.0.0-rc \
+	@angular/upgrade@^4.0.0-rc \
 	@types/angular \
 	@types/angular-material \
 	@types/braintree-web \
@@ -104,7 +104,7 @@ yarn add --ignore-platform --ignore-scripts \
 	tslint \
 	tslint-microsoft-contrib \
 	typedoc \
-	typescript@next \
+	typescript \
 	uglify-js \
 	unsemantic \
 	webpack \
