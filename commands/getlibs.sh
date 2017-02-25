@@ -20,8 +20,9 @@ yarn add --ignore-platform --ignore-scripts ${nativePlugins} || exit 1
 
 cd node_modules
 
-# Workaround pending TS 2.1
-echo > @types/lodash/index.d.ts
+# Workaround for TS >=2.1
+echo > @types/whatwg-fetch/index.d.ts
+echo > @types/whatwg-streams/index.d.ts
 
 cp -a ../libsodium ./
 
@@ -155,11 +156,6 @@ for f in $(find firebase -type f -name '*.js') ; do
 	mv ${f}.new ${f}
 done
 
-for f in package.json yarn.lock ; do
-	cat tslint/${f} | grep -v tslint-test-config-non-relative > ${f}.new
-	mv ${f}.new tslint/${f}
-done
-
 node -e '
 	const package	= JSON.parse(fs.readFileSync("ts-node/package.json").toString());
 	package.scripts.prepublish	= undefined;
@@ -180,6 +176,10 @@ for d in firebase firebase-server ts-node tslint ; do
 		cp -f firebase.js firebase-browser.js
 		cp -f firebase.js firebase-node.js
 		rm -rf node_modules
+	elif [ "${d}" == 'tslint' ] ; then
+		# Temporary workaround pending tslint updating to TS >= 2.2
+		rm -rf node_modules/typescript
+		cp -rf "${currentDir}/typescript" node_modules/
 	fi
 
 	cd "${currentDir}"
@@ -202,8 +202,7 @@ rm -rf js
 mv .js.tmp js
 cp js/yarn.lock js/node_modules/
 
-# Pending TS 2.1: cp js/node_modules/core-js/client/shim.js js/base.js
-cp js/node_modules/babel-polyfill/dist/polyfill.js js/base.js
+cp js/node_modules/core-js/client/shim.js js/base.js
 
 
 mkdir go

@@ -12,6 +12,10 @@ cd cyph
 node -e '
 	const package	= JSON.parse(fs.readFileSync("package.json").toString());
 	package.dependencies["@angular/compiler-cli"]	= package.dependencies["@angular/compiler"];
+
+	/* Temporary workaround until NativeScript works with latest stable TypeScript */
+	package.dependencies["typescript"]				= "2.2.0-dev.20170213";
+
 	fs.writeFileSync("package.json", JSON.stringify(package));
 '
 mkdir node_modules 2> /dev/null
@@ -19,6 +23,10 @@ npm install || exit 1
 
 cp ${dir}/shared/js/native/firebase.nativescript.json ./
 for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
+
+# Temporary workaround pending NativeScript updating to TS >= 2.2
+cat node_modules/tns-core-modules/declarations.d.ts | tail -n67 > declarations.d.ts.new
+mv declarations.d.ts.new node_modules/tns-core-modules/declarations.d.ts
 
 cp -rf node_modules node_modules.old
 rm -rf node_modules/@types 2> /dev/null
@@ -39,7 +47,6 @@ cp -rf ${dir}/shared/js/native/* app/
 cp -rf ${dir}/shared/css/native app/css
 cp -rf ${dir}/shared/templates/native app/templates
 mv app/css/app.scss app/
-mv app/css app/js/
 
 rm -rf app/js
 mkdir -p app/js/cyph.im app/js/preload
@@ -49,9 +56,10 @@ cp -rf ${dir}/shared/js/cyph app/js/
 rm -rf app/js/cyph/components/material
 rm -rf app/js/cyph/components/checkout.component.ts
 rm -rf app/js/cyph/components/register.component.ts
+mv app/css app/js/
 
 find app -type f -name '*.scss' -exec bash -c '
-	scss -C -I${dir}/shared/css "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
+	scss -C "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
 ' \;
 
 getmodules () {
@@ -88,6 +96,7 @@ node -e "
 	);
 
 	/* For Angular AOT */
+	tsconfig.compilerOptions.noUnusedLocals		= undefined;
 	tsconfig.compilerOptions.noUnusedParameters	= undefined;
 
 	tsconfig.compilerOptions.baseUrl			= '.';
@@ -119,6 +128,7 @@ node -e "
 		JSON.stringify(tsconfig)
 	);
 "
+
 
 ./node_modules/.bin/ngc -p .
 sed -i 's|\./app.module|\./app.module.ngfactory|g' app/main.ts
@@ -178,24 +188,6 @@ for platform in android ios ; do
 				sphincs: 'self.sphincs',
 				supersphincs: 'self.superSphincs'
 			},
-			module: {
-				rules: [
-					{
-						test: /\.js$/,
-						use: [
-							{
-								loader: 'babel-loader',
-								options: {
-									compact: false,
-									presets: [
-										['es2015', {modules: false}]
-									]
-								}
-							}
-						]
-					}
-				]
-			},
 			node: {
 				http: false,
 				timers: false,
@@ -227,7 +219,8 @@ for platform in android ios ; do
 	# ../commands/websign/threadpack.ts app/main.${platform}.js
 
 	cp base.js main.${platform}.js
-	babel --presets es2015 --compact false app/js/preload/global.js >> main.${platform}.js
+	echo >> main.${platform}.js
+	cat app/js/preload/global.js >> main.${platform}.js
 	cat >> main.${platform}.js <<- EOM
 		/* Temporary workaround pending APPS-35 */
 		self.firebase	= {
