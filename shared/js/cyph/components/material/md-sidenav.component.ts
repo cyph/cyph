@@ -33,6 +33,7 @@ export class MdSidenavComponent
 		bindings: {
 			childClass: '@',
 			mdComponentId: '@',
+			mdIsLockedOpen: '<',
 			mdIsOpen: '='
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
@@ -44,6 +45,9 @@ export class MdSidenavComponent
 			public readonly mdComponentId: string;
 
 			/** @ignore */
+			public readonly mdIsLockedOpen: boolean;
+
+			/** @ignore */
 			public readonly mdIsOpen: boolean;
 
 			constructor () {}
@@ -52,6 +56,7 @@ export class MdSidenavComponent
 			<md-sidenav
 				ng-class='$ctrl.childClass'
 				ng-attr-md-component-id='{{$ctrl.mdComponentId}}'
+				md-is-locked-open='$ctrl.mdIsLockedOpen'
 				md-is-open='$ctrl.mdIsOpen'
 				ng-transclude
 			></md-sidenav>
@@ -65,6 +70,9 @@ export class MdSidenavComponent
 
 	/** @ignore */
 	@Input() public mdComponentId: string;
+
+	/** @ignore */
+	@Input() public mdIsLockedOpen: boolean;
 
 	/** @ignore */
 	@Input() public mdIsOpen: boolean;
