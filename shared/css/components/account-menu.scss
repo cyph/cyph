@@ -1,4 +1,9 @@
-//TODO: Menu Styling
-* {
-    font-family: Ubuntu;
+/** Hide backdrop */
+md-backdrop.md-sidenav-backdrop.md-opaque {
+    opacity: 0;
+    z-index: -999;
+}
+
+md-sidenav {
+    width: 20%;
 }
