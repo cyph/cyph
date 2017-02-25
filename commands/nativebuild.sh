@@ -92,6 +92,7 @@ node -e "
 	);
 
 	/* For Angular AOT */
+	tsconfig.compilerOptions.noUnusedLocals		= undefined;
 	tsconfig.compilerOptions.noUnusedParameters	= undefined;
 
 	tsconfig.compilerOptions.baseUrl			= '.';

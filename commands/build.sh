@@ -104,6 +104,7 @@ tsbuild () {
 		);
 
 		/* For Angular AOT */
+		tsconfig.compilerOptions.noUnusedLocals		= undefined;
 		tsconfig.compilerOptions.noUnusedParameters	= undefined;
 
 		$(test "${watch}" && echo "
