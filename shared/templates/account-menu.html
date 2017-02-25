@@ -1,12 +1,15 @@
 <div>
 	<md2-sidenav 
 		mdComponentId='menu'
-		childClass='md-sidenav-left md-whiteframe-z2'
+		childClass='md-sidenav-left md-whiteframe-z2 flex-25'
 		mode='side'>
 	<md2-content childClass='md-padding md-no-flicker'>
 		<div>
 			<md2-button cyphTranslate href='/' (childClick)='closeMenu()'>
-				Cyph
+				<img
+					src='../img/logo.white.horizontal.png'
+					class='logo'
+				/>
 			</md2-button>
 		</div>
 		<div>
@@ -17,48 +20,6 @@
 		<div>
 			<md2-button cyphTranslate href='/about' (childClick)='closeMenu()'>
 				Settings
-			</md2-button>
-		</div>
-		<div>
-			<md2-button
-				cyphTranslate
-				rel='noreferrer'
-				href='https://github.com/cyph'
-				target='_blank'
-				(childClick)='closeMenu()'
-			>
-				<span class='image'>
-					<img src='/img/iconfinder/github.png' alt='GitHub icon' />
-				</span>
-				<span>GitHub</span>
-			</md2-button>
-		</div>
-		<div>
-			<md2-button
-				cyphTranslate
-				rel='noreferrer'
-				href='https://twitter.com/cyph'
-				target='_blank'
-				(childClick)='closeMenu()'
-			>
-				<span class='image'>
-					<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
-				</span>
-				<span>Twitter</span>
-			</md2-button>
-		</div>
-		<div>
-			<md2-button
-				cyphTranslate
-				rel='noreferrer'
-				href='https://www.facebook.com/pages/Cyph/299270843606014'
-				target='_blank'
-				(childClick)='closeMenu()'
-			>
-				<span class='image'>
-					<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />
-				</span>
-				<span>Facebook</span>
 			</md2-button>
 		</div>
 	</md2-content>
