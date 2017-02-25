@@ -7,6 +7,8 @@ import {AccountService} from '../services/account.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {MdSidenavService} from '../services/material/md-sidenav.service';
 import {util} from '../util';
+import {UrlStateService} from '../services/url-state.service';
+
 
 /**
  * Angular component for account home UI.
@@ -78,7 +80,10 @@ export class AccountMenuComponent implements OnInit {
 		public readonly accountProfileService: AccountProfileService,
 
 		/** @see AccountContactsService */
-		public readonly accountUserLookupService: AccountUserLookupService
+		public readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @see AccountContactsService */
+		public readonly urlStateService: UrlStateService
 	) {
 		this.menu	= mdSidenavService.getSidenav('menu');
 	}
