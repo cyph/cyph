@@ -11,7 +11,7 @@ import * as DOMPurify from 'dompurify';
 const whitelist: string[]	= ['http', 'https', 'ftp'];
 
 /* Build fitting regex */
-const regex: RegExp			= RegExp('^(' + whitelist.join('|') + '):', 'gim');
+const regex: RegExp			= RegExp('^(' + whitelist.join('|') + '):', 'im');
 
 /* Add a hook to enforce URI scheme whitelist */
 DOMPurify.addHook('afterSanitizeAttributes', (node: HTMLElement) => {
