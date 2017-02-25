@@ -3,11 +3,11 @@ import {States, UserPresence} from '../account/enums';
 import {Profile} from '../account/profile';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountProfileService} from '../services/account-profile.service';
-import {AccountService} from '../services/account.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
+import {AccountService} from '../services/account.service';
 import {MdSidenavService} from '../services/material/md-sidenav.service';
-import {util} from '../util';
 import {UrlStateService} from '../services/url-state.service';
+import {util} from '../util';
 
 
 /**
