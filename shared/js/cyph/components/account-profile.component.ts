@@ -28,6 +28,8 @@ export class AccountProfileComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		await this.accountAuthService.ready;
+
 		try {
 			this.profile	= !this.username ?
 				this.accountAuthService.current :
