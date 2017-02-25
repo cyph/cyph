@@ -35,14 +35,6 @@ yarn add --ignore-platform --ignore-scripts \
 	angular-animate@~1.5 \
 	angular-aria@~1.5 \
 	animate.css \
-	babel-cli \
-	babel-core \
-	babel-loader \
-	babel-polyfill \
-	babel-preset-es2015 \
-	babel-traverse \
-	babel-types \
-	babylon \
 	Base64 \
 	bourbon@4.2.7 \
 	braintree-web@^2 \
