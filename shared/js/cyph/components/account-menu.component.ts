@@ -1,7 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {States, UserPresence} from '../account/enums';
 import {Profile} from '../account/profile';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountProfileService} from '../services/account-profile.service';
+import {AccountService} from '../services/account.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {MdSidenavService} from '../services/material/md-sidenav.service';
 import {util} from '../util';
@@ -26,6 +28,12 @@ export class AccountMenuComponent implements OnInit {
 
 	/** @ignore */
 	public menu: Promise<angular.material.ISidenavObject>;
+
+	/** @see UserPresence */
+	public readonly userPresence: typeof UserPresence	= UserPresence;
+
+	/** @see States */
+	public states: typeof States	= States;
 
 	/** Closes account menu */
 	public async closeMenu () : Promise<void> {
@@ -62,6 +70,9 @@ export class AccountMenuComponent implements OnInit {
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
+
+		/** @see AccountService */
+		public readonly accountService: AccountService,
 
 		/** @see AccountContactsService */
 		public readonly accountProfileService: AccountProfileService,

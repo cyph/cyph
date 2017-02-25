@@ -5,7 +5,7 @@
 		mode='side'>
 	<md2-content childClass='md-padding md-no-flicker'>
 		<div>
-			<md2-button cyphTranslate href='/' (childClick)='closeMenu()'>
+			<md2-button cyphTranslate (childClick)='accountService.state = states.home'>
 				<img
 					src='../img/logo.white.horizontal.png'
 					class='logo'
@@ -14,12 +14,12 @@
 			</md2-button>
 		</div>
 		<div>
-			<md2-button cyphTranslate href='/' (childClick)='closeMenu()'>
+			<md2-button cyphTranslate (childClick)='accountService.state = states.files'>
 				Files
 			</md2-button>
 		</div>
 		<div>
-			<md2-button cyphTranslate href='/about' (childClick)='closeMenu()'>
+			<md2-button cyphTranslate (childClick)='accountService.state = states.settings'>
 				Settings
 			</md2-button>
 		</div>
