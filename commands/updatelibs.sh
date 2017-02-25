@@ -10,17 +10,17 @@ mkdir -p ~/lib/js ~/tmplib/js
 cd ~/tmplib/js
 
 yarn add --ignore-platform --ignore-scripts \
-	@angular/common \
-	@angular/compiler \
-	@angular/compiler-cli \
-	@angular/core \
-	@angular/forms \
-	@angular/http \
-	@angular/platform-browser \
-	@angular/platform-browser-dynamic \
-	@angular/platform-server \
-	@angular/router \
-	@angular/upgrade \
+	@angular/common@^4.0.0-rc \
+	@angular/compiler@^4.0.0-rc \
+	@angular/compiler-cli@^4.0.0-rc \
+	@angular/core@^4.0.0-rc \
+	@angular/forms@^4.0.0-rc \
+	@angular/http@^4.0.0-rc \
+	@angular/platform-browser@^4.0.0-rc \
+	@angular/platform-browser-dynamic@^4.0.0-rc \
+	@angular/platform-server@^4.0.0-rc \
+	@angular/router@^4.0.0-rc \
+	@angular/upgrade@^4.0.0-rc \
 	@types/angular \
 	@types/angular-material \
 	@types/braintree-web \
@@ -35,14 +35,6 @@ yarn add --ignore-platform --ignore-scripts \
 	angular-animate@~1.5 \
 	angular-aria@~1.5 \
 	animate.css \
-	babel-cli \
-	babel-core \
-	babel-loader \
-	babel-polyfill \
-	babel-preset-es2015 \
-	babel-traverse \
-	babel-types \
-	babylon \
 	Base64 \
 	bourbon@4.2.7 \
 	braintree-web@^2 \
@@ -104,10 +96,10 @@ yarn add --ignore-platform --ignore-scripts \
 	tslint \
 	tslint-microsoft-contrib \
 	typedoc \
-	typescript@2.0.10 \
+	typescript \
 	uglify-js \
 	unsemantic \
-	webpack@^2 \
+	webpack \
 	webrtc-adapter \
 	whatwg-fetch \
 	wowjs \

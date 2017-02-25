@@ -350,9 +350,7 @@ export class AppService {
 			let expanded	= this.urlStateService.getUrl() === '';
 			elements.mainToolbar().toggleClass('new-cyph-expanded', expanded);
 
-			/* Temporary workaround pending TypeScript fix. */
-			/* tslint:disable-next-line:ban  */
-			setTimeout(async () => {
+			(async () => {
 				await util.sleep(3000);
 
 				while (true) {
@@ -373,7 +371,7 @@ export class AppService {
 					expanded	= shouldExpand;
 					elements.mainToolbar().toggleClass('new-cyph-expanded', expanded);
 				}
-			});
+			})();
 
 			/* Avoid full page reloads */
 
@@ -401,14 +399,12 @@ export class AppService {
 				subtree: true
 			});
 
-			/* Temporary workaround pending TypeScript fix. */
-			/* tslint:disable-next-line:ban  */
-			setTimeout(async () => {
+			(async () => {
 				while (true) {
 					await util.sleep(4200);
 					this.cycleFeatures();
 				}
-			});
+			})();
 
 			/* Load complete */
 
