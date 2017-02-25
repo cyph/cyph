@@ -1,6 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {Profile} from '../account/profile';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountProfileService} from '../services/account-profile.service';
+import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {MdSidenavService} from '../services/material/md-sidenav.service';
 import {util} from '../util';
 
@@ -15,9 +17,15 @@ import {util} from '../util';
 	styleUrls: ['../../css/components/account-menu.css'],
 	templateUrl: '../../../templates/account-menu.html'
 })
-export class AccountMenuComponent {
+export class AccountMenuComponent implements OnInit {
 	/** @ignore */
 	public menuLock: boolean	= true;
+
+	/** Username of profile owner. */
+	@Input() public username: string|undefined;
+
+	/** User profile. */
+	public profile: Profile|undefined;
 
 	/** @ignore */
 	private menu: Promise<angular.material.ISidenavObject>;
@@ -39,8 +47,18 @@ export class AccountMenuComponent {
 		(await this.menu).open();
 	}
 
-	public ngOnInit () : void {
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
 		this.openMenu();
+		try {
+			this.profile	= await this.accountProfileService.getProfile(
+				this.username ?
+					await this.accountUserLookupService.getUser(this.username) :
+					undefined
+			);
+		}
+		catch (_) {
+		}
 	}
 	constructor (
 		mdSidenavService: MdSidenavService,
@@ -49,7 +67,10 @@ export class AccountMenuComponent {
 		public readonly accountAuthService: AccountAuthService,
 
 		/** @see AccountContactsService */
-		public readonly accountProfileService: AccountProfileService
+		public readonly accountProfileService: AccountProfileService,
+
+		/** @see AccountContactsService */
+		public readonly accountUserLookupService: AccountUserLookupService
 	) {
 		this.menu	= mdSidenavService.getSidenav('menu');
 	}
