@@ -6,9 +6,6 @@ import {AccountUserLookupService} from '../services/account-user-lookup.service'
 import {MdSidenavService} from '../services/material/md-sidenav.service';
 import {util} from '../util';
 
-
-
-
 /**
  * Angular component for account home UI.
  */
@@ -28,7 +25,7 @@ export class AccountMenuComponent implements OnInit {
 	public profile: Profile|undefined;
 
 	/** @ignore */
-	private menu: Promise<angular.material.ISidenavObject>;
+	public menu: Promise<angular.material.ISidenavObject>;
 
 	/** Closes account menu */
 	public async closeMenu () : Promise<void> {
