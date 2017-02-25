@@ -5,14 +5,22 @@
 		mode='side'>
 	<md2-content class='layout-column' childClass='md-padding md-no-flicker'>
 		<div class='layout-column'>
-			<div>
-				<md2-button cyphTranslate (childClick)='accountService.state = states.home'>
+			<div class='home-wrapper'>
+				<md2-button class='home' cyphTranslate (childClick)='accountService.state = states.home'>
 					<img
 						src='../img/logo.white.horizontal.png'
 						class='logo'
 						alt='Cyph Logo'
 					/>
 				</md2-button>
+				<div class='user' *ngIf='profile'>
+					<img
+						class='profile-picture animated flipInX _1'
+						[ngClass]='userPresence[profile.user.status]'
+						alt='Profile Picture'
+						[src]='profile.user.avatar'
+					/>
+				</div>
 			</div>
 			<div>
 				<md2-button cyphTranslate (childClick)='accountService.state = states.files'>

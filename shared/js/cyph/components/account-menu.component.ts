@@ -56,13 +56,13 @@ export class AccountMenuComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		this.openMenu();
 		try {
 			this.profile	= await this.accountProfileService.getProfile(
 				this.username ?
 					await this.accountUserLookupService.getUser(this.username) :
 					undefined
 			);
+			this.openMenu();
 		}
 		catch (_) {
 		}

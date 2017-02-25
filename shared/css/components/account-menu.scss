@@ -38,4 +38,51 @@ md2-button.logout {
 
 md-sidenav, md2-content, md-content, md-content .layout-column {
 	height: 100%;
+	overflow: visible;
+}
+
+md2-button.home {
+    margin-left: 15%;
+    position: relative;
+    top: 20px;
+}
+
+.home button.md-button {
+    width: 65%;
+	img {
+		width: 100%;
+	}
+}
+
+.home-wrapper {
+	margin-bottom: 30px;
+}
+
+.user {
+	.profile-picture {
+		width: 100px;
+		height: 100px;
+		background-color: #f3f3f3;
+		border-radius: 50%;
+		right: -50px;
+		position: absolute;
+		top: 25px;
+
+	}
+
+	.profile-picture.online {
+		border: 7px solid rgba(56, 140, 71, 0.9) !important;
+	}
+
+	.profile-picture.away {
+		border: 7px solid rgba(247, 184, 1, 0.9) !important;
+	}
+
+	.profile-picture.busy {
+		border: 7px solid rgba(255, 28, 28, 0.9) !important;
+	}
+
+	.profile-picture.offline {
+		border: 7px solid rgba(40, 38, 44, 0.9) !important;
+	}
 }
