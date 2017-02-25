@@ -45,6 +45,7 @@ import {
 	MdProgressLinearComponent
 } from '../cyph/components/material/md-progress-linear.component';
 import {MdSelectComponent} from '../cyph/components/material/md-select.component';
+import {MdSidenavComponent} from '../cyph/components/material/md-sidenav.component';
 import {MdSubheaderComponent} from '../cyph/components/material/md-subheader.component';
 import {MdSwitchComponent} from '../cyph/components/material/md-switch.component';
 import {MdTabsComponent} from '../cyph/components/material/md-tabs.component';
@@ -66,13 +67,16 @@ angular.
 	module(config.angularConfig.rootModule, ['ngMaterial']).
 	controller(config.angularConfig.rootController, [
 		'$mdDialog',
+		'$mdSidenav',
 		'$mdToast',
 
 		(
 			$mdDialog: angular.material.IDialogService,
+			$mdSidenav: angular.material.ISidenavService,
 			$mdToast: angular.material.IToastService
 		) => {
 			eventManager.trigger('$mdDialog', $mdDialog);
+			eventManager.trigger('$mdSidenav', $mdSidenav);
 			eventManager.trigger('$mdToast', $mdToast);
 		}
 	]).
@@ -148,6 +152,10 @@ angular.
 	component(
 		MdSelectComponent.title,
 		MdSelectComponent.config
+	).
+	component(
+		MdSidenavComponent.title,
+		MdSidenavComponent.config
 	).
 	component(
 		MdSubheaderComponent.title,

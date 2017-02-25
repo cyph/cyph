@@ -9,6 +9,7 @@ import {AccountFilesComponent} from '../cyph/components/account-files.component'
 import {AccountHomeComponent} from '../cyph/components/account-home.component';
 import {AccountLoginComponent} from '../cyph/components/account-login.component';
 import {AccountLogoutComponent} from '../cyph/components/account-logout.component';
+import {AccountMenuComponent} from '../cyph/components/account-menu.component';
 import {AccountProfileComponent} from '../cyph/components/account-profile.component';
 import {AccountRegisterComponent} from '../cyph/components/account-register.component';
 import {AccountSettingsComponent} from '../cyph/components/account-settings.component';
@@ -49,6 +50,7 @@ import {
 	MdProgressLinearComponent
 } from '../cyph/components/material/md-progress-linear.component';
 import {MdSelectComponent} from '../cyph/components/material/md-select.component';
+import {MdSidenavComponent} from '../cyph/components/material/md-sidenav.component';
 import {MdSubheaderComponent} from '../cyph/components/material/md-subheader.component';
 import {MdSwitchComponent} from '../cyph/components/material/md-switch.component';
 import {MdTabsComponent} from '../cyph/components/material/md-tabs.component';
@@ -69,6 +71,7 @@ import {EnvService} from '../cyph/services/env.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {FileService} from '../cyph/services/file.service';
 import {MdDialogService} from '../cyph/services/material/md-dialog.service';
+import {MdSidenavService} from '../cyph/services/material/md-sidenav.service';
 import {MdToastService} from '../cyph/services/material/md-toast.service';
 import {NotificationService} from '../cyph/services/notification.service';
 import {SignupService} from '../cyph/services/signup.service';
@@ -93,6 +96,7 @@ import {ChatRootComponent} from './chat-root.component';
 		AccountHomeComponent,
 		AccountLoginComponent,
 		AccountLogoutComponent,
+		AccountMenuComponent,
 		AccountProfileComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
@@ -130,6 +134,7 @@ import {ChatRootComponent} from './chat-root.component';
 		MdProgressCircularComponent,
 		MdProgressLinearComponent,
 		MdSelectComponent,
+		MdSidenavComponent,
 		MdSubheaderComponent,
 		MdSwitchComponent,
 		MdTabsComponent,
@@ -159,6 +164,7 @@ import {ChatRootComponent} from './chat-root.component';
 		FaviconService,
 		FileService,
 		MdDialogService,
+		MdSidenavService,
 		MdToastService,
 		NotificationService,
 		SignupService,

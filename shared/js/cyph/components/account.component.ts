@@ -37,6 +37,17 @@ export class AccountComponent implements OnInit {
 		).length > 0;
 	}
 
+	/** Indicates whether menu should be displayed. */
+	public get menuVisible () : boolean {
+		return [
+			States.chat,
+			States.contacts,
+			States.home
+		].filter(
+			state => state === this.accountService.state
+		).length > 0;
+	}
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		if (!this.envService.isWeb) {
