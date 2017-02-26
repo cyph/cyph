@@ -42,13 +42,14 @@ md-sidenav, md2-content, md-content, md-content .layout-column {
 }
 
 md2-button.home {
-    margin-left: 15%;
-    position: relative;
-    top: 20px;
+	margin-left: 15%;
+	position: relative;
+	top: 20px;
 }
 
 .home button.md-button {
-    width: 65%;
+	width: 65%;
+
 	img {
 		width: 100%;
 	}
@@ -67,7 +68,6 @@ md2-button.home {
 		right: -50px;
 		position: absolute;
 		top: 25px;
-
 	}
 
 	.profile-picture.online {
