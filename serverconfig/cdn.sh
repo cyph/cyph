@@ -133,29 +133,6 @@ cat > server.js <<- EOM
 		returnError(res)
 	));
 
-	app.get(/.*\/pkg/, (req, res) => Promise.resolve().then( () => {
-		if (req.cache[req.originalUrl]) {
-			return;
-		}
-
-		return req.getFileName().then(fileName => new Promise( (resolve, reject) =>
-			fs.readFile(cdnPath + fileName, (err, data) => {
-				if (err) {
-					reject(err);
-					return;
-				}
-
-				req.cache[req.originalUrl]	= data;
-
-				resolve();
-			})
-		));
-	}).then( () =>
-		res.send(req.cache[req.originalUrl])
-	).catch( () =>
-		returnError(res)
-	));
-
 	app.get(/\/.*/, (req, res) => Promise.resolve().then( () => {
 		if (req.cache[req.originalUrl]) {
 			return;

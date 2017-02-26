@@ -417,6 +417,8 @@ if [ "${websign}" ] ; then
 			git commit -S -m $plink $plink > /dev/null 2>&1
 		fi
 
+		cp ${p}/current ${p}/pkg.srihash
+
 		find $p -type f -not \( -name '*.srihash' -or -name '*.gz' -or -name '*.br' \) -exec bash -c ' \
 			if [ ! -f {}.gz ] ; then \
 				zopfli -i1000 {}; \
