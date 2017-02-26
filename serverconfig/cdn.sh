@@ -190,9 +190,17 @@ cat > cdnupdate.sh <<- EOM
 	cd cdn
 
 	while true ; do
-		git pull
+		git pull || break
 		sleep 60
 	done
+
+	# Start from scratch when pull fails
+	cd ..
+	rm -rf cdn
+	/home/cyph/cdnupdate.sh &
+	while [ ! -d cdn ] ; do sleep 5 ; done
+	killall node
+	/home/cyph/server.js &
 EOM
 chmod +x cdnupdate.sh
 
