@@ -16,9 +16,9 @@
 				<div class='user' *ngIf='profile'>
 					<img
 						class='profile-picture animated flipInX _1'
-						[ngClass]='userPresence[profile.user.status]'
+						[ngClass]='userPresence[accountAuthService.current.user.status]'
 						alt='Profile Picture'
-						[src]='profile.user.avatar'
+						[src]='accountAuthService.current.user.avatar'
 					/>
 				</div>
 			</div>

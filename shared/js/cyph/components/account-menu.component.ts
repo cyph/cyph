@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {States, UserPresence} from '../account/enums';
 import {Profile} from '../account/profile';
 import {AccountAuthService} from '../services/account-auth.service';
@@ -19,23 +19,20 @@ import {util} from '../util';
 	templateUrl: '../../../templates/account-menu.html'
 })
 export class AccountMenuComponent implements OnInit {
-	/** @ignore */
-	public menuLock: boolean	= true;
-
-	/** Username of profile owner. */
-	@Input() public username: string|undefined;
-
 	/** User profile. */
 	public profile: Profile|undefined;
 
 	/** @ignore */
 	public menu: Promise<angular.material.ISidenavObject>;
 
-	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence	= UserPresence;
+	/** @ignore */
+	public menuLock: boolean		= true;
 
 	/** @see States */
 	public states: typeof States	= States;
+
+	/** @see UserPresence */
+	public readonly userPresence: typeof UserPresence	= UserPresence;
 
 	/** Closes account menu */
 	public async closeMenu () : Promise<void> {
@@ -56,17 +53,10 @@ export class AccountMenuComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		try {
-			this.profile	= await this.accountProfileService.getProfile(
-				this.username ?
-					await this.accountUserLookupService.getUser(this.username) :
-					undefined
-			);
-			this.openMenu();
-		}
-		catch (_) {
-		}
+		await this.accountAuthService.ready;
+		this.openMenu();
 	}
+
 	constructor (
 		mdSidenavService: MdSidenavService,
 
