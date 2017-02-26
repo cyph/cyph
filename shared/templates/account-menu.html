@@ -19,6 +19,7 @@
 						[ngClass]='userPresence[accountAuthService.current.user.status]'
 						alt='Profile Picture'
 						[src]='accountAuthService.current.user.avatar'
+						(click)='goToState(states.profile)'
 					/>
 				</div>
 			</div>

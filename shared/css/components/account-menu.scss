@@ -70,6 +70,10 @@ md2-button.home {
 		top: 25px;
 	}
 
+	img:hover {
+		cursor: pointer;
+	}
+
 	.profile-picture.online {
 		border: 7px solid rgba(56, 140, 71, 0.9) !important;
 	}
