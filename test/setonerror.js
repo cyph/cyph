@@ -1,9 +1,4 @@
 self.setOnerror	= function () {
-	try {
-		cyph.UI.VisibilityWatcher.isVisible	= true;
-	}
-	catch (_) {}
-
 	self.onerror	= function (err) {
 		if (err === 'Script error.') {
 			return;
