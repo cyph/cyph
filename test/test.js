@@ -267,6 +267,13 @@ const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
 	);
 }).catch(err => {
 	console.error(err);
+
+	/* Throw out results and retry when failure is caused by BrowserStack/Selenium bug. */
+	if (err.constructor === webdriver.error.WebDriverError) {
+		testLock	= false;
+		return;
+	}
+
 	return false;
 }).then(passing => {
 	if (passing === undefined) {
