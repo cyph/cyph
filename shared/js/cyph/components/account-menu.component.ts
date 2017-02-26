@@ -57,6 +57,11 @@ export class AccountMenuComponent implements OnInit {
 		this.openMenu();
 	}
 
+	public async goToState (state: States) : Promise<void> {
+		this.accountService.state = state;
+		this.urlStateService.setUrl('account/' + States[state]);
+	}
+
 	constructor (
 		mdSidenavService: MdSidenavService,
 

@@ -23,13 +23,13 @@
 				</div>
 			</div>
 			<div>
-				<md2-button cyphTranslate (childClick)='accountService.state = states.files'>
-					<i class='material-icons' alt='Logout'>folder</i> Files
+				<md2-button cyphTranslate (childClick)='goToState(states.files)'>
+					<i class='material-icons' alt='Files'>folder</i> Files
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate (childClick)='accountService.state = states.settings'>
-					<i class='material-icons' alt='Logout'>settings</i> Settings
+				<md2-button cyphTranslate (childClick)='goToState(states.settings)'>
+					<i class='material-icons' alt='Settings'>settings</i> Settings
 				</md2-button>
 			</div>
 			<div class='flex'></div>
