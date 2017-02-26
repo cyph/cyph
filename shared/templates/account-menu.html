@@ -13,7 +13,7 @@
 						alt='Cyph Logo'
 					/>
 				</md2-button>
-				<div class='user' *ngIf='profile'>
+				<div class='user' *ngIf='accountAuthService.current'>
 					<img
 						class='profile-picture animated flipInX _1'
 						[ngClass]='userPresence[accountAuthService.current.user.status]'
