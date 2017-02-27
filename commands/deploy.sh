@@ -291,6 +291,16 @@ for d in $compiledProjects ; do
 
 	mv .index.html index.html
 
+	if [ "${d}" == 'cyph.com' ] ; then node -e '
+		const $	= require("cheerio").load(fs.readFileSync("index.html").toString());
+
+		$(`link[href="/css/loading.css"]`).replaceWith(`<style>${
+			fs.readFileSync("css/loading.css").toString()
+		}</style>`);
+
+		fs.writeFileSync("index.html", $.html().trim());
+	' ; fi
+
 	rm -rf js/node_modules
 	find css -type f \( -name '*.scss' -or -name '*.map' \) -exec rm {} \;
 	find js -type f \( -name '*.ts' -or -name '*.map' \) -exec rm {} \;

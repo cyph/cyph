@@ -124,6 +124,7 @@ find . -type f | grep -P '.*\.min\.[a-z]+$' | xargs -I% bash -c '
 
 for f in \
 	Base64/base64.js \
+	fg-loadcss/src/*.js \
 	jquery.appear/jquery.appear.js \
 	nanoscroller/bin/javascripts/jquery.nanoscroller.js \
 	whatwg-fetch/fetch.js
