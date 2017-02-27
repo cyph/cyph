@@ -61,11 +61,6 @@ import {AppComponent} from './app.component';
 import {AppModule} from './app.module';
 
 
-/* Stylesheets */
-for (const stylesheet of $('stylesheet').toArray().map(elem => $(elem).attr('src'))) {
-	loadCSS(stylesheet);
-}
-
 $(document.body).attr(
 	'ng-controller',
 	config.angularConfig.rootController
@@ -222,6 +217,15 @@ enableProdMode();
 	document.body,
 	[config.angularConfig.rootModule]
 ); })();
+
+
+/* Stylesheets */
+
+$(() => {
+	for (const stylesheet of $('stylesheet').toArray().map(elem => $(elem).attr('src'))) {
+		loadCSS(stylesheet);
+	}
+});
 
 
 /* Redirect to Onion site when on Tor */

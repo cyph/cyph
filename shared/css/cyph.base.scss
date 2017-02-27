@@ -4,6 +4,11 @@
 	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004) !important;
 }
 
+body.load-complete #pre-load {
+	pointer-events: none;
+	opacity: 0;
+}
+
 html, body, #main, .cyph-foreground, md-sidenav {
 	background-color: #8b62d9 !important;
 }
