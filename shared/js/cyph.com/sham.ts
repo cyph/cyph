@@ -48,6 +48,13 @@ if (!('Uint8Array' in self)) {
 }
 
 
+/* Worker sham */
+
+if (!('Worker' in self)) {
+	(<any> self).Worker	= true;
+}
+
+
 /* Firebase sham */
 
 (<any> self).firebase	= {
