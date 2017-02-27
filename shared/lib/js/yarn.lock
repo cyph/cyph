@@ -2110,6 +2110,10 @@ faye-websocket@0.9.3:
     ref "https://github.com/icenium/ref/tarball/v1.3.2.2"
     ref-struct "https://github.com/telerik/ref-struct/tarball/v1.0.2.4"
 
+fg-loadcss@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/fg-loadcss/-/fg-loadcss-1.3.1.tgz#8930e820959faafbb242850eeec4f2d0259430cb"
+
 "fibers@https://github.com/icenium/node-fibers/tarball/v1.0.15.0":
   version "1.0.15"
   resolved "https://github.com/icenium/node-fibers/tarball/v1.0.15.0#3474551977c7f67d7fdd9abda209e1249ad17b62"
