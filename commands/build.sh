@@ -487,7 +487,9 @@ compile () {
 
 					for (const chunk of stats.compilation.entrypoints.main.chunks) {
 						for (const file of chunk.files) {
-							\$('body').append(\`<script src='/${packdir}/\${file}'></script>\`);
+							\$('body').append(
+								\`<script defer src='/${packdir}/\${file}'></script>\`
+							);
 						}
 					}
 
