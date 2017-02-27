@@ -42,32 +42,27 @@ md-sidenav, md2-content, md-content, md-content .layout-column {
 }
 
 md2-button.home {
-	margin-left: 15%;
+	margin-left: 15px;
+    margin-right: 15px;
 	position: relative;
 	top: 20px;
 }
 
-.home button.md-button {
-	width: 65%;
-
-	img {
-		width: 100%;
-	}
-}
-
 .home-wrapper {
-	margin-bottom: 30px;
+	margin-bottom: 10px;
 }
 
 .user {
+    margin-top: 25px;
+    width: 100px;
+    margin-left: auto;
+    margin-right: auto;
 	.profile-picture {
 		width: 100px;
 		height: 100px;
 		background-color: #f3f3f3;
 		border-radius: 50%;
-		right: -50px;
-		position: absolute;
-		top: 25px;
+		position: relative;
 	}
 
 	img:hover {

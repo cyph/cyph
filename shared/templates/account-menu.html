@@ -6,21 +6,24 @@
 	<md2-content class='layout-column' childClass='md-padding md-no-flicker'>
 		<div class='layout-column'>
 			<div class='home-wrapper'>
-				<md2-button class='home' cyphTranslate (childClick)='goToState(states.home)'>
-					<img
-						src='../img/logo.white.horizontal.png'
-						class='logo'
-						alt='Cyph Logo'
-					/>
-				</md2-button>
-				<div class='user' *ngIf='accountAuthService.current'>
-					<img
-						class='profile-picture animated flipInX _1'
-						[ngClass]='userPresence[accountAuthService.current.user.status]'
-						alt='Profile Picture'
-						[src]='accountAuthService.current.user.avatar'
-						(click)='goToState(states.profile)'
-					/>
+				<div class='layout-column'>
+					<md2-button class='home' cyphTranslate (childClick)='goToState(states.home)'>
+
+							<img
+								src='../img/logo.white.horizontal.png'
+								class='logo'
+								alt='Cyph Logo'
+							/>
+					</md2-button>
+					<div class='user' *ngIf='accountAuthService.current'>
+						<img
+							class='profile-picture animated flipInX _1'
+							[ngClass]='userPresence[accountAuthService.current.user.status]'
+							alt='Profile Picture'
+							[src]='accountAuthService.current.user.avatar'
+							(click)='goToState(states.profile)'
+						/>
+					</div>
 				</div>
 			</div>
 			<div>
