@@ -55,6 +55,7 @@ yarn add --ignore-platform --ignore-scripts \
 	core-js \
 	datauri \
 	dompurify \
+	fg-loadcss \
 	file-saver \
 	firebase \
 	firebase-server \
