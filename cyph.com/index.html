@@ -60,14 +60,6 @@
 		<meta property='og:type' content='website' />
 
 		<link rel='stylesheet' href='/css/loading.css' />
-	</head>
-	<body>
-		<cyph-app></cyph-app>
-
-		<div id='pre-load'>
-			<div class='double-bounce1'></div>
-			<div class='double-bounce2'></div>
-		</div>
 
 		<link rel='stylesheet' href='/lib/js/node_modules/angular-material/angular-material.css' />
 		<link rel='stylesheet' href='/lib/js/node_modules/animate.css/animate.css' />
@@ -80,13 +72,21 @@
 		<link rel='stylesheet' href='/css/fonts.css' />
 		<link rel='stylesheet' href='/css/cyph.com.css' />
 
-		<script src='/lib/js/base.js'></script>
-		<script src='/js/preload/global.js'></script>
-		<script src='/js/cyph.com/sham.js'></script>
-		<script src='/js/preload/capabilities.js'></script>
-		<script src='/js/preload/unsupported-browsers.js'></script>
-		<script src='/lib/js/node_modules/jquery/dist/jquery.js'></script>
-		<script src='/lib/js/node_modules/angular/angular.js'></script>
-		<script src='/js/cyph.com/main.js'></script>
+		<script defer src='/lib/js/base.js'></script>
+		<script defer src='/js/preload/global.js'></script>
+		<script defer src='/js/cyph.com/sham.js'></script>
+		<script defer src='/js/preload/capabilities.js'></script>
+		<script defer src='/js/preload/unsupported-browsers.js'></script>
+		<script defer src='/lib/js/node_modules/jquery/dist/jquery.js'></script>
+		<script defer src='/lib/js/node_modules/angular/angular.js'></script>
+		<script defer src='/js/cyph.com/main.js'></script>
+	</head>
+	<body>
+		<cyph-app></cyph-app>
+
+		<div id='pre-load'>
+			<div class='double-bounce1'></div>
+			<div class='double-bounce2'></div>
+		</div>
 	</body>
 </html>
