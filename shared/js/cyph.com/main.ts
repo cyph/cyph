@@ -10,6 +10,7 @@ import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as angular from 'angular';
 import 'angular-material';
+import {loadCSS} from 'fg-loadcss';
 import * as $ from 'jquery';
 import 'jquery.appear';
 import 'magnific-popup';
@@ -59,6 +60,11 @@ import '../translations';
 import {AppComponent} from './app.component';
 import {AppModule} from './app.module';
 
+
+/* Stylesheets */
+for (const stylesheet of $('stylesheet').toArray().map(elem => $(elem).attr('src'))) {
+	loadCSS(stylesheet);
+}
 
 $(document.body).attr(
 	'ng-controller',
