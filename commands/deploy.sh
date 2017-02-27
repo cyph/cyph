@@ -298,12 +298,14 @@ for d in $compiledProjects ; do
 			fs.readFileSync("css/loading.css").toString()
 		}</style>`);
 
+		/*
 		$(`link[rel="stylesheet"]`).each((_, elem) => {
 			const $elem			= $(elem);
 			const $stylesheet	= $("<stylesheet></stylesheet>");
 			$stylesheet.attr("src", $elem.attr("href"));
 			$elem.replaceWith($stylesheet);
 		});
+		*/
 
 		fs.writeFileSync("index.html", $.html().trim());
 	' ; fi

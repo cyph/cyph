@@ -10,7 +10,6 @@ import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as angular from 'angular';
 import 'angular-material';
-import {loadCSS} from 'fg-loadcss';
 import * as $ from 'jquery';
 import 'jquery.appear';
 import 'magnific-popup';
@@ -217,15 +216,6 @@ enableProdMode();
 	document.body,
 	[config.angularConfig.rootModule]
 ); })();
-
-
-/* Stylesheets */
-
-$(() => {
-	for (const stylesheet of $('stylesheet').toArray().map(elem => $(elem).attr('src'))) {
-		loadCSS(stylesheet);
-	}
-});
 
 
 /* Redirect to Onion site when on Tor */
