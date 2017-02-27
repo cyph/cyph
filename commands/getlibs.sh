@@ -116,6 +116,13 @@ for anyType in granim konami-code.js markdown-it-emoji markdown-it-sup simpleweb
 	" > "@types/${anyType}/index.d.ts"
 done
 
+mkdir -p @types/fg-loadcss
+echo "
+	declare module 'fg-loadcss' {
+		export const loadCSS: (stylesheet: string) => void;
+	}
+" > @types/fg-loadcss/index.d.ts
+
 echo 'declare module "braintree-web" { export = braintree; }' >> @types/braintree-web/index.d.ts
 
 find . -type f | grep -P '.*\.min\.[a-z]+$' | xargs -I% bash -c '
