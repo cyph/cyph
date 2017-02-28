@@ -3,6 +3,6 @@ import {userPresenceSorted} from './user-presence-sorted';
 
 
 /** String representations of UserPresence values in sorting order for UI. */
-export const userPresenceSortedStrings: string[]	=
-	userPresenceSorted.map(up => UserPresence[up])
-;
+export const userPresenceSortedStrings: string[]	= userPresenceSorted.map(up =>
+	UserPresence[up][0].toUpperCase() + UserPresence[up].slice(1)
+);
