@@ -1,8 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {States, UserPresence} from '../account/enums';
-import {Profile} from '../account/profile';
 import {AccountAuthService} from '../services/account-auth.service';
-import {AccountProfileService} from '../services/account-profile.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountService} from '../services/account.service';
 import {MdSidenavService} from '../services/material/md-sidenav.service';
@@ -19,9 +17,6 @@ import {util} from '../util';
 	templateUrl: '../../../templates/account-menu.html'
 })
 export class AccountMenuComponent implements OnInit {
-	/** User profile. */
-	public profile: Profile|undefined;
-
 	/** @ignore */
 	public menu: Promise<angular.material.ISidenavObject>;
 
@@ -34,7 +29,7 @@ export class AccountMenuComponent implements OnInit {
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
-	/** Closes account menu */
+	/** Closes account menu. */
 	public async closeMenu () : Promise<void> {
 		return util.lockTryOnce(
 			this.menuLock,
@@ -45,7 +40,13 @@ export class AccountMenuComponent implements OnInit {
 		);
 	}
 
-	/** Opens account menu */
+	/** Goes to state. */
+	public async goToState (state: States) : Promise<void> {
+		this.accountService.state	= state;
+		this.urlStateService.setUrl('account/' + States[state]);
+	}
+
+	/** Opens account menu. */
 	public async openMenu () : Promise<void> {
 		await util.sleep();
 		(await this.menu).open();
@@ -57,11 +58,6 @@ export class AccountMenuComponent implements OnInit {
 		this.openMenu();
 	}
 
-	public async goToState (state: States) : Promise<void> {
-		this.accountService.state = state;
-		this.urlStateService.setUrl('account/' + States[state]);
-	}
-
 	constructor (
 		mdSidenavService: MdSidenavService,
 
@@ -70,9 +66,6 @@ export class AccountMenuComponent implements OnInit {
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
-
-		/** @see AccountContactsService */
-		public readonly accountProfileService: AccountProfileService,
 
 		/** @see AccountContactsService */
 		public readonly accountUserLookupService: AccountUserLookupService,
