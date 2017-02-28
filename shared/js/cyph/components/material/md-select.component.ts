@@ -76,9 +76,9 @@ export class MdSelectComponent
 				>
 					<md-option
 						ng-repeat='option in $ctrl.options'
-						ng-value='option.value || option'
+						ng-value='option.value === undefined ? option : option.value'
 					>
-						{{option.text || option}}
+						{{option.text === undefined ? option : option.text}}
 					</md-option>
 				</md-select>
 				<label>{{$ctrl.label}}</label>
