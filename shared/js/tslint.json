@@ -8,8 +8,15 @@
 		/* TypeScript-Specific */
 
 		"adjacent-overload-signatures": true,
+		"ban-types": [
+			true,
+			["Boolean", "Use boolean."],
+			["Number", "Use number."],
+			["Object", "Use {}."],
+			["String", "Use string."]
+		],
 		"member-access": true,
-		"member-ordering": [true, {"order": [
+		"member-ordering": [true, {/* TODO: "alphabetize": true, */ "order": [
 			"private-static-field",
 			"protected-static-field",
 			"public-static-field",
@@ -26,10 +33,12 @@
 		]}],
 		"no-any": false,
 		"no-empty-interface": true,
+		"no-import-side-effect": false,
 		"no-inferrable-types": [true, "ignore-params", "ignore-properties"],
 		"no-internal-module": true,
 		"no-magic-numbers": false,
 		"no-namespace": true,
+		"no-non-null-assertion": true,
 		"no-reference": true,
 		"no-var-requires": true,
 		"only-arrow-functions": true,
@@ -75,6 +84,7 @@
 		"no-console": [true, "error", "log"],
 		"no-construct": true,
 		"no-debugger": true,
+		"no-duplicate-super": true,
 		"no-duplicate-variable": true,
 		"no-empty": false,
 		"no-eval": true,
@@ -138,7 +148,9 @@
 		"interface-name": [true, "always-prefix"],
 		"interface-over-type-literal": true,
 		"jsdoc-format": true,
+		"match-default-export-name": true,
 		"new-parens": true,
+		"newline-before-return": false,
 		"no-angle-bracket-type-assertion": false,
 		"no-boolean-literal-compare": true,
 		"no-consecutive-blank-lines": [true, 2],
