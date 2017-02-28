@@ -52,6 +52,7 @@
 		font-family: Ubuntu;
 		background-color: #392859;
 		margin-top: 20px;
+
 		label {
 			margin: -26px -70px;
 			font-size: 24px;
@@ -59,17 +60,20 @@
 			color: white !important;
 			position: absolute;
 		}
+
 		md-select-value {
 			.md-text {
 				color: white !important;
 				font-weight: 500;
 			}
 		}
+
 		md-option {
 			.md-text {
 				font-weight: 500;
 			}
 		}
+
 		md-input-container {
 			padding: 0 !important;
 			margin: 5px !important;
