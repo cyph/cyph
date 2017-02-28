@@ -57,7 +57,7 @@ export class MdSelectComponent
 			public readonly model: string;
 
 			/** @ignore */
-			public readonly options: string[];
+			public readonly options: string[]|{text: string; value: boolean|number|string}[];
 
 			/** @ignore */
 			public readonly required: boolean;
@@ -76,9 +76,9 @@ export class MdSelectComponent
 				>
 					<md-option
 						ng-repeat='option in $ctrl.options'
-						value='{{option}}'
+						value='{{typeof option === "string" ? option : option.value}}'
 					>
-						{{option}}
+						{{typeof option === "string" ? option : option.text}}
 					</md-option>
 				</md-select>
 				<label>{{$ctrl.label}}</label>
@@ -106,7 +106,7 @@ export class MdSelectComponent
 	@Output() public modelChange: EventEmitter<string>;
 
 	/** @ignore */
-	@Input() public options: string[];
+	@Input() public options: string[]|{text: string; value: boolean|number|string}[];
 
 	/** @ignore */
 	@Input() public required: boolean;
