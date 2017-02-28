@@ -23,8 +23,31 @@ export class Rule extends AbstractRule {
 		'assignment operator must be preceded by tab(s) and followed by newline or space'
 	;
 
-	public static isCompliant (node: ts.PropertyDeclaration|ts.VariableStatement) : boolean {
-		const equalsSplit	= node.getText().replace(/=>/g, '').split('=');
+	public static isCompliant (node: ts.Node) : boolean {
+		if (
+			node.parent && (
+				node.parent.kind === ts.SyntaxKind.Constructor ||
+				node.parent.kind === ts.SyntaxKind.FunctionDeclaration ||
+				node.parent.kind === ts.SyntaxKind.MethodDeclaration ||
+				node.parent.kind === ts.SyntaxKind.VariableDeclarationList
+			)
+		 ) {
+			return true;
+		}
+
+		const equalsSplit	= node.getText().
+			replace(/=>/g, '').
+			replace(/>=/g, '').
+			replace(/<=/g, '').
+			replace(/!==/g, '').
+			replace(/!=/g, '').
+			replace(/===/g, '').
+			replace(/==/g, '').
+			replace(/\+=/g, '').
+			replace(/-=/g, '').
+			split(/['"`]/g)[0].
+			split('=')
+		;
 
 		if (equalsSplit.length < 2) {
 			return true;
@@ -50,6 +73,25 @@ export class Rule extends AbstractRule {
 }
 
 class TabEqualsWalker extends RuleWalker {
+	public visitPropertyAccessExpression (node: ts.PropertyAccessExpression) : void {
+		try {
+			if (Rule.isCompliant(node.parent)) {
+				return;
+			}
+
+			this.addFailure(
+				this.createFailure(
+					node.parent.getStart(),
+					node.parent.getWidth(),
+					Rule.FAILURE_STRING
+				)
+			);
+		}
+		finally {
+			super.visitPropertyAccessExpression(node);
+		}
+	}
+
 	public visitPropertyDeclaration (node: ts.PropertyDeclaration) : void {
 		try {
 			if (Rule.isCompliant(node)) {
@@ -66,6 +108,25 @@ class TabEqualsWalker extends RuleWalker {
 		}
 		finally {
 			super.visitPropertyDeclaration(node);
+		}
+	}
+
+	public visitVariableDeclaration (node: ts.VariableDeclaration) : void {
+		try {
+			if (Rule.isCompliant(node)) {
+				return;
+			}
+
+			this.addFailure(
+				this.createFailure(
+					node.getStart(),
+					node.getWidth(),
+					Rule.FAILURE_STRING
+				)
+			);
+		}
+		finally {
+			super.visitVariableDeclaration(node);
 		}
 	}
 
