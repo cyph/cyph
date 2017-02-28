@@ -26,17 +26,28 @@ export class AppService {
 	;
 
 
-	/** @see States */
-	public state: States				= States.home;
+	/** Business pricing state. */
+	public readonly business: boolean	= false;
 
-	/** @see States */
-	public promos: typeof Promos		= Promos;
-
-	/** @see Promos */
-	public states: typeof States		= States;
+	/** Amount, category, and item respectively in cart. */
+	public cart: {
+		amount: number;
+		category: number;
+		item: number;
+		subscription: boolean;
+	};
 
 	/** @see Email */
-	public readonly contact: Email		= new Email('hello');
+	public readonly contact: Email			= new Email('hello');
+
+	/** Donation amount in dollars. */
+	public readonly donationAmount: number	= 10;
+
+	/** Carousel of features. */
+	public featureCarousel: Carousel;
+
+	/** Current feature displayed in hero section. */
+	public featureIndex: number			= 0;
 
 	/** List of features to cycle through in hero section. */
 	public readonly features: string[]	= [
@@ -47,37 +58,26 @@ export class AppService {
 		'File Transfers'
 	];
 
-	/** Current feature displayed in hero section. */
-	public featureIndex: number				= 0;
-
-	/** Donation amount in dollars. */
-	public readonly donationAmount: number	= 10;
-
-	/** Individual pricing state. */
-	public readonly individual: boolean		= false;
-
-	/** Business pricing state. */
-	public readonly business: boolean		= false;
-
-	/** Telehealth pricing state. */
-	public readonly telehealth: boolean		= false;
-
-	/** Amount, category, and item respectively in cart. */
-	public cart: {
-		amount: number;
-		category: number;
-		item: number;
-		subscription: boolean;
-	};
-
 	/** @see HomeSections */
 	public homeSection: HomeSections|undefined;
+
+	/** Individual pricing state. */
+	public readonly individual: boolean	= false;
 
 	/** @see Promos */
 	public promo: Promos|undefined;
 
-	/** Carousel of features. */
-	public featureCarousel: Carousel;
+	/** @see Promos */
+	public promos: typeof Promos		= Promos;
+
+	/** @see States */
+	public state: States				= States.home;
+
+	/** @see States */
+	public states: typeof States		= States;
+
+	/** Telehealth pricing state. */
+	public readonly telehealth: boolean	= false;
 
 	/** Carousel of testimonials. */
 	public testimonialCarousel: Carousel;
@@ -209,7 +209,7 @@ export class AppService {
 		}
 		else if (state === States.contact) {
 			const to: string	= newUrlStateSplit[1];
-			if (this.configService.cyphEmailAddresses.indexOf(to) > -1) {
+			if (this.configService.contactEmailAddresses.indexOf(to) > -1) {
 				this.contact.to	= to;
 			}
 

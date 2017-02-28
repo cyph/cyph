@@ -23,9 +23,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 /* tslint:disable-next-line:directive-class-suffix */
 export class MdCardTitleComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'md2CardTitle';
-
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
@@ -46,6 +43,9 @@ export class MdCardTitleComponent
 		`,
 		transclude: true
 	};
+
+	/** Component title. */
+	public static readonly title: string	= 'md2CardTitle';
 
 
 	/** @ignore */

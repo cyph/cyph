@@ -83,7 +83,7 @@ export class DemoComponent implements OnInit {
 
 	/** @ignore */
 	private async facebookJoke ($desktopPic: JQuery, $mobilePic: JQuery) : Promise<void> {
-		const picUrl	= await this.demoService.facebookPicUrl;
+		const picUrl	= await this.demoService.facebookPicDataUri;
 
 		const $picImg	= await util.waitForIterable(
 			() => elements.demoRoot().find(`img:visible[src='${picUrl}']`),

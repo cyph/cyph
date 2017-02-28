@@ -20,10 +20,10 @@ import {DemoService} from './demo.service';
 })
 export class AppComponent {
 	/** @ignore */
-	private sidenavLock: {}	= {};
+	private sidenav: Promise<angular.material.ISidenavObject>;
 
 	/** @ignore */
-	private sidenav: Promise<angular.material.ISidenavObject>;
+	private sidenavLock: {}	= {};
 
 	/** Closes mobile sidenav menu. */
 	public async closeSidenav () : Promise<void> {

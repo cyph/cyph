@@ -5,36 +5,39 @@ import {ISessionService} from './service-interfaces/isession-service';
  * Static/constant configuration values.
  */
 export class Config {
-	/** URL for Cyph Tor site. */
-	public readonly onionRoot: string			= 'cyphdbyhiddenbhs.onion';
+	/** Angular-related config. */
+	public readonly angularConfig	= {
+		config: [
+			'$compileProvider',
+			'$mdThemingProvider',
+			(
+				$compileProvider: angular.ICompileProvider,
+				$mdThemingProvider: angular.material.IThemingProvider
+			) => {
+				$compileProvider.
+					aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/).
+					debugInfoEnabled(false)
+				;
 
-	/** Indicates the original language of any content to be translated. */
-	public readonly defaultLanguage: string		= 'en';
+				$mdThemingProvider.definePalette(
+					'cyph',
+					$mdThemingProvider.extendPalette(
+						'deep-purple',
+						{
+							400: '8b62d9'
+						}
+					)
+				);
 
-	/** Length of server ID for a cyph. */
-	public readonly cyphIdLength: number		= 7;
-
-	/** Number of milliseconds before new cyph wait screen will abort. */
-	public readonly cyphCountdown: number		= 600000;
-
-	/** Length of random IDs in cyph links. */
-	public readonly secretLength: number		= 25;
-
-	/** Length of channel IDs. */
-	public readonly longSecretLength: number	= 52;
-
-	/**
-	 * Characters used by Util.generateGuid (includes all alphanumeric
-	 * characters except 'l' and 'I' for readability reasons).
-	 */
-	public readonly guidAddressSpace: string[]	= [
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-		'k', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
-		'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E',
-		'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-		'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
-	];
+				$mdThemingProvider.theme('default').
+					primaryPalette('cyph').
+					accentPalette('cyph')
+				;
+			}
+		],
+		rootController: 'CyphController',
+		rootModule: 'Cyph'
+	};
 
 	/** Configuration of available API flags. */
 	public readonly apiFlags	= [
@@ -80,44 +83,60 @@ export class Config {
 		}
 	];
 
-	/** Angular-related config. */
-	public readonly angularConfig	= {
-		config: [
-			'$compileProvider',
-			'$mdThemingProvider',
-			(
-				$compileProvider: angular.ICompileProvider,
-				$mdThemingProvider: angular.material.IThemingProvider
-			) => {
-				$compileProvider.
-					aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/).
-					debugInfoEnabled(false)
-				;
-
-				$mdThemingProvider.definePalette(
-					'cyph',
-					$mdThemingProvider.extendPalette(
-						'deep-purple',
-						{
-							400: '8b62d9'
-						}
-					)
-				);
-
-				$mdThemingProvider.theme('default').
-					primaryPalette('cyph').
-					accentPalette('cyph')
-				;
-			}
-		],
-		rootController: 'CyphController',
-		rootModule: 'Cyph'
-	};
-
 	/** Braintree-related config. */
 	public readonly braintreeConfig	= {
 		endpoint: 'braintree'
 	};
+
+	/** User-facing email addresses to include in places like contact forms. */
+	public readonly contactEmailAddresses: string[]	= [
+		'hello',
+		'help',
+		'feedback',
+		'bugs',
+		'b2b',
+		'telehealth',
+		'privacy'
+	];
+
+	/** Number of milliseconds before new cyph wait screen will abort. */
+	public readonly cyphCountdown: number		= 600000;
+
+	/** Length of server ID for a cyph. */
+	public readonly cyphIdLength: number		= 7;
+
+	/** Indicates the original language of any content to be translated. */
+	public readonly defaultLanguage: string		= 'en';
+
+	/** File-transfer-related config (used by Files.Files). */
+	public readonly filesConfig	= {
+		approvalLimit: 512000,
+		chunkSize: 67108864,
+		maxImageWidth: 1920,
+		maxSize: 268435456
+	};
+
+	/**
+	 * Characters used by Util.generateGuid (includes all alphanumeric
+	 * characters except 'l' and 'I' for readability reasons).
+	 */
+	public readonly guidAddressSpace: string[]	= [
+		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+		'k', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+		'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E',
+		'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+		'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+	];
+
+	/** Length of channel IDs. */
+	public readonly longSecretLength: number	= 52;
+
+	/** Max unsigned 48-bit integer + 1, used by Util.random. */
+	public readonly maxSafeUint: number			= 281474976710656;
+
+	/** URL for Cyph Tor site. */
+	public readonly onionRoot: string			= 'cyphdbyhiddenbhs.onion';
 
 	/** Pricing-related config. */
 	public readonly pricingConfig: {
@@ -199,33 +218,14 @@ export class Config {
 		}
 	};
 
-	/** File-transfer-related config (used by Files.Files). */
-	public readonly filesConfig	= {
-		approvalLimit: 512000,
-		chunkSize: 67108864,
-		maxImageWidth: 1920,
-		maxSize: 268435456
-	};
+	/** Length of random IDs in cyph links. */
+	public readonly secretLength: number	= 25;
 
 	/** WebSign-related config. */
-	public readonly webSignConfig	= {
+	public readonly webSignConfig			= {
 		serviceWorker: 'serviceworker.js',
 		workerHelper: 'js/workerhelper.js'
 	};
-
-	/** User-facing email addresses to include in places like contact forms. */
-	public readonly cyphEmailAddresses: string[]	= [
-		'hello',
-		'help',
-		'feedback',
-		'bugs',
-		'b2b',
-		'telehealth',
-		'privacy'
-	];
-
-	/** Max unsigned 48-bit integer + 1, used by Util.random. */
-	public readonly maxSafeUint: number	= 281474976710656;
 
 	constructor () {}
 }

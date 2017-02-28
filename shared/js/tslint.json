@@ -16,7 +16,7 @@
 			["String", "Use string."]
 		],
 		"member-access": true,
-		"member-ordering": [true, {/* TODO: "alphabetize": true, */ "order": [
+		"member-ordering": [true, {"alphabetize": true, "order": [
 			"private-static-field",
 			"protected-static-field",
 			"public-static-field",

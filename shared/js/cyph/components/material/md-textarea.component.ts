@@ -25,9 +25,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 /* tslint:disable-next-line:directive-class-suffix */
 export class MdTextareaComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'md2Textarea';
-
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
@@ -79,6 +76,9 @@ export class MdTextareaComponent
 			</md-input-container>
 		`
 	};
+
+	/** Component title. */
+	public static readonly title: string	= 'md2Textarea';
 
 
 	/** @ignore */

@@ -25,17 +25,17 @@ export class ChatMessageBoxComponent implements OnInit {
 	/** @see FileInput.accept */
 	@Input() public fileAccept: string;
 
-	/** Indicates whether speed dial should be displayed. */
-	public isSpeedDialReady: boolean;
-
 	/** Indicates whether speed dial is open. */
 	public isSpeedDialOpen: boolean	= true;
 
+	/** Indicates whether speed dial should be displayed. */
+	public isSpeedDialReady: boolean;
+
 	/** Button to open mobile menu. */
 	public readonly menuButton: {
-		click: ($mdMenu: any) => void,
-		icon: string,
-		label: string
+		click: ($mdMenu: any) => void;
+		icon: string;
+		label: string;
 	}	= {
 		click: ($mdMenu: any) => { this.openMenu($mdMenu); },
 		icon: 'more_horiz',
@@ -44,9 +44,9 @@ export class ChatMessageBoxComponent implements OnInit {
 
 	/** Items inside mobile menu. */
 	public readonly menuItems: {
-		click: () => void,
-		icon: string,
-		label: string
+		click: () => void;
+		icon: string;
+		label: string;
 	}[]	= [
 		{
 			click: () => { this.chatService.helpButton(); },
@@ -118,21 +118,6 @@ export class ChatMessageBoxComponent implements OnInit {
 		label: string;
 		tooltipDirection: string;
 	}[]	= this.speedDialButtons.filter(o => !o.disabled);
-
-	/** Opens mobile menu. */
-	public async openMenu ($mdMenu: any) : Promise<void> {
-		/* Workaround for Angular Material menu bug */
-		if (this.envService.isMobile) {
-			let $focused: JQuery;
-			do {
-				$focused	= $(':focus');
-				$focused.blur();
-				await util.sleep();
-			} while ($focused.length > 0);
-		}
-
-		$mdMenu.open();
-	}
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
@@ -254,6 +239,21 @@ export class ChatMessageBoxComponent implements OnInit {
 
 			tabIndent.render($textarea[0]);
 		}
+	}
+
+	/** Opens mobile menu. */
+	public async openMenu ($mdMenu: any) : Promise<void> {
+		/* Workaround for Angular Material menu bug */
+		if (this.envService.isMobile) {
+			let $focused: JQuery;
+			do {
+				$focused	= $(':focus');
+				$focused.blur();
+				await util.sleep();
+			} while ($focused.length > 0);
+		}
+
+		$mdMenu.open();
 	}
 
 	constructor (

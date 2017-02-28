@@ -28,19 +28,19 @@ import {util} from '../util';
 })
 export class LinkConnectionComponent implements OnInit {
 	/** @ignore */
-	private linkConstant: string;
-
-	/** @ignore */
 	private readonly addTimeLock: {}	= {};
 
 	/** @ignore */
 	private readonly copyLock: {}		= {};
 
-	/** Indicates whether advanced features UI should be displayed. */
-	@Input() public enableAdvancedFeatures: boolean;
+	/** @ignore */
+	private linkConstant: string;
 
 	/** Indicates whether the advanced features menu is open. */
 	public advancedFeatures: boolean;
+
+	/** Indicates whether advanced features UI should be displayed. */
+	@Input() public enableAdvancedFeatures: boolean;
 
 	/** Indicates whether this link connection was initiated passively via API integration. */
 	public isPassive: boolean;
@@ -51,11 +51,11 @@ export class LinkConnectionComponent implements OnInit {
 	/** URL-encoded version of this link (for sms and mailto links). */
 	public linkEncoded: string;
 
-	/** Counts down until link expires. */
-	public timer: Timer;
-
 	/** Draft of queued message. */
 	public queuedMessageDraft: string	= '';
+
+	/** Counts down until link expires. */
+	public timer: Timer;
 
 	/**
 	 * Extends the countdown duration.

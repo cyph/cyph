@@ -38,15 +38,6 @@ export class P2P implements IP2P {
 
 
 	/** @ignore */
-	private isAccepted: boolean;
-
-	/** @ignore */
-	private readonly mutex: IMutex;
-
-	/** @ignore */
-	private webRTC: any;
-
-	/** @ignore */
 	private readonly commands	= {
 		accept: () : void => {
 			this.join();
@@ -91,7 +82,7 @@ export class P2P implements IP2P {
 			}
 		},
 
-		webRTC: (data: {event: string; args: any[]}) : void => {
+		webRTC: (data: {args: any[]; event: string}) : void => {
 			eventManager.trigger(
 				P2P.constants.webRTC + data.event,
 				data.args
@@ -99,17 +90,26 @@ export class P2P implements IP2P {
 		}
 	};
 
-	/** @inheritDoc */
-	public readonly incomingStream	= {audio: false, video: false};
+	/** @ignore */
+	private isAccepted: boolean;
+
+	/** @ignore */
+	private readonly mutex: IMutex;
+
+	/** @ignore */
+	private webRTC: any;
 
 	/** @inheritDoc */
-	public readonly outgoingStream	= {audio: false, video: false};
+	public readonly incomingStream	= {audio: false, video: false};
 
 	/** @inheritDoc */
 	public isActive: boolean;
 
 	/** @inheritDoc */
 	public loading: boolean;
+
+	/** @inheritDoc */
+	public readonly outgoingStream	= {audio: false, video: false};
 
 	/** @ignore */
 	private receiveCommand (command: Command) : void {

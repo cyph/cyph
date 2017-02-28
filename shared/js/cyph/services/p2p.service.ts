@@ -16,11 +16,11 @@ export class P2PService {
 	/** @ignore */
 	private preemptivelyInitiated: boolean;
 
-	/** Indicates whether sidebar is open. */
-	public isSidebarOpen: boolean;
-
 	/** Indicates whether P2P is possible (i.e. both clients support WebRTC). */
 	public isEnabled: boolean	= false;
+
+	/** Indicates whether sidebar is open. */
+	public isSidebarOpen: boolean;
 
 	/** @see IP2P */
 	public p2p: IP2P;
@@ -53,9 +53,9 @@ export class P2PService {
 		this.sessionService.on(
 			this.sessionService.events.p2pUI,
 			async (e: {
+				args: any[];
 				category: UIEventCategories;
 				event: UIEvents;
-				args: any[];
 			}) => {
 				switch (e.category) {
 					case UIEventCategories.base: {

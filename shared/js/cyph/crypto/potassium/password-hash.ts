@@ -97,7 +97,7 @@ export class PasswordHash {
 		clearInput?: boolean
 	) : Promise<{
 		hash: Uint8Array;
-		metadata: Uint8Array,
+		metadata: Uint8Array;
 		metadataObject: {
 			algorithm: string;
 			memLimit: number;

@@ -24,6 +24,9 @@ export class CheckoutComponent implements OnInit {
 	/** Company. */
 	@Input() public company: string;
 
+	/** Indicates whether checkout is complete. */
+	public complete: boolean;
+
 	/** Email address. */
 	@Input() public email: string;
 
@@ -35,9 +38,6 @@ export class CheckoutComponent implements OnInit {
 
 	/** Indicates whether this will be a recurring purchase. */
 	@Input() public subscription: boolean;
-
-	/** Indicates whether checkout is complete. */
-	public complete: boolean;
 
 	/** Indicates whether checkout is complete. */
 	public success: boolean;

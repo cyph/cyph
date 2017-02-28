@@ -24,11 +24,11 @@ export class Box {
 		publicExponent: new Uint8Array([0x01, 0x00, 0x01])
 	};
 
-	/** Public key length. */
-	public readonly publicKeyBytes: number	= 800;
-
 	/** Private key length. */
 	public readonly privateKeyBytes: number	= 3250;
+
+	/** Public key length. */
+	public readonly publicKeyBytes: number	= 800;
 
 	/** Generates key pair. */
 	public async keyPair () : Promise<IKeyPair> {
@@ -56,60 +56,6 @@ export class Box {
 			publicKey,
 			privateKey
 		};
-	}
-
-	/** Encrypts plaintext. */
-	public async seal (
-		plaintext: Uint8Array,
-		nonce: Uint8Array,
-		publicKey: Uint8Array
-	) : Promise<Uint8Array> {
-		const asymmetricPlaintext: Uint8Array	= potassiumUtil.randomBytes(
-			secretBox.keyBytes + oneTimeAuth.keyBytes
-		);
-
-		const symmetricKey: Uint8Array			= new Uint8Array(
-			asymmetricPlaintext.buffer,
-			0,
-			secretBox.keyBytes
-		);
-
-		const symmetricCyphertext: Uint8Array	= await secretBox.seal(
-			plaintext,
-			nonce,
-			symmetricKey
-		);
-
-		const asymmetricCyphertext: Uint8Array	= new Uint8Array(
-			await crypto.subtle.encrypt(
-				this.algorithm.name,
-				await importHelper.importJWK(
-					publicKey,
-					this.algorithm,
-					'encrypt'
-				),
-				asymmetricPlaintext
-			)
-		);
-
-		const macKey: Uint8Array				= new Uint8Array(
-			asymmetricPlaintext.buffer,
-			secretBox.keyBytes
-		);
-
-		const mac: Uint8Array					= await oneTimeAuth.sign(
-			asymmetricCyphertext,
-			macKey
-		);
-
-		potassiumUtil.clearMemory(asymmetricPlaintext);
-
-		return potassiumUtil.concatMemory(
-			true,
-			asymmetricCyphertext,
-			mac,
-			symmetricCyphertext
-		);
 	}
 
 	/** Decrypts cyphertext. */
@@ -183,6 +129,60 @@ export class Box {
 			potassiumUtil.clearMemory(plaintext);
 			throw new Error('Invalid RSA cyphertext.');
 		}
+	}
+
+	/** Encrypts plaintext. */
+	public async seal (
+		plaintext: Uint8Array,
+		nonce: Uint8Array,
+		publicKey: Uint8Array
+	) : Promise<Uint8Array> {
+		const asymmetricPlaintext: Uint8Array	= potassiumUtil.randomBytes(
+			secretBox.keyBytes + oneTimeAuth.keyBytes
+		);
+
+		const symmetricKey: Uint8Array			= new Uint8Array(
+			asymmetricPlaintext.buffer,
+			0,
+			secretBox.keyBytes
+		);
+
+		const symmetricCyphertext: Uint8Array	= await secretBox.seal(
+			plaintext,
+			nonce,
+			symmetricKey
+		);
+
+		const asymmetricCyphertext: Uint8Array	= new Uint8Array(
+			await crypto.subtle.encrypt(
+				this.algorithm.name,
+				await importHelper.importJWK(
+					publicKey,
+					this.algorithm,
+					'encrypt'
+				),
+				asymmetricPlaintext
+			)
+		);
+
+		const macKey: Uint8Array				= new Uint8Array(
+			asymmetricPlaintext.buffer,
+			secretBox.keyBytes
+		);
+
+		const mac: Uint8Array					= await oneTimeAuth.sign(
+			asymmetricCyphertext,
+			macKey
+		);
+
+		potassiumUtil.clearMemory(asymmetricPlaintext);
+
+		return potassiumUtil.concatMemory(
+			true,
+			asymmetricCyphertext,
+			mac,
+			symmetricCyphertext
+		);
 	}
 
 	constructor () {}

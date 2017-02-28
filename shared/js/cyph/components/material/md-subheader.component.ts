@@ -23,9 +23,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 /* tslint:disable-next-line:directive-class-suffix */
 export class MdSubheaderComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'md2Subheader';
-
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
@@ -55,6 +52,9 @@ export class MdSubheaderComponent
 			</md-subheader>
 		`
 	};
+
+	/** Component title. */
+	public static readonly title: string	= 'md2Subheader';
 
 
 	/** @ignore */

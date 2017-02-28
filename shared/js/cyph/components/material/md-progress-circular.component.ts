@@ -23,9 +23,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 /* tslint:disable-next-line:directive-class-suffix */
 export class MdProgressCircularComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'md2ProgressCircular';
-
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
@@ -53,6 +50,9 @@ export class MdProgressCircularComponent
 			></md-progress-circular>
 		`
 	};
+
+	/** Component title. */
+	public static readonly title: string	= 'md2ProgressCircular';
 
 
 	/** @ignore */

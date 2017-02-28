@@ -25,9 +25,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 /* tslint:disable-next-line:directive-class-suffix */
 export class MdSwitchComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'md2Switch';
-
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
@@ -60,6 +57,9 @@ export class MdSwitchComponent
 		`,
 		transclude: true
 	};
+
+	/** Component title. */
+	public static readonly title: string	= 'md2Switch';
 
 
 	/** @ignore */

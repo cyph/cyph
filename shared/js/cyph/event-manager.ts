@@ -130,8 +130,8 @@ export class EventManager {
 		/* This is DedicatedWorkerGlobalScope.postMessage(), not Window.postMessage() */
 		this.on(
 			this.untriggeredEvents,
-			(o: {event: string; data: any}) => (<any> self).postMessage(
-				{event: o.event, data: o.data, isThreadEvent: true}
+			(o: {data: any; event: string}) => (<any> self).postMessage(
+				{data: o.data, event: o.event, isThreadEvent: true}
 			)
 		);
 	}

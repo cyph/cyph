@@ -23,9 +23,9 @@ import {Transfer} from './transfer';
 export class Files {
 	/** @ignore */
 	private static async cryptoThread (o: {
-		cyphertext?: Uint8Array,
-		key?: Uint8Array,
-		plaintext?: Uint8Array
+		cyphertext?: Uint8Array;
+		key?: Uint8Array;
+		plaintext?: Uint8Array;
 	}) : Promise<Uint8Array[]> {
 		const threadLocals	= {
 			callbackId: 'files-' + util.generateGuid(),
@@ -42,11 +42,11 @@ export class Files {
 				Potassium: any,
 				eventManager: EventManager,
 				locals: {
-					plaintext?: Uint8Array,
-					cyphertext?: Uint8Array,
-					key?: Uint8Array,
-					chunkSize: number,
-					callbackId: string
+					callbackId: string;
+					chunkSize: number;
+					cyphertext?: Uint8Array;
+					key?: Uint8Array;
+					plaintext?: Uint8Array;
 				},
 				importScripts: Function
 			) : Promise<void> {

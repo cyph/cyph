@@ -8,8 +8,8 @@ import {ISession} from '../session/isession';
 import {ProFeatures} from '../session/profeatures';
 import {Thread} from '../thread';
 import {util} from '../util';
+import {AbstractSessionInitService} from './abstract-session-init.service';
 import {ConfigService} from './config.service';
-import {SessionInitService} from './session-init.service';
 
 
 /**
@@ -18,21 +18,21 @@ import {SessionInitService} from './session-init.service';
 @Injectable()
 export class SessionService implements ISessionService {
 	/** @ignore */
+	private readonly eventId: string	= util.generateGuid();
+
+	/** @ignore */
 	private readonly thread: Thread;
-
-	/** @ignore */
-	private readonly eventId: string			= util.generateGuid();
-
-	/** @ignore */
-	private readonly wasInitiatedByAPI: boolean	=
-		this.sessionInitService.id.length > this.configService.secretLength
-	;
 
 	/** @ignore */
 	private readonly threadEvents		= {
 		close: 'close-SessionService',
 		send: 'send-SessionService'
 	};
+
+	/** @ignore */
+	private readonly wasInitiatedByAPI: boolean	=
+		this.abstractSessionInitService.id.length > this.configService.secretLength
+	;
 
 	/** @inheritDoc */
 	public readonly apiFlags	= {
@@ -43,7 +43,13 @@ export class SessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly state		= {
+	public readonly events: Events			= events;
+
+	/** @inheritDoc */
+	public readonly rpcEvents: RpcEvents	= rpcEvents;
+
+	/** @inheritDoc */
+	public readonly state	= {
 		cyphId: '',
 		isAlice: false,
 		isAlive: true,
@@ -53,13 +59,7 @@ export class SessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly events: Events			= events;
-
-	/** @inheritDoc */
-	public readonly rpcEvents: RpcEvents	= rpcEvents;
-
-	/** @inheritDoc */
-	public readonly users: Users			= users;
+	public readonly users: Users	= users;
 
 	/** @inheritDoc */
 	public close () : void {
@@ -89,8 +89,8 @@ export class SessionService implements ISessionService {
 			this.apiFlags.modestBranding,
 			this.apiFlags.nativeCrypto,
 			this.apiFlags.telehealth,
-			this.sessionInitService.callType === 'video',
-			this.sessionInitService.callType === 'audio'
+			this.abstractSessionInitService.callType === 'video',
+			this.abstractSessionInitService.callType === 'audio'
 		);
 	}
 
@@ -106,12 +106,12 @@ export class SessionService implements ISessionService {
 
 	constructor (
 		/** @ignore */
-		private readonly configService: ConfigService,
+		private readonly abstractSessionInitService: AbstractSessionInitService,
 
 		/** @ignore */
-		private readonly sessionInitService: SessionInitService
+		private readonly configService: ConfigService
 	) {
-		let id	= this.sessionInitService.id;
+		let id	= this.abstractSessionInitService.id;
 
 		/* API flags */
 		for (const flag of this.configService.apiFlags) {
