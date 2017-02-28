@@ -53,7 +53,7 @@ export class AccountMenuComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		await this.accountAuthService.ready;
+		await this.accountAuthService.ready && this.accountAuthService.current;
 		this.openMenu();
 	}
 
