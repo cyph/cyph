@@ -12,11 +12,13 @@ export class AccountUserLookupService {
 	/** @ignore */
 	public static DUMMY_USERS: IUser[]	= [
 
-	].map((user: {avatar: string; name: string; username: string}) => ({
+	].map((user: {avatar: string; name: string; username: string; email: string; hasPremium: boolean}) => ({
 		avatar: user.avatar,
 		name: user.name,
 		status: userPresenceSorted[util.random(userPresenceSorted.length)],
-		username: user.username
+		username: user.username,
+		email: user.email,
+		hasPremium: user.hasPremium
 	}));
 
 	/** Tries to to get user object for the specified username. */

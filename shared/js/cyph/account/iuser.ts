@@ -16,4 +16,10 @@ export interface IUser {
 
 	/** Username. */
 	username: string;
+
+	/** Email Address */
+	email: string;
+
+	/** Premium Account */
+	hasPremium: boolean;
 }
