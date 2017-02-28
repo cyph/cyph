@@ -33,7 +33,7 @@
 		]}],
 		"no-any": false,
 		"no-empty-interface": true,
-		"no-import-side-effect": false,
+		"no-import-side-effect": true,
 		"no-inferrable-types": [true, "ignore-params", "ignore-properties"],
 		"no-internal-module": true,
 		"no-magic-numbers": false,
