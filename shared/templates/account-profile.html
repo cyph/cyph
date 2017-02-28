@@ -1,4 +1,4 @@
-<div class='profile' *ngIf='profile'>
+<div class='profile layout-column' *ngIf='profile'>
 	<img
 		class='profile-picture animated flipInX _1'
 		[ngClass]='userPresence[profile.user.status]'
@@ -8,7 +8,7 @@
 	<span class='name animated flipInX _2'>{{profile.user.name}}</span>
 	<span class='description animated flipInX _3'>{{profile.description}}</span>
 	
-	<div class='status'>
+	<div class='status flex-50'>
 			<md2-select
 				cyphTranslate
 				class='flex'

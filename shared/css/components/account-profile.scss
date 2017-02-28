@@ -1,1 +1,104 @@
+@mixin vertical-align {
+	position: relative;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
 
+.profile {
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	font-family: Ubuntu;
+
+	.profile-picture {
+		border-radius: 50%;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 5%;
+		position: relative;
+		display: block;
+		-webkit-box-shadow: 0px 20px 42px 0px rgba(75, 67, 89, 1);
+		-moz-box-shadow: 0px 20px 42px 0px rgba(75, 67, 89, 1);
+		box-shadow: 0px 20px 42px 0px rgba(75, 67, 89, 1);
+	}
+
+	span {
+		display: block;
+		text-align: center;
+		font-family: Ubuntu;
+	}
+
+	span.name {
+		font-size: 42px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 25px;
+		margin-bottom: 10px;
+		position: relative;
+		width: auto;
+		font-weight: 500;
+	}
+
+	span.description {
+		font-size: 24px;
+	}
+
+	.status {
+		width: 200px;
+		margin-left: auto;
+		margin-right: auto;
+		font-family: Ubuntu;
+		background-color: #392859;
+		margin-top: 20px;
+		label {
+			margin: -26px -70px;
+			font-size: 24px;
+			font-weight: 500;
+			color: white !important;
+			position: absolute;
+		}
+		md-select-value {
+			.md-text {
+				color: white !important;
+				font-weight: 500;
+			}
+		}
+		md-option {
+			.md-text {
+				font-weight: 500;
+			}
+		}
+		md-input-container {
+			padding: 0 !important;
+			margin: 5px !important;
+		}
+	}
+
+	.buttons {
+		width: 175px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 20px;
+
+		i.material-icons {
+			font-size: 42px;
+			padding: 5px;
+		}
+
+		md2-button {
+			width: 85px;
+			left: 16px;
+			position: relative;
+			display: inline-block;
+		}
+
+		button.md-button {
+			background-color: #392859;
+			border-radius: 50%;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+}
