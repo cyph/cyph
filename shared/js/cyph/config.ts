@@ -65,7 +65,7 @@ export class Config {
 				sessionService.apiFlags.forceTURN ? this.apiFlags[2].character : ''
 			,
 			set: (sessionService: ISessionService) => {
-				sessionService.apiFlags.forceTURN 		= true;
+				sessionService.apiFlags.forceTURN		= true;
 			}
 		},
 		{
