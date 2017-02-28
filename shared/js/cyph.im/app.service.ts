@@ -12,17 +12,17 @@ import {AccountStates, States, urlSections} from './enums';
  */
 @Injectable()
 export class AppService {
-	/** @see States */
-	public state: States;
-
 	/** @see AccountStates */
 	public accountState: AccountStates|undefined;
 
-	/** @see States */
-	public states: typeof States				= States;
-
 	/** @see AccountStates */
 	public accountStates: typeof AccountStates	= AccountStates;
+
+	/** @see States */
+	public state: States;
+
+	/** @see States */
+	public states: typeof States	= States;
 
 	/** @ignore */
 	private onUrlStateChange (newUrlState: string) : void {

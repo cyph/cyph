@@ -5,18 +5,19 @@ import {potassiumUtil} from '../potassium-util';
  * Wrapper for SubtleCrypto key import and export APIs.
  */
 export class ImportHelper {
-	/** Converts raw byte array into CryptoKey object. */
-	public async importRawKey (
-		key: Uint8Array,
-		algorithm: any,
-		purpose: string
-	) : Promise<CryptoKey> {
-		return crypto.subtle.importKey(
-			'raw',
-			new Uint8Array(key).buffer,
-			algorithm,
-			false,
-			[purpose]
+	/** Converts CryptoKey object into JWK byte array. */
+	public async exportJWK (
+		cryptoKey: CryptoKey,
+		algorithmName: string
+	) : Promise<Uint8Array> {
+		return potassiumUtil.fromString(
+			JSON.stringify(
+				await (<any> crypto.subtle).exportKey(
+					'jwk',
+					cryptoKey,
+					algorithmName
+				)
+			)
 		);
 	}
 
@@ -51,19 +52,18 @@ export class ImportHelper {
 		);
 	}
 
-	/** Converts CryptoKey object into JWK byte array. */
-	public async exportJWK (
-		cryptoKey: CryptoKey,
-		algorithmName: string
-	) : Promise<Uint8Array> {
-		return potassiumUtil.fromString(
-			JSON.stringify(
-				await (<any> crypto.subtle).exportKey(
-					'jwk',
-					cryptoKey,
-					algorithmName
-				)
-			)
+	/** Converts raw byte array into CryptoKey object. */
+	public async importRawKey (
+		key: Uint8Array,
+		algorithm: any,
+		purpose: string
+	) : Promise<CryptoKey> {
+		return crypto.subtle.importKey(
+			'raw',
+			new Uint8Array(key).buffer,
+			algorithm,
+			false,
+			[purpose]
 		);
 	}
 

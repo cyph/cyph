@@ -11,17 +11,14 @@ import {VisibilityWatcherService} from './visibility-watcher.service';
 @Injectable()
 export class NotificationService implements INotificationService {
 	/** @ignore */
+	private readonly audio: HTMLAudioElement|undefined;
+
+	/** @ignore */
 	private readonly config	= {
 		audio: '/audio/beep.mp3',
 		icon: customBuildFavicon || '/img/favicon/favicon-192x192.png',
 		title: 'Cyph'
 	};
-
-	/** @ignore */
-	private readonly audio: {play: Function}	= Audio ?
-		new Audio(this.config.audio) :
-		{play: () => {}}
-	;
 
 	/** Indicates whether notifications are currently silenced. */
 	private disableNotify: boolean				= false;
@@ -44,7 +41,9 @@ export class NotificationService implements INotificationService {
 			const notification	= new (<any> self).Notification(this.config.title, options);
 
 			try {
-				this.audio.play();
+				if (this.audio) {
+					this.audio.play();
+				}
 			}
 			catch (_) {}
 
@@ -100,6 +99,10 @@ export class NotificationService implements INotificationService {
 		/** @ignore */
 		private readonly visibilityWatcherService: VisibilityWatcherService
 	) {
+		if (Audio) {
+			this.audio	= new Audio(this.config.audio);
+		}
+
 		this.visibilityWatcherService.onChange((isVisible: boolean) => {
 			if (isVisible) {
 				for (const notification of this.openNotifications) {

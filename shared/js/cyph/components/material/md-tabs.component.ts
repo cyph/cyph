@@ -24,9 +24,6 @@ import {util} from '../../util';
 /* tslint:disable-next-line:directive-class-suffix */
 export class MdTabsComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'md2Tabs';
-
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
@@ -79,6 +76,9 @@ export class MdTabsComponent
 		`,
 		transclude: true
 	};
+
+	/** Component title. */
+	public static readonly title: string	= 'md2Tabs';
 
 
 	/** @ignore */

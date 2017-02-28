@@ -95,7 +95,7 @@ export class CyphertextService {
 	) {
 		sessionService.on(
 			sessionService.events.cyphertext,
-			(o: {cyphertext: string; author?: string}) => { this.log(
+			(o: {author?: string; cyphertext: string}) => { this.log(
 				o.cyphertext,
 				o.author || this.stringsService.friend
 			); }

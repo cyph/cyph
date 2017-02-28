@@ -23,9 +23,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 /* tslint:disable-next-line:directive-class-suffix */
 export class MdSidenavComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'md2Sidenav';
-
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
@@ -51,6 +48,9 @@ export class MdSidenavComponent
 		`,
 		transclude: true
 	};
+
+	/** Component title. */
+	public static readonly title: string	= 'md2Sidenav';
 
 
 	/** @ignore */

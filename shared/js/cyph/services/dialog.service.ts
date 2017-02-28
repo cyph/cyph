@@ -18,9 +18,9 @@ export class DialogService {
 	 */
 	public async alert (
 		o: {
-			title: string;
 			content: string;
 			ok: string;
+			title: string;
 		}
 	) : Promise<void> {
 		util.lock(this.lock, async () =>
@@ -39,12 +39,12 @@ export class DialogService {
 	 */
 	public async baseDialog (
 		o: {
-			template: string;
 			locals?: any;
+			template: string;
 		}
 	) : Promise<{
-		ok: boolean;
 		locals: any;
+		ok: boolean;
 	}> {
 		return util.lock(
 			this.lock,
@@ -72,11 +72,11 @@ export class DialogService {
 	 */
 	public async confirm (
 		o: {
-			title: string;
+			cancel: string;
 			content: string;
 			ok: string;
-			cancel: string;
 			timeout?: number;
+			title: string;
 		}
 	) : Promise<boolean> {
 		return util.lock(this.lock, async () => {

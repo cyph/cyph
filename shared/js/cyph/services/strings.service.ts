@@ -155,10 +155,10 @@ export class StringsService {
 	public readonly micEnable: string				= util.translate(`Enable Mic`);
 
 	/** @see StringsService */
-	public readonly newString: string				= util.translate(`new`);
+	public readonly newMessageNotification: string	= util.translate(`New message!`);
 
 	/** @see StringsService */
-	public readonly newMessageNotification: string	= util.translate(`New message!`);
+	public readonly newString: string				= util.translate(`new`);
 
 	/** @see StringsService */
 	public readonly no: string						= util.translate(`no`);

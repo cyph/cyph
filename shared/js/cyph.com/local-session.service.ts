@@ -32,7 +32,13 @@ export class LocalSessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly state		= {
+	public readonly events: Events			= events;
+
+	/** @inheritDoc */
+	public readonly rpcEvents: RpcEvents	= rpcEvents;
+
+	/** @inheritDoc */
+	public readonly state	= {
 		cyphId: '',
 		isAlice: false,
 		isAlive: false,
@@ -42,13 +48,7 @@ export class LocalSessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly events: Events			= events;
-
-	/** @inheritDoc */
-	public readonly rpcEvents: RpcEvents	= rpcEvents;
-
-	/** @inheritDoc */
-	public readonly users: Users			= users;
+	public readonly users: Users	= users;
 
 	/** @inheritDoc */
 	public close () : void {

@@ -24,6 +24,9 @@ export class AccountComponent implements OnInit {
 	/** @ignore */
 	public username: string		= '';
 
+	/** @inheritDoc */
+	public ngOnInit () : void {}
+
 	/** @ignore */
 	public async onSubmit () : Promise<void> {
 		/* TODO: stop blatantly lying to people */
@@ -36,9 +39,6 @@ export class AccountComponent implements OnInit {
 		this.checking	= false;
 		this.error		= true;
 	}
-
-	/** @inheritDoc */
-	public ngOnInit () : void {}
 
 	constructor (
 		/** @see AppService */

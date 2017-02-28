@@ -25,9 +25,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 /* tslint:disable-next-line:directive-class-suffix */
 export class MdSliderComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'md2Slider';
-
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
@@ -77,6 +74,9 @@ export class MdSliderComponent
 			></md-slider>
 		`
 	};
+
+	/** Component title. */
+	public static readonly title: string	= 'md2Slider';
 
 
 	/** @ignore */

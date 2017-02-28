@@ -152,8 +152,8 @@ export class FileService {
 		this.sessionService.on(
 			this.sessionService.events.filesUI,
 			async (e: {
-				event: UIEvents;
 				args: any[];
+				event: UIEvents;
 			}) => {
 				switch (e.event) {
 					case UIEvents.completed: {

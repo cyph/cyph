@@ -25,13 +25,16 @@ export class ChatService {
 
 
 	/** @ignore */
+	private isMessageChanged: boolean	= false;
+
+	/** @ignore */
 	private previousMessage: string;
 
 	/** @ignore */
 	private queuedMessage: string;
 
-	/** @ignore */
-	private isMessageChanged: boolean	= false;
+	/** The current message being composed. */
+	public currentMessage: string				= '';
 
 	/** Indicates whether authentication has completed (still true even after disconnect). */
 	public isConnected: boolean					= false;
@@ -42,23 +45,20 @@ export class ChatService {
 	/** Indicates whether the other party is typing. */
 	public isFriendTyping: boolean				= false;
 
-	/** Indicates whether the queued message is self-destructing. */
-	public queuedMessageSelfDestruct: boolean	= false;
-
-	/** The current message being composed. */
-	public currentMessage: string				= '';
-
 	/** Percentage complete with initial handshake (approximate / faked out). */
 	public keyExchangeProgress: number			= 0;
+
+	/** Message list. */
+	public readonly messages: IChatMessage[]	= [];
+
+	/** Indicates whether the queued message is self-destructing. */
+	public queuedMessageSelfDestruct: boolean	= false;
 
 	/** Chat UI state/view. */
 	public state: States						= States.none;
 
 	/** @see States */
 	public readonly states: typeof States		= States;
-
-	/** Message list. */
-	public readonly messages: IChatMessage[]	= [];
 
 	/** This kills the chat. */
 	private close () : void {
@@ -340,9 +340,9 @@ export class ChatService {
 
 		this.sessionService.on(this.sessionService.rpcEvents.text, (o: {
 			author?: string;
+			selfDestructTimeout?: number;
 			text?: string;
 			timestamp: number;
-			selfDestructTimeout?: number;
 		}) => {
 			if (typeof o.text !== 'string') {
 				return;

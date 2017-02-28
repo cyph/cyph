@@ -25,9 +25,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 /* tslint:disable-next-line:directive-class-suffix */
 export class MdInputComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'md2Input';
-
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
@@ -80,6 +77,9 @@ export class MdInputComponent
 			</md-input-container>
 		`
 	};
+
+	/** Component title. */
+	public static readonly title: string	= 'md2Input';
 
 
 	/** @ignore */

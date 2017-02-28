@@ -18,21 +18,21 @@ import {ConfigService} from './config.service';
 @Injectable()
 export class SessionService implements ISessionService {
 	/** @ignore */
+	private readonly eventId: string	= util.generateGuid();
+
+	/** @ignore */
 	private readonly thread: Thread;
-
-	/** @ignore */
-	private readonly eventId: string			= util.generateGuid();
-
-	/** @ignore */
-	private readonly wasInitiatedByAPI: boolean	=
-		this.abstractSessionInitService.id.length > this.configService.secretLength
-	;
 
 	/** @ignore */
 	private readonly threadEvents		= {
 		close: 'close-SessionService',
 		send: 'send-SessionService'
 	};
+
+	/** @ignore */
+	private readonly wasInitiatedByAPI: boolean	=
+		this.abstractSessionInitService.id.length > this.configService.secretLength
+	;
 
 	/** @inheritDoc */
 	public readonly apiFlags	= {
@@ -43,7 +43,13 @@ export class SessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly state		= {
+	public readonly events: Events			= events;
+
+	/** @inheritDoc */
+	public readonly rpcEvents: RpcEvents	= rpcEvents;
+
+	/** @inheritDoc */
+	public readonly state	= {
 		cyphId: '',
 		isAlice: false,
 		isAlive: true,
@@ -53,13 +59,7 @@ export class SessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly events: Events			= events;
-
-	/** @inheritDoc */
-	public readonly rpcEvents: RpcEvents	= rpcEvents;
-
-	/** @inheritDoc */
-	public readonly users: Users			= users;
+	public readonly users: Users	= users;
 
 	/** @inheritDoc */
 	public close () : void {

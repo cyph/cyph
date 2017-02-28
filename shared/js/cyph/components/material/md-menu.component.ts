@@ -23,9 +23,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 /* tslint:disable-next-line:directive-class-suffix */
 export class MdMenuComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'md2Menu';
-
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
@@ -39,9 +36,9 @@ export class MdMenuComponent
 		controller: class {
 			/** @ignore */
 			public readonly button: {
-				click: ($mdMenu: any) => void,
-				icon: string,
-				label: string
+				click: ($mdMenu: any) => void;
+				icon: string;
+				label: string;
 			};
 
 			/** @ignore */
@@ -49,9 +46,9 @@ export class MdMenuComponent
 
 			/** @ignore */
 			public readonly items: {
-				click: () => void,
-				icon: string,
-				label: string
+				click: () => void;
+				icon: string;
+				label: string;
 			}[];
 
 			/** @ignore */
@@ -91,12 +88,15 @@ export class MdMenuComponent
 		`
 	};
 
+	/** Component title. */
+	public static readonly title: string	= 'md2Menu';
+
 
 	/** @ignore */
 	@Input() public button: {
-		click: ($mdMenu: any) => void,
-		icon: string,
-		label: string
+		click: ($mdMenu: any) => void;
+		icon: string;
+		label: string;
 	};
 
 	/** @ignore */
@@ -104,9 +104,9 @@ export class MdMenuComponent
 
 	/** @ignore */
 	@Input() public items: {
-		click: () => void,
-		icon: string,
-		label: string
+		click: () => void;
+		icon: string;
+		label: string;
 	}[];
 
 	/** @ignore */

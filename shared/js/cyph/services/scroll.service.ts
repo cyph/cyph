@@ -12,13 +12,13 @@ import {VisibilityWatcherService} from './visibility-watcher.service';
 @Injectable()
 export class ScrollService {
 	/** @ignore */
+	private itemCountInTitle: boolean	= false;
+
+	/** @ignore */
 	private rootElement: JQuery|undefined;
 
 	/** @ignore */
-	private itemCountInTitle: boolean			= false;
-
-	/** @ignore */
-	private scrollDownLock: {}					= {};
+	private scrollDownLock: {}	= {};
 
 	/** @ignore */
 	private unreadItems: Set<{unread: boolean}>	= new Set<{unread: boolean}>();

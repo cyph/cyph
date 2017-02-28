@@ -23,9 +23,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 /* tslint:disable-next-line:directive-class-suffix */
 export class MdProgressLinearComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'md2ProgressLinear';
-
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
@@ -54,6 +51,9 @@ export class MdProgressLinearComponent
 			></md-progress-linear>
 		`
 	};
+
+	/** Component title. */
+	public static readonly title: string	= 'md2ProgressLinear';
 
 
 	/** @ignore */

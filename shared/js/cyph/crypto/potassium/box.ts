@@ -108,8 +108,8 @@ export class Box {
 		encryptedKeyBytes: number,
 		decrypt: (cyphertext: Uint8Array, privateKey: Uint8Array) => Uint8Array
 	) : Promise<{
-		innerKeys: Uint8Array,
-		symmetricKey: Uint8Array
+		innerKeys: Uint8Array;
+		symmetricKey: Uint8Array;
 	}> {
 		const encryptedKeys: Uint8Array	= new Uint8Array(
 			keyCyphertext.buffer,
@@ -161,9 +161,9 @@ export class Box {
 		plaintextBytes: number,
 		encrypt: (plaintext: Uint8Array, publicKey: Uint8Array) => Uint8Array
 	) : Promise<{
-		innerKeys: Uint8Array,
-		symmetricKey: Uint8Array,
-		keyCyphertext: Uint8Array
+		innerKeys: Uint8Array;
+		keyCyphertext: Uint8Array;
+		symmetricKey: Uint8Array;
 	}> {
 		if (plaintextBytes < (this.secretBox.keyBytes + this.oneTimeAuth.keyBytes)) {
 			throw new Error(`Not enough space for keys; must increase ${name} parameters.`);

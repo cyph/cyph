@@ -19,10 +19,10 @@ import {util} from '../util';
 })
 export class MarkdownComponent implements OnChanges {
 	/** @ignore */
-	private readonly markdownIt: MarkdownIt.MarkdownIt;
+	private initiated: boolean	= false;
 
 	/** @ignore */
-	private initiated: boolean	= false;
+	private readonly markdownIt: MarkdownIt.MarkdownIt;
 
 	/** String of Markdown to render as HTML and add to the DOM. */
 	@Input() public markdown: string|undefined;

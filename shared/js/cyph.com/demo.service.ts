@@ -12,22 +12,17 @@ import {HomeSections} from './enums';
  */
 @Injectable()
 export class DemoService {
-	/** Indicates whether demo is in active state. */
-	public isActive: boolean	= false;
+	/** Desktop chat UI data. */
+	public desktop: ChatData;
 
 	/** Data URI to use for placeholder for Facebook joke. */
-	public readonly facebookPicUrl: Promise<string>		= (
+	public readonly facebookPicDataUri: Promise<string>		= (
 		!this.envService.isMobile ?
 			Promise.reject('') :
 			util.request({retries: 5, url: '/img/fbimagealt.txt'})
 	).catch(
 		() => 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs='
 	);
-
-	/** Complete message to use as placeholder for Facebook joke. */
-	public readonly facebookPicMessage: Promise<string>	= (async () =>
-		`![](${await this.facebookPicUrl})\n\n#### mynewpic.jpg`
-	)();
 
 	/** Frame containing Facebook profile picture. */
 	public readonly facebookPicFrame: string			= this.envService.isMobile ? '' : `
@@ -40,15 +35,23 @@ export class DemoService {
 		</div>
 	`;
 
+	/** Complete message to use as placeholder for Facebook joke. */
+	public readonly facebookPicMessage: Promise<string>	= (async () =>
+		`![](${await this.facebookPicDataUri})\n\n#### mynewpic.jpg`
+	)();
+
 	/** Placeholder div for absolutely positioned iframe to sit on top of. */
 	public readonly facebookPicPlaceholder: string		= `
 		<div class='facebook-pic image-frame'>&nbsp;</div>
 	`;
 
+	/** Indicates whether demo is in active state. */
+	public isActive: boolean	= false;
+
 	/** Messages to send during demo. */
 	public readonly messages: Promise<{
-		text: string;
 		isMobile: boolean;
+		text: string;
 	}[]>	= (async () => [
 		{
 			isMobile: true,
@@ -103,9 +106,6 @@ export class DemoService {
 			text: `ttyl :v:`
 		}
 	])();
-
-	/** Desktop chat UI data. */
-	public desktop: ChatData;
 
 	/** Mobile chat UI data. */
 	public mobile: ChatData;

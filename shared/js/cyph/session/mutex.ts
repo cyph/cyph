@@ -16,15 +16,6 @@ export class Mutex implements IMutex {
 
 
 	/** @ignore */
-	private owner: string;
-
-	/** @ignore */
-	private purpose: string;
-
-	/** @ignore */
-	private requester: {user: string; purpose: string}|undefined;
-
-	/** @ignore */
 	private readonly commands	= {
 		release: () : void => {
 			if (this.owner !== users.me) {
@@ -45,10 +36,19 @@ export class Mutex implements IMutex {
 				);
 			}
 			else {
-				this.requester	= {user: users.other, purpose};
+				this.requester	= {purpose, user: users.other};
 			}
 		}
 	};
+
+	/** @ignore */
+	private owner: string;
+
+	/** @ignore */
+	private purpose: string;
+
+	/** @ignore */
+	private requester: {purpose: string; user: string}|undefined;
 
 	/** @ignore */
 	private shiftRequester () : void {
