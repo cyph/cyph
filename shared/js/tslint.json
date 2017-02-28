@@ -26,7 +26,7 @@
 		]}],
 		"no-any": false,
 		"no-empty-interface": true,
-		/* Pending palantir/tslint/issues/2158: "no-inferrable-types": [true, "ignore-params"], */
+		"no-inferrable-types": [true, "ignore-params", "ignore-properties"],
 		"no-internal-module": true,
 		"no-magic-numbers": false,
 		"no-namespace": true,
@@ -181,13 +181,13 @@
 		"no-forward-ref": true,
 		"no-input-rename": true,
 		"no-output-rename": true,
-		/* Pending fix: "no-unused-css": true, */
+		"no-unused-css": true,
 		"pipe-impure": true,
 		"pipe-naming": [true, "camelCase", "cyph"],
 		"templates-use-public": true,
 		"use-host-property-decorator": true,
 		"use-input-property-decorator": true,
-		/* Pending fix: "use-life-cycle-interface": true, */
+		"use-life-cycle-interface": true,
 		"use-output-property-decorator": true,
 		"use-pipe-transform-interface": true,
 
@@ -196,7 +196,7 @@
 
 		"export-name": false,
 		"insecure-random": true,
-		/* Pending fix: "max-func-body-length": [true, 200], */
+		"max-func-body-length": [true, 200],
 		"no-banned-terms": true,
 		"no-constant-condition": false,
 		"no-delete-expression": true,
@@ -224,7 +224,7 @@
 		"no-unnecessary-field-initialization": true,
 		"no-unnecessary-local-variable": true,
 		"no-unnecessary-override": true,
-		/* Pending fix: "no-unnecessary-semicolons": true, */
+		"no-unnecessary-semicolons": true,
 		"no-var-self": true,
 		"no-with-statement": true,
 		"possible-timing-attack": true,
