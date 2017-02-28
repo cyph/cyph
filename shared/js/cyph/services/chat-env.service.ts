@@ -11,6 +11,7 @@ import {SessionService} from './session.service';
  */
 @Injectable()
 export class ChatEnvService extends EnvService {
+	/** @ignore */
 	private newCyphUrlHelper (base: boolean) : string {
 		if (!this.configService) {
 			return base ? env.newCyphBaseUrl : env.newCyphUrl;
