@@ -1,5 +1,17 @@
-<div class='settings-wrapper'>
+<div class='settings-wrapper' *ngIf='accountAuthService.current'>
 	<h1>Account Settings</h1>
+	<div class='name'>
+		<label>Your Name: </label>
+		<span>{{accountAuthService.current.user.name}}</span>
+	</div>
+	<div class='email'>
+		<label>Your Email: </label>
+		<span>{{accountAuthService.current.user.email}}</span>
+	</div>
+	<div class='premium-status'>
+		<label>Premium Status: </label>
+		<span>{{accountAuthService.current.user.hasPremium ? 'Enabled' : 'Disabled'}}</span>
+	</div>
 	<md2-switch>Setting 1</md2-switch>
 	<md2-switch>Setting 2</md2-switch>
 	<md2-switch>Setting 3</md2-switch>
