@@ -1,1 +1,98 @@
+@mixin vertical-align {
+	position: relative;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
 
+:host h1 {
+	text-align: center;
+}
+
+md2-button {
+	button {
+		margin: 0px !important;
+	}
+
+	.chat, .message {
+		font-size: 23px !important;
+		top: 2px;
+		position: relative;
+	}
+
+	.material-icons {
+		font-size: 30px;
+	}
+}
+
+.contacts {
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+
+	.wrapper {
+		margin: 2px;
+		background-color: rgba(57, 40, 89, 0.65);
+		padding: 10px;
+		border-radius: 8px;
+		border: 3px solid rgba(57, 40, 89, 0.35) !important;
+
+		span, h2, h3 {
+			text-align: center;
+		}
+
+		.user {
+			margin-top: 15px;
+			max-height: 42px;
+			margin-left: 10px;
+			margin-right: 10px;
+		}
+
+		.name {
+			max-width: 175px;
+		}
+
+		.name, .status {
+			margin: 0px;
+		}
+
+		.username {
+			margin-right: 0px !important;
+		}
+
+		.status {
+			margin-top: 5px !important;
+			margin-bottom: -5px !important;
+			text-align: center;
+		}
+
+		.username {
+			margin: 0px;
+		}
+
+		.avatar {
+			width: 60px;
+			height: 60px;
+			background-color: #f3f3f3;
+			border-radius: 50%;
+			transition: border 0.75s ease;
+		}
+
+		.avatar.online {
+			border: 5px solid rgba(56, 140, 71, 0.9) !important;
+		}
+
+		.avatar.away {
+			border: 5px solid rgba(247, 184, 1, 0.9) !important;
+		}
+
+		.avatar.busy {
+			border: 5px solid rgba(255, 28, 28, 0.9) !important;
+		}
+
+		.avatar.offline {
+			border: 5px solid rgba(40, 38, 44, 0.9) !important;
+		}
+	}
+}

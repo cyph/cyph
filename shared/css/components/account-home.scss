@@ -14,6 +14,10 @@ cyph-account-profile {
 		transform: translateY(0%) !important;
 
 		// Profile Status Indicator. TODO: Add Animations
+		.profile-picture {
+			transition: border 0.75s ease;
+		}
+
 		.profile-picture.online {
 			border: 13px solid rgba(56, 140, 71, 0.9) !important
 		}
