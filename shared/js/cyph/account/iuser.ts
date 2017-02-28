@@ -8,6 +8,12 @@ export interface IUser {
 	/** Image URI for avatar / profile picture. */
 	avatar: string;
 
+	/** Email Address */
+	email: string;
+
+	/** Premium Account */
+	hasPremium: boolean;
+
 	/** Full name. */
 	name: string;
 
@@ -16,10 +22,4 @@ export interface IUser {
 
 	/** Username. */
 	username: string;
-
-	/** Email Address */
-	email: string;
-
-	/** Premium Account */
-	hasPremium: boolean;
 }

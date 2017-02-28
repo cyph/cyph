@@ -27,7 +27,7 @@ export class AccountProfileComponent implements OnInit {
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
 	/** @see UserPresence */
-	public readonly statuses: typeof userPresenceSelectOptions = userPresenceSelectOptions;
+	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
@@ -62,7 +62,7 @@ export class AccountProfileComponent implements OnInit {
 		public readonly envService: EnvService,
 
 		/** @see AccountProfileService */
-		public readonly urlStateService: UrlStateService,
+		public readonly urlStateService: UrlStateService
 
 	) {}
 }
