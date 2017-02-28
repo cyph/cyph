@@ -1,3 +1,5 @@
+/* tslint:disable:no-import-side-effect */
+
 /**
  * @file Entry point of cyph.im.
  */

@@ -1,3 +1,5 @@
+/* tslint:disable:no-import-side-effect */
+
 /**
  * @file Miscellaneous setup tasks performed before running main
  * routine of all Web projects.
