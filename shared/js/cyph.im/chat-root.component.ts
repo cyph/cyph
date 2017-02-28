@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import * as Granim from 'granim';
 import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
-import {AbstractSessionInitService} from '../cyph/services/abstract-session-init.service';
 import {ChatEnvService} from '../cyph/services/chat-env.service';
 import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
@@ -13,13 +12,14 @@ import {FaviconService} from '../cyph/services/favicon.service';
 import {FileTransferService} from '../cyph/services/file-transfer.service';
 import {P2PService} from '../cyph/services/p2p.service';
 import {ScrollService} from '../cyph/services/scroll.service';
+import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
 import {AppService} from './app.service';
 import {States} from './enums';
-import {SessionInitService} from './session-init.service';
+import {UrlSessionInitService} from './url-session-init.service';
 
 
 /**
@@ -34,8 +34,8 @@ import {SessionInitService} from './session-init.service';
 		ScrollService,
 		SessionService,
 		{
-			provide: AbstractSessionInitService,
-			useClass: SessionInitService
+			provide: SessionInitService,
+			useClass: UrlSessionInitService
 		},
 		{
 			provide: EnvService,
@@ -115,7 +115,7 @@ export class ChatRootComponent implements OnInit {
 			true
 		);
 
-		if (this.abstractSessionInitService.callType) {
+		if (this.sessionInitService.callType) {
 			/* If unsupported, warn and then close window */
 			if (!this.p2pService.isSupported) {
 				this.appService.state	= States.blank;
@@ -143,8 +143,8 @@ export class ChatRootComponent implements OnInit {
 		this.sessionService.one(this.sessionService.events.beginChatComplete).then(() => {
 			self.onbeforeunload	= () => this.stringsService.disconnectWarning;
 
-			if (this.abstractSessionInitService.callType && this.sessionService.state.isAlice) {
-				this.p2pService.p2p.request(this.abstractSessionInitService.callType);
+			if (this.sessionInitService.callType && this.sessionService.state.isAlice) {
+				this.p2pService.p2p.request(this.sessionInitService.callType);
 			}
 		});
 
@@ -155,9 +155,9 @@ export class ChatRootComponent implements OnInit {
 		this.sessionService.one(this.sessionService.events.connect).then(() => {
 			this.appService.state	= States.chat;
 
-			if (this.abstractSessionInitService.callType) {
+			if (this.sessionInitService.callType) {
 				this.dialogService.toast({
-					content: this.abstractSessionInitService.callType === 'video' ?
+					content: this.sessionInitService.callType === 'video' ?
 						this.stringsService.p2pWarningVideoPassive :
 						this.stringsService.p2pWarningAudioPassive
 					,
@@ -190,9 +190,6 @@ export class ChatRootComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly abstractSessionInitService: AbstractSessionInitService,
-
-		/** @ignore */
 		private readonly appService: AppService,
 
 		/** @ignore */
@@ -212,6 +209,9 @@ export class ChatRootComponent implements OnInit {
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		private readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService,

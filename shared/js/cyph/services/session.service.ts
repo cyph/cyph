@@ -8,8 +8,8 @@ import {ISession} from '../session/isession';
 import {ProFeatures} from '../session/profeatures';
 import {Thread} from '../thread';
 import {util} from '../util';
-import {AbstractSessionInitService} from './abstract-session-init.service';
 import {ConfigService} from './config.service';
+import {SessionInitService} from './session-init.service';
 
 
 /**
@@ -25,7 +25,7 @@ export class SessionService implements ISessionService {
 
 	/** @ignore */
 	private readonly wasInitiatedByAPI: boolean	=
-		this.abstractSessionInitService.id.length > this.configService.secretLength
+		this.sessionInitService.id.length > this.configService.secretLength
 	;
 
 	/** @ignore */
@@ -89,8 +89,8 @@ export class SessionService implements ISessionService {
 			this.apiFlags.modestBranding,
 			this.apiFlags.nativeCrypto,
 			this.apiFlags.telehealth,
-			this.abstractSessionInitService.callType === 'video',
-			this.abstractSessionInitService.callType === 'audio'
+			this.sessionInitService.callType === 'video',
+			this.sessionInitService.callType === 'audio'
 		);
 	}
 
@@ -106,12 +106,12 @@ export class SessionService implements ISessionService {
 
 	constructor (
 		/** @ignore */
-		private readonly abstractSessionInitService: AbstractSessionInitService,
+		private readonly configService: ConfigService,
 
 		/** @ignore */
-		private readonly configService: ConfigService
+		private readonly sessionInitService: SessionInitService
 	) {
-		let id	= this.abstractSessionInitService.id;
+		let id	= this.sessionInitService.id;
 
 		/* API flags */
 		for (const flag of this.configService.apiFlags) {

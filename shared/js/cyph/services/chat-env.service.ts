@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {env} from '../env';
-import {AbstractSessionInitService} from './abstract-session-init.service';
 import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
+import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 
 
@@ -21,9 +21,9 @@ export class ChatEnvService extends EnvService {
 		;
 
 		const baseUrl	=
-			this.abstractSessionInitService.callType === 'audio' ?
+			this.sessionInitService.callType === 'audio' ?
 				(base ? env.cyphAudioBaseUrl : env.cyphAudioUrl) :
-				this.abstractSessionInitService.callType === 'video' ?
+				this.sessionInitService.callType === 'video' ?
 					(base ? env.cyphVideoBaseUrl : env.cyphVideoUrl) :
 					(base ? env.newCyphBaseUrl : env.newCyphUrl)
 		;
@@ -60,13 +60,13 @@ export class ChatEnvService extends EnvService {
 
 	constructor (
 		/** @ignore */
-		private readonly abstractSessionInitService: AbstractSessionInitService,
-
-		/** @ignore */
 		private readonly configService: ConfigService,
 
 		/** @ignore */
-		private readonly sessionService: SessionService
+		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		private readonly sessionInitService: SessionInitService
 	) {
 		super();
 	}
