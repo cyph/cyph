@@ -1,6 +1,6 @@
 <div class='demo-root grid-container'>
 	<span class='desktop'>
-		<cyph-chat-root [data]='demoService.desktop'>
+		<cyph-demo-chat-root [data]='demoService.desktop'>
 			<span *ngIf='!envService.isMobile'>
 				<div class='cyph-foreground'>
 					<cyph-chat-main class='flex layout-column layout-fill'>
@@ -13,11 +13,11 @@
 				</div>
 				<cyph-chat-cyphertext></cyph-chat-cyphertext>
 			</span>
-		</cyph-chat-root>
+		</cyph-demo-chat-root>
 	</span>
 
 	<span class='mobile'>
-		<cyph-chat-root [data]='demoService.mobile'>
+		<cyph-demo-chat-root [data]='demoService.mobile'>
 			<div class='cyph-foreground'>
 				<cyph-chat-main class='flex layout-column layout-fill'>
 					<span cyphTranslate>
@@ -27,6 +27,6 @@
 				<cyph-chat-message-box></cyph-chat-message-box>
 			</div>
 			<cyph-chat-cyphertext></cyph-chat-cyphertext>
-		</cyph-chat-root>
+		</cyph-demo-chat-root>
 	</span>
 </div>

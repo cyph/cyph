@@ -46,10 +46,10 @@ import {UrlSessionInitService} from './url-session-init.service';
 			useClass: ChatStringsService
 		}
 	],
-	selector: 'cyph-chat-root',
+	selector: 'cyph-ephemeral-chat-root',
 	templateUrl: '../../templates/chat-root.html'
 })
-export class ChatRootComponent implements OnInit {
+export class EphemeralChatRootComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		const granim	= !this.envService.isWeb || this.envService.coBranded ?

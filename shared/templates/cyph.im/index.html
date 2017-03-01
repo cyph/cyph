@@ -1,4 +1,4 @@
-<cyph-chat-root *ngIf='appService.state !== appService.states.account'>
+<cyph-ephemeral-chat-root *ngIf='appService.state !== appService.states.account'>
 	<section id='main' class='cyph-foreground layout-fill layout-column'>
 		<canvas id='main-chat-gradient'></canvas>
 
@@ -40,7 +40,7 @@
 	</section>
 
 	<cyph-chat-cyphertext></cyph-chat-cyphertext>
-</cyph-chat-root>
+</cyph-ephemeral-chat-root>
 
 <section
 	id='main'

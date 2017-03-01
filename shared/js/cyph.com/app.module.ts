@@ -62,7 +62,7 @@ import {UtilService} from '../cyph/services/util.service';
 import {VirtualKeyboardWatcherService} from '../cyph/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
 import {AppComponent} from './app.component';
-import {ChatRootComponent} from './chat-root.component';
+import {DemoChatRootComponent} from './demo-chat-root.component';
 import {DemoComponent} from './demo.component';
 import {SilentNotificationService} from './silent-notification.service';
 
@@ -78,7 +78,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
-		ChatRootComponent,
+		DemoChatRootComponent,
 		CheckoutComponent,
 		ContactComponent,
 		DemoComponent,

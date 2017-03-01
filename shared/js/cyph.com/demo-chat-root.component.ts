@@ -27,10 +27,10 @@ import {LocalSessionService} from './local-session.service';
 			useExisting: LocalSessionService
 		}
 	],
-	selector: 'cyph-chat-root',
+	selector: 'cyph-demo-chat-root',
 	templateUrl: '../../templates/chat-root.html'
 })
-export class ChatRootComponent implements OnInit {
+export class DemoChatRootComponent implements OnInit {
 	/** @see ChatData */
 	@Input() public data: ChatData;
 

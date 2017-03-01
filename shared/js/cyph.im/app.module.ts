@@ -81,7 +81,7 @@ import {UtilService} from '../cyph/services/util.service';
 import {VirtualKeyboardWatcherService} from '../cyph/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
 import {AppComponent} from './app.component';
-import {ChatRootComponent} from './chat-root.component';
+import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 
 
 /**
@@ -105,7 +105,7 @@ import {ChatRootComponent} from './chat-root.component';
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
-		ChatRootComponent,
+		EphemeralChatRootComponent,
 		ContactComponent,
 		FileInputComponent,
 		FooterComponent,
