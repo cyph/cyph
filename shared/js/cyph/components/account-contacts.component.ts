@@ -15,11 +15,11 @@ import {EnvService} from '../services/env.service';
 	templateUrl: '../../../templates/account-contacts.html'
 })
 export class AccountContactsComponent {
-	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence	= UserPresence;
-
 	/** @see States */
 	public states: typeof States	= States;
+
+	/** @see UserPresence */
+	public readonly userPresence: typeof UserPresence	= UserPresence;
 
 	constructor (
 		/** @see AccountService */

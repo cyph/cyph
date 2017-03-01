@@ -46,16 +46,16 @@ export class AccountMenuComponent implements OnInit {
 		this.urlStateService.setUrl('account/' + States[state]);
 	}
 
-	/** Opens account menu. */
-	public async openMenu () : Promise<void> {
-		await util.sleep();
-		(await this.menu).open();
-	}
-
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		await this.accountAuthService.ready && this.accountAuthService.current;
 		this.openMenu();
+	}
+
+	/** Opens account menu. */
+	public async openMenu () : Promise<void> {
+		await util.sleep();
+		(await this.menu).open();
 	}
 
 	constructor (

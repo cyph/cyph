@@ -25,9 +25,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 /* tslint:disable-next-line:directive-class-suffix */
 export class MdAutocompleteComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'md2Autocomplete';
-
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
@@ -86,6 +83,9 @@ export class MdAutocompleteComponent
 			</md-autocomplete>
 		`
 	};
+
+	/** Component title. */
+	public static readonly title: string	= 'md2Autocomplete';
 
 
 	/** @ignore */

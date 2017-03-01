@@ -17,17 +17,17 @@ import {UrlStateService} from '../services/url-state.service';
 	templateUrl: '../../../templates/account-profile.html'
 })
 export class AccountProfileComponent implements OnInit {
-	/** Username of profile owner. */
-	@Input() public username: string|undefined;
-
 	/** User profile. */
 	public profile: Profile|undefined;
 
 	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence	= UserPresence;
+	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
+
+	/** Username of profile owner. */
+	@Input() public username: string|undefined;
 
 	/** @see UserPresence */
-	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
+	public readonly userPresence: typeof UserPresence	= UserPresence;
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
