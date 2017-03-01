@@ -1,6 +1,7 @@
 <cyph-chat-root *ngIf='appService.state !== appService.states.account'>
 	<section id='main' class='cyph-foreground layout-fill layout-column'>
 		<canvas id='main-chat-gradient'></canvas>
+
 		<cyph-chat-main
 			[hideDisconnectMessage]='envService.coBranded'
 			[messageCountInTitle]='true'
@@ -34,14 +35,13 @@
 				*ngIf='appService.state === appService.states.chat'
 			></cyph-chat-message-box>
 
-			<cyph-footer
-				*ngIf='!envService.isMobile'
-			></cyph-footer>
+			<cyph-footer *ngIf='!envService.isMobile'></cyph-footer>
 		</footer>
 	</section>
 
 	<cyph-chat-cyphertext></cyph-chat-cyphertext>
 </cyph-chat-root>
+
 <section
 	id='main'
 	class='layout-fill layout-column'

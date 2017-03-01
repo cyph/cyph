@@ -54,7 +54,7 @@ export class ChatRootComponent implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		const granim	= !this.envService.isWeb || this.envService.coBranded ?
 			undefined :
-			new Granim({
+			<{changeState: (state: string) => void}> new Granim({
 				direction: 'radial',
 				element: '#main-chat-gradient',
 				isPausedWhenNotInView: true,
