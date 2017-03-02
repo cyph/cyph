@@ -9,6 +9,7 @@ import {ChatService} from '../cyph/services/chat.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
+import {EphemeralSessionService} from '../cyph/services/ephemeral-session.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {FileTransferService} from '../cyph/services/file-transfer.service';
 import {P2PService} from '../cyph/services/p2p.service';
@@ -33,14 +34,17 @@ import {UrlSessionInitService} from './url-session-init.service';
 		FileTransferService,
 		P2PService,
 		ScrollService,
-		SessionService,
-		{
-			provide: SessionInitService,
-			useClass: UrlSessionInitService
-		},
 		{
 			provide: EnvService,
 			useClass: ChatEnvService
+		},
+		{
+			provide: SessionService,
+			useClass: EphemeralSessionService
+		},
+		{
+			provide: SessionInitService,
+			useClass: UrlSessionInitService
 		},
 		{
 			provide: StringsService,

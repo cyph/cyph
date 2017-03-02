@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
-import {ISessionService} from '../cyph/service-interfaces/isession-service';
 import {EnvService} from '../cyph/services/env.service';
+import {SessionService} from '../cyph/services/session.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {IMessage} from '../cyph/session/imessage';
 import {Message} from '../cyph/session/message';
@@ -13,7 +13,7 @@ import {ChatData} from './chat-data';
  * Mocks session service and communicates locally.
  */
 @Injectable()
-export class LocalSessionService extends ISessionService {
+export class LocalSessionService extends SessionService {
 	/** @ignore */
 	private chatData: ChatData;
 

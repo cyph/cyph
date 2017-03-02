@@ -1,16 +1,16 @@
 import {Injectable} from '@angular/core';
 import {IUser} from '../account/iuser';
-import {ISessionService} from '../service-interfaces/isession-service';
 import {IMessage} from '../session/imessage';
 import {util} from '../util';
 import {AccountUserLookupService} from './account-user-lookup.service';
+import {SessionService} from './session.service';
 
 
 /**
  * Account session service.
  */
 @Injectable()
-export class AccountSessionService extends ISessionService {
+export class AccountSessionService extends SessionService {
 	/** Temporary, for testing. */
 	private readonly replies	= new Set<string>();
 

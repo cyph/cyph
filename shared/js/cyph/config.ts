@@ -1,4 +1,4 @@
-import {ISessionService} from './service-interfaces/isession-service';
+import {ISessionService} from './service-interfaces/isession.service';
 
 
 /**
