@@ -6,7 +6,7 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 
 
 /**
- * @see Account contacts service.
+ * Account contacts service.
  */
 @Injectable()
 export class AccountContactsService {

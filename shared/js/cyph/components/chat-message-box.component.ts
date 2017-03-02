@@ -1,6 +1,7 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
 import * as tabIndent from 'tab-indent';
+import {States} from '../chat/enums';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
@@ -118,6 +119,9 @@ export class ChatMessageBoxComponent implements OnInit {
 		label: string;
 		tooltipDirection: string;
 	}[]	= this.speedDialButtons.filter(o => !o.disabled);
+
+	/** @see States */
+	public readonly states: typeof States	= States;
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {

@@ -8,10 +8,10 @@ export interface IUser {
 	/** Image URI for avatar / profile picture. */
 	avatar: string;
 
-	/** Email Address */
+	/** Email address. */
 	email: string;
 
-	/** Premium Account */
+	/** Premium account. */
 	hasPremium: boolean;
 
 	/** Full name. */

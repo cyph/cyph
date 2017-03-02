@@ -5,7 +5,7 @@
 >
 	<div
 		class='cyph-view loading layout-column layout-fill flex'
-		[class.active]='chatService.state === chatService.states.keyExchange'
+		[class.active]='chatService.chat.state === states.keyExchange'
 	>
 		<div class='flex'></div>
 		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation'>
@@ -22,14 +22,14 @@
 		<md2-progress-linear
 			childClass='md-accent key-exchange-progress'
 			mdMode='determinate'
-			[value]='chatService.keyExchangeProgress'
+			[value]='chatService.chat.keyExchangeProgress'
 		></md2-progress-linear>
 		<div class='flex'></div>
 	</div>
 
 	<div
 		class='cyph-view abort-screen loading layout-column layout-fill flex'
-		[class.active]='chatService.state === chatService.states.aborted'
+		[class.active]='chatService.chat.state === states.aborted'
 	>
 		<div class='flex'></div>
 		<div class='image'>
@@ -78,7 +78,7 @@
 
 	<div
 		class='cyph-view chat-begin-message loading layout-column layout-fill flex'
-		[class.active]='chatService.state === chatService.states.chatBeginMessage'
+		[class.active]='chatService.chat.state === states.chatBeginMessage'
 	>
 		<div class='flex'></div>
 		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation connected'></div>
@@ -96,7 +96,7 @@
 
 	<div
 		class='cyph-view video-call flex'
-		[class.active]='chatService.state === chatService.states.chat'
+		[class.active]='chatService.chat.state === states.chat'
 		[class.playing]='p2pService.isActive'
 		[class.sidebar-open]='p2pService.isSidebarOpen'
 		*ngIf='p2pService.p2p'
@@ -209,7 +209,7 @@
 
 	<div
 		class='cyph-view transfer-list flex'
-		[class.active]='chatService.state === chatService.states.chat'
+		[class.active]='chatService.chat.state === states.chat'
 	>
 		<md2-content childClass='md-no-flicker'>
 			<md2-list childClass='layout-column'>
@@ -245,7 +245,7 @@
 
 	<div
 		class='cyph-view message-list flex'
-		[class.active]='chatService.state === chatService.states.chat'
+		[class.active]='chatService.chat.state === states.chat'
 		[style.margin-top]='
 			(
 				(
@@ -262,27 +262,23 @@
 					class='layout-row'
 					[message]='message'
 					[mobile]='envService.isMobile || p2pService.isActive'
-					*ngFor='let message of chatService.messages'
+					*ngFor='let message of chatService.chat.messages'
 				></cyph-chat-message>
 
-				<md2-list-item
-					class='layout-row'
-					[childClass]='
-						"friend-is-typing" +
-						(chatService.isFriendTyping ? " show" : "")
-					'
-				>
-					<span class='ellipsis-spinner'>
-						<div class='bounce1'></div>
-						<div class='bounce2'></div>
-						<div class='bounce3'></div>
+				<md2-list-item class='layout-row'>
+					<span class='friend-is-typing' [class.show]='chatService.chat.isFriendTyping'>
+						<span class='ellipsis-spinner'>
+							<div class='bounce1'></div>
+							<div class='bounce2'></div>
+							<div class='bounce3'></div>
+						</span>
 					</span>
 				</md2-list-item>
 
 				<md2-list-item
 					class='layout-row'
 					childClass='chat-end-message layout-align-center-center'
-					*ngIf='chatService.isDisconnected && !hideDisconnectMessage'
+					*ngIf='chatService.chat.isDisconnected && !hideDisconnectMessage'
 				>
 					<md2-card class='flex flex-gt-sm-50' childClass='md-padding'>
 						<md2-card-content>

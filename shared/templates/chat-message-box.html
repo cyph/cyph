@@ -1,11 +1,11 @@
 <div
 	class='chat-message-box'
 	[class.mobile]='envService.isMobile'
-	*ngIf='chatService.state === chatService.states.chat && sessionService.state.isAlive'
+	*ngIf='chatService.chat.state === states.chat && sessionService.state.isAlive'
 >
 	<textarea
 		class='message-box tabIndent'
-		[(ngModel)]='chatService.currentMessage'
+		[(ngModel)]='chatService.chat.currentMessage'
 		(ngModelChange)='chatService.messageChange()'
 		placeholder='Send a secure message...'
 		cyphTranslate
@@ -14,7 +14,7 @@
 	<div *ngIf='envService.isMobile'>
 		<div
 			class='message-box-button-group'
-			[class.hidden]='chatService.currentMessage === ""'
+			[class.hidden]='chatService.chat.currentMessage === ""'
 		>
 			<md2-button
 				ariaLabel='Send'
@@ -27,7 +27,7 @@
 		</div>
 		<div
 			class='message-box-button-group'
-			[class.hidden]='chatService.currentMessage !== ""'
+			[class.hidden]='chatService.chat.currentMessage !== ""'
 		>
 			<md2-button
 				ariaLabel='Video Call'

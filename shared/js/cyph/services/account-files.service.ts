@@ -4,7 +4,7 @@ import {AccountAuthService} from './account-auth.service';
 
 
 /**
- * @see Account file service.
+ * Account file service.
  */
 @Injectable()
 export class AccountFilesService {

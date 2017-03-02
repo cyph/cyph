@@ -1,13 +1,17 @@
 <div cyphNanoScroller class='layout-row'>
 	<canvas class='cyph-gradient'></canvas>
-	<cyph-account-menu class='menu sidebar layout-column'></cyph-account-menu>
+
+	<cyph-account-menu
+		class='menu sidebar layout-column flex-20'
+	></cyph-account-menu>
+
 	<div
-		class='layout-column'
-		[ngClass]='sidebarVisible ? "flex-75" : "flex"'
+		class='layout-column flex'
 		*ngIf='!showOnlySidebar'
 	>
 		<cyph-account-chat
 			class='layout-fill'
+			[username]='accountService.chatUsername'
 			*ngIf='accountService.state === states.chat'
 		></cyph-account-chat>
 
@@ -33,6 +37,7 @@
 
 		<cyph-account-profile
 			class='layout-fill'
+			[username]='accountService.profileUsername'
 			*ngIf='accountService.state === states.profile'
 		></cyph-account-profile>
 

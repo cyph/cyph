@@ -134,11 +134,11 @@
 				childClass='self-destruct-button'
 				(childClick)='chatService.setQueuedMessage(
 					undefined,
-					!chatService.queuedMessageSelfDestruct
+					!chatService.chat.queuedMessageSelfDestruct
 				)'
 			>
 				<md2-icon [childClass]='
-					chatService.queuedMessageSelfDestruct === true ? "active" : ""
+					chatService.chat.queuedMessageSelfDestruct === true ? "active" : ""
 				'>
 					timer
 				</md2-icon>

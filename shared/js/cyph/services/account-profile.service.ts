@@ -6,7 +6,7 @@ import {FileService} from './file.service';
 
 
 /**
- * @see Account profile service.
+ * Account profile service.
  */
 @Injectable()
 export class AccountProfileService {

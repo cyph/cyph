@@ -1,5 +1,6 @@
 import {ChangeDetectorRef, Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
+import {States} from '../chat/enums';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
@@ -24,6 +25,9 @@ export class ChatMainComponent implements OnInit {
 
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean;
+
+	/** @see States */
+	public readonly states: typeof States	= States;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {

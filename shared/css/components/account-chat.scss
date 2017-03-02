@@ -1,3 +1,9 @@
-cyph-chat-cyphertext {
+:host > div {
+	margin-left: 4%;
+	padding-bottom: 1em;
+	background-color: initial !important;
+}
+
+:host /deep/ .message-list:after {
 	display: none;
 }

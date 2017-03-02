@@ -5,7 +5,7 @@ import {util} from '../util';
 
 
 /**
- * @see Account user lookup service.
+ * Account user lookup service.
  */
 @Injectable()
 export class AccountUserLookupService {

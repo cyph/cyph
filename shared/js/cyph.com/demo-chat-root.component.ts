@@ -42,7 +42,7 @@ export class DemoChatRootComponent implements OnInit {
 
 		this.data.message.subscribe(s => {
 			if (s.length === 1) {
-				this.chatService.currentMessage += s;
+				this.chatService.chat.currentMessage += s;
 			}
 			else if (s.length > 1) {
 				this.chatService.send(s);

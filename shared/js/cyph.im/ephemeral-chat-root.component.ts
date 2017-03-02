@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import * as Granim from 'granim';
 import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
+import {States as ChatStates} from '../cyph/chat/enums';
 import {ChatEnvService} from '../cyph/services/chat-env.service';
 import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
@@ -173,7 +174,7 @@ export class EphemeralChatRootComponent implements OnInit {
 		/* Cyphertext easter egg */
 		/* tslint:disable-next-line:no-unused-new */
 		new Konami(async () => {
-			while (this.chatService.state !== this.chatService.states.chat) {
+			while (this.chatService.chat.state !== ChatStates.chat) {
 				await util.sleep();
 			}
 

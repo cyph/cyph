@@ -7,12 +7,12 @@
 }
 
 .message-list {
-	.message-item {
+	.message-item, .friend-is-typing {
 		@include transition(opacity 1s ease-in-out);
+	}
 
-		.message-timestamp .message-pending {
-			display: none;
-		}
+	.message-item .message-timestamp .message-pending {
+		display: none;
 	}
 
 	.friend-is-typing {
@@ -20,7 +20,9 @@
 		width: 100%;
 		opacity: 0;
 
-		@include transition(opacity 1s ease-in-out);
+		&.show {
+			opacity: 1;
+		}
 
 		.ellipsis-spinner {
 			margin: 0px;
@@ -98,14 +100,6 @@
 .chat-main.mobile, .chat-main.video {
 	.friend-is-typing {
 		text-align: center;
-	}
-}
-
-.message-list {
-	.friend-is-typing.show {
-		opacity: 1;
-
-		@include transition(opacity 1s ease-in-out);
 	}
 }
 
