@@ -43,7 +43,7 @@
 		}
 	}
 
-	.new-messages {
+	.new-messages > * {
 		background-color: white !important;
 		color: #8b62d9 !important;
 		width: 100%;
@@ -51,6 +51,8 @@
 		margin-top: -20px;
 		cursor: pointer;
 		z-index: 4 !important;
+		position: absolute;
+		top: 0px;
 
 		&:after {
 			width: 100%;
@@ -98,11 +100,11 @@
 			border: 1px solid #000000;
 		}
 
-		.message-box:focus ~ .new-messages {
+		.message-box:focus ~ .new-messages > * {
 			display: none;
 		}
 
-		.new-messages {
+		.new-messages > * {
 			z-index: 35 !important;
 		}
 

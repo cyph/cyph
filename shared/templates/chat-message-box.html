@@ -96,7 +96,8 @@
 	></md2-fab-speed-dial>
 
 	<md2-subheader
-		childClass='new-messages md-subheader-colored md-sticky-clone'
+		class='new-messages'
+		childClass='md-sticky-clone'
 		*ngIf='scrollService.unreadItemCount > 0'
 		stickyState='active'
 		(click)='scrollService.scrollDown()'
