@@ -30,9 +30,7 @@ export class SessionService implements ISessionService {
 	};
 
 	/** @ignore */
-	private readonly wasInitiatedByAPI: boolean	=
-		this.abstractSessionInitService.id.length > this.configService.secretLength
-	;
+	private readonly wasInitiatedByAPI: boolean;
 
 	/** @inheritDoc */
 	public readonly apiFlags	= {
@@ -130,6 +128,8 @@ export class SessionService implements ISessionService {
 				hitType: 'event'
 			});
 		}
+
+		this.wasInitiatedByAPI	= id.length > this.configService.secretLength;
 
 		this.on(this.events.threadUpdate, (e: {
 			key: 'cyphId'|'isAlice'|'isAlive'|'sharedSecret'|'startingNewCyph'|'wasInitiatedByAPI';
