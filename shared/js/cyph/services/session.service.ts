@@ -22,13 +22,10 @@ export abstract class SessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly events: Events				= events;
+	public readonly events: Events			= events;
 
 	/** @inheritDoc */
-	public readonly proFeatures: ProFeatures	= new ProFeatures();
-
-	/** @inheritDoc */
-	public readonly rpcEvents: RpcEvents		= rpcEvents;
+	public readonly rpcEvents: RpcEvents	= rpcEvents;
 
 	/** @inheritDoc */
 	public readonly state	= {
@@ -61,6 +58,11 @@ export abstract class SessionService implements ISessionService {
 	/** @inheritDoc */
 	public async one<T> (event: string) : Promise<T> {
 		return eventManager.one<T>(event + this.eventId);
+	}
+
+	/** @inheritDoc */
+	public get proFeatures () : ProFeatures {
+		return new ProFeatures();
 	}
 
 	/** @inheritDoc */
