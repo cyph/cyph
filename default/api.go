@@ -204,9 +204,12 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	var preAuthorizedProFeatures map[string]bool
 	json.Unmarshal(preAuthorizedCyph.ProFeatures, &preAuthorizedProFeatures)
 
-	for feature, isRequired := range proFeatures {
-		if isRequired && !preAuthorizedProFeatures[feature] {
-			return "Pro feature " + feature + " not available.", http.StatusForbidden
+	/* For now, disable pro feature check for non-API usage */
+	if proFeatures["api"] {
+		for feature, isRequired := range proFeatures {
+			if isRequired && !preAuthorizedProFeatures[feature] {
+				return "Pro feature " + feature + " not available.", http.StatusForbidden
+			}
 		}
 	}
 
