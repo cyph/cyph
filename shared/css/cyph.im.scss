@@ -21,7 +21,7 @@ html, body, #main {
 }
 
 body:not(.mobile) {
-	cyph-chat-root > #main {
+	#main.cyph-foreground {
 		padding: 0px 30px 15px;
 	}
 
