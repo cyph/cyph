@@ -171,14 +171,16 @@ export class ChatRootComponent implements OnInit {
 		});
 
 		/* Cyphertext easter egg */
-		/* tslint:disable-next-line:no-unused-new */
-		new Konami(async () => {
-			while (this.chatService.state !== this.chatService.states.chat) {
-				await util.sleep();
-			}
+		if (!this.sessionService.apiFlags.telehealth) {
+			/* tslint:disable-next-line:no-unused-new */
+			new Konami(async () => {
+				while (this.chatService.state !== this.chatService.states.chat) {
+					await util.sleep();
+				}
 
-			this.cyphertextService.show();
-		});
+				this.cyphertextService.show();
+			});
+		}
 
 		/* For automated tests */
 		if (this.envService.isWeb) {
