@@ -4,7 +4,7 @@ import {FormsModule} from '@angular/forms';
 import {Title} from '@angular/platform-browser';
 import {NativeScriptModule} from 'nativescript-angular/platform';
 import {AppComponent} from './app.component';
-import {ChatRootComponent} from './chat-root.component';
+import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 import {ChatCyphertextComponent} from './js/cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from './js/cyph/components/chat-main.component';
 import {ChatMessageBoxComponent} from './js/cyph/components/chat-message-box.component';
@@ -43,7 +43,7 @@ import {VisibilityWatcherService} from './js/cyph/services/visibility-watcher.se
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
-		ChatRootComponent,
+		EphemeralChatRootComponent,
 		ContactComponent,
 		FileInputComponent,
 		FooterComponent,

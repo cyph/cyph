@@ -7,6 +7,7 @@ import {ChatService} from './js/cyph/services/chat.service';
 import {CyphertextService} from './js/cyph/services/cyphertext.service';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {EnvService} from './js/cyph/services/env.service';
+import {EphemeralSessionService} from './js/cyph/services/ephemeral-session.service';
 import {FileTransferService} from './js/cyph/services/file-transfer.service';
 import {P2PService} from './js/cyph/services/p2p.service';
 import {ScrollService} from './js/cyph/services/scroll.service';
@@ -26,14 +27,17 @@ import {UrlSessionInitService} from './url-session-init.service';
 		FileTransferService,
 		P2PService,
 		ScrollService,
-		SessionService,
-		{
-			provide: SessionInitService,
-			useClass: UrlSessionInitService
-		},
 		{
 			provide: EnvService,
 			useClass: ChatEnvService
+		},
+		{
+			provide: SessionService,
+			useClass: EphemeralSessionService
+		},
+		{
+			provide: SessionInitService,
+			useClass: UrlSessionInitService
 		},
 		{
 			provide: StringsService,
@@ -43,7 +47,7 @@ import {UrlSessionInitService} from './url-session-init.service';
 	selector: 'cyph-chat-root',
 	templateUrl: './templates/chat-root.html'
 })
-export class ChatRootComponent implements OnInit {
+export class EphemeralChatRootComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		if (this.sessionInitService.callType) {
