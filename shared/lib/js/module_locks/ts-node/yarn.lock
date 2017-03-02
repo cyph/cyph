@@ -896,8 +896,8 @@ make-error-cause@^1.2.1:
     make-error "^1.2.0"
 
 make-error@^1.1.1, make-error@^1.2.0:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/make-error/-/make-error-1.2.1.tgz#9a6dfb4844423b9f145806728d05c6e935670e75"
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/make-error/-/make-error-1.2.2.tgz#e4e270e474f642cca20fa126fe441163957832ef"
 
 merge-descriptors@~1.0.0:
   version "1.0.1"
@@ -1397,8 +1397,8 @@ tslint-eslint-rules@^3.2.3:
     doctrine "^0.7.2"
 
 tslint@^4.0.2:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/tslint/-/tslint-4.5.0.tgz#12b384a339d456ee1d3cc665f13f4e759bbe5d64"
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/tslint/-/tslint-4.5.1.tgz#05356871bef23a434906734006fc188336ba824b"
   dependencies:
     babel-code-frame "^6.20.0"
     colors "^1.1.2"
@@ -1494,8 +1494,8 @@ typings@^2.0.0:
     xtend "^4.0.1"
 
 uglify-js@^2.6:
-  version "2.7.5"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.7.5.tgz#4612c0c7baaee2ba7c487de4904ae122079f2ca8"
+  version "2.8.4"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.4.tgz#5aeb6fd6f1f0a672dea63795016590502c290513"
   dependencies:
     async "~0.2.6"
     source-map "~0.5.1"
