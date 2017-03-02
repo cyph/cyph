@@ -8,17 +8,18 @@
 	<span class='name animated flipInX _2'>{{profile.user.name}}</span>
 	<span class='description animated flipInX _3'>{{profile.description}}</span>
 	
-	<div class='status flex-50'>
-			<md2-select
-				cyphTranslate
-				class='flex'
-				childClass='md-block'
-				[(model)]='profile.user.status'
-				formName='status'
-				label='Status'
-				[options]='statuses'
-			></md2-select>
+	<div *ngIf='!username' class='status flex-50'>
+		<md2-select
+			cyphTranslate
+			class='flex'
+			childClass='md-block'
+			[(model)]='profile.user.status'
+			formName='status'
+			label='Status'
+			[options]='statuses'
+		></md2-select>
 	</div>
+
 	<div class='buttons'>
 		<md2-button
 			class='animated flipInX _4'
