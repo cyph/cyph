@@ -22,10 +22,13 @@ export abstract class SessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly events: Events			= events;
+	public readonly events: Events				= events;
 
 	/** @inheritDoc */
-	public readonly rpcEvents: RpcEvents	= rpcEvents;
+	public readonly proFeatures: ProFeatures	= new ProFeatures();
+
+	/** @inheritDoc */
+	public readonly rpcEvents: RpcEvents		= rpcEvents;
 
 	/** @inheritDoc */
 	public readonly state	= {
@@ -38,10 +41,7 @@ export abstract class SessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly proFeatures: ProFeatures	= new ProFeatures();
-
-	/** @inheritDoc */
-	public readonly users: Users				= users;
+	public readonly users: Users	= users;
 
 	/** @inheritDoc */
 	public close () : void {
@@ -64,13 +64,13 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
-	public trigger (event: string, data?: any) : void {
-		eventManager.trigger(event + this.eventId, data);
+	public send (..._MESSAGES: IMessage[]) : void {
+		throw new Error('Must provide an implementation of SessionService.send.');
 	}
 
 	/** @inheritDoc */
-	public send (..._MESSAGES: IMessage[]) : void {
-		throw new Error('Must provide an implementation of SessionService.send.');
+	public trigger (event: string, data?: any) : void {
+		eventManager.trigger(event + this.eventId, data);
 	}
 
 	constructor () {}
