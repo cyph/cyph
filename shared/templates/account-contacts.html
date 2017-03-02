@@ -13,6 +13,7 @@
 						[ngClass]='userPresence[contact.status]'
 						[src]='contact.avatar'
 						alt='User Avatar'
+						(click)='accountService.openProfile(contact.username)'
 					/>
 					<h4 class='status'>
 						{{userPresence[contact.status]}}
