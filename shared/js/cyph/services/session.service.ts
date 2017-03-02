@@ -1,17 +1,36 @@
+import {Injectable} from '@angular/core';
+import {analytics} from '../analytics';
 import {eventManager} from '../event-manager';
-import {ISessionService} from '../service-interfaces/isession.service';
+import {ISessionService} from '../service-interfaces/isession-service';
 import {Events, events, RpcEvents, rpcEvents, Users, users} from '../session/enums';
 import {IMessage} from '../session/imessage';
+import {ISession} from '../session/isession';
 import {ProFeatures} from '../session/profeatures';
+import {Thread} from '../thread';
 import {util} from '../util';
+import {AbstractSessionInitService} from './abstract-session-init.service';
+import {ConfigService} from './config.service';
 
 
 /**
- * Manages a session.
+ * Manages a session in a separate thread.
  */
-export abstract class SessionService implements ISessionService {
+@Injectable()
+export class SessionService implements ISessionService {
 	/** @ignore */
-	protected readonly eventId: string	= util.generateGuid();
+	private readonly eventId: string	= util.generateGuid();
+
+	/** @ignore */
+	private readonly thread: Thread;
+
+	/** @ignore */
+	private readonly threadEvents		= {
+		close: 'close-SessionService',
+		send: 'send-SessionService'
+	};
+
+	/** @ignore */
+	private readonly wasInitiatedByAPI: boolean;
 
 	/** @inheritDoc */
 	public readonly apiFlags	= {
@@ -42,7 +61,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public close () : void {
-		throw new Error('Must provide an implementation of SessionService.close.');
+		this.trigger(this.threadEvents.close);
 	}
 
 	/** @inheritDoc */
@@ -62,12 +81,20 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public get proFeatures () : ProFeatures {
-		return new ProFeatures();
+		return new ProFeatures(
+			this.wasInitiatedByAPI,
+			this.apiFlags.forceTURN,
+			this.apiFlags.modestBranding,
+			this.apiFlags.nativeCrypto,
+			this.apiFlags.telehealth,
+			this.abstractSessionInitService.callType === 'video',
+			this.abstractSessionInitService.callType === 'audio'
+		);
 	}
 
 	/** @inheritDoc */
-	public send (..._MESSAGES: IMessage[]) : void {
-		throw new Error('Must provide an implementation of SessionService.send.');
+	public send (...messages: IMessage[]) : void {
+		this.trigger(this.threadEvents.send, {messages});
 	}
 
 	/** @inheritDoc */
@@ -75,5 +102,88 @@ export abstract class SessionService implements ISessionService {
 		eventManager.trigger(event + this.eventId, data);
 	}
 
-	constructor () {}
+	constructor (
+		/** @ignore */
+		private readonly abstractSessionInitService: AbstractSessionInitService,
+
+		/** @ignore */
+		private readonly configService: ConfigService
+	) {
+		let id	= this.abstractSessionInitService.id;
+
+		/* API flags */
+		for (const flag of this.configService.apiFlags) {
+			if (id[0] !== flag.character) {
+				continue;
+			}
+
+			id	= id.substring(1);
+
+			flag.set(this);
+
+			analytics.sendEvent({
+				eventAction: 'used',
+				eventCategory: flag.analEvent,
+				eventValue: 1,
+				hitType: 'event'
+			});
+		}
+
+		this.wasInitiatedByAPI	= id.length > this.configService.secretLength;
+
+		this.on(this.events.threadUpdate, (e: {
+			key: 'cyphId'|'isAlice'|'isAlive'|'sharedSecret'|'startingNewCyph'|'wasInitiatedByAPI';
+			value: boolean|string|undefined;
+		}) => {
+			if (
+				(e.key === 'cyphId' && typeof e.value === 'string') ||
+				(e.key === 'isAlice' && typeof e.value === 'boolean') ||
+				(e.key === 'isAlive' && typeof e.value === 'boolean') ||
+				(e.key === 'sharedSecret' && typeof e.value === 'string') ||
+				(
+					e.key === 'startingNewCyph' &&
+					(typeof e.value === 'boolean' || typeof e.value === 'undefined')
+				) ||
+				(e.key === 'wasInitiatedByAPI' && typeof e.value === 'boolean')
+			) {
+				/* Casting to any as a temporary workaround pending TypeScript fix */
+				(<any> this).state[e.key]	= e.value;
+			}
+			else {
+				throw new Error('Invalid value.');
+			}
+		});
+
+		this.thread	= new Thread(
+			/* tslint:disable-next-line:only-arrow-functions */
+			function (
+				/* tslint:disable-next-line:variable-name */
+				Session: any,
+				locals: any,
+				importScripts: Function
+			) : void {
+				importScripts('/js/cyph/session/session.js');
+
+				const session: ISession	= new Session(
+					locals.id,
+					locals.proFeatures,
+					locals.eventId
+				);
+
+				session.on(locals.events.close, () => {
+					session.close();
+				});
+
+				session.on(locals.events.send, (e: {messages: IMessage[]}) => {
+					session.send(...e.messages);
+				});
+			},
+			{
+				id,
+				eventId: this.eventId,
+				events: this.threadEvents,
+				proFeatures: this.proFeatures
+			}
+		);
+	}
 }
