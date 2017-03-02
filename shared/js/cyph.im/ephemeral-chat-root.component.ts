@@ -2,26 +2,24 @@ import {Component, OnInit} from '@angular/core';
 import * as Granim from 'granim';
 import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
-import {States as ChatStates} from '../cyph/chat/enums';
+import {AbstractSessionInitService} from '../cyph/services/abstract-session-init.service';
 import {ChatEnvService} from '../cyph/services/chat-env.service';
 import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
-import {EphemeralSessionService} from '../cyph/services/ephemeral-session.service';
 import {FaviconService} from '../cyph/services/favicon.service';
-import {FileTransferService} from '../cyph/services/file-transfer.service';
+import {FileService} from '../cyph/services/file.service';
 import {P2PService} from '../cyph/services/p2p.service';
 import {ScrollService} from '../cyph/services/scroll.service';
-import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
 import {AppService} from './app.service';
 import {States} from './enums';
-import {UrlSessionInitService} from './url-session-init.service';
+import {SessionInitService} from './session-init.service';
 
 
 /**
@@ -31,35 +29,32 @@ import {UrlSessionInitService} from './url-session-init.service';
 	providers: [
 		ChatService,
 		CyphertextService,
-		FileTransferService,
+		FileService,
 		P2PService,
 		ScrollService,
+		SessionService,
+		{
+			provide: AbstractSessionInitService,
+			useClass: SessionInitService
+		},
 		{
 			provide: EnvService,
 			useClass: ChatEnvService
-		},
-		{
-			provide: SessionService,
-			useClass: EphemeralSessionService
-		},
-		{
-			provide: SessionInitService,
-			useClass: UrlSessionInitService
 		},
 		{
 			provide: StringsService,
 			useClass: ChatStringsService
 		}
 	],
-	selector: 'cyph-ephemeral-chat-root',
+	selector: 'cyph-chat-root',
 	templateUrl: '../../templates/chat-root.html'
 })
-export class EphemeralChatRootComponent implements OnInit {
+export class ChatRootComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		const granim	= !this.envService.isWeb || this.envService.coBranded ?
 			undefined :
-			<{changeState: (state: string) => void}> new Granim({
+			new Granim({
 				direction: 'radial',
 				element: '#main-chat-gradient',
 				isPausedWhenNotInView: true,
@@ -120,7 +115,7 @@ export class EphemeralChatRootComponent implements OnInit {
 			true
 		);
 
-		if (this.sessionInitService.callType) {
+		if (this.abstractSessionInitService.callType) {
 			/* If unsupported, warn and then close window */
 			if (!this.p2pService.isSupported) {
 				this.appService.state	= States.blank;
@@ -148,8 +143,8 @@ export class EphemeralChatRootComponent implements OnInit {
 		this.sessionService.one(this.sessionService.events.beginChatComplete).then(() => {
 			self.onbeforeunload	= () => this.stringsService.disconnectWarning;
 
-			if (this.sessionInitService.callType && this.sessionService.state.isAlice) {
-				this.p2pService.p2p.request(this.sessionInitService.callType);
+			if (this.abstractSessionInitService.callType && this.sessionService.state.isAlice) {
+				this.p2pService.p2p.request(this.abstractSessionInitService.callType);
 			}
 		});
 
@@ -160,9 +155,9 @@ export class EphemeralChatRootComponent implements OnInit {
 		this.sessionService.one(this.sessionService.events.connect).then(() => {
 			this.appService.state	= States.chat;
 
-			if (this.sessionInitService.callType) {
+			if (this.abstractSessionInitService.callType) {
 				this.dialogService.toast({
-					content: this.sessionInitService.callType === 'video' ?
+					content: this.abstractSessionInitService.callType === 'video' ?
 						this.stringsService.p2pWarningVideoPassive :
 						this.stringsService.p2pWarningAudioPassive
 					,
@@ -176,14 +171,16 @@ export class EphemeralChatRootComponent implements OnInit {
 		});
 
 		/* Cyphertext easter egg */
-		/* tslint:disable-next-line:no-unused-new */
-		new Konami(async () => {
-			while (this.chatService.chat.state !== ChatStates.chat) {
-				await util.sleep();
-			}
+		if (!this.sessionService.apiFlags.telehealth) {
+			/* tslint:disable-next-line:no-unused-new */
+			new Konami(async () => {
+				while (this.chatService.state !== this.chatService.states.chat) {
+					await util.sleep();
+				}
 
-			this.cyphertextService.show();
-		});
+				this.cyphertextService.show();
+			});
+		}
 
 		/* For automated tests */
 		if (this.envService.isWeb) {
@@ -194,6 +191,9 @@ export class EphemeralChatRootComponent implements OnInit {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly abstractSessionInitService: AbstractSessionInitService,
+
 		/** @ignore */
 		private readonly appService: AppService,
 
@@ -214,9 +214,6 @@ export class EphemeralChatRootComponent implements OnInit {
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
-
-		/** @ignore */
-		private readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService,
