@@ -21,7 +21,13 @@ export class SessionService implements ISessionService {
 	private readonly eventId: string	= util.generateGuid();
 
 	/** @ignore */
-	private readonly thread: Thread;
+	/* tslint:disable-next-line:promise-must-complete */
+	private readonly remoteUsername: Promise<string>	= new Promise<string>(resolve => {
+		this.setRemoteUsername	= resolve;
+	});
+
+	/** @ignore */
+	private thread: Thread;
 
 	/** @ignore */
 	private readonly threadEvents		= {
@@ -45,6 +51,9 @@ export class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public readonly rpcEvents: RpcEvents	= rpcEvents;
+
+	/** Sets remote username. */
+	public setRemoteUsername: (remoteUsername: string) => void;
 
 	/** @inheritDoc */
 	public readonly state	= {
@@ -154,36 +163,40 @@ export class SessionService implements ISessionService {
 			}
 		});
 
-		this.thread	= new Thread(
-			/* tslint:disable-next-line:only-arrow-functions */
-			function (
-				/* tslint:disable-next-line:variable-name */
-				Session: any,
-				locals: any,
-				importScripts: Function
-			) : void {
-				importScripts('/js/cyph/session/session.js');
+		(async () => {
+			this.thread	= new Thread(
+				/* tslint:disable-next-line:only-arrow-functions */
+				function (
+					/* tslint:disable-next-line:variable-name */
+					Session: any,
+					locals: any,
+					importScripts: Function
+				) : void {
+					importScripts('/js/cyph/session/session.js');
 
-				const session: ISession	= new Session(
-					locals.id,
-					locals.proFeatures,
-					locals.eventId
-				);
+					const session: ISession	= new Session(
+						locals.id,
+						locals.proFeatures,
+						locals.eventId,
+						locals.remoteUsername
+					);
 
-				session.on(locals.events.close, () => {
-					session.close();
-				});
+					session.on(locals.events.close, () => {
+						session.close();
+					});
 
-				session.on(locals.events.send, (e: {messages: IMessage[]}) => {
-					session.send(...e.messages);
-				});
-			},
-			{
-				id,
-				eventId: this.eventId,
-				events: this.threadEvents,
-				proFeatures: this.proFeatures
-			}
-		);
+					session.on(locals.events.send, (e: {messages: IMessage[]}) => {
+						session.send(...e.messages);
+					});
+				},
+				{
+					id,
+					eventId: this.eventId,
+					events: this.threadEvents,
+					proFeatures: this.proFeatures,
+					remoteUsername: await this.remoteUsername
+				}
+			);
+		})();
 	}
 }

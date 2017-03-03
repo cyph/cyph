@@ -6,6 +6,7 @@ import {AbstractSessionInitService} from '../cyph/services/abstract-session-init
 import {ChatEnvService} from '../cyph/services/chat-env.service';
 import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
+import {ConfigService} from '../cyph/services/config.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
@@ -106,8 +107,11 @@ export class ChatRootComponent implements OnInit {
 		}
 
 		this.urlStateService.setUrl(
-			this.envService.newCyphBaseUrl.
-				split(locationData.host).
+			(
+				this.envService.isOnion ?
+					this.envService.newCyphUrlRedirect.split(this.configService.onionRoot) :
+					this.envService.newCyphBaseUrl.split(locationData.host)
+			).
 				slice(-1)[0].
 				replace(/\/$/, '')
 			,
@@ -199,6 +203,9 @@ export class ChatRootComponent implements OnInit {
 
 		/** @ignore */
 		private readonly chatService: ChatService,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly dialogService: DialogService,

@@ -28,5 +28,7 @@ export class ChatStringsService extends StringsService {
 		private readonly sessionService: SessionService
 	) {
 		super();
+
+		this.sessionService.setRemoteUsername(this.friend);
 	}
 }

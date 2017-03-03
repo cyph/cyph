@@ -222,7 +222,7 @@ export class Session implements ISession {
 			onConnect: () => {
 				this.trigger(events.connect);
 
-				this.castle	= new AnonymousCastle(this, nativeCrypto);
+				this.castle	= new AnonymousCastle(this, nativeCrypto, this.remoteUsername);
 				this.updateState('sharedSecret', '');
 			},
 			onMessage: async (message: string) => {
@@ -360,12 +360,15 @@ export class Session implements ISession {
 	 * @param eventId
 	 */
 	constructor (
-		id: string = '',
+		id: string,
 
 		proFeatures: ProFeatures,
 
 		/** @ignore */
-		private readonly eventId: string = util.generateGuid()
+		private readonly eventId: string,
+
+		/** @ignore */
+		private readonly remoteUsername: string
 	) { (async () => {
 		/* true = yes; false = no; undefined = maybe */
 		this.updateState(
