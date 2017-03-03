@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {analytics} from '../analytics';
-import {IChatData, IChatMessage, States} from '../chat';
+import {States} from '../chat/enums';
+import {IChatMessage} from '../chat/ichat-message';
 import {Message} from '../session/message';
 import {Timer} from '../timer';
 import {util} from '../util';
@@ -23,33 +24,56 @@ export class ChatService {
 	private static readonly queuedMessageSelfDestructTimeout: number	= 15000;
 
 
-	/** @see IChatData */
-	public chat: IChatData	= {
-		currentMessage: '',
-		isConnected: false,
-		isDisconnected: false,
-		isFriendTyping: false,
-		isMessageChanged: false,
-		keyExchangeProgress: 0,
-		messages: [],
-		queuedMessageSelfDestruct: false,
-		state: States.none
-	};
+	/** @ignore */
+	private previousMessage: string;
+
+	/** @ignore */
+	private queuedMessage: string;
+
+	/** @ignore */
+	private isMessageChanged: boolean	= false;
+
+	/** Indicates whether authentication has completed (still true even after disconnect). */
+	public isConnected: boolean					= false;
+
+	/** Indicates whether chat has been disconnected. */
+	public isDisconnected: boolean				= false;
+
+	/** Indicates whether the other party is typing. */
+	public isFriendTyping: boolean				= false;
+
+	/** Indicates whether the queued message is self-destructing. */
+	public queuedMessageSelfDestruct: boolean	= false;
+
+	/** The current message being composed. */
+	public currentMessage: string				= '';
+
+	/** Percentage complete with initial handshake (approximate / faked out). */
+	public keyExchangeProgress: number			= 0;
+
+	/** Chat UI state/view. */
+	public state: States						= States.none;
+
+	/** @see States */
+	public readonly states: typeof States		= States;
+
+	/** Message list. */
+	public readonly messages: IChatMessage[]	= [];
 
 	/** This kills the chat. */
 	private close () : void {
-		if (this.chat.state === States.aborted) {
+		if (this.state === States.aborted) {
 			return;
 		}
 
 		this.setFriendTyping(false);
 		this.scrollService.scrollDown();
 
-		if (!this.chat.isConnected) {
+		if (!this.isConnected) {
 			this.abortSetup();
 		}
-		else if (!this.chat.isDisconnected) {
-			this.chat.isDisconnected	= true;
+		else if (!this.isDisconnected) {
+			this.isDisconnected	= true;
 			this.addMessage(
 				this.stringsService.disconnectNotification,
 				this.sessionService.users.app
@@ -60,7 +84,7 @@ export class ChatService {
 
 	/** Aborts the process of chat initialisation and authentication. */
 	public abortSetup () : void {
-		this.chat.state	= States.aborted;
+		this.state	= States.aborted;
 		this.sessionService.trigger(this.sessionService.events.abort);
 		this.sessionService.close();
 	}
@@ -80,11 +104,11 @@ export class ChatService {
 		shouldNotify: boolean = author !== this.sessionService.users.me,
 		selfDestructTimeout?: number
 	) : Promise<void> {
-		if (this.chat.state === States.aborted || this.chat.isDisconnected || !text) {
+		if (this.state === States.aborted || this.isDisconnected || !text) {
 			return;
 		}
 
-		while (author !== this.sessionService.users.app && !this.chat.isConnected) {
+		while (author !== this.sessionService.users.app && !this.isConnected) {
 			await util.sleep(500);
 		}
 
@@ -107,8 +131,8 @@ export class ChatService {
 				author !== this.sessionService.users.me
 		};
 
-		this.chat.messages.push(message);
-		this.chat.messages.sort((a, b) => a.timestamp - b.timestamp);
+		this.messages.push(message);
+		this.messages.sort((a, b) => a.timestamp - b.timestamp);
 
 		if (author === this.sessionService.users.me) {
 			this.scrollService.scrollDown();
@@ -128,7 +152,7 @@ export class ChatService {
 
 	/** Begins chat. */
 	public async begin () : Promise<void> {
-		if (this.chat.state === States.aborted) {
+		if (this.state === States.aborted) {
 			return;
 		}
 
@@ -139,17 +163,17 @@ export class ChatService {
 			this.notificationService.notify(this.stringsService.connectedNotification);
 		}
 
-		this.chat.state	= States.chatBeginMessage;
+		this.state	= States.chatBeginMessage;
 
 		await util.sleep(3000);
 
-		if (<States> this.chat.state === States.aborted) {
+		if (<States> this.state === States.aborted) {
 			return;
 		}
 
 		this.sessionService.trigger(this.sessionService.events.beginChatComplete);
 
-		this.chat.state	= States.chat;
+		this.state	= States.chat;
 
 		this.addMessage(
 			this.stringsService.introductoryMessage,
@@ -158,12 +182,12 @@ export class ChatService {
 			false
 		);
 
-		this.chat.isConnected	= true;
+		this.isConnected	= true;
 
-		if (this.chat.queuedMessage) {
+		if (this.queuedMessage) {
 			this.send(
-				this.chat.queuedMessage,
-				this.chat.queuedMessageSelfDestruct ?
+				this.queuedMessage,
+				this.queuedMessageSelfDestruct ?
 					ChatService.queuedMessageSelfDestructTimeout :
 					undefined
 			);
@@ -202,18 +226,18 @@ export class ChatService {
 	 */
 	public messageChange () : void {
 		const isMessageChanged: boolean	=
-			this.chat.currentMessage !== '' &&
-			this.chat.currentMessage !== this.chat.previousMessage
+			this.currentMessage !== '' &&
+			this.currentMessage !== this.previousMessage
 		;
 
-		this.chat.previousMessage	= this.chat.currentMessage;
+		this.previousMessage	= this.currentMessage;
 
-		if (this.chat.isMessageChanged !== isMessageChanged) {
-			this.chat.isMessageChanged	= isMessageChanged;
+		if (this.isMessageChanged !== isMessageChanged) {
+			this.isMessageChanged	= isMessageChanged;
 			this.sessionService.send(
 				new Message(
 					this.sessionService.rpcEvents.typing,
-					{isTyping: this.chat.isMessageChanged}
+					{isTyping: this.isMessageChanged}
 				)
 			);
 		}
@@ -226,8 +250,8 @@ export class ChatService {
 	 */
 	public send (message?: string, selfDestructTimeout?: number) : void {
 		if (!message) {
-			message						= this.chat.currentMessage;
-			this.chat.currentMessage	= '';
+			message				= this.currentMessage;
+			this.currentMessage	= '';
 			this.messageChange();
 		}
 
@@ -244,7 +268,7 @@ export class ChatService {
 	 * @param isFriendTyping
 	 */
 	public setFriendTyping (isFriendTyping: boolean) : void {
-		this.chat.isFriendTyping	= isFriendTyping;
+		this.isFriendTyping	= isFriendTyping;
 	}
 
 	/**
@@ -254,40 +278,41 @@ export class ChatService {
 	 */
 	public setQueuedMessage (messageText?: string, selfDestruct?: boolean) : void {
 		if (typeof messageText === 'string') {
-			this.chat.queuedMessage	= messageText;
+			this.queuedMessage	= messageText;
 			this.dialogService.toast({
 				content: this.stringsService.queuedMessageSaved,
 				delay: 2500
 			});
 		}
-
 		if (typeof selfDestruct === 'boolean') {
-			this.chat.queuedMessageSelfDestruct	= selfDestruct;
+			this.queuedMessageSelfDestruct	= selfDestruct;
 		}
 	}
 
 	constructor (
 		/** @ignore */
-		protected readonly dialogService: DialogService,
+		private readonly dialogService: DialogService,
 
 		/** @ignore */
-		protected readonly notificationService: NotificationService,
+		private readonly notificationService: NotificationService,
 
 		/** @ignore */
-		protected readonly scrollService: ScrollService,
+		private readonly scrollService: ScrollService,
 
 		/** @ignore */
-		protected readonly sessionService: SessionService,
+		private readonly sessionService: SessionService,
 
 		/** @ignore */
-		protected readonly stringsService: StringsService
+		private readonly stringsService: StringsService
 	) {
-		(async () => {
+		/* Temporary workaround pending TypeScript fix. */
+		/* tslint:disable-next-line:ban  */
+		setTimeout(async () => {
 			while (true) {
 				await util.sleep(5000);
 				this.messageChange();
 			}
-		})();
+		});
 
 		this.sessionService.one(this.sessionService.events.beginChat).then(() => {
 			this.begin();
@@ -298,17 +323,17 @@ export class ChatService {
 		});
 
 		this.sessionService.one(this.sessionService.events.connect).then(async () => {
-			this.chat.state	= States.keyExchange;
+			this.state	= States.keyExchange;
 
 			const interval		= 250;
 			const increment		= interval / ChatService.approximateKeyExchangeTime;
 
-			while (this.chat.keyExchangeProgress <= 100) {
+			while (this.keyExchangeProgress <= 100) {
 				await util.sleep(interval);
-				this.chat.keyExchangeProgress += increment * 100;
+				this.keyExchangeProgress += increment * 100;
 			}
 
-			this.chat.keyExchangeProgress	= 100;
+			this.keyExchangeProgress	= 100;
 		});
 
 		this.sessionService.one(this.sessionService.events.connectFailure).then(() => {
@@ -316,10 +341,10 @@ export class ChatService {
 		});
 
 		this.sessionService.on(this.sessionService.rpcEvents.text, (o: {
-			author?: string;
-			selfDestructTimeout?: number;
+			author: string;
 			text?: string;
 			timestamp: number;
+			selfDestructTimeout?: number;
 		}) => {
 			if (typeof o.text !== 'string') {
 				return;
@@ -327,7 +352,7 @@ export class ChatService {
 
 			this.addMessage(
 				o.text,
-				o.author || this.stringsService.friend,
+				o.author,
 				o.timestamp,
 				undefined,
 				o.selfDestructTimeout

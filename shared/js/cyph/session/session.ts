@@ -11,7 +11,6 @@ import {CastleEvents, events, rpcEvents} from './enums';
 import {IMessage} from './imessage';
 import {ISession} from './isession';
 import {Message} from './message';
-import {ProFeatures} from './profeatures';
 
 
 /**
@@ -222,7 +221,7 @@ export class Session implements ISession {
 			onConnect: () => {
 				this.trigger(events.connect);
 
-				this.castle	= new AnonymousCastle(this, nativeCrypto);
+				this.castle	= new AnonymousCastle(this, nativeCrypto, this.remoteUsername);
 				this.updateState('sharedSecret', '');
 			},
 			onMessage: async (message: string) => {
@@ -293,7 +292,7 @@ export class Session implements ISession {
 			) ||
 			(key === 'wasInitiatedByAPI' && typeof value === 'boolean')
 		) {
-			/* Casting to any as a temporary workaround pending TypeScript fix */
+			/* Casting to any as a temporary workaround pending TS 2.1 */
 			(<any> this).state[key]	= value;
 		}
 		else {
@@ -356,28 +355,34 @@ export class Session implements ISession {
 
 	/**
 	 * @param id Descriptor used for brokering the session.
-	 * @param proFeatures
+	 * @param nativeCrypto
 	 * @param eventId
 	 */
 	constructor (
-		id: string = '',
+		id: string,
 
-		proFeatures: ProFeatures,
+		nativeCrypto: boolean,
 
 		/** @ignore */
-		private readonly eventId: string = util.generateGuid()
+		private readonly eventId: string,
+
+		/** @ignore */
+		private readonly remoteUsername: string
 	) { (async () => {
 		/* true = yes; false = no; undefined = maybe */
 		this.updateState(
 			'startingNewCyph',
-			proFeatures.api ?
-				undefined :
-				id.length < 1 ?
-					true :
+			id.length < 1 ?
+				true :
+				id.length > config.secretLength ?
+					undefined :
 					false
 		);
 
-		this.updateState('wasInitiatedByAPI', proFeatures.api);
+		this.updateState(
+			'wasInitiatedByAPI',
+			this.state.startingNewCyph === undefined
+		);
 
 		this.setId(id);
 
@@ -395,12 +400,12 @@ export class Session implements ISession {
 		try {
 			this.setUpChannel(
 				await util.request({
-					data: {channelDescriptor, proFeatures},
+					data: {channelDescriptor},
 					method: 'POST',
 					retries: 5,
 					url: env.baseUrl + 'channels/' + this.state.cyphId
 				}),
-				proFeatures.nativeCrypto
+				nativeCrypto
 			);
 		}
 		catch (_) {

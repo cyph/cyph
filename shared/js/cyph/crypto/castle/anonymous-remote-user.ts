@@ -39,7 +39,7 @@ export class AnonymousRemoteUser implements IRemoteUser {
 	}
 
 	/** @inheritDoc */
-	public getUsername () : string|undefined {
+	public getUsername () : string {
 		return this.username;
 	}
 
@@ -54,7 +54,7 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		private sharedSecret: string,
 
 		/** @ignore */
-		private readonly username?: string
+		private readonly username: string
 	) {
 		this.cyphertextPromise	= this.transport.interceptIncomingCyphertext();
 	}

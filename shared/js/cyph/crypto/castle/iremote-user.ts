@@ -6,5 +6,5 @@ export interface IRemoteUser {
 	getPublicKey () : Promise<Uint8Array>;
 
 	/** User's unique identifier (e.g. "alice"). */
-	getUsername () : string|undefined;
+	getUsername () : string;
 }

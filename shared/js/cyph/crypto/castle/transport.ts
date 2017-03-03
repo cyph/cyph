@@ -59,7 +59,7 @@ export class Transport {
 	 * @param cyphertext
 	 * @param author
 	 */
-	public logCyphertext (cyphertext: string, author?: string) : void {
+	public logCyphertext (cyphertext: string, author: string) : void {
 		if (cyphertext.length >= Transport.cyphertextLimit) {
 			return;
 		}
@@ -76,7 +76,7 @@ export class Transport {
 	public receive (
 		cyphertext: Uint8Array,
 		plaintext: DataView,
-		author?: string
+		author: string
 	) : void {
 		this.logCyphertext(potassiumUtil.toBase64(cyphertext), author);
 

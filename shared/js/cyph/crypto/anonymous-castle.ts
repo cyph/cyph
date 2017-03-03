@@ -28,7 +28,7 @@ export class AnonymousCastle implements ICastle {
 		return this.pairwiseSession.send(plaintext, timestamp);
 	}
 
-	constructor (session: ISession, isNative: boolean) {
+	constructor (session: ISession, isNative: boolean, remoteUsername: string) {
 		const potassium		= new Potassium(isNative);
 		const transport		= new Transport(session);
 
@@ -41,7 +41,8 @@ export class AnonymousCastle implements ICastle {
 		const remoteUser	= new AnonymousRemoteUser(
 			potassium,
 			transport,
-			session.state.sharedSecret
+			session.state.sharedSecret,
+			remoteUsername
 		);
 
 		this.pairwiseSession	= new PairwiseSession(

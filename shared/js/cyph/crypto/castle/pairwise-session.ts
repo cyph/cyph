@@ -44,7 +44,7 @@ export class PairwiseSession {
 	private isConnected: boolean;
 
 	/** @ignore */
-	private remoteUsername: string|undefined;
+	private remoteUsername: string;
 
 	/** @ignore */
 	private abort () : void {
