@@ -203,7 +203,11 @@ export class Session implements ISession {
 	}
 
 	/** @ignore */
-	private setUpChannel (channelDescriptor: string, nativeCrypto: boolean) : void {
+	private setUpChannel (
+		channelDescriptor: string,
+		nativeCrypto: boolean,
+		remoteUsername: string
+	) : void {
 		const handlers	= {
 			onClose: () => {
 				this.updateState('isAlive', false);
@@ -222,7 +226,7 @@ export class Session implements ISession {
 			onConnect: () => {
 				this.trigger(events.connect);
 
-				this.castle	= new AnonymousCastle(this, nativeCrypto, this.remoteUsername);
+				this.castle	= new AnonymousCastle(this, nativeCrypto, remoteUsername);
 				this.updateState('sharedSecret', '');
 			},
 			onMessage: async (message: string) => {
@@ -357,6 +361,7 @@ export class Session implements ISession {
 	/**
 	 * @param id Descriptor used for brokering the session.
 	 * @param proFeatures
+	 * @param remoteUsername
 	 * @param eventId
 	 */
 	constructor (
@@ -364,11 +369,10 @@ export class Session implements ISession {
 
 		proFeatures: ProFeatures,
 
-		/** @ignore */
-		private readonly eventId: string,
+		remoteUsername: string,
 
 		/** @ignore */
-		private readonly remoteUsername: string
+		private readonly eventId: string
 	) { (async () => {
 		/* true = yes; false = no; undefined = maybe */
 		this.updateState(
@@ -403,7 +407,8 @@ export class Session implements ISession {
 					retries: 5,
 					url: env.baseUrl + 'channels/' + this.state.cyphId
 				}),
-				proFeatures.nativeCrypto
+				proFeatures.nativeCrypto,
+				remoteUsername
 			);
 		}
 		catch (_) {

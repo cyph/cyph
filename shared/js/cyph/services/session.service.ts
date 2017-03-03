@@ -177,8 +177,8 @@ export class SessionService implements ISessionService {
 					const session: ISession	= new Session(
 						locals.id,
 						locals.proFeatures,
-						locals.eventId,
-						locals.remoteUsername
+						locals.remoteUsername,
+						locals.eventId
 					);
 
 					session.on(locals.events.close, () => {
