@@ -43,7 +43,7 @@ export class ChatEnvService extends EnvService {
 
 	/** EnvService.newCyphUrl adjusted for session API flags and initial call type. */
 	public get newCyphUrl () : string {
-		return this.newCyphUrlHelper(false);
+		return this.newCyphUrlHelper(this.isOnion);
 	}
 
 	/** @ignore */
@@ -51,7 +51,7 @@ export class ChatEnvService extends EnvService {
 
 	/** @inheritDoc */
 	public get newCyphUrlRedirect () : string {
-		const newCyphUrl	= this.newCyphUrl;
+		const newCyphUrl	= this.newCyphUrlHelper(false);
 		return newCyphUrl.indexOf(`${locationData.host}/#`) > -1 ? `${newCyphUrl}/` : newCyphUrl;
 	}
 
