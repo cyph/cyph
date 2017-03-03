@@ -17,10 +17,16 @@ import {ConfigService} from './config.service';
 @Injectable()
 export class SessionService implements ISessionService {
 	/** @ignore */
-	private readonly thread: Thread;
+	private thread: Thread;
 
 	/** @ignore */
 	private readonly eventId: string	= util.generateGuid();
+
+	/** @ignore */
+	/* tslint:disable-next-line:promise-must-complete */
+	private readonly remoteUsername: Promise<string>	= new Promise<string>(resolve => {
+		this.setRemoteUsername	= resolve;
+	});
 
 	/** @ignore */
 	private readonly threadEvents		= {
@@ -51,6 +57,9 @@ export class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public readonly rpcEvents: RpcEvents	= rpcEvents;
+
+	/** Sets remote username. */
+	public setRemoteUsername: (remoteUsername: string) => void;
 
 	/** @inheritDoc */
 	public readonly users: Users			= users;
@@ -132,36 +141,40 @@ export class SessionService implements ISessionService {
 			}
 		});
 
-		this.thread	= new Thread(
-			/* tslint:disable-next-line:only-arrow-functions */
-			function (
-				/* tslint:disable-next-line:variable-name */
-				Session: any,
-				locals: any,
-				importScripts: Function
-			) : void {
-				importScripts('/js/cyph/session/session.js');
+		(async () => {
+			this.thread	= new Thread(
+				/* tslint:disable-next-line:only-arrow-functions */
+				function (
+					/* tslint:disable-next-line:variable-name */
+					Session: any,
+					locals: any,
+					importScripts: Function
+				) : void {
+					importScripts('/js/cyph/session/session.js');
 
-				const session: ISession	= new Session(
-					locals.id,
-					locals.nativeCrypto,
-					locals.eventId
-				);
+					const session: ISession	= new Session(
+						locals.id,
+						locals.nativeCrypto,
+						locals.eventId,
+						locals.remoteUsername
+					);
 
-				session.on(locals.events.close, () => {
-					session.close();
-				});
+					session.on(locals.events.close, () => {
+						session.close();
+					});
 
-				session.on(locals.events.send, (e: {messages: IMessage[]}) => {
-					session.send(...e.messages);
-				});
-			},
-			{
-				id,
-				eventId: this.eventId,
-				events: this.threadEvents,
-				nativeCrypto: this.apiFlags.nativeCrypto
-			}
-		);
+					session.on(locals.events.send, (e: {messages: IMessage[]}) => {
+						session.send(...e.messages);
+					});
+				},
+				{
+					id,
+					eventId: this.eventId,
+					events: this.threadEvents,
+					nativeCrypto: this.apiFlags.nativeCrypto,
+					remoteUsername: await this.remoteUsername
+				}
+			);
+		})();
 	}
 }
