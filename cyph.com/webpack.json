@@ -1258,76 +1258,61 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_inline/newline.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_inline/state_inline.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_inline/text.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_inline/text_collapse.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/mdurl/decode.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/mdurl/encode.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/mdurl/parse.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/mediastream-gain/mediastream-gain.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/tryCatch.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/symbol/observable.js"
       ],
-      "hash": "72f7501515f762773a16c36e82e58911",
+      "hash": "99dd771bf6808cbe9d3e63bfedcf7e4f",
       "id": 0
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/metadata.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/change_detection_util.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/constants.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/application_tokens.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/differs/iterable_differs.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/injector.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/differs/keyvalue_differs.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/forward_ref.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/opaque_token.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/reflective_key.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/error_handler.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/util/lang.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/debug/debug_node.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/core.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/core_private_export.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/debug/debug_renderer.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/element_injector.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/application_init.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/change_detection.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/console.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_player.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_queue.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_keyframe.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_sequence_player.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_styles.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_transition_event.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/application_module.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/change_detector_ref.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_style_util.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_transition.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/view_animation_map.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/observable/fromPromise.js"
       ],
-      "hash": "9a22ce044294b62797bddad6d054f803",
+      "hash": "9781663b1192a123f0347299e0387df1",
       "id": 1
     },
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/mockconsole/mockconsole.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/jquery.appear/jquery.appear.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/node_modules/getusermedia/getusermedia.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/index-browser.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/common/html_blocks.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/state_core.js"
       ],
-      "hash": "5815d016047d47ccdda4c4b65758d9b3",
+      "hash": "a32203c415e5da054849383f6e971c3e",
       "id": 2
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/control_container.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_form.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_control.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_control_status.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/default_value_accessor.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/abstract_form_group_directive.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_control_status.ngfactory.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_model_group.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_form.ngfactory.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/error_examples.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/template_driven_errors.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/private_import_core.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/default_value_accessor.ngfactory.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_model.ngfactory.js"
-      ],
-      "hash": "7b7562756e351df744e4e36780f9c631",
-      "id": 3
     },
     {
       "modules": [
@@ -1346,46 +1331,100 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/session/enums/castle-events.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!externals/firebase.js"
       ],
-      "hash": "6db803d528389779868c40821cca5f88",
+      "hash": "82f84eda506652d6ab073ca3d4f77649",
+      "id": 3
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/control_container.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_form.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_control.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_control_status.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/default_value_accessor.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/abstract_form_group_directive.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/checkbox_value_accessor.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_control_status.ngfactory.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_form.ngfactory.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/number_value_accessor.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/error_examples.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/default_value_accessor.ngfactory.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_model.ngfactory.js"
+      ],
+      "hash": "c412464a088164cb424ddf093de11533",
       "id": 4
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/facade/lang.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/aot/constants.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/events/key_events.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/private_import_core.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/security/dom_sanitization_service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/symbol/rxSubscriber.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/web_animations_driver.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/angular_js.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/web_animations_player.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/facade/collection.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/private_export.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/security/style_sanitizer.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/block.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/element_ref.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/template_ref.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/view_container.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/ng_module_factory.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/debug_context.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/errors.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/ng_module_factory_loader.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/view_container_ref.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/errorObject.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/query_list.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/system_js_ng_module_factory_loader.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/metadata/ng_module.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/util.js"
       ],
-      "hash": "1e86623fcaa72e934b6f569b8f5cb07f",
+      "hash": "34f88abd131730e4dc842f53853c68cd",
       "id": 5
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/dom_tokens.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/mockconsole/mockconsole.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/symbol/rxSubscriber.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/blockquote.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/html_block.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/lheading.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/list.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/reference.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/state_block.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/table.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/linkify.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/replacements.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/smartquotes.js"
+      ],
+      "hash": "d083f292ef72199783ba83fa20c126f8",
+      "id": 6
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/static.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/facade/lang.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/events/key_events.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/private_import_core.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/security/dom_sanitization_service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/web_animations_driver.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/angular_js.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/web_animations_player.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/facade/collection.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/platform-browser.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/private_export.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/security/style_sanitizer.js"
+      ],
+      "hash": "d81d476878313288544700ed23564f0f",
+      "id": 7
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser/title.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/animation_driver.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/debug/ng_probe.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/events/dom_events.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser/browser_adapter.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser/location/browser_platform_location.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser/testability.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/angular-material/index.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser/generic_browser_adapter.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser/tools/common_tools.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser/tools/tools.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/debug/by.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/facade/browser.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/platform-browser.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it-emoji/index.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/facade/browser.js"
       ],
-      "hash": "120f3930ba861782b82dc503aa6eb8f5",
-      "id": 6
+      "hash": "bc5fbd64e79051be8650e5d1086569d3",
+      "id": 8
     },
     {
       "modules": [
@@ -1395,20 +1434,19 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/node_modules/rxjs/Subject.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/node_modules/rxjs/Subscriber.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_group_player.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_keyframe.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_styles.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/isFunction.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/uc.micro/properties/Any/regex.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/pipes/number_pipe.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/pipes/slice_pipe.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/node_modules/rxjs/util/UnsubscriptionError.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/render.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/pipes/uppercase_pipe.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/node_modules/rxjs/SubjectSubscription.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection.js"
       ],
-      "hash": "7fbd28f7d67a37a397fe5f4d7d1a165a",
-      "id": 7
+      "hash": "c11b8fbf01a4d37dee71c0f63bcf419a",
+      "id": 9
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/pipes/invalid_pipe_argument_error.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/location/location_strategy.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/location/location.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/location/platform_location.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/pipes/intl.js",
@@ -1419,46 +1457,9 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/pipes/i18n_select_pipe.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/pipes/json_pipe.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/pipes/lowercase_pipe.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/pipes/uppercase_pipe.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/node_modules/rxjs/SubjectSubscription.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/node_modules/rxjs/util/UnsubscriptionError.js"
       ],
-      "hash": "6a46cedaaa5ccabc6e65210d14a703a9",
-      "id": 8
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/metadata/view.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/view.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/security.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/profile/profile.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/reflection/reflector_reader.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/type.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/view_ref.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/metadata/lifecycle_hooks.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/metadata/di.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/metadata/ng_module.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/platform_core_providers.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/profile/wtf_impl.js"
-      ],
-      "hash": "f782a9568237421fd7bb71a019a873c1",
-      "id": 9
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/facade/lang.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/component_factory.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/element_ref.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/facade/errors.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/compiler.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/facade/collection.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/component_factory_resolver.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/reflective_provider.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/facade/async.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/metadata.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/animation_view_context.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/zone.js"
-      ],
-      "hash": "99ba3b7370f39b03715d99479cf439a7",
+      "hash": "50010f2e5cc55d7a1a09cc04b43a8638",
       "id": 10
     },
     {
@@ -1481,19 +1482,19 @@
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/blockquote.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/html_block.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/lheading.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/list.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/reference.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/state_block.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/table.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/linkify.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/replacements.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/smartquotes.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/symbol/observable.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/root.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sdp-jingle-json/lib/senders.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/rtcpeerconnection.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/observable/PromiseObservable.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/operator/toPromise.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/isObject.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/toSubscriber.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sdp-jingle-json/index.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/util/support/isBufferBrowser.js"
       ],
-      "hash": "001823c47448765ec972062d9e94f82d",
+      "hash": "b5325c91027d3480b47e4654fd1ebd89",
       "id": 12
     },
     {
@@ -1508,13 +1509,14 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/fence.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/heading.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/paragraph.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/isObject.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/mdurl/format.js"
       ],
-      "hash": "32944780d4c6b24d317868ad3bb9d48a",
+      "hash": "165b90a5f802a04417993aa0352ff73c",
       "id": 13
     },
     {
       "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/aot/constants.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/security/url_sanitizer.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/aot/angular1_providers.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/aot/upgrade_module.js",
@@ -1524,50 +1526,81 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/aot/downgrade_component.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/aot/downgrade_component_adapter.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/aot/downgrade_injectable.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!preload/dompurify.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/uc.micro/index.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it-emoji/index.js"
       ],
-      "hash": "31a983513fc6bbe7751fd291928f2ecc",
+      "hash": "a8e61c8db3aae16c12586813ac068209",
       "id": 14
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/radio_control_value_accessor.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_model.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/validators.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/facade/async.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/facade/lang.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/dom_tokens.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/index.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/reactive_errors.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/number_value_accessor.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/range_value_accessor.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/reactive_directives/form_control_directive.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/reactive_directives/form_control_name.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/form_providers.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/errorObject.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/version.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/validators.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/facade/collection.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/form_builder.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser/testability.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/forms.js"
       ],
-      "hash": "6cdf22656539fd613bf2b25523ae784a",
+      "hash": "5fcbf593f63b5b100b7f8e634603e45f",
       "id": 15
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/template_ref.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/view_container.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/ng_module_factory.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/reflection/reflection.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/debug_context.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/errors.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/ng_module_factory_loader.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/view_container_ref.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/query_list.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/system_js_ng_module_factory_loader.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/metadata/directives.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/view_utils.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/control_value_accessor.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/security.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/type.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/util/lang.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/reflection/reflection_capabilities.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/reflection/reflector.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/version.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/private_import_core.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/zone.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/index.js"
       ],
-      "hash": "592bb1cab11c8abe2e16bc37206801ab",
+      "hash": "e957423d72f0f50086f124fa01f7451a",
       "id": 16
     },
     {
       "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/metadata/view.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/view.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/profile/profile.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/reflection/reflection.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/reflection/reflector_reader.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/view_ref.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/metadata/lifecycle_hooks.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/metadata/di.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/metadata/directives.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/platform_core_providers.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/profile/wtf_impl.js"
+      ],
+      "hash": "c6a3b95bf230c22ef33e0a186daca56c",
+      "id": 17
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/Observable.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/Subject.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/Subscription.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/SubjectSubscription.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/ObjectUnsubscribedError.js"
+      ],
+      "hash": "d57360c5203d784fef67a313def28d4a",
+      "id": 18
+    },
+    {
+      "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/common/html_re.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/hark/hark.js",
@@ -1575,58 +1608,59 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/linkify-it/index.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/linkify-it/lib/re.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it-emoji/lib/replace.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/code.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it-sup/index.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/uc.micro/index.js"
       ],
-      "hash": "4d92feac93c72901669497688829933b",
-      "id": 17
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/static.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/validators.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/facade/async.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/facade/lang.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/validators.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/facade/collection.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/form_builder.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/forms.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser/generic_browser_adapter.js"
-      ],
-      "hash": "f0c560110df5d9fa7c436f21b7c83f2a",
-      "id": 18
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/change_detection_util.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/constants.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/application_tokens.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/application_init.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/application_ref.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/change_detection.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/i18n/tokens.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/application_module.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/change_detector_ref.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/view_animation_map.js"
-      ],
-      "hash": "9d00683d099ad92ee542ada44cbc5de9",
+      "hash": "2048aad01e642db771a6bbd884da359d",
       "id": 19
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/view_type.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_if.ngfactory.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/visibility-watcher.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/virtual-keyboard-watcher.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/thread.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/pipes/index.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/session/mutex.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/timer.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_class.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_style.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!preload/index.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/aot/upgrade_component.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/facade/lang.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!preload/dompurify.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/angular-aria/angular-aria.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/attachmediastream.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/adapter_core.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/safari/safari_shim.js"
       ],
-      "hash": "1cd4589a3e145e67cb67959b193bca84",
+      "hash": "2aa9111938331ea7f6723e536f1606b2",
       "id": 20
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/facade/lang.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/component_factory.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/compiler.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/facade/collection.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/component_factory_resolver.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/reflective_provider.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/error_handler.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/facade/async.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/animation_view_context.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/element_injector.js"
+      ],
+      "hash": "4d1e12caeb7b70553e6479b945eac259",
+      "id": 21
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/metadata.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/injector.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/application_ref.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/forward_ref.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/opaque_token.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/i18n/tokens.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/debug/debug_node.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/metadata.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/core_private_export.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker.js"
+      ],
+      "hash": "4fedef7734b5f544cc75138b3617a0ff",
+      "id": 22
     },
     {
       "modules": [
@@ -1641,8 +1675,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/files/transfer.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/isArray.js"
       ],
-      "hash": "8cc764abbbcb0b8369242547cda7b28d",
-      "id": 21
+      "hash": "ed325e774400b24064986a3c778081f0",
+      "id": 23
     },
     {
       "modules": [
@@ -1657,8 +1691,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/components/material/md-subheader.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/components/material/md-tabs.component.ngfactory.js"
       ],
-      "hash": "1efb5a3bb02419c597e386c99ac8c3c3",
-      "id": 22
+      "hash": "52a8a393257464cb0bf2998f9cbb3625",
+      "id": 24
     },
     {
       "modules": [
@@ -1673,8 +1707,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/session/enums/events.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/version.js"
       ],
-      "hash": "dd3a1cebb866f0ab9d93a21305a98e68",
-      "id": 23
+      "hash": "409f8b1ed35b5bf3889c05836a5c6ed1",
+      "id": 25
     },
     {
       "modules": [
@@ -1689,141 +1723,23 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/components/material/md-list.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/uc.micro/categories/Z/regex.js"
       ],
-      "hash": "4aea0cef6023d9edb262539ef0792ced",
-      "id": 24
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sdp/sdp.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sdp-jingle-json/lib/senders.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sdp-jingle-json/lib/tojson.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sdp-jingle-json/lib/tosdp.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/simplewebrtc/peer.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/simplewebrtc/webrtc.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/util/support/isBufferBrowser.js"
-      ],
-      "hash": "bc1886c194e179b25f0453adacd38330",
-      "id": 25
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/Observable.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/Subject.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/Subscriber.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/SubjectSubscription.js"
-      ],
-      "hash": "e362225d5ab1534575db34600134095c",
+      "hash": "c039aaeb5d6d7c5c66e998ea0e84c2f2",
       "id": 26
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/uc.micro/properties/Any/regex.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!preload/index.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/aot/upgrade_component.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/upgrade/src/facade/lang.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/angular-aria/angular-aria.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/attachmediastream.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/inline.js"
-      ],
-      "hash": "a557da40417d368da799770dee1b29a2",
-      "id": 27
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/shared.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser/title.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/reactive_directives/form_group_directive.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/reactive_directives/form_group_name.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/select_control_value_accessor.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/select_multiple_control_value_accessor.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser/location/history.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/version.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/uc.micro/categories/Cf/regex.js"
-      ],
-      "hash": "9775d70081f30550102a1e950b215c64",
-      "id": 28
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/control_value_accessor.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/util/decorators.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/zone/ng_zone.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/render/api.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/testability/testability.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/abstract_control_directive.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/normalize_validator.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/observable/fromPromise.js"
-      ],
-      "hash": "4020981534b051227f34713e31fb3563",
-      "id": 29
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/facade/lang.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/localization.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/location/location_strategy.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_switch.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_template_outlet.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/facade/collection.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/facade/errors.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/location/hash_location_strategy.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/node_modules/rxjs/util/ObjectUnsubscribedError.js"
-      ],
-      "hash": "4e333ad30033a1ba5637eedde56850c8",
-      "id": 30
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/env.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/dialog.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/file.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/cyphertext.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/util.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/material/md-sidenav.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/common_module.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_constants.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/mdurl/index.js"
-      ],
-      "hash": "af7f7ef2e410b6b80acf1c162348b16b",
-      "id": 31
     },
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/webpack/buildin/global.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/wildemitter/wildemitter.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/util/util.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/webrtcsupport/index-browser.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/whatwg-fetch/fetch.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/uc.micro/categories/P/regex.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/webpack/buildin/module.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js"
       ],
-      "hash": "c24c489f1ff975aed5d89817d6e4192c",
-      "id": 32
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/root.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/rtcpeerconnection.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/observable/PromiseObservable.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/ObjectUnsubscribedError.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/UnsubscriptionError.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sdp-jingle-json/index.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sdp-jingle-json/lib/parsers.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/util/node_modules/inherits/inherits_browser.js"
-      ],
-      "hash": "47d465705c4bb88715d9803ec56fae9a",
-      "id": 33
+      "hash": "7468f9dc5f624120d724edc8bd40c754",
+      "id": 27
     },
     {
       "modules": [
@@ -1833,11 +1749,87 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/microlight-string/microlight.min.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/punycode/punycode.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/toSubscriber.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/tryCatch.js"
       ],
-      "hash": "9ba37d8486cad6470593bd75094d744c",
-      "id": 34
+      "hash": "bfc35bb559a351349a8f5870cf999531",
+      "id": 28
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/radio_control_value_accessor.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_model.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/ng_model_group.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/reactive_errors.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/range_value_accessor.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/reactive_directives/form_control_directive.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/reactive_directives/form_control_name.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/template_driven_errors.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/version.js"
+      ],
+      "hash": "136804d3374eded2b5041b9b2b4ab005",
+      "id": 29
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/util/decorators.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/zone/ng_zone.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/render/api.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/testability/testability.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/abstract_control_directive.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/normalize_validator.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/version.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/browser/location/history.js"
+      ],
+      "hash": "5e38673cc9a46893bbe35f90722ba3c9",
+      "id": 30
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/facade/lang.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/localization.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_switch.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/mdurl/index.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_style.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_template_outlet.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/facade/collection.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/facade/errors.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/location/hash_location_strategy.js"
+      ],
+      "hash": "912a58cdd2c7be52e8fcdb4d18604170",
+      "id": 31
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_if.ngfactory.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/visibility-watcher.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/virtual-keyboard-watcher.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/thread.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_for.ngfactory.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/session/mutex.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/timer.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_class.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/node_modules/rxjs/util/ObjectUnsubscribedError.js"
+      ],
+      "hash": "2ed1db81d580575ff252eca48c0b8746",
+      "id": 32
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/env.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/view_type.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/dialog.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/file.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/cyphertext.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/util.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/material/md-sidenav.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/common_module.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_constants.js"
+      ],
+      "hash": "335bb4d229ec7be930d638832ab4922b",
+      "id": 33
     },
     {
       "modules": [
@@ -1848,24 +1840,24 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/helpers/parse_link_label.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/helpers/parse_link_title.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/parser_core.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_inline/text_collapse.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_block/code.js"
       ],
-      "hash": "f09975d5d66fef9981efdfb906c1796b",
-      "id": 35
+      "hash": "8af51338c33f938071038ea9b904e1fc",
+      "id": 34
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_player.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_queue.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_sequence_player.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_transition_event.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/metadata.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_style_util.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/animation_transition.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/strings.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/session.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/scroll.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/pipes/invalid_pipe_argument_error.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/signup.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/url-state.service.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/pipes/index.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/isFunction.js"
       ],
-      "hash": "d2457cbb96d6475b37752336e1719c3d",
-      "id": 36
+      "hash": "da3ef4d849924d8fab26ee433f135e8d",
+      "id": 35
     },
     {
       "modules": [
@@ -1878,8 +1870,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/components/material/md-toolbar.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/crypto/potassium/native-crypto/box.js"
       ],
-      "hash": "2972a84ef2caeb06c9909028dd91dbdb",
-      "id": 37
+      "hash": "04b55934f2fced0fdeb73637457dd77c",
+      "id": 36
     },
     {
       "modules": [
@@ -1892,8 +1884,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/session/command.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/session/enums/users.js"
       ],
-      "hash": "e052ff3d506809fe99519cdd26e53c9b",
-      "id": 38
+      "hash": "b8dc32a1ae44f6450b05964a3025bbdf",
+      "id": 37
     },
     {
       "modules": [
@@ -1906,8 +1898,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph.com/enums/page-titles.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/session/enums/rpc-events.js"
       ],
-      "hash": "c05a17a430f1c5eaf5683fd8e329ae4b",
-      "id": 39
+      "hash": "1c583042859feabbc0400ac441503e0e",
+      "id": 38
     },
     {
       "modules": [
@@ -1920,34 +1912,21 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph.com/enums/states.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!externals/libsodium.js"
       ],
-      "hash": "dd168fe3818a7109e8a35905d624c166",
+      "hash": "cd17f9270519b47ba28c390aad086a37",
+      "id": 39
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sdp/sdp.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sdp-jingle-json/lib/parsers.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sdp-jingle-json/lib/tojson.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sdp-jingle-json/lib/tosdp.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/simplewebrtc/peer.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/util/node_modules/inherits/inherits_browser.js"
+      ],
+      "hash": "f9aa474492e6ce431e3bf67dec7a4279",
       "id": 40
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/linker/view_utils.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/checkbox_value_accessor.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/reflection/reflection_capabilities.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/reflection/reflector.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/version.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/angular-material/index.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/index.js"
-      ],
-      "hash": "c8756a99b9cf3a47bb99319748b2e68c",
-      "id": 41
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/strings.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/session.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/scroll.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/signup.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/services/url-state.service.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_for.ngfactory.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/helpers/index.js"
-      ],
-      "hash": "b088d3bb412caad52b45dc2749a70009",
-      "id": 42
     },
     {
       "modules": [
@@ -1959,8 +1938,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/node_modules/rxjs/util/root.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/index.js"
       ],
-      "hash": "1f0e2188968a0dc4566b3ae1eb701d9b",
-      "id": 43
+      "hash": "c9547fc003b8fba767dc2c689fea296c",
+      "id": 41
     },
     {
       "modules": [
@@ -1972,8 +1951,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/p2p/p2p.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/common.js"
       ],
-      "hash": "192980402fce4d75a0283a03acc965be",
-      "id": 44
+      "hash": "7f1fdf7c1fb07d6f81bc4ae6172edffd",
+      "id": 42
     },
     {
       "modules": [
@@ -1985,8 +1964,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/components/material/md-card-header-text.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/angular-aria/index.js"
       ],
-      "hash": "507dde0d9c0f42186aabf6e892ad4f78",
-      "id": 45
+      "hash": "2f03c3a95e04a59438c2fba2ec10f40d",
+      "id": 43
     },
     {
       "modules": [
@@ -1998,32 +1977,43 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/private_import_core.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/angular-animate/index.js"
       ],
-      "hash": "f385775dc83b10103176a8f9ff02ac50",
-      "id": 46
+      "hash": "ddc3bf994935dd2c942c061d927e14c0",
+      "id": 44
     },
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/simplewebrtc/simplewebrtc.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/simplewebrtc/webrtc.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/sodiumutil/dist/sodiumutil.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/tab-indent/js/tabIndent.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/index.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js"
       ],
-      "hash": "515bf9a2141b378ec641114b688aa634",
-      "id": 47
+      "hash": "ab02b0f4af23603c3b5846d79b43555b",
+      "id": 45
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/angular-animate/angular-animate.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/file-saver/FileSaver.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/normalize.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/shared.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/reactive_directives/form_group_directive.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/reactive_directives/form_group_name.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/select_control_value_accessor.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/directives/select_multiple_control_value_accessor.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/forms/src/form_providers.js"
       ],
-      "hash": "1fa614d9eb93a51ac314d6600624f8f8",
-      "id": 48
+      "hash": "bd0a54053b0188754eed524d808a157d",
+      "id": 46
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/jquery.appear/jquery.appear.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it-emoji/lib/data/shortcuts.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/uc.micro/categories/Cf/regex.js"
+      ],
+      "hash": "925f81b0e09ff5d16980c6467f9ce99f",
+      "id": 47
     },
     {
       "modules": [
@@ -2031,21 +2021,21 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/dompurify/src/purify.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/getscreenmedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/mdurl/format.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/normalize.js"
       ],
-      "hash": "168b63474f8efe39a0f72058e75173ea",
-      "id": 49
+      "hash": "fd04363339c3a449967ef6baddbab274",
+      "id": 48
     },
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/filetransfer/filetransfer.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/state_core.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/file-saver/FileSaver.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/block.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/rules_core/inline.js"
       ],
-      "hash": "8028c0b20943e9fafd6cde03cdd2ea3c",
-      "id": 50
+      "hash": "2e510d7f1a243622dc7ebfb046d1ba6d",
+      "id": 49
     },
     {
       "modules": [
@@ -2055,18 +2045,29 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/events/hammer_gestures.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/platform-browser/src/dom/shared_styles_host.js"
       ],
-      "hash": "8b36db12e3357a497df9e2c7e98da13f",
+      "hash": "128c249f1434d3022cba594afa1012ad",
+      "id": 50
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/facade/errors.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/differs/default_iterable_differ.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/reflective_key.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/debug/debug_renderer.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/render.js"
+      ],
+      "hash": "6d1a3c96be4fba4bcbc46c7d50f0b041",
       "id": 51
     },
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/console.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/differs/default_iterable_differ.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/differs/keyvalue_differs.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/animation/metadata.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/change_detection/differs/default_keyvalue_differ.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/util.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/core.js"
       ],
-      "hash": "7ad951e24c1bdd095aab4adf98c7cba1",
+      "hash": "33addf0d434ac288909c9e0c7a50b1d0",
       "id": 52
     },
     {
@@ -2115,33 +2116,23 @@
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/uc.micro/categories/P/regex.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/webpack/buildin/module.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/common/html_re.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it-emoji/lib/normalize_opts.js"
       ],
-      "hash": "defc932882ad874c95e24c66e542a0bf",
+      "hash": "30e8b728f86cf6cdbd7584a9e8858af6",
       "id": 57
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it-sup/index.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/common/html_blocks.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/Observer.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/angular-animate/angular-animate.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/filetransfer/filetransfer.js"
       ],
-      "hash": "82a024149332f259b6b03d1477935110",
+      "hash": "81148f52a54cae0e699ed95699733be5",
       "id": 58
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it-emoji/lib/data/shortcuts.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it-emoji/lib/normalize_opts.js"
-      ],
-      "hash": "6c1d8307a59a391202fb214894ec86c4",
-      "id": 59
     },
     {
       "modules": [
@@ -2150,8 +2141,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/directives/ng_plural.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/node_modules/rxjs/util/toSubscriber.js"
       ],
-      "hash": "ea9bbac4a57b8d8a19cac77f0428f9c0",
-      "id": 60
+      "hash": "c2057c8460cdd51642875b176f21fc69",
+      "id": 59
     },
     {
       "modules": [
@@ -2160,8 +2151,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/node_modules/rxjs/util/isObject.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/node_modules/rxjs/util/tryCatch.js"
       ],
-      "hash": "fa27b989e22b7a9889bf073434e00275",
-      "id": 61
+      "hash": "404f6f7b761bdfceb6230887b1a9b385",
+      "id": 60
     },
     {
       "modules": [
@@ -2170,16 +2161,25 @@
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!cyph/components/markdown.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/common/src/location/index.js"
       ],
-      "hash": "485dd59cce68f5715f1528cc63f82c0f",
+      "hash": "aa3942bf617b8e9c9a1a7fcb12ee1578",
+      "id": 61
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/wildemitter/wildemitter.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/wowjs/dist/wow.js",
+        "../../../../../node_modules/markdown-it-emoji/lib/data/full.json"
+      ],
+      "hash": "0908dbb92579fc3db73a4c3929ce2aae",
       "id": 62
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/Subscription.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/Subscriber.js",
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/operator/toPromise.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/util/UnsubscriptionError.js"
       ],
-      "hash": "51cc60ddf0d2f2c333a10ad8f8942128",
+      "hash": "ea88921c63bac297e66f79eae04f0b15",
       "id": 63
     },
     {
@@ -2194,25 +2194,25 @@
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/reflective_errors.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/rxjs/Observer.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/reflective_injector.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!node_modules/@angular/core/src/di/reflective_injector.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/markdown-it/lib/helpers/index.js"
       ],
-      "hash": "eab986918397dccf0019427b9bf2315f",
+      "hash": "9fbf3699dfad7637b7e30c353fb62539",
       "id": 65
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/zone.js/dist/zone.js",
-        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/wowjs/dist/wow.js"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/whatwg-fetch/fetch.js",
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js"
       ],
-      "hash": "151844033807e3f2e544ce2a61df1476",
+      "hash": "f6db491c218cb9ea44378c6c1e514b99",
       "id": 66
     },
     {
       "modules": [
-        "../../../../../node_modules/entities/maps/entities.json"
+        "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!../../../../../node_modules/zone.js/dist/zone.js"
       ],
-      "hash": "27f14c1b2713f9ffdfe6f20a8b3b7868",
+      "hash": "5b181b5e6b6e93b729725ca24d36c7cc",
       "id": 68
     },
     {
@@ -2233,7 +2233,7 @@
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js??ref--0-0!translations.js"
       ],
-      "hash": "33348bf120ca56a07f5f23b6417b5c65",
+      "hash": "6c12fa095c96ef974622e40e1232fa32",
       "id": 71
     },
     {
