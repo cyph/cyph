@@ -5,6 +5,7 @@ import {ISessionService} from '../service-interfaces/isession-service';
 import {Events, events, RpcEvents, rpcEvents, Users, users} from '../session/enums';
 import {IMessage} from '../session/imessage';
 import {ISession} from '../session/isession';
+import {ProFeatures} from '../session/profeatures';
 import {Thread} from '../thread';
 import {util} from '../util';
 import {AbstractSessionInitService} from './abstract-session-init.service';
@@ -17,9 +18,6 @@ import {ConfigService} from './config.service';
 @Injectable()
 export class SessionService implements ISessionService {
 	/** @ignore */
-	private thread: Thread;
-
-	/** @ignore */
 	private readonly eventId: string	= util.generateGuid();
 
 	/** @ignore */
@@ -29,10 +27,16 @@ export class SessionService implements ISessionService {
 	});
 
 	/** @ignore */
+	private thread: Thread;
+
+	/** @ignore */
 	private readonly threadEvents		= {
 		close: 'close-SessionService',
 		send: 'send-SessionService'
 	};
+
+	/** @ignore */
+	private readonly wasInitiatedByAPI: boolean;
 
 	/** @inheritDoc */
 	public readonly apiFlags	= {
@@ -40,16 +44,6 @@ export class SessionService implements ISessionService {
 		modestBranding: false,
 		nativeCrypto: false,
 		telehealth: false
-	};
-
-	/** @inheritDoc */
-	public readonly state		= {
-		cyphId: '',
-		isAlice: false,
-		isAlive: true,
-		sharedSecret: '',
-		startingNewCyph: false,
-		wasInitiatedByAPI: false
 	};
 
 	/** @inheritDoc */
@@ -62,7 +56,17 @@ export class SessionService implements ISessionService {
 	public setRemoteUsername: (remoteUsername: string) => void;
 
 	/** @inheritDoc */
-	public readonly users: Users			= users;
+	public readonly state	= {
+		cyphId: '',
+		isAlice: false,
+		isAlive: true,
+		sharedSecret: '',
+		startingNewCyph: false,
+		wasInitiatedByAPI: false
+	};
+
+	/** @inheritDoc */
+	public readonly users: Users	= users;
 
 	/** @inheritDoc */
 	public close () : void {
@@ -85,6 +89,19 @@ export class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
+	public get proFeatures () : ProFeatures {
+		return new ProFeatures(
+			this.wasInitiatedByAPI,
+			this.apiFlags.forceTURN,
+			this.apiFlags.modestBranding,
+			this.apiFlags.nativeCrypto,
+			this.apiFlags.telehealth,
+			this.abstractSessionInitService.callType === 'video',
+			this.abstractSessionInitService.callType === 'audio'
+		);
+	}
+
+	/** @inheritDoc */
 	public send (...messages: IMessage[]) : void {
 		this.trigger(this.threadEvents.send, {messages});
 	}
@@ -95,13 +112,16 @@ export class SessionService implements ISessionService {
 	}
 
 	constructor (
-		abstractSessionInitService: AbstractSessionInitService,
-		configService: ConfigService
+		/** @ignore */
+		private readonly abstractSessionInitService: AbstractSessionInitService,
+
+		/** @ignore */
+		private readonly configService: ConfigService
 	) {
-		let id	= abstractSessionInitService.id;
+		let id	= this.abstractSessionInitService.id;
 
 		/* API flags */
-		for (const flag of configService.apiFlags) {
+		for (const flag of this.configService.apiFlags) {
 			if (id[0] !== flag.character) {
 				continue;
 			}
@@ -118,6 +138,8 @@ export class SessionService implements ISessionService {
 			});
 		}
 
+		this.wasInitiatedByAPI	= id.length > this.configService.secretLength;
+
 		this.on(this.events.threadUpdate, (e: {
 			key: 'cyphId'|'isAlice'|'isAlive'|'sharedSecret'|'startingNewCyph'|'wasInitiatedByAPI';
 			value: boolean|string|undefined;
@@ -133,7 +155,7 @@ export class SessionService implements ISessionService {
 				) ||
 				(e.key === 'wasInitiatedByAPI' && typeof e.value === 'boolean')
 			) {
-				/* Casting to any as a temporary workaround pending TS 2.1 */
+				/* Casting to any as a temporary workaround pending TypeScript fix */
 				(<any> this).state[e.key]	= e.value;
 			}
 			else {
@@ -154,9 +176,9 @@ export class SessionService implements ISessionService {
 
 					const session: ISession	= new Session(
 						locals.id,
-						locals.nativeCrypto,
-						locals.eventId,
-						locals.remoteUsername
+						locals.proFeatures,
+						locals.remoteUsername,
+						locals.eventId
 					);
 
 					session.on(locals.events.close, () => {
@@ -171,7 +193,7 @@ export class SessionService implements ISessionService {
 					id,
 					eventId: this.eventId,
 					events: this.threadEvents,
-					nativeCrypto: this.apiFlags.nativeCrypto,
+					proFeatures: this.proFeatures,
 					remoteUsername: await this.remoteUsername
 				}
 			);
