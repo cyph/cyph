@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import * as Granim from 'granim';
 import {States} from '../account/enums';
-import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/account-auth.service';
+import {AccountService} from '../services/account.service';
 import {EnvService} from '../services/env.service';
 import {UrlStateService} from '../services/url-state.service';
 
