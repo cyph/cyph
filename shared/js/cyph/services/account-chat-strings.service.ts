@@ -11,7 +11,7 @@ import {SessionService} from './session.service';
 export class AccountChatStringsService extends ChatStringsService {
 	/** @inheritDoc */
 	public get friend () : string {
-		if (!this.accountSessionService.user) {
+		if (!this.accountSessionService || !this.accountSessionService.user) {
 			return '';
 		}
 
@@ -28,5 +28,7 @@ export class AccountChatStringsService extends ChatStringsService {
 		private readonly accountSessionService: AccountSessionService
 	) {
 		super(sessionService);
+
+		sessionService.setRemoteUsername(this.friend);
 	}
 }
