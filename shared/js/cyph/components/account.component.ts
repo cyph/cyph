@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import * as Granim from 'granim';
 import {States} from '../account/enums';
 import {AccountService} from '../services/account.service';
+import {AccountAuthService} from '../services/account-auth.service';
 import {EnvService} from '../services/env.service';
 import {UrlStateService} from '../services/url-state.service';
 
@@ -17,29 +18,9 @@ export class AccountComponent implements OnInit {
 	/** @see States */
 	public states: typeof States	= States;
 
-	/** Indicates whether the sidebar should take up the entire view. */
-	public get showOnlySidebar () : boolean {
-		return [
-			States.contacts
-		].filter(
-			state => state === this.accountService.state
-		).length > 0;
-	}
-
-	/** Indicates whether sidebar should be displayed. */
-	public get sidebarVisible () : boolean {
-		return [
-			States.chat,
-			States.contacts,
-			States.home
-		].filter(
-			state => state === this.accountService.state
-		).length > 0;
-	}
-
 	/** Indicates whether menu should be displayed. */
 	public get menuVisible () : boolean {
-		return [
+		return this.accountAuthService.current !== undefined && [
 			States.chat,
 			States.contacts,
 			States.home
@@ -81,7 +62,30 @@ export class AccountComponent implements OnInit {
 		});
 	}
 
+	/** Indicates whether the sidebar should take up the entire view. */
+	public get showOnlySidebar () : boolean {
+		return this.sidebarVisible && [
+			States.contacts
+		].filter(
+			state => state === this.accountService.state
+		).length > 0;
+	}
+
+	/** Indicates whether sidebar should be displayed. */
+	public get sidebarVisible () : boolean {
+		return this.accountAuthService.current !== undefined && [
+			States.chat,
+			States.contacts,
+			States.home
+		].filter(
+			state => state === this.accountService.state
+		).length > 0;
+	}
+
 	constructor (
+		/** @ignore */
+		private readonly accountAuthService: AccountAuthService,
+
 		/** @ignore */
 		private readonly urlStateService: UrlStateService,
 
