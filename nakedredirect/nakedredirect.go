@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"strings"
 )
 
 func init() {
@@ -11,6 +10,11 @@ func init() {
 		w.Header().Set("Public-Key-Pins", config.HPKPHeader)
 		w.Header().Set("Strict-Transport-Security", config.HSTSHeader)
 
-		http.Redirect(w, r, "https://www.cyph.com"+strings.SplitAfterN(r.URL.String(), "cyph.com", 2)[1], http.StatusMovedPermanently)
+		path := r.URL.Path
+		if len(r.URL.RawQuery) > 0 {
+			path += "?" + r.URL.RawQuery
+		}
+
+		http.Redirect(w, r, "https://www.cyph.com"+path, http.StatusMovedPermanently)
 	})
 }
