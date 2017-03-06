@@ -21,7 +21,7 @@ export class AccountMenuComponent implements OnInit {
 	public menu: Promise<angular.material.ISidenavObject>;
 
 	/** @ignore */
-	public menuLock: boolean		= true;
+	public menuLock: {}				= {};
 
 	/** @see States */
 	public states: typeof States	= States;
@@ -36,6 +36,17 @@ export class AccountMenuComponent implements OnInit {
 			async () => {
 				await util.sleep();
 				(await this.menu).close();
+			}
+		);
+	}
+
+	/** Toggles account menu. */
+	public async toggleMenu () : Promise<void> {
+		return util.lockTryOnce(
+			this.menuLock,
+			async () => {
+				await util.sleep();
+				(await this.menu).toggle();
 			}
 		);
 	}

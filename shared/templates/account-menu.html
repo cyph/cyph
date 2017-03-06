@@ -1,4 +1,4 @@
-<div>
+<div *ngIf='accountAuthService.current'>
 	<md2-sidenav 
 		mdComponentId='menu'
 		childClass='md-sidenav-left md-whiteframe-z2 flex-25'
@@ -7,24 +7,30 @@
 		<md2-content class='layout-column' childClass='md-padding md-no-flicker'>
 			<div class='layout-column'>
 				<div class='home-wrapper'>
-					<md2-button class='home' cyphTranslate (childClick)='goToState(states.home)'>
-						<img
-							src='/img/logo.white.horizontal.png'
-							class='logo'
-							alt='Cyph Logo'
-						/>
-					</md2-button>
-					<div class='user' *ngIf='accountAuthService.current'>
-						<img
-							class='profile-picture animated flipInX _1'
-							[ngClass]='userPresence[accountAuthService.current.user.status]'
-							alt='Profile Picture'
-							[src]='accountAuthService.current.user.avatar'
-							(click)='goToState(states.profile)'
-						/>
+					<div class='layout-column'>
+						<md2-button class='home' cyphTranslate (childClick)='this.toggleMenu()'>
+
+								<img
+									src='/img/logo.white.horizontal.png'
+									class='logo'
+									alt='Cyph Logo'
+								/>
+						</md2-button>
+						<div class='user' *ngIf='accountAuthService.current'>
+							<img
+								class='profile-picture animated flipInX _1'
+								[ngClass]='userPresence[accountAuthService.current.user.status]'
+								alt='Profile Picture'
+								[src]='accountAuthService.current.user.avatar'
+								(click)='goToState(states.home)'
+							/>
+						</div>
 					</div>
 				</div>
 				<div>
+					<md2-button cyphTranslate (childClick)='goToState(states.home)'>
+						<i class='material-icons' alt='Contacts'>home</i> Home
+					</md2-button>
 					<md2-button cyphTranslate (childClick)='goToState(states.contacts)'>
 						<i class='material-icons' alt='Contacts'>people</i> Contacts
 					</md2-button>

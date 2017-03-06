@@ -42,18 +42,21 @@ md-sidenav, md2-content, md-content, md-content .layout-column {
 }
 
 md2-button.home {
-	margin-left: 15px;
-	margin-right: 15px;
 	position: relative;
-	top: 20px;
+	top: 5px;
+	padding: 0px;
 }
 
 .home-wrapper {
 	margin-bottom: 10px;
 }
 
+.home button.md-button.md-ink-ripple {
+    padding: 0;
+}
+
 .user {
-	margin-top: 25px;
+	margin-top: 15px;
 	width: 100px;
 	margin-left: auto;
 	margin-right: auto;
@@ -84,5 +87,40 @@ md2-button.home {
 
 	.profile-picture.offline {
 		border: 7px solid rgba(40, 38, 44, 0.9) !important;
+	}
+}
+
+/** Mini Menu */
+md-sidenav.md-closed {
+	width: 69px !important;
+	display: block;
+	-webkit-transform: translate3d(0%,0,0) !important;
+    transform: translate3d(0%,0,0) !important;
+	img.logo {
+		width: 105px !important;
+		margin-left: 1px;
+	}
+	.home-wrapper {
+		margin-bottom: 0px !important;
+	}
+	.user .profile-picture {
+		width: 60px;
+		height: 60px;
+		left: -10px;
+	}
+	.profile-picture.online {
+		border: 5px solid rgba(56, 140, 71, 0.9) !important;
+	}
+
+	.profile-picture.away {
+		border: 5px solid rgba(247, 184, 1, 0.9) !important;
+	}
+
+	.profile-picture.busy {
+		border: 5px solid rgba(255, 28, 28, 0.9) !important;
+	}
+
+	.profile-picture.offline {
+		border: 5px solid rgba(40, 38, 44, 0.9) !important;
 	}
 }
