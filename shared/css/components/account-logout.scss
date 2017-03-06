@@ -1,10 +1,4 @@
-@mixin vertical-align {
-	position: relative;
-	top: 50%;
-	-webkit-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-	transform: translateY(-50%);
-}
+@import '../mixins';
 
 .logout {
 	font-size: 60px;
@@ -21,21 +15,15 @@
 	overflow: hidden;
 	display: inline-block;
 	vertical-align: bottom;
-	-webkit-animation: ellipsis steps(4, end) 900ms infinite;
-	animation: ellipsis steps(4, end) 900ms infinite;
 	content: '\2026';
 
 	/* ascii code for the ellipsis character */
 	width: 0px;
+
+	@include animation(ellipsis steps(4, end) 900ms infinite);
 }
 
-@keyframes ellipsis {
-	to {
-		width: 1.25em;
-	}
-}
-
-@-webkit-keyframes ellipsis {
+@include keyframes(ellipsis) {
 	to {
 		width: 1.25em;
 	}

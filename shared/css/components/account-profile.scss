@@ -1,10 +1,4 @@
-@mixin vertical-align {
-	position: relative;
-	top: 50%;
-	-webkit-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-	transform: translateY(-50%);
-}
+@import '../mixins';
 
 .profile {
 	width: 100%;
@@ -21,8 +15,6 @@
 		display: block;
 		width: 18em;
 		height: 18em;
-		-webkit-box-shadow: 0px 20px 42px 0px rgba(75, 67, 89, 1);
-		-moz-box-shadow: 0px 20px 42px 0px rgba(75, 67, 89, 1);
 		box-shadow: 0px 20px 42px 0px rgba(75, 67, 89, 1);
 	}
 

@@ -4,6 +4,6 @@
 	background-color: initial !important;
 }
 
-:host /deep/ .message-list:after {
+.message-list:after {
 	display: none;
 }

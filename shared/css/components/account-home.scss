@@ -9,9 +9,8 @@ cyph-account-profile {
 
 	.profile {
 		width: 100% !important;
-		-webkit-transform: translateY(0%) !important;
-		-ms-transform: translateY(0%) !important;
-		transform: translateY(0%) !important;
+
+		@include transform(translateY(0px) !important);
 
 		// Profile Status Indicator. TODO: Add Animations
 		.profile-picture {

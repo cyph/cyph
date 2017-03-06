@@ -1054,12 +1054,6 @@ body.mobile .pricing-chart {
 		margin: -10px auto auto auto;
 	}
 
-	/*:first-child {
-		margin-left: auto !important;
-	}
-	:last-child {
-		margin-right: auto !important;
-	}*/
 	.md-button {
 		width: 100px;
 		background-color: #392859;
@@ -1077,30 +1071,12 @@ body.mobile .pricing-chart {
 	}
 
 	md-input-container .md-input {
-		/* -webkit-order: 2; */
 		-ms-flex-order: 2;
-
-		/* order: 2; */
-		/* display: block; */
-		background-color: #BBA8DF;
-
-		//margin: 10px !important;
-		/* margin-top: 0; */
-		/* background: 0 0; */
-		padding: 2px 2px 1px;
-
-		/* border-width: 0 0 1px; */
-		line-height: 26px;
-
-		/* height: 30px; */
 		-ms-flex-preferred-size: 26px;
-
-		/* border-radius: 0; */
-		/* border-style: solid; */
+		background-color: #BBA8DF;
+		padding: 2px 2px 1px;
+		line-height: 26px;
 		width: 100%;
-
-		/* box-sizing: border-box; */
-		/* float: left; */
 	}
 }
 

@@ -1,18 +1,11 @@
 // Staggered animation support. Usage: add any class from ._1 -> ._10
-@mixin animationDelay($delay) {
-	-webkit-animation-delay: $delay;
-	-moz-animation-delay: $delay;
-	-ms-animation-delay: $delay;
-	-o-animation-delay: $delay;
-	animation-delay: $delay;
-}
 
 $interval: 0.25s;
 $classesToAdd: 15;
 
 @for $i from 1 to $classesToAdd + 1 {
 	._#{$i} {
-		@include animationDelay($i * $interval);
+		@include animation-delay($i * $interval);
 	}
 }
 

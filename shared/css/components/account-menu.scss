@@ -1,4 +1,4 @@
-/** Hide backdrop */
+/* Hide backdrop */
 md-backdrop.md-sidenav-backdrop.md-opaque {
 	opacity: 0;
 	z-index: -999;
@@ -90,12 +90,12 @@ md2-button.home {
 	}
 }
 
-/** Mini Menu */
+/* Mini Menu */
 md-sidenav.md-closed {
 	width: 69px !important;
 	display: block;
-	-webkit-transform: translate3d(0%, 0, 0) !important;
-	transform: translate3d(0%, 0, 0) !important;
+
+	@include transform(translate3d(0px, 0, 0) !important);
 
 	img.logo {
 		width: 105px !important;
