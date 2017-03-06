@@ -52,7 +52,7 @@ md2-button.home {
 }
 
 .home button.md-button.md-ink-ripple {
-    padding: 0;
+	padding: 0;
 }
 
 .user {
@@ -94,20 +94,24 @@ md2-button.home {
 md-sidenav.md-closed {
 	width: 69px !important;
 	display: block;
-	-webkit-transform: translate3d(0%,0,0) !important;
-    transform: translate3d(0%,0,0) !important;
+	-webkit-transform: translate3d(0%, 0, 0) !important;
+	transform: translate3d(0%, 0, 0) !important;
+
 	img.logo {
 		width: 105px !important;
 		margin-left: 1px;
 	}
+
 	.home-wrapper {
 		margin-bottom: 0px !important;
 	}
+
 	.user .profile-picture {
 		width: 60px;
 		height: 60px;
 		left: -10px;
 	}
+
 	.profile-picture.online {
 		border: 5px solid rgba(56, 140, 71, 0.9) !important;
 	}
