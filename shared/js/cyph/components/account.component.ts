@@ -23,7 +23,10 @@ export class AccountComponent implements OnInit {
 		return this.accountAuthService.current !== undefined && [
 			States.chat,
 			States.contacts,
-			States.home
+			States.files,
+			States.home,
+			States.profile,
+			States.settings
 		].filter(
 			state => state === this.accountService.state
 		).length > 0;
