@@ -33,7 +33,7 @@ export class AccountComponent implements OnInit {
 	}
 
 	/** @inheritDoc */
-	public ngOnInit () : void {
+	public async ngOnInit () : Promise<void> {
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;

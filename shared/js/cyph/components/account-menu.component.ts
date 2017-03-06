@@ -40,6 +40,24 @@ export class AccountMenuComponent implements OnInit {
 		);
 	}
 
+	/** Goes to state. */
+	public async goToState (state: States) : Promise<void> {
+		this.accountService.state	= state;
+		this.urlStateService.setUrl('account/' + States[state]);
+	}
+
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
+		await this.accountAuthService.ready;
+		this.openMenu();
+	}
+
+	/** Opens account menu. */
+	public async openMenu () : Promise<void> {
+		await util.sleep();
+		(await this.menu).open();
+	}
+
 	/** Toggles account menu. */
 	public async toggleMenu () : Promise<void> {
 		return util.lockTryOnce(
@@ -49,24 +67,6 @@ export class AccountMenuComponent implements OnInit {
 				(await this.menu).toggle();
 			}
 		);
-	}
-
-	/** Goes to state. */
-	public async goToState (state: States) : Promise<void> {
-		this.accountService.state	= state;
-		this.urlStateService.setUrl('account/' + States[state]);
-	}
-
-	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
-		await this.accountAuthService.ready && this.accountAuthService.current;
-		this.openMenu();
-	}
-
-	/** Opens account menu. */
-	public async openMenu () : Promise<void> {
-		await util.sleep();
-		(await this.menu).open();
 	}
 
 	constructor (
@@ -83,7 +83,6 @@ export class AccountMenuComponent implements OnInit {
 
 		/** @see AccountContactsService */
 		public readonly urlStateService: UrlStateService
-	) {
-		this.menu	= mdSidenavService.getSidenav('menu');
+	) { this.menu	= mdSidenavService.getSidenav('menu');
 	}
 }
