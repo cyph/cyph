@@ -279,7 +279,7 @@ export class Files {
 						/* Temporary workaround while Firebase adds CORS support */
 						url: (transfer.url || '').replace(
 							'firebasestorage.googleapis.com',
-							'api.cyph.com'
+							'cyph.com'
 						)
 					});
 

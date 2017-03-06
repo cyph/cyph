@@ -115,14 +115,7 @@ func getOrg(h HandlerArgs) string {
 }
 
 func getIP(h HandlerArgs) []byte {
-	var ip string
-	if forwarded, ok := h.Request.Header["X-Forwarded-For"]; ok && len(forwarded) > 0 {
-		ip = forwarded[0]
-	} else {
-		ip = h.Request.RemoteAddr
-	}
-
-	return net.ParseIP(ip)
+	return net.ParseIP(h.Request.RemoteAddr)
 }
 
 func braintreeInit(h HandlerArgs) *braintree.Braintree {
