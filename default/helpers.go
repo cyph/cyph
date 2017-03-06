@@ -48,8 +48,6 @@ type PreAuthorizedCyph struct {
 	Timestamp   int64
 }
 
-type none struct{}
-
 var methods = struct {
 	GET     string
 	HEAD    string
@@ -69,8 +67,6 @@ var methods = struct {
 	"OPTIONS",
 	"CONNECT",
 }
-
-var empty = struct{}{}
 
 var namespace = strings.Split(strings.Split(config.RootURL, "/")[2], ":")[0]
 
@@ -318,12 +314,14 @@ func initHandler(w http.ResponseWriter, r *http.Request) {
 	_, ok := config.AllowedHosts[r.Host]
 	origin := r.Header.Get("Origin")
 
+	w.Header().Set("Public-Key-Pins", config.HPKPHeader)
+	w.Header().Set("Strict-Transport-Security", config.HSTSHeader)
+
 	if ok || strings.HasSuffix(origin, ".pki.ws") || strings.HasSuffix(origin, ".cyph.ws") || appengine.IsDevAppServer() {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Credentials", "true")
 		w.Header().Add("Access-Control-Allow-Headers", config.AllowedHeaders)
 		w.Header().Add("Access-Control-Allow-Methods", config.AllowedMethods)
-		w.Header().Set("Strict-Transport-Security", config.HSTSHeader)
 	}
 }
 
