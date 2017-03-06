@@ -1,7 +1,7 @@
   http_headers:
     Cache-Control: private, max-age=31536000
     Content-Security-Policy: DEFAULT_CSP
-    Referrer-Policy: "no-referrer"
+    Public-Key-Pins: max-age=5184000; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="unPe8YYMLOhkaAWcjfFF1q571QqcrI5NUfP+0eBT/po="; preload
     Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
     X-Content-Security-Policy: DEFAULT_CSP
     X-Frame-Options: deny

@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+type none struct{}
+
+var empty = struct{}{}
+
 var config = struct {
 	AllowedCyphIds             *regexp.Regexp
 	AllowedCyphIdLength        int
@@ -16,6 +20,7 @@ var config = struct {
 	Continents                 map[string]none
 	DefaultContinent           string
 	EmailAddress               string
+	HPKPHeader                 string
 	HSTSHeader                 string
 	MaxChannelDescriptorLength int
 	MaxSignupValueLength       int
@@ -78,6 +83,8 @@ var config = struct {
 	"eu",
 
 	"Cyph <hello@cyph.com>",
+
+	"max-age=5184000; pin-sha256=\"8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU=\"; pin-sha256=\"unPe8YYMLOhkaAWcjfFF1q571QqcrI5NUfP+0eBT/po=\"; preload",
 
 	"max-age=31536000; includeSubdomains; preload",
 

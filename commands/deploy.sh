@@ -205,6 +205,10 @@ else
 	version=prod
 fi
 
+if [ -d nakedredirect ] ; then
+	cp default/config.go nakedredirect/
+fi
+
 
 # wpstatic + cache busting
 waitingForWpstatic=''
