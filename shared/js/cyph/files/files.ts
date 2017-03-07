@@ -276,11 +276,7 @@ export class Files {
 
 					const cyphertext: Uint8Array	= await util.requestBytes({
 						retries: 5,
-						/* Temporary workaround while Firebase adds CORS support */
-						url: (transfer.url || '').replace(
-							'firebasestorage.googleapis.com',
-							'cyph.com'
-						)
+						url: transfer.url
 					});
 
 					(await firebaseApp).storage().refFromURL(transfer.url).delete();
