@@ -9,6 +9,7 @@ import {Component} from '@angular/core';
 	styleUrls: ['../../css/components/account-extension.css'],
 	templateUrl: '../../../templates/account-extension.html'
 })
+/* tslint:disable-next-line:no-stateless-class */
 export class AccountExtensionComponent {
 	constructor () {}
 }
