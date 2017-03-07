@@ -3,7 +3,6 @@ import {UserPresence, userPresenceSelectOptions} from '../account/enums';
 import {Profile} from '../account/profile';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountProfileService} from '../services/account-profile.service';
-import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {EnvService} from '../services/env.service';
 import {UrlStateService} from '../services/url-state.service';
 
@@ -34,12 +33,7 @@ export class AccountProfileComponent implements OnInit {
 		await this.accountAuthService.ready;
 
 		try {
-			this.profile	= !this.username ?
-				this.accountAuthService.current :
-				await this.accountProfileService.getProfile(
-					await this.accountUserLookupService.getUser(this.username)
-				)
-			;
+			this.profile	= await this.accountProfileService.getProfile(this.username);
 		}
 		catch (_) {}
 
@@ -49,9 +43,6 @@ export class AccountProfileComponent implements OnInit {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly accountUserLookupService: AccountUserLookupService,
-
 		/** @ignore */
 		private readonly urlStateService: UrlStateService,
 
