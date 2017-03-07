@@ -26,13 +26,13 @@ export class UrlStateService {
 	 */
 	public getUrl (fragmentOnly?: boolean) : string {
 		try {
-			const fragment: string	= locationData.hash.split('#')[1] || '';
+			const fragment: string	= locationData.hash.toLowerCase().split('#')[1] || '';
 
 			if (fragmentOnly || fragment) {
 				return fragment;
 			}
 
-			return locationData.pathname.substring(1) || '';
+			return locationData.pathname.toLowerCase().substring(1) || '';
 		}
 		catch (_) {
 			return '';

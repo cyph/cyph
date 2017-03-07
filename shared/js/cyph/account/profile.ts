@@ -1,5 +1,5 @@
 import {util} from '../util';
-import {IUser} from './iuser';
+import {User} from './user';
 
 
 /**
@@ -13,8 +13,8 @@ export class Profile {
 	>();
 
 	constructor (
-		/** @see IUser */
-		public user: IUser,
+		/** @see User */
+		public user: User,
 
 		/** Image URI for cover image. */
 		public coverImage: string = '',

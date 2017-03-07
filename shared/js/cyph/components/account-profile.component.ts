@@ -50,6 +50,9 @@ export class AccountProfileComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
+		private readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @ignore */
 		private readonly urlStateService: UrlStateService,
 
 		/** @see AccountAuthService */
@@ -57,9 +60,6 @@ export class AccountProfileComponent implements OnInit {
 
 		/** @see AccountProfileService */
 		public readonly accountProfileService: AccountProfileService,
-
-		/** @see AccountUserLookupService */
-		public readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService

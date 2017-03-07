@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {IUser} from '../account/iuser';
 import {Profile} from '../account/profile';
+import {User} from '../account/user';
 import {AccountAuthService} from './account-auth.service';
 import {FileService} from './file.service';
 
@@ -11,7 +11,7 @@ import {FileService} from './file.service';
 @Injectable()
 export class AccountProfileService {
 	/** Tries to to get user object for the specified user. */
-	public async getProfile (user?: IUser) : Promise<Profile> {
+	public async getProfile (user?: User) : Promise<Profile> {
 		await this.accountAuthService.ready;
 
 		if (!user) {

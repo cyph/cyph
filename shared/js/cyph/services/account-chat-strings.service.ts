@@ -15,7 +15,7 @@ export class AccountChatStringsService extends ChatStringsService {
 			return '';
 		}
 
-		return this.accountSessionService.user.username;
+		return this.accountSessionService.user.realUsername;
 	}
 
 	/** @ignore */

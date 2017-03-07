@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {userPresenceSorted} from '../account/enums';
-import {IUser} from '../account/iuser';
+import {User} from '../account/user';
 import {AccountAuthService} from './account-auth.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 
@@ -11,7 +11,7 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 @Injectable()
 export class AccountContactsService {
 	/** List of contacts for current user. */
-	public get contacts () : IUser[] {
+	public get contacts () : User[] {
 		if (!this.accountAuthService.current) {
 			return [];
 		}

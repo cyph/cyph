@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {IUser} from '../account/iuser';
+import {User} from '../account/user';
 import {IMessage} from '../session/imessage';
 import {util} from '../util';
 import {AccountUserLookupService} from './account-user-lookup.service';
@@ -15,7 +15,7 @@ export class AccountSessionService extends SessionService {
 	private readonly replies	= new Set<string>();
 
 	/** The remote user we're chatting with. */
-	public user: IUser|undefined;
+	public user: User|undefined;
 
 	/** Closes a chat with an anonymous user. Otherwise, this is a no-op. */
 	public close () : void {}
@@ -45,7 +45,7 @@ export class AccountSessionService extends SessionService {
 				this.trigger(this.rpcEvents.typing, {isTyping: false});
 
 				this.trigger(this.rpcEvents.text, {
-					author: this.user.username,
+					author: this.user.realUsername,
 					text: 'who is this?'
 				});
 			})();
