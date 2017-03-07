@@ -1,6 +1,6 @@
 <div *ngIf='accountAuthService.current'>
 	<md2-sidenav 
-		mdComponentId='menu'
+		[mdComponentId]='menuId'
 		childClass='md-sidenav-left md-whiteframe-z2 flex-25'
 		mode='side'
 	>
@@ -8,7 +8,7 @@
 			<div class='layout-column'>
 				<div class='home-wrapper'>
 					<div class='layout-column'>
-						<md2-button class='home' cyphTranslate (childClick)='this.toggleMenu()'>
+						<md2-button class='home' cyphTranslate (childClick)='toggleMenu()'>
 
 								<img
 									src='/img/logo.white.horizontal.png'

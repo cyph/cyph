@@ -18,10 +18,13 @@ import {util} from '../util';
 })
 export class AccountMenuComponent implements OnInit {
 	/** @ignore */
-	public menu: Promise<angular.material.ISidenavObject>;
+	private readonly menu: Promise<angular.material.ISidenavObject>;
 
 	/** @ignore */
-	public menuLock: {}				= {};
+	private readonly menuLock: {}	= {};
+
+	/** Menu component ID. */
+	public readonly menuId: string	= util.generateGuid();
 
 	/** @see States */
 	public states: typeof States	= States;
@@ -83,6 +86,7 @@ export class AccountMenuComponent implements OnInit {
 
 		/** @see AccountContactsService */
 		public readonly urlStateService: UrlStateService
-	) { this.menu	= mdSidenavService.getSidenav('menu');
+	) {
+		this.menu	= mdSidenavService.getSidenav(this.menuId);
 	}
 }
