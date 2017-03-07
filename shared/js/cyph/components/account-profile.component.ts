@@ -28,6 +28,11 @@ export class AccountProfileComponent implements OnInit {
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
+	/** Indicates whether this is the profile of the currently signed in user. */
+	public get isCurrentUser () : boolean {
+		return this.profile === this.accountAuthService.current;
+	}
+
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		await this.accountAuthService.ready;

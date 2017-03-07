@@ -38,7 +38,7 @@
 				<md2-button
 					cyphTranslate
 					class='layout-row'
-					ariaLabel='Send Message'
+					ariaLabel='Start Chat'
 					*ngIf='contact.status === userPresence.online'
 					(childClick)='urlStateService.setUrl("account/chat/" + contact.username)'
 				>

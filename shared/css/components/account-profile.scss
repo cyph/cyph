@@ -35,7 +35,15 @@
 		font-weight: 500;
 	}
 
+	span.username {
+		color: #bababa;
+	}
+
 	span.description {
+		margin: 25px auto;
+	}
+
+	span.username, span.description {
 		font-size: 24px;
 	}
 

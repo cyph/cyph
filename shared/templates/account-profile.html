@@ -6,9 +6,10 @@
 		[src]='profile.user.avatar'
 	/>
 	<span class='name animated flipInX _2'>{{profile.user.name}}</span>
+	<span class='username animated flipInX _2'>@{{profile.user.realUsername}}</span>
 	<span class='description animated flipInX _3'>{{profile.description}}</span>
 	
-	<div *ngIf='!username' class='status flex-50'>
+	<div *ngIf='isCurrentUser' class='status flex-50'>
 		<md2-select
 			cyphTranslate
 			class='flex'
@@ -20,20 +21,31 @@
 		></md2-select>
 	</div>
 
-	<div class='buttons'>
+	<div *ngIf='!isCurrentUser' class='buttons'>
 		<md2-button
-			class='animated flipInX _4'
 			cyphTranslate
+			class='animated flipInX _4'
 			ariaLabel='Add User'
 		>
 			<i class='material-icons' alt='Add User'>person_add</i>
 		</md2-button>
+
 		<md2-button
-			class='animated flipInX _4'
 			cyphTranslate
+			class='animated flipInX _4'
 			ariaLabel='Send Message'
+			*ngIf='profile.user.status !== userPresence.online'
 		>
 			<i class='material-icons' alt='Send Message'>email</i>
+		</md2-button>
+		<md2-button
+			cyphTranslate
+			class='animated flipInX _4'
+			ariaLabel='Start Chat'
+			*ngIf='profile.user.status === userPresence.online'
+			(childClick)='urlStateService.setUrl("account/chat/" + profile.user.username)'
+		>
+			<i class='material-icons' alt='Start Chat'>chat_bubble</i>
 		</md2-button>
 	</div>
 </div>
