@@ -4,6 +4,7 @@
 export enum States {
 	chat,
 	contacts,
+	extension,
 	files,
 	home,
 	login,

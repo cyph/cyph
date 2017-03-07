@@ -16,6 +16,11 @@
 			*ngIf='accountService.state === states.chat'
 		></cyph-account-chat>
 
+		<cyph-account-extension
+			class='layout-fill'
+			*ngIf='accountService.state === states.extension'
+		></cyph-account-extension>
+
 		<cyph-account-files
 			class='layout-fill'
 			*ngIf='accountService.state === states.files'
