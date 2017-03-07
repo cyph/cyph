@@ -6,7 +6,7 @@ import {EnvService} from '../services/env.service';
 
 
 /**
- * Angular component for Cyph.io
+ * Angular component for files UI.
  */
 @Component({
 	selector: 'cyph-account-files',
