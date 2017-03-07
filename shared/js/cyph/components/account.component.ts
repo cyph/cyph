@@ -46,23 +46,25 @@ export class AccountComponent implements OnInit {
 		}
 
 		/* tslint:disable-next-line:no-unused-new */
-		new Granim({
-			direction: 'radial',
-			element: '.cyph-gradient',
-			isPausedWhenNotInView: true,
-			name: 'basic-gradient',
-			opacity: [1, .5, 0],
-			states : {
-				'default-state': {
-					gradients: [
-						['#392859', '#624599'],
-						['#9368E6', '#624599']
-					],
-					loop: true,
-					transitionSpeed: 5000
+		if (this.accountService.state != States.extension){
+			new Granim({
+				direction: 'radial',
+				element: '.cyph-gradient',
+				isPausedWhenNotInView: true,
+				name: 'basic-gradient',
+				opacity: [1, .5, 0],
+				states : {
+					'default-state': {
+						gradients: [
+							['#392859', '#624599'],
+							['#9368E6', '#624599']
+						],
+						loop: true,
+						transitionSpeed: 5000
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	/** Indicates whether the sidebar should take up the entire view. */

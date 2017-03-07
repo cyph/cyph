@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 
-
 /**
  * Angular component for browser extension.
  */
