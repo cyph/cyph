@@ -31,6 +31,7 @@ export class AppService {
 
 		if (newUrlStateSplit[0] === urlSections.account) {
 			this.accountService.state	= (<any> AccountStates)[newUrlStateSplit[1]];
+			this.accountService.input	= newUrlStateSplit[2];
 			this.state					= States.account;
 		}
 		else if (newUrlState === this.urlStateService.states.notFound) {

@@ -12,7 +12,7 @@
 	>
 		<cyph-account-chat
 			class='layout-fill'
-			[username]='accountService.chatUsername'
+			[username]='accountService.input'
 			*ngIf='accountService.state === states.chat'
 		></cyph-account-chat>
 
@@ -43,7 +43,7 @@
 
 		<cyph-account-profile
 			class='layout-fill'
-			[username]='accountService.profileUsername'
+			[username]='accountService.input'
 			*ngIf='accountService.state === states.profile'
 		></cyph-account-profile>
 

@@ -4,6 +4,7 @@ import {AccountAuthService} from '../services/account-auth.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountService} from '../services/account.service';
 import {EnvService} from '../services/env.service';
+import {UrlStateService} from '../services/url-state.service';
 
 
 /**
@@ -32,6 +33,9 @@ export class AccountContactsComponent {
 		public readonly accountContactsService: AccountContactsService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see AccountProfileService */
+		public readonly urlStateService: UrlStateService
 	) {}
 }
