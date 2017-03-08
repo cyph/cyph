@@ -17,6 +17,24 @@ export class AccountFilesService {
 		{name: 'Test File', filetype: 'png', location: '/', size: 1337}
 	];
 
+	/** Gets the File default Thumbnail */
+	public  thumb (filetype: String) : String {
+		var images: String[] = ['png', 'jpg', 'jpeg', 'tiff', 'bmp', 'gif', 'eps', 'ai'];
+		var videos: String[] = ['mov', 'mp4', 'avi', 'mpeg'];
+		
+		for (var i = 0; i < images.length; i++) {
+			if (filetype === images[i]){
+				return 'photo';
+			}
+		}
+		for (var i = 0; i < videos.length; i++) {
+			if (filetype === videos[i]){
+				return 'movie';
+			}
+		}
+		return 'insert_drive_file';
+	}
+
 	/** Files owned by current user. */
 	public get myFiles () : IFile[] {
 		if (!this.accountAuthService.current) {

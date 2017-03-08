@@ -21,7 +21,14 @@ span {
 		border: 3px solid rgba(57, 40, 89, 0.35) !important;
 		margin: 5px;
 		padding: 15px;
-
+		.thumb .material-icons {
+			font-size: 42px;
+			position: relative;
+			top: 12px;
+		}
+		md2-button .material-icons {
+			font-size: 38px;
+		}
 		.file {
 			margin: 5px;
 		}

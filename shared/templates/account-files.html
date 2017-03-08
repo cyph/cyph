@@ -9,6 +9,9 @@
 		>
 			<div class='wrapper layout-row layout-align-start-stretch flex animated flipInY _{{i}}'>
 				<div class='layout-row flex'>
+					<div class='thumb'>
+						<i class='material-icons' alt='File Type'>{{accountFilesService.thumb(myFile.filetype)}}</i>
+					</div>
 					<div class='file layout-column flex'>
 						<span class='name'>
 							{{myFile.name}}
