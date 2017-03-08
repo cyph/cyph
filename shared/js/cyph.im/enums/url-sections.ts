@@ -3,10 +3,13 @@
  */
 export class UrlSections {
 	/** @see UrlSections */
-	public readonly account: string	= 'account';
+	public readonly account: string		= 'account';
 
 	/** @see UrlSections */
-	public readonly root: string	= '';
+	public readonly extension: string	= 'extension';
+
+	/** @see UrlSections */
+	public readonly root: string		= '';
 
 	constructor () {}
 }

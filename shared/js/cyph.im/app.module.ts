@@ -5,7 +5,6 @@ import {BrowserModule, Title} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {AccountChatComponent} from '../cyph/components/account-chat.component';
 import {AccountContactsComponent} from '../cyph/components/account-contacts.component';
-import {AccountExtensionComponent} from '../cyph/components/account-extension.component';
 import {AccountFilesComponent} from '../cyph/components/account-files.component';
 import {AccountHomeComponent} from '../cyph/components/account-home.component';
 import {AccountLoginComponent} from '../cyph/components/account-login.component';
@@ -93,7 +92,6 @@ import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 		AccountChatComponent,
 		AccountComponent,
 		AccountContactsComponent,
-		AccountExtensionComponent,
 		AccountFilesComponent,
 		AccountHomeComponent,
 		AccountLoginComponent,

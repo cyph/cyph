@@ -22,6 +22,11 @@ export class AppService {
 	public states: typeof States	= States;
 
 	/** @ignore */
+	private get urlSection () : string {
+		return this.urlStateService.getUrlSplit()[0];
+	}
+
+	/** @ignore */
 	private onUrlStateChange (newUrlState: string) : void {
 		if (newUrlState === urlSections.root) {
 			return;
@@ -74,9 +79,13 @@ export class AppService {
 		self.onpopstate		= () => {};
 
 
-		const urlSection: string	= this.urlStateService.getUrlSplit()[0];
+		/* Handle browser extension case */
+		if (this.urlSection === urlSections.extension) {
+			this.accountService.isExtension	= true;
+			this.urlStateService.setUrl('account/home');
+		}
 
-		if (urlSection === urlSections.account) {
+		if (this.urlSection === urlSections.account) {
 			this.state	= States.account;
 			this.urlStateService.trigger();
 		}

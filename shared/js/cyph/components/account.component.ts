@@ -40,9 +40,7 @@ export class AccountComponent implements OnInit {
 			return;
 		}
 
-		this.urlStateService.trigger();
-
-		if (!this.envService.coBranded && this.accountService.state !== States.extension) {
+		if (!this.envService.coBranded && !this.accountService.isExtension) {
 			/* tslint:disable-next-line:no-unused-new */
 			new Granim({
 				direction: 'radial',
