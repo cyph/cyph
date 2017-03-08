@@ -61,7 +61,7 @@ export class ChatRootComponent implements OnInit {
 				isPausedWhenNotInView: true,
 				name: 'basic-gradient',
 				opacity: [1, 1],
-				states : {
+				states: {
 					'default-state': {
 						gradients: [
 							['#392859', '#624599'],

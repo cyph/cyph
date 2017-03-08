@@ -50,7 +50,7 @@ export class AccountComponent implements OnInit {
 				isPausedWhenNotInView: true,
 				name: 'basic-gradient',
 				opacity: [1, 0.5, 0],
-				states : {
+				states: {
 					'default-state': {
 						gradients: [
 							['#392859', '#624599'],
