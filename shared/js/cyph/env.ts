@@ -64,7 +64,7 @@ export class Env extends EnvDeploy {
 	public readonly isMainThread: boolean	= typeof (<any> self).importScripts !== 'function';
 
 	/** Indicates whether this is mobile. */
-	public isMobile: boolean				=
+	public readonly isMobile: boolean		=
 		this.isAndroid ||
 		this.isIOS ||
 		this.isFFMobile

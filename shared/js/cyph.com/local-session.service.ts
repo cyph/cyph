@@ -15,10 +15,14 @@ import {ChatData} from './chat-data';
 @Injectable()
 export class LocalSessionService extends SessionService {
 	/** @ignore */
-	private chatData: ChatData;
+	private chatData: ChatData|undefined;
 
 	/** @inheritDoc */
-	public close () : void {
+	public async close () : Promise<void> {
+		while (!this.chatData) {
+			await util.sleep();
+		}
+
 		if (!this.state.isAlive) {
 			return;
 		}
@@ -64,7 +68,11 @@ export class LocalSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	public send (...messages: IMessage[]) : void {
+	public async send (...messages: IMessage[]) : Promise<void> {
+		while (!this.chatData) {
+			await util.sleep();
+		}
+
 		for (const message of messages) {
 			const cyphertext	= potassiumUtil.toBase64(
 				potassiumUtil.randomBytes(

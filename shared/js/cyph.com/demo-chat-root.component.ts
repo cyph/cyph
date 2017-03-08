@@ -7,6 +7,7 @@ import {P2PService} from '../cyph/services/p2p.service';
 import {ScrollService} from '../cyph/services/scroll.service';
 import {SessionService} from '../cyph/services/session.service';
 import {ChatData} from './chat-data';
+import {DemoEnvService} from './demo-env.service';
 import {LocalSessionService} from './local-session.service';
 
 
@@ -17,11 +18,15 @@ import {LocalSessionService} from './local-session.service';
 	providers: [
 		ChatService,
 		CyphertextService,
-		EnvService,
+		DemoEnvService,
 		FileTransferService,
 		LocalSessionService,
 		P2PService,
 		ScrollService,
+		{
+			provide: EnvService,
+			useExisting: DemoEnvService
+		},
 		{
 			provide: SessionService,
 			useExisting: LocalSessionService
@@ -36,8 +41,7 @@ export class DemoChatRootComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		this.envService.isMobile	= this.data.isMobile;
-
+		this.demoEnvService.init(this.data);
 		this.localSessionService.init(this.data);
 
 		this.data.message.subscribe(s => {
@@ -66,7 +70,7 @@ export class DemoChatRootComponent implements OnInit {
 		private readonly chatService: ChatService,
 
 		/** @ignore */
-		private readonly envService: EnvService,
+		private readonly demoEnvService: DemoEnvService,
 
 		/** @ignore */
 		private readonly localSessionService: LocalSessionService,
