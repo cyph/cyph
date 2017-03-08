@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import * as Granim from 'granim';
 import {States} from '../account/enums';
 import {AccountAuthService} from '../services/account-auth.service';
+import {AccountEnvService} from '../services/account-env.service';
 import {AccountService} from '../services/account.service';
 import {EnvService} from '../services/env.service';
 import {UrlStateService} from '../services/url-state.service';
@@ -11,6 +12,12 @@ import {UrlStateService} from '../services/url-state.service';
  * Angular component for the Cyph account screen.
  */
 @Component({
+	providers: [
+		{
+			provide: EnvService,
+			useClass: AccountEnvService
+		}
+	],
 	selector: 'cyph-account',
 	styleUrls: ['../../css/components/account.css'],
 	templateUrl: '../../../templates/account.html'

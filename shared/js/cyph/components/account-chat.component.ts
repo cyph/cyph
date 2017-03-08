@@ -23,7 +23,6 @@ import {StringsService} from '../services/strings.service';
 		AccountChatService,
 		AccountSessionService,
 		CyphertextService,
-		EnvService,
 		FileTransferService,
 		P2PService,
 		ScrollService,
