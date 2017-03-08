@@ -9,6 +9,7 @@ if [ ! "$source" -o ! "$target" ] ; then
 	exit 1
 fi
 
+git config push.default upstream
 git checkout $targetCamel 2> /dev/null || git checkout -b $targetCamel --track $target
 git pull
 git merge $source
