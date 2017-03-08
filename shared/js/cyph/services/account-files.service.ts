@@ -17,23 +17,6 @@ export class AccountFilesService {
 		{name: 'Test File', filetype: 'png', location: '/', size: 1337}
 	];
 
-	/** Gets the File default Thumbnail */
-	public  thumb (filetype: string) : string {
-		const images: string[]	= ['png', 'jpg', 'jpeg', 'tiff', 'bmp', 'gif', 'eps', 'ai'];
-		const videos: string[]	= ['mov', 'mp4', 'avi', 'mpeg'];
-		for (const image of images) {
-			if (filetype === image) {
-				return 'photo';
-			}
-		}
-		for (const video of videos) {
-			if (filetype === video) {
-				return 'movie';
-			}
-		}
-		return 'insert_drive_file';
-	}
-
 	/** Files owned by current user. */
 	public get myFiles () : IFile[] {
 		if (!this.accountAuthService.current) {
@@ -41,6 +24,26 @@ export class AccountFilesService {
 		}
 
 		return AccountFilesService.DUMMY_FILES;
+	}
+
+	/** Gets the Material icon name for the file default thumbnail. */
+	public thumb (filetype: string) : 'insert_drive_file'|'movie'|'photo' {
+		const images: string[]	= ['png', 'jpg', 'jpeg', 'tiff', 'bmp', 'gif', 'eps', 'ai'];
+		const videos: string[]	= ['mov', 'mp4', 'avi', 'mpeg'];
+
+		for (const image of images) {
+			if (filetype === image) {
+				return 'photo';
+			}
+		}
+
+		for (const video of videos) {
+			if (filetype === video) {
+				return 'movie';
+			}
+		}
+
+		return 'insert_drive_file';
 	}
 
 	constructor (

@@ -6,6 +6,7 @@ import {AccountService} from '../services/account.service';
 import {EnvService} from '../services/env.service';
 import {UrlStateService} from '../services/url-state.service';
 
+
 /**
  * Angular component for the Cyph account screen.
  */
@@ -41,18 +42,14 @@ export class AccountComponent implements OnInit {
 
 		this.urlStateService.trigger();
 
-		if (this.envService.coBranded) {
-			return;
-		}
-
-		if (this.accountService.state !== States.extension) {
+		if (!this.envService.coBranded && this.accountService.state !== States.extension) {
 			/* tslint:disable-next-line:no-unused-new */
-			new Granim ({
+			new Granim({
 				direction: 'radial',
 				element: '.cyph-gradient',
 				isPausedWhenNotInView: true,
 				name: 'basic-gradient',
-				opacity: [1, .5, 0],
+				opacity: [1, 0.5, 0],
 				states : {
 					'default-state': {
 						gradients: [
