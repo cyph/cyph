@@ -11,7 +11,7 @@ import {EnvService} from './env.service';
 export class AccountEnvService extends EnvService {
 	/** @inheritDoc */
 	public get isMobile () : boolean {
-		return this.accountService.isExtension || env.isMobile;
+		return (this.accountService && this.accountService.isExtension) || env.isMobile;
 	}
 
 	/** @ignore */
