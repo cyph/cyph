@@ -100,16 +100,21 @@ md-sidenav .md-button {
 	}
 }
 
-md-select-menu md-content md-option {
-	background-color: rgba(180, 141, 255, 0.85);
-	color: #f1f1f1;
-
-	&:not([selected]):hover {
-		background-color: rgb(180, 141, 255) !important;
+md-select-menu {
+	&, md-content md-option {
+		background-color: rgba(180, 141, 255, 0.85);
 	}
 
-	&[selected] {
-		background-color: #f1f1f1 !important;
+	md-content md-option {
+		color: #f1f1f1;
+
+		&:not([selected]):hover {
+			background-color: rgb(180, 141, 255) !important;
+		}
+
+		&[selected] {
+			background-color: #f1f1f1 !important;
+		}
 	}
 }
 
