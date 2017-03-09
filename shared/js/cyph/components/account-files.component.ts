@@ -3,6 +3,7 @@ import {AccountAuthService} from '../services/account-auth.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {EnvService} from '../services/env.service';
+import {UtilService} from '../services/util.service';
 
 
 /**
@@ -25,6 +26,9 @@ export class AccountFilesComponent {
 		public readonly accountFilesService: AccountFilesService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see UtilService */
+		public readonly utilService: UtilService
 	) {}
 }

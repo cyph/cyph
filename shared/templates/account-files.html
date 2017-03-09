@@ -18,10 +18,10 @@
 						</span>
 						<div class='metadata layout-row'>
 							<span class='filetype'>
-								Filetype: {{myFile.filetype}} 
+								File type: {{myFile.filetype}} 
 							</span>
 							<span class='size'>
-								File size {{myFile.size}} kb
+								File size: {{utilService.readableByteLength(myFile.size)}}
 							</span>
 						</div>
 					</div>
