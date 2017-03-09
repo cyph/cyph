@@ -21,31 +21,38 @@
 		></md2-select>
 	</div>
 
-	<div *ngIf='!isCurrentUser' class='buttons'>
+	<div *ngIf='!isCurrentUser' class='buttons layout-row'>
+		<div class='flex'></div>
+
 		<md2-button
 			cyphTranslate
+			childClass='md-fab'
 			class='animated flipInX _4'
 			ariaLabel='Add User'
 		>
-			<i class='material-icons' alt='Add User'>person_add</i>
+			<md2-icon>person_add</md2-icon>
 		</md2-button>
 
 		<md2-button
 			cyphTranslate
+			childClass='md-fab'
 			class='animated flipInX _4'
 			ariaLabel='Send Message'
 			*ngIf='profile.user.status !== userPresence.online'
 		>
-			<i class='material-icons' alt='Send Message'>email</i>
+			<md2-icon>email</md2-icon>
 		</md2-button>
 		<md2-button
 			cyphTranslate
+			childClass='md-fab'
 			class='animated flipInX _4'
 			ariaLabel='Start Chat'
 			*ngIf='profile.user.status === userPresence.online'
 			(childClick)='urlStateService.setUrl("account/chat/" + profile.user.username)'
 		>
-			<i class='material-icons' alt='Start Chat'>chat_bubble</i>
+			<md2-icon>chat_bubble</md2-icon>
 		</md2-button>
+
+		<div class='flex'></div>
 	</div>
 </div>

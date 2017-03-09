@@ -93,29 +93,7 @@
 		}
 	}
 
-	.buttons {
-		width: 175px;
-		margin-left: auto;
-		margin-right: auto;
-		margin-top: 20px;
-
-		i.material-icons {
-			font-size: 42px;
-			padding: 5px;
-		}
-
-		md2-button {
-			width: 85px;
-			left: 16px;
-			position: relative;
-			display: inline-block;
-		}
-
-		button.md-button {
-			background-color: #392859;
-			border-radius: 50%;
-			margin-left: auto;
-			margin-right: auto;
-		}
+	.buttons .md-button {
+		background-color: #392859;
 	}
 }
