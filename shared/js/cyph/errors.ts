@@ -1,5 +1,6 @@
 import {analytics} from './analytics';
 import {Email} from './email';
+import {env} from './env';
 import {util} from './util';
 
 
@@ -15,17 +16,12 @@ export class Errors {
 	 * @param column
 	 * @param errorObject
 	 */
-	public readonly log			= this.baseErrorLog(
-		'WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS',
-		true
-	);
+	public readonly log			= this.baseErrorLog('CYPH ERROR', true);
 
 	/**
 	 * Logs chat authentication failure (attempted mitm and/or mistyped shared secret).
 	 */
-	public readonly logAuthFail	= this.baseErrorLog(
-		'AUTHENTICATION JUST FAILED FOR SOMEONE LADS'
-	);
+	public readonly logAuthFail	= this.baseErrorLog('CYPH AUTHENTICATION FAILURE');
 
 	/** @ignore */
 	private baseErrorLog (subject: string, requireErrorMessage?: boolean) : (
@@ -70,7 +66,7 @@ export class Errors {
 			if (numEmails++ < 50) {
 				util.email(new Email(
 					'errors',
-					'CYPH: ' + subject,
+					`[${env.host}] ${subject}`,
 					exception
 				));
 			}
