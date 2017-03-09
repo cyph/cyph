@@ -35,7 +35,19 @@ export class AppService {
 		const newUrlStateSplit: string[]	= newUrlState.split('/');
 
 		if (newUrlStateSplit[0] === urlSections.account) {
-			this.accountService.state	= (<any> AccountStates)[newUrlStateSplit[1]];
+			const accountState: AccountStates|undefined	=
+				(<any> AccountStates)[newUrlStateSplit[1]]
+			;
+
+			if (accountState === AccountStates.home) {
+				this.urlStateService.setUrl(urlSections.account);
+				return;
+			}
+
+			this.accountService.state	=
+				accountState === undefined ? AccountStates.home : accountState
+			;
+
 			this.accountService.input	= newUrlStateSplit[2];
 			this.state					= States.account;
 		}

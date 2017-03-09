@@ -41,7 +41,7 @@ export class AccountLoginComponent {
 		this.username	= '';
 
 		/* TODO: handle this somewhere else */
-		this.urlStateService.setUrl('account/home');
+		this.urlStateService.setUrl('account');
 	}
 
 	constructor (

@@ -71,7 +71,7 @@ export class AccountComponent implements OnInit {
 		await this.accountAuthService.ready;
 
 		if (this.accountAuthService.current && this.accountService.state === States.login) {
-			this.urlStateService.setUrl('account/home');
+			this.urlStateService.setUrl('account');
 		}
 		else if (!this.accountAuthService.current && this.accountService.state !== States.login) {
 			this.urlStateService.setUrl('account/login');
