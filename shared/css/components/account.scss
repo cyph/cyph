@@ -9,16 +9,17 @@ $classesToAdd: 15;
 	}
 }
 
-// Scrollfix to pin Cyph background/gradient - add all account component selectors here
-cyph-account-contacts,
-cyph-account-login,
-cyph-account-logout,
-cyph-account-profile,
-cyph-account-register,
-cyph-account-settings,
-cyph-account-home,
-cyph-account-menu {
+/* Scrollfix to pin Cyph background/gradient */
+:host > div > :not(canvas) {
 	overflow: scroll;
+}
+
+cyph-account-menu {
+	min-width: 5em;
+}
+
+.mobile .cyph-gradient {
+	opacity: 0.15;
 }
 
 .cyph-gradient {

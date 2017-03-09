@@ -1,8 +1,9 @@
-<div cyphNanoScroller class='layout-row'>
+<div cyphNanoScroller class='layout-row' [class.mobile]='envService.isMobile'>
 	<canvas class='cyph-gradient'></canvas>
 
 	<cyph-account-menu
-		class='menu sidebar layout-column flex-20'
+		class='menu sidebar layout-column'
+		[class.flex-20]='!envService.isMobile'
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
@@ -58,6 +59,10 @@
 		[ngClass]='showOnlySidebar ? "flex" : "flex-25"'
 		*ngIf='sidebarVisible'
 	>
-		<cyph-account-contacts></cyph-account-contacts>
+		<div class='layout-row'>
+			<div *ngIf='!envService.isMobile && showOnlySidebar' class='flex-30'></div>
+			<cyph-account-contacts class='flex'></cyph-account-contacts>
+			<div *ngIf='!envService.isMobile && showOnlySidebar' class='flex-30'></div>
+		</div>
 	</div>
 </div>

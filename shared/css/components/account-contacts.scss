@@ -21,8 +21,6 @@ md2-button {
 }
 
 .contacts {
-	margin-left: auto;
-	margin-right: auto;
 	position: relative;
 
 	.wrapper {
@@ -44,7 +42,7 @@ md2-button {
 		}
 
 		.name {
-			max-width: 175px;
+			padding: 0px 5px;
 		}
 
 		.name, .status {

@@ -9,12 +9,16 @@
 				<div class='home-wrapper'>
 					<div class='layout-column'>
 						<md2-button class='home' cyphTranslate (childClick)='toggleMenu()'>
-
-								<img
-									src='/img/logo.white.horizontal.png'
-									class='logo'
-									alt='Cyph Logo'
-								/>
+							<img
+								src='/img/logo.white.horizontal.png'
+								class='logo full-button'
+								alt='Cyph Logo'
+							/>
+							<img
+								src='/img/logo.white.icon.png'
+								class='logo collapsed-button'
+								alt='Cyph Logo'
+							/>
 						</md2-button>
 						<div class='user' *ngIf='accountAuthService.current'>
 							<img
@@ -29,16 +33,20 @@
 				</div>
 				<div>
 					<md2-button cyphTranslate (childClick)='goToState(states.home)'>
-						<i class='material-icons' alt='Contacts'>home</i> Home
+						<i class='material-icons' alt='Contacts'>home</i>
+						<span class='full-button'>Home</span>
 					</md2-button>
 					<md2-button cyphTranslate (childClick)='goToState(states.contacts)'>
-						<i class='material-icons' alt='Contacts'>people</i> Contacts
+						<i class='material-icons' alt='Contacts'>people</i>
+						<span class='full-button'>Contacts</span>
 					</md2-button>
 					<md2-button cyphTranslate (childClick)='goToState(states.files)'>
-						<i class='material-icons' alt='Files'>folder</i> Files
+						<i class='material-icons' alt='Files'>folder</i>
+						<span class='full-button'>Files</span>
 					</md2-button>
 					<md2-button cyphTranslate (childClick)='goToState(states.settings)'>
-						<i class='material-icons' alt='Settings'>settings</i> Settings
+						<i class='material-icons' alt='Settings'>settings</i>
+						<span class='full-button'>Settings</span>
 					</md2-button>
 				</div>
 				<div class='flex'></div>
@@ -48,7 +56,8 @@
 						cyphTranslate
 						(childClick)='urlStateService.setUrl("account/logout")'
 					>
-						<i class='material-icons' alt='Logout'>exit_to_app</i> Logout
+						<i class='material-icons' alt='Logout'>exit_to_app</i>
+						<span class='full-button'>Logout</span>
 					</md2-button>
 				</div>
 			</div>

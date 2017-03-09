@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {States, UserPresence} from '../account/enums';
 import {AccountAuthService} from '../services/account-auth.service';
-import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountService} from '../services/account.service';
+import {EnvService} from '../services/env.service';
 import {MdSidenavService} from '../services/material/md-sidenav.service';
 import {UrlStateService} from '../services/url-state.service';
 import {util} from '../util';
@@ -45,13 +45,20 @@ export class AccountMenuComponent implements OnInit {
 
 	/** Goes to state. */
 	public async goToState (state: States) : Promise<void> {
+		if (this.envService.isMobile) {
+			await this.closeMenu();
+		}
+
 		this.accountService.state	= state;
 		this.urlStateService.setUrl('account/' + States[state]);
 	}
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		await this.accountAuthService.ready;
+		if (this.envService.isMobile) {
+			return;
+		}
+
 		this.openMenu();
 	}
 
@@ -75,16 +82,16 @@ export class AccountMenuComponent implements OnInit {
 	constructor (
 		mdSidenavService: MdSidenavService,
 
+		/** @ignore */
+		private readonly accountService: AccountService,
+
+		/** @ignore */
+		private readonly envService: EnvService,
+
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
 
-		/** @see AccountService */
-		public readonly accountService: AccountService,
-
-		/** @see AccountContactsService */
-		public readonly accountUserLookupService: AccountUserLookupService,
-
-		/** @see AccountContactsService */
+		/** @see UrlStateService */
 		public readonly urlStateService: UrlStateService
 	) {
 		this.menu	= mdSidenavService.getSidenav(this.menuId);

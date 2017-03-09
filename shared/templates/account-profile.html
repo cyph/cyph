@@ -1,4 +1,4 @@
-<div class='profile layout-column' *ngIf='profile'>
+<div class='profile layout-column' *ngIf='profile' [class.mobile]='envService.isMobile'>
 	<img
 		class='profile-picture animated flipInX _1'
 		[ngClass]='userPresence[profile.user.status]'

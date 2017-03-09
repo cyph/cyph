@@ -47,7 +47,7 @@ export class AccountComponent implements OnInit {
 			return;
 		}
 
-		if (!this.envService.coBranded && !this.accountService.isExtension) {
+		if (!this.envService.coBranded && !this.envService.isMobile) {
 			/* tslint:disable-next-line:no-unused-new */
 			new Granim({
 				direction: 'radial',
@@ -80,7 +80,7 @@ export class AccountComponent implements OnInit {
 
 	/** Indicates whether the sidebar should take up the entire view. */
 	public get showOnlySidebar () : boolean {
-		return this.sidebarVisible && [
+		return [
 			States.contacts
 		].filter(
 			state => state === this.accountService.state
@@ -89,13 +89,17 @@ export class AccountComponent implements OnInit {
 
 	/** Indicates whether sidebar should be displayed. */
 	public get sidebarVisible () : boolean {
-		return this.accountAuthService.current !== undefined && [
-			States.chat,
-			States.contacts,
-			States.home
-		].filter(
-			state => state === this.accountService.state
-		).length > 0;
+		return this.accountAuthService.current !== undefined && (
+			this.envService.isMobile ?
+				this.showOnlySidebar :
+				[
+					States.chat,
+					States.contacts,
+					States.home
+				].filter(
+					state => state === this.accountService.state
+				).length > 0
+		);
 	}
 
 	constructor (

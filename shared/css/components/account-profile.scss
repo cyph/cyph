@@ -6,6 +6,17 @@
 	margin-right: auto;
 	font-family: Ubuntu;
 
+	&.mobile {
+		.profile-picture {
+			width: 10em;
+			height: 10em;
+		}
+
+		.status label {
+			display: none;
+		}
+	}
+
 	.profile-picture {
 		border-radius: 50%;
 		margin-left: auto;

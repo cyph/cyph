@@ -1,9 +1,15 @@
 :host > div {
-	margin-left: 4%;
 	padding-bottom: 1em;
 	background-color: initial !important;
+	margin-left: 50%;
+
+	@include transform(translateX(-50%));
 }
 
 .message-list:after {
 	display: none;
+}
+
+cyph-chat-message-box .chat-message-box.mobile {
+	padding: 0px 4px;
 }

@@ -59,6 +59,5 @@ export class AccountProfileComponent implements OnInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService
-
 	) {}
 }

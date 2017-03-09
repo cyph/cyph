@@ -82,7 +82,7 @@ export class AppService {
 		/* Handle browser extension case */
 		if (this.urlSection === urlSections.extension) {
 			this.accountService.isExtension	= true;
-			this.urlStateService.setUrl('account/home');
+			this.urlStateService.setUrl('account/contacts');
 		}
 
 		if (this.urlSection === urlSections.account) {
