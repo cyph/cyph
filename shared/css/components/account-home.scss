@@ -1,8 +1,3 @@
-div h1 {
-	font-size: 32px;
-	text-align: center;
-}
-
 cyph-account-profile {
 	position: relative;
 	overflow: hidden;
@@ -33,11 +28,4 @@ cyph-account-profile {
 			border: 13px solid rgba(40, 38, 44, 0.9) !important;
 		}
 	}
-}
-
-cyph-account-contacts {
-	right: 0;
-	top: 0;
-	overflow: scroll !important;
-	position: absolute;
 }
