@@ -1,3 +1,14 @@
+/* Changes size of md2-icon */
+@mixin icon-size($size) {
+	&, md-icon {
+		font-size: $size;
+		height: $size;
+		min-height: $size;
+		width: $size;
+		min-width: $size;
+	}
+}
+
 @mixin vertical-align {
 	position: relative;
 	top: 50%;

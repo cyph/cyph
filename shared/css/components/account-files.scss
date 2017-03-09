@@ -1,3 +1,5 @@
+@import 'mixins';
+
 span {
 	font-family: Ubuntu;
 	text-align: center;
@@ -22,14 +24,15 @@ span {
 		margin: 5px;
 		padding: 15px;
 
-		.thumb .material-icons {
-			font-size: 42px;
+		.thumb md2-icon {
 			position: relative;
 			top: 12px;
+
+			@include icon-size(42px);
 		}
 
-		md2-button .material-icons {
-			font-size: 38px;
+		md2-button md2-icon {
+			@include icon-size(38px);
 		}
 
 		.file {

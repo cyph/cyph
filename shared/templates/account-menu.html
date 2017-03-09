@@ -32,31 +32,48 @@
 					</div>
 				</div>
 				<div>
-					<md2-button cyphTranslate (childClick)='goToState(states.home)'>
-						<i class='material-icons' alt='Contacts'>home</i>
+					<md2-button
+						cyphTranslate
+						ariaLabel='Home'
+						(childClick)='goToState(states.home)'
+					>
+						<md2-icon>home</md2-icon>
 						<span class='full-button'>Home</span>
 					</md2-button>
-					<md2-button cyphTranslate (childClick)='goToState(states.contacts)'>
-						<i class='material-icons' alt='Contacts'>people</i>
+					<md2-button
+						cyphTranslate
+						ariaLabel='Contacts'
+						(childClick)='goToState(states.contacts)'
+					>
+						<md2-icon>people</md2-icon>
 						<span class='full-button'>Contacts</span>
 					</md2-button>
-					<md2-button cyphTranslate (childClick)='goToState(states.files)'>
-						<i class='material-icons' alt='Files'>folder</i>
+					<md2-button
+						cyphTranslate
+						ariaLabel='Files'
+						(childClick)='goToState(states.files)'
+					>
+						<md2-icon>folder</md2-icon>
 						<span class='full-button'>Files</span>
 					</md2-button>
-					<md2-button cyphTranslate (childClick)='goToState(states.settings)'>
-						<i class='material-icons' alt='Settings'>settings</i>
+					<md2-button
+						cyphTranslate
+						ariaLabel='Settings'
+						(childClick)='goToState(states.settings)'
+					>
+						<md2-icon>settings</md2-icon>
 						<span class='full-button'>Settings</span>
 					</md2-button>
 				</div>
 				<div class='flex'></div>
 				<div class='menu-footer'>
 					<md2-button
-						class='logout'
 						cyphTranslate
+						class='logout'
+						ariaLabel='Logout'
 						(childClick)='urlStateService.setUrl("account/logout")'
 					>
-						<i class='material-icons' alt='Logout'>exit_to_app</i>
+						<md2-icon>exit_to_app</md2-icon>
 						<span class='full-button'>Logout</span>
 					</md2-button>
 				</div>

@@ -1,3 +1,5 @@
+@import 'mixins';
+
 /* Hide backdrop */
 md-backdrop.md-sidenav-backdrop.md-opaque {
 	opacity: 0;
@@ -32,10 +34,8 @@ md2-button.logout {
 	transform: rotate(180deg);
 }
 
-.md-button i.material-icons {
-	font-size: 32px;
-	top: 8px;
-	position: relative;
+.md-button md2-icon {
+	@include icon-size(32px);
 }
 
 md-sidenav, md2-content, md-content, md-content .layout-column {
@@ -131,7 +131,9 @@ md-sidenav:not(.md-closed) {
 		display: none;
 	}
 
-	.material-icons {
+	md2-icon {
+		position: relative;
 		right: 2px;
+		top: -2px;
 	}
 }

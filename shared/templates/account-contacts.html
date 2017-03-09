@@ -29,34 +29,34 @@
 				</div>
 				<md2-button
 					cyphTranslate
-					class='layout-row'
+					class='layout-row message'
 					ariaLabel='Send Message'
 					*ngIf='contact.status !== userPresence.online'
 				>
-					<i class='message material-icons' alt='Send Message'>email</i>
+					<md2-icon>email</md2-icon>
 				</md2-button>
 				<md2-button
 					cyphTranslate
-					class='layout-row'
+					class='layout-row chat'
 					ariaLabel='Start Chat'
 					*ngIf='contact.status === userPresence.online'
 					(childClick)='urlStateService.setUrl("account/chat/" + contact.username)'
 				>
-					<i class='chat material-icons' alt='Start Chat'>chat_bubble</i>
+					<md2-icon>chat_bubble</md2-icon>
 				</md2-button>
 				<md2-button
 					cyphTranslate
 					class='layout-row'
 					ariaLabel='Video Call'
 				>
-					<i class='material-icons' alt='Video Call'>videocam</i>
+					<md2-icon>videocam</md2-icon>
 				</md2-button>
 				<md2-button
 					cyphTranslate
 					class='layout-row'
 					ariaLabel='Send File'
 				>
-					<i class='material-icons' alt='Send File'>attachment</i>
+					<md2-icon>attachment</md2-icon>
 				</md2-button>
 			</div>
 		</md2-list-item>

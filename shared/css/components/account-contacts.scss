@@ -9,14 +9,17 @@ md2-button {
 		margin: 0px !important;
 	}
 
-	.chat, .message {
-		font-size: 23px !important;
-		top: 2px;
-		position: relative;
+	&.chat, &.message {
+		md2-icon {
+			top: 2px;
+			position: relative;
+
+			@include icon-size(23px);
+		}
 	}
 
-	.material-icons {
-		font-size: 30px;
+	md2-icon {
+		@include icon-size(30px);
 	}
 }
 

@@ -9,10 +9,8 @@
 		>
 			<div class='wrapper layout-row layout-align-start-stretch flex animated flipInY _{{i}}'>
 				<div class='layout-row flex'>
-					<div class='thumb'>
-						<i class='material-icons' alt='File Type'>
-							{{accountFilesService.thumb(myFile.filetype)}}
-						</i>
+					<div class='thumb' alt='File Type'>
+						<md2-icon>{{accountFilesService.thumb(myFile.filetype)}}</md2-icon>
 					</div>
 					<div class='file layout-column flex'>
 						<span class='name'>
@@ -32,14 +30,14 @@
 						class='layout-row'
 						ariaLabel='File Settings'
 					>
-						<i class='material-icons' alt='Edit File Name'>settings</i>
+						<md2-icon>settings</md2-icon>
 					</md2-button>
 					<md2-button
 						cyphTranslate
 						class='layout-row'
 						ariaLabel='Download File'
 					>
-						<i class='material-icons' alt='Download File'>file_download</i>
+						<md2-icon>file_download</md2-icon>
 					</md2-button>
 				</div>
 			</div>
