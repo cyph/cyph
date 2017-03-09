@@ -9,7 +9,7 @@ cyph-account-profile {
 
 		// Profile Status Indicator. TODO: Add Animations
 		.profile-picture {
-			transition: border 0.75s ease;
+			@include transition(border 0.75s ease);
 		}
 
 		.profile-picture.online {

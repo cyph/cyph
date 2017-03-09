@@ -71,7 +71,8 @@ md2-button {
 			height: 60px;
 			background-color: #f3f3f3;
 			border-radius: 50%;
-			transition: border 0.75s ease;
+
+			@include transition(border 0.75s ease);
 		}
 
 		.avatar.online {

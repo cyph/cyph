@@ -31,7 +31,8 @@ md-sidenav._md.md-sidenav-left.md-whiteframe-z2 {
 
 md2-button.logout {
 	bottom: 0px;
-	transform: rotate(180deg);
+
+	@include transform(rotate(180deg));
 }
 
 .md-button md2-icon {
