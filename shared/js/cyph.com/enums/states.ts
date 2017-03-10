@@ -8,7 +8,6 @@ export enum States {
 	home,
 	error,
 	faq,
-	pricing,
 	privacypolicy,
 	termsofservice
 }
