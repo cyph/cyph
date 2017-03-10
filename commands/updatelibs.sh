@@ -70,6 +70,7 @@ yarn add --ignore-platform --ignore-scripts \
 	mceliece \
 	microlight-string \
 	mkdirp \
+	moment \
 	nanoscroller \
 	nativescript \
 	nativescript-angular \
@@ -80,6 +81,7 @@ yarn add --ignore-platform --ignore-scripts \
 	ntru \
 	read \
 	reflect-metadata \
+	retire \
 	rlwe \
 	rxjs \
 	sidh \
