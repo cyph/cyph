@@ -132,7 +132,7 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 		braintreePrivateKey,
 	)
 
-	bt.SetHTTPClient(urlfetch.Client(h.Context))
+	bt.HttpClient = urlfetch.Client(h.Context)
 
 	return bt
 }
