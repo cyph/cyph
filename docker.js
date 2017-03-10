@@ -190,7 +190,8 @@ const shellScripts			= {
 			${windowsWorkaround}
 			/cyph/commands/getlibs.sh
 
-			rm -rf \${GOPATH}/src/*
+			rm -rf \${GOPATH}/src 2> /dev/null
+			mkdir -p \${GOPATH}/src
 			for f in $(find /cyph/default -mindepth 1 -maxdepth 1 -type d) ; do
 				cp -rf \${f} \${GOPATH}/src/$(echo "\${f}" | perl -pe 's/.*\\///g') > /dev/null 2>&1
 			done
