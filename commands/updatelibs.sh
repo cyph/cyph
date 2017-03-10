@@ -31,9 +31,9 @@ yarn add --ignore-platform --ignore-scripts \
 	@types/markdown-it \
 	@types/whatwg-fetch \
 	@types/whatwg-streams \
-	angular@~1.5 \
-	angular-animate@~1.5 \
-	angular-aria@~1.5 \
+	angular \
+	angular-animate \
+	angular-aria \
 	animate.css \
 	Base64 \
 	bourbon@4.2.7 \
