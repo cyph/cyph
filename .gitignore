@@ -21,5 +21,3 @@ node_modules
 shared/js/**/pack
 shared/lib/js/base.js
 shared/lib/go
-default/github.com
-default/golang.org

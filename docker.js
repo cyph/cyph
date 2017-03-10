@@ -192,11 +192,11 @@ const shellScripts			= {
 
 			rm -rf \${GOPATH}/src 2> /dev/null
 			mkdir -p \${GOPATH}/src
-			for f in $(find /cyph/default -mindepth 1 -maxdepth 1 -type d) ; do
+			for f in $(find /cyph/shared/lib/go -mindepth 1 -maxdepth 1 -type d) ; do
 				cp -rf \${f} \${GOPATH}/src/$(echo "\${f}" | perl -pe 's/.*\\///g') > /dev/null 2>&1
 			done
-			for f in $(find /cyph/default -mindepth 1 -maxdepth 4 -type d) ; do
-				go install $(echo "\${f}" | sed 's|/cyph/default/||') > /dev/null 2>&1
+			for f in $(find /cyph/shared/lib/go -mindepth 1 -maxdepth 4 -type d) ; do
+				go install $(echo "\${f}" | sed 's|/cyph/shared/lib/go/||') > /dev/null 2>&1
 			done
 		`,
 		condition: `
