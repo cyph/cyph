@@ -906,79 +906,77 @@ body:not(.mobile) .section-content-container:not(.full) {
 	}
 }
 
-.donation-amount {
-	font-family: Ubuntu;
-	font-size: 1.75em;
-	padding-top: 8px;
-	padding-left: 20px;
+#donate {
+	.donation-amount {
+		font-family: Ubuntu;
+		font-size: 1.75em;
+		padding-top: 8px;
+		padding-left: 20px;
+	}
+
+	.donate-button {
+		display: block;
+		margin-top: -15px;
+	}
+
+	md-slider .md-sign:after {
+		border-top-color: rgb(107, 63, 176);
+	}
+
+	md-slider .md-thumb:after {
+		border-color: rgb(107, 63, 176);
+		background-color: rgb(107, 63, 176);
+	}
+
+	span.md-thumb-text:before {
+		content: '$';
+	}
+
+	md-slider.md-min .md-thumb:after {
+		background-color: rgb(255, 255, 255);
+	}
+
+	md-slider .md-track.md-track-fill {
+		background-color: rgb(255, 255, 255);
+	}
+
+	md-slider .md-sign {
+		background-color: rgb(107, 63, 176);
+	}
+
+	md-slider .md-sign {
+		left: -20px !important;
+		top: -25px !important;
+		width: 42px !important;
+		height: 42px !important;
+	}
+
+	md-slider .md-focus-thumb {
+		position: absolute;
+		left: -24px;
+		top: 0px;
+		width: 48px;
+		height: 48px;
+		border-radius: 48px;
+		display: none;
+		opacity: 0;
+		background-color: silver;
+
+		@include animation(sliderFocusThumb 0.4s linear);
+	}
+
+	md-slider .md-sign .md-thumb-text {
+		z-index: 1;
+	}
 }
 
-.donate-button {
-	display: block;
-	margin-top: -15px;
-}
+#checkout {
+	.cart {
+		position: relative;
+		top: calc(50vh - 210px);
 
-md-slider .md-sign:after {
-	border-top-color: rgb(107, 63, 176);
-}
-
-md-slider .md-thumb:after {
-	border-color: rgb(107, 63, 176);
-	background-color: rgb(107, 63, 176);
-}
-
-span.md-thumb-text:before {
-	content: '$';
-}
-
-md-slider.md-min .md-thumb:after {
-	background-color: rgb(255, 255, 255);
-}
-
-md-slider .md-track.md-track-fill {
-	background-color: rgb(255, 255, 255);
-}
-
-md-slider .md-sign {
-	background-color: rgb(107, 63, 176);
-}
-
-md-slider .md-sign {
-	left: -20px !important;
-	top: -25px !important;
-	width: 42px !important;
-	height: 42px !important;
-}
-
-md-slider .md-focus-thumb {
-	position: absolute;
-	left: -24px;
-	top: 0px;
-	width: 48px;
-	height: 48px;
-	border-radius: 48px;
-	display: none;
-	opacity: 0;
-	background-color: silver;
-
-	@include animation(sliderFocusThumb 0.4s linear);
-}
-
-md-slider .md-sign .md-thumb-text {
-	z-index: 1;
-}
-
-input.donation {
-	text-align: center;
-	border: 0px;
-}
-
-/* Checkout Page */
-.cart {
-	position: relative;
-	top: calc(50vh - 210px);
-
-	.empty {
-		font-size: 1.14rem;
+		.empty {
+			font-size: 1.14rem;
+		}
 	}
 }
