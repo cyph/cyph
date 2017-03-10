@@ -1,22 +1,14 @@
 <md2-list-item
-	class='layout-column flex'
+	class='layout-column flex message-item'
 	[class.mobile]='envService.isMobile'
 	[class.read]='!message.unread'
-	[childClass]='
-		"message-item layout-row" +
-		(
-			message.author === sessionService.users.me ?
-				" author-me" :
-				message.author === sessionService.users.app ?
-					" author-app" :
-					" author-other"
-		) +
-		(
-			message.selfDestructTimer && message.selfDestructTimer.isComplete ?
-				" self-destructed" :
-				""
-		)
+	[class.author-app]='message.author === sessionService.users.app'
+	[class.author-me]='message.author === sessionService.users.me'
+	[class.author-other]='
+		message.author !== sessionService.users.app &&
+		message.author !== sessionService.users.me
 	'
+	[class.self-destructed]='message.selfDestructTimer && message.selfDestructTimer.isComplete'
 >
 	<div class='flex layout-column'>
 		<div class='layout-row'>
@@ -40,7 +32,6 @@
 				<cyph-markdown
 					class='message-text'
 					[markdown]='message.text'
-					[class.app-message]='message.author === sessionService.users.app'
 				></cyph-markdown>
 			</span>
 			<span class='message-timestamp flex'>

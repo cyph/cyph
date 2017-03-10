@@ -39,16 +39,16 @@ body.telehealth {
 		border: 1px solid #E7C447;
 	}
 
-	.message-item {
+	.message-item > md-list-item {
 		background-color: transparent;
 		box-shadow: none;
 	}
 
-	.message-item.author-other:after {
+	.message-item.author-other > md-list-item:after {
 		border-color: transparent #4D5062 !important;
 	}
 
-	.message-item.author-other:before {
+	.message-item.author-other > md-list-item:before {
 		box-shadow: 5px 1px 5px #4D5062 !important;
 	}
 
@@ -81,8 +81,6 @@ body.telehealth {
 	}
 
 	.footer {
-		//visibility: hidden;
-		//margin-bottom: -75px;
 		color: #4D5062;
 
 		.icons {
@@ -107,13 +105,6 @@ body.telehealth {
 	.chat-main.video .video-call.active.playing ~ .message-list {
 		background-color: rgba(187, 168, 223, 0.8) !important;
 	}
-
-	/*
-	span.message-timestamp.flex,
-	cyph-markdown.message-text.app-message p {
-		color: #f3f3f3 !important;
-	}
-	*/
 }
 
 body.telehealth:not(.mobile) {
@@ -129,12 +120,12 @@ body.telehealth:not(.mobile) {
 		}
 	}
 
-	.message-item.author-me {
+	.message-item.author-me > md-list-item {
 		background-color: transparent !important;
 		box-shadow: none !important;
 	}
 
-	.message-item.author-other {
+	.message-item.author-other > md-list-item {
 		background-color: transparent !important;
 		box-shadow: none !important;
 	}
@@ -151,30 +142,42 @@ body.telehealth.mobile {
 
 	.chat-main.mobile {
 		.message-item.author-me, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me {
-			background-color: rgba(231, 196, 70, 0.95);
+			> md-list-item {
+				background-color: rgba(231, 196, 70, 0.95);
+			}
 		}
 
 		.message-item.author-other, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-other {
-			margin-left: 5%;
-			background-color: rgba(231, 196, 70, 0.95);
+			> md-list-item {
+				margin-left: 5%;
+				background-color: rgba(231, 196, 70, 0.95);
+			}
 		}
 
-		.message-item.author-me:after, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me:after {
-			border-color: transparent rgba(231, 196, 70, 0.95) !important;
-			right: -11px;
+		.message-item.author-me, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me {
+			> md-list-item:after {
+				border-color: transparent rgba(231, 196, 70, 0.95) !important;
+				right: -11px;
+			}
 		}
 
-		.message-item.author-other:after, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-other:after {
-			border-color: transparent rgba(231, 196, 70, 0.95) !important;
-			left: -10px;
+		.message-item.author-other, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-other {
+			> md-list-item:after {
+				border-color: transparent rgba(231, 196, 70, 0.95) !important;
+				left: -10px;
+			}
 		}
 
-		.message-item.author-other .message-timestamp, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-other .message-timestamp {
-			color: #4D5062 !important;
+		.message-item.author-other, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-other {
+			> md-list-item .message-timestamp {
+				color: #4D5062 !important;
+			}
 		}
 
-		.message-item.author-me .message-timestamp, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me .message-timestamp {
-			color: #4D5062 !important;
+		.message-item.author-me, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me {
+			> md-list-item .message-timestamp {
+				color: #4D5062 !important;
+			}
 		}
 	}
 }

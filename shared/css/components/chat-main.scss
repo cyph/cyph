@@ -7,12 +7,12 @@
 }
 
 .message-list {
-	.message-item, .friend-is-typing {
+	.message-item > md-list-item {
 		@include transition(opacity 1s ease-in-out);
-	}
 
-	.message-item .message-timestamp .message-pending {
-		display: none;
+		.message-timestamp .message-pending {
+			display: none;
+		}
 	}
 
 	.friend-is-typing {
@@ -20,9 +20,7 @@
 		width: 100%;
 		opacity: 0;
 
-		&.show {
-			opacity: 1;
-		}
+		@include transition(opacity 1s ease-in-out);
 
 		.ellipsis-spinner {
 			margin: 0px;
@@ -103,19 +101,29 @@
 	}
 }
 
-.chat-main .message-item .message {
+.message-list {
+	.friend-is-typing.show {
+		opacity: 1;
+
+		@include transition(opacity 1s ease-in-out);
+	}
+}
+
+.chat-main .message-item > md-list-item .message {
 	max-width: 85%;
 }
 
-.chat-main:not(.mobile):not(.video) .message-item.author-app .message {
+.chat-main:not(.mobile):not(.video) .message-item.author-app > md-list-item .message {
 	width: 85%;
 
 	@include transform(translateX(9.25%));
 }
 
 .chat-main:not(.mobile):not(.video) .message-item, .message-item.author-app {
-	&:before, &:after {
-		display: none;
+	> md-list-item {
+		&:before, &:after {
+			display: none;
+		}
 	}
 }
 
@@ -132,7 +140,7 @@
 }
 
 .chat-main.mobile, .chat-main.video .video-call.active.playing ~ .message-list {
-	.message-item {
+	.message-item > md-list-item {
 		position: relative;
 		max-width: 80%;
 		min-width: 120px;
@@ -164,7 +172,7 @@
 		}
 	}
 
-	.message-item.author-me {
+	.message-item.author-me > md-list-item {
 		margin-right: 5%;
 
 		.message {
@@ -177,20 +185,22 @@
 		}
 	}
 
-	.message-item.author-me:after, .message-item.author-me:before {
-		content: '';
-		position: absolute;
-		border-style: solid;
-		border-width: 18px 0px 0px 12px;
-		bottom: 0px;
+	.message-item.author-me > md-list-item {
+		&:before, &:after {
+			content: '';
+			position: absolute;
+			border-style: solid;
+			border-width: 18px 0px 0px 12px;
+			bottom: 0px;
+		}
 	}
 
-	.message-item.author-me:after {
+	.message-item.author-me > md-list-item:after {
 		border-color: transparent rgba(139, 98, 217, 0.8);
 		right: -12px;
 	}
 
-	.message-item.author-me:before {
+	.message-item.author-me > md-list-item:before {
 		border-color: transparent transparent;
 		right: 0px;
 		box-shadow: 5px 1px 5px rgba(139, 98, 217, 0.8);
@@ -198,7 +208,7 @@
 		@include transform(rotate(-35deg));
 	}
 
-	.message-item.author-other {
+	.message-item.author-other > md-list-item {
 		margin-left: 5%;
 
 		.message {
@@ -211,20 +221,22 @@
 		}
 	}
 
-	.message-item.author-other:after, .message-item.author-other:before {
-		content: '';
-		position: absolute;
-		border-style: solid;
-		border-width: 0px 12px 18px 0px;
-		top: 0px;
+	.message-item.author-other > md-list-item {
+		&:before, &:after {
+			content: '';
+			position: absolute;
+			border-style: solid;
+			border-width: 0px 12px 18px 0px;
+			top: 0px;
+		}
 	}
 
-	.message-item.author-other:after {
+	.message-item.author-other > md-list-item:after {
 		border-color: transparent rgba(100, 55, 190, 0.5);
 		left: -12px;
 	}
 
-	.message-item.author-other:before {
+	.message-item.author-other > md-list-item:before {
 		border-color: transparent transparent;
 		left: -3px;
 		box-shadow: 5px 1px 5px rgba(100, 51, 193, 0.5);
@@ -232,7 +244,7 @@
 		@include transform(rotate(-215deg));
 	}
 
-	.message-item.author-app {
+	.message-item.author-app > md-list-item {
 		width: 90%;
 		background-color: transparent;
 
@@ -507,13 +519,15 @@
 		background-color: rgba(255, 255, 255, 0.5);
 
 		.message-item {
-			box-shadow: none;
+			> md-list-item {
+				box-shadow: none;
+			}
 
-			&.author-app {
+			&.author-app > md-list-item {
 				background-color: rgba(0, 0, 0, 0.3);
 			}
 
-			&.author-other {
+			&.author-other > md-list-item {
 				background-color: rgba(97, 47, 192, 0.5);
 
 				&:before {
@@ -525,7 +539,7 @@
 				}
 			}
 
-			&.author-me {
+			&.author-me > md-list-item {
 				background-color: rgba(125, 83, 203, 0.4);
 
 				&:before {
@@ -612,7 +626,7 @@
 }
 
 .chat-main:not(.mobile).video .video-call.active.playing {
-	~ .message-list .message-item {
+	~ .message-list .message-item > md-list-item {
 		font-size: initial;
 	}
 
