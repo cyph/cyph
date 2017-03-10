@@ -7,7 +7,7 @@ ${!o.colors.main ? '' : `
 `}
 
 ${!o.colors.text ? '' : `
-	&, body, #main, .cyph-foreground, .message-item *,
+	&, body, #main, .cyph-foreground, .message-item > md-list-item *,
 	.loading :not(.image):not(.logo-animation):not(md-icon),
 	.loading .md-button:not(.md-fab) md-icon {
 		color: ${o.colors.text};
@@ -76,7 +76,7 @@ ${!o.colors.linkConnection ? '' : `
 
 	${!o.colors.messages ? '' : `
 		${!o.colors.messages.app ? '' : `
-			.message-item.author-app {
+			.message-item.author-app > md-list-item {
 				background-color: ${o.colors.messages.app.desktop};
 				box-shadow: 0px 0px 5px ${o.colors.messages.app.desktop};
 
@@ -85,7 +85,7 @@ ${!o.colors.linkConnection ? '' : `
 				}
 			}
 			&.mobile, &.video {
-				.message-item.author-app {
+				.message-item.author-app > md-list-item {
 					background-color: ${o.colors.messages.app.mobile};
 					box-shadow: 0px 0px 5px ${o.colors.messages.app.mobile};
 				}
@@ -93,7 +93,7 @@ ${!o.colors.linkConnection ? '' : `
 		`}
 
 		${!o.colors.messages.me ? '' : `
-			.message-item.author-me {
+			.message-item.author-me > md-list-item {
 				background-color: ${o.colors.messages.me.desktop};
 				box-shadow: 0px 0px 5px ${o.colors.messages.me.desktop};
 
@@ -102,7 +102,7 @@ ${!o.colors.linkConnection ? '' : `
 				}
 			}
 			&.mobile, &.video {
-				.message-item.author-me {
+				.message-item.author-me > md-list-item {
 					background-color: ${o.colors.messages.me.mobilePrimary};
 					box-shadow: 0px 0px 5px ${o.colors.messages.me.mobilePrimary};
 
@@ -117,7 +117,7 @@ ${!o.colors.linkConnection ? '' : `
 		`}
 
 		${!o.colors.messages.other ? '' : `
-			.message-item.author-other {
+			.message-item.author-other > md-list-item {
 				background-color: ${o.colors.messages.other.desktop};
 				box-shadow: 0px 0px 5px ${o.colors.messages.other.desktop};
 
@@ -126,7 +126,7 @@ ${!o.colors.linkConnection ? '' : `
 				}
 			}
 			&.mobile, &.video {
-				.message-item.author-other {
+				.message-item.author-other > md-list-item {
 					background-color: ${o.colors.messages.other.mobilePrimary};
 					box-shadow: 0px 0px 5px ${o.colors.messages.other.mobilePrimary};
 

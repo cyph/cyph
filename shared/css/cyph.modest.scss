@@ -30,7 +30,7 @@ body.modest {
 		}
 	}
 
-	.message-item {
+	.message-item > md-list-item {
 		background-color: transparent;
 		box-shadow: none;
 	}
