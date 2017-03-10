@@ -231,12 +231,6 @@ do
 	${dir}/commands/libclone.sh https://github.com/${arr[0]}.git ${arr[1]}
 done
 
-# Temporary workaround for GAE support
-echo '
-func (g *Braintree) SetHTTPClient(client *http.Client) {
-	g.HttpClient = client
-}' >> github.com/lionelbarrow/braintree-go/braintree.go
-
 mkdir -p golang.org/x/net
 mv golang.org/x/net.tmp/context golang.org/x/net.tmp/html golang.org/x/net/
 rm -rf golang.org/x/net.tmp
