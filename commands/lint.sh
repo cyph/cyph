@@ -52,9 +52,6 @@ output="$({
 	' \;;
 })"
 
-echo -e "${output}"
-if [ "${#output}" -gt 0 ] ; then exit ${#output} ; fi
-
 # Retire.js
 
 cd ..
@@ -77,4 +74,10 @@ node -e 'fs.writeFileSync(
 	)
 )'
 
-retire --path /node_modules || exit 1
+retireOutput="$(retire --path /node_modules 2>&1)"
+if (( $? )) ; then
+	output="${output}${retireOutput}"
+fi
+
+echo -e "${output}"
+exit ${#output}
