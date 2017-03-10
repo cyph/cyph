@@ -34,7 +34,11 @@ export class ScrollService {
 	}
 
 	/** @ignore */
-	private updateTitle () : void {
+	private updateTitle (item?: {unread: boolean}) : void {
+		if (item && item.unread) {
+			this.unreadItems.add(item);
+		}
+
 		if (!this.itemCountInTitle) {
 			return;
 		}
@@ -88,12 +92,8 @@ export class ScrollService {
 			await util.sleep();
 		}
 
-		if (item.unread) {
-			this.unreadItems.add(item);
-		}
-
 		if (!this.visibilityWatcherService.isVisible) {
-			this.updateTitle();
+			this.updateTitle(item);
 			await this.visibilityWatcherService.waitForChange();
 		}
 
@@ -110,7 +110,7 @@ export class ScrollService {
 			return;
 		}
 
-		this.updateTitle();
+		this.updateTitle(item);
 		while (!this.appeared($elem)) {
 			await util.sleep();
 		}
