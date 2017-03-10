@@ -224,22 +224,26 @@ export class ChatService {
 	 * Checks for change to current message, and sends appropriate
 	 * typing indicator signals through session.
 	 */
-	public messageChange () : void {
-		const isMessageChanged: boolean	=
-			this.currentMessage !== '' &&
-			this.currentMessage !== this.previousMessage
-		;
+	public async messageChange () : Promise<void> {
+		for (let i = 0 ; i < 2 ; ++i) {
+			const isMessageChanged: boolean	=
+				this.currentMessage !== '' &&
+				this.currentMessage !== this.previousMessage
+			;
 
-		this.previousMessage	= this.currentMessage;
+			this.previousMessage	= this.currentMessage;
 
-		if (this.isMessageChanged !== isMessageChanged) {
-			this.isMessageChanged	= isMessageChanged;
-			this.sessionService.send(
-				new Message(
-					this.sessionService.rpcEvents.typing,
-					{isTyping: this.isMessageChanged}
-				)
-			);
+			if (this.isMessageChanged !== isMessageChanged) {
+				this.isMessageChanged	= isMessageChanged;
+				this.sessionService.send(
+					new Message(
+						this.sessionService.rpcEvents.typing,
+						{isTyping: this.isMessageChanged}
+					)
+				);
+			}
+
+			await util.sleep(1000);
 		}
 	}
 
@@ -305,13 +309,6 @@ export class ChatService {
 		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
-		(async () => {
-			while (true) {
-				await util.sleep(5000);
-				this.messageChange();
-			}
-		})();
-
 		this.sessionService.one(this.sessionService.events.beginChat).then(() => {
 			this.begin();
 		});
