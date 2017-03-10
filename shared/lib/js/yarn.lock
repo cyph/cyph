@@ -246,21 +246,21 @@ amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
 
-angular-animate@~1.5:
-  version "1.5.11"
-  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.5.11.tgz#1baa43c303d1b93c4e6aa89453b39114b7a1c669"
+angular-animate@^1.6.3:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.6.3.tgz#d228a14f47a4e50bea44ed15bbc4651d44d194f5"
 
-angular-aria@~1.5:
-  version "1.5.11"
-  resolved "https://registry.yarnpkg.com/angular-aria/-/angular-aria-1.5.11.tgz#26963ac336891ced7b199e59afd7e9b25e53d6a6"
+angular-aria@^1.6.3:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/angular-aria/-/angular-aria-1.6.3.tgz#8143d2fdf1622408cc669509673599acd85c586c"
 
 "angular-material@https://github.com/angular/bower-material":
   version "1.1.3-master-88e0c8f"
   resolved "https://github.com/angular/bower-material#fa822782f30271aeb48149f20c7bdddb3583fbdc"
 
-angular@~1.5:
-  version "1.5.11"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.5.11.tgz#8c5ba7386f15965c9acf3429f6881553aada30d6"
+angular@^1.6.3:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.3.tgz#5d34b799234e8fa17c6a3a14e0258733935f43e7"
 
 "animate.css@>= 3.0.0", animate.css@^3.5.2, animate.css@latest:
   version "3.5.2"
@@ -941,7 +941,13 @@ cli-color@0.3.2:
     memoizee "0.3.x"
     timers-ext "0.1.x"
 
-cli-table@^0.3.1, "cli-table@https://github.com/telerik/cli-table/tarball/v0.3.1.2":
+cli-table@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/cli-table/-/cli-table-0.3.1.tgz#f53b05266a8b1a0b934b3d0821e6e2dc5914ae23"
+  dependencies:
+    colors "1.0.3"
+
+"cli-table@https://github.com/telerik/cli-table/tarball/v0.3.1.2":
   version "0.3.1"
   resolved "https://github.com/telerik/cli-table/tarball/v0.3.1.2#07e13c3118154c53893d3be7a7e08d990e86d859"
   dependencies:
@@ -4086,11 +4092,11 @@ public-encrypt@^4.0.0:
     parse-asn1 "^5.0.0"
     randombytes "^2.0.1"
 
-punycode@1.3.2:
+punycode@1.3.2, punycode@^1.3.2:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.3.2.tgz#9653a036fb7c1ee42342f2325cceefea3926c48d"
 
-punycode@^1.2.4, punycode@^1.3.2, punycode@^1.4.1:
+punycode@^1.2.4, punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
 
@@ -4576,7 +4582,7 @@ shelljs@0.7.0:
     interpret "^1.0.0"
     rechoir "^0.6.2"
 
-shelljs@0.7.6, shelljs@^0.7.0:
+shelljs@0.7.6:
   version "0.7.6"
   resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.7.6.tgz#379cccfb56b91c8601e4793356eb5382924de9ad"
   dependencies:
@@ -4587,6 +4593,14 @@ shelljs@0.7.6, shelljs@^0.7.0:
 shelljs@^0.6.0:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.6.1.tgz#ec6211bed1920442088fe0f70b2837232ed2c8a8"
+
+shelljs@^0.7.0:
+  version "0.7.7"
+  resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.7.7.tgz#b2f5c77ef97148f4b4f6e22682e10bba8667cff1"
+  dependencies:
+    glob "^7.0.0"
+    interpret "^1.0.0"
+    rechoir "^0.6.2"
 
 sidh@^1.0.1:
   version "1.0.1"
@@ -5146,8 +5160,8 @@ typedarray@~0.0.5:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
 typedoc-default-themes@^0.4.2:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/typedoc-default-themes/-/typedoc-default-themes-0.4.2.tgz#640b854fd7ef19e6774496ea7741ec31a0dcaddc"
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/typedoc-default-themes/-/typedoc-default-themes-0.4.3.tgz#39014c515585f27e59773d29e8921a5b8b89d4c0"
 
 typedoc@^0.5.7:
   version "0.5.7"
@@ -5183,9 +5197,9 @@ uc.micro@^1.0.1, uc.micro@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/uc.micro/-/uc.micro-1.0.3.tgz#7ed50d5e0f9a9fb0a573379259f2a77458d50192"
 
-uglify-js@2.8.x, uglify-js@^2.6, uglify-js@^2.7.5, uglify-js@^2.8.10:
-  version "2.8.10"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.10.tgz#bd0be568369f7be8cad2a4161fa90ada118ef73a"
+uglify-js@2.8.x, uglify-js@^2.6, uglify-js@^2.7.5, uglify-js@^2.8.11:
+  version "2.8.11"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.11.tgz#11a51c43d810b47bc00aee4d512cb3947ddd1ac4"
   dependencies:
     source-map "~0.5.1"
     uglify-to-browserify "~1.0.0"
@@ -5762,6 +5776,6 @@ zombie@^5.0.5:
     tough-cookie "^2.2.0"
     ws "^1.0.1"
 
-zone.js@^0.7.7:
-  version "0.7.7"
-  resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.7.7.tgz#0d7b7ae7f68012d03438b8a18f5763441bbf9620"
+zone.js@^0.7.8:
+  version "0.7.8"
+  resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.7.8.tgz#4f3fe8834d44597f2639053a0fa438df34fffded"
