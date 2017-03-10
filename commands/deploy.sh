@@ -221,7 +221,7 @@ if [ "${cacheBustedProjects}" ] ; then
 			while [ ! -f .build.done ] ; do sleep 1 ; done
 		fi
 
-		if [ ! '${site}' ] || ( [ '${site}' == cyph.com ] && [ ! '${simple}' ] ) ; then
+		if [ ! '${simple}' ] && ( [ ! '${site}' ] || [ '${site}' == cyph.com ] ) ; then
 			rm -rf cyph.com/blog 2> /dev/null
 			mkdir -p cyph.com/blog
 			cd cyph.com/blog
