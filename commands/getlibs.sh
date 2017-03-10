@@ -221,6 +221,7 @@ for arr in \
 	'gorilla/mux github.com/gorilla/mux' \
 	'lionelbarrow/braintree-go github.com/lionelbarrow/braintree-go' \
 	'microcosm-cc/bluemonday github.com/microcosm-cc/bluemonday' \
+	'oschwald/geoip2-golang github.com/oschwald/geoip2-golang' \
 	'golang/net golang.org/x/net.tmp' \
 	'golang/text golang.org/x/text' \
 	'golang/tools golang.org/x/tools.tmp'
