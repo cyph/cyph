@@ -7,6 +7,8 @@ tmpDir="$(mktemp -d)"
 ./commands/copyworkspace.sh --client-only "${tmpDir}"
 cd "${tmpDir}/shared"
 
+# tslint and htmllint
+
 /node_modules/tslint/node_modules/.bin/tsc --skipLibCheck tslint-rules/*.ts || exit 1
 
 node -e "
@@ -51,4 +53,28 @@ output="$({
 })"
 
 echo -e "${output}"
-exit ${#output}
+if [ "${#output}" -gt 0 ] ; then exit ${#output} ; fi
+
+# Retire.js
+
+cd ..
+
+node -e 'fs.writeFileSync(
+	".retireignore.json",
+	JSON.stringify(
+		JSON.parse(
+			fs.readFileSync("retireignore.json").toString()
+		).map(o => !o.path ?
+			[o] :
+			[o, Object.keys(o).reduce((acc, k) => {
+				acc[k]	= k === "path" ? `/node_modules/${o[k]}` : o[k];
+				return acc;
+			}, {})]
+		).reduce(
+			(acc, arr) => acc.concat(arr),
+			[]
+		)
+	)
+)'
+
+retire --path /node_modules || exit 1
