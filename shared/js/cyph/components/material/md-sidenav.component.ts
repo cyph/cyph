@@ -2,12 +2,14 @@ import {
 	Directive,
 	DoCheck,
 	ElementRef,
+	EventEmitter,
 	Inject,
 	Injector,
 	Input,
 	OnChanges,
 	OnDestroy,
 	OnInit,
+	Output,
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
@@ -27,7 +29,9 @@ export class MdSidenavComponent
 	public static readonly config			= {
 		bindings: {
 			childClass: '@',
-			mdComponentId: '@'
+			mdComponentId: '@',
+			mdIsLockedOpen: '<',
+			mdIsOpen: '='
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
@@ -37,12 +41,20 @@ export class MdSidenavComponent
 			/** @ignore */
 			public readonly mdComponentId: string;
 
+			/** @ignore */
+			public readonly mdIsLockedOpen: boolean;
+
+			/** @ignore */
+			public readonly mdIsOpen: boolean;
+
 			constructor () {}
 		},
 		template: `
 			<md-sidenav
 				ng-class='$ctrl.childClass'
 				ng-attr-md-component-id='{{$ctrl.mdComponentId}}'
+				md-is-locked-open='$ctrl.mdIsLockedOpen'
+				md-is-open='$ctrl.mdIsOpen'
 				ng-transclude
 			></md-sidenav>
 		`,
@@ -58,6 +70,15 @@ export class MdSidenavComponent
 
 	/** @ignore */
 	@Input() public mdComponentId: string;
+
+	/** @ignore */
+	@Input() public mdIsLockedOpen: boolean;
+
+	/** @ignore */
+	@Input() public mdIsOpen: boolean;
+
+	/** @ignore */
+	@Output() public mdIsOpenChange: EventEmitter<boolean>;
 
 	/** @ignore */
 	/* tslint:disable-next-line:no-unnecessary-override */

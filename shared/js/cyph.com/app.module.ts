@@ -50,6 +50,7 @@ import {TranslateDirective} from '../cyph/directives/translate.directive';
 import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
+import {FileService} from '../cyph/services/file.service';
 import {MdDialogService} from '../cyph/services/material/md-dialog.service';
 import {MdSidenavService} from '../cyph/services/material/md-sidenav.service';
 import {MdToastService} from '../cyph/services/material/md-toast.service';
@@ -61,7 +62,7 @@ import {UtilService} from '../cyph/services/util.service';
 import {VirtualKeyboardWatcherService} from '../cyph/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
 import {AppComponent} from './app.component';
-import {ChatRootComponent} from './chat-root.component';
+import {DemoChatRootComponent} from './demo-chat-root.component';
 import {DemoComponent} from './demo.component';
 import {SilentNotificationService} from './silent-notification.service';
 
@@ -77,7 +78,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
-		ChatRootComponent,
+		DemoChatRootComponent,
 		CheckoutComponent,
 		ContactComponent,
 		DemoComponent,
@@ -127,6 +128,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		ConfigService,
 		DialogService,
 		EnvService,
+		FileService,
 		MdDialogService,
 		MdSidenavService,
 		MdToastService,

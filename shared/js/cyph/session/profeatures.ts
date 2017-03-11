@@ -19,10 +19,10 @@ export class ProFeatures {
 		/** @see ISessionService.apiFlags.telehealth */
 		public readonly telehealth: boolean = false,
 
-		/** True if AbstractSessionInitService.callType is set to video. */
+		/** True if SessionInitService.callType is set to video. */
 		public readonly video: boolean = false,
 
-		/** True if AbstractSessionInitService.callType is set to audio. */
+		/** True if SessionInitService.callType is set to audio. */
 		public readonly voice: boolean = false
 	) {}
 }

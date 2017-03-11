@@ -1,19 +1,20 @@
 import {Component, OnInit} from '@angular/core';
 import {AppService} from './app.service';
 import {States} from './js/cyph.im/enums';
-import {AbstractSessionInitService} from './js/cyph/services/abstract-session-init.service';
 import {ChatEnvService} from './js/cyph/services/chat-env.service';
 import {ChatStringsService} from './js/cyph/services/chat-strings.service';
 import {ChatService} from './js/cyph/services/chat.service';
 import {CyphertextService} from './js/cyph/services/cyphertext.service';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {EnvService} from './js/cyph/services/env.service';
-import {FileService} from './js/cyph/services/file.service';
+import {EphemeralSessionService} from './js/cyph/services/ephemeral-session.service';
+import {FileTransferService} from './js/cyph/services/file-transfer.service';
 import {P2PService} from './js/cyph/services/p2p.service';
 import {ScrollService} from './js/cyph/services/scroll.service';
+import {SessionInitService} from './js/cyph/services/session-init.service';
 import {SessionService} from './js/cyph/services/session.service';
 import {StringsService} from './js/cyph/services/strings.service';
-import {SessionInitService} from './session-init.service';
+import {UrlSessionInitService} from './url-session-init.service';
 
 
 /**
@@ -23,17 +24,20 @@ import {SessionInitService} from './session-init.service';
 	providers: [
 		ChatService,
 		CyphertextService,
-		FileService,
+		FileTransferService,
 		P2PService,
 		ScrollService,
-		SessionService,
-		{
-			provide: AbstractSessionInitService,
-			useClass: SessionInitService
-		},
 		{
 			provide: EnvService,
 			useClass: ChatEnvService
+		},
+		{
+			provide: SessionService,
+			useClass: EphemeralSessionService
+		},
+		{
+			provide: SessionInitService,
+			useClass: UrlSessionInitService
 		},
 		{
 			provide: StringsService,
@@ -43,10 +47,10 @@ import {SessionInitService} from './session-init.service';
 	selector: 'cyph-chat-root',
 	templateUrl: './templates/chat-root.html'
 })
-export class ChatRootComponent implements OnInit {
+export class EphemeralChatRootComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		if (this.abstractSessionInitService.callType) {
+		if (this.sessionInitService.callType) {
 			if (!this.p2pService.isSupported) {
 				this.appService.state	= States.blank;
 
@@ -73,8 +77,8 @@ export class ChatRootComponent implements OnInit {
 		this.sessionService.one(this.sessionService.events.beginChatComplete).then(() => {
 			self.onbeforeunload	= () => this.stringsService.disconnectWarning;
 
-			if (this.abstractSessionInitService.callType && this.sessionService.state.isAlice) {
-				this.p2pService.p2p.request(this.abstractSessionInitService.callType);
+			if (this.sessionInitService.callType && this.sessionService.state.isAlice) {
+				this.p2pService.p2p.request(this.sessionInitService.callType);
 			}
 		});
 
@@ -85,9 +89,9 @@ export class ChatRootComponent implements OnInit {
 		this.sessionService.one(this.sessionService.events.connect).then(() => {
 			this.appService.state	= States.chat;
 
-			if (this.abstractSessionInitService.callType) {
+			if (this.sessionInitService.callType) {
 				this.dialogService.toast({
-					content: this.abstractSessionInitService.callType === 'video' ?
+					content: this.sessionInitService.callType === 'video' ?
 						this.stringsService.p2pWarningVideoPassive :
 						this.stringsService.p2pWarningAudioPassive
 					,
@@ -99,9 +103,6 @@ export class ChatRootComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly abstractSessionInitService: AbstractSessionInitService,
-
-		/** @ignore */
 		private readonly appService: AppService,
 
 		/** @ignore */
@@ -112,6 +113,9 @@ export class ChatRootComponent implements OnInit {
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		private readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService,

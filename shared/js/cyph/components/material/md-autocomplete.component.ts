@@ -16,14 +16,14 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 
 
 /**
- * ng2 wrapper for Material1 md-input-container + md-select.
+ * ng2 wrapper for Material1 md-autocomplete.
  */
 @Directive({
 	/* tslint:disable-next-line:directive-selector */
-	selector: 'md2-select'
+	selector: 'md2-autocomplete'
 })
 /* tslint:disable-next-line:directive-class-suffix */
-export class MdSelectComponent
+export class MdAutocompleteComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component configuration. */
 	public static readonly config			= {
@@ -31,10 +31,11 @@ export class MdSelectComponent
 			childClass: '@',
 			disabled: '<',
 			formName: '@',
-			label: '@',
-			model: '=',
-			options: '<',
-			required: '<'
+			items: '<',
+			placeholder: '@',
+			required: '<',
+			searchText: '=',
+			selectedItem: '='
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
@@ -48,43 +49,43 @@ export class MdSelectComponent
 			public readonly formName: string;
 
 			/** @ignore */
-			public readonly label: string;
+			public readonly items: {display: string; value: string}[];
 
 			/** @ignore */
-			public readonly model: string;
-
-			/** @ignore */
-			public readonly options: string[]|{text: string; value: boolean|number|string}[];
+			public readonly placeholder: string;
 
 			/** @ignore */
 			public readonly required: boolean;
 
+			/** @ignore */
+			public readonly searchText: string;
+
+			/** @ignore */
+			public readonly selectedItem: {display: string; value: string};
+
 			constructor () {}
 		},
 		template: `
-			<md-input-container ng-class='$ctrl.childClass'>
-				<md-select
-					ng-disabled='$ctrl.disabled'
-					ng-attr-name='{{$ctrl.formName}}'
-					ng-attr-aria-label='{{$ctrl.label}}'
-					ng-model='$ctrl.model'
-					ng-required='$ctrl.required'
-					aria-label='.'
-				>
-					<md-option
-						ng-repeat='option in $ctrl.options'
-						ng-value='option.value === undefined ? option : option.value'
-					>
-						{{option.text === undefined ? option : option.text}}
-					</md-option>
-				</md-select>
-				<label>{{$ctrl.label}}</label>
-			</md-input-container>
+			<md-autocomplete
+				ng-class='$ctrl.childClass'
+				ng-disabled='$ctrl.disabled'
+				md-input-name='{{$ctrl.formName}}'
+				md-items='item in $ctrl.items'
+				md-item-text='item.display'
+				ng-attr-aria-label='{{$ctrl.placeholder}}'
+				ng-attr-placeholder='{{$ctrl.placeholder}}'
+				ng-required='$ctrl.required'
+				md-search-text='$ctrl.searchText'
+				md-selected-item='$ctrl.selectedItem'
+				aria-label='.'
+			>
+				<span md-highlight-text='$ctrl.searchText'>{{item.display}}</span>
+			</md-autocomplete>
 		`
 	};
 
 	/** Component title. */
-	public static readonly title: string	= 'md2Select';
+	public static readonly title: string	= 'md2Autocomplete';
 
 
 	/** @ignore */
@@ -97,19 +98,25 @@ export class MdSelectComponent
 	@Input() public formName: string;
 
 	/** @ignore */
-	@Input() public label: string;
+	@Input() public items: {display: string; value: string}[];
 
 	/** @ignore */
-	@Input() public model: string;
-
-	/** @ignore */
-	@Output() public modelChange: EventEmitter<string>;
-
-	/** @ignore */
-	@Input() public options: string[]|{text: string; value: boolean|number|string}[];
+	@Input() public placeholder: string;
 
 	/** @ignore */
 	@Input() public required: boolean;
+
+	/** @ignore */
+	@Input() public searchText: string;
+
+	/** @ignore */
+	@Output() public searchTextChange: EventEmitter<string>;
+
+	/** @ignore */
+	@Input() public selectedItem: {display: string; value: string};
+
+	/** @ignore */
+	@Output() public selectedItemChange: EventEmitter<{display: string; value: string}>;
 
 	/** @ignore */
 	/* tslint:disable-next-line:no-unnecessary-override */
@@ -139,6 +146,6 @@ export class MdSelectComponent
 		@Inject(ElementRef) elementRef: ElementRef,
 		@Inject(Injector) injector: Injector
 	) {
-		super(MdSelectComponent.title, elementRef, injector);
+		super(MdAutocompleteComponent.title, elementRef, injector);
 	}
 }

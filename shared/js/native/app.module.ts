@@ -5,7 +5,7 @@ import {Title} from '@angular/platform-browser';
 import {NativeScriptModule} from 'nativescript-angular/platform';
 import {AccountComponent} from './account.component';
 import {AppComponent} from './app.component';
-import {ChatRootComponent} from './chat-root.component';
+import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 import {ChatCyphertextComponent} from './js/cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from './js/cyph/components/chat-main.component';
 import {ChatMessageBoxComponent} from './js/cyph/components/chat-message-box.component';
@@ -23,6 +23,7 @@ import {TranslateDirective} from './js/cyph/directives/translate.directive';
 import {ConfigService} from './js/cyph/services/config.service';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {EnvService} from './js/cyph/services/env.service';
+import {FileService} from './js/cyph/services/file.service';
 import {MdDialogService} from './js/cyph/services/material/md-dialog.service';
 import {MdToastService} from './js/cyph/services/material/md-toast.service';
 import {NotificationService} from './js/cyph/services/notification.service';
@@ -44,7 +45,7 @@ import {VisibilityWatcherService} from './js/cyph/services/visibility-watcher.se
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
-		ChatRootComponent,
+		EphemeralChatRootComponent,
 		ContactComponent,
 		FileInputComponent,
 		FooterComponent,
@@ -70,6 +71,7 @@ import {VisibilityWatcherService} from './js/cyph/services/visibility-watcher.se
 		ConfigService,
 		DialogService,
 		EnvService,
+		FileService,
 		MdDialogService,
 		MdToastService,
 		NotificationService,

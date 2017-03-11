@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
-import {AbstractSessionInitService} from '../cyph/services/abstract-session-init.service';
+import {SessionInitService} from '../cyph/services/session-init.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 
 
 /**
- * AbstractSessionInitService implementation that gets ID from URL.
+ * SessionInitService implementation that gets ID from URL.
  */
 @Injectable()
-export class SessionInitService implements AbstractSessionInitService {
+export class UrlSessionInitService implements SessionInitService {
 	/** @inheritDoc */
 	public readonly callType: 'audio'|'video'|undefined;
 

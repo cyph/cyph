@@ -32,7 +32,7 @@ export class P2PService {
 
 	/** If chat authentication is complete, alert that P2P is disabled. */
 	public disabledAlert () : void {
-		if (this.chatService.isConnected && !this.isEnabled) {
+		if (this.chatService.chat.isConnected && !this.isEnabled) {
 			this.dialogService.alert({
 				content: this.stringsService.p2pDisabled,
 				ok: this.stringsService.ok,

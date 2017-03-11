@@ -64,8 +64,7 @@ body.telehealth {
 	}
 
 	.not-found img {
-		-webkit-filter: brightness(0.5);
-		filter: brightness(0.5);
+		@include filter(brightness(0.5));
 	}
 
 	.md-bar2 {
@@ -137,7 +136,7 @@ body.telehealth:not(.mobile) {
 }
 
 body.telehealth.mobile {
-	md-icon.material-icons {
+	md-icon {
 		color: #4D5062 !important;
 	}
 

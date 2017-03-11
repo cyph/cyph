@@ -2,11 +2,12 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ChatService} from '../cyph/services/chat.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {EnvService} from '../cyph/services/env.service';
-import {FileService} from '../cyph/services/file.service';
+import {FileTransferService} from '../cyph/services/file-transfer.service';
 import {P2PService} from '../cyph/services/p2p.service';
 import {ScrollService} from '../cyph/services/scroll.service';
 import {SessionService} from '../cyph/services/session.service';
 import {ChatData} from './chat-data';
+import {DemoEnvService} from './demo-env.service';
 import {LocalSessionService} from './local-session.service';
 
 
@@ -17,32 +18,35 @@ import {LocalSessionService} from './local-session.service';
 	providers: [
 		ChatService,
 		CyphertextService,
-		EnvService,
-		FileService,
+		DemoEnvService,
+		FileTransferService,
 		LocalSessionService,
 		P2PService,
 		ScrollService,
+		{
+			provide: EnvService,
+			useExisting: DemoEnvService
+		},
 		{
 			provide: SessionService,
 			useExisting: LocalSessionService
 		}
 	],
-	selector: 'cyph-chat-root',
+	selector: 'cyph-demo-chat-root',
 	templateUrl: '../../templates/chat-root.html'
 })
-export class ChatRootComponent implements OnInit {
+export class DemoChatRootComponent implements OnInit {
 	/** @see ChatData */
 	@Input() public data: ChatData;
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		this.envService.isMobile	= this.data.isMobile;
-
+		this.demoEnvService.init(this.data);
 		this.localSessionService.init(this.data);
 
 		this.data.message.subscribe(s => {
 			if (s.length === 1) {
-				this.chatService.currentMessage += s;
+				this.chatService.chat.currentMessage += s;
 			}
 			else if (s.length > 1) {
 				this.chatService.send(s);
@@ -66,7 +70,7 @@ export class ChatRootComponent implements OnInit {
 		private readonly chatService: ChatService,
 
 		/** @ignore */
-		private readonly envService: EnvService,
+		private readonly demoEnvService: DemoEnvService,
 
 		/** @ignore */
 		private readonly localSessionService: LocalSessionService,

@@ -29,6 +29,7 @@ export class ChatStringsService extends StringsService {
 	) {
 		super();
 
-		this.sessionService.setRemoteUsername(this.friend);
+		const friend	= this.friend;
+		this.sessionService.setRemoteUsername(friend);
 	}
 }
