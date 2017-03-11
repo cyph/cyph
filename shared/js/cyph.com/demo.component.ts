@@ -90,7 +90,7 @@ export class DemoComponent implements OnInit {
 			2
 		);
 
-		$picImg.each(async (_: number, elem: HTMLElement) => {
+		$picImg.each((_: number, elem: HTMLElement) => { (async () => {
 			const $this: JQuery		= $(elem);
 
 			const isMobile: boolean	=
@@ -120,7 +120,7 @@ export class DemoComponent implements OnInit {
 			}
 
 			$pic.css(offset);
-		});
+		})(); });
 
 		this.demoService.desktop.scrollDown.next();
 		this.demoService.mobile.scrollDown.next();

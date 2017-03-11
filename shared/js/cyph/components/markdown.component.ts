@@ -73,9 +73,9 @@ export class MarkdownComponent implements OnChanges {
 		));
 
 		/* Block window.opener in new window */
-		$html.find('a').each((_: number, a: HTMLAnchorElement) =>
-			$(a).attr('rel', 'noreferrer')
-		);
+		$html.find('a').each((_: number, a: HTMLAnchorElement) => {
+			$(a).attr('rel', 'noreferrer');
+		});
 
 		/* Process image lightboxes */
 		$html.find('img').each((_: number, img: HTMLImageElement) => {
