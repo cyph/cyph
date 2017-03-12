@@ -23,16 +23,23 @@ export class UrlStateService {
 	/**
 	 * Gets URL fragment or (if none exists) path without leading slash.
 	 * @param fragmentOnly If true, will only return fragment or empty string.
+	 * @param lowercase If true, will set to lowercase.
 	 */
-	public getUrl (fragmentOnly?: boolean) : string {
+	public getUrl (fragmentOnly?: boolean, lowercase?: boolean) : string {
 		try {
-			const fragment: string	= locationData.hash.toLowerCase().split('#')[1] || '';
+			const fragment: string	= locationData.hash.split('#')[1] || '';
 
-			if (fragmentOnly || fragment) {
-				return fragment;
+			const url: string		= fragmentOnly || fragment ?
+				fragment :
+				locationData.pathname.substring(1) || ''
+			;
+
+			if (lowercase) {
+				return url.toLowerCase();
 			}
-
-			return locationData.pathname.toLowerCase().substring(1) || '';
+			else {
+				return url;
+			}
 		}
 		catch (_) {
 			return '';
@@ -41,17 +48,21 @@ export class UrlStateService {
 
 	/**
 	 * Gets URL fragment and splits with delimiter '/'.
+	 * @param lowercase If true, will set to lowercase.
 	 */
-	public getUrlSplit () : string[] {
-		return this.getUrl(true).split('/');
+	public getUrlSplit (lowercase?: boolean) : string[] {
+		return this.getUrl(true, lowercase).split('/');
 	}
 
 	/**
 	 * Sets handler to run when URL changes.
 	 * @param handler
+	 * @param lowercase If true, will set to lowercase.
 	 */
-	public onChange (handler: (newUrlState: string) => void) : void {
-		eventManager.on(UrlStateService.urlStateChangeEvent, () => { handler(this.getUrl()); });
+	public onChange (handler: (newUrlState: string) => void, lowercase?: boolean) : void {
+		eventManager.on(UrlStateService.urlStateChangeEvent, () => {
+			handler(this.getUrl(lowercase));
+		});
 	}
 
 	/**

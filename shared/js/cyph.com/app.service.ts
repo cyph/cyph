@@ -286,7 +286,10 @@ export class AppService {
 		}
 
 		(async () => {
-			this.urlStateService.onChange(newUrlState => { this.onUrlStateChange(newUrlState); });
+			this.urlStateService.onChange(
+				newUrlState => { this.onUrlStateChange(newUrlState); },
+				true
+			);
 
 			const newUrlState: string	= this.urlStateService.getUrl();
 

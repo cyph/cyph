@@ -34,7 +34,7 @@ export class AppService {
 
 		if (newUrlStateSplit[0] === urlSections.account) {
 			this.accountState	= (<any> AccountStates)[newUrlStateSplit[1]];
-			this.state		= States.account;
+			this.state			= States.account;
 		}
 		else if (newUrlState === this.urlStateService.states.notFound) {
 			this.state		= States.error;
@@ -63,9 +63,10 @@ export class AppService {
 
 		titleService.setTitle(util.translate(titleService.getTitle()));
 
-		this.urlStateService.onChange(newUrlState => {
-			this.onUrlStateChange(newUrlState);
-		});
+		this.urlStateService.onChange(
+			newUrlState => { this.onUrlStateChange(newUrlState); },
+			true
+		);
 
 		self.onhashchange	= () => { location.reload(); };
 		self.onpopstate		= () => {};
