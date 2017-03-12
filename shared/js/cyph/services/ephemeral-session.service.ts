@@ -27,6 +27,11 @@ export class EphemeralSessionService extends SessionService {
 	private readonly wasInitiatedByAPI: boolean;
 
 	/** @inheritDoc */
+	public close () : void {
+		this.trigger(this.threadEvents.close);
+	}
+
+	/** @inheritDoc */
 	public get proFeatures () : ProFeatures {
 		return new ProFeatures(
 			this.wasInitiatedByAPI,
