@@ -26,6 +26,7 @@
     "angular-animate": "^1.6.3",
     "angular-aria": "^1.6.3",
     "angular-material": "https://github.com/angular/bower-material",
+    "angularfire2": "^2.0.0-beta.8",
     "animate.css": "^3.5.2",
     "bourbon": "4.2.7",
     "braintree-web": "^2",
