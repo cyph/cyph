@@ -19,6 +19,7 @@ import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
+import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
 import {util} from '../cyph/util';
 import {AppService} from './app.service';
 import {States} from './enums';
@@ -58,34 +59,56 @@ import {UrlSessionInitService} from './url-session-init.service';
 export class EphemeralChatRootComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		const granim	= !this.envService.isWeb || this.envService.coBranded ?
+		const granimStates	= {
+			'default-state': !this.sessionService.apiFlags.telehealth ?
+				{
+					gradients: [
+						['#392859', '#624599'],
+						['#9368e6', '#624599']
+					],
+					loop: true,
+					transitionSpeed: 5000
+				} :
+				{
+					direction: 'diagonal',
+					gradients: [
+						['#eeecf1', '#fbf8fe'],
+						['#fbf8fe', '#eeecf1']
+					],
+					loop: true,
+					opacity: [0.75, 0.5],
+					transitionSpeed: 2500
+				}
+			,
+			'paused': !this.sessionService.apiFlags.telehealth ?
+				{
+					gradients: [
+						['#624599', '#8b62d9'],
+						['#9368e6', '#624599']
+					],
+					transitionSpeed: 5000
+				} :
+				undefined
+		};
+
+		const granim	= (
+			!this.envService.isWeb ||
+			this.envService.coBranded ||
+			this.sessionService.apiFlags.modestBranding
+		) ?
 			undefined :
-			<{changeState: (state: string) => void}> new Granim({
+			<{
+				changeState: (state: string) => void;
+				clear: () => void;
+				pause: () => void;
+				play: () => void;
+			}> new Granim({
 				direction: 'radial',
 				element: '#main-chat-gradient',
 				isPausedWhenNotInView: true,
 				name: 'basic-gradient',
 				opacity: [1, 1],
-				states: {
-					'default-state': {
-						gradients: [
-							['#392859', '#624599'],
-							['#9368E6', '#624599']
-						],
-						loop: true,
-						transitionSpeed: 5000
-					},
-					'telehealth': {
-						direction: 'diagonal',
-						gradients: [
-							['#eeecf1', '#FBF8FE'],
-							['#FBF8FE', '#eeecf1']
-						],
-						loop: true,
-						opacity: [0.75, 0.5],
-						transitionSpeed: 2500
-					}
-				}
+				states: granimStates
 			})
 		;
 
@@ -101,10 +124,6 @@ export class EphemeralChatRootComponent implements OnInit {
 			if (this.envService.isWeb) {
 				$(document.body).addClass('telehealth');
 				this.faviconService.setFavicon('telehealth');
-
-				if (granim) {
-					granim.changeState('telehealth');
-				}
 			}
 			else {
 				/* TODO: HANDLE NATIVE */
@@ -149,11 +168,22 @@ export class EphemeralChatRootComponent implements OnInit {
 			this.appService.state	= States.chat;
 		});
 
-		this.sessionService.one(this.sessionService.events.beginChatComplete).then(() => {
+		this.sessionService.one(this.sessionService.events.beginChatComplete).then(async () => {
 			self.onbeforeunload	= () => this.stringsService.disconnectWarning;
 
 			if (this.sessionInitService.callType && this.sessionService.state.isAlice) {
 				this.p2pService.p2p.request(this.sessionInitService.callType);
+			}
+
+			if (granim) {
+				await this.visibilityWatcherService.waitUntilVisible();
+
+				if (granimStates.paused) {
+					granim.changeState('paused');
+				}
+
+				await util.sleep(3000);
+				granim.pause();
 			}
 		});
 
@@ -232,6 +262,9 @@ export class EphemeralChatRootComponent implements OnInit {
 
 		/** @ignore */
 		private readonly urlStateService: UrlStateService,
+
+		/** @ignore */
+		private readonly visibilityWatcherService: VisibilityWatcherService,
 
 		/** @see CyphertextService */
 		public readonly cyphertextService: CyphertextService

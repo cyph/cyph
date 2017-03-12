@@ -1,7 +1,7 @@
 html {
 
 ${!o.colors.main ? '' : `
-	&, body, #main, .cyph-foreground, .chat-begin-message, md-sidenav {
+	&, body, #main, .cyph-foreground, md-sidenav {
 		background-color: ${o.colors.main};
 	}
 `}

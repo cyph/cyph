@@ -40,6 +40,17 @@ export class VisibilityWatcherService {
 		return eventManager.one<boolean>(this.visibilityChangeEvent);
 	}
 
+	/**
+	 * Waits until the window is visible.
+	 */
+	public async waitUntilVisible () : Promise<void> {
+		if (this.isVisible) {
+			return;
+		}
+
+		await this.waitForChange();
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly envService: EnvService
