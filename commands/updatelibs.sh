@@ -34,6 +34,7 @@ yarn add --ignore-platform --ignore-scripts \
 	angular \
 	angular-animate \
 	angular-aria \
+	angularfire2 \
 	animate.css \
 	Base64 \
 	bourbon@4.2.7 \
