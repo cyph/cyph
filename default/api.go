@@ -205,7 +205,7 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	json.Unmarshal(preAuthorizedCyph.ProFeatures, &preAuthorizedProFeatures)
 
 	/* For now, disable pro feature check for non-API usage.
-		Also, _temporarily_ disable this check for modest branding usage. */
+	Also, _temporarily_ disable this check for modest branding usage. */
 	if proFeatures["api"] && !proFeatures["modestBranding"] {
 		for feature, isRequired := range proFeatures {
 			if isRequired && !preAuthorizedProFeatures[feature] {
