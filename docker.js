@@ -181,7 +181,11 @@ const shellScripts			= {
 		source ~/.bashrc
 		${windowsWorkaround}
 		/cyph/commands/${args.command}.sh ${
-			process.argv.slice(3).filter(s => s !== '--background').join(' ')
+			process.argv.
+				slice(3).
+				filter(s => s !== '--background').
+				map(s => s.indexOf("'") ? `"${s}"` : `'${s}'`).
+				join(' ')
 		}
 	`,
 	libUpdate: {
