@@ -10,7 +10,7 @@ $classesToAdd: 15;
 }
 
 /* Scrollfix to pin Cyph background/gradient */
-:host > div > :not(canvas) {
+:host > div > :not(canvas):not(cyph-account-menu) {
 	overflow: scroll;
 }
 

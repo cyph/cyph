@@ -1,13 +1,7 @@
 @import 'mixins';
 
-/* Hide backdrop */
-md-backdrop.md-sidenav-backdrop.md-opaque {
-	opacity: 0;
-	z-index: -999;
-}
-
 .md-button {
-	text-align: center;
+	text-align: center !important;
 	font-family: Ubuntu;
 	font-weight: 500;
 	font-size: 24px;
@@ -24,9 +18,25 @@ img.logo {
 	}
 }
 
-md-sidenav._md.md-sidenav-left.md-whiteframe-z2 {
+.menu {
 	background-color: rgba(80, 57, 124, 0.9) !important;
-	box-shadow: 0px 2px 4px -1px rgba(71, 50, 110, 0.15), 0px 4px 5px 0 rgba(70, 50, 110, 0.1), 0px 1px 10px 0 rgba(70, 50, 110, 0.12);
+	width: 100%;
+
+	@include transition(all 0.25s ease-out);
+
+	&.mobile {
+		position: absolute;
+		z-index: 999;
+		max-width: 25em;
+
+		&:not(.closed) {
+			background-color: rgb(80, 57, 124) !important;
+		}
+	}
+
+	&:not(.mobile) {
+		margin-right: 18px;
+	}
 }
 
 md2-button.logout {
@@ -39,7 +49,7 @@ md2-button.logout {
 	@include icon-size(32px);
 }
 
-md-sidenav, md2-content, md-content, md-content .layout-column {
+.menu, md2-content, md-content, md-content .layout-column {
 	height: 100%;
 }
 
@@ -95,12 +105,10 @@ md2-button.home {
 }
 
 /* Mini Menu */
-md-sidenav.md-closed {
+.menu.closed {
 	width: 5em;
 	min-width: 0px;
 	display: block;
-
-	@include transform(translate3d(0px, 0px, 0px) !important);
 
 	.full-button {
 		display: none;
@@ -127,7 +135,7 @@ md-sidenav.md-closed {
 	}
 }
 
-md-sidenav:not(.md-closed) {
+.menu:not(.closed) {
 	.collapsed-button {
 		display: none;
 	}

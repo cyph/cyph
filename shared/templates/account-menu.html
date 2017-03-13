@@ -1,8 +1,8 @@
-<div *ngIf='accountAuthService.current'>
-	<md2-sidenav 
-		[mdComponentId]='menuId'
-		childClass='md-sidenav-left md-whiteframe-z2 flex-25'
-		mode='side'
+<div class='layout-row layout-fill' *ngIf='accountAuthService.current'>
+	<div
+		class='menu md-sidenav md-whiteframe-z2'
+		[class.closed]='!open'
+		[class.mobile]='envService.isMobile'
 	>
 		<md2-content class='layout-column' childClass='md-padding md-no-flicker'>
 			<div class='layout-column'>
@@ -79,5 +79,5 @@
 				</div>
 			</div>
 		</md2-content>
-	</md2-sidenav>
+	</div>
 </div>
