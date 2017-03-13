@@ -93,7 +93,7 @@ export class LinkConnectionComponent implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		let isWaiting		= true;
 
-		await util.waitForValue(() => this.sessionService.state.sharedSecret);
+		await util.waitForValue(() => this.sessionService.state.sharedSecret || undefined);
 
 		this.isPassive		= this.sessionService.state.wasInitiatedByAPI;
 
