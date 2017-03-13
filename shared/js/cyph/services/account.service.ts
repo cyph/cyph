@@ -7,7 +7,7 @@ import {States} from '../account/enums';
  */
 @Injectable()
 export class AccountService {
-	/** Username of user whose profile is being viewed. */
+	/** Parameter passed in via URL route (e.g. a username). */
 	public input: string|undefined;
 
 	/** Indicates whether the browser extension UI should be used. */
