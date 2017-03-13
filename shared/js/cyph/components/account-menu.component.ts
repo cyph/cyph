@@ -15,8 +15,8 @@ import {UrlStateService} from '../services/url-state.service';
 	templateUrl: '../../../templates/account-menu.html'
 })
 export class AccountMenuComponent {
-	/** Indicates whether menu is open. */
-	public open: boolean			= !this.envService.isMobile;
+	/** Indicates whether menu is expanded. */
+	public expanded: boolean		= !this.envService.isMobile;
 
 	/** @see States */
 	public states: typeof States	= States;
@@ -35,12 +35,12 @@ export class AccountMenuComponent {
 	}
 
 	/** Toggles account menu. */
-	public toggleMenu (open?: boolean) : void {
-		if (typeof open === 'boolean') {
-			this.open	= open;
+	public toggleMenu (expanded?: boolean) : void {
+		if (typeof expanded === 'boolean') {
+			this.expanded	= expanded;
 		}
 		else {
-			this.open	= !this.open;
+			this.expanded	= !this.expanded;
 		}
 	}
 

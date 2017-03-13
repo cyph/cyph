@@ -1,7 +1,7 @@
 <div class='layout-row layout-fill' *ngIf='accountAuthService.current'>
 	<div
 		class='menu md-sidenav md-whiteframe-z2'
-		[class.closed]='!open'
+		[class.collapsed]='!expanded'
 		[class.mobile]='envService.isMobile'
 	>
 		<md2-content class='layout-column' childClass='md-padding md-no-flicker'>
