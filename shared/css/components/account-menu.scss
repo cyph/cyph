@@ -120,7 +120,7 @@ md2-button.menu-toggle {
 		md2-icon.flipped md-icon {
 			@include transform(rotate(180deg));
 
-			@include transition(transform 0.5s linear);
+			@include transition(transform 0.1s linear);
 		}
 
 		md-icon.material-icons {
