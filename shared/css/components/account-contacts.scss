@@ -26,12 +26,33 @@ md2-button {
 .contacts {
 	position: relative;
 
+	.contact.active {
+		.wrapper {
+			background-color: transparent;
+			border-color: transparent !important;
+
+			> md2-button {
+				@include transform(scaleX(0));
+			}
+
+			.user {
+				@include transform(translateX(48px));
+			}
+		}
+	}
+
 	.wrapper {
 		margin: 2px;
 		background-color: rgba(57, 40, 89, 0.65);
 		padding: 10px;
 		border-radius: 8px;
 		border: 3px solid rgba(57, 40, 89, 0.35) !important;
+
+		@include transition(background-color 0.5s ease, border-color 0.25s ease);
+
+		> md2-button, .user {
+			@include transition(transform 0.5s ease);
+		}
 
 		span, h2, h3 {
 			text-align: center;

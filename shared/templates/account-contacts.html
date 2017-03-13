@@ -5,6 +5,10 @@
 			childClass='layout-row'
 			*ngFor='let contact of accountContactsService.contacts; let i = index'
 			[attr.data-index]='i'
+			[class.active]='
+				this.accountService.state === states.chat &&
+				this.accountService.input === contact.username
+			'
 		>
 			<div class='wrapper layout-row layout-align-start-stretch flex animated flipInY _{{i}}'>
 				<div class='layout-column'>
