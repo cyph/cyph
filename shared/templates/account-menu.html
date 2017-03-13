@@ -1,83 +1,85 @@
-<div class='layout-row layout-fill' *ngIf='accountAuthService.current'>
-	<div
-		class='menu md-sidenav md-whiteframe-z2'
-		[class.collapsed]='!expanded'
-		[class.mobile]='envService.isMobile'
+<md2-sidenav 
+	*ngIf='accountAuthService.current'
+	[mdComponentId]='menuId'
+	childClass='md-sidenav-left md-whiteframe-z2'
+	mode='side'
+>
+	<md2-content
+		class='layout-column'
+		childClass='md-padding md-no-flicker'
 	>
-		<md2-content class='layout-column' childClass='md-padding md-no-flicker'>
-			<div class='layout-column'>
-				<div class='home-wrapper'>
-					<div class='layout-column'>
-						<md2-button class='home' cyphTranslate (childClick)='toggleMenu()'>
-							<img
-								src='/img/logo.white.horizontal.png'
-								class='logo full-button'
-								alt='Cyph Logo'
-							/>
-							<img
-								src='/img/logo.white.icon.png'
-								class='logo collapsed-button'
-								alt='Cyph Logo'
-							/>
-						</md2-button>
-						<div class='user' *ngIf='accountAuthService.current'>
-							<img
-								class='profile-picture animated flipInX _1'
-								[ngClass]='userPresence[accountAuthService.current.user.status]'
-								alt='Profile Picture'
-								[src]='accountAuthService.current.user.avatar'
-								(click)='goToState(states.home)'
-							/>
-						</div>
+		<div class='layout-column'>
+			<div class='home-wrapper'>
+				<div class='layout-column'>
+					<md2-button class='home' cyphTranslate (childClick)='toggleMenu()'>
+						<img
+							src='/img/logo.white.horizontal.png'
+							class='logo full-button'
+							alt='Cyph Logo'
+						/>
+						<img
+							src='/img/logo.white.icon.png'
+							class='logo collapsed-button'
+							alt='Cyph Logo'
+						/>
+					</md2-button>
+					<div class='user' *ngIf='accountAuthService.current'>
+						<img
+							class='profile-picture animated flipInX _1'
+							[ngClass]='userPresence[accountAuthService.current.user.status]'
+							alt='Profile Picture'
+							[src]='accountAuthService.current.user.avatar'
+							(click)='goToState(states.home)'
+						/>
 					</div>
 				</div>
-				<div>
-					<md2-button
-						cyphTranslate
-						ariaLabel='Home'
-						(childClick)='goToState(states.home)'
-					>
-						<md2-icon>home</md2-icon>
-						<span class='full-button'>Home</span>
-					</md2-button>
-					<md2-button
-						cyphTranslate
-						ariaLabel='Contacts'
-						(childClick)='goToState(states.contacts)'
-					>
-						<md2-icon>people</md2-icon>
-						<span class='full-button'>Contacts</span>
-					</md2-button>
-					<md2-button
-						cyphTranslate
-						ariaLabel='Files'
-						(childClick)='goToState(states.files)'
-					>
-						<md2-icon>folder</md2-icon>
-						<span class='full-button'>Files</span>
-					</md2-button>
-					<md2-button
-						cyphTranslate
-						ariaLabel='Settings'
-						(childClick)='goToState(states.settings)'
-					>
-						<md2-icon>settings</md2-icon>
-						<span class='full-button'>Settings</span>
-					</md2-button>
-				</div>
-				<div class='flex'></div>
-				<div class='menu-footer'>
-					<md2-button
-						cyphTranslate
-						class='logout'
-						ariaLabel='Logout'
-						(childClick)='urlStateService.setUrl("account/logout")'
-					>
-						<md2-icon>exit_to_app</md2-icon>
-						<span class='full-button'>Logout</span>
-					</md2-button>
-				</div>
 			</div>
-		</md2-content>
-	</div>
-</div>
+			<div>
+				<md2-button
+					cyphTranslate
+					ariaLabel='Home'
+					(childClick)='goToState(states.home)'
+				>
+					<md2-icon>home</md2-icon>
+					<span class='full-button'>Home</span>
+				</md2-button>
+				<md2-button
+					cyphTranslate
+					ariaLabel='Contacts'
+					(childClick)='goToState(states.contacts)'
+				>
+					<md2-icon>people</md2-icon>
+					<span class='full-button'>Contacts</span>
+				</md2-button>
+				<md2-button
+					cyphTranslate
+					ariaLabel='Files'
+					(childClick)='goToState(states.files)'
+				>
+					<md2-icon>folder</md2-icon>
+					<span class='full-button'>Files</span>
+				</md2-button>
+				<md2-button
+					cyphTranslate
+					ariaLabel='Settings'
+					(childClick)='goToState(states.settings)'
+				>
+					<md2-icon>settings</md2-icon>
+					<span class='full-button'>Settings</span>
+				</md2-button>
+			</div>
+			<div class='flex'></div>
+			<div class='menu-footer'>
+				<md2-button
+					cyphTranslate
+					class='logout'
+					ariaLabel='Logout'
+					(childClick)='urlStateService.setUrl("account/logout")'
+				>
+					<md2-icon>exit_to_app</md2-icon>
+					<span class='full-button'>Logout</span>
+				</md2-button>
+			</div>
+		</div>
+	</md2-content>
+</md2-sidenav>

@@ -13,8 +13,15 @@ export class AccountService {
 	/** Indicates whether the browser extension UI should be used. */
 	public isExtension: boolean	= false;
 
+	/** Indicates whether the menu is expanded */
+	public menuExpanded: boolean = true;
+
 	/** @see States */
 	public state: States|undefined;
 
+	public toggleMenu(): void {
+		this.menuExpanded = !this.menuExpanded;
+		console.log(this.menuExpanded);
+	}
 	constructor () {}
 }

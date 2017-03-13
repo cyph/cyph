@@ -26,6 +26,11 @@ export class AccountComponent implements OnInit {
 	/** @see States */
 	public states: typeof States	= States;
 
+	/** Indicates whether menu is expanded or compact */
+	public get menuExpanded () : boolean {
+		return this.accountService.menuExpanded;
+	}
+	
 	/** Indicates whether menu should be displayed. */
 	public get menuVisible () : boolean {
 		return this.accountAuthService.current !== undefined && [
