@@ -28,8 +28,10 @@ md2-button {
 
 	.contact.active {
 		.wrapper {
-			background-color: transparent;
-			border-color: transparent !important;
+			background-color: rgba(57, 40, 89, 0.75);
+			border: 3px solid rgba(57, 40, 89, 0.5) !important;
+			right: 15px;
+			position: relative;
 
 			> md2-button {
 				@include transform(scaleX(0));
