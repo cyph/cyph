@@ -47,7 +47,7 @@ export class AccountComponent implements OnInit {
 			return;
 		}
 
-		if (!this.envService.coBranded && !this.envService.isMobile) {
+		if (!this.envService.coBranded && !this.accountService.isExtension) {
 			/* tslint:disable-next-line:no-unused-new */
 			new Granim({
 				direction: 'radial',
@@ -61,7 +61,7 @@ export class AccountComponent implements OnInit {
 							['#392859', '#624599'],
 							['#9368E6', '#624599']
 						],
-						loop: true,
+						loop: false,
 						transitionSpeed: 5000
 					}
 				}
