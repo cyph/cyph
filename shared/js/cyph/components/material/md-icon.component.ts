@@ -27,6 +27,7 @@ export class MdIconComponent
 	public static readonly config			= {
 		bindings: {
 			childClass: '@',
+			icon: '@',
 			mdMenuAlignTarget: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
@@ -35,7 +36,18 @@ export class MdIconComponent
 			public readonly childClass: string;
 
 			/** @ignore */
+			public readonly icon: string;
+
+			/** @ignore */
 			public readonly mdMenuAlignTarget: string;
+
+			/** @ignore */
+			public ready: boolean	= false;
+
+			/** @ignore */
+			public $onInit () : void {
+				this.ready	= true;
+			}
 
 			constructor () {}
 		},
@@ -43,8 +55,16 @@ export class MdIconComponent
 			<md-icon
 				ng-class='$ctrl.childClass'
 				ng-attr-md-menu-align-target='{{$ctrl.mdMenuAlignTarget}}'
+				ng-if='$ctrl.ready && !$ctrl.icon'
 				ng-transclude
 			></md-icon>
+			<md-icon
+				ng-class='$ctrl.childClass'
+				ng-attr-md-menu-align-target='{{$ctrl.mdMenuAlignTarget}}'
+				ng-if='$ctrl.ready && $ctrl.icon'
+			>
+				{{$ctrl.icon}}
+			</md-icon>
 		`,
 		transclude: true
 	};
@@ -55,6 +75,9 @@ export class MdIconComponent
 
 	/** @ignore */
 	@Input() public childClass: string;
+
+	/** @ignore */
+	@Input() public icon: string;
 
 	/** @ignore */
 	@Input() public mdMenuAlignTarget: string;
