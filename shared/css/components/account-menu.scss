@@ -1,13 +1,7 @@
 @import 'mixins';
 
-/* Hide backdrop */
-md-backdrop.md-sidenav-backdrop.md-opaque {
-	opacity: 0;
-	z-index: -999;
-}
-
 .md-button {
-	text-align: center;
+	text-align: center !important;
 	font-family: Ubuntu;
 	font-weight: 500;
 	font-size: 24px;
@@ -24,13 +18,69 @@ img.logo {
 	}
 }
 
-md-sidenav._md.md-sidenav-left.md-whiteframe-z2 {
+.menu {
 	background-color: rgba(80, 57, 124, 0.9) !important;
-	box-shadow: 0px 2px 4px -1px rgba(71, 50, 110, 0.15), 0px 4px 5px 0 rgba(70, 50, 110, 0.1), 0px 1px 10px 0 rgba(70, 50, 110, 0.12);
-}
+	width: 100%;
 
-md-sidenav.md-closed md-content {
-	padding: 8px;
+	&.mobile {
+		position: absolute;
+		z-index: 999;
+		max-width: 25em;
+
+		&.collapsed {
+			width: 6em;
+		}
+
+		&:not(.collapsed) {
+			background-color: rgb(80, 57, 124) !important;
+		}
+	}
+
+	&.collapsed {
+		.full-button {
+			display: none;
+		}
+
+		.home-wrapper {
+			margin-bottom: 0px !important;
+		}
+
+		.profile-picture.online {
+			border: 5px solid rgba(56, 140, 71, 0.9) !important;
+		}
+
+		.profile-picture.away {
+			border: 5px solid rgba(247, 184, 1, 0.9) !important;
+		}
+
+		.profile-picture.busy {
+			border: 5px solid rgba(255, 28, 28, 0.9) !important;
+		}
+
+		.profile-picture.offline {
+			border: 5px solid rgba(40, 38, 44, 0.9) !important;
+		}
+
+		md-content {
+			padding: 8px;
+		}
+	}
+
+	&:not(.collapsed) {
+		.collapsed-button {
+			display: none;
+		}
+
+		md2-icon {
+			position: relative;
+			right: 2px;
+			top: -2px;
+		}
+	}
+
+	md-content {
+		padding-right: 0px;
+	}
 }
 
 md2-button.logout {
@@ -43,12 +93,8 @@ md2-button.logout {
 	@include icon-size(32px);
 }
 
-md-sidenav, md2-content, md-content, md-content .layout-column {
+.menu, md2-content, md-content, md-content .layout-column {
 	height: 100%;
-}
-
-md-content {
-	padding-right: 0px;
 }
 
 md2-button.home {
@@ -59,21 +105,25 @@ md2-button.home {
 
 md2-button.menu-toggle {
 	width: 25px;
+	margin-top: -6px;
+
 	@include vertical-align();
+
 	button {
 		height: 100%;
+
 		md2-icon.flipped md-icon {
-			transform: rotate(180deg);
-			transition: transform 1s ease;
+			@include transform(rotate(180deg));
+
+			@include transition(transform 1s ease);
 		}
+
 		md-icon.material-icons {
 			right: 10px;
 			position: relative;
 		}
 	}
 }
-
-
 
 .home-wrapper {
 	margin-bottom: 10px;
@@ -117,50 +167,5 @@ md2-button.menu-toggle {
 
 	.profile-picture.offline {
 		border: 7px solid rgba(40, 38, 44, 0.9) !important;
-	}
-}
-
-/* Mini Menu */
-md-sidenav.md-closed {
-	width: 6em;
-	min-width: 0px;
-	display: block;
-
-	@include transform(translate3d(0px, 0px, 0px) !important);
-
-	.full-button {
-		display: none;
-	}
-
-	.home-wrapper {
-		margin-bottom: 0px !important;
-	}
-
-	.profile-picture.online {
-		border: 5px solid rgba(56, 140, 71, 0.9) !important;
-	}
-
-	.profile-picture.away {
-		border: 5px solid rgba(247, 184, 1, 0.9) !important;
-	}
-
-	.profile-picture.busy {
-		border: 5px solid rgba(255, 28, 28, 0.9) !important;
-	}
-
-	.profile-picture.offline {
-		border: 5px solid rgba(40, 38, 44, 0.9) !important;
-	}
-}
-
-md-sidenav:not(.md-closed) {
-	.collapsed-button {
-		display: none;
-	}
-
-	md2-icon {
-		position: relative;
-		right: 2px;
-		top: -2px;
 	}
 }
