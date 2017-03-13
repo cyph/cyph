@@ -26,19 +26,26 @@ md2-button {
 .contacts {
 	position: relative;
 
-	.contact.active {
-		.wrapper {
-			background-color: rgba(57, 40, 89, 0.75);
-			border: 3px solid rgba(57, 40, 89, 0.5) !important;
-			right: 15px;
-			position: relative;
+	.contact {
+		&, .wrapper > md2-button, .user {
+			@include transition(transform 0.5s ease);
+		}
 
-			> md2-button {
-				@include transform(scaleX(0));
-			}
+		&.active {
+			@include transform(translateX(-15px));
 
-			.user {
-				@include transform(translateX(48px));
+			.wrapper {
+				background-color: rgba(57, 40, 89, 0.75);
+				border: 3px solid rgba(57, 40, 89, 0.5) !important;
+				position: relative;
+
+				> md2-button {
+					@include transform(scaleX(0));
+				}
+
+				.user {
+					@include transform(translateX(48px));
+				}
 			}
 		}
 	}
@@ -51,10 +58,6 @@ md2-button {
 		border: 3px solid rgba(57, 40, 89, 0.35) !important;
 
 		@include transition(background-color 0.5s ease, border-color 0.25s ease);
-
-		> md2-button, .user {
-			@include transition(transform 0.5s ease);
-		}
 
 		span, h2, h3 {
 			text-align: center;

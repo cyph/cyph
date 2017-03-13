@@ -1,6 +1,6 @@
 @import 'mixins';
 
-:host, .menu {
+:host, .menu, .menu md-content {
 	@include transition(all 0.25s ease-out);
 }
 
@@ -67,7 +67,6 @@ img.logo {
 		}
 
 		md-content {
-			width: 6em;
 			padding: 8px;
 		}
 	}
