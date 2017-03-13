@@ -443,12 +443,17 @@ export class Util {
 	) : Promise<T> {
 		let value: T|undefined;
 
-		while (!value || (condition && !condition(value))) {
+		while (value === undefined || (condition && !condition(value))) {
 			value	= f();
 			await this.sleep();
 		}
 
 		return value;
+	}
+
+	/** Waits until function returns true. */
+	public async waitUntilTrue (f: () => boolean) : Promise<void> {
+		await this.waitForValue(() => f() || undefined);
 	}
 
 	constructor () { (async () => {
