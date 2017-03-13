@@ -112,7 +112,7 @@ md2-button.menu-toggle {
 	width: 25px;
 	margin-top: -6px;
 
-	@include vertical-align();
+	@include vertical-align;
 
 	button {
 		height: 100%;
