@@ -3,12 +3,12 @@
 
 	<cyph-account-menu
 		class='menu sidebar layout-column'
-		[ngClass]='accountService.menuExpanded ? "flex-25" : "flex-5"'
+		[ngClass]='accountService.menuExpanded && !envService.isMobile ? "flex-20" : "flex-5"'
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
 	<div
-		class='main layout-column flex'
+		class='layout-column flex'
 		*ngIf='!showOnlySidebar'
 	>
 		<cyph-account-chat

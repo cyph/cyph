@@ -11,17 +11,23 @@ export class AccountService {
 	public input: string|undefined;
 
 	/** Indicates whether the browser extension UI should be used. */
-	public isExtension: boolean	= false;
+	public isExtension: boolean		= false;
 
-	/** Indicates whether the menu is expanded */
-	public menuExpanded: boolean = true;
+	/** Indicates whether menu is expanded. */
+	public menuExpanded: boolean	= false;
 
 	/** @see States */
 	public state: States|undefined;
 
-	public toggleMenu(): void {
-		this.menuExpanded = !this.menuExpanded;
-		console.log(this.menuExpanded);
+	/** Toggles account menu. */
+	public toggleMenu (menuExpanded?: boolean) : void {
+		if (typeof menuExpanded === 'boolean') {
+			this.menuExpanded	= menuExpanded;
+		}
+		else {
+			this.menuExpanded	= !this.menuExpanded;
+		}
 	}
+
 	constructor () {}
 }

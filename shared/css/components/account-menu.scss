@@ -22,27 +22,21 @@ img.logo {
 	background-color: rgba(80, 57, 124, 0.9) !important;
 	width: 100%;
 
-	@include transition(all 0.25s ease-out);
-
 	&.mobile {
 		position: absolute;
 		z-index: 999;
 		max-width: 25em;
+
+		&.collapsed {
+			width: 5em;
+		}
 
 		&:not(.collapsed) {
 			background-color: rgb(80, 57, 124) !important;
 		}
 	}
 
-	&:not(.mobile) {
-		margin-right: 18px;
-	}
-
 	&.collapsed {
-		width: 5em;
-		min-width: 0px;
-		display: block;
-
 		.full-button {
 			display: none;
 		}
