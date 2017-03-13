@@ -21,10 +21,6 @@ $classesToAdd: 15;
 cyph-account-menu {
 	min-width: 5em;
 	margin-right: 18px;
-
-	&, .menu {
-		@include transition(all 0.25s ease-out);
-	}
 }
 
 .mobile .cyph-gradient {
