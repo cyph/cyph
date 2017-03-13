@@ -13,8 +13,8 @@ import {SessionService} from './session.service';
 export class AccountSessionService extends SessionService {
 	/** Temporary, for testing. */
 	private static DUMMY_REPLIES: string[]	= [
-		'who is this?',
-		'oh...'
+		'Hey, how\'s it going?',
+		'Same old, same old. Still on the run from the NSA.'
 	];
 
 	/** Temporary, for testing. */
