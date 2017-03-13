@@ -62,10 +62,16 @@ export class AccountComponent implements OnInit {
 				opacity: [1, 0.5, 0],
 				states: {
 					'default-state': {
-						gradients: [
-							['#392859', '#624599'],
-							['#9368E6', '#624599']
-						],
+						gradients: !this.accountService.isTelehealth ?
+							[
+								['#392859', '#624599'],
+								['#9368e6', '#624599']
+							] :
+							[
+								['#624599', '#8b62d9'],
+								['#9368e6', '#624599']
+							]
+						,
 						loop: false,
 						transitionSpeed: 5000
 					}

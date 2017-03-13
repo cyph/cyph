@@ -14,12 +14,20 @@
 							(childClick)='goToState(states.home)'
 						>
 							<img
-								src='/img/logo.white.horizontal.png'
+								[src]='
+									!accountService.isTelehealth ?
+										"/img/logo.white.horizontal.png" :
+										"/img/telehealth.video.logo.png"
+								'
 								class='logo full-button'
 								alt='Cyph Logo'
 							/>
 							<img
-								src='/img/logo.white.icon.png'
+								[src]='
+									!accountService.isTelehealth ?
+										"/img/logo.white.icon.png" :
+										"/img/logo.telehealth.icon.png"
+								'
 								class='logo collapsed-button'
 								alt='Cyph Logo'
 							/>
