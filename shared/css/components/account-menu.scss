@@ -21,6 +21,7 @@ img.logo {
 .menu {
 	background-color: rgba(80, 57, 124, 0.9) !important;
 	width: 100%;
+	text-align: center;
 
 	&.mobile {
 		position: absolute;
@@ -62,6 +63,7 @@ img.logo {
 		}
 
 		md-content {
+			width: 6em;
 			padding: 8px;
 		}
 	}
@@ -115,7 +117,7 @@ md2-button.menu-toggle {
 		md2-icon.flipped md-icon {
 			@include transform(rotate(180deg));
 
-			@include transition(transform 1s ease);
+			@include transition(transform 0.5s linear);
 		}
 
 		md-icon.material-icons {
