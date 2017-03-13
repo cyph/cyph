@@ -12,7 +12,13 @@ import {SessionService} from './session.service';
 @Injectable()
 export class AccountSessionService extends SessionService {
 	/** Temporary, for testing. */
-	private readonly replies	= new Set<string>();
+	private static DUMMY_REPLIES: string[]	= [
+		'who is this?',
+		'oh...'
+	];
+
+	/** Temporary, for testing. */
+	private readonly replies	= new Map<string, number>();
 
 	/** The remote user we're chatting with. */
 	public user: User|undefined;
@@ -29,26 +35,33 @@ export class AccountSessionService extends SessionService {
 
 			this.trigger(this.rpcEvents.text, message.data);
 
-			if (util.random(7) !== 0) {
+			if (!this.user) {
 				continue;
 			}
 
-			(async () => {
-				if (!this.user || this.replies.has(this.user.username)) {
-					return;
-				}
+			const user	= this.user;
+			const reply	= this.replies.get(user.username) || 0;
+			this.replies.set(user.username, reply + 1);
 
-				this.replies.add(this.user.username);
-				await util.sleep(util.random(10000, 3000));
+			if (reply >= AccountSessionService.DUMMY_REPLIES.length) {
+				continue;
+			}
+
+			util.lock(user, async () => {
+				await util.sleep(util.random(1000));
+				await util.waitUntilTrue(() => user === this.user);
 				this.trigger(this.rpcEvents.typing, {isTyping: true});
-				await util.sleep(util.random(4000, 1000));
+				await util.sleep(util.random(2000, 500));
 				this.trigger(this.rpcEvents.typing, {isTyping: false});
+				await util.waitUntilTrue(() => user === this.user);
+				await util.sleep(1000);
+				await util.waitUntilTrue(() => user === this.user);
 
 				this.trigger(this.rpcEvents.text, {
-					author: this.user.realUsername,
-					text: 'who is this?'
+					author: user.realUsername,
+					text: AccountSessionService.DUMMY_REPLIES[reply]
 				});
-			})();
+			});
 		}
 	}
 
