@@ -96,7 +96,9 @@ md2-button {
 
 			@include transition(border 0.75s ease);
 		}
-
+		img.avatar:hover {
+			cursor: pointer;
+		}
 		.avatar.online {
 			border: 5px solid rgba(56, 140, 71, 0.9) !important;
 		}
