@@ -1,3 +1,4 @@
+import {Injectable} from '@angular/core';
 import {analytics} from '../analytics';
 import {ICastle} from '../crypto/icastle';
 import {errors} from '../errors';
@@ -14,6 +15,7 @@ import {util} from '../util';
 /**
  * Manages a session.
  */
+@Injectable()
 export abstract class SessionService implements ISessionService {
 	/** @ignore */
 	protected castle: ICastle;
