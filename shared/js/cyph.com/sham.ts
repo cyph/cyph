@@ -31,7 +31,7 @@ if (!('crypto' in self)) {
 			return array;
 		},
 
-		subtle: null
+		subtle: undefined
 	};
 }
 
