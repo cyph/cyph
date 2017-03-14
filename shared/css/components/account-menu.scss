@@ -12,8 +12,10 @@
 }
 
 img.logo {
-	width: 100%;
-	max-width: 6em;
+    height: auto !important;
+    width: auto !important;
+	max-height: 2em;
+	max-width: 100%;
 	padding: 0.25em 0.25em 0px 0.25em;
 
 	&.collapsed-button {
