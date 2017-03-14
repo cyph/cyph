@@ -1,3 +1,4 @@
+import {Injectable} from '@angular/core';
 import {errors} from '../errors';
 import {firebaseApp} from '../firebase-app';
 import {util} from '../util';
@@ -6,9 +7,18 @@ import {util} from '../util';
 /**
  * Bidirectional network connection that sends and receives data (via Firebase).
  */
-export class Channel {
+@Injectable()
+export class ChannelService {
 	/** @ignore */
 	private channelRef: firebase.database.Reference;
+
+	/** @ignore */
+	private handlers: {
+		onClose: () => void;
+		onConnect: () => void;
+		onMessage: (message: string) => void;
+		onOpen: (isAlice: boolean) => void;
+	};
 
 	/** @ignore */
 	private isAlice: boolean		= false;
@@ -40,45 +50,21 @@ export class Channel {
 		this.channelRef.remove().catch(() => {});
 	}
 
-	/** Indicates whether this channel is available for sending and receiving. */
-	public get isAlive () : boolean {
-		return !this.isClosed;
-	}
-
-	/** Sends message through this channel. */
-	public async send (message: string) : Promise<void> {
-		try {
-			await util.retryUntilSuccessful(async () => {
-				if (this.isClosed) {
-					return;
-				}
-
-				await this.messagesRef.push({
-					cyphertext: message,
-					sender: this.userId,
-					timestamp: util.timestamp()
-				});
-			});
-		}
-		catch (err) {
-			errors.log('Failed to send.');
-			throw err;
-		}
-	}
-
 	/**
 	 * @param channelName Name of this channel.
 	 * @param handlers Event handlers for this channel.
 	 */
-	constructor (
+	public async init (
 		channelName: string,
-		private handlers: ({
+		handlers: {
 			onClose: () => void;
 			onConnect: () => void;
 			onMessage: (message: string) => void;
 			onOpen: (isAlice: boolean) => void;
-		})
-	) { (async () => {
+		}
+	) : Promise<void> {
+		this.handlers	= handlers;
+
 		this.channelRef		= await util.retryUntilSuccessful(async () =>
 			(await firebaseApp).database().ref('channels').child(channelName)
 		);
@@ -144,5 +130,31 @@ export class Channel {
 				}
 			})
 		);
-	})(); }
+	}
+
+	/** Indicates whether this channel is available for sending and receiving. */
+	public get isAlive () : boolean {
+		return !this.isClosed;
+	}
+
+	/** Sends message through this channel. */
+	public async send (message: string) : Promise<void> {
+		try {
+			await util.retryUntilSuccessful(async () => {
+				if (this.isClosed) {
+					return;
+				}
+
+				await this.messagesRef.push({
+					cyphertext: message,
+					sender: this.userId,
+					timestamp: util.timestamp()
+				});
+			});
+		}
+		catch (err) {
+			errors.log('Failed to send.');
+			throw err;
+		}
+	}
 }

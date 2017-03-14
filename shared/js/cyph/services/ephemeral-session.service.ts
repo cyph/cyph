@@ -2,11 +2,11 @@ import {Injectable} from '@angular/core';
 import {analytics} from '../analytics';
 import {AnonymousCastle} from '../crypto/anonymous-castle';
 import {env} from '../env';
-import {Channel} from '../session/channel';
 import {CastleEvents, events, rpcEvents} from '../session/enums';
 import {IMessage} from '../session/imessage';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
+import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
@@ -17,6 +17,22 @@ import {SessionService} from './session.service';
  */
 @Injectable()
 export class EphemeralSessionService extends SessionService {
+	/** @ignore */
+	private sendHandler (messages: string[]) : void {
+		this.lastOutgoingMessageTimestamp	= util.timestamp();
+
+		for (const message of messages) {
+			this.channelService.send(message);
+		}
+
+		analytics.sendEvent({
+			eventAction: 'sent',
+			eventCategory: 'message',
+			eventValue: messages.length,
+			hitType: 'event'
+		});
+	}
+
 	/** @ignore */
 	private setId (id: string) : void {
 		if (
@@ -115,12 +131,12 @@ export class EphemeralSessionService extends SessionService {
 			}
 		};
 
-		this.channel	= new Channel(channelDescriptor, handlers);
+		this.channelService.init(channelDescriptor, handlers);
 	}
 
 	/** @inheritDoc */
 	public close () : void {
-		this.channel.close();
+		this.channelService.close();
 	}
 
 	/** @inheritDoc */
@@ -161,6 +177,9 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly channelService: ChannelService,
+
 		/** @ignore */
 		private readonly configService: ConfigService,
 
