@@ -6,7 +6,7 @@ import {ISessionService} from '../service-interfaces/isession.service';
 import {Channel} from '../session/channel';
 import {CastleEvents, Events, events, RpcEvents, rpcEvents, Users, users} from '../session/enums';
 import {IMessage} from '../session/imessage';
-import {Message} from '../session/message'
+import {Message} from '../session/message';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
 
@@ -22,7 +22,16 @@ export abstract class SessionService implements ISessionService {
 	protected channel: Channel;
 
 	/** @ignore */
-	protected readonly eventId: string	= util.generateGuid();
+	protected readonly eventId: string					= util.generateGuid();
+
+	/** @ignore */
+	protected lastIncomingMessageTimestamp: number		= util.timestamp();
+
+	/** @ignore */
+	protected lastOutgoingMessageTimestamp: number		= util.timestamp();
+
+	/** @ignore */
+	protected pingPongTimeouts: number					= 0;
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string>	= new Set<string>();
@@ -34,16 +43,7 @@ export abstract class SessionService implements ISessionService {
 	});
 
 	/** @ignore */
-	protected readonly sendQueue: string[]			= [];
-
-	/** @ignore */
-	protected lastIncomingMessageTimestamp: number	= util.timestamp();
-
-	/** @ignore */
-	protected lastOutgoingMessageTimestamp: number	= util.timestamp();
-
-	/** @ignore */
-	protected pingPongTimeouts: number				= 0;
+	protected readonly sendQueue: string[]				= [];
 
 	/** @inheritDoc */
 	public readonly apiFlags	= {
@@ -76,7 +76,7 @@ export abstract class SessionService implements ISessionService {
 	public readonly users: Users	= users;
 
 	/** @ignore */
-	protected castleHandler (e: {event: CastleEvents; data?: any}) : void {
+	protected castleHandler (e: {data?: any; event: CastleEvents}) : void {
 		switch (e.event) {
 			case CastleEvents.abort: {
 				errors.logAuthFail();
@@ -115,7 +115,7 @@ export abstract class SessionService implements ISessionService {
 					for (let i = 0 ; i < messages.length ; ++i) {
 						const message	= messages[i];
 
-						if (typeof message.data !== 'object') {
+						if (typeof (<any> message).data !== 'object') {
 							message.data	= {
 								author: '',
 								timestamp: 0

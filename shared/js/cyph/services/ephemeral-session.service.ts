@@ -95,9 +95,9 @@ export class EphemeralSessionService extends SessionService {
 					}
 				}
 
-				this.on(events.castle, (e: {event: CastleEvents; data?: any}) =>
-					this.castleHandler(e)
-				);
+				this.on(events.castle, (e: {data?: any; event: CastleEvents}) => {
+					this.castleHandler(e);
+				});
 
 				while (this.state.isAlive) {
 					await util.sleep();
