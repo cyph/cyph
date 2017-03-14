@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {analytics} from '../analytics';
-import {config} from '../config';
 import {AnonymousCastle} from '../crypto/anonymous-castle';
 import {env} from '../env';
 import {Channel} from '../session/channel';
@@ -22,29 +21,25 @@ export class EphemeralSessionService extends SessionService {
 	private setId (id: string) : void {
 		if (
 			/* Too short */
-			id.length < config.secretLength ||
+			id.length < this.configService.secretLength ||
 
 			/* Contains invalid character(s) */
 			!id.split('').reduce(
 				(isValid: boolean, c: string) : boolean =>
-					isValid && config.guidAddressSpace.indexOf(c) > -1
+					isValid && this.configService.guidAddressSpace.indexOf(c) > -1
 				,
 				true
 			)
 		) {
-			id	= util.generateGuid(config.secretLength);
+			id	= util.generateGuid(this.configService.secretLength);
 		}
 
-		this.state.cyphId		= id.substring(0, config.cyphIdLength);
+		this.state.cyphId		= id.substring(0, this.configService.cyphIdLength);
 		this.state.sharedSecret	= this.state.sharedSecret || id;
 	}
 
 	/** @ignore */
-	private setUpChannel (
-		channelDescriptor: string,
-		nativeCrypto: boolean,
-		remoteUsername: string
-	) : void {
+	private setUpChannel (channelDescriptor: string) : void {
 		const handlers	= {
 			onClose: () => {
 				this.state.isAlive	= false;
@@ -60,10 +55,15 @@ export class EphemeralSessionService extends SessionService {
 
 				this.trigger(events.closeChat);
 			},
-			onConnect: () => {
+			onConnect: async () => {
 				this.trigger(events.connect);
 
-				this.castle	= new AnonymousCastle(this, nativeCrypto, remoteUsername);
+				this.castle	= new AnonymousCastle(
+					this,
+					this.apiFlags.nativeCrypto,
+					await this.remoteUsername
+				);
+
 				this.state.sharedSecret	= '';
 			},
 			onMessage: async (message: string) => {
@@ -209,7 +209,7 @@ export class EphemeralSessionService extends SessionService {
 		const channelDescriptor: string	=
 			this.state.startingNewCyph === false ?
 				'' :
-				util.generateGuid(config.longSecretLength)
+				util.generateGuid(this.configService.longSecretLength)
 		;
 
 		(async () => {
@@ -220,9 +220,7 @@ export class EphemeralSessionService extends SessionService {
 						method: 'POST',
 						retries: 5,
 						url: env.baseUrl + 'channels/' + this.state.cyphId
-					}),
-					this.apiFlags.nativeCrypto,
-					await this.remoteUsername
+					})
 				);
 			}
 			catch (_) {
