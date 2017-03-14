@@ -8,4 +8,3 @@ export * from './profeatures';
 export * from './isession';
 export * from './message';
 export * from './mutex';
-export * from './session';

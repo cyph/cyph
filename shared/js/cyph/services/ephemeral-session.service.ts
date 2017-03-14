@@ -1,40 +1,132 @@
 import {Injectable} from '@angular/core';
 import {analytics} from '../analytics';
+import {config} from '../config';
+import {AnonymousCastle} from '../crypto/anonymous-castle';
+import {env} from '../env';
+import {Channel} from '../session/channel';
+import {CastleEvents, events, rpcEvents} from '../session/enums';
 import {IMessage} from '../session/imessage';
-import {ISession} from '../session/isession';
 import {ProFeatures} from '../session/profeatures';
-import {Thread} from '../thread';
+import {util} from '../util';
 import {ConfigService} from './config.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 
 
 /**
- * Manages a session in a separate thread.
+ * Manages ephemeral session.
  */
 @Injectable()
 export class EphemeralSessionService extends SessionService {
 	/** @ignore */
-	private thread: Thread;
+	private setId (id: string) : void {
+		if (
+			/* Too short */
+			id.length < config.secretLength ||
+
+			/* Contains invalid character(s) */
+			!id.split('').reduce(
+				(isValid: boolean, c: string) : boolean =>
+					isValid && config.guidAddressSpace.indexOf(c) > -1
+				,
+				true
+			)
+		) {
+			id	= util.generateGuid(config.secretLength);
+		}
+
+		this.state.cyphId		= id.substring(0, config.cyphIdLength);
+		this.state.sharedSecret	= this.state.sharedSecret || id;
+	}
 
 	/** @ignore */
-	private readonly threadEvents	= {
-		close: 'close-SessionService',
-		send: 'send-SessionService'
-	};
+	private setUpChannel (
+		channelDescriptor: string,
+		nativeCrypto: boolean,
+		remoteUsername: string
+	) : void {
+		const handlers	= {
+			onClose: () => {
+				this.state.isAlive	= false;
 
-	/** @ignore */
-	private readonly wasInitiatedByAPI: boolean;
+				/* If aborting before the cyph begins,
+					block friend from trying to join */
+				util.request({
+					method: 'POST',
+					url: env.baseUrl + 'channels/' + this.state.cyphId
+				}).catch(
+					() => {}
+				);
+
+				this.trigger(events.closeChat);
+			},
+			onConnect: () => {
+				this.trigger(events.connect);
+
+				this.castle	= new AnonymousCastle(this, nativeCrypto, remoteUsername);
+				this.state.sharedSecret	= '';
+			},
+			onMessage: async (message: string) => {
+				(await util.waitForValue(() => this.castle)).receive(message);
+			},
+			onOpen: async (isAlice: boolean) : Promise<void> => {
+				this.state.isAlice	= isAlice;
+
+				if (this.state.isAlice) {
+					this.trigger(events.beginWaiting);
+				}
+				else {
+					this.pingPong();
+
+					analytics.sendEvent({
+						eventAction: 'started',
+						eventCategory: 'cyph',
+						eventValue: 1,
+						hitType: 'event'
+					});
+
+					if (this.state.wasInitiatedByAPI) {
+						analytics.sendEvent({
+							eventAction: 'started',
+							eventCategory: 'api-initiated-cyph',
+							eventValue: 1,
+							hitType: 'event'
+						});
+					}
+				}
+
+				this.on(events.castle, (e: {event: CastleEvents; data?: any}) =>
+					this.castleHandler(e)
+				);
+
+				while (this.state.isAlive) {
+					await util.sleep();
+
+					if (
+						this.sendQueue.length &&
+						(
+							this.sendQueue.length >= 4 ||
+							(util.timestamp() - this.lastOutgoingMessageTimestamp) > 500
+						)
+					) {
+						this.sendHandler(this.sendQueue.splice(0, 4));
+					}
+				}
+			}
+		};
+
+		this.channel	= new Channel(channelDescriptor, handlers);
+	}
 
 	/** @inheritDoc */
 	public close () : void {
-		this.trigger(this.threadEvents.close);
+		this.channel.close();
 	}
 
 	/** @inheritDoc */
 	public get proFeatures () : ProFeatures {
 		return new ProFeatures(
-			this.wasInitiatedByAPI,
+			this.state.wasInitiatedByAPI,
 			this.apiFlags.forceTURN,
 			this.apiFlags.modestBranding,
 			this.apiFlags.nativeCrypto,
@@ -45,8 +137,27 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	public send (...messages: IMessage[]) : void {
-		this.trigger(this.threadEvents.send, {messages});
+	public async send (...messages: IMessage[]) : Promise<void> {
+		while (!this.castle) {
+			await util.sleep();
+		}
+
+		for (const message of messages) {
+			if (message.event === rpcEvents.text) {
+				this.trigger(rpcEvents.text, message.data);
+			}
+		}
+
+		this.castle.send(
+			JSON.stringify(messages, (_, v) => {
+				if (v instanceof Uint8Array) {
+					(<any> v).isUint8Array	= true;
+				}
+
+				return v;
+			}),
+			util.timestamp()
+		);
 	}
 
 	constructor (
@@ -78,65 +189,45 @@ export class EphemeralSessionService extends SessionService {
 			});
 		}
 
-		this.wasInitiatedByAPI	= id.length > this.configService.secretLength;
+		this.state.wasInitiatedByAPI	= id.length > this.configService.secretLength;
 
-		this.on(this.events.threadUpdate, (e: {
-			key: 'cyphId'|'isAlice'|'isAlive'|'sharedSecret'|'startingNewCyph'|'wasInitiatedByAPI';
-			value: boolean|string|undefined;
-		}) => {
-			if (
-				(e.key === 'cyphId' && typeof e.value === 'string') ||
-				(e.key === 'isAlice' && typeof e.value === 'boolean') ||
-				(e.key === 'isAlive' && typeof e.value === 'boolean') ||
-				(e.key === 'sharedSecret' && typeof e.value === 'string') ||
-				(
-					e.key === 'startingNewCyph' &&
-					(typeof e.value === 'boolean' || typeof e.value === 'undefined')
-				) ||
-				(e.key === 'wasInitiatedByAPI' && typeof e.value === 'boolean')
-			) {
-				/* Casting to any as a temporary workaround pending TypeScript fix */
-				(<any> this).state[e.key]	= e.value;
-			}
-			else {
-				throw new Error('Invalid value.');
-			}
-		});
+		/* true = yes; false = no; undefined = maybe */
+		this.state.startingNewCyph		=
+			this.state.wasInitiatedByAPI ?
+				undefined :
+				id.length < 1 ?
+					true :
+					false
+		;
+
+		this.setId(id);
+
+		if (this.state.startingNewCyph !== false) {
+			this.trigger(events.newCyph);
+		}
+
+		const channelDescriptor: string	=
+			this.state.startingNewCyph === false ?
+				'' :
+				util.generateGuid(config.longSecretLength)
+		;
 
 		(async () => {
-			this.thread	= new Thread(
-				/* tslint:disable-next-line:only-arrow-functions */
-				function (
-					/* tslint:disable-next-line:variable-name */
-					Session: any,
-					locals: any,
-					importScripts: Function
-				) : void {
-					importScripts('/js/cyph/session/session.js');
-
-					const session: ISession	= new Session(
-						locals.id,
-						locals.proFeatures,
-						locals.remoteUsername,
-						locals.eventId
-					);
-
-					session.on(locals.events.close, () => {
-						session.close();
-					});
-
-					session.on(locals.events.send, (e: {messages: IMessage[]}) => {
-						session.send(...e.messages);
-					});
-				},
-				{
-					id,
-					eventId: this.eventId,
-					events: this.threadEvents,
-					proFeatures: this.proFeatures,
-					remoteUsername: await this.remoteUsername
-				}
-			);
+			try {
+				this.setUpChannel(
+					await util.request({
+						data: {channelDescriptor, proFeatures: this.proFeatures},
+						method: 'POST',
+						retries: 5,
+						url: env.baseUrl + 'channels/' + this.state.cyphId
+					}),
+					this.apiFlags.nativeCrypto,
+					await this.remoteUsername
+				);
+			}
+			catch (_) {
+				this.trigger(events.cyphNotFound);
+			}
 		})();
 	}
 }

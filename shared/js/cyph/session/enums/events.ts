@@ -41,9 +41,6 @@ export class Events {
 	/** @see Events */
 	public readonly p2pUI: string				= 'p2pUI';
 
-	/** @see Events */
-	public readonly threadUpdate: string		= 'threadUpdate';
-
 	constructor () {}
 }
 
