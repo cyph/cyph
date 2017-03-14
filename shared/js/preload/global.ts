@@ -2,6 +2,8 @@
  * @file Normalises global namespace across varying runtime environments.
  */
 
+/* tslint:disable:strict-type-predicates */
+
 
 if (typeof self === 'undefined' && typeof global !== 'undefined') {
 	(<any> global).self	= global;
