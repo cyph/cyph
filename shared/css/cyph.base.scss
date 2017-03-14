@@ -192,6 +192,13 @@ textarea {
 	background-image: none !important;
 }
 
+.close-button {
+	background-color: #202020 !important;
+	box-shadow: rgba(25, 130, 25, 0.13725) 0px 0px 4px 0px, rgba(25, 130, 25, 0.27843) 0px 4px 8px 0px !important;
+	font-family: 'Ubuntu Mono', monospace !important;
+	font-size: 2.1em;
+}
+
 pre, code {
 	font-family: 'Ubuntu Mono', monospace;
 	white-space: pre-wrap;
