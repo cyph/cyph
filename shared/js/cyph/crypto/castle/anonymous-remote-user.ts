@@ -9,10 +9,10 @@ import {Transport} from './transport';
  */
 export class AnonymousRemoteUser implements IRemoteUser {
 	/** @ignore */
-	private publicKey: Uint8Array;
+	private cyphertextPromise: Promise<Uint8Array>;
 
 	/** @ignore */
-	private cyphertextPromise: Promise<Uint8Array>;
+	private publicKey: Uint8Array;
 
 	/** @inheritDoc */
 	public async getPublicKey () : Promise<Uint8Array> {

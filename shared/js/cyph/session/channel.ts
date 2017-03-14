@@ -11,13 +11,7 @@ export class Channel {
 	private channelRef: firebase.database.Reference;
 
 	/** @ignore */
-	private messagesRef: firebase.database.Reference;
-
-	/** @ignore */
-	private usersRef: firebase.database.Reference;
-
-	/** @ignore */
-	private userId: string;
+	private isAlice: boolean		= false;
 
 	/** @ignore */
 	private isClosed: boolean		= false;
@@ -26,7 +20,13 @@ export class Channel {
 	private isConnected: boolean	= false;
 
 	/** @ignore */
-	private isAlice: boolean		= false;
+	private messagesRef: firebase.database.Reference;
+
+	/** @ignore */
+	private userId: string;
+
+	/** @ignore */
+	private usersRef: firebase.database.Reference;
 
 	/** This kills the channel. */
 	public close () : void {

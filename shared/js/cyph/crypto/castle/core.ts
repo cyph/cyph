@@ -38,13 +38,13 @@ export class Core {
 
 
 	/** @ignore */
-	private readonly lock: {}	= {};
-
-	/** @ignore */
 	private readonly ephemeralKeys: IKeyPairMaybe	= {
 		privateKey: undefined,
 		publicKey: undefined
 	};
+
+	/** @ignore */
+	private readonly lock: {}	= {};
 
 	/** @ignore */
 	private async ratchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {

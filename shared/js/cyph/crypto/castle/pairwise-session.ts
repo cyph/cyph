@@ -12,10 +12,27 @@ import {Transport} from './transport';
  */
 export class PairwiseSession {
 	/** @ignore */
+	private core: Core;
+
+	/** @ignore */
 	private incomingMessageId: number	= 0;
 
 	/** @ignore */
+	private readonly incomingMessages: Map<number, Uint8Array[]>	=
+		new Map<number, Uint8Array[]>()
+	;
+
+	/** @ignore */
 	private incomingMessagesMax: number	= 0;
+
+	/** @ignore */
+	private isAborted: boolean;
+
+	/** @ignore */
+	private isConnected: boolean;
+
+	/** @ignore */
+	private localUser: ILocalUser|undefined;
 
 	/** @ignore */
 	private outgoingMessageId: number	= 0;
@@ -24,24 +41,7 @@ export class PairwiseSession {
 	private readonly receiveLock: {}	= {};
 
 	/** @ignore */
-	private readonly incomingMessages: Map<number, Uint8Array[]>	=
-		new Map<number, Uint8Array[]>()
-	;
-
-	/** @ignore */
-	private core: Core;
-
-	/** @ignore */
-	private localUser: ILocalUser|undefined;
-
-	/** @ignore */
 	private remoteUser: IRemoteUser|undefined;
-
-	/** @ignore */
-	private isAborted: boolean;
-
-	/** @ignore */
-	private isConnected: boolean;
 
 	/** @ignore */
 	private remoteUsername: string;
