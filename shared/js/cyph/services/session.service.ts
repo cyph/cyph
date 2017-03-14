@@ -4,7 +4,6 @@ import {ICastle} from '../crypto/icastle';
 import {errors} from '../errors';
 import {eventManager} from '../event-manager';
 import {ISessionService} from '../service-interfaces/isession.service';
-import {Channel} from '../session/channel';
 import {CastleEvents, Events, events, RpcEvents, rpcEvents, Users, users} from '../session/enums';
 import {IMessage} from '../session/imessage';
 import {Message} from '../session/message';
@@ -19,9 +18,6 @@ import {util} from '../util';
 export abstract class SessionService implements ISessionService {
 	/** @ignore */
 	protected castle: ICastle;
-
-	/** @ignore */
-	protected channel: Channel;
 
 	/** @ignore */
 	protected readonly eventId: string					= util.generateGuid();
@@ -184,22 +180,6 @@ export abstract class SessionService implements ISessionService {
 		if (message.event && message.event in rpcEvents) {
 			this.trigger(message.event, message.data);
 		}
-	}
-
-	/** @ignore */
-	protected sendHandler (messages: string[]) : void {
-		this.lastOutgoingMessageTimestamp	= util.timestamp();
-
-		for (const message of messages) {
-			this.channel.send(message);
-		}
-
-		analytics.sendEvent({
-			eventAction: 'sent',
-			eventCategory: 'message',
-			eventValue: messages.length,
-			hitType: 'event'
-		});
 	}
 
 	/** @inheritDoc */

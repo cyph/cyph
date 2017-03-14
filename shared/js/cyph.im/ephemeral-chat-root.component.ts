@@ -3,6 +3,7 @@ import * as Granim from 'granim';
 import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
 import {States as ChatStates} from '../cyph/chat/enums';
+import {ChannelService} from '../cyph/services/channel.service';
 import {ChatEnvService} from '../cyph/services/chat-env.service';
 import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
@@ -31,6 +32,7 @@ import {UrlSessionInitService} from './url-session-init.service';
  */
 @Component({
 	providers: [
+		ChannelService,
 		ChatService,
 		CyphertextService,
 		FileTransferService,
