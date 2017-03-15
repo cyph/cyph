@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="/appcache.appcache">
+<html>
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -266,7 +266,7 @@ if (!(
 	'replaceState' in self.history &&
 	'MutationObserver' in self
 )) {
-	location.pathname	= '/unsupportedbrowser';
+	location.pathname	= 'https://cyph.ws/unsupportedbrowser';
 }</script>
 				
 		
@@ -544,34 +544,13 @@ function webSignSRI_Process (baseUrl) {
 	cdnUrlBaseOnion: 'cdn.cyphdbyhiddenbhs.onion/',
 	continentUrl: 'https://api.cyph.com/continent',
 	defaultContinent: 'eu',
-
-	files: [
-		'/',
-		'/js/workerhelper.js',
-		'/appcache.appcache',
-		'/manifest.json',
-		'/serviceworker.js',
-		'/unsupportedbrowser'
-	],
-
 	publicKeys: PUBLIC_KEYS
 };</script>
 				
 		
 					<script>(function () {
 
-
-/* Initialize ServiceWorker where possible */
-try {
-	navigator.serviceWorker.
-		register('/serviceworker.js').
-		catch(function () {})
-	;
-}
-catch (_) {}
-
 var isHiddenService	= false;
-
 var packageName		= 'cyph.ws';
 
 /* Get user's current location to choose optimal CDN node */
@@ -722,58 +701,6 @@ then(function (results) {
 	return opened.package;
 }).
 
-/* Before finishing, perform self-administered
-	integrity check on WebSign bootstrap */
-catch(function () {
-	return null;
-}).then(function (package) {
-	return Promise.all([
-		package,
-		Promise.all(config.files.map(function (file) {
-			return fetch(file).then(function (response) {
-				return response.text();
-			});
-		}))
-	]);
-}).then(function (results) {
-	var package			= results[0];
-	var fileContents	= results[1];
-
-	var bootstrapText	= config.files.
-		map(function (file, i) {
-			return file + ':\n\n' + fileContents[i].trim();
-		}).
-		join('\n\n\n\n\n\n')
-	;
-
-	return Promise.all([
-		package,
-		bootstrapText,
-		superSphincs.hash(bootstrapText)
-	]);
-}).then(function (results) {
-	var package			= results[0];
-	var bootstrapText	= results[1];
-	var hash			= results[2].hex;
-
-	storage.webSignHashOld	= storage.webSignHash;
-	storage.webSignHash		= hash;
-
-	var hashWhitelist	= JSON.parse(storage.webSignHashWhitelist);
-
-	if (!hashWhitelist[storage.webSignHash]) {
-		throw {
-			webSignPanic: true,
-			bootstrapText: bootstrapText
-		};
-	}
-	else if (package) {
-		return package;
-	}
-
-	throw null;
-}).
-
 /* Successfully execute package */
 then(function (package) {
 	document.head.innerHTML	= package.split('<head>')[1].split('</head>')[0];
@@ -789,43 +716,8 @@ then(function (package) {
 catch(function (err) {
 	var messageElement;
 
-	if (!err || !err.webSignPanic) {
-		messageElement					= document.getElementById('websign-load-message');
-		messageElement.innerText		= config.abortText;
-	}
-	else {
-		messageElement					= document.getElementById('panic-message');
-		messageElement.style.display	= 'block';
-
-		/* Also try to warn us, though in a serious attack this may be blocked */
-		fetch('https://mandrillapp.com/api/1.0/messages/send.json', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				key: 'HNz4JExN1MtpKz8uP2RD1Q',
-				message: {
-					from_email: 'test@mandrillapp.com',
-					to: [{
-						email: 'errors@cyph.com',
-						type: 'to'
-					}],
-					autotext: 'true',
-					subject: 'CYPH: SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS',
-					text:
-						navigator.language + '\n\n' +
-						navigator.userAgent + '\n\n' +
-						location.toString().replace(/\/#.*/g, '') + '\n\n' +
-						'\n\ncdn url: ' + storage.webSignCdnUrl +
-						'\n\ncurrent bootstrap hash: ' + storage.webSignHash +
-						'\n\nprevious bootstrap hash: ' + storage.webSignHashOld +
-						'\n\npackage hash: ' + storage.webSignPackageHash +
-						'\n\n\n\n' + err.bootstrapText
-				}
-			})
-		});
-	}
+	messageElement					= document.getElementById('websign-load-message');
+	messageElement.innerText		= config.abortText;
 
 	var parent	= messageElement.parentElement;
 
