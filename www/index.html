@@ -553,6 +553,16 @@ function webSignSRI_Process (baseUrl) {
 var isHiddenService	= false;
 var packageName		= 'cyph.ws';
 
+var userAgent	= navigator.userAgent.toLowerCase();
+
+UserAgent.set('PhoneGap' + (
+	/android/.test(navigator.userAgent) ?
+		' (Android)' :
+		/ipad|iphone|ipod/.test(navigator.userAgent) ?
+			' (iOS)' :
+			''
+));
+
 /* Get user's current location to choose optimal CDN node */
 Promise.resolve().then(function () {
 	if (isHiddenService) {

@@ -65,6 +65,7 @@
     <plugin name="cordova-plugin-vibration" />
 
     <!-- Third party plugins -->
+    <plugin name="im.ltdev.cordova.UserAgent" />
     <!-- A list of available plugins are available at https://build.phonegap.com/plugins -->
     <!--
         <plugin name="com.phonegap.plugins.barcodescanner" />
