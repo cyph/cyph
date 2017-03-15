@@ -65,7 +65,6 @@
     <plugin name="cordova-plugin-vibration" />
 
     <!-- Third party plugins -->
-    <plugin name="im.ltdev.cordova.UserAgent" />
     <!-- A list of available plugins are available at https://build.phonegap.com/plugins -->
     <!--
         <plugin name="com.phonegap.plugins.barcodescanner" />
@@ -128,6 +127,7 @@
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
     <platform name="android">
+        <preference name="OverrideUserAgent" value="Mozilla/5.0 (Linux; Android 7.1; Pixel XL Build/NDE63H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.91 Mobile Safari/537.36" />
         <allow-intent href="market:*" />
     </platform>
     <platform name="ios">
