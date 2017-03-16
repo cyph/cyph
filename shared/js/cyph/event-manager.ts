@@ -69,6 +69,23 @@ export class EventManager {
 		});
 	}
 
+	/** EventManager.on wrapper that allows sending a response to EventManager.rpcTrigger. */
+	public rpcOn<I, O> (event: string, handler: (data: I) => O|Promise<O>) : void {
+		this.on(event, async (o: {data: I; eventId: string}) => {
+			this.trigger<O>(o.eventId, await handler(o.data));
+		});
+	}
+
+	/** EventManager.trigger wrapper that allows receiving a response from EventManager.on. */
+	public async rpcTrigger<I, O> (event: string, data?: I) : Promise<O> {
+		const eventId	= util.generateGuid();
+		const response	= this.one<O>(eventId);
+
+		this.trigger(event, {data, eventId});
+
+		return response;
+	}
+
 	/**
 	 * Triggers event.
 	 * @param event
