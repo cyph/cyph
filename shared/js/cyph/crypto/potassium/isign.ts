@@ -4,13 +4,13 @@ import {IKeyPair} from '../ikey-pair';
 /** Equivalent to sodium.crypto_sign. */
 export interface ISign {
 	/** Signature length. */
-	readonly bytes: number;
+	readonly bytes: Promise<number>;
 
 	/** Private key length. */
-	readonly privateKeyBytes: number;
+	readonly privateKeyBytes: Promise<number>;
 
 	/** Public key length. */
-	readonly publicKeyBytes: number;
+	readonly publicKeyBytes: Promise<number>;
 
 	/** Generates key pair. */
 	keyPair () : Promise<IKeyPair>;

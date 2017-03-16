@@ -22,7 +22,7 @@ export class AnonymousLocalUser implements ILocalUser {
 
 		const sharedSecret	= (await this.potassium.passwordHash.hash(
 			this.sharedSecret,
-			new Uint8Array(this.potassium.passwordHash.saltBytes)
+			new Uint8Array(await this.potassium.passwordHash.saltBytes)
 		)).hash;
 
 		this.transport.send(await this.potassium.secretBox.seal(

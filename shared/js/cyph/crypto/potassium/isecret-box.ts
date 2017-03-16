@@ -1,13 +1,13 @@
 /** Equivalent to sodium.crypto_secretbox. */
 export interface ISecretBox {
 	/** Additional data length. */
-	readonly aeadBytes: number;
+	readonly aeadBytes: Promise<number>;
 
 	/** Key length. */
-	readonly keyBytes: number;
+	readonly keyBytes: Promise<number>;
 
 	/** Generates a new nonce. */
-	newNonce (size: number) : Uint8Array;
+	newNonce (size: number) : Promise<Uint8Array>;
 
 	/** Decrypts cyphertext. */
 	open (

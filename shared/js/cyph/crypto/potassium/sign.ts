@@ -6,13 +6,19 @@ import {ISign} from './isign';
 /** @inheritDoc */
 export class Sign implements ISign {
 	/** @inheritDoc */
-	public readonly bytes: number			= superSphincs.bytes;
+	public readonly bytes: Promise<number>				= Promise.resolve(
+		superSphincs.bytes
+	);
 
 	/** @inheritDoc */
-	public readonly privateKeyBytes: number	= superSphincs.privateKeyBytes;
+	public readonly privateKeyBytes: Promise<number>	= Promise.resolve(
+		superSphincs.privateKeyBytes
+	);
 
 	/** @inheritDoc */
-	public readonly publicKeyBytes: number	= superSphincs.publicKeyBytes;
+	public readonly publicKeyBytes: Promise<number>		= Promise.resolve(
+		superSphincs.publicKeyBytes
+	);
 
 	/** @inheritDoc */
 	public async keyPair () : Promise<IKeyPair> {

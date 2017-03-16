@@ -88,18 +88,18 @@ export class Box implements IBox {
 	};
 
 	/** @inheritDoc */
-	public readonly privateKeyBytes: number	=
+	public readonly privateKeyBytes: Promise<number>	= Promise.resolve(
 		mceliece.privateKeyBytes +
 		ntru.privateKeyBytes +
 		this.helpers.privateKeyBytes
-	;
+	);
 
 	/** @inheritDoc */
-	public readonly publicKeyBytes: number	=
+	public readonly publicKeyBytes: Promise<number>		= Promise.resolve(
 		mceliece.publicKeyBytes +
 		ntru.publicKeyBytes +
 		this.helpers.publicKeyBytes
-	;
+	);
 
 	/** @ignore */
 	private async publicKeyDecrypt (
@@ -112,6 +112,10 @@ export class Box implements IBox {
 		innerKeys: Uint8Array;
 		symmetricKey: Uint8Array;
 	}> {
+		const oneTimeAuthBytes		= await this.oneTimeAuth.bytes;
+		const oneTimeAuthKeyBytes	= await this.oneTimeAuth.keyBytes;
+		const secretBoxKeyBytes		= await this.secretBox.keyBytes;
+
 		const encryptedKeys: Uint8Array	= new Uint8Array(
 			keyCyphertext.buffer,
 			keyCyphertext.byteOffset,
@@ -121,7 +125,7 @@ export class Box implements IBox {
 		const mac: Uint8Array			= new Uint8Array(
 			keyCyphertext.buffer,
 			keyCyphertext.byteOffset + encryptedKeyBytes,
-			this.oneTimeAuth.bytes
+			oneTimeAuthBytes
 		);
 
 		const innerKeys: Uint8Array		= decrypt(
@@ -132,13 +136,13 @@ export class Box implements IBox {
 		const symmetricKey: Uint8Array	= new Uint8Array(
 			innerKeys.buffer,
 			0,
-			this.secretBox.keyBytes
+			secretBoxKeyBytes
 		);
 
 		const authKey: Uint8Array		= new Uint8Array(
 			innerKeys.buffer,
-			this.secretBox.keyBytes,
-			this.oneTimeAuth.keyBytes
+			secretBoxKeyBytes,
+			oneTimeAuthKeyBytes
 		);
 
 		const isValid: boolean			= await this.oneTimeAuth.verify(
@@ -166,7 +170,10 @@ export class Box implements IBox {
 		keyCyphertext: Uint8Array;
 		symmetricKey: Uint8Array;
 	}> {
-		if (plaintextBytes < (this.secretBox.keyBytes + this.oneTimeAuth.keyBytes)) {
+		const oneTimeAuthKeyBytes	= await this.oneTimeAuth.keyBytes;
+		const secretBoxKeyBytes		= await this.secretBox.keyBytes;
+
+		if (plaintextBytes < (secretBoxKeyBytes + oneTimeAuthKeyBytes)) {
 			throw new Error(`Not enough space for keys; must increase ${name} parameters.`);
 		}
 
@@ -175,13 +182,13 @@ export class Box implements IBox {
 		const symmetricKey: Uint8Array	= new Uint8Array(
 			innerKeys.buffer,
 			0,
-			this.secretBox.keyBytes
+			secretBoxKeyBytes
 		);
 
 		const authKey: Uint8Array		= new Uint8Array(
 			innerKeys.buffer,
-			this.secretBox.keyBytes,
-			this.oneTimeAuth.keyBytes
+			secretBoxKeyBytes,
+			oneTimeAuthKeyBytes
 		);
 
 		const encryptedKeys: Uint8Array	= encrypt(
@@ -292,6 +299,8 @@ export class Box implements IBox {
 
 	/** @inheritDoc */
 	public async open (cyphertext: Uint8Array, keyPair: IKeyPair) : Promise<Uint8Array> {
+		const oneTimeAuthBytes		= await this.oneTimeAuth.bytes;
+
 		const privateSubKeys	= this.splitPrivateKey(keyPair.privateKey);
 		const publicSubKeys		= this.splitPublicKey(keyPair.publicKey);
 
@@ -302,7 +311,7 @@ export class Box implements IBox {
 				cyphertext.buffer,
 				cyphertextIndex,
 				mceliece.cyphertextBytes +
-					this.oneTimeAuth.bytes
+					oneTimeAuthBytes
 			),
 			privateSubKeys.mcEliece,
 			'McEliece',
@@ -312,7 +321,7 @@ export class Box implements IBox {
 
 		cyphertextIndex +=
 			mceliece.cyphertextBytes +
-			this.oneTimeAuth.bytes
+			oneTimeAuthBytes
 		;
 
 		const ntruData							= await this.publicKeyDecrypt(
@@ -320,7 +329,7 @@ export class Box implements IBox {
 				cyphertext.buffer,
 				cyphertextIndex,
 				ntru.cyphertextBytes +
-					this.oneTimeAuth.bytes
+					oneTimeAuthBytes
 			),
 			privateSubKeys.ntru,
 			'NTRU',
@@ -330,7 +339,7 @@ export class Box implements IBox {
 
 		cyphertextIndex +=
 			ntru.cyphertextBytes +
-			this.oneTimeAuth.bytes
+			oneTimeAuthBytes
 		;
 
 		const nonce: Uint8Array					= new Uint8Array(
@@ -391,7 +400,9 @@ export class Box implements IBox {
 			(p: Uint8Array, pk: Uint8Array) => ntru.encrypt(p, pk)
 		);
 
-		const nonce: Uint8Array					= this.secretBox.newNonce(this.helpers.nonceBytes);
+		const nonce: Uint8Array					= await this.secretBox.newNonce(
+			this.helpers.nonceBytes
+		);
 
 		const classicalCyphertext: Uint8Array	= await this.helpers.seal(
 			plaintext,

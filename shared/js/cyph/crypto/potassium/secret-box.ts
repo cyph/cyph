@@ -73,36 +73,38 @@ export class SecretBox implements ISecretBox {
 	};
 
 	/** @inheritDoc */
-	public readonly aeadBytes: number	=
+	public readonly aeadBytes: Promise<number>	= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.secretBox.aeadBytes :
 			sodium.crypto_aead_chacha20poly1305_ABYTES
-	;
+	);
 
 	/** @inheritDoc */
-	public readonly keyBytes: number	=
+	public readonly keyBytes: Promise<number>	= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.secretBox.keyBytes :
 			sodium.crypto_aead_chacha20poly1305_KEYBYTES
-	;
+	);
 
 	/** @ignore */
-	private getAdditionalData (input?: Uint8Array) : Uint8Array|undefined {
-		if (!input || input.length === this.aeadBytes) {
+	private async getAdditionalData (input?: Uint8Array) : Promise<Uint8Array|undefined> {
+		const aeadBytes	= await this.aeadBytes;
+
+		if (!input || input.length === aeadBytes) {
 			return input;
 		}
 
-		if (input.length > this.aeadBytes) {
+		if (input.length > aeadBytes) {
 			throw new Error('Too much additional data.');
 		}
 
-		const output: Uint8Array	= new Uint8Array(this.aeadBytes);
+		const output: Uint8Array	= new Uint8Array(aeadBytes);
 		output.set(input);
 		return output;
 	}
 
 	/** @inheritDoc */
-	public newNonce (size: number) : Uint8Array {
+	public async newNonce (size: number) : Promise<Uint8Array> {
 		if (size < 4) {
 			throw new Error('Nonce size too small.');
 		}
@@ -120,7 +122,9 @@ export class SecretBox implements ISecretBox {
 		key: Uint8Array,
 		additionalData?: Uint8Array
 	) : Promise<Uint8Array> {
-		if (key.length % this.keyBytes !== 0) {
+		const keyBytes	= await this.keyBytes;
+
+		if (key.length % keyBytes !== 0) {
 			throw new Error('Invalid key.');
 		}
 
@@ -141,9 +145,9 @@ export class SecretBox implements ISecretBox {
 			let paddedPlaintext: Uint8Array|undefined;
 
 			for (
-				let i = key.length - this.keyBytes;
+				let i = key.length - keyBytes;
 				i >= 0;
-				i -= this.keyBytes
+				i -= keyBytes
 			) {
 				const dataToDecrypt: Uint8Array	= paddedPlaintext || symmetricCyphertext;
 
@@ -153,9 +157,9 @@ export class SecretBox implements ISecretBox {
 					new Uint8Array(
 						key.buffer,
 						key.byteOffset + i,
-						this.keyBytes
+						keyBytes
 					),
-					this.getAdditionalData(additionalData)
+					await this.getAdditionalData(additionalData)
 				);
 
 				potassiumUtil.clearMemory(dataToDecrypt);
@@ -186,7 +190,9 @@ export class SecretBox implements ISecretBox {
 		key: Uint8Array,
 		additionalData?: Uint8Array
 	) : Promise<Uint8Array> {
-		if (key.length % this.keyBytes !== 0) {
+		const keyBytes	= await this.keyBytes;
+
+		if (key.length % keyBytes !== 0) {
 			throw new Error('Invalid key.');
 		}
 
@@ -199,11 +205,11 @@ export class SecretBox implements ISecretBox {
 			plaintext
 		);
 
-		const nonce: Uint8Array	= this.newNonce(this.helpers.nonceBytes);
+		const nonce: Uint8Array	= await this.newNonce(this.helpers.nonceBytes);
 
 		let symmetricCyphertext: Uint8Array|undefined;
 
-		for (let i = 0 ; i < key.length ; i += this.keyBytes) {
+		for (let i = 0 ; i < key.length ; i += keyBytes) {
 			const dataToEncrypt: Uint8Array	= symmetricCyphertext || paddedPlaintext;
 
 			symmetricCyphertext	= await this.helpers.seal(
@@ -212,9 +218,9 @@ export class SecretBox implements ISecretBox {
 				new Uint8Array(
 					key.buffer,
 					key.byteOffset + i,
-					this.keyBytes
+					keyBytes
 				),
-				this.getAdditionalData(additionalData)
+				await this.getAdditionalData(additionalData)
 			);
 
 			potassiumUtil.clearMemory(dataToEncrypt);

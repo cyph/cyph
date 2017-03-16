@@ -1,7 +1,7 @@
 /** Equivalent to sodium.crypto_generichash. */
 export interface IHash {
 	/** Hash length. */
-	readonly bytes: number;
+	readonly bytes: Promise<number>;
 
 	/** Stretches input to the specified number of bytes. */
 	deriveKey (

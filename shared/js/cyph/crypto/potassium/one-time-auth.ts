@@ -6,18 +6,18 @@ import * as NativeCrypto from './native-crypto';
 /** @inheritDoc */
 export class OneTimeAuth implements IOneTimeAuth {
 	/** @inheritDoc */
-	public readonly bytes: number		=
+	public readonly bytes: Promise<number>		= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.oneTimeAuth.bytes :
 			sodium.crypto_onetimeauth_BYTES
-	;
+	);
 
 	/** @inheritDoc */
-	public readonly keyBytes: number	=
+	public readonly keyBytes: Promise<number>	= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.oneTimeAuth.keyBytes :
 			sodium.crypto_onetimeauth_KEYBYTES
-	;
+	);
 
 	/** @inheritDoc */
 	public async sign (
