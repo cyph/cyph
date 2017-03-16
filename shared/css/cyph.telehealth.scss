@@ -52,15 +52,23 @@ body.telehealth {
 		box-shadow: 5px 1px 5px #4D5062 !important;
 	}
 
+	blockquote {
+		border-color: #4D5062 !important;
+	}
+
 	textarea {
 		@include placeholder {
 			color: #4D5062 !important;
 		}
 	}
 
-	span, a, p, h1, h2, h3, li, cyph-help, .message-timestamp {
+	span, a, p, h1, h2, h3, li, md-icon, .md-button:not(.md-fab):not([disabled]), md-tabs .md-active, .message-timestamp, cyph-contact * {
 		color: #4D5062 !important;
 		font-weight: 400;
+	}
+
+	cyph-contact .md-button {
+		background-color: transparent;
 	}
 
 	.not-found img {
@@ -102,8 +110,22 @@ body.telehealth {
 		display: none;
 	}
 
-	.chat-main.video .video-call.active.playing ~ .message-list {
-		background-color: rgba(187, 168, 223, 0.8) !important;
+	.friend-is-typing .ellipsis-spinner > div {
+		background-color: #4D5062 !important;
+	}
+
+	.chat-main.video .video-call.active.playing {
+		~ .message-list {
+			background-color: rgba(187, 168, 223, 0.8) !important;
+
+			.friend-is-typing .ellipsis-spinner > div {
+				background-color: #f1f1f1 !important;
+			}
+		}
+
+		md-icon, ~ cyph-chat-message-box md-menu md-icon {
+			color: #f1f1f1 !important;
+		}
 	}
 }
 
@@ -123,34 +145,40 @@ body.telehealth:not(.mobile) {
 	.message-item.author-me > md-list-item {
 		background-color: transparent !important;
 		box-shadow: none !important;
+
+		&:after {
+			display: none;
+		}
 	}
 
 	.message-item.author-other > md-list-item {
 		background-color: transparent !important;
 		box-shadow: none !important;
+
+		&:after {
+			display: none;
+		}
 	}
 
-	md-icon {
-		color: #4D5062 !important;
+	.chat-main.video .video-call.active.playing {
+		~ .message-list *, ~ cyph-chat-message-box textarea {
+			color: #f1f1f1 !important;
+		}
 	}
 }
 
 body.telehealth.mobile {
-	md-icon {
-		color: #4D5062 !important;
-	}
-
 	.chat-main.mobile {
 		.message-item.author-me, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me {
 			> md-list-item {
-				background-color: rgba(231, 196, 70, 0.95);
+				background-color: rgba(231, 196, 70, 0.95) !important;
 			}
 		}
 
 		.message-item.author-other, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-other {
 			> md-list-item {
 				margin-left: 5%;
-				background-color: rgba(231, 196, 70, 0.95);
+				background-color: rgba(231, 196, 70, 0.95) !important;
 			}
 		}
 
@@ -179,5 +207,9 @@ body.telehealth.mobile {
 				color: #4D5062 !important;
 			}
 		}
+	}
+
+	.chat-main.video .video-call.active.playing ~ .message-list .author-app * {
+		color: #f1f1f1 !important;
 	}
 }
