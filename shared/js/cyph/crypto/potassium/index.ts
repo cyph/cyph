@@ -15,3 +15,4 @@ export * from './potassium';
 export * from './potassium-util';
 export * from './secret-box';
 export * from './sign';
+export * from './thread-events';
