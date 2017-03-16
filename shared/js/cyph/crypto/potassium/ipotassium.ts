@@ -1,11 +1,11 @@
-import {Box} from './box';
-import {EphemeralKeyExchange} from './ephemeral-key-exchange';
-import {Hash} from './hash';
-import {OneTimeAuth} from './one-time-auth';
-import {PasswordHash} from './password-hash';
+import {IBox} from './ibox';
+import {IEphemeralKeyExchange} from './iephemeral-key-exchange';
+import {IHash} from './ihash';
+import {IOneTimeAuth} from './ione-time-auth';
+import {IPasswordHash} from './ipassword-hash';
+import {ISecretBox} from './isecret-box';
+import {ISign} from './isign';
 import {PotassiumUtil} from './potassium-util';
-import {SecretBox} from './secret-box';
-import {Sign} from './sign';
 
 
 /**
@@ -14,26 +14,26 @@ import {Sign} from './sign';
  * should generally not be called directly.
  */
 export interface IPotassium extends PotassiumUtil {
-	/** @see Box */
-	readonly box: Box;
+	/** @see IBox */
+	readonly box: IBox;
 
-	/** @see EphemeralKeyExchange */
-	readonly ephemeralKeyExchange: EphemeralKeyExchange;
+	/** @see IEphemeralKeyExchange */
+	readonly ephemeralKeyExchange: IEphemeralKeyExchange;
 
-	/** @see Hash */
-	readonly hash: Hash;
+	/** @see IHash */
+	readonly hash: IHash;
 
-	/** @see OneTimeAuth */
-	readonly oneTimeAuth: OneTimeAuth;
+	/** @see IOneTimeAuth */
+	readonly oneTimeAuth: IOneTimeAuth;
 
-	/** @see PasswordHash */
-	readonly passwordHash: PasswordHash;
+	/** @see IPasswordHash */
+	readonly passwordHash: IPasswordHash;
 
-	/** @see SecretBox */
-	readonly secretBox: SecretBox;
+	/** @see ISecretBox */
+	readonly secretBox: ISecretBox;
 
-	/** @see Sign */
-	readonly sign: Sign;
+	/** @see ISign */
+	readonly sign: ISign;
 
 	/** Indicates whether this Potassium instance is using native crypto. */
 	native () : boolean;

@@ -1,14 +1,15 @@
 import {sodium} from 'libsodium';
 import {superSphincs} from 'supersphincs';
+import {IHash} from './ihash';
 import {potassiumUtil} from './potassium-util';
 
 
-/** Equivalent to sodium.crypto_generichash. */
-export class Hash {
-	/** Hash length. */
+/** @inheritDoc */
+export class Hash implements IHash {
+	/** @inheritDoc */
 	public readonly bytes: number	= superSphincs.hashBytes;
 
-	/** Stretches input to the specified number of bytes. */
+	/** @inheritDoc */
 	public async deriveKey (
 		input: Uint8Array,
 		outputBytes?: number,
@@ -34,7 +35,7 @@ export class Hash {
 		return hash;
 	}
 
-	/** Hashes plaintext. */
+	/** @inheritDoc */
 	public async hash (plaintext: Uint8Array|string) : Promise<Uint8Array> {
 		return superSphincs.hash(plaintext, true);
 	}
