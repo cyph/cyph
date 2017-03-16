@@ -62,7 +62,7 @@ body.telehealth {
 		}
 	}
 
-	span, a, p, h1, h2, h3, li, md-icon, .md-button:not(.md-fab):not([disabled]), md-tabs .md-active, .message-timestamp, cyph-contact * {
+	span, a, p, h1, h2, h3, li, md-icon, md-switch, .md-button:not(.md-fab):not([disabled]), md-tabs .md-active, .message-timestamp, cyph-contact * {
 		color: #4D5062 !important;
 		font-weight: 400;
 	}
@@ -125,6 +125,40 @@ body.telehealth {
 
 		md-icon, ~ cyph-chat-message-box md-menu md-icon {
 			color: #f1f1f1 !important;
+		}
+	}
+
+	/* Accounts */
+
+	cyph-account-contacts, cyph-account-files {
+		.contacts, .files {
+			.wrapper {
+				background-color: rgba(238, 236, 241, 0.5);
+				border-color: rgba(208, 195, 234, 0.35) !important;
+
+				.status {
+					color: #4D5062 !important;
+				}
+			}
+
+			.contact.active .wrapper {
+				background-color: rgba(238, 236, 241, 0.9);
+				border-color: rgb(211, 211, 224) !important;
+			}
+		}
+	}
+
+	cyph-account-menu .menu {
+		background-color: rgba(238, 236, 241, 0.9) !important;
+	}
+
+	cyph-account-profile {
+		.md-button.md-fab md-icon {
+			color: #f1f1f1 !important;
+		}
+
+		.profile .status label {
+			color: #4D5062 !important;
 		}
 	}
 }

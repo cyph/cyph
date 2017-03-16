@@ -68,8 +68,8 @@ export class AccountComponent implements OnInit {
 								['#9368e6', '#624599']
 							] :
 							[
-								['#624599', '#8b62d9'],
-								['#9368e6', '#624599']
+								['#eeecf1', '#b7bccb'],
+								['#b7bccb', '#eeecf1']
 							]
 						,
 						loop: false,
