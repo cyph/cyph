@@ -1,0 +1,15 @@
+/** Equivalent to sodium.crypto_generichash. */
+export interface IHash {
+	/** Hash length. */
+	readonly bytes: number;
+
+	/** Stretches input to the specified number of bytes. */
+	deriveKey (
+		input: Uint8Array,
+		outputBytes?: number,
+		clearInput?: boolean
+	) : Promise<Uint8Array>;
+
+	/** Hashes plaintext. */
+	hash (plaintext: Uint8Array|string) : Promise<Uint8Array>;
+}

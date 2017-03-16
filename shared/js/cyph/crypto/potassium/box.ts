@@ -2,14 +2,15 @@ import {sodium} from 'libsodium';
 import {mceliece} from 'mceliece';
 import {ntru} from 'ntru';
 import {IKeyPair} from '../ikey-pair';
+import {IBox} from './ibox';
 import * as NativeCrypto from './native-crypto';
 import {OneTimeAuth} from './one-time-auth';
 import {potassiumUtil} from './potassium-util';
 import {SecretBox} from './secret-box';
 
 
-/** Equivalent to sodium.crypto_box. */
-export class Box {
+/** @inheritDoc */
+export class Box implements IBox {
 	/** @ignore */
 	private readonly helpers: {
 		keyPair: () => Promise<IKeyPair>;
@@ -86,14 +87,14 @@ export class Box {
 				)
 	};
 
-	/** Private key length. */
+	/** @inheritDoc */
 	public readonly privateKeyBytes: number	=
 		mceliece.privateKeyBytes +
 		ntru.privateKeyBytes +
 		this.helpers.privateKeyBytes
 	;
 
-	/** Public key length. */
+	/** @inheritDoc */
 	public readonly publicKeyBytes: number	=
 		mceliece.publicKeyBytes +
 		ntru.publicKeyBytes +
@@ -264,7 +265,7 @@ export class Box {
 		};
 	}
 
-	/** Generates key pair. */
+	/** @inheritDoc */
 	public async keyPair () : Promise<IKeyPair> {
 		const keyPairs	= {
 			classical: await this.helpers.keyPair(),
@@ -289,7 +290,7 @@ export class Box {
 		};
 	}
 
-	/** Decrypts cyphertext. */
+	/** @inheritDoc */
 	public async open (cyphertext: Uint8Array, keyPair: IKeyPair) : Promise<Uint8Array> {
 		const privateSubKeys	= this.splitPrivateKey(keyPair.privateKey);
 		const publicSubKeys		= this.splitPublicKey(keyPair.publicKey);
@@ -372,7 +373,7 @@ export class Box {
 		return plaintext;
 	}
 
-	/** Encrypts plaintext. */
+	/** @inheritDoc */
 	public async seal (plaintext: Uint8Array, publicKey: Uint8Array) : Promise<Uint8Array> {
 		const publicSubKeys	= this.splitPublicKey(publicKey);
 

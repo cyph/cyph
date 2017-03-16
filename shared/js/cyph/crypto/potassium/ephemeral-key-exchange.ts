@@ -2,27 +2,28 @@ import {sodium} from 'libsodium';
 import {rlwe} from 'rlwe';
 import {IKeyPair} from '../ikey-pair';
 import {Hash} from './hash';
+import {IEphemeralKeyExchange} from './iephemeral-key-exchange';
 import {potassiumUtil} from './potassium-util';
 
 
-/** Equivalent to sodium.crypto_scalarmult. */
-export class EphemeralKeyExchange {
-	/** Private key length. */
+/** @inheritDoc */
+export class EphemeralKeyExchange implements IEphemeralKeyExchange {
+	/** @inheritDoc */
 	public readonly privateKeyBytes: number	=
 		rlwe.privateKeyBytes +
 		sodium.crypto_scalarmult_SCALARBYTES
 	;
 
-	/** Public key length. */
+	/** @inheritDoc */
 	public readonly publicKeyBytes: number	=
 		rlwe.publicKeyBytes +
 		sodium.crypto_scalarmult_BYTES
 	;
 
-	/** Shared secret length. */
+	/** @inheritDoc */
 	public readonly secretBytes: number		= 64;
 
-	/** Generates Alice's key pair. */
+	/** @inheritDoc */
 	public async aliceKeyPair () : Promise<IKeyPair> {
 		const rlweKeyPair: IKeyPair	= rlwe.aliceKeyPair();
 
@@ -49,7 +50,7 @@ export class EphemeralKeyExchange {
 		};
 	}
 
-	/** Computes secret for Alice using Bob's public key. */
+	/** @inheritDoc */
 	public async aliceSecret (
 		publicKey: Uint8Array,
 		privateKey: Uint8Array
@@ -97,7 +98,7 @@ export class EphemeralKeyExchange {
 		);
 	}
 
-	/** Computes secret and public key for Bob using Alice's public key. */
+	/** @inheritDoc */
 	public async bobSecret (alicePublicKey: Uint8Array) : Promise<{
 		publicKey: Uint8Array;
 		secret: Uint8Array;

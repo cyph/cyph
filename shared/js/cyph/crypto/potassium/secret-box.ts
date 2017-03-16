@@ -1,10 +1,11 @@
 import {sodium} from 'libsodium';
+import {ISecretBox} from './isecret-box';
 import * as NativeCrypto from './native-crypto';
 import {potassiumUtil} from './potassium-util';
 
 
-/** Equivalent to sodium.crypto_secretbox. */
-export class SecretBox {
+/** @inheritDoc */
+export class SecretBox implements ISecretBox {
 	/** @ignore */
 	private readonly helpers: {
 		nonceBytes: number;
@@ -71,14 +72,14 @@ export class SecretBox {
 				)
 	};
 
-	/** Additional data length. */
+	/** @inheritDoc */
 	public readonly aeadBytes: number	=
 		this.isNative ?
 			NativeCrypto.secretBox.aeadBytes :
 			sodium.crypto_aead_chacha20poly1305_ABYTES
 	;
 
-	/** Key length. */
+	/** @inheritDoc */
 	public readonly keyBytes: number	=
 		this.isNative ?
 			NativeCrypto.secretBox.keyBytes :
@@ -100,7 +101,7 @@ export class SecretBox {
 		return output;
 	}
 
-	/** Generates a new nonce. */
+	/** @inheritDoc */
 	public newNonce (size: number) : Uint8Array {
 		if (size < 4) {
 			throw new Error('Nonce size too small.');
@@ -113,7 +114,7 @@ export class SecretBox {
 		);
 	}
 
-	/** Decrypts cyphertext. */
+	/** @inheritDoc */
 	public async open (
 		cyphertext: Uint8Array,
 		key: Uint8Array,
@@ -179,7 +180,7 @@ export class SecretBox {
 		}
 	}
 
-	/** Encrypts plaintext. */
+	/** @inheritDoc */
 	public async seal (
 		plaintext: Uint8Array,
 		key: Uint8Array,
