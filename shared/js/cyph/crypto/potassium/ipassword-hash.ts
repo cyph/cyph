@@ -1,22 +1,22 @@
 /** Equivalent to sodium.crypto_pwhash. */
 export interface IPasswordHash {
 	/** Algorithm name. */
-	readonly algorithm: string;
+	readonly algorithm: Promise<string>;
 
 	/** Moderate mem limit. */
-	readonly memLimitInteractive: number;
+	readonly memLimitInteractive: Promise<number>;
 
 	/** Heavy mem limit. */
-	readonly memLimitSensitive: number;
+	readonly memLimitSensitive: Promise<number>;
 
 	/** Moderate ops limit. */
-	readonly opsLimitInteractive: number;
+	readonly opsLimitInteractive: Promise<number>;
 
 	/** Heavy ops limit. */
-	readonly opsLimitSensitive: number;
+	readonly opsLimitSensitive: Promise<number>;
 
 	/** Salt length. */
-	readonly saltBytes: number;
+	readonly saltBytes: Promise<number>;
 
 	/** Hashes plaintext. */
 	hash (

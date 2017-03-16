@@ -4,13 +4,13 @@ import {IKeyPair} from '../ikey-pair';
 /** Equivalent to sodium.crypto_scalarmult. */
 export interface IEphemeralKeyExchange {
 	/** Private key length. */
-	readonly privateKeyBytes: number;
+	readonly privateKeyBytes: Promise<number>;
 
 	/** Public key length. */
-	readonly publicKeyBytes: number;
+	readonly publicKeyBytes: Promise<number>;
 
 	/** Shared secret length. */
-	readonly secretBytes: number;
+	readonly secretBytes: Promise<number>;
 
 	/** Generates Alice's key pair. */
 	aliceKeyPair () : Promise<IKeyPair>;

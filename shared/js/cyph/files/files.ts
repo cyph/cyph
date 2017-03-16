@@ -57,7 +57,7 @@ export class Files {
 				/* Encrypt */
 				if (locals.plaintext) {
 					const key: Uint8Array	= potassium.randomBytes(
-						potassium.secretBox.keyBytes
+						await potassium.secretBox.keyBytes
 					);
 
 					const chunks: Uint8Array[]	= [];
@@ -213,7 +213,7 @@ export class Files {
 		try {
 			if (this.nativeSecretBox) {
 				const key: Uint8Array	= potassiumUtil.randomBytes(
-					this.nativeSecretBox.keyBytes
+					await this.nativeSecretBox.keyBytes
 				);
 
 				return {

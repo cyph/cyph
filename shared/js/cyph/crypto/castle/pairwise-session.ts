@@ -326,7 +326,7 @@ export class PairwiseSession {
 			let secret: Uint8Array;
 			if (isAlice) {
 				secret	= this.potassium.randomBytes(
-					potassium.ephemeralKeyExchange.secretBytes
+					await potassium.ephemeralKeyExchange.secretBytes
 				);
 
 				this.transport.send(await this.handshakeSendSecret(secret));

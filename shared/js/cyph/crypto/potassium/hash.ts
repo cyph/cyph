@@ -7,7 +7,7 @@ import {potassiumUtil} from './potassium-util';
 /** @inheritDoc */
 export class Hash implements IHash {
 	/** @inheritDoc */
-	public readonly bytes: number	= superSphincs.hashBytes;
+	public readonly bytes: Promise<number>	= Promise.resolve(superSphincs.hashBytes);
 
 	/** @inheritDoc */
 	public async deriveKey (

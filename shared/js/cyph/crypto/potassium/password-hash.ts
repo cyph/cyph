@@ -42,59 +42,57 @@ export class PasswordHash implements IPasswordHash {
 	};
 
 	/** @inheritDoc */
-	public readonly algorithm: string			=
+	public readonly algorithm: Promise<string>				= Promise.resolve(
 		this.isNative ?
 			(
 				NativeCrypto.passwordHash.algorithm.name + '/' +
 				NativeCrypto.passwordHash.algorithm.hash.name
 			) :
 			'scrypt'
-	;
+	);
 
 	/** @inheritDoc */
-	public readonly memLimitInteractive: number	=
+	public readonly memLimitInteractive: Promise<number>	= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.passwordHash.memLimitInteractive :
 			sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE
-	;
+	);
 
 	/** @inheritDoc */
-	public readonly memLimitSensitive: number	=
+	public readonly memLimitSensitive: Promise<number>		= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.passwordHash.memLimitSensitive :
 			134217728 /* 128 MB */
-	;
+	);
 
 	/** @inheritDoc */
-	public readonly opsLimitInteractive: number	=
+	public readonly opsLimitInteractive: Promise<number>	= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.passwordHash.opsLimitInteractive :
 			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE
-	;
+	);
 
 	/** @inheritDoc */
-	public readonly opsLimitSensitive: number	=
+	public readonly opsLimitSensitive: Promise<number>		= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.passwordHash.opsLimitSensitive :
 			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE
-	;
+	);
 
 	/** @inheritDoc */
-	public readonly saltBytes: number			=
+	public readonly saltBytes: Promise<number>				= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.passwordHash.saltBytes :
 			sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
-	;
+	);
 
 	/** @inheritDoc */
 	public async hash (
 		plaintext: Uint8Array|string,
-		salt: Uint8Array = potassiumUtil.randomBytes(
-			this.saltBytes
-		),
-		outputBytes: number = this.secretBox.keyBytes,
-		opsLimit: number = this.opsLimitInteractive,
-		memLimit: number = this.memLimitInteractive,
+		salt?: Uint8Array,
+		outputBytes?: number,
+		opsLimit?: number,
+		memLimit?: number,
 		clearInput?: boolean
 	) : Promise<{
 		hash: Uint8Array;
@@ -106,20 +104,31 @@ export class PasswordHash implements IPasswordHash {
 			salt: Uint8Array;
 		};
 	}> {
+		const algorithm	= await this.algorithm;
+
+		if (salt === undefined) {
+			salt		= potassiumUtil.randomBytes(await this.saltBytes);
+		}
+		if (outputBytes === undefined) {
+			outputBytes	= await this.secretBox.keyBytes;
+		}
+		if (opsLimit === undefined) {
+			opsLimit	= await this.opsLimitInteractive;
+		}
+		if (memLimit === undefined) {
+			memLimit	= await this.memLimitInteractive;
+		}
+
 		const plaintextBinary: Uint8Array	= potassiumUtil.fromString(plaintext);
 
 		try {
-			const algorithm: Uint8Array	= potassiumUtil.fromString(
-				this.algorithm
-			);
-
 			const metadata: Uint8Array	= potassiumUtil.concatMemory(
 				false,
 				new Uint8Array(new Uint32Array([memLimit]).buffer),
 				new Uint8Array(new Uint32Array([opsLimit]).buffer),
 				new Uint8Array(new Uint32Array([salt.length]).buffer),
 				salt,
-				algorithm
+				potassiumUtil.fromString(algorithm)
 			);
 
 			return {
@@ -132,7 +141,7 @@ export class PasswordHash implements IPasswordHash {
 				),
 				metadata,
 				metadataObject: {
-					algorithm: this.algorithm,
+					algorithm,
 					memLimit,
 					opsLimit,
 					salt

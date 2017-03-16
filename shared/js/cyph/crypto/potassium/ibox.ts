@@ -4,10 +4,10 @@ import {IKeyPair} from '../ikey-pair';
 /** Equivalent to sodium.crypto_box. */
 export interface IBox {
 	/** Private key length. */
-	readonly privateKeyBytes: number;
+	readonly privateKeyBytes: Promise<number>;
 
 	/** Public key length. */
-	readonly publicKeyBytes: number;
+	readonly publicKeyBytes: Promise<number>;
 
 	/** Generates key pair. */
 	keyPair () : Promise<IKeyPair>;
