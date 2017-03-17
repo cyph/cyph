@@ -49,6 +49,13 @@ export class Transport {
 
 			if (timeout) {
 				await util.sleep(timeout);
+
+				const index	= this.cyphertextIntercepters.indexOf(resolve);
+				if (index < 0) {
+					return;
+				}
+
+				this.cyphertextIntercepters.splice(index, 1);
 				reject('Cyphertext interception timeout.');
 			}
 		});
