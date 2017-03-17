@@ -138,8 +138,6 @@ export class Thread implements IThread {
 		importScripts('/lib/js/node_modules/ntru/dist/ntru.js');
 		importScripts('/lib/js/node_modules/rlwe/dist/rlwe.js');
 		importScripts('/lib/js/node_modules/supersphincs/dist/supersphincs.js');
-		importScripts('/lib/js/node_modules/whatwg-fetch/fetch.js');
-		importScripts('/lib/js/node_modules/firebase/firebase.js');
 
 		importScripts('/js/cyph/base.js');
 
