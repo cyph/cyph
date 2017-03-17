@@ -74,7 +74,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 			this.threadEvents.ephemeralKeyExchange.privateKeyBytes
 		),
 		publicKeyBytes: eventManager.one<number>(
-			this.threadEvents.box.publicKeyBytes
+			this.threadEvents.ephemeralKeyExchange.publicKeyBytes
 		),
 		secretBytes: eventManager.one<number>(
 			this.threadEvents.ephemeralKeyExchange.secretBytes
@@ -294,7 +294,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					potassium.ephemeralKeyExchange.aliceKeyPair()
 				);
 
-				eventManager.rpcOn(threadEvents.ephemeralKeyExchange.aliceKeyPair, async (o: {
+				eventManager.rpcOn(threadEvents.ephemeralKeyExchange.aliceSecret, async (o: {
 					privateKey: Uint8Array;
 					publicKey: Uint8Array;
 				}) =>
@@ -315,6 +315,11 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 				eventManager.trigger<number>(
 					threadEvents.ephemeralKeyExchange.publicKeyBytes,
 					await potassium.ephemeralKeyExchange.publicKeyBytes
+				);
+
+				eventManager.trigger<number>(
+					threadEvents.ephemeralKeyExchange.secretBytes,
+					await potassium.ephemeralKeyExchange.secretBytes
 				);
 
 				/* Hash */
