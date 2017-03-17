@@ -72,7 +72,12 @@ export class EventManager {
 	/** EventManager.on wrapper that allows sending a response to EventManager.rpcTrigger. */
 	public rpcOn<I, O> (event: string, handler: (data: I) => O|Promise<O>) : void {
 		this.on(event, async (o: {data: I; eventId: string}) => {
-			this.trigger<O>(o.eventId, await handler(o.data));
+			try {
+				this.trigger(o.eventId, {data: await handler(o.data)});
+			}
+			catch (err) {
+				this.trigger(o.eventId, {error: {message: err && err.message || ''}});
+			}
 		});
 	}
 
@@ -83,13 +88,24 @@ export class EventManager {
 	 * @param init Optional promise to wait on for initialization of handler before triggering.
 	 */
 	public async rpcTrigger<I, O> (event: string, data?: I, init?: Promise<void>) : Promise<O> {
-		const eventId	= util.generateGuid();
-		const response	= this.one<O>(eventId);
+		const eventId			= util.generateGuid();
+		const responsePromise	=
+			this.one<{data: O; error: undefined}|{data: never; error: {message: string}}>(
+				eventId
+			)
+		;
 
 		await init;
 		this.trigger(event, {data, eventId});
 
-		return response;
+		const response	= await responsePromise;
+
+		if (response.error !== undefined) {
+			throw new Error(`RPC trigger to ${event} failed.\n\n${response.error.message}`);
+		}
+		else {
+			return response.data;
+		}
 	}
 
 	/**
