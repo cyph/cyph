@@ -31,7 +31,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	private readonly thread: Thread;
 
 	/** @ignore */
-	private readonly threadEvents		= new ThreadEvents(this.eventId);
+	private readonly threadEvents: ThreadEvents	= new ThreadEvents(this.eventId);
 
 	/** @inheritDoc */
 	public readonly box: IBox	= {
