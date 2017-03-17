@@ -1,6 +1,6 @@
 import {config} from '../../config';
 import {util} from '../../util';
-import {Potassium} from '../potassium';
+import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
 import {ILocalUser} from './ilocal-user';
 import {IRemoteUser} from './iremote-user';
@@ -304,7 +304,7 @@ export class PairwiseSession {
 
 	constructor (
 		/** @ignore */
-		private readonly potassium: Potassium,
+		private readonly potassium: IPotassium,
 
 		/** @ignore */
 		private readonly transport: Transport,
@@ -319,7 +319,7 @@ export class PairwiseSession {
 			this.localUser	= localUser;
 			this.remoteUser	= remoteUser;
 
-			this.remoteUsername	= this.remoteUser.getUsername();
+			this.remoteUsername	= await this.remoteUser.getUsername();
 
 			await this.localUser.getKeyPair();
 

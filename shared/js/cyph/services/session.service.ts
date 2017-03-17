@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {analytics} from '../analytics';
-import {ICastle} from '../crypto/icastle';
 import {errors} from '../errors';
 import {eventManager} from '../event-manager';
 import {ISessionService} from '../service-interfaces/isession.service';
@@ -17,9 +16,6 @@ import {util} from '../util';
 @Injectable()
 export abstract class SessionService implements ISessionService {
 	/** @ignore */
-	protected castle: ICastle;
-
-	/** @ignore */
 	protected readonly eventId: string					= util.generateGuid();
 
 	/** @ignore */
@@ -35,12 +31,6 @@ export abstract class SessionService implements ISessionService {
 	protected readonly receivedMessages: Set<string>	= new Set<string>();
 
 	/** @ignore */
-	/* tslint:disable-next-line:promise-must-complete */
-	protected readonly remoteUsername: Promise<string>	= new Promise<string>(resolve => {
-		this.setRemoteUsername	= resolve;
-	});
-
-	/** @ignore */
 	protected readonly sendQueue: string[]				= [];
 
 	/** @inheritDoc */
@@ -52,10 +42,16 @@ export abstract class SessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly events: Events			= events;
+	public readonly events: Events					= events;
+
+	/** Remote username (e.g. "friend" or "alice"). */
+	/* tslint:disable-next-line:promise-must-complete */
+	public readonly remoteUsername: Promise<string>	= new Promise<string>(resolve => {
+		this.setRemoteUsername	= resolve;
+	});
 
 	/** @inheritDoc */
-	public readonly rpcEvents: RpcEvents	= rpcEvents;
+	public readonly rpcEvents: RpcEvents			= rpcEvents;
 
 	/** Sets remote username. */
 	public setRemoteUsername: (remoteUsername: string) => void;

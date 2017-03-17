@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {analytics} from '../analytics';
-import {AnonymousCastle} from '../crypto/anonymous-castle';
 import {env} from '../env';
 import {CastleEvents, events, rpcEvents} from '../session/enums';
 import {IMessage} from '../session/imessage';
@@ -8,6 +7,7 @@ import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
 import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';
+import {AnonymousCastleService} from './crypto/anonymous-castle.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 
@@ -73,17 +73,11 @@ export class EphemeralSessionService extends SessionService {
 			},
 			onConnect: async () => {
 				this.trigger(events.connect);
-
-				this.castle	= new AnonymousCastle(
-					this,
-					this.apiFlags.nativeCrypto,
-					await this.remoteUsername
-				);
-
+				this.anonymousCastleService.init(this);
 				this.state.sharedSecret	= '';
 			},
-			onMessage: async (message: string) => {
-				(await util.waitForValue(() => this.castle)).receive(message);
+			onMessage: (message: string) => {
+				this.anonymousCastleService.receive(message);
 			},
 			onOpen: async (isAlice: boolean) : Promise<void> => {
 				this.state.isAlice	= isAlice;
@@ -154,17 +148,13 @@ export class EphemeralSessionService extends SessionService {
 
 	/** @inheritDoc */
 	public async send (...messages: IMessage[]) : Promise<void> {
-		while (!this.castle) {
-			await util.sleep();
-		}
-
 		for (const message of messages) {
 			if (message.event === rpcEvents.text) {
 				this.trigger(rpcEvents.text, message.data);
 			}
 		}
 
-		this.castle.send(
+		this.anonymousCastleService.send(
 			JSON.stringify(messages, (_, v) => {
 				if (v instanceof Uint8Array) {
 					(<any> v).isUint8Array	= true;
@@ -177,6 +167,9 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly anonymousCastleService: AnonymousCastleService,
+
 		/** @ignore */
 		private readonly channelService: ChannelService,
 
