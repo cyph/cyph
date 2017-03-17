@@ -56,7 +56,8 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 		),
 		seal: async (plaintext: Uint8Array, publicKey: Uint8Array) => eventManager.rpcTrigger(
 			this.threadEvents.box.seal,
-			{plaintext, publicKey}
+			{plaintext, publicKey},
+			this.threadInit
 		)
 	};
 
