@@ -33,14 +33,20 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	/** @ignore */
 	private readonly threadEvents: ThreadEvents	= new ThreadEvents(this.eventId);
 
+	/** @ignore */
+	private readonly threadInit: Promise<void>	= eventManager.one<void>(this.eventId);
+
 	/** @inheritDoc */
 	public readonly box: IBox	= {
 		keyPair: async () => eventManager.rpcTrigger(
-			this.threadEvents.box.keyPair
+			this.threadEvents.box.keyPair,
+			undefined,
+			this.threadInit
 		),
 		open: async (cyphertext: Uint8Array, keyPair: IKeyPair) => eventManager.rpcTrigger(
 			this.threadEvents.box.open,
-			{cyphertext, keyPair}
+			{cyphertext, keyPair},
+			this.threadInit
 		),
 		privateKeyBytes: eventManager.one<number>(
 			this.threadEvents.box.privateKeyBytes
@@ -57,18 +63,22 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	/** @inheritDoc */
 	public readonly ephemeralKeyExchange: IEphemeralKeyExchange	= {
 		aliceKeyPair: async () => eventManager.rpcTrigger(
-			this.threadEvents.ephemeralKeyExchange.aliceKeyPair
+			this.threadEvents.ephemeralKeyExchange.aliceKeyPair,
+			undefined,
+			this.threadInit
 		),
 		aliceSecret: async (
 			publicKey: Uint8Array,
 			privateKey: Uint8Array
 		) => eventManager.rpcTrigger(
 			this.threadEvents.ephemeralKeyExchange.aliceSecret,
-			{privateKey, publicKey}
+			{privateKey, publicKey},
+			this.threadInit
 		),
 		bobSecret: async (alicePublicKey: Uint8Array) => eventManager.rpcTrigger(
 			this.threadEvents.ephemeralKeyExchange.bobSecret,
-			{alicePublicKey}
+			{alicePublicKey},
+			this.threadInit
 		),
 		privateKeyBytes: eventManager.one<number>(
 			this.threadEvents.ephemeralKeyExchange.privateKeyBytes
@@ -92,11 +102,13 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 			clearInput?: boolean
 		) => eventManager.rpcTrigger(
 			this.threadEvents.hash.deriveKey,
-			{clearInput, input, outputBytes}
+			{clearInput, input, outputBytes},
+			this.threadInit
 		),
 		hash: async (plaintext: Uint8Array|string) => eventManager.rpcTrigger(
 			this.threadEvents.hash.hash,
-			{plaintext}
+			{plaintext},
+			this.threadInit
 		)
 	};
 
@@ -110,7 +122,8 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 		),
 		sign: async (message: Uint8Array, key: Uint8Array) => eventManager.rpcTrigger(
 			this.threadEvents.oneTimeAuth.sign,
-			{key, message}
+			{key, message},
+			this.threadInit
 		),
 		verify: async (
 			mac: Uint8Array,
@@ -118,7 +131,8 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 			key: Uint8Array
 		) => eventManager.rpcTrigger(
 			this.threadEvents.oneTimeAuth.verify,
-			{key, mac, message}
+			{key, mac, message},
+			this.threadInit
 		)
 	};
 
@@ -136,7 +150,8 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 			clearInput?: boolean
 		) => eventManager.rpcTrigger(
 			this.threadEvents.passwordHash.hash,
-			{clearInput, memLimit, opsLimit, outputBytes, plaintext, salt}
+			{clearInput, memLimit, opsLimit, outputBytes, plaintext, salt},
+			this.threadInit
 		),
 		memLimitInteractive: eventManager.one<number>(
 			this.threadEvents.passwordHash.memLimitInteractive
@@ -152,7 +167,8 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 		),
 		parseMetadata: async (metadata: Uint8Array) => eventManager.rpcTrigger(
 			this.threadEvents.passwordHash.parseMetadata,
-			{metadata}
+			{metadata},
+			this.threadInit
 		),
 		saltBytes: eventManager.one<number>(
 			this.threadEvents.passwordHash.saltBytes
@@ -169,7 +185,8 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 		),
 		newNonce: async (size: number) => eventManager.rpcTrigger(
 			this.threadEvents.secretBox.newNonce,
-			{size}
+			{size},
+			this.threadInit
 		),
 		open: async (
 			cyphertext: Uint8Array,
@@ -177,7 +194,8 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 			additionalData?: Uint8Array
 		) => eventManager.rpcTrigger(
 			this.threadEvents.secretBox.open,
-			{additionalData, cyphertext, key}
+			{additionalData, cyphertext, key},
+			this.threadInit
 		),
 		seal: async (
 			plaintext: Uint8Array,
@@ -185,7 +203,8 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 			additionalData?: Uint8Array
 		) => eventManager.rpcTrigger(
 			this.threadEvents.secretBox.seal,
-			{additionalData, key, plaintext}
+			{additionalData, key, plaintext},
+			this.threadInit
 		)
 	};
 
@@ -195,14 +214,17 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 			this.threadEvents.sign.bytes
 		),
 		keyPair: async () => eventManager.rpcTrigger(
-			this.threadEvents.sign.keyPair
+			this.threadEvents.sign.keyPair,
+			undefined,
+			this.threadInit
 		),
 		open: async (
 			signed: Uint8Array|string,
 			publicKey: Uint8Array
 		) => eventManager.rpcTrigger(
 			this.threadEvents.sign.open,
-			{publicKey, signed}
+			{publicKey, signed},
+			this.threadInit
 		),
 		privateKeyBytes: eventManager.one<number>(
 			this.threadEvents.sign.privateKeyBytes
@@ -215,14 +237,16 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 			privateKey: Uint8Array
 		) => eventManager.rpcTrigger(
 			this.threadEvents.sign.sign,
-			{message, privateKey}
+			{message, privateKey},
+			this.threadInit
 		),
 		signDetached: async (
 			message: Uint8Array|string,
 			privateKey: Uint8Array
 		) => eventManager.rpcTrigger(
 			this.threadEvents.sign.signDetached,
-			{message, privateKey}
+			{message, privateKey},
+			this.threadInit
 		),
 		verifyDetached: async (
 			signature: Uint8Array|string,
@@ -230,7 +254,8 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 			publicKey: Uint8Array
 		) => eventManager.rpcTrigger(
 			this.threadEvents.sign.verifyDetached,
-			{message, publicKey, signature}
+			{message, publicKey, signature},
+			this.threadInit
 		)
 	};
 
@@ -509,6 +534,8 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 				}) =>
 					potassium.sign.verifyDetached(o.signature, o.message, o.publicKey)
 				);
+
+				eventManager.trigger<void>(locals.eventId);
 			},
 			{
 				eventId: this.eventId
