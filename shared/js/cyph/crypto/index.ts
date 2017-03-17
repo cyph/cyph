@@ -1,4 +1,3 @@
-export * from './anonymous-castle';
 export * from './icastle';
 export * from './ikey-pair';
 export * from './ikey-pair-maybe';

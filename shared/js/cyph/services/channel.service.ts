@@ -51,6 +51,7 @@ export class ChannelService {
 	}
 
 	/**
+	 * Initializes service.
 	 * @param channelName Name of this channel.
 	 * @param handlers Event handlers for this channel.
 	 */

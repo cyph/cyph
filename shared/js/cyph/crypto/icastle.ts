@@ -6,7 +6,7 @@ export interface ICastle {
 	 * Receive incoming cyphertext.
 	 * @param cyphertext Data to be decrypted.
 	 */
-	receive (cyphertext: string) : void;
+	receive (cyphertext: string) : Promise<void>;
 
 	/**
 	 * Send outgoing text.

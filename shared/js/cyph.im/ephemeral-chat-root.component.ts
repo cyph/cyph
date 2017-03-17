@@ -8,6 +8,8 @@ import {ChatEnvService} from '../cyph/services/chat-env.service';
 import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
 import {ConfigService} from '../cyph/services/config.service';
+import {AnonymousCastleService} from '../cyph/services/crypto/anonymous-castle.service';
+import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
@@ -32,11 +34,13 @@ import {UrlSessionInitService} from './url-session-init.service';
  */
 @Component({
 	providers: [
+		AnonymousCastleService,
 		ChannelService,
 		ChatService,
 		CyphertextService,
 		FileTransferService,
 		P2PService,
+		PotassiumService,
 		ScrollService,
 		{
 			provide: EnvService,

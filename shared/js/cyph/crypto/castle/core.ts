@@ -1,6 +1,6 @@
 import {util} from '../../util';
 import {IKeyPairMaybe} from '../ikey-pair-maybe';
-import {Potassium} from '../potassium';
+import {IPotassium} from '../potassium/ipotassium';
 
 
 /**
@@ -14,7 +14,7 @@ export class Core {
 	 * @param secret
 	 */
 	public static async newKeys (
-		potassium: Potassium,
+		potassium: IPotassium,
 		isAlice: boolean,
 		secret: Uint8Array
 	) : Promise<{
@@ -220,7 +220,7 @@ export class Core {
 	 */
 	constructor (
 		/** @ignore */
-		private readonly potassium: Potassium,
+		private readonly potassium: IPotassium,
 
 		/** @ignore */
 		private readonly isAlice: boolean,

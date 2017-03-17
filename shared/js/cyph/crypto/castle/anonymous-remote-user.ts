@@ -1,4 +1,4 @@
-import {Potassium} from '../potassium';
+import {IPotassium} from '../potassium/ipotassium';
 import {IRemoteUser} from './iremote-user';
 import {Transport} from './transport';
 
@@ -39,13 +39,13 @@ export class AnonymousRemoteUser implements IRemoteUser {
 	}
 
 	/** @inheritDoc */
-	public getUsername () : string {
+	public async getUsername () : Promise<string> {
 		return this.username;
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly potassium: Potassium,
+		private readonly potassium: IPotassium,
 
 		/** @ignore */
 		private readonly transport: Transport,
@@ -54,7 +54,7 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		private sharedSecret: string,
 
 		/** @ignore */
-		private readonly username: string
+		private readonly username: Promise<string>
 	) {
 		this.cyphertextPromise	= this.transport.interceptIncomingCyphertext();
 	}
