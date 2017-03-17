@@ -76,11 +76,17 @@ export class EventManager {
 		});
 	}
 
-	/** EventManager.trigger wrapper that allows receiving a response from EventManager.on. */
-	public async rpcTrigger<I, O> (event: string, data?: I) : Promise<O> {
+	/**
+	 * EventManager.trigger wrapper that allows receiving a response from EventManager.on.
+	 * @param event
+	 * @param data
+	 * @param init Optional promise to wait on for initialization of handler before triggering.
+	 */
+	public async rpcTrigger<I, O> (event: string, data?: I, init?: Promise<void>) : Promise<O> {
 		const eventId	= util.generateGuid();
 		const response	= this.one<O>(eventId);
 
+		await init;
 		this.trigger(event, {data, eventId});
 
 		return response;
