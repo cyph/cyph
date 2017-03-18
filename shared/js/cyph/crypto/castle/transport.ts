@@ -17,9 +17,6 @@ export class Transport {
 
 
 	/** @ignore */
-	private lastIncomingMessageTimestamp: number	= 0;
-
-	/** @ignore */
 	private readonly receivedMessages: Map<number, {data: Uint8Array; totalChunks: number}>	=
 		new Map<number, {data: Uint8Array; totalChunks: number}>()
 	;
@@ -111,17 +108,13 @@ export class Transport {
 			return;
 		}
 
-		if (timestamp > this.lastIncomingMessageTimestamp) {
-			this.lastIncomingMessageTimestamp	= timestamp;
+		const messageData	= potassiumUtil.toString(message.data);
 
-			const messageData	= potassiumUtil.toString(message.data);
-
-			if (messageData) {
-				this.session.trigger(events.castle, {
-					data: {author, timestamp, plaintext: messageData},
-					event: CastleEvents.receive
-				});
-			}
+		if (messageData) {
+			this.session.trigger(events.castle, {
+				data: {author, timestamp, plaintext: messageData},
+				event: CastleEvents.receive
+			});
 		}
 
 		potassiumUtil.clearMemory(message.data);
