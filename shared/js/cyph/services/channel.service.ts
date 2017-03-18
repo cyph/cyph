@@ -158,4 +158,6 @@ export class ChannelService {
 			throw err;
 		}
 	}
+
+	constructor () {}
 }
