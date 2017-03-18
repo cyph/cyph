@@ -1,6 +1,6 @@
 import {config} from '../../config';
 import {util} from '../../util';
-import {IPotassium} from '../potassium/ipotassium';
+import {Potassium} from '../potassium';
 import {Core} from './core';
 import {ILocalUser} from './ilocal-user';
 import {IRemoteUser} from './iremote-user';
@@ -12,10 +12,16 @@ import {Transport} from './transport';
  */
 export class PairwiseSession {
 	/** @ignore */
-	private core: Core;
+	private incomingMessageId: number	= 0;
 
 	/** @ignore */
-	private incomingMessageId: number	= 0;
+	private incomingMessagesMax: number	= 0;
+
+	/** @ignore */
+	private outgoingMessageId: number	= 0;
+
+	/** @ignore */
+	private readonly lock: {}			= {};
 
 	/** @ignore */
 	private readonly incomingMessages: Map<number, Uint8Array[]>	=
@@ -23,25 +29,19 @@ export class PairwiseSession {
 	;
 
 	/** @ignore */
-	private incomingMessagesMax: number	= 0;
+	private core: Core;
+
+	/** @ignore */
+	private localUser: ILocalUser|undefined;
+
+	/** @ignore */
+	private remoteUser: IRemoteUser|undefined;
 
 	/** @ignore */
 	private isAborted: boolean;
 
 	/** @ignore */
 	private isConnected: boolean;
-
-	/** @ignore */
-	private localUser: ILocalUser|undefined;
-
-	/** @ignore */
-	private readonly lock: {}			= {};
-
-	/** @ignore */
-	private outgoingMessageId: number	= 0;
-
-	/** @ignore */
-	private remoteUser: IRemoteUser|undefined;
 
 	/** @ignore */
 	private remoteUsername: string;
@@ -293,7 +293,7 @@ export class PairwiseSession {
 
 	constructor (
 		/** @ignore */
-		private readonly potassium: IPotassium,
+		private readonly potassium: Potassium,
 
 		/** @ignore */
 		private readonly transport: Transport,
@@ -308,14 +308,14 @@ export class PairwiseSession {
 			this.localUser	= localUser;
 			this.remoteUser	= remoteUser;
 
-			this.remoteUsername	= await this.remoteUser.getUsername();
+			this.remoteUsername	= this.remoteUser.getUsername();
 
 			await this.localUser.getKeyPair();
 
 			let secret: Uint8Array;
 			if (isAlice) {
 				secret	= this.potassium.randomBytes(
-					await potassium.ephemeralKeyExchange.secretBytes
+					potassium.ephemeralKeyExchange.secretBytes
 				);
 
 				this.transport.send(await this.handshakeSendSecret(secret));
