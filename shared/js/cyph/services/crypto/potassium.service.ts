@@ -330,12 +330,14 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 				eventManager.trigger<number>(
 					threadEvents.box.privateKeyBytes,
-					await potassium.box.privateKeyBytes
+					await potassium.box.privateKeyBytes,
+					true
 				);
 
 				eventManager.trigger<number>(
 					threadEvents.box.publicKeyBytes,
-					await potassium.box.publicKeyBytes
+					await potassium.box.publicKeyBytes,
+					true
 				);
 
 				eventManager.rpcOn(threadEvents.box.seal, async (o: {
@@ -369,24 +371,28 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 				eventManager.trigger<number>(
 					threadEvents.ephemeralKeyExchange.privateKeyBytes,
-					await potassium.ephemeralKeyExchange.privateKeyBytes
+					await potassium.ephemeralKeyExchange.privateKeyBytes,
+					true
 				);
 
 				eventManager.trigger<number>(
 					threadEvents.ephemeralKeyExchange.publicKeyBytes,
-					await potassium.ephemeralKeyExchange.publicKeyBytes
+					await potassium.ephemeralKeyExchange.publicKeyBytes,
+					true
 				);
 
 				eventManager.trigger<number>(
 					threadEvents.ephemeralKeyExchange.secretBytes,
-					await potassium.ephemeralKeyExchange.secretBytes
+					await potassium.ephemeralKeyExchange.secretBytes,
+					true
 				);
 
 				/* Hash */
 
 				eventManager.trigger<number>(
 					threadEvents.hash.bytes,
-					await potassium.hash.bytes
+					await potassium.hash.bytes,
+					true
 				);
 
 				eventManager.rpcOn(threadEvents.hash.deriveKey, async (o: {
@@ -411,12 +417,14 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 				eventManager.trigger<number>(
 					threadEvents.oneTimeAuth.bytes,
-					await potassium.oneTimeAuth.bytes
+					await potassium.oneTimeAuth.bytes,
+					true
 				);
 
 				eventManager.trigger<number>(
 					threadEvents.oneTimeAuth.keyBytes,
-					await potassium.oneTimeAuth.keyBytes
+					await potassium.oneTimeAuth.keyBytes,
+					true
 				);
 
 				eventManager.rpcOn(threadEvents.oneTimeAuth.sign, async (o: {
@@ -438,7 +446,8 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 				eventManager.trigger<string>(
 					threadEvents.passwordHash.algorithm,
-					await potassium.passwordHash.algorithm
+					await potassium.passwordHash.algorithm,
+					true
 				);
 
 				eventManager.rpcOn(threadEvents.passwordHash.hash, async (o: {
@@ -461,22 +470,26 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 				eventManager.trigger<number>(
 					threadEvents.passwordHash.memLimitInteractive,
-					await potassium.passwordHash.memLimitInteractive
+					await potassium.passwordHash.memLimitInteractive,
+					true
 				);
 
 				eventManager.trigger<number>(
 					threadEvents.passwordHash.memLimitSensitive,
-					await potassium.passwordHash.memLimitSensitive
+					await potassium.passwordHash.memLimitSensitive,
+					true
 				);
 
 				eventManager.trigger<number>(
 					threadEvents.passwordHash.opsLimitInteractive,
-					await potassium.passwordHash.opsLimitInteractive
+					await potassium.passwordHash.opsLimitInteractive,
+					true
 				);
 
 				eventManager.trigger<number>(
 					threadEvents.passwordHash.opsLimitSensitive,
-					await potassium.passwordHash.opsLimitSensitive
+					await potassium.passwordHash.opsLimitSensitive,
+					true
 				);
 
 				eventManager.rpcOn(threadEvents.passwordHash.parseMetadata, async (o: {
@@ -487,19 +500,22 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 				eventManager.trigger<number>(
 					threadEvents.passwordHash.saltBytes,
-					await potassium.passwordHash.saltBytes
+					await potassium.passwordHash.saltBytes,
+					true
 				);
 
 				/* SecretBox */
 
 				eventManager.trigger<number>(
 					threadEvents.secretBox.aeadBytes,
-					await potassium.secretBox.aeadBytes
+					await potassium.secretBox.aeadBytes,
+					true
 				);
 
 				eventManager.trigger<number>(
 					threadEvents.secretBox.keyBytes,
-					await potassium.secretBox.keyBytes
+					await potassium.secretBox.keyBytes,
+					true
 				);
 
 				eventManager.rpcOn(threadEvents.secretBox.newNonce, async (o: {
@@ -536,7 +552,8 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 				eventManager.trigger<number>(
 					threadEvents.sign.bytes,
-					await potassium.sign.bytes
+					await potassium.sign.bytes,
+					true
 				);
 
 				eventManager.rpcOn(threadEvents.sign.keyPair, async () =>
@@ -552,12 +569,14 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 				eventManager.trigger<number>(
 					threadEvents.sign.privateKeyBytes,
-					await potassium.sign.privateKeyBytes
+					await potassium.sign.privateKeyBytes,
+					true
 				);
 
 				eventManager.trigger<number>(
 					threadEvents.sign.publicKeyBytes,
-					await potassium.sign.publicKeyBytes
+					await potassium.sign.publicKeyBytes,
+					true
 				);
 
 				eventManager.rpcOn(threadEvents.sign.sign, async (o: {
@@ -586,7 +605,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					))
 				);
 
-				eventManager.trigger<void>(locals.eventId);
+				eventManager.trigger<void>(locals.eventId, undefined, true);
 			},
 			{
 				eventId: this.eventId
