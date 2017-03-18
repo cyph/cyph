@@ -53,7 +53,7 @@ export class AnonymousCastleService implements ICastle {
 
 	/** @inheritDoc */
 	public async receive (cyphertext: string) : Promise<void> {
-		(await this.pairwiseSession).receive(cyphertext);
+		return (await this.pairwiseSession).receive(cyphertext);
 	}
 
 	/** @inheritDoc */

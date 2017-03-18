@@ -35,10 +35,10 @@ export class PairwiseSession {
 	private localUser: ILocalUser|undefined;
 
 	/** @ignore */
-	private outgoingMessageId: number	= 0;
+	private readonly lock: {}			= {};
 
 	/** @ignore */
-	private readonly receiveLock: {}	= {};
+	private outgoingMessageId: number	= 0;
 
 	/** @ignore */
 	private remoteUser: IRemoteUser|undefined;
@@ -118,49 +118,49 @@ export class PairwiseSession {
 	 * Receive/decrypt incoming message.
 	 * @param cyphertext
 	 */
-	public receive (cyphertext: string) : void {
+	public async receive (cyphertext: string) : Promise<void> {
 		if (this.isAborted) {
 			return;
 		}
 
-		try {
-			const cyphertextBytes: Uint8Array	=
-				this.potassium.fromBase64(cyphertext)
-			;
+		return util.lock(this.lock, async () => {
+			try {
+				const cyphertextBytes: Uint8Array	=
+					this.potassium.fromBase64(cyphertext)
+				;
 
-			if (this.transport.cyphertextIntercepters.length > 0) {
-				const cyphertextIntercepter	= this.transport.cyphertextIntercepters.shift();
+				if (this.transport.cyphertextIntercepters.length > 0) {
+					const cyphertextIntercepter	= this.transport.cyphertextIntercepters.shift();
 
-				if (cyphertextIntercepter) {
-					cyphertextIntercepter(cyphertextBytes);
-					return;
+					if (cyphertextIntercepter) {
+						cyphertextIntercepter(cyphertextBytes);
+						return;
+					}
+				}
+
+				const id: number	= new Float64Array(cyphertextBytes.buffer, 0, 1)[0];
+
+				if (id >= this.incomingMessageId) {
+					this.incomingMessagesMax	= Math.max(
+						this.incomingMessagesMax,
+						id
+					);
+
+					util.getOrSetDefault(
+						this.incomingMessages,
+						id,
+						() => []
+					).push(
+						cyphertextBytes
+					);
 				}
 			}
+			catch (_) {}
 
-			const id: number	= new Float64Array(cyphertextBytes.buffer, 0, 1)[0];
-
-			if (id >= this.incomingMessageId) {
-				this.incomingMessagesMax	= Math.max(
-					this.incomingMessagesMax,
-					id
-				);
-
-				util.getOrSetDefault(
-					this.incomingMessages,
-					id,
-					() => []
-				).push(
-					cyphertextBytes
-				);
+			if (!this.core) {
+				return;
 			}
-		}
-		catch (_) {}
 
-		if (!this.core) {
-			return;
-		}
-
-		util.lock(this.receiveLock, async () => {
 			while (this.incomingMessageId <= this.incomingMessagesMax) {
 				const incomingMessages	= this.incomingMessages.get(this.incomingMessageId);
 
@@ -168,56 +168,46 @@ export class PairwiseSession {
 					break;
 				}
 
-				let success	= false;
-
 				for (const cyphertextBytes of incomingMessages) {
-					if (!success) {
-						try {
-							let plaintext: DataView	= await this.core.decrypt(
-								cyphertextBytes
-							);
+					try {
+						let plaintext: DataView	= await this.core.decrypt(
+							cyphertextBytes
+						);
 
-							/* Part 2 of handshake for Alice */
-							if (this.localUser) {
-								const oldPlaintext	= this.potassium.toBytes(plaintext);
+						/* Part 2 of handshake for Alice */
+						if (this.localUser) {
+							const oldPlaintext	= this.potassium.toBytes(plaintext);
 
-								plaintext	= new DataView((
-									await this.handshakeOpenSecret(oldPlaintext)
-								).buffer);
+							plaintext	= new DataView((
+								await this.handshakeOpenSecret(oldPlaintext)
+							).buffer);
 
-								this.potassium.clearMemory(oldPlaintext);
-							}
-
-							/* Completion of handshake for Bob */
-							if (!this.remoteUser) {
-								this.connect();
-							}
-
-							this.transport.receive(
-								cyphertextBytes,
-								plaintext,
-								this.remoteUsername
-							);
-
-							success	= true;
+							this.potassium.clearMemory(oldPlaintext);
 						}
-						catch (_) {
-							if (!this.isConnected) {
-								this.abort();
-							}
+
+						/* Completion of handshake for Bob */
+						if (!this.remoteUser) {
+							this.connect();
+						}
+
+						this.transport.receive(
+							cyphertextBytes,
+							plaintext,
+							this.remoteUsername
+						);
+
+						this.incomingMessages.delete(this.incomingMessageId++);
+						break;
+					}
+					catch (_) {
+						if (!this.isConnected) {
+							this.abort();
 						}
 					}
-
-					this.potassium.clearMemory(cyphertextBytes);
+					finally {
+						this.potassium.clearMemory(cyphertextBytes);
+					}
 				}
-
-				this.incomingMessages.delete(this.incomingMessageId);
-
-				if (!success) {
-					break;
-				}
-
-				++this.incomingMessageId;
 			}
 		});
 	}
@@ -227,79 +217,78 @@ export class PairwiseSession {
 	 * @param plaintext
 	 * @param timestamp
 	 */
-	public async send (
-		plaintext: string,
-		timestamp: number = util.timestamp()
-	) : Promise<void> {
+	public async send (plaintext: string, timestamp: number = util.timestamp()) : Promise<void> {
 		if (this.isAborted || !this.core) {
 			return;
 		}
 
-		const plaintextBytes: Uint8Array	= this.potassium.fromString(plaintext);
+		return util.lock(this.lock, async () => {
+			const plaintextBytes: Uint8Array	= this.potassium.fromString(plaintext);
 
-		const id: Float64Array				= new Float64Array([
-			util.random(config.maxSafeUint)
-		]);
+			const id: Float64Array				= new Float64Array([
+				util.random(config.maxSafeUint)
+			]);
 
-		const timestampBytes: Float64Array	= new Float64Array([
-			timestamp
-		]);
+			const timestampBytes: Float64Array	= new Float64Array([
+				timestamp
+			]);
 
-		const numBytes: Float64Array		= new Float64Array([
-			plaintextBytes.length
-		]);
+			const numBytes: Float64Array		= new Float64Array([
+				plaintextBytes.length
+			]);
 
-		const numChunks: Float64Array		= new Float64Array([
-			Math.ceil(plaintextBytes.length / Transport.chunkLength)
-		]);
+			const numChunks: Float64Array		= new Float64Array([
+				Math.ceil(plaintextBytes.length / Transport.chunkLength)
+			]);
 
-		const i	= new Float64Array(1);
-		while (
-			i[0] < plaintextBytes.length ||
-			(i[0] === 0 && plaintextBytes.length === 0)
-		) {
-			const chunk: Uint8Array	= new Uint8Array(
-				plaintextBytes.buffer,
-				i[0],
-				Math.min(
-					Transport.chunkLength,
-					plaintextBytes.length - i[0]
-				)
-			);
+			const i	= new Float64Array(1);
+			while (
+				i[0] < plaintextBytes.length ||
+				(i[0] === 0 && plaintextBytes.length === 0)
+			) {
+				const chunk: Uint8Array	= new Uint8Array(
+					plaintextBytes.buffer,
+					i[0],
+					Math.min(
+						Transport.chunkLength,
+						plaintextBytes.length - i[0]
+					)
+				);
 
-			let data: Uint8Array	= this.potassium.concatMemory(
-				false,
-				id,
-				timestampBytes,
-				numBytes,
-				numChunks,
-				i,
-				chunk
-			);
+				let data: Uint8Array	= this.potassium.concatMemory(
+					false,
+					id,
+					timestampBytes,
+					numBytes,
+					numChunks,
+					i,
+					chunk
+				);
 
-			/* Part 2 of handshake for Bob */
-			if (this.remoteUser) {
-				const oldData	= data;
-				data			= await this.handshakeSendSecret(oldData);
-				this.potassium.clearMemory(oldData);
+				/* Part 2 of handshake for Bob */
+				if (this.remoteUser) {
+					const oldData	= data;
+					data			= await this.handshakeSendSecret(oldData);
+					this.potassium.clearMemory(oldData);
+				}
+
+				const messageId		= this.newMessageId();
+				const cyphertext	= await this.core.encrypt(data, messageId);
+
+				this.potassium.clearMemory(data);
+
+				this.transport.send(cyphertext, messageId);
+
+				i[0] += Transport.chunkLength;
 			}
 
-			const messageId		= this.newMessageId();
-			const cyphertext	= await this.core.encrypt(data, messageId);
-
-			this.potassium.clearMemory(data);
-
-			this.transport.send(cyphertext, messageId);
-
-			i[0] += Transport.chunkLength;
-		}
-
-		this.potassium.clearMemory(plaintextBytes);
-		this.potassium.clearMemory(id);
-		this.potassium.clearMemory(timestampBytes);
-		this.potassium.clearMemory(numBytes);
-		this.potassium.clearMemory(numChunks);
-		this.potassium.clearMemory(i);
+			this.potassium.clearMemory(plaintextBytes);
+			this.potassium.clearMemory(id);
+			this.potassium.clearMemory(timestampBytes);
+			this.potassium.clearMemory(numBytes);
+			this.potassium.clearMemory(numChunks);
+			this.potassium.clearMemory(i);
+		});
 	}
 
 	constructor (
