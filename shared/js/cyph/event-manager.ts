@@ -10,11 +10,8 @@ export class EventManager {
 	/** @ignore */
 	private readonly eventMappings: Map<string, Set<Function>>	= new Map<string, Set<Function>>();
 
-	/** @ignore */
-	private readonly untriggeredEvents: string	= 'untriggeredEvents';
-
 	/** List of all active threads. */
-	public readonly threads: Set<IThread>		= new Set<IThread>();
+	public readonly threads: Set<IThread>	= new Set<IThread>();
 
 	/**
 	 * Removes handler from event.
@@ -73,10 +70,10 @@ export class EventManager {
 	public rpcOn<I, O> (event: string, handler: (data: I) => O|Promise<O>) : void {
 		this.on(event, async (o: {data: I; eventId: string}) => {
 			try {
-				this.trigger(o.eventId, {data: await handler(o.data)});
+				this.trigger(o.eventId, {data: await handler(o.data)}, true);
 			}
 			catch (err) {
-				this.trigger(o.eventId, {error: {message: err && err.message || ''}});
+				this.trigger(o.eventId, {error: {message: err && err.message || ''}}, true);
 			}
 		});
 	}
@@ -96,7 +93,7 @@ export class EventManager {
 		;
 
 		await init;
-		this.trigger(event, {data, eventId});
+		this.trigger(event, {data, eventId}, true);
 
 		const response	= await responsePromise;
 
@@ -112,24 +109,21 @@ export class EventManager {
 	 * Triggers event.
 	 * @param event
 	 * @param data
-	 * @param shouldTrigger Ignore this (used internally for cross-thread events).
+	 * @param crossThread Indicates whether event should be propagated to other threads.
 	 */
-	public trigger<T> (
-		event: string,
-		data?: T,
-		shouldTrigger: boolean = env.isMainThread
-	) : void {
-		if (!shouldTrigger) {
-			this.trigger(this.untriggeredEvents, {event, data}, true);
-			return;
-		}
-
-		if (env.isMainThread) {
-			for (const thread of Array.from(this.threads)) {
-				try {
-					thread.postMessage({event, data, isThreadEvent: true});
+	public trigger<T> (event: string, data?: T, crossThread: boolean = false) : void {
+		if (crossThread) {
+			if (env.isMainThread) {
+				for (const thread of Array.from(this.threads)) {
+					try {
+						thread.postMessage({data, event, isThreadEvent: true});
+					}
+					catch (_) {}
 				}
-				catch (_) {}
+			}
+			else {
+				/* DedicatedWorkerGlobalScope.postMessage(), not Window.postMessage() */
+				(<any> self).postMessage({data, event, isThreadEvent: true});
 			}
 		}
 
@@ -159,20 +153,12 @@ export class EventManager {
 			const data: any	= e.data || {};
 
 			if (data.isThreadEvent) {
-				this.trigger(data.event, data.data, true);
+				this.trigger(data.event, data.data);
 			}
 			else if (onthreadmessage) {
 				onthreadmessage(e);
 			}
 		};
-
-		/* This is DedicatedWorkerGlobalScope.postMessage(), not Window.postMessage() */
-		this.on(
-			this.untriggeredEvents,
-			(o: {data: any; event: string}) => (<any> self).postMessage(
-				{data: o.data, event: o.event, isThreadEvent: true}
-			)
-		);
 	}
 }
 

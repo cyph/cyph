@@ -267,7 +267,7 @@ export class Thread implements IThread {
 				}
 				catch (_) {}
 
-				eventManager.trigger(callbackId, locals);
+				eventManager.trigger(callbackId, locals, true);
 			}
 			else if (e.data === 'close') {
 				this.stop();
