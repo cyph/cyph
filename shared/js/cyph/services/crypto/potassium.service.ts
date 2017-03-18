@@ -101,11 +101,19 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 			input: Uint8Array,
 			outputBytes?: number,
 			clearInput?: boolean
-		) => eventManager.rpcTrigger(
-			this.threadEvents.hash.deriveKey,
-			{clearInput, input, outputBytes},
-			this.threadInit
-		),
+		) => {
+			const output	= await eventManager.rpcTrigger(
+				this.threadEvents.hash.deriveKey,
+				{clearInput, input, outputBytes},
+				this.threadInit
+			);
+
+			if (clearInput) {
+				this.clearMemory(input);
+			}
+
+			return output;
+		},
 		hash: async (plaintext: Uint8Array|string) => eventManager.rpcTrigger(
 			this.threadEvents.hash.hash,
 			{plaintext},
@@ -149,11 +157,22 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 			opsLimit?: number,
 			memLimit?: number,
 			clearInput?: boolean
-		) => eventManager.rpcTrigger(
-			this.threadEvents.passwordHash.hash,
-			{clearInput, memLimit, opsLimit, outputBytes, plaintext, salt},
-			this.threadInit
-		),
+		) => {
+			const output	= await eventManager.rpcTrigger(
+				this.threadEvents.passwordHash.hash,
+				{clearInput, memLimit, opsLimit, outputBytes, plaintext, salt},
+				this.threadInit
+			);
+
+			if (clearInput && plaintext instanceof Uint8Array) {
+				this.clearMemory(plaintext);
+			}
+			if (clearInput && salt instanceof Uint8Array) {
+				this.clearMemory(salt);
+			}
+
+			return output;
+		},
 		memLimitInteractive: eventManager.one<number>(
 			this.threadEvents.passwordHash.memLimitInteractive
 		),
@@ -284,6 +303,18 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 				const potassium: IPotassium			= new Potassium();
 				const threadEvents: ThreadEvents	= new ThreadEvents(locals.eventId);
 
+				const clearAndReturn	= async <T> (o: any, p: Promise<T>) => {
+					const output	= await p;
+
+					for (const k of Object.keys(o)) {
+						if (o[k] instanceof Uint8Array) {
+							potassium.clearMemory(o[k]);
+						}
+					}
+
+					return output;
+				};
+
 				/* Box */
 
 				eventManager.rpcOn(threadEvents.box.keyPair, async () =>
@@ -294,7 +325,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					cyphertext: Uint8Array;
 					keyPair: IKeyPair;
 				}) =>
-					potassium.box.open(o.cyphertext, o.keyPair)
+					clearAndReturn(o, potassium.box.open(o.cyphertext, o.keyPair))
 				);
 
 				eventManager.trigger<number>(
@@ -311,7 +342,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					plaintext: Uint8Array;
 					publicKey: Uint8Array;
 				}) =>
-					potassium.box.seal(o.plaintext, o.publicKey)
+					clearAndReturn(o, potassium.box.seal(o.plaintext, o.publicKey))
 				);
 
 				/* EphemeralKeyExchange */
@@ -324,13 +355,16 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					privateKey: Uint8Array;
 					publicKey: Uint8Array;
 				}) =>
-					potassium.ephemeralKeyExchange.aliceSecret(o.publicKey, o.privateKey)
+					clearAndReturn(o, potassium.ephemeralKeyExchange.aliceSecret(
+						o.publicKey,
+						o.privateKey
+					))
 				);
 
 				eventManager.rpcOn(threadEvents.ephemeralKeyExchange.bobSecret, async (o: {
 					alicePublicKey: Uint8Array;
 				}) =>
-					potassium.ephemeralKeyExchange.bobSecret(o.alicePublicKey)
+					clearAndReturn(o, potassium.ephemeralKeyExchange.bobSecret(o.alicePublicKey))
 				);
 
 				eventManager.trigger<number>(
@@ -360,13 +394,17 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					input: Uint8Array;
 					outputBytes?: number;
 				}) =>
-					potassium.hash.deriveKey(o.input, o.outputBytes, o.clearInput)
+					clearAndReturn(o, potassium.hash.deriveKey(
+						o.input,
+						o.outputBytes,
+						o.clearInput
+					))
 				);
 
 				eventManager.rpcOn(threadEvents.hash.hash, async (o: {
 					plaintext: Uint8Array;
 				}) =>
-					potassium.hash.hash(o.plaintext)
+					clearAndReturn(o, potassium.hash.hash(o.plaintext))
 				);
 
 				/* OneTimeAuth */
@@ -385,7 +423,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					key: Uint8Array;
 					message: Uint8Array;
 				}) =>
-					potassium.oneTimeAuth.sign(o.message, o.key)
+					clearAndReturn(o, potassium.oneTimeAuth.sign(o.message, o.key))
 				);
 
 				eventManager.rpcOn(threadEvents.oneTimeAuth.verify, async (o: {
@@ -393,7 +431,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					mac: Uint8Array;
 					message: Uint8Array;
 				}) =>
-					potassium.oneTimeAuth.verify(o.mac, o.message, o.key)
+					clearAndReturn(o, potassium.oneTimeAuth.verify(o.mac, o.message, o.key))
 				);
 
 				/* PasswordHash */
@@ -411,14 +449,14 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					plaintext: Uint8Array|string;
 					salt?: Uint8Array;
 				}) =>
-					potassium.passwordHash.hash(
+					clearAndReturn(o, potassium.passwordHash.hash(
 						o.plaintext,
 						o.salt,
 						o.outputBytes,
 						o.opsLimit,
 						o.memLimit,
 						o.clearInput
-					)
+					))
 				);
 
 				eventManager.trigger<number>(
@@ -444,7 +482,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 				eventManager.rpcOn(threadEvents.passwordHash.parseMetadata, async (o: {
 					metadata: Uint8Array;
 				}) =>
-					potassium.passwordHash.parseMetadata(o.metadata)
+					clearAndReturn(o, potassium.passwordHash.parseMetadata(o.metadata))
 				);
 
 				eventManager.trigger<number>(
@@ -467,7 +505,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 				eventManager.rpcOn(threadEvents.secretBox.newNonce, async (o: {
 					size: number;
 				}) =>
-					potassium.secretBox.newNonce(o.size)
+					clearAndReturn(o, potassium.secretBox.newNonce(o.size))
 				);
 
 				eventManager.rpcOn(threadEvents.secretBox.open, async (o: {
@@ -475,7 +513,11 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					cyphertext: Uint8Array;
 					key: Uint8Array;
 				}) =>
-					potassium.secretBox.open(o.cyphertext, o.key, o.additionalData)
+					clearAndReturn(o, potassium.secretBox.open(
+						o.cyphertext,
+						o.key,
+						o.additionalData
+					))
 				);
 
 				eventManager.rpcOn(threadEvents.secretBox.seal, async (o: {
@@ -483,7 +525,11 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					key: Uint8Array;
 					plaintext: Uint8Array;
 				}) =>
-					potassium.secretBox.seal(o.plaintext, o.key, o.additionalData)
+					clearAndReturn(o, potassium.secretBox.seal(
+						o.plaintext,
+						o.key,
+						o.additionalData
+					))
 				);
 
 				/* Sign */
@@ -501,7 +547,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					publicKey: Uint8Array;
 					signed: Uint8Array|string;
 				}) =>
-					potassium.sign.open(o.signed, o.publicKey)
+					clearAndReturn(o, potassium.sign.open(o.signed, o.publicKey))
 				);
 
 				eventManager.trigger<number>(
@@ -518,14 +564,14 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					message: Uint8Array|string;
 					privateKey: Uint8Array;
 				}) =>
-					potassium.sign.sign(o.message, o.privateKey)
+					clearAndReturn(o, potassium.sign.sign(o.message, o.privateKey))
 				);
 
 				eventManager.rpcOn(threadEvents.sign.signDetached, async (o: {
 					message: Uint8Array|string;
 					privateKey: Uint8Array;
 				}) =>
-					potassium.sign.signDetached(o.message, o.privateKey)
+					clearAndReturn(o, potassium.sign.signDetached(o.message, o.privateKey))
 				);
 
 				eventManager.rpcOn(threadEvents.sign.verifyDetached, async (o: {
@@ -533,7 +579,11 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 					publicKey: Uint8Array;
 					signature: Uint8Array|string;
 				}) =>
-					potassium.sign.verifyDetached(o.signature, o.message, o.publicKey)
+					clearAndReturn(o, potassium.sign.verifyDetached(
+						o.signature,
+						o.message,
+						o.publicKey
+					))
 				);
 
 				eventManager.trigger<void>(locals.eventId);
