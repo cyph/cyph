@@ -31,7 +31,7 @@ export class ChatMainComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.fileTransferService.files.changeDetectorRef	= this.changeDetectorRef;
+		this.fileTransferService.changeDetectorRef	= this.changeDetectorRef;
 
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */

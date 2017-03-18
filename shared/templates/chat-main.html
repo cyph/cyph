@@ -216,7 +216,7 @@
 				<md2-list-item
 					class='layout-column'
 					childClass='layout-row'
-					*ngFor='let transfer of fileTransferService.files.transfers'
+					*ngFor='let transfer of fileTransferService.transfers'
 				>
 					<div class='layout-column layout-align-start-stretch flex'>
 						<div class='layout-row'>
@@ -249,8 +249,8 @@
 		[style.margin-top]='
 			(
 				(
-					fileTransferService.files.transfers.size < 3 ?
-						fileTransferService.files.transfers.size :
+					fileTransferService.transfers.size < 3 ?
+						fileTransferService.transfers.size :
 						3
 				) * 65
 			) + "px"
