@@ -6,6 +6,9 @@ import {potassiumUtil} from './potassium-util';
 
 /** @inheritDoc */
 export class SecretBox implements ISecretBox {
+	/** Max size of chunk to encrypt, 64 MB. */
+	private readonly chunkSize: number	= 67108864;
+
 	/** @ignore */
 	private readonly helpers: {
 		nonceBytes: number;
@@ -103,21 +106,8 @@ export class SecretBox implements ISecretBox {
 		return output;
 	}
 
-	/** @inheritDoc */
-	public async newNonce (size: number) : Promise<Uint8Array> {
-		if (size < 4) {
-			throw new Error('Nonce size too small.');
-		}
-
-		return potassiumUtil.concatMemory(
-			true,
-			new Uint32Array([this.counter++]),
-			potassiumUtil.randomBytes(size - 4)
-		);
-	}
-
-	/** @inheritDoc */
-	public async open (
+	/** @ignore */
+	private async openChunk (
 		cyphertext: Uint8Array,
 		key: Uint8Array,
 		additionalData?: Uint8Array
@@ -184,8 +174,8 @@ export class SecretBox implements ISecretBox {
 		}
 	}
 
-	/** @inheritDoc */
-	public async seal (
+	/** @ignore */
+	private async sealChunk (
 		plaintext: Uint8Array,
 		key: Uint8Array,
 		additionalData?: Uint8Array
@@ -235,6 +225,89 @@ export class SecretBox implements ISecretBox {
 			nonce,
 			symmetricCyphertext
 		);
+	}
+
+	/** @inheritDoc */
+	public async newNonce (size: number) : Promise<Uint8Array> {
+		if (size < 4) {
+			throw new Error('Nonce size too small.');
+		}
+
+		return potassiumUtil.concatMemory(
+			true,
+			new Uint32Array([this.counter++]),
+			potassiumUtil.randomBytes(size - 4)
+		);
+	}
+
+	/** @inheritDoc */
+	public async open (
+		cyphertext: Uint8Array,
+		key: Uint8Array,
+		additionalData?: Uint8Array
+	) : Promise<Uint8Array> {
+		if (this.isNative) {
+			return this.openChunk(cyphertext, key, additionalData);
+		}
+
+		const chunks: Uint8Array[]	= [];
+		cyphertext	= new Uint8Array(cyphertext);
+
+		for (let i = 0 ; i < cyphertext.length ; ) {
+			const chunkSize: number	= new DataView(
+				cyphertext.buffer,
+				i
+			).getUint32(0, true);
+
+			i += 4;
+
+			chunks.push(await this.openChunk(
+				new Uint8Array(
+					cyphertext.buffer,
+					i,
+					chunkSize
+				),
+				key
+			));
+
+			i += chunkSize;
+		}
+
+		return potassiumUtil.concatMemory(true, ...chunks);
+	}
+
+	/** @inheritDoc */
+	public async seal (
+		plaintext: Uint8Array,
+		key: Uint8Array,
+		additionalData?: Uint8Array
+	) : Promise<Uint8Array> {
+		if (this.isNative) {
+			return this.sealChunk(plaintext, key, additionalData);
+		}
+
+		const chunks: Uint8Array[]	= [];
+
+		for (let i = 0 ; i < plaintext.length ; i += this.chunkSize) {
+			chunks.push(await this.sealChunk(
+				new Uint8Array(
+					plaintext.buffer,
+					i,
+					(plaintext.length - i) > this.chunkSize ?
+						this.chunkSize :
+						undefined
+				),
+				key
+			));
+		}
+
+		return potassiumUtil.concatMemory(true, ...chunks.map(chunk =>
+			potassiumUtil.concatMemory(
+				true,
+				new Uint8Array(new Uint32Array([chunk.length]).buffer),
+				chunk
+			)
+		));
 	}
 
 	constructor (

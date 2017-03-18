@@ -111,7 +111,6 @@ export class Config {
 	/** File-transfer-related config (used by Files.Files). */
 	public readonly filesConfig	= {
 		approvalLimit: 512000,
-		chunkSize: 67108864,
 		maxImageWidth: 1920,
 		maxSize: 268435456
 	};
