@@ -294,7 +294,7 @@ export class ChatService {
 			this.close();
 		});
 
-		this.sessionService.one(this.sessionService.events.connect).then(async () => {
+		this.sessionService.connected.then(async () => {
 			this.chat.state	= States.keyExchange;
 
 			const interval		= 250;
