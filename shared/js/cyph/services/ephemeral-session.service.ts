@@ -18,12 +18,6 @@ import {SessionService} from './session.service';
 @Injectable()
 export class EphemeralSessionService extends SessionService {
 	/** @ignore */
-	protected sendHandler (message: string) : void {
-		super.sendHandler(message);
-		this.channelService.send(message);
-	}
-
-	/** @ignore */
 	private setId (id: string) : void {
 		if (
 			/* Too short */
@@ -100,6 +94,12 @@ export class EphemeralSessionService extends SessionService {
 		};
 
 		this.channelService.init(channelDescriptor, handlers);
+	}
+
+	/** @ignore */
+	protected sendHandler (message: string) : void {
+		super.sendHandler(message);
+		this.channelService.send(message);
 	}
 
 	/** @inheritDoc */
