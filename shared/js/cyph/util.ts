@@ -177,19 +177,26 @@ export class Util {
 		return `${hour.toString()}:${minute}${ampm}`;
 	}
 
-	/** Executes a Promise within a mutual-exclusion lock. */
+	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 	public async lock<T> (lock: any, f: () => Promise<T>) : Promise<T> {
+		if (lock.queue === undefined) {
+			lock.queue	= [];
+		}
+
+		const queue: string[]	= lock.queue;
+		const guid: string		= this.generateGuid();
+
+		queue.push(guid);
+
+		while (queue[0] !== guid) {
+			await this.sleep();
+		}
+
 		try {
-			while (lock.isOwned) {
-				await this.sleep();
-			}
-
-			lock.isOwned	= true;
-
 			return (await f());
 		}
 		finally {
-			lock.isOwned	= false;
+			queue.shift();
 		}
 	}
 
@@ -198,7 +205,7 @@ export class Util {
 	 * will give up after first failed attempt to obtain lock.
 	 */
 	public async lockTryOnce<T> (lock: any, f: () => Promise<T>) : Promise<T|void> {
-		if (!lock.isOwned) {
+		if (lock.queue === undefined || lock.queue.length < 1) {
 			return this.lock(lock, f);
 		}
 	}
