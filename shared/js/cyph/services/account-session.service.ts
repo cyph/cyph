@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {User} from '../account/user';
+import {rpcEvents} from '../session/enums';
 import {IMessage} from '../session/imessage';
 import {util} from '../util';
 import {AccountUserLookupService} from './account-user-lookup.service';
@@ -29,11 +30,11 @@ export class AccountSessionService extends SessionService {
 	/** @inheritDoc */
 	public send (...messages: IMessage[]) : void {
 		for (const message of messages) {
-			if (message.event !== this.rpcEvents.text) {
+			if (message.event !== rpcEvents.text) {
 				continue;
 			}
 
-			this.trigger(this.rpcEvents.text, message.data);
+			this.trigger(rpcEvents.text, message.data);
 
 			if (!this.user) {
 				continue;
@@ -50,14 +51,14 @@ export class AccountSessionService extends SessionService {
 			util.lock(user, async () => {
 				await util.sleep(util.random(1000));
 				await util.waitUntilTrue(() => user === this.user);
-				this.trigger(this.rpcEvents.typing, {isTyping: true});
+				this.trigger(rpcEvents.typing, {isTyping: true});
 				await util.sleep(util.random(2000, 500));
-				this.trigger(this.rpcEvents.typing, {isTyping: false});
+				this.trigger(rpcEvents.typing, {isTyping: false});
 				await util.waitUntilTrue(() => user === this.user);
 				await util.sleep(1000);
 				await util.waitUntilTrue(() => user === this.user);
 
-				this.trigger(this.rpcEvents.text, {
+				this.trigger(rpcEvents.text, {
 					author: user.realUsername,
 					text: AccountSessionService.DUMMY_REPLIES[reply]
 				});

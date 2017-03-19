@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {IChatData, States} from '../chat';
+import {users} from '../session/enums';
 import {AccountSessionService} from './account-session.service';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
@@ -50,7 +51,7 @@ export class AccountChatService extends ChatService {
 
 			this.addMessage(
 				this.stringsService.introductoryMessage,
-				this.sessionService.users.app,
+				users.app,
 				undefined,
 				false
 			);
