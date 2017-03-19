@@ -22,16 +22,10 @@ export abstract class SessionService implements ISessionService {
 	protected lastIncomingMessageTimestamp: number		= util.timestamp();
 
 	/** @ignore */
-	protected lastOutgoingMessageTimestamp: number		= util.timestamp();
-
-	/** @ignore */
 	protected pingPongTimeouts: number					= 0;
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string>	= new Set<string>();
-
-	/** @ignore */
-	protected readonly sendQueue: string[]				= [];
 
 	/** @inheritDoc */
 	public readonly apiFlags							= {
@@ -120,7 +114,7 @@ export abstract class SessionService implements ISessionService {
 			}
 			case CastleEvents.send: {
 				if (e.data) {
-					this.sendQueue.push(e.data);
+					this.sendHandler(e.data);
 				}
 				break;
 			}
@@ -170,6 +164,16 @@ export abstract class SessionService implements ISessionService {
 		if (message.event && message.event in rpcEvents) {
 			this.trigger(message.event, message.data);
 		}
+	}
+
+	/** @ignore */
+	protected sendHandler (_MESSAGE: string) : void {
+		analytics.sendEvent({
+			eventAction: 'sent',
+			eventCategory: 'message',
+			eventValue: 1,
+			hitType: 'event'
+		});
 	}
 
 	/** @inheritDoc */
