@@ -178,7 +178,7 @@ export class Util {
 	}
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
-	public async lock<T> (lock: any, f: () => Promise<T>) : Promise<T> {
+	public async lock<T> (lock: {queue?: string[]}, f: () => Promise<T>) : Promise<T> {
 		if (lock.queue === undefined) {
 			lock.queue	= [];
 		}
@@ -204,7 +204,7 @@ export class Util {
 	 * Executes a Promise within a mutual-exclusion lock, but
 	 * will give up after first failed attempt to obtain lock.
 	 */
-	public async lockTryOnce<T> (lock: any, f: () => Promise<T>) : Promise<T|void> {
+	public async lockTryOnce<T> (lock: {queue?: string[]}, f: () => Promise<T>) : Promise<T|void> {
 		if (lock.queue === undefined || lock.queue.length < 1) {
 			return this.lock(lock, f);
 		}
