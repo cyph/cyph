@@ -49,6 +49,7 @@ import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive'
 import {TranslateDirective} from '../cyph/directives/translate.directive';
 import {ConfigService} from '../cyph/services/config.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
+import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {FileService} from '../cyph/services/file.service';
@@ -65,6 +66,7 @@ import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.serv
 import {AppComponent} from './app.component';
 import {DemoChatRootComponent} from './demo-chat-root.component';
 import {DemoComponent} from './demo.component';
+import {MockDatabaseService} from './mock-database.service';
 import {MockPotassiumService} from './mock-potassium.service';
 import {SilentNotificationService} from './silent-notification.service';
 
@@ -141,6 +143,10 @@ import {SilentNotificationService} from './silent-notification.service';
 		UtilService,
 		VirtualKeyboardWatcherService,
 		VisibilityWatcherService,
+		{
+			provide: DatabaseService,
+			useClass: MockDatabaseService
+		},
 		{
 			provide: NotificationService,
 			useClass: SilentNotificationService

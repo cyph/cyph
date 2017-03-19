@@ -5,13 +5,13 @@ import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
 import {UIEvents} from '../files/enums';
 import {Transfer} from '../files/transfer';
-import {firebaseApp} from '../firebase-app';
 import {events, rpcEvents, users} from '../session/enums';
 import {Message} from '../session/message';
 import {util} from '../util';
 import {ChatService} from './chat.service';
 import {ConfigService} from './config.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {FileService} from './file.service';
 import {SessionService} from './session.service';
@@ -126,7 +126,7 @@ export class FileTransferService {
 						url: transfer.url
 					});
 
-					(await firebaseApp).storage().refFromURL(transfer.url).delete();
+					(await this.databaseService.getStorageRef(transfer.url)).delete();
 
 					const plaintext: Uint8Array	= await this.decryptFile(cyphertext, transfer.key);
 
@@ -140,7 +140,7 @@ export class FileTransferService {
 				}
 				else {
 					this.triggerUIEvent(UIEvents.rejected, transfer);
-					(await firebaseApp).storage().refFromURL(transfer.url).delete();
+					(await this.databaseService.getStorageRef(transfer.url)).delete();
 				}
 			}
 		);
@@ -244,7 +244,9 @@ export class FileTransferService {
 		while (!complete) {
 			const path: string	= 'ephemeral/' + util.generateGuid();
 
-			uploadTask	= (await firebaseApp).storage().ref(path).put(new Blob([o.cyphertext]));
+			uploadTask	= (await this.databaseService.getStorageRef(path)).put(
+				new Blob([o.cyphertext])
+			);
 
 			complete	= await new Promise<boolean>(resolve => uploadTask.on(
 				'state_changed',
@@ -279,6 +281,9 @@ export class FileTransferService {
 
 		/** @ignore */
 		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
 		private readonly dialogService: DialogService,
