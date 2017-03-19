@@ -65,6 +65,7 @@ export class AppService {
 
 		this.urlStateService.onChange(
 			newUrlState => { this.onUrlStateChange(newUrlState); },
+			true,
 			true
 		);
 

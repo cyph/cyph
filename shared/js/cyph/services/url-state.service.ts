@@ -57,11 +57,16 @@ export class UrlStateService {
 	/**
 	 * Sets handler to run when URL changes.
 	 * @param handler
+	 * @param fragmentOnly If true, will only return fragment or empty string.
 	 * @param lowercase If true, will set to lowercase.
 	 */
-	public onChange (handler: (newUrlState: string) => void, lowercase?: boolean) : void {
+	public onChange (
+		handler: (newUrlState: string) => void,
+		fragmentOnly?: boolean,
+		lowercase?: boolean
+	) : void {
 		eventManager.on(UrlStateService.urlStateChangeEvent, () => {
-			handler(this.getUrl(lowercase));
+			handler(this.getUrl(fragmentOnly, lowercase));
 		});
 	}
 
