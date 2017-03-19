@@ -18,19 +18,9 @@ import {SessionService} from './session.service';
 @Injectable()
 export class EphemeralSessionService extends SessionService {
 	/** @ignore */
-	private sendHandler (messages: string[]) : void {
-		this.lastOutgoingMessageTimestamp	= util.timestamp();
-
-		for (const message of messages) {
-			this.channelService.send(message);
-		}
-
-		analytics.sendEvent({
-			eventAction: 'sent',
-			eventCategory: 'message',
-			eventValue: messages.length,
-			hitType: 'event'
-		});
+	protected sendHandler (message: string) : void {
+		super.sendHandler(message);
+		this.channelService.send(message);
 	}
 
 	/** @ignore */
@@ -106,20 +96,6 @@ export class EphemeralSessionService extends SessionService {
 				this.on(events.castle, (e: {data?: any; event: CastleEvents}) => {
 					this.castleHandler(e);
 				});
-
-				while (this.state.isAlive) {
-					await util.sleep();
-
-					if (
-						this.sendQueue.length &&
-						(
-							this.sendQueue.length >= 4 ||
-							(util.timestamp() - this.lastOutgoingMessageTimestamp) > 500
-						)
-					) {
-						this.sendHandler(this.sendQueue.splice(0, 4));
-					}
-				}
 			}
 		};
 
