@@ -14,6 +14,7 @@ import {ScrollService} from './js/cyph/services/scroll.service';
 import {SessionInitService} from './js/cyph/services/session-init.service';
 import {SessionService} from './js/cyph/services/session.service';
 import {StringsService} from './js/cyph/services/strings.service';
+import {events} from './js/cyph/session/enums';
 import {UrlSessionInitService} from './url-session-init.service';
 
 
@@ -69,12 +70,12 @@ export class EphemeralChatRootComponent implements OnInit {
 		}
 
 
-		this.sessionService.one(this.sessionService.events.abort).then(() => {
+		this.sessionService.one(events.abort).then(() => {
 			self.onbeforeunload		= () => {};
 			this.appService.state	= States.chat;
 		});
 
-		this.sessionService.one(this.sessionService.events.beginChatComplete).then(() => {
+		this.sessionService.one(events.beginChatComplete).then(() => {
 			self.onbeforeunload	= () => this.stringsService.disconnectWarning;
 
 			if (this.sessionInitService.callType && this.sessionService.state.isAlice) {
@@ -82,11 +83,11 @@ export class EphemeralChatRootComponent implements OnInit {
 			}
 		});
 
-		this.sessionService.one(this.sessionService.events.beginWaiting).then(() => {
+		this.sessionService.one(events.beginWaiting).then(() => {
 			this.appService.state	= States.waitingForFriend;
 		});
 
-		this.sessionService.one(this.sessionService.events.connect).then(() => {
+		this.sessionService.connected.then(() => {
 			this.appService.state	= States.chat;
 
 			if (this.sessionInitService.callType) {

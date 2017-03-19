@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {analytics} from '../analytics';
 import {IChatData, IChatMessage, States} from '../chat';
+import {events, rpcEvents, users} from '../session/enums';
 import {Message} from '../session/message';
 import {Timer} from '../timer';
 import {util} from '../util';
@@ -52,7 +53,7 @@ export class ChatService {
 			this.chat.isDisconnected	= true;
 			this.addMessage(
 				this.stringsService.disconnectNotification,
-				this.sessionService.users.app
+				users.app
 			);
 			this.sessionService.close();
 		}
@@ -61,7 +62,7 @@ export class ChatService {
 	/** Aborts the process of chat initialisation and authentication. */
 	public abortSetup () : void {
 		this.chat.state	= States.aborted;
-		this.sessionService.trigger(this.sessionService.events.abort);
+		this.sessionService.trigger(events.abort);
 		this.sessionService.close();
 	}
 
@@ -77,19 +78,19 @@ export class ChatService {
 		text: string,
 		author: string,
 		timestamp: number = util.timestamp(),
-		shouldNotify: boolean = author !== this.sessionService.users.me,
+		shouldNotify: boolean = author !== users.me,
 		selfDestructTimeout?: number
 	) : Promise<void> {
 		if (this.chat.state === States.aborted || this.chat.isDisconnected || !text) {
 			return;
 		}
 
-		while (author !== this.sessionService.users.app && !this.chat.isConnected) {
+		while (author !== users.app && !this.chat.isConnected) {
 			await util.sleep(500);
 		}
 
 		if (this.notificationService && shouldNotify) {
-			if (author === this.sessionService.users.app) {
+			if (author === users.app) {
 				this.notificationService.notify(text);
 			}
 			else {
@@ -103,14 +104,14 @@ export class ChatService {
 			timestamp,
 			timeString: util.getTimeString(timestamp),
 			unread:
-				author !== this.sessionService.users.app &&
-				author !== this.sessionService.users.me
+				author !== users.app &&
+				author !== users.me
 		};
 
 		this.chat.messages.push(message);
 		this.chat.messages.sort((a, b) => a.timestamp - b.timestamp);
 
-		if (author === this.sessionService.users.me) {
+		if (author === users.me) {
 			this.scrollService.scrollDown();
 		}
 
@@ -147,13 +148,13 @@ export class ChatService {
 			return;
 		}
 
-		this.sessionService.trigger(this.sessionService.events.beginChatComplete);
+		this.sessionService.trigger(events.beginChatComplete);
 
 		this.chat.state	= States.chat;
 
 		this.addMessage(
 			this.stringsService.introductoryMessage,
-			this.sessionService.users.app,
+			users.app,
 			util.timestamp() - 30000,
 			false
 		);
@@ -213,7 +214,7 @@ export class ChatService {
 				this.chat.isMessageChanged	= isMessageChanged;
 				this.sessionService.send(
 					new Message(
-						this.sessionService.rpcEvents.typing,
+						rpcEvents.typing,
 						{isTyping: this.chat.isMessageChanged}
 					)
 				);
@@ -236,7 +237,7 @@ export class ChatService {
 		}
 
 		if (message) {
-			this.sessionService.send(new Message(this.sessionService.rpcEvents.text, {
+			this.sessionService.send(new Message(rpcEvents.text, {
 				selfDestructTimeout,
 				text: message
 			}));
@@ -286,11 +287,11 @@ export class ChatService {
 		/** @ignore */
 		protected readonly stringsService: StringsService
 	) {
-		this.sessionService.one(this.sessionService.events.beginChat).then(() => {
+		this.sessionService.one(events.beginChat).then(() => {
 			this.begin();
 		});
 
-		this.sessionService.one(this.sessionService.events.closeChat).then(() => {
+		this.sessionService.one(events.closeChat).then(() => {
 			this.close();
 		});
 
@@ -308,11 +309,11 @@ export class ChatService {
 			this.chat.keyExchangeProgress	= 100;
 		});
 
-		this.sessionService.one(this.sessionService.events.connectFailure).then(() => {
+		this.sessionService.one(events.connectFailure).then(() => {
 			this.abortSetup();
 		});
 
-		this.sessionService.on(this.sessionService.rpcEvents.text, (o: {
+		this.sessionService.on(rpcEvents.text, (o: {
 			author: string;
 			selfDestructTimeout?: number;
 			text?: string;
@@ -331,7 +332,7 @@ export class ChatService {
 			);
 		});
 
-		this.sessionService.on(this.sessionService.rpcEvents.typing, (o: {isTyping: boolean}) => {
+		this.sessionService.on(rpcEvents.typing, (o: {isTyping: boolean}) => {
 			this.setFriendTyping(o.isTyping);
 		});
 	}

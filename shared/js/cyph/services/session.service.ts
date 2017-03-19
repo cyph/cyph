@@ -3,7 +3,7 @@ import {analytics} from '../analytics';
 import {errors} from '../errors';
 import {eventManager} from '../event-manager';
 import {ISessionService} from '../service-interfaces/isession.service';
-import {CastleEvents, Events, events, RpcEvents, rpcEvents, Users, users} from '../session/enums';
+import {CastleEvents, events, rpcEvents} from '../session/enums';
 import {IMessage} from '../session/imessage';
 import {Message} from '../session/message';
 import {ProFeatures} from '../session/profeatures';
@@ -41,26 +41,20 @@ export abstract class SessionService implements ISessionService {
 		telehealth: false
 	};
 
-	/** Resolves when this session is connected. */
+	/** @inheritDoc */
 	public readonly connected: Promise<void>			= this.one<void>(events.connect);
 
 	/** @inheritDoc */
-	public readonly events: Events						= events;
-
-	/** Remote username (e.g. "friend" or "alice"). */
 	/* tslint:disable-next-line:promise-must-complete */
 	public readonly remoteUsername: Promise<string>		= new Promise<string>(resolve => {
 		this.setRemoteUsername	= resolve;
 	});
 
 	/** @inheritDoc */
-	public readonly rpcEvents: RpcEvents				= rpcEvents;
-
-	/** Sets remote username. */
 	public setRemoteUsername: (remoteUsername: string) => void;
 
 	/** @inheritDoc */
-	public readonly state	= {
+	public readonly state								= {
 		cyphId: '',
 		isAlice: false,
 		isAlive: true,
@@ -68,9 +62,6 @@ export abstract class SessionService implements ISessionService {
 		startingNewCyph: <boolean|undefined> false,
 		wasInitiatedByAPI: false
 	};
-
-	/** @inheritDoc */
-	public readonly users: Users	= users;
 
 	/** @ignore */
 	protected castleHandler (e: {data?: any; event: CastleEvents}) : void {

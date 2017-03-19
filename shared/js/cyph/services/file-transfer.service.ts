@@ -6,7 +6,7 @@ import {eventManager} from '../event-manager';
 import {UIEvents} from '../files/enums';
 import {Transfer} from '../files/transfer';
 import {firebaseApp} from '../firebase-app';
-import {events, rpcEvents} from '../session/enums';
+import {events, rpcEvents, users} from '../session/enums';
 import {Message} from '../session/message';
 import {util} from '../util';
 import {ChatService} from './chat.service';
@@ -346,7 +346,7 @@ export class FileTransferService {
 		});
 
 		this.sessionService.on(
-			this.sessionService.events.filesUI,
+			events.filesUI,
 			async (e: {
 				args: any[];
 				event: UIEvents;
@@ -367,7 +367,7 @@ export class FileTransferService {
 
 							this.chatService.addMessage(
 								`${message} ${transfer.name}`,
-								this.sessionService.users.app
+								users.app
 							);
 						}
 						break;
@@ -410,7 +410,7 @@ export class FileTransferService {
 
 						this.chatService.addMessage(
 							`${this.stringsService.incomingFileRejected} ${transfer.name}`,
-							this.sessionService.users.app,
+							users.app,
 							undefined,
 							false
 						);
@@ -432,7 +432,7 @@ export class FileTransferService {
 						const transfer: Transfer	= e.args[0];
 
 						const message: string	=
-							transfer.author === this.sessionService.users.me ?
+							transfer.author === users.me ?
 								this.stringsService.fileTransferInitMe :
 								this.stringsService.fileTransferInitFriend
 						;
@@ -440,7 +440,7 @@ export class FileTransferService {
 						if (!transfer.image) {
 							this.chatService.addMessage(
 								`${message} ${transfer.name}`,
-								this.sessionService.users.app
+								users.app
 							);
 						}
 						break;

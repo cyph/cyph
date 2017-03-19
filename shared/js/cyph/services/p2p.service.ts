@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {UIEventCategories, UIEvents} from '../p2p/enums';
 import {IP2P} from '../p2p/ip2p';
 import {P2P} from '../p2p/p2p';
+import {events, users} from '../session/enums';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
 import {SessionService} from './session.service';
@@ -51,7 +52,7 @@ export class P2PService {
 		);
 
 		this.sessionService.on(
-			this.sessionService.events.p2pUI,
+			events.p2pUI,
 			async (e: {
 				args: any[];
 				category: UIEventCategories;
@@ -66,7 +67,7 @@ export class P2PService {
 								if (isConnected) {
 									this.chatService.addMessage(
 										this.stringsService.p2pConnect,
-										this.sessionService.users.app,
+										users.app,
 										undefined,
 										false
 									);
@@ -80,7 +81,7 @@ export class P2PService {
 
 									this.chatService.addMessage(
 										this.stringsService.p2pDisconnect,
-										this.sessionService.users.app,
+										users.app,
 										undefined,
 										false
 									);
@@ -157,7 +158,7 @@ export class P2PService {
 							case UIEvents.requestConfirmation: {
 								this.chatService.addMessage(
 									this.stringsService.p2pRequestConfirmation,
-									this.sessionService.users.app,
+									users.app,
 									undefined,
 									false
 								);

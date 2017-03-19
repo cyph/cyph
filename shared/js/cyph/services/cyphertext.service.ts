@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {analytics} from '../analytics';
 import {IChatMessage} from '../chat/ichat-message';
+import {events} from '../session/enums';
 import {util} from '../util';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
@@ -94,7 +95,7 @@ export class CyphertextService {
 		private readonly stringsService: StringsService
 	) {
 		sessionService.on(
-			sessionService.events.cyphertext,
+			events.cyphertext,
 			(o: {author: string; cyphertext: string}) => { this.log(
 				o.cyphertext,
 				o.author
