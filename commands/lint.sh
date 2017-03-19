@@ -19,12 +19,9 @@ node -e "
 			join('\n')
 	);
 
-	tsconfig.files	= [
-		'cyph.com/main.ts',
-		'cyph.im/main.ts',
-		'native/main.ts',
-		'typings/index.d.ts'
-	];
+	tsconfig.files	=
+		'$(cd js ; find . -type f -name '*.ts' | tr '\n' ' ')typings/index.d.ts'.split(' ')
+	;
 
 	fs.writeFileSync(
 		'js/tsconfig.tslint.json',

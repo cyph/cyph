@@ -1,11 +1,12 @@
 import {sodium} from 'libsodium';
+import {IPasswordHash} from './ipassword-hash';
 import * as NativeCrypto from './native-crypto';
 import {potassiumUtil} from './potassium-util';
 import {SecretBox} from './secret-box';
 
 
-/** Equivalent to sodium.crypto_pwhash. */
-export class PasswordHash {
+/** @inheritDoc */
+export class PasswordHash implements IPasswordHash {
 	/** @ignore */
 	private readonly helpers: {
 		hash: (
@@ -40,60 +41,58 @@ export class PasswordHash {
 				)
 	};
 
-	/** Algorithm name. */
-	public readonly algorithm: string			=
+	/** @inheritDoc */
+	public readonly algorithm: Promise<string>				= Promise.resolve(
 		this.isNative ?
 			(
 				NativeCrypto.passwordHash.algorithm.name + '/' +
 				NativeCrypto.passwordHash.algorithm.hash.name
 			) :
 			'scrypt'
-	;
+	);
 
-	/** Moderate mem limit. */
-	public readonly memLimitInteractive: number	=
+	/** @inheritDoc */
+	public readonly memLimitInteractive: Promise<number>	= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.passwordHash.memLimitInteractive :
 			sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE
-	;
+	);
 
-	/** Heavy mem limit. */
-	public readonly memLimitSensitive: number	=
+	/** @inheritDoc */
+	public readonly memLimitSensitive: Promise<number>		= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.passwordHash.memLimitSensitive :
 			134217728 /* 128 MB */
-	;
+	);
 
-	/** Moderate ops limit. */
-	public readonly opsLimitInteractive: number	=
+	/** @inheritDoc */
+	public readonly opsLimitInteractive: Promise<number>	= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.passwordHash.opsLimitInteractive :
 			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE
-	;
+	);
 
-	/** Heavy ops limit. */
-	public readonly opsLimitSensitive: number	=
+	/** @inheritDoc */
+	public readonly opsLimitSensitive: Promise<number>		= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.passwordHash.opsLimitSensitive :
 			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE
-	;
+	);
 
-	/** Salt length. */
-	public readonly saltBytes: number			=
+	/** @inheritDoc */
+	public readonly saltBytes: Promise<number>				= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.passwordHash.saltBytes :
 			sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
-	;
+	);
 
-	/** Hashes plaintext. */
+	/** @inheritDoc */
 	public async hash (
 		plaintext: Uint8Array|string,
-		salt: Uint8Array = potassiumUtil.randomBytes(
-			this.saltBytes
-		),
-		outputBytes: number = this.secretBox.keyBytes,
-		opsLimit: number = this.opsLimitInteractive,
-		memLimit: number = this.memLimitInteractive,
+		salt?: Uint8Array,
+		outputBytes?: number,
+		opsLimit?: number,
+		memLimit?: number,
 		clearInput?: boolean
 	) : Promise<{
 		hash: Uint8Array;
@@ -105,20 +104,31 @@ export class PasswordHash {
 			salt: Uint8Array;
 		};
 	}> {
+		const algorithm	= await this.algorithm;
+
+		if (salt === undefined) {
+			salt		= potassiumUtil.randomBytes(await this.saltBytes);
+		}
+		if (outputBytes === undefined) {
+			outputBytes	= await this.secretBox.keyBytes;
+		}
+		if (opsLimit === undefined) {
+			opsLimit	= await this.opsLimitInteractive;
+		}
+		if (memLimit === undefined) {
+			memLimit	= await this.memLimitInteractive;
+		}
+
 		const plaintextBinary: Uint8Array	= potassiumUtil.fromString(plaintext);
 
 		try {
-			const algorithm: Uint8Array	= potassiumUtil.fromString(
-				this.algorithm
-			);
-
 			const metadata: Uint8Array	= potassiumUtil.concatMemory(
 				false,
 				new Uint8Array(new Uint32Array([memLimit]).buffer),
 				new Uint8Array(new Uint32Array([opsLimit]).buffer),
 				new Uint8Array(new Uint32Array([salt.length]).buffer),
 				salt,
-				algorithm
+				potassiumUtil.fromString(algorithm)
 			);
 
 			return {
@@ -131,7 +141,7 @@ export class PasswordHash {
 				),
 				metadata,
 				metadataObject: {
-					algorithm: this.algorithm,
+					algorithm,
 					memLimit,
 					opsLimit,
 					salt
@@ -149,7 +159,7 @@ export class PasswordHash {
 		}
 	}
 
-	/** Parses metadata byte array into usable object. */
+	/** @inheritDoc */
 	public async parseMetadata (metadata: Uint8Array) : Promise<{
 		algorithm: string;
 		memLimit: number;

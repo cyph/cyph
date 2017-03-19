@@ -4,6 +4,7 @@ import {CyphertextService} from '../services/cyphertext.service';
 import {EnvService} from '../services/env.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
+import {Users, users} from '../session/enums';
 
 
 /**
@@ -15,6 +16,9 @@ import {StringsService} from '../services/strings.service';
 	templateUrl: '../../../templates/chat-cyphertext.html'
 })
 export class ChatCyphertextComponent implements OnInit {
+	/** @see Users */
+	public readonly users: Users	= users;
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		if (!this.envService.isWeb) {

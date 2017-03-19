@@ -138,8 +138,6 @@ export class Thread implements IThread {
 		importScripts('/lib/js/node_modules/ntru/dist/ntru.js');
 		importScripts('/lib/js/node_modules/rlwe/dist/rlwe.js');
 		importScripts('/lib/js/node_modules/supersphincs/dist/supersphincs.js');
-		importScripts('/lib/js/node_modules/whatwg-fetch/fetch.js');
-		importScripts('/lib/js/node_modules/firebase/firebase.js');
 
 		importScripts('/js/cyph/base.js');
 
@@ -269,7 +267,7 @@ export class Thread implements IThread {
 				}
 				catch (_) {}
 
-				eventManager.trigger(callbackId, locals);
+				eventManager.trigger(callbackId, locals, true);
 			}
 			else if (e.data === 'close') {
 				this.stop();

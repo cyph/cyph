@@ -4,6 +4,7 @@ import {States} from '../chat/enums';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
+import {P2PWebRTCService} from '../services/p2p-webrtc.service';
 import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
@@ -31,7 +32,7 @@ export class ChatMainComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.fileTransferService.files.changeDetectorRef	= this.changeDetectorRef;
+		this.fileTransferService.changeDetectorRef	= this.changeDetectorRef;
 
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
@@ -72,6 +73,9 @@ export class ChatMainComponent implements OnInit {
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,
+
+		/** @see P2PWebRTCService */
+		public readonly p2pWebRTCService: P2PWebRTCService,
 
 		/** @see SessionService */
 		public readonly sessionService: SessionService,

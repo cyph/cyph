@@ -1,23 +1,27 @@
+import {Injectable} from '@angular/core';
 import {errors} from '../errors';
-import {firebaseApp} from '../firebase-app';
 import {util} from '../util';
+import {DatabaseService} from './database.service';
 
 
 /**
  * Bidirectional network connection that sends and receives data (via Firebase).
  */
-export class Channel {
+@Injectable()
+export class ChannelService {
 	/** @ignore */
 	private channelRef: firebase.database.Reference;
 
 	/** @ignore */
-	private messagesRef: firebase.database.Reference;
+	private handlers: {
+		onClose: () => void;
+		onConnect: () => void;
+		onMessage: (message: string) => void;
+		onOpen: (isAlice: boolean) => void;
+	};
 
 	/** @ignore */
-	private usersRef: firebase.database.Reference;
-
-	/** @ignore */
-	private userId: string;
+	private isAlice: boolean		= false;
 
 	/** @ignore */
 	private isClosed: boolean		= false;
@@ -26,7 +30,13 @@ export class Channel {
 	private isConnected: boolean	= false;
 
 	/** @ignore */
-	private isAlice: boolean		= false;
+	private messagesRef: firebase.database.Reference;
+
+	/** @ignore */
+	private userId: string;
+
+	/** @ignore */
+	private usersRef: firebase.database.Reference;
 
 	/** This kills the channel. */
 	public close () : void {
@@ -40,56 +50,28 @@ export class Channel {
 		this.channelRef.remove().catch(() => {});
 	}
 
-	/** Indicates whether this channel is available for sending and receiving. */
-	public get isAlive () : boolean {
-		return !this.isClosed;
-	}
-
-	/** Sends message through this channel. */
-	public async send (message: string) : Promise<void> {
-		try {
-			await util.retryUntilSuccessful(async () => {
-				if (this.isClosed) {
-					return;
-				}
-
-				await this.messagesRef.push({
-					cyphertext: message,
-					sender: this.userId,
-					timestamp: util.timestamp()
-				});
-			});
-		}
-		catch (err) {
-			errors.log('Failed to send.');
-			throw err;
-		}
-	}
-
 	/**
+	 * Initializes service.
 	 * @param channelName Name of this channel.
 	 * @param handlers Event handlers for this channel.
 	 */
-	constructor (
+	public async init (
 		channelName: string,
-		private handlers: ({
+		handlers: {
 			onClose: () => void;
 			onConnect: () => void;
 			onMessage: (message: string) => void;
 			onOpen: (isAlice: boolean) => void;
-		})
-	) { (async () => {
-		this.channelRef		= await util.retryUntilSuccessful(async () =>
-			(await firebaseApp).database().ref('channels').child(channelName)
-		);
+		}
+	) : Promise<void> {
+		this.handlers		= handlers;
 
-		this.messagesRef	= await util.retryUntilSuccessful(() =>
-			this.channelRef.child('messages')
-		);
+		this.channelRef		=
+			(await this.databaseService.getDatabaseRef('channels')).child(channelName)
+		;
 
-		this.usersRef		= await util.retryUntilSuccessful(() =>
-			this.channelRef.child('users')
-		);
+		this.messagesRef	= this.channelRef.child('messages');
+		this.usersRef		= this.channelRef.child('users');
 
 		const userRef: firebase.database.ThenableReference	=
 			await util.retryUntilSuccessful(() => this.usersRef.push(''))
@@ -144,5 +126,36 @@ export class Channel {
 				}
 			})
 		);
-	})(); }
+	}
+
+	/** Indicates whether this channel is available for sending and receiving. */
+	public get isAlive () : boolean {
+		return !this.isClosed;
+	}
+
+	/** Sends message through this channel. */
+	public async send (message: string) : Promise<void> {
+		try {
+			await util.retryUntilSuccessful(async () => {
+				if (this.isClosed) {
+					return;
+				}
+
+				await this.messagesRef.push({
+					cyphertext: message,
+					sender: this.userId,
+					timestamp: util.timestamp()
+				});
+			});
+		}
+		catch (err) {
+			errors.log('Failed to send.');
+			throw err;
+		}
+	}
+
+	constructor (
+		/** @ignore */
+		private readonly databaseService: DatabaseService
+	) {}
 }

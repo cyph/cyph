@@ -1,4 +1,3 @@
-import {Events, RpcEvents, Users} from '../session/enums';
 import {ISession} from '../session/isession';
 import {ProFeatures} from '../session/profeatures';
 
@@ -15,15 +14,15 @@ export interface ISessionService extends ISession {
 		telehealth: boolean;
 	};
 
-	/** @see Events */
-	readonly events: Events;
+	/** Resolves when this session is connected. */
+	readonly connected: Promise<void>;
 
 	/** @see ProFeatures */
 	readonly proFeatures: ProFeatures;
 
-	/** @see RpcEvents */
-	readonly rpcEvents: RpcEvents;
+	/** Remote username (e.g. "friend" or "alice"). */
+	readonly remoteUsername: Promise<string>;
 
-	/** @see Users */
-	readonly users: Users;
+	/** Sets remote username. */
+	setRemoteUsername: (remoteUsername: string) => void;
 }

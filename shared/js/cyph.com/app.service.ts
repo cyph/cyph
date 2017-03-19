@@ -288,6 +288,7 @@ export class AppService {
 		(async () => {
 			this.urlStateService.onChange(
 				newUrlState => { this.onUrlStateChange(newUrlState); },
+				false,
 				true
 			);
 

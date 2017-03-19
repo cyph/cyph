@@ -1,24 +1,25 @@
 import {sodium} from 'libsodium';
+import {IOneTimeAuth} from './ione-time-auth';
 import * as NativeCrypto from './native-crypto';
 
 
-/** Equivalent to sodium.crypto_onetimeauth. */
-export class OneTimeAuth {
-	/** MAC length. */
-	public readonly bytes: number		=
+/** @inheritDoc */
+export class OneTimeAuth implements IOneTimeAuth {
+	/** @inheritDoc */
+	public readonly bytes: Promise<number>		= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.oneTimeAuth.bytes :
 			sodium.crypto_onetimeauth_BYTES
-	;
+	);
 
-	/** Key length. */
-	public readonly keyBytes: number	=
+	/** @inheritDoc */
+	public readonly keyBytes: Promise<number>	= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.oneTimeAuth.keyBytes :
 			sodium.crypto_onetimeauth_KEYBYTES
-	;
+	);
 
-	/** Signs message. */
+	/** @inheritDoc */
 	public async sign (
 		message: Uint8Array,
 		key: Uint8Array
@@ -35,7 +36,7 @@ export class OneTimeAuth {
 		;
 	}
 
-	/** Verifies MAC. */
+	/** @inheritDoc */
 	public async verify (
 		mac: Uint8Array,
 		message: Uint8Array,

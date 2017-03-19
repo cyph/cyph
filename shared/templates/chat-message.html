@@ -2,11 +2,11 @@
 	class='layout-column flex message-item'
 	[class.mobile]='envService.isMobile'
 	[class.read]='!message.unread'
-	[class.author-app]='message.author === sessionService.users.app'
-	[class.author-me]='message.author === sessionService.users.me'
+	[class.author-app]='message.author === users.app'
+	[class.author-me]='message.author === users.me'
 	[class.author-other]='
-		message.author !== sessionService.users.app &&
-		message.author !== sessionService.users.me
+		message.author !== users.app &&
+		message.author !== users.me
 	'
 	[class.self-destructed]='message.selfDestructTimer && message.selfDestructTimer.isComplete'
 >
@@ -15,7 +15,7 @@
 			<span class='message'>
 				<strong
 					class='message-author'
-					*ngIf='!mobile && message.author === sessionService.users.me'
+					*ngIf='!mobile && message.author === users.me'
 				>
 					{{stringsService.me}}:
 				</strong>
@@ -23,8 +23,8 @@
 					class='message-author'
 					*ngIf='
 						!mobile &&
-						message.author !== sessionService.users.me &&
-						message.author !== sessionService.users.app
+						message.author !== users.me &&
+						message.author !== users.app
 					'
 				>
 					{{message.author}}:
@@ -35,7 +35,7 @@
 				></cyph-markdown>
 			</span>
 			<span class='message-timestamp flex'>
-				<span *ngIf='mobile && message.author === sessionService.users.me'>
+				<span *ngIf='mobile && message.author === users.me'>
 					{{stringsService.me}} &nbsp;&mdash;&nbsp;
 				</span>
 
@@ -44,8 +44,8 @@
 				<span
 					*ngIf='
 						mobile &&
-						message.author !== sessionService.users.me &&
-						message.author !== sessionService.users.app
+						message.author !== users.me &&
+						message.author !== users.app
 					'
 				>
 					&nbsp;&mdash;&nbsp; {{message.author}}

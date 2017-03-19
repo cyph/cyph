@@ -3,16 +3,21 @@ import * as Granim from 'granim';
 import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
 import {States as ChatStates} from '../cyph/chat/enums';
+import {ChannelService} from '../cyph/services/channel.service';
 import {ChatEnvService} from '../cyph/services/chat-env.service';
+import {ChatPotassiumService} from '../cyph/services/chat-potassium.service';
 import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
 import {ConfigService} from '../cyph/services/config.service';
+import {AnonymousCastleService} from '../cyph/services/crypto/anonymous-castle.service';
+import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {EphemeralSessionService} from '../cyph/services/ephemeral-session.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {FileTransferService} from '../cyph/services/file-transfer.service';
+import {P2PWebRTCService} from '../cyph/services/p2p-webrtc.service';
 import {P2PService} from '../cyph/services/p2p.service';
 import {ScrollService} from '../cyph/services/scroll.service';
 import {SessionInitService} from '../cyph/services/session-init.service';
@@ -20,6 +25,7 @@ import {SessionService} from '../cyph/services/session.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
+import {events} from '../cyph/session/enums';
 import {util} from '../cyph/util';
 import {AppService} from './app.service';
 import {States} from './enums';
@@ -31,14 +37,21 @@ import {UrlSessionInitService} from './url-session-init.service';
  */
 @Component({
 	providers: [
+		AnonymousCastleService,
+		ChannelService,
 		ChatService,
 		CyphertextService,
 		FileTransferService,
 		P2PService,
+		P2PWebRTCService,
 		ScrollService,
 		{
 			provide: EnvService,
 			useClass: ChatEnvService
+		},
+		{
+			provide: PotassiumService,
+			useClass: ChatPotassiumService
 		},
 		{
 			provide: SessionService,
@@ -163,16 +176,16 @@ export class EphemeralChatRootComponent implements OnInit {
 		}
 
 
-		this.sessionService.one(this.sessionService.events.abort).then(() => {
+		this.sessionService.one(events.abort).then(() => {
 			self.onbeforeunload		= () => {};
 			this.appService.state	= States.chat;
 		});
 
-		this.sessionService.one(this.sessionService.events.beginChatComplete).then(async () => {
+		this.sessionService.one(events.beginChatComplete).then(async () => {
 			self.onbeforeunload	= () => this.stringsService.disconnectWarning;
 
 			if (this.sessionInitService.callType && this.sessionService.state.isAlice) {
-				this.p2pService.p2p.request(this.sessionInitService.callType);
+				this.p2pWebRTCService.request(this.sessionInitService.callType);
 			}
 
 			if (granim) {
@@ -187,11 +200,11 @@ export class EphemeralChatRootComponent implements OnInit {
 			}
 		});
 
-		this.sessionService.one(this.sessionService.events.beginWaiting).then(() => {
+		this.sessionService.one(events.beginWaiting).then(() => {
 			this.appService.state	= States.waitingForFriend;
 		});
 
-		this.sessionService.one(this.sessionService.events.connect).then(() => {
+		this.sessionService.connected.then(() => {
 			this.appService.state	= States.chat;
 
 			if (this.sessionInitService.callType) {
@@ -205,7 +218,7 @@ export class EphemeralChatRootComponent implements OnInit {
 			}
 		});
 
-		this.sessionService.one(this.sessionService.events.cyphNotFound).then(() => {
+		this.sessionService.one(events.cyphNotFound).then(() => {
 			this.urlStateService.setUrl(this.urlStateService.states.notFound);
 		});
 
@@ -250,6 +263,9 @@ export class EphemeralChatRootComponent implements OnInit {
 
 		/** @ignore */
 		private readonly p2pService: P2PService,
+
+		/** @ignore */
+		private readonly p2pWebRTCService: P2PWebRTCService,
 
 		/** @ignore */
 		private readonly sessionService: SessionService,

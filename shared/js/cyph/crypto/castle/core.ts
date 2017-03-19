@@ -1,6 +1,6 @@
 import {util} from '../../util';
 import {IKeyPairMaybe} from '../ikey-pair-maybe';
-import {Potassium} from '../potassium';
+import {IPotassium} from '../potassium/ipotassium';
 
 
 /**
@@ -14,7 +14,7 @@ export class Core {
 	 * @param secret
 	 */
 	public static async newKeys (
-		potassium: Potassium,
+		potassium: IPotassium,
 		isAlice: boolean,
 		secret: Uint8Array
 	) : Promise<{
@@ -38,13 +38,13 @@ export class Core {
 
 
 	/** @ignore */
-	private readonly lock: {}	= {};
-
-	/** @ignore */
 	private readonly ephemeralKeys: IKeyPairMaybe	= {
 		privateKey: undefined,
 		publicKey: undefined
 	};
+
+	/** @ignore */
+	private readonly lock: {}	= {};
 
 	/** @ignore */
 	private async ratchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
@@ -120,6 +120,10 @@ export class Core {
 	 * @returns Plaintext.
 	 */
 	public async decrypt (cyphertext: Uint8Array) : Promise<DataView> {
+		const ephemeralKeyExchangePublicKeyBytes	=
+			await this.potassium.ephemeralKeyExchange.publicKeyBytes
+		;
+
 		return util.lock(this.lock, async () => {
 			const messageId: Uint8Array	= new Uint8Array(cyphertext.buffer, 0, 8);
 			const encrypted: Uint8Array	= new Uint8Array(cyphertext.buffer, 8);
@@ -155,10 +159,10 @@ export class Core {
 						await this.ratchet(new Uint8Array(
 							decrypted.buffer,
 							startIndex,
-							this.potassium.ephemeralKeyExchange.publicKeyBytes
+							ephemeralKeyExchangePublicKeyBytes
 						));
 
-						startIndex += this.potassium.ephemeralKeyExchange.publicKeyBytes;
+						startIndex += ephemeralKeyExchangePublicKeyBytes;
 					}
 
 					plaintext	= new DataView(decrypted.buffer, startIndex);
@@ -216,7 +220,7 @@ export class Core {
 	 */
 	constructor (
 		/** @ignore */
-		private readonly potassium: Potassium,
+		private readonly potassium: IPotassium,
 
 		/** @ignore */
 		private readonly isAlice: boolean,

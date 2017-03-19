@@ -2,14 +2,15 @@ import {sodium} from 'libsodium';
 import {mceliece} from 'mceliece';
 import {ntru} from 'ntru';
 import {IKeyPair} from '../ikey-pair';
+import {IBox} from './ibox';
 import * as NativeCrypto from './native-crypto';
 import {OneTimeAuth} from './one-time-auth';
 import {potassiumUtil} from './potassium-util';
 import {SecretBox} from './secret-box';
 
 
-/** Equivalent to sodium.crypto_box. */
-export class Box {
+/** @inheritDoc */
+export class Box implements IBox {
 	/** @ignore */
 	private readonly helpers: {
 		keyPair: () => Promise<IKeyPair>;
@@ -86,19 +87,19 @@ export class Box {
 				)
 	};
 
-	/** Private key length. */
-	public readonly privateKeyBytes: number	=
+	/** @inheritDoc */
+	public readonly privateKeyBytes: Promise<number>	= Promise.resolve(
 		mceliece.privateKeyBytes +
 		ntru.privateKeyBytes +
 		this.helpers.privateKeyBytes
-	;
+	);
 
-	/** Public key length. */
-	public readonly publicKeyBytes: number	=
+	/** @inheritDoc */
+	public readonly publicKeyBytes: Promise<number>		= Promise.resolve(
 		mceliece.publicKeyBytes +
 		ntru.publicKeyBytes +
 		this.helpers.publicKeyBytes
-	;
+	);
 
 	/** @ignore */
 	private async publicKeyDecrypt (
@@ -111,6 +112,10 @@ export class Box {
 		innerKeys: Uint8Array;
 		symmetricKey: Uint8Array;
 	}> {
+		const oneTimeAuthBytes		= await this.oneTimeAuth.bytes;
+		const oneTimeAuthKeyBytes	= await this.oneTimeAuth.keyBytes;
+		const secretBoxKeyBytes		= await this.secretBox.keyBytes;
+
 		const encryptedKeys: Uint8Array	= new Uint8Array(
 			keyCyphertext.buffer,
 			keyCyphertext.byteOffset,
@@ -120,7 +125,7 @@ export class Box {
 		const mac: Uint8Array			= new Uint8Array(
 			keyCyphertext.buffer,
 			keyCyphertext.byteOffset + encryptedKeyBytes,
-			this.oneTimeAuth.bytes
+			oneTimeAuthBytes
 		);
 
 		const innerKeys: Uint8Array		= decrypt(
@@ -131,13 +136,13 @@ export class Box {
 		const symmetricKey: Uint8Array	= new Uint8Array(
 			innerKeys.buffer,
 			0,
-			this.secretBox.keyBytes
+			secretBoxKeyBytes
 		);
 
 		const authKey: Uint8Array		= new Uint8Array(
 			innerKeys.buffer,
-			this.secretBox.keyBytes,
-			this.oneTimeAuth.keyBytes
+			secretBoxKeyBytes,
+			oneTimeAuthKeyBytes
 		);
 
 		const isValid: boolean			= await this.oneTimeAuth.verify(
@@ -165,7 +170,10 @@ export class Box {
 		keyCyphertext: Uint8Array;
 		symmetricKey: Uint8Array;
 	}> {
-		if (plaintextBytes < (this.secretBox.keyBytes + this.oneTimeAuth.keyBytes)) {
+		const oneTimeAuthKeyBytes	= await this.oneTimeAuth.keyBytes;
+		const secretBoxKeyBytes		= await this.secretBox.keyBytes;
+
+		if (plaintextBytes < (secretBoxKeyBytes + oneTimeAuthKeyBytes)) {
 			throw new Error(`Not enough space for keys; must increase ${name} parameters.`);
 		}
 
@@ -174,13 +182,13 @@ export class Box {
 		const symmetricKey: Uint8Array	= new Uint8Array(
 			innerKeys.buffer,
 			0,
-			this.secretBox.keyBytes
+			secretBoxKeyBytes
 		);
 
 		const authKey: Uint8Array		= new Uint8Array(
 			innerKeys.buffer,
-			this.secretBox.keyBytes,
-			this.oneTimeAuth.keyBytes
+			secretBoxKeyBytes,
+			oneTimeAuthKeyBytes
 		);
 
 		const encryptedKeys: Uint8Array	= encrypt(
@@ -264,7 +272,7 @@ export class Box {
 		};
 	}
 
-	/** Generates key pair. */
+	/** @inheritDoc */
 	public async keyPair () : Promise<IKeyPair> {
 		const keyPairs	= {
 			classical: await this.helpers.keyPair(),
@@ -289,8 +297,10 @@ export class Box {
 		};
 	}
 
-	/** Decrypts cyphertext. */
+	/** @inheritDoc */
 	public async open (cyphertext: Uint8Array, keyPair: IKeyPair) : Promise<Uint8Array> {
+		const oneTimeAuthBytes		= await this.oneTimeAuth.bytes;
+
 		const privateSubKeys	= this.splitPrivateKey(keyPair.privateKey);
 		const publicSubKeys		= this.splitPublicKey(keyPair.publicKey);
 
@@ -301,7 +311,7 @@ export class Box {
 				cyphertext.buffer,
 				cyphertextIndex,
 				mceliece.cyphertextBytes +
-					this.oneTimeAuth.bytes
+					oneTimeAuthBytes
 			),
 			privateSubKeys.mcEliece,
 			'McEliece',
@@ -311,7 +321,7 @@ export class Box {
 
 		cyphertextIndex +=
 			mceliece.cyphertextBytes +
-			this.oneTimeAuth.bytes
+			oneTimeAuthBytes
 		;
 
 		const ntruData							= await this.publicKeyDecrypt(
@@ -319,7 +329,7 @@ export class Box {
 				cyphertext.buffer,
 				cyphertextIndex,
 				ntru.cyphertextBytes +
-					this.oneTimeAuth.bytes
+					oneTimeAuthBytes
 			),
 			privateSubKeys.ntru,
 			'NTRU',
@@ -329,7 +339,7 @@ export class Box {
 
 		cyphertextIndex +=
 			ntru.cyphertextBytes +
-			this.oneTimeAuth.bytes
+			oneTimeAuthBytes
 		;
 
 		const nonce: Uint8Array					= new Uint8Array(
@@ -372,7 +382,7 @@ export class Box {
 		return plaintext;
 	}
 
-	/** Encrypts plaintext. */
+	/** @inheritDoc */
 	public async seal (plaintext: Uint8Array, publicKey: Uint8Array) : Promise<Uint8Array> {
 		const publicSubKeys	= this.splitPublicKey(publicKey);
 
@@ -390,7 +400,9 @@ export class Box {
 			(p: Uint8Array, pk: Uint8Array) => ntru.encrypt(p, pk)
 		);
 
-		const nonce: Uint8Array					= this.secretBox.newNonce(this.helpers.nonceBytes);
+		const nonce: Uint8Array					= await this.secretBox.newNonce(
+			this.helpers.nonceBytes
+		);
 
 		const classicalCyphertext: Uint8Array	= await this.helpers.seal(
 			plaintext,

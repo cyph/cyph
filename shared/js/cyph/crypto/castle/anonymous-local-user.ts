@@ -1,5 +1,5 @@
 import {IKeyPair} from '../ikey-pair';
-import {Potassium} from '../potassium';
+import {IPotassium} from '../potassium/ipotassium';
 import {ILocalUser} from './ilocal-user';
 import {Transport} from './transport';
 
@@ -22,7 +22,7 @@ export class AnonymousLocalUser implements ILocalUser {
 
 		const sharedSecret	= (await this.potassium.passwordHash.hash(
 			this.sharedSecret,
-			new Uint8Array(this.potassium.passwordHash.saltBytes)
+			new Uint8Array(await this.potassium.passwordHash.saltBytes)
 		)).hash;
 
 		this.transport.send(await this.potassium.secretBox.seal(
@@ -44,7 +44,7 @@ export class AnonymousLocalUser implements ILocalUser {
 
 	constructor (
 		/** @ignore */
-		private readonly potassium: Potassium,
+		private readonly potassium: IPotassium,
 
 		/** @ignore */
 		private readonly transport: Transport,
