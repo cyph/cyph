@@ -30,24 +30,8 @@ if (!HTMLElement.prototype.click) {
 }
 
 $(async () => {
-	/* Support button-links */
-
-	$('button a').each((_: number, elem: HTMLElement) => {
-		const $this: JQuery		= $(elem);
-		const $button: JQuery	= $this.closest('button');
-
-		$this.css('pointer-events', 'none');
-
-		/* Using mouseup instead of click because of Angular Material weirdness */
-		$button.on('mouseup', async () => {
-			await util.sleep(500);
-			elem.click();
-		});
-	});
-
 	if (!env.isLocalEnv && !env.isHomeSite) {
-		/* In WebSigned environments, remove no-longer-necessary
-			'unsafe-inline' from CSP after application loads */
+		/* In WebSigned environments, perform CSP Meta-Hardening */
 		await util.sleep(10000);
 		$(document.head).append(
 			`<meta http-equiv="Content-Security-Policy" content="${env.CSP}" />`

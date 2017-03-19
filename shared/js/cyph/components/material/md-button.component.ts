@@ -13,6 +13,7 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
+import {util} from '../../util';
 
 
 /**
@@ -68,7 +69,29 @@ export class MdButtonComponent
 			/* tslint:disable-next-line:no-reserved-keywords */
 			public readonly type: string;
 
-			constructor () {}
+			/** @ignore */
+			public $onInit () : void {
+				/* Support button-links */
+
+				const $a	= this.$element.find('a');
+
+				if ($a.length < 1) {
+					return;
+				}
+
+				$a.css('pointer-events', 'none');
+
+				/* Using mouseup instead of click because of Angular Material weirdness */
+				this.$element.on('mouseup', async () => {
+					await util.sleep(500);
+					$a[0].click();
+				});
+			}
+
+			constructor (
+				/** @ignore */
+				private readonly $element: JQuery
+			) {}
 		},
 		template: `
 			<md-button
