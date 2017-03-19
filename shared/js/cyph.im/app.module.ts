@@ -65,10 +65,12 @@ import {AccountProfileService} from '../cyph/services/account-profile.service';
 import {AccountUserLookupService} from '../cyph/services/account-user-lookup.service';
 import {AccountService} from '../cyph/services/account.service';
 import {ConfigService} from '../cyph/services/config.service';
+import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {FileService} from '../cyph/services/file.service';
+import {FirebaseDatabaseService} from '../cyph/services/firebase-database.service';
 import {MdDialogService} from '../cyph/services/material/md-dialog.service';
 import {MdToastService} from '../cyph/services/material/md-toast.service';
 import {NotificationService} from '../cyph/services/notification.service';
@@ -169,7 +171,11 @@ import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 		UrlStateService,
 		UtilService,
 		VirtualKeyboardWatcherService,
-		VisibilityWatcherService
+		VisibilityWatcherService,
+		{
+			provide: DatabaseService,
+			useClass: FirebaseDatabaseService
+		}
 	]
 })
 export class AppModule {

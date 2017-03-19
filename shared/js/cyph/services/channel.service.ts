@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {errors} from '../errors';
-import {firebaseApp} from '../firebase-app';
 import {util} from '../util';
+import {DatabaseService} from './database.service';
 
 
 /**
@@ -64,19 +64,14 @@ export class ChannelService {
 			onOpen: (isAlice: boolean) => void;
 		}
 	) : Promise<void> {
-		this.handlers	= handlers;
+		this.handlers		= handlers;
 
-		this.channelRef		= await util.retryUntilSuccessful(async () =>
-			(await firebaseApp).database().ref('channels').child(channelName)
-		);
+		this.channelRef		=
+			(await this.databaseService.getDatabaseRef('channels')).child(channelName)
+		;
 
-		this.messagesRef	= await util.retryUntilSuccessful(() =>
-			this.channelRef.child('messages')
-		);
-
-		this.usersRef		= await util.retryUntilSuccessful(() =>
-			this.channelRef.child('users')
-		);
+		this.messagesRef	= this.channelRef.child('messages');
+		this.usersRef		= this.channelRef.child('users');
 
 		const userRef: firebase.database.ThenableReference	=
 			await util.retryUntilSuccessful(() => this.usersRef.push(''))
@@ -159,5 +154,8 @@ export class ChannelService {
 		}
 	}
 
-	constructor () {}
+	constructor (
+		/** @ignore */
+		private readonly databaseService: DatabaseService
+	) {}
 }
