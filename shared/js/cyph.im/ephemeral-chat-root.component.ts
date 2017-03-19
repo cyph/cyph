@@ -24,6 +24,7 @@ import {SessionService} from '../cyph/services/session.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
+import {events} from '../cyph/session/enums';
 import {util} from '../cyph/util';
 import {AppService} from './app.service';
 import {States} from './enums';
@@ -173,12 +174,12 @@ export class EphemeralChatRootComponent implements OnInit {
 		}
 
 
-		this.sessionService.one(this.sessionService.events.abort).then(() => {
+		this.sessionService.one(events.abort).then(() => {
 			self.onbeforeunload		= () => {};
 			this.appService.state	= States.chat;
 		});
 
-		this.sessionService.one(this.sessionService.events.beginChatComplete).then(async () => {
+		this.sessionService.one(events.beginChatComplete).then(async () => {
 			self.onbeforeunload	= () => this.stringsService.disconnectWarning;
 
 			if (this.sessionInitService.callType && this.sessionService.state.isAlice) {
@@ -197,7 +198,7 @@ export class EphemeralChatRootComponent implements OnInit {
 			}
 		});
 
-		this.sessionService.one(this.sessionService.events.beginWaiting).then(() => {
+		this.sessionService.one(events.beginWaiting).then(() => {
 			this.appService.state	= States.waitingForFriend;
 		});
 
@@ -215,7 +216,7 @@ export class EphemeralChatRootComponent implements OnInit {
 			}
 		});
 
-		this.sessionService.one(this.sessionService.events.cyphNotFound).then(() => {
+		this.sessionService.one(events.cyphNotFound).then(() => {
 			this.urlStateService.setUrl(this.urlStateService.states.notFound);
 		});
 

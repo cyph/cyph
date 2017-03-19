@@ -3,6 +3,7 @@ import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {EnvService} from '../cyph/services/env.service';
 import {SessionService} from '../cyph/services/session.service';
 import {StringsService} from '../cyph/services/strings.service';
+import {events, rpcEvents, users} from '../cyph/session/enums';
 import {IMessage} from '../cyph/session/imessage';
 import {Message} from '../cyph/session/message';
 import {util} from '../cyph/util';
@@ -31,7 +32,7 @@ export class LocalSessionService extends SessionService {
 
 		this.chatData.channelIncoming.complete();
 		this.chatData.channelOutgoing.complete();
-		this.trigger(this.events.closeChat);
+		this.trigger(events.closeChat);
 	}
 
 	/** Initialise service. */
@@ -48,13 +49,13 @@ export class LocalSessionService extends SessionService {
 
 				message.data.author	= this.stringsService.friend;
 
-				if (message.event === this.events.cyphertext) {
-					this.trigger(this.events.cyphertext, {
+				if (message.event === events.cyphertext) {
+					this.trigger(events.cyphertext, {
 						author: message.data.author,
 						cyphertext: message.data.cyphertext
 					});
 				}
-				else if (message.event in this.rpcEvents) {
+				else if (message.event in rpcEvents) {
 					this.trigger(message.event, message.data);
 				}
 			},
@@ -64,7 +65,7 @@ export class LocalSessionService extends SessionService {
 
 		await this.chatData.start;
 
-		this.trigger(this.events.beginChat);
+		this.trigger(events.beginChat);
 	}
 
 	/** @inheritDoc */
@@ -80,16 +81,16 @@ export class LocalSessionService extends SessionService {
 				)
 			);
 
-			this.trigger(this.events.cyphertext, {
+			this.trigger(events.cyphertext, {
 				cyphertext,
-				author: this.users.me
+				author: users.me
 			});
 
-			if (message.event === this.rpcEvents.text) {
-				this.trigger(this.rpcEvents.text, message.data);
+			if (message.event === rpcEvents.text) {
+				this.trigger(rpcEvents.text, message.data);
 			}
 
-			this.chatData.channelOutgoing.next(new Message(this.events.cyphertext, {cyphertext}));
+			this.chatData.channelOutgoing.next(new Message(events.cyphertext, {cyphertext}));
 			this.chatData.channelOutgoing.next(message);
 		}
 	}
