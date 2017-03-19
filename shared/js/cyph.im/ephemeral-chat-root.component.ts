@@ -5,6 +5,7 @@ import * as Konami from 'konami-code.js';
 import {States as ChatStates} from '../cyph/chat/enums';
 import {ChannelService} from '../cyph/services/channel.service';
 import {ChatEnvService} from '../cyph/services/chat-env.service';
+import {ChatPotassiumService} from '../cyph/services/chat-potassium.service';
 import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
 import {ConfigService} from '../cyph/services/config.service';
@@ -40,11 +41,14 @@ import {UrlSessionInitService} from './url-session-init.service';
 		CyphertextService,
 		FileTransferService,
 		P2PService,
-		PotassiumService,
 		ScrollService,
 		{
 			provide: EnvService,
 			useClass: ChatEnvService
+		},
+		{
+			provide: PotassiumService,
+			useClass: ChatPotassiumService
 		},
 		{
 			provide: SessionService,
@@ -197,7 +201,7 @@ export class EphemeralChatRootComponent implements OnInit {
 			this.appService.state	= States.waitingForFriend;
 		});
 
-		this.sessionService.one(this.sessionService.events.connect).then(() => {
+		this.sessionService.connected.then(() => {
 			this.appService.state	= States.chat;
 
 			if (this.sessionInitService.callType) {

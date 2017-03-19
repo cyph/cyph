@@ -26,29 +26,36 @@ export class AnonymousCastleService implements ICastle {
 	private resolvePairwiseSession: (pairwiseSession: PairwiseSession) => void;
 
 	/** Initializes service. */
-	public init (sessionService: SessionService) : void {
+	public async init (
+		potassiumService: PotassiumService,
+		sessionService: SessionService
+	) : Promise<void> {
+		await sessionService.connected;
+
 		const transport			= new Transport(sessionService);
 
 		const localUser			= new AnonymousLocalUser(
-			this.potassiumService,
+			potassiumService,
 			transport,
 			sessionService.state.sharedSecret
 		);
 
 		const remoteUser		= new AnonymousRemoteUser(
-			this.potassiumService,
+			potassiumService,
 			transport,
 			sessionService.state.sharedSecret,
 			sessionService.remoteUsername
 		);
 
 		this.resolvePairwiseSession(new PairwiseSession(
-			this.potassiumService,
+			potassiumService,
 			transport,
 			localUser,
 			remoteUser,
 			sessionService.state.isAlice
 		));
+
+		sessionService.state.sharedSecret	= '';
 	}
 
 	/** @inheritDoc */
@@ -64,8 +71,5 @@ export class AnonymousCastleService implements ICastle {
 		return (await this.pairwiseSession).send(plaintext, timestamp);
 	}
 
-	constructor (
-		/** @ignore */
-		private readonly potassiumService: PotassiumService
-	) {}
+	constructor () {}
 }

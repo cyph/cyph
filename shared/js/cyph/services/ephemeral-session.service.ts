@@ -71,10 +71,8 @@ export class EphemeralSessionService extends SessionService {
 
 				this.trigger(events.closeChat);
 			},
-			onConnect: async () => {
+			onConnect: () => {
 				this.trigger(events.connect);
-				this.anonymousCastleService.init(this);
-				this.state.sharedSecret	= '';
 			},
 			onMessage: (message: string) => {
 				this.anonymousCastleService.receive(message);
