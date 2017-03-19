@@ -26,7 +26,15 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class FileTransferService {
 	/** @ignore */
-	private nativeSecretBox: SecretBox;
+	private resolveSecretBox: (secretBox: SecretBox) => void;
+
+	/** @ignore */
+	private readonly secretBox: Promise<SecretBox>	=
+		/* tslint:disable-next-line:promise-must-complete */
+		new Promise<SecretBox>(resolve => {
+			this.resolveSecretBox	= resolve;
+		})
+	;
 
 	/** @ignore Temporary workaround. */
 	public changeDetectorRef: ChangeDetectorRef;
@@ -50,10 +58,7 @@ export class FileTransferService {
 	/** @ignore */
 	private async decryptFile (cyphertext: Uint8Array, key: Uint8Array) : Promise<Uint8Array> {
 		try {
-			return (await (this.nativeSecretBox || this.potassiumService.secretBox).open(
-				cyphertext,
-				key
-			));
+			return (await (await this.secretBox).open(cyphertext, key));
 		}
 		catch (_) {
 			return this.potassiumService.fromString('File decryption failed.');
@@ -67,14 +72,11 @@ export class FileTransferService {
 	}> {
 		try {
 			const key: Uint8Array	= this.potassiumService.randomBytes(
-				await this.nativeSecretBox.keyBytes
+				await (await this.secretBox).keyBytes
 			);
 
 			return {
-				cyphertext: await (this.nativeSecretBox || this.potassiumService.secretBox).seal(
-					plaintext,
-					key
-				),
+				cyphertext: await (await this.secretBox).seal(plaintext, key),
 				key
 			};
 		}
@@ -295,16 +297,25 @@ export class FileTransferService {
 	) { (async () => {
 		const isNativeCryptoSupported	= await this.potassiumService.isNativeCryptoSupported();
 
-		if (isNativeCryptoSupported) {
-			this.sessionService.on(events.beginChat, () => {
-				this.sessionService.send(new Message(rpcEvents.files));
-			});
-		}
+		this.sessionService.one(events.beginChat).then(() => {
+			this.sessionService.send(new Message(rpcEvents.files, {isNativeCryptoSupported}));
+		});
 
 		const downloadAnswers	= new Map<string, boolean>();
 
-		this.sessionService.on(rpcEvents.files, async (transfer: Transfer) => {
-			if (transfer.id) {
+		this.sessionService.one<{isNativeCryptoSupported: boolean}>(rpcEvents.files).then(o => {
+			/* Negotiation on whether or not to use SubtleCrypto */
+			this.resolveSecretBox(
+				isNativeCryptoSupported && o.isNativeCryptoSupported ?
+					new SecretBox(true) :
+					this.potassiumService.secretBox
+			);
+
+			this.sessionService.on(rpcEvents.files, async (transfer: Transfer) => {
+				if (!transfer.id) {
+					return;
+				}
+
 				/* Outgoing file transfer acceptance or rejection */
 				if (transfer.answer === true || transfer.answer === false) {
 					eventManager.trigger('transfer-' + transfer.id, transfer.answer);
@@ -338,11 +349,7 @@ export class FileTransferService {
 						}
 					);
 				}
-			}
-			/* Negotiation on whether or not to use SubtleCrypto */
-			else if (isNativeCryptoSupported && !this.nativeSecretBox) {
-				this.nativeSecretBox	= new SecretBox(true);
-			}
+			});
 		});
 
 		this.sessionService.on(
