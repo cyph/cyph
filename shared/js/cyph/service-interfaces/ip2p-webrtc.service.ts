@@ -1,7 +1,7 @@
 /**
- * Manages P2P sessions.
+ * Manages P2P WebRTC logic.
  */
-export interface IP2P {
+export interface IP2PWebRTCService {
 	/** Description of incoming data. */
 	readonly incomingStream: {audio: boolean; video: boolean};
 
@@ -20,14 +20,13 @@ export interface IP2P {
 	 */
 	accept (callType?: 'audio'|'video') : void;
 
-	/**
-	 * This kills the P2P session.
-	 */
+	/** This kills the P2P session. */
 	close () : void;
 
-	/**
-	 * Sets up a new P2P session.
-	 */
+	/** Initialise service. */
+	init (localVideo: () => JQuery, remoteVideo: () => JQuery) : void;
+
+	/** Sets up a new P2P session. */
 	join () : void;
 
 	/**
