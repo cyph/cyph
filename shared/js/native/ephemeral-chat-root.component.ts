@@ -9,6 +9,7 @@ import {DialogService} from './js/cyph/services/dialog.service';
 import {EnvService} from './js/cyph/services/env.service';
 import {EphemeralSessionService} from './js/cyph/services/ephemeral-session.service';
 import {FileTransferService} from './js/cyph/services/file-transfer.service';
+import {P2PWebRTCService} from './js/cyph/services/p2p-webrtc.service';
 import {P2PService} from './js/cyph/services/p2p.service';
 import {ScrollService} from './js/cyph/services/scroll.service';
 import {SessionInitService} from './js/cyph/services/session-init.service';
@@ -27,6 +28,7 @@ import {UrlSessionInitService} from './url-session-init.service';
 		CyphertextService,
 		FileTransferService,
 		P2PService,
+		P2PWebRTCService,
 		ScrollService,
 		{
 			provide: EnvService,
@@ -79,7 +81,7 @@ export class EphemeralChatRootComponent implements OnInit {
 			self.onbeforeunload	= () => this.stringsService.disconnectWarning;
 
 			if (this.sessionInitService.callType && this.sessionService.state.isAlice) {
-				this.p2pService.p2p.request(this.sessionInitService.callType);
+				this.p2pWebRTCService.request(this.sessionInitService.callType);
 			}
 		});
 
@@ -111,6 +113,9 @@ export class EphemeralChatRootComponent implements OnInit {
 
 		/** @ignore */
 		private readonly p2pService: P2PService,
+
+		/** @ignore */
+		private readonly p2pWebRTCService: P2PWebRTCService,
 
 		/** @ignore */
 		private readonly sessionService: SessionService,

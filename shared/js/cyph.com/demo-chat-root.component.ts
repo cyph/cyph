@@ -3,6 +3,7 @@ import {ChatService} from '../cyph/services/chat.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {EnvService} from '../cyph/services/env.service';
 import {FileTransferService} from '../cyph/services/file-transfer.service';
+import {P2PWebRTCService} from '../cyph/services/p2p-webrtc.service';
 import {P2PService} from '../cyph/services/p2p.service';
 import {ScrollService} from '../cyph/services/scroll.service';
 import {SessionService} from '../cyph/services/session.service';
@@ -22,6 +23,7 @@ import {LocalSessionService} from './local-session.service';
 		FileTransferService,
 		LocalSessionService,
 		P2PService,
+		P2PWebRTCService,
 		ScrollService,
 		{
 			provide: EnvService,

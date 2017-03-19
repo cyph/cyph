@@ -99,7 +99,7 @@
 		[class.active]='chatService.chat.state === states.chat'
 		[class.playing]='p2pService.isActive'
 		[class.sidebar-open]='p2pService.isSidebarOpen'
-		*ngIf='p2pService.p2p'
+		*ngIf='p2pWebRTCService'
 	>
 		<a class='logo' rel='noreferrer' [href]='envService.homeUrl'>
 			<img 
@@ -117,23 +117,23 @@
 		</a>
 		<div
 			class='friend stream'
-			[hidden]='!p2pService.p2p.incomingStream.video || p2pService.p2p.loading'
+			[hidden]='!p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
 		></div>
 		<img
 			class='friend'
-			[hidden]='p2pService.p2p.incomingStream.video || p2pService.p2p.loading'
+			[hidden]='p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
 			src='/img/voicecall.jpg'
 			alt='Voice call'
 		/>
 		<video
 			class='me'
-			[hidden]='!p2pService.p2p.outgoingStream.video'
+			[hidden]='!p2pWebRTCService.outgoingStream.video'
 			autoplay
 			muted
 		></video>
 
 		<md2-progress-circular
-			*ngIf='p2pService.p2p.loading'
+			*ngIf='p2pWebRTCService.loading'
 			mdMode='indeterminate'
 		></md2-progress-circular>
 
@@ -151,20 +151,20 @@
 				childClass='md-fab video-call-button'
 				(childClick)='p2pService.videoCallButton()'
 				[ariaLabel]='
-					!p2pService.p2p.outgoingStream.video ?
+					!p2pWebRTCService.outgoingStream.video ?
 						stringsService.cameraEnable :
 						stringsService.cameraDisable
 				'
 			>
 				<img
 					cyphTranslate
-					[hidden]='p2pService.p2p.outgoingStream.video'
+					[hidden]='p2pWebRTCService.outgoingStream.video'
 					src='/img/icons/video.on.png'
 					alt='Video on'
 				/>
 				<img
 					cyphTranslate
-					[hidden]='!p2pService.p2p.outgoingStream.video'
+					[hidden]='!p2pWebRTCService.outgoingStream.video'
 					src='/img/icons/video.off.png'
 					alt='Video off'
 				/>
@@ -173,20 +173,20 @@
 				childClass='md-fab voice-call-button'
 				(childClick)='p2pService.voiceCallButton()'
 				[ariaLabel]='
-					!p2pService.p2p.outgoingStream.audio ?
+					!p2pWebRTCService.outgoingStream.audio ?
 						stringsService.micEnable :
 						stringsService.micDisable
 				'
 			>
 				<img
 					cyphTranslate
-					[hidden]='p2pService.p2p.outgoingStream.audio'
+					[hidden]='p2pWebRTCService.outgoingStream.audio'
 					src='/img/icons/mic.on.png'
 					alt='Mic on'
 				/>
 				<img
 					cyphTranslate
-					[hidden]='!p2pService.p2p.outgoingStream.audio'
+					[hidden]='!p2pWebRTCService.outgoingStream.audio'
 					src='/img/icons/mic.off.png'
 					alt='Mic off'
 				/>

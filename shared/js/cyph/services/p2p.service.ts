@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
 import {UIEventCategories, UIEvents} from '../p2p/enums';
-import {IP2P} from '../p2p/ip2p';
-import {P2P} from '../p2p/p2p';
 import {events, users} from '../session/enums';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
+import {P2PWebRTCService} from './p2p-webrtc.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
@@ -23,12 +22,9 @@ export class P2PService {
 	/** Indicates whether sidebar is open. */
 	public isSidebarOpen: boolean;
 
-	/** @see IP2P */
-	public p2p: IP2P;
-
 	/** Close active P2P session. */
 	public closeButton () : void {
-		this.p2p.close();
+		this.p2pWebRTCService.close();
 	}
 
 	/** If chat authentication is complete, alert that P2P is disabled. */
@@ -44,14 +40,83 @@ export class P2PService {
 
 	/** Initialise service. */
 	public init (localVideo: () => JQuery, remoteVideo: () => JQuery) : void {
-		this.p2p	= new P2P(
-			this.sessionService,
-			this.sessionService.apiFlags.forceTURN,
-			localVideo,
-			remoteVideo
-		);
+		this.p2pWebRTCService.init(localVideo, remoteVideo);
 
-		this.sessionService.on(
+		if (this.preemptivelyInitiated) {
+			this.p2pWebRTCService.accept();
+		}
+	}
+
+	/** @see P2P.isActive */
+	public get isActive () : boolean {
+		return !!this.p2pWebRTCService && this.p2pWebRTCService.isActive;
+	}
+
+	/** @see P2P.isSupported */
+	public get isSupported () : boolean {
+		return P2PWebRTCService.isSupported;
+	}
+
+	/** Preemptively initiate call, bypassing any prerequisite dialogs and button clicks. */
+	public preemptivelyInitiate () : void {
+		this.preemptivelyInitiated	= true;
+	}
+
+	/** Toggle visibility of sidebar containing chat UI. */
+	public toggleSidebar () : void {
+		this.isSidebarOpen	= !this.isSidebarOpen;
+	}
+
+	/**
+	 * Attempt to toggle outgoing video stream,
+	 * requesting new P2P session if necessary.
+	 */
+	public videoCallButton () : void {
+		if (!this.isEnabled) {
+			return;
+		}
+
+		if (!this.p2pWebRTCService.isActive) {
+			this.p2pWebRTCService.request('video');
+		}
+		else {
+			this.p2pWebRTCService.toggle(undefined, 'video');
+		}
+	}
+
+	/**
+	 * Attempt to toggle outgoing audio stream,
+	 * requesting new P2P session if necessary.
+	 */
+	public voiceCallButton () : void {
+		if (!this.isEnabled) {
+			return;
+		}
+
+		if (!this.p2pWebRTCService.isActive) {
+			this.p2pWebRTCService.request('audio');
+		}
+		else {
+			this.p2pWebRTCService.toggle(undefined, 'audio');
+		}
+	}
+
+	constructor (
+		sessionService: SessionService,
+
+		/** @ignore */
+		private readonly chatService: ChatService,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly p2pWebRTCService: P2PWebRTCService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
+	) {
+		sessionService.on(
 			events.p2pUI,
 			async (e: {
 				args: any[];
@@ -178,77 +243,5 @@ export class P2PService {
 				}
 			}
 		);
-
-		if (this.preemptivelyInitiated) {
-			this.p2p.accept();
-		}
 	}
-
-	/** @see P2P.isActive */
-	public get isActive () : boolean {
-		return !!this.p2p && this.p2p.isActive;
-	}
-
-	/** @see P2P.isSupported */
-	public get isSupported () : boolean {
-		return P2P.isSupported;
-	}
-
-	/** Preemptively initiate call, bypassing any prerequisite dialogs and button clicks. */
-	public preemptivelyInitiate () : void {
-		this.preemptivelyInitiated	= true;
-	}
-
-	/** Toggle visibility of sidebar containing chat UI. */
-	public toggleSidebar () : void {
-		this.isSidebarOpen	= !this.isSidebarOpen;
-	}
-
-	/**
-	 * Attempt to toggle outgoing video stream,
-	 * requesting new P2P session if necessary.
-	 */
-	public videoCallButton () : void {
-		if (!this.isEnabled) {
-			return;
-		}
-
-		if (!this.p2p.isActive) {
-			this.p2p.request('video');
-		}
-		else {
-			this.p2p.toggle(undefined, 'video');
-		}
-	}
-
-	/**
-	 * Attempt to toggle outgoing audio stream,
-	 * requesting new P2P session if necessary.
-	 */
-	public voiceCallButton () : void {
-		if (!this.isEnabled) {
-			return;
-		}
-
-		if (!this.p2p.isActive) {
-			this.p2p.request('audio');
-		}
-		else {
-			this.p2p.toggle(undefined, 'audio');
-		}
-	}
-
-	constructor (
-		/** @ignore */
-		private readonly chatService: ChatService,
-
-		/** @ignore */
-		private readonly dialogService: DialogService,
-
-		/** @ignore */
-		private readonly sessionService: SessionService,
-
-		/** @ignore */
-		private readonly stringsService: StringsService
-	) {}
 }

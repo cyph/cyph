@@ -1,20 +1,22 @@
+import {Injectable} from '@angular/core';
 import * as SimpleWebRTC from 'simplewebrtc';
 import {analytics} from '../analytics';
 import {env} from '../env';
 import {eventManager} from '../event-manager';
+import {UIEventCategories, UIEvents} from '../p2p/enums';
+import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {Command} from '../session/command';
 import {events, rpcEvents} from '../session/enums';
 import {IMutex} from '../session/imutex';
-import {ISession} from '../session/isession';
 import {Message} from '../session/message';
 import {Mutex} from '../session/mutex';
 import {util} from '../util';
-import {UIEventCategories, UIEvents} from './enums';
-import {IP2P} from './ip2p';
+import {SessionService} from './session.service';
 
 
 /** @inheritDoc */
-export class P2P implements IP2P {
+@Injectable()
+export class P2PWebRTCService implements IP2PWebRTCService {
 	/** Constant values used by P2P. */
 	public static readonly constants	= {
 		accept: 'accept',
@@ -84,7 +86,7 @@ export class P2P implements IP2P {
 
 		webRTC: (data: {args: any[]; event: string}) : void => {
 			eventManager.trigger(
-				P2P.constants.webRTC + data.event,
+				P2PWebRTCService.constants.webRTC + data.event,
 				data.args
 			);
 		}
@@ -94,7 +96,29 @@ export class P2P implements IP2P {
 	private isAccepted: boolean;
 
 	/** @ignore */
+	private readonly localVideo: Promise<() => JQuery>	=
+		/* tslint:disable-next-line:promise-must-complete */
+		new Promise<() => JQuery>(resolve => {
+			this.resolveLocalVideo	= resolve;
+		})
+	;
+
+	/** @ignore */
 	private readonly mutex: IMutex;
+
+	/** @ignore */
+	private readonly remoteVideo: Promise<() => JQuery>	=
+		/* tslint:disable-next-line:promise-must-complete */
+		new Promise<() => JQuery>(resolve => {
+			this.resolveRemoteVideo	= resolve;
+		})
+	;
+
+	/** @ignore */
+	private resolveLocalVideo: (secretBox: () => JQuery) => void;
+
+	/** @ignore */
+	private resolveRemoteVideo: (secretBox: () => JQuery) => void;
 
 	/** @ignore */
 	private webRTC: any;
@@ -113,7 +137,7 @@ export class P2P implements IP2P {
 
 	/** @ignore */
 	private receiveCommand (command: Command) : void {
-		if (!P2P.isSupported) {
+		if (!P2PWebRTCService.isSupported) {
 			return;
 		}
 
@@ -128,12 +152,12 @@ export class P2P implements IP2P {
 				500000,
 				this.isAccepted,
 				(ok: boolean) => {
-					this.session.send(
+					this.sessionService.send(
 						new Message(
 							rpcEvents.p2p,
 							new Command(ok ?
-								P2P.constants.accept :
-								P2P.constants.decline
+								P2PWebRTCService.constants.accept :
+								P2PWebRTCService.constants.decline
 							)
 						)
 					);
@@ -184,7 +208,7 @@ export class P2P implements IP2P {
 		event: UIEvents,
 		...args: any[]
 	) : void {
-		this.session.trigger(events.p2pUI, {category, event, args});
+		this.sessionService.trigger(events.p2pUI, {category, event, args});
 	}
 
 	/** @inheritDoc */
@@ -196,14 +220,20 @@ export class P2P implements IP2P {
 
 	/** @inheritDoc */
 	public close () : void {
-		this.session.send(
+		this.sessionService.send(
 			new Message(
 				rpcEvents.p2p,
-				new Command(P2P.constants.kill)
+				new Command(P2PWebRTCService.constants.kill)
 			)
 		);
 
 		this.commands.kill();
+	}
+
+	/** @inheritDoc */
+	public init (localVideo: () => JQuery, remoteVideo: () => JQuery) : void {
+		this.resolveLocalVideo(localVideo);
+		this.resolveRemoteVideo(remoteVideo);
 	}
 
 	/** @inheritDoc */
@@ -230,8 +260,8 @@ export class P2P implements IP2P {
 
 		const events: string[]	= [];
 
-		const $localVideo	= await util.waitForIterable<JQuery>(this.localVideo);
-		const $remoteVideo	= await util.waitForIterable<JQuery>(this.remoteVideo);
+		const $localVideo	= await util.waitForIterable<JQuery>(await this.localVideo);
+		const $remoteVideo	= await util.waitForIterable<JQuery>(await this.remoteVideo);
 
 		const webRTC	= new SimpleWebRTC({
 			adjustPeerVolume: true,
@@ -246,20 +276,20 @@ export class P2P implements IP2P {
 						lastArg(undefined, {clients: {friend: {video: true}}});
 					}
 					else {
-						this.session.send(
+						this.sessionService.send(
 							new Message(
 								rpcEvents.p2p,
 								new Command(
-									P2P.constants.webRTC,
+									P2PWebRTCService.constants.webRTC,
 									{event, args}
 								)
 							)
 						);
 					}
 				},
-				getSessionid: () => this.session.state.cyphId,
+				getSessionid: () => this.sessionService.state.cyphId,
 				on: (event: string, callback: Function) => {
-					const fullEvent: string	= P2P.constants.webRTC + event;
+					const fullEvent: string	= P2PWebRTCService.constants.webRTC + event;
 					events.push(fullEvent);
 
 					eventManager.on(
@@ -291,7 +321,9 @@ export class P2P implements IP2P {
 
 		webRTC.webrtc.config.peerConnectionConfig.iceServers	=
 			JSON.parse(iceServers).
-			filter((o: any) => !this.forceTURN || o.url.indexOf('stun:') !== 0)
+			filter((o: any) =>
+				!this.sessionService.apiFlags.forceTURN || o.url.indexOf('stun:') !== 0
+			)
 		;
 
 		webRTC.connection.on(
@@ -310,7 +342,7 @@ export class P2P implements IP2P {
 		});
 
 		webRTC.on('readyToCall', async () => {
-			webRTC.joinRoom(P2P.constants.webRTC);
+			webRTC.joinRoom(P2PWebRTCService.constants.webRTC);
 
 			/* Possible edge case workaround */
 			if (initialRefresh) {
@@ -339,7 +371,7 @@ export class P2P implements IP2P {
 				}
 
 				try {
-					const lockDetails	= await this.mutex.lock(P2P.constants.requestCall);
+					const lockDetails	= await this.mutex.lock(P2PWebRTCService.constants.requestCall);
 
 					if (!lockDetails.wasFirstOfType) {
 						return;
@@ -347,7 +379,7 @@ export class P2P implements IP2P {
 
 					this.accept(callType);
 
-					this.session.send(
+					this.sessionService.send(
 						new Message(
 							rpcEvents.p2p,
 							new Command(callType)
@@ -408,32 +440,23 @@ export class P2P implements IP2P {
 
 	constructor (
 		/** @ignore */
-		private readonly session: ISession,
-
-		/** @ignore */
-		private readonly forceTURN: boolean,
-
-		/** @ignore */
-		private readonly localVideo: () => JQuery,
-
-		/** @ignore */
-		private readonly remoteVideo: () => JQuery
+		private readonly sessionService: SessionService
 	) {
-		this.mutex	= new Mutex(this.session);
+		this.mutex	= new Mutex(this.sessionService);
 
-		if (P2P.isSupported) {
-			this.session.on(events.beginChat, () => {
-				this.session.send(new Message(rpcEvents.p2p, new Command()));
+		if (P2PWebRTCService.isSupported) {
+			this.sessionService.on(events.beginChat, () => {
+				this.sessionService.send(new Message(rpcEvents.p2p, new Command()));
 			});
 		}
 
-		this.session.on(events.closeChat, () => { this.close(); });
+		this.sessionService.on(events.closeChat, () => { this.close(); });
 
-		this.session.on(rpcEvents.p2p, (command: Command) => {
+		this.sessionService.on(rpcEvents.p2p, (command: Command) => {
 			if (command.method) {
 				this.receiveCommand(command);
 			}
-			else if (P2P.isSupported) {
+			else if (P2PWebRTCService.isSupported) {
 				this.triggerUIEvent(
 					UIEventCategories.base,
 					UIEvents.enable
