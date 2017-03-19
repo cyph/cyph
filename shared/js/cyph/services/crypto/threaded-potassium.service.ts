@@ -23,7 +23,7 @@ import {util} from '../../util';
  * Potassium wrapper that offloads computationally expensive operations to a separate thread.
  */
 @Injectable()
-export class PotassiumService extends PotassiumUtil implements IPotassium {
+export class ThreadedPotassiumService extends PotassiumUtil implements IPotassium {
 	/** @ignore */
 	private readonly eventId: string	= util.generateGuid();
 
