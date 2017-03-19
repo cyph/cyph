@@ -35,7 +35,7 @@ export class Potassium extends PotassiumUtil implements IPotassium {
 	public readonly sign: Sign;
 
 	/** @inheritDoc */
-	public native () : boolean {
+	public async native () : Promise<boolean> {
 		return this.isNative;
 	}
 

@@ -34,24 +34,27 @@ export abstract class SessionService implements ISessionService {
 	protected readonly sendQueue: string[]				= [];
 
 	/** @inheritDoc */
-	public readonly apiFlags	= {
+	public readonly apiFlags							= {
 		forceTURN: false,
 		modestBranding: false,
 		nativeCrypto: false,
 		telehealth: false
 	};
 
+	/** Resolves when this session is connected. */
+	public readonly connected: Promise<void>			= this.one<void>(events.connect);
+
 	/** @inheritDoc */
-	public readonly events: Events					= events;
+	public readonly events: Events						= events;
 
 	/** Remote username (e.g. "friend" or "alice"). */
 	/* tslint:disable-next-line:promise-must-complete */
-	public readonly remoteUsername: Promise<string>	= new Promise<string>(resolve => {
+	public readonly remoteUsername: Promise<string>		= new Promise<string>(resolve => {
 		this.setRemoteUsername	= resolve;
 	});
 
 	/** @inheritDoc */
-	public readonly rpcEvents: RpcEvents			= rpcEvents;
+	public readonly rpcEvents: RpcEvents				= rpcEvents;
 
 	/** Sets remote username. */
 	public setRemoteUsername: (remoteUsername: string) => void;

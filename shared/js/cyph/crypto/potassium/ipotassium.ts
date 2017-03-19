@@ -36,5 +36,5 @@ export interface IPotassium extends PotassiumUtil {
 	readonly sign: ISign;
 
 	/** Indicates whether this Potassium instance is using native crypto. */
-	native () : boolean;
+	native () : Promise<boolean>;
 }

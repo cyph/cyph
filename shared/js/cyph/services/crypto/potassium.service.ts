@@ -28,7 +28,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	private readonly eventId: string	= util.generateGuid();
 
 	/** @ignore */
-	private readonly thread: Thread;
+	private thread: Thread;
 
 	/** @ignore */
 	private readonly threadEvents: ThreadEvents	= new ThreadEvents(this.eventId);
@@ -280,14 +280,14 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	};
 
 	/** @inheritDoc */
-	public native () : boolean {
+	public async native () : Promise<boolean> {
 		return false;
 	}
 
 	constructor () {
 		super();
 
-		this.thread	= new Thread(
+		(async () => { this.thread	= new Thread(
 			/* tslint:disable-next-line:only-arrow-functions */
 			async function (
 				/* tslint:disable-next-line:variable-name */
@@ -296,11 +296,11 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 				ThreadEvents: any,
 				eventManager: EventManager,
 				importScripts: Function,
-				locals: {eventId: string}
+				locals: {eventId: string; isNative: boolean}
 			) : Promise<void> {
 				importScripts('/js/cyph/crypto/potassium/index.js');
 
-				const potassium: IPotassium			= new Potassium();
+				const potassium: IPotassium			= new Potassium(locals.isNative);
 				const threadEvents: ThreadEvents	= new ThreadEvents(locals.eventId);
 
 				const clearAndReturn	= async <T> (o: any, p: Promise<T>) => {
@@ -608,8 +608,9 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 				eventManager.trigger<void>(locals.eventId, undefined, true);
 			},
 			{
-				eventId: this.eventId
+				eventId: this.eventId,
+				isNative: await this.native()
 			}
-		);
+		); })();
 	}
 }
