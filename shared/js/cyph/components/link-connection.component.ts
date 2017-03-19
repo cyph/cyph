@@ -156,7 +156,7 @@ export class LinkConnectionComponent implements OnInit {
 			this.changeDetectorRef
 		);
 
-		this.sessionService.one(this.sessionService.events.connect).then(() => {
+		this.sessionService.connected.then(() => {
 			isWaiting			= false;
 			this.link			= '';
 			this.linkConstant	= '';
