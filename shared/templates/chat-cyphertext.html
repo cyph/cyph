@@ -7,10 +7,10 @@
 				*ngFor='let message of cyphertextService.messages'
 			>
 				<span class='message'>
-					<strong *ngIf='message.author === sessionService.users.me'>
+					<strong *ngIf='message.author === users.me'>
 						{{stringsService.me}}:
 					</strong>
-					<strong *ngIf='message.author !== sessionService.users.me'>
+					<strong *ngIf='message.author !== users.me'>
 						{{message.author}}:
 					</strong>
 					<span class='flex'>{{message.text}}</span>

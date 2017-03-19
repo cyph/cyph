@@ -5,6 +5,7 @@ import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
+import {Users, users} from '../session/enums';
 
 
 /**
@@ -21,6 +22,9 @@ export class ChatMessageComponent implements OnInit {
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean;
+
+	/** @see Users */
+	public readonly users: Users	= users;
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
