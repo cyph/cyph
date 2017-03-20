@@ -240,12 +240,6 @@ compile () {
 		echo 'module.exports = self.angular;' > externals/angular.js
 		echo 'module.exports = self.jQuery;' > externals/jquery.js
 		echo 'module.exports = {sodium: self.sodium};' > externals/libsodium.js
-		echo 'module.exports = {mceliece: self.mceliece};' > externals/mceliece.js
-		echo 'module.exports = {ntru: self.ntru};' > externals/ntru.js
-		echo 'module.exports = {rlwe: self.rlwe};' > externals/rlwe.js
-		echo 'module.exports = {sidh: self.sidh};' > externals/sidh.js
-		echo 'module.exports = {sphincs: self.sphincs};' > externals/sphincs.js
-		echo 'module.exports = {superSphincs: self.superSphincs};' > externals/supersphincs.js
 	fi
 
 	if [ "${watch}" ] ; then
@@ -363,13 +357,7 @@ compile () {
 								externals: {
 									angular: 'self.angular',
 									jquery: 'self.jQuery',
-									libsodium: '{sodium: self.sodium}',
-									mceliece: '{mceliece: self.mceliece}',
-									ntru: '{ntru: self.ntru}',
-									rlwe: '{rlwe: self.rlwe}',
-									sidh: '{sidh: self.sidh}',
-									sphincs: '{sphincs: self.sphincs}',
-									supersphincs: '{superSphincs: self.superSphincs}'
+									libsodium: '{sodium: self.sodium}'
 								},
 							*/
 							output: {
@@ -382,13 +370,7 @@ compile () {
 								alias: {
 									angular: '${PWD}/externals/angular.js',
 									jquery: '${PWD}/externals/jquery.js',
-									libsodium: '${PWD}/externals/libsodium.js',
-									mceliece: '${PWD}/externals/mceliece.js',
-									ntru: '${PWD}/externals/ntru.js',
-									rlwe: '${PWD}/externals/rlwe.js',
-									sidh: '${PWD}/externals/sidh.js',
-									sphincs: '${PWD}/externals/sphincs.js',
-									supersphincs: '${PWD}/externals/supersphincs.js'
+									libsodium: '${PWD}/externals/libsodium.js'
 								}
 							}
 						};
@@ -427,13 +409,7 @@ compile () {
 						externals: {
 							angular: 'self.angular',
 							jquery: 'self.jQuery',
-							libsodium: '{sodium: self.sodium}',
-							mceliece: '{mceliece: self.mceliece}',
-							ntru: '{ntru: self.ntru}',
-							rlwe: '{rlwe: self.rlwe}',
-							sidh: '{sidh: self.sidh}',
-							sphincs: '{sphincs: self.sphincs}',
-							supersphincs: '{superSphincs: self.superSphincs}'
+							libsodium: '{sodium: self.sodium}'
 						},
 					*/
 					output: {
@@ -487,13 +463,7 @@ compile () {
 						alias: {
 							angular: '${PWD}/externals/angular.js',
 							jquery: '${PWD}/externals/jquery.js',
-							libsodium: '${PWD}/externals/libsodium.js',
-							mceliece: '${PWD}/externals/mceliece.js',
-							ntru: '${PWD}/externals/ntru.js',
-							rlwe: '${PWD}/externals/rlwe.js',
-							sidh: '${PWD}/externals/sidh.js',
-							sphincs: '${PWD}/externals/sphincs.js',
-							supersphincs: '${PWD}/externals/supersphincs.js'
+							libsodium: '${PWD}/externals/libsodium.js'
 						}
 					}
 				}, (err, stats) => {$(test "${enablesplit}" && echo "
