@@ -179,13 +179,7 @@ for platform in android ios ; do
 				" ; done)
 				jquery: 'undefined',
 				libsodium: 'self.sodium',
-				mceliece: 'self.mceliece',
-				ntru: 'self.ntru',
-				rlwe: 'self.rlwe',
-				sidh: 'self.sidh',
-				simplewebrtc: '{}',
-				sphincs: 'self.sphincs',
-				supersphincs: 'self.superSphincs'
+				simplewebrtc: '{}'
 			},
 			node: {
 				http: false,

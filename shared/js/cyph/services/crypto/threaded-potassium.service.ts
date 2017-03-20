@@ -2,18 +2,16 @@
 
 import {Injectable} from '@angular/core';
 import {IKeyPair} from '../../crypto/ikey-pair';
-import {
-	IBox,
-	IEphemeralKeyExchange,
-	IHash,
-	IOneTimeAuth,
-	IPasswordHash,
-	IPotassium,
-	ISecretBox,
-	ISign,
-	PotassiumUtil,
-	ThreadEvents
-} from '../../crypto/potassium';
+import {IBox} from '../../crypto/potassium/ibox';
+import {IEphemeralKeyExchange} from '../../crypto/potassium/iephemeral-key-exchange';
+import {IHash} from '../../crypto/potassium/ihash';
+import {IOneTimeAuth} from '../../crypto/potassium/ione-time-auth';
+import {IPasswordHash} from '../../crypto/potassium/ipassword-hash';
+import {IPotassium} from '../../crypto/potassium/ipotassium';
+import {ISecretBox} from '../../crypto/potassium/isecret-box';
+import {ISign} from '../../crypto/potassium/isign';
+import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
+import {ThreadEvents} from '../../crypto/potassium/thread-events';
 import {EventManager, eventManager} from '../../event-manager';
 import {Thread} from '../../thread';
 import {util} from '../../util';
