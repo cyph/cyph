@@ -10,6 +10,7 @@ import {DatabaseService} from './database.service';
  */
 @Injectable()
 export class FirebaseDatabaseService extends DatabaseService {
+	/** @ignore */
 	private app: Promise<firebase.app.App>	= util.retryUntilSuccessful(() =>
 		firebase && (firebase.apps[0] || firebase.initializeApp(env.firebaseConfig))
 	);
