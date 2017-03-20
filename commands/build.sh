@@ -238,7 +238,6 @@ compile () {
 
 		mkdir externals
 		echo 'module.exports = self.angular;' > externals/angular.js
-		echo 'module.exports = self.firebase;' > externals/firebase.js
 		echo 'module.exports = self.jQuery;' > externals/jquery.js
 		echo 'module.exports = {sodium: self.sodium};' > externals/libsodium.js
 		echo 'module.exports = {mceliece: self.mceliece};' > externals/mceliece.js
@@ -363,7 +362,6 @@ compile () {
 							/*
 								externals: {
 									angular: 'self.angular',
-									firebase: 'self.firebase',
 									jquery: 'self.jQuery',
 									libsodium: '{sodium: self.sodium}',
 									mceliece: '{mceliece: self.mceliece}',
@@ -383,7 +381,6 @@ compile () {
 							resolve: {
 								alias: {
 									angular: '${PWD}/externals/angular.js',
-									firebase: '${PWD}/externals/firebase.js',
 									jquery: '${PWD}/externals/jquery.js',
 									libsodium: '${PWD}/externals/libsodium.js',
 									mceliece: '${PWD}/externals/mceliece.js',
@@ -429,7 +426,6 @@ compile () {
 					/*
 						externals: {
 							angular: 'self.angular',
-							firebase: 'self.firebase',
 							jquery: 'self.jQuery',
 							libsodium: '{sodium: self.sodium}',
 							mceliece: '{mceliece: self.mceliece}',
@@ -490,7 +486,6 @@ compile () {
 					resolve: {
 						alias: {
 							angular: '${PWD}/externals/angular.js',
-							firebase: '${PWD}/externals/firebase.js',
 							jquery: '${PWD}/externals/jquery.js',
 							libsodium: '${PWD}/externals/libsodium.js',
 							mceliece: '${PWD}/externals/mceliece.js',

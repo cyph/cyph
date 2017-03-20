@@ -221,12 +221,6 @@ for platform in android ios ; do
 	cp base.js main.${platform}.js
 	echo >> main.${platform}.js
 	cat app/js/preload/global.js >> main.${platform}.js
-	cat >> main.${platform}.js <<- EOM
-		/* Temporary workaround pending APPS-35 */
-		self.firebase	= {
-			apps: [{}]
-		};
-	EOM
 	node -e 'console.log(`
 		self.translations = ${JSON.stringify(
 			child_process.spawnSync("find", [
