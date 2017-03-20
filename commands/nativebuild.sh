@@ -119,7 +119,6 @@ node -e "
 		'app/js/preload/global.ts',
 		'app/js/cyph/base.ts',
 		'app/js/cyph/crypto/potassium/index.ts',
-		'app/js/cyph/session/session.ts',
 		'typings/index.d.ts'
 	];
 
