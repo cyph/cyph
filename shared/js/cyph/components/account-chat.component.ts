@@ -5,10 +5,15 @@ import {AccountChatStringsService} from '../services/account-chat-strings.servic
 import {AccountChatService} from '../services/account-chat.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountSessionService} from '../services/account-session.service';
+import {ChannelService} from '../services/channel.service';
+import {ChatPotassiumService} from '../services/chat-potassium.service';
 import {ChatService} from '../services/chat.service';
+import {AnonymousCastleService} from '../services/crypto/anonymous-castle.service';
+import {PotassiumService} from '../services/crypto/potassium.service';
 import {CyphertextService} from '../services/cyphertext.service';
 import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
+import {P2PWebRTCService} from '../services/p2p-webrtc.service';
 import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
@@ -22,13 +27,20 @@ import {StringsService} from '../services/strings.service';
 	providers: [
 		AccountChatService,
 		AccountSessionService,
+		AnonymousCastleService,
+		ChannelService,
 		CyphertextService,
 		FileTransferService,
 		P2PService,
+		P2PWebRTCService,
 		ScrollService,
 		{
 			provide: ChatService,
 			useExisting: AccountChatService
+		},
+		{
+			provide: PotassiumService,
+			useClass: ChatPotassiumService
 		},
 		{
 			provide: SessionService,
