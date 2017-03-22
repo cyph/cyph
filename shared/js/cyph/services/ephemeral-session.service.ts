@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {env} from '../env';
 import {CastleEvents, events, rpcEvents} from '../session/enums';
 import {IMessage} from '../session/imessage';
@@ -132,7 +133,10 @@ export class EphemeralSessionService extends SessionService {
 		this.anonymousCastleService.send(
 			JSON.stringify(messages, (_, v) => {
 				if (v instanceof Uint8Array) {
-					(<any> v).isUint8Array	= true;
+					return {
+						data: potassiumUtil.toBase64(v),
+						isUint8Array: true
+					};
 				}
 
 				return v;
