@@ -4,6 +4,8 @@ import {rpcEvents} from '../session/enums';
 import {IMessage} from '../session/imessage';
 import {util} from '../util';
 import {AccountUserLookupService} from './account-user-lookup.service';
+import {AnalyticsService} from './analytics.service';
+import {ErrorService} from './error.service';
 import {SessionService} from './session.service';
 
 
@@ -76,9 +78,12 @@ export class AccountSessionService extends SessionService {
 	}
 
 	constructor (
+		analyticsService: AnalyticsService,
+		errorService: ErrorService,
+
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService
 	) {
-		super();
+		super(analyticsService, errorService);
 	}
 }

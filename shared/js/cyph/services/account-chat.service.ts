@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {IChatData, States} from '../chat';
 import {users} from '../session/enums';
 import {AccountSessionService} from './account-session.service';
+import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
@@ -59,6 +60,7 @@ export class AccountChatService extends ChatService {
 	}
 
 	constructor (
+		analyticsService: AnalyticsService,
 		dialogService: DialogService,
 		notificationService: NotificationService,
 		scrollService: ScrollService,
@@ -69,6 +71,7 @@ export class AccountChatService extends ChatService {
 		private readonly accountSessionService: AccountSessionService
 	) {
 		super(
+			analyticsService,
 			dialogService,
 			notificationService,
 			scrollService,
