@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {analytics} from '../analytics';
 import {IChatMessage} from '../chat/ichat-message';
 import {events} from '../session/enums';
 import {util} from '../util';
+import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {SessionService} from './session.service';
@@ -74,7 +74,7 @@ export class CyphertextService {
 
 		this.isVisible	= true;
 
-		analytics.sendEvent({
+		this.analyticsService.sendEvent({
 			eventAction: 'show',
 			eventCategory: 'cyphertext',
 			eventValue: 1,
@@ -84,6 +84,9 @@ export class CyphertextService {
 
 	constructor (
 		sessionService: SessionService,
+
+		/** @ignore */
+		private readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
 		private readonly dialogService: DialogService,

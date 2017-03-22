@@ -1,14 +1,14 @@
 import * as $ from 'jquery';
-import {potassiumUtil} from './crypto/potassium/potassium-util';
-import {env} from './env';
-import {util} from './util';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
+import {env} from '../env';
+import {util} from '../util';
 
 
 /**
  * Handles analytics events by calling the Google Analytics SDK in a sandboxed iframe.
  * (https://developers.google.com/analytics/devguides/collection/analyticsjs/events)
  */
-export class Analytics {
+export class AnalyticsService {
 	/** @ignore */
 	private analFrame: HTMLIFrameElement;
 
@@ -136,6 +136,3 @@ export class Analytics {
 		}
 	})(); }
 }
-
-/** @see Analytics */
-export const analytics	= new Analytics();

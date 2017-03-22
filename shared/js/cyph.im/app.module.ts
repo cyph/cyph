@@ -51,10 +51,12 @@ import {NotFoundComponent} from '../cyph/components/not-found.component';
 import {SignupFormComponent} from '../cyph/components/signup-form.component';
 import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive';
 import {TranslateDirective} from '../cyph/directives/translate.directive';
+import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
+import {ErrorService} from '../cyph/services/error.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {FileService} from '../cyph/services/file.service';
 import {FirebaseDatabaseService} from '../cyph/services/firebase-database.service';
@@ -133,9 +135,11 @@ import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 		UpgradeModule
 	],
 	providers: [
+		AnalyticsService,
 		ConfigService,
 		DialogService,
 		EnvService,
+		ErrorService,
 		FaviconService,
 		FileService,
 		MdDialogService,

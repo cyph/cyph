@@ -299,7 +299,7 @@ export class AppService {
 				await util.sleep(500);
 			}
 
-			this.urlStateService.setUrl(newUrlState, true, false, false);
+			this.urlStateService.setUrl(newUrlState, true, false);
 		})();
 
 		(async () => {

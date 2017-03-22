@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {analytics} from '../analytics';
 import {eventManager} from '../event-manager';
 import {util} from '../util';
+import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
 
 
@@ -54,7 +54,7 @@ export class SignupService {
 			return;
 		}
 
-		analytics.sendEvent({
+		this.analyticsService.sendEvent({
 			eventAction: 'new',
 			eventCategory: 'signup',
 			eventValue: 1,
@@ -62,7 +62,7 @@ export class SignupService {
 		});
 
 		if (this.promo) {
-			analytics.sendEvent({
+			this.analyticsService.sendEvent({
 				hitType: 'social',
 				socialAction: 'signup',
 				socialNetwork: 'promo-' + this.promo,
@@ -72,6 +72,9 @@ export class SignupService {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly analyticsService: AnalyticsService,
+
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
