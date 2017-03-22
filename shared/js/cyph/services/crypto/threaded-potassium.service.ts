@@ -301,29 +301,78 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 				const potassium: IPotassium			= new Potassium(locals.isNative);
 				const threadEvents: ThreadEvents	= new ThreadEvents(locals.eventId);
 
-				const clearAndReturn	= async <T> (o: any, p: Promise<T>) => {
-					const output	= await p;
-
-					for (const k of Object.keys(o)) {
-						if (o[k] instanceof Uint8Array) {
-							potassium.clearMemory(o[k]);
+				const clearData	= (
+					input: Uint8Array|undefined|{
+						[s: string]: boolean|number|string|Uint8Array|undefined|{
+							[s: string]: Uint8Array
+						}
+					},
+					output: boolean|string|Uint8Array|undefined|{
+						[s: string]: number|string|Uint8Array|{
+							[s: string]: number|string|Uint8Array
 						}
 					}
+				) => {
+					for (const o of [input, output]) {
+						if (
+							o === undefined ||
+							typeof o === 'boolean' ||
+							typeof o === 'string'
+						) {
+							continue;
+						}
+						else if (o instanceof Uint8Array) {
+							potassium.clearMemory(o);
+							continue;
+						}
 
-					return output;
+						for (const k of Object.keys(o)) {
+							const v	= o[k];
+
+							if (
+								v === undefined ||
+								typeof v === 'boolean' ||
+								typeof v === 'number' ||
+								typeof v === 'string'
+							) {
+								continue;
+							}
+							else if (v instanceof Uint8Array) {
+								potassium.clearMemory(v);
+								continue;
+							}
+
+							for (const k2 of Object.keys(v)) {
+								const v2	= v[k2];
+
+								if (v2 instanceof Uint8Array) {
+									potassium.clearMemory(v2);
+								}
+							}
+						}
+					}
 				};
 
 				/* Box */
 
-				eventManager.rpcOn(threadEvents.box.keyPair, async () =>
-					potassium.box.keyPair()
+				eventManager.rpcOn(
+					threadEvents.box.keyPair,
+					async () =>
+						<Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>>
+						potassium.box.keyPair()
+					,
+					clearData
 				);
 
-				eventManager.rpcOn(threadEvents.box.open, async (o: {
-					cyphertext: Uint8Array;
-					keyPair: IKeyPair;
-				}) =>
-					clearAndReturn(o, potassium.box.open(o.cyphertext, o.keyPair))
+				eventManager.rpcOn(
+					threadEvents.box.open,
+					async (o: {
+						cyphertext: Uint8Array;
+						keyPair: {privateKey: Uint8Array; publicKey: Uint8Array};
+					}) =>
+						potassium.box.open(o.cyphertext, o.keyPair)
+					,
+					clearData
 				);
 
 				eventManager.trigger<number>(
@@ -338,33 +387,47 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 					true
 				);
 
-				eventManager.rpcOn(threadEvents.box.seal, async (o: {
-					plaintext: Uint8Array;
-					publicKey: Uint8Array;
-				}) =>
-					clearAndReturn(o, potassium.box.seal(o.plaintext, o.publicKey))
+				eventManager.rpcOn(
+					threadEvents.box.seal,
+					async (o: {
+						plaintext: Uint8Array;
+						publicKey: Uint8Array;
+					}) =>
+						potassium.box.seal(o.plaintext, o.publicKey)
+					,
+					clearData
 				);
 
 				/* EphemeralKeyExchange */
 
-				eventManager.rpcOn(threadEvents.ephemeralKeyExchange.aliceKeyPair, async () =>
-					potassium.ephemeralKeyExchange.aliceKeyPair()
+				eventManager.rpcOn(
+					threadEvents.ephemeralKeyExchange.aliceKeyPair,
+					async () =>
+						<Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>>
+						potassium.ephemeralKeyExchange.aliceKeyPair()
+					,
+					clearData
 				);
 
-				eventManager.rpcOn(threadEvents.ephemeralKeyExchange.aliceSecret, async (o: {
-					privateKey: Uint8Array;
-					publicKey: Uint8Array;
-				}) =>
-					clearAndReturn(o, potassium.ephemeralKeyExchange.aliceSecret(
-						o.publicKey,
-						o.privateKey
-					))
+				eventManager.rpcOn(
+					threadEvents.ephemeralKeyExchange.aliceSecret,
+					async (o: {
+						privateKey: Uint8Array;
+						publicKey: Uint8Array;
+					}) =>
+						potassium.ephemeralKeyExchange.aliceSecret(o.publicKey, o.privateKey)
+					,
+					clearData
 				);
 
-				eventManager.rpcOn(threadEvents.ephemeralKeyExchange.bobSecret, async (o: {
-					alicePublicKey: Uint8Array;
-				}) =>
-					clearAndReturn(o, potassium.ephemeralKeyExchange.bobSecret(o.alicePublicKey))
+				eventManager.rpcOn(
+					threadEvents.ephemeralKeyExchange.bobSecret,
+					async (o: {
+						alicePublicKey: Uint8Array;
+					}) =>
+						potassium.ephemeralKeyExchange.bobSecret(o.alicePublicKey)
+					,
+					clearData
 				);
 
 				eventManager.trigger<number>(
@@ -393,22 +456,26 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 					true
 				);
 
-				eventManager.rpcOn(threadEvents.hash.deriveKey, async (o: {
-					clearInput?: boolean;
-					input: Uint8Array;
-					outputBytes?: number;
-				}) =>
-					clearAndReturn(o, potassium.hash.deriveKey(
-						o.input,
-						o.outputBytes,
-						o.clearInput
-					))
+				eventManager.rpcOn(
+					threadEvents.hash.deriveKey,
+					async (o: {
+						clearInput?: boolean;
+						input: Uint8Array;
+						outputBytes?: number;
+					}) =>
+						potassium.hash.deriveKey(o.input, o.outputBytes, o.clearInput)
+					,
+					clearData
 				);
 
-				eventManager.rpcOn(threadEvents.hash.hash, async (o: {
-					plaintext: Uint8Array;
-				}) =>
-					clearAndReturn(o, potassium.hash.hash(o.plaintext))
+				eventManager.rpcOn(
+					threadEvents.hash.hash,
+					async (o: {
+						plaintext: Uint8Array;
+					}) =>
+						potassium.hash.hash(o.plaintext)
+					,
+					clearData
 				);
 
 				/* OneTimeAuth */
@@ -425,19 +492,27 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 					true
 				);
 
-				eventManager.rpcOn(threadEvents.oneTimeAuth.sign, async (o: {
-					key: Uint8Array;
-					message: Uint8Array;
-				}) =>
-					clearAndReturn(o, potassium.oneTimeAuth.sign(o.message, o.key))
+				eventManager.rpcOn(
+					threadEvents.oneTimeAuth.sign,
+					async (o: {
+						key: Uint8Array;
+						message: Uint8Array;
+					}) =>
+						potassium.oneTimeAuth.sign(o.message, o.key)
+					,
+					clearData
 				);
 
-				eventManager.rpcOn(threadEvents.oneTimeAuth.verify, async (o: {
-					key: Uint8Array;
-					mac: Uint8Array;
-					message: Uint8Array;
-				}) =>
-					clearAndReturn(o, potassium.oneTimeAuth.verify(o.mac, o.message, o.key))
+				eventManager.rpcOn(
+					threadEvents.oneTimeAuth.verify,
+					async (o: {
+						key: Uint8Array;
+						mac: Uint8Array;
+						message: Uint8Array;
+					}) =>
+						potassium.oneTimeAuth.verify(o.mac, o.message, o.key)
+					,
+					clearData
 				);
 
 				/* PasswordHash */
@@ -448,22 +523,26 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 					true
 				);
 
-				eventManager.rpcOn(threadEvents.passwordHash.hash, async (o: {
-					clearInput?: boolean;
-					memLimit?: number;
-					opsLimit?: number;
-					outputBytes?: number;
-					plaintext: Uint8Array|string;
-					salt?: Uint8Array;
-				}) =>
-					clearAndReturn(o, potassium.passwordHash.hash(
-						o.plaintext,
-						o.salt,
-						o.outputBytes,
-						o.opsLimit,
-						o.memLimit,
-						o.clearInput
-					))
+				eventManager.rpcOn(
+					threadEvents.passwordHash.hash,
+					async (o: {
+						clearInput?: boolean;
+						memLimit?: number;
+						opsLimit?: number;
+						outputBytes?: number;
+						plaintext: Uint8Array|string;
+						salt?: Uint8Array;
+					}) =>
+						potassium.passwordHash.hash(
+							o.plaintext,
+							o.salt,
+							o.outputBytes,
+							o.opsLimit,
+							o.memLimit,
+							o.clearInput
+						)
+					,
+					clearData
 				);
 
 				eventManager.trigger<number>(
@@ -490,10 +569,14 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 					true
 				);
 
-				eventManager.rpcOn(threadEvents.passwordHash.parseMetadata, async (o: {
-					metadata: Uint8Array;
-				}) =>
-					clearAndReturn(o, potassium.passwordHash.parseMetadata(o.metadata))
+				eventManager.rpcOn(
+					threadEvents.passwordHash.parseMetadata,
+					async (o: {
+						metadata: Uint8Array;
+					}) =>
+						potassium.passwordHash.parseMetadata(o.metadata)
+					,
+					clearData
 				);
 
 				eventManager.trigger<number>(
@@ -516,34 +599,38 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 					true
 				);
 
-				eventManager.rpcOn(threadEvents.secretBox.newNonce, async (o: {
-					size: number;
-				}) =>
-					clearAndReturn(o, potassium.secretBox.newNonce(o.size))
+				eventManager.rpcOn(
+					threadEvents.secretBox.newNonce,
+					async (o: {
+						size: number;
+					}) =>
+						potassium.secretBox.newNonce(o.size)
+					,
+					clearData
 				);
 
-				eventManager.rpcOn(threadEvents.secretBox.open, async (o: {
-					additionalData?: Uint8Array;
-					cyphertext: Uint8Array;
-					key: Uint8Array;
-				}) =>
-					clearAndReturn(o, potassium.secretBox.open(
-						o.cyphertext,
-						o.key,
-						o.additionalData
-					))
+				eventManager.rpcOn(
+					threadEvents.secretBox.open,
+					async (o: {
+						additionalData?: Uint8Array;
+						cyphertext: Uint8Array;
+						key: Uint8Array;
+					}) =>
+						potassium.secretBox.open(o.cyphertext, o.key, o.additionalData)
+					,
+					clearData
 				);
 
-				eventManager.rpcOn(threadEvents.secretBox.seal, async (o: {
-					additionalData?: Uint8Array;
-					key: Uint8Array;
-					plaintext: Uint8Array;
-				}) =>
-					clearAndReturn(o, potassium.secretBox.seal(
-						o.plaintext,
-						o.key,
-						o.additionalData
-					))
+				eventManager.rpcOn(
+					threadEvents.secretBox.seal,
+					async (o: {
+						additionalData?: Uint8Array;
+						key: Uint8Array;
+						plaintext: Uint8Array;
+					}) =>
+						potassium.secretBox.seal(o.plaintext, o.key, o.additionalData)
+					,
+					clearData
 				);
 
 				/* Sign */
@@ -554,15 +641,24 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 					true
 				);
 
-				eventManager.rpcOn(threadEvents.sign.keyPair, async () =>
-					potassium.sign.keyPair()
+				eventManager.rpcOn(
+					threadEvents.sign.keyPair,
+					async () =>
+						<Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>>
+						potassium.sign.keyPair()
+					,
+					clearData
 				);
 
-				eventManager.rpcOn(threadEvents.sign.open, async (o: {
-					publicKey: Uint8Array;
-					signed: Uint8Array|string;
-				}) =>
-					clearAndReturn(o, potassium.sign.open(o.signed, o.publicKey))
+				eventManager.rpcOn(
+					threadEvents.sign.open,
+					async (o: {
+						publicKey: Uint8Array;
+						signed: Uint8Array|string;
+					}) =>
+						potassium.sign.open(o.signed, o.publicKey)
+					,
+					clearData
 				);
 
 				eventManager.trigger<number>(
@@ -577,30 +673,38 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 					true
 				);
 
-				eventManager.rpcOn(threadEvents.sign.sign, async (o: {
-					message: Uint8Array|string;
-					privateKey: Uint8Array;
-				}) =>
-					clearAndReturn(o, potassium.sign.sign(o.message, o.privateKey))
+				eventManager.rpcOn(
+					threadEvents.sign.sign,
+					async (o: {
+						message: Uint8Array|string;
+						privateKey: Uint8Array;
+					}) =>
+						potassium.sign.sign(o.message, o.privateKey)
+					,
+					clearData
 				);
 
-				eventManager.rpcOn(threadEvents.sign.signDetached, async (o: {
-					message: Uint8Array|string;
-					privateKey: Uint8Array;
-				}) =>
-					clearAndReturn(o, potassium.sign.signDetached(o.message, o.privateKey))
+				eventManager.rpcOn(
+					threadEvents.sign.signDetached,
+					async (o: {
+						message: Uint8Array|string;
+						privateKey: Uint8Array;
+					}) =>
+						potassium.sign.signDetached(o.message, o.privateKey)
+					,
+					clearData
 				);
 
-				eventManager.rpcOn(threadEvents.sign.verifyDetached, async (o: {
-					message: Uint8Array|string;
-					publicKey: Uint8Array;
-					signature: Uint8Array|string;
-				}) =>
-					clearAndReturn(o, potassium.sign.verifyDetached(
-						o.signature,
-						o.message,
-						o.publicKey
-					))
+				eventManager.rpcOn(
+					threadEvents.sign.verifyDetached,
+					async (o: {
+						message: Uint8Array|string;
+						publicKey: Uint8Array;
+						signature: Uint8Array|string;
+					}) =>
+						potassium.sign.verifyDetached(o.signature, o.message, o.publicKey)
+					,
+					clearData
 				);
 
 				eventManager.trigger<void>(locals.eventId, undefined, true);
