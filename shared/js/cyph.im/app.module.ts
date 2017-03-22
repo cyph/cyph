@@ -53,6 +53,8 @@ import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive'
 import {TranslateDirective} from '../cyph/directives/translate.directive';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
+import {PotassiumService} from '../cyph/services/crypto/potassium.service';
+import {ThreadedPotassiumService} from '../cyph/services/crypto/threaded-potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
@@ -155,6 +157,10 @@ import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 		{
 			provide: DatabaseService,
 			useClass: FirebaseDatabaseService
+		},
+		{
+			provide: PotassiumService,
+			useClass: ThreadedPotassiumService
 		}
 	]
 })
