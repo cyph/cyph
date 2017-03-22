@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {eventManager} from '../event-manager';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {CastleEvents, events, rpcEvents} from '../session/enums';
@@ -76,14 +77,8 @@ export abstract class SessionService implements ISessionService {
 					const messages: IMessage[]	= (() => {
 						try {
 							return JSON.parse(e.data.plaintext, (_, v) => {
-								if (v && v.isUint8Array) {
-									const bytes	= new Uint8Array(Object.keys(v).length - 1);
-
-									for (let i = 0 ; i < bytes.length ; ++i) {
-										bytes[i]	= v[i];
-									}
-
-									return bytes;
+								if (v && v.isUint8Array && typeof v.data === 'string') {
+									return potassiumUtil.fromBase64(v.data);
 								}
 
 								return v;
