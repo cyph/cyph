@@ -1,7 +1,6 @@
 import * as $ from 'jquery';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {env} from './env';
-import {eventManager} from './event-manager';
 import {util} from './util';
 
 
@@ -11,10 +10,6 @@ import {util} from './util';
  */
 export class Analytics {
 	/** @ignore */
-	private static readonly baseEventSubmitThreadEvent: string	= 'baseEventSubmitThreadEvent';
-
-
-	/** @ignore */
 	private analFrame: HTMLIFrameElement;
 
 	/** @ignore */
@@ -22,11 +17,6 @@ export class Analytics {
 
 	/** @ignore */
 	private async baseEventSubmit (method: string, args: any[]) : Promise<void> {
-		if (!env.isMainThread) {
-			eventManager.trigger(Analytics.baseEventSubmitThreadEvent, {args, method});
-			return;
-		}
-
 		while (!this.analFrameIsReady) {
 			/* Do nothing if explicitly set to false */
 			if (this.analFrameIsReady === false) {
@@ -67,95 +57,82 @@ export class Analytics {
 		const appName: string		= env.host;
 		const appVersion: string	= env.isWeb ? 'Web' : 'Native';
 
-		if (env.isOnion || env.isLocalEnv) {
+		/* TODO: HANDLE NATIVE */
+		if (env.isOnion || env.isLocalEnv || !env.isWeb) {
 			this.analFrameIsReady	= false;
+			return;
 		}
-		else if (env.isMainThread) {
-			eventManager.on(Analytics.baseEventSubmitThreadEvent, async (o: {
-				args: any[];
-				method: string;
-			}) => this.baseEventSubmit(
-				o.method,
-				o.args
-			));
 
-			if (!env.isWeb) {
-				/* TODO: HANDLE NATIVE */
-				this.analFrameIsReady	= false;
-				return;
-			}
+		try {
+			this.analFrame	= document.createElement('iframe');
 
-			try {
-				this.analFrame	= document.createElement('iframe');
+			(<any> this.analFrame).sandbox	= 'allow-scripts allow-same-origin';
 
-				(<any> this.analFrame).sandbox	= 'allow-scripts allow-same-origin';
-
-				this.analFrame.src	=
-					env.baseUrl +
-					'analsandbox/' +
-					appName +
-					locationData.pathname +
-					locationData.search +
+			this.analFrame.src	=
+				env.baseUrl +
+				'analsandbox/' +
+				appName +
+				locationData.pathname +
+				locationData.search +
+				(
+					/* Set referrer except when it's a Cyph URL or an encoded form
+						of a Cyph URL, particularly to avoid leaking shared secret */
 					(
-						/* Set referrer except when it's a Cyph URL or an encoded form
-							of a Cyph URL, particularly to avoid leaking shared secret */
+						document.referrer &&
+						![document.referrer].
+							concat(
+								(
+									document.referrer.match(/[0-9a-fA-F]+/g) || []
+								).map((s: string) => {
+									try {
+										return potassiumUtil.toString(potassiumUtil.fromHex(s));
+									}
+									catch (e) {
+										return '';
+									}
+								})
+							).concat(
+								(
+									'&' + document.referrer.substring(
+										document.referrer.indexOf('?') + 1
+									)
+								).split(/\&.*?=/g).map((s: string) => {
+									try {
+										return potassiumUtil.toString(potassiumUtil.fromBase64(s));
+									}
+									catch (e) {
+										return '';
+									}
+								})
+							).map((s: string) =>
+								/\/\/.*?\.?cyph\.[a-z]+\/?/.test(s)
+							).
+							reduce((a: boolean, b: boolean) => a || b)
+					) ?
 						(
-							document.referrer &&
-							![document.referrer].
-								concat(
-									(
-										document.referrer.match(/[0-9a-fA-F]+/g) || []
-									).map((s: string) => {
-										try {
-											return potassiumUtil.toString(potassiumUtil.fromHex(s));
-										}
-										catch (e) {
-											return '';
-										}
-									})
-								).concat(
-									(
-										'&' + document.referrer.substring(
-											document.referrer.indexOf('?') + 1
-										)
-									).split(/\&.*?=/g).map((s: string) => {
-										try {
-											return potassiumUtil.toString(potassiumUtil.fromBase64(s));
-										}
-										catch (e) {
-											return '';
-										}
-									})
-								).map((s: string) =>
-									/\/\/.*?\.?cyph\.[a-z]+\/?/.test(s)
-								).
-								reduce((a: boolean, b: boolean) => a || b)
-						) ?
-							(
-								(locationData.search ? '&' : '?') +
-								'ref=' +
-								encodeURIComponent(document.referrer)
-							) :
-							''
-					)
-				;
+							(locationData.search ? '&' : '?') +
+							'ref=' +
+							encodeURIComponent(document.referrer)
+						) :
+						''
+				)
+			;
 
-				this.analFrame.style.display	= 'none';
+			this.analFrame.style.display	= 'none';
 
-				document.body.appendChild(this.analFrame);
+			document.body.appendChild(this.analFrame);
 
-				await new Promise<void>(resolve => $(() => { resolve(); }));
-				await new Promise<void>(resolve =>
-					$(this.analFrame).one('load', () => { resolve(); })
-				);
-				await util.sleep();
+			await new Promise<void>(resolve => $(() => { resolve(); }));
+			await new Promise<void>(resolve =>
+				$(this.analFrame).one('load', () => { resolve(); })
+			);
+			await util.sleep();
 
-				this.analFrameIsReady	= true;
-				this.setEvent({appName, appVersion});
-			}
-			catch (_) {
-				this.analFrameIsReady	= false;
-			}
+			this.analFrameIsReady	= true;
+			this.setEvent({appName, appVersion});
+		}
+		catch (_) {
+			this.analFrameIsReady	= false;
 		}
 	})(); }
 }

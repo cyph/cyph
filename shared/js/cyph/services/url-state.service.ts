@@ -9,9 +9,6 @@ import {EnvService} from './env.service';
 @Injectable()
 export class UrlStateService {
 	/** @ignore */
-	private static readonly setThreadEvent: string		= 'setThreadEvent';
-
-	/** @ignore */
 	private static readonly urlStateChangeEvent: string	= 'urlStateChangeEvent';
 
 
@@ -75,52 +72,36 @@ export class UrlStateService {
 	 * @param path
 	 * @param shouldReplace If true, previous URL is erased from history.
 	 * @param shouldNotTrigger If true, UrlState.onChange is not triggered.
-	 * @param redirectFallback If true, uses redirect-based history polyfill.
 	 */
-	public setUrl (
-		path: string,
-		shouldReplace?: boolean,
-		shouldNotTrigger?: boolean,
-		redirectFallback: boolean = true
-	) : void {
+	public setUrl (path: string, shouldReplace?: boolean, shouldNotTrigger?: boolean) : void {
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
 		}
 
-		if (this.envService.isMainThread) {
-			for (const c of ['/', '#']) {
-				if (path[0] === c) {
-					path	= path.substring(1);
-				}
-			}
-
-			/* Force fragment-based paths when not on home site */
-			if (!this.envService.isHomeSite && path.length > 0) {
-				path	= '#' + path;
-			}
-
-			/* Force absolute paths */
-			path	= '/' + path;
-
-			if (shouldReplace) {
-				history.replaceState({}, '', path);
-			}
-			else {
-				history.pushState({}, '', path);
-			}
-
-			if (!shouldNotTrigger) {
-				this.trigger();
+		for (const c of ['/', '#']) {
+			if (path[0] === c) {
+				path	= path.substring(1);
 			}
 		}
+
+		/* Force fragment-based paths when not on home site */
+		if (!this.envService.isHomeSite && path.length > 0) {
+			path	= '#' + path;
+		}
+
+		/* Force absolute paths */
+		path	= '/' + path;
+
+		if (shouldReplace) {
+			history.replaceState({}, '', path);
+		}
 		else {
-			eventManager.trigger(UrlStateService.setThreadEvent, {
-				path,
-				redirectFallback,
-				shouldNotTrigger,
-				shouldReplace
-			});
+			history.pushState({}, '', path);
+		}
+
+		if (!shouldNotTrigger) {
+			this.trigger();
 		}
 	}
 
@@ -135,20 +116,6 @@ export class UrlStateService {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
-		if (this.envService.isMainThread) {
-			eventManager.on(UrlStateService.setThreadEvent, (o: {
-				path: string;
-				redirectFallback?: boolean;
-				shouldNotTrigger?: boolean;
-				shouldReplace?: boolean;
-			}) => { this.setUrl(
-				o.path,
-				o.shouldReplace,
-				o.shouldNotTrigger,
-				o.redirectFallback
-			); });
-
-			self.onpopstate	= () => { eventManager.trigger(UrlStateService.urlStateChangeEvent); };
-		}
+		self.onpopstate	= () => { eventManager.trigger(UrlStateService.urlStateChangeEvent); };
 	}
 }
