@@ -1,7 +1,7 @@
 import * as $ from 'jquery';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
-import {env} from '../env';
 import {util} from '../util';
+import {EnvService} from './env.service';
 
 
 /**
@@ -13,25 +13,16 @@ export class AnalyticsService {
 	private analFrame: HTMLIFrameElement;
 
 	/** @ignore */
-	private analFrameIsReady: boolean;
+	private readonly ready: Promise<void>;
 
 	/** @ignore */
 	private async baseEventSubmit (method: string, args: any[]) : Promise<void> {
-		while (!this.analFrameIsReady) {
-			/* Do nothing if explicitly set to false */
-			if (this.analFrameIsReady === false) {
-				return;
-			}
-
-			await util.sleep();
-		}
-
-		args.unshift(method);
-
 		try {
+			await this.ready;
+			args.unshift(method);
 			this.analFrame.contentWindow.postMessage(
 				{args: JSON.stringify(args)},
-				env.baseUrl.slice(0, -1)
+				this.envService.baseUrl.slice(0, -1)
 			);
 		}
 		catch (_) {}
@@ -53,23 +44,25 @@ export class AnalyticsService {
 		this.baseEventSubmit('set', args);
 	}
 
-	constructor () { (async () => {
-		const appName: string		= env.host;
-		const appVersion: string	= env.isWeb ? 'Web' : 'Native';
+	constructor (
+		/** @ignore */
+		private readonly envService: EnvService
+	) {
+		this.ready	= Promise.resolve().then(async () => {
+			const appName: string		= this.envService.host;
+			const appVersion: string	= this.envService.isWeb ? 'Web' : 'Native';
 
-		/* TODO: HANDLE NATIVE */
-		if (env.isOnion || env.isLocalEnv || !env.isWeb) {
-			this.analFrameIsReady	= false;
-			return;
-		}
+			/* TODO: HANDLE NATIVE */
+			if (this.envService.isOnion || this.envService.isLocalEnv || !this.envService.isWeb) {
+				throw new Error('Analytics disabled.');
+			}
 
-		try {
 			this.analFrame	= document.createElement('iframe');
 
 			(<any> this.analFrame).sandbox	= 'allow-scripts allow-same-origin';
 
 			this.analFrame.src	=
-				env.baseUrl +
+				this.envService.baseUrl +
 				'analsandbox/' +
 				appName +
 				locationData.pathname +
@@ -128,11 +121,7 @@ export class AnalyticsService {
 			);
 			await util.sleep();
 
-			this.analFrameIsReady	= true;
 			this.setEvent({appName, appVersion});
-		}
-		catch (_) {
-			this.analFrameIsReady	= false;
-		}
-	})(); }
+		});
+	}
 }

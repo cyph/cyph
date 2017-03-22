@@ -1,7 +1,7 @@
 import {Email} from '../email';
-import {env} from '../env';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
+import {EnvService} from './env.service';
 
 
 /**
@@ -66,7 +66,7 @@ export class ErrorService {
 			if (numEmails++ < 50) {
 				util.email(new Email(
 					'errors',
-					`[${env.host}] ${subject}`,
+					`[${this.envService.host}] ${subject}`,
 					exception
 				));
 			}
@@ -79,7 +79,10 @@ export class ErrorService {
 
 	constructor (
 		/** @ignore */
-		private readonly analyticsService: AnalyticsService
+		private readonly analyticsService: AnalyticsService,
+
+		/** @ignore */
+		private readonly envService: EnvService
 	) {
 		self.onerror	= this.log;
 
