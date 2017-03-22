@@ -29,7 +29,9 @@ export class ChatStringsService extends StringsService {
 	) {
 		super();
 
-		const friend	= this.friend;
-		this.sessionService.setRemoteUsername(friend);
+		(async () => {
+			await this.sessionService.connected;
+			this.sessionService.setRemoteUsername(this.friend);
+		})();
 	}
 }
