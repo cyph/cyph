@@ -15,13 +15,17 @@ export class AnalyticsService {
 	private analFrame: HTMLIFrameElement;
 
 	/** @ignore */
-	private readonly ready: Promise<void>;
+	private readonly enabled: Promise<boolean>;
 
 	/** @ignore */
 	private async baseEventSubmit (method: string, args: any[]) : Promise<void> {
+		if (!(await this.enabled)) {
+			return;
+		}
+
+		args.unshift(method);
+
 		try {
-			await this.ready;
-			args.unshift(method);
 			this.analFrame.contentWindow.postMessage(
 				{args: JSON.stringify(args)},
 				this.envService.baseUrl.slice(0, -1)
@@ -50,7 +54,7 @@ export class AnalyticsService {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
-		this.ready	= Promise.resolve().then(async () => {
+		this.enabled	= Promise.resolve().then(async () => {
 			const appName: string		= this.envService.host;
 			const appVersion: string	= this.envService.isWeb ? 'Web' : 'Native';
 
@@ -124,6 +128,10 @@ export class AnalyticsService {
 			await util.sleep();
 
 			this.setEvent({appName, appVersion});
-		});
+
+			return true;
+		}).catch(() =>
+			false
+		);
 	}
 }
