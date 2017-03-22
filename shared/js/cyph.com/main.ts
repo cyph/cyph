@@ -54,7 +54,6 @@ import {MdTextareaComponent} from '../cyph/components/material/md-textarea.compo
 import {MdToolbarComponent} from '../cyph/components/material/md-toolbar.component';
 import {config} from '../cyph/config';
 import {env} from '../cyph/env';
-import '../cyph/errors';
 import {eventManager} from '../cyph/event-manager';
 import {util} from '../cyph/util';
 import '../translations';

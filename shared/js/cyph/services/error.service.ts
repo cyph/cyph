@@ -1,3 +1,4 @@
+import {Injectable} from '@angular/core';
 import {Email} from '../email';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
@@ -7,6 +8,7 @@ import {EnvService} from './env.service';
 /**
  * Handles error logging.
  */
+@Injectable()
 export class ErrorService {
 	/**
 	 * Logs generic error (used by self.onerror).
