@@ -1,3 +1,4 @@
+import {Injectable} from '@angular/core';
 import * as $ from 'jquery';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {util} from '../util';
@@ -8,6 +9,7 @@ import {EnvService} from './env.service';
  * Handles analytics events by calling the Google Analytics SDK in a sandboxed iframe.
  * (https://developers.google.com/analytics/devguides/collection/analyticsjs/events)
  */
+@Injectable()
 export class AnalyticsService {
 	/** @ignore */
 	private analFrame: HTMLIFrameElement;

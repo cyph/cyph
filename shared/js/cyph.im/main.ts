@@ -52,7 +52,6 @@ import {MdSwitchComponent} from '../cyph/components/material/md-switch.component
 import {MdTabsComponent} from '../cyph/components/material/md-tabs.component';
 import {MdTextareaComponent} from '../cyph/components/material/md-textarea.component';
 import {config} from '../cyph/config';
-import '../cyph/errors';
 import {eventManager} from '../cyph/event-manager';
 import '../translations';
 import {AppComponent} from './app.component';
