@@ -1,13 +1,14 @@
 import {Injectable} from '@angular/core';
-import {analytics} from '../analytics';
 import {env} from '../env';
 import {CastleEvents, events, rpcEvents} from '../session/enums';
 import {IMessage} from '../session/imessage';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
+import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';
 import {AnonymousCastleService} from './crypto/anonymous-castle.service';
+import {ErrorService} from './error.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 
@@ -70,7 +71,7 @@ export class EphemeralSessionService extends SessionService {
 				else {
 					this.pingPong();
 
-					analytics.sendEvent({
+					this.analyticsService.sendEvent({
 						eventAction: 'started',
 						eventCategory: 'cyph',
 						eventValue: 1,
@@ -78,7 +79,7 @@ export class EphemeralSessionService extends SessionService {
 					});
 
 					if (this.state.wasInitiatedByAPI) {
-						analytics.sendEvent({
+						this.analyticsService.sendEvent({
 							eventAction: 'started',
 							eventCategory: 'api-initiated-cyph',
 							eventValue: 1,
@@ -141,6 +142,10 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	constructor (
+		analyticsService: AnalyticsService,
+
+		errorService: ErrorService,
+
 		/** @ignore */
 		private readonly anonymousCastleService: AnonymousCastleService,
 
@@ -153,7 +158,7 @@ export class EphemeralSessionService extends SessionService {
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService
 	) {
-		super();
+		super(analyticsService, errorService);
 
 		let id	= this.sessionInitService.id;
 
@@ -167,7 +172,7 @@ export class EphemeralSessionService extends SessionService {
 
 			flag.set(this);
 
-			analytics.sendEvent({
+			this.analyticsService.sendEvent({
 				eventAction: 'used',
 				eventCategory: flag.analEvent,
 				eventValue: 1,

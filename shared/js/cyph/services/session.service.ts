@@ -1,6 +1,4 @@
 import {Injectable} from '@angular/core';
-import {analytics} from '../analytics';
-import {errors} from '../errors';
 import {eventManager} from '../event-manager';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {CastleEvents, events, rpcEvents} from '../session/enums';
@@ -8,6 +6,8 @@ import {IMessage} from '../session/imessage';
 import {Message} from '../session/message';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
+import {AnalyticsService} from './analytics.service';
+import {ErrorService} from './error.service';
 
 
 /**
@@ -61,7 +61,7 @@ export abstract class SessionService implements ISessionService {
 	protected castleHandler (e: {data?: any; event: CastleEvents}) : void {
 		switch (e.event) {
 			case CastleEvents.abort: {
-				errors.logAuthFail();
+				this.errorService.logAuthFail();
 				this.trigger(events.connectFailure);
 				break;
 			}
@@ -137,7 +137,7 @@ export abstract class SessionService implements ISessionService {
 				if (this.pingPongTimeouts++ < 2) {
 					this.lastIncomingMessageTimestamp	= util.timestamp();
 
-					analytics.sendEvent({
+					this.analyticsService.sendEvent({
 						eventAction: 'detected',
 						eventCategory: 'ping-pong-timeout',
 						eventValue: 1,
@@ -168,7 +168,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected sendHandler (_MESSAGE: string) : void {
-		analytics.sendEvent({
+		this.analyticsService.sendEvent({
 			eventAction: 'sent',
 			eventCategory: 'message',
 			eventValue: 1,
@@ -211,5 +211,11 @@ export abstract class SessionService implements ISessionService {
 		eventManager.trigger(event + this.eventId, data);
 	}
 
-	constructor () {}
+	constructor (
+		/** @ignore */
+		protected readonly analyticsService: AnalyticsService,
+
+		/** @ignore */
+		private readonly errorService: ErrorService
+	) {}
 }

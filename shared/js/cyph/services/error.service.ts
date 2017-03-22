@@ -1,13 +1,13 @@
-import {analytics} from './analytics';
-import {Email} from './email';
-import {env} from './env';
-import {util} from './util';
+import {Email} from '../email';
+import {env} from '../env';
+import {util} from '../util';
+import {AnalyticsService} from './analytics.service';
 
 
 /**
- * Handles this.
+ * Handles error logging.
  */
-export class Errors {
+export class ErrorService {
 	/**
 	 * Logs generic error (used by self.onerror).
 	 * @param errorMessage
@@ -71,13 +71,16 @@ export class Errors {
 				));
 			}
 
-			analytics.sendEvent('exception', {
+			this.analyticsService.sendEvent('exception', {
 				exDescription: exception
 			});
 		};
 	}
 
-	constructor () {
+	constructor (
+		/** @ignore */
+		private readonly analyticsService: AnalyticsService
+	) {
 		self.onerror	= this.log;
 
 		try {
@@ -94,6 +97,3 @@ export class Errors {
 		(<any> self).onunhandledrejection	= (e: any) => { self.onerror(e.reason); };
 	}
 }
-
-/** @see Errors */
-export const errors	= new Errors();

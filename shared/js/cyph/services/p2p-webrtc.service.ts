@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import * as SimpleWebRTC from 'simplewebrtc';
-import {analytics} from '../analytics';
 import {env} from '../env';
 import {eventManager} from '../event-manager';
 import {UIEventCategories, UIEvents} from '../p2p/enums';
@@ -11,6 +10,7 @@ import {IMutex} from '../session/imutex';
 import {Message} from '../session/message';
 import {Mutex} from '../session/mutex';
 import {util} from '../util';
+import {AnalyticsService} from './analytics.service';
 import {SessionService} from './session.service';
 
 
@@ -173,7 +173,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 						this.join();
 
-						analytics.sendEvent({
+						this.analyticsService.sendEvent({
 							eventAction: 'start',
 							eventCategory: 'call',
 							eventLabel: command.method,
@@ -439,6 +439,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly analyticsService: AnalyticsService,
+
 		/** @ignore */
 		private readonly sessionService: SessionService
 	) {

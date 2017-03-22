@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {errors} from '../errors';
 import {util} from '../util';
 import {DatabaseService} from './database.service';
+import {ErrorService} from './error.service';
 
 
 /**
- * Bidirectional network connection that sends and receives data (via Firebase).
+ * Bidirectional network connection that sends and receives data.
  */
 @Injectable()
 export class ChannelService {
@@ -149,13 +149,16 @@ export class ChannelService {
 			});
 		}
 		catch (err) {
-			errors.log('Failed to send.');
+			this.errorService.log('Failed to send.');
 			throw err;
 		}
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly databaseService: DatabaseService
+		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly errorService: ErrorService
 	) {}
 }

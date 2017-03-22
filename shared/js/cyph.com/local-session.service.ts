@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
+import {AnalyticsService} from '../cyph/services/analytics.service';
 import {EnvService} from '../cyph/services/env.service';
+import {ErrorService} from '../cyph/services/error.service';
 import {SessionService} from '../cyph/services/session.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {events, rpcEvents, users} from '../cyph/session/enums';
@@ -96,12 +98,16 @@ export class LocalSessionService extends SessionService {
 	}
 
 	constructor (
+		analyticsService: AnalyticsService,
+
+		errorService: ErrorService,
+
 		/** @ignore */
 		private readonly envService: EnvService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
-		super();
+		super(analyticsService, errorService);
 	}
 }

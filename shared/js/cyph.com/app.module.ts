@@ -47,11 +47,13 @@ import {MdToolbarComponent} from '../cyph/components/material/md-toolbar.compone
 import {SignupFormComponent} from '../cyph/components/signup-form.component';
 import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive';
 import {TranslateDirective} from '../cyph/directives/translate.directive';
+import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
+import {ErrorService} from '../cyph/services/error.service';
 import {FileService} from '../cyph/services/file.service';
 import {MdDialogService} from '../cyph/services/material/md-dialog.service';
 import {MdSidenavService} from '../cyph/services/material/md-sidenav.service';
@@ -129,9 +131,11 @@ import {SilentNotificationService} from './silent-notification.service';
 		UpgradeModule
 	],
 	providers: [
+		AnalyticsService,
 		ConfigService,
 		DialogService,
 		EnvService,
+		ErrorService,
 		FileService,
 		MdDialogService,
 		MdSidenavService,

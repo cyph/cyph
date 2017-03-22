@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
-import {analytics} from '../analytics';
 import {IChatData, IChatMessage, States} from '../chat';
 import {events, rpcEvents, users} from '../session/enums';
 import {Message} from '../session/message';
 import {Timer} from '../timer';
 import {util} from '../util';
+import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
 import {ScrollService} from './scroll.service';
@@ -189,7 +189,7 @@ export class ChatService {
 			template: `<md-dialog class='full'><cyph-help></cyph-help></md-dialog>`
 		});
 
-		analytics.sendEvent({
+		this.analyticsService.sendEvent({
 			eventAction: 'show',
 			eventCategory: 'help',
 			eventValue: 1,
@@ -272,6 +272,9 @@ export class ChatService {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly analyticsService: AnalyticsService,
+
 		/** @ignore */
 		protected readonly dialogService: DialogService,
 

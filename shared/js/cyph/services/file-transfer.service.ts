@@ -1,5 +1,4 @@
 import {ChangeDetectorRef, Injectable} from '@angular/core';
-import {analytics} from '../analytics';
 import {config} from '../config';
 import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
@@ -8,6 +7,7 @@ import {Transfer} from '../files/transfer';
 import {events, rpcEvents, users} from '../session/enums';
 import {Message} from '../session/message';
 import {util} from '../util';
+import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
 import {ConfigService} from './config.service';
 import {PotassiumService} from './crypto/potassium.service';
@@ -178,7 +178,7 @@ export class FileTransferService {
 		if (plaintext.length > config.filesConfig.maxSize) {
 			this.triggerUIEvent(UIEvents.tooLarge);
 
-			analytics.sendEvent({
+			this.analyticsService.sendEvent({
 				eventAction: 'toolarge',
 				eventCategory: 'file',
 				eventValue: 1,
@@ -204,7 +204,7 @@ export class FileTransferService {
 		this.transfers.add(transfer);
 		this.triggerChangeDetection();
 
-		analytics.sendEvent({
+		this.analyticsService.sendEvent({
 			eventAction: 'send',
 			eventCategory: 'file',
 			eventValue: 1,
@@ -276,6 +276,9 @@ export class FileTransferService {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly analyticsService: AnalyticsService,
+
 		/** @ignore */
 		private readonly chatService: ChatService,
 
