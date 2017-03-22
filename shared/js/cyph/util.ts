@@ -2,20 +2,12 @@ import {saveAs} from 'file-saver';
 import {config} from './config';
 import {Email} from './email';
 import {env} from './env';
-import {eventManager} from './event-manager';
 
 
 /**
  * Miscellaneous helper functions used throughout the codes.
  */
 export class Util {
-	/** @ignore */
-	private static readonly openUrlThreadEvent: string	= 'openUrlThreadEvent';
-
-	/** @ignore */
-	private static readonly saveFileThreadEvent: string	= 'saveFileThreadEvent';
-
-
 	/** @ignore */
 	private readonly timestampData	= {last: 0, offset: 0, subtime: 0};
 
@@ -217,11 +209,6 @@ export class Util {
 			return;
 		}
 
-		if (!env.isMainThread) {
-			eventManager.trigger(Util.openUrlThreadEvent, url);
-			return;
-		}
-
 		const a: HTMLAnchorElement	= document.createElement('a');
 
 		a.href			= url;
@@ -351,11 +338,6 @@ export class Util {
 
 	/** Opens the specified URL. */
 	public async saveFile (content: Uint8Array, fileName: string) : Promise<void> {
-		if (!env.isMainThread) {
-			eventManager.trigger(Util.saveFileThreadEvent, {content, fileName});
-			return;
-		}
-
 		const onbeforeunload	= self.onbeforeunload;
 		self.onbeforeunload		= () => {};
 
@@ -472,20 +454,6 @@ export class Util {
 			this.timestampData.offset	= serverTimestamp - Date.now();
 		}
 		catch (_) {}
-
-		if (!env.isMainThread) {
-			return;
-		}
-
-		while (!eventManager) {
-			await this.sleep();
-		}
-
-		eventManager.on(Util.openUrlThreadEvent, (url: string) => { this.openUrl(url); });
-
-		eventManager.on(Util.saveFileThreadEvent, (o: {content: Uint8Array; fileName: string}) => {
-			this.saveFile(o.content, o.fileName);
-		});
 	})(); }
 }
 
