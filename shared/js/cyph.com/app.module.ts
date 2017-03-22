@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {BrowserModule, Title} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
@@ -150,6 +150,10 @@ import {SilentNotificationService} from './silent-notification.service';
 		{
 			provide: DatabaseService,
 			useClass: MockDatabaseService
+		},
+		{
+			provide: ErrorHandler,
+			useExisting: ErrorService
 		},
 		{
 			provide: NotificationService,

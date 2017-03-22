@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {BrowserModule, Title} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
@@ -157,6 +157,10 @@ import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 		{
 			provide: DatabaseService,
 			useClass: FirebaseDatabaseService
+		},
+		{
+			provide: ErrorHandler,
+			useExisting: ErrorService
 		},
 		{
 			provide: PotassiumService,

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {ErrorHandler, Injectable} from '@angular/core';
 import {Email} from '../email';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
@@ -9,9 +9,9 @@ import {EnvService} from './env.service';
  * Handles error logging.
  */
 @Injectable()
-export class ErrorService {
+export class ErrorService implements ErrorHandler {
 	/**
-	 * Logs generic error (used by self.onerror).
+	 * Logs generic error.
 	 * @param errorMessage
 	 * @param url
 	 * @param line
@@ -56,14 +56,17 @@ export class ErrorService {
 				${errorMessage}
 
 				URL: ${url}
-				Line: ${line === undefined || isNaN(line) ? '' : line.toString()}
-				Column: ${column === undefined || isNaN(column) ? '' : column.toString()}
+				${line === undefined || isNaN(line) ? '' : `Line: ${line.toString()}`}
+				${column === undefined || isNaN(column) ? '' : `Column: ${column.toString()}`}
 
 				${!errorObject ? '' : <string> errorObject.stack}
 			`.replace(
 				/\/#.*/g,
 				''
 			);
+
+			/* tslint:disable-next-line:no-console */
+			console.error(errorObject || exception);
 
 			if (numEmails++ < 50) {
 				util.email(new Email(
@@ -79,26 +82,22 @@ export class ErrorService {
 		};
 	}
 
+	/** @inheritDoc */
+	public handleError (error: any) : void {
+		this.log(
+			error.message ? error.message : error.toString(),
+			locationData.toString(),
+			undefined,
+			undefined,
+			error
+		);
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
 		private readonly envService: EnvService
-	) {
-		self.onerror	= this.log;
-
-		try {
-			/* tslint:disable-next-line:no-unbound-method */
-			const oldConsoleError	= console.error;
-			/* tslint:disable-next-line:no-unbound-method */
-			console.error			= (errorMessage: string) => {
-				oldConsoleError.call(console, errorMessage);
-				self.onerror(errorMessage);
-			};
-		}
-		catch (_) {}
-
-		(<any> self).onunhandledrejection	= (e: any) => { self.onerror(e.reason); };
-	}
+	) {}
 }
