@@ -10,17 +10,17 @@ mkdir -p ~/lib/js ~/tmplib/js
 cd ~/tmplib/js
 
 yarn add --ignore-platform --ignore-scripts \
-	@angular/common@4.0.0-rc.2 \
-	@angular/compiler@4.0.0-rc.2 \
-	@angular/compiler-cli@4.0.0-rc.2 \
-	@angular/core@4.0.0-rc.2 \
-	@angular/forms@4.0.0-rc.2 \
-	@angular/http@4.0.0-rc.2 \
-	@angular/platform-browser@4.0.0-rc.2 \
-	@angular/platform-browser-dynamic@4.0.0-rc.2 \
-	@angular/platform-server@4.0.0-rc.2 \
-	@angular/router@4.0.0-rc.2 \
-	@angular/upgrade@4.0.0-rc.2 \
+	@angular/common@^4.0.0-rc \
+	@angular/compiler@^4.0.0-rc \
+	@angular/compiler-cli@^4.0.0-rc \
+	@angular/core@^4.0.0-rc \
+	@angular/forms@^4.0.0-rc \
+	@angular/http@^4.0.0-rc \
+	@angular/platform-browser@^4.0.0-rc \
+	@angular/platform-browser-dynamic@^4.0.0-rc \
+	@angular/platform-server@^4.0.0-rc \
+	@angular/router@^4.0.0-rc \
+	@angular/upgrade@^4.0.0-rc \
 	@types/angular \
 	@types/angular-material \
 	@types/braintree-web \
