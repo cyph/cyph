@@ -117,10 +117,8 @@ yarn add --ignore-platform --ignore-scripts \
 
 cp yarn.lock package.json ~/lib/js/
 
-for f in package.json yarn.lock ; do
-	cat node_modules/tslint/${f} | grep -v tslint-test-config-non-relative > ${f}.new
-	mv ${f}.new node_modules/tslint/${f}
-done
+cat node_modules/tslint/package.json | grep -v tslint-test-config-non-relative > package.json.new
+mv package.json.new node_modules/tslint/package.json
 
 node -e '
 	const package	= JSON.parse(fs.readFileSync("node_modules/ts-node/package.json").toString());
