@@ -110,6 +110,7 @@ yarn add --ignore-platform --ignore-scripts \
 	zombie \
 	zone.js \
 	https://github.com/angular/bower-material \
+	https://github.com/buu700/webrtcsupport \
 	https://github.com/morr/jquery.appear \
 || \
 	exit 1
