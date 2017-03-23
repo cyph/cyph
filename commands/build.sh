@@ -323,8 +323,8 @@ compile () {
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
 			mainparent="$(echo "${f}" | sed 's|/main$||')"
-			packdir="js/${mainparent}/pack"
-			packdirfull="${outputDir}/${packdir}"
+			packDir="js/${mainparent}/pack"
+			packDirFull="${outputDir}/${packDir}"
 			records="${rootDir}/${mainparent}/webpack.json"
 			htmlinput="${rootDir}/$(echo "${f}" | sed 's/\/.*//')/index.html"
 			htmloutput="$(echo "${htmlinput}" | sed 's/index\.html$/.index.html/')"
@@ -388,8 +388,8 @@ compile () {
 			if [ "${m}" == 'Main' ] ; then
 				if [ "${minify}" ] ; then
 					enablesplit=true
-					rm -rf $packdirfull 2> /dev/null
-					mkdir $packdirfull
+					rm -rf $packDirFull 2> /dev/null
+					mkdir $packDirFull
 				else
 					cp -f "${htmlinput}" "${htmloutput}"
 				fi
@@ -422,7 +422,7 @@ compile () {
 						$(test "${enablesplit}" && echo "
 							filename: '[name].js',
 							chunkFilename: '[name].js',
-							path: '${packdirfull}'
+							path: '${packDirFull}'
 						")
 					},
 					plugins: [
@@ -478,7 +478,7 @@ compile () {
 					for (const chunk of stats.compilation.entrypoints.main.chunks) {
 						for (const file of chunk.files) {
 							\$('body').append(
-								\`<script defer src='/${packdir}/\${file}'></script>\`
+								\`<script defer src='/${packDir}/\${file}'></script>\`
 							);
 						}
 					}
