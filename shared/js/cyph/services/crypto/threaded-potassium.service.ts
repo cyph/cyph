@@ -102,7 +102,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		) => {
 			const output	= await eventManager.rpcTrigger(
 				this.threadEvents.hash.deriveKey,
-				{clearInput, input, outputBytes},
+				{input, outputBytes},
 				this.threadInit
 			);
 
@@ -158,7 +158,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		) => {
 			const output	= await eventManager.rpcTrigger(
 				this.threadEvents.passwordHash.hash,
-				{clearInput, memLimit, opsLimit, outputBytes, plaintext, salt},
+				{memLimit, opsLimit, outputBytes, plaintext, salt},
 				this.threadInit
 			);
 
@@ -459,11 +459,10 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 				eventManager.rpcOn(
 					threadEvents.hash.deriveKey,
 					async (o: {
-						clearInput?: boolean;
 						input: Uint8Array;
 						outputBytes?: number;
 					}) =>
-						potassium.hash.deriveKey(o.input, o.outputBytes, o.clearInput)
+						potassium.hash.deriveKey(o.input, o.outputBytes)
 					,
 					clearData
 				);
@@ -526,7 +525,6 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 				eventManager.rpcOn(
 					threadEvents.passwordHash.hash,
 					async (o: {
-						clearInput?: boolean;
 						memLimit?: number;
 						opsLimit?: number;
 						outputBytes?: number;
@@ -538,8 +536,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 							o.salt,
 							o.outputBytes,
 							o.opsLimit,
-							o.memLimit,
-							o.clearInput
+							o.memLimit
 						)
 					,
 					clearData
