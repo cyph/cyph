@@ -417,7 +417,7 @@ compile () {
 							filename: '${f}.js.tmp',
 							library: '${m}',
 							libraryTarget: 'var',
-							path: '.'
+							path: '${PWD}'
 						")
 						$(test "${enablesplit}" && echo "
 							filename: '[name].js',
