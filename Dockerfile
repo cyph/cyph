@@ -162,11 +162,13 @@ RUN echo 'Package: yarn\nPin: version 0.19.1-1\nPin-Priority: 1337' | sudo tee -
 
 #CIRCLECI:RUN sudo apt-get -y --force-yes update
 #CIRCLECI:RUN sudo apt-get -y --force-yes upgrade
+#CIRCLECI:RUN mkdir -p ~/getlibs/commands
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/firebase
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/firebase-server
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/ts-node
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/tslint
-#CIRCLECI:RUN echo 'GETLIBS_BASE64' | base64 --decode > ~/getlibs/shared/getlibs.sh
+#CIRCLECI:RUN echo 'GETLIBS_BASE64' | base64 --decode > ~/getlibs/commands/getlibs.sh
+#CIRCLECI:RUN echo 'LIBCLONE_BASE64' | base64 --decode > ~/getlibs/commands/libclone.sh
 #CIRCLECI:RUN echo 'PACKAGE_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/package.json
 #CIRCLECI:RUN touch ~/getlibs/shared/lib/js/yarn.lock
 #CIRCLECI:RUN echo 'FB_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/firebase/package.json
@@ -179,7 +181,7 @@ RUN echo 'Package: yarn\nPin: version 0.19.1-1\nPin-Priority: 1337' | sudo tee -
 #CIRCLECI:RUN touch ~/getlibs/shared/lib/js/module_locks/tslint/yarn.lock
 #CIRCLECI:RUN git clone --depth 1 https://github.com/jedisct1/libsodium.js ~/getlibs/shared/lib/js/libsodium
 #CIRCLECI:RUN chmod -R 777 ~/getlibs
-#CIRCLECI:RUN ~/getlibs/shared/getlibs.sh
+#CIRCLECI:RUN ~/getlibs/commands/getlibs.sh
 #CIRCLECI:RUN echo 'cp /node_modules/core-js/client/shim.js /cyph/shared/lib/js/base.js' >> ~/.bashrc
 
 

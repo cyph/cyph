@@ -26,6 +26,12 @@ dependencies:
                   ).toString("base64")
               ).
               replace(
+                  /LIBCLONE_BASE64/g,
+                  fs.readFileSync(
+                      "commands/getlibs.sh"
+                  ).toString("base64")
+              ).
+              replace(
                   /FB_BASE64/g,
                   fs.readFileSync(
                       "shared/lib/js/module_locks/firebase/package.json"
