@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     environment:
-      - DOCKER_IMAGE: cyph/circleci:${CIRCLE_BRANCH}
+      - DOCKER_IMAGE: cyph/circleci
     docker:
       - image: node:6.9.4
     working_directory: ~/cyph
