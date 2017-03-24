@@ -7,6 +7,7 @@ jobs:
       - image: node:6.9.4
     working_directory: ~/cyph
     steps:
+      - checkout
       - setup_remote_docker
       - run: |
           node -e 'fs.writeFileSync(
