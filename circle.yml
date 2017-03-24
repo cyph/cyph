@@ -13,8 +13,8 @@ jobs:
           name: Install Docker client
           command: |
             set -x
-            wget https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz
-            tar -xz -C /tmp -f /tmp/docker-latest.tgz
+            wget https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz -O /tmp/docker.tgz
+            tar -xz -C /tmp -f /tmp/docker.tgz
             mv /tmp/docker/* /usr/bin
       - run: |
           node -e 'fs.writeFileSync(
