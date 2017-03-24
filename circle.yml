@@ -95,5 +95,5 @@ jobs:
     working_directory: /cyph
     steps:
       - checkout
-      - source ~/.bashrc
-      - /cyph/commands/build.sh
+      - run: source ~/.bashrc
+      - run: /cyph/commands/build.sh
