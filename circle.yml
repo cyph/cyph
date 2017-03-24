@@ -76,7 +76,6 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            set -x
             docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
             docker pull cyph/circleci:${CIRCLE_BRANCH} || true
             docker build --rm=false -t cyph/circleci:${CIRCLE_BRANCH} .
@@ -84,7 +83,6 @@ jobs:
       - deploy:
           name: Test
           command: |
-            set -x
             curl --user "${CIRCLE_API_TOKEN}:" \
                 --data "build_parameters[CIRCLE_JOB]=test" \
                 --data "revision=${CIRCLE_SHA1}" \
