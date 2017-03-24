@@ -10,6 +10,7 @@ mkdir -p ~/lib/js ~/tmplib/js
 cd ~/tmplib/js
 
 yarn add --ignore-platform --ignore-scripts \
+	@angular/animations \
 	@angular/common \
 	@angular/compiler \
 	@angular/compiler-cli \
@@ -34,7 +35,6 @@ yarn add --ignore-platform --ignore-scripts \
 	angular \
 	angular-animate \
 	angular-aria \
-	angularfire2 \
 	animate.css \
 	Base64 \
 	bourbon@4.2.7 \
