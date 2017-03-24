@@ -28,7 +28,7 @@ dependencies:
               replace(
                   /LIBCLONE_BASE64/g,
                   fs.readFileSync(
-                      "commands/getlibs.sh"
+                      "commands/libclone.sh"
                   ).toString("base64")
               ).
               replace(
