@@ -9,6 +9,13 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            wget https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz
+            tar -xz -C /tmp -f /tmp/docker-latest.tgz
+            mv /tmp/docker/* /usr/bin
       - run: |
           node -e 'fs.writeFileSync(
               "Dockerfile",
