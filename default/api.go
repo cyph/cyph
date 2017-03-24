@@ -87,7 +87,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return err.Error(), http.StatusTeapot
 		}
 
-		creditCard, err := bt.CreditCard().Create(&braintree.CreditCard{
+		paymentMethod, err := bt.PaymentMethod().Create(&braintree.PaymentMethodRequest{
 			CustomerId:         customer.Id,
 			PaymentMethodNonce: nonce,
 		})
@@ -96,8 +96,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return err.Error(), http.StatusTeapot
 		}
 
-		tx, err := bt.Subscription().Create(&braintree.Subscription{
-			PaymentMethodToken: creditCard.Token,
+		tx, err := bt.Subscription().Create(&braintree.SubscriptionRequest{
+			PaymentMethodToken: paymentMethod.GetToken(),
 			PlanId:             planId,
 		})
 
@@ -297,29 +297,42 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 
 	proFeatures := map[string]bool{}
 	sessionCountLimit := int64(0)
+	subscriptions := []*braintree.Subscription{}
 
 	for i := range braintreeCustomer.CreditCards.CreditCard {
 		creditCard := braintreeCustomer.CreditCards.CreditCard[i]
 		for j := range creditCard.Subscriptions.Subscription {
-			subscription := creditCard.Subscriptions.Subscription[j]
-			if subscription.Status != braintree.SubscriptionStatusActive {
-				continue
-			}
+			subscriptions = append(subscriptions, creditCard.Subscriptions.Subscription[j])
+		}
+	}
 
-			plan, ok := config.Plans[subscription.PlanId]
-			if !ok {
-				continue
-			}
+	for i := range braintreeCustomer.PayPalAccounts.PayPalAccount {
+		payPalAccount := braintreeCustomer.PayPalAccounts.PayPalAccount[i]
+		for j := range payPalAccount.Subscriptions.Subscription {
+			subscriptions = append(subscriptions, payPalAccount.Subscriptions.Subscription[j])
+		}
+	}
 
-			for feature, isAvailable := range plan.ProFeatures {
-				if isAvailable {
-					proFeatures[feature] = true
-				}
-			}
+	for i := range subscriptions {
+		subscription := subscriptions[i]
 
-			if plan.SessionCountLimit > sessionCountLimit || plan.SessionCountLimit == -1 {
-				sessionCountLimit = plan.SessionCountLimit
+		if subscription.Status != braintree.SubscriptionStatusActive {
+			continue
+		}
+
+		plan, ok := config.Plans[subscription.PlanId]
+		if !ok {
+			continue
+		}
+
+		for feature, isAvailable := range plan.ProFeatures {
+			if isAvailable {
+				proFeatures[feature] = true
 			}
+		}
+
+		if plan.SessionCountLimit > sessionCountLimit || plan.SessionCountLimit == -1 {
+			sessionCountLimit = plan.SessionCountLimit
 		}
 	}
 

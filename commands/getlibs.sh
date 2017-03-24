@@ -219,7 +219,7 @@ cd go
 for arr in \
 	'gorilla/context github.com/gorilla/context' \
 	'gorilla/mux github.com/gorilla/mux' \
-	'lionelbarrow/braintree-go github.com/lionelbarrow/braintree-go' \
+	'lionelbarrow/braintree-go github.com/lionelbarrow/braintree-go master' \
 	'microcosm-cc/bluemonday github.com/microcosm-cc/bluemonday' \
 	'oschwald/geoip2-golang github.com/oschwald/geoip2-golang' \
 	'oschwald/maxminddb-golang github.com/oschwald/maxminddb-golang' \
@@ -228,7 +228,7 @@ for arr in \
 	'golang/tools golang.org/x/tools.tmp'
 do
 	read -ra arr <<< "${arr}"
-	${dir}/commands/libclone.sh https://github.com/${arr[0]}.git ${arr[1]}
+	${dir}/commands/libclone.sh https://github.com/${arr[0]}.git ${arr[1]} ${arr[2]}
 done
 
 mkdir -p golang.org/x/net
