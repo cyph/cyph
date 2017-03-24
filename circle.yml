@@ -8,7 +8,7 @@ jobs:
     working_directory: ~/cyph
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
           exclusive: true
           reusable: true
       - run:
