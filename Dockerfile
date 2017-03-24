@@ -56,10 +56,13 @@ RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
 	pinentry-curses \
 	procps \
 	python \
+	ruby \
 	sudo \
 	yarn \
 	zopfli
 
+RUN gem update
+RUN gem install sass
 
 RUN echo '\
 	source /home/gibson/emsdk_portable/emsdk_env.sh > /dev/null 2>&1; \
@@ -141,13 +144,6 @@ RUN haxelib install hxcpp
 RUN haxelib install hxcs
 RUN haxelib install hxjava
 RUN haxelib install hxnodejs
-
-RUN wget https://keybase.io/mpapis/key.asc -O ~/public.key
-RUN gpg --import ~/public.key
-RUN rm ~/public.key
-RUN curl -sSL https://get.rvm.io | bash -s stable --ruby
-
-RUN bash -c 'source ~/.bashrc ; gem install sass'
 
 RUN wget "$( \
 	curl -sL https://cloud.google.com/appengine/docs/go/download | \
