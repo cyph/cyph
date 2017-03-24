@@ -66,7 +66,6 @@ RUN gem install sass
 
 RUN echo '\
 	source /home/gibson/emsdk_portable/emsdk_env.sh > /dev/null 2>&1; \
-	source /home/gibson/.rvm/scripts/rvm; \
 \
 	export GIT_EDITOR="vim"; \
 \
