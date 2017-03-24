@@ -14,8 +14,7 @@ jobs:
           command: |
             set -x
             wget https://get.docker.com/builds/Linux/x86_64/docker-1.9.1.tgz -O /tmp/docker.tgz
-            tar -xzf /tmp/docker.tgz -C /tmp
-            mv /tmp/docker/* /usr/bin/
+            tar -xzf /tmp/docker.tgz -C /
       - run:
           name: Set up Dockerfile
           command: |
