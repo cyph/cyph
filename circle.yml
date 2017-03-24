@@ -9,6 +9,8 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+          exclusive: true
+          reusable: true
       - run:
           name: Install Docker client
           command: |
