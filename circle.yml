@@ -15,8 +15,9 @@ jobs:
           name: Install Docker client
           command: |
             set -x
-            wget https://get.docker.com/builds/Linux/x86_64/docker-1.9.1.tgz -O /tmp/docker.tgz
-            tar -xzf /tmp/docker.tgz -C /
+            wget https://get.docker.com/builds/Linux/x86_64/docker-17.03.0-ce.tgz -O /tmp/docker.tgz
+            tar -xzf /tmp/docker.tgz -C /tmp
+            mv /tmp/docker/* /usr/bin/
       - run:
           name: Set up Dockerfile
           command: |
