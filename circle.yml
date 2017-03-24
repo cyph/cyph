@@ -79,7 +79,7 @@ jobs:
             set -x
             docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
             docker pull cyph/circleci:${CIRCLE_BRANCH} || true
-            docker build -t cyph/circleci:${CIRCLE_BRANCH} .
+            docker build --rm=false -t cyph/circleci:${CIRCLE_BRANCH} .
             docker push cyph/circleci:${CIRCLE_BRANCH}
       - deploy:
           name: Test
