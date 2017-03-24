@@ -75,7 +75,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker login -e ${DOCKER_EMAIL} -u ${DOCKER_USER} -p ${DOCKER_PASS}
+            docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
             docker pull cyph/circleci:${CIRCLE_BRANCH} || true
             docker build -t cyph/circleci:${CIRCLE_BRANCH} .
             docker push cyph/circleci:${CIRCLE_BRANCH}
