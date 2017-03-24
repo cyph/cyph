@@ -1,69 +1,69 @@
-machine:
-  environment:
-    DOCKER_IMAGE: cyph/circleci:${CIRCLE_BRANCH}
-  node:
-    version: 6.9.4
-  services:
-    - docker
-
-dependencies:
-  override:
-    - >
-      node -e 'fs.writeFileSync(
-          "Dockerfile",
-          fs.readFileSync("Dockerfile").
-              toString().
-              replace(/.*emsdk.*/g, "").
-              replace(/#CIRCLECI:/g, "").
-              replace(
-                  /GETLIBS_BASE64/g,
-                  new Buffer(
-                      fs.readFileSync("commands/getlibs.sh").
-                          toString().
-                          split("\n").
-                          filter(s => s.indexOf("nativePlugins") < 0).
-                          join("\n")
-                  ).toString("base64")
-              ).
-              replace(
-                  /LIBCLONE_BASE64/g,
-                  fs.readFileSync(
-                      "commands/libclone.sh"
-                  ).toString("base64")
-              ).
-              replace(
-                  /FB_BASE64/g,
-                  fs.readFileSync(
-                      "shared/lib/js/module_locks/firebase/package.json"
-                  ).toString("base64")
-              ).
-              replace(
-                  /FBS_BASE64/g,
-                  fs.readFileSync(
-                      "shared/lib/js/module_locks/firebase-server/package.json"
-                  ).toString("base64")
-              ).
-              replace(
-                  /TSN_BASE64/g,
-                  fs.readFileSync(
-                      "shared/lib/js/module_locks/ts-node/package.json"
-                  ).toString("base64")
-              ).
-              replace(
-                  /TSL_BASE64/g,
-                  fs.readFileSync(
-                      "shared/lib/js/module_locks/tslint/package.json"
-                  ).toString("base64")
-              ).
-              replace(
-                  /PACKAGE_BASE64/g,
-                  fs.readFileSync(
-                      "shared/lib/js/package.json"
-                  ).toString("base64")
-              )
-      )'
-    - docker build --rm=false -t ${DOCKER_IMAGE} .
-
-test:
-  override:
-    - docker run -v ${PWD}:/cyph ${DOCKER_IMAGE} bash -c 'source ~/.bashrc ; /cyph/commands/build.sh'
+version: 2
+jobs:
+  build:
+    environment:
+      - DOCKER_IMAGE: cyph/circleci:${CIRCLE_BRANCH}
+    docker:
+      - image: node:6.9.4
+    steps:
+      - setup_remote_docker
+      - run: |
+          node -e 'fs.writeFileSync(
+              "Dockerfile",
+              fs.readFileSync("Dockerfile").
+                  toString().
+                  replace(/.*emsdk.*/g, "").
+                  replace(/#CIRCLECI:/g, "").
+                  replace(
+                      /GETLIBS_BASE64/g,
+                      new Buffer(
+                          fs.readFileSync("commands/getlibs.sh").
+                              toString().
+                              split("\n").
+                              filter(s => s.indexOf("nativePlugins") < 0).
+                              join("\n")
+                      ).toString("base64")
+                  ).
+                  replace(
+                      /LIBCLONE_BASE64/g,
+                      fs.readFileSync(
+                          "commands/libclone.sh"
+                      ).toString("base64")
+                  ).
+                  replace(
+                      /FB_BASE64/g,
+                      fs.readFileSync(
+                          "shared/lib/js/module_locks/firebase/package.json"
+                      ).toString("base64")
+                  ).
+                  replace(
+                      /FBS_BASE64/g,
+                      fs.readFileSync(
+                          "shared/lib/js/module_locks/firebase-server/package.json"
+                      ).toString("base64")
+                  ).
+                  replace(
+                      /TSN_BASE64/g,
+                      fs.readFileSync(
+                          "shared/lib/js/module_locks/ts-node/package.json"
+                      ).toString("base64")
+                  ).
+                  replace(
+                      /TSL_BASE64/g,
+                      fs.readFileSync(
+                          "shared/lib/js/module_locks/tslint/package.json"
+                      ).toString("base64")
+                  ).
+                  replace(
+                      /PACKAGE_BASE64/g,
+                      fs.readFileSync(
+                          "shared/lib/js/package.json"
+                      ).toString("base64")
+                  )
+          )'
+      - run: docker build -t ${DOCKER_IMAGE} .
+      - run: |
+          docker run -v ${PWD}:/cyph ${DOCKER_IMAGE} bash -c '
+              source ~/.bashrc
+              /cyph/commands/build.sh
+          '
