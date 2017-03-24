@@ -78,7 +78,7 @@ jobs:
       - run:
           name: Test
           command: |
-            docker run -v ${PWD}:/cyph ${DOCKER_IMAGE} bash -c '
-                source ~/.bashrc
-                /cyph/commands/build.sh
+            docker run -v ~/cyph:/cyph ${DOCKER_IMAGE} bash -c '
+                source ~/.bashrc;
+                /cyph/commands/build.sh;
             '
