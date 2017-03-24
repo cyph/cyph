@@ -2,11 +2,11 @@
 	"name": "test",
 	"version": "1.0.0",
 	"dependencies": {
-		"selenium-webdriver": "*",
-		"@google-cloud/datastore": "*"
+		"@google-cloud/datastore": "*",
+		"selenium-webdriver": "*"
 	},
 	"engines": {
-		"node": "^6.9.2"
+		"node": "^6.10.1"
 	},
 	"scripts": {
 		"start": "node test.js"
