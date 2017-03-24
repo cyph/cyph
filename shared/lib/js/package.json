@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@angular/animations": "^4.0.0",
     "@angular/common": "^4.0.0",
     "@angular/compiler": "^4.0.0",
     "@angular/compiler-cli": "^4.0.0",
@@ -26,7 +27,6 @@
     "angular-animate": "^1.6.3",
     "angular-aria": "^1.6.3",
     "angular-material": "https://github.com/angular/bower-material",
-    "angularfire2": "^2.0.0-beta.8",
     "animate.css": "^3.5.2",
     "bourbon": "4.2.7",
     "braintree-web": "^2",
@@ -55,7 +55,7 @@
     "jquery.appear": "https://github.com/morr/jquery.appear",
     "konami-code.js": "^1.4.7",
     "lazy": "^1.0.11",
-    "libsodium-wrappers": "^0.5.0",
+    "libsodium-wrappers": "^0.5.1",
     "magnific-popup": "^1.1.0",
     "markdown-it": "^8.3.1",
     "markdown-it-emoji": "^1.3.0",
@@ -67,7 +67,7 @@
     "nanoscroller": "^0.8.7",
     "nativescript": "^2.5.3",
     "nativescript-angular": "^1.4.1",
-    "nativescript-dev-android-snapshot": "^0.0.7",
+    "nativescript-dev-android-snapshot": "^0.0.8",
     "nativescript-dev-typescript": "^0.3.7",
     "nativescript-theme-core": "^1.0.3",
     "node-fetch": "^1.6.3",
