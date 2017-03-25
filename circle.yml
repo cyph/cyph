@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: node:6.10.1
-    working_directory: /cyph
+    working_directory: ~/cyph
     steps:
       - checkout
       - setup_remote_docker:
@@ -13,9 +13,11 @@ jobs:
           name: Install Docker client
           command: |
             set -x
-            wget https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz -O /tmp/docker.tgz
-            tar -xzf /tmp/docker.tgz -C /tmp
-            mv /tmp/docker/* /usr/bin/
+            wget https://get.docker.com/builds/Linux/x86_64/docker-1.9.1.tgz -O /tmp/docker.tgz
+            tar -xzf /tmp/docker.tgz -C /
+            # wget https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz -O /tmp/docker.tgz
+            # tar -xzf /tmp/docker.tgz -C /tmp
+            # mv /tmp/docker/* /usr/bin/
       - run:
           name: Set up Dockerfile
           command: |
@@ -90,7 +92,8 @@ jobs:
   test:
     docker:
       - image: cyph/circleci:latest
-    working_directory: /cyph
+    working_directory: ~/cyph
     steps:
+      - checkout
       - run: source ~/.bashrc
       - run: /cyph/commands/build.sh
