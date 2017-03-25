@@ -182,6 +182,8 @@ RUN echo 'Package: yarn\nPin: version 0.19.1-1\nPin-Priority: 1337' | sudo tee -
 #CIRCLECI:RUN chmod -R 777 ~/getlibs
 #CIRCLECI:RUN ~/getlibs/commands/getlibs.sh
 #CIRCLECI:RUN echo 'cp /node_modules/core-js/client/shim.js /cyph/shared/lib/js/base.js' >> ~/.bashrc
+#CIRCLECI:RUN sudo mkdir -p /cyph/shared/lib/js /cyph/commands
+#CIRCLECI:RUN sudo chmod -R 777 /cyph
 
 
 VOLUME /cyph
