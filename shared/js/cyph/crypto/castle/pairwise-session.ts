@@ -131,40 +131,40 @@ export class PairwiseSession {
 			return;
 		}
 
-		return util.lock(this.lock, async () => {
-			try {
-				const cyphertextBytes: Uint8Array	=
-					this.potassium.fromBase64(cyphertext)
-				;
+		try {
+			const cyphertextBytes: Uint8Array	=
+				this.potassium.fromBase64(cyphertext)
+			;
 
-				if (this.transport.cyphertextIntercepters.length > 0) {
-					const cyphertextIntercepter	= this.transport.cyphertextIntercepters.shift();
+			if (this.transport.cyphertextIntercepters.length > 0) {
+				const cyphertextIntercepter	= this.transport.cyphertextIntercepters.shift();
 
-					if (cyphertextIntercepter) {
-						cyphertextIntercepter(cyphertextBytes);
-						return;
-					}
-				}
-
-				const id: number	= new Float64Array(cyphertextBytes.buffer, 0, 1)[0];
-
-				if (id >= this.incomingMessageId) {
-					this.incomingMessagesMax	= Math.max(
-						this.incomingMessagesMax,
-						id
-					);
-
-					util.getOrSetDefault(
-						this.incomingMessages,
-						id,
-						() => []
-					).push(
-						cyphertextBytes
-					);
+				if (cyphertextIntercepter) {
+					cyphertextIntercepter(cyphertextBytes);
+					return;
 				}
 			}
-			catch (_) {}
 
+			const id: number	= new Float64Array(cyphertextBytes.buffer, 0, 1)[0];
+
+			if (id >= this.incomingMessageId) {
+				this.incomingMessagesMax	= Math.max(
+					this.incomingMessagesMax,
+					id
+				);
+
+				util.getOrSetDefault(
+					this.incomingMessages,
+					id,
+					() => []
+				).push(
+					cyphertextBytes
+				);
+			}
+		}
+		catch (_) {}
+
+		return util.lock(this.lock, async () => {
 			while (this.incomingMessageId <= this.incomingMessagesMax) {
 				const incomingMessages	= this.incomingMessages.get(this.incomingMessageId);
 
