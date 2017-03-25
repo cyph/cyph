@@ -13,11 +13,9 @@ jobs:
           name: Install Docker client
           command: |
             set -x
-            wget https://get.docker.com/builds/Linux/x86_64/docker-1.9.1.tgz -O /tmp/docker.tgz
-            tar -xzf /tmp/docker.tgz -C /
-            # wget https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz -O /tmp/docker.tgz
-            # tar -xzf /tmp/docker.tgz -C /tmp
-            # mv /tmp/docker/* /usr/bin/
+            wget https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz -O /tmp/docker.tgz
+            tar -xzf /tmp/docker.tgz -C /tmp
+            mv /tmp/docker/* /usr/bin/
       - run:
           name: Set up Dockerfile
           command: |
@@ -78,9 +76,9 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker login -e "${DOCKER_EMAIL}" -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
+            docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
             docker pull cyph/circleci:latest || true
-            docker build --rm=false -t cyph/circleci:latest .
+            docker build --rm=false --cache-from cyph/circleci:latest -t cyph/circleci:latest .
             docker push cyph/circleci:latest
       - deploy:
           name: Test
