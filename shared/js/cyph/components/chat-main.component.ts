@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
 import {States} from '../chat/enums';
 import {ChatService} from '../services/chat.service';
@@ -32,8 +32,6 @@ export class ChatMainComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.fileTransferService.changeDetectorRef	= this.changeDetectorRef;
-
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
@@ -53,9 +51,6 @@ export class ChatMainComponent implements OnInit {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly changeDetectorRef: ChangeDetectorRef,
-
 		/** @ignore */
 		private readonly elementRef: ElementRef,
 
