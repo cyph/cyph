@@ -18,6 +18,14 @@ if (env.isMobile) {
 	$(document.body).addClass('mobile');
 }
 
+/* Handle beforeunload */
+
+window.addEventListener('beforeunload', e => {
+	if (beforeUnloadMessage !== undefined) {
+		e.returnValue	= beforeUnloadMessage;
+	}
+});
+
 /* Polyfill */
 
 /* tslint:disable-next-line:no-unbound-method */

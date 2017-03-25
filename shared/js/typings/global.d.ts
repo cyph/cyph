@@ -1,5 +1,11 @@
 /**
  * @global
+ * Message to return for beforeunload event.
+ */
+declare let beforeUnloadMessage: string|undefined;
+
+/**
+ * @global
  * If applicable, identifier of this custom build.
  */
 declare let customBuild: string|undefined;
