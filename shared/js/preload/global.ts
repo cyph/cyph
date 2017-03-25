@@ -32,6 +32,7 @@ for (const k of ['window', 'document']) {
 
 for (const k of [
 	'Audio',
+	'beforeUnloadMessage',
 	'customBuild',
 	'customBuildFavicon',
 	'history',

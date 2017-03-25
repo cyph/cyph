@@ -177,12 +177,12 @@ export class EphemeralChatRootComponent implements OnInit {
 
 
 		this.sessionService.one(events.abort).then(() => {
-			self.onbeforeunload		= () => {};
+			beforeUnloadMessage		= undefined;
 			this.appService.state	= States.chat;
 		});
 
 		this.sessionService.one(events.beginChatComplete).then(async () => {
-			self.onbeforeunload	= () => this.stringsService.disconnectWarning;
+			beforeUnloadMessage	= this.stringsService.disconnectWarning;
 
 			if (this.sessionInitService.callType && this.sessionService.state.isAlice) {
 				this.p2pWebRTCService.request(this.sessionInitService.callType);

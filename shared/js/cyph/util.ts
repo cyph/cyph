@@ -338,8 +338,8 @@ export class Util {
 
 	/** Opens the specified URL. */
 	public async saveFile (content: Uint8Array, fileName: string) : Promise<void> {
-		const onbeforeunload	= self.onbeforeunload;
-		self.onbeforeunload		= () => {};
+		const oldBeforeUnloadMessage	= beforeUnloadMessage;
+		beforeUnloadMessage				= undefined;
 
 		saveAs(
 			new Blob([content], {type: 'application/octet-stream'}),
@@ -348,7 +348,7 @@ export class Util {
 		);
 
 		await this.sleep();
-		self.onbeforeunload		= onbeforeunload;
+		beforeUnloadMessage	= oldBeforeUnloadMessage;
 	}
 
 	/** Sleep for the specifed amount of time. */
