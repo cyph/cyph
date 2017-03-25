@@ -99,6 +99,18 @@ var config = struct {
 	600,
 
 	map[string]Plan{
+		"0-0": Plan{
+			ProFeatures: map[string]bool{
+				"api":            true,
+				"disableP2P":     true,
+				"modestBranding": true,
+				"nativeCrypto":   true,
+				"telehealth":     true,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
 		"2-0": Plan{
 			ProFeatures: map[string]bool{
 				"api":            true,
