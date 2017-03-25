@@ -299,17 +299,21 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	sessionCountLimit := int64(0)
 	subscriptions := []*braintree.Subscription{}
 
-	for i := range braintreeCustomer.CreditCards.CreditCard {
-		creditCard := braintreeCustomer.CreditCards.CreditCard[i]
-		for j := range creditCard.Subscriptions.Subscription {
-			subscriptions = append(subscriptions, creditCard.Subscriptions.Subscription[j])
+	if braintreeCustomer.CreditCards != nil {
+		for i := range braintreeCustomer.CreditCards.CreditCard {
+			creditCard := braintreeCustomer.CreditCards.CreditCard[i]
+			for j := range creditCard.Subscriptions.Subscription {
+				subscriptions = append(subscriptions, creditCard.Subscriptions.Subscription[j])
+			}
 		}
 	}
 
-	for i := range braintreeCustomer.PayPalAccounts.PayPalAccount {
-		payPalAccount := braintreeCustomer.PayPalAccounts.PayPalAccount[i]
-		for j := range payPalAccount.Subscriptions.Subscription {
-			subscriptions = append(subscriptions, payPalAccount.Subscriptions.Subscription[j])
+	if braintreeCustomer.PayPalAccounts != nil {
+		for i := range braintreeCustomer.PayPalAccounts.PayPalAccount {
+			payPalAccount := braintreeCustomer.PayPalAccounts.PayPalAccount[i]
+			for j := range payPalAccount.Subscriptions.Subscription {
+				subscriptions = append(subscriptions, payPalAccount.Subscriptions.Subscription[j])
+			}
 		}
 	}
 
@@ -343,7 +347,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		customer.SessionCount = 0
 	}
 
-	if customer.SessionCount > sessionCountLimit && sessionCountLimit != -1 {
+	if customer.SessionCount >= sessionCountLimit && sessionCountLimit != -1 {
 		return "Session limit exceeded.", http.StatusForbidden
 	}
 
