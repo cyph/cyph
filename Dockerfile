@@ -181,7 +181,6 @@ RUN echo 'Package: yarn\nPin: version 0.19.1-1\nPin-Priority: 1337' | sudo tee -
 #CIRCLECI:RUN git clone --depth 1 https://github.com/jedisct1/libsodium.js ~/getlibs/shared/lib/js/libsodium
 #CIRCLECI:RUN chmod -R 777 ~/getlibs
 #CIRCLECI:RUN ~/getlibs/commands/getlibs.sh
-#CIRCLECI:RUN echo 'cp /node_modules/core-js/client/shim.js /cyph/shared/lib/js/base.js' >> ~/.bashrc
 #CIRCLECI:RUN sudo mkdir /cyph
 #CIRCLECI:RUN sudo chmod 777 /cyph
 
