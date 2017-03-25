@@ -64,39 +64,36 @@ export class VirtualKeyboardWatcherService {
 		const $window	= $(window);
 
 		/* Android */
-		$window.resize(() => {
-			this.trigger(window.innerHeight < this.initialScreenSize);
-		});
+		if (this.envService.isAndroid) {
+			$window.resize(() => {
+				this.trigger(window.innerHeight < this.initialScreenSize);
+			});
+		}
+		/* iOS/misc. */
+		else {
+			const inputSelector		= 'input, textarea';
+			const focusBlurListen	= ($elem: JQuery) => {
+				$elem.on('blur', () => { this.trigger(false); });
+				$elem.on('focus', () => { this.trigger(true); });
+			};
 
-		/* iOS */
-		const inputSelector		= 'input, textarea';
-		const focusBlurListen	= ($elem: JQuery) =>
-			$elem.on('focus blur', () => {
-				if (document.body.scrollHeight > $window.height()) {
-					return;
-				}
-
-				$window.scrollTop(10);
-				this.trigger($window.scrollTop() > 0);
-				$window.scrollTop(0);
-			})
-		;
-		focusBlurListen($(inputSelector));
-		new MutationObserver(mutations => {
-			focusBlurListen(
-				$(mutations.
-					map(mutationRecord => Array.from(mutationRecord.addedNodes)).
-					reduce((a, b) => a.concat(b), [])
-				).
-					find(inputSelector).
-					addBack().
-					filter(inputSelector)
-			);
-		}).observe(document.body, {
-			attributes: false,
-			characterData: false,
-			childList: true,
-			subtree: true
-		});
+			focusBlurListen($(inputSelector));
+			new MutationObserver(mutations => {
+				focusBlurListen(
+					$(mutations.
+						map(mutationRecord => Array.from(mutationRecord.addedNodes)).
+						reduce((a, b) => a.concat(b), [])
+					).
+						find(inputSelector).
+						addBack().
+						filter(inputSelector)
+				);
+			}).observe(document.body, {
+				attributes: false,
+				characterData: false,
+				childList: true,
+				subtree: true
+			});
+		}
 	}
 }
