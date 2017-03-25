@@ -1,6 +1,6 @@
 import {config} from '../../config';
 import {util} from '../../util';
-import {Potassium} from '../potassium';
+import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
 import {ILocalUser} from './ilocal-user';
 import {IRemoteUser} from './iremote-user';
@@ -12,16 +12,15 @@ import {Transport} from './transport';
  */
 export class PairwiseSession {
 	/** @ignore */
+	private readonly core: Promise<Core>	=
+		/* tslint:disable-next-line:promise-must-complete */
+		new Promise<Core>(resolve => {
+			this.resolveCore	= resolve;
+		})
+	;
+
+	/** @ignore */
 	private incomingMessageId: number	= 0;
-
-	/** @ignore */
-	private incomingMessagesMax: number	= 0;
-
-	/** @ignore */
-	private outgoingMessageId: number	= 0;
-
-	/** @ignore */
-	private readonly lock: {}			= {};
 
 	/** @ignore */
 	private readonly incomingMessages: Map<number, Uint8Array[]>	=
@@ -29,13 +28,7 @@ export class PairwiseSession {
 	;
 
 	/** @ignore */
-	private core: Core;
-
-	/** @ignore */
-	private localUser: ILocalUser|undefined;
-
-	/** @ignore */
-	private remoteUser: IRemoteUser|undefined;
+	private incomingMessagesMax: number	= 0;
 
 	/** @ignore */
 	private isAborted: boolean;
@@ -44,7 +37,22 @@ export class PairwiseSession {
 	private isConnected: boolean;
 
 	/** @ignore */
+	private localUser: ILocalUser|undefined;
+
+	/** @ignore */
+	private readonly lock: {}			= {};
+
+	/** @ignore */
+	private outgoingMessageId: number	= 0;
+
+	/** @ignore */
+	private remoteUser: IRemoteUser|undefined;
+
+	/** @ignore */
 	private remoteUsername: string;
+
+	/** @ignore */
+	private resolveCore: (core: Core) => void;
 
 	/** @ignore */
 	private abort () : void {
@@ -157,10 +165,6 @@ export class PairwiseSession {
 			}
 			catch (_) {}
 
-			if (!this.core) {
-				return;
-			}
-
 			while (this.incomingMessageId <= this.incomingMessagesMax) {
 				const incomingMessages	= this.incomingMessages.get(this.incomingMessageId);
 
@@ -170,7 +174,7 @@ export class PairwiseSession {
 
 				for (const cyphertextBytes of incomingMessages) {
 					try {
-						let plaintext: DataView	= await this.core.decrypt(
+						let plaintext: DataView	= await (await this.core).decrypt(
 							cyphertextBytes
 						);
 
@@ -218,7 +222,7 @@ export class PairwiseSession {
 	 * @param timestamp
 	 */
 	public async send (plaintext: string, timestamp: number = util.timestamp()) : Promise<void> {
-		if (this.isAborted || !this.core) {
+		if (this.isAborted) {
 			return;
 		}
 
@@ -273,7 +277,7 @@ export class PairwiseSession {
 				}
 
 				const messageId		= this.newMessageId();
-				const cyphertext	= await this.core.encrypt(data, messageId);
+				const cyphertext	= await (await this.core).encrypt(data, messageId);
 
 				this.potassium.clearMemory(data);
 
@@ -293,7 +297,7 @@ export class PairwiseSession {
 
 	constructor (
 		/** @ignore */
-		private readonly potassium: Potassium,
+		private readonly potassium: IPotassium,
 
 		/** @ignore */
 		private readonly transport: Transport,
@@ -308,14 +312,14 @@ export class PairwiseSession {
 			this.localUser	= localUser;
 			this.remoteUser	= remoteUser;
 
-			this.remoteUsername	= this.remoteUser.getUsername();
+			this.remoteUsername	= await this.remoteUser.getUsername();
 
 			await this.localUser.getKeyPair();
 
 			let secret: Uint8Array;
 			if (isAlice) {
 				secret	= this.potassium.randomBytes(
-					potassium.ephemeralKeyExchange.secretBytes
+					await potassium.ephemeralKeyExchange.secretBytes
 				);
 
 				this.transport.send(await this.handshakeSendSecret(secret));
@@ -326,11 +330,11 @@ export class PairwiseSession {
 				);
 			}
 
-			this.core	= new Core(
+			this.resolveCore(new Core(
 				this.potassium,
 				isAlice,
 				[await Core.newKeys(this.potassium, isAlice, secret)]
-			);
+			));
 
 			if (isAlice) {
 				this.connect();
