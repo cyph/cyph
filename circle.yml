@@ -75,11 +75,7 @@ jobs:
             )'
       - run:
           name: Build Docker image
-          command: |
-            docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
-            docker pull cyph/circleci:latest || true
-            docker build --rm=false --cache-from cyph/circleci:latest -t cyph/circleci:latest .
-            docker push cyph/circleci:latest
+          command: docker build -t cyph .
       - deploy:
           name: Test
           command: |
@@ -89,7 +85,7 @@ jobs:
                 "https://circleci.com/api/v1.1/project/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/tree/${CIRCLE_BRANCH}"
   test:
     docker:
-      - image: cyph/circleci:latest
+      - image: cyph
     working_directory: ~/cyph
     steps:
       - checkout
