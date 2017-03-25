@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {config} from '../config';
 import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
@@ -35,9 +35,6 @@ export class FileTransferService {
 			this.resolveSecretBox	= resolve;
 		})
 	;
-
-	/** @ignore Temporary workaround. */
-	public changeDetectorRef: ChangeDetectorRef;
 
 	/** In-progress file transfers. */
 	public readonly transfers: Set<Transfer>	= new Set<Transfer>();
@@ -107,7 +104,6 @@ export class FileTransferService {
 
 				if (ok) {
 					this.transfers.add(transfer);
-					this.triggerChangeDetection();
 
 					/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
 					(async () => {
@@ -117,7 +113,6 @@ export class FileTransferService {
 							transfer.percentComplete +=
 								util.random(100000, 25000) / transfer.size * 100
 							;
-							this.triggerChangeDetection();
 						}
 					})();
 
@@ -131,12 +126,10 @@ export class FileTransferService {
 					const plaintext: Uint8Array	= await this.decryptFile(cyphertext, transfer.key);
 
 					transfer.percentComplete	= 100;
-					this.triggerChangeDetection();
 					this.potassiumService.clearMemory(transfer.key);
 					this.triggerUIEvent(UIEvents.save, transfer, plaintext);
 					await util.sleep(1000);
 					this.transfers.delete(transfer);
-					this.triggerChangeDetection();
 				}
 				else {
 					this.triggerUIEvent(UIEvents.rejected, transfer);
@@ -147,17 +140,7 @@ export class FileTransferService {
 	}
 
 	/** @ignore */
-	private triggerChangeDetection () : void {
-		if (this.changeDetectorRef) {
-			this.changeDetectorRef.detectChanges();
-		}
-	}
-
-	/** @ignore */
-	private triggerUIEvent (
-		event: UIEvents,
-		...args: any[]
-	) : void {
+	private triggerUIEvent (event: UIEvents, ...args: any[]) : void {
 		this.sessionService.trigger(events.filesUI, {event, args});
 	}
 
@@ -202,7 +185,6 @@ export class FileTransferService {
 		);
 
 		this.transfers.add(transfer);
-		this.triggerChangeDetection();
 
 		this.analyticsService.sendEvent({
 			eventAction: 'send',
@@ -227,7 +209,6 @@ export class FileTransferService {
 
 			if (!transfer.answer) {
 				this.transfers.delete(transfer);
-				this.triggerChangeDetection();
 
 				if (uploadTask) {
 					uploadTask.cancel();
@@ -256,7 +237,6 @@ export class FileTransferService {
 						snapshot.totalBytes *
 						100
 					;
-					this.triggerChangeDetection();
 				},
 				() => { resolve(transfer.answer === false); },
 				() => {
@@ -268,7 +248,6 @@ export class FileTransferService {
 					));
 
 					this.transfers.delete(transfer);
-					this.triggerChangeDetection();
 					resolve(true);
 				}
 			));

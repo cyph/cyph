@@ -1,10 +1,4 @@
-import {
-	ChangeDetectorRef,
-	Component,
-	ElementRef,
-	Input,
-	OnInit
-} from '@angular/core';
+import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as clipboard from 'clipboard-js';
 import * as $ from 'jquery';
 import {ChatService} from '../services/chat.service';
@@ -150,11 +144,7 @@ export class LinkConnectionComponent implements OnInit {
 			/* TODO: HANDLE NATIVE */
 		}
 
-		this.timer	= new Timer(
-			this.configService.cyphCountdown,
-			false,
-			this.changeDetectorRef
-		);
+		this.timer	= new Timer(this.configService.cyphCountdown, false);
 
 		this.sessionService.connected.then(() => {
 			isWaiting			= false;
@@ -174,9 +164,6 @@ export class LinkConnectionComponent implements OnInit {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly changeDetectorRef: ChangeDetectorRef,
-
 		/** @ignore */
 		private readonly elementRef: ElementRef,
 

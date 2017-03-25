@@ -1,4 +1,3 @@
-import {ChangeDetectorRef} from '@angular/core';
 import {util} from './util';
 
 
@@ -39,10 +38,6 @@ export class Timer {
 				`${minutes}:${`0${seconds}`.slice(-2)}` :
 				`${seconds}`
 		;
-
-		if (this.changeDetectorRef) {
-			this.changeDetectorRef.detectChanges();
-		}
 	}
 
 	/**
@@ -104,10 +99,7 @@ export class Timer {
 		/** Countdown duration in milliseconds. */
 		public countdown: number,
 
-		autostart?: boolean,
-
-		/** @ignore */
-		private readonly changeDetectorRef?: ChangeDetectorRef
+		autostart?: boolean
 	) {
 		this.updateTimestamp(this.countdown);
 
