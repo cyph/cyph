@@ -24,7 +24,9 @@ jobs:
                 "Dockerfile",
                 fs.readFileSync("Dockerfile").
                     toString().
-                    replace(/VOLUME/g, "RUN mkdir -p").
+                    split("\n").
+                    filter(s => !s.startsWith("VOLUME")).
+                    join("\n").
                     replace(/.*emsdk.*/g, "").
                     replace(/#CIRCLECI:/g, "").
                     replace(
