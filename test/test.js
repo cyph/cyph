@@ -1,5 +1,6 @@
-const crypto	= require('crypto');
+const Cyph		= require('@cyph/sdk');
 const datastore	= require('@google-cloud/datastore')();
+const crypto	= require('crypto');
 const http		= require('http');
 const webdriver	= require('selenium-webdriver');
 
@@ -157,24 +158,20 @@ const homeTest		= o => {
 const newCyphTest	= o => {
 	const driver	= getDriver(o);
 
-	/* Temporarily reducing the scope of this test until the full test passes consistently.
-		Related TODO: use the SDK for link generation since the API is locked down now. */
-
-	return driverSetURL(driver, o.newCyphURL /* `${o.newCyphURL}/#${o.secret}` */).then(() =>
+	return o.cyphLink.then(cyphLink =>
+		driverSetURL(driver, cyphLink)
+	).then(() =>
 		driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				setOnerror();
-				return self.$ && $(
-					'body.load-complete cyph-link-connection:visible'
-					/* '.message-box:visible' */
-				)[0];
+				return self.$ && $('body.load-complete .message-box:visible')[0];
 			})),
 			150000
 		)
-	) /* .then(() => new Promise(resolve =>
-		setTimeout(resolve, 10000)
-	)).then(() =>
+	).then(() =>
+		new Promise(resolve => setTimeout(resolve, 10000))
+	).then(() =>
 		driverScript(driver, function () {
 			sendMessage('balls');
 		})
@@ -191,9 +188,9 @@ const newCyphTest	= o => {
 			})),
 			60000
 		)
-	).then(() => new Promise(resolve =>
-		setTimeout(resolve, 30000)
-	)) */ .then(() =>
+	).then(() =>
+		new Promise(resolve => setTimeout(resolve, 30000))
+	).then(() =>
 		driverQuit(driver)
 	).catch(err => {
 		driverQuit(driver);
@@ -202,7 +199,7 @@ const newCyphTest	= o => {
 };
 
 
-const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
+const runTests	= (backendURL, homeURL, newCyphURL) => Promise.resolve().then(() => {
 	/* Never run test suites concurrently, and never run the same
 		test suite more frequently than once every six hours */
 	if (
@@ -224,8 +221,7 @@ const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
 			'browserstack.user': process.env.BS_USER,
 			'browserstack.key': process.env.BS_KEY,
 			'browserstack.debug': true,
-			homeURL,
-			newCyphURL
+			homeURL
 		};
 
 		for (let k of Object.keys(browser)) {
@@ -237,11 +233,21 @@ const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
 		const a	= acc.slice(-1)[0];
 
 		if (a.length === 1) {
-			o.secret	= a[0].secret;
+			o.cyphLink	= a[0].cyphLink;
 			a.push(o);
 		}
 		else {
-			o.secret	= crypto.randomBytes(30).toString('hex');
+			o.cyphLink	= Cyph.initiateSession(
+				process.env.AUTH,
+				undefined,
+				{
+					backend: backendURL,
+					chat: `${newCyphURL}/#`,
+					video: `${newCyphURL}/#video/`,
+					voice: `${newCyphURL}/#audio/`
+				}
+			);
+
 			acc.push([o]);
 		}
 
@@ -300,19 +306,20 @@ http.createServer((req, res) => Promise.resolve().then(() => {
 		return 404;
 	}
 
-	const homeURL		= `https://${urlSplit[1]}`;
-	const newCyphURL	= `https://${urlSplit[2]}`;
+	const backendURL	= `https://${urlSplit[1]}`;
+	const homeURL		= `https://${urlSplit[2]}`;
+	const newCyphURL	= `https://${urlSplit[3]}`;
 
 	setImmediate(() => {
 		try {
-			runTests(homeURL, newCyphURL);
+			runTests(backendURL, homeURL, newCyphURL);
 		}
 		catch (err) {
 			console.error(err);
 		}
 	});
 
-	return isTestPassing(homeURL + newCyphURL).then(() => 200);
+	return isTestPassing(backendURL + homeURL + newCyphURL).then(() => 200);
 }).catch(err => {
 	if (err) {
 		console.error(err);
