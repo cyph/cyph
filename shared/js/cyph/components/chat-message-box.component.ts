@@ -72,22 +72,22 @@ export class ChatMessageBoxComponent implements OnInit {
 	/** Wrappers for mobile button handlers. */
 	public readonly mobileButtonHandlers	= {
 		fileTransfer: ($event: File) => {
-			this.mobileButtonWrapper(() => {
+			this.mobileButtonWrapper(false, () => {
 				this.fileTransferService.send($event);
 			});
 		},
 		send: () => {
-			this.mobileButtonWrapper(() => {
+			this.mobileButtonWrapper(true, () => {
 				this.chatService.send();
 			});
 		},
 		videoCall: () => {
-			this.mobileButtonWrapper(() => {
+			this.mobileButtonWrapper(false, () => {
 				this.p2pService.videoCallButton();
 			});
 		},
 		voiceCall: () => {
-			this.mobileButtonWrapper(() => {
+			this.mobileButtonWrapper(false, () => {
 				this.p2pService.voiceCallButton();
 			});
 		}
@@ -156,10 +156,10 @@ export class ChatMessageBoxComponent implements OnInit {
 	public readonly states: typeof States	= States;
 
 	/** @ignore */
-	private mobileButtonWrapper (f: () => void) : void {
+	private mobileButtonWrapper (leaveFocused: boolean, f: () => void) : void {
 		util.lockTryOnce(this.mobileButtonLock, async () => {
 			f();
-			if (this.virtualKeyboardWatcherService.isOpen) {
+			if (leaveFocused && this.virtualKeyboardWatcherService.isOpen) {
 				(await this.$textarea).focus();
 			}
 			await util.sleep(500);
