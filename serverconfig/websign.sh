@@ -6,6 +6,7 @@ rekeyscript='base64 hpkpsuicide.sh'
 
 apikey='ASK RYAN FOR THIS'
 orderid='ASK RYAN FOR THIS'
+githubToken='ASK RYAN FOR THIS'
 csrSubject='/C=US/ST=Delaware/L=Dover/O=Cyph, Inc./CN=cyph.ws'
 
 
@@ -48,13 +49,15 @@ cat > /certupdate.sh << EndOfMessage
 #!/bin/bash
 
 while [ ! -d /cdn ] ; do
-	git clone https://github.com/cyph/cdn.git /cdn || sleep 5
+	git clone https://${githubToken}:x-oauth-basic@github.com/cyph/cdn.git /cdn || sleep 5
 done
 
 cd /cdn
 
+sleep 60
+
 while true ; do
-	git pull
+	git pull || break
 
 	node -e "console.log([
 		'cyph.ws',
@@ -77,11 +80,15 @@ while true ; do
 	)" > /etc/nginx/sans.json
 
 	if [ "\${1}" == 'init' ] ; then
-		break
+		exit 0
 	fi
 
 	sleep 90m
 done
+
+# Start from scratch when pull fails
+rm -rf /cdn
+/certupdate.sh &
 EndOfMessage
 
 
