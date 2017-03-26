@@ -23,6 +23,14 @@ import {util} from '../util';
 	templateUrl: '../../../templates/chat-message-box.html'
 })
 export class ChatMessageBoxComponent implements OnInit {
+	/** @ignore */
+	private readonly $textarea: Promise<JQuery>	=
+		util.waitForIterable(() => $(this.elementRef.nativeElement).find('textarea'))
+	;
+
+	/** @ignore */
+	private readonly mobileButtonLock: {}		= {};
+
 	/** @see FileInput.accept */
 	@Input() public fileAccept: string;
 
@@ -60,6 +68,30 @@ export class ChatMessageBoxComponent implements OnInit {
 			label: this.stringsService.disconnect
 		}
 	];
+
+	/** Wrappers for mobile button handlers. */
+	public readonly mobileButtonHandlers	= {
+		fileTransfer: ($event: File) => {
+			this.mobileButtonWrapper(() => {
+				this.fileTransferService.send($event);
+			});
+		},
+		send: () => {
+			this.mobileButtonWrapper(() => {
+				this.chatService.send();
+			});
+		},
+		videoCall: () => {
+			this.mobileButtonWrapper(() => {
+				this.p2pService.videoCallButton();
+			});
+		},
+		voiceCall: () => {
+			this.mobileButtonWrapper(() => {
+				this.p2pService.voiceCallButton();
+			});
+		}
+	};
 
 	/** Speed dial buttons. */
 	public readonly speedDialButtons: {
@@ -123,6 +155,17 @@ export class ChatMessageBoxComponent implements OnInit {
 	/** @see States */
 	public readonly states: typeof States	= States;
 
+	/** @ignore */
+	private mobileButtonWrapper (f: () => void) : void {
+		util.lockTryOnce(this.mobileButtonLock, async () => {
+			f();
+			if (this.virtualKeyboardWatcherService.isOpen) {
+				(await this.$textarea).focus();
+			}
+			await util.sleep(500);
+		});
+	}
+
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
@@ -154,7 +197,7 @@ export class ChatMessageBoxComponent implements OnInit {
 
 		/* Allow enter press to submit, except on mobile without external keyboard */
 
-		const $textarea	= await util.waitForIterable(() => $element.find('textarea'));
+		const $textarea	= await this.$textarea;
 
 		$textarea.keypress(e => {
 			if (
@@ -174,27 +217,6 @@ export class ChatMessageBoxComponent implements OnInit {
 			$textarea.focus(async () => {
 				await util.sleep(750);
 				this.scrollService.scrollDown();
-			});
-
-			const buttonLock	= {};
-			const $buttons		= await util.waitForIterable(
-				() => $element.find('.message-box-button-group md2-button')
-			);
-
-			$buttons.each((_, elem) => {
-				const $elem		= $(elem);
-				const $mdButton	= $elem.find('.md-button');
-
-				$elem.click(() => {
-					util.lockTryOnce(buttonLock, async () => {
-						const isKeyboardOpen	= this.virtualKeyboardWatcherService.isOpen;
-						$mdButton.click();
-						if (isKeyboardOpen) {
-							$textarea.focus();
-						}
-						await util.sleep(500);
-					});
-				});
 			});
 		}
 		else {
@@ -238,6 +260,9 @@ export class ChatMessageBoxComponent implements OnInit {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
+		private readonly fileTransferService: FileTransferService,
+
+		/** @ignore */
 		private readonly virtualKeyboardWatcherService: VirtualKeyboardWatcherService,
 
 		/** @ignore */
@@ -248,9 +273,6 @@ export class ChatMessageBoxComponent implements OnInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
-
-		/** @see FileTransferService */
-		public readonly fileTransferService: FileTransferService,
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,
