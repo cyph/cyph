@@ -14,9 +14,10 @@
 		top: 50%;
 		right: 10px;
 		z-index: 30;
-		pointer-events: none;
 
 		@include transform(translateY(-50%));
+
+		@include transition(transform 0.4s linear);
 
 		.md-button {
 			opacity: 0.75;
@@ -26,8 +27,6 @@
 			padding-right: 0px;
 			pointer-events: none;
 
-			@include transition(transform 0.35s linear);
-
 			md-icon {
 				font-size: 1.72rem;
 				width: 100%;
@@ -36,10 +35,10 @@
 			}
 		}
 
-		&.hidden .md-button {
+		&.hidden {
 			@include transform(translateY(250px) !important);
 
-			@include transition(transform 0.5s linear);
+			@include transition(transform 0.6s linear);
 		}
 	}
 

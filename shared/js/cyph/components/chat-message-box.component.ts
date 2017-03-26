@@ -171,57 +171,30 @@ export class ChatMessageBoxComponent implements OnInit {
 		});
 
 		if (this.envService.isMobile) {
-			/* Prevent jankiness upon message send on mobile */
-
-			let lastClick	= 0;
-
-			const $buttons	= await util.waitForIterable(
-				() => $element.find('.message-box-button-group .md-button')
-			);
-
-			$textarea.on('mousedown', e => {
-				const now: number	= util.timestamp();
-
-				if ($textarea.is(':focus') && !this.virtualKeyboardWatcherService.isOpen) {
-					$textarea.blur();
-				}
-
-				const wasButtonClicked	=
-					(now - lastClick <= 500) ||
-					$buttons.filter(':visible').toArray().reduce(
-						(clicked: boolean, elem: HTMLElement) => {
-							if (clicked) {
-								return true;
-							}
-
-							const bounds	= elem.getBoundingClientRect();
-
-							if (!(
-								(e.clientY > bounds.top && e.clientY < bounds.bottom) &&
-								(e.clientX > bounds.left && e.clientX < bounds.right)
-							)) {
-								return false;
-							}
-
-							$(elem).click();
-
-							return true;
-						},
-						false
-					)
-				;
-
-				if (!wasButtonClicked) {
-					return;
-				}
-
-				lastClick	= now;
-
-				e.stopPropagation();
-				e.preventDefault();
-			}).focus(async () => {
+			$textarea.focus(async () => {
 				await util.sleep(750);
 				this.scrollService.scrollDown();
+			});
+
+			const buttonLock	= {};
+			const $buttons		= await util.waitForIterable(
+				() => $element.find('.message-box-button-group md2-button')
+			);
+
+			$buttons.each((_, elem) => {
+				const $elem		= $(elem);
+				const $mdButton	= $elem.find('.md-button');
+
+				$elem.click(() => {
+					util.lockTryOnce(buttonLock, async () => {
+						const isKeyboardOpen	= this.virtualKeyboardWatcherService.isOpen;
+						$mdButton.click();
+						if (isKeyboardOpen) {
+							$textarea.focus();
+						}
+						await util.sleep(500);
+					});
+				});
 			});
 		}
 		else {
