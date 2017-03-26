@@ -187,21 +187,26 @@ chmod +x server.js
 cat > cdnupdate.sh <<- EOM
 	#!/bin/bash
 
-	getHead () {
-		git reflog -1 --pretty=format:%H
-	}
+	cachePath=" \
+		url=\"https://localhost:31337/\\\\\\\$( \
+			echo 'PATH' | sed 's|\.br\\\\\\\$||g' \
+		)?\\\\\\\$( \
+			git log -1 --pretty=format:%s 'PATH' \
+		)\"; \
+		\
+		curl -sk \"\\\\\\\${url}\"; \
+		curl -H 'Accept-Encoding: br' -sk \"\\\\\\\${url}\"; \
+	"
 
 	cachePaths () {
-		for path in \\\$(echo "\\\${1}" | grep -P '\.br\\\$') ; do
-			url="https://localhost:31337/\\\$(
-				echo "\\\${path}" | sed "s|\.br\\\$||g"
-			)?\\\$(
-				git log -1 --pretty=format:%s "\\\${path}"
-			)"
+		echo "\\\${1}" |
+			grep -P '\.br\\\$' |
+			grep -vP '/current\.br\\\$' |
+			xargs -IPATH -P10 bash -c "\\\${cachePath}"
+	}
 
-			curl -sk "\\\${url}"
-			curl -sk -H 'Accept-Encoding: br' "\\\${url}"
-		done
+	getHead () {
+		git reflog -1 --pretty=format:%H
 	}
 
 	while [ ! -d cdn ] ; do
