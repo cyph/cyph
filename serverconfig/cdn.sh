@@ -193,11 +193,14 @@ cat > cdnupdate.sh <<- EOM
 
 	cachePaths () {
 		for path in \\\$(echo "\\\${1}" | grep -P '\.br\\\$') ; do
-			curl -sk "https://localhost:31337/\\\$(
+			url="https://localhost:31337/\\\$(
 				echo "\\\${path}" | sed "s|\.br\\\$||g"
 			)?\\\$(
 				git log -1 --pretty=format:%s "\\\${path}"
 			)"
+
+			curl -sk "\\\${url}"
+			curl -sk -H 'Accept-Encoding: br' "\\\${url}"
 		done
 	}
 
