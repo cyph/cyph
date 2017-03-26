@@ -139,6 +139,8 @@ export class LinkConnectionComponent implements OnInit {
 					}
 				})();
 			}
+
+			await util.waitForIterable(() => $element.filter(':visible'));
 		}
 		else {
 			/* TODO: HANDLE NATIVE */
