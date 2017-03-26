@@ -19,7 +19,7 @@
 			<md2-button
 				ariaLabel='Send'
 				childClass='grey'
-				(childClick)='chatService.send()'
+				(childClick)='mobileButtonHandlers.send()'
 				cyphTranslate
 			>
 				<md2-icon>send</md2-icon>
@@ -32,7 +32,7 @@
 			<md2-button
 				ariaLabel='Video Call'
 				childClass='grey'
-				(childClick)='p2pService.videoCallButton()'
+				(childClick)='mobileButtonHandlers.videoCall()'
 				[disabled]='!p2pService.isEnabled'
 				*ngIf='!p2pService.isActive'
 				cyphTranslate
@@ -42,7 +42,7 @@
 			<md2-button
 				ariaLabel='Voice Call'
 				childClass='grey'
-				(childClick)='p2pService.voiceCallButton()'
+				(childClick)='mobileButtonHandlers.voiceCall()'
 				[disabled]='!p2pService.isEnabled'
 				*ngIf='!p2pService.isActive'
 				cyphTranslate
@@ -57,7 +57,7 @@
 				<md2-icon>attach_file</md2-icon>
 				<cyph-file-input
 					[accept]='fileAccept'
-					(change)='fileTransferService.send($event)'
+					(change)='mobileButtonHandlers.fileTransfer($event)'
 				></cyph-file-input>
 			</md2-button>
 		</div>
