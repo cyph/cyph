@@ -4,6 +4,7 @@
 
 cert='ASK RYAN FOR THIS'
 key='ASK RYAN FOR THIS'
+githubToken='ASK RYAN FOR THIS'
 
 
 adduser --gecos '' --disabled-password --home /home/cyph cyph || exit 1
@@ -99,7 +100,7 @@ cat > server.js <<- EOM
 		res.set('Access-Control-Allow-Origin', '*');
 		res.set('Cache-Control', 'public, max-age=31536000');
 		res.set('Content-Type', 'application/octet-stream');
-		res.set('Public-Key-Pins', 'max-age=5184000; includeSubdomains; pin-sha256="\${keyHash}"; pin-sha256="\${backupHash}"');
+		res.set('Public-Key-Pins', 'max-age=5184000; pin-sha256="\${keyHash}"; pin-sha256="\${backupHash}"');
 		res.set('Strict-Transport-Security', 'max-age=31536000; includeSubdomains');
 
 		if ( (req.get('Accept-Encoding') || '').replace(/\s+/g, '').split(',').indexOf('br') > -1) {
@@ -150,23 +151,26 @@ cat > server.js <<- EOM
 				resolve();
 			})
 		).then( () =>
-			hash ? git('log', fileName) : ''
+			hash ? git('log', '--pretty=format:%H %s', fileName) : ''
 		).then(output => {
 			const revision	= (
 				output.toString().
-					replace(/\n/g, ' ').
-					replace(/commit /g, '\n').
 					split('\n').
-					filter(s => s.indexOf(hash) > -1)
-				[0] || ''
-			).split(' ')[0] || 'HEAD';
+					map(s => s.split(' ')).
+					filter(arr => arr[1] === hash).
+					concat([['HEAD']])
+			)[0][0];
 
 			return git('show', revision + ':' + fileName);
 		}).then(data => {
 			req.cache[req.originalUrl]	= data;
 		}));
 	}).then( () =>
-		res.send(req.cache[req.originalUrl])
+		res.send(
+			req.hostname === 'localhost' ?
+				'' :
+				req.cache[req.originalUrl]
+		)
 	).catch( () =>
 		returnError(res)
 	));
@@ -183,15 +187,43 @@ chmod +x server.js
 cat > cdnupdate.sh <<- EOM
 	#!/bin/bash
 
+	getHead () {
+		git reflog -1 --pretty=format:%H
+	}
+
+	cachePaths () {
+		for path in \$(echo "\${1}" | grep -P '\.br\$') ; do
+			curl -sk "https://localhost:31337/\$(
+				echo "\${path}" | sed "s|\.br\$||g"
+			)?\$(
+				git log -1 --pretty=format:%s "\${path}"
+			)"
+		done
+	}
+
 	while [ ! -d cdn ] ; do
-		git clone https://github.com/cyph/cdn.git || sleep 5
+		git clone https://${githubToken}:x-oauth-basic@github.com/cyph/cdn.git || sleep 5
 	done
 
 	cd cdn
 
+	head="\$(getHead)"
+
+	sleep 60
+	cachePaths "\$(git ls-files)"
+
 	while true ; do
-		git pull || break
 		sleep 60
+		git pull || break
+
+		newHead="\$(getHead)"
+		if [ "\${head}" == "\${newHead}" ] ; then
+			continue
+		fi
+
+		cachePaths "\$(git diff --name-only "\${newHead}" "\${head}")"
+
+		head="\${newHead}"
 	done
 
 	# Start from scratch when pull fails

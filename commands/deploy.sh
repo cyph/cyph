@@ -456,19 +456,6 @@ if [ "${websign}" ] ; then
 		cd ..
 	done
 
-	# Hydrate CDN cache
-
-	sleep 60
-	for node in af as eu na oc sa ; do
-		find cdn -type f -name '*.srihash' -exec bash -c "
-			curl -s --compressed \
-				\"https://${node}.cdn.cyph.com\$(
-					echo '{}' | perl -pe 's/^cdn(.*)\.srihash$/\1/'
-				)?\$(cat '{}')\" \
-			> /dev/null" \
-		\;
-	done
-
 	# WebSign redirects
 
 	./commands/websign/createredirect.sh '' cyph.im "${package}" "${test}"
