@@ -192,11 +192,11 @@ cat > cdnupdate.sh <<- EOM
 	}
 
 	cachePaths () {
-		for path in \$(echo "\${1}" | grep -P '\.br\$') ; do
-			curl -sk "https://localhost:31337/\$(
-				echo "\${path}" | sed "s|\.br\$||g"
-			)?\$(
-				git log -1 --pretty=format:%s "\${path}"
+		for path in \\\$(echo "\\\${1}" | grep -P '\.br\\\$') ; do
+			curl -sk "https://localhost:31337/\\\$(
+				echo "\\\${path}" | sed "s|\.br\\\$||g"
+			)?\\\$(
+				git log -1 --pretty=format:%s "\\\${path}"
 			)"
 		done
 	}
@@ -207,23 +207,23 @@ cat > cdnupdate.sh <<- EOM
 
 	cd cdn
 
-	head="\$(getHead)"
+	head="\\\$(getHead)"
 
 	sleep 60
-	cachePaths "\$(git ls-files)"
+	cachePaths "\\\$(git ls-files)"
 
 	while true ; do
 		sleep 60
 		git pull || break
 
-		newHead="\$(getHead)"
-		if [ "\${head}" == "\${newHead}" ] ; then
+		newHead="\\\$(getHead)"
+		if [ "\\\${head}" == "\\\${newHead}" ] ; then
 			continue
 		fi
 
-		cachePaths "\$(git diff --name-only "\${newHead}" "\${head}")"
+		cachePaths "\\\$(git diff --name-only "\\\${newHead}" "\\\${head}")"
 
-		head="\${newHead}"
+		head="\\\${newHead}"
 	done
 
 	# Start from scratch when pull fails
