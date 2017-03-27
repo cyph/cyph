@@ -351,6 +351,79 @@ const removeImage		= (name, opts) => {
 	}
 };
 
+const updateCircleCI	= () => {
+	fs.writeFileSync(
+		'Dockerfile.tmp',
+		fs.readFileSync('Dockerfile').
+			toString().
+			split('\n').
+			filter(s => !s.startsWith('VOLUME')).
+			join('\n').
+			replace('WORKDIR /cyph/commands', 'WORKDIR /cyph').
+			replace(/.*emsdk.*/g, '').
+			replace(/#CIRCLECI:/g, '').
+			replace(
+				/GETLIBS_BASE64/g,
+				new Buffer(
+					fs.readFileSync('commands/getlibs.sh').
+						toString().
+						split('\n').
+						filter(s => s.indexOf('nativePlugins') < 0).
+						join('\n')
+				).toString('base64')
+			).
+			replace(
+				/LIBCLONE_BASE64/g,
+				fs.readFileSync(
+					'commands/libclone.sh'
+				).toString('base64')
+			).
+			replace(
+				/FB_BASE64/g,
+				fs.readFileSync(
+					'shared/lib/js/module_locks/firebase/package.json'
+				).toString('base64')
+			).
+			replace(
+				/FBS_BASE64/g,
+				fs.readFileSync(
+					'shared/lib/js/module_locks/firebase-server/package.json'
+				).toString('base64')
+			).
+			replace(
+				/TSN_BASE64/g,
+				fs.readFileSync(
+					'shared/lib/js/module_locks/ts-node/package.json'
+				).toString('base64')
+			).
+			replace(
+				/TSL_BASE64/g,
+				fs.readFileSync(
+					'shared/lib/js/module_locks/tslint/package.json'
+				).toString('base64')
+			).
+			replace(
+				/PACKAGE_BASE64/g,
+				fs.readFileSync(
+					'shared/lib/js/package.json'
+				).toString('base64')
+			)
+	);
+
+	spawnAsync('docker', [
+		'build',
+		'-t',
+		'cyph/circleci:latest',
+		'-f',
+		'Dockerfile.tmp',
+		'.'
+	]).then(() =>
+		spawnAsync('docker', ['push', 'cyph/circleci:latest'])
+	).then(() => {
+		fs.unlinkSync('Dockerfile.tmp');
+	});
+};
+
 
 if (isWindows && isAgseDeploy) {
 	throw new Error('AGSE not yet supported on Windows.');
@@ -452,5 +525,9 @@ initPromise.then(() => {
 			false,
 			commandAdditionalArgs
 		);
+	}).then(() => {
+		if (shellScripts.command === 'updatelibs') {
+			updateCircleCI();
+		}
 	});
 });
