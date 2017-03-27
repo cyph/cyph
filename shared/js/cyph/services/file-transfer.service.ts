@@ -46,7 +46,7 @@ export class FileTransferService {
 				`\n\n#### ${transfer.name}`
 			,
 			transfer.author,
-			undefined,
+			transfer.timestamp,
 			undefined,
 			transfer.imageSelfDestructTimeout
 		);
@@ -97,12 +97,16 @@ export class FileTransferService {
 			async (ok: boolean) => {
 				transfer.answer	= ok;
 
+				if (transfer.answer && transfer.image) {
+					transfer.timestamp	= util.timestamp();
+				}
+
 				this.sessionService.send(new Message(
 					rpcEvents.files,
 					transfer
 				));
 
-				if (ok) {
+				if (transfer.answer) {
 					this.transfers.add(transfer);
 
 					/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
@@ -193,13 +197,11 @@ export class FileTransferService {
 			hitType: 'event'
 		});
 
-		this.triggerUIEvent(
-			UIEvents.started,
-			transfer
-		);
+		this.triggerUIEvent(UIEvents.started, transfer);
 
-		eventManager.one<boolean>('transfer-' + transfer.id).then(answer => {
-			transfer.answer	= answer;
+		eventManager.one<Transfer>(`transfer-${transfer.id}`).then(incomingTransfer => {
+			transfer.answer		= incomingTransfer.answer;
+			transfer.timestamp	= incomingTransfer.timestamp;
 
 			this.triggerUIEvent(
 				UIEvents.completed,
@@ -305,7 +307,7 @@ export class FileTransferService {
 
 				/* Outgoing file transfer acceptance or rejection */
 				if (transfer.answer === true || transfer.answer === false) {
-					eventManager.trigger('transfer-' + transfer.id, transfer.answer);
+					eventManager.trigger(`transfer-${transfer.id}`, transfer);
 				}
 				/* Incoming file transfer */
 				else if (transfer.url) {
