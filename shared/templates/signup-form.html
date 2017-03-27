@@ -1,5 +1,5 @@
 <div class='signup-form' [class.mobile]='envService.isMobile'>
-	<form (submit)='submit()' *ngIf='signupService.state === 0'>
+	<form ngNativeValidate (submit)='submit()' *ngIf='signupService.state === 0'>
 		<div class='layout-row layout-align-center-center flex'>
 			<ng-content></ng-content>
 		</div>

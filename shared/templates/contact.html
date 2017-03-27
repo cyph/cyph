@@ -1,5 +1,5 @@
 <div *ngIf='email'>
-	<form (submit)='send()' *ngIf='!email.sent'>
+	<form ngNativeValidate (submit)='send()' *ngIf='!email.sent'>
 		<div class='layout-gt-xs-row'>
 			<md2-select
 				cyphTranslate
