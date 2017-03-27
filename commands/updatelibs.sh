@@ -36,7 +36,6 @@ yarn add --ignore-platform --ignore-scripts \
 	angular-animate \
 	angular-aria \
 	animate.css \
-	Base64 \
 	bourbon@4.2.7 \
 	braintree-web@^2 \
 	browserify \
