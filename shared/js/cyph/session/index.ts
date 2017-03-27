@@ -1,5 +1,6 @@
 export * from './command';
 export * from './enums';
+export * from './ichannel-handlers';
 export * from './imessage';
 export * from './imessage-data';
 export * from './imutex';
