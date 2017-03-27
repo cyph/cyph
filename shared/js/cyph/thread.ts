@@ -77,11 +77,6 @@ export class Thread implements IThread {
 			};
 		}
 
-		/* tslint:disable-next-line:strict-type-predicates */
-		if (typeof atob === 'undefined' || typeof btoa === 'undefined') {
-			importScripts('/lib/js/node_modules/Base64/base64.js');
-		}
-
 		try {
 			crypto.getRandomValues(new Uint8Array(1));
 		}
