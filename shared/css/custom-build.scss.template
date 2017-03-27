@@ -15,7 +15,7 @@ ${!o.colors.text ? '' : `
 `}
 
 ${!o.colors.dialog ? '' : `
-	md-dialog {
+	md-dialog, md-card {
 		background-color: ${o.colors.dialog};
 	}
 `}
