@@ -87,11 +87,16 @@ export class AppService {
 		}
 
 		(async () => {
-			while (this.state === States.blank && !this.isLockedDown) {
+			if (this.isLockedDown) {
+				await util.sleep(1000);
+			}
+			else {
+				while (this.state === States.blank) {
+					await util.sleep();
+				}
+
 				await util.sleep();
 			}
-
-			await util.sleep();
 
 			$(document.body).addClass('load-complete');
 		})();
