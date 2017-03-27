@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {IChannelHandlers} from '../session/ichannel-handlers';
 import {util} from '../util';
 import {DatabaseService} from './database.service';
 import {ErrorService} from './error.service';
@@ -13,12 +14,15 @@ export class ChannelService {
 	private channelRef: firebase.database.Reference;
 
 	/** @ignore */
-	private handlers: {
-		onClose: () => void;
-		onConnect: () => void;
-		onMessage: (message: string) => void;
-		onOpen: (isAlice: boolean) => void;
-	};
+	private readonly handlers: Promise<IChannelHandlers>	=
+		/* tslint:disable-next-line:promise-must-complete */
+		new Promise<IChannelHandlers>(resolve => {
+			this.resolveHandlers	= resolve;
+		})
+	;
+
+	/** @ignore */
+	private resolveHandlers: (handlers: IChannelHandlers) => void;
 
 	/** @ignore */
 	private isAlice: boolean		= false;
@@ -39,14 +43,14 @@ export class ChannelService {
 	private usersRef: firebase.database.Reference;
 
 	/** This kills the channel. */
-	public close () : void {
+	public async close () : Promise<void> {
 		if (this.isClosed) {
 			return;
 		}
 
 		this.isClosed	= true;
 
-		this.handlers.onClose();
+		(await this.handlers).onClose();
 		this.channelRef.remove().catch(() => {});
 	}
 
@@ -55,16 +59,8 @@ export class ChannelService {
 	 * @param channelName Name of this channel.
 	 * @param handlers Event handlers for this channel.
 	 */
-	public async init (
-		channelName: string,
-		handlers: {
-			onClose: () => void;
-			onConnect: () => void;
-			onMessage: (message: string) => void;
-			onOpen: (isAlice: boolean) => void;
-		}
-	) : Promise<void> {
-		this.handlers		= handlers;
+	public async init (channelName: string, handlers: IChannelHandlers) : Promise<void> {
+		this.resolveHandlers(handlers);
 
 		this.channelRef		=
 			(await this.databaseService.getDatabaseRef('channels')).child(channelName)
@@ -93,20 +89,20 @@ export class ChannelService {
 			this.channelRef.onDisconnect().remove()
 		);
 
-		this.handlers.onOpen(this.isAlice);
+		handlers.onOpen(this.isAlice);
 
 		if (this.isAlice) {
 			util.retryUntilSuccessful(() =>
 				this.usersRef.on('child_added', (snapshot: firebase.database.DataSnapshot) => {
 					if (!this.isConnected && snapshot.key !== this.userId) {
 						this.isConnected	= true;
-						this.handlers.onConnect();
+						handlers.onConnect();
 					}
 				})
 			);
 		}
 		else {
-			this.handlers.onConnect();
+			handlers.onConnect();
 		}
 
 		util.retryUntilSuccessful(() =>
@@ -122,7 +118,7 @@ export class ChannelService {
 				const o: any	= snapshot.val();
 
 				if (o.sender !== this.userId) {
-					this.handlers.onMessage(o.cyphertext);
+					handlers.onMessage(o.cyphertext);
 				}
 			})
 		);
