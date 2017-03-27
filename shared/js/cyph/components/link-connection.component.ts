@@ -103,6 +103,7 @@ export class LinkConnectionComponent implements OnInit {
 
 		this.linkEncoded	= encodeURIComponent(this.linkConstant);
 		this.link			= this.linkConstant;
+		this.timer			= new Timer(this.configService.cyphCountdown, false);
 
 		if (this.elementRef.nativeElement && this.envService.isWeb) {
 			const $element		= $(this.elementRef.nativeElement);
@@ -146,8 +147,6 @@ export class LinkConnectionComponent implements OnInit {
 			/* TODO: HANDLE NATIVE */
 		}
 
-		this.timer	= new Timer(this.configService.cyphCountdown, false);
-
 		this.sessionService.connected.then(() => {
 			isWaiting			= false;
 			this.link			= '';
@@ -157,6 +156,7 @@ export class LinkConnectionComponent implements OnInit {
 			this.timer.stop();
 		});
 
+		await util.sleep(1000);
 		await this.timer.start();
 
 		if (isWaiting) {
