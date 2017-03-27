@@ -1,4 +1,7 @@
 .message-item {
+	word-wrap: break-word;
+	word-break: break-all;
+
 	> md-list-item {
 		padding: 7.5px 10px 5px 10px;
 		margin: 2.5px;
