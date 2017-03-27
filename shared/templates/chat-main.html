@@ -209,7 +209,7 @@
 
 	<div
 		class='cyph-view transfer-list flex'
-		[class.active]='chatService.chat.state === states.chat'
+		[class.active]='chatService.chat.state === states.chat && !p2pService.isActive'
 	>
 		<md2-content childClass='md-no-flicker'>
 			<md2-list childClass='layout-column'>
@@ -247,13 +247,15 @@
 		class='cyph-view message-list flex'
 		[class.active]='chatService.chat.state === states.chat'
 		[style.margin-top]='
-			(
+			p2pService.isActive ? "" : (
 				(
-					fileTransferService.transfers.size < 3 ?
-						fileTransferService.transfers.size :
-						3
-				) * 65
-			) + "px"
+					(
+						fileTransferService.transfers.size < 3 ?
+							fileTransferService.transfers.size :
+							3
+					) * 65
+				).toString() + "px"
+			)
 		'
 	>
 		<md2-content cyphNanoScroller childClass='md-no-flicker'>
