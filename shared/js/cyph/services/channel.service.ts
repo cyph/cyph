@@ -22,9 +22,6 @@ export class ChannelService {
 	;
 
 	/** @ignore */
-	private resolveHandlers: (handlers: IChannelHandlers) => void;
-
-	/** @ignore */
 	private isAlice: boolean		= false;
 
 	/** @ignore */
@@ -35,6 +32,9 @@ export class ChannelService {
 
 	/** @ignore */
 	private messagesRef: firebase.database.Reference;
+
+	/** @ignore */
+	private resolveHandlers: (handlers: IChannelHandlers) => void;
 
 	/** @ignore */
 	private userId: string;
