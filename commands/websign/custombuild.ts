@@ -104,6 +104,14 @@ $('head').find(
 $('head').append(`
 	<meta name='custom-build' content='${args.customBuild}' />
 	<meta name='custom-build-favicon' content='${o.favicon}' />
+	${
+		/* Not going to pretend that this is a security feature. */
+		!o.password ?
+			'' :
+			`<meta name='custom-build-password' content='${
+				Buffer.from(o.password).toString('base64')
+			}' />`
+	}
 `);
 
 $('body').append(`

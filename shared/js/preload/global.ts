@@ -35,6 +35,7 @@ for (const k of [
 	'beforeUnloadMessage',
 	'customBuild',
 	'customBuildFavicon',
+	'customBuildPassword',
 	'history',
 	'location',
 	'navigator',

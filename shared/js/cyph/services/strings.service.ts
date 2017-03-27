@@ -129,6 +129,11 @@ export class StringsService {
 	);
 
 	/** @see StringsService */
+	public readonly invalidPassword: string			= util.translate(
+		`Invalid password.`
+	);
+
+	/** @see StringsService */
 	public readonly linkCopied: string				= util.translate(`Cyph link copied.`);
 
 	/** @see StringsService */

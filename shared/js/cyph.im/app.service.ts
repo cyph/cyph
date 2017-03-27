@@ -18,6 +18,9 @@ export class AppService {
 	/** @see AccountStates */
 	public accountStates: typeof AccountStates	= AccountStates;
 
+	/** If true, app is locked down. */
+	public isLockedDown: boolean	= !!customBuildPassword;
+
 	/** @see States */
 	public state: States;
 
@@ -84,7 +87,7 @@ export class AppService {
 		}
 
 		(async () => {
-			while (this.state === States.blank) {
+			while (this.state === States.blank && !this.isLockedDown) {
 				await util.sleep();
 			}
 
