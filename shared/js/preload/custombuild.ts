@@ -17,3 +17,9 @@ $('.custom-build-favicon').each((_: number, elem: HTMLElement) => {
 		elem.content	= customBuildFavicon || '';
 	}
 });
+
+const $password	= $('meta[name="custom-build-password"]');
+if ($password.length > 0) {
+	customBuildPassword	= $password.attr('content');
+	$password.remove();
+}

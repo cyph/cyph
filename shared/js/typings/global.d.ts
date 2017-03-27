@@ -17,6 +17,12 @@ declare let customBuild: string|undefined;
 declare let customBuildFavicon: string|undefined;
 
 /**
+ * @global
+ * If applicable, password for this custom build.
+ */
+declare let customBuildPassword: string|undefined;
+
+/**
  * @ignore
  */
 declare let IS_WEB: boolean;

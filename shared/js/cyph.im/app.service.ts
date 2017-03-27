@@ -1,14 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import * as $ from 'jquery';
-import {States as AccountStates} from '../cyph/account/enums';
-import {AccountAuthService} from '../cyph/services/account-auth.service';
-import {AccountService} from '../cyph/services/account.service';
 import {EnvService} from '../cyph/services/env.service';
-import {FaviconService} from '../cyph/services/favicon.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
-import {States, urlSections} from './enums';
+import {AccountStates, States, urlSections} from './enums';
 
 
 /**
@@ -16,16 +12,20 @@ import {States, urlSections} from './enums';
  */
 @Injectable()
 export class AppService {
+	/** @see AccountStates */
+	public accountState: AccountStates|undefined;
+
+	/** @see AccountStates */
+	public accountStates: typeof AccountStates	= AccountStates;
+
+	/** If true, app is locked down. */
+	public isLockedDown: boolean	= !!customBuildPassword;
+
 	/** @see States */
 	public state: States;
 
 	/** @see States */
 	public states: typeof States	= States;
-
-	/** @ignore */
-	private get urlSection () : string {
-		return this.urlStateService.getUrlSplit()[0];
-	}
 
 	/** @ignore */
 	private onUrlStateChange (newUrlState: string) : void {
@@ -36,21 +36,8 @@ export class AppService {
 		const newUrlStateSplit: string[]	= newUrlState.split('/');
 
 		if (newUrlStateSplit[0] === urlSections.account) {
-			const accountState: AccountStates|undefined	=
-				(<any> AccountStates)[newUrlStateSplit[1]]
-			;
-
-			if (accountState === AccountStates.home) {
-				this.urlStateService.setUrl(urlSections.account);
-				return;
-			}
-
-			this.accountService.state	=
-				accountState === undefined ? AccountStates.home : accountState
-			;
-
-			this.accountService.input	= newUrlStateSplit[2];
-			this.state					= States.account;
+			this.accountState	= (<any> AccountStates)[newUrlStateSplit[1]];
+			this.state			= States.account;
 		}
 		else if (newUrlState === this.urlStateService.states.notFound) {
 			this.state		= States.error;
@@ -64,16 +51,9 @@ export class AppService {
 	}
 
 	constructor (
-		accountAuthService: AccountAuthService,
-
 		envService: EnvService,
 
-		faviconService: FaviconService,
-
 		titleService: Title,
-
-		/** @ignore */
-		private readonly accountService: AccountService,
 
 		/** @ignore */
 		private readonly urlStateService: UrlStateService
@@ -96,19 +76,9 @@ export class AppService {
 		self.onpopstate		= () => {};
 
 
-		/* Handle special cases */
-		if (this.urlSection === urlSections.extension) {
-			this.accountService.isExtension		= true;
-			this.urlStateService.setUrl('account/contacts');
-		}
-		else if (this.urlSection === urlSections.telehealth) {
-			this.accountService.isTelehealth	= true;
-			$(document.body).addClass('telehealth');
-			faviconService.setFavicon('telehealth');
-			this.urlStateService.setUrl('account');
-		}
+		const urlSection: string	= this.urlStateService.getUrlSplit()[0];
 
-		if (this.urlSection === urlSections.account) {
+		if (urlSection === urlSections.account) {
 			this.state	= States.account;
 			this.urlStateService.trigger();
 		}
@@ -117,14 +87,8 @@ export class AppService {
 		}
 
 		(async () => {
-			if (this.state === States.account) {
-				$(document.body).addClass('loading-accounts');
-				await accountAuthService.ready;
-			}
-			else {
-				while (this.state === States.blank) {
-					await util.sleep();
-				}
+			while (this.state === States.blank && !this.isLockedDown) {
+				await util.sleep();
 			}
 
 			await util.sleep();

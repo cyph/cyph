@@ -74,6 +74,7 @@ import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.serv
 import {AccountComponent} from './account.component';
 import {AppComponent} from './app.component';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
+import {LockdownComponent} from './lockdown.component';
 
 
 /**
@@ -98,6 +99,7 @@ import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 		FooterComponent,
 		HelpComponent,
 		LinkConnectionComponent,
+		LockdownComponent,
 		MarkdownComponent,
 		NanoScrollerDirective,
 		NotFoundComponent,
