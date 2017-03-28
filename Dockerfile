@@ -65,7 +65,7 @@ RUN gem update
 RUN gem install sass
 
 RUN echo '\
-	source /home/gibson/emsdk_portable/emsdk_env.sh > /dev/null 2>&1; \
+	source /home/gibson/emsdk-portable/emsdk_env.sh > /dev/null 2>&1; \
 \
 	export GIT_EDITOR="vim"; \
 \
@@ -114,7 +114,7 @@ RUN bash -c ' \
 	wget https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz; \
 	tar xzf emsdk-portable.tar.gz; \
 	rm emsdk-portable.tar.gz; \
-	cd emsdk_portable; \
+	cd emsdk-portable; \
 	./emsdk update; \
 	./emsdk install latest; \
 	./emsdk activate latest; \
@@ -123,8 +123,8 @@ RUN bash -c ' \
 
 RUN bash -c ' \
 	source ~/.bashrc; \
-	mkdir -p /home/gibson/emsdk_portable/node/4.1.1_64bit/bin; \
-	ln -s /usr/bin/node /home/gibson/emsdk_portable/node/4.1.1_64bit/bin/node; \
+	mkdir -p /home/gibson/emsdk-portable/node/4.1.1_64bit/bin; \
+	ln -s /usr/bin/node /home/gibson/emsdk-portable/node/4.1.1_64bit/bin/node; \
 '
 
 RUN bash -c ' \
