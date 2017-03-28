@@ -31,10 +31,6 @@ ${!o.noCyphBranding ? '' : `
 		display: none;
 	}
 
-	[cyph-chat-toolbar] a {
-		display: none;
-	}
-
 	md-fab-trigger img {
 		content: url(${o.favicon});
 		@include filter(brightness(0%) invert(100%));
