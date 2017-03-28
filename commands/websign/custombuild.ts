@@ -131,16 +131,19 @@ if (o.password) {
 	);
 }
 
-$('body').append(`
-	<link
-		rel='stylesheet'
-		websign-sri-path='${args.customBuildStylesheet}'
-		websign-sri-hash='${hash}'
-	></link>
-`);
+if (css) {
+	$('body').append(`
+		<link
+			rel='stylesheet'
+			websign-sri-path='${args.customBuildStylesheet}'
+			websign-sri-hash='${hash}'
+		></link>
+	`);
 
-fs.writeFileSync(args.customBuildStylesheet, css);
-fs.writeFileSync(`${args.customBuildStylesheet}.srihash`, hash);
+	fs.writeFileSync(args.customBuildStylesheet, css);
+	fs.writeFileSync(`${args.customBuildStylesheet}.srihash`, hash);
+}
+
 fs.writeFileSync(`../${args.customBuild}`, $.html().trim());
 
 
