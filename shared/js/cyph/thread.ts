@@ -18,7 +18,6 @@ export class Thread implements IThread {
 		/* Inherit these from main thread */
 
 		(<any> self).customBuild		= threadSetupVars.customBuild;
-		(<any> self).customBuildFavicon	= threadSetupVars.customBuildFavicon;
 		(<any> self).locationData		= threadSetupVars.locationData;
 		(<any> self).navigatorData		= threadSetupVars.navigatorData;
 		(<any> self).translations		= threadSetupVars.translations;
@@ -183,7 +182,6 @@ export class Thread implements IThread {
 
 		const threadSetupVars	= {
 			customBuild,
-			customBuildFavicon,
 			translations,
 			locationData: {
 				hash: locationData.hash,
