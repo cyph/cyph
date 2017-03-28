@@ -26,5 +26,9 @@ export class UrlSessionInitService implements SessionInitService {
 		;
 
 		this.id			= urlState[this.callType ? 1 : 0] || '';
+
+		if (!this.callType) {
+			this.callType	= customBuildCallType;
+		}
 	}
 }
