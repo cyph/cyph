@@ -514,11 +514,11 @@ initPromise.then(() => {
 	killContainer(containerName(args.command));
 
 	pullUpdates().then(() => {
-		if (shellScripts.command === 'getlibs') {
+		if (args.command === 'getlibs') {
 			return;
 		}
 
-		dockerRun(
+		return dockerRun(
 			shellScripts.command,
 			containerName(args.command),
 			args.background,
@@ -526,7 +526,7 @@ initPromise.then(() => {
 			commandAdditionalArgs
 		);
 	}).then(() => {
-		if (shellScripts.command === 'updatelibs') {
+		if (args.command === 'updatelibs') {
 			updateCircleCI();
 		}
 	});
