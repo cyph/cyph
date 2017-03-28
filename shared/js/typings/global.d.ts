@@ -12,6 +12,18 @@ declare let customBuild: string|undefined;
 
 /**
  * @global
+ * If applicable, API flags for this custom build.
+ */
+declare let customBuildApiFlags: string|undefined;
+
+/**
+ * @global
+ * If applicable, call type for this custom build.
+ */
+declare let customBuildCallType: 'audio'|'video'|undefined;
+
+/**
+ * @global
  * If applicable, favicon for this custom build.
  */
 declare let customBuildFavicon: string|undefined;

@@ -34,6 +34,8 @@ for (const k of [
 	'Audio',
 	'beforeUnloadMessage',
 	'customBuild',
+	'customBuildApiFlags',
+	'customBuildCallType',
 	'customBuildFavicon',
 	'customBuildPassword',
 	'history',

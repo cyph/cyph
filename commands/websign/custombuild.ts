@@ -99,6 +99,14 @@ if (o.colors && o.colors.main) {
 
 $('head').append(`<meta name='custom-build' content='${args.customBuild}' />`);
 
+if (o.apiFlags) {
+	$('head').append(`<meta name='custom-build-api-flags' content='${o.apiFlags}' />`);
+}
+
+if (o.callType) {
+	$('head').append(`<meta name='custom-build-call-type' content='${o.callType}' />`);
+}
+
 if (o.favicon) {
 	$('head').find(
 		'link[type="image/png"],' + 
