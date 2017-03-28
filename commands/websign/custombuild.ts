@@ -42,8 +42,15 @@ const o	= JSON.parse(
 	fs.readFileSync(args.customBuildTheme).toString()
 );
 
-o.background	= datauri.sync(args.customBuildBackground);
-o.favicon		= datauri.sync(args.customBuildFavicon);
+try {
+	o.background	= datauri.sync(args.customBuildBackground);
+}
+catch (_) {}
+
+try {
+	o.favicon		= datauri.sync(args.customBuildFavicon);
+}
+catch (_) {}
 
 try {
 	o.additionalStyling	= compileSCSS(
@@ -68,7 +75,7 @@ const hash	= (await superSphincs.hash(css)).hex;
 
 $('title').text(htmlencode.htmlEncode(o.title));
 
-if (o.colors.main) {
+if (o.colors && o.colors.main) {
 	$('head').find(
 		'meta[name="theme-color"],' + 
 		'meta[name="msapplication-TileColor"]'
@@ -90,29 +97,31 @@ if (o.colors.main) {
 	`) + '</style>');
 }
 
-$('head').find(
-	'link[type="image/png"],' + 
-	'meta[name="msapplication-TileImage"]'
-).
-	removeAttr('websign-sri-path').
-	removeAttr('websign-sri-hash').
-	removeAttr('href').
-	removeAttr('content').
-	addClass('custom-build-favicon')
-;
+$('head').append(`<meta name='custom-build' content='${args.customBuild}' />`);
 
-$('head').append(`
-	<meta name='custom-build' content='${args.customBuild}' />
-	<meta name='custom-build-favicon' content='${o.favicon}' />
-	${
-		/* Not going to pretend that this is a security feature. */
-		!o.password ?
-			'' :
-			`<meta name='custom-build-password' content='${
-				Buffer.from(o.password).toString('base64')
-			}' />`
-	}
-`);
+if (o.favicon) {
+	$('head').find(
+		'link[type="image/png"],' + 
+		'meta[name="msapplication-TileImage"]'
+	).
+		removeAttr('websign-sri-path').
+		removeAttr('websign-sri-hash').
+		removeAttr('href').
+		removeAttr('content').
+		addClass('custom-build-favicon')
+	;
+
+	$('head').append(`<meta name='custom-build-favicon' content='${o.favicon}' />`);
+}
+
+if (o.password) {
+	/* Not going to pretend that this is a security feature. */
+	$('head').append(
+		`<meta name='custom-build-password' content='${
+			Buffer.from(o.password).toString('base64')
+		}' />`
+	);
+}
 
 $('body').append(`
 	<link
