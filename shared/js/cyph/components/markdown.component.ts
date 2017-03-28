@@ -25,7 +25,7 @@ export class MarkdownComponent implements OnChanges {
 	private readonly markdownIt: MarkdownIt.MarkdownIt;
 
 	/** String of Markdown to render as HTML and add to the DOM. */
-	@Input() public markdown: string|undefined;
+	@Input() public markdown?: string;
 
 	/** @ignore */
 	public async ngOnChanges (_CHANGES: SimpleChanges) : Promise<void> {

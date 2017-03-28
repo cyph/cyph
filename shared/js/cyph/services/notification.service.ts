@@ -11,7 +11,7 @@ import {VisibilityWatcherService} from './visibility-watcher.service';
 @Injectable()
 export class NotificationService implements INotificationService {
 	/** @ignore */
-	private readonly audio: HTMLAudioElement|undefined;
+	private readonly audio?: HTMLAudioElement;
 
 	/** @ignore */
 	private readonly config	= {

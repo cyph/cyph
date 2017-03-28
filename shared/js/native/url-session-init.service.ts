@@ -8,7 +8,7 @@ import {SessionInitService} from './js/cyph/services/session-init.service';
 @Injectable()
 export class UrlSessionInitService implements SessionInitService {
 	/** @inheritDoc */
-	public readonly callType: 'audio'|'video'|undefined;
+	public readonly callType?: 'audio'|'video';
 
 	/** @inheritDoc */
 	public readonly id: string;

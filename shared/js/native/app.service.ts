@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {States} from './js/cyph.im/enums';
+import {AccountStates, States} from './js/cyph.im/enums';
 
 
 /**
@@ -7,6 +7,12 @@ import {States} from './js/cyph.im/enums';
  */
 @Injectable()
 export class AppService {
+	/** @see AccountStates */
+	public accountState?: AccountStates;
+
+	/** @see AccountStates */
+	public accountStates: typeof AccountStates	= AccountStates;
+
 	/** @see LinkConnection.baseUrl */
 	public linkConnectionBaseUrl: string;
 

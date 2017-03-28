@@ -12,7 +12,7 @@ export interface ISession {
 		isAlice: boolean;
 		isAlive: boolean;
 		sharedSecret: string;
-		startingNewCyph: boolean|undefined;
+		startingNewCyph?: boolean;
 		wasInitiatedByAPI: boolean;
 	};
 
