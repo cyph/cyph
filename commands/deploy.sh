@@ -373,7 +373,7 @@ if [ "${websign}" ] ; then
 
 	cd ..
 
-	packages="${package}"
+	customBuilds=""
 
 	cd pkg/cyph.ws-subresources
 	mv ../../custom-builds ./
@@ -386,7 +386,7 @@ if [ "${websign}" ] ; then
 		customBuildFavicon="${d}/favicon.png"
 		customBuildTheme="${d}/theme.json"
 		customBuildStylesheet="custom-builds/${customBuildBase}.css"
-		packages="${packages} ${customBuild}"
+		customBuilds="${customBuilds} ${customBuild}"
 
 		../../commands/websign/custombuild.ts \
 			"${customBuild}" \
@@ -400,18 +400,20 @@ if [ "${websign}" ] ; then
 	done
 	cd ../..
 
+	packages="${package} ${customBuilds}"
+
 	if [ $test ] ; then
 		mv pkg/cyph.ws "pkg/${package}"
 	fi
 
-	for p in $packages ; do
+	for p in ${packages} ; do
 		rm -rf cdn/${p}
 	done
 
 	echo "Starting signing process."
 
 	./commands/websign/sign.ts "${websignHashWhitelist}" $(
-		for p in $packages ; do
+		for p in ${packages} ; do
 			echo -n "pkg/${p}=cdn/${p} "
 		done
 	) || exit 1
@@ -425,24 +427,35 @@ if [ "${websign}" ] ; then
 		'
 	fi
 
-	for p in $packages ; do
-		if [ -d pkg/cyph.ws-subresources ] ; then
-			cp -a pkg/cyph.ws-subresources/* cdn/${p}/
-		fi
+	if [ -d pkg/cyph.ws-subresources ] ; then
+		cp -a pkg/cyph.ws-subresources/* cdn/${package}/
 
-		cd cdn
+		for customBuild in ${customBuilds} ; do
+			cd cdn/${customBuild}
+			for subresource in $(ls ../../pkg/cyph.ws-subresources) ; do
+				ln -s ../${package}/${subresource} ${subresource}
+				chmod 700 ${subresource}
+				git add ${subresource}
+				git commit -S -m ${subresource} ${subresource} > /dev/null 2>&1
+			done
+			cd ../..
+		done
+	fi
 
-		plink=$(echo $p | sed 's/\.ws$//')
-		if (echo $p | grep -P '\.ws$' > /dev/null) && ! [ -L $plink ] ; then
-			ln -s $p $plink
-			chmod 700 $plink
-			git add $plink
-			git commit -S -m $plink $plink > /dev/null 2>&1
+	cd cdn
+
+	for p in ${packages} ; do
+		plink=$(echo ${p} | sed 's/\.ws$//')
+		if (echo ${p} | grep -P '\.ws$' > /dev/null) && ! [ -L ${plink} ] ; then
+			ln -s ${p} ${plink}
+			chmod 700 ${plink}
+			git add ${plink}
+			git commit -S -m ${plink} ${plink} > /dev/null 2>&1
 		fi
 
 		cp ${p}/current ${p}/pkg.srihash
 
-		find $p -type f -not \( -name '*.srihash' -or -name '*.gz' -or -name '*.br' \) -exec bash -c ' \
+		find ${p} -type f -not \( -name '*.srihash' -or -name '*.gz' -or -name '*.br' \) -exec bash -c ' \
 			if [ ! -f {}.gz ] ; then \
 				zopfli -i1000 {}; \
 				bro --quality 99 --repeat 99 --input {} --output {}.br; \
@@ -453,8 +466,9 @@ if [ "${websign}" ] ; then
 		' \;
 
 		git push
-		cd ..
 	done
+
+	cd ..
 
 	# WebSign redirects
 
