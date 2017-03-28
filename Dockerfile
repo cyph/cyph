@@ -57,6 +57,7 @@ RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
 	procps \
 	python \
 	ruby \
+	ruby-dev \
 	sudo \
 	yarn \
 	zopfli
