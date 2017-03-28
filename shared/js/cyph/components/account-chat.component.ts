@@ -57,7 +57,7 @@ import {StringsService} from '../services/strings.service';
 })
 export class AccountChatComponent implements OnChanges {
 	/** Username of profile owner. */
-	@Input() public username: string|undefined;
+	@Input() public username?: string;
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;

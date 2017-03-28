@@ -8,7 +8,7 @@ import {States} from '../account/enums';
 @Injectable()
 export class AccountService {
 	/** Parameter passed in via URL route (e.g. a username). */
-	public input: string|undefined;
+	public input?: string;
 
 	/** Indicates whether the browser extension UI should be used. */
 	public isExtension: boolean		= false;
@@ -20,7 +20,7 @@ export class AccountService {
 	public menuExpanded: boolean	= false;
 
 	/** @see States */
-	public state: States|undefined;
+	public state?: States;
 
 	/** Toggles account menu. */
 	public toggleMenu (menuExpanded?: boolean) : void {

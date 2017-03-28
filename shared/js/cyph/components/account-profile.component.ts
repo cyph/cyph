@@ -17,13 +17,13 @@ import {UrlStateService} from '../services/url-state.service';
 })
 export class AccountProfileComponent implements OnInit {
 	/** User profile. */
-	public profile: Profile|undefined;
+	public profile?: Profile;
 
 	/** @see UserPresence */
 	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
 
 	/** Username of profile owner. */
-	@Input() public username: string|undefined;
+	@Input() public username?: string;
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;

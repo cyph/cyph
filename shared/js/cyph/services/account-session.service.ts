@@ -24,7 +24,7 @@ export class AccountSessionService extends SessionService {
 	private readonly replies	= new Map<string, number>();
 
 	/** The remote user we're chatting with. */
-	public user: User|undefined;
+	public user?: User;
 
 	/** Closes a chat with an anonymous user. Otherwise, this is a no-op. */
 	public close () : void {}
