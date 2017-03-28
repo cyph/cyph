@@ -12,7 +12,7 @@ export interface IChatMessage {
 	selfDestructTimer?: Timer;
 
 	/** Message text. */
-	text: string|undefined;
+	text?: string;
 
 	/** Message timestamp. */
 	timestamp: number;

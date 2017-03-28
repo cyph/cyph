@@ -48,7 +48,7 @@ export class Mutex implements IMutex {
 	private purpose: string;
 
 	/** @ignore */
-	private requester: {purpose: string; user: string}|undefined;
+	private requester?: {purpose: string; user: string};
 
 	/** @ignore */
 	private shiftRequester () : void {

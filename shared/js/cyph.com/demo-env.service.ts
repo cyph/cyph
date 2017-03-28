@@ -10,7 +10,7 @@ import {ChatData} from './chat-data';
 @Injectable()
 export class DemoEnvService extends EnvService {
 	/** @ignore */
-	private chatData: ChatData|undefined;
+	private chatData?: ChatData;
 
 	/** Initialise service. */
 	public init (chatData: ChatData) : void {

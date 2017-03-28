@@ -15,7 +15,7 @@ export class ScrollService {
 	private itemCountInTitle: boolean	= false;
 
 	/** @ignore */
-	private rootElement: JQuery|undefined;
+	private rootElement?: JQuery;
 
 	/** @ignore */
 	private scrollDownLock: {}	= {};

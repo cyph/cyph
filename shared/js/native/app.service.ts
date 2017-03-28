@@ -8,7 +8,7 @@ import {AccountStates, States} from './js/cyph.im/enums';
 @Injectable()
 export class AppService {
 	/** @see AccountStates */
-	public accountState: AccountStates|undefined;
+	public accountState?: AccountStates;
 
 	/** @see AccountStates */
 	public accountStates: typeof AccountStates	= AccountStates;

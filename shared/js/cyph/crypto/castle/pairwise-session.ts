@@ -37,7 +37,7 @@ export class PairwiseSession {
 	private isConnected: boolean;
 
 	/** @ignore */
-	private localUser: ILocalUser|undefined;
+	private localUser?: ILocalUser;
 
 	/** @ignore */
 	private readonly lock: {}			= {};
@@ -46,7 +46,7 @@ export class PairwiseSession {
 	private outgoingMessageId: number	= 0;
 
 	/** @ignore */
-	private remoteUser: IRemoteUser|undefined;
+	private remoteUser?: IRemoteUser;
 
 	/** @ignore */
 	private remoteUsername: string;

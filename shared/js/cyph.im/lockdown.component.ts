@@ -15,7 +15,7 @@ import {AppService} from './app.service';
 })
 export class LockdownComponent implements OnInit {
 	/** @ignore */
-	private correctPassword: string|undefined;
+	private correctPassword?: string;
 
 	/** Indicates whether unlock attempt is in progress. */
 	public checking: boolean	= false;

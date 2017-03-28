@@ -143,7 +143,7 @@ export class Thread implements IThread {
 
 
 	/** @ignore */
-	private worker: Worker|undefined;
+	private worker?: Worker;
 
 	/** @inheritDoc */
 	public isAlive () : boolean {

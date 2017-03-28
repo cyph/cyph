@@ -18,7 +18,7 @@ import {ChatData} from './chat-data';
 @Injectable()
 export class LocalSessionService extends SessionService {
 	/** @ignore */
-	private chatData: ChatData|undefined;
+	private chatData?: ChatData;
 
 	/** @inheritDoc */
 	public async close () : Promise<void> {

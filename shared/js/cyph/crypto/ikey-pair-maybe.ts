@@ -6,8 +6,8 @@ export interface IKeyPairMaybe {
 	keyType?: string;
 
 	/** Private key. */
-	privateKey: Uint8Array|undefined;
+	privateKey?: Uint8Array;
 
 	/** Public key. */
-	publicKey: Uint8Array|undefined;
+	publicKey?: Uint8Array;
 }

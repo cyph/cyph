@@ -59,13 +59,13 @@ export class AppService {
 	];
 
 	/** @see HomeSections */
-	public homeSection: HomeSections|undefined;
+	public homeSection?: HomeSections;
 
 	/** Individual pricing state. */
 	public readonly individual: boolean	= false;
 
 	/** @see Promos */
-	public promo: Promos|undefined;
+	public promo?: Promos;
 
 	/** @see Promos */
 	public promos: typeof Promos		= Promos;
