@@ -29,7 +29,6 @@ RUN apt-get -y --force-yes update
 RUN apt-get -y --force-yes upgrade
 
 RUN apt-get -y --force-yes install haxe
-RUN apt-get -y --force-yes -t unstable install gcc-6
 RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
 	autoconf \
 	automake \
@@ -61,6 +60,7 @@ RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
 	sudo \
 	yarn \
 	zopfli
+RUN apt-get -y --force-yes -t unstable install gcc-6
 
 RUN gem update
 RUN gem install sass
