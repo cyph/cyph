@@ -88,7 +88,7 @@ export class EnvDeploy {
 
 	/** Endpoint for Firebase server. */
 	public readonly firebaseEndpoint: string	=
-		`ws://${`${locationData.hostname}.home.`.replace('localhost.home.', '127.0.1')}:44000`
+		`ws://${`${locationData.hostname}.`.replace(/localhost\.$/, '127.0.1')}:44000`
 	;
 
 	/** Content Security Policy defined in shared/csp. */
