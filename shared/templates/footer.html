@@ -50,22 +50,20 @@
 		</p>
 	</div>
 
-	<div class='layout-row' *ngIf='envService.coBranded'>
-		<p class='powered-by-cyph flex-nogrow layout-padding'>
-			<a [href]='envService.homeUrl' class='small-font' cyphTranslate>
-				Powered by Cyph
-			</a>
-		</p>
-	</div>
-
 	<div *ngIf='sessionService.apiFlags.telehealth' class='icons'>
 		<img class='websign icon' src='/img/websign.icon.png' alt='WebSign Validated' />
 		<img class='hipaa icon' src='/img/hipaa.icon.png' alt='HIPAA-Compliant' />
 	</div>
-	<div class='layout-row' *ngIf='sessionService.apiFlags.telehealth'>
+
+	<div class='layout-row' *ngIf='envService.coBranded || sessionService.apiFlags.telehealth'>
 		<p class='powered-by-cyph flex-nogrow layout-padding'>
-			<a [href]='envService.homeUrl' class='small-font' cyphTranslate>
-				Telehealth Session Powered by Cyph
+			<a [href]='envService.homeUrl' class='small-font'>
+				<span *ngIf='sessionService.apiFlags.telehealth' cyphTranslate>
+					Telehealth Session
+				</span>
+				<span cyphTranslate>
+					Powered by Cyph
+				</span>
 			</a>
 		</p>
 	</div>
