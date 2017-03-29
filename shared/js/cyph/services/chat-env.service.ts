@@ -18,15 +18,24 @@ export class ChatEnvService extends EnvService {
 		}
 
 		const flags		=
-			this.configService.apiFlags.map(o => o.get(this.sessionService)).join('')
+			this.configService.apiFlags.map(flag =>
+				customBuildApiFlags && customBuildApiFlags.indexOf(flag.character) > -1 ?
+					'' :
+					flag.get(this.sessionService)
+			).join('')
 		;
 
 		const baseUrl	=
-			this.sessionInitService.callType === 'audio' ?
-				(base ? env.cyphAudioBaseUrl : env.cyphAudioUrl) :
-				this.sessionInitService.callType === 'video' ?
-					(base ? env.cyphVideoBaseUrl : env.cyphVideoUrl) :
-					(base ? env.newCyphBaseUrl : env.newCyphUrl)
+			(
+				customBuildCallType === this.sessionInitService.callType ?
+					undefined :
+					this.sessionInitService.callType === 'audio' ?
+						(base ? env.cyphAudioBaseUrl : env.cyphAudioUrl) :
+						this.sessionInitService.callType === 'video' ?
+							(base ? env.cyphVideoBaseUrl : env.cyphVideoUrl) :
+							undefined
+			) ||
+				(base ? env.newCyphBaseUrl : env.newCyphUrl)
 		;
 
 		const divider	= baseUrl.indexOf('#') < 0 ? '#' : '';
