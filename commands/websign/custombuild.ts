@@ -73,7 +73,9 @@ const css	= compileSCSS(
 const hash	= (await superSphincs.hash(css)).hex;
 
 
-$('title').text(htmlencode.htmlEncode(o.title));
+if (o.title) {
+	$('title').text(htmlencode.htmlEncode(o.title));
+}
 
 if (o.colors && o.colors.main) {
 	$('head').find(
