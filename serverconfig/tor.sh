@@ -33,7 +33,7 @@ gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
 curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
-apt-get -y --force-yes install apt dpkg nginx openssl nodejs deb.torproject.org-keyring tor
+apt-get -y --force-yes install apt cron dpkg nginx openssl nodejs deb.torproject.org-keyring tor
 do-release-upgrade -f DistUpgradeViewNonInteractive
 
 mkdir -p /etc/nginx/ssl/websign

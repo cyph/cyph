@@ -24,7 +24,7 @@ echo "deb https://deb.nodesource.com/node_6.x ${distro} main" >> /etc/apt/source
 curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
-apt-get -y --force-yes install apt dpkg nodejs openssl build-essential git
+apt-get -y --force-yes install apt cron dpkg nodejs openssl build-essential git
 do-release-upgrade -f DistUpgradeViewNonInteractive
 
 
