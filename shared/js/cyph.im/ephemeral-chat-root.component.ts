@@ -104,11 +104,7 @@ export class EphemeralChatRootComponent implements OnInit {
 				undefined
 		};
 
-		const granim	= (
-			!this.envService.isWeb ||
-			this.envService.coBranded ||
-			this.sessionService.apiFlags.modestBranding
-		) ?
+		const granim	= !this.envService.isWeb ?
 			undefined :
 			<{
 				changeState: (state: string) => void;

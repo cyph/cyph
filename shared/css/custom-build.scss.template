@@ -48,6 +48,10 @@ ${!o.colors ? '' : `
 		&, body, #main, .cyph-foreground, md-sidenav {
 			background-color: ${o.colors.main};
 		}
+
+		#main-chat-gradient {
+			display: none;
+		}
 	`}
 
 	${!o.colors.text ? '' : `
