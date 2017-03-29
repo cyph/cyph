@@ -360,7 +360,6 @@ const updateCircleCI	= () => {
 			filter(s => !s.startsWith('VOLUME')).
 			join('\n').
 			replace('WORKDIR /cyph/commands', 'WORKDIR /cyph').
-			replace(/.*emsdk.*/g, '').
 			replace(/#CIRCLECI:/g, '').
 			replace(
 				/GETLIBS_BASE64/g,
