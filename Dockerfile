@@ -5,7 +5,7 @@ MAINTAINER Ryan Lester <hacker@linux.com>
 LABEL Name="cyph"
 
 RUN apt-get -y --force-yes update
-RUN apt-get -y --force-yes install apt-transport-https curl lsb-release
+RUN apt-get -y --force-yes install apt-transport-https apt-utils curl lsb-release
 
 ENV debianVersion "echo $(lsb_release -c | awk '{print \$2}')"
 ENV debianBackports "${debianVersion}-backports"
@@ -29,8 +29,8 @@ RUN apt-get -y --force-yes update
 RUN apt-get -y --force-yes upgrade
 
 RUN apt-get -y --force-yes install haxe
+RUN apt-get -y --force-yes -t unstable install gcc-6
 RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
-	apt-utils \
 	autoconf \
 	automake \
 	build-essential \
