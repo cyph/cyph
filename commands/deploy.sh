@@ -502,13 +502,6 @@ fi
 find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favicon.ico {}/ \;
 
 
-# Temporary workaround for cache-busting reverse proxies
-if [ ! "${test}" ] && ( [ ! "${site}" ] || [ "${site}" == cyph.im ] ) ; then
-	for project in cyph.im cyph.video ; do
-		cat $project/*.yaml | perl -pe 's/(service: cyph.*)/\1-update/' > $project/update.yaml
-	done
-fi
-
 if [ "${test}" ] ; then
 	rm -rf $prodOnlyProjects
 fi
