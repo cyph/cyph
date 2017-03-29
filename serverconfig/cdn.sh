@@ -51,7 +51,16 @@ cat > server.js <<- EOM
 	const fs				= require('fs');
 	const spdy				= require('spdy');
 
-	const cache				= {gzip: {}, br: {}};
+	const cache				= {
+		br: {
+			files: {},
+			urls: {}
+		},
+		gzip: {
+			files: {},
+			urls: {}
+		}
+	};
 
 	const cdnPath			= './cdn/';
 	const certPath			= 'cert.pem';
@@ -135,41 +144,51 @@ cat > server.js <<- EOM
 	));
 
 	app.get(/\/.*/, (req, res) => Promise.resolve().then( () => {
-		if (req.cache[req.originalUrl]) {
+		if (req.cache.urls[req.originalUrl]) {
 			return;
 		}
 
 		const hash	= req.originalUrl.split('?')[1];
 
-		return req.getFileName().then(fileName => new Promise( (resolve, reject) =>
-			fs.stat(cdnPath + fileName, err => {
-				if (err) {
-					reject(err);
-					return;
-				}
+		return req.getFileName().then(fileName =>
+			(req.cache.files[fileName] || {})[hash] ?
+				Promise.resolve(req.cache.files[fileName][hash]) :
+				new Promise( (resolve, reject) =>
+					fs.stat(cdnPath + fileName, err => {
+						if (err) {
+							reject(err);
+							return;
+						}
 
-				resolve();
-			})
-		).then( () =>
-			hash ? git('log', '--pretty=format:%H %s', fileName) : ''
-		).then(output => {
-			const revision	= (
-				output.toString().
-					split('\n').
-					map(s => s.split(' ')).
-					filter(arr => arr[1] === hash).
-					concat([['HEAD']])
-			)[0][0];
+						resolve();
+					})
+				).then( () =>
+					hash ? git('log', '--pretty=format:%H %s', fileName) : ''
+				).then(output => {
+					const revision	= (
+						output.toString().
+							split('\n').
+							map(s => s.split(' ')).
+							filter(arr => arr[1] === hash).
+							concat([['HEAD']])
+					)[0][0];
 
-			return git('show', revision + ':' + fileName);
-		}).then(data => {
-			req.cache[req.originalUrl]	= data;
-		}));
+					return git('show', revision + ':' + fileName);
+				}).then(data => {
+					if (!req.cache.files[fileName]) {
+						req.cache.files[fileName]	= {};
+					}
+					req.cache.files[fileName][hash]	= data;
+					return data;
+				})
+		).then(data => {
+			req.cache.urls[req.originalUrl]	= data;
+		});
 	}).then( () =>
 		res.send(
 			req.hostname === 'localhost' ?
 				'' :
-				req.cache[req.originalUrl]
+				req.cache.urls[req.originalUrl]
 		)
 	).catch( () =>
 		returnError(res)
