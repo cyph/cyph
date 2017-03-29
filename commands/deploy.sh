@@ -464,10 +464,9 @@ if [ "${websign}" ] ; then
 			git add {}.gz {}.br; \
 			git commit -S -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz {}.br > /dev/null 2>&1; \
 		' \;
-
-		git push
 	done
 
+	git push
 	cd ..
 
 	# WebSign redirects
