@@ -2,7 +2,7 @@ import {CommonModule} from '@angular/common';
 import {NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {Title} from '@angular/platform-browser';
-import {NativeScriptModule} from 'nativescript-angular/platform';
+import {NativeScriptModule} from 'nativescript-angular/nativescript.module';
 import {AccountComponent} from './account.component';
 import {AppComponent} from './app.component';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
@@ -87,4 +87,3 @@ import {VisibilityWatcherService} from './js/cyph/services/visibility-watcher.se
 export class AppModule {
 	constructor () {}
 }
-
