@@ -62,6 +62,10 @@ RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
 	zopfli
 RUN apt-get -y --force-yes -t unstable install gcc-6
 
+RUN apt-get -y --force-yes update
+RUN apt-get -y --force-yes upgrade
+RUN apt-get -y --force-yes autoremove
+
 RUN gem update
 RUN gem install sass
 
