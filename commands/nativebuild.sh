@@ -12,10 +12,6 @@ cd cyph
 node -e '
 	const package	= JSON.parse(fs.readFileSync("package.json").toString());
 	package.dependencies["@angular/compiler-cli"]	= package.dependencies["@angular/compiler"];
-
-	/* Temporary workaround until NativeScript works with latest stable TypeScript */
-	package.dependencies["typescript"]				= "2.2.0-dev.20170213";
-
 	fs.writeFileSync("package.json", JSON.stringify(package));
 '
 mkdir node_modules 2> /dev/null
@@ -23,10 +19,6 @@ npm install || exit 1
 
 cp ${dir}/shared/js/native/firebase.nativescript.json ./
 for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
-
-# Temporary workaround pending NativeScript updating to TS >= 2.2
-cat node_modules/tns-core-modules/declarations.d.ts | tail -n67 > declarations.d.ts.new
-mv declarations.d.ts.new node_modules/tns-core-modules/declarations.d.ts
 
 cp -rf node_modules node_modules.old
 rm -rf node_modules/@types 2> /dev/null
