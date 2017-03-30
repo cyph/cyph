@@ -72,8 +72,8 @@ yarn add --ignore-platform --ignore-scripts \
 	mkdirp \
 	moment \
 	nanoscroller \
-	nativescript \
-	nativescript-angular \
+	nativescript@rc \
+	nativescript-angular@rc \
 	nativescript-dev-android-snapshot \
 	nativescript-dev-typescript \
 	nativescript-theme-core \
