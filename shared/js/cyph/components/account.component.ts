@@ -53,7 +53,7 @@ export class AccountComponent implements OnInit {
 		}
 
 		if (!this.envService.coBranded && !this.accountService.isExtension) {
-			/* tslint:disable-next-line:no-unused-new */
+			/* tslint:disable-next-line:no-unused-expression */
 			new Granim({
 				direction: 'radial',
 				element: '.cyph-gradient',
