@@ -97,6 +97,7 @@
 	<div
 		class='cyph-view video-call flex'
 		[class.active]='chatService.chat.state === states.chat'
+		[class.no-transition]='p2pService.isActive'
 		[class.playing]='p2pService.isActive'
 		[class.sidebar-open]='p2pService.isSidebarOpen'
 		*ngIf='p2pWebRTCService'

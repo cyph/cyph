@@ -13,9 +13,6 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class P2PService {
-	/** @ignore */
-	private preemptivelyInitiated: boolean;
-
 	/** Indicates whether P2P is possible (i.e. both clients support WebRTC). */
 	public isEnabled: boolean	= false;
 
@@ -42,7 +39,7 @@ export class P2PService {
 	public init (localVideo: () => JQuery, remoteVideo: () => JQuery) : void {
 		this.p2pWebRTCService.init(localVideo, remoteVideo);
 
-		if (this.preemptivelyInitiated) {
+		if (this.isActive) {
 			this.p2pWebRTCService.accept();
 		}
 	}
@@ -59,7 +56,7 @@ export class P2PService {
 
 	/** Preemptively initiate call, bypassing any prerequisite dialogs and button clicks. */
 	public preemptivelyInitiate () : void {
-		this.preemptivelyInitiated	= true;
+		this.p2pWebRTCService.isActive	= true;
 	}
 
 	/** Toggle visibility of sidebar containing chat UI. */
