@@ -220,7 +220,7 @@ export class EphemeralChatRootComponent implements OnInit {
 
 		/* Cyphertext easter egg */
 		if (!this.sessionService.apiFlags.telehealth) {
-			/* tslint:disable-next-line:no-unused-new */
+			/* tslint:disable-next-line:no-unused-expression */
 			new Konami(async () => {
 				while (this.chatService.chat.state !== ChatStates.chat) {
 					await util.sleep();

@@ -101,12 +101,11 @@
 		"no-unsafe-any": false,
 		"no-unsafe-finally": true,
 		"no-unused-expression": true,
-		"no-unused-new": true,
-		"no-use-before-declare": true,
+		/* Pending fix: "no-use-before-declare": true, */
 		"no-var-keyword": true,
 		"no-void-expression": true,
 		"radix": true,
-		"restrict-plus-operands": true,
+		/* Pending fix: "restrict-plus-operands": true, */
 		"strict-boolean-expressions": false,
 		"switch-default": false,
 		"strict-type-predicates": true,
@@ -183,24 +182,23 @@
 		/* Codelyzer */
 
 		"component-class-suffix": true,
-		"component-selector": [true, "element", "cyph", "kebab-case"],
+		/* Pending fix: "component-selector": [true, "element", "cyph", "kebab-case"], */
 		"directive-class-suffix": true,
-		"directive-selector": [true, "attribute", "cyph", "camelCase"],
-		"import-destructuring-spacing": false,
+		/* Pending fix: "directive-selector": [true, "attribute", "cyph", "camelCase"], */
 		"invoke-injectable": true,
-		"no-access-missing-member": true,
+		/* Pending fix: "no-access-missing-member": true, */
 		"no-attribute-parameter-decorator": true,
 		"no-forward-ref": true,
 		"no-input-rename": true,
 		"no-output-rename": true,
 		"no-unused-css": true,
 		"pipe-impure": true,
-		"pipe-naming": [true, "camelCase", "cyph"],
-		"templates-use-public": true,
-		"use-host-property-decorator": true,
-		"use-input-property-decorator": true,
-		"use-life-cycle-interface": true,
-		"use-output-property-decorator": true,
+		/* Pending fix: "pipe-naming": [true, "camelCase", "cyph"], */
+		/* Pending fix: "templates-use-public": true, */
+		/* Pending fix: "use-host-property-decorator": true, */
+		/* Pending fix: "use-input-property-decorator": true, */
+		/* Pending fix: "use-life-cycle-interface": true, */
+		/* Pending fix: "use-output-property-decorator": true, */
 		"use-pipe-transform-interface": true,
 
 
@@ -220,7 +218,7 @@
 		"no-empty-line-after-opening-brace": true,
 		"no-exec-script": true,
 		"no-for-in": true,
-		"no-function-constructor-with-string-args": true,
+		/* Pending fix: "no-function-constructor-with-string-args": true, */
 		"no-increment-decrement": false,
 		"no-inner-html": true,
 		"no-invalid-regexp": true,
@@ -229,9 +227,9 @@
 		"no-reserved-keywords": true,
 		"no-sparse-arrays": true,
 		"no-stateless-class": true,
-		"no-string-based-set-immediate": true,
-		"no-string-based-set-interval": true,
-		"no-string-based-set-timeout": true,
+		/* Pending fix: "no-string-based-set-immediate": true, */
+		/* Pending fix: "no-string-based-set-interval": true, */
+		/* Pending fix: "no-string-based-set-timeout": true, */
 		"no-unnecessary-bind": true,
 		"no-unnecessary-field-initialization": true,
 		"no-unnecessary-local-variable": true,
