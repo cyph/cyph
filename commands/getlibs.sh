@@ -183,10 +183,6 @@ for d in firebase firebase-server ts-node tslint ; do
 		cp -f firebase.js firebase-browser.js
 		cp -f firebase.js firebase-node.js
 		rm -rf node_modules
-	elif [ "${d}" == 'tslint' ] ; then
-		# Temporary workaround pending tslint updating to TS >= 2.2
-		rm -rf node_modules/typescript
-		cp -rf "${currentDir}/typescript" node_modules/
 	fi
 
 	cd "${currentDir}"
