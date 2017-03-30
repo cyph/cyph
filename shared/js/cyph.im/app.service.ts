@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import * as $ from 'jquery';
+import {ConfigService} from '../cyph/services/config.service';
 import {EnvService} from '../cyph/services/env.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
@@ -19,7 +20,7 @@ export class AppService {
 	public accountStates: typeof AccountStates	= AccountStates;
 
 	/** If true, app is locked down. */
-	public isLockedDown: boolean	= !!customBuildPassword;
+	public isLockedDown: boolean;
 
 	/** @see States */
 	public state: States;
@@ -51,6 +52,8 @@ export class AppService {
 	}
 
 	constructor (
+		configService: ConfigService,
+
 		envService: EnvService,
 
 		titleService: Title,
@@ -76,9 +79,14 @@ export class AppService {
 		self.onpopstate		= () => {};
 
 
-		const urlSection: string	= this.urlStateService.getUrlSplit()[0];
+		const urlState	= this.urlStateService.getUrlSplit();
 
-		if (urlSection === urlSections.account) {
+		this.isLockedDown	=
+			!!customBuildPassword &&
+			urlState.slice(-1)[0].length < configService.secretLength
+		;
+
+		if (urlState[0] === urlSections.account) {
 			this.state	= States.account;
 			this.urlStateService.trigger();
 		}
