@@ -54,31 +54,6 @@ find app -type f -name '*.scss' -exec bash -c '
 	scss -C "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
 ' \;
 
-getmodules () {
-	{
-		find node_modules/${1} -mindepth 1 -type d -or -name '*.ts' \
-			-not -path 'node_modules/${1}/node_modules/*' |
-			sed 's|node_modules/||g' |
-			sed 's|\.d\.ts$||g' |
-			sed 's|\.ts$||g' \
-		;
-		echo "${1}/index";
-	} |
-		perl -pe 's/(.*)\/index/\1\n\1\/index/g' |
-		sort |
-		uniq
-}
-
-getbadimports () {
-	grep -rP "^import .* from [\"']" app |
-		grep -vP '^app/js/' |
-		grep '\.ts:' |
-		perl -pe "s/.* from [\"'](.*?)[\"'].*/\1/g" |
-		grep -P "^($(echo -n "$(getmodules tns-core-modules | grep '/')" | tr '\n' '|'))" |
-		sort |
-		uniq
-}
-
 node -e "
 	const tsconfig	= JSON.parse(
 		fs.readFileSync('${dir}/shared/js/tsconfig.json').toString().
@@ -90,19 +65,6 @@ node -e "
 	/* For Angular AOT */
 	tsconfig.compilerOptions.noUnusedLocals		= undefined;
 	tsconfig.compilerOptions.noUnusedParameters	= undefined;
-
-	tsconfig.compilerOptions.baseUrl			= '.';
-	tsconfig.compilerOptions.paths				= {
-		$(
-			getmodules tns-core-modules |
-				sed 's|^tns-core-modules/||g' |
-				grep / |
-				xargs -I% echo '"%": ["node_modules/tns-core-modules/%"],' |
-				perl -pe 's/([^\/]+)\/\g1/\1/g' |
-				sort |
-				uniq
-		)
-	};
 
 	tsconfig.compilerOptions.outDir				= '.';
 
@@ -125,35 +87,6 @@ node -e "
 sed -i 's|\./app.module|\./app.module.ngfactory|g' app/main.ts
 sed -i 's|AppModule|AppModuleNgFactory|g' app/main.ts
 sed -i 's|bootstrapModule|bootstrapModuleFactory|g' app/main.ts
-for module in $(getbadimports) ; do
-	newModuleParent="${PWD}/node_modules/${module}"
-	oldModule="${newModuleParent}"
-	newModule1="${newModuleParent}/index"
-	newModule2="$(echo "${newModuleParent}" | sed 's|[^/]*$||')index"
-
-	if [ ! -f "${oldModule}.d.ts" ] ; then
-		continue
-	fi
-
-	node -e "fs.writeFileSync(
-		'${oldModule}.d.ts',
-		fs.readFileSync('${oldModule}.d.ts').toString().
-			split('{').
-			slice(1).
-			join('{').
-			split('}').
-			slice(0, -1).
-			join('}')
-	)"
-
-	mkdir -p "${newModuleParent}" 2> /dev/null
-
-	for newModule in "${newModule1}" "${newModule2}" ; do
-		for ext in d.ts android.js ios.js js ; do
-			ln -s "${oldModule}.${ext}" "${newModule}.${ext}" 2> /dev/null
-		done
-	done
-done
 ./node_modules/.bin/ngc -p .
 rm tsconfig.json
 
@@ -180,7 +113,7 @@ for platform in android ios ; do
 			},
 			output: {
 				filename: 'app/main.${platform}.js',
-				path: '.'
+				path: '${PWD}'
 			},
 			resolve: {
 				extensions: [
@@ -231,7 +164,7 @@ for platform in android ios ; do
 done
 
 cd ..
-rm -rf app hooks/before-prepare/nativescript-dev-typescript.js
+rm -rf app hooks/*/nativescript-dev-typescript.js
 mkdir app
 mv tmp/main.*.js tmp/app/App_Resources tmp/app/app.css tmp/app/package.json app/
 mv node_modules.old node_modules
