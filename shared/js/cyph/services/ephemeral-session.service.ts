@@ -50,7 +50,7 @@ export class EphemeralSessionService extends SessionService {
 					block friend from trying to join */
 				util.request({
 					method: 'POST',
-					url: env.baseUrl + 'channels/' + this.state.cyphId
+					url: `${env.baseUrl}channels/${this.state.cyphId}`
 				}).catch(
 					() => {}
 				);
@@ -215,7 +215,7 @@ export class EphemeralSessionService extends SessionService {
 						data: {channelDescriptor, proFeatures: this.proFeatures},
 						method: 'POST',
 						retries: 5,
-						url: env.baseUrl + 'channels/' + this.state.cyphId
+						url: `${env.baseUrl}channels/${this.state.cyphId}`
 					})
 				);
 			}

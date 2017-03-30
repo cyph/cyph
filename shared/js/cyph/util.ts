@@ -289,7 +289,7 @@ export class Util {
 						{n: b, s: ''}
 		;
 
-		return o.n.toFixed(2) + ' ' + o.s + 'B';
+		return `${o.n.toFixed(2)} ${o.s}B`;
 	}
 
 	/** Performs HTTP request. */
@@ -384,7 +384,7 @@ export class Util {
 	public toQueryString (o: any, parent?: string) : string {
 		return Object.keys(o).
 			map((k: string) => {
-				const key: string	= parent ? (parent + '[' + k + ']') : k;
+				const key: string	= parent ? `${parent}[${k}]` : k;
 
 				return typeof o[k] === 'object' ?
 					this.toQueryString(o[k], key) :

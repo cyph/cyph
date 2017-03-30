@@ -175,7 +175,7 @@ export class AppService {
 			}
 			else {
 				this.scroll(
-					$('#' + HomeSections[this.homeSection] + '-section').offset().top -
+					$(`#${HomeSections[this.homeSection]}-section`).offset().top -
 					(
 						this.homeSection === HomeSections.gettingstarted ?
 							-1 :
