@@ -165,7 +165,7 @@ export class DemoService {
 		);
 
 		/* Cyphertext easter egg */
-		/* tslint:disable-next-line:no-unused-new */
+		/* tslint:disable-next-line:no-unused-expression */
 		new Konami(async () => {
 			urlStateService.setUrl(HomeSections[HomeSections.intro]);
 

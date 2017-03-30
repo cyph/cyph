@@ -65,7 +65,7 @@ export class Rule extends AbstractRule {
 		);
 	}
 
-	public apply (sourceFile: ts.SourceFile, languageService: ts.LanguageService) : RuleFailure[] {
+	public apply (sourceFile: ts.SourceFile) : RuleFailure[] {
 		return this.applyWithWalker(
 			new TabEqualsWalker(sourceFile, this.getOptions())
 		);
