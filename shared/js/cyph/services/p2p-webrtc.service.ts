@@ -214,6 +214,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	/** @inheritDoc */
 	public accept (callType?: 'audio'|'video') : void {
 		this.isAccepted				= true;
+		this.loading				= true;
 		this.outgoingStream.video	= callType === 'video';
 		this.outgoingStream.audio	= true;
 	}

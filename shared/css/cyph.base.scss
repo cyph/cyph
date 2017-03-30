@@ -235,7 +235,9 @@ pre, code {
 .cyph-view.active {
 	position: relative;
 
-	@include transition(opacity 0.75s linear);
+	&:not(.no-transition) {
+		@include transition(opacity 0.75s linear);
+	}
 }
 
 @include keyframes(breathe) {
