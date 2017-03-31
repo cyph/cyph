@@ -45,7 +45,7 @@ tsfiles="$(
 		\) -exec cat {} \; |
 			grep -oP "importScripts\((['\"])/js/.*\1\)" \
 		;
-		echo cyph/analytics;
+		echo preload/analytics;
 	} | \
 		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/\1/g" |
 		grep -v 'Binary file' |
