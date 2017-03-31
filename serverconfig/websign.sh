@@ -60,7 +60,6 @@ while true ; do
 	git pull || break
 
 	node -e "console.log([
-		'cyph.ws',
 		'cyph.im',
 		'cyph.io',
 		'cyph.me',
