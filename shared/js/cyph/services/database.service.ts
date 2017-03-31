@@ -17,5 +17,10 @@ export class DatabaseService {
 		throw new Error('Must provide an implementation of DatabaseService.getStorageRef.');
 	}
 
+	/** @see Util.retryUntilSuccessful */
+	public async retryUntilSuccessful<T> (_F: () => (T|Promise<T>)) : Promise<T> {
+		throw new Error('Must provide an implementation of DatabaseService.retryUntilSuccessful.');
+	}
+
 	constructor () {}
 }

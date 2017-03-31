@@ -62,42 +62,42 @@ export class ChannelService {
 	public async init (channelName: string, handlers: IChannelHandlers) : Promise<void> {
 		this.resolveHandlers(handlers);
 
-		this.channelRef		= await util.retryUntilSuccessful(async () =>
+		this.channelRef		= await this.databaseService.retryUntilSuccessful(async () =>
 			(await this.databaseService.getDatabaseRef('channels')).child(channelName)
 		);
 
-		this.messagesRef	= await util.retryUntilSuccessful(async () =>
+		this.messagesRef	= await this.databaseService.retryUntilSuccessful(async () =>
 			this.channelRef.child('messages')
 		);
 
-		this.usersRef		= await util.retryUntilSuccessful(async () =>
+		this.usersRef		= await this.databaseService.retryUntilSuccessful(async () =>
 			this.channelRef.child('users')
 		);
 
 		const userRef: firebase.database.ThenableReference	=
-			await util.retryUntilSuccessful(() => this.usersRef.push(''))
+			await this.databaseService.retryUntilSuccessful(() => this.usersRef.push(''))
 		;
 
 		this.userId			= userRef.key || '';
 
-		await util.retryUntilSuccessful(async () => userRef.set(this.userId));
+		await this.databaseService.retryUntilSuccessful(async () => userRef.set(this.userId));
 
 		this.isAlice		=
 			Object.keys(
-				await util.retryUntilSuccessful(async () =>
+				await this.databaseService.retryUntilSuccessful(async () =>
 					(await this.usersRef.once('value')).val()
 				)
 			).sort()[0] === this.userId
 		;
 
-		util.retryUntilSuccessful(async () =>
+		this.databaseService.retryUntilSuccessful(async () =>
 			this.channelRef.onDisconnect().remove()
 		);
 
 		handlers.onOpen(this.isAlice);
 
 		if (this.isAlice) {
-			util.retryUntilSuccessful(() =>
+			this.databaseService.retryUntilSuccessful(() =>
 				this.usersRef.on('child_added', (snapshot: firebase.database.DataSnapshot) => {
 					if (!this.isConnected && snapshot.key !== this.userId) {
 						this.isConnected	= true;
@@ -110,7 +110,7 @@ export class ChannelService {
 			handlers.onConnect();
 		}
 
-		util.retryUntilSuccessful(() =>
+		this.databaseService.retryUntilSuccessful(() =>
 			this.channelRef.on('value', (snapshot: firebase.database.DataSnapshot) => {
 				if (!snapshot.exists()) {
 					this.close();
@@ -118,7 +118,7 @@ export class ChannelService {
 			})
 		);
 
-		util.retryUntilSuccessful(() =>
+		this.databaseService.retryUntilSuccessful(() =>
 			this.messagesRef.on('child_added', (snapshot: firebase.database.DataSnapshot) => {
 				const o: any	= snapshot.val();
 
@@ -137,7 +137,7 @@ export class ChannelService {
 	/** Sends message through this channel. */
 	public async send (message: string) : Promise<void> {
 		try {
-			await util.retryUntilSuccessful(async () => {
+			await this.databaseService.retryUntilSuccessful(async () => {
 				if (this.isClosed) {
 					return;
 				}
