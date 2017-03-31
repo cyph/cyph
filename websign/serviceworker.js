@@ -45,15 +45,17 @@ self.addEventListener('install', function () {
 });
 
 self.addEventListener('fetch', function (e) {
+	var url	= e.request.url.split('#')[0];
+
 	/* Let requests to other origins pass through */
-	if (e.request.url.indexOf(root) !== 0) {
+	if (url.indexOf(root) !== 0) {
 		return;
 	}
 
 	/* Block non-whitelisted paths in this origin */
 	if (
 		files.filter(function (file) {
-			return e.request.url === file.url;
+			return url === file.url;
 		}).length < 1
 	) {
 		return e.respondWith(new Response('', {status: 404}));
