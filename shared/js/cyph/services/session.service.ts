@@ -102,18 +102,41 @@ export abstract class SessionService implements ISessionService {
 						message.data.author		= e.data.author;
 						message.data.timestamp	= (<number> e.data.timestamp) + i * 0.001;
 
-						this.receiveHandler(message);
+						this.cyphertextReceiveHandler(message);
 					}
 				}
 				break;
 			}
 			case CastleEvents.send: {
 				if (e.data) {
-					this.sendHandler(e.data);
+					this.cyphertextSendHandler(e.data);
 				}
 				break;
 			}
 		}
+	}
+
+	/** @ignore */
+	protected cyphertextReceiveHandler (message: IMessage) : void {
+		if (!message.id || this.receivedMessages.has(message.id)) {
+			return;
+		}
+
+		this.receivedMessages.add(message.id);
+
+		if (message.event && message.event in rpcEvents) {
+			this.trigger(message.event, message.data);
+		}
+	}
+
+	/** @ignore */
+	protected cyphertextSendHandler (_MESSAGE: string) : void {
+		this.analyticsService.sendEvent({
+			eventAction: 'sent',
+			eventCategory: 'message',
+			eventValue: 1,
+			hitType: 'event'
+		});
 	}
 
 	/**
@@ -147,28 +170,6 @@ export abstract class SessionService implements ISessionService {
 				nextPing	= now + util.random(90000, 30000);
 			}
 		}
-	}
-
-	/** @ignore */
-	protected receiveHandler (message: IMessage) : void {
-		if (!message.id || this.receivedMessages.has(message.id)) {
-			return;
-		}
-		this.receivedMessages.add(message.id);
-
-		if (message.event && message.event in rpcEvents) {
-			this.trigger(message.event, message.data);
-		}
-	}
-
-	/** @ignore */
-	protected sendHandler (_MESSAGE: string) : void {
-		this.analyticsService.sendEvent({
-			eventAction: 'sent',
-			eventCategory: 'message',
-			eventValue: 1,
-			hitType: 'event'
-		});
 	}
 
 	/** @inheritDoc */

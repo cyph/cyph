@@ -99,8 +99,8 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @ignore */
-	protected sendHandler (message: string) : void {
-		super.sendHandler(message);
+	protected cyphertextSendHandler (message: string) : void {
+		super.cyphertextSendHandler(message);
 		this.channelService.send(message);
 	}
 
