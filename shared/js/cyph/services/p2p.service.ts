@@ -4,6 +4,7 @@ import {events, users} from '../session/enums';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
+import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
@@ -21,7 +22,12 @@ export class P2PService {
 
 	/** Close active P2P session. */
 	public closeButton () : void {
-		this.p2pWebRTCService.close();
+		if (this.sessionInitService.callType === undefined) {
+			this.p2pWebRTCService.close();
+		}
+		else {
+			this.chatService.disconnectButton();
+		}
 	}
 
 	/** If chat authentication is complete, alert that P2P is disabled. */
@@ -109,6 +115,9 @@ export class P2PService {
 
 		/** @ignore */
 		private readonly p2pWebRTCService: P2PWebRTCService,
+
+		/** @ignore */
+		private readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService
