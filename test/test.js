@@ -302,7 +302,7 @@ http.createServer((req, res) => Promise.resolve().then(() => {
 	else if (req.headers.authorization !== process.env.AUTH) {
 		return 403;
 	}
-	else if (urlSplit.length !== 3) {
+	else if (urlSplit.length !== 4) {
 		return 404;
 	}
 
