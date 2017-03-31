@@ -62,12 +62,17 @@ export class ChannelService {
 	public async init (channelName: string, handlers: IChannelHandlers) : Promise<void> {
 		this.resolveHandlers(handlers);
 
-		this.channelRef		=
+		this.channelRef		= await util.retryUntilSuccessful(async () =>
 			(await this.databaseService.getDatabaseRef('channels')).child(channelName)
-		;
+		);
 
-		this.messagesRef	= this.channelRef.child('messages');
-		this.usersRef		= this.channelRef.child('users');
+		this.messagesRef	= await util.retryUntilSuccessful(async () =>
+			this.channelRef.child('messages')
+		);
+
+		this.usersRef		= await util.retryUntilSuccessful(async () =>
+			this.channelRef.child('users')
+		);
 
 		const userRef: firebase.database.ThenableReference	=
 			await util.retryUntilSuccessful(() => this.usersRef.push(''))
