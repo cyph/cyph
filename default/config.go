@@ -7,6 +7,24 @@ import (
 
 type none struct{}
 
+type Customer struct {
+	ApiKey       string
+	BraintreeId  string
+	LastSession  int64
+	SessionCount int64
+}
+
+type Plan struct {
+	ProFeatures       map[string]bool
+	SessionCountLimit int64
+}
+
+type PreAuthorizedCyph struct {
+	Id          string
+	ProFeatures []byte
+	Timestamp   int64
+}
+
 var empty = struct{}{}
 
 var config = struct {

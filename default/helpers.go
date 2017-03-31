@@ -30,24 +30,6 @@ type HandlerArgs struct {
 type Handler func(HandlerArgs) (interface{}, int)
 type Handlers map[string]Handler
 
-type Customer struct {
-	ApiKey       string
-	BraintreeId  string
-	LastSession  int64
-	SessionCount int64
-}
-
-type Plan struct {
-	ProFeatures       map[string]bool
-	SessionCountLimit int64
-}
-
-type PreAuthorizedCyph struct {
-	Id          string
-	ProFeatures []byte
-	Timestamp   int64
-}
-
 var methods = struct {
 	GET     string
 	HEAD    string
