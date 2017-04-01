@@ -155,19 +155,7 @@ cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/w
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
 cat > firebase/firebase-node.js << EOM
-const firebase			= require('./app-node');
-const Storage			= require('dom-storage');
-const XMLHttpRequest	= require('xmlhttprequest').XMLHttpRequest;
-
-firebase.INTERNAL.extendNamespace({
-	INTERNAL: {
-		node: {
-			localStorage: new Storage(null, {strict: true}),
-			sessionStorage: new Storage(null, {strict: true}),
-			XMLHttpRequest: XMLHttpRequest
-		}
-	}
-});
+const firebase	= require('./app-node');
 
 require('./database-node');
 require('./storage');
