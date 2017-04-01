@@ -53,10 +53,12 @@ cat > server.js <<- EOM
 
 	const cache				= {
 		br: {
+			current: {},
 			files: {},
 			urls: {}
 		},
 		gzip: {
+			current: {},
 			files: {},
 			urls: {}
 		}
@@ -69,7 +71,12 @@ cat > server.js <<- EOM
 
 	const returnError		= res => res.status(418).end();
 
-	const getFileName		= (req, ext) => () => new Promise( (resolve, reject) =>
+	const getFileName		= (req, ext) => () => new Promise( (resolve, reject) => {
+		if (req.path.indexOf('..') > -1) {
+			reject('Invalid path.');
+			return;
+		}
+
 		fs.realpath(cdnPath + req.path.slice(1) + ext, (err, path) => {
 			if (err || !path) {
 				reject(err);
@@ -84,8 +91,8 @@ cat > server.js <<- EOM
 			}
 
 			reject(path);
-		})
-	);
+		});
+	});
 
 	const git				= (...args) => new Promise( (resolve, reject) => {
 		let data		= new Buffer([]);
@@ -130,15 +137,21 @@ cat > server.js <<- EOM
 
 	app.get(/.*\/current/, (req, res) => req.getFileName().then(fileName =>
 		new Promise( (resolve, reject) =>
-			res.sendFile(fileName, {root: cdnPath}, err => {
-				if (err) {
-					reject(err);
+			fs.readFile(cdnPath + fileName, (err, data) => {
+				if (!err && data) {
+					req.cache.current[fileName]	= data;
+				}
+
+				if (req.cache.current[fileName]) {
+					resolve(req.cache.current[fileName]);
 				}
 				else {
-					resolve();
+					reject(err);
 				}
 			})
 		)
+	).then( data =>
+		res.send(data)
 	).catch( () =>
 		returnError(res)
 	));
