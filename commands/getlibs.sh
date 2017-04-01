@@ -154,14 +154,26 @@ sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/simplewebrtc.js
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
-for f in $(find firebase -type f -name '*.js') ; do
-	cat ${f} |
-		sed 's|https://apis.google.com||g' |
-		sed 's|iframe||gi' |
-		perl -pe "s/[A-Za-z0-9]+\([\"']\/js\/.*?.js.*?\)/null/g" \
-	> ${f}.new
-	mv ${f}.new ${f}
-done
+cat > firebase/firebase-node.js << EOM
+const firebase			= require('./app-node');
+const Storage			= require('dom-storage');
+const XMLHttpRequest	= require('xmlhttprequest').XMLHttpRequest;
+
+firebase.INTERNAL.extendNamespace({
+	INTERNAL: {
+		node: {
+			localStorage: new Storage(null, {strict: true}),
+			sessionStorage: new Storage(null, {strict: true}),
+			XMLHttpRequest: XMLHttpRequest
+		}
+	}
+});
+
+require('./database-node');
+require('./storage');
+
+module.exports	= firebase;
+EOM
 
 node -e '
 	const package	= JSON.parse(fs.readFileSync("ts-node/package.json").toString());
