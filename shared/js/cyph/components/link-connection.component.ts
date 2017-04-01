@@ -58,7 +58,7 @@ export class LinkConnectionComponent implements OnInit {
 	public async addTime (milliseconds: number) : Promise<void> {
 		this.timer.addTime(milliseconds);
 
-		return util.lockTryOnce(
+		await util.lockTryOnce(
 			this.addTimeLock,
 			async () => {
 				await this.dialogService.toast({
@@ -71,7 +71,7 @@ export class LinkConnectionComponent implements OnInit {
 
 	/** Copies link to clipboard. */
 	public async copyToClipboard () : Promise<void> {
-		return util.lockTryOnce(
+		await util.lockTryOnce(
 			this.copyLock,
 			async () => this.dialogService.toast({
 				content: await clipboard.copy(this.linkConstant).

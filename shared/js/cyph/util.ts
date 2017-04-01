@@ -195,11 +195,18 @@ export class Util {
 	/**
 	 * Executes a Promise within a mutual-exclusion lock, but
 	 * will give up after first failed attempt to obtain lock.
+	 * @returns Whether or not the lock was obtained.
 	 */
-	public async lockTryOnce<T> (lock: {queue?: string[]}, f: () => Promise<T>) : Promise<T|void> {
+	public async lockTryOnce (
+		lock: {queue?: string[]},
+		f: () => Promise<void>
+	) : Promise<boolean> {
 		if (lock.queue === undefined || lock.queue.length < 1) {
-			return this.lock(lock, f);
+			await this.lock(lock, f);
+			return true;
 		}
+
+		return false;
 	}
 
 	/** Opens the specified URL. */
