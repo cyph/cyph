@@ -6,9 +6,11 @@ import {FileTransferService} from '../cyph/services/file-transfer.service';
 import {P2PWebRTCService} from '../cyph/services/p2p-webrtc.service';
 import {P2PService} from '../cyph/services/p2p.service';
 import {ScrollService} from '../cyph/services/scroll.service';
+import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
 import {ChatData} from './chat-data';
 import {DemoEnvService} from './demo-env.service';
+import {LocalSessionInitService} from './local-session-init.service';
 import {LocalSessionService} from './local-session.service';
 
 
@@ -32,6 +34,10 @@ import {LocalSessionService} from './local-session.service';
 		{
 			provide: SessionService,
 			useExisting: LocalSessionService
+		},
+		{
+			provide: SessionInitService,
+			useClass: LocalSessionInitService
 		}
 	],
 	selector: 'cyph-demo-chat-root',
