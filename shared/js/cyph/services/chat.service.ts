@@ -24,6 +24,9 @@ export class ChatService {
 	private static readonly queuedMessageSelfDestructTimeout: number	= 15000;
 
 
+	/** @ignore */
+	private messageChangeLock: {}	= {};
+
 	/** @see IChatData */
 	public chat: IChatData	= {
 		currentMessage: '',
@@ -202,26 +205,28 @@ export class ChatService {
 	 * typing indicator signals through session.
 	 */
 	public async messageChange () : Promise<void> {
-		for (let i = 0 ; i < 2 ; ++i) {
-			const isMessageChanged: boolean	=
-				this.chat.currentMessage !== '' &&
-				this.chat.currentMessage !== this.chat.previousMessage
-			;
+		return util.lock(this.messageChangeLock, async () => {
+			for (let i = 0 ; i < 2 ; ++i) {
+				const isMessageChanged: boolean	=
+					this.chat.currentMessage !== '' &&
+					this.chat.currentMessage !== this.chat.previousMessage
+				;
 
-			this.chat.previousMessage	= this.chat.currentMessage;
+				this.chat.previousMessage	= this.chat.currentMessage;
 
-			if (this.chat.isMessageChanged !== isMessageChanged) {
-				this.chat.isMessageChanged	= isMessageChanged;
-				this.sessionService.send(
-					new Message(
-						rpcEvents.typing,
-						{isTyping: this.chat.isMessageChanged}
-					)
-				);
+				if (this.chat.isMessageChanged !== isMessageChanged) {
+					this.chat.isMessageChanged	= isMessageChanged;
+					this.sessionService.send(
+						new Message(
+							rpcEvents.typing,
+							{isTyping: this.chat.isMessageChanged}
+						)
+					);
+
+					await util.sleep(1000);
+				}
 			}
-
-			await util.sleep(1000);
-		}
+		});
 	}
 
 	/**
