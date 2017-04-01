@@ -66,7 +66,7 @@ export class ScrollService {
 
 	/** Scrolls to bottom. */
 	public async scrollDown () : Promise<void> {
-		return util.lockTryOnce(this.scrollDownLock, async () => {
+		await util.lockTryOnce(this.scrollDownLock, async () => {
 			while (!this.rootElement) {
 				await util.sleep();
 			}
