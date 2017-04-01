@@ -154,14 +154,12 @@ sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/simplewebrtc.js
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
-cat > firebase/firebase-node.js << EOM
-const firebase	= require('./app-node');
-
-require('./database-node');
-require('./storage');
-
-module.exports	= firebase;
-EOM
+cd firebase
+for m in $(ls *-node.js | sed 's|-node\.js$||') ; do
+	mv ${m}-node.js ${m}.js
+	grep -rl "${m}-node" | xargs sed -i "s|${m}-node|${m}|g"
+done
+cd ..
 
 node -e '
 	const package	= JSON.parse(fs.readFileSync("ts-node/package.json").toString());
@@ -170,21 +168,13 @@ node -e '
 '
 
 currentDir="${PWD}"
-for d in firebase firebase-server ts-node tslint ; do
+for d in firebase-server ts-node tslint ; do
 	tmpDir="$(mktemp -d)"
 	mv "${d}" "${tmpDir}/"
 	cp -f ../module_locks/${d}/* "${tmpDir}/${d}/"
 	cd "${tmpDir}/${d}"
 	mkdir node_modules 2> /dev/null
 	yarn install --ignore-platform || exit 1
-
-	if [ "${d}" == 'firebase' ] ; then
-		"${currentDir}/.bin/browserify" firebase-node.js -o firebase.js -s firebase
-		cp -f firebase.js firebase-browser.js
-		cp -f firebase.js firebase-node.js
-		rm -rf node_modules
-	fi
-
 	cd "${currentDir}"
 	mv "${tmpDir}/${d}" ./
 done

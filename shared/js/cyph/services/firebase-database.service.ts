@@ -1,5 +1,9 @@
+/* tslint:disable:no-import-side-effect */
+
 import {Injectable} from '@angular/core';
-import * as firebase from 'firebase';
+import * as firebase from 'firebase/app';
+import 'firebase/database';
+import 'firebase/storage';
 import {env} from '../env';
 import {util} from '../util';
 import {DatabaseService} from './database.service';

@@ -237,9 +237,14 @@ compile () {
 		`.trim())' > translations.js
 
 		mkdir externals
+		echo 'module.exports = undefined;' > externals/_stream_duplex.js
+		echo 'module.exports = undefined;' > externals/_stream_writable.js
 		echo 'module.exports = self.angular;' > externals/angular.js
+		echo 'module.exports = self.WebSocket;' > externals/faye-websocket.js
 		echo 'module.exports = self.jQuery;' > externals/jquery.js
 		echo 'module.exports = {sodium: self.sodium};' > externals/libsodium.js
+		echo 'module.exports = undefined;' > externals/request.js
+		echo 'module.exports = {Promise: self.Promise};' > externals/rsvp.js
 	fi
 
 	if [ "${watch}" ] ; then
@@ -355,9 +360,14 @@ compile () {
 							},
 							/*
 								externals: {
-									angular: 'self.angular',
-									jquery: 'self.jQuery',
-									libsodium: '{sodium: self.sodium}'
+									'_stream_duplex': 'undefined',
+									'_stream_writable': 'undefined',
+									'angular': 'self.angular',
+									'faye-websocket': 'self.WebSocket',
+									'jquery': 'self.jQuery',
+									'libsodium': '{sodium: self.sodium}',
+									'request': 'undefined',
+									'rsvp': '{Promise: self.Promise}'
 								},
 							*/
 							output: {
@@ -368,9 +378,14 @@ compile () {
 							},
 							resolve: {
 								alias: {
-									angular: '${PWD}/externals/angular.js',
-									jquery: '${PWD}/externals/jquery.js',
-									libsodium: '${PWD}/externals/libsodium.js'
+									'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
+									'_stream_writable': '${PWD}/externals/_stream_writable.js',
+									'angular': '${PWD}/externals/angular.js',
+									'faye-websocket': '${PWD}/externals/faye-websocket.js',
+									'jquery': '${PWD}/externals/jquery.js',
+									'libsodium': '${PWD}/externals/libsodium.js',
+									'request': '${PWD}/externals/request.js',
+									'rsvp': '${PWD}/externals/rsvp.js'
 								}
 							}
 						};
@@ -407,9 +422,14 @@ compile () {
 					},
 					/*
 						externals: {
-							angular: 'self.angular',
-							jquery: 'self.jQuery',
-							libsodium: '{sodium: self.sodium}'
+							'_stream_duplex': 'undefined',
+							'_stream_writable': 'undefined',
+							'angular': 'self.angular',
+							'faye-websocket': 'self.WebSocket',
+							'jquery': 'self.jQuery',
+							'libsodium': '{sodium: self.sodium}',
+							'request': 'undefined',
+							'rsvp': '{Promise: self.Promise}'
 						},
 					*/
 					output: {
@@ -461,9 +481,14 @@ compile () {
 					")
 					resolve: {
 						alias: {
-							angular: '${PWD}/externals/angular.js',
-							jquery: '${PWD}/externals/jquery.js',
-							libsodium: '${PWD}/externals/libsodium.js'
+							'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
+							'_stream_writable': '${PWD}/externals/_stream_writable.js',
+							'angular': '${PWD}/externals/angular.js',
+							'faye-websocket': '${PWD}/externals/faye-websocket.js',
+							'jquery': '${PWD}/externals/jquery.js',
+							'libsodium': '${PWD}/externals/libsodium.js',
+							'request': '${PWD}/externals/request.js',
+							'rsvp': '${PWD}/externals/rsvp.js'
 						}
 					}
 				}, (err, stats) => {$(test "${enablesplit}" && echo "
