@@ -125,7 +125,7 @@ node -e '
 	fs.writeFileSync("node_modules/ts-node/package.json", JSON.stringify(package));
 '
 
-for d in firebase firebase-server ts-node tslint ; do
+for d in firebase-server ts-node tslint ; do
 	mkdir -p ~/lib/js/module_locks/${d}
 	cd node_modules/${d}
 	mkdir node_modules 2> /dev/null
