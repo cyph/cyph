@@ -25,11 +25,13 @@ export class Rule extends AbstractRule {
 
 	public static isCompliant (node: ts.Node) : boolean {
 		if (
-			node.parent && (
-				node.parent.kind === ts.SyntaxKind.Constructor ||
-				node.parent.kind === ts.SyntaxKind.FunctionDeclaration ||
-				node.parent.kind === ts.SyntaxKind.MethodDeclaration ||
-				node.parent.kind === ts.SyntaxKind.VariableDeclarationList
+			node.kind === ts.SyntaxKind.CallExpression || (
+				node.parent && (
+					node.parent.kind === ts.SyntaxKind.Constructor ||
+					node.parent.kind === ts.SyntaxKind.FunctionDeclaration ||
+					node.parent.kind === ts.SyntaxKind.MethodDeclaration ||
+					node.parent.kind === ts.SyntaxKind.VariableDeclarationList
+				)
 			)
 		 ) {
 			return true;
