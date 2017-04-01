@@ -38,6 +38,7 @@ yarn add --ignore-platform --ignore-scripts \
 	animate.css \
 	bourbon@4.2.7 \
 	braintree-web@^2 \
+	browser-request \
 	browserify \
 	browserstack \
 	cheerio \
@@ -47,6 +48,7 @@ yarn add --ignore-platform --ignore-scripts \
 	core-js \
 	datauri \
 	dompurify \
+	faye \
 	fg-loadcss \
 	file-saver \
 	firebase \
