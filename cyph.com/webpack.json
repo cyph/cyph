@@ -101,263 +101,264 @@
       "cyph/directives/nano-scroller.directive.js": 97,
       "cyph/services/material/md-dialog.service.js": 98,
       "cyph/services/material/md-toast.service.js": 99,
-      "../../../../../node_modules/markdown-it/lib/ruler.js": 100,
-      "../../../../../node_modules/markdown-it/lib/token.js": 101,
-      "../../../../../node_modules/mockconsole/mockconsole.js": 102,
-      "../../../../../node_modules/rxjs/symbol/rxSubscriber.js": 103,
-      "../../../../../node_modules/uc.micro/categories/P/regex.js": 104,
-      "externals/angular.js": 105,
-      "cyph.com/app.service.js": 106,
-      "cyph.com/chat-data.js": 107,
-      "cyph.com/elements.js": 108,
-      "cyph.com/enums/index.js": 109,
-      "cyph.com/mock-database.service.js": 110,
-      "cyph.com/mock-potassium.service.js": 111,
-      "cyph.com/silent-notification.service.js": 112,
-      "cyph/components/chat-message-box.component.ngfactory.js": 113,
-      "cyph/components/contact.component.ngfactory.js": 114,
-      "cyph/components/file-input.component.ngfactory.js": 115,
-      "cyph/crypto/potassium/native-crypto/index.js": 116,
-      "cyph/crypto/potassium/native-crypto/one-time-auth.js": 117,
-      "cyph/session/command.js": 118,
-      "node_modules/@angular/core/@angular async": 119,
-      "../../../../../node_modules/dompurify/src/purify.js": 120,
-      "../../../../../node_modules/markdown-it/lib/common/entities.js": 121,
-      "../../../../../node_modules/markdown-it/lib/common/html_re.js": 122,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/emphasis.js": 123,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/strikethrough.js": 124,
-      "../../../../../node_modules/mdurl/index.js": 125,
-      "../../../../../node_modules/process/browser.js": 126,
-      "../../../../../node_modules/rxjs/Observer.js": 127,
-      "../../../../../node_modules/rxjs/OuterSubscriber.js": 128,
-      "../../../../../node_modules/rxjs/observable/EmptyObservable.js": 129,
-      "../../../../../node_modules/rxjs/symbol/observable.js": 130,
-      "../../../../../node_modules/rxjs/util/errorObject.js": 131,
-      "../../../../../node_modules/rxjs/util/isArray.js": 132,
-      "../../../../../node_modules/rxjs/util/isFunction.js": 133,
-      "../../../../../node_modules/rxjs/util/isObject.js": 134,
-      "../../../../../node_modules/rxjs/util/isScheduler.js": 135,
-      "../../../../../node_modules/rxjs/util/subscribeToResult.js": 136,
-      "../../../../../node_modules/sdp-jingle-json/lib/senders.js": 137,
-      "../../../../../node_modules/uc.micro/categories/Cc/regex.js": 138,
-      "../../../../../node_modules/uc.micro/categories/Z/regex.js": 139,
-      "../../../../../node_modules/uc.micro/properties/Any/regex.js": 140,
-      "../../../../../node_modules/webpack/buildin/module.js": 141,
-      "cyph.com/app.module.ngfactory.js": 142,
-      "preload/index.js": 143,
-      "translations.js": 144,
-      "../../../../../node_modules/angular-material/index.js": 145,
-      "../../../../../node_modules/jquery.appear/jquery.appear.js": 146,
-      "../../../../../node_modules/magnific-popup/dist/jquery.magnific-popup.js": 147,
-      "../../../../../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js": 148,
-      "../../../../../node_modules/whatwg-fetch/fetch.js": 149,
-      "../../../../../node_modules/zone.js/dist/zone.js": 150,
-      "css/components/beta-register.css.shim.ngstyle.js": 151,
-      "css/components/chat-cyphertext.css.shim.ngstyle.js": 152,
-      "css/components/chat-main.css.shim.ngstyle.js": 153,
-      "css/components/chat-message-box.css.shim.ngstyle.js": 154,
-      "css/components/chat-message.css.shim.ngstyle.js": 155,
-      "css/components/checkout.css.shim.ngstyle.js": 156,
-      "css/components/contact.css.shim.ngstyle.js": 157,
-      "css/components/cyph.com/demo.css.shim.ngstyle.js": 158,
-      "css/components/file-input.css.shim.ngstyle.js": 159,
-      "css/components/help.css.shim.ngstyle.js": 160,
-      "css/components/markdown.css.shim.ngstyle.js": 161,
-      "css/components/signup-form.css.shim.ngstyle.js": 162,
-      "cyph.com/app.component.ngfactory.js": 163,
-      "cyph.com/app.module.js": 164,
-      "cyph.com/carousel.js": 165,
-      "cyph.com/demo-chat-root.component.ngfactory.js": 166,
-      "cyph.com/demo.component.ngfactory.js": 167,
-      "cyph.com/enums/home-sections.js": 168,
-      "cyph.com/enums/page-titles.js": 169,
-      "cyph.com/enums/promos.js": 170,
-      "cyph.com/enums/states.js": 171,
-      "cyph.com/enums/wpstatic-pages.js": 172,
-      "cyph.com/main.js": 173,
-      "cyph/chat/enums/states.js": 174,
-      "cyph/chat/index.js": 175,
-      "cyph/components/beta-register.component.ngfactory.js": 176,
-      "cyph/components/chat-cyphertext.component.ngfactory.js": 177,
-      "cyph/components/chat-main.component.ngfactory.js": 178,
-      "cyph/components/chat-message.component.ngfactory.js": 179,
-      "cyph/components/checkout.component.ngfactory.js": 180,
-      "cyph/components/help.component.ngfactory.js": 181,
-      "cyph/components/markdown.component.ngfactory.js": 182,
-      "cyph/components/signup-form.component.ngfactory.js": 183,
-      "cyph/crypto/potassium/native-crypto/box.js": 184,
-      "cyph/crypto/potassium/native-crypto/password-hash.js": 185,
-      "cyph/crypto/potassium/secret-box.js": 186,
-      "cyph/env-deploy.js": 187,
-      "cyph/files/transfer.js": 188,
-      "cyph/session/enums/castle-events.js": 189,
-      "cyph/session/enums/events.js": 190,
-      "cyph/session/enums/rpc-events.js": 191,
-      "cyph/session/enums/users.js": 192,
-      "cyph/session/mutex.js": 193,
-      "cyph/session/profeatures.js": 194,
-      "cyph/timer.js": 195,
-      "externals/libsodium.js": 196,
-      "preload/dompurify.js": 197,
-      "../../../../../node_modules/angular-animate/angular-animate.js": 198,
-      "../../../../../node_modules/angular-animate/index.js": 199,
-      "../../../../../node_modules/angular-aria/angular-aria.js": 200,
-      "../../../../../node_modules/angular-aria/index.js": 201,
-      "../../../../../node_modules/angular-material/angular-material.js": 202,
-      "../../../../../node_modules/attachmediastream/attachmediastream.js": 203,
-      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/adapter_core.js": 204,
-      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js": 205,
-      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js": 206,
-      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/edge_shim.js": 207,
-      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/getusermedia.js": 208,
-      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js": 209,
-      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js": 210,
-      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/safari/safari_shim.js": 211,
-      "../../../../../node_modules/braintree-web/dist/braintree.js": 212,
-      "../../../../../node_modules/entities/maps/entities.json": 213,
-      "../../../../../node_modules/file-saver/FileSaver.js": 214,
-      "../../../../../node_modules/filetransfer/filetransfer.js": 215,
-      "../../../../../node_modules/getscreenmedia/getscreenmedia.js": 216,
-      "../../../../../node_modules/getscreenmedia/node_modules/getusermedia/getusermedia.js": 217,
-      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/adapter_core.js": 218,
-      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js": 219,
-      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js": 220,
-      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js": 221,
-      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js": 222,
-      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js": 223,
-      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js": 224,
-      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js": 225,
-      "../../../../../node_modules/getusermedia/index-browser.js": 226,
-      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/adapter_core.js": 227,
-      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js": 228,
-      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js": 229,
-      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js": 230,
-      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js": 231,
-      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js": 232,
-      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js": 233,
-      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js": 234,
-      "../../../../../node_modules/hark/hark.js": 235,
-      "../../../../../node_modules/konami-code.js/konami.js": 236,
-      "../../../../../node_modules/linkify-it/index.js": 237,
-      "../../../../../node_modules/linkify-it/lib/re.js": 238,
-      "../../../../../node_modules/localmedia/index.js": 239,
-      "../../../../../node_modules/lodash.clonedeep/index.js": 240,
-      "../../../../../node_modules/markdown-it-emoji/index.js": 241,
-      "../../../../../node_modules/markdown-it-emoji/lib/data/full.json": 242,
-      "../../../../../node_modules/markdown-it-emoji/lib/data/shortcuts.js": 243,
-      "../../../../../node_modules/markdown-it-emoji/lib/normalize_opts.js": 244,
-      "../../../../../node_modules/markdown-it-emoji/lib/render.js": 245,
-      "../../../../../node_modules/markdown-it-emoji/lib/replace.js": 246,
-      "../../../../../node_modules/markdown-it-sup/index.js": 247,
-      "../../../../../node_modules/markdown-it/index.js": 248,
-      "../../../../../node_modules/markdown-it/lib/common/html_blocks.js": 249,
-      "../../../../../node_modules/markdown-it/lib/helpers/index.js": 250,
-      "../../../../../node_modules/markdown-it/lib/helpers/parse_link_destination.js": 251,
-      "../../../../../node_modules/markdown-it/lib/helpers/parse_link_label.js": 252,
-      "../../../../../node_modules/markdown-it/lib/helpers/parse_link_title.js": 253,
-      "../../../../../node_modules/markdown-it/lib/index.js": 254,
-      "../../../../../node_modules/markdown-it/lib/parser_block.js": 255,
-      "../../../../../node_modules/markdown-it/lib/parser_core.js": 256,
-      "../../../../../node_modules/markdown-it/lib/parser_inline.js": 257,
-      "../../../../../node_modules/markdown-it/lib/presets/commonmark.js": 258,
-      "../../../../../node_modules/markdown-it/lib/presets/default.js": 259,
-      "../../../../../node_modules/markdown-it/lib/presets/zero.js": 260,
-      "../../../../../node_modules/markdown-it/lib/renderer.js": 261,
-      "../../../../../node_modules/markdown-it/lib/rules_block/blockquote.js": 262,
-      "../../../../../node_modules/markdown-it/lib/rules_block/code.js": 263,
-      "../../../../../node_modules/markdown-it/lib/rules_block/fence.js": 264,
-      "../../../../../node_modules/markdown-it/lib/rules_block/heading.js": 265,
-      "../../../../../node_modules/markdown-it/lib/rules_block/hr.js": 266,
-      "../../../../../node_modules/markdown-it/lib/rules_block/html_block.js": 267,
-      "../../../../../node_modules/markdown-it/lib/rules_block/lheading.js": 268,
-      "../../../../../node_modules/markdown-it/lib/rules_block/list.js": 269,
-      "../../../../../node_modules/markdown-it/lib/rules_block/paragraph.js": 270,
-      "../../../../../node_modules/markdown-it/lib/rules_block/reference.js": 271,
-      "../../../../../node_modules/markdown-it/lib/rules_block/state_block.js": 272,
-      "../../../../../node_modules/markdown-it/lib/rules_block/table.js": 273,
-      "../../../../../node_modules/markdown-it/lib/rules_core/block.js": 274,
-      "../../../../../node_modules/markdown-it/lib/rules_core/inline.js": 275,
-      "../../../../../node_modules/markdown-it/lib/rules_core/linkify.js": 276,
-      "../../../../../node_modules/markdown-it/lib/rules_core/normalize.js": 277,
-      "../../../../../node_modules/markdown-it/lib/rules_core/replacements.js": 278,
-      "../../../../../node_modules/markdown-it/lib/rules_core/smartquotes.js": 279,
-      "../../../../../node_modules/markdown-it/lib/rules_core/state_core.js": 280,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/autolink.js": 281,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/backticks.js": 282,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/balance_pairs.js": 283,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/entity.js": 284,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/escape.js": 285,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/html_inline.js": 286,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/image.js": 287,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/link.js": 288,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/newline.js": 289,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/state_inline.js": 290,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/text.js": 291,
-      "../../../../../node_modules/markdown-it/lib/rules_inline/text_collapse.js": 292,
-      "../../../../../node_modules/mdurl/decode.js": 293,
-      "../../../../../node_modules/mdurl/encode.js": 294,
-      "../../../../../node_modules/mdurl/format.js": 295,
-      "../../../../../node_modules/mdurl/parse.js": 296,
-      "../../../../../node_modules/mediastream-gain/mediastream-gain.js": 297,
-      "../../../../../node_modules/mediastream-gain/node_modules/webrtcsupport/index-browser.js": 298,
-      "../../../../../node_modules/microlight-string/microlight.min.js": 299,
-      "../../../../../node_modules/punycode/punycode.js": 300,
-      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js": 301,
-      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js": 302,
-      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js": 303,
-      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js": 304,
-      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js": 305,
-      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js": 306,
-      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js": 307,
-      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js": 308,
-      "../../../../../node_modules/rtcpeerconnection/rtcpeerconnection.js": 309,
-      "../../../../../node_modules/rxjs/InnerSubscriber.js": 310,
-      "../../../../../node_modules/rxjs/SubjectSubscription.js": 311,
-      "../../../../../node_modules/rxjs/observable/ArrayObservable.js": 312,
-      "../../../../../node_modules/rxjs/observable/ConnectableObservable.js": 313,
-      "../../../../../node_modules/rxjs/observable/ForkJoinObservable.js": 314,
-      "../../../../../node_modules/rxjs/observable/PromiseObservable.js": 315,
-      "../../../../../node_modules/rxjs/observable/ScalarObservable.js": 316,
-      "../../../../../node_modules/rxjs/observable/forkJoin.js": 317,
-      "../../../../../node_modules/rxjs/observable/fromPromise.js": 318,
-      "../../../../../node_modules/rxjs/observable/merge.js": 319,
-      "../../../../../node_modules/rxjs/operator/map.js": 320,
-      "../../../../../node_modules/rxjs/operator/merge.js": 321,
-      "../../../../../node_modules/rxjs/operator/mergeAll.js": 322,
-      "../../../../../node_modules/rxjs/operator/multicast.js": 323,
-      "../../../../../node_modules/rxjs/operator/share.js": 324,
-      "../../../../../node_modules/rxjs/symbol/iterator.js": 325,
-      "../../../../../node_modules/rxjs/util/ObjectUnsubscribedError.js": 326,
-      "../../../../../node_modules/rxjs/util/UnsubscriptionError.js": 327,
-      "../../../../../node_modules/rxjs/util/isArrayLike.js": 328,
-      "../../../../../node_modules/rxjs/util/isPromise.js": 329,
-      "../../../../../node_modules/rxjs/util/toSubscriber.js": 330,
-      "../../../../../node_modules/rxjs/util/tryCatch.js": 331,
-      "../../../../../node_modules/sdp-jingle-json/index.js": 332,
-      "../../../../../node_modules/sdp-jingle-json/lib/parsers.js": 333,
-      "../../../../../node_modules/sdp-jingle-json/lib/tojson.js": 334,
-      "../../../../../node_modules/sdp-jingle-json/lib/tosdp.js": 335,
-      "../../../../../node_modules/simplewebrtc/peer.js": 336,
-      "../../../../../node_modules/simplewebrtc/simplewebrtc.js": 337,
-      "../../../../../node_modules/simplewebrtc/webrtc.js": 338,
-      "../../../../../node_modules/sodiumutil/dist/sodiumutil.js": 339,
-      "../../../../../node_modules/tab-indent/js/tabIndent.js": 340,
-      "../../../../../node_modules/traceablepeerconnection/index.js": 341,
-      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js": 342,
-      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js": 343,
-      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js": 344,
-      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js": 345,
-      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js": 346,
-      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js": 347,
-      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js": 348,
-      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js": 349,
-      "../../../../../node_modules/uc.micro/categories/Cf/regex.js": 350,
-      "../../../../../node_modules/uc.micro/index.js": 351,
-      "../../../../../node_modules/util/node_modules/inherits/inherits_browser.js": 352,
-      "../../../../../node_modules/util/support/isBufferBrowser.js": 353,
-      "../../../../../node_modules/webpack/buildin/amd-define.js": 354,
-      "../../../../../node_modules/webpack/buildin/amd-options.js": 355,
-      "../../../../../node_modules/wowjs/dist/wow.js": 356
+      "cyph/services/session-init.service.js": 100,
+      "../../../../../node_modules/markdown-it/lib/ruler.js": 101,
+      "../../../../../node_modules/markdown-it/lib/token.js": 102,
+      "../../../../../node_modules/mockconsole/mockconsole.js": 103,
+      "../../../../../node_modules/rxjs/symbol/rxSubscriber.js": 104,
+      "../../../../../node_modules/uc.micro/categories/P/regex.js": 105,
+      "externals/angular.js": 106,
+      "cyph.com/app.service.js": 107,
+      "cyph.com/chat-data.js": 108,
+      "cyph.com/elements.js": 109,
+      "cyph.com/enums/index.js": 110,
+      "cyph.com/mock-database.service.js": 111,
+      "cyph.com/mock-potassium.service.js": 112,
+      "cyph.com/silent-notification.service.js": 113,
+      "cyph/components/chat-message-box.component.ngfactory.js": 114,
+      "cyph/components/contact.component.ngfactory.js": 115,
+      "cyph/components/file-input.component.ngfactory.js": 116,
+      "cyph/crypto/potassium/native-crypto/index.js": 117,
+      "cyph/crypto/potassium/native-crypto/one-time-auth.js": 118,
+      "cyph/session/command.js": 119,
+      "node_modules/@angular/core/@angular async": 120,
+      "../../../../../node_modules/dompurify/src/purify.js": 121,
+      "../../../../../node_modules/markdown-it/lib/common/entities.js": 122,
+      "../../../../../node_modules/markdown-it/lib/common/html_re.js": 123,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/emphasis.js": 124,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/strikethrough.js": 125,
+      "../../../../../node_modules/mdurl/index.js": 126,
+      "../../../../../node_modules/process/browser.js": 127,
+      "../../../../../node_modules/rxjs/Observer.js": 128,
+      "../../../../../node_modules/rxjs/OuterSubscriber.js": 129,
+      "../../../../../node_modules/rxjs/observable/EmptyObservable.js": 130,
+      "../../../../../node_modules/rxjs/symbol/observable.js": 131,
+      "../../../../../node_modules/rxjs/util/errorObject.js": 132,
+      "../../../../../node_modules/rxjs/util/isArray.js": 133,
+      "../../../../../node_modules/rxjs/util/isFunction.js": 134,
+      "../../../../../node_modules/rxjs/util/isObject.js": 135,
+      "../../../../../node_modules/rxjs/util/isScheduler.js": 136,
+      "../../../../../node_modules/rxjs/util/subscribeToResult.js": 137,
+      "../../../../../node_modules/sdp-jingle-json/lib/senders.js": 138,
+      "../../../../../node_modules/uc.micro/categories/Cc/regex.js": 139,
+      "../../../../../node_modules/uc.micro/categories/Z/regex.js": 140,
+      "../../../../../node_modules/uc.micro/properties/Any/regex.js": 141,
+      "../../../../../node_modules/webpack/buildin/module.js": 142,
+      "cyph.com/app.module.ngfactory.js": 143,
+      "preload/index.js": 144,
+      "translations.js": 145,
+      "../../../../../node_modules/angular-material/index.js": 146,
+      "../../../../../node_modules/jquery.appear/jquery.appear.js": 147,
+      "../../../../../node_modules/magnific-popup/dist/jquery.magnific-popup.js": 148,
+      "../../../../../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js": 149,
+      "../../../../../node_modules/whatwg-fetch/fetch.js": 150,
+      "../../../../../node_modules/zone.js/dist/zone.js": 151,
+      "css/components/beta-register.css.shim.ngstyle.js": 152,
+      "css/components/chat-cyphertext.css.shim.ngstyle.js": 153,
+      "css/components/chat-main.css.shim.ngstyle.js": 154,
+      "css/components/chat-message-box.css.shim.ngstyle.js": 155,
+      "css/components/chat-message.css.shim.ngstyle.js": 156,
+      "css/components/checkout.css.shim.ngstyle.js": 157,
+      "css/components/contact.css.shim.ngstyle.js": 158,
+      "css/components/cyph.com/demo.css.shim.ngstyle.js": 159,
+      "css/components/file-input.css.shim.ngstyle.js": 160,
+      "css/components/help.css.shim.ngstyle.js": 161,
+      "css/components/markdown.css.shim.ngstyle.js": 162,
+      "css/components/signup-form.css.shim.ngstyle.js": 163,
+      "cyph.com/app.component.ngfactory.js": 164,
+      "cyph.com/app.module.js": 165,
+      "cyph.com/carousel.js": 166,
+      "cyph.com/demo-chat-root.component.ngfactory.js": 167,
+      "cyph.com/demo.component.ngfactory.js": 168,
+      "cyph.com/enums/home-sections.js": 169,
+      "cyph.com/enums/page-titles.js": 170,
+      "cyph.com/enums/promos.js": 171,
+      "cyph.com/enums/states.js": 172,
+      "cyph.com/enums/wpstatic-pages.js": 173,
+      "cyph.com/main.js": 174,
+      "cyph/chat/enums/states.js": 175,
+      "cyph/chat/index.js": 176,
+      "cyph/components/beta-register.component.ngfactory.js": 177,
+      "cyph/components/chat-cyphertext.component.ngfactory.js": 178,
+      "cyph/components/chat-main.component.ngfactory.js": 179,
+      "cyph/components/chat-message.component.ngfactory.js": 180,
+      "cyph/components/checkout.component.ngfactory.js": 181,
+      "cyph/components/help.component.ngfactory.js": 182,
+      "cyph/components/markdown.component.ngfactory.js": 183,
+      "cyph/components/signup-form.component.ngfactory.js": 184,
+      "cyph/crypto/potassium/native-crypto/box.js": 185,
+      "cyph/crypto/potassium/native-crypto/password-hash.js": 186,
+      "cyph/crypto/potassium/secret-box.js": 187,
+      "cyph/env-deploy.js": 188,
+      "cyph/files/transfer.js": 189,
+      "cyph/session/enums/castle-events.js": 190,
+      "cyph/session/enums/events.js": 191,
+      "cyph/session/enums/rpc-events.js": 192,
+      "cyph/session/enums/users.js": 193,
+      "cyph/session/mutex.js": 194,
+      "cyph/session/profeatures.js": 195,
+      "cyph/timer.js": 196,
+      "externals/libsodium.js": 197,
+      "preload/dompurify.js": 198,
+      "../../../../../node_modules/angular-animate/angular-animate.js": 199,
+      "../../../../../node_modules/angular-animate/index.js": 200,
+      "../../../../../node_modules/angular-aria/angular-aria.js": 201,
+      "../../../../../node_modules/angular-aria/index.js": 202,
+      "../../../../../node_modules/angular-material/angular-material.js": 203,
+      "../../../../../node_modules/attachmediastream/attachmediastream.js": 204,
+      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/adapter_core.js": 205,
+      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js": 206,
+      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js": 207,
+      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/edge_shim.js": 208,
+      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/getusermedia.js": 209,
+      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js": 210,
+      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js": 211,
+      "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/safari/safari_shim.js": 212,
+      "../../../../../node_modules/braintree-web/dist/braintree.js": 213,
+      "../../../../../node_modules/entities/maps/entities.json": 214,
+      "../../../../../node_modules/file-saver/FileSaver.js": 215,
+      "../../../../../node_modules/filetransfer/filetransfer.js": 216,
+      "../../../../../node_modules/getscreenmedia/getscreenmedia.js": 217,
+      "../../../../../node_modules/getscreenmedia/node_modules/getusermedia/getusermedia.js": 218,
+      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/adapter_core.js": 219,
+      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js": 220,
+      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js": 221,
+      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js": 222,
+      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js": 223,
+      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js": 224,
+      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js": 225,
+      "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js": 226,
+      "../../../../../node_modules/getusermedia/index-browser.js": 227,
+      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/adapter_core.js": 228,
+      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js": 229,
+      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js": 230,
+      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js": 231,
+      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js": 232,
+      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js": 233,
+      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js": 234,
+      "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js": 235,
+      "../../../../../node_modules/hark/hark.js": 236,
+      "../../../../../node_modules/konami-code.js/konami.js": 237,
+      "../../../../../node_modules/linkify-it/index.js": 238,
+      "../../../../../node_modules/linkify-it/lib/re.js": 239,
+      "../../../../../node_modules/localmedia/index.js": 240,
+      "../../../../../node_modules/lodash.clonedeep/index.js": 241,
+      "../../../../../node_modules/markdown-it-emoji/index.js": 242,
+      "../../../../../node_modules/markdown-it-emoji/lib/data/full.json": 243,
+      "../../../../../node_modules/markdown-it-emoji/lib/data/shortcuts.js": 244,
+      "../../../../../node_modules/markdown-it-emoji/lib/normalize_opts.js": 245,
+      "../../../../../node_modules/markdown-it-emoji/lib/render.js": 246,
+      "../../../../../node_modules/markdown-it-emoji/lib/replace.js": 247,
+      "../../../../../node_modules/markdown-it-sup/index.js": 248,
+      "../../../../../node_modules/markdown-it/index.js": 249,
+      "../../../../../node_modules/markdown-it/lib/common/html_blocks.js": 250,
+      "../../../../../node_modules/markdown-it/lib/helpers/index.js": 251,
+      "../../../../../node_modules/markdown-it/lib/helpers/parse_link_destination.js": 252,
+      "../../../../../node_modules/markdown-it/lib/helpers/parse_link_label.js": 253,
+      "../../../../../node_modules/markdown-it/lib/helpers/parse_link_title.js": 254,
+      "../../../../../node_modules/markdown-it/lib/index.js": 255,
+      "../../../../../node_modules/markdown-it/lib/parser_block.js": 256,
+      "../../../../../node_modules/markdown-it/lib/parser_core.js": 257,
+      "../../../../../node_modules/markdown-it/lib/parser_inline.js": 258,
+      "../../../../../node_modules/markdown-it/lib/presets/commonmark.js": 259,
+      "../../../../../node_modules/markdown-it/lib/presets/default.js": 260,
+      "../../../../../node_modules/markdown-it/lib/presets/zero.js": 261,
+      "../../../../../node_modules/markdown-it/lib/renderer.js": 262,
+      "../../../../../node_modules/markdown-it/lib/rules_block/blockquote.js": 263,
+      "../../../../../node_modules/markdown-it/lib/rules_block/code.js": 264,
+      "../../../../../node_modules/markdown-it/lib/rules_block/fence.js": 265,
+      "../../../../../node_modules/markdown-it/lib/rules_block/heading.js": 266,
+      "../../../../../node_modules/markdown-it/lib/rules_block/hr.js": 267,
+      "../../../../../node_modules/markdown-it/lib/rules_block/html_block.js": 268,
+      "../../../../../node_modules/markdown-it/lib/rules_block/lheading.js": 269,
+      "../../../../../node_modules/markdown-it/lib/rules_block/list.js": 270,
+      "../../../../../node_modules/markdown-it/lib/rules_block/paragraph.js": 271,
+      "../../../../../node_modules/markdown-it/lib/rules_block/reference.js": 272,
+      "../../../../../node_modules/markdown-it/lib/rules_block/state_block.js": 273,
+      "../../../../../node_modules/markdown-it/lib/rules_block/table.js": 274,
+      "../../../../../node_modules/markdown-it/lib/rules_core/block.js": 275,
+      "../../../../../node_modules/markdown-it/lib/rules_core/inline.js": 276,
+      "../../../../../node_modules/markdown-it/lib/rules_core/linkify.js": 277,
+      "../../../../../node_modules/markdown-it/lib/rules_core/normalize.js": 278,
+      "../../../../../node_modules/markdown-it/lib/rules_core/replacements.js": 279,
+      "../../../../../node_modules/markdown-it/lib/rules_core/smartquotes.js": 280,
+      "../../../../../node_modules/markdown-it/lib/rules_core/state_core.js": 281,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/autolink.js": 282,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/backticks.js": 283,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/balance_pairs.js": 284,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/entity.js": 285,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/escape.js": 286,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/html_inline.js": 287,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/image.js": 288,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/link.js": 289,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/newline.js": 290,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/state_inline.js": 291,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/text.js": 292,
+      "../../../../../node_modules/markdown-it/lib/rules_inline/text_collapse.js": 293,
+      "../../../../../node_modules/mdurl/decode.js": 294,
+      "../../../../../node_modules/mdurl/encode.js": 295,
+      "../../../../../node_modules/mdurl/format.js": 296,
+      "../../../../../node_modules/mdurl/parse.js": 297,
+      "../../../../../node_modules/mediastream-gain/mediastream-gain.js": 298,
+      "../../../../../node_modules/mediastream-gain/node_modules/webrtcsupport/index-browser.js": 299,
+      "../../../../../node_modules/microlight-string/microlight.min.js": 300,
+      "../../../../../node_modules/punycode/punycode.js": 301,
+      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js": 302,
+      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js": 303,
+      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js": 304,
+      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js": 305,
+      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js": 306,
+      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js": 307,
+      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js": 308,
+      "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js": 309,
+      "../../../../../node_modules/rtcpeerconnection/rtcpeerconnection.js": 310,
+      "../../../../../node_modules/rxjs/InnerSubscriber.js": 311,
+      "../../../../../node_modules/rxjs/SubjectSubscription.js": 312,
+      "../../../../../node_modules/rxjs/observable/ArrayObservable.js": 313,
+      "../../../../../node_modules/rxjs/observable/ConnectableObservable.js": 314,
+      "../../../../../node_modules/rxjs/observable/ForkJoinObservable.js": 315,
+      "../../../../../node_modules/rxjs/observable/PromiseObservable.js": 316,
+      "../../../../../node_modules/rxjs/observable/ScalarObservable.js": 317,
+      "../../../../../node_modules/rxjs/observable/forkJoin.js": 318,
+      "../../../../../node_modules/rxjs/observable/fromPromise.js": 319,
+      "../../../../../node_modules/rxjs/observable/merge.js": 320,
+      "../../../../../node_modules/rxjs/operator/map.js": 321,
+      "../../../../../node_modules/rxjs/operator/merge.js": 322,
+      "../../../../../node_modules/rxjs/operator/mergeAll.js": 323,
+      "../../../../../node_modules/rxjs/operator/multicast.js": 324,
+      "../../../../../node_modules/rxjs/operator/share.js": 325,
+      "../../../../../node_modules/rxjs/symbol/iterator.js": 326,
+      "../../../../../node_modules/rxjs/util/ObjectUnsubscribedError.js": 327,
+      "../../../../../node_modules/rxjs/util/UnsubscriptionError.js": 328,
+      "../../../../../node_modules/rxjs/util/isArrayLike.js": 329,
+      "../../../../../node_modules/rxjs/util/isPromise.js": 330,
+      "../../../../../node_modules/rxjs/util/toSubscriber.js": 331,
+      "../../../../../node_modules/rxjs/util/tryCatch.js": 332,
+      "../../../../../node_modules/sdp-jingle-json/index.js": 333,
+      "../../../../../node_modules/sdp-jingle-json/lib/parsers.js": 334,
+      "../../../../../node_modules/sdp-jingle-json/lib/tojson.js": 335,
+      "../../../../../node_modules/sdp-jingle-json/lib/tosdp.js": 336,
+      "../../../../../node_modules/simplewebrtc/peer.js": 337,
+      "../../../../../node_modules/simplewebrtc/simplewebrtc.js": 338,
+      "../../../../../node_modules/simplewebrtc/webrtc.js": 339,
+      "../../../../../node_modules/sodiumutil/dist/sodiumutil.js": 340,
+      "../../../../../node_modules/tab-indent/js/tabIndent.js": 341,
+      "../../../../../node_modules/traceablepeerconnection/index.js": 342,
+      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js": 343,
+      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js": 344,
+      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js": 345,
+      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js": 346,
+      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js": 347,
+      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js": 348,
+      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js": 349,
+      "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js": 350,
+      "../../../../../node_modules/uc.micro/categories/Cf/regex.js": 351,
+      "../../../../../node_modules/uc.micro/index.js": 352,
+      "../../../../../node_modules/util/node_modules/inherits/inherits_browser.js": 353,
+      "../../../../../node_modules/util/support/isBufferBrowser.js": 354,
+      "../../../../../node_modules/webpack/buildin/amd-define.js": 355,
+      "../../../../../node_modules/webpack/buildin/amd-options.js": 356,
+      "../../../../../node_modules/wowjs/dist/wow.js": 357
     },
     "usedIds": {
       "0": 0,
@@ -716,12 +717,13 @@
       "353": 353,
       "354": 354,
       "355": 355,
-      "356": 356
+      "356": 356,
+      "357": 357
     }
   },
   "chunks": {
     "byName": {
-      "init": 51
+      "init": 52
     },
     "byBlocks": {},
     "usedIds": {
@@ -776,20 +778,21 @@
       "48": 48,
       "49": 49,
       "50": 50,
-      "51": 51
+      "51": 51,
+      "52": 52
     }
   },
   "aggressiveSplits": [
     {
       "modules": [
         "../../../../../node_modules/markdown-it/lib/token.js",
-        "../../../../../node_modules/mockconsole/mockconsole.js",
-        "../../../../../node_modules/rxjs/symbol/rxSubscriber.js",
         "../../../../../node_modules/markdown-it/lib/rules_inline/emphasis.js",
         "../../../../../node_modules/markdown-it/lib/rules_inline/strikethrough.js",
+        "../../../../../node_modules/markdown-it/lib/rules_core/linkify.js",
         "../../../../../node_modules/markdown-it/lib/rules_core/replacements.js",
         "../../../../../node_modules/markdown-it/lib/rules_core/smartquotes.js",
         "../../../../../node_modules/markdown-it/lib/rules_inline/autolink.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/backticks.js",
         "../../../../../node_modules/markdown-it/lib/rules_inline/balance_pairs.js",
         "../../../../../node_modules/markdown-it/lib/rules_inline/entity.js",
         "../../../../../node_modules/markdown-it/lib/rules_inline/escape.js",
@@ -799,16 +802,36 @@
         "../../../../../node_modules/markdown-it/lib/rules_inline/newline.js",
         "../../../../../node_modules/markdown-it/lib/rules_inline/state_inline.js",
         "../../../../../node_modules/markdown-it/lib/rules_inline/text.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/text_collapse.js",
         "../../../../../node_modules/mdurl/decode.js",
-        "../../../../../node_modules/mdurl/encode.js",
-        "../../../../../node_modules/mdurl/format.js",
         "../../../../../node_modules/mediastream-gain/mediastream-gain.js",
-        "../../../../../node_modules/mediastream-gain/node_modules/webrtcsupport/index-browser.js",
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/rxjs/util/isPromise.js"
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js"
       ],
-      "hash": "6e90de6ac174decddaa648d236379163",
+      "hash": "b4b6c9f00c0eb15fc7c54b3a94ec793b",
       "id": 0
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/rxjs/Subscription.js",
+        "../../../../../node_modules/rxjs/observable/EmptyObservable.js",
+        "../../../../../node_modules/rxjs/util/subscribeToResult.js",
+        "../../../../../node_modules/sdp-jingle-json/lib/senders.js",
+        "../../../../../node_modules/rxjs/observable/ForkJoinObservable.js",
+        "../../../../../node_modules/rxjs/observable/PromiseObservable.js",
+        "../../../../../node_modules/rxjs/operator/map.js",
+        "../../../../../node_modules/rxjs/operator/merge.js",
+        "../../../../../node_modules/rxjs/operator/mergeAll.js",
+        "../../../../../node_modules/rxjs/operator/multicast.js",
+        "../../../../../node_modules/rxjs/symbol/iterator.js",
+        "../../../../../node_modules/rxjs/util/ObjectUnsubscribedError.js",
+        "../../../../../node_modules/rxjs/util/UnsubscriptionError.js",
+        "../../../../../node_modules/sdp-jingle-json/index.js",
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
+        "../../../../../node_modules/util/node_modules/inherits/inherits_browser.js"
+      ],
+      "hash": "8facd9c229f4a37a06c7be188e5be472",
+      "id": 1
     },
     {
       "modules": [
@@ -829,87 +852,8 @@
         "css/components/signup-form.css.shim.ngstyle.js",
         "cyph/session/enums/castle-events.js"
       ],
-      "hash": "0ba762a3d94f947f1accb8c33a0fba92",
-      "id": 1
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/rxjs/Subscription.js",
-        "../../../../../node_modules/rxjs/util/subscribeToResult.js",
-        "../../../../../node_modules/sdp-jingle-json/lib/senders.js",
-        "../../../../../node_modules/rxjs/observable/ForkJoinObservable.js",
-        "../../../../../node_modules/rxjs/observable/PromiseObservable.js",
-        "../../../../../node_modules/rxjs/operator/map.js",
-        "../../../../../node_modules/rxjs/operator/merge.js",
-        "../../../../../node_modules/rxjs/operator/mergeAll.js",
-        "../../../../../node_modules/rxjs/operator/multicast.js",
-        "../../../../../node_modules/rxjs/util/ObjectUnsubscribedError.js",
-        "../../../../../node_modules/rxjs/util/UnsubscriptionError.js",
-        "../../../../../node_modules/sdp-jingle-json/index.js",
-        "../../../../../node_modules/sdp-jingle-json/lib/parsers.js",
-        "../../../../../node_modules/uc.micro/categories/Cf/regex.js",
-        "../../../../../node_modules/uc.micro/index.js"
-      ],
-      "hash": "8325020a0269181376326118fd01f99c",
+      "hash": "ae40421fe7e29a1783db68b57cbc5ea0",
       "id": 2
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/markdown-it/lib/rules_block/blockquote.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/fence.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/hr.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/html_block.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/lheading.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/list.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/paragraph.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/reference.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/state_block.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/table.js",
-        "../../../../../node_modules/markdown-it/lib/rules_core/linkify.js",
-        "../../../../../node_modules/markdown-it/lib/rules_core/state_core.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/backticks.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/text_collapse.js"
-      ],
-      "hash": "a0f173df84c686ec436fbb3e6359b0d0",
-      "id": 3
-    },
-    {
-      "modules": [
-        "cyph/session/message.js",
-        "cyph/components/material/md-list.component.js",
-        "cyph/components/material/md-menu.component.js",
-        "cyph/components/material/md-progress-circular.component.js",
-        "cyph/components/material/md-progress-linear.component.js",
-        "cyph/components/material/md-select.component.js",
-        "cyph/components/material/md-sidenav.component.js",
-        "cyph/components/material/md-slider.component.js",
-        "cyph/components/material/md-subheader.component.js",
-        "cyph/components/material/md-tabs.component.js",
-        "cyph/components/material/md-textarea.component.js",
-        "../../../../../node_modules/mdurl/index.js",
-        "../../../../../node_modules/markdown-it/lib/helpers/index.js"
-      ],
-      "hash": "ce8e5156495b16d9f0546cc6a24c2fab",
-      "id": 4
-    },
-    {
-      "modules": [
-        "cyph/components/contact.component.js",
-        "cyph/components/beta-register.component.js",
-        "cyph/components/help.component.js",
-        "cyph/components/chat-cyphertext.component.js",
-        "cyph/components/chat-main.component.js",
-        "cyph/components/chat-message.component.js",
-        "cyph.com/mock-database.service.js",
-        "cyph/components/file-input.component.ngfactory.js",
-        "cyph/session/command.js",
-        "cyph/components/beta-register.component.ngfactory.js",
-        "cyph/components/chat-cyphertext.component.ngfactory.js",
-        "cyph/session/enums/users.js",
-        "../../../../../node_modules/markdown-it/index.js"
-      ],
-      "hash": "d3dd43df9e7e16af614f8f1acbb9f92c",
-      "id": 5
     },
     {
       "modules": [
@@ -923,99 +867,132 @@
         "cyph/components/material/md-card-title-text.component.js",
         "cyph/components/material/md-card-title.component.js",
         "cyph/components/material/md-fab-speed-dial.component.js",
+        "../../../../../node_modules/markdown-it/lib/common/entities.js",
+        "../../../../../node_modules/mdurl/index.js",
         "cyph/files/transfer.js",
-        "cyph/session/enums/rpc-events.js"
+        "../../../../../node_modules/markdown-it/lib/helpers/index.js"
       ],
-      "hash": "b90dc5b2b45f6579263233f913ecc3d1",
-      "id": 6
+      "hash": "52871e8f4115f2a708e5939ddf2f40df",
+      "id": 3
     },
     {
       "modules": [
         "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
         "../../../../../node_modules/rxjs/Observable.js",
-        "../../../../../node_modules/rxjs/util/root.js",
         "../../../../../node_modules/rxjs/Subject.js",
-        "../../../../../node_modules/rxjs/symbol/observable.js",
+        "../../../../../node_modules/rxjs/OuterSubscriber.js",
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
         "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
         "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
         "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
         "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
         "../../../../../node_modules/rxjs/SubjectSubscription.js",
-        "../../../../../node_modules/rxjs/observable/ArrayObservable.js"
+        "../../../../../node_modules/rxjs/operator/share.js",
+        "../../../../../node_modules/uc.micro/index.js",
+        "../../../../../node_modules/util/support/isBufferBrowser.js"
       ],
-      "hash": "3aacbb2b45249cbd4cff7aac86c9cb77",
+      "hash": "c5f03fa5e4761e52cceb63dca5400a4f",
+      "id": 4
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/markdown-it/lib/common/utils.js",
+        "../../../../../node_modules/markdown-it/lib/index.js",
+        "../../../../../node_modules/markdown-it/lib/parser_core.js",
+        "../../../../../node_modules/markdown-it/lib/parser_inline.js",
+        "../../../../../node_modules/markdown-it/lib/presets/commonmark.js",
+        "../../../../../node_modules/markdown-it/lib/presets/default.js",
+        "../../../../../node_modules/markdown-it/lib/presets/zero.js",
+        "../../../../../node_modules/markdown-it/lib/renderer.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/code.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/fence.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/heading.js",
+        "../../../../../node_modules/mdurl/format.js",
+        "../../../../../node_modules/uc.micro/categories/Cf/regex.js"
+      ],
+      "hash": "9499255abecc24d102d6be2aec77640a",
+      "id": 5
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/rxjs/util/isScheduler.js",
+        "../../../../../node_modules/hark/hark.js",
+        "../../../../../node_modules/konami-code.js/konami.js",
+        "../../../../../node_modules/linkify-it/index.js",
+        "../../../../../node_modules/linkify-it/lib/re.js",
+        "../../../../../node_modules/localmedia/index.js",
+        "../../../../../node_modules/markdown-it-emoji/lib/data/shortcuts.js",
+        "../../../../../node_modules/markdown-it-emoji/lib/normalize_opts.js",
+        "../../../../../node_modules/markdown-it-emoji/lib/replace.js",
+        "../../../../../node_modules/markdown-it-sup/index.js",
+        "../../../../../node_modules/markdown-it/lib/helpers/parse_link_destination.js",
+        "../../../../../node_modules/markdown-it/lib/helpers/parse_link_label.js",
+        "../../../../../node_modules/rxjs/util/isPromise.js"
+      ],
+      "hash": "384b806c93393673031629b2a772de82",
+      "id": 6
+    },
+    {
+      "modules": [
+        "cyph/components/contact.component.js",
+        "cyph/email.js",
+        "cyph/components/beta-register.component.js",
+        "cyph/components/help.component.js",
+        "cyph/components/chat-cyphertext.component.js",
+        "cyph/components/chat-main.component.js",
+        "cyph/components/chat-message.component.js",
+        "cyph.com/mock-database.service.js",
+        "cyph/components/file-input.component.ngfactory.js",
+        "node_modules/@angular/core/@angular async",
+        "cyph/components/beta-register.component.ngfactory.js",
+        "cyph/components/chat-cyphertext.component.ngfactory.js",
+        "../../../../../node_modules/angular-aria/index.js"
+      ],
+      "hash": "1d5c3bfb05a617bfa59432ef5d70828d",
       "id": 7
     },
     {
       "modules": [
-        "../../../../../node_modules/process/browser.js",
-        "../../../../../node_modules/rxjs/OuterSubscriber.js",
-        "../../../../../node_modules/rxjs/util/isScheduler.js",
-        "../../../../../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js",
-        "../../../../../node_modules/mdurl/parse.js",
-        "../../../../../node_modules/microlight-string/microlight.min.js",
-        "../../../../../node_modules/punycode/punycode.js",
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
-        "../../../../../node_modules/rxjs/InnerSubscriber.js",
-        "../../../../../node_modules/rxjs/operator/share.js"
-      ],
-      "hash": "2f1c773588235bc0621eecbb4e9aee8f",
-      "id": 8
-    },
-    {
-      "modules": [
-        "cyph/util.js",
-        "preload/index.js",
-        "cyph/session/mutex.js",
-        "cyph/timer.js",
-        "../../../../../node_modules/angular-aria/angular-aria.js",
-        "../../../../../node_modules/attachmediastream/attachmediastream.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/file-saver/FileSaver.js",
-        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/rxjs/observable/fromPromise.js",
-        "../../../../../node_modules/webpack/buildin/amd-options.js"
-      ],
-      "hash": "f351d4460d5640767f4d0740408854f0",
-      "id": 9
-    },
-    {
-      "modules": [
+        "externals/jquery.js",
         "cyph.com/app.component.js",
         "cyph/chat/enums/index.js",
         "externals/angular.js",
         "cyph.com/elements.js",
+        "../../../../../node_modules/uc.micro/categories/Cc/regex.js",
         "cyph.com/app.module.ngfactory.js",
         "cyph.com/app.module.js",
         "cyph.com/carousel.js",
         "cyph.com/enums/home-sections.js",
         "cyph.com/enums/promos.js",
-        "cyph.com/enums/states.js",
+        "cyph.com/enums/wpstatic-pages.js",
         "cyph/chat/index.js"
       ],
-      "hash": "17b8237711ad71156f00ecfeb610c1f6",
-      "id": 10
+      "hash": "afcdb964a64c72e1579099e003b5373a",
+      "id": 8
     },
     {
       "modules": [
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/webpack/buildin/global.js",
-        "../../../../../node_modules/wildemitter/wildemitter.js",
-        "../../../../../node_modules/util/util.js",
-        "../../../../../node_modules/webrtcsupport/index-browser.js",
-        "../../../../../node_modules/uc.micro/categories/P/regex.js",
-        "../../../../../node_modules/webpack/buildin/module.js",
-        "../../../../../node_modules/whatwg-fetch/fetch.js",
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js"
+        "cyph/components/material/md-list.component.js",
+        "cyph/components/material/md-menu.component.js",
+        "cyph/components/material/md-progress-circular.component.js",
+        "cyph/components/material/md-progress-linear.component.js",
+        "cyph/components/material/md-select.component.js",
+        "cyph/components/material/md-sidenav.component.js",
+        "cyph/components/material/md-slider.component.js",
+        "cyph/components/material/md-subheader.component.js",
+        "cyph/components/material/md-tabs.component.js",
+        "cyph/components/material/md-textarea.component.js",
+        "cyph/session/command.js",
+        "../../../../../node_modules/markdown-it/lib/rules_core/block.js"
       ],
-      "hash": "18ec2d04eaa17883d4c69fdd27ed8b20",
-      "id": 11
+      "hash": "097a9f8bda91655447a6e58beeb4028e",
+      "id": 9
     },
     {
       "modules": [
         "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/utils.js",
+        "../../../../../node_modules/rxjs/util/isObject.js",
+        "../../../../../node_modules/jquery.appear/jquery.appear.js",
         "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
         "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
         "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
@@ -1023,11 +1000,10 @@
         "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
         "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
         "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/markdown-it-sup/index.js",
-        "../../../../../node_modules/markdown-it/lib/common/html_blocks.js"
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js"
       ],
-      "hash": "cfcd315514086c8f9cc30a7c8d38a6ef",
-      "id": 12
+      "hash": "35474eac035e31eb7719669532fa49c1",
+      "id": 10
     },
     {
       "modules": [
@@ -1036,13 +1012,46 @@
         "cyph/event-manager.js",
         "cyph/services/analytics.service.js",
         "cyph/env.js",
+        "cyph/session/message.js",
         "cyph/directives/nano-scroller.directive.js",
         "cyph/crypto/potassium/secret-box.js",
         "cyph/env-deploy.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/rxjs/observable/forkJoin.js"
+        "../../../../../node_modules/rxjs/observable/forkJoin.js",
+        "../../../../../node_modules/webpack/buildin/amd-options.js"
       ],
-      "hash": "33b04338ea3f548b215c51539fe20135",
+      "hash": "d63b0db79e1f43023374783569f783a6",
+      "id": 11
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/process/browser.js",
+        "../../../../../node_modules/rxjs/symbol/observable.js",
+        "../../../../../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js",
+        "../../../../../node_modules/mdurl/encode.js",
+        "../../../../../node_modules/mdurl/parse.js",
+        "../../../../../node_modules/mediastream-gain/node_modules/webrtcsupport/index-browser.js",
+        "../../../../../node_modules/microlight-string/microlight.min.js",
+        "../../../../../node_modules/punycode/punycode.js",
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
+        "../../../../../node_modules/rxjs/InnerSubscriber.js"
+      ],
+      "hash": "282a69b427cebbb53350b595f5098974",
+      "id": 12
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/markdown-it/lib/ruler.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/blockquote.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/hr.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/html_block.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/lheading.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/list.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/paragraph.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/reference.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/state_block.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/table.js"
+      ],
+      "hash": "5641b3c46d0b00b552d555db088f88d6",
       "id": 13
     },
     {
@@ -1056,100 +1065,41 @@
         "cyph/crypto/potassium/native-crypto/one-time-auth.js",
         "cyph/crypto/potassium/native-crypto/box.js",
         "cyph/crypto/potassium/native-crypto/password-hash.js",
-        "../../../../../node_modules/rxjs/util/isArrayLike.js"
+        "../../../../../node_modules/rxjs/observable/merge.js"
       ],
-      "hash": "b507a915171697e13ced698edd56634f",
+      "hash": "b5091f20d95aa04dcda25ccff62a900b",
       "id": 14
     },
     {
       "modules": [
-        "cyph/email.js",
+        "cyph/session/enums/index.js",
         "cyph.com/demo.component.js",
         "cyph.com/local-session.service.js",
         "cyph.com/mock-potassium.service.js",
         "cyph.com/silent-notification.service.js",
-        "../../../../../node_modules/uc.micro/categories/Cc/regex.js",
+        "cyph/crypto/potassium/native-crypto/index.js",
         "cyph.com/demo.component.ngfactory.js",
-        "cyph/chat/enums/states.js",
-        "../../../../../node_modules/angular-animate/index.js",
-        "../../../../../node_modules/angular-aria/index.js"
+        "cyph.com/enums/states.js",
+        "cyph/session/enums/rpc-events.js",
+        "../../../../../node_modules/angular-animate/index.js"
       ],
-      "hash": "87dae26b6c25cb453c0cd78d0f3f389d",
+      "hash": "8559e137b6bc20e9a471a36929233748",
       "id": 15
     },
     {
       "modules": [
-        "externals/jquery.js",
-        "cyph/session/enums/index.js",
-        "cyph.com/demo.service.js",
-        "cyph.com/demo-chat-root.component.js",
-        "cyph.com/app.service.js",
-        "cyph/crypto/potassium/native-crypto/index.js",
-        "cyph.com/demo-chat-root.component.ngfactory.js",
-        "cyph.com/enums/page-titles.js",
-        "cyph.com/enums/wpstatic-pages.js",
-        "externals/libsodium.js"
+        "cyph/services/strings.service.js",
+        "cyph/services/session.service.js",
+        "cyph/services/p2p.service.js",
+        "cyph/services/signup.service.js",
+        "cyph/services/url-state.service.js",
+        "../../../../../node_modules/rxjs/util/isArray.js",
+        "preload/index.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/markdown-it/lib/rules_core/normalize.js"
       ],
-      "hash": "a090af509d6ffd15689f45fd37aa13e6",
+      "hash": "a6e50d34ef780ef7ce957a0a7e47ac5b",
       "id": 16
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/markdown-it/lib/ruler.js",
-        "../../../../../node_modules/markdown-it/lib/index.js",
-        "../../../../../node_modules/markdown-it/lib/parser_block.js",
-        "../../../../../node_modules/markdown-it/lib/parser_inline.js",
-        "../../../../../node_modules/markdown-it/lib/presets/commonmark.js",
-        "../../../../../node_modules/markdown-it/lib/presets/default.js",
-        "../../../../../node_modules/markdown-it/lib/presets/zero.js",
-        "../../../../../node_modules/markdown-it/lib/renderer.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/heading.js"
-      ],
-      "hash": "7dd813e381f22f6dcf0f5205ba637e22",
-      "id": 17
-    },
-    {
-      "modules": [
-        "cyph/components/checkout.component.js",
-        "cyph/components/markdown.component.js",
-        "../../../../../node_modules/markdown-it/lib/common/entities.js",
-        "../../../../../node_modules/uc.micro/categories/Z/regex.js",
-        "../../../../../node_modules/angular-material/index.js",
-        "cyph/components/chat-message.component.ngfactory.js",
-        "cyph/components/checkout.component.ngfactory.js",
-        "cyph/components/markdown.component.ngfactory.js",
-        "cyph/session/enums/events.js"
-      ],
-      "hash": "bb26178ff3b9defb7e7a16c1a81db6e0",
-      "id": 18
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/simplewebrtc/simplewebrtc.js",
-        "../../../../../node_modules/sodiumutil/dist/sodiumutil.js",
-        "../../../../../node_modules/tab-indent/js/tabIndent.js",
-        "../../../../../node_modules/traceablepeerconnection/index.js",
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js"
-      ],
-      "hash": "e4b9192deb84d97b3d1aabc9f558451e",
-      "id": 19
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/markdown-it/lib/common/utils.js",
-        "../../../../../node_modules/hark/hark.js",
-        "../../../../../node_modules/konami-code.js/konami.js",
-        "../../../../../node_modules/linkify-it/index.js",
-        "../../../../../node_modules/linkify-it/lib/re.js",
-        "../../../../../node_modules/localmedia/index.js",
-        "../../../../../node_modules/markdown-it-emoji/lib/replace.js",
-        "../../../../../node_modules/markdown-it/lib/rules_core/block.js"
-      ],
-      "hash": "4ce6f9d4870f1e047753979c3ec097c8",
-      "id": 20
     },
     {
       "modules": [
@@ -1159,280 +1109,333 @@
         "cyph/services/error.service.js",
         "cyph/services/crypto/potassium.service.js",
         "cyph/services/cyphertext.service.js",
-        "cyph/services/material/md-sidenav.service.js",
-        "../../../../../node_modules/webpack/buildin/amd-define.js"
+        "cyph/services/util.service.js",
+        "cyph/session/profeatures.js",
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/safari/safari_shim.js"
       ],
-      "hash": "d29d26453eb07ad9228b07a7f8d4dc27",
-      "id": 21
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/rxjs/Subscriber.js",
-        "../../../../../node_modules/rxjs/observable/EmptyObservable.js",
-        "../../../../../node_modules/rtcpeerconnection/rtcpeerconnection.js",
-        "../../../../../node_modules/rxjs/observable/ScalarObservable.js",
-        "../../../../../node_modules/rxjs/symbol/iterator.js",
-        "../../../../../node_modules/rxjs/util/tryCatch.js",
-        "../../../../../node_modules/util/support/isBufferBrowser.js"
-      ],
-      "hash": "eb7b1379b412b713c34bd81c8072002c",
-      "id": 22
-    },
-    {
-      "modules": [
-        "cyph/services/strings.service.js",
-        "cyph/services/session.service.js",
-        "cyph/services/visibility-watcher.service.js",
-        "cyph/services/p2p.service.js",
-        "cyph/services/virtual-keyboard-watcher.service.js",
-        "cyph/services/url-state.service.js",
-        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js"
-      ],
-      "hash": "5bb3f3029926a2e7d837b9e42df5ee72",
-      "id": 23
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/sdp/sdp.js",
-        "../../../../../node_modules/sdp-jingle-json/lib/tojson.js",
-        "../../../../../node_modules/sdp-jingle-json/lib/tosdp.js",
-        "../../../../../node_modules/simplewebrtc/peer.js",
-        "../../../../../node_modules/simplewebrtc/webrtc.js",
-        "../../../../../node_modules/util/node_modules/inherits/inherits_browser.js"
-      ],
-      "hash": "9477b74ec22ba4a50f1aee88b209a166",
-      "id": 24
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/lodash.clonedeep/index.js",
-        "../../../../../node_modules/markdown-it/lib/helpers/parse_link_destination.js",
-        "../../../../../node_modules/markdown-it/lib/helpers/parse_link_title.js",
-        "../../../../../node_modules/markdown-it/lib/parser_core.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/code.js",
-        "../../../../../node_modules/markdown-it/lib/rules_core/inline.js"
-      ],
-      "hash": "dd70db30796e36659f950ff2ede18bfb",
-      "id": 25
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/rxjs/util/isFunction.js",
-        "../../../../../node_modules/entities/maps/entities.json",
-        "../../../../../node_modules/getscreenmedia/node_modules/getusermedia/getusermedia.js",
-        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/markdown-it-emoji/lib/normalize_opts.js"
-      ],
-      "hash": "29aa47c3bd43b9bf6819ecdae97e5e61",
-      "id": 26
+      "hash": "7bb84938adb40c34d7ed7dd56dc7569f",
+      "id": 17
     },
     {
       "modules": [
         "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/utils.js",
         "../../../../../node_modules/dompurify/src/purify.js",
         "../../../../../node_modules/rxjs/util/errorObject.js",
-        "../../../../../node_modules/filetransfer/filetransfer.js",
-        "../../../../../node_modules/getscreenmedia/getscreenmedia.js",
-        "../../../../../node_modules/markdown-it-emoji/lib/data/shortcuts.js"
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/getusermedia/getusermedia.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/rxjs/observable/fromPromise.js"
       ],
-      "hash": "bc8709af0c7b5566775482685c6923e0",
-      "id": 27
+      "hash": "a8f4fef3a5ad4798f827b04784b66937",
+      "id": 18
     },
     {
       "modules": [
+        "cyph/services/file-transfer.service.js",
+        "cyph/services/file.service.js",
+        "cyph/services/material/md-sidenav.service.js",
+        "cyph/services/material/md-dialog.service.js",
+        "preload/dompurify.js",
+        "../../../../../node_modules/attachmediastream/attachmediastream.js",
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/rxjs/util/isArrayLike.js"
+      ],
+      "hash": "9977103a4cfa3e5c59e79e0fbd68242e",
+      "id": 19
+    },
+    {
+      "modules": [
+        "cyph/components/checkout.component.js",
+        "cyph/components/markdown.component.js",
+        "cyph/services/session-init.service.js",
+        "../../../../../node_modules/angular-material/index.js",
+        "cyph/components/chat-message.component.ngfactory.js",
+        "cyph/components/checkout.component.ngfactory.js",
+        "cyph/components/markdown.component.ngfactory.js",
+        "../../../../../node_modules/markdown-it-emoji/lib/render.js"
+      ],
+      "hash": "def3177de37a7f24814c68aba56254e4",
+      "id": 20
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/webpack/buildin/global.js",
+        "../../../../../node_modules/webpack/buildin/module.js",
+        "../../../../../node_modules/simplewebrtc/peer.js",
+        "../../../../../node_modules/simplewebrtc/simplewebrtc.js",
+        "../../../../../node_modules/sodiumutil/dist/sodiumutil.js",
+        "../../../../../node_modules/tab-indent/js/tabIndent.js",
+        "../../../../../node_modules/traceablepeerconnection/index.js"
+      ],
+      "hash": "5d0fe8bded84c60e4ed196bcc6c1c09c",
+      "id": 21
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/sdp/sdp.js",
+        "../../../../../node_modules/uc.micro/categories/P/regex.js",
+        "../../../../../node_modules/sdp-jingle-json/lib/parsers.js",
+        "../../../../../node_modules/sdp-jingle-json/lib/tojson.js",
+        "../../../../../node_modules/sdp-jingle-json/lib/tosdp.js",
+        "../../../../../node_modules/simplewebrtc/webrtc.js",
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js"
+      ],
+      "hash": "6db3f8be6c286af2bcdebef58a24010c",
+      "id": 22
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/mockconsole/mockconsole.js",
+        "../../../../../node_modules/uc.micro/properties/Any/regex.js",
         "../../../../../node_modules/angular-animate/angular-animate.js",
+        "../../../../../node_modules/angular-aria/angular-aria.js",
         "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
         "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js"
+        "../../../../../node_modules/filetransfer/filetransfer.js"
       ],
-      "hash": "af97842d8c920fe852f1c0f942cb37b2",
-      "id": 28
+      "hash": "1a2712c65eb13bd89bc0489d1dc9cee2",
+      "id": 23
+    },
+    {
+      "modules": [
+        "cyph/util.js",
+        "cyph/services/visibility-watcher.service.js",
+        "cyph/services/virtual-keyboard-watcher.service.js",
+        "cyph/session/mutex.js",
+        "cyph/timer.js",
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/adapter_core.js",
+        "../../../../../node_modules/markdown-it/lib/rules_core/state_core.js"
+      ],
+      "hash": "7ef92e23ca428db8e3c8a84732ab9ace",
+      "id": 24
+    },
+    {
+      "modules": [
+        "cyph.com/demo.service.js",
+        "cyph.com/demo-chat-root.component.js",
+        "cyph.com/app.service.js",
+        "cyph.com/demo-chat-root.component.ngfactory.js",
+        "cyph.com/enums/page-titles.js",
+        "cyph/chat/enums/states.js",
+        "externals/libsodium.js"
+      ],
+      "hash": "c939108d90a3388cf2c94233df898631",
+      "id": 25
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
+        "../../../../../node_modules/util/util.js",
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js"
+      ],
+      "hash": "57e83cb9510b767b3e6e2d3d1c2ac045",
+      "id": 26
     },
     {
       "modules": [
         "cyph/services/scroll.service.js",
         "cyph/services/p2p-webrtc.service.js",
         "cyph/services/notification.service.js",
-        "cyph/services/util.service.js",
         "cyph/services/material/md-toast.service.js",
-        "cyph/session/profeatures.js"
+        "../../../../../node_modules/file-saver/FileSaver.js",
+        "../../../../../node_modules/markdown-it/lib/rules_core/inline.js"
       ],
-      "hash": "7e2fa1dc004025271d8c9a70358c9930",
-      "id": 29
+      "hash": "57c432bdb3824f600ff4138ba6d2e849",
+      "id": 27
     },
     {
       "modules": [
-        "cyph/services/file-transfer.service.js",
-        "cyph/services/signup.service.js",
-        "cyph/services/file.service.js",
-        "cyph/services/material/md-dialog.service.js",
+        "cyph/directives/translate.directive.js",
         "../../../../../node_modules/rxjs/Observer.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/safari/safari_shim.js"
+        "cyph/components/signup-form.component.ngfactory.js",
+        "cyph/session/enums/events.js",
+        "../../../../../node_modules/webpack/buildin/amd-define.js"
       ],
-      "hash": "bc8a0a289f6ad11671733ab1cf07b4b8",
-      "id": 30
-    },
-    {
-      "modules": [
-        "cyph/components/file-input.component.js",
-        "cyph/components/chat-message-box.component.js",
-        "cyph/components/chat-message-box.component.ngfactory.js",
-        "node_modules/@angular/core/@angular async",
-        "../../../../../node_modules/markdown-it-emoji/lib/render.js",
-        "../../../../../node_modules/rxjs/observable/merge.js"
-      ],
-      "hash": "2afec305d9b8d35dcb93fc1af7e1fb95",
-      "id": 31
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/uc.micro/properties/Any/regex.js",
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
-        "../../../../../node_modules/markdown-it/lib/helpers/parse_link_label.js"
-      ],
-      "hash": "3e984bc24d0ffad7180dd06b254e41ea",
-      "id": 32
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/rxjs/util/isArray.js",
-        "../../../../../node_modules/jquery.appear/jquery.appear.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
-        "../../../../../node_modules/markdown-it-emoji/index.js"
-      ],
-      "hash": "a3c5ee60e51f72af747527337402087a",
-      "id": 33
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/markdown-it/lib/common/html_re.js",
-        "../../../../../node_modules/rxjs/util/isObject.js",
-        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js"
-      ],
-      "hash": "fb70d7d93c59d2ab09baac84c839fddb",
-      "id": 34
+      "hash": "403b6a617f1998023a49136a71db20ed",
+      "id": 28
     },
     {
       "modules": [
         "cyph/components/material/md-button.component.js",
         "cyph/components/material/md-card-content.component.js",
         "cyph/components/contact.component.ngfactory.js",
+        "../../../../../node_modules/uc.micro/categories/Z/regex.js",
         "cyph/components/help.component.ngfactory.js"
       ],
-      "hash": "4c2ccdf9307a6917f94aa69df7d41ce1",
-      "id": 35
+      "hash": "c73b83a4d4f5f7834147a6a07632307a",
+      "id": 29
+    },
+    {
+      "modules": [
+        "cyph/components/file-input.component.js",
+        "cyph/components/chat-message-box.component.js",
+        "cyph/components/chat-message-box.component.ngfactory.js",
+        "cyph/session/enums/users.js",
+        "../../../../../node_modules/markdown-it/index.js"
+      ],
+      "hash": "0ce9bdd6d3c4ebbf31dd70173aa0b784",
+      "id": 30
     },
     {
       "modules": [
         "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/rxjs/observable/ConnectableObservable.js",
+        "../../../../../node_modules/rxjs/observable/ArrayObservable.js",
+        "../../../../../node_modules/rxjs/observable/ScalarObservable.js",
         "../../../../../node_modules/rxjs/util/toSubscriber.js"
       ],
-      "hash": "f4a6a8c2ca9253c0174f792ae1594b7f",
+      "hash": "98210ba780e51f2b82df8acaa52f9306",
+      "id": 31
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/lodash.clonedeep/index.js",
+        "../../../../../node_modules/markdown-it/lib/helpers/parse_link_title.js",
+        "../../../../../node_modules/markdown-it/lib/parser_block.js",
+        "../../../../../node_modules/rxjs/util/tryCatch.js"
+      ],
+      "hash": "4d0163fb4734da2b190c5dde807ee694",
+      "id": 32
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/utils.js",
+        "../../../../../node_modules/markdown-it/lib/common/html_re.js",
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js"
+      ],
+      "hash": "5986af9b6e9718200299895c421c07ff",
+      "id": 33
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/rxjs/symbol/rxSubscriber.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
+        "../../../../../node_modules/markdown-it/lib/common/html_blocks.js"
+      ],
+      "hash": "f8419723ab99315bd54a66df3b7de847",
+      "id": 34
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/rxjs/util/isFunction.js",
+        "../../../../../node_modules/entities/maps/entities.json",
+        "../../../../../node_modules/getscreenmedia/getscreenmedia.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js"
+      ],
+      "hash": "3f5ee5e5b0736e4902401e0643736ce1",
+      "id": 35
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
+        "../../../../../node_modules/markdown-it-emoji/index.js"
+      ],
+      "hash": "883ef34e73abf01ca74a622c45a37441",
       "id": 36
     },
     {
       "modules": [
-        "../../../../../node_modules/magnific-popup/dist/jquery.magnific-popup.js",
-        "../../../../../node_modules/markdown-it-emoji/lib/data/full.json",
-        "../../../../../node_modules/markdown-it/lib/rules_core/normalize.js"
+        "../../../../../node_modules/webrtcsupport/index-browser.js",
+        "../../../../../node_modules/whatwg-fetch/fetch.js",
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js"
       ],
-      "hash": "29894938515fc38bb573c84597a64e69",
+      "hash": "06b1600bd544ac25f8e947024c64c2e0",
       "id": 37
     },
     {
       "modules": [
-        "cyph/directives/translate.directive.js",
-        "cyph/components/signup-form.component.ngfactory.js",
-        "preload/dompurify.js"
+        "../../../../../node_modules/rxjs/Subscriber.js",
+        "../../../../../node_modules/rtcpeerconnection/rtcpeerconnection.js",
+        "../../../../../node_modules/rxjs/observable/ConnectableObservable.js"
       ],
-      "hash": "f2b744e45b26b7756b9b2a349c2d35ca",
+      "hash": "47e2018e9cfbb4329e29d36fe1476cd6",
       "id": 38
     },
     {
       "modules": [
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js"
+        "../../../../../node_modules/rxjs/util/root.js",
+        "../../../../../node_modules/magnific-popup/dist/jquery.magnific-popup.js",
+        "../../../../../node_modules/markdown-it-emoji/lib/data/full.json"
       ],
-      "hash": "ee30c6b756d607b822397b7d21c79100",
-      "id": 40
+      "hash": "1661dee57193fdd3d7d581617f7c4f58",
+      "id": 39
     },
     {
       "modules": [
         "../../../../../node_modules/braintree-web/dist/braintree.js"
       ],
-      "hash": "24818317b22c530233a5d3f0f7ffd3fd",
-      "id": 41
+      "hash": "40acb645184c2be43fe08105ab54030f",
+      "id": 42
     },
     {
       "modules": [
         "../../../../../node_modules/angular-material/angular-material.js"
       ],
-      "hash": "612e255f673e7d0406718dfa1952c135",
-      "id": 42
+      "hash": "8617cc7947a9a905e05528023d3314a1",
+      "id": 43
     },
     {
       "modules": [
         "translations.js"
       ],
-      "hash": "c75100bdb4383a3bb59da6592073ee76",
-      "id": 43
+      "hash": "fe393cd2d16b6dd9c439f10927507e93",
+      "id": 44
     },
     {
       "modules": [
         "node_modules/@angular/upgrade/@angular/upgrade/static.es5.js"
       ],
-      "hash": "fd46a38c952997fdd22ed5f0dd381b1b",
-      "id": 44
+      "hash": "2e4f494e3926ca1f9b748331e94a6878",
+      "id": 45
     },
     {
       "modules": [
         "node_modules/@angular/platform-browser/@angular/platform-browser.es5.js"
       ],
-      "hash": "b655d9396876565d71f4ea5c9fd00cf3",
-      "id": 45
+      "hash": "05c8be768859518105ee64e25a15db2a",
+      "id": 46
     },
     {
       "modules": [
         "node_modules/@angular/forms/@angular/forms.es5.js"
       ],
-      "hash": "b4098a101d5bc66e15072bd0d40f626c",
-      "id": 46
+      "hash": "3f0335a7bdcebedb483a57fc25368873",
+      "id": 47
     },
     {
       "modules": [
         "node_modules/@angular/core/@angular/core.es5.js"
       ],
-      "hash": "7940d75e282a8601fc8f6aff5986eade",
-      "id": 47
+      "hash": "43ef94dddbdad750b1fb665d9fb5a5c7",
+      "id": 48
     },
     {
       "modules": [
         "node_modules/@angular/common/@angular/common.es5.js"
       ],
-      "hash": "20ad38923c5a558e8f48d929d9198073",
-      "id": 48
+      "hash": "be49d867eb00bb52c3fc7fb6fb9eb6bf",
+      "id": 49
     },
     {
       "modules": [
         "cyph/components/chat-main.component.ngfactory.js"
       ],
-      "hash": "09d15ec538a2744bc2933c8cd7159035",
-      "id": 49
+      "hash": "81d4da22d97cd50a0fe3d09b868d228d",
+      "id": 50
     },
     {
       "modules": [
         "cyph.com/app.component.ngfactory.js"
       ],
-      "hash": "05ce0bebec45214279a73b373132cd55",
-      "id": 50
+      "hash": "02a7bbfd058c352d3ad609feae9ee40a",
+      "id": 51
     }
   ]
 }
