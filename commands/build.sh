@@ -237,14 +237,10 @@ compile () {
 		`.trim())' > translations.js
 
 		mkdir externals
-		echo 'module.exports = undefined;' > externals/_stream_duplex.js
-		echo 'module.exports = undefined;' > externals/_stream_writable.js
 		echo 'module.exports = self.angular;' > externals/angular.js
-		echo 'module.exports = self.WebSocket;' > externals/faye-websocket.js
 		echo 'module.exports = self.jQuery;' > externals/jquery.js
 		echo 'module.exports = {sodium: self.sodium};' > externals/libsodium.js
-		echo 'module.exports = undefined;' > externals/request.js
-		echo 'module.exports = {Promise: self.Promise};' > externals/rsvp.js
+		echo 'module.exports = undefined;' > externals/rsvp.js
 	fi
 
 	if [ "${watch}" ] ; then
@@ -360,14 +356,10 @@ compile () {
 							},
 							/*
 								externals: {
-									'_stream_duplex': 'undefined',
-									'_stream_writable': 'undefined',
 									'angular': 'self.angular',
-									'faye-websocket': 'self.WebSocket',
 									'jquery': 'self.jQuery',
 									'libsodium': '{sodium: self.sodium}',
-									'request': 'undefined',
-									'rsvp': '{Promise: self.Promise}'
+									'rsvp': 'undefined'
 								},
 							*/
 							output: {
@@ -378,13 +370,11 @@ compile () {
 							},
 							resolve: {
 								alias: {
-									'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
-									'_stream_writable': '${PWD}/externals/_stream_writable.js',
 									'angular': '${PWD}/externals/angular.js',
-									'faye-websocket': '${PWD}/externals/faye-websocket.js',
+									'faye-websocket': 'faye',
 									'jquery': '${PWD}/externals/jquery.js',
 									'libsodium': '${PWD}/externals/libsodium.js',
-									'request': '${PWD}/externals/request.js',
+									'request': 'browser-request',
 									'rsvp': '${PWD}/externals/rsvp.js'
 								}
 							}
@@ -422,14 +412,10 @@ compile () {
 					},
 					/*
 						externals: {
-							'_stream_duplex': 'undefined',
-							'_stream_writable': 'undefined',
 							'angular': 'self.angular',
-							'faye-websocket': 'self.WebSocket',
 							'jquery': 'self.jQuery',
 							'libsodium': '{sodium: self.sodium}',
-							'request': 'undefined',
-							'rsvp': '{Promise: self.Promise}'
+							'rsvp': 'undefined'
 						},
 					*/
 					output: {
@@ -481,13 +467,11 @@ compile () {
 					")
 					resolve: {
 						alias: {
-							'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
-							'_stream_writable': '${PWD}/externals/_stream_writable.js',
 							'angular': '${PWD}/externals/angular.js',
-							'faye-websocket': '${PWD}/externals/faye-websocket.js',
+							'faye-websocket': 'faye',
 							'jquery': '${PWD}/externals/jquery.js',
 							'libsodium': '${PWD}/externals/libsodium.js',
-							'request': '${PWD}/externals/request.js',
+							'request': 'browser-request',
 							'rsvp': '${PWD}/externals/rsvp.js'
 						}
 					}
