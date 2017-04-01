@@ -238,6 +238,7 @@ compile () {
 
 		mkdir externals
 		echo 'module.exports = self.angular;' > externals/angular.js
+		echo 'module.exports = {Client: self.WebSocket};' > externals/faye-websocket.js
 		echo 'module.exports = self.jQuery;' > externals/jquery.js
 		echo 'module.exports = {sodium: self.sodium};' > externals/libsodium.js
 		echo 'module.exports = undefined;' > externals/rsvp.js
@@ -357,6 +358,7 @@ compile () {
 							/*
 								externals: {
 									'angular': 'self.angular',
+									'faye-websocket': '{Client: self.WebSocket}',
 									'jquery': 'self.jQuery',
 									'libsodium': '{sodium: self.sodium}',
 									'rsvp': 'undefined'
@@ -371,7 +373,7 @@ compile () {
 							resolve: {
 								alias: {
 									'angular': '${PWD}/externals/angular.js',
-									'faye-websocket': 'faye',
+									'faye-websocket': '${PWD}/externals/faye-websocket.js',
 									'jquery': '${PWD}/externals/jquery.js',
 									'libsodium': '${PWD}/externals/libsodium.js',
 									'request': 'browser-request',
@@ -413,6 +415,7 @@ compile () {
 					/*
 						externals: {
 							'angular': 'self.angular',
+							'faye-websocket': '{Client: self.WebSocket}',
 							'jquery': 'self.jQuery',
 							'libsodium': '{sodium: self.sodium}',
 							'rsvp': 'undefined'
@@ -468,7 +471,7 @@ compile () {
 					resolve: {
 						alias: {
 							'angular': '${PWD}/externals/angular.js',
-							'faye-websocket': 'faye',
+							'faye-websocket': '${PWD}/externals/faye-websocket.js',
 							'jquery': '${PWD}/externals/jquery.js',
 							'libsodium': '${PWD}/externals/libsodium.js',
 							'request': 'browser-request',
