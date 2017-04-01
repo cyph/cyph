@@ -243,6 +243,7 @@ compile () {
 		echo 'module.exports = {Client: self.WebSocket};' > externals/faye-websocket.js
 		echo 'module.exports = self.jQuery;' > externals/jquery.js
 		echo 'module.exports = {sodium: self.sodium};' > externals/libsodium.js
+		echo 'module.exports = undefined;' > externals/request.js
 		echo 'module.exports = undefined;' > externals/rsvp.js
 	fi
 
@@ -365,6 +366,7 @@ compile () {
 									'faye-websocket': '{Client: self.WebSocket}',
 									'jquery': 'self.jQuery',
 									'libsodium': '{sodium: self.sodium}',
+									'request': 'undefined',
 									'rsvp': 'undefined'
 								},
 							*/
@@ -382,7 +384,7 @@ compile () {
 									'faye-websocket': '${PWD}/externals/faye-websocket.js',
 									'jquery': '${PWD}/externals/jquery.js',
 									'libsodium': '${PWD}/externals/libsodium.js',
-									'request': 'browser-request',
+									'request': '${PWD}/externals/request.js',
 									'rsvp': '${PWD}/externals/rsvp.js'
 								}
 							}
@@ -426,6 +428,7 @@ compile () {
 							'faye-websocket': '{Client: self.WebSocket}',
 							'jquery': 'self.jQuery',
 							'libsodium': '{sodium: self.sodium}',
+							'request': 'undefined',
 							'rsvp': 'undefined'
 						},
 					*/
@@ -484,7 +487,7 @@ compile () {
 							'faye-websocket': '${PWD}/externals/faye-websocket.js',
 							'jquery': '${PWD}/externals/jquery.js',
 							'libsodium': '${PWD}/externals/libsodium.js',
-							'request': 'browser-request',
+							'request': '${PWD}/externals/request.js',
 							'rsvp': '${PWD}/externals/rsvp.js'
 						}
 					}
