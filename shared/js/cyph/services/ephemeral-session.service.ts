@@ -57,8 +57,32 @@ export class EphemeralSessionService extends SessionService {
 
 				this.trigger(events.closeChat);
 			},
-			onConnect: () => {
+			onConnect: async () => {
 				this.trigger(events.connect);
+
+				while (this.state.isAlive) {
+					await util.sleep(this.plaintextSendInterval);
+
+					if (this.plaintextSendQueue.length < 1) {
+						continue;
+					}
+
+					this.anonymousCastleService.send(
+						JSON.stringify(
+							this.plaintextSendQueue.splice(0, this.plaintextSendQueue.length),
+							(_, v) => {
+								if (v instanceof Uint8Array) {
+									return {
+										data: potassiumUtil.toBase64(v),
+										isUint8Array: true
+									};
+								}
+
+								return v;
+							}
+						)
+					);
+				}
 			},
 			onMessage: (message: string) => {
 				this.anonymousCastleService.receive(message);
@@ -130,19 +154,7 @@ export class EphemeralSessionService extends SessionService {
 			}
 		}
 
-		this.anonymousCastleService.send(
-			JSON.stringify(messages, (_, v) => {
-				if (v instanceof Uint8Array) {
-					return {
-						data: potassiumUtil.toBase64(v),
-						isUint8Array: true
-					};
-				}
-
-				return v;
-			}),
-			util.timestamp()
-		);
+		this.plaintextSendHandler(messages);
 	}
 
 	constructor (

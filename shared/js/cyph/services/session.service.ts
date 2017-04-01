@@ -26,6 +26,12 @@ export abstract class SessionService implements ISessionService {
 	protected pingPongTimeouts: number					= 0;
 
 	/** @ignore */
+	protected readonly plaintextSendInterval: number	= 1337;
+
+	/** @ignore */
+	protected readonly plaintextSendQueue: IMessage[]	= [];
+
+	/** @ignore */
 	protected readonly receivedMessages: Set<string>	= new Set<string>();
 
 	/** @inheritDoc */
@@ -137,6 +143,13 @@ export abstract class SessionService implements ISessionService {
 			eventValue: 1,
 			hitType: 'event'
 		});
+	}
+
+	/** @ignore */
+	protected plaintextSendHandler (messages: IMessage[]) : void {
+		for (const message of messages) {
+			this.plaintextSendQueue.push(message);
+		}
 	}
 
 	/**
