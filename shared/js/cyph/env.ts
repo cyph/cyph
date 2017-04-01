@@ -9,6 +9,7 @@ export class Env extends EnvDeploy {
 	/** @ignore */
 	private static readonly UA: string		= navigatorData.userAgent.toLowerCase();
 
+
 	/** Indicates whether this is a co-branded instance of Cyph. */
 	public readonly coBranded: boolean		= !!customBuild;
 
@@ -50,6 +51,9 @@ export class Env extends EnvDeploy {
 			)
 		)
 	;
+
+	/** Indicates whether this is Firefox. */
+	public readonly isFirefox: boolean		= /firefox/.test(Env.UA);
 
 	/** Indicates whether this is the Cyph corporate website (cyph.com). */
 	public readonly isHomeSite: boolean	=

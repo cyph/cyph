@@ -1,7 +1,7 @@
 <span *ngIf='!appService.isLockedDown; else lockdown'>
 	<cyph-ephemeral-chat-root *ngIf='appService.state !== appService.states.account'>
 		<section id='main' class='cyph-foreground layout-fill layout-column'>
-			<canvas id='main-chat-gradient'></canvas>
+			<canvas [hidden]='envService.isFirefox' id='main-chat-gradient'></canvas>
 
 			<cyph-chat-main
 				[hideDisconnectMessage]='envService.coBranded'
