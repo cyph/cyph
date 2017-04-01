@@ -145,13 +145,6 @@ export abstract class SessionService implements ISessionService {
 		});
 	}
 
-	/** @ignore */
-	protected plaintextSendHandler (messages: IMessage[]) : void {
-		for (const message of messages) {
-			this.plaintextSendQueue.push(message);
-		}
-	}
-
 	/**
 	 * @ignore
 	 * Intermittent check to verify chat is still alive and send fake encrypted chatter.
@@ -182,6 +175,13 @@ export abstract class SessionService implements ISessionService {
 
 				nextPing	= now + util.random(90000, 30000);
 			}
+		}
+	}
+
+	/** @ignore */
+	protected plaintextSendHandler (messages: IMessage[]) : void {
+		for (const message of messages) {
+			this.plaintextSendQueue.push(message);
 		}
 	}
 
