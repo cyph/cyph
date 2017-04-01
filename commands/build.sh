@@ -237,6 +237,8 @@ compile () {
 		`.trim())' > translations.js
 
 		mkdir externals
+		echo 'module.exports = undefined;' > externals/_stream_duplex.js
+		echo 'module.exports = undefined;' > externals/_stream_writable.js
 		echo 'module.exports = self.angular;' > externals/angular.js
 		echo 'module.exports = {Client: self.WebSocket};' > externals/faye-websocket.js
 		echo 'module.exports = self.jQuery;' > externals/jquery.js
@@ -357,6 +359,8 @@ compile () {
 							},
 							/*
 								externals: {
+									'_stream_duplex': 'undefined',
+									'_stream_writable': 'undefined',
 									'angular': 'self.angular',
 									'faye-websocket': '{Client: self.WebSocket}',
 									'jquery': 'self.jQuery',
@@ -372,6 +376,8 @@ compile () {
 							},
 							resolve: {
 								alias: {
+									'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
+									'_stream_writable': '${PWD}/externals/_stream_writable.js',
 									'angular': '${PWD}/externals/angular.js',
 									'faye-websocket': '${PWD}/externals/faye-websocket.js',
 									'jquery': '${PWD}/externals/jquery.js',
@@ -414,6 +420,8 @@ compile () {
 					},
 					/*
 						externals: {
+							'_stream_duplex': 'undefined',
+							'_stream_writable': 'undefined',
 							'angular': 'self.angular',
 							'faye-websocket': '{Client: self.WebSocket}',
 							'jquery': 'self.jQuery',
@@ -470,6 +478,8 @@ compile () {
 					")
 					resolve: {
 						alias: {
+							'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
+							'_stream_writable': '${PWD}/externals/_stream_writable.js',
 							'angular': '${PWD}/externals/angular.js',
 							'faye-websocket': '${PWD}/externals/faye-websocket.js',
 							'jquery': '${PWD}/externals/jquery.js',
