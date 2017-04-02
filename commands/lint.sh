@@ -9,6 +9,14 @@ cd "${tmpDir}/shared"
 
 # tslint and htmllint
 
+cd js
+checkTslintAllOutput="$(check-tslint-all 2>&1)"
+if (( $? )) ; then
+	echo "${checkTslintAllOutput}"
+	exit 1
+fi
+cd ..
+
 /node_modules/tslint/node_modules/.bin/tsc --skipLibCheck tslint-rules/*.ts || exit 1
 
 node -e "
