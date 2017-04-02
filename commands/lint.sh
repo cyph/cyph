@@ -3,19 +3,19 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
-tmpDir="$(mktemp -d)"
-./commands/copyworkspace.sh --client-only "${tmpDir}"
-cd "${tmpDir}/shared"
-
-# tslint and htmllint
-
-cd js
+cd shared/js
 checkTslintAllOutput="$(check-tslint-all 2>&1)"
 if (( $? )) ; then
 	echo "${checkTslintAllOutput}"
 	exit 1
 fi
-cd ..
+cd ../..
+
+tmpDir="$(mktemp -d)"
+./commands/copyworkspace.sh --client-only "${tmpDir}"
+cd "${tmpDir}/shared"
+
+# tslint and htmllint
 
 /node_modules/tslint/node_modules/.bin/tsc --skipLibCheck tslint-rules/*.ts || exit 1
 
