@@ -167,7 +167,6 @@ RUN echo 'Package: yarn\nPin: version 0.19.1-1\nPin-Priority: 1337' | sudo tee -
 #CIRCLECI:RUN sudo apt-get -y --force-yes update
 #CIRCLECI:RUN sudo apt-get -y --force-yes upgrade
 #CIRCLECI:RUN mkdir -p ~/getlibs/commands
-#CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/firebase
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/firebase-server
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/ts-node
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/tslint
@@ -175,8 +174,6 @@ RUN echo 'Package: yarn\nPin: version 0.19.1-1\nPin-Priority: 1337' | sudo tee -
 #CIRCLECI:RUN echo 'LIBCLONE_BASE64' | base64 --decode > ~/getlibs/commands/libclone.sh
 #CIRCLECI:RUN echo 'PACKAGE_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/package.json
 #CIRCLECI:RUN touch ~/getlibs/shared/lib/js/yarn.lock
-#CIRCLECI:RUN echo 'FB_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/firebase/package.json
-#CIRCLECI:RUN touch ~/getlibs/shared/lib/js/module_locks/firebase/yarn.lock
 #CIRCLECI:RUN echo 'FBS_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/firebase-server/package.json
 #CIRCLECI:RUN touch ~/getlibs/shared/lib/js/module_locks/firebase-server/yarn.lock
 #CIRCLECI:RUN echo 'TSN_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/ts-node/package.json
