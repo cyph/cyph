@@ -38,6 +38,7 @@ yarn add --ignore-platform --ignore-scripts \
 	animate.css \
 	bourbon@4.2.7 \
 	braintree-web@^2 \
+	check-tslint-all \
 	cheerio \
 	clean-css-cli \
 	clipboard-js \

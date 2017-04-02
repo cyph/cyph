@@ -97,15 +97,17 @@
 		"no-shadowed-variable": true,
 		"no-string-literal": true,
 		"no-string-throw": true,
+		"no-switch-case-fall-through": true,
 		"no-unbound-method": true,
 		"no-unsafe-any": false,
 		"no-unsafe-finally": true,
 		"no-unused-expression": true,
-		/* Pending fix: "no-use-before-declare": true, */
+		"no-unused-variable": false,
+		"no-use-before-declare": false, /* Pending fix: true, */
 		"no-var-keyword": true,
 		"no-void-expression": true,
 		"radix": true,
-		/* Pending fix: "restrict-plus-operands": true, */
+		"restrict-plus-operands": false, /* Pending fix: true, */
 		"strict-boolean-expressions": false,
 		"switch-default": false,
 		"strict-type-predicates": true,
@@ -141,7 +143,7 @@
 		"callable-types": true,
 		"class-name": true,
 		"comment-format": [true, "check-space", "check-uppercase"],
-		/* Pending fix: "completed-docs": true, */
+		"completed-docs": false, /* Pending fix: true, */
 		"file-header": false,
 		"import-spacing": true,
 		"interface-name": [true, "always-prefix"],
