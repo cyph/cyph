@@ -183,11 +183,6 @@ mv .bin/ts-node .bin/ts-node-original
 echo -e '#!/bin/bash\nts-node-original -D "${@}"' > .bin/ts-node
 chmod +x .bin/ts-node
 
-# Workaround for lib bugs
-rm nodobjc/docs/assets/ir_black.css ref/docs/stylesheets/hightlight.css
-cp highlight.js/styles/ir-black.css nodobjc/docs/assets/ir_black.css
-cp highlight.js/styles/solarized-light.css ref/docs/stylesheets/hightlight.css
-
 cd ../..
 
 mv js/node_modules .js.tmp/
