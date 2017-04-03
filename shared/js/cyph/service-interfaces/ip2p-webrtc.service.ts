@@ -1,3 +1,6 @@
+import {IP2PHandlers} from '../p2p/ip2p-handlers';
+
+
 /**
  * Manages P2P WebRTC logic.
  */
@@ -24,7 +27,7 @@ export interface IP2PWebRTCService {
 	close () : void;
 
 	/** Initialise service. */
-	init (localVideo: () => JQuery, remoteVideo: () => JQuery) : void;
+	init (handlers: IP2PHandlers, localVideo: () => JQuery, remoteVideo: () => JQuery) : void;
 
 	/** Sets up a new P2P session. */
 	join () : void;
@@ -33,7 +36,7 @@ export interface IP2PWebRTCService {
 	 * Sends a new call request to the other party.
 	 * @param callType Requested session type.
 	 */
-	request (callType: 'audio'|'video') : void;
+	request (callType: 'audio'|'video') : Promise<void>;
 
 	/**
 	 * Pauses all or a subset of the current outgoing stream.

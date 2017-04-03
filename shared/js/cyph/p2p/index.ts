@@ -1,1 +1,1 @@
-export * from './enums';
+export * from './ip2p-handlers';

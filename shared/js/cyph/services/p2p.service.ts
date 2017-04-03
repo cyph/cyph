@@ -1,11 +1,10 @@
 import {Injectable} from '@angular/core';
-import {UIEventCategories, UIEvents} from '../p2p/enums';
-import {events, users} from '../session/enums';
+import {IP2PHandlers} from '../p2p/ip2p-handlers';
+import {users} from '../session/enums';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {SessionInitService} from './session-init.service';
-import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
 
@@ -14,6 +13,95 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class P2PService {
+	/** @ignore */
+	private readonly handlers: IP2PHandlers	= {
+		acceptConfirm: async (callType: string, timeout: number, isAccepted: boolean) => {
+			if (isAccepted) {
+				return true;
+			}
+
+			return this.dialogService.confirm({
+				timeout,
+				cancel: this.stringsService.decline,
+				content: `${
+					this.stringsService.p2pRequest
+				} ${
+					<string> (
+						(<any> this.stringsService)[callType + 'Call'] ||
+						''
+					)
+				}. ${
+					this.stringsService.p2pWarning
+				}`,
+				ok: this.stringsService.continueDialogAction,
+				title: this.stringsService.p2pTitle
+			});
+		},
+		connected: (isConnected: boolean) => {
+			if (isConnected) {
+				this.chatService.addMessage(
+					this.stringsService.p2pConnect,
+					users.app,
+					undefined,
+					false
+				);
+			}
+			else {
+				this.dialogService.alert({
+					content: this.stringsService.p2pDisconnect,
+					ok: this.stringsService.ok,
+					title: this.stringsService.p2pTitle
+				});
+
+				this.chatService.addMessage(
+					this.stringsService.p2pDisconnect,
+					users.app,
+					undefined,
+					false
+				);
+			}
+		},
+		enable: () => {
+			this.isEnabled	= true;
+		},
+		requestConfirm: async (callType: string, isAccepted: boolean) => {
+			if (isAccepted) {
+				return true;
+			}
+
+			return this.dialogService.confirm({
+				cancel: this.stringsService.cancel,
+				content: `${
+					this.stringsService.p2pInit
+				} ${
+					<string> (
+						(<any> this.stringsService)[callType + 'Call'] ||
+						''
+					)
+				}. ${
+					this.stringsService.p2pWarning
+				}`,
+				ok: this.stringsService.continueDialogAction,
+				title: this.stringsService.p2pTitle
+			});
+		},
+		requestConfirmation: () => {
+			this.chatService.addMessage(
+				this.stringsService.p2pRequestConfirmation,
+				users.app,
+				undefined,
+				false
+			);
+		},
+		requestRejection: () => {
+			this.dialogService.alert({
+				content: this.stringsService.p2pDeny,
+				ok: this.stringsService.ok,
+				title: this.stringsService.p2pTitle
+			});
+		}
+	};
+
 	/** Indicates whether P2P is possible (i.e. both clients support WebRTC). */
 	public isEnabled: boolean	= false;
 
@@ -43,7 +131,7 @@ export class P2PService {
 
 	/** Initialise service. */
 	public init (localVideo: () => JQuery, remoteVideo: () => JQuery) : void {
-		this.p2pWebRTCService.init(localVideo, remoteVideo);
+		this.p2pWebRTCService.init(this.handlers, localVideo, remoteVideo);
 
 		if (this.isActive) {
 			this.p2pWebRTCService.accept();
@@ -105,8 +193,6 @@ export class P2PService {
 	}
 
 	constructor (
-		sessionService: SessionService,
-
 		/** @ignore */
 		private readonly chatService: ChatService,
 
@@ -121,133 +207,5 @@ export class P2PService {
 
 		/** @ignore */
 		private readonly stringsService: StringsService
-	) {
-		sessionService.on(
-			events.p2pUI,
-			async (e: {
-				args: any[];
-				category: UIEventCategories;
-				event: UIEvents;
-			}) => {
-				switch (e.category) {
-					case UIEventCategories.base: {
-						switch (e.event) {
-							case UIEvents.connected: {
-								const isConnected: boolean	= e.args[0];
-
-								if (isConnected) {
-									this.chatService.addMessage(
-										this.stringsService.p2pConnect,
-										users.app,
-										undefined,
-										false
-									);
-								}
-								else {
-									this.dialogService.alert({
-										content: this.stringsService.p2pDisconnect,
-										ok: this.stringsService.ok,
-										title: this.stringsService.p2pTitle
-									});
-
-									this.chatService.addMessage(
-										this.stringsService.p2pDisconnect,
-										users.app,
-										undefined,
-										false
-									);
-								}
-								break;
-							}
-							case UIEvents.enable: {
-								this.isEnabled	= true;
-								break;
-							}
-						}
-						break;
-					}
-					case UIEventCategories.request: {
-						switch (e.event) {
-							case UIEvents.acceptConfirm: {
-								const callType: string		= e.args[0];
-								const timeout: number		= e.args[1];
-								const isAccepted: boolean	= e.args[2];
-								const callback: Function	= e.args[3];
-
-								if (isAccepted) {
-									callback(true);
-								}
-								else {
-									callback(await this.dialogService.confirm({
-										timeout,
-										cancel: this.stringsService.decline,
-										content: `${
-											this.stringsService.p2pRequest
-										} ${
-											<string> (
-												(<any> this.stringsService)[callType + 'Call'] ||
-												''
-											)
-										}. ${
-											this.stringsService.p2pWarning
-										}`,
-										ok: this.stringsService.continueDialogAction,
-										title: this.stringsService.p2pTitle
-									}));
-								}
-
-								break;
-							}
-							case UIEvents.requestConfirm: {
-								const callType: string		= e.args[0];
-								const isAccepted: boolean	= e.args[1];
-								const callback: Function	= e.args[2];
-
-								if (isAccepted) {
-									callback(true);
-								}
-								else {
-									callback(await this.dialogService.confirm({
-										cancel: this.stringsService.cancel,
-										content: `${
-											this.stringsService.p2pInit
-										} ${
-											<string> (
-												(<any> this.stringsService)[callType + 'Call'] ||
-												''
-											)
-										}. ${
-											this.stringsService.p2pWarning
-										}`,
-										ok: this.stringsService.continueDialogAction,
-										title: this.stringsService.p2pTitle
-									}));
-								}
-
-								break;
-							}
-							case UIEvents.requestConfirmation: {
-								this.chatService.addMessage(
-									this.stringsService.p2pRequestConfirmation,
-									users.app,
-									undefined,
-									false
-								);
-								break;
-							}
-							case UIEvents.requestRejection: {
-								this.dialogService.alert({
-									content: this.stringsService.p2pDeny,
-									ok: this.stringsService.ok,
-									title: this.stringsService.p2pTitle
-								});
-								break;
-							}
-						}
-						break;
-					}
-				}
-			}
-		);
-	}
+	) {}
 }
