@@ -370,55 +370,57 @@ export class FileTransferService {
 		/** @ignore */
 		private readonly stringsService: StringsService
 	) { (async () => {
+		const nativeCryptoRemote		=
+			this.sessionService.one<{isNativeCryptoSupported: boolean}>(rpcEvents.files)
+		;
+
 		const isNativeCryptoSupported	= await this.potassiumService.isNativeCryptoSupported();
+
+		const downloadAnswers			= new Map<string, boolean>();
 
 		this.sessionService.one(events.beginChat).then(() => {
 			this.sessionService.send(new Message(rpcEvents.files, {isNativeCryptoSupported}));
 		});
 
-		const downloadAnswers	= new Map<string, boolean>();
+		/* Negotiation on whether or not to use SubtleCrypto */
+		this.resolveSecretBox(
+			isNativeCryptoSupported && (await nativeCryptoRemote).isNativeCryptoSupported ?
+				new SecretBox(true) :
+				this.potassiumService.secretBox
+		);
 
-		this.sessionService.one<{isNativeCryptoSupported: boolean}>(rpcEvents.files).then(o => {
-			/* Negotiation on whether or not to use SubtleCrypto */
-			this.resolveSecretBox(
-				isNativeCryptoSupported && o.isNativeCryptoSupported ?
-					new SecretBox(true) :
-					this.potassiumService.secretBox
-			);
+		this.sessionService.on(rpcEvents.files, async (transfer: Transfer) => {
+			if (!transfer.id) {
+				return;
+			}
 
-			this.sessionService.on(rpcEvents.files, async (transfer: Transfer) => {
-				if (!transfer.id) {
-					return;
+			/* Outgoing file transfer acceptance or rejection */
+			if (transfer.answer === true || transfer.answer === false) {
+				eventManager.trigger(`transfer-${transfer.id}`, transfer);
+			}
+			/* Incoming file transfer */
+			else if (transfer.url) {
+				while (!downloadAnswers.has(transfer.id)) {
+					await util.sleep();
 				}
-
-				/* Outgoing file transfer acceptance or rejection */
-				if (transfer.answer === true || transfer.answer === false) {
-					eventManager.trigger(`transfer-${transfer.id}`, transfer);
+				if (downloadAnswers.get(transfer.id)) {
+					downloadAnswers.delete(transfer.id);
+					this.receiveTransfer(transfer);
 				}
-				/* Incoming file transfer */
-				else if (transfer.url) {
-					while (!downloadAnswers.has(transfer.id)) {
-						await util.sleep();
-					}
-					if (downloadAnswers.get(transfer.id)) {
-						downloadAnswers.delete(transfer.id);
-						this.receiveTransfer(transfer);
-					}
-				}
-				/* Incoming file transfer request */
-				else {
-					this.uiStarted(transfer);
+			}
+			/* Incoming file transfer request */
+			else {
+				this.uiStarted(transfer);
 
-					const ok	= await this.uiConfirm(transfer, false);
-					downloadAnswers.set(transfer.id, ok);
+				const ok	= await this.uiConfirm(transfer, false);
+				downloadAnswers.set(transfer.id, ok);
 
-					if (!ok) {
-						this.uiRejected(transfer);
-						transfer.answer	= false;
-						this.sessionService.send(new Message(rpcEvents.files, transfer));
-					}
+				if (!ok) {
+					this.uiRejected(transfer);
+					transfer.answer	= false;
+					this.sessionService.send(new Message(rpcEvents.files, transfer));
 				}
-			});
+			}
 		});
 	})(); }
 }
