@@ -144,7 +144,9 @@ export class FileTransferService {
 		else {
 			const message: string	= transfer.answer ?
 				this.stringsService.outgoingFileSaved :
-				this.stringsService.outgoingFileRejected
+				transfer.answer === false ?
+					this.stringsService.outgoingFileRejected :
+					this.stringsService.outgoingFileError
 			;
 
 			this.chatService.addMessage(
@@ -286,7 +288,9 @@ export class FileTransferService {
 
 		this.uiStarted(transfer);
 
-		eventManager.one<Transfer>(`transfer-${transfer.id}`).then(incomingTransfer => {
+		const completedEvent	= `transfer-${transfer.id}`;
+
+		eventManager.one<Transfer>(completedEvent).then(incomingTransfer => {
 			transfer.answer		= incomingTransfer.answer;
 			transfer.timestamp	= incomingTransfer.timestamp;
 
@@ -306,39 +310,43 @@ export class FileTransferService {
 			transfer
 		));
 
-		let complete	= false;
-		while (!complete) {
-			try {
-				const path: string	= 'ephemeral/' + util.generateGuid();
+		try {
+			await util.retryUntilSuccessful(async () => {
+				let complete	= false;
+				while (!complete) {
+					const path: string	= 'ephemeral/' + util.generateGuid();
 
-				uploadTask	= (await this.databaseService.getStorageRef(path)).put(
-					new Blob([o.cyphertext])
-				);
+					uploadTask	= (await this.databaseService.getStorageRef(path)).put(
+						new Blob([o.cyphertext])
+					);
 
-				complete	= await new Promise<boolean>(resolve => uploadTask.on(
-					'state_changed',
-					(snapshot: firebase.storage.UploadTaskSnapshot) => {
-						transfer.percentComplete	=
-							snapshot.bytesTransferred /
-							snapshot.totalBytes *
-							100
-						;
-					},
-					() => { resolve(transfer.answer === false); },
-					() => {
-						transfer.url	= uploadTask.snapshot.downloadURL || '';
+					complete	= await new Promise<boolean>(resolve => uploadTask.on(
+						'state_changed',
+						(snapshot: firebase.storage.UploadTaskSnapshot) => {
+							transfer.percentComplete	=
+								snapshot.bytesTransferred /
+								snapshot.totalBytes *
+								100
+							;
+						},
+						() => { resolve(transfer.answer === false); },
+						() => {
+							transfer.url	= uploadTask.snapshot.downloadURL || '';
 
-						this.sessionService.send(new Message(
-							rpcEvents.files,
-							transfer
-						));
+							this.sessionService.send(new Message(
+								rpcEvents.files,
+								transfer
+							));
 
-						this.transfers.delete(transfer);
-						resolve(true);
-					}
-				));
-			}
-			catch (_) {}
+							this.transfers.delete(transfer);
+							resolve(true);
+						}
+					));
+				}
+			});
+		}
+		catch (_) {
+			eventManager.trigger(completedEvent, transfer);
 		}
 	}
 
