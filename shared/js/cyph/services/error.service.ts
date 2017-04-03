@@ -71,7 +71,7 @@ export class ErrorService implements ErrorHandler {
 			if (numEmails++ < 50) {
 				util.email(new Email(
 					'errors',
-					`[${this.envService.host}] ${subject}`,
+					`[${this.envService.packageName}] ${subject}`,
 					exception
 				));
 			}
