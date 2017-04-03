@@ -199,16 +199,10 @@ const newCyphTest	= o => {
 };
 
 
-const runTests	= (backendURL, homeURL, newCyphURL) => Promise.resolve().then(() => {
+const runTests	= (backendURL, homeURL, newCyphURL, id) => Promise.resolve().then(() => {
 	/* Never run test suites concurrently, and never run the same
 		test suite more frequently than once every six hours */
-	if (
-		testLock ||
-		(
-			!isNaN(testTimes[homeURL + newCyphURL]) &&
-			Date.now() - testTimes[homeURL + newCyphURL] < 21600000
-		)
-	) {
+	if (testLock || (!isNaN(testTimes[id]) && Date.now() - testTimes[id] < 21600000)) {
 		return;
 	}
 
@@ -286,8 +280,8 @@ const runTests	= (backendURL, homeURL, newCyphURL) => Promise.resolve().then(() 
 		return;
 	}
 
-	setTestResult(homeURL + newCyphURL, passing);
-	testTimes[homeURL + newCyphURL]		= Date.now();
+	setTestResult(id, passing);
+	testTimes[id]		= Date.now();
 
 	testLock	= false;
 });
@@ -309,17 +303,18 @@ http.createServer((req, res) => Promise.resolve().then(() => {
 	const backendURL	= `https://${urlSplit[1]}`;
 	const homeURL		= `https://${urlSplit[2]}`;
 	const newCyphURL	= `https://${urlSplit[3]}`;
+	const id			= backendURL + homeURL + newCyphURL;
 
 	setImmediate(() => {
 		try {
-			runTests(backendURL, homeURL, newCyphURL);
+			runTests(backendURL, homeURL, newCyphURL, id);
 		}
 		catch (err) {
 			console.error(err);
 		}
 	});
 
-	return isTestPassing(backendURL + homeURL + newCyphURL).then(() => 200);
+	return isTestPassing(id).then(() => 200);
 }).catch(err => {
 	if (err) {
 		console.error(err);
