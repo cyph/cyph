@@ -33,9 +33,6 @@ export class Events {
 	public readonly cyphNotFound: string		= 'cyphNotFound';
 
 	/** @see Events */
-	public readonly filesUI: string				= 'filesUI';
-
-	/** @see Events */
 	public readonly newCyph: string				= 'newCyph';
 
 	/** @see Events */

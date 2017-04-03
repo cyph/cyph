@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {config} from '../config';
 import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
-import {UIEvents} from '../files/enums';
 import {Transfer} from '../files/transfer';
 import {events, rpcEvents, users} from '../session/enums';
 import {Message} from '../session/message';
@@ -76,77 +75,164 @@ export class FileTransferService {
 	}
 
 	/** @ignore */
-	private receiveTransfer (transfer: Transfer) : void {
+	private async receiveTransfer (transfer: Transfer) : Promise<void> {
 		transfer.isOutgoing			= false;
 		transfer.percentComplete	= 0;
 
-		this.triggerUIEvent(
-			UIEvents.confirm,
-			transfer,
-			true,
-			async (ok: boolean) => {
-				transfer.answer	= ok;
+		transfer.answer	= await this.uiConfirm(transfer, true);
 
-				if (transfer.answer && transfer.image) {
-					transfer.timestamp	= util.timestamp();
-				}
+		if (transfer.answer && transfer.image) {
+			transfer.timestamp	= util.timestamp();
+		}
 
-				this.sessionService.send(new Message(
-					rpcEvents.files,
-					transfer
-				));
+		this.sessionService.send(new Message(
+			rpcEvents.files,
+			transfer
+		));
 
-				if (transfer.answer) {
-					this.transfers.add(transfer);
+		if (transfer.answer) {
+			this.transfers.add(transfer);
 
-					/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
-					(async () => {
-						while (transfer.percentComplete < 85) {
-							await util.sleep(1000);
-
-							transfer.percentComplete +=
-								util.random(100000, 25000) / transfer.size * 100
-							;
-						}
-					})();
-
-					const cyphertext: Uint8Array|undefined	= await util.requestBytes({
-						retries: 5,
-						url: transfer.url
-					}).catch(
-						() => undefined
-					);
-
-					(await this.databaseService.getStorageRef(transfer.url)).delete();
-
-					const plaintext: Uint8Array|undefined	=
-						cyphertext ?
-							await (await this.secretBox).open(
-								cyphertext,
-								transfer.key
-							).catch(
-								() => undefined
-							) :
-							undefined
-					;
-
-					transfer.percentComplete	= 100;
-					this.potassiumService.clearMemory(transfer.key);
-					this.triggerUIEvent(UIEvents.save, transfer, plaintext);
+			/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
+			(async () => {
+				while (transfer.percentComplete < 85) {
 					await util.sleep(1000);
-					this.transfers.delete(transfer);
+
+					transfer.percentComplete +=
+						util.random(100000, 25000) / transfer.size * 100
+					;
 				}
-				else {
-					this.triggerUIEvent(UIEvents.rejected, transfer);
-					(await this.databaseService.getStorageRef(transfer.url)).delete();
-				}
-			}
+			})();
+
+			const cyphertext: Uint8Array|undefined	= await util.requestBytes({
+				retries: 5,
+				url: transfer.url
+			}).catch(
+				() => undefined
+			);
+
+			(await this.databaseService.getStorageRef(transfer.url)).delete();
+
+			const plaintext: Uint8Array|undefined	=
+				cyphertext ?
+					await (await this.secretBox).open(
+						cyphertext,
+						transfer.key
+					).catch(
+						() => undefined
+					) :
+					undefined
+			;
+
+			transfer.percentComplete	= 100;
+			this.potassiumService.clearMemory(transfer.key);
+			this.uiSave(transfer, plaintext);
+			await util.sleep(1000);
+			this.transfers.delete(transfer);
+		}
+		else {
+			this.uiRejected(transfer);
+			(await this.databaseService.getStorageRef(transfer.url)).delete();
+		}
+	}
+
+	/** @ignore */
+	private uiCompleted (transfer: Transfer, plaintext: Uint8Array) : void {
+		if (transfer.answer && transfer.image) {
+			this.addImage(transfer, plaintext);
+		}
+		else {
+			const message: string	= transfer.answer ?
+				this.stringsService.outgoingFileSaved :
+				this.stringsService.outgoingFileRejected
+			;
+
+			this.chatService.addMessage(
+				`${message} ${transfer.name}`,
+				users.app
+			);
+		}
+	}
+
+	/** @ignore */
+	private async uiConfirm (transfer: Transfer, isSave: boolean) : Promise<boolean> {
+		const title	=
+			`${this.stringsService.incomingFile} ${transfer.name} ` +
+			`(${util.readableByteLength(transfer.size)})`
+		;
+
+		return (
+				!isSave &&
+				transfer.size < this.configService.filesConfig.approvalLimit
+			) ||
+			(isSave && transfer.image) ||
+			await this.dialogService.confirm({
+				title,
+				cancel: isSave ?
+					this.stringsService.discard :
+					this.stringsService.reject
+				,
+				content: isSave ?
+					this.stringsService.incomingFileSave :
+					this.stringsService.incomingFileDownload
+				,
+				ok: isSave ?
+					this.stringsService.save :
+					this.stringsService.accept
+			})
+		;
+	}
+
+	/** @ignore */
+	private uiRejected (transfer: Transfer) : void {
+		this.chatService.addMessage(
+			`${this.stringsService.incomingFileRejected} ${transfer.name}`,
+			users.app,
+			undefined,
+			false
 		);
 	}
 
 	/** @ignore */
-	private triggerUIEvent (event: UIEvents, ...args: any[]) : void {
-		this.sessionService.trigger(events.filesUI, {event, args});
+	private uiSave (transfer: Transfer, plaintext?: Uint8Array) : void {
+		if (!plaintext) {
+			this.chatService.addMessage(
+				`${this.stringsService.incomingFileSaveError} ${transfer.name}`,
+				users.app,
+				undefined,
+				false
+			);
+		}
+		else if (transfer.image) {
+			this.addImage(transfer, plaintext);
+		}
+		else {
+			util.saveFile(plaintext, transfer.name);
+		}
+	}
+
+	/** @ignore */
+	private uiStarted (transfer: Transfer) : void {
+		if (transfer.image) {
+			return;
+		}
+
+		const message: string	=
+			transfer.author === users.me ?
+				this.stringsService.fileTransferInitMe :
+				this.stringsService.fileTransferInitFriend
+		;
+
+		this.chatService.addMessage(`${message} ${transfer.name}`, users.app);
+	}
+
+	/** @ignore */
+	private async uiTooLarge () : Promise<void> {
+		return this.dialogService.alert({
+			content: this.stringsService.fileTooLarge,
+			ok: this.stringsService.ok,
+			title: this.stringsService.oopsTitle
+		});
 	}
 
 	/**
@@ -164,7 +250,7 @@ export class FileTransferService {
 		const plaintext	= await this.fileService.getBytes(file, image);
 
 		if (plaintext.length > config.filesConfig.maxSize) {
-			this.triggerUIEvent(UIEvents.tooLarge);
+			this.uiTooLarge();
 
 			this.analyticsService.sendEvent({
 				eventAction: 'toolarge',
@@ -198,17 +284,13 @@ export class FileTransferService {
 			hitType: 'event'
 		});
 
-		this.triggerUIEvent(UIEvents.started, transfer);
+		this.uiStarted(transfer);
 
 		eventManager.one<Transfer>(`transfer-${transfer.id}`).then(incomingTransfer => {
 			transfer.answer		= incomingTransfer.answer;
 			transfer.timestamp	= incomingTransfer.timestamp;
 
-			this.triggerUIEvent(
-				UIEvents.completed,
-				transfer,
-				transfer.image ? plaintext : undefined
-			);
+			this.uiCompleted(transfer, plaintext);
 
 			if (!transfer.answer) {
 				this.transfers.delete(transfer);
@@ -325,144 +407,18 @@ export class FileTransferService {
 				}
 				/* Incoming file transfer request */
 				else {
-					this.triggerUIEvent(UIEvents.started, transfer);
+					this.uiStarted(transfer);
 
-					this.triggerUIEvent(
-						UIEvents.confirm,
-						transfer,
-						false,
-						(ok: boolean) => {
-							downloadAnswers.set(transfer.id, ok);
+					const ok	= await this.uiConfirm(transfer, false);
+					downloadAnswers.set(transfer.id, ok);
 
-							if (!ok) {
-								this.triggerUIEvent(UIEvents.rejected, transfer);
-								transfer.answer	= false;
-								this.sessionService.send(new Message(rpcEvents.files, transfer));
-							}
-						}
-					);
+					if (!ok) {
+						this.uiRejected(transfer);
+						transfer.answer	= false;
+						this.sessionService.send(new Message(rpcEvents.files, transfer));
+					}
 				}
 			});
 		});
-
-		this.sessionService.on(
-			events.filesUI,
-			async (e: {
-				args: any[];
-				event: UIEvents;
-			}) => {
-				switch (e.event) {
-					case UIEvents.completed: {
-						const transfer: Transfer	= e.args[0];
-						const plaintext: Uint8Array	= e.args[1];
-
-						if (transfer.answer && transfer.image) {
-							this.addImage(transfer, plaintext);
-						}
-						else {
-							const message: string	= transfer.answer ?
-								this.stringsService.outgoingFileSaved :
-								this.stringsService.outgoingFileRejected
-							;
-
-							this.chatService.addMessage(
-								`${message} ${transfer.name}`,
-								users.app
-							);
-						}
-						break;
-					}
-					case UIEvents.confirm: {
-						const transfer: Transfer				= e.args[0];
-						const isSave: boolean					= e.args[1];
-						const callback: (ok: boolean) => void	= e.args[2];
-
-						const title	=
-							`${this.stringsService.incomingFile} ${transfer.name} ` +
-							`(${util.readableByteLength(transfer.size)})`
-						;
-
-						callback(
-							(
-								!isSave &&
-								transfer.size < this.configService.filesConfig.approvalLimit
-							) ||
-							(isSave && transfer.image) ||
-							await this.dialogService.confirm({
-								title,
-								cancel: isSave ?
-									this.stringsService.discard :
-									this.stringsService.reject
-								,
-								content: isSave ?
-									this.stringsService.incomingFileSave :
-									this.stringsService.incomingFileDownload
-								,
-								ok: isSave ?
-									this.stringsService.save :
-									this.stringsService.accept
-							})
-						);
-						break;
-					}
-					case UIEvents.rejected: {
-						const transfer: Transfer	= e.args[0];
-
-						this.chatService.addMessage(
-							`${this.stringsService.incomingFileRejected} ${transfer.name}`,
-							users.app,
-							undefined,
-							false
-						);
-						break;
-					}
-					case UIEvents.save: {
-						const transfer: Transfer				= e.args[0];
-						const plaintext: Uint8Array|undefined	= e.args[1];
-
-						if (!plaintext) {
-							this.chatService.addMessage(
-								`${this.stringsService.incomingFileSaveError} ${transfer.name}`,
-								users.app,
-								undefined,
-								false
-							);
-						}
-						else if (transfer.image) {
-							this.addImage(transfer, plaintext);
-						}
-						else {
-							util.saveFile(plaintext, transfer.name);
-						}
-						break;
-					}
-					case UIEvents.started: {
-						const transfer: Transfer	= e.args[0];
-
-						const message: string	=
-							transfer.author === users.me ?
-								this.stringsService.fileTransferInitMe :
-								this.stringsService.fileTransferInitFriend
-						;
-
-						if (!transfer.image) {
-							this.chatService.addMessage(
-								`${message} ${transfer.name}`,
-								users.app
-							);
-						}
-						break;
-					}
-					case UIEvents.tooLarge: {
-						this.dialogService.alert({
-							content: this.stringsService.fileTooLarge,
-							ok: this.stringsService.ok,
-							title: this.stringsService.oopsTitle
-						});
-						break;
-					}
-				}
-			}
-		);
 	})(); }
 }
