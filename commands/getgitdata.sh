@@ -11,8 +11,8 @@ remote="$(
 
 cat <<- EOM
 	branch="$(
-		git describe --tags --exact-match 2> /dev/null || git branch | 
-		awk '/^\*/{print $2}' | 
+		git describe --tags --exact-match 2> /dev/null || git branch |
+		awk '/^\*/{print $2}' |
 		tr '[:upper:]' '[:lower:]'
 	)"
 
