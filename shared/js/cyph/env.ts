@@ -121,6 +121,20 @@ export class Env extends EnvDeploy {
 		;
 	})();
 
+	/** Package/environment name. */
+	public readonly packageName: string		= (() => {
+		try {
+			const timestamp	= parseInt(localStorage.getItem('webSignPackageTimestamp') || '', 10);
+
+			if (!isNaN(timestamp)) {
+				return `${this.host} ${timestamp.toString()}`;
+			}
+		}
+		catch (_) {}
+
+		return this.host;
+	})();
+
 	/** Base URI for sending an SMS. */
 	public readonly smsUriBase: string	=
 		`sms:${this.isIOS8Plus ? '&' : this.isIOS ? ';' : '?'}body=`
