@@ -180,6 +180,11 @@ export class StringsService {
 	public readonly oopsTitle: string				= util.translate(`Oops!`);
 
 	/** @see StringsService */
+	public readonly outgoingFileError: string		= util.translate(
+		`Failed to send the following file:`
+	);
+
+	/** @see StringsService */
 	public readonly outgoingFileRejected: string	= util.translate(
 		`Your "friend" has rejected the following file transfer:`
 	);
