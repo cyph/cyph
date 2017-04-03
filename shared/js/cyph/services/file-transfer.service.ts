@@ -53,16 +53,6 @@ export class FileTransferService {
 	}
 
 	/** @ignore */
-	private async decryptFile (cyphertext: Uint8Array, key: Uint8Array) : Promise<Uint8Array> {
-		try {
-			return (await (await this.secretBox).open(cyphertext, key));
-		}
-		catch (_) {
-			return this.potassiumService.fromString('File decryption failed.');
-		}
-	}
-
-	/** @ignore */
 	private async encryptFile (plaintext: Uint8Array) : Promise<{
 		cyphertext: Uint8Array;
 		key: Uint8Array;
@@ -120,14 +110,25 @@ export class FileTransferService {
 						}
 					})();
 
-					const cyphertext: Uint8Array	= await util.requestBytes({
+					const cyphertext: Uint8Array|undefined	= await util.requestBytes({
 						retries: 5,
 						url: transfer.url
-					});
+					}).catch(
+						() => undefined
+					);
 
 					(await this.databaseService.getStorageRef(transfer.url)).delete();
 
-					const plaintext: Uint8Array	= await this.decryptFile(cyphertext, transfer.key);
+					const plaintext: Uint8Array|undefined	=
+						cyphertext ?
+							await (await this.secretBox).open(
+								cyphertext,
+								transfer.key
+							).catch(
+								() => undefined
+							) :
+							undefined
+					;
 
 					transfer.percentComplete	= 100;
 					this.potassiumService.clearMemory(transfer.key);
@@ -225,34 +226,37 @@ export class FileTransferService {
 
 		let complete	= false;
 		while (!complete) {
-			const path: string	= 'ephemeral/' + util.generateGuid();
+			try {
+				const path: string	= 'ephemeral/' + util.generateGuid();
 
-			uploadTask	= (await this.databaseService.getStorageRef(path)).put(
-				new Blob([o.cyphertext])
-			);
+				uploadTask	= (await this.databaseService.getStorageRef(path)).put(
+					new Blob([o.cyphertext])
+				);
 
-			complete	= await new Promise<boolean>(resolve => uploadTask.on(
-				'state_changed',
-				(snapshot: firebase.storage.UploadTaskSnapshot) => {
-					transfer.percentComplete	=
-						snapshot.bytesTransferred /
-						snapshot.totalBytes *
-						100
-					;
-				},
-				() => { resolve(transfer.answer === false); },
-				() => {
-					transfer.url	= uploadTask.snapshot.downloadURL || '';
+				complete	= await new Promise<boolean>(resolve => uploadTask.on(
+					'state_changed',
+					(snapshot: firebase.storage.UploadTaskSnapshot) => {
+						transfer.percentComplete	=
+							snapshot.bytesTransferred /
+							snapshot.totalBytes *
+							100
+						;
+					},
+					() => { resolve(transfer.answer === false); },
+					() => {
+						transfer.url	= uploadTask.snapshot.downloadURL || '';
 
-					this.sessionService.send(new Message(
-						rpcEvents.files,
-						transfer
-					));
+						this.sessionService.send(new Message(
+							rpcEvents.files,
+							transfer
+						));
 
-					this.transfers.delete(transfer);
-					resolve(true);
-				}
-			));
+						this.transfers.delete(transfer);
+						resolve(true);
+					}
+				));
+			}
+			catch (_) {}
 		}
 	}
 
@@ -413,10 +417,18 @@ export class FileTransferService {
 						break;
 					}
 					case UIEvents.save: {
-						const transfer: Transfer	= e.args[0];
-						const plaintext: Uint8Array	= e.args[1];
+						const transfer: Transfer				= e.args[0];
+						const plaintext: Uint8Array|undefined	= e.args[1];
 
-						if (transfer.image) {
+						if (!plaintext) {
+							this.chatService.addMessage(
+								`${this.stringsService.incomingFileSaveError} ${transfer.name}`,
+								users.app,
+								undefined,
+								false
+							);
+						}
+						else if (transfer.image) {
 							this.addImage(transfer, plaintext);
 						}
 						else {

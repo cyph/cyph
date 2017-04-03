@@ -119,6 +119,11 @@ export class StringsService {
 	);
 
 	/** @see StringsService */
+	public readonly incomingFileSaveError: string	= util.translate(
+		`Failed to save the following file:`
+	);
+
+	/** @see StringsService */
 	public readonly introductoryMessage: string		= util.translate(
 		`You may now speak.`
 	);
