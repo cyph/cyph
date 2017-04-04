@@ -80,10 +80,6 @@ export class FileTransferService {
 
 		transfer.answer	= await this.uiConfirm(transfer, true);
 
-		if (transfer.answer && transfer.image) {
-			transfer.timestamp	= util.timestamp();
-		}
-
 		this.sessionService.send(new Message(
 			rpcEvents.files,
 			transfer

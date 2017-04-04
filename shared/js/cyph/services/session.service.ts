@@ -77,9 +77,9 @@ export abstract class SessionService implements ISessionService {
 				break;
 			}
 			case CastleEvents.receive: {
-				this.lastIncomingMessageTimestamp	= util.timestamp();
-
 				if (e.data) {
+					const cyphertextTimestamp: number	= e.data.timestamp;
+
 					const messages: IMessage[]	= (() => {
 						try {
 							return JSON.parse(e.data.plaintext, (_, v) => {
@@ -106,7 +106,21 @@ export abstract class SessionService implements ISessionService {
 						}
 
 						message.data.author		= e.data.author;
-						message.data.timestamp	= (<number> e.data.timestamp) + i * 0.001;
+
+						/* Discard invalid / clearly inaccurate timestamps */
+						if (
+							message.data.timestamp === undefined ||
+							isNaN(message.data.timestamp) ||
+							message.data.timestamp > cyphertextTimestamp ||
+							message.data.timestamp < this.lastIncomingMessageTimestamp
+						) {
+							message.data.timestamp	=
+								this.lastIncomingMessageTimestamp + i * 0.001
+							;
+						}
+						else {
+							this.lastIncomingMessageTimestamp	= message.data.timestamp;
+						}
 
 						this.cyphertextReceiveHandler(message);
 					}
@@ -150,17 +164,11 @@ export abstract class SessionService implements ISessionService {
 	 * Intermittent check to verify chat is still alive and send fake encrypted chatter.
 	 */
 	protected async pingPong () : Promise<void> {
-		let nextPing	= 0;
-
 		while (this.state.isAlive) {
-			await util.sleep(1000);
+			await util.sleep(util.random(90000, 30000));
 
-			const now	= util.timestamp();
-
-			if (now - this.lastIncomingMessageTimestamp > 180000) {
+			if (util.timestamp() - this.lastIncomingMessageTimestamp > 180000) {
 				if (this.pingPongTimeouts++ < 2) {
-					this.lastIncomingMessageTimestamp	= util.timestamp();
-
 					this.analyticsService.sendEvent({
 						eventAction: 'detected',
 						eventCategory: 'ping-pong-timeout',
@@ -170,17 +178,14 @@ export abstract class SessionService implements ISessionService {
 				}
 			}
 
-			if (now > nextPing) {
-				this.send(new Message());
-
-				nextPing	= now + util.random(90000, 30000);
-			}
+			this.send(new Message());
 		}
 	}
 
 	/** @ignore */
 	protected plaintextSendHandler (messages: IMessage[]) : void {
 		for (const message of messages) {
+			message.data.timestamp	= util.timestamp();
 			this.plaintextSendQueue.push(message);
 		}
 	}
