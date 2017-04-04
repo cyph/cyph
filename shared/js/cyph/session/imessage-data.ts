@@ -5,7 +5,7 @@ export interface IMessageData {
 	/** Author of this message. */
 	author?: string;
 
-	/** @see Message.id */
+	/** Unique id for this message. */
 	id?: string;
 
 	/** Timestamp of this message. */

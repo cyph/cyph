@@ -13,15 +13,23 @@ export class Message implements IMessage {
 		/** @inheritDoc */
 		public readonly event: string = '',
 
-		data?: any,
-
-		/** @inheritDoc */
-		public readonly id: string = util.generateGuid()
+		data?: any
 	) {
-		this.data	= typeof data === 'object' ? data : {};
+		this.data	= {
+			author: users.me,
+			id: util.generateGuid()
+		};
 
-		if (!this.data.author) {
-			this.data.author	= users.me;
+		if (!data) {
+			return;
+		}
+
+		for (const k of Object.keys(data)) {
+			if (k === 'author' || k === 'id' || k === 'timestamp') {
+				continue;
+			}
+
+			(<any> this.data)[k]	= data[k];
 		}
 	}
 }
