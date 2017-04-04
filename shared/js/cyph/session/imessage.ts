@@ -10,4 +10,7 @@ export interface IMessage {
 
 	/** Event name (e.g. "text"). */
 	readonly event?: string;
+
+	/** Unique id for this message. */
+	readonly id?: string;
 }
