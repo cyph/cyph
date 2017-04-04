@@ -101,29 +101,20 @@ export abstract class SessionService implements ISessionService {
 					}
 				})();
 
-				for (let i = 0 ; i < messages.length ; ++i) {
-					const message	= messages[i];
-
-					if (typeof (<any> message).data !== 'object') {
-						continue;
-					}
-
-					message.data.author		= e.data.author;
-
-					/* Discard invalid / clearly inaccurate timestamps */
+				for (const message of messages) {
+					/* Discard messages without valid timestamps */
 					if (
+						typeof (<any> message).data !== 'object' ||
 						message.data.timestamp === undefined ||
 						isNaN(message.data.timestamp) ||
 						message.data.timestamp > cyphertextTimestamp ||
 						message.data.timestamp < this.lastIncomingMessageTimestamp
 					) {
-						message.data.timestamp	=
-							this.lastIncomingMessageTimestamp + i * 0.001
-						;
+						continue;
 					}
-					else {
-						this.lastIncomingMessageTimestamp	= message.data.timestamp;
-					}
+
+					this.lastIncomingMessageTimestamp	= message.data.timestamp;
+					message.data.author					= e.data.author;
 
 					this.cyphertextReceiveHandler(message);
 				}
