@@ -36,14 +36,20 @@ export class Transfer implements IMessageData {
 		public percentComplete: number = 0,
 
 		/** Unique ID to represent this file transfer. */
-		public readonly id: string = util.generateGuid(),
+		public readonly transferId: string = util.generateGuid(),
 
 		/** If defined, indicates an acceptance or rejection of a file transfer. */
 		/* tslint:disable-next-line:no-unnecessary-initializer */
 		public answer: boolean|undefined = undefined,
 
+		/** Indicates the time at which the file was received. */
+		public receiptTimestamp?: number,
+
 		/** @inheritDoc */
 		public author: string = users.me,
+
+		/** @inheritDoc */
+		public id?: string,
 
 		/** @inheritDoc */
 		public timestamp?: number

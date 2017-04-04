@@ -41,7 +41,7 @@ export class FileTransferService {
 				`\n\n#### ${transfer.name}`
 			,
 			transfer.author,
-			transfer.timestamp,
+			transfer.receiptTimestamp,
 			undefined,
 			transfer.imageSelfDestructTimeout
 		);
@@ -75,7 +75,8 @@ export class FileTransferService {
 		transfer.isOutgoing			= false;
 		transfer.percentComplete	= 0;
 
-		transfer.answer	= await this.uiConfirm(transfer, true);
+		transfer.answer				= await this.uiConfirm(transfer, true);
+		transfer.receiptTimestamp	= util.timestamp();
 
 		this.sessionService.send(new Message(
 			rpcEvents.files,
@@ -280,11 +281,11 @@ export class FileTransferService {
 
 		this.uiStarted(transfer);
 
-		const completedEvent	= `transfer-${transfer.id}`;
+		const completedEvent	= `transfer-${transfer.transferId}`;
 
 		eventManager.one<Transfer>(completedEvent).then(incomingTransfer => {
-			transfer.answer		= incomingTransfer.answer;
-			transfer.timestamp	= incomingTransfer.timestamp;
+			transfer.answer				= incomingTransfer.answer;
+			transfer.receiptTimestamp	= incomingTransfer.receiptTimestamp;
 
 			this.uiCompleted(transfer, plaintext);
 
@@ -376,21 +377,22 @@ export class FileTransferService {
 		const downloadAnswers	= new Map<string, boolean>();
 
 		this.sessionService.on(rpcEvents.files, async (transfer: Transfer) => {
-			if (!transfer.id) {
+			if (!transfer.transferId) {
 				return;
 			}
 
 			/* Outgoing file transfer acceptance or rejection */
 			if (transfer.answer === true || transfer.answer === false) {
-				eventManager.trigger(`transfer-${transfer.id}`, transfer);
+				eventManager.trigger(`transfer-${transfer.transferId}`, transfer);
 			}
 			/* Incoming file transfer */
 			else if (transfer.url) {
-				while (!downloadAnswers.has(transfer.id)) {
+				while (!downloadAnswers.has(transfer.transferId)) {
 					await util.sleep();
 				}
-				if (downloadAnswers.get(transfer.id)) {
-					downloadAnswers.delete(transfer.id);
+
+				if (downloadAnswers.get(transfer.transferId)) {
+					downloadAnswers.delete(transfer.transferId);
 					this.receiveTransfer(transfer);
 				}
 			}
@@ -399,11 +401,12 @@ export class FileTransferService {
 				this.uiStarted(transfer);
 
 				const ok	= await this.uiConfirm(transfer, false);
-				downloadAnswers.set(transfer.id, ok);
+				downloadAnswers.set(transfer.transferId, ok);
 
 				if (!ok) {
 					this.uiRejected(transfer);
-					transfer.answer	= false;
+					transfer.answer				= false;
+					transfer.receiptTimestamp	= transfer.timestamp;
 					this.sessionService.send(new Message(rpcEvents.files, transfer));
 				}
 			}

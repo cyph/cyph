@@ -115,6 +115,7 @@ export abstract class SessionService implements ISessionService {
 
 					this.lastIncomingMessageTimestamp	= message.data.timestamp;
 					message.data.author					= e.data.author;
+					message.data.id						= message.id;
 
 					this.cyphertextReceiveHandler(message);
 				}
@@ -133,11 +134,11 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected cyphertextReceiveHandler (message: IMessage) : void {
-		if (!message.data.id || this.receivedMessages.has(message.data.id)) {
+		if (!message.id || this.receivedMessages.has(message.id)) {
 			return;
 		}
 
-		this.receivedMessages.add(message.data.id);
+		this.receivedMessages.add(message.id);
 
 		if (message.event && message.event in rpcEvents) {
 			this.trigger(message.event, message.data);
