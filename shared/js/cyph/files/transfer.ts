@@ -46,6 +46,6 @@ export class Transfer implements IMessageData {
 		public author: string = users.me,
 
 		/** @inheritDoc */
-		public timestamp: number = util.timestamp()
+		public timestamp?: number
 	) {}
 }

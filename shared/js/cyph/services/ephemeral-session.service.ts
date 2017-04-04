@@ -148,13 +148,13 @@ export class EphemeralSessionService extends SessionService {
 
 	/** @inheritDoc */
 	public async send (...messages: IMessage[]) : Promise<void> {
+		this.plaintextSendHandler(messages);
+
 		for (const message of messages) {
 			if (message.event === rpcEvents.text) {
 				this.trigger(rpcEvents.text, message.data);
 			}
 		}
-
-		this.plaintextSendHandler(messages);
 	}
 
 	constructor (

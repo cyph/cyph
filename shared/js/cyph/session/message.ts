@@ -23,9 +23,5 @@ export class Message implements IMessage {
 		if (!this.data.author) {
 			this.data.author	= users.me;
 		}
-
-		if (isNaN(this.data.timestamp)) {
-			this.data.timestamp	= util.timestamp();
-		}
 	}
 }

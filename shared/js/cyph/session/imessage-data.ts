@@ -6,5 +6,5 @@ export interface IMessageData {
 	author?: string;
 
 	/** Timestamp of this message. */
-	timestamp: number;
+	timestamp?: number;
 }
