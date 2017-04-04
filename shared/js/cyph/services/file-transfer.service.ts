@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
 import {Transfer} from '../files/transfer';
-import {events, rpcEvents, users} from '../session/enums';
+import {rpcEvents, users} from '../session/enums';
 import {Message} from '../session/message';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
@@ -12,6 +12,7 @@ import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {FileService} from './file.service';
+import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
@@ -24,18 +25,14 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class FileTransferService {
 	/** @ignore */
-	private resolveSecretBox: (secretBox: SecretBox) => void;
-
-	/** @ignore */
-	private readonly secretBox: Promise<SecretBox>	=
-		/* tslint:disable-next-line:promise-must-complete */
-		new Promise<SecretBox>(resolve => {
-			this.resolveSecretBox	= resolve;
-		})
-	;
+	private readonly secretBox: Promise<SecretBox>	= (async () =>
+		(await this.sessionCapabilitiesService.capabilities).nativeCrypto ?
+			new SecretBox(true) :
+			this.potassiumService.secretBox
+	)();
 
 	/** In-progress file transfers. */
-	public readonly transfers: Set<Transfer>	= new Set<Transfer>();
+	public readonly transfers: Set<Transfer>		= new Set<Transfer>();
 
 	/** @ignore */
 	private addImage (transfer: Transfer, plaintext: Uint8Array) : void {
@@ -371,26 +368,12 @@ export class FileTransferService {
 		private readonly sessionService: SessionService,
 
 		/** @ignore */
+		private readonly sessionCapabilitiesService: SessionCapabilitiesService,
+
+		/** @ignore */
 		private readonly stringsService: StringsService
-	) { (async () => {
-		const nativeCryptoRemote		=
-			this.sessionService.one<{isNativeCryptoSupported: boolean}>(rpcEvents.files)
-		;
-
-		const isNativeCryptoSupported	= await this.potassiumService.isNativeCryptoSupported();
-
-		const downloadAnswers			= new Map<string, boolean>();
-
-		this.sessionService.one(events.beginChat).then(() => {
-			this.sessionService.send(new Message(rpcEvents.files, {isNativeCryptoSupported}));
-		});
-
-		/* Negotiation on whether or not to use SubtleCrypto */
-		this.resolveSecretBox(
-			isNativeCryptoSupported && (await nativeCryptoRemote).isNativeCryptoSupported ?
-				new SecretBox(true) :
-				this.potassiumService.secretBox
-		);
+	) {
+		const downloadAnswers	= new Map<string, boolean>();
 
 		this.sessionService.on(rpcEvents.files, async (transfer: Transfer) => {
 			if (!transfer.id) {
@@ -425,5 +408,5 @@ export class FileTransferService {
 				}
 			}
 		});
-	})(); }
+	}
 }

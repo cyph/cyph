@@ -20,6 +20,7 @@ import {FileTransferService} from '../cyph/services/file-transfer.service';
 import {P2PWebRTCService} from '../cyph/services/p2p-webrtc.service';
 import {P2PService} from '../cyph/services/p2p.service';
 import {ScrollService} from '../cyph/services/scroll.service';
+import {SessionCapabilitiesService} from '../cyph/services/session-capabilities.service';
 import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
 import {StringsService} from '../cyph/services/strings.service';
@@ -45,6 +46,7 @@ import {UrlSessionInitService} from './url-session-init.service';
 		P2PService,
 		P2PWebRTCService,
 		ScrollService,
+		SessionCapabilitiesService,
 		{
 			provide: EnvService,
 			useClass: ChatEnvService
@@ -154,7 +156,7 @@ export class EphemeralChatRootComponent implements OnInit {
 
 		if (this.sessionInitService.callType) {
 			/* If unsupported, warn and then close window */
-			if (!this.p2pService.isSupported) {
+			if (!(await this.sessionCapabilitiesService.localCapabilities).p2p) {
 				this.appService.state	= States.blank;
 
 				await this.dialogService.alert({
@@ -265,6 +267,9 @@ export class EphemeralChatRootComponent implements OnInit {
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		private readonly sessionCapabilitiesService: SessionCapabilitiesService,
 
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService,

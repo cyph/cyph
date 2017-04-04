@@ -3,22 +3,25 @@
  */
 export class RpcEvents {
 	/** @see RpcEvents */
-	public readonly confirm: string	= 'confirm';
+	public readonly capabilities: string	= 'capabilities';
 
 	/** @see RpcEvents */
-	public readonly files: string	= 'files';
+	public readonly confirm: string			= 'confirm';
 
 	/** @see RpcEvents */
-	public readonly mutex: string	= 'mutex';
+	public readonly files: string			= 'files';
 
 	/** @see RpcEvents */
-	public readonly p2p: string		= 'p2p';
+	public readonly mutex: string			= 'mutex';
 
 	/** @see RpcEvents */
-	public readonly text: string	= 'text';
+	public readonly p2p: string				= 'p2p';
 
 	/** @see RpcEvents */
-	public readonly typing: string	= 'typing';
+	public readonly text: string			= 'text';
+
+	/** @see RpcEvents */
+	public readonly typing: string			= 'typing';
 
 	constructor () {}
 }

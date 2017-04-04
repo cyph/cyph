@@ -12,6 +12,7 @@ import {FileTransferService} from './js/cyph/services/file-transfer.service';
 import {P2PWebRTCService} from './js/cyph/services/p2p-webrtc.service';
 import {P2PService} from './js/cyph/services/p2p.service';
 import {ScrollService} from './js/cyph/services/scroll.service';
+import {SessionCapabilitiesService} from './js/cyph/services/session-capabilities.service';
 import {SessionInitService} from './js/cyph/services/session-init.service';
 import {SessionService} from './js/cyph/services/session.service';
 import {StringsService} from './js/cyph/services/strings.service';
@@ -30,6 +31,7 @@ import {UrlSessionInitService} from './url-session-init.service';
 		P2PService,
 		P2PWebRTCService,
 		ScrollService,
+		SessionCapabilitiesService,
 		{
 			provide: EnvService,
 			useClass: ChatEnvService
@@ -54,7 +56,7 @@ export class EphemeralChatRootComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		if (this.sessionInitService.callType) {
-			if (!this.p2pService.isSupported) {
+			if (!(await this.sessionCapabilitiesService.localCapabilities).p2p) {
 				this.appService.state	= States.blank;
 
 				await this.dialogService.alert({
@@ -119,6 +121,9 @@ export class EphemeralChatRootComponent implements OnInit {
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		private readonly sessionCapabilitiesService: SessionCapabilitiesService,
 
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService,
