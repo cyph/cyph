@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {config} from '../config';
 import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
 import {Transfer} from '../files/transfer';
@@ -251,7 +250,7 @@ export class FileTransferService {
 	) : Promise<void> {
 		const plaintext	= await this.fileService.getBytes(file, image);
 
-		if (plaintext.length > config.filesConfig.maxSize) {
+		if (plaintext.length > this.configService.filesConfig.maxSize) {
 			this.uiTooLarge();
 
 			this.analyticsService.sendEvent({
