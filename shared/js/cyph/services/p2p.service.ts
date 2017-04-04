@@ -131,21 +131,16 @@ export class P2PService {
 
 	/** Initialise service. */
 	public init (localVideo: () => JQuery, remoteVideo: () => JQuery) : void {
-		this.p2pWebRTCService.init(this.handlers, localVideo, remoteVideo);
-
-		if (this.isActive) {
-			this.p2pWebRTCService.accept();
+		if (this.sessionInitService.callType !== undefined) {
+			this.p2pWebRTCService.accept(this.sessionInitService.callType);
 		}
+
+		this.p2pWebRTCService.init(this.handlers, localVideo, remoteVideo);
 	}
 
 	/** @see P2PWebRTCService.isActive */
 	public get isActive () : boolean {
-		return !!this.p2pWebRTCService && this.p2pWebRTCService.isActive;
-	}
-
-	/** Preemptively initiate call, bypassing any prerequisite dialogs and button clicks. */
-	public preemptivelyInitiate () : void {
-		this.p2pWebRTCService.isActive	= true;
+		return this.p2pWebRTCService.isActive;
 	}
 
 	/** Toggle visibility of sidebar containing chat UI. */

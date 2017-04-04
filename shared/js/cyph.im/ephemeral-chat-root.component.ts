@@ -154,23 +154,22 @@ export class EphemeralChatRootComponent implements OnInit {
 			true
 		);
 
-		if (this.sessionInitService.callType) {
-			/* If unsupported, warn and then close window */
-			if (!(await this.sessionCapabilitiesService.localCapabilities).p2p) {
-				this.appService.state	= States.blank;
+		/* If unsupported, warn and then close window */
+		if (
+			this.sessionInitService.callType &&
+			!(await this.sessionCapabilitiesService.localCapabilities).p2p
+		) {
+			this.appService.state	= States.blank;
 
-				await this.dialogService.alert({
-					content: this.stringsService.p2pDisabledLocal,
-					ok: this.stringsService.ok,
-					title: this.stringsService.p2pTitle
-				});
+			await this.dialogService.alert({
+				content: this.stringsService.p2pDisabledLocal,
+				ok: this.stringsService.ok,
+				title: this.stringsService.p2pTitle
+			});
 
-				self.close();
+			self.close();
 
-				return;
-			}
-
-			this.p2pService.preemptivelyInitiate();
+			return;
 		}
 
 
@@ -258,9 +257,6 @@ export class EphemeralChatRootComponent implements OnInit {
 
 		/** @ignore */
 		private readonly faviconService: FaviconService,
-
-		/** @ignore */
-		private readonly p2pService: P2PService,
 
 		/** @ignore */
 		private readonly p2pWebRTCService: P2PWebRTCService,
