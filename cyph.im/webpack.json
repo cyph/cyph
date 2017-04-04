@@ -39,12 +39,12 @@
       "cyph/services/error.service.js": 35,
       "cyph/services/file-transfer.service.js": 36,
       "cyph/services/p2p.service.js": 37,
-      "node_modules/@angular/forms/@angular/forms.es5.js": 38,
-      "../../../../../node_modules/wildemitter/wildemitter.js": 39,
-      "cyph/components/material/md-content.component.js": 40,
-      "cyph/directives/nano-scroller.directive.js": 41,
-      "cyph/services/p2p-webrtc.service.js": 42,
-      "cyph/services/session-init.service.js": 43,
+      "cyph/services/session-init.service.js": 38,
+      "node_modules/@angular/forms/@angular/forms.es5.js": 39,
+      "../../../../../node_modules/wildemitter/wildemitter.js": 40,
+      "cyph/components/material/md-content.component.js": 41,
+      "cyph/directives/nano-scroller.directive.js": 42,
+      "cyph/services/p2p-webrtc.service.js": 43,
       "cyph/services/virtual-keyboard-watcher.service.js": 44,
       "cyph/session/message.js": 45,
       "../../../../../node_modules/rxjs/util/root.js": 46,
@@ -952,7 +952,6 @@
   "aggressiveSplits": [
     {
       "modules": [
-        "externals/jquery.js",
         "cyph/session/enums/index.js",
         "cyph.im/app.service.js",
         "cyph.im/app.component.js",
@@ -976,7 +975,7 @@
         "cyph/session/index.js",
         "externals/_stream_writable.js"
       ],
-      "hash": "74919b8d3ba4c04d5a48959018f61fe9",
+      "hash": "4c330444a6b86d66c8b6ae57048a6320",
       "id": 0
     },
     {
@@ -1000,10 +999,36 @@
         "../../../../../node_modules/markdown-it/lib/rules_inline/state_inline.js",
         "../../../../../node_modules/markdown-it/lib/rules_inline/text.js",
         "../../../../../node_modules/markdown-it/lib/rules_inline/text_collapse.js",
-        "../../../../../node_modules/rxjs/observable/fromPromise.js"
+        "../../../../../node_modules/rxjs/util/isArrayLike.js"
       ],
-      "hash": "0b420fc1e41c42fa8a9f52cb90b68085",
+      "hash": "998a163817d672af3d328286f9a3e5d9",
       "id": 1
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/rxjs/Observer.js",
+        "preload/custombuild.js",
+        "preload/index.js",
+        "node_modules/@angular/core/node_modules/rxjs/observable/ConnectableObservable.js",
+        "node_modules/@angular/core/node_modules/rxjs/operator/merge.js",
+        "node_modules/@angular/core/node_modules/rxjs/operator/multicast.js",
+        "node_modules/@angular/core/node_modules/rxjs/operator/share.js",
+        "node_modules/@angular/core/node_modules/rxjs/symbol/iterator.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/ObjectUnsubscribedError.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/UnsubscriptionError.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/subscribeToResult.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/toSubscriber.js",
+        "preload/dompurify.js",
+        "../../../../../node_modules/angular-aria/angular-aria.js",
+        "../../../../../node_modules/attachmediastream/attachmediastream.js",
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/adapter_core.js",
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js"
+      ],
+      "hash": "ff32f831277d70de12724d47817896d7",
+      "id": 2
     },
     {
       "modules": [
@@ -1025,50 +1050,8 @@
         "cyph/session/enums/castle-events.js",
         "externals/_stream_duplex.js"
       ],
-      "hash": "50e3bea0e7b455947b9e685ad1eecfbc",
-      "id": 2
-    },
-    {
-      "modules": [
-        "preload/custombuild.js",
-        "preload/index.js",
-        "node_modules/@angular/core/node_modules/rxjs/observable/ConnectableObservable.js",
-        "node_modules/@angular/core/node_modules/rxjs/operator/merge.js",
-        "node_modules/@angular/core/node_modules/rxjs/operator/mergeAll.js",
-        "node_modules/@angular/core/node_modules/rxjs/operator/multicast.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/subscribeToResult.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/toSubscriber.js",
-        "preload/dompurify.js",
-        "../../../../../node_modules/angular-aria/angular-aria.js",
-        "../../../../../node_modules/attachmediastream/attachmediastream.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
-        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js"
-      ],
-      "hash": "c157b23e170d41fc731ce249cb26122d",
+      "hash": "00cdbd2dee1c207fa6681fbe77db7370",
       "id": 3
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/sdp-jingle-json/lib/senders.js",
-        "../../../../../node_modules/rxjs/Subscription.js",
-        "../../../../../node_modules/rxjs/operator/map.js",
-        "../../../../../node_modules/rxjs/util/subscribeToResult.js",
-        "../../../../../node_modules/sdp-jingle-json/index.js",
-        "../../../../../node_modules/sdp-jingle-json/lib/parsers.js",
-        "../../../../../node_modules/sdp-jingle-json/lib/tojson.js",
-        "../../../../../node_modules/sdp-jingle-json/lib/tosdp.js",
-        "../../../../../node_modules/setimmediate/setImmediate.js",
-        "../../../../../node_modules/timers-browserify/main.js",
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/uc.micro/categories/Cf/regex.js",
-        "../../../../../node_modules/uc.micro/index.js",
-        "../../../../../node_modules/util/support/isBufferBrowser.js"
-      ],
-      "hash": "23ce340fa5d92d41410af98309b0db6d",
-      "id": 4
     },
     {
       "modules": [
@@ -1087,27 +1070,66 @@
         "../../../../../node_modules/markdown-it/lib/rules_core/state_core.js",
         "../../../../../node_modules/markdown-it/lib/rules_inline/backticks.js"
       ],
-      "hash": "bf48494363dd5977625d1b19f276dea1",
+      "hash": "1be729ff89bc213072c99324eba7203c",
+      "id": 4
+    },
+    {
+      "modules": [
+        "cyph/components/material/md-input.component.js",
+        "cyph/components/material/md-content.component.js",
+        "cyph/components/material/md-card.component.js",
+        "cyph/components/material/md-icon.component.js",
+        "cyph/components/material/md-list-item.component.js",
+        "cyph/components/material/md-progress-circular.component.js",
+        "cyph/components/material/md-list.component.js",
+        "cyph/components/material/md-fab-speed-dial.component.js",
+        "cyph/components/material/md-menu.component.js",
+        "cyph/components/material/md-progress-linear.component.js",
+        "cyph/session/command.js",
+        "node_modules/@angular/core/node_modules/rxjs/symbol/rxSubscriber.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/isArray.js",
+        "../../../../../node_modules/granim/lib/getDimensions.js"
+      ],
+      "hash": "df2afde9b15f38a667ab1b040a219f03",
       "id": 5
     },
     {
       "modules": [
-        "cyph/services/session-init.service.js",
+        "../../../../../node_modules/sdp-jingle-json/lib/senders.js",
+        "../../../../../node_modules/rxjs/Subscription.js",
+        "../../../../../node_modules/rxjs/operator/map.js",
+        "../../../../../node_modules/rxjs/util/subscribeToResult.js",
+        "../../../../../node_modules/sdp-jingle-json/index.js",
+        "../../../../../node_modules/sdp-jingle-json/lib/parsers.js",
+        "../../../../../node_modules/sdp-jingle-json/lib/tojson.js",
+        "../../../../../node_modules/sdp-jingle-json/lib/tosdp.js",
+        "../../../../../node_modules/setimmediate/setImmediate.js",
+        "../../../../../node_modules/timers-browserify/main.js",
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/util/node_modules/inherits/inherits_browser.js",
+        "../../../../../node_modules/util/support/isBufferBrowser.js"
+      ],
+      "hash": "b8902b0dcecdc5d07733416da86d9022",
+      "id": 6
+    },
+    {
+      "modules": [
         "cyph.im/ephemeral-chat-root.component.js",
         "cyph/components/account-contacts.component.js",
         "cyph/components/account-login.component.js",
         "cyph/components/account-profile.component.js",
         "cyph/components/account-register.component.js",
         "cyph/components/account-settings.component.js",
-        "node_modules/@angular/core/@angular async",
         "cyph.im/lockdown.component.ngfactory.js",
         "cyph/components/account-contacts.component.ngfactory.js",
         "cyph/components/account-profile.component.ngfactory.js",
         "cyph/components/account-register.component.ngfactory.js",
-        "cyph/components/account-settings.component.ngfactory.js"
+        "cyph/components/account-settings.component.ngfactory.js",
+        "cyph/components/markdown.component.ngfactory.js",
+        "../../../../../node_modules/granim/index.js"
       ],
-      "hash": "a4370f3ccfc33ee9aa19062aaabe7395",
-      "id": 6
+      "hash": "f8d651832f362688f730f07d7bb71fdd",
+      "id": 7
     },
     {
       "modules": [
@@ -1124,13 +1146,13 @@
         "../../../../../node_modules/rxjs/OuterSubscriber.js",
         "../../../../../node_modules/rxjs/observable/EmptyObservable.js"
       ],
-      "hash": "09149a067bacc40c5f39f8faa4ae5c80",
-      "id": 7
+      "hash": "cc421646c22dcac989a4855c3e85780a",
+      "id": 8
     },
     {
       "modules": [
         "../../../../../node_modules/process/browser.js",
-        "../../../../../node_modules/rxjs/util/errorObject.js",
+        "../../../../../node_modules/rxjs/util/isFunction.js",
         "../../../../../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js",
         "../../../../../node_modules/mdurl/decode.js",
         "../../../../../node_modules/mdurl/encode.js",
@@ -1142,13 +1164,13 @@
         "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
         "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js"
       ],
-      "hash": "e86896b213e41c75439ad612f12df839",
-      "id": 8
+      "hash": "07df9618f98de899134a3f981fb47a25",
+      "id": 9
     },
     {
       "modules": [
         "../../../../../node_modules/markdown-it/lib/common/utils.js",
-        "../../../../../node_modules/rxjs/Observer.js",
+        "../../../../../node_modules/rxjs/util/errorObject.js",
         "../../../../../node_modules/markdown-it/lib/helpers/parse_link_title.js",
         "../../../../../node_modules/markdown-it/lib/index.js",
         "../../../../../node_modules/markdown-it/lib/parser_block.js",
@@ -1160,12 +1182,11 @@
         "../../../../../node_modules/markdown-it/lib/renderer.js",
         "../../../../../node_modules/markdown-it/lib/rules_block/code.js"
       ],
-      "hash": "109ee304b67a664b71b2845cdc7a7c04",
-      "id": 9
+      "hash": "711fb202d08ab9e8c6e49e913362fe08",
+      "id": 10
     },
     {
       "modules": [
-        "../../../../../node_modules/mdurl/index.js",
         "../../../../../node_modules/hark/hark.js",
         "../../../../../node_modules/ieee754/index.js",
         "../../../../../node_modules/konami-code.js/konami.js",
@@ -1176,31 +1197,15 @@
         "../../../../../node_modules/markdown-it-emoji/lib/data/shortcuts.js",
         "../../../../../node_modules/markdown-it-emoji/lib/normalize_opts.js",
         "../../../../../node_modules/markdown-it-emoji/lib/replace.js",
-        "../../../../../node_modules/markdown-it-sup/index.js"
+        "../../../../../node_modules/markdown-it-sup/index.js",
+        "../../../../../node_modules/rxjs/observable/fromPromise.js"
       ],
-      "hash": "5726c8b1a5befc432c7c5b485517cd66",
-      "id": 10
-    },
-    {
-      "modules": [
-        "cyph/components/material/md-input.component.js",
-        "cyph/components/material/md-content.component.js",
-        "cyph/components/material/md-card.component.js",
-        "cyph/components/material/md-icon.component.js",
-        "cyph/components/material/md-list-item.component.js",
-        "cyph/components/material/md-progress-circular.component.js",
-        "cyph/components/material/md-list.component.js",
-        "cyph/components/material/md-fab-speed-dial.component.js",
-        "cyph/components/material/md-menu.component.js",
-        "cyph/components/material/md-progress-linear.component.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/isFunction.js",
-        "cyph/session/enums/events.js"
-      ],
-      "hash": "39a83754628c923e9991db4dcf0dd9b2",
+      "hash": "f71e01a6eb25afce320b151a1d14d6d4",
       "id": 11
     },
     {
       "modules": [
+        "externals/jquery.js",
         "cyph.im/lockdown.component.js",
         "cyph.im/url-session-init.service.js",
         "cyph/email.js",
@@ -1211,10 +1216,27 @@
         "externals/libsodium.js",
         "externals/request.js",
         "externals/rsvp.js",
-        "../../../../../node_modules/angular-animate/index.js"
+        "../../../../../node_modules/angular-aria/index.js"
       ],
-      "hash": "fb7d12e1581663f80ad2fefa0b02abd2",
+      "hash": "d5766a928c031430b5fc740096ca13d7",
       "id": 12
+    },
+    {
+      "modules": [
+        "cyph/services/visibility-watcher.service.js",
+        "cyph/services/url-state.service.js",
+        "node_modules/@angular/core/node_modules/rxjs/Observable.js",
+        "cyph/services/virtual-keyboard-watcher.service.js",
+        "node_modules/@angular/core/node_modules/rxjs/Subject.js",
+        "cyph/session/mutex.js",
+        "cyph/timer.js",
+        "node_modules/@angular/core/node_modules/rxjs/symbol/observable.js",
+        "../../../../../node_modules/mdurl/index.js",
+        "cyph/thread.js",
+        "node_modules/@angular/core/node_modules/rxjs/observable/ScalarObservable.js"
+      ],
+      "hash": "f71240960f74b4a194f30b5fa56af8ce",
+      "id": 13
     },
     {
       "modules": [
@@ -1229,90 +1251,76 @@
         "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
         "../../../../../node_modules/granim/lib/refreshColors.js"
       ],
-      "hash": "1e1ac8cb82f47111dc5ef958b787001b",
-      "id": 13
-    },
-    {
-      "modules": [
-        "cyph/components/chat-message.component.js",
-        "cyph/components/footer.component.js",
-        "cyph/session/command.js",
-        "cyph/components/chat-message-box.component.ngfactory.js",
-        "cyph/components/file-input.component.ngfactory.js",
-        "node_modules/@angular/core/node_modules/rxjs/Observer.js",
-        "cyph/components/chat-message.component.ngfactory.js",
-        "node_modules/@angular/core/node_modules/rxjs/observable/merge.js",
-        "../../../../../node_modules/granim/index.js",
-        "../../../../../node_modules/markdown-it/index.js"
-      ],
-      "hash": "b8c5e40aa9b095cbc75fe5b5d160d0d0",
+      "hash": "e27b9ff5738c77fc7fd39190cc479529",
       "id": 14
     },
     {
       "modules": [
-        "../../../../../node_modules/rxjs/util/isArray.js",
-        "../../../../../node_modules/rxjs/util/isFunction.js",
-        "../../../../../node_modules/rxjs/util/isObject.js",
-        "../../../../../node_modules/uc.micro/properties/Any/regex.js",
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/rxjs/observable/ForkJoinObservable.js",
-        "../../../../../node_modules/rxjs/symbol/iterator.js",
-        "../../../../../node_modules/rxjs/util/UnsubscriptionError.js",
-        "../../../../../node_modules/rxjs/util/isArrayLike.js"
+        "cyph/services/chat.service.js",
+        "cyph/services/crypto/potassium.service.js",
+        "cyph/services/database.service.js",
+        "cyph/services/crypto/anonymous-castle.service.js",
+        "cyph/services/cyphertext.service.js",
+        "cyph/services/chat-potassium.service.js",
+        "cyph/services/chat-strings.service.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/isScheduler.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/isPromise.js",
+        "../../../../../node_modules/granim/lib/clear.js"
       ],
-      "hash": "c91bc1c1db90bb03cfa46d8c75e5ae52",
+      "hash": "c970c074bd891f72a896502f99c87016",
       "id": 15
     },
     {
       "modules": [
-        "cyph/services/env.service.js",
+        "cyph/directives/translate.directive.js",
         "cyph/event-manager.js",
         "cyph/services/analytics.service.js",
         "cyph/env.js",
-        "cyph/directives/nano-scroller.directive.js",
         "cyph/services/channel.service.js",
+        "cyph/services/chat-env.service.js",
         "cyph/env-deploy.js",
         "cyph/files/transfer.js",
-        "node_modules/@angular/core/node_modules/rxjs/InnerSubscriber.js"
+        "cyph/session/enums/rpc-events.js",
+        "../../../../../node_modules/buffer/node_modules/isarray/index.js"
       ],
-      "hash": "ce1cb964b1c72141f6000076e3666d78",
+      "hash": "f0086da2bd0ab5d304dd646a3a3073e1",
       "id": 16
     },
     {
       "modules": [
-        "cyph/directives/translate.directive.js",
-        "cyph/crypto/potassium/potassium-util.js",
-        "cyph/crypto/potassium/native-crypto/import-helper.js",
-        "cyph/crypto/potassium/native-crypto/secret-box.js",
-        "cyph/crypto/potassium/native-crypto/box.js",
-        "cyph/crypto/potassium/native-crypto/password-hash.js",
-        "cyph/crypto/potassium/secret-box.js",
-        "cyph/crypto/potassium/thread-events.js",
-        "../../../../../node_modules/buffer/node_modules/isarray/index.js"
+        "cyph/services/p2p-webrtc.service.js",
+        "cyph/services/file.service.js",
+        "cyph/services/material/md-dialog.service.js",
+        "cyph/services/material/md-toast.service.js",
+        "cyph/session/profeatures.js",
+        "node_modules/@angular/core/node_modules/rxjs/InnerSubscriber.js",
+        "node_modules/@angular/core/node_modules/rxjs/OuterSubscriber.js",
+        "../../../../../node_modules/granim/lib/colorDiff.js",
+        "../../../../../node_modules/markdown-it-emoji/lib/render.js"
       ],
-      "hash": "65a93521c31d05c5ad8ad8487c858abc",
+      "hash": "c42f3e78cfb3ae61c198ade85233eb31",
       "id": 17
     },
     {
       "modules": [
-        "cyph/session/message.js",
-        "cyph/crypto/castle/transport.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/isScheduler.js",
-        "cyph/crypto/castle/anonymous-local-user.js",
-        "cyph/crypto/castle/anonymous-remote-user.js",
-        "cyph/crypto/castle/core.js",
-        "cyph/crypto/castle/pairwise-session.js",
-        "cyph/session/enums/rpc-events.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/isPromise.js"
+        "cyph/crypto/potassium/potassium-util.js",
+        "cyph/directives/nano-scroller.directive.js",
+        "cyph/crypto/potassium/native-crypto/import-helper.js",
+        "cyph/crypto/potassium/native-crypto/secret-box.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/isObject.js",
+        "cyph/crypto/potassium/native-crypto/box.js",
+        "cyph/crypto/potassium/native-crypto/password-hash.js",
+        "cyph/crypto/potassium/secret-box.js",
+        "cyph/session/enums/events.js"
       ],
-      "hash": "033075cad653e070b74d838de4822085",
+      "hash": "2dcb096123d9143959185b7fb8cc715c",
       "id": 18
     },
     {
       "modules": [
+        "cyph/services/config.service.js",
         "cyph/config.js",
         "cyph/components/material/md-subheader.component.js",
-        "cyph/services/util.service.js",
         "cyph/components/material/md-textarea.component.js",
         "cyph/components/material/md-select.component.js",
         "cyph/components/material/md-switch.component.js",
@@ -1320,38 +1328,8 @@
         "cyph/components/signup-form.component.js",
         "cyph/components/not-found.component.ngfactory.js"
       ],
-      "hash": "433ab7b36efc221df2eda01066863151",
+      "hash": "5456e7536ba607cd3b149d0341eeb730",
       "id": 19
-    },
-    {
-      "modules": [
-        "cyph/services/config.service.js",
-        "cyph/components/material/md-card-title-text.component.js",
-        "cyph/components/material/md-card-title.component.js",
-        "cyph/components/not-found.component.js",
-        "cyph/components/material/md-card-header-text.component.js",
-        "cyph/components/link-connection.component.ngfactory.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/isArray.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/isArrayLike.js",
-        "../../../../../node_modules/webpack/buildin/amd-options.js"
-      ],
-      "hash": "4c7d6cf29884f0efca8f80ca51657939",
-      "id": 20
-    },
-    {
-      "modules": [
-        "cyph/components/chat-message-box.component.js",
-        "cyph/components/chat-cyphertext.component.js",
-        "cyph/components/chat-main.component.js",
-        "cyph/components/contact.component.js",
-        "../../../../../node_modules/uc.micro/categories/Cc/regex.js",
-        "cyph/components/account-login.component.ngfactory.js",
-        "cyph/components/chat-cyphertext.component.ngfactory.js",
-        "cyph/components/markdown.component.ngfactory.js",
-        "../../../../../node_modules/angular-aria/index.js"
-      ],
-      "hash": "669daa5a0a0ce4114a9b87f990e467e4",
-      "id": 21
     },
     {
       "modules": [
@@ -1364,8 +1342,22 @@
         "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
         "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js"
       ],
-      "hash": "f32701a7ea70256518d23fd6474680b5",
-      "id": 22
+      "hash": "a3cac9eca91910e2a996f691cf458635",
+      "id": 20
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/rxjs/util/isObject.js",
+        "../../../../../node_modules/uc.micro/properties/Any/regex.js",
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
+        "../../../../../node_modules/rxjs/observable/ForkJoinObservable.js",
+        "../../../../../node_modules/rxjs/symbol/iterator.js",
+        "../../../../../node_modules/rxjs/util/UnsubscriptionError.js",
+        "../../../../../node_modules/rxjs/util/isPromise.js",
+        "../../../../../node_modules/uc.micro/categories/Cf/regex.js"
+      ],
+      "hash": "f86b78f6be95623b58454a0791d4d509",
+      "id": 21
     },
     {
       "modules": [
@@ -1378,63 +1370,50 @@
         "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
         "../../../../../node_modules/granim/lib/eventPolyfill.js"
       ],
-      "hash": "b89bda1fc7038663364f053ec65d94cb",
-      "id": 23
-    },
-    {
-      "modules": [
-        "cyph/util.js",
-        "node_modules/@angular/core/node_modules/rxjs/Subscriber.js",
-        "node_modules/@angular/core/node_modules/rxjs/Subscription.js",
-        "node_modules/@angular/core/node_modules/rxjs/Subject.js",
-        "node_modules/@angular/core/node_modules/rxjs/observable/ScalarObservable.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/ObjectUnsubscribedError.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/UnsubscriptionError.js",
-        "../../../../../node_modules/granim/lib/onResize.js"
-      ],
-      "hash": "ac732ec98fbd44065791771f483d155f",
-      "id": 24
+      "hash": "08f492a52daf5705ea3f2a9d74cef8a6",
+      "id": 22
     },
     {
       "modules": [
         "cyph/services/strings.service.js",
-        "cyph/services/visibility-watcher.service.js",
-        "node_modules/@angular/core/node_modules/rxjs/Observable.js",
-        "cyph/services/virtual-keyboard-watcher.service.js",
-        "cyph/session/mutex.js",
-        "cyph/timer.js",
-        "cyph/thread.js",
-        "node_modules/@angular/core/node_modules/rxjs/observable/EmptyObservable.js"
+        "cyph/services/session.service.js",
+        "cyph/services/scroll.service.js",
+        "cyph/services/p2p.service.js",
+        "cyph/services/signup.service.js",
+        "../../../../../node_modules/markdown-it/lib/common/entities.js",
+        "node_modules/@angular/core/node_modules/rxjs/observable/EmptyObservable.js",
+        "../../../../../node_modules/granim/lib/onResize.js"
       ],
-      "hash": "2ec129ca679a3458492b0d550442a9d5",
+      "hash": "dcdc31e660a8fb7c7b345708daf2193f",
+      "id": 23
+    },
+    {
+      "modules": [
+        "cyph/components/material/md-button.component.js",
+        "cyph/components/link-connection.component.js",
+        "cyph/components/markdown.component.js",
+        "node_modules/@angular/core/@angular async",
+        "node_modules/@angular/core/node_modules/rxjs/Observer.js",
+        "../../../../../node_modules/uc.micro/categories/Cc/regex.js",
+        "cyph/components/help.component.ngfactory.js",
+        "node_modules/@angular/core/node_modules/rxjs/observable/merge.js"
+      ],
+      "hash": "7fb021a6900e33c193023e08e2cf908e",
+      "id": 24
+    },
+    {
+      "modules": [
+        "cyph/components/chat-message-box.component.js",
+        "cyph/components/chat-cyphertext.component.js",
+        "cyph/components/chat-main.component.js",
+        "cyph/components/contact.component.js",
+        "cyph/components/not-found.component.js",
+        "cyph/components/account-login.component.ngfactory.js",
+        "cyph/components/chat-cyphertext.component.ngfactory.js",
+        "../../../../../node_modules/angular-animate/index.js"
+      ],
+      "hash": "7526fbb17c9c4a89db35c409d95bdb6b",
       "id": 25
-    },
-    {
-      "modules": [
-        "cyph/services/chat.service.js",
-        "cyph/services/crypto/potassium.service.js",
-        "cyph/services/crypto/anonymous-castle.service.js",
-        "cyph/services/cyphertext.service.js",
-        "cyph/services/chat-env.service.js",
-        "cyph/services/chat-potassium.service.js",
-        "cyph/services/chat-strings.service.js",
-        "../../../../../node_modules/granim/lib/getDimensions.js"
-      ],
-      "hash": "93cf76cbb4730bad2973d7f4836d4a37",
-      "id": 26
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/webpack/buildin/global.js",
-        "../../../../../node_modules/wildemitter/wildemitter.js",
-        "../../../../../node_modules/util/util.js",
-        "../../../../../node_modules/webrtcsupport/index-browser.js",
-        "../../../../../node_modules/uc.micro/categories/P/regex.js",
-        "../../../../../node_modules/webpack/buildin/module.js",
-        "../../../../../node_modules/whatwg-fetch/fetch.js"
-      ],
-      "hash": "fd44e5a205c4515aa36213d9fa7e05b0",
-      "id": 27
     },
     {
       "modules": [
@@ -1442,12 +1421,12 @@
         "../../../../../node_modules/rxjs/Subscriber.js",
         "../../../../../node_modules/rtcpeerconnection/rtcpeerconnection.js",
         "../../../../../node_modules/rxjs/observable/PromiseObservable.js",
-        "../../../../../node_modules/rxjs/util/isPromise.js",
         "../../../../../node_modules/rxjs/util/toSubscriber.js",
-        "../../../../../node_modules/rxjs/util/tryCatch.js"
+        "../../../../../node_modules/rxjs/util/tryCatch.js",
+        "../../../../../node_modules/uc.micro/index.js"
       ],
-      "hash": "6fa3c531589d0f101d8ed7d8943ca264",
-      "id": 28
+      "hash": "dbe81967122d87bb14d65bf6cd7ee81d",
+      "id": 26
     },
     {
       "modules": [
@@ -1459,8 +1438,8 @@
         "../../../../../node_modules/granim/lib/setDirection.js",
         "../../../../../node_modules/markdown-it/lib/rules_core/inline.js"
       ],
-      "hash": "0a01e016d98ee78466278b3724b7048c",
-      "id": 29
+      "hash": "78acc52210e87facf8e29fd81943c8cc",
+      "id": 27
     },
     {
       "modules": [
@@ -1472,73 +1451,73 @@
         "../../../../../node_modules/granim/lib/play.js",
         "../../../../../node_modules/markdown-it/lib/helpers/index.js"
       ],
-      "hash": "47d651470e8159907e06a03d180f9611",
-      "id": 30
+      "hash": "cf603889b8bf7f1fdcd72d532a8f7367",
+      "id": 28
     },
     {
       "modules": [
         "../../../../../node_modules/dompurify/src/purify.js",
-        "../../../../../node_modules/markdown-it/lib/common/entities.js",
+        "../../../../../node_modules/rxjs/util/isArray.js",
         "../../../../../node_modules/clipboard-js/clipboard.js",
         "../../../../../node_modules/filetransfer/filetransfer.js",
         "../../../../../node_modules/getscreenmedia/getscreenmedia.js",
         "../../../../../node_modules/granim/lib/getLightness.js",
         "../../../../../node_modules/granim/lib/hexToRgb.js"
       ],
-      "hash": "b3e6c57c4130f9a3f9c232f8b6182d2f",
+      "hash": "46e54e79255135bae14057fdb23ab389",
+      "id": 29
+    },
+    {
+      "modules": [
+        "cyph/util.js",
+        "node_modules/@angular/core/node_modules/rxjs/Subscriber.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/root.js",
+        "node_modules/@angular/core/node_modules/rxjs/Subscription.js",
+        "node_modules/@angular/core/node_modules/rxjs/observable/ArrayObservable.js",
+        "node_modules/@angular/core/node_modules/rxjs/operator/mergeAll.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/tryCatch.js"
+      ],
+      "hash": "6ec9bb61c24dd973af4b05e2ac9e4584",
+      "id": 30
+    },
+    {
+      "modules": [
+        "cyph/services/env.service.js",
+        "cyph/services/error.service.js",
+        "cyph/services/file-transfer.service.js",
+        "cyph/services/ephemeral-session.service.js",
+        "cyph/services/firebase-database.service.js",
+        "../../../../../node_modules/angular-material/index.js",
+        "../../../../../node_modules/webpack/buildin/amd-options.js"
+      ],
+      "hash": "5640685d772cf0bfd2f36bbb5179774c",
       "id": 31
     },
     {
       "modules": [
-        "cyph/services/session.service.js",
-        "cyph/services/url-state.service.js",
-        "cyph/services/p2p-webrtc.service.js",
-        "cyph/services/signup.service.js",
-        "node_modules/@angular/core/node_modules/rxjs/observable/ArrayObservable.js",
-        "../../../../../node_modules/granim/lib/getCurrentColors.js",
-        "../../../../../node_modules/markdown-it-emoji/lib/render.js"
+        "cyph/services/util.service.js",
+        "cyph/crypto/castle/transport.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/isFunction.js",
+        "cyph/crypto/castle/anonymous-local-user.js",
+        "cyph/crypto/castle/anonymous-remote-user.js",
+        "cyph/crypto/castle/core.js",
+        "cyph/crypto/castle/pairwise-session.js"
       ],
-      "hash": "4c1b8fd091318f260b9096b20f20c8c7",
+      "hash": "cbbdf48b5122672c9130f8e2843bbb3d",
       "id": 32
     },
     {
       "modules": [
-        "cyph/services/scroll.service.js",
-        "cyph/services/p2p.service.js",
-        "cyph/services/file.service.js",
-        "cyph/services/material/md-dialog.service.js",
-        "cyph/services/material/md-toast.service.js",
-        "cyph/services/firebase-database.service.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/tryCatch.js"
-      ],
-      "hash": "b306169970b61babb969cdb1e6f53726",
-      "id": 33
-    },
-    {
-      "modules": [
-        "cyph/services/database.service.js",
-        "cyph/services/error.service.js",
-        "cyph/services/crypto/threaded-potassium.service.js",
-        "cyph/session/profeatures.js",
-        "node_modules/@angular/core/node_modules/rxjs/symbol/observable.js",
-        "node_modules/@angular/core/node_modules/rxjs/OuterSubscriber.js",
-        "../../../../../node_modules/granim/lib/clear.js"
-      ],
-      "hash": "495cf2314166f80b969323ef60160be0",
-      "id": 34
-    },
-    {
-      "modules": [
-        "cyph/components/material/md-button.component.js",
-        "cyph/components/link-connection.component.js",
-        "cyph/components/markdown.component.js",
-        "node_modules/@angular/core/node_modules/rxjs/symbol/rxSubscriber.js",
+        "cyph/components/material/md-card-title-text.component.js",
+        "cyph/components/material/md-card-title.component.js",
+        "cyph/components/material/md-card-header-text.component.js",
         "node_modules/@angular/core/node_modules/rxjs/util/errorObject.js",
-        "cyph/components/help.component.ngfactory.js",
-        "../../../../../node_modules/webpack/buildin/amd-define.js"
+        "../../../../../node_modules/uc.micro/categories/Z/regex.js",
+        "cyph/components/link-connection.component.ngfactory.js",
+        "cyph/crypto/potassium/thread-events.js"
       ],
-      "hash": "4074050d0ca320b4441e71781580fa7e",
-      "id": 35
+      "hash": "b3495dba89c281923811f068c58ea9bc",
+      "id": 33
     },
     {
       "modules": [
@@ -1546,12 +1525,12 @@
         "cyph/components/file-input.component.js",
         "cyph/components/help.component.js",
         "cyph/components/material/md-card-header.component.js",
-        "../../../../../node_modules/uc.micro/categories/Z/regex.js",
         "cyph/components/contact.component.ngfactory.js",
-        "cyph/components/footer.component.ngfactory.js"
+        "cyph/components/footer.component.ngfactory.js",
+        "../../../../../node_modules/markdown-it/index.js"
       ],
-      "hash": "ef6a8589fc140fbd805fae108606a868",
-      "id": 36
+      "hash": "9bd6a949fb5ff31106c3e8ec6623d29f",
+      "id": 34
     },
     {
       "modules": [
@@ -1562,19 +1541,41 @@
         "../../../../../node_modules/markdown-it/lib/helpers/parse_link_label.js",
         "../../../../../node_modules/markdown-it/lib/rules_core/block.js"
       ],
-      "hash": "7dce08caee892437a785df5d9e48736f",
+      "hash": "2411e31d15a5239e9a236f3c4122118e",
+      "id": 35
+    },
+    {
+      "modules": [
+        "cyph/services/session-init.service.js",
+        "cyph/components/chat-message.component.js",
+        "cyph/components/footer.component.js",
+        "cyph/components/chat-message-box.component.ngfactory.js",
+        "cyph/components/file-input.component.ngfactory.js",
+        "cyph/components/chat-message.component.ngfactory.js"
+      ],
+      "hash": "ffc640a0fecb96bb856b6260624cd492",
+      "id": 36
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/wildemitter/wildemitter.js",
+        "../../../../../node_modules/util/util.js",
+        "../../../../../node_modules/webrtcsupport/index-browser.js",
+        "../../../../../node_modules/uc.micro/categories/P/regex.js",
+        "../../../../../node_modules/whatwg-fetch/fetch.js"
+      ],
+      "hash": "7f7c190ce61cc1ba15525ceb7a18ff10",
       "id": 37
     },
     {
       "modules": [
-        "cyph/services/dialog.service.js",
-        "cyph/services/file-transfer.service.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/root.js",
-        "cyph/services/ephemeral-session.service.js",
-        "node_modules/@angular/core/node_modules/rxjs/SubjectSubscription.js",
-        "node_modules/@angular/core/node_modules/rxjs/operator/share.js"
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
+        "../../../../../node_modules/webpack/buildin/global.js",
+        "../../../../../node_modules/webpack/buildin/module.js",
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js"
       ],
-      "hash": "150cd7bfd392024d9d670aca092714fb",
+      "hash": "6f59518be6828be822c8c2b1d0974dd2",
       "id": 38
     },
     {
@@ -1590,33 +1591,32 @@
     },
     {
       "modules": [
-        "cyph/services/notification.service.js",
-        "cyph/services/session-capabilities.service.js",
-        "../../../../../node_modules/angular-material/index.js",
-        "node_modules/@angular/core/node_modules/rxjs/symbol/iterator.js",
-        "../../../../../node_modules/granim/lib/colorDiff.js"
-      ],
-      "hash": "6147f246f402289b18ec47ba6fdb81f4",
-      "id": 40
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
-        "../../../../../node_modules/util/node_modules/inherits/inherits_browser.js"
-      ],
-      "hash": "dcb14251c48a03dac1eb006f1378f3c2",
-      "id": 41
-    },
-    {
-      "modules": [
         "../../../../../node_modules/sdp/sdp.js",
         "../../../../../node_modules/simplewebrtc/peer.js",
         "../../../../../node_modules/simplewebrtc/simplewebrtc.js",
         "../../../../../node_modules/simplewebrtc/webrtc.js"
       ],
-      "hash": "41bc6dbf3ba66a0ded32014d80a96252",
+      "hash": "91e26110db661c66ced6f72315ac7e78",
+      "id": 40
+    },
+    {
+      "modules": [
+        "cyph/services/notification.service.js",
+        "cyph/services/session-capabilities.service.js",
+        "node_modules/@angular/core/node_modules/rxjs/SubjectSubscription.js",
+        "../../../../../node_modules/granim/lib/getCurrentColors.js"
+      ],
+      "hash": "b3383b13c680d8d35f2bd3a8236fd3f1",
+      "id": 41
+    },
+    {
+      "modules": [
+        "cyph/services/dialog.service.js",
+        "cyph/session/message.js",
+        "cyph/services/crypto/threaded-potassium.service.js",
+        "../../../../../node_modules/webpack/buildin/amd-define.js"
+      ],
+      "hash": "4c8cb40381689f4e1df0083e12569802",
       "id": 42
     },
     {
@@ -1658,10 +1658,10 @@
     {
       "modules": [
         "cyph/crypto/potassium/native-crypto/one-time-auth.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/isObject.js",
-        "cyph/components/signup-form.component.ngfactory.js"
+        "cyph/components/signup-form.component.ngfactory.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/isArrayLike.js"
       ],
-      "hash": "896f27fb50588b0c6efb8d550e63a079",
+      "hash": "1fa19ba153ec6381465f734031007f01",
       "id": 47
     },
     {
@@ -1703,7 +1703,7 @@
       "modules": [
         "node_modules/@angular/forms/@angular/forms.es5.js"
       ],
-      "hash": "d1172e804d72eb34883d8e0a811734c4",
+      "hash": "b4d5ac706184deb5cd24c475bed4cc5d",
       "id": 54
     },
     {
@@ -1731,7 +1731,7 @@
       "modules": [
         "cyph/components/chat-main.component.ngfactory.js"
       ],
-      "hash": "1e8e3da58af0118f97e26b8e01736aa8",
+      "hash": "f7826bed40e4dbb354b25da095dd03f9",
       "id": 58
     }
   ]
