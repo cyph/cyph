@@ -138,14 +138,9 @@ export class P2PService {
 		}
 	}
 
-	/** @see P2P.isActive */
+	/** @see P2PWebRTCService.isActive */
 	public get isActive () : boolean {
 		return !!this.p2pWebRTCService && this.p2pWebRTCService.isActive;
-	}
-
-	/** @see P2P.isSupported */
-	public get isSupported () : boolean {
-		return P2PWebRTCService.isSupported;
 	}
 
 	/** Preemptively initiate call, bypassing any prerequisite dialogs and button clicks. */
