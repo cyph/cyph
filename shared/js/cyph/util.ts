@@ -372,7 +372,7 @@ export class Util {
 		let timestamp: number	= Date.now() + this.timestampData.offset;
 
 		if (timestamp === this.timestampData.last) {
-			this.timestampData.subtime += 0.01;
+			this.timestampData.subtime += this.random() / 100;
 			timestamp += this.timestampData.subtime;
 		}
 		else {
