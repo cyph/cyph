@@ -254,7 +254,7 @@ pre, code {
 
 
 .breathe {
-	@include breathe();
+	@include breathe;
 }
 
 /* nanoScroller styling */

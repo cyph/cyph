@@ -61,7 +61,7 @@
 	&.unconfirmed {
 		opacity: 0.4;
 
-		@include breathe();
+		@include breathe;
 	}
 
 	&.author-me > md-list-item {
