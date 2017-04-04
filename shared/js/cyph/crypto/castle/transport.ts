@@ -112,7 +112,7 @@ export class Transport {
 
 		if (messageData) {
 			this.session.trigger(events.castle, {
-				data: {author, timestamp, plaintext: messageData},
+				data: {author, plaintext: messageData, timestamp},
 				event: CastleEvents.receive
 			});
 		}
