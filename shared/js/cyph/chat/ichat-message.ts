@@ -8,6 +8,9 @@ export interface IChatMessage {
 	/** Message author. */
 	author: string;
 
+	/** Associated session message ID. @see IMessageData.id. */
+	id?: string;
+
 	/** Timer for self-destruction. */
 	selfDestructTimer?: Timer;
 

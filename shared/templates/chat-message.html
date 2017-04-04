@@ -9,6 +9,7 @@
 		message.author !== users.me
 	'
 	[class.self-destructed]='message.selfDestructTimer && message.selfDestructTimer.isComplete'
+	[class.unconfirmed]='chatService.chat.unconfirmedMessages.has(message.id)'
 >
 	<div class='flex layout-column'>
 		<div class='layout-row'>

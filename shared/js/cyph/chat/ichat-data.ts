@@ -38,4 +38,7 @@ export interface IChatData {
 
 	/** Chat UI state/view. */
 	state: States;
+
+	/** IDs of outgoing messages whose receipt has yet to be confirmed. */
+	unconfirmedMessages: Set<string>;
 }

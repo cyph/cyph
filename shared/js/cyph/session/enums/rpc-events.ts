@@ -3,6 +3,9 @@
  */
 export class RpcEvents {
 	/** @see RpcEvents */
+	public readonly confirm: string	= 'confirm';
+
+	/** @see RpcEvents */
 	public readonly files: string	= 'files';
 
 	/** @see RpcEvents */
