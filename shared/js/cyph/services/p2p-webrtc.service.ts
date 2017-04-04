@@ -12,6 +12,7 @@ import {Mutex} from '../session/mutex';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
+import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 
 
@@ -132,7 +133,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	public readonly incomingStream	= {audio: false, video: false};
 
 	/** @inheritDoc */
-	public isActive: boolean;
+	public isActive: boolean		= this.sessionInitService.callType !== undefined;
 
 	/** @inheritDoc */
 	public loading: boolean;
@@ -435,6 +436,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		/** @ignore */
 		private readonly analyticsService: AnalyticsService,
+
+		/** @ignore */
+		private readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
 		private readonly sessionService: SessionService
