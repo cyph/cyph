@@ -184,11 +184,8 @@ export class Core {
 	 * @param messageId Used to enforce message ordering.
 	 * @returns Cyphertext.
 	 */
-	public async encrypt (
-		plaintext: Uint8Array,
-		messageId: Uint8Array
-	) : Promise<Uint8Array> {
-		return util.lock(this.lock, async () => {
+	public async encrypt (plaintext: Uint8Array, messageId: Uint8Array) : Promise<Uint8Array> {
+		const o	= await util.lock(this.lock, async () => {
 			this.keys[0].outgoing	= await this.potassium.hash.deriveKey(
 				this.keys[0].outgoing,
 				undefined,
@@ -201,16 +198,19 @@ export class Core {
 				plaintext
 			);
 
-			const cyphertext: Uint8Array	= await this.potassium.secretBox.seal(
-				fullPlaintext,
-				this.keys[0].outgoing,
-				messageId
-			);
-
-			this.potassium.clearMemory(fullPlaintext);
-
-			return cyphertext;
+			return {fullPlaintext, key: new Uint8Array(this.keys[0].outgoing)};
 		});
+
+		const cyphertext: Uint8Array	= await this.potassium.secretBox.seal(
+			o.fullPlaintext,
+			o.key,
+			messageId
+		);
+
+		this.potassium.clearMemory(o.key);
+		this.potassium.clearMemory(o.fullPlaintext);
+
+		return cyphertext;
 	}
 
 	/**
