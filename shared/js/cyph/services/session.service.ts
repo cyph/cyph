@@ -65,7 +65,10 @@ export abstract class SessionService implements ISessionService {
 	};
 
 	/** @ignore */
-	protected castleHandler (e: {data?: any; event: CastleEvents}) : void {
+	protected castleHandler (e: {
+		data?: string|{author: string; plaintext: string; timestamp: number};
+		event: CastleEvents;
+	}) : void {
 		switch (e.event) {
 			case CastleEvents.abort: {
 				this.errorService.logAuthFail();
@@ -77,60 +80,64 @@ export abstract class SessionService implements ISessionService {
 				break;
 			}
 			case CastleEvents.receive: {
-				if (e.data) {
-					const cyphertextTimestamp: number	= e.data.timestamp;
+				if (!e.data || typeof e.data === 'string') {
+					break;
+				}
 
-					const messages: IMessage[]	= (() => {
-						try {
-							return JSON.parse(e.data.plaintext, (_, v) => {
-								if (v && v.isUint8Array && typeof v.data === 'string') {
-									return potassiumUtil.fromBase64(v.data);
-								}
+				const cyphertextTimestamp: number	= e.data.timestamp;
 
-								return v;
-							});
-						}
-						catch (_) {
-							return [];
-						}
-					})();
+				const messages: IMessage[]	= (() => {
+					try {
+						return JSON.parse(e.data.plaintext, (_, v) => {
+							if (v && v.isUint8Array && typeof v.data === 'string') {
+								return potassiumUtil.fromBase64(v.data);
+							}
 
-					for (let i = 0 ; i < messages.length ; ++i) {
-						const message	= messages[i];
-
-						if (typeof (<any> message).data !== 'object') {
-							message.data	= {
-								author: '',
-								timestamp: 0
-							};
-						}
-
-						message.data.author		= e.data.author;
-
-						/* Discard invalid / clearly inaccurate timestamps */
-						if (
-							message.data.timestamp === undefined ||
-							isNaN(message.data.timestamp) ||
-							message.data.timestamp > cyphertextTimestamp ||
-							message.data.timestamp < this.lastIncomingMessageTimestamp
-						) {
-							message.data.timestamp	=
-								this.lastIncomingMessageTimestamp + i * 0.001
-							;
-						}
-						else {
-							this.lastIncomingMessageTimestamp	= message.data.timestamp;
-						}
-
-						this.cyphertextReceiveHandler(message);
+							return v;
+						});
 					}
+					catch (_) {
+						return [];
+					}
+				})();
+
+				for (let i = 0 ; i < messages.length ; ++i) {
+					const message	= messages[i];
+
+					if (typeof (<any> message).data !== 'object') {
+						message.data	= {
+							author: '',
+							timestamp: 0
+						};
+					}
+
+					message.data.author		= e.data.author;
+
+					/* Discard invalid / clearly inaccurate timestamps */
+					if (
+						message.data.timestamp === undefined ||
+						isNaN(message.data.timestamp) ||
+						message.data.timestamp > cyphertextTimestamp ||
+						message.data.timestamp < this.lastIncomingMessageTimestamp
+					) {
+						message.data.timestamp	=
+							this.lastIncomingMessageTimestamp + i * 0.001
+						;
+					}
+					else {
+						this.lastIncomingMessageTimestamp	= message.data.timestamp;
+					}
+
+					this.cyphertextReceiveHandler(message);
 				}
 				break;
 			}
 			case CastleEvents.send: {
-				if (e.data) {
-					this.cyphertextSendHandler(e.data);
+				if (!e.data || typeof e.data !== 'string') {
+					break;
 				}
+
+				this.cyphertextSendHandler(e.data);
 				break;
 			}
 		}
