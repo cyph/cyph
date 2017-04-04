@@ -40,7 +40,10 @@ export class PairwiseSession {
 	private localUser?: ILocalUser;
 
 	/** @ignore */
-	private readonly lock: {}			= {};
+	private readonly locks				= {
+		receive: {},
+		send: {}
+	};
 
 	/** @ignore */
 	private outgoingMessageId: number	= 0;
@@ -164,7 +167,7 @@ export class PairwiseSession {
 		}
 		catch (_) {}
 
-		return util.lock(this.lock, async () => {
+		return util.lock(this.locks.receive, async () => {
 			while (this.incomingMessageId <= this.incomingMessagesMax) {
 				const incomingMessages	= this.incomingMessages.get(this.incomingMessageId);
 
@@ -226,7 +229,7 @@ export class PairwiseSession {
 			return;
 		}
 
-		return util.lock(this.lock, async () => {
+		return util.lock(this.locks.send, async () => {
 			const plaintextBytes: Uint8Array	= this.potassium.fromString(plaintext);
 
 			const id: Float64Array				= new Float64Array([
