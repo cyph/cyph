@@ -1,3 +1,5 @@
+@import 'mixins';
+
 * {
 	-webkit-font-smoothing: antialiased !important;
 	-moz-osx-font-smoothing: grayscale !important;
@@ -252,13 +254,7 @@ pre, code {
 
 
 .breathe {
-	@include animation-name(breathe);
-
-	@include animation-duration(3s);
-
-	@include animation-timing-function(ease-in-out);
-
-	@include animation-iteration-count(infinite);
+	@include breathe();
 }
 
 /* nanoScroller styling */

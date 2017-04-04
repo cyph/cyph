@@ -37,7 +37,8 @@ export class ChatService {
 		keyExchangeProgress: 0,
 		messages: [],
 		queuedMessageSelfDestruct: false,
-		state: States.none
+		state: States.none,
+		unconfirmedMessages: new Set<string>()
 	};
 
 	/** This kills the chat. */
@@ -76,13 +77,15 @@ export class ChatService {
 	 * @param timestamp If not set, will use Util.timestamp().
 	 * @param shouldNotify If true, a notification will be sent.
 	 * @param selfDestructTimeout
+	 * @param id
 	 */
 	public async addMessage (
 		text: string,
 		author: string,
 		timestamp: number = util.timestamp(),
 		shouldNotify: boolean = author !== users.me,
-		selfDestructTimeout?: number
+		selfDestructTimeout?: number,
+		id?: string
 	) : Promise<void> {
 		if (this.chat.state === States.aborted || this.chat.isDisconnected || !text) {
 			return;
@@ -103,6 +106,7 @@ export class ChatService {
 
 		const message: IChatMessage	= {
 			author,
+			id,
 			text,
 			timestamp,
 			timeString: util.getTimeString(timestamp),
@@ -321,8 +325,17 @@ export class ChatService {
 			this.abortSetup();
 		});
 
+		this.sessionService.on(rpcEvents.confirm, (o: {messageId?: string}) => {
+			if (typeof o.messageId !== 'string') {
+				return;
+			}
+
+			this.chat.unconfirmedMessages.delete(o.messageId);
+		});
+
 		this.sessionService.on(rpcEvents.text, (o: {
 			author: string;
+			id: string;
 			selfDestructTimeout?: number;
 			text?: string;
 			timestamp: number;
@@ -331,12 +344,22 @@ export class ChatService {
 				return;
 			}
 
+			if (o.author === users.me) {
+				this.chat.unconfirmedMessages.add(o.id);
+			}
+			else {
+				this.sessionService.send(new Message(rpcEvents.confirm, {
+					messageId: o.id
+				}));
+			}
+
 			this.addMessage(
 				o.text,
 				o.author,
 				o.timestamp,
 				undefined,
-				o.selfDestructTimeout
+				o.selfDestructTimeout,
+				o.id
 			);
 		});
 

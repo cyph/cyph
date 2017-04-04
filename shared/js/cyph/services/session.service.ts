@@ -105,10 +105,7 @@ export abstract class SessionService implements ISessionService {
 					const message	= messages[i];
 
 					if (typeof (<any> message).data !== 'object') {
-						message.data	= {
-							author: '',
-							timestamp: 0
-						};
+						continue;
 					}
 
 					message.data.author		= e.data.author;
@@ -145,11 +142,11 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected cyphertextReceiveHandler (message: IMessage) : void {
-		if (!message.id || this.receivedMessages.has(message.id)) {
+		if (!message.data.id || this.receivedMessages.has(message.data.id)) {
 			return;
 		}
 
-		this.receivedMessages.add(message.id);
+		this.receivedMessages.add(message.data.id);
 
 		if (message.event && message.event in rpcEvents) {
 			this.trigger(message.event, message.data);

@@ -1,6 +1,7 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
 import {IChatMessage} from '../chat/ichat-message';
+import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
@@ -42,6 +43,9 @@ export class ChatMessageComponent implements OnInit {
 
 		/** @ignore */
 		private readonly scrollService: ScrollService,
+
+		/** @see ChatService */
+		public readonly chatService: ChatService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

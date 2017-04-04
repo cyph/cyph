@@ -1,3 +1,13 @@
+@mixin breathe {
+	@include animation-name(breathe !important);
+
+	@include animation-duration(3s !important);
+
+	@include animation-timing-function(ease-in-out !important);
+
+	@include animation-iteration-count(infinite !important);
+}
+
 /* Changes size of md2-icon */
 @mixin icon-size($size) {
 	&, md-icon {

@@ -13,12 +13,10 @@ export class Message implements IMessage {
 		/** @inheritDoc */
 		public readonly event: string = '',
 
-		data?: any,
-
-		/** @inheritDoc */
-		public readonly id: string = util.generateGuid()
+		data?: any
 	) {
-		this.data	= typeof data === 'object' ? data : {};
+		this.data		= typeof data === 'object' ? data : {};
+		this.data.id	= util.generateGuid();
 
 		if (!this.data.author) {
 			this.data.author	= users.me;

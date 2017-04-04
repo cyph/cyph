@@ -1,3 +1,5 @@
+@import 'mixins';
+
 .message-item {
 	word-wrap: break-word;
 	word-break: break-all;
@@ -54,6 +56,12 @@
 		@include transform(scaleX(1));
 
 		@include transition(transform 3s cubic-bezier(0.8, 0.4, 1, 0.3));
+	}
+
+	&.unconfirmed {
+		opacity: 0.4;
+
+		@include breathe();
 	}
 
 	&.author-me > md-list-item {
