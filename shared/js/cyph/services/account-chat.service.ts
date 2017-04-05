@@ -45,7 +45,8 @@ export class AccountChatService extends ChatService {
 				keyExchangeProgress: 0,
 				messages: [],
 				queuedMessageSelfDestruct: false,
-				state: States.chat
+				state: States.chat,
+				unconfirmedMessages: new Set<string>()
 			};
 
 			this.chats.set(username, this.chat);
