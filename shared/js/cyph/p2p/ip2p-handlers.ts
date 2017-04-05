@@ -12,9 +12,6 @@ export interface IP2PHandlers {
 	/** Connected handler. */
 	connected: (isConnected: boolean) => void;
 
-	/** Enable handler. */
-	enable: () => void;
-
 	/** Request confirm handler. */
 	requestConfirm: (callType: 'audio'|'video', isAccepted: boolean) => Promise<boolean>;
 

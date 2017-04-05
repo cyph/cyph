@@ -453,12 +453,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			}
 		});
 
-		(async () => {
-			sessionCapabilitiesService.resolveP2PSupport(P2PWebRTCService.isSupported);
-
-			if ((await sessionCapabilitiesService.capabilities).p2p) {
-				(await this.handlers).enable();
-			}
-		})();
+		sessionCapabilitiesService.resolveP2PSupport(P2PWebRTCService.isSupported);
 	}
 }
