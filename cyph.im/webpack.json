@@ -972,7 +972,7 @@
   "aggressiveSplits": [
     {
       "modules": [
-        "node_modules/@angular/core/node_modules/rxjs/symbol/observable.js",
+        "../../../../../node_modules/markdown-it/lib/common/entities.js",
         "preload/custombuild.js",
         "preload/index.js",
         "node_modules/@angular/core/node_modules/rxjs/observable/ScalarObservable.js",
@@ -992,11 +992,38 @@
         "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
         "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
         "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/granim/lib/eventPolyfill.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
+        "../../../../../node_modules/granim/lib/getCurrentColors.js"
+      ],
+      "hash": "de11ec4dcb6d6b5bb1323448e91a6699",
+      "id": 0
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/markdown-it/lib/token.js",
+        "../../../../../node_modules/mockconsole/mockconsole.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/emphasis.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/strikethrough.js",
+        "../../../../../node_modules/rxjs/symbol/rxSubscriber.js",
+        "../../../../../node_modules/markdown-it/lib/rules_block/table.js",
+        "../../../../../node_modules/markdown-it/lib/rules_core/linkify.js",
+        "../../../../../node_modules/markdown-it/lib/rules_core/replacements.js",
+        "../../../../../node_modules/markdown-it/lib/rules_core/smartquotes.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/autolink.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/balance_pairs.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/entity.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/escape.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/html_inline.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/image.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/link.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/newline.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/state_inline.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/text.js",
+        "../../../../../node_modules/mdurl/format.js",
         "../../../../../node_modules/rxjs/util/isArrayLike.js"
       ],
-      "hash": "0e0f36b1fb7354efd8bdc6d602c3afa5",
-      "id": 0
+      "hash": "086dff302e4dd7db3a2cb46dc6dd5186",
+      "id": 1
     },
     {
       "modules": [
@@ -1022,33 +1049,7 @@
         "cyph/session/index.js",
         "externals/_stream_writable.js"
       ],
-      "hash": "775fb7be7cbdc07911541464b9348101",
-      "id": 1
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/markdown-it/lib/token.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/emphasis.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/strikethrough.js",
-        "../../../../../node_modules/rxjs/symbol/rxSubscriber.js",
-        "../../../../../node_modules/rxjs/util/errorObject.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/table.js",
-        "../../../../../node_modules/markdown-it/lib/rules_core/linkify.js",
-        "../../../../../node_modules/markdown-it/lib/rules_core/replacements.js",
-        "../../../../../node_modules/markdown-it/lib/rules_core/smartquotes.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/autolink.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/balance_pairs.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/entity.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/escape.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/html_inline.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/image.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/link.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/newline.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/state_inline.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/text.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/text_collapse.js"
-      ],
-      "hash": "9dd56aa44b8c872edc8ae8c894c2c0cb",
+      "hash": "2c96ea236aadd6fc344d96a6038b3194",
       "id": 2
     },
     {
@@ -1076,23 +1077,45 @@
     },
     {
       "modules": [
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
+        "../../../../../node_modules/rxjs/Observable.js",
+        "../../../../../node_modules/rxjs/util/errorObject.js",
+        "../../../../../node_modules/rxjs/util/isFunction.js",
+        "../../../../../node_modules/rxjs/util/isObject.js",
+        "../../../../../node_modules/punycode/punycode.js",
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
+        "../../../../../node_modules/rxjs/InnerSubscriber.js",
+        "../../../../../node_modules/rxjs/OuterSubscriber.js",
+        "../../../../../node_modules/rxjs/observable/EmptyObservable.js",
+        "../../../../../node_modules/rxjs/util/isPromise.js"
+      ],
+      "hash": "defc7b19656de16a9ca3d68656ad02c8",
+      "id": 4
+    },
+    {
+      "modules": [
         "../../../../../node_modules/markdown-it/lib/ruler.js",
-        "../../../../../node_modules/mockconsole/mockconsole.js",
         "../../../../../node_modules/markdown-it/lib/rules_block/blockquote.js",
         "../../../../../node_modules/markdown-it/lib/rules_block/fence.js",
         "../../../../../node_modules/markdown-it/lib/rules_block/heading.js",
-        "../../../../../node_modules/markdown-it/lib/rules_block/hr.js",
         "../../../../../node_modules/markdown-it/lib/rules_block/html_block.js",
         "../../../../../node_modules/markdown-it/lib/rules_block/lheading.js",
         "../../../../../node_modules/markdown-it/lib/rules_block/list.js",
         "../../../../../node_modules/markdown-it/lib/rules_block/paragraph.js",
         "../../../../../node_modules/markdown-it/lib/rules_block/reference.js",
         "../../../../../node_modules/markdown-it/lib/rules_block/state_block.js",
+        "../../../../../node_modules/markdown-it/lib/rules_core/inline.js",
+        "../../../../../node_modules/markdown-it/lib/rules_core/normalize.js",
         "../../../../../node_modules/markdown-it/lib/rules_core/state_core.js",
-        "../../../../../node_modules/markdown-it/lib/rules_inline/backticks.js"
+        "../../../../../node_modules/markdown-it/lib/rules_inline/backticks.js",
+        "../../../../../node_modules/markdown-it/lib/rules_inline/text_collapse.js"
       ],
-      "hash": "a1af9a4c8d1451c4bb92a210b6b82cd7",
-      "id": 4
+      "hash": "f9ed89c00e1c42d70de9d2f78ef347d2",
+      "id": 5
     },
     {
       "modules": [
@@ -1111,26 +1134,7 @@
         "node_modules/@angular/core/node_modules/rxjs/util/isArray.js",
         "../../../../../node_modules/granim/lib/getDimensions.js"
       ],
-      "hash": "3929af061fa4c929b05982020b7edc4d",
-      "id": 5
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/sdp-jingle-json/lib/senders.js",
-        "../../../../../node_modules/rxjs/Subscription.js",
-        "../../../../../node_modules/rxjs/operator/map.js",
-        "../../../../../node_modules/rxjs/util/subscribeToResult.js",
-        "../../../../../node_modules/sdp-jingle-json/index.js",
-        "../../../../../node_modules/sdp-jingle-json/lib/parsers.js",
-        "../../../../../node_modules/sdp-jingle-json/lib/tojson.js",
-        "../../../../../node_modules/sdp-jingle-json/lib/tosdp.js",
-        "../../../../../node_modules/setimmediate/setImmediate.js",
-        "../../../../../node_modules/timers-browserify/main.js",
-        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/util/node_modules/inherits/inherits_browser.js",
-        "../../../../../node_modules/util/support/isBufferBrowser.js"
-      ],
-      "hash": "774dacfa2371f92f5e47468545f15767",
+      "hash": "f961942354f56e3fde11589932b84e1d",
       "id": 6
     },
     {
@@ -1154,44 +1158,26 @@
     },
     {
       "modules": [
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/rxjs/Observable.js",
-        "../../../../../node_modules/rxjs/symbol/observable.js",
-        "../../../../../node_modules/punycode/punycode.js",
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
-        "../../../../../node_modules/rxjs/InnerSubscriber.js",
-        "../../../../../node_modules/rxjs/OuterSubscriber.js",
-        "../../../../../node_modules/rxjs/observable/EmptyObservable.js"
+        "../../../../../node_modules/sdp-jingle-json/lib/senders.js",
+        "../../../../../node_modules/rxjs/Subscription.js",
+        "../../../../../node_modules/rxjs/operator/map.js",
+        "../../../../../node_modules/rxjs/util/subscribeToResult.js",
+        "../../../../../node_modules/sdp-jingle-json/index.js",
+        "../../../../../node_modules/sdp-jingle-json/lib/parsers.js",
+        "../../../../../node_modules/sdp-jingle-json/lib/tojson.js",
+        "../../../../../node_modules/sdp-jingle-json/lib/tosdp.js",
+        "../../../../../node_modules/setimmediate/setImmediate.js",
+        "../../../../../node_modules/timers-browserify/main.js",
+        "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/util/node_modules/inherits/inherits_browser.js"
       ],
-      "hash": "ba3c66f33c35873864f6a88e808db430",
+      "hash": "65d5c1d6d07bfe6cc201b581f9072e45",
       "id": 8
     },
     {
       "modules": [
-        "../../../../../node_modules/process/browser.js",
-        "../../../../../node_modules/rxjs/util/isFunction.js",
-        "../../../../../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js",
-        "../../../../../node_modules/mdurl/decode.js",
-        "../../../../../node_modules/mdurl/encode.js",
-        "../../../../../node_modules/mdurl/format.js",
-        "../../../../../node_modules/mdurl/parse.js",
-        "../../../../../node_modules/mediastream-gain/mediastream-gain.js",
-        "../../../../../node_modules/mediastream-gain/node_modules/webrtcsupport/index-browser.js",
-        "../../../../../node_modules/microlight-string/microlight.min.js",
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js"
-      ],
-      "hash": "08cd9967d4a0416b41457ddaec7bdab4",
-      "id": 9
-    },
-    {
-      "modules": [
         "../../../../../node_modules/markdown-it/lib/common/utils.js",
-        "../../../../../node_modules/markdown-it/lib/helpers/parse_link_title.js",
+        "../../../../../node_modules/rxjs/util/isArray.js",
         "../../../../../node_modules/markdown-it/lib/index.js",
         "../../../../../node_modules/markdown-it/lib/parser_block.js",
         "../../../../../node_modules/markdown-it/lib/parser_core.js",
@@ -1201,45 +1187,78 @@
         "../../../../../node_modules/markdown-it/lib/presets/zero.js",
         "../../../../../node_modules/markdown-it/lib/renderer.js",
         "../../../../../node_modules/markdown-it/lib/rules_block/code.js",
-        "../../../../../node_modules/rxjs/observable/fromPromise.js"
+        "../../../../../node_modules/markdown-it/lib/rules_block/hr.js"
       ],
-      "hash": "dad91c1ecfe36718a3b8ffdbb2535486",
+      "hash": "a430300c2ad28e9edd8bd3e8b9953510",
+      "id": 9
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/process/browser.js",
+        "../../../../../node_modules/rxjs/symbol/observable.js",
+        "../../../../../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js",
+        "../../../../../node_modules/mdurl/decode.js",
+        "../../../../../node_modules/mdurl/encode.js",
+        "../../../../../node_modules/mdurl/parse.js",
+        "../../../../../node_modules/mediastream-gain/mediastream-gain.js",
+        "../../../../../node_modules/mediastream-gain/node_modules/webrtcsupport/index-browser.js",
+        "../../../../../node_modules/microlight-string/microlight.min.js",
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js"
+      ],
+      "hash": "50c7986997c67400aac3fd4eebda3407",
       "id": 10
     },
     {
       "modules": [
-        "../../../../../node_modules/rxjs/Observer.js",
         "../../../../../node_modules/hark/hark.js",
         "../../../../../node_modules/ieee754/index.js",
         "../../../../../node_modules/konami-code.js/konami.js",
         "../../../../../node_modules/linkify-it/index.js",
         "../../../../../node_modules/linkify-it/lib/re.js",
         "../../../../../node_modules/localmedia/index.js",
-        "../../../../../node_modules/markdown-it-emoji/index.js",
         "../../../../../node_modules/markdown-it-emoji/lib/data/shortcuts.js",
         "../../../../../node_modules/markdown-it-emoji/lib/normalize_opts.js",
         "../../../../../node_modules/markdown-it-emoji/lib/replace.js",
-        "../../../../../node_modules/markdown-it-sup/index.js"
+        "../../../../../node_modules/markdown-it-sup/index.js",
+        "../../../../../node_modules/markdown-it/lib/common/html_blocks.js"
       ],
-      "hash": "e8d35e36ece2b164599a1cc456cff0e4",
+      "hash": "1fcf12394bdd13dbe2294e75b11fe74e",
       "id": 11
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/utils.js",
+        "../../../../../node_modules/mdurl/index.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
+        "../../../../../node_modules/getusermedia/index-browser.js",
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
+        "../../../../../node_modules/markdown-it/lib/helpers/index.js"
+      ],
+      "hash": "a9deb90145c8f300a2f2a9cae0867471",
+      "id": 12
     },
     {
       "modules": [
         "cyph/services/visibility-watcher.service.js",
         "node_modules/@angular/core/node_modules/rxjs/Observable.js",
         "cyph/services/virtual-keyboard-watcher.service.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/root.js",
         "node_modules/@angular/core/node_modules/rxjs/Subject.js",
         "cyph/session/mutex.js",
         "cyph/timer.js",
-        "../../../../../node_modules/markdown-it/lib/common/entities.js",
+        "node_modules/@angular/core/node_modules/rxjs/symbol/observable.js",
         "cyph/thread.js",
         "node_modules/@angular/core/node_modules/rxjs/SubjectSubscription.js",
-        "node_modules/@angular/core/node_modules/rxjs/observable/ArrayObservable.js",
-        "node_modules/@angular/core/node_modules/rxjs/operator/share.js"
+        "node_modules/@angular/core/node_modules/rxjs/observable/ArrayObservable.js"
       ],
-      "hash": "74a3ce476e313513c7b4378d96ae5784",
-      "id": 12
+      "hash": "dfdaeef5a53f7d97725c1392f3d8df41",
+      "id": 13
     },
     {
       "modules": [
@@ -1255,23 +1274,7 @@
         "externals/libsodium.js",
         "externals/request.js"
       ],
-      "hash": "9bb539a9f92178f3fd23d172c63d9f91",
-      "id": 13
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
-        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
-        "../../../../../node_modules/getusermedia/index-browser.js",
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
-        "../../../../../node_modules/granim/lib/refreshColors.js"
-      ],
-      "hash": "4351466da11ba05c616a32be15394769",
+      "hash": "e104c77e495002b995345f210988b5ee",
       "id": 14
     },
     {
@@ -1308,21 +1311,6 @@
     },
     {
       "modules": [
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/mdurl/index.js",
-        "../../../../../node_modules/angular-animate/angular-animate.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
-        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
-        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/granim/lib/getCurrentColors.js"
-      ],
-      "hash": "a88285ed65b5068548482e1108728329",
-      "id": 17
-    },
-    {
-      "modules": [
         "cyph/crypto/potassium/potassium-util.js",
         "cyph/directives/nano-scroller.directive.js",
         "cyph/crypto/potassium/native-crypto/import-helper.js",
@@ -1333,8 +1321,8 @@
         "cyph/crypto/potassium/secret-box.js",
         "cyph/session/enums/events.js"
       ],
-      "hash": "397c04c5e27469d2ecda7a7ea09914e5",
-      "id": 18
+      "hash": "8f03ea257635370a636b2ecb289ab7d6",
+      "id": 17
     },
     {
       "modules": [
@@ -1348,8 +1336,8 @@
         "cyph/components/signup-form.component.js",
         "cyph/components/not-found.component.ngfactory.js"
       ],
-      "hash": "d6eb3ad3440f90bb5bdb632f68c61076",
-      "id": 19
+      "hash": "870e7c6fe42a01156b3c2372024445f1",
+      "id": 18
     },
     {
       "modules": [
@@ -1363,8 +1351,8 @@
         "node_modules/@angular/core/node_modules/rxjs/observable/merge.js",
         "../../../../../node_modules/granim/index.js"
       ],
-      "hash": "b47edc56f5f4cefd7890810fc79323bf",
-      "id": 20
+      "hash": "3141718ce738242e91062c2fd8e1e693",
+      "id": 19
     },
     {
       "modules": [
@@ -1377,8 +1365,8 @@
         "../../../../../node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
         "../../../../../node_modules/webrtc-adapter/src/js/safari/safari_shim.js"
       ],
-      "hash": "a044dd90ea41607d451abe7935ac3b20",
-      "id": 21
+      "hash": "ed4e64cceb168a03bd62cdf785e62716",
+      "id": 20
     },
     {
       "modules": [
@@ -1391,22 +1379,50 @@
         "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
         "../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js"
       ],
-      "hash": "8a20cdcdd1777a4839e40e1741e64ac7",
+      "hash": "3a94b056fc17b7524613864fc84a34d7",
+      "id": 21
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/rxjs/Subscriber.js",
+        "../../../../../node_modules/uc.micro/properties/Any/regex.js",
+        "../../../../../node_modules/rtcpeerconnection/rtcpeerconnection.js",
+        "../../../../../node_modules/rxjs/observable/PromiseObservable.js",
+        "../../../../../node_modules/rxjs/util/toSubscriber.js",
+        "../../../../../node_modules/rxjs/util/tryCatch.js",
+        "../../../../../node_modules/uc.micro/index.js",
+        "../../../../../node_modules/util/support/isBufferBrowser.js"
+      ],
+      "hash": "d6221876fdf96d9986ade892a267fd97",
       "id": 22
     },
     {
       "modules": [
-        "../../../../../node_modules/rxjs/util/isObject.js",
-        "../../../../../node_modules/uc.micro/properties/Any/regex.js",
-        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/rxjs/observable/ForkJoinObservable.js",
-        "../../../../../node_modules/rxjs/symbol/iterator.js",
-        "../../../../../node_modules/rxjs/util/UnsubscriptionError.js",
-        "../../../../../node_modules/rxjs/util/isPromise.js",
-        "../../../../../node_modules/uc.micro/categories/Cf/regex.js"
+        "../../../../../node_modules/dompurify/src/purify.js",
+        "../../../../../node_modules/clipboard-js/clipboard.js",
+        "../../../../../node_modules/filetransfer/filetransfer.js",
+        "../../../../../node_modules/getscreenmedia/getscreenmedia.js",
+        "../../../../../node_modules/granim/lib/hexToRgb.js",
+        "../../../../../node_modules/granim/lib/pause.js",
+        "../../../../../node_modules/granim/lib/play.js",
+        "../../../../../node_modules/granim/lib/refreshColors.js"
       ],
-      "hash": "f917d0504faa26ba3b516d233ecb5135",
+      "hash": "62ebba84e7c5e6c174ef3b14f4fc4dc0",
       "id": 23
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/utils.js",
+        "../../../../../node_modules/angular-animate/angular-animate.js",
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
+        "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
+        "../../../../../node_modules/granim/lib/onResize.js"
+      ],
+      "hash": "4e995225faa0bc1b6ca1d8fc0301388c",
+      "id": 24
     },
     {
       "modules": [
@@ -1416,11 +1432,11 @@
         "cyph/services/p2p.service.js",
         "cyph/services/signup.service.js",
         "node_modules/@angular/core/node_modules/rxjs/InnerSubscriber.js",
-        "node_modules/@angular/core/node_modules/rxjs/OuterSubscriber.js",
-        "../../../../../node_modules/granim/lib/onResize.js"
+        "node_modules/@angular/core/node_modules/rxjs/operator/share.js",
+        "node_modules/@angular/core/node_modules/rxjs/util/tryCatch.js"
       ],
-      "hash": "e57e0bbdd171fd8c6ddb26a1204ee4ff",
-      "id": 24
+      "hash": "1759489d5b6d40e2b1d7ad30109ad248",
+      "id": 25
     },
     {
       "modules": [
@@ -1433,77 +1449,38 @@
         "cyph/components/chat-cyphertext.component.ngfactory.js",
         "../../../../../node_modules/angular-animate/index.js"
       ],
-      "hash": "6b6d511a76fa7ce001cb2da443a4de5c",
-      "id": 25
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/rxjs/util/root.js",
-        "../../../../../node_modules/rxjs/Subscriber.js",
-        "../../../../../node_modules/rtcpeerconnection/rtcpeerconnection.js",
-        "../../../../../node_modules/rxjs/observable/PromiseObservable.js",
-        "../../../../../node_modules/rxjs/util/toSubscriber.js",
-        "../../../../../node_modules/rxjs/util/tryCatch.js",
-        "../../../../../node_modules/uc.micro/index.js"
-      ],
-      "hash": "08d5aad3b2e450dda9221880b0d6f8e0",
+      "hash": "0aee8710beab093b639706dc97ef1a1f",
       "id": 26
     },
     {
       "modules": [
+        "../../../../../node_modules/rxjs/Observer.js",
         "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
         "../../../../../node_modules/granim/lib/Granim.js",
         "../../../../../node_modules/granim/lib/animateColors.js",
         "../../../../../node_modules/granim/lib/pauseWhenNotInView.js",
         "../../../../../node_modules/granim/lib/setColors.js",
-        "../../../../../node_modules/granim/lib/setDirection.js",
-        "../../../../../node_modules/markdown-it/lib/rules_core/inline.js"
+        "../../../../../node_modules/markdown-it-emoji/index.js"
       ],
-      "hash": "b76a002c5a2a6bf69faf2d7f1d67762c",
+      "hash": "c4d6eed0f93b438311ff02addd630ce0",
       "id": 27
     },
     {
       "modules": [
-        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/firebase/storage.js",
-        "../../../../../node_modules/getscreenmedia/node_modules/getusermedia/getusermedia.js",
-        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
-        "../../../../../node_modules/granim/lib/play.js",
-        "../../../../../node_modules/markdown-it/lib/helpers/index.js"
+        "cyph/util.js",
+        "node_modules/@angular/core/node_modules/rxjs/Subscriber.js",
+        "node_modules/@angular/core/node_modules/rxjs/Subscription.js",
+        "../../../../../node_modules/angular-material/index.js",
+        "node_modules/@angular/core/node_modules/rxjs/observable/ConnectableObservable.js",
+        "node_modules/@angular/core/node_modules/rxjs/observable/EmptyObservable.js",
+        "../../../../../node_modules/granim/lib/colorDiff.js"
       ],
-      "hash": "5e1946809aa5eb63b14208f075e4652c",
+      "hash": "ee67139744b6f9b253935a98c71f4862",
       "id": 28
     },
     {
       "modules": [
-        "../../../../../node_modules/dompurify/src/purify.js",
-        "../../../../../node_modules/rxjs/util/isArray.js",
-        "../../../../../node_modules/clipboard-js/clipboard.js",
-        "../../../../../node_modules/filetransfer/filetransfer.js",
-        "../../../../../node_modules/getscreenmedia/getscreenmedia.js",
-        "../../../../../node_modules/granim/lib/getLightness.js",
-        "../../../../../node_modules/granim/lib/hexToRgb.js"
-      ],
-      "hash": "622551fe7e74674624b078b1d69e2e45",
-      "id": 29
-    },
-    {
-      "modules": [
         "cyph/services/env.service.js",
-        "cyph/services/error.service.js",
-        "cyph/services/file-transfer.service.js",
-        "cyph/services/ephemeral-session.service.js",
-        "cyph/services/firebase-database.service.js",
-        "../../../../../node_modules/angular-material/index.js",
-        "../../../../../node_modules/webpack/buildin/amd-define.js"
-      ],
-      "hash": "6c3e21540861a66325417e193f476f25",
-      "id": 30
-    },
-    {
-      "modules": [
-        "cyph/services/util.service.js",
         "cyph/crypto/castle/transport.js",
         "node_modules/@angular/core/node_modules/rxjs/util/isFunction.js",
         "cyph/crypto/castle/anonymous-local-user.js",
@@ -1511,8 +1488,8 @@
         "cyph/crypto/castle/core.js",
         "cyph/crypto/castle/pairwise-session.js"
       ],
-      "hash": "26418fd444a29e4fa1a2ce6b2c9ae93d",
-      "id": 31
+      "hash": "f619059449c1c353251f6dd0d00f8561",
+      "id": 29
     },
     {
       "modules": [
@@ -1524,8 +1501,8 @@
         "cyph/crypto/potassium/thread-events.js",
         "../../../../../node_modules/markdown-it/index.js"
       ],
-      "hash": "6c58e0e9fd7d315553c3147078b1f469",
-      "id": 32
+      "hash": "81cd0763bd68699549ce70b56cf04430",
+      "id": 30
     },
     {
       "modules": [
@@ -1537,43 +1514,67 @@
         "cyph/components/footer.component.ngfactory.js",
         "../../../../../node_modules/angular-aria/index.js"
       ],
-      "hash": "8b01debb0e68c5bf3968c5dcc240c9d7",
-      "id": 33
+      "hash": "968d240ccbb56785971db9e2c33b74fd",
+      "id": 31
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/rxjs/util/root.js",
+        "../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
+        "../../../../../node_modules/rxjs/observable/ForkJoinObservable.js",
+        "../../../../../node_modules/rxjs/symbol/iterator.js",
+        "../../../../../node_modules/rxjs/util/UnsubscriptionError.js",
+        "../../../../../node_modules/uc.micro/categories/Cf/regex.js"
+      ],
+      "hash": "0d741654529ef32f62d37136232eb5f3",
+      "id": 32
     },
     {
       "modules": [
         "../../../../../node_modules/markdown-it/lib/common/html_re.js",
         "../../../../../node_modules/lodash.clonedeep/index.js",
-        "../../../../../node_modules/markdown-it/lib/common/html_blocks.js",
         "../../../../../node_modules/markdown-it/lib/helpers/parse_link_destination.js",
         "../../../../../node_modules/markdown-it/lib/helpers/parse_link_label.js",
-        "../../../../../node_modules/markdown-it/lib/rules_core/block.js"
+        "../../../../../node_modules/markdown-it/lib/helpers/parse_link_title.js",
+        "../../../../../node_modules/rxjs/observable/fromPromise.js"
       ],
-      "hash": "bf85f87b436303cb90907ebd83ee1097",
-      "id": 34
+      "hash": "d6f9ebe992f2352ec4217d520b921390",
+      "id": 33
     },
     {
       "modules": [
-        "cyph/util.js",
-        "node_modules/@angular/core/node_modules/rxjs/Subscriber.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/root.js",
-        "node_modules/@angular/core/node_modules/rxjs/Subscription.js",
-        "node_modules/@angular/core/node_modules/rxjs/observable/ConnectableObservable.js",
-        "node_modules/@angular/core/node_modules/rxjs/observable/EmptyObservable.js"
+        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/utils.js",
+        "../../../../../node_modules/firebase/storage.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/getusermedia/getusermedia.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
+        "../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
+        "../../../../../node_modules/granim/lib/setDirection.js"
       ],
-      "hash": "46a2da5703f6d0be364ee3114aa29835",
-      "id": 35
+      "hash": "ff8804752eaa7f8f8114adf6e9b68148",
+      "id": 34
     },
     {
       "modules": [
         "cyph/services/url-state.service.js",
         "cyph/services/p2p-webrtc.service.js",
-        "cyph/services/file.service.js",
         "cyph/services/material/md-dialog.service.js",
         "cyph/services/material/md-toast.service.js",
-        "node_modules/@angular/core/node_modules/rxjs/util/tryCatch.js"
+        "cyph/session/profeatures.js",
+        "cyph/services/firebase-database.service.js"
       ],
-      "hash": "74e91814ab3b75062328b574b77dc015",
+      "hash": "d3c082628822d3b25f57e0c4e695f533",
+      "id": 35
+    },
+    {
+      "modules": [
+        "cyph/services/error.service.js",
+        "cyph/services/file-transfer.service.js",
+        "cyph/services/file.service.js",
+        "cyph/services/ephemeral-session.service.js",
+        "node_modules/@angular/core/node_modules/rxjs/OuterSubscriber.js",
+        "../../../../../node_modules/webpack/buildin/amd-define.js"
+      ],
+      "hash": "3a1a57db1829b98080cca1fdd921f704",
       "id": 36
     },
     {
@@ -1604,22 +1605,11 @@
         "../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
         "../../../../../node_modules/buffer/node_modules/base64-js/lib/b64.js",
         "../../../../../node_modules/file-saver/FileSaver.js",
-        "../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
-        "../../../../../node_modules/granim/lib/getElement.js"
+        "../../../../../node_modules/granim/lib/changeState.js",
+        "../../../../../node_modules/granim/lib/eventPolyfill.js"
       ],
-      "hash": "2905b9a31e8ebfd02b1f6d561216eacd",
+      "hash": "d08140aabe5acac5369458b9b12ca4f5",
       "id": 39
-    },
-    {
-      "modules": [
-        "cyph/services/session-capabilities.service.js",
-        "cyph/services/notification.service.js",
-        "cyph/session/profeatures.js",
-        "../../../../../node_modules/granim/lib/colorDiff.js",
-        "../../../../../node_modules/markdown-it-emoji/lib/render.js"
-      ],
-      "hash": "40eb3f491209a0e2bddc248ff06c9c01",
-      "id": 40
     },
     {
       "modules": [
@@ -1628,17 +1618,27 @@
         "../../../../../node_modules/simplewebrtc/simplewebrtc.js",
         "../../../../../node_modules/simplewebrtc/webrtc.js"
       ],
-      "hash": "590049ce607591cd5c9ed48398f2b670",
-      "id": 42
+      "hash": "bb26427d8d450812531684402dddcef9",
+      "id": 41
     },
     {
       "modules": [
         "../../../../../node_modules/buffer/index.js",
-        "../../../../../node_modules/granim/lib/changeState.js",
-        "../../../../../node_modules/granim/lib/pause.js",
+        "../../../../../node_modules/granim/lib/getElement.js",
+        "../../../../../node_modules/granim/lib/getLightness.js",
         "../../../../../node_modules/webpack/buildin/amd-options.js"
       ],
-      "hash": "ef9351c46bfb23c45c913c6400c5f0a4",
+      "hash": "599f18825a21ed3de3092c3a9b3ad972",
+      "id": 42
+    },
+    {
+      "modules": [
+        "cyph/services/session-capabilities.service.js",
+        "cyph/services/notification.service.js",
+        "cyph/services/util.service.js",
+        "../../../../../node_modules/markdown-it-emoji/lib/render.js"
+      ],
+      "hash": "49a449a8624fdc9cb54d4c521dc960c1",
       "id": 43
     },
     {
@@ -1655,9 +1655,9 @@
       "modules": [
         "../../../../../node_modules/magnific-popup/dist/jquery.magnific-popup.js",
         "../../../../../node_modules/markdown-it-emoji/lib/data/full.json",
-        "../../../../../node_modules/markdown-it/lib/rules_core/normalize.js"
+        "../../../../../node_modules/markdown-it/lib/rules_core/block.js"
       ],
-      "hash": "d93f0d0503b69fc14a8cc044bd8e69e2",
+      "hash": "60ca974239bf4a386cc8a11d920bb830",
       "id": 45
     },
     {
