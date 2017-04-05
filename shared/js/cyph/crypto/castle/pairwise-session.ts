@@ -192,7 +192,7 @@ export class PairwiseSession {
 							this.potassium.clearMemory(oldPlaintext);
 						}
 
-						/* Completion of handshake for Bob */
+						/* Completion of handshake */
 						if (!this.remoteUser) {
 							this.connect();
 						}
@@ -331,6 +331,8 @@ export class PairwiseSession {
 				secret	= await this.handshakeOpenSecret(
 					await this.localUser.getRemoteSecret()
 				);
+
+				this.send('');
 			}
 
 			this.resolveCore(new Core(
@@ -338,13 +340,6 @@ export class PairwiseSession {
 				isAlice,
 				[await Core.newKeys(this.potassium, isAlice, secret)]
 			));
-
-			if (isAlice) {
-				this.connect();
-			}
-			else {
-				this.send('');
-			}
 		}
 		catch (_) {
 			this.abort();
