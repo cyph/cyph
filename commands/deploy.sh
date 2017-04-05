@@ -503,7 +503,9 @@ find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favi
 
 
 if [ "${test}" ] ; then
-	rm -rf $prodOnlyProjects
+	rm -rf ${prodOnlyProjects}
+elif [ ! "${site}" ] ; then
+	gcloud app services delete --quiet --project cyphme test
 fi
 
 gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
