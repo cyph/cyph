@@ -4,6 +4,7 @@ import {users} from '../session/enums';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
+import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
 
@@ -60,9 +61,6 @@ export class P2PService {
 					false
 				);
 			}
-		},
-		enable: () => {
-			this.isEnabled	= true;
 		},
 		requestConfirm: async (callType: string, isAccepted: boolean) => {
 			if (isAccepted) {
@@ -130,12 +128,14 @@ export class P2PService {
 	}
 
 	/** Initialise service. */
-	public init (localVideo: () => JQuery, remoteVideo: () => JQuery) : void {
+	public async init (localVideo: () => JQuery, remoteVideo: () => JQuery) : Promise<void> {
 		if (this.sessionInitService.callType !== undefined) {
 			this.p2pWebRTCService.accept(this.sessionInitService.callType);
 		}
 
 		this.p2pWebRTCService.init(this.handlers, localVideo, remoteVideo);
+
+		this.isEnabled	= (await this.sessionCapabilitiesService.capabilities).p2p;
 	}
 
 	/** @see P2PWebRTCService.isActive */
@@ -191,6 +191,9 @@ export class P2PService {
 
 		/** @ignore */
 		private readonly p2pWebRTCService: P2PWebRTCService,
+
+		/** @ignore */
+		private readonly sessionCapabilitiesService: SessionCapabilitiesService,
 
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService,

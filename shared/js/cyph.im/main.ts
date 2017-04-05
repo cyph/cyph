@@ -17,6 +17,7 @@ import 'angular-material';
 import * as $ from 'jquery';
 import 'magnific-popup';
 import 'nanoscroller';
+import 'webrtc-adapter';
 import 'whatwg-fetch';
 import 'zone.js';
 import {FileInputComponent} from '../cyph/components/file-input.component';
