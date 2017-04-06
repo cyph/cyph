@@ -237,7 +237,9 @@
 			</div>
 		</div>
 
-		
+
+<script src='cordova.js'></script>
+
 					<script>try {
 	if (!self.crypto && self.msCrypto) {
 		self.crypto			= self.msCrypto;
@@ -548,9 +550,9 @@ function webSignSRI_Process (baseUrl) {
 };</script>
 				
 		
-					<script>(function () {
+<script>document.addEventListener('deviceready', function () {
 
-if (self.device.platform === 'iOS') {
+if (device.platform === 'iOS') {
 	cordova.plugins.iosrtc.registerGlobals();
 }
 
@@ -735,7 +737,7 @@ catch(function (err) {
 });
 
 
-})();</script>
+});</script>
 				
 	</body>
 </html>
