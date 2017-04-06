@@ -136,12 +136,12 @@ export class Env extends EnvDeploy {
 	})();
 
 	/** Base URI for sending an SMS. */
-	public readonly smsUriBase: string	=
+	public readonly smsUriBase: string		=
 		`sms:${this.isIOS8Plus ? '&' : this.isIOS ? ';' : '?'}body=`
 	;
 
 	/** Current user agent (lowercase). */
-	public readonly userAgent: string	= Env.UA;
+	public readonly userAgent: string		= Env.UA;
 
 	constructor () {
 		super();
