@@ -550,6 +550,10 @@ function webSignSRI_Process (baseUrl) {
 		
 					<script>(function () {
 
+if (self.device.platform === 'iOS') {
+	cordova.plugins.iosrtc.registerGlobals();
+}
+
 var isHiddenService	= false;
 var packageName		= 'cyph.ws';
 

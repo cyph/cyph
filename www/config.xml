@@ -76,6 +76,7 @@
         <plugin name="com.phonegap.plugins.barcodescanner" />
     -->
 
+    <plugin name="cordova-plugin-iosrtc" />
     <plugin name="cordova-plugin-statusbar" />
 
     <!-- Define app icon for each platform. -->
