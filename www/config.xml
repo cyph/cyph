@@ -44,6 +44,10 @@
 
     <preference name="android-windowSoftInputMode" value="adjustResize" />
 
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarBackgroundColor" value="#000000" />
+    <preference name="StatusBarStyle" value="lightcontent" />
+
     <!-- Plugins -->
 
     <!-- Core plugins -->
@@ -71,6 +75,8 @@
     <!--
         <plugin name="com.phonegap.plugins.barcodescanner" />
     -->
+
+    <plugin name="cordova-plugin-statusbar" />
 
     <!-- Define app icon for each platform. -->
     <icon src="icon.png" />
