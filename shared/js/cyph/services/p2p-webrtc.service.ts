@@ -362,7 +362,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @inheritDoc */
 	public async request (callType: 'audio'|'video') : Promise<void> {
-		const ok	= (await this.handlers).requestConfirm(callType, this.isAccepted);
+		const ok	= await (await this.handlers).requestConfirm(callType, this.isAccepted);
 
 		if (!ok) {
 			return;
