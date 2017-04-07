@@ -3,6 +3,15 @@
 		<section id='main' class='cyph-foreground layout-fill layout-column'>
 			<canvas [hidden]='envService.isFirefox' id='main-chat-gradient'></canvas>
 
+			<md2-subheader
+				html='
+					WARNING: Your Cyph instance has a problem.
+					See <a href="https://www.cyph.com/websignerror">here</a>
+					for more details and the solution.
+				'
+				*ngIf='envService.webSignError && appService.state !== appService.states.chat'
+			></md2-subheader>
+
 			<cyph-chat-main
 				[hideDisconnectMessage]='envService.coBranded'
 				[messageCountInTitle]='true'
