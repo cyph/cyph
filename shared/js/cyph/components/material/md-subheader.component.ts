@@ -27,6 +27,7 @@ export class MdSubheaderComponent
 	public static readonly config			= {
 		bindings: {
 			childClass: '@',
+			html: '<',
 			stickyState: '@',
 			text: '<'
 		},
@@ -36,19 +37,38 @@ export class MdSubheaderComponent
 			public readonly childClass: string;
 
 			/** @ignore */
+			public readonly html: string;
+
+			/** @ignore */
 			public readonly stickyState: string;
 
 			/** @ignore */
 			public readonly text: string;
 
-			constructor () {}
+			/** @ignore */
+			public trustedHtml: any;
+
+			/** @ignore */
+			public $onChanges () : void {
+				if (!this.html) {
+					return;
+				}
+
+				this.trustedHtml	= this.$sce.trustAsHtml(this.html);
+			}
+
+			constructor (
+				/** @ignore */
+				private readonly $sce: any
+			) {}
 		},
 		template: `
 			<md-subheader
 				ng-class='$ctrl.childClass'
 				ng-attr-sticky-state='{{$ctrl.stickyState}}'
 			>
-				{{$ctrl.text}}
+				<span ng-if='!$ctrl.trustedHtml'>{{$ctrl.text}}</span>
+				<span ng-if='$ctrl.trustedHtml' ng-bind-html='$ctrl.trustedHtml'></span>
 			</md-subheader>
 		`
 	};
@@ -59,6 +79,9 @@ export class MdSubheaderComponent
 
 	/** @ignore */
 	@Input() public childClass: string;
+
+	/** @ignore */
+	@Input() public html: string;
 
 	/** @ignore */
 	@Input() public stickyState: string;
