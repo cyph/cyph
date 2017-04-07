@@ -196,3 +196,12 @@ enableProdMode();
 	document.body,
 	[config.angularConfig.rootModule]
 ); })();
+
+
+/* Request Persistent Storage permission to mitigate
+	edge case eviction of ServiceWorker/AppCache */
+
+try {
+	(<any> navigator).storage.persist();
+}
+catch (_) {}
