@@ -11,7 +11,6 @@ import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
 import {ChatData} from './chat-data';
 import {DemoEnvService} from './demo-env.service';
-import {LocalSessionInitService} from './local-session-init.service';
 import {LocalSessionService} from './local-session.service';
 
 
@@ -29,6 +28,7 @@ import {LocalSessionService} from './local-session.service';
 		P2PWebRTCService,
 		ScrollService,
 		SessionCapabilitiesService,
+		SessionInitService,
 		{
 			provide: EnvService,
 			useExisting: DemoEnvService
@@ -36,10 +36,6 @@ import {LocalSessionService} from './local-session.service';
 		{
 			provide: SessionService,
 			useExisting: LocalSessionService
-		},
-		{
-			provide: SessionInitService,
-			useClass: LocalSessionInitService
 		}
 	],
 	selector: 'cyph-demo-chat-root',
