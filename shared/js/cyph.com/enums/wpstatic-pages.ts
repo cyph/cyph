@@ -4,5 +4,6 @@
 export const wpstaticPages: string[]	= [
 	'blog',
 	'pricing',
-	'telehealth-pricing'
+	'telehealth-pricing',
+	'websignerror'
 ];
