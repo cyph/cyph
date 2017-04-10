@@ -3,11 +3,17 @@ import {ErrorHandler, NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {BrowserModule, Title} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
+import {AccountChatComponent} from '../cyph/components/account-chat.component';
 import {AccountContactsComponent} from '../cyph/components/account-contacts.component';
+import {AccountFilesComponent} from '../cyph/components/account-files.component';
+import {AccountHomeComponent} from '../cyph/components/account-home.component';
 import {AccountLoginComponent} from '../cyph/components/account-login.component';
+import {AccountLogoutComponent} from '../cyph/components/account-logout.component';
+import {AccountMenuComponent} from '../cyph/components/account-menu.component';
 import {AccountProfileComponent} from '../cyph/components/account-profile.component';
 import {AccountRegisterComponent} from '../cyph/components/account-register.component';
 import {AccountSettingsComponent} from '../cyph/components/account-settings.component';
+import {AccountComponent} from '../cyph/components/account.component';
 import {ChatCyphertextComponent} from '../cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from '../cyph/components/chat-main.component';
 import {ChatMessageBoxComponent} from '../cyph/components/chat-message-box.component';
@@ -18,6 +24,7 @@ import {FooterComponent} from '../cyph/components/footer.component';
 import {HelpComponent} from '../cyph/components/help.component';
 import {LinkConnectionComponent} from '../cyph/components/link-connection.component';
 import {MarkdownComponent} from '../cyph/components/markdown.component';
+import {MdAutocompleteComponent} from '../cyph/components/material/md-autocomplete.component';
 import {MdButtonComponent} from '../cyph/components/material/md-button.component';
 import {MdCardContentComponent} from '../cyph/components/material/md-card-content.component';
 import {
@@ -51,6 +58,12 @@ import {NotFoundComponent} from '../cyph/components/not-found.component';
 import {SignupFormComponent} from '../cyph/components/signup-form.component';
 import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive';
 import {TranslateDirective} from '../cyph/directives/translate.directive';
+import {AccountAuthService} from '../cyph/services/account-auth.service';
+import {AccountContactsService} from '../cyph/services/account-contacts.service';
+import {AccountFilesService} from '../cyph/services/account-files.service';
+import {AccountSettingsService} from '../cyph/services/account-settings.service';
+import {AccountUserLookupService} from '../cyph/services/account-user-lookup.service';
+import {AccountService} from '../cyph/services/account.service';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
@@ -71,7 +84,6 @@ import {UrlStateService} from '../cyph/services/url-state.service';
 import {UtilService} from '../cyph/services/util.service';
 import {VirtualKeyboardWatcherService} from '../cyph/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
-import {AccountComponent} from './account.component';
 import {AppComponent} from './app.component';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 import {LockdownComponent} from './lockdown.component';
@@ -82,9 +94,14 @@ import {LockdownComponent} from './lockdown.component';
  */
 @NgModule({
 	declarations: [
+		AccountChatComponent,
 		AccountComponent,
 		AccountContactsComponent,
+		AccountFilesComponent,
+		AccountHomeComponent,
 		AccountLoginComponent,
+		AccountLogoutComponent,
+		AccountMenuComponent,
 		AccountProfileComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
@@ -105,6 +122,7 @@ import {LockdownComponent} from './lockdown.component';
 		NotFoundComponent,
 		SignupFormComponent,
 		TranslateDirective,
+		MdAutocompleteComponent,
 		MdButtonComponent,
 		MdCardComponent,
 		MdCardContentComponent,
@@ -139,6 +157,12 @@ import {LockdownComponent} from './lockdown.component';
 		UpgradeModule
 	],
 	providers: [
+		AccountService,
+		AccountAuthService,
+		AccountContactsService,
+		AccountFilesService,
+		AccountSettingsService,
+		AccountUserLookupService,
 		AnalyticsService,
 		ConfigService,
 		DialogService,

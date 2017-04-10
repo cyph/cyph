@@ -4,15 +4,15 @@
 		<h1>Account Settings</h1>
 		<div class='name'>
 			<span>Your Name: </span>
-			<span>{{accountAuthService.current.user.name}}</span>
+			<span>{{accountAuthService.current.name}}</span>
 		</div>
 		<div class='email'>
 			<span>Your Email: </span>
-			<span>{{accountAuthService.current.user.email}}</span>
+			<span>{{accountAuthService.current.email}}</span>
 		</div>
 		<div class='premium-status'>
 			<span>Premium Status: </span>
-			<span>{{accountAuthService.current.user.hasPremium ? 'Enabled' : 'Disabled'}}</span>
+			<span>{{accountAuthService.current.hasPremium ? 'Enabled' : 'Disabled'}}</span>
 		</div>
 		<div class='layout-column'>
 			<md2-switch>Setting 1</md2-switch>

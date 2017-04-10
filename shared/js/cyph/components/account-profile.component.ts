@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {UserPresence, userPresenceSelectOptions} from '../account/enums';
-import {Profile} from '../account/profile';
+import {User} from '../account/user';
 import {AccountAuthService} from '../services/account-auth.service';
-import {AccountProfileService} from '../services/account-profile.service';
+import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {EnvService} from '../services/env.service';
 import {UrlStateService} from '../services/url-state.service';
 
@@ -16,21 +16,21 @@ import {UrlStateService} from '../services/url-state.service';
 	templateUrl: '../../../templates/account-profile.html'
 })
 export class AccountProfileComponent implements OnInit {
-	/** User profile. */
-	public profile?: Profile;
+	/** Username of profile owner. */
+	@Input() private username?: string;
 
 	/** @see UserPresence */
 	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
 
-	/** Username of profile owner. */
-	@Input() public username?: string;
+	/** User profile. */
+	public user?: User;
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
 	/** Indicates whether this is the profile of the currently signed in user. */
 	public get isCurrentUser () : boolean {
-		return this.profile === this.accountAuthService.current;
+		return this.user === this.accountAuthService.current;
 	}
 
 	/** @inheritDoc */
@@ -38,11 +38,16 @@ export class AccountProfileComponent implements OnInit {
 		await this.accountAuthService.ready;
 
 		try {
-			this.profile	= await this.accountProfileService.getProfile(this.username);
+			if (this.username) {
+				this.user	= await this.accountUserLookupService.getUser(this.username);
+			}
+			else if (this.accountAuthService.current) {
+				this.user	= this.accountAuthService.current;
+			}
 		}
 		catch (_) {}
 
-		if (!this.profile) {
+		if (!this.user) {
 			this.urlStateService.setUrl('account/login');
 		}
 	}
@@ -54,8 +59,8 @@ export class AccountProfileComponent implements OnInit {
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
 
-		/** @see AccountProfileService */
-		public readonly accountProfileService: AccountProfileService,
+		/** @see AccountUserLookupService */
+		public readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService

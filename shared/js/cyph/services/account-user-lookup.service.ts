@@ -14,11 +14,13 @@ export class AccountUserLookupService {
 
 	].map(user => new User(
 		user.avatar,
+		'/img/metaimage.png',
+		`Hello, my name is ${user.name}.`,
 		user.email,
 		user.hasPremium,
 		user.name,
-		userPresenceSorted[util.random(userPresenceSorted.length)],
-		user.realUsername
+		user.realUsername,
+		userPresenceSorted[util.random(userPresenceSorted.length)]
 	));
 
 	/** Tries to to get user object for the specified username. */

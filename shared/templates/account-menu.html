@@ -35,9 +35,9 @@
 						<div class='user' *ngIf='accountAuthService.current'>
 							<img
 								class='profile-picture animated flipInX _1'
-								[ngClass]='userPresence[accountAuthService.current.user.status]'
+								[ngClass]='userPresence[accountAuthService.current.status]'
 								alt='Profile Picture'
-								[src]='accountAuthService.current.user.avatar'
+								[src]='accountAuthService.current.avatar'
 								(click)='goToState(states.profile)'
 							/>
 						</div>

@@ -1,20 +1,20 @@
-<div class='profile layout-column' *ngIf='profile' [class.mobile]='envService.isMobile'>
+<div class='profile layout-column' *ngIf='user' [class.mobile]='envService.isMobile'>
 	<img
 		class='profile-picture animated flipInX _1'
-		[ngClass]='userPresence[profile.user.status]'
+		[ngClass]='userPresence[user.status]'
 		alt='Profile Picture'
-		[src]='profile.user.avatar'
+		[src]='user.avatar'
 	/>
-	<span class='name animated flipInX _2'>{{profile.user.name}}</span>
-	<span class='username animated flipInX _2'>@{{profile.user.realUsername}}</span>
-	<span class='description animated flipInX _3'>{{profile.description}}</span>
+	<span class='name animated flipInX _2'>{{user.name}}</span>
+	<span class='username animated flipInX _2'>@{{user.realUsername}}</span>
+	<span class='description animated flipInX _3'>{{user.description}}</span>
 	
 	<div *ngIf='isCurrentUser' class='status flex-50'>
 		<md2-select
 			cyphTranslate
 			class='flex'
 			childClass='md-block'
-			[(model)]='profile.user.status'
+			[(model)]='user.status'
 			formName='status'
 			label='Status'
 			[options]='statuses'
@@ -38,7 +38,7 @@
 			childClass='md-fab'
 			class='animated flipInX _4'
 			ariaLabel='Send Message'
-			*ngIf='profile.user.status !== userPresence.online'
+			*ngIf='user.status !== userPresence.online'
 		>
 			<md2-icon>email</md2-icon>
 		</md2-button>
@@ -47,8 +47,8 @@
 			childClass='md-fab'
 			class='animated flipInX _4'
 			ariaLabel='Start Chat'
-			*ngIf='profile.user.status === userPresence.online'
-			(childClick)='urlStateService.setUrl("account/chat/" + profile.user.username)'
+			*ngIf='user.status === userPresence.online'
+			(childClick)='urlStateService.setUrl("account/chat/" + user.username)'
 		>
 			<md2-icon>chat_bubble</md2-icon>
 		</md2-button>

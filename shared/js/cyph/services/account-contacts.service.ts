@@ -19,7 +19,7 @@ export class AccountContactsService {
 		return AccountUserLookupService.DUMMY_USERS.
 			filter(user =>
 				this.accountAuthService.current &&
-				user.username !== this.accountAuthService.current.user.username
+				user.username !== this.accountAuthService.current.username
 			).
 			sort((a, b) => {
 				const statusIndexA	= userPresenceSorted.indexOf(a.status);
