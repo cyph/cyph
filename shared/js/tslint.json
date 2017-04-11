@@ -91,10 +91,12 @@
 		"no-floating-promises": false,
 		"no-for-in-array": true,
 		"no-inferred-empty-object-type": true,
+		"no-invalid-template-strings": true,
 		"no-invalid-this": [true, "check-function-in-method"],
 		"no-misused-new": true,
 		"no-null-keyword": true,
 		"no-shadowed-variable": true,
+		"no-sparse-arrays": true,
 		"no-string-literal": true,
 		"no-string-throw": true,
 		"no-switch-case-fall-through": true,
@@ -103,11 +105,11 @@
 		"no-unsafe-finally": true,
 		"no-unused-expression": true,
 		"no-unused-variable": false,
-		"no-use-before-declare": false, /* Pending fix: true, */
+		"no-use-before-declare": true,
 		"no-var-keyword": true,
 		"no-void-expression": true,
 		"radix": true,
-		"restrict-plus-operands": false, /* Pending fix: true, */
+		"restrict-plus-operands": true,
 		"strict-boolean-expressions": false,
 		"switch-default": false,
 		"strict-type-predicates": true,
@@ -231,7 +233,6 @@
 		"no-jquery-raw-elements": true,
 		"no-octal-literal": true,
 		"no-reserved-keywords": true,
-		"no-sparse-arrays": true,
 		"no-stateless-class": true,
 		/* Pending fix: "no-string-based-set-immediate": true, */
 		/* Pending fix: "no-string-based-set-interval": true, */
