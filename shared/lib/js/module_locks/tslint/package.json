@@ -1,6 +1,6 @@
 {
   "name": "tslint",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "An extensible static analysis linter for the TypeScript language",
   "bin": {
     "tslint": "./bin/tslint"
@@ -30,9 +30,10 @@
     "lint:from-bin": "node bin/tslint --project test/tsconfig.json --format stylish",
     "test": "npm-run-all test:pre -p test:mocha test:rules",
     "test:pre": "cd ./test/config && npm install",
-    "test:mocha": "mocha --reporter spec --colors \"build/test/**/*Tests.js\" build/test/assert.js",
+    "test:mocha": "mocha --reporter spec --colors \"build/test/**/*Tests.js\"",
     "test:rules": "node ./build/test/ruleTestRunner.js",
-    "verify": "npm-run-all clean compile lint test docs"
+    "verify": "npm-run-all clean compile lint test docs",
+    "coverage": "rimraf coverage .nyc_output && nyc npm test"
   },
   "dependencies": {
     "babel-code-frame": "^6.22.0",
@@ -67,6 +68,7 @@
     "js-yaml": "^3.7.0",
     "mocha": "^3.2.0",
     "npm-run-all": "^3.1.0",
+    "nyc": "^10.2.0",
     "rimraf": "^2.5.4",
     "tslint": "latest",
     "typescript": "^2.2.2"
