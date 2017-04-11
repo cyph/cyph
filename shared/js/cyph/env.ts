@@ -24,11 +24,20 @@ export class Env extends EnvDeploy {
 
 	/** Firebase-related config. */
 	public readonly firebaseConfig			= {
+		apiKey: 'AIzaSyBQmgjG4klHr0TWUrBsGAgKPGSFFM1FSeI',
+		authDomain: 'cyph-test.firebaseapp.com',
+		databaseURL: 'https://cyph-test.firebaseio.com',
+		storageBucket: 'cyph-test.appspot.com'
+	};
+
+	/*
+	public readonly firebaseConfig			= {
 		apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',
 		authDomain: 'cyphme.firebaseapp.com',
 		databaseURL: this.firebaseEndpoint,
 		storageBucket: 'cyphme.appspot.com'
 	};
+	*/
 
 	/** Complete (lowercase) language code, e.g. "en-us". */
 	public readonly fullLanguage: string	= Env.language.toLowerCase();
