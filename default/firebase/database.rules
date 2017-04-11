@@ -51,6 +51,12 @@
 				".read": "$user == auth.token.name",
 				".write": "$user == auth.token.name",
 
+				"certificate": {
+					".read": true,
+					".write": false,
+					".validate": "newData.isString()"
+				},
+
 				"contacts": {
 					"$contact": {
 						"messages": {
@@ -62,6 +68,10 @@
 							".validate": "newData.isString()"
 						}
 					}
+				},
+
+				"encryptionKeyPair": {
+					".validate": "newData.isString()"
 				},
 
 				"loginData": {
@@ -78,7 +88,7 @@
 					".validate": "newData.isString()"
 				},
 
-				"signingKey": {
+				"signingKeyPair": {
 					".validate": "newData.isString()"
 				}
 			}
