@@ -105,6 +105,7 @@ yarn add --ignore-platform --ignore-scripts \
 	webrtc-adapter \
 	whatwg-fetch \
 	wowjs \
+	xkcd-passphrase \
 	zombie \
 	zone.js \
 	https://github.com/angular/bower-material \
