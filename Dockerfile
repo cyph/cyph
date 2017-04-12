@@ -98,17 +98,6 @@ RUN bash -c ' \
 	wget https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz; \
 	tar xzf emsdk-portable.tar.gz; \
 	rm emsdk-portable.tar.gz; \
-	cd emsdk-portable; \
-	./emsdk update; \
-	./emsdk install latest; \
-	./emsdk activate latest; \
-	./emsdk uninstall $(./emsdk list | grep INSTALLED | grep node | awk "{print \$2}"); \
-'
-
-RUN bash -c ' \
-	source ~/.bashrc; \
-	mkdir -p /home/gibson/emsdk-portable/node/4.1.1_64bit/bin; \
-	ln -s /usr/bin/node /home/gibson/emsdk-portable/node/4.1.1_64bit/bin/node; \
 '
 
 RUN bash -c ' \
