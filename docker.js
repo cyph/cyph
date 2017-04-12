@@ -172,6 +172,7 @@ const shellScripts			= {
 			sudo apt-get -y --force-yes update
 			sudo apt-get -y --force-yes upgrade
 			sudo gem update
+			gcloud components update --quiet
 			touch ~/.updated
 		`,
 		condition: `
@@ -213,7 +214,7 @@ const shellScripts			= {
 		source ~/.bashrc
 		tns error-reporting disable
 		tns usage-reporting disable
-		gcloud auth login
+		gcloud init
 	`,
 	stopServe: `
 		rm -rf \\

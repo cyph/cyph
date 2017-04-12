@@ -25,14 +25,11 @@ eval "$(./commands/getgitdata.sh)"
 
 
 appserver () {
-	/google-cloud-sdk/bin/dev_appserver.py \
-		--automatic_restart=false \
-		--skip_sdk_update_check ${*} \
-	> /dev/null 2>&1 &
+	dev_appserver.py --automatic_restart false --skip_sdk_update_check ${*} > /dev/null 2>&1 &
 }
 
 go_appserver () {
-	~/go_appengine/dev_appserver.py --skip_sdk_update_check ${*} &
+	dev_appserver.py --skip_sdk_update_check ${*} &
 }
 
 
