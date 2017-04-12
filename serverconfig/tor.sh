@@ -26,7 +26,7 @@ apt-get -y --force-yes purge apache* mysql*
 distro="$(lsb_release -c | awk '{print $2}')"
 echo "
 	deb http://deb.torproject.org/torproject.org ${distro} main
-	deb https://deb.nodesource.com/node_6.x ${distro} main
+	deb https://deb.nodesource.com/node_7.x ${distro} main
 " >> /etc/apt/sources.list
 gpg --keyserver keys.gnupg.net --recv 886DDD89
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
