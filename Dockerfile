@@ -132,9 +132,7 @@ RUN bash -c ' \
 	cd; \
 	wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-150.0.0-linux-x86_64.tar.gz; \
 	tar xzf google-cloud-sdk-150.0.0-linux-x86_64.tar.gz; \
-	./google-cloud-sdk/install.sh --additional-components app-engine-go --command-completion true --path-update true --rc-path ~/.bashrc --usage-reporting false; \
-	source ~/.bashrc; \
-	gcloud components update --quiet; \
+	rm google-cloud-sdk-150.0.0-linux-x86_64.tar.gz; \
 '
 
 RUN rm -rf ~/.gnupg

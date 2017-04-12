@@ -172,7 +172,7 @@ const shellScripts			= {
 			sudo apt-get -y --force-yes update
 			sudo apt-get -y --force-yes upgrade
 			sudo gem update
-			gcloud components update --quiet
+			if [ "$(command -v gcloud)" ] ; then gcloud components update --quiet ; fi
 			touch ~/.updated
 		`,
 		condition: `
@@ -212,8 +212,18 @@ const shellScripts			= {
 	},
 	setup: `
 		source ~/.bashrc
+
 		tns error-reporting disable
 		tns usage-reporting disable
+
+		~/google-cloud-sdk/install.sh \
+			--additional-components app-engine-go \
+			--command-completion true \
+			--path-update true \
+			--rc-path ~/.bashrc \
+			--usage-reporting false
+		source ~/.bashrc
+		gcloud components update --quiet
 		gcloud init
 	`,
 	stopServe: `
