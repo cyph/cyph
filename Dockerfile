@@ -160,10 +160,6 @@ RUN rm ~/go_appengine.zip
 RUN rm -rf ~/.gnupg
 
 
-# Temporary workaround for https://github.com/yarnpkg/yarn/issues/2692
-RUN echo 'Package: yarn\nPin: version 0.19.1-1\nPin-Priority: 1337' | sudo tee -a /etc/apt/preferences
-
-
 #CIRCLECI:RUN sudo apt-get -y --force-yes update
 #CIRCLECI:RUN sudo apt-get -y --force-yes upgrade
 #CIRCLECI:RUN mkdir -p ~/getlibs/commands
