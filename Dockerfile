@@ -62,22 +62,15 @@ RUN echo '\
 	source /home/gibson/emsdk-portable/emsdk_env.sh > /dev/null 2>&1; \
 \
 	export GIT_EDITOR="vim"; \
-\
 	export GOPATH="/home/gibson/go"; \
-	export CLOUDSDK_PYTHON="python2"; \
-	export CLOUD_PATHS="$( \
-		echo -n "/google-cloud-sdk/bin:"; \
-		echo -n "/google-cloud-sdk/platform/google_appengine:"; \
-		echo -n "/google-cloud-sdk/platform/google_appengine/google/appengine/tools"; \
+	export JAVA_HOME="$( \
+		update-alternatives --query javac | sed -n -e "s/Best: *\(.*\)\/bin\/javac/\\1/p" \
 	)"; \
-\
-	export JAVA_HOME="$(update-alternatives --query javac | sed -n -e "s/Best: *\(.*\)\/bin\/javac/\\1/p")"; \
 \
 	export PATH="$( \
 		echo -n "/opt/local/bin:"; \
 		echo -n "/opt/local/sbin:"; \
 		echo -n "/usr/local/opt/go/libexec/bin:"; \
-		echo -n "${CLOUD_PATHS}:"; \
 		echo -n "${GOPATH}/bin:"; \
 		echo -n "${PATH}:"; \
 		echo -n "/node_modules/.bin"; \
@@ -135,13 +128,14 @@ RUN haxelib install hxcs
 RUN haxelib install hxjava
 RUN haxelib install hxnodejs
 
-RUN wget "$( \
-	curl -sL https://cloud.google.com/appengine/docs/go/download | \
-	grep -oP 'https://.*?go_appengine_sdk_linux_amd64.*?\.zip' | \
-	head -n1 \
-)" -O ~/go_appengine.zip
-RUN unzip ~/go_appengine.zip -d ~
-RUN rm ~/go_appengine.zip
+RUN bash -c ' \
+	cd; \
+	wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-150.0.0-linux-x86_64.tar.gz; \
+	tar xzf google-cloud-sdk-150.0.0-linux-x86_64.tar.gz; \
+	./google-cloud-sdk/install.sh --additional-components app-engine-go --command-completion true --path-update true --rc-path ~/.bashrc --usage-reporting false; \
+	source ~/.bashrc; \
+	gcloud components update --quiet; \
+'
 
 RUN rm -rf ~/.gnupg
 
