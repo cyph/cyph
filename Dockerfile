@@ -93,12 +93,14 @@ USER gibson
 ENV HOME /home/gibson
 
 
-RUN bash -c ' \
-	cd; \
-	wget https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz; \
-	tar xzf emsdk-portable.tar.gz; \
-	rm emsdk-portable.tar.gz; \
-'
+RUN wget \
+	https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz \
+	-O ~/emsdk.tar.gz
+RUN wget \
+	https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-150.0.0-linux-x86_64.tar.gz \
+	-O ~/gcloud-sdk.tar.gz
+RUN ls ~/*.tar.gz | xargs -I% tar xvzf % -C ~
+RUN rm ~/*.tar.gz
 
 RUN bash -c ' \
 	cd; \
@@ -116,13 +118,6 @@ RUN haxelib install hxcpp
 RUN haxelib install hxcs
 RUN haxelib install hxjava
 RUN haxelib install hxnodejs
-
-RUN bash -c ' \
-	cd; \
-	wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-150.0.0-linux-x86_64.tar.gz; \
-	tar xzf google-cloud-sdk-150.0.0-linux-x86_64.tar.gz; \
-	rm google-cloud-sdk-150.0.0-linux-x86_64.tar.gz; \
-'
 
 RUN rm -rf ~/.gnupg
 
