@@ -1,4 +1,4 @@
-FROM debian/unstable
+FROM debian:unstable
 
 MAINTAINER Ryan Lester <hacker@linux.com>
 
