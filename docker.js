@@ -176,12 +176,19 @@ const shellScripts			= {
 
 			sudo gem update
 
+			cd ~/brotli
+			git pull
+			make bro
+			sudo mv bin/bro /usr/bin/
+
 			emsdk update
 			emsdk install latest
 			emsdk uninstall $(emsdk list | grep INSTALLED | grep node | awk "{print $2}")
 			emsdk activate latest
 
 			if [ "$(command -v gcloud)" ] ; then gcloud components update --quiet ; fi
+
+			haxelib update
 
 			touch ~/.updated
 		`,

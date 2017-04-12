@@ -102,15 +102,7 @@ RUN wget \
 RUN ls ~/*.tar.gz | xargs -I% tar xvzf % -C ~
 RUN rm ~/*.tar.gz
 
-RUN bash -c ' \
-	cd; \
-	git clone https://github.com/google/brotli.git; \
-	cd brotli; \
-	make; \
-	sudo mv bin/bro /usr/bin/; \
-	cd; \
-	rm -rf brotli; \
-'
+RUN git clone https://github.com/google/brotli.git ~/brotli
 
 RUN mkdir ~/haxelib
 RUN haxelib setup ~/haxelib
