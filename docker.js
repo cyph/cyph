@@ -171,8 +171,16 @@ const shellScripts			= {
 		command: `
 			sudo apt-get -y --force-yes update
 			sudo apt-get -y --force-yes upgrade
+
 			sudo gem update
+
+			emsdk update
+			emsdk install latest
+			emsdk uninstall $(emsdk list | grep INSTALLED | grep node | awk "{print $2}")
+			emsdk activate latest
+
 			if [ "$(command -v gcloud)" ] ; then gcloud components update --quiet ; fi
+
 			touch ~/.updated
 		`,
 		condition: `
