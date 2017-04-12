@@ -7,7 +7,7 @@
 		"selenium-webdriver": "*"
 	},
 	"engines": {
-		"node": "^6.10.1"
+		"node": "^7"
 	},
 	"scripts": {
 		"start": "node test.js"

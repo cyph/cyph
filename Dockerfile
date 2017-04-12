@@ -11,7 +11,7 @@ ENV debianVersion "echo $(lsb_release -c | awk '{print \$2}')"
 ENV debianBackports "${debianVersion}-backports"
 RUN dpkg --add-architecture i386
 RUN echo "deb http://ftp.debian.org/debian $(eval "${debianBackports}") main" >> /etc/apt/sources.list
-RUN echo "deb https://deb.nodesource.com/node_6.x $(eval "${debianVersion}") main" >> /etc/apt/sources.list
+RUN echo "deb https://deb.nodesource.com/node_7.x $(eval "${debianVersion}") main" >> /etc/apt/sources.list
 RUN echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list
 RUN echo 'deb http://httpredir.debian.org/debian unstable main' >> /etc/apt/sources.list
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
