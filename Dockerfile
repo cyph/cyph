@@ -17,6 +17,7 @@ RUN apt-get -y --force-yes update
 RUN apt-get -y --force-yes upgrade
 
 RUN apt-get -y --force-yes install \
+	android-sdk \
 	autoconf \
 	automake \
 	build-essential \
@@ -47,6 +48,7 @@ RUN apt-get -y --force-yes install \
 	ruby \
 	ruby-dev \
 	sudo \
+	tightvncserver \
 	yarn \
 	zopfli
 
@@ -70,7 +72,6 @@ RUN echo '\
 		echo -n "/google-cloud-sdk/platform/google_appengine/google/appengine/tools"; \
 	)"; \
 \
-	export ANDROID_HOME="/home/gibson/androidsdk"; \
 	export JAVA_HOME="$(update-alternatives --query javac | sed -n -e "s/Best: *\(.*\)\/bin\/javac/\\1/p")"; \
 \
 	export PATH="$( \
@@ -79,8 +80,6 @@ RUN echo '\
 		echo -n "/usr/local/opt/go/libexec/bin:"; \
 		echo -n "${CLOUD_PATHS}:"; \
 		echo -n "${GOPATH}/bin:"; \
-		echo -n "${ANDROID_HOME}/platform-tools:"; \
-		echo -n "${ANDROID_HOME}/tools:"; \
 		echo -n "${PATH}:"; \
 		echo -n "/node_modules/.bin"; \
 	)"; \
