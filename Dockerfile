@@ -1,4 +1,4 @@
-FROM google/cloud-sdk
+FROM debian/unstable
 
 MAINTAINER Ryan Lester <hacker@linux.com>
 
@@ -7,40 +7,29 @@ LABEL Name="cyph"
 RUN apt-get -y --force-yes update
 RUN apt-get -y --force-yes install apt-transport-https apt-utils curl lsb-release
 
-ENV debianVersion "echo $(lsb_release -c | awk '{print \$2}')"
-ENV debianBackports "${debianVersion}-backports"
 RUN dpkg --add-architecture i386
-RUN echo "deb http://ftp.debian.org/debian $(eval "${debianBackports}") main" >> /etc/apt/sources.list
-RUN echo "deb https://deb.nodesource.com/node_7.x $(eval "${debianVersion}") main" >> /etc/apt/sources.list
+RUN echo "deb https://deb.nodesource.com/node_7.x sid main" >> /etc/apt/sources.list
 RUN echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list
-RUN echo 'deb http://httpredir.debian.org/debian unstable main' >> /etc/apt/sources.list
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN curl -s https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-
-RUN echo 'Package: *' > /etc/apt/preferences.d/unstable
-RUN echo 'Pin: release a=unstable' >> /etc/apt/preferences.d/unstable
-RUN echo 'Pin-Priority: 100' >> /etc/apt/preferences.d/unstable
-RUN echo >> /etc/apt/preferences.d/unstable
-RUN echo 'Package: haxe neko libneko*' >> /etc/apt/preferences.d/unstable
-RUN echo 'Pin: release a=unstable' >> /etc/apt/preferences.d/unstable
-RUN echo 'Pin-Priority: 999' >> /etc/apt/preferences.d/unstable
 
 RUN apt-get -y --force-yes update
 RUN apt-get -y --force-yes upgrade
 
-RUN apt-get -y --force-yes install haxe
-RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
+RUN apt-get -y --force-yes install \
 	autoconf \
 	automake \
 	build-essential \
 	cmake \
 	devscripts \
 	expect \
+	gcc-6 \
 	g++ \
 	git \
 	gnupg \
 	gnupg-agent \
 	golang-go \
+	haxe \
 	inotify-tools \
 	lib32ncurses5 \
 	lib32z1 \
@@ -60,7 +49,6 @@ RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
 	sudo \
 	yarn \
 	zopfli
-RUN apt-get -y --force-yes -t unstable install gcc-6
 
 RUN apt-get -y --force-yes update
 RUN apt-get -y --force-yes upgrade
