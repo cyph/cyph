@@ -51,6 +51,7 @@ yarn add --ignore-platform --ignore-scripts \
 	firebase \
 	firebase-server \
 	glob \
+	google-closure-compiler \
 	granim \
 	gulp \
 	highlight.js \
