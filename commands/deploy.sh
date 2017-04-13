@@ -375,30 +375,35 @@ if [ "${websign}" ] ; then
 
 	customBuilds=""
 
-	cd pkg/cyph.ws-subresources
-	mv ../../custom-builds ./
-	rm -rf custom-builds/.git custom-builds/reference.json
-	for d in $(find custom-builds -mindepth 1 -maxdepth 1 -type d) ; do
-		customBuildBase="$(echo "${d}" | perl -pe 's/.*\/(.*)$/\1/')"
-		customBuild="$(projectname "${customBuildBase}")"
-		customBuildAdditionalStyling="${d}/custom.scss"
-		customBuildBackground="${d}/background.png"
-		customBuildFavicon="${d}/favicon.png"
-		customBuildTheme="${d}/theme.json"
-		customBuildStylesheet="custom-builds/${customBuildBase}.css"
-		customBuilds="${customBuilds} ${customBuild}"
+	if \
+		[ "${username}" == 'cyph' ] && \
+		[ "${branch}" == 'staging' -o "${branch}" == 'beta' -o "${branch}" == 'master' ] \
+	; then
+		cd pkg/cyph.ws-subresources
+		mv ../../custom-builds ./
+		rm -rf custom-builds/.git custom-builds/reference.json
+		for d in $(find custom-builds -mindepth 1 -maxdepth 1 -type d) ; do
+			customBuildBase="$(echo "${d}" | perl -pe 's/.*\/(.*)$/\1/')"
+			customBuild="$(projectname "${customBuildBase}")"
+			customBuildAdditionalStyling="${d}/custom.scss"
+			customBuildBackground="${d}/background.png"
+			customBuildFavicon="${d}/favicon.png"
+			customBuildTheme="${d}/theme.json"
+			customBuildStylesheet="custom-builds/${customBuildBase}.css"
+			customBuilds="${customBuilds} ${customBuild}"
 
-		../../commands/websign/custombuild.ts \
-			"${customBuild}" \
-			"${customBuildAdditionalStyling}" \
-			"${customBuildBackground}" \
-			"${customBuildFavicon}" \
-			"${customBuildStylesheet}" \
-			"${customBuildTheme}"
+			../../commands/websign/custombuild.ts \
+				"${customBuild}" \
+				"${customBuildAdditionalStyling}" \
+				"${customBuildBackground}" \
+				"${customBuildFavicon}" \
+				"${customBuildStylesheet}" \
+				"${customBuildTheme}"
 
-		rm -rf ${d}
-	done
-	cd ../..
+			rm -rf ${d}
+		done
+		cd ../..
+	fi
 
 	packages="${package} ${customBuilds}"
 
