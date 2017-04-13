@@ -157,7 +157,7 @@ mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 cd firebase
 for m in $(ls *-node.js | sed 's|-node\.js$||') ; do
 	mv ${m}-node.js ${m}.js
-	grep -rl "${m}-node" | xargs sed -i "s|${m}-node|${m}|g"
+	grep -rl "${m}-node" | xargs -I% sed -i "s|${m}-node|${m}|g" %
 done
 cd ..
 

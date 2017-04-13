@@ -270,7 +270,7 @@ sed -i "s|https://fonts.googleapis.com/css|${fullDestinationURL}/$(grep -rl 'loc
 	wp-content/plugins/pricing-table-by-supsystic/js/table.min.js
 
 grep -rl "'//' + disqus_shortname" |
-	xargs sed -i "s|'//' + disqus_shortname|'/blog/js/' + disqus_shortname|g"
+	xargs -I% sed -i "s|'//' + disqus_shortname|'/blog/js/' + disqus_shortname|g" %
 
 for id in cyph cyphtest ; do
 	mkdir js/${id}.disqus.com
@@ -300,7 +300,7 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 done
 
 cd css
-ls | xargs sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/cedar/assets/fonts|g"
+ls | xargs -I% sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/cedar/assets/fonts|g" %
 for type in eot svg ttf woff woff2 ; do
 	grep -r "\.${type}" |
 		grep -oP "(http)?(s)?(:)?//[A-Za-z0-9\./:?=_-]*?\.${type}" |
@@ -312,7 +312,7 @@ for type in eot svg ttf woff woff2 ; do
 				require('supersphincs').hash('%').then(hash => console.log(hash.hex)) \
 			\").${type}\";
 			wget --tries=50 \"\${url}\" -O \"../\${path}\";
-			grep -rl '%' | xargs sed -i \"s|%|/blog/\${path}|g\";
+			grep -rl '%' | xargs -I{} sed -i \"s|%|/blog/\${path}|g\" {};
 		"
 done
 cd ..
@@ -330,13 +330,13 @@ for path in $(
 done
 
 rm root/index.html
-grep -rl /blog/root root | xargs sed -i 's|/blog/root||g'
+grep -rl /blog/root root | xargs -I% sed -i 's|/blog/root||g' %
 
 # One-off edge cases; should find a better general solution later
 for page in checkout contact ; do
-	grep -rl /blog/${page} root | xargs sed -i "s|/blog/${page}|/${page}|g"
+	grep -rl /blog/${page} root | xargs -I% sed -i "s|/blog/${page}|/${page}|g" %
 done
-{ grep -rlP '/blog/?"' root; echo index.html; } | xargs sed -i 's|/blog/*"|/"|g'
+{ grep -rlP '/blog/?"' root; echo index.html; } | xargs -I% sed -i 's|/blog/*"|/"|g' %
 
 if [ "${getRoot}" ] ; then
 	yamlFile="../.build.yaml"
