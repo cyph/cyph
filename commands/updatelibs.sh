@@ -15,8 +15,10 @@ yarn add --ignore-platform --ignore-scripts \
 	@angular/compiler \
 	@angular/compiler-cli \
 	@angular/core \
+	@angular/flex-layout \
 	@angular/forms \
 	@angular/http \
+	@angular/material \
 	@angular/platform-browser \
 	@angular/platform-browser-dynamic \
 	@angular/platform-server \
@@ -111,6 +113,7 @@ yarn add --ignore-platform --ignore-scripts \
 	zone.js \
 	https://github.com/angular/bower-material \
 	https://github.com/buu700/webrtcsupport \
+	https://github.com/jefersonestevo/angular-smd \
 	https://github.com/morr/jquery.appear \
 || \
 	exit 1
