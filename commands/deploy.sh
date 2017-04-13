@@ -358,7 +358,7 @@ if [ "${websign}" ] ; then
 	echo "WebSign ${package}"
 
 	# Merge imported libraries into threads
-	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.ts %
+	find js -type f -name '*.js' | xargs -I% ../commands/websign/threadpack.ts %
 
 	../commands/websign/pack.ts --sri --minify index.html ../pkg/cyph.ws
 

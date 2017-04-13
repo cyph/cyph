@@ -39,7 +39,7 @@ fi
 tsfiles="$(
 	{
 		cat cyph.com/*.html cyph.im/*.html | grep -oP "src=(['\"])/js/.*?\1";
-		find ${outputDir}/js -name '*.ts' -not \( \
+		find ${outputDir}/js -type f -name '*.ts' -not \( \
 			-name '*.ngfactory.ts' \
 			-or -name '*.ngmodule.ts' \
 		\) -exec cat {} \; |
@@ -59,7 +59,7 @@ tsfiles="$(
 cd shared
 
 scssfiles="$(
-	find css -name '*.scss' |
+	find css -type f -name '*.scss' |
 		perl -pe 's/css\/(.*)\.scss/\1/g' |
 		tr '\n' ' '
 )"
@@ -220,6 +220,8 @@ compile () {
 			self.translations = ${JSON.stringify(
 				child_process.spawnSync("find", [
 					"../../translations",
+					" -type",
+					"f",
 					"-name",
 					"*.json"
 				]).stdout.toString().
@@ -306,7 +308,7 @@ compile () {
 
 		if [ "${minify}" ] ; then
 			for d in . "${outputDir}/js" ; do
-				find "${d}" -name '*.js' -not \( \
+				find "${d}" -type f -name '*.js' -not \( \
 					-name '*.ngfactory.js' \
 					-or -name '*.ngmodule.js' \
 				\) -exec cat {} \; |
