@@ -20,6 +20,10 @@
 		"justification": "These are just type definitions"
 	},
 	{
+		"path": "google-closure-compiler-js/contrib/externs",
+		"justification": "These are just type definitions"
+	},
+	{
 		"component": "jquery",
 		"version": "1.7.1",
 		"justification": "Only jQuery 3.x is included in our client code"
@@ -73,6 +77,10 @@
 	{
 		"path": "socket.io-client",
 		"justification": "Not using Socket.IO for SimpleWebRTC signaling"
+	},
+	{
+		"path": "webpack-closure-compiler/node_modules/google-closure-compiler",
+		"justification": "These are just type definitions"
 	},
 	{
 		"path": "ws",
