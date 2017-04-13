@@ -16,6 +16,10 @@
 		"justification": "Dev dependency"
 	},
 	{
+		"path": "google-closure-compiler/contrib/externs",
+		"justification": "These are just type definitions"
+	},
+	{
 		"component": "jquery",
 		"version": "1.7.1",
 		"justification": "Only jQuery 3.x is included in our client code"
