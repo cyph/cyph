@@ -105,6 +105,7 @@ yarn add --ignore-platform --ignore-scripts \
 	uglify-js \
 	unsemantic \
 	webpack \
+	webpack-closure-compiler \
 	webrtc-adapter \
 	whatwg-fetch \
 	wowjs \
