@@ -80,7 +80,7 @@
 		[mdOpen]='isSpeedDialOpen'
 		(mouseenter)='isSpeedDialOpen = true'
 		(mouseleave)='isSpeedDialOpen = false'
-		*ngIf='!envService.isMobile && isSpeedDialReady && !p2pService.isActive'
+		*ngIf='!envService.isMobile && !p2pService.isActive'
 	></md2-fab-speed-dial>
 	<md2-fab-speed-dial
 		cyphTranslate
@@ -92,7 +92,7 @@
 		[mdOpen]='isSpeedDialOpen'
 		(mouseenter)='isSpeedDialOpen = true'
 		(mouseleave)='isSpeedDialOpen = false'
-		*ngIf='!envService.isMobile && isSpeedDialReady && p2pService.isActive'
+		*ngIf='!envService.isMobile && p2pService.isActive'
 	></md2-fab-speed-dial>
 
 	<md2-subheader

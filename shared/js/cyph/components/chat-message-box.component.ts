@@ -10,7 +10,6 @@ import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
-import {VisibilityWatcherService} from '../services/visibility-watcher.service';
 import {util} from '../util';
 
 
@@ -36,9 +35,6 @@ export class ChatMessageBoxComponent implements OnInit {
 
 	/** Indicates whether speed dial is open. */
 	public isSpeedDialOpen: boolean	= true;
-
-	/** Indicates whether speed dial should be displayed. */
-	public isSpeedDialReady: boolean;
 
 	/** Button to open mobile menu. */
 	public readonly menuButton: {
@@ -173,28 +169,6 @@ export class ChatMessageBoxComponent implements OnInit {
 			return;
 		}
 
-		const $element	= $(this.elementRef.nativeElement);
-
-		/* Temporary workaround for Angular Material bug */
-
-		const isVideoCallMessageBox	= $element.hasClass('video-call-message-box');
-
-		while (
-			!this.visibilityWatcherService.isVisible ||
-			!$element.is(':visible') ||
-			(
-				isVideoCallMessageBox &&
-				!this.p2pService.isSidebarOpen
-			)
-		) {
-			await util.sleep();
-		}
-
-		await util.sleep(500);
-		this.isSpeedDialReady	= true;
-		await util.sleep(1000);
-		this.isSpeedDialOpen	= false;
-
 		/* Allow enter press to submit, except on mobile without external keyboard */
 
 		const $textarea	= await this.$textarea;
@@ -264,9 +238,6 @@ export class ChatMessageBoxComponent implements OnInit {
 
 		/** @ignore */
 		private readonly virtualKeyboardWatcherService: VirtualKeyboardWatcherService,
-
-		/** @ignore */
-		private readonly visibilityWatcherService: VisibilityWatcherService,
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,
