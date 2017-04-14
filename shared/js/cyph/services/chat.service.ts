@@ -268,10 +268,7 @@ export class ChatService {
 	public setQueuedMessage (messageText?: string, selfDestruct?: boolean) : void {
 		if (typeof messageText === 'string') {
 			this.chat.queuedMessage	= messageText;
-			this.dialogService.toast({
-				content: this.stringsService.queuedMessageSaved,
-				delay: 2500
-			});
+			this.dialogService.toast(this.stringsService.queuedMessageSaved, 2500);
 		}
 
 		if (typeof selfDestruct === 'boolean') {

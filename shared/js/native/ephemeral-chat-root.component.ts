@@ -94,13 +94,13 @@ export class EphemeralChatRootComponent implements OnInit {
 			this.appService.state	= States.chat;
 
 			if (this.sessionInitService.callType) {
-				this.dialogService.toast({
-					content: this.sessionInitService.callType === 'video' ?
+				this.dialogService.toast(
+					this.sessionInitService.callType === 'video' ?
 						this.stringsService.p2pWarningVideoPassive :
 						this.stringsService.p2pWarningAudioPassive
 					,
-					delay: 5000
-				});
+					5000
+				);
 			}
 		});
 	}

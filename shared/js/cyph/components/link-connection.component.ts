@@ -60,12 +60,10 @@ export class LinkConnectionComponent implements OnInit {
 
 		await util.lockTryOnce(
 			this.addTimeLock,
-			async () => {
-				await this.dialogService.toast({
-					content: this.stringsService.timeExtended,
-					delay: 2500
-				});
-			}
+			async () => this.dialogService.toast(
+				this.stringsService.timeExtended,
+				2500
+			)
 		);
 	}
 
@@ -73,13 +71,13 @@ export class LinkConnectionComponent implements OnInit {
 	public async copyToClipboard () : Promise<void> {
 		await util.lockTryOnce(
 			this.copyLock,
-			async () => this.dialogService.toast({
-				content: await clipboard.copy(this.linkConstant).
+			async () => this.dialogService.toast(
+				await clipboard.copy(this.linkConstant).
 					then(() => this.stringsService.linkCopied).
 					catch(() => this.stringsService.linkCopyFail)
 				,
-				delay: 2500
-			})
+				2500
+			)
 		);
 	}
 
