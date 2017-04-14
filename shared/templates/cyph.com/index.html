@@ -1,236 +1,209 @@
 <section
-	fxFlexFill
-	fxLayout='column'
 	id='main'
+	class='layout-column'
 	[class.unisection-mode]='appService.state !== appService.states.home'
 >
-	<md-toolbar id='main-toolbar' class='wow animated fadeInDownBig' [fxHide]='sidenav.opened'>
-		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
-			<div fxFlex fxLayout='column'>
-				<div fxLayout='row'>
-					<div fxLayout='column' fxLayoutAlign='center center'>
-						<a cyphTranslate id='logo' href='/'>
-							<img src='/img/logo.white.horizontal.header.png' alt='Cyph logo' />
-						</a>
-					</div>
+	<md-sidenav-container>
+		<md2-toolbar childId='main-toolbar' childClass='wow animated fadeInDownBig'>
+			<div class='md-toolbar-tools'>
+				<span class='padding'></span>
 
-					<div fxFlex fxLayout='column'></div>
+				<a id='logo' href='/'>
+					<img
+						cyphTranslate
+						src='/img/logo.white.horizontal.header.png'
+						alt='Horizontal white Cyph logo with transparent background'
+					/>
+				</a>
 
-					<div
-						fxLayout='column'
-						fxLayoutAlign='center center'
-						fxHide.lt-lg class='link-wrapper-outer right'
-					>
-						<div class='link-wrapper-inner' cyphTranslate>
-							<a md-button href='/intro'>Intro</a>
-							<a md-button href='/features'>Features</a>
-							<a md-button href='/about'>About</a>
-							<a md-button href='/gettingstarted'>Getting Started</a>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div fxFlexAlign='center' fxLayout='column' fxLayoutAlign='center center'>
-				<a
-					md-raised-button
+				<md2-button
 					cyphTranslate
-					id='new-cyph'
-					class='breathe'
-					[href]='envService.newCyphUrl'
+					childId='new-cyph'
+					ariaLabel='Start new cyph'
+					childClass='breathe'
 				>
-					Start New Cyph
-				</a>
-			</div>
+					<a [href]='envService.newCyphUrl'>Start new cyph</a>
+				</md2-button>
 
-			<div fxFlex fxLayout='column'>
-				<div fxLayout='row'>
-					<div
-						fxLayout='column'
-						fxLayoutAlign='center center'
-						fxHide.lt-lg
-						class='link-wrapper-outer left'
+				<span class='link-wrapper-outer right hide show-gt-md'>
+					<span class='link-wrapper-inner' cyphTranslate>
+						<md2-button href='/intro'>Intro</md2-button>
+						<md2-button href='/features'>Features</md2-button>
+						<md2-button href='/about'>About</md2-button>
+						<md2-button href='/gettingstarted'>Getting Started</md2-button>
+					</span>
+				</span>
+
+				<span class='flex'></span>
+
+				<span class='link-wrapper-outer left hide show-gt-md'>
+					<span class='link-wrapper-inner'>
+						<md2-button cyphTranslate href='/blog'>Blog</md2-button>
+						<md2-button cyphTranslate href='/faq'>FAQ</md2-button>
+						<md2-button cyphTranslate href='/pricing'>Pricing</md2-button>
+						<md2-button cyphTranslate href='/register'>Register</md2-button>
+					</span>
+				</span>
+
+				<span class='social-media hide show-gt-md'>
+					<md2-button
+						cyphTranslate
+						ariaLabel='GitHub'
+						rel='noreferrer'
+						href='https://github.com/cyph'
+						target='_blank'
 					>
-						<div class='link-wrapper-inner' cyphTranslate>
-							<a md-button href='/blog'>Blog</a>
-							<a md-button href='/faq'>FAQ</a>
-							<a md-button href='/pricing'>Pricing</a>
-							<a md-button href='/register'>Register</a>
-						</div>
-					</div>
+						<img src='/img/iconfinder/github.png' alt='GitHub icon' />
+					</md2-button>
+					<md2-button
+						cyphTranslate
+						ariaLabel='Twitter'
+						rel='noreferrer'
+						href='https://twitter.com/cyph'
+						target='_blank'
+					>
+						<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
+					</md2-button>
+					<md2-button
+						cyphTranslate
+						ariaLabel='Facebook'
+						rel='noreferrer'
+						href='https://www.facebook.com/cyph'
+						target='_blank'
+					>
+						<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />
+					</md2-button>
+				</span>
 
-					<div fxFlex fxLayout='column'></div>
+				<md2-button
+					cyphTranslate
+					ariaLabel='Menu'
+					(childClick)='sidenav.open()'
+					childClass='hide-gt-md'
+				>
+					<img src='/img/icons/menu.png' alt='Menu' />
+				</md2-button>
 
-					<div fxLayout='column' fxLayoutAlign='center center'>
-						<div fxHide.lt-lg class='social-media'>
-							<a
-								md-icon-button
-								cyphTranslate
-								mdTooltip='GitHub'
-								rel='noreferrer'
-								href='https://github.com/cyph/cyph'
-								target='_blank'
-							>
-								<img src='/img/iconfinder/github.png' alt='GitHub icon' />
-							</a>
-							<a
-								md-icon-button
-								cyphTranslate
-								mdTooltip='Twitter'
-								rel='noreferrer'
-								href='https://twitter.com/cyph'
-								target='_blank'
-							>
-								<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
-							</a>
-							<a
-								md-icon-button
-								cyphTranslate
-								mdTooltip='Facebook'
-								rel='noreferrer'
-								href='https://www.facebook.com/cyph'
-								target='_blank'
-							>
-								<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />
-							</a>
-						</div>
-
-						<div fxHide.gt-md>
-							<button
-								md-icon-button
-								cyphTranslate
-								mdTooltip='Menu'
-								(click)='sidenav.toggle()'
-							>
-								<md-icon>menu</md-icon>
-							</button>
-						</div>
-					</div>
-				</div>
+				<span class='padding'></span>
 			</div>
-		</div>
-	</md-toolbar>
+		</md2-toolbar>
 
-	<md-sidenav-container (backdropClick)='sidenav.close()'>
-		<md-sidenav #sidenav align='end' mode='push' fxLayout='column' fxLayoutGap='8px'>
-			<div fxLayout='row'></div>
-			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/' (click)='sidenav.close()'>
-					<img src='/img/logo.white.horizontal.header.png' alt='Cyph logo' />
-				</a>
-			</div>
-			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/intro' (click)='sidenav.close()'>
+		<md-sidenav #sidenav>
+			<div>
+				<md2-button cyphTranslate href='/intro' (childClick)='sidenav.close()'>
 					Intro
-				</a>
+				</md2-button>
 			</div>
-			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/features' (click)='sidenav.close()'>
+			<div>
+				<md2-button cyphTranslate href='/features' (childClick)='sidenav.close()'>
 					Features
-				</a>
+				</md2-button>
 			</div>
-			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/about' (click)='sidenav.close()'>
+			<div>
+				<md2-button cyphTranslate href='/about' (childClick)='sidenav.close()'>
 					About
-				</a>
+				</md2-button>
 			</div>
-			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/gettingstarted' (click)='sidenav.close()'>
+			<div>
+				<md2-button
+					cyphTranslate
+					href='/gettingstarted'
+					(childClick)='sidenav.close()'
+				>
 					Getting Started
-				</a>
+				</md2-button>
 			</div>
-			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/blog' (click)='sidenav.close()'>
+			<div>
+				<md2-button cyphTranslate href='/blog' (childClick)='sidenav.close()'>
 					Blog
-				</a>
+				</md2-button>
 			</div>
-			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/faq' (click)='sidenav.close()'>
+			<div>
+				<md2-button cyphTranslate href='/faq' (childClick)='sidenav.close()'>
 					FAQ
-				</a>
+				</md2-button>
 			</div>
-			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/pricing' (click)='sidenav.close()'>
+			<div>
+				<md2-button cyphTranslate href='/pricing' (childClick)='sidenav.close()'>
 					Pricing
-				</a>
+				</md2-button>
 			</div>
-			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/register' (click)='sidenav.close()'>
+			<div>
+				<md2-button cyphTranslate href='/register' (childClick)='sidenav.close()'>
 					Register
-				</a>
+				</md2-button>
 			</div>
-			<div fxLayout='row'>
-				<a
-					md-button
-					fxFlex
+			<div>
+				<md2-button
 					cyphTranslate
 					rel='noreferrer'
-					href='https://github.com/cyph/cyph'
+					href='https://github.com/cyph'
 					target='_blank'
-					(click)='sidenav.close()'
+					(childClick)='sidenav.close()'
 				>
-					<img src='/img/iconfinder/github.png' alt='GitHub icon' />
+					<span class='image'>
+						<img src='/img/iconfinder/github.png' alt='GitHub icon' />
+					</span>
 					<span>GitHub</span>
-				</a>
+				</md2-button>
 			</div>
-			<div fxLayout='row'>
-				<a
-					md-button
-					fxFlex
+			<div>
+				<md2-button
 					cyphTranslate
 					rel='noreferrer'
 					href='https://twitter.com/cyph'
 					target='_blank'
-					(click)='sidenav.close()'
+					(childClick)='sidenav.close()'
 				>
-					<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
+					<span class='image'>
+						<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
+					</span>
 					<span>Twitter</span>
-				</a>
+				</md2-button>
 			</div>
-			<div fxLayout='row'>
-				<a
-					md-button
-					fxFlex
+			<div>
+				<md2-button
 					cyphTranslate
 					rel='noreferrer'
 					href='https://www.facebook.com/cyph'
 					target='_blank'
-					(click)='sidenav.close()'
+					(childClick)='sidenav.close()'
 				>
-					<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />
+					<span class='image'>
+						<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />
+					</span>
 					<span>Facebook</span>
-				</a>
+				</md2-button>
 			</div>
 		</md-sidenav>
+
 
 		<section id='hero-section' [class.promo]='appService.promo !== undefined'>
 			<div class='hero-foreground'>
 				<div
-					fxLayout='row'
-					fxLayoutAlign='center center'
 					id='promo-section'
 					*ngIf='appService.promo !== undefined'
+					class='layout-row layout-align-center-center'
 				>
-					<md-card
-						fxFlex='33'
-						fxFlex.sm='66'
-						fxFlex.xs='100'
-						class='animated wow'
+					<md2-card
+						class='animated wow flex-33 flex-sm-66 flex-xs-100'
 						data-wow-delay='3000ms'
 						[class.bounceInLeft]='appService.promo === appService.promos.jjgo'
 						[class.bounceInDown]='appService.promo !== appService.promos.jjgo'
 					>
-						<md-card-title>
-							<img
-								alt='Promo image'
-								[src]='
-									"/img/thirdparty/" +
-									appService.promos[appService.promo] +
-									".png"
-								'
-							/>
-						</md-card-title>
-						<md-card-content>
+						<md2-card-header>
+							<md2-card-header-text class='flex'>
+								<img
+									alt='Promo image'
+									[src]='
+										"/img/thirdparty/" +
+										appService.promos[appService.promo] +
+										".png"
+									'
+								/>
+							</md2-card-header-text>
+						</md2-card-header>
+						<md2-card-content>
 							<p>
 								<span cyphTranslate>Welcome</span>
 								<span *ngIf='appService.promo === appService.promos.betalist'>
@@ -268,8 +241,8 @@
 									for a Cyph beta account.
 								</span>
 							</p>
-						</md-card-content>
-					</md-card>
+						</md2-card-content>
+					</md2-card>
 				</div>
 
 				<div class='hero-foreground-main'>
@@ -282,8 +255,8 @@
 					</h1>
 
 					<div class='hero-container grid-container'>
-						<div fxLayout='row' *ngIf='!envService.isMobile'>
-							<div fxFlex='25'></div>
+						<div class='layout-row' *ngIf='!envService.isMobile'>
+							<div class='flex-25'></div>
 							<div class='wow bounceInLeft' data-wow-delay='2250ms'>
 								<a href='/intro'>
 									<img
@@ -308,7 +281,7 @@
 								</a>
 								&nbsp;
 							</div>
-							<div fxFlex='25'></div>
+							<div class='flex-25'></div>
 						</div>
 						<div class='hero-description wow animated fadeIn' data-wow-delay='2500ms'>
 							<p cyphTranslate>
@@ -330,25 +303,17 @@
 		</section>
 
 		<section id='testimonials-section'>
-			<div
-				fxLayout='row'
-				class='carousel wow animated fadeIn'
-				data-wow-delay='2750ms'
-			>
-				<div class='logo-container'>
+			<div class='carousel flex layout-column wow animated fadeIn' data-wow-delay='2750ms'>
+				<div class='logo-container flex layout-row'>
 					<a
-						fxFlex
-						fxLayout='column'
-						class='logo'
+						class='logo flex layout-column'
 						(click)='appService.testimonialCarousel.setItem(0)'
 					>
 						<img cyphTranslate src='/img/thirdparty/cure53.png' alt='Cure53 logo' />
 					</a>
-					<div fxFlex='55' fxLayout='column'></div>
+					<div class='flex-55 layout-column'></div>
 					<a
-						fxFlex
-						fxLayout='column'
-						class='logo'
+						class='logo flex layout-column'
 						(click)='appService.testimonialCarousel.setItem(1)'
 					>
 						<img
@@ -359,12 +324,8 @@
 					</a>
 				</div>
 
-				<div fxFlex class='quote-container'>
-					<div
-						[fxFlex]='envService.isMobile ? "100" : "50"'
-						fxLayout='column'
-						class='quote'
-					>
+				<div class='quote-container flex layout-row'>
+					<div class='quote layout-column' [class.flex-50]='!envService.isMobile'>
 						<div class='text' cyphTranslate>
 							Cyph provides security from a broad range of cryptographic attacks
 							and very strong client-side crypto. The general conclusion of the
@@ -400,11 +361,7 @@
 							>Open Technology Fund</a>)
 						</div>
 					</div>
-					<div
-						[fxFlex]='envService.isMobile ? "100" : "50"'
-						fxLayout='column'
-						class='quote'
-					>
+					<div class='quote layout-column' [class.flex-50]='!envService.isMobile'>
 						<div class='text' cyphTranslate>
 							I like the simple, nonintrusive interface and the single-minded
 							emphasis on doing one thing really well. We will definitely
@@ -428,26 +385,14 @@
 				</div>
 			</div>
 
-			<a
-				md-icon-button
-				class='nav-arrow'
-				href='/intro'
-				mdTooltip='Scroll Down'
-				*ngIf='!envService.isMobile'
-			>
-				<md-icon>keyboard_arrow_down</md-icon>
+			<a class='nav-arrow' href='/intro' *ngIf='!envService.isMobile'>
+				<img cyphTranslate src='/img/icons/downarrow.png' alt='Down arrow' />
 			</a>
 		</section>
 
 		<section id='intro-section'>
-			<a
-				md-icon-button
-				class='nav-arrow'
-				href='/'
-				mdTooltip='Scroll Up'
-				*ngIf='!envService.isMobile'
-			>
-				<md-icon>keyboard_arrow_up</md-icon>
+			<a class='nav-arrow' href='/' *ngIf='!envService.isMobile'>
+				<img cyphTranslate src='/img/icons/uparrow.png' alt='Up arrow' />
 			</a>
 
 			<cyph-demo></cyph-demo>
@@ -804,7 +749,7 @@
 			<h1 class='hero-text' cyphTranslate>
 				Press The Button
 			</h1>
-			<div [fxFlex]='envService.isMobile' class='section-content-container'>
+			<div class='section-content-container'>
 				<p cyphTranslate>
 					The button will take you into the Cyph application, where you'll be given
 					a custom shortlink to share with one friend.
@@ -848,25 +793,23 @@
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
 				Contact Us
 			</h1>
-			<div class='section-content-container' fxLayout='column' fxLayoutGap='32px'>
-				<div>
+			<div class='section-content-container'>
+				<p>
 					<cyph-contact [email]='appService.contact'></cyph-contact>
-				</div>
-				<div>
-					<p>
-						<span cyphTranslate>
-							If you prefer to use your own email client,
-							feel free to shoot us a message at
-						</span>
-						<a href='mailto:hello@cyph.com' title='hello@cyph.com'>hello@cyph.com</a>.
-					</p>
-					<p>
-						<span cyphTranslate>
-							We also have a phone line open for voicemail:
-						</span>
-						<a href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>.
-					</p>
-				</div>
+				</p>
+				<p>
+					<span cyphTranslate>
+						If you prefer to use your own email client,
+						feel free to shoot us a message at
+					</span>
+					<a href='mailto:hello@cyph.com' title='hello@cyph.com'>hello@cyph.com</a>.
+				</p>
+				<p>
+					<span cyphTranslate>
+						We also have a phone line open for voicemail:
+					</span>
+					<a href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>.
+				</p>
 			</div>
 		</section>
 
@@ -878,54 +821,51 @@
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
 				Donate
 			</h1>
-			<div fxLayout='column' fxLayoutGap='16px' class='section-content-container'>
-				<div fxLayout='row'>
-					<div fxLayout='column'>
-						<p>
-							<span cyphTranslate>
-								If you'd like to help support our mission, you may donate
-								via the form below or use the Bitcoin address
-							</span>
-							<a
-								target='_self'
-								href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'
-							>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>.
-						</p>
-						<p>
-							All donations will go directly toward the development of
-							native mobile apps and Cyph accounts.
-						</p>
+			<div class='section-content-container'>
+				<div class='layout-row'>
+					<div>
+						<span cyphTranslate>
+							If you'd like to help support our mission, you may donate
+							via the form below or use the Bitcoin address
+						</span>
+						<a
+							target='_self'
+							href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'
+						>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>.
 					</div>
 				</div>
-				<div fxLayout='row'>
-					<md-slider
-						fxFlex
-						fxLayout='column'
-						thumbLabel
-						[(ngModel)]='appService.donationAmount'
-						step='1'
-						min='1'
-						max='1337'
-						mdTooltip='Donation Amount'
-					></md-slider>
-					<div fxLayout='column' class='donation-amount'>
+				<p class='layout-row' cyphTranslate>
+					All donations will go directly toward the development of
+					native mobile apps and Cyph accounts.
+				</p>
+				<div class='layout-row'>
+					<md2-slider
+						class='flex layout-column'
+						mdDiscrete
+						[(model)]='appService.donationAmount'
+						[step]='1'
+						[min]='1'
+						[max]='1337'
+						ariaLabel='Donation Amount'
+					></md2-slider>
+					<div class='donation-amount layout-column'>
 						${{appService.donationAmount}}
 					</div>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<button
-						md-button
-						cyphTranslate
-						class='donate-button'
-						(click)='appService.updateCart(
-							appService.donationAmount,
-							configService.pricingConfig.categories.donation.id,
-							configService.pricingConfig.categories.donation.items.generic.id
-						)'
-					>
+				<md2-button
+					class='layout-row'
+					childClass='donate-button'
+					ariaLabel='Submit Donation'
+					cyphTranslate
+				>
+					<a (click)='appService.updateCart(
+						appService.donationAmount,
+						configService.pricingConfig.categories.donation.id,
+						configService.pricingConfig.categories.donation.items.generic.id
+					)'>
 						Confirm Donation Amount
-					</button>
-				</div>
+					</a>
+				</md2-button>
 			</div>
 		</section>
 
@@ -937,48 +877,48 @@
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
 				Checkout
 			</h1>
-			<div fxLayout='row' fxLayoutAlign='center center'>
-				<md-card fxFlex='33' fxFlex.sm='80' fxFlex.xs='95'>
-					<md-card-content>
-						<div class='cart empty' *ngIf='!appService.cart'>
-							<h3 cyphTranslate>
-								There's nothing in your cart. What are you even doing here?
-							</h3>
-							<br />
-							<span cyphTranslate>To add something to your cart go to</span>
-							<a href='/pricing' cyphTranslate>Business Pricing</a>
-							<span cyphTranslate>or</span>
-							<a href='/donate' cyphTranslate>make a donation</a>
-							.
-						</div>
-						<cyph-checkout
-							[amount]='appService.cart.amount'
-							[category]='appService.cart.category'
-							[item]='appService.cart.item'
-							[subscription]='appService.cart.subscription'
-							*ngIf='appService.cart'
-						>
-							<div
-								cyphTranslate
-								*ngIf='
-									appService.cart.category ===
-									configService.pricingConfig.categories.donation.id
-								'
-							>
-								Thank you for supporting Cyph!
-							</div>
-							<div
-								cyphTranslate
-								*ngIf='
-									appService.cart.category !==
-									configService.pricingConfig.categories.donation.id
-								'
-							>
-								Payment confirmed! Follow-up instructions will be sent via email.
-							</div>
-						</cyph-checkout>
-					</md-card-content>
-				</md-card>
+			<div class='layout-row layout-align-center-center'>
+				<div
+					class='cart empty flex-33 flex-sm-80 flex-xs-95'
+					*ngIf='!appService.cart'
+				>
+					<h3 cyphTranslate>
+						There's nothing in your cart. What are you even doing here?
+					</h3>
+					<br />
+					<span cyphTranslate>To add something to your cart go to</span>
+					<a href='/pricing' cyphTranslate>Business Pricing</a>
+					<span cyphTranslate>or</span>
+					<a href='/donate' cyphTranslate>make a donation</a>
+					.
+				</div>
+				<cyph-checkout
+					class='flex-33 flex-sm-80 flex-xs-95'
+					[amount]='appService.cart.amount'
+					[category]='appService.cart.category'
+					[item]='appService.cart.item'
+					[subscription]='appService.cart.subscription'
+					*ngIf='appService.cart'
+				>
+					<div
+						cyphTranslate
+						*ngIf='
+							appService.cart.category ===
+							configService.pricingConfig.categories.donation.id
+						'
+					>
+						Thank you for supporting Cyph!
+					</div>
+					<div
+						cyphTranslate
+						*ngIf='
+							appService.cart.category !==
+							configService.pricingConfig.categories.donation.id
+						'
+					>
+						Payment confirmed! Follow-up instructions will be sent via email.
+					</div>
+				</cyph-checkout>
 			</div>
 		</section>
 
@@ -990,15 +930,17 @@
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
 				Frequently Asked Questions
 			</h1>
-			<div fxLayout='row' fxLayoutAlign='center center' class='section-content-container'>
-				<div fxFlex='75' fxFlex.xs='95' fxLayout='column' fxLayoutGap='16px'>
-					<md-card>
-						<md-card-title>
-							<span cyphTranslate>
-								How do I use Cyph?
-							</span>
-						</md-card-title>
-						<md-card-content>
+			<div class='section-content-container layout-row layout-align-center-center'>
+				<div class='md-padding flex-75 flex-xs-95 layout-column'>
+					<md2-card>
+						<md2-card-header>
+							<md2-card-header-text>
+								<span class='md-title' cyphTranslate>
+									How do I use Cyph?
+								</span>
+							</md2-card-header-text>
+						</md2-card-header>
+						<md2-card-content>
 							<p>
 								<span cyphTranslate>Simply go to</span>
 								<a [href]='envService.newCyphUrl'>cyph.im</a>
@@ -1009,28 +951,32 @@
 									click it you both will enter a secure chat.
 								</span>
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
-							<span cyphTranslate>
-								How do I send files?
-							</span>
-						</md-card-title>
-						<md-card-content>
+						</md2-card-content>
+					</md2-card>
+					<md2-card>
+						<md2-card-header>
+							<md2-card-header-text>
+								<span class='md-title' cyphTranslate>
+									How do I send files?
+								</span>
+							</md2-card-header-text>
+						</md2-card-header>
+						<md2-card-content>
 							<p cyphTranslate>
 								Click the plus ("+") icon in the message composition textbox, click
 								the paperclip icon, and then select the file you wish to share.
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
-							<span cyphTranslate>
-								How do I start a video or voice call?
-							</span>
-						</md-card-title>
-						<md-card-content>
+						</md2-card-content>
+					</md2-card>
+					<md2-card>
+						<md2-card-header>
+							<md2-card-header-text>
+								<span class='md-title' cyphTranslate>
+									How do I start a video or voice call?
+								</span>
+							</md2-card-header-text>
+						</md2-card-header>
+						<md2-card-content>
 							<p cyphTranslate>
 								Click the plus ("+") icon in the message composition textbox,
 								then click the video (or phone) icon. A warning will pop up
@@ -1040,29 +986,33 @@
 								directly to the other party instead of going through our
 								servers).
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
-							<span cyphTranslate>
-								What data do you track?
-							</span>
-						</md-card-title>
-						<md-card-content>
+						</md2-card-content>
+					</md2-card>
+					<md2-card>
+						<md2-card-header>
+							<md2-card-header-text>
+								<span class='md-title' cyphTranslate>
+									What data do you track?
+								</span>
+							</md2-card-header-text>
+						</md2-card-header>
+						<md2-card-content>
 							<p cyphTranslate>
 								Currently, we only track numbers of: cyph sessions, messages,
 								timeouts, voice/video calls, file transfers, signups,
 								cyphertext UI views, help UI views, and calls to our API.
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
-							<span cyphTranslate>
-								How much does Cyph cost?
-							</span>
-						</md-card-title>
-						<md-card-content>
+						</md2-card-content>
+					</md2-card>
+					<md2-card>
+						<md2-card-header>
+							<md2-card-header-text>
+								<span class='md-title' cyphTranslate>
+									How much does Cyph cost?
+								</span>
+							</md2-card-header-text>
+						</md2-card-header>
+						<md2-card-content>
 							<p>
 								<span cyphTranslate>
 									The Cyph beta is free to use for individuals (we intend
@@ -1074,44 +1024,50 @@
 									cyphTranslate
 								>enterprise deployments of secure video and instant messaging</a>.
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
-							<span cyphTranslate>
-								Do you have an Android/iOS/TI-89 app?
-							</span>
-						</md-card-title>
-						<md-card-content>
+						</md2-card-content>
+					</md2-card>
+					<md2-card>
+						<md2-card-header>
+							<md2-card-header-text>
+								<span class='md-title' cyphTranslate>
+									Do you have an Android/iOS/TI-89 app?
+								</span>
+							</md2-card-header-text>
+						</md2-card-header>
+						<md2-card-content>
 							<p cyphTranslate>
 								Native chat applications for Android and iOS are in the works.
 								We have no plans to support any Texas Instruments machines.
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
-							<span cyphTranslate>
-								Why do I keep getting the "I'm sorry,
-								but your cyph is in another castle" screen?
-							</span>
-						</md-card-title>
-						<md-card-content>
+						</md2-card-content>
+					</md2-card>
+					<md2-card>
+						<md2-card-header>
+							<md2-card-header-text>
+								<span class='md-title' cyphTranslate>
+									Why do I keep getting the "I'm sorry,
+									but your cyph is in another castle" screen?
+								</span>
+							</md2-card-header-text>
+						</md2-card-header>
+						<md2-card-content>
 							<p cyphTranslate>
 								Common reasons for landing on this page are: the cyph URL has
 								been opened more than once (only the first person who clicks
 								it is allowed into the chat) or the cyph link has already
 								expired.
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
-							<span cyphTranslate>
-								Has there been a third-party security audit of Cyph?
-							</span>
-						</md-card-title>
-						<md-card-content>
+						</md2-card-content>
+					</md2-card>
+					<md2-card>
+						<md2-card-header>
+							<md2-card-header-text>
+								<span class='md-title' cyphTranslate>
+									Has there been a third-party security audit of Cyph?
+								</span>
+							</md2-card-header-text>
+						</md2-card-header>
+						<md2-card-content>
 							<p>
 								<span cyphTranslate>Yes,</span>
 								<a
@@ -1131,15 +1087,17 @@
 									cyphTranslate
 								>[Complete Cure53 Pentest Report]</a>
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
-							<span cyphTranslate>
-								How can I support Cyph?
-							</span>
-						</md-card-title>
-						<md-card-content>
+						</md2-card-content>
+					</md2-card>
+					<md2-card>
+						<md2-card-header>
+							<md2-card-header-text>
+								<span class='md-title' cyphTranslate>
+									How can I support Cyph?
+								</span>
+							</md2-card-header-text>
+						</md2-card-header>
+						<md2-card-content>
 							<p>
 								<span cyphTranslate>
 									One of the best ways you can support Cyph is by
@@ -1154,15 +1112,17 @@
 									development and growth of Cyph.
 								</span>
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
-							<span cyphTranslate>
-								What should I do if I encounter a bug?
-							</span>
-						</md-card-title>
-						<md-card-content>
+						</md2-card-content>
+					</md2-card>
+					<md2-card>
+						<md2-card-header>
+							<md2-card-header-text>
+								<span class='md-title' cyphTranslate>
+									What should I do if I encounter a bug?
+								</span>
+							</md2-card-header-text>
+						</md2-card-header>
+						<md2-card-content>
 							<p>
 								<span cyphTranslate>Please contact us at</span>
 								<a href='/contact/bugs'>bugs@cyph.com</a>;
@@ -1172,8 +1132,8 @@
 									or other relevant information.
 								</span>
 							</p>
-						</md-card-content>
-					</md-card>
+						</md2-card-content>
+					</md2-card>
 				</div>
 			</div>
 		</section>

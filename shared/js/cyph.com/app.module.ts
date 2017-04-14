@@ -1,28 +1,13 @@
 import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
-import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {
-	MdButtonModule,
-	MdCardModule,
 	MdDialogModule,
-	MdIconModule,
-	MdInputModule,
-	MdListModule,
-	MdMenuModule,
-	MdProgressBarModule,
-	MdProgressSpinnerModule,
-	MdSelectModule,
 	MdSidenavModule,
-	MdSliderModule,
-	MdSlideToggleModule,
-	MdSnackBarModule,
-	MdTabsModule,
-	MdToolbarModule,
-	MdTooltipModule
+	MdSnackBarModule
 } from '@angular/material';
 import {BrowserModule, Title} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {UpgradeModule} from '@angular/upgrade/static';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
 import {ChatCyphertextComponent} from '../cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from '../cyph/components/chat-main.component';
@@ -32,14 +17,40 @@ import {CheckoutComponent} from '../cyph/components/checkout.component';
 import {ContactComponent} from '../cyph/components/contact.component';
 import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
 import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
-import {
-	SmdFabSpeedDialActions,
-	SmdFabSpeedDialComponent,
-	SmdFabSpeedDialTrigger
-} from '../cyph/components/fab-speed-dial.tmp';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {HelpComponent} from '../cyph/components/help.component';
 import {MarkdownComponent} from '../cyph/components/markdown.component';
+import {MdButtonComponent} from '../cyph/components/material/md-button.component';
+import {MdCardContentComponent} from '../cyph/components/material/md-card-content.component';
+import {
+	MdCardHeaderTextComponent
+} from '../cyph/components/material/md-card-header-text.component';
+import {MdCardHeaderComponent} from '../cyph/components/material/md-card-header.component';
+import {
+	MdCardTitleTextComponent
+} from '../cyph/components/material/md-card-title-text.component';
+import {MdCardTitleComponent} from '../cyph/components/material/md-card-title.component';
+import {MdCardComponent} from '../cyph/components/material/md-card.component';
+import {MdContentComponent} from '../cyph/components/material/md-content.component';
+import {MdFabSpeedDialComponent} from '../cyph/components/material/md-fab-speed-dial.component';
+import {MdIconComponent} from '../cyph/components/material/md-icon.component';
+import {MdInputComponent} from '../cyph/components/material/md-input.component';
+import {MdListItemComponent} from '../cyph/components/material/md-list-item.component';
+import {MdListComponent} from '../cyph/components/material/md-list.component';
+import {MdMenuComponent} from '../cyph/components/material/md-menu.component';
+import {
+	MdProgressCircularComponent
+} from '../cyph/components/material/md-progress-circular.component';
+import {
+	MdProgressLinearComponent
+} from '../cyph/components/material/md-progress-linear.component';
+import {MdSelectComponent} from '../cyph/components/material/md-select.component';
+import {MdSidenavComponent} from '../cyph/components/material/md-sidenav.component';
+import {MdSliderComponent} from '../cyph/components/material/md-slider.component';
+import {MdSubheaderComponent} from '../cyph/components/material/md-subheader.component';
+import {MdTabsComponent} from '../cyph/components/material/md-tabs.component';
+import {MdTextareaComponent} from '../cyph/components/material/md-textarea.component';
+import {MdToolbarComponent} from '../cyph/components/material/md-toolbar.component';
 import {SignupFormComponent} from '../cyph/components/signup-form.component';
 import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive';
 import {TranslateDirective} from '../cyph/directives/translate.directive';
@@ -70,7 +81,6 @@ import {SilentNotificationService} from './silent-notification.service';
  * Angular module for Cyph home page.
  */
 @NgModule({
-	bootstrap: [AppComponent],
 	declarations: [
 		AppComponent,
 		BetaRegisterComponent,
@@ -90,39 +100,44 @@ import {SilentNotificationService} from './silent-notification.service';
 		NanoScrollerDirective,
 		SignupFormComponent,
 		TranslateDirective,
-		SmdFabSpeedDialActions,
-		SmdFabSpeedDialComponent,
-		SmdFabSpeedDialTrigger
+		MdButtonComponent,
+		MdCardComponent,
+		MdCardContentComponent,
+		MdCardHeaderComponent,
+		MdCardHeaderTextComponent,
+		MdCardTitleComponent,
+		MdCardTitleTextComponent,
+		MdContentComponent,
+		MdFabSpeedDialComponent,
+		MdIconComponent,
+		MdInputComponent,
+		MdListComponent,
+		MdListItemComponent,
+		MdMenuComponent,
+		MdProgressCircularComponent,
+		MdProgressLinearComponent,
+		MdSelectComponent,
+		MdSidenavComponent,
+		MdSliderComponent,
+		MdSubheaderComponent,
+		MdTabsComponent,
+		MdTextareaComponent,
+		MdToolbarComponent
 	],
 	entryComponents: [
+		AppComponent,
 		BetaRegisterComponent,
-		DialogAlertComponent,
-		DialogConfirmComponent,
+		FileInputComponent,
 		HelpComponent
 	],
 	imports: [
-		BrowserAnimationsModule,
 		BrowserModule,
 		CommonModule,
-		FlexLayoutModule,
 		FormsModule,
-		MdButtonModule,
-		MdCardModule,
 		MdDialogModule,
-		MdIconModule,
-		MdInputModule,
-		MdListModule,
-		MdMenuModule,
-		MdProgressBarModule,
-		MdProgressSpinnerModule,
-		MdSelectModule,
 		MdSidenavModule,
-		MdSliderModule,
-		MdSlideToggleModule,
 		MdSnackBarModule,
-		MdTabsModule,
-		MdToolbarModule,
-		MdTooltipModule
+		UpgradeModule
 	],
 	providers: [
 		AnalyticsService,
@@ -156,7 +171,9 @@ import {SilentNotificationService} from './silent-notification.service';
 		}
 	]
 })
-/* tslint:disable-next-line:no-stateless-class */
 export class AppModule {
+	/** @ignore */
+	public ngDoBootstrap () : void {}
+
 	constructor () {}
 }
