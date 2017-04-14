@@ -3,164 +3,113 @@
 	[class.mobile]='envService.isMobile'
 	*ngIf='chatService.chat.state === states.chat && sessionService.state.isAlive'
 >
-	<div fxFlex class='message-box-wrapper'>
-		<textarea
-			fxFlex
-			class='message-box tabIndent'
-			[(ngModel)]='chatService.chat.currentMessage'
-			(ngModelChange)='chatService.messageChange()'
-			placeholder='Send a secure message...'
-			cyphTranslate
-		></textarea>
-	</div>
+	<textarea
+		class='message-box tabIndent'
+		[(ngModel)]='chatService.chat.currentMessage'
+		(ngModelChange)='chatService.messageChange()'
+		placeholder='Send a secure message...'
+		cyphTranslate
+	></textarea>
 
 	<div *ngIf='envService.isMobile'>
 		<div
 			class='message-box-button-group'
 			[class.hidden]='chatService.chat.currentMessage === ""'
 		>
-			<button
-				md-icon-button
-				mdTooltip='Send'
-				(click)='mobileButtonHandlers.send()'
+			<md2-button
+				ariaLabel='Send'
+				childClass='grey'
+				(childClick)='mobileButtonHandlers.send()'
 				cyphTranslate
 			>
-				<md-icon>send</md-icon>
-			</button>
+				<md2-icon>send</md2-icon>
+			</md2-button>
 		</div>
 		<div
 			class='message-box-button-group'
 			[class.hidden]='chatService.chat.currentMessage !== ""'
 		>
-			<button
-				md-icon-button
-				mdTooltip='Video Call'
-				(click)='mobileButtonHandlers.videoCall()'
+			<md2-button
+				ariaLabel='Video Call'
+				childClass='grey'
+				(childClick)='mobileButtonHandlers.videoCall()'
 				[disabled]='!p2pService.isEnabled'
 				*ngIf='!p2pService.isActive'
 				cyphTranslate
 			>
-				<md-icon>video_call</md-icon>
-			</button>
-			<button
-				md-icon-button
-				mdTooltip='Voice Call'
-				(click)='mobileButtonHandlers.voiceCall()'
+				<md2-icon>videocam</md2-icon>
+			</md2-button>
+			<md2-button
+				ariaLabel='Voice Call'
+				childClass='grey'
+				(childClick)='mobileButtonHandlers.voiceCall()'
 				[disabled]='!p2pService.isEnabled'
 				*ngIf='!p2pService.isActive'
 				cyphTranslate
 			>
-				<md-icon>call</md-icon>
-			</button>
-			<button
-				md-icon-button
-				mdTooltip='Send File or Photo'
+				<md2-icon>phone</md2-icon>
+			</md2-button>
+			<md2-button
+				ariaLabel='Send File or Photo'
+				childClass='grey'
 				cyphTranslate
 			>
-				<md-icon>attach_file</md-icon>
+				<md2-icon>attach_file</md2-icon>
 				<cyph-file-input
 					[accept]='fileAccept'
 					(change)='mobileButtonHandlers.fileTransfer($event)'
 				></cyph-file-input>
-			</button>
+			</md2-button>
 		</div>
 
-		<button md-icon-button [mdMenuTriggerFor]='menu' class='menu-button'>
-			<md-icon>more_horiz</md-icon>
-		</button>
-		<md-menu #menu='mdMenu'>
-			<button md-menu-item (click)='chatService.helpButton()'>
-				<md-icon>help_outline</md-icon>
-				<span>{{stringsService.help}}</span>
-			</button>
-			<button md-menu-item (click)='chatService.disconnectButton()'>
-				<md-icon>close</md-icon>
-				<span>{{stringsService.disconnect}}</span>
-			</button>
-		</md-menu>
+		<md2-menu
+			mdPositionMode='target-right target'
+			width='4'
+			[button]='menuButton'
+			[items]='menuItems'
+		></md2-menu>
 	</div>
 
-	<smd-fab-speed-dial
-		[open]='isSpeedDialOpen'
+	<md2-fab-speed-dial
+		cyphTranslate
+		ariaLabel='Menu'
+		icon='add'
+		[buttons]='speedDialButtons'
+		mdDirection='up'
+		childClass='md-fling md-fab-bottom-right'
+		[mdOpen]='isSpeedDialOpen'
+		(mouseenter)='isSpeedDialOpen = true'
 		(mouseleave)='isSpeedDialOpen = false'
-		*ngIf='!envService.isMobile'
-	>
-		<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
-			<button md-fab>
-				<md-icon>add</md-icon>
-			</button>
-		</smd-fab-trigger>
-		<smd-fab-actions>
-			<button
-				md-mini-fab
-				cyphTranslate
-				mdTooltip='Send File or Photo'
-				mdTooltipPosition='left'
-			>
-				<md-icon>attach_file</md-icon>
-				<cyph-file-input
-					[accept]='fileAccept'
-					(change)='fileTransferService.send($event)'
-				></cyph-file-input>
-			</button>
-			<button
-				md-mini-fab
-				cyphTranslate
-				mdTooltip='Voice Call'
-				mdTooltipPosition='left'
-				[disabled]='!p2pService.isEnabled'
-				*ngIf='!p2pService.isActive'
-				(click)='p2pService.voiceCallButton()'
-			>
-				<md-icon>call</md-icon>
-			</button>
-			<button
-				md-mini-fab
-				cyphTranslate
-				mdTooltip='Video Call'
-				mdTooltipPosition='left'
-				[disabled]='!p2pService.isEnabled'
-				*ngIf='!p2pService.isActive'
-				(click)='p2pService.videoCallButton()'
-			>
-				<md-icon>video_call</md-icon>
-			</button>
-			<button
-				md-mini-fab
-				cyphTranslate
-				class='alt'
-				[mdTooltip]='stringsService.help'
-				mdTooltipPosition='left'
-				(click)='chatService.helpButton()'
-			>
-				<md-icon>help_outline</md-icon>
-			</button>
-			<button
-				md-mini-fab
-				cyphTranslate
-				class='alt'
-				[mdTooltip]='stringsService.disconnect'
-				mdTooltipPosition='left'
-				(click)='chatService.disconnectButton()'
-			>
-				<md-icon>close</md-icon>
-			</button>
-		</smd-fab-actions>
-	</smd-fab-speed-dial>
+		*ngIf='!envService.isMobile && !p2pService.isActive'
+	></md2-fab-speed-dial>
+	<md2-fab-speed-dial
+		cyphTranslate
+		ariaLabel='Menu'
+		icon='add'
+		[buttons]='speedDialButtonsP2P'
+		mdDirection='up'
+		childClass='md-fling md-fab-bottom-right'
+		[mdOpen]='isSpeedDialOpen'
+		(mouseenter)='isSpeedDialOpen = true'
+		(mouseleave)='isSpeedDialOpen = false'
+		*ngIf='!envService.isMobile && p2pService.isActive'
+	></md2-fab-speed-dial>
 
-	<h3
-		fxFlex
-		class='new-messages cyph-banner emphasis'
+	<md2-subheader
+		class='new-messages'
+		childClass='md-sticky-clone'
 		*ngIf='scrollService.unreadItemCount > 0'
+		stickyState='active'
 		(click)='scrollService.scrollDown()'
-	>
-		↓&nbsp;
-		{{scrollService.unreadItemCount}}
-		{{stringsService.newString}}
-		{{
-			scrollService.unreadItemCount === 1 ?
-				stringsService.message :
-				stringsService.messages
-		}}
-	</h3>
+		[text]='
+			"↓  " +
+			scrollService.unreadItemCount +
+			" " + stringsService.newString + " " +
+			(
+				scrollService.unreadItemCount === 1 ?
+					stringsService.message :
+					stringsService.messages
+			)
+		'
+	></md2-subheader>
 </div>
