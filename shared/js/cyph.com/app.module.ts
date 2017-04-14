@@ -7,6 +7,7 @@ import {
 	MdSnackBarModule
 } from '@angular/material';
 import {BrowserModule, Title} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
 import {ChatCyphertextComponent} from '../cyph/components/chat-cyphertext.component';
@@ -131,6 +132,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		HelpComponent
 	],
 	imports: [
+		BrowserAnimationsModule,
 		BrowserModule,
 		CommonModule,
 		FormsModule,

@@ -66,7 +66,7 @@ $(document.body).attr(
 
 angular.
 	module(config.angularConfig.rootModule, ['ngMaterial']).
-	controller(config.angularConfig.rootController, []).
+	controller(config.angularConfig.rootController, () => {}).
 	config(config.angularConfig.config).
 	component(
 		MdButtonComponent.title,
