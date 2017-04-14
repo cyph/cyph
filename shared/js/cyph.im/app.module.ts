@@ -7,6 +7,7 @@ import {
 	MdSnackBarModule
 } from '@angular/material';
 import {BrowserModule, Title} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {AccountContactsComponent} from '../cyph/components/account-contacts.component';
 import {AccountLoginComponent} from '../cyph/components/account-login.component';
@@ -140,6 +141,7 @@ import {LockdownComponent} from './lockdown.component';
 		HelpComponent
 	],
 	imports: [
+		BrowserAnimationsModule,
 		BrowserModule,
 		CommonModule,
 		FormsModule,
