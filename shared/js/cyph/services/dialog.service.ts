@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
+import {ComponentType, MdDialog, MdDialogConfig, MdSnackBar} from '@angular/material';
+import {DialogAlertComponent} from '../components/dialog-alert.component';
+import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {util} from '../util';
-import {MdDialogService} from './material/md-dialog.service';
-import {MdToastService} from './material/md-toast.service';
 
 
 /**
@@ -16,90 +17,71 @@ export class DialogService {
 	 * Displays alert.
 	 * @param o
 	 */
-	public async alert (
-		o: {
-			content: string;
-			ok: string;
-			title: string;
-		}
-	) : Promise<void> {
-		util.lock(this.lock, async () =>
-			this.mdDialogService.show(
-				(await this.mdDialogService.alert()).
-					title(o.title).
-					textContent(o.content).
-					ok(o.ok)
-			)
-		);
+	public async alert (o: {content: string; ok: string; title: string}) : Promise<void> {
+		return util.lock(this.lock, async () => {
+			const mdDialogRef	= this.mdDialog.open(DialogAlertComponent);
+
+			mdDialogRef.componentInstance.content	= o.content;
+			mdDialogRef.componentInstance.ok		= o.ok;
+			mdDialogRef.componentInstance.title		= o.title;
+
+			await mdDialogRef.afterClosed().toPromise();
+		});
 	}
 
 	/**
 	 * Generic modal implementation that takes a template / content.
 	 * @param o
 	 */
-	public async baseDialog (
-		o: {
-			locals?: any;
-			template: string;
-		}
-	) : Promise<{
-		locals: any;
-		ok: boolean;
-	}> {
-		return util.lock(
-			this.lock,
-			async () => this.mdDialogService.show({
-				clickOutsideToClose: true,
-				controller: <any> ['$scope', ($scope: any) => {
-					$scope.locals	= o.locals;
-				}],
-				escapeToClose: true,
-				template: o.template
-			}).then(() =>
-				true
-			).catch(() =>
-				false
-			).then(ok => ({
-				ok,
-				locals: o.locals
-			}))
-		);
+	public async baseDialog<T> (
+		componentType: ComponentType<T>,
+		config?: MdDialogConfig,
+		setInputs?: (componentInstance: T) => void
+	) : Promise<void> {
+		return util.lock(this.lock, async () => {
+			const mdDialogRef	= this.mdDialog.open(componentType, config);
+
+			if (setInputs) {
+				setInputs(mdDialogRef.componentInstance);
+			}
+
+			await mdDialogRef.afterClosed().toPromise();
+		});
 	}
 
 	/**
 	 * Displays interactive confirmation prompt.
 	 * @param o
 	 */
-	public async confirm (
-		o: {
-			cancel: string;
-			content: string;
-			ok: string;
-			timeout?: number;
-			title: string;
-		}
-	) : Promise<boolean> {
+	public async confirm (o: {
+		cancel: string;
+		content: string;
+		ok: string;
+		timeout?: number;
+		title: string;
+	}) : Promise<boolean> {
 		return util.lock(this.lock, async () => {
-			const promise	= this.mdDialogService.show(
-				(await this.mdDialogService.confirm()).
-					title(o.title).
-					textContent(o.content).
-					ok(o.ok).
-					cancel(o.cancel)
-			);
+			const mdDialogRef	= this.mdDialog.open(DialogConfirmComponent);
+
+			mdDialogRef.componentInstance.cancel	= o.cancel;
+			mdDialogRef.componentInstance.content	= o.content;
+			mdDialogRef.componentInstance.ok		= o.ok;
+			mdDialogRef.componentInstance.title		= o.title;
+
+			const promise	= mdDialogRef.afterClosed().toPromise<boolean>();
 
 			let hasReturned	= false;
 			if (o.timeout !== undefined && !isNaN(o.timeout)) {
 				(async () => {
 					await util.sleep(o.timeout);
 					if (!hasReturned) {
-						this.mdDialogService.cancel(promise);
+						mdDialogRef.close(false);
 					}
 				})();
 			}
 
 			try {
-				return (await promise.catch(() => false));
+				return await promise;
 			}
 			finally {
 				hasReturned	= true;
@@ -115,25 +97,25 @@ export class DialogService {
 		o: {
 			content: string;
 			delay: number;
-			position?: string;
 		}
 	) : Promise<void> {
-		this.mdToastService.show({
-			hideDelay: o.delay,
-			position: o.position || 'top right',
-			template: `<md-toast><div class='md-toast-content'>${o.content}</div></md-toast>`
-		}).catch(
-			() => {}
-		);
+		await this.mdSnackbar.open(
+			o.content,
+			undefined,
+			{duration: o.delay}
+		).
+			afterDismissed().
+			toPromise()
+		;
 
-		await util.sleep(o.delay + 500);
+		await util.sleep(500);
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly mdDialogService: MdDialogService,
+		private readonly mdDialog: MdDialog,
 
 		/** @ignore */
-		private readonly mdToastService: MdToastService
+		private readonly mdSnackbar: MdSnackBar
 	) {}
 }

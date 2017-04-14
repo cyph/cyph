@@ -1,6 +1,11 @@
 import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
+import {
+	MdDialogModule,
+	MdSidenavModule,
+	MdSnackBarModule
+} from '@angular/material';
 import {BrowserModule, Title} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
@@ -10,6 +15,8 @@ import {ChatMessageBoxComponent} from '../cyph/components/chat-message-box.compo
 import {ChatMessageComponent} from '../cyph/components/chat-message.component';
 import {CheckoutComponent} from '../cyph/components/checkout.component';
 import {ContactComponent} from '../cyph/components/contact.component';
+import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
+import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {HelpComponent} from '../cyph/components/help.component';
 import {MarkdownComponent} from '../cyph/components/markdown.component';
@@ -55,9 +62,6 @@ import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {ErrorService} from '../cyph/services/error.service';
 import {FileService} from '../cyph/services/file.service';
-import {MdDialogService} from '../cyph/services/material/md-dialog.service';
-import {MdSidenavService} from '../cyph/services/material/md-sidenav.service';
-import {MdToastService} from '../cyph/services/material/md-toast.service';
 import {NotificationService} from '../cyph/services/notification.service';
 import {SignupService} from '../cyph/services/signup.service';
 import {StringsService} from '../cyph/services/strings.service';
@@ -85,6 +89,8 @@ import {SilentNotificationService} from './silent-notification.service';
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
 		DemoChatRootComponent,
+		DialogAlertComponent,
+		DialogConfirmComponent,
 		CheckoutComponent,
 		ContactComponent,
 		DemoComponent,
@@ -128,6 +134,9 @@ import {SilentNotificationService} from './silent-notification.service';
 		BrowserModule,
 		CommonModule,
 		FormsModule,
+		MdDialogModule,
+		MdSidenavModule,
+		MdSnackBarModule,
 		UpgradeModule
 	],
 	providers: [
@@ -137,9 +146,6 @@ import {SilentNotificationService} from './silent-notification.service';
 		EnvService,
 		ErrorService,
 		FileService,
-		MdDialogService,
-		MdSidenavService,
-		MdToastService,
 		SignupService,
 		StringsService,
 		Title,

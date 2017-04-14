@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import * as $ from 'jquery';
 import * as WOW from 'wowjs';
+import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
 import {Email} from '../cyph/email';
 import {eventManager} from '../cyph/event-manager';
 import {ConfigService} from '../cyph/services/config.service';
@@ -145,14 +146,7 @@ export class AppService {
 			await util.sleep();
 
 			if (this.homeSection === HomeSections.register) {
-				await this.dialogService.baseDialog({
-					template: `
-						<md-dialog>
-							<cyph-beta-register></cyph-beta-register>
-						</md-dialog>
-					`
-				});
-
+				await this.dialogService.baseDialog(BetaRegisterComponent);
 				this.urlStateService.setUrl('');
 			}
 			else if (this.homeSection === HomeSections.invite) {
@@ -163,12 +157,8 @@ export class AppService {
 					)[1] || ''
 				);
 
-				await this.dialogService.baseDialog({
-					template: `
-						<md-dialog>
-							<cyph-beta-register [invite]='true'></cyph-beta-register>
-						</md-dialog>
-					`
+				await this.dialogService.baseDialog(BetaRegisterComponent, undefined, o => {
+					o.invite	= true;
 				});
 
 				this.urlStateService.setUrl('');

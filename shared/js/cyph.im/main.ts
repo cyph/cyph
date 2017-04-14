@@ -17,11 +17,11 @@ import 'angular-material';
 import * as $ from 'jquery';
 import 'magnific-popup';
 import 'nanoscroller';
+import 'rxjs/add/operator/toPromise';
 import 'webrtc-adapter';
 import 'whatwg-fetch';
 import 'zone.js';
 import {FileInputComponent} from '../cyph/components/file-input.component';
-import {HelpComponent} from '../cyph/components/help.component';
 import {MdButtonComponent} from '../cyph/components/material/md-button.component';
 import {MdCardContentComponent} from '../cyph/components/material/md-card-content.component';
 import {
@@ -52,7 +52,6 @@ import {MdSwitchComponent} from '../cyph/components/material/md-switch.component
 import {MdTabsComponent} from '../cyph/components/material/md-tabs.component';
 import {MdTextareaComponent} from '../cyph/components/material/md-textarea.component';
 import {config} from '../cyph/config';
-import {eventManager} from '../cyph/event-manager';
 import '../translations';
 import {AppComponent} from './app.component';
 import {AppModule} from './app.module';
@@ -65,18 +64,7 @@ $(document.body).attr(
 
 angular.
 	module(config.angularConfig.rootModule, ['ngMaterial']).
-	controller(config.angularConfig.rootController, [
-		'$mdDialog',
-		'$mdToast',
-
-		(
-			$mdDialog: angular.material.IDialogService,
-			$mdToast: angular.material.IToastService
-		) => {
-			eventManager.trigger('$mdDialog', $mdDialog);
-			eventManager.trigger('$mdToast', $mdToast);
-		}
-	]).
+	controller(config.angularConfig.rootController, []).
 	config(config.angularConfig.config).
 	component(
 		MdButtonComponent.title,
@@ -168,12 +156,6 @@ angular.
 			component: FileInputComponent,
 			inputs: ['accept'],
 			outputs: ['change']
-		})
-	).
-	directive(
-		'cyphHelp',
-		downgradeComponent({
-			component: HelpComponent
 		})
 	).
 	directive(

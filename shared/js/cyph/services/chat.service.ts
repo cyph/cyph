@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {IChatData, IChatMessage, States} from '../chat';
+import {HelpComponent} from '../components/help.component';
 import {events, rpcEvents, users} from '../session/enums';
 import {Message} from '../session/message';
 import {Timer} from '../timer';
@@ -192,9 +193,7 @@ export class ChatService {
 
 	/** Displays help information. */
 	public helpButton () : void {
-		this.dialogService.baseDialog({
-			template: `<md-dialog class='full'><cyph-help></cyph-help></md-dialog>`
-		});
+		this.dialogService.baseDialog(HelpComponent);
 
 		this.analyticsService.sendEvent({
 			eventAction: 'show',

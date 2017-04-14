@@ -16,11 +16,10 @@ import * as $ from 'jquery';
 import 'jquery.appear';
 import 'magnific-popup';
 import 'nanoscroller';
+import 'rxjs/add/operator/toPromise';
 import 'whatwg-fetch';
 import 'zone.js';
-import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
 import {FileInputComponent} from '../cyph/components/file-input.component';
-import {HelpComponent} from '../cyph/components/help.component';
 import {MdButtonComponent} from '../cyph/components/material/md-button.component';
 import {MdCardContentComponent} from '../cyph/components/material/md-card-content.component';
 import {
@@ -54,7 +53,6 @@ import {MdTextareaComponent} from '../cyph/components/material/md-textarea.compo
 import {MdToolbarComponent} from '../cyph/components/material/md-toolbar.component';
 import {config} from '../cyph/config';
 import {env} from '../cyph/env';
-import {eventManager} from '../cyph/event-manager';
 import {util} from '../cyph/util';
 import '../translations';
 import {AppComponent} from './app.component';
@@ -68,21 +66,7 @@ $(document.body).attr(
 
 angular.
 	module(config.angularConfig.rootModule, ['ngMaterial']).
-	controller(config.angularConfig.rootController, [
-		'$mdDialog',
-		'$mdSidenav',
-		'$mdToast',
-
-		(
-			$mdDialog: angular.material.IDialogService,
-			$mdSidenav: angular.material.ISidenavService,
-			$mdToast: angular.material.IToastService
-		) => {
-			eventManager.trigger('$mdDialog', $mdDialog);
-			eventManager.trigger('$mdSidenav', $mdSidenav);
-			eventManager.trigger('$mdToast', $mdToast);
-		}
-	]).
+	controller(config.angularConfig.rootController, []).
 	config(config.angularConfig.config).
 	component(
 		MdButtonComponent.title,
@@ -177,24 +161,11 @@ angular.
 		MdToolbarComponent.config
 	).
 	directive(
-		'cyphBetaRegister',
-		downgradeComponent({
-			component: BetaRegisterComponent,
-			inputs: ['invite', 'signupForm']
-		})
-	).
-	directive(
 		'cyphFileInput',
 		downgradeComponent({
 			component: FileInputComponent,
 			inputs: ['accept'],
 			outputs: ['change']
-		})
-	).
-	directive(
-		'cyphHelp',
-		downgradeComponent({
-			component: HelpComponent
 		})
 	).
 	directive(

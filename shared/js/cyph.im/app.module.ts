@@ -1,6 +1,11 @@
 import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
+import {
+	MdDialogModule,
+	MdSidenavModule,
+	MdSnackBarModule
+} from '@angular/material';
 import {BrowserModule, Title} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {AccountContactsComponent} from '../cyph/components/account-contacts.component';
@@ -13,6 +18,8 @@ import {ChatMainComponent} from '../cyph/components/chat-main.component';
 import {ChatMessageBoxComponent} from '../cyph/components/chat-message-box.component';
 import {ChatMessageComponent} from '../cyph/components/chat-message.component';
 import {ContactComponent} from '../cyph/components/contact.component';
+import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
+import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {FooterComponent} from '../cyph/components/footer.component';
 import {HelpComponent} from '../cyph/components/help.component';
@@ -62,8 +69,6 @@ import {ErrorService} from '../cyph/services/error.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {FileService} from '../cyph/services/file.service';
 import {FirebaseDatabaseService} from '../cyph/services/firebase-database.service';
-import {MdDialogService} from '../cyph/services/material/md-dialog.service';
-import {MdToastService} from '../cyph/services/material/md-toast.service';
 import {NotificationService} from '../cyph/services/notification.service';
 import {SignupService} from '../cyph/services/signup.service';
 import {StringsService} from '../cyph/services/strings.service';
@@ -93,6 +98,8 @@ import {LockdownComponent} from './lockdown.component';
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
+		DialogAlertComponent,
+		DialogConfirmComponent,
 		EphemeralChatRootComponent,
 		ContactComponent,
 		FileInputComponent,
@@ -136,6 +143,9 @@ import {LockdownComponent} from './lockdown.component';
 		BrowserModule,
 		CommonModule,
 		FormsModule,
+		MdDialogModule,
+		MdSidenavModule,
+		MdSnackBarModule,
 		UpgradeModule
 	],
 	providers: [
@@ -146,8 +156,6 @@ import {LockdownComponent} from './lockdown.component';
 		ErrorService,
 		FaviconService,
 		FileService,
-		MdDialogService,
-		MdToastService,
 		NotificationService,
 		SignupService,
 		StringsService,
