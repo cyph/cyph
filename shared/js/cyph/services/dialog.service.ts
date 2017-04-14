@@ -89,25 +89,9 @@ export class DialogService {
 		});
 	}
 
-	/**
-	 * Displays toast notification.
-	 * @param o
-	 */
-	public async toast (
-		o: {
-			content: string;
-			delay: number;
-		}
-	) : Promise<void> {
-		await this.mdSnackbar.open(
-			o.content,
-			undefined,
-			{duration: o.delay}
-		).
-			afterDismissed().
-			toPromise()
-		;
-
+	/** Displays toast notification. */
+	public async toast (content: string, duration: number) : Promise<void> {
+		await this.mdSnackbar.open(content, undefined, {duration}).afterDismissed().toPromise();
 		await util.sleep(500);
 	}
 

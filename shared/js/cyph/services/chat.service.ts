@@ -260,10 +260,20 @@ export class ChatService {
 		this.chat.isFriendTyping	= isFriendTyping;
 	}
 
-	/** Sets queued message to be sent after handshake. */
-	public setQueuedMessage (messageText: string) : void {
-		this.chat.queuedMessage	= messageText;
-		this.dialogService.toast(this.stringsService.queuedMessageSaved, 2500);
+	/**
+	 * Sets queued message to be sent after handshake.
+	 * @param messageText
+	 * @param selfDestruct
+	 */
+	public setQueuedMessage (messageText?: string, selfDestruct?: boolean) : void {
+		if (typeof messageText === 'string') {
+			this.chat.queuedMessage	= messageText;
+			this.dialogService.toast(this.stringsService.queuedMessageSaved, 2500);
+		}
+
+		if (typeof selfDestruct === 'boolean') {
+			this.chat.queuedMessageSelfDestruct	= selfDestruct;
+		}
 	}
 
 	constructor (
