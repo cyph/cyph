@@ -1,8 +1,10 @@
 <div
-	class='login-form layout-row layout-align-center-center'
+	fxLayout='row'
+	fxLayoutAlign='center center'
+	class='login-form'
 	[class.checking]='checking'
 >
-	<md-card class='flex flex-gt-sm-50'>
+	<md-card fxFlex fxFlex.gt-sm='50'>
 		<md-card-header>
 			<md-card-title cyphTranslate>
 				Log In
@@ -13,17 +15,17 @@
 		</md-card-header>
 		<md-card-content>
 			<form ngNativeValidate (submit)='onSubmit()'>
-				<div class='layout-row layout-align-center-center'>
+				<div fxLayout='row' fxLayoutAlign='center center'>
 					<h3 md-subheader [style.visibility]='error ? "visible" : "hidden"'>
 						{{stringsService.invalidCredentials}}
 					</h3>
 				</div>
-				<div class='layout-row layout-align-center-center'>
+				<div fxLayout='row' fxLayoutAlign='center center'>
 					<md-input-container>
 						<input
 							mdInput
 							cyphTranslate
-							class='flex-60'
+							fxFlex='60'
 							md1Class='md-block'
 							[(ngModel)]='username'
 							name='username'
@@ -32,12 +34,12 @@
 						/>
 					</md-input-container>
 				</div>
-				<div class='layout-row layout-align-center-center'>
+				<div fxLayout='row' fxLayoutAlign='center center'>
 					<md-input-container>
 						<input
 							mdInput
 							cyphTranslate
-							class='flex-60'
+							fxFlex='60'
 							md1Class='md-block'
 							[(ngModel)]='password'
 							name='password'
@@ -47,7 +49,7 @@
 						/>
 					</md-input-container>
 				</div>
-				<div class='layout-row layout-align-center-center'>
+				<div fxLayout='row' fxLayoutAlign='center center'>
 					<button md-button type='submit' cyphTranslate>
 						Log In
 					</button>

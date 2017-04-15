@@ -1,8 +1,10 @@
 <div class='chat-cyphertext'>
 	<div cyphNanoScroller>
-		<md-list class='layout-column'>
+		<md-list fxLayout='column'>
 			<md-list-item
-				class='flex message-item layout-row'
+				fxFlex
+				fxLayout='row'
+				class='message-item'
 				*ngFor='let message of cyphertextService.messages'
 			>
 				<span class='message'>
@@ -12,7 +14,7 @@
 					<strong *ngIf='message.author !== users.me'>
 						{{message.author}}:
 					</strong>
-					<span class='flex'>{{message.text}}</span>
+					<span fxFlex>{{message.text}}</span>
 					<br />
 					<br />
 				</span>

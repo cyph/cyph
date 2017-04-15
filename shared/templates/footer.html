@@ -1,61 +1,70 @@
-<div fxFlex fxLayout='row' fxLayoutAlign='center center' class='footer'>
+<div fxFlex fxLayout='row' class='footer'>
 	<div fxFlex></div>
 
 	<div
 		fxLayout='row'
-		fxLayoutGap='32px'
+		fxLayoutGap='16px'
 		*ngIf='!envService.coBranded && !sessionService.apiFlags.telehealth'
 	>
-		<div fxFlex='nogrow'>
+		<p fxFlex='nogrow'>
 			<a [href]='envService.homeUrl'>
 				<span>&copy; Cyph 2017</span>
 					&nbsp;&nbsp;&nbsp;
 				<span cyphTranslate>(Patents Pending) </span>
 			</a>
-		</div>
+		</p>
 
-		<div fxFlex='nogrow'>
+		<p fxFlex='nogrow'>
 			<a [href]='envService.homeUrl + "contact"' cyphTranslate>
 				Contact
 			</a>
-		</div>
+		</p>
 
-		<div fxFlex='nogrow'>
+		<p fxFlex='nogrow'>
 			<a [href]='envService.homeUrl + "donate"' cyphTranslate>
 				Donate
 			</a>
-		</div>
+		</p>
 
-		<div fxFlex='nogrow'>
+		<p fxFlex='nogrow'>
 			<strong *ngIf='!sessionService.state.wasInitiatedByAPI' cyphTranslate>
 				- Individual Use Only -
 			</strong>
 			<strong *ngIf='sessionService.state.wasInitiatedByAPI' cyphTranslate>
 				- Cyph API -
 			</strong>
-		</div>
+		</p>
 
-		<div fxFlex='nogrow'>
+		<p fxFlex='nogrow'>
 			<a [href]='envService.homeUrl + "pricing"' cyphTranslate>
 				Business Pricing
 			</a>
-		</div>
+		</p>
 
-		<div fxFlex='nogrow'>
+		<p fxFfxFlex='nogrow'lex>
 			<a [href]='envService.homeUrl + "privacypolicy"' cyphTranslate>
 				Privacy Policy
 			</a>
-		</div>
+		</p>
 
-		<div fxFlex='nogrow'>
+		<p fxFlex='nogrow'>
 			<a [href]='envService.homeUrl + "termsofservice"' cyphTranslate>
 				Terms of Service
 			</a>
-		</div>
+		</p>
 	</div>
 
-	<div fxLayout='row' *ngIf='envService.coBranded || sessionService.apiFlags.telehealth'>
-		<div class='powered-by-cyph'>
+	<div *ngIf='sessionService.apiFlags.telehealth' class='icons'>
+		<img class='websign icon' src='/img/websign.icon.png' alt='WebSign Validated' />
+		<img class='hipaa icon' src='/img/hipaa.icon.png' alt='HIPAA-Compliant' />
+	</div>
+
+	<div
+		fxLayout='row'
+		fxLayoutGap='16px'
+		*ngIf='envService.coBranded || sessionService.apiFlags.telehealth'
+	>
+		<p fxFlex='nogrow' class='powered-by-cyph'>
 			<a [href]='envService.homeUrl' class='small-font'>
 				<span *ngIf='sessionService.apiFlags.telehealth' cyphTranslate>
 					Telehealth Session
@@ -64,13 +73,8 @@
 					Powered by Cyph
 				</span>
 			</a>
-		</div>
+		</p>
 	</div>
 
-	<div fxFlex fxLayout='row' fxLayoutAlign='end center'>
-		<div *ngIf='sessionService.apiFlags.telehealth'>
-			<img src='/img/websign.icon.png' alt='WebSign Validated' />
-			<img src='/img/hipaa.icon.png' alt='HIPAA-Compliant' />
-		</div>
-	</div>
+	<div fxFlex></div>
 </div>

@@ -1,5 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
+import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {
 	MdButtonModule,
@@ -97,6 +98,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		BrowserAnimationsModule,
 		BrowserModule,
 		CommonModule,
+		FlexLayoutModule,
 		FormsModule,
 		MdButtonModule,
 		MdCardModule,

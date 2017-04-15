@@ -1,9 +1,9 @@
 <div *ngIf='email'>
 	<form ngNativeValidate (submit)='send()' *ngIf='!email.sent'>
-		<div class='layout-gt-xs-row'>
+		<div fxLayout.gt-xs='row'>
 			<md-select
 				cyphTranslate
-				class='flex'
+				fxFlex
 				md1Class='md-block'
 				[(ngModel)]='email.to'
 				name='to'
@@ -17,12 +17,12 @@
 				</md-option>
 			</md-select>
 		</div>
-		<div class='layout-row'>
+		<div fxLayout='row'>
 			<md-input-container>
 				<input
 					mdInput
 					cyphTranslate
-					class='flex'
+					fxFlex
 					md1Class='md-block'
 					[(ngModel)]='email.fromName'
 					name='name'
@@ -33,7 +33,7 @@
 				<input
 					mdInput
 					cyphTranslate
-					class='flex'
+					fxFlex
 					md1Class='md-block'
 					[(ngModel)]='email.fromEmail'
 					name='email'
