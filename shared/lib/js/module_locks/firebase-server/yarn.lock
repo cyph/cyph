@@ -1439,14 +1439,14 @@ js-tokens@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-1.0.1.tgz#cc435a5c8b94ad15acb7983140fc80182c89aeae"
 
-js-yaml@3.0.1:
+js-yaml@3.0.1, js-yaml@3.x:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.0.1.tgz#76405fea5bce30fc8f405d48c6dca7f0a32c6afe"
   dependencies:
     argparse "~ 0.1.11"
     esprima "~ 1.0.2"
 
-js-yaml@3.x, js-yaml@^3.2.5:
+js-yaml@^3.2.5:
   version "3.8.3"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.8.3.tgz#33a05ec481c850c8875929166fe1beb61c728766"
   dependencies:

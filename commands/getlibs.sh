@@ -15,8 +15,8 @@ cd js
 
 git init
 mkdir node_modules
-yarn install --ignore-platform || exit 1
-yarn add --ignore-platform --ignore-scripts ${nativePlugins} || exit 1
+yarn install --ignore-engines --ignore-platform --ignore-scripts || exit 1
+yarn add --ignore-engines --ignore-platform --ignore-scripts ${nativePlugins} || exit 1
 
 cd node_modules
 

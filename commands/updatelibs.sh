@@ -9,13 +9,13 @@ dir="$PWD"
 mkdir -p ~/lib/js ~/tmplib/js
 cd ~/tmplib/js
 
-yarn add --ignore-platform --ignore-scripts \
+yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@angular/animations \
 	@angular/common \
 	@angular/compiler \
 	@angular/compiler-cli \
 	@angular/core \
-	@angular/flex-layout \
+	@angular/flex-layout@https://github.com/crisbeto/flex-layout#ng-4 \
 	@angular/forms \
 	@angular/http \
 	@angular/material \
