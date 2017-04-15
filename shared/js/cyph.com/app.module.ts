@@ -22,11 +22,6 @@ import {
 } from '@angular/material';
 import {BrowserModule, Title} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {
-	SmdFabSpeedDialActions,
-	SmdFabSpeedDialComponent,
-	SmdFabSpeedDialTrigger
-} from 'angular-smd/src/app/shared/component/smd-fab-speed-dial';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
 import {ChatCyphertextComponent} from '../cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from '../cyph/components/chat-main.component';
@@ -36,6 +31,11 @@ import {CheckoutComponent} from '../cyph/components/checkout.component';
 import {ContactComponent} from '../cyph/components/contact.component';
 import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
 import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
+import {
+	SmdFabSpeedDialActions,
+	SmdFabSpeedDialComponent,
+	SmdFabSpeedDialTrigger
+} from '../cyph/components/fab-speed-dial.tmp';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {HelpComponent} from '../cyph/components/help.component';
 import {MarkdownComponent} from '../cyph/components/markdown.component';
