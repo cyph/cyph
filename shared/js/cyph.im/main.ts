@@ -11,6 +11,7 @@ import '../preload';
 
 import {enableProdMode} from '@angular/core';
 import {platformBrowser} from '@angular/platform-browser';
+import 'hammerjs';
 import 'magnific-popup';
 import 'nanoscroller';
 import 'rxjs/add/operator/toPromise';
