@@ -73,6 +73,7 @@ import {LockdownComponent} from './lockdown.component';
  * Angular module for Cyph UI.
  */
 @NgModule({
+	bootstrap: [AppComponent],
 	declarations: [
 		AccountComponent,
 		AccountContactsComponent,
@@ -102,11 +103,6 @@ import {LockdownComponent} from './lockdown.component';
 		SmdFabSpeedDialActions,
 		SmdFabSpeedDialComponent,
 		SmdFabSpeedDialTrigger
-	],
-	entryComponents: [
-		AppComponent,
-		FileInputComponent,
-		HelpComponent
 	],
 	imports: [
 		BrowserAnimationsModule,
