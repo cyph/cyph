@@ -56,6 +56,7 @@ yarn add --ignore-platform --ignore-scripts \
 	google-closure-compiler \
 	granim \
 	gulp \
+	hammerjs \
 	highlight.js \
 	html-minifier \
 	htmlencode \
@@ -90,6 +91,8 @@ yarn add --ignore-platform --ignore-scripts \
 	simplewebrtc \
 	sodiumutil \
 	sphincs \
+	stylelint \
+	stylelint-scss \
 	supersphincs \
 	tab-indent \
 	textillate \
