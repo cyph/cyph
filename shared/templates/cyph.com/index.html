@@ -15,7 +15,7 @@
 				/>
 			</a>
 
-			<button
+			<a
 				md-button
 				cyphTranslate
 				id='new-cyph'
@@ -24,14 +24,14 @@
 				[href]='envService.newCyphUrl'
 			>
 				Start new cyph
-			</button>
+			</a>
 
 			<span class='link-wrapper-outer right hide show-gt-md'>
 				<span class='link-wrapper-inner' cyphTranslate>
-					<button md-button href='/intro'>Intro</button>
-					<button md-button href='/features'>Features</button>
-					<button md-button href='/about'>About</button>
-					<button md-button href='/gettingstarted'>Getting Started</button>
+					<a md-button href='/intro'>Intro</a>
+					<a md-button href='/features'>Features</a>
+					<a md-button href='/about'>About</a>
+					<a md-button href='/gettingstarted'>Getting Started</a>
 				</span>
 			</span>
 
@@ -39,15 +39,15 @@
 
 			<span class='link-wrapper-outer left hide show-gt-md'>
 				<span class='link-wrapper-inner' cyphTranslate>
-					<button md-button href='/blog'>Blog</button>
-					<button md-button href='/faq'>FAQ</button>
-					<button md-button href='/pricing'>Pricing</button>
-					<button md-button href='/register'>Register</button>
+					<a md-button href='/blog'>Blog</a>
+					<a md-button href='/faq'>FAQ</a>
+					<a md-button href='/pricing'>Pricing</a>
+					<a md-button href='/register'>Register</a>
 				</span>
 			</span>
 
 			<span class='social-media hide show-gt-md'>
-				<button
+				<a
 					md-icon-button
 					cyphTranslate
 					mdTooltip='GitHub'
@@ -56,8 +56,8 @@
 					target='_blank'
 				>
 					<img src='/img/iconfinder/github.png' alt='GitHub icon' />
-				</button>
-				<button
+				</a>
+				<a
 					md-icon-button
 					cyphTranslate
 					mdTooltip='Twitter'
@@ -66,8 +66,8 @@
 					target='_blank'
 				>
 					<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
-				</button>
-				<button
+				</a>
+				<a
 					md-icon-button
 					cyphTranslate
 					mdTooltip='Facebook'
@@ -76,7 +76,7 @@
 					target='_blank'
 				>
 					<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />
-				</button>
+				</a>
 			</span>
 
 			<button
@@ -94,52 +94,52 @@
 
 		<md-sidenav #sidenav align='end'>
 			<div>
-				<button md-button cyphTranslate href='/intro' (click)='sidenav.close()'>
+				<a md-button cyphTranslate href='/intro' (click)='sidenav.close()'>
 					Intro
-				</button>
+				</a>
 			</div>
 			<div>
-				<button md-button cyphTranslate href='/features' (click)='sidenav.close()'>
+				<a md-button cyphTranslate href='/features' (click)='sidenav.close()'>
 					Features
-				</button>
+				</a>
 			</div>
 			<div>
-				<button md-button cyphTranslate href='/about' (click)='sidenav.close()'>
+				<a md-button cyphTranslate href='/about' (click)='sidenav.close()'>
 					About
-				</button>
+				</a>
 			</div>
 			<div>
-				<button
+				<a
 					md-button
 					cyphTranslate
 					href='/gettingstarted'
 					(click)='sidenav.close()'
 				>
 					Getting Started
-				</button>
+				</a>
 			</div>
 			<div>
-				<button md-button cyphTranslate href='/blog' (click)='sidenav.close()'>
+				<a md-button cyphTranslate href='/blog' (click)='sidenav.close()'>
 					Blog
-				</button>
+				</a>
 			</div>
 			<div>
-				<button md-button cyphTranslate href='/faq' (click)='sidenav.close()'>
+				<a md-button cyphTranslate href='/faq' (click)='sidenav.close()'>
 					FAQ
-				</button>
+				</a>
 			</div>
 			<div>
-				<button md-button cyphTranslate href='/pricing' (click)='sidenav.close()'>
+				<a md-button cyphTranslate href='/pricing' (click)='sidenav.close()'>
 					Pricing
-				</button>
+				</a>
 			</div>
 			<div>
-				<button md-button cyphTranslate href='/register' (click)='sidenav.close()'>
+				<a md-button cyphTranslate href='/register' (click)='sidenav.close()'>
 					Register
-				</button>
+				</a>
 			</div>
 			<div>
-				<button
+				<a
 					md-button
 					cyphTranslate
 					rel='noreferrer'
@@ -151,10 +151,10 @@
 						<img src='/img/iconfinder/github.png' alt='GitHub icon' />
 					</span>
 					<span>GitHub</span>
-				</button>
+				</a>
 			</div>
 			<div>
-				<button
+				<a
 					md-button
 					cyphTranslate
 					rel='noreferrer'
@@ -166,10 +166,10 @@
 						<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
 					</span>
 					<span>Twitter</span>
-				</button>
+				</a>
 			</div>
 			<div>
-				<button
+				<a
 					md-button
 					cyphTranslate
 					rel='noreferrer'
@@ -181,7 +181,7 @@
 						<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />
 					</span>
 					<span>Facebook</span>
-				</button>
+				</a>
 			</div>
 		</md-sidenav>
 
