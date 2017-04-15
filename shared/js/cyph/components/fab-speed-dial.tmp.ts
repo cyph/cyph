@@ -14,7 +14,7 @@ import {
     ContentChild,
     HostBinding,
     HostListener,
-    Injector
+	ViewContainerRef
 } from "@angular/core";
 import {MdButton} from "@angular/material";
 
@@ -36,8 +36,10 @@ export class SmdFabSpeedDialTrigger {
 
     private readonly _parent: SmdFabSpeedDialComponent;
 
-	constructor (injector: Injector) {
-		this._parent	= injector.get(SmdFabSpeedDialComponent);
+	constructor (viewContainerRef: ViewContainerRef) {
+		this._parent	=
+			(<any> viewContainerRef)._data.componentView.component.viewContainerRef._view.component
+		;
     }
 
     @HostListener('click', ['$event'])
@@ -62,8 +64,10 @@ export class SmdFabSpeedDialActions implements AfterContentInit {
 
     private readonly _parent: SmdFabSpeedDialComponent;
 
-	constructor (injector: Injector, private renderer: Renderer) {
-		this._parent	= injector.get(SmdFabSpeedDialComponent);
+	constructor (viewContainerRef: ViewContainerRef, private renderer: Renderer) {
+		this._parent	=
+			(<any> viewContainerRef)._data.componentView.component.viewContainerRef._view.component
+		;
     }
 
     ngAfterContentInit(): void {
@@ -222,7 +226,8 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
 
     @ContentChild(SmdFabSpeedDialActions) _childActions: SmdFabSpeedDialActions;
 
-    constructor(private elementRef: ElementRef, private renderer: Renderer) {}
+    constructor(private elementRef: ElementRef, private renderer: Renderer) {
+    }
 
     ngAfterContentInit(): void {
         this.isInitialized = true;
