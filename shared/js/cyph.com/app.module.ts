@@ -69,6 +69,7 @@ import {SilentNotificationService} from './silent-notification.service';
  * Angular module for Cyph home page.
  */
 @NgModule({
+	bootstrap: [AppComponent],
 	declarations: [
 		AppComponent,
 		BetaRegisterComponent,
@@ -91,12 +92,6 @@ import {SilentNotificationService} from './silent-notification.service';
 		SmdFabSpeedDialActions,
 		SmdFabSpeedDialComponent,
 		SmdFabSpeedDialTrigger
-	],
-	entryComponents: [
-		AppComponent,
-		BetaRegisterComponent,
-		FileInputComponent,
-		HelpComponent
 	],
 	imports: [
 		BrowserAnimationsModule,

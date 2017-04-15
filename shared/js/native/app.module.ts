@@ -55,11 +55,6 @@ import {VisibilityWatcherService} from './js/cyph/services/visibility-watcher.se
 		SignupFormComponent,
 		TranslateDirective
 	],
-	entryComponents: [
-		AppComponent,
-		FileInputComponent,
-		HelpComponent
-	],
 	imports: [
 		CommonModule,
 		FormsModule,
