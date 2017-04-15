@@ -6,59 +6,62 @@
 		<div class='layout-row layout-align-center-stretch flex'>
 			<div class='layout-column flex-50' *ngIf='!envService.isMobile'>
 				<div class='layout-row layout-align-center-center'>
-					<md2-input
-						cyphTranslate
-						class='flex-80'
-						childClass='md-block'
-						[(model)]='signupService.data.email'
-						formName='email'
-						type='email'
-						label='Email'
-					></md2-input>
+					<md-input-container>
+						<input
+							cyphTranslate
+							class='flex-80'
+							md1Class='md-block'
+							[(ngModel)]='signupService.data.email'
+							name='email'
+							type='email'
+							placeholder='Email'
+						/>
+					</md-input-container>
 				</div>
 				<div class='layout-row layout-align-center-center'>
-					<md2-input
-						cyphTranslate
-						class='flex-80'
-						childClass='md-block'
-						formName='password'
-						type='password'
-						label='Password'
-						[disabled]='true'
-					></md2-input>
+					<md-input-container>
+						<input
+							cyphTranslate
+							class='flex-80'
+							md1Class='md-block'
+							name='password'
+							type='password'
+							placeholder='Password'
+							[disabled]='true'
+						/>
+					</md-input-container>
 				</div>
 
 				<div class='layout-row layout-align-center-center'>
-					<md2-input
-						cyphTranslate
-						class='flex-80'
-						childClass='md-block'
-						formName='confirmPassword'
-						type='password'
-						label='Confirm Password'
-						[disabled]='true'
-					></md2-input>
+					<md-input-container>
+						<input
+							cyphTranslate
+							class='flex-80'
+							md1Class='md-block'
+							name='confirmPassword'
+							type='password'
+							placeholder='Confirm Password'
+							[disabled]='true'
+						/>
+					</md-input-container>
 				</div>
 				<div *ngIf='invite' class='layout-row layout-align-center-center'>
-					<md2-input
-						cyphTranslate
-						class='flex-80'
-						childClass='md-block'
-						[(model)]='signupService.data.inviteCode'
-						formName='inviteCode'
-						type='text'
-						label='Invite Code'
-					></md2-input>
+					<md-input-container>
+						<input
+							cyphTranslate
+							class='flex-80'
+							md1Class='md-block'
+							[(ngModel)]='signupService.data.inviteCode'
+							name='inviteCode'
+							type='text'
+							placeholder='Invite Code'
+						/>
+					</md-input-container>
 				</div>
 				<div class='register-button layout-row layout-align-center-end'>
-					<md2-button
-						type='submit'
-						ariaLabel='Register'
-						[disabled]='true'
-						cyphTranslate
-					>
+					<button md-button type='submit' [disabled]='true' cyphTranslate>
 						Register
-					</md2-button>
+					</button>
 				</div>
 			</div>
 			<div class='layout-column flex'>
@@ -79,13 +82,9 @@
 					<br />
 				</div>
 				<div class='register-button layout-row layout-align-center-end'>
-					<md2-button
-						type='submit'
-						ariaLabel='Waitlist Signup'
-						cyphTranslate
-					>
+					<button md-button type='submit' cyphTranslate>
 						Waitlist Signup
-					</md2-button>
+					</button>
 				</div>
 			</div>
 		</div>
@@ -95,37 +94,37 @@
 		<div class='layout-row layout-align-center-center flex'>
 			<div class='layout-column flex'>
 				<div class='layout-row layout-align-center-center'>
-					<md2-input
-						cyphTranslate
-						class='flex-80'
-						childClass='md-block'
-						[(model)]='signupService.data.email'
-						formName='email'
-						type='email'
-						label='Email'
-						[required]='true'
-					></md2-input>
+					<md-input-container>
+						<input
+							cyphTranslate
+							class='flex-80'
+							md1Class='md-block'
+							[(ngModel)]='signupService.data.email'
+							name='email'
+							type='email'
+							placeholder='Email'
+							[required]='true'
+						/>
+					</md-input-container>
 				</div>
 				<div *ngIf='invite' class='layout-row layout-align-center-center'>
-					<md2-input
-						cyphTranslate
-						class='flex-80'
-						childClass='md-block'
-						[(model)]='signupService.data.inviteCode'
-						formName='inviteCode'
-						type='text'
-						label='Invite Code'
-						[required]='true'
-					></md2-input>
+					<md-input-container>
+						<input
+							cyphTranslate
+							class='flex-80'
+							md1Class='md-block'
+							[(ngModel)]='signupService.data.inviteCode'
+							name='inviteCode'
+							type='text'
+							placeholder='Invite Code'
+							[required]='true'
+						/>
+					</md-input-container>
 				</div>
 				<div class='layout-row layout-align-center-end'>
-					<md2-button
-						type='submit'
-						ariaLabel='Waitlist Signup'
-						cyphTranslate
-					>
+					<button md-button type='submit' cyphTranslate>
 						Waitlist Signup
-					</md2-button>
+					</button>
 				</div>
 			</div>
 		</div>
@@ -135,23 +134,21 @@
 		<div class='layout-row layout-align-center-center flex'>
 			<div class='layout-column flex'>
 				<div class='layout-row layout-align-center-center'>
-					<md2-input
-						cyphTranslate
-						class='flex-80'
-						childClass='md-block'
-						[(model)]='signupService.data.name'
-						formName='name'
-						label='Name (optional)'
-					></md2-input>
+					<md-input-container>
+						<input
+							cyphTranslate
+							class='flex-80'
+							md1Class='md-block'
+							[(ngModel)]='signupService.data.name'
+							name='name'
+							placeholder='Name (optional)'
+						/>
+					</md-input-container>
 				</div>
 				<div class='layout-row layout-align-center-end'>
-					<md2-button
-						type='submit'
-						ariaLabel='Waitlist Signup'
-						cyphTranslate
-					>
+					<button md-button type='submit' cyphTranslate>
 						Waitlist Signup
-					</md2-button>
+					</button>
 				</div>
 			</div>
 		</div>

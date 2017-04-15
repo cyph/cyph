@@ -1,9 +1,8 @@
 <div class='chat-cyphertext'>
-	<md2-content cyphNanoScroller>
-		<md2-list childClass='layout-column'>
-			<md2-list-item
-				class='message-item layout-row'
-				childClass='flex'
+	<div cyphNanoScroller>
+		<md-list class='layout-column'>
+			<md-list-item
+				class='flex message-item layout-row'
 				*ngFor='let message of cyphertextService.messages'
 			>
 				<span class='message'>
@@ -17,15 +16,17 @@
 					<br />
 					<br />
 				</span>
-			</md2-list-item>
-		</md2-list>
-	</md2-content>
-	<md2-button
+			</md-list-item>
+		</md-list>
+	</div>
+	<button
+		md-fab
 		cyphTranslate
-		ariaLabel='Close Cyphertext'
-		childClass='md-fab md-theme-grey close-button'
-		(childClick)='cyphertextService.hide()'
+		mdTooltip='Close Cyphertext'
+		md1Class='md-theme-grey'
+		class='close-button'
+		(click)='cyphertextService.hide()'
 	>
-		<strong>&times;</strong>
-	</md2-button>
+		<md-icon>close</md-icon>
+	</button>
 </div>

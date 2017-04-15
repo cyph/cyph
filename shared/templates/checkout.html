@@ -3,45 +3,51 @@
 		<div class='checkout-ui'>
 			<div class='braintree'></div>
 			<div class='layout-row layout-sm-column layout-xs-column'>
-				<md2-input
-					cyphTranslate
-					class='layout-column layout-sm-row layout-xs-row md-block flex'
-					childClass='flex'
-					[(model)]='name'
-					formName='name'
-					label='Name'
-					[required]='true'
-				></md2-input>
-				<md2-input
-					cyphTranslate
-					class='layout-column layout-sm-row layout-xs-row md-block flex'
-					childClass='flex'
-					[(model)]='email'
-					formName='email'
-					type='email'
-					label='Email'
-					[required]='true'
-				></md2-input>
+				<md-input-container>
+					<input
+						cyphTranslate
+						class='layout-column layout-sm-row layout-xs-row flex'
+						md1Class='md-block'
+						[(ngModel)]='name'
+						name='name'
+						placeholder='Name'
+						[required]='true'
+					/>
+				</md-input-container>
+				<md-input-container>
+					<input
+						cyphTranslate
+						class='layout-column layout-sm-row layout-xs-row flex'
+						md1Class='md-block'
+						[(ngModel)]='email'
+						name='email'
+						type='email'
+						placeholder='Email'
+						[required]='true'
+					/>
+				</md-input-container>
 			</div>
 			<div class='layout-row layout-sm-column layout-xs-column'>
-				<md2-input
-					cyphTranslate
-					class='layout-column layout-sm-row layout-xs-row md-block flex'
-					childClass='flex'
-					[(model)]='company'
-					formName='company'
-					label='Company (optional)'
-				></md2-input>
+				<md-input-container>
+					<input
+						cyphTranslate
+						class='layout-column layout-sm-row layout-xs-row flex'
+						md1Class='md-block'
+						[(ngModel)]='company'
+						name='company'
+						placeholder='Company (optional)'
+					/>
+				</md-input-container>
 			</div>
 		</div>
-		<md2-button type='submit'>
+		<button md-button type='submit'>
 			<span cyphTranslate>Confirm</span>
 			<span>${{amount}}</span>
 			<span>
 				<span *ngIf='!subscription' cyphTranslate>payment</span>
 				<span *ngIf='subscription' cyphTranslate>monthly subscription</span>
 			</span>
-		</md2-button>
+		</button>
 	</div>
 	<div class='confirmation' *ngIf='complete'>
 		<ng-content *ngIf='success'></ng-content>

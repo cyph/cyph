@@ -1,42 +1,41 @@
-<md2-content class='md-no-flicker'>
-	<md2-card childClass='md-padding'>
-		<md2-card-title>
-			<md2-card-title-text>
-				<span *ngIf='!invite' class='md-headline' cyphTranslate>
-					Register
+<md-card>
+	<md-card-header>
+		<md-card-title>
+			<span *ngIf='!invite' cyphTranslate>
+				Register
+			</span>
+			<span *ngIf='invite' cyphTranslate>
+				Register with Invite Code
+			</span>
+		</md-card-title>
+		<md-card-subtitle>
+			<div *ngIf='signupService.state === 1'>
+				<span *ngIf='!invite' cyphTranslate>
+					Enter your email address.
 				</span>
-				<span *ngIf='invite' class='md-headline' cyphTranslate>
-					Register with Invite Code
+				<span *ngIf='invite' cyphTranslate>
+					Enter your email address and invite code for priority access
+					on our waitlist.
 				</span>
-				<span class='md-subhead'>
-					<div *ngIf='signupService.state === 1'>
-						<span *ngIf='!invite' cyphTranslate>
-							Enter your email address.
-						</span>
-						<span *ngIf='invite' cyphTranslate>
-							Enter your email address and invite code for priority access
-							on our waitlist.
-						</span>
-					</div>
-					<div *ngIf='signupService.state === 2' cyphTranslate>
-						Thanks for signing up. Feel free to give us your name too.
-						Privacy is at the core of our ideology, so we'll never give
-						away your email address or personal details.
-					</div>
-				</span>
-			</md2-card-title-text>
-		</md2-card-title>
-		<md2-card-content>
-			<cyph-signup-form [invite]='invite'></cyph-signup-form>
-		</md2-card-content>
-	</md2-card>
+			</div>
+			<div *ngIf='signupService.state === 2' cyphTranslate>
+				Thanks for signing up. Feel free to give us your name too.
+				Privacy is at the core of our ideology, so we'll never give
+				away your email address or personal details.
+			</div>
+		</md-card-subtitle>
+	</md-card-header>
+	<md-card-content>
+		<cyph-signup-form [invite]='invite'></cyph-signup-form>
+	</md-card-content>
+</md-card>
 
-	<div class='login-button layout-row layout-align-center-center'>
-		<md2-button
-			[href]='envService.newCyphBaseUrl + "#account/login"'
-			cyphTranslate
-		>
-			Already have a Cyph account? Click here to login.
-		</md2-button>
-	</div>
-</md2-content>
+<div class='login-button layout-row layout-align-center-center'>
+	<button
+		md-button
+		[href]='envService.newCyphBaseUrl + "#account/login"'
+		cyphTranslate
+	>
+		Already have a Cyph account? Click here to login.
+	</button>
+</div>

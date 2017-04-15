@@ -31,63 +31,67 @@
 			<br />
 
 			<div class='connect-link-input' *ngIf='!envService.isMobile'>
-				<md2-input
-					cyphTranslate
-					childClass='connect-link-input'
-					[(model)]='link'
-					label='Cyph link'
-				></md2-input>
-				<md2-button
-					ariaLabel='Copy to clipboard'
-					(childClick)='copyToClipboard()'
+				<md-input-container>
+					<input
+						cyphTranslate
+						class='connect-link-input'
+						[(ngModel)]='link'
+						mdTooltip='Cyph Link'
+					/>
+				</md-input-container>
+				<button
+					md-icon-button
+					mdTooltip='Copy to Clipboard'
+					(click)='copyToClipboard()'
 					cyphTranslate
 				>
-					<md2-icon>content_copy</md2-icon>
-				</md2-button>
+					<md-icon>content_copy</md-icon>
+				</button>
 			</div>
 
 			<div class='connect-link-mobile' *ngIf='envService.isMobile'>
 				<a
 					class='connect-link-link'
 					[href]='link'
+					mdTooltip='Cyph Link'
 				>{{link}}</a>
 				<br />
 
-				<md2-button
-					childClass='md-fab'
-					ariaLabel='SMS'
+				<button
+					md-fab
+					mdTooltip='SMS'
 					[href]='envService.smsUriBase + linkEncoded'
 					cyphTranslate
 				>
-					<img src='/img/icons/sms.png' alt='SMS' cyphTranslate />
-				</md2-button>
+					<md-icon>textsms</md-icon>
+				</button>
 
 				<span class='divider'>
 					&nbsp;
 				</span>
 
-				<md2-button
-					childClass='md-fab'
-					ariaLabel='Email'
+				<button
+					md-fab
+					mdTooltip='Email'
 					target='_self'
 					[href]='"mailto:?subject=Cyph&body=" + linkEncoded'
 					cyphTranslate
 				>
-					<img src='/img/icons/email.png' alt='Email' cyphTranslate />
-				</md2-button>
+					<md-icon>email</md-icon>
+				</button>
 
 				<span class='divider'>
 					&nbsp;
 				</span>
 
-				<md2-button
-					childClass='md-fab'
-					ariaLabel='Copy to clipboard'
-					(childClick)='copyToClipboard()'
+				<button
+					md-fab
+					mdTooltip='Copy to Clipboard'
+					(click)='copyToClipboard()'
 					cyphTranslate
 				>
-					<md2-icon>content_copy</md2-icon>
-				</md2-button>
+					<md-icon>content_copy</md-icon>
+				</button>
 			</div>
 		</div>
 
@@ -99,50 +103,56 @@
 			<span class='countdown'>
 				{{timer.timestamp}}
 			</span>
-			<md2-button
-				(childClick)='addTime(60000)'
-				ariaLabel='Increase time by one minute'
+			<button
+				md-icon-button
+				(click)='addTime(60000)'
+				mdTooltip='Increase Time by One Minute'
 			>
-				<md2-icon>alarm_add</md2-icon>
-			</md2-button>
+				<md-icon>alarm_add</md-icon>
+			</button>
 		</div>
 	</div>
 
-	<md2-switch
-		childClass='advanced-features-switch'
+	<md-slide-toggle
+		class='advanced-features-switch'
 		*ngIf='enableAdvancedFeatures'
-		[(model)]='advancedFeatures'
-		ariaLabel='Advanced Features'
+		[(checked)]='advancedFeatures'
 		cyphTranslate
 	>
 		Advanced Features
-	</md2-switch>
+	</md-slide-toggle>
 
 	<div class='advanced-features' *ngIf='advancedFeatures'>
-		<md2-textarea
-			cyphTranslate
-			childClass='queued-message-box'
-			[(model)]='queuedMessageDraft'
-			label='Queue up first message'
-			rows='3'
-		></md2-textarea>
+		<md-input-container>
+			<textarea
+				cyphTranslate
+				class='queued-message-box'
+				[(ngModel)]='queuedMessageDraft'
+				placeholder='Queue up first message'
+				rows='3'
+			></textarea>
+		</md-input-container>
 		<div class='buttons'>
-			<md2-button (childClick)='chatService.setQueuedMessage(queuedMessageDraft)'>
-				<md2-icon>save</md2-icon>
-			</md2-button>
-			<md2-button
-				childClass='self-destruct-button'
-				(childClick)='chatService.setQueuedMessage(
+			<button
+				md-icon-button
+				mdTooltip='Save'
+				(click)='chatService.setQueuedMessage(queuedMessageDraft)'
+			>
+				<md-icon>save</md-icon>
+			</button>
+			<button
+				md-icon-button
+				class='self-destruct-button'
+				mdTooltip='Self-destruct'
+				(click)='chatService.setQueuedMessage(
 					undefined,
 					!chatService.chat.queuedMessageSelfDestruct
 				)'
 			>
-				<md2-icon [childClass]='
-					chatService.chat.queuedMessageSelfDestruct === true ? "active" : ""
-				'>
+				<md-icon [class.active]='chatService.chat.queuedMessageSelfDestruct'>
 					timer
-				</md2-icon>
-			</md2-button>
+				</md-icon>
+			</button>
 		</div>
 	</div>
 	<div class='flex'></div>

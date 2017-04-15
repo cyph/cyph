@@ -14,7 +14,8 @@ import {
 	MdSelectModule,
 	MdSlideToggleModule,
 	MdSnackBarModule,
-	MdTabsModule
+	MdTabsModule,
+	MdTooltipModule
 } from '@angular/material';
 import {BrowserModule, Title} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -124,7 +125,8 @@ import {LockdownComponent} from './lockdown.component';
 		MdSelectModule,
 		MdSlideToggleModule,
 		MdSnackBarModule,
-		MdTabsModule
+		MdTabsModule,
+		MdTooltipModule
 	],
 	providers: [
 		AnalyticsService,

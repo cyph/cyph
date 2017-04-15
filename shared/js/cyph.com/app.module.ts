@@ -17,7 +17,8 @@ import {
 	MdSlideToggleModule,
 	MdSnackBarModule,
 	MdTabsModule,
-	MdToolbarModule
+	MdToolbarModule,
+	MdTooltipModule
 } from '@angular/material';
 import {BrowserModule, Title} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -117,7 +118,8 @@ import {SilentNotificationService} from './silent-notification.service';
 		MdSlideToggleModule,
 		MdSnackBarModule,
 		MdTabsModule,
-		MdToolbarModule
+		MdToolbarModule,
+		MdTooltipModule
 	],
 	providers: [
 		AnalyticsService,
