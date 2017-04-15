@@ -1,6 +1,6 @@
 <section
 	id='main'
-	class='layout-column'
+	fxLayout='column'
 	[class.unisection-mode]='appService.state !== appService.states.home'
 >
 	<md-sidenav-container>
@@ -26,7 +26,7 @@
 				Start new cyph
 			</a>
 
-			<span class='link-wrapper-outer right hide show-gt-md'>
+			<span fxHide fxShow.gt-md class='link-wrapper-outer right'>
 				<span class='link-wrapper-inner' cyphTranslate>
 					<a md-button href='/intro'>Intro</a>
 					<a md-button href='/features'>Features</a>
@@ -35,9 +35,9 @@
 				</span>
 			</span>
 
-			<span class='flex'></span>
+			<span fxFlex></span>
 
-			<span class='link-wrapper-outer left hide show-gt-md'>
+			<span fxHide fxShow.gt-md class='link-wrapper-outer left'>
 				<span class='link-wrapper-inner' cyphTranslate>
 					<a md-button href='/blog'>Blog</a>
 					<a md-button href='/faq'>FAQ</a>
@@ -46,7 +46,7 @@
 				</span>
 			</span>
 
-			<span class='social-media hide show-gt-md'>
+			<span fxHide fxShow.gt-md class='social-media'>
 				<a
 					md-icon-button
 					cyphTranslate
@@ -81,10 +81,10 @@
 
 			<button
 				md-icon-button
+				fxHide.gt-md
 				cyphTranslate
 				mdTooltip='Menu'
 				(click)='sidenav.open()'
-				class='hide-gt-md'
 			>
 				<md-icon>menu</md-icon>
 			</button>
@@ -189,12 +189,16 @@
 		<section id='hero-section' [class.promo]='appService.promo !== undefined'>
 			<div class='hero-foreground'>
 				<div
+					fxLayout='row'
+					fxLayoutAlign='center center'
 					id='promo-section'
 					*ngIf='appService.promo !== undefined'
-					class='layout-row layout-align-center-center'
 				>
 					<md-card
-						class='animated wow flex-33 flex-sm-66 flex-xs-100'
+						fxFlex='33'
+						fxFlex.sm='66'
+						fxFlex.xs='100'
+						class='animated wow'
 						data-wow-delay='3000ms'
 						[class.bounceInLeft]='appService.promo === appService.promos.jjgo'
 						[class.bounceInDown]='appService.promo !== appService.promos.jjgo'
@@ -263,8 +267,8 @@
 					</h1>
 
 					<div class='hero-container grid-container'>
-						<div class='layout-row' *ngIf='!envService.isMobile'>
-							<div class='flex-25'></div>
+						<div fxLayout='row' *ngIf='!envService.isMobile'>
+							<div fxFlex='25'></div>
 							<div class='wow bounceInLeft' data-wow-delay='2250ms'>
 								<a href='/intro'>
 									<img
@@ -289,7 +293,7 @@
 								</a>
 								&nbsp;
 							</div>
-							<div class='flex-25'></div>
+							<div fxFlex='25'></div>
 						</div>
 						<div class='hero-description wow animated fadeIn' data-wow-delay='2500ms'>
 							<p cyphTranslate>
@@ -311,17 +315,26 @@
 		</section>
 
 		<section id='testimonials-section'>
-			<div class='carousel flex layout-column wow animated fadeIn' data-wow-delay='2750ms'>
-				<div class='logo-container flex layout-row'>
+			<div
+				fxFlex
+				fxLayout='column'
+				class='carousel wow animated fadeIn'
+				data-wow-delay='2750ms'
+			>
+				<div fxFlex fxLayout='row' class='logo-container'>
 					<a
-						class='logo flex layout-column'
+						fxFlex
+						fxLayout='column'
+						class='logo'
 						(click)='appService.testimonialCarousel.setItem(0)'
 					>
 						<img cyphTranslate src='/img/thirdparty/cure53.png' alt='Cure53 logo' />
 					</a>
-					<div class='flex-55 layout-column'></div>
+					<div fxFlex='55' fxLayout='column'></div>
 					<a
-						class='logo flex layout-column'
+						fxFlex
+						fxLayout='column'
+						class='logo'
 						(click)='appService.testimonialCarousel.setItem(1)'
 					>
 						<img
@@ -332,8 +345,12 @@
 					</a>
 				</div>
 
-				<div class='quote-container flex layout-row'>
-					<div class='quote layout-column' [class.flex-50]='!envService.isMobile'>
+				<div fxFlex fxLayout='row' class='quote-container'>
+					<div
+						[fxFlex]='envService.isMobile ? "100" : "50"'
+						fxLayout='column'
+						class='quote'
+					>
 						<div class='text' cyphTranslate>
 							Cyph provides security from a broad range of cryptographic attacks
 							and very strong client-side crypto. The general conclusion of the
@@ -369,7 +386,11 @@
 							>Open Technology Fund</a>)
 						</div>
 					</div>
-					<div class='quote layout-column' [class.flex-50]='!envService.isMobile'>
+					<div
+						[fxFlex]='envService.isMobile ? "100" : "50"'
+						fxLayout='column'
+						class='quote'
+					>
 						<div class='text' cyphTranslate>
 							I like the simple, nonintrusive interface and the single-minded
 							emphasis on doing one thing really well. We will definitely
@@ -840,7 +861,7 @@
 				Donate
 			</h1>
 			<div class='section-content-container'>
-				<div class='layout-row'>
+				<div fxLayout='row'>
 					<div>
 						<span cyphTranslate>
 							If you'd like to help support our mission, you may donate
@@ -852,26 +873,28 @@
 						>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>.
 					</div>
 				</div>
-				<p class='layout-row' cyphTranslate>
+				<p fxLayout='row' cyphTranslate>
 					All donations will go directly toward the development of
 					native mobile apps and Cyph accounts.
 				</p>
-				<div class='layout-row'>
+				<div fxLayout='row'>
 					<md-slider
-						class='flex layout-column'
+						fxFlex
+						fxLayout='column'
 						[(value)]='appService.donationAmount'
 						step='1'
 						min='1'
 						max='1337'
 						mdTooltip='Donation Amount'
 					></md-slider>
-					<div class='donation-amount layout-column'>
+					<div fxLayout='column' class='donation-amount'>
 						${{appService.donationAmount}}
 					</div>
 				</div>
 				<button
-					class='layout-row donate-button'
+					fxLayout='row'
 					cyphTranslate
+					class='donate-button'
 					(click)='appService.updateCart(
 						appService.donationAmount,
 						configService.pricingConfig.categories.donation.id,
@@ -891,9 +914,12 @@
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
 				Checkout
 			</h1>
-			<div class='layout-row layout-align-center-center'>
+			<div fxLayout='row' fxLayoutAlign='center center'>
 				<div
-					class='cart empty flex-33 flex-sm-80 flex-xs-95'
+					fxFlex='33'
+					fxFlex.sm='80'
+					fxFlex.xs='95'
+					class='cart empty'
 					*ngIf='!appService.cart'
 				>
 					<h3 cyphTranslate>
@@ -907,7 +933,9 @@
 					.
 				</div>
 				<cyph-checkout
-					class='flex-33 flex-sm-80 flex-xs-95'
+					fxFlex='33'
+					fxFlex.sm='80'
+					fxFlex.xs='95'
 					[amount]='appService.cart.amount'
 					[category]='appService.cart.category'
 					[item]='appService.cart.item'
@@ -944,8 +972,8 @@
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
 				Frequently Asked Questions
 			</h1>
-			<div class='section-content-container layout-row layout-align-center-center'>
-				<div class='flex-75 flex-xs-95 layout-column'>
+			<div fxLayout='row' fxLayoutAlign='center center' class='section-content-container'>
+				<div fxFlex='75' fxFlex.xs='95' fxLayout='column'>
 					<md-card>
 						<md-card-header>
 							<md-card-title cyphTranslate>

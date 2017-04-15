@@ -1,8 +1,12 @@
-<div class='footer flex layout-row'>
-	<div class='flex'></div>
+<div fxFlex fxLayout='row' class='footer'>
+	<div fxFlex></div>
 
-	<div class='layout-row' *ngIf='!envService.coBranded && !sessionService.apiFlags.telehealth'>
-		<p class='flex-nogrow layout-padding'>
+	<div
+		fxLayout='row'
+		fxLayoutGap='16px'
+		*ngIf='!envService.coBranded && !sessionService.apiFlags.telehealth'
+	>
+		<p fxFlex='nogrow'>
 			<a [href]='envService.homeUrl'>
 				<span>&copy; Cyph 2017</span>
 					&nbsp;&nbsp;&nbsp;
@@ -10,19 +14,19 @@
 			</a>
 		</p>
 
-		<p class='flex-nogrow layout-padding'>
+		<p fxFlex='nogrow'>
 			<a [href]='envService.homeUrl + "contact"' cyphTranslate>
 				Contact
 			</a>
 		</p>
 
-		<p class='flex-nogrow layout-padding'>
+		<p fxFlex='nogrow'>
 			<a [href]='envService.homeUrl + "donate"' cyphTranslate>
 				Donate
 			</a>
 		</p>
 
-		<p class='flex-nogrow layout-padding'>
+		<p fxFlex='nogrow'>
 			<strong *ngIf='!sessionService.state.wasInitiatedByAPI' cyphTranslate>
 				- Individual Use Only -
 			</strong>
@@ -31,19 +35,19 @@
 			</strong>
 		</p>
 
-		<p class='flex-nogrow layout-padding'>
+		<p fxFlex='nogrow'>
 			<a [href]='envService.homeUrl + "pricing"' cyphTranslate>
 				Business Pricing
 			</a>
 		</p>
 
-		<p class='flex-nogrow layout-padding'>
+		<p fxFfxFlex='nogrow'lex>
 			<a [href]='envService.homeUrl + "privacypolicy"' cyphTranslate>
 				Privacy Policy
 			</a>
 		</p>
 
-		<p class='flex-nogrow layout-padding'>
+		<p fxFlex='nogrow'>
 			<a [href]='envService.homeUrl + "termsofservice"' cyphTranslate>
 				Terms of Service
 			</a>
@@ -55,8 +59,12 @@
 		<img class='hipaa icon' src='/img/hipaa.icon.png' alt='HIPAA-Compliant' />
 	</div>
 
-	<div class='layout-row' *ngIf='envService.coBranded || sessionService.apiFlags.telehealth'>
-		<p class='powered-by-cyph flex-nogrow layout-padding'>
+	<div
+		fxLayout='row'
+		fxLayoutGap='16px'
+		*ngIf='envService.coBranded || sessionService.apiFlags.telehealth'
+	>
+		<p fxFlex='nogrow' class='powered-by-cyph'>
 			<a [href]='envService.homeUrl' class='small-font'>
 				<span *ngIf='sessionService.apiFlags.telehealth' cyphTranslate>
 					Telehealth Session
@@ -68,5 +76,5 @@
 		</p>
 	</div>
 
-	<div class='flex'></div>
+	<div fxFlex></div>
 </div>

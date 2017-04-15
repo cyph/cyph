@@ -1,13 +1,19 @@
 <div
-	class='chat-main layout-column layout-fill flex'
+	fxFlex
+	fxFlexFill
+	fxLayout='column'
+	class='chat-main'
 	[class.video]='p2pService.isActive'
 	[class.mobile]='envService.isMobile'
 >
 	<div
-		class='cyph-view loading layout-column layout-fill flex'
+		fxFlex
+		fxFlexFill
+		fxLayout='column'
+		class='cyph-view loading'
 		[class.active]='chatService.chat.state === states.keyExchange'
 	>
-		<div class='flex'></div>
+		<div fxFlex></div>
 		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation'>
 			<div></div>
 			<div></div>
@@ -23,14 +29,17 @@
 			class='key-exchange-progress'
 			[value]='chatService.chat.keyExchangeProgress'
 		></md-progress-bar>
-		<div class='flex'></div>
+		<div fxFlex></div>
 	</div>
 
 	<div
-		class='cyph-view abort-screen loading layout-column layout-fill flex'
+		fxFlex
+		fxFlexFill
+		fxLayout='column'
+		class='cyph-view abort-screen loading'
 		[class.active]='chatService.chat.state === states.aborted'
 	>
-		<div class='flex'></div>
+		<div fxFlex></div>
 		<div class='image'>
 			<img
 				*ngIf='!sessionService.apiFlags.telehealth'
@@ -72,14 +81,17 @@
 				</span>
 			</div>
 		</div>		
-		<div class='flex'></div>
+		<div fxFlex></div>
 	</div>
 
 	<div
-		class='cyph-view chat-begin-message loading layout-column layout-fill flex'
+		fxFlex
+		fxFlexFill
+		fxLayout='column'
+		class='cyph-view chat-begin-message loading'
 		[class.active]='chatService.chat.state === states.chatBeginMessage'
 	>
-		<div class='flex'></div>
+		<div fxFlex></div>
 		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation connected'></div>
 		<div *ngIf='sessionService.apiFlags.telehealth' class='telehealth-logo'>
 			<img src='/img/logo.telehealth.icon.png' alt='Telehealth logo' />
@@ -89,11 +101,12 @@
 			class='key-exchange-progress'
 			[value]='100'
 		></md-progress-bar>
-		<div class='flex'></div>
+		<div fxFlex></div>
 	</div>
 
 	<div
-		class='cyph-view video-call flex'
+		fxFlex
+		class='cyph-view video-call'
 		[class.active]='chatService.chat.state === states.chat'
 		[class.no-transition]='p2pService.isActive'
 		[class.playing]='p2pService.isActive'
@@ -116,17 +129,17 @@
 		</a>
 		<div
 			class='friend stream'
-			[hidden]='!p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
+			[fxHide]='!p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
 		></div>
 		<img
 			class='friend'
-			[hidden]='p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
+			[fxHide]='p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
 			src='/img/voicecall.jpg'
 			alt='Voice call'
 		/>
 		<video
 			class='me'
-			[hidden]='!p2pWebRTCService.outgoingStream.video'
+			[fxHide]='!p2pWebRTCService.outgoingStream.video'
 			autoplay
 			muted
 		></video>
@@ -192,30 +205,31 @@
 	></cyph-chat-message-box>
 
 	<div
-		class='cyph-view transfer-list flex'
+		fxFlex
+		class='cyph-view transfer-list'
 		[class.active]='chatService.chat.state === states.chat && !p2pService.isActive'
 	>
-		<md-list class='layout-column'>
+		<md-list fxLayout='column'>
 			<md-list-item
-				class='layout-row'
+				fxLayout='row'
 				*ngFor='let transfer of fileTransferService.transfers'
 			>
-				<div class='layout-column layout-align-start-stretch flex'>
-					<div class='layout-row'>
-						<span class='layout-column' *ngIf='transfer.isOutgoing' cyphTranslate>
+				<div fxFlex fxLayout='column' fxLayoutAlign='start stretch'>
+					<div fxLayout='row'>
+						<span fxLayout='column' *ngIf='transfer.isOutgoing' cyphTranslate>
 							Sending
 						</span>
-						<span class='layout-column' *ngIf='!transfer.isOutgoing' cyphTranslate>
+						<span fxLayout='column' *ngIf='!transfer.isOutgoing' cyphTranslate>
 							Receiving
 						</span>
 						&nbsp;
-						<span class='flex layout-column'>
+						<span fxFlex fxLayout='column'>
 							{{transfer.name}}
 							({{utilService.readableByteLength(transfer.size)}}):
 						</span>
 					</div>
 					<md-progress-bar
-						class='layout-row'
+						fxLayout='row'
 						[value]='transfer.percentComplete'
 					></md-progress-bar>
 				</div>
@@ -224,7 +238,8 @@
 	</div>
 
 	<div
-		class='cyph-view message-list flex'
+		fxFlex
+		class='cyph-view message-list'
 		[class.active]='chatService.chat.state === states.chat'
 		[style.margin-top]='
 			p2pService.isActive ? "" : (
@@ -239,16 +254,16 @@
 		'
 	>
 		<div cyphNanoScroller>
-			<md-list class='layout-fill layout-column'>
+			<md-list fxFlexFill fxLayout='column'>
 				<cyph-chat-message
-					class='layout-row'
+					fxLayout='row'
 					[message]='message'
 					[mobile]='envService.isMobile || p2pService.isActive'
 					*ngFor='let message of chatService.chat.messages'
 				></cyph-chat-message>
 
-				<md-list-item class='layout-row'>
-					<span class='friend-is-typing' [class.show]='chatService.chat.isFriendTyping'>
+				<md-list-item fxLayout='row'>
+					<span class='friend-is-typing' [fxShow]='chatService.chat.isFriendTyping'>
 						<span class='ellipsis-spinner'>
 							<div class='bounce1'></div>
 							<div class='bounce2'></div>
@@ -258,10 +273,11 @@
 				</md-list-item>
 
 				<md-list-item
-					class='layout-row chat-end-message'
+					fxLayout='row'
+					class='chat-end-message'
 					*ngIf='chatService.chat.isDisconnected && !hideDisconnectMessage'
 				>
-					<md-card class='flex flex-gt-sm-50 layout-align-center-center'>
+					<md-card fxFlex fxFlex.gt-sm='50' fxLayoutAlign='center center'>
 						<md-card-content>
 							<ng-content></ng-content>
 						</md-card-content>

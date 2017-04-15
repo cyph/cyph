@@ -2,12 +2,14 @@
 	<div *ngIf='!complete'>
 		<div class='checkout-ui'>
 			<div class='braintree'></div>
-			<div class='layout-row layout-sm-column layout-xs-column'>
+			<div fxLayout='row' fxLayout.lt-md='column'>
 				<md-input-container>
 					<input
 						mdInput
+						fxFlex
+						fxLayout='column'
+						fxLayout.lt-md='row'
 						cyphTranslate
-						class='layout-column layout-sm-row layout-xs-row flex'
 						md1Class='md-block'
 						[(ngModel)]='name'
 						name='name'
@@ -18,8 +20,10 @@
 				<md-input-container>
 					<input
 						mdInput
+						fxFlex
+						fxLayout='column'
+						fxLayout.lt-md='row'
 						cyphTranslate
-						class='layout-column layout-sm-row layout-xs-row flex'
 						md1Class='md-block'
 						[(ngModel)]='email'
 						name='email'
@@ -29,12 +33,14 @@
 					/>
 				</md-input-container>
 			</div>
-			<div class='layout-row layout-sm-column layout-xs-column'>
+			<div fxLayout='row' fxLayout.lt-md='column'>
 				<md-input-container>
 					<input
 						mdInput
+						fxFlex
+						fxLayout='column'
+						fxLayout.lt-md='row'
 						cyphTranslate
-						class='layout-column layout-sm-row layout-xs-row flex'
 						md1Class='md-block'
 						[(ngModel)]='company'
 						name='company'

@@ -3,7 +3,7 @@
 		<cyph-demo-chat-root [data]='demoService.desktop'>
 			<span *ngIf='!envService.isMobile'>
 				<div class='cyph-foreground'>
-					<cyph-chat-main class='flex layout-column layout-fill'>
+					<cyph-chat-main fxFlex fxFlexFill fxLayout='column'>
 						<span cyphTranslate>
 							We hope you enjoyed our quick demo! Just click
 							the "start new cyph" button to use it for real.
@@ -19,7 +19,7 @@
 	<span class='mobile'>
 		<cyph-demo-chat-root [data]='demoService.mobile'>
 			<div class='cyph-foreground'>
-				<cyph-chat-main class='flex layout-column layout-fill'>
+				<cyph-chat-main fxFlex fxFlexFill fxLayout='column'>
 					<span cyphTranslate>
 						Tell your friends.
 					</span>
