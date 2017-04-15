@@ -1,7 +1,5 @@
 <md-list-item
-	[fxFlex]='envService.isMobile || p2pService.isActive ? "nogrow" : ""'
-	fxLayout='column'
-	class='message-item'
+	class='layout-column flex message-item'
 	[class.mobile]='envService.isMobile'
 	[class.read]='!message.unread'
 	[class.author-app]='message.author === users.app'
@@ -13,8 +11,8 @@
 	[class.self-destructed]='message.selfDestructTimer && message.selfDestructTimer.isComplete'
 	[class.unconfirmed]='message.id && chatService.chat.unconfirmedMessages.has(message.id)'
 >
-	<div fxFlex fxLayout='column'>
-		<div fxLayout='row'>
+	<div class='flex layout-column'>
+		<div class='layout-row'>
 			<span class='message'>
 				<strong
 					class='message-author'
@@ -37,7 +35,7 @@
 					[markdown]='message.text'
 				></cyph-markdown>
 			</span>
-			<span fxFlex class='message-timestamp'>
+			<span class='message-timestamp flex'>
 				<span *ngIf='mobile && message.author === users.me'>
 					{{stringsService.me}} &nbsp;&mdash;&nbsp;
 				</span>
@@ -56,8 +54,7 @@
 			</span>
 		</div>
 		<div
-			fxLayout='row'
-			class='self-destruct-timer'
+			class='self-destruct-timer layout-row'
 			*ngIf='message.selfDestructTimer'
 		>
 			<span cyphTranslate>Message will self-destruct in</span>

@@ -1,5 +1,5 @@
-<div fxFlex fxFlexFill fxLayout='column' class='link-connection loading'>
-	<div fxFlex></div>
+<div class='link-connection loading layout-column layout-fill flex'>
+	<div class='flex'></div>
 	<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation'>
 		<div></div>
 		<div></div>
@@ -30,10 +30,9 @@
 			<br />
 			<br />
 
-			<div fxLayoutAlign='center center' *ngIf='!envService.isMobile'>
-				<md-input-container fxFlex='50'>
+			<div class='connect-link-input' *ngIf='!envService.isMobile'>
+				<md-input-container>
 					<input
-						mdInput
 						cyphTranslate
 						class='connect-link-input'
 						[(ngModel)]='link'
@@ -56,28 +55,37 @@
 					[href]='link'
 					mdTooltip='Cyph Link'
 				>{{link}}</a>
-
-				<br />
 				<br />
 
-				<a md-mini-fab mdTooltip='SMS' [href]='linkSMS' cyphTranslate>
+				<button
+					md-fab
+					mdTooltip='SMS'
+					[href]='envService.smsUriBase + linkEncoded'
+					cyphTranslate
+				>
 					<md-icon>textsms</md-icon>
-				</a>
-
-				<span class='divider'>
-					&nbsp;
-				</span>
-
-				<a md-mini-fab mdTooltip='Email' target='_self' [href]='linkMailto' cyphTranslate>
-					<md-icon>email</md-icon>
-				</a>
+				</button>
 
 				<span class='divider'>
 					&nbsp;
 				</span>
 
 				<button
-					md-mini-fab
+					md-fab
+					mdTooltip='Email'
+					target='_self'
+					[href]='"mailto:?subject=Cyph&body=" + linkEncoded'
+					cyphTranslate
+				>
+					<md-icon>email</md-icon>
+				</button>
+
+				<span class='divider'>
+					&nbsp;
+				</span>
+
+				<button
+					md-fab
 					mdTooltip='Copy to Clipboard'
 					(click)='copyToClipboard()'
 					cyphTranslate
@@ -105,49 +113,47 @@
 		</div>
 	</div>
 
-	<br />
-	<br />
+	<md-slide-toggle
+		class='advanced-features-switch'
+		*ngIf='enableAdvancedFeatures'
+		[(checked)]='advancedFeatures'
+		cyphTranslate
+	>
+		Advanced Features
+	</md-slide-toggle>
 
-	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='enableAdvancedFeatures'>
-		<div fxFlex fxFlex.gt-md='50' fxLayout='column'>
-			<div fxLayout='row' fxLayoutAlign='center center'>
-				<md-slide-toggle [(ngModel)]='advancedFeatures' cyphTranslate>
-					Advanced Features
-				</md-slide-toggle>
-			</div>
-
-			<div fxLayout='row' *ngIf='advancedFeatures'>
-				<md-input-container fxFlex fxLayout='column'>
-					<textarea
-						mdInput
-						cyphTranslate
-						[(ngModel)]='queuedMessageDraft'
-						placeholder='Queue up first message'
-						rows='3'
-					></textarea>
-				</md-input-container>
-				<div fxLayout='column' fxLayoutAlign='center center'>
-					<button
-						md-icon-button
-						mdTooltip='Save'
-						(click)='chatService.setQueuedMessage(queuedMessageDraft)'
-					>
-						<md-icon>save</md-icon>
-					</button>
-					<md-button-toggle
-						mdTooltip='Self-destruct'
-						[checked]='chatService.chat.queuedMessageSelfDestruct'
-						(change)='
-							chatService.chat.queuedMessageSelfDestruct =
-								!chatService.chat.queuedMessageSelfDestruct
-						'
-					>
-						<md-icon>timer</md-icon>
-					</md-button-toggle>
-				</div>
-			</div>
+	<div class='advanced-features' *ngIf='advancedFeatures'>
+		<md-input-container>
+			<textarea
+				cyphTranslate
+				class='queued-message-box'
+				[(ngModel)]='queuedMessageDraft'
+				placeholder='Queue up first message'
+				rows='3'
+			></textarea>
+		</md-input-container>
+		<div class='buttons'>
+			<button
+				md-icon-button
+				mdTooltip='Save'
+				(click)='chatService.setQueuedMessage(queuedMessageDraft)'
+			>
+				<md-icon>save</md-icon>
+			</button>
+			<button
+				md-icon-button
+				class='self-destruct-button'
+				mdTooltip='Self-destruct'
+				(click)='chatService.setQueuedMessage(
+					undefined,
+					!chatService.chat.queuedMessageSelfDestruct
+				)'
+			>
+				<md-icon [class.active]='chatService.chat.queuedMessageSelfDestruct'>
+					timer
+				</md-icon>
+			</button>
 		</div>
 	</div>
-
-	<div fxFlex></div>
+	<div class='flex'></div>
 </div>

@@ -1,26 +1,16 @@
 <div class='signup-form' [class.mobile]='envService.isMobile'>
-	<form
-		ngNativeValidate
-		fxLayout='column'
-		fxLayoutGap='16px'
-		(submit)='submit()'
-		*ngIf='signupService.state === 0'
-	>
-		<div fxLayout='row'>
+	<form ngNativeValidate (submit)='submit()' *ngIf='signupService.state === 0'>
+		<div class='layout-row layout-align-center-center flex'>
 			<ng-content></ng-content>
 		</div>
-		<div fxLayout='row'>
-			<div
-				fxFlex='50'
-				fxLayout='column'
-				fxLayoutAlign='center stretch'
-				*ngIf='!envService.isMobile'
-			>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container fxFlex='80'>
+		<div class='layout-row layout-align-center-stretch flex'>
+			<div class='layout-column flex-50' *ngIf='!envService.isMobile'>
+				<div class='layout-row layout-align-center-center'>
+					<md-input-container>
 						<input
-							mdInput
 							cyphTranslate
+							class='flex-80'
+							md1Class='md-block'
 							[(ngModel)]='signupService.data.email'
 							name='email'
 							type='email'
@@ -28,11 +18,12 @@
 						/>
 					</md-input-container>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container fxFlex='80'>
+				<div class='layout-row layout-align-center-center'>
+					<md-input-container>
 						<input
-							mdInput
 							cyphTranslate
+							class='flex-80'
+							md1Class='md-block'
 							name='password'
 							type='password'
 							placeholder='Password'
@@ -40,11 +31,13 @@
 						/>
 					</md-input-container>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container fxFlex='80'>
+
+				<div class='layout-row layout-align-center-center'>
+					<md-input-container>
 						<input
-							mdInput
 							cyphTranslate
+							class='flex-80'
+							md1Class='md-block'
 							name='confirmPassword'
 							type='password'
 							placeholder='Confirm Password'
@@ -52,11 +45,12 @@
 						/>
 					</md-input-container>
 				</div>
-				<div *ngIf='invite' fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container fxFlex='80'>
+				<div *ngIf='invite' class='layout-row layout-align-center-center'>
+					<md-input-container>
 						<input
-							mdInput
 							cyphTranslate
+							class='flex-80'
+							md1Class='md-block'
 							[(ngModel)]='signupService.data.inviteCode'
 							name='inviteCode'
 							type='text'
@@ -64,22 +58,22 @@
 						/>
 					</md-input-container>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center end' class='register-button'>
+				<div class='register-button layout-row layout-align-center-end'>
 					<button md-button type='submit' [disabled]='true' cyphTranslate>
 						Register
 					</button>
 				</div>
 			</div>
-			<div fxFlex fxLayout='column'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<p fxFlex='80' cyphTranslate>
+			<div class='layout-column flex'>
+				<div class='layout-row layout-align-center-center'>
+					<p class='flex-80' cyphTranslate>
 						We are currently at capacity and registration is closed,
 						but you can sign up for the waitlist to reserve your spot
 						in line for an account.
 					</p>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<p fxFlex='80' cyphTranslate>
+				<div class='layout-row layout-align-center-center'>
+					<p class='flex-80' cyphTranslate>
 						However, you don't need an account to use Cyph; just click the
 						"start new cyph" button on the homepage. Our beta accounts program
 						only provides early access to more advanced functionality and cool
@@ -87,7 +81,7 @@
 					</p>
 					<br />
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center end' class='register-button'>
+				<div class='register-button layout-row layout-align-center-end'>
 					<button md-button type='submit' cyphTranslate>
 						Waitlist Signup
 					</button>
@@ -96,38 +90,38 @@
 		</div>
 	</form>
 
-	<form ngNativeValidate (submit)='submit()' *ngIf='signupService.state === 1'>
-		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
-			<div fxFlex fxLayout='column'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
+	<form (submit)='submit()' *ngIf='signupService.state === 1'>
+		<div class='layout-row layout-align-center-center flex'>
+			<div class='layout-column flex'>
+				<div class='layout-row layout-align-center-center'>
 					<md-input-container>
 						<input
-							mdInput
 							cyphTranslate
-							fxFlex='80'
+							class='flex-80'
+							md1Class='md-block'
 							[(ngModel)]='signupService.data.email'
 							name='email'
 							type='email'
 							placeholder='Email'
-							required
+							[required]='true'
 						/>
 					</md-input-container>
 				</div>
-				<div *ngIf='invite' fxLayout='row' fxLayoutAlign='center center'>
+				<div *ngIf='invite' class='layout-row layout-align-center-center'>
 					<md-input-container>
 						<input
-							mdInput
 							cyphTranslate
-							fxFlex='80'
+							class='flex-80'
+							md1Class='md-block'
 							[(ngModel)]='signupService.data.inviteCode'
 							name='inviteCode'
 							type='text'
 							placeholder='Invite Code'
-							required
+							[required]='true'
 						/>
 					</md-input-container>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center end'>
+				<div class='layout-row layout-align-center-end'>
 					<button md-button type='submit' cyphTranslate>
 						Waitlist Signup
 					</button>
@@ -136,22 +130,22 @@
 		</div>
 	</form>
 
-	<form ngNativeValidate (submit)='submit()' *ngIf='signupService.state === 2'>
-		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
-			<div fxFlex fxLayout='column'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
+	<form (submit)='submit()' *ngIf='signupService.state === 2'>
+		<div class='layout-row layout-align-center-center flex'>
+			<div class='layout-column flex'>
+				<div class='layout-row layout-align-center-center'>
 					<md-input-container>
 						<input
-							mdInput
 							cyphTranslate
-							fxFlex='80'
+							class='flex-80'
+							md1Class='md-block'
 							[(ngModel)]='signupService.data.name'
 							name='name'
 							placeholder='Name (optional)'
 						/>
 					</md-input-container>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center end'>
+				<div class='layout-row layout-align-center-end'>
 					<button md-button type='submit' cyphTranslate>
 						Waitlist Signup
 					</button>
@@ -160,11 +154,11 @@
 		</div>
 	</form>
 
-	<form ngNativeValidate (submit)='submit()' *ngIf='signupService.state === 3'>
-		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
-			<div fxFlex fxLayout='column'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<p fxFlex='80'>
+	<form (submit)='submit()' *ngIf='signupService.state === 3'>
+		<div class='layout-row layout-align-center-center flex'>
+			<div class='layout-column flex'>
+				<div class='layout-row layout-align-center-center'>
+					<p class='flex-80'>
 						<span cyphTranslate>Thanks for subscribing,</span>
 						<span>{{signupService.data.name}}!</span>
 						<span cyphTranslate>We'll email you when your invite is ready.</span>

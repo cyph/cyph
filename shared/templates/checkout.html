@@ -1,37 +1,38 @@
 <form ngNativeValidate>
-	<div fxLayout='column' fxLayoutGap='16px' *ngIf='!complete'>
-		<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui'>
+	<div *ngIf='!complete'>
+		<div class='checkout-ui'>
 			<div class='braintree'></div>
-			<div>
-				<div fxLayout='column' fxLayout.gt-md='row' fxLayoutGap='16px'>
-					<md-input-container fxFlex>
-						<input
-							mdInput
-							cyphTranslate
-							[(ngModel)]='name'
-							name='name'
-							placeholder='Name'
-							required
-						/>
-					</md-input-container>
-					<md-input-container fxFlex>
-						<input
-							mdInput
-							cyphTranslate
-							[(ngModel)]='email'
-							name='email'
-							type='email'
-							placeholder='Email'
-							required
-						/>
-					</md-input-container>
-				</div>
-			</div>
-			<div>
-				<md-input-container fxFlex>
+			<div class='layout-row layout-sm-column layout-xs-column'>
+				<md-input-container>
 					<input
-						mdInput
 						cyphTranslate
+						class='layout-column layout-sm-row layout-xs-row flex'
+						md1Class='md-block'
+						[(ngModel)]='name'
+						name='name'
+						placeholder='Name'
+						[required]='true'
+					/>
+				</md-input-container>
+				<md-input-container>
+					<input
+						cyphTranslate
+						class='layout-column layout-sm-row layout-xs-row flex'
+						md1Class='md-block'
+						[(ngModel)]='email'
+						name='email'
+						type='email'
+						placeholder='Email'
+						[required]='true'
+					/>
+				</md-input-container>
+			</div>
+			<div class='layout-row layout-sm-column layout-xs-column'>
+				<md-input-container>
+					<input
+						cyphTranslate
+						class='layout-column layout-sm-row layout-xs-row flex'
+						md1Class='md-block'
 						[(ngModel)]='company'
 						name='company'
 						placeholder='Company (optional)'
@@ -39,16 +40,14 @@
 				</md-input-container>
 			</div>
 		</div>
-		<div fxLayoutAlign='center center'>
-			<button md-button type='submit'>
-				<span cyphTranslate>Confirm</span>
-				<span>${{amount}}</span>
-				<span>
-					<span *ngIf='!subscription' cyphTranslate>payment</span>
-					<span *ngIf='subscription' cyphTranslate>monthly subscription</span>
-				</span>
-			</button>
-		</div>
+		<button md-button type='submit'>
+			<span cyphTranslate>Confirm</span>
+			<span>${{amount}}</span>
+			<span>
+				<span *ngIf='!subscription' cyphTranslate>payment</span>
+				<span *ngIf='subscription' cyphTranslate>monthly subscription</span>
+			</span>
+		</button>
 	</div>
 	<div class='confirmation' *ngIf='complete'>
 		<ng-content *ngIf='success'></ng-content>

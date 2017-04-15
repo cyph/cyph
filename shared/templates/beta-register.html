@@ -1,39 +1,41 @@
 <md-card>
-	<md-card-title>
-		<span *ngIf='!invite' cyphTranslate>
-			Register
-		</span>
-		<span *ngIf='invite' cyphTranslate>
-			Register with Invite Code
-		</span>
-	</md-card-title>
-	<md-card-subtitle>
-		<div *ngIf='signupService.state === 1'>
+	<md-card-header>
+		<md-card-title>
 			<span *ngIf='!invite' cyphTranslate>
-				Enter your email address.
+				Register
 			</span>
 			<span *ngIf='invite' cyphTranslate>
-				Enter your email address and invite code for priority access
-				on our waitlist.
+				Register with Invite Code
 			</span>
-		</div>
-		<div *ngIf='signupService.state === 2' cyphTranslate>
-			Thanks for signing up. Feel free to give us your name too.
-			Privacy is at the core of our ideology, so we'll never give
-			away your email address or personal details.
-		</div>
-	</md-card-subtitle>
+		</md-card-title>
+		<md-card-subtitle>
+			<div *ngIf='signupService.state === 1'>
+				<span *ngIf='!invite' cyphTranslate>
+					Enter your email address.
+				</span>
+				<span *ngIf='invite' cyphTranslate>
+					Enter your email address and invite code for priority access
+					on our waitlist.
+				</span>
+			</div>
+			<div *ngIf='signupService.state === 2' cyphTranslate>
+				Thanks for signing up. Feel free to give us your name too.
+				Privacy is at the core of our ideology, so we'll never give
+				away your email address or personal details.
+			</div>
+		</md-card-subtitle>
+	</md-card-header>
 	<md-card-content>
 		<cyph-signup-form [invite]='invite'></cyph-signup-form>
 	</md-card-content>
 </md-card>
 
-<div fxLayout='row' fxLayoutAlign='center center' class='login-button'>
-	<a
+<div class='login-button layout-row layout-align-center-center'>
+	<button
 		md-button
 		[href]='envService.newCyphBaseUrl + "#account/login"'
 		cyphTranslate
 	>
 		Already have a Cyph account? Click here to login.
-	</a>
+	</button>
 </div>

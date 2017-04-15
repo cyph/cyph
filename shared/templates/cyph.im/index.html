@@ -1,11 +1,10 @@
-<!-- TODO: Find a less hackish way to apply the theme globally than mat-sidenav-container. -->
-<span fxFlexFill *ngIf='!appService.isLockedDown; else lockdown' class='mat-sidenav-container'>
-	<cyph-ephemeral-chat-root fxFlexFill *ngIf='appService.state !== appService.states.account'>
-		<section fxFlexFill fxLayout='column' id='main' class='cyph-foreground'>
-			<canvas [fxHide]='envService.isFirefox' id='main-chat-gradient'></canvas>
+<span *ngIf='!appService.isLockedDown; else lockdown'>
+	<cyph-ephemeral-chat-root *ngIf='appService.state !== appService.states.account'>
+		<section id='main' class='cyph-foreground layout-fill layout-column'>
+			<canvas [hidden]='envService.isFirefox' id='main-chat-gradient'></canvas>
 
 			<h3
-				class='cyph-banner emphasis'
+				md-subheader
 				*ngIf='envService.webSignError && appService.state !== appService.states.chat'
 			>
 				WARNING: Your Cyph instance has a problem.
@@ -14,42 +13,31 @@
 			</h3>
 
 			<cyph-chat-main
-				fxFlex
-				fxFlexFill
-				fxLayout='column'
 				[hideDisconnectMessage]='envService.coBranded'
 				[messageCountInTitle]='true'
 				[class.active]='appService.state === appService.states.chat'
-				class='cyph-view'
+				class='cyph-view layout-fill layout-column flex'
 			>
 				<cyph-signup-form>
-					{{stringsService.signupMessage}}
+					{{stringsService.signupMessage1}}
+					{{stringsService.signupMessage2}}
 				</cyph-signup-form>
 			</cyph-chat-main>
 
 			<cyph-link-connection
-				fxFlex
-				fxFlexFill
-				fxLayout='column'
 				[class.active]='appService.state === appService.states.waitingForFriend'
-				class='cyph-view'
+				class='cyph-view layout-fill layout-column flex'
 			></cyph-link-connection>
 
 			<cyph-not-found
-				fxFlex
-				fxFlexFill
-				fxLayout='column'
 				[class.active]='appService.state === appService.states.error'
-				class='cyph-view'
+				class='cyph-view layout-fill layout-column flex'
 			></cyph-not-found>
 
 			<div
-				fxFlex
-				fxFlexFill
-				fxLayout='column'
-				id='blank'
 				[class.active]='appService.state === appService.states.blank'
-				class='cyph-view'
+				id='blank'
+				class='cyph-view layout-fill layout-column flex'
 			></div>
 
 			<footer>
@@ -65,9 +53,8 @@
 	</cyph-ephemeral-chat-root>
 
 	<section
-		fxFlexFill
-		fxLayout='column'
 		id='main'
+		class='layout-fill layout-column'
 		*ngIf='appService.state === appService.states.account'
 	>
 		<cyph-account></cyph-account>
@@ -75,7 +62,7 @@
 </span>
 
 <ng-template #lockdown>
-	<section fxFlexFill fxLayout='column' id='main' class='mat-sidenav-container'>
+	<section id='main' class='layout-fill layout-column'>
 		<cyph-lockdown></cyph-lockdown>
 	</section>
 </ng-template>

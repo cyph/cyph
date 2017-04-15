@@ -1,45 +1,48 @@
 <div cyphNanoScroller>
-	<div
-		fxFlexFill
-		fxLayoutAlign='center center'
-		class='login-form'
-		[class.checking]='checking'
-	>
-		<md-card fxFlex fxFlex.gt-sm='50'>
-			<md-card-title cyphTranslate>
-				Log In
-			</md-card-title>
-			<md-card-subtitle cyphTranslate>
-				Welcome to Cyph! You must enter a password to access this environment.
-			</md-card-subtitle>
-			<md-card-content>
-				<form ngNativeValidate (submit)='submit()'>
-					<div fxLayout='row' fxLayoutAlign='center center'>
-						<h3 class='cyph-banner' [style.visibility]='error ? "visible" : "hidden"'>
-							{{stringsService.invalidPassword}}
-						</h3>
-					</div>
-					<div fxLayout='row' fxLayoutAlign='center center'>
-						<md-input-container fxFlex='60'>
-							<input
-								mdInput
-								cyphTranslate
-								[(ngModel)]='password'
-								name='password'
-								type='password'
-								placeholder='Password'
-								required
-							/>
-						</md-input-container>
-					</div>
-					<div fxLayout='row' fxLayoutAlign='center center'>
-						<button md-button type='submit' cyphTranslate>
-							Log In
-						</button>
-					</div>
-				</form>
-			</md-card-content>
-			<md-progress-spinner mode='indeterminate'></md-progress-spinner>
-		</md-card>
+	<div class='layout-fill'>
+		<div
+			class='login-form layout-row layout-align-center-center'
+			[class.checking]='checking'
+		>
+			<md-card class='flex flex-gt-sm-50'>
+				<md-card-header>
+					<md-card-title cyphTranslate>
+						Log In
+					</md-card-title>
+					<md-card-subtitle cyphTranslate>
+						Welcome to Cyph! You must enter a password to access this environment.
+					</md-card-subtitle>
+				</md-card-header>
+				<md-card-content>
+					<form ngNativeValidate (submit)='submit()'>
+						<div class='layout-row layout-align-center-center'>
+							<h3 md-subheader [style.visibility]='error ? "visible" : "hidden"'>
+								{{stringsService.invalidPassword}}
+							</h3>
+						</div>
+						<div class='layout-row layout-align-center-center'>
+							<md-input-container>
+								<input
+									cyphTranslate
+									class='flex-60'
+									md1Class='md-block'
+									[(ngModel)]='password'
+									name='password'
+									type='password'
+									placeholder='Password'
+									[required]='true'
+								/>
+							</md-input-container>
+						</div>
+						<div class='layout-row layout-align-center-center'>
+							<button md-button type='submit' cyphTranslate>
+								Log In
+							</button>
+						</div>
+					</form>
+				</md-card-content>
+				<md-progress-spinner mode='indeterminate'></md-progress-spinner>
+			</md-card>
+		</div>
 	</div>
 </div>
