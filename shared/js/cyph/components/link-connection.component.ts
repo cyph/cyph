@@ -1,4 +1,5 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import * as clipboard from 'clipboard-js';
 import * as $ from 'jquery';
 import {ChatService} from '../services/chat.service';
@@ -42,8 +43,11 @@ export class LinkConnectionComponent implements OnInit {
 	/** The link to join this connection. */
 	public link: string;
 
-	/** URL-encoded version of this link (for sms and mailto links). */
-	public linkEncoded: string;
+	/** Mailto version of this link. */
+	public linkMailto?: SafeUrl;
+
+	/** SMS version of this link. */
+	public linkSMS?: SafeUrl;
 
 	/** Draft of queued message. */
 	public queuedMessageDraft: string	= '';
@@ -99,7 +103,16 @@ export class LinkConnectionComponent implements OnInit {
 			this.sessionService.state.sharedSecret
 		;
 
-		this.linkEncoded	= encodeURIComponent(this.linkConstant);
+		const linkEncoded	= encodeURIComponent(this.linkConstant);
+
+		this.linkMailto		= this.domSanitizer.bypassSecurityTrustUrl(
+			`mailto:?subject=Cyph&body=${linkEncoded}`
+		);
+
+		this.linkSMS		= this.domSanitizer.bypassSecurityTrustUrl(
+			this.envService.smsUriBase + linkEncoded
+		);
+
 		this.link			= this.linkConstant;
 		this.timer			= new Timer(this.configService.cyphCountdown, false);
 
@@ -149,7 +162,8 @@ export class LinkConnectionComponent implements OnInit {
 			isWaiting			= false;
 			this.link			= '';
 			this.linkConstant	= '';
-			this.linkEncoded	= '';
+			this.linkMailto		= undefined;
+			this.linkSMS		= undefined;
 
 			this.timer.stop();
 		});
@@ -164,6 +178,9 @@ export class LinkConnectionComponent implements OnInit {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly domSanitizer: DomSanitizer,
+
 		/** @ignore */
 		private readonly elementRef: ElementRef,
 
