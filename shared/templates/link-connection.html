@@ -58,12 +58,7 @@
 				>{{link}}</a>
 				<br />
 
-				<a
-					md-fab
-					mdTooltip='SMS'
-					[href]='envService.smsUriBase + linkEncoded'
-					cyphTranslate
-				>
+				<a md-fab mdTooltip='SMS' [href]='linkSMS' cyphTranslate>
 					<md-icon>textsms</md-icon>
 				</a>
 
@@ -71,13 +66,7 @@
 					&nbsp;
 				</span>
 
-				<a
-					md-fab
-					mdTooltip='Email'
-					target='_self'
-					[href]='"mailto:?subject=Cyph&body=" + linkEncoded'
-					cyphTranslate
-				>
+				<a md-fab mdTooltip='Email' target='_self' [href]='linkMailto' cyphTranslate>
 					<md-icon>email</md-icon>
 				</a>
 

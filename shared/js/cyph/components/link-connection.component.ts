@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import * as clipboard from 'clipboard-js';
 import * as $ from 'jquery';
@@ -35,7 +35,7 @@ export class LinkConnectionComponent implements OnInit {
 	public advancedFeatures: boolean;
 
 	/** Indicates whether advanced features UI should be displayed. */
-	public enableAdvancedFeatures: boolean	= this.envService.isLocalEnv;
+	@Input() public enableAdvancedFeatures: boolean;
 
 	/** Indicates whether this link connection was initiated passively via API integration. */
 	public isPassive: boolean;
@@ -129,7 +129,7 @@ export class LinkConnectionComponent implements OnInit {
 			}
 			else {
 				const $connectLinkInput	= await util.waitForIterable(
-					() => $element.find('.connect-link-input')
+					() => $element.find('.connect-link-input input')
 				);
 
 				const connectLinkInput	= <HTMLInputElement> $connectLinkInput[0];
