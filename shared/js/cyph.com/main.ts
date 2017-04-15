@@ -9,6 +9,7 @@ import '../preload';
 
 import {enableProdMode} from '@angular/core';
 import {platformBrowser} from '@angular/platform-browser';
+import 'hammerjs';
 import 'jquery.appear';
 import 'magnific-popup';
 import 'nanoscroller';
