@@ -33,6 +33,7 @@
 			<div class='connect-link-input' *ngIf='!envService.isMobile'>
 				<md-input-container>
 					<input
+						mdInput
 						cyphTranslate
 						class='connect-link-input'
 						[(ngModel)]='link'
@@ -125,6 +126,7 @@
 	<div class='advanced-features' *ngIf='advancedFeatures'>
 		<md-input-container>
 			<textarea
+				mdInput
 				cyphTranslate
 				class='queued-message-box'
 				[(ngModel)]='queuedMessageDraft'
