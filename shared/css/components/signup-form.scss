@@ -1,3 +1,5 @@
+@import 'theme';
+
 :host {
 	font-size: 1.08em;
 }
@@ -19,8 +21,8 @@ input {
 
 	&:not([disabled]) {
 		&, ~ label {
-			color: #f1f1f1 !important;
-			border-color: #f1f1f1 !important;
+			color: $cyph-foreground !important;
+			border-color: $cyph-foreground !important;
 		}
 	}
 }

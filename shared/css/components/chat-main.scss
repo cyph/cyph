@@ -1,3 +1,5 @@
+@import 'theme';
+
 .message-list:not(.nano) {
 	overflow-y: scroll;
 }
@@ -652,7 +654,7 @@
 	> div {
 		width: 12px;
 		height: 12px;
-		background-color: #f1f1f1;
+		background-color: $cyph-foreground;
 		border-radius: 100%;
 		display: inline-block;
 

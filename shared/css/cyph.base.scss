@@ -1,6 +1,8 @@
 @import 'mixins';
 @import 'theme';
 
+@include angular-material-theme($cyph-app-theme);
+
 * {
 	-webkit-font-smoothing: antialiased !important;
 	-moz-osx-font-smoothing: grayscale !important;
@@ -14,7 +16,7 @@ body.load-complete #pre-load {
 
 html, body, #main, .cyph-foreground {
 	margin: 0px;
-	background-color: #8b62d9 !important;
+	background-color: $cyph-background !important;
 }
 
 html, body {
@@ -75,7 +77,7 @@ input, textarea {
 }
 
 blockquote {
-	border-left: 2px solid #f1f1f1 !important;
+	border-left: 2px solid $cyph-foreground !important;
 	padding-left: 10px;
 }
 
