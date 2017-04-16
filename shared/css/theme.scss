@@ -28,8 +28,8 @@ $cyph-app-theme: (
 		card:                     map_get($cyph-primary, lighter),
 		dialog:                   map_get($cyph-primary, lighter),
 		disabled-button-toggle:   $cyph-darkest,
-		raised-button:            map_get($cyph-accent, default),
-		selected-button:          map_get($cyph-accent, darker),
+		raised-button:            map_get($cyph-primary, default),
+		selected-button:          map_get($cyph-accent, default),
 		selected-disabled-button: map_get($cyph-primary, darker),
 		status-bar:               $cyph-darkest
 	))
