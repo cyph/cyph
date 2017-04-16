@@ -3,7 +3,7 @@
 
 	<div
 		fxLayout='row'
-		fxLayoutGap='16px'
+		fxLayoutGap='32px'
 		*ngIf='!envService.coBranded && !sessionService.apiFlags.telehealth'
 	>
 		<p fxFlex='nogrow'>
@@ -41,7 +41,7 @@
 			</a>
 		</p>
 
-		<p fxFfxFlex='nogrow'lex>
+		<p fxFlex='nogrow'>
 			<a [href]='envService.homeUrl + "privacypolicy"' cyphTranslate>
 				Privacy Policy
 			</a>
@@ -61,7 +61,7 @@
 
 	<div
 		fxLayout='row'
-		fxLayoutGap='16px'
+		fxLayoutGap='32px'
 		*ngIf='envService.coBranded || sessionService.apiFlags.telehealth'
 	>
 		<p fxFlex='nogrow' class='powered-by-cyph'>
