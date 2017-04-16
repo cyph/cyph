@@ -107,7 +107,8 @@ import {LockdownComponent} from './lockdown.component';
 	],
 	entryComponents: [
 		DialogAlertComponent,
-		DialogConfirmComponent
+		DialogConfirmComponent,
+		HelpComponent
 	],
 	imports: [
 		BrowserAnimationsModule,

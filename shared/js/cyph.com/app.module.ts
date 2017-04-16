@@ -96,7 +96,8 @@ import {SilentNotificationService} from './silent-notification.service';
 	],
 	entryComponents: [
 		DialogAlertComponent,
-		DialogConfirmComponent
+		DialogConfirmComponent,
+		HelpComponent
 	],
 	imports: [
 		BrowserAnimationsModule,
