@@ -1,8 +1,8 @@
 @import 'cyph.base';
-@import 'themes/modest';
-@import 'themes/telehealth';
+@import 'cyph.modest';
+@import 'cyph.telehealth';
 
-html, body {
+html, body, #main {
 	width: 100% !important;
 	height: 100% !important;
 	overflow: hidden;

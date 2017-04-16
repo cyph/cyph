@@ -9,8 +9,8 @@ body.load-complete #pre-load {
 }
 
 body:not(.load-complete) {
-	#main > section, footer {
-		display: none;
+	#main section, footer {
+		display: none !important;
 	}
 }
 
@@ -724,7 +724,7 @@ body.mobile #gettingstarted-section {
 	padding: 40px;
 	background-color: rgb(108, 63, 176);
 
-	> section {
+	section {
 		min-height: 0px;
 		height: auto;
 	}
@@ -858,11 +858,11 @@ body:not(.mobile) .section-content-container:not(.full) {
 }
 
 #main.unisection-mode {
-	> section:not(.unisection) {
-		display: none;
+	section:not(.unisection) {
+		display: none !important;
 	}
 
-	> section.unisection {
+	section.unisection {
 		padding-top: 50px;
 		min-height: calc(100vh - 108px);
 
