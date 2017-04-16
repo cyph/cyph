@@ -105,6 +105,10 @@ import {LockdownComponent} from './lockdown.component';
 		SmdFabSpeedDialComponent,
 		SmdFabSpeedDialTrigger
 	],
+	entryComponents: [
+		DialogAlertComponent,
+		DialogConfirmComponent
+	],
 	imports: [
 		BrowserAnimationsModule,
 		BrowserModule,
