@@ -3,7 +3,7 @@
 	fxLayout='column'
 	[class.unisection-mode]='appService.state !== appService.states.home'
 >
-	<md-sidenav-container>
+	<md-sidenav-container (backdropClick)='sidenav.close()'>
 		<md-toolbar id='main-toolbar' class='wow animated fadeInDownBig'>
 			<span class='padding'></span>
 
@@ -84,7 +84,7 @@
 				fxHide.gt-md
 				cyphTranslate
 				mdTooltip='Menu'
-				(click)='sidenav.open()'
+				(click)='sidenav.toggle()'
 			>
 				<md-icon>menu</md-icon>
 			</button>
@@ -92,7 +92,7 @@
 			<span class='padding'></span>
 		</md-toolbar>
 
-		<md-sidenav #sidenav align='end'>
+		<md-sidenav #sidenav align='end' mode='push'>
 			<div>
 				<a md-button cyphTranslate href='/intro' (click)='sidenav.close()'>
 					Intro
