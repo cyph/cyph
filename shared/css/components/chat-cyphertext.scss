@@ -8,15 +8,9 @@
 	width: calc(100% + 2px);
 	height: calc(100% + 2px);
 	font-family: 'Ubuntu Mono', monospace;
-	background-color: #141414;
-	color: #3bfc34;
-
-	md-content {
-		padding: 30px 12.5%;
-	}
+	padding: 30px 12.5%;
 
 	.close-button {
-		color: inherit !important;
 		position: absolute;
 		top: 30px;
 		right: 5%;

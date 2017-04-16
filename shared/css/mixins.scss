@@ -8,9 +8,9 @@
 	@include animation-iteration-count(infinite !important);
 }
 
-/* Changes size of md2-icon */
+/* Changes size of md-icon */
 @mixin icon-size($size) {
-	&, md-icon {
+	& {
 		font-size: $size;
 		height: $size;
 		min-height: $size;

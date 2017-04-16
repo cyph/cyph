@@ -1,30 +1,21 @@
 .login-form {
-	height: 100%;
-
-	md-input-container * {
-		color: #f1f1f1 !important;
-		border-color: #f1f1f1 !important;
-	}
-
-	md-progress-circular {
+	md-progress-spinner {
 		display: none;
 		position: absolute;
 		top: calc(50% - 25px);
 		left: calc(50% - 25px);
 	}
 
-	form .md-subheader {
-		color: red;
-		background: #f1f1f1;
+	[md-subheader] {
 		margin: 20px;
 	}
 
 	&.checking {
-		md-progress-circular {
+		md-progress-spinner {
 			display: block;
 		}
 
-		md-card-title, md-card-content {
+		md-card-header, md-card-content {
 			opacity: 0.15;
 		}
 	}

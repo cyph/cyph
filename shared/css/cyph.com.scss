@@ -1,16 +1,7 @@
-@import 'cyph.im';
+@import 'cyph.base';
 
 html, body, #main {
-	max-width: initial !important;
-	max-height: initial !important;
-	overflow: initial;
 	padding-top: 0px !important;
-}
-
-body:not(.mobile) #main {
-	padding-bottom: initial;
-	padding-left: initial;
-	padding-right: initial;
 }
 
 body.load-complete #pre-load {
@@ -340,64 +331,52 @@ body.mobile #hero-section {
 	z-index: 11;
 	top: 0px;
 	left: 0px;
-	height: 2.5em !important;
 	background-color: rgba(97, 51, 163, 0.75);
 
-	.md-toolbar-tools {
-		margin-top: 5px;
-		padding: 0px;
+	.padding {
+		display: inline-block;
+		width: 1vw;
+		max-width: 16px;
+	}
 
-		.padding {
-			display: inline-block;
-			width: 1vw;
-			max-width: 16px;
-		}
+	.link-wrapper-outer {
+		width: calc(50% - 9.55em);
+		text-align: center;
 
-		.link-wrapper-outer {
-			width: calc(50% - 9.55em);
-			text-align: center;
+		.link-wrapper-inner {
+			margin-left: auto;
+			margin-right: auto;
 
-			.link-wrapper-inner {
-				margin-left: auto;
-				margin-right: auto;
-
-				.md-button {
-					font-size: 1rem;
-				}
-			}
-
-			&.left {
-				text-align: left;
-			}
-
-			&.right {
-				text-align: right;
+			button {
+				font-size: 1rem;
 			}
 		}
+
+		&.left {
+			text-align: left;
+		}
+
+		&.right {
+			text-align: right;
+		}
+	}
+
+	a:not(#logo) {
+		margin: 10px;
+	}
+
+	.social-media {
+		margin-left: 20px;
 
 		a:not(#logo) {
-			margin: 10px;
-		}
+			margin: 0px;
 
-		.social-media {
-			margin-left: 20px;
-
-			a:not(#logo) {
-				margin: 0px;
-
-				img {
-					height: 15px !important;
-					display: block;
-				}
+			img {
+				height: 15px !important;
+				display: block;
 			}
 		}
 	}
-}
-
-[md-component-id='main-toolbar-sidenav'] {
-	position: fixed;
-	height: 100%;
-	overflow-y: scroll;
 }
 
 #logo {
@@ -709,19 +688,6 @@ body.mobile .demo-root {
 	}
 }
 
-.md-open-menu-container {
-	right: 12vw;
-	left: initial !important;
-
-	@include transform(scale(0.625) translateY(20px));
-}
-
-body.mobile .md-open-menu-container {
-	right: 5vw;
-
-	@include transform(scale(0.8) translateY(30px));
-}
-
 #gettingstarted-section {
 	height: calc(100vh - 158px);
 	min-height: 400px;
@@ -919,54 +885,8 @@ body:not(.mobile) .section-content-container:not(.full) {
 		margin-top: -15px;
 	}
 
-	md-slider .md-sign:after {
-		border-top-color: rgb(107, 63, 176);
-	}
-
-	md-slider .md-thumb:after {
-		border-color: rgb(107, 63, 176);
-		background-color: rgb(107, 63, 176);
-	}
-
-	span.md-thumb-text:before {
+	.mat-slider-thumb-label-text:before {
 		content: '$';
-	}
-
-	md-slider.md-min .md-thumb:after {
-		background-color: rgb(255, 255, 255);
-	}
-
-	md-slider .md-track.md-track-fill {
-		background-color: rgb(255, 255, 255);
-	}
-
-	md-slider .md-sign {
-		background-color: rgb(107, 63, 176);
-	}
-
-	md-slider .md-sign {
-		left: -20px !important;
-		top: -25px !important;
-		width: 42px !important;
-		height: 42px !important;
-	}
-
-	md-slider .md-focus-thumb {
-		position: absolute;
-		left: -24px;
-		top: 0px;
-		width: 48px;
-		height: 48px;
-		border-radius: 48px;
-		display: none;
-		opacity: 0;
-		background-color: silver;
-
-		@include animation(sliderFocusThumb 0.4s linear);
-	}
-
-	md-slider .md-sign .md-thumb-text {
-		z-index: 1;
 	}
 }
 

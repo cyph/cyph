@@ -90,12 +90,6 @@
 			.message-box {
 				min-height: 60px;
 			}
-
-			md-fab-speed-dial {
-				bottom: -30px;
-
-				@include transform(scale(0.8));
-			}
 		}
 	}
 
@@ -133,7 +127,7 @@
 				}
 			}
 
-			.chat-end-message md2-card {
+			.chat-end-message md-card {
 				max-width: 100%;
 				text-align: center;
 				font-size: 135%;

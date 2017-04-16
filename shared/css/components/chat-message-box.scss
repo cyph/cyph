@@ -1,7 +1,7 @@
 .chat-message-box {
 	position: relative;
 
-	button.md-button[disabled] {
+	button[disabled] {
 		opacity: 0.25;
 	}
 
@@ -19,7 +19,7 @@
 
 		@include transition(transform 0.4s linear);
 
-		.md-button {
+		button {
 			opacity: 0.75;
 			z-index: 35;
 			height: 2.72em;
@@ -42,8 +42,6 @@
 	}
 
 	.new-messages > * {
-		background-color: white !important;
-		color: #8b62d9 !important;
 		width: 100%;
 		text-align: center;
 		margin-top: -20px;
