@@ -1,3 +1,5 @@
+@import '/node_modules/@angular/material/theming';
+
 @mixin breathe {
 	@include animation-name(breathe !important);
 
@@ -24,6 +26,30 @@
 	top: 50%;
 
 	@include transform(translateY(-50%));
+}
+
+@function cyph-dark-theme($primary, $accent, $warn, $background, $foreground) {
+	@return (
+		primary: $primary,
+		accent: $accent,
+		warn: $warn,
+		is-dark: true,
+		foreground: map-merge($mat-dark-theme-foreground, (
+			base:  $foreground,
+			icon:  $foreground,
+			icons: $foreground,
+			text:  $foreground
+		)),
+		background: map-merge($mat-dark-theme-background, (
+			app-bar:                  map_get($primary, default),
+			background:               $background,
+			card:                     map_get($accent, default),
+			dialog:                   map_get($accent, default),
+			raised-button:            map_get($primary, default),
+			selected-button:          map_get($accent, darker),
+			selected-disabled-button: map_get($primary, darker)
+		))
+	);
 }
 
 @function invert-palette($base-palette) {

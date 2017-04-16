@@ -1,4 +1,3 @@
-@import '/node_modules/@angular/material/theming';
 @import 'mixins';
 
 /* Reference: https://material.io/color/#!/?view.left=0&view.right=1&primary.color=7d4fd3&secondary.color=8b62d9&secondary.text.color=f1f1f1&primary.text.color=ffffff */
@@ -8,51 +7,28 @@
 $cyph-primary: mat-palette($mat-deep-purple, 600, 500, 700);
 $cyph-accent: mat-palette($mat-deep-purple, 500, A200, A700);
 $cyph-warn: mat-palette($mat-red);
-$cyph-darkest: map-get($mat-deep-purple, 900);
 $cyph-background: #8b62d9;
 $cyph-foreground: #f1f1f1;
 
-$cyph-theme: (
-	primary: $cyph-primary,
-	accent: $cyph-accent,
-	warn: $cyph-warn,
-	is-dark: true,
-	foreground: map-merge($mat-dark-theme-foreground, (
-		base:  $cyph-foreground,
-		icon:  $cyph-foreground,
-		icons: $cyph-foreground,
-		text:  $cyph-foreground
-	)),
-	background: map-merge($mat-dark-theme-background, (
-		app-bar:                  map_get($cyph-primary, default),
-		background:               $cyph-background,
-		card:                     map_get($cyph-accent, default),
-		dialog:                   map_get($cyph-accent, default),
-		disabled-button-toggle:   $cyph-darkest,
-		raised-button:            map_get($cyph-primary, default),
-		selected-button:          map_get($cyph-accent, darker),
-		selected-disabled-button: map_get($cyph-primary, darker),
-		status-bar:               $cyph-darkest
-	))
+$cyph-theme: cyph-dark-theme(
+	$cyph-primary,
+	$cyph-accent,
+	$cyph-warn,
+	$cyph-background,
+	$cyph-foreground
 );
 
-$cyph-primary-inverted: mat-palette(invert-palette($mat-deep-purple), 600, 500, 700);
-$cyph-accent-inverted: mat-palette(invert-palette($mat-deep-purple), 500, A200, A700);
-$cyph-warn-inverted: $cyph-warn;
-
-$cyph-inverted-theme: (
-	primary: $cyph-primary-inverted,
-	accent: $cyph-accent-inverted,
-	warn: $cyph-warn-inverted,
-	is-dark: false,
-	foreground: map-merge($mat-light-theme-foreground, (
-		base:  $cyph-background,
-		icon:  $cyph-background,
-		icons: $cyph-background,
-		text:  $cyph-background
-	)),
-	background: map-merge($mat-light-theme-background, (
-		card:   $cyph-foreground,
-		dialog: $cyph-foreground
-	))
+$cyph-cyphertext-theme: cyph-dark-theme(
+	mat-palette($mat-green),
+	mat-palette($mat-green),
+	$cyph-warn,
+	#141414,
+	#3bfc34
 );
+
+$cyph-progress-bar-theme: map-merge($cyph-theme, (
+	primary: map-merge($cyph-primary, (
+		100: map_get($cyph-primary, darker),
+		600: $cyph-foreground
+	))
+));

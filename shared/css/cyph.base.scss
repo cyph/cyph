@@ -3,8 +3,12 @@
 
 @include angular-material-theme($cyph-theme);
 
-.cyph-inverted {
-	@include angular-material-theme($cyph-inverted-theme);
+cyph-chat-cyphertext {
+	@include angular-material-theme($cyph-cyphertext-theme);
+}
+
+md-progress-bar {
+	@include angular-material-theme($cyph-progress-bar-theme);
 }
 
 * {
