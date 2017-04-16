@@ -1,4 +1,5 @@
 @import '/node_modules/@angular/material/theming';
+@import 'mixins';
 
 /* Reference: https://material.io/color/#!/?view.left=0&view.right=1&primary.color=7d4fd3&secondary.color=8b62d9&secondary.text.color=f1f1f1&primary.text.color=ffffff */
 
@@ -11,7 +12,7 @@ $cyph-darkest: map-get($mat-deep-purple, 900);
 $cyph-background: #8b62d9;
 $cyph-foreground: #f1f1f1;
 
-$cyph-app-theme: (
+$cyph-theme: (
 	primary: $cyph-primary,
 	accent: $cyph-accent,
 	warn: $cyph-warn,
@@ -32,5 +33,26 @@ $cyph-app-theme: (
 		selected-button:          map_get($cyph-accent, darker),
 		selected-disabled-button: map_get($cyph-primary, darker),
 		status-bar:               $cyph-darkest
+	))
+);
+
+$cyph-primary-inverted: mat-palette(invert-palette($mat-deep-purple), 600, 500, 700);
+$cyph-accent-inverted: mat-palette(invert-palette($mat-deep-purple), 500, A200, A700);
+$cyph-warn-inverted: $cyph-warn;
+
+$cyph-inverted-theme: (
+	primary: $cyph-primary-inverted,
+	accent: $cyph-accent-inverted,
+	warn: $cyph-warn-inverted,
+	is-dark: false,
+	foreground: map-merge($mat-light-theme-foreground, (
+		base:  $cyph-background,
+		icon:  $cyph-background,
+		icons: $cyph-background,
+		text:  $cyph-background
+	)),
+	background: map-merge($mat-light-theme-background, (
+		card:   $cyph-foreground,
+		dialog: $cyph-foreground
 	))
 );
