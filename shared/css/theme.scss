@@ -4,8 +4,8 @@
 
 @include mat-core;
 
-$cyph-primary: mat-palette($mat-deep-purple, 500, A100, 700);
-$cyph-accent: mat-palette($mat-deep-purple, 600, A200, 800);
+$cyph-primary: mat-palette($mat-deep-purple, 600, 500, 700);
+$cyph-accent: mat-palette($mat-deep-purple, A400, A200, A700);
 $cyph-warn: mat-palette($mat-red);
 $cyph-darkest: map-get($mat-deep-purple, 900);
 $cyph-background: #8b62d9;
@@ -25,8 +25,8 @@ $cyph-app-theme: (
 	background: map-merge($mat-dark-theme-background, (
 		app-bar:                  map_get($cyph-primary, default),
 		background:               $cyph-background,
-		card:                     map_get($cyph-accent, default),
-		dialog:                   map_get($cyph-accent, default),
+		card:                     map_get($cyph-primary, lighter),
+		dialog:                   map_get($cyph-primary, lighter),
 		disabled-button-toggle:   $cyph-darkest,
 		raised-button:            map_get($cyph-accent, default),
 		selected-button:          map_get($cyph-accent, darker),
