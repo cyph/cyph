@@ -95,6 +95,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		SmdFabSpeedDialTrigger
 	],
 	entryComponents: [
+		BetaRegisterComponent,
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		HelpComponent
