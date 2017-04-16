@@ -4,18 +4,33 @@
 
 @include mat-core();
 
+$cyph-primary: mat-palette($mat-deep-purple, 500, A100, 700);
+$cyph-accent: mat-palette($mat-deep-purple, 600, A200, 800);
+$cyph-warn: mat-palette($mat-red);
+$cyph-darkest: map_get($mat-deep-purple, 900);
+$cyph-background: #8b62d9;
+$cyph-foreground: #f1f1f1;
+
 $cyph-app-theme: (
-	primary: mat-palette($mat-deep-purple, 500, A100, 800),
-	accent: mat-palette($mat-deep-purple, A200, 300, 700),
-	warn: mat-palette($mat-red),
+	primary: $cyph-primary,
+	accent: $cyph-accent,
+	warn: $cyph-warn,
 	is-dark: true,
 	foreground: map-merge($mat-dark-theme-foreground, (
-		base: #f1f1f1,
-		icon: #f1f1f1,
-		icons: #f1f1f1,
-		text: #f1f1f1
+		base:  $cyph-foreground,
+		icon:  $cyph-foreground,
+		icons: $cyph-foreground,
+		text:  $cyph-foreground
 	)),
-	background: $mat-dark-theme-background
+	background: map-merge($mat-dark-theme-background, (
+		app-bar:                  map_get($cyph-primary, default),
+		background:               $cyph-background,
+		card:                     map_get($cyph-accent, default),
+		dialog:                   map_get($cyph-accent, default),
+		disabled-button-toggle:   $cyph-darkest,
+		raised-button:            map_get($cyph-accent, default),
+		selected-button:          map_get($cyph-accent, darker),
+		selected-disabled-button: map_get($cyph-primary, darker),
+		status-bar:               $cyph-darkest
+	))
 );
-
-@include angular-material-theme($cyph-app-theme);
