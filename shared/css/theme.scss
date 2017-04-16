@@ -11,4 +11,26 @@ $cyph-darkest: map-get($mat-deep-purple, 900);
 $cyph-background: #8b62d9;
 $cyph-foreground: #f1f1f1;
 
-$cyph-app-theme: (primary: $cyph-primary, accent: $cyph-accent, warn: $cyph-warn, is-dark: true, foreground: map-merge($mat-dark-theme-foreground, (base: $cyph-foreground, icon: $cyph-foreground, icons: $cyph-foreground, text: $cyph-foreground)), background: map-merge($mat-dark-theme-background, (app-bar: map-get($cyph-primary, default), background: $cyph-background, card: map-get($cyph-accent, default), dialog: map-get($cyph-accent, default), disabled-button-toggle: $cyph-darkest, raised-button: map-get($cyph-accent, default), selected-button: map-get($cyph-accent, darker), selected-disabled-button: map-get($cyph-primary, darker), status-bar: $cyph-darkest)));
+$cyph-app-theme: (
+	primary: $cyph-primary,
+	accent: $cyph-accent,
+	warn: $cyph-warn,
+	is-dark: true,
+	foreground: map-merge($mat-dark-theme-foreground, (
+		base:  $cyph-foreground,
+		icon:  $cyph-foreground,
+		icons: $cyph-foreground,
+		text:  $cyph-foreground
+	)),
+	background: map-merge($mat-dark-theme-background, (
+		app-bar:                  map_get($cyph-primary, default),
+		background:               $cyph-background,
+		card:                     map_get($cyph-accent, default),
+		dialog:                   map_get($cyph-accent, default),
+		disabled-button-toggle:   $cyph-darkest,
+		raised-button:            map_get($cyph-accent, default),
+		selected-button:          map_get($cyph-accent, darker),
+		selected-disabled-button: map_get($cyph-primary, darker),
+		status-bar:               $cyph-darkest
+	))
+);
