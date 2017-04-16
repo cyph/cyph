@@ -1,20 +1,27 @@
 @import 'cyph.base';
 
+html, body, #main {
+	padding-top: 0px !important;
+}
+
 body.load-complete #pre-load {
 	@include transition(opacity 0.25s linear);
 }
 
 body:not(.load-complete) {
-	#main section, footer {
-		display: none !important;
+	#main > section, footer {
+		display: none;
 	}
 }
 
-.mat-sidenav-content {
+section#main {
+	background-color: transparent !important;
 	overflow-x: hidden !important;
 }
 
 #main {
+	min-height: 100vh;
+
 	section {
 		position: relative;
 		padding: 20px;
@@ -99,11 +106,18 @@ body:not(.load-complete) {
 	font-family: Ubuntu;
 	font-size: 0.5em;
 	font-weight: 300;
-	border-radius: 1px;
+	position: fixed;
+	top: 0.5em;
+	left: 50%;
+	height: 3.5em;
 	width: 10.7em;
-	margin: 0px 10px;
-	padding: 0.25em;
+	padding: 0px;
+	margin: 0px;
+	border-radius: 1px;
+	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25);
 	background-color: #7d4fd3 !important;
+
+	@include transform(translateX(-50%));
 
 	@include transition(all 0.75s ease);
 
@@ -118,7 +132,7 @@ body:not(.load-complete) {
 
 #main-toolbar.new-cyph-expanded {
 	#new-cyph {
-		@include transform(translateY(calc(50vh - 100%)) scale(2));
+		@include transform(translateX(-50%) translateY(calc(50vh - 50% - 0.5em)) scale(2));
 	}
 
 	.link-wrapper-outer {
@@ -132,15 +146,20 @@ body:not(.load-complete) {
 	}
 }
 
+body.mobile #main-toolbar #new-cyph {
+	top: 0.6em;
+	height: 3.8em;
+}
+
 @media all and (orientation: portrait) {
 	body.mobile #main-toolbar.new-cyph-expanded #new-cyph {
-		@include transform(translateY(30em) scale(2));
+		@include transform(translateX(-50%) translateY(30em) scale(2));
 	}
 }
 
 @media all and (orientation: landscape) {
 	body.mobile #main-toolbar.new-cyph-expanded #new-cyph {
-		@include transform(translateY(25em) scale(2));
+		@include transform(translateX(-50%) translateY(25em) scale(2));
 	}
 }
 
@@ -297,7 +316,7 @@ body.mobile #hero-section {
 .feature-cycle {
 	font-family: Ubuntu;
 	font-size: 90%;
-	border: 1px solid $cyph-foreground !important;
+	border: 1px solid #f1f1f1 !important;
 	border-top: 0px !important;
 	border-left: 0px !important;
 	border-right: 0px !important;
@@ -313,34 +332,64 @@ body.mobile #hero-section {
 	top: 0px;
 	left: 0px;
 	background-color: rgba(97, 51, 163, 0.75);
-	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
 
-	&, md-toolbar-row {
-		height: 2.5em !important;
-		min-height: 2.5em !important;
+	.padding {
+		display: inline-block;
+		width: 1vw;
+		max-width: 16px;
 	}
 
-	#logo {
-		height: 1.5em;
+	.link-wrapper-outer {
+		width: calc(50% - 9.55em);
+		text-align: center;
 
-		img {
-			height: 100%;
+		.link-wrapper-inner {
+			margin-left: auto;
+			margin-right: auto;
+
+			button {
+				font-size: 1rem;
+			}
+		}
+
+		&.left {
+			text-align: left;
+		}
+
+		&.right {
+			text-align: right;
+		}
+	}
+
+	a:not(#logo) {
+		margin: 10px;
+	}
+
+	.social-media {
+		margin-left: 20px;
+
+		a:not(#logo) {
+			margin: 0px;
+
+			img {
+				height: 15px !important;
+				display: block;
+			}
 		}
 	}
 }
 
-#main-toolbar, md-sidenav {
-	img {
-		height: 20px;
+#logo {
+	height: 30px;
+	margin-right: 20px;
+
+	> img {
+		height: 100% !important;
 	}
 }
 
-md-sidenav img {
-	margin-right: 5px;
-}
-
-.mat-sidenav-backdrop {
-	background-color: rgba(33, 33, 33, 0.48) !important;
+body.mobile #logo {
+	margin-left: 5px;
 }
 
 .carousel {
@@ -492,8 +541,8 @@ body.mobile .carousel {
 	margin-top: -2px;
 
 	.nav-arrow {
-		left: calc(50% - 33px);
-		top: calc(100% - 70px);
+		left: calc(50% - 20px);
+		top: calc(100% - 45px);
 	}
 
 	.carousel {
@@ -607,11 +656,13 @@ body.mobile #features-section .carousel .logo.active > img {
 	z-index: 10;
 	left: 20px;
 	top: 50px;
+	height: 40px;
+	width: auto;
+	opacity: 0.15;
 
-	@include transform(scale(1.65));
-
-	md-icon {
-		opacity: 0.15;
+	> img {
+		height: 100%;
+		width: auto;
 	}
 }
 
@@ -673,7 +724,7 @@ body.mobile #gettingstarted-section {
 	padding: 40px;
 	background-color: rgb(108, 63, 176);
 
-	section {
+	> section {
 		min-height: 0px;
 		height: auto;
 	}
@@ -807,11 +858,11 @@ body:not(.mobile) .section-content-container:not(.full) {
 }
 
 #main.unisection-mode {
-	section:not(.unisection) {
-		display: none !important;
+	> section:not(.unisection) {
+		display: none;
 	}
 
-	section.unisection {
+	> section.unisection {
 		padding-top: 50px;
 		min-height: calc(100vh - 108px);
 
@@ -840,10 +891,6 @@ body:not(.mobile) .section-content-container:not(.full) {
 }
 
 #checkout {
-	.hero-text {
-		margin-bottom: 30px;
-	}
-
 	.cart {
 		position: relative;
 		top: calc(50vh - 210px);

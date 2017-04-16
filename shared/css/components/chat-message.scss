@@ -2,20 +2,17 @@
 
 .message-item {
 	word-wrap: break-word;
-	word-break: break-word;
+	word-break: break-all;
+
 	padding: 7.5px 10px 5px 10px;
 	margin: 2.5px;
 	min-height: 0px;
 	position: relative;
 
-	/* Needed for self-destructing messages for now */
-	.mat-list-item-content {
-		position: static;
-	}
-
 	.message {
 		max-width: 100%;
 		padding-bottom: 5px;
+		word-wrap: break-word;
 
 		> * {
 			padding-top: 5px;
@@ -38,7 +35,7 @@
 	}
 
 	/* Self-destruct animation */
-	.self-destruct-cover {
+	> .self-destruct-cover {
 		content: ' ';
 		height: 100%;
 		width: 100%;
@@ -53,7 +50,7 @@
 		@include transform-origin(top left);
 	}
 
-	&.self-destructed .self-destruct-cover {
+	&.self-destructed > .self-destruct-cover {
 		@include transform(scaleX(1));
 
 		@include transition(transform 3s cubic-bezier(0.8, 0.4, 1, 0.3));
@@ -63,6 +60,16 @@
 		opacity: 0.4;
 
 		@include breathe;
+	}
+
+	&.author-me {
+		background-color: rgba(139, 98, 217, 0.8);
+		box-shadow: 0px 0px 5px rgba(139, 98, 217, 0.8);
+	}
+
+	&.author-other {
+		background-color: rgba(97, 47, 192, 0.5);
+		box-shadow: 0px 0px 5px rgba(97, 47, 192, 0.5);
 	}
 
 	&.author-app .message {

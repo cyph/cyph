@@ -14,12 +14,9 @@
 		overflow: hidden;
 
 		.cyph-foreground {
+			font-size: 1em;
+			height: calc(100% + 4px);
 			overflow: hidden;
-			width: calc(100% + 1px) !important;
-
-			&, .mat-list-item-content {
-				font-size: 1em !important;
-			}
 		}
 	}
 
@@ -38,16 +35,18 @@
 
 	> .desktop {
 		height: calc((100vw - 60px) * 0.47 * 0.565);
-		width: calc(47% + 1px);
+		width: 47%;
 		margin-top: 62px;
 		left: 11.5%;
 
-		.cyph-foreground {
-			padding: 10px;
-			padding-top: 0px;
+		cyph-chat-main, cyph-chat-message-box {
+			margin-left: 17.5px;
+			width: calc(100% - 25px);
 		}
 
 		cyph-chat-main {
+			height: calc(100% - 70px);
+
 			.chat-main {
 				.message-list {
 					font-size: 90%;
@@ -91,19 +90,12 @@
 			.message-box {
 				min-height: 60px;
 			}
-
-			smd-fab-speed-dial {
-				bottom: -23px;
-				right: 17px;
-
-				@include transform(scale(0.8));
-			}
 		}
 	}
 
 	> .mobile {
 		height: calc((100vw - 60px) * 0.26 * 1.78);
-		width: calc(26% + 1px);
+		width: 26%;
 		margin-top: -62px;
 		left: 21.5%;
 
@@ -112,6 +104,8 @@
 		@include transform(scale(0.625));
 
 		cyph-chat-main {
+			height: calc(100% - 50px);
+
 			.chat-main.video .video-call.active.playing {
 				~ .message-list {
 					width: calc(30vw - 150px);
@@ -169,36 +163,36 @@
 	}
 
 	.chat-cyphertext {
-		&, .close-button {
-			position: absolute;
-		}
+		position: absolute;
 	}
 
-	cyph-chat-main .chat-main.video .video-call {
-		&, .logo, .me, .sidebar, .buttons, ~ .message-list, ~ .video-call-message-box {
-			position: absolute;
-		}
+	cyph-chat-main .chat-main.video {
+		.video-call.active.playing {
+			&, .logo, .me, .sidebar, .buttons, ~ .message-list, ~ .video-call-message-box {
+				position: absolute;
+			}
 
-		.logo {
-			top: 17.5%;
-			left: 15px;
-		}
+			.logo {
+				top: 17.5%;
+				left: 15px;
+			}
 
-		.me {
-			bottom: 13%;
-			right: 0px;
-			width: 15%;
-		}
+			.me {
+				bottom: 13%;
+				right: 0px;
+				width: 15%;
+			}
 
-		.sidebar {
-			display: none;
-			top: 17.5%;
-			right: 15px;
-		}
+			.sidebar {
+				display: none;
+				top: 17.5%;
+				right: 15px;
+			}
 
-		.buttons {
-			left: 0px;
-			bottom: calc(17.5% + 25px);
+			.buttons {
+				left: calc(50% - 100px);
+				bottom: calc(17.5% + 25px);
+			}
 		}
 	}
 }
