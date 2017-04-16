@@ -26,9 +26,30 @@ $cyph-cyphertext-theme: cyph-dark-theme(
 	#3bfc34
 );
 
-$cyph-progress-bar-theme: map-merge($cyph-theme, (
+$cyph-progress-theme: map-merge($cyph-theme, (
 	primary: map-merge($cyph-primary, (
-		100: map_get($cyph-primary, darker),
+		100: rgba(0, 0, 0, 0.15),
 		600: $cyph-foreground
 	))
 ));
+
+$cyph-select-theme: map-merge($cyph-theme, (
+	primary: map-merge($cyph-primary, (
+		default: map_get($cyph-primary, 100)
+	))
+));
+
+$cyph-speed-dial-action-palette: mat-palette($mat-grey, 50, 100, 50);
+
+$cyph-speed-dial-action-theme: cyph-dark-theme(
+	$cyph-speed-dial-action-palette,
+	map-merge($cyph-speed-dial-action-palette, (
+		default-contrast: #757575
+	)),
+	$cyph-warn,
+	$cyph-background,
+	$cyph-foreground
+);
+
+$cyph-speed-dial-action-alt-background: #444;
+$cyph-speed-dial-action-alt-foreground: $cyph-foreground;

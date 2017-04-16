@@ -7,8 +7,26 @@ cyph-chat-cyphertext {
 	@include angular-material-theme($cyph-cyphertext-theme);
 }
 
-md-progress-bar {
-	@include angular-material-theme($cyph-progress-bar-theme);
+md-progress-bar, md-progress-spinner {
+	@include angular-material-theme($cyph-progress-theme);
+}
+
+.mat-select-content {
+	@include angular-material-theme($cyph-select-theme);
+}
+
+smd-fab-actions {
+	@include angular-material-theme($cyph-speed-dial-action-theme);
+
+	button.alt {
+		background-color: $cyph-speed-dial-action-alt-background;
+		color: $cyph-speed-dial-action-alt-foreground;
+	}
+}
+
+/* Temporary workaround pending https://github.com/angular/material2/issues/4116 */
+md-dialog-container, md-option {
+	color: $cyph-foreground;
 }
 
 * {
