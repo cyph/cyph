@@ -1,7 +1,59 @@
+@import 'theme';
+
 :host {
 	font-size: 1.08em;
 }
 
 [disabled] {
 	cursor: not-allowed;
+}
+
+input {
+	&[disabled] {
+		color: #999;
+		background-color: #86789F !important;
+		opacity: 0.25 !important;
+
+		~ label {
+			color: #392859 !important;
+		}
+	}
+
+	&:not([disabled]) {
+		&, ~ label {
+			color: $cyph-foreground !important;
+			border-color: $cyph-foreground !important;
+		}
+	}
+}
+
+.register-button {
+	@include flex(1 1 auto);
+}
+
+.signup-form {
+	&.mobile {
+		margin: 0px;
+	}
+
+	+ div {
+		opacity: 0;
+		pointer-events: none;
+		position: fixed;
+		z-index: 99;
+		top: -1px;
+		left: -1px;
+		width: calc(100% + 2px);
+		height: calc(100% + 2px);
+		font-size: 5vw;
+		padding: 15vh 15vw;
+		background-color: rgba(97, 51, 163, 0.75);
+		font-family: Ubuntu !important;
+	}
+
+	&.complete + div {
+		opacity: 1;
+
+		@include transition(opacity 500ms 1s linear);
+	}
 }

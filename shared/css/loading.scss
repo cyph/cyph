@@ -144,6 +144,7 @@
 
 	> :not(.image):not(.logo-animation) {
 		letter-spacing: 1px;
+		color: $cyph-foreground;
 		text-align: center;
 		font-family: Ubuntu, 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
 	}
