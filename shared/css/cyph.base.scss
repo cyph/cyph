@@ -1,7 +1,11 @@
 @import 'mixins';
 @import 'theme';
 
-@include angular-material-theme($cyph-app-theme);
+@include angular-material-theme($cyph-theme);
+
+.cyph-inverted {
+	@include angular-material-theme($cyph-inverted-theme);
+}
 
 * {
 	-webkit-font-smoothing: antialiased !important;
