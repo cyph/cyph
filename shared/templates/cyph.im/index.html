@@ -1,4 +1,5 @@
-<span *ngIf='!appService.isLockedDown; else lockdown'>
+<!-- TODO: Find a less hackish way to apply the theme globally than mat-sidenav-container. -->
+<span *ngIf='!appService.isLockedDown; else lockdown' class='mat-sidenav-container'>
 	<cyph-ephemeral-chat-root *ngIf='appService.state !== appService.states.account'>
 		<section fxFlexFill fxLayout='column' id='main' class='cyph-foreground'>
 			<canvas [fxHide]='envService.isFirefox' id='main-chat-gradient'></canvas>
@@ -75,7 +76,7 @@
 </span>
 
 <ng-template #lockdown>
-	<section fxFlexFill fxLayout='column' id='main'>
+	<section fxFlexFill fxLayout='column' id='main' class='mat-sidenav-container'>
 		<cyph-lockdown></cyph-lockdown>
 	</section>
 </ng-template>
