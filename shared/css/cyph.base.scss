@@ -13,6 +13,7 @@ body.load-complete #pre-load {
 }
 
 html, body, #main, .cyph-foreground {
+	margin: 0px;
 	background-color: #8b62d9 !important;
 }
 
@@ -34,6 +35,18 @@ section {
 
 .cyph-foreground {
 	font-size: 1.08em;
+}
+
+a {
+	color: inherit;
+}
+
+[md-button], [md-raised-button] {
+	text-transform: uppercase;
+}
+
+button, html, input, select, textarea {
+	font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
 input, textarea {
