@@ -47,8 +47,12 @@ a {
 	text-transform: uppercase;
 }
 
-button, html, input, select, textarea {
+html, button, input, select, textarea {
 	font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+button, input, select, textarea {
+	font-size: 100%;
 }
 
 input, textarea {
