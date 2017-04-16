@@ -15,7 +15,7 @@ cd js
 
 git init
 mkdir node_modules
-yarn install --ignore-engines --ignore-platform --ignore-scripts || exit 1
+yarn install --ignore-engines --ignore-platform || exit 1
 yarn add --ignore-engines --ignore-platform --ignore-scripts ${nativePlugins} || exit 1
 
 cd node_modules
@@ -174,7 +174,7 @@ for d in firebase-server ts-node tslint ; do
 	cp -f ../module_locks/${d}/* "${tmpDir}/${d}/"
 	cd "${tmpDir}/${d}"
 	mkdir node_modules 2> /dev/null
-	yarn install --ignore-platform || exit 1
+	yarn install --ignore-engines --ignore-platform || exit 1
 	cd "${currentDir}"
 	mv "${tmpDir}/${d}" ./
 done
