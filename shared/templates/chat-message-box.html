@@ -81,7 +81,13 @@
 		</md-menu>
 	</div>
 
-	<smd-fab-speed-dial cyphTranslate *ngIf='!envService.isMobile'>
+	<smd-fab-speed-dial
+		cyphTranslate
+		[open]='isSpeedDialOpen'
+		(mouseenter)='isSpeedDialOpen = true'
+		(mouseleave)='isSpeedDialOpen = false'
+		*ngIf='!envService.isMobile'
+	>
 		<smd-fab-trigger [spin]='true'>
 			<button md-fab>
 				<md-icon>add</md-icon>

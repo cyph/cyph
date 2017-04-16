@@ -33,6 +33,9 @@ export class ChatMessageBoxComponent implements OnInit {
 	/** @see FileInput.accept */
 	@Input() public fileAccept: string;
 
+	/** Indicates whether speed dial is open. */
+	public isSpeedDialOpen: boolean	= false;
+
 	/** Wrappers for mobile button handlers. */
 	public readonly mobileButtonHandlers	= {
 		fileTransfer: ($event: File) => {
