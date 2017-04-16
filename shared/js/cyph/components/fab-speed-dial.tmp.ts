@@ -13,8 +13,7 @@ import {
     QueryList,
     ContentChild,
     HostBinding,
-    HostListener,
-	ViewContainerRef
+    HostListener
 } from "@angular/core";
 import {MdButton} from "@angular/material";
 
@@ -36,10 +35,8 @@ export class SmdFabSpeedDialTrigger {
 
     private readonly _parent: SmdFabSpeedDialComponent;
 
-	constructor (viewContainerRef: ViewContainerRef) {
-		this._parent	=
-			(<any> viewContainerRef)._data.componentView.component.viewContainerRef._view.component
-		;
+	constructor () {
+		this._parent	= (<any> self).fabSpeedDialTmp;
     }
 
     @HostListener('click', ['$event'])
@@ -64,10 +61,8 @@ export class SmdFabSpeedDialActions implements AfterContentInit {
 
     private readonly _parent: SmdFabSpeedDialComponent;
 
-	constructor (viewContainerRef: ViewContainerRef, private renderer: Renderer) {
-		this._parent	=
-			(<any> viewContainerRef)._data.componentView.component.viewContainerRef._view.component
-		;
+	constructor (private renderer: Renderer) {
+		this._parent	= (<any> self).fabSpeedDialTmp;
     }
 
     ngAfterContentInit(): void {
@@ -227,6 +222,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
     @ContentChild(SmdFabSpeedDialActions) _childActions: SmdFabSpeedDialActions;
 
     constructor(private elementRef: ElementRef, private renderer: Renderer) {
+        (<any> self).fabSpeedDialTmp    = this;
     }
 
     ngAfterContentInit(): void {
