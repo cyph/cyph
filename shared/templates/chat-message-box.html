@@ -19,7 +19,6 @@
 			<button
 				md-icon-button
 				mdTooltip='Send'
-				class='grey'
 				(click)='mobileButtonHandlers.send()'
 				cyphTranslate
 			>
@@ -33,7 +32,6 @@
 			<button
 				md-icon-button
 				mdTooltip='Video Call'
-				class='grey'
 				(click)='mobileButtonHandlers.videoCall()'
 				[disabled]='!p2pService.isEnabled'
 				*ngIf='!p2pService.isActive'
@@ -44,7 +42,6 @@
 			<button
 				md-icon-button
 				mdTooltip='Voice Call'
-				class='grey'
 				(click)='mobileButtonHandlers.voiceCall()'
 				[disabled]='!p2pService.isEnabled'
 				*ngIf='!p2pService.isActive'
@@ -55,7 +52,6 @@
 			<button
 				md-icon-button
 				mdTooltip='Send File or Photo'
-				class='grey'
 				cyphTranslate
 			>
 				<md-icon>attach_file</md-icon>

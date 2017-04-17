@@ -11,6 +11,36 @@ $cyph-background: #8b62d9;
 $cyph-foreground: #f1f1f1;
 $cyph-inverted: #444;
 
+$cyph-message-box-colors: (
+	background: $cyph-foreground,
+	buttons: #757575,
+	desktopGlow: #7239dd,
+	mobileGlow: rgba(0, 0, 0, 0.5),
+	text: initial
+);
+
+$cyph-message-colors: (
+	app: (
+		desktop: transparent,
+		mobile: transparent,
+		text: inherit
+	),
+	me: (
+		desktop: rgba(139, 98, 217, 0.8),
+		mobileBorder: rgba(139, 98, 217, 0.8),
+		mobileShadow: rgba(139, 98, 217, 0.8),
+		mobilePrimary: rgba(139, 98, 217, 0.8),
+		text: inherit
+	),
+	other: (
+		desktop: rgba(97, 47, 192, 0.5),
+		mobileBorder: rgba(100, 55, 190, 0.5),
+		mobileShadow: rgba(100, 51, 193, 0.5),
+		mobilePrimary: rgba(97, 47, 192, 0.5),
+		text: inherit
+	)
+);
+
 $cyph-theme: cyph-dark-theme(
 	$cyph-primary,
 	$cyph-accent,
@@ -45,7 +75,7 @@ $cyph-speed-dial-action-palette: mat-palette($mat-grey, 50, 100, 50);
 $cyph-speed-dial-action-theme: cyph-dark-theme(
 	$cyph-speed-dial-action-palette,
 	map-merge($cyph-speed-dial-action-palette, (
-		default-contrast: #757575
+		default-contrast: map-get($cyph-message-box-colors, buttons)
 	)),
 	$cyph-warn,
 	$cyph-background,
@@ -54,32 +84,3 @@ $cyph-speed-dial-action-theme: cyph-dark-theme(
 
 $cyph-speed-dial-action-alt-background: $cyph-inverted;
 $cyph-speed-dial-action-alt-foreground: $cyph-foreground;
-
-$cyph-message-box-colors: (
-	background: $cyph-foreground,
-	desktopGlow: #7239dd,
-	mobileGlow: rgba(0, 0, 0, 0.5),
-	text: initial
-);
-
-$cyph-message-colors: (
-	app: (
-		desktop: transparent,
-		mobile: transparent,
-		text: inherit
-	),
-	me: (
-		desktop: rgba(139, 98, 217, 0.8),
-		mobileBorder: rgba(139, 98, 217, 0.8),
-		mobileShadow: rgba(139, 98, 217, 0.8),
-		mobilePrimary: rgba(139, 98, 217, 0.8),
-		text: inherit
-	),
-	other: (
-		desktop: rgba(97, 47, 192, 0.5),
-		mobileBorder: rgba(100, 55, 190, 0.5),
-		mobileShadow: rgba(100, 51, 193, 0.5),
-		mobilePrimary: rgba(97, 47, 192, 0.5),
-		text: inherit
-	)
-);
