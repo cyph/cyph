@@ -71,8 +71,8 @@
 		}
 
 		.message-box:focus {
-			box-shadow: 0px 0px 10px #7239dd;
-			border: 1px solid $cyph-background;
+			box-shadow: 0px 0px 10px map-get($cyph-message-box-colors, desktopGlow);
+			border: 1px solid map-get($cyph-message-box-colors, desktopGlow);
 		}
 	}
 
@@ -93,8 +93,8 @@
 		}
 
 		.message-box:focus {
-			box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-			border: 1px solid #000000;
+			box-shadow: 0px 0px 10px map-get($cyph-message-box-colors, mobileGlow);
+			border: 1px solid map-get($cyph-message-box-colors, mobileGlow);
 		}
 
 		.message-box:focus ~ .new-messages > * {

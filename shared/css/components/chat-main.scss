@@ -30,7 +30,7 @@
 			}
 
 			.chat-main.video & > div {
-				background-color: #444;
+				background-color: $cyph-inverted;
 			}
 
 			> div {
@@ -171,7 +171,15 @@
 		}
 	}
 
+	.message-item.author-app {
+		background-color: map-get(map-get($cyph-message-colors, app), mobile);
+		box-shadow: 0px 0px 5px map-get(map-get($cyph-message-colors, app), mobile);
+	}
+
 	.message-item.author-me {
+		background-color: map-get(map-get($cyph-message-colors, me), mobilePrimary);
+		box-shadow: 0px 0px 5px map-get(map-get($cyph-message-colors, me), mobilePrimary);
+
 		&:before, &:after {
 			content: '';
 			position: absolute;
@@ -179,23 +187,33 @@
 			border-width: 18px 0px 0px 12px;
 			bottom: 0px;
 		}
-	}
 
-	.message-item.author-me:after {
-		border-color: transparent rgba(139, 98, 217, 0.8);
-		right: -12px;
-	}
+		&:before {
+			box-shadow: 5px 1px 5px map-get(map-get($cyph-message-colors, me), mobileShadow);
+			border-color: transparent transparent;
+			right: 0px;
 
-	.message-item.author-me:before {
-		border-color: transparent transparent;
-		right: 0px;
-		box-shadow: 5px 1px 5px rgba(139, 98, 217, 0.8);
+			@include transform(rotate(-35deg));
+		}
 
-		@include transform(rotate(-35deg));
+		&:after {
+			border-color: transparent map-get(map-get($cyph-message-colors, me), mobileBorder);
+			right: -12px;
+		}
 	}
 
 	.message-item.author-other {
 		margin-left: 5%;
+		background-color: map-get(map-get($cyph-message-colors, other), mobilePrimary);
+		box-shadow: 0px 0px 5px map-get(map-get($cyph-message-colors, other), mobilePrimary);
+
+		&:before, &:after {
+			content: '';
+			position: absolute;
+			border-style: solid;
+			border-width: 0px 12px 18px 0px;
+			top: 0px;
+		}
 
 		.message {
 			text-align: left;
@@ -205,29 +223,19 @@
 			text-align: left;
 			left: 10px;
 		}
-	}
 
-	.message-item.author-other {
-		&:before, &:after {
-			content: '';
-			position: absolute;
-			border-style: solid;
-			border-width: 0px 12px 18px 0px;
-			top: 0px;
+		&before {
+			box-shadow: 5px 1px 5px map-get(map-get($cyph-message-colors, other), mobileShadow);
+			border-color: transparent transparent;
+			left: -3px;
+
+			@include transform(rotate(-215deg));
 		}
-	}
 
-	.message-item.author-other:after {
-		border-color: transparent rgba(100, 55, 190, 0.5);
-		left: -12px;
-	}
-
-	.message-item.author-other:before {
-		border-color: transparent transparent;
-		left: -3px;
-		box-shadow: 5px 1px 5px rgba(100, 51, 193, 0.5);
-
-		@include transform(rotate(-215deg));
+		&:after {
+			border-color: transparent map-get(map-get($cyph-message-colors, other), mobileBorder);
+			left: -12px;
+		}
 	}
 
 	.message-item.author-app {
@@ -484,28 +492,8 @@
 				background-color: rgba(0, 0, 0, 0.3);
 			}
 
-			&.author-other {
-				background-color: rgba(97, 47, 192, 0.5);
-
-				&:before {
-					display: none;
-				}
-
-				&:after {
-					border-color: transparent rgba(97, 47, 192, 0.5);
-				}
-			}
-
-			&.author-me {
-				background-color: rgba(125, 83, 203, 0.4);
-
-				&:before {
-					display: none;
-				}
-
-				&:after {
-					border-color: transparent rgba(125, 83, 203, 0.4);
-				}
+			&:before {
+				display: none;
 			}
 		}
 
@@ -536,7 +524,7 @@
 		top: calc(50px - 100vh);
 
 		md-icon {
-			color: #444 !important;
+			color: $cyph-inverted !important;
 		}
 	}
 

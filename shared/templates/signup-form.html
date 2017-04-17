@@ -94,7 +94,7 @@
 		</div>
 	</form>
 
-	<form (submit)='submit()' *ngIf='signupService.state === 1'>
+	<form ngNativeValidate (submit)='submit()' *ngIf='signupService.state === 1'>
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
@@ -136,7 +136,7 @@
 		</div>
 	</form>
 
-	<form (submit)='submit()' *ngIf='signupService.state === 2'>
+	<form ngNativeValidate (submit)='submit()' *ngIf='signupService.state === 2'>
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
@@ -161,7 +161,7 @@
 		</div>
 	</form>
 
-	<form (submit)='submit()' *ngIf='signupService.state === 3'>
+	<form ngNativeValidate (submit)='submit()' *ngIf='signupService.state === 3'>
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>

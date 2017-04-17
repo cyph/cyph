@@ -131,19 +131,12 @@
 			>
 				<md-icon>save</md-icon>
 			</button>
-			<button
-				md-icon-button
-				class='self-destruct-button'
+			<md-button-toggle
 				mdTooltip='Self-destruct'
-				(click)='chatService.setQueuedMessage(
-					undefined,
-					!chatService.chat.queuedMessageSelfDestruct
-				)'
+				[(value)]='chatService.chat.queuedMessageSelfDestruct'
 			>
-				<md-icon [class.active]='chatService.chat.queuedMessageSelfDestruct'>
-					timer
-				</md-icon>
-			</button>
+				<md-icon>timer</md-icon>
+			</md-button-toggle>
 		</div>
 	</div>
 	<div fxFlex></div>

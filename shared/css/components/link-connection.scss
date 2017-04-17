@@ -1,29 +1,5 @@
 @import 'theme';
 
-.connect-link-input {
-	position: relative;
-
-	input {
-		text-align: center;
-		margin-left: auto;
-		margin-right: auto;
-		background-color: $cyph-foreground;
-		box-shadow: 0px 0px 10px #7239dd;
-		padding: 5px;
-		border: 1px solid $cyph-background !important;
-		height: auto;
-		width: 50%;
-
-		@include transform(translateX(50%));
-	}
-
-	button {
-		position: absolute;
-		top: -3px;
-		right: calc(25% - 50px);
-	}
-}
-
 .connect-link-link {
 	font-size: 130%;
 	word-wrap: break-word;
@@ -33,41 +9,4 @@
 .connect-link-mobile .divider {
 	width: 21px;
 	display: inline-block;
-}
-
-/* Advanced Features */
-
-.advanced-features-switch {
-	margin: 25px auto;
-}
-
-.advanced-features {
-	.buttons {
-		width: 25px;
-		float: left;
-		top: 51px;
-		position: relative;
-
-		.self-destruct-button md-icon:not(.active) {
-			opacity: 0.25;
-		}
-	}
-
-	.queued-message-box {
-		position: relative;
-		float: left;
-		top: 25px;
-		margin: 15px 15px 0px 25%;
-		width: 50%;
-
-		textarea {
-			color: white;
-			background-color: rgba(180, 141, 255, 0.95);
-			max-height: 150px;
-			overflow-y: scroll;
-			position: relative;
-			padding: 10px 15px;
-			top: 10px;
-		}
-	}
 }

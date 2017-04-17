@@ -916,52 +916,47 @@
 				Checkout
 			</h1>
 			<div fxLayout='row' fxLayoutAlign='center center'>
-				<div
-					fxFlex='33'
-					fxFlex.sm='80'
-					fxFlex.xs='95'
-					class='cart empty'
-					*ngIf='!appService.cart'
-				>
-					<h3 cyphTranslate>
-						There's nothing in your cart. What are you even doing here?
-					</h3>
-					<br />
-					<span cyphTranslate>To add something to your cart go to</span>
-					<a href='/pricing' cyphTranslate>Business Pricing</a>
-					<span cyphTranslate>or</span>
-					<a href='/donate' cyphTranslate>make a donation</a>
-					.
-				</div>
-				<cyph-checkout
-					fxFlex='33'
-					fxFlex.sm='80'
-					fxFlex.xs='95'
-					[amount]='appService.cart.amount'
-					[category]='appService.cart.category'
-					[item]='appService.cart.item'
-					[subscription]='appService.cart.subscription'
-					*ngIf='appService.cart'
-				>
-					<div
-						cyphTranslate
-						*ngIf='
-							appService.cart.category ===
-							configService.pricingConfig.categories.donation.id
-						'
-					>
-						Thank you for supporting Cyph!
-					</div>
-					<div
-						cyphTranslate
-						*ngIf='
-							appService.cart.category !==
-							configService.pricingConfig.categories.donation.id
-						'
-					>
-						Payment confirmed! Follow-up instructions will be sent via email.
-					</div>
-				</cyph-checkout>
+				<md-card fxFlex='33' fxFlex.sm='80' fxFlex.xs='95'>
+					<md-card-content>
+						<div class='cart empty' *ngIf='!appService.cart'>
+							<h3 cyphTranslate>
+								There's nothing in your cart. What are you even doing here?
+							</h3>
+							<br />
+							<span cyphTranslate>To add something to your cart go to</span>
+							<a href='/pricing' cyphTranslate>Business Pricing</a>
+							<span cyphTranslate>or</span>
+							<a href='/donate' cyphTranslate>make a donation</a>
+							.
+						</div>
+						<cyph-checkout
+							[amount]='appService.cart.amount'
+							[category]='appService.cart.category'
+							[item]='appService.cart.item'
+							[subscription]='appService.cart.subscription'
+							*ngIf='appService.cart'
+						>
+							<div
+								cyphTranslate
+								*ngIf='
+									appService.cart.category ===
+									configService.pricingConfig.categories.donation.id
+								'
+							>
+								Thank you for supporting Cyph!
+							</div>
+							<div
+								cyphTranslate
+								*ngIf='
+									appService.cart.category !==
+									configService.pricingConfig.categories.donation.id
+								'
+							>
+								Payment confirmed! Follow-up instructions will be sent via email.
+							</div>
+						</cyph-checkout>
+					</md-card-content>
+				</md-card>
 			</div>
 		</section>
 
