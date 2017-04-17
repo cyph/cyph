@@ -1,18 +1,16 @@
 <div
-	fxLayout='row'
+	fxFlexFill
 	fxLayoutAlign='center center'
 	class='login-form'
 	[class.checking]='checking'
 >
 	<md-card fxFlex fxFlex.gt-sm='50'>
-		<md-card-header>
-			<md-card-title cyphTranslate>
-				Log In
-			</md-card-title>
-			<md-card-subtitle cyphTranslate>
-				Welcome to Cyph! You can log in to your beta account here.
-			</md-card-subtitle>
-		</md-card-header>
+		<md-card-title cyphTranslate>
+			Log In
+		</md-card-title>
+		<md-card-subtitle cyphTranslate>
+			Welcome to Cyph! You can log in to your beta account here.
+		</md-card-subtitle>
 		<md-card-content>
 			<form ngNativeValidate (submit)='onSubmit()'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
@@ -21,11 +19,10 @@
 					</h3>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container>
+					<md-input-container fxFlex='60'>
 						<input
 							mdInput
 							cyphTranslate
-							fxFlex='60'
 							md1Class='md-block'
 							[(ngModel)]='username'
 							name='username'
@@ -35,11 +32,10 @@
 					</md-input-container>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container>
+					<md-input-container fxFlex='60'>
 						<input
 							mdInput
 							cyphTranslate
-							fxFlex='60'
 							md1Class='md-block'
 							[(ngModel)]='password'
 							name='password'

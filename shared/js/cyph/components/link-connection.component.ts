@@ -129,7 +129,7 @@ export class LinkConnectionComponent implements OnInit {
 			}
 			else {
 				const $connectLinkInput	= await util.waitForIterable(
-					() => $element.find('.connect-link-input input')
+					() => $element.find('.connect-link-input')
 				);
 
 				const connectLinkInput	= <HTMLInputElement> $connectLinkInput[0];

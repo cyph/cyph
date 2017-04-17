@@ -4,9 +4,9 @@
 
 @include mat-core;
 
-$cyph-primary: mat-palette($mat-deep-purple, 600, 500, 700);
-$cyph-accent: mat-palette($mat-deep-purple, 500, A200, A700);
-$cyph-warn: mat-palette($mat-red);
+$cyph-primary: mat-palette($mat-deep-purple, 800, 700, 900);
+$cyph-accent: mat-palette($mat-deep-purple, 500, 400, 600);
+$cyph-warn: mat-palette($mat-red, 700, 600, 800);
 $cyph-background: #8b62d9;
 $cyph-foreground: #f1f1f1;
 $cyph-inverted: #444;
@@ -61,12 +61,6 @@ $cyph-progress-theme: map-merge($cyph-theme, (
 	primary: map-merge($cyph-primary, (
 		100: rgba(0, 0, 0, 0.15),
 		600: $cyph-foreground
-	))
-));
-
-$cyph-select-theme: map-merge($cyph-theme, (
-	primary: map-merge($cyph-primary, (
-		default: map_get($cyph-primary, 100)
 	))
 ));
 

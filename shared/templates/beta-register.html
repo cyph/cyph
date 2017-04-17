@@ -1,30 +1,28 @@
 <md-card>
-	<md-card-header>
-		<md-card-title>
+	<md-card-title>
+		<span *ngIf='!invite' cyphTranslate>
+			Register
+		</span>
+		<span *ngIf='invite' cyphTranslate>
+			Register with Invite Code
+		</span>
+	</md-card-title>
+	<md-card-subtitle>
+		<div *ngIf='signupService.state === 1'>
 			<span *ngIf='!invite' cyphTranslate>
-				Register
+				Enter your email address.
 			</span>
 			<span *ngIf='invite' cyphTranslate>
-				Register with Invite Code
+				Enter your email address and invite code for priority access
+				on our waitlist.
 			</span>
-		</md-card-title>
-		<md-card-subtitle>
-			<div *ngIf='signupService.state === 1'>
-				<span *ngIf='!invite' cyphTranslate>
-					Enter your email address.
-				</span>
-				<span *ngIf='invite' cyphTranslate>
-					Enter your email address and invite code for priority access
-					on our waitlist.
-				</span>
-			</div>
-			<div *ngIf='signupService.state === 2' cyphTranslate>
-				Thanks for signing up. Feel free to give us your name too.
-				Privacy is at the core of our ideology, so we'll never give
-				away your email address or personal details.
-			</div>
-		</md-card-subtitle>
-	</md-card-header>
+		</div>
+		<div *ngIf='signupService.state === 2' cyphTranslate>
+			Thanks for signing up. Feel free to give us your name too.
+			Privacy is at the core of our ideology, so we'll never give
+			away your email address or personal details.
+		</div>
+	</md-card-subtitle>
 	<md-card-content>
 		<cyph-signup-form [invite]='invite'></cyph-signup-form>
 	</md-card-content>

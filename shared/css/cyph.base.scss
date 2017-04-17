@@ -1,21 +1,15 @@
 @import 'theme';
 
 @include angular-material-theme($cyph-theme);
+@include mat-progress-bar-theme($cyph-progress-theme);
+@include mat-progress-spinner-theme($cyph-progress-theme);
 
 cyph-chat-cyphertext {
 	@include angular-material-theme($cyph-cyphertext-theme);
 }
 
-md-progress-bar, md-progress-spinner {
-	@include angular-material-theme($cyph-progress-theme);
-}
-
-.mat-select-content {
-	@include angular-material-theme($cyph-select-theme);
-}
-
 smd-fab-actions {
-	@include angular-material-theme($cyph-speed-dial-action-theme);
+	@include mat-button-theme($cyph-speed-dial-action-theme);
 
 	button.alt {
 		background-color: $cyph-speed-dial-action-alt-background;
@@ -64,8 +58,13 @@ section {
 	z-index: 2;
 }
 
-.cyph-foreground {
-	font-size: 1.08em;
+.cyph-foreground, body:not(.mobile) .cyph-foreground .mat-list-item-content {
+	font-size: 1.08rem;
+}
+
+.cyph-foreground .mat-list-item-content {
+	height: auto !important;
+	padding: 0px !important;
 }
 
 a {
@@ -84,10 +83,6 @@ button, input, select, textarea {
 	font-size: 100%;
 }
 
-input, textarea {
-	border-radius: 0px;
-}
-
 .image-frame {
 	overflow: hidden;
 }
@@ -103,10 +98,6 @@ input, textarea {
 
 .strike {
 	text-decoration: line-through;
-}
-
-:not(textarea):not(md-input-container):not(input):not(blockquote) {
-	border: 0px !important;
 }
 
 blockquote {
@@ -186,12 +177,6 @@ pre, code {
 	.nano-pane {
 		background-color: transparent;
 	}
-}
-
-/* Desktop styling tweak */
-
-body:not(.mobile) * {
-	outline: none !important;
 }
 
 /* Lightbox */

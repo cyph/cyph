@@ -2,8 +2,10 @@
 	md-progress-spinner {
 		display: none;
 		position: absolute;
-		top: calc(50% - 25px);
-		left: calc(50% - 25px);
+		top: 50%;
+		left: 50%;
+
+		@include transform(translate(-50%, -50%));
 	}
 
 	[md-subheader] {
@@ -15,7 +17,7 @@
 			display: block;
 		}
 
-		md-card-header, md-card-content {
+		md-card > :not(md-progress-spinner) {
 			opacity: 0.15;
 		}
 	}

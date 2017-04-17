@@ -1,9 +1,5 @@
 @import 'cyph.base';
 
-html, body, #main {
-	padding-top: 0px !important;
-}
-
 body.load-complete #pre-load {
 	@include transition(opacity 0.25s linear);
 }
