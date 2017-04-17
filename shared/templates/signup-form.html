@@ -1,16 +1,26 @@
 <div class='signup-form' [class.mobile]='envService.isMobile'>
-	<form ngNativeValidate (submit)='submit()' *ngIf='signupService.state === 0'>
-		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
+	<form
+		ngNativeValidate
+		fxLayout='column'
+		fxLayoutGap='16px'
+		(submit)='submit()'
+		*ngIf='signupService.state === 0'
+	>
+		<div fxLayout='row'>
 			<ng-content></ng-content>
 		</div>
-		<div fxFlex fxLayout='row' fxLayoutAlign='center stretch'>
-			<div fxFlex='50' fxLayout='column' *ngIf='!envService.isMobile'>
+		<div fxLayout='row'>
+			<div
+				fxFlex='50'
+				fxLayout='column'
+				fxLayoutAlign='center stretch'
+				*ngIf='!envService.isMobile'
+			>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container>
+					<md-input-container fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
-							fxFlex='80'
 							md1Class='md-block'
 							[(ngModel)]='signupService.data.email'
 							name='email'
@@ -20,11 +30,10 @@
 					</md-input-container>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container>
+					<md-input-container fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
-							fxFlex='80'
 							md1Class='md-block'
 							name='password'
 							type='password'
@@ -33,13 +42,11 @@
 						/>
 					</md-input-container>
 				</div>
-
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container>
+					<md-input-container fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
-							fxFlex='80'
 							md1Class='md-block'
 							name='confirmPassword'
 							type='password'
@@ -49,11 +56,10 @@
 					</md-input-container>
 				</div>
 				<div *ngIf='invite' fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container>
+					<md-input-container fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
-							fxFlex='80'
 							md1Class='md-block'
 							[(ngModel)]='signupService.data.inviteCode'
 							name='inviteCode'

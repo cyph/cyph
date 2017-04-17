@@ -15,7 +15,7 @@
 			display: block;
 		}
 
-		md-card-header, md-card-content {
+		md-card > :not(md-progress-spinner) {
 			opacity: 0.15;
 		}
 	}

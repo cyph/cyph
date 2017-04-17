@@ -275,12 +275,8 @@ export class StringsService {
 	);
 
 	/** @see StringsService */
-	public readonly signupMessage1: string			= util.translate(
-		`Enjoying the service? Join our waitlist for Cyph v2!`
-	);
-
-	/** @see StringsService */
-	public readonly signupMessage2: string			= util.translate(
+	public readonly signupMessage: string			= util.translate(
+		`Enjoying the service? Join our waitlist for Cyph v2! ` +
 		`More details are on the way, but the next version of Cyph will include ` +
 		`group messaging, user accounts, and encrypted chat history.`
 	);

@@ -30,8 +30,8 @@
 			<br />
 			<br />
 
-			<div class='connect-link-input' *ngIf='!envService.isMobile'>
-				<md-input-container>
+			<div fxLayoutAlign='center center' *ngIf='!envService.isMobile'>
+				<md-input-container fxFlex='50'>
 					<input
 						mdInput
 						cyphTranslate
@@ -56,6 +56,8 @@
 					[href]='link'
 					mdTooltip='Cyph Link'
 				>{{link}}</a>
+
+				<br />
 				<br />
 
 				<a md-mini-fab mdTooltip='SMS' [href]='linkSMS' cyphTranslate>

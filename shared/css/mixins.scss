@@ -12,13 +12,11 @@
 
 /* Changes size of md-icon */
 @mixin icon-size($size) {
-	& {
-		font-size: $size;
-		height: $size;
-		min-height: $size;
-		width: $size;
-		min-width: $size;
-	}
+	font-size: $size;
+	height: $size;
+	min-height: $size;
+	width: $size;
+	min-width: $size;
 }
 
 @mixin vertical-align {
@@ -44,7 +42,7 @@
 			app-bar:                  map_get($primary, default),
 			background:               $background,
 			card:                     map_get($accent, default),
-			dialog:                   map_get($accent, default),
+			dialog:                   map_get($accent, lighter),
 			raised-button:            map_get($primary, default),
 			selected-button:          map_get($accent, darker),
 			selected-disabled-button: map_get($primary, darker)
