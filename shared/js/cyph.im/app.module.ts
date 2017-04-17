@@ -4,6 +4,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {
 	MdButtonModule,
+	MdButtonToggleModule,
 	MdCardModule,
 	MdDialogModule,
 	MdIconModule,
@@ -117,6 +118,7 @@ import {LockdownComponent} from './lockdown.component';
 		FlexLayoutModule,
 		FormsModule,
 		MdButtonModule,
+		MdButtonToggleModule,
 		MdCardModule,
 		MdDialogModule,
 		MdIconModule,
