@@ -1,4 +1,3 @@
-@import 'mixins';
 @import 'theme';
 
 @include angular-material-theme($cyph-theme);
@@ -22,6 +21,10 @@ smd-fab-actions {
 		background-color: $cyph-speed-dial-action-alt-background;
 		color: $cyph-speed-dial-action-alt-foreground;
 	}
+}
+
+.message-box-button-group {
+	color: map-get($cyph-message-box-colors, buttons);
 }
 
 /* Temporary workaround pending https://github.com/angular/material2/issues/4116 */
