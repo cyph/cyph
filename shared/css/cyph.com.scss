@@ -842,6 +842,10 @@ body:not(.mobile) .section-content-container:not(.full) {
 }
 
 #checkout {
+	.hero-text {
+		margin-bottom: 30px;
+	}
+
 	.cart {
 		position: relative;
 		top: calc(50vh - 210px);

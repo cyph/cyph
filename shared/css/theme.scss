@@ -47,6 +47,12 @@ $cyph-theme: cyph-dark-theme(
 	$cyph-foreground
 );
 
+$cyph-checkout-theme: mat-light-theme(
+	mat-palette($mat-blue-grey),
+	mat-palette($mat-blue-grey),
+	$cyph-warn
+);
+
 $cyph-cyphertext-theme: cyph-dark-theme(
 	mat-palette($mat-green),
 	mat-palette($mat-green),
