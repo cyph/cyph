@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import * as clipboard from 'clipboard-js';
 import * as $ from 'jquery';
@@ -35,7 +35,7 @@ export class LinkConnectionComponent implements OnInit {
 	public advancedFeatures: boolean;
 
 	/** Indicates whether advanced features UI should be displayed. */
-	@Input() public enableAdvancedFeatures: boolean;
+	public enableAdvancedFeatures: boolean	= this.envService.isLocalEnv;
 
 	/** Indicates whether this link connection was initiated passively via API integration. */
 	public isPassive: boolean;
