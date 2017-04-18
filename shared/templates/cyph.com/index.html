@@ -4,182 +4,190 @@
 	id='main'
 	[class.unisection-mode]='appService.state !== appService.states.home'
 >
+	<md-toolbar id='main-toolbar' class='wow animated fadeInDownBig' [fxHide]='sidenav.opened'>
+		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
+			<div fxFlex fxLayout='column'>
+				<div fxLayout='row'>
+					<div fxLayout='column' fxLayoutAlign='center center'>
+						<a id='logo' href='/'>
+							<img
+								cyphTranslate
+								src='/img/logo.white.horizontal.header.png'
+								alt='Cyph logo'
+							/>
+						</a>
+					</div>
+
+					<div fxFlex fxLayout='column'></div>
+
+					<div fxLayout='column' fxLayoutAlign='center center' fxHide.lt-lg class='link-wrapper-outer right'>
+						<div class='link-wrapper-inner' cyphTranslate>
+							<a md-button href='/intro'>Intro</a>
+							<a md-button href='/features'>Features</a>
+							<a md-button href='/about'>About</a>
+							<a md-button href='/gettingstarted'>Getting Started</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div fxFlexAlign='center' fxLayout='column' fxLayoutAlign='center center'>
+				<a
+					md-raised-button
+					cyphTranslate
+					id='new-cyph'
+					class='breathe'
+					[href]='envService.newCyphUrl'
+				>
+					Start New Cyph
+				</a>
+			</div>
+
+			<div fxFlex fxLayout='column'>
+				<div fxLayout='row'>
+					<div fxLayout='column' fxLayoutAlign='center center' fxHide.lt-lg class='link-wrapper-outer left'>
+						<div class='link-wrapper-inner' cyphTranslate>
+							<a md-button href='/blog'>Blog</a>
+							<a md-button href='/faq'>FAQ</a>
+							<a md-button href='/pricing'>Pricing</a>
+							<a md-button href='/register'>Register</a>
+						</div>
+					</div>
+
+					<div fxFlex fxLayout='column'></div>
+
+					<div fxLayout='column' fxLayoutAlign='center center'>
+						<div fxHide.lt-lg class='social-media'>
+							<a
+								md-icon-button
+								cyphTranslate
+								mdTooltip='GitHub'
+								rel='noreferrer'
+								href='https://github.com/cyph'
+								target='_blank'
+							>
+								<img src='/img/iconfinder/github.png' alt='GitHub icon' />
+							</a>
+							<a
+								md-icon-button
+								cyphTranslate
+								mdTooltip='Twitter'
+								rel='noreferrer'
+								href='https://twitter.com/cyph'
+								target='_blank'
+							>
+								<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
+							</a>
+							<a
+								md-icon-button
+								cyphTranslate
+								mdTooltip='Facebook'
+								rel='noreferrer'
+								href='https://www.facebook.com/cyph'
+								target='_blank'
+							>
+								<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />
+							</a>
+						</div>
+
+						<div fxHide.gt-md>
+							<button
+								md-icon-button
+								cyphTranslate
+								mdTooltip='Menu'
+								(click)='sidenav.toggle()'
+							>
+								<md-icon>menu</md-icon>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</md-toolbar>
+
 	<md-sidenav-container (backdropClick)='sidenav.close()'>
-		<md-toolbar id='main-toolbar' class='wow animated fadeInDownBig'>
-			<span class='padding'></span>
-
-			<a id='logo' href='/'>
-				<img
-					cyphTranslate
-					src='/img/logo.white.horizontal.header.png'
-					alt='Cyph logo'
-				/>
-			</a>
-
-			<a
-				md-button
-				cyphTranslate
-				id='new-cyph'
-				class='breathe'
-				[href]='envService.newCyphUrl'
-			>
-				Start New Cyph
-			</a>
-
-			<span fxHide fxShow.gt-md class='link-wrapper-outer right'>
-				<span class='link-wrapper-inner' cyphTranslate>
-					<a md-button href='/intro'>Intro</a>
-					<a md-button href='/features'>Features</a>
-					<a md-button href='/about'>About</a>
-					<a md-button href='/gettingstarted'>Getting Started</a>
-				</span>
-			</span>
-
-			<span fxFlex></span>
-
-			<span fxHide fxShow.gt-md class='link-wrapper-outer left'>
-				<span class='link-wrapper-inner' cyphTranslate>
-					<a md-button href='/blog'>Blog</a>
-					<a md-button href='/faq'>FAQ</a>
-					<a md-button href='/pricing'>Pricing</a>
-					<a md-button href='/register'>Register</a>
-				</span>
-			</span>
-
-			<span fxHide fxShow.gt-md class='social-media'>
-				<a
-					md-icon-button
-					cyphTranslate
-					mdTooltip='GitHub'
-					rel='noreferrer'
-					href='https://github.com/cyph'
-					target='_blank'
-				>
-					<img src='/img/iconfinder/github.png' alt='GitHub icon' />
-				</a>
-				<a
-					md-icon-button
-					cyphTranslate
-					mdTooltip='Twitter'
-					rel='noreferrer'
-					href='https://twitter.com/cyph'
-					target='_blank'
-				>
-					<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
-				</a>
-				<a
-					md-icon-button
-					cyphTranslate
-					mdTooltip='Facebook'
-					rel='noreferrer'
-					href='https://www.facebook.com/cyph'
-					target='_blank'
-				>
-					<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />
-				</a>
-			</span>
-
-			<button
-				md-icon-button
-				fxHide.gt-md
-				cyphTranslate
-				mdTooltip='Menu'
-				(click)='sidenav.toggle()'
-			>
-				<md-icon>menu</md-icon>
-			</button>
-
-			<span class='padding'></span>
-		</md-toolbar>
-
-		<md-sidenav #sidenav align='end' mode='push'>
-			<div>
-				<a md-button cyphTranslate href='/intro' (click)='sidenav.close()'>
+		<md-sidenav #sidenav align='end' mode='push' fxLayout='column' fxLayoutGap='8px'>
+			<div fxLayout='row'></div>
+			<div fxLayout='row'>
+				<a md-button fxFlex cyphTranslate href='/intro' (click)='sidenav.close()'>
 					Intro
 				</a>
 			</div>
-			<div>
-				<a md-button cyphTranslate href='/features' (click)='sidenav.close()'>
+			<div fxLayout='row'>
+				<a md-button fxFlex cyphTranslate href='/features' (click)='sidenav.close()'>
 					Features
 				</a>
 			</div>
-			<div>
-				<a md-button cyphTranslate href='/about' (click)='sidenav.close()'>
+			<div fxLayout='row'>
+				<a md-button fxFlex cyphTranslate href='/about' (click)='sidenav.close()'>
 					About
 				</a>
 			</div>
-			<div>
-				<a
-					md-button
-					cyphTranslate
-					href='/gettingstarted'
-					(click)='sidenav.close()'
-				>
+			<div fxLayout='row'>
+				<a md-button fxFlex cyphTranslate href='/gettingstarted' (click)='sidenav.close()'>
 					Getting Started
 				</a>
 			</div>
-			<div>
-				<a md-button cyphTranslate href='/blog' (click)='sidenav.close()'>
+			<div fxLayout='row'>
+				<a md-button fxFlex cyphTranslate href='/blog' (click)='sidenav.close()'>
 					Blog
 				</a>
 			</div>
-			<div>
-				<a md-button cyphTranslate href='/faq' (click)='sidenav.close()'>
+			<div fxLayout='row'>
+				<a md-button fxFlex cyphTranslate href='/faq' (click)='sidenav.close()'>
 					FAQ
 				</a>
 			</div>
-			<div>
-				<a md-button cyphTranslate href='/pricing' (click)='sidenav.close()'>
+			<div fxLayout='row'>
+				<a md-button fxFlex cyphTranslate href='/pricing' (click)='sidenav.close()'>
 					Pricing
 				</a>
 			</div>
-			<div>
-				<a md-button cyphTranslate href='/register' (click)='sidenav.close()'>
+			<div fxLayout='row'>
+				<a md-button fxFlex cyphTranslate href='/register' (click)='sidenav.close()'>
 					Register
 				</a>
 			</div>
-			<div>
+			<div fxLayout='row'>
 				<a
 					md-button
+					fxFlex
 					cyphTranslate
 					rel='noreferrer'
 					href='https://github.com/cyph'
 					target='_blank'
 					(click)='sidenav.close()'
 				>
-					<span class='image'>
-						<img src='/img/iconfinder/github.png' alt='GitHub icon' />
-					</span>
+					<img src='/img/iconfinder/github.png' alt='GitHub icon' />
 					<span>GitHub</span>
 				</a>
 			</div>
-			<div>
+			<div fxLayout='row'>
 				<a
 					md-button
+					fxFlex
 					cyphTranslate
 					rel='noreferrer'
 					href='https://twitter.com/cyph'
 					target='_blank'
 					(click)='sidenav.close()'
 				>
-					<span class='image'>
-						<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
-					</span>
+					<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
 					<span>Twitter</span>
 				</a>
 			</div>
-			<div>
+			<div fxLayout='row'>
 				<a
 					md-button
+					fxFlex
 					cyphTranslate
 					rel='noreferrer'
 					href='https://www.facebook.com/cyph'
 					target='_blank'
 					(click)='sidenav.close()'
 				>
-					<span class='image'>
-						<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />
-					</span>
+					<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />
 					<span>Facebook</span>
 				</a>
 			</div>
