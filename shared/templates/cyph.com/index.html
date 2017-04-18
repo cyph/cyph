@@ -334,7 +334,7 @@
 				class='carousel wow animated fadeIn'
 				data-wow-delay='2750ms'
 			>
-				<div fxFlex class='logo-container'>
+				<div class='logo-container'>
 					<a
 						fxFlex
 						fxLayout='column'
@@ -803,7 +803,7 @@
 			<h1 class='hero-text' cyphTranslate>
 				Press The Button
 			</h1>
-			<div class='section-content-container'>
+			<div [fxFlex]='envService.isMobile' class='section-content-container'>
 				<p cyphTranslate>
 					The button will take you into the Cyph application, where you'll be given
 					a custom shortlink to share with one friend.
