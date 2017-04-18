@@ -20,7 +20,11 @@
 
 					<div fxFlex fxLayout='column'></div>
 
-					<div fxLayout='column' fxLayoutAlign='center center' fxHide.lt-lg class='link-wrapper-outer right'>
+					<div
+						fxLayout='column'
+						fxLayoutAlign='center center'
+						fxHide.lt-lg class='link-wrapper-outer right'
+					>
 						<div class='link-wrapper-inner' cyphTranslate>
 							<a md-button href='/intro'>Intro</a>
 							<a md-button href='/features'>Features</a>
@@ -45,7 +49,12 @@
 
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row'>
-					<div fxLayout='column' fxLayoutAlign='center center' fxHide.lt-lg class='link-wrapper-outer left'>
+					<div
+						fxLayout='column'
+						fxLayoutAlign='center center'
+						fxHide.lt-lg
+						class='link-wrapper-outer left'
+					>
 						<div class='link-wrapper-inner' cyphTranslate>
 							<a md-button href='/blog'>Blog</a>
 							<a md-button href='/faq'>FAQ</a>
@@ -192,7 +201,6 @@
 				</a>
 			</div>
 		</md-sidenav>
-
 
 		<section id='hero-section' [class.promo]='appService.promo !== undefined'>
 			<div class='hero-foreground'>
