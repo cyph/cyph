@@ -1,5 +1,6 @@
 @import 'theme';
 
+@include mat-core;
 @include angular-material-theme($cyph-theme);
 @include mat-progress-bar-theme($cyph-progress-theme);
 @include mat-progress-spinner-theme($cyph-progress-theme);
