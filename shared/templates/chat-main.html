@@ -209,11 +209,8 @@
 		class='cyph-view transfer-list'
 		[class.active]='chatService.chat.state === states.chat && !p2pService.isActive'
 	>
-		<md-list fxLayout='column'>
-			<md-list-item
-				fxLayout='row'
-				*ngFor='let transfer of fileTransferService.transfers'
-			>
+		<md-list fxFlex fxLayout='column'>
+			<md-list-item fxLayout='row' *ngFor='let transfer of fileTransferService.transfers'>
 				<div fxFlex fxLayout='column' fxLayoutAlign='start stretch'>
 					<div fxLayout='row'>
 						<span fxLayout='column' *ngIf='transfer.isOutgoing' cyphTranslate>

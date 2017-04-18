@@ -66,13 +66,17 @@
 		md-list-item {
 			height: 65px;
 
+			.mat-list-item-content {
+				width: 100%;
+			}
+
 			span {
 				word-wrap: break-word;
 			}
 
 			md-progress-bar {
-				padding: 20px;
-				padding-top: 0px;
+				margin: 20px;
+				margin-top: 0px;
 			}
 		}
 	}
