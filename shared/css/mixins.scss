@@ -45,7 +45,7 @@
 			dialog:          map_get($accent, lighter),
 			raised-button:   map_get($primary, default),
 			selected-button: map_get($accent, darker),
-			status-bar:      map_get($primary, darker)
+			status-bar:      $foreground
 		))
 	);
 }
