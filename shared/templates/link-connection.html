@@ -105,41 +105,45 @@
 		</div>
 	</div>
 
-	<md-slide-toggle
-		class='advanced-features-switch'
-		*ngIf='enableAdvancedFeatures'
-		[(checked)]='advancedFeatures'
-		cyphTranslate
-	>
-		Advanced Features
-	</md-slide-toggle>
+	<br />
+	<br />
 
-	<div class='advanced-features' *ngIf='advancedFeatures'>
-		<md-input-container>
-			<textarea
-				mdInput
-				cyphTranslate
-				class='queued-message-box'
-				[(ngModel)]='queuedMessageDraft'
-				placeholder='Queue up first message'
-				rows='3'
-			></textarea>
-		</md-input-container>
-		<div class='buttons'>
-			<button
-				md-icon-button
-				mdTooltip='Save'
-				(click)='chatService.setQueuedMessage(queuedMessageDraft)'
-			>
-				<md-icon>save</md-icon>
-			</button>
-			<md-button-toggle
-				mdTooltip='Self-destruct'
-				[(value)]='chatService.chat.queuedMessageSelfDestruct'
-			>
-				<md-icon>timer</md-icon>
-			</md-button-toggle>
+	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='enableAdvancedFeatures'>
+		<div fxFlex fxFlex.gt-md='50' fxLayout='column'>
+			<div fxLayout='row' fxLayoutAlign='center center'>
+				<md-slide-toggle [(ngModel)]='advancedFeatures' cyphTranslate>
+					Advanced Features
+				</md-slide-toggle>
+			</div>
+
+			<div fxLayout='row' *ngIf='advancedFeatures'>
+				<md-input-container fxFlex fxLayout='column'>
+					<textarea
+						mdInput
+						cyphTranslate
+						[(ngModel)]='queuedMessageDraft'
+						placeholder='Queue up first message'
+						rows='3'
+					></textarea>
+				</md-input-container>
+				<div fxLayout='column' fxLayoutAlign='center center'>
+					<button
+						md-icon-button
+						mdTooltip='Save'
+						(click)='chatService.setQueuedMessage(queuedMessageDraft)'
+					>
+						<md-icon>save</md-icon>
+					</button>
+					<md-button-toggle
+						mdTooltip='Self-destruct'
+						[(value)]='chatService.chat.queuedMessageSelfDestruct'
+					>
+						<md-icon>timer</md-icon>
+					</md-button-toggle>
+				</div>
+			</div>
 		</div>
 	</div>
+
 	<div fxFlex></div>
 </div>
