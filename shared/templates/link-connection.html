@@ -136,7 +136,11 @@
 					</button>
 					<md-button-toggle
 						mdTooltip='Self-destruct'
-						[(value)]='chatService.chat.queuedMessageSelfDestruct'
+						[checked]='chatService.chat.queuedMessageSelfDestruct'
+						(change)='
+							chatService.chat.queuedMessageSelfDestruct =
+								!chatService.chat.queuedMessageSelfDestruct
+						'
 					>
 						<md-icon>timer</md-icon>
 					</md-button-toggle>
