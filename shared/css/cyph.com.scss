@@ -10,9 +10,8 @@ body:not(.load-complete) {
 	}
 }
 
-section#main {
-	background-color: transparent !important;
-	overflow-x: hidden !important;
+.mat-sidenav-content {
+	overflow-x: hidden;
 }
 
 #main {
