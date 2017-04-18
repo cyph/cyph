@@ -39,48 +39,48 @@
 			text:  $foreground
 		)),
 		background: map-merge($mat-dark-theme-background, (
-			app-bar:         map_get($primary, default),
+			app-bar:         map-get($primary, default),
 			background:      $background,
-			card:            map_get($accent, default),
-			dialog:          map_get($accent, lighter),
-			raised-button:   map_get($primary, default),
-			selected-button: map_get($accent, darker),
-			status-bar:      $foreground
+			card:            map-get($accent, default),
+			dialog:          map-get($accent, lighter),
+			raised-button:   map-get($primary, default),
+			selected-button: map-get($accent, darker),
+			status-bar:      mat-color($primary, 100)
 		))
 	);
 }
 
 @function invert-palette($base-palette) {
 	@return map-merge($base-palette, (
-		50:   map_get($base-palette, 900),
-		100:  map_get($base-palette, 800),
-		200:  map_get($base-palette, 700),
-		300:  map_get($base-palette, 600),
-		400:  map_get($base-palette, 500),
-		500:  map_get($base-palette, 400),
-		600:  map_get($base-palette, 300),
-		700:  map_get($base-palette, 200),
-		800:  map_get($base-palette, 100),
-		900:  map_get($base-palette, 50),
-		A100: map_get($base-palette, A700),
-		A200: map_get($base-palette, A400),
-		A400: map_get($base-palette, A200),
-		A700: map_get($base-palette, A100),
+		50:   map-get($base-palette, 900),
+		100:  map-get($base-palette, 800),
+		200:  map-get($base-palette, 700),
+		300:  map-get($base-palette, 600),
+		400:  map-get($base-palette, 500),
+		500:  map-get($base-palette, 400),
+		600:  map-get($base-palette, 300),
+		700:  map-get($base-palette, 200),
+		800:  map-get($base-palette, 100),
+		900:  map-get($base-palette, 50),
+		A100: map-get($base-palette, A700),
+		A200: map-get($base-palette, A400),
+		A400: map-get($base-palette, A200),
+		A700: map-get($base-palette, A100),
 		contrast: (
-			50:   map_get(map-get($base-palette, contrast), 900),
-			100:  map_get(map-get($base-palette, contrast), 800),
-			200:  map_get(map-get($base-palette, contrast), 700),
-			300:  map_get(map-get($base-palette, contrast), 600),
-			400:  map_get(map-get($base-palette, contrast), 500),
-			500:  map_get(map-get($base-palette, contrast), 400),
-			600:  map_get(map-get($base-palette, contrast), 300),
-			700:  map_get(map-get($base-palette, contrast), 200),
-			800:  map_get(map-get($base-palette, contrast), 100),
-			900:  map_get(map-get($base-palette, contrast), 50),
-			A100: map_get(map-get($base-palette, contrast), A700),
-			A200: map_get(map-get($base-palette, contrast), A400),
-			A400: map_get(map-get($base-palette, contrast), A200),
-			A700: map_get(map-get($base-palette, contrast), A100)
+			50:   map-get(map-get($base-palette, contrast), 900),
+			100:  map-get(map-get($base-palette, contrast), 800),
+			200:  map-get(map-get($base-palette, contrast), 700),
+			300:  map-get(map-get($base-palette, contrast), 600),
+			400:  map-get(map-get($base-palette, contrast), 500),
+			500:  map-get(map-get($base-palette, contrast), 400),
+			600:  map-get(map-get($base-palette, contrast), 300),
+			700:  map-get(map-get($base-palette, contrast), 200),
+			800:  map-get(map-get($base-palette, contrast), 100),
+			900:  map-get(map-get($base-palette, contrast), 50),
+			A100: map-get(map-get($base-palette, contrast), A700),
+			A200: map-get(map-get($base-palette, contrast), A400),
+			A400: map-get(map-get($base-palette, contrast), A200),
+			A700: map-get(map-get($base-palette, contrast), A100)
 		)
 	));
 }
