@@ -4,6 +4,7 @@
 	*ngIf='chatService.chat.state === states.chat && sessionService.state.isAlive'
 >
 	<textarea
+		fxFlex
 		class='message-box tabIndent'
 		[(ngModel)]='chatService.chat.currentMessage'
 		(ngModelChange)='chatService.messageChange()'
