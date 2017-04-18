@@ -14,9 +14,11 @@
 		overflow: hidden;
 
 		.cyph-foreground {
-			font-size: 1em;
-			height: calc(100% + 4px);
 			overflow: hidden;
+
+			&, .mat-list-item-content {
+				font-size: 1em !important;
+			}
 		}
 	}
 
@@ -35,18 +37,16 @@
 
 	> .desktop {
 		height: calc((100vw - 60px) * 0.47 * 0.565);
-		width: 47%;
+		width: calc(47% + 1px);
 		margin-top: 62px;
 		left: 11.5%;
 
-		cyph-chat-main, cyph-chat-message-box {
-			margin-left: 17.5px;
-			width: calc(100% - 25px);
+		.cyph-foreground {
+			padding: 10px;
+			padding-top: 0px;
 		}
 
 		cyph-chat-main {
-			height: calc(100% - 70px);
-
 			.chat-main {
 				.message-list {
 					font-size: 90%;
@@ -90,12 +90,19 @@
 			.message-box {
 				min-height: 60px;
 			}
+
+			smd-fab-speed-dial {
+				bottom: -23px;
+				right: 17px;
+
+				@include transform(scale(0.8));
+			}
 		}
 	}
 
 	> .mobile {
 		height: calc((100vw - 60px) * 0.26 * 1.78);
-		width: 26%;
+		width: calc(26% + 1px);
 		margin-top: -62px;
 		left: 21.5%;
 
@@ -104,8 +111,6 @@
 		@include transform(scale(0.625));
 
 		cyph-chat-main {
-			height: calc(100% - 50px);
-
 			.chat-main.video .video-call.active.playing {
 				~ .message-list {
 					width: calc(30vw - 150px);
