@@ -45,7 +45,7 @@
 			dialog:          map-get($accent, lighter),
 			raised-button:   map-get($primary, default),
 			selected-button: map-get($accent, darker),
-			status-bar:      mat-color($primary, 100)
+			status-bar:      mat-color($primary, 600)
 		))
 	);
 }
