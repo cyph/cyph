@@ -611,13 +611,11 @@ body.mobile #features-section .carousel .logo.active > img {
 	z-index: 10;
 	left: 20px;
 	top: 50px;
-	height: 40px;
-	width: auto;
-	opacity: 0.15;
 
-	> img {
-		height: 100%;
-		width: auto;
+	@include transform(scale(1.65));
+
+	md-icon {
+		opacity: 0.15;
 	}
 }
 
