@@ -330,12 +330,11 @@
 
 		<section id='testimonials-section'>
 			<div
-				fxFlex
-				fxLayout='column'
+				fxLayout='row'
 				class='carousel wow animated fadeIn'
 				data-wow-delay='2750ms'
 			>
-				<div fxFlex fxLayout='row' class='logo-container'>
+				<div fxFlex class='logo-container'>
 					<a
 						fxFlex
 						fxLayout='column'
@@ -359,7 +358,7 @@
 					</a>
 				</div>
 
-				<div fxFlex fxLayout='row' class='quote-container'>
+				<div fxFlex class='quote-container'>
 					<div
 						[fxFlex]='envService.isMobile ? "100" : "50"'
 						fxLayout='column'
