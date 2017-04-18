@@ -8,6 +8,11 @@
 	min-height: 0px;
 	position: relative;
 
+	/* Needed for self-destructing messages for now */
+	.mat-list-item-content {
+		position: static;
+	}
+
 	.message {
 		max-width: 100%;
 		padding-bottom: 5px;
@@ -34,7 +39,7 @@
 	}
 
 	/* Self-destruct animation */
-	> .self-destruct-cover {
+	.self-destruct-cover {
 		content: ' ';
 		height: 100%;
 		width: 100%;
@@ -49,7 +54,7 @@
 		@include transform-origin(top left);
 	}
 
-	&.self-destructed > .self-destruct-cover {
+	&.self-destructed .self-destruct-cover {
 		@include transform(scaleX(1));
 
 		@include transition(transform 3s cubic-bezier(0.8, 0.4, 1, 0.3));
