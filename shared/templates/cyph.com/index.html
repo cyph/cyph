@@ -9,12 +9,8 @@
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row'>
 					<div fxLayout='column' fxLayoutAlign='center center'>
-						<a id='logo' href='/'>
-							<img
-								cyphTranslate
-								src='/img/logo.white.horizontal.header.png'
-								alt='Cyph logo'
-							/>
+						<a cyphTranslate id='logo' href='/'>
+							<img src='/img/logo.white.horizontal.header.png' alt='Cyph logo' />
 						</a>
 					</div>
 
@@ -118,6 +114,11 @@
 	<md-sidenav-container (backdropClick)='sidenav.close()'>
 		<md-sidenav #sidenav align='end' mode='push' fxLayout='column' fxLayoutGap='8px'>
 			<div fxLayout='row'></div>
+			<div fxLayout='row'>
+				<a md-button fxFlex cyphTranslate href='/' (click)='sidenav.close()'>
+					<img src='/img/logo.white.horizontal.header.png' alt='Cyph logo' />
+				</a>
+			</div>
 			<div fxLayout='row'>
 				<a md-button fxFlex cyphTranslate href='/intro' (click)='sidenav.close()'>
 					Intro
