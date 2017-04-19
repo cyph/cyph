@@ -1,5 +1,5 @@
 <md-list-item
-	fxFlex
+	[fxFlex]='envService.isMobile ? "nogrow" : ""'
 	fxLayout='column'
 	class='message-item'
 	[class.mobile]='envService.isMobile'

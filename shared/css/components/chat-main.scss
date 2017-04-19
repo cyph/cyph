@@ -228,7 +228,7 @@
 			left: 10px;
 		}
 
-		&before {
+		&:before {
 			box-shadow: 5px 1px 5px map-get(map-get($cyph-message-colors, other), mobileShadow);
 			border-color: transparent transparent;
 			left: -3px;
