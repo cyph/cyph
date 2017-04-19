@@ -106,10 +106,9 @@
 
 	<div
 		fxFlex
-		class='cyph-view video-call'
+		[fxShow]='p2pService.isActive'
+		class='cyph-view no-transition video-call'
 		[class.active]='chatService.chat.state === states.chat'
-		[class.no-transition]='p2pService.isActive'
-		[class.playing]='p2pService.isActive'
 		[class.sidebar-open]='p2pService.isSidebarOpen'
 		*ngIf='p2pWebRTCService'
 	>
@@ -159,9 +158,15 @@
 			<md-icon>forum</md-icon>
 		</button>
 
-		<div class='buttons'>
+		<div
+			fxFlex
+			fxLayout='row'
+			fxLayoutAlign='center center'
+			fxLayoutGap='32px'
+			class='buttons'
+		>
 			<button
-				md-fab
+				md-icon-button
 				class='video-call-button'
 				(click)='p2pService.videoCallButton()'
 				[mdTooltip]='
@@ -169,12 +174,13 @@
 						stringsService.cameraEnable :
 						stringsService.cameraDisable
 				'
+				mdTooltipPosition='above'
 			>
 				<md-icon *ngIf='!p2pWebRTCService.outgoingStream.video'>videocam</md-icon>
 				<md-icon *ngIf='p2pWebRTCService.outgoingStream.video'>videocam_off</md-icon>
 			</button>
 			<button
-				md-fab
+				md-icon-button
 				class='voice-call-button'
 				(click)='p2pService.voiceCallButton()'
 				[mdTooltip]='
@@ -182,14 +188,17 @@
 						stringsService.micEnable :
 						stringsService.micDisable
 				'
+				mdTooltipPosition='above'
 			>
 				<md-icon *ngIf='!p2pWebRTCService.outgoingStream.audio'>mic</md-icon>
 				<md-icon *ngIf='p2pWebRTCService.outgoingStream.audio'>mic_off</md-icon>
 			</button>
 			<button
-				md-fab
+				md-icon-button
 				cyphTranslate
 				mdTooltip='End Call'
+				mdTooltipPosition='above'
+				color='warn'
 				md1Class='md-theme-grey'
 				class='close-button'
 				(click)='p2pService.closeButton()'
