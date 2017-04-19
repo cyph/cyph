@@ -7,8 +7,8 @@
   resolved "https://registry.yarnpkg.com/@types/babel-code-frame/-/babel-code-frame-6.20.1.tgz#e79a40ea81435034df7b46b5e32e8ed638aea4dd"
 
 "@types/chai@^3.4.34":
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-3.5.0.tgz#45e2dc2af9a5727be846af6e61d08ffc45d5b2ca"
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-3.5.1.tgz#9bd77fe12503ae00648b0945b38eab666adffe2e"
 
 "@types/colors@^0.6.33":
   version "0.6.33"
@@ -36,20 +36,20 @@
     "@types/node" "*"
 
 "@types/js-yaml@^3.5.29":
-  version "3.5.29"
-  resolved "https://registry.yarnpkg.com/@types/js-yaml/-/js-yaml-3.5.29.tgz#29f4dd9314fbccb080d8bd84b9c23811ec5090c2"
+  version "3.5.30"
+  resolved "https://registry.yarnpkg.com/@types/js-yaml/-/js-yaml-3.5.30.tgz#f555118c022318e57e36d803379cb8ee38ee20a7"
 
 "@types/minimatch@*":
   version "2.0.29"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-2.0.29.tgz#5002e14f75e2d71e564281df0431c8c1b4a2a36a"
 
 "@types/mocha@^2.2.35":
-  version "2.2.40"
-  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.40.tgz#9811dd800ece544cd84b5b859917bf584a150c4c"
+  version "2.2.41"
+  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.41.tgz#e27cf0817153eb9f2713b2d3f6c68f1e1c3ca608"
 
 "@types/node@*", "@types/node@^6.0.56":
-  version "6.0.68"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.68.tgz#0c43b6b8b9445feb86a0fbd3457e3f4bc591e66d"
+  version "6.0.70"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.70.tgz#f6e04b859205ee3611849921f09819701dbfa5e8"
 
 "@types/optimist@0.0.29":
   version "0.0.29"
@@ -115,8 +115,8 @@ arr-diff@^2.0.0:
     arr-flatten "^1.0.1"
 
 arr-flatten@^1.0.1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/arr-flatten/-/arr-flatten-1.0.2.tgz#1ec1e63439c54f67d6f72bb4299c3d4f73b2d996"
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/arr-flatten/-/arr-flatten-1.0.3.tgz#a274ed85ac08849b6bd7847c4580745dc51adfb1"
 
 array-filter@~0.0.0:
   version "0.0.1"
@@ -1444,8 +1444,8 @@ tslint@latest:
     tsutils "^1.4.0"
 
 tsutils@^1.4.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/tsutils/-/tsutils-1.6.0.tgz#1fd7fac2a61369ed99cd3997f0fbb437128850f2"
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/tsutils/-/tsutils-1.7.0.tgz#2e63ccc2d6912bb095f7e363ff4100721dc86f50"
 
 type-detect@0.1.1:
   version "0.1.1"
