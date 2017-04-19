@@ -3,14 +3,16 @@
 	[class.mobile]='envService.isMobile'
 	*ngIf='chatService.chat.state === states.chat && sessionService.state.isAlive'
 >
-	<textarea
-		fxFlex
-		class='message-box tabIndent'
-		[(ngModel)]='chatService.chat.currentMessage'
-		(ngModelChange)='chatService.messageChange()'
-		placeholder='Send a secure message...'
-		cyphTranslate
-	></textarea>
+	<div fxFlex class='message-box-wrapper'>
+		<textarea
+			fxFlex
+			class='message-box tabIndent'
+			[(ngModel)]='chatService.chat.currentMessage'
+			(ngModelChange)='chatService.messageChange()'
+			placeholder='Send a secure message...'
+			cyphTranslate
+		></textarea>
+	</div>
 
 	<div *ngIf='envService.isMobile'>
 		<div
@@ -147,8 +149,8 @@
 	</smd-fab-speed-dial>
 
 	<h3
-		md-subheader
-		class='new-messages'
+		fxFlex
+		class='new-messages cyph-banner emphasis'
 		*ngIf='scrollService.unreadItemCount > 0'
 		(click)='scrollService.scrollDown()'
 	>

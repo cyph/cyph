@@ -41,18 +41,13 @@
 		}
 	}
 
-	.new-messages > * {
+	.new-messages {
 		width: 100%;
-		text-align: center;
 		margin-top: -20px;
 		cursor: pointer;
 		z-index: 4 !important;
 		position: absolute;
 		top: 0px;
-
-		&:after {
-			width: 100%;
-		}
 	}
 
 	&:not(.mobile) {
@@ -75,7 +70,9 @@
 	}
 
 	&.mobile {
-		overflow: hidden;
+		.message-box-wrapper {
+			overflow: hidden;
+		}
 
 		.message-box {
 			height: 2.96em;
@@ -96,11 +93,11 @@
 			border: 1px solid map-get($cyph-message-box-colors, mobileGlow);
 		}
 
-		.message-box:focus ~ .new-messages > * {
+		.message-box:focus ~ .new-messages {
 			display: none;
 		}
 
-		.new-messages > * {
+		.new-messages {
 			z-index: 35 !important;
 		}
 
