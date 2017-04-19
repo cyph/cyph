@@ -5,7 +5,7 @@
 }
 
 .message-list {
-	.message-item, .friend-is-typing {
+	.message-item, .ellipsis-spinner {
 		@include transition(opacity 1s ease-in-out);
 	}
 
@@ -14,16 +14,15 @@
 	}
 
 	.friend-is-typing {
-		margin-top: 20px;
-		width: 100%;
-		opacity: 0;
-
-		&.show {
-			opacity: 1;
-		}
+		margin: 20px 0px;
 
 		.ellipsis-spinner {
 			margin: 0px;
+			opacity: 0;
+
+			&.show {
+				opacity: 1;
+			}
 
 			.chat-main.mobile &, .chat-main.video & {
 				margin: auto;
@@ -91,13 +90,14 @@
 }
 
 .chat-main:not(.mobile):not(.video) .friend-is-typing {
-	text-align: left;
 	padding-left: 20px;
 }
 
 .chat-main.mobile, .chat-main.video {
 	.friend-is-typing {
-		text-align: center;
+		.mat-list-item-content, .ellipsis-spinner {
+			width: 100%;
+		}
 	}
 }
 
@@ -622,7 +622,7 @@
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 
 .ellipsis-spinner {
-	margin: 100px auto 0;
+	margin: 100px auto 0px;
 	width: 70px;
 	text-align: center;
 
