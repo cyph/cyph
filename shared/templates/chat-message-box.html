@@ -79,19 +79,22 @@
 	</div>
 
 	<smd-fab-speed-dial
-		cyphTranslate
 		[open]='isSpeedDialOpen'
-		(mouseenter)='isSpeedDialOpen = true'
 		(mouseleave)='isSpeedDialOpen = false'
 		*ngIf='!envService.isMobile'
 	>
-		<smd-fab-trigger [spin]='true'>
+		<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
 			<button md-fab>
 				<md-icon>add</md-icon>
 			</button>
 		</smd-fab-trigger>
 		<smd-fab-actions>
-			<button md-mini-fab cyphTranslate mdTooltip='Send File or Photo'>
+			<button
+				md-mini-fab
+				cyphTranslate
+				mdTooltip='Send File or Photo'
+				mdTooltipPosition='left'
+			>
 				<md-icon>attach_file</md-icon>
 				<cyph-file-input
 					[accept]='fileAccept'
@@ -102,6 +105,7 @@
 				md-mini-fab
 				cyphTranslate
 				mdTooltip='Voice Call'
+				mdTooltipPosition='left'
 				[disabled]='!p2pService.isEnabled'
 				*ngIf='!p2pService.isActive'
 				(click)='p2pService.voiceCallButton()'
@@ -112,6 +116,7 @@
 				md-mini-fab
 				cyphTranslate
 				mdTooltip='Video Call'
+				mdTooltipPosition='left'
 				[disabled]='!p2pService.isEnabled'
 				*ngIf='!p2pService.isActive'
 				(click)='p2pService.videoCallButton()'
@@ -123,6 +128,7 @@
 				cyphTranslate
 				class='alt'
 				[mdTooltip]='stringsService.help'
+				mdTooltipPosition='left'
 				(click)='chatService.helpButton()'
 			>
 				<md-icon>help_outline</md-icon>
@@ -132,6 +138,7 @@
 				cyphTranslate
 				class='alt'
 				[mdTooltip]='stringsService.disconnect'
+				mdTooltipPosition='left'
 				(click)='chatService.disconnectButton()'
 			>
 				<md-icon>close</md-icon>
