@@ -75,6 +75,8 @@
 	}
 
 	&.mobile {
+		overflow: hidden;
+
 		.message-box {
 			height: 2.96em;
 			font-size: 1.12em;
