@@ -18,6 +18,11 @@ smd-fab-actions {
 	}
 }
 
+[md-dialog-title] {
+	font-family: Ubuntu;
+	font-weight: initial;
+}
+
 /* Temporary workaround pending https://github.com/angular/material2/issues/4116 */
 md-dialog-container, md-option {
 	color: $cyph-foreground;

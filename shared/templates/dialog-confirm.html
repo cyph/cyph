@@ -1,6 +1,6 @@
 <h1 md-dialog-title>{{title}}</h1>
 <div md-dialog-content>{{content}}</div>
-<div md-dialog-actions>
+<div md-dialog-actions fxLayoutAlign='end center'>
 	<button md-button (click)='mdDialogRef.close(false)'>{{cancel}}</button>
 	<button md-button (click)='mdDialogRef.close(true)'>{{ok}}</button>
 </div>
