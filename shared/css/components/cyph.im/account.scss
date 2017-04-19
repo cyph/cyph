@@ -1,3 +1,5 @@
+@import 'theme';
+
 .login-form {
 	md-progress-spinner {
 		display: none;
@@ -8,7 +10,8 @@
 		@include transform(translate(-50%, -50%));
 	}
 
-	[md-subheader] {
+	.cyph-banner {
+		color: map-get($cyph-warn, default);
 		margin: 20px;
 	}
 

@@ -15,7 +15,7 @@
 			<md-card-content>
 				<form ngNativeValidate (submit)='submit()'>
 					<div fxLayout='row' fxLayoutAlign='center center'>
-						<h3 md-subheader [style.visibility]='error ? "visible" : "hidden"'>
+						<h3 class='cyph-banner' [style.visibility]='error ? "visible" : "hidden"'>
 							{{stringsService.invalidPassword}}
 						</h3>
 					</div>

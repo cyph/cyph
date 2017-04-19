@@ -160,6 +160,23 @@ pre, code {
 	}
 }
 
+h3.cyph-banner {
+	display: block;
+	font-size: 1rem;
+	line-height: 1rem;
+	font-weight: initial;
+	color: $cyph-background;
+	background-color: $cyph-foreground;
+	padding: 16px;
+	text-align: center;
+
+	&.emphasis {
+		box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.16);
+
+		@include filter(brightness(1.05));
+	}
+}
+
 @include keyframes(breathe) {
 	0%, 100% {
 		@include filter(brightness(1));
