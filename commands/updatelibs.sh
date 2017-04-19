@@ -15,7 +15,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@angular/compiler \
 	@angular/compiler-cli \
 	@angular/core \
-	@angular/flex-layout@https://github.com/buu700/flex-layout-tmp \
+	@angular/flex-layout \
 	@angular/forms \
 	@angular/http \
 	@angular/material \
