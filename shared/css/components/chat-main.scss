@@ -24,14 +24,6 @@
 				opacity: 1;
 			}
 
-			.chat-main.mobile &, .chat-main.video & {
-				margin: auto;
-			}
-
-			.chat-main.video & > div {
-				background-color: $cyph-inverted;
-			}
-
 			> div {
 				width: 8px;
 				height: 8px;
@@ -101,6 +93,10 @@
 	}
 }
 
+.chat-main.video .friend-is-typing .ellipsis-spinner > div {
+	background-color: $cyph-inverted;
+}
+
 .chat-main .message-item .message {
 	max-width: 85%;
 }
@@ -129,7 +125,7 @@
 	}
 }
 
-.chat-main.mobile, .chat-main.video .video-call.active.playing ~ .message-list {
+.chat-main.mobile, .chat-main.video .video-call ~ .message-list {
 	.message-item {
 		position: relative;
 		max-width: 80%;
@@ -254,10 +250,6 @@
 	}
 }
 
-.chat-main:not(.video) .video-call {
-	display: none;
-}
-
 .chat-main.video {
 	.video-call {
 		height: 100%;
@@ -289,27 +281,16 @@
 
 		md-progress-spinner {
 			position: absolute;
-			top: calc(50% - 25px);
-			left: calc(50% - 25px);
-		}
+			top: 50%;
+			left: 50%;
 
-		&:not(.playing) {
-			max-height: 100px !important;
-			background-color: transparent !important;
-
-			& ~ .message-list {
-				max-height: calc(100% - 200px) !important;
-			}
-
-			video, md-progress-spinner {
-				display: none !important;
-			}
+			@include transform(translate(-50%, -50%));
 		}
 	}
 }
 
 @media all and (orientation: landscape) {
-	.chat-main.video .video-call.active.playing {
+	.chat-main.video .video-call {
 		top: -17.5% !important;
 		height: 135% !important;
 
@@ -326,7 +307,7 @@
 }
 
 @media all and (orientation: portrait) {
-	.chat-main.video .video-call.active.playing {
+	.chat-main.video .video-call {
 		left: -17.5% !important;
 		width: 135% !important;
 
@@ -353,22 +334,6 @@
 	}
 }
 
-.chat-main.video.mobile {
-	.video-call.playing {
-		& ~ .message-list {
-			display: none;
-		}
-	}
-
-	.video-call:not(.playing) {
-		padding-left: 10px;
-
-		& ~ .message-list {
-			max-height: calc(100% - 100px) !important;
-		}
-	}
-}
-
 .chat-main .key-exchange-progress {
 	margin-left: auto;
 	margin-right: auto;
@@ -385,7 +350,7 @@
 
 /*** New fullscreen video UI ***/
 
-.chat-main.video .video-call.active.playing {
+.chat-main.video .video-call {
 	position: fixed;
 	z-index: 10000;
 	top: 0px;
@@ -447,35 +412,34 @@
 		position: fixed;
 		top: 10px;
 		right: 15px;
-		height: 35px;
-		padding: 0px;
-		opacity: 0.5;
-		outline: white solid 1px !important;
 
-		img {
-			height: 100%;
+		md-icon {
+			opacity: 0.5;
 		}
 	}
 
 	button {
-		background-color: rgba(0, 0, 0, 0.2) !important;
+		background-color: rgba(0, 0, 0, 0.2);
+
+		&:hover {
+			@include transform(scale(1.1));
+		}
 	}
 
 	.buttons {
 		position: fixed;
 		z-index: 2;
 		bottom: 25px;
-		left: calc(50vw - 100px);
+		left: 0px;
+		width: 100%;
 
-		.close-button {
-			position: static;
-			top: auto;
-			right: auto;
+		button {
+			@include transform(scale(1.25));
+
+			&:hover {
+				@include transform(scale(1.4));
+			}
 		}
-	}
-
-	button:hover {
-		@include transform(scale(1.1));
 	}
 
 	~ .message-list {
@@ -524,7 +488,7 @@
 		}
 	}
 
-	~ cyph-chat-message-box md-menu {
+	~ cyph-chat-message-box .menu-button {
 		top: calc(50px - 100vh);
 
 		md-icon {
@@ -532,7 +496,7 @@
 		}
 	}
 
-	&:not(.sidebar-open) ~ cyph-chat-message-box md-menu {
+	&:not(.sidebar-open) ~ cyph-chat-message-box .menu-button {
 		@include transform(translateX(300px) !important);
 	}
 
@@ -544,14 +508,14 @@
 }
 
 @media (min-width: 1200px) {
-	.chat-main:not(.mobile).video .video-call.active.playing {
+	.chat-main:not(.mobile).video .video-call {
 		~ .message-list {
-			width: 25vw;
+			width: 25vw !important;
 		}
 
 		~ .video-call-message-box {
-			right: calc(-25vw - 10px);
-			width: calc(25vw + 10px);
+			right: -25vw;
+			width: 25vw;
 		}
 
 		&.sidebar-open {
@@ -564,13 +528,13 @@
 			}
 		}
 
-		&:not(.sidebar-open) ~ cyph-chat-message-box md-menu {
+		&:not(.sidebar-open) ~ cyph-chat-message-box .menu-button {
 			@include transform(translateX(25vw) !important);
 		}
 	}
 }
 
-.chat-main:not(.mobile).video .video-call.active.playing {
+.chat-main:not(.mobile).video .video-call {
 	~ .message-list .message-item {
 		font-size: initial;
 	}
@@ -584,9 +548,9 @@
 	}
 }
 
-.chat-main.mobile.video .video-call.active.playing {
+.chat-main.mobile.video .video-call {
 	~ .message-list {
-		width: calc(100vw - 65px);
+		width: calc(100vw - 65px) !important;
 	}
 
 	~ .video-call-message-box {
@@ -598,7 +562,7 @@
 		pointer-events: none;
 	}
 
-	&:not(.sidebar-open) ~ cyph-chat-message-box md-menu {
+	&:not(.sidebar-open) ~ cyph-chat-message-box .menu-button {
 		@include transform(translateX(calc(100vw - 65px)) !important);
 	}
 
@@ -610,12 +574,6 @@
 		.me {
 			@include transform(translateX(calc(65px - 100vw)) scaleX(-1) !important);
 		}
-	}
-}
-
-.chat-main .video-call:not(.playing) {
-	.logo, .sidebar, .buttons > :not(.close-button), ~ .video-call-message-box {
-		display: none;
 	}
 }
 
