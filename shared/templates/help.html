@@ -4,8 +4,10 @@
 			<p>
 				<span>Cyph uses a version of Markdown called</span>
 				<a href='http://commonmark.org'>CommonMark</a>
+				<span>for formatting.</span>
+				<br />
 				<span>
-					for formatting. We also support various extensions &ndash;
+					We also support various extensions &ndash;
 					including emojis and code fencing.
 				</span>
 			</p>
@@ -105,16 +107,18 @@
 				</tbody>
 			</table>
 		</md-tab>
-		<md-tab cyphTranslate [label]='stringsService.contactCyph' *ngIf='!envService.coBranded'>
-			<div>
-				<span>Please check out the</span>
-				<a [href]='envService.homeUrl + "faq"'>FAQs</a>
-				<span>first!</span>
+		<md-tab [label]='stringsService.contactCyph' *ngIf='!envService.coBranded'>
+			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+				<div></div>
+				<div cyphTranslate>
+					<span>Please check out the</span>
+					<a [href]='envService.homeUrl + "faq"'>FAQs</a>
+					<span>first!</span>
+				</div>
+				<div></div>
+				<div></div>
+				<cyph-contact [email]='email'></cyph-contact>
 			</div>
-			<br />
-			<br />
-			<br />
-			<cyph-contact [email]='email'></cyph-contact>
 		</md-tab>
 	</md-tab-group>
 </div>
