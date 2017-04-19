@@ -260,14 +260,12 @@
 					*ngFor='let message of chatService.chat.messages'
 				></cyph-chat-message>
 
-				<md-list-item fxLayout='row'>
-					<span class='friend-is-typing' [class.show]='chatService.chat.isFriendTyping'>
-						<span class='ellipsis-spinner'>
-							<div class='bounce1'></div>
-							<div class='bounce2'></div>
-							<div class='bounce3'></div>
-						</span>
-					</span>
+				<md-list-item fxLayout='row' class='friend-is-typing'>
+					<div class='ellipsis-spinner' [class.show]='chatService.chat.isFriendTyping'>
+						<div class='bounce1'></div>
+						<div class='bounce2'></div>
+						<div class='bounce3'></div>
+					</div>
 				</md-list-item>
 
 				<md-list-item
