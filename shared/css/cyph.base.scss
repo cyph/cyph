@@ -23,6 +23,12 @@ md-dialog-container, md-option {
 	color: $cyph-foreground;
 }
 
+/* Temporary workaround */
+md-dialog-container {
+	max-height: 95vh;
+	overflow-y: hidden !important;
+}
+
 * {
 	-webkit-font-smoothing: antialiased !important;
 	-moz-osx-font-smoothing: grayscale !important;

@@ -3,9 +3,7 @@ pre {
 }
 
 table {
-	table-layout: fixed;
 	width: 100%;
-	overflow-x: hidden;
 
 	th, td {
 		width: 50%;
@@ -31,6 +29,6 @@ table {
 	}
 }
 
-:host > .mobile {
-	font-size: 75%;
+:host > .mobile * {
+	font-size: 0.75rem;
 }
