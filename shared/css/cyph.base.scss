@@ -18,10 +18,6 @@ smd-fab-actions {
 	}
 }
 
-.message-box-button-group {
-	color: map-get($cyph-message-box-colors, buttons);
-}
-
 /* Temporary workaround pending https://github.com/angular/material2/issues/4116 */
 md-dialog-container, md-option {
 	color: $cyph-foreground;
