@@ -8,6 +8,7 @@ $cyph-warn: mat-palette($mat-red, 700, 600, 800);
 $cyph-background: #8b62d9;
 $cyph-foreground: #f1f1f1;
 $cyph-inverted: #444;
+$cyph-cyphertext-foreground: #3bfc34;
 
 $cyph-message-box-colors: (
 	background: $cyph-foreground,
@@ -55,10 +56,12 @@ $cyph-checkout-theme: mat-light-theme(
 
 $cyph-cyphertext-theme: cyph-dark-theme(
 	mat-palette($mat-green),
-	mat-palette($mat-green),
+	map-merge(mat-palette($mat-grey, 900, 800, 900), (
+		default-contrast: $cyph-cyphertext-foreground
+	)),
 	$cyph-warn,
-	#141414,
-	#3bfc34
+	black,
+	$cyph-cyphertext-foreground
 );
 
 $cyph-progress-theme: map-merge($cyph-theme, (
@@ -68,7 +71,7 @@ $cyph-progress-theme: map-merge($cyph-theme, (
 	))
 ));
 
-$cyph-speed-dial-action-palette: mat-palette($mat-grey, 50, 100, 50);
+$cyph-speed-dial-action-palette: mat-palette($mat-grey, 50, 50, 100);
 
 $cyph-speed-dial-action-theme: cyph-dark-theme(
 	$cyph-speed-dial-action-palette,
