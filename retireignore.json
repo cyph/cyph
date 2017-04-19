@@ -8,6 +8,10 @@
 		"justification": "Not using Socket.IO for SimpleWebRTC signaling"
 	},
 	{
+		"path": "domino",
+		"justification": "Dev dependency"
+	},
+	{
 		"path": "engine.io-client",
 		"justification": "Not using Socket.IO for SimpleWebRTC signaling"
 	},
@@ -81,6 +85,10 @@
 	{
 		"path": "webpack-closure-compiler/node_modules/google-closure-compiler",
 		"justification": "These are just type definitions"
+	},
+	{
+		"path": "webpack-dev-server",
+		"justification": "Dev dependency"
 	},
 	{
 		"path": "ws",
