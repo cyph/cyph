@@ -1,5 +1,3 @@
-@import 'components/chat-message';
-
 .chat-cyphertext {
 	z-index: 1;
 	position: fixed;
@@ -7,20 +5,22 @@
 	left: -1px;
 	width: calc(100% + 2px);
 	height: calc(100% + 2px);
-	font-family: 'Ubuntu Mono', monospace;
-	padding: 30px 12.5%;
+	overflow-y: scroll;
+
+	md-list {
+		padding: 50px 12.5%;
+	}
 
 	.close-button {
-		position: absolute;
+		position: fixed;
 		top: 30px;
 		right: 5%;
 	}
 
-	.message-item {
-		margin-left: 0px;
+	.message {
+		font-family: 'Ubuntu Mono', monospace;
+		font-size: 1rem;
+		word-break: break-all;
+		word-wrap: break-word;
 	}
-}
-
-.chat-cyphertext:not(.nano) {
-	overflow-y: scroll;
 }
