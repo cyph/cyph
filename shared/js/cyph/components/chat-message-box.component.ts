@@ -10,7 +10,6 @@ import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
-import {VisibilityWatcherService} from '../services/visibility-watcher.service';
 import {util} from '../util';
 
 
@@ -35,39 +34,7 @@ export class ChatMessageBoxComponent implements OnInit {
 	@Input() public fileAccept: string;
 
 	/** Indicates whether speed dial is open. */
-	public isSpeedDialOpen: boolean	= true;
-
-	/** Indicates whether speed dial should be displayed. */
-	public isSpeedDialReady: boolean;
-
-	/** Button to open mobile menu. */
-	public readonly menuButton: {
-		click: ($mdMenu: any) => void;
-		icon: string;
-		label: string;
-	}	= {
-		click: ($mdMenu: any) => { this.openMenu($mdMenu); },
-		icon: 'more_horiz',
-		label: util.translate('Menu')
-	};
-
-	/** Items inside mobile menu. */
-	public readonly menuItems: {
-		click: () => void;
-		icon: string;
-		label: string;
-	}[]	= [
-		{
-			click: () => { this.chatService.helpButton(); },
-			icon: 'help_outline',
-			label: this.stringsService.help
-		},
-		{
-			click: () => { this.chatService.disconnectButton(); },
-			icon: 'close',
-			label: this.stringsService.disconnect
-		}
-	];
+	public isSpeedDialOpen: boolean	= false;
 
 	/** Wrappers for mobile button handlers. */
 	public readonly mobileButtonHandlers	= {
@@ -93,65 +60,6 @@ export class ChatMessageBoxComponent implements OnInit {
 		}
 	};
 
-	/** Speed dial buttons. */
-	public readonly speedDialButtons: {
-		click?: () => void;
-		cssClass?: string;
-		disabled?: () => boolean;
-		fileAccept?: string;
-		fileChange?: ($event: File) => void;
-		icon: string;
-		label: string;
-		tooltipDirection: string;
-	}[]	= [
-		{
-			fileAccept: this.fileAccept,
-			fileChange: ($event: File) => { this.fileTransferService.send($event); },
-			icon: 'attach_file',
-			label: 'Send File or Photo',
-			tooltipDirection: 'left'
-		},
-		{
-			click: () => { this.p2pService.voiceCallButton(); },
-			disabled: () => !this.p2pService.isEnabled,
-			icon: 'phone',
-			label: 'Voice Call',
-			tooltipDirection: 'left'
-		},
-		{
-			click: () => { this.p2pService.videoCallButton(); },
-			disabled: () => !this.p2pService.isEnabled,
-			icon: 'videocam',
-			label: 'Video Call',
-			tooltipDirection: 'left'
-		},
-		{
-			click: () => { this.chatService.helpButton(); },
-			cssClass: 'dark',
-			icon: 'help_outline',
-			label: this.stringsService.help,
-			tooltipDirection: 'left'
-		},
-		{
-			click: () => { this.chatService.disconnectButton(); },
-			cssClass: 'dark',
-			icon: 'close',
-			label: this.stringsService.disconnect,
-			tooltipDirection: 'left'
-		}
-	];
-
-	/** Speed dial buttons to display during voice/video call. */
-	public readonly speedDialButtonsP2P: {
-		click?: () => void;
-		disabled?: () => boolean;
-		fileAccept?: string;
-		fileChange?: ($event: File) => void;
-		icon: string;
-		label: string;
-		tooltipDirection: string;
-	}[]	= this.speedDialButtons.filter(o => !o.disabled);
-
 	/** @see States */
 	public readonly states: typeof States	= States;
 
@@ -172,28 +80,6 @@ export class ChatMessageBoxComponent implements OnInit {
 			/* TODO: HANDLE NATIVE */
 			return;
 		}
-
-		const $element	= $(this.elementRef.nativeElement);
-
-		/* Temporary workaround for Angular Material bug */
-
-		const isVideoCallMessageBox	= $element.hasClass('video-call-message-box');
-
-		while (
-			!this.visibilityWatcherService.isVisible ||
-			!$element.is(':visible') ||
-			(
-				isVideoCallMessageBox &&
-				!this.p2pService.isSidebarOpen
-			)
-		) {
-			await util.sleep();
-		}
-
-		await util.sleep(500);
-		this.isSpeedDialReady	= true;
-		await util.sleep(1000);
-		this.isSpeedDialOpen	= false;
 
 		/* Allow enter press to submit, except on mobile without external keyboard */
 
@@ -264,9 +150,6 @@ export class ChatMessageBoxComponent implements OnInit {
 
 		/** @ignore */
 		private readonly virtualKeyboardWatcherService: VirtualKeyboardWatcherService,
-
-		/** @ignore */
-		private readonly visibilityWatcherService: VisibilityWatcherService,
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,

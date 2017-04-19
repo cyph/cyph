@@ -1,13 +1,19 @@
 <div
-	class='chat-main layout-column layout-fill flex'
+	fxFlex
+	fxFlexFill
+	fxLayout='column'
+	class='chat-main'
 	[class.video]='p2pService.isActive'
 	[class.mobile]='envService.isMobile'
 >
 	<div
-		class='cyph-view loading layout-column layout-fill flex'
+		fxFlex
+		fxFlexFill
+		fxLayout='column'
+		class='cyph-view loading'
 		[class.active]='chatService.chat.state === states.keyExchange'
 	>
-		<div class='flex'></div>
+		<div fxFlex></div>
 		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation'>
 			<div></div>
 			<div></div>
@@ -19,19 +25,21 @@
 			<img src='/img/logo.telehealth.icon.png' alt='Telehealth logo' />
 		</div>
 		<span cyphTranslate>Initiating key exchange...</span>
-		<md2-progress-linear
-			childClass='md-accent key-exchange-progress'
-			mdMode='determinate'
+		<md-progress-bar
+			class='key-exchange-progress'
 			[value]='chatService.chat.keyExchangeProgress'
-		></md2-progress-linear>
-		<div class='flex'></div>
+		></md-progress-bar>
+		<div fxFlex></div>
 	</div>
 
 	<div
-		class='cyph-view abort-screen loading layout-column layout-fill flex'
+		fxFlex
+		fxFlexFill
+		fxLayout='column'
+		class='cyph-view abort-screen loading'
 		[class.active]='chatService.chat.state === states.aborted'
 	>
-		<div class='flex'></div>
+		<div fxFlex></div>
 		<div class='image'>
 			<img
 				*ngIf='!sessionService.apiFlags.telehealth'
@@ -73,32 +81,34 @@
 				</span>
 			</div>
 		</div>		
-		<div class='flex'></div>
+		<div fxFlex></div>
 	</div>
 
 	<div
-		class='cyph-view chat-begin-message loading layout-column layout-fill flex'
+		fxFlex
+		fxFlexFill
+		fxLayout='column'
+		class='cyph-view chat-begin-message loading'
 		[class.active]='chatService.chat.state === states.chatBeginMessage'
 	>
-		<div class='flex'></div>
+		<div fxFlex></div>
 		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation connected'></div>
 		<div *ngIf='sessionService.apiFlags.telehealth' class='telehealth-logo'>
 			<img src='/img/logo.telehealth.icon.png' alt='Telehealth logo' />
 		</div>
 		<span cyphTranslate>Securely Connected!</span>
-		<md2-progress-linear
-			childClass='md-accent key-exchange-progress'
-			mdMode='determinate'
+		<md-progress-bar
+			class='key-exchange-progress'
 			[value]='100'
-		></md2-progress-linear>
-		<div class='flex'></div>
+		></md-progress-bar>
+		<div fxFlex></div>
 	</div>
 
 	<div
-		class='cyph-view video-call flex'
+		fxFlex
+		[fxShow]='p2pService.isActive'
+		class='cyph-view no-transition video-call'
 		[class.active]='chatService.chat.state === states.chat'
-		[class.no-transition]='p2pService.isActive'
-		[class.playing]='p2pService.isActive'
 		[class.sidebar-open]='p2pService.isSidebarOpen'
 		*ngIf='p2pWebRTCService'
 	>
@@ -118,88 +128,82 @@
 		</a>
 		<div
 			class='friend stream'
-			[hidden]='!p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
+			[fxHide]='!p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
 		></div>
 		<img
 			class='friend'
-			[hidden]='p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
+			[fxHide]='p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
 			src='/img/voicecall.jpg'
 			alt='Voice call'
 		/>
 		<video
 			class='me'
-			[hidden]='!p2pWebRTCService.outgoingStream.video'
+			[fxHide]='!p2pWebRTCService.outgoingStream.video'
 			autoplay
 			muted
 		></video>
 
-		<md2-progress-circular
+		<md-progress-spinner
 			*ngIf='p2pWebRTCService.loading'
-			mdMode='indeterminate'
-		></md2-progress-circular>
+			mode='indeterminate'
+		></md-progress-spinner>
 
-		<md2-button
+		<button
+			md-icon-button
 			cyphTranslate
-			childClass='sidebar'
-			ariaLabel='Sidebar'
-			(childClick)='p2pService.toggleSidebar()'
+			class='sidebar'
+			mdTooltip='Toggle Chat Sidebar'
+			(click)='p2pService.toggleSidebar()'
 		>
-			<img src='/img/icons/chat.png' alt='Chat' cyphTranslate />
-		</md2-button>
+			<md-icon>forum</md-icon>
+		</button>
 
-		<div class='buttons'>
-			<md2-button
-				childClass='md-fab video-call-button'
-				(childClick)='p2pService.videoCallButton()'
-				[ariaLabel]='
+		<div
+			fxFlex
+			fxLayout='row'
+			fxLayoutAlign='center center'
+			fxLayoutGap='32px'
+			class='buttons'
+		>
+			<button
+				md-icon-button
+				class='video-call-button'
+				(click)='p2pService.videoCallButton()'
+				[mdTooltip]='
 					!p2pWebRTCService.outgoingStream.video ?
 						stringsService.cameraEnable :
 						stringsService.cameraDisable
 				'
+				mdTooltipPosition='above'
 			>
-				<img
-					cyphTranslate
-					[hidden]='p2pWebRTCService.outgoingStream.video'
-					src='/img/icons/video.on.png'
-					alt='Video on'
-				/>
-				<img
-					cyphTranslate
-					[hidden]='!p2pWebRTCService.outgoingStream.video'
-					src='/img/icons/video.off.png'
-					alt='Video off'
-				/>
-			</md2-button>
-			<md2-button
-				childClass='md-fab voice-call-button'
-				(childClick)='p2pService.voiceCallButton()'
-				[ariaLabel]='
+				<md-icon *ngIf='!p2pWebRTCService.outgoingStream.video'>videocam</md-icon>
+				<md-icon *ngIf='p2pWebRTCService.outgoingStream.video'>videocam_off</md-icon>
+			</button>
+			<button
+				md-icon-button
+				class='voice-call-button'
+				(click)='p2pService.voiceCallButton()'
+				[mdTooltip]='
 					!p2pWebRTCService.outgoingStream.audio ?
 						stringsService.micEnable :
 						stringsService.micDisable
 				'
+				mdTooltipPosition='above'
 			>
-				<img
-					cyphTranslate
-					[hidden]='p2pWebRTCService.outgoingStream.audio'
-					src='/img/icons/mic.on.png'
-					alt='Mic on'
-				/>
-				<img
-					cyphTranslate
-					[hidden]='!p2pWebRTCService.outgoingStream.audio'
-					src='/img/icons/mic.off.png'
-					alt='Mic off'
-				/>
-			</md2-button>
-			<md2-button
+				<md-icon *ngIf='!p2pWebRTCService.outgoingStream.audio'>mic</md-icon>
+				<md-icon *ngIf='p2pWebRTCService.outgoingStream.audio'>mic_off</md-icon>
+			</button>
+			<button
+				md-icon-button
 				cyphTranslate
-				ariaLabel='End Call'
-				childClass='md-fab md-theme-grey close-button'
-				(childClick)='p2pService.closeButton()'
+				mdTooltip='End Call'
+				mdTooltipPosition='above'
+				color='warn'
+				class='close-button'
+				(click)='p2pService.closeButton()'
 			>
-				<md2-icon>call_end</md2-icon>
-			</md2-button>
+				<md-icon>call_end</md-icon>
+			</button>
 		</div>
 	</div>
 
@@ -209,43 +213,39 @@
 	></cyph-chat-message-box>
 
 	<div
-		class='cyph-view transfer-list flex'
+		fxFlex
+		class='cyph-view transfer-list'
 		[class.active]='chatService.chat.state === states.chat && !p2pService.isActive'
 	>
-		<md2-content childClass='md-no-flicker'>
-			<md2-list childClass='layout-column'>
-				<md2-list-item
-					class='layout-column'
-					childClass='layout-row'
-					*ngFor='let transfer of fileTransferService.transfers'
-				>
-					<div class='layout-column layout-align-start-stretch flex'>
-						<div class='layout-row'>
-							<span class='layout-column' *ngIf='transfer.isOutgoing' cyphTranslate>
-								Sending
-							</span>
-							<span class='layout-column' *ngIf='!transfer.isOutgoing' cyphTranslate>
-								Receiving
-							</span>
-							&nbsp;
-							<span class='flex layout-column'>
-								{{transfer.name}}
-								({{utilService.readableByteLength(transfer.size)}}):
-							</span>
-						</div>
-						<md2-progress-linear
-							mdMode='determinate'
-							[value]='transfer.percentComplete'
-							childClass='layout-row'
-						></md2-progress-linear>
+		<md-list fxFlex fxLayout='column'>
+			<md-list-item fxLayout='row' *ngFor='let transfer of fileTransferService.transfers'>
+				<div fxFlex fxLayout='column' fxLayoutAlign='start stretch'>
+					<div fxLayout='row'>
+						<span fxLayout='column' *ngIf='transfer.isOutgoing' cyphTranslate>
+							Sending
+						</span>
+						<span fxLayout='column' *ngIf='!transfer.isOutgoing' cyphTranslate>
+							Receiving
+						</span>
+						&nbsp;
+						<span fxFlex fxLayout='column'>
+							{{transfer.name}}
+							({{utilService.readableByteLength(transfer.size)}}):
+						</span>
 					</div>
-				</md2-list-item>
-			</md2-list>
-		</md2-content>
+					<md-progress-bar
+						fxLayout='row'
+						[value]='transfer.percentComplete'
+					></md-progress-bar>
+				</div>
+			</md-list-item>
+		</md-list>
 	</div>
 
 	<div
-		class='cyph-view message-list flex'
+		fxFlex
+		fxFlexFill
+		class='cyph-view message-list'
 		[class.active]='chatService.chat.state === states.chat'
 		[style.margin-top]='
 			p2pService.isActive ? "" : (
@@ -259,37 +259,37 @@
 			)
 		'
 	>
-		<md2-content cyphNanoScroller childClass='md-no-flicker'>
-			<md2-list class='layout-fill' childClass='layout-column'>
+		<div cyphNanoScroller>
+			<md-list fxLayout='column'>
 				<cyph-chat-message
-					class='layout-row'
+					fxLayout='row'
 					[message]='message'
 					[mobile]='envService.isMobile || p2pService.isActive'
 					*ngFor='let message of chatService.chat.messages'
 				></cyph-chat-message>
 
-				<md2-list-item class='layout-row'>
-					<span class='friend-is-typing' [class.show]='chatService.chat.isFriendTyping'>
-						<span class='ellipsis-spinner'>
-							<div class='bounce1'></div>
-							<div class='bounce2'></div>
-							<div class='bounce3'></div>
-						</span>
-					</span>
-				</md2-list-item>
+				<md-list-item fxLayout='row' class='friend-is-typing'>
+					<div class='ellipsis-spinner' [class.show]='chatService.chat.isFriendTyping'>
+						<div class='bounce1'></div>
+						<div class='bounce2'></div>
+						<div class='bounce3'></div>
+					</div>
+				</md-list-item>
 
-				<md2-list-item
-					class='layout-row'
-					childClass='chat-end-message layout-align-center-center'
+				<md-list-item
+					fxLayout='row'
+					class='chat-end-message'
 					*ngIf='chatService.chat.isDisconnected && !hideDisconnectMessage'
 				>
-					<md2-card class='flex flex-gt-sm-50' childClass='md-padding'>
-						<md2-card-content>
-							<ng-content></ng-content>
-						</md2-card-content>
-					</md2-card>
-				</md2-list-item>
-			</md2-list>
-		</md2-content>
+					<div fxFlexFill fxLayoutAlign='center center'>
+						<md-card fxFlex fxFlex.gt-sm='50'>
+							<md-card-content>
+								<ng-content></ng-content>
+							</md-card-content>
+						</md-card>
+					</div>
+				</md-list-item>
+			</md-list>
+		</div>
 	</div>
 </div>

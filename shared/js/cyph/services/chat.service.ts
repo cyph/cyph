@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {IChatData, IChatMessage, States} from '../chat';
+import {HelpComponent} from '../components/help.component';
 import {events, rpcEvents, users} from '../session/enums';
 import {Message} from '../session/message';
 import {Timer} from '../timer';
@@ -192,9 +193,7 @@ export class ChatService {
 
 	/** Displays help information. */
 	public helpButton () : void {
-		this.dialogService.baseDialog({
-			template: `<md-dialog class='full'><cyph-help></cyph-help></md-dialog>`
-		});
+		this.dialogService.baseDialog(HelpComponent);
 
 		this.analyticsService.sendEvent({
 			eventAction: 'show',
@@ -261,23 +260,10 @@ export class ChatService {
 		this.chat.isFriendTyping	= isFriendTyping;
 	}
 
-	/**
-	 * Sets queued message to be sent after handshake.
-	 * @param messageText
-	 * @param selfDestruct
-	 */
-	public setQueuedMessage (messageText?: string, selfDestruct?: boolean) : void {
-		if (typeof messageText === 'string') {
-			this.chat.queuedMessage	= messageText;
-			this.dialogService.toast({
-				content: this.stringsService.queuedMessageSaved,
-				delay: 2500
-			});
-		}
-
-		if (typeof selfDestruct === 'boolean') {
-			this.chat.queuedMessageSelfDestruct	= selfDestruct;
-		}
+	/** Sets queued message to be sent after handshake. */
+	public setQueuedMessage (messageText: string) : void {
+		this.chat.queuedMessage	= messageText;
+		this.dialogService.toast(this.stringsService.queuedMessageSaved, 2500);
 	}
 
 	constructor (

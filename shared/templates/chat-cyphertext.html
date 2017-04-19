@@ -1,31 +1,24 @@
-<div class='chat-cyphertext'>
-	<md2-content cyphNanoScroller>
-		<md2-list childClass='layout-column'>
-			<md2-list-item
-				class='message-item layout-row'
-				childClass='flex'
-				*ngFor='let message of cyphertextService.messages'
-			>
-				<span class='message'>
-					<strong *ngIf='message.author === users.me'>
-						{{stringsService.me}}:
-					</strong>
-					<strong *ngIf='message.author !== users.me'>
-						{{message.author}}:
-					</strong>
-					<span class='flex'>{{message.text}}</span>
-					<br />
-					<br />
-				</span>
-			</md2-list-item>
-		</md2-list>
-	</md2-content>
-	<md2-button
+<div class='chat-cyphertext mat-app-background'>
+	<md-list fxLayout='column' fxLayoutGap='32px'>
+		<md-list-item fxLayout='row' *ngFor='let message of cyphertextService.messages'>
+			<div class='message'>
+				<strong *ngIf='message.author === users.me'>
+					{{stringsService.me}}:
+				</strong>
+				<strong *ngIf='message.author !== users.me'>
+					{{message.author}}:
+				</strong>
+				<span>{{message.text}}</span>
+			</div>
+		</md-list-item>
+	</md-list>
+	<button
+		md-fab
 		cyphTranslate
-		ariaLabel='Close Cyphertext'
-		childClass='md-fab md-theme-grey close-button'
-		(childClick)='cyphertextService.hide()'
+		mdTooltip='Close Cyphertext'
+		class='close-button'
+		(click)='cyphertextService.hide()'
 	>
-		<strong>&times;</strong>
-	</md2-button>
+		<md-icon>close</md-icon>
+	</button>
 </div>

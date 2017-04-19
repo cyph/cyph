@@ -16,18 +16,11 @@ export class HelpComponent {
 	/** @see Email */
 	public readonly email: Email	= new Email('help');
 
-	/** List of labels for tabs to display. */
-	public readonly tabLabels: string[];
-
 	constructor (
-		stringsService: StringsService,
-
 		/** @see EnvService */
-		public readonly envService: EnvService
-	) {
-		this.tabLabels	= this.envService.coBranded ?
-			[stringsService.formattingHelp] :
-			[stringsService.formattingHelp, stringsService.contactCyph]
-		;
-	}
+		public readonly envService: EnvService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
+	) {}
 }

@@ -1,5 +1,7 @@
+@import 'theme';
+
 #pre-load {
-	background-color: #8b62d9 !important;
+	background-color: $cyph-background !important;
 	position: fixed;
 	top: -1px;
 	left: -1px;
@@ -142,7 +144,7 @@
 
 	> :not(.image):not(.logo-animation) {
 		letter-spacing: 1px;
-		color: #f1f1f1;
+		color: $cyph-foreground;
 		text-align: center;
 		font-family: Ubuntu, 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
 	}

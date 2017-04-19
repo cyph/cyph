@@ -1,0 +1,87 @@
+@import 'mixins';
+
+/* Reference: https://material.io/color/#!/?view.left=0&view.right=1&primary.color=7d4fd3&secondary.color=8b62d9&secondary.text.color=f1f1f1&primary.text.color=ffffff */
+
+$cyph-primary: mat-palette($mat-deep-purple, 800, 700, 900);
+$cyph-accent: mat-palette($mat-deep-purple, 500, 400, 600);
+$cyph-warn: mat-palette($mat-red, 700, 600, 800);
+$cyph-background: #8b62d9;
+$cyph-foreground: #f1f1f1;
+$cyph-inverted: #444;
+$cyph-cyphertext-foreground: #3bfc34;
+
+$cyph-message-box-colors: (
+	background: $cyph-foreground,
+	buttons: #757575,
+	desktopGlow: #7239dd,
+	mobileGlow: rgba(0, 0, 0, 0.5),
+	text: initial
+);
+
+$cyph-message-colors: (
+	app: (
+		desktop: transparent,
+		mobile: transparent,
+		text: inherit
+	),
+	me: (
+		desktop: rgba(139, 98, 217, 0.8),
+		mobileBorder: rgba(139, 98, 217, 0.8),
+		mobileShadow: rgba(139, 98, 217, 0.8),
+		mobilePrimary: rgba(139, 98, 217, 0.8),
+		text: inherit
+	),
+	other: (
+		desktop: rgba(97, 47, 192, 0.5),
+		mobileBorder: rgba(100, 55, 190, 0.5),
+		mobileShadow: rgba(100, 51, 193, 0.5),
+		mobilePrimary: rgba(97, 47, 192, 0.5),
+		text: inherit
+	)
+);
+
+$cyph-theme: cyph-dark-theme(
+	$cyph-primary,
+	$cyph-accent,
+	$cyph-warn,
+	$cyph-background,
+	$cyph-foreground
+);
+
+$cyph-checkout-theme: mat-light-theme(
+	mat-palette($mat-blue-grey),
+	mat-palette($mat-blue-grey),
+	$cyph-warn
+);
+
+$cyph-cyphertext-theme: cyph-dark-theme(
+	mat-palette($mat-green),
+	map-merge(mat-palette($mat-grey, 900, 800, 900), (
+		default-contrast: $cyph-cyphertext-foreground
+	)),
+	$cyph-warn,
+	black,
+	$cyph-cyphertext-foreground
+);
+
+$cyph-progress-theme: map-merge($cyph-theme, (
+	primary: map-merge($cyph-primary, (
+		100: rgba(0, 0, 0, 0.15),
+		600: $cyph-foreground
+	))
+));
+
+$cyph-speed-dial-action-palette: mat-palette($mat-grey, 50, 50, 100);
+
+$cyph-speed-dial-action-theme: cyph-dark-theme(
+	$cyph-speed-dial-action-palette,
+	map-merge($cyph-speed-dial-action-palette, (
+		default-contrast: map-get($cyph-message-box-colors, buttons)
+	)),
+	$cyph-warn,
+	$cyph-background,
+	$cyph-foreground
+);
+
+$cyph-speed-dial-action-alt-background: $cyph-inverted;
+$cyph-speed-dial-action-alt-foreground: $cyph-foreground;

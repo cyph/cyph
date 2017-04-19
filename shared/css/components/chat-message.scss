@@ -1,58 +1,59 @@
-@import 'mixins';
+@import 'theme';
 
 .message-item {
 	word-wrap: break-word;
-	word-break: break-all;
+	word-break: break-word;
+	padding: 7.5px 10px 5px 10px;
+	margin: 2.5px;
+	min-height: 0px;
+	position: relative;
 
-	> md-list-item {
-		padding: 7.5px 10px 5px 10px;
-		margin: 2.5px;
-		min-height: 0px;
-		position: relative;
+	/* Needed for self-destructing messages for now */
+	.mat-list-item-content {
+		position: static;
+	}
 
-		.message {
-			max-width: 100%;
-			padding-bottom: 5px;
-			word-wrap: break-word;
+	.message {
+		max-width: 100%;
+		padding-bottom: 5px;
 
-			> * {
-				padding-top: 5px;
-			}
-		}
-
-		.message-timestamp {
-			text-align: right;
-		}
-
-		img, .image-frame {
-			max-width: 25%;
-			margin-top: 10px;
-			margin-bottom: 10px;
-			margin-left: 10vw;
-			margin-right: auto;
-			display: block;
-			box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.4);
-			position: relative;
-		}
-
-		/* Self-destruct animation */
-		> .self-destruct-cover {
-			content: ' ';
-			height: 100%;
-			width: 100%;
-			top: 0px;
-			left: 0px;
-			background-color: black;
-			position: absolute;
-			z-index: 5;
-
-			@include transform(scaleX(0));
-
-			@include transform-origin(top left);
+		> * {
+			padding-top: 5px;
 		}
 	}
 
-	&.self-destructed > md-list-item > .self-destruct-cover {
+	.message-timestamp {
+		text-align: right;
+	}
+
+	img, .image-frame {
+		max-width: 25%;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		margin-left: 10vw;
+		margin-right: auto;
+		display: block;
+		box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.4);
+		position: relative;
+	}
+
+	/* Self-destruct animation */
+	.self-destruct-cover {
+		content: ' ';
+		height: 100%;
+		width: 100%;
+		top: 0px;
+		left: 0px;
+		background-color: black;
+		position: absolute;
+		z-index: 5;
+
+		@include transform(scaleX(0));
+
+		@include transform-origin(top left);
+	}
+
+	&.self-destructed .self-destruct-cover {
 		@include transform(scaleX(1));
 
 		@include transition(transform 3s cubic-bezier(0.8, 0.4, 1, 0.3));
@@ -64,14 +65,22 @@
 		@include breathe;
 	}
 
-	&.author-me > md-list-item {
-		background-color: rgba(139, 98, 217, 0.8);
-		box-shadow: 0px 0px 5px rgba(139, 98, 217, 0.8);
+	&.author-app {
+		background-color: map-get(map-get($cyph-message-colors, app), desktop);
+		box-shadow: 0px 0px 5px map-get(map-get($cyph-message-colors, app), desktop);
+		color: map-get(map-get($cyph-message-colors, app), text);
 	}
 
-	&.author-other > md-list-item {
-		background-color: rgba(97, 47, 192, 0.5);
-		box-shadow: 0px 0px 5px rgba(97, 47, 192, 0.5);
+	&.author-me {
+		background-color: map-get(map-get($cyph-message-colors, me), desktop);
+		box-shadow: 0px 0px 5px map-get(map-get($cyph-message-colors, me), desktop);
+		color: map-get(map-get($cyph-message-colors, me), text);
+	}
+
+	&.author-other {
+		background-color: map-get(map-get($cyph-message-colors, other), desktop);
+		box-shadow: 0px 0px 5px map-get(map-get($cyph-message-colors, other), desktop);
+		color: map-get(map-get($cyph-message-colors, other), text);
 	}
 
 	&.author-app .message {
@@ -95,7 +104,7 @@
 }
 
 :host > .mobile {
-	.message-item > md-list-item > .self-destruct-cover {
+	.message-item > .self-destruct-cover {
 		left: -25vw;
 		width: 150vw;
 	}

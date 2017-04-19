@@ -27,7 +27,7 @@ git commit -S -a -m "${comment}"
 
 find . -type f -name '*.go' | grep -v github.com | xargs -I% gofmt -w "%"
 
-find shared/css -type f -name '*.scss' | xargs -I% bash -c '
+find shared/css -type f -name '*.scss' -not -name theme.scss -not -name mixins.scss | xargs -I% bash -c '
 sass-convert --from scss --to scss --dasherize --indent t % | awk "{
 if (\$1 != \"/*\")
 	gsub(/\"/, \"'"'"'\", \$0)

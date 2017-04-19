@@ -252,7 +252,7 @@ compile () {
 	if [ "${watch}" ] ; then
 		find . -type f -name main.ts -exec bash -c "
 			cat '{}' |
-				grep -v enableProdMode |
+				# grep -v enableProdMode |
 				sed 's|platformBrowser|platformBrowserDynamic|g' |
 				sed 's|platform-browser|platform-browser-dynamic|g' \
 			> '{}.new'

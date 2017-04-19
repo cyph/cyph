@@ -1,3 +1,5 @@
+@import 'theme';
+
 body.telehealth {
 	&, #main, md-sidenav, md-dialog, md-toolbar, md-toolbar.md-default-theme {
 		background-color: #eeecf1 !important;
@@ -119,12 +121,12 @@ body.telehealth {
 			background-color: rgba(187, 168, 223, 0.8) !important;
 
 			.friend-is-typing .ellipsis-spinner > div {
-				background-color: #f1f1f1 !important;
+				background-color: $cyph-foreground !important;
 			}
 		}
 
 		md-icon, ~ cyph-chat-message-box md-menu md-icon {
-			color: #f1f1f1 !important;
+			color: $cyph-foreground !important;
 		}
 	}
 }
@@ -162,7 +164,7 @@ body.telehealth:not(.mobile) {
 
 	.chat-main.video .video-call.active.playing {
 		~ .message-list *, ~ cyph-chat-message-box textarea {
-			color: #f1f1f1 !important;
+			color: $cyph-foreground !important;
 		}
 	}
 }
@@ -210,6 +212,6 @@ body.telehealth.mobile {
 	}
 
 	.chat-main.video .video-call.active.playing ~ .message-list .author-app * {
-		color: #f1f1f1 !important;
+		color: $cyph-foreground !important;
 	}
 }

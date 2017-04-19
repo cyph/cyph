@@ -1,30 +1,26 @@
+@import 'theme';
+
 .login-form {
-	height: 100%;
-
-	md-input-container * {
-		color: #f1f1f1 !important;
-		border-color: #f1f1f1 !important;
-	}
-
-	md-progress-circular {
+	md-progress-spinner {
 		display: none;
 		position: absolute;
-		top: calc(50% - 25px);
-		left: calc(50% - 25px);
+		top: 50%;
+		left: 50%;
+
+		@include transform(translate(-50%, -50%));
 	}
 
-	form .md-subheader {
-		color: red;
-		background: #f1f1f1;
+	.cyph-banner {
+		color: map-get($cyph-warn, default);
 		margin: 20px;
 	}
 
 	&.checking {
-		md-progress-circular {
+		md-progress-spinner {
 			display: block;
 		}
 
-		md-card-title, md-card-content {
+		md-card > :not(md-progress-spinner) {
 			opacity: 0.15;
 		}
 	}

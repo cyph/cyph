@@ -1,9 +1,9 @@
 <div class='demo-root grid-container'>
 	<span class='desktop'>
-		<cyph-demo-chat-root [data]='demoService.desktop'>
+		<cyph-demo-chat-root fxFlexFill [data]='demoService.desktop'>
 			<span *ngIf='!envService.isMobile'>
-				<div class='cyph-foreground'>
-					<cyph-chat-main class='flex layout-column layout-fill'>
+				<div fxFlexFill fxLayout='column' class='cyph-foreground'>
+					<cyph-chat-main fxFlex fxFlexFill fxLayout='column'>
 						<span cyphTranslate>
 							We hope you enjoyed our quick demo! Just click
 							the "start new cyph" button to use it for real.
@@ -11,22 +11,22 @@
 					</cyph-chat-main>
 					<cyph-chat-message-box></cyph-chat-message-box>
 				</div>
-				<cyph-chat-cyphertext></cyph-chat-cyphertext>
+				<cyph-chat-cyphertext fxFlexFill></cyph-chat-cyphertext>
 			</span>
 		</cyph-demo-chat-root>
 	</span>
 
 	<span class='mobile'>
-		<cyph-demo-chat-root [data]='demoService.mobile'>
-			<div class='cyph-foreground'>
-				<cyph-chat-main class='flex layout-column layout-fill'>
+		<cyph-demo-chat-root fxFlexFill [data]='demoService.mobile'>
+			<div fxFlexFill fxLayout='column' class='cyph-foreground'>
+				<cyph-chat-main fxFlex fxFlexFill fxLayout='column'>
 					<span cyphTranslate>
 						Tell your friends.
 					</span>
 				</cyph-chat-main>
 				<cyph-chat-message-box></cyph-chat-message-box>
 			</div>
-			<cyph-chat-cyphertext></cyph-chat-cyphertext>
+			<cyph-chat-cyphertext fxFlexFill></cyph-chat-cyphertext>
 		</cyph-demo-chat-root>
 	</span>
 </div>

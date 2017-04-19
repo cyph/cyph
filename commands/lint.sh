@@ -41,6 +41,7 @@ node -e "
 
 output="$({
 	tslint \
+		-e '/node_modules/**' \
 		-r tslint-rules \
 		-r /node_modules/codelyzer \
 		-r /node_modules/tslint-microsoft-contrib \

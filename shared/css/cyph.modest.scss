@@ -1,3 +1,5 @@
+@import 'theme';
+
 body.modest {
 	&, #main, md-sidenav, md-dialog, md-toolbar, md-toolbar.md-default-theme {
 		background-color: #7a7c8b !important;
@@ -20,7 +22,7 @@ body.modest {
 			}
 
 			md-icon {
-				color: #f1f1f1 !important;
+				color: $cyph-foreground !important;
 			}
 		}
 

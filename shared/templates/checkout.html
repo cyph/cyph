@@ -1,47 +1,52 @@
 <form ngNativeValidate>
-	<div *ngIf='!complete'>
+	<div fxLayout='column' fxLayoutGap='16px' *ngIf='!complete'>
 		<div class='checkout-ui'>
 			<div class='braintree'></div>
-			<div class='layout-row layout-sm-column layout-xs-column'>
-				<md2-input
-					cyphTranslate
-					class='layout-column layout-sm-row layout-xs-row md-block flex'
-					childClass='flex'
-					[(model)]='name'
-					formName='name'
-					label='Name'
-					[required]='true'
-				></md2-input>
-				<md2-input
-					cyphTranslate
-					class='layout-column layout-sm-row layout-xs-row md-block flex'
-					childClass='flex'
-					[(model)]='email'
-					formName='email'
-					type='email'
-					label='Email'
-					[required]='true'
-				></md2-input>
+			<div fxLayout='row' fxLayout.lt-md='column' fxLayoutGap='16px'>
+				<md-input-container fxFlex fxLayout='column' fxLayout.lt-md='row'>
+					<input
+						mdInput
+						cyphTranslate
+						[(ngModel)]='name'
+						name='name'
+						placeholder='Name'
+						[required]='true'
+					/>
+				</md-input-container>
+				<md-input-container fxFlex fxLayout='column' fxLayout.lt-md='row'>
+					<input
+						mdInput
+						cyphTranslate
+						[(ngModel)]='email'
+						name='email'
+						type='email'
+						placeholder='Email'
+						[required]='true'
+					/>
+				</md-input-container>
 			</div>
-			<div class='layout-row layout-sm-column layout-xs-column'>
-				<md2-input
-					cyphTranslate
-					class='layout-column layout-sm-row layout-xs-row md-block flex'
-					childClass='flex'
-					[(model)]='company'
-					formName='company'
-					label='Company (optional)'
-				></md2-input>
+			<div fxLayout='row' fxLayout.lt-md='column'>
+				<md-input-container fxFlex>
+					<input
+						mdInput
+						cyphTranslate
+						[(ngModel)]='company'
+						name='company'
+						placeholder='Company (optional)'
+					/>
+				</md-input-container>
 			</div>
 		</div>
-		<md2-button type='submit'>
-			<span cyphTranslate>Confirm</span>
-			<span>${{amount}}</span>
-			<span>
-				<span *ngIf='!subscription' cyphTranslate>payment</span>
-				<span *ngIf='subscription' cyphTranslate>monthly subscription</span>
-			</span>
-		</md2-button>
+		<div fxLayoutAlign='center center'>
+			<button md-button type='submit'>
+				<span cyphTranslate>Confirm</span>
+				<span>${{amount}}</span>
+				<span>
+					<span *ngIf='!subscription' cyphTranslate>payment</span>
+					<span *ngIf='subscription' cyphTranslate>monthly subscription</span>
+				</span>
+			</button>
+		</div>
 	</div>
 	<div class='confirmation' *ngIf='complete'>
 		<ng-content *ngIf='success'></ng-content>
