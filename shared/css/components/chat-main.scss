@@ -79,6 +79,7 @@
 
 .chat-main.mobile .transfer-list {
 	width: calc(100% - 30px);
+	padding: 5px;
 }
 
 .chat-main:not(.mobile):not(.video) .friend-is-typing {
