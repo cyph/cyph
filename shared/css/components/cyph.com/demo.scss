@@ -15,6 +15,7 @@
 
 		.cyph-foreground {
 			overflow: hidden;
+			width: calc(100% + 1px) !important;
 
 			&, .mat-list-item-content {
 				font-size: 1em !important;
