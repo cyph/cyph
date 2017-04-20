@@ -172,33 +172,31 @@
 		position: absolute;
 	}
 
-	cyph-chat-main .chat-main.video {
-		.video-call.active.playing {
-			&, .logo, .me, .sidebar, .buttons, ~ .message-list, ~ .video-call-message-box {
-				position: absolute;
-			}
+	cyph-chat-main .chat-main.video .video-call {
+		&, .logo, .me, .sidebar, .buttons, ~ .message-list, ~ .video-call-message-box {
+			position: absolute;
+		}
 
-			.logo {
-				top: 17.5%;
-				left: 15px;
-			}
+		.logo {
+			top: 17.5%;
+			left: 15px;
+		}
 
-			.me {
-				bottom: 13%;
-				right: 0px;
-				width: 15%;
-			}
+		.me {
+			bottom: 13%;
+			right: 0px;
+			width: 15%;
+		}
 
-			.sidebar {
-				display: none;
-				top: 17.5%;
-				right: 15px;
-			}
+		.sidebar {
+			display: none;
+			top: 17.5%;
+			right: 15px;
+		}
 
-			.buttons {
-				left: calc(50% - 100px);
-				bottom: calc(17.5% + 25px);
-			}
+		.buttons {
+			left: 0px;
+			bottom: calc(17.5% + 25px);
 		}
 	}
 }
