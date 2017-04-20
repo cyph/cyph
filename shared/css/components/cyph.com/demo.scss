@@ -169,7 +169,9 @@
 	}
 
 	.chat-cyphertext {
-		position: absolute;
+		&, .close-button {
+			position: absolute;
+		}
 	}
 
 	cyph-chat-main .chat-main.video .video-call {
