@@ -2,9 +2,7 @@
 
 @include mat-core;
 
-body {
-	@include cyph-apply-theme;
-}
+@include cyph-apply-theme(true);
 
 /* Temporary workaround */
 md-tab-body {
