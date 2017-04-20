@@ -14,7 +14,7 @@ import * as superSphincs from 'supersphincs';
 
 const args			= {
 	customBuild: process.argv[2],
-	customBuildAdditionalStyling: process.argv[3],
+	customBuildConfig: process.argv[3],
 	customBuildBackground: process.argv[4],
 	customBuildFavicon: process.argv[5],
 	customBuildStylesheet: process.argv[6],
@@ -26,9 +26,10 @@ const compileSCSS	= scss =>
 	childProcess.spawnSync('cleancss', [], {input:
 		childProcess.spawnSync(
 			'scss',
-			['-s', '-C'],
+			['-s', '-C', '-I../../shared/css'],
 			{input: `
 				@import '/node_modules/bourbon/app/assets/stylesheets/bourbon';
+				@import 'theme';
 
 				${scss}
 			`}
@@ -39,7 +40,7 @@ const compileSCSS	= scss =>
 const $	= cheerio.load(fs.readFileSync('../cyph.ws').toString());
 
 const o	= JSON.parse(
-	fs.readFileSync(args.customBuildTheme).toString()
+	fs.readFileSync(args.customBuildConfig).toString()
 );
 
 try {
@@ -52,23 +53,20 @@ try {
 }
 catch (_) {}
 
+let css	= '';
 try {
-	o.additionalStyling	= compileSCSS(
-		fs.readFileSync(args.customBuildAdditionalStyling).toString()
-	);
+	css	= compileSCSS(`
+		${!o.backgroundColor ? '' : `$cyph-background: ${o.backgroundColor};`}
+		${!o.foregroundColor ? '' : `$cyph-foreground: ${o.foregroundColor};`}
+
+		${fs.readFileSync(args.customBuildTheme).toString()}
+
+		body {
+			@include cyph-apply-theme;
+		}
+	`);
 }
 catch (_) {}
-
-const css	= compileSCSS(
-	eval('`' +
-		fs.readFileSync(
-			'../../shared/css/custom-build.scss.template'
-		).
-			toString().
-			replace(/;/g, '!important;').
-			replace(/(@include .*)\)!important;/g, '$1!important);')
-	+ '`')
-);
 
 const hash	= (await superSphincs.hash(css)).hex;
 
@@ -77,26 +75,31 @@ if (o.title) {
 	$('title').text(htmlencode.htmlEncode(o.title));
 }
 
-if (o.colors && o.colors.main) {
+let headStyle	= '';
+if (o.backgroundColor) {
 	$('head').find(
 		'meta[name="theme-color"],' + 
 		'meta[name="msapplication-TileColor"]'
 	).
-		attr('content', o.colors.main)
+		attr('content', o.backgroundColor)
 	;
 
-	$('head').append('<style>' + compileSCSS(`
+	headStyle += `
 		#pre-load {
-			background-color: ${o.colors.main} !important;
+			background-color: ${o.backgroundColor} !important;
 		}
-
-		${!o.loadingAnimationFilter ? '' : `
-			#pre-load > .transition, .loading > .logo-animation > *,
-			.loading > .logo-animation.connected, md-progress-linear {
-				@include filter(${o.loadingAnimationFilter});
-			}
-		`}
-	`) + '</style>');
+	`;
+}
+if (o.loadingAnimationFilter) {
+	headStyle += `
+		#pre-load > .transition, .loading > .logo-animation > *,
+		.loading > .logo-animation.connected, md-progress-linear {
+			@include filter(${o.loadingAnimationFilter});
+		}
+	`;
+}
+if (headStyle) {
+	$('head').append(`<style>${headStyle}</style>`);
 }
 
 $('head').append(`<meta name='custom-build' content='${args.customBuild}' />`);
