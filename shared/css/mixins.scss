@@ -26,10 +26,44 @@
 	@include transform(translateY(-50%));
 }
 
-@mixin apply-theme {
+@mixin cyph-apply-theme {
+	$cyph-theme: cyph-theme(
+		$cyph-primary,
+		$cyph-accent,
+		$cyph-warn,
+		$cyph-background,
+		$cyph-foreground,
+		$cyph-is-dark
+	);
+
+	$cyph-progress-theme: map-merge($cyph-theme, (
+		primary: map-merge($cyph-primary, (
+			100: rgba(0, 0, 0, 0.15),
+			600: $cyph-progress-foreground
+		))
+	));
+
+	$cyph-speed-dial-action-palette: mat-palette($mat-grey, 50, 50, 100);
+
+	$cyph-speed-dial-action-theme: cyph-theme(
+		$cyph-speed-dial-action-palette,
+		map-merge($cyph-speed-dial-action-palette, (
+			default-contrast: map-get($cyph-message-box-colors, buttons)
+		)),
+		$cyph-warn,
+		$cyph-background,
+		$cyph-foreground,
+		false
+	);
+
 	@include angular-material-theme($cyph-theme);
 	@include mat-progress-bar-theme($cyph-progress-theme);
 	@include mat-progress-spinner-theme($cyph-progress-theme);
+
+	/* Temporary workaround pending https://github.com/angular/material2/issues/4116 */
+	md-dialog-container, md-option {
+		color: $cyph-foreground;
+	}
 
 	cyph-account, cyph-lockdown {
 		.login-form .cyph-banner {
@@ -114,21 +148,36 @@
 		.chat-message-box {
 			.message-box {
 				color: map-get($cyph-message-box-colors, text);
-				background-color: map-get($cyph-message-box-colors, background);
+
+				@if map-has-key($cyph-message-box-colors, background) {
+					background-color: map-get($cyph-message-box-colors, background);
+				}
 			}
 
 			.message-box-button-group button md-icon {
 				color: map-get($cyph-message-box-colors, buttons);
 			}
 
-			&:not(.mobile) .message-box:focus {
-				box-shadow: 0px 0px 10px map-get($cyph-message-box-colors, desktopGlow);
-				border: 1px solid map-get($cyph-message-box-colors, desktopGlow);
+			&:not(.mobile) .message-box {
+				@if map-has-key($cyph-message-box-colors, desktopBackground) {
+					background-color: map-get($cyph-message-box-colors, desktopBackground);
+				}
+
+				&:focus {
+					box-shadow: 0px 0px 10px map-get($cyph-message-box-colors, desktopGlow);
+					border: 1px solid map-get($cyph-message-box-colors, desktopGlow);
+				}
 			}
 
-			&.mobile .message-box:focus {
-				box-shadow: 0px 0px 10px map-get($cyph-message-box-colors, mobileGlow);
-				border: 1px solid map-get($cyph-message-box-colors, mobileGlow);
+			&.mobile .message-box {
+				@if map-has-key($cyph-message-box-colors, mobileBackground) {
+					background-color: map-get($cyph-message-box-colors, mobileBackground);
+				}
+
+				&:focus {
+					box-shadow: 0px 0px 10px map-get($cyph-message-box-colors, mobileGlow);
+					border: 1px solid map-get($cyph-message-box-colors, mobileGlow);
+				}
 			}
 		}
 	}
@@ -151,27 +200,38 @@
 	}
 }
 
-@function cyph-dark-theme($primary, $accent, $warn, $background, $foreground) {
+@function cyph-theme($primary, $accent, $warn, $background, $foreground, $isDark) {
 	@return (
 		primary: $primary,
 		accent: $accent,
 		warn: $warn,
-		is-dark: true,
-		foreground: map-merge($mat-dark-theme-foreground, (
-			base:  $foreground,
-			icon:  $foreground,
-			icons: $foreground,
-			text:  $foreground
-		)),
-		background: map-merge($mat-dark-theme-background, (
-			app-bar:         map-get($primary, default),
-			background:      $background,
-			card:            map-get($accent, default),
-			dialog:          map-get($accent, lighter),
-			raised-button:   map-get($primary, default),
-			selected-button: map-get($accent, darker),
-			status-bar:      mat-color($primary, 600)
-		))
+		is-dark: $isDark,
+		foreground: map-merge(
+			if($isDark, $mat-dark-theme-foreground, $mat-light-theme-foreground),
+			(
+				base:  $foreground,
+				icon:  $foreground,
+				icons: $foreground,
+				text:  $foreground
+			)
+		),
+		background: map-merge(
+			if(
+				$isDark,
+				map-merge($mat-dark-theme-background, (
+					app-bar:         map-get($primary, default),
+					card:            map-get($accent, default),
+					dialog:          map-get($accent, lighter),
+					raised-button:   map-get($primary, default),
+					selected-button: map-get($accent, darker),
+					status-bar:      mat-color($primary, 600)
+				)),
+				$mat-light-theme-background
+			),
+			(
+				background:      $background
+			)
+		)
 	);
 }
 
