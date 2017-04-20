@@ -1,31 +1,33 @@
 <form ngNativeValidate>
 	<div fxLayout='column' fxLayoutGap='16px' *ngIf='!complete'>
-		<div class='checkout-ui'>
+		<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui'>
 			<div class='braintree'></div>
-			<div fxLayout='row' fxLayout.lt-md='column' fxLayoutGap='16px'>
-				<md-input-container fxFlex fxLayout='column' fxLayout.lt-md='row'>
-					<input
-						mdInput
-						cyphTranslate
-						[(ngModel)]='name'
-						name='name'
-						placeholder='Name'
-						required
-					/>
-				</md-input-container>
-				<md-input-container fxFlex fxLayout='column' fxLayout.lt-md='row'>
-					<input
-						mdInput
-						cyphTranslate
-						[(ngModel)]='email'
-						name='email'
-						type='email'
-						placeholder='Email'
-						required
-					/>
-				</md-input-container>
+			<div>
+				<div fxLayout='column' fxLayout.gt-md='row' fxLayoutGap='16px'>
+					<md-input-container fxFlex>
+						<input
+							mdInput
+							cyphTranslate
+							[(ngModel)]='name'
+							name='name'
+							placeholder='Name'
+							required
+						/>
+					</md-input-container>
+					<md-input-container fxFlex>
+						<input
+							mdInput
+							cyphTranslate
+							[(ngModel)]='email'
+							name='email'
+							type='email'
+							placeholder='Email'
+							required
+						/>
+					</md-input-container>
+				</div>
 			</div>
-			<div fxLayout='row' fxLayout.lt-md='column'>
+			<div>
 				<md-input-container fxFlex>
 					<input
 						mdInput
