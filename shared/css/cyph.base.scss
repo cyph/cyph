@@ -26,7 +26,6 @@ md-dialog-container, md-option {
 /* Temporary workaround */
 md-dialog-container {
 	max-height: 95vh;
-	overflow-y: hidden !important;
 }
 
 * {
@@ -82,7 +81,7 @@ a {
 
 [md-dialog-title] {
 	font-family: Ubuntu;
-	font-weight: initial;
+	font-weight: initial !important;
 }
 
 html, button, input, select, textarea {
