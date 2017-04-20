@@ -11,12 +11,10 @@ body:not(.load-complete) {
 }
 
 .mat-sidenav-content {
-	overflow-x: hidden;
+	overflow-x: hidden !important;
 }
 
 #main {
-	min-height: 100vh;
-
 	section {
 		position: relative;
 		padding: 20px;
