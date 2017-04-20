@@ -26,7 +26,9 @@
 	@include transform(translateY(-50%));
 }
 
-@mixin cyph-apply-theme {
+@mixin cyph-apply-theme($isRoot: false) {
+	$root: if($isRoot, body, &);
+
 	$cyph-theme: cyph-theme(
 		$cyph-primary,
 		$cyph-accent,
@@ -65,7 +67,7 @@
 		color: $cyph-foreground;
 	}
 
-	&, #main, .cyph-foreground {
+	#{$root}, #main, .cyph-foreground {
 		background-color: $cyph-background !important;
 	}
 
