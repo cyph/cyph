@@ -1,14 +1,9 @@
-@import 'theme';
-
 .checkout-ui {
 	margin: 30px 30px 0px 30px;
 	padding: 10px;
 	opacity: 0.9;
 	background-color: white;
 	padding: 15px;
-	color: map-get(map-get($cyph-checkout-theme, foreground), text);
-
-	@include mat-input-theme($cyph-checkout-theme);
 
 	.braintree {
 		margin-bottom: 20px;
