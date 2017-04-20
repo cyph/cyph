@@ -56,35 +56,13 @@ catch (_) {}
 let css	= '';
 try {
 	css	= compileSCSS(`
-		${!o.backgroundColor ? '' : `
-			$cyph-background: ${o.backgroundColor};
-
-			#main-chat-gradient {
-				display: none;
-			}
-		`}
-
-		${!o.foregroundColor ? '' : `
-			$cyph-foreground: ${o.foregroundColor};
-		`}
+		${!o.backgroundColor ? '' : `$cyph-background: ${o.backgroundColor};`}
+		${!o.foregroundColor ? '' : `$cyph-foreground: ${o.foregroundColor};`}
 
 		${fs.readFileSync(args.customBuildTheme).toString()}
 
 		body {
 			@include cyph-apply-theme;
-
-			${!o.background ? '' : `
-				chat-main {
-					.message-list:after {
-						background-image: url(${o.background}) !important;
-					}
-
-					.video-call .logo {
-						height: 75% !important;
-						opacity: 0.4 !important;
-					}
-				}
-			`}
 		}
 	`);
 }
@@ -115,13 +93,13 @@ if (o.backgroundColor) {
 if (o.loadingAnimationFilter) {
 	headStyle += `
 		#pre-load > .transition, .loading > .logo-animation > *,
-		.loading > .logo-animation.connected, md-progress-bar {
+		.loading > .logo-animation.connected, md-progress-linear {
 			@include filter(${o.loadingAnimationFilter});
 		}
 	`;
 }
 if (headStyle) {
-	$('head').append(`<style>${compileSCSS(headStyle)}</style>`);
+	$('head').append(`<style>${headStyle}</style>`);
 }
 
 $('head').append(`<meta name='custom-build' content='${args.customBuild}' />`);
