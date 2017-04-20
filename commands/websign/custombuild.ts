@@ -56,13 +56,28 @@ catch (_) {}
 let css	= '';
 try {
 	css	= compileSCSS(`
-		${!o.backgroundColor ? '' : `$cyph-background: ${o.backgroundColor};`}
-		${!o.foregroundColor ? '' : `$cyph-foreground: ${o.foregroundColor};`}
+		${!o.backgroundColor ? '' : `
+			$cyph-background: ${o.backgroundColor};
+
+			#main-chat-gradient {
+				display: none;
+			}
+		`}
+
+		${!o.foregroundColor ? '' : `
+			$cyph-foreground: ${o.foregroundColor};
+		`}
 
 		${fs.readFileSync(args.customBuildTheme).toString()}
 
 		body {
 			@include cyph-apply-theme;
+
+			${!o.background ? '' : `
+				.message-list:after {
+					background-image: url(${o.background});
+				}
+			`}
 		}
 	`);
 }
