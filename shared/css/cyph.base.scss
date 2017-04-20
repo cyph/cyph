@@ -1,12 +1,7 @@
 @import 'theme';
 
 @include mat-core;
-@include apply-theme;
-
-/* Temporary workaround pending https://github.com/angular/material2/issues/4116 */
-md-dialog-container, md-option {
-	color: $cyph-foreground;
-}
+@include cyph-apply-theme;
 
 /* Temporary workaround */
 md-tab-body {
