@@ -1,7 +1,10 @@
 @import 'theme';
 
 @include mat-core;
-@include cyph-apply-theme;
+
+body {
+	@include cyph-apply-theme;
+}
 
 /* Temporary workaround */
 md-tab-body {
@@ -21,7 +24,6 @@ body.load-complete #pre-load {
 
 html, body, #main, .cyph-foreground {
 	margin: 0px;
-	background-color: $cyph-background !important;
 }
 
 html, body {
@@ -90,7 +92,6 @@ button, input, select, textarea {
 }
 
 blockquote {
-	border-left: 2px solid $cyph-foreground !important;
 	padding-left: 10px;
 }
 
@@ -150,8 +151,6 @@ h3.cyph-banner {
 	font-size: 1rem;
 	line-height: 1rem;
 	font-weight: initial;
-	color: $cyph-background;
-	background-color: $cyph-foreground;
 	padding: 16px;
 	text-align: center;
 

@@ -65,6 +65,19 @@
 		color: $cyph-foreground;
 	}
 
+	&, #main, .cyph-foreground {
+		background-color: $cyph-background !important;
+	}
+
+	blockquote {
+		border-left: 2px solid $cyph-foreground !important;
+	}
+
+	h3.cyph-banner {
+		color: $cyph-background;
+		background-color: $cyph-foreground;
+	}
+
 	cyph-account, cyph-lockdown {
 		.login-form .cyph-banner {
 			color: map-get($cyph-warn, default);
