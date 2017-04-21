@@ -1,68 +1,71 @@
-<div cyphNanoScroller class='layout-row' [class.mobile]='envService.isMobile'>
+<div cyphNanoScroller fxLayout='row' [class.mobile]='envService.isMobile'>
 	<canvas class='cyph-gradient'></canvas>
 
 	<cyph-account-menu
-		class='menu sidebar layout-column'
-		[ngClass]='accountService.menuExpanded && !envService.isMobile ? "flex-20" : "flex-5"'
+		fxLayout='column'
+		class='menu sidebar'
+		[fxFlex]='accountService.menuExpanded && !envService.isMobile ? "20" : "5"'
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
 	<div
-		class='layout-column flex'
+		fxFlex
+		fxLayout='column'
 		*ngIf='!showOnlySidebar'
 	>
 		<cyph-account-chat
-			class='layout-fill'
+			fxFlexFill
 			[username]='accountService.input'
 			*ngIf='accountService.state === states.chat'
 		></cyph-account-chat>
 
 		<cyph-account-files
-			class='layout-fill'
+			fxFlexFill
 			*ngIf='accountService.state === states.files'
 		></cyph-account-files>
 
 		<cyph-account-home
-			class='layout-fill'
+			fxFlexFill
 			*ngIf='accountService.state === states.home'
 		></cyph-account-home>
 
 		<cyph-account-login
-			class='layout-fill'
+			fxFlexFill
 			*ngIf='accountService.state === states.login'
 		></cyph-account-login>
 
 		<cyph-account-logout
-			class='layout-fill'
+			fxFlexFill
 			*ngIf='accountService.state === states.logout'
 		></cyph-account-logout>
 
 		<cyph-account-profile
-			class='layout-fill'
+			fxFlexFill
 			[username]='accountService.input'
 			*ngIf='accountService.state === states.profile'
 		></cyph-account-profile>
 
 		<cyph-account-register
-			class='layout-fill'
+			fxFlexFill
 			*ngIf='accountService.state === states.register'
 		></cyph-account-register>
 
 		<cyph-account-settings
-			class='layout-fill'
+			fxFlexFill
 			*ngIf='accountService.state === states.settings'
 		></cyph-account-settings>
 	</div>
 
 	<div
-		class='sidebar layout-column'
-		[ngClass]='showOnlySidebar ? "flex" : "flex-25"'
+		[fxFlex]='showOnlySidebar ? "" : "25"'
+		fxLayout='column'
+		class='sidebar'
 		*ngIf='sidebarVisible'
 	>
-		<div class='layout-row'>
-			<div *ngIf='!envService.isMobile && showOnlySidebar' class='flex-30'></div>
-			<cyph-account-contacts class='flex'></cyph-account-contacts>
-			<div *ngIf='!envService.isMobile && showOnlySidebar' class='flex-30'></div>
+		<div fxLayout='row'>
+			<div *ngIf='!envService.isMobile && showOnlySidebar' fxFlex='30'></div>
+			<cyph-account-contacts fxFlex></cyph-account-contacts>
+			<div *ngIf='!envService.isMobile && showOnlySidebar' fxFlex='30'></div>
 		</div>
 	</div>
 </div>

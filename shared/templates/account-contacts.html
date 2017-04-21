@@ -1,8 +1,8 @@
-<div class='layout-fill layout-column flex'>
-	<md2-list class='contacts' childClass='layout-column'>
-		<md2-list-item
-			class='contact layout-column'
-			childClass='layout-row'
+<div fxFlex fxFlexFill fxLayout='column'>
+	<md-list fxLayout='column' class='contacts'>
+		<md-list-item
+			fxLayout='row'
+			class='contact'
 			*ngFor='let contact of accountContactsService.contacts; let i = index'
 			[attr.data-index]='i'
 			[class.active]='
@@ -10,8 +10,13 @@
 				this.accountService.input === contact.username
 			'
 		>
-			<div class='wrapper layout-row layout-align-start-stretch flex animated flipInY _{{i}}'>
-				<div class='layout-column'>
+			<div
+				fxFlex
+				fxLayout='row'
+				fxLayoutAlign='start stretch'
+				class='wrapper animated flipInY _{{i}}'
+			>
+				<div fxLayout='column'>
 					<img
 						class='avatar'
 						[ngClass]='userPresence[contact.status]'
@@ -23,7 +28,7 @@
 						{{userPresence[contact.status]}}
 					</h4>
 				</div>
-				<div class='user layout-column flex'>
+				<div fxFlex fxLayout='column' class='user'>
 					<h2 class='name'>
 						{{contact.name}}
 					</h2>
@@ -31,38 +36,44 @@
 						{{contact.realUsername}} 
 					</span>
 				</div>
-				<md2-button
+				<button
+					md-icon-button
+					fxLayout='row'
 					cyphTranslate
-					class='layout-row message'
-					ariaLabel='Send Message'
+					class='message'
+					mdTooltip='Send Message'
 					*ngIf='contact.status !== userPresence.online'
 				>
-					<md2-icon>email</md2-icon>
-				</md2-button>
-				<md2-button
+					<md-icon>email</md-icon>
+				</button>
+				<button
+					md-icon-button
+					fxLayout='row'
 					cyphTranslate
-					class='layout-row chat'
-					ariaLabel='Start Chat'
+					class='chat'
+					mdTooltip='Start Chat'
 					*ngIf='contact.status === userPresence.online'
-					(childClick)='urlStateService.setUrl("account/chat/" + contact.username)'
+					(click)='urlStateService.setUrl("account/chat/" + contact.username)'
 				>
-					<md2-icon>chat_bubble</md2-icon>
-				</md2-button>
-				<md2-button
+					<md-icon>chat_bubble</md-icon>
+				</button>
+				<button
+					md-icon-button
+					fxLayout='row'
 					cyphTranslate
-					class='layout-row'
-					ariaLabel='Video Call'
+					mdTooltip='Video Call'
 				>
-					<md2-icon>videocam</md2-icon>
-				</md2-button>
-				<md2-button
+					<md-icon>videocam</md-icon>
+				</button>
+				<button
+					md-icon-button
+					fxLayout='row'
 					cyphTranslate
-					class='layout-row'
-					ariaLabel='Send File'
+					mdTooltip='Send File'
 				>
-					<md2-icon>attachment</md2-icon>
-				</md2-button>
+					<md-icon>attachment</md-icon>
+				</button>
 			</div>
-		</md2-list-item>
-	</md2-list>
+		</md-list-item>
+	</md-list>
 </div>

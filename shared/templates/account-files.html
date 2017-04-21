@@ -1,22 +1,27 @@
-<div class='flex layout-row'>
-	<div *ngIf='!envService.isMobile' class='flex'></div>
-	<md2-list class='files flex-50' childClass='layout-column'>
-		<md2-list-item
-			class='contact layout-column'
-			childClass='layout-row'
+<div fxFlex fxLayout='row'>
+	<div *ngIf='!envService.isMobile' fxFlex></div>
+	<md-list fxFlex='50' fxLayout='column' class='files'>
+		<md-list-item
+			class='contact'
+			fxLayout='row'
 			*ngFor='let myFile of accountFilesService.myFiles; let i = index'
 			[attr.data-index]='i'
 		>
-			<div class='wrapper layout-row layout-align-start-stretch flex animated flipInY _{{i}}'>
-				<div class='layout-row flex'>
+			<div
+				fxFlex
+				fxLayout='row'
+				fxLayoutAlign='start stretch'
+				class='wrapper animated flipInY _{{i}}'
+			>
+				<div fxFlex fxLayout='row'>
 					<div class='thumb' alt='File Type'>
-						<md2-icon [icon]='accountFilesService.thumb(myFile.filetype)'></md2-icon>
+						<md-icon>{{accountFilesService.thumb(myFile.filetype)}}</md-icon>
 					</div>
-					<div class='file layout-column flex'>
+					<div fxFlex fxLayout='column' class='file'>
 						<span class='name'>
 							{{myFile.name}}
 						</span>
-						<div class='metadata layout-row'>
+						<div fxLayout='row' class='metadata'>
 							<span class='filetype'>
 								File type: {{myFile.filetype}} 
 							</span>
@@ -25,23 +30,25 @@
 							</span>
 						</div>
 					</div>
-					<md2-button
+					<button
+						md-icon-button
+						fxLayout='row'
 						cyphTranslate
-						class='layout-row'
-						ariaLabel='File Settings'
+						mdTooltip='File Settings'
 					>
-						<md2-icon>settings</md2-icon>
-					</md2-button>
-					<md2-button
+						<md-icon>settings</md-icon>
+					</button>
+					<button
+						md-icon-button
+						fxLayout='row'
 						cyphTranslate
-						class='layout-row'
-						ariaLabel='Download File'
+						mdTooltip='Download File'
 					>
-						<md2-icon>file_download</md2-icon>
-					</md2-button>
+						<md-icon>file_download</md-icon>
+					</button>
 				</div>
 			</div>
-		</md2-list-item>
-	</md2-list>
-	<div *ngIf='!envService.isMobile' class='flex'></div>
+		</md-list-item>
+	</md-list>
+	<div *ngIf='!envService.isMobile' fxFlex></div>
 </div>

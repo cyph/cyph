@@ -4,13 +4,11 @@
 	text-align: center;
 }
 
-md2-button {
-	button {
-		margin: 0px !important;
-	}
+button {
+	margin: 0px !important;
 
 	&.chat, &.message {
-		md2-icon {
+		md-icon {
 			top: 2px;
 			position: relative;
 
@@ -18,7 +16,7 @@ md2-button {
 		}
 	}
 
-	md2-icon {
+	md-icon {
 		@include icon-size(30px);
 	}
 }
@@ -27,7 +25,7 @@ md2-button {
 	position: relative;
 
 	.contact {
-		&, .wrapper > md2-button, .user {
+		&, .wrapper > button, .user {
 			@include transition(transform 0.5s ease);
 		}
 
@@ -39,7 +37,7 @@ md2-button {
 				border: 3px solid rgba(57, 40, 89, 0.5) !important;
 				position: relative;
 
-				> md2-button {
+				> button {
 					@include transform(scaleX(0));
 				}
 
@@ -118,11 +116,6 @@ md2-button {
 
 		.avatar.offline {
 			border: 5px solid rgba(40, 38, 44, 0.9) !important;
-		}
-
-		md2-button.layout-row {
-			top: -3px;
-			position: relative;
 		}
 	}
 

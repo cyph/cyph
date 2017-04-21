@@ -1,10 +1,10 @@
 @import 'mixins';
 
-:host, .menu, .menu md-content {
+:host, .menu {
 	@include transition(all 0.25s ease-out);
 }
 
-.md-button {
+button {
 	text-align: center !important;
 	font-family: Ubuntu;
 	font-weight: 500;
@@ -28,6 +28,9 @@ img.logo {
 	background-color: rgba(80, 57, 124, 0.9) !important;
 	width: 100%;
 	text-align: center;
+	padding: 16px;
+	padding-right: 0px;
+	box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
 
 	&.mobile {
 		position: absolute;
@@ -44,6 +47,8 @@ img.logo {
 	}
 
 	&.collapsed {
+		padding: 8px;
+
 		.full-button {
 			display: none;
 		}
@@ -67,10 +72,6 @@ img.logo {
 		.profile-picture.offline {
 			border: 5px solid rgba(40, 38, 44, 0.9) !important;
 		}
-
-		md-content {
-			padding: 8px;
-		}
 	}
 
 	&:not(.collapsed) {
@@ -78,39 +79,35 @@ img.logo {
 			display: none;
 		}
 
-		md2-icon {
+		md-icon {
 			position: relative;
 			right: 2px;
 			top: -2px;
 		}
 	}
-
-	md-content {
-		padding-right: 0px;
-	}
 }
 
-md2-button.logout {
+button.logout {
 	bottom: 0px;
 
 	@include transform(rotate(180deg));
 }
 
-.md-button md2-icon {
+button md-icon {
 	@include icon-size(32px);
 }
 
-.menu, md2-content, md-content, md-content .layout-column {
+.menu {
 	height: 100%;
 }
 
-md2-button.home {
+button.home {
 	position: relative;
 	top: 5px;
 	padding: 0px;
 }
 
-md2-button.menu-toggle {
+button.menu-toggle {
 	width: 25px;
 	margin-top: -6px;
 
@@ -119,15 +116,15 @@ md2-button.menu-toggle {
 	button {
 		height: 100%;
 
-		md2-icon.flipped md-icon {
-			@include transform(rotate(180deg));
-
-			@include transition(transform 0.1s linear);
-		}
-
-		md-icon.material-icons {
+		md-icon {
 			right: 10px;
 			position: relative;
+
+			&.flipped {
+				@include transform(rotate(180deg));
+
+				@include transition(transform 0.1s linear);
+			}
 		}
 	}
 }
@@ -136,7 +133,7 @@ md2-button.menu-toggle {
 	margin-bottom: 10px;
 }
 
-.home button.md-button {
+.home button {
 	padding: 0px;
 }
 

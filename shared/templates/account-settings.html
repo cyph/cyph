@@ -1,6 +1,6 @@
-<div class='flex layout-row' *ngIf='accountAuthService.current'>
-	<div class='flex'></div>
-	<div class='layout-column settings-wrapper flex-50'>
+<div fxFlex fxLayout='row' *ngIf='accountAuthService.current'>
+	<div fxFlex></div>
+	<div fxFlex='50' fxLayout='column' class='settings-wrapper'>
 		<h1>Account Settings</h1>
 		<div class='name'>
 			<span>Your Name: </span>
@@ -14,11 +14,11 @@
 			<span>Premium Status: </span>
 			<span>{{accountAuthService.current.hasPremium ? 'Enabled' : 'Disabled'}}</span>
 		</div>
-		<div class='layout-column'>
-			<md2-switch>Setting 1</md2-switch>
-			<md2-switch>Setting 2</md2-switch>
-			<md2-switch>Setting 3</md2-switch>
+		<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
+			<md-slide-toggle>Setting 1</md-slide-toggle>
+			<md-slide-toggle>Setting 2</md-slide-toggle>
+			<md-slide-toggle>Setting 3</md-slide-toggle>
 		</div>
 	</div>
-	<div class='flex'></div>
+	<div fxFlex></div>
 </div>

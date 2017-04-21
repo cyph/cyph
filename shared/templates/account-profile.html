@@ -1,4 +1,4 @@
-<div class='profile layout-column' *ngIf='user' [class.mobile]='envService.isMobile'>
+<div fxLayout='column' class='profile' *ngIf='user' [class.mobile]='envService.isMobile'>
 	<img
 		class='profile-picture animated flipInX _1'
 		[ngClass]='userPresence[user.status]'
@@ -9,50 +9,55 @@
 	<span class='username animated flipInX _2'>@{{user.realUsername}}</span>
 	<span class='description animated flipInX _3'>{{user.description}}</span>
 	
-	<div *ngIf='isCurrentUser' class='status flex-50'>
-		<md2-select
+	<div *ngIf='isCurrentUser' fxFlex='50' class='status'>
+		<md-select
+			fxFlex
 			cyphTranslate
-			class='flex'
-			childClass='md-block'
-			[(model)]='user.status'
-			formName='status'
-			label='Status'
-			[options]='statuses'
-		></md2-select>
+			[(ngModel)]='user.status'
+			name='status'
+			placeholder='Status'
+		>
+			<md-option
+				*ngFor='let status of statuses'
+				[value]='status.value'
+			>
+				{{status.text}}
+			</md-option>
+		</md-select>
 	</div>
 
-	<div *ngIf='!isCurrentUser' class='buttons layout-row'>
-		<div class='flex'></div>
+	<div *ngIf='!isCurrentUser' fxLayout='row' class='buttons'>
+		<div fxFlex></div>
 
-		<md2-button
+		<button
+			md-fab
 			cyphTranslate
-			childClass='md-fab'
 			class='animated flipInX _4'
-			ariaLabel='Add User'
+			mdTooltip='Add User'
 		>
-			<md2-icon>person_add</md2-icon>
-		</md2-button>
+			<md-icon>person_add</md-icon>
+		</button>
 
-		<md2-button
+		<button
+			md-fab
 			cyphTranslate
-			childClass='md-fab'
 			class='animated flipInX _4'
-			ariaLabel='Send Message'
+			mdTooltip='Send Message'
 			*ngIf='user.status !== userPresence.online'
 		>
-			<md2-icon>email</md2-icon>
-		</md2-button>
-		<md2-button
+			<md-icon>email</md-icon>
+		</button>
+		<button
+			md-fab
 			cyphTranslate
-			childClass='md-fab'
 			class='animated flipInX _4'
-			ariaLabel='Start Chat'
+			mdTooltip='Start Chat'
 			*ngIf='user.status === userPresence.online'
-			(childClick)='urlStateService.setUrl("account/chat/" + user.username)'
+			(click)='urlStateService.setUrl("account/chat/" + user.username)'
 		>
-			<md2-icon>chat_bubble</md2-icon>
-		</md2-button>
+			<md-icon>chat_bubble</md-icon>
+		</button>
 
-		<div class='flex'></div>
+		<div fxFlex></div>
 	</div>
 </div>

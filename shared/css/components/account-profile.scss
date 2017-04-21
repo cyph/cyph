@@ -74,26 +74,13 @@
 			position: absolute;
 		}
 
-		md-select-value {
-			.md-text {
-				color: white !important;
-				font-weight: 500;
-			}
-		}
-
-		md-option {
-			.md-text {
-				font-weight: 500;
-			}
-		}
-
 		md-input-container {
-			padding: 0 !important;
+			padding: 0px !important;
 			margin: 5px !important;
 		}
 	}
 
-	.buttons .md-button {
+	.buttons button {
 		background-color: #392859;
 	}
 }

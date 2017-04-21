@@ -1,96 +1,107 @@
-<div class='layout-row layout-fill' *ngIf='accountAuthService.current'>
-	<div
-		class='menu md-sidenav md-whiteframe-z2'
-		[class.collapsed]='!accountService.menuExpanded'
-		[class.mobile]='envService.isMobile'
-	>
-		<md2-content class='layout-column' childClass='layout-row md-padding md-no-flicker'>
-			<div class='layout-column layout-fill'>
-				<div class='home-wrapper'>
-					<div class='layout-column'>
-						<md2-button
-							cyphTranslate
-							class='home'
-							(childClick)='goToState(states.home)'
-						>
-							<img
-								[src]='
-									!accountService.isTelehealth ?
-										"/img/logo.white.horizontal.png" :
-										"/img/logo.telehealth.horizontal.png"
-								'
-								class='logo full-button'
-								alt='Cyph Logo'
-							/>
-							<img
-								[src]='
-									!accountService.isTelehealth ?
-										"/img/logo.white.icon.png" :
-										"/img/logo.telehealth.icon.png"
-								'
-								class='logo collapsed-button'
-								alt='Cyph Logo'
-							/>
-						</md2-button>
-						<div class='user' *ngIf='accountAuthService.current'>
-							<img
-								class='profile-picture animated flipInX _1'
-								[ngClass]='userPresence[accountAuthService.current.status]'
-								alt='Profile Picture'
-								[src]='accountAuthService.current.avatar'
-								(click)='goToState(states.profile)'
-							/>
-						</div>
-					</div>
-				</div>
-				<div>
-					<md2-button
-						cyphTranslate
-						ariaLabel='Contacts'
-						(childClick)='goToState(states.contacts)'
-					>
-						<md2-icon>people</md2-icon>
-						<span class='full-button'>Contacts</span>
-					</md2-button>
-					<md2-button
-						cyphTranslate
-						ariaLabel='Files'
-						(childClick)='goToState(states.files)'
-					>
-						<md2-icon>folder</md2-icon>
-						<span class='full-button'>Files</span>
-					</md2-button>
-					<md2-button
-						cyphTranslate
-						ariaLabel='Settings'
-						(childClick)='goToState(states.settings)'
-					>
-						<md2-icon>settings</md2-icon>
-						<span class='full-button'>Settings</span>
-					</md2-button>
-				</div>
-				<div class='flex'></div>
-				<div class='menu-footer'>
-					<md2-button
-						cyphTranslate
-						class='logout'
-						ariaLabel='Logout'
-						(childClick)='urlStateService.setUrl("account/logout")'
-					>
-						<md2-icon>exit_to_app</md2-icon>
-						<span class='full-button'>Logout</span>
-					</md2-button>
+<div
+	fxLayout='row'
+	class='menu'
+	[class.collapsed]='!accountService.menuExpanded'
+	[class.mobile]='envService.isMobile'
+	*ngIf='accountAuthService.current'
+>
+	<div fxFlexFill fxLayout='column'>
+		<div class='home-wrapper'>
+			<div fxLayout='column'>
+				<button
+					md-button
+					cyphTranslate
+					class='home'
+					mdTooltip='Home'
+					(click)='goToState(states.home)'
+				>
+					<img
+						[src]='
+							!accountService.isTelehealth ?
+								"/img/logo.white.horizontal.png" :
+								"/img/logo.telehealth.horizontal.png"
+						'
+						class='logo full-button'
+						alt='Cyph Logo'
+					/>
+					<img
+						[src]='
+							!accountService.isTelehealth ?
+								"/img/logo.white.icon.png" :
+								"/img/logo.telehealth.icon.png"
+						'
+						class='logo collapsed-button'
+						alt='Cyph Logo'
+					/>
+				</button>
+				<div class='user' *ngIf='accountAuthService.current'>
+					<img
+						class='profile-picture animated flipInX _1'
+						[ngClass]='userPresence[accountAuthService.current.status]'
+						alt='Profile Picture'
+						[src]='accountAuthService.current.avatar'
+						(click)='goToState(states.profile)'
+					/>
 				</div>
 			</div>
-			<md2-button
-				class='menu-toggle'
-				ariaLabel='Menu Toggle'
-				(childClick)='accountService.toggleMenu()'
+		</div>
+		<div>
+			<button
+				md-button
+				cyphTranslate
+				mdTooltip='Contacts'
+				(click)='goToState(states.contacts)'
 			>
-				<md2-icon [class.flipped]='!accountService.menuExpanded'>
-					keyboard_arrow_left
-				</md2-icon>
-			</md2-button> 
-		</md2-content>
+				<md-icon>people</md-icon>
+				<span class='full-button'>Contacts</span>
+			</button>
+		</div>
+		<div>
+			<button
+				md-button
+				cyphTranslate
+				mdTooltip='Files'
+				(click)='goToState(states.files)'
+			>
+				<md-icon>folder</md-icon>
+				<span class='full-button'>Files</span>
+			</button>
+		</div>
+		<div>
+			<button
+				md-button
+				cyphTranslate
+				mdTooltip='Settings'
+				(click)='goToState(states.settings)'
+			>
+				<md-icon>settings</md-icon>
+				<span class='full-button'>Settings</span>
+			</button>
+		</div>
+		<div fxFlex></div>
+		<div class='menu-footer'>
+			<button
+				md-button
+				cyphTranslate
+				class='logout'
+				mdTooltip='Logout'
+				(click)='urlStateService.setUrl("account/logout")'
+			>
+				<md-icon>exit_to_app</md-icon>
+				<span class='full-button'>Logout</span>
+			</button>
+		</div>
+	</div>
+	<div fxLayout='column'>
+		<button
+			md-button
+			class='menu-toggle'
+			mdTooltip='Menu Toggle'
+			(click)='accountService.toggleMenu()'
+		>
+			<md-icon [class.flipped]='!accountService.menuExpanded'>
+				keyboard_arrow_left
+			</md-icon>
+		</button>
 	</div>
 </div>

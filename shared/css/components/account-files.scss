@@ -24,14 +24,14 @@ span {
 		margin: 5px;
 		padding: 15px;
 
-		.thumb md2-icon {
+		.thumb md-icon {
 			position: relative;
 			top: 12px;
 
 			@include icon-size(42px);
 		}
 
-		md2-button md2-icon {
+		button md-icon {
 			@include icon-size(38px);
 		}
 
@@ -40,14 +40,12 @@ span {
 		}
 	}
 
-	.metadata.layout-row {
+	.metadata {
 		margin-left: auto;
 		margin-right: auto;
 
-		span {
-			&.filetype {
-				margin-right: 10px;
-			}
+		.filetype {
+			margin-right: 10px;
 		}
 	}
 }
