@@ -9,6 +9,7 @@ import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 import {ChatCyphertextComponent} from './js/cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from './js/cyph/components/chat-main.component';
 import {ChatMessageBoxComponent} from './js/cyph/components/chat-message-box.component';
+import {ChatMessageListComponent} from '../cyph/components/chat-message-list.component';
 import {ChatMessageComponent} from './js/cyph/components/chat-message.component';
 import {ContactComponent} from './js/cyph/components/contact.component';
 import {FileInputComponent} from './js/cyph/components/file-input.component';
@@ -43,6 +44,7 @@ import {VisibilityWatcherService} from './js/cyph/services/visibility-watcher.se
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
+		ChatMessageListComponent,
 		EphemeralChatRootComponent,
 		ContactComponent,
 		FileInputComponent,

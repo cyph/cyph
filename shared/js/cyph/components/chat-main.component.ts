@@ -45,7 +45,7 @@ export class ChatMainComponent implements OnInit {
 		);
 
 		this.scrollService.init(
-			$element.find('.message-list > div'),
+			$element.find('.message-list-background > div'),
 			this.messageCountInTitle
 		);
 	}

@@ -31,21 +31,19 @@ export class Elements {
 
 	/** @see Elements */
 	public readonly demoListDesktop		= Elements.getElement(
-		'.demo-root > .desktop .message-list md-list'
+		'.demo-root > .desktop cyph-chat-message-list md-list'
 	);
 
 	/** @see Elements */
 	public readonly demoListMobile		= Elements.getElement(
-		'.demo-root > .mobile .message-list md-list'
+		'.demo-root > .mobile cyph-chat-message-list md-list'
 	);
 
 	/** @see Elements */
 	public readonly demoRoot			= Elements.getElement('.demo-root');
 
 	/** @see Elements */
-	public readonly demoRootDesktop		= Elements.getElement(
-		'.demo-root > .desktop'
-	);
+	public readonly demoRootDesktop		= Elements.getElement('.demo-root > .desktop');
 
 	/** @see Elements */
 	public readonly demoRootMobile		= Elements.getElement('.demo-root > .mobile');
