@@ -29,6 +29,7 @@ import {AccountSettingsComponent} from '../cyph/components/account-settings.comp
 import {ChatCyphertextComponent} from '../cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from '../cyph/components/chat-main.component';
 import {ChatMessageBoxComponent} from '../cyph/components/chat-message-box.component';
+import {ChatMessageListComponent} from '../cyph/components/chat-message-list.component';
 import {ChatMessageComponent} from '../cyph/components/chat-message.component';
 import {ContactComponent} from '../cyph/components/contact.component';
 import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
@@ -88,6 +89,7 @@ import {LockdownComponent} from './lockdown.component';
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
+		ChatMessageListComponent,
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		EphemeralChatRootComponent,

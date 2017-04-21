@@ -27,6 +27,7 @@ import {BetaRegisterComponent} from '../cyph/components/beta-register.component'
 import {ChatCyphertextComponent} from '../cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from '../cyph/components/chat-main.component';
 import {ChatMessageBoxComponent} from '../cyph/components/chat-message-box.component';
+import {ChatMessageListComponent} from '../cyph/components/chat-message-list.component';
 import {ChatMessageComponent} from '../cyph/components/chat-message.component';
 import {CheckoutComponent} from '../cyph/components/checkout.component';
 import {ContactComponent} from '../cyph/components/contact.component';
@@ -78,6 +79,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
+		ChatMessageListComponent,
 		DemoChatRootComponent,
 		DialogAlertComponent,
 		DialogConfirmComponent,

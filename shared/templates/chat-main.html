@@ -242,10 +242,12 @@
 		</md-list>
 	</div>
 
-	<div
+	<cyph-chat-message-list
 		fxFlex
 		fxFlexFill
-		class='cyph-view message-list'
+		class='cyph-view'
+		[mobile]='envService.isMobile || p2pService.isActive'
+		[showDisconnectMessage]='chatService.chat.isDisconnected && !hideDisconnectMessage'
 		[class.active]='chatService.chat.state === states.chat'
 		[style.margin-top]='
 			p2pService.isActive ? "" : (
@@ -259,37 +261,6 @@
 			)
 		'
 	>
-		<div cyphNanoScroller>
-			<md-list fxLayout='column'>
-				<cyph-chat-message
-					fxLayout='row'
-					[message]='message'
-					[mobile]='envService.isMobile || p2pService.isActive'
-					*ngFor='let message of chatService.chat.messages'
-				></cyph-chat-message>
-
-				<md-list-item fxLayout='row' class='friend-is-typing'>
-					<div class='ellipsis-spinner' [class.show]='chatService.chat.isFriendTyping'>
-						<div class='bounce1'></div>
-						<div class='bounce2'></div>
-						<div class='bounce3'></div>
-					</div>
-				</md-list-item>
-
-				<md-list-item
-					fxLayout='row'
-					class='chat-end-message'
-					*ngIf='chatService.chat.isDisconnected && !hideDisconnectMessage'
-				>
-					<div fxFlexFill fxLayoutAlign='center center'>
-						<md-card fxFlex='90' fxFlex.gt-sm='50'>
-							<md-card-content>
-								<ng-content></ng-content>
-							</md-card-content>
-						</md-card>
-					</div>
-				</md-list-item>
-			</md-list>
-		</div>
-	</div>
+		<ng-content></ng-content>
+	</cyph-chat-message-list>
 </div>
