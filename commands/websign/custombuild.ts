@@ -108,13 +108,13 @@ if (o.backgroundColor) {
 if (o.loadingAnimationFilter) {
 	headStyle += `
 		#pre-load > .transition, .loading > .logo-animation > *,
-		.loading > .logo-animation.connected, md-progress-linear {
+		.loading > .logo-animation.connected {
 			@include filter(${o.loadingAnimationFilter});
 		}
 	`;
 }
 if (headStyle) {
-	$('head').append(`<style>${headStyle}</style>`);
+	$('head').append(`<style>${compileSCSS(headStyle)}</style>`);
 }
 
 $('head').append(`<meta name='custom-build' content='${args.customBuild}' />`);
