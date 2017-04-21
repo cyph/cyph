@@ -74,8 +74,15 @@ try {
 			@include cyph-apply-theme;
 
 			${!o.background ? '' : `
-				.message-list:after {
-					background-image: url(${o.background});
+				chat-main {
+					.message-list:after {
+						background-image: url(${o.background}) !important;
+					}
+
+					.video-call .logo {
+						height: 75% !important;
+						opacity: 0.4 !important;
+					}
 				}
 			`}
 		}
