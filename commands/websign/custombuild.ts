@@ -115,7 +115,7 @@ if (o.backgroundColor) {
 if (o.loadingAnimationFilter) {
 	headStyle += `
 		#pre-load > .transition, .loading > .logo-animation > *,
-		.loading > .logo-animation.connected {
+		.loading > .logo-animation.connected, md-progress-bar {
 			@include filter(${o.loadingAnimationFilter});
 		}
 	`;
