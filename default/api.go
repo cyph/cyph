@@ -125,7 +125,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			}
 		}
 	} else {
-		tx, err := bt.Transaction().Create(&braintree.Transaction{
+		tx, err := bt.Transaction().Create(&braintree.TransactionRequest{
 			Type:               "sale",
 			Amount:             braintree.NewDecimal(amount, 2),
 			PaymentMethodNonce: nonce,
