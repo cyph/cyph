@@ -406,9 +406,14 @@
 
 	button {
 		background-color: rgba(0, 0, 0, 0.2);
+		box-shadow: transparent 0px 0px 0px 0px, rgba(255, 255, 255, 0.5) 0px 1px 2px 0px;
 
 		&:hover {
 			@include transform(scale(1.1));
+		}
+
+		&:not(.close-button) {
+			color: rgba(255, 255, 255, 0.75);
 		}
 	}
 
@@ -443,7 +448,8 @@
 			box-shadow: none;
 
 			&.author-app {
-				background-color: rgba(0, 0, 0, 0.3);
+				background-color: rgba(0, 0, 0, 0.3) !important;
+				color: #f1f1f1 !important;
 			}
 
 			&:before {
