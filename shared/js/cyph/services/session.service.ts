@@ -26,7 +26,7 @@ export abstract class SessionService implements ISessionService {
 	protected pingPongTimeouts: number					= 0;
 
 	/** @ignore */
-	protected readonly plaintextSendInterval: number	= 1337;
+	protected readonly plaintextSendInterval: number	= 1776;
 
 	/** @ignore */
 	protected readonly plaintextSendQueue: IMessage[]	= [];
