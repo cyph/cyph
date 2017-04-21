@@ -60,16 +60,11 @@
 	}
 
 	&.mobile {
-		.message-box-wrapper {
-			overflow: hidden;
-		}
-
 		.message-box {
 			height: 2.96em;
 			font-size: 1.12em;
 			line-height: 1.5em;
-			padding: 13px;
-			padding-right: 60px;
+			padding: 10px 60px 10px 15px;
 			margin: -2px;
 			margin-top: 0px;
 			box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
