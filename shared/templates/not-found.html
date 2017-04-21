@@ -1,39 +1,44 @@
-<md2-content class='layout-fill' childClass='md-no-flicker flex layout-column'>
-	<div class='not-found' [class.mobile]='envService.isMobile' cyphNanoScroller>
-		<div>
-			<h1 cyphTranslate>
-				I'm sorry, but your cyph is in another castle...
-			</h1>
-		</div>
-		<img src='/img/404.png' alt='Funny Mario reference' cyphTranslate />
-		<div class='explanation'>
-			<p>
-				<span cyphTranslate>Please</span>
-				<a
-					cyphTranslate
-					target='_self'
-					[href]='envService.newCyphUrl + "/"'
-				>try again</a>.
-			</p>
-			<p cyphTranslate>Reasons why you may have landed here:</p>
-			<ul>
-				<li cyphTranslate>
-					The cyph you're looking for has expired
-				</li>
-				<li cyphTranslate>
-					The cyph you're looking for has already been connected to
-					(someone else got there first, or you clicked twice)
-				</li>
-				<li cyphTranslate>
-					A glitch in the matrix
-				</li>
-				<li cyphTranslate>
-					You're just guessing random URLs
-				</li>
-				<li cyphTranslate>
-					We broke something
-				</li>
-			</ul>
-		</div>
+<div
+	fxFlex
+	fxFlexFill
+	fxLayout='column'
+	cyphNanoScroller
+	class='not-found'
+	[class.mobile]='envService.isMobile'
+>
+	<div>
+		<h1 cyphTranslate>
+			I'm sorry, but your cyph is in another castle...
+		</h1>
 	</div>
-</md2-content>
+	<img src='/img/404.png' alt='Funny Mario reference' cyphTranslate />
+	<div class='explanation'>
+		<p>
+			<span cyphTranslate>Please</span>
+			<a
+				cyphTranslate
+				target='_self'
+				[href]='envService.newCyphUrl + "/"'
+			>try again</a>.
+		</p>
+		<p cyphTranslate>Reasons why you may have landed here:</p>
+		<ul>
+			<li cyphTranslate>
+				The cyph you're looking for has expired
+			</li>
+			<li cyphTranslate>
+				The cyph you're looking for has already been connected to
+				(someone else got there first, or you clicked twice)
+			</li>
+			<li cyphTranslate>
+				A glitch in the matrix
+			</li>
+			<li cyphTranslate>
+				You're just guessing random URLs
+			</li>
+			<li cyphTranslate>
+				We broke something
+			</li>
+		</ul>
+	</div>
+</div>

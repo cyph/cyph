@@ -3,6 +3,7 @@ import * as $ from 'jquery';
 import {IChatMessage} from '../chat/ichat-message';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
+import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
@@ -49,6 +50,9 @@ export class ChatMessageComponent implements OnInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see P2PService */
+		public readonly p2pService: P2PService,
 
 		/** @see SessionService */
 		public readonly sessionService: SessionService,

@@ -1,11 +1,13 @@
-<md2-content class='md-no-flicker' [class.mobile]='envService.isMobile'>
-	<md2-tabs [labels]='tabLabels'>
-		<div cyphTranslate>
+<div [class.mobile]='envService.isMobile'>
+	<md-tab-group>
+		<md-tab cyphTranslate [label]='stringsService.formattingHelp'>
 			<p>
 				<span>Cyph uses a version of Markdown called</span>
 				<a href='http://commonmark.org'>CommonMark</a>
+				<span>for formatting.</span>
+				<br />
 				<span>
-					for formatting. We also support various extensions &ndash;
+					We also support various extensions &ndash;
 					including emojis and code fencing.
 				</span>
 			</p>
@@ -104,17 +106,19 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
-		<div cyphTranslate>
-			<div>
-				<span>Please check out the</span>
-				<a [href]='envService.homeUrl + "faq"'>FAQs</a>
-				<span>first!</span>
+		</md-tab>
+		<md-tab [label]='stringsService.contactCyph' *ngIf='!envService.coBranded'>
+			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+				<div></div>
+				<div cyphTranslate>
+					<span>Please check out the</span>
+					<a [href]='envService.homeUrl + "faq"'>FAQs</a>
+					<span>first!</span>
+				</div>
+				<div></div>
+				<div></div>
+				<cyph-contact [email]='email'></cyph-contact>
 			</div>
-			<br />
-			<br />
-			<br />
-			<cyph-contact [email]='email'></cyph-contact>
-		</div>
-	</md2-tabs>
-</md2-content>
+		</md-tab>
+	</md-tab-group>
+</div>

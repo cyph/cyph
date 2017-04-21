@@ -1,33 +1,6 @@
-.connect-link-input {
-	position: relative;
-
-	md-input-container {
-		width: 100%;
-
-		input {
-			text-align: center;
-			margin-left: auto;
-			margin-right: auto;
-			background-color: #f1f1f1;
-			box-shadow: 0px 0px 10px #7239dd;
-			padding: 5px;
-			border: 1px solid #8b62d9 !important;
-			height: auto;
-			width: 50%;
-
-			@include transform(translateX(50%));
-		}
-
-		label {
-			display: none;
-		}
-	}
-
-	.md-button {
-		position: absolute;
-		top: -3px;
-		right: calc(25% - 50px);
-	}
+.connect-link-input, .connect-link-link {
+	font-family: 'Ubuntu Mono';
+	text-align: center;
 }
 
 .connect-link-link {
@@ -39,80 +12,4 @@
 .connect-link-mobile .divider {
 	width: 21px;
 	display: inline-block;
-}
-
-.connect-link-mobile {
-	.md-button:not([disabled='disabled']) {
-		color: #444;
-		background-color: #7d4fd3 !important;
-
-		&.focus, &:hover {
-			background-color: #7239dd !important;
-		}
-	}
-
-	.md-fab {
-		height: 42px;
-		width: 42px;
-		margin-top: 20px;
-
-		img {
-			height: 80%;
-		}
-	}
-}
-
-/*** Advanced Features ***/
-
-.advanced-features-switch {
-	margin: 25px auto;
-}
-
-.advanced-features {
-	.buttons {
-		width: 25px;
-		float: left;
-		top: 51px;
-		position: relative;
-
-		.md-button {
-			padding: 0px;
-
-			&.self-destruct-button i:not(.active) {
-				opacity: 0.25;
-			}
-		}
-	}
-
-	md-input-container:not(.md-input-invalid).md-input-focused {
-		label {
-			color: #51318C;
-		}
-
-		.md-input {
-			border-color: #51318C;
-		}
-	}
-
-	.queued-message-box {
-		position: relative;
-		float: left;
-		top: 25px;
-		margin: 15px 15px 0px 25%;
-		width: 50%;
-
-		textarea {
-			color: white;
-			background-color: rgba(180, 141, 255, 0.95);
-			max-height: 150px;
-			overflow-y: scroll;
-			position: relative;
-			padding: 10px 15px;
-			top: 10px;
-		}
-
-		label:not(.md-no-float) {
-			@include transform(translate3d(12.5%, 6px, 0px) scale(0.75));
-		}
-	}
 }

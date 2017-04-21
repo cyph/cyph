@@ -17,7 +17,7 @@ export class TranslateDirective {
 		const $element	= $(nativeElement);
 		const $children	= $element.children();
 
-		for (const attr of ['alt', 'aria-label', 'ariaLabel', 'content', 'label', 'placeholder']) {
+		for (const attr of ['alt', 'mdTooltip', 'content', 'label', 'placeholder']) {
 			this.translate(
 				$element.attr(attr),
 				translation => {

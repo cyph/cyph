@@ -1,50 +1,45 @@
 <div cyphNanoScroller>
-	<div class='layout-fill'>
-		<div
-			class='login-form layout-row layout-align-center-center'
-			[class.checking]='checking'
-		>
-			<md2-card class='md-padding flex flex-gt-sm-50'>
-				<md2-card-title>
-					<md2-card-title-text>
-						<span class='md-headline' cyphTranslate>
-							Log In
-						</span>
-						<span class='md-subhead' cyphTranslate>
-							Welcome to Cyph! You must enter a password to access this environment.
-						</span>
-					</md2-card-title-text>
-				</md2-card-title>
-				<md2-card-content>
-					<form ngNativeValidate (submit)='submit()'>
-						<div class='layout-row layout-align-center-center'>
-							<md2-subheader
+	<div
+		fxFlexFill
+		fxLayoutAlign='center center'
+		class='login-form'
+		[class.checking]='checking'
+	>
+		<md-card fxFlex fxFlex.gt-sm='50'>
+			<md-card-title cyphTranslate>
+				Log In
+			</md-card-title>
+			<md-card-subtitle cyphTranslate>
+				Welcome to Cyph! You must enter a password to access this environment.
+			</md-card-subtitle>
+			<md-card-content>
+				<form ngNativeValidate (submit)='submit()'>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<h3 class='cyph-banner' [style.visibility]='error ? "visible" : "hidden"'>
+							{{stringsService.invalidPassword}}
+						</h3>
+					</div>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<md-input-container fxFlex='60'>
+							<input
+								mdInput
 								cyphTranslate
-								[style.visibility]='error ? "visible" : "hidden"'
-								[text]='stringsService.invalidPassword'
-							></md2-subheader>
-						</div>
-						<div class='layout-row layout-align-center-center'>
-							<md2-input
-								cyphTranslate
-								class='flex-60'
-								childClass='md-block'
-								[(model)]='password'
-								formName='password'
+								[(ngModel)]='password'
+								name='password'
 								type='password'
-								label='Password'
-								[required]='true'
-							></md2-input>
-						</div>
-						<div class='layout-row layout-align-center-center'>
-							<md2-button type='submit' ariaLabel='Log In' cyphTranslate>
-								Log In
-							</md2-button>
-						</div>
-					</form>
-				</md2-card-content>
-				<md2-progress-circular mdMode='indeterminate'></md2-progress-circular>
-			</md2-card>
-		</div>
+								placeholder='Password'
+								required
+							/>
+						</md-input-container>
+					</div>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<button md-button type='submit' cyphTranslate>
+							Log In
+						</button>
+					</div>
+				</form>
+			</md-card-content>
+			<md-progress-spinner mode='indeterminate'></md-progress-spinner>
+		</md-card>
 	</div>
 </div>

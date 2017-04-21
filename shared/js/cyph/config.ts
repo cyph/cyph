@@ -5,40 +5,6 @@ import {ISessionService} from './service-interfaces/isession.service';
  * Static/constant configuration values.
  */
 export class Config {
-	/** Angular-related config. */
-	public readonly angularConfig	= {
-		config: [
-			'$compileProvider',
-			'$mdThemingProvider',
-			(
-				$compileProvider: angular.ICompileProvider,
-				$mdThemingProvider: angular.material.IThemingProvider
-			) => {
-				$compileProvider.
-					aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/).
-					debugInfoEnabled(false)
-				;
-
-				$mdThemingProvider.definePalette(
-					'cyph',
-					$mdThemingProvider.extendPalette(
-						'deep-purple',
-						{
-							400: '8b62d9'
-						}
-					)
-				);
-
-				$mdThemingProvider.theme('default').
-					primaryPalette('cyph').
-					accentPalette('cyph')
-				;
-			}
-		],
-		rootController: 'CyphController',
-		rootModule: 'Cyph'
-	};
-
 	/** Configuration of available API flags. */
 	public readonly apiFlags	= [
 		{

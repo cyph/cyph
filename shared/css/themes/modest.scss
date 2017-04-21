@@ -1,0 +1,39 @@
+@import 'theme';
+
+$cyph-primary: mat-palette($mat-blue-grey, 800, 700, 900);
+$cyph-accent: mat-palette($mat-grey, 800, 700, 900);
+$cyph-is-dark: true;
+$cyph-background: #7a7c8b;
+
+$cyph-message-box-colors: map-merge($cyph-message-box-colors, (
+	desktopGlow: map-get($cyph-message-box-colors, mobileGlow)
+));
+
+$cyph-message-colors: map-merge($cyph-message-colors, (
+	me: (
+		desktop: transparent,
+		mobileBorder: #444,
+		mobileShadow: transparent,
+		mobilePrimary: #444,
+		text: inherit
+	),
+	other: (
+		desktop: transparent,
+		mobileBorder: #444,
+		mobileShadow: transparent,
+		mobilePrimary: #444,
+		text: inherit
+	)
+));
+
+body.modest {
+	@include cyph-apply-theme;
+
+	#main-chat-gradient,
+	.message-list:after,
+	.chat-end-message,
+	.abort-screen .image,
+	cyph-footer {
+		display: none !important;
+	}
+}

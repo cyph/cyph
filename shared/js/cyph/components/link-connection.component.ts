@@ -1,4 +1,5 @@
-import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit} from '@angular/core';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import * as clipboard from 'clipboard-js';
 import * as $ from 'jquery';
 import {ChatService} from '../services/chat.service';
@@ -34,7 +35,7 @@ export class LinkConnectionComponent implements OnInit {
 	public advancedFeatures: boolean;
 
 	/** Indicates whether advanced features UI should be displayed. */
-	@Input() public enableAdvancedFeatures: boolean;
+	public enableAdvancedFeatures: boolean	= this.envService.isLocalEnv;
 
 	/** Indicates whether this link connection was initiated passively via API integration. */
 	public isPassive: boolean;
@@ -42,8 +43,11 @@ export class LinkConnectionComponent implements OnInit {
 	/** The link to join this connection. */
 	public link: string;
 
-	/** URL-encoded version of this link (for sms and mailto links). */
-	public linkEncoded: string;
+	/** Mailto version of this link. */
+	public linkMailto?: SafeUrl;
+
+	/** SMS version of this link. */
+	public linkSMS?: SafeUrl;
 
 	/** Draft of queued message. */
 	public queuedMessageDraft: string	= '';
@@ -60,12 +64,10 @@ export class LinkConnectionComponent implements OnInit {
 
 		await util.lockTryOnce(
 			this.addTimeLock,
-			async () => {
-				await this.dialogService.toast({
-					content: this.stringsService.timeExtended,
-					delay: 2500
-				});
-			}
+			async () => this.dialogService.toast(
+				this.stringsService.timeExtended,
+				2500
+			)
 		);
 	}
 
@@ -73,13 +75,13 @@ export class LinkConnectionComponent implements OnInit {
 	public async copyToClipboard () : Promise<void> {
 		await util.lockTryOnce(
 			this.copyLock,
-			async () => this.dialogService.toast({
-				content: await clipboard.copy(this.linkConstant).
+			async () => this.dialogService.toast(
+				await clipboard.copy(this.linkConstant).
 					then(() => this.stringsService.linkCopied).
 					catch(() => this.stringsService.linkCopyFail)
 				,
-				delay: 2500
-			})
+				2500
+			)
 		);
 	}
 
@@ -101,7 +103,16 @@ export class LinkConnectionComponent implements OnInit {
 			this.sessionService.state.sharedSecret
 		;
 
-		this.linkEncoded	= encodeURIComponent(this.linkConstant);
+		const linkEncoded	= encodeURIComponent(this.linkConstant);
+
+		this.linkMailto		= this.domSanitizer.bypassSecurityTrustUrl(
+			`mailto:?subject=Cyph&body=${linkEncoded}`
+		);
+
+		this.linkSMS		= this.domSanitizer.bypassSecurityTrustUrl(
+			this.envService.smsUriBase + linkEncoded
+		);
+
 		this.link			= this.linkConstant;
 		this.timer			= new Timer(this.configService.cyphCountdown, false);
 
@@ -118,7 +129,7 @@ export class LinkConnectionComponent implements OnInit {
 			}
 			else {
 				const $connectLinkInput	= await util.waitForIterable(
-					() => $element.find('.connect-link-input input')
+					() => $element.find('.connect-link-input')
 				);
 
 				const connectLinkInput	= <HTMLInputElement> $connectLinkInput[0];
@@ -151,7 +162,8 @@ export class LinkConnectionComponent implements OnInit {
 			isWaiting			= false;
 			this.link			= '';
 			this.linkConstant	= '';
-			this.linkEncoded	= '';
+			this.linkMailto		= undefined;
+			this.linkSMS		= undefined;
 
 			this.timer.stop();
 		});
@@ -166,6 +178,9 @@ export class LinkConnectionComponent implements OnInit {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly domSanitizer: DomSanitizer,
+
 		/** @ignore */
 		private readonly elementRef: ElementRef,
 

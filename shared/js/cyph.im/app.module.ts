@@ -1,8 +1,26 @@
 import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
+import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
+import {
+	MdButtonModule,
+	MdButtonToggleModule,
+	MdCardModule,
+	MdDialogModule,
+	MdIconModule,
+	MdInputModule,
+	MdListModule,
+	MdMenuModule,
+	MdProgressBarModule,
+	MdProgressSpinnerModule,
+	MdSelectModule,
+	MdSlideToggleModule,
+	MdSnackBarModule,
+	MdTabsModule,
+	MdTooltipModule
+} from '@angular/material';
 import {BrowserModule, Title} from '@angular/platform-browser';
-import {UpgradeModule} from '@angular/upgrade/static';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AccountChatComponent} from '../cyph/components/account-chat.component';
 import {AccountContactsComponent} from '../cyph/components/account-contacts.component';
 import {AccountFilesComponent} from '../cyph/components/account-files.component';
@@ -19,41 +37,18 @@ import {ChatMainComponent} from '../cyph/components/chat-main.component';
 import {ChatMessageBoxComponent} from '../cyph/components/chat-message-box.component';
 import {ChatMessageComponent} from '../cyph/components/chat-message.component';
 import {ContactComponent} from '../cyph/components/contact.component';
+import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
+import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
+import {
+	SmdFabSpeedDialActions,
+	SmdFabSpeedDialComponent,
+	SmdFabSpeedDialTrigger
+} from '../cyph/components/fab-speed-dial.tmp';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {FooterComponent} from '../cyph/components/footer.component';
 import {HelpComponent} from '../cyph/components/help.component';
 import {LinkConnectionComponent} from '../cyph/components/link-connection.component';
 import {MarkdownComponent} from '../cyph/components/markdown.component';
-import {MdAutocompleteComponent} from '../cyph/components/material/md-autocomplete.component';
-import {MdButtonComponent} from '../cyph/components/material/md-button.component';
-import {MdCardContentComponent} from '../cyph/components/material/md-card-content.component';
-import {
-	MdCardHeaderTextComponent
-} from '../cyph/components/material/md-card-header-text.component';
-import {MdCardHeaderComponent} from '../cyph/components/material/md-card-header.component';
-import {
-	MdCardTitleTextComponent
-} from '../cyph/components/material/md-card-title-text.component';
-import {MdCardTitleComponent} from '../cyph/components/material/md-card-title.component';
-import {MdCardComponent} from '../cyph/components/material/md-card.component';
-import {MdContentComponent} from '../cyph/components/material/md-content.component';
-import {MdFabSpeedDialComponent} from '../cyph/components/material/md-fab-speed-dial.component';
-import {MdIconComponent} from '../cyph/components/material/md-icon.component';
-import {MdInputComponent} from '../cyph/components/material/md-input.component';
-import {MdListItemComponent} from '../cyph/components/material/md-list-item.component';
-import {MdListComponent} from '../cyph/components/material/md-list.component';
-import {MdMenuComponent} from '../cyph/components/material/md-menu.component';
-import {
-	MdProgressCircularComponent
-} from '../cyph/components/material/md-progress-circular.component';
-import {
-	MdProgressLinearComponent
-} from '../cyph/components/material/md-progress-linear.component';
-import {MdSelectComponent} from '../cyph/components/material/md-select.component';
-import {MdSubheaderComponent} from '../cyph/components/material/md-subheader.component';
-import {MdSwitchComponent} from '../cyph/components/material/md-switch.component';
-import {MdTabsComponent} from '../cyph/components/material/md-tabs.component';
-import {MdTextareaComponent} from '../cyph/components/material/md-textarea.component';
 import {NotFoundComponent} from '../cyph/components/not-found.component';
 import {SignupFormComponent} from '../cyph/components/signup-form.component';
 import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive';
@@ -75,8 +70,6 @@ import {ErrorService} from '../cyph/services/error.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {FileService} from '../cyph/services/file.service';
 import {FirebaseDatabaseService} from '../cyph/services/firebase-database.service';
-import {MdDialogService} from '../cyph/services/material/md-dialog.service';
-import {MdToastService} from '../cyph/services/material/md-toast.service';
 import {NotificationService} from '../cyph/services/notification.service';
 import {SignupService} from '../cyph/services/signup.service';
 import {StringsService} from '../cyph/services/strings.service';
@@ -93,6 +86,7 @@ import {LockdownComponent} from './lockdown.component';
  * Angular module for Cyph UI.
  */
 @NgModule({
+	bootstrap: [AppComponent],
 	declarations: [
 		AccountChatComponent,
 		AccountComponent,
@@ -110,6 +104,8 @@ import {LockdownComponent} from './lockdown.component';
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
+		DialogAlertComponent,
+		DialogConfirmComponent,
 		EphemeralChatRootComponent,
 		ContactComponent,
 		FileInputComponent,
@@ -122,39 +118,36 @@ import {LockdownComponent} from './lockdown.component';
 		NotFoundComponent,
 		SignupFormComponent,
 		TranslateDirective,
-		MdAutocompleteComponent,
-		MdButtonComponent,
-		MdCardComponent,
-		MdCardContentComponent,
-		MdCardHeaderComponent,
-		MdCardHeaderTextComponent,
-		MdCardTitleComponent,
-		MdCardTitleTextComponent,
-		MdContentComponent,
-		MdFabSpeedDialComponent,
-		MdIconComponent,
-		MdInputComponent,
-		MdListComponent,
-		MdListItemComponent,
-		MdMenuComponent,
-		MdProgressCircularComponent,
-		MdProgressLinearComponent,
-		MdSelectComponent,
-		MdSubheaderComponent,
-		MdSwitchComponent,
-		MdTabsComponent,
-		MdTextareaComponent
+		SmdFabSpeedDialActions,
+		SmdFabSpeedDialComponent,
+		SmdFabSpeedDialTrigger
 	],
 	entryComponents: [
-		AppComponent,
-		FileInputComponent,
+		DialogAlertComponent,
+		DialogConfirmComponent,
 		HelpComponent
 	],
 	imports: [
+		BrowserAnimationsModule,
 		BrowserModule,
 		CommonModule,
+		FlexLayoutModule,
 		FormsModule,
-		UpgradeModule
+		MdButtonModule,
+		MdButtonToggleModule,
+		MdCardModule,
+		MdDialogModule,
+		MdIconModule,
+		MdInputModule,
+		MdListModule,
+		MdMenuModule,
+		MdProgressBarModule,
+		MdProgressSpinnerModule,
+		MdSelectModule,
+		MdSlideToggleModule,
+		MdSnackBarModule,
+		MdTabsModule,
+		MdTooltipModule
 	],
 	providers: [
 		AccountService,
@@ -170,8 +163,6 @@ import {LockdownComponent} from './lockdown.component';
 		ErrorService,
 		FaviconService,
 		FileService,
-		MdDialogService,
-		MdToastService,
 		NotificationService,
 		SignupService,
 		StringsService,
@@ -194,9 +185,7 @@ import {LockdownComponent} from './lockdown.component';
 		}
 	]
 })
+/* tslint:disable-next-line:no-stateless-class */
 export class AppModule {
-	/** @ignore */
-	public ngDoBootstrap () : void {}
-
 	constructor () {}
 }

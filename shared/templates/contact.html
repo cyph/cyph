@@ -1,54 +1,79 @@
 <div *ngIf='email'>
-	<form ngNativeValidate (submit)='send()' *ngIf='!email.sent'>
-		<div class='layout-gt-xs-row'>
-			<md2-select
+	<form
+		ngNativeValidate
+		fxLayout='column'
+		fxLayoutGap='16px'
+		(submit)='send()'
+		*ngIf='!email.sent'
+	>
+		<div fxLayout='row'>
+			<md-select
 				cyphTranslate
-				class='flex'
-				childClass='md-block'
-				[(model)]='email.to'
-				formName='to'
-				label='Cyph team to contact'
-				[options]='configService.contactEmailAddresses'
-			></md2-select>
+				fxFlex
+				[(ngModel)]='email.to'
+				name='to'
+				placeholder='Cyph Team to Contact'
+			>
+				<md-option
+					*ngFor='let address of configService.contactEmailAddresses'
+					[value]='address'
+				>
+					{{address}}
+				</md-option>
+			</md-select>
 		</div>
-		<div class='layout-row'>
-			<md2-input
-				cyphTranslate
-				class='flex'
-				childClass='md-block'
-				[(model)]='email.fromName'
-				formName='name'
-				label='Name'
-			></md2-input>
-			<md2-input
-				cyphTranslate
-				class='flex'
-				childClass='md-block'
-				[(model)]='email.fromEmail'
-				formName='email'
-				type='email'
-				label='Email'
-				[required]='true'
-			></md2-input>
+		<div fxLayout='row'>
+			<div fxFlex fxLayout.lt-md='column' fxLayoutGap='16px'>
+				<md-input-container fxFlex>
+					<input
+						mdInput
+						cyphTranslate
+						[(ngModel)]='email.fromName'
+						name='name'
+						placeholder='Name'
+					/>
+				</md-input-container>
+				<md-input-container fxFlex>
+					<input
+						mdInput
+						cyphTranslate
+						[(ngModel)]='email.fromEmail'
+						name='email'
+						type='email'
+						placeholder='Email'
+						required
+					/>
+				</md-input-container>
+			</div>
 		</div>
-		<md2-input
-			cyphTranslate
-			childClass='md-block'
-			[(model)]='email.subject'
-			formName='subject'
-			label='Subject'
-		></md2-input>
-		<md2-textarea
-			cyphTranslate
-			childClass='md-block'
-			[(model)]='email.message'
-			formName='message'
-			label='Message'
-			[required]='true'
-		></md2-textarea>
-		<md2-button type='submit' ariaLabel='Send' cyphTranslate>
-			Send
-		</md2-button>
+		<div fxLayout='row'>
+			<md-input-container fxFlex>
+				<input
+					mdInput
+					cyphTranslate
+					[(ngModel)]='email.subject'
+					name='subject'
+					placeholder='Subject'
+				/>
+			</md-input-container>
+		</div>
+		<div fxLayout='row'>
+			<md-input-container fxFlex>
+				<textarea
+					mdInput
+					cyphTranslate
+					[(ngModel)]='email.message'
+					name='message'
+					placeholder='Message'
+					required
+				></textarea>
+			</md-input-container>
+		</div>
+		<div fxLayout='row' fxLayoutAlign='center center'>
+			<button md-button type='submit' cyphTranslate>
+				Send
+			</button>
+		</div>
 	</form>
 	<div *ngIf='email.sent' cyphTranslate>
 		Your email has been sent! Someone on the team will get back to you shortly.

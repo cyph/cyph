@@ -1,8 +1,10 @@
 .chat-message-box {
 	position: relative;
 
-	button.md-button[disabled] {
-		opacity: 0.25;
+	smd-fab-speed-dial {
+		position: absolute;
+		bottom: 22px;
+		right: 25px;
 	}
 
 	.message-box {
@@ -19,19 +21,12 @@
 
 		@include transition(transform 0.4s linear);
 
-		.md-button {
+		button md-icon {
 			opacity: 0.75;
-			z-index: 35;
-			height: 2.72em;
-			padding-left: 0px;
-			padding-right: 0px;
+		}
 
-			md-icon {
-				font-size: 1.72rem;
-				width: 100%;
-				height: 100%;
-				display: block;
-			}
+		button[disabled] md-icon {
+			opacity: 0.25;
 		}
 
 		&.hidden {
@@ -41,20 +36,13 @@
 		}
 	}
 
-	.new-messages > * {
-		background-color: white !important;
-		color: #8b62d9 !important;
+	.new-messages {
 		width: 100%;
-		text-align: center;
 		margin-top: -20px;
 		cursor: pointer;
 		z-index: 4 !important;
 		position: absolute;
 		top: 0px;
-
-		&:after {
-			width: 100%;
-		}
 	}
 
 	&:not(.mobile) {
@@ -63,53 +51,45 @@
 
 			outline: none;
 			padding: 3px;
-			padding-right: 60px;
 			border: 1px solid #dddddd;
 			margin: 0px 13px;
 			min-height: 100px;
 			max-height: 200px;
-			width: calc(100% - 29px);
-		}
-
-		.message-box:focus {
-			box-shadow: 0px 0px 10px #7239dd;
-			border: 1px solid #8b62d9;
+			padding-right: 65px;
 		}
 	}
 
 	&.mobile {
+		.message-box-wrapper {
+			overflow: hidden;
+		}
+
 		.message-box {
-			width: calc(100% + 4px);
 			height: 2.96em;
 			font-size: 1.12em;
 			line-height: 1.5em;
 			padding: 13px;
 			padding-right: 60px;
-			margin-left: -2px;
-			margin-bottom: -2px;
+			margin: -2px;
+			margin-top: 0px;
 			box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
 			position: relative;
 			z-index: 30;
 			outline: none !important;
 		}
 
-		.message-box:focus {
-			box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-			border: 1px solid #000000;
-		}
-
-		.message-box:focus ~ .new-messages > * {
+		.message-box:focus ~ .new-messages {
 			display: none;
 		}
 
-		.new-messages > * {
+		.new-messages {
 			z-index: 35 !important;
 		}
 
-		md-menu {
+		.menu-button {
 			position: fixed;
 			top: 5px;
-			right: 0px;
+			right: 5px;
 		}
 	}
 }

@@ -1,4 +1,13 @@
-@import 'mixins';
+@import 'theme';
+
+@include mat-core;
+
+@include cyph-apply-theme(true);
+
+/* Temporary workaround */
+md-tab-body {
+	max-height: 70vh;
+}
 
 * {
 	-webkit-font-smoothing: antialiased !important;
@@ -11,8 +20,8 @@ body.load-complete #pre-load {
 	opacity: 0;
 }
 
-html, body, #main, .cyph-foreground, md-sidenav {
-	background-color: #8b62d9 !important;
+html, body, #main, .cyph-foreground {
+	margin: 0px;
 }
 
 html, body {
@@ -24,118 +33,52 @@ section {
 	display: block;
 }
 
-[hidden] {
-	display: none !important;
-}
-
-#main, .cyph-foreground, .md-button:not(.md-fab):not([disabled]), md-icon {
-	color: #f1f1f1 !important;
-}
-
-md2-icon {
-	height: 24px;
-	width: 24px;
-	min-height: 24px;
-	min-width: 24px;
-}
-
-md-fab-speed-dial {
-	md-fab-trigger {
-		img {
-			height: 65% !important;
-			margin: auto;
-			display: block;
-		}
-
-		md-icon, img {
-			@include transition(all 0.2s ease-out);
-		}
-	}
-
-	&.md-is-open md-fab-trigger {
-		md-icon, img {
-			margin-top: -5%;
-
-			@include transform(rotate(225deg));
-		}
-	}
-}
-
-md-fab-actions .md-button {
-	background-color: #fafafa !important;
-
-	&.dark {
-		background-color: #444 !important;
-	}
-
-	&.invert {
-		background-color: #757575 !important;
-
-		md-icon {
-			color: #fafafa !important;
-		}
-	}
-}
-
-md-fab-actions .md-button:not(.dark):not(.invert) md-icon, .md-button.grey md-icon {
-	color: #757575 !important;
-}
-
-body .md-button {
-	font-weight: normal;
-}
-
-md-sidenav .md-button, .md-sidenav .md-button {
-	margin-left: 0px;
-	width: 100%;
-	text-align: left;
-	line-height: 25px;
-
-	.image {
-		width: 35px;
-		display: inline-block;
-
-		img {
-			height: 20px !important;
-			vertical-align: middle;
-			margin-left: 50%;
-
-			@include transform(translateX(calc(-50% - 5px)));
-		}
-
-		& + span {
-			vertical-align: middle;
-		}
-	}
-}
-
-md-select-menu {
-	&, md-content md-option {
-		background-color: rgba(180, 141, 255, 0.85);
-	}
-
-	md-content md-option {
-		color: #f1f1f1;
-
-		&:not([selected]):hover {
-			background-color: rgb(180, 141, 255) !important;
-		}
-
-		&[selected] {
-			background-color: #f1f1f1 !important;
-		}
-	}
-}
-
-md-toast {
-	position: fixed;
-}
-
 #footer, .footer {
 	margin-top: 0px;
 	position: relative;
 	text-align: center;
 	z-index: 2;
+}
+
+.cyph-foreground, body:not(.mobile) .cyph-foreground .mat-list-item-content {
+	font-size: 1.08rem;
+}
+
+.cyph-foreground, .chat-cyphertext {
+	.mat-list-item-content {
+		height: auto !important;
+		padding: 0px !important;
+	}
+}
+
+a {
+	color: inherit;
+}
+
+[md-button], [md-raised-button] {
+	text-transform: uppercase;
+}
+
+[md-dialog-title] {
+	font-family: Ubuntu;
+	font-weight: initial !important;
+}
+
+html, button, input, select, textarea {
+	font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+button, input, select, textarea {
+	font-size: 100%;
+}
+
+.image-frame {
+	overflow: hidden;
+}
+
+.countdown {
+	font-family: 'Ubuntu Mono', monospace;
+	padding-left: 10px;
 }
 
 .small-font {
@@ -146,38 +89,8 @@ md-toast {
 	text-decoration: line-through;
 }
 
-md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar) {
-	background-color: #7d4fd3;
-	height: 40px !important;
-	min-height: 40px !important;
-	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
-
-	img {
-		height: 25px !important;
-		vertical-align: middle;
-	}
-}
-
-cyph-checkout, #donate {
-	button {
-		display: block !important;
-		margin: 14px auto 25px auto !important;
-		background-color: #51318C !important;
-		padding: 15px 20px !important;
-	}
-}
-
-:not(textarea):not(md-input-container):not(input):not(blockquote) {
-	border: 0px !important;
-}
-
 blockquote {
-	border-left: 2px solid #f1f1f1 !important;
 	padding-left: 10px;
-}
-
-a {
-	color: inherit;
 }
 
 #footer, .footer {
@@ -186,19 +99,8 @@ a {
 	}
 }
 
-textarea {
-	background-color: #f1f1f1;
-}
-
 .tabIndent-rendered {
 	background-image: none !important;
-}
-
-.close-button {
-	background-color: #202020 !important;
-	box-shadow: rgba(25, 130, 25, 0.13725) 0px 0px 4px 0px, rgba(25, 130, 25, 0.27843) 0px 4px 8px 0px !important;
-	font-family: 'Ubuntu Mono', monospace !important;
-	font-size: 2.1em;
 }
 
 pre, code {
@@ -242,6 +144,21 @@ pre, code {
 	}
 }
 
+h3.cyph-banner {
+	display: block;
+	font-size: 1rem;
+	line-height: 1rem;
+	font-weight: initial;
+	padding: 16px;
+	text-align: center;
+
+	&.emphasis {
+		box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.16);
+
+		@include filter(brightness(1.05));
+	}
+}
+
 @include keyframes(breathe) {
 	0%, 100% {
 		@include filter(brightness(1));
@@ -263,12 +180,6 @@ pre, code {
 	.nano-pane {
 		background-color: transparent;
 	}
-}
-
-/* Desktop styling tweak */
-
-body:not(.mobile) * {
-	outline: none !important;
 }
 
 /* Lightbox */
@@ -301,43 +212,7 @@ body.mobile .mfp-content {
 	pointer-events: none !important;
 }
 
-md-card {
-	background-color: rgba(81, 49, 140, 0.75);
-}
-
-md-progress-circular path {
-	stroke: #f1f1f1 !important;
-}
-
-md-progress-linear {
-	.md-container {
-		background-color: rgba(197, 202, 233, 0.4);
-
-		.md-bar2 {
-			background-color: #f1f1f1;
-			visibility: hidden;
-
-			&[style*='transform'] {
-				visibility: visible;
-
-				@include animation(mdProgressLinearVisibilityDelay 0.5s linear);
-			}
-		}
-	}
-}
-
-md2-progress-linear[mdMode='determinate'] .md-bar1 {
-	display: none;
-}
-
-@include keyframes(mdProgressLinearVisibilityDelay) {
-	0%, 100% {
-		visibility: hidden;
-	}
-}
-
-
-/*** Readability improvement for large screens ***/
+/* Readability improvement for large screens */
 
 @media (min-width: 1920px) {
 	html, body {
@@ -345,150 +220,8 @@ md2-progress-linear[mdMode='determinate'] .md-bar1 {
 	}
 }
 
-/*** Unsemantic ***/
+/* Unsemantic */
 
 .grid-container {
 	max-width: initial;
-}
-
-html {
-	/*** Angular Material patches (from 0.4 to 0.6 upgrade) ***/
-
-	md-content.md-default-theme {
-		background-color: transparent;
-	}
-
-	> body p {
-		line-height: 135%;
-	}
-
-	input, textarea {
-		line-height: 26px;
-	}
-
-	button.md-button.md-fab {
-		z-index: auto;
-	}
-
-	.md-button > a {
-		text-decoration: none;
-	}
-
-	.layout-fill {
-		min-height: 0px;
-		height: 100%;
-	}
-
-	md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar) {
-		.md-toolbar-tools {
-			height: 40px;
-			min-height: 40px;
-			max-height: 40px;
-		}
-	}
-
-	md-dialog {
-		background-color: rgba(139, 98, 217, 0.97) !important;
-		color: #f1f1f1 !important;
-
-		h2 {
-			font-family: Ubuntu;
-			font-weight: normal;
-		}
-	}
-
-	md-dialog.full {
-		height: 100%;
-		width: 100%;
-	}
-
-	md-checkbox {
-		.md-icon {
-			background: none !important;
-			border-color: #f1f1f1 !important;
-		}
-
-		.md-label {
-			border: 0px !important;
-		}
-	}
-
-	#templates {
-		display: none;
-	}
-
-	@include keyframes(inkRippleCheckbox) {
-		0% {
-			@include transform(scale(0));
-
-			opacity: 0.4;
-		}
-
-		50% {
-			@include transform(scale(1));
-
-			opacity: 0.4;
-		}
-
-		100% {
-			@include transform(scale(1));
-
-			opacity: 0;
-		}
-	}
-
-
-	/*** Angular Material patches (from 0.8 to 0.9 upgrade) ***/
-
-	*, *:before, *:after {
-		box-sizing: border-box;
-	}
-
-	.md-button {
-		padding: 6px;
-		min-height: 0px;
-		min-width: 0px;
-		line-height: normal;
-
-		&.md-fab {
-			line-height: 100% !important;
-		}
-	}
-
-	md-dialog {
-		.md-title {
-			font-size: 1.5em;
-			font-weight: normal;
-		}
-
-		md-content {
-			padding: 24px;
-		}
-	}
-
-	/*** Angular Material patches (from 0.9 to 0.10 upgrade) ***/
-
-	md-content {
-		color: inherit;
-	}
-
-	/*** Angular Material patches (from 0.10.1 to 1.0.7 upgrade) ***/
-
-	md-content {
-		background-color: inherit;
-	}
-
-	md-input-container {
-		margin-top: 0px;
-	}
-
-	md-sidenav {
-		max-width: calc(100% - 50px) !important;
-	}
-
-	/*** Angular Material patches (from 1.0.7 to 1.1.0 upgrade) ***/
-
-	md-card {
-		color: inherit;
-	}
 }

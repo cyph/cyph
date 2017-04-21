@@ -54,23 +54,13 @@ export class CyphertextService {
 
 		this.isVisible	= false;
 
-		this.dialogService.toast({
-			content: this.stringsService.cypherToast3,
-			delay: 1000
-		});
+		this.dialogService.toast(this.stringsService.cypherToast3, 1000);
 	}
 
 	/** Shows cyphertext UI. */
 	public async show () : Promise<void> {
-		await this.dialogService.toast({
-			content: this.stringsService.cypherToast1,
-			delay: 2000
-		});
-
-		await this.dialogService.toast({
-			content: this.stringsService.cypherToast2,
-			delay: 3000
-		});
+		await this.dialogService.toast(this.stringsService.cypherToast1, 2000);
+		await this.dialogService.toast(this.stringsService.cypherToast2, 3000);
 
 		this.isVisible	= true;
 

@@ -1,8 +1,6 @@
 import {Component} from '@angular/core';
 import {ConfigService} from '../cyph/services/config.service';
 import {EnvService} from '../cyph/services/env.service';
-import {MdSidenavService} from '../cyph/services/material/md-sidenav.service';
-import {util} from '../cyph/util';
 import {AppService} from './app.service';
 import {DemoService} from './demo.service';
 
@@ -19,32 +17,7 @@ import {DemoService} from './demo.service';
 	templateUrl: '../../templates/cyph.com/index.html'
 })
 export class AppComponent {
-	/** @ignore */
-	private readonly sidenav: Promise<angular.material.ISidenavObject>;
-
-	/** @ignore */
-	private readonly sidenavLock: {}	= {};
-
-	/** Closes mobile sidenav menu. */
-	public async closeSidenav () : Promise<void> {
-		await util.lockTryOnce(
-			this.sidenavLock,
-			async () => {
-				await util.sleep();
-				(await this.sidenav).close();
-			}
-		);
-	}
-
-	/** Opens mobile sidenav menu. */
-	public async openSidenav () : Promise<void> {
-		await util.sleep();
-		(await this.sidenav).open();
-	}
-
 	constructor (
-		mdSidenavService: MdSidenavService,
-
 		/** @see AppService */
 		public readonly appService: AppService,
 
@@ -56,7 +29,5 @@ export class AppComponent {
 
 		/** @see EnvService */
 		public readonly envService: EnvService
-	) {
-		this.sidenav	= mdSidenavService.getSidenav('main-toolbar-sidenav');
-	}
+	) {}
 }
