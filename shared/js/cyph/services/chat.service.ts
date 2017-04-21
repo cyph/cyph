@@ -116,8 +116,12 @@ export class ChatService {
 				author !== users.me
 		};
 
-		this.chat.messages.push(message);
-		this.chat.messages.sort((a, b) => a.timestamp - b.timestamp);
+		for (let i = this.chat.messages.length - 1 ; i >= -1 ; --i) {
+			if (i === -1 || message.timestamp > this.chat.messages[i].timestamp) {
+				this.chat.messages.splice(i + 1, 0, message);
+				break;
+			}
+		}
 
 		if (author === users.me) {
 			this.scrollService.scrollDown();
