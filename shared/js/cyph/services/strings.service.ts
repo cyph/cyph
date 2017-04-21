@@ -245,14 +245,12 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly p2pWarningAudioPassive: string	= util.translate(
-		`Starting voice call and P2P connection. ` +
-		`If you don't want to continue with the call, close this window now.`
+		`Starting voice call (P2P). Close this window to abort.`
 	);
 
 	/** @see StringsService */
 	public readonly p2pWarningVideoPassive: string	= util.translate(
-		`Starting video call and P2P connection. ` +
-		`If you don't want to be seen on camera, close this window now.`
+		`Starting video call (P2P). Close this window to abort.`
 	);
 
 	/** @see StringsService */
