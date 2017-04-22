@@ -24,6 +24,8 @@ button {
 }
 
 img {
+	max-width: 100%;
+
 	&.avatar {
 		width: calc(100% - 10px);
 	}
