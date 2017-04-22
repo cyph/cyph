@@ -1,3 +1,5 @@
+@import 'theme';
+
 // Staggered animation support. Usage: add any class from ._1 -> ._10
 
 $interval: 0.25s;
@@ -40,18 +42,18 @@ $classesToAdd: 15;
 	@include transition(border 0.75s ease);
 
 	&.online {
-		border: 5px solid rgba(56, 140, 71, 0.9) !important;
+		border: 5px solid map-get($mat-green, 700) !important;
 	}
 
 	&.away {
-		border: 5px solid rgba(247, 184, 1, 0.9) !important;
+		border: 5px solid map-get($mat-amber, 500) !important;
 	}
 
 	&.busy {
-		border: 5px solid rgba(255, 28, 28, 0.9) !important;
+		border: 5px solid map-get($mat-red, 700) !important;
 	}
 
 	&.offline {
-		border: 5px solid rgba(40, 38, 44, 0.9) !important;
+		border: 5px solid map-get($mat-grey, 900) !important;
 	}
 }
