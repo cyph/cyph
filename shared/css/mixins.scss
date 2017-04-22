@@ -68,11 +68,11 @@
 	}
 
 	#{$root}, #main, .cyph-foreground {
-		background-color: $cyph-background !important;
+		background-color: $cyph-background;
 	}
 
 	blockquote {
-		border-left: 2px solid $cyph-foreground !important;
+		border-left: 2px solid $cyph-foreground;
 	}
 
 	h3.cyph-banner {
