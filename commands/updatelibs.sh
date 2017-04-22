@@ -23,7 +23,6 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@angular/platform-browser-dynamic \
 	@angular/platform-server \
 	@angular/router \
-	@angular/upgrade \
 	@types/angular \
 	@types/angular-material \
 	@types/braintree-web \
@@ -34,9 +33,6 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@types/markdown-it \
 	@types/whatwg-fetch \
 	@types/whatwg-streams \
-	angular \
-	angular-animate \
-	angular-aria \
 	angular-ssr \
 	animate.css \
 	bourbon@4.2.7 \
@@ -116,7 +112,6 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	xkcd-passphrase \
 	zombie \
 	zone.js \
-	https://github.com/angular/bower-material \
 	https://github.com/buu700/webrtcsupport \
 	https://github.com/buu700/angular-smd \ # https://github.com/jefersonestevo/angular-smd \
 	https://github.com/morr/jquery.appear \
