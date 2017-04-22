@@ -118,7 +118,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	zone.js \
 	https://github.com/angular/bower-material \
 	https://github.com/buu700/webrtcsupport \
-	https://github.com/jefersonestevo/angular-smd \
+	https://github.com/buu700/angular-smd \ # https://github.com/jefersonestevo/angular-smd \
 	https://github.com/morr/jquery.appear \
 || \
 	exit 1
