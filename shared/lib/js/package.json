@@ -24,7 +24,7 @@
     "@types/whatwg-fetch": "^0.0.33",
     "@types/whatwg-streams": "^0.0.3",
     "angular-smd": "https://github.com/buu700/angular-smd",
-    "angular-ssr": "^0.1.83",
+    "angular-ssr": "^0.1.84",
     "animate.css": "^3.5.2",
     "bourbon": "4.2.7",
     "braintree-web": "^2",
