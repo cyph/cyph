@@ -59,13 +59,22 @@ a {
 	text-transform: uppercase;
 }
 
-[md-icon-button], [md-mini-fab] {
+[md-icon-button] {
 	&.pulldown md-icon {
 		margin-bottom: -3px;
 	}
 
 	&.shrink md-icon {
 		@include icon-size(23px);
+	}
+}
+[md-mini-fab] {
+	&.pulldown md-icon {
+		margin-top: 2px;
+	}
+
+	&.shrink md-icon {
+		@include icon-size(22px);
 	}
 }
 
