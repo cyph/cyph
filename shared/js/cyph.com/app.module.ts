@@ -23,6 +23,7 @@ import {
 } from '@angular/material';
 import {BrowserModule, Title} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {RouterModule} from '@angular/router';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
 import {ChatCyphertextComponent} from '../cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from '../cyph/components/chat-main.component';
@@ -59,11 +60,13 @@ import {UrlStateService} from '../cyph/services/url-state.service';
 import {UtilService} from '../cyph/services/util.service';
 import {VirtualKeyboardWatcherService} from '../cyph/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
+import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {DemoChatRootComponent} from './demo-chat-root.component';
 import {DemoComponent} from './demo.component';
 import {MockDatabaseService} from './mock-database.service';
 import {MockPotassiumService} from './mock-potassium.service';
+import {RouterComponent} from './router.component';
 import {SilentNotificationService} from './silent-notification.service';
 
 
@@ -71,7 +74,7 @@ import {SilentNotificationService} from './silent-notification.service';
  * Angular module for Cyph home page.
  */
 @NgModule({
-	bootstrap: [AppComponent],
+	bootstrap: [RouterComponent],
 	declarations: [
 		AppComponent,
 		BetaRegisterComponent,
@@ -90,6 +93,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		HelpComponent,
 		MarkdownComponent,
 		NanoScrollerDirective,
+		RouterComponent,
 		SignupFormComponent,
 		TranslateDirective,
 		SmdFabSpeedDialActions,
@@ -103,6 +107,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		HelpComponent
 	],
 	imports: [
+		RouterModule.forRoot(appRoutes),
 		BrowserAnimationsModule,
 		BrowserModule,
 		CommonModule,
