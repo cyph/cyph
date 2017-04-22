@@ -2,20 +2,24 @@
 	fxFlex
 	fxFlexFill
 	fxLayout='column'
-	fxLayoutAlign='center center'
+	fxLayoutAlign='center stretch'
 	class='profile'
 	*ngIf='user'
 	[class.mobile]='envService.isMobile'
 >
-	<img
-		class='avatar animated flipInX _1'
-		[ngClass]='userPresence[user.status]'
-		alt='Profile Picture'
-		[src]='user.avatar'
-	/>
-	<div class='name animated flipInX _2'>{{user.name}}</div>
-	<div class='username animated flipInX _2'>@{{user.realUsername}}</div>
-	<div class='description animated flipInX _3'>{{user.description}}</div>
+	<div fxLayoutAlign='center center'>
+		<div>
+			<img
+				class='avatar animated flipInX _1'
+				[ngClass]='userPresence[user.status]'
+				alt='Profile Picture'
+				[src]='user.avatar'
+			/>
+			<div class='name animated flipInX _2'>{{user.name}}</div>
+			<div class='username animated flipInX _2'>@{{user.realUsername}}</div>
+			<div class='description animated flipInX _3'>{{user.description}}</div>
+		</div>
+	</div>
 	
 	<div fxLayoutAlign='center center' class='status' *ngIf='isCurrentUser'>
 		<md-select
