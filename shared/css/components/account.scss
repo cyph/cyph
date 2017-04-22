@@ -1,6 +1,6 @@
 @import 'theme';
 
-// Staggered animation support. Usage: add any class from ._1 -> ._10
+/* Staggered animation support. Usage: add any class from ._1 -> ._10 */
 
 $interval: 0.25s;
 $classesToAdd: 15;
@@ -24,10 +24,10 @@ $classesToAdd: 15;
 	display: block;
 	width: 100%;
 	height: 100%;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	left: 0px;
 	position: absolute;
 	background-image: url(/img/cyph.brick.pattern.png);
 	background-repeat: repeat;
