@@ -59,6 +59,16 @@ a {
 	text-transform: uppercase;
 }
 
+[md-icon-button], [md-mini-fab] {
+	&.pulldown md-icon {
+		margin-bottom: -3px;
+	}
+
+	&.shrink md-icon {
+		@include icon-size(23px);
+	}
+}
+
 [md-dialog-title] {
 	font-family: Ubuntu;
 	font-weight: initial !important;

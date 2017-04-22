@@ -1,125 +1,17 @@
 @import 'mixins';
 
-:host h1 {
-	text-align: center;
-}
+.contact {
+	@include transition(filter 0.5s ease);
 
-button {
-	margin: 0px !important;
-
-	&.chat, &.message {
-		md-icon {
-			top: 2px;
-			position: relative;
-
-			@include icon-size(23px);
-		}
+	button {
+		@include transition(transform 0.5s ease);
 	}
 
-	md-icon {
-		@include icon-size(30px);
-	}
-}
+	&.active {
+		@include filter(brightness(1.2));
 
-.contacts {
-	position: relative;
-
-	.contact {
-		&, .wrapper > button, .user {
-			@include transition(transform 0.5s ease);
+		button {
+			@include transform(scaleX(0));
 		}
-
-		&.active {
-			@include transform(translateX(-15px));
-
-			.wrapper {
-				background-color: rgba(57, 40, 89, 0.75);
-				border: 3px solid rgba(57, 40, 89, 0.5) !important;
-				position: relative;
-
-				> button {
-					@include transform(scaleX(0));
-				}
-
-				.user {
-					@include transform(translateX(48px));
-				}
-			}
-		}
-	}
-
-	.wrapper {
-		margin: 2px;
-		background-color: rgba(57, 40, 89, 0.65);
-		padding: 10px;
-		border-radius: 8px;
-		border: 3px solid rgba(57, 40, 89, 0.35) !important;
-
-		@include transition(background-color 0.5s ease, border-color 0.25s ease);
-
-		span, h2, h3 {
-			text-align: center;
-		}
-
-		.user {
-			margin-top: 15px;
-			max-height: 42px;
-			margin-left: 10px;
-			margin-right: 10px;
-		}
-
-		.name {
-			padding: 0px 5px;
-		}
-
-		.name, .status {
-			margin: 0px;
-		}
-
-		.username {
-			margin-right: 0px !important;
-		}
-
-		.status {
-			margin-top: 5px !important;
-			margin-bottom: -5px !important;
-			text-align: center;
-		}
-
-		.username {
-			margin: 0px;
-		}
-
-		.avatar {
-			width: 60px;
-			height: 60px;
-			background-color: #f3f3f3;
-			border-radius: 50%;
-			cursor: pointer;
-
-			@include transition(border 0.75s ease);
-		}
-		img.avatar:hover {
-			cursor: pointer;
-		}
-		.avatar.online {
-			border: 5px solid rgba(56, 140, 71, 0.9) !important;
-		}
-
-		.avatar.away {
-			border: 5px solid rgba(247, 184, 1, 0.9) !important;
-		}
-
-		.avatar.busy {
-			border: 5px solid rgba(255, 28, 28, 0.9) !important;
-		}
-
-		.avatar.offline {
-			border: 5px solid rgba(40, 38, 44, 0.9) !important;
-		}
-	}
-
-	.wrapper:hover * {
-		@include transform(scale(1.05));
 	}
 }

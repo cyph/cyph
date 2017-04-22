@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {States, UserPresence} from '../account/enums';
+import {States, User, UserPresence} from '../account';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountService} from '../services/account.service';
@@ -16,11 +16,15 @@ import {UrlStateService} from '../services/url-state.service';
 	templateUrl: '../../../templates/account-contacts.html'
 })
 export class AccountContactsComponent {
-	/** @see States */
-	public states: typeof States	= States;
-
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
+
+	/** Indicates whether the chat UI is open for this user. */
+	public isActive (contact: User) : boolean {
+		return this.accountService.state === States.chat &&
+			this.accountService.input === contact.username
+		;
+	}
 
 	constructor (
 		/** @see AccountService */

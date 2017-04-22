@@ -1,46 +1,30 @@
-<div fxFlex fxFlexFill fxLayout='column'>
-	<md-list fxLayout='column' class='contacts'>
-		<md-list-item
-			fxLayout='row'
-			class='contact'
-			*ngFor='let contact of accountContactsService.contacts; let i = index'
-			[attr.data-index]='i'
-			[class.active]='
-				this.accountService.state === states.chat &&
-				this.accountService.input === contact.username
-			'
-		>
-			<div
-				fxFlex
-				fxLayout='row'
-				fxLayoutAlign='start stretch'
-				class='wrapper animated flipInY _{{i}}'
-			>
-				<div fxLayout='column'>
-					<img
-						class='avatar'
-						[ngClass]='userPresence[contact.status]'
-						[src]='contact.avatar'
-						alt='User Avatar'
-						(click)='urlStateService.setUrl("account/profile/" + contact.username)'
-					/>
-					<h4 class='status'>
-						{{userPresence[contact.status]}}
-					</h4>
-				</div>
-				<div fxFlex fxLayout='column' class='user'>
-					<h2 class='name'>
-						{{contact.name}}
-					</h2>
-					<span class='username'>
-						{{contact.realUsername}} 
-					</span>
-				</div>
+<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+	<div></div>
+
+	<md-card
+		[fxFlexOrder]='isActive(contact) ? "-1" : ""'
+		class='contact animated _{{i}}'
+		*ngFor='let contact of accountContactsService.contacts; let i = index'
+		[attr.data-index]='i'
+		[class.active]='isActive(contact)'
+		[class.flipInY]='!isActive(contact)'
+	>
+		<md-card-header fxLayout='row'>
+			<img
+				md-card-avatar
+				class='avatar'
+				[ngClass]='userPresence[contact.status]'
+				[src]='contact.avatar'
+				alt='User Avatar'
+				(click)='urlStateService.setUrl("account/profile/" + contact.username)'
+			/>
+			<md-card-title>{{contact.name}}</md-card-title>
+			<md-card-subtitle>{{contact.realUsername}}</md-card-subtitle>
+			<div fxFlex fxLayoutAlign='end center'>
 				<button
 					md-icon-button
-					fxLayout='row'
 					cyphTranslate
-					class='message'
+					class='shrink'
 					mdTooltip='Send Message'
 					*ngIf='contact.status !== userPresence.online'
 				>
@@ -48,9 +32,8 @@
 				</button>
 				<button
 					md-icon-button
-					fxLayout='row'
 					cyphTranslate
-					class='chat'
+					class='shrink pulldown'
 					mdTooltip='Start Chat'
 					*ngIf='contact.status === userPresence.online'
 					(click)='urlStateService.setUrl("account/chat/" + contact.username)'
@@ -59,21 +42,21 @@
 				</button>
 				<button
 					md-icon-button
-					fxLayout='row'
 					cyphTranslate
 					mdTooltip='Video Call'
 				>
-					<md-icon>videocam</md-icon>
+					<md-icon>video_call</md-icon>
 				</button>
 				<button
 					md-icon-button
-					fxLayout='row'
 					cyphTranslate
 					mdTooltip='Send File'
 				>
 					<md-icon>attachment</md-icon>
 				</button>
 			</div>
-		</md-list-item>
-	</md-list>
+		</md-card-header>
+	</md-card>
+
+	<div></div>
 </div>

@@ -1,38 +1,24 @@
-<div fxFlex fxLayout='row'>
-	<div *ngIf='!envService.isMobile' fxFlex></div>
-	<md-list fxFlex='50' fxLayout='column' class='files'>
-		<md-list-item
-			class='contact'
-			fxLayout='row'
+<div fxFlexFill fxLayout='row' fxLayoutAlign='center start'>
+	<div fxFlex='50' fxLayout='column' fxLayoutGap='16px'>
+		<div></div>
+
+		<md-card
+			class='contact animated flipInY _{{i}}'
 			*ngFor='let myFile of accountFilesService.myFiles; let i = index'
 			[attr.data-index]='i'
 		>
-			<div
-				fxFlex
-				fxLayout='row'
-				fxLayoutAlign='start stretch'
-				class='wrapper animated flipInY _{{i}}'
-			>
-				<div fxFlex fxLayout='row'>
-					<div class='thumb' alt='File Type'>
-						<md-icon>{{accountFilesService.thumb(myFile.filetype)}}</md-icon>
-					</div>
-					<div fxFlex fxLayout='column' class='file'>
-						<span class='name'>
-							{{myFile.name}}
-						</span>
-						<div fxLayout='row' class='metadata'>
-							<span class='filetype'>
-								File type: {{myFile.filetype}} 
-							</span>
-							<span class='size'>
-								File size: {{utilService.readableByteLength(myFile.size)}}
-							</span>
-						</div>
-					</div>
+			<md-card-header fxLayout='row'>
+				<md-icon md-card-avatar>
+					{{accountFilesService.thumb(myFile.filetype)}}
+				</md-icon>
+				<md-card-title>{{myFile.name}}</md-card-title>
+				<md-card-subtitle>
+					<div>File type: {{myFile.filetype}}</div>
+					<div>File size: {{utilService.readableByteLength(myFile.size)}}</div>
+				</md-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
 					<button
 						md-icon-button
-						fxLayout='row'
 						cyphTranslate
 						mdTooltip='File Settings'
 					>
@@ -40,15 +26,15 @@
 					</button>
 					<button
 						md-icon-button
-						fxLayout='row'
 						cyphTranslate
 						mdTooltip='Download File'
 					>
 						<md-icon>file_download</md-icon>
 					</button>
 				</div>
-			</div>
-		</md-list-item>
-	</md-list>
-	<div *ngIf='!envService.isMobile' fxFlex></div>
+			</md-card-header>
+		</md-card>
+
+		<div></div>
+	</div>
 </div>

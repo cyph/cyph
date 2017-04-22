@@ -1,17 +1,25 @@
-<div fxLayout='column' class='profile' *ngIf='user' [class.mobile]='envService.isMobile'>
+<div
+	fxFlex
+	fxFlexFill
+	fxLayout='column'
+	fxLayoutAlign='center center'
+	class='profile'
+	*ngIf='user'
+	[class.mobile]='envService.isMobile'
+>
 	<img
-		class='profile-picture animated flipInX _1'
+		class='avatar animated flipInX _1'
 		[ngClass]='userPresence[user.status]'
 		alt='Profile Picture'
 		[src]='user.avatar'
 	/>
-	<span class='name animated flipInX _2'>{{user.name}}</span>
-	<span class='username animated flipInX _2'>@{{user.realUsername}}</span>
-	<span class='description animated flipInX _3'>{{user.description}}</span>
+	<div class='name animated flipInX _2'>{{user.name}}</div>
+	<div class='username animated flipInX _2'>@{{user.realUsername}}</div>
+	<div class='description animated flipInX _3'>{{user.description}}</div>
 	
-	<div *ngIf='isCurrentUser' fxFlex='50' class='status'>
+	<div fxLayoutAlign='center center' class='status' *ngIf='isCurrentUser'>
 		<md-select
-			fxFlex
+			fxFlex='50'
 			cyphTranslate
 			[(ngModel)]='user.status'
 			name='status'
@@ -26,11 +34,11 @@
 		</md-select>
 	</div>
 
-	<div *ngIf='!isCurrentUser' fxLayout='row' class='buttons'>
+	<div fxLayout='row' fxLayoutGap='16px' class='buttons' *ngIf='!isCurrentUser'>
 		<div fxFlex></div>
 
 		<button
-			md-fab
+			md-mini-fab
 			cyphTranslate
 			class='animated flipInX _4'
 			mdTooltip='Add User'
@@ -39,18 +47,18 @@
 		</button>
 
 		<button
-			md-fab
+			md-mini-fab
 			cyphTranslate
-			class='animated flipInX _4'
+			class='animated shrink flipInX _4'
 			mdTooltip='Send Message'
 			*ngIf='user.status !== userPresence.online'
 		>
 			<md-icon>email</md-icon>
 		</button>
 		<button
-			md-fab
+			md-mini-fab
 			cyphTranslate
-			class='animated flipInX _4'
+			class='animated shrink pulldown flipInX _4'
 			mdTooltip='Start Chat'
 			*ngIf='user.status === userPresence.online'
 			(click)='urlStateService.setUrl("account/chat/" + user.username)'

@@ -4,11 +4,6 @@
 	font-size: 60px;
 	font-family: Ubuntu;
 	font-weight: 500;
-	margin-left: auto;
-	margin-right: auto;
-	display: relative;
-
-	@include vertical-align;
 }
 
 .logout:after {

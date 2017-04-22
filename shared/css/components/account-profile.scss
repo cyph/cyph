@@ -1,44 +1,23 @@
-@import 'mixins';
-
 .profile {
-	width: 100%;
-	margin-left: auto;
-	margin-right: auto;
+	text-align: center;
 	font-family: Ubuntu;
 
 	&.mobile {
-		.profile-picture {
+		.avatar {
 			width: 10em;
 			height: 10em;
 		}
-
-		.status label {
-			display: none;
-		}
 	}
 
-	.profile-picture {
+	.avatar {
 		border-radius: 50%;
-		margin-left: auto;
-		margin-right: auto;
-		margin-top: 5%;
-		position: relative;
-		display: block;
 		width: 18em;
 		height: 18em;
 		box-shadow: 0px 20px 42px 0px rgba(75, 67, 89, 1);
 	}
 
-	span {
-		display: block;
-		text-align: center;
-		font-family: Ubuntu;
-	}
-
-	span.name {
+	.name {
 		font-size: 42px;
-		margin-left: auto;
-		margin-right: auto;
 		margin-top: 25px;
 		margin-bottom: 10px;
 		position: relative;
@@ -46,38 +25,20 @@
 		font-weight: 500;
 	}
 
-	span.username {
-		color: #bababa;
+	.username {
+		opacity: 0.6;
 	}
 
-	span.description {
+	.description {
 		margin: 25px auto;
 	}
 
-	span.username, span.description {
+	.username, .description {
 		font-size: 24px;
 	}
 
 	.status {
-		width: 200px;
-		margin-left: auto;
-		margin-right: auto;
-		font-family: Ubuntu;
-		background-color: #392859;
-		margin-top: 20px;
-
-		label {
-			margin: -26px -70px;
-			font-size: 24px;
-			font-weight: 500;
-			color: white !important;
-			position: absolute;
-		}
-
-		md-input-container {
-			padding: 0px !important;
-			margin: 5px !important;
-		}
+		width: 100%;
 	}
 
 	.buttons button {

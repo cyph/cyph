@@ -87,9 +87,7 @@ img.logo {
 	}
 }
 
-button.logout {
-	bottom: 0px;
-
+button.logout md-icon {
 	@include transform(rotate(180deg));
 }
 

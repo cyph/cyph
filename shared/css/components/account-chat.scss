@@ -1,12 +1,9 @@
 :host > div {
 	padding-bottom: 1em;
 	background-color: initial !important;
-	margin-left: 50%;
-
-	@include transform(translateX(-50%));
 }
 
-.message-list:after {
+.message-list-background:after {
 	display: none;
 }
 

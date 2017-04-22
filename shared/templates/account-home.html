@@ -1,7 +1,3 @@
-<div  *ngIf='accountAuthService.current'>
-	<div fxLayout='row'>
-		<div fxFlex>
-			<cyph-account-profile></cyph-account-profile>
-		</div>
-	</div>
+<div fxFlexFill fxLayout='row' *ngIf='accountAuthService.current'>
+	<cyph-account-profile fxFlexFill></cyph-account-profile>
 </div>
