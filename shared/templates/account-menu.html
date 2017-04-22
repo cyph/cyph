@@ -58,6 +58,8 @@
 		<div fxLayoutAlign='center center' *ngIf='accountAuthService.current'>
 			<div [fxFlex]='accountService.menuExpanded ? "60" : "6em"'>
 				<img
+					cyphTranslate
+					mdTooltip='Profile'
 					class='avatar animated flipInX _1'
 					[ngClass]='userPresence[accountAuthService.current.status]'
 					alt='Profile Picture'
