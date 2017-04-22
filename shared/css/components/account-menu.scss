@@ -5,169 +5,43 @@
 }
 
 button {
-	text-align: center !important;
 	font-family: Ubuntu;
-	font-weight: 500;
 	font-size: 24px;
+
+	&[md-icon-button] {
+		height: 1.75em;
+		width: 1.75em;
+
+		&.home {
+			height: 2em;
+			width: 2em;
+		}
+	}
+
+	md-icon {
+		@include icon-size(32px);
+	}
 }
 
-img.logo {
-	height: auto !important;
-	width: auto !important;
-	max-height: 2em;
-	max-width: 100%;
-	padding: 0.25em 0.25em 0px 0.25em;
+img {
+	&.avatar {
+		width: calc(100% - 10px);
+	}
 
-	&.collapsed-button {
-		max-width: 2em;
-		padding: 0.1em 0.1em 0px 0.1em;
+	&.logo {
+		max-height: 1.5em;
 	}
 }
 
 .menu {
 	background-color: rgba(80, 57, 124, 0.9) !important;
-	width: 100%;
-	text-align: center;
-	padding: 16px;
-	padding-right: 0px;
 	box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
 
-	&.mobile {
-		position: absolute;
-		z-index: 999;
-		max-width: 25em;
-
-		&.collapsed {
-			width: 6em;
-		}
-
-		&:not(.collapsed) {
-			background-color: rgb(80, 57, 124) !important;
-		}
-	}
-
-	&.collapsed {
-		padding: 8px;
-
-		.full-button {
-			display: none;
-		}
-
-		.home-wrapper {
-			margin-bottom: 0px !important;
-		}
-
-		.profile-picture.online {
-			border: 5px solid rgba(56, 140, 71, 0.9) !important;
-		}
-
-		.profile-picture.away {
-			border: 5px solid rgba(247, 184, 1, 0.9) !important;
-		}
-
-		.profile-picture.busy {
-			border: 5px solid rgba(255, 28, 28, 0.9) !important;
-		}
-
-		.profile-picture.offline {
-			border: 5px solid rgba(40, 38, 44, 0.9) !important;
-		}
-	}
-
-	&:not(.collapsed) {
-		.collapsed-button {
-			display: none;
-		}
-
-		md-icon {
-			position: relative;
-			right: 2px;
-			top: -2px;
-		}
+	&, .menu-toggle {
+		padding: 0px;
 	}
 }
 
-button.logout md-icon {
-	@include transform(rotate(180deg));
-}
-
-button md-icon {
-	@include icon-size(32px);
-}
-
-.menu {
-	height: 100%;
-}
-
-button.home {
-	position: relative;
-	top: 5px;
-	padding: 0px;
-}
-
-button.menu-toggle {
-	width: 25px;
-	margin-top: -6px;
-
-	@include vertical-align;
-
-	button {
-		height: 100%;
-
-		md-icon {
-			right: 10px;
-			position: relative;
-
-			&.flipped {
-				@include transform(rotate(180deg));
-
-				@include transition(transform 0.1s linear);
-			}
-		}
-	}
-}
-
-.home-wrapper {
-	margin-bottom: 10px;
-}
-
-.home button {
-	padding: 0px;
-}
-
-.user {
-	margin-top: 1em;
-	max-width: 8em;
-	width: 100%;
-	height: 100%;
-	margin-left: auto;
-	margin-right: auto;
-
-	.profile-picture {
-		width: 100%;
-		height: 100%;
-		background-color: #f3f3f3;
-		border-radius: 50%;
-		position: relative;
-	}
-
-	img:hover {
-		cursor: pointer;
-	}
-
-	.profile-picture.online {
-		border: 7px solid rgba(56, 140, 71, 0.9) !important;
-	}
-
-	.profile-picture.away {
-		border: 7px solid rgba(247, 184, 1, 0.9) !important;
-	}
-
-	.profile-picture.busy {
-		border: 7px solid rgba(255, 28, 28, 0.9) !important;
-	}
-
-	.profile-picture.offline {
-		border: 7px solid rgba(40, 38, 44, 0.9) !important;
-	}
+.menu-toggle md-icon {
+	margin-left: -4px;
 }

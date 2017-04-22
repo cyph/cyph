@@ -3,8 +3,33 @@
 
 	<cyph-account-menu
 		fxLayout='column'
-		class='menu sidebar'
-		[fxFlex]='accountService.menuExpanded && !envService.isMobile ? "20" : "5"'
+		class='sidebar'
+		[fxFlex]='
+			!accountService.menuExpanded ?
+				"6em" :
+				envService.isMobile ?
+					"100" :
+					"20"
+		'
+		[fxFlex.gt-xs]='
+			!accountService.menuExpanded ?
+				"6em" :
+				envService.isMobile ?
+					"50" :
+					"20"
+		'
+		[fxFlex.gt-sm]='
+			!accountService.menuExpanded ?
+				"6em" :
+				envService.isMobile ?
+					"35" :
+					"20"
+		'
+		[fxFlex.gt-md]='
+			!accountService.menuExpanded ?
+				"6em" :
+				"20"
+		'
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
@@ -63,10 +88,13 @@
 		class='sidebar'
 		*ngIf='sidebarVisible'
 	>
-		<div fxFlexFill fxLayout='row'>
-			<div *ngIf='!envService.isMobile && showOnlySidebar' fxFlex='30'></div>
-			<cyph-account-contacts></cyph-account-contacts>
-			<div *ngIf='!envService.isMobile && showOnlySidebar' fxFlex='30'></div>
+		<div fxFlex fxFlexFill fxLayout='row' fxLayoutAlign='center center'>
+			<cyph-account-contacts
+				[fxFlex]='showOnlySidebar ? "95" : "90"'
+				[fxFlex.gt-sm]='showOnlySidebar ? "65" : "90"'
+				[fxFlex.gt-md]='showOnlySidebar ? "40" : "90"'
+				fxFlexFill
+			></cyph-account-contacts>
 		</div>
 	</div>
 </div>

@@ -14,15 +14,6 @@ $classesToAdd: 15;
 	overflow: scroll;
 }
 
-.mobile cyph-account-menu {
-	margin-right: 0px;
-}
-
-cyph-account-menu {
-	min-width: 5em;
-	margin-right: 18px;
-}
-
 .mobile .cyph-gradient {
 	opacity: 0.15;
 }
@@ -43,6 +34,9 @@ cyph-account-menu {
 }
 
 .avatar {
+	border-radius: 50%;
+	cursor: pointer;
+
 	@include transition(border 0.75s ease);
 
 	&.online {

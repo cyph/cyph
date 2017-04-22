@@ -91,6 +91,10 @@ button, input, select, textarea {
 	padding-left: 10px;
 }
 
+.flipped {
+	@include transform(rotate(180deg));
+}
+
 .small-font {
 	font-size: 80%;
 }

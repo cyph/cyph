@@ -12,10 +12,12 @@
 		<md-card-header fxLayout='row'>
 			<img
 				md-card-avatar
+				cyphTranslate
 				class='avatar'
 				[ngClass]='userPresence[contact.status]'
 				[src]='contact.avatar'
 				alt='User Avatar'
+				mdTooltip='Open Profile'
 				(click)='urlStateService.setUrl("account/profile/" + contact.username)'
 			/>
 			<md-card-title>{{contact.name}}</md-card-title>
