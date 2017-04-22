@@ -80,9 +80,21 @@
 		background-color: $cyph-foreground;
 	}
 
-	cyph-account, cyph-lockdown {
+	cyph-account-login, cyph-lockdown {
 		.login-form .cyph-banner {
 			color: map-get($cyph-warn, default);
+		}
+	}
+
+	cyph-account-menu {
+		.menu {
+			background-color: if($cyph-is-dark, map-get($cyph-accent, darker), $cyph-background);
+		}
+	}
+
+	cyph-account-profile {
+		.profile .buttons button {
+			background-color: map-get($cyph-primary, default);
 		}
 	}
 
