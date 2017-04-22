@@ -330,11 +330,13 @@ compile () {
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
 			mainparent="$(echo "${f}" | sed 's|/main$||')"
+			appModule="$(echo "${f}" | sed 's|/main$|app.module|')"
 			packDir="js/${mainparent}/pack"
 			packDirFull="${outputDir}/${packDir}"
 			records="${rootDir}/${mainparent}/webpack.json"
-			htmlinput="${rootDir}/$(echo "${f}" | sed 's/\/.*//')/index.html"
-			htmloutput="$(echo "${htmlinput}" | sed 's/index\.html$/.index.html/')"
+			htmldir="${rootDir}/$(echo "${f}" | sed 's/\/.*//')"
+			htmlinput="${htmldir}/index.html"
+			htmloutput="${htmldir}/.index.html"
 
 			if [ "${watch}" ] ; then
 				{
@@ -402,11 +404,16 @@ compile () {
 			fi
 
 			enablesplit=''
+			prerender=''
 			if [ "${m}" == 'Main' ] ; then
 				if [ "${minify}" ] ; then
-					enablesplit=true
-					rm -rf $packDirFull 2> /dev/null
-					mkdir $packDirFull
+					if [ "${f}" == 'cyph.com/main' ] ; then
+						prerender=true
+					else
+						enablesplit=true
+						rm -rf $packDirFull 2> /dev/null
+						mkdir $packDirFull
+					fi
 				else
 					cp -f "${htmlinput}" "${htmloutput}"
 				fi
@@ -414,105 +421,125 @@ compile () {
 
 			# Don't use ".js" file extension for Webpack outputs. No idea
 			# why right now, but it breaks the module imports in Session.
-			echo -e "\nPack ${f}\n$({ time node -e "
-				const cheerio	= require('cheerio');
-				const webpack	= require('webpack');
-
-				webpack({
-					entry: {
-						main: './${f}'
+			webpackConfig="{
+				entry: {
+					main: './${f}'
+				},
+				/*
+					externals: {
+						'_stream_duplex': 'undefined',
+						'_stream_writable': 'undefined',
+						'angular': 'self.angular',
+						'faye-websocket': '{Client: self.WebSocket}',
+						'jquery': 'self.jQuery',
+						'libsodium': '{sodium: self.sodium}',
+						'request': 'undefined',
+						'rsvp': 'undefined'
 					},
-					/*
-						externals: {
-							'_stream_duplex': 'undefined',
-							'_stream_writable': 'undefined',
-							'angular': 'self.angular',
-							'faye-websocket': '{Client: self.WebSocket}',
-							'jquery': 'self.jQuery',
-							'libsodium': '{sodium: self.sodium}',
-							'request': 'undefined',
-							'rsvp': 'undefined'
-						},
-					*/
-					output: {
-						$(test "${enablesplit}" || echo "
-							filename: '${f}.js.tmp',
-							library: '${m}',
-							libraryTarget: 'var',
-							path: '${PWD}'
-						")
-						$(test "${enablesplit}" && echo "
-							filename: '[name].js',
-							chunkFilename: '[name].js',
-							path: '${packDirFull}'
-						")
-					},
-					plugins: [
-						$(test "${minify}" && echo "
-							new webpack.LoaderOptionsPlugin({
-								debug: false,
-								minimize: true
-							}),
-							new webpack.optimize.UglifyJsPlugin({
-								compress: false,
-								mangle: {
-									except: JSON.parse(
-										fs.readFileSync('/tmp/mangle.json').toString()
-									)
-								},
-								output: {
-									comments: false
-								},
-								sourceMap: false,
-								test: /\.js(\.tmp)?$/
-							}),
-						")
-						$(test "${enablesplit}" && echo "
-							new webpack.optimize.AggressiveSplittingPlugin({
-								minSize: 30000,
-								maxSize: 50000
-							}),
-							new webpack.optimize.CommonsChunkPlugin({
-								name: 'init',
-								minChunks: Infinity
-							})
-						")
-					],
-					$(test "${enablesplit}" && echo "
-						recordsPath: '${records}',
+				*/
+				output: {
+					$(test "${enablesplit}" || echo "
+						filename: '${f}.js.tmp',
+						library: '${m}',
+						libraryTarget: 'var',
+						path: '${PWD}'
 					")
-					resolve: {
-						alias: {
-							'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
-							'_stream_writable': '${PWD}/externals/_stream_writable.js',
-							'angular': '${PWD}/externals/angular.js',
-							'faye-websocket': '${PWD}/externals/faye-websocket.js',
-							'jquery': '${PWD}/externals/jquery.js',
-							'libsodium': '${PWD}/externals/libsodium.js',
-							'request': '${PWD}/externals/request.js',
-							'rsvp': '${PWD}/externals/rsvp.js'
-						}
+					$(test "${enablesplit}" && echo "
+						filename: '[name].js',
+						chunkFilename: '[name].js',
+						path: '${packDirFull}'
+					")
+				},
+				plugins: [
+					$(test "${minify}" && echo "
+						new webpack.LoaderOptionsPlugin({
+							debug: false,
+							minimize: true
+						}),
+						new webpack.optimize.UglifyJsPlugin({
+							compress: false,
+							mangle: {
+								except: JSON.parse(
+									fs.readFileSync('/tmp/mangle.json').toString()
+								)
+							},
+							output: {
+								comments: false
+							},
+							sourceMap: false,
+							test: /\.js(\.tmp)?$/
+						}),
+					")
+					$(test "${enablesplit}" && echo "
+						new webpack.optimize.AggressiveSplittingPlugin({
+							minSize: 30000,
+							maxSize: 50000
+						}),
+						new webpack.optimize.CommonsChunkPlugin({
+							name: 'init',
+							minChunks: Infinity
+						})
+					")
+				],
+				$(test "${enablesplit}" && echo "
+					recordsPath: '${records}',
+				")
+				resolve: {
+					alias: {
+						'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
+						'_stream_writable': '${PWD}/externals/_stream_writable.js',
+						'angular': '${PWD}/externals/angular.js',
+						'faye-websocket': '${PWD}/externals/faye-websocket.js',
+						'jquery': '${PWD}/externals/jquery.js',
+						'libsodium': '${PWD}/externals/libsodium.js',
+						'request': '${PWD}/externals/request.js',
+						'rsvp': '${PWD}/externals/rsvp.js'
 					}
-				}, (err, stats) => {$(test "${enablesplit}" && echo "
-					if (err) {
-						throw err;
-					}
+				}
+			}"
 
-					const \$	= cheerio.load(fs.readFileSync('${htmlinput}').toString());
+			echo -e "\nPack ${f}\n$({
+				if [ "${enableSplit}" ] ; then
+					time node -e "
+						const cheerio	= require('cheerio');
+						const webpack	= require('webpack');
 
-					\$('script[src=\"/js/${f}.js\"]').remove();
+						webpack(${webpackConfig}, (err, stats) => {$(test "${enablesplit}" && echo "
+							if (err) {
+								throw err;
+							}
 
-					for (const chunk of stats.compilation.entrypoints.main.chunks) {
-						for (const file of chunk.files) {
-							\$('body').append(
-								\`<script defer src='/${packDir}/\${file}'></script>\`
-							);
-						}
-					}
+							const \$	= cheerio.load(fs.readFileSync('${htmlinput}').toString());
 
-					fs.writeFileSync('${htmloutput}', \$.html().trim());
-				")});
-			"; } 2>&1)\n" 1>&2
+							\$('script[src=\"/js/${f}.js\"]').remove();
+
+							for (const chunk of stats.compilation.entrypoints.main.chunks) {
+								for (const file of chunk.files) {
+									\$('body').append(
+										\`<script defer src='/${packDir}/\${file}'></script>\`
+									);
+								}
+							}
+
+							fs.writeFileSync('${htmloutput}', \$.html().trim());
+						")});
+					"
+				else
+					echo "${webpackConfig}" > "${f}.webpack.js"
+
+					if [ "${prerender}" ] ; then
+						ng-render \
+							--template "${htmlinput}" \
+							--module "${appModule}.ts" \
+							--symbol AppModule \
+							--project . \
+							--webpack "${f}.webpack.js" \
+							--output "${htmldir}"
+					else
+						webpack --config "${f}.webpack.js"
+					fi
+				fi
+			} 2>&1)\n" 1>&2
 		done
 
 		for f in $tsfiles ; do
