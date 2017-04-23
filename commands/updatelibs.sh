@@ -41,7 +41,9 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@types/whatwg-fetch \
 	@types/whatwg-streams \
 	angular-ssr \
+	angular2-template-loader \
 	animate.css \
+	awesome-typescript-loader \
 	bourbon@4.2.7 \
 	braintree-web@^2 \
 	check-tslint-all \
@@ -50,9 +52,11 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	clipboard-js \
 	codelyzer \
 	core-js \
+	css-loader \
 	datauri \
 	dompurify \
 	fg-loadcss \
+	file-loader \
 	file-saver \
 	firebase \
 	firebase-server \
@@ -85,16 +89,20 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	nativescript-dev-typescript \
 	nativescript-theme-core \
 	node-fetch \
+	node-sass \
 	ntru \
+	raw-loader \
 	read \
 	reflect-metadata \
 	retire \
 	rlwe \
 	rxjs \
+	sass-loader \
 	sidh \
 	simplewebrtc \
 	sodiumutil \
 	sphincs \
+	style-loader \
 	stylelint \
 	stylelint-scss \
 	supersphincs \
@@ -104,6 +112,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	tns-core-modules \
 	tns-core-modules-widgets \
 	tns-ios \
+	ts-loader \
 	ts-node \
 	tslint \
 	tslint-microsoft-contrib \
@@ -111,6 +120,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	typescript \
 	uglify-js \
 	unsemantic \
+	url-loader \
 	webpack \
 	webpack-closure-compiler \
 	webrtc-adapter \
