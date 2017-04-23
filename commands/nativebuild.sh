@@ -10,11 +10,6 @@ cd
 # tns create cyph --ng --appid com.cyph.app || exit 1
 tns create cyph --template tns-template-hello-world-ng@rc --appid com.cyph.app || exit 1
 cd cyph
-node -e '
-	const package	= JSON.parse(fs.readFileSync("package.json").toString());
-	package.dependencies["@angular/compiler-cli"]	= package.dependencies["@angular/compiler"];
-	fs.writeFileSync("package.json", JSON.stringify(package));
-'
 mkdir node_modules 2> /dev/null
 npm install || exit 1
 
@@ -22,7 +17,7 @@ cp ${dir}/shared/js/native/firebase.nativescript.json ./
 for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
 
 cp -rf node_modules node_modules.old
-rm -rf node_modules/@types 2> /dev/null
+rm -rf node_modules/@angular node_modules/@types node_modules/rxjs node_modules/zone.js 2> /dev/null
 for d in $(ls -a /node_modules) ; do
 	if [ ! -d "node_modules/${d}" ] ; then
 		cp -rf "/node_modules/${d}" node_modules/
@@ -46,10 +41,6 @@ mkdir -p app/js/cyph.im app/js/preload
 cp ${dir}/shared/js/preload/global.ts app/js/preload/
 cp -rf ${dir}/shared/js/cyph.im/enums app/js/cyph.im/
 cp -rf ${dir}/shared/js/cyph app/js/
-rm -rf app/js/cyph/components/material
-rm -rf app/js/cyph/components/checkout.component.ts
-rm -rf app/js/cyph/components/register.component.ts
-mv app/css app/templates app/js/
 
 for module in cyph-app cyph-common ; do
 	modulePath="app/js/cyph/modules/${module}.module.ts"
@@ -58,8 +49,9 @@ for module in cyph-app cyph-common ; do
 done
 
 find app -type f -name '*.scss' -exec bash -c '
-	scss -C "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
+	scss -C -Iapp/css "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
 ' \;
+cp -rf app/css app/templates app/js/
 
 node -e "
 	const tsconfig	= JSON.parse(
@@ -71,11 +63,6 @@ node -e "
 
 	tsconfig.compilerOptions.outDir	= '.';
 
-	tsconfig.angularCompilerOptions	= {
-		genDir: '.',
-		skipMetadataEmit: true
-	};
-
 	tsconfig.files	= [
 		'app/main.ts',
 		'app/js/preload/global.ts',
@@ -84,27 +71,25 @@ node -e "
 		'typings/index.d.ts'
 	];
 
-	fs.writeFileSync(
-		'tsconfig.json',
-		JSON.stringify(tsconfig)
-	);
+	fs.writeFileSync('tsconfig.json', JSON.stringify(tsconfig));
 "
 
-
-./node_modules/.bin/ngc -p .
+sed -i 's|/platform|/platform-static|g' app/main.ts
+sed -i 's|platformNativeScriptDynamic|platformNativeScript|g' app/main.ts
+./node_modules/@angular/compiler-cli/src/main.js -p .
 sed -i 's|\./app.module|\./app.module.ngfactory|g' app/main.ts
 sed -i 's|AppModule|AppModuleNgFactory|g' app/main.ts
 sed -i 's|bootstrapModule|bootstrapModuleFactory|g' app/main.ts
-./node_modules/.bin/ngc -p .
-rm tsconfig.json
+
 
 for platform in android ios ; do
 	cat > webpack.js <<- EOM
+		const AotPlugin	= require('@ngtools/webpack').AotPlugin;
 		const webpack	= require('webpack');
 
 		module.exports	= {
 			entry: {
-				app: './app/main'
+				app: './app/main.ts'
 			},
 			externals: {
 				$(for plugin in ${plugins} ; do echo "
@@ -113,6 +98,22 @@ for platform in android ios ; do
 				jquery: 'undefined',
 				libsodium: 'self.sodium',
 				simplewebrtc: '{}'
+			},
+			module: {
+				rules: [
+					{
+						test: /\.html$/,
+						use: [{loader: 'raw-loader'}]
+					},
+					{
+						test: /\.css$/,
+						use: [{loader: 'raw-loader'}]
+					},
+					{
+						test: /\.ts$/,
+						use: [{loader: '@ngtools/webpack'}]
+					}
+				]
 			},
 			node: {
 				http: false,
@@ -123,11 +124,21 @@ for platform in android ios ; do
 				filename: 'app/main.${platform}.js',
 				path: '${PWD}'
 			},
+			plugins: [
+				new AotPlugin({
+					entryModule: '${PWD}/app/app.module#AppModule',
+					tsConfigPath: './tsconfig.json'
+				})
+			],
 			resolve: {
 				extensions: [
+					'.ts',
 					'.js',
+					'.html',
 					'.css',
+					'.${platform}.ts',
 					'.${platform}.js',
+					'.${platform}.html',
 					'.${platform}.css'
 				],
 				modules: [
