@@ -78,7 +78,6 @@
     "nativescript-angular": "rc",
     "nativescript-dev-android-snapshot": "^0.0.8",
     "nativescript-dev-typescript": "^0.4.2",
-    "nativescript-dev-webpack": "^0.4.0",
     "nativescript-theme-core": "^1.0.4",
     "node-fetch": "^1.6.3",
     "node-sass": "^4.5.2",
