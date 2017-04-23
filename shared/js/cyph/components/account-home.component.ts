@@ -11,7 +11,7 @@ import {UrlStateService} from '../services/url-state.service';
 @Component({
 	selector: 'cyph-account-home',
 	styleUrls: ['../../css/components/account-home.css'],
-	templateUrl: '../../../templates/account-home.html'
+	templateUrl: '../../templates/account-home.html'
 })
 export class AccountHomeComponent {
 	constructor (

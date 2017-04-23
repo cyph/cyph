@@ -6,6 +6,12 @@ import {HelpComponent} from '../cyph/components/help.component';
 import {CyphAppModule} from '../cyph/modules/cyph-app.module';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
+import {AccountAuthService} from '../cyph/services/account-auth.service';
+import {AccountContactsService} from '../cyph/services/account-contacts.service';
+import {AccountFilesService} from '../cyph/services/account-files.service';
+import {AccountSettingsService} from '../cyph/services/account-settings.service';
+import {AccountUserLookupService} from '../cyph/services/account-user-lookup.service';
+import {AccountService} from '../cyph/services/account.service';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
@@ -24,7 +30,6 @@ import {UrlStateService} from '../cyph/services/url-state.service';
 import {UtilService} from '../cyph/services/util.service';
 import {VirtualKeyboardWatcherService} from '../cyph/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
-import {AccountComponent} from './account.component';
 import {AppComponent} from './app.component';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 import {LockdownComponent} from './lockdown.component';
@@ -36,7 +41,6 @@ import {LockdownComponent} from './lockdown.component';
 @NgModule({
 	bootstrap: [AppComponent],
 	declarations: [
-		AccountComponent,
 		AppComponent,
 		EphemeralChatRootComponent,
 		LockdownComponent
@@ -52,6 +56,12 @@ import {LockdownComponent} from './lockdown.component';
 		CyphWebModule
 	],
 	providers: [
+		AccountService,
+		AccountAuthService,
+		AccountContactsService,
+		AccountFilesService,
+		AccountSettingsService,
+		AccountUserLookupService,
 		AnalyticsService,
 		ConfigService,
 		DialogService,

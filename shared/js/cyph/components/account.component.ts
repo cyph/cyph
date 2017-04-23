@@ -20,7 +20,7 @@ import {UrlStateService} from '../services/url-state.service';
 	],
 	selector: 'cyph-account',
 	styleUrls: ['../../css/components/account.css'],
-	templateUrl: '../../../templates/account.html'
+	templateUrl: '../../templates/account.html'
 })
 export class AccountComponent implements OnInit {
 	/** @see States */

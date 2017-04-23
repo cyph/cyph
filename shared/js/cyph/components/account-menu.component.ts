@@ -12,7 +12,7 @@ import {UrlStateService} from '../services/url-state.service';
 @Component({
 	selector: 'cyph-account-menu',
 	styleUrls: ['../../css/components/account-menu.css'],
-	templateUrl: '../../../templates/account-menu.html'
+	templateUrl: '../../templates/account-menu.html'
 })
 export class AccountMenuComponent {
 	/** @see States */

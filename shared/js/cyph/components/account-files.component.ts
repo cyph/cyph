@@ -12,7 +12,7 @@ import {UtilService} from '../services/util.service';
 @Component({
 	selector: 'cyph-account-files',
 	styleUrls: ['../../css/components/account-files.css'],
-	templateUrl: '../../../templates/account-files.html'
+	templateUrl: '../../templates/account-files.html'
 })
 export class AccountFilesComponent {
 	constructor (
