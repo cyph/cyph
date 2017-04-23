@@ -192,7 +192,7 @@
 		"component-class-suffix": true,
 		/* Pending fix: "component-selector": [true, "element", "cyph", "kebab-case"], */
 		"directive-class-suffix": true,
-		"directive-selector": [true, "attribute", "cyph", "camelCase"],
+		/* Pending fix: "directive-selector": [true, "attribute", "cyph", "camelCase"], */
 		"invoke-injectable": true,
 		"no-access-missing-member": true,
 		"no-attribute-parameter-decorator": true,
