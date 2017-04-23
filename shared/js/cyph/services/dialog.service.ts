@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ComponentType, MdDialog, MdDialogConfig, MdSnackBar} from '@angular/material';
+import 'rxjs/add/operator/toPromise';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {util} from '../util';

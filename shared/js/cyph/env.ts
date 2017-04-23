@@ -92,7 +92,7 @@ export class Env extends EnvDeploy {
 	;
 
 	/** Indicates whether this is Safari. */
-	public readonly isSafari: boolean		= navigator.vendor === 'Apple Computer, Inc.';
+	public readonly isSafari: boolean		= navigatorData.vendor === 'Apple Computer, Inc.';
 
 	/** Indicates whether this should be considered a tablet. */
 	public readonly isTablet: boolean		= this.isMobile && self.outerWidth > 767;

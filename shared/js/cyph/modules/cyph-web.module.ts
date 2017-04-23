@@ -20,8 +20,6 @@ import {
 } from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {DialogAlertComponent} from '../components/dialog-alert.component';
-import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {
 	SmdFabSpeedDialActions,
 	SmdFabSpeedDialComponent,
@@ -35,8 +33,6 @@ import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
  */
 @NgModule({
 	declarations: [
-		DialogAlertComponent,
-		DialogConfirmComponent,
 		NanoScrollerDirective,
 		SmdFabSpeedDialActions,
 		SmdFabSpeedDialComponent,
@@ -45,8 +41,6 @@ import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 	exports: [
 		BrowserAnimationsModule,
 		BrowserModule,
-		DialogAlertComponent,
-		DialogConfirmComponent,
 		FlexLayoutModule,
 		FormsModule,
 		MdButtonModule,
