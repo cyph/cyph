@@ -278,6 +278,7 @@ compile () {
 		cp -rf /node_modules/@angular node_modules/
 	fi
 
+	mainfiles="$(echo "${tsfiles}" | grep -P '/main$')"
 	nonmainfiles="$(echo "${tsfiles}" | grep -vP '/main$')"
 
 	if [ "${watch}" ] ; then
@@ -286,7 +287,7 @@ compile () {
 		tsbuild ${nonmainfiles}
 	fi
 
-	for f in $(echo "${tsfiles}" | grep -P '/main$') ; do
+	for f in ${mainfiles} ; do
 		if [ "${watch}" ] ; then
 			tsbuild --log-tmp-dir "${f}" &
 		else
@@ -327,7 +328,7 @@ compile () {
 			)"
 		fi
 
-		for f in $tsfiles ; do
+		for f in ${nonmainfiles} ${mainfiles} ; do
 			m="$(modulename "${f}")"
 			mainparent="$(echo "${f}" | sed 's|/main$||')"
 			appModule="$(echo "${f}" | sed 's|/main$|app.module|')"
@@ -339,216 +340,204 @@ compile () {
 			htmloutput="${htmldir}/.index.html"
 
 			if [ "${watch}" ] ; then
-				{
-					waitForTmpDir () {
-						while [ ! -f "${f}.tmpdir" ] ; do
-							sleep 1
-						done
-					}
+				waitForTmpDir () {
+					while [ ! -f "${f}.tmpdir" ] ; do
+						sleep 1
+					done
+				}
 
-					currentDir="${PWD}"
+				currentDir="${PWD}"
 
-					if [ "${m}" == 'Main' ] ; then
-						cp -f "${htmlinput}" "${htmloutput}"
-					fi
-
-					waitForTmpDir
-					cd "$(cat "${f}.tmpdir")"
-
-					cat > "${f}.webpack.js" <<- EOM
-						const webpack	= require('webpack');
-
-						module.exports	= {
-							entry: {
-								app: './${f}'
-							},
-							/*
-								externals: {
-									'_stream_duplex': 'undefined',
-									'_stream_writable': 'undefined',
-									'angular': 'self.angular',
-									'faye-websocket': '{Client: self.WebSocket}',
-									'jquery': 'self.jQuery',
-									'libsodium': '{sodium: self.sodium}',
-									'request': 'undefined',
-									'rsvp': 'undefined'
-								},
-							*/
-							output: {
-								filename: '${f}.js.tmp',
-								library: '${m}',
-								libraryTarget: 'var',
-								path: '${currentDir}'
-							},
-							resolve: {
-								alias: {
-									'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
-									'_stream_writable': '${PWD}/externals/_stream_writable.js',
-									'angular': '${PWD}/externals/angular.js',
-									'faye-websocket': '${PWD}/externals/faye-websocket.js',
-									'jquery': '${PWD}/externals/jquery.js',
-									'libsodium': '${PWD}/externals/libsodium.js',
-									'request': '${PWD}/externals/request.js',
-									'rsvp': '${PWD}/externals/rsvp.js'
-								}
-							}
-						};
-					EOM
-
-					webpack --config "${f}.webpack.js"
-
-					echo
-				} &
-
-				continue
-			fi
-
-			enablesplit=''
-			prerender=''
-			if [ "${m}" == 'Main' ] ; then
-				if [ "${minify}" ] ; then
-					if [ "${f}" == 'cyph.com/main' ] ; then
-						prerender=true
-					else
-						enablesplit=true
-						rm -rf $packDirFull 2> /dev/null
-						mkdir $packDirFull
-					fi
-				else
+				if [ "${m}" == 'Main' ] ; then
 					cp -f "${htmlinput}" "${htmloutput}"
 				fi
-			fi
 
-			# Don't use ".js" file extension for Webpack outputs. No idea
-			# why right now, but it breaks the module imports in Session.
-			webpackConfig="{
-				entry: {
-					main: './${f}'
-				},
-				/*
-					externals: {
-						'_stream_duplex': 'undefined',
-						'_stream_writable': 'undefined',
-						'angular': 'self.angular',
-						'faye-websocket': '{Client: self.WebSocket}',
-						'jquery': 'self.jQuery',
-						'libsodium': '{sodium: self.sodium}',
-						'request': 'undefined',
-						'rsvp': 'undefined'
-					},
-				*/
-				output: {
-					$(test "${enablesplit}" || echo "
-						filename: '${f}.js.tmp',
-						library: '${m}',
-						libraryTarget: 'var',
-						path: '${PWD}'
-					")
-					$(test "${enablesplit}" && echo "
-						filename: '[name].js',
-						chunkFilename: '[name].js',
-						path: '${packDirFull}'
-					")
-				},
-				plugins: [
-					$(test "${minify}" && echo "
-						new webpack.LoaderOptionsPlugin({
-							debug: false,
-							minimize: true
-						}),
-						new webpack.optimize.UglifyJsPlugin({
-							compress: false,
-							mangle: {
-								except: JSON.parse(
-									fs.readFileSync('/tmp/mangle.json').toString()
-								)
+				waitForTmpDir
+				cd "$(cat "${f}.tmpdir")"
+
+				cat > "${f}.webpack.js" <<- EOM
+					const webpack	= require('webpack');
+
+					module.exports	= {
+						entry: {
+							app: './${f}'
+						},
+						/*
+							externals: {
+								'_stream_duplex': 'undefined',
+								'_stream_writable': 'undefined',
+								'angular': 'self.angular',
+								'faye-websocket': '{Client: self.WebSocket}',
+								'jquery': 'self.jQuery',
+								'libsodium': '{sodium: self.sodium}',
+								'request': 'undefined',
+								'rsvp': 'undefined'
 							},
-							output: {
-								comments: false
-							},
-							sourceMap: false,
-							test: /\.js(\.tmp)?$/
-						}),
-					")
-					$(test "${enablesplit}" && echo "
-						new webpack.optimize.AggressiveSplittingPlugin({
-							minSize: 30000,
-							maxSize: 50000
-						}),
-						new webpack.optimize.CommonsChunkPlugin({
-							name: 'init',
-							minChunks: Infinity
-						})
-					")
-				],
-				$(test "${enablesplit}" && echo "
-					recordsPath: '${records}',
-				")
-				resolve: {
-					alias: {
-						'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
-						'_stream_writable': '${PWD}/externals/_stream_writable.js',
-						'angular': '${PWD}/externals/angular.js',
-						'faye-websocket': '${PWD}/externals/faye-websocket.js',
-						'jquery': '${PWD}/externals/jquery.js',
-						'libsodium': '${PWD}/externals/libsodium.js',
-						'request': '${PWD}/externals/request.js',
-						'rsvp': '${PWD}/externals/rsvp.js'
-					}
-				}
-			}"
-
-			echo -e "\nPack ${f}\n$({
-				if [ "${enableSplit}" ] ; then
-					time node -e "
-						const cheerio	= require('cheerio');
-						const webpack	= require('webpack');
-
-						webpack(${webpackConfig}, (err, stats) => {$(test "${enablesplit}" && echo "
-							if (err) {
-								throw err;
+						*/
+						output: {
+							filename: '${f}.js.tmp',
+							library: '${m}',
+							libraryTarget: 'var',
+							path: '${currentDir}'
+						},
+						resolve: {
+							alias: {
+								'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
+								'_stream_writable': '${PWD}/externals/_stream_writable.js',
+								'angular': '${PWD}/externals/angular.js',
+								'faye-websocket': '${PWD}/externals/faye-websocket.js',
+								'jquery': '${PWD}/externals/jquery.js',
+								'libsodium': '${PWD}/externals/libsodium.js',
+								'request': '${PWD}/externals/request.js',
+								'rsvp': '${PWD}/externals/rsvp.js'
 							}
+						}
+					};
+				EOM
 
-							const \$	= cheerio.load(fs.readFileSync('${htmlinput}').toString());
-
-							\$('script[src=\"/js/${f}.js\"]').remove();
-
-							for (const chunk of stats.compilation.entrypoints.main.chunks) {
-								for (const file of chunk.files) {
-									\$('body').append(
-										\`<script defer src='/${packDir}/\${file}'></script>\`
-									);
-								}
-							}
-
-							fs.writeFileSync('${htmloutput}', \$.html().trim());
-						")});
-					"
-				else
-					echo "${webpackConfig}" > "${f}.webpack.js"
-
-					if [ "${prerender}" ] ; then
-						ng-render \
-							--template "${htmlinput}" \
-							--module "${appModule}.ts" \
-							--symbol AppModule \
-							--project . \
-							--webpack "${f}.webpack.js" \
-							--output "${htmldir}"
+				webpack --config "${f}.webpack.js"
+			else
+				enablesplit=''
+				prerender=''
+				if [ "${m}" == 'Main' ] ; then
+					if [ "${minify}" ] ; then
+						if [ "${f}" == 'cyph.com/main' ] ; then
+							prerender=true
+						else
+							enablesplit=true
+							rm -rf $packDirFull 2> /dev/null
+							mkdir $packDirFull
+						fi
 					else
-						webpack --config "${f}.webpack.js"
+						cp -f "${htmlinput}" "${htmloutput}"
 					fi
 				fi
-			} 2>&1)\n" 1>&2
-		done
 
-		for f in $tsfiles ; do
-			m="$(modulename "${f}")"
+				# Don't use ".js" file extension for Webpack outputs. No idea
+				# why right now, but it breaks the module imports in Session.
+				webpackConfig="{
+					entry: {
+						main: './${f}'
+					},
+					/*
+						externals: {
+							'_stream_duplex': 'undefined',
+							'_stream_writable': 'undefined',
+							'angular': 'self.angular',
+							'faye-websocket': '{Client: self.WebSocket}',
+							'jquery': 'self.jQuery',
+							'libsodium': '{sodium: self.sodium}',
+							'request': 'undefined',
+							'rsvp': 'undefined'
+						},
+					*/
+					output: {
+						$(test "${enablesplit}" || echo "
+							filename: '${f}.js.tmp',
+							library: '${m}',
+							libraryTarget: 'var',
+							path: '${PWD}'
+						")
+						$(test "${enablesplit}" && echo "
+							filename: '[name].js',
+							chunkFilename: '[name].js',
+							path: '${packDirFull}'
+						")
+					},
+					plugins: [
+						$(test "${minify}" && echo "
+							new webpack.LoaderOptionsPlugin({
+								debug: false,
+								minimize: true
+							}),
+							new webpack.optimize.UglifyJsPlugin({
+								compress: false,
+								mangle: {
+									except: JSON.parse(
+										fs.readFileSync('/tmp/mangle.json').toString()
+									)
+								},
+								output: {
+									comments: false
+								},
+								sourceMap: false,
+								test: /\.js(\.tmp)?$/
+							}),
+						")
+						$(test "${enablesplit}" && echo "
+							new webpack.optimize.AggressiveSplittingPlugin({
+								minSize: 30000,
+								maxSize: 50000
+							}),
+							new webpack.optimize.CommonsChunkPlugin({
+								name: 'init',
+								minChunks: Infinity
+							})
+						")
+					],
+					$(test "${enablesplit}" && echo "
+						recordsPath: '${records}',
+					")
+					resolve: {
+						alias: {
+							'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
+							'_stream_writable': '${PWD}/externals/_stream_writable.js',
+							'angular': '${PWD}/externals/angular.js',
+							'faye-websocket': '${PWD}/externals/faye-websocket.js',
+							'jquery': '${PWD}/externals/jquery.js',
+							'libsodium': '${PWD}/externals/libsodium.js',
+							'request': '${PWD}/externals/request.js',
+							'rsvp': '${PWD}/externals/rsvp.js'
+						}
+					}
+				}"
 
-			if [ "${watch}" ] ; then
-				while [ ! -f "${f}.js.tmp" ] ; do
-					sleep 1
-				done
+				echo -e "\nPack ${f}\n$({
+					if [ "${enableSplit}" ] ; then
+						time node -e "
+							const cheerio	= require('cheerio');
+							const webpack	= require('webpack');
+
+							webpack(${webpackConfig}, (err, stats) => {$(test "${enablesplit}" && echo "
+								if (err) {
+									throw err;
+								}
+
+								const \$	= cheerio.load(fs.readFileSync('${htmlinput}').toString());
+
+								\$('script[src=\"/js/${f}.js\"]').remove();
+
+								for (const chunk of stats.compilation.entrypoints.main.chunks) {
+									for (const file of chunk.files) {
+										\$('body').append(
+											\`<script defer src='/${packDir}/\${file}'></script>\`
+										);
+									}
+								}
+
+								fs.writeFileSync('${htmloutput}', \$.html().trim());
+							")});
+						"
+					else
+						echo "
+							const fs		= require('fs');
+							const webpack	= require('webpack');
+							module.exports	= ${webpackConfig};
+						" > "${f}.webpack.js"
+
+						if [ "${prerender}" ] ; then
+							ng-render \
+								--template "${htmlinput}" \
+								--module "${appModule}.ts" \
+								--symbol AppModule \
+								--project . \
+								--webpack "${f}.webpack.js" \
+								--output "${htmldir}"
+						else
+							webpack --config "${f}.webpack.js"
+						fi
+					fi
+				} 2>&1)\n" 1>&2
 			fi
 
 			if [ "${m}" == 'Main' ] ; then
