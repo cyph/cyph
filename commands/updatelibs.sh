@@ -11,6 +11,7 @@ cd ~/tmplib/js
 
 yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@angular/animations \
+	@angular/cli \
 	@angular/common \
 	@angular/compiler \
 	@angular/compiler-cli \
@@ -22,7 +23,13 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@angular/platform-browser \
 	@angular/platform-browser-dynamic \
 	@angular/platform-server \
+	@angular/platform-webworker \
+	@angular/platform-webworker-dynamic \
 	@angular/router \
+	@angular/service-worker \
+	@ngrx/effects \
+	@ngrx/store \
+	@ngtools/webpack \
 	@types/angular \
 	@types/angular-material \
 	@types/braintree-web \
