@@ -190,7 +190,7 @@
 		/* Codelyzer */
 
 		"component-class-suffix": true,
-		"component-selector": [true, "element", "cyph", "kebab-case"],
+		/* Pending fix: "component-selector": [true, "element", "cyph", "kebab-case"], */
 		"directive-class-suffix": true,
 		"directive-selector": [true, "attribute", "cyph", "camelCase"],
 		"invoke-injectable": true,
