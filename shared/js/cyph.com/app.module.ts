@@ -1,50 +1,14 @@
-import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {FormsModule} from '@angular/forms';
-import {
-	MdButtonModule,
-	MdCardModule,
-	MdDialogModule,
-	MdIconModule,
-	MdInputModule,
-	MdListModule,
-	MdMenuModule,
-	MdProgressBarModule,
-	MdProgressSpinnerModule,
-	MdSelectModule,
-	MdSidenavModule,
-	MdSliderModule,
-	MdSlideToggleModule,
-	MdSnackBarModule,
-	MdTabsModule,
-	MdToolbarModule,
-	MdTooltipModule
-} from '@angular/material';
-import {BrowserModule, Title} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MdSidenavModule, MdSliderModule, MdToolbarModule} from '@angular/material';
+import {Title} from '@angular/platform-browser';
 import {RouterModule} from '@angular/router';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
-import {ChatCyphertextComponent} from '../cyph/components/chat-cyphertext.component';
-import {ChatMainComponent} from '../cyph/components/chat-main.component';
-import {ChatMessageBoxComponent} from '../cyph/components/chat-message-box.component';
-import {ChatMessageListComponent} from '../cyph/components/chat-message-list.component';
-import {ChatMessageComponent} from '../cyph/components/chat-message.component';
 import {CheckoutComponent} from '../cyph/components/checkout.component';
-import {ContactComponent} from '../cyph/components/contact.component';
 import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
 import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
-import {
-	SmdFabSpeedDialActions,
-	SmdFabSpeedDialComponent,
-	SmdFabSpeedDialTrigger
-} from '../cyph/components/fab-speed-dial.tmp';
-import {FileInputComponent} from '../cyph/components/file-input.component';
 import {HelpComponent} from '../cyph/components/help.component';
-import {MarkdownComponent} from '../cyph/components/markdown.component';
-import {SignupFormComponent} from '../cyph/components/signup-form.component';
-import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive';
-import {TranslateDirective} from '../cyph/directives/translate.directive';
+import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
+import {CyphWebModule} from '../cyph/modules/cyph-web.module';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
@@ -78,27 +42,10 @@ import {SilentNotificationService} from './silent-notification.service';
 	declarations: [
 		AppComponent,
 		BetaRegisterComponent,
-		ChatCyphertextComponent,
-		ChatMainComponent,
-		ChatMessageComponent,
-		ChatMessageBoxComponent,
-		ChatMessageListComponent,
 		DemoChatRootComponent,
-		DialogAlertComponent,
-		DialogConfirmComponent,
 		CheckoutComponent,
-		ContactComponent,
 		DemoComponent,
-		FileInputComponent,
-		HelpComponent,
-		MarkdownComponent,
-		NanoScrollerDirective,
-		RouterComponent,
-		SignupFormComponent,
-		TranslateDirective,
-		SmdFabSpeedDialActions,
-		SmdFabSpeedDialComponent,
-		SmdFabSpeedDialTrigger
+		RouterComponent
 	],
 	entryComponents: [
 		BetaRegisterComponent,
@@ -108,28 +55,11 @@ import {SilentNotificationService} from './silent-notification.service';
 	],
 	imports: [
 		RouterModule.forRoot(appRoutes),
-		BrowserAnimationsModule,
-		BrowserModule,
-		CommonModule,
-		FlexLayoutModule,
-		FormsModule,
-		MdButtonModule,
-		MdCardModule,
-		MdDialogModule,
-		MdIconModule,
-		MdInputModule,
-		MdListModule,
-		MdMenuModule,
-		MdProgressBarModule,
-		MdProgressSpinnerModule,
-		MdSelectModule,
+		CyphCommonModule,
+		CyphWebModule,
 		MdSidenavModule,
 		MdSliderModule,
-		MdSlideToggleModule,
-		MdSnackBarModule,
-		MdTabsModule,
-		MdToolbarModule,
-		MdTooltipModule
+		MdToolbarModule
 	],
 	providers: [
 		AnalyticsService,

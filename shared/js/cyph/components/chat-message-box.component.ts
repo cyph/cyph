@@ -19,7 +19,7 @@ import {util} from '../util';
 @Component({
 	selector: 'cyph-chat-message-box',
 	styleUrls: ['../../css/components/chat-message-box.css'],
-	templateUrl: '../../../templates/chat-message-box.html'
+	templateUrl: '../../templates/chat-message-box.html'
 })
 export class ChatMessageBoxComponent implements OnInit {
 	/** @ignore */

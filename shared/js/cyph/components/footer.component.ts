@@ -9,7 +9,7 @@ import {SessionService} from '../services/session.service';
 @Component({
 	selector: 'cyph-footer',
 	styleUrls: ['../../css/components/footer.css'],
-	templateUrl: '../../../templates/footer.html'
+	templateUrl: '../../templates/footer.html'
 })
 export class FooterComponent {
 	constructor (

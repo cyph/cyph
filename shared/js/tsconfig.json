@@ -14,14 +14,10 @@
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
 		"noUnusedLocals": true,
-		"noUnusedParameters": true,
+		/* Pending Angular AOT fix: "noUnusedParameters": true, */
 		"skipLibCheck": true,
 		"strictNullChecks": true,
 		"rootDir": ".",
 		"target": "es5"
-	},
-	"angularCompilerOptions": {
-		"genDir": ".",
-		"skipMetadataEmit" : true
 	}
 }

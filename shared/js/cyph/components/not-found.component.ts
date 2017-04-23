@@ -8,7 +8,7 @@ import {EnvService} from '../services/env.service';
 @Component({
 	selector: 'cyph-not-found',
 	styleUrls: ['../../css/components/not-found.css'],
-	templateUrl: '../../../templates/not-found.html'
+	templateUrl: '../../templates/not-found.html'
 })
 export class NotFoundComponent {
 	constructor (

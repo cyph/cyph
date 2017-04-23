@@ -13,7 +13,7 @@ import {UrlStateService} from '../services/url-state.service';
 @Component({
 	selector: 'cyph-account-contacts',
 	styleUrls: ['../../css/components/account-contacts.css'],
-	templateUrl: '../../../templates/account-contacts.html'
+	templateUrl: '../../templates/account-contacts.html'
 })
 export class AccountContactsComponent {
 	/** @see UserPresence */

@@ -13,7 +13,7 @@ import {Users, users} from '../session/enums';
 @Component({
 	selector: 'cyph-chat-cyphertext',
 	styleUrls: ['../../css/components/chat-cyphertext.css'],
-	templateUrl: '../../../templates/chat-cyphertext.html'
+	templateUrl: '../../templates/chat-cyphertext.html'
 })
 export class ChatCyphertextComponent implements OnInit {
 	/** @see Users */

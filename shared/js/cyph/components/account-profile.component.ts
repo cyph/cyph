@@ -13,7 +13,7 @@ import {UrlStateService} from '../services/url-state.service';
 @Component({
 	selector: 'cyph-account-profile',
 	styleUrls: ['../../css/components/account-profile.css'],
-	templateUrl: '../../../templates/account-profile.html'
+	templateUrl: '../../templates/account-profile.html'
 })
 export class AccountProfileComponent implements OnInit {
 	/** Username of profile owner. */

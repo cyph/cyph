@@ -19,7 +19,7 @@ import {util} from '../util';
 @Component({
 	selector: 'cyph-link-connection',
 	styleUrls: ['../../css/components/link-connection.css'],
-	templateUrl: '../../../templates/link-connection.html'
+	templateUrl: '../../templates/link-connection.html'
 })
 export class LinkConnectionComponent implements OnInit {
 	/** @ignore */

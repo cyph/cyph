@@ -11,7 +11,7 @@ import {UrlStateService} from '../services/url-state.service';
 @Component({
 	selector: 'cyph-account-login',
 	styleUrls: ['../../css/components/account-login.css'],
-	templateUrl: '../../../templates/account-login.html'
+	templateUrl: '../../templates/account-login.html'
 })
 export class AccountLoginComponent {
 	/** Indicates whether login attempt is in progress. */
