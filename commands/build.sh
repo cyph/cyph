@@ -103,10 +103,6 @@ tsbuild () {
 				join('\n')
 		);
 
-		/* For Angular AOT */
-		tsconfig.compilerOptions.noUnusedLocals		= undefined;
-		tsconfig.compilerOptions.noUnusedParameters	= undefined;
-
 		$(test "${watch}" && echo "
 			tsconfig.compilerOptions.lib			= undefined;
 			tsconfig.compilerOptions.target			= 'es2015';
@@ -118,7 +114,6 @@ tsbuild () {
 
 		$(test "${logTmpDir}" || echo "
 			tsconfig.compilerOptions.outDir			= '${currentDir}';
-			tsconfig.angularCompilerOptions.genDir	= '${currentDir}';
 		")
 
 		tsconfig.files	= 'typings/index.d ${*}'.
@@ -152,7 +147,7 @@ tsbuild () {
 		fi
 	} > build.log 2>&1
 
-	echo -e "\nCompile ${*}\n$(cat build.log)\n" 1>&2
+	echo -e "\nCompile ${*}\n$(cat build.log)\n\n" 1>&2
 
 	cd "${currentDir}"
 
@@ -215,48 +210,39 @@ compile () {
 		output="${output}$(../../commands/lint.sh 2>&1)"
 	else
 		find . -type f -name '*.js' -exec rm {} \;
-
-		node -e 'console.log(`
-			self.translations = ${JSON.stringify(
-				child_process.spawnSync("find", [
-					"../../translations",
-					" -type",
-					"f",
-					"-name",
-					"*.json"
-				]).stdout.toString().
-					split("\n").
-					filter(s => s).
-					map(file => ({
-						key: file.split("/").slice(-1)[0].split(".")[0],
-						value: JSON.parse(fs.readFileSync(file).toString())
-					})).
-					reduce((translations, o) => {
-						translations[o.key]	= o.value;
-						return translations;
-					}, {})
-			)};
-		`.trim())' > translations.js
-
-		mkdir externals
-		echo 'module.exports = undefined;' > externals/_stream_duplex.js
-		echo 'module.exports = undefined;' > externals/_stream_writable.js
-		echo 'module.exports = {Client: self.WebSocket};' > externals/faye-websocket.js
-		echo 'module.exports = self.jQuery;' > externals/jquery.js
-		echo 'module.exports = {sodium: self.sodium};' > externals/libsodium.js
-		echo 'module.exports = undefined;' > externals/request.js
-		echo 'module.exports = undefined;' > externals/rsvp.js
 	fi
 
+	node -e 'console.log(`
+		/* tslint:disable */
+
+		(<any> self).translations = ${JSON.stringify(
+			child_process.spawnSync("find", [
+				"../../translations",
+				" -type",
+				"f",
+				"-name",
+				"*.json"
+			]).stdout.toString().
+				split("\n").
+				filter(s => s).
+				map(file => ({
+					key: file.split("/").slice(-1)[0].split(".")[0],
+					value: JSON.parse(fs.readFileSync(file).toString())
+				})).
+				reduce((translations, o) => {
+					translations[o.key]	= o.value;
+					return translations;
+				}, {})
+		)};
+	`.trim())' > translations.ts
+
 	if [ "${watch}" ] ; then
-		find . -type f -name main.ts -exec bash -c "
-			cat '{}' |
-				# grep -v enableProdMode |
-				sed 's|platformBrowser|platformBrowserDynamic|g' |
-				sed 's|platform-browser|platform-browser-dynamic|g' \
-			> '{}.new'
-			mv '{}.new' '{}'
-		" \;
+		# find . -type f -name main.ts -exec bash -c "
+		# 	cat '{}' |
+		# 		grep -v enableProdMode |
+		# 	> '{}.new'
+		# 	mv '{}.new' '{}'
+		# " \;
 
 		for resource in css templates ; do
 			find . -type f -name '*.ts' -exec bash -c "
@@ -282,328 +268,349 @@ compile () {
 
 	if [ "${watch}" ] ; then
 		tsbuild --log-tmp-dir ${nonmainfiles} &
+		for f in ${mainfiles} ; do
+			tsbuild --log-tmp-dir "${f}" &
+		done
 	else
 		tsbuild ${nonmainfiles}
+		cp -rf ../css ../templates ./
 	fi
 
-	for f in ${mainfiles} ; do
+	tsbuild preload/global
+	mv preload/global.js preload/global.js.tmp
+	cat preload/global.js.tmp |
+		if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
+	> "${outputDir}/js/preload/global.js"
+	rm preload/global.js.tmp
+
+	if [ "${minify}" ] ; then
+		for d in . "${outputDir}/js" ; do
+			find "${d}" -type f -name '*.js' -not \( \
+				-name '*.ngfactory.js' \
+				-or -name '*.ngmodule.js' \
+			\) -exec cat {} \; |
+				grep -oP '[A-Za-z_$][A-Za-z0-9_$]*'
+		done |
+			sort |
+			uniq |
+			tr '\n' ' ' \
+		> /tmp/mangle
+
+		node -e "fs.writeFileSync(
+			'/tmp/mangle.json',
+			JSON.stringify(
+				fs.readFileSync('/tmp/mangle').toString().trim().split(/\s+/)
+			)
+		)"
+	fi
+
+	for f in ${nonmainfiles} ${mainfiles} ; do
+		m="$(modulename "${f}")"
+		mainparent="$(echo "${f}" | sed 's|/main$||')"
+		appModule="$(echo "${f}" | sed 's|/main$|/app.module|')"
+		packDir="js/${mainparent}/pack"
+		packDirFull="${outputDir}/${packDir}"
+		records="${rootDir}/${mainparent}/webpack.json"
+		htmldir="${rootDir}/$(echo "${f}" | sed 's/\/.*//')"
+		htmlinput="${htmldir}/index.html"
+		htmloutput="${htmldir}/.index.html"
+
 		if [ "${watch}" ] ; then
-			tsbuild --log-tmp-dir "${f}" &
+			{
+				waitForTmpDir () {
+					while [ ! -f "${f}.tmpdir" ] ; do
+						sleep 1
+					done
+				}
+
+				currentDir="${PWD}"
+
+				if [ "${m}" == 'Main' ] ; then
+					cp -f "${htmlinput}" "${htmloutput}"
+				fi
+
+				waitForTmpDir
+				cd "$(cat "${f}.tmpdir")"
+
+				cat > "${f}.webpack.js" <<- EOM
+					const webpack	= require('webpack');
+
+					module.exports	= {
+						entry: {
+							app: './${f}'
+						},
+						externals: {
+							'_stream_duplex': 'undefined',
+							'_stream_writable': 'undefined',
+							'faye-websocket': '{Client: self.WebSocket}',
+							'jquery': 'self.jQuery',
+							'libsodium': '{sodium: self.sodium}',
+							'request': 'undefined',
+							'rsvp': 'undefined'
+						},
+						output: {
+							filename: '${f}.js.tmp',
+							library: '${m}',
+							libraryTarget: 'var',
+							path: '${currentDir}'
+						}
+					};
+				EOM
+
+				webpack --config "${f}.webpack.js"
+
+				echo
+			} &
+
+			continue
+		fi
+
+		aot=''
+		enablesplit=''
+		prerender=''
+		if [ "${m}" == 'Main' ] ; then
+			aot=true
+			if [ "${test}" ] ; then
+				echo -n
+			elif [ "${minify}" ] ; then
+				# if [ "${f}" == 'cyph.com/main' ] ; then
+				# 	prerender=true
+				# else
+					enablesplit=true
+					rm -rf $packDirFull 2> /dev/null
+					mkdir $packDirFull
+				# fi
+			else
+				cp -f "${htmlinput}" "${htmloutput}"
+			fi
+
+			node -e "
+				const tsconfig	= JSON.parse(
+					fs.readFileSync('tsconfig.json').toString().
+						split('\n').
+						filter(s => s.trim()[0] !== '/').
+						join('\n')
+				);
+
+				tsconfig.files	= ['typings/index.d.ts', '${f}.ts'];
+
+				fs.writeFileSync('tsconfig.json', JSON.stringify(tsconfig));
+			"
+		fi
+
+		# Don't use ".js" file extension for Webpack outputs. No idea
+		# why right now, but it breaks the module imports in Session.
+		webpackConfig="{
+			entry: {
+				main: './${f}$(test "${aot}" && echo -n '.ts')'
+			},
+			externals: {
+				'_stream_duplex': 'undefined',
+				'_stream_writable': 'undefined',
+				'faye-websocket': '{Client: self.WebSocket}',
+				'jquery': 'self.jQuery',
+				'libsodium': '{sodium: self.sodium}',
+				'request': 'undefined',
+				'rsvp': 'undefined'
+			},
+			$(test "${aot}" && echo "
+				module: {
+					rules: [
+						{
+							test: /\.html$/,
+							use: [{loader: 'raw-loader'}]
+						},
+						{
+							test: /\.css$/,
+							use: [{loader: 'raw-loader'}]
+						},
+						{
+							test: /\.ts$/,
+							use: [{loader: '@ngtools/webpack'}]
+						}
+					]
+				},
+			")
+			output: {
+				$(test "${enablesplit}" || echo "
+					filename: '${f}.js.tmp',
+					library: '${m}',
+					libraryTarget: 'var',
+					path: '${PWD}'
+				")
+				$(test "${enablesplit}" && echo "
+					filename: '[name].js',
+					chunkFilename: '[name].js',
+					path: '${packDirFull}'
+				")
+			},
+			plugins: [
+				$(test "${aot}" && echo "
+					new AotPlugin({
+						entryModule: '${PWD}/${appModule}#AppModule',
+						tsConfigPath: './tsconfig.json'
+					}),
+				")
+				$(test "${minify}" && echo "
+					new webpack.LoaderOptionsPlugin({
+						debug: false,
+						minimize: true
+					}),
+					new webpack.optimize.UglifyJsPlugin({
+						compress: false,
+						mangle: {
+							except: JSON.parse(
+								fs.readFileSync('/tmp/mangle.json').toString()
+							)
+						},
+						output: {
+							comments: false
+						},
+						sourceMap: false,
+						test: /\.js(\.tmp)?$/
+					}),
+				")
+				$(test "${enablesplit}" && echo "
+					new webpack.optimize.AggressiveSplittingPlugin({
+						minSize: 30000,
+						maxSize: 50000
+					}),
+					new webpack.optimize.CommonsChunkPlugin({
+						name: 'init',
+						minChunks: Infinity
+					})
+				")
+			],
+			$(test "${enablesplit}" && echo "
+				recordsPath: '${records}',
+			")
+			$(test "${aot}" && echo "
+				resolve: {
+					extensions: ['.ts', '.js', '.html'],
+				}
+			")
+		}"
+
+		if [ "${enableSplit}" ] ; then
+			echo -e "\nPack ${f}\n$({ time node -e "
+				const AotPlugin	= require('@ngtools/webpack').AotPlugin;
+				const cheerio	= require('cheerio');
+				const webpack	= require('webpack');
+
+				webpack(${webpackConfig}, (err, stats) => {$(test "${enablesplit}" && echo "
+					if (err) {
+						throw err;
+					}
+
+					const \$	= cheerio.load(fs.readFileSync('${htmlinput}').toString());
+
+					\$('script[src=\"/js/${f}.js\"]').remove();
+
+					for (const chunk of stats.compilation.entrypoints.main.chunks) {
+						for (const file of chunk.files) {
+							\$('body').append(
+								\`<script defer src='/${packDir}/\${file}'></script>\`
+							);
+						}
+					}
+
+					fs.writeFileSync('${htmloutput}', \$.html().trim());
+				")});
+			"; } 2>&1)" 1>&2
 		else
-			tsbuild "${f}"
-			sed -i 's|\./app.module|\./app.module.ngfactory|g' "${f}.ts"
-			sed -i 's|AppModule|AppModuleNgFactory|g' "${f}.ts"
-			sed -i 's|bootstrapModule|bootstrapModuleFactory|g' "${f}.ts"
-			tsbuild "${f}"
+			echo "
+				const AotPlugin	= require('@ngtools/webpack').AotPlugin;
+				const fs		= require('fs');
+				const webpack	= require('webpack');
+
+				module.exports	= ${webpackConfig};
+			" > "${f}.webpack.js"
+
+			if [ "${prerender}" ] ; then
+				time ng-render \
+					--template "${htmlinput}" \
+					--module "${appModule}.ts" \
+					--symbol AppModule \
+					--project . \
+					--webpack "${f}.webpack.js" \
+					--output "${htmldir}"
+			else
+				time webpack --config "${f}.webpack.js"
+			fi
+		fi
+
+		if (( $? )) && [ "${test}" ] ; then
+			output="${output} "
+		fi
+
+		echo -e '\n\n'
+	done
+
+	if [ "${test}" ] ; then
+		return
+	fi
+
+	for f in $tsfiles ; do
+		m="$(modulename "${f}")"
+
+		if [ "${watch}" ] ; then
+			while [ ! -f "${f}.js.tmp" ] ; do
+				sleep 1
+			done
+		fi
+
+		if [ "${m}" == 'Main' ] ; then
+			if [ -f "${f}.js.tmp" ] ; then
+				mv "${f}.js.tmp" "${outputDir}/js/${f}.js"
+			fi
+
+			continue
+		fi
+
+		{
+			echo '(function () {';
+			cat "${f}.js.tmp";
+			echo "
+				self.${m}	= ${m};
+
+				var keys	= Object.keys(${m});
+				for (var i = 0 ; i < keys.length ; ++i) {
+					var key		= keys[i];
+					self[key]	= ${m}[key];
+				}
+			" |
+				if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
+			;
+			echo '})();';
+		} \
+			> "${outputDir}/js/${f}.js"
+
+		rm "${f}.js.tmp"
+	done
+
+	if [ "${watch}" ] ; then
+		return
+	fi
+
+	for js in $(find . -type f -name '*.js' -not \( \
+		-path './preload/global.js' \
+		-or -name 'translations.js' \
+		-or -path './*/pack/*' \
+	\)) ; do
+		delete=true
+		for f in $tsfiles ; do
+			if [ "${js}" == "./${f}.js" ] ; then
+				delete=''
+			fi
+		done
+		if [ "${delete}" ] ; then
+			rm "${js}"
 		fi
 	done
 
-	if [ ! "${test}" ] ; then
-		tsbuild preload/global
-		mv preload/global.js preload/global.js.tmp
-		cat preload/global.js.tmp |
-			if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
-		> "${outputDir}/js/preload/global.js"
-		rm preload/global.js.tmp
-
-		if [ "${minify}" ] ; then
-			for d in . "${outputDir}/js" ; do
-				find "${d}" -type f -name '*.js' -not \( \
-					-name '*.ngfactory.js' \
-					-or -name '*.ngmodule.js' \
-				\) -exec cat {} \; |
-					grep -oP '[A-Za-z_$][A-Za-z0-9_$]*'
-			done |
-				sort |
-				uniq |
-				tr '\n' ' ' \
-			> /tmp/mangle
-
-			node -e "fs.writeFileSync(
-				'/tmp/mangle.json',
-				JSON.stringify(
-					fs.readFileSync('/tmp/mangle').toString().trim().split(/\s+/)
-				)
-			)"
-		fi
-
-		for f in ${nonmainfiles} ${mainfiles} ; do
-			m="$(modulename "${f}")"
-			mainparent="$(echo "${f}" | sed 's|/main$||')"
-			appModule="$(echo "${f}" | sed 's|/main$|app.module|')"
-			packDir="js/${mainparent}/pack"
-			packDirFull="${outputDir}/${packDir}"
-			records="${rootDir}/${mainparent}/webpack.json"
-			htmldir="${rootDir}/$(echo "${f}" | sed 's/\/.*//')"
-			htmlinput="${htmldir}/index.html"
-			htmloutput="${htmldir}/.index.html"
-
-			if [ "${watch}" ] ; then
-				{
-					waitForTmpDir () {
-						while [ ! -f "${f}.tmpdir" ] ; do
-							sleep 1
-						done
-					}
-
-					currentDir="${PWD}"
-
-					if [ "${m}" == 'Main' ] ; then
-						cp -f "${htmlinput}" "${htmloutput}"
-					fi
-
-					waitForTmpDir
-					cd "$(cat "${f}.tmpdir")"
-
-					cat > "${f}.webpack.js" <<- EOM
-						const webpack	= require('webpack');
-
-						module.exports	= {
-							entry: {
-								app: './${f}'
-							},
-							/*
-								externals: {
-									'_stream_duplex': 'undefined',
-									'_stream_writable': 'undefined',
-									'faye-websocket': '{Client: self.WebSocket}',
-									'jquery': 'self.jQuery',
-									'libsodium': '{sodium: self.sodium}',
-									'request': 'undefined',
-									'rsvp': 'undefined'
-								},
-							*/
-							output: {
-								filename: '${f}.js.tmp',
-								library: '${m}',
-								libraryTarget: 'var',
-								path: '${currentDir}'
-							},
-							resolve: {
-								alias: {
-									'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
-									'_stream_writable': '${PWD}/externals/_stream_writable.js',
-									'faye-websocket': '${PWD}/externals/faye-websocket.js',
-									'jquery': '${PWD}/externals/jquery.js',
-									'libsodium': '${PWD}/externals/libsodium.js',
-									'request': '${PWD}/externals/request.js',
-									'rsvp': '${PWD}/externals/rsvp.js'
-								}
-							}
-						};
-					EOM
-
-					webpack --config "${f}.webpack.js"
-
-					echo
-				} &
-
-				continue
-			fi
-
-			enablesplit=''
-			prerender=''
-			if [ "${m}" == 'Main' ] ; then
-				if [ "${minify}" ] ; then
-					# if [ "${f}" == 'cyph.com/main' ] ; then
-					# 	prerender=true
-					# else
-						enablesplit=true
-						rm -rf $packDirFull 2> /dev/null
-						mkdir $packDirFull
-					# fi
-				else
-					cp -f "${htmlinput}" "${htmloutput}"
-				fi
-			fi
-
-			# Don't use ".js" file extension for Webpack outputs. No idea
-			# why right now, but it breaks the module imports in Session.
-			webpackConfig="{
-				entry: {
-					main: './${f}'
-				},
-				/*
-					externals: {
-						'_stream_duplex': 'undefined',
-						'_stream_writable': 'undefined',
-						'faye-websocket': '{Client: self.WebSocket}',
-						'jquery': 'self.jQuery',
-						'libsodium': '{sodium: self.sodium}',
-						'request': 'undefined',
-						'rsvp': 'undefined'
-					},
-				*/
-				output: {
-					$(test "${enablesplit}" || echo "
-						filename: '${f}.js.tmp',
-						library: '${m}',
-						libraryTarget: 'var',
-						path: '${PWD}'
-					")
-					$(test "${enablesplit}" && echo "
-						filename: '[name].js',
-						chunkFilename: '[name].js',
-						path: '${packDirFull}'
-					")
-				},
-				plugins: [
-					$(test "${minify}" && echo "
-						new webpack.LoaderOptionsPlugin({
-							debug: false,
-							minimize: true
-						}),
-						new webpack.optimize.UglifyJsPlugin({
-							compress: false,
-							mangle: {
-								except: JSON.parse(
-									fs.readFileSync('/tmp/mangle.json').toString()
-								)
-							},
-							output: {
-								comments: false
-							},
-							sourceMap: false,
-							test: /\.js(\.tmp)?$/
-						}),
-					")
-					$(test "${enablesplit}" && echo "
-						new webpack.optimize.AggressiveSplittingPlugin({
-							minSize: 30000,
-							maxSize: 50000
-						}),
-						new webpack.optimize.CommonsChunkPlugin({
-							name: 'init',
-							minChunks: Infinity
-						})
-					")
-				],
-				$(test "${enablesplit}" && echo "
-					recordsPath: '${records}',
-				")
-				resolve: {
-					alias: {
-						'_stream_duplex': '${PWD}/externals/_stream_duplex.js',
-						'_stream_writable': '${PWD}/externals/_stream_writable.js',
-						'faye-websocket': '${PWD}/externals/faye-websocket.js',
-						'jquery': '${PWD}/externals/jquery.js',
-						'libsodium': '${PWD}/externals/libsodium.js',
-						'request': '${PWD}/externals/request.js',
-						'rsvp': '${PWD}/externals/rsvp.js'
-					}
-				}
-			}"
-
-			echo -e "\nPack ${f}\n$({
-				if [ "${enableSplit}" ] ; then
-					time node -e "
-						const cheerio	= require('cheerio');
-						const webpack	= require('webpack');
-
-						webpack(${webpackConfig}, (err, stats) => {$(test "${enablesplit}" && echo "
-							if (err) {
-								throw err;
-							}
-
-							const \$	= cheerio.load(fs.readFileSync('${htmlinput}').toString());
-
-							\$('script[src=\"/js/${f}.js\"]').remove();
-
-							for (const chunk of stats.compilation.entrypoints.main.chunks) {
-								for (const file of chunk.files) {
-									\$('body').append(
-										\`<script defer src='/${packDir}/\${file}'></script>\`
-									);
-								}
-							}
-
-							fs.writeFileSync('${htmloutput}', \$.html().trim());
-						")});
-					"
-				else
-					echo "
-						const fs		= require('fs');
-						const webpack	= require('webpack');
-						module.exports	= ${webpackConfig};
-					" > "${f}.webpack.js"
-
-					if [ "${prerender}" ] ; then
-						ng-render \
-							--template "${htmlinput}" \
-							--module "${appModule}.ts" \
-							--symbol AppModule \
-							--project . \
-							--webpack "${f}.webpack.js" \
-							--output "${htmldir}"
-					else
-						webpack --config "${f}.webpack.js"
-					fi
-				fi
-			} 2>&1)\n" 1>&2
-		done
-
-		for f in $tsfiles ; do
-			m="$(modulename "${f}")"
-
-			if [ "${watch}" ] ; then
-				while [ ! -f "${f}.js.tmp" ] ; do
-					sleep 1
-				done
-			fi
-
-			if [ "${m}" == 'Main' ] ; then
-				if [ -f "${f}.js.tmp" ] ; then
-					mv "${f}.js.tmp" "${outputDir}/js/${f}.js"
-				fi
-
-				continue
-			fi
-
-			{
-				echo '(function () {';
-				cat "${f}.js.tmp";
-				echo "
-					self.${m}	= ${m};
-
-					var keys	= Object.keys(${m});
-					for (var i = 0 ; i < keys.length ; ++i) {
-						var key		= keys[i];
-						self[key]	= ${m}[key];
-					}
-				" |
-					if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
-				;
-				echo '})();';
-			} \
-				> "${outputDir}/js/${f}.js"
-
-			rm "${f}.js.tmp"
-		done
-
-		if [ "${watch}" ] ; then
-			return
-		fi
-
-		for js in $(find . -type f -name '*.js' -not \( \
-			-path './preload/global.js' \
-			-or -name 'translations.js' \
-			-or -path './*/pack/*' \
-		\)) ; do
-			delete=true
-			for f in $tsfiles ; do
-				if [ "${js}" == "./${f}.js" ] ; then
-					delete=''
-				fi
-			done
-			if [ "${delete}" ] ; then
-				rm "${js}"
-			fi
-		done
-
-		find "${outputDir}/js" -type f -name '*.js' -not -path '*/node_modules/*' -exec \
-			sed -i 's|use strict||g' {} \
-		\;
-	fi
+	find "${outputDir}/js" -type f -name '*.js' -not -path '*/node_modules/*' -exec \
+		sed -i 's|use strict||g' {} \
+	\;
 }
 
 if [ "${watch}" ] ; then
@@ -638,4 +645,11 @@ else
 fi
 
 echo -e "${output}"
+if [ "${test}" ] ; then
+	if [ "${#output}" == "0" ] ; then
+		echo PASS
+	else
+		echo FAIL
+	fi
+fi
 exit ${#output}

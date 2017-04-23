@@ -8,7 +8,7 @@
 import '../preload';
 
 import {enableProdMode} from '@angular/core';
-import {platformBrowser} from '@angular/platform-browser';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import 'hammerjs';
 import 'jquery.appear';
 import 'magnific-popup';
@@ -24,7 +24,7 @@ import {AppModule} from './app.module';
 
 
 enableProdMode();
-platformBrowser().bootstrapModule(AppModule);
+platformBrowserDynamic().bootstrapModule(AppModule);
 
 /* Redirect to Onion site when on Tor */
 

@@ -1,53 +1,11 @@
-import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {FormsModule} from '@angular/forms';
-import {
-	MdButtonModule,
-	MdButtonToggleModule,
-	MdCardModule,
-	MdDialogModule,
-	MdIconModule,
-	MdInputModule,
-	MdListModule,
-	MdMenuModule,
-	MdProgressBarModule,
-	MdProgressSpinnerModule,
-	MdSelectModule,
-	MdSlideToggleModule,
-	MdSnackBarModule,
-	MdTabsModule,
-	MdTooltipModule
-} from '@angular/material';
-import {BrowserModule, Title} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {AccountContactsComponent} from '../cyph/components/account-contacts.component';
-import {AccountLoginComponent} from '../cyph/components/account-login.component';
-import {AccountProfileComponent} from '../cyph/components/account-profile.component';
-import {AccountRegisterComponent} from '../cyph/components/account-register.component';
-import {AccountSettingsComponent} from '../cyph/components/account-settings.component';
-import {ChatCyphertextComponent} from '../cyph/components/chat-cyphertext.component';
-import {ChatMainComponent} from '../cyph/components/chat-main.component';
-import {ChatMessageBoxComponent} from '../cyph/components/chat-message-box.component';
-import {ChatMessageListComponent} from '../cyph/components/chat-message-list.component';
-import {ChatMessageComponent} from '../cyph/components/chat-message.component';
-import {ContactComponent} from '../cyph/components/contact.component';
+import {Title} from '@angular/platform-browser';
 import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
 import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
-import {
-	SmdFabSpeedDialActions,
-	SmdFabSpeedDialComponent,
-	SmdFabSpeedDialTrigger
-} from '../cyph/components/fab-speed-dial.tmp';
-import {FileInputComponent} from '../cyph/components/file-input.component';
-import {FooterComponent} from '../cyph/components/footer.component';
 import {HelpComponent} from '../cyph/components/help.component';
-import {LinkConnectionComponent} from '../cyph/components/link-connection.component';
-import {MarkdownComponent} from '../cyph/components/markdown.component';
-import {NotFoundComponent} from '../cyph/components/not-found.component';
-import {SignupFormComponent} from '../cyph/components/signup-form.component';
-import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive';
-import {TranslateDirective} from '../cyph/directives/translate.directive';
+import {CyphAppModule} from '../cyph/modules/cyph-app.module';
+import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
+import {CyphWebModule} from '../cyph/modules/cyph-web.module';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
@@ -79,34 +37,9 @@ import {LockdownComponent} from './lockdown.component';
 	bootstrap: [AppComponent],
 	declarations: [
 		AccountComponent,
-		AccountContactsComponent,
-		AccountLoginComponent,
-		AccountProfileComponent,
-		AccountRegisterComponent,
-		AccountSettingsComponent,
 		AppComponent,
-		ChatCyphertextComponent,
-		ChatMainComponent,
-		ChatMessageComponent,
-		ChatMessageBoxComponent,
-		ChatMessageListComponent,
-		DialogAlertComponent,
-		DialogConfirmComponent,
 		EphemeralChatRootComponent,
-		ContactComponent,
-		FileInputComponent,
-		FooterComponent,
-		HelpComponent,
-		LinkConnectionComponent,
-		LockdownComponent,
-		MarkdownComponent,
-		NanoScrollerDirective,
-		NotFoundComponent,
-		SignupFormComponent,
-		TranslateDirective,
-		SmdFabSpeedDialActions,
-		SmdFabSpeedDialComponent,
-		SmdFabSpeedDialTrigger
+		LockdownComponent
 	],
 	entryComponents: [
 		DialogAlertComponent,
@@ -114,26 +47,9 @@ import {LockdownComponent} from './lockdown.component';
 		HelpComponent
 	],
 	imports: [
-		BrowserAnimationsModule,
-		BrowserModule,
-		CommonModule,
-		FlexLayoutModule,
-		FormsModule,
-		MdButtonModule,
-		MdButtonToggleModule,
-		MdCardModule,
-		MdDialogModule,
-		MdIconModule,
-		MdInputModule,
-		MdListModule,
-		MdMenuModule,
-		MdProgressBarModule,
-		MdProgressSpinnerModule,
-		MdSelectModule,
-		MdSlideToggleModule,
-		MdSnackBarModule,
-		MdTabsModule,
-		MdTooltipModule
+		CyphAppModule,
+		CyphCommonModule,
+		CyphWebModule
 	],
 	providers: [
 		AnalyticsService,

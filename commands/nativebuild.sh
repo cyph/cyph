@@ -7,7 +7,8 @@ dir="$PWD"
 plugins="$(cat shared/js/native/plugins.list)"
 
 cd
-tns create cyph --ng --appid com.cyph.app || exit 1
+# tns create cyph --ng --appid com.cyph.app || exit 1
+tns create cyph --template tns-template-hello-world-ng@rc --appid com.cyph.app || exit 1
 cd cyph
 node -e '
 	const package	= JSON.parse(fs.readFileSync("package.json").toString());
@@ -48,7 +49,13 @@ cp -rf ${dir}/shared/js/cyph app/js/
 rm -rf app/js/cyph/components/material
 rm -rf app/js/cyph/components/checkout.component.ts
 rm -rf app/js/cyph/components/register.component.ts
-mv app/css app/js/
+mv app/css app/templates app/js/
+
+for module in cyph-app cyph-common ; do
+	modulePath="app/js/cyph/modules/${module}.module.ts"
+	cat "${modulePath}" | grep -v CyphWebModule > "${modulePath}.new"
+	mv "${modulePath}.new" "${modulePath}"
+done
 
 find app -type f -name '*.scss' -exec bash -c '
 	scss -C "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
@@ -62,11 +69,12 @@ node -e "
 			join('\n')
 	);
 
-	/* For Angular AOT */
-	tsconfig.compilerOptions.noUnusedLocals		= undefined;
-	tsconfig.compilerOptions.noUnusedParameters	= undefined;
+	tsconfig.compilerOptions.outDir	= '.';
 
-	tsconfig.compilerOptions.outDir				= '.';
+	tsconfig.angularCompilerOptions	= {
+		genDir: '.',
+		skipMetadataEmit: true
+	};
 
 	tsconfig.files	= [
 		'app/main.ts',

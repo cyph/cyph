@@ -8,7 +8,7 @@ import {ChatService} from '../services/chat.service';
 @Component({
 	selector: 'cyph-chat-message-list',
 	styleUrls: ['../../css/components/chat-message-list.css'],
-	templateUrl: '../../../templates/chat-message-list.html'
+	templateUrl: '../../templates/chat-message-list.html'
 })
 export class ChatMessageListComponent {
 	/** @see ChatMessageComponent.mobile */

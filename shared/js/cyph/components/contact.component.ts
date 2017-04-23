@@ -10,7 +10,7 @@ import {util} from '../util';
 @Component({
 	selector: 'cyph-contact',
 	styleUrls: ['../../css/components/contact.css'],
-	templateUrl: '../../../templates/contact.html'
+	templateUrl: '../../templates/contact.html'
 })
 export class ContactComponent {
 	/** @see IEmail */

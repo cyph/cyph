@@ -7,7 +7,7 @@ import {Component} from '@angular/core';
 @Component({
 	selector: 'cyph-dialog-alert',
 	styleUrls: ['../../css/components/dialog-alert.css'],
-	templateUrl: '../../../templates/dialog-alert.html'
+	templateUrl: '../../templates/dialog-alert.html'
 })
 export class DialogAlertComponent {
 	/** Content. */

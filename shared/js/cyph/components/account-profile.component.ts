@@ -8,7 +8,7 @@ import {EnvService} from '../services/env.service';
 @Component({
 	selector: 'cyph-account-profile',
 	styleUrls: ['../../css/components/account-profile.css'],
-	templateUrl: '../../../templates/account-profile.html'
+	templateUrl: '../../templates/account-profile.html'
 })
 export class AccountProfileComponent {
 	constructor (

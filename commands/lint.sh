@@ -29,6 +29,9 @@ node -e "
 			join('\n')
 	);
 
+	/* Pending Angular AOT fix */
+	tsconfig.compilerOptions.noUnusedParameters	= true;
+
 	tsconfig.files	=
 		'$(cd js ; find . -type f -name '*.ts' | tr '\n' ' ')typings/index.d.ts'.split(' ')
 	;

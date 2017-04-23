@@ -10,7 +10,7 @@ import '../preload/custombuild';
 import '../preload';
 
 import {enableProdMode} from '@angular/core';
-import {platformBrowser} from '@angular/platform-browser';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import 'hammerjs';
 import 'magnific-popup';
 import 'nanoscroller';
@@ -23,7 +23,7 @@ import {AppModule} from './app.module';
 
 
 enableProdMode();
-platformBrowser().bootstrapModule(AppModule);
+platformBrowserDynamic().bootstrapModule(AppModule);
 
 /* Request Persistent Storage permission to mitigate
 	edge case eviction of ServiceWorker/AppCache */

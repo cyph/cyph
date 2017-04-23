@@ -9,7 +9,7 @@ import {AppService} from './app.service';
 @Component({
 	selector: 'cyph-account',
 	styleUrls: ['../css/components/cyph.im/account.css'],
-	templateUrl: '../../templates/cyph.im/account.html'
+	templateUrl: '../templates/cyph.im/account.html'
 })
 export class AccountComponent implements OnInit {
 	/** @inheritDoc */

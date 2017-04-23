@@ -12,7 +12,7 @@ import {util} from '../util';
 @Component({
 	selector: 'cyph-checkout',
 	styleUrls: ['../../css/components/checkout.css'],
-	templateUrl: '../../../templates/checkout.html'
+	templateUrl: '../../templates/checkout.html'
 })
 export class CheckoutComponent implements OnInit {
 	/** Amount in dollars. */
