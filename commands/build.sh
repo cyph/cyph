@@ -4,6 +4,16 @@ outputDir="$PWD"
 cd $(cd "$(dirname "$0")" ; pwd)/..
 rootDir="$PWD"
 
+externals="{
+	'_stream_duplex': 'undefined',
+	'_stream_writable': 'undefined',
+	'faye-websocket': '{Client: self.WebSocket}',
+	'jquery': 'self.jQuery',
+	'libsodium': '{sodium: self.sodium}',
+	'request': 'undefined',
+	'rsvp': 'undefined'
+}"
+
 
 cloneworkingdir=''
 test=''
@@ -236,6 +246,14 @@ compile () {
 		)};
 	`.trim())' > translations.ts
 
+	mkdir externals
+	node -e "
+		const externals	= ${externals};
+		for (const k of Object.keys(externals)) {
+			fs.writeFileSync(\`module.exports = \${externals[k]};\`, \`externals/\${k}.js\`);
+		}
+	"
+
 	if [ "${watch}" ] ; then
 		# find . -type f -name main.ts -exec bash -c "
 		# 	cat '{}' |
@@ -339,15 +357,7 @@ compile () {
 						entry: {
 							app: './${f}'
 						},
-						externals: {
-							'_stream_duplex': 'undefined',
-							'_stream_writable': 'undefined',
-							'faye-websocket': '{Client: self.WebSocket}',
-							'jquery': 'self.jQuery',
-							'libsodium': '{sodium: self.sodium}',
-							'request': 'undefined',
-							'rsvp': 'undefined'
-						},
+						externals: ${externals},
 						output: {
 							filename: '${f}.js.tmp',
 							library: '${m}',
@@ -366,17 +376,18 @@ compile () {
 		fi
 
 		aot=''
-		enablesplit=''
+		enableSplit=''
 		prerender=''
 		if [ "${m}" == 'Main' ] ; then
 			aot=true
+
 			if [ "${test}" ] ; then
 				echo -n
 			elif [ "${minify}" ] ; then
 				# if [ "${f}" == 'cyph.com/main' ] ; then
 				# 	prerender=true
 				# else
-					enablesplit=true
+					enableSplit=true
 					rm -rf $packDirFull 2> /dev/null
 					mkdir $packDirFull
 				# fi
@@ -404,15 +415,9 @@ compile () {
 			entry: {
 				main: './${f}$(test "${aot}" && echo -n '.ts')'
 			},
-			externals: {
-				'_stream_duplex': 'undefined',
-				'_stream_writable': 'undefined',
-				'faye-websocket': '{Client: self.WebSocket}',
-				'jquery': 'self.jQuery',
-				'libsodium': '{sodium: self.sodium}',
-				'request': 'undefined',
-				'rsvp': 'undefined'
-			},
+			$(test "${aot}" || echo "
+				externals: ${externals},
+			")
 			$(test "${aot}" && echo "
 				module: {
 					rules: [
@@ -432,13 +437,13 @@ compile () {
 				},
 			")
 			output: {
-				$(test "${enablesplit}" || echo "
+				$(test "${enableSplit}" || echo "
 					filename: '${f}.js.tmp',
 					library: '${m}',
 					libraryTarget: 'var',
 					path: '${PWD}'
 				")
-				$(test "${enablesplit}" && echo "
+				$(test "${enableSplit}" && echo "
 					filename: '[name].js',
 					chunkFilename: '[name].js',
 					path: '${packDirFull}'
@@ -470,7 +475,7 @@ compile () {
 						test: /\.js(\.tmp)?$/
 					}),
 				")
-				$(test "${enablesplit}" && echo "
+				$(test "${enableSplit}" && echo "
 					new webpack.optimize.AggressiveSplittingPlugin({
 						minSize: 30000,
 						maxSize: 50000
@@ -481,14 +486,20 @@ compile () {
 					})
 				")
 			],
-			$(test "${enablesplit}" && echo "
+			$(test "${enableSplit}" && echo "
 				recordsPath: '${records}',
 			")
-			$(test "${aot}" && echo "
-				resolve: {
-					extensions: ['.ts', '.js', '.html'],
-				}
-			")
+			resolve: {
+				$(test "${enableSplit}" && echo "
+					alias: Object.keys(${externals}).reduce((o, k) => {
+						o[k]	= \`${PWD}/externals/\${k}.js\`;
+						return o;
+					}, {}),
+				")
+				$(test "${aot}" && echo "
+					extensions: ['.ts', '.js', '.html']
+				")
+			}
 		}"
 
 		if [ "${enableSplit}" ] ; then
@@ -497,7 +508,7 @@ compile () {
 				const cheerio	= require('cheerio');
 				const webpack	= require('webpack');
 
-				webpack(${webpackConfig}, (err, stats) => {$(test "${enablesplit}" && echo "
+				webpack(${webpackConfig}, (err, stats) => {$(test "${enableSplit}" && echo "
 					if (err) {
 						throw err;
 					}
