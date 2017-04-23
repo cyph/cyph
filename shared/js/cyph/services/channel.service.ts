@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {env} from '../env';
 import {IChannelHandlers} from '../session/ichannel-handlers';
 import {util} from '../util';
 import {DatabaseService} from './database.service';
@@ -14,11 +15,19 @@ export class ChannelService {
 	private channelRef: firebase.database.Reference;
 
 	/** @ignore */
+	private chunkSize: number		= env.isSafari ? 30720 : 5242880;
+
+	/** @ignore */
 	private readonly handlers: Promise<IChannelHandlers>	=
 		/* tslint:disable-next-line:promise-must-complete */
 		new Promise<IChannelHandlers>(resolve => {
 			this.resolveHandlers	= resolve;
 		})
+	;
+
+	/** @ignore */
+	private readonly incomingMessages: Map<string, Map<number, string>>	=
+		new Map<string, Map<number, string>>()
 	;
 
 	/** @ignore */
@@ -35,6 +44,9 @@ export class ChannelService {
 
 	/** @ignore */
 	private resolveHandlers: (handlers: IChannelHandlers) => void;
+
+	/** @ignore */
+	private sendLock: {}	= {};
 
 	/** @ignore */
 	private userId: string;
@@ -120,11 +132,41 @@ export class ChannelService {
 
 		util.retryUntilSuccessful(() =>
 			this.messagesRef.on('child_added', (snapshot: firebase.database.DataSnapshot) => {
-				const o: any	= snapshot.val();
+				const o: {
+					chunkIndex: number;
+					cyphertext: string;
+					id: string;
+					numChunks: number;
+					sender: string;
+					timestamp: number;
+				}	=
+					snapshot.val()
+				;
 
-				if (o.sender !== this.userId) {
-					handlers.onMessage(o.cyphertext);
+				if (o.sender === this.userId) {
+					return;
 				}
+
+				const incomingMessage	= util.getOrSetDefault(
+					this.incomingMessages,
+					o.id,
+					() => new Map<number, string>()
+				);
+
+				incomingMessage.set(o.chunkIndex, o.cyphertext);
+
+				if (incomingMessage.size !== o.numChunks) {
+					return;
+				}
+
+				const message	= Array.from(incomingMessage.keys()).
+					sort((a, b) => a - b).
+					map(k => incomingMessage.get(k)).
+					join('')
+				;
+
+				this.incomingMessages.delete(o.id);
+				handlers.onMessage(message);
 			})
 		);
 	}
@@ -137,16 +179,24 @@ export class ChannelService {
 	/** Sends message through this channel. */
 	public async send (message: string) : Promise<void> {
 		try {
-			await util.retryUntilSuccessful(async () => {
+			await util.lock(this.sendLock, async () => {
 				if (this.isClosed) {
 					return;
 				}
 
-				await this.messagesRef.push({
-					cyphertext: message,
-					sender: this.userId,
-					timestamp: util.timestamp()
-				});
+				const id		= util.generateGuid();
+				const numChunks	= Math.ceil(message.length / this.chunkSize);
+
+				for (let chunkIndex = 0 ; chunkIndex < numChunks ; ++chunkIndex) {
+					await util.retryUntilSuccessful(async () => this.messagesRef.push({
+						chunkIndex,
+						id,
+						numChunks,
+						cyphertext: message.substr(chunkIndex * this.chunkSize, this.chunkSize),
+						sender: this.userId,
+						timestamp: util.timestamp()
+					}));
+				}
 			});
 		}
 		catch (err) {

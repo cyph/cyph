@@ -11,10 +11,26 @@
 				"messages": {
 					"$message": {
 						".write": "!data.exists() && newData.exists()",
-						".validate": "newData.hasChildren(['cyphertext', 'sender', 'timestamp'])",
+						".validate": "newData.hasChildren([
+							'chunkIndex',
+							'cyphertext',
+							'id',
+							'numChunks',
+							'sender',
+							'timestamp'
+						])",
 
+						"chunkIndex": {
+							".validate": "newData.isNumber()"
+						},
 						"cyphertext": {
 							".validate": "newData.isString()"
+						},
+						"id": {
+							".validate": "newData.isString()"
+						},
+						"numChunks": {
+							".validate": "newData.isNumber()"
 						},
 						"sender": {
 							".validate": "
