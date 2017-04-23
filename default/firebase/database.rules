@@ -11,19 +11,33 @@
 				"messages": {
 					"$message": {
 						".write": "!data.exists() && newData.exists()",
-						".validate": "newData.hasChildren(['cyphertext', 'sender', 'timestamp'])",
+						".validate": "newData.hasChildren([
+							'chunkIndex',
+							'cyphertext',
+							'id',
+							'numChunks',
+							'sender',
+							'timestamp'
+						])",
 
+						"chunkIndex": {
+							".validate": "newData.isNumber()"
+						},
 						"cyphertext": {
 							".validate": "newData.isString()"
 						},
-
+						"id": {
+							".validate": "newData.isString()"
+						},
+						"numChunks": {
+							".validate": "newData.isNumber()"
+						},
 						"sender": {
 							".validate": "
 								newData.isString() &&
 								root.child('channels').child($channel).child('users').child(newData.val()).exists()
 							"
 						},
-
 						"timestamp": {
 							".validate": "newData.isNumber() && newData.val() < (now + 2500)"
 						},
@@ -42,54 +56,6 @@
 							(newData.val() == '' || newData.val() == $user)
 						"
 					}
-				}
-			}
-		},
-
-		"users": {
-			"$user": {
-				".read": "$user == auth.token.name",
-				".write": "$user == auth.token.name",
-
-				"certificate": {
-					".read": true,
-					".write": false,
-					".validate": "newData.isString()"
-				},
-
-				"contacts": {
-					"$contact": {
-						"messages": {
-							"$message": {
-								".validate": "newData.isString()"
-							}
-						},
-						"session": {
-							".validate": "newData.isString()"
-						}
-					}
-				},
-
-				"encryptionKeyPair": {
-					".validate": "newData.isString()"
-				},
-
-				"loginData": {
-					".read": true,
-					".validate": "newData.isString()"
-				},
-
-				"publicProfile": {
-					".read": true,
-					".validate": "newData.isString()"
-				},
-
-				"settings": {
-					".validate": "newData.isString()"
-				},
-
-				"signingKeyPair": {
-					".validate": "newData.isString()"
 				}
 			}
 		}

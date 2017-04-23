@@ -12,14 +12,6 @@ export class Transport {
 	/** @ignore */
 	private static readonly cyphertextLimit: number	= 200000;
 
-	/** @ignore */
-	public static readonly chunkLength: number		= 5000000;
-
-
-	/** @ignore */
-	private readonly receivedMessages: Map<number, {data: Uint8Array; totalChunks: number}>	=
-		new Map<number, {data: Uint8Array; totalChunks: number}>()
-	;
 
 	/** Queue of cyphertext interception handlers. */
 	public readonly cyphertextIntercepters: ((cyphertext: Uint8Array) => void)[]	= [];
@@ -84,41 +76,18 @@ export class Transport {
 	) : void {
 		this.logCyphertext(potassiumUtil.toBase64(cyphertext), author);
 
-		const id: number		= plaintext.getFloat64(0, true);
-		const timestamp: number	= plaintext.getFloat64(8, true);
-		const numBytes: number	= plaintext.getFloat64(16, true);
-		const numChunks: number	= plaintext.getFloat64(24, true);
-		const index: number		= plaintext.getFloat64(32, true);
+		const timestamp: number	= plaintext.getFloat64(0, true);
+		const data: Uint8Array	= new Uint8Array(plaintext.buffer, plaintext.byteOffset + 8);
+		const dataString		= potassiumUtil.toString(data);
 
-		const chunk: Uint8Array	= new Uint8Array(
-			plaintext.buffer,
-			plaintext.byteOffset + 40
-		);
-
-		const message			= util.getOrSetDefault(
-			this.receivedMessages,
-			id,
-			() => ({data: new Uint8Array(numBytes), totalChunks: 0})
-		);
-
-		message.data.set(chunk, index);
-		potassiumUtil.clearMemory(plaintext);
-
-		if (++message.totalChunks !== numChunks) {
-			return;
-		}
-
-		const messageData	= potassiumUtil.toString(message.data);
-
-		if (messageData) {
+		if (dataString) {
 			this.session.trigger(events.castle, {
-				data: {author, plaintext: messageData, timestamp},
+				data: {author, plaintext: dataString, timestamp},
 				event: CastleEvents.receive
 			});
 		}
 
-		potassiumUtil.clearMemory(message.data);
-		this.receivedMessages.delete(id);
+		potassiumUtil.clearMemory(data);
 	}
 
 	/**

@@ -100,6 +100,9 @@ export class Env extends EnvDeploy {
 		typeof (<any> self).require === 'function'
 	;
 
+	/** Indicates whether this is Safari. */
+	public readonly isSafari: boolean		= navigator.vendor === 'Apple Computer, Inc.';
+
 	/** Indicates whether this should be considered a tablet. */
 	public readonly isTablet: boolean		= this.isMobile && self.outerWidth > 767;
 

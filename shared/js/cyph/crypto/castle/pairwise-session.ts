@@ -1,4 +1,3 @@
-import {config} from '../../config';
 import {util} from '../../util';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
@@ -231,70 +230,26 @@ export class PairwiseSession {
 
 		return util.lock(this.locks.send, async () => {
 			const plaintextBytes: Uint8Array	= this.potassium.fromString(plaintext);
+			const timestampBytes: Float64Array	= new Float64Array([timestamp]);
 
-			const id: Float64Array				= new Float64Array([
-				util.random(config.maxSafeUint)
-			]);
+			let data: Uint8Array	= this.potassium.concatMemory(
+				true,
+				timestampBytes,
+				plaintextBytes
+			);
 
-			const timestampBytes: Float64Array	= new Float64Array([
-				timestamp
-			]);
-
-			const numBytes: Float64Array		= new Float64Array([
-				plaintextBytes.length
-			]);
-
-			const numChunks: Float64Array		= new Float64Array([
-				Math.ceil(plaintextBytes.length / Transport.chunkLength)
-			]);
-
-			const i	= new Float64Array(1);
-			while (
-				i[0] < plaintextBytes.length ||
-				(i[0] === 0 && plaintextBytes.length === 0)
-			) {
-				const chunk: Uint8Array	= new Uint8Array(
-					plaintextBytes.buffer,
-					i[0],
-					Math.min(
-						Transport.chunkLength,
-						plaintextBytes.length - i[0]
-					)
-				);
-
-				let data: Uint8Array	= this.potassium.concatMemory(
-					false,
-					id,
-					timestampBytes,
-					numBytes,
-					numChunks,
-					i,
-					chunk
-				);
-
-				/* Part 2 of handshake for Bob */
-				if (this.remoteUser) {
-					const oldData	= data;
-					data			= await this.handshakeSendSecret(oldData);
-					this.potassium.clearMemory(oldData);
-				}
-
-				const messageId		= this.newMessageId();
-				const cyphertext	= await (await this.core).encrypt(data, messageId);
-
-				this.potassium.clearMemory(data);
-
-				this.transport.send(cyphertext, messageId);
-
-				i[0] += Transport.chunkLength;
+			/* Part 2 of handshake for Bob */
+			if (this.remoteUser) {
+				const oldData	= data;
+				data			= await this.handshakeSendSecret(oldData);
+				this.potassium.clearMemory(oldData);
 			}
 
-			this.potassium.clearMemory(plaintextBytes);
-			this.potassium.clearMemory(id);
-			this.potassium.clearMemory(timestampBytes);
-			this.potassium.clearMemory(numBytes);
-			this.potassium.clearMemory(numChunks);
-			this.potassium.clearMemory(i);
+			const messageId		= this.newMessageId();
+			const cyphertext	= await (await this.core).encrypt(data, messageId);
+
+			this.potassium.clearMemory(data);
+			this.transport.send(cyphertext, messageId);
 		});
 	}
 
