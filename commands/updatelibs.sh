@@ -87,7 +87,6 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	nativescript-angular@rc \
 	nativescript-dev-android-snapshot \
 	nativescript-dev-typescript \
-	nativescript-dev-webpack \
 	nativescript-theme-core \
 	node-fetch \
 	node-sass \
