@@ -401,13 +401,13 @@ compile () {
 				prerender=''
 				if [ "${m}" == 'Main' ] ; then
 					if [ "${minify}" ] ; then
-						if [ "${f}" == 'cyph.com/main' ] ; then
-							prerender=true
-						else
+						# if [ "${f}" == 'cyph.com/main' ] ; then
+						# 	prerender=true
+						# else
 							enablesplit=true
 							rm -rf $packDirFull 2> /dev/null
 							mkdir $packDirFull
-						fi
+						# fi
 					else
 						cp -f "${htmlinput}" "${htmloutput}"
 					fi
