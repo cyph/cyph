@@ -47,6 +47,9 @@ if [ "${simple}" ] ; then
 	websign=''
 else
 	cacheBustedProjects="$(echo "${cacheBustedProjects}" | sed "s|${webSignedProject}||")"
+fi
+
+if [ "${websign}" ] ; then
 	./commands/keycache.sh
 fi
 
@@ -325,18 +328,6 @@ for d in $compiledProjects ; do
 
 	cd ..
 done
-if [ ! "${test}" ] ; then
-	currentDir="$PWD"
-	for f in */webpack.json ; do
-		cp -f $f "${dir}/${f}"
-		chmod 700 "${dir}/${f}"
-	done
-	cd "${dir}"
-	git commit -m 'webpack.json update' */webpack.json
-	git push
-	cd "${currentDir}"
-	currentDir=''
-fi
 touch .build.done
 
 

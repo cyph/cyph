@@ -222,6 +222,14 @@ compile () {
 		find . -type f -name '*.js' -exec rm {} \;
 	fi
 
+	dependencyModules="$(
+		grep -roP "(import|from) '[@A-Za-z0-9][^' ]*';" |
+			perl -pe "s/.*?'(.*)';/\1/g" |
+			sort |
+			uniq |
+			tr '\n' ' '
+	)"
+
 	node -e 'console.log(`
 		/* tslint:disable */
 
@@ -303,7 +311,7 @@ compile () {
 
 	if [ "${minify}" ] ; then
 		for d in . "${outputDir}/js" ; do
-			find "${d}" -type f -name '*.js' -not \( \
+			find "${d}" -type f \( -name '*.js' -or -name '*.ts' \) -not \( \
 				-name '*.ngfactory.js' \
 				-or -name '*.ngmodule.js' \
 			\) -exec cat {} \; |
@@ -328,7 +336,6 @@ compile () {
 		appModule="$(echo "${f}" | sed 's|/main$|/app.module|')"
 		packDir="js/${mainparent}/pack"
 		packDirFull="${outputDir}/${packDir}"
-		records="${rootDir}/${mainparent}/webpack.json"
 		htmldir="${rootDir}/$(echo "${f}" | sed 's/\/.*//')"
 		htmlinput="${htmldir}/index.html"
 		htmloutput="${htmldir}/.index.html"
@@ -412,12 +419,14 @@ compile () {
 		# Don't use ".js" file extension for Webpack outputs. No idea
 		# why right now, but it breaks the module imports in Session.
 		webpackConfig="{
-			entry: {
-				main: './${f}$(test "${aot}" && echo -n '.ts')'
-			},
-			$(test "${enableSplit}" || echo "
-				externals: ${externals},
-			")
+			entry: chunks.concat({
+				name: 'main',
+				path: './${f}$(test "${aot}" && echo -n '.ts')'
+			}).reduce(
+				(o, chunk) => { o[chunk.name] = chunk.path; return o; },
+				{}
+			),
+			externals: ${externals},
 			$(test "${aot}" && echo "
 				module: {
 					rules: [
@@ -473,29 +482,25 @@ compile () {
 						},
 						sourceMap: false,
 						test: /\.js(\.tmp)?$/
-					}),
-				")
-				$(test "${enableSplit}" && echo "
-					new webpack.optimize.AggressiveSplittingPlugin({
-						minSize: 30000,
-						maxSize: 50000
-					}),
-					new webpack.optimize.CommonsChunkPlugin({
-						name: 'init',
-						minChunks: Infinity
 					})
 				")
-			],
-			$(test "${enableSplit}" && echo "
-				recordsPath: '${records}',
-			")
-			resolve: {
+			].concat(
+				$(test "${enableSplit}" || echo '[]')
 				$(test "${enableSplit}" && echo "
-					alias: Object.keys(${externals}).reduce((o, k) => {
-						o[k]	= \`${PWD}/externals/\${k}.js\`;
-						return o;
-					}, {}),
+					chunks.map(chunk =>
+						new webpack.optimize.CommonsChunkPlugin({
+							name: 'commons__' + chunk.name,
+							chunks: ['main', chunk.name]
+						})
+					).concat(
+						new webpack.optimize.CommonsChunkPlugin({
+							name: 'init',
+							minChunks: Infinity
+						})
+					)
 				")
+			),
+			resolve: {
 				$(test "${aot}" && echo "
 					extensions: ['.ts', '.js', '.html']
 				")
@@ -506,7 +511,28 @@ compile () {
 			echo -e "\nPack ${f}\n$({ time node -e "
 				const AotPlugin	= require('@ngtools/webpack').AotPlugin;
 				const cheerio	= require('cheerio');
+				const glob		= require('glob');
 				const webpack	= require('webpack');
+
+				const chunks	=
+					'${dependencyModules}'.trim().split(/\s+/).
+						concat('./cyph/thread').
+						/*
+							Disabled for now because it makes the build take
+							a long time and doesn't seem to add much benefit.
+
+							concat(
+								glob.sync('./cyph/components/**.ts').
+									map(path => path.slice(0, -3)).
+									map(path => [path, path + '.ngfactory']).
+									reduce((a, b) => a.concat(b))
+							).
+						*/
+						map(path => ({
+							path,
+							name: path.replace(/\//g, '_')
+						}))
+				;
 
 				webpack(${webpackConfig}, (err, stats) => {$(test "${enableSplit}" && echo "
 					if (err) {
@@ -517,12 +543,17 @@ compile () {
 
 					\$('script[src=\"/js/${f}.js\"]').remove();
 
-					for (const chunk of stats.compilation.entrypoints.main.chunks) {
-						for (const file of chunk.files) {
-							\$('body').append(
-								\`<script defer src='/${packDir}/\${file}'></script>\`
-							);
-						}
+					for (
+						const file of ['init.js'].concat(
+							stats.compilation.entrypoints.main.chunks.
+								map(chunk => chunk.files).
+								reduce((a, b) => a.concat(b)).
+								filter(file => file !== 'init.js')
+						)
+					) {
+						\$('body').append(
+							\`<script defer src='/${packDir}/\${file}'></script>\`
+						);
 					}
 
 					fs.writeFileSync('${htmloutput}', \$.html().trim());
@@ -533,6 +564,8 @@ compile () {
 				const AotPlugin	= require('@ngtools/webpack').AotPlugin;
 				const fs		= require('fs');
 				const webpack	= require('webpack');
+
+				const chunks	= [];
 
 				module.exports	= ${webpackConfig};
 			" > "${f}.webpack.js"
