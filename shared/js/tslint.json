@@ -226,7 +226,7 @@
 		"no-empty-line-after-opening-brace": true,
 		"no-exec-script": true,
 		"no-for-in": true,
-		"no-function-constructor-with-string-args": false, /* Pending fix: true */
+		"no-function-constructor-with-string-args": true,
 		"no-increment-decrement": false,
 		"no-inner-html": true,
 		"no-invalid-regexp": true,
@@ -234,9 +234,9 @@
 		"no-octal-literal": true,
 		"no-reserved-keywords": true,
 		"no-stateless-class": true,
-		"no-string-based-set-immediate": false, /* Pending fix: true */
-		"no-string-based-set-interval": false, /* Pending fix: true */
-		"no-string-based-set-timeout": false, /* Pending fix: true */
+		"no-string-based-set-immediate": true,
+		"no-string-based-set-interval": true,
+		"no-string-based-set-timeout": true,
 		"no-unnecessary-bind": true,
 		"no-unnecessary-field-initialization": true,
 		"no-unnecessary-local-variable": true,
