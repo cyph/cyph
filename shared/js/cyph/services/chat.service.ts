@@ -26,10 +26,10 @@ export class ChatService {
 
 
 	/** @ignore */
-	private readonly messageChangeLock: {}	= {};
+	private messageChangeLock: {}	= {};
 
 	/** @see IChatData */
-	public readonly chat: IChatData	= {
+	public chat: IChatData	= {
 		currentMessage: '',
 		isConnected: false,
 		isDisconnected: false,
