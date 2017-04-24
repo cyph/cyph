@@ -415,7 +415,7 @@ compile () {
 			entry: {
 				main: './${f}$(test "${aot}" && echo -n '.ts')'
 			},
-			$(test "${aot}" || echo "
+			$(test "${enableSplit}" || echo "
 				externals: ${externals},
 			")
 			$(test "${aot}" && echo "
