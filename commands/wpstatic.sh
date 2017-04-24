@@ -43,7 +43,7 @@ sshkill () {
 		grep -P "ssh.*${sshServer}" |
 		grep -v grep |
 		awk '{print $2}' |
-		xargs kill -9
+		xargs -r kill -9
 }
 
 while [ ! -f index.html ] ; do
