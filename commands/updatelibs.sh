@@ -29,7 +29,9 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@angular/service-worker \
 	@ngrx/core \
 	@ngrx/effects \
+	@ngrx/router-store \
 	@ngrx/store \
+	@ngrx/store-devtools \
 	@ngtools/webpack \
 	@types/angular \
 	@types/angular-material \
@@ -71,6 +73,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	htmlencode \
 	htmllint \
 	image-type \
+	immutable@rc \
 	jquery \
 	konami-code.js \
 	lazy \
