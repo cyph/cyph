@@ -61,7 +61,9 @@ output="$({
 			}
 		})
 	' \;;
-})"
+} 2>&1 |
+	grep -v 'Warning: Lint.createLanguageServiceHost is not a function'
+)"
 
 # Retire.js
 
