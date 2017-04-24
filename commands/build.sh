@@ -254,14 +254,6 @@ compile () {
 		)};
 	`.trim())' > translations.ts
 
-	mkdir externals
-	node -e "
-		const externals	= ${externals};
-		for (const k of Object.keys(externals)) {
-			fs.writeFileSync(\`module.exports = \${externals[k]};\`, \`externals/\${k}.js\`);
-		}
-	"
-
 	if [ "${watch}" ] ; then
 		# find . -type f -name main.ts -exec bash -c "
 		# 	cat '{}' |
