@@ -201,7 +201,7 @@
 		"no-output-rename": true,
 		"no-unused-css": true,
 		"pipe-impure": true,
-		"pipe-naming": [true, "camelCase", "cyph"],
+		/* Pending fix: "pipe-naming": [true, "camelCase", "cyph"], */
 		"templates-use-public": true,
 		"use-host-property-decorator": true,
 		"use-input-property-decorator": true,
