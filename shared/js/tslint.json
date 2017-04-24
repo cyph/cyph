@@ -190,9 +190,9 @@
 		/* Codelyzer */
 
 		"component-class-suffix": true,
-		/* Pending fix: "component-selector": [true, "element", "cyph", "kebab-case"], */
+		"component-selector": false, /* Pending fix: [true, "element", "cyph", "kebab-case"] */
 		"directive-class-suffix": true,
-		/* Pending fix: "directive-selector": [true, "attribute", "cyph", "camelCase"], */
+		"directive-selector": false, /* Pending fix: [true, "attribute", "cyph", "camelCase"] */
 		"invoke-injectable": true,
 		"no-access-missing-member": true,
 		"no-attribute-parameter-decorator": true,
@@ -201,7 +201,7 @@
 		"no-output-rename": true,
 		"no-unused-css": true,
 		"pipe-impure": true,
-		/* Pending fix: "pipe-naming": [true, "camelCase", "cyph"], */
+		"pipe-naming": false, /* Pending fix: [true, "camelCase", "cyph"] */
 		"templates-use-public": true,
 		"use-host-property-decorator": true,
 		"use-input-property-decorator": true,
@@ -226,7 +226,7 @@
 		"no-empty-line-after-opening-brace": true,
 		"no-exec-script": true,
 		"no-for-in": true,
-		/* Pending fix: "no-function-constructor-with-string-args": true, */
+		"no-function-constructor-with-string-args": false, /* Pending fix: true */
 		"no-increment-decrement": false,
 		"no-inner-html": true,
 		"no-invalid-regexp": true,
@@ -234,9 +234,9 @@
 		"no-octal-literal": true,
 		"no-reserved-keywords": true,
 		"no-stateless-class": true,
-		/* Pending fix: "no-string-based-set-immediate": true, */
-		/* Pending fix: "no-string-based-set-interval": true, */
-		/* Pending fix: "no-string-based-set-timeout": true, */
+		"no-string-based-set-immediate": false, /* Pending fix: true */
+		"no-string-based-set-interval": false, /* Pending fix: true */
+		"no-string-based-set-timeout": false, /* Pending fix: true */
 		"no-unnecessary-bind": true,
 		"no-unnecessary-field-initialization": true,
 		"no-unnecessary-local-variable": true,
