@@ -27,6 +27,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@angular/platform-webworker-dynamic \
 	@angular/router \
 	@angular/service-worker \
+	@ngrx/core \
 	@ngrx/effects \
 	@ngrx/store \
 	@ngtools/webpack \
