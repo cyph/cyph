@@ -190,9 +190,9 @@
 		/* Codelyzer */
 
 		"component-class-suffix": true,
-		"component-selector": false, /* Pending fix: [true, "element", "cyph", "kebab-case"] */
+		/* Pending fix: "component-selector": false, [true, "element", "cyph", "kebab-case"] */
 		"directive-class-suffix": true,
-		"directive-selector": false, /* Pending fix: [true, "attribute", "cyph", "camelCase"] */
+		/* Pending fix: "directive-selector": false, [true, "attribute", "cyph", "camelCase"] */
 		"invoke-injectable": true,
 		"no-access-missing-member": true,
 		"no-attribute-parameter-decorator": true,
@@ -201,7 +201,7 @@
 		"no-output-rename": true,
 		"no-unused-css": true,
 		"pipe-impure": true,
-		"pipe-naming": false, /* Pending fix: [true, "camelCase", "cyph"] */
+		/* Pending fix: "pipe-naming": false, [true, "camelCase", "cyph"] */
 		"templates-use-public": true,
 		"use-host-property-decorator": true,
 		"use-input-property-decorator": true,
