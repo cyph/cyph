@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {IChatData, States} from '../chat';
+import {List, Set as ImmutableSet} from 'immutable';
+import {IChatData, IChatMessage, States} from '../chat';
 import {users} from '../session/enums';
 import {AccountSessionService} from './account-session.service';
 import {AnalyticsService} from './analytics.service';
@@ -43,10 +44,10 @@ export class AccountChatService extends ChatService {
 				isFriendTyping: false,
 				isMessageChanged: false,
 				keyExchangeProgress: 0,
-				messages: [],
+				messages: List<IChatMessage>(),
 				queuedMessageSelfDestruct: false,
 				state: States.chat,
-				unconfirmedMessages: new Set<string>()
+				unconfirmedMessages: ImmutableSet<string>()
 			};
 
 			this.chats.set(username, this.chat);
