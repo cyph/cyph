@@ -92,7 +92,6 @@
 		fxLayout='column'
 		class='chat-begin-message loading'
 		*ngIf='chatService.chat.state === states.chatBeginMessage'
-		[@fadeIn]='"in"'
 	>
 		<div fxFlex></div>
 		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation connected'></div>
