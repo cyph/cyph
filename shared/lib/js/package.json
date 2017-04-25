@@ -16,7 +16,8 @@
     "@angular/platform-webworker": "^4.0.3",
     "@angular/platform-webworker-dynamic": "^4.0.3",
     "@angular/router": "^4.0.3",
-    "@angular/service-worker": "^1.0.0-beta.9",
+    "@angular/service-worker": "^1.0.0-beta.10",
+    "@compodoc/compodoc": "^1.0.0-beta.7",
     "@ngrx/core": "^1.2.0",
     "@ngrx/effects": "^2.0.3",
     "@ngrx/router-store": "^1.2.6",
@@ -47,7 +48,7 @@
     "core-js": "^2.4.1",
     "css-loader": "^0.28.0",
     "datauri": "^1.0.5",
-    "dompurify": "^0.8.6",
+    "dompurify": "^0.8.7",
     "fg-loadcss": "^1.3.1",
     "file-loader": "^0.11.1",
     "file-saver": "^1.3.3",
@@ -119,12 +120,12 @@
     "web-animations-js": "^2.2.5",
     "webpack": "^2.4.1",
     "webpack-closure-compiler": "^2.1.4",
-    "webrtc-adapter": "^3.3.3",
+    "webrtc-adapter": "^3.3.4",
     "webrtcsupport": "https://github.com/buu700/webrtcsupport",
     "whatwg-fetch": "^2.0.3",
     "wowjs": "^1.1.3",
     "xkcd-passphrase": "^1.0.5",
     "zombie": "^5.0.5",
-    "zone.js": "^0.8.8"
+    "zone.js": "^0.8.9"
   }
 }
