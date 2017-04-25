@@ -20,8 +20,8 @@
 	}
 }
 
-.message-item, .ellipsis-spinner {
-	@include transition(opacity 1s ease-in-out);
+.message-item {
+	@include transition(opacity 0.75s ease-in-out);
 }
 
 .message-item .message-timestamp .message-pending {
@@ -30,14 +30,10 @@
 
 .friend-is-typing {
 	margin: 20px 0px;
+	min-height: 18px;
 
 	.ellipsis-spinner {
 		margin: 0px;
-		opacity: 0;
-
-		&.show {
-			opacity: 1;
-		}
 
 		> div {
 			width: 8px;

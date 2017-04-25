@@ -19,8 +19,8 @@
 				fxLayout='column'
 				[hideDisconnectMessage]='envService.coBranded'
 				[messageCountInTitle]='true'
-				[class.active]='appService.state === appService.states.chat'
-				class='cyph-view'
+				*ngIf='appService.state === appService.states.chat'
+				[@fadeIn]='"in"'
 			>
 				<cyph-signup-form>
 					{{stringsService.signupMessage}}
@@ -31,16 +31,16 @@
 				fxFlex
 				fxFlexFill
 				fxLayout='column'
-				[class.active]='appService.state === appService.states.waitingForFriend'
-				class='cyph-view'
+				*ngIf='appService.state === appService.states.waitingForFriend'
+				[@fadeIn]='"in"'
 			></cyph-link-connection>
 
 			<cyph-not-found
 				fxFlex
 				fxFlexFill
 				fxLayout='column'
-				[class.active]='appService.state === appService.states.error'
-				class='cyph-view'
+				*ngIf='appService.state === appService.states.error'
+				[@fadeIn]='"in"'
 			></cyph-not-found>
 
 			<div
@@ -48,8 +48,7 @@
 				fxFlexFill
 				fxLayout='column'
 				id='blank'
-				[class.active]='appService.state === appService.states.blank'
-				class='cyph-view'
+				*ngIf='appService.state === appService.states.blank'
 			></div>
 
 			<footer>

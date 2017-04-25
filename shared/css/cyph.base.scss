@@ -111,6 +111,9 @@ pre, code {
 }
 
 .cyph-foreground {
+	width: calc(100% + 1px);
+	overflow: hidden;
+
 	@include transform-origin(top left);
 
 	@include transition(transform 2s cubic-bezier(1, 0, 0, 1));
@@ -120,28 +123,9 @@ pre, code {
 	}
 }
 
-.cyph-foreground {
-	width: calc(100% + 1px);
-	overflow: hidden;
-}
-
 #main, .cyph-foreground {
 	position: relative;
 	z-index: 2;
-}
-
-.cyph-view:not(.active) {
-	opacity: 0;
-	pointer-events: none;
-	position: fixed;
-}
-
-.cyph-view.active {
-	position: relative;
-
-	&:not(.no-transition) {
-		@include transition(opacity 0.75s linear);
-	}
 }
 
 h3.cyph-banner {

@@ -15,6 +15,7 @@ import 'hammerjs';
 import 'magnific-popup';
 import 'nanoscroller';
 import 'rxjs/add/operator/toPromise';
+import 'web-animations-js';
 import 'webrtc-adapter';
 import 'whatwg-fetch';
 import 'zone.js';

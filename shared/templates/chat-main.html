@@ -10,8 +10,9 @@
 		fxFlex
 		fxFlexFill
 		fxLayout='column'
-		class='cyph-view loading'
-		[class.active]='chatService.chat.state === states.keyExchange'
+		class='loading'
+		*ngIf='chatService.chat.state === states.keyExchange'
+		[@fadeIn]='"in"'
 	>
 		<div fxFlex></div>
 		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation'>
@@ -36,8 +37,9 @@
 		fxFlex
 		fxFlexFill
 		fxLayout='column'
-		class='cyph-view abort-screen loading'
-		[class.active]='chatService.chat.state === states.aborted'
+		class='abort-screen loading'
+		*ngIf='chatService.chat.state === states.aborted'
+		[@fadeIn]='"in"'
 	>
 		<div fxFlex></div>
 		<div class='image'>
@@ -88,8 +90,9 @@
 		fxFlex
 		fxFlexFill
 		fxLayout='column'
-		class='cyph-view chat-begin-message loading'
-		[class.active]='chatService.chat.state === states.chatBeginMessage'
+		class='chat-begin-message loading'
+		*ngIf='chatService.chat.state === states.chatBeginMessage'
+		[@fadeIn]='"in"'
 	>
 		<div fxFlex></div>
 		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation connected'></div>
@@ -107,10 +110,9 @@
 	<div
 		fxFlex
 		[fxShow]='p2pService.isActive'
-		class='cyph-view no-transition video-call'
-		[class.active]='chatService.chat.state === states.chat'
+		class='video-call'
 		[class.sidebar-open]='p2pService.isSidebarOpen'
-		*ngIf='p2pWebRTCService'
+		*ngIf='p2pWebRTCService && chatService.chat.state === states.chat'
 	>
 		<a class='logo' rel='noreferrer' [href]='envService.homeUrl'>
 			<img 
@@ -214,8 +216,9 @@
 
 	<div
 		fxFlex
-		class='cyph-view transfer-list'
-		[class.active]='chatService.chat.state === states.chat && !p2pService.isActive'
+		class='transfer-list'
+		*ngIf='chatService.chat.state === states.chat && !p2pService.isActive'
+		[@fadeIn]='"in"'
 	>
 		<md-list fxFlex fxLayout='column'>
 			<md-list-item fxLayout='row' *ngFor='let transfer of fileTransferService.transfers'>
@@ -245,13 +248,14 @@
 	<cyph-chat-message-list
 		fxFlex
 		fxFlexFill
-		class='cyph-view'
 		[isFriendTyping]='chatService.chat.isFriendTyping'
+		[messageCountInTitle]='messageCountInTitle'
 		[messages]='chatService.chat.messages'
 		[mobile]='envService.isMobile || p2pService.isActive'
 		[showDisconnectMessage]='chatService.chat.isDisconnected && !hideDisconnectMessage'
 		[unconfirmedMessages]='chatService.chat.unconfirmedMessages'
-		[class.active]='chatService.chat.state === states.chat'
+		*ngIf='chatService.chat.state === states.chat'
+		[@fadeIn]='"in"'
 		[style.margin-top]='
 			p2pService.isActive ? "" : (
 				(

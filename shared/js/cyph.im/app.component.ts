@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {fadeIn} from '../cyph/animations';
 import {EnvService} from '../cyph/services/env.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {AppService} from './app.service';
@@ -8,6 +9,7 @@ import {AppService} from './app.service';
  * Angular component for Cyph UI.
  */
 @Component({
+	animations: [fadeIn],
 	providers: [AppService],
 	selector: 'cyph-app',
 	templateUrl: '../../templates/cyph.im/index.html'
