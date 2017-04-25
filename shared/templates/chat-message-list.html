@@ -10,7 +10,7 @@
 			></cyph-chat-message>
 
 			<md-list-item fxLayout='row' class='friend-is-typing'>
-				<div class='ellipsis-spinner' [class.show]='isFriendTyping'>
+				<div class='ellipsis-spinner' *ngIf='isFriendTyping' [@fadeInOut]='"in"'>
 					<div class='bounce1'></div>
 					<div class='bounce2'></div>
 					<div class='bounce3'></div>
