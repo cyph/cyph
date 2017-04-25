@@ -94,9 +94,9 @@ export class Util {
 			data: {
 				key: 'HNz4JExN1MtpKz8uP2RD1Q',
 				message: {
+					subject,
 					from_email: fromEmail.replace('@cyph.com', '@mandrillapp.com'),
 					from_name: fromName,
-					subject: subject,
 					text: (
 						`${message}\n\n\n---\n\n${env.userAgent}\n\n` +
 						`${env.language}\n\n${locationData.href}`

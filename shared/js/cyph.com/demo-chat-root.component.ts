@@ -14,8 +14,8 @@ import {SessionService} from '../cyph/services/session.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
 import {ChatData} from './chat-data';
-import {DemoService} from './demo.service';
 import {DemoEnvService} from './demo-env.service';
+import {DemoService} from './demo.service';
 import {HomeSections} from './enums';
 import {LocalSessionService} from './local-session.service';
 
