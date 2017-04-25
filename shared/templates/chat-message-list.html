@@ -5,11 +5,11 @@
 				fxLayout='row'
 				[message]='message'
 				[mobile]='mobile'
-				*ngFor='let message of chatService.chat.messages'
+				*ngFor='let message of messages'
 			></cyph-chat-message>
 
 			<md-list-item fxLayout='row' class='friend-is-typing'>
-				<div class='ellipsis-spinner' [class.show]='chatService.chat.isFriendTyping'>
+				<div class='ellipsis-spinner' [class.show]='isFriendTyping'>
 					<div class='bounce1'></div>
 					<div class='bounce2'></div>
 					<div class='bounce3'></div>

@@ -8,9 +8,7 @@ import {StringsService} from './js/cyph/services/strings.service';
  * Angular component for Cyph UI.
  */
 @Component({
-	providers: [
-		AppService
-	],
+	providers: [AppService],
 	selector: 'cyph-app',
 	templateUrl: './templates/app/index.html'
 })

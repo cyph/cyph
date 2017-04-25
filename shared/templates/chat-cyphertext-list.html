@@ -1,0 +1,13 @@
+<md-list fxLayout='column' fxLayoutGap='32px'>
+	<md-list-item fxLayout='row' *ngFor='let message of messages'>
+		<div class='message'>
+			<strong *ngIf='message.author === users.me'>
+				{{stringsService.me}}:
+			</strong>
+			<strong *ngIf='message.author !== users.me'>
+				{{message.author}}:
+			</strong>
+			<span>{{message.text}}</span>
+		</div>
+	</md-list-item>
+</md-list>

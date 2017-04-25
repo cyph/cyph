@@ -246,8 +246,11 @@
 		fxFlex
 		fxFlexFill
 		class='cyph-view'
+		[isFriendTyping]='chatService.chat.isFriendTyping'
+		[messages]='chatService.chat.messages'
 		[mobile]='envService.isMobile || p2pService.isActive'
 		[showDisconnectMessage]='chatService.chat.isDisconnected && !hideDisconnectMessage'
+		[unconfirmedMessages]='chatService.chat.unconfirmedMessages'
 		[class.active]='chatService.chat.state === states.chat'
 		[style.margin-top]='
 			p2pService.isActive ? "" : (

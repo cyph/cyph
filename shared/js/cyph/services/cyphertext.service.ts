@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {List} from 'immutable';
 import {IChatMessage} from '../chat/ichat-message';
 import {events} from '../session/enums';
 import {util} from '../util';
@@ -18,32 +19,34 @@ export class CyphertextService {
 	public isVisible: boolean	= false;
 
 	/** Cyphertext message list. */
-	public readonly messages: IChatMessage[]	= [];
+	public messages: List<IChatMessage>	= List<IChatMessage>();
 
 	/**
 	 * Logs new cyphertext message.
 	 * @param text
 	 * @param author
 	 */
-	private log (text: string, author: string) : void {
+	private async log (text: string, author: string) : Promise<void> {
 		if (!text) {
 			return;
 		}
 
-		/* Mobile performance optimisation */
-		if (this.messages.length > (this.envService.isMobile ? 5 : 50)) {
-			this.messages.shift();
-		}
-
 		const timestamp	= util.timestamp();
 
-		this.messages.push({
-			author,
-			text,
-			timestamp,
-			timeString: util.getTimeString(timestamp),
-			unread: false
-		});
+		this.messages	= this.messages.withMutations(messages =>
+			(
+				/* Mobile performance optimisation */
+				messages.size > (this.envService.isMobile ? 5 : 50) ?
+					messages.shift() :
+					messages
+			).push({
+				author,
+				text,
+				timestamp,
+				timeString: util.getTimeString(timestamp),
+				unread: false
+			})
+		);
 	}
 
 	/** Hides cyphertext UI. */

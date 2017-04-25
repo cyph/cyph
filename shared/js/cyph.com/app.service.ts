@@ -3,7 +3,6 @@ import {Title} from '@angular/platform-browser';
 import * as $ from 'jquery';
 import * as WOW from 'wowjs';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
-import {Email} from '../cyph/email';
 import {eventManager} from '../cyph/event-manager';
 import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
@@ -38,8 +37,8 @@ export class AppService {
 		subscription: boolean;
 	};
 
-	/** @see Email */
-	public readonly contact: Email			= new Email('hello');
+	/** @see ContactComponent.to. */
+	public contactTo: string	= 'hello';
 
 	/** Donation amount in dollars. */
 	public readonly donationAmount: number	= 10;
@@ -200,7 +199,7 @@ export class AppService {
 		else if (state === States.contact) {
 			const to: string	= newUrlStateSplit[1];
 			if (this.configService.contactEmailAddresses.indexOf(to) > -1) {
-				this.contact.to	= to;
+				this.contactTo	= to;
 			}
 
 			this.state	= state;
