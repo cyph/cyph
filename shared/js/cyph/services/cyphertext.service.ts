@@ -49,8 +49,7 @@ export class CyphertextService {
 				author,
 				text,
 				timestamp,
-				timeString: util.getTimeString(timestamp),
-				unread: false
+				timeString: util.getTimeString(timestamp)
 			})
 		);
 	}

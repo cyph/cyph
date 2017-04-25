@@ -22,7 +22,4 @@ export interface IChatMessage {
 
 	/** Message timestamp string. */
 	timeString: string;
-
-	/** Indicates whether message is unread. */
-	unread: boolean;
 }

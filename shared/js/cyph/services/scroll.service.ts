@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
+import {Set as ImmutableSet} from 'immutable';
 import * as $ from 'jquery';
 import {util} from '../util';
 import {EnvService} from './env.service';
@@ -29,7 +30,7 @@ export class ScrollService {
 	private readonly scrollDownLock: {}	= {};
 
 	/** @ignore */
-	private readonly unreadItems: Set<{unread: boolean}>	= new Set<{unread: boolean}>();
+	private unreadItems: ImmutableSet<JQuery>	= ImmutableSet<JQuery>();
 
 	/** @ignore */
 	private async appeared ($elem: JQuery) : Promise<boolean> {
@@ -38,9 +39,9 @@ export class ScrollService {
 	}
 
 	/** @ignore */
-	private updateTitle (item?: {unread: boolean}) : void {
-		if (item && item.unread) {
-			this.unreadItems.add(item);
+	private updateTitle ($elem?: JQuery) : void {
+		if ($elem) {
+			this.unreadItems	= this.unreadItems.add($elem);
 		}
 
 		if (!this.itemCountInTitle) {
@@ -73,27 +74,23 @@ export class ScrollService {
 		const rootElement	= await this.rootElement;
 
 		await util.lockTryOnce(this.scrollDownLock, async () => {
-			await util.sleep();
+			this.unreadItems	= this.unreadItems.clear();
+			this.updateTitle();
 
+			await util.sleep();
 			await rootElement.animate(
 				{scrollTop: rootElement[0].scrollHeight},
 				350
 			).promise();
-
-			for (const item of Array.from(this.unreadItems)) {
-				item.unread	= false;
-			}
-			this.unreadItems.clear();
-			this.updateTitle();
 		});
 	}
 
 	/** Process read-ness and scrolling. */
-	public async trackItem (item: {unread: boolean}, $elem: JQuery) : Promise<void> {
+	public async trackItem ($elem: JQuery) : Promise<void> {
 		const rootElement	= await this.rootElement;
 
 		if (!this.visibilityWatcherService.isVisible) {
-			this.updateTitle(item);
+			this.updateTitle($elem);
 			await this.visibilityWatcherService.waitForChange();
 		}
 
@@ -110,17 +107,16 @@ export class ScrollService {
 			return;
 		}
 
-		this.updateTitle(item);
+		this.updateTitle($elem);
 		while (!(await this.appeared($elem))) {
-			if (!item.unread) {
+			if (!this.unreadItems.has($elem)) {
 				return;
 			}
 
 			await util.sleep();
 		}
 
-		item.unread	= false;
-		this.unreadItems.delete(item);
+		this.unreadItems	= this.unreadItems.delete($elem);
 		this.updateTitle();
 	}
 

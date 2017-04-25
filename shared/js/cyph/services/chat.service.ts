@@ -111,10 +111,7 @@ export class ChatService {
 			id,
 			text,
 			timestamp,
-			timeString: util.getTimeString(timestamp),
-			unread:
-				author !== users.app &&
-				author !== users.me
+			timeString: util.getTimeString(timestamp)
 		};
 
 		this.chat.messages	= this.chat.messages.push(message).sortBy(o => o.timestamp);

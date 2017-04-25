@@ -36,7 +36,9 @@ export class ChatMessageComponent implements OnInit {
 			return;
 		}
 
-		this.scrollService.trackItem(this.message, $(this.elementRef.nativeElement));
+		if (this.message.author !== users.app && this.message.author !== users.me) {
+			this.scrollService.trackItem($(this.elementRef.nativeElement));
+		}
 	}
 
 	constructor (
