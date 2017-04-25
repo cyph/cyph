@@ -1,10 +1,7 @@
 import {Injectable} from '@angular/core';
-import * as Konami from 'konami-code.js';
 import {EnvService} from '../cyph/services/env.service';
-import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
 import {ChatData} from './chat-data';
-import {HomeSections} from './enums';
 
 
 /**
@@ -152,8 +149,6 @@ export class DemoService {
 	}
 
 	constructor (
-		urlStateService: UrlStateService,
-
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
@@ -163,24 +158,5 @@ export class DemoService {
 			this.desktop.channelOutgoing,
 			this.desktop.channelIncoming
 		);
-
-		/* Cyphertext easter egg */
-		/* tslint:disable-next-line:no-unused-expression */
-		new Konami(async () => {
-			urlStateService.setUrl(HomeSections[HomeSections.intro]);
-
-			while (!this.isActive) {
-				await util.sleep();
-			}
-
-			if (this.envService.isMobile) {
-				this.mobile.showCyphertext.next();
-			}
-			else {
-				this.desktop.showCyphertext.next();
-				await util.sleep(8000);
-				this.mobile.showCyphertext.next();
-			}
-		});
 	}
 }
