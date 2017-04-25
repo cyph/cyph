@@ -15,22 +15,26 @@ export class ScrollService {
 	private itemCountInTitle: boolean	= false;
 
 	/** @ignore */
-	private rootElement?: JQuery;
+	private resolveRootElement: (rootElement: JQuery) => void;
 
 	/** @ignore */
-	private scrollDownLock: {}	= {};
+	private readonly rootElement: Promise<JQuery>	=
+		/* tslint:disable-next-line:promise-must-complete */
+		new Promise<JQuery>(resolve => {
+			this.resolveRootElement	= resolve;
+		})
+	;
 
 	/** @ignore */
-	private unreadItems: Set<{unread: boolean}>	= new Set<{unread: boolean}>();
+	private readonly scrollDownLock: {}	= {};
 
 	/** @ignore */
-	private appeared ($elem: JQuery) : boolean {
-		if (!this.rootElement) {
-			return false;
-		}
+	private readonly unreadItems: Set<{unread: boolean}>	= new Set<{unread: boolean}>();
 
+	/** @ignore */
+	private async appeared ($elem: JQuery) : Promise<boolean> {
 		const offset	= $elem.offset();
-		return offset.top > 0 && offset.top < this.rootElement.height();
+		return offset.top > 0 && offset.top < (await this.rootElement).height();
 	}
 
 	/** @ignore */
@@ -51,8 +55,8 @@ export class ScrollService {
 
 	/** Initialise service. */
 	public init (rootElement: JQuery, itemCountInTitle: boolean = false) : void {
-		this.rootElement		= rootElement;
 		this.itemCountInTitle	= itemCountInTitle;
+		this.resolveRootElement(rootElement);
 
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
@@ -61,20 +65,18 @@ export class ScrollService {
 
 		/* Workaround for jQuery appear plugin */
 		const $window	= $(window);
-		this.rootElement.scroll(() => $window.trigger('scroll'));
+		rootElement.scroll(() => $window.trigger('scroll'));
 	}
 
 	/** Scrolls to bottom. */
 	public async scrollDown () : Promise<void> {
-		await util.lockTryOnce(this.scrollDownLock, async () => {
-			while (!this.rootElement) {
-				await util.sleep();
-			}
+		const rootElement	= await this.rootElement;
 
+		await util.lockTryOnce(this.scrollDownLock, async () => {
 			await util.sleep();
 
-			await this.rootElement.animate(
-				{scrollTop: this.rootElement[0].scrollHeight},
+			await rootElement.animate(
+				{scrollTop: rootElement[0].scrollHeight},
 				350
 			).promise();
 
@@ -88,9 +90,7 @@ export class ScrollService {
 
 	/** Process read-ness and scrolling. */
 	public async trackItem (item: {unread: boolean}, $elem: JQuery) : Promise<void> {
-		while (!this.rootElement) {
-			await util.sleep();
-		}
+		const rootElement	= await this.rootElement;
 
 		if (!this.visibilityWatcherService.isVisible) {
 			this.updateTitle(item);
@@ -98,10 +98,10 @@ export class ScrollService {
 		}
 
 		const scrollPosition	=
-			this.rootElement[0].scrollHeight -
+			rootElement[0].scrollHeight -
 			(
-				this.rootElement[0].scrollTop +
-				this.rootElement[0].clientHeight
+				rootElement[0].scrollTop +
+				rootElement[0].clientHeight
 			)
 		;
 
@@ -111,7 +111,11 @@ export class ScrollService {
 		}
 
 		this.updateTitle(item);
-		while (!this.appeared($elem)) {
+		while (!(await this.appeared($elem))) {
+			if (!item.unread) {
+				return;
+			}
+
 			await util.sleep();
 		}
 
