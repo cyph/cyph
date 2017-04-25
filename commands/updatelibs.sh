@@ -46,6 +46,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@types/whatwg-streams \
 	angular-ssr \
 	angular2-template-loader \
+	angular2-virtual-scroll \
 	animate.css \
 	awesome-typescript-loader \
 	bourbon@4.2.7 \
@@ -94,6 +95,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	nativescript-dev-android-snapshot \
 	nativescript-dev-typescript \
 	nativescript-theme-core \
+	ng2-vs-for \
 	node-fetch \
 	node-sass \
 	ntru \
