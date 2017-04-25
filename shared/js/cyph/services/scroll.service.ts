@@ -34,6 +34,8 @@ export class ScrollService {
 
 	/** @ignore */
 	private async appeared ($elem: JQuery) : Promise<boolean> {
+		await this.visibilityWatcherService.waitUntilVisible();
+
 		const offset	= $elem.offset();
 		return offset.top > 0 && offset.top < (await this.rootElement).height();
 	}
