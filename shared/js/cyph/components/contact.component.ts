@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ConfigService} from '../services/config.service';
 import {util} from '../util';
 
@@ -11,7 +11,7 @@ import {util} from '../util';
 	styleUrls: ['../../css/components/contact.css'],
 	templateUrl: '../../templates/contact.html'
 })
-export class ContactComponent {
+export class ContactComponent implements OnInit {
 	/** Sender email address. */
 	@Input() public fromEmail: string	= '';
 
@@ -29,6 +29,13 @@ export class ContactComponent {
 
 	/** Recipient @cyph.com email address ("@cyph.com" may be omitted). */
 	@Input() public to: string			= '';
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		if (!this.to) {
+			this.to	= 'hello';
+		}
+	}
 
 	/** Sends email. */
 	public send () : void {
