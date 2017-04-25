@@ -1,5 +1,9 @@
 [
 	{
+		"path": "bcryptjs",
+		"justification": "Dev dependency"
+	},
+	{
 		"path": "cli",
 		"justification": "Dev dependency"
 	},
@@ -61,6 +65,18 @@
 		"component": "jquery",
 		"version": "2.1.1",
 		"justification": "Only jQuery 3.x is included in our client code"
+	},
+	{
+		"path": "lunr/example",
+		"justification": "Not included in client code"
+	},
+	{
+		"path": "lunr/perf",
+		"justification": "Not included in client code"
+	},
+	{
+		"path": "lunr/test",
+		"justification": "Not included in client code"
 	},
 	{
 		"path": "ms",
