@@ -38,7 +38,7 @@ export class AppService {
 	};
 
 	/** @see ContactComponent.to. */
-	public contactTo: string	= 'hello';
+	public contactTo?: string;
 
 	/** Donation amount in dollars. */
 	public readonly donationAmount: number	= 10;
