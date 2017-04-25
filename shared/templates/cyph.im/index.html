@@ -5,7 +5,7 @@
 			<canvas [fxHide]='envService.isFirefox' id='main-chat-gradient'></canvas>
 
 			<h3
-				class='cyph-banner emphasis'
+				class='cyph-banner emphasis warn'
 				*ngIf='envService.webSignError && appService.state !== appService.states.chat'
 			>
 				WARNING: Your Cyph instance has a problem.

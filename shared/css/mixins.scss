@@ -78,10 +78,8 @@
 	h3.cyph-banner {
 		color: $cyph-background;
 		background-color: $cyph-foreground;
-	}
 
-	cyph-account, cyph-lockdown {
-		.login-form .cyph-banner {
+		&.warn {
 			color: map-get($cyph-warn, default);
 		}
 	}
