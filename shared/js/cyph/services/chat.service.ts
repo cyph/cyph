@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {List, Set as ImmutableSet} from 'immutable';
 import {IChatData, IChatMessage, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
 import {events, rpcEvents, users} from '../session/enums';
@@ -36,10 +37,10 @@ export class ChatService {
 		isFriendTyping: false,
 		isMessageChanged: false,
 		keyExchangeProgress: 0,
-		messages: [],
+		messages: List<IChatMessage>(),
 		queuedMessageSelfDestruct: false,
 		state: States.none,
-		unconfirmedMessages: new Set<string>()
+		unconfirmedMessages: ImmutableSet<string>()
 	};
 
 	/** This kills the chat. */
@@ -116,12 +117,7 @@ export class ChatService {
 				author !== users.me
 		};
 
-		for (let i = this.chat.messages.length - 1 ; i >= -1 ; --i) {
-			if (i === -1 || message.timestamp > this.chat.messages[i].timestamp) {
-				this.chat.messages.splice(i + 1, 0, message);
-				break;
-			}
-		}
+		this.chat.messages	= this.chat.messages.push(message).sortBy(o => o.timestamp);
 
 		if (author === users.me) {
 			this.scrollService.scrollDown();
@@ -320,7 +316,7 @@ export class ChatService {
 				return;
 			}
 
-			this.chat.unconfirmedMessages.delete(o.messageId);
+			this.chat.unconfirmedMessages	= this.chat.unconfirmedMessages.delete(o.messageId);
 		});
 
 		this.sessionService.on(rpcEvents.text, (o: {
@@ -335,7 +331,7 @@ export class ChatService {
 			}
 
 			if (o.author === users.me) {
-				this.chat.unconfirmedMessages.add(o.id);
+				this.chat.unconfirmedMessages	= this.chat.unconfirmedMessages.add(o.id);
 			}
 			else {
 				this.sessionService.send(new Message(rpcEvents.confirm, {

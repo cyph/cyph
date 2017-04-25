@@ -1,5 +1,4 @@
 import {ErrorHandler, Injectable} from '@angular/core';
-import {Email} from '../email';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
@@ -69,11 +68,11 @@ export class ErrorService implements ErrorHandler {
 			console.error(errorObject || exception);
 
 			if (numEmails++ < 50) {
-				util.email(new Email(
+				util.email(
 					'errors',
 					`[${this.envService.packageName}] ${subject}`,
 					exception
-				));
+				);
 			}
 
 			this.analyticsService.sendEvent('exception', {

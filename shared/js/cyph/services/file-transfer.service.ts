@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {Set as ImmutableSet} from 'immutable';
 import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
 import {Transfer} from '../files/transfer';
@@ -32,7 +33,7 @@ export class FileTransferService {
 	)();
 
 	/** In-progress file transfers. */
-	public readonly transfers: Set<Transfer>		= new Set<Transfer>();
+	public transfers: ImmutableSet<Transfer>		= ImmutableSet<Transfer>();
 
 	/** @ignore */
 	private addImage (transfer: Transfer, plaintext: Uint8Array) : void {
@@ -84,7 +85,7 @@ export class FileTransferService {
 		));
 
 		if (transfer.answer) {
-			this.transfers.add(transfer);
+			this.transfers	= this.transfers.add(transfer);
 
 			/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
 			(async () => {
@@ -121,7 +122,7 @@ export class FileTransferService {
 			this.potassiumService.clearMemory(transfer.key);
 			this.uiSave(transfer, plaintext);
 			await util.sleep(1000);
-			this.transfers.delete(transfer);
+			this.transfers	= this.transfers.delete(transfer);
 		}
 		else {
 			this.uiRejected(transfer);
@@ -270,7 +271,7 @@ export class FileTransferService {
 			o.key
 		);
 
-		this.transfers.add(transfer);
+		this.transfers	= this.transfers.add(transfer);
 
 		this.analyticsService.sendEvent({
 			eventAction: 'send',
@@ -290,7 +291,7 @@ export class FileTransferService {
 			this.uiCompleted(transfer, plaintext);
 
 			if (!transfer.answer) {
-				this.transfers.delete(transfer);
+				this.transfers	= this.transfers.delete(transfer);
 
 				if (uploadTask) {
 					uploadTask.cancel();
@@ -331,7 +332,7 @@ export class FileTransferService {
 								transfer
 							));
 
-							this.transfers.delete(transfer);
+							this.transfers	= this.transfers.delete(transfer);
 							resolve(true);
 						}
 					));

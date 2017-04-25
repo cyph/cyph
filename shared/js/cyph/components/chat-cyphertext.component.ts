@@ -2,9 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import * as $ from 'jquery';
 import {CyphertextService} from '../services/cyphertext.service';
 import {EnvService} from '../services/env.service';
-import {SessionService} from '../services/session.service';
-import {StringsService} from '../services/strings.service';
-import {Users, users} from '../session/enums';
 
 
 /**
@@ -16,9 +13,6 @@ import {Users, users} from '../session/enums';
 	templateUrl: '../../templates/chat-cyphertext.html'
 })
 export class ChatCyphertextComponent implements OnInit {
-	/** @see Users */
-	public readonly users: Users	= users;
-
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		if (!this.envService.isWeb) {
@@ -39,12 +33,6 @@ export class ChatCyphertextComponent implements OnInit {
 		private readonly envService: EnvService,
 
 		/** @see CyphertextService */
-		public readonly cyphertextService: CyphertextService,
-
-		/** @see SessionService */
-		public readonly sessionService: SessionService,
-
-		/** @see StringsService */
-		public readonly stringsService: StringsService
+		public readonly cyphertextService: CyphertextService
 	) {}
 }

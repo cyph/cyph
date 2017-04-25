@@ -1,6 +1,5 @@
 import {saveAs} from 'file-saver';
 import {config} from './config';
-import {Email} from './email';
 import {env} from './env';
 
 
@@ -83,23 +82,27 @@ export class Util {
 		return response;
 	}
 
-	/** Sends an email to the Cyph team. "@cyph.com" may be omitted from email.to. */
-	public email (email: Email) : void {
-		this.request({
+	/** Sends an email to the Cyph team. "@cyph.com" may be omitted from to. */
+	public async email (
+		to: string = 'hello',
+		subject: string = 'New Cyph Email',
+		message: string = '',
+		fromEmail: string = 'test@mandrillapp.com',
+		fromName: string = 'Mandrill'
+	) : Promise<void> {
+		await this.request({
 			data: {
 				key: 'HNz4JExN1MtpKz8uP2RD1Q',
 				message: {
-					from_email: (email.fromEmail || 'test@mandrillapp.com').
-						replace('@cyph.com', '@mandrillapp.com')
-					,
-					from_name: email.fromName || 'Mandrill',
-					subject: email.subject || 'New Cyph Email',
+					from_email: fromEmail.replace('@cyph.com', '@mandrillapp.com'),
+					from_name: fromName,
+					subject: subject,
 					text: (
-						`${email.message}\n\n\n---\n\n${env.userAgent}\n\n` +
+						`${message}\n\n\n---\n\n${env.userAgent}\n\n` +
 						`${env.language}\n\n${locationData.href}`
 					).replace(/\/#.*/g, ''),
 					to: [{
-						email: (email.to || 'hello').replace('@cyph.com', '') + '@cyph.com',
+						email: to.replace('@cyph.com', '') + '@cyph.com',
 						type: 'to'
 					}]
 				}
@@ -109,8 +112,6 @@ export class Util {
 		}).catch(
 			() => {}
 		);
-
-		email.sent	= true;
 	}
 
 	/**

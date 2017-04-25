@@ -2,6 +2,7 @@ import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ChatCyphertextComponent} from '../components/chat-cyphertext.component';
+import {ChatCyphertextListComponent} from '../components/chat-cyphertext-list.component';
 import {ChatMainComponent} from '../components/chat-main.component';
 import {ChatMessageBoxComponent} from '../components/chat-message-box.component';
 import {ChatMessageListComponent} from '../components/chat-message-list.component';
@@ -23,6 +24,7 @@ import {CyphWebModule} from './cyph-web.module';
 @NgModule({
 	declarations: [
 		ChatCyphertextComponent,
+		ChatCyphertextListComponent,
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
@@ -38,6 +40,7 @@ import {CyphWebModule} from './cyph-web.module';
 	],
 	exports: [
 		ChatCyphertextComponent,
+		ChatCyphertextListComponent,
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,

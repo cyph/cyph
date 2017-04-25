@@ -8,9 +8,7 @@ import {AppService} from './app.service';
  * Angular component for Cyph UI.
  */
 @Component({
-	providers: [
-		AppService
-	],
+	providers: [AppService],
 	selector: 'cyph-app',
 	templateUrl: '../../templates/cyph.im/index.html'
 })
