@@ -1,4 +1,4 @@
-<div class='chat-cyphertext mat-app-background'>
+<div class='chat-cyphertext mat-app-background' *ngIf='cyphertextService.isEnabled'>
 	<cyph-chat-cyphertext-list
 		[messages]='cyphertextService.messages'
 	></cyph-chat-cyphertext-list>

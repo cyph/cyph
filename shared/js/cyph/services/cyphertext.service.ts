@@ -15,6 +15,12 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class CyphertextService {
+	/** Indicates whether cyphertext UI should be enabled. */
+	public readonly isEnabled: boolean	=
+		!this.sessionService.apiFlags.telehealth &&
+		(this.envService.isLocalEnv || this.envService.isHomeSite)
+	;
+
 	/** Indicates whether cyphertext should be displayed. */
 	public isVisible: boolean	= false;
 
@@ -27,7 +33,7 @@ export class CyphertextService {
 	 * @param author
 	 */
 	private async log (text: string, author: string) : Promise<void> {
-		if (!text) {
+		if (!text || !this.isEnabled) {
 			return;
 		}
 
@@ -76,8 +82,6 @@ export class CyphertextService {
 	}
 
 	constructor (
-		sessionService: SessionService,
-
 		/** @ignore */
 		private readonly analyticsService: AnalyticsService,
 
@@ -88,14 +92,18 @@ export class CyphertextService {
 		private readonly envService: EnvService,
 
 		/** @ignore */
+		private readonly sessionService: SessionService,
+
+		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
-		sessionService.on(
-			events.cyphertext,
-			(o: {author: string; cyphertext: string}) => { this.log(
-				o.cyphertext,
-				o.author
-			); }
-		);
+		if (this.isEnabled) {
+			this.sessionService.on(
+				events.cyphertext,
+				(o: {author: string; cyphertext: string}) => {
+					this.log(o.cyphertext, o.author);
+				}
+			);
+		}
 	}
 }
