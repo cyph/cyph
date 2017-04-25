@@ -1,11 +1,9 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {Set as ImmutableSet} from 'immutable';
 import * as $ from 'jquery';
 import {IChatMessage} from '../chat/ichat-message';
-import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
-import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
-import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {Users, users} from '../session/enums';
 
@@ -24,6 +22,9 @@ export class ChatMessageComponent implements OnInit {
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean;
+
+	/** @see IChatData.unconfirmedMessages */
+	@Input() public unconfirmedMessages: ImmutableSet<string>;
 
 	/** @see Users */
 	public readonly users: Users	= users;
@@ -45,17 +46,8 @@ export class ChatMessageComponent implements OnInit {
 		/** @ignore */
 		private readonly scrollService: ScrollService,
 
-		/** @see ChatService */
-		public readonly chatService: ChatService,
-
 		/** @see EnvService */
 		public readonly envService: EnvService,
-
-		/** @see P2PService */
-		public readonly p2pService: P2PService,
-
-		/** @see SessionService */
-		public readonly sessionService: SessionService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
