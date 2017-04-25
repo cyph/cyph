@@ -62,7 +62,7 @@
 				}
 			}
 
-			.chat-main.video .video-call.active.playing {
+			.chat-main.video .video-call {
 				~ cyph-chat-message-list {
 					width: 20vw;
 				}
@@ -112,7 +112,7 @@
 		@include transform(scale(0.625));
 
 		cyph-chat-main {
-			.chat-main.video .video-call.active.playing {
+			.chat-main.video .video-call {
 				~ cyph-chat-message-list {
 					width: calc(30vw - 150px);
 				}

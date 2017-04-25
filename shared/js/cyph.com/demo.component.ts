@@ -202,16 +202,16 @@ export class DemoComponent implements OnInit {
 		const $desktopFacebookPic: JQuery	= $(this.demoService.facebookPicFrame);
 		const $mobileFacebookPic: JQuery	= $(this.demoService.facebookPicFrame);
 
+		this.demoService.run(() => {
+			this.facebookJoke($desktopFacebookPic, $mobileFacebookPic);
+		});
+
 		if (!this.envService.isMobile) {
 			await util.waitForIterable(elements.demoListDesktop);
 			await util.waitForIterable(elements.demoListMobile);
 			elements.demoListDesktop().append($desktopFacebookPic);
 			elements.demoListMobile().append($mobileFacebookPic);
 		}
-
-		this.demoService.run(() => {
-			this.facebookJoke($desktopFacebookPic, $mobileFacebookPic);
-		});
 	}
 
 	constructor (
