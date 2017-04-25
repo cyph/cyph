@@ -79,6 +79,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	konami-code.js \
 	lazy \
 	libsodium-wrappers \
+	lunr \
 	magnific-popup \
 	markdown-it \
 	markdown-it-emoji \
