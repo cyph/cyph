@@ -22,12 +22,12 @@ $cyph-message-colors: map-merge($cyph-message-colors, (
 	),
 	me: (
 		desktop: transparent,
-		mobile: rgba(231, 196, 70, 0.95),
+		mobile: map-get($mat-amber, 400),
 		text: $cyph-foreground
 	),
 	other: (
 		desktop: transparent,
-		mobile: rgba(231, 196, 70, 0.95),
+		mobile: map-get($mat-yellow, 600),
 		text: $cyph-foreground
 	)
 ));
