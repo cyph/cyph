@@ -89,7 +89,7 @@
 			background-color: $cyph-inverted;
 		}
 
-		.ellipsis-spinner > div {
+		.friend-is-typing .ellipsis-spinner > div {
 			background-color: $cyph-foreground;
 		}
 
@@ -129,16 +129,28 @@
 			&.author-app {
 				background-color: map-get(map-get($cyph-message-colors, app), desktop);
 				color: map-get(map-get($cyph-message-colors, app), text);
+
+				.ellipsis-spinner > div {
+					background-color: map-get(map-get($cyph-message-colors, app), text);
+				}
 			}
 
 			&.author-me {
 				background-color: map-get(map-get($cyph-message-colors, me), desktop);
 				color: map-get(map-get($cyph-message-colors, me), text);
+
+				.ellipsis-spinner > div {
+					background-color: map-get(map-get($cyph-message-colors, me), text);
+				}
 			}
 
 			&.author-other {
 				background-color: map-get(map-get($cyph-message-colors, other), desktop);
 				color: map-get(map-get($cyph-message-colors, other), text);
+
+				.ellipsis-spinner > div {
+					background-color: map-get(map-get($cyph-message-colors, other), text);
+				}
 			}
 		}
 	}
