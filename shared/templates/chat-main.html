@@ -10,38 +10,63 @@
 		fxFlex
 		fxFlexFill
 		fxLayout='column'
+		fxLayoutAlign='center center'
 		class='loading'
-		*ngIf='chatService.chat.state === states.keyExchange'
+		*ngIf='
+			chatService.chat.state === states.keyExchange ||
+			chatService.chat.state === states.chatBeginMessage
+		'
 		[@fadeIn]='"in"'
 	>
-		<div fxFlex></div>
-		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation'>
-			<div></div>
-			<div></div>
-			<div></div>
-			<div></div>
-			<div></div>
-		</div>
-		<div *ngIf='sessionService.apiFlags.telehealth' class='telehealth-logo'>
+		<div *ngIf='sessionService.apiFlags.telehealth; else animation' class='telehealth-logo'>
 			<img src='/img/logo.telehealth.icon.png' alt='Telehealth logo' />
 		</div>
-		<span cyphTranslate>Initiating key exchange...</span>
+
+		<ng-template #animation>
+			<div
+				class='logo-animation'
+				*ngIf='chatService.chat.state === states.keyExchange'
+			>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div
+				class='logo-animation connected'
+				*ngIf='chatService.chat.state === states.chatBeginMessage'
+			></div>
+		</ng-template>
+
+		<div
+			cyphTranslate
+			*ngIf='chatService.chat.state === states.keyExchange'
+		>
+			Initiating key exchange...
+		</div>
+		<div
+			cyphTranslate
+			*ngIf='chatService.chat.state === states.chatBeginMessage'
+		>
+			Securely Connected!
+		</div>
+
 		<md-progress-bar
 			class='key-exchange-progress'
 			[value]='chatService.chat.keyExchangeProgress'
 		></md-progress-bar>
-		<div fxFlex></div>
 	</div>
 
 	<div
 		fxFlex
 		fxFlexFill
 		fxLayout='column'
+		fxLayoutAlign='center center'
 		class='abort-screen loading'
 		*ngIf='chatService.chat.state === states.aborted'
 		[@fadeIn]='"in"'
 	>
-		<div fxFlex></div>
 		<div class='image'>
 			<img
 				*ngIf='!sessionService.apiFlags.telehealth'
@@ -82,28 +107,7 @@
 					your practitoner will send you a new link.
 				</span>
 			</div>
-		</div>		
-		<div fxFlex></div>
-	</div>
-
-	<div
-		fxFlex
-		fxFlexFill
-		fxLayout='column'
-		class='chat-begin-message loading'
-		*ngIf='chatService.chat.state === states.chatBeginMessage'
-	>
-		<div fxFlex></div>
-		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation connected'></div>
-		<div *ngIf='sessionService.apiFlags.telehealth' class='telehealth-logo'>
-			<img src='/img/logo.telehealth.icon.png' alt='Telehealth logo' />
 		</div>
-		<span cyphTranslate>Securely Connected!</span>
-		<md-progress-bar
-			class='key-exchange-progress'
-			[value]='100'
-		></md-progress-bar>
-		<div fxFlex></div>
 	</div>
 
 	<div

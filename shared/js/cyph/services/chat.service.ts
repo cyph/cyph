@@ -296,7 +296,10 @@ export class ChatService {
 			const interval		= 250;
 			const increment		= interval / ChatService.approximateKeyExchangeTime;
 
-			while (this.chat.keyExchangeProgress <= 100) {
+			while (
+				this.chat.state === States.keyExchange &&
+				this.chat.keyExchangeProgress <= 100
+			) {
 				await util.sleep(interval);
 				this.chat.keyExchangeProgress += increment * 100;
 			}
