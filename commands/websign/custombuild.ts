@@ -70,22 +70,20 @@ try {
 
 		${fs.readFileSync(args.customBuildTheme).toString()}
 
-		body {
-			@include cyph-apply-theme;
+		@include cyph-apply-theme(true);
 
-			${!o.background ? '' : `
-				chat-main {
-					.message-list:after {
-						background-image: url(${o.background}) !important;
-					}
-
-					.video-call .logo {
-						height: 75% !important;
-						opacity: 0.4 !important;
-					}
+		${!o.background ? '' : `
+			chat-main {
+				.message-list:after {
+					background-image: url(${o.background}) !important;
 				}
-			`}
-		}
+
+				.video-call .logo {
+					height: 75% !important;
+					opacity: 0.4 !important;
+				}
+			}
+		`}
 	`);
 }
 catch (_) {}
