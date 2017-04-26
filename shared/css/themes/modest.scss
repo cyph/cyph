@@ -13,12 +13,12 @@ $cyph-message-colors: map-merge($cyph-message-colors, (
 	me: (
 		desktop: transparent,
 		mobile: #444,
-		text: inherit
+		text: $cyph-foreground
 	),
 	other: (
 		desktop: transparent,
 		mobile: #444,
-		text: inherit
+		text: $cyph-foreground
 	)
 ));
 

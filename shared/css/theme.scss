@@ -26,17 +26,17 @@ $cyph-message-colors: (
 	app: (
 		desktop: transparent,
 		mobile: transparent,
-		text: inherit
+		text: $cyph-foreground
 	),
 	me: (
 		desktop: rgba(139, 98, 217, 0.8),
 		mobile: rgba(139, 98, 217, 0.8),
-		text: inherit
+		text: $cyph-foreground
 	),
 	other: (
 		desktop: rgba(97, 47, 192, 0.5),
 		mobile: rgba(97, 47, 192, 0.5),
-		text: inherit
+		text: $cyph-foreground
 	)
 );
 
