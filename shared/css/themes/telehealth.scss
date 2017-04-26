@@ -15,6 +15,11 @@ $cyph-message-box-colors: map-merge($cyph-message-box-colors, (
 ));
 
 $cyph-message-colors: map-merge($cyph-message-colors, (
+	app: (
+		desktop: transparent,
+		mobile: transparent,
+		text: $cyph-foreground
+	),
 	me: (
 		desktop: transparent,
 		mobile: rgba(231, 196, 70, 0.95),
