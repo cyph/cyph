@@ -130,8 +130,6 @@
 		&:before {
 			border-color: transparent transparent;
 			right: 0px;
-
-			@include transform(rotate(-35deg));
 		}
 
 		&:after {
@@ -162,8 +160,6 @@
 		&:before {
 			border-color: transparent transparent;
 			left: -3px;
-
-			@include transform(rotate(-215deg));
 		}
 
 		&:after {
