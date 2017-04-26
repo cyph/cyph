@@ -17,7 +17,8 @@
 	<div *ngIf='envService.isMobile'>
 		<div
 			class='message-box-button-group'
-			[class.hidden]='chatService.chat.currentMessage === ""'
+			*ngIf='chatService.chat.currentMessage !== ""'
+			[@slideInOutBottom]='"in"'
 		>
 			<button
 				md-icon-button
@@ -30,7 +31,8 @@
 		</div>
 		<div
 			class='message-box-button-group'
-			[class.hidden]='chatService.chat.currentMessage !== ""'
+			*ngIf='chatService.chat.currentMessage === ""'
+			[@slideInOutBottom]='"in"'
 		>
 			<button
 				md-icon-button

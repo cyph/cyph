@@ -17,22 +17,12 @@
 		right: 10px;
 		z-index: 30;
 
-		@include transform(translateY(-50%));
-
-		@include transition(transform 0.4s linear);
-
 		button md-icon {
 			opacity: 0.75;
 		}
 
 		button[disabled] md-icon {
 			opacity: 0.25;
-		}
-
-		&.hidden {
-			@include transform(translateY(250px) !important);
-
-			@include transition(transform 0.6s linear);
 		}
 	}
 
