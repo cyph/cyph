@@ -10,7 +10,7 @@
 		fxFlex
 		fxFlexFill
 		fxLayout='column'
-		fxLayoutAlign='center center'
+		fxLayoutAlign='center stretch'
 		class='loading'
 		*ngIf='
 			chatService.chat.state === states.keyExchange ||
@@ -62,7 +62,7 @@
 		fxFlex
 		fxFlexFill
 		fxLayout='column'
-		fxLayoutAlign='center center'
+		fxLayoutAlign='center stretch'
 		class='abort-screen loading'
 		*ngIf='chatService.chat.state === states.aborted'
 		[@fadeIn]='"in"'
