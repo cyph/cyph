@@ -27,7 +27,7 @@
 }
 
 @mixin cyph-apply-theme($isRoot: false) {
-	$root: if($isRoot, body, &);
+	$root: if($isRoot, 'html, body', '&');
 
 	$cyph-theme: cyph-theme(
 		$cyph-primary,
