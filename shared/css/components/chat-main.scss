@@ -55,7 +55,7 @@
 }
 
 .chat-main:not(.mobile):not(.video) .message-item, .message-item.author-app {
-	&:before, &:after {
+	&:after {
 		display: none;
 	}
 }
@@ -119,30 +119,23 @@
 	}
 
 	.message-item.author-me {
-		&:before, &:after {
+		&:after {
 			content: '';
 			position: absolute;
+			right: -12px;
 			border-style: solid;
 			border-width: 18px 0px 0px 12px;
 			bottom: 0px;
-		}
-
-		&:before {
-			border-color: transparent transparent;
-			right: 0px;
-		}
-
-		&:after {
-			right: -12px;
 		}
 	}
 
 	.message-item.author-other {
 		margin-left: 5%;
 
-		&:before, &:after {
+		&:after {
 			content: '';
 			position: absolute;
+			left: -12px;
 			border-style: solid;
 			border-width: 0px 12px 18px 0px;
 			top: 0px;
@@ -155,15 +148,6 @@
 		.message-timestamp {
 			text-align: left;
 			left: 10px;
-		}
-
-		&:before {
-			border-color: transparent transparent;
-			left: -3px;
-		}
-
-		&:after {
-			left: -12px;
 		}
 	}
 
@@ -393,15 +377,9 @@
 		background-color: rgba(255, 255, 255, 0.5);
 
 		.message-item {
-			box-shadow: none;
-
 			&.author-app {
 				background-color: rgba(0, 0, 0, 0.3) !important;
 				color: #f1f1f1 !important;
-			}
-
-			&:before {
-				display: none;
 			}
 		}
 
