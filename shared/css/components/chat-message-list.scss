@@ -20,6 +20,10 @@
 	}
 }
 
+md-list {
+	@include filter(drop-shadow(-2px 2px 2px rgba(0, 0, 0, 0.15)));
+}
+
 .message-item {
 	@include transition(opacity 0.75s ease-in-out);
 }
