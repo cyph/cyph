@@ -78,6 +78,11 @@
 }
 
 :host > .mobile {
+	.ellipsis-spinner > div {
+		width: 6px;
+		height: 6px;
+	}
+
 	.message-item > .self-destruct-cover {
 		left: -25vw;
 		width: 150vw;
