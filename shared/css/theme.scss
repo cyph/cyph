@@ -30,16 +30,12 @@ $cyph-message-colors: (
 	),
 	me: (
 		desktop: rgba(139, 98, 217, 0.8),
-		mobileBorder: rgba(139, 98, 217, 0.8),
-		mobileShadow: rgba(139, 98, 217, 0.8),
-		mobilePrimary: rgba(139, 98, 217, 0.8),
+		mobile: rgba(139, 98, 217, 0.8),
 		text: inherit
 	),
 	other: (
 		desktop: rgba(97, 47, 192, 0.5),
-		mobileBorder: rgba(100, 55, 190, 0.5),
-		mobileShadow: rgba(100, 51, 193, 0.5),
-		mobilePrimary: rgba(97, 47, 192, 0.5),
+		mobile: rgba(97, 47, 192, 0.5),
 		text: inherit
 	)
 );
