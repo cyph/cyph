@@ -1,6 +1,7 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
 import * as tabIndent from 'tab-indent';
+import {slideInOutBottom} from '../animations';
 import {States} from '../chat/enums';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
@@ -17,6 +18,7 @@ import {util} from '../util';
  * Angular component for chat message box.
  */
 @Component({
+	animations: [slideInOutBottom],
 	selector: 'cyph-chat-message-box',
 	styleUrls: ['../../css/components/chat-message-box.css'],
 	templateUrl: '../../templates/chat-message-box.html'
