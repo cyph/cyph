@@ -18,7 +18,6 @@ body:not(.load-complete) {
 	section {
 		position: relative;
 		padding: 20px;
-		margin-top: -1px;
 
 		> img.background {
 			display: block;
@@ -577,7 +576,6 @@ body.mobile #testimonials-section .carousel {
 	.carousel {
 		padding: 0px;
 		padding-left: 2.5vw;
-		margin-top: -20px;
 
 		.logo {
 			height: 85px;
