@@ -45,7 +45,7 @@ export class ChatMessageListComponent implements OnInit {
 		const $element	= $(this.elementRef.nativeElement);
 
 		this.scrollService.init(
-			$element.find('.message-list-background > div'),
+			$element.find('.message-list-background'),
 			this.messageCountInTitle
 		);
 	}
