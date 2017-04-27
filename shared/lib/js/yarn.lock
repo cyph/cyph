@@ -5183,7 +5183,7 @@ matcher-collection@^1.0.0:
   dependencies:
     minimatch "^3.0.2"
 
-math-expression-evaluator@^1.2.14:
+math-expression-evaluator@^1.2.14, math-expression-evaluator@^1.2.16:
   version "1.2.16"
   resolved "https://registry.yarnpkg.com/math-expression-evaluator/-/math-expression-evaluator-1.2.16.tgz#b357fa1ca9faefb8e48d10c14ef2bcb2d9f0a7c9"
 
@@ -5458,11 +5458,11 @@ mute-stream@0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.4.tgz#a9219960a6d5d5d046597aee51252c6655f7177e"
 
-mute-stream@0.0.5, mute-stream@~0.0.4:
+mute-stream@0.0.5:
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.5.tgz#8fbfabb0a98a253d3184331f9e8deb7372fac6c0"
 
-mute-stream@0.0.7:
+mute-stream@0.0.7, mute-stream@~0.0.4:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
 
@@ -7298,9 +7298,13 @@ rsa-keygen@*:
   dependencies:
     nan "~2.3.3"
 
-rsvp@3.2.1, rsvp@^3.0.17:
+rsvp@3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-3.2.1.tgz#07cb4a5df25add9e826ebc67dcc9fd89db27d84a"
+
+rsvp@^3.0.17:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-3.5.0.tgz#a62c573a4ae4e1dfd0697ebc6242e79c681eaa34"
 
 rtcpeerconnection@^5.1.1:
   version "5.2.1"
@@ -8826,9 +8830,11 @@ wcwidth@*, wcwidth@^1.0.0:
   dependencies:
     defaults "^1.0.3"
 
-web-animations-js@^2.2.5:
+"web-animations-js@https://github.com/buu700/web-animations-js-tmp":
   version "2.2.5"
-  resolved "https://registry.yarnpkg.com/web-animations-js/-/web-animations-js-2.2.5.tgz#26ca1b34c1347332a0813f8b2bfe69664efa80aa"
+  resolved "https://github.com/buu700/web-animations-js-tmp#82a28999a337f3c411030583b23a46e5747a2dff"
+  dependencies:
+    math-expression-evaluator "^1.2.16"
 
 webidl-conversions@^2.0.0:
   version "2.0.1"
