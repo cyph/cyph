@@ -30,7 +30,7 @@
     "@types/file-saver": "^0.0.1",
     "@types/jquery": "^2.0.41",
     "@types/markdown-it": "^0.0.2",
-    "angular-ssr": "^0.1.87",
+    "angular-ssr": "^0.1.88",
     "angular2-template-loader": "^0.6.2",
     "angular2-virtual-scroll": "^0.1.5",
     "animate.css": "^3.5.2",
