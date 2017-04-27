@@ -1,7 +1,6 @@
 {
 	"compileOnSave": true,
 	"compilerOptions": {
-		"alwaysStrict": true,
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,
@@ -10,13 +9,11 @@
 		"moduleResolution": "node",
 		"newLine": "LF",
 		"noFallthroughCasesInSwitch": true,
-		"noImplicitAny": true,
 		"noImplicitReturns": true,
-		"noImplicitThis": true,
 		"noUnusedLocals": true,
 		/* Pending Angular AOT fix: "noUnusedParameters": true, */
 		"skipLibCheck": true,
-		"strictNullChecks": true,
+		"strict": true,
 		"rootDir": ".",
 		"target": "es5"
 	}
