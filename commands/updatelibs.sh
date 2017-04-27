@@ -125,7 +125,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	uglify-js \
 	unsemantic \
 	url-loader \
-	web-animations-js \
+	web-animations-js@https://github.com/buu700/web-animations-js-tmp \
 	webpack \
 	webpack-closure-compiler \
 	webrtc-adapter \
