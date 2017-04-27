@@ -20,10 +20,6 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts ${nativePlugins} ||
 
 cd node_modules
 
-# Workaround for TS >=2.1
-echo > @types/whatwg-fetch/index.d.ts
-echo > @types/whatwg-streams/index.d.ts
-
 cp -a ../libsodium ./
 
 mkdir -p @types/libsodium

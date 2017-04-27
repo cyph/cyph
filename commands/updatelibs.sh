@@ -34,16 +34,12 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@ngrx/store \
 	@ngrx/store-devtools \
 	@ngtools/webpack \
-	@types/angular \
-	@types/angular-material \
 	@types/braintree-web \
 	@types/clipboard-js \
 	@types/dompurify \
 	@types/file-saver \
 	@types/jquery \
 	@types/markdown-it \
-	@types/whatwg-fetch \
-	@types/whatwg-streams \
 	angular-ssr \
 	angular2-template-loader \
 	angular2-virtual-scroll \
