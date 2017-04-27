@@ -15,7 +15,6 @@
 		"noImplicitThis": true,
 		"noUnusedLocals": true,
 		/* Pending Angular AOT fix: "noUnusedParameters": true, */
-		"skipLibCheck": true,
 		"strictNullChecks": true,
 		"rootDir": ".",
 		"target": "es5"
