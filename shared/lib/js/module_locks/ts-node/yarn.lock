@@ -1244,8 +1244,8 @@ tslint@^4.0.2:
     update-notifier "^2.0.0"
 
 tsutils@^1.1.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/tsutils/-/tsutils-1.7.0.tgz#2e63ccc2d6912bb095f7e363ff4100721dc86f50"
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/tsutils/-/tsutils-1.8.0.tgz#bf8118ed8e80cd5c9fc7d75728c7963d44ed2f52"
 
 type-check@~0.3.2:
   version "0.3.2"
@@ -1266,8 +1266,8 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
 typescript@^2.1.4:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.3.0.tgz#2e63e09284392bc8158a2444c33e2093795c0418"
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.3.1.tgz#e3361fb395c6c3f9c69faeeabc9503f8bdecaea1"
 
 typings-core@^2.3.3:
   version "2.3.3"
