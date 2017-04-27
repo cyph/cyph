@@ -464,9 +464,9 @@ amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
 
-angular-ssr@^0.1.86:
-  version "0.1.86"
-  resolved "https://registry.yarnpkg.com/angular-ssr/-/angular-ssr-0.1.86.tgz#86b341a00cac25ac76c1ac93f1e5891393ff1b6c"
+angular-ssr@^0.1.87:
+  version "0.1.87"
+  resolved "https://registry.yarnpkg.com/angular-ssr/-/angular-ssr-0.1.87.tgz#23dc7c7149071fc1c0671b3d7770c12799fcf72e"
   dependencies:
     "@angular/cli" "^1.0.0"
     "@types/babel-core" "6.7.14"
@@ -501,7 +501,7 @@ angular-ssr@^0.1.86:
     chalk "^1.1.3"
     commander "2.9.0"
     domino "https://github.com/clbond/domino/archive/1.0.42.tar.gz"
-    es2015-imports-to-commonjs-loose "^1.0.4"
+    es2015-imports-to-commonjs-loose "^1.0.6"
     jsonschema "^1.1.1"
     lru_map "^0.3.3"
     mkdir-recursive "^0.3.0"
@@ -2262,9 +2262,9 @@ dateformat@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-2.0.0.tgz#2743e3abb5c3fc2462e527dca445e04e9f4dee17"
 
-debug@*, debug@2.6.4, debug@^2.1.1, debug@^2.1.3, debug@^2.2, debug@^2.2.0, debug@^2.6.0:
-  version "2.6.4"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.4.tgz#7586a9b3c39741c0282ae33445c4e8ac74734fe0"
+debug@*, debug@^2.1.1, debug@^2.1.3, debug@^2.2, debug@^2.2.0, debug@^2.6.0:
+  version "2.6.5"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.5.tgz#7a76247781acd4ef2a85f0fb8abf763cd1af249e"
   dependencies:
     ms "0.7.3"
 
@@ -2289,6 +2289,12 @@ debug@2.6.1:
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.1.tgz#79855090ba2c4e3115cc7d8769491d58f0491351"
   dependencies:
     ms "0.7.2"
+
+debug@2.6.4:
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.4.tgz#7586a9b3c39741c0282ae33445c4e8ac74734fe0"
+  dependencies:
+    ms "0.7.3"
 
 debuglog@*, debuglog@^1.0.1:
   version "1.0.1"
@@ -2677,9 +2683,9 @@ es-to-primitive@^1.1.1:
     is-date-object "^1.0.1"
     is-symbol "^1.0.1"
 
-es2015-imports-to-commonjs-loose@^1.0.4:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/es2015-imports-to-commonjs-loose/-/es2015-imports-to-commonjs-loose-1.0.5.tgz#2aa0a98afeb2738d181b0bea9308ca0b9533f738"
+es2015-imports-to-commonjs-loose@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/es2015-imports-to-commonjs-loose/-/es2015-imports-to-commonjs-loose-1.0.6.tgz#565162ca7c90b4ed5acc1e8745561c068b860e1b"
 
 es5-ext@^0.10.14, es5-ext@^0.10.9, es5-ext@~0.10.11, es5-ext@~0.10.14, es5-ext@~0.10.2, es5-ext@~0.10.5, es5-ext@~0.10.6:
   version "0.10.15"
@@ -8418,8 +8424,8 @@ tslint@^5.1.0:
     tsutils "^1.4.0"
 
 tsutils@^1.4.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/tsutils/-/tsutils-1.7.0.tgz#2e63ccc2d6912bb095f7e363ff4100721dc86f50"
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/tsutils/-/tsutils-1.8.0.tgz#bf8118ed8e80cd5c9fc7d75728c7963d44ed2f52"
 
 tty-browserify@0.0.0:
   version "0.0.0"
@@ -8478,9 +8484,13 @@ typedoc@^0.6.0:
     typedoc-default-themes "^0.4.2"
     typescript "2.2.2"
 
-typescript@2.2.2, "typescript@>=2.0.0 <2.3.0", typescript@^2.1.5, typescript@^2.2.2:
+typescript@2.2.2, "typescript@>=2.0.0 <2.3.0":
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.2.2.tgz#606022508479b55ffa368b58fee963a03dfd7b0c"
+
+typescript@^2.1.5, typescript@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.3.1.tgz#e3361fb395c6c3f9c69faeeabc9503f8bdecaea1"
 
 uc.micro@^1.0.1, uc.micro@^1.0.3:
   version "1.0.3"
@@ -8832,7 +8842,7 @@ wcwidth@*, wcwidth@^1.0.0:
 
 "web-animations-js@https://github.com/buu700/web-animations-js-tmp":
   version "2.2.5"
-  resolved "https://github.com/buu700/web-animations-js-tmp#82a28999a337f3c411030583b23a46e5747a2dff"
+  resolved "https://github.com/buu700/web-animations-js-tmp#b2bf891e8b343428bf75ed0b6ce9bb17c7346efb"
   dependencies:
     math-expression-evaluator "^1.2.16"
 
