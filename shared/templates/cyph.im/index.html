@@ -2,7 +2,10 @@
 <span fxFlexFill *ngIf='!appService.isLockedDown; else lockdown' class='mat-sidenav-container'>
 	<cyph-ephemeral-chat-root fxFlexFill *ngIf='appService.state !== appService.states.account'>
 		<section fxFlexFill fxLayout='column' id='main' class='cyph-foreground'>
-			<canvas [fxHide]='envService.isFirefox' id='main-chat-gradient'></canvas>
+			<canvas
+				[fxShow]='envService.isChrome || envService.isEdge || envService.isSafari'
+				id='main-chat-gradient'
+			></canvas>
 
 			<h3
 				class='cyph-banner emphasis warn'
