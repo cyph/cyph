@@ -121,8 +121,6 @@ echo "
 	}
 " > @types/fg-loadcss/index.d.ts
 
-echo 'declare module "braintree-web" { export = braintree; }' >> @types/braintree-web/index.d.ts
-
 find . -type f | grep -P '.*\.min\.[a-z]+$' | xargs -I% bash -c '
 	cp -f "%" "$(echo "%" | perl -pe "s/\.min(\.[a-z]+)$/\1/")"
 '
