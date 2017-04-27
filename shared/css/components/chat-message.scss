@@ -70,6 +70,11 @@
 	}
 }
 
+md-progress-spinner {
+	margin-left: 12px;
+	margin-right: 12px;
+}
+
 .self-destruct-timer {
 	font-size: 2.3rem;
 	text-align: center;
@@ -78,9 +83,14 @@
 }
 
 :host > .mobile {
-	.ellipsis-spinner > div {
-		width: 6px;
-		height: 6px;
+	md-progress-spinner {
+		width: 10px;
+		height: 10px;
+		margin: auto 9.5px;
+	}
+
+	.message-timestamp {
+		height: 12px;
 	}
 
 	.message-item > .self-destruct-cover {
@@ -95,8 +105,10 @@
 }
 
 :host > :not(.mobile) {
-	.ellipsis-spinner {
-		margin-right: 12px;
+	md-progress-spinner {
+		width: 20px;
+		height: 20px;
+		margin-right: 16px;
 	}
 
 	.message-item {
