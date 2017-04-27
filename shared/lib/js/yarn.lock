@@ -249,18 +249,6 @@
     magic-string "^0.19.0"
     source-map "^0.5.6"
 
-"@types/angular-material@^1.1.49":
-  version "1.1.49"
-  resolved "https://registry.yarnpkg.com/@types/angular-material/-/angular-material-1.1.49.tgz#0d828772a8d04061f92d5a63797bf6c255eb0ab1"
-  dependencies:
-    "@types/angular" "*"
-
-"@types/angular@*", "@types/angular@^1.6.16":
-  version "1.6.16"
-  resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.16.tgz#f649ef28dd56311a7d8c10be19af879a2a3a9151"
-  dependencies:
-    "@types/jquery" "*"
-
 "@types/babel-core@6.7.14":
   version "6.7.14"
   resolved "https://registry.yarnpkg.com/@types/babel-core/-/babel-core-6.7.14.tgz#a08c900a98e8987c1a98d2ea4fa0a1805a7d131f"
@@ -326,7 +314,7 @@
   version "9.1.9"
   resolved "https://registry.yarnpkg.com/@types/highlight.js/-/highlight.js-9.1.9.tgz#ed6336955eaf233b75eb7923b9b1f373d045ef01"
 
-"@types/jquery@*", "@types/jquery@^2.0.41":
+"@types/jquery@^2.0.41":
   version "2.0.41"
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-2.0.41.tgz#b87ba051011f99edbe586d8f97282e7786e01a6d"
 
@@ -387,16 +375,6 @@
     "@types/node" "*"
     "@types/tapable" "*"
     "@types/uglify-js" "*"
-
-"@types/whatwg-fetch@^0.0.33":
-  version "0.0.33"
-  resolved "https://registry.yarnpkg.com/@types/whatwg-fetch/-/whatwg-fetch-0.0.33.tgz#19c0d2863c8cb2380f21a1c736b79cbf7895bb13"
-  dependencies:
-    "@types/whatwg-streams" "*"
-
-"@types/whatwg-streams@*", "@types/whatwg-streams@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@types/whatwg-streams/-/whatwg-streams-0.0.3.tgz#4853d869f3e26d5adfd0d9407b6edce716d06bfe"
 
 JSONStream@^0.8.4:
   version "0.8.4"
@@ -3320,7 +3298,7 @@ gauge@~2.7.1:
     strip-ansi "^3.0.1"
     wide-align "^1.1.0"
 
-gaze@1.1.0, gaze@^1.0.0:
+gaze@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.0.tgz#74d3ffb0110ede715c9f15bba56c6e9b851d3ce0"
   dependencies:
@@ -3331,6 +3309,12 @@ gaze@^0.5.1:
   resolved "https://registry.yarnpkg.com/gaze/-/gaze-0.5.2.tgz#40b709537d24d1d45767db5a908689dfe69ac44f"
   dependencies:
     globule "~0.1.0"
+
+gaze@^1.0.0:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.2.tgz#847224677adb8870d679257ed3388fdb61e40105"
+  dependencies:
+    globule "^1.0.0"
 
 get-caller-file@^1.0.0, get-caller-file@^1.0.1:
   version "1.0.2"
@@ -5203,9 +5187,9 @@ math-expression-evaluator@^1.2.14:
   version "1.2.16"
   resolved "https://registry.yarnpkg.com/math-expression-evaluator/-/math-expression-evaluator-1.2.16.tgz#b357fa1ca9faefb8e48d10c14ef2bcb2d9f0a7c9"
 
-mceliece@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/mceliece/-/mceliece-1.0.6.tgz#da66f1c3eedd5816a61ab1a422b3c2fa441914eb"
+mceliece@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/mceliece/-/mceliece-1.1.0.tgz#a3294c9780fa1a19779172d3f1f3fb701504e5fb"
 
 mdurl@^1.0.1:
   version "1.0.1"
@@ -5263,9 +5247,9 @@ methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/methods/-/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"
 
-microlight-string@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/microlight-string/-/microlight-string-1.0.1.tgz#f4b5c88b8f26807ebe41062892d1d909336461ff"
+microlight-string@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/microlight-string/-/microlight-string-1.1.0.tgz#3a06d74631894f31ffce7b24ba07d1b0fc666585"
 
 micromatch@^2.1.5, micromatch@^2.3.11, micromatch@^2.3.7:
   version "2.3.11"
@@ -5954,9 +5938,9 @@ nth-check@~1.0.1:
   dependencies:
     boolbase "~1.0.0"
 
-ntru@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/ntru/-/ntru-1.0.3.tgz#3b47158e8290ed68a0c6c213bfae737c10513f23"
+ntru@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/ntru/-/ntru-1.1.0.tgz#a25446a853fc33a4431ac9c17235af6360ee0e1d"
 
 num2fraction@^1.2.2:
   version "1.2.2"
@@ -7304,9 +7288,9 @@ ripemd160@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/ripemd160/-/ripemd160-1.0.1.tgz#93a4bbd4942bc574b69a8fa57c71de10ecca7d6e"
 
-rlwe@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/rlwe/-/rlwe-1.0.2.tgz#7ab5df5ec4f8eb0e194e386ff13981e5865a3648"
+rlwe@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/rlwe/-/rlwe-1.1.0.tgz#e3a0476176fa3ad0802bea207d808302b574c59e"
 
 rsa-keygen@*:
   version "1.0.6"
@@ -7314,13 +7298,9 @@ rsa-keygen@*:
   dependencies:
     nan "~2.3.3"
 
-rsvp@3.2.1:
+rsvp@3.2.1, rsvp@^3.0.17:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-3.2.1.tgz#07cb4a5df25add9e826ebc67dcc9fd89db27d84a"
-
-rsvp@^3.0.17:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-3.5.0.tgz#a62c573a4ae4e1dfd0697ebc6242e79c681eaa34"
 
 rtcpeerconnection@^5.1.1:
   version "5.2.1"
@@ -7596,9 +7576,9 @@ shelljs@^0.7.0, shelljs@^0.7.7:
     interpret "^1.0.0"
     rechoir "^0.6.2"
 
-sidh@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/sidh/-/sidh-1.1.0.tgz#56f72c509b4d58424e8e8dc0e685ed358e26e325"
+sidh@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/sidh/-/sidh-1.2.0.tgz#2db4628000ffc5eddf94453994bf53bd17421811"
 
 sigmund@~1.0.0:
   version "1.0.1"
@@ -7693,9 +7673,9 @@ sockjs@0.3.18:
     faye-websocket "^0.10.0"
     uuid "^2.0.2"
 
-sodiumutil@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/sodiumutil/-/sodiumutil-1.0.0.tgz#16092ac7437f814ee5e202fb816779ad27bbacd7"
+sodiumutil@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/sodiumutil/-/sodiumutil-1.1.0.tgz#61988e73d5ce089648c5cfca6aab3b13b36c9244"
 
 sort-keys@^1.0.0:
   version "1.1.2"
@@ -7817,9 +7797,9 @@ speedometer@~0.1.2:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/speedometer/-/speedometer-0.1.4.tgz#9876dbd2a169d3115402d48e6ea6329c8816a50d"
 
-sphincs@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/sphincs/-/sphincs-1.0.2.tgz#b291885798a2bba597dbab71d70f00e40237a508"
+sphincs@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/sphincs/-/sphincs-1.1.0.tgz#ac166aa56af75985d7754feb4cc059f72b5bd658"
 
 split2@^0.2.1:
   version "0.2.1"
@@ -8120,9 +8100,9 @@ sugarss@^0.2.0:
   dependencies:
     postcss "^5.2.4"
 
-supersphincs@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-1.3.1.tgz#5b6c07728287b60830c3daf6dfd9f57492def816"
+supersphincs@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-1.4.0.tgz#c2b58450a8198a611fd822bd551ba317fe14067c"
   dependencies:
     pem-jwk "*"
     rsa-keygen "*"
@@ -9151,9 +9131,9 @@ xhr2@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/xhr2/-/xhr2-0.1.4.tgz#7f87658847716db5026323812f818cadab387a5f"
 
-xkcd-passphrase@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/xkcd-passphrase/-/xkcd-passphrase-1.0.5.tgz#c6251699e8ce0b44e314dc39d2fedb651a87942b"
+xkcd-passphrase@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/xkcd-passphrase/-/xkcd-passphrase-1.1.0.tgz#61e018f95bb5c36bc02e837be62ffdee5fa596fd"
 
 xml-char-classes@^1.0.0:
   version "1.0.0"
@@ -9217,7 +9197,7 @@ yallist@^2.0.0:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-2.1.2.tgz#1c11f9218f076089a47dd512f93c6699a6a81d52"
 
-yargs-parser@^2.4.0:
+yargs-parser@^2.4.0, yargs-parser@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-2.4.1.tgz#85568de3cf150ff49fa51825f03a8c880ddcc5c4"
   dependencies:
@@ -9230,7 +9210,7 @@ yargs-parser@^4.0.2, yargs-parser@^4.2.0:
   dependencies:
     camelcase "^3.0.0"
 
-yargs@4.7.1, yargs@^4.7.1:
+yargs@4.7.1:
   version "4.7.1"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-4.7.1.tgz#e60432658a3387ff269c028eacde4a512e438dff"
   dependencies:
@@ -9278,6 +9258,25 @@ yargs@^3.5.4, yargs@~3.10.0:
     cliui "^2.1.0"
     decamelize "^1.0.0"
     window-size "0.1.0"
+
+yargs@^4.7.1:
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-4.8.1.tgz#c0c42924ca4aaa6b0e6da1739dfb216439f9ddc0"
+  dependencies:
+    cliui "^3.2.0"
+    decamelize "^1.1.1"
+    get-caller-file "^1.0.1"
+    lodash.assign "^4.0.3"
+    os-locale "^1.4.0"
+    read-pkg-up "^1.0.1"
+    require-directory "^2.1.1"
+    require-main-filename "^1.0.1"
+    set-blocking "^2.0.0"
+    string-width "^1.0.1"
+    which-module "^1.0.0"
+    window-size "^0.2.0"
+    y18n "^3.2.1"
+    yargs-parser "^2.4.1"
 
 yargs@^6.5.0:
   version "6.6.0"
