@@ -14,7 +14,6 @@ import 'jquery.appear';
 import 'magnific-popup';
 import 'nanoscroller';
 import 'rxjs/add/operator/toPromise';
-import 'web-animations-js';
 import 'whatwg-fetch';
 import 'zone.js';
 import {config} from '../cyph/config';
