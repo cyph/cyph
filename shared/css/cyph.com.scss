@@ -18,6 +18,7 @@ body:not(.load-complete) {
 	section {
 		position: relative;
 		padding: 20px;
+		margin-bottom: -1px;
 
 		> img.background {
 			display: block;
