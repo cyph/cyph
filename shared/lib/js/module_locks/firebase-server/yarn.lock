@@ -880,8 +880,8 @@ expand-range@^1.8.1:
     fill-range "^2.1.0"
 
 extend@~3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.0.tgz#5a474353b9f3353ddd8176dfd37b91c83a46f1d4"
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.1.tgz#a755ea7bc1adfcc5a31ce7e762dbaadc5e636444"
 
 extglob@^0.3.1:
   version "0.3.2"
@@ -1443,14 +1443,14 @@ js-tokens@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-1.0.1.tgz#cc435a5c8b94ad15acb7983140fc80182c89aeae"
 
-js-yaml@3.0.1, js-yaml@3.x:
+js-yaml@3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.0.1.tgz#76405fea5bce30fc8f405d48c6dca7f0a32c6afe"
   dependencies:
     argparse "~ 0.1.11"
     esprima "~ 1.0.2"
 
-js-yaml@^3.2.5:
+js-yaml@3.x, js-yaml@^3.2.5:
   version "3.8.3"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.8.3.tgz#33a05ec481c850c8875929166fe1beb61c728766"
   dependencies:
