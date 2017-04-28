@@ -25,3 +25,7 @@ body:not(.mobile) {
 		padding: 0px 30px 15px;
 	}
 }
+
+cyph-chat-message-box smd-fab-speed-dial:not(.smd-opened) smd-fab-actions {
+	height: 0px !important;
+}

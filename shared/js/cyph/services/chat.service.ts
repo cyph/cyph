@@ -145,7 +145,8 @@ export class ChatService {
 			this.notificationService.notify(this.stringsService.connectedNotification);
 		}
 
-		this.chat.state	= States.chatBeginMessage;
+		this.chat.keyExchangeProgress	= 100;
+		this.chat.state					= States.chatBeginMessage;
 
 		await util.sleep(3000);
 
@@ -296,10 +297,7 @@ export class ChatService {
 			const interval		= 250;
 			const increment		= interval / ChatService.approximateKeyExchangeTime;
 
-			while (
-				this.chat.state === States.keyExchange &&
-				this.chat.keyExchangeProgress <= 100
-			) {
+			while (this.chat.keyExchangeProgress <= 100) {
 				await util.sleep(interval);
 				this.chat.keyExchangeProgress += increment * 100;
 			}
