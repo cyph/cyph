@@ -150,6 +150,11 @@ export class Env extends EnvDeploy {
 		return this.host;
 	})();
 
+	/** Indicates whether Granim gradient canvases should be displayed. */
+	public readonly showGranim: boolean		=
+		this.isChrome || this.isEdge || this.isIOS || this.isSafari
+	;
+
 	/** Base URI for sending an SMS. */
 	public readonly smsUriBase: string		=
 		`sms:${this.isIOS8Plus ? '&' : this.isIOS ? ';' : '?'}body=`
