@@ -7,7 +7,7 @@
 		background-image: url(/img/betalogo.png);
 		background-repeat: no-repeat;
 		background-size: cover;
-		position: absolute;
+		position: fixed;
 		width: 50vh;
 		height: 50vh;
 		left: 50%;
@@ -16,7 +16,7 @@
 		opacity: 0.10;
 		content: ' ';
 
-		@include transform(translateX(-50%) translateY(-50%));
+		@include transform(translateX(-50%) translateY(-75%));
 	}
 }
 
