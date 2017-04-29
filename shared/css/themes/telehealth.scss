@@ -9,7 +9,7 @@ $cyph-speed-dial-action-alt-background: $cyph-background;
 $cyph-speed-dial-action-alt-foreground: $cyph-foreground;
 
 $cyph-message-box-colors: map-merge($cyph-message-box-colors, (
-	desktopBackground: rgba(156, 162, 186, 0.5),
+	desktopBackground: rgba(146, 149, 163, 0.5),
 	desktopGlow: $cyph-progress-foreground,
 	text: black
 ));
