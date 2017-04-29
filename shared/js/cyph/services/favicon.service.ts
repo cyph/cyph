@@ -76,7 +76,7 @@ export class FaviconService {
 			return;
 		}
 
-		if (this.envService.coBranded) {
+		if (customBuildFavicon) {
 			return;
 		}
 
