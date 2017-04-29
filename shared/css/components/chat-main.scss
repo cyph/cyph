@@ -156,9 +156,11 @@
 		background-color: transparent;
 
 		.message-timestamp {
-			text-align: center;
-			width: 100%;
-			left: 0px;
+			&, & > div, & > div > div {
+				text-align: center;
+				width: 100%;
+				left: 0px;
+			}
 		}
 	}
 }
@@ -280,7 +282,7 @@
 		z-index: 1;
 	}
 
-	*, ~ *, ~ * :not(.self-destruct-cover) {
+	.logo, .me, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
 		@include transition(transform 0.5s ease-in-out !important);
 	}
 
@@ -375,6 +377,8 @@
 		z-index: 10001;
 		width: 300px;
 		background-color: rgba(255, 255, 255, 0.5);
+
+		@include transform(translateX(0px));
 
 		.message-item {
 			&.author-app {
