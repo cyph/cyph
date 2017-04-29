@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {INotificationService} from '../service-interfaces/inotification.service';
 import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
+import {FaviconService} from './favicon.service';
 import {VisibilityWatcherService} from './visibility-watcher.service';
 
 
@@ -16,7 +17,6 @@ export class NotificationService implements INotificationService {
 	/** @ignore */
 	private readonly config	= {
 		audio: '/audio/beep.mp3',
-		icon: customBuildFavicon || '/img/favicon/favicon-192x192.png',
 		title: 'Cyph'
 	};
 
@@ -31,7 +31,7 @@ export class NotificationService implements INotificationService {
 		const options	= {
 			audio: <string|undefined> undefined,
 			body: message,
-			icon: this.config.icon,
+			icon: this.faviconService.activeFaviconSet.icon256,
 			lang: this.envService.language,
 			noscreen: false,
 			sticky: false
@@ -95,6 +95,9 @@ export class NotificationService implements INotificationService {
 
 		/** @ignore */
 		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly faviconService: FaviconService,
 
 		/** @ignore */
 		private readonly visibilityWatcherService: VisibilityWatcherService
