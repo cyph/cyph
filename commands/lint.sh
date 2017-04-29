@@ -42,6 +42,8 @@ node -e "
 	);
 "
 
+cp -rf css templates js/
+
 output="$({
 	tslint \
 		-e '/node_modules/**' \
