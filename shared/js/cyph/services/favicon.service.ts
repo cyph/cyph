@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as $ from 'jquery';
+import {IFaviconSet} from '../favicon/ifavicon-set';
 import {EnvService} from './env.service';
 
 
@@ -8,26 +9,8 @@ import {EnvService} from './env.service';
  */
 @Injectable()
 export class FaviconService {
-	private static faviconSets: {[name: string]: {
-		apple114: string;
-		apple120: string;
-		apple144: string;
-		apple152: string;
-		apple180: string;
-		apple57: string;
-		apple60: string;
-		apple72: string;
-		apple76: string;
-		icon16: string;
-		icon160: string;
-		icon192: string;
-		icon256: string;
-		icon32: string;
-		icon96: string;
-		mask: string;
-		mstile: string;
-		shortcut196: string;
-	}}	= {
+	/** @ignore */
+	private static readonly faviconSets: {[name: string]: IFaviconSet}	= {
 		default: {
 			apple114: '',
 			apple120: '',
@@ -71,13 +54,17 @@ export class FaviconService {
 	};
 
 
-	private elements	= {
+	/** @ignore */
+	private readonly elements	= {
 		apple: (size: string) => $(`link[rel='apple-touch-icon'][sizes='${size}x${size}']`),
 		icon: (size: string) => $(`link[rel='icon'][sizes='${size}x${size}']`),
 		mask: () => $(`link[rel='mask-icon']`),
 		mstile: () => $(`meta[name='msapplication-TileImage']`),
 		shortcut: (size: string) => $(`link[rel='shortcut icon'][sizes='${size}x${size}']`)
 	};
+
+	/** Active favicon set. */
+	public activeFaviconSet: IFaviconSet	= FaviconService.faviconSets.default;
 
 	/**
 	 * Changes favicon at run-time for non-co-branded instances.
@@ -93,26 +80,26 @@ export class FaviconService {
 			return;
 		}
 
-		const faviconSet	= FaviconService.faviconSets[name];
+		this.activeFaviconSet	= FaviconService.faviconSets[name];
 
-		this.elements.apple('114').attr('href', faviconSet.apple114);
-		this.elements.apple('120').attr('href', faviconSet.apple120);
-		this.elements.apple('144').attr('href', faviconSet.apple144);
-		this.elements.apple('152').attr('href', faviconSet.apple152);
-		this.elements.apple('180').attr('href', faviconSet.apple180);
-		this.elements.apple('57').attr('href', faviconSet.apple57);
-		this.elements.apple('60').attr('href', faviconSet.apple60);
-		this.elements.apple('72').attr('href', faviconSet.apple72);
-		this.elements.apple('76').attr('href', faviconSet.apple76);
-		this.elements.icon('16').attr('href', faviconSet.icon16);
-		this.elements.icon('160').attr('href', faviconSet.icon160);
-		this.elements.icon('192').attr('href', faviconSet.icon192);
-		this.elements.icon('256').attr('href', faviconSet.icon256);
-		this.elements.icon('32').attr('href', faviconSet.icon32);
-		this.elements.icon('96').attr('href', faviconSet.icon96);
-		this.elements.mask().attr('href', faviconSet.mask);
-		this.elements.mstile().attr('content', faviconSet.mstile);
-		this.elements.shortcut('196').attr('href', faviconSet.shortcut196);
+		this.elements.apple('114').attr('href', this.activeFaviconSet.apple114);
+		this.elements.apple('120').attr('href', this.activeFaviconSet.apple120);
+		this.elements.apple('144').attr('href', this.activeFaviconSet.apple144);
+		this.elements.apple('152').attr('href', this.activeFaviconSet.apple152);
+		this.elements.apple('180').attr('href', this.activeFaviconSet.apple180);
+		this.elements.apple('57').attr('href', this.activeFaviconSet.apple57);
+		this.elements.apple('60').attr('href', this.activeFaviconSet.apple60);
+		this.elements.apple('72').attr('href', this.activeFaviconSet.apple72);
+		this.elements.apple('76').attr('href', this.activeFaviconSet.apple76);
+		this.elements.icon('16').attr('href', this.activeFaviconSet.icon16);
+		this.elements.icon('160').attr('href', this.activeFaviconSet.icon160);
+		this.elements.icon('192').attr('href', this.activeFaviconSet.icon192);
+		this.elements.icon('256').attr('href', this.activeFaviconSet.icon256);
+		this.elements.icon('32').attr('href', this.activeFaviconSet.icon32);
+		this.elements.icon('96').attr('href', this.activeFaviconSet.icon96);
+		this.elements.mask().attr('href', this.activeFaviconSet.mask);
+		this.elements.mstile().attr('content', this.activeFaviconSet.mstile);
+		this.elements.shortcut('196').attr('href', this.activeFaviconSet.shortcut196);
 	}
 
 	constructor (
