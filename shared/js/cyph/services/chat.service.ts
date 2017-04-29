@@ -89,7 +89,11 @@ export class ChatService {
 		selfDestructTimeout?: number,
 		id?: string
 	) : Promise<void> {
-		if (this.chat.state === States.aborted || this.chat.isDisconnected || !text) {
+		if (
+			!text ||
+			this.chat.state === States.aborted ||
+			(author !== users.app && this.chat.isDisconnected)
+		) {
 			return;
 		}
 
