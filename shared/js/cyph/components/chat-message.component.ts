@@ -46,10 +46,10 @@ export class ChatMessageComponent implements OnInit {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly scrollService: ScrollService,
+		private readonly envService: EnvService,
 
-		/** @see EnvService */
-		public readonly envService: EnvService,
+		/** @ignore */
+		private readonly scrollService: ScrollService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

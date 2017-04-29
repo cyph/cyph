@@ -69,6 +69,7 @@
 
 	#{$root}, #main, .cyph-foreground {
 		background-color: $cyph-background;
+		color: $cyph-foreground;
 	}
 
 	blockquote {
@@ -130,27 +131,33 @@
 				background-color: map-get(map-get($cyph-message-colors, app), desktop);
 				color: map-get(map-get($cyph-message-colors, app), text);
 
-				.ellipsis-spinner > div {
-					background-color: map-get(map-get($cyph-message-colors, app), text);
-				}
+				@include mat-progress-spinner-theme(map-merge($cyph-theme, (
+					primary: map-merge($cyph-primary, (
+						600: map-get(map-get($cyph-message-colors, app), text)
+					))
+				)));
 			}
 
 			&.author-me {
 				background-color: map-get(map-get($cyph-message-colors, me), desktop);
 				color: map-get(map-get($cyph-message-colors, me), text);
 
-				.ellipsis-spinner > div {
-					background-color: map-get(map-get($cyph-message-colors, me), text);
-				}
+				@include mat-progress-spinner-theme(map-merge($cyph-theme, (
+					primary: map-merge($cyph-primary, (
+						600: map-get(map-get($cyph-message-colors, me), text)
+					))
+				)));
 			}
 
 			&.author-other {
 				background-color: map-get(map-get($cyph-message-colors, other), desktop);
 				color: map-get(map-get($cyph-message-colors, other), text);
 
-				.ellipsis-spinner > div {
-					background-color: map-get(map-get($cyph-message-colors, other), text);
-				}
+				@include mat-progress-spinner-theme(map-merge($cyph-theme, (
+					primary: map-merge($cyph-primary, (
+						600: map-get(map-get($cyph-message-colors, other), text)
+					))
+				)));
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 	[fxFlex]='mobile ? "nogrow" : ""'
 	fxLayout='column'
 	class='message-item'
-	[class.mobile]='envService.isMobile'
+	[class.mobile]='mobile'
 	[class.author-app]='message.author === users.app'
 	[class.author-me]='message.author === users.me'
 	[class.author-other]='
