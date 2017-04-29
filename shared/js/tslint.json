@@ -199,7 +199,7 @@
 		"no-forward-ref": true,
 		"no-input-rename": true,
 		"no-output-rename": true,
-		"no-unused-css": true,
+		"no-unused-css": false,
 		"pipe-impure": true,
 		/* Pending fix: "pipe-naming": false, [true, "camelCase", "cyph"] */
 		"templates-use-public": true,
