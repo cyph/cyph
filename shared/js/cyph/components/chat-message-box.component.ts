@@ -148,9 +148,6 @@ export class ChatMessageBoxComponent implements OnInit {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly fileTransferService: FileTransferService,
-
-		/** @ignore */
 		private readonly virtualKeyboardWatcherService: VirtualKeyboardWatcherService,
 
 		/** @see ChatService */
@@ -158,6 +155,9 @@ export class ChatMessageBoxComponent implements OnInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see FileTransferService */
+		public readonly fileTransferService: FileTransferService,
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,
