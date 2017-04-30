@@ -32,11 +32,11 @@ export class AccountMenuComponent {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly accountService: AccountService,
-
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
+
+		/** @see AccountService */
+		public readonly accountService: AccountService,
 
 		/** @see EnvAuthService */
 		public readonly envService: EnvService,
