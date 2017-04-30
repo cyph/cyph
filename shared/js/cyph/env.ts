@@ -75,12 +75,6 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is iOS. */
 	public readonly isIOS: boolean			= /ipad|iphone|ipod/.test(Env.UA);
 
-	/** Indicates whether this is iOS 8 or greater. */
-	public readonly isIOS8Plus: boolean		=
-		this.isIOS &&
-		parseInt((Env.UA.match(/ os (\d+)_/) || [])[1], 10) >= 8
-	;
-
 	/** Indicates whether this is macOS / OS X. */
 	public readonly isMacOS: boolean		= /mac os x/.test(Env.UA);
 
@@ -156,9 +150,7 @@ export class Env extends EnvDeploy {
 	;
 
 	/** Base URI for sending an SMS. */
-	public readonly smsUriBase: string		=
-		`sms:${this.isIOS8Plus ? '&' : this.isIOS ? ';' : '?'}body=`
-	;
+	public readonly smsUriBase: string		= `sms:${this.isIOS ? '&' : '?'}body=`;
 
 	/** Current user agent (lowercase). */
 	public readonly userAgent: string		= Env.UA;

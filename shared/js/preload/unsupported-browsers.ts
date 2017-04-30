@@ -13,7 +13,12 @@ const isFirefoxOS: boolean		=
 
 const isOldIOS: boolean			=
 	/ipad|iphone|ipod/.test(userAgent) &&
-	(parseInt((userAgent.match(/os (\d+)_(\d+)_?(\d+)?/) || [])[1], 10) || 0) < 7
+	(parseInt((userAgent.match(/os (\d+)_(\d+)_?(\d+)?/) || [])[1], 10) || 0) < 9
+;
+
+const isOldSafari: boolean			=
+	navigator.vendor === 'Apple Computer, Inc.' &&
+	(parseInt((userAgent.match(/version\/(\d+)/) || [])[1], 10) || 0) < 9
 ;
 
 const isStockAndroid: boolean	=
@@ -29,6 +34,7 @@ const isIE: boolean				= /msie |trident\/|iemobile/.test(userAgent);
 if (
 	isFirefoxOS ||
 	isOldIOS ||
+	isOldSafari ||
 	isStockAndroid ||
 	isOldOpera ||
 	isIE
