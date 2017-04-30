@@ -40,6 +40,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@types/file-saver \
 	@types/jquery \
 	@types/markdown-it \
+	angular-smd@https://github.com/buu700/angular-smd-tmp \
 	angular-ssr \
 	angular2-template-loader \
 	angular2-virtual-scroll \
