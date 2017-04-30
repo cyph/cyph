@@ -24,7 +24,7 @@ import {
 	SmdFabSpeedDialActions,
 	SmdFabSpeedDialComponent,
 	SmdFabSpeedDialTrigger
-} from '../components/fab-speed-dial.tmp';
+} from 'angular-smd/src/app/shared/component/smd-fab-speed-dial';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 
 
