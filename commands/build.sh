@@ -394,6 +394,9 @@ compile () {
 				cp -f "${htmlinput}" "${htmloutput}"
 			fi
 
+			rm -rf node_modules 2> /dev/null
+			ln -s /node_modules node_modules
+
 			node -e "
 				const tsconfig	= JSON.parse(
 					fs.readFileSync('tsconfig.json').toString().
@@ -574,6 +577,8 @@ compile () {
 				time webpack --config "${f}.webpack.js"
 			fi
 		fi
+
+		rm -rf node_modules 2> /dev/null
 
 		if (( $? )) && [ "${test}" ] ; then
 			output="${output} "
