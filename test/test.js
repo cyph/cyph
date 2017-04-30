@@ -9,8 +9,14 @@ const browsers	= [
 	{
 		browserName: 'Chrome',
 		os: 'OS X',
-		os_version: 'El Capitan',
+		os_version: 'Sierra',
 		resolution: '1920x1080'
+	},
+	{
+		browserName: 'Chrome',
+		os: 'OS X',
+		os_version: 'El Capitan',
+		resolution: '1600x1200'
 	},
 	{
 		browserName: 'Chrome',
@@ -20,21 +26,21 @@ const browsers	= [
 	},
 	{
 		browserName: 'Firefox',
-		browser_version : '47.0',
+		browser_version: '47.0',
 		os: 'OS X',
 		os_version: 'Yosemite',
 		resolution: '1280x960'
 	},
 	{
 		browserName: 'Firefox',
-		browser_version : '47.0',
+		browser_version: '47.0',
 		os: 'Windows',
 		os_version: '10',
 		resolution: '2048x1536'
 	},
 	{
 		browserName: 'Firefox',
-		browser_version : '47.0',
+		browser_version: '47.0',
 		os: 'Windows',
 		os_version: 'XP',
 		resolution: '1024x768'
@@ -46,6 +52,13 @@ const browsers	= [
 		resolution: '2048x1536'
 	},
 	{
+		browserName: 'Safari',
+		browser_version: '10.0',
+		os: 'OS X',
+		os_version: 'Sierra',
+		resolution: '1920x1080'
+	},
+	{
 		browserName: 'iPhone',
 		platform: 'MAC',
 		device: 'iPhone 6S Plus'
@@ -53,7 +66,7 @@ const browsers	= [
 	{
 		browserName: 'iPad',
 		platform: 'MAC',
-		device: 'iPad Air'
+		device: 'iPad Air 2'
 	}
 ];
 
