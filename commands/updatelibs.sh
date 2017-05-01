@@ -119,7 +119,6 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	tns-core-modules-widgets \
 	tns-ios \
 	ts-loader \
-	ts-node \
 	tslint \
 	tslint-microsoft-contrib \
 	typedoc \
@@ -146,13 +145,7 @@ cp yarn.lock package.json ~/lib/js/
 cat node_modules/tslint/package.json | grep -v tslint-test-config-non-relative > package.json.new
 mv package.json.new node_modules/tslint/package.json
 
-node -e '
-	const package	= JSON.parse(fs.readFileSync("node_modules/ts-node/package.json").toString());
-	package.scripts.prepublish	= undefined;
-	fs.writeFileSync("node_modules/ts-node/package.json", JSON.stringify(package));
-'
-
-for d in firebase-server ts-node tslint ; do
+for d in firebase-server tslint ; do
 	mkdir -p ~/lib/js/module_locks/${d}
 	cd node_modules/${d}
 	mkdir node_modules 2> /dev/null

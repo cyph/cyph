@@ -1,12 +1,12 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node
 
 
-import * as childProcess from 'child_process';
-import * as dgram from 'dgram';
-import * as level from 'level';
-import * as read from 'read';
-import * as stream from 'stream';
-import * as superSphincs from 'supersphincs';
+const childProcess	= require('child_process');
+const dgram			= require('dgram');
+const level			= require('level');
+const read			= require('read');
+const stream		= require('stream');
+const superSphincs	= require('supersphincs');
 
 
 (async () => {

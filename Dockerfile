@@ -118,7 +118,6 @@ RUN rm -rf ~/.gnupg
 #CIRCLECI:RUN sudo apt-get -y --allow-downgrades upgrade
 #CIRCLECI:RUN mkdir -p ~/getlibs/commands
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/firebase-server
-#CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/ts-node
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/tslint
 #CIRCLECI:RUN echo 'GETLIBS_BASE64' | base64 --decode > ~/getlibs/commands/getlibs.sh
 #CIRCLECI:RUN echo 'LIBCLONE_BASE64' | base64 --decode > ~/getlibs/commands/libclone.sh
@@ -126,8 +125,6 @@ RUN rm -rf ~/.gnupg
 #CIRCLECI:RUN touch ~/getlibs/shared/lib/js/yarn.lock
 #CIRCLECI:RUN echo 'FBS_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/firebase-server/package.json
 #CIRCLECI:RUN touch ~/getlibs/shared/lib/js/module_locks/firebase-server/yarn.lock
-#CIRCLECI:RUN echo 'TSN_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/ts-node/package.json
-#CIRCLECI:RUN touch ~/getlibs/shared/lib/js/module_locks/ts-node/yarn.lock
 #CIRCLECI:RUN echo 'TSL_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/tslint/package.json
 #CIRCLECI:RUN touch ~/getlibs/shared/lib/js/module_locks/tslint/yarn.lock
 #CIRCLECI:RUN git clone --depth 1 https://github.com/jedisct1/libsodium.js ~/getlibs/shared/lib/js/libsodium

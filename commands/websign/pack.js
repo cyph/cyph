@@ -1,11 +1,11 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node
 
 
-import * as cheerio from 'cheerio';
-import * as fs from 'fs';
-import * as htmlMinifier from 'html-minifier';
-import * as mkdirp from 'mkdirp';
-import {superSphincs} from 'supersphincs';
+const cheerio		= require('cheerio');
+const fs			= require('fs');
+const htmlMinifier	= require('html-minifier');
+const mkdirp		= require('mkdirp');
+const superSphincs	= require('supersphincs');
 
 
 (async () => {

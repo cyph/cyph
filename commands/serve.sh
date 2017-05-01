@@ -102,7 +102,7 @@ if [ "${prodlike}" ] ; then
 	fi
 
 	cd shared
-	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.ts %
+	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 	cd ..
 
 	echo -e "\n\n\nLocal env ready ($(expr $(date +%s) - $start)s)\n\n"

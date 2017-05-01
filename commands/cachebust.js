@@ -1,10 +1,10 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node
 
 
-import * as childProcess from 'child_process';
-import * as fs from 'fs';
-import * as mkdirp from 'mkdirp';
-import {superSphincs} from 'supersphincs';
+const childProcess	= require('child_process');
+const fs			= require('fs');
+const mkdirp		= require('mkdirp');
+const superSphincs	= require('supersphincs');
 
 
 (async () => {

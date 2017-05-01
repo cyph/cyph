@@ -1,12 +1,12 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node
 
 
-import {randomBytes} from 'crypto';
-import * as dgram from 'dgram';
-import * as fs from 'fs';
-import * as mkdirp from 'mkdirp';
-import * as os from 'os';
-import {superSphincs} from 'supersphincs';
+const crypto		= require('crypto');
+const dgram			= require('dgram');
+const fs			= require('fs');
+const mkdirp		= require('mkdirp');
+const os			= require('os');
+const superSphincs	= require('supersphincs');
 
 
 (async () => {
@@ -58,7 +58,7 @@ const dataToSign	= Buffer.from(JSON.stringify(
 	items.map(o => o.inputData)
 ));
 
-const id			= new Uint32Array(randomBytes(4).buffer)[0];
+const id			= new Uint32Array(crypto.randomBytes(4).buffer)[0];
 const client		= dgram.createSocket('udp4');
 const server		= dgram.createSocket('udp4');
 

@@ -1,11 +1,11 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node
 
 
-import * as fs from 'fs';
-import * as level from 'level';
-import * as sodium from 'libsodium-wrappers';
-import * as fetch from 'node-fetch';
-import * as superSphincs from 'supersphincs';
+const fs			= require('fs');
+const level			= require('level');
+const sodium		= require('libsodium-wrappers');
+const fetch			= require('node-fetch');
+const superSphincs	= require('supersphincs');
 
 
 (async () => {

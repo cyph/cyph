@@ -1,12 +1,12 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node
 
 
-import * as cheerio from 'cheerio';
-import * as childProcess from 'child_process';
-import * as datauri from 'datauri';
-import * as fs from 'fs';
-import * as htmlencode from 'htmlencode';
-import * as superSphincs from 'supersphincs';
+const cheerio		= require('cheerio');
+const childProcess	= require('child_process');
+const datauri		= require('datauri');
+const fs			= require('fs');
+const htmlencode	= require('htmlencode');
+const superSphincs	= require('supersphincs');
 
 
 (async () => {

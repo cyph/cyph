@@ -55,14 +55,14 @@ apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
 apt-get -y --force-yes install sudo nodejs ecryptfs-utils lsof
 
-npm -g install ts-node typescript xkcd-passphrase
+npm -g install xkcd-passphrase
 
 mkdir -p /tmp/agse
 cp "$(dirname "$0")"/* /tmp/agse/
 chmod -R 777 /tmp/agse
 
 if [ -f /tmp/agse/keybackup ] ; then
-	eval "$(/tmp/agse/getbackuppassword.ts)"
+	eval "$(/tmp/agse/getbackuppassword.js)"
 else
 	backupPasswordAes="$(xkcd-passphrase 256)"
 	backupPasswordSodium="$(xkcd-passphrase 256)"
@@ -81,7 +81,7 @@ cd /home/${username}
 npm install level libsodium-wrappers node-fetch read supersphincs
 echo
 
-/tmp/agse/generatekeys.ts \
+/tmp/agse/generatekeys.js \
 	"${activeKeys}" \
 	"${backupKeys}" \
 	"$(ls /tmp/agse/keybackup 2> /dev/null)" \
@@ -103,7 +103,7 @@ if [ ! -f /tmp/agse/keybackup ] ; then
 	read
 fi
 
-mv /tmp/agse/server.ts ./
+mv /tmp/agse/server.js ./
 
 
 cat >> .bashrc <<- EOM
@@ -126,16 +126,12 @@ cat >> .bashrc <<- EOM
 			sleep 1
 		done
 
-		./server.ts "${activeKeys}" "${localAddress}" "${remoteAddress}" "${port}"
+		./server.js "${activeKeys}" "${localAddress}" "${remoteAddress}" "${port}"
 	fi
 EOM
 EndOfMessage
 chmod 777 /tmp/agse/setup.sh
 
-
-mv /usr/bin/ts-node /usr/bin/ts-node-original
-echo -e '#!/bin/bash\nts-node-original -D "${@}"' > /usr/bin/ts-node
-chmod +x /usr/bin/ts-node
 
 su ${username} -c /tmp/agse/setup.sh
 rm -rf /tmp/agse
