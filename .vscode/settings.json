@@ -1,0 +1,5 @@
+{
+	"typescript.check.tscVersion": false,
+	"typescript.disableAutomaticTypeAcquisition": true,
+	"typescript.tsdk": "shared/lib/js/node_modules/typescript/lib"
+}

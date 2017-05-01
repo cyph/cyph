@@ -412,12 +412,6 @@ const updateCircleCI	= () => {
 				).toString('base64')
 			).
 			replace(
-				/TSN_BASE64/g,
-				fs.readFileSync(
-					'shared/lib/js/module_locks/ts-node/package.json'
-				).toString('base64')
-			).
-			replace(
 				/TSL_BASE64/g,
 				fs.readFileSync(
 					'shared/lib/js/module_locks/tslint/package.json'

@@ -2,7 +2,7 @@
 
 cd "$(cd "$(dirname "$0")" ; pwd)/../../websign"
 
-../commands/websign/pack.ts index.html .index.html.tmp
+../commands/websign/pack.js index.html .index.html.tmp
 
 node -e '
 	const files	= JSON.parse(

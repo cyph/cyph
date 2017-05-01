@@ -157,14 +157,8 @@ for m in $(ls *-node.js | sed 's|-node\.js$||') ; do
 done
 cd ..
 
-node -e '
-	const package	= JSON.parse(fs.readFileSync("ts-node/package.json").toString());
-	package.scripts.prepublish	= undefined;
-	fs.writeFileSync("ts-node/package.json", JSON.stringify(package));
-'
-
 currentDir="${PWD}"
-for d in firebase-server ts-node tslint ; do
+for d in firebase-server tslint ; do
 	tmpDir="$(mktemp -d)"
 	mv "${d}" "${tmpDir}/"
 	cp -f ../module_locks/${d}/* "${tmpDir}/${d}/"
@@ -174,10 +168,6 @@ for d in firebase-server ts-node tslint ; do
 	cd "${currentDir}"
 	mv "${tmpDir}/${d}" ./
 done
-
-mv .bin/ts-node .bin/ts-node-original
-echo -e '#!/bin/bash\nts-node-original -D "${@}"' > .bin/ts-node
-chmod +x .bin/ts-node
 
 cd ../..
 

@@ -1,7 +1,7 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node
 
 
-import * as read from 'read';
+const read	= require('read');
 
 
 (async () => {

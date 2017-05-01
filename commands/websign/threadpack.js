@@ -1,7 +1,7 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node
 
 
-import * as fs from 'fs';
+const fs	= require('fs');
 
 
 (async () => {
