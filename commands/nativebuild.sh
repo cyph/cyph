@@ -17,7 +17,13 @@ cp ${dir}/shared/js/native/firebase.nativescript.json ./
 for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
 
 cp -rf node_modules node_modules.old
-rm -rf node_modules/@angular node_modules/@types node_modules/rxjs node_modules/zone.js 2> /dev/null
+rm -rf \
+	node_modules/@angular \
+	node_modules/@types \
+	node_modules/rxjs \
+	node_modules/typescript \
+	node_modules/zone.js \
+2> /dev/null
 for d in $(ls -a /node_modules) ; do
 	if [ ! -d "node_modules/${d}" ] ; then
 		cp -rf "/node_modules/${d}" node_modules/
