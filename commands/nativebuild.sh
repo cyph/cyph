@@ -44,7 +44,11 @@ cp -rf ${dir}/shared/js/cyph app/js/
 
 for module in cyph-app cyph-common ; do
 	modulePath="app/js/cyph/modules/${module}.module.ts"
-	cat "${modulePath}" | grep -v CyphWebModule > "${modulePath}.new"
+	cat "${modulePath}" |
+		grep -v CyphWebModule |
+		sed 's|{NgModule}|{NgModule, NO_ERRORS_SCHEMA}|g' |
+		sed 's|exports:|schemas: [NO_ERRORS_SCHEMA], exports:|g' \
+	> "${modulePath}.new"
 	mv "${modulePath}.new" "${modulePath}"
 done
 
