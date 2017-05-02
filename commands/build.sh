@@ -357,11 +357,22 @@ compile () {
 							app: './${f}'
 						},
 						externals: ${externals},
+						module: {
+							rules: [
+								{
+									test: /\.ts$/,
+									use: [{loader: 'awesome-typescript-loader'}]
+								}
+							]
+						},
 						output: {
 							filename: '${f}.js.tmp',
 							library: '${m}',
 							libraryTarget: 'var',
 							path: '${currentDir}'
+						},
+						resolve: {
+							extensions: ['.js', '.ts']
 						}
 					};
 				EOM
