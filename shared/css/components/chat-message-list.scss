@@ -1,8 +1,4 @@
 .message-list-background {
-	&:not(.nano) {
-		overflow-y: scroll;
-	}
-
 	&:after {
 		background-image: url(/img/betalogo.png);
 		background-repeat: no-repeat;
