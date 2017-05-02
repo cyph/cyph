@@ -13,7 +13,6 @@ import {enableProdMode} from '@angular/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import 'hammerjs';
 import 'magnific-popup';
-import 'nanoscroller';
 import 'rxjs/add/operator/toPromise';
 import 'web-animations-js';
 import 'webrtc-adapter';

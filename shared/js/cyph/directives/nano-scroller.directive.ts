@@ -1,7 +1,5 @@
-import {Directive, ElementRef, OnDestroy, OnInit} from '@angular/core';
-import * as $ from 'jquery';
+import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
 import {EnvService} from '../services/env.service';
-import {util} from '../util';
 
 
 /**
@@ -11,43 +9,30 @@ import {util} from '../util';
 @Directive({
 	selector: '[cyphNanoScroller]'
 })
-export class NanoScrollerDirective implements OnDestroy, OnInit {
-	/** @ignore */
-	private isAlive: boolean	= true;
-
-	/** @inheritDoc */
-	public ngOnDestroy () : void {
-		this.isAlive	= false;
-	}
-
+export class NanoScrollerDirective implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			return;
 		}
 
-		const $elem		= $(this.elementRef.nativeElement);
-		const $parent	= $elem.parent();
+		this.renderer.addClass(this.elementRef.nativeElement, 'nano-content');
+		this.renderer.addClass(this.renderer.parentNode(this.elementRef.nativeElement), 'nano');
 
-		$parent.addClass('nano');
-		$elem.addClass('nano-content');
-
-		if (this.envService.isMobile || this.envService.isMacOS) {
-			return;
+		if (this.envService.isEdge) {
+			this.renderer.addClass(this.elementRef.nativeElement, 'edge');
 		}
-
-		while (this.isAlive) {
-			if ($elem.is(':visible')) {
-				(<any> $parent).nanoScroller();
-			}
-
-			await util.sleep(1000);
+		else if (!this.envService.isMobile && !this.envService.isMacOS) {
+			this.renderer.addClass(this.elementRef.nativeElement, 'other');
 		}
 	}
 
 	constructor (
 		/** @ignore */
 		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly renderer: Renderer2,
 
 		/** @ignore */
 		private readonly envService: EnvService
