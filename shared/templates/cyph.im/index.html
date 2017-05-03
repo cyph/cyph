@@ -38,6 +38,7 @@
 				fxFlex
 				fxFlexFill
 				fxLayout='column'
+				cyphNanoScroller
 				*ngIf='appService.state === appService.states.error'
 				[@fadeIn]='"in"'
 			></cyph-not-found>
@@ -68,12 +69,12 @@
 		id='main'
 		*ngIf='appService.state === appService.states.account'
 	>
-		<cyph-account></cyph-account>
+		<cyph-account fxFlexFill></cyph-account>
 	</section>
 </span>
 
 <ng-template #lockdown>
 	<section fxFlexFill fxLayout='column' id='main' class='mat-sidenav-container'>
-		<cyph-lockdown></cyph-lockdown>
+		<cyph-lockdown fxFlexFill></cyph-lockdown>
 	</section>
 </ng-template>

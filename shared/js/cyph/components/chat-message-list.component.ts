@@ -42,12 +42,7 @@ export class ChatMessageListComponent implements OnInit {
 			return;
 		}
 
-		const $element	= $(this.elementRef.nativeElement);
-
-		this.scrollService.init(
-			$element.find('.message-list-background'),
-			this.messageCountInTitle
-		);
+		this.scrollService.init($(this.elementRef.nativeElement), this.messageCountInTitle);
 	}
 
 	constructor (
