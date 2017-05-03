@@ -1,4 +1,4 @@
-/* tslint:disable:no-import-side-effect */
+/* tslint:disable:no-import-side-effect no-require-imports no-var-requires */
 
 /**
  * @file Entry point of app.
