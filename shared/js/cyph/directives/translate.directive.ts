@@ -1,4 +1,4 @@
-import {Directive, ElementRef, Renderer} from '@angular/core';
+import {Directive, ElementRef, Renderer2} from '@angular/core';
 import * as $ from 'jquery';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
@@ -13,7 +13,7 @@ import {util} from '../util';
 })
 export class TranslateDirective {
 	/** @ignore */
-	private handleElement (nativeElement: HTMLElement, renderer: Renderer) : void {
+	private handleElement (nativeElement: HTMLElement, renderer: Renderer2) : void {
 		const $element	= $(nativeElement);
 		const $children	= $element.children();
 
@@ -21,7 +21,7 @@ export class TranslateDirective {
 			this.translate(
 				$element.attr(attr),
 				translation => {
-					renderer.setElementAttribute(nativeElement, attr, translation);
+					renderer.setAttribute(nativeElement, attr, translation);
 				}
 			);
 		}
@@ -35,7 +35,7 @@ export class TranslateDirective {
 			this.translate(
 				$element.text(),
 				translation => {
-					renderer.setText(nativeElement, translation);
+					renderer.setValue(nativeElement, translation);
 				}
 			);
 		}
@@ -58,7 +58,7 @@ export class TranslateDirective {
 
 	constructor (
 		elementRef: ElementRef,
-		renderer: Renderer,
+		renderer: Renderer2,
 		configService: ConfigService,
 		envService: EnvService
 	) {

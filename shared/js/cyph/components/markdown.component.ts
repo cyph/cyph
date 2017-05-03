@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnChanges, Renderer, SimpleChanges} from '@angular/core';
+import {Component, ElementRef, Input, OnChanges, Renderer2, SimpleChanges} from '@angular/core';
 import * as DOMPurify from 'dompurify';
 import * as $ from 'jquery';
 import * as MarkdownIt from 'markdown-it';
@@ -31,7 +31,7 @@ export class MarkdownComponent implements OnChanges {
 	public async ngOnChanges (_CHANGES: SimpleChanges) : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
-			this.renderer.setText(this.elementRef.nativeElement, this.markdown || '');
+			this.renderer.setValue(this.elementRef.nativeElement, this.markdown || '');
 			return;
 		}
 
@@ -103,7 +103,7 @@ export class MarkdownComponent implements OnChanges {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly renderer: Renderer,
+		private readonly renderer: Renderer2,
 
 		/** @ignore */
 		private readonly envService: EnvService
