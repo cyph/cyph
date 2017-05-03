@@ -1,5 +1,6 @@
 import {animate, state, style, transition, trigger} from '@angular/animations';
 
+/** Slide in and out from the bottom animation. */
 export const slideInOutBottom	= trigger('slideInOutBottom', [
 	state('in', style({transform: 'translateY(-50%)'})),
 	transition(':enter', [
