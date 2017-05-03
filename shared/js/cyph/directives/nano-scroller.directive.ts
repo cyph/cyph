@@ -12,12 +12,7 @@ import {EnvService} from '../services/env.service';
 export class NanoScrollerDirective implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
-			return;
-		}
-
-		this.renderer.addClass(this.elementRef.nativeElement, 'nano-content');
-		this.renderer.addClass(this.renderer.parentNode(this.elementRef.nativeElement), 'nano');
+		this.renderer.addClass(this.elementRef.nativeElement, 'nano');
 
 		if (this.envService.isEdge) {
 			this.renderer.addClass(this.elementRef.nativeElement, 'edge');
