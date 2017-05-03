@@ -76,55 +76,8 @@ export class Thread implements IThread {
 			};
 		}
 
-		try {
-			crypto.getRandomValues(new Uint8Array(1));
-		}
-		catch (_) {
-			/* Some browsers only expose crypto in the main thread;
-				as a workaround, the main thread's crypto instance
-				is used to seed a different CSPRNG here */
-
-			crypto	= (() => {
-				const key		= new Uint8Array(threadSetupVars.seed);
-				const nonce		= new Uint32Array(2);
-				let isActive	= false;
-
-				return {
-					getRandomValues: (array: ArrayBufferView) => {
-						if (
-							typeof (<any> self).sodium !== 'undefined' &&
-							(<any> self).sodium.crypto_stream_chacha20
-						) {
-							isActive	= true;
-						}
-						else if (!isActive) {
-							return array;
-						}
-						else {
-							throw new Error('No CSPRNG found.');
-						}
-
-						++nonce[nonce[0] === 4294967295 ? 0 : 1];
-
-						const newBytes: Uint8Array	= (<any> self).sodium.crypto_stream_chacha20(
-							array.byteLength,
-							key,
-							new Uint8Array(nonce.buffer)
-						);
-
-						new Uint8Array(array.buffer).set(newBytes);
-						(<any> self).sodium.memzero(newBytes);
-
-						return array;
-					},
-
-					subtle: <SubtleCrypto> {}
-				};
-			})();
-		}
-
-		(<any> self).crypto	= crypto;
-
+		importScripts('/js/cyph/crypto/web-crypto-polyfill.js');
+		(<any> self).webCryptoPolyfill(new Uint8Array(threadSetupVars.seed));
 		importScripts('/lib/js/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js');
 		(<any> self).sodium.memzero(threadSetupVars.seed);
 
