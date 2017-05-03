@@ -19,17 +19,17 @@ export class SignupService {
 
 	/** Signup data entered by user. */
 	public readonly data	= {
-		email: <string> '',
-		inviteCode: <string> '',
-		language: <string> this.envService.fullLanguage,
-		name: <string> ''
+		email: '',
+		inviteCode: '',
+		language: this.envService.fullLanguage,
+		name: ''
 	};
 
 	/** Used to track which users signed up through a promo page. */
 	public promo: string	= '';
 
 	/** Ordinal number indicating which screen of this form is active. */
-	public state: number		= 0;
+	public state: number	= 0;
 
 	/** Submits signup data to server. */
 	public async submit () : Promise<void> {
