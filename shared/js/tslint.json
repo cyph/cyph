@@ -73,7 +73,7 @@
 		/* Functionality */
 
 		"await-promise": false,
-		"ban": [true, ["Math", "random"], ["require"], "setInterval", "setTimeout"],
+		"ban": [true, ["Math", "random"], "setInterval", "setTimeout"],
 		"curly": true,
 		"forin": true,
 		"import-blacklist": false,
