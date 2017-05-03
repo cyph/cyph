@@ -36,7 +36,7 @@ export class DemoComponent implements OnInit {
 					$root: elements.demoRootDesktop(),
 					$screenshot: elements.screenshotLaptop(),
 					multiplierHeight: 0.104,
-					multiplierWidth: 0.130,
+					multiplierWidth: 0.13,
 					scale: 0.73,
 					verticalOffset: 0
 				},

@@ -144,33 +144,36 @@ export class AppService {
 
 			await util.sleep();
 
-			if (this.homeSection === HomeSections.register) {
-				await this.dialogService.baseDialog(BetaRegisterComponent);
-				this.urlStateService.setUrl('');
-			}
-			else if (this.homeSection === HomeSections.invite) {
-				eventManager.trigger(
-					SignupService.inviteEvent,
-					this.urlStateService.getUrl().split(
-						`${HomeSections[HomeSections.invite]}/`
-					)[1] || ''
-				);
+			switch (this.homeSection) {
+				case HomeSections.register:
+					await this.dialogService.baseDialog(BetaRegisterComponent);
+					this.urlStateService.setUrl('');
+					break;
 
-				await this.dialogService.baseDialog(BetaRegisterComponent, undefined, o => {
-					o.invite	= true;
-				});
+				case HomeSections.invite:
+					eventManager.trigger(
+						SignupService.inviteEvent,
+						this.urlStateService.getUrl().split(
+							`${HomeSections[HomeSections.invite]}/`
+						)[1] || ''
+					);
 
-				this.urlStateService.setUrl('');
-			}
-			else {
-				this.scroll(
-					$(`#${HomeSections[this.homeSection]}-section`).offset().top -
-					(
-						this.homeSection === HomeSections.gettingstarted ?
-							-1 :
-							elements.mainToolbar().height()
-					)
-				);
+					await this.dialogService.baseDialog(BetaRegisterComponent, undefined, o => {
+						o.invite	= true;
+					});
+
+					this.urlStateService.setUrl('');
+					break;
+
+				default:
+					this.scroll(
+						$(`#${HomeSections[this.homeSection]}-section`).offset().top -
+						(
+							this.homeSection === HomeSections.gettingstarted ?
+								-1 :
+								elements.mainToolbar().height()
+						)
+					);
 			}
 		}
 		else if (state === States.checkout) {

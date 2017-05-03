@@ -10,7 +10,16 @@ import {EnvService} from './env.service';
 @Injectable()
 export class FaviconService {
 	/** @ignore */
-	private static readonly faviconSets: {[name: string]: IFaviconSet}	= {
+	private readonly elements	= {
+		apple: (size: string) => $(`link[rel='apple-touch-icon'][sizes='${size}x${size}']`),
+		icon: (size: string) => $(`link[rel='icon'][sizes='${size}x${size}']`),
+		mask: () => $(`link[rel='mask-icon']`),
+		mstile: () => $(`meta[name='msapplication-TileImage']`),
+		shortcut: (size: string) => $(`link[rel='shortcut icon'][sizes='${size}x${size}']`)
+	};
+
+	/** @ignore */
+	private readonly faviconSets: {[name: string]: IFaviconSet}	= {
 		default: {
 			apple114: '',
 			apple120: '',
@@ -53,18 +62,8 @@ export class FaviconService {
 		}
 	};
 
-
-	/** @ignore */
-	private readonly elements	= {
-		apple: (size: string) => $(`link[rel='apple-touch-icon'][sizes='${size}x${size}']`),
-		icon: (size: string) => $(`link[rel='icon'][sizes='${size}x${size}']`),
-		mask: () => $(`link[rel='mask-icon']`),
-		mstile: () => $(`meta[name='msapplication-TileImage']`),
-		shortcut: (size: string) => $(`link[rel='shortcut icon'][sizes='${size}x${size}']`)
-	};
-
 	/** Active favicon set. */
-	public activeFaviconSet: IFaviconSet	= FaviconService.faviconSets.default;
+	public activeFaviconSet: IFaviconSet	= this.faviconSets.default;
 
 	/**
 	 * Changes favicon at run-time for non-co-branded instances.
@@ -80,7 +79,7 @@ export class FaviconService {
 			return;
 		}
 
-		this.activeFaviconSet	= FaviconService.faviconSets[name];
+		this.activeFaviconSet	= this.faviconSets[name];
 
 		this.elements.apple('114').attr('href', this.activeFaviconSet.apple114);
 		this.elements.apple('120').attr('href', this.activeFaviconSet.apple120);
@@ -106,27 +105,27 @@ export class FaviconService {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
-		const defaultFaviconSet	= FaviconService.faviconSets['default'];
-
-		if (this.envService.isWeb && !defaultFaviconSet.apple114) {
-			defaultFaviconSet.apple114		= this.elements.apple('114').attr('href');
-			defaultFaviconSet.apple120		= this.elements.apple('120').attr('href');
-			defaultFaviconSet.apple144		= this.elements.apple('144').attr('href');
-			defaultFaviconSet.apple152		= this.elements.apple('152').attr('href');
-			defaultFaviconSet.apple180		= this.elements.apple('180').attr('href');
-			defaultFaviconSet.apple57		= this.elements.apple('57').attr('href');
-			defaultFaviconSet.apple60		= this.elements.apple('60').attr('href');
-			defaultFaviconSet.apple72		= this.elements.apple('72').attr('href');
-			defaultFaviconSet.apple76		= this.elements.apple('76').attr('href');
-			defaultFaviconSet.icon16		= this.elements.icon('16').attr('href');
-			defaultFaviconSet.icon160		= this.elements.icon('160').attr('href');
-			defaultFaviconSet.icon192		= this.elements.icon('192').attr('href');
-			defaultFaviconSet.icon256		= this.elements.icon('256').attr('href');
-			defaultFaviconSet.icon32		= this.elements.icon('32').attr('href');
-			defaultFaviconSet.icon96		= this.elements.icon('96').attr('href');
-			defaultFaviconSet.mask			= this.elements.mask().attr('href');
-			defaultFaviconSet.mstile		= this.elements.mstile().attr('content');
-			defaultFaviconSet.shortcut196	= this.elements.shortcut('196').attr('href');
+		if (!this.envService.isWeb || this.faviconSets.default.apple114) {
+			return;
 		}
+
+		this.faviconSets.default.apple114		= this.elements.apple('114').attr('href');
+		this.faviconSets.default.apple120		= this.elements.apple('120').attr('href');
+		this.faviconSets.default.apple144		= this.elements.apple('144').attr('href');
+		this.faviconSets.default.apple152		= this.elements.apple('152').attr('href');
+		this.faviconSets.default.apple180		= this.elements.apple('180').attr('href');
+		this.faviconSets.default.apple57		= this.elements.apple('57').attr('href');
+		this.faviconSets.default.apple60		= this.elements.apple('60').attr('href');
+		this.faviconSets.default.apple72		= this.elements.apple('72').attr('href');
+		this.faviconSets.default.apple76		= this.elements.apple('76').attr('href');
+		this.faviconSets.default.icon16			= this.elements.icon('16').attr('href');
+		this.faviconSets.default.icon160		= this.elements.icon('160').attr('href');
+		this.faviconSets.default.icon192		= this.elements.icon('192').attr('href');
+		this.faviconSets.default.icon256		= this.elements.icon('256').attr('href');
+		this.faviconSets.default.icon32			= this.elements.icon('32').attr('href');
+		this.faviconSets.default.icon96			= this.elements.icon('96').attr('href');
+		this.faviconSets.default.mask			= this.elements.mask().attr('href');
+		this.faviconSets.default.mstile			= this.elements.mstile().attr('content');
+		this.faviconSets.default.shortcut196	= this.elements.shortcut('196').attr('href');
 	}
 }
