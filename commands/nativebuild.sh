@@ -163,7 +163,7 @@ for platform in android ios ; do
 	webpack --config webpack.js
 	sed -i 's|lib/js/||g' app/main.${platform}.js
 	sed -i 's|js/|app/js/|g' app/main.${platform}.js
-	# ../commands/websign/threadpack.js app/main.${platform}.js
+	/cyph/commands/websign/threadpack.js app/main.${platform}.js
 
 	cp base.js main.${platform}.js
 	echo >> main.${platform}.js

@@ -1,4 +1,3 @@
-nativescript-angular-webview-crypto
 nativescript-audio
 nativescript-bitmap-factory
 nativescript-calendar
@@ -20,3 +19,4 @@ nativescript-plugin-firebase
 nativescript-secure-storage
 nativescript-social-share
 nativescript-telerik-ui-pro
+nativescript-webview-interface
