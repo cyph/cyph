@@ -15,12 +15,7 @@
 	}
 }
 
-.chat-main:not(.mobile) .transfer-list {
-	width: calc(100% - 3px);
-}
-
 .chat-main.mobile .transfer-list {
-	width: calc(100% - 30px);
 	padding: 5px;
 }
 
