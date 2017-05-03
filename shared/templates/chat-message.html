@@ -1,6 +1,5 @@
-<md-list-item
+<div
 	[fxFlex]='mobile ? "nogrow" : ""'
-	fxLayout='column'
 	class='message-item'
 	[class.mobile]='mobile'
 	[class.author-app]='message.author === users.app'
@@ -11,7 +10,7 @@
 	'
 	[class.self-destructed]='message.selfDestructTimer && message.selfDestructTimer.isComplete'
 >
-	<div fxFlex fxLayout='column'>
+	<div>
 		<div fxLayout='row'>
 			<div class='message'>
 				<strong
@@ -73,4 +72,4 @@
 		</div>
 	</div>
 	<div class='self-destruct-cover'></div>
-</md-list-item>
+</div>

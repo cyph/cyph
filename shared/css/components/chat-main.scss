@@ -1,24 +1,16 @@
 .transfer-list {
-	position: absolute !important;
+	max-height: 195px;
 
-	md-list {
-		max-height: 195px;
+	.transfer-item {
+		height: 65px;
 
-		md-list-item {
-			height: 65px;
+		span {
+			word-wrap: break-word;
+		}
 
-			.mat-list-item-content {
-				width: 100%;
-			}
-
-			span {
-				word-wrap: break-word;
-			}
-
-			md-progress-bar {
-				margin: 20px;
-				margin-top: 0px;
-			}
+		md-progress-bar {
+			width: calc(100% - 40px);
+			margin-left: 20px;
 		}
 	}
 }
@@ -37,10 +29,8 @@
 }
 
 .chat-main.mobile, .chat-main.video {
-	.friend-is-typing {
-		.mat-list-item-content, .ellipsis-spinner {
-			width: 100%;
-		}
+	.friend-is-typing .ellipsis-spinner {
+		width: 100%;
 	}
 }
 
@@ -60,14 +50,14 @@
 	}
 }
 
-.chat-main:not(.mobile):not(.video) cyph-chat-message-list md-list > md-list-item:first-child {
+.chat-main:not(.mobile):not(.video) cyph-chat-message-list .message-list-background > :first-child {
 	padding-top: 15px;
 }
 
-.chat-main.mobile.video cyph-chat-message-list md-list {
+.chat-main.mobile.video cyph-chat-message-list .message-list-background {
 	padding-top: 0px;
 
-	> md-list-item:first-child {
+	> :first-child {
 		margin-top: 40px !important;
 	}
 }
@@ -263,9 +253,8 @@
 	width: 75%;
 }
 
-.chat-end-message .mat-list-item-content {
-	padding: 10px 0px !important;
-	width: 100% !important;
+.chat-end-message {
+	padding: 10px 0px;
 }
 
 /*** New fullscreen video UI ***/
@@ -387,7 +376,7 @@
 			}
 		}
 
-		md-list {
+		.message-list-background {
 			padding-right: 0px;
 			padding-bottom: 120px;
 		}
