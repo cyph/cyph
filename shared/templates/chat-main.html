@@ -216,14 +216,13 @@
 	></cyph-chat-message-box>
 
 	<div
-		fxFlex
 		class='transfer-list'
 		*ngIf='chatService.chat.state === states.chat && !p2pService.isActive'
 		[@fadeIn]='"in"'
 	>
-		<md-list fxFlex fxLayout='column'>
-			<md-list-item fxLayout='row' *ngFor='let transfer of fileTransferService.transfers'>
-				<div fxFlex fxLayout='column' fxLayoutAlign='start stretch'>
+		<div fxFlex fxLayout='column'>
+			<div fxLayout='row' *ngFor='let transfer of fileTransferService.transfers'>
+				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch' class='transfer-item'>
 					<div fxLayout='row'>
 						<span fxLayout='column' *ngIf='transfer.isOutgoing' cyphTranslate>
 							Sending
@@ -242,8 +241,8 @@
 						[value]='transfer.percentComplete'
 					></md-progress-bar>
 				</div>
-			</md-list-item>
-		</md-list>
+			</div>
+		</div>
 	</div>
 
 	<cyph-chat-message-list
@@ -258,17 +257,6 @@
 		[unconfirmedMessages]='chatService.chat.unconfirmedMessages'
 		*ngIf='chatService.chat.state === states.chat'
 		[@fadeIn]='"in"'
-		[style.margin-top]='
-			p2pService.isActive ? "" : (
-				(
-					(
-						fileTransferService.transfers.size < 3 ?
-							fileTransferService.transfers.size :
-							3
-					) * 65
-				).toString() + "px"
-			)
-		'
 	>
 		<ng-content></ng-content>
 	</cyph-chat-message-list>

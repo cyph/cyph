@@ -122,6 +122,8 @@
 	}
 
 	cyph-chat-cyphertext {
+		color: $cyph-cyphertext-foreground;
+
 		@include angular-material-theme($cyph-cyphertext-theme);
 	}
 

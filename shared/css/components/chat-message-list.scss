@@ -1,4 +1,6 @@
 .message-list-background {
+	@include filter(drop-shadow((-2px) 2px 2px rgba(0, 0, 0, 0.15)));
+
 	&:after {
 		background-image: url(/img/betalogo.png);
 		background-repeat: no-repeat;
@@ -14,10 +16,6 @@
 
 		@include transform(translateX(-50%) translateY(-75%));
 	}
-}
-
-md-list {
-	@include filter(drop-shadow((-2px) 2px 2px rgba(0, 0, 0, 0.15)));
 }
 
 .message-item {
