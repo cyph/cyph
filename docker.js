@@ -391,18 +391,20 @@ const updateCircleCI	= () => {
 			replace(/#CIRCLECI:/g, '').
 			replace(
 				/GETLIBS_BASE64/g,
-				new Buffer(
-					fs.readFileSync('commands/getlibs.sh').
-						toString().
-						split('\n').
-						filter(s => s.indexOf('nativePlugins') < 0).
-						join('\n')
+				fs.readFileSync(
+					'commands/getlibs.sh'
 				).toString('base64')
 			).
 			replace(
 				/LIBCLONE_BASE64/g,
 				fs.readFileSync(
 					'commands/libclone.sh'
+				).toString('base64')
+			).
+			replace(
+				/PLUGINS_BASE64/g,
+				fs.readFileSync(
+					'shared/js/native/plugins.list'
 				).toString('base64')
 			).
 			replace(
