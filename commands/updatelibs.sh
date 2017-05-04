@@ -95,6 +95,8 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	node-sass \
 	ntru \
 	od-virtualscroll \
+	prepack \
+	prepack-webpack-plugin \
 	raw-loader \
 	read \
 	reflect-metadata \
