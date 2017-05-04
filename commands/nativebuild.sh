@@ -7,8 +7,7 @@ dir="$PWD"
 plugins="$(cat shared/js/native/plugins.list)"
 
 cd
-# tns create cyph --ng --appid com.cyph.app || exit 1
-tns create cyph --template tns-template-hello-world-ng@rc --appid com.cyph.app || exit 1
+tns create cyph --ng --appid com.cyph.app || exit 1
 cd cyph
 mkdir node_modules 2> /dev/null
 npm install || exit 1
