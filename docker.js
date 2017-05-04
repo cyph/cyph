@@ -512,6 +512,10 @@ switch (args.command) {
 		exec(shellScripts.stopServe);
 		break;
 
+	case 'updatecircleci':
+		updateCircleCI();
+		break;
+
 	default:
 		if (!commandScriptExists) {
 			throw new Error('fak u gooby');
