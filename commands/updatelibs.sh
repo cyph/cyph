@@ -87,8 +87,8 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	mkdirp \
 	moment \
 	nanoscroller \
-	nativescript@rc \
-	nativescript-angular@rc \
+	nativescript \
+	nativescript-angular \
 	nativescript-dev-android-snapshot \
 	nativescript-dev-typescript \
 	nativescript-theme-core \
