@@ -43,7 +43,6 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	angular-smd@https://github.com/buu700/angular-smd-tmp \
 	angular-ssr \
 	angular2-template-loader \
-	angular2-virtual-scroll \
 	animate.css \
 	awesome-typescript-loader \
 	bourbon@4.2.7 \
@@ -92,7 +91,6 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	nativescript-dev-android-snapshot \
 	nativescript-dev-typescript \
 	nativescript-theme-core \
-	ng2-vs-for \
 	node-fetch \
 	node-sass \
 	ntru \
