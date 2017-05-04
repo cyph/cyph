@@ -118,6 +118,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	tns-core-modules \
 	tns-core-modules-widgets \
 	tns-ios \
+	tns-platform-declarations \
 	ts-loader \
 	tslint \
 	tslint-microsoft-contrib \
