@@ -122,7 +122,7 @@ RUN rm -rf ~/.gnupg
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/tslint
 #CIRCLECI:RUN echo 'GETLIBS_BASE64' | base64 --decode > ~/getlibs/commands/getlibs.sh
 #CIRCLECI:RUN echo 'LIBCLONE_BASE64' | base64 --decode > ~/getlibs/commands/libclone.sh
-#CIRCLECI:RUN echo 'PLUGINS_BASE64' | base64 --decode > ~/shared/js/native/plugins.list
+#CIRCLECI:RUN echo 'PLUGINS_BASE64' | base64 --decode > ~/getlibs/shared/js/native/plugins.list
 #CIRCLECI:RUN echo 'PACKAGE_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/package.json
 #CIRCLECI:RUN touch ~/getlibs/shared/lib/js/yarn.lock
 #CIRCLECI:RUN echo 'FBS_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/firebase-server/package.json
