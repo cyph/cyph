@@ -2219,16 +2219,9 @@ domutils@1.1:
   dependencies:
     domelementtype "1"
 
-domutils@1.5.1:
+domutils@1.5.1, domutils@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.5.1.tgz#dcd8488a26f563d61079e48c9f7b7e32373682cf"
-  dependencies:
-    dom-serializer "0"
-    domelementtype "1"
-
-domutils@^1.5.1:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.6.0.tgz#853de07f013287f976b7fe0461740222ea14ecbb"
   dependencies:
     dom-serializer "0"
     domelementtype "1"
@@ -8061,6 +8054,10 @@ tns-core-modules@^3.0.0:
 tns-ios@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/tns-ios/-/tns-ios-3.0.0.tgz#e7dffd32313deda0d5bc22451e4e209a28ad7a91"
+
+tns-platform-declarations@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/tns-platform-declarations/-/tns-platform-declarations-3.0.0.tgz#1dc58f1fbc6e710c23463930a676a9455a0d7c88"
 
 to-array@0.1.3:
   version "0.1.3"

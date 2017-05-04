@@ -109,6 +109,7 @@
     "tns-core-modules": "^3.0.0",
     "tns-core-modules-widgets": "^3.0.0",
     "tns-ios": "^3.0.0",
+    "tns-platform-declarations": "^3.0.0",
     "ts-loader": "^2.0.3",
     "tslint": "^5.2.0",
     "tslint-microsoft-contrib": "^4.0.1",
