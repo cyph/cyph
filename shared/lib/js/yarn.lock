@@ -6,9 +6,9 @@
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-4.1.0.tgz#97b642aee01b5406e03ec65e499342ba91e2dd38"
 
-"@angular/cli@^1.0.0", "@angular/cli@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@angular/cli/-/cli-1.0.1.tgz#95bc1e02c564ff2bddc7c6d975fdf355b47216cb"
+"@angular/cli@^1.0.0", "@angular/cli@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@angular/cli/-/cli-1.0.2.tgz#68f37cea8b379521120bb83032e76ac623b9917c"
   dependencies:
     "@ngtools/json-schema" "1.0.9"
     "@ngtools/webpack" "1.3.1"
@@ -74,10 +74,6 @@
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/common/-/common-4.1.0.tgz#4370f569e51ddd99963b7f4aa58c1a5dcc5fea52"
 
-"@angular/common@~4.0.0":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@angular/common/-/common-4.0.3.tgz#17472895eb425f2812b3a79162b5b494d2506a5b"
-
 "@angular/compiler-cli@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/compiler-cli/-/compiler-cli-4.1.0.tgz#727aaada8bfd94285e9818995925048f7fdf1200"
@@ -90,17 +86,9 @@
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-4.1.0.tgz#be1ade5b6aec81f03c29d52bcb95925a28900dcb"
 
-"@angular/compiler@~4.0.0":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-4.0.3.tgz#8b3cad338ac539328e10a6a4bfaa057094f7bc89"
-
 "@angular/core@^4", "@angular/core@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/core/-/core-4.1.0.tgz#72ec173316879571880c9c483ed6dfc0caab94b0"
-
-"@angular/core@~4.0.0":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@angular/core/-/core-4.0.3.tgz#61be21db6aa5778e33159ffd38cbbebaf16120d9"
 
 "@angular/flex-layout@2.0.0-beta.8":
   version "2.0.0-beta.8"
@@ -110,17 +98,9 @@
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-4.1.0.tgz#8eae2a45c4ba064b377f9280e59c012b5dac6b80"
 
-"@angular/forms@~4.0.0":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-4.0.3.tgz#fb8e6e0aede782bf58730a31d1179b323271816e"
-
 "@angular/http@^4", "@angular/http@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/http/-/http-4.1.0.tgz#7ba0c4d044dee964021b7cf19cb146a2c31577a5"
-
-"@angular/http@~4.0.0":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@angular/http/-/http-4.0.3.tgz#efbb701a215ec7704c021676484b85ed47392f4b"
 
 "@angular/material@^2.0.0-beta.3":
   version "2.0.0-beta.3"
@@ -130,17 +110,9 @@
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-4.1.0.tgz#0250d82d4abd36be60bb31fc7448ac6e28036690"
 
-"@angular/platform-browser-dynamic@~4.0.0":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-4.0.3.tgz#5fa3b98f725999b631d7d7174e6e43dcbf6aa9ac"
-
 "@angular/platform-browser@^4", "@angular/platform-browser@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-4.1.0.tgz#b981386be1a36f2af7f0679447fd97b7267b25de"
-
-"@angular/platform-browser@~4.0.0":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-4.0.3.tgz#170b18d5af4ee02b248aa6a1f1e0584ac841681e"
 
 "@angular/platform-server@^4.1.0":
   version "4.1.0"
@@ -160,10 +132,6 @@
 "@angular/router@^4", "@angular/router@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@angular/router/-/router-4.1.0.tgz#dd3563662f95ca3aa3dd9ff13c6ed4bea1d90b06"
-
-"@angular/router@~4.0.0":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@angular/router/-/router-4.0.3.tgz#24184e9b1266c4ad017b2be81573464b1e4c5dfa"
 
 "@angular/service-worker@^1.0.0-beta.10":
   version "1.0.0-beta.10"
@@ -486,10 +454,6 @@ angular2-template-loader@^0.6.2:
   resolved "https://registry.yarnpkg.com/angular2-template-loader/-/angular2-template-loader-0.6.2.tgz#c0d44e90fff0fac95e8b23f043acda7fd1c51d7c"
   dependencies:
     loader-utils "^0.2.15"
-
-angular2-virtual-scroll@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/angular2-virtual-scroll/-/angular2-virtual-scroll-0.1.5.tgz#941d02582ea8834c9882421c0a924f9acd41bbaf"
 
 "animate.css@>= 3.0.0", animate.css@^3.5.2, animate.css@latest:
   version "3.5.2"
@@ -3837,9 +3801,9 @@ invert-kv@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-1.0.0.tgz#104a8e4aaca6d3d8cd157a8ef8bfab2d7a3ffdb6"
 
-ios-device-lib@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/ios-device-lib/-/ios-device-lib-0.4.0.tgz#1e5d62eda94f09a02ce27ffd1c0bf8858b24b0c0"
+ios-device-lib@0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/ios-device-lib/-/ios-device-lib-0.4.1.tgz#c687a5850f9f87819e733a67d5fe42dbe4d2abb3"
   dependencies:
     bufferpack "0.0.6"
     node-uuid "1.4.7"
@@ -5255,24 +5219,12 @@ natives@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/natives/-/natives-1.1.0.tgz#e9ff841418a6b2ec7a495e939984f78f163e6e31"
 
-nativescript-angular@rc:
-  version "2.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/nativescript-angular/-/nativescript-angular-2.0.0-rc.1.tgz#480792b28b7dc31669480b0a26fc81b4cca47994"
+nativescript-angular@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/nativescript-angular/-/nativescript-angular-3.0.0.tgz#401c5eae895c22a44010c16f443910d2aa5af6ee"
   dependencies:
-    "@angular/common" "~4.0.0"
-    "@angular/compiler" "~4.0.0"
-    "@angular/core" "~4.0.0"
-    "@angular/forms" "~4.0.0"
-    "@angular/http" "~4.0.0"
-    "@angular/platform-browser" "~4.0.0"
-    "@angular/platform-browser-dynamic" "~4.0.0"
-    "@angular/router" "~4.0.0"
-    nativescript-intl "~0.0.8"
-    punycode "1.3.2"
-    querystring "0.2.0"
-    reflect-metadata "~0.1.8"
-    rxjs "^5.0.1"
-    url "0.10.3"
+    nativescript-intl "^3.0.0"
+    reflect-metadata "^0.1.8"
 
 nativescript-dev-android-snapshot@^0.0.9:
   version "0.0.9"
@@ -5296,17 +5248,17 @@ nativescript-hook@^0.2.0, nativescript-hook@^0.2.1:
     glob "^6.0.1"
     mkdirp "^0.5.1"
 
-nativescript-intl@~0.0.8:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/nativescript-intl/-/nativescript-intl-0.0.10.tgz#2a310f07f627344f75db547177db18298d430b0e"
+nativescript-intl@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/nativescript-intl/-/nativescript-intl-3.0.0.tgz#82ee9be7d377172b3c4295734723037628e186a7"
 
 nativescript-theme-core@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/nativescript-theme-core/-/nativescript-theme-core-1.0.4.tgz#cf2880c7fbf2fe5f43e2235d309750790803efe1"
 
-nativescript@rc:
-  version "3.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/nativescript/-/nativescript-3.0.0-rc.2.tgz#1dec489624f6cdc12dea79abc2551bf9b14ddccc"
+nativescript@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/nativescript/-/nativescript-3.0.0.tgz#73efc618b7ddb089f95f7866f908cceee8f23d8e"
   dependencies:
     bplist-parser "0.1.0"
     bufferpack "0.0.6"
@@ -5323,7 +5275,7 @@ nativescript@rc:
     glob "^7.0.3"
     iconv-lite "0.4.11"
     inquirer "0.9.0"
-    ios-device-lib "0.4.0"
+    ios-device-lib "0.4.1"
     ios-mobileprovision-finder "1.0.9"
     ios-sim-portable "~2.0.0"
     lockfile "1.0.1"
@@ -5376,10 +5328,6 @@ next-tick@1:
 next-tick@~0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-0.2.2.tgz#75da4a927ee5887e39065880065b7336413b310d"
-
-ng2-vs-for@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/ng2-vs-for/-/ng2-vs-for-1.1.1.tgz#79003aa184efe0fe4bba0e1129dc928334ca9a13"
 
 no-case@^2.2.0:
   version "2.3.1"
@@ -6848,7 +6796,7 @@ reduce-function-call@^1.0.1:
   dependencies:
     balanced-match "^0.4.2"
 
-reflect-metadata@^0, reflect-metadata@^0.1.10, reflect-metadata@^0.1.2, reflect-metadata@~0.1.8:
+reflect-metadata@^0, reflect-metadata@^0.1.10, reflect-metadata@^0.1.2, reflect-metadata@^0.1.8:
   version "0.1.10"
   resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.10.tgz#b4f83704416acad89988c9b15635d47e03b9344a"
 
@@ -8389,13 +8337,6 @@ url-parse@^1.1.1:
   dependencies:
     querystringify "~1.0.0"
     requires-port "1.0.x"
-
-url@0.10.3:
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/url/-/url-0.10.3.tgz#021e4d9c7705f21bbf37d03ceb58767402774c64"
-  dependencies:
-    punycode "1.3.2"
-    querystring "0.2.0"
 
 url@^0.11.0:
   version "0.11.0"
