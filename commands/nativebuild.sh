@@ -5,7 +5,7 @@ dir="$PWD"
 
 
 # Temporary workaround for plugin issues
-plugins="$(cat shared/js/native/plugins.list | grep -vP '(firebase|google|secure-storage)')"
+plugins="$(cat shared/js/native/plugins.list | grep -vP '(google|secure-storage)')"
 
 cd
 tns create cyph --ng --appid com.cyph.app || exit 1
@@ -13,7 +13,6 @@ cd cyph
 mkdir node_modules 2> /dev/null
 npm install || exit 1
 
-cp ${dir}/shared/js/native/firebase.nativescript.json ./
 for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
 
 cp -rf node_modules node_modules.old
@@ -104,9 +103,14 @@ for platform in android ios ; do
 				$(for plugin in ${plugins} ; do echo "
 					'${plugin}': \"require('${plugin}')\",
 				" ; done)
-				jquery: 'undefined',
-				libsodium: 'self.sodium',
-				simplewebrtc: '{}'
+				'_stream_duplex': 'undefined',
+				'_stream_writable': 'undefined',
+				'faye-websocket': '{Client: self.WebSocket}',
+				'jquery': 'undefined',
+				'libsodium': 'self.sodium',
+				'simplewebrtc': '{}',
+				'request': 'undefined',
+				'rsvp': 'undefined'
 			},
 			module: {
 				rules: [

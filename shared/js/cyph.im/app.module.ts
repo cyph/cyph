@@ -7,9 +7,8 @@ import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {ThreadedPotassiumService} from '../cyph/services/crypto/threaded-potassium.service';
-import {DatabaseService} from '../cyph/services/database.service';
 import {FaviconService} from '../cyph/services/favicon.service';
-import {FirebaseDatabaseService} from '../cyph/services/firebase-database.service';
+import {AccountComponent} from './account.component';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
@@ -40,10 +39,6 @@ import {LockdownComponent} from './lockdown.component';
 	providers: [
 		AppService,
 		FaviconService,
-		{
-			provide: DatabaseService,
-			useClass: FirebaseDatabaseService
-		},
 		{
 			provide: PotassiumService,
 			useClass: ThreadedPotassiumService

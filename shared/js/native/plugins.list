@@ -18,6 +18,6 @@ nativescript-nfc
 nativescript-ngx-fonticon
 nativescript-permissions
 nativescript-phone
-nativescript-plugin-firebase
 nativescript-secure-storage
 nativescript-social-share
+nativescript-websockets
