@@ -108,5 +108,10 @@ md-progress-spinner {
 
 	.message-item {
 		border-radius: 1px;
+
+		> .self-destruct-cover {
+			left: -12px;
+			width: calc(100% + 24px);
+		}
 	}
 }
