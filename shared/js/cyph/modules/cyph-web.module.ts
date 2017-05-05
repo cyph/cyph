@@ -26,6 +26,7 @@ import {
 	SmdFabSpeedDialTrigger
 } from 'angular-smd/src/app/shared/component/smd-fab-speed-dial';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
+import {UrlStateService} from '../services/url-state.service';
 
 
 /**
@@ -82,7 +83,8 @@ import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 		MdSnackBarModule,
 		MdTabsModule,
 		MdTooltipModule
-	]
+	],
+	providers: [UrlStateService]
 })
 /* tslint:disable-next-line:no-stateless-class */
 export class CyphWebModule {

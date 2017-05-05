@@ -10,7 +10,6 @@ import {AppService} from './app.service';
  */
 @Component({
 	animations: [fadeIn],
-	providers: [AppService],
 	selector: 'cyph-app',
 	templateUrl: '../../templates/cyph.im/index.html'
 })

@@ -1,25 +1,18 @@
 import {NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
-import {Title} from '@angular/platform-browser';
 import {NativeScriptModule} from 'nativescript-angular/nativescript.module';
 import {AccountComponent} from './account.component';
 import {AppComponent} from './app.component';
+import {AppService} from './app.service';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 import {HelpComponent} from './js/cyph/components/help.component';
 import {CyphAppModule} from './js/cyph/modules/cyph-app.module';
 import {CyphCommonModule} from './js/cyph/modules/cyph-common.module';
-import {ConfigService} from './js/cyph/services/config.service';
-import {DialogService} from './js/cyph/services/dialog.service';
-import {EnvService} from './js/cyph/services/env.service';
-import {FileService} from './js/cyph/services/file.service';
-import {NotificationService} from './js/cyph/services/notification.service';
-import {SignupService} from './js/cyph/services/signup.service';
-import {StringsService} from './js/cyph/services/strings.service';
-import {VirtualKeyboardWatcherService} from './js/cyph/services/virtual-keyboard-watcher.service';
-import {VisibilityWatcherService} from './js/cyph/services/visibility-watcher.service';
+import {PotassiumService} from './js/cyph/services/crypto/potassium.service';
+import {MainThreadPotassiumService} from './js/cyph/services/crypto/main-thread-potassium.service';
 
 
 /**
- * Angular module for Cyph UI.
+ * Angular module for Cyph native UI.
  */
 @NgModule({
 	bootstrap: [AppComponent],
@@ -35,16 +28,11 @@ import {VisibilityWatcherService} from './js/cyph/services/visibility-watcher.se
 		NativeScriptModule
 	],
 	providers: [
-		ConfigService,
-		DialogService,
-		EnvService,
-		FileService,
-		NotificationService,
-		SignupService,
-		StringsService,
-		Title,
-		VirtualKeyboardWatcherService,
-		VisibilityWatcherService
+		AppService,
+		{
+			provide: PotassiumService,
+			useClass: MainThreadPotassiumService
+		}
 	],
 	schemas: [NO_ERRORS_SCHEMA]
 })

@@ -7,7 +7,7 @@ import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
  * @see IPotassium
  */
 @Injectable()
-export abstract class PotassiumService extends PotassiumUtil implements IPotassium {
+export class PotassiumService extends PotassiumUtil implements IPotassium {
 	/** @inheritDoc */
 	public readonly box: any;
 
