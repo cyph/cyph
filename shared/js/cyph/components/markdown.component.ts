@@ -1,10 +1,12 @@
-import {Component, ElementRef, Input, OnChanges, Renderer2, SimpleChanges} from '@angular/core';
+import {Component, ElementRef, Input, OnChanges} from '@angular/core';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import * as DOMPurify from 'dompurify';
 import * as $ from 'jquery';
 import * as MarkdownIt from 'markdown-it';
 import * as markdownItEmoji from 'markdown-it-emoji';
 import * as markdownItSup from 'markdown-it-sup';
 import {microlight} from 'microlight-string';
+import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {util} from '../util';
 
@@ -24,24 +26,33 @@ export class MarkdownComponent implements OnChanges {
 	/** @ignore */
 	private readonly markdownIt: MarkdownIt.MarkdownIt;
 
+	/** Rendered HTML. */
+	public html?: SafeHtml;
+
 	/** String of Markdown to render as HTML and add to the DOM. */
 	@Input() public markdown?: string;
 
-	/** @ignore */
-	public async ngOnChanges (_CHANGES: SimpleChanges) : Promise<void> {
+	/** Handle clicks to display image dialogs when needed. */
+	public click (event: MouseEvent) : void {
+		if (event.srcElement instanceof HTMLImageElement) {
+			this.dialogService.image(event.srcElement.src);
+		}
+	}
+
+	/** @inheritDoc */
+	public async ngOnChanges () : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
-			this.renderer.setValue(this.elementRef.nativeElement, this.markdown || '');
 			return;
 		}
-
-		const $element	= $(this.elementRef.nativeElement);
 
 		if (this.markdown !== undefined) {
 			this.initiated	= true;
 		}
 		else if (this.initiated) {
 			await util.sleep(10000);
+
+			const $element	= $(this.elementRef.nativeElement);
 
 			$element.
 				height($element.height()).
@@ -50,60 +61,39 @@ export class MarkdownComponent implements OnChanges {
 			;
 		}
 
-		const $html	= $(DOMPurify.sanitize(
-			this.markdownIt.render(this.markdown || '').
+		this.html	= this.domSanitizer.bypassSecurityTrustHtml(
+			DOMPurify.sanitize(
+				this.markdownIt.render(this.markdown || '').
 
-				/* Merge blockquotes like reddit */
-				replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
+					/* Merge blockquotes like reddit */
+					replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
 
-				/* Images */
-				replace(
-					/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
-					(_: string, value: string) => {
-						const img: HTMLImageElement	= document.createElement('img');
-						img.src	= value;
-						return img.outerHTML;
-					}
-				)
-			,
-			{
-				FORBID_TAGS: ['style'],
-				SAFE_FOR_JQUERY: true
-			}
-		));
-
-		/* Block window.opener in new window */
-		$html.find('a').each((_: number, a: HTMLAnchorElement) => {
-			$(a).attr('rel', 'noreferrer');
-		});
-
-		/* Process image lightboxes */
-		$html.find('img').each((_: number, img: HTMLImageElement) => {
-			const $img	= $(img);
-			const $a	= $(document.createElement('a'));
-
-			$a.attr('href', $img.attr('src'));
-
-			$img.before($a);
-			$img.detach();
-			$a.append($img);
-
-			(<any> $a).magnificPopup({type: 'image'});
-		});
-
-		if (this.envService.isMobile) {
-			$html.addClass('mobile');
-		}
-
-		$element.empty().append($html);
+					/* Images */
+					replace(
+						/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
+						(_: string, value: string) => {
+							const img: HTMLImageElement	= document.createElement('img');
+							img.src	= value;
+							return img.outerHTML;
+						}
+					)
+				,
+				{
+					FORBID_TAGS: ['style']
+				}
+			)
+		);
 	}
 
 	constructor (
 		/** @ignore */
+		private readonly domSanitizer: DomSanitizer,
+
+		/** @ignore */
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly renderer: Renderer2,
+		private readonly dialogService: DialogService,
 
 		/** @ignore */
 		private readonly envService: EnvService
