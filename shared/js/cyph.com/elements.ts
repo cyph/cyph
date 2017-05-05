@@ -31,12 +31,12 @@ export class Elements {
 
 	/** @see Elements */
 	public readonly demoListDesktop		= Elements.getElement(
-		'.demo-root > .desktop cyph-chat-message-list md-list'
+		'.demo-root > .desktop cyph-chat-message-list .message-list-background'
 	);
 
 	/** @see Elements */
 	public readonly demoListMobile		= Elements.getElement(
-		'.demo-root > .mobile cyph-chat-message-list md-list'
+		'.demo-root > .mobile cyph-chat-message-list .message-list-background'
 	);
 
 	/** @see Elements */
