@@ -64,11 +64,13 @@
 		</div>
 		<div
 			fxLayout='row'
+			fxLayoutAlign='center center'
+			fxLayoutGap='10px'
 			class='self-destruct-timer'
 			*ngIf='message.selfDestructTimer'
 		>
-			<span cyphTranslate>Message will self-destruct in</span>
-			<span class='countdown'>{{message.selfDestructTimer.timestamp | async}}</span>
+			<div cyphTranslate>Message will self-destruct in</div>
+			<div class='countdown'>{{message.selfDestructTimer.timestamp | async}}</div>
 		</div>
 	</div>
 	<div class='self-destruct-cover'></div>

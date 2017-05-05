@@ -90,7 +90,8 @@ button, input, select, textarea {
 
 .countdown {
 	font-family: 'Ubuntu Mono', monospace;
-	padding-left: 10px;
+	word-break: normal;
+	word-wrap: normal;
 }
 
 .flipped {
