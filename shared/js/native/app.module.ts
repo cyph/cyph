@@ -7,8 +7,8 @@ import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 import {HelpComponent} from './js/cyph/components/help.component';
 import {CyphAppModule} from './js/cyph/modules/cyph-app.module';
 import {CyphCommonModule} from './js/cyph/modules/cyph-common.module';
-import {PotassiumService} from './js/cyph/services/crypto/potassium.service';
 import {MainThreadPotassiumService} from './js/cyph/services/crypto/main-thread-potassium.service';
+import {PotassiumService} from './js/cyph/services/crypto/potassium.service';
 
 
 /**
