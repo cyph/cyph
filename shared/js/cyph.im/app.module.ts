@@ -10,7 +10,6 @@ import {ThreadedPotassiumService} from '../cyph/services/crypto/threaded-potassi
 import {DatabaseService} from '../cyph/services/database.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {FirebaseDatabaseService} from '../cyph/services/firebase-database.service';
-import {AccountComponent} from './account.component';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
