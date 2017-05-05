@@ -11,7 +11,6 @@ import {enableProdMode} from '@angular/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import 'hammerjs';
 import 'jquery.appear';
-import 'magnific-popup';
 import 'rxjs/add/operator/toPromise';
 import 'web-animations-js';
 import 'whatwg-fetch';

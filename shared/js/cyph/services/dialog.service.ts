@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {ComponentType, MdDialog, MdDialogConfig, MdSnackBar} from '@angular/material';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
+import {DialogImageComponent} from '../components/dialog-image.component';
 import {util} from '../util';
 
 
@@ -13,10 +14,7 @@ export class DialogService {
 	/** @ignore */
 	private readonly lock: {}	= {};
 
-	/**
-	 * Displays alert.
-	 * @param o
-	 */
+	/** Displays alert. */
 	public async alert (o: {content: string; ok: string; title: string}) : Promise<void> {
 		return util.lock(this.lock, async () => {
 			const mdDialogRef	= this.mdDialog.open(DialogAlertComponent);
@@ -29,10 +27,7 @@ export class DialogService {
 		});
 	}
 
-	/**
-	 * Generic modal implementation that takes a template / content.
-	 * @param o
-	 */
+	/** Generic modal implementation that takes a template / content. */
 	public async baseDialog<T> (
 		componentType: ComponentType<T>,
 		config?: MdDialogConfig,
@@ -49,10 +44,7 @@ export class DialogService {
 		});
 	}
 
-	/**
-	 * Displays interactive confirmation prompt.
-	 * @param o
-	 */
+	/** Displays interactive confirmation prompt. */
 	public async confirm (o: {
 		cancel: string;
 		content: string;
@@ -86,6 +78,17 @@ export class DialogService {
 			finally {
 				hasReturned	= true;
 			}
+		});
+	}
+
+	/** Displays image. */
+	public async image (src: string) : Promise<void> {
+		return util.lock(this.lock, async () => {
+			const mdDialogRef	= this.mdDialog.open(DialogImageComponent);
+
+			mdDialogRef.componentInstance.src	= src;
+
+			await mdDialogRef.afterClosed().toPromise();
 		});
 	}
 

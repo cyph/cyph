@@ -42,5 +42,10 @@ DOMPurify.addHook('afterSanitizeAttributes', (node: HTMLElement) => {
 		}
 	}
 
+	/* Block window.opener in new window */
+	if (node instanceof HTMLAnchorElement) {
+		node.rel	= 'noreferrer';
+	}
+
 	return node;
 });

@@ -1,4 +1,6 @@
-:host {
+@import 'mixins';
+
+:host > span {
 	> p:only-child {
 		display: inline;
 	}
@@ -10,4 +12,8 @@
 			margin-left: 25px;
 		}
 	}
+}
+
+img {
+	cursor: pointer;
 }

@@ -11,6 +11,7 @@ import {ChatMessageComponent} from '../components/chat-message.component';
 import {ContactComponent} from '../components/contact.component';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
+import {DialogImageComponent} from '../components/dialog-image.component';
 import {FileInputComponent} from '../components/file-input.component';
 import {HelpComponent} from '../components/help.component';
 import {MarkdownComponent} from '../components/markdown.component';
@@ -47,6 +48,7 @@ import {CyphWebModule} from './cyph-web.module';
 		ContactComponent,
 		DialogAlertComponent,
 		DialogConfirmComponent,
+		DialogImageComponent,
 		FileInputComponent,
 		HelpComponent,
 		MarkdownComponent,
@@ -64,6 +66,7 @@ import {CyphWebModule} from './cyph-web.module';
 		ContactComponent,
 		DialogAlertComponent,
 		DialogConfirmComponent,
+		DialogImageComponent,
 		FileInputComponent,
 		FormsModule,
 		HelpComponent,

@@ -77,7 +77,6 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	lazy \
 	libsodium-wrappers \
 	lunr \
-	magnific-popup \
 	markdown-it \
 	markdown-it-emoji \
 	markdown-it-sup \

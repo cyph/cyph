@@ -19,6 +19,10 @@
 	min-width: $size;
 }
 
+@mixin shadow {
+	@include filter(drop-shadow((-2px) 2px 2px rgba(0, 0, 0, 0.15)));
+}
+
 @mixin vertical-align {
 	position: relative;
 	top: 50%;
