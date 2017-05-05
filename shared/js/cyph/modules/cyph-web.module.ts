@@ -27,7 +27,6 @@ import {
 } from 'angular-smd/src/app/shared/component/smd-fab-speed-dial';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 import {UrlStateService} from '../services/url-state.service';
-import {CyphCommonModule} from './cyph-common.module';
 
 
 /**
@@ -68,7 +67,6 @@ import {CyphCommonModule} from './cyph-common.module';
 	imports: [
 		BrowserAnimationsModule,
 		BrowserModule,
-		CyphCommonModule,
 		FlexLayoutModule,
 		FormsModule,
 		MdButtonModule,
