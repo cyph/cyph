@@ -234,7 +234,9 @@ export class EphemeralChatRootComponent implements OnInit {
 		/* For automated tests */
 		if (this.envService.isWeb) {
 			(<any> self).sendMessage	=
-				(message: string) => { this.chatService.send(message); }
+				(message?: string, selfDestructTimeout?: number) => {
+					this.chatService.send(message, selfDestructTimeout);
+				}
 			;
 		}
 	}
