@@ -52,7 +52,7 @@ for module in cyph-app cyph-common ; do
 	modulePath="app/js/cyph/modules/${module}.module.ts"
 	cat "${modulePath}" |
 		grep -v CyphWebModule |
-		sed 's|{NgModule}|{NgModule, NO_ERRORS_SCHEMA}|g' |
+		sed 's|NgModule}|NgModule, NO_ERRORS_SCHEMA}|g' |
 		sed 's|exports:|schemas: [NO_ERRORS_SCHEMA], exports:|g' \
 	> "${modulePath}.new"
 	mv "${modulePath}.new" "${modulePath}"
@@ -76,8 +76,6 @@ node -e "
 	tsconfig.files	= [
 		'app/main.ts',
 		'app/js/preload/global.ts',
-		'app/js/cyph/base.ts',
-		'app/js/cyph/crypto/potassium/index.ts',
 		'typings/index.d.ts'
 	];
 
