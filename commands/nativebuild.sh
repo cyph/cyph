@@ -75,6 +75,7 @@ node -e "
 
 	tsconfig.files	= [
 		'app/main.ts',
+		'app/js/cyph/crypto/native-web-crypto-polyfill.ts',
 		'app/js/preload/global.ts',
 		'typings/index.d.ts'
 	];
@@ -161,11 +162,14 @@ for platform in android ios ; do
 	webpack --config webpack.js
 	sed -i 's|lib/js/||g' app/main.${platform}.js
 	sed -i 's|js/|app/js/|g' app/main.${platform}.js
-	/cyph/commands/websign/threadpack.js app/main.${platform}.js
 
 	cp base.js main.${platform}.js
 	echo >> main.${platform}.js
 	cat app/js/preload/global.js >> main.${platform}.js
+	echo '
+		importScripts("/app/js/cyph/crypto/native-web-crypto-polyfill.js");
+		importScripts("/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js");
+	' >> main.${platform}.js
 	node -e 'console.log(`
 		self.translations = ${JSON.stringify(
 			child_process.spawnSync("find", [
@@ -188,6 +192,7 @@ for platform in android ios ; do
 	cat app/main.${platform}.js >> main.${platform}.js
 
 	sed -i 's|use strict||g' main.${platform}.js
+	/cyph/commands/websign/threadpack.js main.${platform}.js
 done
 
 cd ..
