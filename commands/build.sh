@@ -522,7 +522,10 @@ compile () {
 
 				const chunks	=
 					'${dependencyModules}'.trim().split(/\s+/).
-						concat('./cyph/thread').
+						concat([
+							'./cyph/services/crypto/threaded-potassium.service.ts',
+							'./cyph/thread'
+						]).
 						/*
 							Disabled for now because it makes the build take
 							a long time and doesn't seem to add much benefit.
