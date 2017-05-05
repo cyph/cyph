@@ -9,10 +9,6 @@ import {DemoService} from './demo.service';
  * Angular component for Cyph home page.
  */
 @Component({
-	providers: [
-		AppService,
-		DemoService
-	],
 	selector: 'cyph-app',
 	templateUrl: '../../templates/cyph.com/index.html'
 })
