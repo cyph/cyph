@@ -166,11 +166,11 @@ for platform in android ios ; do
 	cp base.js main.${platform}.js
 	echo >> main.${platform}.js
 	cat app/js/preload/global.js >> main.${platform}.js
-	echo '
-		importScripts("/app/js/cyph/crypto/native-web-crypto-polyfill.js");
-		importScripts("/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js");
-	' >> main.${platform}.js
+	echo >> main.${platform}.js
+	cat app/js/cyph/crypto/native-web-crypto-polyfill.js >> main.${platform}.js
 	node -e 'console.log(`
+		importScripts("/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js");
+
 		self.translations = ${JSON.stringify(
 			child_process.spawnSync("find", [
 				"../translations",
