@@ -8,15 +8,15 @@
 
 	/* Android */
 	if (
-		typeof java !== 'undefined' &&
-		typeof java.security !== 'undefined' &&
-		typeof java.security.SecureRandom !== 'undefined'
+		(<any> self).java !== 'undefined' &&
+		(<any> self).java.security !== 'undefined' &&
+		(<any> self).java.security.SecureRandom !== 'undefined'
 	) {
 		const secureRandom	= new java.security.SecureRandom();
 		getRandomByte		= () => secureRandom.nextInt(256);
 	}
 	/* iOS */
-	else if (typeof arc4random_uniform !== 'undefined') {
+	else if ((<any> self).arc4random_uniform !== 'undefined') {
 		getRandomByte		= () => arc4random_uniform(256);
 	}
 	/* Other */
