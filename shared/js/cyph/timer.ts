@@ -1,3 +1,4 @@
+import {BehaviorSubject, Subject} from 'rxjs';
 import {util} from './util';
 
 
@@ -18,13 +19,15 @@ export class Timer {
 	private isStopped: boolean;
 
 	/** Indicates whether timer's countdown has completed. */
-	public isComplete: boolean;
+	public isComplete: Subject<boolean>	= new BehaviorSubject<boolean>(false);
 
 	/** Human-readable string indicating remaining time. */
-	public timestamp: string;
+	public timestamp: Subject<string>	= new BehaviorSubject<string>(
+		this.getTimestamp(this.countdown)
+	);
 
 	/** @ignore */
-	private updateTimestamp (timeRemaining: number) : void {
+	private getTimestamp (timeRemaining: number) : string {
 		const hours		= Math.floor(timeRemaining / 3600000);
 		const minutes	= Math.floor((timeRemaining % 3600000) / 60000);
 		const seconds	= Math.floor(((timeRemaining % 3600000) % 60000) / 1000);
@@ -32,7 +35,7 @@ export class Timer {
 		this.includeHours	= this.includeHours || this.countdown >= 3600000;
 		this.includeMinutes	= this.includeMinutes || this.countdown >= 60000;
 
-		this.timestamp	= this.includeHours ?
+		return this.includeHours ?
 			`${hours}:${`0${minutes}`.slice(-2)}:${`0${seconds}`.slice(-2)}` :
 			this.includeMinutes ?
 				`${minutes}:${`0${seconds}`.slice(-2)}` :
@@ -40,10 +43,7 @@ export class Timer {
 		;
 	}
 
-	/**
-	 * Extends the countdown duration.
-	 * @param milliseconds
-	 */
+	/** Extends the countdown duration. */
 	public addTime (milliseconds: number) : void {
 		this.countdown += milliseconds;
 
@@ -61,6 +61,8 @@ export class Timer {
 			return;
 		}
 
+		await util.sleep(1000);
+
 		this.endTime	= util.timestamp() + this.countdown;
 
 		for (
@@ -72,27 +74,22 @@ export class Timer {
 				return;
 			}
 
-			this.updateTimestamp(timeRemaining);
-			await util.sleep(500);
+			this.timestamp.next(this.getTimestamp(timeRemaining));
+			await util.sleep();
 
 			if (timeRemaining < 1) {
 				await util.sleep(1000);
 			}
 		}
 
-		this.isComplete	= true;
-		this.timestamp	= this.includeHours ?
-			'0:00:00' :
-			this.includeMinutes ?
-				'0:00' :
-				'0'
-		;
+		this.isComplete.next(true);
+		this.timestamp.next(this.includeHours ? '0:00:00' : this.includeMinutes ? '0:00' : '0');
 	}
 
 	/** Stops countdown. */
 	public stop () : void {
-		this.isComplete	= true;
 		this.isStopped	= true;
+		this.isComplete.next(true);
 	}
 
 	constructor (
@@ -101,8 +98,6 @@ export class Timer {
 
 		autostart?: boolean
 	) {
-		this.updateTimestamp(this.countdown);
-
 		if (autostart) {
 			this.start();
 		}
