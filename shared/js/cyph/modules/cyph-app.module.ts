@@ -7,6 +7,8 @@ import {AccountSettingsComponent} from '../components/account-settings.component
 import {FooterComponent} from '../components/footer.component';
 import {LinkConnectionComponent} from '../components/link-connection.component';
 import {NotFoundComponent} from '../components/not-found.component';
+import {DatabaseService} from '../services/database.service';
+import {FirebaseDatabaseService} from '../services/firebase-database.service';
 import {CyphWebModule} from './cyph-web.module';
 
 
@@ -36,6 +38,12 @@ import {CyphWebModule} from './cyph-web.module';
 	],
 	imports: [
 		CyphWebModule
+	],
+	providers: [
+		{
+			provide: DatabaseService,
+			useClass: FirebaseDatabaseService
+		}
 	]
 })
 /* tslint:disable-next-line:no-stateless-class */
