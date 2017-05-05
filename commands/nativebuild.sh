@@ -4,8 +4,7 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 
-# Temporary workaround for plugin issues
-plugins="$(cat shared/js/native/plugins.list | grep -vP '(google|secure-storage)')"
+plugins="$(cat shared/js/native/plugins.list)"
 
 cd
 tns create cyph --ng --appid com.cyph.app || exit 1
