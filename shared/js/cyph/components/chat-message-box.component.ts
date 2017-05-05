@@ -40,9 +40,9 @@ export class ChatMessageBoxComponent implements OnInit {
 
 	/** Wrappers for mobile button handlers. */
 	public readonly mobileButtonHandlers	= {
-		fileTransfer: ($event: File) => {
+		fileTransfer: (file: File) => {
 			this.mobileButtonWrapper(false, () => {
-				this.fileTransferService.send($event);
+				this.fileTransferService.send(file);
 			});
 		},
 		send: () => {
@@ -126,21 +126,6 @@ export class ChatMessageBoxComponent implements OnInit {
 
 			tabIndent.render($textarea[0]);
 		}
-	}
-
-	/** Opens mobile menu. */
-	public async openMenu ($mdMenu: any) : Promise<void> {
-		/* Workaround for Angular Material menu bug */
-		if (this.envService.isMobile) {
-			let $focused: JQuery;
-			do {
-				$focused	= $(':focus');
-				$focused.blur();
-				await util.sleep();
-			} while ($focused.length > 0);
-		}
-
-		$mdMenu.open();
 	}
 
 	constructor (
