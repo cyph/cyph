@@ -3,18 +3,22 @@
  */
 
 
-import {isAndroid, isIOS} from 'tns-core-modules/platform';
-
-
 let getRandomByte: () => number;
 
-if (isAndroid) {
+/* Android */
+if (
+	typeof java !== 'undefined' &&
+	typeof java.security !== 'undefined' &&
+	typeof java.security.SecureRandom !== 'undefined'
+) {
 	const secureRandom	= new java.security.SecureRandom();
 	getRandomByte		= () => secureRandom.nextInt(256);
 }
-else if (isIOS) {
+/* iOS */
+else if (typeof arc4random_uniform !== 'undefined') {
 	getRandomByte		= () => arc4random_uniform(256);
 }
+/* Other */
 else {
 	throw new Error('Crypto polyfill not implemented for this platform.');
 }
