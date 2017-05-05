@@ -172,7 +172,10 @@ for platform in android ios ; do
 	echo >> main.${platform}.js
 	cat app/js/cyph/crypto/native-web-crypto-polyfill.js >> main.${platform}.js
 	node -e 'console.log(`
-		importScripts("/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js");
+		(function () {
+			var exports	= undefined;
+			importScripts("/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js");
+		})();
 
 		self.translations = ${JSON.stringify(
 			child_process.spawnSync("find", [
