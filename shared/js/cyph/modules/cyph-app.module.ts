@@ -9,6 +9,7 @@ import {LinkConnectionComponent} from '../components/link-connection.component';
 import {NotFoundComponent} from '../components/not-found.component';
 import {DatabaseService} from '../services/database.service';
 import {FirebaseDatabaseService} from '../services/firebase-database.service';
+import {CyphCommonModule} from './cyph-common.module';
 import {CyphWebModule} from './cyph-web.module';
 
 
@@ -37,6 +38,7 @@ import {CyphWebModule} from './cyph-web.module';
 		NotFoundComponent
 	],
 	imports: [
+		CyphCommonModule,
 		CyphWebModule
 	],
 	providers: [
