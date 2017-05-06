@@ -18,6 +18,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	private app: Promise<firebase.app.App>	= util.retryUntilSuccessful(() => {
 		try {
 			for (const key of Object.keys(localStorage).filter(k => k.startsWith('firebase:'))) {
+				/* tslint:disable-next-line:ban */
 				localStorage.removeItem(key);
 			}
 		}

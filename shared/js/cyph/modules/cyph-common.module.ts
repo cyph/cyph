@@ -25,6 +25,7 @@ import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {ErrorService} from '../services/error.service';
 import {FileService} from '../services/file.service';
+import {LocalStorageService} from '../services/local-storage.service';
 import {NotificationService} from '../services/notification.service';
 import {SignupService} from '../services/signup.service';
 import {StringsService} from '../services/strings.service';
@@ -87,6 +88,7 @@ import {CyphWebModule} from './cyph-web.module';
 		EnvService,
 		ErrorService,
 		FileService,
+		LocalStorageService,
 		NotificationService,
 		PotassiumService,
 		SignupService,

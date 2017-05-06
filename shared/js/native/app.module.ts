@@ -9,6 +9,8 @@ import {CyphAppModule} from './js/cyph/modules/cyph-app.module';
 import {CyphCommonModule} from './js/cyph/modules/cyph-common.module';
 import {MainThreadPotassiumService} from './js/cyph/services/crypto/main-thread-potassium.service';
 import {PotassiumService} from './js/cyph/services/crypto/potassium.service';
+import {LocalStorageService} from './js/cyph/services/local-storage.service';
+import {NativeLocalStorageService} from './native-local-storage.service';
 
 
 /**
@@ -29,6 +31,10 @@ import {PotassiumService} from './js/cyph/services/crypto/potassium.service';
 	],
 	providers: [
 		AppService,
+		{
+			provide: LocalStorageService,
+			useClass: NativeLocalStorageService
+		},
 		{
 			provide: PotassiumService,
 			useClass: MainThreadPotassiumService
