@@ -13,20 +13,20 @@ import {util} from '../util';
 	templateUrl: '../../templates/account-login.html'
 })
 export class AccountLoginComponent {
-	/** @ignore */
+	/** Indicates whether login attempt is in progress. */
 	public checking: boolean	= false;
 
-	/** @ignore */
+	/** Indicates whether the last login attempt has failed. */
 	public error: boolean		= false;
 
-	/** @ignore */
+	/** Password to be used for login attempt. */
 	public password: string		= '';
 
-	/** @ignore */
+	/** Username to be used for login attempt. */
 	public username: string		= '';
 
-	/** @ignore */
-	public async onSubmit () : Promise<void> {
+	/** Initiate login attempt. */
+	public async submit () : Promise<void> {
 		/* TODO: stop blatantly lying to people */
 
 		this.checking	= true;
