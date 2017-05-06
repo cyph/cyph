@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {env} from '../env';
 import {AccountService} from './account.service';
 import {EnvService} from './env.service';
+import {LocalStorageService} from './local-storage.service';
 
 
 /**
@@ -18,9 +19,11 @@ export class AccountEnvService extends EnvService {
 	public set isMobile (_: boolean) {}
 
 	constructor (
+		localStorageService: LocalStorageService,
+
 		/** @ignore */
 		private readonly accountService: AccountService
 	) {
-		super();
+		super(localStorageService);
 	}
 }
