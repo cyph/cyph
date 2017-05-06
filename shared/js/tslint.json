@@ -74,7 +74,14 @@
 		/* Functionality */
 
 		"await-promise": false,
-		"ban": [true, ["Math", "random"], "setInterval", "setTimeout"],
+		"ban": [true,
+			["localStorage", "getItem", "Use LocalStorageService"],
+			["localStorage", "removeItem", "Use LocalStorageService"],
+			["localStorage", "setItem", "Use LocalStorageService"],
+			["Math", "random", "Seriously?"],
+			"setInterval",
+			"setTimeout"
+		],
 		"curly": true,
 		"forin": true,
 		"import-blacklist": false,

@@ -31,16 +31,16 @@ export class ErrorService implements ErrorHandler {
 		line?: number,
 		column?: number,
 		errorObject?: any
-	) => void {
+	) => Promise<void> {
 		let numEmails	= 0;
 
-		return (
+		return async (
 			errorMessage?: string,
 			url?: string,
 			line?: number,
 			column?: number,
 			errorObject?: any
-		) : void => {
+		) : Promise<void> => {
 			if (
 				(requireErrorMessage && !errorMessage) ||
 				/* Annoying useless iframe-related spam */
@@ -70,7 +70,7 @@ export class ErrorService implements ErrorHandler {
 			if (numEmails++ < 50) {
 				util.email(
 					'errors',
-					`[${this.envService.packageName}] ${subject}`,
+					`[${await this.envService.packageName}] ${subject}`,
 					exception
 				);
 			}

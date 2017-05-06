@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {env} from '../cyph/env';
 import {EnvService} from '../cyph/services/env.service';
+import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {ChatData} from './chat-data';
 
 
@@ -25,7 +26,7 @@ export class DemoEnvService extends EnvService {
 	/** @ignore */
 	public set isMobile (_: boolean) {}
 
-	constructor () {
-		super();
+	constructor (localStorageService: LocalStorageService) {
+		super(localStorageService);
 	}
 }

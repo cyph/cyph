@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {env} from '../env';
 import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
+import {LocalStorageService} from './local-storage.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 
@@ -69,6 +70,8 @@ export class ChatEnvService extends EnvService {
 	public set newCyphUrlRedirect (_: string) {}
 
 	constructor (
+		localStorageService: LocalStorageService,
+
 		/** @ignore */
 		private readonly configService: ConfigService,
 
@@ -78,6 +81,6 @@ export class ChatEnvService extends EnvService {
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService
 	) {
-		super();
+		super(localStorageService);
 	}
 }

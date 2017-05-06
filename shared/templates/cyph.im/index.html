@@ -5,7 +5,10 @@
 
 			<h3
 				class='cyph-banner emphasis warn'
-				*ngIf='envService.webSignError && appService.state !== appService.states.chat'
+				*ngIf='
+					appService.state !== appService.states.chat &&
+					(envService.webSignError | async)
+				'
 			>
 				WARNING: Your Cyph instance has a problem.
 				See <a href='https://www.cyph.com/websignerror'>here</a>
