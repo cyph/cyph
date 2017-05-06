@@ -12,7 +12,7 @@
 			Welcome to Cyph! You can log in to your beta account here.
 		</md-card-subtitle>
 		<md-card-content>
-			<form ngNativeValidate (submit)='onSubmit()'>
+			<form ngNativeValidate (submit)='submit()'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<h3 class='cyph-banner warn' [style.visibility]='error ? "visible" : "hidden"'>
 						{{stringsService.invalidCredentials}}

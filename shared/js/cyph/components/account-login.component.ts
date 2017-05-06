@@ -1,8 +1,7 @@
 import {Component} from '@angular/core';
-import {AccountAuthService} from '../services/account-auth.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
-import {UrlStateService} from '../services/url-state.service';
+import {util} from '../util';
 
 
 /**
@@ -28,29 +27,18 @@ export class AccountLoginComponent {
 
 	/** Initiate login attempt. */
 	public async submit () : Promise<void> {
+		/* TODO: stop blatantly lying to people */
+
 		this.checking	= true;
 		this.error		= false;
-		this.error		= !(await this.accountAuthService.login(this.username, this.password));
+
+		await util.sleep(util.random(4000, 1500));
+
 		this.checking	= false;
-
-		if (this.error) {
-			return;
-		}
-
-		this.password	= '';
-		this.username	= '';
-
-		/* TODO: handle this somewhere else */
-		this.urlStateService.setUrl('account');
+		this.error		= true;
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly urlStateService: UrlStateService,
-
-		/** @see AccountAuthService */
-		public readonly accountAuthService: AccountAuthService,
-
 		/** @see EnvService */
 		public readonly envService: EnvService,
 
