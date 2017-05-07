@@ -7,7 +7,7 @@ import {ChatRootStates} from './enums';
 
 
 /**
- * Angular service for Cyph UI.
+ * Angular service for Cyph web UI.
  */
 @Injectable()
 export class AppService {
