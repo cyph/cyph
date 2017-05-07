@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {eventManager} from '../event-manager';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
@@ -10,13 +9,6 @@ import {EnvService} from './env.service';
  */
 @Injectable()
 export class SignupService {
-	/** Event for setting data.inviteCode. */
-	public static inviteEvent: string	= 'SignupServiceInviteEvent';
-
-	/** Event for setting promo. */
-	public static promoEvent: string	= 'SignupServicePromoEvent';
-
-
 	/** Signup data entered by user. */
 	public readonly data	= {
 		email: '',
@@ -77,13 +69,5 @@ export class SignupService {
 
 		/** @ignore */
 		private readonly envService: EnvService
-	) {
-		eventManager.on(SignupService.inviteEvent, (inviteCode: string) => {
-			this.data.inviteCode	= inviteCode;
-		});
-
-		eventManager.on(SignupService.promoEvent, (promo: string) => {
-			this.promo	= promo;
-		});
-	}
+	) {}
 }

@@ -1,6 +1,7 @@
 import {NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
+import {RouterModule} from '@angular/router';
 import {NativeScriptModule} from 'nativescript-angular/nativescript.module';
-import {AccountComponent} from './account.component';
+import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
@@ -19,12 +20,12 @@ import {NativeLocalStorageService} from './native-local-storage.service';
 @NgModule({
 	bootstrap: [AppComponent],
 	declarations: [
-		AccountComponent,
 		AppComponent,
 		EphemeralChatRootComponent
 	],
 	entryComponents: [HelpComponent],
 	imports: [
+		RouterModule.forRoot(appRoutes, {useHash: true}),
 		CyphAppModule,
 		CyphCommonModule,
 		NativeScriptModule

@@ -80,8 +80,7 @@
 			<span cyphTranslate>Please</span>
 			<a
 				cyphTranslate
-				target='_self'
-				[href]='envService.newCyphUrlRedirect'
+				[routerLink]='envService.newCyphUrlRetry'
 			>try again</a>.
 		</div>
 		<div *ngIf='sessionService.apiFlags.telehealth'>
@@ -95,8 +94,7 @@
 				</span>
 				<a
 					cyphTranslate
-					target='_self'
-					[href]='envService.newCyphUrlRedirect'
+					[routerLink]='envService.newCyphUrlRetry'
 				>try again</a><span>.</span>
 			</div>
 			<div *ngIf='!sessionService.state.isAlice'>

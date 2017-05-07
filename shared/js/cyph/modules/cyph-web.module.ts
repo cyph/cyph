@@ -19,14 +19,12 @@ import {
 	MdTooltipModule
 } from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
 	SmdFabSpeedDialActions,
 	SmdFabSpeedDialComponent,
 	SmdFabSpeedDialTrigger
 } from 'angular-smd/src/app/shared/component/smd-fab-speed-dial';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
-import {UrlStateService} from '../services/url-state.service';
 
 
 /**
@@ -40,7 +38,6 @@ import {UrlStateService} from '../services/url-state.service';
 		SmdFabSpeedDialTrigger
 	],
 	exports: [
-		BrowserAnimationsModule,
 		BrowserModule,
 		FlexLayoutModule,
 		FormsModule,
@@ -65,7 +62,6 @@ import {UrlStateService} from '../services/url-state.service';
 		SmdFabSpeedDialTrigger
 	],
 	imports: [
-		BrowserAnimationsModule,
 		BrowserModule,
 		FlexLayoutModule,
 		FormsModule,
@@ -83,8 +79,7 @@ import {UrlStateService} from '../services/url-state.service';
 		MdSnackBarModule,
 		MdTabsModule,
 		MdTooltipModule
-	],
-	providers: [UrlStateService]
+	]
 })
 /* tslint:disable-next-line:no-stateless-class */
 export class CyphWebModule {

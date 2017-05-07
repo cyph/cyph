@@ -60,15 +60,6 @@ export class ChatEnvService extends EnvService {
 	/** @ignore */
 	public set newCyphUrl (_: string) {}
 
-	/** @inheritDoc */
-	public get newCyphUrlRedirect () : string {
-		const newCyphUrl	= this.newCyphUrlHelper(false);
-		return newCyphUrl.indexOf(`${locationData.host}/#`) > -1 ? `${newCyphUrl}/` : newCyphUrl;
-	}
-
-	/** @ignore */
-	public set newCyphUrlRedirect (_: string) {}
-
 	constructor (
 		localStorageService: LocalStorageService,
 

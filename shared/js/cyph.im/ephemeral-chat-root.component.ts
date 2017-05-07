@@ -1,14 +1,15 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import * as Granim from 'granim';
 import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
+import {fadeIn} from '../cyph/animations';
 import {States as ChatStates} from '../cyph/chat/enums';
 import {ChannelService} from '../cyph/services/channel.service';
 import {ChatEnvService} from '../cyph/services/chat-env.service';
 import {ChatPotassiumService} from '../cyph/services/chat-potassium.service';
 import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
-import {ConfigService} from '../cyph/services/config.service';
 import {AnonymousCastleService} from '../cyph/services/crypto/anonymous-castle.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
@@ -24,19 +25,19 @@ import {SessionCapabilitiesService} from '../cyph/services/session-capabilities.
 import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
 import {StringsService} from '../cyph/services/strings.service';
-import {UrlStateService} from '../cyph/services/url-state.service';
+import {UrlSessionInitService} from '../cyph/services/url-session-init.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
 import {events} from '../cyph/session/enums';
 import {util} from '../cyph/util';
 import {AppService} from './app.service';
-import {States} from './enums';
-import {UrlSessionInitService} from './url-session-init.service';
+import {ChatRootStates} from './enums';
 
 
 /**
  * Angular component for chat UI root to share services.
  */
 @Component({
+	animations: [fadeIn],
 	providers: [
 		AnonymousCastleService,
 		ChannelService,
@@ -56,12 +57,12 @@ import {UrlSessionInitService} from './url-session-init.service';
 			useClass: ChatPotassiumService
 		},
 		{
-			provide: SessionService,
-			useClass: EphemeralSessionService
-		},
-		{
 			provide: SessionInitService,
 			useClass: UrlSessionInitService
+		},
+		{
+			provide: SessionService,
+			useClass: EphemeralSessionService
 		},
 		{
 			provide: StringsService,
@@ -69,11 +70,25 @@ import {UrlSessionInitService} from './url-session-init.service';
 		}
 	],
 	selector: 'cyph-ephemeral-chat-root',
-	templateUrl: '../../templates/chat-root.html'
+	styleUrls: ['../css/components/cyph.im/ephemeral-chat-root.css'],
+	templateUrl: '../templates/cyph.im/ephemeral-chat-root.html'
 })
-export class EphemeralChatRootComponent implements OnInit {
+export class EphemeralChatRootComponent implements OnDestroy, OnInit {
+	/** @ignore */
+	private destroyed: boolean	= false;
+
+	/** @see ChatRootStates */
+	public readonly chatRootStates: typeof ChatRootStates	= ChatRootStates;
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		this.destroyed	= true;
+	}
+
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		this.appService.chatRootState	= ChatRootStates.blank;
+
 		const granimStates	= {
 			'default-state': !this.sessionService.apiFlags.telehealth ?
 				{
@@ -141,26 +156,27 @@ export class EphemeralChatRootComponent implements OnInit {
 			}
 		}
 
-		this.urlStateService.setUrl(
-			(
-				this.envService.isOnion ?
-					this.envService.newCyphUrlRedirect.split(this.configService.onionRoot) :
-					this.envService.newCyphBaseUrl.split(locationData.host)
-			).
-				slice(-1)[0].
-				replace(/\/$/, '')
-			,
-			true,
-			true
-		);
+		if (this.sessionService.state.startingNewCyph !== true) {
+			this.appService.isLockedDown	= false;
+
+			this.routerService.navigate(
+				(
+					this.routerService.routerState.snapshot.root.firstChild &&
+					this.routerService.routerState.snapshot.root.firstChild.url.length > 1
+				) ?
+					this.routerService.routerState.snapshot.root.firstChild.url.
+						slice(0, -1).
+						map(o => o.path)
+					:
+					['']
+			);
+		}
 
 		/* If unsupported, warn and then close window */
 		if (
 			this.sessionInitService.callType &&
 			!(await this.sessionCapabilitiesService.localCapabilities).p2p
 		) {
-			this.appService.state	= States.blank;
-
 			await this.dialogService.alert({
 				content: this.stringsService.p2pDisabledLocal,
 				ok: this.stringsService.ok,
@@ -174,11 +190,19 @@ export class EphemeralChatRootComponent implements OnInit {
 
 
 		this.sessionService.one(events.abort).then(() => {
-			beforeUnloadMessage		= undefined;
-			this.appService.state	= States.chat;
+			if (this.destroyed) {
+				return;
+			}
+
+			beforeUnloadMessage				= undefined;
+			this.appService.chatRootState	= ChatRootStates.chat;
 		});
 
 		this.sessionService.one(events.beginChatComplete).then(async () => {
+			if (this.destroyed) {
+				return;
+			}
+
 			beforeUnloadMessage	= this.stringsService.disconnectWarning;
 
 			if (this.sessionInitService.callType && this.sessionService.state.isAlice) {
@@ -198,11 +222,19 @@ export class EphemeralChatRootComponent implements OnInit {
 		});
 
 		this.sessionService.one(events.beginWaiting).then(() => {
-			this.appService.state	= States.waitingForFriend;
+			if (this.destroyed) {
+				return;
+			}
+
+			this.appService.chatRootState	= ChatRootStates.waitingForFriend;
 		});
 
 		this.sessionService.connected.then(() => {
-			this.appService.state	= States.chat;
+			if (this.destroyed) {
+				return;
+			}
+
+			this.appService.chatRootState	= ChatRootStates.chat;
 
 			if (this.sessionInitService.callType) {
 				this.dialogService.toast(
@@ -216,13 +248,22 @@ export class EphemeralChatRootComponent implements OnInit {
 		});
 
 		this.sessionService.one(events.cyphNotFound).then(() => {
-			this.urlStateService.setUrl(this.urlStateService.states.notFound);
+			if (this.destroyed) {
+				return;
+			}
+
+			this.appService.chatRootState	= ChatRootStates.error;
+			this.routerService.navigate(['404']);
 		});
 
 		/* Cyphertext easter egg */
 		if (this.cyphertextService.isEnabled) {
 			/* tslint:disable-next-line:no-unused-expression */
 			new Konami(async () => {
+				if (this.destroyed) {
+					return;
+				}
+
 				while (this.chatService.chat.state !== ChatStates.chat) {
 					await util.sleep();
 				}
@@ -243,25 +284,19 @@ export class EphemeralChatRootComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly appService: AppService,
-
-		/** @ignore */
 		private readonly chatService: ChatService,
 
 		/** @ignore */
-		private readonly configService: ConfigService,
-
-		/** @ignore */
 		private readonly dialogService: DialogService,
-
-		/** @ignore */
-		private readonly envService: EnvService,
 
 		/** @ignore */
 		private readonly faviconService: FaviconService,
 
 		/** @ignore */
 		private readonly p2pWebRTCService: P2PWebRTCService,
+
+		/** @ignore */
+		private readonly routerService: Router,
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
@@ -273,13 +308,16 @@ export class EphemeralChatRootComponent implements OnInit {
 		private readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
-		private readonly stringsService: StringsService,
-
-		/** @ignore */
-		private readonly urlStateService: UrlStateService,
-
-		/** @ignore */
 		private readonly visibilityWatcherService: VisibilityWatcherService,
+
+		/** @see AppService */
+		public readonly appService: AppService,
+
+		/** @see EnvService */
+		public readonly envService: EnvService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService,
 
 		/** @see CyphertextService */
 		public readonly cyphertextService: CyphertextService

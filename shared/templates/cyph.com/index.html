@@ -2,14 +2,14 @@
 	fxFlexFill
 	fxLayout='column'
 	id='main'
-	[class.unisection-mode]='appService.state !== appService.states.home'
+	[class.unisection-mode]='appService.state !== states.home'
 >
 	<md-toolbar id='main-toolbar' class='wow animated fadeInDownBig' [fxHide]='sidenav.opened'>
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row'>
 					<div fxLayout='column' fxLayoutAlign='center center'>
-						<a cyphTranslate id='logo' href='/'>
+						<a cyphTranslate id='logo' routerLink='/'>
 							<img src='/img/logo.white.horizontal.header.png' alt='Cyph logo' />
 						</a>
 					</div>
@@ -22,10 +22,10 @@
 						fxHide.lt-lg class='link-wrapper-outer right'
 					>
 						<div class='link-wrapper-inner' cyphTranslate>
-							<a md-button href='/intro'>Intro</a>
-							<a md-button href='/features'>Features</a>
-							<a md-button href='/about'>About</a>
-							<a md-button href='/gettingstarted'>Getting Started</a>
+							<a md-button routerLink='/intro'>Intro</a>
+							<a md-button routerLink='/features'>Features</a>
+							<a md-button routerLink='/about'>About</a>
+							<a md-button routerLink='/gettingstarted'>Getting Started</a>
 						</div>
 					</div>
 				</div>
@@ -53,9 +53,9 @@
 					>
 						<div class='link-wrapper-inner' cyphTranslate>
 							<a md-button href='/blog'>Blog</a>
-							<a md-button href='/faq'>FAQ</a>
+							<a md-button routerLink='/faq'>FAQ</a>
 							<a md-button href='/pricing'>Pricing</a>
-							<a md-button href='/register'>Register</a>
+							<a md-button routerLink='/register'>Register</a>
 						</div>
 					</div>
 
@@ -115,27 +115,27 @@
 		<md-sidenav #sidenav align='end' mode='push' fxLayout='column' fxLayoutGap='8px'>
 			<div fxLayout='row'></div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/' (click)='sidenav.close()'>
+				<a md-button fxFlex cyphTranslate routerLink='/' (click)='sidenav.close()'>
 					<img src='/img/logo.white.horizontal.header.png' alt='Cyph logo' />
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/intro' (click)='sidenav.close()'>
+				<a md-button fxFlex cyphTranslate routerLink='/intro' (click)='sidenav.close()'>
 					Intro
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/features' (click)='sidenav.close()'>
+				<a md-button fxFlex cyphTranslate routerLink='/features' (click)='sidenav.close()'>
 					Features
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/about' (click)='sidenav.close()'>
+				<a md-button fxFlex cyphTranslate routerLink='/about' (click)='sidenav.close()'>
 					About
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/gettingstarted' (click)='sidenav.close()'>
+				<a md-button fxFlex cyphTranslate routerLink='/gettingstarted' (click)='sidenav.close()'>
 					Getting Started
 				</a>
 			</div>
@@ -145,7 +145,7 @@
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/faq' (click)='sidenav.close()'>
+				<a md-button fxFlex cyphTranslate routerLink='/faq' (click)='sidenav.close()'>
 					FAQ
 				</a>
 			</div>
@@ -155,7 +155,7 @@
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/register' (click)='sidenav.close()'>
+				<a md-button fxFlex cyphTranslate routerLink='/register' (click)='sidenav.close()'>
 					Register
 				</a>
 			</div>
@@ -217,15 +217,15 @@
 						fxFlex.xs='100'
 						class='animated wow'
 						data-wow-delay='3000ms'
-						[class.bounceInLeft]='appService.promo === appService.promos.jjgo'
-						[class.bounceInDown]='appService.promo !== appService.promos.jjgo'
+						[class.bounceInLeft]='appService.promo === promos.jjgo'
+						[class.bounceInDown]='appService.promo !== promos.jjgo'
 					>
 						<md-card-title>
 							<img
 								alt='Promo image'
 								[src]='
 									"/img/thirdparty/" +
-									appService.promos[appService.promo] +
+									promos[appService.promo] +
 									".png"
 								'
 							/>
@@ -233,36 +233,36 @@
 						<md-card-content>
 							<p>
 								<span cyphTranslate>Welcome</span>
-								<span *ngIf='appService.promo === appService.promos.betalist'>
+								<span *ngIf='appService.promo === promos.betalist'>
 									Betalisters!
 								</span>
-								<span *ngIf='appService.promo !== appService.promos.betalist'>
-									<i *ngIf='appService.promo === appService.promos.penn'>
+								<span *ngIf='appService.promo !== promos.betalist'>
+									<i *ngIf='appService.promo === promos.penn'>
 										Penn's Sunday School
 									</i>
-									<i *ngIf='appService.promo === appService.promos.jjgo'>
+									<i *ngIf='appService.promo === promos.jjgo'>
 										Jordan, Jesse, Go!
 									</i>
-									<i *ngIf='appService.promo === appService.promos.ventura'>
+									<i *ngIf='appService.promo === promos.ventura'>
 										We The People
 									</i>
-									<i *ngIf='appService.promo === appService.promos.sawbones'>
+									<i *ngIf='appService.promo === promos.sawbones'>
 										Sawbones
 									</i>
-									<i *ngIf='appService.promo === appService.promos.judgejohn'>
+									<i *ngIf='appService.promo === promos.judgejohn'>
 										Judge John Hodgman
 									</i>
-									<i *ngIf='appService.promo === appService.promos.mybrother'>
+									<i *ngIf='appService.promo === promos.mybrother'>
 										My Brother, My Brother and Me
 									</i>
-									<i *ngIf='appService.promo === appService.promos.security'>
+									<i *ngIf='appService.promo === promos.security'>
 										The Security Brief
 									</i>
 									<span cyphTranslate>listeners!</span>
 								</span>
 							</p>
 							<p>
-								<a href='/register' cyphTranslate>Sign up now</a>,
+								<a routerLink='/register' cyphTranslate>Sign up now</a>,
 								<span cyphTranslate>
 									and you'll get extra priority on our waitlist
 									for a Cyph beta account.
@@ -285,7 +285,7 @@
 						<div fxLayout='row' *ngIf='!envService.isMobile'>
 							<div fxFlex='25'></div>
 							<div class='wow bounceInLeft' data-wow-delay='2250ms'>
-								<a href='/intro'>
+								<a routerLink='/intro'>
 									<img
 										cyphTranslate
 										class='laptop screenshot'
@@ -297,7 +297,7 @@
 								&nbsp;
 							</div>
 							<div class='wow bounceInRight' data-wow-delay='2250ms'>
-								<a href='/intro'>
+								<a routerLink='/intro'>
 									<img
 										cyphTranslate
 										class='phone screenshot'
@@ -431,7 +431,7 @@
 			<a
 				md-icon-button
 				class='nav-arrow'
-				href='/intro'
+				routerLink='/intro'
 				mdTooltip='Scroll Down'
 				*ngIf='!envService.isMobile'
 			>
@@ -443,7 +443,7 @@
 			<a
 				md-icon-button
 				class='nav-arrow'
-				href='/'
+				routerLink='/'
 				mdTooltip='Scroll Up'
 				*ngIf='!envService.isMobile'
 			>
@@ -817,7 +817,7 @@
 
 		<section
 			id='error'
-			*ngIf='appService.state === appService.states.error'
+			*ngIf='appService.state === states.error'
 			class='unisection'
 		>
 			<div>
@@ -842,7 +842,7 @@
 
 		<section
 			id='contact'
-			*ngIf='appService.state === appService.states.contact'
+			*ngIf='appService.state === states.contact'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -872,7 +872,7 @@
 
 		<section
 			id='donate'
-			*ngIf='appService.state === appService.states.donate'
+			*ngIf='appService.state === states.donate'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -931,7 +931,7 @@
 
 		<section
 			id='checkout'
-			*ngIf='appService.state === appService.states.checkout'
+			*ngIf='appService.state === states.checkout'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -948,7 +948,7 @@
 							<span cyphTranslate>To add something to your cart go to</span>
 							<a href='/pricing' cyphTranslate>Business Pricing</a>
 							<span cyphTranslate>or</span>
-							<a href='/donate' cyphTranslate>make a donation</a>
+							<a routerLink='/donate' cyphTranslate>make a donation</a>
 							.
 						</div>
 						<cyph-checkout
@@ -984,7 +984,7 @@
 
 		<section
 			id='faq'
-			*ngIf='appService.state === appService.states.faq'
+			*ngIf='appService.state === states.faq'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1146,9 +1146,9 @@
 									using it with your friends and talking about us
 									on social media. You can also
 								</span>
-								<a cyphTranslate href='/contact/feedback'>give feedback</a>
+								<a cyphTranslate routerLink='/contact/feedback'>give feedback</a>
 								<span cyphTranslate>or</span>
-								<a cyphTranslate href='/donate'>donate</a>
+								<a cyphTranslate routerLink='/donate'>donate</a>
 								<span cyphTranslate>
 									to the cause. All donations will go towards the
 									development and growth of Cyph.
@@ -1165,7 +1165,7 @@
 						<md-card-content>
 							<p>
 								<span cyphTranslate>Please contact us at</span>
-								<a href='/contact/bugs'>bugs@cyph.com</a>;
+								<a routerLink='/contact/bugs'>bugs@cyph.com</a>;
 								<span cyphTranslate>
 									our team generally has pretty fast response time.
 									If you can, please include any steps to reproduce
@@ -1180,7 +1180,7 @@
 
 		<section
 			id='termsofservice'
-			*ngIf='appService.state === appService.states.termsofservice'
+			*ngIf='appService.state === states.termsofservice'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1322,7 +1322,7 @@
 
 		<section
 			id='privacypolicy'
-			*ngIf='appService.state === appService.states.privacypolicy'
+			*ngIf='appService.state === states.privacypolicy'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1382,7 +1382,7 @@
 					<span>
 						If you have any questions about our policy, please email us at
 					</span>
-					<a href='/contact/privacy'>privacy@cyph.com</a>.
+					<a routerLink='/contact/privacy'>privacy@cyph.com</a>.
 				</p>
 			</div>
 		</section>
@@ -1393,13 +1393,13 @@
 					&nbsp;&nbsp;&nbsp;
 				<span cyphTranslate>(Patents Pending)</span>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href='/contact' cyphTranslate>Contact</a>
+				<a routerLink='/contact' cyphTranslate>Contact</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href='/donate' cyphTranslate>Donate</a>
+				<a routerLink='/donate' cyphTranslate>Donate</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href='/privacypolicy' cyphTranslate>Privacy Policy</a>
+				<a routerLink='/privacypolicy' cyphTranslate>Privacy Policy</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href='/termsofservice' cyphTranslate>Terms of Service</a>
+				<a routerLink='/termsofservice' cyphTranslate>Terms of Service</a>
 			</div>
 		</footer>
 	</md-sidenav-container>

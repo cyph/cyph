@@ -1,6 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import {AppService} from './app.service';
-import {States} from './js/cyph.im/enums';
+import {ChatRootStates} from './js/cyph.im/enums';
+import {fadeIn} from './js/cyph/animations';
 import {ChatEnvService} from './js/cyph/services/chat-env.service';
 import {ChatStringsService} from './js/cyph/services/chat-strings.service';
 import {ChatService} from './js/cyph/services/chat.service';
@@ -16,14 +18,15 @@ import {SessionCapabilitiesService} from './js/cyph/services/session-capabilitie
 import {SessionInitService} from './js/cyph/services/session-init.service';
 import {SessionService} from './js/cyph/services/session.service';
 import {StringsService} from './js/cyph/services/strings.service';
+import {UrlSessionInitService} from './js/cyph/services/url-session-init.service';
 import {events} from './js/cyph/session/enums';
-import {UrlSessionInitService} from './url-session-init.service';
 
 
 /**
  * Angular component for chat UI root to share services.
  */
 @Component({
+	animations: [fadeIn],
 	providers: [
 		ChatService,
 		CyphertextService,
@@ -37,12 +40,12 @@ import {UrlSessionInitService} from './url-session-init.service';
 			useClass: ChatEnvService
 		},
 		{
-			provide: SessionService,
-			useClass: EphemeralSessionService
-		},
-		{
 			provide: SessionInitService,
 			useClass: UrlSessionInitService
+		},
+		{
+			provide: SessionService,
+			useClass: EphemeralSessionService
 		},
 		{
 			provide: StringsService,
@@ -52,15 +55,26 @@ import {UrlSessionInitService} from './url-session-init.service';
 	selector: 'cyph-chat-root',
 	templateUrl: './templates/chat-root.html'
 })
-export class EphemeralChatRootComponent implements OnInit {
+export class EphemeralChatRootComponent implements OnDestroy, OnInit {
+	/** @ignore */
+	private destroyed: boolean	= false;
+
+	/** @see ChatRootStates */
+	public readonly chatRootStates: typeof ChatRootStates	= ChatRootStates;
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		this.destroyed	= true;
+	}
+
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		this.appService.chatRootState	= ChatRootStates.blank;
+
 		if (
 			this.sessionInitService.callType &&
 			!(await this.sessionCapabilitiesService.localCapabilities).p2p
 		) {
-			this.appService.state	= States.blank;
-
 			await this.dialogService.alert({
 				content: this.stringsService.p2pDisabledLocal,
 				ok: this.stringsService.ok,
@@ -74,12 +88,20 @@ export class EphemeralChatRootComponent implements OnInit {
 
 
 		this.sessionService.one(events.abort).then(() => {
-			self.onbeforeunload		= () => {};
-			this.appService.state	= States.chat;
+			if (this.destroyed) {
+				return;
+			}
+
+			beforeUnloadMessage				= undefined;
+			this.appService.chatRootState	= ChatRootStates.chat;
 		});
 
 		this.sessionService.one(events.beginChatComplete).then(() => {
-			self.onbeforeunload	= () => this.stringsService.disconnectWarning;
+			if (this.destroyed) {
+				return;
+			}
+
+			beforeUnloadMessage	= this.stringsService.disconnectWarning;
 
 			if (this.sessionInitService.callType && this.sessionService.state.isAlice) {
 				this.p2pWebRTCService.request(this.sessionInitService.callType);
@@ -87,11 +109,19 @@ export class EphemeralChatRootComponent implements OnInit {
 		});
 
 		this.sessionService.one(events.beginWaiting).then(() => {
-			this.appService.state	= States.waitingForFriend;
+			if (this.destroyed) {
+				return;
+			}
+
+			this.appService.chatRootState	= ChatRootStates.waitingForFriend;
 		});
 
 		this.sessionService.connected.then(() => {
-			this.appService.state	= States.chat;
+			if (this.destroyed) {
+				return;
+			}
+
+			this.appService.chatRootState	= ChatRootStates.chat;
 
 			if (this.sessionInitService.callType) {
 				this.dialogService.toast(
@@ -102,6 +132,15 @@ export class EphemeralChatRootComponent implements OnInit {
 					5000
 				);
 			}
+		});
+
+		this.sessionService.one(events.cyphNotFound).then(() => {
+			if (this.destroyed) {
+				return;
+			}
+
+			this.appService.chatRootState	= ChatRootStates.error;
+			this.routerService.navigate(['404']);
 		});
 	}
 
@@ -114,6 +153,9 @@ export class EphemeralChatRootComponent implements OnInit {
 
 		/** @ignore */
 		private readonly p2pWebRTCService: P2PWebRTCService,
+
+		/** @ignore */
+		private readonly routerService: Router,
 
 		/** @ignore */
 		private readonly sessionService: SessionService,

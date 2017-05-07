@@ -3,6 +3,7 @@ import {ConfigService} from '../cyph/services/config.service';
 import {EnvService} from '../cyph/services/env.service';
 import {AppService} from './app.service';
 import {DemoService} from './demo.service';
+import {Promos, States} from './enums';
 
 
 /**
@@ -13,6 +14,12 @@ import {DemoService} from './demo.service';
 	templateUrl: '../../templates/cyph.com/index.html'
 })
 export class AppComponent {
+	/** @see Promos */
+	public promos: typeof Promos	= Promos;
+
+	/** @see States */
+	public states: typeof States	= States;
+
 	constructor (
 		/** @see AppService */
 		public readonly appService: AppService,
