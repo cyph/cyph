@@ -5,7 +5,7 @@ import {StringsService} from './js/cyph/services/strings.service';
 
 
 /**
- * Angular component for Cyph UI.
+ * Angular component for Cyph native UI.
  */
 @Component({
 	selector: 'cyph-app',

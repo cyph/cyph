@@ -3,7 +3,7 @@ import {AppService} from './app.service';
 
 
 /**
- * Angular component for Cyph UI.
+ * Angular component for Cyph web UI.
  */
 @Component({
 	selector: 'cyph-app',
