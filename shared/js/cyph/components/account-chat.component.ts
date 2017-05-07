@@ -1,4 +1,5 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {UserPresence} from '../account/enums';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountChatStringsService} from '../services/account-chat-strings.service';
@@ -59,25 +60,29 @@ import {StringsService} from '../services/strings.service';
 	styleUrls: ['../../css/components/account-chat.css'],
 	templateUrl: '../../templates/account-chat.html'
 })
-export class AccountChatComponent implements OnChanges {
-	/** Username of profile owner. */
-	@Input() public username?: string;
-
+export class AccountChatComponent implements OnInit {
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
 	/** @inheritDoc */
-	public async ngOnChanges (_CHANGES: SimpleChanges) : Promise<void> {
-		if (!this.username) {
-			return;
-		}
+	public ngOnInit () : void {
+		this.activatedRouteService.params.subscribe(o => {
+			const username: string|undefined	= o.username;
 
-		this.accountChatService.setUser(this.username);
+			if (!username) {
+				return;
+			}
+
+			this.accountChatService.setUser(username);
+		});
 	}
 
 	constructor (
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,
+
+		/** @ignore */
+		private readonly activatedRouteService: ActivatedRoute,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

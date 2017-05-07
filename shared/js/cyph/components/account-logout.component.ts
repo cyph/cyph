@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import {AccountAuthService} from '../services/account-auth.service';
-import {UrlStateService} from '../services/url-state.service';
 import {util} from '../util';
 
 
@@ -17,14 +17,14 @@ export class AccountLogoutComponent implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		this.accountAuthService.logout();
 		await util.sleep(1500);
-		this.urlStateService.setUrl('account/login');
+		this.routerService.navigate(['account', 'login']);
 	}
 
 	constructor (
-		/** @see AccountAuthService */
-		public readonly accountAuthService: AccountAuthService,
+		/** @ignore */
+		private readonly routerService: Router,
 
 		/** @see AccountAuthService */
-		public readonly urlStateService: UrlStateService
+		public readonly accountAuthService: AccountAuthService
 	) {}
 }

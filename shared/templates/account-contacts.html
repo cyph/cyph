@@ -1,64 +1,72 @@
-<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-	<div></div>
-
-	<md-card
-		[fxFlexOrder]='isActive(contact) ? "-1" : ""'
-		class='contact animated _{{i}}'
-		*ngFor='let contact of accountContactsService.contacts; let i = index'
-		[attr.data-index]='i'
-		[class.active]='isActive(contact)'
-		[class.flipInY]='!isActive(contact)'
+<div fxFlexFill fxLayout='row' fxLayoutAlign='center start'>
+	<div
+		fxFlex='90'
+		[fxFlex.gt-sm]='sidebar ? "90" : "65"'
+		[fxFlex.gt-md]='sidebar ? "90" : "40"'
+		fxLayout='column'
+		fxLayoutGap='16px'
 	>
-		<md-card-header fxLayout='row'>
-			<img
-				md-card-avatar
-				cyphTranslate
-				class='avatar'
-				[ngClass]='userPresence[contact.status]'
-				[src]='contact.avatar'
-				alt='User Avatar'
-				mdTooltip='Open Profile'
-				(click)='urlStateService.setUrl("account/profile/" + contact.username)'
-			/>
-			<md-card-title>{{contact.name}}</md-card-title>
-			<md-card-subtitle>{{contact.realUsername}}</md-card-subtitle>
-			<div fxFlex fxLayoutAlign='end center'>
-				<button
-					md-icon-button
-					cyphTranslate
-					class='shrink'
-					mdTooltip='Send Message'
-					*ngIf='contact.status !== userPresence.online'
-				>
-					<md-icon>email</md-icon>
-				</button>
-				<button
-					md-icon-button
-					cyphTranslate
-					class='shrink pulldown'
-					mdTooltip='Start Chat'
-					*ngIf='contact.status === userPresence.online'
-					(click)='urlStateService.setUrl("account/chat/" + contact.username)'
-				>
-					<md-icon>chat_bubble</md-icon>
-				</button>
-				<button
-					md-icon-button
-					cyphTranslate
-					mdTooltip='Video Call'
-				>
-					<md-icon>video_call</md-icon>
-				</button>
-				<button
-					md-icon-button
-					cyphTranslate
-					mdTooltip='Send File'
-				>
-					<md-icon>attachment</md-icon>
-				</button>
-			</div>
-		</md-card-header>
-	</md-card>
+		<div></div>
 
-	<div></div>
+		<md-card
+			[fxFlexOrder]='isActive(contact) ? "-1" : ""'
+			class='contact animated _{{i}}'
+			*ngFor='let contact of accountContactsService.contacts; let i = index'
+			[attr.data-index]='i'
+			[class.active]='isActive(contact)'
+			[class.flipInY]='!isActive(contact)'
+		>
+			<md-card-header fxLayout='row'>
+				<img
+					md-card-avatar
+					cyphTranslate
+					class='avatar'
+					[ngClass]='userPresence[contact.status]'
+					[src]='contact.avatar'
+					alt='User Avatar'
+					mdTooltip='Open Profile'
+					[routerLink]='"/account/profile/" + contact.username'
+				/>
+				<md-card-title>{{contact.name}}</md-card-title>
+				<md-card-subtitle>{{contact.realUsername}}</md-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						md-icon-button
+						cyphTranslate
+						class='shrink'
+						mdTooltip='Send Message'
+						*ngIf='contact.status !== userPresence.online'
+					>
+						<md-icon>email</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						class='shrink pulldown'
+						mdTooltip='Start Chat'
+						*ngIf='contact.status === userPresence.online'
+						[routerLink]='"/account/chat/" + contact.username'
+					>
+						<md-icon>chat_bubble</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Video Call'
+					>
+						<md-icon>video_call</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Send File'
+					>
+						<md-icon>attachment</md-icon>
+					</button>
+				</div>
+			</md-card-header>
+		</md-card>
+
+		<div></div>
+	</div>
 </div>

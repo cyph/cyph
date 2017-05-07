@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {States} from '../account/enums';
 
 
 /**
@@ -7,9 +6,6 @@ import {States} from '../account/enums';
  */
 @Injectable()
 export class AccountService {
-	/** Parameter passed in via URL route (e.g. a username). */
-	public input?: string;
-
 	/** Indicates whether the browser extension UI should be used. */
 	public isExtension: boolean		= false;
 
@@ -18,9 +14,6 @@ export class AccountService {
 
 	/** Indicates whether menu is expanded. */
 	public menuExpanded: boolean	= false;
-
-	/** @see States */
-	public state?: States;
 
 	/** Toggles account menu. */
 	public toggleMenu (menuExpanded?: boolean) : void {

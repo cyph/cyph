@@ -33,68 +33,18 @@
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
-	<div
-		fxFlex
-		fxLayout='column'
-		*ngIf='!showOnlySidebar'
-	>
-		<cyph-account-chat
-			fxFlexFill
-			[username]='accountService.input'
-			*ngIf='accountService.state === states.chat'
-		></cyph-account-chat>
-
-		<cyph-account-files
-			fxFlexFill
-			*ngIf='accountService.state === states.files'
-		></cyph-account-files>
-
-		<cyph-account-home
-			fxFlexFill
-			*ngIf='accountService.state === states.home'
-		></cyph-account-home>
-
-		<cyph-account-login
-			fxFlexFill
-			*ngIf='accountService.state === states.login'
-		></cyph-account-login>
-
-		<cyph-account-logout
-			fxFlexFill
-			*ngIf='accountService.state === states.logout'
-		></cyph-account-logout>
-
-		<cyph-account-profile
-			fxFlexFill
-			[username]='accountService.input'
-			*ngIf='accountService.state === states.profile'
-		></cyph-account-profile>
-
-		<cyph-account-register
-			fxFlexFill
-			*ngIf='accountService.state === states.register'
-		></cyph-account-register>
-
-		<cyph-account-settings
-			fxFlexFill
-			*ngIf='accountService.state === states.settings'
-		></cyph-account-settings>
+	<div fxFlex fxLayout='column'>
+		<div fxFlexFill>
+			<router-outlet></router-outlet>
+		</div>
 	</div>
 
 	<div
-		[fxFlex]='showOnlySidebar ? "" : "25"'
-		fxFlexFill
+		fxFlex='25'
 		fxLayout='column'
 		class='sidebar'
 		*ngIf='sidebarVisible'
 	>
-		<div fxFlex fxFlexFill fxLayout='row' fxLayoutAlign='center center'>
-			<cyph-account-contacts
-				[fxFlex]='showOnlySidebar ? "95" : "90"'
-				[fxFlex.gt-sm]='showOnlySidebar ? "65" : "90"'
-				[fxFlex.gt-md]='showOnlySidebar ? "40" : "90"'
-				fxFlexFill
-			></cyph-account-contacts>
-		</div>
+		<cyph-account-contacts fxFlex fxFlexFill [sidebar]='true'></cyph-account-contacts>
 	</div>
 </div>

@@ -1,10 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import {UserPresence, userPresenceSelectOptions} from '../account/enums';
 import {User} from '../account/user';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {EnvService} from '../services/env.service';
-import {UrlStateService} from '../services/url-state.service';
 
 
 /**
@@ -16,9 +16,6 @@ import {UrlStateService} from '../services/url-state.service';
 	templateUrl: '../../templates/account-profile.html'
 })
 export class AccountProfileComponent implements OnInit {
-	/** Username of profile owner. */
-	@Input() private username?: string;
-
 	/** @see UserPresence */
 	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
 
@@ -28,18 +25,11 @@ export class AccountProfileComponent implements OnInit {
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
-	/** Indicates whether this is the profile of the currently signed in user. */
-	public get isCurrentUser () : boolean {
-		return this.user === this.accountAuthService.current;
-	}
-
-	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
-		await this.accountAuthService.ready;
-
+	/** @ignore */
+	private async setUser (username?: string) : Promise<void> {
 		try {
-			if (this.username) {
-				this.user	= await this.accountUserLookupService.getUser(this.username);
+			if (username) {
+				this.user	= await this.accountUserLookupService.getUser(username);
 			}
 			else if (this.accountAuthService.current) {
 				this.user	= this.accountAuthService.current;
@@ -48,11 +38,29 @@ export class AccountProfileComponent implements OnInit {
 		catch (_) {}
 
 		if (!this.user) {
-			this.urlStateService.setUrl('account/login');
+			this.routerService.navigate(['account', 'login']);
 		}
 	}
 
+	/** Indicates whether this is the profile of the currently signed in user. */
+	public get isCurrentUser () : boolean {
+		return this.user === this.accountAuthService.current;
+	}
+
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
+		await this.accountAuthService.ready;
+		this.setUser(this.activatedRouteService.snapshot.params.username);
+		this.activatedRouteService.params.subscribe(o => { this.setUser(o.username); });
+	}
+
 	constructor (
+		/** @ignore */
+		private readonly activatedRouteService: ActivatedRoute,
+
+		/** @ignore */
+		private readonly routerService: Router,
+
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
 
@@ -60,9 +68,6 @@ export class AccountProfileComponent implements OnInit {
 		public readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService,
-
-		/** @see UrlStateService */
-		public readonly urlStateService: UrlStateService
+		public readonly envService: EnvService
 	) {}
 }

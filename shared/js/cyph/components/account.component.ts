@@ -1,11 +1,10 @@
 import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import * as Granim from 'granim';
-import {States} from '../account/enums';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountEnvService} from '../services/account-env.service';
 import {AccountService} from '../services/account.service';
 import {EnvService} from '../services/env.service';
-import {UrlStateService} from '../services/url-state.service';
 
 
 /**
@@ -23,25 +22,19 @@ import {UrlStateService} from '../services/url-state.service';
 	templateUrl: '../../templates/account.html'
 })
 export class AccountComponent implements OnInit {
-	/** @see States */
-	public states: typeof States	= States;
-
-	/** Indicates whether menu is expanded or compact */
-	public get menuExpanded () : boolean {
-		return this.accountService.menuExpanded;
-	}
-	
 	/** Indicates whether menu should be displayed. */
 	public get menuVisible () : boolean {
 		return this.accountAuthService.current !== undefined && [
-			States.chat,
-			States.contacts,
-			States.files,
-			States.home,
-			States.profile,
-			States.settings
-		].filter(
-			state => state === this.accountService.state
+			'chat',
+			'contacts',
+			'files',
+			'profile',
+			'settings'
+		].filter(path =>
+			this.activatedRouteService.snapshot.firstChild && (
+				this.activatedRouteService.snapshot.firstChild.url.length < 1 ||
+				this.activatedRouteService.snapshot.firstChild.url.map(o => o.path)[0] === path
+			)
 		).length > 0;
 	}
 
@@ -81,36 +74,26 @@ export class AccountComponent implements OnInit {
 
 		await this.accountAuthService.ready;
 
-		if (this.accountAuthService.current && this.accountService.state === States.login) {
-			this.urlStateService.setUrl('account');
-		}
-		else if (!this.accountAuthService.current && this.accountService.state !== States.login) {
-			this.urlStateService.setUrl('account/login');
-		}
-	}
+		const path	= this.activatedRouteService.snapshot.url[0].path;
 
-	/** Indicates whether the sidebar should take up the entire view. */
-	public get showOnlySidebar () : boolean {
-		return [
-			States.contacts
-		].filter(
-			state => state === this.accountService.state
-		).length > 0;
+		if (this.accountAuthService.current && path === 'login') {
+			this.routerService.navigate(['account']);
+		}
+		else if (!this.accountAuthService.current && path !== 'login') {
+			this.routerService.navigate(['account', 'login']);
+		}
 	}
 
 	/** Indicates whether sidebar should be displayed. */
 	public get sidebarVisible () : boolean {
-		return this.accountAuthService.current !== undefined && (
-			this.envService.isMobile ?
-				this.showOnlySidebar :
-				[
-					States.chat,
-					States.contacts,
-					States.home
-				].filter(
-					state => state === this.accountService.state
-				).length > 0
-		);
+		return this.accountAuthService.current !== undefined && !this.envService.isMobile && [
+			'chat'
+		].filter(path =>
+			this.activatedRouteService.snapshot.firstChild && (
+				this.activatedRouteService.snapshot.firstChild.url.length < 1 ||
+				this.activatedRouteService.snapshot.firstChild.url.map(o => o.path)[0] === path
+			)
+		).length > 0;
 	}
 
 	constructor (
@@ -118,7 +101,10 @@ export class AccountComponent implements OnInit {
 		private readonly accountAuthService: AccountAuthService,
 
 		/** @ignore */
-		private readonly urlStateService: UrlStateService,
+		private readonly activatedRouteService: ActivatedRoute,
+
+		/** @ignore */
+		private readonly routerService: Router,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

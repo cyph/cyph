@@ -24,7 +24,8 @@
 			class='home'
 			mdTooltip='Home'
 			mdTooltipPosition='right'
-			(click)='goToState(states.home)'
+			routerLink='/account'
+			(click)='click()'
 			*ngIf='accountService.menuExpanded'
 		>
 			<img
@@ -43,7 +44,8 @@
 			class='home'
 			mdTooltip='Home'
 			mdTooltipPosition='right'
-			(click)='goToState(states.home)'
+			routerLink='/account'
+			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
 		>
 			<img
@@ -67,7 +69,8 @@
 					[ngClass]='userPresence[accountAuthService.current.status]'
 					alt='Profile Picture'
 					[src]='accountAuthService.current.avatar'
-					(click)='goToState(states.profile)'
+					routerLink='/account/profile'
+					(click)='click()'
 				/>
 			</div>
 		</div>
@@ -79,7 +82,8 @@
 			cyphTranslate
 			mdTooltip='Contacts'
 			mdTooltipPosition='right'
-			(click)='goToState(states.contacts)'
+			routerLink='/account/contacts'
+			(click)='click()'
 			*ngIf='accountService.menuExpanded'
 		>
 			<md-icon>people</md-icon>
@@ -90,7 +94,8 @@
 			cyphTranslate
 			mdTooltip='Contacts'
 			mdTooltipPosition='right'
-			(click)='goToState(states.contacts)'
+			routerLink='/account/contacts'
+			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
 		>
 			<md-icon>people</md-icon>
@@ -101,7 +106,8 @@
 			cyphTranslate
 			mdTooltip='Files'
 			mdTooltipPosition='right'
-			(click)='goToState(states.files)'
+			routerLink='/account/files'
+			(click)='click()'
 			*ngIf='accountService.menuExpanded'
 		>
 			<md-icon>folder</md-icon>
@@ -112,7 +118,8 @@
 			cyphTranslate
 			mdTooltip='Files'
 			mdTooltipPosition='right'
-			(click)='goToState(states.files)'
+			routerLink='/account/files'
+			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
 		>
 			<md-icon>folder</md-icon>
@@ -123,7 +130,8 @@
 			cyphTranslate
 			mdTooltip='Settings'
 			mdTooltipPosition='right'
-			(click)='goToState(states.settings)'
+			routerLink='/account/settings'
+			(click)='click()'
 			*ngIf='accountService.menuExpanded'
 		>
 			<md-icon>settings</md-icon>
@@ -134,7 +142,8 @@
 			cyphTranslate
 			mdTooltip='Settings'
 			mdTooltipPosition='right'
-			(click)='goToState(states.settings)'
+			routerLink='/account/settings'
+			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
 		>
 			<md-icon>settings</md-icon>
@@ -147,7 +156,8 @@
 			cyphTranslate
 			mdTooltip='Logout'
 			mdTooltipPosition='right'
-			(click)='urlStateService.setUrl("account/logout")'
+			routerLink='/account/logout'
+			(click)='click()'
 			*ngIf='accountService.menuExpanded'
 		>
 			<md-icon>exit_to_app</md-icon>
@@ -158,7 +168,8 @@
 			cyphTranslate
 			mdTooltip='Logout'
 			mdTooltipPosition='right'
-			(click)='urlStateService.setUrl("account/logout")'
+			routerLink='/account/logout'
+			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
 		>
 			<md-icon>exit_to_app</md-icon>
