@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import * as Konami from 'konami-code.js';
 import {env} from '../cyph/env';
 import {ChatService} from '../cyph/services/chat.service';
@@ -11,7 +12,6 @@ import {ScrollService} from '../cyph/services/scroll.service';
 import {SessionCapabilitiesService} from '../cyph/services/session-capabilities.service';
 import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
-import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
 import {ChatData} from './chat-data';
 import {DemoEnvService} from './demo-env.service';
@@ -80,7 +80,7 @@ export class DemoChatRootComponent implements OnInit {
 		if (this.cyphertextService.isEnabled) {
 			/* tslint:disable-next-line:no-unused-expression */
 			new Konami(async () => {
-				this.urlStateService.setUrl(HomeSections[HomeSections.intro]);
+				this.routerService.navigate([HomeSections[HomeSections.intro]]);
 
 				while (!this.demoService.isActive) {
 					await util.sleep();
@@ -112,10 +112,10 @@ export class DemoChatRootComponent implements OnInit {
 		private readonly localSessionService: LocalSessionService,
 
 		/** @ignore */
-		private readonly scrollService: ScrollService,
+		private readonly routerService: Router,
 
 		/** @ignore */
-		private readonly urlStateService: UrlStateService,
+		private readonly scrollService: ScrollService,
 
 		/** @see CyphertextService */
 		public readonly cyphertextService: CyphertextService

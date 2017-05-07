@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {SessionInitService} from '../cyph/services/session-init.service';
-import {UrlStateService} from '../cyph/services/url-state.service';
+import {Router} from '@angular/router';
+import {SessionInitService} from './session-init.service';
 
 
 /**
@@ -14,18 +14,22 @@ export class UrlSessionInitService implements SessionInitService {
 	/** @inheritDoc */
 	public readonly id: string;
 
-	constructor (urlStateService: UrlStateService) {
-		const urlState	= urlStateService.getUrlSplit();
+	constructor (routerService: Router) {
+		const urlSegmentPaths	=
+			routerService.routerState.snapshot.root.firstChild ?
+				routerService.routerState.snapshot.root.firstChild.url.map(o => o.path) :
+				[]
+		;
 
 		this.callType	=
-			urlState[0] === 'audio' ?
+			urlSegmentPaths[0] === 'audio' ?
 				'audio' :
-				urlState[0] === 'video' ?
+				urlSegmentPaths[0] === 'video' ?
 					'video' :
 					undefined
 		;
 
-		this.id			= urlState[this.callType ? 1 : 0] || '';
+		this.id	= urlSegmentPaths[this.callType ? 1 : 0] || '';
 
 		if (!this.callType) {
 			this.callType	= customBuildCallType;

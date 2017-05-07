@@ -1,1 +1,24 @@
+.login-form {
+	md-progress-spinner {
+		display: none;
+		position: absolute;
+		top: 50%;
+		left: 50%;
 
+		@include transform(translate(-50%, -50%));
+	}
+
+	.cyph-banner {
+		margin: 20px;
+	}
+
+	&.checking {
+		md-progress-spinner {
+			display: block;
+		}
+
+		md-card > :not(md-progress-spinner) {
+			opacity: 0.15;
+		}
+	}
+}

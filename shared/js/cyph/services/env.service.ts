@@ -8,9 +8,6 @@ import {LocalStorageService} from './local-storage.service';
  */
 @Injectable()
 export class EnvService extends Env {
-	/** Version of newCyphUrl that bypasses onhashchange to force redirect when necessary. */
-	public readonly newCyphUrlRedirect: string		= this.newCyphUrl;
-
 	/** Package/environment name. */
 	public readonly packageName: Promise<string>	= (async () => {
 		const timestamp	=
@@ -64,6 +61,11 @@ export class EnvService extends Env {
 
 		return false;
 	})();
+
+	/** Version of newCyphUrl that triggers a retry. */
+	public get newCyphUrlRetry () : string {
+		return '/retry/' + this.newCyphUrl.replace(/^.*?(\/#|$)/, '');
+	}
 
 	constructor (
 		/** @ignore */

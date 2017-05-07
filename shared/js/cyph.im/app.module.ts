@@ -1,4 +1,5 @@
 import {NgModule} from '@angular/core';
+import {RouterModule} from '@angular/router';
 import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
 import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
 import {DialogImageComponent} from '../cyph/components/dialog-image.component';
@@ -9,7 +10,7 @@ import {CyphWebModule} from '../cyph/modules/cyph-web.module';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {ThreadedPotassiumService} from '../cyph/services/crypto/threaded-potassium.service';
 import {FaviconService} from '../cyph/services/favicon.service';
-import {AccountComponent} from './account.component';
+import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
@@ -22,7 +23,6 @@ import {LockdownComponent} from './lockdown.component';
 @NgModule({
 	bootstrap: [AppComponent],
 	declarations: [
-		AccountComponent,
 		AppComponent,
 		EphemeralChatRootComponent,
 		LockdownComponent
@@ -34,6 +34,7 @@ import {LockdownComponent} from './lockdown.component';
 		HelpComponent
 	],
 	imports: [
+		RouterModule.forRoot(appRoutes, {useHash: true}),
 		CyphAppModule,
 		CyphCommonModule,
 		CyphWebModule

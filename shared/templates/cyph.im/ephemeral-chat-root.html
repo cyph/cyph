@@ -1,0 +1,66 @@
+<span [class.curtain]='cyphertextService.isVisible'>
+	<section fxFlexFill fxLayout='column' id='main' class='cyph-foreground'>
+		<canvas [fxShow]='envService.showGranim' id='main-chat-gradient'></canvas>
+
+		<h3
+			class='cyph-banner emphasis warn'
+			*ngIf='
+				appService.chatRootState !== chatRootStates.chat &&
+				(envService.webSignError | async)
+			'
+		>
+			WARNING: Your Cyph instance has a problem.
+			See <a href='https://www.cyph.com/websignerror'>here</a>
+			for more details and the solution.
+		</h3>
+
+		<cyph-chat-main
+			fxFlex
+			fxFlexFill
+			fxLayout='column'
+			[hideDisconnectMessage]='envService.coBranded'
+			[messageCountInTitle]='true'
+			*ngIf='appService.chatRootState === chatRootStates.chat'
+			[@fadeIn]='"in"'
+		>
+			<cyph-signup-form>
+				{{stringsService.signupMessage}}
+			</cyph-signup-form>
+		</cyph-chat-main>
+
+		<cyph-link-connection
+			fxFlex
+			fxFlexFill
+			fxLayout='column'
+			*ngIf='appService.chatRootState === chatRootStates.waitingForFriend'
+			[@fadeIn]='"in"'
+		></cyph-link-connection>
+
+		<cyph-not-found
+			fxFlex
+			fxFlexFill
+			fxLayout='column'
+			cyphNanoScroller
+			*ngIf='appService.chatRootState === chatRootStates.error'
+			[@fadeIn]='"in"'
+		></cyph-not-found>
+
+		<div
+			fxFlex
+			fxFlexFill
+			fxLayout='column'
+			id='blank'
+			*ngIf='appService.chatRootState === chatRootStates.blank'
+		></div>
+
+		<footer>
+			<cyph-chat-message-box
+				*ngIf='appService.chatRootState === chatRootStates.chat'
+			></cyph-chat-message-box>
+
+			<cyph-footer *ngIf='!envService.isMobile'></cyph-footer>
+		</footer>
+	</section>
+
+	<cyph-chat-cyphertext></cyph-chat-cyphertext>
+</span>

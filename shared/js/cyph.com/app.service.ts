@@ -1,18 +1,17 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
+import {NavigationEnd, Router} from '@angular/router';
 import * as $ from 'jquery';
 import * as WOW from 'wowjs';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
-import {eventManager} from '../cyph/event-manager';
 import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {SignupService} from '../cyph/services/signup.service';
-import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
 import {Carousel} from './carousel';
 import {elements} from './elements';
-import {HomeSections, pageTitles, Promos, States, wpstaticPages} from './enums';
+import {HomeSections, pageTitles, Promos, States} from './enums';
 
 
 /**
@@ -21,13 +20,7 @@ import {HomeSections, pageTitles, Promos, States, wpstaticPages} from './enums';
 @Injectable()
 export class AppService {
 	/** @ignore */
-	private static readonly linkInterceptSelector: string	=
-		'a[href^="/"]' + wpstaticPages.map(s => `:not(a[href^='/${s}'])`).join('')
-	;
-
-
-	/** Business pricing state. */
-	public readonly business: boolean	= false;
+	private disableNextScroll: boolean	= false;
 
 	/** Amount, category, and item respectively in cart. */
 	public cart: {
@@ -61,23 +54,11 @@ export class AppService {
 	/** @see HomeSections */
 	public homeSection?: HomeSections;
 
-	/** Individual pricing state. */
-	public readonly individual: boolean	= false;
-
 	/** @see Promos */
 	public promo?: Promos;
 
-	/** @see Promos */
-	public promos: typeof Promos		= Promos;
-
 	/** @see States */
-	public state: States				= States.home;
-
-	/** @see States */
-	public states: typeof States		= States;
-
-	/** Telehealth pricing state. */
-	public readonly telehealth: boolean	= false;
+	public state: States	= States.home;
 
 	/** Carousel of testimonials. */
 	public testimonialCarousel: Carousel;
@@ -93,53 +74,32 @@ export class AppService {
 	}
 
 	/** @ignore */
-	private async linkClickHandler (e: Event) : Promise<void> {
-		e.preventDefault();
+	private async onUrlChange (url: string) : Promise<void> {
+		/* Workaround to allow triggering this method
+			even when URL hasn't changed (e.g. for scrolling). */
+		this.routerService.navigated	= false;
 
-		const href		= $(e.currentTarget).attr('href');
-		let scrollDelay	= 500;
+		const urlSegmentPaths: string[]	= url.split('/').slice(1);
+		const urlBasePath: string		= urlSegmentPaths[0];
 
-		if (href !== locationData.pathname || this.homeSection !== undefined) {
-			scrollDelay	= 0;
-
-			this.urlStateService.setUrl(href);
-		}
-
-		if (this.homeSection === undefined) {
-			await util.sleep(scrollDelay);
-			this.scroll(0);
-		}
-	}
-
-	/** @ignore */
-	private async onUrlStateChange (newUrlState: string) : Promise<void> {
-		const newUrlStateSplit: string[]	= newUrlState.split('/');
-		const newUrlStateBase: string		= newUrlStateSplit[0];
-
-		const state: States|undefined	= (<any> States)[newUrlStateBase];
-		const promo: Promos|undefined	= (<any> Promos)[newUrlStateBase];
+		const state: States|undefined	= (<any> States)[urlBasePath];
+		const promo: Promos|undefined	= (<any> Promos)[urlBasePath];
 
 		this.homeSection	= promo === undefined ?
-			(<any> HomeSections)[newUrlStateBase] :
+			(<any> HomeSections)[urlBasePath] :
 			HomeSections.promo
 		;
 
 		this.titleService.setTitle(
-			(<any> pageTitles)[newUrlStateBase] || pageTitles.defaultTitle
+			(<any> pageTitles)[urlBasePath] || pageTitles.defaultTitle
 		);
-
-		this.urlStateService.setUrl(newUrlState, true, true);
 
 		if (this.homeSection !== undefined) {
 			this.state	= States.home;
 
 			if (promo !== undefined) {
-				this.promo				= promo;
-
-				eventManager.trigger(
-					SignupService.promoEvent,
-					Promos[promo]
-				);
+				this.promo					= promo;
+				this.signupService.promo	= Promos[promo];
 			}
 
 			await util.sleep();
@@ -147,25 +107,32 @@ export class AppService {
 			switch (this.homeSection) {
 				case HomeSections.register:
 					await this.dialogService.baseDialog(BetaRegisterComponent);
-					this.urlStateService.setUrl('');
+					this.disableNextScroll	= true;
+					this.routerService.navigate(['']);
 					break;
 
 				case HomeSections.invite:
-					eventManager.trigger(
-						SignupService.inviteEvent,
-						this.urlStateService.getUrl().split(
+					this.signupService.data.inviteCode	=
+						urlSegmentPaths.join('/').split(
 							`${HomeSections[HomeSections.invite]}/`
 						)[1] || ''
-					);
+					;
 
 					await this.dialogService.baseDialog(BetaRegisterComponent, undefined, o => {
 						o.invite	= true;
 					});
 
-					this.urlStateService.setUrl('');
+					this.disableNextScroll	= true;
+					this.routerService.navigate(['']);
 					break;
 
 				default:
+					const loadComplete	= () => $('body.load-complete');
+					if (loadComplete().length < 1) {
+						await util.waitForIterable(loadComplete);
+						await util.sleep(500);
+					}
+
 					this.scroll(
 						$(`#${HomeSections[this.homeSection]}-section`).offset().top -
 						(
@@ -175,11 +142,14 @@ export class AppService {
 						)
 					);
 			}
+
+			return;
 		}
-		else if (state === States.checkout) {
+
+		if (state === States.checkout) {
 			try {
-				const category: string	= newUrlStateSplit[1];
-				const item: string		= newUrlStateSplit[2].replace(
+				const category: string	= urlSegmentPaths[1];
+				const item: string		= urlSegmentPaths[2].replace(
 					/-(.)/g,
 					(_, s) => s.toUpperCase()
 				);
@@ -196,11 +166,11 @@ export class AppService {
 				);
 			}
 			catch (_) {
-				this.urlStateService.setUrl(this.urlStateService.states.notFound);
+				this.routerService.navigate(['404']);
 			}
 		}
 		else if (state === States.contact) {
-			const to: string	= newUrlStateSplit[1];
+			const to: string	= urlSegmentPaths[1];
 			if (this.configService.contactEmailAddresses.indexOf(to) > -1) {
 				this.contactTo	= to;
 			}
@@ -210,14 +180,22 @@ export class AppService {
 		else if (state !== undefined) {
 			this.state	= state;
 		}
-		else if (newUrlStateBase === '') {
+		else if (urlBasePath === '') {
 			this.state	= States.home;
 		}
-		else if (newUrlStateBase === this.urlStateService.states.notFound) {
+		else if (urlBasePath === '404') {
 			this.state	= States.error;
 		}
 		else {
-			this.urlStateService.setUrl(this.urlStateService.states.notFound);
+			this.routerService.navigate(['404']);
+		}
+
+		if (this.disableNextScroll) {
+			this.disableNextScroll	= false;
+		}
+		else {
+			await util.sleep(500);
+			this.scroll(0);
 		}
 	}
 
@@ -268,31 +246,23 @@ export class AppService {
 		private readonly envService: EnvService,
 
 		/** @ignore */
-		private readonly titleService: Title,
+		private readonly routerService: Router,
 
 		/** @ignore */
-		private readonly urlStateService: UrlStateService
+		private readonly signupService: SignupService,
+
+		/** @ignore */
+		private readonly titleService: Title
 	) {
 		if (!this.envService.isMobile) {
 			new WOW({live: true}).init();
 		}
 
-		(async () => {
-			this.urlStateService.onChange(
-				newUrlState => { this.onUrlStateChange(newUrlState); },
-				false,
-				true
-			);
-
-			const newUrlState: string	= this.urlStateService.getUrl();
-
-			if ((<any> HomeSections)[newUrlState] !== undefined) {
-				await util.waitForIterable(() => $('body.load-complete'));
-				await util.sleep(500);
+		this.routerService.events.subscribe(e => {
+			if (e instanceof NavigationEnd) {
+				this.onUrlChange(e.url);
 			}
-
-			this.urlStateService.setUrl(newUrlState, true, false);
-		})();
+		});
 
 		(async () => {
 			/* Disable background video on mobile */
@@ -343,7 +313,7 @@ export class AppService {
 
 			await util.waitForIterable(elements.mainToolbar);
 
-			let expanded	= this.urlStateService.getUrl() === '';
+			let expanded	= this.routerService.routerState.snapshot.url === '';
 			elements.mainToolbar().toggleClass('new-cyph-expanded', expanded);
 
 			(async () => {
@@ -369,31 +339,7 @@ export class AppService {
 				}
 			})();
 
-			/* Avoid full page reloads */
-
-			$(AppService.linkInterceptSelector).click(e => { this.linkClickHandler(e); });
-			new MutationObserver(mutations => {
-				for (const mutation of mutations) {
-					for (const elem of Array.from(mutation.addedNodes)) {
-						const $elem: JQuery	= $(elem);
-
-						if ($elem.is(AppService.linkInterceptSelector)) {
-							$elem.click(e => { this.linkClickHandler(e); });
-						}
-						else {
-							$elem.
-								find(AppService.linkInterceptSelector).
-								click(e => { this.linkClickHandler(e); })
-							;
-						}
-					}
-				}
-			}).observe(document.body, {
-				attributes: false,
-				characterData: false,
-				childList: true,
-				subtree: true
-			});
+			/* Hero section feature rotation */
 
 			(async () => {
 				while (true) {
