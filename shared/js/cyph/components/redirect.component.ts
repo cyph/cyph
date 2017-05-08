@@ -13,7 +13,7 @@ import {util} from '../util';
 export class RedirectComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		await util.sleep();
+		await util.sleep(0);
 
 		this.routerService.navigate(
 			(
