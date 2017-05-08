@@ -8,7 +8,6 @@ externals="{
 	'_stream_duplex': 'undefined',
 	'_stream_writable': 'undefined',
 	'faye-websocket': '{Client: self.WebSocket}',
-	'jquery': 'self.jQuery',
 	'libsodium': '{sodium: self.sodium}',
 	'request': 'undefined',
 	'rsvp': 'undefined'
