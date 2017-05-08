@@ -38,8 +38,10 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@types/clipboard-js \
 	@types/dompurify \
 	@types/file-saver \
+	@types/jasmine \
 	@types/jquery \
 	@types/markdown-it \
+	@types/node \
 	angular-smd@https://github.com/buu700/angular-smd-tmp \
 	angular-ssr \
 	angular2-template-loader \
@@ -72,7 +74,15 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	htmllint \
 	image-type \
 	immutable@rc \
+	jasmine-core \
+	jasmine-spec-reporter \
 	jquery \
+	karma \
+	karma-chrome-launcher \
+	karma-cli \
+	karma-coverage-istanbul-reporter \
+	karma-jasmine \
+	karma-jasmine-html-reporter \
 	konami-code.js \
 	lazy \
 	libsodium-wrappers \
@@ -95,6 +105,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	od-virtualscroll \
 	prepack \
 	prepack-webpack-plugin \
+	protractor \
 	raw-loader \
 	read \
 	reflect-metadata \
@@ -118,6 +129,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	tns-ios \
 	tns-platform-declarations \
 	ts-loader \
+	ts-node \
 	tslint \
 	tslint-microsoft-contrib \
 	typedoc \
