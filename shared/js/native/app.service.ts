@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ChatRootStates} from './js/cyph.im/enums';
+import {ChatRootStates} from './js/cyph.ws/enums';
 
 
 /**

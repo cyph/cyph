@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AppService} from './app.service';
-import {ChatRootStates} from './js/cyph.im/enums';
+import {ChatRootStates} from './js/cyph.ws/enums';
 import {fadeIn} from './js/cyph/animations';
 import {ChatEnvService} from './js/cyph/services/chat-env.service';
 import {ChatStringsService} from './js/cyph/services/chat-strings.service';

@@ -79,7 +79,7 @@ const commandScriptExists	= (() => {
 const isAgseDeploy			=
 	args.command === 'deploy' &&
 	!args.simple &&
-	(!args.site || args.site === 'cyph.im')
+	(!args.site || args.site === 'cyph.ws')
 ;
 
 const image					= 'cyph/' + (
@@ -493,7 +493,7 @@ switch (args.command) {
 		commandAdditionalArgs.push('44000:44000');
 
 		const base		= 'http://localhost';
-		const projects	= ['backend', 'cyph.com', 'cyph.im'];
+		const projects	= ['backend', 'cyph.com', 'cyph.ws'];
 
 		for (let i = 0 ; i < projects.length ; ++i) {
 			console.log(`${projects[i]}: ${base}:4200${i}`);

@@ -47,7 +47,7 @@ fi
 
 tsfiles="$(
 	{
-		cat cyph.com/*.html cyph.im/*.html | grep -oP "src=(['\"])/js/.*?\1";
+		cat cyph.com/*.html cyph.ws/*.html | grep -oP "src=(['\"])/js/.*?\1";
 		find ${outputDir}/js -type f -name '*.ts' -not \( \
 			-name '*.ngfactory.ts' \
 			-or -name '*.ngmodule.ts' \
