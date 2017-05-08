@@ -84,7 +84,6 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	microlight-string \
 	mkdirp \
 	moment \
-	nanoscroller \
 	nativescript \
 	nativescript-angular \
 	nativescript-dev-android-snapshot \

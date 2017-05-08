@@ -128,7 +128,6 @@ find . -type f | grep -P '.*\.min\.[a-z]+$' | xargs -I% bash -c '
 for f in \
 	fg-loadcss/src/*.js \
 	jquery.appear/jquery.appear.js \
-	nanoscroller/bin/javascripts/jquery.nanoscroller.js \
 	whatwg-fetch/fetch.js
 do
 	./.bin/uglifyjs "${f}" -m -o "${f}"
