@@ -92,19 +92,19 @@ if [ ! -f GeoIP2-ISP.mmdb ] ; then
 	echo 'GeoIP2-ISP.mmdb missing'
 	exit 1
 fi
-mv GeoIP2-ISP.mmdb ../default/
+mv GeoIP2-ISP.mmdb ../backend/
 cd ..
 rm -rf geoisp.tmp
 
 # Secret credentials
-cat ~/.cyph/default.vars >> default/app.yaml
+cat ~/.cyph/backend.vars >> backend/app.yaml
 cat ~/.cyph/test.vars >> test/test.yaml
-cp ~/.cyph/GeoIP2-Country.mmdb default/
+cp ~/.cyph/GeoIP2-Country.mmdb backend/
 if [ "${branch}" == 'staging' ] ; then
-	echo '  PROD: true' >> default/app.yaml
-	cat ~/.cyph/braintree.prod >> default/app.yaml
+	echo '  PROD: true' >> backend/app.yaml
+	cat ~/.cyph/braintree.prod >> backend/app.yaml
 else
-	cat ~/.cyph/braintree.sandbox >> default/app.yaml
+	cat ~/.cyph/braintree.sandbox >> backend/app.yaml
 fi
 
 projectname () {
@@ -166,8 +166,8 @@ if [ "${test}" ] ; then
 		newCyphURL="https://${version}-dot-cyph-im-dot-cyphme.appspot.com"
 	fi
 
-	sed -i "s|staging|${version}|g" default/config.go
-	sed -i "s|http://localhost:42000|https://${version}-dot-cyphme.appspot.com|g" default/config.go
+	sed -i "s|staging|${version}|g" backend/config.go
+	sed -i "s|http://localhost:42000|https://${version}-dot-cyphme.appspot.com|g" backend/config.go
 	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" %
 	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|www.cyph.com|${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" %
@@ -193,7 +193,7 @@ if [ "${test}" ] ; then
 	# 	done
 	# fi
 else
-	sed -i "s|http://localhost:42000|https://api.cyph.com|g" default/config.go
+	sed -i "s|http://localhost:42000|https://api.cyph.com|g" backend/config.go
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://api.cyph.com|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42001|https://www.cyph.com|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42002|https://cyph.ws|g" %
@@ -209,7 +209,7 @@ else
 fi
 
 if [ -d nakedredirect ] ; then
-	cp default/config.go nakedredirect/
+	cp backend/config.go nakedredirect/
 fi
 
 

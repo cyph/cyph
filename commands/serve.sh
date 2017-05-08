@@ -60,7 +60,7 @@ done
 
 node /node_modules/.bin/firebase-server -p 44000 &
 
-cp -f default/app.yaml default/.build.yaml
+cp -f backend/app.yaml backend/.build.yaml
 cp -f cyph.com/cyph-com.yaml cyph.com/.build.yaml
 cp -f cyph.ws/cyph-ws.yaml cyph.ws/.build.yaml
 
@@ -75,16 +75,16 @@ fi
 
 for f in */.build.yaml ; do sed -i 's|index.html|.index.html|g' $f ; done
 
-cat ~/.cyph/default.vars >> default/.build.yaml
+cat ~/.cyph/backend.vars >> backend/.build.yaml
 if [ "${branch}" == 'prod' ] ; then
-	echo '  PROD: true' >> default/.build.yaml
-	cat ~/.cyph/braintree.prod >> default/.build.yaml
+	echo '  PROD: true' >> backend/.build.yaml
+	cat ~/.cyph/braintree.prod >> backend/.build.yaml
 else
-	cat ~/.cyph/braintree.sandbox >> default/.build.yaml
+	cat ~/.cyph/braintree.sandbox >> backend/.build.yaml
 fi
 
 mkdir /tmp/cyph0;
-go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 default/.build.yaml;
+go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 backend/.build.yaml;
 
 mkdir /tmp/cyph1;
 appserver --port 5001 --admin_port 6001 --host 0.0.0.0 --storage_path /tmp/cyph1 cyph.com/.build.yaml;
