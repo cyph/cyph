@@ -5,12 +5,12 @@ dir="$PWD"
 originalArgs="${*}"
 
 
-cacheBustedProjects='cyph.com cyph.im'
-compiledProjects='cyph.com cyph.im'
+cacheBustedProjects='cyph.com cyph.ws'
+compiledProjects='cyph.com cyph.ws'
 allCompiledProjects="${compiledProjects}"
-webSignedProject='cyph.im'
+webSignedProject='cyph.ws'
 prodOnlyProjects='nakedredirect test websign'
-shortlinkProjects='io me video audio'
+shortlinkProjects='im io me video audio'
 site=''
 test=true
 websign=true
@@ -467,14 +467,12 @@ if [ "${websign}" ] ; then
 
 	# WebSign redirects
 
-	./commands/websign/createredirect.sh '' cyph.im "${package}" "${test}"
-
 	for suffix in $shortlinkProjects ; do
 		d=cyph.${suffix}
 		project=cyph-${suffix}
 
 		mkdir $d
-		cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
+		cat cyph.ws/cyph-ws.yaml | sed "s|cyph-ws|${project}|g" > ${d}/${project}.yaml
 		./commands/websign/createredirect.sh ${suffix} ${d} "${package}" "${test}"
 	done
 elif [ ! "${site}" ] || [ "${site}" == "${webSignedProject}" ] ; then

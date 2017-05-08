@@ -7,7 +7,7 @@ import {AppService} from './app.service';
  */
 @Component({
 	selector: 'cyph-app',
-	templateUrl: '../../templates/cyph.im/index.html'
+	templateUrl: '../../templates/cyph.ws/index.html'
 })
 export class AppComponent {
 	constructor (

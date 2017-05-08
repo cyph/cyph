@@ -8,8 +8,8 @@ dispatch:
 - url: "www.cyph.com/*"
   module: cyph-com
 
-- url: "cyph.im/*"
-  module: cyph-im
+- url: "cyph.ws/*"
+  module: cyph-ws
 
 - url: "cyph.me/*"
   module: cyph-me

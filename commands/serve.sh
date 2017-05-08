@@ -33,7 +33,7 @@ go_appserver () {
 }
 
 
-for project in cyph.com cyph.im ; do
+for project in cyph.com cyph.ws ; do
 	cd ${project}
 	for d in $(ls ../shared) ; do
 		rm -rf ${d} 2> /dev/null
@@ -62,7 +62,7 @@ node /node_modules/.bin/firebase-server -p 44000 &
 
 cp -f default/app.yaml default/.build.yaml
 cp -f cyph.com/cyph-com.yaml cyph.com/.build.yaml
-cp -f cyph.im/cyph-im.yaml cyph.im/.build.yaml
+cp -f cyph.ws/cyph-ws.yaml cyph.ws/.build.yaml
 
 if [ "${blog}" ] ; then
 	cd cyph.com
@@ -90,7 +90,7 @@ mkdir /tmp/cyph1;
 appserver --port 5001 --admin_port 6001 --host 0.0.0.0 --storage_path /tmp/cyph1 cyph.com/.build.yaml;
 
 mkdir /tmp/cyph2;
-appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.im/.build.yaml;
+appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.ws/.build.yaml;
 
 if [ "${prodlike}" ] ; then
 	start="$(date +%s)"

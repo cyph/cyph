@@ -41,9 +41,9 @@ cp -rf ${dir}/shared/templates/native app/templates
 mv app/css/app.scss app/
 
 rm -rf app/js
-mkdir -p app/js/cyph.im app/js/standalone
+mkdir -p app/js/cyph.ws app/js/standalone
 cp ${dir}/shared/js/standalone/global.ts app/js/standalone/
-cp -rf ${dir}/shared/js/cyph.im/enums app/js/cyph.im/
+cp -rf ${dir}/shared/js/cyph.ws/enums app/js/cyph.ws/
 cp -rf ${dir}/shared/js/cyph app/js/
 
 for module in cyph-app cyph-common ; do
