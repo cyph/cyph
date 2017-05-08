@@ -1,13 +1,13 @@
 /* tslint:disable:object-literal-sort-keys */
 
 import {Routes} from '@angular/router';
-import {AccountContactsComponent} from '../cyph/components/account-contacts.component';
-import {AccountLoginComponent} from '../cyph/components/account-login.component';
-import {AccountProfileComponent} from '../cyph/components/account-profile.component';
-import {AccountRegisterComponent} from '../cyph/components/account-register.component';
-import {AccountSettingsComponent} from '../cyph/components/account-settings.component';
-import {RedirectComponent} from '../cyph/components/redirect.component';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
+import {AccountContactsComponent} from './js/cyph/components/account-contacts.component';
+import {AccountLoginComponent} from './js/cyph/components/account-login.component';
+import {AccountProfileComponent} from './js/cyph/components/account-profile.component';
+import {AccountRegisterComponent} from './js/cyph/components/account-register.component';
+import {AccountSettingsComponent} from './js/cyph/components/account-settings.component';
+import {RedirectComponent} from './js/cyph/components/redirect.component';
 
 
 /** @see Routes */
