@@ -23,6 +23,7 @@ export const account: Route	= {
 		{path: 'chat/:username', component: AccountChatComponent},
 		{path: 'contacts', component: AccountContactsComponent},
 		{path: 'contacts/:username', component: AccountContactsComponent},
+		{path: 'home', redirectTo: ''},
 		{path: 'files', component: AccountFilesComponent},
 		{path: 'login', component: AccountLoginComponent},
 		{path: 'logout', component: AccountLogoutComponent},
