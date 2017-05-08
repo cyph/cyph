@@ -4,7 +4,6 @@ import {NativeScriptModule} from 'nativescript-angular/nativescript.module';
 import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
-import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 import {HelpComponent} from './js/cyph/components/help.component';
 import {CyphAppModule} from './js/cyph/modules/cyph-app.module';
 import {CyphCommonModule} from './js/cyph/modules/cyph-common.module';
@@ -19,13 +18,10 @@ import {NativeLocalStorageService} from './native-local-storage.service';
  */
 @NgModule({
 	bootstrap: [AppComponent],
-	declarations: [
-		AppComponent,
-		EphemeralChatRootComponent
-	],
+	declarations: [AppComponent],
 	entryComponents: [HelpComponent],
 	imports: [
-		RouterModule.forRoot(appRoutes, {useHash: true}),
+		RouterModule.forRoot(appRoutes),
 		CyphAppModule,
 		CyphCommonModule,
 		NativeScriptModule
