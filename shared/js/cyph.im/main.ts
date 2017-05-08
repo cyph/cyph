@@ -5,9 +5,8 @@
  */
 
 
-import '../preload/custombuild';
-
-import '../preload';
+import '../standalone/custombuild';
+import '../standalone/init';
 
 import {enableProdMode} from '@angular/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';

@@ -41,8 +41,8 @@ cp -rf ${dir}/shared/templates/native app/templates
 mv app/css/app.scss app/
 
 rm -rf app/js
-mkdir -p app/js/cyph.im app/js/preload
-cp ${dir}/shared/js/preload/global.ts app/js/preload/
+mkdir -p app/js/cyph.im app/js/standalone
+cp ${dir}/shared/js/standalone/global.ts app/js/standalone/
 cp -rf ${dir}/shared/js/cyph.im/enums app/js/cyph.im/
 cp -rf ${dir}/shared/js/cyph app/js/
 
@@ -74,7 +74,7 @@ node -e "
 	tsconfig.files	= [
 		'app/main.ts',
 		'app/js/cyph/crypto/native-web-crypto-polyfill.ts',
-		'app/js/preload/global.ts',
+		'app/js/standalone/global.ts',
 		'typings/index.d.ts'
 	];
 
@@ -168,7 +168,7 @@ for platform in android ios ; do
 
 	cp base.js main.${platform}.js
 	echo >> main.${platform}.js
-	cat app/js/preload/global.js >> main.${platform}.js
+	cat app/js/standalone/global.js >> main.${platform}.js
 	echo >> main.${platform}.js
 	cat app/js/cyph/crypto/native-web-crypto-polyfill.js >> main.${platform}.js
 	node -e 'console.log(`

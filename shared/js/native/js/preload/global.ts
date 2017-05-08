@@ -1,1 +1,0 @@
-../../../preload/global.ts
