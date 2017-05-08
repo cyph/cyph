@@ -35,7 +35,7 @@ export class Thread implements IThread {
 		/* Normalisation to increase compatibility with web libraries */
 
 		importScripts('/lib/js/base.js');
-		importScripts('/js/preload/global.js');
+		importScripts('/js/standalone/global.js');
 
 
 		/* Allow destroying the Thread object from within the thread */

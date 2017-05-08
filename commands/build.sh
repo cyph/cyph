@@ -54,11 +54,11 @@ tsfiles="$(
 		\) -exec cat {} \; |
 			grep -oP "importScripts\((['\"])/js/.*\1\)" \
 		;
-		echo preload/analytics;
+		echo standalone/analytics;
 	} | \
 		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/\1/g" |
 		grep -v 'Binary file' |
-		grep -vP '^preload/global$' |
+		grep -vP '^standalone/global$' |
 		grep -vP '^typings$' |
 		xargs -I% bash -c "ls '${outputDir}/js/%.ts' > /dev/null 2>&1 && echo '%'" |
 		sort |
@@ -293,12 +293,12 @@ compile () {
 		cp -rf ../css ../templates ./
 	fi
 
-	tsbuild preload/global
-	mv preload/global.js preload/global.js.tmp
-	cat preload/global.js.tmp |
+	tsbuild standalone/global
+	mv standalone/global.js standalone/global.js.tmp
+	cat standalone/global.js.tmp |
 		if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
-	> "${outputDir}/js/preload/global.js"
-	rm preload/global.js.tmp
+	> "${outputDir}/js/standalone/global.js"
+	rm standalone/global.js.tmp
 
 	if [ "${minify}" ] ; then
 		for d in . "${outputDir}/js" ; do
@@ -647,7 +647,7 @@ compile () {
 	fi
 
 	for js in $(find . -type f -name '*.js' -not \( \
-		-path './preload/global.js' \
+		-path './standalone/global.js' \
 		-or -name 'translations.js' \
 		-or -path './*/pack/*' \
 	\)) ; do
