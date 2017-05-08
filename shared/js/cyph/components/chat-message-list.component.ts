@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, ElementRef, Input, OnInit} from '@angular/core';
 import {List, Set as ImmutableSet} from 'immutable';
+import * as $ from 'jquery';
 import {fadeInOut} from '../animations';
 import {IChatMessage} from '../chat';
 import {EnvService} from '../services/env.service';
