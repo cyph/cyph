@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {ChatRootStates} from './js/cyph.im/enums';
 
 
 /**
@@ -7,11 +6,5 @@ import {ChatRootStates} from './js/cyph.im/enums';
  */
 @Injectable()
 export class AppService {
-	/** @see ChatRootStates */
-	public chatRootState: ChatRootStates	= ChatRootStates.blank;
-
-	/** @see LinkConnection.baseUrl */
-	public linkConnectionBaseUrl: string;
-
 	constructor () {}
 }
