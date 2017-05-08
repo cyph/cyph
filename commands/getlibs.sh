@@ -6,7 +6,7 @@ dir="$PWD"
 
 nativePlugins="$(cat shared/js/native/plugins.list)"
 
-rm -rf ~/lib shared/lib/go shared/lib/js/base.js shared/lib/js/node_modules 2> /dev/null
+rm -rf ~/lib shared/lib/go shared/lib/js/node_modules 2> /dev/null
 
 cp -a shared/lib ~/lib
 cd ~/lib
@@ -174,8 +174,6 @@ mv js/node_modules .js.tmp/
 rm -rf js
 mv .js.tmp js
 cp js/yarn.lock js/node_modules/
-
-cp js/node_modules/core-js/client/shim.js js/base.js
 
 
 mkdir go

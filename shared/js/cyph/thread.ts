@@ -34,7 +34,7 @@ export class Thread implements IThread {
 
 		/* Normalisation to increase compatibility with web libraries */
 
-		importScripts('/lib/js/base.js');
+		importScripts('/lib/js/node_modules/core-js/client/shim.js');
 		importScripts('/js/standalone/global.js');
 
 
