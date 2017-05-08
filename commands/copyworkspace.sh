@@ -18,7 +18,7 @@ rsync -rLq "${source}" "${dir}" \
 	--exclude shared/lib/js/libsodium \
 	--exclude cyph.com/blog \
 	$(if [ "${clientOnly}" ] ; then
-		echo -n '--exclude default --exclude shared/lib/go '
+		echo -n '--exclude backend --exclude shared/lib/go '
 		find "${source}" -mindepth 2 -maxdepth 2 \
 			\( -path "${source}cyph.com/*" -o -path "${source}cyph.ws/*" \) \
 			-a -not -name index.html \
