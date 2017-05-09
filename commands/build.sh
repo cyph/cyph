@@ -244,7 +244,7 @@ compile () {
 					return translations;
 				}, {})
 		)};
-	`.trim())' > translations.ts
+	`.trim())' > standalone/translations.ts
 
 	if [ "${watch}" ] ; then
 		# find . -type f -name main.ts -exec bash -c "
@@ -644,7 +644,7 @@ compile () {
 
 	for js in $(find . -type f -name '*.js' -not \( \
 		-path './standalone/global.js' \
-		-or -name 'translations.js' \
+		-or -path './standalone/translations.js' \
 		-or -path './*/pack/*' \
 	\)) ; do
 		delete=true
