@@ -12,7 +12,7 @@ cd "${tmpDir}/shared"
 cd js
 ln -s /node_modules node_modules
 mv tslint.json tslint.json.old
-cat tslint.json.new | grep -v tslint-microsoft-contrib > tslint.json
+cat tslint.json.old | grep -v tslint-microsoft-contrib > tslint.json
 checkTslintAllOutput="$(check-tslint-all 2>&1)"
 mv tslint.json.old tslint.json
 if (( $? )) ; then
@@ -23,6 +23,7 @@ rm node_modules
 cd ..
 
 /node_modules/tslint/node_modules/.bin/tsc --skipLibCheck js/tslint-rules/*.ts || exit 1
+rm js/tslint-rules/*.ts
 
 node -e "
 	const tsconfig	= JSON.parse(
