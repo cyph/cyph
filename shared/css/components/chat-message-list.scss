@@ -26,10 +26,6 @@
 	@include transition(opacity 0.75s ease-in-out);
 }
 
-.message-item .message-timestamp .message-pending {
-	display: none;
-}
-
 .friend-is-typing {
 	margin: 20px 0px;
 	min-height: 18px;
