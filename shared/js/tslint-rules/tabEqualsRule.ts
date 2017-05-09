@@ -58,7 +58,7 @@ export class Rule extends AbstractRule {
 		const equalsPrefix	= (equalsSplit[0].match(/\s+$/) || [''])[0];
 		const equalsSuffix	= (equalsSplit[1].match(/^\s+/) || [''])[0];
 
-		return (
+		return !!(
 			(equalsPrefix.match(/\t/) && !equalsPrefix.match(/ /)) &&
 			(
 				(equalsSuffix[0] === '\n' && !equalsSuffix.match(/ /)) || 
@@ -77,6 +77,10 @@ export class Rule extends AbstractRule {
 class TabEqualsWalker extends RuleWalker {
 	public visitPropertyAccessExpression (node: ts.PropertyAccessExpression) : void {
 		try {
+			if (node.parent === undefined) {
+				return;
+			}
+
 			if (Rule.isCompliant(node.parent)) {
 				return;
 			}
