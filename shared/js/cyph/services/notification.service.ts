@@ -16,7 +16,7 @@ export class NotificationService implements INotificationService {
 
 	/** @ignore */
 	private readonly config	= {
-		audio: '/audio/beep.mp3',
+		audio: '/assets/audio/beep.mp3',
 		title: 'Cyph'
 	};
 

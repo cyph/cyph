@@ -1,0 +1,17 @@
+{
+	"extends": "./src/js/tsconfig.json",
+	"compileOnSave": false,
+	"compilerOptions": {
+		"baseUrl": "src",
+		"declaration": false,
+		"outDir": "./dist/out-tsc",
+		"rootDir": ".",
+		"typeRoots": [
+			"node_modules/@types"
+		]
+	},
+	"files": [
+		"src/js/cyph.ws/main.ts",
+		"src/js/typings/index.d.ts"
+	]
+}

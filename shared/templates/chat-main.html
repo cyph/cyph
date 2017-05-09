@@ -18,7 +18,7 @@
 		[@fadeIn]='"in"'
 	>
 		<div *ngIf='sessionService.apiFlags.telehealth; else animation' class='telehealth-logo'>
-			<img src='/img/logo.telehealth.icon.png' alt='Telehealth logo' />
+			<img src='/assets/img/logo.telehealth.icon.png' alt='Telehealth logo' />
 		</div>
 
 		<ng-template #animation>
@@ -68,7 +68,7 @@
 		<div class='image'>
 			<img
 				*ngIf='!sessionService.apiFlags.telehealth'
-				src='/img/walken.png'
+				src='/assets/img/walken.png'
 				alt='Definitely not Christopher Walken'
 				cyphTranslate
 			/>
@@ -116,13 +116,13 @@
 		<a class='logo' rel='noreferrer' [href]='envService.homeUrl'>
 			<img 
 				*ngIf='!sessionService.apiFlags.telehealth'
-				src='/img/betalogo.mobile.png'
+				src='/assets/img/betalogo.mobile.png'
 				alt='Beta logo'
 				cyphTranslate
 			/>
 			<img
 				*ngIf='sessionService.apiFlags.telehealth'
-				src='/img/telehealth.video.logo.png'
+				src='/assets/img/telehealth.video.logo.png'
 				alt='Telehealth logo'
 				cyphTranslate
 			/>
@@ -134,7 +134,7 @@
 		<img
 			class='friend'
 			[fxHide]='p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
-			src='/img/voicecall.jpg'
+			src='/assets/img/voicecall.jpg'
 			alt='Voice call'
 		/>
 		<video
