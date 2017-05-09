@@ -1,4 +1,4 @@
-@import 'mixins';
+@import '../mixins';
 
 :host, .menu {
 	@include transition(all 0.25s ease-out);
