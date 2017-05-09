@@ -65,13 +65,15 @@ tsfiles="$(
 		uniq
 )"
 
-cd shared
-
 scssfiles="$(
-	find css -type f -name '*.scss' |
-		perl -pe 's/css\/(.*)\.scss/\1/g' |
-		tr '\n' ' '
+	cat cyph.com/*.html cyph.ws/*.html |
+		grep -oP "href=(['\"])/css/.*?\1" |
+		perl -pe "s/.*?['\"]\/css\/(.*)\.css.*/\1/g" |
+		sort |
+		uniq
 )"
+
+cd shared
 
 
 output=''
@@ -350,8 +352,15 @@ compile () {
 						module: {
 							rules: [
 								{
+									test: /\.(html|css)$/,
+									use: [{loader: 'raw-loader'}]
+								},
+								{
 									test: /\.ts$/,
-									use: [{loader: 'awesome-typescript-loader'}]
+									use: [
+										{loader: 'awesome-typescript-loader'},
+										{loader: 'angular2-template-loader'}
+									]
 								}
 							]
 						},
@@ -427,11 +436,7 @@ compile () {
 				module: {
 					rules: [
 						{
-							test: /\.html$/,
-							use: [{loader: 'raw-loader'}]
-						},
-						{
-							test: /\.css$/,
+							test: /\.(html|css)$/,
 							use: [{loader: 'raw-loader'}]
 						},
 						{

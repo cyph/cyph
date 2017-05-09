@@ -6,7 +6,7 @@ import {Component} from '@angular/core';
  */
 @Component({
 	selector: 'cyph-dialog-image',
-	styleUrls: ['../../css/components/dialog-image.css'],
+	styleUrls: ['../../css/components/dialog-image.scss'],
 	templateUrl: '../../templates/dialog-image.html'
 })
 export class DialogImageComponent {

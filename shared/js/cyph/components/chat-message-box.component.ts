@@ -20,7 +20,7 @@ import {util} from '../util';
 @Component({
 	animations: [slideInOutBottom],
 	selector: 'cyph-chat-message-box',
-	styleUrls: ['../../css/components/chat-message-box.css'],
+	styleUrls: ['../../css/components/chat-message-box.scss'],
 	templateUrl: '../../templates/chat-message-box.html'
 })
 export class ChatMessageBoxComponent implements OnInit {

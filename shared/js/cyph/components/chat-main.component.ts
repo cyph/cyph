@@ -18,7 +18,7 @@ import {UtilService} from '../services/util.service';
 @Component({
 	animations: [fadeIn],
 	selector: 'cyph-chat-main',
-	styleUrls: ['../../css/components/chat-main.css'],
+	styleUrls: ['../../css/components/chat-main.scss'],
 	templateUrl: '../../templates/chat-main.html'
 })
 export class ChatMainComponent implements OnInit {

@@ -48,6 +48,8 @@ find app -type f -name '*.scss' -exec bash -c '
 ' \;
 cp -rf app/css app/templates app/js/
 
+find app -type f -name '*.ts' -exec sed -i "s|\.scss'|\.css'|g" {} \;
+
 node -e "
 	const tsconfig	= JSON.parse(
 		fs.readFileSync('${dir}/shared/js/tsconfig.json').toString().

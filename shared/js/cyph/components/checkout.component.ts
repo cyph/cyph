@@ -11,7 +11,7 @@ import {util} from '../util';
  */
 @Component({
 	selector: 'cyph-checkout',
-	styleUrls: ['../../css/components/checkout.css'],
+	styleUrls: ['../../css/components/checkout.scss'],
 	templateUrl: '../../templates/checkout.html'
 })
 export class CheckoutComponent implements OnInit {
