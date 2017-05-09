@@ -701,9 +701,9 @@ fi
 echo -e "${output}"
 if [ "${test}" ] ; then
 	if [ "${#output}" == "0" ] ; then
-		echo PASS
+		echo -e '\n\nPASS\n\n'
 	else
-		echo FAIL
+		echo -e '\n\nFAIL\n\n'
 	fi
 fi
 exit ${#output}
