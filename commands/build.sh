@@ -121,24 +121,7 @@ tsbuild () {
 		);
 	"
 
-	{
-		time if [ "${watch}" ] ; then
-			tsc -p .
-		else
-			if [ ! -d css ] ; then
-				mv ../css ./
-			else
-				find ../css -type f -name '*.css' -exec bash -c '
-					mkdir -p "$(echo "{}" | sed "s/^\.//" | sed "s/[^\/]*$//")";
-					mv "{}" "$(echo "{}" | sed "s/^\.//")";
-				' \;
-			fi
-
-			output="${output}$(./node_modules/@angular/compiler-cli/src/main.js -p . 2>&1)"
-		fi
-	} > build.log 2>&1
-
-	echo -e "\nCompile ${*}\n$(cat build.log)\n\n" 1>&2
+	echo -e "\nCompile ${*}\n$(tsc -p . 2>&1)\n\n" 1>&2
 }
 
 compile () {
@@ -249,7 +232,7 @@ compile () {
 	nonmainfiles="$(echo "${tsfiles}" | grep -vP '/main$')"
 
 	tsbuild standalone/global ${nonmainfiles}
-	cp standalone/global.js "${outputDir}/js/standalone/global.js"
+	cp standalone/global.js "${outputDir}/js/standalone/global.js" 2> /dev/null
 	if [ ! "${watch}" ] ; then
 		cp -rf ../css ../templates ./
 	fi
