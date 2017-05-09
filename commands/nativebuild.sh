@@ -19,6 +19,7 @@ mv app/App_Resources tmp/app/
 cd tmp
 
 mv ../node_modules ./
+cp -rf ${dir}/shared/fonts app/
 cp -rf ${dir}/shared/js/typings ./
 cp -rf ${dir}/shared/js/native/* app/
 cp -rf ${dir}/shared/css/native app/css
