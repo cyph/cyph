@@ -41,24 +41,24 @@ export class FaviconService {
 			shortcut196: ''
 		},
 		telehealth: {
-			apple114: '/img/favicon/telehealth/apple-touch-icon-114x114.png',
-			apple120: '/img/favicon/telehealth/apple-touch-icon-120x120.png',
-			apple144: '/img/favicon/telehealth/apple-touch-icon-144x144.png',
-			apple152: '/img/favicon/telehealth/apple-touch-icon-152x152.png',
-			apple180: '/img/favicon/telehealth/apple-touch-icon-180x180.png',
-			apple57: '/img/favicon/telehealth/apple-touch-icon-57x57.png',
-			apple60: '/img/favicon/telehealth/apple-touch-icon-60x60.png',
-			apple72: '/img/favicon/telehealth/apple-touch-icon-72x72.png',
-			apple76: '/img/favicon/telehealth/apple-touch-icon-76x76.png',
-			icon16: '/img/favicon/telehealth/favicon-16x16.png',
-			icon160: '/img/favicon/telehealth/favicon-160x160.png',
-			icon192: '/img/favicon/telehealth/favicon-192x192.png',
-			icon256: '/img/favicon/telehealth/favicon-256x256.png',
-			icon32: '/img/favicon/telehealth/favicon-32x32.png',
-			icon96: '/img/favicon/telehealth/favicon-96x96.png',
-			mask: '/img/favicon/telehealth/mask.svg',
-			mstile: '/img/favicon/telehealth/mstile-144x144.png',
-			shortcut196: '/img/favicon/telehealth/favicon-196x196.png'
+			apple114: '/assets/img/favicon/telehealth/apple-touch-icon-114x114.png',
+			apple120: '/assets/img/favicon/telehealth/apple-touch-icon-120x120.png',
+			apple144: '/assets/img/favicon/telehealth/apple-touch-icon-144x144.png',
+			apple152: '/assets/img/favicon/telehealth/apple-touch-icon-152x152.png',
+			apple180: '/assets/img/favicon/telehealth/apple-touch-icon-180x180.png',
+			apple57: '/assets/img/favicon/telehealth/apple-touch-icon-57x57.png',
+			apple60: '/assets/img/favicon/telehealth/apple-touch-icon-60x60.png',
+			apple72: '/assets/img/favicon/telehealth/apple-touch-icon-72x72.png',
+			apple76: '/assets/img/favicon/telehealth/apple-touch-icon-76x76.png',
+			icon16: '/assets/img/favicon/telehealth/favicon-16x16.png',
+			icon160: '/assets/img/favicon/telehealth/favicon-160x160.png',
+			icon192: '/assets/img/favicon/telehealth/favicon-192x192.png',
+			icon256: '/assets/img/favicon/telehealth/favicon-256x256.png',
+			icon32: '/assets/img/favicon/telehealth/favicon-32x32.png',
+			icon96: '/assets/img/favicon/telehealth/favicon-96x96.png',
+			mask: '/assets/img/favicon/telehealth/mask.svg',
+			mstile: '/assets/img/favicon/telehealth/mstile-144x144.png',
+			shortcut196: '/assets/img/favicon/telehealth/favicon-196x196.png'
 		}
 	};
 
@@ -67,7 +67,7 @@ export class FaviconService {
 
 	/**
 	 * Changes favicon at run-time for non-co-branded instances.
-	 * @param name Name of folder containing alternate favicon set under /img/favicons.
+	 * @param name Name of folder containing alternate favicon set under /assets/img/favicons.
 	 */
 	public setFavicon (name: 'default'|'telehealth' = 'default') : void {
 		if (!this.envService.isWeb) {

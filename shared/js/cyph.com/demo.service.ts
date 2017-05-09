@@ -16,7 +16,7 @@ export class DemoService {
 	public readonly facebookPicDataUri: Promise<string>		= (
 		!this.envService.isMobile ?
 			Promise.reject('') :
-			util.request({retries: 5, url: '/img/fbimagealt.txt'})
+			util.request({retries: 5, url: '/assets/img/fbimagealt.txt'})
 	).catch(
 		() => 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs='
 	);
