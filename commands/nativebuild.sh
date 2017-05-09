@@ -84,6 +84,10 @@ node -e "
 sed -i 's|/platform|/platform-static|g' app/main.ts
 sed -i 's|platformNativeScriptDynamic|platformNativeScript|g' app/main.ts
 ./node_modules/@angular/compiler-cli/src/main.js -p .
+if (( $? )) ; then
+	echo -e '\n\nFAIL\n\n'
+	exit 1
+fi
 sed -i 's|\./app.module|\./app.module.ngfactory|g' app/main.ts
 sed -i 's|AppModule|AppModuleNgFactory|g' app/main.ts
 sed -i 's|bootstrapModule|bootstrapModuleFactory|g' app/main.ts
@@ -163,6 +167,10 @@ for platform in android ios ; do
 	EOM
 
 	webpack --config webpack.js
+	if (( $? )) ; then
+		echo -e '\n\nFAIL\n\n'
+		exit 2
+	fi
 	sed -i 's|lib/js/||g' app/main.${platform}.js
 	sed -i 's|js/|app/js/|g' app/main.${platform}.js
 
@@ -212,3 +220,5 @@ rm -rf tmp
 cd
 rm -rf ${dir}/.nativebuild 2> /dev/null
 mv cyph ${dir}/.nativebuild
+
+echo -e '\n\nPASS\n\n'
