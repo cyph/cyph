@@ -1,6 +1,6 @@
 @import '../mixins';
 
-:host >>> {
+:host /deep/ {
 	.transfer-list {
 		max-height: 195px;
 

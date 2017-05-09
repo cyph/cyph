@@ -1,6 +1,6 @@
 @import '../../mixins';
 
-:host >>> {
+:host /deep/ {
 	.demo-root {
 		opacity: 0;
 
