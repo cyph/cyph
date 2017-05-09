@@ -9,24 +9,10 @@ plugins="$(cat shared/js/native/plugins.list)"
 cd
 tns create cyph --ng --appid com.cyph.app || exit 1
 cd cyph
-mkdir node_modules 2> /dev/null
-npm install || exit 1
 
+rm -rf node_modules 2> /dev/null
+ln -s /node_modules node_modules
 for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
-
-cp -rf node_modules node_modules.old
-rm -rf \
-	node_modules/@angular \
-	node_modules/@types \
-	node_modules/rxjs \
-	node_modules/typescript \
-	node_modules/zone.js \
-2> /dev/null
-for d in $(ls -a /node_modules) ; do
-	if [ ! -d "node_modules/${d}" ] ; then
-		cp -rf "/node_modules/${d}" node_modules/
-	fi
-done
 
 mkdir -p tmp/app
 mv app/App_Resources tmp/app/
@@ -159,8 +145,7 @@ for platform in android ios ; do
 				],
 				modules: [
 					'node_modules/tns-core-modules',
-					'node_modules',
-					'/node_modules'
+					'node_modules'
 				]
 			}
 		};
@@ -214,7 +199,6 @@ cd ..
 rm -rf app hooks/*/nativescript-dev-typescript.js
 mkdir app
 mv tmp/main.*.js tmp/app/App_Resources tmp/app/app.css tmp/app/package.json app/
-mv node_modules.old node_modules
 rm -rf tmp
 
 cd
