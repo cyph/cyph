@@ -40,6 +40,7 @@ if (\$1 != \"/*\")
 print \$0
 }" > %.new
 mv %.new %
+sed -i "s|> > >|>>>|g" %
 '
 
 chmod -R 700 .
