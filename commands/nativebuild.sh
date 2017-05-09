@@ -10,22 +10,23 @@ cd
 tns create cyph --ng --appid com.cyph.app || exit 1
 cd cyph
 
-rm -rf node_modules 2> /dev/null
-ln -s /node_modules node_modules
 for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
+rm -rf node_modules
+ln -s /node_modules node_modules
 
 mkdir -p tmp/app
 mv app/App_Resources tmp/app/
 cd tmp
 
 mv ../node_modules ./
-cp -rf ${dir}/shared/fonts app/
 cp -rf ${dir}/shared/js/typings ./
 cp -rf ${dir}/shared/js/native/* app/
 cp -rf ${dir}/shared/css/native app/css
-cp -r ${dir}/shared/css/* app/css/ 2> /dev/null
-cp -rf ${dir}/shared/templates/native app/templates
 mv app/css/app.scss app/
+cp -r ${dir}/shared/css/* app/css/
+cp -r ${dir}/shared/css/* app/
+rm -rf app/native app/css/native
+cp -rf ${dir}/shared/templates/native app/templates
 
 rm -rf app/js
 mkdir -p app/js/cyph.ws app/js/standalone
@@ -58,10 +59,10 @@ node -e "
 			join('\n')
 	);
 
-	tsconfig.compilerOptions.outDir	= '.';
+	tsconfig.compilerOptions.rootDir	= '.';
+	tsconfig.compilerOptions.outDir		= '.';
 
 	tsconfig.files	= [
-		'app/main.ts',
 		'app/js/cyph/crypto/native-web-crypto-polyfill.ts',
 		'app/js/standalone/global.ts',
 		'typings/index.d.ts'
@@ -69,7 +70,18 @@ node -e "
 
 	fs.writeFileSync('tsconfig.json', JSON.stringify(tsconfig));
 "
+tsc -p .
+if (( $? )) ; then
+	echo -e '\n\nFAIL\n\n'
+	exit 1
+fi
 
+node -e "
+	const tsconfig	= JSON.parse(fs.readFileSync('tsconfig.json').toString());
+	tsconfig.compilerOptions.rootDir	= undefined;
+	tsconfig.files	= ['app/main.ts', 'typings/index.d.ts'];
+	fs.writeFileSync('tsconfig.json', JSON.stringify(tsconfig));
+"
 sed -i 's|/platform|/platform-static|g' app/main.ts
 sed -i 's|platformNativeScriptDynamic|platformNativeScript|g' app/main.ts
 ./node_modules/@angular/compiler-cli/src/main.js -p .
