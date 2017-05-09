@@ -201,41 +201,15 @@ compile () {
 		)};
 	`.trim())' > standalone/translations.ts
 
-	if [ "${watch}" ] ; then
-		# find . -type f -name main.ts -exec bash -c "
-		# 	cat '{}' |
-		# 		grep -v enableProdMode |
-		# 	> '{}.new'
-		# 	mv '{}.new' '{}'
-		# " \;
-
-		for resource in css templates ; do
-			find . -type f -name '*.ts' -exec bash -c "
-				if grep '${resource}' '{}' > /dev/null ; then
-					cat '{}' |
-						perl -pe \"s/'(\\.\\.\\/)+${resource}/ \
-							location.pathname.slice(1).replace( \
-								\\/[^\\\\\\\\\/]+(\\\\\\\\\/|\\\\$)\\/g, \
-								'..\\/' \
-							) + '${resource}/g\" \
-					> '{}.new'
-					mv '{}.new' '{}'
-				fi
-			" \;
-		done
-	elif [ ! -d node_modules ] ; then
-		mkdir node_modules
-		cp -rf /node_modules/@angular node_modules/
-	fi
+	ln -s ../css css 2> /dev/null
+	ln -s ../templates templates 2> /dev/null
+	ln -s /node_modules node_modules 2> /dev/null
 
 	mainfiles="$(echo "${tsfiles}" | grep -P '/main$')"
 	nonmainfiles="$(echo "${tsfiles}" | grep -vP '/main$')"
 
 	tsbuild standalone/global ${nonmainfiles}
 	cp standalone/global.js "${outputDir}/js/standalone/global.js" 2> /dev/null
-	if [ ! "${watch}" ] ; then
-		cp -rf ../css ../templates ./
-	fi
 
 	if [ "${minify}" ] ; then 
 		uglifyjs standalone/global.js -o "${outputDir}/js/standalone/global.js"
