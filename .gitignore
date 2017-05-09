@@ -19,6 +19,5 @@ npm-debug.log
 node_modules
 **/node_modules
 shared/js/**/pack
-shared/lib/js/base.js
 shared/lib/go
 Dockerfile.tmp
