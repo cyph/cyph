@@ -19,7 +19,7 @@ fi
 rm node_modules
 cd ..
 
-/node_modules/tslint/node_modules/.bin/tsc --skipLibCheck tslint-rules/*.ts || exit 1
+/node_modules/tslint/node_modules/.bin/tsc --skipLibCheck js/tslint-rules/*.ts || exit 1
 
 node -e "
 	const tsconfig	= JSON.parse(
@@ -47,9 +47,6 @@ cp -rf css templates js/
 output="$({
 	tslint \
 		-e '/node_modules/**' \
-		-r tslint-rules \
-		-r /node_modules/codelyzer \
-		-r /node_modules/tslint-microsoft-contrib \
 		--project js/tsconfig.tslint.json \
 		--type-check \
 	;
