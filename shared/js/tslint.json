@@ -317,8 +317,8 @@
 		"valid-typeof": true
 	},
 	"rulesDirectory": [
-		"node_modules/codelyzer",
-		"node_modules/tslint-microsoft-contrib",
+		"/node_modules/codelyzer",
+		"/node_modules/tslint-microsoft-contrib",
 		"tslint-rules"
 	]
 }
