@@ -1,200 +1,204 @@
-.demo-root {
-	opacity: 0;
+@import 'mixins';
 
-	@include transition(opacity 0.75s 0.5s ease);
+:host >>> {
+	.demo-root {
+		opacity: 0;
 
-	&, > * {
-		position: relative;
-		z-index: 3;
-	}
+		@include transition(opacity 0.75s 0.5s ease);
 
-	> * {
-		float: left;
-		padding: 0px;
-		overflow: hidden;
+		&, > * {
+			position: relative;
+			z-index: 3;
+		}
 
-		.cyph-foreground {
+		> * {
+			float: left;
+			padding: 0px;
 			overflow: hidden;
-			width: calc(100% + 1px) !important;
-			font-size: 1em !important;
-		}
-	}
 
-	.message-list-background:after {
-		display: none;
-	}
-
-	.logo-animation.connected {
-		height: 8em;
-		width: 8em;
-		min-height: 8em;
-		min-width: 8em;
-		background-size: 8em 8em;
-	}
-
-	> .desktop {
-		height: calc((100vw - 60px) * 0.47 * 0.565);
-		width: calc(47% + 1px);
-		margin-top: 62px;
-		left: 11.5%;
-
-		.cyph-foreground {
-			padding: 10px;
-			padding-top: 0px;
-		}
-
-		cyph-chat-main {
-			.chat-main {
-				cyph-chat-message-list {
-					font-size: 90%;
-
-					&:after {
-						@include transform(translateX(-50%) translateY(-60%));
-					}
-				}
-
-				.transfer-list {
-					width: calc(100% - 35px);
-				}
-			}
-
-			.chat-main.video .video-call {
-				~ cyph-chat-message-list {
-					width: 20vw;
-				}
-
-				~ .video-call-message-box {
-					right: calc(-20vw - 10px);
-					width: calc(20vw + 10px);
-				}
-
-				&.sidebar-open {
-					.logo, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
-						@include transform(translateX(-20vw));
-					}
-
-					.me {
-						@include transform(translateX(-20vw) scaleX(-1) !important);
-					}
-				}
+			.cyph-foreground {
+				overflow: hidden;
+				width: calc(100% + 1px) !important;
+				font-size: 1em !important;
 			}
 		}
 
-		cyph-chat-message-box {
-			margin-top: -10px;
-			display: block;
-
-			.message-box {
-				min-height: 60px;
-			}
-
-			smd-fab-speed-dial {
-				bottom: -23px;
-				right: 17px;
-
-				@include transform(scale(0.8));
-			}
-		}
-	}
-
-	> .mobile {
-		height: calc((100vw - 60px) * 0.26 * 1.78);
-		width: calc(26% + 1px);
-		margin-top: -62px;
-		left: 21.5%;
-
-		@include filter(blur(0px));
-
-		@include transform(scale(0.625));
-
-		cyph-chat-main {
-			.chat-main.video .video-call {
-				~ cyph-chat-message-list {
-					width: calc(30vw - 150px);
-				}
-
-				~ .video-call-message-box {
-					right: calc(150px - 30vw);
-					width: calc(30vw - 150px);
-				}
-
-				&.sidebar-open {
-					.logo, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
-						@include transform(translateX(calc(150px - 30vw)));
-					}
-
-					.me {
-						@include transform(translateX(calc(150px - 30vw)) scaleX(-1) !important);
-					}
-				}
-			}
-
-			.chat-end-message md-card {
-				max-width: 100%;
-				text-align: center;
-				font-size: 135%;
-			}
-		}
-
-		cyph-chat-message-box .message-box {
-			overflow: hidden;
-		}
-	}
-
-	.facebook-pic {
-		width: 105px !important;
-		max-width: 105px !important;
-		height: 100px !important;
-		pointer-events: none;
-	}
-
-	.facebook-pic.real {
-		position: absolute;
-		top: -200px;
-		width: 106px !important;
-		height: 106px !important;
-		max-width: 106px !important;
-
-		> iframe {
-			width: 1000px;
-			margin-top: -55px;
-			margin-left: 608px;
-
-			@include transform(scale(2.25));
-		}
-	}
-
-	.chat-cyphertext {
-		&, .close-button {
-			position: absolute;
-		}
-	}
-
-	cyph-chat-main .chat-main.video .video-call {
-		&, .logo, .me, .sidebar, .buttons, ~ cyph-chat-message-list, ~ .video-call-message-box {
-			position: absolute;
-		}
-
-		.logo {
-			top: 17.5%;
-			left: 15px;
-		}
-
-		.me {
-			bottom: 13%;
-			right: 0px;
-			width: 15%;
-		}
-
-		.sidebar {
+		.message-list-background:after {
 			display: none;
-			top: 17.5%;
-			right: 15px;
 		}
 
-		.buttons {
-			left: 0px;
-			bottom: calc(17.5% + 25px);
+		.logo-animation.connected {
+			height: 8em;
+			width: 8em;
+			min-height: 8em;
+			min-width: 8em;
+			background-size: 8em 8em;
+		}
+
+		> .desktop {
+			height: calc((100vw - 60px) * 0.47 * 0.565);
+			width: calc(47% + 1px);
+			margin-top: 62px;
+			left: 11.5%;
+
+			.cyph-foreground {
+				padding: 10px;
+				padding-top: 0px;
+			}
+
+			cyph-chat-main {
+				.chat-main {
+					cyph-chat-message-list {
+						font-size: 90%;
+
+						&:after {
+							@include transform(translateX(-50%) translateY(-60%));
+						}
+					}
+
+					.transfer-list {
+						width: calc(100% - 35px);
+					}
+				}
+
+				.chat-main.video .video-call {
+					~ cyph-chat-message-list {
+						width: 20vw;
+					}
+
+					~ .video-call-message-box {
+						right: calc(-20vw - 10px);
+						width: calc(20vw + 10px);
+					}
+
+					&.sidebar-open {
+						.logo, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
+							@include transform(translateX(-20vw));
+						}
+
+						.me {
+							@include transform(translateX(-20vw) scaleX(-1) !important);
+						}
+					}
+				}
+			}
+
+			cyph-chat-message-box {
+				margin-top: -10px;
+				display: block;
+
+				.message-box {
+					min-height: 60px;
+				}
+
+				smd-fab-speed-dial {
+					bottom: -23px;
+					right: 17px;
+
+					@include transform(scale(0.8));
+				}
+			}
+		}
+
+		> .mobile {
+			height: calc((100vw - 60px) * 0.26 * 1.78);
+			width: calc(26% + 1px);
+			margin-top: -62px;
+			left: 21.5%;
+
+			@include filter(blur(0px));
+
+			@include transform(scale(0.625));
+
+			cyph-chat-main {
+				.chat-main.video .video-call {
+					~ cyph-chat-message-list {
+						width: calc(30vw - 150px);
+					}
+
+					~ .video-call-message-box {
+						right: calc(150px - 30vw);
+						width: calc(30vw - 150px);
+					}
+
+					&.sidebar-open {
+						.logo, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
+							@include transform(translateX(calc(150px - 30vw)));
+						}
+
+						.me {
+							@include transform(translateX(calc(150px - 30vw)) scaleX(-1) !important);
+						}
+					}
+				}
+
+				.chat-end-message md-card {
+					max-width: 100%;
+					text-align: center;
+					font-size: 135%;
+				}
+			}
+
+			cyph-chat-message-box .message-box {
+				overflow: hidden;
+			}
+		}
+
+		.facebook-pic {
+			width: 105px !important;
+			max-width: 105px !important;
+			height: 100px !important;
+			pointer-events: none;
+		}
+
+		.facebook-pic.real {
+			position: absolute;
+			top: -200px;
+			width: 106px !important;
+			height: 106px !important;
+			max-width: 106px !important;
+
+			> iframe {
+				width: 1000px;
+				margin-top: -55px;
+				margin-left: 608px;
+
+				@include transform(scale(2.25));
+			}
+		}
+
+		.chat-cyphertext {
+			&, .close-button {
+				position: absolute;
+			}
+		}
+
+		cyph-chat-main .chat-main.video .video-call {
+			&, .logo, .me, .sidebar, .buttons, ~ cyph-chat-message-list, ~ .video-call-message-box {
+				position: absolute;
+			}
+
+			.logo {
+				top: 17.5%;
+				left: 15px;
+			}
+
+			.me {
+				bottom: 13%;
+				right: 0px;
+				width: 15%;
+			}
+
+			.sidebar {
+				display: none;
+				top: 17.5%;
+				right: 15px;
+			}
+
+			.buttons {
+				left: 0px;
+				bottom: calc(17.5% + 25px);
+			}
 		}
 	}
 }

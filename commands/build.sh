@@ -182,16 +182,7 @@ compile () {
 			compileF () {
 				isComponent="$(echo "${f}" | grep '^components/' > /dev/null && echo true)"
 
-				{
-					echo '@import "/node_modules/bourbon/app/assets/stylesheets/bourbon";';
-					if [ "${isComponent}" ] ; then
-						echo ':host /deep/ {'
-						cat "css/${f}.scss" | sed 's|:host|\&|g'
-						echo '}'
-					else
-						cat "css/${f}.scss"
-					fi;
-				} |
+				cat "css/${f}.scss" |
 					scss -s -C -Icss |
 					if [ "${minify}" ] ; then cleancss --inline none ; else cat - ; fi \
 				> "css/${f}.css"
