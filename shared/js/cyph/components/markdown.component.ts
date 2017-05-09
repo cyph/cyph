@@ -16,7 +16,7 @@ import {util} from '../util';
  */
 @Component({
 	selector: 'cyph-markdown',
-	styleUrls: ['../../css/components/markdown.css'],
+	styleUrls: ['../../css/components/markdown.scss'],
 	templateUrl: '../../templates/markdown.html'
 })
 export class MarkdownComponent implements OnChanges {

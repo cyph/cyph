@@ -8,7 +8,7 @@ import {StringsService} from '../services/strings.service';
  */
 @Component({
 	selector: 'cyph-help',
-	styleUrls: ['../../css/components/help.css'],
+	styleUrls: ['../../css/components/help.scss'],
 	templateUrl: '../../templates/help.html'
 })
 export class HelpComponent {

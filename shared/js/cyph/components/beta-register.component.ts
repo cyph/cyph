@@ -8,7 +8,7 @@ import {SignupService} from '../services/signup.service';
  */
 @Component({
 	selector: 'cyph-beta-register',
-	styleUrls: ['../../css/components/beta-register.css'],
+	styleUrls: ['../../css/components/beta-register.scss'],
 	templateUrl: '../../templates/beta-register.html'
 })
 export class BetaRegisterComponent {

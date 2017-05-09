@@ -9,7 +9,7 @@ import {EnvService} from '../services/env.service';
  */
 @Component({
 	selector: 'cyph-account-settings',
-	styleUrls: ['../../css/components/account-settings.css'],
+	styleUrls: ['../../css/components/account-settings.scss'],
 	templateUrl: '../../templates/account-settings.html'
 })
 export class AccountSettingsComponent {

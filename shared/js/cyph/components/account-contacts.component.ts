@@ -12,7 +12,7 @@ import {EnvService} from '../services/env.service';
  */
 @Component({
 	selector: 'cyph-account-contacts',
-	styleUrls: ['../../css/components/account-contacts.css'],
+	styleUrls: ['../../css/components/account-contacts.scss'],
 	templateUrl: '../../templates/account-contacts.html'
 })
 export class AccountContactsComponent {
