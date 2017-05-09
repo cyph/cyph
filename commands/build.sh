@@ -115,16 +115,16 @@ tsbuild () {
 		);
 
 		$(test "${watch}" && echo "
-			tsconfig.compilerOptions.lib			= undefined;
-			tsconfig.compilerOptions.target			= 'es2015';
+			tsconfig.compilerOptions.lib		= undefined;
+			tsconfig.compilerOptions.target		= 'es2015';
 		")
 
 		$(test "${logTmpDir}" && echo "
-			tsconfig.compilerOptions.outDir			= '.';
+			tsconfig.compilerOptions.rootDir	= undefined;
 		")
 
 		$(test "${logTmpDir}" || echo "
-			tsconfig.compilerOptions.outDir			= '${currentDir}';
+			tsconfig.compilerOptions.outDir		= '${currentDir}';
 		")
 
 		tsconfig.files	= 'typings/index.d ${*}'.
@@ -666,7 +666,8 @@ compile () {
 if [ "${watch}" ] ; then
 	eval "$(${rootDir}/commands/getgitdata.sh)"
 
-	for type in js css ; do
+	init="$(mktemp -d)/init"
+	for type in css js ; do
 		typeUppercase="$(echo ${type} | tr '[:lower:]' '[:upper:]')"
 
 		while true ; do
@@ -674,6 +675,7 @@ if [ "${watch}" ] ; then
 			echo -e "\n\n\nBuilding ${typeUppercase}\n\n"
 			compile "${type}"
 			echo -e "\n\n\nFinished building ${typeUppercase} ($(expr $(date +%s) - ${start})s)\n\n"
+			touch "${init}"
 
 			cd "${rootDir}/shared"
 
@@ -687,6 +689,8 @@ if [ "${watch}" ] ; then
 				fi
 			done
 		done &
+
+		while [ ! -f "${init}" ] ; do sleep 5 ; done
 	done
 
 	sleep Infinity
