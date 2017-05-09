@@ -9,8 +9,8 @@ import {SessionService} from '../services/session.service';
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-footer',
-	styleUrls: ['../../css/components/footer.scss'],
-	templateUrl: '../../templates/footer.html'
+	styleUrls: ['../../../css/components/footer.scss'],
+	templateUrl: '../../../templates/footer.html'
 })
 export class FooterComponent {
 	constructor (

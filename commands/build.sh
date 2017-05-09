@@ -233,9 +233,6 @@ compile () {
 
 	tsbuild standalone/global ${nonmainfiles}
 	cp standalone/global.js "${outputDir}/js/standalone/global.js" 2> /dev/null
-	if [ ! "${watch}" ] ; then
-		cp -rf ../css ../templates ./
-	fi
 
 	if [ "${minify}" ] ; then 
 		uglifyjs standalone/global.js -o "${outputDir}/js/standalone/global.js"

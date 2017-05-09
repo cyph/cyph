@@ -14,8 +14,8 @@ import {ScrollService} from '../services/scroll.service';
 	animations: [fadeInOut],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-chat-message-list',
-	styleUrls: ['../../css/components/chat-message-list.scss'],
-	templateUrl: '../../templates/chat-message-list.html'
+	styleUrls: ['../../../css/components/chat-message-list.scss'],
+	templateUrl: '../../../templates/chat-message-list.html'
 })
 export class ChatMessageListComponent implements OnInit {
 	/** @see IChatData.isFriendTyping */

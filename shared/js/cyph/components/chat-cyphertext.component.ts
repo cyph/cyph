@@ -9,8 +9,8 @@ import {EnvService} from '../services/env.service';
  */
 @Component({
 	selector: 'cyph-chat-cyphertext',
-	styleUrls: ['../../css/components/chat-cyphertext.scss'],
-	templateUrl: '../../templates/chat-cyphertext.html'
+	styleUrls: ['../../../css/components/chat-cyphertext.scss'],
+	templateUrl: '../../../templates/chat-cyphertext.html'
 })
 export class ChatCyphertextComponent implements OnInit {
 	/** @inheritDoc */
