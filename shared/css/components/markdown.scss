@@ -1,19 +1,21 @@
 @import '../mixins';
 
-:host > span {
-	> p:only-child {
-		display: inline;
-	}
+:host /deep/ {
+	> span {
+		> p:only-child {
+			display: inline;
+		}
 
-	> :not(p), > p:not(:only-child) {
-		margin: 10px;
+		> :not(p), > p:not(:only-child) {
+			margin: 10px;
 
-		&:not(.mobile) {
-			margin-left: 25px;
+			&:not(.mobile) {
+				margin-left: 25px;
+			}
 		}
 	}
-}
 
-img {
-	cursor: pointer;
+	img {
+		cursor: pointer;
+	}
 }

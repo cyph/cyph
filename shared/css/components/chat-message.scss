@@ -1,6 +1,6 @@
 @import '../mixins';
 
-.message-item {
+:host /deep/ .message-item {
 	word-wrap: break-word;
 	word-break: break-word;
 	padding: 7.5px 10px 5px 10px;
@@ -69,7 +69,7 @@
 	&.author-app .message {
 		text-align: center;
 
-		/deep/ cyph-markdown {
+		cyph-markdown {
 			margin-top: 20px;
 
 			* {
