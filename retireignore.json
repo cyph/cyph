@@ -87,8 +87,16 @@
 		"justification": "Dev dependency"
 	},
 	{
+		"path": "selenium-webdriver",
+		"justification": "Dev dependency"
+	},
+	{
 		"path": "socket.io-client",
 		"justification": "Not using Socket.IO for SimpleWebRTC signaling"
+	},
+	{
+		"path": "webdriver-js-extender",
+		"justification": "Dev dependency"
 	},
 	{
 		"path": "webpack-closure-compiler/node_modules/google-closure-compiler",
