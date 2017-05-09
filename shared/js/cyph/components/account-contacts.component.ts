@@ -12,8 +12,8 @@ import {EnvService} from '../services/env.service';
  */
 @Component({
 	selector: 'cyph-account-contacts',
-	styleUrls: ['../../css/components/account-contacts.scss'],
-	templateUrl: '../../templates/account-contacts.html'
+	styleUrls: ['../../../css/components/account-contacts.scss'],
+	templateUrl: '../../../templates/account-contacts.html'
 })
 export class AccountContactsComponent {
 	/** Indicates whether this is contained within a sidebar. */

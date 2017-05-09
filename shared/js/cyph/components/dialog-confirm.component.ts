@@ -7,8 +7,8 @@ import {MdDialogRef} from '@angular/material';
  */
 @Component({
 	selector: 'cyph-dialog-confirm',
-	styleUrls: ['../../css/components/dialog-confirm.scss'],
-	templateUrl: '../../templates/dialog-confirm.html'
+	styleUrls: ['../../../css/components/dialog-confirm.scss'],
+	templateUrl: '../../../templates/dialog-confirm.html'
 })
 export class DialogConfirmComponent {
 	/** Cancel button text. */

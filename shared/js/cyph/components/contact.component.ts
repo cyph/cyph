@@ -8,8 +8,8 @@ import {util} from '../util';
  */
 @Component({
 	selector: 'cyph-contact',
-	styleUrls: ['../../css/components/contact.scss'],
-	templateUrl: '../../templates/contact.html'
+	styleUrls: ['../../../css/components/contact.scss'],
+	templateUrl: '../../../templates/contact.html'
 })
 export class ContactComponent implements OnInit {
 	/** Sender email address. */
