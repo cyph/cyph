@@ -35,6 +35,7 @@ go_appserver () {
 
 for project in cyph.com cyph.ws ; do
 	cd ${project}
+	ln -s /node_modules node_modules
 	for d in $(ls ../shared) ; do
 		rm -rf ${d} 2> /dev/null
 		ln -s ../shared/${d} ${d}
@@ -54,7 +55,6 @@ for project in cyph.com cyph.ws ; do
 	ln -s /node_modules node_modules
 	cd ../lib/js
 	ln -s /node_modules node_modules
-	cp ../../../shared/lib/js/base.js base.js
 	cd ../../..
 done
 

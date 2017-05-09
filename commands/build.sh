@@ -65,13 +65,15 @@ tsfiles="$(
 		uniq
 )"
 
-cd shared
-
 scssfiles="$(
-	find css -type f -name '*.scss' |
-		perl -pe 's/css\/(.*)\.scss/\1/g' |
-		tr '\n' ' '
+	cat cyph.com/*.html cyph.ws/*.html |
+		grep -oP "href=(['\"])/css/.*?\1" |
+		perl -pe "s/.*?['\"]\/css\/(.*)\.css.*/\1/g" |
+		sort |
+		uniq
 )"
+
+cd shared
 
 
 output=''
@@ -92,18 +94,6 @@ webpackname () {
 }
 
 tsbuild () {
-	tmpDir="$(mktemp -d)"
-	tmpJsDir="${tmpDir}/js"
-	currentDir="$(realpath --relative-to="${tmpJsDir}" "${PWD}")"
-	logTmpDir=''
-
-	if [ "${1}" == '--log-tmp-dir' ] ; then
-		logTmpDir=true
-		shift
-	fi
-
-	rsync -rq .. "${tmpDir}" --exclude lib/js/node_modules
-
 	node -e "
 		const tsconfig	= JSON.parse(
 			fs.readFileSync('tsconfig.json').toString().
@@ -112,17 +102,11 @@ tsbuild () {
 				join('\n')
 		);
 
+		tsconfig.compilerOptions.outDir			= '.';
+
 		$(test "${watch}" && echo "
-			tsconfig.compilerOptions.lib			= undefined;
-			tsconfig.compilerOptions.target			= 'es2015';
-		")
-
-		$(test "${logTmpDir}" && echo "
-			tsconfig.compilerOptions.outDir			= '.';
-		")
-
-		$(test "${logTmpDir}" || echo "
-			tsconfig.compilerOptions.outDir			= '${currentDir}';
+			tsconfig.compilerOptions.lib		= undefined;
+			tsconfig.compilerOptions.target		= 'es2015';
 		")
 
 		tsconfig.files	= 'typings/index.d ${*}'.
@@ -132,12 +116,10 @@ tsbuild () {
 		;
 
 		fs.writeFileSync(
-			'${tmpJsDir}/tsconfig.json',
+			'tsconfig.json',
 			JSON.stringify(tsconfig)
 		);
 	"
-
-	cd "${tmpJsDir}"
 
 	{
 		time if [ "${watch}" ] ; then
@@ -157,14 +139,6 @@ tsbuild () {
 	} > build.log 2>&1
 
 	echo -e "\nCompile ${*}\n$(cat build.log)\n\n" 1>&2
-
-	cd "${currentDir}"
-
-	if [ "${logTmpDir}" ] ; then
-		for f in ${*} ; do
-			echo "${tmpJsDir}" > "${f}.tmpdir"
-		done
-	fi
 }
 
 compile () {
@@ -182,10 +156,10 @@ compile () {
 			compileF () {
 				isComponent="$(echo "${f}" | grep '^components/' > /dev/null && echo true)"
 
-				cat "css/${f}.scss" |
-					scss -s -C -Icss |
-					if [ "${minify}" ] ; then cleancss --inline none ; else cat - ; fi \
-				> "css/${f}.css"
+				scss "css/${f}.scss" "css/${f}.css"
+				if [ "${minify}" ] ; then
+					cleancss --inline none "css/${f}.css" -o "css/${f}.css"
+				fi
 
 				if ! cmp "css/${f}.css" "${outputDir}/css/${f}.css" > /dev/null 2>&1 ; then
 					cp -f "css/${f}.css" "${outputDir}/css/${f}.css"
@@ -274,24 +248,15 @@ compile () {
 	mainfiles="$(echo "${tsfiles}" | grep -P '/main$')"
 	nonmainfiles="$(echo "${tsfiles}" | grep -vP '/main$')"
 
-	if [ "${watch}" ] ; then
-		tsbuild --log-tmp-dir ${nonmainfiles} &
-		for f in ${mainfiles} ; do
-			tsbuild --log-tmp-dir "${f}" &
-		done
-	else
-		tsbuild ${nonmainfiles}
+	tsbuild standalone/global ${nonmainfiles}
+	cp standalone/global.js "${outputDir}/js/standalone/global.js"
+	if [ ! "${watch}" ] ; then
 		cp -rf ../css ../templates ./
 	fi
 
-	tsbuild standalone/global
-	mv standalone/global.js standalone/global.js.tmp
-	cat standalone/global.js.tmp |
-		if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
-	> "${outputDir}/js/standalone/global.js"
-	rm standalone/global.js.tmp
+	if [ "${minify}" ] ; then 
+		uglifyjs standalone/global.js -o "${outputDir}/js/standalone/global.js"
 
-	if [ "${minify}" ] ; then
 		for d in . "${outputDir}/js" ; do
 			find "${d}" -type f \( -name '*.js' -or -name '*.ts' \) -not \( \
 				-name '*.ngfactory.js' \
@@ -324,20 +289,9 @@ compile () {
 
 		if [ "${watch}" ] ; then
 			{
-				waitForTmpDir () {
-					while [ ! -f "${f}.tmpdir" ] ; do
-						sleep 1
-					done
-				}
-
-				currentDir="${PWD}"
-
 				if [ "${m}" == 'Main' ] ; then
 					cp -f "${htmlinput}" "${htmloutput}"
 				fi
-
-				waitForTmpDir
-				cd "$(cat "${f}.tmpdir")"
 
 				cat > "${f}.webpack.js" <<- EOM
 					const webpack	= require('webpack');
@@ -350,8 +304,22 @@ compile () {
 						module: {
 							rules: [
 								{
+									test: /\.(html|css)$/,
+									use: [{loader: 'raw-loader'}]
+								},
+								{
+									test: /\.scss$/,
+									use: [
+										{loader: 'raw-loader'},
+										{loader: 'sass-loader'}
+									]
+								},
+								{
 									test: /\.ts$/,
-									use: [{loader: 'awesome-typescript-loader'}]
+									use: [
+										{loader: 'awesome-typescript-loader'},
+										{loader: 'angular2-template-loader'}
+									]
 								}
 							]
 						},
@@ -359,7 +327,7 @@ compile () {
 							filename: '${f}.js.tmp',
 							library: '${m}',
 							libraryTarget: 'var',
-							path: '${currentDir}'
+							path: '${PWD}'
 						},
 						resolve: {
 							extensions: ['.js', '.ts']
@@ -427,12 +395,15 @@ compile () {
 				module: {
 					rules: [
 						{
-							test: /\.html$/,
+							test: /\.(html|css)$/,
 							use: [{loader: 'raw-loader'}]
 						},
 						{
-							test: /\.css$/,
-							use: [{loader: 'raw-loader'}]
+							test: /\.scss$/,
+							use: [
+								{loader: 'raw-loader'},
+								{loader: 'sass-loader'}
+							]
 						},
 						{
 							test: /\.ts$/,
@@ -661,7 +632,8 @@ compile () {
 if [ "${watch}" ] ; then
 	eval "$(${rootDir}/commands/getgitdata.sh)"
 
-	for type in js css ; do
+	init="$(mktemp -d)/init"
+	for type in css js ; do
 		typeUppercase="$(echo ${type} | tr '[:lower:]' '[:upper:]')"
 
 		while true ; do
@@ -669,6 +641,7 @@ if [ "${watch}" ] ; then
 			echo -e "\n\n\nBuilding ${typeUppercase}\n\n"
 			compile "${type}"
 			echo -e "\n\n\nFinished building ${typeUppercase} ($(expr $(date +%s) - ${start})s)\n\n"
+			touch "${init}"
 
 			cd "${rootDir}/shared"
 
@@ -682,6 +655,8 @@ if [ "${watch}" ] ; then
 				fi
 			done
 		done &
+
+		while [ ! -f "${init}" ] ; do sleep 5 ; done
 	done
 
 	sleep Infinity

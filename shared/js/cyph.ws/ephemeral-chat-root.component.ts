@@ -70,7 +70,7 @@ import {ChatRootStates} from './enums';
 		}
 	],
 	selector: 'cyph-ephemeral-chat-root',
-	styleUrls: ['../css/components/cyph.ws/ephemeral-chat-root.css'],
+	styleUrls: ['../css/components/cyph.ws/ephemeral-chat-root.scss'],
 	templateUrl: '../templates/cyph.ws/ephemeral-chat-root.html'
 })
 export class EphemeralChatRootComponent implements OnDestroy, OnInit {

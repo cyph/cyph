@@ -11,7 +11,7 @@ import {AppService} from './app.service';
  */
 @Component({
 	selector: 'cyph-lockdown',
-	styleUrls: ['../css/components/cyph.ws/lockdown.css'],
+	styleUrls: ['../css/components/cyph.ws/lockdown.scss'],
 	templateUrl: '../templates/cyph.ws/lockdown.html'
 })
 export class LockdownComponent implements OnInit {

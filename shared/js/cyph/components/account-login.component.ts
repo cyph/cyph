@@ -9,7 +9,7 @@ import {util} from '../util';
  */
 @Component({
 	selector: 'cyph-account-login',
-	styleUrls: ['../../css/components/account-login.css'],
+	styleUrls: ['../../css/components/account-login.scss'],
 	templateUrl: '../../templates/account-login.html'
 })
 export class AccountLoginComponent {

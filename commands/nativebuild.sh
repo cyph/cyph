@@ -18,12 +18,12 @@ mkdir -p tmp/app
 mv app/App_Resources tmp/app/
 cd tmp
 
-cp ${dir}/shared/lib/js/base.js ./
 mv ../node_modules ./
+cp -rf ${dir}/shared/fonts app/
 cp -rf ${dir}/shared/js/typings ./
 cp -rf ${dir}/shared/js/native/* app/
 cp -rf ${dir}/shared/css/native app/css
-cp ${dir}/shared/css/*.scss app/css/ 2> /dev/null
+cp -r ${dir}/shared/css/* app/css/ 2> /dev/null
 cp -rf ${dir}/shared/templates/native app/templates
 mv app/css/app.scss app/
 
@@ -44,9 +44,11 @@ for module in cyph-app cyph-common ; do
 done
 
 find app -type f -name '*.scss' -exec bash -c '
-	scss -C -Iapp/css "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
+	scss "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
 ' \;
 cp -rf app/css app/templates app/js/
+
+find app -type f -name '*.ts' -exec sed -i "s|\.scss'|\.css'|g" {} \;
 
 node -e "
 	const tsconfig	= JSON.parse(
@@ -160,7 +162,7 @@ for platform in android ios ; do
 	sed -i 's|lib/js/||g' app/main.${platform}.js
 	sed -i 's|js/|app/js/|g' app/main.${platform}.js
 
-	cp base.js main.${platform}.js
+	cp node_modules/core-js/client/shim.js main.${platform}.js
 	echo >> main.${platform}.js
 	cat app/js/standalone/global.js >> main.${platform}.js
 	echo >> main.${platform}.js

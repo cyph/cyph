@@ -9,7 +9,7 @@ import {util} from '../util';
  */
 @Component({
 	selector: 'cyph-file-input',
-	styleUrls: ['../../css/components/file-input.css'],
+	styleUrls: ['../../css/components/file-input.scss'],
 	templateUrl: '../../templates/file-input.html'
 })
 export class FileInputComponent implements OnInit {

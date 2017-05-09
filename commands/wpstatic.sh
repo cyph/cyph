@@ -253,10 +253,10 @@ for f in $(find . -name '*.html') ; do node -e "
 				fs.writeFileSync(path, content);
 			});
 		})))
-	).then(() =>\$('body').append(\`
-		<script src='/lib/js/base.js'></script>
-		<script src='/js/standalone/global.js'></script>
-		<script src='/js/standalone/analytics.js'></script>
+	).then(() =>\$('head').append(\`
+		<script defer src='/lib/js/node_modules/core-js/client/shim.js'></script>
+		<script defer src='/js/standalone/global.js'></script>
+		<script defer src='/js/standalone/analytics.js'></script>
 	\`)).then(() => fs.writeFileSync('${f}', htmlMinifier.minify(
 		\$.html().trim(),
 		{
