@@ -69,7 +69,7 @@
 	&.author-app .message {
 		text-align: center;
 
-		>>> cyph-markdown {
+		/deep/ cyph-markdown {
 			margin-top: 20px;
 
 			* {
