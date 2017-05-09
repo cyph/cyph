@@ -25,7 +25,7 @@
 import '../standalone/global';
 
 import '../standalone/capabilities';
-import '../standalone/unsupported-browser';
+import '../standalone/unsupported-browsers';
 
 
 /***************************************************************************************************
@@ -44,7 +44,6 @@ import 'zone.js/dist/zone';
  */
 
 import 'hammerjs';
-import 'rxjs/add/operator/toPromise';
 import '../standalone/custombuild';
 import '../standalone/init';
-import '../translations';
+import '../standalone/translations';

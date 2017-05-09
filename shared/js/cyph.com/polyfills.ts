@@ -24,10 +24,10 @@
 
 import '../standalone/global';
 
-import '../sham';
+import './sham';
 
 import '../standalone/capabilities';
-import '../standalone/unsupported-browser';
+import '../standalone/unsupported-browsers';
 
 
 /***************************************************************************************************
@@ -47,6 +47,5 @@ import 'zone.js/dist/zone';
 import 'hammerjs';
 import 'jquery';
 import 'jquery.appear';
-import 'rxjs/add/operator/toPromise';
 import '../standalone/init';
-import '../translations';
+import '../standalone/translations';

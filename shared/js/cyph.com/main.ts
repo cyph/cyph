@@ -1,3 +1,5 @@
+/* tslint:disable:no-import-side-effect */
+
 /**
  * @file Entry point.
  */
@@ -5,6 +7,7 @@
 
 import {enableProdMode} from '@angular/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
+import 'rxjs/add/operator/toPromise';
 import {config} from '../cyph/config';
 import {env} from '../cyph/env';
 import {util} from '../cyph/util';
