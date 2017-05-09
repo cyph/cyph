@@ -16,7 +16,7 @@ import 'web-animations-js';
 import 'webrtc-adapter';
 import 'whatwg-fetch';
 import 'zone.js';
-import '../translations';
+import '../standalone/translations';
 import {AppModule} from './app.module';
 
 

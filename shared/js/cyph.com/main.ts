@@ -18,7 +18,7 @@ import 'zone.js';
 import {config} from '../cyph/config';
 import {env} from '../cyph/env';
 import {util} from '../cyph/util';
-import '../translations';
+import '../standalone/translations';
 import {AppModule} from './app.module';
 
 
