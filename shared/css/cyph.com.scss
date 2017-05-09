@@ -1,4 +1,4 @@
-@import 'cyph.base';
+@import './cyph.base';
 
 body.load-complete #pre-load {
 	@include transition(opacity 0.25s linear);
