@@ -54,7 +54,6 @@ for project in cyph.com cyph.ws ; do
 	ln -s /node_modules node_modules
 	cd ../lib/js
 	ln -s /node_modules node_modules
-	cp ../../../shared/lib/js/base.js base.js
 	cd ../../..
 done
 

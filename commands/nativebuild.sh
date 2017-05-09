@@ -18,7 +18,6 @@ mkdir -p tmp/app
 mv app/App_Resources tmp/app/
 cd tmp
 
-cp ${dir}/shared/lib/js/base.js ./
 mv ../node_modules ./
 cp -rf ${dir}/shared/js/typings ./
 cp -rf ${dir}/shared/js/native/* app/
@@ -162,7 +161,7 @@ for platform in android ios ; do
 	sed -i 's|lib/js/||g' app/main.${platform}.js
 	sed -i 's|js/|app/js/|g' app/main.${platform}.js
 
-	cp base.js main.${platform}.js
+	cp node_modules/core-js/client/shim.js main.${platform}.js
 	echo >> main.${platform}.js
 	cat app/js/standalone/global.js >> main.${platform}.js
 	echo >> main.${platform}.js
