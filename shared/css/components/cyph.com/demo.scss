@@ -88,7 +88,7 @@
 				display: block;
 
 				.message-box {
-					min-height: 60px;
+					min-height: 60px !important;
 				}
 
 				smd-fab-speed-dial {
@@ -169,7 +169,7 @@
 
 		.chat-cyphertext {
 			&, .close-button {
-				position: absolute;
+				position: absolute !important;
 			}
 		}
 
