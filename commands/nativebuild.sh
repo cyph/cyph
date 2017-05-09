@@ -23,6 +23,7 @@ mv ../node_modules ./
 cp -rf ${dir}/shared/js/typings ./
 cp -rf ${dir}/shared/js/native/* app/
 cp -rf ${dir}/shared/css/native app/css
+cp ${dir}/shared/css/*.scss app/css/ 2> /dev/null
 cp -rf ${dir}/shared/templates/native app/templates
 mv app/css/app.scss app/
 
