@@ -56,8 +56,7 @@ export class MarkdownComponent implements OnChanges {
 
 			$element.
 				height($element.height()).
-				width($element.width()).
-				css('display', 'inline-block')
+				width($element.width())
 			;
 		}
 

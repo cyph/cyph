@@ -203,6 +203,11 @@ compile () {
 		)};
 	`.trim())' > standalone/translations.ts
 
+	# Workaround for angular2-template-loader
+	if [ "${watch}" ] ; then
+		find . -name '*.ts' -type f -exec sed -i "s|templateUrl: '|templateUrl: ('') + '|g" {} \;
+	fi
+
 	rm -rf css templates 2> /dev/null
 	cp -rf ../css css
 	cp -rf ../templates templates
@@ -589,34 +594,24 @@ compile () {
 if [ "${watch}" ] ; then
 	eval "$(${rootDir}/commands/getgitdata.sh)"
 
-	init="$(mktemp -d)/init"
-	for type in css js ; do
-		typeUppercase="$(echo ${type} | tr '[:lower:]' '[:upper:]')"
+	while true ; do
+		start="$(date +%s)"
+		echo -e "\n\n\nBuilding\n\n"
+		compile
+		echo -e "\n\n\nFinished building ($(expr $(date +%s) - ${start})s)\n\n"
+
+		cd "${rootDir}/shared"
 
 		while true ; do
-			start="$(date +%s)"
-			echo -e "\n\n\nBuilding ${typeUppercase}\n\n"
-			compile "${type}"
-			echo -e "\n\n\nFinished building ${typeUppercase} ($(expr $(date +%s) - ${start})s)\n\n"
-			touch "${init}"
-
-			cd "${rootDir}/shared"
-
-			while true ; do
-				fsevent="$(
-					inotifywait -r --exclude '(sed.*|.*\.(css|js|map|tmp))$' "${type}"
-				)"
-				if ! echo "${fsevent}" | grep -P '(ACCESS|CLOSE|OPEN|ISDIR)' > /dev/null ; then
-					echo "${fsevent}"
-					break
-				fi
-			done
-		done &
-
-		while [ ! -f "${init}" ] ; do sleep 5 ; done
+			fsevent="$(
+				inotifywait -r --exclude '(sed.*|.*\.(css|js|map|tmp))$' js css
+			)"
+			if ! echo "${fsevent}" | grep -P '(ACCESS|CLOSE|OPEN|ISDIR)' > /dev/null ; then
+				echo "${fsevent}"
+				break
+			fi
+		done
 	done
-
-	sleep Infinity
 else
 	compile
 fi

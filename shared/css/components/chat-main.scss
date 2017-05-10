@@ -144,7 +144,7 @@
 			background-color: transparent;
 
 			.message-timestamp {
-				&, & > div, & > div > div {
+				&, > div, > div > div {
 					text-align: center;
 					width: 100%;
 					left: 0px;
