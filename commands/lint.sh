@@ -7,6 +7,27 @@ tmpDir="$(mktemp -d)"
 ./commands/copyworkspace.sh --client-only "${tmpDir}"
 cd "${tmpDir}/shared"
 
+# Validate component template/stylesheet count consistency
+
+componentConsistency="$(
+	node -e 'console.log(
+		[
+			"templates/*.html",
+			"templates/native/*.html",
+			"css/components/*.scss",
+			"css/native/components/*.scss"
+		].
+			map(s => require("glob").sync(s).length).
+			reduce((a, b) => a === b ? a : -1)
+		!== -1
+	)'
+)"
+
+if [ "${componentConsistency}" != true ] ; then
+	echo 'Component template/stylesheet count mismatch'
+	exit 1
+fi
+
 # tslint and htmllint
 
 cd js
