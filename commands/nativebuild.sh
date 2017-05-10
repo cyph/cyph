@@ -176,8 +176,6 @@ for platform in android ios ; do
 		echo -e '\n\nFAIL\n\n'
 		exit 2
 	fi
-	sed -i 's|lib/js/||g' app/main.${platform}.js
-	sed -i 's|js/|app/js/|g' app/main.${platform}.js
 
 	cp node_modules/core-js/client/shim.js main.${platform}.js
 	echo >> main.${platform}.js
@@ -212,6 +210,8 @@ for platform in android ios ; do
 	cat app/main.${platform}.js >> main.${platform}.js
 
 	sed -i 's|use strict||g' main.${platform}.js
+	sed -i "s|importScripts('/lib/js/|importScripts('/|g" main.${platform}.js
+	sed -i "s|importScripts('/js/|importScripts('/app/js/|g" main.${platform}.js
 	/cyph/commands/websign/threadpack.js main.${platform}.js
 done
 
