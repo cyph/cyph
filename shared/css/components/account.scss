@@ -1,59 +1,61 @@
 @import '../theme';
 
-/* Staggered animation support. Usage: add any class from ._1 -> ._10 */
+:host /deep/ {
+	/* Staggered animation support. Usage: add any class from ._1 -> ._10 */
 
-$interval: 0.25s;
-$classesToAdd: 15;
+	$interval: 0.25s;
+	$classesToAdd: 15;
 
-@for $i from 1 to $classesToAdd + 1 {
-	._#{$i} {
-		@include animation-delay($i * $interval);
-	}
-}
-
-/* Scrollfix to pin Cyph background/gradient */
-:host > div > :not(canvas):not(cyph-account-menu) {
-	overflow: scroll;
-}
-
-.mobile .cyph-gradient {
-	opacity: 0.15;
-}
-
-.cyph-gradient {
-	display: block;
-	width: 100%;
-	height: 100%;
-	top: 0px;
-	right: 0px;
-	bottom: 0px;
-	left: 0px;
-	position: absolute;
-	background-image: url(/img/cyph.brick.pattern.png);
-	background-repeat: repeat;
-	background-position-x: 50%;
-	z-index: -999;
-}
-
-.avatar {
-	border-radius: 50%;
-	cursor: pointer;
-
-	@include transition(border 0.75s ease);
-
-	&.online {
-		border: 5px solid map-get($mat-green, 700) !important;
+	@for $i from 1 to $classesToAdd + 1 {
+		._#{$i} {
+			@include animation-delay($i * $interval);
+		}
 	}
 
-	&.away {
-		border: 5px solid map-get($mat-amber, 500) !important;
+	/* Scrollfix to pin Cyph background/gradient */
+	> div > :not(canvas):not(cyph-account-menu) {
+		overflow: scroll;
 	}
 
-	&.busy {
-		border: 5px solid map-get($mat-red, 700) !important;
+	.mobile .cyph-gradient {
+		opacity: 0.15;
 	}
 
-	&.offline {
-		border: 5px solid map-get($mat-grey, 900) !important;
+	.cyph-gradient {
+		display: block;
+		width: 100%;
+		height: 100%;
+		top: 0px;
+		right: 0px;
+		bottom: 0px;
+		left: 0px;
+		position: absolute;
+		background-image: url(/img/cyph.brick.pattern.png);
+		background-repeat: repeat;
+		background-position-x: 50%;
+		z-index: -999;
+	}
+
+	.avatar {
+		border-radius: 50%;
+		cursor: pointer;
+
+		@include transition(border 0.75s ease);
+
+		&.online {
+			border: 5px solid map-get($mat-green, 700) !important;
+		}
+
+		&.away {
+			border: 5px solid map-get($mat-amber, 500) !important;
+		}
+
+		&.busy {
+			border: 5px solid map-get($mat-red, 700) !important;
+		}
+
+		&.offline {
+			border: 5px solid map-get($mat-grey, 900) !important;
+		}
 	}
 }

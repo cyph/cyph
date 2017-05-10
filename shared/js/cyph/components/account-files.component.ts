@@ -11,7 +11,7 @@ import {UtilService} from '../services/util.service';
  */
 @Component({
 	selector: 'cyph-account-files',
-	styleUrls: ['../../css/components/account-files.css'],
+	styleUrls: ['../../css/components/account-files.scss'],
 	templateUrl: '../../templates/account-files.html'
 })
 export class AccountFilesComponent {

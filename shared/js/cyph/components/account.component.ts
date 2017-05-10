@@ -18,7 +18,7 @@ import {EnvService} from '../services/env.service';
 		}
 	],
 	selector: 'cyph-account',
-	styleUrls: ['../../css/components/account.css'],
+	styleUrls: ['../../css/components/account.scss'],
 	templateUrl: '../../templates/account.html'
 })
 export class AccountComponent implements OnInit {
