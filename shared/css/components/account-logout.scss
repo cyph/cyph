@@ -4,18 +4,18 @@
 	font-size: 60px;
 	font-family: Ubuntu;
 	font-weight: 500;
-}
 
-.logout:after {
-	overflow: hidden;
-	display: inline-block;
-	vertical-align: bottom;
-	content: '\2026';
+	&:after {
+		overflow: hidden;
+		display: inline-block;
+		vertical-align: bottom;
+		content: '\2026';
 
-	/* ascii code for the ellipsis character */
-	width: 0px;
+		/* ascii code for the ellipsis character */
+		width: 0px;
 
-	@include animation(ellipsis steps(4, end) 900ms infinite);
+		@include animation(ellipsis steps(4, end) 900ms infinite);
+	}
 }
 
 @include keyframes(ellipsis) {
