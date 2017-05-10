@@ -203,6 +203,11 @@ compile () {
 		)};
 	`.trim())' > standalone/translations.ts
 
+	# Workaround for angular2-template-loader
+	if [ "${watch}" ] ; then
+		find . -name '*.ts' -type f -exec sed -i "s|templateUrl: '|templateUrl: ('') + '|g" {} \;
+	fi
+
 	rm -rf css templates 2> /dev/null
 	cp -rf ../css css
 	cp -rf ../templates templates
