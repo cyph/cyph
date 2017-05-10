@@ -1,15 +1,13 @@
 @import '../mixins';
 
-.message-list-background {
+:host {
 	position: relative;
-
-	@include shadow;
 
 	&:after {
 		background-image: url(/img/betalogo.png);
 		background-repeat: no-repeat;
 		background-size: cover;
-		position: fixed;
+		position: absolute;
 		width: 50vh;
 		height: 50vh;
 		left: 50%;
@@ -18,8 +16,12 @@
 		opacity: 0.10;
 		content: ' ';
 
-		@include transform(translateX(-50%) translateY(-75%));
+		@include transform(translateX(-50%) translateY(-50%));
 	}
+}
+
+.message-list-background {
+	@include shadow;
 }
 
 .message-item {
