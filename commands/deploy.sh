@@ -473,15 +473,15 @@ fi
 # WebSign redirects
 
 for suffix in ${shortlinkProjects} ; do
-	d=cyph.${suffix}
-	project=cyph-${suffix}
+	d="cyph.${suffix}"
+	project="cyph-${suffix}"
 
 	# Special case for cyph.im to directly redirect to cyph.ws instead of cyph.ws/#im
 	if [ "${suffix}" == 'im' ] ; then suffix='' ; fi
 
-	mkdir ${d}
-	cat cyph.ws/cyph-ws.yaml | sed "s|cyph-ws|${project}|g" > ${d}/${project}.yaml
-	./commands/websign/createredirect.sh ${suffix} ${d} "${package}" "${test}"
+	mkdir "${d}"
+	cat cyph.ws/cyph-ws.yaml | sed "s|cyph-ws|${project}|g" > "${d}/${project}.yaml"
+	./commands/websign/createredirect.sh "${suffix}" "${d}" "${package}" "${test}"
 done
 
 
