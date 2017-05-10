@@ -63,8 +63,13 @@ node -e "
 	tsconfig.compilerOptions.outDir		= '.';
 
 	tsconfig.files	= [
+		$(
+			grep -roP "importScripts\((['\"])/js/.*\1\)" app |
+				perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/'app\/js\/\1.ts',/g" |
+				sort |
+				uniq
+		)
 		'app/js/cyph/crypto/native-web-crypto-polyfill.ts',
-		'app/js/standalone/global.ts',
 		'typings/index.d.ts'
 	];
 
