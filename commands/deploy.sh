@@ -108,7 +108,9 @@ else
 fi
 
 projectname () {
-	if [ "${test}" ] ; then
+	if [ "${simple}" ] ; then
+		echo "${version}-dot-$(echo "${1}" | tr '.' '-')-dot-cyphme.appspot.com"
+	elif [ "${test}" ] ; then
 		echo "${version}.${1}"
 	else
 		echo "${1}"
@@ -464,20 +466,23 @@ if [ "${websign}" ] ; then
 
 	git push
 	cd ..
-
-	# WebSign redirects
-
-	for suffix in $shortlinkProjects ; do
-		d=cyph.${suffix}
-		project=cyph-${suffix}
-
-		mkdir $d
-		cat cyph.ws/cyph-ws.yaml | sed "s|cyph-ws|${project}|g" > ${d}/${project}.yaml
-		./commands/websign/createredirect.sh ${suffix} ${d} "${package}" "${test}"
-	done
 elif [ ! "${site}" ] || [ "${site}" == "${webSignedProject}" ] ; then
 	cp websign/js/workerhelper.js "${webSignedProject}/js/"
 fi
+
+# WebSign redirects
+
+for suffix in ${shortlinkProjects} ; do
+	d=cyph.${suffix}
+	project=cyph-${suffix}
+
+	# Special case for cyph.im to directly redirect to cyph.ws instead of cyph.ws/#im
+	if [ "${suffix}" == 'im' ] ; then suffix='' ; fi
+
+	mkdir ${d}
+	cat cyph.ws/cyph-ws.yaml | sed "s|cyph-ws|${project}|g" > ${d}/${project}.yaml
+	./commands/websign/createredirect.sh ${suffix} ${d} "${package}" "${test}"
+done
 
 
 if [ "${waitingForWpstatic}" ] ; then
