@@ -1,3 +1,5 @@
+/* tslint:disable */
+
 import {IRuleMetadata, RuleFailure} from 'tslint/lib/language/rule/rule';
 import {RuleWalker} from 'tslint/lib/language/walker';
 import {AbstractRule} from 'tslint/lib/rules';

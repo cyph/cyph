@@ -169,6 +169,8 @@ compile () {
 		find . -type f -name '*.js' -exec rm {} \;
 	fi
 
+	rm -rf tslint-rules
+
 	dependencyModules="$(
 		grep -roP "(import|from) '[@A-Za-z0-9][^' ]*';" |
 			perl -pe "s/.*?'(.*)';/\1/g" |
@@ -321,9 +323,6 @@ compile () {
 				cp -f "${htmlinput}" "${htmloutput}"
 			fi
 
-			rm -rf node_modules 2> /dev/null
-			ln -s /node_modules node_modules
-
 			node -e "
 				const tsconfig	= JSON.parse(
 					fs.readFileSync('tsconfig.json').toString().
@@ -462,7 +461,7 @@ compile () {
 						}))
 				;
 
-				webpack(${webpackConfig}, (err, stats) => {$(test "${enableSplit}" && echo "
+				webpack(${webpackConfig}, (err, stats) => {
 					if (err) {
 						throw err;
 					}
@@ -485,7 +484,7 @@ compile () {
 					}
 
 					fs.writeFileSync('${htmloutput}', \$.html().trim());
-				")});
+				});
 			"; } 2>&1)" 1>&2
 		else
 			echo "

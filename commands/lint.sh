@@ -23,7 +23,6 @@ rm node_modules
 cd ..
 
 /node_modules/tslint/node_modules/.bin/tsc --skipLibCheck js/tslint-rules/*.ts || exit 1
-rm js/tslint-rules/*.ts
 
 node -e "
 	const tsconfig	= JSON.parse(
