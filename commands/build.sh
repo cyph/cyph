@@ -201,8 +201,9 @@ compile () {
 		)};
 	`.trim())' > standalone/translations.ts
 
-	ln -s ../css css 2> /dev/null
-	ln -s ../templates templates 2> /dev/null
+	rm -rf css templates 2> /dev/null
+	cp -rf ../css css
+	cp -rf ../templates templates
 	ln -s /node_modules node_modules 2> /dev/null
 
 	mainfiles="$(echo "${tsfiles}" | grep -P '/main$')"
