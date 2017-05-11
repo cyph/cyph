@@ -1,7 +1,7 @@
 <form ngNativeValidate>
 	<div fxLayout='column' fxLayoutGap='16px' *ngIf='!complete'>
 		<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui'>
-			<div class='braintree'></div>
+			<div [id]='containerID' class='braintree'></div>
 			<div>
 				<div fxLayout='column' fxLayout.gt-md='row' fxLayoutGap='16px'>
 					<md-input-container fxFlex>

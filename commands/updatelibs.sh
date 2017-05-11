@@ -48,7 +48,8 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	animate.css \
 	awesome-typescript-loader \
 	bourbon@4.2.7 \
-	braintree-web@^2 \
+	braintree-web \
+	braintree-web-drop-in \
 	check-tslint-all \
 	cheerio \
 	clean-css-cli \
