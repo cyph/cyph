@@ -33,6 +33,8 @@ mkdir -p app/js/cyph.ws app/js/standalone
 cp ${dir}/shared/js/standalone/global.ts app/js/standalone/
 cp -rf ${dir}/shared/js/cyph.ws/enums app/js/cyph.ws/
 cp -rf ${dir}/shared/js/cyph app/js/
+cp -rf ${dir}/shared/js/environments app/js/
+cp -rf ${dir}/shared/js/typings app/js/
 
 for module in cyph-app cyph-common ; do
 	modulePath="app/js/cyph/modules/${module}.module.ts"
@@ -84,7 +86,7 @@ fi
 node -e "
 	const tsconfig	= JSON.parse(fs.readFileSync('tsconfig.json').toString());
 	tsconfig.compilerOptions.rootDir	= undefined;
-	tsconfig.files	= ['app/main.ts', 'typings/index.d.ts'];
+	tsconfig.files	= ['app/main.ts'];
 	fs.writeFileSync('tsconfig.json', JSON.stringify(tsconfig));
 "
 sed -i 's|/platform|/platform-static|g' app/main.ts

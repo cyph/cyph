@@ -47,7 +47,6 @@ fi
 
 tsfiles="$(
 	{
-		cat cyph.com/*.html cyph.ws/*.html | grep -oP "src=(['\"])/js/.*?\1";
 		find ${outputDir}/js -type f -name '*.ts' -not \( \
 			-name '*.ngfactory.ts' \
 			-or -name '*.ngmodule.ts' \
@@ -65,13 +64,7 @@ tsfiles="$(
 		uniq
 )"
 
-scssfiles="$(
-	cat cyph.com/*.html cyph.ws/*.html |
-		grep -oP "href=(['\"])/css/.*?\1" |
-		perl -pe "s/.*?['\"]\/css\/(.*)\.css.*/\1/g" |
-		sort |
-		uniq
-)"
+scssfiles=""
 
 cd shared
 
