@@ -68,7 +68,6 @@ export class CheckoutComponent implements OnInit {
 
 		braintreeDropIn.create({
 			authorization,
-			paypal: {flow: 'vault'},
 			selector: `#${this.containerID}`
 		}, (err: any, instance: any) => {
 			if (err) {
