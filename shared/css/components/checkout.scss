@@ -17,6 +17,19 @@ button {
 	white-space: normal;
 }
 
+md-progress-spinner {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+
+	@include transform(translate(-50%, -50%));
+
+	+ form {
+		opacity: 0.15;
+		pointer-events: none;
+	}
+}
+
 .confirmation {
 	font-size: 120%;
 	width: 100%;
