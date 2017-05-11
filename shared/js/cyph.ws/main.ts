@@ -1,4 +1,4 @@
-/* tslint:disable:no-import-side-effect reference-only */
+/* tslint:disable:no-import-side-effect no-reference */
 
 /**
  * @file Entry point.
