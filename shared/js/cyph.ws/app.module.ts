@@ -1,3 +1,15 @@
+/* tslint:disable:no-import-side-effect no-reference */
+
+/// <reference path="../typings/index.d.ts" />
+
+import '../standalone/global';
+
+import 'hammerjs';
+import 'rxjs/add/operator/toPromise';
+import '../standalone/custombuild';
+import '../standalone/init';
+import '../standalone/translations';
+
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
