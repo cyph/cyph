@@ -6,6 +6,20 @@ dir="$PWD"
 
 plugins="$(cat shared/js/native/plugins.list)"
 
+externals="{
+	$(for plugin in ${plugins} ; do echo "
+		'${plugin}': \"require('${plugin}')\",
+	" ; done)
+	'_stream_duplex': 'undefined',
+	'_stream_writable': 'undefined',
+	'faye-websocket': '{Client: self.WebSocket}',
+	'jquery': 'undefined',
+	'libsodium': 'self.sodium',
+	'simplewebrtc': '{}',
+	'request': 'undefined',
+	'rsvp': 'undefined'
+}"
+
 cd
 tns create cyph --ng --appid com.cyph.app || exit 1
 cd cyph
@@ -51,6 +65,14 @@ cp -rf app/css app/templates app/js/
 
 find app -type f -name '*.ts' -exec sed -i "s|\.scss'|\.css'|g" {} \;
 
+importedTsfiles="app/js/cyph/crypto/native-web-crypto-polyfill $(
+	grep -roP "importScripts\((['\"])/js/.*\1\)" app |
+		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/app\/js\/\1/g" |
+		sort |
+		uniq |
+		tr '\n' ' '
+)"
+
 node -e "
 	const tsconfig	= JSON.parse(
 		fs.readFileSync('${dir}/shared/js/tsconfig.json').toString().
@@ -62,16 +84,11 @@ node -e "
 	tsconfig.compilerOptions.rootDir	= '.';
 	tsconfig.compilerOptions.outDir		= '.';
 
-	tsconfig.files	= [
-		$(
-			grep -roP "importScripts\((['\"])/js/.*\1\)" app |
-				perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/'app\/js\/\1.ts',/g" |
-				sort |
-				uniq
-		)
-		'app/js/cyph/crypto/native-web-crypto-polyfill.ts',
-		'typings/index.d.ts'
-	];
+	tsconfig.files	= 'typings/index.d ${importedTsfiles}'.
+		trim().
+		split(/\s+/).
+		map(f => f + '.ts')
+	;
 
 	fs.writeFileSync('tsconfig.json', JSON.stringify(tsconfig));
 "
@@ -80,6 +97,25 @@ if (( $? )) ; then
 	echo -e '\n\nFAIL\n\n'
 	exit 1
 fi
+for f in ${importedTsfiles} ; do
+	cat > "${f}.webpack.js" <<- EOM
+		module.exports	= {
+			entry: {
+				app: './${f}'
+			},
+			externals: ${externals},
+			output: {
+				filename: '${f}.js',
+				path: '${PWD}'
+			}
+		};
+	EOM
+	webpack --config "${f}.webpack.js"
+	if (( $? )) ; then
+		echo -e '\n\nFAIL\n\n'
+		exit 1
+	fi
+done
 
 node -e "
 	const tsconfig	= JSON.parse(fs.readFileSync('tsconfig.json').toString());
@@ -108,19 +144,7 @@ for platform in android ios ; do
 			entry: {
 				app: './app/main.ts'
 			},
-			externals: {
-				$(for plugin in ${plugins} ; do echo "
-					'${plugin}': \"require('${plugin}')\",
-				" ; done)
-				'_stream_duplex': 'undefined',
-				'_stream_writable': 'undefined',
-				'faye-websocket': '{Client: self.WebSocket}',
-				'jquery': 'undefined',
-				'libsodium': 'self.sodium',
-				'simplewebrtc': '{}',
-				'request': 'undefined',
-				'rsvp': 'undefined'
-			},
+			externals: ${externals},
 			module: {
 				rules: [
 					{
