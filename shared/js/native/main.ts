@@ -1,9 +1,11 @@
-/* tslint:disable:no-import-side-effect */
+/* tslint:disable:no-import-side-effect reference-only */
 
 /**
  * @file Entry point of app.
  */
 
+
+/// <reference path="../typings/index.d.ts" />
 
 import {platformNativeScriptDynamic} from 'nativescript-angular/platform';
 

@@ -114,7 +114,7 @@ const windowsWorkaround		= !isWindows ? '' : `
 		else
 			rm -rf "\${3}" 2> /dev/null
 			mkdir "\${3}"
-			sudo mount -o bind "\${2}" "\${3}"
+			sudo mount --bind "\${2}" "\${3}"
 		fi
 	' |
 		sudo tee -a /bin/ln > /dev/null
@@ -292,10 +292,9 @@ const containerName		= command => `${image}_${command}`.replace(/\//g, '_');
 const dockerRun			= (command, name, background, noCleanup, additionalArgs, getOutput) => {
 	const processArgs	= [
 		'run',
+		'--privileged',
 		getOutput ? '-i' : '-it'
 	].concat(
-		isWindows ? ['--privileged'] : []
-	).concat(
 		name ? [`--name=${name}`] : []
 	).concat(
 		background ? [`-d`] : []
