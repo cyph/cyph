@@ -11,7 +11,7 @@ tns create cyph --ng --appid com.cyph.app || exit 1
 cd cyph
 
 for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
-rm -rf node_modules
+mv node_modules node_modules.old
 ln -s /node_modules node_modules
 
 mkdir -p tmp/app
@@ -219,6 +219,7 @@ cd ..
 rm -rf app hooks/*/nativescript-dev-typescript.js
 mkdir app
 mv tmp/main.*.js tmp/app/App_Resources tmp/app/app.css tmp/app/package.json app/
+mv node_modules.old node_modules
 rm -rf tmp
 
 cd
