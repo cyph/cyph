@@ -5,13 +5,11 @@
 		"baseUrl": "src",
 		"declaration": false,
 		"outDir": "./dist/out-tsc",
-		"rootDir": ".",
 		"typeRoots": [
 			"node_modules/@types"
 		]
 	},
 	"files": [
-		"src/js/cyph.com/main.ts",
-		"src/js/typings/index.d.ts"
+		"src/js/cyph.com/main.ts"
 	]
 }

@@ -19,8 +19,6 @@
 			"testTsconfig": "tsconfig.spec.json",
 			"prefix": "cyph",
 			"styles": [
-				"node_modules/animate.css/animate.css",
-				"node_modules/unsemantic/assets/stylesheets/unsemantic-grid-responsive-tablet-no-ie7.css",
 				"css/cyph.com.scss"
 			],
 			"scripts": [],

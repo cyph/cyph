@@ -1,5 +1,5 @@
-@import '/node_modules/@angular/material/theming';
-@import '/node_modules/bourbon/app/assets/stylesheets/bourbon';
+@import '~@angular/material/theming';
+@import '~bourbon/app/assets/stylesheets/bourbon';
 
 @mixin breathe {
 	@include animation-name(breathe !important);

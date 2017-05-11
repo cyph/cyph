@@ -1,9 +1,11 @@
-/* tslint:disable:no-import-side-effect */
+/* tslint:disable:no-import-side-effect reference-only */
 
 /**
  * @file Entry point.
  */
 
+
+/// <reference path="../typings/index.d.ts" />
 
 import {enableProdMode} from '@angular/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
