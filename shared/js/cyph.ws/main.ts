@@ -7,8 +7,13 @@
 
 /// <reference path="../typings/index.d.ts" />
 
+import '../standalone/custombuild';
+import '../standalone/init';
+import '../standalone/translations';
+
 import {enableProdMode} from '@angular/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
+import 'hammerjs';
 import 'rxjs/add/operator/toPromise';
 import {environment} from '../environments/environment';
 import {AppModule} from './app.module';

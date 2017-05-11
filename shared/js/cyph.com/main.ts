@@ -7,8 +7,14 @@
 
 /// <reference path="../typings/index.d.ts" />
 
+import '../standalone/init';
+import '../standalone/translations';
+
 import {enableProdMode} from '@angular/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
+import 'hammerjs';
+import 'jquery';
+import 'jquery.appear';
 import 'rxjs/add/operator/toPromise';
 import {config} from '../cyph/config';
 import {env} from '../cyph/env';

@@ -19,16 +19,6 @@
 
 
 /***************************************************************************************************
- * INITIAL STANDALONE IMPORTS
- */
-
-import '../standalone/global';
-
-import '../standalone/capabilities';
-import '../standalone/unsupported-browsers';
-
-
-/***************************************************************************************************
  * BROWSER POLYFILLS
  */
 
@@ -43,7 +33,6 @@ import 'zone.js/dist/zone';
  * APPLICATION IMPORTS
  */
 
-import 'hammerjs';
-import '../standalone/custombuild';
-import '../standalone/init';
-import '../standalone/translations';
+import '../standalone/capabilities';
+import '../standalone/global';
+import '../standalone/unsupported-browsers';
