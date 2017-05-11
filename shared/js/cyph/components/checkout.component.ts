@@ -43,6 +43,9 @@ export class CheckoutComponent implements OnInit {
 	/** Name. */
 	@Input() public name: string;
 
+	/** Indicates whether payment is pending. */
+	public pending: boolean;
+
 	/** Indicates whether this will be a recurring purchase. */
 	@Input() public subscription: boolean;
 
@@ -79,40 +82,51 @@ export class CheckoutComponent implements OnInit {
 	/** Submits payment. */
 	public async submit () : Promise<void> {
 		if (!this.braintreeInstance) {
+			this.complete	= true;
+			this.pending	= false;
+			this.success	= false;
+
 			throw new Error('Cannot process payment because Braintree failed to initialize.');
 		}
 
-		const paymentMethod	= await new Promise<{
-			data: any;
-			err: any;
-		}>(resolve => {
-			this.braintreeInstance.requestPaymentMethod((err: any, data: any) => {
-				resolve({data, err});
+		try {
+			this.pending		= true;
+
+			const paymentMethod	= await new Promise<{
+				data: any;
+				err: any;
+			}>(resolve => {
+				this.braintreeInstance.requestPaymentMethod((err: any, data: any) => {
+					resolve({data, err});
+				});
 			});
-		});
 
-		if (paymentMethod.err) {
-			throw paymentMethod.err;
+			if (paymentMethod.err) {
+				throw paymentMethod.err;
+			}
+
+			this.success	= 'true' === await util.request({
+				data: {
+					amount: Math.floor(this.amount * 100),
+					category: this.category,
+					company: this.company || '',
+					email: this.email,
+					item: this.item,
+					name: this.name,
+					nonce: paymentMethod.data.nonce,
+					subscription: this.subscription
+				},
+				method: 'POST',
+				url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
+			}).catch(
+				() => ''
+			);
+
+			this.complete	= true;
 		}
-
-		this.success	= 'true' === await util.request({
-			data: {
-				amount: Math.floor(this.amount * 100),
-				category: this.category,
-				company: this.company || '',
-				email: this.email,
-				item: this.item,
-				name: this.name,
-				nonce: paymentMethod.data.nonce,
-				subscription: this.subscription
-			},
-			method: 'POST',
-			url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
-		}).catch(
-			() => ''
-		);
-
-		this.complete	= true;
+		finally {
+			this.pending	= false;
+		}
 	}
 
 	constructor (
