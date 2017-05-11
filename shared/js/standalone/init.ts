@@ -9,7 +9,6 @@
 import * as $ from 'jquery';
 import {env} from '../cyph/env';
 import {util} from '../cyph/util';
-import './dompurify';
 
 
 /* Mobile CSS class */
