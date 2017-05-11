@@ -1,4 +1,4 @@
-<form ngNativeValidate>
+<form ngNativeValidate (submit)='submit()'>
 	<div fxLayout='column' fxLayoutGap='16px' *ngIf='!complete'>
 		<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui'>
 			<div [id]='containerID' class='braintree'></div>
