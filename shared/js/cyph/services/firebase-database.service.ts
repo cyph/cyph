@@ -13,7 +13,7 @@ import {DatabaseService} from './database.service';
  * DatabaseService implementation built on Firebase.
  */
 @Injectable()
-export class FirebaseDatabaseService extends DatabaseService {
+export class FirebaseDatabaseService implements DatabaseService {
 	/** @ignore */
 	private app: Promise<firebase.app.App>	= util.retryUntilSuccessful(() => {
 		try {
@@ -45,7 +45,5 @@ export class FirebaseDatabaseService extends DatabaseService {
 		);
 	}
 
-	constructor () {
-		super();
-	}
+	constructor () {}
 }

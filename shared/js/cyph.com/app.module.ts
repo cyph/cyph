@@ -11,6 +11,7 @@ import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
+import {HtmlSanitizerService} from '../cyph/services/html-sanitizer.service';
 import {NotificationService} from '../cyph/services/notification.service';
 import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
@@ -19,6 +20,7 @@ import {DemoChatRootComponent} from './demo-chat-root.component';
 import {DemoComponent} from './demo.component';
 import {DemoService} from './demo.service';
 import {MockDatabaseService} from './mock-database.service';
+import {MockHtmlSanitizerService} from './mock-html-sanitizer.service';
 import {MockPotassiumService} from './mock-potassium.service';
 import {RouterComponent} from './router.component';
 import {SilentNotificationService} from './silent-notification.service';
@@ -58,6 +60,10 @@ import {SilentNotificationService} from './silent-notification.service';
 		{
 			provide: DatabaseService,
 			useClass: MockDatabaseService
+		},
+		{
+			provide: HtmlSanitizerService,
+			useClass: MockHtmlSanitizerService
 		},
 		{
 			provide: NotificationService,
