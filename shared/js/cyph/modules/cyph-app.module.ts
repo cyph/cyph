@@ -8,7 +8,9 @@ import {FooterComponent} from '../components/footer.component';
 import {LinkConnectionComponent} from '../components/link-connection.component';
 import {NotFoundComponent} from '../components/not-found.component';
 import {DatabaseService} from '../services/database.service';
+import {DOMPurifyHtmlSanitizerService} from '../services/dompurify-html-sanitizer.service';
 import {FirebaseDatabaseService} from '../services/firebase-database.service';
+import {HtmlSanitizerService} from '../services/html-sanitizer.service';
 import {CyphCommonModule} from './cyph-common.module';
 import {CyphWebModule} from './cyph-web.module';
 
@@ -45,6 +47,10 @@ import {CyphWebModule} from './cyph-web.module';
 		{
 			provide: DatabaseService,
 			useClass: FirebaseDatabaseService
+		},
+		{
+			provide: HtmlSanitizerService,
+			useClass: DOMPurifyHtmlSanitizerService
 		}
 	]
 })
