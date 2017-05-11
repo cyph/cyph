@@ -254,6 +254,24 @@ export class AppService {
 		/** @ignore */
 		private readonly titleService: Title
 	) {
+		/* Redirect to Onion site when on Tor */
+		if (!this.envService.isOnion) {
+			(async () => {
+				const response: string	= await util.request({
+					url: `https://ping.${this.configService.onionRoot}`
+				}).catch(
+					() => ''
+				);
+
+				if (response === 'pong') {
+					locationData.href	=
+						`https://${this.configService.onionRoot}/` +
+						locationData.href.split(locationData.host + '/')[1]
+					;
+				}
+			})();
+		}
+
 		if (!this.envService.isMobile) {
 			new WOW({live: true}).init();
 		}

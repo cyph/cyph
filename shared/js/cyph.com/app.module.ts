@@ -1,3 +1,17 @@
+/* tslint:disable:no-import-side-effect no-reference */
+
+/// <reference path="../typings/index.d.ts" />
+
+import '../standalone/global';
+
+import 'hammerjs';
+import 'jquery';
+import 'jquery.appear';
+import 'rxjs/add/operator/toPromise';
+import '../standalone/init';
+import '../standalone/translations';
+import './sham';
+
 import {NgModule} from '@angular/core';
 import {MdSidenavModule, MdSliderModule, MdToolbarModule} from '@angular/material';
 import {RouterModule} from '@angular/router';

@@ -34,5 +34,4 @@ import 'zone.js/dist/zone';
  */
 
 import '../standalone/capabilities';
-import '../standalone/global';
 import '../standalone/unsupported-browsers';
