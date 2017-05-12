@@ -66,16 +66,19 @@ export class CheckoutComponent implements OnInit {
 			url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
 		});
 
-		braintreeDropIn.create({
-			authorization,
-			selector: `#${this.containerID}`
-		}, (err: any, instance: any) => {
-			if (err) {
-				throw err;
-			}
+		braintreeDropIn.create(
+			{
+				authorization,
+				selector: `#${this.containerID}`
+			},
+			(err: any, instance: any) => {
+				if (err) {
+					throw err;
+				}
 
-			this.braintreeInstance	= instance;
-		});
+				this.braintreeInstance	= instance;
+			}
+		);
 	}
 
 	/** Submits payment. */
