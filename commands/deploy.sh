@@ -139,7 +139,7 @@ if [ ! "${simple}" ] ; then
 	defaultCSPString='DEFAULT_CSP'
 	fullCSP="$(cat shared/csp | tr -d '\n')"
 	webSignCSP="$(cat websign/csp | tr -d '\n')"
-	cyphComCSP="$(cat shared/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com|g' | sed 's|connect-src|connect-src blob:|g')"
+	cyphComCSP="$(cat shared/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com https://*.braintreegateway.com|g' | sed 's|connect-src|connect-src blob:|g')"
 	ls cyph.com/*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
 	ls */*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${webSignCSP}\"|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultCSPString}|${fullCSP}|g" %
