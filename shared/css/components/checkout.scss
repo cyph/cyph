@@ -1,14 +1,13 @@
 @import '../mixins';
 
 .checkout-ui {
-	margin: 30px 30px 0px 30px;
-	padding: 10px;
-	opacity: 0.9;
+	margin: 8px 10px;
+	padding: 0px 12px 10px 9px;
+	opacity: 0.95;
 	background-color: white;
-	padding: 15px;
 
-	.braintree {
-		margin-bottom: 20px;
+	> .braintree {
+		min-height: 150px;
 	}
 }
 
