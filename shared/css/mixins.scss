@@ -45,8 +45,8 @@
 
 	$cyph-progress-theme: map-merge($cyph-theme, (
 		primary: map-merge($cyph-primary, (
-			100: rgba(0, 0, 0, 0.15),
-			600: $cyph-progress-foreground
+			lighter: rgba(0, 0, 0, 0.15),
+			default: $cyph-progress-foreground
 		))
 	));
 
@@ -140,7 +140,7 @@
 
 				@include mat-progress-spinner-theme(map-merge($cyph-theme, (
 					primary: map-merge($cyph-primary, (
-						600: map-get(map-get($cyph-message-colors, app), text)
+						default: map-get(map-get($cyph-message-colors, app), text)
 					))
 				)));
 			}
@@ -151,7 +151,7 @@
 
 				@include mat-progress-spinner-theme(map-merge($cyph-theme, (
 					primary: map-merge($cyph-primary, (
-						600: map-get(map-get($cyph-message-colors, me), text)
+						default: map-get(map-get($cyph-message-colors, me), text)
 					))
 				)));
 			}
@@ -162,7 +162,7 @@
 
 				@include mat-progress-spinner-theme(map-merge($cyph-theme, (
 					primary: map-merge($cyph-primary, (
-						600: map-get(map-get($cyph-message-colors, other), text)
+						default: map-get(map-get($cyph-message-colors, other), text)
 					))
 				)));
 			}
