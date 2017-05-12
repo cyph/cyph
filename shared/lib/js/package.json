@@ -9,7 +9,7 @@
     "@angular/flex-layout": "2.0.0-beta.8",
     "@angular/forms": "^4.1.2",
     "@angular/http": "^4.1.2",
-    "@angular/material": "^2.0.0-beta.3",
+    "@angular/material": "^2.0.0-beta.4",
     "@angular/platform-browser": "^4.1.2",
     "@angular/platform-browser-dynamic": "^4.1.2",
     "@angular/platform-server": "^4.1.2",
