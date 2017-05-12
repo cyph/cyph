@@ -31,7 +31,7 @@ body.modest {
 	@include cyph-apply-theme;
 
 	#main-chat-gradient,
-	.message-list-background:after,
+	cyph-chat-message-list:after,
 	.chat-end-message,
 	.abort-screen .image,
 	cyph-footer {

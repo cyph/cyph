@@ -133,9 +133,9 @@
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/@angular/router/-/router-4.1.2.tgz#31b1b126fec2e1c32f4557ef8eb605536adccb27"
 
-"@angular/service-worker@^1.0.0-beta.12":
-  version "1.0.0-beta.12"
-  resolved "https://registry.yarnpkg.com/@angular/service-worker/-/service-worker-1.0.0-beta.12.tgz#0c46389df6bcd38d6e05e1c540c43e3a5c44a1f6"
+"@angular/service-worker@^1.0.0-beta.13":
+  version "1.0.0-beta.13"
+  resolved "https://registry.yarnpkg.com/@angular/service-worker/-/service-worker-1.0.0-beta.13.tgz#fa9383d3cc06d32eabd0fcd2c78a9ea1fe8824da"
   dependencies:
     base64-js "^1.1.2"
     jshashes "^1.0.5"
@@ -1083,9 +1083,9 @@ braces@^1.8.2:
     preserve "^0.2.0"
     repeat-element "^1.1.2"
 
-braintree-web-drop-in@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/braintree-web-drop-in/-/braintree-web-drop-in-1.0.1.tgz#dccdeeb15999962a910b9c2a6df564e3f4b97177"
+braintree-web-drop-in@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/braintree-web-drop-in/-/braintree-web-drop-in-1.0.2.tgz#b68e1b962e33c11682ed2ccb91644f0ed2977d0e"
   dependencies:
     braintree-web "3.15.0"
     browser-detection braintree/browser-detection#1.1.0
@@ -2359,9 +2359,16 @@ domutils@1.1:
   dependencies:
     domelementtype "1"
 
-domutils@1.5.1, domutils@^1.5.1:
+domutils@1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.5.1.tgz#dcd8488a26f563d61079e48c9f7b7e32373682cf"
+  dependencies:
+    dom-serializer "0"
+    domelementtype "1"
+
+domutils@^1.5.1:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.6.2.tgz#1958cc0b4c9426e9ed367fb1c8e854891b0fa3ff"
   dependencies:
     dom-serializer "0"
     domelementtype "1"
@@ -6913,9 +6920,9 @@ prepack-webpack-plugin@^1.1.0:
     prepack "^0.2.0"
     webpack-sources "^0.2.3"
 
-prepack@^0.2.0, prepack@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/prepack/-/prepack-0.2.1.tgz#bb8f203a4fc7a93aa1054b10d8d52d92e4a7aa04"
+prepack@^0.2.0, prepack@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/prepack/-/prepack-0.2.2.tgz#d30e23de7271310016d99f9c3dbd0e9947ebe296"
   dependencies:
     babel-core "^6.8.0"
     babel-generator "^6.8.0"

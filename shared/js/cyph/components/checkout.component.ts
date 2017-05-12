@@ -1,8 +1,7 @@
 /* tslint:disable:no-import-side-effect */
 
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
-import * as braintree from 'braintree-web';
-import 'braintree-web-drop-in';
+import * as braintreeDropIn from 'braintree-web-drop-in';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
 import {util} from '../util';
@@ -17,6 +16,9 @@ import {util} from '../util';
 	templateUrl: '../../../templates/checkout.html'
 })
 export class CheckoutComponent implements OnInit {
+	/* Braintree instance. */
+	private braintreeInstance: any;
+
 	/** Amount in dollars. */
 	@Input() public amount: number;
 
@@ -30,7 +32,7 @@ export class CheckoutComponent implements OnInit {
 	public complete: boolean;
 
 	/** ID of Braintree container element. */
-	public readonly containerID: string	= util.generateGuid();
+	public readonly containerID: string	= `id-${util.generateGuid()}`;
 
 	/** Email address. */
 	@Input() public email: string;
@@ -40,6 +42,9 @@ export class CheckoutComponent implements OnInit {
 
 	/** Name. */
 	@Input() public name: string;
+
+	/** Indicates whether payment is pending. */
+	public pending: boolean;
 
 	/** Indicates whether this will be a recurring purchase. */
 	@Input() public subscription: boolean;
@@ -61,27 +66,42 @@ export class CheckoutComponent implements OnInit {
 			url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
 		});
 
-		/* Temporarily <any> pending github.com/DefinitelyTyped/DefinitelyTyped/issues/16474 */
-		(<any> braintree).dropin.create({
+		braintreeDropIn.create({
 			authorization,
-			paypal: {flow: 'vault'},
 			selector: `#${this.containerID}`
-		}, async (err: any, instance: any) => {
+		}, (err: any, instance: any) => {
 			if (err) {
 				throw err;
 			}
 
-			const {data, paymentMethodErr}	= await new Promise<{
+			this.braintreeInstance	= instance;
+		});
+	}
+
+	/** Submits payment. */
+	public async submit () : Promise<void> {
+		if (!this.braintreeInstance) {
+			this.complete	= true;
+			this.pending	= false;
+			this.success	= false;
+
+			throw new Error('Cannot process payment because Braintree failed to initialize.');
+		}
+
+		try {
+			this.pending		= true;
+
+			const paymentMethod	= await new Promise<{
 				data: any;
-				paymentMethodErr: any;
+				err: any;
 			}>(resolve => {
-				instance.requestPaymentMethod((paymentMethodErr: any, data: any) => {
-					resolve({data, paymentMethodErr});
+				this.braintreeInstance.requestPaymentMethod((err: any, data: any) => {
+					resolve({data, err});
 				});
 			});
 
-			if (paymentMethodErr) {
-				throw paymentMethodErr;
+			if (paymentMethod.err) {
+				throw paymentMethod.err;
 			}
 
 			this.success	= 'true' === await util.request({
@@ -92,7 +112,7 @@ export class CheckoutComponent implements OnInit {
 					email: this.email,
 					item: this.item,
 					name: this.name,
-					nonce: data.nonce,
+					nonce: paymentMethod.data.nonce,
 					subscription: this.subscription
 				},
 				method: 'POST',
@@ -102,7 +122,10 @@ export class CheckoutComponent implements OnInit {
 			);
 
 			this.complete	= true;
-		});
+		}
+		finally {
+			this.pending	= false;
+		}
 	}
 
 	constructor (

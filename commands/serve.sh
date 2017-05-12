@@ -83,14 +83,14 @@ else
 	cat ~/.cyph/braintree.sandbox >> backend/.build.yaml
 fi
 
-mkdir /tmp/cyph0;
-go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 backend/.build.yaml;
+mkdir /tmp/cyph0
+go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 backend/.build.yaml
 
-mkdir /tmp/cyph1;
-appserver --port 5001 --admin_port 6001 --host 0.0.0.0 --storage_path /tmp/cyph1 cyph.com/.build.yaml;
+mkdir /tmp/cyph1
+appserver --port 5001 --admin_port 6001 --host 0.0.0.0 --storage_path /tmp/cyph1 cyph.com/.build.yaml
 
-mkdir /tmp/cyph2;
-appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.ws/.build.yaml;
+mkdir /tmp/cyph2
+appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.ws/.build.yaml
 
 if [ "${prodlike}" ] ; then
 	start="$(date +%s)"
@@ -106,7 +106,7 @@ if [ "${prodlike}" ] ; then
 	cd ..
 
 	echo -e "\n\n\nLocal env ready ($(expr $(date +%s) - $start)s)\n\n"
-	sleep infinity
+	sleep Infinity
 else
 	# bash -c 'sleep 90 ; ./commands/docs.sh > /dev/null 2>&1' &
 	./commands/build.sh --watch

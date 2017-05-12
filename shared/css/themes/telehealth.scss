@@ -41,7 +41,7 @@ body.telehealth {
 		width: 42vh;
 	}
 
-	.message-list-background:after, .chat-end-message, .abort-screen .image {
+	cyph-chat-message-list:after, .chat-end-message, .abort-screen .image {
 		display: none !important;
 	}
 }
