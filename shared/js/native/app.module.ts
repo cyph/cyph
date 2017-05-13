@@ -1,7 +1,10 @@
-import {NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
-import {RouterModule} from '@angular/router';
+import {NgModule, NgModuleFactoryLoader, NO_ERRORS_SCHEMA} from '@angular/core';
+import {Title} from '@angular/platform-browser';
+import {NativeScriptAnimationsModule} from 'nativescript-angular/animations';
+import {NativeScriptFormsModule} from 'nativescript-angular/forms';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {NativeScriptModule} from 'nativescript-angular/nativescript.module';
+import {NativeScriptRouterModule, NSModuleFactoryLoader} from 'nativescript-angular/router';
 import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
@@ -16,6 +19,7 @@ import {LocalStorageService} from './js/cyph/services/local-storage.service';
 import {NativeDialogImageComponent} from './native-dialog-image.component';
 import {NativeDialogService} from './native-dialog.service';
 import {NativeLocalStorageService} from './native-local-storage.service';
+import {NativeTitleService} from './native-title.service';
 
 
 /**
@@ -30,10 +34,13 @@ import {NativeLocalStorageService} from './native-local-storage.service';
 	],
 	entryComponents: [HelpComponent],
 	imports: [
-		RouterModule.forRoot(appRoutes, {useHash: true}),
+		NativeScriptRouterModule.forRoot(appRoutes),
 		CyphAppModule,
 		CyphCommonModule,
-		NativeScriptModule
+		NativeScriptAnimationsModule,
+		NativeScriptFormsModule,
+		NativeScriptModule,
+		NativeScriptRouterModule
 	],
 	providers: [
 		AppService,
@@ -47,8 +54,16 @@ import {NativeLocalStorageService} from './native-local-storage.service';
 			useClass: NativeLocalStorageService
 		},
 		{
+			provide: NgModuleFactoryLoader,
+			useClass: NSModuleFactoryLoader
+		},
+		{
 			provide: PotassiumService,
 			useClass: MainThreadPotassiumService
+		},
+		{
+			provide: Title,
+			useClass: NativeTitleService
 		}
 	],
 	schemas: [NO_ERRORS_SCHEMA]

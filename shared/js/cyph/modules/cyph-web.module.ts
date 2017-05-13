@@ -19,6 +19,8 @@ import {
 	MdTooltipModule
 } from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {RouterModule} from '@angular/router';
 import {
 	SmdFabSpeedDialActions,
 	SmdFabSpeedDialComponent,
@@ -46,6 +48,7 @@ import {MaterialDialogService} from '../services/material-dialog.service';
 		SmdFabSpeedDialTrigger
 	],
 	exports: [
+		BrowserAnimationsModule,
 		BrowserModule,
 		DialogAlertComponent,
 		DialogConfirmComponent,
@@ -68,11 +71,13 @@ import {MaterialDialogService} from '../services/material-dialog.service';
 		MdTabsModule,
 		MdTooltipModule,
 		NanoScrollerDirective,
+		RouterModule,
 		SmdFabSpeedDialActions,
 		SmdFabSpeedDialComponent,
 		SmdFabSpeedDialTrigger
 	],
 	imports: [
+		BrowserAnimationsModule,
 		BrowserModule,
 		FlexLayoutModule,
 		FormsModule,
@@ -89,7 +94,8 @@ import {MaterialDialogService} from '../services/material-dialog.service';
 		MdSlideToggleModule,
 		MdSnackBarModule,
 		MdTabsModule,
-		MdTooltipModule
+		MdTooltipModule,
+		RouterModule
 	],
 	providers: [
 		{
