@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import {ModalDialogParams} from 'nativescript-angular/modal-dialog';
-import {DialogImageComponent} from './js/cyph/components/dialog-image.component';
 
 
 /**
@@ -11,10 +10,11 @@ import {DialogImageComponent} from './js/cyph/components/dialog-image.component'
 	styleUrls: ['./css/components/dialog-image.scss'],
 	templateUrl: './templates/dialog-image.html'
 })
-export class NativeDialogImageComponent extends DialogImageComponent {
-	constructor (params: ModalDialogParams) {
-		super();
+export class DialogImageComponent {
+	/** Image src. */
+	public src: string;
 
+	constructor (params: ModalDialogParams) {
 		this.src	= params.context;
 	}
 }
