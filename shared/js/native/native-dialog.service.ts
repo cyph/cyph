@@ -3,9 +3,9 @@ import {ComponentType} from '@angular/material';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {SnackBar} from 'nativescript-snackbar';
 import {alert, confirm} from 'tns-core-modules/ui/dialogs';
+import {DialogImageComponent} from './dialog-image.component';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {util} from './js/cyph/util';
-import {NativeDialogImageComponent} from './native-dialog-image.component';
 
 
 /**
@@ -14,10 +14,10 @@ import {NativeDialogImageComponent} from './native-dialog-image.component';
 @Injectable()
 export class NativeDialogService implements DialogService {
 	/** @ignore */
-	private readonly lock: {}	= {};
+	private readonly lock: {}			= {};
 
 	/** @ignore */
-	private readonly snackbar	= new SnackBar();
+	private readonly snackbar: SnackBar	= new SnackBar();
 
 	/** @inheritDoc */
 	public async alert (o: {content: string; ok: string; title: string}) : Promise<void> {
@@ -71,7 +71,7 @@ export class NativeDialogService implements DialogService {
 	/** @inheritDoc */
 	public async image (src: string) : Promise<void> {
 		return util.lock(this.lock, async () => {
-			await this.modalDialogService.showModal(NativeDialogImageComponent, {context: src});
+			await this.modalDialogService.showModal(DialogImageComponent, {context: src});
 		});
 	}
 
