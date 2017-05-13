@@ -16,13 +16,9 @@ import {SignupFormComponent} from '../components/signup-form.component';
 import {TranslateDirective} from '../directives/translate.directive';
 import {AnalyticsService} from '../services/analytics.service';
 import {ConfigService} from '../services/config.service';
-import {PotassiumService} from '../services/crypto/potassium.service';
-import {DatabaseService} from '../services/database.service';
-import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {ErrorService} from '../services/error.service';
 import {FileService} from '../services/file.service';
-import {HtmlSanitizerService} from '../services/html-sanitizer.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {NotificationService} from '../services/notification.service';
 import {SignupService} from '../services/signup.service';
@@ -75,15 +71,11 @@ import {CyphWebModule} from './cyph-web.module';
 	providers: [
 		AnalyticsService,
 		ConfigService,
-		DatabaseService,
-		DialogService,
 		EnvService,
 		ErrorService,
 		FileService,
-		HtmlSanitizerService,
 		LocalStorageService,
 		NotificationService,
-		PotassiumService,
 		SignupService,
 		StringsService,
 		Title,
