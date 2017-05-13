@@ -16,6 +16,7 @@ import {NativeScriptRouterModule, NSModuleFactoryLoader} from 'nativescript-angu
 import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
+import {DialogImageComponent} from './dialog-image.component';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 import {HelpComponent} from './js/cyph/components/help.component';
 import {CyphAppModule} from './js/cyph/modules/cyph-app.module';
@@ -24,7 +25,6 @@ import {MainThreadPotassiumService} from './js/cyph/services/crypto/main-thread-
 import {PotassiumService} from './js/cyph/services/crypto/potassium.service';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {LocalStorageService} from './js/cyph/services/local-storage.service';
-import {NativeDialogImageComponent} from './native-dialog-image.component';
 import {NativeDialogService} from './native-dialog.service';
 import {NativeLocalStorageService} from './native-local-storage.service';
 import {NativeTitleService} from './native-title.service';
@@ -37,7 +37,7 @@ import {NativeTitleService} from './native-title.service';
 	bootstrap: [AppComponent],
 	declarations: [
 		AppComponent,
-		NativeDialogImageComponent,
+		DialogImageComponent,
 		EphemeralChatRootComponent
 	],
 	entryComponents: [HelpComponent],
