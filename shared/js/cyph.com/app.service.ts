@@ -118,7 +118,7 @@ export class AppService {
 						)[1] || ''
 					;
 
-					await this.dialogService.baseDialog(BetaRegisterComponent, undefined, o => {
+					await this.dialogService.baseDialog(BetaRegisterComponent, o => {
 						o.invite	= true;
 					});
 

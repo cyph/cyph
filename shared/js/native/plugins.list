@@ -19,5 +19,6 @@ nativescript-ngx-fonticon
 nativescript-permissions
 nativescript-phone
 nativescript-secure-storage
+nativescript-snackbar
 nativescript-social-share
 nativescript-websockets
