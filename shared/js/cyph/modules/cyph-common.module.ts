@@ -1,9 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
-import {FormsModule} from '@angular/forms';
 import {Title} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {RouterModule} from '@angular/router';
 import {ChatCyphertextListComponent} from '../components/chat-cyphertext-list.component';
 import {ChatCyphertextComponent} from '../components/chat-cyphertext.component';
 import {ChatMainComponent} from '../components/chat-main.component';
@@ -56,7 +53,6 @@ import {CyphWebModule} from './cyph-web.module';
 		TranslateDirective
 	],
 	exports: [
-		BrowserAnimationsModule,
 		ChatCyphertextComponent,
 		ChatCyphertextListComponent,
 		ChatMainComponent,
@@ -66,20 +62,15 @@ import {CyphWebModule} from './cyph-web.module';
 		CommonModule,
 		ContactComponent,
 		FileInputComponent,
-		FormsModule,
 		HelpComponent,
 		MarkdownComponent,
 		RedirectComponent,
-		RouterModule,
 		SignupFormComponent,
 		TranslateDirective
 	],
 	imports: [
-		BrowserAnimationsModule,
 		CommonModule,
-		CyphWebModule,
-		FormsModule,
-		RouterModule
+		CyphWebModule
 	],
 	providers: [
 		AnalyticsService,
