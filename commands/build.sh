@@ -123,7 +123,7 @@ compile () {
 	cd "${outputDir}"
 
 	if [ "${cloneworkingdir}" ] ; then
-		../commands/copyworkspace.sh --client-only ~/.build
+		../commands/copyworkspace.sh ~/.build
 		cd ~/.build/shared
 	fi
 
