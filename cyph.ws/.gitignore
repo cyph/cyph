@@ -1,4 +1,10 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+# Cyph project bind mounts (see commands/cliprojectinit.sh)
+
+favicon.ico
+src/assets
+src/css
+src/js
+src/templates
 
 # compiled output
 /dist
