@@ -4,7 +4,7 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
 tmpDir="$(mktemp -d)"
-./commands/copyworkspace.sh --client-only "${tmpDir}"
+./commands/copyworkspace.sh "${tmpDir}"
 cd "${tmpDir}/shared"
 
 # Validate component template/stylesheet count consistency
