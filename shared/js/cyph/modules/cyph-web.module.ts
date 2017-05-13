@@ -19,12 +19,19 @@ import {
 	MdTooltipModule
 } from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {RouterModule} from '@angular/router';
 import {
 	SmdFabSpeedDialActions,
 	SmdFabSpeedDialComponent,
 	SmdFabSpeedDialTrigger
 } from 'angular-smd/src/app/shared/component/smd-fab-speed-dial';
+import {DialogAlertComponent} from '../components/dialog-alert.component';
+import {DialogConfirmComponent} from '../components/dialog-confirm.component';
+import {DialogImageComponent} from '../components/dialog-image.component';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
+import {DialogService} from '../services/dialog.service';
+import {MaterialDialogService} from '../services/material-dialog.service';
 
 
 /**
@@ -32,13 +39,20 @@ import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
  */
 @NgModule({
 	declarations: [
+		DialogAlertComponent,
+		DialogConfirmComponent,
+		DialogImageComponent,
 		NanoScrollerDirective,
 		SmdFabSpeedDialActions,
 		SmdFabSpeedDialComponent,
 		SmdFabSpeedDialTrigger
 	],
 	exports: [
+		BrowserAnimationsModule,
 		BrowserModule,
+		DialogAlertComponent,
+		DialogConfirmComponent,
+		DialogImageComponent,
 		FlexLayoutModule,
 		FormsModule,
 		MdButtonModule,
@@ -57,11 +71,13 @@ import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 		MdTabsModule,
 		MdTooltipModule,
 		NanoScrollerDirective,
+		RouterModule,
 		SmdFabSpeedDialActions,
 		SmdFabSpeedDialComponent,
 		SmdFabSpeedDialTrigger
 	],
 	imports: [
+		BrowserAnimationsModule,
 		BrowserModule,
 		FlexLayoutModule,
 		FormsModule,
@@ -78,7 +94,14 @@ import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 		MdSlideToggleModule,
 		MdSnackBarModule,
 		MdTabsModule,
-		MdTooltipModule
+		MdTooltipModule,
+		RouterModule
+	],
+	providers: [
+		{
+			provide: DialogService,
+			useClass: MaterialDialogService
+		}
 	]
 })
 /* tslint:disable-next-line:no-stateless-class */

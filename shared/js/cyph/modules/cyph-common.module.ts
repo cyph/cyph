@@ -1,9 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
-import {FormsModule} from '@angular/forms';
 import {Title} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {RouterModule} from '@angular/router';
 import {ChatCyphertextListComponent} from '../components/chat-cyphertext-list.component';
 import {ChatCyphertextComponent} from '../components/chat-cyphertext.component';
 import {ChatMainComponent} from '../components/chat-main.component';
@@ -11,9 +8,6 @@ import {ChatMessageBoxComponent} from '../components/chat-message-box.component'
 import {ChatMessageListComponent} from '../components/chat-message-list.component';
 import {ChatMessageComponent} from '../components/chat-message.component';
 import {ContactComponent} from '../components/contact.component';
-import {DialogAlertComponent} from '../components/dialog-alert.component';
-import {DialogConfirmComponent} from '../components/dialog-confirm.component';
-import {DialogImageComponent} from '../components/dialog-image.component';
 import {FileInputComponent} from '../components/file-input.component';
 import {HelpComponent} from '../components/help.component';
 import {MarkdownComponent} from '../components/markdown.component';
@@ -22,13 +16,9 @@ import {SignupFormComponent} from '../components/signup-form.component';
 import {TranslateDirective} from '../directives/translate.directive';
 import {AnalyticsService} from '../services/analytics.service';
 import {ConfigService} from '../services/config.service';
-import {PotassiumService} from '../services/crypto/potassium.service';
-import {DatabaseService} from '../services/database.service';
-import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {ErrorService} from '../services/error.service';
 import {FileService} from '../services/file.service';
-import {HtmlSanitizerService} from '../services/html-sanitizer.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {NotificationService} from '../services/notification.service';
 import {SignupService} from '../services/signup.service';
@@ -51,9 +41,6 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageBoxComponent,
 		ChatMessageListComponent,
 		ContactComponent,
-		DialogAlertComponent,
-		DialogConfirmComponent,
-		DialogImageComponent,
 		FileInputComponent,
 		HelpComponent,
 		MarkdownComponent,
@@ -62,7 +49,6 @@ import {CyphWebModule} from './cyph-web.module';
 		TranslateDirective
 	],
 	exports: [
-		BrowserAnimationsModule,
 		ChatCyphertextComponent,
 		ChatCyphertextListComponent,
 		ChatMainComponent,
@@ -71,37 +57,25 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageListComponent,
 		CommonModule,
 		ContactComponent,
-		DialogAlertComponent,
-		DialogConfirmComponent,
-		DialogImageComponent,
 		FileInputComponent,
-		FormsModule,
 		HelpComponent,
 		MarkdownComponent,
 		RedirectComponent,
-		RouterModule,
 		SignupFormComponent,
 		TranslateDirective
 	],
 	imports: [
-		BrowserAnimationsModule,
 		CommonModule,
-		CyphWebModule,
-		FormsModule,
-		RouterModule
+		CyphWebModule
 	],
 	providers: [
 		AnalyticsService,
 		ConfigService,
-		DatabaseService,
-		DialogService,
 		EnvService,
 		ErrorService,
 		FileService,
-		HtmlSanitizerService,
 		LocalStorageService,
 		NotificationService,
-		PotassiumService,
 		SignupService,
 		StringsService,
 		Title,
