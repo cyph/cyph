@@ -97,7 +97,7 @@ for (let subresource of subresources) {
 }
 
 
-const output	= $.html().trim().replace(/use strict/g, '');
+const output	= $.html().trim();
 
 fs.writeFileSync(
 	args.outputPath,

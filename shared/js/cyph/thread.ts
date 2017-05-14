@@ -10,7 +10,7 @@ export class Thread implements IThread {
 	/** @ignore */
 	private static stringifyFunction (f: Function) : string {
 		const s: string	= f.toString();
-		return s.slice(s.indexOf('{'));
+		return s.slice(s.indexOf('{')).replace(/use strict/g, '');
 	}
 
 	/** @ignore */
