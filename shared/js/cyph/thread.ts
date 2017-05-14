@@ -14,7 +14,10 @@ export class Thread implements IThread {
 	}
 
 	/** @ignore */
-	private static threadEnvSetup (threadSetupVars: any, importScripts: Function) : void {
+	private static threadEnvSetup () : void {
+		let importScripts: Function	= (<any> self).importScripts;
+		let threadSetupVars: any	= (<any> self).threadSetupVars;
+
 		/* Inherit these from main thread */
 
 		(<any> self).customBuild		= threadSetupVars.customBuild;
