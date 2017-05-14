@@ -235,7 +235,6 @@ for platform in android ios ; do
 	`)' >> main.${platform}.js
 	cat app/main.${platform}.js >> main.${platform}.js
 
-	sed -i 's|use strict||g' main.${platform}.js
 	sed -i "s|importScripts('/lib/js/|importScripts('/|g" main.${platform}.js
 	sed -i "s|importScripts('/js/|importScripts('/app/js/|g" main.${platform}.js
 	/cyph/commands/websign/threadpack.js main.${platform}.js
