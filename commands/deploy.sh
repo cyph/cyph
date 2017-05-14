@@ -8,7 +8,6 @@ originalArgs="${*}"
 
 cacheBustedProjects='cyph.com cyph.ws'
 compiledProjects='cyph.com cyph.ws'
-allCompiledProjects="${compiledProjects}"
 webSignedProject='cyph.ws'
 prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='im io me video audio'
@@ -227,15 +226,18 @@ if [ "${cacheBustedProjects}" ] ; then
 		fi
 
 		if [ ! '${simple}' ] && ( [ ! '${site}' ] || [ '${site}' == cyph.com ] ) ; then
-			rm -rf cyph.com/blog 2> /dev/null
-			mkdir -p cyph.com/blog
-			cd cyph.com/blog
+			rm -rf wpstatic 2> /dev/null
+			mkdir -p wpstatic/blog
+			cp cyph.com/cyph-com.yaml wpstatic/
+			cd wpstatic/blog
 			../../commands/wpstatic.sh '${homeURL}' >> ../../.wpstatic.output 2>&1
 			cd ../..
 		fi
 
 		while [ ! -f .build.done ] ; do sleep 1 ; done
 		rm .build.done
+		mv wpstatic/* cyph.com/
+		rmdir wpstatic
 
 		# Cache bust
 		echo 'Cache bust' >> .wpstatic.output 2>&1
@@ -254,7 +256,7 @@ fi
 if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedProject}" ] ) ; then
 	cd websign
 	websignHashWhitelist="$(cat hashwhitelist.json)"
-	cp -rf ../shared/img ./
+	cp -rf ../shared/assets/img ./
 	../commands/websign/pack.js index.html index.html
 	cd ..
 fi
@@ -263,48 +265,38 @@ fi
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
 	./commands/lint.sh || exit 1
+	./commands/buildunbundledassets.sh || exit 1
 fi
 for d in $compiledProjects ; do
-	echo "Build $(projectname ${d})"
+	echo "Build $(projectname "${d}")"
 
-	for sharedResource in $(ls shared) ; do
-		rm -rf ${d}/${sharedResource} 2> /dev/null
-		cp -rf shared/${sharedResource} ${d}/
-	done
-
-	cd ${d}
-
-	for altD in $allCompiledProjects ; do
-		if [ "${d}" == "${altD}" ] ; then
-			continue
-		fi
-
-		find js -mindepth 1 -maxdepth 1 -type d -name "${altD}" -exec rm -rf {} \;
-	done
+	cd "${d}"
 
 	if [ "${websign}" -a "${d}" == "${webSignedProject}" ] ; then
 		# Block importScripts in Workers in WebSigned environments
-		cat js/cyph/thread.ts | \
+		cat src/js/cyph/thread.ts | \
 			tr '\n' '☁' | \
 			perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw new Error(`Cannot load external script \${s}.`); };/' | \
 			tr '☁' '\n' | \
 			grep -v oldImportScripts \
-		> js/cyph/thread.ts.new
-		mv js/cyph/thread.ts.new js/cyph/thread.ts
+		> src/js/cyph/thread.ts.new
+		mv src/js/cyph/thread.ts.new src/js/cyph/thread.ts
 
 		# Merge in base64'd images, fonts, video, and audio
 		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
 	fi
 
-	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit 1
-
-	mv .index.html index.html
+	if [ "${simple}" ] ; then
+		ng build --no-aot --sourcemaps || exit 1
+	else
+		../commands/prodbuild.sh || exit 1
+	fi
 
 	if [ "${d}" == 'cyph.com' ] ; then node -e '
-		const $	= require("cheerio").load(fs.readFileSync("index.html").toString());
+		const $	= require("cheerio").load(fs.readFileSync("dist/index.html").toString());
 
-		$(`link[href="/css/loading.css"]`).replaceWith(`<style>${
-			fs.readFileSync("css/loading.css").toString()
+		$(`link[href="/assets/css/loading.css"]`).replaceWith(`<style>${
+			fs.readFileSync("dist/assets/css/loading.css").toString()
 		}</style>`);
 
 		/*
@@ -316,19 +308,15 @@ for d in $compiledProjects ; do
 		});
 		*/
 
-		fs.writeFileSync("index.html", $.html().trim());
+		fs.writeFileSync("dist/index.html", $.html().trim());
 	' ; fi
 
-	rm -rf js/node_modules
-	find css -type f \( -name '*.scss' -or -name '*.map' \) -exec rm {} \;
-	find js -type f \( -name '*.ts' -or -name '*.map' \) -exec rm {} \;
-
-	if [ ! "${simple}" ] ; then
-		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace index.html -o index.html.new
-		mv index.html.new index.html
-	fi
+	mv *.html *.yaml sitemap.xml dist/
 
 	cd ..
+
+	mv "${d}" "${d}.src"
+	mv "${d}.src/dist" "${d}"
 done
 touch .build.done
 
@@ -351,18 +339,9 @@ if [ "${websign}" ] ; then
 	echo "WebSign ${package}"
 
 	# Merge imported libraries into threads
-	find js -type f -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
+	find . -type f -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
 	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.ws
-
-	find . \
-		-mindepth 1 -maxdepth 1 \
-		-not -name '*.html' \
-		-not -name '*.js' \
-		-not -name '*.yaml' \
-		-not -name 'img' \
-		-not -name 'favicon.ico' \
-		-exec rm -rf {} \;
 
 	cd ..
 
@@ -496,9 +475,6 @@ if [ "${waitingForWpstatic}" ] ; then
 	done
 	rm .wpstatic.done .wpstatic.output
 fi
-
-
-find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favicon.ico {}/ \;
 
 
 if [ "${test}" ] ; then
