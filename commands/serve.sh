@@ -10,7 +10,7 @@ ngserve () {
 	cd "${1}"
 	shift
 	../commands/cliprojectinit.sh
-	ng serve ${*}
+	ng serve --host '0.0.0.0' ${*}
 }
 
 
@@ -36,8 +36,9 @@ dev_appserver.py \
 	backend/.build.yaml \
 &
 
-ngserve cyph.com --port 5001 &
-
 ngserve cyph.ws --port 5002 &
+sleep 60000
+
+ngserve cyph.com --port 5001 &
 
 sleep Infinity
