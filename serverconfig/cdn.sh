@@ -2,6 +2,7 @@
 
 # CDN node setup script for Ubuntu 16.04
 
+
 cert='ASK RYAN FOR THIS'
 key='ASK RYAN FOR THIS'
 githubToken='ASK RYAN FOR THIS'

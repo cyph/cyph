@@ -1,8 +1,10 @@
 #!/bin/bash
 
+
 outputDir="$PWD"
 cd $(cd "$(dirname "$0")" ; pwd)/..
 rootDir="$PWD"
+
 
 externals="{
 	'_stream_duplex': 'undefined',

@@ -2,6 +2,7 @@
 
 # Air Gapped Signing Environment setup script for Debian 8.5 on BeagleBone Black
 
+
 activeKeys='4'
 backupKeys='21'
 localAddress='10.0.0.42'
