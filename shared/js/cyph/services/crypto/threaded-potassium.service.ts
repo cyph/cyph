@@ -296,7 +296,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 				importScripts: Function,
 				locals: {eventId: string; isNative: boolean}
 			) : Promise<void> {
-				importScripts('/js/cyph/crypto/potassium/index.js');
+				importScripts('/assets/js/cyph/crypto/potassium/index.js');
 
 				const potassium: IPotassium			= new Potassium(locals.isNative);
 				const threadEvents: ThreadEvents	= new ThreadEvents(locals.eventId);
