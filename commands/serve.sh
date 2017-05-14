@@ -6,6 +6,10 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 eval "$(./commands/getgitdata.sh)"
 
+blockoomkiller () {
+	sudo bash -c "echo -17 > /proc/${1}/oom_adj ; renice -20 ${1}" > /dev/null
+}
+
 ngserve () {
 	cd "${1}"
 	../commands/ngprojectinit.sh
@@ -13,9 +17,8 @@ ngserve () {
 }
 
 
-./commands/buildunbundledassets.sh
-
 node /node_modules/.bin/firebase-server -p 44000 &
+blockoomkiller ${!}
 
 cp -f backend/app.yaml backend/.build.yaml
 
@@ -36,10 +39,15 @@ dev_appserver.py \
 	--storage_path /tmp/cyph0 \
 	backend/.build.yaml \
 &
+blockoomkiller ${!}
+
+./commands/buildunbundledassets.sh
 
 ngserve cyph.ws 42002 &
+blockoomkiller ${!}
 sleep 60
 
 ngserve cyph.com 42001 &
+blockoomkiller ${!}
 
 sleep Infinity
