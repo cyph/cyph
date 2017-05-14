@@ -17,7 +17,7 @@ nodeModulesAssets="$(
 		uniq
 )"
 
-typescriptAssets="cyph/crypto/native-web-crypto-polyfill $(
+typescriptAssets="cyph/crypto/native-web-crypto-polyfill standalone/analytics $(
 	grep -roP "importScripts\('/assets/js/.*?\.js'\)" shared/js |
 		perl -pe "s/^.*?'\/assets\/js\/(.*?)\.js'.*/\1/g" |
 		grep -vP '^standalone/global$' |

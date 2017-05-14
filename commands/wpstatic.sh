@@ -254,9 +254,9 @@ for f in $(find . -name '*.html') ; do node -e "
 			});
 		})))
 	).then(() =>\$('head').append(\`
-		<script defer src='/lib/js/node_modules/core-js/client/shim.js'></script>
-		<script defer src='/js/standalone/global.js'></script>
-		<script defer src='/js/standalone/analytics.js'></script>
+		<script defer src='/assets/node_modules/core-js/client/shim.js'></script>
+		<script defer src='/assets/js/standalone/global.js'></script>
+		<script defer src='/assets/js/standalone/analytics.js'></script>
 	\`)).then(() => fs.writeFileSync('${f}', htmlMinifier.minify(
 		\$.html().trim(),
 		{
