@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 if [ -d ~/tmpgit ] ; then
 	exit
 fi

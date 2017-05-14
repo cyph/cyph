@@ -2,6 +2,7 @@
 
 # WebSign HPKP re-key script, for denying availability after the first use
 
+
 mkdir -p /etc/nginx/ssl/tmp
 cd /etc/nginx/ssl/tmp
 

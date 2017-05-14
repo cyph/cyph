@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 dir="$PWD"
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
