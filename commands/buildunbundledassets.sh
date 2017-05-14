@@ -108,7 +108,7 @@ for f in ${typescriptAssets} ; do
 				path: '${PWD}'
 			},
 			resolve: {
-				extensions: ['.ts'],
+				extensions: ['.js', '.ts'],
 				plugins: [
 					new TsConfigPathsPlugin({
 						compiler: "typescript",
