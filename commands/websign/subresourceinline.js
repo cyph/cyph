@@ -18,18 +18,17 @@ const args			= {
 
 
 const filesToMerge	= childProcess.spawnSync('find', [
-	'audio',
-	'fonts',
-	'img',
-	'video',
+	'src/assets',
 	'-type',
 	'f'
 ]).stdout.toString().split('\n').filter(s => s);
 
 const filesToModify	= [
-	{dir: 'css', ext: 'scss'},
-	{dir: 'js', ext: 'ts'},
-	{dir: 'templates', ext: 'html'}
+	{dir: 'src/assets/css', ext: 'css'},
+	{dir: 'src/assets/js', ext: 'js'},
+	{dir: 'src/css', ext: 'scss'},
+	{dir: 'src/js', ext: 'ts'},
+	{dir: 'src/templates', ext: 'html'}
 ].reduce((arr, o) =>
 	arr.concat(
 		childProcess.spawnSync('find', [
@@ -40,7 +39,7 @@ const filesToModify	= [
 			'f'
 		]).stdout.toString().split('\n')
 	),
-	['index.html']
+	['src/index.html']
 ).filter(s => s);
 
 
