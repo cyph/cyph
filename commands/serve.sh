@@ -8,9 +8,8 @@ eval "$(./commands/getgitdata.sh)"
 
 ngserve () {
 	cd "${1}"
-	shift
 	../commands/ngprojectinit.sh
-	ng serve --host '0.0.0.0' ${*}
+	ng serve --host '0.0.0.0' --port "${2}" --sourcemaps
 }
 
 
@@ -36,9 +35,9 @@ dev_appserver.py \
 	backend/.build.yaml \
 &
 
-ngserve cyph.ws --port 42002 &
+ngserve cyph.ws 42002 &
 sleep 60000
 
-ngserve cyph.com --port 42001 &
+ngserve cyph.com 42001 &
 
 sleep Infinity
