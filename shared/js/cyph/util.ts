@@ -410,7 +410,11 @@ export class Util {
 	 * @param defaultValue Falls back to this if no translation exists.
 	 */
 	public translate (text: string, defaultValue: string = text) : string {
-		return (translations[env.language] || {})[text] || defaultValue;
+		if (!translations || !translations[env.language] || !translations[env.language][text]) {
+			return defaultValue;
+		}
+
+		return translations[env.language][text];
 	}
 
 	/** Simulates a click on elem. */
