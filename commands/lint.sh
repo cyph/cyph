@@ -56,6 +56,8 @@ node -e "
 	/* Pending Angular AOT fix */
 	tsconfig.compilerOptions.noUnusedParameters	= true;
 
+	tsconfig.compilerOptions.paths	= undefined;
+
 	tsconfig.files	=
 		'$(cd js ; find . -type f -name '*.ts' | tr '\n' ' ')typings/index.d.ts'.split(' ')
 	;
