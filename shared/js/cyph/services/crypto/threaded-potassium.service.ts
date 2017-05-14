@@ -287,16 +287,18 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 
 		(async () => { this.thread	= new Thread(
 			/* tslint:disable-next-line:only-arrow-functions */
-			async function (
-				/* tslint:disable-next-line:variable-name */
-				Potassium: any,
-				/* tslint:disable-next-line:variable-name */
-				ThreadEvents: any,
-				eventManager: EventManager,
-				importScripts: Function,
-				locals: {eventId: string; isNative: boolean}
-			) : Promise<void> {
+			async function (this: any) : Promise<void> {
+				/* tslint:disable-next-line:no-invalid-this */
+				const importScripts: Function						= this.importScripts;
 				importScripts('/assets/js/cyph/crypto/potassium/index.js');
+				/* tslint:disable-next-line:no-invalid-this variable-name */
+				const Potassium: any								= this.Potassium;
+				/* tslint:disable-next-line:no-invalid-this variable-name */
+				const ThreadEvents: any								= this.ThreadEvents;
+				/* tslint:disable-next-line:no-invalid-this */
+				const eventManager: EventManager					= this.eventManager;
+				/* tslint:disable-next-line:no-invalid-this */
+				const locals: {eventId: string; isNative: boolean}	= this.locals;
 
 				const potassium: IPotassium			= new Potassium(locals.isNative);
 				const threadEvents: ThreadEvents	= new ThreadEvents(locals.eventId);
