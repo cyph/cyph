@@ -13,6 +13,8 @@ ngserve () {
 }
 
 
+./commands/buildunbundledassets.sh
+
 node /node_modules/.bin/firebase-server -p 44000 &
 
 cp -f backend/app.yaml backend/.build.yaml

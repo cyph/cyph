@@ -34,8 +34,8 @@ export class Thread implements IThread {
 
 		/* Normalisation to increase compatibility with web libraries */
 
-		importScripts('/lib/js/node_modules/core-js/client/shim.js');
-		importScripts('/js/standalone/global.js');
+		importScripts('/assets/node_modules/core-js/client/shim.js');
+		importScripts('/assets/js/standalone/global.js');
 
 
 		/* Allow destroying the Thread object from within the thread */
@@ -76,12 +76,12 @@ export class Thread implements IThread {
 			};
 		}
 
-		importScripts('/js/cyph/crypto/web-crypto-polyfill.js');
+		importScripts('/assets/js/cyph/crypto/web-crypto-polyfill.js');
 		(<any> self).webCryptoPolyfill(new Uint8Array(threadSetupVars.seed));
-		importScripts('/lib/js/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js');
+		importScripts('/assets/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js');
 		(<any> self).sodium.memzero(threadSetupVars.seed);
 
-		importScripts('/js/cyph/base.js');
+		importScripts('/assets/js/cyph/base.js');
 
 		threadSetupVars	= undefined;
 	}
