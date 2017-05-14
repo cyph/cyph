@@ -15,5 +15,5 @@ cp -a $(ls | grep -vP '^(lib|node_modules)$') "${dir}/shared/"
 
 for d in cyph.com cyph.ws ; do
 	cd "${dir}/${d}"
-	../commands/cliprojectinit.sh
+	../commands/ngprojectinit.sh
 done

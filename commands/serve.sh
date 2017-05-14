@@ -9,7 +9,7 @@ eval "$(./commands/getgitdata.sh)"
 ngserve () {
 	cd "${1}"
 	shift
-	../commands/cliprojectinit.sh
+	../commands/ngprojectinit.sh
 	ng serve --host '0.0.0.0' ${*}
 }
 
