@@ -483,11 +483,11 @@ switch (args.command) {
 
 	case 'serve':
 		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42000:5000');
+		commandAdditionalArgs.push('42000:42000');
 		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42001:5001');
+		commandAdditionalArgs.push('42001:42001');
 		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42002:5002');
+		commandAdditionalArgs.push('42002:42002');
 		commandAdditionalArgs.push('-p');
 		commandAdditionalArgs.push('44000:44000');
 

@@ -29,16 +29,16 @@ fi
 mkdir /tmp/cyph0
 dev_appserver.py \
 	--skip_sdk_update_check \
-	--port 5000 \
+	--port 42000 \
 	--admin_port 6000 \
 	--host 0.0.0.0 \
 	--storage_path /tmp/cyph0 \
 	backend/.build.yaml \
 &
 
-ngserve cyph.ws --port 5002 &
+ngserve cyph.ws --port 42002 &
 sleep 60000
 
-ngserve cyph.com --port 5001 &
+ngserve cyph.com --port 42001 &
 
 sleep Infinity
