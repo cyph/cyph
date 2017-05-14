@@ -11,10 +11,7 @@ dir="$(realpath "${1}")"
 cd "${source}"
 cp -a $(ls | grep -vP '^shared$') "${dir}/"
 cd shared
-cp -a $(ls | grep -vP '^lib$') "${dir}/shared/"
-
-rm "${dir}/shared/js/node_modules"
-sed -i "s|\"../node_modules|\"/node_modules|g" "${dir}/shared/js/typings/libs.d.ts"
+cp -a $(ls | grep -vP '^(lib|node_modules)$') "${dir}/shared/"
 
 for d in cyph.com cyph.ws ; do
 	cd "${dir}/${d}"

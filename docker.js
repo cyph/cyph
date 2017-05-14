@@ -224,7 +224,7 @@ const shellScripts			= {
 		`,
 		condition: `
 			! cmp /cyph/shared/lib/js/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1 ||
-			! cmp /cyph/shared/js/node_modules/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1
+			! cmp /cyph/shared/lib/js/node_modules/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1
 		`
 	},
 	setup: `
