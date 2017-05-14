@@ -3,6 +3,13 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
+checkfail () {
+	if (( $? )) ; then
+		exit 1
+	fi
+}
+
+
 nodeModulesAssets="$(
 	grep -roP "importScripts\('/assets/node_modules/.*?\.js'\)" shared/js |
 		perl -pe "s/^.*?'\/assets\/node_modules\/(.*?)'.*/\1/g" |
@@ -70,7 +77,9 @@ node -e "
 "
 
 tsc -p .
+checkfail
 uglifyjs standalone/global.js -o standalone/global.js
+checkfail
 
 for f in ${typescriptAssets} ; do
 	m="$(echo ${f} | perl -pe 's/.*\/([^\/]+)$/\u$1/' | perl -pe 's/[^A-Za-z0-9](.)?/\u$1/g')"
@@ -110,6 +119,7 @@ for f in ${typescriptAssets} ; do
 	EOM
 
 	webpack --config webpack.js
+	checkfail
 	rm webpack.js
 
 	{
@@ -129,6 +139,8 @@ for f in ${typescriptAssets} ; do
 		uglifyjs \
 	> "${f}.js.tmp"
 
+	checkfail
+
 	mv "${f}.js.tmp" "${f}.js"
 done
 
@@ -140,5 +152,7 @@ grep -rl "@import '~" | xargs -I% sed -i "s|@import '~|@import '/node_modules/|g
 
 for f in ${scssAssets} ; do
 	scss "${f}.scss" "${f}.css"
+	checkfail
 	cleancss --inline none "${f}.css" -o "${f}.css"
+	checkfail
 done
