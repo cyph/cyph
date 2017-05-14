@@ -38,7 +38,7 @@ dev_appserver.py \
 &
 
 ngserve cyph.ws 42002 &
-sleep 60000
+sleep 60
 
 ngserve cyph.com 42001 &
 
