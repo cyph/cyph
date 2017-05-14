@@ -13,7 +13,7 @@ blockoomkiller () {
 ngserve () {
 	cd "${1}"
 	../commands/ngprojectinit.sh
-	ng serve --host '0.0.0.0' --port "${2}" --sourcemaps
+	ng serve --hmr --host '0.0.0.0' --no-aot --port "${2}" --sourcemaps
 }
 
 
