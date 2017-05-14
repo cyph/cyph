@@ -9,4 +9,4 @@ jobs:
       - run: |
           source ~/.bashrc
           touch ~/.circleci
-          /cyph/commands/build.sh
+          /cyph/commands/test.sh
