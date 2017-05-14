@@ -479,7 +479,7 @@ fi
 
 if [ "${test}" ] ; then
 	rm -rf ${prodOnlyProjects}
-elif [ ! "${site}" ] ; then
+elif [ ! "${site}" ] || [ "${site}" == test ] ; then
 	gcloud app services delete --quiet --project cyphme test
 fi
 
