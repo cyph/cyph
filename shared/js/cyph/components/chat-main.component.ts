@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
 import * as $ from 'jquery';
 import {fadeIn} from '../animations';
 import {States} from '../chat/enums';
@@ -21,7 +21,7 @@ import {UtilService} from '../services/util.service';
 	styleUrls: ['../../../css/components/chat-main.scss'],
 	templateUrl: '../../../templates/chat-main.html'
 })
-export class ChatMainComponent implements OnInit {
+export class ChatMainComponent implements AfterViewInit {
 	/** Indicates whether projected disconnection message should be hidden. */
 	@Input() public hideDisconnectMessage: boolean;
 
@@ -32,7 +32,7 @@ export class ChatMainComponent implements OnInit {
 	public readonly states: typeof States	= States;
 
 	/** @inheritDoc */
-	public ngOnInit () : void {
+	public ngAfterViewInit () : void {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;

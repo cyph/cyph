@@ -1,6 +1,6 @@
 /* tslint:disable:no-import-side-effect */
 
-import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
 import * as braintreeDropIn from 'braintree-web-drop-in';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
@@ -15,7 +15,7 @@ import {util} from '../util';
 	styleUrls: ['../../../css/components/checkout.scss'],
 	templateUrl: '../../../templates/checkout.html'
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements AfterViewInit {
 	/* Braintree instance. */
 	private braintreeInstance: any;
 
@@ -53,7 +53,7 @@ export class CheckoutComponent implements OnInit {
 	public success: boolean;
 
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
+	public async ngAfterViewInit () : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;

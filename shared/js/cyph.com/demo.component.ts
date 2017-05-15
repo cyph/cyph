@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component} from '@angular/core';
 import * as $ from 'jquery';
 import {EnvService} from '../cyph/services/env.service';
 import {util} from '../cyph/util';
@@ -14,7 +14,7 @@ import {elements} from './elements';
 	styleUrls: ['../../css/components/cyph.com/demo.scss'],
 	templateUrl: '../../templates/cyph.com/demo.html'
 })
-export class DemoComponent implements OnInit {
+export class DemoComponent implements AfterViewInit {
 	/** @ignore */
 	private readonly mobileUIScale: number	= 0.625;
 
@@ -138,7 +138,7 @@ export class DemoComponent implements OnInit {
 	}
 
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
+	public async ngAfterViewInit () : Promise<void> {
 		const $window	= $(window);
 
 		await util.waitForIterable(elements.demoRoot);

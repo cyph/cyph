@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
 import * as $ from 'jquery';
 import * as tabIndent from 'tab-indent';
 import {slideInOutBottom} from '../animations';
@@ -23,7 +23,7 @@ import {util} from '../util';
 	styleUrls: ['../../../css/components/chat-message-box.scss'],
 	templateUrl: '../../../templates/chat-message-box.html'
 })
-export class ChatMessageBoxComponent implements OnInit {
+export class ChatMessageBoxComponent implements AfterViewInit {
 	/** @ignore */
 	private readonly $textarea: Promise<JQuery>	=
 		util.waitForIterable(() => $(this.elementRef.nativeElement).find('textarea'))
@@ -77,7 +77,7 @@ export class ChatMessageBoxComponent implements OnInit {
 	}
 
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
+	public async ngAfterViewInit () : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
