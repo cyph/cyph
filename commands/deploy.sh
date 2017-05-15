@@ -236,8 +236,10 @@ if [ "${cacheBustedProjects}" ] ; then
 
 		while [ ! -f .build.done ] ; do sleep 1 ; done
 		rm .build.done
-		mv wpstatic/* cyph.com/
-		rmdir wpstatic
+		if [ -d wpstatic ] ; then
+			mv wpstatic/* cyph.com/
+			rmdir wpstatic
+		fi
 
 		# Cache bust
 		echo 'Cache bust' >> .wpstatic.output 2>&1
@@ -311,7 +313,7 @@ for d in $compiledProjects ; do
 		fs.writeFileSync("dist/index.html", $.html().trim());
 	' ; fi
 
-	mv *.html *.yaml sitemap.xml dist/
+	mv *.html *.yaml sitemap.xml dist/ 2> /dev/null
 
 	cd ..
 
@@ -446,6 +448,7 @@ if [ "${websign}" ] ; then
 	git push
 	cd ..
 elif [ ! "${site}" ] || [ "${site}" == "${webSignedProject}" ] ; then
+	mkdir "${webSignedProject}/js"
 	cp websign/js/workerhelper.js "${webSignedProject}/js/"
 fi
 
