@@ -12,6 +12,11 @@ checkfail () {
 }
 
 
+cd backend
+go build
+checkfail
+cd ..
+
 output="$(./commands/buildunbundledassets.sh 2>&1)"
 checkfail "${output}"
 

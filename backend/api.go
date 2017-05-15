@@ -1,13 +1,13 @@
 package main
 
 import (
-	"appengine/datastore"
-	"appengine/mail"
-	"appengine/memcache"
-	"appengine/urlfetch"
 	"bytes"
 	"encoding/json"
 	"github.com/lionelbarrow/braintree-go"
+	"google.golang.org/appengine/datastore"
+	"google.golang.org/appengine/mail"
+	"google.golang.org/appengine/memcache"
+	"google.golang.org/appengine/urlfetch"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -28,6 +28,8 @@ func init() {
 		return "Welcome to Cyph, lad", http.StatusOK
 	})
 }
+
+func main() {}
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	company := sanitize(h.Request.PostFormValue("company"))

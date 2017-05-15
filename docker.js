@@ -212,15 +212,6 @@ const shellScripts			= {
 			source ~/.bashrc
 			${windowsWorkaround}
 			/cyph/commands/getlibs.sh
-
-			rm -rf \${GOPATH}/src 2> /dev/null
-			mkdir -p \${GOPATH}/src
-			for f in $(find /cyph/shared/lib/go -mindepth 1 -maxdepth 1 -type d) ; do
-				cp -rf \${f} \${GOPATH}/src/$(echo "\${f}" | perl -pe 's/.*\\///g') > /dev/null 2>&1
-			done
-			for f in $(find /cyph/shared/lib/go -mindepth 1 -maxdepth 4 -type d) ; do
-				go install $(echo "\${f}" | sed 's|/cyph/shared/lib/go/||') > /dev/null 2>&1
-			done
 		`,
 		condition: `
 			! cmp /cyph/shared/lib/js/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1 ||

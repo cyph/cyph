@@ -5,6 +5,19 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 
+go get \
+	github.com/gorilla/mux \
+	github.com/lionelbarrow/braintree-go \
+	github.com/microcosm-cc/bluemonday \
+	github.com/oschwald/geoip2-golang \
+	golang.org/x/net/context \
+	google.golang.org/appengine \
+	google.golang.org/appengine/datastore \
+	google.golang.org/appengine/mail \
+	google.golang.org/appengine/memcache \
+	google.golang.org/appengine/urlfetch
+
+
 nativePlugins="$(cat native/plugins.list)"
 
 rm -rf ~/lib shared/lib/go shared/lib/js/node_modules 2> /dev/null
@@ -184,40 +197,6 @@ mv js/node_modules .js.tmp/
 rm -rf js
 mv .js.tmp js
 cp js/yarn.lock js/node_modules/
-
-
-mkdir go
-cd go
-
-for arr in \
-	'gorilla/context github.com/gorilla/context' \
-	'gorilla/mux github.com/gorilla/mux' \
-	'lionelbarrow/braintree-go github.com/lionelbarrow/braintree-go master' \
-	'microcosm-cc/bluemonday github.com/microcosm-cc/bluemonday' \
-	'oschwald/geoip2-golang github.com/oschwald/geoip2-golang' \
-	'oschwald/maxminddb-golang github.com/oschwald/maxminddb-golang' \
-	'golang/net golang.org/x/net.tmp' \
-	'golang/text golang.org/x/text' \
-	'golang/tools golang.org/x/tools.tmp'
-do
-	read -ra arr <<< "${arr}"
-	${dir}/commands/libclone.sh https://github.com/${arr[0]}.git ${arr[1]} ${arr[2]}
-done
-
-mkdir -p golang.org/x/net
-mv golang.org/x/net.tmp/context golang.org/x/net.tmp/html golang.org/x/net/
-rm -rf golang.org/x/net.tmp
-
-mkdir -p golang.org/x/tools/go
-mv golang.org/x/tools.tmp/go/ast golang.org/x/tools/go/
-mv golang.org/x/tools.tmp/go/buildutil golang.org/x/tools/go/
-mv golang.org/x/tools.tmp/go/loader golang.org/x/tools/go/
-rm -rf golang.org/x/tools.tmp
-find golang.org/x/tools -name '*test*' -exec rm -rf {} \; 2> /dev/null
-
-find . -type f -name '*test.go' -exec rm {} \;
-find . -type f -name '*.go' -exec sed -i 's|func main|func functionRemoved|g' {} \;
-
 
 cd
 rm -rf ${dir}/shared/lib

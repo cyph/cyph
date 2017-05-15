@@ -1,23 +1,29 @@
 package main
 
 import (
-	"appengine"
-	"appengine/urlfetch"
+	"bytes"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/lionelbarrow/braintree-go"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
+	"golang.org/x/net/context"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/urlfetch"
 	"io/ioutil"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
+	"strconv"
 	"strings"
 )
 
 type HandlerArgs struct {
-	Context appengine.Context
+	Context context.Context
 	Request *http.Request
 	Writer  http.ResponseWriter
 	Vars    map[string]string
@@ -45,6 +51,8 @@ var methods = struct {
 	"CONNECT",
 }
 
+var namespace = strings.Split(strings.Split(config.RootURL, "/")[2], ":")[0]
+
 var router = mux.NewRouter()
 var isRouterActive = false
 
@@ -63,6 +71,18 @@ var braintreePublicKey = os.Getenv("BRAINTREE_PUBLIC_KEY")
 var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
 var prefineryKey = os.Getenv("PREFINERY_KEY")
+
+func isValidCyphId(id string) bool {
+	return len(id) == config.AllowedCyphIdLength && config.AllowedCyphIds.MatchString(id)
+}
+
+func generateApiKey() (string, error) {
+	bytes := make([]byte, config.ApiKeyByteLength)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
+}
 
 func geolocate(h HandlerArgs) (string, string) {
 	if appengine.IsDevAppServer() {
@@ -84,11 +104,23 @@ func geolocate(h HandlerArgs) (string, string) {
 	return country, continent
 }
 
+func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
+	return map[string]bool{
+		"api":            sanitize(h.Request.PostFormValue("proFeatures[api]")) == "true",
+		"disableP2P":     sanitize(h.Request.PostFormValue("proFeatures[disableP2P]")) == "true",
+		"modestBranding": sanitize(h.Request.PostFormValue("proFeatures[modestBranding]")) == "true",
+		"nativeCrypto":   sanitize(h.Request.PostFormValue("proFeatures[nativeCrypto]")) == "true",
+		"telehealth":     sanitize(h.Request.PostFormValue("proFeatures[telehealth]")) == "true",
+		"video":          sanitize(h.Request.PostFormValue("proFeatures[video]")) == "true",
+		"voice":          sanitize(h.Request.PostFormValue("proFeatures[voice]")) == "true",
+	}
+}
+
 func getSignupFromRequest(h HandlerArgs) map[string]interface{} {
 	country, _ := geolocate(h)
 
-	signup := make(map[string]interface{})
-	profile := make(map[string]interface{})
+	signup := map[string]interface{}{}
+	profile := map[string]interface{}{}
 
 	profile["country"] = country
 	profile["first_name"] = sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength)
@@ -168,6 +200,34 @@ func getTwilioToken(h HandlerArgs) map[string]interface{} {
 	}
 }
 
+func trackEvent(h HandlerArgs, category, action, label string, value int) error {
+	data := url.Values{}
+
+	data.Set("v", "1")
+	data.Set("tid", config.AnalId)
+	data.Set("cid", "555")
+	data.Set("t", "event")
+	data.Set("ec", category)
+	data.Set("ea", action)
+	data.Set("el", label)
+	data.Set("ev", strconv.Itoa(value))
+
+	req, err := http.NewRequest(
+		methods.POST,
+		"https://www.google-analytics.com/collect",
+		bytes.NewBufferString(data.Encode()),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	client := urlfetch.Client(h.Context)
+	_, err = client.Do(req)
+
+	return err
+}
+
 func handleFunc(pattern string, handler Handler) {
 	handleFuncs(pattern, Handlers{methods.GET: handler})
 }
@@ -197,7 +257,13 @@ func handleFuncs(pattern string, handlers Handlers) {
 				responseBody = config.AllowedMethods
 				responseCode = http.StatusOK
 			} else {
-				responseBody, responseCode = handler(HandlerArgs{appengine.NewContext(r), r, w, mux.Vars(r)})
+				context, err := appengine.Namespace(appengine.NewContext(r), namespace)
+				if err != nil {
+					responseBody = "Failed to create context."
+					responseCode = http.StatusInternalServerError
+				} else {
+					responseBody, responseCode = handler(HandlerArgs{context, r, w, mux.Vars(r)})
+				}
 			}
 
 			w.WriteHeader(responseCode)
@@ -230,6 +296,7 @@ func initHandler(w http.ResponseWriter, r *http.Request) {
 	if ok || strings.HasSuffix(origin, ".pki.ws") || strings.HasSuffix(origin, ".cyph.ws") || appengine.IsDevAppServer() {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Credentials", "true")
+		w.Header().Add("Access-Control-Allow-Headers", config.AllowedHeaders)
 		w.Header().Add("Access-Control-Allow-Methods", config.AllowedMethods)
 	}
 }
