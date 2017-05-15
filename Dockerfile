@@ -45,6 +45,7 @@ RUN apt-get -y --allow-downgrades install \
 	python \
 	ruby \
 	ruby-dev \
+	shellcheck \
 	sudo \
 	tightvncserver \
 	wget \
