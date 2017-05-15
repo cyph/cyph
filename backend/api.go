@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/lionelbarrow/braintree-go"
+	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/mail"
 	"google.golang.org/appengine/memcache"
@@ -29,7 +30,9 @@ func init() {
 	})
 }
 
-func main() {}
+func main() {
+	appengine.Main()
+}
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	company := sanitize(h.Request.PostFormValue("company"))
