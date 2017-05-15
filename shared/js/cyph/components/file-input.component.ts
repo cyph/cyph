@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import * as $ from 'jquery';
 import {EnvService} from '../services/env.service';
 import {util} from '../util';
@@ -12,7 +12,7 @@ import {util} from '../util';
 	styleUrls: ['../../../css/components/file-input.scss'],
 	templateUrl: '../../../templates/file-input.html'
 })
-export class FileInputComponent implements OnInit {
+export class FileInputComponent implements AfterViewInit {
 	/** Optional file type restriction. */
 	@Input() public accept: string;
 
@@ -20,7 +20,7 @@ export class FileInputComponent implements OnInit {
 	@Output() public change: EventEmitter<File>	= new EventEmitter<File>();
 
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
+	public async ngAfterViewInit () : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;

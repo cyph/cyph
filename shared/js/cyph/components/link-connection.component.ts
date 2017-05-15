@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import * as clipboard from 'clipboard-js';
 import * as $ from 'jquery';
@@ -21,7 +21,7 @@ import {util} from '../util';
 	styleUrls: ['../../../css/components/link-connection.scss'],
 	templateUrl: '../../../templates/link-connection.html'
 })
-export class LinkConnectionComponent implements OnInit {
+export class LinkConnectionComponent implements AfterViewInit {
 	/** @ignore */
 	private readonly addTimeLock: {}	= {};
 
@@ -86,7 +86,7 @@ export class LinkConnectionComponent implements OnInit {
 	}
 
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
+	public async ngAfterViewInit () : Promise<void> {
 		let isWaiting		= true;
 
 		await util.waitForValue(() => this.sessionService.state.sharedSecret || undefined);
