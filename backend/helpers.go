@@ -1,8 +1,6 @@
 package main
 
 import (
-	"appengine"
-	"appengine/urlfetch"
 	"bytes"
 	"crypto/rand"
 	"encoding/hex"
@@ -12,6 +10,9 @@ import (
 	"github.com/lionelbarrow/braintree-go"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
+	"golang.org/x/net/context"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/urlfetch"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -22,7 +23,7 @@ import (
 )
 
 type HandlerArgs struct {
-	Context appengine.Context
+	Context context.Context
 	Request *http.Request
 	Writer  http.ResponseWriter
 	Vars    map[string]string
