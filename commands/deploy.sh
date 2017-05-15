@@ -309,7 +309,7 @@ for d in $compiledProjects ; do
 	' ; fi
 
 	mv *.html *.yaml sitemap.xml dist/ 2> /dev/null
-	sudo umount node_modules
+	findmnt -t overlay -o TARGET -lun | grep "^${PWD}" | xargs sudo umount
 
 	cd ..
 
