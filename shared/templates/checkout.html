@@ -55,7 +55,7 @@
 		<ng-content *ngIf='success'></ng-content>
 		<div *ngIf='!success'>
 			<span cyphTranslate>Payment failed.</span>
-			<span class='retry' (click)='ngOnInit()' cyphTranslate>Click here</span>
+			<span class='retry' (click)='ngAfterViewInit()' cyphTranslate>Click here</span>
 			<span cyphTranslate>to try again.</span>
 		</div>
 	</div>
