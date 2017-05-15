@@ -3,6 +3,7 @@
 
 const childProcess	= require('child_process');
 const fs			= require('fs');
+const glob			= require('glob');
 const mkdirp		= require('mkdirp');
 const superSphincs	= require('supersphincs');
 
@@ -10,34 +11,13 @@ const superSphincs	= require('supersphincs');
 (async () => {
 
 
-const filesToCacheBust	= childProcess.spawnSync('find', [
-	'-L',
-	'.',
-	'-type',
-	'f',
-	'-mindepth',
-	'2'
-]).stdout.toString().split('\n').filter(s => s).map(s => s.slice(2));
+const filesToCacheBust	= glob.sync('*', {nodir: true}).concat(
+	glob.sync('assets/**', {nodir: true})
+);
 
-const filesToModify		= childProcess.spawnSync('find', [
-	'.',
-	'-type',
-	'f',
-	'-not',
-	'-path',
-	'./lib/*',
-	'-and',
-	'\(',
-	'-name',
-	'*.html',
-	'-or',
-	'-name',
-	'*.js',
-	'-or',
-	'-name',
-	'*.css',
-	'\)'
-]).stdout.toString().split('\n').filter(s => s);
+const filesToModify		= glob.sync('**', {nodir: true}).filter(path =>
+	path.endsWith('.html') || path.endsWith('.js')
+);
 
 const fileContents		= {};
 const cacheBustedFiles	= {};
@@ -71,23 +51,6 @@ for (let file of filesToModify) {
 		fileContents[file]	= content;
 		fs.writeFileSync(file, content);
 	}
-}
-
-
-const localModulesPath	= 'lib/js/node_modules';
-const globalModulesPath	= '/node_modules';
-
-fs.unlinkSync(localModulesPath);
-
-for (let subresource of filesToCacheBust.filter(subresource =>
-	subresource.startsWith(`${localModulesPath}/`) &&
-	cacheBustedFiles[subresource]
-)) {
-	mkdirp.sync(subresource.split('/').slice(0, -1).join('/'));
-	childProcess.spawnSync('cp', [
-		subresource.replace(new RegExp(`^${localModulesPath}`), globalModulesPath),
-		subresource
-	]);
 }
 
 
