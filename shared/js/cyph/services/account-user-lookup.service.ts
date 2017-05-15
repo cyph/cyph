@@ -14,7 +14,7 @@ export class AccountUserLookupService {
 
 	].map(user => new User(
 		user.avatar,
-		'/img/metaimage.png',
+		'/assets/img/metaimage.png',
 		`Hello, my name is ${user.name}.`,
 		user.email,
 		user.hasPremium,
