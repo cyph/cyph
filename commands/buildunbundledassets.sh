@@ -33,8 +33,23 @@ scssAssets="$(
 		uniq
 )"
 
+hash="$(
+	cat \
+		$(echo "${nodeModulesAssets}" | perl -pe 's/([^\s]+)/\/node_modules\/\1/g') \
+		$(echo "${typescriptAssets}" | perl -pe 's/([^\s]+)/shared\/js\/\1\.ts/g') \
+		$(echo "${scssAssets}" | perl -pe 's/([^\s]+)/shared\/css\/\1\.scss/g') \
+	|
+		shasum -a 512 |
+		awk '{print $1}'
+)"
+
 
 cd shared/assets
+
+if [ "${hash}" == "$(cat unbundled.hash)" ] ; then
+	exit 0
+fi
+
 rm -rf node_modules js css 2> /dev/null
 mkdir node_modules js css
 
@@ -157,3 +172,7 @@ for f in ${scssAssets} ; do
 	cleancss --inline none "${f}.css" -o "${f}.css"
 	checkfail
 done
+
+
+cd ..
+echo "${hash}" > unbundled.hash
