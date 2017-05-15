@@ -314,6 +314,7 @@ for d in $compiledProjects ; do
 	' ; fi
 
 	mv *.html *.yaml sitemap.xml dist/ 2> /dev/null
+	sudo umount node_modules
 
 	cd ..
 

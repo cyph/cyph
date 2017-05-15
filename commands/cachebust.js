@@ -44,7 +44,10 @@ for (let file of filesToModify) {
 		cacheBustedFiles[subresource]	= true;
 
 		const hash	= (await superSphincs.hash(fs.readFileSync(subresource))).hex;
-		content		= content.split(subresource).join(`${subresource}?${hash}`);
+		content		= content.replace(
+			new RegExp(subresource + '(?!\.map)', 'g'),
+			`${subresource}?${hash}`
+		);
 	}
 
 	if (content !== fileContents[file]) {
