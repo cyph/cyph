@@ -57,8 +57,8 @@ import {StringsService} from '../services/strings.service';
 		}
 	],
 	selector: 'cyph-account-chat',
-	styleUrls: ['../../css/components/account-chat.scss'],
-	templateUrl: '../../templates/account-chat.html'
+	styleUrls: ['../../../css/components/account-chat.scss'],
+	templateUrl: '../../../templates/account-chat.html'
 })
 export class AccountChatComponent implements OnInit {
 	/** @see UserPresence */

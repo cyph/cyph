@@ -18,8 +18,8 @@ import {EnvService} from '../services/env.service';
 		}
 	],
 	selector: 'cyph-account',
-	styleUrls: ['../../css/components/account.scss'],
-	templateUrl: '../../templates/account.html'
+	styleUrls: ['../../../css/components/account.scss'],
+	templateUrl: '../../../templates/account.html'
 })
 export class AccountComponent implements OnInit {
 	/** Indicates whether menu should be displayed. */

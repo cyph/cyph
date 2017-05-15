@@ -10,8 +10,8 @@ import {EnvService} from '../services/env.service';
  */
 @Component({
 	selector: 'cyph-account-menu',
-	styleUrls: ['../../css/components/account-menu.scss'],
-	templateUrl: '../../templates/account-menu.html'
+	styleUrls: ['../../../css/components/account-menu.scss'],
+	templateUrl: '../../../templates/account-menu.html'
 })
 export class AccountMenuComponent {
 	/** @see UserPresence */

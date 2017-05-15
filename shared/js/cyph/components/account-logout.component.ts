@@ -9,8 +9,8 @@ import {util} from '../util';
  */
 @Component({
 	selector: 'cyph-account-logout',
-	styleUrls: ['../../css/components/account-logout.scss'],
-	templateUrl: '../../templates/account-logout.html'
+	styleUrls: ['../../../css/components/account-logout.scss'],
+	templateUrl: '../../../templates/account-logout.html'
 })
 export class AccountLogoutComponent implements OnInit {
 	/** @inheritDoc */
