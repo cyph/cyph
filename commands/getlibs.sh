@@ -5,7 +5,7 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 
-nativePlugins="$(cat shared/js/native/plugins.list)"
+nativePlugins="$(cat native/plugins.list)"
 
 rm -rf ~/lib shared/lib/go shared/lib/js/node_modules 2> /dev/null
 
@@ -226,3 +226,12 @@ sudo rm -rf /node_modules
 sudo mv lib/js/node_modules /
 sudo chmod -R 777 /node_modules
 rm -rf lib
+
+
+tns create cyph --ng --appid com.cyph.app
+cd cyph
+for plugin in ${nativePlugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
+# rm hooks/*/nativescript-dev-typescript.js
+cd
+sudo mv cyph /native
+sudo chmod -R 777 /native

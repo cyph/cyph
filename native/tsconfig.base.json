@@ -1,0 +1,28 @@
+{
+	"extends": "../shared/js/tslint.json",
+	"compilerOptions": {
+		"module": "commonjs",
+		"noEmitHelpers": true,
+		"noEmitOnError": true,
+		"baseUrl": ".",
+		"paths": {
+			"*": [
+				"./node_modules/tns-core-modules/*",
+				"./node_modules/*"
+			],
+			"_stream_duplex": ["app/js/externals/_stream_duplex"],
+			"_stream_writable": ["app/js/externals/_stream_writable"],
+			"faye-websocket": ["app/js/externals/faye-websocket"],
+			"jquery": ["app/externals/jquery"],
+			"libsodium": ["app/js/externals/libsodium"],
+			"request": ["app/js/externals/request"],
+			"rsvp": ["app/js/externals/rsvp"],
+			"simplewebrtc": ["app/externals/simplewebrtc"]
+		}
+	},
+	"exclude": [
+		"node_modules",
+		"platforms",
+		"**/*.aot.ts"
+	]
+}
