@@ -14,5 +14,14 @@
 	"homepage": "https://www.cyph.com",
 	"android": {
 		"v8Flags": "--expose_gc"
+	},
+	"dependencies": {},
+	"devDependencies": {},
+	"scripts": {
+		"ns-bundle": "ns-bundle",
+		"start-android-bundle": "npm run ns-bundle --android --start-app",
+		"start-ios-bundle": "npm run ns-bundle --ios --start-app",
+		"build-android-bundle": "npm run ns-bundle --android --build-app",
+		"build-ios-bundle": "npm run ns-bundle --ios --build-app"
 	}
 }
