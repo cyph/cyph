@@ -1,5 +1,7 @@
 app
 hooks
+package.tmp.json
 platforms
 tsconfig.json
 typings
+webpack.config.js

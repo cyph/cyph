@@ -57,10 +57,12 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	clean-css-cli \
 	clipboard-js \
 	codelyzer \
+	copy-webpack-plugin \
 	core-js \
 	css-loader \
 	datauri \
 	dompurify \
+	extract-text-webpack-plugin \
 	fg-loadcss \
 	file-loader \
 	file-saver \
@@ -99,8 +101,10 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	moment \
 	nativescript \
 	nativescript-angular \
+	nativescript-css-loader \
 	nativescript-dev-android-snapshot \
 	nativescript-dev-typescript \
+	nativescript-dev-webpack \
 	nativescript-theme-core \
 	node-fetch \
 	node-sass \
@@ -112,6 +116,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	raw-loader \
 	read \
 	reflect-metadata \
+	resolve-url-loader \
 	retire \
 	rlwe \
 	rxjs \
@@ -144,6 +149,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	web-animations-js@https://github.com/buu700/web-animations-js-tmp \
 	webpack \
 	webpack-closure-compiler \
+	webpack-sources \
 	webrtc-adapter \
 	whatwg-fetch \
 	wowjs \
