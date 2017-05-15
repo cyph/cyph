@@ -1,11 +1,11 @@
-<div class='signup-form' [class.mobile]='envService.isMobile'>
-	<form
-		ngNativeValidate
-		fxLayout='column'
-		fxLayoutGap='16px'
-		(submit)='submit()'
-		*ngIf='signupService.state === 0'
-	>
+<form
+	ngNativeValidate
+	fxFlexFill
+	fxLayout='column'
+	fxLayoutGap='16px'
+	(submit)='submit()'
+>
+	<div fxFlexFill *ngIf='signupService.state === 0'>
 		<div fxLayout='row'>
 			<ng-content></ng-content>
 		</div>
@@ -94,17 +94,16 @@
 				</div>
 			</div>
 		</div>
-	</form>
+	</div>
 
-	<form ngNativeValidate (submit)='submit()' *ngIf='signupService.state === 1'>
+	<div fxFlexFill *ngIf='signupService.state === 1'>
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container>
+					<md-input-container fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
-							fxFlex='80'
 							[(ngModel)]='signupService.data.email'
 							name='email'
 							type='email'
@@ -114,11 +113,10 @@
 					</md-input-container>
 				</div>
 				<div *ngIf='invite' fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container>
+					<md-input-container fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
-							fxFlex='80'
 							[(ngModel)]='signupService.data.inviteCode'
 							name='inviteCode'
 							type='text'
@@ -134,17 +132,16 @@
 				</div>
 			</div>
 		</div>
-	</form>
+	</div>
 
-	<form ngNativeValidate (submit)='submit()' *ngIf='signupService.state === 2'>
+	<div fxFlexFill *ngIf='signupService.state === 2'>
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container>
+					<md-input-container fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
-							fxFlex='80'
 							[(ngModel)]='signupService.data.name'
 							name='name'
 							placeholder='Name (optional)'
@@ -158,11 +155,11 @@
 				</div>
 			</div>
 		</div>
-	</form>
+	</div>
 
-	<form ngNativeValidate (submit)='submit()' *ngIf='signupService.state === 3'>
+	<div fxFlexFill *ngIf='signupService.state === 3'>
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
-			<div fxFlex fxLayout='column'>
+			<div fxFlex='50' fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<p fxFlex='80'>
 						<span cyphTranslate>Thanks for subscribing,</span>
@@ -172,5 +169,5 @@
 				</div>
 			</div>
 		</div>
-	</form>
-</div>
+	</div>
+</form>
