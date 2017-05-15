@@ -33,7 +33,7 @@ export class ErrorService implements ErrorHandler {
 		let numEmails	= 0;
 
 		return async (err?: any, url?: string) : Promise<void> => {
-			let errorMessage	= err.message ? err.message : err.toString();
+			const errorMessage	= err.message ? err.message : err.toString();
 
 			if (
 				(requireErrorMessage && !errorMessage) ||
