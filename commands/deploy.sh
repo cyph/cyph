@@ -275,15 +275,6 @@ for d in $compiledProjects ; do
 	cd "${d}"
 
 	if [ "${websign}" -a "${d}" == "${webSignedProject}" ] ; then
-		# Block importScripts in Workers in WebSigned environments
-		cat src/js/cyph/thread.ts | \
-			tr '\n' '☁' | \
-			perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw new Error(`Cannot load external script \${s}.`); };/' | \
-			tr '☁' '\n' | \
-			grep -v oldImportScripts \
-		> src/js/cyph/thread.ts.new
-		mv src/js/cyph/thread.ts.new src/js/cyph/thread.ts
-
 		# Merge in base64'd images, fonts, video, and audio
 		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
 	fi

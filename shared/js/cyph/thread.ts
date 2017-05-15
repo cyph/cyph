@@ -15,7 +15,6 @@ export class Thread implements IThread {
 
 	/** @ignore */
 	private static threadEnvSetup () : void {
-		let importScripts: Function	= (<any> self).importScripts;
 		let threadSetupVars: any	= (<any> self).threadSetupVars;
 
 		/* Inherit these from main thread */
@@ -27,12 +26,25 @@ export class Thread implements IThread {
 
 
 		/* Wrapper to make importScripts work in local dev environments
-			(not used in prod because of WebSign packing) */
+			and block it in prod (because of WebSign packing) */
 
-		const oldImportScripts	= importScripts;
-		importScripts			= (script: string) => oldImportScripts(
-			`${(<any> self).locationData.protocol}//${(<any> self).locationData.host}${script}`
-		);
+		if (threadSetupVars.isLocalEnv) {
+			const oldImportScripts	= importScripts;
+			importScripts			= (script: string) => {
+				oldImportScripts(`${
+					(<any> self).locationData.protocol
+				}//${
+					(<any> self).locationData.host
+				}${
+					script
+				}`);
+			};
+		}
+		else {
+			importScripts			= (script: string) => {
+				throw new Error(`Cannot load external script ${script}.`);
+			};
+		}
 
 
 		/* Normalisation to increase compatibility with web libraries */
@@ -139,6 +151,7 @@ export class Thread implements IThread {
 		const threadSetupVars	= {
 			customBuild,
 			translations,
+			isLocalEnv: env.isLocalEnv,
 			locationData: {
 				hash: locationData.hash,
 				host: locationData.host,
@@ -166,6 +179,7 @@ export class Thread implements IThread {
 			}
 
 			eventManager.one('${callbackId}').then(function (locals) {
+				self.locals	= locals;
 				${Thread.stringifyFunction(f)}
 				${
 					/* tslint:disable-next-line:no-unbound-method */
