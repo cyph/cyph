@@ -10,8 +10,8 @@ import {util} from '../util';
  */
 @Component({
 	selector: 'cyph-signup-form',
-	styleUrls: ['../../css/components/signup-form.scss'],
-	templateUrl: '../../templates/signup-form.html'
+	styleUrls: ['../../../css/components/signup-form.scss'],
+	templateUrl: '../../../templates/signup-form.html'
 })
 export class SignupFormComponent {
 	/** Indicates whether or not to display invite-code-related UI. */

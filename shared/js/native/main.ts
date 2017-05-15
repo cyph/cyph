@@ -1,5 +1,3 @@
-/* tslint:disable:no-import-side-effect */
-
 /**
  * @file Entry point of app.
  */
@@ -8,10 +6,12 @@
 import {platformNativeScriptDynamic} from 'nativescript-angular/platform';
 
 import {enableProdMode} from '@angular/core';
-import 'nativescript-websockets';
-import 'rxjs/add/operator/toPromise';
 import {AppModule} from './app.module';
+import {environment} from './js/environments/environment';
 
 
-enableProdMode();
+if (environment.production) {
+	enableProdMode();
+}
+
 platformNativeScriptDynamic().bootstrapModule(AppModule);

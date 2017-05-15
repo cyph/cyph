@@ -1,32 +1,19 @@
-/* tslint:disable:no-import-side-effect */
-
 /**
- * @file Entry point of cyph.ws.
+ * @file Entry point.
  */
 
 
-import '../standalone/custombuild';
-import '../standalone/init';
-
 import {enableProdMode} from '@angular/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
-import 'hammerjs';
-import 'rxjs/add/operator/toPromise';
-import 'web-animations-js';
-import 'webrtc-adapter';
-import 'whatwg-fetch';
-import 'zone.js';
-import '../standalone/translations';
+import {environment} from '../environments/environment';
 import {AppModule} from './app.module';
 
 
-enableProdMode();
-platformBrowserDynamic().bootstrapModule(AppModule);
-
-/* Request Persistent Storage permission to mitigate
-	edge case eviction of ServiceWorker/AppCache */
-
-try {
-	(<any> navigator).storage.persist();
+if (environment.production) {
+	enableProdMode();
 }
-catch (_) {}
+else if ((<any> module).hot) {
+	(<any> module).hot.accept();
+}
+
+platformBrowserDynamic().bootstrapModule(AppModule);

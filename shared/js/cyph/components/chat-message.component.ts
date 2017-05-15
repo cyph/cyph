@@ -13,8 +13,8 @@ import {Users, users} from '../session/enums';
  */
 @Component({
 	selector: 'cyph-chat-message',
-	styleUrls: ['../../css/components/chat-message.scss'],
-	templateUrl: '../../templates/chat-message.html'
+	styleUrls: ['../../../css/components/chat-message.scss'],
+	templateUrl: '../../../templates/chat-message.html'
 })
 export class ChatMessageComponent implements OnInit {
 	/** @see IChatMessage */

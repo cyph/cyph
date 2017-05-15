@@ -1,10 +1,11 @@
 #!/bin/bash
 
+
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
 tmpDir="$(mktemp -d)"
-./commands/copyworkspace.sh --client-only "${tmpDir}"
+./commands/copyworkspace.sh "${tmpDir}"
 cd "${tmpDir}/shared"
 
 # Validate component template/stylesheet count consistency
@@ -55,6 +56,8 @@ node -e "
 
 	/* Pending Angular AOT fix */
 	tsconfig.compilerOptions.noUnusedParameters	= true;
+
+	tsconfig.compilerOptions.paths	= undefined;
 
 	tsconfig.files	=
 		'$(cd js ; find . -type f -name '*.ts' | tr '\n' ' ')typings/index.d.ts'.split(' ')

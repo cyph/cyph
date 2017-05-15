@@ -36,6 +36,10 @@
 		"justification": "These are just type definitions"
 	},
 	{
+		"path": "granim/docs",
+		"justification": "Not included in our client code"
+	},
+	{
 		"component": "jquery",
 		"version": "1.7.1",
 		"justification": "Only jQuery 3.x is included in our client code"

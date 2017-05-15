@@ -35,6 +35,14 @@ declare let customBuildFavicon: string|undefined;
 declare let customBuildPassword: string|undefined;
 
 /**
+ * @global
+ * WorkerGlobalScope API to load JavaScript file.
+ * Reduced to accept just one script rather than
+ * an array to accommodate WebSign packing.
+ */
+declare let importScripts : (script: string) => void;
+
+/**
  * @ignore
  */
 declare let IS_WEB: boolean;

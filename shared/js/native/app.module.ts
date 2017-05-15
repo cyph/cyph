@@ -1,3 +1,11 @@
+/* tslint:disable:no-import-side-effect no-reference */
+
+
+/// <reference path="./js/typings/index.d.ts" />
+
+import 'nativescript-websockets';
+import 'rxjs/add/operator/toPromise';
+
 import {NgModule, NgModuleFactoryLoader, NO_ERRORS_SCHEMA} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {NativeScriptAnimationsModule} from 'nativescript-angular/animations';

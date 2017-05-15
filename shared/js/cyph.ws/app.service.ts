@@ -18,6 +18,13 @@ export class AppService {
 	public isLockedDown: boolean			= !!customBuildPassword;
 
 	constructor (routerService: Router, titleService: Title) {
+		/* Request Persistent Storage permission to mitigate
+			edge case eviction of ServiceWorker/AppCache */
+		try {
+			(<any> navigator).storage.persist();
+		}
+		catch (_) {}
+
 		titleService.setTitle(util.translate(titleService.getTitle()));
 
 		self.onhashchange	= () => { location.reload(); };

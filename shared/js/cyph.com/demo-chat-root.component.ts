@@ -45,7 +45,7 @@ import {LocalSessionService} from './local-session.service';
 		}
 	],
 	selector: 'cyph-demo-chat-root',
-	templateUrl: '../templates/chat-root.html'
+	templateUrl: '../../templates/chat-root.html'
 })
 export class DemoChatRootComponent implements OnInit {
 	/** @see ChatData */

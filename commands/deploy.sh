@@ -1,13 +1,17 @@
 #!/bin/bash
 
+
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 originalArgs="${*}"
 
+log () {
+	echo -e "\n\n\n${*} ($(date))\n"
+}
+
 
 cacheBustedProjects='cyph.com cyph.ws'
 compiledProjects='cyph.com cyph.ws'
-allCompiledProjects="${compiledProjects}"
 webSignedProject='cyph.ws'
 prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='im io me video audio'
@@ -53,7 +57,7 @@ if [ "${websign}" ] ; then
 	./commands/keycache.sh
 fi
 
-echo -e '\n\nInitial setup\n'
+log 'Initial setup'
 
 # Branch config setup
 eval "$(./commands/getgitdata.sh)"
@@ -66,7 +70,7 @@ if [ "${branch}" == 'prod' ] ; then
 		staging=true
 	fi
 elif [ ! "${test}" ] ; then
-	echo 'Cannot do prod deploy from test branch'
+	log 'Cannot do prod deploy from test branch'
 	exit 1
 fi
 version="${branch}"
@@ -89,7 +93,7 @@ wget "https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-ISP&suff
 tar xzf geoisp.tar.gz
 mv */*.mmdb GeoIP2-ISP.mmdb
 if [ ! -f GeoIP2-ISP.mmdb ] ; then
-	echo 'GeoIP2-ISP.mmdb missing'
+	log 'GeoIP2-ISP.mmdb missing'
 	exit 1
 fi
 mv GeoIP2-ISP.mmdb ../backend/
@@ -108,7 +112,7 @@ else
 fi
 
 projectname () {
-	if [ "${simple}" ] ; then
+	if [ "${simple}" ] || [ "${1}" != "${webSignedProject}" ] ; then
 		echo "${version}-dot-$(echo "${1}" | tr '.' '-')-dot-cyphme.appspot.com"
 	elif [ "${test}" ] ; then
 		echo "${version}.${1}"
@@ -159,7 +163,6 @@ if [ ! "${simple}" ] ; then
 fi
 
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
-ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i 's|isLocalEnv: boolean\s*= true|isLocalEnv: boolean\t= false|g' %
 ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s/ws:\/\/.*:44000/https:\/\/cyphme.firebaseio.com/g" %
 
 if [ "${test}" ] ; then
@@ -227,18 +230,23 @@ if [ "${cacheBustedProjects}" ] ; then
 		fi
 
 		if [ ! '${simple}' ] && ( [ ! '${site}' ] || [ '${site}' == cyph.com ] ) ; then
-			rm -rf cyph.com/blog 2> /dev/null
-			mkdir -p cyph.com/blog
-			cd cyph.com/blog
+			rm -rf wpstatic 2> /dev/null
+			mkdir -p wpstatic/blog
+			cp cyph.com/cyph-com.yaml wpstatic/
+			cd wpstatic/blog
 			../../commands/wpstatic.sh '${homeURL}' >> ../../.wpstatic.output 2>&1
 			cd ../..
 		fi
 
 		while [ ! -f .build.done ] ; do sleep 1 ; done
 		rm .build.done
+		if [ -d wpstatic ] ; then
+			mv wpstatic/* cyph.com/
+			rmdir wpstatic
+		fi
 
 		# Cache bust
-		echo 'Cache bust' >> .wpstatic.output 2>&1
+		echo -e \"\n\n\nCache bust (\$(date))\n\" >> .wpstatic.output 2>&1
 		for d in ${cacheBustedProjects} ; do
 			cd \$d
 			../commands/cachebust.js >> ../.wpstatic.output 2>&1
@@ -254,7 +262,7 @@ fi
 if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedProject}" ] ) ; then
 	cd websign
 	websignHashWhitelist="$(cat hashwhitelist.json)"
-	cp -rf ../shared/img ./
+	cp -rf ../shared/assets/img ./
 	../commands/websign/pack.js index.html index.html
 	cd ..
 fi
@@ -263,48 +271,30 @@ fi
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
 	./commands/lint.sh || exit 1
+	./commands/buildunbundledassets.sh || exit 1
 fi
 for d in $compiledProjects ; do
-	echo "Build $(projectname ${d})"
+	log "Build $(projectname "${d}")"
 
-	for sharedResource in $(ls shared) ; do
-		rm -rf ${d}/${sharedResource} 2> /dev/null
-		cp -rf shared/${sharedResource} ${d}/
-	done
-
-	cd ${d}
-
-	for altD in $allCompiledProjects ; do
-		if [ "${d}" == "${altD}" ] ; then
-			continue
-		fi
-
-		find js -mindepth 1 -maxdepth 1 -type d -name "${altD}" -exec rm -rf {} \;
-	done
+	cd "${d}"
 
 	if [ "${websign}" -a "${d}" == "${webSignedProject}" ] ; then
-		# Block importScripts in Workers in WebSigned environments
-		cat js/cyph/thread.ts | \
-			tr '\n' '☁' | \
-			perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw new Error(`Cannot load external script \${s}.`); };/' | \
-			tr '☁' '\n' | \
-			grep -v oldImportScripts \
-		> js/cyph/thread.ts.new
-		mv js/cyph/thread.ts.new js/cyph/thread.ts
-
 		# Merge in base64'd images, fonts, video, and audio
 		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
 	fi
 
-	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit 1
-
-	mv .index.html index.html
+	if [ "${simple}" ] ; then
+		ng build --no-aot --sourcemaps || exit 1
+	else
+		# ../commands/prodbuild.sh || exit 1
+		ng build --aot --prod --no-sourcemaps || exit 1
+	fi
 
 	if [ "${d}" == 'cyph.com' ] ; then node -e '
-		const $	= require("cheerio").load(fs.readFileSync("index.html").toString());
+		const $	= require("cheerio").load(fs.readFileSync("dist/index.html").toString());
 
-		$(`link[href="/css/loading.css"]`).replaceWith(`<style>${
-			fs.readFileSync("css/loading.css").toString()
+		$(`link[href="/assets/css/loading.css"]`).replaceWith(`<style>${
+			fs.readFileSync("dist/assets/css/loading.css").toString()
 		}</style>`);
 
 		/*
@@ -316,19 +306,16 @@ for d in $compiledProjects ; do
 		});
 		*/
 
-		fs.writeFileSync("index.html", $.html().trim());
+		fs.writeFileSync("dist/index.html", $.html().trim());
 	' ; fi
 
-	rm -rf js/node_modules
-	find css -type f \( -name '*.scss' -or -name '*.map' \) -exec rm {} \;
-	find js -type f \( -name '*.ts' -or -name '*.map' \) -exec rm {} \;
-
-	if [ ! "${simple}" ] ; then
-		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace index.html -o index.html.new
-		mv index.html.new index.html
-	fi
+	mv *.html *.yaml sitemap.xml dist/ 2> /dev/null
+	findmnt -t overlay -o TARGET -lun | grep "^${PWD}" | xargs sudo umount
 
 	cd ..
+
+	mv "${d}" "${d}.src"
+	mv "${d}.src/dist" "${d}"
 done
 touch .build.done
 
@@ -348,25 +335,16 @@ if [ "${websign}" ] ; then
 
 	cd "${webSignedProject}"
 
-	echo "WebSign ${package}"
+	log "WebSign ${package}"
 
 	# Merge imported libraries into threads
-	find js -type f -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
+	find . -type f -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
 	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.ws
 
-	find . \
-		-mindepth 1 -maxdepth 1 \
-		-not -name '*.html' \
-		-not -name '*.js' \
-		-not -name '*.yaml' \
-		-not -name 'img' \
-		-not -name 'favicon.ico' \
-		-exec rm -rf {} \;
-
 	cd ..
 
-	customBuilds=""
+	customBuilds=''
 
 	if \
 		[ "${username}" == 'cyph' ] && \
@@ -408,7 +386,7 @@ if [ "${websign}" ] ; then
 		rm -rf cdn/${p}
 	done
 
-	echo "Starting signing process."
+	log 'Starting signing process'
 
 	./commands/websign/sign.js "${websignHashWhitelist}" $(
 		for p in ${packages} ; do
@@ -416,7 +394,7 @@ if [ "${websign}" ] ; then
 		done
 	) || exit 1
 
-	echo -e '\n\nCompressing resources for deployment to CDN\n'
+	log 'Compressing resources for deployment to CDN'
 
 	if [ -d pkg/cyph.ws-subresources ] ; then
 		find pkg/cyph.ws-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
@@ -467,6 +445,7 @@ if [ "${websign}" ] ; then
 	git push
 	cd ..
 elif [ ! "${site}" ] || [ "${site}" == "${webSignedProject}" ] ; then
+	mkdir "${webSignedProject}/js"
 	cp websign/js/workerhelper.js "${webSignedProject}/js/"
 fi
 
@@ -498,12 +477,9 @@ if [ "${waitingForWpstatic}" ] ; then
 fi
 
 
-find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favicon.ico {}/ \;
-
-
 if [ "${test}" ] ; then
 	rm -rf ${prodOnlyProjects}
-elif [ ! "${site}" ] ; then
+elif [ ! "${site}" ] || [ "${site}" == test ] ; then
 	gcloud app services delete --quiet --project cyphme test
 fi
 

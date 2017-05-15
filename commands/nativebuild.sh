@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
@@ -47,6 +48,8 @@ mkdir -p app/js/cyph.ws app/js/standalone
 cp ${dir}/shared/js/standalone/global.ts app/js/standalone/
 cp -rf ${dir}/shared/js/cyph.ws/enums app/js/cyph.ws/
 cp -rf ${dir}/shared/js/cyph app/js/
+cp -rf ${dir}/shared/js/environments app/js/
+cp -rf ${dir}/shared/js/typings app/js/
 
 for module in cyph-app cyph-common ; do
 	modulePath="app/js/cyph/modules/${module}.module.ts"
@@ -120,7 +123,7 @@ done
 node -e "
 	const tsconfig	= JSON.parse(fs.readFileSync('tsconfig.json').toString());
 	tsconfig.compilerOptions.rootDir	= undefined;
-	tsconfig.files	= ['app/main.ts', 'typings/index.d.ts'];
+	tsconfig.files	= ['app/main.ts'];
 	fs.writeFileSync('tsconfig.json', JSON.stringify(tsconfig));
 "
 sed -i 's|/platform|/platform-static|g' app/main.ts
@@ -233,7 +236,6 @@ for platform in android ios ; do
 	`)' >> main.${platform}.js
 	cat app/main.${platform}.js >> main.${platform}.js
 
-	sed -i 's|use strict||g' main.${platform}.js
 	sed -i "s|importScripts('/lib/js/|importScripts('/|g" main.${platform}.js
 	sed -i "s|importScripts('/js/|importScripts('/app/js/|g" main.${platform}.js
 	/cyph/commands/websign/threadpack.js main.${platform}.js

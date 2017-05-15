@@ -114,7 +114,7 @@ const windowsWorkaround		= !isWindows ? '' : `
 		else
 			rm -rf "\${3}" 2> /dev/null
 			mkdir "\${3}"
-			sudo mount -o bind "\${2}" "\${3}"
+			sudo mount --bind "\${2}" "\${3}"
 		fi
 	' |
 		sudo tee -a /bin/ln > /dev/null
@@ -224,7 +224,7 @@ const shellScripts			= {
 		`,
 		condition: `
 			! cmp /cyph/shared/lib/js/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1 ||
-			! cmp /cyph/shared/js/node_modules/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1
+			! cmp /cyph/shared/lib/js/node_modules/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1
 		`
 	},
 	setup: `
@@ -292,10 +292,9 @@ const containerName		= command => `${image}_${command}`.replace(/\//g, '_');
 const dockerRun			= (command, name, background, noCleanup, additionalArgs, getOutput) => {
 	const processArgs	= [
 		'run',
+		'--privileged',
 		getOutput ? '-i' : '-it'
 	].concat(
-		isWindows ? ['--privileged'] : []
-	).concat(
 		name ? [`--name=${name}`] : []
 	).concat(
 		background ? [`-d`] : []
@@ -484,11 +483,11 @@ switch (args.command) {
 
 	case 'serve':
 		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42000:5000');
+		commandAdditionalArgs.push('42000:42000');
 		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42001:5001');
+		commandAdditionalArgs.push('42001:42001');
 		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42002:5002');
+		commandAdditionalArgs.push('42002:42002');
 		commandAdditionalArgs.push('-p');
 		commandAdditionalArgs.push('44000:44000');
 

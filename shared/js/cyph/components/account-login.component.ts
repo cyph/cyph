@@ -9,8 +9,8 @@ import {util} from '../util';
  */
 @Component({
 	selector: 'cyph-account-login',
-	styleUrls: ['../../css/components/account-login.scss'],
-	templateUrl: '../../templates/account-login.html'
+	styleUrls: ['../../../css/components/account-login.scss'],
+	templateUrl: '../../../templates/account-login.html'
 })
 export class AccountLoginComponent {
 	/** Indicates whether login attempt is in progress. */

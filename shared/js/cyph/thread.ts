@@ -10,11 +10,13 @@ export class Thread implements IThread {
 	/** @ignore */
 	private static stringifyFunction (f: Function) : string {
 		const s: string	= f.toString();
-		return s.slice(s.indexOf('{'));
+		return s.slice(s.indexOf('{')).replace(/use strict/g, '');
 	}
 
 	/** @ignore */
-	private static threadEnvSetup (threadSetupVars: any, importScripts: Function) : void {
+	private static threadEnvSetup () : void {
+		let threadSetupVars: any	= (<any> self).threadSetupVars;
+
 		/* Inherit these from main thread */
 
 		(<any> self).customBuild		= threadSetupVars.customBuild;
@@ -24,18 +26,31 @@ export class Thread implements IThread {
 
 
 		/* Wrapper to make importScripts work in local dev environments
-			(not used in prod because of WebSign packing) */
+			and block it in prod (because of WebSign packing) */
 
-		const oldImportScripts	= importScripts;
-		importScripts			= (script: string) => oldImportScripts(
-			`${(<any> self).locationData.protocol}//${(<any> self).locationData.host}${script}`
-		);
+		if (threadSetupVars.isLocalEnv) {
+			const oldImportScripts	= importScripts;
+			importScripts			= (script: string) => {
+				oldImportScripts(`${
+					(<any> self).locationData.protocol
+				}//${
+					(<any> self).locationData.host
+				}${
+					script
+				}`);
+			};
+		}
+		else {
+			importScripts			= (script: string) => {
+				throw new Error(`Cannot load external script ${script}.`);
+			};
+		}
 
 
 		/* Normalisation to increase compatibility with web libraries */
 
-		importScripts('/lib/js/node_modules/core-js/client/shim.js');
-		importScripts('/js/standalone/global.js');
+		importScripts('/assets/node_modules/core-js/client/shim.js');
+		importScripts('/assets/js/standalone/global.js');
 
 
 		/* Allow destroying the Thread object from within the thread */
@@ -76,12 +91,12 @@ export class Thread implements IThread {
 			};
 		}
 
-		importScripts('/js/cyph/crypto/web-crypto-polyfill.js');
+		importScripts('/assets/js/cyph/crypto/web-crypto-polyfill.js');
 		(<any> self).webCryptoPolyfill(new Uint8Array(threadSetupVars.seed));
-		importScripts('/lib/js/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js');
+		importScripts('/assets/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js');
 		(<any> self).sodium.memzero(threadSetupVars.seed);
 
-		importScripts('/js/cyph/base.js');
+		importScripts('/assets/js/cyph/base.js');
 
 		threadSetupVars	= undefined;
 	}
@@ -136,6 +151,7 @@ export class Thread implements IThread {
 		const threadSetupVars	= {
 			customBuild,
 			translations,
+			isLocalEnv: env.isLocalEnv,
 			locationData: {
 				hash: locationData.hash,
 				host: locationData.host,
@@ -163,6 +179,7 @@ export class Thread implements IThread {
 			}
 
 			eventManager.one('${callbackId}').then(function (locals) {
+				self.locals	= locals;
 				${Thread.stringifyFunction(f)}
 				${
 					/* tslint:disable-next-line:no-unbound-method */

@@ -8,4 +8,5 @@ jobs:
       - checkout
       - run: |
           source ~/.bashrc
+          touch ~/.circleci
           /cyph/commands/build.sh

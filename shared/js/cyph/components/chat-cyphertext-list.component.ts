@@ -11,8 +11,8 @@ import {Users, users} from '../session/enums';
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-chat-cyphertext-list',
-	styleUrls: ['../../css/components/chat-cyphertext-list.scss'],
-	templateUrl: '../../templates/chat-cyphertext-list.html'
+	styleUrls: ['../../../css/components/chat-cyphertext-list.scss'],
+	templateUrl: '../../../templates/chat-cyphertext-list.html'
 })
 export class ChatCyphertextListComponent {
 	/** @see CyphertextService.messages */

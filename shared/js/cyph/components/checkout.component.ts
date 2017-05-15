@@ -12,8 +12,8 @@ import {util} from '../util';
  */
 @Component({
 	selector: 'cyph-checkout',
-	styleUrls: ['../../css/components/checkout.scss'],
-	templateUrl: '../../templates/checkout.html'
+	styleUrls: ['../../../css/components/checkout.scss'],
+	templateUrl: '../../../templates/checkout.html'
 })
 export class CheckoutComponent implements OnInit {
 	/* Braintree instance. */

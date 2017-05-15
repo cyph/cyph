@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 source="$1"
 target="$2"
 targetCamel="$(echo $target | perl -pe 's/\/(.)/\u$1/g')"
