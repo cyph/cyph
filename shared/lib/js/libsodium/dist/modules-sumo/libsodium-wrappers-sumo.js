@@ -14,7 +14,7 @@
         }
     }
 }(this, (function (exports, libsodium) {
-    "";
+    "use strict";
 
     var output_format = "uint8array";
 
