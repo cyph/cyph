@@ -5,7 +5,7 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 
-plugins="$(cat shared/js/native/plugins.list)"
+plugins="$(cat native/plugins.list)"
 
 externals="{
 	$(for plugin in ${plugins} ; do echo "
