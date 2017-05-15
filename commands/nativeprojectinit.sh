@@ -1,10 +1,17 @@
 #!/bin/bash
 
 
+cd $(cd "$(dirname "$0")" ; pwd)/..
+
+./commands/buildunbundledassets.sh
+
+cd native
 rm -rf app 2> /dev/null
 cp -rf ../shared/js/native app
+rm app/app.module.ngfactory.ts
 cp -rf ../shared/css/native app/css
 mv app/css/app.scss app/
+cp ../shared/assets/css/native/app.css app/
 cp -r ../shared/css/* app/
 cp -r ../shared/css/* app/css/
 rm -rf app/native app/css/native
@@ -37,10 +44,16 @@ for plugin in $(cat plugins.list) ; do
 	EOM
 	node -e "
 		const tsconfig	= JSON.parse(fs.readFileSync('tsconfig.json').toString());
-		tsconfig.compilerOptions.paths['${plugin}']	= 'app/externals/${plugin}';
+		tsconfig.compilerOptions.paths['${plugin}']	= ['app/externals/${plugin}'];
 		fs.writeFileSync('tsconfig.json', JSON.stringify(tsconfig));
 	"
 done
+
+cp package.json package.tmp.json
+mkdir node_modules
+npm install --save-dev nativescript-dev-webpack
+rm -rf node_modules
+mv package.tmp.json package.json
 
 for arr in \
 	'node_modules /node_modules' \

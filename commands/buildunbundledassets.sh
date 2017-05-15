@@ -26,7 +26,7 @@ typescriptAssets="cyph/crypto/native-web-crypto-polyfill standalone/analytics $(
 		uniq
 )"
 
-scssAssets="$(
+scssAssets="native/app.scss $(
 	grep -oP "href='/assets/css/.*?\.css'" */src/index.html |
 		perl -pe "s/^.*?'\/assets\/css\/(.*?)\.css'.*/\1/g" |
 		sort |
