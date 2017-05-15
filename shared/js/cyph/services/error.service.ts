@@ -1,4 +1,5 @@
 import {ErrorHandler, Injectable} from '@angular/core';
+import {fromError, report} from 'stacktrace-js';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
@@ -26,21 +27,14 @@ export class ErrorService implements ErrorHandler {
 
 	/** @ignore */
 	private baseErrorLog (subject: string, requireErrorMessage?: boolean) : (
-		errorMessage?: string,
-		url?: string,
-		line?: number,
-		column?: number,
-		errorObject?: any
+		err?: any,
+		url?: string
 	) => Promise<void> {
 		let numEmails	= 0;
 
-		return async (
-			errorMessage?: string,
-			url?: string,
-			line?: number,
-			column?: number,
-			errorObject?: any
-		) : Promise<void> => {
+		return async (err?: any, url?: string) : Promise<void> => {
+			let errorMessage	= err.message ? err.message : err.toString();
+
 			if (
 				(requireErrorMessage && !errorMessage) ||
 				/* Annoying useless iframe-related spam */
@@ -51,21 +45,15 @@ export class ErrorService implements ErrorHandler {
 				return;
 			}
 
-			const exception: string	= !errorMessage ? '' : `
-				${errorMessage}
-
-				URL: ${url}
-				${line === undefined || isNaN(line) ? '' : `Line: ${line.toString()}`}
-				${column === undefined || isNaN(column) ? '' : `Column: ${column.toString()}`}
-
-				${!errorObject ? '' : <string> errorObject.stack}
-			`.replace(
-				/\/#.*/g,
+			const exception: string	= (err && url) ?
+				(await report(await fromError(err), url)).replace(/\/#.*/g, '') :
 				''
-			);
+			;
 
-			/* tslint:disable-next-line:no-console */
-			console.error(errorObject || exception);
+			if (err) {
+				/* tslint:disable-next-line:no-console */
+				console.error(err);
+			}
 
 			if (numEmails++ < 50) {
 				util.email(
@@ -82,14 +70,8 @@ export class ErrorService implements ErrorHandler {
 	}
 
 	/** @inheritDoc */
-	public handleError (error: any) : void {
-		this.log(
-			error.message ? error.message : error.toString(),
-			locationData.toString(),
-			undefined,
-			undefined,
-			error
-		);
+	public handleError (err: any) : void {
+		this.log(err, locationData.toString());
 	}
 
 	constructor (
