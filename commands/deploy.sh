@@ -5,6 +5,10 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 originalArgs="${*}"
 
+log () {
+	echo -e "\n\n\n${*} ($(date))\n"
+}
+
 
 cacheBustedProjects='cyph.com cyph.ws'
 compiledProjects='cyph.com cyph.ws'
@@ -53,7 +57,7 @@ if [ "${websign}" ] ; then
 	./commands/keycache.sh
 fi
 
-echo -e '\n\nInitial setup\n'
+log 'Initial setup'
 
 # Branch config setup
 eval "$(./commands/getgitdata.sh)"
@@ -66,7 +70,7 @@ if [ "${branch}" == 'prod' ] ; then
 		staging=true
 	fi
 elif [ ! "${test}" ] ; then
-	echo 'Cannot do prod deploy from test branch'
+	log 'Cannot do prod deploy from test branch'
 	exit 1
 fi
 version="${branch}"
@@ -89,7 +93,7 @@ wget "https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-ISP&suff
 tar xzf geoisp.tar.gz
 mv */*.mmdb GeoIP2-ISP.mmdb
 if [ ! -f GeoIP2-ISP.mmdb ] ; then
-	echo 'GeoIP2-ISP.mmdb missing'
+	log 'GeoIP2-ISP.mmdb missing'
 	exit 1
 fi
 mv GeoIP2-ISP.mmdb ../backend/
@@ -108,7 +112,7 @@ else
 fi
 
 projectname () {
-	if [ "${simple}" ] ; then
+	if [ "${simple}" ] || [ "${1}" != "${webSignedProject}" ] ; then
 		echo "${version}-dot-$(echo "${1}" | tr '.' '-')-dot-cyphme.appspot.com"
 	elif [ "${test}" ] ; then
 		echo "${version}.${1}"
@@ -242,7 +246,7 @@ if [ "${cacheBustedProjects}" ] ; then
 		fi
 
 		# Cache bust
-		echo 'Cache bust' >> .wpstatic.output 2>&1
+		echo -e \"\n\n\nCache bust (\$(date))\n\" >> .wpstatic.output 2>&1
 		for d in ${cacheBustedProjects} ; do
 			cd \$d
 			../commands/cachebust.js >> ../.wpstatic.output 2>&1
@@ -270,7 +274,7 @@ if [ "${compiledProjects}" ] ; then
 	./commands/buildunbundledassets.sh || exit 1
 fi
 for d in $compiledProjects ; do
-	echo "Build $(projectname "${d}")"
+	log "Build $(projectname "${d}")"
 
 	cd "${d}"
 
@@ -330,7 +334,7 @@ if [ "${websign}" ] ; then
 
 	cd "${webSignedProject}"
 
-	echo "WebSign ${package}"
+	log "WebSign ${package}"
 
 	# Merge imported libraries into threads
 	find . -type f -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
@@ -339,7 +343,7 @@ if [ "${websign}" ] ; then
 
 	cd ..
 
-	customBuilds=""
+	customBuilds=''
 
 	if \
 		[ "${username}" == 'cyph' ] && \
@@ -381,7 +385,7 @@ if [ "${websign}" ] ; then
 		rm -rf cdn/${p}
 	done
 
-	echo "Starting signing process."
+	log 'Starting signing process'
 
 	./commands/websign/sign.js "${websignHashWhitelist}" $(
 		for p in ${packages} ; do
@@ -389,7 +393,7 @@ if [ "${websign}" ] ; then
 		done
 	) || exit 1
 
-	echo -e '\n\nCompressing resources for deployment to CDN\n'
+	log 'Compressing resources for deployment to CDN'
 
 	if [ -d pkg/cyph.ws-subresources ] ; then
 		find pkg/cyph.ws-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
