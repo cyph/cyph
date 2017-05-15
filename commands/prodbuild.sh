@@ -29,12 +29,10 @@ node -e 'console.log(`
 
 ng eject --aot --prod --no-sourcemaps
 
-mv webpack.config.js webpack.ng.js
-
-cat > webpack.config.js <<- EOM
+cat > webpack.js <<- EOM
 	const glob					= require('glob');
 	const {CommonsChunkPlugin}	= require('webpack').optimize;
-	const config				= require('./webpack.ng.js');
+	const config				= require('./webpack.config.js');
 
 	const chunks	=
 		'${dependencyModules}'.trim().split(/\s+/).
@@ -53,7 +51,7 @@ cat > webpack.config.js <<- EOM
 			continue;
 		}
 
-		config.entry[chunk.name]	= chunk.path;
+		config.entry[chunk.name]	= [chunk.path];
 
 		config.plugins.push(
 			new CommonsChunkPlugin({
@@ -73,4 +71,4 @@ cat > webpack.config.js <<- EOM
 	module.exports	= config;
 EOM
 
-npm build
+webpack --config webpack.js
