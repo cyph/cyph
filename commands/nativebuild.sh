@@ -61,6 +61,10 @@ for module in cyph-app cyph-common ; do
 	mv "${modulePath}.new" "${modulePath}"
 done
 
+grep -rl "@import '~" app | xargs -I% sed -i "s|@import '~|@import '/node_modules/|g" %
+grep -rl "importScripts('/assets/" app |
+	xargs -I% sed -i "s|importScripts('/assets/|importScripts('/|g" %
+
 find app -type f -name '*.scss' -exec bash -c '
 	scss "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
 ' \;
@@ -86,6 +90,8 @@ node -e "
 
 	tsconfig.compilerOptions.rootDir	= '.';
 	tsconfig.compilerOptions.outDir		= '.';
+
+	tsconfig.compilerOptions.paths		= undefined;
 
 	tsconfig.files	= 'typings/index.d ${importedTsfiles}'.
 		trim().
