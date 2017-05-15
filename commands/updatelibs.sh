@@ -43,6 +43,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	@types/jquery \
 	@types/markdown-it \
 	@types/node \
+	@types/stacktrace-js \
 	angular-smd@https://github.com/buu700/angular-smd-tmp \
 	angular-ssr \
 	angular2-template-loader \
@@ -119,6 +120,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	simplewebrtc \
 	sodiumutil \
 	sphincs \
+	stacktrace-js \
 	style-loader \
 	stylelint \
 	stylelint-scss \
