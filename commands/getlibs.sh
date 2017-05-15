@@ -214,3 +214,7 @@ for plugin in ${nativePlugins} ; do tns plugin add ${plugin} < /dev/null || exit
 cd
 sudo mv cyph /native
 sudo chmod -R 777 /native
+
+
+cd ${dir}
+./commands/buildunbundledassets.sh
