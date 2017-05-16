@@ -286,8 +286,7 @@ for d in $compiledProjects ; do
 	if [ "${simple}" ] ; then
 		ng build --no-aot --sourcemaps || exit 1
 	else
-		# ../commands/prodbuild.sh || exit 1
-		ng build --aot --prod --no-sourcemaps || exit 1
+		../commands/prodbuild.sh || exit 1
 	fi
 
 	if [ "${d}" == 'cyph.com' ] ; then node -e '

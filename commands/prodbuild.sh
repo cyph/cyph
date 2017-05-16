@@ -31,60 +31,139 @@ node -e 'console.log(`
 ng eject --aot --prod --no-sourcemaps
 
 cat > webpack.js <<- EOM
-	const fs					= require('fs');
-	const glob					= require('glob');
-	const {CommonsChunkPlugin}	= require('webpack').optimize;
-	const config				= require('./webpack.config.js');
-
-	const project	= JSON.parse(fs.readFileSync('package.json').toString()).name;
+	const ExtractTextPlugin						= require('extract-text-webpack-plugin');
+	const HtmlWebpackPlugin						= require('html-webpack-plugin');
+	const path									= require('path');
+	const {CommonsChunkPlugin, UglifyJsPlugin}	= require('webpack').optimize;
+	const config								= require('./webpack.config.js');
 
 	const chunks	=
-		'${dependencyModules}'.trim().split(/\s+/).
-			filter(path =>
-				(path.match(/\//g) || []).length - (path.match(/@/g) || []).length === 0
-			).
+		Array.from(
+			new Set(
+				'${dependencyModules}'.
+					trim().
+					split(/\s+/).
+					map(s => s.
+						split('/').
+						slice(0, s[0] === '@' ? 2 : 1).
+						join('/')
+					)
+			)
+		).
+			map(s => path.join('node_modules', s)).
 			concat([
-				\`./src/js/\${project}/polyfills.ts\`,
-				'./src/js/cyph/services/crypto/threaded-potassium.service.ts',
-				'./src/js/cyph/thread'
+				'src/js/cyph/thread',
+				'src/js/cyph/services/crypto/threaded-potassium.service',
+				'src/js/cyph/services',
+				'src/js/cyph/components',
+				'src/js/cyph'
 			]).
-			map(path => ({
-				path,
-				name: path.replace(/\//g, '_')
+			map(s => ({
+				name: 'commons__' + s.replace(/\//g, '_'),
+				path: s
 			}))
 	;
 
+	const entryPoints	= ['inline', 'polyfills', 'sw-register', 'styles'].
+		concat(chunks.map(chunk => chunk.name)).
+		concat(['vendor', 'main'])
+	;
+
 	const commonsChunkIndex	= config.plugins.indexOf(
-		config.plugins.filter(o => o instanceof CommonsChunkPlugin)[0] || config.plugins[0]
-	);
-
-	config.plugins	= config.plugins.filter(o => !(o instanceof CommonsChunkPlugin));
-
-	config.plugins.splice(
-		commonsChunkIndex,
-		undefined,
-		new CommonsChunkPlugin({
-			name: 'init',
-			minChunks: Infinity
-		})
+		config.plugins.find(o => o instanceof CommonsChunkPlugin)
 	);
 
 	for (const chunk of chunks.reverse()) {
-		if (chunk.name in config.entry) {
-			continue;
-		}
-
-		config.entry[chunk.name]	= [chunk.path];
-
 		config.plugins.splice(
-			commonsChunkIndex,
+			commonsChunkIndex + 1,
 			undefined,
 			new CommonsChunkPlugin({
-				name: 'commons__' + chunk.name,
-				chunks: ['main', chunk.name]
+				name: chunk.name,
+				chunks: ['main'],
+				minChunks: o => o.resource && o.resource.startsWith(
+					path.join(process.cwd(), chunk.path)
+				)
 			})
 		);
 	}
+
+	const extractTextIndex	= config.plugins.indexOf(
+		config.plugins.find(o => o instanceof ExtractTextPlugin)
+	);
+
+	if (extractTextIndex > -1) {
+		config.plugins.splice(
+			extractTextIndex,
+			1,
+			new ExtractTextPlugin({
+				filename: '[name].css'
+			})
+		);
+	}
+
+	const htmlWebpackIndex	= config.plugins.indexOf(
+		config.plugins.find(o => o instanceof HtmlWebpackPlugin)
+	);
+
+	if (htmlWebpackIndex > -1) {
+		config.plugins.splice(
+			htmlWebpackIndex,
+			1,
+			new HtmlWebpackPlugin({
+				template: './src/index.html',
+				filename: './index.html',
+				hash: false,
+				inject: true,
+				compile: true,
+				favicon: false,
+				minify: false,
+				cache: true,
+				showErrors: true,
+				chunks: 'all',
+				xhtml: true,
+				chunksSortMode: (left, right) => {
+					let leftIndex	= entryPoints.indexOf(left.names[0]);
+					let rightindex	= entryPoints.indexOf(right.names[0]);
+
+					if (leftIndex > rightindex) {
+						return 1;
+					}
+					else if (leftIndex < rightindex) {
+						return -1;
+					}
+					else {
+						return 0;
+					}
+				}
+			})
+		);
+	}
+
+	const uglifyJsIndex	= config.plugins.indexOf(
+		config.plugins.find(o => o instanceof UglifyJsPlugin)
+	);
+
+	if (uglifyJsIndex > -1) {
+		config.plugins.splice(
+			uglifyJsIndex,
+			1,
+			new UglifyJsPlugin({
+				comments: false,
+				compress: {
+					'screw_ie8': true,
+					'warnings': false
+				},
+				exclude: /^(commons__node_modules_|polyfills)/,
+				mangle: {
+					'screw_ie8': true
+				},
+				sourceMap: false
+			})
+		);
+	}
+
+	config.output.filename		= '[name].js';
+	config.output.chunkFilename	= config.output.filename;
 
 	module.exports	= config;
 EOM
