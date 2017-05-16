@@ -13,7 +13,7 @@ checkfail () {
 
 nodeModulesAssets="$(
 	grep -roP "importScripts\('/assets/node_modules/.*?\.js'\)" shared/js |
-		perl -pe "s/^.*?'\/assets\/node_modules\/(.*?)'.*/\1/g" |
+		perl -pe "s/^.*?'\/assets\/node_modules\/(.*?)\.js'.*/\1/g" |
 		sort |
 		uniq
 )"
@@ -58,7 +58,11 @@ cd node_modules
 
 for f in ${nodeModulesAssets} ; do
 	mkdir -p "$(echo "${f}" | perl -pe 's/(.*)\/[^\/]+$/\1/')" 2> /dev/null
-	cp "/node_modules/${f}" "${f}"
+	if [ -f "/node_modules/${f}.min.js" ] ; then
+		cp "/node_modules/${f}.min.js" "${f}.js"
+	else
+		uglifyjs "/node_modules/${f}.js" -m -o "${f}.js"
+	fi
 done
 
 
