@@ -117,6 +117,7 @@ RUN rm -rf ~/.gnupg
 
 #CIRCLECI:RUN sudo apt-get -y --allow-downgrades update
 #CIRCLECI:RUN sudo apt-get -y --allow-downgrades upgrade
+#CIRCLECI:RUN sudo npm -g install nativescript
 #CIRCLECI:RUN mkdir -p ~/getlibs/commands
 #CIRCLECI:RUN mkdir -p ~/getlibs/native
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/firebase-server

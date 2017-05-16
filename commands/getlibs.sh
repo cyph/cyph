@@ -1,6 +1,7 @@
 #!/bin/bash
 
 
+source ~/.bashrc
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
@@ -208,7 +209,3 @@ sudo rm -rf /node_modules 2> /dev/null
 sudo mv lib/js/node_modules /
 sudo chmod -R 777 /node_modules
 rm -rf lib
-
-
-cd ${dir}
-./commands/buildunbundledassets.sh
