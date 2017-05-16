@@ -35,7 +35,7 @@ scssAssets="native/app $(
 
 hash="$(
 	cat \
-		$(echo "${nodeModulesAssets}" | perl -pe 's/([^\s]+)/\/node_modules\/\1/g') \
+		$(echo "${nodeModulesAssets}" | perl -pe 's/([^\s]+)/\/node_modules\/\1.js/g') \
 		$(find shared/js -type f -name '*.ts') \
 		$(find shared/css -type f -name '*.scss') \
 	|
