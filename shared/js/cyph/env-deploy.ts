@@ -1,6 +1,5 @@
 /* tslint:disable */
 
-import {environment} from '../environments/environment';
 import {config} from './config';
 
 
@@ -10,7 +9,7 @@ import {config} from './config';
  */
 export class EnvDeploy {
 	/** Indicates whether this is local dev environment. */
-	public readonly isLocalEnv: boolean			= !environment.production;
+	public readonly isLocalEnv: boolean			= true;
 
 	/** Indicates whether this is our Tor site. */
 	public readonly isOnion: boolean			=
