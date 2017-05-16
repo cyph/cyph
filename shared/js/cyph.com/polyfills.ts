@@ -32,5 +32,7 @@ import 'zone.js/dist/zone';
  * APPLICATION IMPORTS
  */
 
+import './sham';
+
 import '../standalone/capabilities';
 import '../standalone/unsupported-browsers';
