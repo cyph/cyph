@@ -36,8 +36,8 @@ scssAssets="native/app $(
 hash="$(
 	cat \
 		$(echo "${nodeModulesAssets}" | perl -pe 's/([^\s]+)/\/node_modules\/\1/g') \
-		$(echo "${typescriptAssets}" | perl -pe 's/([^\s]+)/shared\/js\/\1\.ts/g') \
-		$(echo "${scssAssets}" | perl -pe 's/([^\s]+)/shared\/css\/\1\.scss/g') \
+		$(find shared/js -type f -name '*.ts') \
+		$(find shared/css -type f -name '*.scss') \
 	|
 		shasum -a 512 |
 		awk '{print $1}'
