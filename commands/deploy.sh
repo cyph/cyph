@@ -401,7 +401,6 @@ if [ "${websign}" ] ; then
 		find pkg/cyph.ws-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
 			zopfli -i1000 %; \
 			bro --quality 99 --repeat 99 --input % --output %.br; \
-			rm %; \
 		'
 	fi
 
@@ -411,11 +410,14 @@ if [ "${websign}" ] ; then
 		for customBuild in ${customBuilds} ; do
 			cd cdn/${customBuild}
 			for subresource in $(ls ../../pkg/cyph.ws-subresources) ; do
+				if [ -f "${subresource}.gz" ] ; then
+					continue
+				fi
 				ln -s ../${package}/${subresource} ${subresource}
 				chmod 700 ${subresource}
 				git add ${subresource}
-				git commit -S -m ${subresource} ${subresource} > /dev/null 2>&1
 			done
+			git commit -S -m "${customBuild} symlinks" . > /dev/null 2>&1
 			cd ../..
 		done
 	fi
@@ -437,7 +439,6 @@ if [ "${websign}" ] ; then
 			if [ ! -f {}.gz ] ; then \
 				zopfli -i1000 {}; \
 				bro --quality 99 --repeat 99 --input {} --output {}.br; \
-				rm {}; \
 			fi; \
 			chmod 700 {}.gz {}.br; \
 			git add {}.gz {}.br; \
