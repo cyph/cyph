@@ -193,6 +193,38 @@ h3.cyph-banner {
 	}
 }
 
+/* Dialog sizing */
+
+@media (min-width: 1920px) {
+	md-dialog-container {
+		width: 33vw !important;
+	}
+}
+
+@media (min-width: 1280px) and (max-width: 1919px) {
+	md-dialog-container {
+		width: 40vw !important;
+	}
+}
+
+@media (min-width: 960px) and (max-width: 1279px) {
+	md-dialog-container {
+		width: 50vw !important;
+	}
+}
+
+@media (min-width: 600px) and (max-width: 959px) {
+	md-dialog-container {
+		width: 60vw !important;
+	}
+}
+
+@media (max-width: 599px) {
+	md-dialog-container {
+		width: 80vw !important;
+	}
+}
+
 /* Readability improvement for large screens */
 
 @media (min-width: 1920px) {
