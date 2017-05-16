@@ -3,7 +3,6 @@
 
 dependencyModules="$(
 	grep -roP "(import|from) '[@A-Za-z0-9][^' ]*';" src/js |
-		grep -vP '^src/js/native/' |
 		perl -pe "s/.*?'(.*)';/\1/g" |
 		sort |
 		uniq |
@@ -38,18 +37,9 @@ cat > webpack.js <<- EOM
 	const config								= require('./webpack.config.js');
 
 	const chunks	=
-		Array.from(
-			new Set(
-				'${dependencyModules}'.
-					trim().
-					split(/\s+/).
-					map(s => s.
-						split('/').
-						slice(0, s[0] === '@' ? 2 : 1).
-						join('/')
-					)
-			)
-		).
+		'${dependencyModules}'.
+			trim().
+			split(/\s+/).
 			map(s => path.join('node_modules', s)).
 			concat([
 				'src/js/cyph/thread',
