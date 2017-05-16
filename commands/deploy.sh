@@ -410,10 +410,7 @@ if [ "${websign}" ] ; then
 
 		for customBuild in ${customBuilds} ; do
 			cd cdn/${customBuild}
-			for subresource in $(ls ../../pkg/cyph.ws-subresources) ; do
-				if [ -f "${subresource}.gz" ] ; then
-					continue
-				fi
+			for subresource in $(ls ../../pkg/cyph.ws-subresources | grep -vP '\.(css|js)$') ; do
 				ln -s ../${package}/${subresource} ${subresource}
 				chmod 700 ${subresource}
 				git add ${subresource}
