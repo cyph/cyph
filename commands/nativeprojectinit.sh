@@ -10,7 +10,6 @@ rm -rf app 2> /dev/null
 cp -rf ../shared/js/native app
 rm app/app.module.ngfactory.ts
 cp -rf ../shared/css/native app/css
-mv app/css/app.scss app/
 cp ../shared/assets/css/native/app.css app/
 cp -r ../shared/css/* app/
 cp -r ../shared/css/* app/css/
