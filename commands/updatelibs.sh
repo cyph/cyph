@@ -158,6 +158,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts \
 	zone.js \
 	https://github.com/buu700/webrtcsupport \
 	https://github.com/morr/jquery.appear \
+	$(cat ${dir}/native/plugins.list) \
 || \
 	exit 1
 

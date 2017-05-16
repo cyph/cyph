@@ -48,11 +48,8 @@ for plugin in $(cat plugins.list) ; do
 	"
 done
 
-cp package.json package.tmp.json
-mkdir node_modules
-npm install --save-dev nativescript-dev-webpack
-rm -rf node_modules
-mv package.tmp.json package.json
+cp -f /native/webpack.config.json /native/tsconfig.aot.json ./
+cp -f /native/app/vendor* app/
 
 for arr in \
 	'node_modules /node_modules' \
