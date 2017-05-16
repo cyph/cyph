@@ -1,2 +1,2 @@
-<router-outlet *ngIf='!appService.isLockedDown; else lockdown'></router-outlet>
-<ng-template #lockdown><cyph-lockdown></cyph-lockdown></ng-template>
+<router-outlet [fxHide]='appService.isLockedDown'></router-outlet>
+<cyph-lockdown *ngIf='appService.isLockedDown'></cyph-lockdown>
