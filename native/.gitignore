@@ -2,6 +2,7 @@ app
 hooks
 package.tmp.json
 platforms
+tsconfig.aot.json
 tsconfig.json
 typings
 webpack.config.js
