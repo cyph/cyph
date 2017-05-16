@@ -270,7 +270,9 @@ fi
 
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
-	./commands/lint.sh || exit 1
+	if [ ! "${test}" ] ; then
+		./commands/lint.sh || exit 1
+	fi
 	./commands/buildunbundledassets.sh || exit 1
 fi
 for d in $compiledProjects ; do
