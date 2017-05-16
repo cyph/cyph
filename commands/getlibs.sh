@@ -144,18 +144,6 @@ echo "
 	}
 " > @types/fg-loadcss/index.d.ts
 
-find . -type f | grep -P '.*\.min\.[a-z]+$' | xargs -I% bash -c '
-	cp -f "%" "$(echo "%" | perl -pe "s/\.min(\.[a-z]+)$/\1/")"
-'
-
-for f in \
-	fg-loadcss/src/*.js \
-	jquery.appear/jquery.appear.js \
-	whatwg-fetch/fetch.js
-do
-	./.bin/uglifyjs "${f}" -m -o "${f}"
-done
-
 for arr in \
 	'konami-code.js/konami.js Konami' \
 	'tab-indent/js/tabIndent.js tabIndent' \
