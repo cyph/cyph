@@ -384,7 +384,7 @@ const updateCircleCI	= () => {
 			replace(
 				/PLUGINS_BASE64/g,
 				fs.readFileSync(
-					'shared/js/native/plugins.list'
+					'native/plugins.list'
 				).toString('base64')
 			).
 			replace(
