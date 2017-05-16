@@ -112,7 +112,7 @@ else
 fi
 
 projectname () {
-	if [ "${simple}" ] || [ "${1}" != "${webSignedProject}" ] ; then
+	if [ "${simple}" ] || [ "${1}" == 'cyph.com' ] ; then
 		echo "${version}-dot-$(echo "${1}" | tr '.' '-')-dot-cyphme.appspot.com"
 	elif [ "${test}" ] ; then
 		echo "${version}.${1}"
@@ -401,6 +401,7 @@ if [ "${websign}" ] ; then
 		find pkg/cyph.ws-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
 			zopfli -i1000 %; \
 			bro --quality 99 --repeat 99 --input % --output %.br; \
+			rm %; \
 		'
 	fi
 
@@ -436,6 +437,7 @@ if [ "${websign}" ] ; then
 			if [ ! -f {}.gz ] ; then \
 				zopfli -i1000 {}; \
 				bro --quality 99 --repeat 99 --input {} --output {}.br; \
+				rm {}; \
 			fi; \
 			chmod 700 {}.gz {}.br; \
 			git add {}.gz {}.br; \
