@@ -3315,7 +3315,7 @@ gauge@~2.7.1, gauge@~2.7.3:
     strip-ansi "^3.0.1"
     wide-align "^1.1.0"
 
-gaze@1.1.0, gaze@^1.0.0:
+gaze@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.0.tgz#74d3ffb0110ede715c9f15bba56c6e9b851d3ce0"
   dependencies:
@@ -3326,6 +3326,12 @@ gaze@^0.5.1:
   resolved "https://registry.yarnpkg.com/gaze/-/gaze-0.5.2.tgz#40b709537d24d1d45767db5a908689dfe69ac44f"
   dependencies:
     globule "~0.1.0"
+
+gaze@^1.0.0:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.2.tgz#847224677adb8870d679257ed3388fdb61e40105"
+  dependencies:
+    globule "^1.0.0"
 
 get-caller-file@^1.0.0, get-caller-file@^1.0.1:
   version "1.0.2"
@@ -5320,7 +5326,11 @@ lowercase-keys@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/lowercase-keys/-/lowercase-keys-1.0.0.tgz#4e3366b39e7f5457e35f1324bdf6f88d0bfc7306"
 
-lru-cache@2, lru-cache@2.2.x:
+lru-cache@2:
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-2.7.3.tgz#6d4524e8b955f95d4f5b58851ce21dd72fb4e952"
+
+lru-cache@2.2.x:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-2.2.4.tgz#6c658619becf14031d0d0b594b16042ce4dc063d"
 
@@ -5733,6 +5743,30 @@ nativescript-angular@^3.0.0:
     nativescript-intl "^3.0.0"
     reflect-metadata "^0.1.8"
 
+nativescript-audio@^3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/nativescript-audio/-/nativescript-audio-3.4.2.tgz#09fa8d2f23894106ccb5e1875caaa6fcb9a06300"
+  dependencies:
+    tns-core-modules ">=3.0.0"
+    tns-platform-declarations ">=3.0.0"
+    typescript "^2.1.0"
+
+nativescript-bitmap-factory@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/nativescript-bitmap-factory/-/nativescript-bitmap-factory-1.7.1.tgz#d123d5de2fac8c395ec4b8f0aadfcd3999333d0c"
+
+nativescript-calendar@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/nativescript-calendar/-/nativescript-calendar-1.2.2.tgz#d7b355aaafc7dd800eee9f297ec774498608fdac"
+
+nativescript-clipboard@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/nativescript-clipboard/-/nativescript-clipboard-1.1.6.tgz#4defb22d764a96802c01d9837aa8082ad22fe6d9"
+
+nativescript-contacts@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/nativescript-contacts/-/nativescript-contacts-1.5.0.tgz#0e60430e52bcb09fa91c14e4c27ab6e2df8071b7"
+
 nativescript-css-loader@^0.26.1:
   version "0.26.1"
   resolved "https://registry.yarnpkg.com/nativescript-css-loader/-/nativescript-css-loader-0.26.1.tgz#2e809bba43cb6c03a97da4902598ec83b113f808"
@@ -5769,6 +5803,22 @@ nativescript-dev-webpack@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/nativescript-dev-webpack/-/nativescript-dev-webpack-0.5.0.tgz#b439853be73f0776ff1b60b883dee4afbda551cd"
 
+nativescript-dialog@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/nativescript-dialog/-/nativescript-dialog-0.1.0.tgz#fc73b715e3c20754993fa41723473ec8d701bf1a"
+
+nativescript-email@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/nativescript-email/-/nativescript-email-1.4.0.tgz#f504f0155d190a31111746145c0cfc5cfbca7589"
+
+nativescript-fingerprint-auth@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/nativescript-fingerprint-auth/-/nativescript-fingerprint-auth-4.0.0.tgz#6312e36729f39eade5609c4e7107cd0456da09d6"
+
+nativescript-google-analytics@^0.3.7:
+  version v0.3.7
+  resolved "https://registry.yarnpkg.com/nativescript-google-analytics/-/nativescript-google-analytics-0.3.7.tgz#02bbb47a1c08b2918987fc21e0df12e738ee1ef9"
+
 nativescript-hook@^0.2.0, nativescript-hook@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/nativescript-hook/-/nativescript-hook-0.2.1.tgz#786225056db20fa49e786451dccd64b52e3864d9"
@@ -5776,13 +5826,73 @@ nativescript-hook@^0.2.0, nativescript-hook@^0.2.1:
     glob "^6.0.1"
     mkdirp "^0.5.1"
 
+nativescript-imagepicker@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/nativescript-imagepicker/-/nativescript-imagepicker-3.0.1.tgz#054308f26bb20316a8eb4329ff0b55896c6baa60"
+
 nativescript-intl@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/nativescript-intl/-/nativescript-intl-3.0.0.tgz#82ee9be7d377172b3c4295734723037628e186a7"
 
+nativescript-local-notifications@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/nativescript-local-notifications/-/nativescript-local-notifications-1.2.1.tgz#f8ce9a5d08a07360fe8089b0009f7a78a5be5f95"
+
+nativescript-material-icons@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/nativescript-material-icons/-/nativescript-material-icons-1.0.3.tgz#77fa8fdb78ec091dc4a6a7854e7685ea2895008c"
+
+nativescript-messenger@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/nativescript-messenger/-/nativescript-messenger-1.2.0.tgz#f0db919ba0932e559191d826cc5eb8fcf00212ab"
+
+nativescript-nfc@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/nativescript-nfc/-/nativescript-nfc-1.1.0.tgz#6f9028bf9ff8474dae4aee52013e535385018717"
+
+nativescript-ngx-fonticon@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/nativescript-ngx-fonticon/-/nativescript-ngx-fonticon-2.2.0.tgz#17a234d6fc0d57af30f543a5991a4b33139904ca"
+  dependencies:
+    tslib "1.6.0"
+
+nativescript-permissions@1.2.3, nativescript-permissions@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/nativescript-permissions/-/nativescript-permissions-1.2.3.tgz#e3e65545f98fe488dd5578f7ff90ebae3088e700"
+
+nativescript-phone@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/nativescript-phone/-/nativescript-phone-1.3.0.tgz#8be737268de368d34639974fdfef6b02ce30437e"
+  dependencies:
+    nativescript-permissions "1.2.3"
+
+nativescript-secure-storage@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/nativescript-secure-storage/-/nativescript-secure-storage-2.1.0.tgz#14ddade2efc5ddb35b8035aaadf956d0ad3fcf98"
+
+nativescript-snackbar@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/nativescript-snackbar/-/nativescript-snackbar-1.1.6.tgz#5725266ae53746ca85e32de13ec603d6e4fe7d6f"
+
+nativescript-social-share@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/nativescript-social-share/-/nativescript-social-share-1.3.2.tgz#ebf85657251f4bc159981ec8d65c861ef5562722"
+
+nativescript-telerik-ui-pro@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/nativescript-telerik-ui-pro/-/nativescript-telerik-ui-pro-2.0.1.tgz#a927cc4f935afcde5e30a5643a4d50408ffc5625"
+
+nativescript-telerik-ui@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/nativescript-telerik-ui/-/nativescript-telerik-ui-2.0.1.tgz#3639f3e93eaef64fb2aa2dc4aead5269ea7c8ba0"
+
 nativescript-theme-core@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/nativescript-theme-core/-/nativescript-theme-core-1.0.4.tgz#cf2880c7fbf2fe5f43e2235d309750790803efe1"
+
+nativescript-websockets@^1.3.3:
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/nativescript-websockets/-/nativescript-websockets-1.3.3.tgz#fe5d25393f18c6c8533308bb39e78752bd1bc49a"
 
 nativescript@^3.0.1:
   version "3.0.1"
@@ -8821,7 +8931,7 @@ tns-core-modules-widgets@3.0.0, tns-core-modules-widgets@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/tns-core-modules-widgets/-/tns-core-modules-widgets-3.0.0.tgz#503c762819c936ce51e0b6025c776ae42a4500fb"
 
-tns-core-modules@^3.0.0:
+tns-core-modules@>=3.0.0, tns-core-modules@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/tns-core-modules/-/tns-core-modules-3.0.0.tgz#be0a538d3924a48320e9a875a1d351c664a3c9ab"
   dependencies:
@@ -8831,7 +8941,7 @@ tns-ios@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/tns-ios/-/tns-ios-3.0.0.tgz#e7dffd32313deda0d5bc22451e4e209a28ad7a91"
 
-tns-platform-declarations@^3.0.1:
+tns-platform-declarations@>=3.0.0, tns-platform-declarations@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/tns-platform-declarations/-/tns-platform-declarations-3.0.1.tgz#d88b29b856b425fba980a1a13a9d57a06e4e53ef"
 
@@ -8926,6 +9036,10 @@ tsickle@^0.21.0:
     source-map "^0.5.6"
     source-map-support "^0.4.2"
 
+tslib@1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.6.0.tgz#cf36c93e02ae86a20fc131eae511162b869a6652"
+
 tslib@^1.6.0:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.7.1.tgz#bc8004164691923a79fe8378bbeb3da2017538ec"
@@ -9010,7 +9124,7 @@ typedoc@^0.7.0:
     typedoc-default-themes "^0.5.0"
     typescript "2.3.2"
 
-typescript@2.3.2, typescript@^2.1.5, typescript@^2.3.2:
+typescript@2.3.2, typescript@^2.1.0, typescript@^2.1.5, typescript@^2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.3.2.tgz#f0f045e196f69a72f06b25fd3bd39d01c3ce9984"
 
