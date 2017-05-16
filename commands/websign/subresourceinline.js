@@ -4,6 +4,7 @@
 const childProcess	= require('child_process');
 const datauri		= require('datauri');
 const fs			= require('fs');
+const glob			= require('glob');
 const mkdirp		= require('mkdirp');
 const superSphincs	= require('supersphincs');
 
@@ -12,35 +13,29 @@ const superSphincs	= require('supersphincs');
 
 
 const args			= {
-	modifyTemplates: process.argv.indexOf('--templates') > -1,
 	subresourcePath: `${process.env.PWD}/${process.argv.slice(-1)[0]}`
 };
 
 
-const filesToMerge	= childProcess.spawnSync('find', [
-	'src/assets',
-	'-type',
-	'f'
-]).stdout.toString().split('\n').filter(s => s);
+process.chdir('src');
+
+
+const filesToMerge	= glob.sync('assets/**', {nodir: true}).
+	filter(s => !s.match(/^assets\/(css|js|node_modules)\//))
+;
 
 const filesToModify	= [
-	{dir: 'src/assets/css', ext: 'css'},
-	{dir: 'src/assets/js', ext: 'js'},
-	{dir: 'src/css', ext: 'scss'},
-	{dir: 'src/js', ext: 'ts'},
-	{dir: 'src/templates', ext: 'html'}
-].reduce((arr, o) =>
-	arr.concat(
-		childProcess.spawnSync('find', [
-			o.dir,
-			'-name',
-			'*.' + o.ext,
-			'-type',
-			'f'
-		]).stdout.toString().split('\n')
-	),
-	['src/index.html']
-).filter(s => s);
+	{dir: 'assets/css', ext: 'css'},
+	{dir: 'assets/js', ext: 'js'},
+	{dir: 'css', ext: 'scss'},
+	{dir: 'js', ext: 'ts'},
+	{dir: 'templates', ext: 'html'}
+].map(o =>
+	glob.sync(`${o.dir}/**`, {nodir: true}).filter(s => s.endsWith(`.${o.ext}`))
+).reduce((a, b) =>
+	a.concat(b),
+	['index.html']
+);
 
 
 await new Promise(resolve => mkdirp(args.subresourcePath, resolve));
