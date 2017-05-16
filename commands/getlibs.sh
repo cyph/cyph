@@ -21,13 +21,13 @@ go get \
 nativePlugins="$(cat native/plugins.list)"
 
 rm -rf ~/cyph ~/lib shared/lib/js/node_modules 2> /dev/null
-cp -rf shared/lib ~/lib
+cp -a shared/lib ~/lib
 
 cd
 tns create cyph --ng --appid com.cyph.app
 cd cyph
 mv package.json package.json.tmp
-cp -rf ~/lib/js/* ./
+cp -a ~/lib/js/* ./
 git init
 rm -rf node_modules 2> /dev/null
 mkdir node_modules
@@ -38,6 +38,7 @@ mv package.json.tmp package.json
 for plugin in ${nativePlugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
 # rm hooks/*/nativescript-dev-typescript.js
 cd
+sudo rm -rf /native 2> /dev/null
 sudo mv cyph /native
 sudo chmod -R 777 /native
 
@@ -203,7 +204,7 @@ cp js/yarn.lock js/node_modules/
 cd
 rm -rf ${dir}/shared/lib
 cp -aL lib ${dir}/shared/
-sudo rm -rf /node_modules
+sudo rm -rf /node_modules 2> /dev/null
 sudo mv lib/js/node_modules /
 sudo chmod -R 777 /node_modules
 rm -rf lib
