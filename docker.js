@@ -233,16 +233,6 @@ const shellScripts			= {
 		source ~/.bashrc
 		gcloud components update --quiet
 		gcloud init
-	`,
-	stopServe: `
-		rm -rf \\
-			*/.build.yaml \\
-			*/.index.html \\
-			cyph.com/blog \\
-			shared/js/docs \\
-			shared/js/*/pack \\
-			$(find shared/css -name '*.css' -or -name '*.map') \\
-			$(find shared/js -name '*.js' -or -name '*.map')
 	`
 };
 
@@ -490,16 +480,6 @@ switch (args.command) {
 		}
 
 		console.log(`docs: ${base}:42001/js/docs/index.html\n\n`);
-		break;
-
-	case 'stopserve':
-		killContainer(containerName('serve'));
-
-		if (isWindows) {
-			break;
-		}
-
-		exec(shellScripts.stopServe);
 		break;
 
 	case 'updatecircleci':
