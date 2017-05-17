@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, AfterViewInit} from '@angular/core';
 import {Router} from '@angular/router';
 import * as Granim from 'granim';
 import * as $ from 'jquery';
@@ -73,7 +73,7 @@ import {ChatRootStates} from './enums';
 	styleUrls: ['../../css/components/cyph.ws/ephemeral-chat-root.scss'],
 	templateUrl: '../../templates/cyph.ws/ephemeral-chat-root.html'
 })
-export class EphemeralChatRootComponent implements OnDestroy, OnInit {
+export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 	/** @ignore */
 	private destroyed: boolean	= false;
 
@@ -86,7 +86,7 @@ export class EphemeralChatRootComponent implements OnDestroy, OnInit {
 	}
 
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
+	public async ngAfterViewInit () : Promise<void> {
 		this.appService.chatRootState	= ChatRootStates.blank;
 
 		const granimStates	= {
