@@ -1,6 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
-import {Router} from '@angular/router';
+import {
+	ActivatedRouteSnapshot,
+	CanActivateChild,
+	Router,
+	RouterStateSnapshot
+} from '@angular/router';
 import * as $ from 'jquery';
 import {util} from '../cyph/util';
 import {ChatRootStates} from './enums';
@@ -10,14 +15,56 @@ import {ChatRootStates} from './enums';
  * Angular service for Cyph web UI.
  */
 @Injectable()
-export class AppService {
+export class AppService implements CanActivateChild {
+	/** @ignore */
+	private readonly lockedDownRoute: Promise<string>	=
+		/* tslint:disable-next-line:promise-must-complete */
+		new Promise<string>(resolve => {
+			this.resolveLockedDownRoute	= resolve;
+		})
+	;
+
+	/** @ignore */
+	private resolveLockedDownRoute: (lockedDownRoute: string) => void;
+
 	/** @see ChatRootStates */
 	public chatRootState: ChatRootStates	= ChatRootStates.blank;
 
 	/** If true, app is locked down. */
 	public isLockedDown: boolean			= !!customBuildPassword;
 
-	constructor (routerService: Router, titleService: Title) {
+	/** @ignore */
+	private loadComplete () : void {
+		$(document.body).addClass('load-complete');
+	}
+
+	/** @inheritDoc */
+	public canActivateChild (_: ActivatedRouteSnapshot, state: RouterStateSnapshot) : boolean {
+		if (this.isLockedDown) {
+			this.resolveLockedDownRoute(state.url);
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+
+	/** Disables lockdown. */
+	public async unlock () : Promise<void> {
+		if (!this.isLockedDown) {
+			return;
+		}
+
+		this.isLockedDown	= false;
+		this.routerService.navigateByUrl(await this.lockedDownRoute);
+	}
+
+	constructor (
+		titleService: Title,
+
+		/** @ignore */
+		private readonly routerService: Router
+	) {
 		/* Request Persistent Storage permission to mitigate
 			edge case eviction of ServiceWorker/AppCache */
 		try {
@@ -30,6 +77,11 @@ export class AppService {
 		self.onhashchange	= () => { location.reload(); };
 
 		(async () => {
+			if (this.isLockedDown) {
+				this.loadComplete();
+				return;
+			}
+
 			const urlSegmentPaths	=
 				(
 					await (
@@ -40,10 +92,7 @@ export class AppService {
 				).map(o => o.path)
 			;
 
-			if (this.isLockedDown) {
-				await util.sleep(1000);
-			}
-			else if (urlSegmentPaths[0] !== 'account') {
+			if (urlSegmentPaths[0] !== 'account') {
 				while (this.chatRootState === ChatRootStates.blank) {
 					await util.sleep();
 				}
@@ -51,7 +100,7 @@ export class AppService {
 				await util.sleep();
 			}
 
-			$(document.body).addClass('load-complete');
+			this.loadComplete();
 		})();
 	}
 }

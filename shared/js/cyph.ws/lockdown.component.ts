@@ -41,7 +41,7 @@ export class LockdownComponent implements OnInit {
 		customBuildPassword		= undefined;
 
 		if ((await this.localStorageService.getItem('password')) === this.correctPassword) {
-			this.appService.isLockedDown	= false;
+			this.appService.unlock();
 		}
 	}
 
@@ -54,7 +54,7 @@ export class LockdownComponent implements OnInit {
 
 		if (this.password === this.correctPassword) {
 			await this.localStorageService.setItem('password', this.password);
-			this.appService.isLockedDown	= false;
+			this.appService.unlock();
 			return;
 		}
 
