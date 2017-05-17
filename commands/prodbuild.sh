@@ -30,11 +30,11 @@ node -e 'console.log(`
 ng eject --aot --prod --no-sourcemaps
 
 cat > webpack.js <<- EOM
-	const ExtractTextPlugin		= require('extract-text-webpack-plugin');
-	const HtmlWebpackPlugin		= require('html-webpack-plugin');
-	const path					= require('path');
-	const {CommonsChunkPlugin}	= require('webpack').optimize;
-	const config				= require('./webpack.config.js');
+	const ExtractTextPlugin						= require('extract-text-webpack-plugin');
+	const HtmlWebpackPlugin						= require('html-webpack-plugin');
+	const path									= require('path');
+	const {CommonsChunkPlugin, UglifyJsPlugin}	= require('webpack').optimize;
+	const config								= require('./webpack.config.js');
 
 	const chunks	=
 		'${dependencyModules}'.
@@ -125,6 +125,29 @@ cat > webpack.js <<- EOM
 						return 0;
 					}
 				}
+			})
+		);
+	}
+
+	const uglifyJsIndex	= config.plugins.indexOf(
+		config.plugins.find(o => o instanceof UglifyJsPlugin)
+	);
+
+	if (uglifyJsIndex > -1) {
+		config.plugins.splice(
+			uglifyJsIndex,
+			1,
+			new UglifyJsPlugin({
+				comments: false,
+				compress: {
+					'screw_ie8': true,
+					'sequences': false,
+					'warnings': false
+				},
+				mangle: {
+					'screw_ie8': true
+				},
+				sourceMap: false
 			})
 		);
 	}
