@@ -1,15 +1,11 @@
 {
-	"extends": "../shared/js/tslint.json",
+	"extends": "../shared/js/tsconfig.json",
 	"compilerOptions": {
 		"module": "commonjs",
 		"noEmitHelpers": true,
 		"noEmitOnError": true,
 		"baseUrl": ".",
 		"paths": {
-			"*": [
-				"./node_modules/tns-core-modules/*",
-				"./node_modules/*"
-			],
 			"_stream_duplex": ["app/js/externals/_stream_duplex"],
 			"_stream_writable": ["app/js/externals/_stream_writable"],
 			"faye-websocket": ["app/js/externals/faye-websocket"],

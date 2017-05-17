@@ -1,5 +1,4 @@
 .build
-.nativebuild
 **/.build.yaml
 *.mmdb
 **/*.mmdb

@@ -18,11 +18,11 @@ for arr in \
 do
 	read -ra arr <<< "${arr}"
 
+	rm -rf "${arr[0]}" 2> /dev/null
+
 	if [ "${circleCI}" ] ; then
-		rm -rf "${arr[0]}" 2> /dev/null
 		cp -a "${arr[1]}" "${arr[0]}"
 	else
-		rm "${arr[0]}" 2> /dev/null
 		mkdir "${arr[0]}" 2> /dev/null
 		sudo mount --bind "${arr[1]}" "${arr[0]}"
 	fi

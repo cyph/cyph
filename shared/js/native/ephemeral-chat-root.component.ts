@@ -53,7 +53,7 @@ import {events} from './js/cyph/session/enums';
 		}
 	],
 	selector: 'cyph-chat-root',
-	templateUrl: './templates/chat-root.html'
+	templateUrl: '../templates/chat-root.html'
 })
 export class EphemeralChatRootComponent implements OnDestroy, OnInit {
 	/** @ignore */

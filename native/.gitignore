@@ -1,8 +1,12 @@
 app
+assets
+css
 hooks
-package.tmp.json
+package.json
 platforms
+templates
 tsconfig.aot.json
 tsconfig.json
 typings
 webpack.config.js
+yarn.lock

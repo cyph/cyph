@@ -15,10 +15,12 @@
 	"android": {
 		"v8Flags": "--expose_gc"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"@angular/core": "*"
+	},
 	"devDependencies": {},
 	"scripts": {
-		"ns-bundle": "ns-bundle",
+		"ns-bundle": "./node_modules/.bin/ns-bundle",
 		"start-android-bundle": "npm run ns-bundle --android --start-app",
 		"start-ios-bundle": "npm run ns-bundle --ios --start-app",
 		"build-android-bundle": "npm run ns-bundle --android --build-app",

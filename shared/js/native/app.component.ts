@@ -9,7 +9,7 @@ import {StringsService} from './js/cyph/services/strings.service';
  */
 @Component({
 	selector: 'cyph-app',
-	templateUrl: './templates/app/index.html'
+	templateUrl: '../templates/app/index.html'
 })
 export class AppComponent {
 	constructor (
