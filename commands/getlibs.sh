@@ -21,11 +21,27 @@ go get \
 
 nativePlugins="$(cat native/plugins.list)"
 
-rm -rf ~/cyph ~/lib shared/lib/js/node_modules 2> /dev/null
-cp -a shared/lib ~/lib
+rm -rf ~/cyph ~/lib ~/node_modules shared/lib/js/node_modules 2> /dev/null
+cp -a shared/lib ~/
 
 cd
-tns create cyph --ng --appid com.cyph.app
+mkdir node_modules
+head -n4 "${dir}/shared/lib/js/yarn.lock" > yarn.lock
+grep -A2 'nativescript@' "${dir}/shared/lib/js/yarn.lock" >> yarn.lock
+node -e "
+	const package	= JSON.parse(
+		fs.readFileSync('${dir}/shared/lib/js/package.json').toString()
+	);
+
+	fs.writeFileSync('package.json', JSON.stringify({
+		dependencies: {
+			nativescript: package.dependencies.nativescript
+		}
+	}));
+"
+yarn install --ignore-engines --ignore-platform || exit 1
+
+~/node_modules/.bin/tns create cyph --ng --appid com.cyph.app
 cd cyph
 mv package.json package.json.tmp
 cp -a ~/lib/js/* ./
@@ -33,10 +49,13 @@ git init
 rm -rf node_modules 2> /dev/null
 mkdir node_modules
 yarn install --ignore-engines --ignore-platform || exit 1
-mv node_modules ~/node_modules.tmp
+rm -rf ~/node_modules ~/package.json ~/yarn.lock
+mv node_modules ~/
 mkdir node_modules
 mv package.json.tmp package.json
-for plugin in ${nativePlugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
+for plugin in ${nativePlugins} ; do
+	~/node_modules/.bin/tns plugin add ${plugin} < /dev/null || exit 1
+done
 # rm hooks/*/nativescript-dev-typescript.js
 cd
 sudo rm -rf /native 2> /dev/null
@@ -47,7 +66,7 @@ sudo chmod -R 777 /native
 cd ~/lib
 cp -a js .js.tmp
 cd js
-mv ~/node_modules.tmp node_modules
+mv ~/node_modules ./
 cd node_modules
 
 cp -a ../libsodium ./
