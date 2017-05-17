@@ -141,6 +141,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 	ts-node \
 	tslint \
 	tslint-microsoft-contrib \
+	tsutils \
 	typedoc \
 	typescript \
 	uglify-js@^2 \
