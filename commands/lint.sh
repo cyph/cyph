@@ -11,17 +11,41 @@ cd "${tmpDir}/shared"
 # Validate component template/stylesheet count consistency
 
 componentConsistency="$(
-	node -e 'console.log(
-		[
-			"templates/*.html",
-			"templates/native/*.html",
-			"css/components/*.scss",
-			"css/native/components/*.scss"
-		].
-			map(s => require("glob").sync(s).length).
-			reduce((a, b) => a === b ? a : -1)
-		!== -1
-	)'
+	node -e '
+		const glob	= require("glob");
+
+		/* Used to offset web AppComponents not having component stylesheets */
+		const webIndexHtml		= glob.sync("templates/**", {nodir: true}).filter(s =>
+			s.endsWith("/index.html") && s.indexOf("/native/") < 0
+		);
+
+		const webTemplates		= glob.sync("templates/**", {nodir: true}).filter(s =>
+			s.endsWith(".html") && s.indexOf("/native/") < 0
+		);
+
+		const nativeTemplates	= glob.sync("templates/native/**", {nodir: true}).filter(s =>
+			s.endsWith(".html") && s.indexOf("/app/") < 0
+		);
+
+		const webStylesheets	= glob.sync("css/components/**", {nodir: true}).filter(s =>
+			s.endsWith(".scss")
+		).concat(
+			webIndexHtml
+		);
+
+		const nativeStylesheets	= glob.sync("css/native/components/**", {nodir: true}).filter(s =>
+			s.endsWith(".scss")
+		).concat(
+			webIndexHtml
+		);
+
+		console.log(
+			[webTemplates, nativeTemplates, webStylesheets, nativeStylesheets].
+				map(a => a.length).
+				reduce((a, b) => a === b ? a : -1)
+			!== -1
+		);
+	'
 )"
 
 if [ "${componentConsistency}" != true ] ; then

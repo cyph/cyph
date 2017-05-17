@@ -6,41 +6,61 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 ./commands/buildunbundledassets.sh
 
 cd native
+
+node -e "
+	const package		= JSON.parse(fs.readFileSync('package.base.json').toString());
+	const libPackage	= JSON.parse(fs.readFileSync('../shared/lib/js/package.json').toString());
+
+	/*
+		package.dependencies	= libPackage.dependencies;
+		package.devDependencies	= libPackage.dependencies;
+	*/
+
+	for (const k of ['tns-android', 'tns-ios']) {
+		package.nativescript[k]	= {
+			version: libPackage.dependencies[k].replace(/^[^\d]+/, '')
+		};
+	}
+
+	fs.writeFileSync('package.json', JSON.stringify(package));
+"
+
 rm -rf app 2> /dev/null
 cp -rf ../shared/js/native app
 rm app/app.module.ngfactory.ts
-cp -rf ../shared/css/native app/css
+cp -rf ../shared/js/typings ./
+cp -rf ../shared/css/native ./css
 cp ../shared/assets/css/native/app.css app/
-cp -r ../shared/css/* app/
-cp -r ../shared/css/* app/css/
-rm -rf app/native app/css/native
-cp -rf ../shared/templates/native app/templates
+cp -r ../shared/css/* ./css/
+cp -rf ../shared/templates/native ./templates
+cp -rf ../shared/assets app/
+cp -rf ../shared/assets ./
 cp package.json app/
 
 rm -rf app/js
-mkdir -p app/js/cyph.ws app/js/standalone
-cp ../shared/js/standalone/global.ts app/js/standalone/
-cp -rf ../shared/js/cyph.ws/enums app/js/cyph.ws/
-cp -rf ../shared/js/cyph app/js/
-cp -rf ../shared/js/environments app/js/
-cp -rf ../shared/js/typings app/js/
-
-for module in cyph-app cyph-common ; do
-	modulePath="app/js/cyph/modules/${module}.module.ts"
-	cat "${modulePath}" |
-		grep -v CyphWebModule |
-		sed 's|NgModule}|NgModule, NO_ERRORS_SCHEMA}|g' |
-		sed 's|exports:|schemas: [NO_ERRORS_SCHEMA], exports:|g' \
-	> "${modulePath}.new"
-	mv "${modulePath}.new" "${modulePath}"
+mkdir app/js
+find ../shared/js -mindepth 1 -maxdepth 1 -type d -not -name native -exec cp -rf {} app/js/ \;
+for pattern in "styleUrls: \['../" "templateUrl: '../" ; do
+	grep -rl "${pattern}" app/js | xargs -I% sed -i "s|${pattern}|${pattern}../|" %
 done
+
+find app/js -type f -name '*.module.ts' -exec bash -c '
+	cat "{}" |
+		grep -vP "(?<!class )CyphWebModule" |
+		sed "s|NgModule}|NgModule, NO_ERRORS_SCHEMA}|g" |
+		sed "s|imports:|schemas: [NO_ERRORS_SCHEMA], imports:|g" \
+	> "{}.new"
+	mv "{}.new" "{}"
+' \;
 
 cp tsconfig.base.json tsconfig.json
 for plugin in $(cat plugins.list) ; do
-	cat > "app/externals/${plugin}.ts" <<- EOM
-		/* tslint:disable */
-		export default require('${plugin}');
-	EOM
+	if [ ! -f "app/externals/${plugin}.ts" ] ; then
+		cat > "app/externals/${plugin}.ts" <<- EOM
+			/* tslint:disable */
+			export default (<any> self).require('${plugin}');
+		EOM
+	fi
 	node -e "
 		const tsconfig	= JSON.parse(fs.readFileSync('tsconfig.json').toString());
 		tsconfig.compilerOptions.paths['${plugin}']	= ['app/externals/${plugin}'];
@@ -48,20 +68,27 @@ for plugin in $(cat plugins.list) ; do
 	"
 done
 
+cp -rf /native/app/App_Resources app/
+cp -rf /native/hooks ./
+rm hooks/*/nativescript-dev-typescript.js
 cp -f /native/webpack.config.js /native/tsconfig.aot.json ./
 cp -f /native/app/vendor* app/
 
+node -e "
+	const tsconfig		= JSON.parse(fs.readFileSync('tsconfig.json').toString());
+	const aotTsconfig	= JSON.parse(fs.readFileSync('tsconfig.aot.json').toString());
+	for (const k of Object.keys(tsconfig.compilerOptions.paths)) {
+		aotTsconfig.compilerOptions.paths[k]	= tsconfig.compilerOptions.paths[k];
+	}
+	fs.writeFileSync('tsconfig.aot.json', JSON.stringify(aotTsconfig));
+"
+
 for arr in \
-	'node_modules /node_modules' \
-	'app/App_Resources /native/app/App_Resources' \
-	'hooks /native/hooks' \
-	'platforms /native/platforms' \
-	'app/assets ../shared/assets' \
-	'typings ../shared/js/typings'
+	'node_modules /node_modules'
 do
 	read -ra arr <<< "${arr}"
 
-	rm "${arr[0]}" 2> /dev/null
+	rm -rf "${arr[0]}" 2> /dev/null
 	mkdir "${arr[0]}" 2> /dev/null
 	sudo mount --bind "${arr[1]}" "${arr[0]}"
 done

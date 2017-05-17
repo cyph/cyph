@@ -7,8 +7,8 @@ import {ModalDialogParams} from 'nativescript-angular/modal-dialog';
  */
 @Component({
 	selector: 'cyph-dialog-image',
-	styleUrls: ['./css/components/dialog-image.scss'],
-	templateUrl: './templates/dialog-image.html'
+	styleUrls: ['../css/components/dialog-image.scss'],
+	templateUrl: '../templates/dialog-image.html'
 })
 export class DialogImageComponent {
 	/** Image src. */
