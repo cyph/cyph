@@ -10,7 +10,7 @@ dir="$PWD"
 mkdir -p ~/lib/js ~/tmplib/js
 cd ~/tmplib/js
 
-yarn add --ignore-engines --ignore-platform --ignore-scripts \
+yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 	@angular/animations \
 	@angular/cli \
 	@angular/common \

@@ -26,21 +26,12 @@ cp -a shared/lib ~/
 
 cd
 mkdir node_modules
-head -n4 "${dir}/shared/lib/js/yarn.lock" > yarn.lock
-grep -A2 'nativescript@' "${dir}/shared/lib/js/yarn.lock" >> yarn.lock
-node -e "
-	const package	= JSON.parse(
-		fs.readFileSync('${dir}/shared/lib/js/package.json').toString()
-	);
+yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
+	"$(grep -oP 'nativescript@[A-Za-z0-9\^\.\-]+' ${dir}/shared/lib/js/yarn.lock)" \
+|| exit 1
 
-	fs.writeFileSync('package.json', JSON.stringify({
-		dependencies: {
-			nativescript: package.dependencies.nativescript
-		}
-	}));
-"
-yarn install || exit 1
-
+~/node_modules/.bin/tns error-reporting disable
+~/node_modules/.bin/tns usage-reporting disable
 ~/node_modules/.bin/tns create cyph --ng --appid com.cyph.app
 cd cyph
 mv package.json package.json.tmp
@@ -48,7 +39,7 @@ cp -a ~/lib/js/* ./
 git init
 rm -rf node_modules 2> /dev/null
 mkdir node_modules
-yarn install --ignore-engines --ignore-platform || exit 1
+yarn install --ignore-engines --ignore-platform --non-interactive || exit 1
 rm -rf ~/node_modules ~/package.json ~/yarn.lock
 mv node_modules ~/
 mkdir node_modules
@@ -209,7 +200,7 @@ for d in firebase-server tslint ; do
 	cp -f ../module_locks/${d}/* "${tmpDir}/${d}/"
 	cd "${tmpDir}/${d}"
 	mkdir node_modules 2> /dev/null
-	yarn install --ignore-engines --ignore-platform || exit 1
+	yarn install --ignore-engines --ignore-platform --non-interactive || exit 1
 	cd "${currentDir}"
 	mv "${tmpDir}/${d}" ./
 done
