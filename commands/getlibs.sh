@@ -39,7 +39,7 @@ node -e "
 		}
 	}));
 "
-yarn install --ignore-engines --ignore-platform || exit 1
+yarn install || exit 1
 
 ~/node_modules/.bin/tns create cyph --ng --appid com.cyph.app
 cd cyph
