@@ -46,7 +46,7 @@ hash="$(
 
 cd shared/assets
 
-if [ "${hash}" == "$(cat unbundled.hash)" ] ; then
+if [ -f unbundled.hash ] && [ "${hash}" == "$(cat unbundled.hash)" ] ; then
 	exit 0
 fi
 

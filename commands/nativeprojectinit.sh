@@ -48,7 +48,7 @@ for plugin in $(cat plugins.list) ; do
 	"
 done
 
-cp -f /native/webpack.config.json /native/tsconfig.aot.json ./
+cp -f /native/webpack.config.js /native/tsconfig.aot.json ./
 cp -f /native/app/vendor* app/
 
 for arr in \
