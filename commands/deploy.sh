@@ -275,6 +275,8 @@ if [ "${compiledProjects}" ] ; then
 		./commands/lint.sh || exit 1
 	fi
 	./commands/buildunbundledassets.sh || exit 1
+	rm -rf "${dir}/shared/assets"
+	cp -a shared/assets "${dir}/shared/"
 fi
 for d in $compiledProjects ; do
 	log "Build $(projectname "${d}")"
