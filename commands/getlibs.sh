@@ -27,7 +27,11 @@ cp -a shared/lib ~/
 cd
 mkdir node_modules
 yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
-	"$(grep -oP 'nativescript@[A-Za-z0-9\^\.\-]+' ${dir}/shared/lib/js/yarn.lock)" \
+	"nativescript@$(node -e "console.log(
+		JSON.parse(
+			fs.readFileSync('${dir}/shared/lib/js/package.json').toString()
+		).dependencies.nativescript
+	)")" \
 || exit 1
 
 ~/node_modules/.bin/tns error-reporting disable
