@@ -1,5 +1,5 @@
 import {ErrorHandler, Injectable} from '@angular/core';
-import {fromError, report} from 'stacktrace-js';
+import {fromError} from 'stacktrace-js';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
@@ -27,12 +27,11 @@ export class ErrorService implements ErrorHandler {
 
 	/** @ignore */
 	private baseErrorLog (subject: string, requireErrorMessage?: boolean) : (
-		err?: any,
-		url?: string
+		err?: any
 	) => Promise<void> {
 		let numEmails	= 0;
 
-		return async (err?: any, url?: string) : Promise<void> => {
+		return async (err?: any) : Promise<void> => {
 			const errorMessage	= err.message ? err.message : err.toString();
 
 			if (
@@ -45,8 +44,8 @@ export class ErrorService implements ErrorHandler {
 				return;
 			}
 
-			const exception: string	= (err && url) ?
-				(await report(await fromError(err), url)).replace(/\/#.*/g, '') :
+			const exception: string	= err ?
+				(await fromError(err)).join('\n').replace(/\/#.*/g, '') :
 				''
 			;
 
@@ -71,7 +70,7 @@ export class ErrorService implements ErrorHandler {
 
 	/** @inheritDoc */
 	public handleError (err: any) : void {
-		this.log(err, locationData.toString());
+		this.log(err);
 	}
 
 	constructor (
