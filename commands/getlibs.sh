@@ -7,6 +7,7 @@ dir="$PWD"
 
 
 go get \
+	github.com/gorilla/context \
 	github.com/gorilla/mux \
 	github.com/lionelbarrow/braintree-go \
 	github.com/microcosm-cc/bluemonday \
