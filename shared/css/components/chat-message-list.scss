@@ -21,6 +21,8 @@
 }
 
 .message-list-background {
+	position: relative;
+
 	@include shadow;
 }
 
