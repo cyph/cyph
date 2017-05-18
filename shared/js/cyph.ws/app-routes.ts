@@ -14,24 +14,18 @@ import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 /** @see Routes */
 export const appRoutes: Routes	= [
 	{
-		path: '',
-		canActivateChild: [AppService],
-		children: [
-			{
-				path: 'retry', children: [
-					{path: '**', component: RedirectComponent}
-				]
-			},
-			{
-				path: 'account', children: [
-					{path: 'contacts', component: AccountContactsComponent},
-					{path: 'login', component: AccountLoginComponent},
-					{path: 'profile', component: AccountProfileComponent},
-					{path: 'register', component: AccountRegisterComponent},
-					{path: 'settings', component: AccountSettingsComponent}
-				]
-			},
-			{path: '**', component: EphemeralChatRootComponent}
+		path: 'retry', children: [
+			{path: '**', component: RedirectComponent}
 		]
-	}
+	},
+	{
+		path: 'account', canActivate: [AppService], children: [
+			{path: 'contacts', component: AccountContactsComponent},
+			{path: 'login', component: AccountLoginComponent},
+			{path: 'profile', component: AccountProfileComponent},
+			{path: 'register', component: AccountRegisterComponent},
+			{path: 'settings', component: AccountSettingsComponent}
+		]
+	},
+	{path: '**', canActivate: [AppService], component: EphemeralChatRootComponent}
 ];

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {
 	ActivatedRouteSnapshot,
-	CanActivateChild,
+	CanActivate,
 	Router,
 	RouterStateSnapshot
 } from '@angular/router';
@@ -15,7 +15,7 @@ import {ChatRootStates} from './enums';
  * Angular service for Cyph web UI.
  */
 @Injectable()
-export class AppService implements CanActivateChild {
+export class AppService implements CanActivate {
 	/** @ignore */
 	private readonly lockedDownRoute: Promise<string>	=
 		/* tslint:disable-next-line:promise-must-complete */
@@ -39,7 +39,7 @@ export class AppService implements CanActivateChild {
 	}
 
 	/** @inheritDoc */
-	public canActivateChild (_: ActivatedRouteSnapshot, state: RouterStateSnapshot) : boolean {
+	public canActivate (_: ActivatedRouteSnapshot, state: RouterStateSnapshot) : boolean {
 		if (this.isLockedDown) {
 			this.resolveLockedDownRoute(state.url);
 			return false;
