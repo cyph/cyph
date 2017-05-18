@@ -59,6 +59,16 @@ cat > webpack.js <<- EOM
 		concat(['vendor', 'main'])
 	;
 
+	const mangleExcept	= '$(
+		grep -oP '[A-Za-z_\$][A-Za-z0-9_\$]*' src/assets/js/standalone/global.js |
+		sort |
+		uniq |
+		tr '\n' ' '
+	)'.
+		trim().
+		split(/\s+/)
+	;
+
 	const commonsChunkIndex	= config.plugins.indexOf(
 		config.plugins.find(o => o instanceof CommonsChunkPlugin)
 	);
@@ -145,6 +155,7 @@ cat > webpack.js <<- EOM
 					'warnings': false
 				},
 				mangle: {
+					'except': mangleExcept,
 					'screw_ie8': true
 				},
 				sourceMap: false
