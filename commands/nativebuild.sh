@@ -59,7 +59,7 @@ fi
 
 mv app/App_Resources ${compiledApp}/
 rm -rf app
-mv ${compiledApp} app
+cp -rf ${compiledApp} app
 
 cp /node_modules/core-js/client/shim.js starter.js
 echo >> starter.js
