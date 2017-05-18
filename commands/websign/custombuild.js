@@ -28,11 +28,14 @@ const compileSCSS	= scss =>
 			'scss',
 			['-s', '-C', '-I../../shared/css'],
 			{input: `
-				@import '/node_modules/bourbon/app/assets/stylesheets/bourbon';
-				@import 'theme';
-
+				@import '~bourbon/app/assets/stylesheets/bourbon';
+				${fs.readFileSync('../../shared/css/mixins.scss').toString()}
+				${fs.readFileSync('../../shared/css/theme.scss').toString()}
 				${scss}
-			`}
+			`.
+				replace(/@import '\.\/mixins';/g, '').
+				replace(/@import '~/g, "@import '/node_modules/")
+			}
 		).stdout.toString()
 	}).stdout.toString().trim()
 ;
