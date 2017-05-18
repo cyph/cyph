@@ -8,6 +8,10 @@
 md-tab-body {
 	max-height: 70vh;
 }
+/* Workaround for mobile Chrome vh bug */
+.cdk-global-overlay-wrapper {
+	height: 100%;
+}
 
 * {
 	-webkit-font-smoothing: antialiased !important;
