@@ -1,37 +1,39 @@
-<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
-	<cyph-chat-message
-		fxLayout='row'
-		[message]='message'
-		[mobile]='mobile'
-		[unconfirmedMessages]='unconfirmedMessages'
-		*ngFor='let message of messages'
-	></cyph-chat-message>
+<div cyphNanoScroller>
+	<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
+		<cyph-chat-message
+			fxLayout='row'
+			[message]='message'
+			[mobile]='mobile'
+			[unconfirmedMessages]='unconfirmedMessages'
+			*ngFor='let message of messages'
+		></cyph-chat-message>
 
-	<div fxLayout='row' class='friend-is-typing'>
-		<div
-			mdTooltip='Friend is typing...'
-			cyphTranslate
-			class='ellipsis-spinner'
-			*ngIf='isFriendTyping'
-			[@fadeInOut]='"in"'
-		>
-			<div class='bounce1'></div>
-			<div class='bounce2'></div>
-			<div class='bounce3'></div>
+		<div fxLayout='row' class='friend-is-typing'>
+			<div
+				mdTooltip='Friend is typing...'
+				cyphTranslate
+				class='ellipsis-spinner'
+				*ngIf='isFriendTyping'
+				[@fadeInOut]='"in"'
+			>
+				<div class='bounce1'></div>
+				<div class='bounce2'></div>
+				<div class='bounce3'></div>
+			</div>
 		</div>
-	</div>
 
-	<div
-		fxLayout='row'
-		class='chat-end-message'
-		*ngIf='showDisconnectMessage'
-	>
-		<div fxFlexFill fxLayoutAlign='center center'>
-			<md-card fxFlex='90' fxFlex.gt-sm='50'>
-				<md-card-content>
-					<ng-content></ng-content>
-				</md-card-content>
-			</md-card>
+		<div
+			fxLayout='row'
+			class='chat-end-message'
+			*ngIf='showDisconnectMessage'
+		>
+			<div fxFlexFill fxLayoutAlign='center center'>
+				<md-card fxFlex='90' fxFlex.gt-sm='50'>
+					<md-card-content>
+						<ng-content></ng-content>
+					</md-card-content>
+				</md-card>
+			</div>
 		</div>
 	</div>
 </div>
