@@ -11,11 +11,6 @@ node -e "
 	const package		= JSON.parse(fs.readFileSync('package.base.json').toString());
 	const libPackage	= JSON.parse(fs.readFileSync('../shared/lib/js/package.json').toString());
 
-	/*
-		package.dependencies	= libPackage.dependencies;
-		package.devDependencies	= libPackage.dependencies;
-	*/
-
 	for (const k of ['tns-android', 'tns-ios']) {
 		package.nativescript[k]	= {
 			version: libPackage.dependencies[k].replace(/^[^\d]+/, '')

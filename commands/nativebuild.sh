@@ -41,16 +41,14 @@ for p in android ios ; do
 	fi
 done
 
-echo -e '\n\nPASS\n\n'
-
 if [ ! "${platform}" ] ; then
+	echo -e '\n\nPASS\n\n'
 	exit
 fi
 
 sudo umount node_modules
 rm -rf node_modules
 cp -a /native_node_modules node_modules
-for plugin in ${nativePlugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
 
 compiledApp=''
 if [ "${platform}" == 'android' ] ; then
@@ -99,3 +97,5 @@ cat app/starter.js >> starter.js
 
 ${dir}/commands/websign/threadpack.js starter.js
 mv starter.js app/
+
+echo -e '\n\nPASS\n\n'
