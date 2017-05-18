@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
 import {List, Set as ImmutableSet} from 'immutable';
 import * as $ from 'jquery';
 import {fadeInOut} from '../animations';
@@ -17,7 +17,7 @@ import {ScrollService} from '../services/scroll.service';
 	styleUrls: ['../../../css/components/chat-message-list.scss'],
 	templateUrl: '../../../templates/chat-message-list.html'
 })
-export class ChatMessageListComponent implements OnInit {
+export class ChatMessageListComponent implements AfterViewInit {
 	/** @see IChatData.isFriendTyping */
 	@Input() public isFriendTyping: boolean;
 
@@ -37,13 +37,16 @@ export class ChatMessageListComponent implements OnInit {
 	@Input() public unconfirmedMessages: ImmutableSet<string>;
 
 	/** @inheritDoc */
-	public ngOnInit () : void {
+	public ngAfterViewInit () : void {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
 		}
 
-		this.scrollService.init($(this.elementRef.nativeElement), this.messageCountInTitle);
+		this.scrollService.init(
+			$(this.elementRef.nativeElement).children().first(),
+			this.messageCountInTitle
+		);
 	}
 
 	constructor (
