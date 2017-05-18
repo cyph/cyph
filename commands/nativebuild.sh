@@ -6,20 +6,6 @@ dir="${PWD}"
 
 
 platform="${1}"
-nativePlugins="$(
-	{
-		cat native/plugins.list;
-		grep -roP "(import|from) '[@A-Za-z0-9][^' ]*';" shared/js |
-			perl -pe "s/.*?'(.*)';/\1/g" |
-			grep nativescript |
-			sort |
-			uniq \
-		;
-	} |
-		sort |
-		uniq -d |
-		tr '\n' ' '
-)"
 
 checkfail () {
 	if (( $? )) ; then
