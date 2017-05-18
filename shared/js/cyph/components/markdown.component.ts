@@ -1,6 +1,5 @@
 import {Component, ElementRef, Input, OnChanges} from '@angular/core';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
-import * as DOMPurify from 'dompurify';
 import * as $ from 'jquery';
 import * as MarkdownIt from 'markdown-it';
 import * as markdownItEmoji from 'markdown-it-emoji';
@@ -8,6 +7,7 @@ import * as markdownItSup from 'markdown-it-sup';
 import {microlight} from 'microlight-string';
 import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
+import {HtmlSanitizerService} from '../services/html-sanitizer.service';
 import {util} from '../util';
 
 
@@ -61,7 +61,7 @@ export class MarkdownComponent implements OnChanges {
 		}
 
 		this.html	= this.domSanitizer.bypassSecurityTrustHtml(
-			DOMPurify.sanitize(
+			this.htmlSanitizerService.sanitize(
 				this.markdownIt.render(this.markdown || '').
 
 					/* Merge blockquotes like reddit */
@@ -76,10 +76,6 @@ export class MarkdownComponent implements OnChanges {
 							return img.outerHTML;
 						}
 					)
-				,
-				{
-					FORBID_TAGS: ['style']
-				}
 			)
 		);
 	}
@@ -93,6 +89,9 @@ export class MarkdownComponent implements OnChanges {
 
 		/** @ignore */
 		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly htmlSanitizerService: HtmlSanitizerService,
 
 		/** @ignore */
 		private readonly envService: EnvService
