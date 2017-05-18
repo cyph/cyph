@@ -121,6 +121,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 	rlwe \
 	rxjs \
 	sass-loader \
+	script-ext-html-webpack-plugin \
 	sidh \
 	simplewebrtc \
 	sodiumutil \
