@@ -6,6 +6,26 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 
+installPackages () {
+	rm -rf node_modules 2> /dev/null
+	mkdir node_modules
+	yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
+		$(node -e "
+			const package	= JSON.parse(
+				fs.readFileSync('${dir}/shared/lib/js/package.json').toString()
+			);
+
+			for (const k of Object.keys(package.dependencies).filter(s =>
+				${1}
+			)) {
+				console.log(\`\${k}@\${package.dependencies[k]}\`);
+			}
+		") \
+	|| exit 1
+	rm package.json yarn.lock 2> /dev/null
+}
+
+
 go get \
 	github.com/gorilla/context \
 	github.com/gorilla/mux \
@@ -22,39 +42,34 @@ go get \
 
 nativePlugins="$(cat native/plugins.list)"
 
-rm -rf ~/cyph ~/lib ~/node_modules shared/lib/js/node_modules 2> /dev/null
+sudo rm -rf \
+	/native \
+	/node_modules \
+	/native_node_modules \
+	~/cyph \
+	~/lib \
+	~/node_modules \
+	shared/lib/js/node_modules \
+2> /dev/null
+
 cp -a shared/lib ~/
 
 cd
 
-mkdir node_modules
-yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
-	$(node -e "
-		const package	= JSON.parse(
-			fs.readFileSync('${dir}/shared/lib/js/package.json').toString()
-		);
-
-		for (const k of Object.keys(package.dependencies).filter(s =>
-			s.startsWith('nativescript') || s.startsWith('tns') || s === '@angular/core'
-		)) {
-			console.log(\`\${k}@\${package.dependencies[k]}\`);
-		}
-	") \
-|| exit 1
-sudo rm -rf /native_node_modules package.json yarn.lock 2> /dev/null
-sudo mv node_modules /native_node_modules
-sudo chmod -R 777 /native_node_modules
-
-/native_node_modules/.bin/tns error-reporting disable
-/native_node_modules/.bin/tns usage-reporting disable
-/native_node_modules/.bin/tns create cyph --ng --appid com.cyph.app
+installPackages "s === 'nativescript'"
+~/node_modules/.bin/tns error-reporting disable
+~/node_modules/.bin/tns usage-reporting disable
+~/node_modules/.bin/tns create cyph --ng --appid com.cyph.app
 cd cyph
 mv package.json package.json.tmp
-cp -a ~/lib/js/* ./
 git init
-rm -rf node_modules 2> /dev/null
+installPackages "s.startsWith('@angular/') || s.startsWith('nativescript') || s.startsWith('tns')"
+sudo mv node_modules /native_node_modules
+sudo chmod -R 777 /native_node_modules
 mkdir node_modules
+cp -a ~/lib/js/* ./
 yarn install --ignore-engines --ignore-platform --non-interactive || exit 1
+rm -rf ~/node_modules
 mv node_modules ~/
 mkdir node_modules
 mv package.json.tmp package.json
@@ -62,7 +77,6 @@ for plugin in ${nativePlugins} ; do
 	~/node_modules/.bin/tns plugin add ${plugin} < /dev/null || exit 1
 done
 cd
-sudo rm -rf /native 2> /dev/null
 sudo mv cyph /native
 sudo chmod -R 777 /native
 
@@ -228,7 +242,6 @@ cp js/yarn.lock js/node_modules/
 cd
 rm -rf ${dir}/shared/lib
 cp -aL lib ${dir}/shared/
-sudo rm -rf /node_modules 2> /dev/null
 sudo mv lib/js/node_modules /
 sudo chmod -R 777 /node_modules
 rm -rf lib
