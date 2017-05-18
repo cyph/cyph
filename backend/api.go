@@ -111,7 +111,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		success = tx.Status == braintree.SubscriptionStatusActive
-		txLog = "Subscription " + tx.Status
+		txLog = "Subscription " + string(tx.Status)
 
 		if success {
 			txLog = txLog + "\nAPI key: " + apiKey + "\nCustomer ID: " + customer.Id
