@@ -15,9 +15,7 @@ installPackages () {
 				fs.readFileSync('${dir}/shared/lib/js/package.json').toString()
 			);
 
-			for (const k of Object.keys(package.dependencies).filter(s =>
-				${1}
-			)) {
+			for (const k of Object.keys(package.dependencies).filter(package => ${1})) {
 				console.log(\`\${k}@\${package.dependencies[k]}\`);
 			}
 		") \
@@ -56,14 +54,18 @@ cp -a shared/lib ~/
 
 cd
 
-installPackages "s === 'nativescript'"
+installPackages "package === 'nativescript'"
 ~/node_modules/.bin/tns error-reporting disable
 ~/node_modules/.bin/tns usage-reporting disable
 ~/node_modules/.bin/tns create cyph --ng --appid com.cyph.app
 cd cyph
 mv package.json package.json.tmp
 git init
-installPackages "s.startsWith('@angular/') || s.startsWith('nativescript') || s.startsWith('tns')"
+installPackages "
+	package === '@angular/core' ||
+	package.startsWith('nativescript') ||
+	package.startsWith('tns')
+"
 sudo mv node_modules /native_node_modules
 sudo chmod -R 777 /native_node_modules
 mkdir node_modules
