@@ -301,6 +301,8 @@ for d in $compiledProjects ; do
 			fs.readFileSync("dist/assets/css/loading.css").toString()
 		}</style>`);
 
+		$("script").each((_, elem) => $(elem).attr("defer", ""));
+
 		/*
 		$(`link[rel="stylesheet"]`).each((_, elem) => {
 			const $elem			= $(elem);
