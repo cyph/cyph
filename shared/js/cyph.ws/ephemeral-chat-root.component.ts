@@ -1,4 +1,4 @@
-import {Component, OnDestroy, AfterViewInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
 import * as Granim from 'granim';
 import * as $ from 'jquery';
@@ -79,11 +79,6 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 
 	/** @see ChatRootStates */
 	public readonly chatRootStates: typeof ChatRootStates	= ChatRootStates;
-
-	/** @inheritDoc */
-	public ngOnDestroy () : void {
-		this.destroyed	= true;
-	}
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
@@ -280,6 +275,11 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 				}
 			;
 		}
+	}
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		this.destroyed	= true;
 	}
 
 	constructor (
