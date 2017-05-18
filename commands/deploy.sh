@@ -417,7 +417,7 @@ if [ "${websign}" ] ; then
 				chmod 700 ${subresource}
 				git add ${subresource}
 			done
-			git commit -S -m "${customBuild} symlinks" . > /dev/null 2>&1
+			git commit -S -m "${customBuild}" . > /dev/null 2>&1
 			cd ../..
 		done
 	fi
