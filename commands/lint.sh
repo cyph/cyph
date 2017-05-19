@@ -8,6 +8,14 @@ tmpDir="$(mktemp -d)"
 ./commands/copyworkspace.sh "${tmpDir}"
 cd "${tmpDir}/shared"
 
+# WebSign hash whitelist check
+
+grep $(../commands/websign/bootstraphash.sh) ../websign/hashwhitelist.json > /dev/null
+if (( $? )) ; then
+	echo 'WebSign hash whitelist check fail'
+	exit 1
+fi
+
 # Validate component template/stylesheet count consistency
 
 componentConsistency="$(
