@@ -263,7 +263,7 @@ fi
 if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedProject}" ] ) ; then
 	cd websign
 	websignHashWhitelist="$(cat hashwhitelist.json)"
-	cp -rf ../shared/assets/img ./
+	cp -rf ../shared/favicon.ico ../shared/assets/img ./
 	../commands/websign/pack.js index.html index.html
 	cd ..
 fi
