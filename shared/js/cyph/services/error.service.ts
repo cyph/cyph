@@ -45,7 +45,7 @@ export class ErrorService implements ErrorHandler {
 			}
 
 			const exception: string	= err ?
-				(await fromError(err)).join('\n').replace(/\/#.*/g, '') :
+				`${errorMessage}\n\n${(await fromError(err)).join('\n')}`.replace(/\/#.*/g, '') :
 				''
 			;
 
