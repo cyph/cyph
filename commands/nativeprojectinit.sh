@@ -67,6 +67,11 @@ for plugin in $(cat plugins.list) ; do
 	"
 done
 
+rm -rf \
+	app/App_Resources \
+	hooks \
+	platforms \
+2> /dev/null
 cp -rf \
 	../shared/lib/native/app/App_Resources \
 	../shared/lib/native/app/vendor* \

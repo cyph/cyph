@@ -43,8 +43,11 @@ elif [ "${platform}" == 'ios' ] ; then
 	compiledApp='platforms/ios/native/app'
 fi
 
+mv app/App_Resources App_Resources.tmp
 rm -rf app
 cp -rf ${compiledApp} app
+rm -rf app/App_Resources
+mv App_Resources.tmp app/App_Resources
 
 cp /node_modules/core-js/client/shim.js starter.js
 echo >> starter.js
