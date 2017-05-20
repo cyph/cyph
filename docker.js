@@ -21,19 +21,19 @@ const exec			= command => childProcess.execSync(
 	{cwd: __dirname}
 ).toString().trim();
 
-const spawn			= (command, args) => (
+const spawn			= (command, args, cwd) => (
 	childProcess.spawnSync(
 		command,
 		args,
-		{cwd: __dirname}
+		{cwd: path.join(__dirname, cwd || '')}
 	).stdout || ''
 ).toString().trim();
 
-const spawnAsync	= (command, args) => new Promise(resolve =>
+const spawnAsync	= (command, args, cwd) => new Promise(resolve =>
 	childProcess.spawn(
 		command,
 		args,
-		{cwd: __dirname, stdio: 'inherit'}
+		{cwd: path.join(__dirname, cwd || ''), stdio: 'inherit'}
 	).on(
 		'exit',
 		() => { resolve(); }
@@ -66,15 +66,9 @@ const agseLocalInterface	= cat(path.join(homeDir, '.cyph', 'agse.local.interface
 const agseTempFile			= path.join(os.tmpdir(), 'balls');
 const commandAdditionalArgs	= [];
 
-const commandScriptExists	= (() => {
-	try {
-		fs.accessSync(path.join(__dirname, 'commands', `${args.command}.sh`));
-		return true;
-	}
-	catch (_) {
-		return false;
-	}
-})();
+const commandScriptExists	= fs.existsSync(
+	path.join(__dirname, 'commands', `${args.command}.sh`)
+);
 
 const isAgseDeploy			=
 	args.command === 'deploy' &&
@@ -344,7 +338,22 @@ const killEverything	= () => killContainer('cyph');
 const pullUpdates		= () => {
 	return editImage(shellScripts.aptUpdate.command, shellScripts.aptUpdate.condition).then(() =>
 		editImage(shellScripts.libUpdate.command, shellScripts.libUpdate.condition)
-	);
+	).then(() => {
+		const libNative	= path.join('shared', 'lib', 'native');
+		const ready		= path.join(__dirname, libNative, '.ready');
+
+		if (fs.existsSync(ready)) {
+			return;
+		}
+
+		console.log(spawn('npm', ['-g', 'update']));
+		console.log(spawn('npm', ['-g', 'install', 'nativescript']));
+		for (const platform of ['android', 'ios']) {
+			spawn('tns', ['platform', 'add', platform], libNative);
+		}
+
+		fs.writeFileSync(ready, '');
+	});
 };
 
 const removeImage		= (name, opts) => {

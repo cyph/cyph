@@ -43,7 +43,6 @@ elif [ "${platform}" == 'ios' ] ; then
 	compiledApp='platforms/ios/native/app'
 fi
 
-mv app/App_Resources ${compiledApp}/
 rm -rf app
 cp -rf ${compiledApp} app
 

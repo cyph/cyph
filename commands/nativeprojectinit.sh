@@ -9,13 +9,17 @@ cd native
 
 node -e "
 	const package		= JSON.parse(fs.readFileSync('package.base.json').toString());
-	const libPackage	= JSON.parse(fs.readFileSync('../shared/lib/js/package.json').toString());
+	const nativePackage	= JSON.parse(
+		fs.readFileSync('../shared/lib/native/package.json').toString()
+	);
 
-	for (const k of ['tns-android', 'tns-ios']) {
-		package.nativescript[k]	= {
-			version: libPackage.dependencies[k].replace(/^[^\d]+/, '')
-		};
+	const id	= package.nativescript.id;
+
+	for (const k of ['dependencies', 'devDependencies', 'nativescript']) {
+		package[k]	= nativePackage[k];
 	}
+
+	package.nativescript.id	= id;
 
 	fs.writeFileSync('package.json', JSON.stringify(package));
 "
@@ -63,11 +67,17 @@ for plugin in $(cat plugins.list) ; do
 	"
 done
 
-cp -rf /native/app/App_Resources app/
-cp -rf /native/hooks ./
+cp -rf \
+	../shared/lib/native/app/App_Resources \
+	../shared/lib/native/app/vendor* \
+app/
+cp -rf \
+	../shared/lib/native/hooks \
+	../shared/lib/native/platforms \
+	../shared/lib/native/tsconfig.aot.json \
+	../shared/lib/native/webpack.config.js \
+./
 rm hooks/*/nativescript-dev-typescript.js
-cp -f /native/webpack.config.js /native/tsconfig.aot.json ./
-cp -f /native/app/vendor* app/
 
 node -e "
 	const tsconfig		= JSON.parse(fs.readFileSync('tsconfig.json').toString());
