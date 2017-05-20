@@ -20,7 +20,6 @@ installPackages () {
 			}
 		") \
 	|| exit 1
-	rm package.json yarn.lock 2> /dev/null
 }
 
 
@@ -41,7 +40,6 @@ go get \
 nativePlugins="$(cat native/plugins.list)"
 
 sudo rm -rf \
-	/native \
 	/node_modules \
 	/native_node_modules \
 	~/cyph \
@@ -55,17 +53,24 @@ cp -a shared/lib ~/
 cd
 
 installPackages "package === 'nativescript'"
+rm package.json yarn.lock
 ~/node_modules/.bin/tns error-reporting disable
 ~/node_modules/.bin/tns usage-reporting disable
 ~/node_modules/.bin/tns create cyph --ng --appid com.cyph.app
 cd cyph
-mv package.json package.json.tmp
 git init
+for plugin in ${nativePlugins} ; do
+	~/node_modules/.bin/tns plugin add ${plugin} < /dev/null || exit 1
+done
 installPackages "
-	package === '@angular/core' ||
+	package.startsWith('@angular/') ||
 	package.startsWith('nativescript') ||
-	package.startsWith('tns')
+	package.startsWith('tns') ||
+	package === 'rxjs' ||
+	package === 'zone.js'
 "
+rm yarn.lock
+mv package.json package.json.tmp
 sudo mv node_modules /native_node_modules
 sudo chmod -R 777 /native_node_modules
 mkdir node_modules
@@ -73,14 +78,9 @@ cp -a ~/lib/js/* ./
 yarn install --ignore-engines --ignore-platform --non-interactive || exit 1
 rm -rf ~/node_modules
 mv node_modules ~/
-mkdir node_modules
 mv package.json.tmp package.json
-for plugin in ${nativePlugins} ; do
-	~/node_modules/.bin/tns plugin add ${plugin} < /dev/null || exit 1
-done
 cd
-sudo mv cyph /native
-sudo chmod -R 777 /native
+mv cyph ~/lib/native
 
 
 cd ~/lib
