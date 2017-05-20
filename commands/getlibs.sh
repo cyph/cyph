@@ -63,11 +63,8 @@ for plugin in ${nativePlugins} ; do
 	~/node_modules/.bin/tns plugin add ${plugin} < /dev/null || exit 1
 done
 installPackages "
-	package.startsWith('@angular/') ||
-	package.startsWith('nativescript') ||
-	package.startsWith('tns') ||
-	package === 'rxjs' ||
-	package === 'zone.js'
+	package.startsWith('nativescript-dev') ||
+	package.startsWith('tns')
 "
 rm yarn.lock
 mv package.json package.json.tmp
