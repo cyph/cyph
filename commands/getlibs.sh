@@ -41,11 +41,11 @@ nativePlugins="$(cat native/plugins.list)"
 
 sudo rm -rf \
 	/node_modules \
-	/native_node_modules \
 	~/cyph \
 	~/lib \
 	~/node_modules \
 	shared/lib/js/node_modules \
+	shared/lib/native \
 2> /dev/null
 
 cp -a shared/lib ~/
@@ -71,13 +71,13 @@ installPackages "
 "
 rm yarn.lock
 mv package.json package.json.tmp
-sudo mv node_modules /native_node_modules
-sudo chmod -R 777 /native_node_modules
+sudo mv node_modules ~/native_node_modules
 mkdir node_modules
-cp -a ~/lib/js/* ./
+cp ~/lib/js/package.json ~/lib/js/yarn.lock ./
 yarn install --ignore-engines --ignore-platform --non-interactive || exit 1
 rm -rf ~/node_modules
 mv node_modules ~/
+mv ~/native_node_modules ./node_modules
 mv package.json.tmp package.json
 cd
 mv cyph ~/lib/native

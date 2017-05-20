@@ -34,7 +34,7 @@ fi
 
 sudo umount node_modules
 rm -rf node_modules
-cp -a /native_node_modules node_modules
+cp -a ../shared/lib/native/node_modules ./
 
 compiledApp=''
 if [ "${platform}" == 'android' ] ; then
