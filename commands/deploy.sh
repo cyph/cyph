@@ -5,10 +5,6 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 originalArgs="${*}"
 
-log () {
-	echo -e "\n\n\n${*} ($(date))\n"
-}
-
 
 cacheBustedProjects='cyph.com cyph.ws'
 compiledProjects='cyph.com cyph.ws'
@@ -247,7 +243,7 @@ if [ "${cacheBustedProjects}" ] ; then
 		fi
 
 		# Cache bust
-		echo -e \"\n\n\nCache bust (\$(date))\n\" >> .wpstatic.output 2>&1
+		log 'Cache bust' >> .wpstatic.output 2>&1
 		for d in ${cacheBustedProjects} ; do
 			cd \$d
 			../commands/cachebust.js >> ../.wpstatic.output 2>&1

@@ -5,7 +5,7 @@ if [ -d ~/tmpgit ] ; then
 	exit
 fi
 
-echo -e '\n\n\nCaching SSH and GPG keys\n'
+log 'Caching SSH and GPG keys'
 
 ssh-add ~/.ssh/id_rsa
 
@@ -28,7 +28,7 @@ git commit -S -a -m test
 
 if [ ! -f ~/.ssh/id_rsa_docker ] ; then
 	ssh-keygen -t rsa -b 4096 -C 'gibson@docker' -P '' -f ~/.ssh/id_rsa_docker
-	echo -e '\n\nGive this public key access to WordPress and then hit enter to continue:\n'
+	log 'Give this public key access to WordPress and then hit enter to continue:'
 	cat ~/.ssh/id_rsa_docker.pub
 	read
 	sleep 30

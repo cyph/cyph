@@ -11,10 +11,7 @@ cd "${tmpDir}/shared"
 # WebSign hash whitelist check
 
 grep $(../commands/websign/bootstraphash.sh) ../websign/hashwhitelist.json > /dev/null
-if (( $? )) ; then
-	echo 'WebSign hash whitelist check fail'
-	exit 1
-fi
+checkfail 'WebSign hash whitelist check fail'
 
 # Validate component template/stylesheet count consistency
 
@@ -57,8 +54,7 @@ componentConsistency="$(
 )"
 
 if [ "${componentConsistency}" != true ] ; then
-	echo 'Component template/stylesheet count mismatch'
-	exit 1
+	fail 'Component template/stylesheet count mismatch'
 fi
 
 # tslint and htmllint
@@ -69,10 +65,7 @@ mv tslint.json tslint.json.old
 cat tslint.json.old | grep -v tslint-microsoft-contrib > tslint.json
 checkTslintAllOutput="$(check-tslint-all 2>&1)"
 mv tslint.json.old tslint.json
-if (( $? )) ; then
-	echo "${checkTslintAllOutput}"
-	exit 1
-fi
+checkfail "${checkTslintAllOutput}"
 rm node_modules
 cd ..
 

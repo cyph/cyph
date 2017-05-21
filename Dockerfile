@@ -82,6 +82,8 @@ RUN echo '\
 	eval $(gpg-agent --daemon 2> /dev/null) > /dev/null 2>&1; \
 \
 	eval $(ssh-agent 2> /dev/null) > /dev/null 2>&1; \
+\
+	if [ -f /cyph/commands/.bashrc ] ; then source /cyph/commands/.bashrc ; fi \
 ' >> /.bashrc
 
 RUN echo 'gibson ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers

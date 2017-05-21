@@ -17,7 +17,7 @@ sourcePort='43000'
 sourceOrigin="localhost:${sourcePort}"
 sourceURL="http://${sourceOrigin}"
 
-echo -e '\n\nGenerating static blog\n'
+log 'Generating static blog'
 
 checklock () {
 	ssh -i ~/.ssh/id_rsa_docker "${sshServer}" '
@@ -136,7 +136,7 @@ while [ ! -f index.html ] ; do
 	" 2> /dev/null | tail -n1)"
 
 	if [ "$(echo "${command}" | grep "${commandComment}")" ] ; then
-		echo -e "${command}\n"
+		log "${command}"
 		eval "${command}"
 	fi
 

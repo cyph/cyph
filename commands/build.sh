@@ -4,14 +4,6 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
-checkfail () {
-	if (( $? )) ; then
-		echo -e "${1}\n\nFAIL\n\n"
-		exit 1
-	fi
-}
-
-
 cd backend
 go build
 checkfail
@@ -31,4 +23,4 @@ for d in cyph.com cyph.ws ; do
 	cd ..
 done
 
-echo -e '\n\nPASS\n\n'
+pass
