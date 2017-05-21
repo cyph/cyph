@@ -55,8 +55,6 @@ cat assets/js/standalone/global.js >> starter.js
 echo >> starter.js
 cat assets/js/cyph/crypto/native-web-crypto-polyfill.js >> starter.js
 node -e 'console.log(`
-	var crypto	= self.crypto;
-
 	(function () {
 		var exports	= undefined;
 		var print	= function (s) { console.log(s); };

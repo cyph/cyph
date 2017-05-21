@@ -1,4 +1,6 @@
 /* tslint:disable */
 
-/** _stream_duplex external. */
+/** @file _stream_duplex external. */
+
+
 export default undefined;

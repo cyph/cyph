@@ -27,14 +27,18 @@ node -e "
 rm -rf app 2> /dev/null
 cp -rf ../shared/js/native app
 rm app/app.module.ngfactory.ts
-cp -rf ../shared/js/typings ./
 cp -rf ../shared/css/native ./css
-cp ../shared/assets/css/native/app.css app/
 cp -r ../shared/css/* ./css/
 cp -rf ../shared/templates/native ./templates
-cp -rf ../shared/assets app/
-cp -rf ../shared/assets ./
-cp package.json app/
+cp -rf \
+	../shared/assets \
+	../shared/js/typings \
+./
+cp -rf \
+	../shared/assets \
+	../shared/assets/css/native/app.css \
+	package.json \
+app/
 
 rm -rf app/js
 mkdir app/js

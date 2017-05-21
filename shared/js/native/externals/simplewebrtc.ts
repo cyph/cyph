@@ -1,4 +1,6 @@
 /* tslint:disable */
 
-/** simplewebrtc external. */
+/** @file simplewebrtc external. */
+
+
 export default {};

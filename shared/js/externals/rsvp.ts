@@ -1,4 +1,6 @@
 /* tslint:disable */
 
-/** rsvp external. */
+/** @file rsvp external. */
+
+
 export default undefined;
