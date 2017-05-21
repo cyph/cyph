@@ -84,6 +84,10 @@ cp -rf \
 ./
 rm hooks/*/nativescript-dev-typescript.js
 
+exceptions='nsWebpack.uglifyMangleExcludes'
+newExceptions="Array.from(new Set(${exceptions}.concat(require('../commands/mangleexceptions'))))"
+sed -i "s|${exceptions}|${newExceptions}|g" webpack.config.js
+
 node -e "
 	const tsconfig		= JSON.parse(fs.readFileSync('tsconfig.json').toString());
 	const aotTsconfig	= JSON.parse(fs.readFileSync('tsconfig.aot.json').toString());
