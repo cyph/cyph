@@ -63,23 +63,7 @@ node -e 'console.log(`
 		importScripts("/assets/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js");
 	})();
 
-	self.translations = ${JSON.stringify(
-		child_process.spawnSync("find", [
-			"../translations",
-			"-name",
-			"*.json"
-		]).stdout.toString().
-			split("\n").
-			filter(s => s).
-			map(file => ({
-				key: file.split("/").slice(-1)[0].split(".")[0],
-				value: JSON.parse(fs.readFileSync(file).toString())
-			})).
-			reduce((translations, o) => {
-				translations[o.key]	= o.value;
-				return translations;
-			}, {})
-	)};
+	self.translations = ${JSON.stringify(require("../commands/translations"))};
 `)' >> starter.js
 cat app/starter.js >> starter.js
 
