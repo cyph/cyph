@@ -1,4 +1,6 @@
 /* tslint:disable */
 
-/** jquery external. */
+/** @file jquery external. */
+
+
 export default undefined;

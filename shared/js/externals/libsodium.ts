@@ -1,4 +1,6 @@
 /* tslint:disable */
 
-/** libsodium external. */
+/** @file libsodium external. */
+
+
 export const sodium	= (<any> self).sodium;

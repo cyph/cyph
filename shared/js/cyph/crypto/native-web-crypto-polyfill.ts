@@ -24,7 +24,7 @@
 		throw new Error('Crypto polyfill not implemented for this platform.');
 	}
 
-	crypto	= {
+	(<any> self).crypto	= {
 		getRandomValues: (arrayBufferView: ArrayBufferView) => {
 			const bytes	= new Uint8Array(arrayBufferView.buffer);
 
@@ -37,6 +37,6 @@
 
 		subtle: <SubtleCrypto> {}
 	};
-
-	(<any> self).crypto	= crypto;
 })();
+
+crypto	= (<any> self).crypto;
