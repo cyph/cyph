@@ -12,19 +12,7 @@ dependencyModules="$(
 node -e 'console.log(`
 	/* tslint:disable */
 
-	(<any> self).translations = ${JSON.stringify(
-		require("glob").sync("../translations/*.json").map(file => ({
-			key: file.split("/").slice(-1)[0].split(".")[0],
-			value: JSON.parse(fs.readFileSync(file).toString())
-		})).
-		reduce(
-			(translations, o) => {
-				translations[o.key]	= o.value;
-				return translations;
-			},
-			{}
-		)
-	)};
+	(<any> self).translations = ${JSON.stringify(require("../commands/translations"))};
 `.trim())' > src/js/standalone/translations.ts
 
 ng eject --aot --prod --no-sourcemaps
@@ -34,6 +22,7 @@ cat > webpack.js <<- EOM
 	const HtmlWebpackPlugin						= require('html-webpack-plugin');
 	const path									= require('path');
 	const {CommonsChunkPlugin, UglifyJsPlugin}	= require('webpack').optimize;
+	const mangleExceptions						= require('../commands/mangleexceptions');
 	const config								= require('./webpack.config.js');
 
 	const chunks	=
@@ -57,16 +46,6 @@ cat > webpack.js <<- EOM
 	const entryPoints	= ['inline', 'polyfills', 'sw-register', 'styles'].
 		concat(chunks.map(chunk => chunk.name)).
 		concat(['vendor', 'main'])
-	;
-
-	const mangleExcept	= '$(
-		grep -oP '[A-Za-z_\$][A-Za-z0-9_\$]*' src/assets/js/standalone/global.js |
-		sort |
-		uniq |
-		tr '\n' ' '
-	)'.
-		trim().
-		split(/\s+/)
 	;
 
 	const commonsChunkIndex	= config.plugins.indexOf(
@@ -155,7 +134,7 @@ cat > webpack.js <<- EOM
 					'warnings': false
 				},
 				mangle: {
-					'except': mangleExcept,
+					'except': mangleExceptions,
 					'screw_ie8': true
 				},
 				sourceMap: false
