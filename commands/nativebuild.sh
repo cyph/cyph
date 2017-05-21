@@ -7,13 +7,6 @@ dir="${PWD}"
 
 platform="${1}"
 
-checkfail () {
-	if (( $? )) ; then
-		echo -e "${1}\n\nFAIL\n\n"
-		exit 1
-	fi
-}
-
 
 ./commands/nativeprojectinit.sh
 checkfail
@@ -28,8 +21,7 @@ for p in android ios ; do
 done
 
 if [ ! "${platform}" ] ; then
-	echo -e '\n\nPASS\n\n'
-	exit
+	pass
 fi
 
 sudo umount node_modules
@@ -68,4 +60,4 @@ cat app/starter.js >> starter.js
 ${dir}/commands/websign/threadpack.js starter.js
 mv starter.js app/
 
-echo -e '\n\nPASS\n\n'
+pass

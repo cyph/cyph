@@ -6,8 +6,7 @@ target="$2"
 targetCamel="$(echo $target | perl -pe 's/\/(.)/\u$1/g')"
 
 if [ ! "$source" -o ! "$target" ] ; then
-	echo 'fak u gooby'
-	exit 1
+	fail 'fak u gooby'
 fi
 
 git config push.default upstream
