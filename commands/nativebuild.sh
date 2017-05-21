@@ -41,12 +41,18 @@ cp -rf ${compiledApp} app
 rm -rf app/App_Resources
 mv App_Resources.tmp app/App_Resources
 
+cp assets/js/standalone/global.js bundle.js
+echo >> bundle.js
+cat app/bundle.js >> bundle.js
+
 cp /node_modules/core-js/client/shim.js starter.js
 echo >> starter.js
 cat assets/js/standalone/global.js >> starter.js
 echo >> starter.js
 cat assets/js/cyph/crypto/native-web-crypto-polyfill.js >> starter.js
 node -e 'console.log(`
+	var crypto	= self.crypto;
+
 	(function () {
 		var exports	= undefined;
 		var print	= function (s) { console.log(s); };
@@ -58,6 +64,6 @@ node -e 'console.log(`
 cat app/starter.js >> starter.js
 
 ${dir}/commands/websign/threadpack.js starter.js
-mv starter.js app/
+mv bundle.js starter.js app/
 
 pass

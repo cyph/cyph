@@ -38,5 +38,3 @@
 		subtle: <SubtleCrypto> {}
 	};
 })();
-
-crypto	= (<any> self).crypto;
