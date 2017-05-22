@@ -180,5 +180,8 @@ for f in ${scssAssets} ; do
 done
 
 
+find . -type f -name '*.js' -exec sed 's|use strict||g' {} \;
+
+
 cd ..
 echo "${hash}" > unbundled.hash
