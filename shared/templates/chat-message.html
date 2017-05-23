@@ -44,7 +44,7 @@
 						mode='indeterminate'
 						mdTooltip='Message delivery unconfirmed'
 						cyphTranslate
-						*ngIf='message.id && unconfirmedMessages.has(message.id); else confirmed'
+						*ngIf='message.id && unconfirmedMessages.get(message.id); else confirmed'
 					></md-progress-spinner>
 					<ng-template #confirmed>
 						<div>{{message.timeString}}</div>
