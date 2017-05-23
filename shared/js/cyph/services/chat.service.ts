@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {List, Set as ImmutableSet} from 'immutable';
+import {List, Map as ImmutableMap} from 'immutable';
 import {IChatData, IChatMessage, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
 import {events, rpcEvents, users} from '../session/enums';
@@ -23,6 +23,9 @@ export class ChatService {
 	private static readonly approximateKeyExchangeTime: number			= 15000;
 
 	/** @ignore */
+	private static readonly messageConfirmationSpinnerTimeout: number	= 3000;
+
+	/** @ignore */
 	private static readonly queuedMessageSelfDestructTimeout: number	= 15000;
 
 
@@ -40,7 +43,7 @@ export class ChatService {
 		messages: List<IChatMessage>(),
 		queuedMessageSelfDestruct: false,
 		state: States.none,
-		unconfirmedMessages: ImmutableSet<string>()
+		unconfirmedMessages: ImmutableMap<string, boolean>()
 	};
 
 	/** This kills the chat. */
@@ -339,7 +342,19 @@ export class ChatService {
 			}
 
 			if (o.author === users.me) {
-				this.chat.unconfirmedMessages	= this.chat.unconfirmedMessages.add(o.id);
+				this.chat.unconfirmedMessages	= this.chat.unconfirmedMessages.set(o.id, false);
+
+				(async () => {
+					await util.sleep(ChatService.messageConfirmationSpinnerTimeout);
+
+					if (!this.chat.unconfirmedMessages.has(o.id)) {
+						return;
+					}
+
+					this.chat.unconfirmedMessages	=
+						this.chat.unconfirmedMessages.set(o.id, true)
+					;
+				})();
 			}
 			else {
 				this.sessionService.send(new Message(rpcEvents.confirm, {

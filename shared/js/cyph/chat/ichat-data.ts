@@ -1,4 +1,4 @@
-import {List, Set as ImmutableSet} from 'immutable';
+import {List, Map as ImmutableMap} from 'immutable';
 import {States} from './enums';
 import {IChatMessage} from './ichat-message';
 
@@ -41,5 +41,5 @@ export interface IChatData {
 	state: States;
 
 	/** IDs of outgoing messages whose receipt has yet to be confirmed. */
-	unconfirmedMessages: ImmutableSet<string>;
+	unconfirmedMessages: ImmutableMap<string, boolean>;
 }

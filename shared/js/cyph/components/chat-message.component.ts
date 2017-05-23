@@ -1,5 +1,5 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
-import {Set as ImmutableSet} from 'immutable';
+import {Map as ImmutableMap} from 'immutable';
 import * as $ from 'jquery';
 import {IChatMessage} from '../chat/ichat-message';
 import {EnvService} from '../services/env.service';
@@ -24,7 +24,7 @@ export class ChatMessageComponent implements OnInit {
 	@Input() public mobile: boolean;
 
 	/** @see IChatData.unconfirmedMessages */
-	@Input() public unconfirmedMessages: ImmutableSet<string>;
+	@Input() public unconfirmedMessages: ImmutableMap<string, boolean>;
 
 	/** @see Users */
 	public readonly users: Users	= users;

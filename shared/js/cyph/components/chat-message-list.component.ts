@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
-import {List, Set as ImmutableSet} from 'immutable';
+import {List, Map as ImmutableMap} from 'immutable';
 import * as $ from 'jquery';
 import {fadeInOut} from '../animations';
 import {IChatMessage} from '../chat';
@@ -34,7 +34,7 @@ export class ChatMessageListComponent implements AfterViewInit {
 	@Input() public showDisconnectMessage: boolean;
 
 	/** @see IChatData.unconfirmedMessages */
-	@Input() public unconfirmedMessages: ImmutableSet<string>;
+	@Input() public unconfirmedMessages: ImmutableMap<string, boolean>;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
