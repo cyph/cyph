@@ -4,6 +4,7 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
+log 'Starting lint'
 tmpDir="$(mktemp -d)"
 ./commands/copyworkspace.sh "${tmpDir}"
 cd "${tmpDir}/shared"
