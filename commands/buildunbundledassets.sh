@@ -182,5 +182,5 @@ done
 
 
 cd ..
-find . -type f -name '*.js' -exec sed 's|use strict||g' {} \;
+find . -type f -name '*.js' -exec sed -i 's|use strict||g' {} \;
 echo "${hash}" > unbundled.hash
