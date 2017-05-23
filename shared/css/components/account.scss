@@ -12,9 +12,13 @@
 		}
 	}
 
-	/* Scrollfix to pin Cyph background/gradient */
-	> div > :not(canvas):not(cyph-account-menu) {
-		overflow: scroll;
+	> div > :not(canvas) {
+		z-index: 1;
+
+		/* Scrollfix to pin Cyph background/gradient */
+		&:not(cyph-account-menu) {
+			overflow: scroll;
+		}
 	}
 
 	.mobile .cyph-gradient {
@@ -33,7 +37,7 @@
 		background-image: url(/assets/img/cyph.brick.pattern.png);
 		background-repeat: repeat;
 		background-position-x: 50%;
-		z-index: -999;
+		z-index: 0;
 	}
 
 	.avatar {
