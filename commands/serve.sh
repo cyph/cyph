@@ -7,6 +7,8 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 eval "$(./commands/getgitdata.sh)"
 
+site="${1}"
+
 blockoomkiller () {
 	sudo bash -c "echo -17 > /proc/${1}/oom_adj ; renice -20 ${1}" > /dev/null
 }
@@ -14,6 +16,7 @@ blockoomkiller () {
 ngserve () {
 	cd "${1}"
 	../commands/ngprojectinit.sh
+	echo -e '\n\n\n'
 	ng serve --hmr --host '0.0.0.0' --no-aot --port "${2}" --sourcemaps
 }
 
@@ -44,11 +47,14 @@ blockoomkiller ${!}
 
 ./commands/buildunbundledassets.sh
 
-ngserve cyph.ws 42002 &
-blockoomkiller ${!}
-sleep 60
+for arr in 'cyph.ws 42002' 'cyph.com 42001' ; do
+	read -ra arr <<< "${arr}"
 
-ngserve cyph.com 42001 &
-blockoomkiller ${!}
+	if [ ! "${site}" ] || [ "${site}" == "${arr[0]}" ] ; then
+		ngserve "${arr[0]}" "${arr[1]}" &
+		blockoomkiller ${!}
+		sleep 60
+	fi
+done
 
 sleep Infinity
