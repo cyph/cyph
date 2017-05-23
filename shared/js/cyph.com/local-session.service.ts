@@ -84,8 +84,8 @@ export class LocalSessionService extends SessionService {
 			);
 
 			this.trigger(events.cyphertext, {
-				cyphertext,
-				author: users.me
+				author: users.me,
+				cyphertext
 			});
 
 			if (message.event === rpcEvents.text) {

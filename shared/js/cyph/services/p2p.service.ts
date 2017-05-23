@@ -22,7 +22,6 @@ export class P2PService {
 			}
 
 			return this.dialogService.confirm({
-				timeout,
 				cancel: this.stringsService.decline,
 				content: `${
 					this.stringsService.p2pRequest
@@ -35,6 +34,7 @@ export class P2PService {
 					this.stringsService.p2pWarning
 				}`,
 				ok: this.stringsService.continueDialogAction,
+				timeout,
 				title: this.stringsService.p2pTitle
 			});
 		},

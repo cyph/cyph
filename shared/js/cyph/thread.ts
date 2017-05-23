@@ -150,7 +150,6 @@ export class Thread implements IThread {
 
 		const threadSetupVars	= {
 			customBuild,
-			translations,
 			isLocalEnv: env.isLocalEnv,
 			locationData: {
 				hash: locationData.hash,
@@ -166,7 +165,8 @@ export class Thread implements IThread {
 				language: env.fullLanguage,
 				userAgent: env.userAgent
 			},
-			seed: Array.from(seedBytes)
+			seed: Array.from(seedBytes),
+			translations
 		};
 
 		const callbackId	= 'NewThread-' + util.generateGuid();
