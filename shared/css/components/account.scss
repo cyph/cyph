@@ -42,24 +42,26 @@
 
 	.avatar {
 		border-radius: 50%;
+		border-width: 5px;
+		border-style: solid;
 		cursor: pointer;
 
 		@include transition(border 0.75s ease);
 
 		&.online {
-			border: 5px solid map-get($mat-green, 700) !important;
+			border-color: map-get($mat-green, 700) !important;
 		}
 
 		&.away {
-			border: 5px solid map-get($mat-amber, 500) !important;
+			border-color: map-get($mat-amber, 500) !important;
 		}
 
 		&.busy {
-			border: 5px solid map-get($mat-red, 700) !important;
+			border-color: map-get($mat-red, 700) !important;
 		}
 
 		&.offline {
-			border: 5px solid map-get($mat-grey, 900) !important;
+			border-color: map-get($mat-grey, 900) !important;
 		}
 	}
 }
