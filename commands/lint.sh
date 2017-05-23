@@ -113,7 +113,7 @@ output="$({
 		})
 	' \;;
 } 2>&1 |
-	grep -v 'Warning: Lint.createLanguageServiceHost is not a function'
+	grep -v "Warning: Cannot read property 'end' of undefined"
 )"
 
 # Retire.js
