@@ -35,6 +35,7 @@ scssAssets="native/app $(
 
 hash="$(
 	cat \
+		commands/buildunbundledassets.sh \
 		$(echo "${nodeModulesAssets}" | perl -pe 's/([^\s]+)/\/node_modules\/\1.js/g') \
 		$(find shared/js -type f -name '*.ts') \
 		$(find shared/css -type f -name '*.scss') \
@@ -180,8 +181,6 @@ for f in ${scssAssets} ; do
 done
 
 
-find . -type f -name '*.js' -exec sed 's|use strict||g' {} \;
-
-
 cd ..
+find . -type f -name '*.js' -exec sed 's|use strict||g' {} \;
 echo "${hash}" > unbundled.hash
