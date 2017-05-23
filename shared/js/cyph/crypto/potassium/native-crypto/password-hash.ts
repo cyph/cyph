@@ -44,10 +44,10 @@ export class PasswordHash {
 		return new Uint8Array(
 			await crypto.subtle.deriveBits(
 				{
-					salt,
 					hash: this.algorithm.hash,
 					iterations: opsLimit,
-					name: this.algorithm.name
+					name: this.algorithm.name,
+					salt
 				},
 				await importHelper.importRawKey(
 					plaintext,

@@ -190,9 +190,9 @@ export class ChannelService {
 				for (let chunkIndex = 0 ; chunkIndex < numChunks ; ++chunkIndex) {
 					await util.retryUntilSuccessful(async () => this.messagesRef.push({
 						chunkIndex,
+						cyphertext: message.substr(chunkIndex * this.chunkSize, this.chunkSize),
 						id,
 						numChunks,
-						cyphertext: message.substr(chunkIndex * this.chunkSize, this.chunkSize),
 						sender: this.userId,
 						timestamp: util.timestamp()
 					}));

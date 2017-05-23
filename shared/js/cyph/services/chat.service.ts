@@ -114,8 +114,8 @@ export class ChatService {
 			author,
 			id,
 			text,
-			timestamp,
-			timeString: util.getTimeString(timestamp)
+			timeString: util.getTimeString(timestamp),
+			timestamp
 		};
 
 		for (let i = this.chat.messages.size - 1 ; i >= -1 ; --i) {

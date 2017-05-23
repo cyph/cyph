@@ -163,7 +163,6 @@ export class FileTransferService {
 			) ||
 			(isSave && transfer.image) ||
 			await this.dialogService.confirm({
-				title,
 				cancel: isSave ?
 					this.stringsService.discard :
 					this.stringsService.reject
@@ -175,6 +174,8 @@ export class FileTransferService {
 				ok: isSave ?
 					this.stringsService.save :
 					this.stringsService.accept
+				,
+				title
 			})
 		;
 	}

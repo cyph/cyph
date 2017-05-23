@@ -48,8 +48,8 @@ export class CyphertextService {
 			).push({
 				author,
 				text,
-				timestamp,
-				timeString: util.getTimeString(timestamp)
+				timeString: util.getTimeString(timestamp),
+				timestamp
 			})
 		);
 	}

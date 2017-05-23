@@ -203,12 +203,12 @@ export class Box implements IBox {
 
 		return {
 			innerKeys,
-			symmetricKey,
 			keyCyphertext: potassiumUtil.concatMemory(
 				true,
 				encryptedKeys,
 				mac
-			)
+			),
+			symmetricKey
 		};
 	}
 

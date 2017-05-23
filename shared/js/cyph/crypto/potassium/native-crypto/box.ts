@@ -53,8 +53,8 @@ export class Box {
 
 		return {
 			keyType: this.algorithm.name,
-			publicKey,
-			privateKey
+			privateKey,
+			publicKey
 		};
 	}
 
