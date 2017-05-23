@@ -28,6 +28,7 @@ export class AccountComponent implements OnInit {
 			'chat',
 			'contacts',
 			'files',
+			'notes',
 			'profile',
 			'settings'
 		].filter(path =>

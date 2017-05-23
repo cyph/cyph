@@ -1,12 +1,26 @@
 import {NgModule} from '@angular/core';
+import {AccountChatComponent} from '../components/account-chat.component';
 import {AccountContactsComponent} from '../components/account-contacts.component';
+import {AccountFilesComponent} from '../components/account-files.component';
+import {AccountHomeComponent} from '../components/account-home.component';
 import {AccountLoginComponent} from '../components/account-login.component';
+import {AccountLogoutComponent} from '../components/account-logout.component';
+import {AccountMenuComponent} from '../components/account-menu.component';
+import {AccountNotesComponent} from '../components/account-notes.component';
 import {AccountProfileComponent} from '../components/account-profile.component';
 import {AccountRegisterComponent} from '../components/account-register.component';
 import {AccountSettingsComponent} from '../components/account-settings.component';
+import {AccountComponent} from '../components/account.component';
 import {FooterComponent} from '../components/footer.component';
 import {LinkConnectionComponent} from '../components/link-connection.component';
 import {NotFoundComponent} from '../components/not-found.component';
+import {AccountAuthService} from '../services/account-auth.service';
+import {AccountContactsService} from '../services/account-contacts.service';
+import {AccountFilesService} from '../services/account-files.service';
+import {AccountNotesService} from '../services/account-notes.service';
+import {AccountSettingsService} from '../services/account-settings.service';
+import {AccountUserLookupService} from '../services/account-user-lookup.service';
+import {AccountService} from '../services/account.service';
 import {DatabaseService} from '../services/database.service';
 import {DOMPurifyHtmlSanitizerService} from '../services/dompurify-html-sanitizer.service';
 import {FirebaseDatabaseService} from '../services/firebase-database.service';
@@ -20,8 +34,15 @@ import {CyphWebModule} from './cyph-web.module';
  */
 @NgModule({
 	declarations: [
+		AccountChatComponent,
+		AccountComponent,
 		AccountContactsComponent,
+		AccountFilesComponent,
+		AccountHomeComponent,
 		AccountLoginComponent,
+		AccountLogoutComponent,
+		AccountMenuComponent,
+		AccountNotesComponent,
 		AccountProfileComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
@@ -30,8 +51,14 @@ import {CyphWebModule} from './cyph-web.module';
 		NotFoundComponent
 	],
 	exports: [
+		AccountChatComponent,
+		AccountComponent,
 		AccountContactsComponent,
+		AccountFilesComponent,
+		AccountHomeComponent,
 		AccountLoginComponent,
+		AccountLogoutComponent,
+		AccountMenuComponent,
 		AccountProfileComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
@@ -44,6 +71,13 @@ import {CyphWebModule} from './cyph-web.module';
 		CyphWebModule
 	],
 	providers: [
+		AccountAuthService,
+		AccountContactsService,
+		AccountFilesService,
+		AccountNotesService,
+		AccountService,
+		AccountSettingsService,
+		AccountUserLookupService,
 		{
 			provide: DatabaseService,
 			useClass: FirebaseDatabaseService

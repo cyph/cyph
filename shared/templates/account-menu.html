@@ -128,6 +128,30 @@
 		<button
 			md-button
 			cyphTranslate
+			mdTooltip='Notes'
+			mdTooltipPosition='right'
+			routerLink='/account/notes'
+			(click)='click()'
+			*ngIf='accountService.menuExpanded'
+		>
+			<md-icon>library_books</md-icon>
+			<span>Notes</span>
+		</button>
+		<button
+			md-icon-button
+			cyphTranslate
+			mdTooltip='Settings'
+			mdTooltipPosition='right'
+			routerLink='/account/settings'
+			(click)='click()'
+			*ngIf='!accountService.menuExpanded'
+		>
+			<md-icon>library_books</md-icon>
+		</button>
+
+		<button
+			md-button
+			cyphTranslate
 			mdTooltip='Settings'
 			mdTooltipPosition='right'
 			routerLink='/account/settings'
