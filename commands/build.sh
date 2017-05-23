@@ -15,6 +15,7 @@ checkfail "${output}"
 ./commands/lint.sh
 checkfail
 
+log 'Starting Angular AOT build'
 for d in cyph.com cyph.ws ; do
 	cd "${d}"
 	../commands/ngprojectinit.sh
