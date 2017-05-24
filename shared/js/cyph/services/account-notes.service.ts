@@ -10,7 +10,7 @@ import {AccountAuthService} from './account-auth.service';
 export class AccountNotesService {
 	/** @ignore */
 	private static DUMMY_NOTES: INote[]	= [
-		{contents: 'balls'}
+		{title: 'Note Title', contents: 'Note Contents'}
 	];
 
 	/** Files owned by current user. */

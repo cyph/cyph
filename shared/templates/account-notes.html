@@ -1,5 +1,33 @@
 <div fxFlexFill fxLayout='row' fxLayoutAlign='center start'>
 	<div fxFlex='90' fxFlex.gt-sm='65' fxFlex.gt-md='40' fxLayout='column' fxLayoutGap='16px'>
 		<div>Notes</div>
+		<md-card
+			class='note animated flipInY _{{i}}'
+			*ngFor='let myNote of accountNotesService.myNotes; let i = index'
+			[attr.data-index]='i'
+		>
+			<md-card-header fxLayout='row'>
+				<md-card-title>{{myNote.title}}</md-card-title>
+				<md-card-subtitle>
+					<div>{{myNote.contents}}</div>
+				</md-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='File Settings'
+					>
+						<md-icon>settings</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Delete Note'
+					>
+						<md-icon>delete</md-icon>
+					</button>
+				</div>
+			</md-card-header>
+		</md-card>
 	</div>
 </div>
