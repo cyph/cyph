@@ -4,7 +4,7 @@ import {AccountAuthService} from './account-auth.service';
 
 
 /**
- * Account file service.
+ * Account notes service.
  */
 @Injectable()
 export class AccountNotesService {
