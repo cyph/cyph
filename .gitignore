@@ -18,4 +18,3 @@ node_modules
 **/node_modules
 Dockerfile.tmp
 .nsbuildinfo
-.vscode/*
