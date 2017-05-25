@@ -10,9 +10,8 @@ import {AccountAuthService} from './account-auth.service';
 export class AccountNotesService {
 	/** @ignore */
 	private static DUMMY_NOTES: INote[]	= [
-		{title: 'Note Title', contents: 'Note Contents'},
-		{title: 'Deconstructing Marx: Debordist situation in the works of Joyce',
-		contents:
+		{contents: 'Note Contents', title: 'Note Title'},
+		{contents:
 				'The characteristic theme of Prinn’s analysis of\
 				Lyotardist narrative is not construction, as Lacan would have it, but\
 				preconstruction. Therefore, Lyotard promotes the use of Debordist situation to\
@@ -41,7 +40,8 @@ export class AccountNotesService {
 				However, Debord uses the term ‘postcapitalist construction’ to denote not,\
 				in fact, deappropriation, but predeappropriation. Neocultural dialectic theory\
 				states that the goal of the reader is social comment, given that the premise of\
-				Lyotardist narrative is valid.'
+				Lyotardist narrative is valid.',
+				title: 'Deconstructing Marx: Debordist situation in the works of Joyce'
 			}
 	];
 
@@ -56,9 +56,9 @@ export class AccountNotesService {
 
 	public noteSnippet (note: string, limit: number) : string {
 		if (!this.accountAuthService.current) {
-			return "";
+			return '';
 		}
-		return (note.length > limit) ? note.substr(0, (limit-1)) + '...' : note;
+		return (note.length > limit) ? note.substr(0, (limit - 1)) + '...' : note;
 	}
 
 	constructor (
