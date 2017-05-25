@@ -10,8 +10,9 @@ import {AccountAuthService} from './account-auth.service';
 export class AccountNotesService {
 	/** @ignore */
 	private static DUMMY_NOTES: INote[]	= [
-		{contents: 'Note Contents', title: 'Note Title'},
-		{contents:
+		{id: 0, noteContents: 'Note Contents', title: 'Note Title'},
+		{id: 1,
+		noteContents:
 				'The characteristic theme of Prinn’s analysis of\
 				Lyotardist narrative is not construction, as Lacan would have it, but\
 				preconstruction. Therefore, Lyotard promotes the use of Debordist situation to\
@@ -41,9 +42,21 @@ export class AccountNotesService {
 				in fact, deappropriation, but predeappropriation. Neocultural dialectic theory\
 				states that the goal of the reader is social comment, given that the premise of\
 				Lyotardist narrative is valid.',
-				title: 'Deconstructing Marx: Debordist situation in the works of Joyce'
+				title: 'Deconstructing Tardiff: Debordist situation in the works of Koons'
 			}
 	];
+
+	private notes: INote[] = AccountNotesService.DUMMY_NOTES;
+	
+	public currentNote: INote = this.notes[0];
+
+	public updateNote (id: number) : void {
+		for(var i = 0; i < this.notes.length; i++) {
+			if(this.notes[i].id == id) {
+				this.currentNote = this.notes[i];
+			}
+		}
+	}
 
 	/** Files owned by current user. */
 	public get myNotes () : INote[] {
@@ -54,6 +67,7 @@ export class AccountNotesService {
 		return AccountNotesService.DUMMY_NOTES;
 	}
 
+	/** Returns a snippet of text as a preview */
 	public noteSnippet (note: string, limit: number) : string {
 		if (!this.accountAuthService.current) {
 			return '';

@@ -7,6 +7,7 @@ import {AccountFilesComponent} from '../components/account-files.component';
 import {AccountHomeComponent} from '../components/account-home.component';
 import {AccountLoginComponent} from '../components/account-login.component';
 import {AccountLogoutComponent} from '../components/account-logout.component';
+import {AccountNoteComponent} from '../components/account-note.component';
 import {AccountNotesComponent} from '../components/account-notes.component';
 import {AccountProfileComponent} from '../components/account-profile.component';
 import {AccountRegisterComponent} from '../components/account-register.component';
@@ -29,6 +30,7 @@ export const account: Route	= {
 		{path: 'login', component: AccountLoginComponent},
 		{path: 'logout', component: AccountLogoutComponent},
 		{path: 'notes', component: AccountNotesComponent},
+		{path: 'notes/:id', component: AccountNoteComponent},
 		{path: 'profile', component: AccountProfileComponent},
 		{path: 'profile/:username', component: AccountProfileComponent},
 		{path: 'register', component: AccountRegisterComponent},

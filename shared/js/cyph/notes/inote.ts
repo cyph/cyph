@@ -2,8 +2,11 @@
  * Represents one note.
  */
 export interface INote {
+	/** Note ID */
+	id: number;
+	
 	/** Note contents. */
-	contents: string;
+	noteContents: string;
 
 	/** Note title. */
 	title: string;
