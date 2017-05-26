@@ -1,5 +1,12 @@
 import {Injectable} from '@angular/core';
+import {IBox} from '../../crypto/potassium/ibox';
+import {IEphemeralKeyExchange} from '../../crypto/potassium/iephemeral-key-exchange';
+import {IHash} from '../../crypto/potassium/ihash';
+import {IOneTimeAuth} from '../../crypto/potassium/ione-time-auth';
+import {IPasswordHash} from '../../crypto/potassium/ipassword-hash';
 import {IPotassium} from '../../crypto/potassium/ipotassium';
+import {ISecretBox} from '../../crypto/potassium/isecret-box';
+import {ISign} from '../../crypto/potassium/isign';
 import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
 
 
@@ -9,25 +16,25 @@ import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
 @Injectable()
 export class PotassiumService extends PotassiumUtil implements IPotassium {
 	/** @inheritDoc */
-	public readonly box: any;
+	public readonly box: IBox;
 
 	/** @inheritDoc */
-	public readonly ephemeralKeyExchange: any;
+	public readonly ephemeralKeyExchange: IEphemeralKeyExchange;
 
 	/** @inheritDoc */
-	public readonly hash: any;
+	public readonly hash: IHash;
 
 	/** @inheritDoc */
-	public readonly oneTimeAuth: any;
+	public readonly oneTimeAuth: IOneTimeAuth;
 
 	/** @inheritDoc */
-	public readonly passwordHash: any;
+	public readonly passwordHash: IPasswordHash;
 
 	/** @inheritDoc */
-	public readonly secretBox: any;
+	public readonly secretBox: ISecretBox;
 
 	/** @inheritDoc */
-	public readonly sign: any;
+	public readonly sign: ISign;
 
 	/** @inheritDoc */
 	public async native () : Promise<boolean> {
