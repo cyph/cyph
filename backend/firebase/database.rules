@@ -53,7 +53,7 @@
 						".write": "!data.exists() && newData.exists()",
 						".validate": "
 							newData.isString() &&
-							(newData.val() == '' || newData.val() == $user)
+							(newData.val() === '' || newData.val() === $user)
 						"
 					}
 				}
