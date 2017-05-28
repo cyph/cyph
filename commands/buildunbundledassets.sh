@@ -61,10 +61,8 @@ for f in ${nodeModulesAssets} ; do
 	mkdir -p "$(echo "${f}" | perl -pe 's/(.*)\/[^\/]+$/\1/')" 2> /dev/null
 	if [ -f "/node_modules/${f}.min.js" ] ; then
 		cp "/node_modules/${f}.min.js" "${f}.js"
-	elif [[ "${f}" == libsodium/* ]] ; then
-		cp "/node_modules/${f}.js" "${f}.js"
 	else
-		uglifyjs "/node_modules/${f}.js" -m -o "${f}.js"
+		uglifyjs "/node_modules/${f}.js" -cmo "${f}.js"
 	fi
 done
 
@@ -159,7 +157,7 @@ for f in ${typescriptAssets} ; do
 		";
 		echo '})();';
 	} |
-		uglifyjs \
+		uglifyjs -cm \
 	> "${f}.js.tmp"
 
 	checkfail
