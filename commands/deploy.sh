@@ -507,7 +507,7 @@ if [ "${test}" -a ! "${simple}" ] ; then
 	./commands/deploy.sh --simple $originalArgs
 elif [ -d ~/.build.original ] ; then
 	mv ~/.build  ~/.build.original/simplebuild
-	mv ~/.build.original .build
+	cp -rf ~/.build.original .build
 else
-	mv ~/.build ./
+	cp -rf ~/.build ./
 fi
