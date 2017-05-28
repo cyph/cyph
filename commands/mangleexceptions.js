@@ -18,7 +18,7 @@ const mangleExceptions	=
 ;
 
 
-if (require.main) {
+if (require.main === module) {
 	console.log(JSON.stringify(mangleExceptions));
 }
 else {
