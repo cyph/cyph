@@ -477,9 +477,9 @@ amdefine@>=0.0.4:
     rxjs "^5"
     zone.js "^0"
 
-angular-ssr@^0.9.11:
-  version "0.9.11"
-  resolved "https://registry.yarnpkg.com/angular-ssr/-/angular-ssr-0.9.11.tgz#d857adc9b0c422bfa4a1d39c638c167074ce489e"
+angular-ssr@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/angular-ssr/-/angular-ssr-0.10.1.tgz#70f5a0b456265534ce583972a7476e383f08c294"
   dependencies:
     "@angular/cli" "^1.0.0"
     "@types/chalk" "^0.4.31"
@@ -1305,8 +1305,8 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000187, caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000673"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000673.tgz#f3333f7ba6871a190f7a26ed20c1285bc96ca072"
+  version "1.0.30000674"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000674.tgz#d78e99a3291341f53830e96ad2f12921b9715e8d"
 
 capture-stack-trace@^1.0.0:
   version "1.0.0"
@@ -5414,9 +5414,9 @@ math-expression-evaluator@^1.2.14, math-expression-evaluator@^1.2.17:
   version "1.2.17"
   resolved "https://registry.yarnpkg.com/math-expression-evaluator/-/math-expression-evaluator-1.2.17.tgz#de819fdbcd84dccd8fae59c6aeb79615b9d266ac"
 
-mceliece@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/mceliece/-/mceliece-1.1.1.tgz#4a096ccf255d66e7d4f0fdc6531312107c220018"
+mceliece@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/mceliece/-/mceliece-2.0.0.tgz#50c952b3b2913aeb2450b8eaf59cdc0cd30fe272"
 
 mdurl@^1.0.1:
   version "1.0.1"
@@ -6282,9 +6282,9 @@ nth-check@~1.0.1:
   dependencies:
     boolbase "~1.0.0"
 
-ntru@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/ntru/-/ntru-1.1.1.tgz#1b820f9e3f094476060eb9f40632c1abdb496d49"
+ntru@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/ntru/-/ntru-2.0.0.tgz#17121a614a09b2f2220a635baf7854f0bb24f7e8"
 
 null-check@^1.0.0:
   version "1.0.0"
@@ -7774,9 +7774,9 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^2.0.0"
     inherits "^2.0.1"
 
-rlwe@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/rlwe/-/rlwe-1.1.1.tgz#73344088ae81ed8555a5b3a8cdbfa1abe7e9fae4"
+rlwe@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/rlwe/-/rlwe-2.0.0.tgz#814cfe1cb0bae28fc45849c9317292e4f8bf1ae9"
 
 rsa-keygen@*:
   version "1.0.6"
@@ -7785,8 +7785,8 @@ rsa-keygen@*:
     nan "~2.3.3"
 
 rsasign@*:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.0.0.tgz#5980843c2b11eddfc66312420f7026ed924c119f"
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.0.3.tgz#42cb5f590d9d5f9ebefeafcb33da83eefbaa0ce9"
   dependencies:
     pem-jwk-norecompute "*"
     rsa-keygen "*"
@@ -8109,9 +8109,9 @@ shelljs@^0.7.0, shelljs@^0.7.7:
     interpret "^1.0.0"
     rechoir "^0.6.2"
 
-sidh@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/sidh/-/sidh-2.0.0.tgz#302ec886cec97fcd252880b256c440e65b8e12ac"
+sidh@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/sidh/-/sidh-3.0.0.tgz#516333aa462a19871b7eefd9b0ec05f873944dd4"
 
 sigmund@~1.0.0:
   version "1.0.1"
@@ -8710,9 +8710,9 @@ sugarss@^0.2.0:
   dependencies:
     postcss "^5.2.4"
 
-supersphincs@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-2.0.0.tgz#fec6ded8aa467bac16b7a6b46c32e089a788a69a"
+supersphincs@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-2.0.1.tgz#ed64173cf8c965f0665cbe1df8cc5311589250d7"
   dependencies:
     js-sha512 "*"
     rsasign "*"
@@ -9846,9 +9846,9 @@ xhr2@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/xhr2/-/xhr2-0.1.4.tgz#7f87658847716db5026323812f818cadab387a5f"
 
-xkcd-passphrase@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/xkcd-passphrase/-/xkcd-passphrase-1.1.0.tgz#61e018f95bb5c36bc02e837be62ffdee5fa596fd"
+xkcd-passphrase@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/xkcd-passphrase/-/xkcd-passphrase-2.0.1.tgz#2a3495a7b0d4d9d80fc26f5b82f653fe6332e8f0"
 
 xml-char-classes@^1.0.0:
   version "1.0.0"
