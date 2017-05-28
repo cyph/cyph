@@ -32,21 +32,26 @@ export class ErrorService implements ErrorHandler {
 		let numEmails	= 0;
 
 		return async (err?: any) : Promise<void> => {
-			const errorMessage	= err.message ? err.message : err.toString();
+			const errorMessage: string	= !err ? '' : err.message ? err.message : err.toString();
 
 			if (
 				(requireErrorMessage && !errorMessage) ||
 				/* Annoying useless iframe-related spam */
 				errorMessage === 'Script error.' ||
 				/* Google Search iOS app bug */
-				errorMessage === "TypeError: null is not an object (evaluating 'elt.parentNode')"
+				errorMessage === "TypeError: null is not an object (evaluating 'elt.parentNode')" ||
+				/* DOMPurify mitigation for Safari bug */
+				errorMessage === 'NetworkError (DOM Exception 19):  A network error occurred.'
 			) {
 				return;
 			}
 
-			const exception: string	= err ?
-				`${errorMessage}\n\n${(await fromError(err)).join('\n')}`.replace(/\/#.*/g, '') :
-				''
+			const exception: string	=
+				`${errorMessage}\n\n${
+					err instanceof Error ?
+						(await fromError(err)).join('\n') :
+						''
+				}`.replace(/\/#.*/g, '')
 			;
 
 			if (err) {
