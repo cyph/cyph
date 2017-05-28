@@ -164,8 +164,11 @@ ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s/ws:\/\/.*:44000/https:\/\/
 
 if [ "${test}" ] ; then
 	newCyphURL="https://${version}.cyph.ws"
+
 	if [ "${simple}" ] ; then
 		newCyphURL="https://${version}-dot-cyph-im-dot-cyphme.appspot.com"
+
+		sed -i 's|env\.isLocalEnv|true|g' shared/js/cyph/thread.ts
 	fi
 
 	sed -i "s|staging|${version}|g" backend/config.go
