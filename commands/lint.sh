@@ -65,8 +65,8 @@ ln -s /node_modules node_modules
 mv tslint.json tslint.json.old
 cat tslint.json.old | grep -v tslint-microsoft-contrib > tslint.json
 checkTslintAllOutput="$(check-tslint-all 2>&1)"
-mv tslint.json.old tslint.json
 checkfail "${checkTslintAllOutput}"
+mv tslint.json.old tslint.json
 rm node_modules
 cd ..
 

@@ -2,7 +2,7 @@
 
 checkfail () {
 	if (( $? )) ; then
-		fail
+		fail "${*}"
 	fi
 }
 
