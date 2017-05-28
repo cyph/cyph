@@ -75,6 +75,8 @@
 
 		"await-promise": false,
 		"ban": [true,
+			["JSON", "parse", "Prefer util.parse"],
+			["JSON", "stringify", "Prefer util.stringify"],
 			["localStorage", "getItem", "Use LocalStorageService"],
 			["localStorage", "removeItem", "Use LocalStorageService"],
 			["localStorage", "setItem", "Use LocalStorageService"],

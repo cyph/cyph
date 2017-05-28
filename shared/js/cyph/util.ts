@@ -1,5 +1,6 @@
 import {saveAs} from 'file-saver';
 import {config} from './config';
+import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {env} from './env';
 
 
@@ -47,7 +48,7 @@ export class Util {
 		}
 		else if (typeof data === 'object') {
 			data	= contentType === 'application/json' ?
-				JSON.stringify(data) :
+				this.stringify(data) :
 				this.toQueryString(data)
 			;
 		}
@@ -236,6 +237,16 @@ export class Util {
 		catch (_) {}
 	}
 
+	/** @see JSON.parse */
+	public parse (text: string) : any {
+		/* tslint:disable-next-line:ban */
+		return JSON.parse(text, (_, v) =>
+			v && v.isUint8Array && typeof v.data === 'string' ?
+				potassiumUtil.fromBase64(v.data) :
+				v
+		);
+	}
+
 	/**
 	 * Cryptographically secure replacement for Math.random.
 	 * @param max Upper bound.
@@ -363,6 +374,16 @@ export class Util {
 	public async sleep (ms: number = 250) : Promise<void> {
 		/* tslint:disable-next-line:ban */
 		return new Promise<void>(resolve => { setTimeout(() => { resolve(); }, ms); });
+	}
+
+	/** @see JSON.stringify */
+	public stringify (value: any) : string {
+		/* tslint:disable-next-line:ban */
+		return JSON.stringify(value, (_, v) =>
+			v instanceof Uint8Array ?
+				{data: potassiumUtil.toBase64(v), isUint8Array: true} :
+				v
+		);
 	}
 
 	/**

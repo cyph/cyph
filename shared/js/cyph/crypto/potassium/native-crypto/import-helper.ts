@@ -1,3 +1,4 @@
+import {util} from '../../../util';
 import {potassiumUtil} from '../potassium-util';
 
 
@@ -11,7 +12,7 @@ export class ImportHelper {
 		algorithmName: string
 	) : Promise<Uint8Array> {
 		return potassiumUtil.fromString(
-			JSON.stringify(
+			util.stringify(
 				await (<any> crypto.subtle).exportKey(
 					'jwk',
 					cryptoKey,
@@ -41,7 +42,7 @@ export class ImportHelper {
 	) : Promise<CryptoKey> {
 		return crypto.subtle.importKey(
 			'jwk',
-			JSON.parse(
+			util.parse(
 				potassiumUtil.toString(
 					new Uint8Array(key.buffer, key.byteOffset, key.indexOf(0))
 				)
