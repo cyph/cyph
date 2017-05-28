@@ -17,12 +17,10 @@ export class AccountService {
 
 	/** Toggles account menu. */
 	public toggleMenu (menuExpanded?: boolean) : void {
-		if (typeof menuExpanded === 'boolean') {
-			this.menuExpanded	= menuExpanded;
-		}
-		else {
-			this.menuExpanded	= !this.menuExpanded;
-		}
+		this.menuExpanded	= typeof menuExpanded === 'boolean' ?
+			menuExpanded :
+			!this.menuExpanded
+		;
 	}
 
 	constructor () {}
