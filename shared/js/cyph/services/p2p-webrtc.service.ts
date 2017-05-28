@@ -322,7 +322,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		});
 
 		webRTC.webrtc.config.peerConnectionConfig.iceServers	=
-			JSON.parse(iceServers).
+			util.parse(iceServers).
 			filter((o: any) =>
 				!this.sessionService.apiFlags.forceTURN || o.url.indexOf('stun:') !== 0
 			)

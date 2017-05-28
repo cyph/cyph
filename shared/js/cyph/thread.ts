@@ -172,7 +172,7 @@ export class Thread implements IThread {
 		const callbackId	= 'NewThread-' + util.generateGuid();
 
 		const threadBody	= `
-			var threadSetupVars = ${JSON.stringify(threadSetupVars)};
+			var threadSetupVars = ${util.stringify(threadSetupVars)};
 			${
 				/* tslint:disable-next-line:no-unbound-method */
 				Thread.stringifyFunction(Thread.threadEnvSetup)

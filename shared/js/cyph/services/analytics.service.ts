@@ -27,7 +27,7 @@ export class AnalyticsService {
 
 		try {
 			this.analFrame.contentWindow.postMessage(
-				{args: JSON.stringify(args)},
+				{args: util.stringify(args)},
 				this.envService.baseUrl.slice(0, -1)
 			);
 		}
