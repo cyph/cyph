@@ -117,6 +117,8 @@
 		"no-use-before-declare": true,
 		"no-var-keyword": true,
 		"no-void-expression": true,
+		"prefer-conditional-expression": true,
+		"prefer-object-spread": true,
 		"radix": true,
 		"restrict-plus-operands": true,
 		"strict-boolean-expressions": false,
@@ -156,6 +158,7 @@
 		"class-name": true,
 		"comment-format": [true, "check-space", "check-uppercase"],
 		"completed-docs": false, /* Pending fix: true, */
+		"encoding": true,
 		"file-header": false,
 		"import-spacing": true,
 		"interface-name": [true, "always-prefix"],
