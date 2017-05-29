@@ -2709,7 +2709,7 @@ escodegen@^1.6.1:
   optionalDependencies:
     source-map "~0.2.0"
 
-esprima@2.7.0, esprima@^2.6.0:
+esprima@2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/esprima/-/esprima-2.7.0.tgz#74cfb0e4ae43f0b81541dcc30050f9dacb1f707e"
 
@@ -2717,7 +2717,7 @@ esprima@^1.2.2:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/esprima/-/esprima-1.2.5.tgz#0993502feaf668138325756f30f9a51feeec11e9"
 
-esprima@^2.7.1:
+esprima@^2.6.0, esprima@^2.7.1:
   version "2.7.3"
   resolved "https://registry.yarnpkg.com/esprima/-/esprima-2.7.3.tgz#96e3b70d5779f6ad49cd032673d1c312767ba581"
 
@@ -3307,7 +3307,7 @@ gauge@~2.7.1, gauge@~2.7.3:
     strip-ansi "^3.0.1"
     wide-align "^1.1.0"
 
-gaze@1.1.0:
+gaze@1.1.0, gaze@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.0.tgz#74d3ffb0110ede715c9f15bba56c6e9b851d3ce0"
   dependencies:
@@ -3318,12 +3318,6 @@ gaze@^0.5.1:
   resolved "https://registry.yarnpkg.com/gaze/-/gaze-0.5.2.tgz#40b709537d24d1d45767db5a908689dfe69ac44f"
   dependencies:
     globule "~0.1.0"
-
-gaze@^1.0.0:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.2.tgz#847224677adb8870d679257ed3388fdb61e40105"
-  dependencies:
-    globule "^1.0.0"
 
 get-caller-file@^1.0.0, get-caller-file@^1.0.1:
   version "1.0.2"
@@ -7791,8 +7785,8 @@ rsa-keygen@*:
     nan "~2.3.3"
 
 rsasign@*:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.0.3.tgz#42cb5f590d9d5f9ebefeafcb33da83eefbaa0ce9"
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.0.4.tgz#04a72ddb0e7640b757480310e945ebcf1af99274"
   dependencies:
     pem-jwk-norecompute "*"
     rsa-keygen "*"
@@ -8400,8 +8394,8 @@ split@0.3:
     through "2"
 
 sprintf-js@^1.0.3:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.1.0.tgz#cffcaf702daf65ea39bb4e0fa2b299cec1a1be46"
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.1.1.tgz#36be78320afe5801f6cea3ee78b6e5aab940ea0c"
 
 sprintf-js@~1.0.2:
   version "1.0.3"
@@ -8716,9 +8710,9 @@ sugarss@^0.2.0:
   dependencies:
     postcss "^5.2.4"
 
-supersphincs@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-2.0.1.tgz#ed64173cf8c965f0665cbe1df8cc5311589250d7"
+supersphincs@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-2.0.2.tgz#48e6d9786e4ec5f2872dbf40325e2eea53f5d9c0"
   dependencies:
     js-sha512 "*"
     rsasign "*"
@@ -9135,8 +9129,8 @@ uc.micro@^1.0.1, uc.micro@^1.0.3:
   resolved "https://registry.yarnpkg.com/uc.micro/-/uc.micro-1.0.3.tgz#7ed50d5e0f9a9fb0a573379259f2a77458d50192"
 
 uglify-js@3.0.x:
-  version "3.0.12"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.0.12.tgz#a3f9f0d77e3b0344022f4a5aa4e29134509e0693"
+  version "3.0.13"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.0.13.tgz#1871d736aa1e550c728d7e5a6556579e70925d68"
   dependencies:
     commander "~2.9.0"
     source-map "~0.5.1"
