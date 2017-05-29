@@ -39,9 +39,7 @@ export class ErrorService implements ErrorHandler {
 				/* Annoying useless iframe-related spam */
 				errorMessage === 'Script error.' ||
 				/* Google Search iOS app bug */
-				errorMessage === "TypeError: null is not an object (evaluating 'elt.parentNode')" ||
-				/* DOMPurify mitigation for Safari bug */
-				errorMessage === 'NetworkError (DOM Exception 19):  A network error occurred.'
+				errorMessage === "TypeError: null is not an object (evaluating 'elt.parentNode')"
 			) {
 				return;
 			}
