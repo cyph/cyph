@@ -17,7 +17,7 @@ ngserve () {
 	cd "${1}"
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
-	ng serve --host '0.0.0.0' --no-aot --port "${2}" --sourcemaps
+	ng serve --host '0.0.0.0' --live-reload false --no-aot --port "${2}" --sourcemaps
 }
 
 
