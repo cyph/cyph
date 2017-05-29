@@ -296,8 +296,9 @@ export class PairwiseSession {
 				[await Core.newKeys(this.potassium, isAlice, secret)]
 			));
 		}
-		catch (_) {
+		catch (err) {
 			this.abort();
+			throw err;
 		}
 	})(); }
 }
