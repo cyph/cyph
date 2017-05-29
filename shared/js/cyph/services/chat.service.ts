@@ -20,7 +20,7 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class ChatService {
 	/** @ignore */
-	private static readonly approximateKeyExchangeTime: number			= 15000;
+	private static readonly approximateKeyExchangeTime: number			= 18000;
 
 	/** @ignore */
 	private static readonly messageConfirmationSpinnerTimeout: number	= 3000;
