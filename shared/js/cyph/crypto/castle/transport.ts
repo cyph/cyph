@@ -31,7 +31,7 @@ export class Transport {
 	 * it ever hits the core Castle protocol logic.
 	 */
 	public async interceptIncomingCyphertext (
-		timeout: number = 45000
+		timeout: number = 120000
 	) : Promise<Uint8Array> {
 		return new Promise<Uint8Array>(async (resolve, reject) => {
 			this.cyphertextIntercepters.push(resolve);
