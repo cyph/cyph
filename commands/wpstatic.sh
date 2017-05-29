@@ -193,10 +193,10 @@ for f in $(find . -name '*.html') ; do node -e "
 		).toArray().map(elem => Promise.resolve().then(() => {
 			elem	= \$(elem);
 
-			const content	= elem.text().trim();
+			const content	= elem.html().trim();
 			const isScript	= elem.prop('tagName').toLowerCase() === 'script';
 
-			elem.text('');
+			elem.html('');
 
 			return superSphincs.hash(content).then(hash => {
 				let path;
