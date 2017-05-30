@@ -201,6 +201,7 @@ const shellScripts			= {
 				map(s => s.indexOf("'") ? `"${s}"` : `'${s}'`).
 				join(' ')
 		}
+		notify 'Command complete: ${args.command}' > /dev/null
 	`,
 	libUpdate: {
 		command: `
@@ -219,6 +220,10 @@ const shellScripts			= {
 		tns error-reporting disable
 		tns usage-reporting disable
 
+		if [ -f ~/.cyph/notify.key ] ; then
+			/node_modules/.bin/notify -r "$(cat ~/.cyph/notify.key)"
+		fi
+
 		~/google-cloud-sdk/install.sh \
 			--additional-components app-engine-go \
 			--command-completion true \
@@ -227,6 +232,7 @@ const shellScripts			= {
 			--usage-reporting false
 		source ~/.bashrc
 		gcloud components update --quiet
+		notify 'Make complete'
 		gcloud init
 	`
 };

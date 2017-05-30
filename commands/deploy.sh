@@ -391,7 +391,7 @@ if [ "${websign}" ] ; then
 		rm -rf cdn/${p}
 	done
 
-	log 'Starting signing process'
+	notify 'Starting signing process'
 
 	./commands/websign/sign.js "${websignHashWhitelist}" $(
 		for p in ${packages} ; do
