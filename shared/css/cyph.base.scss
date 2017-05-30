@@ -185,10 +185,21 @@ h3.cyph-banner {
 
 $nanoScrollbarWidth: 17px;
 
-@function nanoDefault() { @return '&:not(md-tab-group)'; }
-@function nanoDefaultTarget() { @return '#{nanoDefault()} > :first-child'; }
-@function nanoTabGroup() { @return 'md-tab-group#{&}'; }
-@function nanoTabGroupTarget() { @return '#{nanoTabGroup()} md-tab-body'; }
+@function nanoDefault() {
+	@return '&:not(md-tab-group)';
+}
+
+@function nanoDefaultTarget() {
+	@return '#{nanoDefault()} > :first-child';
+}
+
+@function nanoTabGroup() {
+	@return 'md-tab-group#{&}';
+}
+
+@function nanoTabGroupTarget() {
+	@return '#{nanoTabGroup()} md-tab-body';
+}
 
 .nano {
 	@at-root {
@@ -218,10 +229,8 @@ $nanoScrollbarWidth: 17px;
 		}
 
 		&.edge {
-			@at-root {
-				#{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
-					-ms-overflow-style: -ms-autohiding-scrollbar;
-				}
+			@at-root #{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
+				-ms-overflow-style: -ms-autohiding-scrollbar;
 			}
 		}
 
@@ -230,9 +239,11 @@ $nanoScrollbarWidth: 17px;
 				#{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
 					overflow: hidden;
 				}
+
 				#{nanoDefaultTarget()} {
 					width: calc(100% - #{$nanoScrollbarWidth});
 				}
+
 				#{nanoTabGroupTarget()} {
 					padding-right: $nanoScrollbarWidth;
 				}
