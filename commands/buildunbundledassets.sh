@@ -61,6 +61,8 @@ for f in ${nodeModulesAssets} ; do
 	mkdir -p "$(echo "${f}" | perl -pe 's/(.*)\/[^\/]+$/\1/')" 2> /dev/null
 	if [ -f "/node_modules/${f}.min.js" ] ; then
 		cp "/node_modules/${f}.min.js" "${f}.js"
+	elif [[ "${f}" == libsodium/* ]] ; then
+		cp "/node_modules/${f}.js" "${f}.js"
 	else
 		uglifyjs "/node_modules/${f}.js" -cmo "${f}.js"
 	fi
@@ -127,6 +129,21 @@ for f in ${typescriptAssets} ; do
 				libraryTarget: 'var',
 				path: '${PWD}'
 			},
+			plugins: [
+				$(test "${f}" == 'cyph/crypto/potassium/index' || echo "
+					new webpack.optimize.UglifyJsPlugin({
+						comments: false,
+						compress: {
+							'screw_ie8': true,
+							'warnings': false
+						},
+						mangle: {
+							'screw_ie8': true
+						},
+						sourceMap: false
+					})
+				")
+			],
 			resolve: {
 				extensions: ['.js', '.ts'],
 				plugins: [
@@ -154,11 +171,12 @@ for f in ${typescriptAssets} ; do
 				var key		= keys[i];
 				self[key]	= ${m}[key];
 			}
-		";
+		" |
+			uglifyjs \
+		;
 		echo '})();';
-	} |
-		uglifyjs -cm \
-	> "${f}.js.tmp"
+	} \
+		> "${f}.js.tmp"
 
 	checkfail
 
