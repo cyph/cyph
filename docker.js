@@ -220,10 +220,6 @@ const shellScripts			= {
 		tns error-reporting disable
 		tns usage-reporting disable
 
-		if [ -f ~/.cyph/notify.key ] ; then
-			/node_modules/.bin/notify -r "$(cat ~/.cyph/notify.key)"
-		fi
-
 		~/google-cloud-sdk/install.sh \
 			--additional-components app-engine-go \
 			--command-completion true \
