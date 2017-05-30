@@ -234,12 +234,10 @@ $nanoScrollbarWidth: 17px;
 			}
 		}
 
-		&.other{
+		&.other {
 			&:hover {
-				@at-root {
-					#{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
-						overflow-y: scroll;
-					}
+				@at-root #{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
+					overflow-y: scroll;
 				}
 			}
 
