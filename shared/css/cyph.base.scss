@@ -160,7 +160,11 @@ h3.cyph-banner {
 /* cyphNanoScroller styling */
 
 .nano {
+	position: absolute;
 	height: 100%;
+	width: 100%;
+	top: 0px;
+	left: 0px;
 	overflow: scroll;
 	overflow-x: hidden;
 
@@ -170,7 +174,7 @@ h3.cyph-banner {
 
 	&.other:not(:hover) {
 		overflow: hidden;
-		padding-right: 17px;
+		width: calc(100% - 17px);
 	}
 }
 
