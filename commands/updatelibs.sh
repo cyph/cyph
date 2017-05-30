@@ -62,6 +62,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 	css-loader \
 	datauri \
 	dompurify \
+	dragula \
 	extract-text-webpack-plugin \
 	fg-loadcss \
 	file-loader \
@@ -79,6 +80,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 	htmllint \
 	image-type \
 	immutable@rc \
+	interact.js \
 	jasmine-core \
 	jasmine-spec-reporter \
 	jquery \
