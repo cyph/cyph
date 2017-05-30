@@ -210,18 +210,28 @@ $nanoScrollbarWidth: 17px;
 			}
 		}
 
-		&.other:not(:hover) {
-			@at-root {
-				#{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
-					overflow: hidden;
+		&.other{
+			&:hover {
+				@at-root {
+					#{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
+						overflow-y: scroll;
+					}
 				}
+			}
 
-				#{nanoDefaultTarget()} {
-					width: calc(100% - #{$nanoScrollbarWidth});
-				}
+			&:not(:hover) {
+				@at-root {
+					#{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
+						overflow: hidden;
+					}
 
-				#{nanoTabGroupTarget()} {
-					padding-right: $nanoScrollbarWidth;
+					#{nanoDefaultTarget()} {
+						width: calc(100% - #{$nanoScrollbarWidth});
+					}
+
+					#{nanoTabGroupTarget()} {
+						padding-right: $nanoScrollbarWidth;
+					}
 				}
 			}
 		}
