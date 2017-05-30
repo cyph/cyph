@@ -46,16 +46,13 @@ export class AccountNotesService {
 			}
 	];
 
-	private notes: INote[] = AccountNotesService.DUMMY_NOTES;
+	private notes: INote[]	= AccountNotesService.DUMMY_NOTES;
+	public currentNote: INote;
 	
-	public currentNote: INote = this.notes[0];
-
-	public updateNote (id: number) : void {
-		for(var i = 0; i < this.notes.length; i++) {
-			if(this.notes[i].id == id) {
-				this.currentNote = this.notes[i];
-			}
-		}
+	//** Returns note */
+	public getNote (id: number) : void {
+	
+		this.currentNote = this.notes[id];
 	}
 
 	/** Files owned by current user. */
@@ -74,6 +71,8 @@ export class AccountNotesService {
 		}
 		return (note.length > limit) ? note.substr(0, (limit - 1)) + '...' : note;
 	}
+
+
 
 	constructor (
 		/** @ignore */

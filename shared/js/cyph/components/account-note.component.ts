@@ -16,6 +16,7 @@ import {UtilService} from '../services/util.service';
 	templateUrl: '../../../templates/account-note.html'
 })
 export class AccountNoteComponent {
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.activatedRouteService.params.subscribe(o => {
@@ -25,7 +26,7 @@ export class AccountNoteComponent {
 				return;
 			}
 
-			this.accountNotesService.updateNote(id);
+			this.accountNotesService.getNote(id);
 		});
 	}
 
