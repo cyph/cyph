@@ -1,116 +1,114 @@
 <div [class.mobile]='envService.isMobile'>
-	<md-tab-group>
+	<md-tab-group cyphNanoScroller [cyphNanoScrollerNoParent]='true'>
 		<md-tab cyphTranslate [label]='stringsService.formattingHelp'>
-			<div cyphNanoScroller>
-				<p>
-					<span>Cyph uses a version of Markdown called</span>
-					<a href='http://commonmark.org'>CommonMark</a>
-					<span>for formatting.</span>
-					<br />
-					<span>
-						We also support various extensions &ndash;
-						including emojis and code fencing.
-					</span>
-				</p>
-				<p>
-					The following examples are shamelessly copied from reddit:
-				</p>
-				<table>
-					<tbody>
-						<tr>
-							<th>you type:</th>
-							<th>you see:</th>
-						</tr>
-						<tr>
-							<td>*<span>italics</span>*</td>
-							<td><em>italics</em></td>
-						</tr>
-						<tr>
-							<td>**<span>bold</span>**</td>
-							<td><b>bold</b></td>
-						</tr>
-						<tr>
-							<td>
-								[cyph <span>me</span>!](https://cyph.com)
-							</td>
-							<td>
-								<a href='https://cyph.com'>cyph <span>me</span>!</a>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<br />
-								* <span>item 1</span>
-								<br />
-								* <span>item 2</span>
-								<br />
-								* <span>item 3</span>
-							</td>
-							<td>
-								<ul>
-									<li>item 1</li>
-									<li>item 2</li>
-									<li>item 3</li>
-								</ul>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<br />
-								&gt; <span>quoted text</span>
-							</td>
-							<td>
-								<blockquote>quoted text</blockquote>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span>
-									Lines starting with tabs are treated like code:
-								</span>
+			<p>
+				<span>Cyph uses a version of Markdown called</span>
+				<a href='http://commonmark.org'>CommonMark</a>
+				<span>for formatting.</span>
+				<br />
+				<span>
+					We also support various extensions &ndash;
+					including emojis and code fencing.
+				</span>
+			</p>
+			<p>
+				The following examples are shamelessly copied from reddit:
+			</p>
+			<table>
+				<tbody>
+					<tr>
+						<th>you type:</th>
+						<th>you see:</th>
+					</tr>
+					<tr>
+						<td>*<span>italics</span>*</td>
+						<td><em>italics</em></td>
+					</tr>
+					<tr>
+						<td>**<span>bold</span>**</td>
+						<td><b>bold</b></td>
+					</tr>
+					<tr>
+						<td>
+							[cyph <span>me</span>!](https://cyph.com)
+						</td>
+						<td>
+							<a href='https://cyph.com'>cyph <span>me</span>!</a>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<br />
+							* <span>item 1</span>
+							<br />
+							* <span>item 2</span>
+							<br />
+							* <span>item 3</span>
+						</td>
+						<td>
+							<ul>
+								<li>item 1</li>
+								<li>item 2</li>
+								<li>item 3</li>
+							</ul>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<br />
+							&gt; <span>quoted text</span>
+						</td>
+						<td>
+							<blockquote>quoted text</blockquote>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<span>
+								Lines starting with tabs are treated like code:
+							</span>
 
-								<br />
-								<br />
+							<br />
+							<br />
 
-								<span class='spaces'>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-								if 1 * 2 &lt; 3:
-								<br />
-								<span class='spaces'>
-									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								</span>
-								print "hello!"
-								<br />
-							</td>
-							<td>
-								<span>
-									Lines starting with tabs are treated like code:
-								</span>
+							<span class='spaces'>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+							if 1 * 2 &lt; 3:
+							<br />
+							<span class='spaces'>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							</span>
+							print "hello!"
+							<br />
+						</td>
+						<td>
+							<span>
+								Lines starting with tabs are treated like code:
+							</span>
 
-								<br />
-								<br />
+							<br />
+							<br />
 
-								<pre>if 1 * 2 &lt; 3:</pre>
-								<pre>&nbsp;&nbsp;&nbsp;&nbsp;print "hello!"</pre>
-							</td>
-						</tr>
-						<tr>
-							<td>~~<span>strikethrough</span>~~</td>
-							<td><span class='strike'>strikethrough</span></td>
-						</tr>
-						<tr>
-							<td>
-								<span>super</span>^<span>script</span>^
-							</td>
-							<td>
-								<span>super</span><sup>script</sup>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+							<pre>if 1 * 2 &lt; 3:</pre>
+							<pre>&nbsp;&nbsp;&nbsp;&nbsp;print "hello!"</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>~~<span>strikethrough</span>~~</td>
+						<td><span class='strike'>strikethrough</span></td>
+					</tr>
+					<tr>
+						<td>
+							<span>super</span>^<span>script</span>^
+						</td>
+						<td>
+							<span>super</span><sup>script</sup>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</md-tab>
 		<md-tab [label]='stringsService.contactCyph' *ngIf='!envService.coBranded'>
-			<div fxFlex fxLayout='column' fxLayoutGap='16px' cyphNanoScroller>
+			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 				<div></div>
 				<div cyphTranslate>
 					<span>Please check out the</span>
