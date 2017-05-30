@@ -145,7 +145,7 @@ const homeTest		= o => {
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				setOnerror();
-				return self.$ && $('#new-cyph:visible')[0];
+				return document.querySelector('body.load-complete #new-cyph');
 			})),
 			30000
 		)
@@ -178,7 +178,7 @@ const newCyphTest	= o => {
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				setOnerror();
-				return self.$ && $('body.load-complete .message-box:visible')[0];
+				return document.querySelector('body.load-complete .message-box');
 			})),
 			150000
 		)
@@ -192,9 +192,9 @@ const newCyphTest	= o => {
 		driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
-				return self.$ && $('.message-item:visible').toArray().
+				return Array.from(document.querySelectorAll('.message-item')).
 					filter(function (elem) {
-						var text	= $(elem).text();
+						var text	= elem.textContent;
 						return text.indexOf('friend') > -1 && text.indexOf('balls') > -1;
 					})[0]
 				;
