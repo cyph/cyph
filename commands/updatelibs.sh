@@ -108,6 +108,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 	nativescript-theme-core \
 	node-fetch \
 	node-sass \
+	notify-cli \
 	ntru \
 	od-virtualscroll \
 	prepack \

@@ -19,6 +19,11 @@ log () {
 	echo -e "\n\n\n${*} ($(date))\n"
 }
 
+notify () {
+	/node_modules/.bin/notify --text "${*}" > /dev/null
+	log "${*}"
+}
+
 pass () {
 	log 'PASS'
 	exit 0
