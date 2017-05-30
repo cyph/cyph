@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Env} from '../env';
+import {util} from '../util';
 import {LocalStorageService} from './local-storage.service';
 
 
@@ -8,6 +9,17 @@ import {LocalStorageService} from './local-storage.service';
  */
 @Injectable()
 export class EnvService extends Env {
+	/** Geolocation data. */
+	public readonly geolocation	= (async () =>
+		util.parse<{
+			continent: string;
+			country: string;
+			org: string;
+		}>(
+			await util.request({retries: 5, url: this.baseUrl + 'geolocation'})
+		)
+	)();
+
 	/** Package/environment name. */
 	public readonly packageName: Promise<string>	= (async () => {
 		const timestamp	=
