@@ -36,5 +36,5 @@ export -f pass
 
 
 if [ -f ~/.cyph/notify.key ] ; then
-	/node_modules/.bin/notify -r "$(cat ~/.cyph/notify.key)"
+	/node_modules/.bin/notify -r "$(cat ~/.cyph/notify.key)" > /dev/null
 fi
