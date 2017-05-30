@@ -114,6 +114,7 @@ output="$({
 		})
 	' \;;
 } 2>&1 |
+	grep -v js/native/js |
 	grep -v "Warning: Cannot read property 'end' of undefined"
 )"
 
@@ -145,4 +146,5 @@ if (( $? )) ; then
 fi
 
 echo -e "${output}"
+log 'Lint complete'
 exit ${#output}
