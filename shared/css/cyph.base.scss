@@ -183,22 +183,61 @@ h3.cyph-banner {
 
 /* cyphNanoScroller styling */
 
+$nanoScrollbarWidth: 17px;
+
+@function nanoDefault() { @return '&:not(md-tab-group)'; }
+@function nanoDefaultTarget() { @return '#{nanoDefault()} > :first-child'; }
+@function nanoTabGroup() { @return 'md-tab-group#{&}'; }
+@function nanoTabGroupTarget() { @return '#{nanoTabGroup()} md-tab-body'; }
+
 .nano {
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	top: 0px;
-	left: 0px;
-	overflow: scroll;
-	overflow-x: hidden;
+	@at-root {
+		#{nanoDefault()} {
+			overflow: auto;
+			position: relative;
 
-	&.edge {
-		-ms-overflow-style: -ms-autohiding-scrollbar;
-	}
+			&.edge {
+				overflow: hidden;
+			}
+		}
 
-	&.other:not(:hover) {
-		overflow: hidden;
-		width: calc(100% - 17px);
+		#{nanoDefaultTarget()} {
+			position: absolute;
+			height: 100%;
+			width: 100%;
+			top: 0px;
+			left: 0px;
+			overflow: scroll;
+			overflow-x: hidden;
+		}
+
+		#{nanoTabGroupTarget()} {
+			height: 100%;
+
+			@include word-wrap;
+		}
+
+		&.edge {
+			@at-root {
+				#{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
+					-ms-overflow-style: -ms-autohiding-scrollbar;
+				}
+			}
+		}
+
+		&.other:not(:hover) {
+			@at-root {
+				#{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
+					overflow: hidden;
+				}
+				#{nanoDefaultTarget()} {
+					width: calc(100% - #{$nanoScrollbarWidth});
+				}
+				#{nanoTabGroupTarget()} {
+					padding-right: $nanoScrollbarWidth;
+				}
+			}
+		}
 	}
 }
 
