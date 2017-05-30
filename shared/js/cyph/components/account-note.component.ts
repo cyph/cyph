@@ -1,8 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountNotesService} from '../services/account-notes.service';
-import {ActivatedRoute} from '@angular/router';
 import {EnvService} from '../services/env.service';
 import {UtilService} from '../services/util.service';
 
@@ -15,8 +15,7 @@ import {UtilService} from '../services/util.service';
 	styleUrls: ['../../../css/components/account-note.scss'],
 	templateUrl: '../../../templates/account-note.html'
 })
-export class AccountNoteComponent {
-
+export class AccountNoteComponent implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.activatedRouteService.params.subscribe(o => {

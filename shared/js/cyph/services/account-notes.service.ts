@@ -48,11 +48,10 @@ export class AccountNotesService {
 
 	private notes: INote[]	= AccountNotesService.DUMMY_NOTES;
 	public currentNote: INote;
-	
-	//** Returns note */
+
+	/** Returns note */
 	public getNote (id: number) : void {
-	
-		this.currentNote = this.notes[id];
+		this.currentNote	= this.notes[id];
 	}
 
 	/** Files owned by current user. */
@@ -71,8 +70,6 @@ export class AccountNotesService {
 		}
 		return (note.length > limit) ? note.substr(0, (limit - 1)) + '...' : note;
 	}
-
-
 
 	constructor (
 		/** @ignore */
