@@ -266,9 +266,9 @@ func getContinent(h HandlerArgs) (interface{}, int) {
 }
 
 func getGeolocation(h HandlerArgs) (interface{}, int) {
-	country, _ := geolocate(h)
+	country, continent := geolocate(h)
 	org := getOrg(h)
-	return map[string]string{"country": country, "org": org}, http.StatusOK
+	return map[string]string{"continent": continent, "country": country, "org": org}, http.StatusOK
 }
 
 func getIceServers(h HandlerArgs) (interface{}, int) {
