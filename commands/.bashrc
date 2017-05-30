@@ -33,3 +33,8 @@ export -f checkfail
 export -f fail
 export -f log
 export -f pass
+
+
+if [ -f ~/.cyph/notify.key ] ; then
+	/node_modules/.bin/notify -r "$(cat ~/.cyph/notify.key)"
+fi
