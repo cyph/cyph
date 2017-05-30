@@ -20,6 +20,7 @@ func init() {
 	handleFuncs("/braintree", Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
+	handleFuncs("/geolocation", Handlers{methods.GET: getGeolocation})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
 	handleFuncs("/preauth/{id}", Handlers{methods.POST: preAuth})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
@@ -262,6 +263,12 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 func getContinent(h HandlerArgs) (interface{}, int) {
 	_, continent := geolocate(h)
 	return continent, http.StatusOK
+}
+
+func getGeolocation(h HandlerArgs) (interface{}, int) {
+	country, _ := geolocate(h)
+	org := getOrg(h)
+	return map[string]string{"country": country, "org": org}, http.StatusOK
 }
 
 func getIceServers(h HandlerArgs) (interface{}, int) {
