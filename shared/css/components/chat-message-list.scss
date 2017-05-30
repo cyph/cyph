@@ -38,3 +38,8 @@
 		margin: 0px;
 	}
 }
+
+/* Temporary workaround for Safari bug */
+.chat-end-message /deep/ cyph-signup-form > form {
+	display: block !important;
+}
