@@ -22,7 +22,7 @@ export class DOMPurifyHtmlSanitizerService implements HtmlSanitizerService {
 		const whitelist	= ['http', 'https', 'ftp'];
 
 		/* Build fitting regex */
-		const regex		= RegExp(`^(${whitelist.join('|')}):`, 'im');
+		const regex		= new RegExp(`^(${whitelist.join('|')}):`, 'im');
 
 		/* Add a hook to enforce URI scheme whitelist */
 		DOMPurify.addHook('afterSanitizeAttributes', node => {
