@@ -9,13 +9,13 @@ import {LocalStorageService} from './local-storage.service';
  */
 @Injectable()
 export class EnvService extends Env {
-	/** Geolocation data. */
-	public readonly geolocation: Promise<{
-		continent: string;
-		continentCode: string;
-		country: string;
-		countryCode: string;
-		org: string;
+	/** @ignore */
+	private readonly geolocationPromise: Promise<{
+		continent?: string;
+		continentCode?: string;
+		country?: string;
+		countryCode?: string;
+		org?: string;
 	}>	= (async () =>
 		util.parse(
 			await util.request({
@@ -25,13 +25,16 @@ export class EnvService extends Env {
 		)
 	)().catch(
 		() => ({})
-	).then(o => ({
-		continent: (o && o.continent) || 'Unknown',
-		continentCode: (o && o.continentCode) || 'Unknown',
-		country: (o && o.country) || 'Unknown',
-		countryCode: (o && o.countryCode) || 'Unknown',
-		org: (o && o.org) || 'Unknown'
-	}));
+	);
+
+	/** Geolocation data. */
+	public readonly geolocation	= {
+		continent: (async () => (await this.geolocationPromise).continent)(),
+		continentCode: (async () => (await this.geolocationPromise).continentCode)(),
+		country: (async () => (await this.geolocationPromise).country)(),
+		countryCode: (async () => (await this.geolocationPromise).countryCode)(),
+		org: (async () => (await this.geolocationPromise).org)()
+	};
 
 	/** Package/environment name. */
 	public readonly packageName: Promise<string>	= (async () => {
