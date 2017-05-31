@@ -39,7 +39,7 @@ export class LocalStorageService {
 	 * Sets an item's value.
 	 * @returns Success status.
 	 */
-	public async setItem (key: string, value: {toString: () => string}) : Promise<boolean> {
+	public async setItem (key: string, value: boolean|number|string) : Promise<boolean> {
 		try {
 			/* tslint:disable-next-line:ban */
 			localStorage.setItem(key, value.toString());
