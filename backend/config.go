@@ -102,9 +102,9 @@ var config = struct {
 		"sa": empty,
 	},
 
-	"eu",
-
 	"Europe",
+
+	"eu",
 
 	"en",
 
