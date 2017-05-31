@@ -2,8 +2,10 @@
 
 import {Injectable} from '@angular/core';
 import * as firebase from 'firebase/app';
+import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {env} from '../env';
 import {util} from '../util';
 import {DatabaseService} from './database.service';
@@ -13,7 +15,7 @@ import {DatabaseService} from './database.service';
  * DatabaseService implementation built on Firebase.
  */
 @Injectable()
-export class FirebaseDatabaseService implements DatabaseService {
+export class FirebaseDatabaseService extends DatabaseService {
 	/** @ignore */
 	private app: Promise<firebase.app.App>	= util.retryUntilSuccessful(() => {
 		try {
@@ -27,6 +29,11 @@ export class FirebaseDatabaseService implements DatabaseService {
 		return firebase.apps[0] || firebase.initializeApp(env.firebaseConfig);
 	});
 
+	/** @ignore */
+	private usernameToEmail (username: string) : string {
+		return `${username}@cyph.me`;
+	}
+
 	/** @inheritDoc */
 	public async getDatabaseRef (url: string) : Promise<firebase.database.Reference> {
 		return util.retryUntilSuccessful(async () =>
@@ -34,6 +41,13 @@ export class FirebaseDatabaseService implements DatabaseService {
 				(await this.app).database().refFromURL(url) :
 				(await this.app).database().ref(url)
 		);
+	}
+
+	/** @inheritDoc */
+	public async getItem (url: string) : Promise<Uint8Array> {
+		return util.requestBytes({
+			url: await (await this.getStorageRef(url)).getDownloadURL()
+		});
 	}
 
 	/** @inheritDoc */
@@ -45,5 +59,47 @@ export class FirebaseDatabaseService implements DatabaseService {
 		);
 	}
 
-	constructor () {}
+	/** @inheritDoc */
+	public async login (username: string, password: string) : Promise<void> {
+		await (await this.app).auth().signInWithEmailAndPassword(
+			this.usernameToEmail(username),
+			password
+		);
+	}
+
+	/** @inheritDoc */
+	public async logout () : Promise<void> {
+		await util.retryUntilSuccessful(async () =>
+			(await this.app).auth().signOut()
+		);
+	}
+
+	/** @inheritDoc */
+	public async register (username: string, password: string) : Promise<void> {
+		await (await this.app).auth().createUserWithEmailAndPassword(
+			this.usernameToEmail(username),
+			password
+		);
+	}
+
+	/** @inheritDoc */
+	public async setItem (
+		url: string,
+		value: ArrayBufferView|boolean|number|string
+	) : Promise<void> {
+		await (await this.getStorageRef(url)).
+			put(
+				new Blob([potassiumUtil.fromString(
+					(typeof value === 'boolean' || typeof value === 'number') ?
+						value.toString() :
+						value
+				)])
+			).
+			then()
+		;
+	}
+
+	constructor () {
+		super();
+	}
 }
