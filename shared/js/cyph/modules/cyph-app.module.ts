@@ -17,6 +17,7 @@ import {LinkConnectionComponent} from '../components/link-connection.component';
 import {NotFoundComponent} from '../components/not-found.component';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountContactsService} from '../services/account-contacts.service';
+import {AccountDatabaseService} from '../services/account-database.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountNotesService} from '../services/account-notes.service';
 import {AccountSettingsService} from '../services/account-settings.service';
@@ -77,6 +78,7 @@ import {CyphWebModule} from './cyph-web.module';
 	providers: [
 		AccountAuthService,
 		AccountContactsService,
+		AccountDatabaseService,
 		AccountFilesService,
 		AccountNotesService,
 		AccountService,
