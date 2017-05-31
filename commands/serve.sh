@@ -34,6 +34,12 @@ else
 	cat ~/.cyph/braintree.sandbox >> backend/.build.yaml
 fi
 
+for f in $(ls ~/.cyph | grep -P '\.mmdb$') ; do
+	if [ ! -f "backend/${f}" ] ; then
+		cp ~/.cyph/${f} backend/
+	fi
+done
+
 mkdir /tmp/cyph0
 dev_appserver.py \
 	--skip_sdk_update_check \
