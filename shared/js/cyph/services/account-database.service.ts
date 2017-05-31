@@ -12,7 +12,12 @@ export class AccountDatabaseService {
 		return `${url}_${publicData.toString()}_${storage.toString()}`;
 	}
 
-	/** Gets an item's value. */
+	/**
+	 * Gets an item's value.
+	 * @param url Path to item.
+	 * @param publicData If true, validates the item's signature. Otherwise, decrypts the item.
+	 * @param storage If true, uses Firebase Storage. Otherwise, uses Firebase Realtime Database.
+	 */
 	public async getItem (
 		url: string,
 		publicData: boolean = false,
@@ -31,6 +36,8 @@ export class AccountDatabaseService {
 
 	/**
 	 * Deletes an item.
+	 * @param url Path to item.
+	 * @param storage If true, uses Firebase Storage. Otherwise, uses Firebase Realtime Database.
 	 */
 	public async removeItem (
 		url: string,
@@ -51,6 +58,10 @@ export class AccountDatabaseService {
 
 	/**
 	 * Sets an item's value.
+	 * @param url Path to item.
+	 * @param value Data to set.
+	 * @param publicData If true, signs the item. Otherwise, encrypts the item.
+	 * @param storage If true, uses Firebase Storage. Otherwise, uses Firebase Realtime Database.
 	 */
 	public async setItem (
 		url: string,
