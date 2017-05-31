@@ -377,7 +377,7 @@ export class Util {
 	}
 
 	/** @see JSON.stringify */
-	public stringify (value: any) : string {
+	public stringify<T> (value: T) : string {
 		/* tslint:disable-next-line:ban */
 		return JSON.stringify(value, (_, v) =>
 			v instanceof Uint8Array ?
