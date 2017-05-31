@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {AccountAuthService} from './account-auth.service';
+import {util} from '../util';
 import {PotassiumService} from './crypto/potassium.service';
-import {DatabaseService} from './database.service';
+import {LocalStorageService} from './local-storage.service';
 
 
 /**
@@ -9,30 +9,58 @@ import {DatabaseService} from './database.service';
  */
 @Injectable()
 export class AccountDatabaseService {
+	/** @ignore */
+	private dummyKey (url: string, publicData: boolean) : string {
+		return `${url}_${publicData.toString()}`;
+	}
+
 	/**
 	 * Gets an item's value.
 	 * @param url Path to item.
 	 * @param publicData If true, validates the item's signature. Otherwise, decrypts the item.
 	 */
 	public async getItem (url: string, publicData: boolean = false) : Promise<Uint8Array> {
-		if (!this.accountAuthService.currentUserKeys) {
-			throw new Error(`User not signed in. Cannot get item at ${url}.`);
+		const value	= await this.localStorageService.getItem(
+			this.dummyKey(url, publicData)
+		);
+
+		if (value === undefined) {
+			throw new Error(`Failed to get item at ${url}.`);
 		}
 
-		const data	= await this.databaseService.getItem(url);
+		return this.potassiumService.fromString(value);
+	}
 
-		return publicData ?
-			this.potassiumService.fromString(
-				await this.potassiumService.sign.open(
-					data,
-					this.accountAuthService.currentUserKeys.signingKeyPair.publicKey
-				)
-			) :
-			await this.potassiumService.secretBox.open(
-				data,
-				this.accountAuthService.currentUserKeys.symmetricKey
-			)
-		;
+	/**
+	 * Gets a value as a boolean.
+	 * @see getItem
+	 */
+	public async getItemBoolean (url: string, publicData: boolean = false) : Promise<boolean> {
+		return (await this.getItemString(url, publicData)) === 'true';
+	}
+
+	/**
+	 * Gets a value as a number.
+	 * @see getItem
+	 */
+	public async getItemNumber (url: string, publicData: boolean = false) : Promise<number> {
+		return parseFloat(await this.getItemString(url, publicData));
+	}
+
+	/**
+	 * Gets a value as an object.
+	 * @see getItem
+	 */
+	public async getItemObject<T> (url: string, publicData: boolean = false) : Promise<T> {
+		return util.parse<T>(await this.getItemString(url, publicData));
+	}
+
+	/**
+	 * Gets a value as a string.
+	 * @see getItem
+	 */
+	public async getItemString (url: string, publicData: boolean = false) : Promise<string> {
+		return this.potassiumService.toString(await this.getItem(url, publicData));
 	}
 
 	/**
@@ -40,7 +68,17 @@ export class AccountDatabaseService {
 	 * @param url Path to item.
 	 */
 	public async removeItem (url: string) : Promise<void> {
-		return this.databaseService.removeItem(url);
+		for (const publicData of [true, false]) {
+			const success	= await this.localStorageService.removeItem(
+				this.dummyKey(url, publicData)
+			);
+
+			if (success) {
+				return;
+			}
+		}
+
+		throw new Error(`Failed to remove item at ${url}.`);
 	}
 
 	/**
@@ -54,36 +92,23 @@ export class AccountDatabaseService {
 		value: ArrayBufferView|boolean|number|string,
 		publicData: boolean = false
 	) : Promise<void> {
-		if (!this.accountAuthService.currentUserKeys) {
-			throw new Error(`User not signed in. Cannot set item at ${url}.`);
+		const success	= await this.localStorageService.setItem(
+			this.dummyKey(url, publicData),
+			this.potassiumService.toString(
+				(typeof value === 'boolean' || typeof value === 'number') ?
+					value.toString() :
+					value
+			)
+		);
+
+		if (!success) {
+			throw new Error(`Failed to set item at ${url}.`);
 		}
-
-		const data	= this.potassiumService.fromString(
-			(typeof value === 'boolean' || typeof value === 'number') ?
-				value.toString() :
-				value
-		);
-
-		return this.databaseService.setItem(
-			url,
-			publicData ?
-				await this.potassiumService.sign.sign(
-					data,
-					this.accountAuthService.currentUserKeys.signingKeyPair.privateKey
-				) :
-				await this.potassiumService.secretBox.seal(
-					data,
-					this.accountAuthService.currentUserKeys.symmetricKey
-				)
-		);
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly accountAuthService: AccountAuthService,
-
-		/** @ignore */
-		private readonly databaseService: DatabaseService,
+		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
