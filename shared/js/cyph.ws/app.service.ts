@@ -74,7 +74,11 @@ export class AppService implements CanActivate {
 
 		titleService.setTitle(util.translate(titleService.getTitle()));
 
-		self.onhashchange	= () => { location.reload(); };
+		self.onhashchange	= () => {
+			if (!locationData.hash.replace(/^#?\/?/, '').match(/^account(\/|$)/)) {
+				location.reload();
+			}
+		};
 
 		(async () => {
 			if (this.isLockedDown) {
