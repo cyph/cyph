@@ -59,6 +59,11 @@ export class DatabaseService {
 		throw new Error('Must provide an implementation of DatabaseService.register.');
 	}
 
+	/** Removes a value. */
+	public async removeItem (_URL: string) : Promise<void> {
+		throw new Error('Must provide an implementation of DatabaseService.removeItem.');
+	}
+
 	/** Sets a value. */
 	public async setItem (
 		_URL: string,
