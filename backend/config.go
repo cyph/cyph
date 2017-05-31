@@ -39,6 +39,9 @@ var config = struct {
 	DefaultContinent           string
 	DefaultContinentCode       string
 	DefaultLanguageCode        string
+	DummyCountry               string
+	DummyCountryCode           string
+	DummyOrg                   string
 	EmailAddress               string
 	HPKPHeader                 string
 	HSTSHeader                 string
@@ -107,6 +110,12 @@ var config = struct {
 	"eu",
 
 	"en",
+
+	"Principality of Sealand",
+
+	"psl",
+
+	"Legion of Doom",
 
 	"Cyph <hello@cyph.com>",
 
