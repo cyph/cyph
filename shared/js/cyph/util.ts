@@ -238,7 +238,7 @@ export class Util {
 	}
 
 	/** @see JSON.parse */
-	public parse<T = any> (text: string) : T {
+	public parse<T> (text: string) : T {
 		/* tslint:disable-next-line:ban */
 		return JSON.parse(text, (_, v) =>
 			v && v.isUint8Array && typeof v.data === 'string' ?

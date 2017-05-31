@@ -42,7 +42,7 @@ export class ImportHelper {
 	) : Promise<CryptoKey> {
 		return crypto.subtle.importKey(
 			'jwk',
-			util.parse(
+			util.parse<JsonWebKey>(
 				potassiumUtil.toString(
 					new Uint8Array(key.buffer, key.byteOffset, key.indexOf(0))
 				)
