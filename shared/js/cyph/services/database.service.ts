@@ -19,22 +19,34 @@ export class DatabaseService {
 		throw new Error('Must provide an implementation of DatabaseService.getItem.');
 	}
 
-	/** Gets a value as a boolean. */
+	/**
+	 * Gets a value as a boolean.
+	 * @see getItem
+	 */
 	public async getItemBoolean (url: string) : Promise<boolean> {
 		return (await this.getItemString(url)) === 'true';
 	}
 
-	/** Gets a value as a number. */
+	/**
+	 * Gets a value as a number.
+	 * @see getItem
+	 */
 	public async getItemNumber (url: string) : Promise<number> {
 		return parseFloat(await this.getItemString(url));
 	}
 
-	/** Gets a value as an object. */
+	/**
+	 * Gets a value as an object.
+	 * @see getItem
+	 */
 	public async getItemObject<T> (url: string) : Promise<T> {
 		return util.parse<T>(await this.getItemString(url));
 	}
 
-	/** Gets a value as a string. */
+	/**
+	 * Gets a value as a string.
+	 * @see getItem
+	 */
 	public async getItemString (url: string) : Promise<string> {
 		return potassiumUtil.toString(await this.getItem(url));
 	}
