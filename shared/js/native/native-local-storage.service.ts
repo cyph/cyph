@@ -36,7 +36,7 @@ export class NativeLocalStorageService implements LocalStorageService {
 	 * Sets an item's value.
 	 * @returns Success status.
 	 */
-	public async setItem (key: string, value: {toString: () => string}) : Promise<boolean> {
+	public async setItem (key: string, value: boolean|number|string) : Promise<boolean> {
 		return this.storage.set({key, value: value.toString()}).catch(() => false);
 	}
 
