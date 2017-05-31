@@ -47,6 +47,8 @@ blockoomkiller ${!}
 
 ./commands/buildunbundledassets.sh
 
+log 'Starting ng serve'
+
 for arr in 'cyph.ws 42002' 'cyph.com 42001' ; do
 	read -ra arr <<< "${arr}"
 
