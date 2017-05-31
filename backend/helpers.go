@@ -87,7 +87,10 @@ func generateApiKey() (string, error) {
 
 func geolocate(h HandlerArgs) (string, string, string, string) {
 	if appengine.IsDevAppServer() {
-		return config.DefaultContinent, config.DefaultContinentCode, "", ""
+		return config.DefaultContinent,
+			config.DefaultContinentCode,
+			config.DummyCountry,
+			config.DummyCountryCode
 	}
 
 	record, err := countrydb.Country(getIP(h))
@@ -155,7 +158,7 @@ func getSignupFromRequest(h HandlerArgs) map[string]interface{} {
 
 func getOrg(h HandlerArgs) string {
 	if appengine.IsDevAppServer() {
-		return ""
+		return config.DummyOrg
 	}
 
 	record, err := orgdb.ISP(getIP(h))
