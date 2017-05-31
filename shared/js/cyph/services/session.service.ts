@@ -85,9 +85,9 @@ export abstract class SessionService implements ISessionService {
 
 				const cyphertextTimestamp: number	= e.data.timestamp;
 
-				const messages: IMessage[]	= (() => {
+				const messages	= (() => {
 					try {
-						return util.parse(e.data.plaintext);
+						return util.parse<IMessage[]>(e.data.plaintext);
 					}
 					catch (_) {
 						return [];
