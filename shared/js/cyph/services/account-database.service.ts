@@ -56,12 +56,16 @@ export class AccountDatabaseService {
 	 */
 	public async setItem (
 		url: string,
-		value: ArrayBuffer|boolean|number|string,
+		value: ArrayBufferView|boolean|number|string,
 		publicData: boolean = false
 	) : Promise<void> {
 		const success	= await this.localStorageService.setItem(
 			this.dummyKey(url, publicData),
-			this.potassiumService.toString(value.toString())
+			this.potassiumService.toString(
+				(typeof value === 'boolean' || typeof value === 'number') ?
+					value.toString() :
+					value
+			)
 		);
 
 		if (!success) {
