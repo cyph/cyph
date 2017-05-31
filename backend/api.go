@@ -3,24 +3,25 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/lionelbarrow/braintree-go"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/mail"
 	"google.golang.org/appengine/memcache"
 	"google.golang.org/appengine/urlfetch"
-	"io/ioutil"
-	"net/http"
-	"strconv"
-	"strings"
-	"time"
 )
 
 func init() {
 	handleFuncs("/braintree", Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
-	handleFuncs("/geolocation", Handlers{methods.GET: getGeolocation})
+	handleFuncs("/geolocation/{language}", Handlers{methods.GET: getGeolocation})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
 	handleFuncs("/preauth/{id}", Handlers{methods.POST: preAuth})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
@@ -261,14 +262,21 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 }
 
 func getContinent(h HandlerArgs) (interface{}, int) {
-	_, continent := geolocate(h)
-	return continent, http.StatusOK
+	_, continentCode, _, _ := geolocate(h)
+	return continentCode, http.StatusOK
 }
 
 func getGeolocation(h HandlerArgs) (interface{}, int) {
-	country, continent := geolocate(h)
+	continent, continentCode, country, countryCode := geolocate(h)
 	org := getOrg(h)
-	return map[string]string{"continent": continent, "country": country, "org": org}, http.StatusOK
+
+	return map[string]string{
+		"continent":     continent,
+		"continentCode": continentCode,
+		"country":       country,
+		"countryCode":   countryCode,
+		"org":           org,
+	}, http.StatusOK
 }
 
 func getIceServers(h HandlerArgs) (interface{}, int) {

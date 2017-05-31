@@ -6,13 +6,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/lionelbarrow/braintree-go"
-	"github.com/microcosm-cc/bluemonday"
-	"github.com/oschwald/geoip2-golang"
-	"golang.org/x/net/context"
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/urlfetch"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -20,6 +13,14 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/gorilla/mux"
+	"github.com/lionelbarrow/braintree-go"
+	"github.com/microcosm-cc/bluemonday"
+	"github.com/oschwald/geoip2-golang"
+	"golang.org/x/net/context"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/urlfetch"
 )
 
 type HandlerArgs struct {
@@ -84,24 +85,43 @@ func generateApiKey() (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
-func geolocate(h HandlerArgs) (string, string) {
+func geolocate(h HandlerArgs) (string, string, string, string) {
 	if appengine.IsDevAppServer() {
-		return "", config.DefaultContinent
+		return config.DefaultContinent, config.DefaultContinentCode, "", ""
 	}
 
 	record, err := countrydb.Country(getIP(h))
 	if err != nil {
-		return "", config.DefaultContinent
+		return config.DefaultContinent, config.DefaultContinentCode, "", ""
 	}
 
-	country := strings.ToLower(record.Country.IsoCode)
-	continent := strings.ToLower(record.Continent.Code)
+	language := config.DefaultLanguageCode
+	if val, ok := h.Vars["language"]; ok {
+		language = val
+	}
 
-	if _, ok := config.Continents[continent]; !ok {
+	continent := ""
+	continentCode := strings.ToLower(record.Continent.Code)
+	if val, ok := record.Continent.Names[language]; ok {
+		continent = val
+	} else if val, ok := record.Continent.Names[config.DefaultLanguageCode]; ok {
+		continent = val
+	}
+
+	country := ""
+	countryCode := strings.ToLower(record.Country.IsoCode)
+	if val, ok := record.Country.Names[language]; ok {
+		country = val
+	} else if val, ok := record.Country.Names[config.DefaultLanguageCode]; ok {
+		country = val
+	}
+
+	if _, ok := config.Continents[continentCode]; !ok {
 		continent = config.DefaultContinent
+		continentCode = config.DefaultContinentCode
 	}
 
-	return country, continent
+	return continent, continentCode, country, countryCode
 }
 
 func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
@@ -117,12 +137,12 @@ func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
 }
 
 func getSignupFromRequest(h HandlerArgs) map[string]interface{} {
-	country, _ := geolocate(h)
+	_, _, _, countryCode := geolocate(h)
 
 	signup := map[string]interface{}{}
 	profile := map[string]interface{}{}
 
-	profile["country"] = country
+	profile["country"] = countryCode
 	profile["first_name"] = sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength)
 	profile["http_referrer"] = sanitize(h.Request.Referer(), config.MaxSignupValueLength)
 	profile["locale"] = sanitize(h.Request.PostFormValue("language"), config.MaxSignupValueLength)
