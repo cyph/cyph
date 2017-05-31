@@ -63,54 +63,6 @@
 					}
 				}
 			}
-		},
-
-		"users": {
-			"$user": {
-				".read": "($user + '@cyph.me') === auth.token.email",
-				".write": "($user + '@cyph.me') === auth.token.email",
-
-				"certificate": {
-					".read": true,
-					".write": false,
-					".validate": "newData.isString()"
-				},
-
-				"contacts": {
-					"$contact": {
-						"messages": {
-							"$message": {
-								".validate": "newData.isString()"
-							}
-						},
-						"session": {
-							".validate": "newData.isString()"
-						}
-					}
-				},
-
-				"encryptionKeyPair": {
-					".validate": "newData.isString()"
-				},
-
-				"loginData": {
-					".read": true,
-					".validate": "newData.isString()"
-				},
-
-				"publicProfile": {
-					".read": true,
-					".validate": "newData.isString()"
-				},
-
-				"settings": {
-					".validate": "newData.isString()"
-				},
-
-				"signingKeyPair": {
-					".validate": "newData.isString()"
-				}
-			}
 		}
 	}
 }
