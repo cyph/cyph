@@ -37,6 +37,8 @@ var config = struct {
 	ApiKeyByteLength           int
 	Continents                 map[string]none
 	DefaultContinent           string
+	DefaultContinentCode       string
+	DefaultLanguageCode        string
 	EmailAddress               string
 	HPKPHeader                 string
 	HSTSHeader                 string
@@ -101,6 +103,10 @@ var config = struct {
 	},
 
 	"eu",
+
+	"Europe",
+
+	"en",
 
 	"Cyph <hello@cyph.com>",
 

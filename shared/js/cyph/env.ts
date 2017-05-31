@@ -7,7 +7,16 @@ import {EnvDeploy} from './env-deploy';
  */
 export class Env extends EnvDeploy {
 	/** @ignore */
-	private static readonly UA: string		= navigatorData.userAgent.toLowerCase();
+	private static readonly language: string	= (
+		navigatorData.language ||
+		(<any> navigatorData).userLanguage ||
+		(<any> navigatorData).browserLanguage ||
+		(<any> navigatorData).systemLanguage ||
+		config.defaultLanguage
+	);
+
+	/** @ignore */
+	private static readonly UA: string			= navigatorData.userAgent.toLowerCase();
 
 
 	/** Indicates whether this is a co-branded instance of Cyph. */
@@ -31,13 +40,7 @@ export class Env extends EnvDeploy {
 	*/
 
 	/** Complete (lowercase) language code, e.g. "en-us". */
-	public readonly fullLanguage: string	= (
-		navigatorData.language ||
-		(<any> navigatorData).userLanguage ||
-		(<any> navigatorData).browserLanguage ||
-		(<any> navigatorData).systemLanguage ||
-		config.defaultLanguage
-	).toLowerCase();
+	public readonly fullLanguage: string	= Env.language.toLowerCase();
 
 	/** Current URL host (with www subdomain removed). */
 	public readonly host: string			= locationData.host.replace('www.', '');
@@ -68,7 +71,7 @@ export class Env extends EnvDeploy {
 	public readonly isFirefox: boolean		= /firefox/.test(Env.UA);
 
 	/** Indicates whether this is the Cyph corporate website (cyph.com). */
-	public readonly isHomeSite: boolean	=
+	public readonly isHomeSite: boolean		=
 		this.homeUrl.split('/')[2].replace('www.', '') === this.host
 	;
 
@@ -129,6 +132,9 @@ export class Env extends EnvDeploy {
 					language
 		;
 	})();
+
+	/** Complete (original case) language code, e.g. "en-US". */
+	public readonly realLanguage: string	= Env.language;
 
 	/** Indicates whether Granim gradient canvases should be displayed. */
 	public readonly showGranim: boolean		=
