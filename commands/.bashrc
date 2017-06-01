@@ -32,9 +32,11 @@ pass () {
 export -f checkfail
 export -f fail
 export -f log
+export -f notify
 export -f pass
 
 
 if [ -f ~/.cyph/notify.key ] ; then
+	rm ~/.notifyreg 2> /dev/null
 	/node_modules/.bin/notify -r "$(cat ~/.cyph/notify.key)" > /dev/null
 fi
