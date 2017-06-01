@@ -334,94 +334,103 @@
 				fxLayout='row'
 				class='carousel wow animated fadeIn'
 				data-wow-delay='2750ms'
+				*ngIf='appService.testimonialCarousel'
 			>
-				<div class='logo-container'>
-					<a
-						fxFlex
-						fxLayout='column'
-						class='logo'
-						(click)='appService.testimonialCarousel.setItem(0)'
-					>
-						<img cyphTranslate src='/assets/img/thirdparty/cure53.png' alt='Cure53 logo' />
-					</a>
-					<div fxFlex='55' fxLayout='column'></div>
-					<a
-						fxFlex
-						fxLayout='column'
-						class='logo'
-						(click)='appService.testimonialCarousel.setItem(1)'
-					>
-						<img
-							cyphTranslate
-							src='/assets/img/thirdparty/upliftaero.png'
-							alt='Uplift Aeronautics logo'
-						/>
-					</a>
+				<div fxLayout='column' fxLayoutGap='64px' class='logo-container'>
+					<div fxLayout='row'>
+						<a
+							fxFlex
+							fxLayout='column'
+							class='logo'
+							(click)='appService.testimonialCarousel.setItem(0)'
+						>
+							<img
+								cyphTranslate
+								src='/assets/img/thirdparty/cure53.png'
+								alt='Cure53 logo'
+							/>
+						</a>
+						<div fxFlex='55' fxLayout='column'></div>
+						<a
+							fxFlex
+							fxLayout='column'
+							class='logo'
+							(click)='appService.testimonialCarousel.setItem(1)'
+						>
+							<img
+								cyphTranslate
+								src='/assets/img/thirdparty/upliftaero.png'
+								alt='Uplift Aeronautics logo'
+							/>
+						</a>
+					</div>
 				</div>
 
-				<div fxFlex class='quote-container'>
-					<div
-						[fxFlex]='envService.isMobile ? "100" : "50"'
-						fxLayout='column'
-						class='quote'
-					>
-						<div class='text' cyphTranslate>
-							Cyph provides security from a broad range of cryptographic attacks
-							and very strong client-side crypto. The general conclusion of the
-							test is that no major issues in regards to application security or
-							cryptographic implementations could be spotted in spite of a
-							thorough audit.
+				<div fxLayout='column' fxFlex class='quote-container'>
+					<div fxLayout='row' class='quote-row'>
+						<div
+							[fxFlex]='envService.isMobile ? "100" : "50"'
+							fxLayout='column'
+							class='quote'
+						>
+							<div class='text' cyphTranslate>
+								Cyph provides security from a broad range of cryptographic attacks
+								and very strong client-side crypto. The general conclusion of the
+								test is that no major issues in regards to application security or
+								cryptographic implementations could be spotted in spite of a
+								thorough audit.
+							</div>
+							<div class='extra'>
+								<a
+									cyphTranslate
+									href='/assets/auditconclusion.txt'
+									target='_blank'
+								>Conclusion</a>
+								<span cyphTranslate>of the</span>
+								<a
+									rel='noreferrer'
+									href='https://cure53.de/pentest-report_cyph.pdf'
+									target='_blank'
+									cyphTranslate
+								>independent security audit</a>
+								<span cyphTranslate>conducted by</span>
+								<a
+									rel='noreferrer'
+									href='https://cure53.de'
+									target='_blank'
+								>Cure53</a>
+								<br />
+								<span cyphTranslate>(funded by the</span>
+								<a
+									rel='noreferrer'
+									href='https://www.opentechfund.org'
+									target='_blank'
+								>Open Technology Fund</a>)
+							</div>
 						</div>
-						<div class='extra'>
-							<a
-								cyphTranslate
-								href='/assets/auditconclusion.txt'
-								target='_blank'
-							>Conclusion</a>
-							<span cyphTranslate>of the</span>
-							<a
-								rel='noreferrer'
-								href='https://cure53.de/pentest-report_cyph.pdf'
-								target='_blank'
-								cyphTranslate
-							>independent security audit</a>
-							<span cyphTranslate>conducted by</span>
-							<a
-								rel='noreferrer'
-								href='https://cure53.de'
-								target='_blank'
-							>Cure53</a>
-							<br />
-							<span cyphTranslate>(funded by the</span>
-							<a
-								rel='noreferrer'
-								href='https://www.opentechfund.org'
-								target='_blank'
-							>Open Technology Fund</a>)
-						</div>
-					</div>
-					<div
-						[fxFlex]='envService.isMobile ? "100" : "50"'
-						fxLayout='column'
-						class='quote'
-					>
-						<div class='text' cyphTranslate>
-							I like the simple, nonintrusive interface and the single-minded
-							emphasis on doing one thing really well. We will definitely
-							continue using Cyph for these types of conversations.
-						</div>
-						<div class='extra'>
-							<a
-								rel='noreferrer'
-								href='http://uplift.aero'
-								target='_blank'
-							>Uplift Aeronautics</a>
-							<span cyphTranslate>CEO Mark Jacobsen, on the</span>
-							<a
-								rel='noreferrer'
-								href='https://www.indiegogo.com/projects/the-syria-airlift-project'
-								target='_blank'
-							>Syria Airlift Project</a>
+						<div
+							[fxFlex]='envService.isMobile ? "100" : "50"'
+							fxLayout='column'
+							class='quote'
+						>
+							<div class='text' cyphTranslate>
+								I like the simple, nonintrusive interface and the single-minded
+								emphasis on doing one thing really well. We will definitely
+								continue using Cyph for these types of conversations.
+							</div>
+							<div class='extra'>
+								<a
+									rel='noreferrer'
+									href='http://uplift.aero'
+									target='_blank'
+								>Uplift Aeronautics</a>
+								<span cyphTranslate>CEO Mark Jacobsen, on the</span>
+								<a
+									rel='noreferrer'
+									href='https://www.indiegogo.com/projects/the-syria-airlift-project'
+									target='_blank'
+								>Syria Airlift Project</a>
+							</div>
 						</div>
 					</div>
 					&nbsp;
