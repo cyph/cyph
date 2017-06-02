@@ -194,7 +194,7 @@ export class ChannelService {
 						id,
 						numChunks,
 						sender: this.userId,
-						timestamp: util.timestamp()
+						timestamp: await util.timestamp()
 					}));
 				}
 			});

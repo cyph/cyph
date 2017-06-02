@@ -19,7 +19,7 @@ export abstract class SessionService implements ISessionService {
 	protected readonly eventId: string					= util.generateGuid();
 
 	/** @ignore */
-	protected lastIncomingMessageTimestamp: number		= util.timestamp();
+	protected lastIncomingMessageTimestamp: number		= 0;
 
 	/** @ignore */
 	protected pingPongTimeouts: number					= 0;
@@ -155,7 +155,10 @@ export abstract class SessionService implements ISessionService {
 		while (this.state.isAlive) {
 			await util.sleep(util.random(90000, 30000));
 
-			if (util.timestamp() - this.lastIncomingMessageTimestamp > 180000) {
+			if (
+				this.lastIncomingMessageTimestamp !== 0 &&
+				(await util.timestamp()) - this.lastIncomingMessageTimestamp > 180000
+			) {
 				if (this.pingPongTimeouts++ < 2) {
 					this.analyticsService.sendEvent({
 						eventAction: 'detected',
@@ -171,9 +174,9 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @ignore */
-	protected plaintextSendHandler (messages: IMessage[]) : void {
+	protected async plaintextSendHandler (messages: IMessage[]) : Promise<void> {
 		for (const message of messages) {
-			message.data.timestamp	= util.timestamp();
+			message.data.timestamp	= await util.timestamp();
 			this.plaintextSendQueue.push(message);
 		}
 	}

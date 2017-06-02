@@ -63,12 +63,12 @@ export class Timer {
 
 		await util.sleep(1000);
 
-		this.endTime	= util.timestamp() + this.countdown;
+		this.endTime	= (await util.timestamp()) + this.countdown;
 
 		for (
 			let timeRemaining = this.countdown;
 			timeRemaining > 0;
-			timeRemaining = this.endTime - util.timestamp()
+			timeRemaining = this.endTime - (await util.timestamp())
 		) {
 			if (this.isStopped) {
 				return;
