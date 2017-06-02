@@ -37,7 +37,7 @@ export class CyphertextService {
 			return;
 		}
 
-		const timestamp	= util.timestamp();
+		const timestamp	= await util.timestamp();
 
 		this.messages	= this.messages.withMutations(messages =>
 			(

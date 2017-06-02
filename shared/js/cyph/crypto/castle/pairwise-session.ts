@@ -223,21 +223,25 @@ export class PairwiseSession {
 	 * @param plaintext
 	 * @param timestamp
 	 */
-	public async send (plaintext: string, timestamp: number = util.timestamp()) : Promise<void> {
+	public async send (plaintext: string, timestamp?: number) : Promise<void> {
 		if (this.isAborted) {
 			return;
 		}
 
+		if (timestamp === undefined) {
+			timestamp	= await util.timestamp();
+		}
+
+		const plaintextBytes: Uint8Array	= this.potassium.fromString(plaintext);
+		const timestampBytes: Float64Array	= new Float64Array([timestamp]);
+
+		let data: Uint8Array	= this.potassium.concatMemory(
+			true,
+			timestampBytes,
+			plaintextBytes
+		);
+
 		return util.lock(this.locks.send, async () => {
-			const plaintextBytes: Uint8Array	= this.potassium.fromString(plaintext);
-			const timestampBytes: Float64Array	= new Float64Array([timestamp]);
-
-			let data: Uint8Array	= this.potassium.concatMemory(
-				true,
-				timestampBytes,
-				plaintextBytes
-			);
-
 			/* Part 2 of handshake for Bob */
 			if (this.remoteUser) {
 				const oldData	= data;

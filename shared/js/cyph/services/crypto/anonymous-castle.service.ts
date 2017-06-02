@@ -64,10 +64,11 @@ export class AnonymousCastleService implements ICastle {
 	}
 
 	/** @inheritDoc */
-	public async send (
-		plaintext: string,
-		timestamp: number = util.timestamp()
-	) : Promise<void> {
+	public async send (plaintext: string, timestamp?: number) : Promise<void> {
+		if (timestamp === undefined) {
+			timestamp	= await util.timestamp();
+		}
+
 		return (await this.pairwiseSession).send(plaintext, timestamp);
 	}
 

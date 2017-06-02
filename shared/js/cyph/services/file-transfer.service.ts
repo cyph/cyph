@@ -77,7 +77,7 @@ export class FileTransferService {
 		transfer.percentComplete	= 0;
 
 		transfer.answer				= await this.uiConfirm(transfer, true);
-		transfer.receiptTimestamp	= util.timestamp();
+		transfer.receiptTimestamp	= await util.timestamp();
 
 		this.sessionService.send(new Message(
 			rpcEvents.files,
