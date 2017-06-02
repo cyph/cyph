@@ -52,7 +52,7 @@
 			*ngIf='appService.chatRootState === chatRootStates.blank'
 		></div>
 
-		<footer>
+		<footer *ngIf='!p2pService.isActive'>
 			<cyph-chat-message-box
 				*ngIf='appService.chatRootState === chatRootStates.chat'
 			></cyph-chat-message-box>
