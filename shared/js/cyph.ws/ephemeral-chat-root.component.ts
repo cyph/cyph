@@ -316,6 +316,9 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		/** @see EnvService */
 		public readonly envService: EnvService,
 
+		/** @see P2PService */
+		public readonly p2pService: P2PService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService,
 
