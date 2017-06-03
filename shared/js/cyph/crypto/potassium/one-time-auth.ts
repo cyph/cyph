@@ -25,14 +25,8 @@ export class OneTimeAuth implements IOneTimeAuth {
 		key: Uint8Array
 	) : Promise<Uint8Array> {
 		return this.isNative ?
-			NativeCrypto.oneTimeAuth.sign(
-				message,
-				key
-			) :
-			sodium.crypto_onetimeauth(
-				message,
-				key
-			)
+			NativeCrypto.oneTimeAuth.sign(message, key) :
+			sodium.crypto_onetimeauth(message, key)
 		;
 	}
 
@@ -43,16 +37,8 @@ export class OneTimeAuth implements IOneTimeAuth {
 		key: Uint8Array
 	) : Promise<boolean> {
 		return this.isNative ?
-			NativeCrypto.oneTimeAuth.verify(
-				mac,
-				message,
-				key
-			) :
-			sodium.crypto_onetimeauth_verify(
-				mac,
-				message,
-				key
-			)
+			NativeCrypto.oneTimeAuth.verify(mac, message, key) :
+			sodium.crypto_onetimeauth_verify(mac, message, key)
 		;
 	}
 
