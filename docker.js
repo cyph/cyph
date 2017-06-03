@@ -201,7 +201,7 @@ const shellScripts			= {
 				map(s => s.indexOf("'") ? `"${s}"` : `'${s}'`).
 				join(' ')
 		}
-		notify 'Command complete: ${args.command}' > /dev/null
+		notify 'Command complete: ${args.command}' 2>&1 /dev/null
 	`,
 	libUpdate: {
 		command: `
