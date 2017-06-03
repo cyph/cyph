@@ -29,6 +29,19 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 	@angular/router \
 	@angular/service-worker \
 	@compodoc/compodoc \
+	@covalent/charts \
+	@covalent/chips \
+	@covalent/core \
+	@covalent/data \
+	@covalent/data-table \
+	@covalent/dynamic-forms \
+	@covalent/file-upload \
+	@covalent/highlight \
+	@covalent/http \
+	@covalent/json-formatter \
+	@covalent/markdown \
+	@covalent/paging \
+	@covalent/search \
 	@ngrx/core \
 	@ngrx/effects \
 	@ngrx/router-store \
@@ -115,6 +128,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 	od-virtualscroll \
 	prepack \
 	prepack-webpack-plugin \
+	primeng \
 	protractor \
 	raw-loader \
 	read \
