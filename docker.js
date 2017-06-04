@@ -173,8 +173,8 @@ const shellScripts			= {
 
 			cd ~/brotli
 			git pull
-			make bro
-			sudo mv bin/bro /usr/bin/
+			make brotli
+			sudo mv bin/brotli /usr/bin/
 
 			emsdk update
 			emsdk install latest
