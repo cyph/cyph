@@ -61,7 +61,7 @@ RUN gem update
 RUN gem install sass
 
 RUN echo '\
-	source /home/gibson/emsdk-portable/emsdk_env.sh > /dev/null 2>&1; \
+	source /home/gibson/emsdk-portable/emsdk_env.sh &> /dev/null; \
 \
 	export GIT_EDITOR="vim"; \
 	export GOPATH="/home/gibson/go"; \
@@ -80,9 +80,9 @@ RUN echo '\
 \
 	if [ ! -d ~/.gnupg -a -d ~/.gnupg.original ] ; then cp -a ~/.gnupg.original ~/.gnupg ; fi; \
 	export GPG_TTY="$(tty)"; \
-	eval $(gpg-agent --daemon 2> /dev/null) > /dev/null 2>&1; \
+	eval $(gpg-agent --daemon 2> /dev/null) &> /dev/null; \
 \
-	eval $(ssh-agent 2> /dev/null) > /dev/null 2>&1; \
+	eval $(ssh-agent 2> /dev/null) &> /dev/null; \
 \
 	if [ -f /cyph/commands/.bashrc ] ; then source /cyph/commands/.bashrc ; fi \
 ' >> /.bashrc
