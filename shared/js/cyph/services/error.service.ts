@@ -39,7 +39,9 @@ export class ErrorService implements ErrorHandler {
 				/* Annoying useless iframe-related spam */
 				errorMessage === 'Script error.' ||
 				/* Google Search iOS app bug */
-				errorMessage === "TypeError: null is not an object (evaluating 'elt.parentNode')"
+				errorMessage === "TypeError: null is not an object (evaluating 'elt.parentNode')" ||
+				/* Temporary workaround for Firebase Auth issue */
+				(this.envService.isIOS && errorMessage === 'Network Error')
 			) {
 				return;
 			}
