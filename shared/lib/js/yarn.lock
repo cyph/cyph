@@ -913,7 +913,7 @@ babel-code-frame@^6.11.0, babel-code-frame@^6.20.0, babel-code-frame@^6.22.0:
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-babel-core@6.21.0, babel-core@^6.8.0:
+babel-core@6.21.0:
   version "6.21.0"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-6.21.0.tgz#75525480c21c803f826ef3867d22c19f080a3724"
   dependencies:
@@ -937,7 +937,7 @@ babel-core@6.21.0, babel-core@^6.8.0:
     slash "^1.0.0"
     source-map "^0.5.0"
 
-babel-core@^6.24.1:
+babel-core@^6.24.1, babel-core@^6.8.0:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-6.24.1.tgz#8c428564dce1e1f41fb337ec34f4c3b022b5ad83"
   dependencies:
@@ -3461,7 +3461,7 @@ gauge@~2.7.1, gauge@~2.7.3:
     strip-ansi "^3.0.1"
     wide-align "^1.1.0"
 
-gaze@1.1.0, gaze@^1.0.0:
+gaze@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.0.tgz#74d3ffb0110ede715c9f15bba56c6e9b851d3ce0"
   dependencies:
@@ -3472,6 +3472,12 @@ gaze@^0.5.1:
   resolved "https://registry.yarnpkg.com/gaze/-/gaze-0.5.2.tgz#40b709537d24d1d45767db5a908689dfe69ac44f"
   dependencies:
     globule "~0.1.0"
+
+gaze@^1.0.0:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.2.tgz#847224677adb8870d679257ed3388fdb61e40105"
+  dependencies:
+    globule "^1.0.0"
 
 get-caller-file@^1.0.0, get-caller-file@^1.0.1:
   version "1.0.2"
@@ -6853,8 +6859,8 @@ pegjs@0.6.2:
   resolved "https://registry.yarnpkg.com/pegjs/-/pegjs-0.6.2.tgz#74651f8a800e444db688e4eeae8edb65637a17a5"
 
 pem-jwk-norecompute@*:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/pem-jwk-norecompute/-/pem-jwk-norecompute-1.1.0.tgz#9e4aeb608fe74da0d0b7e4132032c7bb2bad9021"
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/pem-jwk-norecompute/-/pem-jwk-norecompute-1.1.1.tgz#fe8525b7c75ff2edf2b74d937111fbc9a487212a"
   dependencies:
     asn1.js "^4"
 
