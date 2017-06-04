@@ -119,7 +119,6 @@ export abstract class SessionService implements ISessionService {
 				}
 
 				this.cyphertextSendHandler(e.data);
-				break;
 			}
 		}
 	}

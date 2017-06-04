@@ -159,9 +159,9 @@ export class SecretBox implements ISecretBox {
 				throw new Error('Padded plaintext empty.');
 			}
 
-			const plaintext: Uint8Array			= new Uint8Array(new Uint8Array(
+			const plaintext: Uint8Array	= new Uint8Array(new Uint8Array(
 				paddedPlaintext.buffer,
-				1 + new Uint8Array(paddedPlaintext.buffer, 0, 1)[0]
+				new Uint8Array(paddedPlaintext.buffer, 0, 1)[0] + 1
 			));
 
 			potassiumUtil.clearMemory(paddedPlaintext);

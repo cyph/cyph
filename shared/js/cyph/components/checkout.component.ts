@@ -107,22 +107,24 @@ export class CheckoutComponent implements AfterViewInit {
 				throw paymentMethod.err;
 			}
 
-			this.success	= 'true' === await util.request({
-				data: {
-					amount: Math.floor(this.amount * 100),
-					category: this.category,
-					company: this.company || '',
-					email: this.email,
-					item: this.item,
-					name: this.name,
-					nonce: paymentMethod.data.nonce,
-					subscription: this.subscription
-				},
-				method: 'POST',
-				url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
-			}).catch(
-				() => ''
-			);
+			this.success	=
+				await util.request({
+					data: {
+						amount: Math.floor(this.amount * 100),
+						category: this.category,
+						company: this.company || '',
+						email: this.email,
+						item: this.item,
+						name: this.name,
+						nonce: paymentMethod.data.nonce,
+						subscription: this.subscription
+					},
+					method: 'POST',
+					url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
+				}).catch(
+					() => ''
+				) === 'true'
+			;
 
 			this.complete	= true;
 		}

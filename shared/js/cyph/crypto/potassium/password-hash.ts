@@ -172,7 +172,7 @@ export class PasswordHash implements IPasswordHash {
 			const saltBytes: number	= new Uint32Array(metadata.buffer, 2, 1)[0];
 
 			return {
-				algorithm: potassiumUtil.toString(new Uint8Array(metadata.buffer, 12 + saltBytes)),
+				algorithm: potassiumUtil.toString(new Uint8Array(metadata.buffer, saltBytes + 12)),
 				memLimit: new Uint32Array(metadata.buffer, 0, 1)[0],
 				opsLimit: new Uint32Array(metadata.buffer, 1, 1)[0],
 				salt: new Uint8Array(new Uint8Array(metadata.buffer, 12, saltBytes))
