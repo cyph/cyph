@@ -407,7 +407,7 @@ if [ "${websign}" ] ; then
 	if [ -d pkg/cyph.ws-subresources ] ; then
 		find pkg/cyph.ws-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
 			zopfli -i1000 %; \
-			bro --quality 99 --repeat 99 --input % --output %.br; \
+			brotli -Zk %; \
 		'
 	fi
 
@@ -442,7 +442,7 @@ if [ "${websign}" ] ; then
 		find ${p} -type f -not \( -name '*.srihash' -or -name '*.gz' -or -name '*.br' \) -exec bash -c ' \
 			if [ ! -f {}.gz ] ; then \
 				zopfli -i1000 {}; \
-				bro --quality 99 --repeat 99 --input {} --output {}.br; \
+				brotli -Zk {}; \
 			fi; \
 			chmod 700 {}.gz {}.br; \
 			git add {}.gz {}.br; \
