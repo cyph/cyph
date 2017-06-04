@@ -11,7 +11,7 @@ export class Util {
 	/** @ignore */
 	private readonly timestampData	= {
 		last: 0,
-		offset: (async() => {
+		offset: (async () => {
 			const serverTimestamp: number	= parseFloat(
 				await this.request({retries: 10, url: env.baseUrl + 'timestamp'})
 			);

@@ -105,13 +105,17 @@ export class Config {
 
 	/** Pricing-related config. */
 	public readonly pricingConfig: {
-		categories: {[category: string]: {
-			id: number;
-			items: {[item: string]: {
-				amount: number;
+		categories: {
+			[category: string]: {
 				id: number;
-			}};
-		}};
+				items: {
+					[item: string]: {
+						amount: number;
+						id: number;
+					};
+				};
+			};
+		};
 	}	= {
 		categories: {
 			accounting: {
