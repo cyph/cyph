@@ -59,7 +59,7 @@ while [ ! -f index.html ] ; do
 	done
 
 	sshkill
-	ssh -i ~/.ssh/id_rsa_docker -f -N -L "${sourcePort}:${sourceOrigin}" "${sshServer}" > /dev/null 2>&1
+	ssh -i ~/.ssh/id_rsa_docker -f -N -L "${sourcePort}:${sourceOrigin}" "${sshServer}" &> /dev/null
 
 	command="$(node -e "
 		const browser	= new (require('zombie'));

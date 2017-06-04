@@ -421,7 +421,7 @@ if [ "${websign}" ] ; then
 				chmod 700 ${subresource}
 				git add ${subresource}
 			done
-			git commit -S -m "${customBuild}" . > /dev/null 2>&1
+			git commit -S -m "${customBuild}" . &> /dev/null
 			cd ../..
 		done
 	fi
@@ -434,7 +434,7 @@ if [ "${websign}" ] ; then
 			ln -s ${p} ${plink}
 			chmod 700 ${plink}
 			git add ${plink}
-			git commit -S -m ${plink} ${plink} > /dev/null 2>&1
+			git commit -S -m ${plink} ${plink} &> /dev/null
 		fi
 
 		cp ${p}/current ${p}/pkg.srihash
