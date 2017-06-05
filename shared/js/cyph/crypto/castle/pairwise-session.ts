@@ -83,11 +83,7 @@ export class PairwiseSession {
 		}
 
 		const keyPair	= await this.localUser.getKeyPair();
-
-		const secret	= await this.potassium.box.open(
-			cyphertext,
-			keyPair
-		);
+		const secret	= await this.potassium.box.open(cyphertext, keyPair);
 
 		this.potassium.clearMemory(keyPair.privateKey);
 		this.potassium.clearMemory(keyPair.publicKey);
