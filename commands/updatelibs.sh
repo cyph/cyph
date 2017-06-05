@@ -77,6 +77,7 @@ read -r -d '' modules <<- EOM
 	copy-webpack-plugin
 	core-js
 	css-loader
+	d3
 	datauri
 	dompurify
 	dragula
