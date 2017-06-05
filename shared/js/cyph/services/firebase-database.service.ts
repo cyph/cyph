@@ -104,6 +104,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 		;
 	}
 
+	/** @inheritDoc */
+	public async timestamp () : Promise<any> {
+		return firebase.database.ServerValue.TIMESTAMP;
+	}
+
 	constructor () {
 		super();
 	}

@@ -89,5 +89,10 @@ export class DatabaseService {
 		return this.setItem(url, util.stringify(value));
 	}
 
+	/** Returns a value representing the database server's timestamp. */
+	public async timestamp () : Promise<any> {
+		return util.timestamp();
+	}
+
 	constructor () {}
 }
