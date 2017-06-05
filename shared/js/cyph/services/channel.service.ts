@@ -78,6 +78,10 @@ export class ChannelService {
 			(await this.databaseService.getDatabaseRef('channels')).child(channelName)
 		);
 
+		util.retryUntilSuccessful(async () =>
+			this.channelRef.onDisconnect().remove()
+		);
+
 		this.messagesRef	= await util.retryUntilSuccessful(async () =>
 			this.channelRef.child('messages')
 		);
@@ -101,10 +105,6 @@ export class ChannelService {
 				)
 			).sort()[0] === this.userId
 		;
-
-		util.retryUntilSuccessful(async () =>
-			this.channelRef.onDisconnect().remove()
-		);
 
 		handlers.onOpen(this.isAlice);
 
