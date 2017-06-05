@@ -315,15 +315,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 								;
 							}
 
-							try {
-								callback.apply(webRTC, args);
-							}
-							catch (err) {
-								throw new Error(
-									`WebRTC event error: ${err ? err.message : 'undefined'}` +
-									`\n\nevent: ${event}\nargs: ${util.stringify(args)}`
-								);
-							}
+							callback.apply(webRTC, args);
 						}
 					);
 				}
