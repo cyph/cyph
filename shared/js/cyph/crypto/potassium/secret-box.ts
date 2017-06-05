@@ -101,7 +101,7 @@ export class SecretBox implements ISecretBox {
 			throw new Error('Too much additional data.');
 		}
 
-		const output: Uint8Array	= new Uint8Array(aeadBytes);
+		const output	= new Uint8Array(aeadBytes);
 		output.set(input);
 		return output;
 	}
@@ -121,13 +121,13 @@ export class SecretBox implements ISecretBox {
 		cyphertext	= new Uint8Array(cyphertext);
 
 		try {
-			const nonce: Uint8Array					= new Uint8Array(
+			const nonce					= new Uint8Array(
 				cyphertext.buffer,
 				0,
 				this.helpers.nonceBytes
 			);
 
-			const symmetricCyphertext: Uint8Array	= new Uint8Array(
+			const symmetricCyphertext	= new Uint8Array(
 				cyphertext.buffer,
 				this.helpers.nonceBytes
 			);
@@ -139,9 +139,9 @@ export class SecretBox implements ISecretBox {
 				i >= 0;
 				i -= keyBytes
 			) {
-				const dataToDecrypt: Uint8Array	= paddedPlaintext || symmetricCyphertext;
+				const dataToDecrypt		= paddedPlaintext || symmetricCyphertext;
 
-				paddedPlaintext	= await this.helpers.open(
+				paddedPlaintext			= await this.helpers.open(
 					dataToDecrypt,
 					nonce,
 					new Uint8Array(
@@ -159,7 +159,7 @@ export class SecretBox implements ISecretBox {
 				throw new Error('Padded plaintext empty.');
 			}
 
-			const plaintext: Uint8Array	= new Uint8Array(new Uint8Array(
+			const plaintext	= new Uint8Array(new Uint8Array(
 				paddedPlaintext.buffer,
 				new Uint8Array(paddedPlaintext.buffer, 0, 1)[0] + 1
 			));
@@ -186,21 +186,21 @@ export class SecretBox implements ISecretBox {
 			throw new Error('Invalid key.');
 		}
 
-		const paddingLength: number			= potassiumUtil.randomBytes(1)[0];
+		const paddingLength		= potassiumUtil.randomBytes(1)[0];
 
-		const paddedPlaintext: Uint8Array	= potassiumUtil.concatMemory(
+		const paddedPlaintext	= potassiumUtil.concatMemory(
 			false,
 			new Uint8Array([paddingLength]),
 			potassiumUtil.randomBytes(paddingLength),
 			plaintext
 		);
 
-		const nonce: Uint8Array	= await this.newNonce(this.helpers.nonceBytes);
+		const nonce	= await this.newNonce(this.helpers.nonceBytes);
 
 		let symmetricCyphertext: Uint8Array|undefined;
 
 		for (let i = 0 ; i < key.length ; i += keyBytes) {
-			const dataToEncrypt: Uint8Array	= symmetricCyphertext || paddedPlaintext;
+			const dataToEncrypt	= symmetricCyphertext || paddedPlaintext;
 
 			symmetricCyphertext	= await this.helpers.seal(
 				dataToEncrypt,
@@ -254,7 +254,7 @@ export class SecretBox implements ISecretBox {
 		cyphertext	= new Uint8Array(cyphertext);
 
 		for (let i = 0 ; i < cyphertext.length ; ) {
-			const chunkSize: number	= new DataView(
+			const chunkSize	= new DataView(
 				cyphertext.buffer,
 				i
 			).getUint32(0, true);
