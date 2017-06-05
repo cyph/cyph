@@ -17,7 +17,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 	@angular/compiler \
 	@angular/compiler-cli \
 	@angular/core \
-	@angular/flex-layout@2.0.0-beta.8 \
+	@angular/flex-layout \
 	@angular/forms \
 	@angular/http \
 	@angular/material \
