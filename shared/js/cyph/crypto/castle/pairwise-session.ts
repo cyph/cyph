@@ -274,12 +274,14 @@ export class PairwiseSession {
 			this.localUser	= localUser;
 			this.remoteUser	= remoteUser;
 
-			this.remoteUsername	= await this.remoteUser.getUsername();
+			const aliceRemoteSecret	= !isAlice ? this.localUser.getRemoteSecret() : undefined;
+
+			this.remoteUsername		= await this.remoteUser.getUsername();
 
 			await this.localUser.getKeyPair();
 
 			let secret: Uint8Array;
-			if (isAlice) {
+			if (aliceRemoteSecret === undefined) {
 				secret	= this.potassium.randomBytes(
 					await potassium.ephemeralKeyExchange.secretBytes
 				);
@@ -287,9 +289,7 @@ export class PairwiseSession {
 				this.transport.send(await this.handshakeSendSecret(secret));
 			}
 			else {
-				secret	= await this.handshakeOpenSecret(
-					await this.localUser.getRemoteSecret()
-				);
+				secret	= await this.handshakeOpenSecret(await aliceRemoteSecret);
 
 				this.send('');
 			}
