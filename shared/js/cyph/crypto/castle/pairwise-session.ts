@@ -138,9 +138,7 @@ export class PairwiseSession {
 		}
 
 		try {
-			const cyphertextBytes: Uint8Array	=
-				this.potassium.fromBase64(cyphertext)
-			;
+			const cyphertextBytes	= this.potassium.fromBase64(cyphertext);
 
 			if (this.transport.cyphertextIntercepters.length > 0) {
 				const cyphertextIntercepter	= this.transport.cyphertextIntercepters.shift();
@@ -151,7 +149,7 @@ export class PairwiseSession {
 				}
 			}
 
-			const id: number	= new Float64Array(cyphertextBytes.buffer, 0, 1)[0];
+			const id	= new Float64Array(cyphertextBytes.buffer, 0, 1)[0];
 
 			if (id >= this.incomingMessageId) {
 				this.incomingMessagesMax	= Math.max(
@@ -180,9 +178,7 @@ export class PairwiseSession {
 
 				for (const cyphertextBytes of incomingMessages) {
 					try {
-						let plaintext: DataView	= await (await this.core).decrypt(
-							cyphertextBytes
-						);
+						let plaintext	= await (await this.core).decrypt(cyphertextBytes);
 
 						/* Part 2 of handshake for Alice */
 						if (this.localUser) {
@@ -237,10 +233,10 @@ export class PairwiseSession {
 			timestamp	= await util.timestamp();
 		}
 
-		const plaintextBytes: Uint8Array	= this.potassium.fromString(plaintext);
-		const timestampBytes: Float64Array	= new Float64Array([timestamp]);
+		const plaintextBytes	= this.potassium.fromString(plaintext);
+		const timestampBytes	= new Float64Array([timestamp]);
 
-		let data: Uint8Array	= this.potassium.concatMemory(
+		let data	= this.potassium.concatMemory(
 			true,
 			timestampBytes,
 			plaintextBytes

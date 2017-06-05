@@ -21,7 +21,7 @@ export class Core {
 		incoming: Uint8Array;
 		outgoing: Uint8Array;
 	}> {
-		const alt: Uint8Array	= await potassium.hash.deriveKey(
+		const alt	= await potassium.hash.deriveKey(
 			potassium.concatMemory(
 				false,
 				secret,
@@ -85,7 +85,7 @@ export class Core {
 
 		/* Part 3: Alice (incoming) */
 		else if (this.isAlice && this.ephemeralKeys.privateKey && incomingPublicKey) {
-			const secret: Uint8Array		=
+			const secret	=
 				await this.potassium.ephemeralKeyExchange.aliceSecret(
 					incomingPublicKey,
 					this.ephemeralKeys.privateKey
@@ -125,8 +125,8 @@ export class Core {
 		;
 
 		return util.lock(this.lock, async () => {
-			const messageId: Uint8Array	= new Uint8Array(cyphertext.buffer, 0, 8);
-			const encrypted: Uint8Array	= new Uint8Array(cyphertext.buffer, 8);
+			const messageId	= new Uint8Array(cyphertext.buffer, 0, 8);
+			const encrypted	= new Uint8Array(cyphertext.buffer, 8);
 
 			let plaintext: DataView|undefined;
 
@@ -141,11 +141,11 @@ export class Core {
 						continue;
 					}
 
-					const incomingKey: Uint8Array	= await this.potassium.hash.deriveKey(
+					const incomingKey	= await this.potassium.hash.deriveKey(
 						keys.incoming
 					);
 
-					const decrypted: Uint8Array		= await this.potassium.secretBox.open(
+					const decrypted		= await this.potassium.secretBox.open(
 						encrypted,
 						incomingKey,
 						messageId
@@ -192,7 +192,7 @@ export class Core {
 				true
 			);
 
-			const fullPlaintext: Uint8Array	= this.potassium.concatMemory(
+			const fullPlaintext		= this.potassium.concatMemory(
 				false,
 				await this.ratchet(),
 				plaintext
@@ -201,7 +201,7 @@ export class Core {
 			return {fullPlaintext, key: new Uint8Array(this.keys[0].outgoing)};
 		});
 
-		const cyphertext: Uint8Array	= await this.potassium.secretBox.seal(
+		const cyphertext	= await this.potassium.secretBox.seal(
 			o.fullPlaintext,
 			o.key,
 			messageId

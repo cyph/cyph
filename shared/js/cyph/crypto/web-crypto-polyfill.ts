@@ -1,3 +1,6 @@
+import {ISodium} from 'libsodium';
+
+
 /**
  * If not available natively, uses a separate CSPRNG to polyfill the Web Crypto API.
  * Used in worker threads in some browsers.
@@ -30,7 +33,7 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 
 			++nonce[nonce[0] === 4294967295 ? 0 : 1];
 
-			const newBytes: Uint8Array	= (<any> self).sodium.crypto_stream_chacha20(
+			const newBytes	= (<ISodium> (<any> self).sodium).crypto_stream_chacha20(
 				arrayBufferView.byteLength,
 				seed,
 				new Uint8Array(nonce.buffer)
