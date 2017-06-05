@@ -78,19 +78,27 @@ export class PairwiseSession {
 
 	/** @ignore */
 	private async handshakeOpenSecret (cyphertext: Uint8Array) : Promise<Uint8Array> {
-		if (!this.localUser) {
-			throw new Error('Local user not found.');
+		try {
+			if (!this.localUser) {
+				throw new Error('Local user not found.');
+			}
+
+			const keyPair	= await this.localUser.getKeyPair();
+			const secret	= await this.potassium.box.open(cyphertext, keyPair);
+
+			this.potassium.clearMemory(keyPair.privateKey);
+			this.potassium.clearMemory(keyPair.publicKey);
+
+			this.localUser	= undefined;
+
+			return secret;
 		}
-
-		const keyPair	= await this.localUser.getKeyPair();
-		const secret	= await this.potassium.box.open(cyphertext, keyPair);
-
-		this.potassium.clearMemory(keyPair.privateKey);
-		this.potassium.clearMemory(keyPair.publicKey);
-
-		this.localUser	= undefined;
-
-		return secret;
+		catch (err) {
+			throw new Error(
+				`handshakeOpenSecret failed: ${err ? err.message : 'undefined'}` +
+				`\n\ncyphertext: ${this.potassium.toBase64(cyphertext)}`
+			);
+		}
 	}
 
 	/** @ignore */

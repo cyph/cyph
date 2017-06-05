@@ -116,47 +116,52 @@ export class Box implements IBox {
 		const oneTimeAuthKeyBytes	= await this.oneTimeAuth.keyBytes;
 		const secretBoxKeyBytes		= await this.secretBox.keyBytes;
 
-		const encryptedKeys	= new Uint8Array(
-			keyCyphertext.buffer,
-			keyCyphertext.byteOffset,
-			encryptedKeyBytes
-		);
+		try {
+			const encryptedKeys	= new Uint8Array(
+				keyCyphertext.buffer,
+				keyCyphertext.byteOffset,
+				encryptedKeyBytes
+			);
 
-		const mac			= new Uint8Array(
-			keyCyphertext.buffer,
-			keyCyphertext.byteOffset + encryptedKeyBytes,
-			oneTimeAuthBytes
-		);
+			const mac			= new Uint8Array(
+				keyCyphertext.buffer,
+				keyCyphertext.byteOffset + encryptedKeyBytes,
+				oneTimeAuthBytes
+			);
 
-		const innerKeys		= cipher.decrypt(
-			encryptedKeys,
-			privateKey
-		);
+			const innerKeys		= cipher.decrypt(
+				encryptedKeys,
+				privateKey
+			);
 
-		const symmetricKey	= new Uint8Array(
-			innerKeys.buffer,
-			0,
-			secretBoxKeyBytes
-		);
+			const symmetricKey	= new Uint8Array(
+				innerKeys.buffer,
+				0,
+				secretBoxKeyBytes
+			);
 
-		const authKey		= new Uint8Array(
-			innerKeys.buffer,
-			secretBoxKeyBytes,
-			oneTimeAuthKeyBytes
-		);
+			const authKey		= new Uint8Array(
+				innerKeys.buffer,
+				secretBoxKeyBytes,
+				oneTimeAuthKeyBytes
+			);
 
-		const isValid		= await this.oneTimeAuth.verify(
-			mac,
-			encryptedKeys,
-			authKey
-		);
+			const isValid		= await this.oneTimeAuth.verify(
+				mac,
+				encryptedKeys,
+				authKey
+			);
 
-		if (!isValid) {
-			potassiumUtil.clearMemory(innerKeys);
-			throw new Error(`Invalid ${name} cyphertext.`);
+			if (!isValid) {
+				potassiumUtil.clearMemory(innerKeys);
+				throw new Error('One-time auth verification failed.');
+			}
+
+			return {innerKeys, symmetricKey};
 		}
-
-		return {innerKeys, symmetricKey};
+		catch (err) {
+			throw new Error(`${name} decryption error: ${err ? err.message : 'undefined'}`);
+		}
 	}
 
 	/** @ignore */
@@ -177,39 +182,45 @@ export class Box implements IBox {
 			throw new Error(`Not enough space for keys; must increase ${name} parameters.`);
 		}
 
-		const innerKeys		= potassiumUtil.randomBytes(plaintextBytes);
+		try {
+			const innerKeys		= potassiumUtil.randomBytes(plaintextBytes);
 
-		const symmetricKey	= new Uint8Array(
-			innerKeys.buffer,
-			0,
-			secretBoxKeyBytes
-		);
+			const symmetricKey	= new Uint8Array(
+				innerKeys.buffer,
+				0,
+				secretBoxKeyBytes
+			);
 
-		const authKey		= new Uint8Array(
-			innerKeys.buffer,
-			secretBoxKeyBytes,
-			oneTimeAuthKeyBytes
-		);
+			const authKey		= new Uint8Array(
+				innerKeys.buffer,
+				secretBoxKeyBytes,
+				oneTimeAuthKeyBytes
+			);
 
-		const encryptedKeys	= cipher.encrypt(
-			innerKeys,
-			publicKey
-		);
+			const encryptedKeys	= cipher.encrypt(
+				innerKeys,
+				publicKey
+			);
 
-		const mac			= await this.oneTimeAuth.sign(
-			encryptedKeys,
-			authKey
-		);
-
-		return {
-			innerKeys,
-			keyCyphertext: potassiumUtil.concatMemory(
-				true,
+			const mac			= await this.oneTimeAuth.sign(
 				encryptedKeys,
-				mac
-			),
-			symmetricKey
-		};
+				authKey
+			);
+
+			return {
+				innerKeys,
+				keyCyphertext: potassiumUtil.concatMemory(
+					true,
+					encryptedKeys,
+					mac
+				),
+				symmetricKey
+			};
+		
+		}
+		catch (err) {
+			throw new Error(`${name} encryption error: ${err ? err.message : 'undefined'}`);
+		}
 	}
 
 	/** @ignore */
