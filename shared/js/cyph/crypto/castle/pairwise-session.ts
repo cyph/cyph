@@ -205,9 +205,10 @@ export class PairwiseSession {
 						this.incomingMessages.delete(this.incomingMessageId++);
 						break;
 					}
-					catch (_) {
+					catch (err) {
 						if (!this.isConnected) {
 							this.abort();
+							throw err;
 						}
 					}
 					finally {
