@@ -216,7 +216,6 @@ export class Box implements IBox {
 				),
 				symmetricKey
 			};
-		
 		}
 		catch (err) {
 			throw new Error(`${name} encryption error: ${err ? err.message : 'undefined'}`);
