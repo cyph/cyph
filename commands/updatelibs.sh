@@ -97,6 +97,7 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 	jasmine-core \
 	jasmine-spec-reporter \
 	jquery \
+	jquery.appear@https://github.com/morr/jquery.appear \
 	karma \
 	karma-chrome-launcher \
 	karma-cli \
@@ -170,13 +171,12 @@ yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 	webpack-closure-compiler \
 	webpack-sources \
 	webrtc-adapter \
+	webrtcsupport@https://github.com/buu700/webrtcsupport \
 	whatwg-fetch \
 	wowjs \
 	xkcd-passphrase \
 	zombie \
 	zone.js \
-	https://github.com/buu700/webrtcsupport \
-	https://github.com/morr/jquery.appear \
 	$(cat ${dir}/native/plugins.list) \
 || \
 	exit 1
