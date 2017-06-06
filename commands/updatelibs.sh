@@ -7,11 +7,8 @@ dir="$PWD"
 
 ./commands/keycache.sh
 
-mkdir -p ~/lib/js ~/tmplib/js ~/tmplib/node_modules
-
-cd ~/tmplib
-yarn add compare-versions
-cd js
+mkdir -p ~/lib/js ~/tmplib/js
+cd ~/tmplib/js
 
 
 read -r -d '' modules <<- EOM
@@ -188,6 +185,10 @@ EOM
 
 # Temporary workaround for flat dependencies pending https://github.com/yarnpkg/yarn/issues/1658
 
+cd ..
+yarn add compare-versions
+cd -
+
 script -fc "
 	while [ ! -f yarn.done ] ; do
 		answer=\"\$(node -e 'console.log(
@@ -195,13 +196,21 @@ script -fc "
 				(
 					fs.readFileSync(\"yarn.out\").
 						toString().
-						split(\"Unable to find a suitable version\")[1] || \"\"
+						split(\"Unable to find a suitable version\")[1]
+					|| \"\"
 				).
-					match(/resolved to \".*?\"/g) || []
+					match(/resolved to \".*?\"/g)
+				|| []
 			).
 				map((s, i) => ({index: i + 1, version: s.split(\"\\\"\")[1]})).
-				reduce((a, b) =>
-					require(\"compare-versions\")(a.version, b.version) === 1 ? a : b,
+				reduce(
+					(a, b) => require(\"compare-versions\")(
+						a.version,
+						b.version
+					) === 1 ?
+						a :
+						b
+					,
 					{index: \"\", version: \"0\"}
 				).index
 		)')\"
@@ -229,8 +238,8 @@ if [ -f yarn.failure ] ; then
 	exit 1
 fi
 
+rm -rf ../node_modules ../package.json ../yarn.lock yarn.failure yarn.out
 
-rm -rf ../node_modules ../package.json ../yarn.lock
 
 cp yarn.lock package.json ~/lib/js/
 
