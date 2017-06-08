@@ -246,16 +246,6 @@ cp yarn.lock package.json ~/lib/js/
 cat node_modules/tslint/package.json | grep -v tslint-test-config-non-relative > package.json.new
 mv package.json.new node_modules/tslint/package.json
 
-for d in firebase-server tslint ; do
-	mkdir -p ~/lib/js/module_locks/${d}
-	cd node_modules/${d}
-	mkdir node_modules 2> /dev/null
-	sed -i 's|https://https://|https://|g' yarn.lock 2> /dev/null
-	yarn install --ignore-engines --ignore-platform || exit 1
-	cp yarn.lock package.json ~/lib/js/module_locks/${d}/
-	cd ../..
-done
-
 cd ~/lib/js
 
 ${dir}/commands/libclone.sh https://github.com/jedisct1/libsodium.js libsodium.build

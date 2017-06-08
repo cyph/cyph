@@ -400,18 +400,6 @@ const updateCircleCI	= () => {
 				).toString('base64')
 			).
 			replace(
-				/FBS_BASE64/g,
-				fs.readFileSync(
-					'shared/lib/js/module_locks/firebase-server/package.json'
-				).toString('base64')
-			).
-			replace(
-				/TSL_BASE64/g,
-				fs.readFileSync(
-					'shared/lib/js/module_locks/tslint/package.json'
-				).toString('base64')
-			).
-			replace(
 				/PACKAGE_BASE64/g,
 				fs.readFileSync(
 					'shared/lib/js/package.json'

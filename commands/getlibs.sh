@@ -217,21 +217,7 @@ for m in $(ls *-node.js | sed 's|-node\.js$||') ; do
 	mv ${m}-node.js ${m}.js
 	grep -rl "${m}-node" | xargs -I% sed -i "s|${m}-node|${m}|g" %
 done
-cd ..
-
-currentDir="${PWD}"
-for d in firebase-server tslint ; do
-	tmpDir="$(mktemp -d)"
-	mv "${d}" "${tmpDir}/"
-	cp -f ../module_locks/${d}/* "${tmpDir}/${d}/"
-	cd "${tmpDir}/${d}"
-	mkdir node_modules 2> /dev/null
-	yarn install --ignore-engines --ignore-platform --non-interactive || exit 1
-	cd "${currentDir}"
-	mv "${tmpDir}/${d}" ./
-done
-
-cd ../..
+cd ../../..
 
 mv js/node_modules .js.tmp/
 rm -rf js
