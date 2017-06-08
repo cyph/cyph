@@ -8,8 +8,8 @@ import {ChatMessageBoxComponent} from '../components/chat-message-box.component'
 import {ChatMessageListComponent} from '../components/chat-message-list.component';
 import {ChatMessageComponent} from '../components/chat-message.component';
 import {ContactComponent} from '../components/contact.component';
-import {FileInputComponent} from '../components/file-input.component';
 import {FeedbackComponent} from '../components/feedback.component';
+import {FileInputComponent} from '../components/file-input.component';
 import {HelpComponent} from '../components/help.component';
 import {MarkdownComponent} from '../components/markdown.component';
 import {RedirectComponent} from '../components/redirect.component';
@@ -42,8 +42,8 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageBoxComponent,
 		ChatMessageListComponent,
 		ContactComponent,
-		FileInputComponent,
 		FeedbackComponent,
+		FileInputComponent,
 		HelpComponent,
 		MarkdownComponent,
 		RedirectComponent,
@@ -59,8 +59,8 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageListComponent,
 		CommonModule,
 		ContactComponent,
-		FileInputComponent,
 		FeedbackComponent,
+		FileInputComponent,
 		HelpComponent,
 		MarkdownComponent,
 		RedirectComponent,

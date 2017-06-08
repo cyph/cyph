@@ -42,8 +42,8 @@ import {NativeTitleService} from './native-title.service';
 		EphemeralChatRootComponent
 	],
 	entryComponents: [
-		HelpComponent,
-		FeedbackComponent
+		FeedbackComponent,
+		HelpComponent
 	],
 	imports: [
 		NativeScriptRouterModule.forRoot(appRoutes),
