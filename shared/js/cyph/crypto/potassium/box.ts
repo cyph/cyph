@@ -225,7 +225,7 @@ export class Box implements IBox {
 	/** @ignore */
 	private splitPrivateKey (privateKey: Uint8Array) : {
 		classical: Uint8Array;
-		mcEliece: Uint8Array;
+		mceliece: Uint8Array;
 		ntru: Uint8Array;
 	} {
 		return {
@@ -234,7 +234,7 @@ export class Box implements IBox {
 				privateKey.byteOffset,
 				this.helpers.privateKeyBytes
 			),
-			mcEliece: new Uint8Array(
+			mceliece: new Uint8Array(
 				privateKey.buffer,
 				privateKey.byteOffset + this.helpers.privateKeyBytes,
 				mceliece.privateKeyBytes
@@ -250,7 +250,7 @@ export class Box implements IBox {
 	/** @ignore */
 	private splitPublicKey (publicKey: Uint8Array) : {
 		classical: Uint8Array;
-		mcEliece: Uint8Array;
+		mceliece: Uint8Array;
 		ntru: Uint8Array;
 	} {
 		return {
@@ -259,7 +259,7 @@ export class Box implements IBox {
 				publicKey.byteOffset,
 				this.helpers.publicKeyBytes
 			),
-			mcEliece: new Uint8Array(
+			mceliece: new Uint8Array(
 				publicKey.buffer,
 				publicKey.byteOffset + this.helpers.publicKeyBytes,
 				mceliece.publicKeyBytes
@@ -276,7 +276,7 @@ export class Box implements IBox {
 	public async keyPair () : Promise<IKeyPair> {
 		const keyPairs	= {
 			classical: await this.helpers.keyPair(),
-			mcEliece: mceliece.keyPair(),
+			mceliece: mceliece.keyPair(),
 			ntru: ntru.keyPair()
 		};
 
@@ -285,13 +285,13 @@ export class Box implements IBox {
 			privateKey: potassiumUtil.concatMemory(
 				true,
 				keyPairs.classical.privateKey,
-				keyPairs.mcEliece.privateKey,
+				keyPairs.mceliece.privateKey,
 				keyPairs.ntru.privateKey
 			),
 			publicKey: potassiumUtil.concatMemory(
 				true,
 				keyPairs.classical.publicKey,
-				keyPairs.mcEliece.publicKey,
+				keyPairs.mceliece.publicKey,
 				keyPairs.ntru.publicKey
 			)
 		};
@@ -306,13 +306,13 @@ export class Box implements IBox {
 
 		let cyphertextIndex			= cyphertext.byteOffset;
 
-		const mcElieceData			= await this.publicKeyDecrypt(
+		const mcelieceData			= await this.publicKeyDecrypt(
 			new Uint8Array(
 				cyphertext.buffer,
 				cyphertextIndex,
 				mceliece.cyphertextBytes + oneTimeAuthBytes
 			),
-			privateSubKeys.mcEliece,
+			privateSubKeys.mceliece,
 			'McEliece',
 			mceliece.cyphertextBytes,
 			mceliece
@@ -342,14 +342,14 @@ export class Box implements IBox {
 
 		cyphertextIndex += this.helpers.nonceBytes;
 
-		const mcElieceCyphertext	= new Uint8Array(
+		const mcelieceCyphertext	= new Uint8Array(
 			cyphertext.buffer,
 			cyphertextIndex,
 			cyphertext.byteLength - (cyphertextIndex - cyphertext.byteOffset)
 		);
 		const ntruCyphertext		= await this.secretBox.open(
-			mcElieceCyphertext,
-			mcElieceData.symmetricKey
+			mcelieceCyphertext,
+			mcelieceData.symmetricKey
 		);
 		const classicalCyphertext	= await this.secretBox.open(
 			ntruCyphertext,
@@ -365,7 +365,7 @@ export class Box implements IBox {
 			}
 		);
 
-		potassiumUtil.clearMemory(mcElieceData.innerKeys);
+		potassiumUtil.clearMemory(mcelieceData.innerKeys);
 		potassiumUtil.clearMemory(ntruData.innerKeys);
 		potassiumUtil.clearMemory(ntruCyphertext);
 		potassiumUtil.clearMemory(classicalCyphertext);
@@ -377,8 +377,8 @@ export class Box implements IBox {
 	public async seal (plaintext: Uint8Array, publicKey: Uint8Array) : Promise<Uint8Array> {
 		const publicSubKeys			= this.splitPublicKey(publicKey);
 
-		const mcElieceData			= await this.publicKeyEncrypt(
-			publicSubKeys.mcEliece,
+		const mcelieceData			= await this.publicKeyEncrypt(
+			publicSubKeys.mceliece,
 			'McEliece',
 			mceliece.plaintextBytes,
 			mceliece
@@ -404,20 +404,20 @@ export class Box implements IBox {
 			classicalCyphertext,
 			ntruData.symmetricKey
 		);
-		const mcElieceCyphertext	= await this.secretBox.seal(
+		const mcelieceCyphertext	= await this.secretBox.seal(
 			ntruCyphertext,
-			mcElieceData.symmetricKey
+			mcelieceData.symmetricKey
 		);
 
 		potassiumUtil.clearMemory(ntruData.innerKeys);
-		potassiumUtil.clearMemory(mcElieceData.innerKeys);
+		potassiumUtil.clearMemory(mcelieceData.innerKeys);
 
 		return potassiumUtil.concatMemory(
 			true,
-			mcElieceData.keyCyphertext,
+			mcelieceData.keyCyphertext,
 			ntruData.keyCyphertext,
 			nonce,
-			mcElieceCyphertext
+			mcelieceCyphertext
 		);
 	}
 
