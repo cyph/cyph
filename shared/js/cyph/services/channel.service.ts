@@ -184,7 +184,7 @@ export class ChannelService {
 					return;
 				}
 
-				const id		= util.generateGuid();
+				const id		= util.uuid();
 				const numChunks	= Math.ceil(message.length / this.chunkSize);
 
 				for (let chunkIndex = 0 ; chunkIndex < numChunks ; ++chunkIndex) {

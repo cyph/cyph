@@ -23,7 +23,7 @@ import {util} from '../../util';
 @Injectable()
 export class ThreadedPotassiumService extends PotassiumUtil implements IPotassium {
 	/** @ignore */
-	private readonly eventId: string	= util.generateGuid();
+	private readonly eventId: string	= util.uuid();
 
 	/** @ignore */
 	private thread: Thread;

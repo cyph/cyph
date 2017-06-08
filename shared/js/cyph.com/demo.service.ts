@@ -26,7 +26,7 @@ export class DemoService {
 		<div class='facebook-pic image-frame real'>
 			<iframe
 				src='https://www.facebook.com/plugins/comments.php?href=https://www.${
-					util.generateGuid(util.random(20, 5))
+					util.readableId(util.random(20, 5))
 				}.com&width=1000'
 			></iframe>
 		</div>

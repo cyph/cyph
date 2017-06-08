@@ -169,7 +169,7 @@ export class Thread implements IThread {
 			translations
 		};
 
-		const callbackId	= 'NewThread-' + util.generateGuid();
+		const callbackId	= 'NewThread-' + util.uuid();
 
 		const threadBody	= `
 			var threadSetupVars = ${util.stringify(threadSetupVars)};
