@@ -299,6 +299,15 @@ export class Util {
 		return `${o.n.toFixed(2)} ${o.s}B`;
 	}
 
+	/** Random ID meant optimized for readability by humans. Uses Config.readableIdCharacters. */
+	public readableId (length: number = 0) : string {
+		let id	= '';
+		for (let i = 0 ; i < length ; ++i) {
+			id += config.readableIdCharacters[this.random(config.readableIdCharacters.length)];
+		}
+		return id;
+	}
+
 	/** Performs HTTP request. */
 	public async request (o: {
 		contentType?: string;
@@ -356,15 +365,6 @@ export class Util {
 
 		await this.sleep();
 		beforeUnloadMessage	= oldBeforeUnloadMessage;
-	}
-
-	/** Random ID meant optimized for readability by humans. Uses Config.readableIdCharacters. */
-	public readableId (length: number = 0) : string {
-		let id	= '';
-		for (let i = 0 ; i < length ; ++i) {
-			id += config.readableIdCharacters[this.random(config.readableIdCharacters.length)];
-		}
-		return id;
 	}
 
 	/** Sleep for the specifed amount of time. */
