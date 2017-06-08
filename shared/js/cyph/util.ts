@@ -126,28 +126,6 @@ export class Util {
 		);
 	}
 
-	/**
-	 * Randomly generates a GUID of specifed length using Config.guidAddressSpace.
-	 * If no valid length is specified, Config.guidAddressSpace is ignored and the
-	 * GUID will instead append a random 32-bit number to the current datetime.
-	 */
-	public generateGuid (length: number = 0) : string {
-		if (length > 0) {
-			let guid	= '';
-
-			for (let i = 0 ; i < length ; ++i) {
-				guid += config.guidAddressSpace[this.random(config.guidAddressSpace.length)];
-			}
-
-			return guid;
-		}
-
-		/* tslint:disable-next-line:ban */
-		return `${Date.now().toString()}-${
-			new Uint32Array(crypto.getRandomValues(new Uint32Array(1)).buffer)[0].toString()
-		}`;
-	}
-
 	/** Gets a value from a map and sets a default value if none had previously been set. */
 	public getOrSetDefault<K, V> (map: Map<K, V>, key: K, defaultValue: () => V) : V {
 		if (!map.has(key)) {
@@ -188,7 +166,7 @@ export class Util {
 		}
 
 		const queue: string[]	= lock.queue;
-		const guid: string		= this.generateGuid();
+		const guid: string		= this.uuid();
 
 		queue.push(guid);
 
@@ -380,6 +358,15 @@ export class Util {
 		beforeUnloadMessage	= oldBeforeUnloadMessage;
 	}
 
+	/** Random ID meant optimized for readability by humans. Uses Config.readableIdCharacters. */
+	public readableId (length: number = 0) : string {
+		let id	= '';
+		for (let i = 0 ; i < length ; ++i) {
+			id += config.readableIdCharacters[this.random(config.readableIdCharacters.length)];
+		}
+		return id;
+	}
+
 	/** Sleep for the specifed amount of time. */
 	public async sleep (ms: number = 250) : Promise<void> {
 		/* tslint:disable-next-line:ban */
@@ -459,6 +446,20 @@ export class Util {
 		const e: Event	= document.createEvent('MouseEvents');
 		e.initEvent('click', true, false);
 		elem.dispatchEvent(e);
+	}
+
+	/** Creates a base64 string containing the current timestamp and 32 random bytes. */
+	public uuid () : string {
+		return potassiumUtil.toBase64(
+			potassiumUtil.concatMemory(
+				true,
+				new Float64Array([
+					/* tslint:disable-next-line:ban */
+					Date.now()
+				]),
+				potassiumUtil.randomBytes(32)
+			)
+		);
 	}
 
 	/** Waits for iterable value to exist and have at least minLength elements. */

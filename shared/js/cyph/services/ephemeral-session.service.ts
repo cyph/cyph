@@ -27,12 +27,12 @@ export class EphemeralSessionService extends SessionService {
 			/* Contains invalid character(s) */
 			!id.split('').reduce(
 				(isValid: boolean, c: string) : boolean =>
-					isValid && this.configService.guidAddressSpace.indexOf(c) > -1
+					isValid && this.configService.readableIdCharacters.indexOf(c) > -1
 				,
 				true
 			)
 		) {
-			id	= util.generateGuid(this.configService.secretLength);
+			id	= util.readableId(this.configService.secretLength);
 		}
 
 		this.state.cyphId		= id.substring(0, this.configService.cyphIdLength);
@@ -206,7 +206,7 @@ export class EphemeralSessionService extends SessionService {
 		const channelDescriptor: string	=
 			this.state.startingNewCyph === false ?
 				'' :
-				util.generateGuid(this.configService.longSecretLength)
+				util.uuid()
 		;
 
 		(async () => {

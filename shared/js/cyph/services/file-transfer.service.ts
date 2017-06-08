@@ -309,7 +309,7 @@ export class FileTransferService {
 			await util.retryUntilSuccessful(async () => {
 				let complete	= false;
 				while (!complete) {
-					const path: string	= 'ephemeral/' + util.generateGuid();
+					const path: string	= 'ephemeral/' + util.uuid();
 
 					uploadTask	= (await this.databaseService.getStorageRef(path)).put(
 						new Blob([o.cyphertext])

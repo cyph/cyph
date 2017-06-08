@@ -36,7 +36,7 @@ export class Transfer implements IMessageData {
 		public percentComplete: number = 0,
 
 		/** Unique ID to represent this file transfer. */
-		public readonly transferId: string = util.generateGuid(),
+		public readonly transferId: string = util.uuid(),
 
 		/** If defined, indicates an acceptance or rejection of a file transfer. */
 		/* tslint:disable-next-line:no-unnecessary-initializer */

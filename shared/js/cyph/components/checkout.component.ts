@@ -32,7 +32,7 @@ export class CheckoutComponent implements AfterViewInit {
 	public complete: boolean;
 
 	/** ID of Braintree container element. */
-	public readonly containerID: string	= `id-${util.generateGuid()}`;
+	public readonly containerID: string	= `id-${util.uuid()}`;
 
 	/** Email address. */
 	@Input() public email: string;

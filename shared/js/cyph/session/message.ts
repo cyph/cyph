@@ -17,7 +17,7 @@ export class Message implements IMessage {
 	) {
 		this.data	= {
 			author: users.me,
-			id: util.generateGuid()
+			id: util.uuid()
 		};
 
 		if (!data) {
