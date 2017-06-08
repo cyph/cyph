@@ -70,7 +70,7 @@ mv tslint.json.old tslint.json
 rm node_modules
 cd ..
 
-/node_modules/tslint/node_modules/.bin/tsc --skipLibCheck js/tslint-rules/*.ts || exit 1
+tsc --skipLibCheck js/tslint-rules/*.ts || exit 1
 
 node -e "
 	const tsconfig	= JSON.parse(
