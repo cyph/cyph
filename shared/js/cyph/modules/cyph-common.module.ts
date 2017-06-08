@@ -9,6 +9,7 @@ import {ChatMessageListComponent} from '../components/chat-message-list.componen
 import {ChatMessageComponent} from '../components/chat-message.component';
 import {ContactComponent} from '../components/contact.component';
 import {FileInputComponent} from '../components/file-input.component';
+import {FeedbackComponent} from '../components/feedback.component';
 import {HelpComponent} from '../components/help.component';
 import {MarkdownComponent} from '../components/markdown.component';
 import {RedirectComponent} from '../components/redirect.component';
@@ -42,6 +43,7 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageListComponent,
 		ContactComponent,
 		FileInputComponent,
+		FeedbackComponent,
 		HelpComponent,
 		MarkdownComponent,
 		RedirectComponent,
@@ -58,6 +60,7 @@ import {CyphWebModule} from './cyph-web.module';
 		CommonModule,
 		ContactComponent,
 		FileInputComponent,
+		FeedbackComponent,
 		HelpComponent,
 		MarkdownComponent,
 		RedirectComponent,
