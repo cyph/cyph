@@ -20,6 +20,7 @@ import {CheckoutComponent} from '../cyph/components/checkout.component';
 import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
 import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
 import {DialogImageComponent} from '../cyph/components/dialog-image.component';
+import {FeedbackComponent} from '../cyph/components/feedback.component';
 import {HelpComponent} from '../cyph/components/help.component';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
@@ -58,6 +59,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogImageComponent,
+		FeedbackComponent,
 		HelpComponent
 	],
 	imports: [

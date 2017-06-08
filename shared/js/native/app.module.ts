@@ -33,8 +33,8 @@ import {NativeLocalStorageService} from './native-local-storage.service';
 		EphemeralChatRootComponent
 	],
 	entryComponents: [
-		HelpComponent,
-		FeedbackComponent
+		FeedbackComponent,
+		HelpComponent
 	],
 	imports: [
 		RouterModule.forRoot(appRoutes, {useHash: true}),
