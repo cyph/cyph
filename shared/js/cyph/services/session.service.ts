@@ -16,7 +16,7 @@ import {ErrorService} from './error.service';
 @Injectable()
 export abstract class SessionService implements ISessionService {
 	/** @ignore */
-	protected readonly eventId: string					= util.generateGuid();
+	protected readonly eventId: string					= util.uuid();
 
 	/** @ignore */
 	protected lastIncomingMessageTimestamp: number		= 0;

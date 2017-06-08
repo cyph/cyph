@@ -97,7 +97,7 @@ export class EventManager {
 	 * @param init Optional promise to wait on for initialization of handler before triggering.
 	 */
 	public async rpcTrigger<I, O> (event: string, data?: I, init?: Promise<void>) : Promise<O> {
-		const eventId			= util.generateGuid();
+		const eventId			= util.uuid();
 		const responsePromise	=
 			this.one<{data: O; error: undefined}|{data: never; error: {message: string}}>(
 				eventId
