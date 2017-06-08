@@ -30,9 +30,7 @@ export class Transport {
 	 * Intercept raw data of next incoming message before
 	 * it ever hits the core Castle protocol logic.
 	 */
-	public async interceptIncomingCyphertext (
-		timeout: number = 120000
-	) : Promise<Uint8Array> {
+	public async interceptIncomingCyphertext (timeout: number = 120000) : Promise<Uint8Array> {
 		return new Promise<Uint8Array>(async (resolve, reject) => {
 			this.cyphertextIntercepters.push(resolve);
 
@@ -69,11 +67,7 @@ export class Transport {
 	 * @param plaintext
 	 * @param author
 	 */
-	public receive (
-		cyphertext: Uint8Array,
-		plaintext: DataView,
-		author: string
-	) : void {
+	public receive (cyphertext: Uint8Array, plaintext: DataView, author: string) : void {
 		this.logCyphertext(potassiumUtil.toBase64(cyphertext), author);
 
 		const timestamp		= plaintext.getFloat64(0, true);
@@ -95,10 +89,7 @@ export class Transport {
 	 * @param cyphertext
 	 * @param messageId
 	 */
-	public send (
-		cyphertext: string|ArrayBufferView,
-		messageId?: ArrayBufferView
-	) : void {
+	public send (cyphertext: string|ArrayBufferView, messageId?: ArrayBufferView) : void {
 		const fullCyphertext	= potassiumUtil.toBase64(
 			!messageId ? cyphertext : potassiumUtil.concatMemory(
 				true,

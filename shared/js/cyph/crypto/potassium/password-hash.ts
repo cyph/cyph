@@ -124,9 +124,9 @@ export class PasswordHash implements IPasswordHash {
 		try {
 			const metadata	= potassiumUtil.concatMemory(
 				false,
-				new Uint8Array(new Uint32Array([memLimit]).buffer),
-				new Uint8Array(new Uint32Array([opsLimit]).buffer),
-				new Uint8Array(new Uint32Array([salt.length]).buffer),
+				new Uint32Array([memLimit]),
+				new Uint32Array([opsLimit]),
+				new Uint32Array([salt.length]),
 				salt,
 				potassiumUtil.fromString(algorithm)
 			);
@@ -166,21 +166,19 @@ export class PasswordHash implements IPasswordHash {
 		opsLimit: number;
 		salt: Uint8Array;
 	}> {
-		metadata	= new Uint8Array(metadata);
+		const metadataView	= new DataView(metadata.buffer, metadata.byteOffset);
+		const saltBytes		= metadataView.getUint32(8, true);
 
-		try {
-			const saltBytes	= new Uint32Array(metadata.buffer, 2, 1)[0];
-
-			return {
-				algorithm: potassiumUtil.toString(new Uint8Array(metadata.buffer, saltBytes + 12)),
-				memLimit: new Uint32Array(metadata.buffer, 0, 1)[0],
-				opsLimit: new Uint32Array(metadata.buffer, 1, 1)[0],
-				salt: new Uint8Array(new Uint8Array(metadata.buffer, 12, saltBytes))
-			};
-		}
-		finally {
-			potassiumUtil.clearMemory(metadata);
-		}
+		return {
+			algorithm: potassiumUtil.toString(
+				new Uint8Array(metadata.buffer, metadata.byteOffset + saltBytes + 12)
+			),
+			memLimit: metadataView.getUint32(0, true),
+			opsLimit: metadataView.getUint32(4, true),
+			salt: new Uint8Array(
+				new Uint8Array(metadata.buffer, metadata.byteOffset + 12, saltBytes)
+			)
+		};
 	}
 
 	constructor (

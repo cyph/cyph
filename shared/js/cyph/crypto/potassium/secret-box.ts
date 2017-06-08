@@ -118,60 +118,53 @@ export class SecretBox implements ISecretBox {
 			throw new Error('Invalid key.');
 		}
 
-		cyphertext	= new Uint8Array(cyphertext);
+		const nonce					= new Uint8Array(
+			cyphertext.buffer,
+			cyphertext.byteOffset,
+			this.helpers.nonceBytes
+		);
 
-		try {
-			const nonce					= new Uint8Array(
-				cyphertext.buffer,
-				0,
-				this.helpers.nonceBytes
+		const symmetricCyphertext	= new Uint8Array(
+			cyphertext.buffer,
+			cyphertext.byteOffset + this.helpers.nonceBytes,
+			cyphertext.byteLength - this.helpers.nonceBytes
+		);
+
+		let paddedPlaintext: Uint8Array|undefined;
+
+		for (
+			let i = key.length - keyBytes;
+			i >= 0;
+			i -= keyBytes
+		) {
+			const dataToDecrypt		= paddedPlaintext || symmetricCyphertext;
+
+			paddedPlaintext			= await this.helpers.open(
+				dataToDecrypt,
+				nonce,
+				new Uint8Array(
+					key.buffer,
+					key.byteOffset + i,
+					keyBytes
+				),
+				await this.getAdditionalData(additionalData)
 			);
 
-			const symmetricCyphertext	= new Uint8Array(
-				cyphertext.buffer,
-				this.helpers.nonceBytes
-			);
-
-			let paddedPlaintext: Uint8Array|undefined;
-
-			for (
-				let i = key.length - keyBytes;
-				i >= 0;
-				i -= keyBytes
-			) {
-				const dataToDecrypt		= paddedPlaintext || symmetricCyphertext;
-
-				paddedPlaintext			= await this.helpers.open(
-					dataToDecrypt,
-					nonce,
-					new Uint8Array(
-						key.buffer,
-						key.byteOffset + i,
-						keyBytes
-					),
-					await this.getAdditionalData(additionalData)
-				);
-
-				potassiumUtil.clearMemory(dataToDecrypt);
-			}
-
-			if (!paddedPlaintext) {
-				throw new Error('Padded plaintext empty.');
-			}
-
-			const plaintext	= new Uint8Array(new Uint8Array(
-				paddedPlaintext.buffer,
-				new Uint8Array(paddedPlaintext.buffer, 0, 1)[0] + 1
-			));
-
-			potassiumUtil.clearMemory(paddedPlaintext);
-			potassiumUtil.clearMemory(cyphertext);
-
-			return plaintext;
+			potassiumUtil.clearMemory(dataToDecrypt);
 		}
-		finally {
-			potassiumUtil.clearMemory(cyphertext);
+
+		if (!paddedPlaintext) {
+			throw new Error('Padded plaintext empty.');
 		}
+
+		const plaintext	= new Uint8Array(new Uint8Array(
+			paddedPlaintext.buffer,
+			new Uint8Array(paddedPlaintext.buffer, 0, 1)[0] + 1
+		));
+
+		potassiumUtil.clearMemory(paddedPlaintext);
+
+		return plaintext;
 	}
 
 	/** @ignore */
@@ -251,20 +244,21 @@ export class SecretBox implements ISecretBox {
 		}
 
 		const chunks: Uint8Array[]	= [];
-		cyphertext	= new Uint8Array(cyphertext);
+		const cyphertextView		= new DataView(
+			cyphertext.buffer,
+			cyphertext.byteOffset,
+			cyphertext.byteLength
+		);
 
 		for (let i = 0 ; i < cyphertext.length ; ) {
-			const chunkSize	= new DataView(
-				cyphertext.buffer,
-				i
-			).getUint32(0, true);
+			const chunkSize	= cyphertextView.getUint32(i, true);
 
 			i += 4;
 
 			chunks.push(await this.openChunk(
 				new Uint8Array(
 					cyphertext.buffer,
-					i,
+					cyphertext.byteOffset + i,
 					chunkSize
 				),
 				key
@@ -304,7 +298,7 @@ export class SecretBox implements ISecretBox {
 		return potassiumUtil.concatMemory(true, ...chunks.map(chunk =>
 			potassiumUtil.concatMemory(
 				true,
-				new Uint8Array(new Uint32Array([chunk.length]).buffer),
+				new Uint32Array([chunk.length]),
 				chunk
 			)
 		));

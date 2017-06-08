@@ -20,9 +20,7 @@ export class SecretBox {
 		cyphertext: Uint8Array,
 		nonce: Uint8Array,
 		key: Uint8Array,
-		additionalData: Uint8Array = new Uint8Array(
-			this.aeadBytes
-		)
+		additionalData: Uint8Array = new Uint8Array(this.aeadBytes)
 	) : Promise<Uint8Array> {
 		return new Uint8Array(
 			await crypto.subtle.decrypt(
@@ -46,9 +44,7 @@ export class SecretBox {
 		plaintext: Uint8Array,
 		nonce: Uint8Array,
 		key: Uint8Array,
-		additionalData: Uint8Array = new Uint8Array(
-			this.aeadBytes
-		)
+		additionalData: Uint8Array = new Uint8Array(this.aeadBytes)
 	) : Promise<Uint8Array> {
 		return new Uint8Array(
 			await crypto.subtle.encrypt(

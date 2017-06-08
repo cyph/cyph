@@ -183,10 +183,13 @@ export class PairwiseSession {
 						/* Part 2 of handshake for Alice */
 						if (this.localUser) {
 							const oldPlaintext	= this.potassium.toBytes(plaintext);
+							const plaintextData	= await this.handshakeOpenSecret(oldPlaintext);
 
-							plaintext	= new DataView((
-								await this.handshakeOpenSecret(oldPlaintext)
-							).buffer);
+							plaintext	= new DataView(
+								plaintextData.buffer,
+								plaintextData.byteOffset,
+								plaintextData.byteLength
+							);
 
 							this.potassium.clearMemory(oldPlaintext);
 						}
