@@ -178,10 +178,6 @@
 				right: 0px;
 			}
 
-			video {
-				@include transform(scaleX(-1));
-			}
-
 			md-progress-spinner {
 				position: absolute;
 				top: 50%;

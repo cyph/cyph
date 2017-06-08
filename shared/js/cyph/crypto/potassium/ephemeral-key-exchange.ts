@@ -25,13 +25,13 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 	/** @inheritDoc */
 	public async aliceKeyPair () : Promise<IKeyPair> {
-		const rlweKeyPair: IKeyPair	= rlwe.aliceKeyPair();
+		const rlweKeyPair		= rlwe.aliceKeyPair();
 
-		const sodiumPrivateKey: Uint8Array	= potassiumUtil.randomBytes(
+		const sodiumPrivateKey	= potassiumUtil.randomBytes(
 			sodium.crypto_scalarmult_SCALARBYTES
 		);
 
-		const sodiumPublicKey: Uint8Array	=
+		const sodiumPublicKey	=
 			sodium.crypto_scalarmult_base(sodiumPrivateKey)
 		;
 
@@ -79,12 +79,12 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 			sodium.crypto_scalarmult_SCALARBYTES
 		);
 
-		const rlweSecret: Uint8Array	= rlwe.aliceSecret(
+		const rlweSecret		= rlwe.aliceSecret(
 			rlwePublicKey,
 			rlwePrivateKey
 		);
 
-		const sodiumSecret: Uint8Array	= sodium.crypto_scalarmult(
+		const sodiumSecret		= sodium.crypto_scalarmult(
 			sodiumPrivateKey,
 			sodiumPublicKey
 		);
@@ -118,18 +118,15 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 			sodium.crypto_scalarmult_BYTES
 		);
 
-		const rlweSecretData: {
-			publicKey: Uint8Array;
-			secret: Uint8Array;
-		}	= rlwe.bobSecret(aliceRlwePublicKey);
+		const rlweSecretData		= rlwe.bobSecret(aliceRlwePublicKey);
 
-		const sodiumPrivateKey: Uint8Array	= potassiumUtil.randomBytes(
+		const sodiumPrivateKey		= potassiumUtil.randomBytes(
 			sodium.crypto_scalarmult_SCALARBYTES
 		);
-		const sodiumPublicKey: Uint8Array	=
+		const sodiumPublicKey		=
 			sodium.crypto_scalarmult_base(sodiumPrivateKey)
 		;
-		const sodiumSecret: Uint8Array		= sodium.crypto_scalarmult(
+		const sodiumSecret			= sodium.crypto_scalarmult(
 			sodiumPrivateKey,
 			aliceSodiumPublicKey
 		);

@@ -303,13 +303,13 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 				const clearData	= (
 					input: Uint8Array|undefined|{
 						[s: string]: boolean|number|string|Uint8Array|undefined|{
-							[s: string]: Uint8Array
-						}
+							[s: string]: Uint8Array;
+						};
 					},
 					output: boolean|string|Uint8Array|undefined|{
 						[s: string]: number|string|Uint8Array|{
-							[s: string]: number|string|Uint8Array
-						}
+							[s: string]: number|string|Uint8Array;
+						};
 					}
 				) => {
 					for (const o of [input, output]) {

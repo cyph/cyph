@@ -86,10 +86,13 @@ export class EnvDeploy {
 			`CYPH-AUDIO/`
 	;
 
-	/** Endpoint for Firebase server. */
-	public readonly firebaseEndpoint: string	=
-		`ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`
-	;
+	/** Firebase-related config. */
+	public readonly firebaseConfig				= {
+		apiKey: 'AIzaSyBQmgjG4klHr0TWUrBsGAgKPGSFFM1FSeI',
+		authDomain: 'cyph-test.firebaseapp.com',
+		databaseURL: `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`,
+		storageBucket: 'cyphme.appspot.com'
+	};
 
 	/** Content Security Policy defined in shared/csp. */
 	public readonly CSP: string					= "DEFAULT_CSP";

@@ -32,7 +32,7 @@ export class Box {
 
 	/** Generates key pair. */
 	public async keyPair () : Promise<IKeyPair> {
-		const keyPair: CryptoKeyPair	= await crypto.subtle.generateKey(
+		const keyPair		= await crypto.subtle.generateKey(
 			this.algorithm,
 			true,
 			['encrypt', 'decrypt']
@@ -64,13 +64,13 @@ export class Box {
 		nonce: Uint8Array,
 		keyPair: IKeyPair
 	) : Promise<Uint8Array> {
-		const asymmetricCyphertext: Uint8Array	= new Uint8Array(
+		const asymmetricCyphertext	= new Uint8Array(
 			cyphertext.buffer,
 			cyphertext.byteOffset,
 			this.algorithm.modulusLengthBytes
 		);
 
-		const asymmetricPlaintext: Uint8Array	= new Uint8Array(
+		const asymmetricPlaintext	= new Uint8Array(
 			await crypto.subtle.decrypt(
 				this.algorithm.name,
 				await importHelper.importJWK(
@@ -82,25 +82,25 @@ export class Box {
 			)
 		);
 
-		const symmetricKey: Uint8Array			= new Uint8Array(
+		const symmetricKey			= new Uint8Array(
 			asymmetricPlaintext.buffer,
 			0,
 			secretBox.keyBytes
 		);
 
-		const symmetricCyphertext: Uint8Array	= new Uint8Array(
+		const symmetricCyphertext	= new Uint8Array(
 			cyphertext.buffer,
 			cyphertext.byteOffset +
 				this.algorithm.modulusLengthBytes +
 				oneTimeAuth.bytes
 		);
 
-		const macKey: Uint8Array				= new Uint8Array(
+		const macKey				= new Uint8Array(
 			asymmetricPlaintext.buffer,
 			secretBox.keyBytes
 		);
 
-		const mac: Uint8Array					= new Uint8Array(
+		const mac					= new Uint8Array(
 			cyphertext.buffer,
 			cyphertext.byteOffset +
 				this.algorithm.modulusLengthBytes
@@ -108,13 +108,13 @@ export class Box {
 			oneTimeAuth.bytes
 		);
 
-		const plaintext: Uint8Array	= await secretBox.open(
+		const plaintext				= await secretBox.open(
 			symmetricCyphertext,
 			nonce,
 			symmetricKey
 		);
 
-		const isValid: boolean		= await oneTimeAuth.verify(
+		const isValid				= await oneTimeAuth.verify(
 			mac,
 			asymmetricCyphertext,
 			macKey
@@ -137,23 +137,23 @@ export class Box {
 		nonce: Uint8Array,
 		publicKey: Uint8Array
 	) : Promise<Uint8Array> {
-		const asymmetricPlaintext: Uint8Array	= potassiumUtil.randomBytes(
+		const asymmetricPlaintext	= potassiumUtil.randomBytes(
 			secretBox.keyBytes + oneTimeAuth.keyBytes
 		);
 
-		const symmetricKey: Uint8Array			= new Uint8Array(
+		const symmetricKey			= new Uint8Array(
 			asymmetricPlaintext.buffer,
 			0,
 			secretBox.keyBytes
 		);
 
-		const symmetricCyphertext: Uint8Array	= await secretBox.seal(
+		const symmetricCyphertext	= await secretBox.seal(
 			plaintext,
 			nonce,
 			symmetricKey
 		);
 
-		const asymmetricCyphertext: Uint8Array	= new Uint8Array(
+		const asymmetricCyphertext	= new Uint8Array(
 			await crypto.subtle.encrypt(
 				this.algorithm.name,
 				await importHelper.importJWK(
@@ -165,12 +165,12 @@ export class Box {
 			)
 		);
 
-		const macKey: Uint8Array				= new Uint8Array(
+		const macKey				= new Uint8Array(
 			asymmetricPlaintext.buffer,
 			secretBox.keyBytes
 		);
 
-		const mac: Uint8Array					= await oneTimeAuth.sign(
+		const mac					= await oneTimeAuth.sign(
 			asymmetricCyphertext,
 			macKey
 		);

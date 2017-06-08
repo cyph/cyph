@@ -20,7 +20,9 @@ export class Hash implements IHash {
 		}
 
 		if (outputBytes > superSphincs.hashBytes) {
-			throw new Error('Potassium.Hash.deriveKey output cannot exceed 64 bytes.');
+			throw new Error(
+				`Potassium.Hash.deriveKey output cannot exceed ${superSphincs.hashBytes} bytes.`
+			);
 		}
 
 		const hash	= this.isNative ?

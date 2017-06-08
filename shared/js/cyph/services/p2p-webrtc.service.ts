@@ -270,7 +270,11 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			autoRemoveVideos: false,
 			autoRequestMedia: false,
 			connection: {
-				disconnect: () => { events.forEach(event => { eventManager.off(event); }); },
+				disconnect: () => {
+					for (const event of events) {
+						eventManager.off(event);
+					}
+				},
 				emit: (event: string, ...args: any[]) => {
 					const lastArg: any	= args.slice(-1)[0];
 
@@ -283,7 +287,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 								rpcEvents.p2p,
 								new Command(
 									P2PWebRTCService.constants.webRTC,
-									{event, args}
+									{args, event}
 								)
 							)
 						);

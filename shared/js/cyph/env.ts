@@ -22,14 +22,6 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is a co-branded instance of Cyph. */
 	public readonly coBranded: boolean		= !!customBuild;
 
-	/** Firebase-related config. */
-	public readonly firebaseConfig			= {
-		apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',
-		authDomain: 'cyphme.firebaseapp.com',
-		databaseURL: this.firebaseEndpoint,
-		storageBucket: 'cyphme.appspot.com'
-	};
-
 	/** Complete (lowercase) language code, e.g. "en-us". */
 	public readonly fullLanguage: string	= Env.language.toLowerCase();
 

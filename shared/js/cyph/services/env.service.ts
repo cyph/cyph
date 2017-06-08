@@ -10,22 +10,25 @@ import {LocalStorageService} from './local-storage.service';
 @Injectable()
 export class EnvService extends Env {
 	/** @ignore */
-	private readonly geolocationPromise: Promise<{
-		continent?: string;
-		continentCode?: string;
-		country?: string;
-		countryCode?: string;
-		org?: string;
-	}>	= (async () =>
-		util.parse(
-			await util.request({
-				retries: 5,
-				url: `${this.baseUrl}geolocation/${this.realLanguage}`
-			})
-		)
-	)().catch(
-		() => ({})
-	);
+	private readonly geolocationPromise	= (async () => {
+		try {
+			return util.parse<{
+				continent?: string;
+				continentCode?: string;
+				country?: string;
+				countryCode?: string;
+				org?: string;
+			}>(
+				await util.request({
+					retries: 5,
+					url: `${this.baseUrl}geolocation/${this.realLanguage}`
+				})
+			);
+		}
+		catch (_) {
+			return {};
+		}
+	})();
 
 	/** Geolocation data. */
 	public readonly geolocation	= {

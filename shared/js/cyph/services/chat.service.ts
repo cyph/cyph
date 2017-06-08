@@ -87,7 +87,7 @@ export class ChatService {
 	public async addMessage (
 		text: string,
 		author: string,
-		timestamp: number = util.timestamp(),
+		timestamp?: number,
 		shouldNotify: boolean = author !== users.me,
 		selfDestructTimeout?: number,
 		id?: string
@@ -98,6 +98,10 @@ export class ChatService {
 			(author !== users.app && this.chat.isDisconnected)
 		) {
 			return;
+		}
+
+		if (timestamp === undefined) {
+			timestamp	= await util.timestamp();
 		}
 
 		while (author !== users.app && !this.chat.isConnected) {
@@ -174,7 +178,7 @@ export class ChatService {
 		this.addMessage(
 			this.stringsService.introductoryMessage,
 			users.app,
-			util.timestamp() - 30000,
+			(await util.timestamp()) - 30000,
 			false
 		);
 

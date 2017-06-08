@@ -142,7 +142,7 @@ if [ ! "${simple}" ] ; then
 	cyphComCSP="$(cat shared/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com https://*.braintreegateway.com|g' | sed 's|connect-src|connect-src blob:|g')"
 	ls cyph.com/*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
 	ls */*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${webSignCSP}\"|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultCSPString}|${fullCSP}|g" %
+	sed -i "s|${defaultCSPString}|${fullCSP}|g" shared/js/cyph/env-deploy.ts
 
 	# Expand connect-src and frame-src on wpstatic pages to support social media widgets and stuff
 
@@ -159,8 +159,7 @@ if [ ! "${simple}" ] ; then
 fi
 
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
-ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i 's|isLocalEnv: boolean\s*= true|isLocalEnv: boolean\t= false|g' %
-ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s/ws:\/\/.*:44000/https:\/\/cyphme.firebaseio.com/g" %
+sed -i 's|isLocalEnv: boolean\s*= true|isLocalEnv: boolean\t= false|g' shared/js/cyph/env-deploy.ts
 
 if [ "${test}" ] ; then
 	newCyphURL="https://${version}.cyph.ws"
@@ -175,14 +174,15 @@ if [ "${test}" ] ; then
 	sed -i "s|http://localhost:42000|https://${version}-dot-cyphme.appspot.com|g" backend/config.go
 	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" %
 	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|www.cyph.com|${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42001|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42002|${newCyphURL}|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-IM|https://${version}-dot-cyph-im-dot-cyphme.appspot.com|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-IO|https://${version}-dot-cyph-io-dot-cyphme.appspot.com|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-ME|https://${version}-dot-cyph-me-dot-cyphme.appspot.com|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" %
+	sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|${defaultHost}42001|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|${defaultHost}42002|${newCyphURL}|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-IM|https://${version}-dot-cyph-im-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-IO|https://${version}-dot-cyph-io-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-ME|https://${version}-dot-cyph-me-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|databaseURL: .*,|databaseURL: 'https://cyph-test.firebaseio.com',|g" shared/js/cyph/env-deploy.ts
 
 	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
 
@@ -199,14 +199,17 @@ if [ "${test}" ] ; then
 	# fi
 else
 	sed -i "s|http://localhost:42000|https://api.cyph.com|g" backend/config.go
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://api.cyph.com|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42001|https://www.cyph.com|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42002|https://cyph.ws|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-IM|https://cyph.im|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-IO|https://cyph.io|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-ME|https://cyph.me|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://cyph.video|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-AUDIO|https://cyph.audio|g" %
+	sed -i "s|${defaultHost}42000|https://api.cyph.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|${defaultHost}42001|https://www.cyph.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|${defaultHost}42002|https://cyph.ws|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-IM|https://cyph.im|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-IO|https://cyph.io|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-ME|https://cyph.me|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-VIDEO|https://cyph.video|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|apiKey: .*,|apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|authDomain: .*,|authDomain: 'cyphme.firebaseapp.com',|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|databaseURL: .*,|databaseURL: 'https://cyphme.firebaseio.com',|g" shared/js/cyph/env-deploy.ts
 
 	homeURL='https://www.cyph.com'
 
@@ -404,7 +407,7 @@ if [ "${websign}" ] ; then
 	if [ -d pkg/cyph.ws-subresources ] ; then
 		find pkg/cyph.ws-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
 			zopfli -i1000 %; \
-			bro --quality 99 --repeat 99 --input % --output %.br; \
+			brotli -Zk %; \
 		'
 	fi
 
@@ -418,7 +421,7 @@ if [ "${websign}" ] ; then
 				chmod 700 ${subresource}
 				git add ${subresource}
 			done
-			git commit -S -m "${customBuild}" . > /dev/null 2>&1
+			git commit -S -m "${customBuild}" . &> /dev/null
 			cd ../..
 		done
 	fi
@@ -431,7 +434,7 @@ if [ "${websign}" ] ; then
 			ln -s ${p} ${plink}
 			chmod 700 ${plink}
 			git add ${plink}
-			git commit -S -m ${plink} ${plink} > /dev/null 2>&1
+			git commit -S -m ${plink} ${plink} &> /dev/null
 		fi
 
 		cp ${p}/current ${p}/pkg.srihash
@@ -439,7 +442,7 @@ if [ "${websign}" ] ; then
 		find ${p} -type f -not \( -name '*.srihash' -or -name '*.gz' -or -name '*.br' \) -exec bash -c ' \
 			if [ ! -f {}.gz ] ; then \
 				zopfli -i1000 {}; \
-				bro --quality 99 --repeat 99 --input {} --output {}.br; \
+				brotli -Zk {}; \
 			fi; \
 			chmod 700 {}.gz {}.br; \
 			git add {}.gz {}.br; \

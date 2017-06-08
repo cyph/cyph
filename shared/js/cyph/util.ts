@@ -9,7 +9,20 @@ import {env} from './env';
  */
 export class Util {
 	/** @ignore */
-	private readonly timestampData	= {last: 0, offset: 0, subtime: 0};
+	private readonly timestampData	= {
+		last: 0,
+		offset: (async () => {
+			const serverTimestamp: number	= parseFloat(
+				await this.request({retries: 10, url: env.baseUrl + 'timestamp'})
+			);
+
+			/* tslint:disable-next-line:ban */
+			return serverTimestamp - Date.now();
+		})().catch(
+			() => 0
+		),
+		subtime: 0
+	};
 
 	/** Performs HTTP request. */
 	private async baseRequest<T> (
@@ -61,9 +74,7 @@ export class Util {
 			try {
 				const res	= await fetch(url, {
 					body: data,
-					headers: !contentType ? {} : {
-						'Content-Type': contentType
-					},
+					headers: !contentType ? {} : {'Content-Type': contentType},
 					method
 				});
 
@@ -131,9 +142,8 @@ export class Util {
 			return guid;
 		}
 
-		return `${
-			this.timestamp().toString()
-		}-${
+		/* tslint:disable-next-line:ban */
+		return `${Date.now().toString()}-${
 			new Uint32Array(crypto.getRandomValues(new Uint32Array(1)).buffer)[0].toString()
 		}`;
 	}
@@ -390,8 +400,9 @@ export class Util {
 	 * Returns current timestamp, with logic to correct for incorrect
 	 * local clocks and ensure each output is unique.
 	 */
-	public timestamp () : number {
-		let timestamp: number	= Date.now() + this.timestampData.offset;
+	public async timestamp () : Promise<number> {
+		/* tslint:disable-next-line:ban */
+		let timestamp: number	= Date.now() + (await this.timestampData.offset);
 
 		if (timestamp === this.timestampData.last) {
 			this.timestampData.subtime += this.random() / 100;
@@ -478,16 +489,7 @@ export class Util {
 		await this.waitForValue(() => f() || undefined);
 	}
 
-	constructor () { (async () => {
-		try {
-			const serverTimestamp: number	= parseFloat(
-				await this.request({url: env.baseUrl + 'timestamp'})
-			);
-
-			this.timestampData.offset	= serverTimestamp - Date.now();
-		}
-		catch (_) {}
-	})(); }
+	constructor () {}
 }
 
 /** @see Util */

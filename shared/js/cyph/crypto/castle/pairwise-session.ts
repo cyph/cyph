@@ -78,23 +78,27 @@ export class PairwiseSession {
 
 	/** @ignore */
 	private async handshakeOpenSecret (cyphertext: Uint8Array) : Promise<Uint8Array> {
-		if (!this.localUser) {
-			throw new Error('Local user not found.');
+		try {
+			if (!this.localUser) {
+				throw new Error('Local user not found.');
+			}
+
+			const keyPair	= await this.localUser.getKeyPair();
+			const secret	= await this.potassium.box.open(cyphertext, keyPair);
+
+			this.potassium.clearMemory(keyPair.privateKey);
+			this.potassium.clearMemory(keyPair.publicKey);
+
+			this.localUser	= undefined;
+
+			return secret;
 		}
-
-		const keyPair	= await this.localUser.getKeyPair();
-
-		const secret	= await this.potassium.box.open(
-			cyphertext,
-			keyPair
-		);
-
-		this.potassium.clearMemory(keyPair.privateKey);
-		this.potassium.clearMemory(keyPair.publicKey);
-
-		this.localUser	= undefined;
-
-		return secret;
+		catch (err) {
+			throw new Error(
+				`handshakeOpenSecret failed: ${err ? err.message : 'undefined'}` +
+				`\n\ncyphertext: ${this.potassium.toBase64(cyphertext)}`
+			);
+		}
 	}
 
 	/** @ignore */
@@ -134,9 +138,7 @@ export class PairwiseSession {
 		}
 
 		try {
-			const cyphertextBytes: Uint8Array	=
-				this.potassium.fromBase64(cyphertext)
-			;
+			const cyphertextBytes	= this.potassium.fromBase64(cyphertext);
 
 			if (this.transport.cyphertextIntercepters.length > 0) {
 				const cyphertextIntercepter	= this.transport.cyphertextIntercepters.shift();
@@ -147,7 +149,7 @@ export class PairwiseSession {
 				}
 			}
 
-			const id: number	= new Float64Array(cyphertextBytes.buffer, 0, 1)[0];
+			const id	= new Float64Array(cyphertextBytes.buffer, 0, 1)[0];
 
 			if (id >= this.incomingMessageId) {
 				this.incomingMessagesMax	= Math.max(
@@ -176,9 +178,7 @@ export class PairwiseSession {
 
 				for (const cyphertextBytes of incomingMessages) {
 					try {
-						let plaintext: DataView	= await (await this.core).decrypt(
-							cyphertextBytes
-						);
+						let plaintext	= await (await this.core).decrypt(cyphertextBytes);
 
 						/* Part 2 of handshake for Alice */
 						if (this.localUser) {
@@ -205,9 +205,10 @@ export class PairwiseSession {
 						this.incomingMessages.delete(this.incomingMessageId++);
 						break;
 					}
-					catch (_) {
+					catch (err) {
 						if (!this.isConnected) {
 							this.abort();
+							throw err;
 						}
 					}
 					finally {
@@ -223,21 +224,25 @@ export class PairwiseSession {
 	 * @param plaintext
 	 * @param timestamp
 	 */
-	public async send (plaintext: string, timestamp: number = util.timestamp()) : Promise<void> {
+	public async send (plaintext: string, timestamp?: number) : Promise<void> {
 		if (this.isAborted) {
 			return;
 		}
 
+		if (timestamp === undefined) {
+			timestamp	= await util.timestamp();
+		}
+
+		const plaintextBytes	= this.potassium.fromString(plaintext);
+		const timestampBytes	= new Float64Array([timestamp]);
+
+		let data	= this.potassium.concatMemory(
+			true,
+			timestampBytes,
+			plaintextBytes
+		);
+
 		return util.lock(this.locks.send, async () => {
-			const plaintextBytes: Uint8Array	= this.potassium.fromString(plaintext);
-			const timestampBytes: Float64Array	= new Float64Array([timestamp]);
-
-			let data: Uint8Array	= this.potassium.concatMemory(
-				true,
-				timestampBytes,
-				plaintextBytes
-			);
-
 			/* Part 2 of handshake for Bob */
 			if (this.remoteUser) {
 				const oldData	= data;
@@ -270,12 +275,14 @@ export class PairwiseSession {
 			this.localUser	= localUser;
 			this.remoteUser	= remoteUser;
 
-			this.remoteUsername	= await this.remoteUser.getUsername();
+			const aliceRemoteSecret	= !isAlice ? this.localUser.getRemoteSecret() : undefined;
+
+			this.remoteUsername		= await this.remoteUser.getUsername();
 
 			await this.localUser.getKeyPair();
 
 			let secret: Uint8Array;
-			if (isAlice) {
+			if (aliceRemoteSecret === undefined) {
 				secret	= this.potassium.randomBytes(
 					await potassium.ephemeralKeyExchange.secretBytes
 				);
@@ -283,9 +290,7 @@ export class PairwiseSession {
 				this.transport.send(await this.handshakeSendSecret(secret));
 			}
 			else {
-				secret	= await this.handshakeOpenSecret(
-					await this.localUser.getRemoteSecret()
-				);
+				secret	= await this.handshakeOpenSecret(await aliceRemoteSecret);
 
 				this.send('');
 			}

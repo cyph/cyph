@@ -173,8 +173,8 @@ const shellScripts			= {
 
 			cd ~/brotli
 			git pull
-			make bro
-			sudo mv bin/bro /usr/bin/
+			make brotli
+			sudo mv bin/brotli /usr/bin/
 
 			emsdk update
 			emsdk install latest
@@ -201,7 +201,7 @@ const shellScripts			= {
 				map(s => s.indexOf("'") ? `"${s}"` : `'${s}'`).
 				join(' ')
 		}
-		notify 'Command complete: ${args.command}' > /dev/null
+		notify 'Command complete: ${args.command}' &> /dev/null
 	`,
 	libUpdate: {
 		command: `
@@ -210,8 +210,8 @@ const shellScripts			= {
 			/cyph/commands/getlibs.sh
 		`,
 		condition: `
-			! cmp /cyph/shared/lib/js/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1 ||
-			! cmp /cyph/shared/lib/js/node_modules/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1
+			! cmp /cyph/shared/lib/js/yarn.lock /node_modules/yarn.lock &> /dev/null ||
+			! cmp /cyph/shared/lib/js/node_modules/yarn.lock /node_modules/yarn.lock &> /dev/null
 		`
 	},
 	setup: `

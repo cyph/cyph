@@ -76,9 +76,9 @@ export class Transport {
 	) : void {
 		this.logCyphertext(potassiumUtil.toBase64(cyphertext), author);
 
-		const timestamp: number	= plaintext.getFloat64(0, true);
-		const data: Uint8Array	= new Uint8Array(plaintext.buffer, plaintext.byteOffset + 8);
-		const dataString		= potassiumUtil.toString(data);
+		const timestamp		= plaintext.getFloat64(0, true);
+		const data			= new Uint8Array(plaintext.buffer, plaintext.byteOffset + 8);
+		const dataString	= potassiumUtil.toString(data);
 
 		if (dataString) {
 			this.session.trigger(events.castle, {
@@ -99,7 +99,7 @@ export class Transport {
 		cyphertext: string|ArrayBufferView,
 		messageId?: ArrayBufferView
 	) : void {
-		const fullCyphertext: string	= potassiumUtil.toBase64(
+		const fullCyphertext	= potassiumUtil.toBase64(
 			!messageId ? cyphertext : potassiumUtil.concatMemory(
 				true,
 				messageId,

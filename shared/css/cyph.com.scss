@@ -524,6 +524,7 @@ body.mobile .carousel {
 body:not(.mobile) #testimonials-section .carousel {
 	.logo-container {
 		position: absolute;
+		z-index: 1;
 		width: 100%;
 	}
 

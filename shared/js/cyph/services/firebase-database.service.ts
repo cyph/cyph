@@ -83,6 +83,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public async removeItem (url: string) : Promise<void> {
+		await (await this.getStorageRef(url)).delete();
+	}
+
+	/** @inheritDoc */
 	public async setItem (
 		url: string,
 		value: ArrayBufferView|boolean|number|string
@@ -97,6 +102,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 			).
 			then()
 		;
+	}
+
+	/** @inheritDoc */
+	public async timestamp () : Promise<any> {
+		return firebase.database.ServerValue.TIMESTAMP;
 	}
 
 	constructor () {
