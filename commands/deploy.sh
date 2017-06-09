@@ -502,6 +502,18 @@ gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 	fi
 )
 
+# Firebase deployment
+cd firebase
+if [ "${test}" ] ; then
+	firebase use --add cyph-test
+else
+	firebase use --add cyphme
+fi
+cd functions
+npm install
+cd ..
+firebase deploy
+
 cd "${dir}"
 rm -rf .build 2> /dev/null
 
