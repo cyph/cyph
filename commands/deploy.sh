@@ -210,6 +210,7 @@ else
 	sed -i "s|apiKey: .*,|apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|authDomain: .*,|authDomain: 'cyphme.firebaseapp.com',|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|databaseURL: .*,|databaseURL: 'https://cyphme.firebaseio.com',|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|storageBucket: .*,|storageBucket: 'cyphme.appspot.com',|g" shared/js/cyph/env-deploy.ts
 
 	homeURL='https://www.cyph.com'
 
@@ -501,6 +502,19 @@ gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 		echo dispatch.yaml
 	fi
 )
+
+# Firebase deployment
+cd firebase
+firebaseProject='cyphme'
+if [ "${test}" ] ; then
+	firebaseProject='cyph-test'
+fi
+firebase use --add ${firebaseProject}
+gsutil cors set storage.cors.json gs://${firebaseProject}.appspot.com
+cd functions
+npm install
+cd ..
+firebase deploy
 
 cd "${dir}"
 rm -rf .build 2> /dev/null

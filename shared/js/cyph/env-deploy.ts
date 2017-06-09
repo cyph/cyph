@@ -91,7 +91,7 @@ export class EnvDeploy {
 		apiKey: 'AIzaSyBQmgjG4klHr0TWUrBsGAgKPGSFFM1FSeI',
 		authDomain: 'cyph-test.firebaseapp.com',
 		databaseURL: `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`,
-		storageBucket: 'cyphme.appspot.com'
+		storageBucket: 'cyph-test.appspot.com',
 	};
 
 	/** Content Security Policy defined in shared/csp. */

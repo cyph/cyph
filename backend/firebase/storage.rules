@@ -1,8 +1,0 @@
-service firebase.storage {
-	match /b/cyphme.appspot.com/o {
-		match /ephemeral/{file} {
-			allow read;
-			allow write: if !request.resource || request.resource.size < 300000000;
-		}
-	}
-}
