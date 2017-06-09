@@ -24,7 +24,6 @@
 
 import 'core-js/client/shim';
 import 'web-animations-js';
-import 'webrtc-adapter';
 import 'whatwg-fetch';
 import 'zone.js/dist/zone';
 

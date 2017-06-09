@@ -23,7 +23,6 @@
  */
 
 import 'core-js/client/shim';
-import 'webrtc-adapter';
 import 'whatwg-fetch';
 import 'zone.js/dist/zone';
 
