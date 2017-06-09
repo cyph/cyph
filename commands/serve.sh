@@ -2,13 +2,17 @@
 
 
 dir="$PWD"
-args="${@}"
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
 eval "$(./commands/getgitdata.sh)"
 
-site="${1}"
+site=''
+if [ "${1}" == 'cyph.ws' ] || [ "${1}" == 'cyph.com' ] ; then
+	site="${1}"
+	shift
+fi
+args="${@}"
 
 blockoomkiller () {
 	sudo bash -c "echo -17 > /proc/${1}/oom_adj ; renice -20 ${1}" > /dev/null
