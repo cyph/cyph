@@ -23,21 +23,26 @@
 						"chunkIndex": {
 							".validate": "newData.isNumber()"
 						},
+
 						"cyphertext": {
 							".validate": "newData.isString()"
 						},
+
 						"id": {
 							".validate": "newData.isString()"
 						},
+
 						"numChunks": {
 							".validate": "newData.isNumber()"
 						},
+
 						"sender": {
 							".validate": "
 								newData.isString() &&
 								root.child('channels').child($channel).child('users').child(newData.val()).exists()
 							"
 						},
+
 						"timestamp": {
 							".validate": "newData.val() === now"
 						},
