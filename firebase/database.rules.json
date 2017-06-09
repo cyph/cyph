@@ -8,6 +8,12 @@
 				".read": true,
 				".write": true,
 
+				"disconnects": {
+					"$user": {
+						".validate": "newData.val() === now"
+					}
+				},
+
 				"messages": {
 					"$message": {
 						".write": "!data.exists() && newData.exists()",

@@ -78,10 +78,6 @@ export class ChannelService {
 			(await this.databaseService.getDatabaseRef('channels')).child(channelName)
 		);
 
-		util.retryUntilSuccessful(async () =>
-			this.channelRef.onDisconnect().remove()
-		);
-
 		this.messagesRef	= await util.retryUntilSuccessful(async () =>
 			this.channelRef.child('messages')
 		);
@@ -95,6 +91,28 @@ export class ChannelService {
 		;
 
 		this.userId			= userRef.key || '';
+
+		const connectedRef	= await util.retryUntilSuccessful(async () =>
+			this.databaseService.getDatabaseRef('.info/connected')
+		);
+
+		const disconnectRef	= await util.retryUntilSuccessful(async () =>
+			this.channelRef.child('disconnects').child(this.userId)
+		);
+
+		connectedRef.on('value', snapshot => {
+			if (!snapshot) {
+				return;
+			}
+
+			if (snapshot.val() === true) {
+				util.retryUntilSuccessful(async () => disconnectRef.remove());
+			}
+		});
+
+		util.retryUntilSuccessful(async () =>
+			disconnectRef.onDisconnect().set(await this.databaseService.timestamp())
+		);
 
 		await util.retryUntilSuccessful(async () => userRef.set(this.userId));
 
@@ -110,7 +128,11 @@ export class ChannelService {
 
 		if (this.isAlice) {
 			util.retryUntilSuccessful(() =>
-				this.usersRef.on('child_added', (snapshot: firebase.database.DataSnapshot) => {
+				this.usersRef.on('child_added', snapshot => {
+					if (!snapshot) {
+						return;
+					}
+
 					if (!this.isConnected && snapshot.key !== this.userId) {
 						this.isConnected	= true;
 						handlers.onConnect();
@@ -123,7 +145,11 @@ export class ChannelService {
 		}
 
 		util.retryUntilSuccessful(() =>
-			this.channelRef.on('value', (snapshot: firebase.database.DataSnapshot) => {
+			this.channelRef.on('value', snapshot => {
+				if (!snapshot) {
+					return;
+				}
+
 				if (!snapshot.exists()) {
 					this.close();
 				}
@@ -131,7 +157,11 @@ export class ChannelService {
 		);
 
 		util.retryUntilSuccessful(() =>
-			this.messagesRef.on('child_added', (snapshot: firebase.database.DataSnapshot) => {
+			this.messagesRef.on('child_added', snapshot => {
+				if (!snapshot) {
+					return;
+				}
+
 				const o: {
 					chunkIndex: number;
 					cyphertext: string;
