@@ -210,6 +210,7 @@ else
 	sed -i "s|apiKey: .*,|apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|authDomain: .*,|authDomain: 'cyphme.firebaseapp.com',|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|databaseURL: .*,|databaseURL: 'https://cyphme.firebaseio.com',|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|storageBucket: .*,|storageBucket: 'cyphme.appspot.com',|g" shared/js/cyph/env-deploy.ts
 
 	homeURL='https://www.cyph.com'
 

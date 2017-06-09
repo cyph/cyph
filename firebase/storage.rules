@@ -1,38 +1,36 @@
 service firebase.storage {
-	match /b/cyphme.appspot.com/o {
-		match /ephemeral/{file} {
+	match /ephemeral/{file} {
+		allow read;
+		allow write: if !request.resource || request.resource.size < 300000000;
+	}
+
+	match /users/{user} {
+		/{all=**} {
+			allow read, write: if (user + '@cyph.me') === auth.token.email;
+		}
+
+		/certificate {
 			allow read;
-			allow write: if !request.resource || request.resource.size < 300000000;
+			allow write: if false;
 		}
 
-		match /users/{user} {
-			/{all=**} {
-				allow read, write: if (user + '@cyph.me') === auth.token.email;
-			}
-
-			/certificate {
-				allow read;
-				allow write: if false;
-			}
-
-			/contacts/{contact} {
-				/messages/{message} {}
-				/session {}
-			}
-
-			/encryptionKeyPair {}
-
-			/loginData {
-				allow read;
-			}
-
-			/publicProfile {
-				allow read;
-			}
-
-			/settings {}
-
-			/signingKeyPair {}
+		/contacts/{contact} {
+			/messages/{message} {}
+			/session {}
 		}
+
+		/encryptionKeyPair {}
+
+		/loginData {
+			allow read;
+		}
+
+		/publicProfile {
+			allow read;
+		}
+
+		/settings {}
+
+		/signingKeyPair {}
 	}
 }
