@@ -11,14 +11,7 @@
 				"messages": {
 					"$message": {
 						".write": "!data.exists() && newData.exists()",
-						".validate": "newData.hasChildren([
-							'chunkIndex',
-							'cyphertext',
-							'id',
-							'numChunks',
-							'sender',
-							'timestamp'
-						])",
+						".validate": "newData.hasChildren(['chunkIndex', 'cyphertext', 'id', 'numChunks', 'sender', 'timestamp'])",
 
 						"chunkIndex": {
 							".validate": "newData.isNumber()"
@@ -37,10 +30,7 @@
 						},
 
 						"sender": {
-							".validate": "
-								newData.isString() &&
-								root.child('channels').child($channel).child('users').child(newData.val()).exists()
-							"
+							".validate": "newData.isString() && root.child('channels').child($channel).child('users').child(newData.val()).exists()"
 						},
 
 						"timestamp": {
@@ -56,10 +46,7 @@
 				"users": {
 					"$user": {
 						".write": "!data.exists() && newData.exists()",
-						".validate": "
-							newData.isString() &&
-							(newData.val() === '' || newData.val() === $user)
-						"
+						".validate": "newData.isString() && (newData.val() === '' || newData.val() === $user)"
 					}
 				}
 			}
