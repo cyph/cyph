@@ -7,6 +7,7 @@ import {
 	RouterStateSnapshot
 } from '@angular/router';
 import * as $ from 'jquery';
+import {config} from '../cyph/config';
 import {util} from '../cyph/util';
 import {ChatRootStates} from './enums';
 
@@ -31,7 +32,12 @@ export class AppService implements CanActivate {
 	public chatRootState: ChatRootStates	= ChatRootStates.blank;
 
 	/** If true, app is locked down. */
-	public isLockedDown: boolean			= !!customBuildPassword;
+	public isLockedDown: boolean			=
+		!!customBuildPassword &&
+		!locationData.hash.match(
+			new RegExp(`[${config.readableIdCharacters.join('|')}]{${config.secretLength}}$`)
+		)
+	;
 
 	/** @ignore */
 	private loadComplete () : void {
