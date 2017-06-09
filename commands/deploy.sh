@@ -505,11 +505,12 @@ gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 
 # Firebase deployment
 cd firebase
+firebaseProject='cyphme'
 if [ "${test}" ] ; then
-	firebase use --add cyph-test
-else
-	firebase use --add cyphme
+	firebaseProject='cyph-test'
 fi
+firebase use --add ${firebaseProject}
+gsutil cors set storage.cors.json gs://${firebaseProject}.appspot.com
 cd functions
 npm install
 cd ..
