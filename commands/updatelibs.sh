@@ -83,7 +83,10 @@ read -r -d '' modules <<- EOM
 	file-loader
 	file-saver
 	firebase
+	firebase-admin
+	firebase-functions
 	firebase-server
+	firebase-tools
 	glob
 	google-closure-compiler
 	granim
