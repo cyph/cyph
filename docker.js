@@ -317,7 +317,7 @@ const editImage			= (command, condition) => Promise.resolve().then(() => {
 
 	spawn('docker', ['rm', '-f', tmpContainer]);
 
-	return dockerRun(command, tmpContainer, undefined, true).then(() =>
+	return dockerRun(command, tmpContainer, undefined, true, ['-p', '9005:9005']).then(() =>
 		spawnAsync('docker', ['commit', tmpContainer, image])
 	).then(() =>
 		spawnAsync('docker', ['rm', '-f', tmpContainer])
