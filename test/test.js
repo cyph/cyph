@@ -180,7 +180,7 @@ const newCyphTest	= o => {
 				setOnerror();
 				return document.querySelector('body.load-complete .message-box');
 			})),
-			150000
+			60000
 		)
 	).then(() =>
 		new Promise(resolve => setTimeout(resolve, 10000))
@@ -188,6 +188,8 @@ const newCyphTest	= o => {
 		driverScript(driver, function () {
 			sendMessage('balls');
 		})
+	).then(() =>
+		new Promise(resolve => setTimeout(resolve, 10000))
 	).then(() =>
 		driverWait(
 			driver,
@@ -199,10 +201,8 @@ const newCyphTest	= o => {
 					})[0]
 				;
 			})),
-			60000
+			5000
 		)
-	).then(() =>
-		new Promise(resolve => setTimeout(resolve, 30000))
 	).then(() =>
 		driverQuit(driver)
 	).catch(err => {
