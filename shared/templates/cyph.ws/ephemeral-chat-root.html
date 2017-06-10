@@ -23,6 +23,7 @@
 			*ngIf='appService.chatRootState === chatRootStates.chat'
 			[@fadeIn]='"in"'
 		>
+			<cyph-contact to='feedback'></cyph-contact>
 			<cyph-signup-form>
 				{{stringsService.signupMessage}}
 			</cyph-signup-form>
