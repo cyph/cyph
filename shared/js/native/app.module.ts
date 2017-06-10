@@ -18,7 +18,6 @@ import {AppComponent} from './app.component';
 import {AppService} from './app.service';
 import {DialogImageComponent} from './dialog-image.component';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
-import {FeedbackComponent} from './js/cyph/components/feedback.component';
 import {HelpComponent} from './js/cyph/components/help.component';
 import {CyphAppModule} from './js/cyph/modules/cyph-app.module';
 import {CyphCommonModule} from './js/cyph/modules/cyph-common.module';
@@ -42,7 +41,6 @@ import {NativeTitleService} from './native-title.service';
 		EphemeralChatRootComponent
 	],
 	entryComponents: [
-		FeedbackComponent,
 		HelpComponent
 	],
 	imports: [
