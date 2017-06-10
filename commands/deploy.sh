@@ -161,6 +161,10 @@ fi
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
 sed -i 's|isLocalEnv: boolean\s*= true|isLocalEnv: boolean\t= false|g' shared/js/cyph/env-deploy.ts
 
+if [ "${branch}" == 'staging' ] ; then
+	sed -i 's|isProd: boolean\s*= false|isProd: boolean\t= true|g' shared/js/cyph/env-deploy.ts
+fi
+
 if [ "${test}" ] ; then
 	newCyphURL="https://${version}.cyph.ws"
 

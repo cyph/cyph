@@ -20,16 +20,20 @@ import {SessionService} from './session.service';
 @Injectable()
 export class P2PWebRTCService implements IP2PWebRTCService {
 	/** Indicates whether WebRTC is supported in the current environment. */
-	private static readonly isSupported: boolean	= (() => {
-		try {
-			return new SimpleWebRTC({
-				connection: {on: () => {}}
-			}).capabilities.support;
-		}
-		catch (_) {
-			return false;
-		}
-	})();
+	private static readonly isSupported: boolean	=
+		/* Temporarily blocking Edge until issue resolved in simplewebrtc/webrtc-adapter */
+		!(env.isProd && env.isEdge) &&
+		(() => {
+			try {
+				return new SimpleWebRTC({
+					connection: {on: () => {}}
+				}).capabilities.support;
+			}
+			catch (_) {
+				return false;
+			}
+		})()
+	;
 
 	/** Constant values used by P2P. */
 	public static readonly constants	= {
