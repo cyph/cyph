@@ -303,14 +303,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 						(args: any) => {
 							/* http://www.kapejod.org/en/2014/05/28/ */
 							if (event === 'message' && args[0].type === 'offer') {
-								args[0].payload.sdp	= args[0].payload.sdp.
+								args[0].payload.sdp	= (<string> args[0].payload.sdp).
 									split('\n').
-									filter((line: string) =>
-										line.indexOf('b=AS:') < 0 &&
-										line.indexOf(
-											'urn:ietf:params:rtp-hdrext:ssrc-audio-level'
-										) < 0
-									).
+									filter(s => s.indexOf('ssrc-audio-level') < 0).
 									join('\n')
 								;
 							}
