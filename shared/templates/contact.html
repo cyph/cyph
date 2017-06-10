@@ -1,87 +1,93 @@
-<form
-	ngNativeValidate
-	fxLayout='column'
-	fxLayoutGap='16px'
-	(submit)='send()'
-	*ngIf='!sent'
->
-	<div fxLayout='row' *ngIf='to != "feedback"' >
-		<md-select
-			cyphTranslate
-			fxFlex
-			[(ngModel)]='to'
-			name='to'
-			placeholder='Cyph Team to Contact'
-		>
-			<md-option
-				*ngFor='let address of configService.contactEmailAddresses'
-				[value]='address'
-			>
-				{{address}}
-			</md-option>
-		</md-select>
-	</div>
-	<div fxLayout='row' *ngIf='to != "feedback"'>
-		<md-input-container fxFlex>
-			<input
-				mdInput
-				cyphTranslate
-				[(ngModel)]='subject'
-				name='subject'
-				placeholder='Subject'
-			/>
-		</md-input-container>
-	</div>
+<div fxLayout='column'>
+	<span *ngIf='to === "feedback"'> Submit Feedback </span>
 	<div fxLayout='row'>
-		<md-input-container fxFlex>
-			<textarea
-				mdInput
-				cyphTranslate
-				[(ngModel)]='message'
-				name='message'
-				placeholder='Message'
-				required
-			></textarea>
-		</md-input-container>
-	</div>
-		<div fxLayout='row'>
-		<md-checkbox
-			[(ngModel)]='responseRequested'
-			name='response'
+		<div fxFlex></div>
+		<form
+			ngNativeValidate
+			fxFlex='1 1 52%'
+			fxLayout='column'
+			fxLayoutGap='16px'
+			(submit)='send()'
+			*ngIf='!sent'
 		>
-		Response Requested {{responseRequested}}
-		</md-checkbox>
-	</div>
-	<div fxLayout='row' *ngIf='responseRequested' >
-		<div fxFlex fxLayout.lt-md='column' fxLayoutGap='16px'>
-			<md-input-container fxFlex>
-				<input
-					mdInput
+			<div fxLayout='column' *ngIf='to != "feedback"' >
+				<md-select
 					cyphTranslate
-					[(ngModel)]='fromName'
-					name='name'
-					placeholder='Name'
-				/>
-			</md-input-container>
-			<md-input-container fxFlex>
-				<input
-					mdInput
-					cyphTranslate
-					[(ngModel)]='fromEmail'
-					name='email'
-					type='email'
-					placeholder='Email'
-					required
-				/>
-			</md-input-container>
+					fxFlex
+					[(ngModel)]='to'
+					name='to'
+					placeholder='Cyph Team to Contact'
+				>
+					<md-option
+						*ngFor='let address of configService.contactEmailAddresses'
+						[value]='address'
+					>
+						{{address}}
+					</md-option>
+				</md-select>
+			</div>
+			<div fxLayout='column' *ngIf='to != "feedback"'>
+				<md-input-container fxFlex>
+					<input
+						mdInput
+						cyphTranslate
+						[(ngModel)]='subject'
+						name='subject'
+						placeholder='Subject'
+					/>
+				</md-input-container>
+			</div>
+			<div fxLayout='column' *ngIf='responseRequested' >
+				<div fxFlex fxLayout.lt-md='column' fxLayoutGap='16px'>
+					<md-input-container fxFlex>
+						<input
+							mdInput
+							cyphTranslate
+							[(ngModel)]='fromName'
+							name='name'
+							placeholder='Name'
+						/>
+					</md-input-container>
+					<md-input-container fxFlex>
+						<input
+							mdInput
+							cyphTranslate
+							[(ngModel)]='fromEmail'
+							name='email'
+							type='email'
+							placeholder='Email'
+							required
+						/>
+					</md-input-container>
+				</div>
+			</div>			
+			<div fxLayout='column'>
+				<md-input-container fxFlex>
+					<textarea
+						mdInput
+						cyphTranslate
+						[(ngModel)]='message'
+						name='message'
+						placeholder='Message'
+						required
+					></textarea>
+				</md-input-container>
+				<div fxLayout='row'>
+					<md-checkbox
+						[(ngModel)]='responseRequested'
+						name='response'
+					>
+					Response Requested
+					</md-checkbox>
+				</div>
+				<button md-button type='submit' fxLayoutGap='16px' fxLayoutAlign='center center' cyphTranslate>
+					Send
+				</button>
+			</div>
+		</form>
+		<div *ngIf='sent' cyphTranslate>
+			Your email has been sent! If you requested a response, someone on the team will get back to you shortly.
 		</div>
+		<div fxFlex></div>
 	</div>
-	<div fxLayout='row' fxLayoutAlign='center center'>
-		<button md-button type='submit' cyphTranslate>
-			Send
-		</button>
-	</div>
-</form>
-<div *ngIf='sent' cyphTranslate>
-	Your email has been sent! If you requested a response, someone on the team will get back to you shortly.
 </div>
