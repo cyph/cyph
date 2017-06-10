@@ -492,7 +492,7 @@ fi
 
 if [ "${test}" ] ; then
 	rm -rf ${prodOnlyProjects}
-elif [ ! "${site}" ] || [ "${site}" == test ] ; then
+elif [ ! "${site}" ] || [ "${site}" == 'test' ] ; then
 	gcloud app services delete --quiet --project cyphme test
 fi
 
@@ -508,7 +508,10 @@ gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 )
 
 # Firebase deployment
-if [ "${branch}" == 'staging' ] && [ ! "${simple}" ] ; then
+if \
+	( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && \
+	( [ "${branch}" == 'staging' ] && [ ! "${simple}" ] ) \
+; then
 	cd firebase
 	firebaseProject='cyphme'
 	if [ "${test}" ] ; then
