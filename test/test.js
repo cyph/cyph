@@ -1,8 +1,8 @@
 const Cyph		= require('@cyph/sdk');
 const datastore	= require('@google-cloud/datastore')();
-const crypto	= require('crypto');
 const http		= require('http');
 const webdriver	= require('selenium-webdriver');
+const shuffle	= require('shuffle-array');
 
 
 const browsers	= [
@@ -221,9 +221,7 @@ const runTests	= (backendURL, homeURL, newCyphURL, id) => Promise.resolve().then
 
 	testLock	= true;
 
-	const testCases	= browsers.sort(() =>
-		crypto.randomBytes(1)[0] > 127
-	).map(browser => {
+	const testCases	= shuffle(browsers).map(browser => {
 		const o	= {
 			'browserstack.user': process.env.BS_USER,
 			'browserstack.key': process.env.BS_KEY,
