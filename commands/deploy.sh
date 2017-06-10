@@ -504,17 +504,21 @@ gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 )
 
 # Firebase deployment
-cd firebase
-firebaseProject='cyphme'
-if [ "${test}" ] ; then
-	firebaseProject='cyph-test'
+if [ "${branch}" == 'staging' ] && [ ! "${simple}" ] ; then
+	cd firebase
+	firebaseProject='cyphme'
+	if [ "${test}" ] ; then
+		firebaseProject='cyph-test'
+	fi
+	firebase use --add ${firebaseProject}
+	gsutil cors set storage.cors.json gs://${firebaseProject}.appspot.com
+	cd functions
+	npm install
+	cd ..
+	firebase deploy
+	rm -rf functions/node_modules functions/package-lock.json
+	cd ..
 fi
-firebase use --add ${firebaseProject}
-gsutil cors set storage.cors.json gs://${firebaseProject}.appspot.com
-cd functions
-npm install
-cd ..
-firebase deploy
 
 cd "${dir}"
 rm -rf .build 2> /dev/null
