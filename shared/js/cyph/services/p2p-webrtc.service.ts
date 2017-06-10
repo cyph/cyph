@@ -20,16 +20,20 @@ import {SessionService} from './session.service';
 @Injectable()
 export class P2PWebRTCService implements IP2PWebRTCService {
 	/** Indicates whether WebRTC is supported in the current environment. */
-	private static readonly isSupported: boolean	= (() => {
-		try {
-			return new SimpleWebRTC({
-				connection: {on: () => {}}
-			}).capabilities.support;
-		}
-		catch (_) {
-			return false;
-		}
-	})();
+	private static readonly isSupported: boolean	=
+		/* Temporarily blocking Edge until issue resolved in simplewebrtc/webrtc-adapter */
+		!(env.isProd && env.isEdge) &&
+		(() => {
+			try {
+				return new SimpleWebRTC({
+					connection: {on: () => {}}
+				}).capabilities.support;
+			}
+			catch (_) {
+				return false;
+			}
+		})()
+	;
 
 	/** Constant values used by P2P. */
 	public static readonly constants	= {
@@ -303,14 +307,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 						(args: any) => {
 							/* http://www.kapejod.org/en/2014/05/28/ */
 							if (event === 'message' && args[0].type === 'offer') {
-								args[0].payload.sdp	= args[0].payload.sdp.
+								args[0].payload.sdp	= (<string> args[0].payload.sdp).
 									split('\n').
-									filter((line: string) =>
-										line.indexOf('b=AS:') < 0 &&
-										line.indexOf(
-											'urn:ietf:params:rtp-hdrext:ssrc-audio-level'
-										) < 0
-									).
+									filter(s => s.indexOf('ssrc-audio-level') < 0).
 									join('\n')
 								;
 							}

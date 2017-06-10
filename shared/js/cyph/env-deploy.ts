@@ -11,6 +11,9 @@ export class EnvDeploy {
 	/** Indicates whether this is local dev environment. */
 	public readonly isLocalEnv: boolean			= true;
 
+	/** Indicates whether this is the production environment. */
+	public readonly isProd: boolean 			= false;
+
 	/** Indicates whether this is our Tor site. */
 	public readonly isOnion: boolean			=
 		locationData.host.split('.').slice(-1)[0] === 'onion'
