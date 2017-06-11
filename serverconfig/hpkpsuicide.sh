@@ -16,6 +16,10 @@ if [ ! -f /dhparams.bak ] ; then
 fi
 
 openssl genrsa -out backup.pem 4096
+
+
+# DigiCert
+
 openssl req -new -newkey rsa:4096 -nodes -out csr.pem -keyout key.pem -subj 'CSR_SUBJECT'
 
 curl -s -u 'API_KEY' -X POST \
@@ -49,6 +53,27 @@ node -e "
 
 	console.log(Object.keys(o.certs).map(k => o.certs[k]).join(''));
 " > cert.pem
+
+
+# LetsEncrypt
+#
+# if [ ! -f /etc/nginx/.certbot ] ; then
+# 	wget https://dl.eff.org/certbot-auto -O /etc/nginx/.certbot
+# 	chmod +x /etc/nginx/.certbot
+# fi
+#
+# /etc/nginx/.certbot certonly \
+# 	--agree-tos \
+# 	-d "$(cat /etc/nginx/sans.json)" \
+# 	--expand \
+# 	-n \
+# 	--standalone \
+# 	--register-unsafely-without-email \
+# 	--rsa-key-size 4096
+#
+# mv /etc/letsencrypt/archive/*/fullchain*.pem cert.pem
+# mv /etc/letsencrypt/archive/*/privkey*.pem key.pem
+# rm -rf /etc/letsencrypt/archive /etc/letsencrypt/live
 
 
 certHash="$(openssl x509 -in cert.pem -pubkey -noout | openssl rsa -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)"
