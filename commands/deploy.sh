@@ -359,10 +359,7 @@ if [ "${websign}" ] ; then
 
 	customBuilds=''
 
-	if \
-		[ "${username}" == 'cyph' ] && \
-		[ "${branch}" == 'staging' -o "${branch}" == 'beta' -o "${branch}" == 'master' ] \
-	; then
+	if [ "${username}" == 'cyph' ] && [ "${branch}" == 'staging' ] ; then
 		cd pkg/cyph.ws-subresources
 		mv ../../custom-builds ./
 		rm -rf custom-builds/.git custom-builds/reference.json
