@@ -24,8 +24,7 @@ if [ ! "${platform}" ] ; then
 	pass
 fi
 
-sudo umount node_modules
-rm -rf node_modules
+unbindmount node_modules
 cp -a ../shared/lib/native/node_modules ./
 
 compiledApp=''

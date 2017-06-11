@@ -102,11 +102,8 @@ node -e "
 "
 
 for arr in \
-	'node_modules /node_modules'
+	'/node_modules node_modules'
 do
 	read -ra arr <<< "${arr}"
-
-	rm -rf "${arr[0]}" 2> /dev/null
-	mkdir "${arr[0]}" 2> /dev/null
-	sudo mount --bind "${arr[1]}" "${arr[0]}"
+	bindmount "${arr[0]}" "${arr[1]}"
 done
