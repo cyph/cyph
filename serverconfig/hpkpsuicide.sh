@@ -36,9 +36,15 @@ sleep 1m
 
 node -e "
 	var o = JSON.parse(
-		'$(curl -s -u "API_KEY" "https://api.digicert.com/order/ORDER_ID/certificate")'.
-			replace(/\\r/g, '').
-			replace(/\\n/g, '\\\\n')
+		child_process.spawnSync('curl', [
+			'-s',
+			'-u',
+			'API_KEY',
+			'https://api.digicert.com/order/ORDER_ID/certificate'
+		]).
+			stdout.
+			toString().
+			replace(/\\\\r/g, '')
 	);
 
 	console.log(Object.keys(o.certs).map(k => o.certs[k]).join(''));
