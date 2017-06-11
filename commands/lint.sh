@@ -61,13 +61,13 @@ fi
 # tslint and htmllint
 
 cd js
-ln -s /node_modules node_modules
+bindmount /node_modules node_modules
 mv tslint.json tslint.json.old
 cat tslint.json.old | grep -v tslint-microsoft-contrib > tslint.json
 checkTslintAllOutput="$(check-tslint-all 2>&1)"
 checkfail "${checkTslintAllOutput}"
 mv tslint.json.old tslint.json
-rm node_modules
+unbindmount node_modules
 cd ..
 
 tsc --skipLibCheck js/tslint-rules/*.ts || exit 1

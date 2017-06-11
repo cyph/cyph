@@ -1,5 +1,21 @@
 # Sourced by bashrc within Docker
 
+circleCI=''
+if [ -f ~/.circleci ] ; then
+	circleCI=true
+fi
+
+bindmount () {
+	rm -rf "${2}" 2> /dev/null
+
+	if [ "${circleCI}" ] ; then
+		cp -a "${1}" "${2}"
+	else
+		mkdir "${2}" 2> /dev/null
+		sudo mount --bind "${1}" "${2}"
+	fi
+}
+
 checkfail () {
 	if (( $? )) ; then
 		fail "${*}"
@@ -27,6 +43,14 @@ notify () {
 pass () {
 	log 'PASS'
 	exit 0
+}
+
+unbindmount () {
+	if [ ! "${circleCI}" ] ; then
+		sudo umount "${1}"
+	fi
+
+	rm -rf "${1}"
 }
 
 export -f checkfail
