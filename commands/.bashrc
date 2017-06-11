@@ -1,10 +1,5 @@
 # Sourced by bashrc within Docker
 
-circleCI=''
-if [ -f ~/.circleci ] ; then
-	circleCI=true
-fi
-
 bindmount () {
 	rm -rf "${2}" 2> /dev/null
 
