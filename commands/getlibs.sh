@@ -225,7 +225,7 @@ mv .js.tmp js
 cp js/yarn.lock js/node_modules/
 
 cd
-rm -rf ${dir}/shared/lib ${dir}/shared/node_modules
+rm -rf ${dir}/shared/lib ${dir}/shared/node_modules 2> /dev/null
 cp -aL lib ${dir}/shared/
 mv ${dir}/shared/lib/js/node_modules ${dir}/shared/
 sudo mv lib/js/node_modules /
