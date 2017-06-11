@@ -242,7 +242,9 @@ cat > cdnupdate.sh <<- EOM
 		git reflog -1 --pretty=format:%H
 	}
 
-	while [ ! -d cdn ] ; do
+	while [ ! -d cdn/.git ] ; do
+		rm -rf cdn 2> /dev/null
+		mkdir cdn
 		git clone https://${githubToken}:x-oauth-basic@github.com/cyph/cdn.git || sleep 5
 	done
 

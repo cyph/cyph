@@ -161,6 +161,10 @@ fi
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
 sed -i 's|isLocalEnv: boolean\s*= true|isLocalEnv: boolean\t= false|g' shared/js/cyph/env-deploy.ts
 
+if [ "${branch}" == 'staging' ] ; then
+	sed -i 's|isProd: boolean\s*= false|isProd: boolean\t= true|g' shared/js/cyph/env-deploy.ts
+fi
+
 if [ "${test}" ] ; then
 	newCyphURL="https://${version}.cyph.ws"
 
@@ -210,6 +214,7 @@ else
 	sed -i "s|apiKey: .*,|apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|authDomain: .*,|authDomain: 'cyphme.firebaseapp.com',|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|databaseURL: .*,|databaseURL: 'https://cyphme.firebaseio.com',|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|storageBucket: .*,|storageBucket: 'cyphme.appspot.com',|g" shared/js/cyph/env-deploy.ts
 
 	homeURL='https://www.cyph.com'
 
@@ -354,10 +359,7 @@ if [ "${websign}" ] ; then
 
 	customBuilds=''
 
-	if \
-		[ "${username}" == 'cyph' ] && \
-		[ "${branch}" == 'staging' -o "${branch}" == 'beta' -o "${branch}" == 'master' ] \
-	; then
+	if [ "${username}" == 'cyph' ] && [ "${branch}" == 'staging' ] ; then
 		cd pkg/cyph.ws-subresources
 		mv ../../custom-builds ./
 		rm -rf custom-builds/.git custom-builds/reference.json
@@ -472,6 +474,32 @@ for suffix in ${shortlinkProjects} ; do
 done
 
 
+# Firebase deployment
+if \
+	( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && \
+	( [ "${branch}" == 'staging' ] && [ ! "${simple}" ] ) \
+; then
+	cd firebase
+	firebaseProject='cyphme'
+	if [ "${test}" ] ; then
+		firebaseProject='cyph-test'
+	fi
+	firebase use --add ${firebaseProject}
+	gsutil cors set storage.cors.json gs://${firebaseProject}.appspot.com
+	cd functions
+	npm install
+	cd ..
+	firebase deploy
+	rm -rf functions/node_modules functions/package-lock.json
+	cd ..
+fi
+
+if [ "${test}" ] ; then
+	rm -rf ${prodOnlyProjects}
+elif [ ! "${site}" ] || [ "${site}" == 'test' ] ; then
+	gcloud app services delete --quiet --project cyphme test
+fi
+
 if [ "${waitingForWpstatic}" ] ; then
 	while true ; do
 		cat .wpstatic.output
@@ -482,13 +510,6 @@ if [ "${waitingForWpstatic}" ] ; then
 		sleep 1
 	done
 	rm .wpstatic.done .wpstatic.output
-fi
-
-
-if [ "${test}" ] ; then
-	rm -rf ${prodOnlyProjects}
-elif [ ! "${site}" ] || [ "${site}" == test ] ; then
-	gcloud app services delete --quiet --project cyphme test
 fi
 
 gcloud app deploy --quiet --no-promote --project cyphme --version $version $(

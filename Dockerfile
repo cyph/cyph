@@ -120,8 +120,7 @@ RUN rm -rf ~/.gnupg
 
 #CIRCLECI:RUN sudo apt-get -y --allow-downgrades update
 #CIRCLECI:RUN sudo apt-get -y --allow-downgrades upgrade
-#CIRCLECI:RUN mkdir -p ~/getlibs/commands
-#CIRCLECI:RUN mkdir -p ~/getlibs/native
+#CIRCLECI:RUN mkdir -p ~/getlibs/commands ~/getlibs/native ~/getlibs/shared/lib/js
 #CIRCLECI:RUN echo 'GETLIBS_BASE64' | base64 --decode > ~/getlibs/commands/getlibs.sh
 #CIRCLECI:RUN echo 'LIBCLONE_BASE64' | base64 --decode > ~/getlibs/commands/libclone.sh
 #CIRCLECI:RUN echo 'PLUGINS_BASE64' | base64 --decode > ~/getlibs/native/plugins.list
@@ -142,7 +141,7 @@ VOLUME /home/gibson/.ssh
 
 WORKDIR /cyph/commands
 
-EXPOSE 31337 42000 42001 42002 44000
+EXPOSE 9005 31337 42000 42001 42002 44000
 
 
 CMD /bin/bash

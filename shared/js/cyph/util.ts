@@ -448,9 +448,9 @@ export class Util {
 		elem.dispatchEvent(e);
 	}
 
-	/** Creates a base64 string containing the current timestamp and 32 random bytes. */
+	/** Creates a hex string containing the current timestamp and 32 random bytes. */
 	public uuid () : string {
-		return potassiumUtil.toBase64(
+		return potassiumUtil.toHex(
 			potassiumUtil.concatMemory(
 				true,
 				new Float64Array([

@@ -11,6 +11,9 @@ export class EnvDeploy {
 	/** Indicates whether this is local dev environment. */
 	public readonly isLocalEnv: boolean			= true;
 
+	/** Indicates whether this is the production environment. */
+	public readonly isProd: boolean 			= false;
+
 	/** Indicates whether this is our Tor site. */
 	public readonly isOnion: boolean			=
 		locationData.host.split('.').slice(-1)[0] === 'onion'
@@ -91,7 +94,7 @@ export class EnvDeploy {
 		apiKey: 'AIzaSyBQmgjG4klHr0TWUrBsGAgKPGSFFM1FSeI',
 		authDomain: 'cyph-test.firebaseapp.com',
 		databaseURL: `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`,
-		storageBucket: 'cyphme.appspot.com'
+		storageBucket: 'cyph-test.appspot.com',
 	};
 
 	/** Content Security Policy defined in shared/csp. */

@@ -7,7 +7,12 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 eval "$(./commands/getgitdata.sh)"
 
-site="${1}"
+site=''
+if [ "${1}" == 'cyph.ws' ] || [ "${1}" == 'cyph.com' ] ; then
+	site="${1}"
+	shift
+fi
+args="${@}"
 
 blockoomkiller () {
 	sudo bash -c "echo -17 > /proc/${1}/oom_adj ; renice -20 ${1}" > /dev/null
@@ -17,7 +22,7 @@ ngserve () {
 	cd "${1}"
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
-	ng serve --host '0.0.0.0' --live-reload false --no-aot --port "${2}" --sourcemaps
+	ng serve --host '0.0.0.0' --live-reload false --no-aot --port "${2}" --sourcemaps ${args}
 }
 
 
