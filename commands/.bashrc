@@ -53,11 +53,13 @@ unbindmount () {
 	rm -rf "${1}"
 }
 
+export -f bindmount
 export -f checkfail
 export -f fail
 export -f log
 export -f notify
 export -f pass
+export -f unbindmount
 
 
 if [ -f ~/.cyph/notify.key ] ; then
