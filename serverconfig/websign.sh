@@ -49,7 +49,9 @@ EndOfMessage
 cat > /certupdate.sh << EndOfMessage
 #!/bin/bash
 
-while [ ! -d /cdn ] ; do
+while [ ! -d /cdn/.git ] ; do
+	rm -rf /cdn 2> /dev/null
+	mkdir /cdn
 	git clone https://${githubToken}:x-oauth-basic@github.com/cyph/cdn.git /cdn || sleep 5
 done
 
