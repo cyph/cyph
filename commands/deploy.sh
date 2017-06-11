@@ -474,36 +474,6 @@ for suffix in ${shortlinkProjects} ; do
 done
 
 
-if [ "${waitingForWpstatic}" ] ; then
-	while true ; do
-		cat .wpstatic.output
-		echo -n > .wpstatic.output
-		if [ -f .wpstatic.done ] ; then
-			break
-		fi
-		sleep 1
-	done
-	rm .wpstatic.done .wpstatic.output
-fi
-
-
-if [ "${test}" ] ; then
-	rm -rf ${prodOnlyProjects}
-elif [ ! "${site}" ] || [ "${site}" == 'test' ] ; then
-	gcloud app services delete --quiet --project cyphme test
-fi
-
-gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
-	if [ "${site}" ] ; then
-		ls $site/*.yaml
-	else
-		ls */*.yaml
-	fi
-	if [ ! "${test}" ] ; then
-		echo dispatch.yaml
-	fi
-)
-
 # Firebase deployment
 if \
 	( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && \
@@ -523,6 +493,35 @@ if \
 	rm -rf functions/node_modules functions/package-lock.json
 	cd ..
 fi
+
+if [ "${test}" ] ; then
+	rm -rf ${prodOnlyProjects}
+elif [ ! "${site}" ] || [ "${site}" == 'test' ] ; then
+	gcloud app services delete --quiet --project cyphme test
+fi
+
+if [ "${waitingForWpstatic}" ] ; then
+	while true ; do
+		cat .wpstatic.output
+		echo -n > .wpstatic.output
+		if [ -f .wpstatic.done ] ; then
+			break
+		fi
+		sleep 1
+	done
+	rm .wpstatic.done .wpstatic.output
+fi
+
+gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
+	if [ "${site}" ] ; then
+		ls $site/*.yaml
+	else
+		ls */*.yaml
+	fi
+	if [ ! "${test}" ] ; then
+		echo dispatch.yaml
+	fi
+)
 
 cd "${dir}"
 rm -rf .build 2> /dev/null
