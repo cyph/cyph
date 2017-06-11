@@ -7,6 +7,6 @@ jobs:
     steps:
       - checkout
       - run: |
-          source ~/.bashrc
           touch ~/.circleci
+          source ~/.bashrc
           /cyph/commands/build.sh
