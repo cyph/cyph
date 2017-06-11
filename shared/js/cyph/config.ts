@@ -39,7 +39,7 @@ export class Config {
 		},
 		{
 			analEvent: 'native-crypto',
-			character: '%',
+			character: '*',
 			get: (sessionService: ISessionService) : string =>
 				sessionService.apiFlags.nativeCrypto ? this.apiFlags[3].character : ''
 			,
