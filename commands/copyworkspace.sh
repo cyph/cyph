@@ -17,3 +17,8 @@ for d in cyph.com cyph.ws ; do
 	cd "${dir}/${d}"
 	../commands/ngprojectinit.sh
 done
+
+cd "${dir}/shared/js/native/js"
+for d in $(ls | grep -v standalone) ; do rm ${d} ; cp -a ../../${d} ${d} ; done
+cd standalone
+for f in * ; do rm ${f} ; cp ../../../standalone/${f} ./ ; done
