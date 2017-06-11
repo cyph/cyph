@@ -230,6 +230,7 @@ const shellScripts			= {
 		gcloud components update --quiet
 		notify 'Make complete'
 		gcloud init
+		echo
 		firebase login
 	`
 };
