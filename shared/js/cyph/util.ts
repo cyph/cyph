@@ -99,14 +99,16 @@ export class Util {
 		to: string = 'hello',
 		subject: string = 'New Cyph Email',
 		message: string = '',
-		fromEmail: string = 'test@mandrillapp.com',
+		fromEmail?: string,
 		fromName: string = 'Mandrill'
 	) : Promise<void> {
 		await this.request({
 			data: {
 				key: 'HNz4JExN1MtpKz8uP2RD1Q',
 				message: {
-					from_email: fromEmail.replace('@cyph.com', '@mandrillapp.com'),
+					from_email: (fromEmail || 'test@mandrillapp.com').
+						replace('@cyph.com', '@mandrillapp.com')
+					,
 					from_name: fromName,
 					subject,
 					text: (
