@@ -22,37 +22,50 @@ openssl genrsa -out backup.pem 4096
 
 openssl req -new -newkey rsa:4096 -nodes -out csr.pem -keyout key.pem -subj 'CSR_SUBJECT'
 
-curl -s -u 'API_KEY' -X POST \
-	-H 'X-HTTP-Method-Override: REISSUE' \
-	-H 'Content-Type: application/vnd.digicert.rest-v1+json' \
-	--data "$(node -e 'console.log(JSON.stringify({
-		csr: fs.readFileSync("csr.pem").toString().trim(),
-		sans: (() => {
-			try {
-				return fs.readFileSync("/etc/nginx/sans.json").toString().trim();
-			}
-			catch (_) {}
-		})()
-	}))')" \
-	'https://api.digicert.com/order/ORDER_ID'
+curl -s -X POST \
+	-H 'X-DC-DEVKEY: API_KEY' \
+	-H 'Content-Type: application/json' \
+	--data "$(node -e "console.log(JSON.stringify({
+		certificate: {
+			common_name: '$(echo 'CSR_SUBJECT' | perl -pe 's/.*CN=([^\/]+).*/\1/')',
+			csr: fs.readFileSync('csr.pem').toString().trim(),
+			dns_names: (() => {
+				try {
+					return fs.readFileSync('/etc/nginx/sans.json').toString().trim().split(',');
+				}
+				catch (_) {}
+			})(),
+			server_platform: {
+				id: 45
+			},
+			signature_hash: 'sha512'
+		}
+	}))")" \
+	'https://www.digicert.com/services/v2/order/certificate/ORDER_ID/reissue'
 
 sleep 1m
 
-node -e "
-	var o = JSON.parse(
+certificateID="$(node -e "console.log(
+	JSON.parse(
 		child_process.spawnSync('curl', [
 			'-s',
-			'-u',
-			'API_KEY',
-			'https://api.digicert.com/order/ORDER_ID/certificate'
+			'-H',
+			'X-DC-DEVKEY: API_KEY',
+			'https://www.digicert.com/services/v2/order/certificate/ORDER_ID'
 		]).
 			stdout.
 			toString().
 			replace(/\\\\r/g, '')
-	);
+	).
+		certificate.
+		id
+)")"
 
-	console.log(Object.keys(o.certs).map(k => o.certs[k]).join(''));
-" > cert.pem
+curl -s \
+	-H 'X-DC-DEVKEY: API_KEY' \
+	"https://www.digicert.com/services/v2/certificate/${certificateID}/download/format/pem_all" \
+> \
+	cert.pem
 
 
 # LetsEncrypt
