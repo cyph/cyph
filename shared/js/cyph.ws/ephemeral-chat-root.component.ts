@@ -313,6 +313,9 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		/** @see AppService */
 		public readonly appService: AppService,
 
+		/** @see CyphertextService */
+		public readonly cyphertextService: CyphertextService,
+
 		/** @see EnvService */
 		public readonly envService: EnvService,
 
@@ -320,9 +323,6 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		public readonly p2pService: P2PService,
 
 		/** @see StringsService */
-		public readonly stringsService: StringsService,
-
-		/** @see CyphertextService */
-		public readonly cyphertextService: CyphertextService
+		public readonly stringsService: StringsService
 	) {}
 }
