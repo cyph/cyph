@@ -80,13 +80,20 @@
 					Response Requested
 					</md-checkbox>
 				</div>
-				<button md-button type='submit' fxLayoutGap='16px' fxLayoutAlign='center center' cyphTranslate>
+				<button
+					md-button type='submit'
+					fxLayoutGap='16px'
+					fxLayoutAlign='center center'
+					cyphTranslate
+				>
 					Send
 				</button>
 			</div>
 		</form>
 		<div *ngIf='sent' cyphTranslate>
-			Your email has been sent! If you requested a response, someone on the team will get back to you shortly.
+			Your email has been sent!
+			If you requested a response, 
+			someone on the team will get back to you shortly.
 		</div>
 		<div fxFlex></div>
 	</div>

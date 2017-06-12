@@ -12,8 +12,6 @@ import {util} from '../util';
 	templateUrl: '../../../templates/contact.html'
 })
 export class ContactComponent implements OnInit {
-	/** Response requested? */
-	public responseRequested: boolean	= false;
 	/** Sender email address. */
 	@Input() public fromEmail: string			= '';
 
@@ -22,6 +20,9 @@ export class ContactComponent implements OnInit {
 
 	/** Email body. */
 	@Input() public message: string				= '';
+
+	/** Response requested? */
+	public responseRequested: boolean	= false;
 
 	/** Indicates whether email has been sent. */
 	public sent: boolean						= false;
@@ -41,8 +42,8 @@ export class ContactComponent implements OnInit {
 
 	/** Sends email. */
 	public send () : void {
-		if (!this.fromEmail){
-			this.fromEmail = 'no-reply@cyph.com';
+		if (!this.fromEmail) {
+			this.fromEmail	= 'no-reply@cyph.com';
 		}
 		util.email(
 			this.to,

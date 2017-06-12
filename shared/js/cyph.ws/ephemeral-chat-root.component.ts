@@ -80,13 +80,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 	/** @see ChatRootStates */
 	public readonly chatRootStates: typeof ChatRootStates	= ChatRootStates;
 
-	public rand: boolean =	(Math.round(Math.random()) === 1);
-
-	/** @inheritDoc */
-	public ngOnInit () : void {
-		this.rand =	(Math.round(Math.random()) === 1);
-		console.log(this.rand);
-	}
+	public rand: boolean	= (util.random(2) === 1);
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
