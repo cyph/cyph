@@ -1,5 +1,5 @@
 <div fxLayout='column'>
-	<span *ngIf='to === "feedback"'> Submit Feedback </span>
+	<span cyphTranslate *ngIf='to === "feedback"'>Submit Feedback</span>
 	<div fxLayout='row'>
 		<div fxFlex></div>
 		<form
@@ -10,7 +10,7 @@
 			(submit)='send()'
 			*ngIf='!sent'
 		>
-			<div fxLayout='column' *ngIf='to != "feedback"' >
+			<div fxLayout='column' *ngIf='to !== "feedback"'>
 				<md-select
 					cyphTranslate
 					fxFlex
@@ -26,7 +26,7 @@
 					</md-option>
 				</md-select>
 			</div>
-			<div fxLayout='column' *ngIf='to != "feedback"'>
+			<div fxLayout='column' *ngIf='to !== "feedback"'>
 				<md-input-container fxFlex>
 					<input
 						mdInput
@@ -37,7 +37,7 @@
 					/>
 				</md-input-container>
 			</div>
-			<div fxLayout='column' *ngIf='responseRequested' >
+			<div fxLayout='column' *ngIf='responseRequested'>
 				<div fxFlex fxLayout.lt-md='column' fxLayoutGap='16px'>
 					<md-input-container fxFlex>
 						<input
@@ -81,7 +81,8 @@
 					</md-checkbox>
 				</div>
 				<button
-					md-button type='submit'
+					md-button
+					type='submit'
 					fxLayoutGap='16px'
 					fxLayoutAlign='center center'
 					cyphTranslate

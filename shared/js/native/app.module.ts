@@ -31,9 +31,7 @@ import {NativeLocalStorageService} from './native-local-storage.service';
 		AppComponent,
 		EphemeralChatRootComponent
 	],
-	entryComponents: [
-		HelpComponent
-	],
+	entryComponents: [HelpComponent],
 	imports: [
 		RouterModule.forRoot(appRoutes, {useHash: true}),
 		CyphAppModule,
