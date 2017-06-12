@@ -40,9 +40,7 @@ import {NativeTitleService} from './native-title.service';
 		DialogImageComponent,
 		EphemeralChatRootComponent
 	],
-	entryComponents: [
-		HelpComponent
-	],
+	entryComponents: [HelpComponent],
 	imports: [
 		NativeScriptRouterModule.forRoot(appRoutes),
 		CyphAppModule,

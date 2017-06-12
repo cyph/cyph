@@ -13,25 +13,25 @@ import {util} from '../util';
 })
 export class ContactComponent implements OnInit {
 	/** Sender email address. */
-	@Input() public fromEmail: string			= '';
+	@Input() public fromEmail: string	= '';
 
 	/** Sender name. */
-	@Input() public fromName: string			= '';
+	@Input() public fromName: string	= '';
 
 	/** Email body. */
-	@Input() public message: string				= '';
+	@Input() public message: string		= '';
 
-	/** Response requested? */
+	/** Indicates whether response is requested. */
 	public responseRequested: boolean	= false;
 
 	/** Indicates whether email has been sent. */
-	public sent: boolean						= false;
+	public sent: boolean				= false;
 
 	/** Email subject. */
-	@Input() public subject: string				= '';
+	@Input() public subject: string		= '';
 
 	/** Recipient @cyph.com email address ("@cyph.com" may be omitted). */
-	@Input() public to: string					= '';
+	@Input() public to: string			= '';
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -42,9 +42,6 @@ export class ContactComponent implements OnInit {
 
 	/** Sends email. */
 	public send () : void {
-		if (!this.fromEmail) {
-			this.fromEmail	= 'no-reply@cyph.com';
-		}
 		util.email(
 			this.to,
 			this.subject,

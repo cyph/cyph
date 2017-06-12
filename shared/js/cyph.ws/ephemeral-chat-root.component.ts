@@ -24,6 +24,7 @@ import {ScrollService} from '../cyph/services/scroll.service';
 import {SessionCapabilitiesService} from '../cyph/services/session-capabilities.service';
 import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
+import {SplitTestingService} from '../cyph/services/split-testing.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {UrlSessionInitService} from '../cyph/services/url-session-init.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
@@ -79,8 +80,6 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 
 	/** @see ChatRootStates */
 	public readonly chatRootStates: typeof ChatRootStates	= ChatRootStates;
-
-	public rand: boolean	= (util.random(2) === 1);
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
@@ -320,6 +319,9 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,
+
+		/** @see SplitTestingService */
+		public readonly splitTestingService: SplitTestingService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService,
