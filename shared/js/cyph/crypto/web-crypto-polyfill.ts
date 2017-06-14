@@ -18,6 +18,7 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 
 	crypto	= {
 		getRandomValues: (arrayBufferView: ArrayBufferView) => {
+			/* Handle circular dependency between this polyfill and libsodium */
 			if (
 				typeof (<any> self).sodium !== 'undefined' &&
 				(<any> self).sodium.crypto_stream_chacha20
@@ -31,7 +32,7 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 				throw new Error('No CSPRNG found.');
 			}
 
-			++nonce[nonce[0] === 4294967295 ? 0 : 1];
+			++nonce[nonce[0] === 4294967295 ? 1 : 0];
 
 			const newBytes	= (<ISodium> (<any> self).sodium).crypto_stream_chacha20(
 				arrayBufferView.byteLength,
