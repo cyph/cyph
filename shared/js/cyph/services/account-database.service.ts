@@ -28,7 +28,7 @@ export class AccountDatabaseService {
 			throw new Error(`Failed to get item at ${url}.`);
 		}
 
-		return this.potassiumService.fromString(value);
+		return this.potassiumService.fromBase64(value);
 	}
 
 	/**
@@ -64,6 +64,16 @@ export class AccountDatabaseService {
 	}
 
 	/**
+	 * Gets a value as a base64 data URI.
+	 * @see getItem
+	 */
+	public async getItemURI (url: string, publicData: boolean = false) : Promise<string> {
+		return 'data:application/octet-stream;base64,' + this.potassiumService.toBase64(
+			await this.getItem(url, publicData)
+		);
+	}
+
+	/**
 	 * Deletes an item.
 	 * @param url Path to item.
 	 */
@@ -89,15 +99,25 @@ export class AccountDatabaseService {
 	 */
 	public async setItem (
 		url: string,
-		value: ArrayBufferView|boolean|number|string,
+		value: ArrayBufferView|Blob|boolean|number|string,
 		publicData: boolean = false
 	) : Promise<void> {
 		const success	= await this.localStorageService.setItem(
 			this.dummyKey(url, publicData),
-			this.potassiumService.toString(
-				(typeof value === 'boolean' || typeof value === 'number') ?
-					value.toString() :
-					value
+			this.potassiumService.toBase64(
+				(
+					typeof value === 'boolean' ||
+					typeof value === 'number' ||
+					typeof value === 'string'
+				) ?
+					this.potassiumService.fromString(value.toString()) :
+					value instanceof Blob ?
+						await new Promise<Uint8Array>(resolve => {
+							const reader	= new FileReader();
+							reader.onload	= () => { resolve(new Uint8Array(reader.result)); };
+							reader.readAsArrayBuffer(value);
+						}) :
+						value
 			)
 		);
 
