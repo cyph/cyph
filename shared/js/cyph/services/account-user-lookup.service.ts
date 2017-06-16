@@ -1,7 +1,10 @@
 import {Injectable} from '@angular/core';
 import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
+import {IPublicKeys} from '../crypto/ipublic-keys';
 import {util} from '../util';
+import {PotassiumService} from './crypto/potassium.service';
+import {DatabaseService} from './database.service';
 
 
 /**
@@ -24,8 +27,8 @@ export class AccountUserLookupService {
 	));
 
 
-	/** @ignore */
-	public cyphPublicSigningKeys	= {
+	/** Public keys for AGSE-PKI certificate validation. */
+	private readonly agsePublicSigningKeys	= {
 		rsa: [
 			'eyJhbGciOiJSUzI1NiIsImUiOiJBUUFCIiwiZXh0Ijp0cnVlLCJrZXlfb3BzIjpbInZlcmlmeSJ' +
 			'dLCJrdHkiOiJSU0EiLCJuIjoidkVUOG1HY24zcWFyN1FfaXo1MVZjUmNKdHRFSG5VcWNmN1VybT' +
@@ -59,6 +62,48 @@ export class AccountUserLookupService {
 		]
 	};
 
+	/** Tries to to get public keys belonging to the specified user. */
+	public async getPublicKeys (username: string) : Promise<IPublicKeys> {
+		const certificate	= await this.databaseService.getItem(`users/${username}/certificate`);
+		const dataView		= new DataView(certificate.buffer);
+
+		const rsaKeyIndex		= dataView.getUint32(0, true);
+		const sphincsKeyIndex	= dataView.getUint32(4, true);
+		const signed			= new Uint8Array(certificate.buffer, 8);
+
+		if (
+			rsaKeyIndex >= this.agsePublicSigningKeys.rsa.length ||
+			sphincsKeyIndex >= this.agsePublicSigningKeys.sphincs.length
+		) {
+			throw new Error('Invalid AGSE-PKI certificate: bad key index.');
+		}
+
+		const verified	= util.parse<{
+			publicEncryptionKey: string;
+			publicSigningKey: string;
+			username: string;
+		}>(
+			this.potassiumService.toString(
+				await this.potassiumService.sign.open(
+					signed,
+					await this.potassiumService.sign.importSuperSphincsPublicKeys(
+						this.agsePublicSigningKeys.rsa[rsaKeyIndex],
+						this.agsePublicSigningKeys.sphincs[sphincsKeyIndex]
+					)
+				)
+			)
+		);
+
+		if (verified.username !== username) {
+			throw new Error('Invalid AGSE-PKI certificate: bad username.');
+		}
+
+		return {
+			encryption: this.potassiumService.fromBase64(verified.publicEncryptionKey),
+			signing: this.potassiumService.fromBase64(verified.publicSigningKey)
+		};
+	}
+
 	/** Tries to to get user object for the specified username. */
 	public async getUser (username: string) : Promise<User> {
 		const user	= AccountUserLookupService.DUMMY_USERS.find(o =>
@@ -73,5 +118,11 @@ export class AccountUserLookupService {
 		}
 	}
 
-	constructor () {}
+	constructor (
+		/** @ignore */
+		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly potassiumService: PotassiumService
+	) {}
 }
