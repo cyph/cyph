@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import {util} from '../util';
-import {AccountAuthService} from './account-auth.service';
 import {PotassiumService} from './crypto/potassium.service';
-import {DatabaseService} from './database.service';
+import {LocalStorageService} from './local-storage.service';
 
 
 /**
@@ -10,30 +9,26 @@ import {DatabaseService} from './database.service';
  */
 @Injectable()
 export class AccountDatabaseService {
+	/** @ignore */
+	private dummyKey (url: string, publicData: boolean) : string {
+		return `${url}_${publicData.toString()}`;
+	}
+
 	/**
 	 * Gets an item's value.
 	 * @param url Path to item.
 	 * @param publicData If true, validates the item's signature. Otherwise, decrypts the item.
 	 */
 	public async getItem (url: string, publicData: boolean = false) : Promise<Uint8Array> {
-		if (!this.accountAuthService.currentUserKeys) {
-			throw new Error(`User not signed in. Cannot get item at ${url}.`);
+		const value	= await this.localStorageService.getItem(
+			this.dummyKey(url, publicData)
+		);
+
+		if (value === undefined) {
+			throw new Error(`Failed to get item at ${url}.`);
 		}
 
-		const data	= await this.databaseService.getItem(url);
-
-		return publicData ?
-			this.potassiumService.fromString(
-				await this.potassiumService.sign.open(
-					data,
-					this.accountAuthService.currentUserKeys.signingKeyPair.publicKey
-				)
-			) :
-			await this.potassiumService.secretBox.open(
-				data,
-				this.accountAuthService.currentUserKeys.symmetricKey
-			)
-		;
+		return this.potassiumService.fromBase64(value);
 	}
 
 	/**
@@ -83,7 +78,17 @@ export class AccountDatabaseService {
 	 * @param url Path to item.
 	 */
 	public async removeItem (url: string) : Promise<void> {
-		return this.databaseService.removeItem(url);
+		for (const publicData of [true, false]) {
+			const success	= await this.localStorageService.removeItem(
+				this.dummyKey(url, publicData)
+			);
+
+			if (success) {
+				return;
+			}
+		}
+
+		throw new Error(`Failed to remove item at ${url}.`);
 	}
 
 	/**
@@ -92,50 +97,53 @@ export class AccountDatabaseService {
 	 * @param value Data to set.
 	 * @param publicData If true, signs the item. Otherwise, encrypts the item.
 	 */
-	public async setItem (
+	public async setItem<T> (
 		url: string,
-		value: ArrayBufferView|Blob|boolean|number|string,
+		value: ArrayBufferView|Blob|boolean|number|string|T,
 		publicData: boolean = false
 	) : Promise<void> {
-		if (!this.accountAuthService.currentUserKeys) {
-			throw new Error(`User not signed in. Cannot set item at ${url}.`);
+		if (value === undefined || value === null) {
+			throw new Error(`Cannot set undefined item value at ${url}.`);
+		}
+		else if (value === NaN) {
+			throw new Error(`Cannot set NaN as item value at ${url}.`);
 		}
 
-		const data	= (
-			typeof value === 'boolean' ||
-			typeof value === 'number' ||
-			typeof value === 'string'
-		) ?
-			this.potassiumService.fromString(value.toString()) :
-			value instanceof Blob ?
-				await new Promise<Uint8Array>(resolve => {
-					const reader	= new FileReader();
-					reader.onload	= () => { resolve(new Uint8Array(reader.result)); };
-					reader.readAsArrayBuffer(value);
-				}) :
-				new Uint8Array(value.buffer)
+		const data	=
+			ArrayBuffer.isView(value) ?
+				new Uint8Array(value.buffer) :
+				value instanceof ArrayBuffer ?
+					new Uint8Array(value) :
+					value instanceof Blob ?
+						await new Promise<Uint8Array>(resolve => {
+							const reader	= new FileReader();
+							reader.onload	= () => { resolve(new Uint8Array(reader.result)); };
+							reader.readAsArrayBuffer(value);
+						}) :
+						this.potassiumService.fromString(
+							(
+								typeof value === 'boolean' ||
+								typeof value === 'number' ||
+								typeof value === 'string'
+							) ?
+								value.toString() :
+								util.stringify<T>(value)
+						)
 		;
 
-		return this.databaseService.setItem(
-			url,
-			publicData ?
-				await this.potassiumService.sign.sign(
-					data,
-					this.accountAuthService.currentUserKeys.signingKeyPair.privateKey
-				) :
-				await this.potassiumService.secretBox.seal(
-					data,
-					this.accountAuthService.currentUserKeys.symmetricKey
-				)
+		const success	= await this.localStorageService.setItem(
+			this.dummyKey(url, publicData),
+			this.potassiumService.toBase64(data)
 		);
+
+		if (!success) {
+			throw new Error(`Failed to set item at ${url}.`);
+		}
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly accountAuthService: AccountAuthService,
-
-		/** @ignore */
-		private readonly databaseService: DatabaseService,
+		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
