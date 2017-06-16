@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {util} from '../util';
 import {AccountAuthService} from './account-auth.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {FileService} from './file.service';
 import {LocalStorageService} from './local-storage.service';
 
 
@@ -166,11 +167,7 @@ export class AccountDatabaseService {
 				ArrayBuffer.isView(value) ?
 					new Uint8Array(value.buffer) :
 					value instanceof Blob ?
-						await new Promise<Uint8Array>(resolve => {
-							const reader	= new FileReader();
-							reader.onload	= () => { resolve(new Uint8Array(reader.result)); };
-							reader.readAsArrayBuffer(value);
-						}) :
+						await this.fileService.getBytes(value, false) :
 						this.potassiumService.fromString(
 							(
 								typeof value === 'boolean' ||
@@ -195,6 +192,9 @@ export class AccountDatabaseService {
 	constructor (
 		/** @ignore */
 		private readonly accountAuthService: AccountAuthService,
+
+		/** @ignore */
+		private readonly fileService: FileService,
 
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,
