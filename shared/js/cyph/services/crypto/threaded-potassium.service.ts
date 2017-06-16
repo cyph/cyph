@@ -231,6 +231,14 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		bytes: eventManager.one<number>(
 			this.threadEvents.sign.bytes
 		),
+		importSuperSphincsPublicKeys: async (
+			rsa: string,
+			sphincs: string
+		) => eventManager.rpcTrigger(
+			this.threadEvents.sign.importSuperSphincsPublicKeys,
+			{rsa, sphincs},
+			this.threadInit
+		),
 		keyPair: async () => eventManager.rpcTrigger(
 			this.threadEvents.sign.keyPair,
 			undefined,
@@ -635,6 +643,14 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 					threadEvents.sign.bytes,
 					await potassium.sign.bytes,
 					true
+				);
+
+				eventManager.rpcOn(
+					threadEvents.sign.importSuperSphincsPublicKeys,
+					async (o: {rsa: string; sphincs: string}) =>
+						potassium.sign.importSuperSphincsPublicKeys(o.rsa, o.sphincs)
+					,
+					clearData
 				);
 
 				eventManager.rpcOn(

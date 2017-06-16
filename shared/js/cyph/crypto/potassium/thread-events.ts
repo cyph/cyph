@@ -60,6 +60,7 @@ export class ThreadEvents {
 	/** @see ISign */
 	public readonly sign	= {
 		bytes: `${this.eventId}.sign.bytes`,
+		importSuperSphincsPublicKeys: `${this.eventId}.sign.importSuperSphincsPublicKeys`,
 		keyPair: `${this.eventId}.sign.keyPair`,
 		open: `${this.eventId}.sign.open`,
 		privateKeyBytes: `${this.eventId}.sign.privateKeyBytes`,
