@@ -97,23 +97,20 @@ export class AccountDatabaseService {
 	 * @param value Data to set.
 	 * @param publicData If true, signs the item. Otherwise, encrypts the item.
 	 */
-	public async setItem<T> (
+	public async setItem (
 		url: string,
-		value: ArrayBufferView|Blob|boolean|number|string|T,
+		value: ArrayBuffer|ArrayBufferView|Blob|boolean|number|string|{[k: string]: any},
 		publicData: boolean = false
 	) : Promise<void> {
-		if (value === undefined || value === null) {
-			throw new Error(`Cannot set undefined item value at ${url}.`);
-		}
-		else if (value === NaN) {
+		if (typeof value === 'number' && isNaN(value)) {
 			throw new Error(`Cannot set NaN as item value at ${url}.`);
 		}
 
 		const data	=
-			ArrayBuffer.isView(value) ?
-				new Uint8Array(value.buffer) :
-				value instanceof ArrayBuffer ?
-					new Uint8Array(value) :
+			value instanceof ArrayBuffer ?
+				new Uint8Array(value) :
+				ArrayBuffer.isView(value) ?
+					new Uint8Array(value.buffer) :
 					value instanceof Blob ?
 						await new Promise<Uint8Array>(resolve => {
 							const reader	= new FileReader();
@@ -127,7 +124,7 @@ export class AccountDatabaseService {
 								typeof value === 'string'
 							) ?
 								value.toString() :
-								util.stringify<T>(value)
+								util.stringify(value)
 						)
 		;
 
