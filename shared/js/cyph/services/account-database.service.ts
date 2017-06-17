@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import {User} from '../account/user';
+import {IKeyPair} from '../crypto/ikey-pair';
 import {util} from '../util';
 import {PotassiumService} from './crypto/potassium.service';
+import {DatabaseService} from './database.service';
 import {FileService} from './file.service';
-import {LocalStorageService} from './local-storage.service';
 
 
 /**
@@ -13,14 +14,13 @@ import {LocalStorageService} from './local-storage.service';
 export class AccountDatabaseService {
 	/** Keys and profile of currently logged in user. Undefined if no user is signed in. */
 	public current?: {
-		keys: {};
+		keys: {
+			encryptionKeyPair: IKeyPair;
+			signingKeyPair: IKeyPair;
+			symmetricKey: Uint8Array;
+		};
 		user: User;
 	};
-
-	/** @ignore */
-	private dummyKey (url: string, publicData: boolean) : string {
-		return `${url}_${publicData.toString()}`;
-	}
 
 	/**
 	 * Gets an item's value.
@@ -33,9 +33,6 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		currentUserData: boolean = false
 	) : Promise<Uint8Array> {
-		if (!publicData && !this.current) {
-			throw new Error(`User not signed in. Cannot get private data at ${url}.`);
-		}
 		if (currentUserData) {
 			if (!this.current) {
 				throw new Error(`User not signed in. Cannot get current user data at ${url}.`);
@@ -44,15 +41,25 @@ export class AccountDatabaseService {
 			url	= `users/${this.current.user.username}/${url}`;
 		}
 
-		const value	= await this.localStorageService.getItem(
-			this.dummyKey(url, publicData)
-		);
+		const data	= await this.databaseService.getItem(url);
 
-		if (value === undefined) {
-			throw new Error(`Failed to get item at ${url}.`);
+		if (publicData) {
+			return this.potassiumService.fromString(
+				await this.potassiumService.sign.open(
+					data,
+					new Uint8Array([]) // this.current.keys.signingKeyPair.publicKey
+				)
+			);
 		}
-
-		return this.potassiumService.fromBase64(value);
+		else if (this.current) {
+			return this.potassiumService.secretBox.open(
+				data,
+				this.current.keys.symmetricKey
+			);
+		}
+		else {
+			throw new Error(`User not signed in. Cannot get private data at ${url}.`);
+		}
 	}
 
 	/**
@@ -133,17 +140,7 @@ export class AccountDatabaseService {
 			url	= `users/${this.current.user.username}/${url}`;
 		}
 
-		for (const publicData of [true, false]) {
-			const success	= await this.localStorageService.removeItem(
-				this.dummyKey(url, publicData)
-			);
-
-			if (success) {
-				return;
-			}
-		}
-
-		throw new Error(`Failed to remove item at ${url}.`);
+		return this.databaseService.removeItem(url);
 	}
 
 	/**
@@ -189,14 +186,18 @@ export class AccountDatabaseService {
 						)
 		;
 
-		const success	= await this.localStorageService.setItem(
-			this.dummyKey(url, publicData),
-			this.potassiumService.toBase64(data)
+		await this.databaseService.setItem(
+			url,
+			publicData ?
+				await this.potassiumService.sign.sign(
+					data,
+					this.current.keys.signingKeyPair.privateKey
+				) :
+				await this.potassiumService.secretBox.seal(
+					data,
+					this.current.keys.symmetricKey
+				)
 		);
-
-		if (!success) {
-			throw new Error(`Failed to set item at ${url}.`);
-		}
 
 		return url;
 	}
@@ -206,7 +207,7 @@ export class AccountDatabaseService {
 		private readonly fileService: FileService,
 
 		/** @ignore */
-		private readonly localStorageService: LocalStorageService,
+		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
