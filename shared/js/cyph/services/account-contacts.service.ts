@@ -17,7 +17,6 @@ export class AccountContactsService {
 
 	/** @ignore */
 	private async updateContacts () : Promise<void> {
-		await this.accountAuthService.ready;
 		if (!this.accountDatabaseService.current) {
 			return;
 		}
@@ -64,5 +63,8 @@ export class AccountContactsService {
 		private readonly accountUserLookupService: AccountUserLookupService
 	) {
 		this.updateContacts();
+		this.accountAuthService.onLogin.subscribe(() => {
+			this.updateContacts();
+		});
 	}
 }

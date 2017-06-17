@@ -30,7 +30,6 @@ export class AccountFilesService {
 	 * TODO: Account-wide locking, or other more robust solution.
 	 */
 	private async updateFiles () : Promise<void> {
-		await this.accountAuthService.ready;
 		if (!this.accountDatabaseService.current) {
 			return;
 		}
@@ -190,5 +189,8 @@ export class AccountFilesService {
 		private readonly potassiumService: PotassiumService
 	) {
 		util.lock(this.lock, async () => this.updateFiles());
+		this.accountAuthService.onLogin.subscribe(() => {
+			util.lock(this.lock, async () => this.updateFiles());
+		});
 	}
 }
