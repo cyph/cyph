@@ -50,7 +50,7 @@ export class AccountSessionService extends SessionService {
 				continue;
 			}
 
-			util.lock(user, async () => {
+			util.lock(<any> user, async () => {
 				await util.sleep(util.random(1000));
 				await util.waitUntilTrue(() => user === this.user);
 				this.trigger(rpcEvents.typing, {isTyping: true});
