@@ -255,7 +255,7 @@
     "@types/dompurify": "^0.0.29",
     "@types/file-saver": "^0.0.1",
     "@types/jasmine": "^2.5.52",
-    "@types/jquery": "^3.2.1",
+    "@types/jquery": "^2",
     "@types/markdown-it": "^0.0.2",
     "@types/node": "^7.0.31",
     "@types/stacktrace-js": "^0.0.32",
