@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {IFileRecord} from '../files/ifile-record';
-import {AccountDatabaseService} from '../services/account-database.service';
 import {AccountContactsService} from '../services/account-contacts.service';
+import {AccountDatabaseService} from '../services/account-database.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {EnvService} from '../services/env.service';
 import {UtilService} from '../services/util.service';

@@ -16,12 +16,24 @@ export class AccountFilesService {
 	private readonly lock: {}	= {};
 
 	/** @ignore */
-	private readonly noteSnippets: Map<string, string>	= new Map<string, string>();
+	private readonly noteSnippets: Map<string, string>		= new Map<string, string>();
+
+	/** List of file records owned by current user, sorted by timestamp in descending order. */
+	public readonly files: BehaviorSubject<IFileRecord[]>	= new BehaviorSubject([]);
+
+	/**
+	 * Files filtered by record type.
+	 * @see files
+	 */
+	public readonly filteredFiles	= {
+		files: this.filterFiles('file'),
+		notes: this.filterFiles('note')
+	};
 
 	/** @ignore */
 	private filterFiles (filterRecordType: 'file'|'note') : Observable<IFileRecord[]> {
 		return this.files.map(files =>
-			files.filter(o =>!filterRecordType || o.recordType === filterRecordType)
+			files.filter(o => !filterRecordType || o.recordType === filterRecordType)
 		);
 	}
 
@@ -44,18 +56,6 @@ export class AccountFilesService {
 			(a, b) => b.timestamp - a.timestamp
 		));
 	}
-
-	/** List of file records owned by current user, sorted by timestamp in descending order. */
-	public readonly files: BehaviorSubject<IFileRecord[]>	= new BehaviorSubject([]);
-
-	/**
-	 * Files filtered by record type.
-	 * @see files
-	 */
-	public readonly filteredFiles	= {
-		files: this.filterFiles('file'),
-		notes: this.filterFiles('note')
-	};
 
 	/** Downloads and saves file. */
 	public async downloadAndSave (id: string) : Promise<void> {
