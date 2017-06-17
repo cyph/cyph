@@ -10,7 +10,7 @@ import {EnvService} from './env.service';
 @Injectable()
 export class FileService {
 	/** @ignore */
-	private async compressImage (image: HTMLImageElement, file: File) : Promise<Uint8Array> {
+	private async compressImage (image: HTMLImageElement, file: Blob) : Promise<Uint8Array> {
 		const canvas: HTMLCanvasElement			= document.createElement('canvas');
 		const context: CanvasRenderingContext2D	=
 			<CanvasRenderingContext2D> canvas.getContext('2d')
@@ -64,11 +64,11 @@ export class FileService {
 	}
 
 	/**
-	 * Converts File object to byte array.
+	 * Converts File/Blob to byte array.
 	 * @param file
 	 * @param image If true, file is processed as an image (compressed).
 	 */
-	public async getBytes (file: File, image: boolean = this.isImage(file)) : Promise<Uint8Array> {
+	public async getBytes (file: Blob, image: boolean = this.isImage(file)) : Promise<Uint8Array> {
 		return new Promise<Uint8Array>(resolve => {
 			const reader	= new FileReader();
 
@@ -91,16 +91,16 @@ export class FileService {
 	}
 
 	/**
-	 * Converts File object to base64 data URI.
+	 * Converts File/Blob to base64 data URI.
 	 * @param file
 	 * @param image If true, file is processed as an image (compressed).
 	 */
-	public async getDataURI (file: File, image: boolean = this.isImage(file)) : Promise<string> {
+	public async getDataURI (file: Blob, image: boolean = this.isImage(file)) : Promise<string> {
 		return this.toDataURI(await this.getBytes(file, image), file.type);
 	}
 
-	/** Indicates whether a File object is an image. */
-	public isImage (file: File) : boolean {
+	/** Indicates whether a File/Blob is an image. */
+	public isImage (file: Blob) : boolean {
 		return file.type.indexOf('image/') === 0;
 	}
 
