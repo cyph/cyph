@@ -21,6 +21,11 @@ export class Sign implements ISign {
 	);
 
 	/** @inheritDoc */
+	public async importSuperSphincsPublicKeys (rsa: string, sphincs: string) : Promise<Uint8Array> {
+		return (await superSphincs.importKeys({public: {rsa, sphincs}})).publicKey;
+	}
+
+	/** @inheritDoc */
 	public async keyPair () : Promise<IKeyPair> {
 		return superSphincs.keyPair();
 	}
