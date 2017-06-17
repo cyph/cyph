@@ -450,16 +450,16 @@ export class Util {
 		elem.dispatchEvent(e);
 	}
 
-	/** Creates a hex string containing the current timestamp and 32 random bytes. */
+	/** Creates a hex string containing the current timestamp and 16 random bytes. */
 	public uuid () : string {
 		return potassiumUtil.toHex(
 			potassiumUtil.concatMemory(
 				true,
-				new Float64Array([
+				new Uint32Array([
 					/* tslint:disable-next-line:ban */
 					Date.now()
 				]),
-				potassiumUtil.randomBytes(32)
+				potassiumUtil.randomBytes(16)
 			)
 		);
 	}
