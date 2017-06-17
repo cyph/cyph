@@ -46,7 +46,7 @@ read -r -d '' modules <<- EOM
 	@types/dompurify
 	@types/file-saver
 	@types/jasmine
-	@types/jquery
+	@types/jquery@^2
 	@types/markdown-it
 	@types/node
 	@types/stacktrace-js

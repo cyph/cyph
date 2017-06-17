@@ -123,7 +123,7 @@ export class AnalyticsService {
 
 			await new Promise<void>(resolve => $(() => { resolve(); }));
 			await new Promise<void>(resolve =>
-				$(<any> this.analFrame).one('load', () => { resolve(); })
+				$(this.analFrame).one('load', () => { resolve(); })
 			);
 			await util.sleep();
 
