@@ -47,11 +47,7 @@ export class AccountFilesService {
 		}
 
 		this.files.next((
-			await this.accountDatabaseService.getItemObject<IFileRecord[]>(
-				'fileList',
-				false,
-				true
-			)
+			await this.accountDatabaseService.getItemObject<IFileRecord[]>('fileList')
 		).sort(
 			(a, b) => b.timestamp - a.timestamp
 		));
@@ -62,19 +58,19 @@ export class AccountFilesService {
 		const file	= await this.getFile(id);
 
 		await util.saveFile(
-			await this.accountDatabaseService.getItem(`files/${id}`, false, true),
+			await this.accountDatabaseService.getItem(`files/${id}`),
 			file.name
 		);
 	}
 
 	/** Downloads file and returns text. */
 	public async downloadText (id: string) : Promise<string> {
-		return this.accountDatabaseService.getItemString(`files/${id}`, false, true);
+		return this.accountDatabaseService.getItemString(`files/${id}`);
 	}
 
 	/** Downloads file and returns as data URI. */
 	public async downloadURI (id: string) : Promise<string> {
-		return this.accountDatabaseService.getItemURI(`files/${id}`, false, true);
+		return this.accountDatabaseService.getItemURI(`files/${id}`);
 	}
 
 	/** Gets the specified file record. */
@@ -133,12 +129,12 @@ export class AccountFilesService {
 
 			const file	= await this.getFile(id, 'note');
 
-			await this.accountDatabaseService.setItem(`files/${id}`, content, false, true);
+			await this.accountDatabaseService.setItem(`files/${id}`, content);
 
 			file.size		= this.potassiumService.fromString(content).length;
 			file.timestamp	= await util.timestamp();
 
-			await this.accountDatabaseService.setItem('fileList', this.files.value, false, true);
+			await this.accountDatabaseService.setItem('fileList', this.files.value);
 
 			await this.updateFiles();
 		});
@@ -149,11 +145,11 @@ export class AccountFilesService {
 		const id	= util.uuid();
 
 		await util.lock(this.lock, async () => {
-			await this.accountDatabaseService.setItem(`files/${id}`, file, false, true);
+			await this.accountDatabaseService.setItem(`files/${id}`, file);
 
 			await this.accountDatabaseService.setItem(
 				'fileList',
-				(this.files.value).concat({
+				this.files.value.concat({
 					id,
 					mediaType: typeof file === 'string' ?
 						'text/plain' :
@@ -169,9 +165,7 @@ export class AccountFilesService {
 						file.size
 					,
 					timestamp: await util.timestamp()
-				}),
-				false,
-				true
+				})
 			);
 
 			await this.updateFiles();

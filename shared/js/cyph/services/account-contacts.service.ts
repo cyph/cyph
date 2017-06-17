@@ -24,11 +24,7 @@ export class AccountContactsService {
 		this.contacts.next((
 			await Promise.all(
 				(
-					await this.accountDatabaseService.getItemObject<string[]>(
-						'contactList',
-						false,
-						true
-					)
+					await this.accountDatabaseService.getItemObject<string[]>('contactList')
 				).map(
 					async username => this.accountUserLookupService.getUser(username)
 				)

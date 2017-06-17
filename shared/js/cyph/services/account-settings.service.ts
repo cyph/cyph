@@ -25,7 +25,6 @@ export class AccountSettingsService {
 		await this.accountDatabaseService.setItem(
 			'publicProfile',
 			this.accountDatabaseService.current,
-			true,
 			true
 		);
 	}
