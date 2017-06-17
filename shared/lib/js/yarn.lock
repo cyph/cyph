@@ -404,9 +404,9 @@
   version "2.5.52"
   resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-2.5.52.tgz#6ea5435d5c71562296e63ef27a4718f94f2fbb13"
 
-"@types/jquery@^3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.2.1.tgz#72c2a4c35448fd4c6b15e82efd0852e71dd630f8"
+"@types/jquery@^2":
+  version "2.0.47"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-2.0.47.tgz#9665a157519dd48d259f94ac670d332a56561c00"
 
 "@types/jsonwebtoken@^7.1.32", "@types/jsonwebtoken@^7.1.33":
   version "7.2.1"
