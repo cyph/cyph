@@ -36,12 +36,15 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 
 	/** @inheritDoc */
 	public readonly box: IBox	= {
-		keyPair: async () => eventManager.rpcTrigger(
+		keyPair: async () => eventManager.rpcTrigger<IKeyPair>(
 			this.threadEvents.box.keyPair,
 			undefined,
 			this.threadInit
 		),
-		open: async (cyphertext: Uint8Array, keyPair: IKeyPair) => eventManager.rpcTrigger(
+		open: async (
+			cyphertext: Uint8Array,
+			keyPair: IKeyPair
+		) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.box.open,
 			{cyphertext, keyPair},
 			this.threadInit
@@ -52,7 +55,10 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		publicKeyBytes: eventManager.one<number>(
 			this.threadEvents.box.publicKeyBytes
 		),
-		seal: async (plaintext: Uint8Array, publicKey: Uint8Array) => eventManager.rpcTrigger(
+		seal: async (
+			plaintext: Uint8Array,
+			publicKey: Uint8Array
+		) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.box.seal,
 			{plaintext, publicKey},
 			this.threadInit
@@ -61,7 +67,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 
 	/** @inheritDoc */
 	public readonly ephemeralKeyExchange: IEphemeralKeyExchange	= {
-		aliceKeyPair: async () => eventManager.rpcTrigger(
+		aliceKeyPair: async () => eventManager.rpcTrigger<IKeyPair>(
 			this.threadEvents.ephemeralKeyExchange.aliceKeyPair,
 			undefined,
 			this.threadInit
@@ -69,12 +75,15 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		aliceSecret: async (
 			publicKey: Uint8Array,
 			privateKey: Uint8Array
-		) => eventManager.rpcTrigger(
+		) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.ephemeralKeyExchange.aliceSecret,
 			{privateKey, publicKey},
 			this.threadInit
 		),
-		bobSecret: async (alicePublicKey: Uint8Array) => eventManager.rpcTrigger(
+		bobSecret: async (alicePublicKey: Uint8Array) => eventManager.rpcTrigger<{
+			publicKey: Uint8Array;
+			secret: Uint8Array;
+		}>(
 			this.threadEvents.ephemeralKeyExchange.bobSecret,
 			{alicePublicKey},
 			this.threadInit
@@ -100,7 +109,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			outputBytes?: number,
 			clearInput?: boolean
 		) => {
-			const output	= await eventManager.rpcTrigger(
+			const output	= await eventManager.rpcTrigger<Uint8Array>(
 				this.threadEvents.hash.deriveKey,
 				{input, outputBytes},
 				this.threadInit
@@ -112,7 +121,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 
 			return output;
 		},
-		hash: async (plaintext: Uint8Array|string) => eventManager.rpcTrigger(
+		hash: async (plaintext: Uint8Array|string) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.hash.hash,
 			{plaintext},
 			this.threadInit
@@ -127,7 +136,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		keyBytes: eventManager.one<number>(
 			this.threadEvents.oneTimeAuth.keyBytes
 		),
-		sign: async (message: Uint8Array, key: Uint8Array) => eventManager.rpcTrigger(
+		sign: async (message: Uint8Array, key: Uint8Array) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.oneTimeAuth.sign,
 			{key, message},
 			this.threadInit
@@ -136,7 +145,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			mac: Uint8Array,
 			message: Uint8Array,
 			key: Uint8Array
-		) => eventManager.rpcTrigger(
+		) => eventManager.rpcTrigger<boolean>(
 			this.threadEvents.oneTimeAuth.verify,
 			{key, mac, message},
 			this.threadInit
@@ -156,7 +165,16 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			memLimit?: number,
 			clearInput?: boolean
 		) => {
-			const output	= await eventManager.rpcTrigger(
+			const output	= await eventManager.rpcTrigger<{
+				hash: Uint8Array;
+				metadata: Uint8Array;
+				metadataObject: {
+					algorithm: string;
+					memLimit: number;
+					opsLimit: number;
+					salt: Uint8Array;
+				};
+			}>(
 				this.threadEvents.passwordHash.hash,
 				{memLimit, opsLimit, outputBytes, plaintext, salt},
 				this.threadInit
@@ -183,7 +201,12 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		opsLimitSensitive: eventManager.one<number>(
 			this.threadEvents.passwordHash.opsLimitSensitive
 		),
-		parseMetadata: async (metadata: Uint8Array) => eventManager.rpcTrigger(
+		parseMetadata: async (metadata: Uint8Array) => eventManager.rpcTrigger<{
+			algorithm: string;
+			memLimit: number;
+			opsLimit: number;
+			salt: Uint8Array;
+		}>(
 			this.threadEvents.passwordHash.parseMetadata,
 			{metadata},
 			this.threadInit
@@ -201,7 +224,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		keyBytes: eventManager.one<number>(
 			this.threadEvents.secretBox.keyBytes
 		),
-		newNonce: async (size: number) => eventManager.rpcTrigger(
+		newNonce: async (size: number) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.secretBox.newNonce,
 			{size},
 			this.threadInit
@@ -210,7 +233,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			cyphertext: Uint8Array,
 			key: Uint8Array,
 			additionalData?: Uint8Array
-		) => eventManager.rpcTrigger(
+		) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.secretBox.open,
 			{additionalData, cyphertext, key},
 			this.threadInit
@@ -219,7 +242,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			plaintext: Uint8Array,
 			key: Uint8Array,
 			additionalData?: Uint8Array
-		) => eventManager.rpcTrigger(
+		) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.secretBox.seal,
 			{additionalData, key, plaintext},
 			this.threadInit
@@ -234,12 +257,12 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		importSuperSphincsPublicKeys: async (
 			rsa: string,
 			sphincs: string
-		) => eventManager.rpcTrigger(
+		) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.sign.importSuperSphincsPublicKeys,
 			{rsa, sphincs},
 			this.threadInit
 		),
-		keyPair: async () => eventManager.rpcTrigger(
+		keyPair: async () => eventManager.rpcTrigger<IKeyPair>(
 			this.threadEvents.sign.keyPair,
 			undefined,
 			this.threadInit
@@ -247,7 +270,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		open: async (
 			signed: Uint8Array|string,
 			publicKey: Uint8Array
-		) => eventManager.rpcTrigger(
+		) => eventManager.rpcTrigger<string>(
 			this.threadEvents.sign.open,
 			{publicKey, signed},
 			this.threadInit
@@ -261,7 +284,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		sign: async (
 			message: Uint8Array|string,
 			privateKey: Uint8Array
-		) => eventManager.rpcTrigger(
+		) => eventManager.rpcTrigger<string>(
 			this.threadEvents.sign.sign,
 			{message, privateKey},
 			this.threadInit
@@ -269,7 +292,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		signDetached: async (
 			message: Uint8Array|string,
 			privateKey: Uint8Array
-		) => eventManager.rpcTrigger(
+		) => eventManager.rpcTrigger<string>(
 			this.threadEvents.sign.signDetached,
 			{message, privateKey},
 			this.threadInit
@@ -278,7 +301,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			signature: Uint8Array|string,
 			message: Uint8Array|string,
 			publicKey: Uint8Array
-		) => eventManager.rpcTrigger(
+		) => eventManager.rpcTrigger<boolean>(
 			this.threadEvents.sign.verifyDetached,
 			{message, publicKey, signature},
 			this.threadInit
