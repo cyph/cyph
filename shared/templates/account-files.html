@@ -4,17 +4,17 @@
 
 		<md-card
 			class='contact animated flipInY _{{i}}'
-			*ngFor='let myFile of accountFilesService.myFiles; let i = index'
+			*ngFor='let file of accountFilesService.getFiles("file") | async; let i = index'
 			[attr.data-index]='i'
 		>
 			<md-card-header fxLayout='row'>
 				<md-icon md-card-avatar>
-					{{accountFilesService.thumb(myFile.filetype)}}
+					{{accountFilesService.getThumbnail(file.mediaType)}}
 				</md-icon>
-				<md-card-title>{{myFile.name}}</md-card-title>
+				<md-card-title>{{file.name}}</md-card-title>
 				<md-card-subtitle>
-					<div>File type: {{myFile.filetype}}</div>
-					<div>File size: {{utilService.readableByteLength(myFile.size)}}</div>
+					<div>File type: {{file.mediaType}}</div>
+					<div>File size: {{utilService.readableByteLength(file.size)}}</div>
 				</md-card-subtitle>
 				<div fxFlex fxLayoutAlign='end center'>
 					<button
@@ -28,6 +28,7 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Download File'
+						(click)='accountFilesService.downloadAndSave(file.id)'
 					>
 						<md-icon>file_download</md-icon>
 					</button>

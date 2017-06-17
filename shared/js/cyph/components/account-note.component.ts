@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+import {IFileRecord} from '../files/ifile-record';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountContactsService} from '../services/account-contacts.service';
-import {AccountNotesService} from '../services/account-notes.service';
+import {AccountFilesService} from '../services/account-files.service';
 import {EnvService} from '../services/env.service';
 import {UtilService} from '../services/util.service';
 
@@ -16,22 +17,33 @@ import {UtilService} from '../services/util.service';
 	templateUrl: '../../../templates/account-note.html'
 })
 export class AccountNoteComponent implements OnInit {
+	/** Current note. */
+	public note: IFileRecord;
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.activatedRouteService.params.subscribe(o => {
-			const id: number|undefined	= o.id;
+		this.activatedRouteService.params.subscribe(async o => {
+			try {
+				const id: string|undefined	= o.id;
 
-			if (!id) {
-				return;
+				if (!this.accountAuthService.current || !id) {
+					throw new Error();
+				}
+
+				this.note	= await this.accountFilesService.getFile(id, 'note');
 			}
-
-			this.accountNotesService.getNote(id);
+			catch (_) {
+				this.routerService.navigate(['404']);
+			}
 		});
 	}
 
 	constructor (
 		/** @ignore */
 		private readonly activatedRouteService: ActivatedRoute,
+
+		/** @ignore */
+		private readonly routerService: Router,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
@@ -40,7 +52,7 @@ export class AccountNoteComponent implements OnInit {
 		public readonly accountContactsService: AccountContactsService,
 
 		/** @see AccountFilesService */
-		public readonly accountNotesService: AccountNotesService,
+		public readonly accountFilesService: AccountFilesService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

@@ -19,7 +19,6 @@ import {AccountAuthService} from '../services/account-auth.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountDatabaseService} from '../services/account-database.service';
 import {AccountFilesService} from '../services/account-files.service';
-import {AccountNotesService} from '../services/account-notes.service';
 import {AccountSettingsService} from '../services/account-settings.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountService} from '../services/account.service';
@@ -80,7 +79,6 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountContactsService,
 		AccountDatabaseService,
 		AccountFilesService,
-		AccountNotesService,
 		AccountService,
 		AccountSettingsService,
 		AccountUserLookupService,

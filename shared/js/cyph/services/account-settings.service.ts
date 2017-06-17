@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {AccountAuthService} from './account-auth.service';
+import {AccountDatabaseService} from './account-database.service';
 import {FileService} from './file.service';
 
 
@@ -21,6 +22,13 @@ export class AccountSettingsService {
 		this.accountAuthService.current[prop]	=
 			await this.fileService.getDataURI(file, true)
 		;
+
+		await this.accountDatabaseService.setItem(
+			'publicProfile',
+			this.accountAuthService.current,
+			true,
+			true
+		);
 	}
 
 	/** Sets the currently signed in user's avatar. */
@@ -36,6 +44,9 @@ export class AccountSettingsService {
 	constructor (
 		/** @ignore */
 		private readonly accountAuthService: AccountAuthService,
+
+		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly fileService: FileService

@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
 import {AccountAuthService} from './account-auth.service';
+import {AccountDatabaseService} from './account-database.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 
 
@@ -11,16 +12,24 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 @Injectable()
 export class AccountContactsService {
 	/** List of contacts for current user. */
-	public get contacts () : User[] {
+	public async getContacts () : Promise<User[]> {
 		if (!this.accountAuthService.current) {
 			return [];
 		}
 
-		return AccountUserLookupService.DUMMY_USERS.
-			filter(user =>
-				this.accountAuthService.current &&
-				user.username !== this.accountAuthService.current.username
-			).
+		return (
+			await Promise.all(
+				(
+					await this.accountDatabaseService.getItemObject<string[]>(
+						'contactList',
+						false,
+						true
+					)
+				).map(
+					async username => this.accountUserLookupService.getUser(username)
+				)
+			)
+		).
 			sort((a, b) => {
 				const statusIndexA	= userPresenceSorted.indexOf(a.status);
 				const statusIndexB	= userPresenceSorted.indexOf(b.status);
@@ -41,6 +50,12 @@ export class AccountContactsService {
 
 	constructor (
 		/** @ignore */
-		private readonly accountAuthService: AccountAuthService
+		private readonly accountAuthService: AccountAuthService,
+
+		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly accountUserLookupService: AccountUserLookupService
 	) {}
 }

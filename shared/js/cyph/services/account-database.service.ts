@@ -143,13 +143,14 @@ export class AccountDatabaseService {
 	 * @param value Data to set.
 	 * @param publicData If true, signs the item. Otherwise, encrypts the item.
 	 * @param currentUserData If true, prepends the URL with users/${CURRENT_USERNAME}/.
+	 * @returns Item URL.
 	 */
 	public async setItem (
 		url: string,
 		value: ArrayBuffer|ArrayBufferView|Blob|boolean|number|string|{[k: string]: any},
 		publicData: boolean = false,
 		currentUserData: boolean = false
-	) : Promise<void> {
+	) : Promise<string> {
 		if (!this.accountAuthService.current) {
 			throw new Error(`User not signed in. Cannot set item at ${url}.`);
 		}
@@ -187,6 +188,8 @@ export class AccountDatabaseService {
 		if (!success) {
 			throw new Error(`Failed to set item at ${url}.`);
 		}
+
+		return url;
 	}
 
 	constructor (

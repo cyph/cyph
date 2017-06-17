@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountContactsService} from '../services/account-contacts.service';
-import {AccountNotesService} from '../services/account-notes.service';
+import {AccountFilesService} from '../services/account-files.service';
 import {EnvService} from '../services/env.service';
 import {UtilService} from '../services/util.service';
 
@@ -23,7 +23,7 @@ export class AccountNotesComponent {
 		public readonly accountContactsService: AccountContactsService,
 
 		/** @see AccountFilesService */
-		public readonly accountNotesService: AccountNotesService,
+		public readonly accountFilesService: AccountFilesService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

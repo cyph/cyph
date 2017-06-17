@@ -1,28 +1,28 @@
 <div fxFlexFill fxLayoutAlign='center start'>
 	<div fxFlex='90' fxFlex.gt-sm='90' fxFlex.gt-md='90' fxLayout='column' >
 		<md-card class='note animated flipInY'>
-				<md-card-header fxLayout='row'>
-					<md-card-title>Title: {{accountNotesService.currentNote.title}}</md-card-title>
-					<md-card-subtitle>
-						<div>Content: {{accountNotesService.currentNote.noteContents}}</div>
-					</md-card-subtitle>
-					<div fxFlex fxLayoutAlign='end center'>
-						<button
-							md-icon-button
-							cyphTranslate
-							mdTooltip='Edit Note'
-						>
-							<md-icon>edit</md-icon>
-						</button>
-						<button
-							md-icon-button
-							cyphTranslate
-							mdTooltip='Delete Note'
-						>
-							<md-icon>delete</md-icon>
-						</button>
-					</div>
-				</md-card-header>
-			</md-card>
+			<md-card-header fxLayout='row'>
+				<md-card-title>Title: {{note.name}}</md-card-title>
+				<md-card-subtitle>
+					<div>Content: {{accountFilesService.downloadText(note.id) | async}}</div>
+				</md-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Edit Note'
+					>
+						<md-icon>edit</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Delete Note'
+					>
+						<md-icon>delete</md-icon>
+					</button>
+				</div>
+			</md-card-header>
+		</md-card>
 	</div>
 </div>

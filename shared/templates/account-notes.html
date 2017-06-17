@@ -3,13 +3,13 @@
 		<h1 class='header'>Secure Notes</h1>
 		<md-card
 			class='note animated flipInY _{{i}}'
-			*ngFor='let myNote of accountNotesService.myNotes; let i = index'
+			*ngFor='let note of accountFilesService.getFiles("note") | async; let i = index'
 			[attr.data-index]='i'
 		>
 			<md-card-header fxLayout='row'>
-				<md-card-title>{{myNote.title}}</md-card-title>
+				<md-card-title>{{note.name}}</md-card-title>
 				<md-card-subtitle>
-					<div>{{accountNotesService.noteSnippet(myNote.noteContents, 75)}}</div>
+					<div>{{accountFilesService.noteSnippet(note.id, 75) | async}}</div>
 				</md-card-subtitle>
 				<div fxFlex fxLayoutAlign='end center'>
 					<button
