@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {AccountAuthService} from '../services/account-auth.service';
+import {AccountDatabaseService} from '../services/account-database.service';
 import {AccountSettingsService} from '../services/account-settings.service';
 import {EnvService} from '../services/env.service';
 
@@ -14,8 +14,8 @@ import {EnvService} from '../services/env.service';
 })
 export class AccountSettingsComponent {
 	constructor (
-		/** @see AccountAuthService */
-		public readonly accountAuthService: AccountAuthService,
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see AccountSettingsService */
 		public readonly accountSettingsService: AccountSettingsService,

@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
-import {AccountAuthService} from './account-auth.service';
 import {AccountDatabaseService} from './account-database.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 
@@ -13,7 +12,7 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 export class AccountContactsService {
 	/** List of contacts for current user. */
 	public async getContacts () : Promise<User[]> {
-		if (!this.accountAuthService.current) {
+		if (!this.accountDatabaseService.current) {
 			return [];
 		}
 
@@ -49,9 +48,6 @@ export class AccountContactsService {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly accountAuthService: AccountAuthService,
-
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 

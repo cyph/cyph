@@ -1,18 +1,24 @@
-<div fxFlex fxLayout='row' *ngIf='accountAuthService.current'>
+<div fxFlex fxLayout='row' *ngIf='accountDatabaseService.current'>
 	<div fxFlex></div>
 	<div fxFlex='50' fxLayout='column' class='settings-wrapper'>
 		<h1>Account Settings</h1>
 		<div class='name'>
 			<span>Your Name: </span>
-			<span>{{accountAuthService.current.name}}</span>
+			<span>{{accountDatabaseService.current.user.name}}</span>
 		</div>
 		<div class='email'>
 			<span>Your Email: </span>
-			<span>{{accountAuthService.current.email}}</span>
+			<span>{{accountDatabaseService.current.user.email}}</span>
 		</div>
 		<div class='premium-status'>
 			<span>Premium Status: </span>
-			<span>{{accountAuthService.current.hasPremium ? 'Enabled' : 'Disabled'}}</span>
+			<span>
+				{{
+					accountDatabaseService.current.user.hasPremium ?
+						'Enabled' :
+						'Disabled'
+				}}
+			</span>
 		</div>
 		<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
 			<md-slide-toggle>Setting 1</md-slide-toggle>

@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {UserPresence} from '../account/enums';
-import {AccountAuthService} from '../services/account-auth.service';
+import {AccountDatabaseService} from '../services/account-database.service';
 import {AccountService} from '../services/account.service';
 import {EnvService} from '../services/env.service';
 
@@ -25,8 +25,8 @@ export class AccountMenuComponent {
 	}
 
 	constructor (
-		/** @see AccountAuthService */
-		public readonly accountAuthService: AccountAuthService,
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

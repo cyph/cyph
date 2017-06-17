@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {IFileRecord} from '../files/ifile-record';
-import {AccountAuthService} from '../services/account-auth.service';
+import {AccountDatabaseService} from '../services/account-database.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {EnvService} from '../services/env.service';
@@ -26,7 +26,7 @@ export class AccountNoteComponent implements OnInit {
 			try {
 				const id: string|undefined	= o.id;
 
-				if (!this.accountAuthService.current || !id) {
+				if (!this.accountDatabaseService.current || !id) {
 					throw new Error();
 				}
 
@@ -45,11 +45,11 @@ export class AccountNoteComponent implements OnInit {
 		/** @ignore */
 		private readonly routerService: Router,
 
-		/** @see AccountAuthService */
-		public readonly accountAuthService: AccountAuthService,
-
 		/** @see AccountContactsService */
 		public readonly accountContactsService: AccountContactsService,
+
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,

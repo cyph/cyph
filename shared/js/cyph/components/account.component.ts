@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as Granim from 'granim';
 import {AccountAuthService} from '../services/account-auth.service';
+import {AccountDatabaseService} from '../services/account-database.service';
 import {AccountEnvService} from '../services/account-env.service';
 import {AccountService} from '../services/account.service';
 import {EnvService} from '../services/env.service';
@@ -24,7 +25,7 @@ import {EnvService} from '../services/env.service';
 export class AccountComponent implements OnInit {
 	/** Indicates whether menu should be displayed. */
 	public get menuVisible () : boolean {
-		return this.accountAuthService.current !== undefined && [
+		return this.accountDatabaseService.current !== undefined && [
 			'chat',
 			'contacts',
 			'files',
@@ -77,17 +78,17 @@ export class AccountComponent implements OnInit {
 
 		const path	= this.activatedRouteService.snapshot.url[0].path;
 
-		if (this.accountAuthService.current && path === 'login') {
+		if (this.accountDatabaseService.current && path === 'login') {
 			this.routerService.navigate(['account']);
 		}
-		else if (!this.accountAuthService.current && path !== 'login') {
+		else if (!this.accountDatabaseService.current && path !== 'login') {
 			this.routerService.navigate(['account', 'login']);
 		}
 	}
 
 	/** Indicates whether sidebar should be displayed. */
 	public get sidebarVisible () : boolean {
-		return this.accountAuthService.current !== undefined && !this.envService.isMobile && [
+		return this.accountDatabaseService.current !== undefined && !this.envService.isMobile && [
 			'chat'
 		].filter(path =>
 			this.activatedRouteService.snapshot.firstChild && (
@@ -99,13 +100,16 @@ export class AccountComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly accountAuthService: AccountAuthService,
-
-		/** @ignore */
 		private readonly activatedRouteService: ActivatedRoute,
 
 		/** @ignore */
 		private readonly routerService: Router,
+
+		/** @see AccountAuthService */
+		public readonly accountAuthService: AccountAuthService,
+
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

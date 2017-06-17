@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {IFileRecord} from '../files/ifile-record';
 import {util} from '../util';
-import {AccountAuthService} from './account-auth.service';
 import {AccountDatabaseService} from './account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 
@@ -58,7 +57,7 @@ export class AccountFilesService {
 	 * sorted by timestamp in descending order.
 	 */
 	public async getFiles (filterRecordType?: 'file'|'note') : Promise<IFileRecord[]> {
-		if (!this.accountAuthService.current) {
+		if (!this.accountDatabaseService.current) {
 			return [];
 		}
 
@@ -141,9 +140,6 @@ export class AccountFilesService {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly accountAuthService: AccountAuthService,
-
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 

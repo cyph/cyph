@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
+import {User} from '../account/user';
 import {util} from '../util';
-import {AccountAuthService} from './account-auth.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {FileService} from './file.service';
 import {LocalStorageService} from './local-storage.service';
@@ -11,6 +11,12 @@ import {LocalStorageService} from './local-storage.service';
  */
 @Injectable()
 export class AccountDatabaseService {
+	/** Keys and profile of currently logged in user. Undefined if no user is signed in. */
+	public current?: {
+		keys: {};
+		user: User;
+	};
+
 	/** @ignore */
 	private dummyKey (url: string, publicData: boolean) : string {
 		return `${url}_${publicData.toString()}`;
@@ -27,12 +33,12 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		currentUserData: boolean = false
 	) : Promise<Uint8Array> {
-		if (!this.accountAuthService.current) {
+		if (!this.current) {
 			throw new Error(`User not signed in. Cannot get item at ${url}.`);
 		}
 
 		if (currentUserData) {
-			url	= `users/${this.accountAuthService.current.username}/${url}`;
+			url	= `users/${this.current.user.username}/${url}`;
 		}
 
 		const value	= await this.localStorageService.getItem(
@@ -116,12 +122,12 @@ export class AccountDatabaseService {
 	 * @param currentUserData If true, prepends the URL with users/${CURRENT_USERNAME}/.
 	 */
 	public async removeItem (url: string, currentUserData: boolean = false) : Promise<void> {
-		if (!this.accountAuthService.current) {
+		if (!this.current) {
 			throw new Error(`User not signed in. Cannot remove item at ${url}.`);
 		}
 
 		if (currentUserData) {
-			url	= `users/${this.accountAuthService.current.username}/${url}`;
+			url	= `users/${this.current.user.username}/${url}`;
 		}
 
 		for (const publicData of [true, false]) {
@@ -151,7 +157,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		currentUserData: boolean = false
 	) : Promise<string> {
-		if (!this.accountAuthService.current) {
+		if (!this.current) {
 			throw new Error(`User not signed in. Cannot set item at ${url}.`);
 		}
 		else if (typeof value === 'number' && isNaN(value)) {
@@ -159,7 +165,7 @@ export class AccountDatabaseService {
 		}
 
 		if (currentUserData) {
-			url	= `users/${this.accountAuthService.current.username}/${url}`;
+			url	= `users/${this.current.user.username}/${url}`;
 		}
 
 		const data	=
@@ -193,9 +199,6 @@ export class AccountDatabaseService {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly accountAuthService: AccountAuthService,
-
 		/** @ignore */
 		private readonly fileService: FileService,
 

@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UserPresence, userPresenceSelectOptions} from '../account/enums';
 import {User} from '../account/user';
 import {AccountAuthService} from '../services/account-auth.service';
+import {AccountDatabaseService} from '../services/account-database.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {EnvService} from '../services/env.service';
 
@@ -31,8 +32,8 @@ export class AccountProfileComponent implements OnInit {
 			if (username) {
 				this.user	= await this.accountUserLookupService.getUser(username);
 			}
-			else if (this.accountAuthService.current) {
-				this.user	= this.accountAuthService.current;
+			else if (this.accountDatabaseService.current) {
+				this.user	= this.accountDatabaseService.current.user;
 			}
 		}
 		catch (_) {}
@@ -44,7 +45,10 @@ export class AccountProfileComponent implements OnInit {
 
 	/** Indicates whether this is the profile of the currently signed in user. */
 	public get isCurrentUser () : boolean {
-		return this.user === this.accountAuthService.current;
+		return (
+			this.accountDatabaseService.current !== undefined &&
+			this.user === this.accountDatabaseService.current.user
+		);
 	}
 
 	/** @inheritDoc */
@@ -63,6 +67,9 @@ export class AccountProfileComponent implements OnInit {
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
+
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see AccountUserLookupService */
 		public readonly accountUserLookupService: AccountUserLookupService,

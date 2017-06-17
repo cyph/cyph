@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {AccountAuthService} from './account-auth.service';
 import {AccountDatabaseService} from './account-database.service';
 import {FileService} from './file.service';
 
@@ -11,7 +10,7 @@ import {FileService} from './file.service';
 export class AccountSettingsService {
 	/** @ignore */
 	private async setImage (file: File, prop: 'avatar'|'coverImage') : Promise<void> {
-		if (!this.accountAuthService.current) {
+		if (!this.accountDatabaseService.current) {
 			throw new Error('Must sign in to set profile photo.');
 		}
 
@@ -19,13 +18,13 @@ export class AccountSettingsService {
 			throw new Error('Profile photo must be an image.');
 		}
 
-		this.accountAuthService.current[prop]	=
+		this.accountDatabaseService.current.user[prop]	=
 			await this.fileService.getDataURI(file, true)
 		;
 
 		await this.accountDatabaseService.setItem(
 			'publicProfile',
-			this.accountAuthService.current,
+			this.accountDatabaseService.current,
 			true,
 			true
 		);
@@ -42,9 +41,6 @@ export class AccountSettingsService {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly accountAuthService: AccountAuthService,
-
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 
