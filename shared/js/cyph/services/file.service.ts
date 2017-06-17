@@ -105,8 +105,8 @@ export class FileService {
 	}
 
 	/** Converts binary data to base64 data URI. */
-	public toDataURI (data: Uint8Array, fileType: string) : string {
-		return `data:${fileType};base64,${potassiumUtil.toBase64(data)}`;
+	public toDataURI (data: Uint8Array, mediaType: string) : string {
+		return `data:${mediaType};base64,${potassiumUtil.toBase64(data)}`;
 	}
 
 	constructor (

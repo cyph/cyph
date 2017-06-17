@@ -12,7 +12,7 @@ export class Transfer implements IMessageData {
 		public readonly name: string = '',
 
 		/** MIME type. */
-		public readonly fileType: string = '',
+		public readonly mediaType: string = '',
 
 		/** Indicates whether file should be handled as an image. */
 		public readonly image: boolean = false,

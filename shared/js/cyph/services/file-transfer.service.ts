@@ -38,7 +38,7 @@ export class FileTransferService {
 	/** @ignore */
 	private addImage (transfer: Transfer, plaintext: Uint8Array) : void {
 		this.chatService.addMessage(
-			`![](${this.fileService.toDataURI(plaintext, transfer.fileType)})` +
+			`![](${this.fileService.toDataURI(plaintext, transfer.mediaType)})` +
 				`\n\n#### ${transfer.name}`
 			,
 			transfer.author,
