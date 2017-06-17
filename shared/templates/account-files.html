@@ -4,7 +4,7 @@
 
 		<md-card
 			class='contact animated flipInY _{{i}}'
-			*ngFor='let file of accountFilesService.getFiles("file") | async; let i = index'
+			*ngFor='let file of accountFilesService.filteredFiles.files | async; let i = index'
 			[attr.data-index]='i'
 		>
 			<md-card-header fxLayout='row'>

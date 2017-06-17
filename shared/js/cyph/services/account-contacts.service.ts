@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
+import {AccountAuthService} from './account-auth.service';
 import {AccountDatabaseService} from './account-database.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 
@@ -11,12 +13,16 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 @Injectable()
 export class AccountContactsService {
 	/** List of contacts for current user. */
-	public async getContacts () : Promise<User[]> {
+	public readonly contacts: Subject<User[]>	= new BehaviorSubject([]);
+
+	/** @ignore */
+	private async updateContacts () : Promise<void> {
+		await this.accountAuthService.ready;
 		if (!this.accountDatabaseService.current) {
-			return [];
+			return;
 		}
 
-		return (
+		this.contacts.next((
 			await Promise.all(
 				(
 					await this.accountDatabaseService.getItemObject<string[]>(
@@ -44,14 +50,19 @@ export class AccountContactsService {
 					1
 				;
 			})
-		;
+		);
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly accountAuthService: AccountAuthService,
+
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService
-	) {}
+	) {
+		this.updateContacts();
+	}
 }
