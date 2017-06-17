@@ -33,11 +33,14 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		currentUserData: boolean = false
 	) : Promise<Uint8Array> {
-		if (!this.current) {
-			throw new Error(`User not signed in. Cannot get item at ${url}.`);
+		if (!publicData && !this.current) {
+			throw new Error(`User not signed in. Cannot get private data at ${url}.`);
 		}
-
 		if (currentUserData) {
+			if (!this.current) {
+				throw new Error(`User not signed in. Cannot get current user data at ${url}.`);
+			}
+
 			url	= `users/${this.current.user.username}/${url}`;
 		}
 
