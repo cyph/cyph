@@ -1,6 +1,10 @@
 #!/bin/bash
 
 
+cd $(cd "$(dirname "$0")" ; pwd)/..
+dir="$PWD"
+cd -
+
 getRoot=true
 if [ "${1}" == '--no-root' ] ; then
 	getRoot=''
@@ -181,6 +185,8 @@ for f in $(find . -name '*.html') ; do node -e "
 		require('node-fetch')(url, opts).catch(() => fetch(url, opts))
 	;
 
+	const isAmp	= '${f}'.endsWith('/amp/index.html');
+
 	const \$	= cheerio.load(fs.readFileSync('${f}').toString());
 
 	\$('meta[name=\"twitter:card\"]').each((i, elem) =>
@@ -191,6 +197,10 @@ for f in $(find . -name '*.html') ; do node -e "
 		\$(
 			'script:not([src]), style'
 		).toArray().map(elem => Promise.resolve().then(() => {
+			if (isAmp) {
+				return;
+			}
+
 			elem	= \$(elem);
 
 			const content	= elem.html().trim();
@@ -218,6 +228,7 @@ for f in $(find . -name '*.html') ; do node -e "
 				fs.writeFileSync(path, content);
 			});
 		})).concat(\$(
+			'amp-img[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
 			'img[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
 			'script[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
 			'link[rel=\"stylesheet\"][href]:not([href^=\"/blog\"]):not([href^=\"${fullDestinationURL}\"])'
@@ -230,6 +241,10 @@ for f in $(find . -name '*.html') ; do node -e "
 			const tagName	= elem.prop('tagName').toLowerCase();
 			const attr		= tagName === 'link' ? 'href' : 'src';
 			const url		= elem.attr(attr).replace(/^\/\//, 'https://');
+
+			if (isAmp && (!tagName.endsWith('img') || url.startsWith('data:'))) {
+				return;
+			}
 
 			return fetch(
 				url,
@@ -253,7 +268,7 @@ for f in $(find . -name '*.html') ; do node -e "
 				fs.writeFileSync(path, content);
 			});
 		})))
-	).then(() =>\$('head').append(\`
+	).then(() => isAmp ? Promise.resolve() : \$('head').append(\`
 		<script defer src='/assets/node_modules/core-js/client/shim.js'></script>
 		<script defer src='/assets/js/standalone/global.js'></script>
 		<script defer src='/assets/js/standalone/analytics.js'></script>
@@ -329,7 +344,10 @@ for path in $(
 	mv "${path}.new" "${path}" 2> /dev/null
 done
 
+find . -type f -name logo-amp.png -exec cp -f "${dir}/shared/assets/img/logo.amp.png" "{}" \;
+
 rm root/index.html
+find root -type d -name amp -exec rm -rf '{}' \; 2> /dev/null
 grep -rl /blog/root root | xargs -I% sed -i 's|/blog/root||g' %
 
 # One-off edge cases; should find a better general solution later

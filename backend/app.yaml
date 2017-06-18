@@ -6,7 +6,7 @@ handlers:
   static_files: anal.html
   upload: anal.html
   secure: always
-  # default_headers Cache-Control X-Frame-Options Content-Security-Policy X-Content-Security-Policy X-WebKit-CSP
+  # default_headers Cache-Control X-Frame-Options Content-Security-Policy
 
 - url: .*
   script: _go_app
