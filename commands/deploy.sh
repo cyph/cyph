@@ -152,6 +152,13 @@ if [ ! "${simple}" ] ; then
 		tr '\n' '☁' |
 		perl -pe 's/(\/PATH.*?connect-src )(.*?frame-src )(.*?connect-src )(.*?frame-src )(.*?connect-src )(.*?frame-src )/\1☼\2☼\3☼\4☼\5☼\6☼/g' |
 		sed "s|☼|${wpstaticCSPSources}|g" |
+		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?connect-src )/\1https:\/\/google-analytics.com /g' |
+		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?connect-src )/\1https:\/\/*.google-analytics.com /g' |
+		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?font-src )/\1https:\/\/fonts.googleapis.com /g' |
+		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?font-src )/\1https:\/\/fonts.gstatic.com /g' |
+		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?style-src )/\1https:\/\/cdn.ampproject.org /g' |
+		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?style-src )/\1https:\/\/fonts.googleapis.com /g' |
+		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?script-src )/\1https:\/\/cdn.ampproject.org /g' |
 		tr '☁' '\n' |
 		sed "s|Cache-Control: private, max-age=31536000|Cache-Control: public, max-age=31536000|g" \
 	> cyph.com/new.yaml
