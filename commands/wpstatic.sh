@@ -346,7 +346,7 @@ done
 
 find . -type f -name logo-amp.png -exec cp -f "${dir}/shared/assets/img/logo.amp.png" "{}" \;
 
-rm root/index.html
+rm -rf blog/amp root/index.html
 find root -type d -name amp -exec rm -rf '{}' \; 2> /dev/null
 grep -rl /blog/root root | xargs -I% sed -i 's|/blog/root||g' %
 
