@@ -1,9 +1,11 @@
   http_headers:
     Cache-Control: private, max-age=31536000
     Content-Security-Policy: DEFAULT_CSP
+    Expect-CT: max-age=0; report-uri="https://cyph.report-uri.io/r/default/ct/reportOnly"
     Referrer-Policy: "no-referrer"
     Public-Key-Pins: max-age=5184000; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="unPe8YYMLOhkaAWcjfFF1q571QqcrI5NUfP+0eBT/po="; preload
     Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
-    X-Content-Security-Policy: DEFAULT_CSP
+    X-Content-Type-Options: nosniff
+    X-DNS-Prefetch-Control: off
     X-Frame-Options: deny
-    X-WebKit-CSP: DEFAULT_CSP
+    X-XSS-Protection: 1; mode=block

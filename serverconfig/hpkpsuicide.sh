@@ -112,7 +112,6 @@ read -r -d '' sslconf <<- EOM
 
 	add_header Public-Key-Pins 'max-age=5184000; pin-sha256="${keyHash}"; pin-sha256="${backupHash}"';
 	add_header Strict-Transport-Security 'max-age=31536000; includeSubdomains; preload';
-	add_header X-XSS-Protection '1; mode=block';
 
 	ssl_stapling on;
 	ssl_stapling_verify on;

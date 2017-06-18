@@ -41,7 +41,7 @@ handlers:
   static_files: PATH/\1/index.html
   upload: PATH/.*
   secure: always
-  # default_headers Cache-Control
+  # default_headers Cache-Control X-DNS-Prefetch-Control
 - url: /PATH/(.*?)[/]?
   static_files: PATH/\1/index.html
   upload: PATH/.*
