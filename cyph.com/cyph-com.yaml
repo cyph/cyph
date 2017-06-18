@@ -37,6 +37,11 @@ handlers:
   upload: PATH/index.html
   secure: always
   # default_headers Cache-Control
+- url: /PATH/(.*?/amp)[/]?
+  static_files: PATH/\1/index.html
+  upload: PATH/.*
+  secure: always
+  # default_headers Cache-Control
 - url: /PATH/(.*?)[/]?
   static_files: PATH/\1/index.html
   upload: PATH/.*
