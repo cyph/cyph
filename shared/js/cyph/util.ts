@@ -298,7 +298,7 @@ export class Util {
 						{n: b, s: ''}
 		;
 
-		return `${o.n.toFixed(2)} ${o.s}B`;
+		return `${o.n.toFixed(2).replace(/\.?0+$/, '')} ${o.s}B`;
 	}
 
 	/** Random ID meant optimized for readability by humans. Uses Config.readableIdCharacters. */
