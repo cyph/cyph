@@ -183,28 +183,28 @@
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@braintree/wrap-promise/-/wrap-promise-1.1.1.tgz#d22c76855e6d4b4012610060421fae1a37ec90b0"
 
-"@compodoc/compodoc@^1.0.0-beta.9":
-  version "1.0.0-beta.9"
-  resolved "https://registry.yarnpkg.com/@compodoc/compodoc/-/compodoc-1.0.0-beta.9.tgz#b1ae94d6263c6f5d04442b068c970e7c20943a9a"
+"@compodoc/compodoc@^1.0.0-beta.10":
+  version "1.0.0-beta.10"
+  resolved "https://registry.yarnpkg.com/@compodoc/compodoc/-/compodoc-1.0.0-beta.10.tgz#3d6329811f13babf4a103e8a56cc59625fd29de0"
   dependencies:
     "@compodoc/ngd-core" "^2.0.0-alpha.1"
     "@compodoc/ngd-transformer" "^2.0.0-alpha.3"
-    cheerio "^0.22.0"
+    cheerio "^1.0.0-rc.1"
     chokidar "^1.7.0"
     colors "^1.1.2"
     commander "^2.9.0"
     fs-extra "^3.0.1"
-    glob "^7.1.1"
+    glob "^7.1.2"
     gulp-util "^3.0.8"
-    handlebars "^4.0.8"
+    handlebars "^4.0.10"
     html-entities "^1.2.1"
     live-server "^1.2.0"
     lodash "^4.17.3"
     lunr "^1.0.0"
     marked "^0.3.6"
     os-name "^2.0.1"
-    shelljs "^0.7.7"
-    typescript "2.3.2"
+    shelljs "^0.7.8"
+    typescript "2.3.4"
 
 "@compodoc/ngd-core@2.0.0-alpha.1", "@compodoc/ngd-core@^2.0.0-alpha.1":
   version "2.0.0-alpha.1"
@@ -1391,8 +1391,8 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000187, caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000690"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000690.tgz#ee4e0750070f6aae6f40e76477984449bd6cb48a"
+  version "1.0.30000692"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000692.tgz#3da9a99353adbcea1e142b99f60ecc6216df47a5"
 
 capture-stack-trace@^1.0.0:
   version "1.0.0"
@@ -1447,7 +1447,7 @@ check-tslint-all@^2.2.2:
     lodash "^4.17.4"
     resolve "^1.3.2"
 
-cheerio@^0.22.0, cheerio@^1.0.0-rc.1:
+cheerio@^1.0.0-rc.1:
   version "1.0.0-rc.1"
   resolved "https://registry.yarnpkg.com/cheerio/-/cheerio-1.0.0-rc.1.tgz#2af37339eab713ef6b72cde98cefa672b87641fe"
   dependencies:
@@ -3832,7 +3832,7 @@ handle-thing@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/handle-thing/-/handle-thing-1.2.5.tgz#fd7aad726bf1a5fd16dfc29b2f7a6601d27139c4"
 
-handlebars@^1.3.0, handlebars@^4.0.3, handlebars@^4.0.6, handlebars@^4.0.8:
+handlebars@^1.3.0, handlebars@^4.0.10, handlebars@^4.0.3, handlebars@^4.0.6:
   version "4.0.10"
   resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.10.tgz#3d30c718b09a3d96f23ea4cc1f403c4d3ba9ff4f"
   dependencies:
@@ -5185,14 +5185,6 @@ lodash.assign@^3.0.0, lodash.assign@^4.0.1, lodash.assign@^4.0.3, lodash.assign@
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/lodash.assign/-/lodash.assign-4.2.0.tgz#0d99f3ccd7a6d261d19bdaeb9245005d285808e7"
 
-lodash.assignin@^4.0.9:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/lodash.assignin/-/lodash.assignin-4.2.0.tgz#ba8df5fb841eb0a3e8044232b0e263a8dc6a28a2"
-
-lodash.bind@^4.1.4:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/lodash.bind/-/lodash.bind-4.2.1.tgz#7ae3017e939622ac31b7d7d7dcb1b34db1690d35"
-
 lodash.camelcase@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
@@ -5201,7 +5193,7 @@ lodash.clonedeep@^4.3.2, lodash.clonedeep@^4.5.0, lodash.clonedeep@~4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
 
-lodash.defaults@^3.1.2, lodash.defaults@^4.0.0, lodash.defaults@^4.0.1:
+lodash.defaults@^3.1.2, lodash.defaults@^4.0.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/lodash.defaults/-/lodash.defaults-4.2.0.tgz#d09178716ffea4dde9e5fb7b37f6f0802274580c"
 
@@ -5210,18 +5202,6 @@ lodash.escape@^3.0.0:
   resolved "https://registry.yarnpkg.com/lodash.escape/-/lodash.escape-3.2.0.tgz#995ee0dc18c1b48cc92effae71a10aab5b487698"
   dependencies:
     lodash._root "^3.0.0"
-
-lodash.filter@^4.4.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/lodash.filter/-/lodash.filter-4.6.0.tgz#668b1d4981603ae1cc5a6fa760143e480b4c4ace"
-
-lodash.flatten@^4.2.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/lodash.flatten/-/lodash.flatten-4.4.0.tgz#f31c22225a9632d2bbf8e4addbef240aa765a61f"
-
-lodash.foreach@^4.3.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.foreach/-/lodash.foreach-4.5.0.tgz#1a6a35eace401280c7f06dddec35165ab27e3e53"
 
 lodash.isarguments@2.4.x, lodash.isarguments@^3.0.0:
   version "3.1.0"
@@ -5251,10 +5231,6 @@ lodash.keys@^3.0.0, lodash.keys@~2.4.1:
     lodash.isarguments "^3.0.0"
     lodash.isarray "^3.0.0"
 
-lodash.map@^4.4.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/lodash.map/-/lodash.map-4.6.0.tgz#771ec7839e3473d9c4cde28b19394c3562f4f6d3"
-
 lodash.mapvalues@^4.4.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash.mapvalues/-/lodash.mapvalues-4.6.0.tgz#1bafa5005de9dd6f4f26668c30ca37230cc9689c"
@@ -5262,10 +5238,6 @@ lodash.mapvalues@^4.4.0:
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
-
-lodash.merge@^4.4.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.0.tgz#69884ba144ac33fe699737a6086deffadd0f89c5"
 
 lodash.mergewith@^4.6.0:
   version "4.6.0"
@@ -5279,25 +5251,9 @@ lodash.once@^4.0.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
 
-lodash.pick@^4.2.1:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
-
-lodash.reduce@^4.4.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/lodash.reduce/-/lodash.reduce-4.6.0.tgz#f1ab6b839299ad48f784abbf476596f03b914d3b"
-
-lodash.reject@^4.4.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/lodash.reject/-/lodash.reject-4.6.0.tgz#80d6492dc1470864bbf583533b651f42a9f52415"
-
 lodash.restparam@*, lodash.restparam@^3.0.0:
   version "3.6.1"
   resolved "https://registry.yarnpkg.com/lodash.restparam/-/lodash.restparam-3.6.1.tgz#936a4e309ef330a7645ed4145986c85ae5b20805"
-
-lodash.some@^4.4.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/lodash.some/-/lodash.some-4.6.0.tgz#1bb9f314ef6b8baded13b549169b2a945eb68e4d"
 
 lodash.tail@^4.1.1:
   version "4.1.1"
@@ -7784,8 +7740,8 @@ rsa-keygen@*:
     nan "~2.3.3"
 
 rsasign@*:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.0.4.tgz#04a72ddb0e7640b757480310e945ebcf1af99274"
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.0.5.tgz#0ad28e5a21a0cd62f443b4ce4b25006c92592792"
   dependencies:
     pem-jwk-norecompute "*"
     rsa-keygen "*"
@@ -8057,7 +8013,7 @@ shell-quote@^1.6.1:
     array-reduce "~0.0.0"
     jsonify "~0.0.0"
 
-shelljs@0.7.0, shelljs@0.7.6, shelljs@^0.6.0, shelljs@^0.7.0, shelljs@^0.7.7:
+shelljs@0.7.0, shelljs@0.7.6, shelljs@^0.6.0, shelljs@^0.7.0, shelljs@^0.7.8:
   version "0.7.8"
   resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.7.8.tgz#decbcf874b0d1e5fb72e14b164a9683048e9acb3"
   dependencies:
@@ -8628,9 +8584,9 @@ superagent@^3.0.0:
     qs "^6.1.0"
     readable-stream "^2.0.5"
 
-supersphincs@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-3.0.0.tgz#18b583e1fc820a99d37ef910a3c12be8b077d1c0"
+supersphincs@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-3.0.1.tgz#0ebac848afa4f3d0c98503c3328bd103b2491442"
   dependencies:
     js-sha512 "*"
     rsasign "*"
@@ -9053,7 +9009,7 @@ typedoc@^0.7.1:
     typedoc-default-themes "^0.5.0"
     typescript "2.3.2"
 
-typescript@2.3.2, "typescript@>=2.0.0 <2.4.0", typescript@^2.1.0, typescript@^2.1.5, typescript@^2.3.4:
+typescript@2.3.2, typescript@2.3.4, "typescript@>=2.0.0 <2.4.0", typescript@^2.1.0, typescript@^2.1.5, typescript@^2.3.4:
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.3.4.tgz#3d38321828231e434f287514959c37a82b629f42"
 
