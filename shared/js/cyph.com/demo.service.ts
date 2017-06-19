@@ -107,7 +107,7 @@ export class DemoService {
 	/** Mobile chat UI data. */
 	public mobile: ChatData;
 
-	/** Run the demo. */
+	/** Runs the demo. */
 	public async run (facebookJoke: () => void) : Promise<void> {
 		this.desktop.resolveStart();
 		this.mobile.resolveStart();

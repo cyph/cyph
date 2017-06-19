@@ -98,7 +98,7 @@ export class PotassiumUtil {
 		;
 	}
 
-	/** Normalises any binary data as standard byte array format. */
+	/** Normalizes any binary data as standard byte array format. */
 	public toBytes (a: ArrayBufferView) : Uint8Array {
 		return new Uint8Array(a.buffer, a.byteOffset, a.byteLength);
 	}

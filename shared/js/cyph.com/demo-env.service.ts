@@ -13,7 +13,7 @@ export class DemoEnvService extends EnvService {
 	/** @ignore */
 	private chatData?: ChatData;
 
-	/** Initialise service. */
+	/** Initializes service. */
 	public init (chatData: ChatData) : void {
 		this.chatData	= chatData;
 	}

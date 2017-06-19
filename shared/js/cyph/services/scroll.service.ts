@@ -56,7 +56,7 @@ export class ScrollService {
 		);
 	}
 
-	/** Initialise service. */
+	/** Initializes service. */
 	public init (rootElement: JQuery, itemCountInTitle: boolean = false) : void {
 		this.itemCountInTitle	= itemCountInTitle;
 		this.resolveRootElement(rootElement);
