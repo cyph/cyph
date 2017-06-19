@@ -16,12 +16,12 @@ export class Transport {
 	/** Queue of cyphertext interception handlers. */
 	public readonly cyphertextIntercepters: ((cyphertext: Uint8Array) => void)[]	= [];
 
-	/** Trigger abortion event. */
+	/** Triggers abortion event. */
 	public abort () : void {
 		this.session.trigger(events.castle, {event: CastleEvents.abort});
 	}
 
-	/** Trigger connection event. */
+	/** Triggers connection event. */
 	public connect () : void {
 		this.session.trigger(events.castle, {event: CastleEvents.connect});
 	}

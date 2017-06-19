@@ -127,7 +127,7 @@ export class P2PService {
 		}
 	}
 
-	/** Initialise service. */
+	/** Initializes service. */
 	public async init (localVideo: () => JQuery, remoteVideo: () => JQuery) : Promise<void> {
 		if (this.sessionInitService.callType !== undefined) {
 			this.p2pWebRTCService.accept(this.sessionInitService.callType);

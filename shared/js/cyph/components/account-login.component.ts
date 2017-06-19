@@ -26,7 +26,7 @@ export class AccountLoginComponent {
 	/** Username to be used for login attempt. */
 	public username: string		= '';
 
-	/** Initiate login attempt. */
+	/** Initiates login attempt. */
 	public async submit () : Promise<void> {
 		this.checking	= true;
 		this.error		= false;
