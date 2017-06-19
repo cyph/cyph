@@ -270,7 +270,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		open: async (
 			signed: Uint8Array|string,
 			publicKey: Uint8Array
-		) => eventManager.rpcTrigger<string>(
+		) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.sign.open,
 			{publicKey, signed},
 			this.threadInit
@@ -284,7 +284,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		sign: async (
 			message: Uint8Array|string,
 			privateKey: Uint8Array
-		) => eventManager.rpcTrigger<string>(
+		) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.sign.sign,
 			{message, privateKey},
 			this.threadInit
@@ -292,7 +292,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		signDetached: async (
 			message: Uint8Array|string,
 			privateKey: Uint8Array
-		) => eventManager.rpcTrigger<string>(
+		) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.sign.signDetached,
 			{message, privateKey},
 			this.threadInit

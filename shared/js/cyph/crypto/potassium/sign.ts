@@ -34,7 +34,7 @@ export class Sign implements ISign {
 	public async open (
 		signed: Uint8Array|string,
 		publicKey: Uint8Array
-	) : Promise<string> {
+	) : Promise<Uint8Array> {
 		return superSphincs.open(signed, publicKey);
 	}
 
@@ -42,7 +42,7 @@ export class Sign implements ISign {
 	public async sign (
 		message: Uint8Array|string,
 		privateKey: Uint8Array
-	) : Promise<string> {
+	) : Promise<Uint8Array> {
 		return superSphincs.sign(message, privateKey);
 	}
 
@@ -50,7 +50,7 @@ export class Sign implements ISign {
 	public async signDetached (
 		message: Uint8Array|string,
 		privateKey: Uint8Array
-	) : Promise<string> {
+	) : Promise<Uint8Array> {
 		return superSphincs.signDetached(message, privateKey);
 	}
 
