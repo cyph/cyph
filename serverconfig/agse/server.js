@@ -231,7 +231,7 @@ server.on('message', async (message) => {
 	}
 
 	const signatures	= await Promise.all(inputs.map(async (s) =>
-		superSphincs.signDetached(s, keyData.keyPair.privateKey)
+		superSphincs.signDetachedBase64(s, keyData.keyPair.privateKey)
 	));
 
 	console.log('Signatures generated.');

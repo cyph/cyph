@@ -22,19 +22,19 @@ export interface ISign {
 	open (
 		signed: Uint8Array|string,
 		publicKey: Uint8Array
-	) : Promise<string>;
+	) : Promise<Uint8Array>;
 
 	/** Signs message and returns it combined with signature. */
 	sign (
 		message: Uint8Array|string,
 		privateKey: Uint8Array
-	) : Promise<string>;
+	) : Promise<Uint8Array>;
 
 	/** Signs message and returns only the signature. */
 	signDetached (
 		message: Uint8Array|string,
 		privateKey: Uint8Array
-	) : Promise<string>;
+	) : Promise<Uint8Array>;
 
 	/** Verifies signature. */
 	verifyDetached (
