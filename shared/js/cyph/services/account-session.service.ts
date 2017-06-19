@@ -15,7 +15,7 @@ import {SessionService} from './session.service';
 @Injectable()
 export class AccountSessionService extends SessionService {
 	/** Temporary, for testing. */
-	private static DUMMY_REPLIES: string[]	= [
+	private readonly DUMMY_REPLIES: string[]	= [
 		'Hey, how\'s it going?',
 		'Same old, same old. Still on the run from the NSA.'
 	];
@@ -46,7 +46,7 @@ export class AccountSessionService extends SessionService {
 			const reply	= this.replies.get(user.username) || 0;
 			this.replies.set(user.username, reply + 1);
 
-			if (reply >= AccountSessionService.DUMMY_REPLIES.length) {
+			if (reply >= this.DUMMY_REPLIES.length) {
 				continue;
 			}
 
@@ -62,7 +62,7 @@ export class AccountSessionService extends SessionService {
 
 				this.trigger(rpcEvents.text, {
 					author: user.realUsername,
-					text: AccountSessionService.DUMMY_REPLIES[reply]
+					text: this.DUMMY_REPLIES[reply]
 				});
 			});
 		}
