@@ -1,4 +1,3 @@
-import {util} from '../util';
 import {UserPresence} from './enums';
 
 
@@ -6,12 +5,6 @@ import {UserPresence} from './enums';
  * Represents a user profile.
  */
 export class User {
-	/** Usernames and similar identifiers for external services like social media. */
-	public externalUsernames	= new Map<
-		'email'|'facebook'|'keybase'|'phone'|'reddit'|'twitter',
-		string
-	>();
-
 	/** Username (all lowercase). */
 	public readonly username: string;
 
@@ -40,21 +33,16 @@ export class User {
 		/** @see UserPresence. */
 		public status: UserPresence,
 
-		externalUsernames?: {service: string; username: string}[]
+		/** Usernames and similar identifiers for external services like social media. */
+		public readonly externalUsernames: {
+			email?: string;
+			facebook?: string;
+			keybase?: string;
+			phone?: string;
+			reddit?: string;
+			twitter?: string;
+		} = {}
 	) {
 		this.username	= this.realUsername.toLowerCase();
-
-		/* Mock external usernames for now */
-		if (!externalUsernames) {
-			externalUsernames	= ['facebook', 'keybase', 'reddit', 'twitter'].
-				sort(() => util.random() > 0.5 ? -1 : 1).
-				slice(0, util.random(5)).
-				map(service => ({service, username: this.username}))
-			;
-		}
-
-		for (const o of externalUsernames) {
-			this.externalUsernames.set(<any> o.service, o.username);
-		}
 	}
 }
