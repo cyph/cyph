@@ -159,7 +159,7 @@ read -r -d '' modules <<- EOM
 	tslint-microsoft-contrib
 	tsutils
 	typedoc
-	typescript@^2.4
+	typescript
 	uglify-js@https://github.com/buu700/uglify-js-tmp
 	unsemantic
 	url-loader
