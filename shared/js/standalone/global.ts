@@ -1,7 +1,7 @@
 /* tslint:disable:strict-type-predicates */
 
 /**
- * @file Normalises global namespace across varying runtime environments.
+ * @file Normalizes global namespace across varying runtime environments.
  */
 
 

@@ -45,7 +45,7 @@ export class LockdownComponent implements OnInit {
 		}
 	}
 
-	/** Initiate unlock attempt. */
+	/** Initiates unlock attempt. */
 	public async submit () : Promise<void> {
 		this.checking	= true;
 		this.error		= false;

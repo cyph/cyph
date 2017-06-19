@@ -406,7 +406,7 @@ export class Util {
 	}
 
 	/**
-	 * Serialises o to a query string (cf. jQuery.param).
+	 * Serializes o to a query string (cf. jQuery.param).
 	 * @param o
 	 * @param parent Ignore this (internal use).
 	 */

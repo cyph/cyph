@@ -26,7 +26,7 @@ export interface IP2PWebRTCService {
 	/** This kills the P2P session. */
 	close () : void;
 
-	/** Initialise service. */
+	/** Initializes service. */
 	init (handlers: IP2PHandlers, localVideo: () => JQuery, remoteVideo: () => JQuery) : void;
 
 	/** Sets up a new P2P session. */

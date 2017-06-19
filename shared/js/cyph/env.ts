@@ -101,7 +101,7 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is (the main thread of) a Web environment. */
 	public readonly isWeb: boolean			= IS_WEB;
 
-	/** Normalised language code, used for translations. */
+	/** Normalized language code, used for translations. */
 	public readonly language: string		= (() => {
 		const language: string	= this.fullLanguage.split('-')[0];
 
