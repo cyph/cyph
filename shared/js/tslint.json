@@ -212,6 +212,8 @@
 
 		/* Codelyzer */
 
+		"angular-whitespace": [true, "check-pipe"],
+		"banana-in-box": true,
 		"component-class-suffix": true,
 		"component-selector": [true, "element", "cyph", "kebab-case"],
 		"directive-class-suffix": true,
@@ -227,6 +229,7 @@
 		"pipe-impure": true,
 		"pipe-naming": [true, "camelCase", "cyph"],
 		"template-to-ng-template": true,
+		"templates-no-negated-async": true,
 		"templates-use-public": true,
 		"use-host-property-decorator": true,
 		"use-input-property-decorator": true,
@@ -234,6 +237,7 @@
 		"use-output-property-decorator": true,
 		"use-pipe-decorator": true,
 		"use-pipe-transform-interface": true,
+		"use-view-encapsulation": true,
 
 
 		/* Microsoft Contrib */
