@@ -21,7 +21,7 @@ read -r -d '' modules <<- EOM
 	@angular/flex-layout@2.0.0-beta.8
 	@angular/forms
 	@angular/http
-	@angular/material
+	@angular/material@https://github.com/buu700/angular-material-tmp
 	@angular/platform-browser
 	@angular/platform-browser-dynamic
 	@angular/platform-server
