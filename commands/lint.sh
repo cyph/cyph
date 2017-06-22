@@ -115,7 +115,7 @@ output="$({
 	' \;;
 } 2>&1 |
 	grep -v js/native/js |
-	grep -v "Warning: Cannot read property 'end' of undefined"
+	grep -vP "Warning: Cannot read property '.*?' of undefined"
 )"
 
 # Retire.js

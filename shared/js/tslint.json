@@ -212,7 +212,7 @@
 
 		/* Codelyzer */
 
-		"angular-whitespace": [true, "check-pipe"],
+		"angular-whitespace": false,
 		"banana-in-box": true,
 		"component-class-suffix": true,
 		"component-selector": [true, "element", "cyph", "kebab-case"],
