@@ -126,7 +126,7 @@ then(function (results) {
 	};
 
 	if (!packageData.rsaKey || !packageData.sphincsKey) {
-		throw 'No valid public key specified.';
+		throw new Error('No valid public key specified.');
 	}
 
 	return Promise.all([
@@ -164,7 +164,7 @@ then(function (results) {
 			packageName !== opened.packageName.replace(/\.ws$/, '')
 		)
 	) {
-		throw 'Stale or invalid data.';
+		throw new Error('Stale or invalid data.');
 	}
 
 	storage.webSignExpires			= opened.expires;
