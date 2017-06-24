@@ -65,34 +65,38 @@ while [ ! -f index.html ] ; do
 	sshkill
 	ssh -i ~/.ssh/id_rsa_docker -f -N -L "${sourcePort}:${sourceOrigin}" "${sshServer}" &> /dev/null
 
-	command="$(node -e "
+	command="$(node -e "(async () => {
 		const browser	= new (require('zombie'));
 
 		setTimeout(() => process.exit(), 1200000);
 
-		new Promise(resolve => browser.visit(
+		await new Promise(resolve => browser.visit(
 			'${sourceURL}/wp-admin/admin.php?page=simply-static_settings',
 			resolve
-		)).then(() => new Promise(resolve => browser.
+		));
+
+		await new Promise(resolve => browser.
 			fill('log', 'admin').
 			fill('pwd', 'hunter2').
 			pressButton('Log In', resolve)
-		)).then(() => new Promise(resolve => browser.
+		);
+
+		await new Promise(resolve => browser.
 			select('destination_scheme', '${destinationProtocol}').
 			fill('destination_host', '${destinationURL}').
 			pressButton('Save Changes', resolve)
-		)).then(() => {
-			let hasInitiated	= false;
+		);
 
-			const tryDownload	= () =>
-				new Promise(resolve => browser.visit(
+		let hasInitiated	= false;
+
+		while (true) {
+			try {
+				await new Promise(resolve => browser.visit(
 					'${sourceURL}/wp-admin/admin.php?page=simply-static',
 					() => setTimeout(resolve, 5000)
-				)).then(() => {
-					if (!hasInitiated) {
-						return;
-					}
+				));
 
+				if (hasInitiated) {
 					const a	= browser.document.querySelectorAll(
 						'a[href*=\".zip\"]'
 					)[0];
@@ -109,7 +113,9 @@ while [ ! -f index.html ] ; do
 					browser.tabs.closeAll();
 					console.log(command);
 					process.exit();
-				}).then(() => new Promise(resolve =>
+				}
+
+				await new Promise(resolve =>
 					!browser.document.querySelectorAll('#generate:not(.hide)')[0] ?
 						resolve() :
 						browser.pressButton(
@@ -119,25 +125,31 @@ while [ ! -f index.html ] ; do
 								resolve();
 							}, 5000)
 						)
-				)).
-				catch(() => {}).
-				then(() => new Promise(resolve =>
+				);
+			}
+			catch (err) {
+				console.warn('Ignored error:');
+				console.warn(err);
+			}
+
+			try {
+				await new Promise(resolve =>
 					!browser.document.querySelectorAll('#resume:not(.hide)')[0] ?
 						resolve() :
 						browser.pressButton(
 							'Resume',
 							() => setTimeout(resolve, 5000)
 						)
-				)).
-				catch(() => {}).
-				then(() =>
-					setTimeout(tryDownload, 10000)
-				)
-			;
+				);
+			}
+			catch (err) {
+				console.warn('Ignored error:');
+				console.warn(err);
+			}
 
-			tryDownload();
-		});
-	" 2> /dev/null | tail -n1)"
+			await new Promise(resolve => setTimeout(resolve, 10000));
+		}
+	})();" 2> /dev/null | tail -n1)"
 
 	if [ "$(echo "${command}" | grep "${commandComment}")" ] ; then
 		log "${command}"
@@ -175,7 +187,7 @@ done
 
 mkdir css fonts img js
 
-for f in $(find . -name '*.html') ; do node -e "
+for f in $(find . -name '*.html') ; do node -e "(async () => {
 	const cheerio		= require('cheerio');
 	const htmlMinifier	= require('html-minifier');
 	const imageType		= require('image-type');
@@ -193,10 +205,10 @@ for f in $(find . -name '*.html') ; do node -e "
 		\$(elem).attr('content', 'summary_large_image')
 	);
 
-	Promise.all(
+	await Promise.all(
 		\$(
 			'script:not([src]), style'
-		).toArray().map(elem => Promise.resolve().then(() => {
+		).toArray().map(async elem => {
 			if (isAmp) {
 				return;
 			}
@@ -204,30 +216,29 @@ for f in $(find . -name '*.html') ; do node -e "
 			elem	= \$(elem);
 
 			const content	= elem.html().trim();
+			const hash		= (await superSphincs.hash(content)).hex;
 			const isScript	= elem.prop('tagName').toLowerCase() === 'script';
 
 			elem.html('');
 
-			return superSphincs.hash(content).then(hash => {
-				let path;
+			let path;
 
-				if (isScript) {
-					path	= \`js/\${hash.hex}.js\`;
-					elem.attr('src', \`/blog/\${path}\`);
-				}
-				else {
-					path	= \`css/\${hash.hex}.css\`;
-					elem.replaceWith(\`
-						<link
-							rel='stylesheet'
-							href='/blog/\${path}'
-						></link>
-					\`);
-				}
+			if (isScript) {
+				path	= \`js/\${hash}.js\`;
+				elem.attr('src', \`/blog/\${path}\`);
+			}
+			else {
+				path	= \`css/\${hash}.css\`;
+				elem.replaceWith(\`
+					<link
+						rel='stylesheet'
+						href='/blog/\${path}'
+					></link>
+				\`);
+			}
 
-				fs.writeFileSync(path, content);
-			});
-		})).concat(\$(
+			fs.writeFileSync(path, content);
+		}).concat(\$(
 			'amp-img[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
 			'img[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
 			'script[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
@@ -235,7 +246,7 @@ for f in $(find . -name '*.html') ; do node -e "
 		).toArray().concat(
 			/* Workaround for Supsystic table plugin dynamically generating this client-side */
 			\$('<link href=\"https://fonts.googleapis.com/css?family=Ubuntu\" />')
-		).map(elem => Promise.resolve().then(() => {
+		).map(async elem => {
 			elem	= \$(elem);
 
 			const tagName	= elem.prop('tagName').toLowerCase();
@@ -246,40 +257,45 @@ for f in $(find . -name '*.html') ; do node -e "
 				return;
 			}
 
-			return fetch(
-				url,
-				{headers: {'User-Agent': 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)'}}
-			).then(res =>
+			const content	= await fetch(url, {
+				headers: {
+					'User-Agent': 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)'
+				}
+			}).then(res =>
 				res.buffer()
-			).then(content => Promise.all([
-				content,
-				superSphincs.hash(content)
-			])).then(results => {
-				const content		= results[0];
-				const hash			= results[1].hex;
+			);
 
-				const path		=
-					tagName === 'script' ? \`js/\${hash}.js\` :
-					tagName === 'link' ? \`css/\${hash}.css\` :
-					\`img/\${hash}.\${(imageType(content) || {ext: 'jpg'}).ext}\`
-				;
+			const hash		= (await superSphincs.hash(content)).hex;
 
-				elem.attr(attr, \`/blog/\${path}\`);
-				fs.writeFileSync(path, content);
-			});
-		})))
-	).then(() => isAmp ? Promise.resolve() : \$('head').append(\`
+			const path		=
+				tagName === 'script' ? \`js/\${hash}.js\` :
+				tagName === 'link' ? \`css/\${hash}.css\` :
+				\`img/\${hash}.\${(imageType(content) || {ext: 'jpg'}).ext}\`
+			;
+
+			elem.attr(attr, \`/blog/\${path}\`);
+			fs.writeFileSync(path, content);
+		}))
+	);
+
+	if (isAmp) {
+		return;
+	}
+
+	\$('head').append(\`
 		<script defer src='/assets/node_modules/core-js/client/shim.js'></script>
 		<script defer src='/assets/js/standalone/global.js'></script>
 		<script defer src='/assets/js/standalone/analytics.js'></script>
-	\`)).then(() => fs.writeFileSync('${f}', htmlMinifier.minify(
+	\`);
+
+	fs.writeFileSync('${f}', htmlMinifier.minify(
 		\$.html().trim(),
 		{
 			collapseWhitespace: true,
 			removeComments: true
 		}
-	)));
-" ; done
+	));
+})();" ; done
 
 sed -i "s|https://fonts.googleapis.com/css|${fullDestinationURL}/$(grep -rl 'local(.Ubuntu.)')|g" \
 	wp-content/plugins/pricing-table-by-supsystic/js/table.min.js
@@ -323,9 +339,9 @@ for type in eot svg ttf woff woff2 ; do
 		uniq |
 		xargs -I% bash -c "
 			url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${sourceURL}|g')\";
-			path=\"fonts/\$(node -e \" \
-				require('supersphincs').hash('%').then(hash => console.log(hash.hex)) \
-			\").${type}\";
+			path=\"fonts/\$(node -e \"(async () => { \
+				console.log((await require('supersphincs').hash('%')).hex); \
+			})();\").${type}\";
 			wget --tries=50 \"\${url}\" -O \"../\${path}\";
 			grep -rl '%' | xargs -I{} sed -i \"s|%|/blog/\${path}|g\" {};
 		"
