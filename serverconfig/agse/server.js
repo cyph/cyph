@@ -199,7 +199,7 @@ server.on('message', async (message) => {
 		return;
 	}
 
-	const buf		= new Buffer(o.data.buffer);
+	const buf		= Buffer.from(o.data.buffer);
 
 	const inputs	= (() => {
 		try {
@@ -249,7 +249,7 @@ server.on('message', async (message) => {
 	childProcess.spawnSync('sleep', ['1']);
 
 	const client			= dgram.createSocket('udp4');
-	const signatureBytes	= new Buffer(JSON.stringify({
+	const signatureBytes	= Buffer.from(JSON.stringify({
 		signatures,
 		rsa: keyData.rsaKeyString,
 		sphincs: keyData.sphincsKeyString
@@ -258,7 +258,7 @@ server.on('message', async (message) => {
 	for (let tries = 0 ; tries < 5 ; ++tries) {
 		for (let i = 0 ; i < signatureBytes.length ; i += chunkSize) {
 			const data	= Buffer.concat([
-				new Buffer(
+				Buffer.from(
 					new Uint32Array([
 						id,
 						signatureBytes.length,
