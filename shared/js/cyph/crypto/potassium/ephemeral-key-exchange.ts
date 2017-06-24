@@ -9,23 +9,23 @@ import {potassiumUtil} from './potassium-util';
 /** @inheritDoc */
 export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 	/** @inheritDoc */
-	public readonly privateKeyBytes: Promise<number>	= Promise.resolve(
-		rlwe.privateKeyBytes +
+	public readonly privateKeyBytes: Promise<number>	= (async () =>
+		(await rlwe.privateKeyBytes) +
 		sodium.crypto_scalarmult_SCALARBYTES
-	);
+	)();
 
 	/** @inheritDoc */
-	public readonly publicKeyBytes: Promise<number>		= Promise.resolve(
-		rlwe.publicKeyBytes +
+	public readonly publicKeyBytes: Promise<number>		= (async () =>
+		(await rlwe.publicKeyBytes) +
 		sodium.crypto_scalarmult_BYTES
-	);
+	)();
 
 	/** @inheritDoc */
 	public readonly secretBytes: Promise<number>		= Promise.resolve(64);
 
 	/** @inheritDoc */
 	public async aliceKeyPair () : Promise<IKeyPair> {
-		const rlweKeyPair		= rlwe.aliceKeyPair();
+		const rlweKeyPair		= await rlwe.aliceKeyPair();
 
 		const sodiumPrivateKey	= potassiumUtil.randomBytes(
 			sodium.crypto_scalarmult_SCALARBYTES
@@ -60,26 +60,26 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 		const rlwePublicKey		= new Uint8Array(
 			publicKey.buffer,
 			publicKey.byteOffset,
-			rlwe.publicKeyBytes
+			await rlwe.publicKeyBytes
 		);
 		const sodiumPublicKey	= new Uint8Array(
 			publicKey.buffer,
-			publicKey.byteOffset + rlwe.publicKeyBytes,
+			publicKey.byteOffset + (await rlwe.publicKeyBytes),
 			sodium.crypto_scalarmult_BYTES
 		);
 
 		const rlwePrivateKey	= new Uint8Array(
 			privateKey.buffer,
 			privateKey.byteOffset,
-			rlwe.privateKeyBytes
+			await rlwe.privateKeyBytes
 		);
 		const sodiumPrivateKey	= new Uint8Array(
 			privateKey.buffer,
-			privateKey.byteOffset + rlwe.privateKeyBytes,
+			privateKey.byteOffset + (await rlwe.privateKeyBytes),
 			sodium.crypto_scalarmult_SCALARBYTES
 		);
 
-		const rlweSecret		= rlwe.aliceSecret(
+		const rlweSecret		= await rlwe.aliceSecret(
 			rlwePublicKey,
 			rlwePrivateKey
 		);
@@ -110,15 +110,15 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 		const aliceRlwePublicKey	= new Uint8Array(
 			alicePublicKey.buffer,
 			alicePublicKey.byteOffset,
-			rlwe.publicKeyBytes
+			await rlwe.publicKeyBytes
 		);
 		const aliceSodiumPublicKey	= new Uint8Array(
 			alicePublicKey.buffer,
-			alicePublicKey.byteOffset + rlwe.publicKeyBytes,
+			alicePublicKey.byteOffset + (await rlwe.publicKeyBytes),
 			sodium.crypto_scalarmult_BYTES
 		);
 
-		const rlweSecretData		= rlwe.bobSecret(aliceRlwePublicKey);
+		const rlweSecretData		= await rlwe.bobSecret(aliceRlwePublicKey);
 
 		const sodiumPrivateKey		= potassiumUtil.randomBytes(
 			sodium.crypto_scalarmult_SCALARBYTES
