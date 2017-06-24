@@ -8,7 +8,7 @@ RUN apt-get -y --allow-downgrades update
 RUN apt-get -y --allow-downgrades install apt-transport-https apt-utils curl gnupg lsb-release
 
 RUN dpkg --add-architecture i386
-RUN echo "deb https://deb.nodesource.com/node_7.x sid main" >> /etc/apt/sources.list
+RUN echo "deb https://deb.nodesource.com/node_8.x sid main" >> /etc/apt/sources.list
 RUN echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN curl -s https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
