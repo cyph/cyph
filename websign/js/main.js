@@ -146,7 +146,7 @@ then(function (results) {
 
 	return Promise.all([
 		downloadMetadata,
-		superSphincs.open(
+		superSphincs.openString(
 			signed,
 			publicKey
 		)
