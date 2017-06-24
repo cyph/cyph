@@ -1391,8 +1391,8 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000187, caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000693"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000693.tgz#8510e7a9ab04adcca23a5dcefa34df9d28c1ce20"
+  version "1.0.30000694"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000694.tgz#02009f4f82d2f0126e4c691b7cd5adb351935c01"
 
 capture-stack-trace@^1.0.0:
   version "1.0.0"
@@ -5480,9 +5480,9 @@ mathml-tag-names@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/mathml-tag-names/-/mathml-tag-names-2.0.0.tgz#eee615112a2b127e70f558d69c9ebe14076503d7"
 
-mceliece@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/mceliece/-/mceliece-3.0.0.tgz#3aebc7e58d3df9032e121335afe77e2f07f8e250"
+mceliece@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/mceliece/-/mceliece-3.0.1.tgz#862333c557215fc5a21537b376f5edccba751d6f"
 
 mdurl@^1.0.1:
   version "1.0.1"
@@ -6301,9 +6301,9 @@ nth-check@~1.0.1:
   dependencies:
     boolbase "~1.0.0"
 
-ntru@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/ntru/-/ntru-3.0.0.tgz#c182dce775ee81ebbcacbb36453b052cdb944d94"
+ntru@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/ntru/-/ntru-3.0.1.tgz#4b09a6a37424f119c6d3cb2b87cc61066356df3e"
 
 null-check@^1.0.0:
   version "1.0.0"
@@ -7745,9 +7745,9 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^2.0.0"
     inherits "^2.0.1"
 
-rlwe@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/rlwe/-/rlwe-3.0.0.tgz#4c0f90b5acd1da95c4d99825b086f4d9c84efed6"
+rlwe@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/rlwe/-/rlwe-3.0.1.tgz#d8ebb20aab76b49a95d99584d9db9dfa4a9f0b44"
 
 router@^1.0.0:
   version "1.3.1"
@@ -8055,9 +8055,9 @@ showdown@1.6.4:
   dependencies:
     yargs "^6.6.0"
 
-sidh@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/sidh/-/sidh-4.0.0.tgz#544607b7f88249d3ad16b76310a88c514f0e5269"
+sidh@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/sidh/-/sidh-4.0.1.tgz#50efbcfa29b6d16b22ca7b7a9817392a9316e8b4"
 
 sigmund@~1.0.0:
   version "1.0.1"
@@ -8275,9 +8275,9 @@ speedometer@~0.1.2:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/speedometer/-/speedometer-0.1.4.tgz#9876dbd2a169d3115402d48e6ea6329c8816a50d"
 
-sphincs@*, sphincs@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/sphincs/-/sphincs-2.0.0.tgz#2905e5155321221e34881463d278f3e8970f6e00"
+sphincs@*, sphincs@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/sphincs/-/sphincs-2.0.1.tgz#dd1c651666267196c3aa6c60bd1b5dbde95d3d81"
 
 split-array-stream@^1.0.0:
   version "1.0.3"
@@ -8612,9 +8612,9 @@ superagent@^3.0.0:
     qs "^6.1.0"
     readable-stream "^2.0.5"
 
-supersphincs@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-4.0.0.tgz#cb131072189dc9a046e66fda626e5e1e22a5ee50"
+supersphincs@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-4.0.1.tgz#c53dd9bc90ac2f316450f64cd3954d2391abc2cf"
   dependencies:
     js-sha512 "*"
     rsasign "*"
@@ -9655,9 +9655,9 @@ xhr2@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/xhr2/-/xhr2-0.1.4.tgz#7f87658847716db5026323812f818cadab387a5f"
 
-xkcd-passphrase@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/xkcd-passphrase/-/xkcd-passphrase-3.0.1.tgz#6e9f43496ebdf9c3371a3f5e167cf741388126a2"
+xkcd-passphrase@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/xkcd-passphrase/-/xkcd-passphrase-3.0.2.tgz#db3565d853eca3107f34dd5943e68befce069082"
 
 xml-char-classes@^1.0.0:
   version "1.0.0"
