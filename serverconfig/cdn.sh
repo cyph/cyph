@@ -21,7 +21,7 @@ apt-get -y --force-yes update
 apt-get -y --force-yes install curl lsb-release apt-transport-https
 apt-get -y --force-yes purge apache* mysql*
 distro="$(lsb_release -c | awk '{print $2}')"
-echo "deb https://deb.nodesource.com/node_7.x ${distro} main" >> /etc/apt/sources.list
+echo "deb https://deb.nodesource.com/node_8.x ${distro} main" >> /etc/apt/sources.list
 curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
@@ -96,7 +96,7 @@ cat > server.js <<- EOM
 	});
 
 	const git				= (...args) => new Promise( (resolve, reject) => {
-		let data		= new Buffer([]);
+		let data		= Buffer.from([]);
 		const stdout	= child_process.spawn('git', args, {cwd: cdnPath}).stdout;
 
 		stdout.on('data', buf => data = Buffer.concat([data, buf]));

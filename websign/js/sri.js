@@ -74,10 +74,11 @@ function webSignSRI_Process (baseUrl) {
 			var actualHash	= results[1].hex;
 
 			if (actualHash !== expectedHash) {
-				throw 'Invalid subresource ' + path + '.\n\n' +
+				throw new Error(
+					'Invalid subresource ' + path + '.\n\n' +
 					'Expected: ' +  expectedHash + '.\n\n' +
 					'Received: ' + actualHash + '.'
-				;
+				);
 			}
 
 			if (isDataResource) {

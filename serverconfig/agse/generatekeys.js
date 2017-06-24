@@ -75,8 +75,8 @@ const backupKeyData	= await Promise.all(
 );
 
 for (const keyPair of keyPairs) {
-	new Buffer(keyPair.privateKey.buffer).fill(0);
-	new Buffer(keyPair.publicKey.buffer).fill(0);
+	Buffer.from(keyPair.privateKey.buffer).fill(0);
+	Buffer.from(keyPair.publicKey.buffer).fill(0);
 }
 
 const publicKeys	= JSON.stringify({

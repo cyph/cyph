@@ -8,7 +8,7 @@
 		"shuffle-array": "*"
 	},
 	"engines": {
-		"node": "^7"
+		"node": "^8"
 	},
 	"scripts": {
 		"start": "node test.js"
