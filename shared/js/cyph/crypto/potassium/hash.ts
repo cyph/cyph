@@ -7,7 +7,7 @@ import {potassiumUtil} from './potassium-util';
 /** @inheritDoc */
 export class Hash implements IHash {
 	/** @inheritDoc */
-	public readonly bytes: Promise<number>	= Promise.resolve(superSphincs.hashBytes);
+	public readonly bytes: Promise<number>	= superSphincs.hashBytes;
 
 	/** @inheritDoc */
 	public async deriveKey (
@@ -15,13 +15,15 @@ export class Hash implements IHash {
 		outputBytes?: number,
 		clearInput?: boolean
 	) : Promise<Uint8Array> {
+		const bytes	= await this.bytes;
+
 		if (!outputBytes) {
 			outputBytes	= input.length;
 		}
 
-		if (outputBytes > superSphincs.hashBytes) {
+		if (outputBytes > bytes) {
 			throw new Error(
-				`Potassium.Hash.deriveKey output cannot exceed ${superSphincs.hashBytes} bytes.`
+				`Potassium.Hash.deriveKey output cannot exceed ${bytes} bytes.`
 			);
 		}
 
