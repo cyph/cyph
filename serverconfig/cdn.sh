@@ -96,7 +96,7 @@ cat > server.js <<- EOM
 	});
 
 	const git				= (...args) => new Promise( (resolve, reject) => {
-		let data		= new Buffer([]);
+		let data		= Buffer.from([]);
 		const stdout	= child_process.spawn('git', args, {cwd: cdnPath}).stdout;
 
 		stdout.on('data', buf => data = Buffer.concat([data, buf]));

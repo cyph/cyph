@@ -98,7 +98,7 @@ server.on('message', async (message) => {
 		server.close();
 
 		const signatureData	= JSON.parse(
-			new Buffer(incoming.data.buffer).toString()
+			Buffer.from(incoming.data.buffer).toString()
 		);
 
 		const rsaIndex		= publicKeys.rsa.indexOf(signatureData.rsa);
@@ -168,7 +168,7 @@ const sendData	= i => {
 	}
 
 	const data	= Buffer.concat([
-		new Buffer(
+		Buffer.from(
 			new Uint32Array([
 				id,
 				dataToSign.length,
