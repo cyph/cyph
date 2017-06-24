@@ -107,7 +107,7 @@ export class Box implements IBox {
 		privateKey: Uint8Array,
 		name: string,
 		encryptedKeyBytes: number,
-		cipher: {decrypt: (cyphertext: Uint8Array, privateKey: Uint8Array) => Uint8Array}
+		cipher: {decrypt: (cyphertext: Uint8Array, privateKey: Uint8Array) => Promise<Uint8Array>}
 	) : Promise<{
 		innerKeys: Uint8Array;
 		symmetricKey: Uint8Array;
@@ -129,7 +129,7 @@ export class Box implements IBox {
 				oneTimeAuthBytes
 			);
 
-			const innerKeys		= cipher.decrypt(
+			const innerKeys		= await cipher.decrypt(
 				encryptedKeys,
 				privateKey
 			);
@@ -169,7 +169,7 @@ export class Box implements IBox {
 		publicKey: Uint8Array,
 		name: string,
 		plaintextBytes: number,
-		cipher: {encrypt: (plaintext: Uint8Array, publicKey: Uint8Array) => Uint8Array}
+		cipher: {encrypt: (plaintext: Uint8Array, publicKey: Uint8Array) => Promise<Uint8Array>}
 	) : Promise<{
 		innerKeys: Uint8Array;
 		keyCyphertext: Uint8Array;
@@ -197,7 +197,7 @@ export class Box implements IBox {
 				oneTimeAuthKeyBytes
 			);
 
-			const encryptedKeys	= cipher.encrypt(
+			const encryptedKeys	= await cipher.encrypt(
 				innerKeys,
 				publicKey
 			);
