@@ -88,18 +88,18 @@ export class Box implements IBox {
 	};
 
 	/** @inheritDoc */
-	public readonly privateKeyBytes: Promise<number>	= Promise.resolve(
-		mceliece.privateKeyBytes +
-		ntru.privateKeyBytes +
+	public readonly privateKeyBytes: Promise<number>	= (async () =>
+		(await mceliece.privateKeyBytes) +
+		(await ntru.privateKeyBytes) +
 		this.helpers.privateKeyBytes
-	);
+	)();
 
 	/** @inheritDoc */
-	public readonly publicKeyBytes: Promise<number>		= Promise.resolve(
-		mceliece.publicKeyBytes +
-		ntru.publicKeyBytes +
+	public readonly publicKeyBytes: Promise<number>		= (async () =>
+		(await mceliece.publicKeyBytes) +
+		(await ntru.publicKeyBytes) +
 		this.helpers.publicKeyBytes
-	);
+	)();
 
 	/** @ignore */
 	private async publicKeyDecrypt (
@@ -223,11 +223,11 @@ export class Box implements IBox {
 	}
 
 	/** @ignore */
-	private splitPrivateKey (privateKey: Uint8Array) : {
+	private async splitPrivateKey (privateKey: Uint8Array) : Promise<{
 		classical: Uint8Array;
 		mceliece: Uint8Array;
 		ntru: Uint8Array;
-	} {
+	}> {
 		return {
 			classical: new Uint8Array(
 				privateKey.buffer,
@@ -237,22 +237,25 @@ export class Box implements IBox {
 			mceliece: new Uint8Array(
 				privateKey.buffer,
 				privateKey.byteOffset + this.helpers.privateKeyBytes,
-				mceliece.privateKeyBytes
+				await mceliece.privateKeyBytes
 			),
 			ntru: new Uint8Array(
 				privateKey.buffer,
-				privateKey.byteOffset + this.helpers.privateKeyBytes + mceliece.privateKeyBytes,
-				ntru.privateKeyBytes
+				privateKey.byteOffset +
+					this.helpers.privateKeyBytes +
+					(await mceliece.privateKeyBytes)
+				,
+				await ntru.privateKeyBytes
 			)
 		};
 	}
 
 	/** @ignore */
-	private splitPublicKey (publicKey: Uint8Array) : {
+	private async splitPublicKey (publicKey: Uint8Array) : Promise<{
 		classical: Uint8Array;
 		mceliece: Uint8Array;
 		ntru: Uint8Array;
-	} {
+	}> {
 		return {
 			classical: new Uint8Array(
 				publicKey.buffer,
@@ -262,12 +265,15 @@ export class Box implements IBox {
 			mceliece: new Uint8Array(
 				publicKey.buffer,
 				publicKey.byteOffset + this.helpers.publicKeyBytes,
-				mceliece.publicKeyBytes
+				await mceliece.publicKeyBytes
 			),
 			ntru: new Uint8Array(
 				publicKey.buffer,
-				publicKey.byteOffset + this.helpers.publicKeyBytes + mceliece.publicKeyBytes,
-				ntru.publicKeyBytes
+				publicKey.byteOffset +
+					this.helpers.publicKeyBytes +
+					(await mceliece.publicKeyBytes)
+				,
+				await ntru.publicKeyBytes
 			)
 		};
 	}
@@ -276,8 +282,8 @@ export class Box implements IBox {
 	public async keyPair () : Promise<IKeyPair> {
 		const keyPairs	= {
 			classical: await this.helpers.keyPair(),
-			mceliece: mceliece.keyPair(),
-			ntru: ntru.keyPair()
+			mceliece: await mceliece.keyPair(),
+			ntru: await ntru.keyPair()
 		};
 
 		return {
@@ -301,8 +307,8 @@ export class Box implements IBox {
 	public async open (cyphertext: Uint8Array, keyPair: IKeyPair) : Promise<Uint8Array> {
 		const oneTimeAuthBytes		= await this.oneTimeAuth.bytes;
 
-		const privateSubKeys		= this.splitPrivateKey(keyPair.privateKey);
-		const publicSubKeys			= this.splitPublicKey(keyPair.publicKey);
+		const privateSubKeys		= await this.splitPrivateKey(keyPair.privateKey);
+		const publicSubKeys			= await this.splitPublicKey(keyPair.publicKey);
 
 		let cyphertextIndex			= cyphertext.byteOffset;
 
@@ -310,29 +316,29 @@ export class Box implements IBox {
 			new Uint8Array(
 				cyphertext.buffer,
 				cyphertextIndex,
-				mceliece.cyphertextBytes + oneTimeAuthBytes
+				(await mceliece.cyphertextBytes) + oneTimeAuthBytes
 			),
 			privateSubKeys.mceliece,
 			'McEliece',
-			mceliece.cyphertextBytes,
+			await mceliece.cyphertextBytes,
 			mceliece
 		);
 
-		cyphertextIndex += mceliece.cyphertextBytes + oneTimeAuthBytes;
+		cyphertextIndex += (await mceliece.cyphertextBytes) + oneTimeAuthBytes;
 
 		const ntruData				= await this.publicKeyDecrypt(
 			new Uint8Array(
 				cyphertext.buffer,
 				cyphertextIndex,
-				ntru.cyphertextBytes + oneTimeAuthBytes
+				(await ntru.cyphertextBytes) + oneTimeAuthBytes
 			),
 			privateSubKeys.ntru,
 			'NTRU',
-			ntru.cyphertextBytes,
+			await ntru.cyphertextBytes,
 			ntru
 		);
 
-		cyphertextIndex += ntru.cyphertextBytes + oneTimeAuthBytes;
+		cyphertextIndex += (await ntru.cyphertextBytes) + oneTimeAuthBytes;
 
 		const nonce					= new Uint8Array(
 			cyphertext.buffer,
@@ -375,19 +381,19 @@ export class Box implements IBox {
 
 	/** @inheritDoc */
 	public async seal (plaintext: Uint8Array, publicKey: Uint8Array) : Promise<Uint8Array> {
-		const publicSubKeys			= this.splitPublicKey(publicKey);
+		const publicSubKeys			= await this.splitPublicKey(publicKey);
 
 		const mcelieceData			= await this.publicKeyEncrypt(
 			publicSubKeys.mceliece,
 			'McEliece',
-			mceliece.plaintextBytes,
+			await mceliece.plaintextBytes,
 			mceliece
 		);
 
 		const ntruData				= await this.publicKeyEncrypt(
 			publicSubKeys.ntru,
 			'NTRU',
-			ntru.plaintextBytes,
+			await ntru.plaintextBytes,
 			ntru
 		);
 
