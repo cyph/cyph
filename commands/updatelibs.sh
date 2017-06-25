@@ -104,6 +104,7 @@ read -r -d '' modules <<- EOM
 	konami-code.js
 	lazy
 	libsodium-wrappers
+	localforage
 	lunr
 	markdown-it
 	markdown-it-emoji
