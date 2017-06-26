@@ -72,7 +72,7 @@ cat > server.js <<- EOM
 
 	const returnError		= res => res.status(418).end();
 
-	const getFileName		= (req, ext) => () => new Promise( (resolve, reject) => {
+	const getFileName		= (req, ext) => () => new Promise((resolve, reject) => {
 		if (req.path.indexOf('..') > -1) {
 			reject('Invalid path.');
 			return;
@@ -95,7 +95,7 @@ cat > server.js <<- EOM
 		});
 	});
 
-	const git				= (...args) => new Promise( (resolve, reject) => {
+	const git				= (...args) => new Promise((resolve, reject) => {
 		let data		= Buffer.from([]);
 		const stdout	= child_process.spawn('git', args, {cwd: cdnPath}).stdout;
 
@@ -112,7 +112,7 @@ cat > server.js <<- EOM
 		});
 	});
 
-	app.use( (req, res, next) => {
+	app.use((req, res, next) => {
 		res.set('Access-Control-Allow-Methods', 'GET');
 		res.set('Access-Control-Allow-Origin', '*');
 		res.set('Cache-Control', 'public, max-age=31536000');
@@ -120,7 +120,7 @@ cat > server.js <<- EOM
 		res.set('Public-Key-Pins', 'max-age=5184000; pin-sha256="\${keyHash}"; pin-sha256="\${backupHash}"');
 		res.set('Strict-Transport-Security', 'max-age=31536000; includeSubdomains');
 
-		if ( (req.get('Accept-Encoding') || '').replace(/\s+/g, '').split(',').indexOf('br') > -1) {
+		if ((req.get('Accept-Encoding') || '').replace(/\s+/g, '').split(',').indexOf('br') > -1) {
 			req.cache		= cache.br;
 			req.getFileName	= getFileName(req, '.br');
 
@@ -137,7 +137,7 @@ cat > server.js <<- EOM
 	});
 
 	app.get(/.*\/current/, (req, res) => req.getFileName().then(fileName =>
-		new Promise( (resolve, reject) =>
+		new Promise((resolve, reject) =>
 			fs.readFile(cdnPath + fileName, (err, data) => {
 				if (!err && data) {
 					req.cache.current[fileName]	= data;
@@ -151,60 +151,54 @@ cat > server.js <<- EOM
 				}
 			})
 		)
-	).then( data =>
+	).then(data =>
 		res.send(data)
-	).catch( () =>
+	).catch(() =>
 		returnError(res)
 	));
 
-	app.get(/\/.*/, (req, res) => Promise.resolve().then( () => {
+	app.get(/\/.*/, (req, res) => (async () => {
 		if (req.cache.urls[req.originalUrl]) {
 			return;
 		}
 
-		const hash	= req.originalUrl.split('?')[1];
+		const hash		= req.originalUrl.split('?')[1];
+		const fileName	= await req.getFileName();
 
-		return req.getFileName().then(fileName =>
-			(req.cache.files[fileName] || {})[hash] ?
-				Promise.resolve(req.cache.files[fileName][hash]) :
-				new Promise( (resolve, reject) =>
-					fs.stat(cdnPath + fileName, err => {
-						if (err) {
-							reject(err);
-							return;
-						}
+		if (!req.cache.files[fileName]) {
+			req.cache.files[fileName]	= {};
+		}
 
-						resolve();
-					})
-				).then( () =>
-					hash ? git('log', '--pretty=format:%H %s', fileName) : ''
-				).then(output => {
-					const revision	= (
-						output.toString().
-							split('\n').
-							map(s => s.split(' ')).
-							filter(arr => arr[1] === hash).
-							concat([['HEAD']])
-					)[0][0];
-
-					return git('show', revision + ':' + fileName);
-				}).then(data => {
-					if (!req.cache.files[fileName]) {
-						req.cache.files[fileName]	= {};
+		if (!req.cache.files[fileName][hash]) {
+			await new Promise((resolve, reject) =>
+				fs.stat(cdnPath + fileName, err => {
+					if (err) {
+						reject(err);
+						return;
 					}
-					req.cache.files[fileName][hash]	= data;
-					return data;
+					resolve();
 				})
-		).then(data => {
-			req.cache.urls[req.originalUrl]	= data;
-		});
-	}).then( () =>
+			);
+
+			const revision	= !hash ? '' : (
+				(await git('log', '--pretty=format:%H %s', fileName)).toString().
+					split('\n').
+					map(s => s.split(' ')).
+					filter(arr => arr[1] === hash).
+					concat([['HEAD']])
+			)[0][0];
+
+			req.cache.files[fileName][hash]	= await git('show', revision + ':' + fileName);
+		}
+
+		req.cache.urls[req.originalUrl]	= req.cache.files[fileName][hash];
+	})().then(() =>
 		res.send(
 			req.hostname === 'localhost' ?
 				'' :
 				req.cache.urls[req.originalUrl]
 		)
-	).catch( () =>
+	).catch(() =>
 		returnError(res)
 	));
 
