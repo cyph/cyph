@@ -54,6 +54,17 @@ export class DataManagerService {
 		);
 	}
 
+	/** Checks whether an item exists. */
+	public async hasItem (key: string) : Promise<boolean> {
+		try {
+			await this.getItem(key);
+			return true;
+		}
+		catch (_) {
+			return false;
+		}
+	}
+
 	/** Deletes an item. */
 	public async removeItem (_KEY: string) : Promise<void> {
 		throw new Error('Must provide an implementation of removeItem.');
