@@ -137,61 +137,53 @@ const setTestResult	= (key, passing) => datastore.save({
 const testResultKey	= key => datastore.key(['TestResult', key]);
 
 
-const homeTest		= o => {
+const homeTest		= async o => {
 	const driver	= getDriver(o);
 
-	return driverSetURL(driver, o.homeURL).then(() =>
-		driverWait(
+	try {
+		await driverSetURL(driver, o.homeURL);
+		await driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				setOnerror();
 				return document.querySelector('body.load-complete #new-cyph');
 			})),
 			30000
-		)
-	).then(() =>
-		driverSetURL(driver, `${o.homeURL}/blog`)
-	).then(() =>
-		driverWait(
+		);
+		await driverSetURL(driver, `${o.homeURL}/blog`);
+		await driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				setOnerror();
 				return document.getElementsByClassName('postlist')[0];
 			})),
 			30000
-		)
-	).then(() =>
-		driverQuit(driver)
-	).catch(err => {
-		driverQuit(driver);
-		throw err;
-	});
+		);
+	}
+	finally {
+		await driverQuit(driver);
+	}
 };
 
-const newCyphTest	= o => {
+const newCyphTest	= async o => {
 	const driver	= getDriver(o);
 
-	return o.cyphLink.then(cyphLink =>
-		driverSetURL(driver, cyphLink)
-	).then(() =>
-		driverWait(
+	try {
+		await driverSetURL(driver, await o.cyphLink);
+		await driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				setOnerror();
 				return document.querySelector('body.load-complete .message-box');
 			})),
 			60000
-		)
-	).then(() =>
-		new Promise(resolve => setTimeout(resolve, 10000))
-	).then(() =>
-		driverScript(driver, function () {
+		);
+		await new Promise(resolve => setTimeout(resolve, 10000));
+		await driverScript(driver, function () {
 			sendMessage('balls');
-		})
-	).then(() =>
-		new Promise(resolve => setTimeout(resolve, 10000))
-	).then(() =>
-		driverWait(
+		});
+		await new Promise(resolve => setTimeout(resolve, 10000));
+		await driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				return Array.from(document.querySelectorAll('.message-item')).
@@ -202,13 +194,11 @@ const newCyphTest	= o => {
 				;
 			})),
 			5000
-		)
-	).then(() =>
-		driverQuit(driver)
-	).catch(err => {
-		driverQuit(driver);
-		throw err;
-	});
+		);
+	}
+	finally {
+		await driverQuit(driver);
+	}
 };
 
 
@@ -264,18 +254,12 @@ const runTests	= (backendURL, homeURL, newCyphURL, id) => Promise.resolve().then
 		lastTestCase.push(lastTestCase[0]);
 	}
 
-	return testCases.reduce(
-		(promise, testCase) => promise.then(() =>
-			Promise.all(
-				testCase.map(o => homeTest(o))
-			).then(() => Promise.all(
-				testCase.map(o => newCyphTest(o))
-			))
-		),
-		Promise.resolve()
-	).then(() =>
-		true
-	);
+	for (const testCase of testCases) {
+		await Promise.all(testCase.map(o => homeTest(o)));
+		await Promise.all(testCase.map(o => newCyphTest(o)));
+	}
+
+	return true;
 }).catch(err => {
 	console.error(err);
 
