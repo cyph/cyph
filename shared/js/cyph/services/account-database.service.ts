@@ -92,7 +92,13 @@ export class AccountDatabaseService {
 
 	/** Checks whether an item exists. */
 	public async hasItem (url: string) : Promise<boolean> {
-		return this.databaseService.hasItem(url);
+		try {
+			await this.getItem(url, true).catch(async () => this.getItem(url, false));
+			return true;
+		}
+		catch (_) {
+			return false;
+		}
 	}
 
 	/**
@@ -109,6 +115,10 @@ export class AccountDatabaseService {
 		for (const publicData of [true, false]) {
 			const success	= await this.localStorageService.removeItem(
 				this.dummyKey(url, publicData)
+			).then(
+				() => true
+			).catch(
+				() => false
 			);
 
 			if (success) {
@@ -142,14 +152,10 @@ export class AccountDatabaseService {
 
 		const data		= await util.toBytes(value);
 
-		const success	= await this.localStorageService.setItem(
+		await this.localStorageService.setItem(
 			this.dummyKey(url, publicData),
 			this.potassiumService.toBase64(data)
 		);
-
-		if (!success) {
-			throw new Error(`Failed to set item at ${url}.`);
-		}
 
 		return url;
 	}
