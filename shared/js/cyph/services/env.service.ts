@@ -42,7 +42,7 @@ export class EnvService extends Env {
 	/** Package/environment name. */
 	public readonly packageName: Promise<string>	= (async () => {
 		const timestamp	=
-			parseInt(await this.localStorageService.getItem('webSignPackageTimestamp') || '', 10)
+			parseInt((await this.getLocalWebSignItem('webSignPackageTimestamp')) || '', 10)
 		;
 
 		if (!isNaN(timestamp)) {
@@ -84,7 +84,7 @@ export class EnvService extends Env {
 		];
 
 		const isAffectedBrowser	= /\/#test$/.test(new Request('https://cyph.ws/#test').url);
-		const webSignHash		= await this.localStorageService.getItem('webSignHash');
+		const webSignHash		= await this.getLocalWebSignItem('webSignHash');
 
 		if (webSignHash) {
 			return isAffectedBrowser && affectedWebSignHashes.indexOf(webSignHash) > -1;
@@ -92,6 +92,26 @@ export class EnvService extends Env {
 
 		return false;
 	})();
+
+	/** @ignore */
+	private async getLocalWebSignItem (key: string) : Promise<string> {
+		for (const getItem of [
+			/* tslint:disable-next-line:ban */
+			(k: string) => localStorage.getItem(k),
+			async (k: string) => this.localStorageService.getItemString(k)
+		]) {
+			try {
+				const item	= await getItem(key);
+
+				if (typeof item === 'string') {
+					return item;
+				}
+			}
+			catch (_) {}
+		}
+
+		return '';
+	}
 
 	/** Version of newCyphUrl that triggers a retry. */
 	public get newCyphUrlRetry () : string {
