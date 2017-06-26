@@ -41,13 +41,17 @@ export class EnvService extends Env {
 
 	/** Package/environment name. */
 	public readonly packageName: Promise<string>	= (async () => {
-		const timestamp	=
-			parseInt((await this.getLocalWebSignItem('webSignPackageTimestamp')) || '', 10)
-		;
+		try {
+			const timestamp	= parseInt(
+				await this.localStorageService.getItemString('webSignPackageTimestamp'),
+				10
+			);
 
-		if (!isNaN(timestamp)) {
-			return `${this.host} ${timestamp.toString()}`;
+			if (!isNaN(timestamp)) {
+				return `${this.host} ${timestamp.toString()}`;
+			}
 		}
+		catch (_) {}
 
 		return this.host;
 	})();
@@ -83,35 +87,16 @@ export class EnvService extends Env {
 				'e35cad39dea62b7d13e0b5c655b802914d398895e197459b91cba28e02361df9'
 		];
 
-		const isAffectedBrowser	= /\/#test$/.test(new Request('https://cyph.ws/#test').url);
-		const webSignHash		= await this.getLocalWebSignItem('webSignHash');
+		try {
+			const isAffectedBrowser	= /\/#test$/.test(new Request('https://cyph.ws/#test').url);
+			const webSignHash		= await this.localStorageService.getItemString('webSignHash');
 
-		if (webSignHash) {
 			return isAffectedBrowser && affectedWebSignHashes.indexOf(webSignHash) > -1;
 		}
-
-		return false;
-	})();
-
-	/** @ignore */
-	private async getLocalWebSignItem (key: string) : Promise<string> {
-		for (const getItem of [
-			/* tslint:disable-next-line:ban */
-			(k: string) => localStorage.getItem(k),
-			async (k: string) => this.localStorageService.getItemString(k)
-		]) {
-			try {
-				const item	= await getItem(key);
-
-				if (typeof item === 'string') {
-					return item;
-				}
-			}
-			catch (_) {}
+		catch (_) {
+			return false;
 		}
-
-		return '';
-	}
+	})();
 
 	/** Version of newCyphUrl that triggers a retry. */
 	public get newCyphUrlRetry () : string {

@@ -471,11 +471,11 @@ export class Util {
 		f: () => T|undefined,
 		condition?: (value: T) => boolean
 	) : Promise<T> {
-		let value: T|undefined;
+		let value: T|undefined	= f();
 
 		while (value === undefined || (condition && !condition(value))) {
-			value	= f();
 			await this.sleep();
+			value	= f();
 		}
 
 		return value;

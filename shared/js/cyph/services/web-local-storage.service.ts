@@ -10,8 +10,32 @@ import {LocalStorageService} from './local-storage.service';
  */
 @Injectable()
 export class WebLocalStorageService extends LocalStorageService {
+	/** @ignore */
+	private ready: Promise<void>	= (async () => {
+		await localforage.ready();
+
+		try {
+			await Promise.all(
+				Object.keys(localStorage).
+					filter(key => !key.startsWith('localforage/')).
+					map(async key => {
+						/* tslint:disable-next-line:ban */
+						const value	= localStorage.getItem(key);
+						if (value) {
+							await this.setItem(key, value);
+						}
+					})
+			);
+		}
+		catch (_) {}
+	})();
+
 	/** @inheritDoc */
-	public async getItem (key: string) : Promise<Uint8Array> {
+	public async getItem (key: string, waitForReady: boolean = true) : Promise<Uint8Array> {
+		if (waitForReady) {
+			await this.ready;
+		}
+
 		const value	= await localforage.getItem<Uint8Array>(key);
 
 		if (!(value instanceof Uint8Array)) {
@@ -22,13 +46,25 @@ export class WebLocalStorageService extends LocalStorageService {
 	}
 
 	/** @inheritDoc */
-	public async removeItem (key: string) : Promise<void> {
+	public async removeItem (key: string, waitForReady: boolean = true) : Promise<void> {
+		if (waitForReady) {
+			await this.ready;
+		}
+
 		await this.getItem(key);
 		await localforage.removeItem(key);
 	}
 
 	/** @inheritDoc */
-	public async setItem (key: string, value: DataType) : Promise<void> {
+	public async setItem (
+		key: string,
+		value: DataType,
+		waitForReady: boolean = true
+	) : Promise<void> {
+		if (waitForReady) {
+			await this.ready;
+		}
+
 		await localforage.setItem<Uint8Array>(key, await util.toBytes(value));
 	}
 
