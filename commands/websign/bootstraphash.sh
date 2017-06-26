@@ -24,7 +24,7 @@ node -e '(async () => {
 				).toString().trim();
 			}).
 			join("\n\n\n\n\n\n")
-	).hex);
+	)).hex);
 })()'
 
 rm -rf .index.html.tmp .index.html.tmp-subresources
