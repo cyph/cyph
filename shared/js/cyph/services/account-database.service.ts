@@ -92,13 +92,7 @@ export class AccountDatabaseService {
 
 	/** Checks whether an item exists. */
 	public async hasItem (url: string) : Promise<boolean> {
-		try {
-			await this.getItem(url, true).catch(() => this.getItem(url, false));
-			return true;
-		}
-		catch (_) {
-			return false;
-		}
+		return this.databaseService.hasItem(url);
 	}
 
 	/**
