@@ -60,6 +60,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public async hasItem (url: string) : Promise<boolean> {
+		try {
+			await (await this.getStorageRef(url)).getDownloadURL();
+			return true;
+		}
+		catch (_) {
+			return false;
+		}
+	}
+
+	/** @inheritDoc */
 	public async login (username: string, password: string) : Promise<void> {
 		await (await this.app).auth().signInWithEmailAndPassword(
 			this.usernameToEmail(username),
