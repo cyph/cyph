@@ -202,32 +202,6 @@ export class Util {
 		return false;
 	}
 
-	/** Opens the specified URL. */
-	public async openUrl (url: string) : Promise<void> {
-		if (!env.isWeb) {
-			/* TODO: HANDLE NATIVE */
-			return;
-		}
-
-		const a: HTMLAnchorElement	= document.createElement('a');
-
-		a.href			= url;
-		a.target		= '_blank';
-		a.style.display	= 'none';
-
-		document.body.appendChild(a);
-		a.click();
-
-		await this.sleep(120000);
-
-		document.body.removeChild(a);
-
-		try {
-			URL.revokeObjectURL(a.href);
-		}
-		catch (_) {}
-	}
-
 	/** @see JSON.parse */
 	public parse<T> (text: string) : T {
 		/* tslint:disable-next-line:ban */
