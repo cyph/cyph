@@ -31,7 +31,9 @@ import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {DialogImageComponent} from '../components/dialog-image.component';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 import {DialogService} from '../services/dialog.service';
+import {LocalStorageService} from '../services/local-storage.service';
 import {MaterialDialogService} from '../services/material-dialog.service';
+import {WebLocalStorageService} from '../services/web-local-storage.service';
 
 
 /**
@@ -101,6 +103,10 @@ import {MaterialDialogService} from '../services/material-dialog.service';
 		{
 			provide: DialogService,
 			useClass: MaterialDialogService
+		},
+		{
+			provide: LocalStorageService,
+			useClass: WebLocalStorageService
 		}
 	]
 })

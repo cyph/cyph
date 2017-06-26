@@ -40,7 +40,10 @@ export class LockdownComponent implements OnInit {
 
 		customBuildPassword		= undefined;
 
-		if ((await this.localStorageService.getItem('password')) === this.correctPassword) {
+		const password	= await this.localStorageService.getItemString('password').catch(() => '');
+
+		/* tslint:disable-next-line:possible-timing-attack */
+		if (password === this.correctPassword) {
 			this.appService.unlock();
 		}
 	}
@@ -52,9 +55,10 @@ export class LockdownComponent implements OnInit {
 
 		await util.sleep(util.random(1000, 250));
 
+		/* tslint:disable-next-line:possible-timing-attack */
 		if (this.password === this.correctPassword) {
-			await this.localStorageService.setItem('password', this.password);
 			this.appService.unlock();
+			await this.localStorageService.setItem('password', this.password);
 			return;
 		}
 

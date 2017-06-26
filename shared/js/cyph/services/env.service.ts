@@ -98,7 +98,7 @@ export class EnvService extends Env {
 		for (const getItem of [
 			/* tslint:disable-next-line:ban */
 			(k: string) => localStorage.getItem(k),
-			(k: string) => this.localStorageService.getItem(k)
+			async (k: string) => this.localStorageService.getItemString(k)
 		]) {
 			try {
 				const item	= await getItem(key);

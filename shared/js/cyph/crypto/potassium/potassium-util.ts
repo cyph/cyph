@@ -50,6 +50,15 @@ export class PotassiumUtil {
 		;
 	}
 
+	/** Converts Blob into binary byte array. */
+	public async fromBlob (b: Blob) : Promise<Uint8Array> {
+		return new Promise<Uint8Array>(resolve => {
+			const reader	= new FileReader();
+			reader.onload	= () => { resolve(new Uint8Array(reader.result)); };
+			reader.readAsArrayBuffer(b);
+		});
+	}
+
 	/** Converts hex string into binary byte array. */
 	public fromHex (s: string|ArrayBufferView) : Uint8Array {
 		return typeof s === 'string' ?

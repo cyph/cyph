@@ -5,7 +5,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
-import {potassiumUtil} from '../crypto/potassium/potassium-util';
+import {DataType} from '../data-type';
 import {env} from '../env';
 import {util} from '../util';
 import {DatabaseService} from './database.service';
@@ -88,20 +88,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async setItem (
-		url: string,
-		value: ArrayBufferView|boolean|number|string
-	) : Promise<void> {
-		await (await this.getStorageRef(url)).
-			put(
-				new Blob([potassiumUtil.fromString(
-					(typeof value === 'boolean' || typeof value === 'number') ?
-						value.toString() :
-						value
-				)])
-			).
-			then()
-		;
+	public async setItem (url: string, value: DataType) : Promise<void> {
+		await (await this.getStorageRef(url)).put(new Blob([await util.toBytes(value)])).then();
 	}
 
 	/** @inheritDoc */

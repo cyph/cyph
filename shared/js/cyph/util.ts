@@ -1,6 +1,7 @@
 import {saveAs} from 'file-saver';
 import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
+import {DataType} from './data-type';
 import {env} from './env';
 
 
@@ -403,6 +404,26 @@ export class Util {
 		}
 
 		return timestamp;
+	}
+
+	/** Converts arbitrary value into binary byte array. */
+	public async toBytes (data: DataType) : Promise<Uint8Array> {
+		return data instanceof ArrayBuffer ?
+			new Uint8Array(data) :
+			ArrayBuffer.isView(data) ?
+				new Uint8Array(data.buffer) :
+				data instanceof Blob ?
+					potassiumUtil.fromBlob(data) :
+					potassiumUtil.fromString(
+						(
+							typeof data === 'boolean' ||
+							typeof data === 'number' ||
+							typeof data === 'string'
+						) ?
+							data.toString() :
+							this.stringify(data)
+					)
+		;
 	}
 
 	/**

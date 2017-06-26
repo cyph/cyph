@@ -1,44 +1,42 @@
 import {Injectable} from '@angular/core';
 import {SecureStorage} from 'nativescript-secure-storage';
+import {potassiumUtil} from './js/cyph/crypto/potassium/potassium-util';
+import {DataType} from './js/cyph/data-type';
 import {LocalStorageService} from './js/cyph/services/local-storage.service';
+import {util} from './js/cyph/util';
 
 
 /**
  * Provides local storage functionality for native app.
  */
 @Injectable()
-export class NativeLocalStorageService implements LocalStorageService {
+export class NativeLocalStorageService extends LocalStorageService {
 	/** @ignore */
 	private readonly storage: SecureStorage	= new SecureStorage();
 
-	/** Gets an item's value. */
-	public async getItem (key: string) : Promise<string|undefined> {
-		try {
-			const value	= await this.storage.get({key});
-			if (typeof value === 'string') {
-				return value;
-			}
+	/** @inheritDoc */
+	public async getItem (key: string) : Promise<Uint8Array> {
+		const value	= await this.storage.get({key});
+
+		if (typeof value !== 'string') {
+			throw new Error(`Item ${key} not found.`);
 		}
-		catch (_) {}
 
-		return;
+		return potassiumUtil.fromString(value);
 	}
 
-	/**
-	 * Deletes an item.
-	 * @returns Success status.
-	 */
-	public async removeItem (key: string) : Promise<boolean> {
-		return this.storage.remove({key}).catch(() => false);
+	/** @inheritDoc */
+	public async removeItem (key: string) : Promise<void> {
+		await this.getItem(key);
+		await this.storage.remove({key});
 	}
 
-	/**
-	 * Sets an item's value.
-	 * @returns Success status.
-	 */
-	public async setItem (key: string, value: boolean|number|string) : Promise<boolean> {
-		return this.storage.set({key, value: value.toString()}).catch(() => false);
+	/** @inheritDoc */
+	public async setItem (key: string, value: DataType) : Promise<void> {
+		await this.storage.set({key, value: potassiumUtil.toString(await util.toBytes(value))});
 	}
 
-	constructor () {}
+	constructor () {
+		super();
+	}
 }
