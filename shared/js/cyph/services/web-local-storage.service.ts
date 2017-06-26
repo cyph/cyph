@@ -22,7 +22,7 @@ export class WebLocalStorageService extends LocalStorageService {
 						/* tslint:disable-next-line:ban */
 						const value	= localStorage.getItem(key);
 						if (value) {
-							await this.setItem(key, value);
+							await this.setItem(key, value, false);
 						}
 					})
 			);

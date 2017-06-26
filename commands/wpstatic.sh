@@ -149,7 +149,7 @@ while [ ! -f index.html ] ; do
 
 			await new Promise(resolve => setTimeout(resolve, 10000));
 		}
-	})();" 2> /dev/null | tail -n1)"
+	})()" 2> /dev/null | tail -n1)"
 
 	if [ "$(echo "${command}" | grep "${commandComment}")" ] ; then
 		log "${command}"
@@ -295,7 +295,7 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 			removeComments: true
 		}
 	));
-})();" ; done
+})()" ; done
 
 sed -i "s|https://fonts.googleapis.com/css|${fullDestinationURL}/$(grep -rl 'local(.Ubuntu.)')|g" \
 	wp-content/plugins/pricing-table-by-supsystic/js/table.min.js
@@ -341,7 +341,7 @@ for type in eot svg ttf woff woff2 ; do
 			url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${sourceURL}|g')\";
 			path=\"fonts/\$(node -e \"(async () => { \
 				console.log((await require('supersphincs').hash('%')).hex); \
-			})();\").${type}\";
+			})()\").${type}\";
 			wget --tries=50 \"\${url}\" -O \"../\${path}\";
 			grep -rl '%' | xargs -I{} sed -i \"s|%|/blog/\${path}|g\" {};
 		"

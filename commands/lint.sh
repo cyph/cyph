@@ -103,16 +103,18 @@ output="$({
 		--project js/tsconfig.tslint.json \
 		--type-check \
 	;
-	find templates -type f -name '*.html' -not -path 'templates/native/*' -exec node -e '
-		require("htmllint")(
+	find templates -type f -name '*.html' -not -path 'templates/native/*' -exec node -e '(async () => {
+		const result	= await require("htmllint")(
 			fs.readFileSync("{}").toString(),
 			JSON.parse(fs.readFileSync("templates/htmllint.json").toString())
-		).then(result => {
-			if (result.length !== 0) {
-				console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
-			}
-		})
-	' \;;
+		);
+
+		if (result.length === 0) {
+			return;
+		}
+
+		console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
+	})()' \;;
 } 2>&1 |
 	grep -v js/native/js |
 	grep -vP "Warning: Cannot read property '.*?' of undefined"

@@ -4,7 +4,7 @@ cd "$(cd "$(dirname "$0")" ; pwd)/../../websign"
 
 ../commands/websign/pack.js index.html .index.html.tmp
 
-node -e '
+node -e '(async () => {
 	const files	= JSON.parse(
 		fs.readFileSync("js/config.js").toString().
 			replace(/\s+/g, " ").
@@ -12,7 +12,7 @@ node -e '
 			replace(/'"'"'/g, "\"")
 	);
 
-	require("supersphincs").hash(
+	console.log((await require("supersphincs").hash(
 		files.
 			map(file => {
 				return file + ":\n\n" + fs.readFileSync(
@@ -24,9 +24,7 @@ node -e '
 				).toString().trim();
 			}).
 			join("\n\n\n\n\n\n")
-	).then(hash =>
-		console.log(hash.hex)
-	);
-'
+	).hex);
+})()'
 
 rm -rf .index.html.tmp .index.html.tmp-subresources
