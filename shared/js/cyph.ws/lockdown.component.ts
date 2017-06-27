@@ -27,6 +27,9 @@ export class LockdownComponent implements OnInit {
 	/** Password to be used for unlock attempt. */
 	public password: string		= '';
 
+	/** Indicates whether component has been initiated. */
+	public ready: boolean		= false;
+
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		if (!customBuildPassword) {
@@ -46,6 +49,8 @@ export class LockdownComponent implements OnInit {
 		if (password === this.correctPassword) {
 			this.appService.unlock();
 		}
+
+		this.ready	= true;
 	}
 
 	/** Initiates unlock attempt. */
