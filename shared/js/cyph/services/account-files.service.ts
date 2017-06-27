@@ -32,8 +32,9 @@ export class AccountFilesService {
 
 	/** @ignore */
 	private filterFiles (filterRecordType: 'file'|'note') : Observable<IFileRecord[]> {
-		return this.files.map(files =>
-			files.filter(o => !filterRecordType || o.recordType === filterRecordType)
+		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
+		return (<any> this.files).map((files: any) =>
+			files.filter((o: any) => !filterRecordType || o.recordType === filterRecordType)
 		);
 	}
 
