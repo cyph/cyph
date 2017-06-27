@@ -202,7 +202,7 @@ const newCyphTest	= async o => {
 };
 
 
-const runTests	= (backendURL, homeURL, newCyphURL, id) => Promise.resolve().then(() => {
+const runTests	= (backendURL, homeURL, newCyphURL, id) => Promise.resolve().then(async () => {
 	/* Never run test suites concurrently, and never run the same
 		test suite more frequently than once every six hours */
 	if (testLock || (!isNaN(testTimes[id]) && Date.now() - testTimes[id] < 21600000)) {
