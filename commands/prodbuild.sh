@@ -35,7 +35,8 @@ cat > webpack.js <<- EOM
 				'src/js/cyph/services/crypto/threaded-potassium.service',
 				'src/js/cyph/services',
 				'src/js/cyph/components',
-				'src/js/cyph'
+				'src/js/cyph',
+				'src/js/standalone/translations'
 			]).
 			map(s => ({
 				name: 'commons__' + s.replace(/\//g, '_'),
