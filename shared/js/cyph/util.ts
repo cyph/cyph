@@ -163,26 +163,31 @@ export class Util {
 	}
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
-	public async lock<T> (lock: {queue?: string[]}, f: () => Promise<T>) : Promise<T> {
+	public async lock<T> (
+		lock: {promise?: Promise<any>; queue?: string[]},
+		f: () => Promise<T>
+	) : Promise<T> {
 		if (lock.queue === undefined) {
 			lock.queue	= [];
 		}
 
 		const queue: string[]	= lock.queue;
-		const guid: string		= this.uuid();
+		const id: string		= this.uuid();
 
-		queue.push(guid);
+		queue.push(id);
 
-		while (queue[0] !== guid) {
-			await this.sleep();
+		while (queue[0] !== id) {
+			await lock.promise;
 		}
 
-		try {
-			return (await f());
-		}
-		finally {
-			queue.shift();
-		}
+		return lock.promise	= (async () => {
+			try {
+				return (await f());
+			}
+			finally {
+				queue.shift();
+			}
+		})();
 	}
 
 	/**
