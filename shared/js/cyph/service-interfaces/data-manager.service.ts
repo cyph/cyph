@@ -70,8 +70,11 @@ export class DataManagerService {
 		throw new Error('Must provide an implementation of removeItem.');
 	}
 
-	/** Sets an item's value. */
-	public async setItem (_KEY: string, _VALUE: DataType) : Promise<void> {
+	/**
+	 * Sets an item's value.
+	 * @returns Item key.
+	 */
+	public async setItem (_KEY: string, _VALUE: DataType) : Promise<string> {
 		throw new Error('Must provide an implementation of setItem.');
 	}
 
