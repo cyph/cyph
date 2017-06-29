@@ -219,8 +219,8 @@
 		@include mat-button-theme($cyph-speed-dial-action-theme);
 
 		button.alt {
-			background-color: $cyph-speed-dial-action-alt-background;
-			color: $cyph-speed-dial-action-alt-foreground;
+			background-color: $cyph-speed-dial-action-alt-background !important;
+			color: $cyph-speed-dial-action-alt-foreground !important;
 		}
 	}
 }
