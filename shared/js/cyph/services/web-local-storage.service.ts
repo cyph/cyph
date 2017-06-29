@@ -60,12 +60,13 @@ export class WebLocalStorageService extends LocalStorageService {
 		key: string,
 		value: DataType,
 		waitForReady: boolean = true
-	) : Promise<void> {
+	) : Promise<string> {
 		if (waitForReady) {
 			await this.ready;
 		}
 
 		await localforage.setItem<Uint8Array>(key, await util.toBytes(value));
+		return key;
 	}
 
 	constructor () {

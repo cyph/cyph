@@ -32,8 +32,9 @@ export class NativeLocalStorageService extends LocalStorageService {
 	}
 
 	/** @inheritDoc */
-	public async setItem (key: string, value: DataType) : Promise<void> {
+	public async setItem (key: string, value: DataType) : Promise<string> {
 		await this.storage.set({key, value: potassiumUtil.toString(await util.toBytes(value))});
+		return key;
 	}
 
 	constructor () {

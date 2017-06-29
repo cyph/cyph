@@ -116,7 +116,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async pushItem (url: string, value: DataType) : Promise<void> {
+	public async pushItem (url: string, value: DataType) : Promise<string> {
 		return this.setItem(`${url}/${(await this.getDatabaseRef(url)).push().key}`, value);
 	}
 
@@ -137,9 +137,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async setItem (url: string, value: DataType) : Promise<void> {
+	public async setItem (url: string, value: DataType) : Promise<string> {
 		await (await this.getStorageRef(url)).put(new Blob([await util.toBytes(value)])).then();
 		await (await this.getDatabaseRef(url)).set(await this.timestamp()).then();
+		return url;
 	}
 
 	/** @inheritDoc */
@@ -150,24 +151,39 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public watchItem (url: string) : Observable<Uint8Array|undefined> {
 		return new Observable<Uint8Array|undefined>(observer => {
-			(async () => {
-				(await this.getDatabaseRef(url)).on('value', async snapshot => {
-					if (!snapshot || !snapshot.exists()) {
-						observer.next();
-					}
+			let cleanup: Function;
 
-					observer.next(await this.getItem(url));
-				});
+			const onValue	= async (snapshot: firebase.database.DataSnapshot) => {
+				if (!snapshot || !snapshot.exists()) {
+					observer.next();
+				}
+
+				observer.next(await this.getItem(url));
+			};
+
+			(async () => {
+				const ref	= await this.getDatabaseRef(url);
+				ref.on('value', onValue);
+
+				cleanup	= () => {
+					ref.off('value', onValue);
+				};
 			})();
+
+			return async () => {
+				(await util.waitForValue(() => cleanup))();
+			};
 		});
 	}
 
 	/** @inheritDoc */
 	public watchList<T = Uint8Array> (
 		url: string,
-		mapper: (value: Uint8Array) => T = (value: Uint8Array&T) => value
+		mapper: (value: Uint8Array) => T|Promise<T> = (value: Uint8Array&T) => value
 	) : Observable<T[]> {
 		return new Observable<T[]>(observer => {
+			let cleanup: Function;
+
 			(async () => {
 				const listRef		= await this.getDatabaseRef(url);
 
@@ -187,7 +203,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 					}
 					data.set(
 						snapshot.key,
-						{timestamp, value: mapper(await this.getItem(`${url}/${snapshot.key}`))}
+						{
+							timestamp,
+							value: await mapper(await this.getItem(`${url}/${snapshot.key}`))
+						}
 					);
 					return true;
 				};
@@ -204,7 +223,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					);
 				};
 
-				listRef.on('child_added', async snapshot => {
+				const onChildAdded	= async (snapshot: firebase.database.DataSnapshot) => {
 					if (
 						!snapshot ||
 						!snapshot.key ||
@@ -220,9 +239,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 						}
 					}
 					publishList();
-				});
+				};
 
-				listRef.on('child_changed', async snapshot => {
+				const onChildChanged	= async (snapshot: firebase.database.DataSnapshot) => {
 					if (
 						!snapshot ||
 						!snapshot.key ||
@@ -234,9 +253,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 						return;
 					}
 					publishList();
-				});
+				};
 
-				listRef.on('child_removed', async snapshot => {
+				const onChildRemoved	= async (snapshot: firebase.database.DataSnapshot) => {
 					if (!snapshot || !snapshot.key) {
 						return;
 					}
@@ -245,8 +264,22 @@ export class FirebaseDatabaseService extends DatabaseService {
 						return;
 					}
 					publishList();
-				});
+				};
+
+				listRef.on('child_added', onChildAdded);
+				listRef.on('child_changed', onChildChanged);
+				listRef.on('child_removed', onChildRemoved);
+
+				cleanup	= () => {
+					listRef.on('child_added', onChildAdded);
+					listRef.on('child_changed', onChildChanged);
+					listRef.on('child_removed', onChildRemoved);
+				};
 			})();
+
+			return async () => {
+				(await util.waitForValue(() => cleanup))();
+			};
 		});
 	}
 

@@ -37,8 +37,11 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.logout.');
 	}
 
-	/** Pushes an item to a list. */
-	public async pushItem (_URL: string, _VALUE: DataType) : Promise<void> {
+	/**
+	 * Pushes an item to a list.
+	 * @returns Item URL.
+	 */
+	public async pushItem (_URL: string, _VALUE: DataType) : Promise<string> {
 		throw new Error('Must provide an implementation of DatabaseService.pushItem.');
 	}
 
@@ -112,7 +115,7 @@ export class DatabaseService extends DataManagerService {
 	/** Subscribes to a list of values. */
 	public watchList<T = Uint8Array> (
 		_URL: string,
-		_MAPPER?: (value: Uint8Array) => T
+		_MAPPER?: (value: Uint8Array) => T|Promise<T>
 	) : Observable<T[]> {
 		throw new Error('Must provide an implementation of DatabaseService.watchList.');
 	}
