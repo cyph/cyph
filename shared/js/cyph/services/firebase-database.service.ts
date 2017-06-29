@@ -5,6 +5,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
+import {Observable} from 'rxjs';
 import {DataType} from '../data-type';
 import {env} from '../env';
 import {util} from '../util';
@@ -71,6 +72,35 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public async lock<T> (url: string, f: () => Promise<T>) : Promise<T> {
+		const queue	= await this.getDatabaseRef(url);
+		const id	= util.uuid();
+		const lock	= queue.push(id);
+
+		lock.onDisconnect().remove();
+
+		try {
+			await new Promise<void>(resolve => {
+				queue.on('value', async snapshot => {
+					const value: string[]	= (snapshot && snapshot.val()) || [];
+
+					if (value[0] !== id) {
+						return;
+					}
+
+					queue.off();
+					resolve();
+				});
+			});
+
+			return (await f());
+		}
+		finally {
+			lock.remove();
+		}
+	}
+
+	/** @inheritDoc */
 	public async login (username: string, password: string) : Promise<void> {
 		await (await this.app).auth().signInWithEmailAndPassword(
 			this.usernameToEmail(username),
@@ -86,6 +116,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public async pushItem (url: string, value: DataType) : Promise<void> {
+		return this.setItem(`${url}/${(await this.getDatabaseRef(url)).push().key}`, value);
+	}
+
+	/** @inheritDoc */
 	public async register (username: string, password: string) : Promise<void> {
 		await (await this.app).auth().createUserWithEmailAndPassword(
 			this.usernameToEmail(username),
@@ -95,17 +130,124 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async removeItem (url: string) : Promise<void> {
-		await (await this.getStorageRef(url)).delete();
+		await Promise.all([
+			(await this.getDatabaseRef(url)).remove().then(),
+			(await this.getStorageRef(url)).delete().then()
+		]);
 	}
 
 	/** @inheritDoc */
 	public async setItem (url: string, value: DataType) : Promise<void> {
 		await (await this.getStorageRef(url)).put(new Blob([await util.toBytes(value)])).then();
+		await (await this.getDatabaseRef(url)).set(await this.timestamp()).then();
 	}
 
 	/** @inheritDoc */
 	public async timestamp () : Promise<any> {
 		return firebase.database.ServerValue.TIMESTAMP;
+	}
+
+	/** @inheritDoc */
+	public watchItem (url: string) : Observable<Uint8Array|undefined> {
+		return new Observable<Uint8Array|undefined>(observer => {
+			(async () => {
+				(await this.getDatabaseRef(url)).on('value', async snapshot => {
+					if (!snapshot || !snapshot.exists()) {
+						observer.next();
+					}
+
+					observer.next(await this.getItem(url));
+				});
+			})();
+		});
+	}
+
+	/** @inheritDoc */
+	public watchList<T = Uint8Array> (
+		url: string,
+		mapper: (value: Uint8Array) => T = (value: Uint8Array&T) => value
+	) : Observable<T[]> {
+		return new Observable<T[]>(observer => {
+			(async () => {
+				const listRef		= await this.getDatabaseRef(url);
+
+				let initRemaining	=
+					(<firebase.database.DataSnapshot> await listRef.once('value')).numChildren()
+				;
+
+				const data			= new Map<string, {timestamp: number; value: T}>();
+
+				const getValue		= async (snapshot: firebase.database.DataSnapshot) => {
+					if (!snapshot.key) {
+						return false;
+					}
+					const timestamp: number	= snapshot.val();
+					if (isNaN(timestamp)) {
+						return false;
+					}
+					data.set(
+						snapshot.key,
+						{timestamp, value: mapper(await this.getItem(`${url}/${snapshot.key}`))}
+					);
+					return true;
+				};
+
+				const publishList	= () => {
+					observer.next(
+						Array.from(data.keys()).sort().map(k => {
+							const o	= data.get(k);
+							if (!o) {
+								throw new Error('Corrupt Map.');
+							}
+							return o.value;
+						})
+					);
+				};
+
+				listRef.on('child_added', async snapshot => {
+					if (
+						!snapshot ||
+						!snapshot.key ||
+						data.has(snapshot.key) ||
+						!(await getValue(snapshot))
+					) {
+						return;
+					}
+					if (initRemaining !== 0) {
+						--initRemaining;
+						if (initRemaining !== 0) {
+							return;
+						}
+					}
+					publishList();
+				});
+
+				listRef.on('child_changed', async snapshot => {
+					if (
+						!snapshot ||
+						!snapshot.key ||
+						!(await getValue(snapshot))
+					) {
+						return;
+					}
+					if (initRemaining !== 0) {
+						return;
+					}
+					publishList();
+				});
+
+				listRef.on('child_removed', async snapshot => {
+					if (!snapshot || !snapshot.key) {
+						return;
+					}
+					data.delete(snapshot.key);
+					if (initRemaining !== 0) {
+						return;
+					}
+					publishList();
+				});
+			})();
+		});
 	}
 
 	constructor () {

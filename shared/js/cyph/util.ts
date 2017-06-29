@@ -169,11 +169,11 @@ export class Util {
 		}
 
 		const queue: string[]	= lock.queue;
-		const guid: string		= this.uuid();
+		const id: string		= this.uuid();
 
-		queue.push(guid);
+		queue.push(id);
 
-		while (queue[0] !== guid) {
+		while (queue[0] !== id) {
 			await this.sleep();
 		}
 
