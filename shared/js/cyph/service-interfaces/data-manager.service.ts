@@ -16,41 +16,42 @@ export class DataManagerService {
 	 * Gets a value as a boolean.
 	 * @see getItem
 	 */
-	public async getItemBoolean (url: string) : Promise<boolean> {
-		return (await this.getItemString(url)) === 'true';
+	public async getItemBoolean (key: string) : Promise<boolean> {
+		return (await this.getItem(key))[0] === 1;
 	}
 
 	/**
 	 * Gets a value as a number.
 	 * @see getItem
 	 */
-	public async getItemNumber (url: string) : Promise<number> {
-		return parseFloat(await this.getItemString(url));
+	public async getItemNumber (key: string) : Promise<number> {
+		const data	= await this.getItem(key);
+		return new DataView(data.buffer, data.byteOffset).getFloat64(0, true);
 	}
 
 	/**
 	 * Gets a value as an object.
 	 * @see getItem
 	 */
-	public async getItemObject<T> (url: string) : Promise<T> {
-		return util.parse<T>(await this.getItemString(url));
+	public async getItemObject<T> (key: string) : Promise<T> {
+		return util.parse<T>(await this.getItemString(key));
 	}
 
 	/**
 	 * Gets a value as a string.
 	 * @see getItem
 	 */
-	public async getItemString (url: string) : Promise<string> {
-		return potassiumUtil.toString(await this.getItem(url));
+	public async getItemString (key: string) : Promise<string> {
+		return potassiumUtil.toString(await this.getItem(key));
 	}
 
 	/**
 	 * Gets a value as a base64 data URI.
 	 * @see getItem
 	 */
-	public async getItemURI (url: string) : Promise<string> {
+	public async getItemURI (key: string) : Promise<string> {
 		return 'data:application/octet-stream;base64,' + potassiumUtil.toBase64(
-			await this.getItem(url)
+			await this.getItem(key)
 		);
 	}
 
