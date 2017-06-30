@@ -210,20 +210,20 @@ export class FirebaseDatabaseService extends DatabaseService {
 					(<firebase.database.DataSnapshot> await listRef.once('value')).numChildren()
 				;
 
-				const data			= new Map<string, {timestamp: number; value: T}>();
+				const data			= new Map<string, {hash: string; value: T}>();
 
 				const getValue		= async (snapshot: firebase.database.DataSnapshot) => {
 					if (!snapshot.key) {
 						return false;
 					}
-					const timestamp: number	= snapshot.val();
-					if (isNaN(timestamp)) {
+					const hash	= snapshot.val();
+					if (typeof hash !== 'string') {
 						return false;
 					}
 					data.set(
 						snapshot.key,
 						{
-							timestamp,
+							hash,
 							value: await mapper(await this.getItem(`${url}/${snapshot.key}`))
 						}
 					);
