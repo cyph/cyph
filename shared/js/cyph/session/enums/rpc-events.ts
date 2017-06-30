@@ -12,9 +12,6 @@ export class RpcEvents {
 	public readonly files: string			= 'files';
 
 	/** @see RpcEvents */
-	public readonly mutex: string			= 'mutex';
-
-	/** @see RpcEvents */
 	public readonly p2p: string				= 'p2p';
 
 	/** @see RpcEvents */

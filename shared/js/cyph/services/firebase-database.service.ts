@@ -89,34 +89,44 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async lock<T> (url: string, f: () => Promise<T>) : Promise<T> {
-		return util.lock(this.localLock, async () => {
-			const queue	= await this.getDatabaseRef(url);
-			const id	= util.uuid();
-			const lock	= queue.push(id);
+	public async lock<T> (
+		url: string,
+		f: (reason?: string) => Promise<T>,
+		reason?: string
+	) : Promise<T> {
+		return util.lock(
+			this.localLock,
+			async () => {
+				const queue	= await this.getDatabaseRef(url);
+				const id	= util.uuid();
+				const lock	= queue.push({id, reason});
 
-			lock.onDisconnect().remove();
+				lock.onDisconnect().remove();
 
-			try {
-				await new Promise<void>(resolve => {
-					queue.on('value', async snapshot => {
-						const value: string[]	= (snapshot && snapshot.val()) || [];
+				try {
+					const lastReason	= await new Promise<string|undefined>(resolve => {
+						queue.on('value', async snapshot => {
+							const value: {id: string; reason?: string}[]	=
+								(snapshot && snapshot.val()) || []
+							;
 
-						if (value[0] !== id) {
-							return;
-						}
+							if (!value[0] || value[0].id !== id) {
+								return;
+							}
 
-						resolve();
-						queue.off();
+							resolve(value[0].reason);
+							queue.off();
+						});
 					});
-				});
 
-				return await f();
-			}
-			finally {
-				lock.remove();
-			}
-		});
+					return await f(lastReason);
+				}
+				finally {
+					lock.remove();
+				}
+			},
+			reason
+		);
 	}
 
 	/** @inheritDoc */

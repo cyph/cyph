@@ -123,6 +123,11 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
+	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
+		return this.channelService.lock(f, reason);
+	}
+
+	/** @inheritDoc */
 	public get proFeatures () : ProFeatures {
 		return new ProFeatures(
 			this.state.wasInitiatedByAPI,

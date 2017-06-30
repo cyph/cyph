@@ -23,7 +23,11 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
-	public async lock<T> (_URL: string, _F: () => Promise<T>) : Promise<T> {
+	public async lock<T> (
+		_URL: string,
+		_F: (reason?: string) => Promise<T>,
+		_REASON?: string
+	) : Promise<T> {
 		throw new Error('Must provide an implementation of DatabaseService.lock.');
 	}
 

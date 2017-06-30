@@ -6,9 +6,7 @@ import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {Command} from '../session/command';
 import {events, rpcEvents} from '../session/enums';
-import {IMutex} from '../session/imutex';
 import {Message} from '../session/message';
-import {Mutex} from '../session/mutex';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
@@ -109,9 +107,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			this.resolveLocalVideo	= resolve;
 		})
 	;
-
-	/** @ignore */
-	private readonly mutex: IMutex;
 
 	/** @ignore */
 	private readonly remoteVideo: Promise<() => JQuery>	=
@@ -371,28 +366,26 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			return;
 		}
 
-		try {
-			const lockDetails	= await this.mutex.lock(P2PWebRTCService.constants.requestCall);
+		await this.sessionService.lock(
+			async reason => {
+				if (reason === P2PWebRTCService.constants.requestCall) {
+					return;
+				}
 
-			if (!lockDetails.wasFirstOfType) {
-				return;
-			}
+				this.accept(callType);
 
-			this.accept(callType);
+				this.sessionService.send(
+					new Message(
+						rpcEvents.p2p,
+						new Command(callType)
+					)
+				);
 
-			this.sessionService.send(
-				new Message(
-					rpcEvents.p2p,
-					new Command(callType)
-				)
-			);
-
-			await util.sleep();
-			(await this.handlers).requestConfirmation();
-		}
-		finally {
-			this.mutex.unlock();
-		}
+				await util.sleep();
+				(await this.handlers).requestConfirmation();
+			},
+			P2PWebRTCService.constants.requestCall
+		);
 
 		/* Time out if request hasn't been accepted within 10 minutes */
 
@@ -446,8 +439,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		/** @ignore */
 		private readonly sessionService: SessionService
 	) {
-		this.mutex	= new Mutex(this.sessionService);
-
 		this.sessionService.on(events.closeChat, () => { this.close(); });
 
 		this.sessionService.on(rpcEvents.p2p, (command: Command) => {

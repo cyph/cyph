@@ -186,6 +186,11 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
+	public async lock<T> (_F: (reason?: string) => Promise<T>, _REASON?: string) : Promise<T> {
+		throw new Error('Must provide an implementation of SessionService.lock.');
+	}
+
+	/** @inheritDoc */
 	public off<T> (event: string, handler: (data: T) => void) : void {
 		eventManager.off<T>(event + this.eventId, handler);
 	}
