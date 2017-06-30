@@ -12,14 +12,11 @@ export class Util {
 	/** @ignore */
 	private readonly timestampData	= {
 		last: 0,
-		offset: (async () => {
-			const serverTimestamp: number	= parseFloat(
-				await this.request({retries: 10, url: env.baseUrl + 'timestamp'})
-			);
-
+		offset: (async () =>
+			parseFloat(await this.request({retries: 10, url: env.baseUrl + 'timestamp'})) -
 			/* tslint:disable-next-line:ban */
-			return serverTimestamp - Date.now();
-		})().catch(
+			Date.now()
+		)().catch(
 			() => 0
 		),
 		subtime: 0
