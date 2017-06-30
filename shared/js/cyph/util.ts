@@ -171,8 +171,8 @@ export class Util {
 			lock.queue	= [];
 		}
 
-		const queue: string[]	= lock.queue;
-		const id: string		= this.uuid();
+		const queue	= lock.queue;
+		const id	= this.uuid();
 
 		queue.push(id);
 
