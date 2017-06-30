@@ -15,7 +15,7 @@ export class NotificationService implements INotificationService {
 	private readonly audio?: HTMLAudioElement;
 
 	/** @ignore */
-	private readonly config	= {
+	private readonly config: {audio?: string; title: string}	= {
 		audio: '/assets/audio/beep.mp3',
 		title: 'Cyph'
 	};
@@ -102,7 +102,10 @@ export class NotificationService implements INotificationService {
 		/** @ignore */
 		private readonly visibilityWatcherService: VisibilityWatcherService
 	) {
-		if (Audio) {
+		if (this.envService.isMobile) {
+			this.config.audio	= undefined;
+		}
+		else if (Audio) {
 			this.audio	= new Audio(this.config.audio);
 		}
 
