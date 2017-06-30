@@ -182,7 +182,7 @@ export class Util {
 
 		return lock.promise	= (async () => {
 			try {
-				return (await f());
+				return await f();
 			}
 			finally {
 				queue.shift();

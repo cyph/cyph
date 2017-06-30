@@ -54,7 +54,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		}
 
 		try {
-			return (await this.localStorageService.getItem(`cache/${hash}`));
+			return await this.localStorageService.getItem(`cache/${hash}`);
 		}
 		catch (_) {}
 
@@ -107,7 +107,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				});
 			});
 
-			return (await f());
+			return await f();
 		}
 		finally {
 			lock.remove();
