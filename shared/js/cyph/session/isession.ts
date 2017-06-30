@@ -16,10 +16,11 @@ export interface ISession {
 		wasInitiatedByAPI: boolean;
 	};
 
-	/**
-	 * This kills the cyph.
-	 */
+	/** This kills the cyph. */
 	close () : void;
+
+	/** @see ChannelService.lock */
+	lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T>;
 
 	/**
 	 * Remove event listener.

@@ -18,6 +18,9 @@ export class ChannelService {
 	private chunkSize: number		= env.isSafari ? 30720 : 5242880;
 
 	/** @ignore */
+	private databaseLock?: string;
+
+	/** @ignore */
 	private readonly handlers: Promise<IChannelHandlers>	=
 		/* tslint:disable-next-line:promise-must-complete */
 		new Promise<IChannelHandlers>(resolve => {
@@ -73,6 +76,8 @@ export class ChannelService {
 	 */
 	public async init (channelName: string, handlers: IChannelHandlers) : Promise<void> {
 		this.resolveHandlers(handlers);
+
+		this.databaseLock	= `channels/${channelName}/lock`;
 
 		this.channelRef		= await util.retryUntilSuccessful(async () =>
 			(await this.databaseService.getDatabaseRef('channels')).child(channelName)
@@ -204,6 +209,15 @@ export class ChannelService {
 	/** Indicates whether this channel is available for sending and receiving. */
 	public get isAlive () : boolean {
 		return !this.isClosed;
+	}
+
+	/** @see DatabaseService.lock */
+	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
+		if (!this.databaseLock) {
+			throw new Error('Channel lock not setup.');
+		}
+
+		return this.databaseService.lock(this.databaseLock, f, reason);
 	}
 
 	/** Sends message through this channel. */

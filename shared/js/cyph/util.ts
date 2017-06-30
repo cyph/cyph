@@ -164,8 +164,9 @@ export class Util {
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 	public async lock<T> (
-		lock: {promise?: Promise<any>; queue?: string[]},
-		f: () => Promise<T>
+		lock: {promise?: Promise<any>; queue?: string[]; reason?: string},
+		f: (reason?: string) => Promise<T>,
+		reason?: string
 	) : Promise<T> {
 		if (lock.queue === undefined) {
 			lock.queue	= [];
@@ -180,9 +181,12 @@ export class Util {
 			await lock.promise;
 		}
 
+		const lastReason	= lock.reason;
+		lock.reason			= reason;
+
 		return lock.promise	= (async () => {
 			try {
-				return await f();
+				return await f(lastReason);
 			}
 			finally {
 				queue.shift();
