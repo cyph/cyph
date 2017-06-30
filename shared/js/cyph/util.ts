@@ -393,15 +393,13 @@ export class Util {
 				new Uint8Array(data.buffer) :
 				data instanceof Blob ?
 					potassiumUtil.fromBlob(data) :
-					potassiumUtil.fromString(
-						(
-							typeof data === 'boolean' ||
-							typeof data === 'number' ||
-							typeof data === 'string'
-						) ?
-							data.toString() :
-							this.stringify(data)
-					)
+					typeof data === 'boolean' ?
+						new Uint8Array([data ? 1 : 0]) :
+						typeof data === 'number' ?
+							new Uint8Array(new Float64Array([data]).buffer) :
+							typeof data === 'string' ?
+								potassiumUtil.fromString(data) :
+								potassiumUtil.fromString(this.stringify(data))
 		;
 	}
 

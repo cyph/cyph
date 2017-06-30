@@ -65,8 +65,8 @@ export class DatabaseService extends DataManagerService {
 	 * @see watchItem
 	 */
 	public watchItemBoolean (url: string) : Observable<boolean|undefined> {
-		return this.watchItemString(url).map(value =>
-			value === undefined ? undefined : value === 'true'
+		return this.watchItem(url).map(value =>
+			value === undefined ? undefined : value[0] === 1
 		);
 	}
 
@@ -75,8 +75,10 @@ export class DatabaseService extends DataManagerService {
 	 * @see watchItem
 	 */
 	public watchItemNumber (url: string) : Observable<number|undefined> {
-		return this.watchItemString(url).map(value =>
-			value === undefined ? undefined : parseFloat(value)
+		return this.watchItem(url).map(value =>
+			value === undefined ?
+				undefined :
+				new DataView(value.buffer, value.byteOffset).getFloat64(0, true)
 		);
 	}
 
@@ -127,7 +129,7 @@ export class DatabaseService extends DataManagerService {
 	public watchListBoolean (url: string) : Observable<boolean[]> {
 		return this.watchList<boolean>(
 			url,
-			value => potassiumUtil.toString(value) === 'true'
+			value => value[0] === 1
 		);
 	}
 
@@ -138,7 +140,7 @@ export class DatabaseService extends DataManagerService {
 	public watchListNumber (url: string) : Observable<number[]> {
 		return this.watchList<number>(
 			url,
-			value => parseFloat(potassiumUtil.toString(value))
+			value => new DataView(value.buffer, value.byteOffset).getFloat64(0, true)
 		);
 	}
 
