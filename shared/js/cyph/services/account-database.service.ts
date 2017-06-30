@@ -230,12 +230,12 @@ export class AccountDatabaseService {
 	}
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
-	public async lock<T> (f: () => Promise<T>) : Promise<T> {
+	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
 		if (!this.current) {
 			throw new Error('User not signed in. Cannot lock.');
 		}
 
-		return this.databaseService.lock(`users/${this.current.user.username}/lock`, f);
+		return this.databaseService.lock(`users/${this.current.user.username}/lock`, f, reason);
 	}
 
 	/**
