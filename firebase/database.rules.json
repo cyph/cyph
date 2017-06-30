@@ -14,6 +14,17 @@
 					}
 				},
 
+				"lock": {
+					"$contender": {
+						"id": {
+							".validate": "newData.isString()"
+						},
+						"reason": {
+							".validate": "newData.isString()"
+						}
+					}
+				},
+
 				"messages": {
 					"$message": {
 						".write": "!data.exists() && newData.exists()",
@@ -54,6 +65,86 @@
 						".write": "!data.exists() && newData.exists()",
 						".validate": "newData.isString() && (newData.val() === '' || newData.val() === $user)"
 					}
+				}
+			}
+		},
+
+		"users": {
+			"$user": {
+				".read": "($user + '@cyph.me') === auth.token.email",
+				".write": "($user + '@cyph.me') === auth.token.email",
+
+				"certificate": {
+					".read": true,
+					".write": false,
+					".validate": "newData.isString()"
+				},
+
+				"contactList": {
+					".validate": "newData.isString()"
+				},
+
+				"contacts": {
+					"$contact": {
+						"messages": {
+							"$message": {
+								".validate": "newData.isString()"
+							}
+						},
+						"session": {
+							".validate": "newData.isString()"
+						}
+					}
+				},
+
+				"encryptionKeyPair": {
+					".validate": "newData.isString()"
+				},
+
+				"fileList": {
+					".validate": "newData.isString()"
+				},
+
+				"files": {
+					"$file": {
+						"messages": {
+							"$message": {
+								".validate": "newData.isString()"
+							}
+						},
+						"session": {
+							".validate": "newData.isString()"
+						}
+					}
+				},
+
+				"lock": {
+					"$contender": {
+						"id": {
+							".validate": "newData.isString()"
+						},
+						"reason": {
+							".validate": "newData.isString()"
+						}
+					}
+				},
+
+				"loginData": {
+					".read": true,
+					".validate": "newData.isString()"
+				},
+
+				"publicProfile": {
+					".read": true,
+					".validate": "newData.isString()"
+				},
+
+				"settings": {
+					".validate": "newData.isString()"
+				},
+
+				"signingKeyPair": {
+					".validate": "newData.isString()"
 				}
 			}
 		}
