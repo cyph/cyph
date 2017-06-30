@@ -113,7 +113,7 @@
 		[class.sidebar-open]='p2pService.isSidebarOpen'
 		*ngIf='p2pWebRTCService && chatService.chat.state === states.chat'
 	>
-		<a class='logo' rel='noreferrer' [href]='envService.homeUrl'>
+		<a class='logo' rel='noopener noreferrer' [href]='envService.homeUrl'>
 			<img 
 				*ngIf='!sessionService.apiFlags.telehealth'
 				src='/assets/img/betalogo.mobile.png'

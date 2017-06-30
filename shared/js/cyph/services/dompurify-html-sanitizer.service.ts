@@ -55,7 +55,7 @@ export class DOMPurifyHtmlSanitizerService implements HtmlSanitizerService {
 
 			/* Block window.opener in new window */
 			if (node instanceof HTMLAnchorElement) {
-				node.rel	= 'noreferrer';
+				node.rel	= 'noopener noreferrer';
 			}
 
 			return node;
