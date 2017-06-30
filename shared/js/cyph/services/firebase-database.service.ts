@@ -9,7 +9,9 @@ import {Observable} from 'rxjs';
 import {DataType} from '../data-type';
 import {env} from '../env';
 import {util} from '../util';
+import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
+import {LocalStorageService} from './local-storage.service';
 
 
 /**
@@ -46,9 +48,21 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async getItem (url: string) : Promise<Uint8Array> {
-		return util.requestBytes({
+		const hash	= (await (await this.getDatabaseRef(url)).once('value').then()).val();
+		if (typeof hash !== 'string') {
+			throw new Error(`Item at ${url} not found.`);
+		}
+
+		try {
+			return (await this.localStorageService.getItem(`cache/${hash}`));
+		}
+		catch (_) {}
+
+		const data	= await util.requestBytes({
 			url: await (await this.getStorageRef(url)).getDownloadURL()
 		});
+		await this.localStorageService.setItem(`cache/${hash}`, data);
+		return data;
 	}
 
 	/** @inheritDoc */
@@ -138,8 +152,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async setItem (url: string, value: DataType) : Promise<string> {
-		await (await this.getStorageRef(url)).put(new Blob([await util.toBytes(value)])).then();
-		await (await this.getDatabaseRef(url)).set(await this.timestamp()).then();
+		const data	= await util.toBytes(value);
+		const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
+
+		await this.localStorageService.setItem(`cache/${hash}`, data);
+		await (await this.getStorageRef(url)).put(new Blob([data])).then();
+		await (await this.getDatabaseRef(url)).set(hash).then();
+
 		return url;
 	}
 
@@ -283,7 +302,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 		});
 	}
 
-	constructor () {
+	constructor (
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
+
+		/** @ignore */
+		private readonly potassiumService: PotassiumService
+	) {
 		super();
 	}
 }
