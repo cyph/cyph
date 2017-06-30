@@ -144,7 +144,7 @@ export class AccountDatabaseService {
 	 * @see getItem
 	 */
 	public async getItemBoolean (url: string, publicData: boolean = false) : Promise<boolean> {
-		return (await this.getItemString(url, publicData)) === 'true';
+		return (await this.getItem(url, publicData))[0] === 1;
 	}
 
 	/**
@@ -152,7 +152,8 @@ export class AccountDatabaseService {
 	 * @see getItem
 	 */
 	public async getItemNumber (url: string, publicData: boolean = false) : Promise<number> {
-		return parseFloat(await this.getItemString(url, publicData));
+		const data	= await this.getItem(url, publicData);
+		return new DataView(data.buffer, data.byteOffset).getFloat64(0, true);
 	}
 
 	/**
