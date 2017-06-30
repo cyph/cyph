@@ -106,15 +106,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 				try {
 					const lastReason	= await new Promise<string|undefined>(resolve => {
 						queue.on('value', async snapshot => {
-							const value: {id: string; reason?: string}[]	=
-								(snapshot && snapshot.val()) || []
+							const value: {[key: string]: {id: string; reason?: string}}	=
+								(snapshot && snapshot.val()) || {}
 							;
 
-							if (!value[0] || value[0].id !== id) {
+							const o	= value[Object.keys(value).sort()[0]] || {};
+
+							if (o.id !== id) {
 								return;
 							}
 
-							resolve(value[0].reason);
+							resolve(o.reason);
 							queue.off();
 						});
 					});
