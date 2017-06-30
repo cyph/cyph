@@ -104,7 +104,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 				lock.onDisconnect().remove();
 
 				try {
-					const lastReason	= await new Promise<string|undefined>(resolve => {
+					let lastReason: string|undefined;
+
+					await new Promise<void>(resolve => {
 						queue.on('value', async snapshot => {
 							const value: {[key: string]: {id: string; reason?: string}}	=
 								(snapshot && snapshot.val()) || {}
@@ -113,10 +115,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 							const o	= value[Object.keys(value).sort()[0]] || {};
 
 							if (o.id !== id) {
+								lastReason	= o.reason;
 								return;
 							}
 
-							resolve(o.reason);
+							resolve();
 							queue.off();
 						});
 					});
