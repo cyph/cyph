@@ -16,13 +16,15 @@ export class NativeLocalStorageService extends LocalStorageService {
 
 	/** @inheritDoc */
 	public async getItem (key: string) : Promise<Uint8Array> {
+		await this.pendingSets.get(key);
+
 		const value	= await this.storage.get({key});
 
 		if (typeof value !== 'string') {
 			throw new Error(`Item ${key} not found.`);
 		}
 
-		return potassiumUtil.fromString(value);
+		return potassiumUtil.fromBase64(value);
 	}
 
 	/** @inheritDoc */
@@ -33,8 +35,17 @@ export class NativeLocalStorageService extends LocalStorageService {
 
 	/** @inheritDoc */
 	public async setItem (key: string, value: DataType) : Promise<string> {
-		await this.storage.set({key, value: potassiumUtil.toString(await util.toBytes(value))});
-		return key;
+		const promise	= (async () => {
+			await this.storage.set({
+				key,
+				value: potassiumUtil.toBase64(await util.toBytes(value))
+			});
+
+			return key;
+		})();
+
+		this.pendingSets.set(key, promise);
+		return promise;
 	}
 
 	constructor () {

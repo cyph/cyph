@@ -61,7 +61,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const data	= await util.requestBytes({
 			url: await (await this.getStorageRef(url)).getDownloadURL()
 		});
-		await this.localStorageService.setItem(`cache/${hash}`, data);
+		this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
 		return data;
 	}
 
@@ -155,7 +155,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const data	= await util.toBytes(value);
 		const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
 
-		await this.localStorageService.setItem(`cache/${hash}`, data);
+		this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
 		await (await this.getStorageRef(url)).put(new Blob([data])).then();
 		await (await this.getDatabaseRef(url)).set(hash).then();
 

@@ -36,6 +36,8 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
+		await this.pendingSets.get(key);
+
 		const value	= await localforage.getItem<Uint8Array>(key);
 
 		if (!(value instanceof Uint8Array)) {
@@ -61,12 +63,17 @@ export class WebLocalStorageService extends LocalStorageService {
 		value: DataType,
 		waitForReady: boolean = true
 	) : Promise<string> {
-		if (waitForReady) {
-			await this.ready;
-		}
+		const promise	= (async () => {
+			if (waitForReady) {
+				await this.ready;
+			}
 
-		await localforage.setItem<Uint8Array>(key, await util.toBytes(value));
-		return key;
+			await localforage.setItem<Uint8Array>(key, await util.toBytes(value));
+			return key;
+		})();
+
+		this.pendingSets.set(key, promise);
+		return promise;
 	}
 
 	constructor () {
