@@ -321,8 +321,8 @@ export class AccountDatabaseService {
 		url: string,
 		publicData: boolean = false
 	) : Observable<boolean|undefined> {
-		return this.watchItemString(url, publicData).map(value =>
-			value === undefined ? undefined : value === 'true'
+		return this.watchItem(url, publicData).map(value =>
+			value === undefined ? undefined : value[0] === 1
 		);
 	}
 
@@ -334,8 +334,10 @@ export class AccountDatabaseService {
 		url: string,
 		publicData: boolean = false
 	) : Observable<number|undefined> {
-		return this.watchItemString(url, publicData).map(value =>
-			value === undefined ? undefined : parseFloat(value)
+		return this.watchItem(url, publicData).map(value =>
+			value === undefined ?
+				undefined :
+				new DataView(value.buffer, value.byteOffset).getFloat64(0, true)
 		);
 	}
 
@@ -415,7 +417,7 @@ export class AccountDatabaseService {
 		return this.watchList<boolean>(
 			url,
 			publicData,
-			value => this.potassiumService.toString(value) === 'true'
+			value => value[0] === 1
 		);
 	}
 
@@ -427,7 +429,7 @@ export class AccountDatabaseService {
 		return this.watchList<number>(
 			url,
 			publicData,
-			value => parseFloat(this.potassiumService.toString(value))
+			value => new DataView(value.buffer, value.byteOffset).getFloat64(0, true)
 		);
 	}
 
