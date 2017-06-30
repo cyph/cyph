@@ -33,6 +33,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 	});
 
 	/** @ignore */
+	private readonly localLock: {}	= {};
+
+	/** @ignore */
 	private usernameToEmail (username: string) : string {
 		return `${username}@cyph.me`;
 	}
@@ -87,31 +90,33 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async lock<T> (url: string, f: () => Promise<T>) : Promise<T> {
-		const queue	= await this.getDatabaseRef(url);
-		const id	= util.uuid();
-		const lock	= queue.push(id);
+		return util.lock(this.localLock, async () => {
+			const queue	= await this.getDatabaseRef(url);
+			const id	= util.uuid();
+			const lock	= queue.push(id);
 
-		lock.onDisconnect().remove();
+			lock.onDisconnect().remove();
 
-		try {
-			await new Promise<void>(resolve => {
-				queue.on('value', async snapshot => {
-					const value: string[]	= (snapshot && snapshot.val()) || [];
+			try {
+				await new Promise<void>(resolve => {
+					queue.on('value', async snapshot => {
+						const value: string[]	= (snapshot && snapshot.val()) || [];
 
-					if (value[0] !== id) {
-						return;
-					}
+						if (value[0] !== id) {
+							return;
+						}
 
-					queue.off();
-					resolve();
+						resolve();
+						queue.off();
+					});
 				});
-			});
 
-			return await f();
-		}
-		finally {
-			lock.remove();
-		}
+				return await f();
+			}
+			finally {
+				lock.remove();
+			}
+		});
 	}
 
 	/** @inheritDoc */
