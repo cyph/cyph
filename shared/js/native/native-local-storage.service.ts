@@ -45,7 +45,13 @@ export class NativeLocalStorageService extends LocalStorageService {
 		})();
 
 		this.pendingSets.set(key, promise);
-		return promise;
+
+		try {
+			return await promise;
+		}
+		finally {
+			this.pendingSets.delete(key);
+		}
 	}
 
 	constructor () {
