@@ -107,6 +107,8 @@ export class AccountFilesService {
 	/** Returns a snippet of a note to use as a preview. */
 	public noteSnippet (id: string) : string {
 		if (!this.noteSnippets.has(id)) {
+			this.noteSnippets.set(id, '...');
+
 			(async () => {
 				const limit		= 75;
 				const content	= await this.downloadText(id);
