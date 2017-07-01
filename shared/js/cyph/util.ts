@@ -181,14 +181,18 @@ export class Util {
 		const lastReason	= lock.reason;
 		lock.reason			= reason;
 
-		return lock.promise	= (async () => {
-			try {
-				return await f(lastReason);
-			}
-			finally {
-				queue.shift();
-			}
-		})();
+		let releaseLock	= () => {};
+		lock.promise	= new Promise(resolve => {
+			releaseLock	= resolve;
+		});
+
+		try {
+			return await f(lastReason);
+		}
+		finally {
+			queue.shift();
+			releaseLock();
+		}
 	}
 
 	/**
