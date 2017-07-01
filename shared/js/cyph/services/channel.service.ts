@@ -22,7 +22,6 @@ export class ChannelService {
 
 	/** @ignore */
 	private readonly handlers: Promise<IChannelHandlers>	=
-		/* tslint:disable-next-line:promise-must-complete */
 		new Promise<IChannelHandlers>(resolve => {
 			this.resolveHandlers	= resolve;
 		})

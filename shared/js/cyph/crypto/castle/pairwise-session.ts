@@ -11,12 +11,9 @@ import {Transport} from './transport';
  */
 export class PairwiseSession {
 	/** @ignore */
-	private readonly core: Promise<Core>	=
-		/* tslint:disable-next-line:promise-must-complete */
-		new Promise<Core>(resolve => {
-			this.resolveCore	= resolve;
-		})
-	;
+	private readonly core: Promise<Core>	= new Promise<Core>(resolve => {
+		this.resolveCore	= resolve;
+	});
 
 	/** @ignore */
 	private incomingMessageId: number	= 0;

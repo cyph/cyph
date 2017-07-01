@@ -45,7 +45,6 @@ export abstract class SessionService implements ISessionService {
 	public readonly connected: Promise<void>			= this.one<void>(events.connect);
 
 	/** @inheritDoc */
-	/* tslint:disable-next-line:promise-must-complete */
 	public readonly remoteUsername: Promise<string>		= new Promise<string>(resolve => {
 		this.setRemoteUsername	= resolve;
 	});

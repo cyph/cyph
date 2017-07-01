@@ -31,7 +31,6 @@ export class ChatData {
 		/** Stream of commands to show the cyphertext UI. */
 		public readonly showCyphertext: Subject<void> = new Subject<void>()
 	) {
-		/* tslint:disable-next-line:promise-must-complete */
 		this.start	= new Promise<void>(resolve => {
 			this.resolveStart	= resolve;
 		});

@@ -16,7 +16,6 @@ import {PotassiumService} from './potassium.service';
 export class AnonymousCastleService implements ICastle {
 	/** @ignore */
 	private readonly pairwiseSession: Promise<PairwiseSession>	=
-		/* tslint:disable-next-line:promise-must-complete */
 		new Promise<PairwiseSession>(resolve => {
 			this.resolvePairwiseSession	= resolve;
 		})

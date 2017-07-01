@@ -19,12 +19,9 @@ export class ScrollService {
 	private resolveRootElement: (rootElement: JQuery) => void;
 
 	/** @ignore */
-	private readonly rootElement: Promise<JQuery>	=
-		/* tslint:disable-next-line:promise-must-complete */
-		new Promise<JQuery>(resolve => {
-			this.resolveRootElement	= resolve;
-		})
-	;
+	private readonly rootElement: Promise<JQuery>	= new Promise<JQuery>(resolve => {
+		this.resolveRootElement	= resolve;
+	});
 
 	/** @ignore */
 	private readonly scrollDownLock: {}	= {};
