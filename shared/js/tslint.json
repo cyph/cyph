@@ -276,7 +276,7 @@
 		"no-with-statement": true,
 		"possible-timing-attack": true,
 		"prefer-type-cast": true,
-		"promise-must-complete": true,
+		"promise-must-complete": false,
 		"use-named-parameter": true,
 		"valid-typeof": true
 	},

@@ -18,12 +18,9 @@ import {ChatRootStates} from './enums';
 @Injectable()
 export class AppService implements CanActivate {
 	/** @ignore */
-	private readonly lockedDownRoute: Promise<string>	=
-		/* tslint:disable-next-line:promise-must-complete */
-		new Promise<string>(resolve => {
-			this.resolveLockedDownRoute	= resolve;
-		})
-	;
+	private readonly lockedDownRoute: Promise<string>	= new Promise<string>(resolve => {
+		this.resolveLockedDownRoute	= resolve;
+	});
 
 	/** @ignore */
 	private resolveLockedDownRoute: (lockedDownRoute: string) => void;

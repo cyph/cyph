@@ -19,7 +19,6 @@ export class SessionCapabilitiesService {
 
 	/** Mutual capabilities available for this session. */
 	public readonly capabilities: Promise<ICapabilities>		=
-		/* tslint:disable-next-line:promise-must-complete */
 		new Promise<ICapabilities>(resolve => {
 			this.resolveCapabilities	= resolve;
 		})
@@ -27,7 +26,6 @@ export class SessionCapabilitiesService {
 
 	/** Locally supported capabilities. */
 	public readonly localCapabilities: Promise<ICapabilities>	= (async () => {
-		/* tslint:disable-next-line:promise-must-complete */
 		const p2p	= new Promise<boolean>(resolve => {
 			this.resolveP2PSupport	= resolve;
 		});

@@ -91,7 +91,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @ignore */
 	private readonly handlers: Promise<IP2PHandlers>	=
-		/* tslint:disable-next-line:promise-must-complete */
 		new Promise<IP2PHandlers>(resolve => {
 			this.resolveHandlers	= resolve;
 		})
@@ -102,7 +101,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @ignore */
 	private readonly localVideo: Promise<() => JQuery>	=
-		/* tslint:disable-next-line:promise-must-complete */
 		new Promise<() => JQuery>(resolve => {
 			this.resolveLocalVideo	= resolve;
 		})
@@ -110,7 +108,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @ignore */
 	private readonly remoteVideo: Promise<() => JQuery>	=
-		/* tslint:disable-next-line:promise-must-complete */
 		new Promise<() => JQuery>(resolve => {
 			this.resolveRemoteVideo	= resolve;
 		})
