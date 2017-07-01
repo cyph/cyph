@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 import {User} from '../account/user';
+import {DataType} from '../data-type';
 import {util} from '../util';
-import {PotassiumService} from './crypto/potassium.service';
 import {LocalStorageService} from './local-storage.service';
 
 
@@ -33,6 +34,89 @@ export class AccountDatabaseService {
 		return `users/${this.current.user.username}/${url}`;
 	}
 
+	/** Downloads value and gives progress. */
+	public downloadItem (url: string, publicData: boolean = false) : {
+		progress: Observable<number>;
+		result: Promise<Uint8Array>;
+	} {
+		return {progress: Observable.of(100), result: this.getItem(url, publicData)};
+	}
+
+	/**
+	 * Downloads a value as a boolean.
+	 * @see downloadItem
+	 */
+	public downloadItemBoolean (url: string, publicData: boolean = false) : {
+		progress: Observable<number>;
+		result: Promise<boolean>;
+	} {
+		const o	= this.downloadItem(url, publicData);
+		return {
+			progress: o.progress,
+			result: o.result.then(value => util.bytesToBoolean(value))
+		};
+	}
+
+	/**
+	 * Downloads a value as a number.
+	 * @see downloadItem
+	 */
+	public downloadItemNumber (url: string, publicData: boolean = false) : {
+		progress: Observable<number>;
+		result: Promise<number>;
+	} {
+		const o	= this.downloadItem(url, publicData);
+		return {
+			progress: o.progress,
+			result: o.result.then(value => util.bytesToNumber(value))
+		};
+	}
+
+	/**
+	 * Downloads a value as an object.
+	 * @see downloadItem
+	 */
+	public downloadItemObject<T> (url: string, publicData: boolean = false) : {
+		progress: Observable<number>;
+		result: Promise<T>;
+	} {
+		const o	= this.downloadItem(url, publicData);
+		return {
+			progress: o.progress,
+			result: o.result.then(value => util.bytesToObject<T>(value))
+		};
+	}
+
+	/**
+	 * Downloads a value as a string.
+	 * @see downloadItem
+	 */
+	public downloadItemString (url: string, publicData: boolean = false) : {
+		progress: Observable<number>;
+		result: Promise<string>;
+	} {
+		const o	= this.downloadItem(url, publicData);
+		return {
+			progress: o.progress,
+			result: o.result.then(value => util.bytesToString(value))
+		};
+	}
+
+	/**
+	 * Downloads a value as a base64 data URI.
+	 * @see downloadItem
+	 */
+	public downloadItemURI (url: string, publicData: boolean = false) : {
+		progress: Observable<number>;
+		result: Promise<string>;
+	} {
+		const o	= this.downloadItem(url, publicData);
+		return {
+			progress: o.progress,
+			result: o.result.then(value => util.bytesToDataURI(value))
+		};
+	}
+
 	/**
 	 * Gets an item's value.
 	 * @param url Path to item.
@@ -53,7 +137,7 @@ export class AccountDatabaseService {
 	 * @see getItem
 	 */
 	public async getItemBoolean (url: string, publicData: boolean = false) : Promise<boolean> {
-		return (await this.getItem(url, publicData))[0] === 1;
+		return util.bytesToBoolean(await this.getItem(url, publicData));
 	}
 
 	/**
@@ -61,8 +145,7 @@ export class AccountDatabaseService {
 	 * @see getItem
 	 */
 	public async getItemNumber (url: string, publicData: boolean = false) : Promise<number> {
-		const data	= await this.getItem(url, publicData);
-		return new DataView(data.buffer, data.byteOffset).getFloat64(0, true);
+		return util.bytesToNumber(await this.getItem(url, publicData));
 	}
 
 	/**
@@ -70,7 +153,7 @@ export class AccountDatabaseService {
 	 * @see getItem
 	 */
 	public async getItemObject<T> (url: string, publicData: boolean = false) : Promise<T> {
-		return util.parse<T>(await this.getItemString(url, publicData));
+		return util.bytesToObject<T>(await this.getItem(url, publicData));
 	}
 
 	/**
@@ -78,7 +161,7 @@ export class AccountDatabaseService {
 	 * @see getItem
 	 */
 	public async getItemString (url: string, publicData: boolean = false) : Promise<string> {
-		return this.potassiumService.toString(await this.getItem(url, publicData));
+		return util.bytesToString(await this.getItem(url, publicData));
 	}
 
 	/**
@@ -86,9 +169,7 @@ export class AccountDatabaseService {
 	 * @see getItem
 	 */
 	public async getItemURI (url: string, publicData: boolean = false) : Promise<string> {
-		return 'data:application/octet-stream;base64,' + this.potassiumService.toBase64(
-			await this.getItem(url, publicData)
-		);
+		return util.bytesToDataURI(await this.getItem(url, publicData));
 	}
 
 	/** Checks whether an item exists. */
@@ -139,7 +220,7 @@ export class AccountDatabaseService {
 	 */
 	public async setItem (
 		url: string,
-		value: ArrayBuffer|ArrayBufferView|Blob|boolean|number|string|{[k: string]: any},
+		value: DataType,
 		publicData: boolean = false
 	) : Promise<string> {
 		if (!this.current) {
@@ -159,11 +240,25 @@ export class AccountDatabaseService {
 		return url;
 	}
 
+	/** Uploads value and gives progress. */
+	public uploadItem (
+		url: string,
+		value: DataType,
+		publicData: boolean = false
+	) : {
+		cancel: () => void;
+		progress: Observable<number>;
+		result: Promise<string>;
+	} {
+		return {
+			cancel: () => {},
+			progress: Observable.of(100),
+			result: this.setItem(url, value, publicData)
+		};
+	}
+
 	constructor (
 		/** @ignore */
-		private readonly localStorageService: LocalStorageService,
-
-		/** @ignore */
-		private readonly potassiumService: PotassiumService
+		private readonly localStorageService: LocalStorageService
 	) {}
 }

@@ -55,23 +55,37 @@ export class AccountFilesService {
 	}
 
 	/** Downloads and saves file. */
-	public async downloadAndSave (id: string) : Promise<void> {
-		const file	= await this.getFile(id);
+	public downloadAndSave (id: string) : {
+		progress: Observable<number>;
+		result: Promise<void>;
+	} {
+		const {progress, result}	= this.accountDatabaseService.downloadItem(`files/${id}`);
 
-		await util.saveFile(
-			await this.accountDatabaseService.getItem(`files/${id}`),
-			file.name
-		);
+		return {
+			progress,
+			result: (async () => {
+				await util.saveFile(
+					await result,
+					(await this.getFile(id)).name
+				);
+			})()
+		};
 	}
 
 	/** Downloads file and returns text. */
-	public async downloadText (id: string) : Promise<string> {
-		return this.accountDatabaseService.getItemString(`files/${id}`);
+	public downloadText (id: string) : {
+		progress: Observable<number>;
+		result: Promise<string>;
+	} {
+		return this.accountDatabaseService.downloadItemString(`files/${id}`);
 	}
 
 	/** Downloads file and returns as data URI. */
-	public async downloadURI (id: string) : Promise<string> {
-		return this.accountDatabaseService.getItemURI(`files/${id}`);
+	public downloadURI (id: string) : {
+		progress: Observable<number>;
+		result: Promise<string>;
+	} {
+		return this.accountDatabaseService.downloadItemURI(`files/${id}`);
 	}
 
 	/** Gets the specified file record. */
@@ -111,7 +125,7 @@ export class AccountFilesService {
 
 			(async () => {
 				const limit		= 75;
-				const content	= await this.downloadText(id);
+				const content	= await this.downloadText(id).result;
 
 				this.noteSnippets.set(
 					id,
