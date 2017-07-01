@@ -19,10 +19,10 @@ export class Timer {
 	private isStopped: boolean;
 
 	/** Indicates whether timer's countdown has completed. */
-	public isComplete: Subject<boolean>	= new BehaviorSubject<boolean>(false);
+	public isComplete: Subject<boolean>	= new BehaviorSubject(false);
 
 	/** Human-readable string indicating remaining time. */
-	public timestamp: Subject<string>	= new BehaviorSubject<string>(
+	public timestamp: Subject<string>	= new BehaviorSubject(
 		this.getTimestamp(this.countdown)
 	);
 
