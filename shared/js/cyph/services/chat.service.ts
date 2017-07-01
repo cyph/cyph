@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {List, Map as ImmutableMap} from 'immutable';
+import {BehaviorSubject} from 'rxjs';
 import {IChatData, IChatMessage, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
 import {events, rpcEvents, users} from '../session/enums';
@@ -39,7 +40,7 @@ export class ChatService {
 		isDisconnected: false,
 		isFriendTyping: false,
 		isMessageChanged: false,
-		keyExchangeProgress: 0,
+		keyExchangeProgress: new BehaviorSubject<number>(0),
 		messages: List<IChatMessage>(),
 		queuedMessageSelfDestruct: false,
 		state: States.none,
@@ -162,8 +163,8 @@ export class ChatService {
 			this.notificationService.notify(this.stringsService.connectedNotification);
 		}
 
-		this.chat.keyExchangeProgress	= 100;
-		this.chat.state					= States.chatBeginMessage;
+		this.chat.keyExchangeProgress.next(100);
+		this.chat.state	= States.chatBeginMessage;
 
 		await util.sleep(3000);
 
@@ -308,18 +309,28 @@ export class ChatService {
 			this.close();
 		});
 
-		this.sessionService.connected.then(async () => {
+		this.sessionService.connected.then(() => {
 			this.chat.state	= States.keyExchange;
 
-			const interval		= 250;
-			const increment		= interval / ChatService.approximateKeyExchangeTime;
+			const interval	= 100;
+			const increment	= interval / ChatService.approximateKeyExchangeTime;
+			let complete	= false;
 
-			while (this.chat.keyExchangeProgress <= 100) {
-				await util.sleep(interval);
-				this.chat.keyExchangeProgress += increment * 100;
-			}
-
-			this.chat.keyExchangeProgress	= 100;
+			this.chat.keyExchangeProgress.subscribe(async n => {
+				if (n === 100 || complete) {
+					complete	= true;
+				}
+				else if (n > 100) {
+					this.chat.keyExchangeProgress.next(100);
+				}
+				else {
+					await util.sleep(interval);
+					if (complete) {
+						return;
+					}
+					this.chat.keyExchangeProgress.next(n + increment * 100);
+				}
+			});
 		});
 
 		this.sessionService.one(events.connectFailure).then(() => {
