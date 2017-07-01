@@ -208,7 +208,6 @@ export class Util {
 			await this.lock(lock, f);
 			return true;
 		}
-
 		return false;
 	}
 
@@ -480,12 +479,10 @@ export class Util {
 		condition?: (value: T) => boolean
 	) : Promise<T> {
 		let value: T|undefined	= f();
-
 		while (value === undefined || (condition && !condition(value))) {
 			await this.sleep();
 			value	= f();
 		}
-
 		return value;
 	}
 
