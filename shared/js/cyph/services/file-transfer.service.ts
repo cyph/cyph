@@ -254,8 +254,7 @@ export class FileTransferService {
 			imageSelfDestructTimeout,
 			cyphertext.length,
 			key,
-			true,
-			url
+			true
 		);
 
 		const transferSetItem	= {metadata: transfer, progress: uploadTask.progress};
@@ -288,10 +287,16 @@ export class FileTransferService {
 
 		try {
 			await uploadTask.result;
+			transfer.url	= url;
+			this.sessionService.send(new Message(rpcEvents.files, transfer));
 		}
 		catch (_) {
-			eventManager.trigger(completedEvent, transfer);
+			if (transfer.answer !== false) {
+				eventManager.trigger(completedEvent, transfer);
+			}
 		}
+
+		this.transfers	= this.transfers.delete(transferSetItem);
 	}
 
 	constructor (
