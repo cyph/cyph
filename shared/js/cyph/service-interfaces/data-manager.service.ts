@@ -1,4 +1,3 @@
-import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {DataType} from '../data-type';
 import {util} from '../util';
 
@@ -17,7 +16,7 @@ export class DataManagerService {
 	 * @see getItem
 	 */
 	public async getItemBoolean (key: string) : Promise<boolean> {
-		return (await this.getItem(key))[0] === 1;
+		return util.bytesToBoolean(await this.getItem(key));
 	}
 
 	/**
@@ -25,8 +24,7 @@ export class DataManagerService {
 	 * @see getItem
 	 */
 	public async getItemNumber (key: string) : Promise<number> {
-		const data	= await this.getItem(key);
-		return new DataView(data.buffer, data.byteOffset).getFloat64(0, true);
+		return util.bytesToNumber(await this.getItem(key));
 	}
 
 	/**
@@ -34,7 +32,7 @@ export class DataManagerService {
 	 * @see getItem
 	 */
 	public async getItemObject<T> (key: string) : Promise<T> {
-		return util.parse<T>(await this.getItemString(key));
+		return util.bytesToObject<T>(await this.getItem(key));
 	}
 
 	/**
@@ -42,7 +40,7 @@ export class DataManagerService {
 	 * @see getItem
 	 */
 	public async getItemString (key: string) : Promise<string> {
-		return potassiumUtil.toString(await this.getItem(key));
+		return util.bytesToString(await this.getItem(key));
 	}
 
 	/**
@@ -50,9 +48,7 @@ export class DataManagerService {
 	 * @see getItem
 	 */
 	public async getItemURI (key: string) : Promise<string> {
-		return 'data:application/octet-stream;base64,' + potassiumUtil.toBase64(
-			await this.getItem(key)
-		);
+		return util.bytesToDataURI(await this.getItem(key));
 	}
 
 	/** Checks whether an item exists. */

@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as firebase from 'firebase';
 import {Observable} from 'rxjs';
-import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {DataType} from '../data-type';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {util} from '../util';
@@ -70,7 +69,7 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchItemBoolean (url: string) : Observable<boolean|undefined> {
 		return this.watchItem(url).map(value =>
-			value === undefined ? undefined : value[0] === 1
+			value === undefined ? undefined : util.bytesToBoolean(value)
 		);
 	}
 
@@ -80,9 +79,7 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchItemNumber (url: string) : Observable<number|undefined> {
 		return this.watchItem(url).map(value =>
-			value === undefined ?
-				undefined :
-				new DataView(value.buffer, value.byteOffset).getFloat64(0, true)
+			value === undefined ? undefined : util.bytesToNumber(value)
 		);
 	}
 
@@ -91,8 +88,8 @@ export class DatabaseService extends DataManagerService {
 	 * @see watchItem
 	 */
 	public watchItemObject<T> (url: string) : Observable<T|undefined> {
-		return this.watchItemString(url).map(value =>
-			value === undefined ? undefined : util.parse<T>(value)
+		return this.watchItem(url).map(value =>
+			value === undefined ? undefined : util.bytesToObject<T>(value)
 		);
 	}
 
@@ -102,7 +99,7 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchItemString (url: string) : Observable<string|undefined> {
 		return this.watchItem(url).map(value =>
-			value === undefined ? undefined : potassiumUtil.toString(value)
+			value === undefined ? undefined : util.bytesToString(value)
 		);
 	}
 
@@ -112,9 +109,7 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchItemURI (url: string) : Observable<string|undefined> {
 		return this.watchItem(url).map(value =>
-			value === undefined ?
-				undefined :
-				'data:application/octet-stream;base64,' + potassiumUtil.toBase64(value)
+			value === undefined ? undefined : util.bytesToDataURI(value)
 		);
 	}
 
@@ -131,10 +126,7 @@ export class DatabaseService extends DataManagerService {
 	 * @see watchList
 	 */
 	public watchListBoolean (url: string) : Observable<boolean[]> {
-		return this.watchList<boolean>(
-			url,
-			value => value[0] === 1
-		);
+		return this.watchList<boolean>(url, value => util.bytesToBoolean(value));
 	}
 
 	/**
@@ -142,10 +134,7 @@ export class DatabaseService extends DataManagerService {
 	 * @see watchList
 	 */
 	public watchListNumber (url: string) : Observable<number[]> {
-		return this.watchList<number>(
-			url,
-			value => new DataView(value.buffer, value.byteOffset).getFloat64(0, true)
-		);
+		return this.watchList<number>(url, value => util.bytesToNumber(value));
 	}
 
 	/**
@@ -153,10 +142,7 @@ export class DatabaseService extends DataManagerService {
 	 * @see watchList
 	 */
 	public watchListObject<T> (url: string) : Observable<T[]> {
-		return this.watchList<T>(
-			url,
-			value => util.parse<T>(potassiumUtil.toString(value))
-		);
+		return this.watchList<T>(url, value => util.bytesToObject<T>(value));
 	}
 
 	/**
@@ -164,10 +150,7 @@ export class DatabaseService extends DataManagerService {
 	 * @see watchList
 	 */
 	public watchListString (url: string) : Observable<string[]> {
-		return this.watchList<string>(
-			url,
-			value => potassiumUtil.toString(value)
-		);
+		return this.watchList<string>(url, value => util.bytesToString(value));
 	}
 
 	/**
@@ -175,10 +158,7 @@ export class DatabaseService extends DataManagerService {
 	 * @see watchList
 	 */
 	public watchListURI (url: string) : Observable<string[]> {
-		return this.watchList<string>(
-			url,
-			value => 'data:application/octet-stream;base64,' + potassiumUtil.toBase64(value)
-		);
+		return this.watchList<string>(url, value => util.bytesToDataURI(value));
 	}
 
 	constructor () {
