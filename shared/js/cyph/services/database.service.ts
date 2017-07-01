@@ -23,11 +23,11 @@ export class DatabaseService extends DataManagerService {
 	 * Downloads a value as a boolean.
 	 * @see downloadItem
 	 */
-	public downloadItemBoolean (key: string) : {
+	public downloadItemBoolean (url: string) : {
 		progress: Observable<number>;
 		result: Promise<boolean>;
 	} {
-		const o	= this.downloadItem(key);
+		const o	= this.downloadItem(url);
 		return {
 			progress: o.progress,
 			result: o.result.then(value => util.bytesToBoolean(value))
@@ -38,11 +38,11 @@ export class DatabaseService extends DataManagerService {
 	 * Downloads a value as a number.
 	 * @see downloadItem
 	 */
-	public downloadItemNumber (key: string) : {
+	public downloadItemNumber (url: string) : {
 		progress: Observable<number>;
 		result: Promise<number>;
 	} {
-		const o	= this.downloadItem(key);
+		const o	= this.downloadItem(url);
 		return {
 			progress: o.progress,
 			result: o.result.then(value => util.bytesToNumber(value))
@@ -53,11 +53,11 @@ export class DatabaseService extends DataManagerService {
 	 * Downloads a value as an object.
 	 * @see downloadItem
 	 */
-	public downloadItemObject<T> (key: string) : {
+	public downloadItemObject<T> (url: string) : {
 		progress: Observable<number>;
 		result: Promise<T>;
 	} {
-		const o	= this.downloadItem(key);
+		const o	= this.downloadItem(url);
 		return {
 			progress: o.progress,
 			result: o.result.then(value => util.bytesToObject<T>(value))
@@ -68,11 +68,11 @@ export class DatabaseService extends DataManagerService {
 	 * Downloads a value as a string.
 	 * @see downloadItem
 	 */
-	public downloadItemString (key: string) : {
+	public downloadItemString (url: string) : {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
-		const o	= this.downloadItem(key);
+		const o	= this.downloadItem(url);
 		return {
 			progress: o.progress,
 			result: o.result.then(value => util.bytesToString(value))
@@ -83,11 +83,11 @@ export class DatabaseService extends DataManagerService {
 	 * Downloads a value as a base64 data URI.
 	 * @see downloadItem
 	 */
-	public downloadItemURI (key: string) : {
+	public downloadItemURI (url: string) : {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
-		const o	= this.downloadItem(key);
+		const o	= this.downloadItem(url);
 		return {
 			progress: o.progress,
 			result: o.result.then(value => util.bytesToDataURI(value))
