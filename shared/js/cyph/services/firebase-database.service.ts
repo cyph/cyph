@@ -33,7 +33,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	});
 
 	/** @ignore */
-	private readonly localLock: {}	= {};
+	private readonly localLocks: Map<string, {}>	= new Map<string, {}>();
 
 	/** @ignore */
 	private usernameToEmail (username: string) : string {
@@ -95,7 +95,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		reason?: string
 	) : Promise<T> {
 		return util.lock(
-			this.localLock,
+			util.getOrSetDefault(this.localLocks, url, () => ({})),
 			async () => {
 				const queue	= await this.getDatabaseRef(url);
 				const id	= util.uuid();
