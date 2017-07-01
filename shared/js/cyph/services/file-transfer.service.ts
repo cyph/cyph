@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Set as ImmutableSet} from 'immutable';
+import {Observable} from 'rxjs';
 import {ISecretBox} from '../crypto/potassium/isecret-box';
 import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
@@ -34,7 +35,13 @@ export class FileTransferService {
 	)();
 
 	/** In-progress file transfers. */
-	public transfers: ImmutableSet<Transfer>		= ImmutableSet<Transfer>();
+	public transfers: ImmutableSet<{
+		metadata: Transfer;
+		progress: Observable<number>;
+	}>	= ImmutableSet<{
+		metadata: Transfer;
+		progress: Observable<number>;
+	}>();
 
 	/** @ignore */
 	private addImage (transfer: Transfer, plaintext: Uint8Array) : void {
@@ -75,7 +82,6 @@ export class FileTransferService {
 	/** @ignore */
 	private async receiveTransfer (transfer: Transfer) : Promise<void> {
 		transfer.isOutgoing			= false;
-		transfer.percentComplete	= 0;
 
 		transfer.answer				= await this.uiConfirm(transfer, true);
 		transfer.receiptTimestamp	= await util.timestamp();
@@ -86,48 +92,25 @@ export class FileTransferService {
 		));
 
 		if (transfer.answer) {
-			this.transfers	= this.transfers.add(transfer);
+			const {result, progress}	= this.databaseService.downloadItem(transfer.url);
+			const transferSetItem		= {metadata: transfer, progress};
+			this.transfers				= this.transfers.add(transferSetItem);
 
-			/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
-			(async () => {
-				while (transfer.percentComplete < 85) {
-					await util.sleep(1000);
-
-					transfer.percentComplete +=
-						util.random(100000, 25000) / transfer.size * 100
-					;
-				}
-			})();
-
-			const cyphertext: Uint8Array|undefined	= await util.requestBytes({
-				retries: 5,
-				url: transfer.url
-			}).catch(
+			const plaintext: Uint8Array|undefined	= await (async () =>
+				await (await this.secretBox).open(await result, transfer.key)
+			)().catch(
 				() => undefined
 			);
 
-			(await this.databaseService.getStorageRef(transfer.url)).delete();
-
-			const plaintext: Uint8Array|undefined	=
-				cyphertext ?
-					await (await this.secretBox).open(
-						cyphertext,
-						transfer.key
-					).catch(
-						() => undefined
-					) :
-					undefined
-			;
-
-			transfer.percentComplete	= 100;
 			this.potassiumService.clearMemory(transfer.key);
+			this.databaseService.removeItem(transfer.url);
 			this.uiSave(transfer, plaintext);
 			await util.sleep(1000);
-			this.transfers	= this.transfers.delete(transfer);
+			this.transfers	= this.transfers.delete(transferSetItem);
 		}
 		else {
 			this.uiRejected(transfer);
-			(await this.databaseService.getStorageRef(transfer.url)).delete();
+			this.databaseService.removeItem(transfer.url);
 		}
 	}
 
@@ -260,20 +243,23 @@ export class FileTransferService {
 			return;
 		}
 
-		let uploadTask: firebase.storage.UploadTask;
-
-		const o	= await this.encryptFile(plaintext);
+		const url					= 'ephemeral/' + util.uuid();
+		const {cyphertext, key}		= await this.encryptFile(plaintext);
+		const uploadTask			= await this.databaseService.uploadItem(url, cyphertext);
 
 		const transfer: Transfer	= new Transfer(
 			file.name,
 			file.type,
 			image,
 			imageSelfDestructTimeout,
-			o.cyphertext.length,
-			o.key
+			cyphertext.length,
+			key,
+			true,
+			url
 		);
 
-		this.transfers	= this.transfers.add(transfer);
+		const transferSetItem	= {metadata: transfer, progress: uploadTask.progress};
+		this.transfers			= this.transfers.add(transferSetItem);
 
 		this.analyticsService.sendEvent({
 			eventAction: 'send',
@@ -293,53 +279,15 @@ export class FileTransferService {
 			this.uiCompleted(transfer, plaintext);
 
 			if (!transfer.answer) {
-				this.transfers	= this.transfers.delete(transfer);
-
-				if (uploadTask) {
-					uploadTask.cancel();
-				}
+				this.transfers	= this.transfers.delete(transferSetItem);
+				uploadTask.cancel();
 			}
 		});
 
-		this.sessionService.send(new Message(
-			rpcEvents.files,
-			transfer
-		));
+		this.sessionService.send(new Message(rpcEvents.files, transfer));
 
 		try {
-			await util.retryUntilSuccessful(async () => {
-				let complete	= false;
-				while (!complete) {
-					const path: string	= 'ephemeral/' + util.uuid();
-
-					uploadTask	= (await this.databaseService.getStorageRef(path)).put(
-						new Blob([o.cyphertext])
-					);
-
-					complete	= await new Promise<boolean>(resolve => uploadTask.on(
-						'state_changed',
-						(snapshot: firebase.storage.UploadTaskSnapshot) => {
-							transfer.percentComplete	=
-								snapshot.bytesTransferred /
-								snapshot.totalBytes *
-								100
-							;
-						},
-						() => { resolve(transfer.answer === false); },
-						() => {
-							transfer.url	= uploadTask.snapshot.downloadURL || '';
-
-							this.sessionService.send(new Message(
-								rpcEvents.files,
-								transfer
-							));
-
-							this.transfers	= this.transfers.delete(transfer);
-							resolve(true);
-						}
-					));
-				}
-			});
+			await uploadTask.result;
 		}
 		catch (_) {
 			eventManager.trigger(completedEvent, transfer);

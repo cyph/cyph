@@ -5,7 +5,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {DataType} from '../data-type';
 import {env} from '../env';
 import {util} from '../util';
@@ -36,8 +36,51 @@ export class FirebaseDatabaseService extends DatabaseService {
 	private readonly localLocks: Map<string, {}>	= new Map<string, {}>();
 
 	/** @ignore */
+	private async getStorageRef (url: string) : Promise<firebase.storage.Reference> {
+		return util.retryUntilSuccessful(async () =>
+			/^https?:\/\//.test(url) ?
+				(await this.app).storage().refFromURL(url) :
+				(await this.app).storage().ref(url)
+		);
+	}
+
+	/** @ignore */
 	private usernameToEmail (username: string) : string {
 		return `${username}@cyph.me`;
+	}
+
+	/** @inheritDoc */
+	public downloadItem (url: string) : {
+		progress: Observable<number>;
+		result: Promise<Uint8Array>;
+	} {
+		let percentComplete: number	= 0;
+
+		const progress	= new BehaviorSubject(0);
+
+		const result	= this.getItem(url).then(data => {
+			percentComplete	= 100;
+			progress.next(percentComplete);
+			return data;
+		});
+
+		/* Arbitrarily assume ~500 Kb/s for progress estimation */
+		(async () => {
+			const size	=
+				(
+					<firebase.storage.FullMetadata>
+					await (await this.getStorageRef(url)).getMetadata()
+				).size
+			;
+
+			while (percentComplete < 85) {
+				await util.sleep();
+				percentComplete += util.random(25000, 6250) / size * 100;
+				progress.next(percentComplete);
+			}
+		})();
+
+		return {progress, result};
 	}
 
 	/** @inheritDoc */
@@ -64,17 +107,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const data	= await util.requestBytes({
 			url: await (await this.getStorageRef(url)).getDownloadURL()
 		});
+
+		if (
+			!this.potassiumService.compareMemory(
+				this.potassiumService.fromBase64(hash),
+				await this.potassiumService.hash.hash(data)
+			)
+		) {
+			throw new Error('Invalid data hash');
+		}
+
 		this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
 		return data;
-	}
-
-	/** @inheritDoc */
-	public async getStorageRef (url: string) : Promise<firebase.storage.Reference> {
-		return util.retryUntilSuccessful(async () =>
-			/^https?:\/\//.test(url) ?
-				(await this.app).storage().refFromURL(url) :
-				(await this.app).storage().ref(url)
-		);
 	}
 
 	/** @inheritDoc */
@@ -185,6 +229,55 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public async timestamp () : Promise<any> {
 		return firebase.database.ServerValue.TIMESTAMP;
+	}
+
+	/** @inheritDoc */
+	public uploadItem (url: string, value: DataType) : {
+		cancel: () => void;
+		progress: Observable<number>;
+		result: Promise<string>;
+	} {
+		let cancel	= () => {};
+		const cancelPromise	= new Promise<void>(resolve => {
+			cancel	= resolve;
+		});
+
+		const progress	= new BehaviorSubject(0);
+
+		const result	= (async () => {
+			const data	= await util.toBytes(value);
+			const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
+			this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
+
+			return new Promise<string>(async (resolve, reject) => {
+				const uploadTask	= (await this.getStorageRef(url)).put(new Blob([data]));
+
+				cancelPromise.then(() => {
+					reject('Upload canceled.');
+					uploadTask.cancel();
+				});
+
+				uploadTask.on(
+					'state_changed',
+					(snapshot: firebase.storage.UploadTaskSnapshot) => {
+						progress.next(snapshot.bytesTransferred / snapshot.totalBytes * 100);
+					},
+					reject,
+					async () => {
+						try {
+							await (await this.getDatabaseRef(url)).set(hash).then();
+							progress.next(100);
+							resolve(url);
+						}
+						catch (err) {
+							reject(err);
+						}
+					}
+				);
+			});
+		})();
+
+		return {cancel, progress, result};
 	}
 
 	/** @inheritDoc */

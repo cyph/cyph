@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import * as firebase from 'firebase';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {DataType} from '../cyph/data-type';
 import {DatabaseService} from '../cyph/services/database.service';
 import {util} from '../cyph/util';
 
@@ -9,81 +10,63 @@ import {util} from '../cyph/util';
  */
 @Injectable()
 export class MockDatabaseService extends DatabaseService {
+	/** @ignore */
+	private uploadedItems: Map<string, Uint8Array>	= new Map<string, Uint8Array>();
+
+	/** @ignore */
+	private async pretendToTransferData (
+		mbps: number,
+		size: number,
+		progress: BehaviorSubject<number>
+	) : Promise<void> {
+		let bytesTransferred	= 0;
+		const increment			= (mbps * 131072) / 4;
+
+		while (bytesTransferred < size) {
+			await util.sleep();
+			bytesTransferred	= Math.min(
+				bytesTransferred + (util.random() * increment * 2),
+				size
+			);
+			progress.next(bytesTransferred / size * 100);
+		}
+	}
+
 	/** @inheritDoc */
-	public async getStorageRef (_URL: string) : Promise<firebase.storage.Reference> {
-		return {
-			bucket: '',
-			child: (_PATH: string) => { throw new Error('Not implemented.'); },
-			delete: async () => {},
-			fullPath: '',
-			getDownloadURL: () => { throw new Error('Not implemented.'); },
-			getMetadata: () => { throw new Error('Not implemented.'); },
-			name: '',
-			/* tslint:disable-next-line:no-null-keyword */
-			parent: null,
-			put: (blob: Blob, _METADATA?: firebase.storage.UploadMetadata) => {
-				const snapshot: firebase.storage.UploadTaskSnapshot	= {
-					bytesTransferred: 0,
-					downloadURL: URL.createObjectURL(blob),
-					metadata: <firebase.storage.FullMetadata> {},
-					ref: <firebase.storage.Reference> {},
-					state: <firebase.storage.TaskState> {},
-					task: <firebase.storage.UploadTask> {},
-					totalBytes: blob.size
-				};
+	public downloadItem (url: string) : {
+		progress: Observable<number>;
+		result: Promise<Uint8Array>;
+	} {
+		const progress	= new BehaviorSubject(0);
 
-				return {
-					cancel: () => true,
-					catch: async (_ON_REJECTED: (a: Error) => any) => {},
-					on: (
-						_EVENT_TYPE: string,
-						onStateChanged:
-							(snapshot: firebase.storage.UploadTaskSnapshot) => void
-						,
-						_ON_ERROR: (err: any) => void,
-						onComplete: () => void
-					) => {
-						(async () => {
-							/* Fake out 50 Mb/s connection */
-							while (snapshot.bytesTransferred < snapshot.totalBytes) {
-								await util.sleep();
-
-								snapshot.bytesTransferred	= Math.min(
-									snapshot.bytesTransferred + 1638400,
-									snapshot.totalBytes
-								);
-
-								onStateChanged(snapshot);
-							}
-
-							onComplete();
-						})();
-
-						return () => {};
-					},
-					pause: () => true,
-					resume: () => true,
-					snapshot,
-					then: async (
-						_ON_FULFILLED?: (a: firebase.storage.UploadTaskSnapshot) => any,
-						_ON_REJECTED?: (a: Error) => any
-					) => {}
-				};
-			},
-			putString: (
-				_DATA: string,
-				_FORMAT?: firebase.storage.StringFormat,
-				_METADATA?: firebase.storage.UploadMetadata
-			) => {
-				throw new Error('Not implemented.');
-			},
-			root: <any> undefined,
-			storage: <any> undefined,
-			toString: () => { throw new Error('Not implemented.'); },
-			updateMetadata: (_METADATA: firebase.storage.SettableMetadata) => {
-				throw new Error('Not implemented.');
+		const result	= (async () => {
+			const data	= this.uploadedItems.get(url);
+			if (!data) {
+				throw new Error('Item not found.');
 			}
-		};
+			await this.pretendToTransferData(50, data.length, progress);
+			return data;
+		})();
+
+		return {progress, result};
+	}
+
+	/** @inheritDoc */
+	public uploadItem (url: string, value: DataType) : {
+		cancel: () => void;
+		progress: Observable<number>;
+		result: Promise<string>;
+	} {
+		const progress	= new BehaviorSubject(0);
+
+		const result	= (async () => {
+			const data	= await util.toBytes(value);
+			await this.pretendToTransferData(15, data.length, progress);
+			this.uploadedItems.set(url, data);
+			return url;
+		})();
+
+		return {cancel: () => {}, progress, result};
 	}
 
 	constructor () {

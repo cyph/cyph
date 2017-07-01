@@ -222,21 +222,29 @@
 			<div fxLayout='row' *ngFor='let transfer of fileTransferService.transfers'>
 				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch' class='transfer-item'>
 					<div fxLayout='row'>
-						<span fxLayout='column' *ngIf='transfer.isOutgoing' cyphTranslate>
+						<span
+							fxLayout='column'
+							*ngIf='transfer.metadata.isOutgoing'
+							cyphTranslate
+						>
 							Sending
 						</span>
-						<span fxLayout='column' *ngIf='!transfer.isOutgoing' cyphTranslate>
+						<span
+							fxLayout='column'
+							*ngIf='!transfer.metadata.isOutgoing'
+							cyphTranslate
+						>
 							Receiving
 						</span>
 						&nbsp;
 						<span fxFlex fxLayout='column'>
-							{{transfer.name}}
-							({{utilService.readableByteLength(transfer.size)}}):
+							{{transfer.metadata.name}}
+							({{utilService.readableByteLength(transfer.metadata.size)}}):
 						</span>
 					</div>
 					<md-progress-bar
 						fxLayout='row'
-						[value]='transfer.percentComplete'
+						[value]='transfer.progress | async'
 					></md-progress-bar>
 				</div>
 			</div>
