@@ -54,7 +54,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		progress: Observable<number>;
 		result: Promise<Uint8Array>;
 	} {
-		let percentComplete: number	= 0;
+		let percentComplete	= 0;
 
 		const progress	= new BehaviorSubject(0);
 
@@ -80,7 +80,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 			}
 		})();
 
-		return {progress, result};
+		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
+		return {progress: <any> progress, result};
 	}
 
 	/** @inheritDoc */
@@ -139,7 +140,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		reason?: string
 	) : Promise<T> {
 		return util.lock(
-			util.getOrSetDefault(this.localLocks, url, () => ({})),
+			util.getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
 			async () => {
 				const queue	= await this.getDatabaseRef(url);
 				const id	= util.uuid();
@@ -277,7 +278,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 			});
 		})();
 
-		return {cancel, progress, result};
+		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
+		return {cancel, progress: <any> progress, result};
 	}
 
 	/** @inheritDoc */

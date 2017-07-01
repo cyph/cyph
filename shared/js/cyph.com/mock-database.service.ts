@@ -48,7 +48,8 @@ export class MockDatabaseService extends DatabaseService {
 			return data;
 		})();
 
-		return {progress, result};
+		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
+		return {progress: <any> progress, result};
 	}
 
 	/** @inheritDoc */
@@ -66,7 +67,8 @@ export class MockDatabaseService extends DatabaseService {
 			return url;
 		})();
 
-		return {cancel: () => {}, progress, result};
+		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
+		return {cancel: () => {}, progress: <any> progress, result};
 	}
 
 	constructor () {
