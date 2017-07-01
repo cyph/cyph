@@ -1,4 +1,5 @@
 import {List, Map as ImmutableMap} from 'immutable';
+import {Subject} from 'rxjs';
 import {States} from './enums';
 import {IChatMessage} from './ichat-message';
 
@@ -23,7 +24,7 @@ export interface IChatData {
 	isMessageChanged: boolean;
 
 	/** Percentage complete with initial handshake (approximate / faked out). */
-	keyExchangeProgress: number;
+	keyExchangeProgress: Subject<number>;
 
 	/** Message list. */
 	messages: List<IChatMessage>;
