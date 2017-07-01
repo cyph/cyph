@@ -40,7 +40,7 @@ export class ChatService {
 		isDisconnected: false,
 		isFriendTyping: false,
 		isMessageChanged: false,
-		keyExchangeProgress: new BehaviorSubject<number>(0),
+		keyExchangeProgress: new BehaviorSubject(0),
 		messages: List<IChatMessage>(),
 		queuedMessageSelfDestruct: false,
 		state: States.none,
