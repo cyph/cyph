@@ -32,9 +32,6 @@ export class Transfer implements IMessageData {
 		/** File URL. */
 		public url: string = '',
 
-		/** Percentage completion of transfer. */
-		public percentComplete: number = 0,
-
 		/** Unique ID to represent this file transfer. */
 		public readonly transferId: string = util.uuid(),
 

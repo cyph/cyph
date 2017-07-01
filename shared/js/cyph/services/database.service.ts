@@ -11,14 +11,92 @@ import {util} from '../util';
  */
 @Injectable()
 export class DatabaseService extends DataManagerService {
+	/** Downloads value and gives progress. */
+	public downloadItem (_URL: string) : {
+		progress: Observable<number>;
+		result: Promise<Uint8Array>;
+	} {
+		throw new Error('Must provide an implementation of DatabaseService.downloadItem.');
+	}
+
+	/**
+	 * Downloads a value as a boolean.
+	 * @see downloadItem
+	 */
+	public downloadItemBoolean (key: string) : {
+		progress: Observable<number>;
+		result: Promise<boolean>;
+	} {
+		const o	= this.downloadItem(key);
+		return {
+			progress: o.progress,
+			result: o.result.then(value => util.bytesToBoolean(value))
+		};
+	}
+
+	/**
+	 * Downloads a value as a number.
+	 * @see downloadItem
+	 */
+	public downloadItemNumber (key: string) : {
+		progress: Observable<number>;
+		result: Promise<number>;
+	} {
+		const o	= this.downloadItem(key);
+		return {
+			progress: o.progress,
+			result: o.result.then(value => util.bytesToNumber(value))
+		};
+	}
+
+	/**
+	 * Downloads a value as an object.
+	 * @see downloadItem
+	 */
+	public downloadItemObject<T> (key: string) : {
+		progress: Observable<number>;
+		result: Promise<T>;
+	} {
+		const o	= this.downloadItem(key);
+		return {
+			progress: o.progress,
+			result: o.result.then(value => util.bytesToObject<T>(value))
+		};
+	}
+
+	/**
+	 * Downloads a value as a string.
+	 * @see downloadItem
+	 */
+	public downloadItemString (key: string) : {
+		progress: Observable<number>;
+		result: Promise<string>;
+	} {
+		const o	= this.downloadItem(key);
+		return {
+			progress: o.progress,
+			result: o.result.then(value => util.bytesToString(value))
+		};
+	}
+
+	/**
+	 * Downloads a value as a base64 data URI.
+	 * @see downloadItem
+	 */
+	public downloadItemURI (key: string) : {
+		progress: Observable<number>;
+		result: Promise<string>;
+	} {
+		const o	= this.downloadItem(key);
+		return {
+			progress: o.progress,
+			result: o.result.then(value => util.bytesToDataURI(value))
+		};
+	}
+
 	/** Returns a reference to a database object. */
 	public async getDatabaseRef (_URL: string) : Promise<firebase.database.Reference> {
 		throw new Error('Must provide an implementation of DatabaseService.getDatabaseRef.');
-	}
-
-	/** Returns a reference to a storage object. */
-	public async getStorageRef (_URL: string) : Promise<firebase.storage.Reference> {
-		throw new Error('Must provide an implementation of DatabaseService.getStorageRef.');
 	}
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
@@ -56,6 +134,15 @@ export class DatabaseService extends DataManagerService {
 	/** Returns value representing the database server's timestamp. */
 	public async timestamp () : Promise<any> {
 		return util.timestamp();
+	}
+
+	/** Uploads value and gives progress. */
+	public uploadItem (_URL: string, _VALUE: DataType) : {
+		cancel: () => void;
+		progress: Observable<number>;
+		result: Promise<string>;
+	} {
+		throw new Error('Must provide an implementation of DatabaseService.uploadItem.');
 	}
 
 	/** Subscribes to value. */
