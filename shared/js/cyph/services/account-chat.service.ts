@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {List, Map as ImmutableMap} from 'immutable';
+import {BehaviorSubject} from 'rxjs';
 import {IChatData, IChatMessage, States} from '../chat';
 import {users} from '../session/enums';
 import {AccountSessionService} from './account-session.service';
@@ -43,7 +44,7 @@ export class AccountChatService extends ChatService {
 				isDisconnected: false,
 				isFriendTyping: false,
 				isMessageChanged: false,
-				keyExchangeProgress: 0,
+				keyExchangeProgress: new BehaviorSubject(0),
 				messages: List<IChatMessage>(),
 				queuedMessageSelfDestruct: false,
 				state: States.chat,
