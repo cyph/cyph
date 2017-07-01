@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {saveAs} from 'file-saver';
 import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
@@ -90,6 +92,31 @@ export class Util {
 		}
 
 		return response;
+	}
+
+	/** Converts byte array produced by toBytes into a boolean. */
+	public bytesToBoolean (bytes: Uint8Array) : boolean {
+		return bytes[0] === 1;
+	}
+
+	/** Converts byte array produced by toBytes into a base64 data URI. */
+	public bytesToDataURI (bytes: Uint8Array) : string {
+		return 'data:application/octet-stream;base64,' + potassiumUtil.toBase64(bytes);
+	}
+
+	/** Converts byte array produced by toBytes into a number. */
+	public bytesToNumber (bytes: Uint8Array) : number {
+		return new DataView(bytes.buffer, bytes.byteOffset).getFloat64(0, true);
+	}
+
+	/** Converts byte array produced by toBytes into a generic object. */
+	public bytesToObject<T> (bytes: Uint8Array) : T {
+		return this.parse<T>(this.bytesToString(bytes));
+	}
+
+	/** Converts byte array produced by toBytes into a string. */
+	public bytesToString (bytes: Uint8Array) : string {
+		return potassiumUtil.toString(bytes);
 	}
 
 	/** Sends an email to the Cyph team. "@cyph.com" may be omitted from to. */
