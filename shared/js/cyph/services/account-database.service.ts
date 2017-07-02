@@ -201,10 +201,11 @@ export class AccountDatabaseService {
 		progress: Observable<number>;
 		result: Promise<boolean>;
 	} {
-		const o	= this.downloadItem(url, publicData);
+		const {progress, result}	= this.downloadItem(url, publicData);
+
 		return {
-			progress: o.progress,
-			result: o.result.then(value => util.bytesToBoolean(value))
+			progress,
+			result: result.then(value => util.bytesToBoolean(value))
 		};
 	}
 
@@ -216,10 +217,11 @@ export class AccountDatabaseService {
 		progress: Observable<number>;
 		result: Promise<number>;
 	} {
-		const o	= this.downloadItem(url, publicData);
+		const {progress, result}	= this.downloadItem(url, publicData);
+
 		return {
-			progress: o.progress,
-			result: o.result.then(value => util.bytesToNumber(value))
+			progress,
+			result: result.then(value => util.bytesToNumber(value))
 		};
 	}
 
@@ -231,10 +233,11 @@ export class AccountDatabaseService {
 		progress: Observable<number>;
 		result: Promise<T>;
 	} {
-		const o	= this.downloadItem(url, publicData);
+		const {progress, result}	= this.downloadItem(url, publicData);
+
 		return {
-			progress: o.progress,
-			result: o.result.then(value => util.bytesToObject<T>(value))
+			progress,
+			result: result.then(value => util.bytesToObject<T>(value))
 		};
 	}
 
@@ -246,10 +249,11 @@ export class AccountDatabaseService {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
-		const o	= this.downloadItem(url, publicData);
+		const {progress, result}	= this.downloadItem(url, publicData);
+
 		return {
-			progress: o.progress,
-			result: o.result.then(value => util.bytesToString(value))
+			progress,
+			result: result.then(value => util.bytesToString(value))
 		};
 	}
 
@@ -261,10 +265,11 @@ export class AccountDatabaseService {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
-		const o	= this.downloadItem(url, publicData);
+		const {progress, result}	= this.downloadItem(url, publicData);
+
 		return {
-			progress: o.progress,
-			result: o.result.then(value => util.bytesToDataURI(value))
+			progress,
+			result: result.then(value => util.bytesToDataURI(value))
 		};
 	}
 
