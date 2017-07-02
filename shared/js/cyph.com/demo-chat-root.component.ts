@@ -54,7 +54,7 @@ export class DemoChatRootComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		this.demoEnvService.init(this.data);
-		this.localSessionService.init(this.data);
+		this.localSessionService.initChatData(this.data);
 
 		this.data.message.subscribe(s => {
 			if (s.length === 1) {

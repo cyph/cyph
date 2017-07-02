@@ -37,8 +37,8 @@ export class LocalSessionService extends SessionService {
 		this.trigger(events.closeChat);
 	}
 
-	/** Initializes service. */
-	public async init (chatData: ChatData) : Promise<void> {
+	/** Initializes chat data. */
+	public async initChatData (chatData: ChatData) : Promise<void> {
 		this.chatData		= chatData;
 		this.state.isAlice	= this.envService.isMobile;
 		this.state.isAlive	= true;
