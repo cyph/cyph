@@ -303,7 +303,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}> {
 		return new Promise<{reason: string|undefined; wasLocked: boolean}>(async resolve => {
 			let reason: string|undefined;
-			let wasLocked: boolean	= false;
+			let wasLocked	= false;
 
 			(await (await this.getDatabaseRef(url))).on('value', async snapshot => {
 				const value: {[key: string]: {id: string; reason?: string}}	=
