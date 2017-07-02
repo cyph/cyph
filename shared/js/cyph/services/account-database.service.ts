@@ -6,6 +6,7 @@ import {User} from '../account/user';
 import {IKeyPair} from '../crypto/ikey-pair';
 import {IPublicKeys} from '../crypto/ipublic-keys';
 import {DataType} from '../data-type';
+import {IAsyncValue} from '../iasync-value';
 import {util} from '../util';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
@@ -264,6 +265,116 @@ export class AccountDatabaseService {
 		return {
 			progress: o.progress,
 			result: o.result.then(value => util.bytesToDataURI(value))
+		};
+	}
+
+	/**
+	 * Gets an IAsyncValue wrapper for an item.
+	 * @param publicData If true, validates the item's signature. Otherwise, decrypts the item.
+	 */
+	public getAsyncValue (url: string, publicData: boolean = false) : IAsyncValue<Uint8Array> {
+		let currentHash: string|undefined;
+		let currentValue: Uint8Array|undefined;
+		const lock	= {};
+
+		const getValue	= async () => util.lock(lock, async () : Promise<Uint8Array> => {
+			await this.waitForUnlock(url);
+
+			const hash	= await this.databaseService.getHash(url);
+
+			if (currentValue && currentHash === hash) {
+				return currentValue;
+			}
+			else if (currentValue) {
+				this.potassiumService.clearMemory(currentValue);
+			}
+
+			const value	= await this.getItem(url, publicData);
+
+			if (hash !== await this.databaseService.getHash(url)) {
+				return getValue();
+			}
+
+			currentHash		= hash;
+			currentValue	= value;
+
+			return currentValue;
+		});
+
+		const setValue	=  async (value: Uint8Array) => util.lock(lock, async () => {
+			if (currentValue) {
+				this.potassiumService.clearMemory(currentValue);
+			}
+
+			currentHash		= (await this.setItem(url, value, publicData)).hash;
+			currentValue	= value;
+		});
+
+		return {getValue, setValue};
+	}
+
+	/**
+	 * Gets an async value as a boolean.
+	 * @see getAsyncValue
+	 */
+	public getAsyncValueBoolean (url: string, publicData: boolean = false) : IAsyncValue<boolean> {
+		const {getValue, setValue}	= this.getAsyncValue(url, publicData);
+
+		return {
+			getValue: async () => util.bytesToBoolean(await getValue()),
+			setValue: async (value: boolean) => setValue(await util.toBytes(value))
+		};
+	}
+
+	/**
+	 * Gets an async value as a number.
+	 * @see getAsyncValue
+	 */
+	public getAsyncValueNumber (url: string, publicData: boolean = false) : IAsyncValue<number> {
+		const {getValue, setValue}	= this.getAsyncValue(url, publicData);
+
+		return {
+			getValue: async () => util.bytesToNumber(await getValue()),
+			setValue: async (value: number) => setValue(await util.toBytes(value))
+		};
+	}
+
+	/**
+	 * Gets an async value as an object.
+	 * @see getAsyncValue
+	 */
+	public getAsyncValueObject<T> (url: string, publicData: boolean = false) : IAsyncValue<T> {
+		const {getValue, setValue}	= this.getAsyncValue(url, publicData);
+
+		return {
+			getValue: async () => util.bytesToObject<T>(await getValue()),
+			setValue: async (value: T) => setValue(await util.toBytes(value))
+		};
+	}
+
+	/**
+	 * Gets an async value as a string.
+	 * @see getAsyncValue
+	 */
+	public getAsyncValueString (url: string, publicData: boolean = false) : IAsyncValue<string> {
+		const {getValue, setValue}	= this.getAsyncValue(url, publicData);
+
+		return {
+			getValue: async () => util.bytesToString(await getValue()),
+			setValue: async (value: string) => setValue(await util.toBytes(value))
+		};
+	}
+
+	/**
+	 * Gets an async value as a base64 data URI.
+	 * @see getAsyncValue
+	 */
+	public getAsyncValueURI (url: string, publicData: boolean = false) : IAsyncValue<string> {
+		const {getValue, setValue}	= this.getAsyncValue(url, publicData);
+
+		return {
+			getValue: async () => util.bytesToDataURI(await getValue()),
+			setValue: async (value: string) => setValue(await util.toBytes(value))
 		};
 	}
 
