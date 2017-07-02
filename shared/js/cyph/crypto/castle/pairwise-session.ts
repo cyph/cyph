@@ -167,7 +167,8 @@ export class PairwiseSession {
 
 		return util.lock(this.locks.receive, async () => {
 			while (this.incomingMessageId <= this.incomingMessagesMax) {
-				const incomingMessages	= this.incomingMessages.get(this.incomingMessageId);
+				const incomingMessageId	= this.incomingMessageId;
+				const incomingMessages	= this.incomingMessages.get(incomingMessageId);
 
 				if (incomingMessages === undefined) {
 					break;
@@ -202,7 +203,7 @@ export class PairwiseSession {
 							this.remoteUsername
 						);
 
-						this.incomingMessages.delete(this.incomingMessageId++);
+						this.incomingMessageId	= incomingMessageId + 1;
 						break;
 					}
 					catch (err) {
@@ -215,6 +216,8 @@ export class PairwiseSession {
 						this.potassium.clearMemory(cyphertextBytes);
 					}
 				}
+
+				this.incomingMessages.delete(incomingMessageId);
 			}
 		});
 	}
@@ -298,7 +301,7 @@ export class PairwiseSession {
 			this.resolveCore(new Core(
 				this.potassium,
 				isAlice,
-				[await Core.newKeys(this.potassium, isAlice, secret)]
+				await Core.initKeys(this.potassium, isAlice, secret)
 			));
 		}
 		catch (err) {

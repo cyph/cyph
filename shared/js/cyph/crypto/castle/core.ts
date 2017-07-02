@@ -1,5 +1,6 @@
+import {IAsyncValue} from '../../iasync-value';
 import {util} from '../../util';
-import {IKeyPairMaybe} from '../ikey-pair-maybe';
+import {AsyncBytes} from '../async-bytes';
 import {IPotassium} from '../potassium/ipotassium';
 
 
@@ -7,13 +8,8 @@ import {IPotassium} from '../potassium/ipotassium';
  * The core Castle protocol logic.
  */
 export class Core {
-	/**
-	 * Convert newly established shared secret into session keys.
-	 * @param potassium
-	 * @param isAlice
-	 * @param secret
-	 */
-	public static async newKeys (
+	/** @ignore */
+	private static async newKeys (
 		potassium: IPotassium,
 		isAlice: boolean,
 		secret: Uint8Array
@@ -36,70 +32,85 @@ export class Core {
 		;
 	}
 
+	/** Convert newly established shared secret into session keys. */
+	public static async initKeys (
+		potassium: IPotassium,
+		isAlice: boolean,
+		secret: Uint8Array
+	) : Promise<{
+		current: {
+			incoming: IAsyncValue<Uint8Array>;
+			outgoing: IAsyncValue<Uint8Array>;
+		};
+		previous: {
+			incoming: IAsyncValue<Uint8Array|undefined>;
+			outgoing: IAsyncValue<Uint8Array|undefined>;
+		};
+	}> {
+		const keys	= await Core.newKeys(potassium, isAlice, secret);
 
-	/** @ignore */
-	private readonly ephemeralKeys: IKeyPairMaybe	= {
-		privateKey: undefined,
-		publicKey: undefined
-	};
+		return {
+			current: {
+				incoming: new AsyncBytes(keys.incoming),
+				outgoing: new AsyncBytes(keys.outgoing)
+			},
+			previous: {
+				incoming: new AsyncBytes<Uint8Array|undefined>(undefined),
+				outgoing: new AsyncBytes<Uint8Array|undefined>(undefined)
+			}
+		};
+	}
 
-	/** @ignore */
-	private readonly lock: {}	= {};
 
 	/** @ignore */
 	private async ratchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
 		let outgoingPublicKey: Uint8Array|undefined;
 
-		/* Part 1: Alice (outgoing) */
-		if (this.isAlice && !this.ephemeralKeys.privateKey && !incomingPublicKey) {
-			const ephemeralKeyPair			=
-				await this.potassium.ephemeralKeyExchange.aliceKeyPair()
-			;
+		const ephemeralKeys	= await (async () => {
+			const [privateKey, publicKey]	= await Promise.all([
+				this.ephemeralKeys.privateKey.getValue(),
+				this.ephemeralKeys.publicKey.getValue()
+			]);
 
-			this.ephemeralKeys.privateKey	= ephemeralKeyPair.privateKey;
-			outgoingPublicKey				= ephemeralKeyPair.publicKey;
+			return {privateKey, publicKey};
+		})();
+
+		/* Part 1: Alice (outgoing) */
+		if (this.isAlice && !ephemeralKeys.privateKey && !incomingPublicKey) {
+			const aliceKeyPair	= await this.potassium.ephemeralKeyExchange.aliceKeyPair();
+			outgoingPublicKey	= aliceKeyPair.publicKey;
+			this.ephemeralKeys.privateKey.setValue(aliceKeyPair.privateKey);
 		}
 
 		/* Part 2a: Bob (incoming) */
-		else if (!this.isAlice && !this.ephemeralKeys.publicKey && incomingPublicKey) {
-			const secretData				=
+		else if (!this.isAlice && !ephemeralKeys.publicKey && incomingPublicKey) {
+			const secretData	=
 				await this.potassium.ephemeralKeyExchange.bobSecret(
 					incomingPublicKey
 				)
 			;
 
-			this.ephemeralKeys.publicKey	= secretData.publicKey;
-
-			this.keys.push(await Core.newKeys(
-				this.potassium,
-				this.isAlice,
-				secretData.secret
-			));
+			this.ephemeralKeys.publicKey.setValue(secretData.publicKey);
+			await this.setNewKeys(secretData.secret);
 		}
 
 		/* Part 2b: Bob (outgoing) */
-		else if (!this.isAlice && this.ephemeralKeys.publicKey && !incomingPublicKey) {
-			outgoingPublicKey				= this.ephemeralKeys.publicKey;
-			this.ephemeralKeys.publicKey	= undefined;
+		else if (!this.isAlice && ephemeralKeys.publicKey && !incomingPublicKey) {
+			outgoingPublicKey	= new Uint8Array(ephemeralKeys.publicKey);
+			this.ephemeralKeys.publicKey.setValue(undefined);
 		}
 
 		/* Part 3: Alice (incoming) */
-		else if (this.isAlice && this.ephemeralKeys.privateKey && incomingPublicKey) {
+		else if (this.isAlice && ephemeralKeys.privateKey && incomingPublicKey) {
 			const secret	=
 				await this.potassium.ephemeralKeyExchange.aliceSecret(
 					incomingPublicKey,
-					this.ephemeralKeys.privateKey
+					ephemeralKeys.privateKey
 				)
 			;
 
-			this.potassium.clearMemory(this.ephemeralKeys.privateKey);
-			this.ephemeralKeys.privateKey	= undefined;
-
-			this.keys.push(await Core.newKeys(
-				this.potassium,
-				this.isAlice,
-				secret
-			));
+			this.ephemeralKeys.privateKey.setValue(undefined);
+			await this.setNewKeys(secret);
 		}
 
 		if (outgoingPublicKey) {
@@ -115,6 +126,24 @@ export class Core {
 	}
 
 	/**
+	 * Replaces keys.previous with the values of keys.current and keys.current
+	 * with a new set of keys derived from the secret using Core.newKeys.
+	 */
+	private async setNewKeys (secret: Uint8Array) : Promise<void> {
+		const newKeys	= await Core.newKeys(this.potassium, this.isAlice, secret);
+
+		const [oldIncoming, oldOutgoing]	= await Promise.all([
+			this.keys.current.incoming.getValue(),
+			this.keys.current.outgoing.getValue()
+		]);
+
+		this.keys.previous.incoming.setValue(new Uint8Array(oldIncoming));
+		this.keys.previous.outgoing.setValue(new Uint8Array(oldOutgoing));
+		this.keys.current.incoming.setValue(newKeys.incoming);
+		this.keys.current.outgoing.setValue(newKeys.outgoing);
+	}
+
+	/**
 	 * Decrypt incoming cyphertext.
 	 * @param cyphertext Data to be decrypted.
 	 * @returns Plaintext.
@@ -124,26 +153,19 @@ export class Core {
 			await this.potassium.ephemeralKeyExchange.publicKeyBytes
 		;
 
-		return util.lock(this.lock, async () => {
-			const messageId	= new Uint8Array(cyphertext.buffer, 0, 8);
-			const encrypted	= new Uint8Array(cyphertext.buffer, 8);
+		return this.lock(async () => {
+			const messageId	= new Uint8Array(cyphertext.buffer, cyphertext.byteOffset, 8);
+			const encrypted	= new Uint8Array(cyphertext.buffer, cyphertext.byteOffset + 8);
 
-			let plaintext: DataView|undefined;
-
-			for (let i = this.keys.length - 1 ; i >= 0 ; --i) {
+			for (const keys of [this.keys.current, this.keys.previous]) {
 				try {
-					const keys	= this.keys[i];
+					const key			= await keys.incoming.getValue();
 
-					if (plaintext) {
-						this.keys.splice(i, 1);
-						this.potassium.clearMemory(keys.incoming);
-						this.potassium.clearMemory(keys.outgoing);
+					if (!key) {
 						continue;
 					}
 
-					const incomingKey	= await this.potassium.hash.deriveKey(
-						keys.incoming
-					);
+					const incomingKey	= await this.potassium.hash.deriveKey(key);
 
 					const decrypted		= await this.potassium.secretBox.open(
 						encrypted,
@@ -151,8 +173,7 @@ export class Core {
 						messageId
 					);
 
-					this.potassium.clearMemory(keys.incoming);
-					keys.incoming	= incomingKey;
+					keys.incoming.setValue(incomingKey);
 
 					let startIndex	= 1;
 					if (decrypted[0] === 1) {
@@ -164,17 +185,19 @@ export class Core {
 
 						startIndex += ephemeralKeyExchangePublicKeyBytes;
 					}
+					else if (keys === this.keys.current) {
+						this.keys.previous.incoming.setValue(undefined);
+						this.keys.previous.outgoing.setValue(undefined);
+					}
 
-					plaintext	= new DataView(decrypted.buffer, startIndex);
+					const plaintext	= new DataView(decrypted.buffer, startIndex);
+
+					return plaintext;
 				}
 				catch (_) {}
 			}
 
-			if (!plaintext) {
-				throw new Error('Invalid cyphertext.');
-			}
-
-			return plaintext;
+			throw new Error('Invalid cyphertext.');
 		});
 	}
 
@@ -185,12 +208,14 @@ export class Core {
 	 * @returns Cyphertext.
 	 */
 	public async encrypt (plaintext: Uint8Array, messageId: Uint8Array) : Promise<Uint8Array> {
-		const o	= await util.lock(this.lock, async () => {
-			this.keys[0].outgoing	= await this.potassium.hash.deriveKey(
-				this.keys[0].outgoing,
-				undefined,
-				true
-			);
+		const o	= await this.lock(async () => {
+			for (const keys of [this.keys.previous, this.keys.current]) {
+				const oldKey	= await keys.outgoing.getValue();
+				if (oldKey) {
+					keys.outgoing.setValue(await this.potassium.hash.deriveKey(oldKey));
+					break;
+				}
+			}
 
 			const fullPlaintext		= this.potassium.concatMemory(
 				false,
@@ -198,7 +223,13 @@ export class Core {
 				plaintext
 			);
 
-			return {fullPlaintext, key: new Uint8Array(this.keys[0].outgoing)};
+			const key	= new Uint8Array(
+				await this.keys.previous.outgoing.getValue().then(value =>
+					value || this.keys.current.outgoing.getValue()
+				)
+			);
+
+			return {fullPlaintext, key};
 		});
 
 		const cyphertext	= await this.potassium.secretBox.seal(
@@ -213,11 +244,6 @@ export class Core {
 		return cyphertext;
 	}
 
-	/**
-	 * @param potassium
-	 * @param isAlice
-	 * @param keys Initial state of key ratchet.
-	 */
 	constructor (
 		/** @ignore */
 		private readonly potassium: IPotassium,
@@ -225,7 +251,31 @@ export class Core {
 		/** @ignore */
 		private readonly isAlice: boolean,
 
-		/** @ignore */
-		private readonly keys: {incoming: Uint8Array; outgoing: Uint8Array}[]
+		/** State of the symmetric (forward-secret) ratchet. */
+		private readonly keys: {
+			current: {
+				incoming: IAsyncValue<Uint8Array>;
+				outgoing: IAsyncValue<Uint8Array>;
+			};
+			previous: {
+				incoming: IAsyncValue<Uint8Array|undefined>;
+				outgoing: IAsyncValue<Uint8Array|undefined>;
+			};
+		},
+
+		/** State of the asymmetric (future-secret) ratchet. */
+		private readonly ephemeralKeys: {
+			privateKey: IAsyncValue<Uint8Array|undefined>;
+			publicKey: IAsyncValue<Uint8Array|undefined>;
+		} = {
+			privateKey: new AsyncBytes<Uint8Array|undefined>(undefined),
+			publicKey: new AsyncBytes<Uint8Array|undefined>(undefined)
+		},
+
+		/** Lock function. */
+		private readonly lock: <T>(f: () => Promise<T>) => Promise<T> = (() => {
+			const localLock	= {};
+			return async <T>(f: () => Promise<T>) => util.lock(localLock, f);
+		})()
 	) {}
 }
