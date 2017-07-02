@@ -150,6 +150,14 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.uploadItem.');
 	}
 
+	/** Waits for lock to be released. */
+	public async waitForUnlock (_URL: string) : Promise<{
+		reason: string|undefined;
+		wasLocked: boolean;
+	}> {
+		throw new Error('Must provide an implementation of DatabaseService.waitForUnlock.');
+	}
+
 	/** Subscribes to value. */
 	public watchItem (_URL: string) : Observable<Uint8Array|undefined> {
 		throw new Error('Must provide an implementation of DatabaseService.watchItem.');

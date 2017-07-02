@@ -297,6 +297,33 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public async waitForUnlock (url: string) : Promise<{
+		reason: string|undefined;
+		wasLocked: boolean;
+	}> {
+		return new Promise<{reason: string|undefined; wasLocked: boolean}>(async resolve => {
+			let reason: string|undefined;
+			let wasLocked: boolean	= false;
+
+			(await (await this.getDatabaseRef(url))).on('value', async snapshot => {
+				const value: {[key: string]: {id: string; reason?: string}}	=
+					(snapshot && snapshot.val()) || {}
+				;
+
+				const keys	= Object.keys(value).sort();
+
+				if (keys.length > 0) {
+					reason		= value[keys[0]].reason;
+					wasLocked	= true;
+					return;
+				}
+
+				resolve({reason, wasLocked});
+			});
+		});
+	}
+
+	/** @inheritDoc */
 	public watchItem (url: string) : Observable<Uint8Array|undefined> {
 		return new Observable<Uint8Array|undefined>(observer => {
 			let cleanup: Function;
