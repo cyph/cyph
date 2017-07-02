@@ -190,9 +190,7 @@ export class Core {
 						this.symmetricKeys.previous.outgoing.setValue(undefined);
 					}
 
-					const plaintext	= new DataView(decrypted.buffer, startIndex);
-
-					return plaintext;
+					return new DataView(decrypted.buffer, startIndex);
 				}
 				catch (_) {}
 			}
@@ -275,7 +273,7 @@ export class Core {
 		/** Lock function. */
 		private readonly lock: <T>(f: () => Promise<T>) => Promise<T> = (() => {
 			const localLock	= {};
-			return async <T>(f: () => Promise<T>) => util.lock(localLock, f);
+			return async <T> (f: () => Promise<T>) => util.lock(localLock, f);
 		})()
 	) {}
 }
