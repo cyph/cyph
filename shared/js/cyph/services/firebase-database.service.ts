@@ -94,11 +94,19 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async getItem (url: string) : Promise<Uint8Array> {
+	public async getHash (url: string) : Promise<string> {
 		const hash	= (await (await this.getDatabaseRef(url)).once('value')).val();
+
 		if (typeof hash !== 'string') {
 			throw new Error(`Item at ${url} not found.`);
 		}
+
+		return hash;
+	}
+
+	/** @inheritDoc */
+	public async getItem (url: string) : Promise<Uint8Array> {
+		const hash	= await this.getHash(url);
 
 		try {
 			return await this.localStorageService.getItem(`cache/${hash}`);

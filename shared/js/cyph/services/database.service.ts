@@ -99,6 +99,11 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.getDatabaseRef.');
 	}
 
+	/** Gets the latest item hash known by the database. */
+	public async getHash (_URL: string) : Promise<string> {
+		throw new Error('Must provide an implementation of DatabaseService.getHash.');
+	}
+
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 	public async lock<T> (
 		_URL: string,
