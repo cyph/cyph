@@ -1,3 +1,4 @@
+export * from './async-bytes';
 export * from './icastle';
 export * from './ikey-pair';
 export * from './ikey-pair-maybe';
