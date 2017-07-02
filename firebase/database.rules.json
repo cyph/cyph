@@ -118,7 +118,7 @@
 					}
 				},
 
-				"lock": {
+				"locks": {
 					"$contender": {
 						"id": {
 							".validate": "newData.isString()"
@@ -145,6 +145,10 @@
 
 				"signingKeyPair": {
 					".validate": "newData.isString()"
+				},
+
+				"$other": {
+					".validate": false
 				}
 			}
 		}
