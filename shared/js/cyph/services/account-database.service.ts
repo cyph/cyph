@@ -287,6 +287,7 @@ export class AccountDatabaseService {
 
 			const hash	= await this.databaseService.getHash(url);
 
+			/* tslint:disable-next-line:possible-timing-attack */
 			if (currentValue && currentHash === hash) {
 				return currentValue;
 			}
@@ -296,6 +297,7 @@ export class AccountDatabaseService {
 
 			const value	= await this.getItem(url, publicData);
 
+			/* tslint:disable-next-line:possible-timing-attack */
 			if (hash !== await this.databaseService.getHash(url)) {
 				return getValue();
 			}
@@ -306,7 +308,7 @@ export class AccountDatabaseService {
 			return currentValue;
 		});
 
-		const setValue	=  async (value: Uint8Array) => util.lock(lock, async () => {
+		const setValue	= async (value: Uint8Array) => util.lock(lock, async () => {
 			if (currentValue) {
 				this.potassiumService.clearMemory(currentValue);
 			}
