@@ -117,7 +117,7 @@ export class AccountDatabaseService {
 
 		return this.processURL(url).replace(
 			`users/${this.current.user.username}/`,
-			`users/${this.current.user.username}/lock/`
+			`users/${this.current.user.username}/locks/`
 		);
 	}
 
