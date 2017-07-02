@@ -20,7 +20,7 @@ export abstract class SessionService implements ISessionService {
 	private resolvePotassiumService: (potassiumService: PotassiumService) => void;
 
 	/** @ignore */
-	private resolveSymmetricKey: (symmetricKey: Uint8Array|Promise<Uint8Array>) => void;
+	private resolveSymmetricKey: (symmetricKey: Uint8Array) => void;
 
 	/** @ignore */
 	protected readonly eventId: string								= util.uuid();
@@ -103,10 +103,16 @@ export abstract class SessionService implements ISessionService {
 						await potassiumService.secretBox.keyBytes
 					);
 					this.resolveSymmetricKey(symmetricKey);
-					this.send(new Message(rpcEvents.symmetricKey, symmetricKey));
+					this.send(new Message(rpcEvents.symmetricKey, {symmetricKey}));
 				}
 				else {
-					this.resolveSymmetricKey(this.one<Uint8Array>(rpcEvents.symmetricKey));
+					this.resolveSymmetricKey(
+						(
+							await this.one<{symmetricKey: Uint8Array}>(
+								rpcEvents.symmetricKey
+							)
+						).symmetricKey
+					);
 				}
 
 				break;
