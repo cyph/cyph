@@ -8,7 +8,7 @@ import {DataManagerService} from '../service-interfaces/data-manager.service';
 @Injectable()
 export class LocalStorageService extends DataManagerService {
 	/** Used to prevent race condition getItem failures. */
-	protected pendingSets: Map<string, Promise<string>>	= new Map<string, Promise<string>>();
+	protected pendingSets: Map<string, Promise<void>>	= new Map<string, Promise<void>>();
 
 	constructor () {
 		super();

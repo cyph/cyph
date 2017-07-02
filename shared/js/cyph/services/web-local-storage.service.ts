@@ -31,54 +31,54 @@ export class WebLocalStorageService extends LocalStorageService {
 	})();
 
 	/** @inheritDoc */
-	public async getItem (key: string, waitForReady: boolean = true) : Promise<Uint8Array> {
+	public async getItem (url: string, waitForReady: boolean = true) : Promise<Uint8Array> {
 		if (waitForReady) {
 			await this.ready;
 		}
 
-		await this.pendingSets.get(key);
+		await this.pendingSets.get(url);
 
-		const value	= await localforage.getItem<Uint8Array>(key);
+		const value	= await localforage.getItem<Uint8Array>(url);
 
 		if (!(value instanceof Uint8Array)) {
-			throw new Error(`Item ${key} not found.`);
+			throw new Error(`Item ${url} not found.`);
 		}
 
 		return value;
 	}
 
 	/** @inheritDoc */
-	public async removeItem (key: string, waitForReady: boolean = true) : Promise<void> {
+	public async removeItem (url: string, waitForReady: boolean = true) : Promise<void> {
 		if (waitForReady) {
 			await this.ready;
 		}
 
-		await this.getItem(key);
-		await localforage.removeItem(key);
+		await this.getItem(url);
+		await localforage.removeItem(url);
 	}
 
 	/** @inheritDoc */
 	public async setItem (
-		key: string,
+		url: string,
 		value: DataType,
 		waitForReady: boolean = true
-	) : Promise<string> {
+	) : Promise<{url: string}> {
 		const promise	= (async () => {
 			if (waitForReady) {
 				await this.ready;
 			}
 
-			await localforage.setItem<Uint8Array>(key, await util.toBytes(value));
-			return key;
+			await localforage.setItem<Uint8Array>(url, await util.toBytes(value));
+			return {url};
 		})();
 
-		this.pendingSets.set(key, promise);
+		this.pendingSets.set(url, promise.then(() => {}));
 
 		try {
 			return await promise;
 		}
 		finally {
-			this.pendingSets.delete(key);
+			this.pendingSets.delete(url);
 		}
 	}
 
