@@ -158,35 +158,45 @@ export class AccountFilesService {
 	}
 
 	/** Uploads new file. */
-	public async upload (name: string, file: string|File) : Promise<void> {
+	public upload (name: string, file: string|File) : {
+		progress: Observable<number>;
+		result: Promise<void>;
+	} {
 		const id	= util.uuid();
 
-		await util.lock(this.lock, async () => {
-			await this.accountDatabaseService.setItem(`files/${id}`, file);
+		const {progress, result}	=
+			this.accountDatabaseService.uploadItem(`files/${id}`, file)
+		;
 
-			await this.accountDatabaseService.setItem(
-				'fileList',
-				this.files.value.concat({
-					id,
-					mediaType: typeof file === 'string' ?
-						'text/plain' :
-						file.type
-					,
-					name,
-					recordType: typeof file === 'string' ?
-						'note' :
-						'file'
-					,
-					size: typeof file === 'string' ?
-						this.potassiumService.fromString(file).length :
-						file.size
-					,
-					timestamp: await util.timestamp()
-				})
-			);
+		return {
+			progress,
+			result: result.then(async () => {
+				await util.lock(this.lock, async () => {
+					await this.accountDatabaseService.setItem(
+						'fileList',
+						this.files.value.concat({
+							id,
+							mediaType: typeof file === 'string' ?
+								'text/plain' :
+								file.type
+							,
+							name,
+							recordType: typeof file === 'string' ?
+								'note' :
+								'file'
+							,
+							size: typeof file === 'string' ?
+								this.potassiumService.fromString(file).length :
+								file.size
+							,
+							timestamp: await util.timestamp()
+						})
+					);
 
-			await this.updateFiles();
-		});
+					await this.updateFiles();
+				});
+			})
+		};
 	}
 
 	constructor (
