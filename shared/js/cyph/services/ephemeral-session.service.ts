@@ -2,14 +2,12 @@ import {Injectable} from '@angular/core';
 import {env} from '../env';
 import {CastleEvents, events, rpcEvents} from '../session/enums';
 import {IMessage} from '../session/imessage';
-import {Message} from '../session/message';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';
 import {AnonymousCastleService} from './crypto/anonymous-castle.service';
-import {PotassiumService} from './crypto/potassium.service';
 import {ErrorService} from './error.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
@@ -20,14 +18,6 @@ import {SessionService} from './session.service';
  */
 @Injectable()
 export class EphemeralSessionService extends SessionService {
-	/** @ignore */
-	private resolveSymmetricKey: (symmetricKey: Uint8Array|Promise<Uint8Array>) => void;
-
-	/** @ignore */
-	private readonly symmetricKey: Promise<Uint8Array>	= new Promise<Uint8Array>(resolve => {
-		this.resolveSymmetricKey	= resolve;
-	});
-
 	/** @ignore */
 	private setId (id: string) : void {
 		if (
@@ -115,18 +105,6 @@ export class EphemeralSessionService extends SessionService {
 				this.on(events.castle, (e: {data?: any; event: CastleEvents}) => {
 					this.castleHandler(e);
 				});
-
-				if (this.state.isAlice) {
-					const symmetricKey	= this.potassiumService.randomBytes(
-						await this.potassiumService.secretBox.keyBytes
-					);
-
-					this.resolveSymmetricKey(symmetricKey);
-					this.send(new Message(rpcEvents.symmetricKey, symmetricKey));
-				}
-				else {
-					this.resolveSymmetricKey(this.one<Uint8Array>(rpcEvents.symmetricKey));
-				}
 			}
 		};
 
@@ -146,21 +124,23 @@ export class EphemeralSessionService extends SessionService {
 
 	/** @inheritDoc */
 	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
+		const potassiumService	= await this.potassiumService;
+
 		return this.channelService.lock(
 			async r => f(!r ?
 				undefined :
-				this.potassiumService.toString(
-					await this.potassiumService.secretBox.open(
-						this.potassiumService.fromBase64(r),
+				potassiumService.toString(
+					await potassiumService.secretBox.open(
+						potassiumService.fromBase64(r),
 						await this.symmetricKey
 					)
 				)
 			),
 			!reason ?
 				undefined :
-				this.potassiumService.toBase64(
-					await this.potassiumService.secretBox.seal(
-						this.potassiumService.fromString(reason),
+				potassiumService.toBase64(
+					await potassiumService.secretBox.seal(
+						potassiumService.fromString(reason),
 						await this.symmetricKey
 					)
 				)
@@ -204,9 +184,6 @@ export class EphemeralSessionService extends SessionService {
 
 		/** @ignore */
 		private readonly configService: ConfigService,
-
-		/** @ignore */
-		private readonly potassiumService: PotassiumService,
 
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService
@@ -256,6 +233,10 @@ export class EphemeralSessionService extends SessionService {
 				'' :
 				util.uuid()
 		;
+
+		(async () => {
+			this.anonymousCastleService.init(await this.potassiumService, this);
+		})();
 
 		(async () => {
 			try {

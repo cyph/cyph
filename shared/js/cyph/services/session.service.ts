@@ -7,6 +7,7 @@ import {Message} from '../session/message';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
+import {PotassiumService} from './crypto/potassium.service';
 import {ErrorService} from './error.service';
 
 
@@ -16,25 +17,45 @@ import {ErrorService} from './error.service';
 @Injectable()
 export abstract class SessionService implements ISessionService {
 	/** @ignore */
-	protected readonly eventId: string					= util.uuid();
+	private resolvePotassiumService: (potassiumService: PotassiumService) => void;
 
 	/** @ignore */
-	protected lastIncomingMessageTimestamp: number		= 0;
+	private resolveSymmetricKey: (symmetricKey: Uint8Array|Promise<Uint8Array>) => void;
 
 	/** @ignore */
-	protected pingPongTimeouts: number					= 0;
+	protected readonly eventId: string								= util.uuid();
 
 	/** @ignore */
-	protected readonly plaintextSendInterval: number	= 1776;
+	protected lastIncomingMessageTimestamp: number					= 0;
 
 	/** @ignore */
-	protected readonly plaintextSendQueue: IMessage[]	= [];
+	protected pingPongTimeouts: number								= 0;
 
 	/** @ignore */
-	protected readonly receivedMessages: Set<string>	= new Set<string>();
+	protected readonly plaintextSendInterval: number				= 1776;
+
+	/** @ignore */
+	protected readonly plaintextSendQueue: IMessage[]				= [];
+
+	/** @ignore */
+	protected readonly potassiumService: Promise<PotassiumService>	=
+		new Promise<PotassiumService>(resolve => {
+			this.resolvePotassiumService	= resolve;
+		})
+	;
+
+	/** @ignore */
+	protected readonly receivedMessages: Set<string>				= new Set<string>();
+
+	/** @ignore */
+	protected readonly symmetricKey: Promise<Uint8Array>			=
+		new Promise<Uint8Array>(resolve => {
+			this.resolveSymmetricKey	= resolve;
+		})
+	;
 
 	/** @inheritDoc */
-	public readonly apiFlags							= {
+	public readonly apiFlags						= {
 		forceTURN: false,
 		modestBranding: false,
 		nativeCrypto: false,
@@ -42,10 +63,10 @@ export abstract class SessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly connected: Promise<void>			= this.one<void>(events.connect);
+	public readonly connected: Promise<void>		= this.one<void>(events.connect);
 
 	/** @inheritDoc */
-	public readonly remoteUsername: Promise<string>		= new Promise<string>(resolve => {
+	public readonly remoteUsername: Promise<string>	= new Promise<string>(resolve => {
 		this.setRemoteUsername	= resolve;
 	});
 
@@ -53,7 +74,7 @@ export abstract class SessionService implements ISessionService {
 	public setRemoteUsername: (remoteUsername: string) => void;
 
 	/** @inheritDoc */
-	public readonly state								= {
+	public readonly state							= {
 		cyphId: '',
 		isAlice: false,
 		isAlive: true,
@@ -63,10 +84,10 @@ export abstract class SessionService implements ISessionService {
 	};
 
 	/** @ignore */
-	protected castleHandler (e: {
+	protected async castleHandler (e: {
 		data?: string|{author: string; plaintext: string; timestamp: number};
 		event: CastleEvents;
-	}) : void {
+	}) : Promise<void> {
 		switch (e.event) {
 			case CastleEvents.abort: {
 				this.errorService.logAuthFail();
@@ -75,6 +96,19 @@ export abstract class SessionService implements ISessionService {
 			}
 			case CastleEvents.connect: {
 				this.trigger(events.beginChat);
+
+				if (this.state.isAlice) {
+					const potassiumService	= await this.potassiumService;
+					const symmetricKey		= potassiumService.randomBytes(
+						await potassiumService.secretBox.keyBytes
+					);
+					this.resolveSymmetricKey(symmetricKey);
+					this.send(new Message(rpcEvents.symmetricKey, symmetricKey));
+				}
+				else {
+					this.resolveSymmetricKey(this.one<Uint8Array>(rpcEvents.symmetricKey));
+				}
+
 				break;
 			}
 			case CastleEvents.receive: {
@@ -182,6 +216,11 @@ export abstract class SessionService implements ISessionService {
 	/** @inheritDoc */
 	public close () : void {
 		throw new Error('Must provide an implementation of SessionService.close.');
+	}
+
+	/** @inheritDoc */
+	public async init (potassiumService: PotassiumService) : Promise<void> {
+		this.resolvePotassiumService(potassiumService);
 	}
 
 	/** @inheritDoc */
