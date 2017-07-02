@@ -66,50 +66,50 @@ export class Core {
 	private async ratchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
 		let outgoingPublicKey: Uint8Array|undefined;
 
-		const ephemeralKeys	= await (async () => {
+		const asymmetricKeys	= await (async () => {
 			const [privateKey, publicKey]	= await Promise.all([
-				this.ephemeralKeys.privateKey.getValue(),
-				this.ephemeralKeys.publicKey.getValue()
+				this.asymmetricKeys.privateKey.getValue(),
+				this.asymmetricKeys.publicKey.getValue()
 			]);
 
 			return {privateKey, publicKey};
 		})();
 
 		/* Part 1: Alice (outgoing) */
-		if (this.isAlice && !ephemeralKeys.privateKey && !incomingPublicKey) {
+		if (this.isAlice && !asymmetricKeys.privateKey && !incomingPublicKey) {
 			const aliceKeyPair	= await this.potassium.ephemeralKeyExchange.aliceKeyPair();
 			outgoingPublicKey	= aliceKeyPair.publicKey;
-			this.ephemeralKeys.privateKey.setValue(aliceKeyPair.privateKey);
+			this.asymmetricKeys.privateKey.setValue(aliceKeyPair.privateKey);
 		}
 
 		/* Part 2a: Bob (incoming) */
-		else if (!this.isAlice && !ephemeralKeys.publicKey && incomingPublicKey) {
+		else if (!this.isAlice && !asymmetricKeys.publicKey && incomingPublicKey) {
 			const secretData	=
 				await this.potassium.ephemeralKeyExchange.bobSecret(
 					incomingPublicKey
 				)
 			;
 
-			this.ephemeralKeys.publicKey.setValue(secretData.publicKey);
+			this.asymmetricKeys.publicKey.setValue(secretData.publicKey);
 			await this.setNewKeys(secretData.secret);
 		}
 
 		/* Part 2b: Bob (outgoing) */
-		else if (!this.isAlice && ephemeralKeys.publicKey && !incomingPublicKey) {
-			outgoingPublicKey	= new Uint8Array(ephemeralKeys.publicKey);
-			this.ephemeralKeys.publicKey.setValue(undefined);
+		else if (!this.isAlice && asymmetricKeys.publicKey && !incomingPublicKey) {
+			outgoingPublicKey	= new Uint8Array(asymmetricKeys.publicKey);
+			this.asymmetricKeys.publicKey.setValue(undefined);
 		}
 
 		/* Part 3: Alice (incoming) */
-		else if (this.isAlice && ephemeralKeys.privateKey && incomingPublicKey) {
+		else if (this.isAlice && asymmetricKeys.privateKey && incomingPublicKey) {
 			const secret	=
 				await this.potassium.ephemeralKeyExchange.aliceSecret(
 					incomingPublicKey,
-					ephemeralKeys.privateKey
+					asymmetricKeys.privateKey
 				)
 			;
 
-			this.ephemeralKeys.privateKey.setValue(undefined);
+			this.asymmetricKeys.privateKey.setValue(undefined);
 			await this.setNewKeys(secret);
 		}
 
@@ -133,14 +133,14 @@ export class Core {
 		const newKeys	= await Core.newKeys(this.potassium, this.isAlice, secret);
 
 		const [oldIncoming, oldOutgoing]	= await Promise.all([
-			this.keys.current.incoming.getValue(),
-			this.keys.current.outgoing.getValue()
+			this.symmetricKeys.current.incoming.getValue(),
+			this.symmetricKeys.current.outgoing.getValue()
 		]);
 
-		this.keys.previous.incoming.setValue(new Uint8Array(oldIncoming));
-		this.keys.previous.outgoing.setValue(new Uint8Array(oldOutgoing));
-		this.keys.current.incoming.setValue(newKeys.incoming);
-		this.keys.current.outgoing.setValue(newKeys.outgoing);
+		this.symmetricKeys.previous.incoming.setValue(new Uint8Array(oldIncoming));
+		this.symmetricKeys.previous.outgoing.setValue(new Uint8Array(oldOutgoing));
+		this.symmetricKeys.current.incoming.setValue(newKeys.incoming);
+		this.symmetricKeys.current.outgoing.setValue(newKeys.outgoing);
 	}
 
 	/**
@@ -157,7 +157,7 @@ export class Core {
 			const messageId	= new Uint8Array(cyphertext.buffer, cyphertext.byteOffset, 8);
 			const encrypted	= new Uint8Array(cyphertext.buffer, cyphertext.byteOffset + 8);
 
-			for (const keys of [this.keys.current, this.keys.previous]) {
+			for (const keys of [this.symmetricKeys.current, this.symmetricKeys.previous]) {
 				try {
 					const key			= await keys.incoming.getValue();
 
@@ -185,9 +185,9 @@ export class Core {
 
 						startIndex += ephemeralKeyExchangePublicKeyBytes;
 					}
-					else if (keys === this.keys.current) {
-						this.keys.previous.incoming.setValue(undefined);
-						this.keys.previous.outgoing.setValue(undefined);
+					else if (keys === this.symmetricKeys.current) {
+						this.symmetricKeys.previous.incoming.setValue(undefined);
+						this.symmetricKeys.previous.outgoing.setValue(undefined);
 					}
 
 					const plaintext	= new DataView(decrypted.buffer, startIndex);
@@ -209,7 +209,7 @@ export class Core {
 	 */
 	public async encrypt (plaintext: Uint8Array, messageId: Uint8Array) : Promise<Uint8Array> {
 		const o	= await this.lock(async () => {
-			for (const keys of [this.keys.previous, this.keys.current]) {
+			for (const keys of [this.symmetricKeys.previous, this.symmetricKeys.current]) {
 				const oldKey	= await keys.outgoing.getValue();
 				if (oldKey) {
 					keys.outgoing.setValue(await this.potassium.hash.deriveKey(oldKey));
@@ -224,8 +224,8 @@ export class Core {
 			);
 
 			const key	= new Uint8Array(
-				await this.keys.previous.outgoing.getValue().then(value =>
-					value || this.keys.current.outgoing.getValue()
+				await this.symmetricKeys.previous.outgoing.getValue().then(value =>
+					value || this.symmetricKeys.current.outgoing.getValue()
 				)
 			);
 
@@ -252,7 +252,7 @@ export class Core {
 		private readonly isAlice: boolean,
 
 		/** State of the symmetric (forward-secret) ratchet. */
-		private readonly keys: {
+		private readonly symmetricKeys: {
 			current: {
 				incoming: IAsyncValue<Uint8Array>;
 				outgoing: IAsyncValue<Uint8Array>;
@@ -264,7 +264,7 @@ export class Core {
 		},
 
 		/** State of the asymmetric (future-secret) ratchet. */
-		private readonly ephemeralKeys: {
+		private readonly asymmetricKeys: {
 			privateKey: IAsyncValue<Uint8Array|undefined>;
 			publicKey: IAsyncValue<Uint8Array|undefined>;
 		} = {
