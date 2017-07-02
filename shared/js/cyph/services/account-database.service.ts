@@ -293,6 +293,7 @@ export class AccountDatabaseService {
 			}
 			else if (currentValue) {
 				this.potassiumService.clearMemory(currentValue);
+				currentValue	= undefined;
 			}
 
 			const value	= await this.getItem(url, publicData);
