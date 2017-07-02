@@ -3,8 +3,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UserPresence, userPresenceSelectOptions} from '../account/enums';
 import {User} from '../account/user';
 import {AccountAuthService} from '../services/account-auth.service';
-import {AccountDatabaseService} from '../services/account-database.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
+import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
 
 

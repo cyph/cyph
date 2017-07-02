@@ -3,8 +3,8 @@ import {BehaviorSubject, Subject} from 'rxjs';
 import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
 import {AccountAuthService} from './account-auth.service';
-import {AccountDatabaseService} from './account-database.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
+import {AccountDatabaseService} from './crypto/account-database.service';
 
 
 /**

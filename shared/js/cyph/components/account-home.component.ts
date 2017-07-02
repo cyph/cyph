@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {AccountContactsService} from '../services/account-contacts.service';
-import {AccountDatabaseService} from '../services/account-database.service';
+import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
 
 

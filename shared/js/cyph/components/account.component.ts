@@ -2,9 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as Granim from 'granim';
 import {AccountAuthService} from '../services/account-auth.service';
-import {AccountDatabaseService} from '../services/account-database.service';
 import {AccountEnvService} from '../services/account-env.service';
 import {AccountService} from '../services/account.service';
+import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
 
 

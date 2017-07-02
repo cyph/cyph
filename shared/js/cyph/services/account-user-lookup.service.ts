@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {User} from '../account/user';
-import {AccountDatabaseService} from './account-database.service';
+import {AccountDatabaseService} from './crypto/account-database.service';
 
 
 /**

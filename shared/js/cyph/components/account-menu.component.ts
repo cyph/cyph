@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {UserPresence} from '../account/enums';
-import {AccountDatabaseService} from '../services/account-database.service';
 import {AccountService} from '../services/account.service';
+import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
 
 
