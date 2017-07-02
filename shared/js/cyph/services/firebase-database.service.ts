@@ -250,7 +250,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public uploadItem (url: string, value: DataType) : {
 		cancel: () => void;
 		progress: Observable<number>;
-		result: Promise<string>;
+		result: Promise<{hash: string; url: string}>;
 	} {
 		let cancel	= () => {};
 		const cancelPromise	= new Promise<void>(resolve => {
@@ -264,7 +264,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
 			this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
 
-			return new Promise<string>(async (resolve, reject) => {
+			return new Promise<{hash: string; url: string}>(async (resolve, reject) => {
 				const uploadTask	= (await this.getStorageRef(url)).put(new Blob([data]));
 
 				cancelPromise.then(() => {
@@ -282,7 +282,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						try {
 							await (await this.getDatabaseRef(url)).set(hash).then();
 							progress.next(100);
-							resolve(url);
+							resolve({hash, url});
 						}
 						catch (err) {
 							reject(err);

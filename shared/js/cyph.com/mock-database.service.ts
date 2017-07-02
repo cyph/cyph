@@ -56,7 +56,7 @@ export class MockDatabaseService extends DatabaseService {
 	public uploadItem (url: string, value: DataType) : {
 		cancel: () => void;
 		progress: Observable<number>;
-		result: Promise<string>;
+		result: Promise<{hash: string; url: string}>;
 	} {
 		const progress	= new BehaviorSubject(0);
 
@@ -64,7 +64,7 @@ export class MockDatabaseService extends DatabaseService {
 			const data	= await util.toBytes(value);
 			await this.pretendToTransferData(15, data.length, progress);
 			this.uploadedItems.set(url, data);
-			return url;
+			return {hash: '', url};
 		})();
 
 		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
