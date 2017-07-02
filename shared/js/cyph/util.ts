@@ -95,28 +95,48 @@ export class Util {
 	}
 
 	/** Converts byte array produced by toBytes into a boolean. */
-	public bytesToBoolean (bytes: Uint8Array) : boolean {
-		return bytes[0] === 1;
+	public bytesToBoolean (bytes: Uint8Array, clearInput: boolean = true) : boolean {
+		const value	= bytes[0] === 1;
+		if (clearInput) {
+			potassiumUtil.clearMemory(bytes);
+		}
+		return value;
 	}
 
 	/** Converts byte array produced by toBytes into a base64 data URI. */
-	public bytesToDataURI (bytes: Uint8Array) : string {
-		return 'data:application/octet-stream;base64,' + potassiumUtil.toBase64(bytes);
+	public bytesToDataURI (bytes: Uint8Array, clearInput: boolean = true) : string {
+		const value	= 'data:application/octet-stream;base64,' + potassiumUtil.toBase64(bytes);
+		if (clearInput) {
+			potassiumUtil.clearMemory(bytes);
+		}
+		return value;
 	}
 
 	/** Converts byte array produced by toBytes into a number. */
-	public bytesToNumber (bytes: Uint8Array) : number {
-		return new DataView(bytes.buffer, bytes.byteOffset).getFloat64(0, true);
+	public bytesToNumber (bytes: Uint8Array, clearInput: boolean = true) : number {
+		const value	= new DataView(bytes.buffer, bytes.byteOffset).getFloat64(0, true);
+		if (clearInput) {
+			potassiumUtil.clearMemory(bytes);
+		}
+		return value;
 	}
 
 	/** Converts byte array produced by toBytes into a generic object. */
-	public bytesToObject<T> (bytes: Uint8Array) : T {
-		return this.parse<T>(this.bytesToString(bytes));
+	public bytesToObject<T> (bytes: Uint8Array, clearInput: boolean = true) : T {
+		const value	= this.parse<T>(this.bytesToString(bytes));
+		if (clearInput) {
+			potassiumUtil.clearMemory(bytes);
+		}
+		return value;
 	}
 
 	/** Converts byte array produced by toBytes into a string. */
-	public bytesToString (bytes: Uint8Array) : string {
-		return potassiumUtil.toString(bytes);
+	public bytesToString (bytes: Uint8Array, clearInput: boolean = true) : string {
+		const value	= potassiumUtil.toString(bytes);
+		if (clearInput) {
+			potassiumUtil.clearMemory(bytes);
+		}
+		return value;
 	}
 
 	/** Sends an email to the Cyph team. "@cyph.com" may be omitted from to. */
