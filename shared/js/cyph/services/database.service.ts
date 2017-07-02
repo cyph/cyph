@@ -127,13 +127,21 @@ export class DatabaseService extends DataManagerService {
 	 * Pushes an item to a list.
 	 * @returns Item URL.
 	 */
-	public async pushItem (_URL: string, _VALUE: DataType) : Promise<string> {
+	public async pushItem (_URL: string, _VALUE: DataType) : Promise<{hash: string; url: string}> {
 		throw new Error('Must provide an implementation of DatabaseService.pushItem.');
 	}
 
 	/** Registers. */
 	public async register (_USERNAME: string, _PASSWORD: string) : Promise<void> {
 		throw new Error('Must provide an implementation of DatabaseService.register.');
+	}
+
+	/**
+	 * Pushes an item to a list.
+	 * @returns Item URL.
+	 */
+	public async setItem (_URL: string, _VALUE: DataType) : Promise<{hash: string; url: string}> {
+		throw new Error('Must provide an implementation of DatabaseService.setItem.');
 	}
 
 	/** Returns value representing the database server's timestamp. */

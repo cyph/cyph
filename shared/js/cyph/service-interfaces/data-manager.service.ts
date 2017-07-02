@@ -7,7 +7,7 @@ import {util} from '../util';
  */
 export class DataManagerService {
 	/** Gets an item's value. */
-	public async getItem (_KEY: string) : Promise<Uint8Array> {
+	public async getItem (_URL: string) : Promise<Uint8Array> {
 		throw new Error('Must provide an implementation of getItem.');
 	}
 
@@ -15,46 +15,46 @@ export class DataManagerService {
 	 * Gets a value as a boolean.
 	 * @see getItem
 	 */
-	public async getItemBoolean (key: string) : Promise<boolean> {
-		return util.bytesToBoolean(await this.getItem(key));
+	public async getItemBoolean (url: string) : Promise<boolean> {
+		return util.bytesToBoolean(await this.getItem(url));
 	}
 
 	/**
 	 * Gets a value as a number.
 	 * @see getItem
 	 */
-	public async getItemNumber (key: string) : Promise<number> {
-		return util.bytesToNumber(await this.getItem(key));
+	public async getItemNumber (url: string) : Promise<number> {
+		return util.bytesToNumber(await this.getItem(url));
 	}
 
 	/**
 	 * Gets a value as an object.
 	 * @see getItem
 	 */
-	public async getItemObject<T> (key: string) : Promise<T> {
-		return util.bytesToObject<T>(await this.getItem(key));
+	public async getItemObject<T> (url: string) : Promise<T> {
+		return util.bytesToObject<T>(await this.getItem(url));
 	}
 
 	/**
 	 * Gets a value as a string.
 	 * @see getItem
 	 */
-	public async getItemString (key: string) : Promise<string> {
-		return util.bytesToString(await this.getItem(key));
+	public async getItemString (url: string) : Promise<string> {
+		return util.bytesToString(await this.getItem(url));
 	}
 
 	/**
 	 * Gets a value as a base64 data URI.
 	 * @see getItem
 	 */
-	public async getItemURI (key: string) : Promise<string> {
-		return util.bytesToDataURI(await this.getItem(key));
+	public async getItemURI (url: string) : Promise<string> {
+		return util.bytesToDataURI(await this.getItem(url));
 	}
 
 	/** Checks whether an item exists. */
-	public async hasItem (key: string) : Promise<boolean> {
+	public async hasItem (url: string) : Promise<boolean> {
 		try {
-			await this.getItem(key);
+			await this.getItem(url);
 			return true;
 		}
 		catch (_) {
@@ -63,15 +63,15 @@ export class DataManagerService {
 	}
 
 	/** Deletes an item. */
-	public async removeItem (_KEY: string) : Promise<void> {
+	public async removeItem (_URL: string) : Promise<void> {
 		throw new Error('Must provide an implementation of removeItem.');
 	}
 
 	/**
 	 * Sets an item's value.
-	 * @returns Item key.
+	 * @returns Item url.
 	 */
-	public async setItem (_KEY: string, _VALUE: DataType) : Promise<string> {
+	public async setItem (_URL: string, _VALUE: DataType) : Promise<{url: string}> {
 		throw new Error('Must provide an implementation of setItem.');
 	}
 
