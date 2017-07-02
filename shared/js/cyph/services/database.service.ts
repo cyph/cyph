@@ -153,7 +153,7 @@ export class DatabaseService extends DataManagerService {
 	public uploadItem (_URL: string, _VALUE: DataType) : {
 		cancel: () => void;
 		progress: Observable<number>;
-		result: Promise<string>;
+		result: Promise<{hash: string; url: string}>;
 	} {
 		throw new Error('Must provide an implementation of DatabaseService.uploadItem.');
 	}
