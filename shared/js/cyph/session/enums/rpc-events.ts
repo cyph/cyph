@@ -15,6 +15,9 @@ export class RpcEvents {
 	public readonly p2p: string				= 'p2p';
 
 	/** @see RpcEvents */
+	public readonly symmetricKey: string	= 'symmetricKey';
+
+	/** @see RpcEvents */
 	public readonly text: string			= 'text';
 
 	/** @see RpcEvents */
