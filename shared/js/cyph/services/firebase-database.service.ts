@@ -95,7 +95,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async getItem (url: string) : Promise<Uint8Array> {
-		const hash	= (await (await this.getDatabaseRef(url)).once('value').then()).val();
+		const hash	= (await (await this.getDatabaseRef(url)).once('value')).val();
 		if (typeof hash !== 'string') {
 			throw new Error(`Item at ${url} not found.`);
 		}
@@ -177,6 +177,20 @@ export class FirebaseDatabaseService extends DatabaseService {
 			},
 			reason
 		);
+	}
+
+	/** @inheritDoc */
+	public async lockStatus (url: string) : Promise<{locked: boolean; reason: string|undefined}> {
+		const value: {[key: string]: {id: string; reason?: string}}	=
+			(await (await this.getDatabaseRef(url)).once('value')).val() || {}
+		;
+
+		const keys	= Object.keys(value).sort();
+
+		return {
+			locked: keys.length > 0,
+			reason: (value[keys[0]] || {}).reason
+		};
 	}
 
 	/** @inheritDoc */

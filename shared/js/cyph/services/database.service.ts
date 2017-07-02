@@ -108,6 +108,11 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.lock.');
 	}
 
+	/** Checks whether a lock is currently claimed and what the specified reason is. */
+	public async lockStatus (_URL: string) : Promise<{locked: boolean; reason: string|undefined}> {
+		throw new Error('Must provide an implementation of DatabaseService.lockStatus.');
+	}
+
 	/** Logs in. */
 	public async login (_USERNAME: string, _PASSWORD: string) : Promise<void> {
 		throw new Error('Must provide an implementation of DatabaseService.login.');
