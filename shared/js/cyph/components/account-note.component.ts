@@ -30,7 +30,7 @@ export class AccountNoteComponent implements OnInit {
 					throw new Error();
 				}
 
-				this.note	= await this.accountFilesService.getFile(id, 'note');
+				this.note	= (await this.accountFilesService.getFile(id, 'note')).file;
 			}
 			catch (_) {
 				this.routerService.navigate(['404']);

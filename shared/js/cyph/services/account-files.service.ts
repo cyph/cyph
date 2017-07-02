@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {IFileRecord} from '../files/ifile-record';
+import {IAsyncValue} from '../iasync-value';
 import {util} from '../util';
-import {AccountAuthService} from './account-auth.service';
 import {AccountDatabaseService} from './account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 
@@ -13,13 +13,17 @@ import {PotassiumService} from './crypto/potassium.service';
 @Injectable()
 export class AccountFilesService {
 	/** @ignore */
-	private readonly lock: {}	= {};
+	private readonly filesObservable: Observable<IFileRecord[]|undefined>	=
+		this.accountDatabaseService.watchItemObject<IFileRecord[]>('fileList')
+	;
 
 	/** @ignore */
-	private readonly noteSnippets: Map<string, string>		= new Map<string, string>();
+	private readonly noteSnippets: Map<string, string>	= new Map<string, string>();
 
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
-	public readonly files: BehaviorSubject<IFileRecord[]>	= new BehaviorSubject([]);
+	public readonly files: IAsyncValue<IFileRecord[]>	=
+		this.accountDatabaseService.getAsyncValueObject<IFileRecord[]>('fileList')
+	;
 
 	/**
 	 * Files filtered by record type.
@@ -32,26 +36,14 @@ export class AccountFilesService {
 
 	/** @ignore */
 	private filterFiles (filterRecordType: 'file'|'note') : Observable<IFileRecord[]> {
-		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
-		return (<any> this.files).map((files: any) =>
-			files.filter((o: any) => !filterRecordType || o.recordType === filterRecordType)
+		return this.filesObservable.map(files =>
+			(files || []).filter(o => !filterRecordType || o.recordType === filterRecordType)
 		);
 	}
 
-	/**
-	 * For now, only run within util.lock.
-	 * TODO: Account-wide locking, or other more robust solution.
-	 */
-	private async updateFiles () : Promise<void> {
-		if (!this.accountDatabaseService.current) {
-			return;
-		}
-
-		this.files.next((
-			await this.accountDatabaseService.getItemObject<IFileRecord[]>('fileList')
-		).sort(
-			(a, b) => b.timestamp - a.timestamp
-		));
+	/** @ignore */
+	private async lock<T> (f: () => Promise<T>) : Promise<T> {
+		return this.accountDatabaseService.lock('accountFilesService', f);
 	}
 
 	/** Downloads and saves file. */
@@ -66,7 +58,7 @@ export class AccountFilesService {
 			result: (async () => {
 				await util.saveFile(
 					await result,
-					(await this.getFile(id)).name
+					(await this.getFile(id)).file.name
 				);
 			})()
 		};
@@ -89,8 +81,13 @@ export class AccountFilesService {
 	}
 
 	/** Gets the specified file record. */
-	public async getFile (id: string, filterRecordType?: 'file'|'note') : Promise<IFileRecord> {
-		const file	= this.files.value.find(o =>
+	public async getFile (id: string, filterRecordType?: 'file'|'note') : Promise<{
+		file: IFileRecord;
+		files: IFileRecord[];
+	}> {
+		const files	= await this.files.getValue();
+
+		const file	= files.find(o =>
 			o.id === id &&
 			(!filterRecordType || o.recordType === filterRecordType)
 		);
@@ -99,7 +96,7 @@ export class AccountFilesService {
 			throw new Error('Specified file does not exist.');
 		}
 
-		return file;
+		return {file, files};
 	}
 
 	/** Gets the Material icon name for the file default thumbnail. */
@@ -141,19 +138,15 @@ export class AccountFilesService {
 
 	/** Overwrites an existing note. */
 	public async updateNote (id: string, content: string) : Promise<void> {
-		await util.lock(this.lock, async () => {
-			await this.updateFiles();
+		await this.getFile(id, 'note');
+		await this.accountDatabaseService.setItem(`files/${id}`, content);
 
-			const file	= await this.getFile(id, 'note');
+		await this.lock(async () => {
+			const {file, files}	= await this.getFile(id, 'note');
+			file.size			= this.potassiumService.fromString(content).length;
+			file.timestamp		= await util.timestamp();
 
-			await this.accountDatabaseService.setItem(`files/${id}`, content);
-
-			file.size		= this.potassiumService.fromString(content).length;
-			file.timestamp	= await util.timestamp();
-
-			await this.accountDatabaseService.setItem('fileList', this.files.value);
-
-			await this.updateFiles();
+			this.files.setValue(files.sort((a, b) => b.timestamp - a.timestamp));
 		});
 	}
 
@@ -170,48 +163,37 @@ export class AccountFilesService {
 
 		return {
 			progress,
-			result: result.then(async () => {
-				await util.lock(this.lock, async () => {
-					await this.accountDatabaseService.setItem(
-						'fileList',
-						this.files.value.concat({
-							id,
-							mediaType: typeof file === 'string' ?
-								'text/plain' :
-								file.type
-							,
-							name,
-							recordType: typeof file === 'string' ?
-								'note' :
-								'file'
-							,
-							size: typeof file === 'string' ?
-								this.potassiumService.fromString(file).length :
-								file.size
-							,
-							timestamp: await util.timestamp()
-						})
-					);
-
-					await this.updateFiles();
-				});
-			})
+			result: result.then(async () => this.lock(async () =>
+				this.files.setValue(
+					(await this.files.getValue()).concat({
+						id,
+						mediaType: typeof file === 'string' ?
+							'text/plain' :
+							file.type
+						,
+						name,
+						recordType: typeof file === 'string' ?
+							'note' :
+							'file'
+						,
+						size: typeof file === 'string' ?
+							this.potassiumService.fromString(file).length :
+							file.size
+						,
+						timestamp: await util.timestamp()
+					}).sort(
+						(a, b) => b.timestamp - a.timestamp
+					)
+				)
+			))
 		};
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly accountAuthService: AccountAuthService,
-
-		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
-	) {
-		util.lock(this.lock, async () => this.updateFiles());
-		this.accountAuthService.onLogin.subscribe(() => {
-			util.lock(this.lock, async () => this.updateFiles());
-		});
-	}
+	) {}
 }
