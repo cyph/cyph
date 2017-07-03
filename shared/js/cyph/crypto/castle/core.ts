@@ -1,5 +1,6 @@
 import {IAsyncValue} from '../../iasync-value';
 import {LocalAsyncValue} from '../../local-async-value';
+import {LockFunction} from '../../lock-function-type';
 import {util} from '../../util';
 import {IPotassium} from '../potassium/ipotassium';
 
@@ -271,9 +272,6 @@ export class Core {
 		},
 
 		/** Lock function. */
-		private readonly lock: <T>(f: () => Promise<T>) => Promise<T> = (() => {
-			const localLock	= {};
-			return async <T> (f: () => Promise<T>) => util.lock(localLock, f);
-		})()
+		private readonly lock: LockFunction = util.lockFunction()
 	) {}
 }
