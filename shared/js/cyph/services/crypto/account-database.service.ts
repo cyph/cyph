@@ -7,6 +7,7 @@ import {IKeyPair} from '../../crypto/ikey-pair';
 import {IPublicKeys} from '../../crypto/ipublic-keys';
 import {DataType} from '../../data-type';
 import {IAsyncValue} from '../../iasync-value';
+import {LockFunction} from '../../lock-function-type';
 import {util} from '../../util';
 import {DatabaseService} from '../database.service';
 import {PotassiumService} from './potassium.service';
@@ -516,6 +517,13 @@ export class AccountDatabaseService {
 					)
 				)
 		);
+	}
+
+	/** Creates and returns a lock function that uses AccountDatabaseService.lock. */
+	public lockFunction (url: string) : LockFunction {
+		return async <T> (f: (reason?: string) => Promise<T>, reason?: string) =>
+			this.lock(url, f, reason)
+		;
 	}
 
 	/** Checks whether a lock is currently claimed and what the specified reason is. */
