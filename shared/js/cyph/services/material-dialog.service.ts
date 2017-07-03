@@ -3,6 +3,7 @@ import {ComponentType, MdDialog, MdSnackBar} from '@angular/material';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {DialogImageComponent} from '../components/dialog-image.component';
+import {LockFunction} from '../lock-function-type';
 import {util} from '../util';
 import {DialogService} from './dialog.service';
 
@@ -13,11 +14,11 @@ import {DialogService} from './dialog.service';
 @Injectable()
 export class MaterialDialogService implements DialogService {
 	/** @ignore */
-	private readonly lock: {}	= {};
+	private readonly lock: LockFunction	= util.lockFunction();
 
 	/** @inheritDoc */
 	public async alert (o: {content: string; ok: string; title: string}) : Promise<void> {
-		return util.lock(this.lock, async () => {
+		return this.lock(async () => {
 			const mdDialogRef	= this.mdDialog.open(DialogAlertComponent);
 
 			mdDialogRef.componentInstance.content	= o.content;
@@ -33,7 +34,7 @@ export class MaterialDialogService implements DialogService {
 		componentType: ComponentType<T>,
 		setInputs?: (componentInstance: T) => void
 	) : Promise<void> {
-		return util.lock(this.lock, async () => {
+		return this.lock(async () => {
 			const mdDialogRef	= this.mdDialog.open(componentType);
 
 			if (setInputs) {
@@ -52,7 +53,7 @@ export class MaterialDialogService implements DialogService {
 		timeout?: number;
 		title: string;
 	}) : Promise<boolean> {
-		return util.lock(this.lock, async () => {
+		return this.lock(async () => {
 			const mdDialogRef	= this.mdDialog.open(DialogConfirmComponent);
 
 			mdDialogRef.componentInstance.cancel	= o.cancel;
@@ -83,7 +84,7 @@ export class MaterialDialogService implements DialogService {
 
 	/** @inheritDoc */
 	public async image (src: string) : Promise<void> {
-		return util.lock(this.lock, async () => {
+		return this.lock(async () => {
 			const mdDialogRef	= this.mdDialog.open(DialogImageComponent);
 
 			mdDialogRef.componentInstance.src	= src;

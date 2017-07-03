@@ -3,6 +3,7 @@ import {List, Map as ImmutableMap} from 'immutable';
 import {BehaviorSubject} from 'rxjs';
 import {IChatData, IChatMessage, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
+import {LockFunction} from '../lock-function-type';
 import {events, rpcEvents, users} from '../session/enums';
 import {Message} from '../session/message';
 import {Timer} from '../timer';
@@ -31,7 +32,7 @@ export class ChatService {
 
 
 	/** @ignore */
-	private messageChangeLock: {}	= {};
+	private messageChangeLock: LockFunction	= util.lockFunction();
 
 	/** @see IChatData */
 	public chat: IChatData	= {
@@ -224,7 +225,7 @@ export class ChatService {
 	 * typing indicator signals through session.
 	 */
 	public async messageChange () : Promise<void> {
-		return util.lock(this.messageChangeLock, async () => {
+		return this.messageChangeLock(async () => {
 			for (let i = 0 ; i < 2 ; ++i) {
 				const isMessageChanged: boolean	=
 					this.chat.currentMessage !== '' &&
