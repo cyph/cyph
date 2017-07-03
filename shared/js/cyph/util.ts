@@ -247,7 +247,7 @@ export class Util {
 	public lockFunction () : LockFunction {
 		const lock	= {};
 		return async <T> (f: (reason?: string) => Promise<T>, reason?: string) =>
-			this.lock(lock, f)
+			this.lock(lock, f, reason)
 		;
 	}
 
