@@ -1,6 +1,6 @@
 import {IAsyncValue} from '../../iasync-value';
+import {LocalAsyncValue} from '../../local-async-value';
 import {util} from '../../util';
-import {AsyncBytes} from '../async-bytes';
 import {IPotassium} from '../potassium/ipotassium';
 
 
@@ -51,12 +51,12 @@ export class Core {
 
 		return {
 			current: {
-				incoming: new AsyncBytes(keys.incoming),
-				outgoing: new AsyncBytes(keys.outgoing)
+				incoming: new LocalAsyncValue(keys.incoming),
+				outgoing: new LocalAsyncValue(keys.outgoing)
 			},
 			previous: {
-				incoming: new AsyncBytes<Uint8Array|undefined>(undefined),
-				outgoing: new AsyncBytes<Uint8Array|undefined>(undefined)
+				incoming: new LocalAsyncValue<Uint8Array|undefined>(undefined),
+				outgoing: new LocalAsyncValue<Uint8Array|undefined>(undefined)
 			}
 		};
 	}
@@ -266,8 +266,8 @@ export class Core {
 			privateKey: IAsyncValue<Uint8Array|undefined>;
 			publicKey: IAsyncValue<Uint8Array|undefined>;
 		} = {
-			privateKey: new AsyncBytes<Uint8Array|undefined>(undefined),
-			publicKey: new AsyncBytes<Uint8Array|undefined>(undefined)
+			privateKey: new LocalAsyncValue<Uint8Array|undefined>(undefined),
+			publicKey: new LocalAsyncValue<Uint8Array|undefined>(undefined)
 		},
 
 		/** Lock function. */
