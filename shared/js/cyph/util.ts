@@ -5,6 +5,7 @@ import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {DataType} from './data-type';
 import {env} from './env';
+import {LockFunction} from './lock-function-type';
 
 
 /**
@@ -240,6 +241,14 @@ export class Util {
 			queue.shift();
 			releaseLock();
 		}
+	}
+
+	/** Creates and returns a lock function that uses Util.lock. */
+	public lockFunction () : LockFunction {
+		const lock	= {};
+		return async <T> (f: (reason?: string) => Promise<T>, reason?: string) =>
+			this.lock(lock, f, reason)
+		;
 	}
 
 	/**

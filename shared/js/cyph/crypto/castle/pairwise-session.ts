@@ -1,3 +1,6 @@
+import {IAsyncValue} from '../../iasync-value';
+import {LocalAsyncValue} from '../../local-async-value';
+import {LockFunction} from '../../lock-function-type';
 import {util} from '../../util';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
@@ -16,17 +19,6 @@ export class PairwiseSession {
 	});
 
 	/** @ignore */
-	private incomingMessageId: number	= 0;
-
-	/** @ignore */
-	private readonly incomingMessages: Map<number, Uint8Array[]>	=
-		new Map<number, Uint8Array[]>()
-	;
-
-	/** @ignore */
-	private incomingMessagesMax: number	= 0;
-
-	/** @ignore */
 	private isAborted: boolean;
 
 	/** @ignore */
@@ -34,15 +26,6 @@ export class PairwiseSession {
 
 	/** @ignore */
 	private localUser?: ILocalUser;
-
-	/** @ignore */
-	private readonly locks				= {
-		receive: {},
-		send: {}
-	};
-
-	/** @ignore */
-	private outgoingMessageId: number	= 0;
 
 	/** @ignore */
 	private remoteUser?: IRemoteUser;
@@ -119,61 +102,70 @@ export class PairwiseSession {
 	}
 
 	/** @ignore */
-	private newMessageId () : Uint8Array {
-		return new Uint8Array(new Float64Array([
-			this.outgoingMessageId++
-		]).buffer);
+	private async newOutgoingMessageId () : Promise<Uint8Array> {
+		const outgoingMessageId	= await this.outgoingMessageId.getValue();
+		this.outgoingMessageId.setValue(outgoingMessageId + 1);
+		return new Uint8Array(new Float64Array([outgoingMessageId]).buffer);
 	}
 
-	/**
-	 * Receive/decrypt incoming message.
-	 * @param cyphertext
-	 */
+	/** Receive/decrypt incoming message. */
 	public async receive (cyphertext: string) : Promise<void> {
 		if (this.isAborted) {
 			return;
 		}
 
+		let newMessageBytes: Uint8Array|undefined;
+		let newMessageId: number|undefined;
+
 		try {
-			const cyphertextBytes	= this.potassium.fromBase64(cyphertext);
+			newMessageBytes	= this.potassium.fromBase64(cyphertext);
 
 			if (this.transport.cyphertextIntercepters.length > 0) {
 				const cyphertextIntercepter	= this.transport.cyphertextIntercepters.shift();
 
 				if (cyphertextIntercepter) {
-					cyphertextIntercepter(cyphertextBytes);
+					cyphertextIntercepter(newMessageBytes);
 					return;
 				}
 			}
 
-			const id	= new Float64Array(cyphertextBytes.buffer, 0, 1)[0];
-
-			if (id >= this.incomingMessageId) {
-				this.incomingMessagesMax	= Math.max(
-					this.incomingMessagesMax,
-					id
-				);
-
-				util.getOrSetDefault(
-					this.incomingMessages,
-					id,
-					() => []
-				).push(
-					cyphertextBytes
-				);
-			}
+			newMessageId	= new DataView(newMessageBytes.buffer).getFloat64(0, true);
 		}
 		catch (_) {}
 
-		return util.lock(this.locks.receive, async () => {
-			while (this.incomingMessageId <= this.incomingMessagesMax) {
-				const incomingMessages	= this.incomingMessages.get(this.incomingMessageId);
+		return this.receiveLock(async () => {
+			const promises	= {
+				incomingMessageId: this.incomingMessageId.getValue(),
+				incomingMessages: this.incomingMessages.getValue(),
+				incomingMessagesMax: this.incomingMessagesMax.getValue()
+			};
+			let incomingMessageId	= await promises.incomingMessageId;
+			const incomingMessages	= await promises.incomingMessages;
+			let incomingMessagesMax	= await promises.incomingMessagesMax;
 
-				if (incomingMessages === undefined) {
+			if (
+				newMessageBytes !== undefined &&
+				newMessageId !== undefined &&
+				newMessageId >= incomingMessageId
+			) {
+				if (newMessageId > incomingMessagesMax) {
+					incomingMessagesMax	= newMessageId;
+				}
+
+				const message					= incomingMessages[newMessageId] || [];
+				incomingMessages[newMessageId]	= message;
+				message.push(newMessageBytes);
+			}
+
+			while (incomingMessageId <= incomingMessagesMax) {
+				const id		= incomingMessageId;
+				const message	= incomingMessages[id];
+
+				if (message === undefined) {
 					break;
 				}
 
-				for (const cyphertextBytes of incomingMessages) {
+				for (const cyphertextBytes of message) {
 					try {
 						let plaintext	= await (await this.core).decrypt(cyphertextBytes);
 
@@ -182,7 +174,7 @@ export class PairwiseSession {
 							const oldPlaintext	= this.potassium.toBytes(plaintext);
 							const plaintextData	= await this.handshakeOpenSecret(oldPlaintext);
 
-							plaintext	= new DataView(
+							plaintext	= new Uint8Array(
 								plaintextData.buffer,
 								plaintextData.byteOffset,
 								plaintextData.byteLength
@@ -196,13 +188,9 @@ export class PairwiseSession {
 							this.connect();
 						}
 
-						this.transport.receive(
-							cyphertextBytes,
-							plaintext,
-							this.remoteUsername
-						);
+						this.transport.receive(cyphertextBytes, plaintext, this.remoteUsername);
 
-						this.incomingMessages.delete(this.incomingMessageId++);
+						++incomingMessageId;
 						break;
 					}
 					catch (err) {
@@ -215,15 +203,17 @@ export class PairwiseSession {
 						this.potassium.clearMemory(cyphertextBytes);
 					}
 				}
+
+				incomingMessages[id]	= undefined;
 			}
+
+			this.incomingMessageId.setValue(incomingMessageId);
+			this.incomingMessages.setValue(incomingMessages);
+			this.incomingMessagesMax.setValue(incomingMessagesMax);
 		});
 	}
 
-	/**
-	 * Send/encrypt outgoing message.
-	 * @param plaintext
-	 * @param timestamp
-	 */
+	/** Send/encrypt outgoing message. */
 	public async send (plaintext: string, timestamp?: number) : Promise<void> {
 		if (this.isAborted) {
 			return;
@@ -242,7 +232,7 @@ export class PairwiseSession {
 			plaintextBytes
 		);
 
-		return util.lock(this.locks.send, async () => {
+		return this.sendLock(async () => {
 			/* Part 2 of handshake for Bob */
 			if (this.remoteUser) {
 				const oldData	= data;
@@ -250,7 +240,7 @@ export class PairwiseSession {
 				this.potassium.clearMemory(oldData);
 			}
 
-			const messageId		= this.newMessageId();
+			const messageId		= await this.newOutgoingMessageId();
 			const cyphertext	= await (await this.core).encrypt(data, messageId);
 
 			this.potassium.clearMemory(data);
@@ -269,7 +259,27 @@ export class PairwiseSession {
 
 		remoteUser: IRemoteUser,
 
-		isAlice: boolean
+		isAlice: boolean,
+
+		/** @ignore */
+		private readonly incomingMessageId: IAsyncValue<number> = new LocalAsyncValue(0),
+
+		/** @ignore */
+		private readonly incomingMessages: IAsyncValue<{[id: number]: Uint8Array[]|undefined}> =
+			new LocalAsyncValue<{[id: number]: Uint8Array[]|undefined}>({})
+		,
+
+		/** @ignore */
+		private readonly incomingMessagesMax: IAsyncValue<number> = new LocalAsyncValue(0),
+
+		/** @ignore */
+		private readonly outgoingMessageId: IAsyncValue<number> = new LocalAsyncValue(0),
+
+		/** @ignore */
+		private readonly receiveLock: LockFunction = util.lockFunction(),
+
+		/** @ignore */
+		private readonly sendLock: LockFunction = util.lockFunction()
 	) { (async () => {
 		try {
 			this.localUser	= localUser;
@@ -298,7 +308,7 @@ export class PairwiseSession {
 			this.resolveCore(new Core(
 				this.potassium,
 				isAlice,
-				[await Core.newKeys(this.potassium, isAlice, secret)]
+				await Core.initLocalKeys(this.potassium, isAlice, secret)
 			));
 		}
 		catch (err) {

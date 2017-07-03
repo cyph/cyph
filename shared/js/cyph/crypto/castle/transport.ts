@@ -48,11 +48,7 @@ export class Transport {
 		});
 	}
 
-	/**
-	 * Trigger event for logging cyphertext.
-	 * @param cyphertext
-	 * @param author
-	 */
+	/** Trigger event for logging cyphertext. */
 	public logCyphertext (cyphertext: string, author: string) : void {
 		if (cyphertext.length >= Transport.cyphertextLimit) {
 			return;
@@ -61,22 +57,17 @@ export class Transport {
 		this.session.trigger(events.cyphertext, {author, cyphertext});
 	}
 
-	/**
-	 * Handle decrypted incoming message.
-	 * @param cyphertext
-	 * @param plaintext
-	 * @param author
-	 */
-	public receive (cyphertext: Uint8Array, plaintext: DataView, author: string) : void {
+	/** Handle decrypted incoming message. */
+	public receive (cyphertext: Uint8Array, plaintext: Uint8Array, author: string) : void {
 		this.logCyphertext(potassiumUtil.toBase64(cyphertext), author);
 
-		const timestamp		= plaintext.getFloat64(0, true);
-		const data			= new Uint8Array(plaintext.buffer, plaintext.byteOffset + 8);
-		const dataString	= potassiumUtil.toString(data);
+		const timestamp	= new DataView(plaintext.buffer).getFloat64(plaintext.byteOffset, true);
+		const data		= new Uint8Array(plaintext.buffer, plaintext.byteOffset + 8);
+		const text		= potassiumUtil.toString(data);
 
-		if (dataString) {
+		if (text) {
 			this.session.trigger(events.castle, {
-				data: {author, plaintext: dataString, timestamp},
+				data: {author, text, timestamp},
 				event: CastleEvents.receive
 			});
 		}
@@ -84,11 +75,7 @@ export class Transport {
 		potassiumUtil.clearMemory(data);
 	}
 
-	/**
-	 * Send outgoing encrypted message.
-	 * @param cyphertext
-	 * @param messageId
-	 */
+	/** Send outgoing encrypted message. */
 	public send (cyphertext: string|ArrayBufferView, messageId?: ArrayBufferView) : void {
 		const fullCyphertext	= potassiumUtil.toBase64(
 			!messageId ? cyphertext : potassiumUtil.concatMemory(
