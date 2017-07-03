@@ -174,7 +174,7 @@ export class PairwiseSession {
 							const oldPlaintext	= this.potassium.toBytes(plaintext);
 							const plaintextData	= await this.handshakeOpenSecret(oldPlaintext);
 
-							plaintext	= new DataView(
+							plaintext	= new Uint8Array(
 								plaintextData.buffer,
 								plaintextData.byteOffset,
 								plaintextData.byteLength
@@ -188,11 +188,7 @@ export class PairwiseSession {
 							this.connect();
 						}
 
-						this.transport.receive(
-							cyphertextBytes,
-							plaintext,
-							this.remoteUsername
-						);
+						this.transport.receive(cyphertextBytes, plaintext, this.remoteUsername);
 
 						++incomingMessageId;
 						break;
