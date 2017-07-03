@@ -139,7 +139,7 @@ export class Core {
 	 * @param cyphertext Data to be decrypted.
 	 * @returns Plaintext.
 	 */
-	public async decrypt (cyphertext: Uint8Array) : Promise<DataView> {
+	public async decrypt (cyphertext: Uint8Array) : Promise<Uint8Array> {
 		const ephemeralKeyExchangePublicKeyBytes	=
 			await this.potassium.ephemeralKeyExchange.publicKeyBytes
 		;
@@ -183,7 +183,7 @@ export class Core {
 						this.symmetricKeys.current.outgoing.setValue(new Uint8Array(nextOutgoing));
 					}
 
-					return new DataView(decrypted.buffer, startIndex);
+					return new Uint8Array(decrypted.buffer, startIndex);
 				}
 				catch (_) {}
 			}
