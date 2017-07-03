@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {env} from '../env';
+import {LockFunction} from '../lock-function-type';
 import {IChannelHandlers} from '../session/ichannel-handlers';
 import {util} from '../util';
 import {DatabaseService} from './database.service';
@@ -48,7 +49,7 @@ export class ChannelService {
 	private resolveHandlers: (handlers: IChannelHandlers) => void;
 
 	/** @ignore */
-	private sendLock: {}	= {};
+	private sendLock: LockFunction	= util.lockFunction();
 
 	/** @ignore */
 	private userId: string;
@@ -222,7 +223,7 @@ export class ChannelService {
 	/** Sends message through this channel. */
 	public async send (message: string) : Promise<void> {
 		try {
-			await util.lock(this.sendLock, async () => {
+			await this.sendLock(async () => {
 				if (this.isClosed) {
 					return;
 				}
