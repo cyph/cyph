@@ -43,9 +43,9 @@ export class Core {
 			incoming: IAsyncValue<Uint8Array>;
 			outgoing: IAsyncValue<Uint8Array>;
 		};
-		previous: {
-			incoming: IAsyncValue<Uint8Array|undefined>;
-			outgoing: IAsyncValue<Uint8Array|undefined>;
+		next: {
+			incoming: IAsyncValue<Uint8Array>;
+			outgoing: IAsyncValue<Uint8Array>;
 		};
 	}> {
 		const keys	= await Core.newKeys(potassium, isAlice, secret);
@@ -55,9 +55,9 @@ export class Core {
 				incoming: new LocalAsyncValue(keys.incoming),
 				outgoing: new LocalAsyncValue(keys.outgoing)
 			},
-			previous: {
-				incoming: new LocalAsyncValue<Uint8Array|undefined>(undefined),
-				outgoing: new LocalAsyncValue<Uint8Array|undefined>(undefined)
+			next: {
+				incoming: new LocalAsyncValue(new Uint8Array(keys.incoming)),
+				outgoing: new LocalAsyncValue(new Uint8Array(keys.outgoing))
 			}
 		};
 	}
@@ -126,22 +126,12 @@ export class Core {
 		}
 	}
 
-	/**
-	 * Replaces keys.previous with the values of keys.current and keys.current
-	 * with a new set of keys derived from the secret using Core.newKeys.
-	 */
+	/** Replaces keys.next wit a new set of keys derived from the secret using Core.newKeys. */
 	private async setNewKeys (secret: Uint8Array) : Promise<void> {
 		const newKeys	= await Core.newKeys(this.potassium, this.isAlice, secret);
 
-		const [oldIncoming, oldOutgoing]	= await Promise.all([
-			this.symmetricKeys.current.incoming.getValue(),
-			this.symmetricKeys.current.outgoing.getValue()
-		]);
-
-		this.symmetricKeys.previous.incoming.setValue(new Uint8Array(oldIncoming));
-		this.symmetricKeys.previous.outgoing.setValue(new Uint8Array(oldOutgoing));
-		this.symmetricKeys.current.incoming.setValue(newKeys.incoming);
-		this.symmetricKeys.current.outgoing.setValue(newKeys.outgoing);
+		this.symmetricKeys.next.incoming.setValue(newKeys.incoming);
+		this.symmetricKeys.next.outgoing.setValue(newKeys.outgoing);
 	}
 
 	/**
@@ -158,15 +148,11 @@ export class Core {
 			const messageId	= new Uint8Array(cyphertext.buffer, cyphertext.byteOffset, 8);
 			const encrypted	= new Uint8Array(cyphertext.buffer, cyphertext.byteOffset + 8);
 
-			for (const keys of [this.symmetricKeys.current, this.symmetricKeys.previous]) {
+			for (const keys of [this.symmetricKeys.current, this.symmetricKeys.next]) {
 				try {
-					const key			= await keys.incoming.getValue();
-
-					if (!key) {
-						continue;
-					}
-
-					const incomingKey	= await this.potassium.hash.deriveKey(key);
+					const incomingKey	= await this.potassium.hash.deriveKey(
+						await keys.incoming.getValue()
+					);
 
 					const decrypted		= await this.potassium.secretBox.open(
 						encrypted,
@@ -186,9 +172,15 @@ export class Core {
 
 						startIndex += ephemeralKeyExchangePublicKeyBytes;
 					}
-					else if (keys === this.symmetricKeys.current) {
-						this.symmetricKeys.previous.incoming.setValue(undefined);
-						this.symmetricKeys.previous.outgoing.setValue(undefined);
+
+					if (keys === this.symmetricKeys.next) {
+						const [nextIncoming, nextOutgoing]	= await Promise.all([
+							this.symmetricKeys.next.incoming.getValue(),
+							this.symmetricKeys.next.outgoing.getValue()
+						]);
+
+						this.symmetricKeys.current.incoming.setValue(new Uint8Array(nextIncoming));
+						this.symmetricKeys.current.outgoing.setValue(new Uint8Array(nextOutgoing));
 					}
 
 					return new DataView(decrypted.buffer, startIndex);
@@ -208,25 +200,15 @@ export class Core {
 	 */
 	public async encrypt (plaintext: Uint8Array, messageId: Uint8Array) : Promise<Uint8Array> {
 		const o	= await this.lock(async () => {
-			for (const keys of [this.symmetricKeys.previous, this.symmetricKeys.current]) {
-				const oldKey	= await keys.outgoing.getValue();
-				if (oldKey) {
-					keys.outgoing.setValue(await this.potassium.hash.deriveKey(oldKey));
-					break;
-				}
-			}
+			const ratchet		= await this.ratchet();
+			const fullPlaintext	= this.potassium.concatMemory(false, ratchet, plaintext);
 
-			const fullPlaintext		= this.potassium.concatMemory(
-				false,
-				await this.ratchet(),
-				plaintext
+			const key			= await this.potassium.hash.deriveKey(
+				await this.symmetricKeys.current.outgoing.getValue()
 			);
 
-			const key	= new Uint8Array(
-				await this.symmetricKeys.previous.outgoing.getValue().then(value =>
-					value || this.symmetricKeys.current.outgoing.getValue()
-				)
-			);
+			this.symmetricKeys.current.outgoing.setValue(new Uint8Array(key));
+			this.potassium.clearMemory(ratchet);
 
 			return {fullPlaintext, key};
 		});
@@ -256,9 +238,9 @@ export class Core {
 				incoming: IAsyncValue<Uint8Array>;
 				outgoing: IAsyncValue<Uint8Array>;
 			};
-			previous: {
-				incoming: IAsyncValue<Uint8Array|undefined>;
-				outgoing: IAsyncValue<Uint8Array|undefined>;
+			next: {
+				incoming: IAsyncValue<Uint8Array>;
+				outgoing: IAsyncValue<Uint8Array>;
 			};
 		},
 
