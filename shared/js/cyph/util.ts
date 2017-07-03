@@ -4,8 +4,8 @@ import {saveAs} from 'file-saver';
 import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {DataType} from './data-type';
-import {LockFunction} from './lock-function-type';
 import {env} from './env';
+import {LockFunction} from './lock-function-type';
 
 
 /**

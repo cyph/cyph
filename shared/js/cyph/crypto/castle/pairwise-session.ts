@@ -134,15 +134,14 @@ export class PairwiseSession {
 		catch (_) {}
 
 		return this.receiveLock(async () => {
-			let [
-				incomingMessageId,
-				incomingMessages,
-				incomingMessagesMax
-			]	= await Promise.all([
-				this.incomingMessageId.getValue(),
-				this.incomingMessages.getValue(),
-				this.incomingMessagesMax.getValue()
-			]);
+			const promises	= {
+				incomingMessageId: this.incomingMessageId.getValue(),
+				incomingMessages: this.incomingMessages.getValue(),
+				incomingMessagesMax: this.incomingMessagesMax.getValue()
+			};
+			let incomingMessageId	= await promises.incomingMessageId;
+			const incomingMessages	= await promises.incomingMessages;
+			let incomingMessagesMax	= await promises.incomingMessagesMax;
 
 			if (
 				newMessageBytes !== undefined &&
@@ -271,7 +270,7 @@ export class PairwiseSession {
 
 		/** @ignore */
 		private readonly incomingMessages: IAsyncValue<{[id: number]: Uint8Array[]|undefined}> =
-			new LocalAsyncValue({})
+			new LocalAsyncValue<{[id: number]: Uint8Array[]|undefined}>({})
 		,
 
 		/** @ignore */
