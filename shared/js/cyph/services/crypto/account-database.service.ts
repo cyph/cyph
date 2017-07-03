@@ -493,6 +493,131 @@ export class AccountDatabaseService {
 		return util.bytesToDataURI(await this.getItem(url, publicData));
 	}
 
+	/**
+	 * Gets an async value that may be undefined.
+	 * @see getAsyncValue
+	 */
+	public getMaybeAsyncValue (
+		url: string,
+		publicData: boolean = false
+	) : IAsyncValue<Uint8Array|undefined> {
+		const {getValue, setValue}	= this.getAsyncValue(url, publicData);
+		const lock	= util.lockFunction();
+
+		return {
+			getValue: async () => lock(async () => {
+				await this.waitForUnlock(url);
+				if (!(await this.hasItem(url))) {
+					return;
+				}
+				return getValue();
+			}),
+			setValue: async (value?: Uint8Array) => lock(async () => {
+				if (value) {
+					await setValue(value);
+				}
+				else {
+					await this.removeItem(url);
+				}
+			})
+		};
+	}
+
+	/**
+	 * Gets an async value as a possibly-undefined boolean.
+	 * @see getMaybeAsyncValue
+	 */
+	public getMaybeAsyncValueBoolean (
+		url: string,
+		publicData: boolean = false
+	) : IAsyncValue<boolean|undefined> {
+		const {getValue, setValue}	= this.getMaybeAsyncValue(url, publicData);
+
+		return {
+			getValue: async () => {
+				const value	= await getValue();
+				return !value ? undefined : util.bytesToBoolean(value);
+			},
+			setValue: async (value: boolean) => setValue(await util.toBytes(value))
+		};
+	}
+
+	/**
+	 * Gets an async value as a possibly-undefined number.
+	 * @see getMaybeAsyncValue
+	 */
+	public getMaybeAsyncValueNumber (
+		url: string,
+		publicData: boolean = false
+	) : IAsyncValue<number|undefined> {
+		const {getValue, setValue}	= this.getMaybeAsyncValue(url, publicData);
+
+		return {
+			getValue: async () => {
+				const value	= await getValue();
+				return !value ? undefined : util.bytesToNumber(value);
+			},
+			setValue: async (value: number) => setValue(await util.toBytes(value))
+		};
+	}
+
+	/**
+	 * Gets an async value as a possibly-undefined object.
+	 * @see getMaybeAsyncValue
+	 */
+	public getMaybeAsyncValueObject<T> (
+		url: string,
+		publicData: boolean = false
+	) : IAsyncValue<T|undefined> {
+		const {getValue, setValue}	= this.getMaybeAsyncValue(url, publicData);
+
+		return {
+			getValue: async () => {
+				const value	= await getValue();
+				return !value ? undefined : util.bytesToObject<T>(value);
+			},
+			setValue: async (value: T) => setValue(await util.toBytes(value))
+		};
+	}
+
+	/**
+	 * Gets an async value as a possibly-undefined string.
+	 * @see getMaybeAsyncValue
+	 */
+	public getMaybeAsyncValueString (
+		url: string,
+		publicData: boolean = false
+	) : IAsyncValue<string|undefined> {
+		const {getValue, setValue}	= this.getMaybeAsyncValue(url, publicData);
+
+		return {
+			getValue: async () => {
+				const value	= await getValue();
+				return !value ? undefined : util.bytesToString(value);
+			},
+			setValue: async (value: string) => setValue(await util.toBytes(value))
+		};
+	}
+
+	/**
+	 * Gets an async value as a possibly-undefined base64 data URI.
+	 * @see getMaybeAsyncValue
+	 */
+	public getMaybeAsyncValueURI (
+		url: string,
+		publicData: boolean = false
+	) : IAsyncValue<string|undefined> {
+		const {getValue, setValue}	= this.getMaybeAsyncValue(url, publicData);
+
+		return {
+			getValue: async () => {
+				const value	= await getValue();
+				return !value ? undefined : util.bytesToDataURI(value);
+			},
+			setValue: async (value: string) => setValue(await util.toBytes(value))
+		};
+	}
+
 	/** Gets public keys belonging to the specified user. */
 	public async getUserPublicKeys (username: string) : Promise<IPublicKeys> {
 		const certificate	= await this.databaseService.getItem(`users/${username}/certificate`);
