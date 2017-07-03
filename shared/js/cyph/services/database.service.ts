@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import * as firebase from 'firebase';
 import {Observable} from 'rxjs';
 import {DataType} from '../data-type';
+import {LockFunction} from '../lock-function-type';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {util} from '../util';
 
@@ -111,6 +112,13 @@ export class DatabaseService extends DataManagerService {
 		_REASON?: string
 	) : Promise<T> {
 		throw new Error('Must provide an implementation of DatabaseService.lock.');
+	}
+
+	/** Creates and returns a lock function that uses DatabaseService.lock. */
+	public lockFunction (url: string) : LockFunction {
+		return async <T> (f: (reason?: string) => Promise<T>, reason?: string) =>
+			this.lock(url, f, reason)
+		;
 	}
 
 	/** Checks whether a lock is currently claimed and what the specified reason is. */
