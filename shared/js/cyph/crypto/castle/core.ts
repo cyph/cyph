@@ -9,8 +9,8 @@ import {IPotassium} from '../potassium/ipotassium';
  * The core Castle protocol logic.
  */
 export class Core {
-	/** @ignore */
-	private static async newKeys (
+	/** Convert newly established shared secret into session keys. */
+	public static async newSymmetricKeys (
 		potassium: IPotassium,
 		isAlice: boolean,
 		secret: Uint8Array
@@ -33,39 +33,11 @@ export class Core {
 		;
 	}
 
-	/** Convert newly established shared secret into session keys. */
-	public static async initLocalKeys (
-		potassium: IPotassium,
-		isAlice: boolean,
-		secret: Uint8Array
-	) : Promise<{
-		current: {
-			incoming: IAsyncValue<Uint8Array>;
-			outgoing: IAsyncValue<Uint8Array>;
-		};
-		next: {
-			incoming: IAsyncValue<Uint8Array>;
-			outgoing: IAsyncValue<Uint8Array>;
-		};
-	}> {
-		const keys	= await Core.newKeys(potassium, isAlice, secret);
-
-		return {
-			current: {
-				incoming: new LocalAsyncValue(keys.incoming),
-				outgoing: new LocalAsyncValue(keys.outgoing)
-			},
-			next: {
-				incoming: new LocalAsyncValue(new Uint8Array(keys.incoming)),
-				outgoing: new LocalAsyncValue(new Uint8Array(keys.outgoing))
-			}
-		};
-	}
-
 
 	/** @ignore */
-	private async ratchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
+	private async asymmetricRatchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
 		let outgoingPublicKey: Uint8Array|undefined;
+		let secret: Uint8Array|undefined;
 
 		const asymmetricKeys	= await (async () => {
 			const [privateKey, publicKey]	= await Promise.all([
@@ -91,8 +63,8 @@ export class Core {
 				)
 			;
 
+			secret	= secretData.secret;
 			this.asymmetricKeys.publicKey.setValue(secretData.publicKey);
-			await this.setNewKeys(secretData.secret);
 		}
 
 		/* Part 2b: Bob (outgoing) */
@@ -103,7 +75,7 @@ export class Core {
 
 		/* Part 3: Alice (incoming) */
 		else if (this.isAlice && asymmetricKeys.privateKey && incomingPublicKey) {
-			const secret	=
+			secret	=
 				await this.potassium.ephemeralKeyExchange.aliceSecret(
 					incomingPublicKey,
 					asymmetricKeys.privateKey
@@ -111,7 +83,12 @@ export class Core {
 			;
 
 			this.asymmetricKeys.privateKey.setValue(undefined);
-			await this.setNewKeys(secret);
+		}
+
+		if (secret) {
+			const newKeys	= await Core.newSymmetricKeys(this.potassium, this.isAlice, secret);
+			this.symmetricKeys.next.incoming.setValue(newKeys.incoming);
+			this.symmetricKeys.next.outgoing.setValue(newKeys.outgoing);
 		}
 
 		if (outgoingPublicKey) {
@@ -124,14 +101,6 @@ export class Core {
 		else {
 			return new Uint8Array([0]);
 		}
-	}
-
-	/** Replaces keys.next with a new set of keys derived from the secret using Core.newKeys. */
-	private async setNewKeys (secret: Uint8Array) : Promise<void> {
-		const newKeys	= await Core.newKeys(this.potassium, this.isAlice, secret);
-
-		this.symmetricKeys.next.incoming.setValue(newKeys.incoming);
-		this.symmetricKeys.next.outgoing.setValue(newKeys.outgoing);
 	}
 
 	/**
@@ -164,7 +133,7 @@ export class Core {
 
 					let startIndex	= 1;
 					if (decrypted[0] === 1) {
-						await this.ratchet(new Uint8Array(
+						await this.asymmetricRatchet(new Uint8Array(
 							decrypted.buffer,
 							startIndex,
 							ephemeralKeyExchangePublicKeyBytes
@@ -200,15 +169,15 @@ export class Core {
 	 */
 	public async encrypt (plaintext: Uint8Array, messageId: Uint8Array) : Promise<Uint8Array> {
 		const o	= await this.lock(async () => {
-			const ratchet		= await this.ratchet();
-			const fullPlaintext	= this.potassium.concatMemory(false, ratchet, plaintext);
+			const ratchetData	= await this.asymmetricRatchet();
+			const fullPlaintext	= this.potassium.concatMemory(false, ratchetData, plaintext);
 
 			const key			= await this.potassium.hash.deriveKey(
 				await this.symmetricKeys.current.outgoing.getValue()
 			);
 
 			this.symmetricKeys.current.outgoing.setValue(new Uint8Array(key));
-			this.potassium.clearMemory(ratchet);
+			this.potassium.clearMemory(ratchetData);
 
 			return {fullPlaintext, key};
 		});

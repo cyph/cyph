@@ -305,10 +305,21 @@ export class PairwiseSession {
 				this.send('');
 			}
 
+			const symmetricKeys	= await Core.newSymmetricKeys(this.potassium, isAlice, secret);
+
 			this.resolveCore(new Core(
 				this.potassium,
 				isAlice,
-				await Core.initLocalKeys(this.potassium, isAlice, secret)
+				{
+					current: {
+						incoming: new LocalAsyncValue(symmetricKeys.incoming),
+						outgoing: new LocalAsyncValue(symmetricKeys.outgoing)
+					},
+					next: {
+						incoming: new LocalAsyncValue(new Uint8Array(symmetricKeys.incoming)),
+						outgoing: new LocalAsyncValue(new Uint8Array(symmetricKeys.outgoing))
+					}
+				}
 			));
 		}
 		catch (err) {
