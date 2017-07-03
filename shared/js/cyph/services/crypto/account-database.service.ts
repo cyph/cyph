@@ -281,9 +281,9 @@ export class AccountDatabaseService {
 	public getAsyncValue (url: string, publicData: boolean = false) : IAsyncValue<Uint8Array> {
 		let currentHash: string|undefined;
 		let currentValue: Uint8Array|undefined;
-		const lock	= {};
+		const lock	= util.lockFunction();
 
-		const getValue	= async () => util.lock(lock, async () : Promise<Uint8Array> => {
+		const getValue	= async () => lock(async () : Promise<Uint8Array> => {
 			await this.waitForUnlock(url);
 
 			const hash	= await this.databaseService.getHash(url);
@@ -310,7 +310,7 @@ export class AccountDatabaseService {
 			return currentValue;
 		});
 
-		const setValue	= async (value: Uint8Array) => util.lock(lock, async () => {
+		const setValue	= async (value: Uint8Array) => lock(async () => {
 			if (currentValue) {
 				this.potassiumService.clearMemory(currentValue);
 			}
