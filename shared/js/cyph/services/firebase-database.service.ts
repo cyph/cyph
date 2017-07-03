@@ -150,14 +150,20 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return util.lock(
 			util.getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
 			async () => {
+				let lock: firebase.database.ThenableReference|undefined;
+
 				const queue	= await this.getDatabaseRef(url);
 				const id	= util.uuid();
-				const lock	= queue.push({id, reason});
 
-				lock.onDisconnect().remove();
+				const contendForLock	= () => {
+					lock	= queue.push({id, reason});
+					lock.onDisconnect().remove();
+				};
 
 				try {
 					let lastReason: string|undefined;
+
+					contendForLock();
 
 					await new Promise<void>(resolve => {
 						queue.on('value', async snapshot => {
@@ -165,22 +171,29 @@ export class FirebaseDatabaseService extends DatabaseService {
 								(snapshot && snapshot.val()) || {}
 							;
 
-							const o	= value[Object.keys(value).sort()[0]] || {};
+							const keys	= Object.keys(value).sort();
+							const o		= value[keys[0]] || {};
 
-							if (o.id !== id) {
-								lastReason	= o.reason;
+							if (o.id === id) {
+								resolve();
+								queue.off();
 								return;
 							}
 
-							resolve();
-							queue.off();
+							lastReason	= o.reason;
+
+							if (!keys.find(key => value[key].id === id)) {
+								contendForLock();
+							}
 						});
 					});
 
 					return await f(lastReason);
 				}
 				finally {
-					lock.remove();
+					if (lock) {
+						lock.remove();
+					}
 				}
 			},
 			reason
