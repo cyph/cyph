@@ -277,8 +277,13 @@ export class AccountDatabaseService {
 	/**
 	 * Gets an IAsyncValue wrapper for an item.
 	 * @param publicData If true, validates the item's signature. Otherwise, decrypts the item.
+	 * @param defaultValue If item isn't already set, will be used to initialize it.
 	 */
-	public getAsyncValue (url: string, publicData: boolean = false) : IAsyncValue<Uint8Array> {
+	public getAsyncValue (
+		url: string,
+		publicData: boolean = false,
+		defaultValue?: () => Uint8Array|Promise<Uint8Array>
+	) : IAsyncValue<Uint8Array> {
 		let currentHash: string|undefined;
 		let currentValue: Uint8Array|undefined;
 		const lock	= util.lockFunction();
@@ -319,6 +324,14 @@ export class AccountDatabaseService {
 			currentValue	= value;
 		});
 
+		if (defaultValue) {
+			lock(async () => {
+				if (!(await this.hasItem(url))) {
+					this.setItem(url, await defaultValue());
+				}
+			});
+		}
+
 		return {getValue, setValue};
 	}
 
@@ -326,8 +339,16 @@ export class AccountDatabaseService {
 	 * Gets an async value as a boolean.
 	 * @see getAsyncValue
 	 */
-	public getAsyncValueBoolean (url: string, publicData: boolean = false) : IAsyncValue<boolean> {
-		const {getValue, setValue}	= this.getAsyncValue(url, publicData);
+	public getAsyncValueBoolean (
+		url: string,
+		publicData: boolean = false,
+		defaultValue?: () => boolean|Promise<boolean>
+	) : IAsyncValue<boolean> {
+		const {getValue, setValue}	= this.getAsyncValue(
+			url,
+			publicData,
+			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
+		);
 
 		return {
 			getValue: async () => util.bytesToBoolean(await getValue()),
@@ -339,8 +360,16 @@ export class AccountDatabaseService {
 	 * Gets an async value as a number.
 	 * @see getAsyncValue
 	 */
-	public getAsyncValueNumber (url: string, publicData: boolean = false) : IAsyncValue<number> {
-		const {getValue, setValue}	= this.getAsyncValue(url, publicData);
+	public getAsyncValueNumber (
+		url: string,
+		publicData: boolean = false,
+		defaultValue?: () => number|Promise<number>
+	) : IAsyncValue<number> {
+		const {getValue, setValue}	= this.getAsyncValue(
+			url,
+			publicData,
+			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
+		);
 
 		return {
 			getValue: async () => util.bytesToNumber(await getValue()),
@@ -352,8 +381,16 @@ export class AccountDatabaseService {
 	 * Gets an async value as an object.
 	 * @see getAsyncValue
 	 */
-	public getAsyncValueObject<T> (url: string, publicData: boolean = false) : IAsyncValue<T> {
-		const {getValue, setValue}	= this.getAsyncValue(url, publicData);
+	public getAsyncValueObject<T> (
+		url: string,
+		publicData: boolean = false,
+		defaultValue?: () => T|Promise<T>
+	) : IAsyncValue<T> {
+		const {getValue, setValue}	= this.getAsyncValue(
+			url,
+			publicData,
+			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
+		);
 
 		return {
 			getValue: async () => util.bytesToObject<T>(await getValue()),
@@ -365,8 +402,16 @@ export class AccountDatabaseService {
 	 * Gets an async value as a string.
 	 * @see getAsyncValue
 	 */
-	public getAsyncValueString (url: string, publicData: boolean = false) : IAsyncValue<string> {
-		const {getValue, setValue}	= this.getAsyncValue(url, publicData);
+	public getAsyncValueString (
+		url: string,
+		publicData: boolean = false,
+		defaultValue?: () => string|Promise<string>
+	) : IAsyncValue<string> {
+		const {getValue, setValue}	= this.getAsyncValue(
+			url,
+			publicData,
+			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
+		);
 
 		return {
 			getValue: async () => util.bytesToString(await getValue()),
@@ -378,8 +423,16 @@ export class AccountDatabaseService {
 	 * Gets an async value as a base64 data URI.
 	 * @see getAsyncValue
 	 */
-	public getAsyncValueURI (url: string, publicData: boolean = false) : IAsyncValue<string> {
-		const {getValue, setValue}	= this.getAsyncValue(url, publicData);
+	public getAsyncValueURI (
+		url: string,
+		publicData: boolean = false,
+		defaultValue?: () => string|Promise<string>
+	) : IAsyncValue<string> {
+		const {getValue, setValue}	= this.getAsyncValue(
+			url,
+			publicData,
+			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
+		);
 
 		return {
 			getValue: async () => util.bytesToDataURI(await getValue()),
