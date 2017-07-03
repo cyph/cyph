@@ -4,6 +4,7 @@ import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {SnackBar} from 'nativescript-snackbar';
 import {alert, confirm} from 'tns-core-modules/ui/dialogs';
 import {DialogImageComponent} from './dialog-image.component';
+import {LockFunction} from './js/cyph/lock-function-type';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {util} from './js/cyph/util';
 
@@ -14,14 +15,14 @@ import {util} from './js/cyph/util';
 @Injectable()
 export class NativeDialogService implements DialogService {
 	/** @ignore */
-	private readonly lock: {}			= {};
+	private readonly lock: LockFunction	= util.lockFunction();
 
 	/** @ignore */
 	private readonly snackbar: SnackBar	= new SnackBar();
 
 	/** @inheritDoc */
 	public async alert (o: {content: string; ok: string; title: string}) : Promise<void> {
-		return util.lock(this.lock, async () => {
+		return this.lock(async () => {
 			return alert({
 				message: o.content,
 				okButtonText: o.ok,
@@ -42,7 +43,7 @@ export class NativeDialogService implements DialogService {
 			throw new Error('NativeDialogService.baseDialog setInputs param is unsupported.');
 		}
 
-		return util.lock(this.lock, async () => {
+		return this.lock(async () => {
 			await this.modalDialogService.showModal(componentType, {});
 		});
 	}
@@ -58,7 +59,7 @@ export class NativeDialogService implements DialogService {
 		timeout?: number;
 		title: string;
 	}) : Promise<boolean> {
-		return util.lock(this.lock, async () => {
+		return this.lock(async () => {
 			return !!(await confirm({
 				cancelButtonText: o.cancel,
 				message: o.content,
@@ -70,7 +71,7 @@ export class NativeDialogService implements DialogService {
 
 	/** @inheritDoc */
 	public async image (src: string) : Promise<void> {
-		return util.lock(this.lock, async () => {
+		return this.lock(async () => {
 			await this.modalDialogService.showModal(DialogImageComponent, {context: src});
 		});
 	}
