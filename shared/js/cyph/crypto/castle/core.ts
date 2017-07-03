@@ -33,7 +33,7 @@ export class Core {
 	}
 
 	/** Convert newly established shared secret into session keys. */
-	public static async initKeys (
+	public static async initLocalKeys (
 		potassium: IPotassium,
 		isAlice: boolean,
 		secret: Uint8Array

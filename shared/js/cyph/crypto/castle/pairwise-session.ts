@@ -301,7 +301,7 @@ export class PairwiseSession {
 			this.resolveCore(new Core(
 				this.potassium,
 				isAlice,
-				await Core.initKeys(this.potassium, isAlice, secret)
+				await Core.initLocalKeys(this.potassium, isAlice, secret)
 			));
 		}
 		catch (err) {
