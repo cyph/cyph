@@ -126,7 +126,7 @@ export class Core {
 		}
 	}
 
-	/** Replaces keys.next wit a new set of keys derived from the secret using Core.newKeys. */
+	/** Replaces keys.next with a new set of keys derived from the secret using Core.newKeys. */
 	private async setNewKeys (secret: Uint8Array) : Promise<void> {
 		const newKeys	= await Core.newKeys(this.potassium, this.isAlice, secret);
 
