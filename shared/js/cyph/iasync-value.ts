@@ -14,7 +14,7 @@ export interface IAsyncValue<T> {
 	/** Sets value. */
 	setValue (value: T) : Promise<void>;
 
-	/** Uses a function to transform value. */
+	/** Uses a function to transform value. Throwing aborts modification. */
 	updateValue (f: (value: T) => Promise<T>) : Promise<void>;
 
 	/** Subscribes to value. */
