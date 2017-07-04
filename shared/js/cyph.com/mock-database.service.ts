@@ -30,6 +30,9 @@ export class MockDatabaseService extends DatabaseService {
 			);
 			progress.next(bytesTransferred / size * 100);
 		}
+
+		progress.next(100);
+		progress.complete();
 	}
 
 	/** @inheritDoc */

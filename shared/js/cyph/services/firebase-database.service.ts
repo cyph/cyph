@@ -61,6 +61,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const result	= this.getItem(url).then(data => {
 			percentComplete	= 100;
 			progress.next(percentComplete);
+			progress.complete();
 			return data;
 		});
 
@@ -303,6 +304,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						try {
 							await (await this.getDatabaseRef(url)).set(hash).then();
 							progress.next(100);
+							progress.complete();
 							resolve({hash, url});
 						}
 						catch (err) {
