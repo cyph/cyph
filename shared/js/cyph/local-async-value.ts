@@ -33,7 +33,15 @@ export class LocalAsyncValue<T> implements IAsyncValue<T> {
 	/** @inheritDoc */
 	public async updateValue (f: (value: T) => Promise<T>) : Promise<void> {
 		await this.lock(async () => {
-			this.setValue(await f(await this.getValue()));
+			const value	= await this.getValue();
+			let newValue: T;
+			try {
+				newValue	= await f(value);
+			}
+			catch (_) {
+				return;
+			}
+			this.setValue(newValue);
 		});
 	}
 
