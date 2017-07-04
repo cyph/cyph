@@ -1,5 +1,5 @@
-import {List, Map as ImmutableMap} from 'immutable';
 import {Subject} from 'rxjs';
+import {IAsyncValue} from '../iasync-value';
 import {States} from './enums';
 import {IChatMessage} from './ichat-message';
 
@@ -18,7 +18,7 @@ export interface IChatData {
 	isDisconnected: boolean;
 
 	/** Indicates whether the other party is typing. */
-	isFriendTyping: boolean;
+	isFriendTyping: Subject<boolean>;
 
 	/** Indicates whether the current message changed before the last check. */
 	isMessageChanged: boolean;
@@ -27,7 +27,7 @@ export interface IChatData {
 	keyExchangeProgress: Subject<number>;
 
 	/** Message list. */
-	messages: List<IChatMessage>;
+	messages: IAsyncValue<IChatMessage[]>;
 
 	/** The previous message sent. */
 	previousMessage?: string;
@@ -42,5 +42,5 @@ export interface IChatData {
 	state: States;
 
 	/** IDs of outgoing messages whose receipt has yet to be confirmed. */
-	unconfirmedMessages: ImmutableMap<string, boolean>;
+	unconfirmedMessages: IAsyncValue<{[id: string]: boolean|undefined}>;
 }

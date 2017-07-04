@@ -254,12 +254,9 @@
 	<cyph-chat-message-list
 		fxFlex
 		fxFlexFill
-		[isFriendTyping]='chatService.chat.isFriendTyping'
 		[messageCountInTitle]='messageCountInTitle'
-		[messages]='chatService.chat.messages'
 		[mobile]='envService.isMobile || p2pService.isActive'
 		[showDisconnectMessage]='chatService.chat.isDisconnected && !hideDisconnectMessage'
-		[unconfirmedMessages]='chatService.chat.unconfirmedMessages'
 		*ngIf='chatService.chat.state === states.chat'
 		[@fadeIn]='"in"'
 	>
