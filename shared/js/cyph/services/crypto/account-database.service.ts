@@ -185,7 +185,11 @@ export class AccountDatabaseService {
 				u => this.databaseService.downloadItem(u)
 			);
 
-			downloadTask.progress.subscribe(n => { progress.next(n); });
+			downloadTask.progress.subscribe(
+				n => { progress.next(n); },
+				err => { progress.error(err); },
+				() => { progress.complete(); }
+			);
 
 			return downloadTask.result;
 		})();
@@ -804,7 +808,12 @@ export class AccountDatabaseService {
 			);
 
 			cancelPromise.then(() => { uploadTask.cancel(); });
-			uploadTask.progress.subscribe(n => { progress.next(n); });
+
+			uploadTask.progress.subscribe(
+				n => { progress.next(n); },
+				err => { progress.error(err); },
+				() => { progress.complete(); }
+			);
 
 			return uploadTask.result;
 		})();
