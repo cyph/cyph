@@ -368,17 +368,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 				if (!snapshot || !snapshot.exists()) {
 					observer.next();
 				}
-
 				observer.next(await this.getItem(url));
 			};
 
 			(async () => {
 				const ref	= await this.getDatabaseRef(url);
 				ref.on('value', onValue);
-
-				cleanup	= () => {
-					ref.off('value', onValue);
-				};
+				cleanup	= () => { ref.off('value', onValue); };
 			})();
 
 			return async () => {
@@ -396,13 +392,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 			let cleanup: Function;
 
 			(async () => {
+				const data			= new Map<string, {hash: string; value: T}>();
 				const listRef		= await this.getDatabaseRef(url);
 
 				let initRemaining	=
 					(<firebase.database.DataSnapshot> await listRef.once('value')).numChildren()
 				;
-
-				const data			= new Map<string, {hash: string; value: T}>();
 
 				const getValue		= async (snapshot: firebase.database.DataSnapshot) => {
 					if (!snapshot.key) {
@@ -412,13 +407,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 					if (typeof hash !== 'string') {
 						return false;
 					}
-					data.set(
-						snapshot.key,
-						{
-							hash,
-							value: await mapper(await this.getItem(`${url}/${snapshot.key}`))
-						}
-					);
+					data.set(snapshot.key, {
+						hash,
+						value: await mapper(await this.getItem(`${url}/${snapshot.key}`))
+					});
 					return true;
 				};
 
