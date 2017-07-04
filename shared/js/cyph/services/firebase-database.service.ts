@@ -256,9 +256,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const data	= await util.toBytes(value);
 		const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
 
-		this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
-		await (await this.getStorageRef(url)).put(new Blob([data])).then();
-		await (await this.getDatabaseRef(url)).set(hash).then();
+		/* tslint:disable-next-line:possible-timing-attack */
+		if (hash !== (await this.getHash(url))) {
+			this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
+			await (await this.getStorageRef(url)).put(new Blob([data])).then();
+			await (await this.getDatabaseRef(url)).set(hash).then();
+		}
 
 		return {hash, url};
 	}
@@ -283,7 +286,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		const result	= (async () => {
 			const data	= await util.toBytes(value);
-			const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
+			const hash	= this.potassiumService.toBase64(
+				await this.potassiumService.hash.hash(data)
+			);
+
+			/* tslint:disable-next-line:possible-timing-attack */
+			if (hash === (await this.getHash(url))) {
+				progress.next(100);
+				progress.complete();
+				return {hash, url};
+			}
+
 			this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
 
 			return new Promise<{hash: string; url: string}>(async (resolve, reject) => {
