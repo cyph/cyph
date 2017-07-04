@@ -31,6 +31,13 @@ export class LocalAsyncValue<T> implements IAsyncValue<T> {
 	}
 
 	/** @inheritDoc */
+	public async updateValue (f: (value: T) => Promise<T>) : Promise<void> {
+		await this.lock(async () => {
+			this.setValue(await f(await this.getValue()));
+		});
+	}
+
+	/** @inheritDoc */
 	public watch () : Observable<T> {
 		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
 		return <any> this.subject;
