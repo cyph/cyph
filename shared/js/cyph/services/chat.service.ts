@@ -165,6 +165,7 @@ export class ChatService {
 		}
 
 		this.chat.keyExchangeProgress.next(100);
+		this.chat.keyExchangeProgress.complete();
 		this.chat.state	= States.chatBeginMessage;
 
 		await util.sleep(3000);
@@ -323,6 +324,7 @@ export class ChatService {
 				}
 				else if (n > 100) {
 					this.chat.keyExchangeProgress.next(100);
+					this.chat.keyExchangeProgress.complete();
 				}
 				else {
 					await util.sleep(interval);
