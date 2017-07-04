@@ -4,8 +4,8 @@
 			fxLayout='row'
 			[message]='message'
 			[mobile]='mobile'
-			[unconfirmedMessages]='unconfirmedMessages'
-			*ngFor='let message of messages'
+			[unconfirmedMessages]='unconfirmedMessages | async'
+			*ngFor='let message of messages | async'
 		></cyph-chat-message>
 
 		<div fxLayout='row' class='friend-is-typing'>
@@ -13,7 +13,7 @@
 				mdTooltip='Friend is typing...'
 				cyphTranslate
 				class='ellipsis-spinner'
-				*ngIf='isFriendTyping'
+				*ngIf='chatService.chat.isFriendTyping | async'
 				[@fadeInOut]='"in"'
 			>
 				<div class='bounce1'></div>

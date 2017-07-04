@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {List, Map as ImmutableMap} from 'immutable';
 import {BehaviorSubject} from 'rxjs';
 import {IChatData, IChatMessage, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
+import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {events, rpcEvents, users} from '../session/enums';
 import {Message} from '../session/message';
@@ -39,13 +39,13 @@ export class ChatService {
 		currentMessage: '',
 		isConnected: false,
 		isDisconnected: false,
-		isFriendTyping: false,
+		isFriendTyping: new BehaviorSubject(false),
 		isMessageChanged: false,
 		keyExchangeProgress: new BehaviorSubject(0),
-		messages: List<IChatMessage>(),
+		messages: new LocalAsyncValue<IChatMessage[]>([]),
 		queuedMessageSelfDestruct: false,
 		state: States.none,
-		unconfirmedMessages: ImmutableMap<string, boolean>()
+		unconfirmedMessages: new LocalAsyncValue<{[id: string]: boolean|undefined}>({})
 	};
 
 	/** This kills the chat. */
@@ -54,7 +54,7 @@ export class ChatService {
 			return;
 		}
 
-		this.setFriendTyping(false);
+		this.chat.isFriendTyping.next(false);
 		this.scrollService.scrollDown();
 
 		if (!this.chat.isConnected) {
@@ -127,13 +127,17 @@ export class ChatService {
 			timestamp
 		};
 
-		for (let i = this.chat.messages.size - 1 ; i >= -1 ; --i) {
-			const o	= this.chat.messages.get(i);
-			if (!o || message.timestamp > o.timestamp) {
-				this.chat.messages	= this.chat.messages.splice(i + 1, 0, message);
-				break;
+		await this.chat.messages.updateValue(async messages => {
+			for (let i = messages.length - 1 ; i >= -1 ; --i) {
+				const o	= messages[i];
+				if (!o || message.timestamp > o.timestamp) {
+					messages.splice(i + 1, 0, message);
+					break;
+				}
 			}
-		}
+
+			return messages;
+		});
 
 		if (author === users.me) {
 			this.scrollService.scrollDown();
@@ -270,14 +274,6 @@ export class ChatService {
 		}
 	}
 
-	/**
-	 * Sets this.isFriendTyping to isFriendTyping.
-	 * @param isFriendTyping
-	 */
-	public setFriendTyping (isFriendTyping: boolean) : void {
-		this.chat.isFriendTyping	= isFriendTyping;
-	}
-
 	/** Sets queued message to be sent after handshake. */
 	public setQueuedMessage (messageText: string) : void {
 		this.chat.queuedMessage	= messageText;
@@ -345,7 +341,14 @@ export class ChatService {
 				return;
 			}
 
-			this.chat.unconfirmedMessages	= this.chat.unconfirmedMessages.delete(o.messageId);
+			this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
+				if (typeof o.messageId !== 'string') {
+					throw undefined;
+				}
+
+				unconfirmedMessages[o.messageId]	= undefined;
+				return unconfirmedMessages;
+			});
 		});
 
 		this.sessionService.on(rpcEvents.text, (o: {
@@ -360,18 +363,21 @@ export class ChatService {
 			}
 
 			if (o.author === users.me) {
-				this.chat.unconfirmedMessages	= this.chat.unconfirmedMessages.set(o.id, false);
-
 				(async () => {
+					await this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
+						unconfirmedMessages[o.id]	= false;
+						return unconfirmedMessages;
+					});
+
 					await util.sleep(ChatService.messageConfirmationSpinnerTimeout);
 
-					if (!this.chat.unconfirmedMessages.has(o.id)) {
-						return;
-					}
-
-					this.chat.unconfirmedMessages	=
-						this.chat.unconfirmedMessages.set(o.id, true)
-					;
+					await this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
+						if (!(o.id in unconfirmedMessages)) {
+							throw undefined;
+						}
+						unconfirmedMessages[o.id]	= true;
+						return unconfirmedMessages;
+					});
 				})();
 			}
 			else {
@@ -391,7 +397,7 @@ export class ChatService {
 		});
 
 		this.sessionService.on(rpcEvents.typing, (o: {isTyping: boolean}) => {
-			this.setFriendTyping(o.isTyping);
+			this.chat.isFriendTyping.next(o.isTyping);
 		});
 	}
 }

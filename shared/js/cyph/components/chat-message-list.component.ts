@@ -1,8 +1,9 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
-import {List, Map as ImmutableMap} from 'immutable';
 import * as $ from 'jquery';
+import {Observable} from 'rxjs';
 import {fadeInOut} from '../animations';
 import {IChatMessage} from '../chat';
+import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 
@@ -18,14 +19,11 @@ import {ScrollService} from '../services/scroll.service';
 	templateUrl: '../../../templates/chat-message-list.html'
 })
 export class ChatMessageListComponent implements AfterViewInit {
-	/** @see IChatData.isFriendTyping */
-	@Input() public isFriendTyping: boolean;
-
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean;
 
 	/** @see IChatData.messages */
-	@Input() public messages: List<IChatMessage>;
+	public messages: Observable<IChatMessage[]>	= this.chatService.chat.messages.watch();
 
 	/** @see ChatMessageComponent.mobile */
 	@Input() public mobile: boolean;
@@ -34,7 +32,9 @@ export class ChatMessageListComponent implements AfterViewInit {
 	@Input() public showDisconnectMessage: boolean;
 
 	/** @see IChatData.unconfirmedMessages */
-	@Input() public unconfirmedMessages: ImmutableMap<string, boolean>;
+	@Input() public unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>	=
+		this.chatService.chat.unconfirmedMessages.watch()
+	;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
@@ -57,6 +57,9 @@ export class ChatMessageListComponent implements AfterViewInit {
 		private readonly envService: EnvService,
 
 		/** @ignore */
-		private readonly scrollService: ScrollService
+		private readonly scrollService: ScrollService,
+
+		/** @see ChatService */
+		public readonly chatService: ChatService
 	) {}
 }
