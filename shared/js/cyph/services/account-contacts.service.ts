@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
-import {AccountAuthService} from './account-auth.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
+import {AccountAuthService} from './crypto/account-auth.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 
 

@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {UserPresence} from '../account/enums';
-import {AccountAuthService} from '../services/account-auth.service';
 import {AccountChatStringsService} from '../services/account-chat-strings.service';
 import {AccountChatService} from '../services/account-chat.service';
 import {AccountContactsService} from '../services/account-contacts.service';
@@ -9,6 +8,7 @@ import {AccountSessionService} from '../services/account-session.service';
 import {ChannelService} from '../services/channel.service';
 import {ChatPotassiumService} from '../services/chat-potassium.service';
 import {ChatService} from '../services/chat.service';
+import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AnonymousCastleService} from '../services/crypto/anonymous-castle.service';
 import {PotassiumService} from '../services/crypto/potassium.service';
 import {CyphertextService} from '../services/cyphertext.service';
