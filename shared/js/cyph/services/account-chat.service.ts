@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {List, Map as ImmutableMap} from 'immutable';
 import {BehaviorSubject} from 'rxjs';
 import {IChatData, IChatMessage, States} from '../chat';
+import {LocalAsyncValue} from '../local-async-value';
 import {users} from '../session/enums';
 import {AccountSessionService} from './account-session.service';
 import {AnalyticsService} from './analytics.service';
@@ -42,13 +42,13 @@ export class AccountChatService extends ChatService {
 				currentMessage: '',
 				isConnected: true,
 				isDisconnected: false,
-				isFriendTyping: false,
+				isFriendTyping: new BehaviorSubject(false),
 				isMessageChanged: false,
 				keyExchangeProgress: new BehaviorSubject(0),
-				messages: List<IChatMessage>(),
+				messages: new LocalAsyncValue<IChatMessage[]>([]),
 				queuedMessageSelfDestruct: false,
 				state: States.chat,
-				unconfirmedMessages: ImmutableMap<string, boolean>()
+				unconfirmedMessages: new LocalAsyncValue<{[id: string]: boolean|undefined}>({})
 			};
 
 			this.chats.set(username, this.chat);
