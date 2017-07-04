@@ -316,18 +316,20 @@ export class AccountDatabaseService {
 		});
 
 		const setValue	= async (value: Uint8Array) => lock(async () => {
-			if (currentValue) {
-				this.potassiumService.clearMemory(currentValue);
-			}
+			const oldValue	= currentValue;
 
 			currentHash		= (await this.setItem(url, value, publicData)).hash;
 			currentValue	= value;
+
+			if (oldValue) {
+				this.potassiumService.clearMemory(oldValue);
+			}
 		});
 
 		if (defaultValue) {
 			lock(async () => {
 				if (!(await this.hasItem(url))) {
-					this.setItem(url, await defaultValue());
+					await this.setItem(url, await defaultValue());
 				}
 			});
 		}
