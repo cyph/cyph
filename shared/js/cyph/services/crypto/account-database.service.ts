@@ -290,55 +290,72 @@ export class AccountDatabaseService {
 	) : IAsyncValue<Uint8Array> {
 		let currentHash: string|undefined;
 		let currentValue: Uint8Array|undefined;
-		const lock	= util.lockFunction();
 
-		const getValue	= async () => lock(async () : Promise<Uint8Array> => {
-			await this.waitForUnlock(url);
+		const localLock	= util.lockFunction();
 
-			const hash	= await this.databaseService.getHash(url);
+		const asyncValue: IAsyncValue<Uint8Array>	= {
+			getValue: async () => localLock(async () : Promise<Uint8Array> => {
+				await this.waitForUnlock(url);
 
-			/* tslint:disable-next-line:possible-timing-attack */
-			if (currentValue && currentHash === hash) {
+				const hash	= await this.databaseService.getHash(url);
+
+				/* tslint:disable-next-line:possible-timing-attack */
+				if (currentValue && currentHash === hash) {
+					return currentValue;
+				}
+				else if (currentValue) {
+					this.potassiumService.clearMemory(currentValue);
+					currentValue	= undefined;
+				}
+
+				const value	= await this.getItem(url, publicData);
+
+				/* tslint:disable-next-line:possible-timing-attack */
+				if (hash !== await this.databaseService.getHash(url)) {
+					return asyncValue.getValue();
+				}
+
+				currentHash		= hash;
+				currentValue	= value;
+
 				return currentValue;
-			}
-			else if (currentValue) {
-				this.potassiumService.clearMemory(currentValue);
-				currentValue	= undefined;
-			}
+			}),
+			lock: this.lockFunction(url),
+			setValue: async (value: Uint8Array) => localLock(async () => {
+				const oldValue	= currentValue;
 
-			const value	= await this.getItem(url, publicData);
+				currentHash		= (await this.setItem(url, value, publicData)).hash;
+				currentValue	= value;
 
-			/* tslint:disable-next-line:possible-timing-attack */
-			if (hash !== await this.databaseService.getHash(url)) {
-				return getValue();
-			}
-
-			currentHash		= hash;
-			currentValue	= value;
-
-			return currentValue;
-		});
-
-		const setValue	= async (value: Uint8Array) => lock(async () => {
-			const oldValue	= currentValue;
-
-			currentHash		= (await this.setItem(url, value, publicData)).hash;
-			currentValue	= value;
-
-			if (oldValue) {
-				this.potassiumService.clearMemory(oldValue);
-			}
-		});
+				if (oldValue) {
+					this.potassiumService.clearMemory(oldValue);
+				}
+			}),
+			updateValue: async f => asyncValue.lock(async () => {
+				const value	= await asyncValue.getValue();
+				let newValue: Uint8Array;
+				try {
+					newValue	= await f(value);
+				}
+				catch (_) {
+					return;
+				}
+				asyncValue.setValue(newValue);
+			}),
+			watch: () => this.watchItem(url, publicData).map(value =>
+				value === undefined ? new Uint8Array([]) : value
+			)
+		};
 
 		if (defaultValue) {
-			lock(async () => {
+			localLock(async () => {
 				if (!(await this.hasItem(url))) {
 					await this.setItem(url, await defaultValue());
 				}
 			});
 		}
 
-		return {getValue, setValue};
+		return asyncValue;
 	}
 
 	/**
@@ -350,7 +367,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		defaultValue?: () => boolean|Promise<boolean>
 	) : IAsyncValue<boolean> {
-		const {getValue, setValue}	= this.getAsyncValue(
+		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
 			url,
 			publicData,
 			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
@@ -358,7 +375,14 @@ export class AccountDatabaseService {
 
 		return {
 			getValue: async () => util.bytesToBoolean(await getValue()),
-			setValue: async (value: boolean) => setValue(await util.toBytes(value))
+			lock,
+			setValue: async value => setValue(await util.toBytes(value)),
+			updateValue: async f => updateValue(
+				async value => util.toBytes(await f(util.bytesToBoolean(value)))
+			),
+			watch: () => this.watchItemBoolean(url, publicData).map(value =>
+				value === undefined ? false : value
+			)
 		};
 	}
 
@@ -371,7 +395,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		defaultValue?: () => number|Promise<number>
 	) : IAsyncValue<number> {
-		const {getValue, setValue}	= this.getAsyncValue(
+		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
 			url,
 			publicData,
 			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
@@ -379,7 +403,14 @@ export class AccountDatabaseService {
 
 		return {
 			getValue: async () => util.bytesToNumber(await getValue()),
-			setValue: async (value: number) => setValue(await util.toBytes(value))
+			lock,
+			setValue: async value => setValue(await util.toBytes(value)),
+			updateValue: async f => updateValue(
+				async value => util.toBytes(await f(util.bytesToNumber(value)))
+			),
+			watch: () => this.watchItemNumber(url, publicData).map(value =>
+				value === undefined ? 0 : value
+			)
 		};
 	}
 
@@ -392,7 +423,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		defaultValue?: () => T|Promise<T>
 	) : IAsyncValue<T> {
-		const {getValue, setValue}	= this.getAsyncValue(
+		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
 			url,
 			publicData,
 			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
@@ -400,7 +431,14 @@ export class AccountDatabaseService {
 
 		return {
 			getValue: async () => util.bytesToObject<T>(await getValue()),
-			setValue: async (value: T) => setValue(await util.toBytes(value))
+			lock,
+			setValue: async value => setValue(await util.toBytes(value)),
+			updateValue: async f => updateValue(
+				async value => util.toBytes(await f(util.bytesToObject<T>(value)))
+			),
+			watch: () => this.watchItemObject<T>(url, publicData).map(value =>
+				value === undefined ? {} : value
+			)
 		};
 	}
 
@@ -413,7 +451,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		defaultValue?: () => string|Promise<string>
 	) : IAsyncValue<string> {
-		const {getValue, setValue}	= this.getAsyncValue(
+		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
 			url,
 			publicData,
 			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
@@ -421,7 +459,14 @@ export class AccountDatabaseService {
 
 		return {
 			getValue: async () => util.bytesToString(await getValue()),
-			setValue: async (value: string) => setValue(await util.toBytes(value))
+			lock,
+			setValue: async value => setValue(await util.toBytes(value)),
+			updateValue: async f => updateValue(
+				async value => util.toBytes(await f(util.bytesToString(value)))
+			),
+			watch: () => this.watchItemString(url, publicData).map(value =>
+				value === undefined ? '' : value
+			)
 		};
 	}
 
@@ -434,7 +479,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		defaultValue?: () => string|Promise<string>
 	) : IAsyncValue<string> {
-		const {getValue, setValue}	= this.getAsyncValue(
+		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
 			url,
 			publicData,
 			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
@@ -442,7 +487,14 @@ export class AccountDatabaseService {
 
 		return {
 			getValue: async () => util.bytesToDataURI(await getValue()),
-			setValue: async (value: string) => setValue(await util.toBytes(value))
+			lock,
+			setValue: async value => setValue(await util.toBytes(value)),
+			updateValue: async f => updateValue(
+				async value => util.toBytes(await f(util.bytesToDataURI(value)))
+			),
+			watch: () => this.watchItemURI(url, publicData).map(value =>
+				value === undefined ? 'data:text/plain;base64,' : value
+			)
 		};
 	}
 
@@ -507,26 +559,49 @@ export class AccountDatabaseService {
 		url: string,
 		publicData: boolean = false
 	) : IAsyncValue<Uint8Array|undefined> {
-		const {getValue, setValue}	= this.getAsyncValue(url, publicData);
-		const lock	= util.lockFunction();
+		const {getValue, lock, setValue}	=
+			this.getAsyncValue(url, publicData)
+		;
 
-		return {
-			getValue: async () => lock(async () => {
+		const localLock	= util.lockFunction();
+
+		const maybeAsyncValue: IAsyncValue<Uint8Array|undefined>	= {
+			getValue: async () => localLock(async () => {
 				await this.waitForUnlock(url);
 				if (!(await this.hasItem(url))) {
 					return;
 				}
 				return getValue();
 			}),
-			setValue: async (value?: Uint8Array) => lock(async () => {
+			lock,
+			setValue: async value => localLock(async () => {
 				if (value) {
 					await setValue(value);
 				}
 				else {
 					await this.removeItem(url);
 				}
-			})
+			}),
+			updateValue: async f => maybeAsyncValue.lock(async () => {
+				const value	= await maybeAsyncValue.getValue();
+				let newValue: Uint8Array|undefined;
+				try {
+					newValue	= await f(value);
+				}
+				catch (_) {
+					return;
+				}
+				if (newValue) {
+					maybeAsyncValue.setValue(newValue);
+				}
+				else {
+					await this.removeItem(url);
+				}
+			}),
+			watch: () => this.watchItem(url)
 		};
+
+		return maybeAsyncValue;
 	}
 
 	/**
@@ -537,14 +612,21 @@ export class AccountDatabaseService {
 		url: string,
 		publicData: boolean = false
 	) : IAsyncValue<boolean|undefined> {
-		const {getValue, setValue}	= this.getMaybeAsyncValue(url, publicData);
+		const {getValue, lock, setValue, updateValue}	= this.getMaybeAsyncValue(url, publicData);
 
 		return {
 			getValue: async () => {
 				const value	= await getValue();
 				return !value ? undefined : util.bytesToBoolean(value);
 			},
-			setValue: async (value: boolean) => setValue(await util.toBytes(value))
+			lock,
+			setValue: async value => setValue(
+				value === undefined ? undefined : await util.toBytes(value)
+			),
+			updateValue: async f => updateValue(
+				async value => value === undefined ? undefined : await util.toBytes(value)
+			),
+			watch: () => this.watchItemBoolean(url, publicData)
 		};
 	}
 
@@ -556,14 +638,21 @@ export class AccountDatabaseService {
 		url: string,
 		publicData: boolean = false
 	) : IAsyncValue<number|undefined> {
-		const {getValue, setValue}	= this.getMaybeAsyncValue(url, publicData);
+		const {getValue, lock, setValue, updateValue}	= this.getMaybeAsyncValue(url, publicData);
 
 		return {
 			getValue: async () => {
 				const value	= await getValue();
 				return !value ? undefined : util.bytesToNumber(value);
 			},
-			setValue: async (value: number) => setValue(await util.toBytes(value))
+			lock,
+			setValue: async value => setValue(
+				value === undefined ? undefined : await util.toBytes(value)
+			),
+			updateValue: async f => updateValue(
+				async value => value === undefined ? undefined : await util.toBytes(value)
+			),
+			watch: () => this.watchItemNumber(url, publicData)
 		};
 	}
 
@@ -575,14 +664,21 @@ export class AccountDatabaseService {
 		url: string,
 		publicData: boolean = false
 	) : IAsyncValue<T|undefined> {
-		const {getValue, setValue}	= this.getMaybeAsyncValue(url, publicData);
+		const {getValue, lock, setValue, updateValue}	= this.getMaybeAsyncValue(url, publicData);
 
 		return {
 			getValue: async () => {
 				const value	= await getValue();
 				return !value ? undefined : util.bytesToObject<T>(value);
 			},
-			setValue: async (value: T) => setValue(await util.toBytes(value))
+			lock,
+			setValue: async value => setValue(
+				value === undefined ? undefined : await util.toBytes(value)
+			),
+			updateValue: async f => updateValue(
+				async value => value === undefined ? undefined : await util.toBytes(value)
+			),
+			watch: () => this.watchItemObject<T>(url, publicData)
 		};
 	}
 
@@ -594,14 +690,21 @@ export class AccountDatabaseService {
 		url: string,
 		publicData: boolean = false
 	) : IAsyncValue<string|undefined> {
-		const {getValue, setValue}	= this.getMaybeAsyncValue(url, publicData);
+		const {getValue, lock, setValue, updateValue}	= this.getMaybeAsyncValue(url, publicData);
 
 		return {
 			getValue: async () => {
 				const value	= await getValue();
 				return !value ? undefined : util.bytesToString(value);
 			},
-			setValue: async (value: string) => setValue(await util.toBytes(value))
+			lock,
+			setValue: async value => setValue(
+				value === undefined ? undefined : await util.toBytes(value)
+			),
+			updateValue: async f => updateValue(
+				async value => value === undefined ? undefined : await util.toBytes(value)
+			),
+			watch: () => this.watchItemString(url, publicData)
 		};
 	}
 
@@ -613,14 +716,21 @@ export class AccountDatabaseService {
 		url: string,
 		publicData: boolean = false
 	) : IAsyncValue<string|undefined> {
-		const {getValue, setValue}	= this.getMaybeAsyncValue(url, publicData);
+		const {getValue, lock, setValue, updateValue}	= this.getMaybeAsyncValue(url, publicData);
 
 		return {
 			getValue: async () => {
 				const value	= await getValue();
 				return !value ? undefined : util.bytesToDataURI(value);
 			},
-			setValue: async (value: string) => setValue(await util.toBytes(value))
+			lock,
+			setValue: async value => setValue(
+				value === undefined ? undefined : await util.toBytes(value)
+			),
+			updateValue: async f => updateValue(
+				async value => value === undefined ? undefined : await util.toBytes(value)
+			),
+			watch: () => this.watchItemURI(url, publicData)
 		};
 	}
 
