@@ -551,6 +551,8 @@ export class AccountDatabaseService {
 
 		const localLock	= util.lockFunction();
 
+		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
+		/* tslint:disable-next-line:no-unnecessary-local-variable */
 		const maybeAsyncValue: IAsyncValue<Uint8Array|undefined>	= {
 			getValue: async () => localLock(async () => {
 				await this.waitForUnlock(url);
@@ -1114,13 +1116,13 @@ export class AccountDatabaseService {
 		);
 	}
 
-		/** Subscribes to a value. */
+	/** Subscribes to a value. */
 	public watchValue (
 		url: string,
 		publicData: boolean = false,
 		defaultValue: () => Uint8Array|Promise<Uint8Array> = () => new Uint8Array([])
 	) : Observable<Uint8Array> {
-		return this.watchMaybe(url, publicData).map(value =>
+		return this.watchMaybe(url, publicData).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}
@@ -1134,7 +1136,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		defaultValue: () => boolean|Promise<boolean> = () => false
 	) : Observable<boolean> {
-		return this.watchMaybeBoolean(url, publicData).map(value =>
+		return this.watchMaybeBoolean(url, publicData).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}
@@ -1148,7 +1150,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		defaultValue: () => number|Promise<number> = () => 0
 	) : Observable<number> {
-		return this.watchMaybeNumber(url, publicData).map(value =>
+		return this.watchMaybeNumber(url, publicData).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}
@@ -1162,7 +1164,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		defaultValue: () => T|Promise<T>
 	) : Observable<T> {
-		return this.watchMaybeObject<T>(url, publicData).map(value =>
+		return this.watchMaybeObject<T>(url, publicData).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}
@@ -1176,7 +1178,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		defaultValue: () => string|Promise<string> = () => ''
 	) : Observable<string> {
-		return this.watchMaybeString(url, publicData).map(value =>
+		return this.watchMaybeString(url, publicData).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}
@@ -1190,7 +1192,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false,
 		defaultValue: () => string|Promise<string> = () => 'data:text/plain;base64,'
 	) : Observable<string> {
-		return this.watchMaybeURI(url, publicData).map(value =>
+		return this.watchMaybeURI(url, publicData).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}
