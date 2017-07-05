@@ -1,6 +1,7 @@
 /* tslint:disable:max-file-line-count */
 
 import {Injectable} from '@angular/core';
+import {memoize} from 'lodash';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {User} from '../../account/user';
 import {IKeyPair} from '../../crypto/ikey-pair';
@@ -342,7 +343,7 @@ export class AccountDatabaseService {
 				}
 				asyncValue.setValue(newValue);
 			}),
-			watch: () => this.watchValue(url, publicData, defaultValue)
+			watch: memoize(() => this.watchValue(url, publicData, defaultValue))
 		};
 
 		localLock(async () => {
@@ -376,7 +377,7 @@ export class AccountDatabaseService {
 			updateValue: async f => updateValue(
 				async value => util.toBytes(await f(util.bytesToBoolean(value)))
 			),
-			watch: () => this.watchValueBoolean(url, publicData, defaultValue)
+			watch: memoize(() => this.watchValueBoolean(url, publicData, defaultValue))
 		};
 	}
 
@@ -402,7 +403,7 @@ export class AccountDatabaseService {
 			updateValue: async f => updateValue(
 				async value => util.toBytes(await f(util.bytesToNumber(value)))
 			),
-			watch: () => this.watchValueNumber(url, publicData, defaultValue)
+			watch: memoize(() => this.watchValueNumber(url, publicData, defaultValue))
 		};
 	}
 
@@ -428,7 +429,7 @@ export class AccountDatabaseService {
 			updateValue: async f => updateValue(
 				async value => util.toBytes(await f(util.bytesToObject<T>(value)))
 			),
-			watch: () => this.watchValueObject<T>(url, publicData, defaultValue)
+			watch: memoize(() => this.watchValueObject<T>(url, publicData, defaultValue))
 		};
 	}
 
@@ -454,7 +455,7 @@ export class AccountDatabaseService {
 			updateValue: async f => updateValue(
 				async value => util.toBytes(await f(util.bytesToString(value)))
 			),
-			watch: () => this.watchValueString(url, publicData, defaultValue)
+			watch: memoize(() => this.watchValueString(url, publicData, defaultValue))
 		};
 	}
 
@@ -480,7 +481,7 @@ export class AccountDatabaseService {
 			updateValue: async f => updateValue(
 				async value => util.toBytes(await f(util.bytesToDataURI(value)))
 			),
-			watch: () => this.watchValueURI(url, publicData, defaultValue)
+			watch: memoize(() => this.watchValueURI(url, publicData, defaultValue))
 		};
 	}
 
@@ -586,7 +587,7 @@ export class AccountDatabaseService {
 					await this.removeItem(url);
 				}
 			}),
-			watch: () => this.watchMaybe(url)
+			watch: memoize(() => this.watchMaybe(url))
 		};
 
 		return maybeAsyncValue;
@@ -617,7 +618,7 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: () => this.watchMaybeBoolean(url, publicData)
+			watch: memoize(() => this.watchMaybeBoolean(url, publicData))
 		};
 	}
 
@@ -646,7 +647,7 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: () => this.watchMaybeNumber(url, publicData)
+			watch: memoize(() => this.watchMaybeNumber(url, publicData))
 		};
 	}
 
@@ -675,7 +676,7 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: () => this.watchMaybeObject<T>(url, publicData)
+			watch: memoize(() => this.watchMaybeObject<T>(url, publicData))
 		};
 	}
 
@@ -704,7 +705,7 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: () => this.watchMaybeString(url, publicData)
+			watch: memoize(() => this.watchMaybeString(url, publicData))
 		};
 	}
 
@@ -733,7 +734,7 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: () => this.watchMaybeURI(url, publicData)
+			watch: memoize(() => this.watchMaybeURI(url, publicData))
 		};
 	}
 
