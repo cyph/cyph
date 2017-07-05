@@ -1,16 +1,19 @@
 <div fxLayout='column'>
-	<span cyphTranslate *ngIf='to === "feedback"'>Submit Feedback</span>
-	<div fxLayout='row'>
-		<div fxFlex></div>
+	<div fxLayout='row' fxLayoutAlign='center start'>
 		<form
 			ngNativeValidate
-			fxFlex='1 1 52%'
+			fxFlex
+			fxFlex.gt-md='75'
+			fxFlex.gt-lg='50'
 			fxLayout='column'
 			fxLayoutGap='16px'
 			(submit)='send()'
 			*ngIf='!sent'
 		>
-			<div fxLayout='column' *ngIf='to !== "feedback"'>
+			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='feedbackForm'>
+				<h3>Submit Feedback</h3>
+			</div>
+			<div fxLayout='row' *ngIf='!feedbackForm'>
 				<md-select
 					cyphTranslate
 					fxFlex
@@ -26,7 +29,7 @@
 					</md-option>
 				</md-select>
 			</div>
-			<div fxLayout='column' *ngIf='to !== "feedback"'>
+			<div fxLayout='row' *ngIf='!feedbackForm'>
 				<md-input-container fxFlex>
 					<input
 						mdInput
@@ -37,7 +40,7 @@
 					/>
 				</md-input-container>
 			</div>
-			<div fxLayout='column' *ngIf='responseRequested'>
+			<div fxLayout='row' *ngIf='responseRequested'>
 				<div fxFlex fxLayout.lt-md='column' fxLayoutGap='16px'>
 					<md-input-container fxFlex>
 						<input
@@ -61,7 +64,7 @@
 					</md-input-container>
 				</div>
 			</div>			
-			<div fxLayout='column'>
+			<div fxLayout='row'>
 				<md-input-container fxFlex>
 					<textarea
 						mdInput
@@ -72,21 +75,14 @@
 						required
 					></textarea>
 				</md-input-container>
-				<div fxLayout='row'>
-					<md-checkbox
-						[(ngModel)]='responseRequested'
-						name='response'
-					>
+			</div>			
+			<div fxLayout='row'>
+				<md-checkbox [(ngModel)]='responseRequested' name='response'>
 					Response Requested
-					</md-checkbox>
-				</div>
-				<button
-					md-button
-					type='submit'
-					fxLayoutGap='16px'
-					fxLayoutAlign='center center'
-					cyphTranslate
-				>
+				</md-checkbox>
+			</div>			
+			<div fxLayout='row'>
+				<button md-button fxFlex cyphTranslate type='submit'>
 					Send
 				</button>
 			</div>
@@ -96,6 +92,5 @@
 			If you requested a response, 
 			someone on the team will get back to you shortly.
 		</div>
-		<div fxFlex></div>
 	</div>
 </div>
