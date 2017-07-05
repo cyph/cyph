@@ -47,6 +47,7 @@ read -r -d '' modules <<- EOM
 	@types/file-saver
 	@types/jasmine
 	@types/jquery@^2
+	@types/lodash
 	@types/markdown-it
 	@types/node
 	@types/stacktrace-js
@@ -105,6 +106,7 @@ read -r -d '' modules <<- EOM
 	lazy
 	libsodium-wrappers
 	localforage
+	lodash
 	lunr
 	markdown-it
 	markdown-it-emoji
