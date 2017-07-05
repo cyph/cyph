@@ -360,30 +360,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchItem (url: string) : Observable<Uint8Array|undefined> {
-		return new Observable<Uint8Array|undefined>(observer => {
-			let cleanup: Function;
-
-			const onValue	= async (snapshot: firebase.database.DataSnapshot) => {
-				if (!snapshot || !snapshot.exists()) {
-					observer.next();
-				}
-				observer.next(await this.getItem(url));
-			};
-
-			(async () => {
-				const ref	= await this.getDatabaseRef(url);
-				ref.on('value', onValue);
-				cleanup	= () => { ref.off('value', onValue); };
-			})();
-
-			return async () => {
-				(await util.waitForValue(() => cleanup))();
-			};
-		});
-	}
-
-	/** @inheritDoc */
 	public watchList<T = Uint8Array> (
 		url: string,
 		mapper: (value: Uint8Array) => T|Promise<T> = (value: Uint8Array&T) => value
@@ -478,6 +454,30 @@ export class FirebaseDatabaseService extends DatabaseService {
 					listRef.on('child_changed', onChildChanged);
 					listRef.on('child_removed', onChildRemoved);
 				};
+			})();
+
+			return async () => {
+				(await util.waitForValue(() => cleanup))();
+			};
+		});
+	}
+
+	/** @inheritDoc */
+	public watchMaybe (url: string) : Observable<Uint8Array|undefined> {
+		return new Observable<Uint8Array|undefined>(observer => {
+			let cleanup: Function;
+
+			const onValue	= async (snapshot: firebase.database.DataSnapshot) => {
+				if (!snapshot || !snapshot.exists()) {
+					observer.next();
+				}
+				observer.next(await this.getItem(url));
+			};
+
+			(async () => {
+				const ref	= await this.getDatabaseRef(url);
+				ref.on('value', onValue);
+				cleanup	= () => { ref.off('value', onValue); };
 			})();
 
 			return async () => {
