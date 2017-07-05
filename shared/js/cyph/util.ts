@@ -15,11 +15,20 @@ export class Util {
 	/** @ignore */
 	private readonly timestampData	= {
 		last: 0,
-		offset: (async () =>
-			parseFloat(await this.request({retries: 10, url: env.baseUrl + 'timestamp'})) -
+		offset: (async () => {
 			/* tslint:disable-next-line:ban */
-			Date.now()
-		)().catch(
+			const start		= Date.now();
+			const server	= parseFloat(await this.request({url: env.baseUrl + 'timestamp'}));
+			/* tslint:disable-next-line:ban */
+			const end		= Date.now();
+
+			if (server > start && server < end) {
+				return 0;
+			}
+			else {
+				return server - end;
+			}
+		})().catch(
 			() => 0
 		),
 		subtime: 0
