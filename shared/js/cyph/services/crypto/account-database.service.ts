@@ -286,7 +286,7 @@ export class AccountDatabaseService {
 	public getAsyncValue (
 		url: string,
 		publicData: boolean = false,
-		defaultValue?: () => Uint8Array|Promise<Uint8Array>
+		defaultValue: () => Uint8Array|Promise<Uint8Array> = () => new Uint8Array([])
 	) : IAsyncValue<Uint8Array> {
 		let currentHash: string|undefined;
 		let currentValue: Uint8Array|undefined;
@@ -342,18 +342,14 @@ export class AccountDatabaseService {
 				}
 				asyncValue.setValue(newValue);
 			}),
-			watch: () => this.watchItem(url, publicData).map(value =>
-				value === undefined ? new Uint8Array([]) : value
-			)
+			watch: () => this.watchValue(url, publicData, defaultValue)
 		};
 
-		if (defaultValue) {
-			localLock(async () => {
-				if (!(await this.hasItem(url))) {
-					await this.setItem(url, await defaultValue());
-				}
-			});
-		}
+		localLock(async () => {
+			if (!(await this.hasItem(url))) {
+				await this.setItem(url, await defaultValue());
+			}
+		});
 
 		return asyncValue;
 	}
@@ -365,12 +361,12 @@ export class AccountDatabaseService {
 	public getAsyncValueBoolean (
 		url: string,
 		publicData: boolean = false,
-		defaultValue?: () => boolean|Promise<boolean>
+		defaultValue: () => boolean|Promise<boolean> = () => false
 	) : IAsyncValue<boolean> {
 		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
 			url,
 			publicData,
-			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
+			async () => util.toBytes(await defaultValue())
 		);
 
 		return {
@@ -380,9 +376,7 @@ export class AccountDatabaseService {
 			updateValue: async f => updateValue(
 				async value => util.toBytes(await f(util.bytesToBoolean(value)))
 			),
-			watch: () => this.watchItemBoolean(url, publicData).map(value =>
-				value === undefined ? false : value
-			)
+			watch: () => this.watchValueBoolean(url, publicData, defaultValue)
 		};
 	}
 
@@ -393,12 +387,12 @@ export class AccountDatabaseService {
 	public getAsyncValueNumber (
 		url: string,
 		publicData: boolean = false,
-		defaultValue?: () => number|Promise<number>
+		defaultValue: () => number|Promise<number> = () => 0
 	) : IAsyncValue<number> {
 		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
 			url,
 			publicData,
-			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
+			async () => util.toBytes(await defaultValue())
 		);
 
 		return {
@@ -408,9 +402,7 @@ export class AccountDatabaseService {
 			updateValue: async f => updateValue(
 				async value => util.toBytes(await f(util.bytesToNumber(value)))
 			),
-			watch: () => this.watchItemNumber(url, publicData).map(value =>
-				value === undefined ? 0 : value
-			)
+			watch: () => this.watchValueNumber(url, publicData, defaultValue)
 		};
 	}
 
@@ -436,9 +428,7 @@ export class AccountDatabaseService {
 			updateValue: async f => updateValue(
 				async value => util.toBytes(await f(util.bytesToObject<T>(value)))
 			),
-			watch: () => this.watchItemObject<T>(url, publicData).flatMap(async value =>
-				value === undefined ? defaultValue() : value
-			)
+			watch: () => this.watchValueObject<T>(url, publicData, defaultValue)
 		};
 	}
 
@@ -449,12 +439,12 @@ export class AccountDatabaseService {
 	public getAsyncValueString (
 		url: string,
 		publicData: boolean = false,
-		defaultValue?: () => string|Promise<string>
+		defaultValue: () => string|Promise<string> = () => ''
 	) : IAsyncValue<string> {
 		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
 			url,
 			publicData,
-			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
+			async () => util.toBytes(await defaultValue())
 		);
 
 		return {
@@ -464,9 +454,7 @@ export class AccountDatabaseService {
 			updateValue: async f => updateValue(
 				async value => util.toBytes(await f(util.bytesToString(value)))
 			),
-			watch: () => this.watchItemString(url, publicData).map(value =>
-				value === undefined ? '' : value
-			)
+			watch: () => this.watchValueString(url, publicData, defaultValue)
 		};
 	}
 
@@ -477,12 +465,12 @@ export class AccountDatabaseService {
 	public getAsyncValueURI (
 		url: string,
 		publicData: boolean = false,
-		defaultValue?: () => string|Promise<string>
+		defaultValue: () => string|Promise<string> = () => 'data:text/plain;base64,'
 	) : IAsyncValue<string> {
 		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
 			url,
 			publicData,
-			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
+			async () => util.toBytes(await defaultValue())
 		);
 
 		return {
@@ -492,9 +480,7 @@ export class AccountDatabaseService {
 			updateValue: async f => updateValue(
 				async value => util.toBytes(await f(util.bytesToDataURI(value)))
 			),
-			watch: () => this.watchItemURI(url, publicData).map(value =>
-				value === undefined ? 'data:text/plain;base64,' : value
-			)
+			watch: () => this.watchValueURI(url, publicData, defaultValue)
 		};
 	}
 
@@ -598,7 +584,7 @@ export class AccountDatabaseService {
 					await this.removeItem(url);
 				}
 			}),
-			watch: () => this.watchItem(url)
+			watch: () => this.watchMaybe(url)
 		};
 
 		return maybeAsyncValue;
@@ -629,7 +615,7 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: () => this.watchItemBoolean(url, publicData)
+			watch: () => this.watchMaybeBoolean(url, publicData)
 		};
 	}
 
@@ -658,7 +644,7 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: () => this.watchItemNumber(url, publicData)
+			watch: () => this.watchMaybeNumber(url, publicData)
 		};
 	}
 
@@ -687,7 +673,7 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: () => this.watchItemObject<T>(url, publicData)
+			watch: () => this.watchMaybeObject<T>(url, publicData)
 		};
 	}
 
@@ -716,7 +702,7 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: () => this.watchItemString(url, publicData)
+			watch: () => this.watchMaybeString(url, publicData)
 		};
 	}
 
@@ -745,7 +731,7 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: () => this.watchItemURI(url, publicData)
+			watch: () => this.watchMaybeURI(url, publicData)
 		};
 	}
 
@@ -970,97 +956,6 @@ export class AccountDatabaseService {
 		};
 	}
 
-	/** Subscribes to value. */
-	public watchItem (
-		url: string,
-		publicData: boolean = false
-	) : Observable<Uint8Array|undefined> {
-		url	= this.processURL(url);
-
-		if (publicData) {
-			const username	= this.getUsernameFromURL(url);
-
-			return this.databaseService.watchItem(url).flatMap(async data =>
-				data ? this.openPublicData(username, data) : undefined
-			);
-		}
-		else if (this.current) {
-			const symmetricKey	= this.current.keys.symmetricKey;
-
-			return this.databaseService.watchItem(url).flatMap(async data =>
-				data ? this.potassiumService.secretBox.open(data, symmetricKey) : undefined
-			);
-		}
-		else {
-			throw new Error(`User not signed in. Cannot watch private data at ${url}.`);
-		}
-	}
-
-	/**
-	 * Subscribes to a value as a boolean.
-	 * @see watchItem
-	 */
-	public watchItemBoolean (
-		url: string,
-		publicData: boolean = false
-	) : Observable<boolean|undefined> {
-		return this.watchItem(url, publicData).map(value =>
-			value === undefined ? undefined : util.bytesToBoolean(value)
-		);
-	}
-
-	/**
-	 * Subscribes to a value as a number.
-	 * @see watchItem
-	 */
-	public watchItemNumber (
-		url: string,
-		publicData: boolean = false
-	) : Observable<number|undefined> {
-		return this.watchItem(url, publicData).map(value =>
-			value === undefined ? undefined : util.bytesToNumber(value)
-		);
-	}
-
-	/**
-	 * Subscribes to a value as an object.
-	 * @see watchItem
-	 */
-	public watchItemObject<T> (
-		url: string,
-		publicData: boolean = false
-	) : Observable<T|undefined> {
-		return this.watchItem(url, publicData).map(value =>
-			value === undefined ? undefined : util.bytesToObject<T>(value)
-		);
-	}
-
-	/**
-	 * Subscribes to a value as a string.
-	 * @see watchItem
-	 */
-	public watchItemString (
-		url: string,
-		publicData: boolean = false
-	) : Observable<string|undefined> {
-		return this.watchItem(url, publicData).map(value =>
-			value === undefined ? undefined : util.bytesToString(value)
-		);
-	}
-
-	/**
-	 * Subscribes to a value as a base64 data URI.
-	 * @see watchItem
-	 */
-	public watchItemURI (
-		url: string,
-		publicData: boolean = false
-	) : Observable<string|undefined> {
-		return this.watchItem(url, publicData).map(value =>
-			value === undefined ? undefined : util.bytesToDataURI(value)
-		);
-	}
-
 	/** Subscribes to a list of values. */
 	public watchList<T = Uint8Array> (
 		url: string,
@@ -1126,6 +1021,178 @@ export class AccountDatabaseService {
 	 */
 	public watchListURI (url: string, publicData: boolean = false) : Observable<string[]> {
 		return this.watchList<string>(url, publicData, value => util.bytesToDataURI(value));
+	}
+
+	/** Subscribes to a possibly-undefined value. */
+	public watchMaybe (
+		url: string,
+		publicData: boolean = false
+	) : Observable<Uint8Array|undefined> {
+		url	= this.processURL(url);
+
+		if (publicData) {
+			const username	= this.getUsernameFromURL(url);
+
+			return this.databaseService.watchMaybe(url).flatMap(async data =>
+				data ? this.openPublicData(username, data) : undefined
+			);
+		}
+		else if (this.current) {
+			const symmetricKey	= this.current.keys.symmetricKey;
+
+			return this.databaseService.watchMaybe(url).flatMap(async data =>
+				data ? this.potassiumService.secretBox.open(data, symmetricKey) : undefined
+			);
+		}
+		else {
+			throw new Error(`User not signed in. Cannot watch private data at ${url}.`);
+		}
+	}
+
+	/**
+	 * Subscribes to a possibly-undefined value as a boolean.
+	 * @see watchMaybe
+	 */
+	public watchMaybeBoolean (
+		url: string,
+		publicData: boolean = false
+	) : Observable<boolean|undefined> {
+		return this.watchMaybe(url, publicData).map(value =>
+			value === undefined ? undefined : util.bytesToBoolean(value)
+		);
+	}
+
+	/**
+	 * Subscribes to a possibly-undefined value as a number.
+	 * @see watchMaybe
+	 */
+	public watchMaybeNumber (
+		url: string,
+		publicData: boolean = false
+	) : Observable<number|undefined> {
+		return this.watchMaybe(url, publicData).map(value =>
+			value === undefined ? undefined : util.bytesToNumber(value)
+		);
+	}
+
+	/**
+	 * Subscribes to a possibly-undefined value as an object.
+	 * @see watchMaybe
+	 */
+	public watchMaybeObject<T> (
+		url: string,
+		publicData: boolean = false
+	) : Observable<T|undefined> {
+		return this.watchMaybe(url, publicData).map(value =>
+			value === undefined ? undefined : util.bytesToObject<T>(value)
+		);
+	}
+
+	/**
+	 * Subscribes to a possibly-undefined value as a string.
+	 * @see watchMaybe
+	 */
+	public watchMaybeString (
+		url: string,
+		publicData: boolean = false
+	) : Observable<string|undefined> {
+		return this.watchMaybe(url, publicData).map(value =>
+			value === undefined ? undefined : util.bytesToString(value)
+		);
+	}
+
+	/**
+	 * Subscribes to a possibly-undefined value as a base64 data URI.
+	 * @see watchMaybe
+	 */
+	public watchMaybeURI (
+		url: string,
+		publicData: boolean = false
+	) : Observable<string|undefined> {
+		return this.watchMaybe(url, publicData).map(value =>
+			value === undefined ? undefined : util.bytesToDataURI(value)
+		);
+	}
+
+		/** Subscribes to a value. */
+	public watchValue (
+		url: string,
+		publicData: boolean = false,
+		defaultValue: () => Uint8Array|Promise<Uint8Array> = () => new Uint8Array([])
+	) : Observable<Uint8Array> {
+		return this.watchMaybe(url, publicData).map(value =>
+			value === undefined ? defaultValue() : value
+		);
+	}
+
+	/**
+	 * Subscribes to a value as a boolean.
+	 * @see watchValue
+	 */
+	public watchValueBoolean (
+		url: string,
+		publicData: boolean = false,
+		defaultValue: () => boolean|Promise<boolean> = () => false
+	) : Observable<boolean> {
+		return this.watchMaybeBoolean(url, publicData).map(value =>
+			value === undefined ? defaultValue() : value
+		);
+	}
+
+	/**
+	 * Subscribes to a value as a number.
+	 * @see watchValue
+	 */
+	public watchValueNumber (
+		url: string,
+		publicData: boolean = false,
+		defaultValue: () => number|Promise<number> = () => 0
+	) : Observable<number> {
+		return this.watchMaybeNumber(url, publicData).map(value =>
+			value === undefined ? defaultValue() : value
+		);
+	}
+
+	/**
+	 * Subscribes to a value as an object.
+	 * @see watchValue
+	 */
+	public watchValueObject<T> (
+		url: string,
+		publicData: boolean = false,
+		defaultValue: () => T|Promise<T>
+	) : Observable<T> {
+		return this.watchMaybeObject<T>(url, publicData).map(value =>
+			value === undefined ? defaultValue() : value
+		);
+	}
+
+	/**
+	 * Subscribes to a value as a string.
+	 * @see watchValue
+	 */
+	public watchValueString (
+		url: string,
+		publicData: boolean = false,
+		defaultValue: () => string|Promise<string> = () => ''
+	) : Observable<string> {
+		return this.watchMaybeString(url, publicData).map(value =>
+			value === undefined ? defaultValue() : value
+		);
+	}
+
+	/**
+	 * Subscribes to a value as a base64 data URI.
+	 * @see watchValue
+	 */
+	public watchValueURI (
+		url: string,
+		publicData: boolean = false,
+		defaultValue: () => string|Promise<string> = () => 'data:text/plain;base64,'
+	) : Observable<string> {
+		return this.watchMaybeURI(url, publicData).map(value =>
+			value === undefined ? defaultValue() : value
+		);
 	}
 
 	constructor (
