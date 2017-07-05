@@ -421,12 +421,12 @@ export class AccountDatabaseService {
 	public getAsyncValueObject<T> (
 		url: string,
 		publicData: boolean = false,
-		defaultValue?: () => T|Promise<T>
+		defaultValue: () => T|Promise<T>
 	) : IAsyncValue<T> {
 		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
 			url,
 			publicData,
-			!defaultValue ? undefined : async () => util.toBytes(await defaultValue())
+			async () => util.toBytes(await defaultValue())
 		);
 
 		return {
@@ -436,8 +436,8 @@ export class AccountDatabaseService {
 			updateValue: async f => updateValue(
 				async value => util.toBytes(await f(util.bytesToObject<T>(value)))
 			),
-			watch: () => this.watchItemObject<T>(url, publicData).map(value =>
-				value === undefined ? {} : value
+			watch: () => this.watchItemObject<T>(url, publicData).flatMap(async value =>
+				value === undefined ? defaultValue() : value
 			)
 		};
 	}
@@ -623,9 +623,12 @@ export class AccountDatabaseService {
 			setValue: async value => setValue(
 				value === undefined ? undefined : await util.toBytes(value)
 			),
-			updateValue: async f => updateValue(
-				async value => value === undefined ? undefined : await util.toBytes(value)
-			),
+			updateValue: async f => updateValue(async value => {
+				const newValue	= await f(
+					value === undefined ? undefined : util.bytesToBoolean(value)
+				);
+				return newValue === undefined ? undefined : util.toBytes(newValue);
+			}),
 			watch: () => this.watchItemBoolean(url, publicData)
 		};
 	}
@@ -649,9 +652,12 @@ export class AccountDatabaseService {
 			setValue: async value => setValue(
 				value === undefined ? undefined : await util.toBytes(value)
 			),
-			updateValue: async f => updateValue(
-				async value => value === undefined ? undefined : await util.toBytes(value)
-			),
+			updateValue: async f => updateValue(async value => {
+				const newValue	= await f(
+					value === undefined ? undefined : util.bytesToNumber(value)
+				);
+				return newValue === undefined ? undefined : util.toBytes(newValue);
+			}),
 			watch: () => this.watchItemNumber(url, publicData)
 		};
 	}
@@ -675,9 +681,12 @@ export class AccountDatabaseService {
 			setValue: async value => setValue(
 				value === undefined ? undefined : await util.toBytes(value)
 			),
-			updateValue: async f => updateValue(
-				async value => value === undefined ? undefined : await util.toBytes(value)
-			),
+			updateValue: async f => updateValue(async value => {
+				const newValue	= await f(
+					value === undefined ? undefined : util.bytesToObject<T>(value)
+				);
+				return newValue === undefined ? undefined : util.toBytes(newValue);
+			}),
 			watch: () => this.watchItemObject<T>(url, publicData)
 		};
 	}
@@ -701,9 +710,12 @@ export class AccountDatabaseService {
 			setValue: async value => setValue(
 				value === undefined ? undefined : await util.toBytes(value)
 			),
-			updateValue: async f => updateValue(
-				async value => value === undefined ? undefined : await util.toBytes(value)
-			),
+			updateValue: async f => updateValue(async value => {
+				const newValue	= await f(
+					value === undefined ? undefined : util.bytesToString(value)
+				);
+				return newValue === undefined ? undefined : util.toBytes(newValue);
+			}),
 			watch: () => this.watchItemString(url, publicData)
 		};
 	}
@@ -727,9 +739,12 @@ export class AccountDatabaseService {
 			setValue: async value => setValue(
 				value === undefined ? undefined : await util.toBytes(value)
 			),
-			updateValue: async f => updateValue(
-				async value => value === undefined ? undefined : await util.toBytes(value)
-			),
+			updateValue: async f => updateValue(async value => {
+				const newValue	= await f(
+					value === undefined ? undefined : util.bytesToDataURI(value)
+				);
+				return newValue === undefined ? undefined : util.toBytes(newValue);
+			}),
 			watch: () => this.watchItemURI(url, publicData)
 		};
 	}
