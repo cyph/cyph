@@ -179,61 +179,6 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.waitForUnlock.');
 	}
 
-	/** Subscribes to value. */
-	public watchItem (_URL: string) : Observable<Uint8Array|undefined> {
-		throw new Error('Must provide an implementation of DatabaseService.watchItem.');
-	}
-
-	/**
-	 * Subscribes to a value as a boolean.
-	 * @see watchItem
-	 */
-	public watchItemBoolean (url: string) : Observable<boolean|undefined> {
-		return this.watchItem(url).map(value =>
-			value === undefined ? undefined : util.bytesToBoolean(value)
-		);
-	}
-
-	/**
-	 * Subscribes to a value as a number.
-	 * @see watchItem
-	 */
-	public watchItemNumber (url: string) : Observable<number|undefined> {
-		return this.watchItem(url).map(value =>
-			value === undefined ? undefined : util.bytesToNumber(value)
-		);
-	}
-
-	/**
-	 * Subscribes to a value as an object.
-	 * @see watchItem
-	 */
-	public watchItemObject<T> (url: string) : Observable<T|undefined> {
-		return this.watchItem(url).map(value =>
-			value === undefined ? undefined : util.bytesToObject<T>(value)
-		);
-	}
-
-	/**
-	 * Subscribes to a value as a string.
-	 * @see watchItem
-	 */
-	public watchItemString (url: string) : Observable<string|undefined> {
-		return this.watchItem(url).map(value =>
-			value === undefined ? undefined : util.bytesToString(value)
-		);
-	}
-
-	/**
-	 * Subscribes to a value as a base64 data URI.
-	 * @see watchItem
-	 */
-	public watchItemURI (url: string) : Observable<string|undefined> {
-		return this.watchItem(url).map(value =>
-			value === undefined ? undefined : util.bytesToDataURI(value)
-		);
-	}
-
 	/** Subscribes to a list of values. */
 	public watchList<T = Uint8Array> (
 		_URL: string,
@@ -280,6 +225,133 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchListURI (url: string) : Observable<string[]> {
 		return this.watchList<string>(url, value => util.bytesToDataURI(value));
+	}
+
+	/** Subscribes to a possibly-undefined value. */
+	public watchMaybe (_URL: string) : Observable<Uint8Array|undefined> {
+		throw new Error('Must provide an implementation of DatabaseService.watchMaybe.');
+	}
+
+	/**
+	 * Subscribes to a possibly-undefined value as a boolean.
+	 * @see watchMaybe
+	 */
+	public watchMaybeBoolean (url: string) : Observable<boolean|undefined> {
+		return this.watchMaybe(url).map(value =>
+			value === undefined ? undefined : util.bytesToBoolean(value)
+		);
+	}
+
+	/**
+	 * Subscribes to a possibly-undefined value as a number.
+	 * @see watchMaybe
+	 */
+	public watchMaybeNumber (url: string) : Observable<number|undefined> {
+		return this.watchMaybe(url).map(value =>
+			value === undefined ? undefined : util.bytesToNumber(value)
+		);
+	}
+
+	/**
+	 * Subscribes to a possibly-undefined value as an object.
+	 * @see watchMaybe
+	 */
+	public watchMaybeObject<T> (url: string) : Observable<T|undefined> {
+		return this.watchMaybe(url).map(value =>
+			value === undefined ? undefined : util.bytesToObject<T>(value)
+		);
+	}
+
+	/**
+	 * Subscribes to a possibly-undefined value as a string.
+	 * @see watchMaybe
+	 */
+	public watchMaybeString (url: string) : Observable<string|undefined> {
+		return this.watchMaybe(url).map(value =>
+			value === undefined ? undefined : util.bytesToString(value)
+		);
+	}
+
+	/**
+	 * Subscribes to a possibly-undefined value as a base64 data URI.
+	 * @see watchMaybe
+	 */
+	public watchMaybeURI (url: string) : Observable<string|undefined> {
+		return this.watchMaybe(url).map(value =>
+			value === undefined ? undefined : util.bytesToDataURI(value)
+		);
+	}
+
+	/** Subscribes to a value. */
+	public watchValue (
+		url: string,
+		defaultValue: Uint8Array = new Uint8Array([])
+	) : Observable<Uint8Array> {
+		return this.watchMaybe(url).map(value =>
+			value === undefined ? defaultValue : value
+		);
+	}
+
+	/**
+	 * Subscribes to a value as a boolean.
+	 * @see watchValue
+	 */
+	public watchValueBoolean (
+		url: string,
+		defaultValue: boolean = false
+	) : Observable<boolean> {
+		return this.watchMaybeBoolean(url).map(value =>
+			value === undefined ? defaultValue : value
+		);
+	}
+
+	/**
+	 * Subscribes to a value as a number.
+	 * @see watchValue
+	 */
+	public watchValueNumber (
+		url: string,
+		defaultValue: number = 0
+	) : Observable<number> {
+		return this.watchMaybeNumber(url).map(value =>
+			value === undefined ? defaultValue : value
+		);
+	}
+
+	/**
+	 * Subscribes to a value as an object.
+	 * @see watchValue
+	 */
+	public watchValueObject<T> (url: string, defaultValue: T) : Observable<T> {
+		return this.watchMaybeObject<T>(url).map(value =>
+			value === undefined ? defaultValue : value
+		);
+	}
+
+	/**
+	 * Subscribes to a value as a string.
+	 * @see watchValue
+	 */
+	public watchValueString (
+		url: string,
+		defaultValue: string = ''
+	) : Observable<string> {
+		return this.watchMaybeString(url).map(value =>
+			value === undefined ? defaultValue : value
+		);
+	}
+
+	/**
+	 * Subscribes to a value as a base64 data URI.
+	 * @see watchValue
+	 */
+	public watchValueURI (
+		url: string,
+		defaultValue: string = 'data:text/plain;base64,'
+	) : Observable<string> {
+		return this.watchMaybeURI(url).map(value =>
+			value === undefined ? defaultValue : value
+		);
 	}
 
 	constructor () {
