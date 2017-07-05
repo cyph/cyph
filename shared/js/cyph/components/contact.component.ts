@@ -12,6 +12,9 @@ import {util} from '../util';
 	templateUrl: '../../../templates/contact.html'
 })
 export class ContactComponent implements OnInit {
+	/** Indicates whether the feedback form UI should be displayed. */
+	public feedbackForm: boolean		= false;
+
 	/** Sender email address. */
 	@Input() public fromEmail: string	= '';
 
@@ -35,6 +38,8 @@ export class ContactComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		this.feedbackForm	= this.to === 'feedback';
+
 		if (!this.to) {
 			this.to	= 'hello';
 		}
