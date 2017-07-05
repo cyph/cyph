@@ -285,9 +285,9 @@ export class DatabaseService extends DataManagerService {
 	/** Subscribes to a value. */
 	public watchValue (
 		url: string,
-		defaultValue: () => Uint8Array = () => new Uint8Array([])
+		defaultValue: () => Uint8Array|Promise<Uint8Array> = () => new Uint8Array([])
 	) : Observable<Uint8Array> {
-		return this.watchMaybe(url).map(value =>
+		return this.watchMaybe(url).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}
@@ -298,9 +298,9 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchValueBoolean (
 		url: string,
-		defaultValue: () => boolean = () => false
+		defaultValue: () => boolean|Promise<boolean> = () => false
 	) : Observable<boolean> {
-		return this.watchMaybeBoolean(url).map(value =>
+		return this.watchMaybeBoolean(url).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}
@@ -311,9 +311,9 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchValueNumber (
 		url: string,
-		defaultValue: () => number = () => 0
+		defaultValue: () => number|Promise<number> = () => 0
 	) : Observable<number> {
-		return this.watchMaybeNumber(url).map(value =>
+		return this.watchMaybeNumber(url).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}
@@ -322,8 +322,11 @@ export class DatabaseService extends DataManagerService {
 	 * Subscribes to a value as an object.
 	 * @see watchValue
 	 */
-	public watchValueObject<T> (url: string, defaultValue: () => T) : Observable<T> {
-		return this.watchMaybeObject<T>(url).map(value =>
+	public watchValueObject<T> (
+		url: string,
+		defaultValue: () => T|Promise<T>
+	) : Observable<T> {
+		return this.watchMaybeObject<T>(url).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}
@@ -334,9 +337,9 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchValueString (
 		url: string,
-		defaultValue: () => string = () => ''
+		defaultValue: () => string|Promise<string> = () => ''
 	) : Observable<string> {
-		return this.watchMaybeString(url).map(value =>
+		return this.watchMaybeString(url).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}
@@ -347,9 +350,9 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchValueURI (
 		url: string,
-		defaultValue: () => string = () => 'data:text/plain;base64,'
+		defaultValue: () => string|Promise<string> = () => 'data:text/plain;base64,'
 	) : Observable<string> {
-		return this.watchMaybeURI(url).map(value =>
+		return this.watchMaybeURI(url).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}
