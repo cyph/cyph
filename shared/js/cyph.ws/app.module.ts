@@ -11,6 +11,7 @@ import '../standalone/init';
 import '../standalone/translations';
 
 import {NgModule} from '@angular/core';
+import {Http} from '@angular/http';
 import {RouterModule} from '@angular/router';
 import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
 import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
@@ -22,6 +23,7 @@ import {CyphWebModule} from '../cyph/modules/cyph-web.module';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {ThreadedPotassiumService} from '../cyph/services/crypto/threaded-potassium.service';
 import {FaviconService} from '../cyph/services/favicon.service';
+import {Util} from '../cyph/util';
 import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
@@ -62,5 +64,7 @@ import {LockdownComponent} from './lockdown.component';
 })
 /* tslint:disable-next-line:no-stateless-class */
 export class AppModule {
-	constructor () {}
+	constructor (http: Http) {
+		Util.resolveHttp(http);
+	}
 }
