@@ -436,6 +436,12 @@
   version "2.0.29"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-2.0.29.tgz#5002e14f75e2d71e564281df0431c8c1b4a2a36a"
 
+"@types/msgpack-lite@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@types/msgpack-lite/-/msgpack-lite-0.1.4.tgz#0ffa12bb008f9b8765f7d6772c109baf38925de5"
+  dependencies:
+    "@types/node" "*"
+
 "@types/node-fetch@^1.6.7":
   version "1.6.7"
   resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-1.6.7.tgz#521078e8f0c69a158e5022005aca92d2620f6d57"
@@ -3064,6 +3070,10 @@ event-emitter@~0.3.4, event-emitter@~0.3.5:
     d "1"
     es5-ext "~0.10.14"
 
+event-lite@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/event-lite/-/event-lite-0.1.1.tgz#47cf08a8d37d0b694cdb7b3b17b51faac6576086"
+
 event-stream@latest, event-stream@~3.3.0:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/event-stream/-/event-stream-3.3.4.tgz#4ab4c9a0f5a54db9338b4c34d86bfce8f4b35571"
@@ -4315,7 +4325,7 @@ icss-utils@^2.1.0:
   dependencies:
     postcss "^6.0.1"
 
-ieee754@^1.1.4:
+ieee754@^1.1.4, ieee754@^1.1.8:
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.8.tgz#be33d40ac10ef1926701f6f08a2d86fbfd1ad3e4"
 
@@ -4438,6 +4448,10 @@ inquirer@0.9.0, inquirer@^0.12.0, inquirer@^3.0.0:
     string-width "^2.0.0"
     strip-ansi "^3.0.0"
     through "^2.3.6"
+
+int64-buffer@^0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/int64-buffer/-/int64-buffer-0.1.9.tgz#9e039da043b24f78b196b283e04653ef5e990f61"
 
 interact.js@^1.2.8:
   version "1.2.8"
@@ -5934,6 +5948,15 @@ move-concurrently@~1.0.1:
 ms@0.6.2, ms@0.7.1, ms@0.7.2, ms@2.0.0, ms@^0.7.1, ms@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
+
+msgpack-lite@^0.1.26:
+  version "0.1.26"
+  resolved "https://registry.yarnpkg.com/msgpack-lite/-/msgpack-lite-0.1.26.tgz#dd3c50b26f059f25e7edee3644418358e2a9ad89"
+  dependencies:
+    event-lite "^0.1.1"
+    ieee754 "^1.1.8"
+    int64-buffer "^0.1.9"
+    isarray "^1.0.0"
 
 multimatch@^2.0.0:
   version "2.1.0"
