@@ -69,6 +69,14 @@
 			}
 		},
 
+		"ephemeral": {
+			"$file": {
+				".read": true,
+				".write": "!data.exists() && newData.exists()",
+				".validate": "newData.isString()"
+			}
+		},
+
 		"users": {
 			"$user": {
 				".read": "($user + '@cyph.me') === auth.token.email",
