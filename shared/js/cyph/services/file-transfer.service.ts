@@ -228,9 +228,7 @@ export class FileTransferService {
 		image: boolean = this.fileService.isImage(file),
 		imageSelfDestructTimeout?: number
 	) : Promise<void> {
-		const plaintext	= await this.fileService.getBytes(file, image);
-
-		if (plaintext.length > this.configService.filesConfig.maxSize) {
+		if (file.size > this.configService.filesConfig.maxSize) {
 			this.uiTooLarge();
 
 			this.analyticsService.sendEvent({
@@ -243,7 +241,21 @@ export class FileTransferService {
 			return;
 		}
 
+		const transferSetPlaceholder	= {
+			metadata: new Transfer(
+				file.name,
+				file.type,
+				image,
+				imageSelfDestructTimeout,
+				file.size
+			),
+			progress: Observable.of(0)
+		};
+
+		this.transfers	= this.transfers.add(transferSetPlaceholder);
+
 		const url					= 'ephemeral/' + util.uuid();
+		const plaintext				= await this.fileService.getBytes(file, image);
 		const {cyphertext, key}		= await this.encryptFile(plaintext);
 		const uploadTask			= await this.databaseService.uploadItem(url, cyphertext);
 
@@ -258,7 +270,11 @@ export class FileTransferService {
 		);
 
 		const transferSetItem	= {metadata: transfer, progress: uploadTask.progress};
-		this.transfers			= this.transfers.add(transferSetItem);
+
+		this.transfers			= this.transfers.
+			remove(transferSetPlaceholder).
+			add(transferSetItem)
+		;
 
 		this.analyticsService.sendEvent({
 			eventAction: 'send',

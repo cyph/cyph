@@ -63,7 +63,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const hash	= await this.getHash(url);
 
 				try {
-					return await this.localStorageService.getItem(`cache/${hash}`);
+					const data	= await this.localStorageService.getItem(`cache/${hash}`);
+					progress.next(100);
+					progress.complete();
+					return data;
 				}
 				catch (_) {}
 
@@ -84,7 +87,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						await this.potassiumService.hash.hash(data)
 					)
 				) {
-					const err	= new Error('Invalid data hash');
+					const err	= new Error('Invalid data hash.');
 					progress.error(err);
 					throw err;
 				}
@@ -248,7 +251,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
 
 		/* tslint:disable-next-line:possible-timing-attack */
-		if (hash !== (await this.getHash(url))) {
+		if (hash !== (await this.getHash(url).catch(() => undefined))) {
 			this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
 			await (await this.getStorageRef(url)).put(new Blob([data])).then();
 			await (await this.getDatabaseRef(url)).set(hash).then();
@@ -282,7 +285,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			);
 
 			/* tslint:disable-next-line:possible-timing-attack */
-			if (hash === (await this.getHash(url))) {
+			if (hash === (await this.getHash(url).catch(() => undefined))) {
 				progress.next(100);
 				progress.complete();
 				return {hash, url};

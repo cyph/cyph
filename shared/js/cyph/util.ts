@@ -1,6 +1,6 @@
 /* tslint:disable:max-file-line-count */
 
-import {Headers, Http, Response} from '@angular/http';
+import {Headers, Http, Response, ResponseContentType} from '@angular/http';
 import {saveAs} from 'file-saver';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {config} from './config';
@@ -59,7 +59,7 @@ export class Util {
 			retries?: number;
 			url: string;
 		},
-		responseType: string,
+		responseType: ResponseContentType,
 		getResponseData: (res: Response) => Promise<T>
 	) : {
 		progress: Observable<number>;
@@ -82,7 +82,7 @@ export class Util {
 				if (url.slice(-5) === '.json') {
 					contentType	= 'application/json';
 				}
-				else if (responseType === 'text') {
+				else if (responseType === ResponseContentType.Text) {
 					contentType	= 'application/x-www-form-urlencoded';
 				}
 
@@ -116,7 +116,8 @@ export class Util {
 								new Headers({'Content-Type': contentType}) :
 								undefined
 							,
-							method
+							method,
+							responseType
 						});
 
 						const res	= await new Promise<Response>((resolve, reject) => {
@@ -424,7 +425,7 @@ export class Util {
 		retries?: number;
 		url: string;
 	}) : Promise<string> {
-		return (await this.baseRequest(o, 'text', async res =>
+		return (await this.baseRequest(o, ResponseContentType.Text, async res =>
 			(await res.text()).trim()
 		)).response;
 	}
@@ -451,7 +452,7 @@ export class Util {
 		progress: Observable<number>;
 		response: Promise<Uint8Array>;
 	} {
-		return this.baseRequest(o, 'arraybuffer', async res =>
+		return this.baseRequest(o, ResponseContentType.ArrayBuffer, async res =>
 			new Uint8Array(await res.arrayBuffer())
 		);
 	}
