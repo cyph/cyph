@@ -31,13 +31,13 @@ export class Box implements IBox {
 		keyPair: async () : Promise<IKeyPair> =>
 			this.isNative ?
 				NativeCrypto.box.keyPair() :
-				sodium.crypto_box_keypair()
+				sodium.crypto_box_curve25519xchacha20poly1305_keypair()
 		,
 
 		nonceBytes:
 			this.isNative ?
 				NativeCrypto.secretBox.nonceBytes :
-				sodium.crypto_box_NONCEBYTES
+				sodium.crypto_box_curve25519xchacha20poly1305_NONCEBYTES
 		,
 
 		open: async (
@@ -51,7 +51,7 @@ export class Box implements IBox {
 					nonce,
 					keyPair
 				) :
-				sodium.crypto_box_seal_open(
+				sodium.crypto_box_curve25519xchacha20poly1305_seal_open(
 					cyphertext,
 					keyPair.publicKey,
 					keyPair.privateKey
@@ -61,13 +61,13 @@ export class Box implements IBox {
 		privateKeyBytes:
 			this.isNative ?
 				NativeCrypto.box.privateKeyBytes :
-				sodium.crypto_box_SECRETKEYBYTES
+				sodium.crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES
 		,
 
 		publicKeyBytes:
 			this.isNative ?
 				NativeCrypto.box.publicKeyBytes :
-				sodium.crypto_box_PUBLICKEYBYTES
+				sodium.crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES
 		,
 
 		seal: async (
@@ -81,7 +81,7 @@ export class Box implements IBox {
 					nonce,
 					publicKey
 				) :
-				sodium.crypto_box_seal(
+				sodium.crypto_box_curve25519xchacha20poly1305_seal(
 					plaintext,
 					publicKey
 				)

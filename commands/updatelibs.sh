@@ -250,6 +250,11 @@ cd ~/lib/js
 
 ${dir}/commands/libclone.sh https://github.com/jedisct1/libsodium.js libsodium.build
 cd libsodium.build
+
+# Temporary, pending https://github.com/jedisct1/libsodium/issues/561 landing in stable
+rm -rf libsodium
+git clone --depth 1 --recursive https://github.com/jedisct1/libsodium
+
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 {
 	"name": "crypto_stream_chacha20",
@@ -282,6 +287,97 @@ cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 	"return": "_format_output(out, outputFormat)"
 }
 EOM
+cat > wrapper/symbols/crypto_box_curve25519xchacha20poly1305_keypair.json << EOM
+{
+	"name": "crypto_box_curve25519xchacha20poly1305_keypair",
+	"type": "function",
+	"inputs": [],
+	"outputs": [
+		{
+			"type": "buf",
+			"size": "libsodium._crypto_box_curve25519xchacha20poly1305_publickeybytes()",
+			"name": "publicKey"
+		},
+		{
+			"type": "buf",
+			"size": "libsodium._crypto_box_curve25519xchacha20poly1305_secretkeybytes()",
+			"name": "secretKey"
+		}
+	],
+	"target": "libsodium._crypto_box_curve25519xchacha20poly1305_keypair(publicKey_address, secretKey_address) | 0",
+	"expect": "=== 0",
+	"return": "_format_output({publicKey: publicKey, privateKey: secretKey, keyType: \"curve25519\"}, outputFormat)"
+}
+EOM
+cat > wrapper/symbols/crypto_box_curve25519xchacha20poly1305_seal.json << EOM
+{
+	"name": "crypto_box_curve25519xchacha20poly1305_seal",
+	"type": "function",
+	"inputs": [
+		{
+			"name": "message",
+			"type": "unsized_buf"
+		},
+		{
+			"name": "publicKey",
+			"type": "buf",
+			"size": "libsodium._crypto_box_curve25519xchacha20poly1305_publickeybytes()"
+		}
+	],
+	"outputs": [
+		{
+			"name": "ciphertext",
+			"type": "buf",
+			"size": "message_length + libsodium._crypto_box_curve25519xchacha20poly1305_sealbytes()"
+		}
+	],
+	"target": "libsodium._crypto_box_curve25519xchacha20poly1305_seal(ciphertext_address, message_address, message_length, 0, publicKey_address) | 0",
+	"expect": "=== 0",
+	"return": "_format_output(ciphertext, outputFormat)"
+}
+EOM
+cat > wrapper/symbols/crypto_box_curve25519xchacha20poly1305_seal_open.json << EOM
+{
+	"name": "crypto_box_curve25519xchacha20poly1305_seal_open",
+	"type": "function",
+	"inputs": [
+		{
+			"name": "ciphertext",
+			"type": "unsized_buf"
+		},
+		{
+			"name": "publicKey",
+			"type": "buf",
+			"size": "libsodium._crypto_box_curve25519xchacha20poly1305_publickeybytes()"
+		},
+		{
+			"name": "secretKey",
+			"type": "buf",
+			"size": "libsodium._crypto_box_curve25519xchacha20poly1305_secretkeybytes()"
+		}
+	],
+	"outputs": [
+		{
+			"name": "plaintext",
+			"type": "buf",
+			"size": "ciphertext_length - libsodium._crypto_box_curve25519xchacha20poly1305_sealbytes()"
+		}
+	],
+	"target": "libsodium._crypto_box_curve25519xchacha20poly1305_seal_open(plaintext_address, ciphertext_address, ciphertext_length, 0, publicKey_address, secretKey_address) | 0",
+	"expect": "=== 0",
+	"return": "_format_output(plaintext, outputFormat)"
+}
+EOM
+
+node -e '
+	const constants	= JSON.parse(fs.readFileSync("wrapper/constants.json").toString());
+	fs.writeFileSync("wrapper/constants.json", JSON.stringify(constants.concat([
+		{"name": "crypto_box_curve25519xchacha20poly1305_NONCEBYTES", "type": "uint"},
+		{"name": "crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES", "type": "uint"},
+		{"name": "crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES", "type": "uint"}
+	])));
+'
+
 cat Makefile |
 	perl -pe 's/^(\s+).*--browser-tests.*/\1\@echo/g' |
 	perl -pe 's/^(\s+).*BROWSERS_TEST_DIR.*/\1\@echo/g' |
