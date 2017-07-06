@@ -372,8 +372,8 @@
   resolved "https://registry.yarnpkg.com/@types/dompurify/-/dompurify-0.0.29.tgz#3a774b80a709848e560fbf9ea62d5f716e79b6f2"
 
 "@types/express-serve-static-core@*":
-  version "4.0.48"
-  resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.0.48.tgz#b4fa06b0fce282e582b4535ff7fac85cc90173e9"
+  version "4.0.49"
+  resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.0.49.tgz#3438d68d26e39db934ba941f18e3862a1beeb722"
   dependencies:
     "@types/node" "*"
 
@@ -448,9 +448,9 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^6.0.46", "@types/node@^7.0.5", "@types/node@^8.0.7":
-  version "8.0.7"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.7.tgz#fb0ad04b5b6f6eabe0372a32a8f1fbba5c130cae"
+"@types/node@*", "@types/node@^6.0.46", "@types/node@^7.0.5", "@types/node@^8.0.8":
+  version "8.0.8"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.8.tgz#0dc4ca2c6f6fc69baee16c5e928c4a627f517ada"
 
 "@types/q@^0.0.32":
   version "0.0.32"
@@ -540,8 +540,8 @@ acorn-globals@^1.0.4:
     acorn "^2.1.0"
 
 acorn@^1.0.3, acorn@^2.1.0, acorn@^2.4.0, acorn@^4.0.3, acorn@^5.0.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.1.0.tgz#e468bf609b0672700e02f878ae2f1b360fe24b4f"
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.1.1.tgz#53fe161111f912ab999ee887a90a0bc52822fd75"
 
 adjust-sourcemap-loader@^1.1.0:
   version "1.1.0"
@@ -621,9 +621,9 @@ amdefine@>=0.0.4:
     rxjs "^5"
     zone.js "^0"
 
-angular-ssr@^0.10.31:
-  version "0.10.31"
-  resolved "https://registry.yarnpkg.com/angular-ssr/-/angular-ssr-0.10.31.tgz#9109412b78699b70c197e8d19a6b9c4f444b7af9"
+angular-ssr@^0.10.34:
+  version "0.10.34"
+  resolved "https://registry.yarnpkg.com/angular-ssr/-/angular-ssr-0.10.34.tgz#3243ae2c88eba8b6cd66698704d686a3904590be"
   dependencies:
     "@angular/cli" ">=1.1.0"
     "@types/chalk" "^0.4.31"
@@ -5639,9 +5639,9 @@ lru_map@^0.3.3:
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/lru_map/-/lru_map-0.3.3.tgz#b5c8351b9464cbd750335a79650a0ec0e56118dd"
 
-lunr@^1.0.0, lunr@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/lunr/-/lunr-2.1.0.tgz#5e0308137de2c720a1653f28fedd4edc14d2a9a5"
+lunr@^1.0.0, lunr@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/lunr/-/lunr-2.1.1.tgz#37f0814610dbc3623b71c31eb3befb9eac4ee5ce"
 
 macaddress@^0.2.8:
   version "0.2.8"
@@ -6172,9 +6172,9 @@ nativescript-websockets@^1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/nativescript-websockets/-/nativescript-websockets-1.3.3.tgz#fe5d25393f18c6c8533308bb39e78752bd1bc49a"
 
-nativescript@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/nativescript/-/nativescript-3.1.1.tgz#e01e8c94e434dac9a1849caac255039c66c1b903"
+nativescript@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/nativescript/-/nativescript-3.1.2.tgz#94b444173e7b2c0ca464a5f3925a98dd2411d17e"
   dependencies:
     bplist-parser "0.1.0"
     bufferpack "0.0.6"
@@ -8110,8 +8110,8 @@ rsvp@3.2.1, rsvp@^3.0.17, rsvp@^3.0.18, rsvp@^3.1.0, rsvp@~3.2.1:
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-3.6.1.tgz#34f4a7ac2859f7bacc8f49789c5604f1e26ae702"
 
 rtcpeerconnection@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/rtcpeerconnection/-/rtcpeerconnection-8.0.0.tgz#e07304301e2cfa4d7393af377f1f5dcb54414409"
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/rtcpeerconnection/-/rtcpeerconnection-8.0.1.tgz#9e775a7648691df34ac0b6011bb473ac1fa96432"
   dependencies:
     lodash.clonedeep "^4.3.2"
     sdp-jingle-json "^3.0.0"
@@ -9955,9 +9955,9 @@ webpack@^3.0.0, webpack@~2.4.0:
     webpack-sources "^1.0.1"
     yargs "^6.0.0"
 
-webrtc-adapter@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/webrtc-adapter/-/webrtc-adapter-4.1.0.tgz#6a79a9990ad0daf56d7be87a1b013eb6c21bb41c"
+webrtc-adapter@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/webrtc-adapter/-/webrtc-adapter-4.1.1.tgz#bb815b6430b9c36dac9c3756d0c9ce438b34e336"
   dependencies:
     sdp "^2.1.0"
 
