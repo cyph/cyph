@@ -5,6 +5,6 @@ export interface ILoginData {
 	/** Randomly generated password for database authentication. */
 	secondaryPassword: string;
 
-	/** Base64-encoded key for encrypting user data. */
-	symmetricKey: string;
+	/** Symmetric key for encrypting user data. */
+	symmetricKey: Uint8Array;
 }

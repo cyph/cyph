@@ -754,18 +754,16 @@ export class AccountDatabaseService {
 			throw new Error('Invalid AGSE-PKI certificate: bad key index.');
 		}
 
-		const verified	= util.parse<{
-			publicEncryptionKey: string;
-			publicSigningKey: string;
+		const verified	= util.bytesToObject<{
+			publicEncryptionKey: Uint8Array;
+			publicSigningKey: Uint8Array;
 			username: string;
 		}>(
-			this.potassiumService.toString(
-				await this.potassiumService.sign.open(
-					signed,
-					await this.potassiumService.sign.importSuperSphincsPublicKeys(
-						this.agsePublicSigningKeys.rsa[rsaKeyIndex],
-						this.agsePublicSigningKeys.sphincs[sphincsKeyIndex]
-					)
+			await this.potassiumService.sign.open(
+				signed,
+				await this.potassiumService.sign.importSuperSphincsPublicKeys(
+					this.agsePublicSigningKeys.rsa[rsaKeyIndex],
+					this.agsePublicSigningKeys.sphincs[sphincsKeyIndex]
 				)
 			)
 		);
@@ -775,8 +773,8 @@ export class AccountDatabaseService {
 		}
 
 		return {
-			encryption: this.potassiumService.fromBase64(verified.publicEncryptionKey),
-			signing: this.potassiumService.fromBase64(verified.publicSigningKey)
+			encryption: verified.publicEncryptionKey,
+			signing: verified.publicSigningKey
 		};
 	}
 
