@@ -85,7 +85,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected async castleHandler (e: {
-		data?: string|{author: string; text: string; timestamp: number};
+		data?: string|{author: string; plaintext: Uint8Array; timestamp: number};
 		event: CastleEvents;
 	}) : Promise<void> {
 		switch (e.event) {
@@ -126,7 +126,7 @@ export abstract class SessionService implements ISessionService {
 
 				const messages	= (() => {
 					try {
-						return util.parse<IMessage[]>(e.data.text);
+						return util.bytesToObject<IMessage[]>(e.data.plaintext);
 					}
 					catch (_) {
 						return [];

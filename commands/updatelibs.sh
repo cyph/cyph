@@ -49,6 +49,7 @@ read -r -d '' modules <<- EOM
 	@types/jquery@^2
 	@types/lodash
 	@types/markdown-it
+	@types/msgpack-lite
 	@types/node
 	@types/stacktrace-js
 	angular-smd@https://github.com/buu700/angular-smd-tmp
@@ -115,6 +116,7 @@ read -r -d '' modules <<- EOM
 	microlight-string
 	mkdirp
 	moment
+	msgpack-lite
 	nativescript
 	nativescript-angular
 	nativescript-css-loader

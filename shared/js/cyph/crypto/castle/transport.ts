@@ -63,11 +63,10 @@ export class Transport {
 
 		const timestamp	= new DataView(plaintext.buffer).getFloat64(plaintext.byteOffset, true);
 		const data		= new Uint8Array(plaintext.buffer, plaintext.byteOffset + 8);
-		const text		= potassiumUtil.toString(data);
 
-		if (text) {
+		if (data.length > 0) {
 			this.session.trigger(events.castle, {
-				data: {author, text, timestamp},
+				data: {author, plaintext: data, timestamp},
 				event: CastleEvents.receive
 			});
 		}

@@ -2,6 +2,7 @@
 
 import {Headers, Http, Response, ResponseContentType} from '@angular/http';
 import {saveAs} from 'file-saver';
+import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
@@ -191,7 +192,7 @@ export class Util {
 
 	/** Converts byte array produced by toBytes into a generic object. */
 	public bytesToObject<T> (bytes: Uint8Array, clearInput: boolean = true) : T {
-		const value	= this.parse<T>(this.bytesToString(bytes));
+		const value: T	= msgpack.decode(bytes);
 		if (clearInput) {
 			potassiumUtil.clearMemory(bytes);
 		}
@@ -542,7 +543,7 @@ export class Util {
 							new Uint8Array(new Float64Array([data]).buffer) :
 							typeof data === 'string' ?
 								potassiumUtil.fromString(data) :
-								potassiumUtil.fromString(this.stringify(data))
+								msgpack.encode(data)
 		;
 	}
 

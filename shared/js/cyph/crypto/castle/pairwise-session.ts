@@ -214,7 +214,7 @@ export class PairwiseSession {
 	}
 
 	/** Send/encrypt outgoing message. */
-	public async send (plaintext: string, timestamp?: number) : Promise<void> {
+	public async send (plaintext: string|ArrayBufferView, timestamp?: number) : Promise<void> {
 		if (this.isAborted) {
 			return;
 		}
