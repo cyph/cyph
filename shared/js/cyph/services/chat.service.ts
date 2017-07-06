@@ -372,7 +372,7 @@ export class ChatService {
 					await util.sleep(ChatService.messageConfirmationSpinnerTimeout);
 
 					await this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
-						if (!(o.id in unconfirmedMessages)) {
+						if (unconfirmedMessages[o.id] === undefined) {
 							throw undefined;
 						}
 						unconfirmedMessages[o.id]	= true;
