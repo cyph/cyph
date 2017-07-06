@@ -28,7 +28,7 @@ export class SecretBox implements ISecretBox {
 		nonceBytes:
 			this.isNative ?
 				NativeCrypto.secretBox.nonceBytes :
-				sodium.crypto_aead_chacha20poly1305_NPUBBYTES
+				sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
 		,
 
 		open: async (
@@ -44,7 +44,7 @@ export class SecretBox implements ISecretBox {
 					key,
 					additionalData
 				) :
-				sodium.crypto_aead_chacha20poly1305_decrypt(
+				sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
 					undefined,
 					cyphertext,
 					additionalData,
@@ -66,7 +66,7 @@ export class SecretBox implements ISecretBox {
 					key,
 					additionalData
 				) :
-				sodium.crypto_aead_chacha20poly1305_encrypt(
+				sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
 					plaintext,
 					additionalData,
 					undefined,
@@ -79,14 +79,14 @@ export class SecretBox implements ISecretBox {
 	public readonly aeadBytes: Promise<number>	= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.secretBox.aeadBytes :
-			sodium.crypto_aead_chacha20poly1305_ABYTES
+			sodium.crypto_aead_xchacha20poly1305_ietf_ABYTES
 	);
 
 	/** @inheritDoc */
 	public readonly keyBytes: Promise<number>	= Promise.resolve(
 		this.isNative ?
 			NativeCrypto.secretBox.keyBytes :
-			sodium.crypto_aead_chacha20poly1305_KEYBYTES
+			sodium.crypto_aead_xchacha20poly1305_ietf_KEYBYTES
 	);
 
 	/** @ignore */
@@ -188,7 +188,7 @@ export class SecretBox implements ISecretBox {
 			plaintext
 		);
 
-		const nonce	= await this.newNonce(this.helpers.nonceBytes);
+		const nonce	= potassiumUtil.randomBytes(this.helpers.nonceBytes);
 
 		let symmetricCyphertext: Uint8Array|undefined;
 
@@ -217,19 +217,6 @@ export class SecretBox implements ISecretBox {
 			true,
 			nonce,
 			symmetricCyphertext
-		);
-	}
-
-	/** @inheritDoc */
-	public async newNonce (size: number) : Promise<Uint8Array> {
-		if (size < 4) {
-			throw new Error('Nonce size too small.');
-		}
-
-		return potassiumUtil.concatMemory(
-			true,
-			new Uint32Array([this.counter++]),
-			potassiumUtil.randomBytes(size - 4)
 		);
 	}
 
@@ -306,9 +293,6 @@ export class SecretBox implements ISecretBox {
 
 	constructor (
 		/** @ignore */
-		private readonly isNative: boolean,
-
-		/** @ignore */
-		private counter: number = 0
+		private readonly isNative: boolean
 	) {}
 }

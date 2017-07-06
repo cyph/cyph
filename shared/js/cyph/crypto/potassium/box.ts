@@ -397,7 +397,7 @@ export class Box implements IBox {
 			ntru
 		);
 
-		const nonce					= await this.secretBox.newNonce(
+		const nonce					= potassiumUtil.randomBytes(
 			this.helpers.nonceBytes
 		);
 

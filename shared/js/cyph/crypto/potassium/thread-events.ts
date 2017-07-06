@@ -52,7 +52,6 @@ export class ThreadEvents {
 	public readonly secretBox	= {
 		aeadBytes: `${this.eventId}.secretBox.aeadBytes`,
 		keyBytes: `${this.eventId}.secretBox.keyBytes`,
-		newNonce: `${this.eventId}.secretBox.newNonce`,
 		open: `${this.eventId}.secretBox.open`,
 		seal: `${this.eventId}.secretBox.seal`
 	};
