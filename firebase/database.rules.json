@@ -72,7 +72,7 @@
 		"ephemeral": {
 			"$file": {
 				".read": true,
-				".write": "!data.exists() && newData.exists()",
+				".write": true,
 				".validate": "newData.isString()"
 			}
 		},
