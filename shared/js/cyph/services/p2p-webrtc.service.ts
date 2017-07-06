@@ -256,7 +256,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			url: env.baseUrl + 'iceservers'
 		});
 
-		const events: string[]	= [];
+		const webRTCEvents: string[]	= [];
 
 		const $localVideo	= await util.waitForIterable<JQuery>(await this.localVideo);
 		const $remoteVideo	= await util.waitForIterable<JQuery>(await this.remoteVideo);
@@ -267,7 +267,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			autoRequestMedia: false,
 			connection: {
 				disconnect: () => {
-					for (const event of events) {
+					for (const event of webRTCEvents) {
 						eventManager.off(event);
 					}
 				},
@@ -292,7 +292,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				getSessionid: () => this.sessionService.state.cyphId,
 				on: (event: string, callback: Function) => {
 					const fullEvent: string	= P2PWebRTCService.constants.webRTC + event;
-					events.push(fullEvent);
+					webRTCEvents.push(fullEvent);
 
 					eventManager.on(
 						fullEvent,

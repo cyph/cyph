@@ -9,7 +9,7 @@ export interface IAsyncValue<T> {
 	getValue () : Promise<T>;
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
-	lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T>;
+	lock<L> (f: (reason?: string) => Promise<L>, reason?: string) : Promise<L>;
 
 	/** Sets value. */
 	setValue (value: T) : Promise<void>;
