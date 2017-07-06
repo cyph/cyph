@@ -94,9 +94,9 @@ declare module 'libsodium' {
 		crypto_aead_xchacha20poly1305_ietf_ABYTES: number;
 		crypto_aead_xchacha20poly1305_ietf_KEYBYTES: number;
 		crypto_aead_xchacha20poly1305_ietf_NPUBBYTES: number;
-		crypto_box_NONCEBYTES: number;
-		crypto_box_PUBLICKEYBYTES: number;
-		crypto_box_SECRETKEYBYTES: number;
+		crypto_box_curve25519xchacha20poly1305_NONCEBYTES: number;
+		crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES: number;
+		crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES: number;
 		crypto_onetimeauth_BYTES: number;
 		crypto_onetimeauth_KEYBYTES: number;
 		crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE: number;
@@ -120,9 +120,15 @@ declare module 'libsodium' {
 			publicNonce: Uint8Array,
 			key: Uint8Array
 		) : Uint8Array;
-		crypto_box_keypair () : {privateKey: Uint8Array; publicKey: Uint8Array};
-		crypto_box_seal (plaintext: Uint8Array, publicKey: Uint8Array) : Uint8Array;
-		crypto_box_seal_open (
+		crypto_box_curve25519xchacha20poly1305_keypair () : {
+			privateKey: Uint8Array;
+			publicKey: Uint8Array;
+		};
+		crypto_box_curve25519xchacha20poly1305_seal (
+			plaintext: Uint8Array,
+			publicKey: Uint8Array
+		) : Uint8Array;
+		crypto_box_curve25519xchacha20poly1305_seal_open (
 			cyphertext: Uint8Array,
 			publicKey: Uint8Array,
 			privateKey: Uint8Array
