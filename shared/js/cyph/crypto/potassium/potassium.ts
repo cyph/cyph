@@ -41,20 +41,16 @@ export class Potassium extends PotassiumUtil implements IPotassium {
 
 	/**
 	 * @param isNative If true, will use NativeCrypto instead of libsodium.
-	 * @param counter Initial value of counter for nonces.
 	 */
 	constructor (
 		/** @ignore */
-		private readonly isNative: boolean = false,
-
-		/** @ignore */
-		private counter: number = 0
+		private readonly isNative: boolean = false
 	) {
 		super();
 
 		this.hash					= new Hash(this.isNative);
 		this.oneTimeAuth			= new OneTimeAuth(this.isNative);
-		this.secretBox				= new SecretBox(this.isNative, this.counter);
+		this.secretBox				= new SecretBox(this.isNative);
 		this.sign					= new Sign();
 
 		this.box					= new Box(this.isNative, this.oneTimeAuth, this.secretBox);

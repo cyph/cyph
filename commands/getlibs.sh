@@ -91,9 +91,9 @@ mkdir -p @types/libsodium
 cat > @types/libsodium/index.d.ts << EOM
 declare module 'libsodium' {
 	interface ISodium {
-		crypto_aead_chacha20poly1305_ABYTES: number;
-		crypto_aead_chacha20poly1305_KEYBYTES: number;
-		crypto_aead_chacha20poly1305_NPUBBYTES: number;
+		crypto_aead_xchacha20poly1305_ietf_ABYTES: number;
+		crypto_aead_xchacha20poly1305_ietf_KEYBYTES: number;
+		crypto_aead_xchacha20poly1305_ietf_NPUBBYTES: number;
 		crypto_box_NONCEBYTES: number;
 		crypto_box_PUBLICKEYBYTES: number;
 		crypto_box_SECRETKEYBYTES: number;
@@ -106,14 +106,14 @@ declare module 'libsodium' {
 		crypto_scalarmult_BYTES: number;
 		crypto_scalarmult_SCALARBYTES: number;
 
-		crypto_aead_chacha20poly1305_decrypt (
+		crypto_aead_xchacha20poly1305_ietf_decrypt (
 			secretNonce: Uint8Array|undefined,
 			cyphertext: Uint8Array,
 			additionalData: Uint8Array|undefined,
 			publicNonce: Uint8Array,
 			key: Uint8Array
 		) : Uint8Array;
-		crypto_aead_chacha20poly1305_encrypt (
+		crypto_aead_xchacha20poly1305_ietf_encrypt (
 			plaintext: Uint8Array,
 			additionalData: Uint8Array|undefined,
 			secretNonce: Uint8Array|undefined,

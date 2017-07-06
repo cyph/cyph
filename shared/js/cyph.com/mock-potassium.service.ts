@@ -27,7 +27,6 @@ export class MockPotassiumService extends PotassiumUtil implements IPotassium {
 	public readonly secretBox	= {
 		aeadBytes: Promise.resolve(1),
 		keyBytes: Promise.resolve(1),
-		newNonce: async (size: number) => new Uint8Array(size),
 		open: async (
 			cyphertext: Uint8Array,
 			_KEY: Uint8Array,

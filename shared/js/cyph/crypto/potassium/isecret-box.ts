@@ -6,9 +6,6 @@ export interface ISecretBox {
 	/** Key length. */
 	readonly keyBytes: Promise<number>;
 
-	/** Generates a new nonce. */
-	newNonce (size: number) : Promise<Uint8Array>;
-
 	/** Decrypts cyphertext. */
 	open (
 		cyphertext: Uint8Array,

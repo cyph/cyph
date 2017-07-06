@@ -224,11 +224,6 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		keyBytes: eventManager.one<number>(
 			this.threadEvents.secretBox.keyBytes
 		),
-		newNonce: async (size: number) => eventManager.rpcTrigger<Uint8Array>(
-			this.threadEvents.secretBox.newNonce,
-			{size},
-			this.threadInit
-		),
 		open: async (
 			cyphertext: Uint8Array,
 			key: Uint8Array,
@@ -624,16 +619,6 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 					threadEvents.secretBox.keyBytes,
 					await potassium.secretBox.keyBytes,
 					true
-				);
-
-				eventManager.rpcOn(
-					threadEvents.secretBox.newNonce,
-					async (o: {
-						size: number;
-					}) =>
-						potassium.secretBox.newNonce(o.size)
-					,
-					clearData
 				);
 
 				eventManager.rpcOn(
