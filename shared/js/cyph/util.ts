@@ -63,14 +63,14 @@ export class Util {
 		getResponseData: (res: Response) => Promise<T>
 	) : {
 		progress: Observable<number>;
-		response: Promise<T>;
+		result: Promise<T>;
 	} {
 		const progress	= new BehaviorSubject(0);
 
 		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
 		return {
 			progress: <any> progress,
-			response: (async () => {
+			result: (async () => {
 				const http	= await Util.http;
 
 				const method: string			= o.method || 'GET';
@@ -427,7 +427,7 @@ export class Util {
 	}) : Promise<string> {
 		return (await this.baseRequest(o, ResponseContentType.Text, async res =>
 			(await res.text()).trim()
-		)).response;
+		)).result;
 	}
 
 	/** Performs HTTP request. */
@@ -438,7 +438,7 @@ export class Util {
 		retries?: number;
 		url: string;
 	}) : Promise<Uint8Array> {
-		return this.requestByteStream(o).response;
+		return this.requestByteStream(o).result;
 	}
 
 	/** Performs HTTP request. */
@@ -450,7 +450,7 @@ export class Util {
 		url: string;
 	}) : {
 		progress: Observable<number>;
-		response: Promise<Uint8Array>;
+		result: Promise<Uint8Array>;
 	} {
 		return this.baseRequest(o, ResponseContentType.ArrayBuffer, async res =>
 			new Uint8Array(await res.arrayBuffer())

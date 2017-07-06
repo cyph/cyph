@@ -79,7 +79,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					err => { progress.next(err); }
 				);
 
-				const data	= await request.response;
+				const data	= await request.result;
 
 				if (
 					!this.potassiumService.compareMemory(
