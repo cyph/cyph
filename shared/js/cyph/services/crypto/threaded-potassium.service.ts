@@ -316,11 +316,12 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			async function () : Promise<void> {
 				importScripts('/assets/js/cyph/crypto/potassium/index.js');
 
+				/* tslint:disable-next-line:no-shadowed-variable */
 				const eventManager: EventManager					= (<any> self).eventManager;
 				const locals: {eventId: string; isNative: boolean}	= (<any> self).locals;
 				/* tslint:disable-next-line:variable-name */
 				const Potassium: any								= (<any> self).Potassium;
-				/* tslint:disable-next-line:variable-name */
+				/* tslint:disable-next-line:no-shadowed-variable variable-name */
 				const ThreadEvents: any								= (<any> self).ThreadEvents;
 
 				const potassium: IPotassium			= new Potassium(locals.isNative);

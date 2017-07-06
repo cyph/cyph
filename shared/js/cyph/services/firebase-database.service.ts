@@ -63,10 +63,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const hash	= await this.getHash(url);
 
 				try {
-					const data	= await this.localStorageService.getItem(`cache/${hash}`);
+					const localData	= await this.localStorageService.getItem(`cache/${hash}`);
 					progress.next(100);
 					progress.complete();
-					return data;
+					return localData;
 				}
 				catch (_) {}
 
