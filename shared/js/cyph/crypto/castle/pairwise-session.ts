@@ -204,7 +204,7 @@ export class PairwiseSession {
 					}
 				}
 
-				incomingMessages[id]	= undefined;
+				delete incomingMessages[id];
 			}
 
 			this.incomingMessageId.setValue(incomingMessageId);

@@ -346,7 +346,7 @@ export class ChatService {
 					throw undefined;
 				}
 
-				unconfirmedMessages[o.messageId]	= undefined;
+				delete unconfirmedMessages[o.messageId];
 				return unconfirmedMessages;
 			});
 		});
