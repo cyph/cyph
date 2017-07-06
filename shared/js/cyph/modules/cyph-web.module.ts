@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
+import {HttpModule} from '@angular/http';
 import {
 	MdButtonModule,
 	MdButtonToggleModule,
@@ -85,6 +86,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		BrowserModule,
 		FlexLayoutModule,
 		FormsModule,
+		HttpModule,
 		MdButtonModule,
 		MdCardModule,
 		MdCheckboxModule,

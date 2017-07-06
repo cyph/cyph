@@ -1,6 +1,8 @@
 /* tslint:disable:max-file-line-count */
 
+import {Headers, Http, Response} from '@angular/http';
 import {saveAs} from 'file-saver';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {DataType} from './data-type';
@@ -12,6 +14,19 @@ import {LockFunction} from './lock-function-type';
  * Miscellaneous helper functions used throughout the codes.
  */
 export class Util {
+	/** @ignore */
+	private static readonly http: Promise<Http>	= new Promise<Http>((resolve, reject) => {
+		if (!env.isMainThread) {
+			reject();
+		}
+
+		Util.resolveHttp	= resolve;
+	});
+
+	/** @ignore */
+	public static resolveHttp: (http: Http) => void;
+
+
 	/** @ignore */
 	private readonly timestampData	= {
 		last: 0,
@@ -35,7 +50,7 @@ export class Util {
 	};
 
 	/** Performs HTTP request. */
-	private async baseRequest<T> (
+	private baseRequest<T> (
 		o: {
 			contentType?: string;
 			data?: any;
@@ -46,62 +61,104 @@ export class Util {
 		},
 		responseType: string,
 		getResponseData: (res: Response) => Promise<T>
-	) : Promise<T> {
-		const method: string			= o.method || 'GET';
-		const retries: number			= o.retries === undefined ? 0 : o.retries;
-		let contentType: string			= o.contentType || '';
-		let data: any					= o.data;
-		let url: string					= o.url;
+	) : {
+		progress: Observable<number>;
+		response: Promise<T>;
+	} {
+		const progress	= new BehaviorSubject(0);
 
-		if (url.slice(-5) === '.json') {
-			contentType	= 'application/json';
-		}
-		else if (responseType === 'text') {
-			contentType	= 'application/x-www-form-urlencoded';
-		}
+		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
+		return {
+			progress: <any> progress,
+			response: (async () => {
+				const http	= await Util.http;
 
-		if (data && method === 'GET') {
-			url		+= '?' + (
-				typeof data === 'object' ?
-					this.toQueryString(data) :
-					(<string> data.toString())
-			);
+				const method: string			= o.method || 'GET';
+				const retries: number			= o.retries === undefined ? 0 : o.retries;
+				let contentType: string			= o.contentType || '';
+				let data: any					= o.data;
+				let url: string					= o.url;
 
-			data	= undefined;
-		}
-		else if (typeof data === 'object') {
-			data	= contentType === 'application/json' ?
-				this.stringify(data) :
-				this.toQueryString(data)
-			;
-		}
+				if (url.slice(-5) === '.json') {
+					contentType	= 'application/json';
+				}
+				else if (responseType === 'text') {
+					contentType	= 'application/x-www-form-urlencoded';
+				}
 
-		let response: T|undefined;
-		let error: Error|undefined;
-		let statusOk	= false;
+				if (data && method === 'GET') {
+					url		+= '?' + (
+						typeof data === 'object' ?
+							this.toQueryString(data) :
+							(<string> data.toString())
+					);
 
-		for (let i = 0 ; !statusOk && i <= retries ; ++i) {
-			try {
-				const res	= await fetch(url, {
-					body: data,
-					headers: !contentType ? {} : {'Content-Type': contentType},
-					method
-				});
+					data	= undefined;
+				}
+				else if (typeof data === 'object') {
+					data	= contentType === 'application/json' ?
+						this.stringify(data) :
+						this.toQueryString(data)
+					;
+				}
 
-				statusOk	= res.ok;
-				response	= await getResponseData(res);
-			}
-			catch (err) {
-				error		= err;
-				statusOk	= false;
-			}
-		}
+				let response: T|undefined;
+				let error: Error|undefined;
+				let statusOk	= false;
 
-		if (!statusOk || !response) {
-			throw error || response || new Error('Request failed.');
-		}
+				for (let i = 0 ; !statusOk && i <= retries ; ++i) {
+					try {
+						progress.next(0);
 
-		return response;
+						const req	= http.request(url, {
+							body: data,
+							headers: contentType ?
+								new Headers({'Content-Type': contentType}) :
+								undefined
+							,
+							method
+						});
+
+						const res	= await new Promise<Response>((resolve, reject) => {
+							let last: Response;
+
+							req.subscribe(
+								r => {
+									last	= r;
+									progress.next(r.bytesLoaded / r.totalBytes * 100);
+								},
+								reject,
+								() => {
+									if (last) {
+										resolve(last);
+									}
+									else {
+										reject();
+									}
+								}
+							);
+						});
+
+						statusOk	= res.ok;
+						response	= await getResponseData(res);
+					}
+					catch (err) {
+						error		= err;
+						statusOk	= false;
+					}
+				}
+
+				if (!statusOk || !response) {
+					const err	= error || response || new Error('Request failed.');
+					progress.error(err);
+					throw err;
+				}
+
+				progress.next(100);
+				progress.complete();
+				return response;
+			})()
+		};
 	}
 
 	/** Converts byte array produced by toBytes into a boolean. */
@@ -367,7 +424,9 @@ export class Util {
 		retries?: number;
 		url: string;
 	}) : Promise<string> {
-		return this.baseRequest(o, 'text', async res => (await res.text()).trim());
+		return (await this.baseRequest(o, 'text', async res =>
+			(await res.text()).trim()
+		)).response;
 	}
 
 	/** Performs HTTP request. */
@@ -378,6 +437,20 @@ export class Util {
 		retries?: number;
 		url: string;
 	}) : Promise<Uint8Array> {
+		return this.requestByteStream(o).response;
+	}
+
+	/** Performs HTTP request. */
+	public requestByteStream (o: {
+		contentType?: string;
+		data?: any;
+		method?: string;
+		retries?: number;
+		url: string;
+	}) : {
+		progress: Observable<number>;
+		response: Promise<Uint8Array>;
+	} {
 		return this.baseRequest(o, 'arraybuffer', async res =>
 			new Uint8Array(await res.arrayBuffer())
 		);

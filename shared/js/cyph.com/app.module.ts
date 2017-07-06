@@ -13,6 +13,7 @@ import '../standalone/translations';
 import './sham';
 
 import {NgModule} from '@angular/core';
+import {Http} from '@angular/http';
 import {MdSidenavModule, MdSliderModule, MdToolbarModule} from '@angular/material';
 import {RouterModule} from '@angular/router';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
@@ -27,6 +28,7 @@ import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {HtmlSanitizerService} from '../cyph/services/html-sanitizer.service';
 import {NotificationService} from '../cyph/services/notification.service';
+import {Util} from '../cyph/util';
 import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
@@ -91,5 +93,7 @@ import {SilentNotificationService} from './silent-notification.service';
 })
 /* tslint:disable-next-line:no-stateless-class */
 export class AppModule {
-	constructor () {}
+	constructor (http: Http) {
+		Util.resolveHttp(http);
+	}
 }

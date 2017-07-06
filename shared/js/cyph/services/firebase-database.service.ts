@@ -54,35 +54,47 @@ export class FirebaseDatabaseService extends DatabaseService {
 		progress: Observable<number>;
 		result: Promise<Uint8Array>;
 	} {
-		let percentComplete	= 0;
-
 		const progress	= new BehaviorSubject(0);
 
-		const result	= this.getItem(url).then(data => {
-			percentComplete	= 100;
-			progress.next(percentComplete);
-			progress.complete();
-			return data;
-		});
-
-		/* Arbitrarily assume ~500 Kb/s for progress estimation */
-		(async () => {
-			const size	=
-				(
-					<firebase.storage.FullMetadata>
-					await (await this.getStorageRef(url)).getMetadata()
-				).size
-			;
-
-			while (percentComplete < 85) {
-				await util.sleep();
-				percentComplete += util.random(25000, 6250) / size * 100;
-				progress.next(percentComplete);
-			}
-		})();
-
 		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
-		return {progress: <any> progress, result};
+		return {
+			progress: <any> progress,
+			result: (async () => {
+				const hash	= await this.getHash(url);
+
+				try {
+					return await this.localStorageService.getItem(`cache/${hash}`);
+				}
+				catch (_) {}
+
+				const request	= util.requestByteStream({
+					url: await (await this.getStorageRef(url)).getDownloadURL()
+				});
+
+				request.progress.subscribe(
+					n => { progress.next(n); },
+					err => { progress.next(err); }
+				);
+
+				const data	= await request.response;
+
+				if (
+					!this.potassiumService.compareMemory(
+						this.potassiumService.fromBase64(hash),
+						await this.potassiumService.hash.hash(data)
+					)
+				) {
+					const err	= new Error('Invalid data hash');
+					progress.error(err);
+					throw err;
+				}
+
+				progress.next(100);
+				progress.complete();
+				this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
+				return data;
+			})()
+		};
 	}
 
 	/** @inheritDoc */
@@ -107,28 +119,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async getItem (url: string) : Promise<Uint8Array> {
-		const hash	= await this.getHash(url);
-
-		try {
-			return await this.localStorageService.getItem(`cache/${hash}`);
-		}
-		catch (_) {}
-
-		const data	= await util.requestBytes({
-			url: await (await this.getStorageRef(url)).getDownloadURL()
-		});
-
-		if (
-			!this.potassiumService.compareMemory(
-				this.potassiumService.fromBase64(hash),
-				await this.potassiumService.hash.hash(data)
-			)
-		) {
-			throw new Error('Invalid data hash');
-		}
-
-		this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
-		return data;
+		return (await this.downloadItem(url)).result;
 	}
 
 	/** @inheritDoc */
