@@ -218,12 +218,16 @@ sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/simplewebrtc.js
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
-for d in uglify-js @angular/cli/node_modules/uglify-js ; do
-	if [ -d "${d}" ] ; then
+rm -rf uglify-js
+cp -a uglify-es uglify-js
+cd @angular/cli/node_modules
+for d in * ; do
+	if [ -d "../../../${d}" ] ; then
 		rm -rf "${d}"
-		cp -a uglify-es "${d}"
+		cp -rf "../../../${d}" ./
 	fi
 done
+cd -
 
 cd firebase
 for m in $(ls *-node.js | sed 's|-node\.js$||') ; do

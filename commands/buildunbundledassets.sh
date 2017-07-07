@@ -125,7 +125,6 @@ for f in ${typescriptAssets} ; do
 					}
 				]
 			},
-			node: false,
 			output: {
 				filename: '${f}.js',
 				library: '${m}',

@@ -167,8 +167,6 @@ export class Thread implements IThread {
 			translations
 		};
 
-		const callbackId	= 'NewThread-' + util.uuid();
-
 		const threadBody	= `
 			var threadSetupVars = ${util.stringify(threadSetupVars)};
 			${
@@ -176,14 +174,17 @@ export class Thread implements IThread {
 				Thread.stringifyFunction(Thread.threadEnvSetup)
 			}
 
-			eventManager.one('${callbackId}').then(function (locals) {
-				self.locals	= locals;
+			self.onmessage	= function (e) {
+				self.locals		= e.data;
+				self.onmessage	= undefined;
+				e				= undefined;
+
 				${Thread.stringifyFunction(f)}
 				${
 					/* tslint:disable-next-line:no-unbound-method */
 					Thread.stringifyFunction(Thread.threadPostSetup)
 				}
-			});
+			};
 
 			self.postMessage('ready');
 		`;
@@ -223,7 +224,9 @@ export class Thread implements IThread {
 				}
 				catch (_) {}
 
-				eventManager.trigger(callbackId, locals, true);
+				if (this.worker) {
+					this.worker.postMessage(locals);
+				}
 			}
 			else if (e.data === 'close') {
 				this.stop();
