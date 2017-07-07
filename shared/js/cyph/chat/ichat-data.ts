@@ -24,7 +24,7 @@ export interface IChatData {
 	isMessageChanged: boolean;
 
 	/** Percentage complete with initial handshake (approximate / faked out). */
-	keyExchangeProgress: Subject<number>;
+	keyExchangeProgress: number;
 
 	/** Message list. */
 	messages: IAsyncValue<IChatMessage[]>;
