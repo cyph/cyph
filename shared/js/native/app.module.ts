@@ -82,7 +82,8 @@ import {NativeTitleService} from './native-title.service';
 })
 /* tslint:disable-next-line:no-stateless-class */
 export class AppModule {
-	constructor (http: Http) {
+	constructor (dialogService: DialogService, http: Http) {
+		Util.resolveDialogService(dialogService);
 		Util.resolveHttp(http);
 	}
 }

@@ -8,7 +8,7 @@ import {ComponentType} from '@angular/material';
 @Injectable()
 export class DialogService {
 	/** Displays alert. */
-	public async alert (_O: {content: string; ok: string; title: string}) : Promise<void> {
+	public async alert (_O: {content: string; ok?: string; title?: string}) : Promise<void> {
 		throw new Error('Must provide an implementation of DialogService.alert.');
 	}
 
@@ -22,9 +22,9 @@ export class DialogService {
 
 	/** Displays interactive confirmation prompt. */
 	public async confirm (_O: {
-		cancel: string;
+		cancel?: string;
 		content: string;
-		ok: string;
+		ok?: string;
 		timeout?: number;
 		title: string;
 	}) : Promise<boolean> {

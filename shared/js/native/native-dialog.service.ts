@@ -6,6 +6,7 @@ import {alert, confirm} from 'tns-core-modules/ui/dialogs';
 import {DialogImageComponent} from './dialog-image.component';
 import {LockFunction} from './js/cyph/lock-function-type';
 import {DialogService} from './js/cyph/services/dialog.service';
+import {StringsService} from './js/cyph/services/strings.service';
 import {util} from './js/cyph/util';
 
 
@@ -21,11 +22,11 @@ export class NativeDialogService implements DialogService {
 	private readonly snackbar: SnackBar	= new SnackBar();
 
 	/** @inheritDoc */
-	public async alert (o: {content: string; ok: string; title: string}) : Promise<void> {
+	public async alert (o: {content: string; ok?: string; title?: string}) : Promise<void> {
 		return this.lock(async () => {
 			return alert({
 				message: o.content,
-				okButtonText: o.ok,
+				okButtonText: o.ok !== undefined ? o.ok : this.stringsService.ok,
 				title: o.title
 			});
 		});
@@ -53,17 +54,17 @@ export class NativeDialogService implements DialogService {
 	 * @param timeout Currently unsupported (ignored).
 	 */
 	public async confirm (o: {
-		cancel: string;
+		cancel?: string;
 		content: string;
-		ok: string;
+		ok?: string;
 		timeout?: number;
-		title: string;
+		title?: string;
 	}) : Promise<boolean> {
 		return this.lock(async () => {
 			return !!(await confirm({
-				cancelButtonText: o.cancel,
+				cancelButtonText: o.ok !== undefined ? o.cancel : this.stringsService.cancel,
 				message: o.content,
-				okButtonText: o.ok,
+				okButtonText: o.ok !== undefined ? o.ok : this.stringsService.ok,
 				title: o.title
 			}));
 		});
@@ -92,6 +93,9 @@ export class NativeDialogService implements DialogService {
 
 	constructor (
 		/** @ignore */
-		private readonly modalDialogService: ModalDialogService
+		private readonly modalDialogService: ModalDialogService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {}
 }
