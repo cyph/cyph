@@ -44,7 +44,7 @@ export class AccountChatService extends ChatService {
 				isDisconnected: false,
 				isFriendTyping: new BehaviorSubject(false),
 				isMessageChanged: false,
-				keyExchangeProgress: new BehaviorSubject(0),
+				keyExchangeProgress: 0,
 				messages: new LocalAsyncValue<IChatMessage[]>([]),
 				queuedMessageSelfDestruct: false,
 				state: States.chat,
