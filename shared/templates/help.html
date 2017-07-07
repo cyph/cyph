@@ -109,14 +109,17 @@
 		</md-tab>
 		<md-tab [label]='stringsService.contactCyph' *ngIf='!envService.coBranded'>
 			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-				<div></div>
-				<div cyphTranslate>
-					<span>Please check out the</span>
-					<a [href]='envService.homeUrl + "faq"'>FAQs</a>
-					<span>first!</span>
+				<br />
+				<br />
+				<div fxLayoutAlign='center center' cyphTranslate>
+					<div>
+						<span>Please check out the</span>
+						<a [href]='envService.homeUrl + "faq"'>FAQs</a>
+						<span>first!</span>
+					</div>
 				</div>
-				<div></div>
-				<div></div>
+				<br />
+				<br />
 				<cyph-contact></cyph-contact>
 			</div>
 		</md-tab>
