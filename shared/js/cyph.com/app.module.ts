@@ -26,6 +26,7 @@ import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
+import {DialogService} from '../cyph/services/dialog.service';
 import {HtmlSanitizerService} from '../cyph/services/html-sanitizer.service';
 import {NotificationService} from '../cyph/services/notification.service';
 import {Util} from '../cyph/util';
@@ -93,7 +94,8 @@ import {SilentNotificationService} from './silent-notification.service';
 })
 /* tslint:disable-next-line:no-stateless-class */
 export class AppModule {
-	constructor (http: Http) {
+	constructor (dialogService: DialogService, http: Http) {
+		Util.resolveDialogService(dialogService);
 		Util.resolveHttp(http);
 	}
 }

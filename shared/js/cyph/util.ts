@@ -9,12 +9,24 @@ import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {DataType} from './data-type';
 import {env} from './env';
 import {LockFunction} from './lock-function-type';
+import {DialogService} from './services/dialog.service';
 
 
 /**
  * Miscellaneous helper functions used throughout the codes.
  */
 export class Util {
+	/** @ignore */
+	private static readonly dialogService: Promise<DialogService>	=
+		new Promise<DialogService>((resolve, reject) => {
+			if (!env.isMainThread) {
+				reject();
+			}
+
+			Util.resolveDialogService	= resolve;
+		})
+	;
+
 	/** @ignore */
 	private static readonly http: Promise<Http>	= new Promise<Http>((resolve, reject) => {
 		if (!env.isMainThread) {
@@ -23,6 +35,9 @@ export class Util {
 
 		Util.resolveHttp	= resolve;
 	});
+
+	/** @ignore */
+	public static resolveDialogService: (http: DialogService) => void;
 
 	/** @ignore */
 	public static resolveHttp: (http: Http) => void;
@@ -483,11 +498,32 @@ export class Util {
 		const oldBeforeUnloadMessage	= beforeUnloadMessage;
 		beforeUnloadMessage				= undefined;
 
-		saveAs(
-			new Blob([content], {type: 'application/octet-stream'}),
-			fileName,
-			false
-		);
+		const save	= () => {
+			saveAs(
+				new Blob([content], {type: 'application/octet-stream'}),
+				fileName,
+				false
+			);
+		};
+
+		if (!env.isSafari) {
+			save();
+		}
+		else {
+			const handler	= () => {
+				document.removeEventListener('click', handler);
+				save();
+			};
+			document.addEventListener('click', handler);
+			await (await Util.dialogService).alert({
+				content: `${
+					this.translate('Saving file')
+				} "${fileName}" ${
+					this.translate('with the name "unknown", due to a Safari bug')
+				}.`,
+				title: this.translate('Save File')
+			});
+		}
 
 		await this.sleep();
 		beforeUnloadMessage	= oldBeforeUnloadMessage;

@@ -6,6 +6,7 @@ import {DialogImageComponent} from '../components/dialog-image.component';
 import {LockFunction} from '../lock-function-type';
 import {util} from '../util';
 import {DialogService} from './dialog.service';
+import {StringsService} from './strings.service';
 
 
 /**
@@ -17,13 +18,21 @@ export class MaterialDialogService implements DialogService {
 	private readonly lock: LockFunction	= util.lockFunction();
 
 	/** @inheritDoc */
-	public async alert (o: {content: string; ok: string; title: string}) : Promise<void> {
+	public async alert (o: {content: string; ok?: string; title?: string}) : Promise<void> {
 		return this.lock(async () => {
 			const mdDialogRef	= this.mdDialog.open(DialogAlertComponent);
 
 			mdDialogRef.componentInstance.content	= o.content;
-			mdDialogRef.componentInstance.ok		= o.ok;
-			mdDialogRef.componentInstance.title		= o.title;
+
+			mdDialogRef.componentInstance.ok		= o.ok !== undefined ?
+				o.ok :
+				this.stringsService.ok
+			;
+
+			mdDialogRef.componentInstance.title		= o.title !== undefined ?
+				o.title :
+				''
+			;
 
 			await mdDialogRef.afterClosed().toPromise();
 		});
@@ -47,19 +56,31 @@ export class MaterialDialogService implements DialogService {
 
 	/** @inheritDoc */
 	public async confirm (o: {
-		cancel: string;
+		cancel?: string;
 		content: string;
-		ok: string;
+		ok?: string;
 		timeout?: number;
-		title: string;
+		title?: string;
 	}) : Promise<boolean> {
 		return this.lock(async () => {
 			const mdDialogRef	= this.mdDialog.open(DialogConfirmComponent);
 
-			mdDialogRef.componentInstance.cancel	= o.cancel;
 			mdDialogRef.componentInstance.content	= o.content;
-			mdDialogRef.componentInstance.ok		= o.ok;
-			mdDialogRef.componentInstance.title		= o.title;
+
+			mdDialogRef.componentInstance.cancel	= o.cancel !== undefined ?
+				o.cancel :
+				this.stringsService.cancel
+			;
+
+			mdDialogRef.componentInstance.ok		= o.ok !== undefined ?
+				o.ok :
+				this.stringsService.ok
+			;
+
+			mdDialogRef.componentInstance.title		= o.title !== undefined ?
+				o.title :
+				''
+			;
 
 			const promise	= mdDialogRef.afterClosed().toPromise<boolean>();
 
@@ -104,6 +125,9 @@ export class MaterialDialogService implements DialogService {
 		private readonly mdDialog: MdDialog,
 
 		/** @ignore */
-		private readonly mdSnackbar: MdSnackBar
+		private readonly mdSnackbar: MdSnackBar,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {}
 }

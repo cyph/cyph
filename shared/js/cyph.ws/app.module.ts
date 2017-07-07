@@ -22,6 +22,7 @@ import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {ThreadedPotassiumService} from '../cyph/services/crypto/threaded-potassium.service';
+import {DialogService} from '../cyph/services/dialog.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {Util} from '../cyph/util';
 import {appRoutes} from './app-routes';
@@ -64,7 +65,8 @@ import {LockdownComponent} from './lockdown.component';
 })
 /* tslint:disable-next-line:no-stateless-class */
 export class AppModule {
-	constructor (http: Http) {
+	constructor (dialogService: DialogService, http: Http) {
+		Util.resolveDialogService(dialogService);
 		Util.resolveHttp(http);
 	}
 }
