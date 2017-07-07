@@ -8,6 +8,12 @@
   dependencies:
     tslib "^1.7.1"
 
+"@angular/cdk@^2.0.0-beta.8":
+  version "2.0.0-beta.8"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-2.0.0-beta.8.tgz#71961c851dfbeb19e085e898bf5e4461408f8b57"
+  dependencies:
+    tslib "^1.7.1"
+
 "@angular/cli@>=1.1.0", "@angular/cli@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@angular/cli/-/cli-1.2.0.tgz#dfd8b8983ec37c2b6d7f902ead60396d7b571597"
@@ -116,9 +122,9 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/material@^2.0.0-beta.3", "@angular/material@https://github.com/buu700/angular-material-tmp":
-  version "2.0.0-beta.100"
-  resolved "https://github.com/buu700/angular-material-tmp#e7c52775940863537432f0e95480b3190ad94aea"
+"@angular/material@^2.0.0-beta.3", "@angular/material@^2.0.0-beta.8":
+  version "2.0.0-beta.8"
+  resolved "https://registry.yarnpkg.com/@angular/material/-/material-2.0.0-beta.8.tgz#a92852abc9261aea26c2401f576645470be2cf38"
   dependencies:
     tslib "^1.7.1"
 
@@ -575,11 +581,11 @@ ajv-keywords@^1.0.0, ajv-keywords@^1.1.1, ajv-keywords@^2.0.0:
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-2.1.0.tgz#a296e17f7bfae7c1ce4f7e0de53d29cb32162df0"
 
 ajv@5.1.6, ajv@^4.7.0, ajv@^4.9.1, ajv@^5.0.0, ajv@^5.1.5:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-5.2.0.tgz#c1735024c5da2ef75cc190713073d44f098bf486"
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-5.2.1.tgz#dcd03045175883ba1b636e5ae9ec3df9ab85323a"
   dependencies:
     co "^4.6.0"
-    fast-deep-equal "^0.1.0"
+    fast-deep-equal "^1.0.0"
     json-schema-traverse "^0.3.0"
     json-stable-stringify "^1.0.1"
 
@@ -1250,15 +1256,16 @@ braces@^0.1.2, braces@^1.8.2, braces@^2.2.2:
     split-string "^2.1.0"
     to-regex "^3.0.1"
 
-braintree-web-drop-in@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/braintree-web-drop-in/-/braintree-web-drop-in-1.3.1.tgz#199b5c19a223a8750559e8dd9036f5d1e9a76d24"
+braintree-web-drop-in@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/braintree-web-drop-in/-/braintree-web-drop-in-1.4.0.tgz#378fb18150f26f71f367d075ba635a71acd50f87"
   dependencies:
     "@braintree/browser-detection" "1.4.1"
-    braintree-web "3.19.0"
+    "@braintree/wrap-promise" "1.1.1"
+    braintree-web "3.19.1"
     promise-polyfill "6.0.2"
 
-braintree-web@3.19.0, braintree-web@^3.19.1:
+braintree-web@3.19.1, braintree-web@^3.19.1:
   version "3.19.1"
   resolved "https://registry.yarnpkg.com/braintree-web/-/braintree-web-3.19.1.tgz#cbf94b047d90899c8f2ce7adf55b54d09a65c21f"
   dependencies:
@@ -2054,7 +2061,7 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.3, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-credit-card-type@5.0.2, credit-card-type@5.0.3, credit-card-type@^5.0.0:
+credit-card-type@5.0.3, credit-card-type@^5.0.0:
   version "5.0.3"
   resolved "https://registry.yarnpkg.com/credit-card-type/-/credit-card-type-5.0.3.tgz#2122f0191920e278c15518dd43ef3abb3f69359d"
 
@@ -2888,7 +2895,7 @@ engine.io@1.8.3:
     engine.io-parser "1.3.2"
     ws "1.1.2"
 
-enhanced-resolve@^3.0.0, enhanced-resolve@^3.1.0:
+enhanced-resolve@^3.0.0, enhanced-resolve@^3.1.0, enhanced-resolve@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-3.3.0.tgz#950964ecc7f0332a42321b673b38dc8ff15535b3"
   dependencies:
@@ -3272,9 +3279,9 @@ fancy-log@^1.1.0:
     chalk "^1.1.1"
     time-stamp "^1.0.0"
 
-fast-deep-equal@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-0.1.0.tgz#5c6f4599aba6b333ee3342e2ed978672f1001f8d"
+fast-deep-equal@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-1.0.0.tgz#96256a3bc975595eb36d82e9929d060d893439ff"
 
 fast-levenshtein@~2.0.4:
   version "2.0.6"
@@ -9467,25 +9474,30 @@ uc.micro@^1.0.1, uc.micro@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/uc.micro/-/uc.micro-1.0.3.tgz#7ed50d5e0f9a9fb0a573379259f2a77458d50192"
 
-uglify-js@3.0.x, uglify-js@^2.6, uglify-js@^2.8.29, uglify-js@^2.8.5, "uglify-js@https://github.com/buu700/uglify-js-tmp", uglify-js@~2.3:
-  version "1337.0.0"
-  resolved "https://github.com/buu700/uglify-js-tmp#70ebcc3c2cf432db9c5154e1f1eb2cb464f4d699"
+uglify-es@^3.0.21, uglify-es@^3.0.23:
+  version "3.0.23"
+  resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.0.23.tgz#9682c6ae347269ad6b0628bd8b3d6a3b391707c0"
   dependencies:
+    commander "~2.9.0"
     source-map "~0.5.1"
-    yargs "~3.10.0"
-  optionalDependencies:
-    uglify-to-browserify "~1.0.0"
+
+uglify-js@3.0.x, uglify-js@^2.6, uglify-js@^2.8.29, uglify-js@^2.8.5, uglify-js@^3.0.23, uglify-js@~2.3:
+  version "3.0.23"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.0.23.tgz#a58c6b97e6d6763d94dbc265fe8e8c1725e64666"
+  dependencies:
+    commander "~2.9.0"
+    source-map "~0.5.1"
 
 uglify-to-browserify@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/uglify-to-browserify/-/uglify-to-browserify-1.0.2.tgz#6e0924d6bda6b5afe349e39a6d632850a0f882b7"
 
-uglifyjs-webpack-plugin@^0.4.4:
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-0.4.6.tgz#b951f4abb6bd617e66f63eb891498e391763e309"
+uglifyjs-webpack-plugin@^0.4.6, uglifyjs-webpack-plugin@beta:
+  version "1.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-1.0.0-beta.1.tgz#595c14d8b85bedd708ab7a6e811894fbe0e69890"
   dependencies:
     source-map "^0.5.6"
-    uglify-js "^2.8.29"
+    uglify-es "^3.0.21"
     webpack-sources "^1.0.1"
 
 uid-number@0.0.6, uid-number@^0.0.6:
@@ -9928,16 +9940,16 @@ webpack-sources@^0.2.3, webpack-sources@^1.0.1:
     source-list-map "^2.0.0"
     source-map "~0.5.3"
 
-webpack@^3.0.0, webpack@~2.4.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.0.0.tgz#ee9bcebf21247f7153cb410168cab45e3a59d4d7"
+webpack@^3.1.0, webpack@~2.4.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.1.0.tgz#ac0675e500db835f9ab2369d29ba096f51ad0731"
   dependencies:
     acorn "^5.0.0"
     acorn-dynamic-import "^2.0.0"
     ajv "^5.1.5"
     ajv-keywords "^2.0.0"
     async "^2.1.2"
-    enhanced-resolve "^3.0.0"
+    enhanced-resolve "^3.3.0"
     escope "^3.6.0"
     interpret "^1.0.0"
     json-loader "^0.5.4"
@@ -9950,7 +9962,7 @@ webpack@^3.0.0, webpack@~2.4.0:
     source-map "^0.5.3"
     supports-color "^3.1.0"
     tapable "~0.2.5"
-    uglifyjs-webpack-plugin "^0.4.4"
+    uglifyjs-webpack-plugin "^0.4.6"
     watchpack "^1.3.1"
     webpack-sources "^1.0.1"
     yargs "^6.0.0"
