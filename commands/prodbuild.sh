@@ -32,11 +32,11 @@ cat > webpack.js <<- EOM
 			split(/\s+/).
 			map(s => path.join('node_modules', s)).
 			concat([
-				'src/js/cyph/thread',
-				'src/js/cyph/services/crypto/threaded-potassium.service',
-				'src/js/cyph/services',
-				'src/js/cyph/components',
 				'src/js/cyph',
+				'src/js/cyph/components',
+				'src/js/cyph/services',
+				'src/js/cyph/services/crypto/threaded-potassium.service',
+				'src/js/cyph/thread',
 				'src/js/standalone/translations'
 			]).
 			map(s => ({
@@ -54,9 +54,9 @@ cat > webpack.js <<- EOM
 		config.plugins.find(o => o instanceof webpack.optimize.CommonsChunkPlugin)
 	);
 
-	for (const chunk of chunks.reverse()) {
+	for (const chunk of chunks) {
 		config.plugins.splice(
-			commonsChunkIndex + 1,
+			commonsChunkIndex,
 			undefined,
 			new webpack.optimize.CommonsChunkPlugin({
 				name: chunk.name,

@@ -96,8 +96,6 @@ export class Thread implements IThread {
 		importScripts('/assets/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js');
 		(<any> self).sodium.memzero(threadSetupVars.seed);
 
-		importScripts('/assets/js/cyph/base.js');
-
 		threadSetupVars	= undefined;
 	}
 
