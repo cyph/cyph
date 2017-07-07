@@ -56,7 +56,7 @@ export class Carousel {
 		await util.sleep(600);
 
 		const timeout	=
-			(quotes.eq(this.itemNumber).text().length + 10) * 50
+			(quotes.eq(this.itemNumber).text().length + 10) * 150
 		;
 
 		if (this.itemNumber === itemNumber) {
