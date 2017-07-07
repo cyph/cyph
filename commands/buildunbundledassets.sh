@@ -111,6 +111,7 @@ for f in ${typescriptAssets} ; do
 		const TsConfigPathsPlugin	= require('awesome-typescript-loader').TsConfigPathsPlugin;
 		const UglifyJsPlugin		= require('uglifyjs-webpack-plugin');
 		const webpack				= require('webpack');
+		const mangleExceptions		= require('../../../commands/mangleexceptions');
 
 		module.exports	= {
 			entry: {
@@ -131,16 +132,16 @@ for f in ${typescriptAssets} ; do
 				path: '${PWD}'
 			},
 			plugins: [
-				$(test "${f}" == 'cyph/crypto/potassium/index' || echo "
-					new UglifyJsPlugin({
-						comments: false,
-						compress: {
-							warnings: false
-						},
-						mangle: true,
-						sourceMap: false
-					})
-				")
+				new UglifyJsPlugin({
+					comments: false,
+					compress: {
+						warnings: false
+					},
+					mangle: {
+						except: mangleExceptions
+					},
+					sourceMap: false
+				})
 			],
 			resolve: {
 				extensions: ['.js', '.ts'],

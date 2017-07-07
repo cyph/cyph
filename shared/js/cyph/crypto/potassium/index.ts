@@ -1,3 +1,4 @@
+export * from '../../event-manager';
 export * from './box';
 export * from './ephemeral-key-exchange';
 export * from './hash';
