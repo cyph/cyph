@@ -32,8 +32,41 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return firebase.apps[0] || firebase.initializeApp(env.firebaseConfig);
 	});
 
+	/** Mapping of URLS to last known good hashes. */
+	private readonly hashCache: Map<string, string>	= new Map<string, string>();
+
 	/** @ignore */
 	private readonly localLocks: Map<string, {}>	= new Map<string, {}>();
+
+	/** @ignore */
+	private async cacheGet (o: {hash?: string; url?: string}) : Promise<Uint8Array> {
+		const hash	= o.hash ? o.hash : o.url ? this.hashCache.get(o.url) : undefined;
+
+		if (!hash) {
+			throw new Error('Item not in cache.');
+		}
+
+		return this.localStorageService.getItem(`cache/${hash}`);
+	}
+
+	/** @ignore */
+	private cacheRemove (o: {hash?: string; url?: string}) : void {
+		const hash	= o.hash ? o.hash : o.url ? this.hashCache.get(o.url) : undefined;
+
+		if (o.url) {
+			this.hashCache.delete(o.url);
+		}
+		if (hash) {
+			this.localStorageService.removeItem(`cache/${hash}`);
+		}
+	}
+
+	/** @ignore */
+	private cacheSet (url: string, value: Uint8Array, hash: string) : void {
+		this.localStorageService.setItem(`cache/${hash}`, value).then(() => {
+			this.hashCache.set(url, hash);
+		});
+	}
 
 	/** @ignore */
 	private async getStorageRef (url: string) : Promise<firebase.storage.Reference> {
@@ -63,7 +96,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const hash	= await this.getHash(url);
 
 				try {
-					const localData	= await this.localStorageService.getItem(`cache/${hash}`);
+					const localData	= await this.cacheGet({hash});
 					progress.next(100);
 					progress.complete();
 					return localData;
@@ -94,7 +127,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				progress.next(100);
 				progress.complete();
-				this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
+				this.cacheSet(url, data, hash);
 				return data;
 			})()
 		};
@@ -239,6 +272,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async removeItem (url: string) : Promise<void> {
+		this.cacheRemove({url});
 		await Promise.all([
 			(await this.getDatabaseRef(url)).remove().then(),
 			(await this.getStorageRef(url)).delete().then()
@@ -252,9 +286,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		/* tslint:disable-next-line:possible-timing-attack */
 		if (hash !== (await this.getHash(url).catch(() => undefined))) {
-			this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
 			await (await this.getStorageRef(url)).put(new Blob([data])).then();
 			await (await this.getDatabaseRef(url)).set(hash).then();
+			this.cacheSet(url, data, hash);
 		}
 
 		return {hash, url};
@@ -291,8 +325,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 				return {hash, url};
 			}
 
-			this.localStorageService.setItem(`cache/${hash}`, data).catch(() => {});
-
 			return new Promise<{hash: string; url: string}>(async (resolve, reject) => {
 				const uploadTask	= (await this.getStorageRef(url)).put(new Blob([data]));
 
@@ -310,6 +342,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					async () => {
 						try {
 							await (await this.getDatabaseRef(url)).set(hash).then();
+							this.cacheSet(url, data, hash);
 							progress.next(100);
 							progress.complete();
 							resolve({hash, url});
