@@ -18,12 +18,13 @@ node -e 'console.log(`
 ng eject --aot --prod --no-sourcemaps
 
 cat > webpack.js <<- EOM
-	const ExtractTextPlugin						= require('extract-text-webpack-plugin');
-	const HtmlWebpackPlugin						= require('html-webpack-plugin');
-	const path									= require('path');
-	const {CommonsChunkPlugin, UglifyJsPlugin}	= require('webpack').optimize;
-	const mangleExceptions						= require('../commands/mangleexceptions');
-	const config								= require('./webpack.config.js');
+	const ExtractTextPlugin	= require('extract-text-webpack-plugin');
+	const HtmlWebpackPlugin	= require('html-webpack-plugin');
+	const path				= require('path');
+	const UglifyJsPlugin	= require('uglifyjs-webpack-plugin');
+	const webpack			= require('webpack');
+	const mangleExceptions	= require('../commands/mangleexceptions');
+	const config			= require('./webpack.config.js');
 
 	const chunks	=
 		'${dependencyModules}'.
@@ -50,14 +51,14 @@ cat > webpack.js <<- EOM
 	;
 
 	const commonsChunkIndex	= config.plugins.indexOf(
-		config.plugins.find(o => o instanceof CommonsChunkPlugin)
+		config.plugins.find(o => o instanceof webpack.optimize.CommonsChunkPlugin)
 	);
 
 	for (const chunk of chunks.reverse()) {
 		config.plugins.splice(
 			commonsChunkIndex + 1,
 			undefined,
-			new CommonsChunkPlugin({
+			new webpack.optimize.CommonsChunkPlugin({
 				name: chunk.name,
 				chunks: ['main'],
 				minChunks: o => o.resource && o.resource.startsWith(
@@ -120,7 +121,10 @@ cat > webpack.js <<- EOM
 	}
 
 	const uglifyJsIndex	= config.plugins.indexOf(
-		config.plugins.find(o => o instanceof UglifyJsPlugin)
+		config.plugins.find(o =>
+			o instanceof webpack.optimize.UglifyJsPlugin ||
+			o instanceof UglifyJsPlugin
+		)
 	);
 
 	if (uglifyJsIndex > -1) {
@@ -130,13 +134,11 @@ cat > webpack.js <<- EOM
 			new UglifyJsPlugin({
 				comments: false,
 				compress: {
-					'screw_ie8': true,
-					'sequences': false,
-					'warnings': false
+					sequences: false,
+					warnings: false
 				},
 				mangle: {
-					'except': mangleExceptions,
-					'screw_ie8': true
+					except: mangleExceptions
 				},
 				sourceMap: false
 			})

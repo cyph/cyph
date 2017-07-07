@@ -218,6 +218,9 @@ sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/simplewebrtc.js
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
+rm -rf uglify-js
+cp -a uglify-es uglify-js
+
 cd firebase
 for m in $(ls *-node.js | sed 's|-node\.js$||') ; do
 	mv ${m}-node.js ${m}.js
