@@ -166,9 +166,7 @@ read -r -d '' modules <<- EOM
 	tsutils
 	typedoc
 	typescript
-	uglify-es
-	uglify-js
-	uglifyjs-webpack-plugin@beta
+	uglify-js@https://github.com/buu700/uglify-js-tmp
 	unsemantic
 	url-loader
 	web-animations-js@https://github.com/buu700/web-animations-js-tmp
