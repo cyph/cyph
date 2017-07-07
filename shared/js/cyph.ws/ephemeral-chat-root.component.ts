@@ -7,11 +7,9 @@ import {fadeIn} from '../cyph/animations';
 import {States as ChatStates} from '../cyph/chat/enums';
 import {ChannelService} from '../cyph/services/channel.service';
 import {ChatEnvService} from '../cyph/services/chat-env.service';
-import {ChatPotassiumService} from '../cyph/services/chat-potassium.service';
 import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
 import {AnonymousCastleService} from '../cyph/services/crypto/anonymous-castle.service';
-import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
@@ -52,10 +50,6 @@ import {ChatRootStates} from './enums';
 		{
 			provide: EnvService,
 			useClass: ChatEnvService
-		},
-		{
-			provide: PotassiumService,
-			useClass: ChatPotassiumService
 		},
 		{
 			provide: SessionInitService,

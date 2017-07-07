@@ -6,6 +6,8 @@ import {SessionService} from './session.service';
 
 /**
  * Overrides ThreadedPotassiumService.native() based on sessionService.apiFlags.nativeCrypto.
+ * Not used at the moment because it resulted in a redundant thread being spawned.
+ * TODO: Find better solution to re-enable native crypto API.
  */
 @Injectable()
 export class ChatPotassiumService extends ThreadedPotassiumService {
