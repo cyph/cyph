@@ -112,7 +112,7 @@ export class Thread implements IThread {
 
 	/** @inheritDoc */
 	public isAlive () : boolean {
-		return !!this.worker;
+		return this.worker !== undefined;
 	}
 
 	/** @inheritDoc */
@@ -217,16 +217,16 @@ export class Thread implements IThread {
 		}
 
 
-		this.worker.onmessage	= (e: MessageEvent) => {
+		const worker	= this.worker;
+
+		worker.onmessage	= (e: MessageEvent) => {
 			if (e.data === 'ready') {
 				try {
 					URL.revokeObjectURL(blobUrl);
 				}
 				catch (_) {}
 
-				if (this.worker) {
-					this.worker.postMessage(locals);
-				}
+				worker.postMessage(locals);
 			}
 			else if (e.data === 'close') {
 				this.stop();
