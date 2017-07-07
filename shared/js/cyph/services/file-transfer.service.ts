@@ -103,14 +103,14 @@ export class FileTransferService {
 			);
 
 			this.potassiumService.clearMemory(transfer.key);
-			this.databaseService.removeItem(transfer.url);
 			this.uiSave(transfer, plaintext);
 			this.transfers	= this.transfers.delete(transferSetItem);
 		}
 		else {
 			this.uiRejected(transfer);
-			this.databaseService.removeItem(transfer.url);
 		}
+
+		this.databaseService.removeItem(transfer.url).catch(() => {});
 	}
 
 	/** @ignore */
@@ -296,6 +296,8 @@ export class FileTransferService {
 				this.transfers	= this.transfers.delete(transferSetItem);
 				uploadTask.cancel();
 			}
+
+			this.databaseService.removeItem(transfer.url).catch(() => {});
 		});
 
 		this.sessionService.send(new Message(rpcEvents.files, transfer));
