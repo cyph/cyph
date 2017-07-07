@@ -8,6 +8,7 @@ import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';
 import {AnonymousCastleService} from './crypto/anonymous-castle.service';
+import {PotassiumService} from './crypto/potassium.service';
 import {ErrorService} from './error.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
@@ -176,6 +177,8 @@ export class EphemeralSessionService extends SessionService {
 
 		errorService: ErrorService,
 
+		potassiumService: PotassiumService,
+
 		/** @ignore */
 		private readonly anonymousCastleService: AnonymousCastleService,
 
@@ -189,6 +192,8 @@ export class EphemeralSessionService extends SessionService {
 		private readonly sessionInitService: SessionInitService
 	) {
 		super(analyticsService, errorService);
+
+		this.init(potassiumService);
 
 		let id	= this.sessionInitService.id;
 
