@@ -130,13 +130,13 @@ cat > webpack.js <<- EOM
 			new UglifyJsPlugin({
 				comments: false,
 				compress: {
-					'screw_ie8': true,
-					'sequences': false,
-					'warnings': false
+					screw_ie8: true,
+					sequences: false,
+					warnings: false
 				},
 				mangle: {
-					'except': mangleExceptions,
-					'screw_ie8': true
+					except: mangleExceptions,
+					screw_ie8: true
 				},
 				sourceMap: false
 			})
