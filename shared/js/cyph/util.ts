@@ -17,10 +17,10 @@ import {DialogService} from './services/dialog.service';
  */
 export class Util {
 	/** @ignore */
-	private static readonly dialogService: Promise<DialogService>	=
-		new Promise<DialogService>((resolve, reject) => {
+	private static readonly dialogService: Promise<DialogService|undefined>	=
+		new Promise<DialogService|undefined>(resolve => {
 			if (!env.isMainThread) {
-				reject();
+				resolve();
 			}
 
 			Util.resolveDialogService	= resolve;
@@ -28,13 +28,15 @@ export class Util {
 	;
 
 	/** @ignore */
-	private static readonly http: Promise<Http>	= new Promise<Http>((resolve, reject) => {
-		if (!env.isMainThread) {
-			reject();
-		}
+	private static readonly http: Promise<Http|undefined>	=
+		new Promise<Http|undefined>(resolve => {
+			if (!env.isMainThread) {
+				resolve();
+			}
 
-		Util.resolveHttp	= resolve;
-	});
+			Util.resolveHttp	= resolve;
+		})
+	;
 
 	/** @ignore */
 	public static resolveDialogService: (http: DialogService) => void;
@@ -88,6 +90,9 @@ export class Util {
 			progress: <any> progress,
 			result: (async () => {
 				const http	= await Util.http;
+				if (!http) {
+					throw new Error('HTTP service not found.');
+				}
 
 				const method: string			= o.method || 'GET';
 				const retries: number			= o.retries === undefined ? 0 : o.retries;
@@ -495,6 +500,11 @@ export class Util {
 
 	/** Opens the specified URL. */
 	public async saveFile (content: Uint8Array, fileName: string) : Promise<void> {
+		const dialogService	= await Util.dialogService;
+		if (!dialogService) {
+			throw new Error('Dialog service not found.');
+		}
+
 		const oldBeforeUnloadMessage	= beforeUnloadMessage;
 		beforeUnloadMessage				= undefined;
 
@@ -515,7 +525,7 @@ export class Util {
 				save();
 			};
 			document.addEventListener('click', handler);
-			await (await Util.dialogService).alert({
+			await dialogService.alert({
 				content: `${
 					this.translate('Saving file')
 				} "${fileName}" ${
