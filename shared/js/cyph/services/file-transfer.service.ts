@@ -105,7 +105,6 @@ export class FileTransferService {
 			this.potassiumService.clearMemory(transfer.key);
 			this.databaseService.removeItem(transfer.url);
 			this.uiSave(transfer, plaintext);
-			await util.sleep(1000);
 			this.transfers	= this.transfers.delete(transferSetItem);
 		}
 		else {
