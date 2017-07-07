@@ -148,8 +148,6 @@ cat > webpack.js <<- EOM
 	config.output.filename		= '[name].js';
 	config.output.chunkFilename	= config.output.filename;
 
-	config.node		= false;
-
 	module.exports	= config;
 EOM
 
