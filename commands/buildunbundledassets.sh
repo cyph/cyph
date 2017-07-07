@@ -109,7 +109,6 @@ for f in ${typescriptAssets} ; do
 
 	cat > webpack.js <<- EOM
 		const TsConfigPathsPlugin	= require('awesome-typescript-loader').TsConfigPathsPlugin;
-		const UglifyJsPlugin		= require('uglifyjs-webpack-plugin');
 		const webpack				= require('webpack');
 		const mangleExceptions		= require('../../../commands/mangleexceptions');
 
@@ -132,13 +131,14 @@ for f in ${typescriptAssets} ; do
 				path: '${PWD}'
 			},
 			plugins: [
-				new UglifyJsPlugin({
+				new webpack.optimize.UglifyJsPlugin({
 					comments: false,
 					compress: {
-						warnings: false
+						'screw_ie8': true,
+						'warnings': false
 					},
 					mangle: {
-						except: mangleExceptions
+						'screw_ie8': true
 					},
 					sourceMap: false
 				})
