@@ -134,11 +134,13 @@ for f in ${typescriptAssets} ; do
 				new webpack.optimize.UglifyJsPlugin({
 					comments: false,
 					compress: {
-						'screw_ie8': true,
-						'warnings': false
+						screw_ie8: true,
+						sequences: false,
+						warnings: false
 					},
 					mangle: {
-						'screw_ie8': true
+						except: mangleExceptions,
+						screw_ie8: true
 					},
 					sourceMap: false
 				})
