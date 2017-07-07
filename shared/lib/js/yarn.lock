@@ -6107,9 +6107,9 @@ nativescript-hook@^0.2.0, nativescript-hook@^0.2.1:
     glob "^6.0.1"
     mkdirp "^0.5.1"
 
-nativescript-imagepicker@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/nativescript-imagepicker/-/nativescript-imagepicker-3.0.1.tgz#054308f26bb20316a8eb4329ff0b55896c6baa60"
+nativescript-imagepicker@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/nativescript-imagepicker/-/nativescript-imagepicker-3.0.2.tgz#975ffbb7d7af9c928d87bc7484e1bb5000f58e06"
 
 nativescript-intl@^3.0.0:
   version "3.0.0"
@@ -9469,30 +9469,25 @@ uc.micro@^1.0.1, uc.micro@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/uc.micro/-/uc.micro-1.0.3.tgz#7ed50d5e0f9a9fb0a573379259f2a77458d50192"
 
-uglify-es@^3.0.21, uglify-es@^3.0.23:
-  version "3.0.23"
-  resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.0.23.tgz#9682c6ae347269ad6b0628bd8b3d6a3b391707c0"
+uglify-js@3.0.x, uglify-js@^2.6, uglify-js@^2.8.29, uglify-js@^2.8.5, "uglify-js@https://github.com/buu700/uglify-js-tmp", uglify-js@~2.3:
+  version "1337.0.0"
+  resolved "https://github.com/buu700/uglify-js-tmp#70ebcc3c2cf432db9c5154e1f1eb2cb464f4d699"
   dependencies:
-    commander "~2.9.0"
     source-map "~0.5.1"
-
-uglify-js@3.0.x, uglify-js@^2.6, uglify-js@^2.8.29, uglify-js@^2.8.5, uglify-js@^3.0.23, uglify-js@~2.3:
-  version "3.0.23"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.0.23.tgz#a58c6b97e6d6763d94dbc265fe8e8c1725e64666"
-  dependencies:
-    commander "~2.9.0"
-    source-map "~0.5.1"
+    yargs "~3.10.0"
+  optionalDependencies:
+    uglify-to-browserify "~1.0.0"
 
 uglify-to-browserify@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/uglify-to-browserify/-/uglify-to-browserify-1.0.2.tgz#6e0924d6bda6b5afe349e39a6d632850a0f882b7"
 
-uglifyjs-webpack-plugin@^0.4.6, uglifyjs-webpack-plugin@beta:
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-1.0.0-beta.1.tgz#595c14d8b85bedd708ab7a6e811894fbe0e69890"
+uglifyjs-webpack-plugin@^0.4.6:
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-0.4.6.tgz#b951f4abb6bd617e66f63eb891498e391763e309"
   dependencies:
     source-map "^0.5.6"
-    uglify-es "^3.0.21"
+    uglify-js "^2.8.29"
     webpack-sources "^1.0.1"
 
 uid-number@0.0.6, uid-number@^0.0.6:
