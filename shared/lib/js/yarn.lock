@@ -4922,10 +4922,6 @@ js-base64@^2.1.5, js-base64@^2.1.8, js-base64@^2.1.9:
   version "2.1.9"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.1.9.tgz#f0e80ae039a4bd654b5f281fc93f04a914a7fcce"
 
-js-sha512@*:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/js-sha512/-/js-sha512-0.3.0.tgz#3dc20b6c7d9052e6557db004ffc2213a71f1a0e9"
-
 js-tokens@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
@@ -9016,11 +9012,10 @@ superagent@^3.0.0:
     qs "^6.1.0"
     readable-stream "^2.0.5"
 
-supersphincs@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-4.0.3.tgz#d1c05354fe61e8cc6d8b0b1412825535565b3779"
+supersphincs@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-4.1.1.tgz#58b51bd2cf42426c402e85318dd8f6ecbf3e80ec"
   dependencies:
-    js-sha512 "*"
     rsasign "*"
     sodiumutil "*"
     sphincs "*"
@@ -9068,8 +9063,8 @@ supertest@3.0.0:
     superagent "^3.0.0"
 
 supports-color@^2.0.0, supports-color@^3.1.0, supports-color@^3.1.1, supports-color@^3.1.2, supports-color@^3.2.3, supports-color@^4.0.0, supports-color@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-4.1.0.tgz#92cc14bb3dad8928ca5656c33e19a19f20af5c7a"
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-4.2.0.tgz#ad986dc7eb2315d009b4d77c8169c2231a684037"
   dependencies:
     has-flag "^2.0.0"
 
