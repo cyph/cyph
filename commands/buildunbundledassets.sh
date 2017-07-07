@@ -109,6 +109,7 @@ for f in ${typescriptAssets} ; do
 
 	cat > webpack.js <<- EOM
 		const TsConfigPathsPlugin	= require('awesome-typescript-loader').TsConfigPathsPlugin;
+		const UglifyJsPlugin		= require('uglifyjs-webpack-plugin');
 		const webpack				= require('webpack');
 
 		module.exports	= {
@@ -131,15 +132,12 @@ for f in ${typescriptAssets} ; do
 			},
 			plugins: [
 				$(test "${f}" == 'cyph/crypto/potassium/index' || echo "
-					new webpack.optimize.UglifyJsPlugin({
+					new UglifyJsPlugin({
 						comments: false,
 						compress: {
-							'screw_ie8': true,
-							'warnings': false
+							warnings: false
 						},
-						mangle: {
-							'screw_ie8': true
-						},
+						mangle: true,
 						sourceMap: false
 					})
 				")
