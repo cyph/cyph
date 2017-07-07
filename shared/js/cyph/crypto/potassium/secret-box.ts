@@ -6,8 +6,8 @@ import {potassiumUtil} from './potassium-util';
 
 /** @inheritDoc */
 export class SecretBox implements ISecretBox {
-	/** Max size of chunk to encrypt, 64 MB. */
-	private readonly chunkSize: number	= 67108864;
+	/** Max size of chunk to encrypt, 32 MB. */
+	private readonly chunkSize: number	= 33554432;
 
 	/** @ignore */
 	private readonly helpers: {
