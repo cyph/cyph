@@ -101,7 +101,7 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @ignore */
-	protected cyphertextSendHandler (_MESSAGE: string) : void {
+	protected cyphertextSendHandler (_MESSAGE: Uint8Array) : void {
 		this.analyticsService.sendEvent({
 			eventAction: 'sent',
 			eventCategory: 'message',
@@ -147,7 +147,7 @@ export abstract class SessionService implements ISessionService {
 	/** @inheritDoc */
 	public async castleHandler (
 		event: CastleEvents,
-		data?: string|{author: string; plaintext: Uint8Array; timestamp: number}
+		data?: Uint8Array|{author: string; plaintext: Uint8Array; timestamp: number}
 	) : Promise<void> {
 		await this.castleLock(async () => { switch (event) {
 			case CastleEvents.abort: {
@@ -179,7 +179,7 @@ export abstract class SessionService implements ISessionService {
 				break;
 			}
 			case CastleEvents.receive: {
-				if (!data || typeof data === 'string') {
+				if (!data || data instanceof Uint8Array) {
 					break;
 				}
 
@@ -219,7 +219,7 @@ export abstract class SessionService implements ISessionService {
 				break;
 			}
 			case CastleEvents.send: {
-				if (!data || typeof data !== 'string') {
+				if (!data || !(data instanceof Uint8Array)) {
 					break;
 				}
 

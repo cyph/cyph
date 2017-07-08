@@ -109,29 +109,26 @@ export class PairwiseSession {
 	}
 
 	/** Receive/decrypt incoming message. */
-	public async receive (cyphertext: string) : Promise<void> {
+	public async receive (cyphertext: Uint8Array) : Promise<void> {
 		if (this.isAborted) {
 			return;
 		}
 
-		let newMessageBytes: Uint8Array|undefined;
-		let newMessageId: number|undefined;
-
 		try {
-			newMessageBytes	= this.potassium.fromBase64(cyphertext);
-
 			if (this.transport.cyphertextIntercepters.length > 0) {
 				const cyphertextIntercepter	= this.transport.cyphertextIntercepters.shift();
 
 				if (cyphertextIntercepter) {
-					cyphertextIntercepter(newMessageBytes);
+					cyphertextIntercepter(cyphertext);
 					return;
 				}
 			}
-
-			newMessageId	= new DataView(newMessageBytes.buffer).getFloat64(0, true);
 		}
 		catch (_) {}
+
+		const newMessageId	=
+			new DataView(cyphertext.buffer, cyphertext.byteOffset).getFloat64(0, true)
+		;
 
 		return this.receiveLock(async () => {
 			const promises	= {
@@ -143,18 +140,14 @@ export class PairwiseSession {
 			const incomingMessages	= await promises.incomingMessages;
 			let incomingMessagesMax	= await promises.incomingMessagesMax;
 
-			if (
-				newMessageBytes !== undefined &&
-				newMessageId !== undefined &&
-				newMessageId >= incomingMessageId
-			) {
+			if (newMessageId >= incomingMessageId) {
 				if (newMessageId > incomingMessagesMax) {
 					incomingMessagesMax	= newMessageId;
 				}
 
 				const message					= incomingMessages[newMessageId] || [];
 				incomingMessages[newMessageId]	= message;
-				message.push(newMessageBytes);
+				message.push(cyphertext);
 			}
 
 			while (incomingMessageId <= incomingMessagesMax) {

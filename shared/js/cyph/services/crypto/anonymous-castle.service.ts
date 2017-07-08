@@ -58,7 +58,7 @@ export class AnonymousCastleService implements ICastle {
 	}
 
 	/** @inheritDoc */
-	public async receive (cyphertext: string) : Promise<void> {
+	public async receive (cyphertext: Uint8Array) : Promise<void> {
 		return (await this.pairwiseSession).receive(cyphertext);
 	}
 

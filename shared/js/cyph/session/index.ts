@@ -2,6 +2,7 @@ export * from './command';
 export * from './enums';
 export * from './icapabilities';
 export * from './ichannel-handlers';
+export * from './ichannel-message';
 export * from './imessage';
 export * from './imessage-data';
 export * from './isession';

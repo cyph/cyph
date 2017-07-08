@@ -38,17 +38,17 @@ export class MockDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public downloadItem (url: string) : {
 		progress: Observable<number>;
-		result: Promise<Uint8Array>;
+		result: Promise<{timestamp: number; value: Uint8Array}>;
 	} {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
-			const data	= this.uploadedItems.get(url);
-			if (!data) {
+			const value	= this.uploadedItems.get(url);
+			if (!value) {
 				throw new Error('Item not found.');
 			}
-			await this.pretendToTransferData(50, data.length, progress);
-			return data;
+			await this.pretendToTransferData(50, value.length, progress);
+			return {timestamp: await util.timestamp(), value};
 		})();
 
 		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
