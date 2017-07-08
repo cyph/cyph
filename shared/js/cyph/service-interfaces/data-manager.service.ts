@@ -31,8 +31,8 @@ export class DataManagerService {
 	 * Gets a value as an object.
 	 * @see getItem
 	 */
-	public async getItemObject<T> (url: string) : Promise<T> {
-		return util.bytesToObject<T>(await this.getItem(url));
+	public async getItemObject<T> (url: string, validator: (o: any) => boolean) : Promise<T> {
+		return util.bytesToObject<T>(await this.getItem(url), validator);
 	}
 
 	/**

@@ -54,14 +54,14 @@ export class DatabaseService extends DataManagerService {
 	 * Downloads a value as an object.
 	 * @see downloadItem
 	 */
-	public downloadItemObject<T> (url: string) : {
+	public downloadItemObject<T> (url: string, validator: (o: any) => boolean) : {
 		progress: Observable<number>;
 		result: Promise<T>;
 	} {
 		const o	= this.downloadItem(url);
 		return {
 			progress: o.progress,
-			result: o.result.then(value => util.bytesToObject<T>(value))
+			result: o.result.then(value => util.bytesToObject<T>(value, validator))
 		};
 	}
 
@@ -207,8 +207,8 @@ export class DatabaseService extends DataManagerService {
 	 * Subscribes to a list of values as objects.
 	 * @see watchList
 	 */
-	public watchListObject<T> (url: string) : Observable<T[]> {
-		return this.watchList<T>(url, value => util.bytesToObject<T>(value));
+	public watchListObject<T> (url: string, validator: (o: any) => boolean) : Observable<T[]> {
+		return this.watchList<T>(url, value => util.bytesToObject<T>(value, validator));
 	}
 
 	/**
@@ -256,9 +256,12 @@ export class DatabaseService extends DataManagerService {
 	 * Subscribes to a possibly-undefined value as an object.
 	 * @see watchMaybe
 	 */
-	public watchMaybeObject<T> (url: string) : Observable<T|undefined> {
+	public watchMaybeObject<T> (
+		url: string,
+		validator: (o: any) => boolean
+	) : Observable<T|undefined> {
 		return this.watchMaybe(url).map(value =>
-			value === undefined ? undefined : util.bytesToObject<T>(value)
+			value === undefined ? undefined : util.bytesToObject<T>(value, validator)
 		);
 	}
 
@@ -324,9 +327,10 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchValueObject<T> (
 		url: string,
+		validator: (o: any) => boolean,
 		defaultValue: () => T|Promise<T>
 	) : Observable<T> {
-		return this.watchMaybeObject<T>(url).flatMap(async value =>
+		return this.watchMaybeObject<T>(url, validator).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}

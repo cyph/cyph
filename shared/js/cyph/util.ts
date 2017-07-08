@@ -210,11 +210,21 @@ export class Util {
 		return value;
 	}
 
-	/** Converts byte array produced by toBytes into a generic object. */
-	public bytesToObject<T> (bytes: Uint8Array, clearInput: boolean = true) : T {
+	/**
+	 * Converts byte array produced by toBytes into a generic object.
+	 * @param validator Function to check object properties and make sure they're as expected.
+	 */
+	public bytesToObject<T> (
+		bytes: Uint8Array,
+		validator: (o: any) => boolean,
+		clearInput: boolean = true
+	) : T {
 		const value: T	= msgpack.decode(bytes);
 		if (clearInput) {
 			potassiumUtil.clearMemory(bytes);
+		}
+		if (!validator(value)) {
+			throw new Error('Invalid deserialized object.');
 		}
 		return value;
 	}
