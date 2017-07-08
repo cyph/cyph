@@ -3,11 +3,11 @@
 
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
+log 'Starting lint'
 
 output="$(./commands/buildunbundledassets.sh 2>&1)"
 checkfail "${output}"
 
-log 'Starting lint'
 tmpDir="$(mktemp -d)"
 ./commands/copyworkspace.sh "${tmpDir}"
 cd "${tmpDir}/shared"
