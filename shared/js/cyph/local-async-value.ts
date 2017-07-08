@@ -47,8 +47,7 @@ export class LocalAsyncValue<T> implements IAsyncValue<T> {
 
 	/** @inheritDoc */
 	public watch () : Observable<T> {
-		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
-		return <any> this.subject;
+		return this.subject;
 	}
 
 	constructor (

@@ -84,9 +84,8 @@ export class Util {
 	} {
 		const progress	= new BehaviorSubject(0);
 
-		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
 		return {
-			progress: <any> progress,
+			progress,
 			result: (async () => {
 				const http	= await Util.http;
 				if (!http) {

@@ -51,8 +51,7 @@ export class MockDatabaseService extends DatabaseService {
 			return {timestamp: await util.timestamp(), value};
 		})();
 
-		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
-		return {progress: <any> progress, result};
+		return {progress, result};
 	}
 
 	/** @inheritDoc */
@@ -70,8 +69,7 @@ export class MockDatabaseService extends DatabaseService {
 			return {hash: '', url};
 		})();
 
-		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
-		return {cancel: () => {}, progress: <any> progress, result};
+		return {cancel: () => {}, progress, result};
 	}
 
 	constructor () {
