@@ -29,7 +29,7 @@ export class SessionTransfer implements ISessionTransfer {
 		public isOutgoing: boolean = true,
 
 		/** @inheritDoc */
-		public url: string = '',
+		public readonly url: string = '',
 
 		/** @inheritDoc */
 		public readonly id: string = util.uuid(),

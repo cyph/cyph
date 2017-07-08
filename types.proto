@@ -157,5 +157,5 @@ message SessionTransfer {
 	required double size = 11;
 
 	/** File URL. */
-	string url = 12;
+	required string url = 12;
 }
