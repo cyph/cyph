@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {eventManager} from '../event-manager';
-import {LockFunction} from '../lock-function-type';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {CastleEvents, events, rpcEvents} from '../session/enums';
 import {IMessage} from '../session/imessage';
@@ -17,9 +16,6 @@ import {ErrorService} from './error.service';
  */
 @Injectable()
 export abstract class SessionService implements ISessionService {
-	/** @ignore */
-	private readonly castleLock: LockFunction						= util.lockFunction();
-
 	/** @ignore */
 	private resolvePotassiumService: (potassiumService: PotassiumService) => void;
 
@@ -149,7 +145,7 @@ export abstract class SessionService implements ISessionService {
 		event: CastleEvents,
 		data?: string|{author: string; plaintext: Uint8Array; timestamp: number}
 	) : Promise<void> {
-		await this.castleLock(async () => { switch (event) {
+		switch (event) {
 			case CastleEvents.abort: {
 				this.errorService.logAuthFail();
 				this.trigger(events.connectFailure);
@@ -225,7 +221,7 @@ export abstract class SessionService implements ISessionService {
 
 				this.cyphertextSendHandler(data);
 			}
-		} });
+		}
 	}
 
 	/** @inheritDoc */
