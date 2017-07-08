@@ -21,9 +21,9 @@ sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
 
 export DEBIAN_FRONTEND=noninteractive
-apt-get -y --force-yes update
-apt-get -y --force-yes install curl lsb-release apt-transport-https
-apt-get -y --force-yes purge apache* mysql*
+apt-get -y --allow-downgrades update
+apt-get -y --allow-downgrades install curl lsb-release apt-transport-https
+apt-get -y --allow-downgrades purge apache* mysql*
 distro="$(lsb_release -c | awk '{print $2}')"
 echo "
 	deb http://deb.torproject.org/torproject.org ${distro} main
@@ -32,9 +32,9 @@ echo "
 gpg --keyserver keys.gnupg.net --recv 886DDD89
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
 curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
-apt-get -y --force-yes update
-apt-get -y --force-yes upgrade
-apt-get -y --force-yes install apt cron dpkg nginx openssl nodejs deb.torproject.org-keyring tor
+apt-get -y --allow-downgrades update
+apt-get -y --allow-downgrades upgrade
+apt-get -y --allow-downgrades install apt cron dpkg nginx openssl nodejs deb.torproject.org-keyring tor
 do-release-upgrade -f DistUpgradeViewNonInteractive
 
 mkdir -p /etc/nginx/ssl/websign
@@ -64,8 +64,8 @@ cat > /systemupdate.sh << EndOfMessage
 #!/bin/bash
 
 export DEBIAN_FRONTEND=noninteractive
-apt-get -y --force-yes update
-apt-get -y --force-yes -o Dpkg::Options::=--force-confdef upgrade
+apt-get -y --allow-downgrades update
+apt-get -y --allow-downgrades -o Dpkg::Options::=--force-confdef upgrade
 do-release-upgrade -f DistUpgradeViewNonInteractive
 
 reboot
