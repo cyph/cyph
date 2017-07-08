@@ -195,8 +195,7 @@ export class AccountDatabaseService {
 			return downloadTask.result;
 		})();
 
-		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
-		return {progress: <any> progress, result};
+		return {progress, result};
 	}
 
 	/**
@@ -930,8 +929,7 @@ export class AccountDatabaseService {
 			return uploadTask.result;
 		})();
 
-		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
-		return {cancel, progress: <any> progress, result};
+		return {cancel, progress, result};
 	}
 
 	/** Waits for lock to be released. */
