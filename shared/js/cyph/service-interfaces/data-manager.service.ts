@@ -74,7 +74,7 @@ export class DataManagerService {
 	 * Sets an item's value.
 	 * @returns Item url.
 	 */
-	public async setItem (_URL: string, _VALUE: DataType) : Promise<{url: string}> {
+	public async setItem<T = never> (_URL: string, _VALUE: DataType<T>) : Promise<{url: string}> {
 		throw new Error('Must provide an implementation of setItem.');
 	}
 

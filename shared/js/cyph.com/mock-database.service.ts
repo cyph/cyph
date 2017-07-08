@@ -56,7 +56,7 @@ export class MockDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public uploadItem (url: string, value: DataType) : {
+	public uploadItem<T = never> (url: string, value: DataType<T>) : {
 		cancel: () => void;
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
