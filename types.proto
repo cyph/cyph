@@ -1,0 +1,146 @@
+syntax = "proto3";
+
+
+/** Represents one message in a chat. */
+message ChatMessage {
+	/** @see SessionMessageData.author */
+	required string author = 1;
+
+	/** @see SessionMessageData.id */
+	required string id = 2;
+
+	/** @see SessionText.selfDestructTimeout */
+	double selfDestructTimeout = 3;
+
+	/** @see SessionText.text */
+	required string text = 4;
+
+	/** @see SessionMessageData.timestamp */
+	required double timestamp = 5;
+}
+
+/** A set of supported capabilities. */
+message SessionCapabilities {
+	/** Native crypto / SubtleCrypto. */
+	required bool nativeCrypto = 1;
+
+	/** P2P networking / WebRTC. */
+	required bool p2p = 2;
+}
+
+/** Misc information about the state of a chat. */
+message SessionChatState {
+	/** Indicates whether this party is actively typing. */
+	required bool isTyping = 1;
+}
+
+/** Contains an RPC call for a specific method. */
+message SessionCommand {
+	/** Argument to pass to method (serialized with MessagePack). */
+	bytes argument = 1;
+
+	/** Method name. */
+	required string method = 2;
+}
+
+/** Message to be sent over a session, indicating some RPC event. */
+message SessionMessage {
+	/** Event name (e.g. "text"). */
+	required string event = 1;
+
+	/** Associated data (e.g. a user-facing chat message). */
+	required SessionMessageData data = 2;
+}
+
+/** Message data. */
+message SessionMessageData {
+	/** Author of this message. */
+	required string author = 1;
+
+	/** Unique ID. */
+	required string id = 2;
+
+	/** Timestamp of this message. */
+	required double timestamp = 3;
+
+	/** Arbitrary bytes. */
+	bytes bytes = 4;
+
+	/** @see SessionCapabilities */
+	SessionCapabilities capabilities = 5;
+
+	/** @see SessionChatState */
+	SessionChatState chatState = 6;
+
+	/** @see SessionCommand */
+	SessionCommand command = 7;
+
+	/** @see SessionText */
+	SessionText text = 8;
+
+	/** @see SessionTextConfirmation */
+	SessionTextConfirmation textConfirmation = 9;
+
+	/** @see SessionTransfer */
+	SessionTransfer transfer = 10;
+}
+
+/** Array of session messages. */
+message SessionMessageList {
+	/** Messages. */
+	repeated SessionMessage messages = 1;
+}
+
+/** Contains an actual chat text message. */
+message SessionText {
+	/** Self-destruction timeout. */
+	double selfDestructTimeout = 1;
+
+	/** Message text. */
+	required string text = 2;
+}
+
+/** Receipt confirmation for a SessionText. */
+message SessionTextConfirmation {
+	/** SessionText ID to be confirmed. */
+	required string id = 1;
+}
+
+/** Represents an active file transfer. */
+message SessionTransfer {
+	/** If defined, indicates an acceptance or rejection of a file transfer. */
+	bool answer = 1;
+
+	/** @see SessionMessageData.author */
+	required string author = 2;
+
+	/** Unique ID to represent this file transfer. */
+	required string id = 3;
+
+	/** Indicates whether file should be handled as an image. */
+	required bool image = 4;
+
+	/** If image is true, this will be used as a self-destruct timeout for the message. */
+	required double imageSelfDestructTimeout = 5;
+
+	/** Indicates whether file is being sent from this Cyph instance. */
+	required bool isOutgoing = 6;
+
+	/** Symmetric key used for encrypting file over the wire. */
+	required bytes key = 7;
+
+	/** MIME type. */
+	required string mediaType = 8;
+
+	/** File name. */
+	required string name = 9;
+
+	/** Indicates the time at which the file was received. */
+	double receiptTimestamp = 10;
+
+	/** File size in bytes. */
+	required double size = 11;
+
+	/** File URL. */
+	string url = 12;
+}

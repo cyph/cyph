@@ -36,6 +36,7 @@ scssAssets="native/app $(
 hash="$(
 	cat \
 		commands/buildunbundledassets.sh \
+		types.proto \
 		$(echo "${nodeModulesAssets}" | perl -pe 's/([^\s]+)/\/node_modules\/\1.js/g') \
 		$(find shared/js -type f -name '*.ts') \
 		$(find shared/css -type f -name '*.scss') \
@@ -53,6 +54,14 @@ fi
 
 rm -rf node_modules js css 2> /dev/null
 mkdir node_modules js css
+
+
+rm -rf ../js/proto 2> /dev/null
+mkdir ../js/proto
+pbjs -t static-module ../../types.proto -o ../js/proto/index.js
+checkfail
+pbts ../js/proto/index.js -o ../js/proto/index.d.ts
+checkfail
 
 
 cd node_modules

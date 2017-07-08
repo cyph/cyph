@@ -1,7 +1,7 @@
 import {Subject} from 'rxjs';
+import {IChatMessage} from '../../proto';
 import {IAsyncValue} from '../iasync-value';
 import {States} from './enums';
-import {IChatMessage} from './ichat-message';
 
 
 /**

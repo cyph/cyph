@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import * as firebase from 'firebase';
 import {Observable} from 'rxjs';
 import {DataType} from '../data-type';
 import {LockFunction} from '../lock-function-type';
@@ -11,24 +12,10 @@ import {util} from '../util';
  */
 @Injectable()
 export class DatabaseService extends DataManagerService {
-	/**
-	 * Checks whether a disconnect is registered at the specified URL.
-	 * @returns True if disconnected.
-	 * @see setDisconnectTracker
-	 */
-	public async checkDisconnected (_URL: string) : Promise<boolean> {
-		throw new Error('Must provide an implementation of DatabaseService.checkDisconnected.');
-	}
-
-	/** Tracks whether this client is connected to the database. */
-	public connectionStatus () : Observable<boolean> {
-		throw new Error('Must provide an implementation of DatabaseService.connectionStatus.');
-	}
-
 	/** Downloads value and gives progress. */
 	public downloadItem (_URL: string) : {
 		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: Uint8Array}>;
+		result: Promise<Uint8Array>;
 	} {
 		throw new Error('Must provide an implementation of DatabaseService.downloadItem.');
 	}
@@ -39,15 +26,12 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public downloadItemBoolean (url: string) : {
 		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: boolean}>;
+		result: Promise<boolean>;
 	} {
 		const o	= this.downloadItem(url);
 		return {
 			progress: o.progress,
-			result: o.result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToBoolean(value)
-			}))
+			result: o.result.then(value => util.bytesToBoolean(value))
 		};
 	}
 
@@ -57,15 +41,12 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public downloadItemNumber (url: string) : {
 		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: number}>;
+		result: Promise<number>;
 	} {
 		const o	= this.downloadItem(url);
 		return {
 			progress: o.progress,
-			result: o.result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToNumber(value)
-			}))
+			result: o.result.then(value => util.bytesToNumber(value))
 		};
 	}
 
@@ -73,17 +54,14 @@ export class DatabaseService extends DataManagerService {
 	 * Downloads a value as an object.
 	 * @see downloadItem
 	 */
-	public downloadItemObject<T> (url: string, validator: (o: any) => boolean) : {
+	public downloadItemObject<T> (url: string, proto: {decode: (bytes: Uint8Array) => T}) : {
 		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: T}>;
+		result: Promise<T>;
 	} {
 		const o	= this.downloadItem(url);
 		return {
 			progress: o.progress,
-			result: o.result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToObject<T>(value, validator)
-			}))
+			result: o.result.then(value => util.bytesToObject<T>(value, proto))
 		};
 	}
 
@@ -93,15 +71,12 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public downloadItemString (url: string) : {
 		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: string}>;
+		result: Promise<string>;
 	} {
 		const o	= this.downloadItem(url);
 		return {
 			progress: o.progress,
-			result: o.result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToString(value)
-			}))
+			result: o.result.then(value => util.bytesToString(value))
 		};
 	}
 
@@ -111,71 +86,23 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public downloadItemURI (url: string) : {
 		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: string}>;
+		result: Promise<string>;
 	} {
 		const o	= this.downloadItem(url);
 		return {
 			progress: o.progress,
-			result: o.result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToDataURI(value)
-			}))
+			result: o.result.then(value => util.bytesToDataURI(value))
 		};
 	}
 
-	/** @inheritDoc */
-	public async getItem (url: string) : Promise<Uint8Array> {
-		return (await (await this.downloadItem(url)).result).value;
+	/** Returns a reference to a database object. */
+	public async getDatabaseRef (_URL: string) : Promise<firebase.database.Reference> {
+		throw new Error('Must provide an implementation of DatabaseService.getDatabaseRef.');
 	}
 
-	/** Gets a list of values. */
-	public async getList (_URL: string) : Promise<Uint8Array[]> {
-		throw new Error('Must provide an implementation of DatabaseService.getList.');
-	}
-
-	/**
-	 * Gets a list as booleans.
-	 * @see getList
-	 */
-	public async getListBoolean (url: string) : Promise<boolean[]> {
-		return (await this.getList(url)).map(value => util.bytesToBoolean(value));
-	}
-
-	/**
-	 * Gets a list as numbers.
-	 * @see getList
-	 */
-	public async getListNumber (url: string) : Promise<number[]> {
-		return (await this.getList(url)).map(value => util.bytesToNumber(value));
-	}
-
-	/**
-	 * Gets a list as objects.
-	 * @see getList
-	 */
-	public async getListObject<T> (url: string, validator: (o: any) => boolean) : Promise<T[]> {
-		return (await this.getList(url)).map(value => util.bytesToObject<T>(value, validator));
-	}
-
-	/**
-	 * Gets a list as strings.
-	 * @see getList
-	 */
-	public async getListString (url: string) : Promise<string[]> {
-		return (await this.getList(url)).map(value => util.bytesToString(value));
-	}
-
-	/**
-	 * Gets a list as base64 data URIs.
-	 * @see getList
-	 */
-	public async getListURI (url: string) : Promise<string[]> {
-		return (await this.getList(url)).map(value => util.bytesToDataURI(value));
-	}
-
-	/** Gets the latest metadata known by the database. */
-	public async getMetadata (_URL: string) : Promise<{hash: string; timestamp: number}> {
-		throw new Error('Must provide an implementation of DatabaseService.getMetadata.');
+	/** Gets the latest item hash known by the database. */
+	public async getHash (_URL: string) : Promise<string> {
+		throw new Error('Must provide an implementation of DatabaseService.getHash.');
 	}
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
@@ -222,17 +149,17 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.register.');
 	}
 
-	/** Tracks disconnects at the specfied URL. */
-	public async setDisconnectTracker (_URL: string) : Promise<void> {
-		throw new Error('Must provide an implementation of DatabaseService.setDisconnectTracker.');
-	}
-
 	/**
 	 * Pushes an item to a list.
 	 * @returns Item URL.
 	 */
 	public async setItem (_URL: string, _VALUE: DataType) : Promise<{hash: string; url: string}> {
 		throw new Error('Must provide an implementation of DatabaseService.setItem.');
+	}
+
+	/** Returns value representing the database server's timestamp. */
+	public async timestamp () : Promise<any> {
+		return util.timestamp();
 	}
 
 	/** Uploads value and gives progress. */
@@ -252,11 +179,11 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.waitForUnlock.');
 	}
 
-	/** Subscribes to a list of values. Completes when the list no longer exists. */
+	/** Subscribes to a list of values. */
 	public watchList<T = Uint8Array> (
 		_URL: string,
 		_MAPPER?: (value: Uint8Array) => T|Promise<T>
-	) : Observable<{timestamp: number; value: T}[]> {
+	) : Observable<T[]> {
 		throw new Error('Must provide an implementation of DatabaseService.watchList.');
 	}
 
@@ -264,7 +191,7 @@ export class DatabaseService extends DataManagerService {
 	 * Subscribes to a list of values as booleans.
 	 * @see watchList
 	 */
-	public watchListBoolean (url: string) : Observable<{timestamp: number; value: boolean}[]> {
+	public watchListBoolean (url: string) : Observable<boolean[]> {
 		return this.watchList<boolean>(url, value => util.bytesToBoolean(value));
 	}
 
@@ -272,7 +199,7 @@ export class DatabaseService extends DataManagerService {
 	 * Subscribes to a list of values as numbers.
 	 * @see watchList
 	 */
-	public watchListNumber (url: string) : Observable<{timestamp: number; value: number}[]> {
+	public watchListNumber (url: string) : Observable<number[]> {
 		return this.watchList<number>(url, value => util.bytesToNumber(value));
 	}
 
@@ -282,16 +209,16 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchListObject<T> (
 		url: string,
-		validator: (o: any) => boolean
-	) : Observable<{timestamp: number; value: T}[]> {
-		return this.watchList<T>(url, value => util.bytesToObject<T>(value, validator));
+		proto: {decode: (bytes: Uint8Array) => T}
+	) : Observable<T[]> {
+		return this.watchList<T>(url, value => util.bytesToObject<T>(value, proto));
 	}
 
 	/**
 	 * Subscribes to a list of values as strings.
 	 * @see watchList
 	 */
-	public watchListString (url: string) : Observable<{timestamp: number; value: string}[]> {
+	public watchListString (url: string) : Observable<string[]> {
 		return this.watchList<string>(url, value => util.bytesToString(value));
 	}
 
@@ -299,14 +226,12 @@ export class DatabaseService extends DataManagerService {
 	 * Subscribes to a list of values as base64 data URIs.
 	 * @see watchList
 	 */
-	public watchListURI (url: string) : Observable<{timestamp: number; value: string}[]> {
+	public watchListURI (url: string) : Observable<string[]> {
 		return this.watchList<string>(url, value => util.bytesToDataURI(value));
 	}
 
 	/** Subscribes to a possibly-undefined value. */
-	public watchMaybe (
-		_URL: string
-	) : Observable<{timestamp: number; value: Uint8Array}|undefined> {
+	public watchMaybe (_URL: string) : Observable<Uint8Array|undefined> {
 		throw new Error('Must provide an implementation of DatabaseService.watchMaybe.');
 	}
 
@@ -314,26 +239,20 @@ export class DatabaseService extends DataManagerService {
 	 * Subscribes to a possibly-undefined value as a boolean.
 	 * @see watchMaybe
 	 */
-	public watchMaybeBoolean (
-		url: string
-	) : Observable<{timestamp: number; value: boolean}|undefined> {
-		return this.watchMaybe(url).map(o => o === undefined ? undefined : {
-			timestamp: o.timestamp,
-			value: util.bytesToBoolean(o.value)
-		});
+	public watchMaybeBoolean (url: string) : Observable<boolean|undefined> {
+		return this.watchMaybe(url).map(value =>
+			value === undefined ? undefined : util.bytesToBoolean(value)
+		);
 	}
 
 	/**
 	 * Subscribes to a possibly-undefined value as a number.
 	 * @see watchMaybe
 	 */
-	public watchMaybeNumber (
-		url: string
-	) : Observable<{timestamp: number; value: number}|undefined> {
-		return this.watchMaybe(url).map(o => o === undefined ? undefined : {
-			timestamp: o.timestamp,
-			value: util.bytesToNumber(o.value)
-		});
+	public watchMaybeNumber (url: string) : Observable<number|undefined> {
+		return this.watchMaybe(url).map(value =>
+			value === undefined ? undefined : util.bytesToNumber(value)
+		);
 	}
 
 	/**
@@ -342,47 +261,40 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchMaybeObject<T> (
 		url: string,
-		validator: (o: any) => boolean
-	) : Observable<{timestamp: number; value: T}|undefined> {
-		return this.watchMaybe(url).map(o => o === undefined ? undefined : {
-			timestamp: o.timestamp,
-			value: util.bytesToObject<T>(o.value, validator)
-		});
+		proto: {decode: (bytes: Uint8Array) => T}
+	) : Observable<T|undefined> {
+		return this.watchMaybe(url).map(value =>
+			value === undefined ? undefined : util.bytesToObject<T>(value, proto)
+		);
 	}
 
 	/**
 	 * Subscribes to a possibly-undefined value as a string.
 	 * @see watchMaybe
 	 */
-	public watchMaybeString (
-		url: string
-	) : Observable<{timestamp: number; value: string}|undefined> {
-		return this.watchMaybe(url).map(o => o === undefined ? undefined : {
-			timestamp: o.timestamp,
-			value: util.bytesToString(o.value)
-		});
+	public watchMaybeString (url: string) : Observable<string|undefined> {
+		return this.watchMaybe(url).map(value =>
+			value === undefined ? undefined : util.bytesToString(value)
+		);
 	}
 
 	/**
 	 * Subscribes to a possibly-undefined value as a base64 data URI.
 	 * @see watchMaybe
 	 */
-	public watchMaybeURI (
-		url: string
-	) : Observable<{timestamp: number; value: string}|undefined> {
-		return this.watchMaybe(url).map(o => o === undefined ? undefined : {
-			timestamp: o.timestamp,
-			value: util.bytesToDataURI(o.value)
-		});
+	public watchMaybeURI (url: string) : Observable<string|undefined> {
+		return this.watchMaybe(url).map(value =>
+			value === undefined ? undefined : util.bytesToDataURI(value)
+		);
 	}
 
 	/** Subscribes to a value. */
 	public watchValue (
 		url: string,
 		defaultValue: () => Uint8Array|Promise<Uint8Array> = () => new Uint8Array([])
-	) : Observable<{timestamp: number; value: Uint8Array}> {
-		return this.watchMaybe(url).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: await defaultValue()}
+	) : Observable<Uint8Array> {
+		return this.watchMaybe(url).flatMap(async value =>
+			value === undefined ? defaultValue() : value
 		);
 	}
 
@@ -393,9 +305,9 @@ export class DatabaseService extends DataManagerService {
 	public watchValueBoolean (
 		url: string,
 		defaultValue: () => boolean|Promise<boolean> = () => false
-	) : Observable<{timestamp: number; value: boolean}> {
-		return this.watchMaybeBoolean(url).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: await defaultValue()}
+	) : Observable<boolean> {
+		return this.watchMaybeBoolean(url).flatMap(async value =>
+			value === undefined ? defaultValue() : value
 		);
 	}
 
@@ -406,9 +318,9 @@ export class DatabaseService extends DataManagerService {
 	public watchValueNumber (
 		url: string,
 		defaultValue: () => number|Promise<number> = () => 0
-	) : Observable<{timestamp: number; value: number}> {
-		return this.watchMaybeNumber(url).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: await defaultValue()}
+	) : Observable<number> {
+		return this.watchMaybeNumber(url).flatMap(async value =>
+			value === undefined ? defaultValue() : value
 		);
 	}
 
@@ -418,11 +330,11 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchValueObject<T> (
 		url: string,
-		defaultValue: () => T|Promise<T>,
-		validator: (o: any) => boolean
-	) : Observable<{timestamp: number; value: T}> {
-		return this.watchMaybeObject<T>(url, validator).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: await defaultValue()}
+		proto: {decode: (bytes: Uint8Array) => T},
+		defaultValue: () => T|Promise<T>
+	) : Observable<T> {
+		return this.watchMaybeObject<T>(url, proto).flatMap(async value =>
+			value === undefined ? defaultValue() : value
 		);
 	}
 
@@ -433,9 +345,9 @@ export class DatabaseService extends DataManagerService {
 	public watchValueString (
 		url: string,
 		defaultValue: () => string|Promise<string> = () => ''
-	) : Observable<{timestamp: number; value: string}> {
-		return this.watchMaybeString(url).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: await defaultValue()}
+	) : Observable<string> {
+		return this.watchMaybeString(url).flatMap(async value =>
+			value === undefined ? defaultValue() : value
 		);
 	}
 
@@ -446,9 +358,9 @@ export class DatabaseService extends DataManagerService {
 	public watchValueURI (
 		url: string,
 		defaultValue: () => string|Promise<string> = () => 'data:text/plain;base64,'
-	) : Observable<{timestamp: number; value: string}> {
-		return this.watchMaybeURI(url).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: await defaultValue()}
+	) : Observable<string> {
+		return this.watchMaybeURI(url).flatMap(async value =>
+			value === undefined ? defaultValue() : value
 		);
 	}
 

@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Set as ImmutableSet} from 'immutable';
 import {Observable} from 'rxjs';
+import {ISessionMessageData, ISessionTransfer} from '../../proto';
 import {ISecretBox} from '../crypto/potassium/isecret-box';
 import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
-import {Transfer} from '../files/transfer';
+import {SessionTransfer} from '../files';
 import {rpcEvents, users} from '../session/enums';
-import {Message} from '../session/message';
+import {SessionMessage} from '../session/message';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
@@ -36,15 +37,15 @@ export class FileTransferService {
 
 	/** In-progress file transfers. */
 	public transfers: ImmutableSet<{
-		metadata: Transfer;
+		metadata: ISessionTransfer;
 		progress: Observable<number>;
 	}>	= ImmutableSet<{
-		metadata: Transfer;
+		metadata: ISessionTransfer;
 		progress: Observable<number>;
 	}>();
 
 	/** @ignore */
-	private addImage (transfer: Transfer, plaintext: Uint8Array) : void {
+	private addImage (transfer: ISessionTransfer, plaintext: Uint8Array) : void {
 		this.chatService.addMessage(
 			`![](${this.fileService.toDataURI(plaintext, transfer.mediaType)})` +
 				`\n\n#### [${transfer.name}](no:link)`
@@ -80,16 +81,13 @@ export class FileTransferService {
 	}
 
 	/** @ignore */
-	private async receiveTransfer (transfer: Transfer) : Promise<void> {
+	private async receiveTransfer (transfer: ISessionTransfer&{url: string}) : Promise<void> {
 		transfer.isOutgoing			= false;
 
 		transfer.answer				= await this.uiConfirm(transfer, true);
 		transfer.receiptTimestamp	= await util.timestamp();
 
-		this.sessionService.send(new Message(
-			rpcEvents.files,
-			transfer
-		));
+		this.sessionService.send(new SessionMessage(rpcEvents.files, {transfer}));
 
 		if (transfer.answer) {
 			const {result, progress}	= this.databaseService.downloadItem(transfer.url);
@@ -114,7 +112,7 @@ export class FileTransferService {
 	}
 
 	/** @ignore */
-	private uiCompleted (transfer: Transfer, plaintext: Uint8Array) : void {
+	private uiCompleted (transfer: ISessionTransfer, plaintext: Uint8Array) : void {
 		if (transfer.answer && transfer.image) {
 			this.addImage(transfer, plaintext);
 		}
@@ -134,7 +132,7 @@ export class FileTransferService {
 	}
 
 	/** @ignore */
-	private async uiConfirm (transfer: Transfer, isSave: boolean) : Promise<boolean> {
+	private async uiConfirm (transfer: ISessionTransfer, isSave: boolean) : Promise<boolean> {
 		const title	=
 			`${this.stringsService.incomingFile} ${transfer.name} ` +
 			`(${util.readableByteLength(transfer.size)})`
@@ -164,7 +162,7 @@ export class FileTransferService {
 	}
 
 	/** @ignore */
-	private uiRejected (transfer: Transfer) : void {
+	private uiRejected (transfer: ISessionTransfer) : void {
 		this.chatService.addMessage(
 			`${this.stringsService.incomingFileRejected} ${transfer.name}`,
 			users.app,
@@ -174,7 +172,7 @@ export class FileTransferService {
 	}
 
 	/** @ignore */
-	private uiSave (transfer: Transfer, plaintext?: Uint8Array) : void {
+	private uiSave (transfer: ISessionTransfer, plaintext?: Uint8Array) : void {
 		if (!plaintext) {
 			this.chatService.addMessage(
 				`${this.stringsService.incomingFileSaveError} ${transfer.name}`,
@@ -192,7 +190,7 @@ export class FileTransferService {
 	}
 
 	/** @ignore */
-	private uiStarted (transfer: Transfer) : void {
+	private uiStarted (transfer: ISessionTransfer) : void {
 		if (transfer.image) {
 			return;
 		}
@@ -241,7 +239,7 @@ export class FileTransferService {
 		}
 
 		const transferSetPlaceholder	= {
-			metadata: new Transfer(
+			metadata: new SessionTransfer(
 				file.name,
 				file.type,
 				image,
@@ -258,7 +256,7 @@ export class FileTransferService {
 		const {cyphertext, key}		= await this.encryptFile(plaintext);
 		const uploadTask			= await this.databaseService.uploadItem(url, cyphertext);
 
-		const transfer: Transfer	= new Transfer(
+		const transfer	= new SessionTransfer(
 			file.name,
 			file.type,
 			image,
@@ -284,9 +282,9 @@ export class FileTransferService {
 
 		this.uiStarted(transfer);
 
-		const completedEvent	= `transfer-${transfer.transferId}`;
+		const completedEvent	= `transfer-${transfer.id}`;
 
-		eventManager.one<Transfer>(completedEvent).then(incomingTransfer => {
+		eventManager.one<ISessionTransfer>(completedEvent).then(incomingTransfer => {
 			transfer.answer				= incomingTransfer.answer;
 			transfer.receiptTimestamp	= incomingTransfer.receiptTimestamp;
 
@@ -300,12 +298,12 @@ export class FileTransferService {
 			this.databaseService.removeItem(transfer.url).catch(() => {});
 		});
 
-		this.sessionService.send(new Message(rpcEvents.files, transfer));
+		this.sessionService.send(new SessionMessage(rpcEvents.files, {transfer}));
 
 		try {
 			await uploadTask.result;
 			transfer.url	= url;
-			this.sessionService.send(new Message(rpcEvents.files, transfer));
+			this.sessionService.send(new SessionMessage(rpcEvents.files, {transfer}));
 		}
 		catch (_) {
 			if (transfer.answer !== false) {
@@ -349,24 +347,26 @@ export class FileTransferService {
 	) {
 		const downloadAnswers	= new Map<string, boolean>();
 
-		this.sessionService.on(rpcEvents.files, async (transfer: Transfer) => {
-			if (!transfer.transferId) {
+		this.sessionService.on(rpcEvents.files, async (o: ISessionMessageData) => {
+			const transfer	= o.transfer;
+			if (!transfer || transfer.id) {
 				return;
 			}
+			transfer.author	= o.author;
 
 			/* Outgoing file transfer acceptance or rejection */
 			if (transfer.answer === true || transfer.answer === false) {
-				eventManager.trigger(`transfer-${transfer.transferId}`, transfer);
+				eventManager.trigger(`transfer-${transfer.id}`, transfer);
 			}
 			/* Incoming file transfer */
 			else if (transfer.url) {
-				while (!downloadAnswers.has(transfer.transferId)) {
+				while (!downloadAnswers.has(transfer.id)) {
 					await util.sleep();
 				}
 
-				if (downloadAnswers.get(transfer.transferId)) {
-					downloadAnswers.delete(transfer.transferId);
-					this.receiveTransfer(transfer);
+				if (downloadAnswers.get(transfer.id)) {
+					downloadAnswers.delete(transfer.id);
+					this.receiveTransfer(<ISessionTransfer&{url: string}> transfer);
 				}
 			}
 			/* Incoming file transfer request */
@@ -374,13 +374,13 @@ export class FileTransferService {
 				this.uiStarted(transfer);
 
 				const ok	= await this.uiConfirm(transfer, false);
-				downloadAnswers.set(transfer.transferId, ok);
+				downloadAnswers.set(transfer.id, ok);
 
 				if (!ok) {
 					this.uiRejected(transfer);
 					transfer.answer				= false;
-					transfer.receiptTimestamp	= transfer.timestamp;
-					this.sessionService.send(new Message(rpcEvents.files, transfer));
+					transfer.receiptTimestamp	= o.timestamp;
+					this.sessionService.send(new SessionMessage(rpcEvents.files, {transfer}));
 				}
 			}
 		});

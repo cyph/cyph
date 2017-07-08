@@ -49,6 +49,7 @@ read -r -d '' modules <<- EOM
 	@types/jasmine
 	@types/jquery@^2
 	@types/lodash
+	@types/long
 	@types/markdown-it
 	@types/msgpack-lite
 	@types/node
@@ -109,6 +110,7 @@ read -r -d '' modules <<- EOM
 	libsodium-wrappers
 	localforage
 	lodash
+	long
 	lunr
 	markdown-it
 	markdown-it-emoji
@@ -133,6 +135,7 @@ read -r -d '' modules <<- EOM
 	prepack
 	prepack-webpack-plugin
 	primeng
+	protobufjs
 	protractor
 	raw-loader
 	read

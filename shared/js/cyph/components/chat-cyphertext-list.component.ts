@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {List} from 'immutable';
-import {IChatMessage} from '../chat';
+import {IChatMessage} from '../../proto';
 import {StringsService} from '../services/strings.service';
 import {Users, users} from '../session/enums';
 

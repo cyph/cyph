@@ -2,7 +2,7 @@
 
 import {Headers, Http, Response, ResponseContentType} from '@angular/http';
 import {saveAs} from 'file-saver';
-import * as msgpack from 'msgpack-lite';
+import {Writer} from 'protobufjs';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
@@ -212,19 +212,16 @@ export class Util {
 
 	/**
 	 * Converts byte array produced by toBytes into a generic object.
-	 * @param validator Function to check object properties and make sure they're as expected.
+	 * @param proto Protocol Buffers class to decode bytes.
 	 */
 	public bytesToObject<T> (
 		bytes: Uint8Array,
-		validator: (o: any) => boolean,
+		proto: {decode: (bytes: Uint8Array) => T},
 		clearInput: boolean = true
 	) : T {
-		const value: T	= msgpack.decode(bytes);
+		const value	= proto.decode(bytes);
 		if (clearInput) {
 			potassiumUtil.clearMemory(bytes);
-		}
-		if (!validator(value)) {
-			throw new Error('Invalid deserialized object.');
 		}
 		return value;
 	}
@@ -586,7 +583,9 @@ export class Util {
 	}
 
 	/** Converts arbitrary value into binary byte array. */
-	public async toBytes (data: DataType) : Promise<Uint8Array> {
+	public async toBytes<T = never> (
+		data: DataType|{data: T; proto: {encode: (data: T) => Writer, verify: (data: T) => any}}
+	) : Promise<Uint8Array> {
 		return data instanceof ArrayBuffer ?
 			new Uint8Array(data) :
 			ArrayBuffer.isView(data) ?
@@ -599,7 +598,13 @@ export class Util {
 							new Uint8Array(new Float64Array([data]).buffer) :
 							typeof data === 'string' ?
 								potassiumUtil.fromString(data) :
-								msgpack.encode(data)
+								(() => {
+									const err	= data.proto.verify(data.data);
+									if (err) {
+										throw new Error(err);
+									}
+									return data.proto.encode(data.data).finish();
+								})()
 		;
 	}
 

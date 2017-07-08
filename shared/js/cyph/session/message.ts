@@ -1,35 +1,50 @@
+import {
+	ISessionCapabilities,
+	ISessionChatState,
+	ISessionCommand,
+	ISessionMessage,
+	ISessionMessageData,
+	ISessionText,
+	ISessionTextConfirmation,
+	ISessionTransfer
+} from '../../proto';
 import {util} from '../util';
 import {users} from './enums';
-import {IMessage} from './imessage';
-import {IMessageData} from './imessage-data';
 
 
 /** @inheritDoc */
-export class Message implements IMessage {
+export class SessionMessage implements ISessionMessage {
 	/** @inheritDoc */
-	public readonly data: IMessageData;
+	public readonly data: ISessionMessageData	= {
+		author: users.me,
+		id: util.uuid(),
+		timestamp: NaN
+	};
 
 	constructor (
 		/** @inheritDoc */
 		public readonly event: string = '',
 
-		data?: any
+		additionalData?: {
+			bytes?: Uint8Array,
+			capabilities?: ISessionCapabilities,
+			chatState?: ISessionChatState,
+			command?: ISessionCommand,
+			text?: ISessionText,
+			textConfirmation?: ISessionTextConfirmation,
+			transfer?: ISessionTransfer
+		}
 	) {
-		this.data	= {
-			author: users.me,
-			id: util.uuid()
-		};
-
-		if (!data) {
+		if (!additionalData) {
 			return;
 		}
 
-		for (const k of Object.keys(data)) {
-			if (k === 'author' || k === 'id' || k === 'timestamp') {
-				continue;
-			}
-
-			(<any> this.data)[k]	= data[k];
-		}
+		this.data.bytes				= additionalData.bytes;
+		this.data.capabilities		= additionalData.capabilities;
+		this.data.chatState			= additionalData.chatState;
+		this.data.command			= additionalData.command;
+		this.data.text				= additionalData.text;
+		this.data.textConfirmation	= additionalData.textConfirmation;
+		this.data.transfer			= additionalData.transfer;
 	}
 }

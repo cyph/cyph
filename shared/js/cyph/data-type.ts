@@ -5,6 +5,5 @@ export type DataType	=
 	Blob|
 	boolean|
 	number|
-	string|
-	{[k: string]: any}
+	string
 ;

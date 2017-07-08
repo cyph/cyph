@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {List} from 'immutable';
-import {IChatMessage} from '../chat/ichat-message';
+import {IChatMessage} from '../../proto';
 import {events} from '../session/enums';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
@@ -47,8 +47,8 @@ export class CyphertextService {
 					messages
 			).push({
 				author,
+				id: '',
 				text,
-				timeString: util.getTimeString(timestamp),
 				timestamp
 			})
 		);
