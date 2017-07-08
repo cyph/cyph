@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
+import * as msgpack from 'msgpack-lite';
 import * as SimpleWebRTC from 'simplewebrtc';
+import {ISessionCommand, ISessionMessageData} from '../../proto';
 import {env} from '../env';
 import {eventManager} from '../event-manager';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
-import {Command} from '../session/command';
 import {events, rpcEvents} from '../session/enums';
-import {Message} from '../session/message';
+import {SessionMessage} from '../session/message';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
@@ -138,13 +139,15 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	public readonly outgoingStream	= {audio: false, video: false};
 
 	/** @ignore */
-	private async receiveCommand (command: Command) : Promise<void> {
+	private async receiveCommand (command: ISessionCommand) : Promise<void> {
 		if (!P2PWebRTCService.isSupported) {
 			return;
 		}
 
-		if (this.isAccepted && command.method in this.commands) {
-			(<any> this.commands)[command.method](command.argument);
+		const method: Function|undefined	= (<any> this.commands)[command.method];
+
+		if (this.isAccepted && method) {
+			method(command.argument ? msgpack.decode(command.argument) : undefined);
 		}
 		else if (command.method === 'audio' || command.method === 'video') {
 			const ok	= await (await this.handlers).acceptConfirm(
@@ -154,12 +157,13 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			);
 
 			this.sessionService.send(
-				new Message(
+				new SessionMessage(
 					rpcEvents.p2p,
-					new Command(ok ?
-						P2PWebRTCService.constants.accept :
-						P2PWebRTCService.constants.decline
-					)
+					{command: {
+						method: ok ?
+							P2PWebRTCService.constants.accept :
+							P2PWebRTCService.constants.decline
+					}}
 				)
 			);
 
@@ -214,9 +218,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	/** @inheritDoc */
 	public close () : void {
 		this.sessionService.send(
-			new Message(
+			new SessionMessage(
 				rpcEvents.p2p,
-				new Command(P2PWebRTCService.constants.kill)
+				{command: {method: P2PWebRTCService.constants.kill}}
 			)
 		);
 
@@ -279,12 +283,12 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 					}
 					else {
 						this.sessionService.send(
-							new Message(
+							new SessionMessage(
 								rpcEvents.p2p,
-								new Command(
-									P2PWebRTCService.constants.webRTC,
-									{args, event}
-								)
+								{command: {
+									method: P2PWebRTCService.constants.webRTC,
+									argument: msgpack.encode({args, event})
+								}}
 							)
 						);
 					}
@@ -372,9 +376,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				this.accept(callType);
 
 				this.sessionService.send(
-					new Message(
+					new SessionMessage(
 						rpcEvents.p2p,
-						new Command(callType)
+						{command: {method: callType}}
 					)
 				);
 
@@ -438,9 +442,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	) {
 		this.sessionService.on(events.closeChat, () => { this.close(); });
 
-		this.sessionService.on(rpcEvents.p2p, (command: Command) => {
-			if (command.method) {
-				this.receiveCommand(command);
+		this.sessionService.on(rpcEvents.p2p, (o: ISessionMessageData) => {
+			if (o.command && o.command.method) {
+				this.receiveCommand(o.command);
 			}
 		});
 

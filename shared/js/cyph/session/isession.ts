@@ -1,5 +1,5 @@
+import {ISessionMessage} from '../../proto';
 import {CastleEvents} from './enums';
-import {IMessage} from './imessage';
 
 
 /**
@@ -53,7 +53,7 @@ export interface ISession {
 	 * Send at least one message through the session.
 	 * @param messages
 	 */
-	send (...messages: IMessage[]) : void;
+	send (...messages: ISessionMessage[]) : void;
 
 	/**
 	 * Trigger event, passing in optional data.

@@ -54,14 +54,14 @@ export class DatabaseService extends DataManagerService {
 	 * Downloads a value as an object.
 	 * @see downloadItem
 	 */
-	public downloadItemObject<T> (url: string, validator: (o: any) => boolean) : {
+	public downloadItemObject<T> (url: string, proto: {decode: (bytes: Uint8Array) => T}) : {
 		progress: Observable<number>;
 		result: Promise<T>;
 	} {
 		const o	= this.downloadItem(url);
 		return {
 			progress: o.progress,
-			result: o.result.then(value => util.bytesToObject<T>(value, validator))
+			result: o.result.then(value => util.bytesToObject<T>(value, proto))
 		};
 	}
 
@@ -207,8 +207,11 @@ export class DatabaseService extends DataManagerService {
 	 * Subscribes to a list of values as objects.
 	 * @see watchList
 	 */
-	public watchListObject<T> (url: string, validator: (o: any) => boolean) : Observable<T[]> {
-		return this.watchList<T>(url, value => util.bytesToObject<T>(value, validator));
+	public watchListObject<T> (
+		url: string,
+		proto: {decode: (bytes: Uint8Array) => T}
+	) : Observable<T[]> {
+		return this.watchList<T>(url, value => util.bytesToObject<T>(value, proto));
 	}
 
 	/**
@@ -258,10 +261,10 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchMaybeObject<T> (
 		url: string,
-		validator: (o: any) => boolean
+		proto: {decode: (bytes: Uint8Array) => T}
 	) : Observable<T|undefined> {
 		return this.watchMaybe(url).map(value =>
-			value === undefined ? undefined : util.bytesToObject<T>(value, validator)
+			value === undefined ? undefined : util.bytesToObject<T>(value, proto)
 		);
 	}
 
@@ -327,10 +330,10 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchValueObject<T> (
 		url: string,
-		validator: (o: any) => boolean,
+		proto: {decode: (bytes: Uint8Array) => T},
 		defaultValue: () => T|Promise<T>
 	) : Observable<T> {
-		return this.watchMaybeObject<T>(url, validator).flatMap(async value =>
+		return this.watchMaybeObject<T>(url, proto).flatMap(async value =>
 			value === undefined ? defaultValue() : value
 		);
 	}

@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {events, ICapabilities, Message, rpcEvents} from '../session';
+import {ISessionCapabilities, ISessionMessageData} from '../../proto';
+import {events, SessionMessage, rpcEvents} from '../session';
 import {PotassiumService} from './crypto/potassium.service';
 import {SessionService} from './session.service';
 
@@ -10,22 +11,24 @@ import {SessionService} from './session.service';
 @Injectable()
 export class SessionCapabilitiesService {
 	/** @ignore */
-	private readonly remoteCapabilities: Promise<ICapabilities>	=
-		this.sessionService.one<ICapabilities>(rpcEvents.capabilities)
+	private readonly remoteCapabilities: Promise<ISessionCapabilities>	=
+		this.sessionService.one<ISessionMessageData>(rpcEvents.capabilities).then(o =>
+			o.capabilities || {nativeCrypto: false, p2p: false}
+		)
 	;
 
 	/** @ignore */
-	private resolveCapabilities: (capabilities: ICapabilities) => void;
+	private resolveCapabilities: (capabilities: ISessionCapabilities) => void;
 
 	/** Mutual capabilities available for this session. */
-	public readonly capabilities: Promise<ICapabilities>		=
-		new Promise<ICapabilities>(resolve => {
+	public readonly capabilities: Promise<ISessionCapabilities>			=
+		new Promise<ISessionCapabilities>(resolve => {
 			this.resolveCapabilities	= resolve;
 		})
 	;
 
 	/** Locally supported capabilities. */
-	public readonly localCapabilities: Promise<ICapabilities>	= (async () => {
+	public readonly localCapabilities: Promise<ISessionCapabilities>	= (async () => {
 		const p2p	= new Promise<boolean>(resolve => {
 			this.resolveP2PSupport	= resolve;
 		});
@@ -49,7 +52,9 @@ export class SessionCapabilitiesService {
 		this.sessionService.one(events.beginChat).then(async () => {
 			const localCapabilities		= await this.localCapabilities;
 
-			this.sessionService.send(new Message(rpcEvents.capabilities, localCapabilities));
+			this.sessionService.send(new SessionMessage(rpcEvents.capabilities, {
+				capabilities: localCapabilities
+			}));
 
 			const remoteCapabilities	= await this.remoteCapabilities;
 

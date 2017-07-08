@@ -30,7 +30,7 @@ export class MarkdownComponent implements OnChanges {
 	public html?: SafeHtml;
 
 	/** String of Markdown to render as HTML and add to the DOM. */
-	@Input() public markdown?: string;
+	@Input() public markdown: string;
 
 	/** Handle clicks to display image dialogs when needed. */
 	public click (event: MouseEvent) : void {
@@ -46,7 +46,7 @@ export class MarkdownComponent implements OnChanges {
 			return;
 		}
 
-		if (this.markdown !== undefined) {
+		if (this.markdown) {
 			this.initiated	= true;
 		}
 		else if (this.initiated) {
@@ -62,7 +62,7 @@ export class MarkdownComponent implements OnChanges {
 
 		this.html	= this.domSanitizer.bypassSecurityTrustHtml(
 			this.htmlSanitizerService.sanitize(
-				this.markdownIt.render(this.markdown || '').
+				this.markdownIt.render(this.markdown).
 
 					/* Merge blockquotes like reddit */
 					replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
