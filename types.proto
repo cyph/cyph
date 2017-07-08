@@ -108,8 +108,14 @@ message SessionTextConfirmation {
 
 /** Represents an active file transfer. */
 message SessionTransfer {
+	enum Answer {
+		EMPTY = 0;
+		ACCEPTED = 1;
+		REJECTED = 2;
+	}
+
 	/** If defined, indicates an acceptance or rejection of a file transfer. */
-	bool answer = 1;
+	Answer answer = 1;
 
 	/** @see SessionMessageData.author */
 	required string author = 2;

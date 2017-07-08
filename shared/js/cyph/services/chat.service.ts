@@ -101,7 +101,7 @@ export class ChatService {
 			return;
 		}
 
-		if (timestamp === undefined) {
+		if (!timestamp) {
 			timestamp	= await util.timestamp();
 		}
 

@@ -34,7 +34,7 @@ export abstract class SessionService implements ISessionService {
 	protected readonly plaintextSendInterval: number				= 1776;
 
 	/** @ignore */
-	protected readonly plaintextSendQueue: ISessionMessage[]				= [];
+	protected readonly plaintextSendQueue: ISessionMessage[]		= [];
 
 	/** @ignore */
 	protected readonly potassiumService: Promise<PotassiumService>	=
@@ -161,13 +161,10 @@ export abstract class SessionService implements ISessionService {
 					this.send(new SessionMessage(rpcEvents.symmetricKey, {bytes: symmetricKey}));
 				}
 				else {
-					const symmetricKey	=
-						(await this.one<ISessionMessageData>(rpcEvents.symmetricKey)).bytes
-					;
-					if (!symmetricKey) {
-						throw new Error('No session symmetric key received.');
-					}
-					this.resolveSymmetricKey(symmetricKey);
+					this.resolveSymmetricKey(
+						(await this.one<ISessionMessageData>(rpcEvents.symmetricKey)).bytes ||
+						new Uint8Array([])
+					);
 				}
 
 				break;
