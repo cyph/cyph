@@ -1,6 +1,6 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
-import {IChatMessage} from '../../proto';
+import {ChatMessage} from '../chat';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {StringsService} from '../services/strings.service';
@@ -16,8 +16,8 @@ import {Users, users} from '../session/enums';
 	templateUrl: '../../../templates/chat-message.html'
 })
 export class ChatMessageComponent implements OnInit {
-	/** @see IChatMessage */
-	@Input() public message: IChatMessage;
+	/** @see ChatMessage */
+	@Input() public message: ChatMessage;
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean;
