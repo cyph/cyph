@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {eventManager} from '../event-manager';
+import {LockFunction} from '../lock-function-type';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {CastleEvents, events, rpcEvents} from '../session/enums';
 import {IMessage} from '../session/imessage';
@@ -16,6 +17,9 @@ import {ErrorService} from './error.service';
  */
 @Injectable()
 export abstract class SessionService implements ISessionService {
+	/** @ignore */
+	private readonly castleLock: LockFunction						= util.lockFunction();
+
 	/** @ignore */
 	private resolvePotassiumService: (potassiumService: PotassiumService) => void;
 
@@ -84,85 +88,6 @@ export abstract class SessionService implements ISessionService {
 	};
 
 	/** @ignore */
-	protected async castleHandler (e: {
-		data?: string|{author: string; plaintext: Uint8Array; timestamp: number};
-		event: CastleEvents;
-	}) : Promise<void> {
-		switch (e.event) {
-			case CastleEvents.abort: {
-				this.errorService.logAuthFail();
-				this.trigger(events.connectFailure);
-				break;
-			}
-			case CastleEvents.connect: {
-				this.trigger(events.beginChat);
-
-				if (this.state.isAlice) {
-					const potassiumService	= await this.potassiumService;
-					const symmetricKey		= potassiumService.randomBytes(
-						await potassiumService.secretBox.keyBytes
-					);
-					this.resolveSymmetricKey(symmetricKey);
-					this.send(new Message(rpcEvents.symmetricKey, {symmetricKey}));
-				}
-				else {
-					this.resolveSymmetricKey(
-						(
-							await this.one<{symmetricKey: Uint8Array}>(
-								rpcEvents.symmetricKey
-							)
-						).symmetricKey
-					);
-				}
-
-				break;
-			}
-			case CastleEvents.receive: {
-				if (!e.data || typeof e.data === 'string') {
-					break;
-				}
-
-				const cyphertextTimestamp: number	= e.data.timestamp;
-
-				const messages	= (() => {
-					try {
-						return util.bytesToObject<IMessage[]>(e.data.plaintext);
-					}
-					catch (_) {
-						return [];
-					}
-				})();
-
-				for (const message of messages) {
-					/* Discard messages without valid timestamps */
-					if (
-						typeof (<any> message).data !== 'object' ||
-						message.data.timestamp === undefined ||
-						isNaN(message.data.timestamp) ||
-						message.data.timestamp > cyphertextTimestamp ||
-						message.data.timestamp < this.lastIncomingMessageTimestamp
-					) {
-						continue;
-					}
-
-					this.lastIncomingMessageTimestamp	= message.data.timestamp;
-					message.data.author					= e.data.author;
-
-					this.cyphertextReceiveHandler(message);
-				}
-				break;
-			}
-			case CastleEvents.send: {
-				if (!e.data || typeof e.data !== 'string') {
-					break;
-				}
-
-				this.cyphertextSendHandler(e.data);
-			}
-		}
-	}
-
-	/** @ignore */
 	protected cyphertextReceiveHandler (message: IMessage) : void {
 		if (!message.data.id || this.receivedMessages.has(message.data.id)) {
 			return;
@@ -217,6 +142,85 @@ export abstract class SessionService implements ISessionService {
 			message.data.timestamp	= await util.timestamp();
 			this.plaintextSendQueue.push(message);
 		}
+	}
+
+	/** @inheritDoc */
+	public async castleHandler (
+		event: CastleEvents,
+		data?: string|{author: string; plaintext: Uint8Array; timestamp: number}
+	) : Promise<void> {
+		await this.castleLock(async () => { switch (event) {
+			case CastleEvents.abort: {
+				this.errorService.logAuthFail();
+				this.trigger(events.connectFailure);
+				break;
+			}
+			case CastleEvents.connect: {
+				this.trigger(events.beginChat);
+
+				if (this.state.isAlice) {
+					const potassiumService	= await this.potassiumService;
+					const symmetricKey		= potassiumService.randomBytes(
+						await potassiumService.secretBox.keyBytes
+					);
+					this.resolveSymmetricKey(symmetricKey);
+					this.send(new Message(rpcEvents.symmetricKey, {symmetricKey}));
+				}
+				else {
+					this.resolveSymmetricKey(
+						(
+							await this.one<{symmetricKey: Uint8Array}>(
+								rpcEvents.symmetricKey
+							)
+						).symmetricKey
+					);
+				}
+
+				break;
+			}
+			case CastleEvents.receive: {
+				if (!data || typeof data === 'string') {
+					break;
+				}
+
+				const cyphertextTimestamp: number	= data.timestamp;
+
+				const messages	= (() => {
+					try {
+						return util.bytesToObject<IMessage[]>(data.plaintext);
+					}
+					catch (_) {
+						return [];
+					}
+				})();
+
+				for (const message of messages) {
+					/* Discard messages without valid timestamps */
+					if (
+						typeof (<any> message).data !== 'object' ||
+						message.data.timestamp === undefined ||
+						isNaN(message.data.timestamp) ||
+						message.data.timestamp > cyphertextTimestamp ||
+						message.data.timestamp < this.lastIncomingMessageTimestamp
+					) {
+						continue;
+					}
+
+					this.lastIncomingMessageTimestamp	= message.data.timestamp;
+					message.data.author					= data.author;
+
+					this.cyphertextReceiveHandler(message);
+				}
+				break;
+			}
+			case CastleEvents.send: {
+				if (!data || typeof data !== 'string') {
+					break;
+				}
+
+				this.cyphertextSendHandler(data);
+			}
+		} });
 	}
 
 	/** @inheritDoc */

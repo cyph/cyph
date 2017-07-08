@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {env} from '../env';
-import {CastleEvents, events, rpcEvents} from '../session/enums';
+import {events, rpcEvents} from '../session/enums';
 import {IMessage} from '../session/imessage';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
@@ -102,10 +102,6 @@ export class EphemeralSessionService extends SessionService {
 						});
 					}
 				}
-
-				this.on(events.castle, (e: {data?: any; event: CastleEvents}) => {
-					this.castleHandler(e);
-				});
 			}
 		};
 
