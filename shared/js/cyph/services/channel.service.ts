@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
+import {ChannelMessage, IChannelMessage} from '../../proto';
 import {LockFunction} from '../lock-function-type';
-import {IChannelHandlers, IChannelMessage} from '../session';
+import {IChannelHandlers} from '../session';
 import {util} from '../util';
 import {DatabaseService} from './database.service';
 
@@ -67,15 +68,11 @@ export class ChannelService {
 		;
 
 		let i	= 0;
-		this.databaseService.watchListObject<IChannelMessage>(`${url}/messages`, o =>
-			typeof o === 'object' &&
-			o.cyphertext instanceof Uint8Array &&
-			typeof o.sender === 'string'
-		).subscribe(
+		this.databaseService.watchListObject(`${url}/messages`, ChannelMessage).subscribe(
 			messages => {
 				for (; i < messages.length ; ++i) {
 					const message	= messages[i].value;
-					if (message.sender === this.userId) {
+					if (message.author === this.userId) {
 						continue;
 					}
 					handlers.onMessage(message.cyphertext);
@@ -105,9 +102,12 @@ export class ChannelService {
 
 	/** Sends message through this channel. */
 	public async send (cyphertext: Uint8Array) : Promise<void> {
-		await this.databaseService.pushItem(
+		await this.databaseService.pushItem<IChannelMessage>(
 			`${(await this.state).url}/messages`,
-			<IChannelMessage> {cyphertext, sender: this.userId}
+			{
+				data: {cyphertext, author: this.userId},
+				proto: ChannelMessage
+			}
 		);
 	}
 

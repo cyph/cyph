@@ -153,8 +153,11 @@ export class DatabaseService extends DataManagerService {
 	 * Gets a list as objects.
 	 * @see getList
 	 */
-	public async getListObject<T> (url: string, validator: (o: any) => boolean) : Promise<T[]> {
-		return (await this.getList(url)).map(value => util.bytesToObject<T>(value, validator));
+	public async getListObject<T> (
+		url: string,
+		proto: {decode: (bytes: Uint8Array) => T}
+	) : Promise<T[]> {
+		return (await this.getList(url)).map(value => util.bytesToObject<T>(value, proto));
 	}
 
 	/**
@@ -213,7 +216,10 @@ export class DatabaseService extends DataManagerService {
 	 * Pushes an item to a list.
 	 * @returns Item URL.
 	 */
-	public async pushItem (_URL: string, _VALUE: DataType) : Promise<{hash: string; url: string}> {
+	public async pushItem<T = never> (_URL: string, _VALUE: DataType<T>) : Promise<{
+		hash: string;
+		url: string;
+	}> {
 		throw new Error('Must provide an implementation of DatabaseService.pushItem.');
 	}
 
@@ -231,12 +237,15 @@ export class DatabaseService extends DataManagerService {
 	 * Pushes an item to a list.
 	 * @returns Item URL.
 	 */
-	public async setItem (_URL: string, _VALUE: DataType) : Promise<{hash: string; url: string}> {
+	public async setItem<T = never> (_URL: string, _VALUE: DataType<T>) : Promise<{
+		hash: string;
+		url: string;
+	}> {
 		throw new Error('Must provide an implementation of DatabaseService.setItem.');
 	}
 
 	/** Uploads value and gives progress. */
-	public uploadItem (_URL: string, _VALUE: DataType) : {
+	public uploadItem<T = never> (_URL: string, _VALUE: DataType<T>) : {
 		cancel: () => void;
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
