@@ -135,7 +135,6 @@ export abstract class SessionService implements ISessionService {
 	/** @ignore */
 	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
 		for (const message of messages) {
-			message.data.timestamp	= await util.timestamp();
 			this.plaintextSendQueue.push(message);
 		}
 	}
