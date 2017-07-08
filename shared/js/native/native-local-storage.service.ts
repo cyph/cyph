@@ -34,7 +34,7 @@ export class NativeLocalStorageService extends LocalStorageService {
 	}
 
 	/** @inheritDoc */
-	public async setItem (url: string, value: DataType) : Promise<{url: string}> {
+	public async setItem<T = never> (url: string, value: DataType<T>) : Promise<{url: string}> {
 		const promise	= (async () => {
 			await this.storage.set({
 				key: url,

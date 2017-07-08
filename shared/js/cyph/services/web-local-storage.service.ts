@@ -58,9 +58,9 @@ export class WebLocalStorageService extends LocalStorageService {
 	}
 
 	/** @inheritDoc */
-	public async setItem (
+	public async setItem<T = never> (
 		url: string,
-		value: DataType,
+		value: DataType<T>,
 		waitForReady: boolean = true
 	) : Promise<{url: string}> {
 		const promise	= (async () => {

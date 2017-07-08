@@ -2,7 +2,6 @@
 
 import {Headers, Http, Response, ResponseContentType} from '@angular/http';
 import {saveAs} from 'file-saver';
-import {Writer} from 'protobufjs';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
@@ -582,9 +581,7 @@ export class Util {
 	}
 
 	/** Converts arbitrary value into binary byte array. */
-	public async toBytes<T = never> (
-		data: DataType|{data: T; proto: {encode: (data: T) => Writer, verify: (data: T) => any}}
-	) : Promise<Uint8Array> {
+	public async toBytes<T = never> (data: DataType<T>) : Promise<Uint8Array> {
 		return data instanceof ArrayBuffer ?
 			new Uint8Array(data) :
 			ArrayBuffer.isView(data) ?

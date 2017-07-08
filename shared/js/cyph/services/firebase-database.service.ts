@@ -257,7 +257,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async pushItem (url: string, value: DataType) : Promise<{hash: string; url: string}> {
+	public async pushItem<T = never> (url: string, value: DataType<T>) : Promise<{
+		hash: string;
+		url: string;
+	}> {
 		return this.setItem(`${url}/${(await this.getDatabaseRef(url)).push().key}`, value);
 	}
 
@@ -279,7 +282,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async setItem (url: string, value: DataType) : Promise<{hash: string; url: string}> {
+	public async setItem<T = never> (url: string, value: DataType<T>) : Promise<{
+		hash: string;
+		url: string;
+	}> {
 		const data	= await util.toBytes(value);
 		const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
 
@@ -299,7 +305,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public uploadItem (url: string, value: DataType) : {
+	public uploadItem<T = never> (url: string, value: DataType<T>) : {
 		cancel: () => void;
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
