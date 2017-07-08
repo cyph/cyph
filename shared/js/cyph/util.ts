@@ -212,16 +212,8 @@ export class Util {
 	 * Converts byte array produced by toBytes into a generic object.
 	 * @param proto Protocol Buffers class to decode bytes.
 	 */
-	public bytesToObject<T> (
-		bytes: Uint8Array,
-		proto: {decode: (bytes: Uint8Array) => T},
-		clearInput: boolean = true
-	) : T {
-		const value	= proto.decode(bytes);
-		if (clearInput) {
-			potassiumUtil.clearMemory(bytes);
-		}
-		return value;
+	public bytesToObject<T> (bytes: Uint8Array, proto: {decode: (bytes: Uint8Array) => T}) : T {
+		return proto.decode(bytes);
 	}
 
 	/** Converts byte array produced by toBytes into a string. */
