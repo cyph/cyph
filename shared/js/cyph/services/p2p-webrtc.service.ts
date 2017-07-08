@@ -146,7 +146,11 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		const method: Function|undefined	= (<any> this.commands)[command.method];
 
 		if (this.isAccepted && method) {
-			method(command.argument ? msgpack.decode(command.argument) : undefined);
+			method(
+				command.argument && command.argument.length > 0 ?
+					msgpack.decode(command.argument) :
+					undefined
+			);
 		}
 		else if (command.method === 'audio' || command.method === 'video') {
 			const ok	= await (await this.handlers).acceptConfirm(
