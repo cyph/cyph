@@ -80,7 +80,7 @@ export class FileTransferService {
 	}
 
 	/** @ignore */
-	private async receiveTransfer (transfer: ISessionTransfer&{url: string}) : Promise<void> {
+	private async receiveTransfer (transfer: ISessionTransfer) : Promise<void> {
 		transfer.isOutgoing			= false;
 
 		transfer.answer				= await this.uiConfirm(transfer, true);
@@ -269,7 +269,8 @@ export class FileTransferService {
 			imageSelfDestructTimeout,
 			cyphertext.length,
 			key,
-			true
+			true,
+			url
 		);
 
 		const transferSetItem	= {metadata: transfer, progress: uploadTask.progress};
@@ -315,7 +316,6 @@ export class FileTransferService {
 
 		try {
 			await uploadTask.result;
-			transfer.url	= url;
 			this.sessionService.send(new SessionMessage(rpcEvents.files, {transfer}));
 		}
 		catch (_) {
@@ -372,18 +372,19 @@ export class FileTransferService {
 				eventManager.trigger(`transfer-${transfer.id}`, transfer);
 			}
 			/* Incoming file transfer */
-			else if (transfer.url) {
-				while (!downloadAnswers.has(transfer.id)) {
+			else if (downloadAnswers.has(transfer.id)) {
+				while (downloadAnswers.get(transfer.id) === SessionTransferAnswer.EMPTY) {
 					await util.sleep();
 				}
 
 				if (downloadAnswers.get(transfer.id) === SessionTransferAnswer.ACCEPTED) {
 					downloadAnswers.delete(transfer.id);
-					this.receiveTransfer(<ISessionTransfer&{url: string}> transfer);
+					this.receiveTransfer(transfer);
 				}
 			}
 			/* Incoming file transfer request */
 			else {
+				downloadAnswers.set(transfer.id, SessionTransferAnswer.EMPTY);
 				this.uiStarted(transfer);
 
 				const answer	= await this.uiConfirm(transfer, false);
