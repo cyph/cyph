@@ -218,6 +218,9 @@ sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/simplewebrtc.js
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
+./.bin/pbjs --help &> /dev/null
+./.bin/pbts --help &> /dev/null
+
 cd firebase
 for m in $(ls *-node.js | sed 's|-node\.js$||') ; do
 	mv ${m}-node.js ${m}.js
@@ -237,6 +240,3 @@ mv ${dir}/shared/lib/js/node_modules ${dir}/shared/
 sudo mv lib/js/node_modules /
 sudo chmod -R 777 /node_modules
 rm -rf lib
-
-pbjs --help &> /dev/null
-pbts --help &> /dev/null
