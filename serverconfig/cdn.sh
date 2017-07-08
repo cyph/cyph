@@ -17,15 +17,15 @@ sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
 
 export DEBIAN_FRONTEND=noninteractive
-apt-get -y --force-yes update
-apt-get -y --force-yes install curl lsb-release apt-transport-https
-apt-get -y --force-yes purge apache* mysql*
+apt-get -y --allow-downgrades update
+apt-get -y --allow-downgrades install curl lsb-release apt-transport-https
+apt-get -y --allow-downgrades purge apache* mysql*
 distro="$(lsb_release -c | awk '{print $2}')"
 echo "deb https://deb.nodesource.com/node_8.x ${distro} main" >> /etc/apt/sources.list
 curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
-apt-get -y --force-yes update
-apt-get -y --force-yes upgrade
-apt-get -y --force-yes install apt cron dpkg nodejs openssl build-essential git
+apt-get -y --allow-downgrades update
+apt-get -y --allow-downgrades upgrade
+apt-get -y --allow-downgrades install apt cron dpkg nodejs openssl build-essential git
 do-release-upgrade -f DistUpgradeViewNonInteractive
 
 
@@ -303,8 +303,8 @@ cat > /systemupdate.sh << EndOfMessage
 su cyph -c 'cd ; npm update'
 
 export DEBIAN_FRONTEND=noninteractive
-apt-get -y --force-yes update
-apt-get -y --force-yes -o Dpkg::Options::=--force-confdef upgrade
+apt-get -y --allow-downgrades update
+apt-get -y --allow-downgrades -o Dpkg::Options::=--force-confdef upgrade
 do-release-upgrade -f DistUpgradeViewNonInteractive
 
 reboot
