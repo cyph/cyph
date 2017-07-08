@@ -70,8 +70,6 @@ export class Transport {
 				{author, plaintext: data, timestamp}
 			);
 		}
-
-		potassiumUtil.clearMemory(data);
 	}
 
 	/** Send outgoing encrypted message. */
