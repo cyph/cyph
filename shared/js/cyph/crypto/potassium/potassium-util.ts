@@ -8,9 +8,7 @@ import * as NativeCrypto from './native-crypto';
 export class PotassiumUtil {
 	/** Zeroes out memory. */
 	public clearMemory (a: ArrayBufferView) : void {
-		sodiumUtil.memzero(
-			this.toBytes(a)
-		);
+		sodiumUtil.memzero(this.toBytes(a));
 	}
 
 	/** Indicates whether two blocks of memory contain the same data. */
@@ -101,9 +99,7 @@ export class PotassiumUtil {
 	public toBase64 (a: ArrayBufferView|string) : string {
 		return typeof a === 'string' ?
 			a :
-			sodiumUtil.to_base64(
-				this.toBytes(a)
-			).replace(/\s+/g, '')
+			sodiumUtil.to_base64(this.toBytes(a)).replace(/\s+/g, '')
 		;
 	}
 
