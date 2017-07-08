@@ -2,8 +2,7 @@ import {Injectable} from '@angular/core';
 import {ISessionMessage, ISessionMessageData, SessionMessageList} from '../../proto';
 import {eventManager} from '../event-manager';
 import {ISessionService} from '../service-interfaces/isession.service';
-import {CastleEvents, events, rpcEvents} from '../session/enums';
-import {SessionMessage} from '../session/message';
+import {CastleEvents, events, rpcEvents, SessionMessage} from '../session';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
@@ -35,7 +34,7 @@ export abstract class SessionService implements ISessionService {
 	protected readonly plaintextSendInterval: number				= 1776;
 
 	/** @ignore */
-	protected readonly plaintextSendQueue: ISessionMessage[]				= [];
+	protected readonly plaintextSendQueue: ISessionMessage[]		= [];
 
 	/** @ignore */
 	protected readonly potassiumService: Promise<PotassiumService>	=
@@ -135,7 +134,6 @@ export abstract class SessionService implements ISessionService {
 	/** @ignore */
 	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
 		for (const message of messages) {
-			message.data.timestamp	= await util.timestamp();
 			this.plaintextSendQueue.push(message);
 		}
 	}
@@ -163,13 +161,10 @@ export abstract class SessionService implements ISessionService {
 					this.send(new SessionMessage(rpcEvents.symmetricKey, {bytes: symmetricKey}));
 				}
 				else {
-					const symmetricKey	=
-						(await this.one<ISessionMessageData>(rpcEvents.symmetricKey)).bytes
-					;
-					if (!symmetricKey) {
-						throw new Error('No session symmetric key received.');
-					}
-					this.resolveSymmetricKey(symmetricKey);
+					this.resolveSymmetricKey(
+						(await this.one<ISessionMessageData>(rpcEvents.symmetricKey)).bytes ||
+						new Uint8Array([])
+					);
 				}
 
 				break;

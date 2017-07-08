@@ -6,8 +6,7 @@ import {env} from '../env';
 import {eventManager} from '../event-manager';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
-import {events, rpcEvents} from '../session/enums';
-import {SessionMessage} from '../session/message';
+import {events, rpcEvents, SessionMessage} from '../session';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
@@ -147,7 +146,11 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		const method: Function|undefined	= (<any> this.commands)[command.method];
 
 		if (this.isAccepted && method) {
-			method(command.argument ? msgpack.decode(command.argument) : undefined);
+			method(
+				command.argument && command.argument.length > 0 ?
+					msgpack.decode(command.argument) :
+					undefined
+			);
 		}
 		else if (command.method === 'audio' || command.method === 'video') {
 			const ok	= await (await this.handlers).acceptConfirm(

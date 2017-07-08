@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ISessionCapabilities, ISessionMessageData} from '../../proto';
-import {events, SessionMessage, rpcEvents} from '../session';
+import {events, rpcEvents, SessionMessage} from '../session';
 import {PotassiumService} from './crypto/potassium.service';
 import {SessionService} from './session.service';
 

@@ -1,6 +1,7 @@
 import {users} from '../session/enums';
 import {ISessionTransfer} from '../../proto';
 import {util} from '../util';
+import {SessionTransferAnswer} from './session-transfer-answer';
 
 
 /** @inheritDoc */
@@ -28,13 +29,13 @@ export class SessionTransfer implements ISessionTransfer {
 		public isOutgoing: boolean = true,
 
 		/** @inheritDoc */
-		public url: string = '',
+		public readonly url: string = '',
 
 		/** @inheritDoc */
 		public readonly id: string = util.uuid(),
 
 		/** @inheritDoc */
-		public answer?: boolean,
+		public answer: SessionTransferAnswer = SessionTransferAnswer.EMPTY,
 
 		/** @inheritDoc */
 		public author: string = users.me,

@@ -5,8 +5,7 @@ import {IChatData, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
-import {events, rpcEvents, users} from '../session/enums';
-import {SessionMessage} from '../session/message';
+import {events, rpcEvents, SessionMessage, users} from '../session';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
@@ -102,7 +101,7 @@ export class ChatService {
 			return;
 		}
 
-		if (timestamp === undefined) {
+		if (!timestamp) {
 			timestamp	= await util.timestamp();
 		}
 
