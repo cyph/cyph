@@ -138,9 +138,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 	} {
 		const progress	= new BehaviorSubject(0);
 
-		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
 		return {
-			progress: <any> progress,
+			progress,
 			result: (async () => {
 				const {hash, timestamp}	= await this.getMetadata(url);
 
@@ -430,8 +429,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			});
 		})();
 
-		/* <any> is temporary workaround for https://github.com/ReactiveX/rxjs/issues/2539 */
-		return {cancel, progress: <any> progress, result};
+		return {cancel, progress, result};
 	}
 
 	/** @inheritDoc */

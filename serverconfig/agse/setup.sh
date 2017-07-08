@@ -12,8 +12,8 @@ passwords=()
 
 
 export DEBIAN_FRONTEND=noninteractive
-apt-get -y --force-yes update
-apt-get -y --force-yes upgrade
+apt-get -y --allow-downgrades update
+apt-get -y --allow-downgrades upgrade
 export DEBIAN_FRONTEND=text
 apt-get install console-data console-setup keyboard-configuration
 
@@ -46,15 +46,15 @@ iface eth0 inet static
 EndOfMessage
 
 export DEBIAN_FRONTEND=noninteractive
-apt-get -y --force-yes update
-apt-get -y --force-yes install curl lsb-release apt-transport-https
-apt-get -y --force-yes purge apache* mysql* openssh-server
+apt-get -y --allow-downgrades update
+apt-get -y --allow-downgrades install curl lsb-release apt-transport-https
+apt-get -y --allow-downgrades purge apache* mysql* openssh-server
 distro="$(lsb_release -c | awk '{print $2}')"
 echo "deb https://deb.nodesource.com/node_8.x ${distro} main" >> /etc/apt/sources.list
 curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
-apt-get -y --force-yes update
-apt-get -y --force-yes upgrade
-apt-get -y --force-yes install sudo nodejs ecryptfs-utils lsof
+apt-get -y --allow-downgrades update
+apt-get -y --allow-downgrades upgrade
+apt-get -y --allow-downgrades install sudo nodejs ecryptfs-utils lsof
 
 npm -g install xkcd-passphrase
 
