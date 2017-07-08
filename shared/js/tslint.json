@@ -76,8 +76,16 @@
 		"await-promise": false,
 		"ban": [true,
 			["Date", "now", "Prefer util.timestamp"],
-			["JSON", "parse", "Prefer util.bytesToObject, msgpack.decode, or util.parse"],
-			["JSON", "stringify", "Prefer util.toBytes, msgpack.encode, or util.stringify"],
+			[
+				"JSON",
+				"parse",
+				"Prefer util.bytesToObject (typed), msgpack.decode (dynamic), or util.parse (JSON interop)"
+			],
+			[
+				"JSON",
+				"stringify",
+				"Prefer util.toBytes (typed), msgpack.encode (dynamic), or util.stringify (JSON interop)"
+			],
 			["localStorage", "getItem", "Use LocalStorageService"],
 			["localStorage", "removeItem", "Use LocalStorageService"],
 			["localStorage", "setItem", "Use LocalStorageService"],
