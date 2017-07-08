@@ -187,7 +187,12 @@ export abstract class SessionService implements ISessionService {
 
 				const messages	= (() => {
 					try {
-						return util.bytesToObject<IMessage[]>(data.plaintext);
+						return util.bytesToObject<IMessage[]>(
+							data.plaintext,
+							arr => Array.isArray(arr) && arr.
+								map(o => typeof o === 'object' && typeof o.data === 'object').
+								reduce((a, b) => a && b, true)
+						);
 					}
 					catch (_) {
 						return [];
