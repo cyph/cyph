@@ -15,9 +15,6 @@ export class Events {
 	public readonly beginWaiting: string		= 'beginWaiting';
 
 	/** @see Events */
-	public readonly castle: string				= 'castle';
-
-	/** @see Events */
 	public readonly closeChat: string			= 'closeChat';
 
 	/** @see Events */

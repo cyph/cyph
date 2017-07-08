@@ -1,3 +1,4 @@
+import {CastleEvents} from './enums';
 import {IMessage} from './imessage';
 
 
@@ -15,6 +16,12 @@ export interface ISession {
 		startingNewCyph?: boolean;
 		wasInitiatedByAPI: boolean;
 	};
+
+	/** Castle event handler called by Castle.Transport. */
+	castleHandler (
+		event: CastleEvents,
+		data?: string|{author: string; plaintext: Uint8Array; timestamp: number}
+	) : Promise<void>;
 
 	/** This kills the cyph. */
 	close () : void;

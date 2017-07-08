@@ -18,12 +18,12 @@ export class Transport {
 
 	/** Triggers abortion event. */
 	public abort () : void {
-		this.session.trigger(events.castle, {event: CastleEvents.abort});
+		this.session.castleHandler(CastleEvents.abort);
 	}
 
 	/** Triggers connection event. */
 	public connect () : void {
-		this.session.trigger(events.castle, {event: CastleEvents.connect});
+		this.session.castleHandler(CastleEvents.connect);
 	}
 
 	/**
@@ -61,14 +61,14 @@ export class Transport {
 	public receive (cyphertext: Uint8Array, plaintext: Uint8Array, author: string) : void {
 		this.logCyphertext(potassiumUtil.toBase64(cyphertext), author);
 
-		const timestamp	= new DataView(plaintext.buffer).getFloat64(plaintext.byteOffset, true);
+		const timestamp	= new DataView(plaintext.buffer, plaintext.byteOffset).getFloat64(0, true);
 		const data		= new Uint8Array(plaintext.buffer, plaintext.byteOffset + 8);
 
 		if (data.length > 0) {
-			this.session.trigger(events.castle, {
-				data: {author, plaintext: data, timestamp},
-				event: CastleEvents.receive
-			});
+			this.session.castleHandler(
+				CastleEvents.receive,
+				{author, plaintext: data, timestamp}
+			);
 		}
 
 		potassiumUtil.clearMemory(data);
@@ -88,11 +88,7 @@ export class Transport {
 			potassiumUtil.clearMemory(cyphertext);
 		}
 
-		this.session.trigger(events.castle, {
-			data: fullCyphertext,
-			event: CastleEvents.send
-		});
-
+		this.session.castleHandler(CastleEvents.send, fullCyphertext);
 		this.logCyphertext(fullCyphertext, users.me);
 	}
 
