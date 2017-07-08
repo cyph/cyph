@@ -1,4 +1,4 @@
-/* tslint:disable:no-import-side-effect */
+/* tslint:disable:max-file-line-count no-import-side-effect */
 
 import {Injectable} from '@angular/core';
 import * as firebase from 'firebase/app';
