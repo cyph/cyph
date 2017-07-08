@@ -97,7 +97,7 @@ export class FileTransferService {
 			this.transfers				= this.transfers.add(transferSetItem);
 
 			const plaintext: Uint8Array|undefined	= await (async () =>
-				await (await this.secretBox).open(await result, transfer.key)
+				await (await this.secretBox).open((await result).value, transfer.key)
 			)().catch(
 				() => undefined
 			);

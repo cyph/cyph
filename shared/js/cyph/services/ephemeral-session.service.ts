@@ -74,7 +74,7 @@ export class EphemeralSessionService extends SessionService {
 					);
 				}
 			},
-			onMessage: (message: string) => {
+			onMessage: (message: Uint8Array) => {
 				this.anonymousCastleService.receive(message);
 			},
 			onOpen: async (isAlice: boolean) : Promise<void> => {
@@ -109,7 +109,7 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @ignore */
-	protected cyphertextSendHandler (message: string) : void {
+	protected cyphertextSendHandler (message: Uint8Array) : void {
 		super.cyphertextSendHandler(message);
 		this.channelService.send(message);
 	}

@@ -75,21 +75,18 @@ export class Transport {
 	}
 
 	/** Send outgoing encrypted message. */
-	public send (cyphertext: string|ArrayBufferView, messageId?: ArrayBufferView) : void {
-		const fullCyphertext	= potassiumUtil.toBase64(
-			!messageId ? cyphertext : potassiumUtil.concatMemory(
+	public send (cyphertext: Uint8Array, messageId?: Uint8Array) : void {
+		const fullCyphertext	= !messageId ?
+			cyphertext :
+			potassiumUtil.concatMemory(
 				true,
 				messageId,
 				potassiumUtil.fromBase64(cyphertext)
 			)
-		);
-
-		if (!messageId && typeof cyphertext !== 'string') {
-			potassiumUtil.clearMemory(cyphertext);
-		}
+		;
 
 		this.session.castleHandler(CastleEvents.send, fullCyphertext);
-		this.logCyphertext(fullCyphertext, users.me);
+		this.logCyphertext(potassiumUtil.toBase64(fullCyphertext), users.me);
 	}
 
 	constructor (

@@ -9,7 +9,7 @@ export interface IChannelHandlers {
 	onConnect: () => void;
 
 	/** Message handler. */
-	onMessage: (message: string) => void;
+	onMessage: (message: Uint8Array) => void;
 
 	/** Open handler. */
 	onOpen: (isAlice: boolean) => void;
