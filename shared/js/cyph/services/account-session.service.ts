@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
+import {ISessionMessage} from '../../proto';
 import {User} from '../account/user';
 import {rpcEvents} from '../session/enums';
-import {IMessage} from '../session/imessage';
 import {util} from '../util';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';
@@ -30,7 +30,7 @@ export class AccountSessionService extends SessionService {
 	public close () : void {}
 
 	/** @inheritDoc */
-	public send (...messages: IMessage[]) : void {
+	public send (...messages: ISessionMessage[]) : void {
 		for (const message of messages) {
 			if (message.event !== rpcEvents.text) {
 				continue;

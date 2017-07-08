@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {IChatData, IChatMessage, States} from '../chat';
+import {IChatMessage} from '../../proto';
+import {IChatData, States} from '../chat';
 import {LocalAsyncValue} from '../local-async-value';
 import {users} from '../session/enums';
 import {AccountSessionService} from './account-session.service';
