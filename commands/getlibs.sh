@@ -237,3 +237,6 @@ mv ${dir}/shared/lib/js/node_modules ${dir}/shared/
 sudo mv lib/js/node_modules /
 sudo chmod -R 777 /node_modules
 rm -rf lib
+
+pbjs --help &> /dev/null
+pbts --help &> /dev/null

@@ -73,7 +73,7 @@ export class DatabaseService extends DataManagerService {
 	 * Downloads a value as an object.
 	 * @see downloadItem
 	 */
-	public downloadItemObject<T> (url: string, validator: (o: any) => boolean) : {
+	public downloadItemObject<T> (url: string, proto: {decode: (bytes: Uint8Array) => T}) : {
 		progress: Observable<number>;
 		result: Promise<{timestamp: number; value: T}>;
 	} {
@@ -82,7 +82,7 @@ export class DatabaseService extends DataManagerService {
 			progress: o.progress,
 			result: o.result.then(({timestamp, value}) => ({
 				timestamp,
-				value: util.bytesToObject<T>(value, validator)
+				value: util.bytesToObject<T>(value, proto)
 			}))
 		};
 	}
@@ -282,9 +282,9 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchListObject<T> (
 		url: string,
-		validator: (o: any) => boolean
+		proto: {decode: (bytes: Uint8Array) => T}
 	) : Observable<{timestamp: number; value: T}[]> {
-		return this.watchList<T>(url, value => util.bytesToObject<T>(value, validator));
+		return this.watchList<T>(url, value => util.bytesToObject<T>(value, proto));
 	}
 
 	/**
@@ -342,11 +342,11 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchMaybeObject<T> (
 		url: string,
-		validator: (o: any) => boolean
+		proto: {decode: (bytes: Uint8Array) => T}
 	) : Observable<{timestamp: number; value: T}|undefined> {
 		return this.watchMaybe(url).map(o => o === undefined ? undefined : {
 			timestamp: o.timestamp,
-			value: util.bytesToObject<T>(o.value, validator)
+			value: util.bytesToObject<T>(o.value, proto)
 		});
 	}
 
@@ -418,10 +418,10 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchValueObject<T> (
 		url: string,
-		defaultValue: () => T|Promise<T>,
-		validator: (o: any) => boolean
+		proto: {decode: (bytes: Uint8Array) => T},
+		defaultValue: () => T|Promise<T>
 	) : Observable<{timestamp: number; value: T}> {
-		return this.watchMaybeObject<T>(url, validator).flatMap(async o =>
+		return this.watchMaybeObject<T>(url, proto).flatMap(async o =>
 			o || {timestamp: await util.timestamp(), value: await defaultValue()}
 		);
 	}

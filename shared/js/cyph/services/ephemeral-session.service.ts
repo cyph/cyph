@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
+import {ISessionMessage, SessionMessageList} from '../../proto';
 import {env} from '../env';
 import {events, rpcEvents} from '../session/enums';
-import {IMessage} from '../session/imessage';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
@@ -68,9 +68,15 @@ export class EphemeralSessionService extends SessionService {
 					}
 
 					this.anonymousCastleService.send(
-						await util.toBytes(
-							this.plaintextSendQueue.splice(0, this.plaintextSendQueue.length)
-						)
+						await util.toBytes({
+							data: {
+								messages: this.plaintextSendQueue.splice(
+									0,
+									this.plaintextSendQueue.length
+								)
+							},
+							proto: SessionMessageList
+						})
 					);
 				}
 			},
@@ -158,7 +164,7 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	public async send (...messages: IMessage[]) : Promise<void> {
+	public async send (...messages: ISessionMessage[]) : Promise<void> {
 		this.plaintextSendHandler(messages);
 
 		for (const message of messages) {

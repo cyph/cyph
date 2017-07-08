@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
+import {ISessionMessage, ISessionMessageData, SessionMessageList} from '../../proto';
 import {eventManager} from '../event-manager';
-import {LockFunction} from '../lock-function-type';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {CastleEvents, events, rpcEvents} from '../session/enums';
-import {IMessage} from '../session/imessage';
-import {Message} from '../session/message';
+import {SessionMessage} from '../session/message';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
@@ -17,9 +16,6 @@ import {ErrorService} from './error.service';
  */
 @Injectable()
 export abstract class SessionService implements ISessionService {
-	/** @ignore */
-	private readonly castleLock: LockFunction						= util.lockFunction();
-
 	/** @ignore */
 	private resolvePotassiumService: (potassiumService: PotassiumService) => void;
 
@@ -39,7 +35,7 @@ export abstract class SessionService implements ISessionService {
 	protected readonly plaintextSendInterval: number				= 1776;
 
 	/** @ignore */
-	protected readonly plaintextSendQueue: IMessage[]				= [];
+	protected readonly plaintextSendQueue: ISessionMessage[]				= [];
 
 	/** @ignore */
 	protected readonly potassiumService: Promise<PotassiumService>	=
@@ -88,7 +84,7 @@ export abstract class SessionService implements ISessionService {
 	};
 
 	/** @ignore */
-	protected cyphertextReceiveHandler (message: IMessage) : void {
+	protected cyphertextReceiveHandler (message: ISessionMessage) : void {
 		if (!message.data.id || this.receivedMessages.has(message.data.id)) {
 			return;
 		}
@@ -132,12 +128,12 @@ export abstract class SessionService implements ISessionService {
 				}
 			}
 
-			this.send(new Message());
+			this.send(new SessionMessage());
 		}
 	}
 
 	/** @ignore */
-	protected async plaintextSendHandler (messages: IMessage[]) : Promise<void> {
+	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
 		for (const message of messages) {
 			message.data.timestamp	= await util.timestamp();
 			this.plaintextSendQueue.push(message);
@@ -149,7 +145,7 @@ export abstract class SessionService implements ISessionService {
 		event: CastleEvents,
 		data?: Uint8Array|{author: string; plaintext: Uint8Array; timestamp: number}
 	) : Promise<void> {
-		await this.castleLock(async () => { switch (event) {
+		switch (event) {
 			case CastleEvents.abort: {
 				this.errorService.logAuthFail();
 				this.trigger(events.connectFailure);
@@ -164,16 +160,16 @@ export abstract class SessionService implements ISessionService {
 						await potassiumService.secretBox.keyBytes
 					);
 					this.resolveSymmetricKey(symmetricKey);
-					this.send(new Message(rpcEvents.symmetricKey, {symmetricKey}));
+					this.send(new SessionMessage(rpcEvents.symmetricKey, {bytes: symmetricKey}));
 				}
 				else {
-					this.resolveSymmetricKey(
-						(
-							await this.one<{symmetricKey: Uint8Array}>(
-								rpcEvents.symmetricKey
-							)
-						).symmetricKey
-					);
+					const symmetricKey	=
+						(await this.one<ISessionMessageData>(rpcEvents.symmetricKey)).bytes
+					;
+					if (!symmetricKey) {
+						throw new Error('No session symmetric key received.');
+					}
+					this.resolveSymmetricKey(symmetricKey);
 				}
 
 				break;
@@ -187,12 +183,7 @@ export abstract class SessionService implements ISessionService {
 
 				const messages	= (() => {
 					try {
-						return util.bytesToObject<IMessage[]>(
-							data.plaintext,
-							arr => Array.isArray(arr) && arr.
-								map(o => typeof o === 'object' && typeof o.data === 'object').
-								reduce((a, b) => a && b, true)
-						);
+						return util.bytesToObject(data.plaintext, SessionMessageList).messages;
 					}
 					catch (_) {
 						return [];
@@ -202,8 +193,6 @@ export abstract class SessionService implements ISessionService {
 				for (const message of messages) {
 					/* Discard messages without valid timestamps */
 					if (
-						typeof (<any> message).data !== 'object' ||
-						message.data.timestamp === undefined ||
 						isNaN(message.data.timestamp) ||
 						message.data.timestamp > cyphertextTimestamp ||
 						message.data.timestamp < this.lastIncomingMessageTimestamp
@@ -225,7 +214,7 @@ export abstract class SessionService implements ISessionService {
 
 				this.cyphertextSendHandler(data);
 			}
-		} });
+		}
 	}
 
 	/** @inheritDoc */
@@ -264,7 +253,7 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
-	public send (..._MESSAGES: IMessage[]) : void {
+	public send (..._MESSAGES: ISessionMessage[]) : void {
 		throw new Error('Must provide an implementation of SessionService.send.');
 	}
 

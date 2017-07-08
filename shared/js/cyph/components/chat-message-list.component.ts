@@ -2,10 +2,11 @@ import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input} fr
 import * as $ from 'jquery';
 import {Observable} from 'rxjs';
 import {fadeInOut} from '../animations';
-import {IChatMessage} from '../chat';
+import {ChatMessage} from '../chat';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
+import {util} from '../util';
 
 
 /**
@@ -19,11 +20,24 @@ import {ScrollService} from '../services/scroll.service';
 	templateUrl: '../../../templates/chat-message-list.html'
 })
 export class ChatMessageListComponent implements AfterViewInit {
+	/** @ignore */
+	private readonly messageCache: Map<string, ChatMessage>	= new Map<string, ChatMessage>();
+
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean;
 
-	/** @see IChatData.messages */
-	public messages: Observable<IChatMessage[]>	= this.chatService.chat.messages.watch();
+	/** Message list. */
+	public messages: Observable<ChatMessage[]>	=
+		this.chatService.chat.messages.watch().map(messages =>
+			messages.map(message =>
+				util.getOrSetDefault(
+					this.messageCache,
+					message.id,
+					() => new ChatMessage(message)
+				)
+			)
+		)
+	;
 
 	/** @see ChatMessageComponent.mobile */
 	@Input() public mobile: boolean;

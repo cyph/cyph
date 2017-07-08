@@ -1,6 +1,6 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
-import {IChatMessage} from '../chat/ichat-message';
+import {IChatMessage} from '../../proto';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {StringsService} from '../services/strings.service';

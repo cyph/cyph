@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {IChatData, IChatMessage, States} from '../chat';
+import {IChatMessage, ISessionMessageData} from '../../proto';
+import {IChatData, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {events, rpcEvents, users} from '../session/enums';
-import {Message} from '../session/message';
-import {Timer} from '../timer';
+import {SessionMessage} from '../session/message';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
@@ -92,7 +92,7 @@ export class ChatService {
 		timestamp?: number,
 		shouldNotify: boolean = author !== users.me,
 		selfDestructTimeout?: number,
-		id?: string
+		id: string = util.uuid()
 	) : Promise<void> {
 		if (
 			!text ||
@@ -122,8 +122,8 @@ export class ChatService {
 		const message: IChatMessage	= {
 			author,
 			id,
+			selfDestructTimeout,
 			text,
-			timeString: util.getTimeString(timestamp),
 			timestamp
 		};
 
@@ -141,17 +141,6 @@ export class ChatService {
 
 		if (author === users.me) {
 			this.scrollService.scrollDown();
-		}
-
-		if (
-			selfDestructTimeout !== undefined &&
-			!isNaN(selfDestructTimeout) &&
-			selfDestructTimeout > 0
-		) {
-			message.selfDestructTimer	= new Timer(selfDestructTimeout);
-			await message.selfDestructTimer.start();
-			await util.sleep(10000);
-			message.text	= undefined;
 		}
 	}
 
@@ -240,12 +229,10 @@ export class ChatService {
 
 				if (this.chat.isMessageChanged !== isMessageChanged) {
 					this.chat.isMessageChanged	= isMessageChanged;
-					this.sessionService.send(
-						new Message(
-							rpcEvents.typing,
-							{isTyping: this.chat.isMessageChanged}
-						)
-					);
+					this.sessionService.send(new SessionMessage(
+						rpcEvents.typing,
+						{chatState: {isTyping: this.chat.isMessageChanged}}
+					));
 
 					await util.sleep(1000);
 				}
@@ -266,10 +253,10 @@ export class ChatService {
 		}
 
 		if (message) {
-			this.sessionService.send(new Message(rpcEvents.text, {
-				selfDestructTimeout,
-				text: message
-			}));
+			this.sessionService.send(new SessionMessage(
+				rpcEvents.text,
+				{text: {selfDestructTimeout, text: message}})
+			);
 		}
 	}
 
@@ -324,29 +311,21 @@ export class ChatService {
 			this.abortSetup();
 		});
 
-		this.sessionService.on(rpcEvents.confirm, (o: {messageId?: string}) => {
-			if (typeof o.messageId !== 'string') {
+		this.sessionService.on(rpcEvents.confirm, (o: ISessionMessageData) => {
+			if (!o.textConfirmation || !o.textConfirmation.id) {
 				return;
 			}
 
-			this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
-				if (typeof o.messageId !== 'string') {
-					throw undefined;
-				}
+			const id	= o.textConfirmation.id;
 
-				delete unconfirmedMessages[o.messageId];
+			this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
+				delete unconfirmedMessages[id];
 				return unconfirmedMessages;
 			});
 		});
 
-		this.sessionService.on(rpcEvents.text, (o: {
-			author: string;
-			id: string;
-			selfDestructTimeout?: number;
-			text?: string;
-			timestamp: number;
-		}) => {
-			if (typeof o.text !== 'string') {
+		this.sessionService.on(rpcEvents.text, (o: ISessionMessageData) => {
+			if (!o.text) {
 				return;
 			}
 
@@ -369,23 +348,25 @@ export class ChatService {
 				})();
 			}
 			else {
-				this.sessionService.send(new Message(rpcEvents.confirm, {
-					messageId: o.id
-				}));
+				this.sessionService.send(
+					new SessionMessage(rpcEvents.confirm, {textConfirmation: {id: o.id}})
+				);
 			}
 
 			this.addMessage(
-				o.text,
+				o.text.text,
 				o.author,
 				o.timestamp,
 				undefined,
-				o.selfDestructTimeout,
+				o.text.selfDestructTimeout,
 				o.id
 			);
 		});
 
-		this.sessionService.on(rpcEvents.typing, (o: {isTyping: boolean}) => {
-			this.chat.isFriendTyping.next(o.isTyping);
+		this.sessionService.on(rpcEvents.typing, (o: ISessionMessageData) => {
+			if (o.chatState) {
+				this.chat.isFriendTyping.next(o.chatState.isTyping);
+			}
 		});
 	}
 }
