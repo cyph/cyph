@@ -1,92 +1,6 @@
 syntax = "proto3";
 
 
-/** Metadata of one file stored in an account. */
-message AccountFileRecord {
-	enum RecordType {
-		FILE = 1;
-		NOTE = 2;
-	}
-
-	/** File ID. */
-	required string id = 1;
-
-	/** File MIME type. */
-	required string mediaType = 2;
-
-	/** File name. */
-	required string name = 3;
-
-	/** Type of file record. */
-	required RecordType recordType = 4;
-
-	/** Size in bytes. */
-	required double size = 5;
-
-	/** Timestamp of upload or last save. */
-	required double timestamp = 6;
-}
-
-/** List of AccountFileRecords. */
-message AccountFileRecordList {
-	repeated AccountFileRecord records = 1;
-}
-
-/** Augmented PAKE login data. */
-message AccountLoginData {
-	/** Randomly generated password for database authentication. */
-	required string secondaryPassword = 1;
-
-	/** Symmetric key for encrypting user data. */
-	required bytes symmetricKey = 2;
-}
-
-/** User public profile. */
-message AccountUserProfile {
-	enum Presence {
-		OFFLINE = 0;
-		AWAY = 1;
-		BUSY = 2;
-		ONLINE = 3;
-	}
-
-	/** Avatar / profile picture. */
-	required bytes avatar = 1;
-
-	/** Cover image. */
-	required bytes coverImage = 2;
-
-	/** Description. */
-	required string description = 3;
-
-	/** Premium account. */
-	required bool hasPremium = 4;
-
-	/** Full name. */
-	required string name = 5;
-
-	/** Username (capitalized according to user preference). */
-	required string realUsername = 6;
-
-	/** Current presence status. */
-	required Presence status = 7;
-
-	/** Usernames and similar identifiers for external services like social media. */
-	map<string, string> externalUsernames = 8;
-}
-
-/** AGSE-PKI certificate. */
-message AGSEPKICert {
-	/** Potassium.Box public key. */
-	required bytes publicEncryptionKey = 1;
-
-	/** Potassium.Sign public key. */
-	required bytes publicSigningKey = 2;
-
-	/** Cyph username (lowercase). */
-	required string username = 3;
-}
-
 /** ChannelService message. */
 message ChannelMessage {
 	/** Cyphertext. */
@@ -255,7 +169,29 @@ message SessionTransfer {
 	required string url = 12;
 }
 
-/** Generic string array. */
+
+/* Generic/primitive types */
+
+message BooleanArray {
+	repeated bool data = 1;
+}
+
+message BooleanValue {
+	required bool data = 1;
+}
+
+message NumberArray {
+	repeated double data = 1;
+}
+
+message NumberValue {
+	required double data = 1;
+}
+
 message StringArray {
-	repeated string strings = 1;
+	repeated string data = 1;
+}
+
+message StringValue {
+	required string data = 1;
 }
