@@ -1,4 +1,4 @@
-import {Writer} from 'protobufjs';
+import {Proto} from './proto-type';
 
 
 /** Any generic value that can be serialized to bytes by util.toBytes. */
@@ -9,5 +9,5 @@ export type DataType<T>	=
 	boolean|
 	number|
 	string|
-	{data: T; proto: {encode: (data: T) => Writer, verify: (data: T) => any}}
+	{data: T; proto: Proto<T>}
 ;
