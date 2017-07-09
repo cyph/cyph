@@ -136,13 +136,13 @@ export class Box implements IBox {
 
 			const symmetricKey	= new Uint8Array(
 				innerKeys.buffer,
-				0,
+				innerKeys.byteOffset,
 				secretBoxKeyBytes
 			);
 
 			const authKey		= new Uint8Array(
 				innerKeys.buffer,
-				secretBoxKeyBytes,
+				innerKeys.byteOffset + secretBoxKeyBytes,
 				oneTimeAuthKeyBytes
 			);
 
@@ -187,7 +187,7 @@ export class Box implements IBox {
 
 			const symmetricKey	= new Uint8Array(
 				innerKeys.buffer,
-				0,
+				innerKeys.byteOffset,
 				secretBoxKeyBytes
 			);
 

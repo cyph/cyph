@@ -15,28 +15,31 @@ export class Hash implements IHash {
 		outputBytes?: number,
 		clearInput?: boolean
 	) : Promise<Uint8Array> {
-		const bytes	= await this.bytes;
+		try {
+			const bytes	= await this.bytes;
 
-		if (!outputBytes) {
-			outputBytes	= input.length;
+			if (!outputBytes) {
+				outputBytes	= input.length;
+			}
+
+			if (outputBytes > bytes) {
+				throw new Error(
+					`Potassium.Hash.deriveKey output cannot exceed ${bytes} bytes.`
+				);
+			}
+
+			if (!this.isNative) {
+				return sodium.crypto_generichash(outputBytes, input);
+			}
+
+			const hash	= await this.hash(input);
+			return new Uint8Array(hash.buffer, hash.byteOffset, outputBytes);
 		}
-
-		if (outputBytes > bytes) {
-			throw new Error(
-				`Potassium.Hash.deriveKey output cannot exceed ${bytes} bytes.`
-			);
+		finally {
+			if (clearInput) {
+				potassiumUtil.clearMemory(input);
+			}
 		}
-
-		const hash	= this.isNative ?
-			new Uint8Array((await this.hash(input)).buffer, 0, outputBytes) :
-			sodium.crypto_generichash(outputBytes, input)
-		;
-
-		if (clearInput) {
-			potassiumUtil.clearMemory(input);
-		}
-
-		return hash;
 	}
 
 	/** @inheritDoc */

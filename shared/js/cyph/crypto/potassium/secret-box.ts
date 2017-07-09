@@ -157,14 +157,12 @@ export class SecretBox implements ISecretBox {
 			throw new Error('Padded plaintext empty.');
 		}
 
-		const plaintext	= new Uint8Array(new Uint8Array(
+		return new Uint8Array(
 			paddedPlaintext.buffer,
-			new Uint8Array(paddedPlaintext.buffer, 0, 1)[0] + 1
-		));
-
-		potassiumUtil.clearMemory(paddedPlaintext);
-
-		return plaintext;
+			paddedPlaintext.byteOffset +
+				1 +
+				new DataView(paddedPlaintext.buffer, paddedPlaintext.byteOffset).getUint8(0)
+		);
 	}
 
 	/** @ignore */
