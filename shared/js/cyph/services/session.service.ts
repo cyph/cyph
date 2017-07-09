@@ -163,7 +163,7 @@ export abstract class SessionService implements ISessionService {
 				else {
 					this.resolveSymmetricKey(
 						(await this.one<ISessionMessageData>(rpcEvents.symmetricKey)).bytes ||
-						new Uint8Array([])
+						new Uint8Array(0)
 					);
 				}
 
