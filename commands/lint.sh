@@ -3,10 +3,21 @@
 
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
+fast=''
+if [ "${1}" == '--fast' ] ; then
+	fast=true
+	shift
+fi
+
 log 'Starting lint'
 
-output="$(./commands/buildunbundledassets.sh 2>&1)"
-checkfail "${output}"
+if [ "${fast}" ] ; then
+	./commands/protobuf.sh
+	checkfail
+else
+	output="$(./commands/buildunbundledassets.sh 2>&1)"
+	checkfail "${output}"
+fi
 
 tmpDir="$(mktemp -d)"
 ./commands/copyworkspace.sh "${tmpDir}"
@@ -61,7 +72,7 @@ if [ "${componentConsistency}" != true ] ; then
 	fail 'Component template/stylesheet count mismatch'
 fi
 
-# tslint and htmllint
+# tslint
 
 cd js
 bindmount /node_modules node_modules
@@ -100,54 +111,60 @@ node -e "
 
 cp -rf css templates js/
 
-output="$({
+output="$(
 	tslint \
 		-e '/node_modules/**' \
 		--project js/tsconfig.tslint.json \
 		--type-check \
-	;
-	find templates -type f -name '*.html' -not -path 'templates/native/*' -exec node -e '(async () => {
-		const result	= await require("htmllint")(
-			fs.readFileSync("{}").toString(),
-			JSON.parse(fs.readFileSync("templates/htmllint.json").toString())
-		);
-
-		if (result.length === 0) {
-			return;
-		}
-
-		console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
-	})()' \;;
-} 2>&1 |
-	grep -v js/native/js |
-	grep -vP "Warning: Cannot read property '.*?' of undefined"
+	2>&1 |
+		if [ "${fast}" ] ; then grep -v js/native/js ; else cat - ; fi |
+		grep -vP "Warning: Cannot read property '.*?' of undefined"
 )"
 
-# Retire.js
+if [ ! "${fast}" ] ; then
+	# htmllint
 
-cd ..
+	output="${output}$({
+		find templates -type f -name '*.html' -not -path 'templates/native/*' -exec node -e '(async () => {
+			const result	= await require("htmllint")(
+				fs.readFileSync("{}").toString(),
+				JSON.parse(fs.readFileSync("templates/htmllint.json").toString())
+			);
 
-node -e 'fs.writeFileSync(
-	".retireignore.json",
-	JSON.stringify(
-		JSON.parse(
-			fs.readFileSync("retireignore.json").toString()
-		).map(o => !o.path ?
-			[o] :
-			[o, Object.keys(o).reduce((acc, k) => {
-				acc[k]	= k === "path" ? `/node_modules/${o[k]}` : o[k];
-				return acc;
-			}, {})]
-		).reduce(
-			(acc, arr) => acc.concat(arr),
-			[]
+			if (result.length === 0) {
+				return;
+			}
+
+			console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
+		})()' \;;
+	} 2>&1)"
+
+	# Retire.js
+
+	cd ..
+
+	node -e 'fs.writeFileSync(
+		".retireignore.json",
+		JSON.stringify(
+			JSON.parse(
+				fs.readFileSync("retireignore.json").toString()
+			).map(o => !o.path ?
+				[o] :
+				[o, Object.keys(o).reduce((acc, k) => {
+					acc[k]	= k === "path" ? `/node_modules/${o[k]}` : o[k];
+					return acc;
+				}, {})]
+			).reduce(
+				(acc, arr) => acc.concat(arr),
+				[]
+			)
 		)
-	)
-)'
+	)'
 
-retireOutput="$(retire --path /node_modules 2>&1)"
-if (( $? )) ; then
-	output="${output}${retireOutput}"
+	retireOutput="$(retire --path /node_modules 2>&1)"
+	if (( $? )) ; then
+		output="${output}${retireOutput}"
+	fi
 fi
 
 echo -e "${output}"

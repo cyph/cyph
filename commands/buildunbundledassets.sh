@@ -56,12 +56,7 @@ rm -rf node_modules js css 2> /dev/null
 mkdir node_modules js css
 
 
-rm -rf ../js/proto 2> /dev/null
-mkdir ../js/proto
-pbjs -t static-module ../../types.proto -o ../js/proto/index.js
-checkfail
-pbts ../js/proto/index.js -o ../js/proto/index.d.ts
-checkfail
+../../commands/protobuf.sh
 
 
 cd node_modules
