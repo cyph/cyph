@@ -5,10 +5,11 @@ import {memoize} from 'lodash';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {AGSEPKICert, IAGSEPKICert, IKeyPair} from '../../../proto';
 import {User} from '../../account/user';
-import {DataType} from '../../data-type';
 import {IAsyncValue} from '../../iasync-value';
 import {IProto} from '../../iproto';
+import {ITimedValue} from '../../itimed-value';
 import {LockFunction} from '../../lock-function-type';
+import {BinaryProto} from '../../protos';
 import {util} from '../../util';
 import {DatabaseService} from '../database.service';
 import {PotassiumService} from './potassium.service';
@@ -16,6 +17,8 @@ import {PotassiumService} from './potassium.service';
 
 /**
  * Account database service.
+ * Setting public data signs it and getting public data verifies it.
+ * Setting private data encrypts it and getting private data decrypts it.
  */
 @Injectable()
 export class AccountDatabaseService {
@@ -65,58 +68,67 @@ export class AccountDatabaseService {
 	};
 
 	/** @ignore */
-	private async getItemInternal (url: string, publicData: boolean, operation: string) : Promise<{
+	private async getItemInternal<T> (
+		url: string,
+		proto: IProto<T>,
+		publicData: boolean,
+		operation: string
+	) : Promise<{
 		progress: Observable<number>;
-		result: {
-			timestamp: number;
-			value: Uint8Array;
-		};
+		result: ITimedValue<T>;
 	}> {
 		await this.waitForUnlock(url);
 
 		url	= this.processURL(url);
 
-		const data	= this.databaseService.downloadItem(url);
-		let result	= await data.result;
-
-		if (publicData) {
-			result	= {
-				timestamp: result.timestamp,
-				value: await this.openPublicData(
-					this.getUsernameFromURL(url),
-					result.value
-				)
-			};
-		}
-		else if (this.current) {
-			result	= {
-				timestamp: result.timestamp,
-				value: await this.potassiumService.secretBox.open(
-					result.value,
-					this.current.keys.symmetricKey
-				)
-			};
-		}
-		else {
-			throw new Error(`User not signed in. Cannot ${operation} private data at ${url}.`);
-		}
-
-		return {progress: data.progress, result};
-	}
-
-	/** @ignore */
-	private getUsernameFromURL (url: string) : string {
-		return (url.match(/\/?users\/(.*?)\//) || [])[1] || '';
-	}
-
-	/** @ignore */
-	private async openPublicData (username: string, data: Uint8Array) : Promise<Uint8Array> {
-		return this.potassiumService.sign.open(
-			data,
-			this.current && username === this.current.user.username ?
-				this.current.keys.signingKeyPair.publicKey :
-				(await this.getUserPublicKeys(username)).publicSigningKey
+		const symmetricKey	= this.getSymmetricKey(
+			publicData,
+			`User not signed in. Cannot ${operation} private data at ${url}.`
 		);
+
+		const downloadTask	= this.databaseService.downloadItem(url, BinaryProto);
+		const result		= await downloadTask.result;
+
+		return {
+			progress: downloadTask.progress,
+			result: {
+				timestamp: result.timestamp,
+				value: await this.open(url, proto, publicData, symmetricKey, result.value)
+			}
+		};
+	}
+
+	/** @ignore */
+	private getSymmetricKey (publicData: boolean, failureMessage: string) : Uint8Array {
+		if (!publicData && !this.current) {
+			throw new Error(failureMessage);
+		}
+		return this.current === undefined ? new Uint8Array(0) : this.current.keys.symmetricKey;
+	}
+
+	/** @ignore */
+	private async open<T> (
+		url: string,
+		proto: IProto<T>,
+		publicData: boolean,
+		symmetricKey: Uint8Array,
+		data: Uint8Array
+	) : Promise<T> {
+		return util.deserialize(proto, await (async () => {
+			if (publicData) {
+				const username	= (url.match(/\/?users\/(.*?)\//) || [])[1] || '';
+
+				return this.potassiumService.sign.open(
+					data,
+					this.current && username === this.current.user.username ?
+						this.current.keys.signingKeyPair.publicKey :
+						(await this.getUserPublicKeys(username)).publicSigningKey
+				);
+			}
+			else {
+				return this.potassiumService.secretBox.open(data, symmetricKey);
+			}
+		})());
 	}
 
 	/** @ignore */
@@ -144,23 +156,21 @@ export class AccountDatabaseService {
 	}
 
 	/** @ignore */
-	private async setItemInternal<T, DT = never> (
+	private async setItemInternal<T, O> (
 		url: string,
-		value: DataType<DT>,
+		proto: IProto<T>,
+		value: T,
 		publicData: boolean,
 		operation: string,
-		setItem: (url: string, value: Uint8Array) => Promise<T>
-	) : Promise<T> {
+		setItem: (url: string, value: Uint8Array) => Promise<O>
+	) : Promise<O> {
 		if (!this.current) {
 			throw new Error(`User not signed in. Cannot ${operation} item at ${url}.`);
-		}
-		else if (typeof value === 'number' && isNaN(value)) {
-			throw new Error(`Cannot ${operation} NaN as item value at ${url}.`);
 		}
 
 		url	= this.processURL(url);
 
-		const data	= await util.toBytes(value);
+		const data	= await util.serialize(proto, value);
 
 		return setItem(
 			url,
@@ -176,18 +186,15 @@ export class AccountDatabaseService {
 		);
 	}
 
-	/**
-	 * Downloads value and gives progress.
-	 * @param publicData If true, validates the item's signature. Otherwise, decrypts the item.
-	 */
-	public downloadItem (url: string, publicData: boolean = false) : {
+	/** Downloads value and gives progress. */
+	public downloadItem<T> (url: string, proto: IProto<T>, publicData: boolean = false) : {
 		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: Uint8Array}>;
+		result: Promise<ITimedValue<T>>;
 	} {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
-			const downloadTask	= await this.getItemInternal(url, publicData, 'download');
+			const downloadTask	= await this.getItemInternal(url, proto, publicData, 'download');
 
 			downloadTask.progress.subscribe(
 				n => { progress.next(n); },
@@ -201,644 +208,79 @@ export class AccountDatabaseService {
 		return {progress, result};
 	}
 
-	/**
-	 * Downloads a value as a boolean.
-	 * @see downloadItem
-	 */
-	public downloadItemBoolean (url: string, publicData: boolean = false) : {
-		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: boolean}>;
-	} {
-		const {progress, result}	= this.downloadItem(url, publicData);
-
-		return {
-			progress,
-			result: result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToBoolean(value)
-			}))
-		};
-	}
-
-	/**
-	 * Downloads a value as a number.
-	 * @see downloadItem
-	 */
-	public downloadItemNumber (url: string, publicData: boolean = false) : {
-		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: number}>;
-	} {
-		const {progress, result}	= this.downloadItem(url, publicData);
-
-		return {
-			progress,
-			result: result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToNumber(value)
-			}))
-		};
-	}
-
-	/**
-	 * Downloads a value as an object.
-	 * @see downloadItem
-	 */
-	public downloadItemObject<T> (url: string, proto: IProto<T>, publicData: boolean = false) : {
-		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: T}>;
-	} {
-		const {progress, result}	= this.downloadItem(url, publicData);
-
-		return {
-			progress,
-			result: result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToObject<T>(value, proto)
-			}))
-		};
-	}
-
-	/**
-	 * Downloads a value as a string.
-	 * @see downloadItem
-	 */
-	public downloadItemString (url: string, publicData: boolean = false) : {
-		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: string}>;
-	} {
-		const {progress, result}	= this.downloadItem(url, publicData);
-
-		return {
-			progress,
-			result: result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToString(value)
-			}))
-		};
-	}
-
-	/**
-	 * Downloads a value as a base64 data URI.
-	 * @see downloadItem
-	 */
-	public downloadItemURI (url: string, publicData: boolean = false) : {
-		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: string}>;
-	} {
-		const {progress, result}	= this.downloadItem(url, publicData);
-
-		return {
-			progress,
-			result: result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToDataURI(value)
-			}))
-		};
-	}
-
-	/**
-	 * Gets an IAsyncValue wrapper for an item.
-	 * @param publicData If true, validates the item's signature. Otherwise, decrypts the item.
-	 * @param defaultValue If item isn't already set, will be used to initialize it.
-	 */
-	public getAsyncValue (
-		url: string,
-		publicData: boolean = false,
-		defaultValue: () => Uint8Array|Promise<Uint8Array> = () => new Uint8Array([])
-	) : IAsyncValue<Uint8Array> {
-		let currentHash: string|undefined;
-		let currentValue: Uint8Array|undefined;
-
-		const localLock	= util.lockFunction();
-
-		const asyncValue: IAsyncValue<Uint8Array>	= {
-			getValue: async () => localLock(async () : Promise<Uint8Array> => {
-				await this.waitForUnlock(url);
-
-				const {hash}	= await this.databaseService.getMetadata(url);
-
-				/* tslint:disable-next-line:possible-timing-attack */
-				if (currentValue && currentHash === hash) {
-					return currentValue;
-				}
-				else if (currentValue) {
-					this.potassiumService.clearMemory(currentValue);
-					currentValue	= undefined;
-				}
-
-				const value	= await this.getItem(url, publicData);
-
-				/* tslint:disable-next-line:possible-timing-attack */
-				if (hash !== (await this.databaseService.getMetadata(url)).hash) {
-					return asyncValue.getValue();
-				}
-
-				currentHash		= hash;
-				currentValue	= value;
-
-				return currentValue;
-			}),
-			lock: this.lockFunction(url),
-			setValue: async (value: Uint8Array) => localLock(async () => {
-				const oldValue	= currentValue;
-
-				currentHash		= (await this.setItem(url, value, publicData)).hash;
-				currentValue	= value;
-
-				if (oldValue) {
-					this.potassiumService.clearMemory(oldValue);
-				}
-			}),
-			updateValue: async f => asyncValue.lock(async () => {
-				const value	= await asyncValue.getValue();
-				let newValue: Uint8Array;
-				try {
-					newValue	= await f(value);
-				}
-				catch (_) {
-					return;
-				}
-				asyncValue.setValue(newValue);
-			}),
-			watch: memoize(() =>
-				this.watchValue(url, publicData, defaultValue).map<
-					{timestamp: number; value: Uint8Array},
-					Uint8Array
-				>(
-					o => o.value
-				)
-			)
-		};
-
-		localLock(async () => {
-			if (!(await this.hasItem(url))) {
-				await this.setItem(url, await defaultValue());
-			}
-		});
-
-		return asyncValue;
-	}
-
-	/**
-	 * Gets an async value as a boolean.
-	 * @see getAsyncValue
-	 */
-	public getAsyncValueBoolean (
-		url: string,
-		publicData: boolean = false,
-		defaultValue: () => boolean|Promise<boolean> = () => false
-	) : IAsyncValue<boolean> {
-		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
-			url,
-			publicData,
-			async () => util.toBytes(await defaultValue())
-		);
-
-		return {
-			getValue: async () => util.bytesToBoolean(await getValue()),
-			lock,
-			setValue: async value => setValue(await util.toBytes(value)),
-			updateValue: async f => updateValue(
-				async value => util.toBytes(await f(util.bytesToBoolean(value)))
-			),
-			watch: memoize(
-				() => this.watchValueBoolean(url, publicData, defaultValue).map<
-					{timestamp: number; value: boolean},
-					boolean
-				>(
-					o => o.value
-				)
-			)
-		};
-	}
-
-	/**
-	 * Gets an async value as a number.
-	 * @see getAsyncValue
-	 */
-	public getAsyncValueNumber (
-		url: string,
-		publicData: boolean = false,
-		defaultValue: () => number|Promise<number> = () => 0
-	) : IAsyncValue<number> {
-		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
-			url,
-			publicData,
-			async () => util.toBytes(await defaultValue())
-		);
-
-		return {
-			getValue: async () => util.bytesToNumber(await getValue()),
-			lock,
-			setValue: async value => setValue(await util.toBytes(value)),
-			updateValue: async f => updateValue(
-				async value => util.toBytes(await f(util.bytesToNumber(value)))
-			),
-			watch: memoize(
-				() => this.watchValueNumber(url, publicData, defaultValue).map<
-					{timestamp: number; value: number},
-					number
-				>(
-					o => o.value
-				)
-			)
-		};
-	}
-
-	/**
-	 * Gets an async value as an object.
-	 * @see getAsyncValue
-	 */
-	public getAsyncValueObject<T> (
+	/** Gets an IAsyncValue wrapper for an item. */
+	public getAsyncValue<T> (
 		url: string,
 		proto: IProto<T>,
-		defaultValue: () => T|Promise<T>,
 		publicData: boolean = false
 	) : IAsyncValue<T> {
-		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
-			url,
+		url	= this.processURL(url);
+
+		const defaultValue	= proto.create();
+		const symmetricKey	= this.getSymmetricKey(
 			publicData,
-			async () => util.toBytes({data: await defaultValue(), proto})
+			`User not signed in. Cannot get async value at ${url}.`
+		);
+
+		const asyncValue	= this.databaseService.getAsyncValue(
+			url,
+			BinaryProto,
+			this.lockFunction(url)
 		);
 
 		return {
-			getValue: async () => util.bytesToObject<T>(await getValue(), proto),
-			lock,
-			setValue: async value => setValue(await util.toBytes({data: value, proto})),
-			updateValue: async f => updateValue(
-				async value => util.toBytes({
-					data: await f(util.bytesToObject<T>(value, proto)),
-					proto
-				})
+			getValue: async () => (async () =>
+				this.open(url, proto, publicData, symmetricKey, await asyncValue.getValue())
+			)().catch(
+				() => defaultValue
 			),
-			watch: memoize(
-				() => this.watchValueObject<T>(url, proto, defaultValue, publicData).map<
-					{timestamp: number; value: T},
-					T
-				>(
-					o => o.value
-				)
+			lock: asyncValue.lock,
+			setValue: async value => this.setItemInternal(
+				url,
+				proto,
+				value,
+				publicData,
+				'set',
+				async (_, v) => asyncValue.setValue(v)
+			),
+			updateValue: async f => asyncValue.updateValue(async value => this.setItemInternal(
+				url,
+				proto,
+				await f(await this.open(url, proto, publicData, symmetricKey, value)),
+				publicData,
+				'set',
+				async (_, v) => v
+			)),
+			watch: memoize(() =>
+				this.watch(url, proto, publicData).map<ITimedValue<T>, T>(o => o.value)
 			)
 		};
 	}
 
-	/**
-	 * Gets an async value as a string.
-	 * @see getAsyncValue
-	 */
-	public getAsyncValueString (
-		url: string,
-		publicData: boolean = false,
-		defaultValue: () => string|Promise<string> = () => ''
-	) : IAsyncValue<string> {
-		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
-			url,
-			publicData,
-			async () => util.toBytes(await defaultValue())
-		);
-
-		return {
-			getValue: async () => util.bytesToString(await getValue()),
-			lock,
-			setValue: async value => setValue(await util.toBytes(value)),
-			updateValue: async f => updateValue(
-				async value => util.toBytes(await f(util.bytesToString(value)))
-			),
-			watch: memoize(
-				() => this.watchValueString(url, publicData, defaultValue).map<
-					{timestamp: number; value: string},
-					string
-				>(
-					o => o.value
-				)
-			)
-		};
-	}
-
-	/**
-	 * Gets an async value as a base64 data URI.
-	 * @see getAsyncValue
-	 */
-	public getAsyncValueURI (
-		url: string,
-		publicData: boolean = false,
-		defaultValue: () => string|Promise<string> = () => 'data:text/plain;base64,'
-	) : IAsyncValue<string> {
-		const {getValue, lock, setValue, updateValue}	= this.getAsyncValue(
-			url,
-			publicData,
-			async () => util.toBytes(await defaultValue())
-		);
-
-		return {
-			getValue: async () => util.bytesToDataURI(await getValue()),
-			lock,
-			setValue: async value => setValue(await util.toBytes(value)),
-			updateValue: async f => updateValue(
-				async value => util.toBytes(await f(util.bytesToDataURI(value)))
-			),
-			watch: memoize(
-				() => this.watchValueURI(url, publicData, defaultValue).map<
-					{timestamp: number; value: string},
-					string
-				>(
-					o => o.value
-				)
-			)
-		};
-	}
-
-	/**
-	 * Gets an item's value.
-	 * @param publicData If true, validates the item's signature. Otherwise, decrypts the item.
-	 */
-	public async getItem (url: string, publicData: boolean = false) : Promise<Uint8Array> {
-		return (await (await this.getItemInternal(url, publicData, 'get')).result).value;
-	}
-
-	/**
-	 * Gets a value as a boolean.
-	 * @see getItem
-	 */
-	public async getItemBoolean (url: string, publicData: boolean = false) : Promise<boolean> {
-		return util.bytesToBoolean(await this.getItem(url, publicData));
-	}
-
-	/**
-	 * Gets a value as a number.
-	 * @see getItem
-	 */
-	public async getItemNumber (url: string, publicData: boolean = false) : Promise<number> {
-		return util.bytesToNumber(await this.getItem(url, publicData));
-	}
-
-	/**
-	 * Gets a value as an object.
-	 * @see getItem
-	 */
-	public async getItemObject<T> (
+	/** Gets an item's value. */
+	public async getItem<T> (
 		url: string,
 		proto: IProto<T>,
 		publicData: boolean = false
 	) : Promise<T> {
-		return util.bytesToObject<T>(await this.getItem(url, publicData), proto);
-	}
-
-	/**
-	 * Gets a value as a string.
-	 * @see getItem
-	 */
-	public async getItemString (url: string, publicData: boolean = false) : Promise<string> {
-		return util.bytesToString(await this.getItem(url, publicData));
-	}
-
-	/**
-	 * Gets a value as a base64 data URI.
-	 * @see getItem
-	 */
-	public async getItemURI (url: string, publicData: boolean = false) : Promise<string> {
-		return util.bytesToDataURI(await this.getItem(url, publicData));
-	}
-
-	/**
-	 * Gets an async value that may be undefined.
-	 * @see getAsyncValue
-	 */
-	public getMaybeAsyncValue (
-		url: string,
-		publicData: boolean = false
-	) : IAsyncValue<Uint8Array|undefined> {
-		const {getValue, lock, setValue}	=
-			this.getAsyncValue(url, publicData)
-		;
-
-		const localLock	= util.lockFunction();
-
-		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
-		/* tslint:disable-next-line:no-unnecessary-local-variable */
-		const maybeAsyncValue: IAsyncValue<Uint8Array|undefined>	= {
-			getValue: async () => localLock(async () => {
-				await this.waitForUnlock(url);
-				if (!(await this.hasItem(url))) {
-					return;
-				}
-				return getValue();
-			}),
-			lock,
-			setValue: async value => localLock(async () => {
-				if (value) {
-					await setValue(value);
-				}
-				else {
-					await this.removeItem(url);
-				}
-			}),
-			updateValue: async f => maybeAsyncValue.lock(async () => {
-				const value	= await maybeAsyncValue.getValue();
-				let newValue: Uint8Array|undefined;
-				try {
-					newValue	= await f(value);
-				}
-				catch (_) {
-					return;
-				}
-				if (newValue) {
-					maybeAsyncValue.setValue(newValue);
-				}
-				else {
-					await this.removeItem(url);
-				}
-			}),
-			watch: memoize(() => this.watchMaybe(url).map<
-				{timestamp: number; value: Uint8Array}|undefined,
-				Uint8Array|undefined
-			>(o =>
-				o === undefined ? undefined : o.value
-			))
-		};
-
-		return maybeAsyncValue;
-	}
-
-	/**
-	 * Gets an async value as a possibly-undefined boolean.
-	 * @see getMaybeAsyncValue
-	 */
-	public getMaybeAsyncValueBoolean (
-		url: string,
-		publicData: boolean = false
-	) : IAsyncValue<boolean|undefined> {
-		const {getValue, lock, setValue, updateValue}	= this.getMaybeAsyncValue(url, publicData);
-
-		return {
-			getValue: async () => {
-				const value	= await getValue();
-				return value === undefined ? undefined : util.bytesToBoolean(value);
-			},
-			lock,
-			setValue: async value => setValue(
-				value === undefined ? undefined : await util.toBytes(value)
-			),
-			updateValue: async f => updateValue(async value => {
-				const newValue	= await f(
-					value === undefined ? undefined : util.bytesToBoolean(value)
-				);
-				return newValue === undefined ? undefined : util.toBytes(newValue);
-			}),
-			watch: memoize(() => this.watchMaybeBoolean(url, publicData).map<
-				{timestamp: number; value: boolean}|undefined,
-				boolean|undefined
-			>(o =>
-				o === undefined ? undefined : o.value
-			))
-		};
-	}
-
-	/**
-	 * Gets an async value as a possibly-undefined number.
-	 * @see getMaybeAsyncValue
-	 */
-	public getMaybeAsyncValueNumber (
-		url: string,
-		publicData: boolean = false
-	) : IAsyncValue<number|undefined> {
-		const {getValue, lock, setValue, updateValue}	= this.getMaybeAsyncValue(url, publicData);
-
-		return {
-			getValue: async () => {
-				const value	= await getValue();
-				return value === undefined ? undefined : util.bytesToNumber(value);
-			},
-			lock,
-			setValue: async value => setValue(
-				value === undefined ? undefined : await util.toBytes(value)
-			),
-			updateValue: async f => updateValue(async value => {
-				const newValue	= await f(
-					value === undefined ? undefined : util.bytesToNumber(value)
-				);
-				return newValue === undefined ? undefined : util.toBytes(newValue);
-			}),
-			watch: memoize(() => this.watchMaybeNumber(url, publicData).map<
-				{timestamp: number; value: number}|undefined,
-				number|undefined
-			>(o =>
-				o === undefined ? undefined : o.value
-			))
-		};
-	}
-
-	/**
-	 * Gets an async value as a possibly-undefined object.
-	 * @see getMaybeAsyncValue
-	 */
-	public getMaybeAsyncValueObject<T> (
-		url: string,
-		proto: IProto<T>,
-		publicData: boolean = false
-	) : IAsyncValue<T|undefined> {
-		const {getValue, lock, setValue, updateValue}	= this.getMaybeAsyncValue(url, publicData);
-
-		return {
-			getValue: async () => {
-				const value	= await getValue();
-				return value === undefined ? undefined : util.bytesToObject<T>(value, proto);
-			},
-			lock,
-			setValue: async value => setValue(
-				value === undefined ? undefined : await util.toBytes({data: value, proto})
-			),
-			updateValue: async f => updateValue(async value => {
-				const newValue	= await f(
-					value === undefined ? undefined : util.bytesToObject<T>(value, proto)
-				);
-				return newValue === undefined ? undefined : util.toBytes({data: newValue, proto});
-			}),
-			watch: memoize(() => this.watchMaybeObject<T>(url, proto, publicData).map<
-				{timestamp: number; value: T}|undefined,
-				T|undefined
-			>(o =>
-				o === undefined ? undefined : o.value
-			))
-		};
-	}
-
-	/**
-	 * Gets an async value as a possibly-undefined string.
-	 * @see getMaybeAsyncValue
-	 */
-	public getMaybeAsyncValueString (
-		url: string,
-		publicData: boolean = false
-	) : IAsyncValue<string|undefined> {
-		const {getValue, lock, setValue, updateValue}	= this.getMaybeAsyncValue(url, publicData);
-
-		return {
-			getValue: async () => {
-				const value	= await getValue();
-				return value === undefined ? undefined : util.bytesToString(value);
-			},
-			lock,
-			setValue: async value => setValue(
-				value === undefined ? undefined : await util.toBytes(value)
-			),
-			updateValue: async f => updateValue(async value => {
-				const newValue	= await f(
-					value === undefined ? undefined : util.bytesToString(value)
-				);
-				return newValue === undefined ? undefined : util.toBytes(newValue);
-			}),
-			watch: memoize(() => this.watchMaybeString(url, publicData).map<
-				{timestamp: number; value: string}|undefined,
-				string|undefined
-			>(o =>
-				o === undefined ? undefined : o.value
-			))
-		};
-	}
-
-	/**
-	 * Gets an async value as a possibly-undefined base64 data URI.
-	 * @see getMaybeAsyncValue
-	 */
-	public getMaybeAsyncValueURI (
-		url: string,
-		publicData: boolean = false
-	) : IAsyncValue<string|undefined> {
-		const {getValue, lock, setValue, updateValue}	= this.getMaybeAsyncValue(url, publicData);
-
-		return {
-			getValue: async () => {
-				const value	= await getValue();
-				return value === undefined ? undefined : util.bytesToDataURI(value);
-			},
-			lock,
-			setValue: async value => setValue(
-				value === undefined ? undefined : await util.toBytes(value)
-			),
-			updateValue: async f => updateValue(async value => {
-				const newValue	= await f(
-					value === undefined ? undefined : util.bytesToDataURI(value)
-				);
-				return newValue === undefined ? undefined : util.toBytes(newValue);
-			}),
-			watch: memoize(() => this.watchMaybeURI(url, publicData).map<
-				{timestamp: number; value: string}|undefined,
-				string|undefined
-			>(o =>
-				o === undefined ? undefined : o.value
-			))
-		};
+		return (await (await this.getItemInternal(url, proto, publicData, 'get')).result).value;
 	}
 
 	/** Gets public keys belonging to the specified user. */
 	public async getUserPublicKeys (username: string) : Promise<IAGSEPKICert> {
-		const certificate	= await this.databaseService.getItem(`users/${username}/certificate`);
-		const dataView		= new DataView(certificate.buffer);
+		if (!username) {
+			throw new Error('Invalid username.');
+		}
 
+		const certificate	= await this.databaseService.getItem(
+			`users/${username}/certificate`,
+			BinaryProto
+		);
+
+		const dataView			= new DataView(certificate.buffer, certificate.byteOffset);
 		const rsaKeyIndex		= dataView.getUint32(0, true);
 		const sphincsKeyIndex	= dataView.getUint32(4, true);
-		const signed			= new Uint8Array(certificate.buffer, 8);
+		const signed			= new Uint8Array(certificate.buffer, certificate.byteOffset + 8);
 
 		if (
 			rsaKeyIndex >= this.agsePublicSigningKeys.rsa.length ||
@@ -847,15 +289,15 @@ export class AccountDatabaseService {
 			throw new Error('Invalid AGSE-PKI certificate: bad key index.');
 		}
 
-		const verified	= util.bytesToObject<IAGSEPKICert>(
+		const verified	= util.deserialize<IAGSEPKICert>(
+			AGSEPKICert,
 			await this.potassiumService.sign.open(
 				signed,
 				await this.potassiumService.sign.importSuperSphincsPublicKeys(
 					this.agsePublicSigningKeys.rsa[rsaKeyIndex],
 					this.agsePublicSigningKeys.sphincs[sphincsKeyIndex]
 				)
-			),
-			AGSEPKICert
+			)
 		);
 
 		if (verified.username !== username) {
@@ -928,22 +370,20 @@ export class AccountDatabaseService {
 		};
 	}
 
-	/**
-	 * Pushes an item to a list.
-	 * @param publicData If true, signs the item. Otherwise, encrypts the item.
-	 * @returns Item URL.
-	 */
-	public async pushItem<T = never> (
+	/** Pushes an item to a list. */
+	public async pushItem<T> (
 		url: string,
-		value: DataType<T>,
+		proto: IProto<T>,
+		value: T,
 		publicData: boolean = false
 	) : Promise<{hash: string; url: string}> {
 		return this.setItemInternal(
 			url,
+			proto,
 			value,
 			publicData,
 			'push',
-			async (u, v) => this.databaseService.pushItem(u, v)
+			async (u, v) => this.databaseService.pushItem(u, BinaryProto, v)
 		);
 	}
 
@@ -958,32 +398,28 @@ export class AccountDatabaseService {
 		return this.databaseService.removeItem(url);
 	}
 
-	/**
-	 * Sets an item's value.
-	 * @param publicData If true, signs the item. Otherwise, encrypts the item.
-	 * @returns Item URL.
-	 */
-	public async setItem<T = never> (
+	/** Sets an item's value. */
+	public async setItem<T> (
 		url: string,
-		value: DataType<T>,
+		proto: IProto<T>,
+		value: T,
 		publicData: boolean = false
 	) : Promise<{hash: string; url: string}> {
 		return this.lock(url, async () => this.setItemInternal(
 			url,
+			proto,
 			value,
 			publicData,
 			'set',
-			async (u, v) => this.databaseService.setItem(u, v)
+			async (u, v) => this.databaseService.setItem(u, BinaryProto, v)
 		));
 	}
 
-	/**
-	 * Uploads value and gives progress.
-	 * @param publicData If true, signs the item. Otherwise, encrypts the item.
-	 */
-	public uploadItem<T = never> (
+	/** Uploads value and gives progress. */
+	public uploadItem<T> (
 		url: string,
-		value: DataType<T>,
+		proto: IProto<T>,
+		value: T,
 		publicData: boolean = false
 	) : {
 		cancel: () => void;
@@ -1000,10 +436,11 @@ export class AccountDatabaseService {
 		const result	= (async () => {
 			const uploadTask	= await this.setItemInternal(
 				url,
+				proto,
 				value,
 				publicData,
 				'upload',
-				async (u, v) => this.databaseService.uploadItem(u, v)
+				async (u, v) => this.databaseService.uploadItem(u, BinaryProto, v)
 			);
 
 			cancelPromise.then(() => { uploadTask.cancel(); });
@@ -1043,293 +480,43 @@ export class AccountDatabaseService {
 		};
 	}
 
-	/** Subscribes to a list of values. */
-	public watchList<T = Uint8Array> (
-		url: string,
-		publicData: boolean = false,
-		mapper: (value: Uint8Array) => T = (value: Uint8Array&T) => value
-	) : Observable<{timestamp: number; value: T}[]> {
-		url	= this.processURL(url);
-
-		if (publicData) {
-			const username	= this.getUsernameFromURL(url);
-
-			return this.databaseService.watchList<T>(url, async data =>
-				mapper(await this.openPublicData(username, data))
-			);
-		}
-		else if (this.current) {
-			const symmetricKey	= this.current.keys.symmetricKey;
-
-			return this.databaseService.watchList<T>(url, async data =>
-				mapper(await this.potassiumService.secretBox.open(data, symmetricKey))
-			);
-		}
-		else {
-			throw new Error(`User not signed in. Cannot watch private data list at ${url}.`);
-		}
-	}
-
-	/**
-	 * Subscribes to a list of values as booleans.
-	 * @see watchList
-	 */
-	public watchListBoolean (url: string, publicData: boolean = false) : Observable<{
-		timestamp: number;
-		value: boolean;
-	}[]> {
-		return this.watchList<boolean>(url, publicData, value => util.bytesToBoolean(value));
-	}
-
-	/**
-	 * Subscribes to a list of values as numbers.
-	 * @see watchList
-	 */
-	public watchListNumber (url: string, publicData: boolean = false) : Observable<{
-		timestamp: number;
-		value: number;
-	}[]> {
-		return this.watchList<number>(url, publicData, value => util.bytesToNumber(value));
-	}
-
-	/**
-	 * Subscribes to a list of values as objects.
-	 * @see watchList
-	 */
-	public watchListObject<T> (
-		url: string,
-		proto: IProto<T>,
-		publicData: boolean = false
-	) : Observable<{timestamp: number; value: T}[]> {
-		return this.watchList<T>(url, publicData, value => util.bytesToObject<T>(value, proto));
-	}
-
-	/**
-	 * Subscribes to a list of values as strings.
-	 * @see watchList
-	 */
-	public watchListString (url: string, publicData: boolean = false) : Observable<{
-		timestamp: number;
-		value: string;
-	}[]> {
-		return this.watchList<string>(url, publicData, value => util.bytesToString(value));
-	}
-
-	/**
-	 * Subscribes to a list of values as base64 data URIs.
-	 * @see watchList
-	 */
-	public watchListURI (url: string, publicData: boolean = false) : Observable<{
-		timestamp: number;
-		value: string;
-	}[]> {
-		return this.watchList<string>(url, publicData, value => util.bytesToDataURI(value));
-	}
-
-	/** Subscribes to a possibly-undefined value. */
-	public watchMaybe (
-		url: string,
-		publicData: boolean = false
-	) : Observable<{timestamp: number; value: Uint8Array}|undefined> {
-		url	= this.processURL(url);
-
-		if (publicData) {
-			const username	= this.getUsernameFromURL(url);
-
-			return this.databaseService.watchMaybe(url).flatMap(async data =>
-				data === undefined ? undefined : {
-					timestamp: data.timestamp,
-					value: await this.openPublicData(username, data.value)
-				}
-			);
-		}
-		else if (this.current) {
-			const symmetricKey	= this.current.keys.symmetricKey;
-
-			return this.databaseService.watchMaybe(url).flatMap(async data =>
-				data === undefined ? undefined : {
-					timestamp: data.timestamp,
-					value: await this.potassiumService.secretBox.open(data.value, symmetricKey)
-				}
-			);
-		}
-		else {
-			throw new Error(`User not signed in. Cannot watch private data at ${url}.`);
-		}
-	}
-
-	/**
-	 * Subscribes to a possibly-undefined value as a boolean.
-	 * @see watchMaybe
-	 */
-	public watchMaybeBoolean (
-		url: string,
-		publicData: boolean = false
-	) : Observable<{timestamp: number; value: boolean}|undefined> {
-		return this.watchMaybe(url, publicData).map(o =>
-			o === undefined ? undefined : {
-				timestamp: o.timestamp,
-				value: util.bytesToBoolean(o.value)
-			}
-		);
-	}
-
-	/**
-	 * Subscribes to a possibly-undefined value as a number.
-	 * @see watchMaybe
-	 */
-	public watchMaybeNumber (
-		url: string,
-		publicData: boolean = false
-	) : Observable<{timestamp: number; value: number}|undefined> {
-		return this.watchMaybe(url, publicData).map(o =>
-			o === undefined ? undefined : {
-				timestamp: o.timestamp,
-				value: util.bytesToNumber(o.value)
-			}
-		);
-	}
-
-	/**
-	 * Subscribes to a possibly-undefined value as an object.
-	 * @see watchMaybe
-	 */
-	public watchMaybeObject<T> (
-		url: string,
-		proto: IProto<T>,
-		publicData: boolean = false
-	) : Observable<{timestamp: number; value: T}|undefined> {
-		return this.watchMaybe(url, publicData).map(o =>
-			o === undefined ? undefined : {
-				timestamp: o.timestamp,
-				value: util.bytesToObject<T>(o.value, proto)
-			}
-		);
-	}
-
-	/**
-	 * Subscribes to a possibly-undefined value as a string.
-	 * @see watchMaybe
-	 */
-	public watchMaybeString (
-		url: string,
-		publicData: boolean = false
-	) : Observable<{timestamp: number; value: string}|undefined> {
-		return this.watchMaybe(url, publicData).map(o =>
-			o === undefined ? undefined : {
-				timestamp: o.timestamp,
-				value: util.bytesToString(o.value)
-			}
-		);
-	}
-
-	/**
-	 * Subscribes to a possibly-undefined value as a base64 data URI.
-	 * @see watchMaybe
-	 */
-	public watchMaybeURI (
-		url: string,
-		publicData: boolean = false
-	) : Observable<{timestamp: number; value: string}|undefined> {
-		return this.watchMaybe(url, publicData).map(o =>
-			o === undefined ? undefined : {
-				timestamp: o.timestamp,
-				value: util.bytesToDataURI(o.value)
-			}
-		);
-	}
-
 	/** Subscribes to a value. */
-	public watchValue (
-		url: string,
-		publicData: boolean = false,
-		defaultValue: () => Uint8Array|Promise<Uint8Array> = () => new Uint8Array([])
-	) : Observable<{timestamp: number; value: Uint8Array}> {
-		return this.watchMaybe(url, publicData).flatMap(async value =>
-			value === undefined ?
-				{timestamp: await util.timestamp(), value: await defaultValue()} :
-				value
-		);
-	}
-
-	/**
-	 * Subscribes to a value as a boolean.
-	 * @see watchValue
-	 */
-	public watchValueBoolean (
-		url: string,
-		publicData: boolean = false,
-		defaultValue: () => boolean|Promise<boolean> = () => false
-	) : Observable<{timestamp: number; value: boolean}> {
-		return this.watchMaybeBoolean(url, publicData).flatMap(async value =>
-			value === undefined ?
-				{timestamp: await util.timestamp(), value: await defaultValue()} :
-				value
-		);
-	}
-
-	/**
-	 * Subscribes to a value as a number.
-	 * @see watchValue
-	 */
-	public watchValueNumber (
-		url: string,
-		publicData: boolean = false,
-		defaultValue: () => number|Promise<number> = () => 0
-	) : Observable<{timestamp: number; value: number}> {
-		return this.watchMaybeNumber(url, publicData).flatMap(async value =>
-			value === undefined ?
-				{timestamp: await util.timestamp(), value: await defaultValue()} :
-				value
-		);
-	}
-
-	/**
-	 * Subscribes to a value as an object.
-	 * @see watchValue
-	 */
-	public watchValueObject<T> (
+	public watch<T> (
 		url: string,
 		proto: IProto<T>,
-		defaultValue: () => T|Promise<T>,
 		publicData: boolean = false
-	) : Observable<{timestamp: number; value: T}> {
-		return this.watchMaybeObject<T>(url, proto, publicData).flatMap(async value =>
-			value === undefined ?
-				{timestamp: await util.timestamp(), value: await defaultValue()} :
-				value
+	) : Observable<ITimedValue<T>> {
+		url	= this.processURL(url);
+
+		const symmetricKey	= this.getSymmetricKey(
+			publicData,
+			`User not signed in. Cannot watch private data at ${url}.`
 		);
+
+		return this.databaseService.watch(url, BinaryProto).flatMap(async data => ({
+			timestamp: data.timestamp,
+			value: await this.open(url, proto, publicData, symmetricKey, data.value)
+		}));
 	}
 
-	/**
-	 * Subscribes to a value as a string.
-	 * @see watchValue
-	 */
-	public watchValueString (
+	/** Subscribes to a list of values. */
+	public watchList<T> (
 		url: string,
-		publicData: boolean = false,
-		defaultValue: () => string|Promise<string> = () => ''
-	) : Observable<{timestamp: number; value: string}> {
-		return this.watchMaybeString(url, publicData).flatMap(async value =>
-			value === undefined ?
-				{timestamp: await util.timestamp(), value: await defaultValue()} :
-				value
-		);
-	}
+		proto: IProto<T>,
+		publicData: boolean = false
+	) : Observable<ITimedValue<T>[]> {
+		url	= this.processURL(url);
 
-	/**
-	 * Subscribes to a value as a base64 data URI.
-	 * @see watchValue
-	 */
-	public watchValueURI (
-		url: string,
-		publicData: boolean = false,
-		defaultValue: () => string|Promise<string> = () => 'data:text/plain;base64,'
-	) : Observable<{timestamp: number; value: string}> {
-		return this.watchMaybeURI(url, publicData).flatMap(async value =>
-			value === undefined ?
-				{timestamp: await util.timestamp(), value: await defaultValue()} :
-				value
+		const symmetricKey	= this.getSymmetricKey(
+			publicData,
+			`User not signed in. Cannot watch private data list at ${url}.`
+		);
+
+		return this.databaseService.watchList(url, BinaryProto).flatMap(async list =>
+			Promise.all(list.map(async data => ({
+				timestamp: data.timestamp,
+				value: await this.open(url, proto, publicData, symmetricKey, data.value)
+			})))
 		);
 	}
 
