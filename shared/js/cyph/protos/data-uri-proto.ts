@@ -11,22 +11,22 @@ export class DataURIProto {
 		DataURIProto.prefix
 	);
 
-	/** @inheritDoc */
+	/** @see IProto.create */
 	public static create () : string {
 		return DataURIProto.prefix;
 	}
 
-	/** @inheritDoc */
+	/** @see IProto.decode */
 	public static decode (bytes: Uint8Array) : string {
 		return potassiumUtil.toString(bytes);
 	}
 
-	/** @inheritDoc */
+	/** @see IProto.encode */
 	public static encode (data: string) : Uint8Array {
 		return potassiumUtil.fromBase64(data.slice(DataURIProto.prefix.length));
 	}
 
-	/** @inheritDoc */
+	/** @see IProto.verify */
 	public static verify (data: string) : string|void {
 		if (
 			data.length >= DataURIProto.prefix.length &&

@@ -168,3 +168,30 @@ message SessionTransfer {
 	/** File URL. */
 	required string url = 12;
 }
+
+
+/* Generic/primitive types */
+
+message BooleanArray {
+	repeated bool data = 1;
+}
+
+message BooleanValue {
+	required bool data = 1;
+}
+
+message NumberArray {
+	repeated double data = 1;
+}
+
+message NumberValue {
+	required double data = 1;
+}
+
+message StringArray {
+	repeated string data = 1;
+}
+
+message StringValue {
+	required string data = 1;
+}
