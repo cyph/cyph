@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ChannelMessage} from '../../proto';
+import {ChannelMessage, IChannelMessage} from '../../proto';
 import {LockFunction} from '../lock-function-type';
 import {StringProto} from '../protos';
 import {IChannelHandlers} from '../session';
@@ -51,8 +51,11 @@ export class ChannelService {
 		this.databaseService.setDisconnectTracker(`${url}/disconnects/${this.userId}`);
 
 		let isConnected	= false;
-		const usersSubscription	= this.databaseService.watchList(`${url}/users`, StringProto).
-			subscribe(users => {
+		const usersSubscription	= this.databaseService.watchList(
+			`${url}/users`,
+			StringProto
+		).subscribe(
+			users => {
 				if (users.length < 1) {
 					return;
 				}
@@ -65,18 +68,23 @@ export class ChannelService {
 				}
 				usersSubscription.unsubscribe();
 				handlers.onConnect();
-			})
-		;
+			},
+			err => {
+				handlers.onClose();
+				throw err;
+			},
+			() => {
+				handlers.onClose();
+			}
+		);
 
-		let i	= 0;
-		this.databaseService.watchList(`${url}/messages`, ChannelMessage).subscribe(
-			messages => {
-				for (; i < messages.length ; ++i) {
-					const message	= messages[i].value;
-					if (message.author === this.userId) {
-						continue;
-					}
-					handlers.onMessage(message.cyphertext);
+		this.databaseService.watchListPushes<IChannelMessage>(
+			`${url}/messages`,
+			ChannelMessage
+		).subscribe(
+			message => {
+				if (message.value.author !== this.userId) {
+					handlers.onMessage(message.value.cyphertext);
 				}
 			},
 			err => {
