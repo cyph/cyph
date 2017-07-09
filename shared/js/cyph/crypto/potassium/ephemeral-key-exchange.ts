@@ -1,6 +1,6 @@
 import {sodium} from 'libsodium';
 import {rlwe} from 'rlwe';
-import {IKeyPair} from '../ikey-pair';
+import {IKeyPair} from '../../../proto';
 import {Hash} from './hash';
 import {IEphemeralKeyExchange} from './iephemeral-key-exchange';
 import {potassiumUtil} from './potassium-util';
@@ -36,7 +36,6 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 		;
 
 		return {
-			keyType: 'potassium-ephemeral',
 			privateKey: potassiumUtil.concatMemory(
 				true,
 				rlweKeyPair.privateKey,

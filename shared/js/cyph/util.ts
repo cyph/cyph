@@ -46,6 +46,9 @@ export class Util {
 
 
 	/** @ignore */
+	private readonly dataURIPrefix: string	= 'data:application/octet-stream;base64,';
+
+	/** @ignore */
 	private readonly timestampData	= {
 		last: 0,
 		offset: (async () => {
@@ -193,7 +196,7 @@ export class Util {
 
 	/** Converts byte array produced by toBytes into a base64 data URI. */
 	public bytesToDataURI (bytes: Uint8Array, clearInput: boolean = true) : string {
-		const value	= 'data:application/octet-stream;base64,' + potassiumUtil.toBase64(bytes);
+		const value	= this.dataURIPrefix + potassiumUtil.toBase64(bytes);
 		if (clearInput) {
 			potassiumUtil.clearMemory(bytes);
 		}
@@ -586,7 +589,15 @@ export class Util {
 						typeof data === 'number' ?
 							new Uint8Array(new Float64Array([data]).buffer) :
 							typeof data === 'string' ?
-								potassiumUtil.fromString(data) :
+								(
+									data.length >= this.dataURIPrefix.length &&
+									data.slice(0, this.dataURIPrefix.length) === this.dataURIPrefix
+								) ?
+									potassiumUtil.fromBase64(
+										data.slice(0, this.dataURIPrefix.length)
+									) :
+									potassiumUtil.fromString(data)
+								:
 								(() => {
 									const err	= data.proto.verify(data.data);
 									if (err) {

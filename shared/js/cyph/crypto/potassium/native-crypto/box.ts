@@ -1,4 +1,4 @@
-import {IKeyPair} from '../../ikey-pair';
+import {IKeyPair} from '../../../../proto';
 import {potassiumUtil} from '../potassium-util';
 import {importHelper} from './import-helper';
 import {oneTimeAuth} from './one-time-auth';
@@ -52,7 +52,6 @@ export class Box {
 		));
 
 		return {
-			keyType: this.algorithm.name,
 			privateKey,
 			publicKey
 		};
