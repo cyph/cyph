@@ -7,8 +7,8 @@ import {AGSEPKICert, IAGSEPKICert, IKeyPair} from '../../../proto';
 import {User} from '../../account/user';
 import {DataType} from '../../data-type';
 import {IAsyncValue} from '../../iasync-value';
+import {IProto} from '../../iproto';
 import {LockFunction} from '../../lock-function-type';
-import {Proto} from '../../proto-type';
 import {util} from '../../util';
 import {DatabaseService} from '../database.service';
 import {PotassiumService} from './potassium.service';
@@ -243,7 +243,7 @@ export class AccountDatabaseService {
 	 * Downloads a value as an object.
 	 * @see downloadItem
 	 */
-	public downloadItemObject<T> (url: string, proto: Proto<T>, publicData: boolean = false) : {
+	public downloadItemObject<T> (url: string, proto: IProto<T>, publicData: boolean = false) : {
 		progress: Observable<number>;
 		result: Promise<{timestamp: number; value: T}>;
 	} {
@@ -451,7 +451,7 @@ export class AccountDatabaseService {
 	 */
 	public getAsyncValueObject<T> (
 		url: string,
-		proto: Proto<T>,
+		proto: IProto<T>,
 		defaultValue: () => T|Promise<T>,
 		publicData: boolean = false
 	) : IAsyncValue<T> {
@@ -578,7 +578,7 @@ export class AccountDatabaseService {
 	 */
 	public async getItemObject<T> (
 		url: string,
-		proto: Proto<T>,
+		proto: IProto<T>,
 		publicData: boolean = false
 	) : Promise<T> {
 		return util.bytesToObject<T>(await this.getItem(url, publicData), proto);
@@ -734,7 +734,7 @@ export class AccountDatabaseService {
 	 */
 	public getMaybeAsyncValueObject<T> (
 		url: string,
-		proto: Proto<T>,
+		proto: IProto<T>,
 		publicData: boolean = false
 	) : IAsyncValue<T|undefined> {
 		const {getValue, lock, setValue, updateValue}	= this.getMaybeAsyncValue(url, publicData);
@@ -1098,7 +1098,7 @@ export class AccountDatabaseService {
 	 */
 	public watchListObject<T> (
 		url: string,
-		proto: Proto<T>,
+		proto: IProto<T>,
 		publicData: boolean = false
 	) : Observable<{timestamp: number; value: T}[]> {
 		return this.watchList<T>(url, publicData, value => util.bytesToObject<T>(value, proto));
@@ -1196,7 +1196,7 @@ export class AccountDatabaseService {
 	 */
 	public watchMaybeObject<T> (
 		url: string,
-		proto: Proto<T>,
+		proto: IProto<T>,
 		publicData: boolean = false
 	) : Observable<{timestamp: number; value: T}|undefined> {
 		return this.watchMaybe(url, publicData).map(o =>
@@ -1290,7 +1290,7 @@ export class AccountDatabaseService {
 	 */
 	public watchValueObject<T> (
 		url: string,
-		proto: Proto<T>,
+		proto: IProto<T>,
 		defaultValue: () => T|Promise<T>,
 		publicData: boolean = false
 	) : Observable<{timestamp: number; value: T}> {

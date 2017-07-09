@@ -1,6 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {AccountFileRecord, AccountFileRecordList, IAccountFileRecord, IAccountFileRecordList} from '../../proto';
+import {
+	AccountFileRecord,
+	AccountFileRecordList,
+	IAccountFileRecord,
+	IAccountFileRecordList
+} from '../../proto';
 import {IAsyncValue} from '../iasync-value';
 import {util} from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -34,7 +39,9 @@ export class AccountFilesService {
 	};
 
 	/** @ignore */
-	private filterFiles (filterRecordType: AccountFileRecord.RecordType) : Observable<IAccountFileRecord[]> {
+	private filterFiles (
+		filterRecordType: AccountFileRecord.RecordType
+	) : Observable<IAccountFileRecord[]> {
 		return this.files.watch().map(files =>
 			(files.records || []).filter(o =>
 				!filterRecordType || o.recordType === filterRecordType
