@@ -176,14 +176,11 @@ export abstract class SessionService implements ISessionService {
 
 				const cyphertextTimestamp: number	= data.timestamp;
 
-				const messages	= (() => {
-					try {
-						return util.deserialize(SessionMessageList, data.plaintext).messages;
-					}
-					catch (_) {
-						return [];
-					}
-				})();
+				const messages	= await (async () =>
+					(await util.deserialize(SessionMessageList, data.plaintext)).messages
+				)().catch(
+					() => []
+				);
 
 				for (const message of messages) {
 					/* Discard messages without valid timestamps */

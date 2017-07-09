@@ -9,13 +9,13 @@ export class GenericArrayProto<T> implements IProto<T[]> {
 	}
 
 	/** @inheritDoc */
-	public decode (bytes: Uint8Array) : T[] {
-		return this.proto.decode(bytes).data || [];
+	public async decode (bytes: Uint8Array) : Promise<T[]> {
+		return (await this.proto.decode(bytes)).data || [];
 	}
 
 	/** @inheritDoc */
-	public encode (data: T[]) : Uint8Array {
-		const o	= this.proto.encode({data});
+	public async encode (data: T[]) : Promise<Uint8Array> {
+		const o	= await this.proto.encode({data});
 		return o instanceof Uint8Array ? o : o.finish();
 	}
 

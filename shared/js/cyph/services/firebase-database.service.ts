@@ -149,7 +149,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					const localData	= await this.cacheGet({hash});
 					progress.next(100);
 					progress.complete();
-					return {timestamp, value: util.deserialize(proto, localData)};
+					return {timestamp, value: await util.deserialize(proto, localData)};
 				}
 				catch (_) {}
 
@@ -178,7 +178,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				progress.next(100);
 				progress.complete();
 				this.cacheSet(url, value, hash);
-				return {timestamp, value: util.deserialize(proto, value)};
+				return {timestamp, value: await util.deserialize(proto, value)};
 			})()
 		};
 	}
