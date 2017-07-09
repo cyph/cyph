@@ -26,13 +26,13 @@ export class SessionMessage implements ISessionMessage {
 		public readonly event: string = '',
 
 		additionalData?: {
-			bytes?: Uint8Array,
-			capabilities?: ISessionCapabilities,
-			chatState?: ISessionChatState,
-			command?: ISessionCommand,
-			text?: ISessionText,
-			textConfirmation?: ISessionTextConfirmation,
-			transfer?: ISessionTransfer
+			bytes?: Uint8Array;
+			capabilities?: ISessionCapabilities;
+			chatState?: ISessionChatState;
+			command?: ISessionCommand;
+			text?: ISessionText;
+			textConfirmation?: ISessionTextConfirmation;
+			transfer?: ISessionTransfer;
 		}
 	) {
 		if (!additionalData) {

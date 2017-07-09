@@ -1,5 +1,5 @@
-import {users} from '../session/enums';
 import {ISessionTransfer} from '../../proto';
+import {users} from '../session/enums';
 import {util} from '../util';
 import {SessionTransferAnswer} from './session-transfer-answer';
 

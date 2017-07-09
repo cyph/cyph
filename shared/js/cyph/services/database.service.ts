@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {DataType} from '../data-type';
+import {IProto} from '../iproto';
 import {LockFunction} from '../lock-function-type';
-import {Proto} from '../proto-type';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {util} from '../util';
 
@@ -74,7 +74,7 @@ export class DatabaseService extends DataManagerService {
 	 * Downloads a value as an object.
 	 * @see downloadItem
 	 */
-	public downloadItemObject<T> (url: string, proto: Proto<T>) : {
+	public downloadItemObject<T> (url: string, proto: IProto<T>) : {
 		progress: Observable<number>;
 		result: Promise<{timestamp: number; value: T}>;
 	} {
@@ -289,7 +289,7 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchListObject<T> (
 		url: string,
-		proto: Proto<T>
+		proto: IProto<T>
 	) : Observable<{timestamp: number; value: T}[]> {
 		return this.watchList<T>(url, value => util.bytesToObject<T>(value, proto));
 	}
@@ -349,7 +349,7 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchMaybeObject<T> (
 		url: string,
-		proto: Proto<T>
+		proto: IProto<T>
 	) : Observable<{timestamp: number; value: T}|undefined> {
 		return this.watchMaybe(url).map(o => o === undefined ? undefined : {
 			timestamp: o.timestamp,
@@ -425,7 +425,7 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchValueObject<T> (
 		url: string,
-		proto: Proto<T>,
+		proto: IProto<T>,
 		defaultValue: () => T|Promise<T>
 	) : Observable<{timestamp: number; value: T}> {
 		return this.watchMaybeObject<T>(url, proto).flatMap(async o =>
