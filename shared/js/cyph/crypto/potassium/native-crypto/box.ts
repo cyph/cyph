@@ -142,7 +142,7 @@ export class Box {
 
 		const symmetricKey			= new Uint8Array(
 			asymmetricPlaintext.buffer,
-			0,
+			asymmetricPlaintext.byteOffset,
 			secretBox.keyBytes
 		);
 
