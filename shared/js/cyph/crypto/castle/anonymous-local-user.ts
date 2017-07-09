@@ -1,4 +1,4 @@
-import {IKeyPair} from '../ikey-pair';
+import {IKeyPair} from '../../../proto';
 import {IPotassium} from '../potassium/ipotassium';
 import {ILocalUser} from './ilocal-user';
 import {Transport} from './transport';

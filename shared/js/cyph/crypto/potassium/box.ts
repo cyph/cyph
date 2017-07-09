@@ -1,7 +1,7 @@
 import {sodium} from 'libsodium';
 import {mceliece} from 'mceliece';
 import {ntru} from 'ntru';
-import {IKeyPair} from '../ikey-pair';
+import {IKeyPair} from '../../../proto';
 import {IBox} from './ibox';
 import * as NativeCrypto from './native-crypto';
 import {OneTimeAuth} from './one-time-auth';
@@ -287,7 +287,6 @@ export class Box implements IBox {
 		};
 
 		return {
-			keyType: 'potassium-box',
 			privateKey: potassiumUtil.concatMemory(
 				true,
 				keyPairs.classical.privateKey,

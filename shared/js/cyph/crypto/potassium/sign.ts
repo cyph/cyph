@@ -1,5 +1,5 @@
 import {superSphincs} from 'supersphincs';
-import {IKeyPair} from '../ikey-pair';
+import {IKeyPair} from '../../../proto';
 import {ISign} from './isign';
 
 
