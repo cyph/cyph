@@ -362,7 +362,12 @@ export class AccountDatabaseService {
 				asyncValue.setValue(newValue);
 			}),
 			watch: memoize(() =>
-				this.watchValue(url, publicData, defaultValue).map(o => o.value)
+				this.watchValue(url, publicData, defaultValue).map<
+					{timestamp: number; value: Uint8Array},
+					Uint8Array
+				>(
+					o => o.value
+				)
 			)
 		};
 
@@ -398,7 +403,12 @@ export class AccountDatabaseService {
 				async value => util.toBytes(await f(util.bytesToBoolean(value)))
 			),
 			watch: memoize(
-				() => this.watchValueBoolean(url, publicData, defaultValue).map(o => o.value)
+				() => this.watchValueBoolean(url, publicData, defaultValue).map<
+					{timestamp: number; value: boolean},
+					boolean
+				>(
+					o => o.value
+				)
 			)
 		};
 	}
@@ -426,7 +436,12 @@ export class AccountDatabaseService {
 				async value => util.toBytes(await f(util.bytesToNumber(value)))
 			),
 			watch: memoize(
-				() => this.watchValueNumber(url, publicData, defaultValue).map(o => o.value)
+				() => this.watchValueNumber(url, publicData, defaultValue).map<
+					{timestamp: number; value: number},
+					number
+				>(
+					o => o.value
+				)
 			)
 		};
 	}
@@ -458,7 +473,12 @@ export class AccountDatabaseService {
 				})
 			),
 			watch: memoize(
-				() => this.watchValueObject<T>(url, proto, defaultValue, publicData).map(o => o.value)
+				() => this.watchValueObject<T>(url, proto, defaultValue, publicData).map<
+					{timestamp: number; value: T},
+					T
+				>(
+					o => o.value
+				)
 			)
 		};
 	}
@@ -486,7 +506,12 @@ export class AccountDatabaseService {
 				async value => util.toBytes(await f(util.bytesToString(value)))
 			),
 			watch: memoize(
-				() => this.watchValueString(url, publicData, defaultValue).map(o => o.value)
+				() => this.watchValueString(url, publicData, defaultValue).map<
+					{timestamp: number; value: string},
+					string
+				>(
+					o => o.value
+				)
 			)
 		};
 	}
@@ -514,7 +539,12 @@ export class AccountDatabaseService {
 				async value => util.toBytes(await f(util.bytesToDataURI(value)))
 			),
 			watch: memoize(
-				() => this.watchValueURI(url, publicData, defaultValue).map(o => o.value)
+				() => this.watchValueURI(url, publicData, defaultValue).map<
+					{timestamp: number; value: string},
+					string
+				>(
+					o => o.value
+				)
 			)
 		};
 	}
@@ -620,8 +650,11 @@ export class AccountDatabaseService {
 					await this.removeItem(url);
 				}
 			}),
-			watch: memoize(() => this.watchMaybe(url).map(o =>
-				o === undefined ? o : o.value
+			watch: memoize(() => this.watchMaybe(url).map<
+				{timestamp: number; value: Uint8Array}|undefined,
+				Uint8Array|undefined
+			>(o =>
+				o === undefined ? undefined : o.value
 			))
 		};
 
@@ -653,8 +686,11 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: memoize(() => this.watchMaybeBoolean(url, publicData).map(o =>
-				o === undefined ? o : o.value
+			watch: memoize(() => this.watchMaybeBoolean(url, publicData).map<
+				{timestamp: number; value: boolean}|undefined,
+				boolean|undefined
+			>(o =>
+				o === undefined ? undefined : o.value
 			))
 		};
 	}
@@ -684,8 +720,11 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: memoize(() => this.watchMaybeNumber(url, publicData).map(o =>
-				o === undefined ? o : o.value
+			watch: memoize(() => this.watchMaybeNumber(url, publicData).map<
+				{timestamp: number; value: number}|undefined,
+				number|undefined
+			>(o =>
+				o === undefined ? undefined : o.value
 			))
 		};
 	}
@@ -716,8 +755,11 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes({data: newValue, proto});
 			}),
-			watch: memoize(() => this.watchMaybeObject<T>(url, proto, publicData).map(o =>
-				o === undefined ? o : o.value
+			watch: memoize(() => this.watchMaybeObject<T>(url, proto, publicData).map<
+				{timestamp: number; value: T}|undefined,
+				T|undefined
+			>(o =>
+				o === undefined ? undefined : o.value
 			))
 		};
 	}
@@ -747,8 +789,11 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: memoize(() => this.watchMaybeString(url, publicData).map(o =>
-				o === undefined ? o : o.value
+			watch: memoize(() => this.watchMaybeString(url, publicData).map<
+				{timestamp: number; value: string}|undefined,
+				string|undefined
+			>(o =>
+				o === undefined ? undefined : o.value
 			))
 		};
 	}
@@ -778,8 +823,11 @@ export class AccountDatabaseService {
 				);
 				return newValue === undefined ? undefined : util.toBytes(newValue);
 			}),
-			watch: memoize(() => this.watchMaybeURI(url, publicData).map(o =>
-				o === undefined ? o : o.value
+			watch: memoize(() => this.watchMaybeURI(url, publicData).map<
+				{timestamp: number; value: string}|undefined,
+				string|undefined
+			>(o =>
+				o === undefined ? undefined : o.value
 			))
 		};
 	}
@@ -1206,7 +1254,7 @@ export class AccountDatabaseService {
 	) : Observable<{timestamp: number; value: Uint8Array}> {
 		return this.watchMaybe(url, publicData).flatMap(async value =>
 			value === undefined ?
-				{timestamp: await util.timestamp(), value: defaultValue()} :
+				{timestamp: await util.timestamp(), value: await defaultValue()} :
 				value
 		);
 	}
@@ -1222,7 +1270,7 @@ export class AccountDatabaseService {
 	) : Observable<{timestamp: number; value: boolean}> {
 		return this.watchMaybeBoolean(url, publicData).flatMap(async value =>
 			value === undefined ?
-				{timestamp: await util.timestamp(), value: defaultValue()} :
+				{timestamp: await util.timestamp(), value: await defaultValue()} :
 				value
 		);
 	}
@@ -1238,7 +1286,7 @@ export class AccountDatabaseService {
 	) : Observable<{timestamp: number; value: number}> {
 		return this.watchMaybeNumber(url, publicData).flatMap(async value =>
 			value === undefined ?
-				{timestamp: await util.timestamp(), value: defaultValue()} :
+				{timestamp: await util.timestamp(), value: await defaultValue()} :
 				value
 		);
 	}
@@ -1255,7 +1303,7 @@ export class AccountDatabaseService {
 	) : Observable<{timestamp: number; value: T}> {
 		return this.watchMaybeObject<T>(url, proto, publicData).flatMap(async value =>
 			value === undefined ?
-				{timestamp: await util.timestamp(), value: defaultValue()} :
+				{timestamp: await util.timestamp(), value: await defaultValue()} :
 				value
 		);
 	}
@@ -1271,7 +1319,7 @@ export class AccountDatabaseService {
 	) : Observable<{timestamp: number; value: string}> {
 		return this.watchMaybeString(url, publicData).flatMap(async value =>
 			value === undefined ?
-				{timestamp: await util.timestamp(), value: defaultValue()} :
+				{timestamp: await util.timestamp(), value: await defaultValue()} :
 				value
 		);
 	}
@@ -1287,7 +1335,7 @@ export class AccountDatabaseService {
 	) : Observable<{timestamp: number; value: string}> {
 		return this.watchMaybeURI(url, publicData).flatMap(async value =>
 			value === undefined ?
-				{timestamp: await util.timestamp(), value: defaultValue()} :
+				{timestamp: await util.timestamp(), value: await defaultValue()} :
 				value
 		);
 	}
