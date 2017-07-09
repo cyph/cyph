@@ -28,6 +28,15 @@ message ChatMessage {
 	required double timestamp = 5;
 }
 
+/** An asymmetric key pair. */
+message KeyPair {
+	/** Private key. */
+	required bytes privateKey = 1;
+
+	/** Public key. */
+	required bytes publicKey = 2;
+}
+
 /** A set of supported capabilities. */
 message SessionCapabilities {
 	/** Native crypto / SubtleCrypto. */

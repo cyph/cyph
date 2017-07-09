@@ -1,7 +1,7 @@
 /* tslint:disable:max-file-line-count max-func-body-length */
 
 import {Injectable} from '@angular/core';
-import {IKeyPair} from '../../crypto/ikey-pair';
+import {IKeyPair} from '../../../proto';
 import {IBox} from '../../crypto/potassium/ibox';
 import {IEphemeralKeyExchange} from '../../crypto/potassium/iephemeral-key-exchange';
 import {IHash} from '../../crypto/potassium/ihash';
