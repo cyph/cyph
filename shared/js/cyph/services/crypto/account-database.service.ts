@@ -156,14 +156,13 @@ export class AccountDatabaseService {
 	}
 
 	/** @ignore */
-	private async setItemInternal<T, O> (
+	private async seal<T> (
 		url: string,
 		proto: IProto<T>,
 		value: T,
 		publicData: boolean,
-		operation: string,
-		setItem: (url: string, value: Uint8Array) => Promise<O>
-	) : Promise<O> {
+		operation: string = 'set'
+	) : Promise<Uint8Array> {
 		if (!this.current) {
 			throw new Error(`User not signed in. Cannot ${operation} item at ${url}.`);
 		}
@@ -172,18 +171,16 @@ export class AccountDatabaseService {
 
 		const data	= await util.serialize(proto, value);
 
-		return setItem(
-			url,
-			publicData ?
-				await this.potassiumService.sign.sign(
-					data,
-					this.current.keys.signingKeyPair.privateKey
-				) :
-				await this.potassiumService.secretBox.seal(
-					data,
-					this.current.keys.symmetricKey
-				)
-		);
+		return publicData ?
+			await this.potassiumService.sign.sign(
+				data,
+				this.current.keys.signingKeyPair.privateKey
+			) :
+			await this.potassiumService.secretBox.seal(
+				data,
+				this.current.keys.symmetricKey
+			)
+		;
 	}
 
 	/** Downloads value and gives progress. */
@@ -235,21 +232,12 @@ export class AccountDatabaseService {
 				() => defaultValue
 			),
 			lock,
-			setValue: async value => this.setItemInternal(
-				url,
-				proto,
-				value,
-				publicData,
-				'set',
-				async (_, v) => setValue(v)
-			),
-			updateValue: async f => updateValue(async value => this.setItemInternal(
+			setValue: async value => setValue(await this.seal(url, proto, value, publicData)),
+			updateValue: async f => updateValue(async value => this.seal(
 				url,
 				proto,
 				await f(await this.open(url, proto, publicData, symmetricKey, value)),
-				publicData,
-				'set',
-				async (_, v) => v
+				publicData
 			)),
 			watch: memoize(() =>
 				this.watch(url, proto, publicData).map<ITimedValue<T>, T>(o => o.value)
@@ -377,13 +365,10 @@ export class AccountDatabaseService {
 		value: T,
 		publicData: boolean = false
 	) : Promise<{hash: string; url: string}> {
-		return this.setItemInternal(
-			url,
-			proto,
-			value,
-			publicData,
-			'push',
-			async (u, v) => this.databaseService.pushItem(u, BinaryProto, v)
+		return this.databaseService.pushItem(
+			this.processURL(url),
+			BinaryProto,
+			await this.seal(url, proto, value, publicData, 'push')
 		);
 	}
 
@@ -405,13 +390,10 @@ export class AccountDatabaseService {
 		value: T,
 		publicData: boolean = false
 	) : Promise<{hash: string; url: string}> {
-		return this.lock(url, async () => this.setItemInternal(
-			url,
-			proto,
-			value,
-			publicData,
-			'set',
-			async (u, v) => this.databaseService.setItem(u, BinaryProto, v)
+		return this.lock(url, async () => this.databaseService.setItem(
+			this.processURL(url),
+			BinaryProto,
+			await this.seal(url, proto, value, publicData)
 		));
 	}
 
@@ -434,13 +416,10 @@ export class AccountDatabaseService {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
-			const uploadTask	= await this.setItemInternal(
-				url,
-				proto,
-				value,
-				publicData,
-				'upload',
-				async (u, v) => this.databaseService.uploadItem(u, BinaryProto, v)
+			const uploadTask	= this.databaseService.uploadItem(
+				this.processURL(url),
+				BinaryProto,
+				await this.seal(url, proto, value, publicData, 'upload')
 			);
 
 			cancelPromise.then(() => { uploadTask.cancel(); });
