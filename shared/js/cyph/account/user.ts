@@ -1,4 +1,5 @@
 import {IAccountUserProfile} from '../../proto';
+import {DataURIProto} from '../protos';
 import {util} from '../util';
 import {UserPresence} from './enums';
 
@@ -8,10 +9,10 @@ import {UserPresence} from './enums';
  */
 export class User {
 	/** Image URI for avatar / profile picture. */
-	public avatar: string;
+	public avatar: string		= DataURIProto.create();
 
 	/** Image URI for cover image. */
-	public coverImage: string;
+	public coverImage: string	= DataURIProto.create();
 
 	/** @see IAccountUserProfile.description */
 	public description: string;
@@ -37,8 +38,8 @@ export class User {
 	/** Exports to IAccountUserProfile format. */
 	public async toAccountUserProfile () : Promise<IAccountUserProfile> {
 		return {
-			avatar: await util.toBytes(this.avatar),
-			coverImage: await util.toBytes(this.coverImage),
+			avatar: await util.serialize(DataURIProto, this.avatar),
+			coverImage: await util.serialize(DataURIProto, this.coverImage),
 			description: this.description,
 			externalUsernames: this.externalUsernames,
 			hasPremium: this.hasPremium,
@@ -49,13 +50,16 @@ export class User {
 	}
 
 	constructor (accountUserProfile: IAccountUserProfile) {
-		this.avatar				= util.bytesToDataURI(accountUserProfile.avatar);
-		this.coverImage			= util.bytesToDataURI(accountUserProfile.coverImage);
 		this.description		= accountUserProfile.description;
 		this.externalUsernames	= accountUserProfile.externalUsernames || {};
 		this.hasPremium			= accountUserProfile.hasPremium;
 		this.name				= accountUserProfile.name;
 		this.status				= accountUserProfile.status;
 		this.username			= accountUserProfile.realUsername.toLowerCase();
+
+		(async () => {
+			this.avatar		= await util.deserialize(DataURIProto, accountUserProfile.avatar);
+			this.coverImage	= await util.deserialize(DataURIProto, accountUserProfile.coverImage);
+		})();
 	}
 }

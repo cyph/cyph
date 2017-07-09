@@ -222,7 +222,7 @@ export class AccountDatabaseService {
 			`User not signed in. Cannot get async value at ${url}.`
 		);
 
-		const asyncValue	= this.databaseService.getAsyncValue(
+		const {getValue, lock, setValue, updateValue}	= this.databaseService.getAsyncValue(
 			url,
 			BinaryProto,
 			this.lockFunction(url)
@@ -230,20 +230,20 @@ export class AccountDatabaseService {
 
 		return {
 			getValue: async () => (async () =>
-				this.open(url, proto, publicData, symmetricKey, await asyncValue.getValue())
+				this.open(url, proto, publicData, symmetricKey, await getValue())
 			)().catch(
 				() => defaultValue
 			),
-			lock: asyncValue.lock,
+			lock,
 			setValue: async value => this.setItemInternal(
 				url,
 				proto,
 				value,
 				publicData,
 				'set',
-				async (_, v) => asyncValue.setValue(v)
+				async (_, v) => setValue(v)
 			),
-			updateValue: async f => asyncValue.updateValue(async value => this.setItemInternal(
+			updateValue: async f => updateValue(async value => this.setItemInternal(
 				url,
 				proto,
 				await f(await this.open(url, proto, publicData, symmetricKey, value)),

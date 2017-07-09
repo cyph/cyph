@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {StringArrayProto} from '../protos';
 import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
 import {IAsyncValue} from '../iasync-value';
+import {StringArrayProto} from '../protos';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 
