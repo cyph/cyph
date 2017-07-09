@@ -462,8 +462,37 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public watch<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>> {
+		return new Observable<ITimedValue<T>>(observer => {
+			let cleanup: Function;
+
+			const onValue	= async (snapshot: firebase.database.DataSnapshot) => {
+				if (!snapshot || !snapshot.exists()) {
+					observer.next({
+						timestamp: await util.timestamp(),
+						value: proto.create()
+					});
+				}
+				else {
+					observer.next(await (await this.downloadItem(url, proto)).result);
+				}
+			};
+
+			(async () => {
+				const ref	= await this.getDatabaseRef(url);
+				ref.on('value', onValue);
+				cleanup	= () => { ref.off('value', onValue); };
+			})();
+
+			return async () => {
+				(await util.waitForValue(() => cleanup))();
+			};
+		});
+	}
+
+	/** @inheritDoc */
 	public watchList<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>[]> {
-		return new Observable<{timestamp: number; value: T}[]>(observer => {
+		return new Observable<ITimedValue<T>[]>(observer => {
 			let cleanup: Function;
 
 			(async () => {
@@ -570,24 +599,26 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchMaybe<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>|undefined> {
-		return new Observable<ITimedValue<T>|undefined>(observer => {
+	public watchListPushes<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>> {
+		return new Observable<ITimedValue<T>>(observer => {
 			let cleanup: Function;
 
-			const onValue	= async (snapshot: firebase.database.DataSnapshot) => {
-				if (!snapshot) {
-					return;
-				}
-				if (!snapshot || !snapshot.exists()) {
-					observer.next();
-				}
-				observer.next(await (await this.downloadItem(url, proto)).result);
-			};
-
 			(async () => {
-				const ref	= await this.getDatabaseRef(url);
-				ref.on('value', onValue);
-				cleanup	= () => { ref.off('value', onValue); };
+				const listRef	= await this.getDatabaseRef(url);
+
+				const onChildAdded	= async (snapshot: firebase.database.DataSnapshot) => {
+					if (snapshot && snapshot.key) {
+						observer.next(
+							await (await this.downloadItem(`${url}/${snapshot.key}`, proto)).result
+						);
+					}
+				};
+
+				listRef.on('child_added', onChildAdded);
+
+				cleanup	= () => {
+					listRef.off('child_added', onChildAdded);
+				};
 			})();
 
 			return async () => {

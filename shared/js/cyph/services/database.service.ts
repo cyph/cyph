@@ -4,7 +4,6 @@ import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {LockFunction} from '../lock-function-type';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
-import {util} from '../util';
 
 
 /**
@@ -129,24 +128,19 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.waitForUnlock.');
 	}
 
+	/** Subscribes to a value. */
+	public watch<T> (_URL: string, _PROTO: IProto<T>) : Observable<ITimedValue<T>> {
+		throw new Error('Must provide an implementation of DatabaseService.watch.');
+	}
+
 	/** Subscribes to a list of values. Completes when the list no longer exists. */
 	public watchList<T> (_URL: string, _PROTO: IProto<T>) : Observable<ITimedValue<T>[]> {
 		throw new Error('Must provide an implementation of DatabaseService.watchList.');
 	}
 
-	/** Subscribes to a possibly-undefined value. */
-	public watchMaybe<T> (
-		_URL: string,
-		_PROTO: IProto<T>
-	) : Observable<ITimedValue<T>|undefined> {
-		throw new Error('Must provide an implementation of DatabaseService.watchMaybe.');
-	}
-
-	/** Subscribes to a value. */
-	public watchValue<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>> {
-		return this.watchMaybe(url, proto).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: proto.create()}
-		);
+	/** Subscribes to new values pushed onto a list. */
+	public watchListPushes<T> (_URL: string, _PROTO: IProto<T>) : Observable<ITimedValue<T>> {
+		throw new Error('Must provide an implementation of DatabaseService.watchListPushes.');
 	}
 
 	constructor () {
