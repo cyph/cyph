@@ -3,6 +3,7 @@ import * as firebase from 'firebase';
 import {Observable} from 'rxjs';
 import {DataType} from '../data-type';
 import {LockFunction} from '../lock-function-type';
+import {Proto} from '../proto-type';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {util} from '../util';
 
@@ -54,7 +55,7 @@ export class DatabaseService extends DataManagerService {
 	 * Downloads a value as an object.
 	 * @see downloadItem
 	 */
-	public downloadItemObject<T> (url: string, proto: {decode: (bytes: Uint8Array) => T}) : {
+	public downloadItemObject<T> (url: string, proto: Proto<T>) : {
 		progress: Observable<number>;
 		result: Promise<T>;
 	} {
@@ -213,10 +214,7 @@ export class DatabaseService extends DataManagerService {
 	 * Subscribes to a list of values as objects.
 	 * @see watchList
 	 */
-	public watchListObject<T> (
-		url: string,
-		proto: {decode: (bytes: Uint8Array) => T}
-	) : Observable<T[]> {
+	public watchListObject<T> (url: string, proto: Proto<T>) : Observable<T[]> {
 		return this.watchList<T>(url, value => util.bytesToObject<T>(value, proto));
 	}
 
@@ -265,10 +263,7 @@ export class DatabaseService extends DataManagerService {
 	 * Subscribes to a possibly-undefined value as an object.
 	 * @see watchMaybe
 	 */
-	public watchMaybeObject<T> (
-		url: string,
-		proto: {decode: (bytes: Uint8Array) => T}
-	) : Observable<T|undefined> {
+	public watchMaybeObject<T> (url: string, proto: Proto<T>) : Observable<T|undefined> {
 		return this.watchMaybe(url).map(value =>
 			value === undefined ? undefined : util.bytesToObject<T>(value, proto)
 		);
@@ -336,7 +331,7 @@ export class DatabaseService extends DataManagerService {
 	 */
 	public watchValueObject<T> (
 		url: string,
-		proto: {decode: (bytes: Uint8Array) => T},
+		proto: Proto<T>,
 		defaultValue: () => T|Promise<T>
 	) : Observable<T> {
 		return this.watchMaybeObject<T>(url, proto).flatMap(async value =>
