@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
+import {StringProto} from '../cyph/protos';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {util} from '../cyph/util';
@@ -43,7 +44,9 @@ export class LockdownComponent implements OnInit {
 
 		customBuildPassword		= undefined;
 
-		const password	= await this.localStorageService.getItemString('password').catch(() => '');
+		const password	=
+			await this.localStorageService.getItem('password', StringProto).catch(() => '')
+		;
 
 		/* tslint:disable-next-line:possible-timing-attack */
 		if (password === this.correctPassword) {
@@ -63,7 +66,7 @@ export class LockdownComponent implements OnInit {
 		/* tslint:disable-next-line:possible-timing-attack */
 		if (this.password === this.correctPassword) {
 			this.appService.unlock();
-			await this.localStorageService.setItem('password', this.password);
+			await this.localStorageService.setItem('password', StringProto, this.password);
 			return;
 		}
 

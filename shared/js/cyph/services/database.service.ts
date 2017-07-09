@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {DataType} from '../data-type';
 import {IProto} from '../iproto';
+import {ITimedValue} from '../itimed-value';
 import {LockFunction} from '../lock-function-type';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {util} from '../util';
@@ -27,151 +27,21 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Downloads value and gives progress. */
-	public downloadItem (_URL: string) : {
+	public downloadItem<T> (_URL: string, _PROTO: IProto<T>) : {
 		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: Uint8Array}>;
+		result: Promise<ITimedValue<T>>;
 	} {
 		throw new Error('Must provide an implementation of DatabaseService.downloadItem.');
 	}
 
-	/**
-	 * Downloads a value as a boolean.
-	 * @see downloadItem
-	 */
-	public downloadItemBoolean (url: string) : {
-		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: boolean}>;
-	} {
-		const o	= this.downloadItem(url);
-		return {
-			progress: o.progress,
-			result: o.result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToBoolean(value)
-			}))
-		};
-	}
-
-	/**
-	 * Downloads a value as a number.
-	 * @see downloadItem
-	 */
-	public downloadItemNumber (url: string) : {
-		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: number}>;
-	} {
-		const o	= this.downloadItem(url);
-		return {
-			progress: o.progress,
-			result: o.result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToNumber(value)
-			}))
-		};
-	}
-
-	/**
-	 * Downloads a value as an object.
-	 * @see downloadItem
-	 */
-	public downloadItemObject<T> (url: string, proto: IProto<T>) : {
-		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: T}>;
-	} {
-		const o	= this.downloadItem(url);
-		return {
-			progress: o.progress,
-			result: o.result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToObject<T>(value, proto)
-			}))
-		};
-	}
-
-	/**
-	 * Downloads a value as a string.
-	 * @see downloadItem
-	 */
-	public downloadItemString (url: string) : {
-		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: string}>;
-	} {
-		const o	= this.downloadItem(url);
-		return {
-			progress: o.progress,
-			result: o.result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToString(value)
-			}))
-		};
-	}
-
-	/**
-	 * Downloads a value as a base64 data URI.
-	 * @see downloadItem
-	 */
-	public downloadItemURI (url: string) : {
-		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: string}>;
-	} {
-		const o	= this.downloadItem(url);
-		return {
-			progress: o.progress,
-			result: o.result.then(({timestamp, value}) => ({
-				timestamp,
-				value: util.bytesToDataURI(value)
-			}))
-		};
-	}
-
 	/** @inheritDoc */
-	public async getItem (url: string) : Promise<Uint8Array> {
-		return (await (await this.downloadItem(url)).result).value;
+	public async getItem<T> (url: string, proto: IProto<T>) : Promise<T> {
+		return (await (await this.downloadItem(url, proto)).result).value;
 	}
 
 	/** Gets a list of values. */
-	public async getList (_URL: string) : Promise<Uint8Array[]> {
+	public async getList<T> (_URL: string, _PROTO: IProto<T>) : Promise<T[]> {
 		throw new Error('Must provide an implementation of DatabaseService.getList.');
-	}
-
-	/**
-	 * Gets a list as booleans.
-	 * @see getList
-	 */
-	public async getListBoolean (url: string) : Promise<boolean[]> {
-		return (await this.getList(url)).map(value => util.bytesToBoolean(value));
-	}
-
-	/**
-	 * Gets a list as numbers.
-	 * @see getList
-	 */
-	public async getListNumber (url: string) : Promise<number[]> {
-		return (await this.getList(url)).map(value => util.bytesToNumber(value));
-	}
-
-	/**
-	 * Gets a list as objects.
-	 * @see getList
-	 */
-	public async getListObject<T> (url: string, proto: IProto<T>) : Promise<T[]> {
-		return (await this.getList(url)).map(value => util.bytesToObject<T>(value, proto));
-	}
-
-	/**
-	 * Gets a list as strings.
-	 * @see getList
-	 */
-	public async getListString (url: string) : Promise<string[]> {
-		return (await this.getList(url)).map(value => util.bytesToString(value));
-	}
-
-	/**
-	 * Gets a list as base64 data URIs.
-	 * @see getList
-	 */
-	public async getListURI (url: string) : Promise<string[]> {
-		return (await this.getList(url)).map(value => util.bytesToDataURI(value));
 	}
 
 	/** Gets the latest metadata known by the database. */
@@ -212,9 +82,9 @@ export class DatabaseService extends DataManagerService {
 
 	/**
 	 * Pushes an item to a list.
-	 * @returns Item URL.
+	 * @returns Item database hash and URL.
 	 */
-	public async pushItem<T = never> (_URL: string, _VALUE: DataType<T>) : Promise<{
+	public async pushItem<T> (_URL: string, _PROTO: IProto<T>, _VALUE: T) : Promise<{
 		hash: string;
 		url: string;
 	}> {
@@ -233,9 +103,9 @@ export class DatabaseService extends DataManagerService {
 
 	/**
 	 * Pushes an item to a list.
-	 * @returns Item URL.
+	 * @returns Item database hash and URL.
 	 */
-	public async setItem<T = never> (_URL: string, _VALUE: DataType<T>) : Promise<{
+	public async setItem<T> (_URL: string, _PROTO: IProto<T>, _VALUE: T) : Promise<{
 		hash: string;
 		url: string;
 	}> {
@@ -243,7 +113,7 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Uploads value and gives progress. */
-	public uploadItem<T = never> (_URL: string, _VALUE: DataType<T>) : {
+	public uploadItem<T> (_URL: string, _PROTO: IProto<T>, _VALUE: T) : {
 		cancel: () => void;
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
@@ -260,202 +130,22 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Subscribes to a list of values. Completes when the list no longer exists. */
-	public watchList<T = Uint8Array> (
-		_URL: string,
-		_MAPPER?: (value: Uint8Array) => T|Promise<T>
-	) : Observable<{timestamp: number; value: T}[]> {
+	public watchList<T> (_URL: string, _PROTO: IProto<T>) : Observable<ITimedValue<T>[]> {
 		throw new Error('Must provide an implementation of DatabaseService.watchList.');
 	}
 
-	/**
-	 * Subscribes to a list of values as booleans.
-	 * @see watchList
-	 */
-	public watchListBoolean (url: string) : Observable<{timestamp: number; value: boolean}[]> {
-		return this.watchList<boolean>(url, value => util.bytesToBoolean(value));
-	}
-
-	/**
-	 * Subscribes to a list of values as numbers.
-	 * @see watchList
-	 */
-	public watchListNumber (url: string) : Observable<{timestamp: number; value: number}[]> {
-		return this.watchList<number>(url, value => util.bytesToNumber(value));
-	}
-
-	/**
-	 * Subscribes to a list of values as objects.
-	 * @see watchList
-	 */
-	public watchListObject<T> (
-		url: string,
-		proto: IProto<T>
-	) : Observable<{timestamp: number; value: T}[]> {
-		return this.watchList<T>(url, value => util.bytesToObject<T>(value, proto));
-	}
-
-	/**
-	 * Subscribes to a list of values as strings.
-	 * @see watchList
-	 */
-	public watchListString (url: string) : Observable<{timestamp: number; value: string}[]> {
-		return this.watchList<string>(url, value => util.bytesToString(value));
-	}
-
-	/**
-	 * Subscribes to a list of values as base64 data URIs.
-	 * @see watchList
-	 */
-	public watchListURI (url: string) : Observable<{timestamp: number; value: string}[]> {
-		return this.watchList<string>(url, value => util.bytesToDataURI(value));
-	}
-
 	/** Subscribes to a possibly-undefined value. */
-	public watchMaybe (
-		_URL: string
-	) : Observable<{timestamp: number; value: Uint8Array}|undefined> {
+	public watchMaybe<T> (
+		_URL: string,
+		_PROTO: IProto<T>
+	) : Observable<ITimedValue<T>|undefined> {
 		throw new Error('Must provide an implementation of DatabaseService.watchMaybe.');
 	}
 
-	/**
-	 * Subscribes to a possibly-undefined value as a boolean.
-	 * @see watchMaybe
-	 */
-	public watchMaybeBoolean (
-		url: string
-	) : Observable<{timestamp: number; value: boolean}|undefined> {
-		return this.watchMaybe(url).map(o => o === undefined ? undefined : {
-			timestamp: o.timestamp,
-			value: util.bytesToBoolean(o.value)
-		});
-	}
-
-	/**
-	 * Subscribes to a possibly-undefined value as a number.
-	 * @see watchMaybe
-	 */
-	public watchMaybeNumber (
-		url: string
-	) : Observable<{timestamp: number; value: number}|undefined> {
-		return this.watchMaybe(url).map(o => o === undefined ? undefined : {
-			timestamp: o.timestamp,
-			value: util.bytesToNumber(o.value)
-		});
-	}
-
-	/**
-	 * Subscribes to a possibly-undefined value as an object.
-	 * @see watchMaybe
-	 */
-	public watchMaybeObject<T> (
-		url: string,
-		proto: IProto<T>
-	) : Observable<{timestamp: number; value: T}|undefined> {
-		return this.watchMaybe(url).map(o => o === undefined ? undefined : {
-			timestamp: o.timestamp,
-			value: util.bytesToObject<T>(o.value, proto)
-		});
-	}
-
-	/**
-	 * Subscribes to a possibly-undefined value as a string.
-	 * @see watchMaybe
-	 */
-	public watchMaybeString (
-		url: string
-	) : Observable<{timestamp: number; value: string}|undefined> {
-		return this.watchMaybe(url).map(o => o === undefined ? undefined : {
-			timestamp: o.timestamp,
-			value: util.bytesToString(o.value)
-		});
-	}
-
-	/**
-	 * Subscribes to a possibly-undefined value as a base64 data URI.
-	 * @see watchMaybe
-	 */
-	public watchMaybeURI (
-		url: string
-	) : Observable<{timestamp: number; value: string}|undefined> {
-		return this.watchMaybe(url).map(o => o === undefined ? undefined : {
-			timestamp: o.timestamp,
-			value: util.bytesToDataURI(o.value)
-		});
-	}
-
 	/** Subscribes to a value. */
-	public watchValue (
-		url: string,
-		defaultValue: () => Uint8Array|Promise<Uint8Array> = () => new Uint8Array([])
-	) : Observable<{timestamp: number; value: Uint8Array}> {
-		return this.watchMaybe(url).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: await defaultValue()}
-		);
-	}
-
-	/**
-	 * Subscribes to a value as a boolean.
-	 * @see watchValue
-	 */
-	public watchValueBoolean (
-		url: string,
-		defaultValue: () => boolean|Promise<boolean> = () => false
-	) : Observable<{timestamp: number; value: boolean}> {
-		return this.watchMaybeBoolean(url).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: await defaultValue()}
-		);
-	}
-
-	/**
-	 * Subscribes to a value as a number.
-	 * @see watchValue
-	 */
-	public watchValueNumber (
-		url: string,
-		defaultValue: () => number|Promise<number> = () => 0
-	) : Observable<{timestamp: number; value: number}> {
-		return this.watchMaybeNumber(url).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: await defaultValue()}
-		);
-	}
-
-	/**
-	 * Subscribes to a value as an object.
-	 * @see watchValue
-	 */
-	public watchValueObject<T> (
-		url: string,
-		proto: IProto<T>,
-		defaultValue: () => T|Promise<T>
-	) : Observable<{timestamp: number; value: T}> {
-		return this.watchMaybeObject<T>(url, proto).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: await defaultValue()}
-		);
-	}
-
-	/**
-	 * Subscribes to a value as a string.
-	 * @see watchValue
-	 */
-	public watchValueString (
-		url: string,
-		defaultValue: () => string|Promise<string> = () => ''
-	) : Observable<{timestamp: number; value: string}> {
-		return this.watchMaybeString(url).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: await defaultValue()}
-		);
-	}
-
-	/**
-	 * Subscribes to a value as a base64 data URI.
-	 * @see watchValue
-	 */
-	public watchValueURI (
-		url: string,
-		defaultValue: () => string|Promise<string> = () => 'data:text/plain;base64,'
-	) : Observable<{timestamp: number; value: string}> {
-		return this.watchMaybeURI(url).flatMap(async o =>
-			o || {timestamp: await util.timestamp(), value: await defaultValue()}
+	public watchValue<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>> {
+		return this.watchMaybe(url, proto).flatMap(async o =>
+			o || {timestamp: await util.timestamp(), value: proto.create()}
 		);
 	}
 

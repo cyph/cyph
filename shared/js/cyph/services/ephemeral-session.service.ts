@@ -68,14 +68,11 @@ export class EphemeralSessionService extends SessionService {
 					}
 
 					this.anonymousCastleService.send(
-						await util.toBytes({
-							data: {
-								messages: this.plaintextSendQueue.splice(
-									0,
-									this.plaintextSendQueue.length
-								)
-							},
-							proto: SessionMessageList
+						await util.serialize(SessionMessageList, {
+							messages: this.plaintextSendQueue.splice(
+								0,
+								this.plaintextSendQueue.length
+							)
 						})
 					);
 				}

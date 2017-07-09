@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
-import {ChannelMessage, IChannelMessage} from '../../proto';
+import {ChannelMessage} from '../../proto';
 import {LockFunction} from '../lock-function-type';
+import {StringProto} from '../protos';
 import {IChannelHandlers} from '../session';
 import {util} from '../util';
 import {DatabaseService} from './database.service';
@@ -50,7 +51,7 @@ export class ChannelService {
 		this.databaseService.setDisconnectTracker(`${url}/disconnects/${this.userId}`);
 
 		let isConnected	= false;
-		const usersSubscription	= this.databaseService.watchListString(`${url}/users`).
+		const usersSubscription	= this.databaseService.watchList(`${url}/users`, StringProto).
 			subscribe(users => {
 				if (users.length < 1) {
 					return;
@@ -68,7 +69,7 @@ export class ChannelService {
 		;
 
 		let i	= 0;
-		this.databaseService.watchListObject(`${url}/messages`, ChannelMessage).subscribe(
+		this.databaseService.watchList(`${url}/messages`, ChannelMessage).subscribe(
 			messages => {
 				for (; i < messages.length ; ++i) {
 					const message	= messages[i].value;
@@ -87,7 +88,7 @@ export class ChannelService {
 			}
 		);
 
-		this.databaseService.pushItem(`${url}/users`, this.userId);
+		this.databaseService.pushItem(`${url}/users`, StringProto, this.userId);
 	}
 
 	/** Indicates whether this channel is available for sending and receiving. */
@@ -102,12 +103,10 @@ export class ChannelService {
 
 	/** Sends message through this channel. */
 	public async send (cyphertext: Uint8Array) : Promise<void> {
-		await this.databaseService.pushItem<IChannelMessage>(
+		await this.databaseService.pushItem(
 			`${(await this.state).url}/messages`,
-			{
-				data: {cyphertext, author: this.userId},
-				proto: ChannelMessage
-			}
+			ChannelMessage,
+			{cyphertext, author: this.userId}
 		);
 	}
 

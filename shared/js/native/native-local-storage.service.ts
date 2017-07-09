@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {SecureStorage} from 'nativescript-secure-storage';
 import {potassiumUtil} from './js/cyph/crypto/potassium/potassium-util';
-import {DataType} from './js/cyph/data-type';
+import {IProto} from './js/cyph/iproto';
 import {LocalStorageService} from './js/cyph/services/local-storage.service';
 import {util} from './js/cyph/util';
 
@@ -15,7 +15,7 @@ export class NativeLocalStorageService extends LocalStorageService {
 	private readonly storage: SecureStorage	= new SecureStorage();
 
 	/** @inheritDoc */
-	public async getItem (url: string) : Promise<Uint8Array> {
+	public async getItem<T> (url: string, proto: IProto<T>) : Promise<T> {
 		await this.pendingSets.get(url);
 
 		const value	= await this.storage.get({key: url});
@@ -24,21 +24,22 @@ export class NativeLocalStorageService extends LocalStorageService {
 			throw new Error(`Item ${url} not found.`);
 		}
 
-		return potassiumUtil.fromBase64(value);
+		return util.deserialize(proto, potassiumUtil.fromBase64(value));
 	}
 
 	/** @inheritDoc */
 	public async removeItem (url: string) : Promise<void> {
-		await this.getItem(url);
-		await this.storage.remove({key: url});
+		if (await this.hasItem(url)) {
+			await this.storage.remove({key: url});
+		}
 	}
 
 	/** @inheritDoc */
-	public async setItem<T = never> (url: string, value: DataType<T>) : Promise<{url: string}> {
+	public async setItem<T> (url: string, proto: IProto<T>, value: T) : Promise<{url: string}> {
 		const promise	= (async () => {
 			await this.storage.set({
 				key: url,
-				value: potassiumUtil.toBase64(await util.toBytes(value))
+				value: potassiumUtil.toBase64(await util.serialize(proto, value))
 			});
 
 			return {url};

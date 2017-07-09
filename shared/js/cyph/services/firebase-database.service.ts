@@ -6,8 +6,10 @@ import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {DataType} from '../data-type';
 import {env} from '../env';
+import {IProto} from '../iproto';
+import {ITimedValue} from '../itimed-value';
+import {BinaryProto} from '../protos';
 import {util} from '../util';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
@@ -46,7 +48,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			throw new Error('Item not in cache.');
 		}
 
-		return this.localStorageService.getItem(`cache/${hash}`);
+		return this.localStorageService.getItem(`cache/${hash}`, BinaryProto);
 	}
 
 	/** @ignore */
@@ -63,7 +65,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @ignore */
 	private cacheSet (url: string, value: Uint8Array, hash: string) : void {
-		this.localStorageService.setItem(`cache/${hash}`, value).then(() => {
+		this.localStorageService.setItem(`cache/${hash}`, BinaryProto, value).then(() => {
 			this.hashCache.set(url, hash);
 		});
 	}
@@ -132,9 +134,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public downloadItem (url: string) : {
+	public downloadItem<T> (url: string, proto: IProto<T>) : {
 		progress: Observable<number>;
-		result: Promise<{timestamp: number; value: Uint8Array}>;
+		result: Promise<ITimedValue<T>>;
 	} {
 		const progress	= new BehaviorSubject(0);
 
@@ -147,7 +149,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					const localData	= await this.cacheGet({hash});
 					progress.next(100);
 					progress.complete();
-					return {timestamp, value: localData};
+					return {timestamp, value: util.deserialize(proto, localData)};
 				}
 				catch (_) {}
 
@@ -176,17 +178,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 				progress.next(100);
 				progress.complete();
 				this.cacheSet(url, value, hash);
-				return {timestamp, value};
+				return {timestamp, value: util.deserialize(proto, value)};
 			})()
 		};
 	}
 
 	/** @inheritDoc */
-	public async getList (url: string) : Promise<Uint8Array[]> {
+	public async getList<T> (url: string, proto: IProto<T>) : Promise<T[]> {
 		const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
 		return !value ?
 			[] :
-			Promise.all(Object.keys(value).map(async k => this.getItem(`${url}/${k}`)))
+			Promise.all(Object.keys(value).map(async k => this.getItem(`${url}/${k}`, proto)))
 		;
 	}
 
@@ -304,12 +306,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async pushItem<T = never> (url: string, value: DataType<T>) : Promise<{
+	public async pushItem<T> (url: string, proto: IProto<T>, value: T) : Promise<{
 		hash: string;
 		url: string;
 	}> {
 		return this.lock(`pushlock/${url}`, async () =>
-			this.setItem(`${url}/${(await this.getDatabaseRef(url)).push().key}`, value)
+			this.setItem(`${url}/${(await this.getDatabaseRef(url)).push().key}`, proto, value)
 		);
 	}
 
@@ -350,11 +352,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async setItem<T = never> (url: string, value: DataType<T>) : Promise<{
+	public async setItem<T> (url: string, proto: IProto<T>, value: T) : Promise<{
 		hash: string;
 		url: string;
 	}> {
-		const data	= await util.toBytes(value);
+		const data	= await util.serialize(proto, value);
 		const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
 
 		/* tslint:disable-next-line:possible-timing-attack */
@@ -371,7 +373,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public uploadItem<T = never> (url: string, value: DataType<T>) : {
+	public uploadItem<T> (url: string, proto: IProto<T>, value: T) : {
 		cancel: () => void;
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
@@ -384,7 +386,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
-			const data	= await util.toBytes(value);
+			const data	= await util.serialize(proto, value);
 			const hash	= this.potassiumService.toBase64(
 				await this.potassiumService.hash.hash(data)
 			);
@@ -460,10 +462,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchList<T = Uint8Array> (
-		url: string,
-		mapper: (value: Uint8Array) => T|Promise<T> = (value: Uint8Array&T) => value
-	) : Observable<{timestamp: number; value: T}[]> {
+	public watchList<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>[]> {
 		return new Observable<{timestamp: number; value: T}[]>(observer => {
 			let cleanup: Function;
 
@@ -488,7 +487,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					data.set(snapshot.key, {
 						hash,
 						timestamp,
-						value: await mapper(await this.getItem(`${url}/${snapshot.key}`))
+						value: await this.getItem(`${url}/${snapshot.key}`, proto)
 					});
 					return true;
 				};
@@ -571,10 +570,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchMaybe (
-		url: string
-	) : Observable<{timestamp: number; value: Uint8Array}|undefined> {
-		return new Observable<{timestamp: number; value: Uint8Array}|undefined>(observer => {
+	public watchMaybe<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>|undefined> {
+		return new Observable<ITimedValue<T>|undefined>(observer => {
 			let cleanup: Function;
 
 			const onValue	= async (snapshot: firebase.database.DataSnapshot) => {
@@ -584,7 +581,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				if (!snapshot || !snapshot.exists()) {
 					observer.next();
 				}
-				observer.next(await (await this.downloadItem(url)).result);
+				observer.next(await (await this.downloadItem(url, proto)).result);
 			};
 
 			(async () => {
