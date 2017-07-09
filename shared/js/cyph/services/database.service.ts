@@ -1,9 +1,13 @@
 import {Injectable} from '@angular/core';
+import {memoize} from 'lodash';
 import {Observable} from 'rxjs';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
+import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {LockFunction} from '../lock-function-type';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
+import {util} from '../util';
 
 
 /**
@@ -31,6 +35,70 @@ export class DatabaseService extends DataManagerService {
 		result: Promise<ITimedValue<T>>;
 	} {
 		throw new Error('Must provide an implementation of DatabaseService.downloadItem.');
+	}
+
+	/** Gets an IAsyncValue wrapper for an item. */
+	public getAsyncValue<T> (
+		url: string,
+		proto: IProto<T>,
+		lock: LockFunction = this.lockFunction(url)
+	) : IAsyncValue<T> {
+		const defaultValue	= proto.create();
+		const localLock		= util.lockFunction();
+
+		let currentHash: string|undefined;
+		let currentValue	= defaultValue;
+
+		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
+		/* tslint:disable-next-line:no-unnecessary-local-variable */
+		const asyncValue: IAsyncValue<T>	= {
+			getValue: async () => localLock(async () : Promise<T> => {
+				await this.waitForUnlock(url);
+
+				const {hash}	= await this.getMetadata(url);
+
+				/* tslint:disable-next-line:possible-timing-attack */
+				if (currentHash === hash) {
+					return currentValue;
+				}
+				else if (ArrayBuffer.isView(currentValue)) {
+					potassiumUtil.clearMemory(currentValue);
+				}
+
+				const value	= await this.getItem(url, proto);
+
+				/* tslint:disable-next-line:possible-timing-attack */
+				if (hash !== (await this.getMetadata(url)).hash) {
+					return asyncValue.getValue();
+				}
+
+				currentHash		= hash;
+				currentValue	= value;
+
+				return currentValue;
+			}).catch(
+				() => defaultValue
+			),
+			lock,
+			setValue: async (value: T) => localLock(async () => {
+				const oldValue	= currentValue;
+
+				currentHash		= (await this.setItem(url, proto, value)).hash;
+				currentValue	= value;
+
+				if (ArrayBuffer.isView(oldValue)) {
+					potassiumUtil.clearMemory(oldValue);
+				}
+			}),
+			updateValue: async f => asyncValue.lock(async () => {
+				asyncValue.setValue(await f(await asyncValue.getValue()));
+			}),
+			watch: memoize(() =>
+				this.watch(url, proto).map<ITimedValue<T>, T>(o => o.value)
+			)
+		};
+
+		return asyncValue;
 	}
 
 	/** @inheritDoc */
