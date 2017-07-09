@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {AccountUserProfile, IAccountUserProfile} from '../../proto';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {FileService} from './file.service';
 
@@ -18,13 +19,18 @@ export class AccountSettingsService {
 			throw new Error('Profile photo must be an image.');
 		}
 
+		/** TODO: Either handle this better or lock it. */
+
 		this.accountDatabaseService.current.user[prop]	=
 			await this.fileService.getDataURI(file, true)
 		;
 
-		await this.accountDatabaseService.setItem(
+		await this.accountDatabaseService.setItem<IAccountUserProfile>(
 			'publicProfile',
-			this.accountDatabaseService.current,
+			{
+				data: await this.accountDatabaseService.current.user.toAccountUserProfile(),
+				proto: AccountUserProfile
+			},
 			true
 		);
 	}

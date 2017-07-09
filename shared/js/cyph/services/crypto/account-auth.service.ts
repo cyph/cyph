@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
-import {ILoginData} from '../../account';
-import {IKeyPair} from '../../crypto/ikey-pair';
+import {AccountLoginData, IAccountLoginData, IKeyPair, KeyPair} from '../../../proto';
 import {util} from '../../util';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {DatabaseService} from '../database.service';
@@ -37,7 +36,8 @@ export class AccountAuthService {
 			await this.potassiumService.secretBox.open(
 				await this.databaseService.getItem(url),
 				symmetricKey
-			)
+			),
+			KeyPair
 		);
 	}
 
@@ -69,11 +69,12 @@ export class AccountAuthService {
 
 			const user		= await this.accountUserLookupService.getUser(username);
 
-			const loginData	= util.bytesToObject<ILoginData>(
+			const loginData	= util.bytesToObject<IAccountLoginData>(
 				await this.potassiumService.secretBox.open(
 					await this.databaseService.getItem(`users/${username}/loginData`),
 					password
-				)
+				),
+				AccountLoginData
 			);
 
 			await this.databaseService.login(username, loginData.secondaryPassword);
@@ -139,7 +140,7 @@ export class AccountAuthService {
 			return false;
 		}
 
-		const loginData: ILoginData	= {
+		const loginData: IAccountLoginData	= {
 			secondaryPassword: this.potassiumService.toBase64(
 				this.potassiumService.randomBytes(64)
 			),
@@ -154,7 +155,7 @@ export class AccountAuthService {
 			await this.databaseService.setItem(
 				`users/${username}/loginData`,
 				await this.potassiumService.secretBox.seal(
-					await util.toBytes(loginData),
+					await util.toBytes({data: loginData, proto: AccountLoginData}),
 					await this.passwordHash(password)
 				)
 			);

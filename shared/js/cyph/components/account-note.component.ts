@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {IFileRecord} from '../files/ifile-record';
+import {AccountFileRecord, IAccountFileRecord} from '../../proto';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
@@ -18,7 +18,7 @@ import {UtilService} from '../services/util.service';
 })
 export class AccountNoteComponent implements OnInit {
 	/** Current note. */
-	public note: IFileRecord;
+	public note?: IAccountFileRecord;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -30,7 +30,10 @@ export class AccountNoteComponent implements OnInit {
 					throw new Error();
 				}
 
-				this.note	= (await this.accountFilesService.getFile(id, 'note')).file;
+				this.note	= (await this.accountFilesService.getFile(
+					id,
+					AccountFileRecord.RecordType.NOTE
+				)).file;
 			}
 			catch (_) {
 				this.routerService.navigate(['404']);

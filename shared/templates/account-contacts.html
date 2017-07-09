@@ -11,7 +11,7 @@
 		<md-card
 			[fxFlexOrder]='isActive(contact) ? "-1" : ""'
 			class='contact animated _{{i}}'
-			*ngFor='let contact of accountContactsService.contacts | async; let i = index'
+			*ngFor='let contact of accountContactsService.contactsList | async; let i = index'
 			[attr.data-index]='i'
 			[class.active]='isActive(contact)'
 			[class.flipInY]='!isActive(contact)'
@@ -35,7 +35,7 @@
 						cyphTranslate
 						class='shrink'
 						mdTooltip='Send Message'
-						*ngIf='contact.status !== userPresence.online'
+						*ngIf='contact.status !== userPresence.ONLINE'
 					>
 						<md-icon>email</md-icon>
 					</button>
@@ -44,7 +44,7 @@
 						cyphTranslate
 						class='shrink pulldown'
 						mdTooltip='Start Chat'
-						*ngIf='contact.status === userPresence.online'
+						*ngIf='contact.status === userPresence.ONLINE'
 						[routerLink]='"/account/chat/" + contact.username'
 					>
 						<md-icon>chat_bubble</md-icon>

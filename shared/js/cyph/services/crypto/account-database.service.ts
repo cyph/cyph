@@ -3,9 +3,8 @@
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash';
 import {BehaviorSubject, Observable} from 'rxjs';
+import {AGSEPKICert, IAGSEPKICert, IKeyPair} from '../../../proto';
 import {User} from '../../account/user';
-import {IKeyPair} from '../../crypto/ikey-pair';
-import {IPublicKeys} from '../../crypto/ipublic-keys';
 import {DataType} from '../../data-type';
 import {IAsyncValue} from '../../iasync-value';
 import {LockFunction} from '../../lock-function-type';
@@ -116,7 +115,7 @@ export class AccountDatabaseService {
 			data,
 			this.current && username === this.current.user.username ?
 				this.current.keys.signingKeyPair.publicKey :
-				(await this.getUserPublicKeys(username)).signing
+				(await this.getUserPublicKeys(username)).publicSigningKey
 		);
 	}
 
@@ -833,7 +832,7 @@ export class AccountDatabaseService {
 	}
 
 	/** Gets public keys belonging to the specified user. */
-	public async getUserPublicKeys (username: string) : Promise<IPublicKeys> {
+	public async getUserPublicKeys (username: string) : Promise<IAGSEPKICert> {
 		const certificate	= await this.databaseService.getItem(`users/${username}/certificate`);
 		const dataView		= new DataView(certificate.buffer);
 
@@ -848,28 +847,22 @@ export class AccountDatabaseService {
 			throw new Error('Invalid AGSE-PKI certificate: bad key index.');
 		}
 
-		const verified	= util.bytesToObject<{
-			publicEncryptionKey: Uint8Array;
-			publicSigningKey: Uint8Array;
-			username: string;
-		}>(
+		const verified	= util.bytesToObject<IAGSEPKICert>(
 			await this.potassiumService.sign.open(
 				signed,
 				await this.potassiumService.sign.importSuperSphincsPublicKeys(
 					this.agsePublicSigningKeys.rsa[rsaKeyIndex],
 					this.agsePublicSigningKeys.sphincs[sphincsKeyIndex]
 				)
-			)
+			),
+			AGSEPKICert
 		);
 
 		if (verified.username !== username) {
 			throw new Error('Invalid AGSE-PKI certificate: bad username.');
 		}
 
-		return {
-			encryption: verified.publicEncryptionKey,
-			signing: verified.publicSigningKey
-		};
+		return verified;
 	}
 
 	/** Checks whether an item exists. */

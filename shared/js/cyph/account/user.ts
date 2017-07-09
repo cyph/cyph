@@ -1,3 +1,5 @@
+import {IAccountUserProfile} from '../../proto';
+import {util} from '../util';
 import {UserPresence} from './enums';
 
 
@@ -5,44 +7,55 @@ import {UserPresence} from './enums';
  * Represents a user profile.
  */
 export class User {
+	/** Image URI for avatar / profile picture. */
+	public avatar: string;
+
+	/** Image URI for cover image. */
+	public coverImage: string;
+
+	/** @see IAccountUserProfile.description */
+	public description: string;
+
+	/** @see IAccountUserProfile.externalUsernames */
+	public readonly externalUsernames: {[k: string]: string};
+
+	/** @see IAccountUserProfile.hasPremium */
+	public hasPremium: boolean;
+
+	/** @see IAccountUserProfile.name */
+	public name: string;
+
+	/** @see IAccountUserProfile.realUsername */
+	public realUsername: string;
+
+	/** @see IAccountUserProfile.status */
+	public status: UserPresence;
+
 	/** Username (all lowercase). */
 	public readonly username: string;
 
-	constructor (
-		/** Image URI for avatar / profile picture. */
-		public avatar: string,
+	/** Exports to IAccountUserProfile format. */
+	public async toAccountUserProfile () : Promise<IAccountUserProfile> {
+		return {
+			avatar: await util.toBytes(this.avatar),
+			coverImage: await util.toBytes(this.coverImage),
+			description: this.description,
+			externalUsernames: this.externalUsernames,
+			hasPremium: this.hasPremium,
+			name: this.name,
+			realUsername: this.realUsername,
+			status: this.status
+		};
+	}
 
-		/** Image URI for cover image. */
-		public coverImage: string = '',
-
-		/** Description. */
-		public description: string = '',
-
-		/** Email address. */
-		public email: string,
-
-		/** Premium account. */
-		public hasPremium: boolean,
-
-		/** Full name. */
-		public name: string,
-
-		/** Username (capitalized according to user preference). */
-		public realUsername: string,
-
-		/** @see UserPresence. */
-		public status: UserPresence,
-
-		/** Usernames and similar identifiers for external services like social media. */
-		public readonly externalUsernames: {
-			email?: string;
-			facebook?: string;
-			keybase?: string;
-			phone?: string;
-			reddit?: string;
-			twitter?: string;
-		} = {}
-	) {
-		this.username	= this.realUsername.toLowerCase();
+	constructor (accountUserProfile: IAccountUserProfile) {
+		this.avatar				= util.bytesToDataURI(accountUserProfile.avatar);
+		this.coverImage			= util.bytesToDataURI(accountUserProfile.coverImage);
+		this.description		= accountUserProfile.description;
+		this.externalUsernames	= accountUserProfile.externalUsernames || {};
+		this.hasPremium			= accountUserProfile.hasPremium;
+		this.name				= accountUserProfile.name;
+		this.status				= accountUserProfile.status;
+		this.username			= accountUserProfile.realUsername.toLowerCase();
 	}
 }
