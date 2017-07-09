@@ -88,7 +88,6 @@ import {CyphWebModule} from './cyph-web.module';
 		}
 	]
 })
-/* tslint:disable-next-line:no-stateless-class */
 export class CyphCommonModule {
 	constructor () {}
 }

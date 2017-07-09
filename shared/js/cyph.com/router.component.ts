@@ -9,7 +9,6 @@ import {Component} from '@angular/core';
 	selector: 'cyph-router',
 	template: '<router-outlet></router-outlet>'
 })
-/* tslint:disable-next-line:no-stateless-class */
 export class RouterComponent {
 	constructor () {}
 }

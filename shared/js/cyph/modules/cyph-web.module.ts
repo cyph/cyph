@@ -115,7 +115,6 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		}
 	]
 })
-/* tslint:disable-next-line:no-stateless-class */
 export class CyphWebModule {
 	constructor () {}
 }
