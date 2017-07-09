@@ -154,10 +154,7 @@ export class DatabaseService extends DataManagerService {
 	 * Gets a list as objects.
 	 * @see getList
 	 */
-	public async getListObject<T> (
-		url: string,
-		proto: {decode: (bytes: Uint8Array) => T}
-	) : Promise<T[]> {
+	public async getListObject<T> (url: string, proto: Proto<T>) : Promise<T[]> {
 		return (await this.getList(url)).map(value => util.bytesToObject<T>(value, proto));
 	}
 
