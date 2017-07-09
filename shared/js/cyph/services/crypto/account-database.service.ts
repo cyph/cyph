@@ -499,6 +499,25 @@ export class AccountDatabaseService {
 		);
 	}
 
+	/** @see DatabaseService.watchListPushes */
+	public watchListPushes<T> (
+		url: string,
+		proto: IProto<T>,
+		publicData: boolean = false
+	) : Observable<ITimedValue<T>> {
+		url	= this.processURL(url);
+
+		const symmetricKey	= this.getSymmetricKey(
+			publicData,
+			`User not signed in. Cannot watch private data list at ${url}.`
+		);
+
+		return this.databaseService.watchListPushes(url, BinaryProto).flatMap(async data => ({
+			timestamp: data.timestamp,
+			value: await this.open(url, proto, publicData, symmetricKey, data.value)
+		}));
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly databaseService: DatabaseService,
