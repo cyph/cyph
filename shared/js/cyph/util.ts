@@ -182,7 +182,7 @@ export class Util {
 	}
 
 	/** Deserializes bytes to data. */
-	public deserialize<T> (proto: IProto<T>, bytes: Uint8Array) : T {
+	public async deserialize<T> (proto: IProto<T>, bytes: Uint8Array) : Promise<T> {
 		return proto.decode(bytes);
 	}
 
@@ -503,7 +503,7 @@ export class Util {
 		if (err) {
 			throw new Error(err);
 		}
-		const o	= proto.encode(data);
+		const o	= await proto.encode(data);
 		return o instanceof Uint8Array ? o : o.finish();
 	}
 

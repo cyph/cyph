@@ -49,7 +49,10 @@ export class MockDatabaseService extends DatabaseService {
 				throw new Error('Item not found.');
 			}
 			await this.pretendToTransferData(50, value.length, progress);
-			return {timestamp: await util.timestamp(), value: util.deserialize(proto, value)};
+			return {
+				timestamp: await util.timestamp(),
+				value: await util.deserialize(proto, value)
+			};
 		})();
 
 		return {progress, result};
