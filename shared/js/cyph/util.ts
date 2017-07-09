@@ -5,7 +5,6 @@ import {saveAs} from 'file-saver';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
-import {DataType} from './data-type';
 import {env} from './env';
 import {IProto} from './iproto';
 import {LockFunction} from './lock-function-type';
@@ -44,9 +43,6 @@ export class Util {
 	/** @ignore */
 	public static resolveHttp: (http: Http) => void;
 
-
-	/** @ignore */
-	private readonly dataURIPrefix: string	= 'data:application/octet-stream;base64,';
 
 	/** @ignore */
 	private readonly timestampData	= {
@@ -185,48 +181,9 @@ export class Util {
 		};
 	}
 
-	/** Converts byte array produced by toBytes into a boolean. */
-	public bytesToBoolean (bytes: Uint8Array, clearInput: boolean = true) : boolean {
-		const value	= bytes[0] === 1;
-		if (clearInput) {
-			potassiumUtil.clearMemory(bytes);
-		}
-		return value;
-	}
-
-	/** Converts byte array produced by toBytes into a base64 data URI. */
-	public bytesToDataURI (bytes: Uint8Array, clearInput: boolean = true) : string {
-		const value	= this.dataURIPrefix + potassiumUtil.toBase64(bytes);
-		if (clearInput) {
-			potassiumUtil.clearMemory(bytes);
-		}
-		return value;
-	}
-
-	/** Converts byte array produced by toBytes into a number. */
-	public bytesToNumber (bytes: Uint8Array, clearInput: boolean = true) : number {
-		const value	= new DataView(bytes.buffer, bytes.byteOffset).getFloat64(0, true);
-		if (clearInput) {
-			potassiumUtil.clearMemory(bytes);
-		}
-		return value;
-	}
-
-	/**
-	 * Converts byte array produced by toBytes into a generic object.
-	 * @param proto Protocol Buffers class to decode bytes.
-	 */
-	public bytesToObject<T> (bytes: Uint8Array, proto: IProto<T>) : T {
+	/** Deserializes bytes to data. */
+	public deserialize<T> (proto: IProto<T>, bytes: Uint8Array) : T {
 		return proto.decode(bytes);
-	}
-
-	/** Converts byte array produced by toBytes into a string. */
-	public bytesToString (bytes: Uint8Array, clearInput: boolean = true) : string {
-		const value	= potassiumUtil.toString(bytes);
-		if (clearInput) {
-			potassiumUtil.clearMemory(bytes);
-		}
-		return value;
 	}
 
 	/** Sends an email to the Cyph team. "@cyph.com" may be omitted from to. */
@@ -540,6 +497,16 @@ export class Util {
 		beforeUnloadMessage	= oldBeforeUnloadMessage;
 	}
 
+	/** Serializes data value to binary byte array. */
+	public async serialize<T> (proto: IProto<T>, data: T) : Promise<Uint8Array> {
+		const err	= proto.verify(data);
+		if (err) {
+			throw new Error(err);
+		}
+		const o	= proto.encode(data);
+		return o instanceof Uint8Array ? o : o.finish();
+	}
+
 	/** Sleep for the specifed amount of time. */
 	public async sleep (ms: number = 250) : Promise<void> {
 		/* tslint:disable-next-line:ban */
@@ -574,38 +541,6 @@ export class Util {
 		}
 
 		return timestamp;
-	}
-
-	/** Converts arbitrary value into binary byte array. */
-	public async toBytes<T = never> (data: DataType<T>) : Promise<Uint8Array> {
-		return data instanceof ArrayBuffer ?
-			new Uint8Array(data) :
-			ArrayBuffer.isView(data) ?
-				new Uint8Array(data.buffer) :
-				data instanceof Blob ?
-					potassiumUtil.fromBlob(data) :
-					typeof data === 'boolean' ?
-						new Uint8Array([data ? 1 : 0]) :
-						typeof data === 'number' ?
-							new Uint8Array(new Float64Array([data]).buffer) :
-							typeof data === 'string' ?
-								(
-									data.length >= this.dataURIPrefix.length &&
-									data.slice(0, this.dataURIPrefix.length) === this.dataURIPrefix
-								) ?
-									potassiumUtil.fromBase64(
-										data.slice(0, this.dataURIPrefix.length)
-									) :
-									potassiumUtil.fromString(data)
-								:
-								(() => {
-									const err	= data.proto.verify(data.data);
-									if (err) {
-										throw new Error(err);
-									}
-									return data.proto.encode(data.data).finish();
-								})()
-		;
 	}
 
 	/**

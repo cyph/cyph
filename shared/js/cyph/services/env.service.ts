@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Env} from '../env';
+import {StringProto} from '../protos';
 import {util} from '../util';
 import {LocalStorageService} from './local-storage.service';
 
@@ -43,7 +44,7 @@ export class EnvService extends Env {
 	public readonly packageName: Promise<string>	= (async () => {
 		try {
 			const timestamp	= parseInt(
-				await this.localStorageService.getItemString('webSignPackageTimestamp'),
+				await this.localStorageService.getItem('webSignPackageTimestamp', StringProto),
 				10
 			);
 
@@ -89,7 +90,10 @@ export class EnvService extends Env {
 
 		try {
 			const isAffectedBrowser	= /\/#test$/.test(new Request('https://cyph.ws/#test').url);
-			const webSignHash		= await this.localStorageService.getItemString('webSignHash');
+			const webSignHash		= await this.localStorageService.getItem(
+				'webSignHash',
+				StringProto
+			);
 
 			return isAffectedBrowser && affectedWebSignHashes.indexOf(webSignHash) > -1;
 		}

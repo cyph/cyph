@@ -178,7 +178,7 @@ export abstract class SessionService implements ISessionService {
 
 				const messages	= (() => {
 					try {
-						return util.bytesToObject(data.plaintext, SessionMessageList).messages;
+						return util.deserialize(SessionMessageList, data.plaintext).messages;
 					}
 					catch (_) {
 						return [];

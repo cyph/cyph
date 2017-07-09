@@ -6,8 +6,10 @@ import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {DataType} from '../data-type';
 import {env} from '../env';
+import {IProto} from '../iproto';
+import {ITimedValue} from '../itimed-value';
+import {BinaryProto} from '../protos';
 import {util} from '../util';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
@@ -46,7 +48,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			throw new Error('Item not in cache.');
 		}
 
-		return this.localStorageService.getItem(`cache/${hash}`);
+		return this.localStorageService.getItem(`cache/${hash}`, BinaryProto);
 	}
 
 	/** @ignore */
@@ -63,9 +65,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @ignore */
 	private cacheSet (url: string, value: Uint8Array, hash: string) : void {
-		this.localStorageService.setItem(`cache/${hash}`, value).then(() => {
+		this.localStorageService.setItem(`cache/${hash}`, BinaryProto, value).then(() => {
 			this.hashCache.set(url, hash);
 		});
+	}
+
+	/** @ignore */
+	private async getDatabaseRef (url: string) : Promise<firebase.database.Reference> {
+		return util.retryUntilSuccessful(async () =>
+			/^https?:\/\//.test(url) ?
+				(await this.app).database().refFromURL(url) :
+				(await this.app).database().ref(url)
+		);
 	}
 
 	/** @ignore */
@@ -78,27 +89,67 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @ignore */
+	private recursivelyGetKeys (root: string, o: any) : string[] {
+		return (root ? [root] : []).concat(
+			typeof o === 'object' ?
+				[] :
+				Object.keys(o).
+					map(k => this.recursivelyGetKeys(`${root}/${k}`, o[k])).
+					reduce((a, b) => a.concat(b), [])
+		);
+	}
+
+	/** @ignore */
 	private usernameToEmail (username: string) : string {
 		return `${username}@cyph.me`;
 	}
 
 	/** @inheritDoc */
-	public downloadItem (url: string) : {
+	public async checkDisconnected (url: string) : Promise<boolean> {
+		return (await (await this.getDatabaseRef(url)).once('value')).val() !== undefined;
+	}
+
+	/** @inheritDoc */
+	public connectionStatus () : Observable<boolean> {
+		return new Observable<boolean>(observer => {
+			let cleanup: Function;
+
+			(async () => {
+				const connectedRef	= await this.getDatabaseRef('.info/connected');
+
+				const onValue		= async (snapshot: firebase.database.DataSnapshot) => {
+					if (snapshot) {
+						observer.next(snapshot.val() === true);
+					}
+				};
+
+				connectedRef.on('value', onValue);
+				cleanup	= () => { connectedRef.off('value', onValue); };
+			})();
+
+			return async () => {
+				(await util.waitForValue(() => cleanup))();
+			};
+		});
+	}
+
+	/** @inheritDoc */
+	public downloadItem<T> (url: string, proto: IProto<T>) : {
 		progress: Observable<number>;
-		result: Promise<Uint8Array>;
+		result: Promise<ITimedValue<T>>;
 	} {
 		const progress	= new BehaviorSubject(0);
 
 		return {
 			progress,
 			result: (async () => {
-				const hash	= await this.getHash(url);
+				const {hash, timestamp}	= await this.getMetadata(url);
 
 				try {
 					const localData	= await this.cacheGet({hash});
 					progress.next(100);
 					progress.complete();
-					return localData;
+					return {timestamp, value: util.deserialize(proto, localData)};
 				}
 				catch (_) {}
 
@@ -111,12 +162,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 					err => { progress.next(err); }
 				);
 
-				const data	= await request.result;
+				const value	= await request.result;
 
 				if (
 					!this.potassiumService.compareMemory(
 						this.potassiumService.fromBase64(hash),
-						await this.potassiumService.hash.hash(data)
+						await this.potassiumService.hash.hash(value)
 					)
 				) {
 					const err	= new Error('Invalid data hash.');
@@ -126,35 +177,33 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				progress.next(100);
 				progress.complete();
-				this.cacheSet(url, data, hash);
-				return data;
+				this.cacheSet(url, value, hash);
+				return {timestamp, value: util.deserialize(proto, value)};
 			})()
 		};
 	}
 
 	/** @inheritDoc */
-	public async getDatabaseRef (url: string) : Promise<firebase.database.Reference> {
-		return util.retryUntilSuccessful(async () =>
-			/^https?:\/\//.test(url) ?
-				(await this.app).database().refFromURL(url) :
-				(await this.app).database().ref(url)
-		);
+	public async getList<T> (url: string, proto: IProto<T>) : Promise<T[]> {
+		const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
+		return !value ?
+			[] :
+			Promise.all(Object.keys(value).map(async k => this.getItem(`${url}/${k}`, proto)))
+		;
 	}
 
 	/** @inheritDoc */
-	public async getHash (url: string) : Promise<string> {
-		const hash	= (await (await this.getDatabaseRef(url)).once('value')).val();
+	public async getMetadata (url: string) : Promise<{hash: string; timestamp: number}> {
+		const {hash, timestamp}	=
+			(await (await this.getDatabaseRef(url)).once('value')).val() ||
+			{hash: undefined, timestamp: undefined}
+		;
 
-		if (typeof hash !== 'string') {
+		if (typeof hash !== 'string' || typeof timestamp !== 'number') {
 			throw new Error(`Item at ${url} not found.`);
 		}
 
-		return hash;
-	}
-
-	/** @inheritDoc */
-	public async getItem (url: string) : Promise<Uint8Array> {
-		return (await this.downloadItem(url)).result;
+		return {hash, timestamp};
 	}
 
 	/** @inheritDoc */
@@ -183,7 +232,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const id	= util.uuid();
 
 				const contendForLock	= () => {
-					lock	= queue.push({id, reason});
+					lock	= queue.push(reason ? {id, reason} : {id});
 					lock.onDisconnect().remove();
 				};
 
@@ -257,11 +306,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async pushItem<T = never> (url: string, value: DataType<T>) : Promise<{
+	public async pushItem<T> (url: string, proto: IProto<T>, value: T) : Promise<{
 		hash: string;
 		url: string;
 	}> {
-		return this.setItem(`${url}/${(await this.getDatabaseRef(url)).push().key}`, value);
+		return this.lock(`pushlock/${url}`, async () =>
+			this.setItem(`${url}/${(await this.getDatabaseRef(url)).push().key}`, proto, value)
+		);
 	}
 
 	/** @inheritDoc */
@@ -275,24 +326,46 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public async removeItem (url: string) : Promise<void> {
 		this.cacheRemove({url});
-		await Promise.all([
-			(await this.getDatabaseRef(url)).remove().then(),
-			(await this.getStorageRef(url)).delete().then()
-		]);
+
+		const databaseRef	= await this.getDatabaseRef(url);
+
+		await Promise.all(
+			this.recursivelyGetKeys(url, (await databaseRef.once('value')).val()).map(
+				async k => (await this.getStorageRef(k)).delete().then()
+			).concat(
+				(async () => databaseRef.remove().then())()
+			)
+		).catch(
+			() => {}
+		);
 	}
 
 	/** @inheritDoc */
-	public async setItem<T = never> (url: string, value: DataType<T>) : Promise<{
+	public async setDisconnectTracker (url: string) : Promise<void> {
+		const disconnectRef	= await this.getDatabaseRef(url);
+		disconnectRef.onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
+		this.connectionStatus().subscribe(isConnected => {
+			if (isConnected) {
+				disconnectRef.remove();
+			}
+		});
+	}
+
+	/** @inheritDoc */
+	public async setItem<T> (url: string, proto: IProto<T>, value: T) : Promise<{
 		hash: string;
 		url: string;
 	}> {
-		const data	= await util.toBytes(value);
+		const data	= await util.serialize(proto, value);
 		const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
 
 		/* tslint:disable-next-line:possible-timing-attack */
-		if (hash !== (await this.getHash(url).catch(() => undefined))) {
+		if (hash !== (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
 			await (await this.getStorageRef(url)).put(new Blob([data])).then();
-			await (await this.getDatabaseRef(url)).set(hash).then();
+			await (await this.getDatabaseRef(url)).set({
+				hash,
+				timestamp: firebase.database.ServerValue.TIMESTAMP
+			}).then();
 			this.cacheSet(url, data, hash);
 		}
 
@@ -300,12 +373,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async timestamp () : Promise<any> {
-		return firebase.database.ServerValue.TIMESTAMP;
-	}
-
-	/** @inheritDoc */
-	public uploadItem<T = never> (url: string, value: DataType<T>) : {
+	public uploadItem<T> (url: string, proto: IProto<T>, value: T) : {
 		cancel: () => void;
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
@@ -318,13 +386,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
-			const data	= await util.toBytes(value);
+			const data	= await util.serialize(proto, value);
 			const hash	= this.potassiumService.toBase64(
 				await this.potassiumService.hash.hash(data)
 			);
 
 			/* tslint:disable-next-line:possible-timing-attack */
-			if (hash === (await this.getHash(url).catch(() => undefined))) {
+			if (hash === (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
 				progress.next(100);
 				progress.complete();
 				return {hash, url};
@@ -346,7 +414,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 					reject,
 					async () => {
 						try {
-							await (await this.getDatabaseRef(url)).set(hash).then();
+							await (await this.getDatabaseRef(url)).set({
+								hash,
+								timestamp: firebase.database.ServerValue.TIMESTAMP
+							}).then();
 							this.cacheSet(url, data, hash);
 							progress.next(100);
 							progress.complete();
@@ -391,32 +462,32 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchList<T = Uint8Array> (
-		url: string,
-		mapper: (value: Uint8Array) => T|Promise<T> = (value: Uint8Array&T) => value
-	) : Observable<T[]> {
-		return new Observable<T[]>(observer => {
+	public watchList<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>[]> {
+		return new Observable<{timestamp: number; value: T}[]>(observer => {
 			let cleanup: Function;
 
 			(async () => {
-				const data			= new Map<string, {hash: string; value: T}>();
-				const listRef		= await this.getDatabaseRef(url);
+				const data		= new Map<string, {hash: string; timestamp: number; value: T}>();
+				const listRef	= await this.getDatabaseRef(url);
+				let initiated	= false;
 
-				let initRemaining	=
-					(<firebase.database.DataSnapshot> await listRef.once('value')).numChildren()
-				;
+				const initialValues	= (await listRef.once('value')).val() || {};
 
-				const getValue		= async (snapshot: firebase.database.DataSnapshot) => {
+				/* tslint:disable-next-line:no-null-keyword */
+				const getValue		= async (snapshot: {key?: string|null; val: () => any}) => {
 					if (!snapshot.key) {
 						return false;
 					}
-					const hash	= snapshot.val();
-					if (typeof hash !== 'string') {
+					const {hash, timestamp}	=
+						snapshot.val() || {hash: undefined, timestamp: undefined}
+					;
+					if (typeof hash !== 'string' || typeof timestamp !== 'number') {
 						return false;
 					}
 					data.set(snapshot.key, {
 						hash,
-						value: await mapper(await this.getItem(`${url}/${snapshot.key}`))
+						timestamp,
+						value: await this.getItem(`${url}/${snapshot.key}`, proto)
 					});
 					return true;
 				};
@@ -428,7 +499,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							if (!o) {
 								throw new Error('Corrupt Map.');
 							}
-							return o.value;
+							return {timestamp: o.timestamp, value: o.value};
 						})
 					);
 				};
@@ -442,12 +513,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 					) {
 						return;
 					}
-					if (initRemaining !== 0) {
-						--initRemaining;
-						if (initRemaining !== 0) {
-							return;
-						}
-					}
 					publishList();
 				};
 
@@ -459,9 +524,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 					) {
 						return;
 					}
-					if (initRemaining !== 0) {
-						return;
-					}
 					publishList();
 				};
 
@@ -470,20 +532,34 @@ export class FirebaseDatabaseService extends DatabaseService {
 						return;
 					}
 					data.delete(snapshot.key);
-					if (initRemaining !== 0) {
-						return;
-					}
 					publishList();
 				};
+
+				const onValue			= async (snapshot: firebase.database.DataSnapshot) => {
+					if (!initiated) {
+						initiated	= true;
+						return;
+					}
+					if (snapshot && !snapshot.exists()) {
+						observer.complete();
+					}
+				};
+
+				for (const key of Object.keys(initialValues)) {
+					await getValue({key, val: () => initialValues[key]});
+				}
+				publishList();
 
 				listRef.on('child_added', onChildAdded);
 				listRef.on('child_changed', onChildChanged);
 				listRef.on('child_removed', onChildRemoved);
+				listRef.on('value', onValue);
 
 				cleanup	= () => {
-					listRef.on('child_added', onChildAdded);
-					listRef.on('child_changed', onChildChanged);
-					listRef.on('child_removed', onChildRemoved);
+					listRef.off('child_added', onChildAdded);
+					listRef.off('child_changed', onChildChanged);
+					listRef.off('child_removed', onChildRemoved);
+					listRef.off('value', onValue);
 				};
 			})();
 
@@ -494,15 +570,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchMaybe (url: string) : Observable<Uint8Array|undefined> {
-		return new Observable<Uint8Array|undefined>(observer => {
+	public watchMaybe<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>|undefined> {
+		return new Observable<ITimedValue<T>|undefined>(observer => {
 			let cleanup: Function;
 
 			const onValue	= async (snapshot: firebase.database.DataSnapshot) => {
+				if (!snapshot) {
+					return;
+				}
 				if (!snapshot || !snapshot.exists()) {
 					observer.next();
 				}
-				observer.next(await this.getItem(url));
+				observer.next(await (await this.downloadItem(url, proto)).result);
 			};
 
 			(async () => {

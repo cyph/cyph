@@ -79,12 +79,12 @@
 			[
 				"JSON",
 				"parse",
-				"Prefer util.bytesToObject (typed), msgpack.decode (dynamic), or util.parse (JSON interop)"
+				"Prefer util.deserialize (typed/validated), msgpack.decode (dynamic), or util.parse (for JSON interop)"
 			],
 			[
 				"JSON",
 				"stringify",
-				"Prefer util.toBytes (typed), msgpack.encode (dynamic), or util.stringify (JSON interop)"
+				"Prefer util.serialize (typed/validated), msgpack.encode (dynamic), or util.stringify (for JSON interop)"
 			],
 			["localStorage", "getItem", "Use LocalStorageService"],
 			["localStorage", "removeItem", "Use LocalStorageService"],
