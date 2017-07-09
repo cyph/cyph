@@ -7,8 +7,8 @@ import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {DataType} from './data-type';
 import {env} from './env';
+import {IProto} from './iproto';
 import {LockFunction} from './lock-function-type';
-import {Proto} from './proto-type';
 import {DialogService} from './services/dialog.service';
 
 
@@ -216,7 +216,7 @@ export class Util {
 	 * Converts byte array produced by toBytes into a generic object.
 	 * @param proto Protocol Buffers class to decode bytes.
 	 */
-	public bytesToObject<T> (bytes: Uint8Array, proto: Proto<T>) : T {
+	public bytesToObject<T> (bytes: Uint8Array, proto: IProto<T>) : T {
 		return proto.decode(bytes);
 	}
 

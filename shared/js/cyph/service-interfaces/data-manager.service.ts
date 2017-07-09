@@ -1,5 +1,5 @@
 import {DataType} from '../data-type';
-import {Proto} from '../proto-type';
+import {IProto} from '../iproto';
 import {util} from '../util';
 
 
@@ -32,7 +32,7 @@ export class DataManagerService {
 	 * Gets a value as an object.
 	 * @see getItem
 	 */
-	public async getItemObject<T> (url: string, proto: Proto<T>) : Promise<T> {
+	public async getItemObject<T> (url: string, proto: IProto<T>) : Promise<T> {
 		return util.bytesToObject<T>(await this.getItem(url), proto);
 	}
 

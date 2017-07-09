@@ -289,8 +289,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 							new SessionMessage(
 								rpcEvents.p2p,
 								{command: {
-									method: P2PWebRTCService.constants.webRTC,
-									argument: msgpack.encode({args, event})
+									argument: msgpack.encode({args, event}),
+									method: P2PWebRTCService.constants.webRTC
 								}}
 							)
 						);
