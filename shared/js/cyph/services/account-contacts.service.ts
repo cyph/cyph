@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {IStringArray, StringArray} from '../../proto';
+import {StringArrayProto} from '../protos';
 import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
 import {IAsyncValue} from '../iasync-value';
@@ -14,22 +14,18 @@ import {AccountDatabaseService} from './crypto/account-database.service';
 @Injectable()
 export class AccountContactsService {
 	/** Async value of contacts list. */
-	public readonly contacts: IAsyncValue<IStringArray>	=
-		this.accountDatabaseService.getAsyncValueObject<IStringArray>(
-			'contactsList',
-			StringArray,
-			() => ({strings: []})
-		)
+	public readonly contacts: IAsyncValue<string[]>	=
+		this.accountDatabaseService.getAsyncValue('contactsList', StringArrayProto)
 	;
 
 	/** List of contacts for current user, sorted by status and then alphabetically. */
 	public readonly contactsList: Observable<User[]>	=
-		this.contacts.watch().flatMap(async o =>
-			(await Promise.all(
-				(o.strings || []).map(async username =>
+		this.contacts.watch().flatMap(async contacts =>
+			(
+				await Promise.all(contacts.map(async username =>
 					this.accountUserLookupService.getUser(username)
-				)
-			)).sort((a, b) => {
+				))
+			).sort((a, b) => {
 				const statusIndexA	= userPresenceSorted.indexOf(a.status);
 				const statusIndexB	= userPresenceSorted.indexOf(b.status);
 

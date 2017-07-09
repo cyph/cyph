@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import {AccountLoginData, IAccountLoginData, IKeyPair, KeyPair} from '../../../proto';
+import {BinaryProto, StringProto} from '../../protos';
 import {util} from '../../util';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {DatabaseService} from '../database.service';
@@ -32,12 +33,12 @@ export class AccountAuthService {
 
 	/** @ignore */
 	private async getKeyPair (url: string, symmetricKey: Uint8Array) : Promise<IKeyPair> {
-		return util.bytesToObject<IKeyPair>(
+		return util.deserialize<IKeyPair>(
+			KeyPair,
 			await this.potassiumService.secretBox.open(
-				await this.databaseService.getItem(url),
+				await this.databaseService.getItem(url, BinaryProto),
 				symmetricKey
-			),
-			KeyPair
+			)
 		);
 	}
 
@@ -69,17 +70,17 @@ export class AccountAuthService {
 
 			const user		= await this.accountUserLookupService.getUser(username);
 
-			const loginData	= util.bytesToObject<IAccountLoginData>(
+			const loginData	= await util.deserialize<IAccountLoginData>(
+				AccountLoginData,
 				await this.potassiumService.secretBox.open(
-					await this.databaseService.getItem(`users/${username}/loginData`),
+					await this.databaseService.getItem(`users/${username}/loginData`, BinaryProto),
 					password
-				),
-				AccountLoginData
+				)
 			);
 
 			await this.databaseService.login(username, loginData.secondaryPassword);
-			await this.localStorageService.setItem('username', username);
-			await this.localStorageService.setItem('password', password);
+			await this.localStorageService.setItem('username', StringProto, username);
+			await this.localStorageService.setItem('password', BinaryProto, password);
 
 			this.accountDatabaseService.current	= {
 				keys: {
@@ -154,8 +155,9 @@ export class AccountAuthService {
 
 			await this.databaseService.setItem(
 				`users/${username}/loginData`,
+				BinaryProto,
 				await this.potassiumService.secretBox.seal(
-					await util.toBytes({data: loginData, proto: AccountLoginData}),
+					await util.serialize(AccountLoginData, loginData),
 					await this.passwordHash(password)
 				)
 			);
@@ -183,8 +185,8 @@ export class AccountAuthService {
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
 	) { (async () => {
-		const username	= await this.localStorageService.getItemString('username');
-		const password	= await this.localStorageService.getItem('password');
+		const username	= await this.localStorageService.getItem('username', StringProto);
+		const password	= await this.localStorageService.getItem('password', BinaryProto);
 
 		if (username && password) {
 			await this.login(username, password);

@@ -27,10 +27,8 @@ export class AccountSettingsService {
 
 		await this.accountDatabaseService.setItem<IAccountUserProfile>(
 			'publicProfile',
-			{
-				data: await this.accountDatabaseService.current.user.toAccountUserProfile(),
-				proto: AccountUserProfile
-			},
+			AccountUserProfile,
+			await this.accountDatabaseService.current.user.toAccountUserProfile(),
 			true
 		);
 	}

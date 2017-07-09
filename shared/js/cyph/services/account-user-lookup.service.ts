@@ -12,7 +12,7 @@ export class AccountUserLookupService {
 	/** Tries to to get user object for the specified username. */
 	public async getUser (username: string) : Promise<User> {
 		return new User(
-			await this.accountDatabaseService.getItemObject<IAccountUserProfile>(
+			await this.accountDatabaseService.getItem<IAccountUserProfile>(
 				`users/${username.toLowerCase()}/publicProfile`,
 				AccountUserProfile,
 				true

@@ -7,6 +7,7 @@ import {
 	IAccountFileRecordList
 } from '../../proto';
 import {IAsyncValue} from '../iasync-value';
+import {BinaryProto, BlobProto, DataURIProto, StringProto} from '../protos';
 import {util} from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
@@ -22,11 +23,7 @@ export class AccountFilesService {
 
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
 	public readonly files: IAsyncValue<IAccountFileRecordList>	=
-		this.accountDatabaseService.getAsyncValueObject<IAccountFileRecordList>(
-			'fileList',
-			AccountFileRecordList,
-			() => ({records: []})
-		)
+		this.accountDatabaseService.getAsyncValue('fileList', AccountFileRecordList)
 	;
 
 	/**
@@ -54,7 +51,10 @@ export class AccountFilesService {
 		progress: Observable<number>;
 		result: Promise<void>;
 	} {
-		const {progress, result}	= this.accountDatabaseService.downloadItem(`files/${id}`);
+		const {progress, result}	= this.accountDatabaseService.downloadItem(
+			`files/${id}`,
+			BinaryProto
+		);
 
 		return {
 			progress,
@@ -73,7 +73,7 @@ export class AccountFilesService {
 		result: Promise<string>;
 	} {
 		const {progress, result}	=
-			this.accountDatabaseService.downloadItemString(`files/${id}`)
+			this.accountDatabaseService.downloadItem(`files/${id}`, StringProto)
 		;
 		return {progress, result: (async () => (await result).value)()};
 	}
@@ -84,7 +84,7 @@ export class AccountFilesService {
 		result: Promise<string>;
 	} {
 		const {progress, result}	=
-			this.accountDatabaseService.downloadItemURI(`files/${id}`)
+			this.accountDatabaseService.downloadItem(`files/${id}`, DataURIProto)
 		;
 		return {progress, result: (async () => (await result).value)()};
 	}
@@ -154,7 +154,7 @@ export class AccountFilesService {
 	/** Overwrites an existing note. */
 	public async updateNote (id: string, content: string) : Promise<void> {
 		await this.getFile(id, AccountFileRecord.RecordType.NOTE);
-		await this.accountDatabaseService.setItem(`files/${id}`, content);
+		await this.accountDatabaseService.setItem(`files/${id}`, StringProto, content);
 
 		await this.files.updateValue(async fileRecordList => {
 			const files		= fileRecordList.records || [];
@@ -172,9 +172,11 @@ export class AccountFilesService {
 		result: Promise<void>;
 	} {
 		const id	= util.uuid();
+		const url	= `files/${id}`;
 
-		const {progress, result}	=
-			this.accountDatabaseService.uploadItem(`files/${id}`, file)
+		const {progress, result}	= typeof file === 'string' ?
+			this.accountDatabaseService.uploadItem(url, StringProto, file) :
+			this.accountDatabaseService.uploadItem(url, BlobProto, file)
 		;
 
 		return {

@@ -289,7 +289,7 @@ export class AccountDatabaseService {
 			throw new Error('Invalid AGSE-PKI certificate: bad key index.');
 		}
 
-		const verified	= util.deserialize<IAGSEPKICert>(
+		const verified	= await util.deserialize<IAGSEPKICert>(
 			AGSEPKICert,
 			await this.potassiumService.sign.open(
 				signed,
