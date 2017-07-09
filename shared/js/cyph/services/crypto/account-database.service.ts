@@ -183,7 +183,7 @@ export class AccountDatabaseService {
 		;
 	}
 
-	/** Downloads value and gives progress. */
+	/** @see DatabaseService.downloadItem */
 	public downloadItem<T> (url: string, proto: IProto<T>, publicData: boolean = false) : {
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
@@ -205,7 +205,7 @@ export class AccountDatabaseService {
 		return {progress, result};
 	}
 
-	/** Gets an IAsyncValue wrapper for an item. */
+	/** @see DatabaseService.getAsyncValue */
 	public getAsyncValue<T> (
 		url: string,
 		proto: IProto<T>,
@@ -245,7 +245,7 @@ export class AccountDatabaseService {
 		};
 	}
 
-	/** Gets an item's value. */
+	/** @see DatabaseService.getItem */
 	public async getItem<T> (
 		url: string,
 		proto: IProto<T>,
@@ -295,12 +295,12 @@ export class AccountDatabaseService {
 		return verified;
 	}
 
-	/** Checks whether an item exists. */
+	/** @see DatabaseService.hasItem */
 	public async hasItem (url: string) : Promise<boolean> {
 		return this.databaseService.hasItem(url);
 	}
 
-	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
+	/** @see DatabaseService.lock */
 	public async lock<T> (
 		url: string,
 		f: (reason?: string) => Promise<T>,
@@ -332,14 +332,14 @@ export class AccountDatabaseService {
 		);
 	}
 
-	/** Creates and returns a lock function that uses AccountDatabaseService.lock. */
+	/** @see DatabaseService.lockFunction */
 	public lockFunction (url: string) : LockFunction {
 		return async <T> (f: (reason?: string) => Promise<T>, reason?: string) =>
 			this.lock(url, f, reason)
 		;
 	}
 
-	/** Checks whether a lock is currently claimed and what the specified reason is. */
+	/** @see DatabaseService.lockStatus */
 	public async lockStatus (url: string) : Promise<{locked: boolean; reason: string|undefined}> {
 		const {locked, reason}	=
 			await this.databaseService.lockStatus(this.processLockURL(url))
@@ -358,7 +358,7 @@ export class AccountDatabaseService {
 		};
 	}
 
-	/** Pushes an item to a list. */
+	/** @see DatabaseService.pushItem */
 	public async pushItem<T> (
 		url: string,
 		proto: IProto<T>,
@@ -372,7 +372,7 @@ export class AccountDatabaseService {
 		);
 	}
 
-	/** Deletes an item. */
+	/** @see DatabaseService.removeItem */
 	public async removeItem (url: string) : Promise<void> {
 		if (!this.current) {
 			throw new Error(`User not signed in. Cannot remove item at ${url}.`);
@@ -383,7 +383,7 @@ export class AccountDatabaseService {
 		return this.databaseService.removeItem(url);
 	}
 
-	/** Sets an item's value. */
+	/** @see DatabaseService.setItem */
 	public async setItem<T> (
 		url: string,
 		proto: IProto<T>,
@@ -397,7 +397,7 @@ export class AccountDatabaseService {
 		));
 	}
 
-	/** Uploads value and gives progress. */
+	/** @see DatabaseService.uploadItem */
 	public uploadItem<T> (
 		url: string,
 		proto: IProto<T>,
@@ -436,7 +436,7 @@ export class AccountDatabaseService {
 		return {cancel, progress, result};
 	}
 
-	/** Waits for lock to be released. */
+	/** @see DatabaseService.waitForUnlock */
 	public async waitForUnlock (url: string) : Promise<{
 		reason: string|undefined;
 		wasLocked: boolean;
@@ -459,7 +459,7 @@ export class AccountDatabaseService {
 		};
 	}
 
-	/** Subscribes to a value. */
+	/** @see DatabaseService.watch */
 	public watch<T> (
 		url: string,
 		proto: IProto<T>,
@@ -478,7 +478,7 @@ export class AccountDatabaseService {
 		}));
 	}
 
-	/** Subscribes to a list of values. */
+	/** @see DatabaseService.watchList */
 	public watchList<T> (
 		url: string,
 		proto: IProto<T>,
