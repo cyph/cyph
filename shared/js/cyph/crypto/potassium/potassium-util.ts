@@ -6,6 +6,55 @@ import * as NativeCrypto from './native-crypto';
  * Miscellaneous helper functions for Potassium.
  */
 export class PotassiumUtil {
+	/** Splits byte array into chunks. */
+	public chunkBytes (a: ArrayBufferView, chunkSize?: number) : Uint8Array[] {
+		const bytes	= this.toBytes(a);
+
+		if (chunkSize === undefined || isNaN(chunkSize) || chunkSize < 1) {
+			return [bytes];
+		}
+
+		const chunks: Uint8Array[]	= [];
+
+		for (let i = 0 ; i < bytes.length ; i += chunkSize) {
+			chunks.push(this.toBytes(
+				bytes,
+				i,
+				(bytes.length - i) > chunkSize ?
+					chunkSize :
+					undefined
+			));
+		}
+
+		return chunks;
+	}
+
+	/** Joins chunks that have been created with chunkBytes. */
+	public chunkedBytesJoin (chunks: Uint8Array[]) : Uint8Array {
+		return this.concatMemory(
+			true,
+			...chunks.
+				map(chunk => [new Uint32Array([chunk.length]), chunk]).
+				reduce((a, b) => a.concat(b), [])
+		);
+	}
+
+	/** Splits chunks that have been joined with chunkedBytesJoin. */
+	public chunkedBytesSplit (bytes: Uint8Array) : Uint8Array[] {
+		const chunks: Uint8Array[]	= [];
+		const cyphertextView		= this.toDataView(bytes);
+
+		let i	= 0;
+		while (i < bytes.length) {
+			const chunkSize	= cyphertextView.getUint32(i, true);
+			i += 4;
+			chunks.push(this.toBytes(bytes, i, chunkSize));
+			i += chunkSize;
+		}
+
+		return chunks;
+	}
+
 	/** Zeroes out memory. */
 	public clearMemory (a: ArrayBufferView) : void {
 		sodiumUtil.memzero(this.toBytes(a));
@@ -28,12 +77,11 @@ export class PotassiumUtil {
 		let index	= 0;
 
 		for (const a of arrays) {
-			const array	= this.toBytes(a);
-			out.set(array, index);
-			index += array.length;
+			out.set(this.toBytes(a), index);
+			index += a.byteLength;
 
 			if (clearOriginals) {
-				this.clearMemory(array);
+				this.clearMemory(a);				
 			}
 		}
 

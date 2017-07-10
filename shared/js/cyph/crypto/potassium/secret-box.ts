@@ -217,23 +217,11 @@ export class SecretBox implements ISecretBox {
 			return this.openChunk(cyphertext, key, additionalData);
 		}
 
-		const chunks: Uint8Array[]	= [];
-		const cyphertextView		= potassiumUtil.toDataView(cyphertext);
-
-		for (let i = 0 ; i < cyphertext.length ; ) {
-			const chunkSize	= cyphertextView.getUint32(i, true);
-
-			i += 4;
-
-			chunks.push(await this.openChunk(
-				potassiumUtil.toBytes(cyphertext, i, chunkSize),
-				key
-			));
-
-			i += chunkSize;
-		}
-
-		return potassiumUtil.concatMemory(true, ...chunks);
+		return potassiumUtil.concatMemory(true, ...(await Promise.all(
+			potassiumUtil.chunkedBytesSplit(cyphertext).map(async c =>
+				this.openChunk(c, key)
+			)
+		)));
 	}
 
 	/** @inheritDoc */
@@ -246,26 +234,9 @@ export class SecretBox implements ISecretBox {
 			return this.sealChunk(plaintext, key, additionalData);
 		}
 
-		const chunks: Uint8Array[]	= [];
-
-		for (let i = 0 ; i < plaintext.length ; i += this.chunkSize) {
-			chunks.push(await this.sealChunk(
-				potassiumUtil.toBytes(
-					plaintext,
-					i,
-					(plaintext.length - i) > this.chunkSize ?
-						this.chunkSize :
-						undefined
-				),
-				key
-			));
-		}
-
-		return potassiumUtil.concatMemory(true, ...chunks.map(chunk =>
-			potassiumUtil.concatMemory(
-				true,
-				new Uint32Array([chunk.length]),
-				chunk
+		return potassiumUtil.chunkedBytesJoin(await Promise.all(
+			potassiumUtil.chunkBytes(plaintext, this.chunkSize).map(async m =>
+				this.sealChunk(m, key)
 			)
 		));
 	}
