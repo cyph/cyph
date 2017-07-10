@@ -50,7 +50,7 @@ dev_appserver.py \
 &
 blockoomkiller ${!}
 
-./commands/buildunbundledassets.sh
+./commands/buildunbundledassets.sh --test
 
 log 'Starting ng serve'
 

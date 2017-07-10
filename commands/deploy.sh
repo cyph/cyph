@@ -288,7 +288,7 @@ if [ "${compiledProjects}" ] ; then
 	if [ ! "${test}" ] ; then
 		./commands/lint.sh || exit 1
 	fi
-	./commands/buildunbundledassets.sh || exit 1
+	./commands/buildunbundledassets.sh $(if [ "${simple}" ] ; then echo '--test' ; fi) || exit 1
 	rm -rf "${dir}/shared/assets"
 	cp -a shared/assets "${dir}/shared/"
 fi
