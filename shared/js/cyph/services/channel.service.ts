@@ -16,6 +16,9 @@ export class ChannelService {
 	private isClosed: boolean	= false;
 
 	/** @ignore */
+	private readonly localLock: LockFunction	= util.lockFunction();
+
+	/** @ignore */
 	private resolveState: (state: {lock: LockFunction; url: string}) => void;
 
 	/** @ignore */
@@ -108,12 +111,12 @@ export class ChannelService {
 	}
 
 	/** Sends message through this channel. */
-	public async send (cyphertext: Uint8Array) : Promise<void> {
-		await this.databaseService.pushItem(
+	public send (cyphertext: Uint8Array) : void {
+		this.localLock(async () => this.databaseService.pushItem(
 			`${(await this.state).url}/messages`,
 			ChannelMessage,
 			{cyphertext, author: this.userId}
-		);
+		));
 	}
 
 	constructor (
