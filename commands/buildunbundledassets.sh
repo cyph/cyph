@@ -4,6 +4,13 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
+test=''
+if [ "${1}" == '--test' ] ; then
+	test=true
+	shift
+fi
+
+
 checkfail () {
 	if (( $? )) ; then
 		exit 1
@@ -33,7 +40,7 @@ scssAssets="native/app $(
 		uniq
 )"
 
-hash="$(
+hash="${test}$(
 	cat \
 		commands/buildunbundledassets.sh \
 		types.proto \
@@ -135,19 +142,21 @@ for f in ${typescriptAssets} ; do
 				path: '${PWD}'
 			},
 			plugins: [
-				new webpack.optimize.UglifyJsPlugin({
-					comments: false,
-					compress: {
-						screw_ie8: true,
-						sequences: false,
-						warnings: false
-					},
-					mangle: {
-						except: mangleExceptions,
-						screw_ie8: true
-					},
-					sourceMap: false
-				})
+				$(test "${test}" || echo "
+					new webpack.optimize.UglifyJsPlugin({
+						comments: false,
+						compress: {
+							screw_ie8: true,
+							sequences: false,
+							warnings: false
+						},
+						mangle: {
+							except: mangleExceptions,
+							screw_ie8: true
+						},
+						sourceMap: false
+					})
+				")
 			],
 			resolve: {
 				extensions: ['.js', '.ts'],
