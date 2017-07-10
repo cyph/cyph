@@ -605,6 +605,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			(async () => {
 				const listRef	= await this.getDatabaseRef(url);
+				let initiated	= false;
 
 				const onChildAdded	= async (snapshot: firebase.database.DataSnapshot) => {
 					if (snapshot && snapshot.key) {
@@ -614,10 +615,22 @@ export class FirebaseDatabaseService extends DatabaseService {
 					}
 				};
 
+				const onValue			= async (snapshot: firebase.database.DataSnapshot) => {
+					if (!initiated) {
+						initiated	= true;
+						return;
+					}
+					if (snapshot && !snapshot.exists()) {
+						observer.complete();
+					}
+				};
+
 				listRef.on('child_added', onChildAdded);
+				listRef.on('value', onValue);
 
 				cleanup	= () => {
 					listRef.off('child_added', onChildAdded);
+					listRef.off('value', onValue);
 				};
 			})();
 
