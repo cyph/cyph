@@ -9,10 +9,13 @@ import {Transport} from './transport';
  */
 export class AnonymousRemoteUser implements IRemoteUser {
 	/** @ignore */
-	private cyphertextPromise: Promise<Uint8Array>;
+	private readonly encryptedPublicBoxKey: Promise<Uint8Array>;
 
 	/** @ignore */
 	private publicKey: Uint8Array;
+
+	/** @ignore */
+	private readonly sharedSecret: Promise<Uint8Array>;
 
 	/** @inheritDoc */
 	public async getPublicKey () : Promise<Uint8Array> {
@@ -20,20 +23,16 @@ export class AnonymousRemoteUser implements IRemoteUser {
 			return this.publicKey;
 		}
 
-		const sharedSecret	= (await this.potassium.passwordHash.hash(
-			this.sharedSecret,
-			new Uint8Array(await this.potassium.passwordHash.saltBytes)
-		)).hash;
+		const encryptedPublicBoxKey	= await this.encryptedPublicBoxKey;
+		const sharedSecret			= await this.sharedSecret;
 
 		this.publicKey		= await this.potassium.secretBox.open(
-			await this.cyphertextPromise,
+			encryptedPublicBoxKey,
 			sharedSecret
 		);
 
+		this.potassium.clearMemory(encryptedPublicBoxKey);
 		this.potassium.clearMemory(sharedSecret);
-
-		this.cyphertextPromise	= Promise.resolve(new Uint8Array(0));
-		this.sharedSecret		= '';
 
 		return this.publicKey;
 	}
@@ -50,12 +49,18 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		/** @ignore */
 		private readonly transport: Transport,
 
-		/** @ignore */
-		private sharedSecret: string,
+		sharedSecret: string,
 
 		/** @ignore */
 		private readonly username: Promise<string>
 	) {
-		this.cyphertextPromise	= this.transport.interceptIncomingCyphertext();
+		this.encryptedPublicBoxKey	= this.transport.interceptIncomingCyphertext();
+
+		this.sharedSecret			= (async () =>
+			(await this.potassium.passwordHash.hash(
+				sharedSecret,
+				new Uint8Array(await this.potassium.passwordHash.saltBytes)
+			)).hash
+		)();
 	}
 }

@@ -14,7 +14,7 @@ export class Transport {
 
 
 	/** Queue of cyphertext interception handlers. */
-	public readonly cyphertextIntercepters: ((cyphertext: Uint8Array) => void)[]	= [];
+	public readonly cyphertextInterceptors: ((cyphertext: Uint8Array) => void)[]	= [];
 
 	/** Triggers abortion event. */
 	public abort () : void {
@@ -32,17 +32,17 @@ export class Transport {
 	 */
 	public async interceptIncomingCyphertext (timeout: number = 120000) : Promise<Uint8Array> {
 		return new Promise<Uint8Array>(async (resolve, reject) => {
-			this.cyphertextIntercepters.push(resolve);
+			this.cyphertextInterceptors.push(resolve);
 
 			if (timeout) {
 				await util.sleep(timeout);
 
-				const index	= this.cyphertextIntercepters.indexOf(resolve);
+				const index	= this.cyphertextInterceptors.indexOf(resolve);
 				if (index < 0) {
 					return;
 				}
 
-				this.cyphertextIntercepters.splice(index, 1);
+				this.cyphertextInterceptors.splice(index, 1);
 				reject('Cyphertext interception timeout.');
 			}
 		});
