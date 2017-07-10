@@ -9,6 +9,11 @@ try {
 	;
 }
 catch (_) {}
+/* Request Persistent Storage permission to mitigate edge case eviction of ServiceWorker/AppCache */
+try {
+	navigator.storage.persist();
+}
+catch (_) {}
 
 var isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
 
