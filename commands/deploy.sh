@@ -461,9 +461,6 @@ if [ "${websign}" ] ; then
 
 	git push
 	cd ..
-elif [ ! "${site}" ] || [ "${site}" == "${webSignedProject}" ] ; then
-	mkdir "${webSignedProject}/js"
-	cp websign/js/workerhelper.js "${webSignedProject}/js/"
 fi
 
 # WebSign redirects

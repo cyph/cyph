@@ -1,6 +1,5 @@
 var files	= [
 	'/',
-	'/js/workerhelper.js',
 	'/appcache.appcache',
 	'/manifest.json',
 	'/serviceworker.js',

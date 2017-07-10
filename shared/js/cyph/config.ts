@@ -189,8 +189,7 @@ export class Config {
 
 	/** WebSign-related config. */
 	public readonly webSignConfig			= {
-		serviceWorker: 'serviceworker.js',
-		workerHelper: 'js/workerhelper.js'
+		serviceWorker: 'serviceworker.js'
 	};
 
 	constructor () {}
