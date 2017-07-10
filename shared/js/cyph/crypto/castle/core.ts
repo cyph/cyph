@@ -114,7 +114,7 @@ export class Core {
 		;
 
 		return this.lock(async () => {
-			const messageId	= this.potassium.toBytes(cyphertext, undefined, 8);
+			const messageId	= this.potassium.toBytes(cyphertext, 0, 8);
 			const encrypted	= this.potassium.toBytes(cyphertext, 8);
 
 			for (const keys of [this.symmetricKeys.current, this.symmetricKeys.next]) {

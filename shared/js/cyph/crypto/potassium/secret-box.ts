@@ -120,7 +120,7 @@ export class SecretBox implements ISecretBox {
 
 		const nonce					= potassiumUtil.toBytes(
 			cyphertext,
-			undefined,
+			0,
 			this.helpers.nonceBytes
 		);
 
