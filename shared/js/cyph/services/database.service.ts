@@ -207,7 +207,11 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Subscribes to new values pushed onto a list. */
-	public watchListPushes<T> (_URL: string, _PROTO: IProto<T>) : Observable<ITimedValue<T>> {
+	public watchListPushes<T> (
+		_URL: string,
+		_PROTO: IProto<T>,
+		_NO_CACHE: boolean = false
+	) : Observable<ITimedValue<T>> {
 		throw new Error('Must provide an implementation of DatabaseService.watchListPushes.');
 	}
 

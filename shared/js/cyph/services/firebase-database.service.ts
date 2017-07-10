@@ -599,7 +599,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchListPushes<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>> {
+	public watchListPushes<T> (
+		url: string,
+		proto: IProto<T>,
+		noCache: boolean = false
+	) : Observable<ITimedValue<T>> {
 		return new Observable<ITimedValue<T>>(observer => {
 			let cleanup: Function;
 
@@ -608,10 +612,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 				let initiated	= false;
 
 				const onChildAdded	= async (snapshot: firebase.database.DataSnapshot) => {
-					if (snapshot && snapshot.key) {
-						observer.next(
-							await (await this.downloadItem(`${url}/${snapshot.key}`, proto)).result
-						);
+					if (!snapshot || !snapshot.key) {
+						return;
+					}
+
+					const itemUrl	= `${url}/${snapshot.key}`;
+					observer.next(await (await this.downloadItem(itemUrl, proto)).result);
+
+					if (noCache) {
+						this.cacheRemove({url: itemUrl});
 					}
 				};
 
