@@ -117,15 +117,15 @@ export class Box implements IBox {
 		const secretBoxKeyBytes		= await this.secretBox.keyBytes;
 
 		try {
-			const encryptedKeys	= new Uint8Array(
-				keyCyphertext.buffer,
-				keyCyphertext.byteOffset,
+			const encryptedKeys	= potassiumUtil.toBytes(
+				keyCyphertext,
+				undefined,
 				encryptedKeyBytes
 			);
 
-			const mac			= new Uint8Array(
-				keyCyphertext.buffer,
-				keyCyphertext.byteOffset + encryptedKeyBytes,
+			const mac			= potassiumUtil.toBytes(
+				keyCyphertext,
+				encryptedKeyBytes,
 				oneTimeAuthBytes
 			);
 
@@ -134,15 +134,15 @@ export class Box implements IBox {
 				privateKey
 			);
 
-			const symmetricKey	= new Uint8Array(
-				innerKeys.buffer,
-				innerKeys.byteOffset,
+			const symmetricKey	= potassiumUtil.toBytes(
+				innerKeys,
+				undefined,
 				secretBoxKeyBytes
 			);
 
-			const authKey		= new Uint8Array(
-				innerKeys.buffer,
-				innerKeys.byteOffset + secretBoxKeyBytes,
+			const authKey		= potassiumUtil.toBytes(
+				innerKeys,
+				secretBoxKeyBytes,
 				oneTimeAuthKeyBytes
 			);
 
@@ -185,14 +185,14 @@ export class Box implements IBox {
 		try {
 			const innerKeys		= potassiumUtil.randomBytes(plaintextBytes);
 
-			const symmetricKey	= new Uint8Array(
-				innerKeys.buffer,
-				innerKeys.byteOffset,
+			const symmetricKey	= potassiumUtil.toBytes(
+				innerKeys,
+				undefined,
 				secretBoxKeyBytes
 			);
 
-			const authKey		= new Uint8Array(
-				innerKeys.buffer,
+			const authKey		= potassiumUtil.toBytes(
+				innerKeys,
 				secretBoxKeyBytes,
 				oneTimeAuthKeyBytes
 			);
@@ -229,22 +229,19 @@ export class Box implements IBox {
 		ntru: Uint8Array;
 	}> {
 		return {
-			classical: new Uint8Array(
-				privateKey.buffer,
-				privateKey.byteOffset,
+			classical: potassiumUtil.toBytes(
+				privateKey,
+				undefined,
 				this.helpers.privateKeyBytes
 			),
-			mceliece: new Uint8Array(
-				privateKey.buffer,
-				privateKey.byteOffset + this.helpers.privateKeyBytes,
+			mceliece: potassiumUtil.toBytes(
+				privateKey,
+				this.helpers.privateKeyBytes,
 				await mceliece.privateKeyBytes
 			),
-			ntru: new Uint8Array(
-				privateKey.buffer,
-				privateKey.byteOffset +
-					this.helpers.privateKeyBytes +
-					(await mceliece.privateKeyBytes)
-				,
+			ntru: potassiumUtil.toBytes(
+				privateKey,
+				this.helpers.privateKeyBytes + (await mceliece.privateKeyBytes),
 				await ntru.privateKeyBytes
 			)
 		};
@@ -257,22 +254,19 @@ export class Box implements IBox {
 		ntru: Uint8Array;
 	}> {
 		return {
-			classical: new Uint8Array(
-				publicKey.buffer,
-				publicKey.byteOffset,
+			classical: potassiumUtil.toBytes(
+				publicKey,
+				undefined,
 				this.helpers.publicKeyBytes
 			),
-			mceliece: new Uint8Array(
-				publicKey.buffer,
-				publicKey.byteOffset + this.helpers.publicKeyBytes,
+			mceliece: potassiumUtil.toBytes(
+				publicKey,
+				this.helpers.publicKeyBytes,
 				await mceliece.publicKeyBytes
 			),
-			ntru: new Uint8Array(
-				publicKey.buffer,
-				publicKey.byteOffset +
-					this.helpers.publicKeyBytes +
-					(await mceliece.publicKeyBytes)
-				,
+			ntru: potassiumUtil.toBytes(
+				publicKey,
+				this.helpers.publicKeyBytes + (await mceliece.publicKeyBytes),
 				await ntru.publicKeyBytes
 			)
 		};
@@ -309,11 +303,11 @@ export class Box implements IBox {
 		const privateSubKeys		= await this.splitPrivateKey(keyPair.privateKey);
 		const publicSubKeys			= await this.splitPublicKey(keyPair.publicKey);
 
-		let cyphertextIndex			= cyphertext.byteOffset;
+		let cyphertextIndex			= 0;
 
 		const mcelieceData			= await this.publicKeyDecrypt(
-			new Uint8Array(
-				cyphertext.buffer,
+			potassiumUtil.toBytes(
+				cyphertext,
 				cyphertextIndex,
 				(await mceliece.cyphertextBytes) + oneTimeAuthBytes
 			),
@@ -326,8 +320,8 @@ export class Box implements IBox {
 		cyphertextIndex += (await mceliece.cyphertextBytes) + oneTimeAuthBytes;
 
 		const ntruData				= await this.publicKeyDecrypt(
-			new Uint8Array(
-				cyphertext.buffer,
+			potassiumUtil.toBytes(
+				cyphertext,
 				cyphertextIndex,
 				(await ntru.cyphertextBytes) + oneTimeAuthBytes
 			),
@@ -339,18 +333,17 @@ export class Box implements IBox {
 
 		cyphertextIndex += (await ntru.cyphertextBytes) + oneTimeAuthBytes;
 
-		const nonce					= new Uint8Array(
-			cyphertext.buffer,
+		const nonce					= potassiumUtil.toBytes(
+			cyphertext,
 			cyphertextIndex,
 			this.helpers.nonceBytes
 		);
 
 		cyphertextIndex += this.helpers.nonceBytes;
 
-		const mcelieceCyphertext	= new Uint8Array(
-			cyphertext.buffer,
-			cyphertextIndex,
-			cyphertext.byteLength - (cyphertextIndex - cyphertext.byteOffset)
+		const mcelieceCyphertext	= potassiumUtil.toBytes(
+			cyphertext,
+			cyphertextIndex
 		);
 		const ntruCyphertext		= await this.secretBox.open(
 			mcelieceCyphertext,

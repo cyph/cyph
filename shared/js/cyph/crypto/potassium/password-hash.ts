@@ -166,18 +166,16 @@ export class PasswordHash implements IPasswordHash {
 		opsLimit: number;
 		salt: Uint8Array;
 	}> {
-		const metadataView	= new DataView(metadata.buffer, metadata.byteOffset);
+		const metadataView	= potassiumUtil.toDataView(metadata);
 		const saltBytes		= metadataView.getUint32(8, true);
 
 		return {
 			algorithm: potassiumUtil.toString(
-				new Uint8Array(metadata.buffer, metadata.byteOffset + saltBytes + 12)
+				potassiumUtil.toBytes(metadata, saltBytes + 12)
 			),
 			memLimit: metadataView.getUint32(0, true),
 			opsLimit: metadataView.getUint32(4, true),
-			salt: new Uint8Array(
-				new Uint8Array(metadata.buffer, metadata.byteOffset + 12, saltBytes)
-			)
+			salt: potassiumUtil.toBytes(metadata, 12, saltBytes)
 		};
 	}
 

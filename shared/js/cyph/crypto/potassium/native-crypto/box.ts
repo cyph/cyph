@@ -63,9 +63,9 @@ export class Box {
 		nonce: Uint8Array,
 		keyPair: IKeyPair
 	) : Promise<Uint8Array> {
-		const asymmetricCyphertext	= new Uint8Array(
-			cyphertext.buffer,
-			cyphertext.byteOffset,
+		const asymmetricCyphertext	= potassiumUtil.toBytes(
+			cyphertext,
+			undefined,
 			this.algorithm.modulusLengthBytes
 		);
 
@@ -81,29 +81,26 @@ export class Box {
 			)
 		);
 
-		const symmetricKey			= new Uint8Array(
-			asymmetricPlaintext.buffer,
-			0,
+		const symmetricKey			= potassiumUtil.toBytes(
+			asymmetricPlaintext,
+			undefined,
 			secretBox.keyBytes
 		);
 
-		const symmetricCyphertext	= new Uint8Array(
-			cyphertext.buffer,
-			cyphertext.byteOffset +
-				this.algorithm.modulusLengthBytes +
-				oneTimeAuth.bytes
+		const symmetricCyphertext	= potassiumUtil.toBytes(
+			cyphertext,
+			this.algorithm.modulusLengthBytes + oneTimeAuth.bytes
 		);
 
-		const macKey				= new Uint8Array(
-			asymmetricPlaintext.buffer,
-			secretBox.keyBytes
+		const macKey				= potassiumUtil.toBytes(
+			asymmetricPlaintext,
+			secretBox.keyBytes,
+			oneTimeAuth.keyBytes
 		);
 
-		const mac					= new Uint8Array(
-			cyphertext.buffer,
-			cyphertext.byteOffset +
-				this.algorithm.modulusLengthBytes
-			,
+		const mac					= potassiumUtil.toBytes(
+			cyphertext,
+			this.algorithm.modulusLengthBytes,
 			oneTimeAuth.bytes
 		);
 
@@ -140,9 +137,9 @@ export class Box {
 			secretBox.keyBytes + oneTimeAuth.keyBytes
 		);
 
-		const symmetricKey			= new Uint8Array(
-			asymmetricPlaintext.buffer,
-			asymmetricPlaintext.byteOffset,
+		const symmetricKey			= potassiumUtil.toBytes(
+			asymmetricPlaintext,
+			undefined,
 			secretBox.keyBytes
 		);
 
@@ -164,9 +161,10 @@ export class Box {
 			)
 		);
 
-		const macKey				= new Uint8Array(
-			asymmetricPlaintext.buffer,
-			secretBox.keyBytes
+		const macKey				= potassiumUtil.toBytes(
+			asymmetricPlaintext,
+			secretBox.keyBytes,
+			oneTimeAuth.keyBytes
 		);
 
 		const mac					= await oneTimeAuth.sign(

@@ -37,10 +37,14 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 			const newBytes	= (<ISodium> (<any> self).sodium).crypto_stream_chacha20(
 				arrayBufferView.byteLength,
 				seed,
-				new Uint8Array(nonce.buffer)
+				new Uint8Array(nonce.buffer, nonce.byteOffset, nonce.byteLength)
 			);
 
-			new Uint8Array(arrayBufferView.buffer).set(newBytes);
+			new Uint8Array(
+				arrayBufferView.buffer,
+				arrayBufferView.byteOffset,
+				arrayBufferView.byteLength
+			).set(newBytes);
 			(<any> self).sodium.memzero(newBytes);
 
 			return arrayBufferView;

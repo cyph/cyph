@@ -104,8 +104,21 @@ export class PotassiumUtil {
 	}
 
 	/** Normalizes any binary data as standard byte array format. */
-	public toBytes (a: ArrayBufferView) : Uint8Array {
-		return new Uint8Array(a.buffer, a.byteOffset, a.byteLength);
+	public toBytes (a: ArrayBufferView, offset: number = 0, length?: number) : Uint8Array {
+		return new Uint8Array(
+			a.buffer,
+			a.byteOffset + offset,
+			length !== undefined ? length : a.byteLength - offset
+		);
+	}
+
+	/** Converts binary data into DataView. */
+	public toDataView (a: ArrayBufferView, offset: number = 0, length?: number) : DataView {
+		return new DataView(
+			a.buffer,
+			a.byteOffset + offset,
+			length !== undefined ? length : a.byteLength - offset
+		);
 	}
 
 	/** Converts binary into hex string. */

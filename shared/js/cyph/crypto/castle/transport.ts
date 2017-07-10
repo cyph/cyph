@@ -61,8 +61,8 @@ export class Transport {
 	public receive (cyphertext: Uint8Array, plaintext: Uint8Array, author: string) : void {
 		this.logCyphertext(potassiumUtil.toBase64(cyphertext), author);
 
-		const timestamp	= new DataView(plaintext.buffer, plaintext.byteOffset).getFloat64(0, true);
-		const data		= new Uint8Array(plaintext.buffer, plaintext.byteOffset + 8);
+		const timestamp	= potassiumUtil.toDataView(plaintext).getFloat64(0, true);
+		const data		= potassiumUtil.toBytes(plaintext, 8);
 
 		if (data.length > 0) {
 			this.session.castleHandler(
