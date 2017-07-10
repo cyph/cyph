@@ -299,12 +299,7 @@ export class FileTransferService {
 		eventManager.one<ISessionTransfer>(completedEvent).then(incomingTransfer => {
 			this.potassiumService.clearMemory(transfer.key);
 
-			transfer.answer	=
-				incomingTransfer.answer !== undefined ?
-					incomingTransfer.answer :
-					SessionTransferAnswer.EMPTY
-			;
-
+			transfer.answer				= incomingTransfer.answer;
 			transfer.receiptTimestamp	= incomingTransfer.receiptTimestamp;
 
 			this.uiCompleted(transfer, plaintext);
