@@ -126,9 +126,7 @@ export class PairwiseSession {
 		}
 		catch (_) {}
 
-		const newMessageId	=
-			new DataView(cyphertext.buffer, cyphertext.byteOffset).getFloat64(0, true)
-		;
+		const newMessageId	= this.potassium.toDataView(cyphertext).getFloat64(0, true);
 
 		return this.receiveLock(async () => {
 			const promises	= {
@@ -165,13 +163,7 @@ export class PairwiseSession {
 						/* Part 2 of handshake for Alice */
 						if (this.localUser) {
 							const oldPlaintext	= this.potassium.toBytes(plaintext);
-							const plaintextData	= await this.handshakeOpenSecret(oldPlaintext);
-
-							plaintext	= new Uint8Array(
-								plaintextData.buffer,
-								plaintextData.byteOffset,
-								plaintextData.byteLength
-							);
+							plaintext			= await this.handshakeOpenSecret(oldPlaintext);
 
 							this.potassium.clearMemory(oldPlaintext);
 						}

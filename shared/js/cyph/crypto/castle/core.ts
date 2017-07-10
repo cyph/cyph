@@ -114,8 +114,8 @@ export class Core {
 		;
 
 		return this.lock(async () => {
-			const messageId	= new Uint8Array(cyphertext.buffer, cyphertext.byteOffset, 8);
-			const encrypted	= new Uint8Array(cyphertext.buffer, cyphertext.byteOffset + 8);
+			const messageId	= this.potassium.toBytes(cyphertext, undefined, 8);
+			const encrypted	= this.potassium.toBytes(cyphertext, 8);
 
 			for (const keys of [this.symmetricKeys.current, this.symmetricKeys.next]) {
 				try {
@@ -133,8 +133,8 @@ export class Core {
 
 					let startIndex	= 1;
 					if (decrypted[0] === 1) {
-						await this.asymmetricRatchet(new Uint8Array(
-							decrypted.buffer,
+						await this.asymmetricRatchet(this.potassium.toBytes(
+							decrypted,
 							startIndex,
 							ephemeralKeyExchangePublicKeyBytes
 						));
@@ -152,7 +152,7 @@ export class Core {
 						this.symmetricKeys.current.outgoing.setValue(new Uint8Array(nextOutgoing));
 					}
 
-					return new Uint8Array(decrypted.buffer, startIndex);
+					return this.potassium.toBytes(decrypted, startIndex);
 				}
 				catch (_) {}
 			}
