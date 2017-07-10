@@ -77,7 +77,8 @@ export class ChannelService {
 
 		this.databaseService.watchListPushes<IChannelMessage>(
 			`${url}/messages`,
-			ChannelMessage
+			ChannelMessage,
+			true
 		).subscribe(
 			message => {
 				if (message.value.author !== this.userId) {
