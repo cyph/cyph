@@ -88,11 +88,7 @@ export class PairwiseSession {
 		}
 
 		const remotePublicKey	= await this.remoteUser.getPublicKey();
-
-		const cyphertext		= await this.potassium.box.seal(
-			secret,
-			remotePublicKey
-		);
+		const cyphertext		= await this.potassium.box.seal(secret, remotePublicKey);
 
 		this.potassium.clearMemory(remotePublicKey);
 
@@ -115,13 +111,11 @@ export class PairwiseSession {
 		}
 
 		try {
-			if (this.transport.cyphertextIntercepters.length > 0) {
-				const cyphertextIntercepter	= this.transport.cyphertextIntercepters.shift();
+			const cyphertextInterceptor	= this.transport.cyphertextInterceptors.shift();
 
-				if (cyphertextIntercepter) {
-					cyphertextIntercepter(cyphertext);
-					return;
-				}
+			if (cyphertextInterceptor) {
+				cyphertextInterceptor(cyphertext);
+				return;
 			}
 		}
 		catch (_) {}
