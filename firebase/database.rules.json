@@ -27,53 +27,51 @@
 
 				"messages": {
 					"$message": {
-						".write": "!data.exists() && newData.exists()",
-						".validate": "newData.hasChildren(['chunkIndex', 'cyphertext', 'id', 'numChunks', 'sender', 'timestamp'])",
-
-						"chunkIndex": {
-							".validate": "newData.isNumber()"
-						},
-
-						"cyphertext": {
+						"hash": {
 							".validate": "newData.isString()"
 						},
-
-						"id": {
-							".validate": "newData.isString()"
-						},
-
-						"numChunks": {
-							".validate": "newData.isNumber()"
-						},
-
-						"sender": {
-							".validate": "newData.isString() && root.child('channels').child($channel).child('users').child(newData.val()).exists()"
-						},
-
 						"timestamp": {
 							".validate": "newData.val() === now"
-						},
-
-						"$other": {
-							".validate": false
 						}
 					}
 				},
 
 				"users": {
 					"$user": {
-						".write": "!data.exists() && newData.exists()",
-						".validate": "newData.isString() && (newData.val() === '' || newData.val() === $user)"
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
 					}
 				}
 			}
 		},
 
-		"ephemeral": {
+		"fileTransfers": {
 			"$file": {
 				".read": true,
 				".write": true,
-				".validate": "newData.isString()"
+				"hash": {
+					".validate": "newData.isString()"
+				},
+				"timestamp": {
+					".validate": "newData.val() === now"
+				}
+			}
+		},
+
+		"pushlocks": {
+			"$contender": {
+				".read": true,
+				".write": true,
+				"id": {
+					".validate": "newData.isString()"
+				},
+				"reason": {
+					".validate": "newData.isString()"
+				}
 			}
 		},
 
@@ -85,43 +83,71 @@
 				"certificate": {
 					".read": true,
 					".write": false,
-					".validate": "newData.isString()"
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
 				},
 
 				"contactList": {
-					".validate": "newData.isString()"
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
 				},
 
 				"contacts": {
 					"$contact": {
 						"messages": {
 							"$message": {
-								".validate": "newData.isString()"
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
 							}
 						},
 						"session": {
-							".validate": "newData.isString()"
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
 						}
 					}
 				},
 
 				"encryptionKeyPair": {
-					".validate": "newData.isString()"
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
 				},
 
 				"fileList": {
-					".validate": "newData.isString()"
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
 				},
 
 				"files": {
 					"$file": {
-						"messages": {
-							"$message": {
-								".validate": "newData.isString()"
-							}
-						},
-						"session": {
+						"hash": {
 							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
 						}
 					}
 				},
@@ -139,20 +165,40 @@
 
 				"loginData": {
 					".read": true,
-					".validate": "newData.isString()"
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
 				},
 
 				"publicProfile": {
 					".read": true,
-					".validate": "newData.isString()"
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
 				},
 
 				"settings": {
-					".validate": "newData.isString()"
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
 				},
 
 				"signingKeyPair": {
-					".validate": "newData.isString()"
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
 				},
 
 				"$other": {

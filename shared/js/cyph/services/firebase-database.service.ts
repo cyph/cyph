@@ -310,7 +310,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		hash: string;
 		url: string;
 	}> {
-		return this.lock(`pushlock/${url}`, async () =>
+		return this.lock(`pushlocks/${url}`, async () =>
 			this.setItem(`${url}/${(await this.getDatabaseRef(url)).push().key}`, proto, value)
 		);
 	}

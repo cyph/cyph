@@ -1,6 +1,16 @@
 service firebase.storage {
 	match /b/{bucket}/o {
-		match /ephemeral/{file} {
+		match /channels/{channel} {
+			match /{all=**} {
+				allow read, write;
+			}
+
+			// match /messages/{message} {}
+
+			// match /users/{user} {}
+		}
+
+		match /fileTransfers/{file} {
 			allow read;
 			allow write: if request.resource == null || request.resource.size < 300000000;
 		}
