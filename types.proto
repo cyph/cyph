@@ -132,8 +132,8 @@ message SessionTransfer {
 		REJECTED = 2;
 	}
 
-	/** If defined, indicates an acceptance or rejection of a file transfer. */
-	Answer answer = 1;
+	/** Indicates a non-response to, acceptance of, or rejection of a file transfer. */
+	required Answer answer = 1;
 
 	/** @see SessionMessageData.author */
 	required string author = 2;
