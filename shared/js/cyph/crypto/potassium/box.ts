@@ -13,16 +13,6 @@ import {SecretBox} from './secret-box';
 export class Box implements IBox {
 	/** @ignore */
 	private readonly classicalCypher	= {
-		keyPair: this.isNative ?
-			 async () => NativeCrypto.box.keyPair() :
-			 async () => sodium.crypto_box_curve25519xchacha20poly1305_keypair()
-		,
-
-		nonceBytes: this.isNative ?
-				NativeCrypto.secretBox.nonceBytes :
-				sodium.crypto_box_curve25519xchacha20poly1305_NONCEBYTES
-		,
-
 		decrypt: this.isNative ?
 			async (cyphertext: Uint8Array, keyPair: IKeyPair) =>
 				NativeCrypto.box.open(cyphertext, keyPair)
@@ -41,6 +31,16 @@ export class Box implements IBox {
 			:
 			async (plaintext: Uint8Array, publicKey: Uint8Array) =>
 				sodium.crypto_box_curve25519xchacha20poly1305_seal(plaintext, publicKey)
+		,
+
+		keyPair: this.isNative ?
+			async () => NativeCrypto.box.keyPair() :
+			async () => sodium.crypto_box_curve25519xchacha20poly1305_keypair()
+		,
+
+		nonceBytes: this.isNative ?
+				NativeCrypto.secretBox.nonceBytes :
+				sodium.crypto_box_curve25519xchacha20poly1305_NONCEBYTES
 		,
 
 		privateKeyBytes: this.isNative ?

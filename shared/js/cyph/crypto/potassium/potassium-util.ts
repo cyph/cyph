@@ -81,7 +81,7 @@ export class PotassiumUtil {
 			index += a.byteLength;
 
 			if (clearOriginals) {
-				this.clearMemory(a);				
+				this.clearMemory(a);
 			}
 		}
 
