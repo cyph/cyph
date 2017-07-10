@@ -218,7 +218,7 @@ export class SecretBox implements ISecretBox {
 		}
 
 		return potassiumUtil.concatMemory(true, ...(await Promise.all(
-			potassiumUtil.chunkedBytesSplit(cyphertext).map(async c =>
+			potassiumUtil.splitBytes(cyphertext).map(async c =>
 				this.openChunk(c, key)
 			)
 		)));
@@ -234,11 +234,11 @@ export class SecretBox implements ISecretBox {
 			return this.sealChunk(plaintext, key, additionalData);
 		}
 
-		return potassiumUtil.chunkedBytesJoin(await Promise.all(
+		return potassiumUtil.joinBytes(...(await Promise.all(
 			potassiumUtil.chunkBytes(plaintext, this.chunkSize).map(async m =>
 				this.sealChunk(m, key)
 			)
-		));
+		)));
 	}
 
 	constructor (

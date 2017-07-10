@@ -79,25 +79,25 @@ export class Box implements IBox {
 		const oneTimeAuthKeyBytes	= await this.oneTimeAuth.keyBytes;
 
 		try {
-			const chunks	= potassiumUtil.chunkedBytesSplit(cyphertext);
+			const [asymmetricCyphertext, symmetricCyphertext]	= potassiumUtil.splitBytes(cyphertext);
 
-			return potassiumUtil.concatMemory(true, ...(await Promise.all(chunks.map(async c => {
-				const mac		= potassiumUtil.toBytes(c, undefined, oneTimeAuthBytes);
-				const encrypted	= potassiumUtil.toBytes(c, oneTimeAuthBytes);
-				const decrypted	= await cypher.decrypt(encrypted, privateKey);
-				const authKey	= potassiumUtil.toBytes(decrypted, undefined, oneTimeAuthKeyBytes);
-				const plaintext	= potassiumUtil.toBytes(decrypted, oneTimeAuthKeyBytes);
-				const isValid	= await this.oneTimeAuth.verify(mac, encrypted, authKey);
+			const mac			= potassiumUtil.toBytes(asymmetricCyphertext, 0, oneTimeAuthBytes);
+			const encrypted		= potassiumUtil.toBytes(asymmetricCyphertext, oneTimeAuthBytes);
+			const decrypted		= await cypher.decrypt(encrypted, privateKey);
+			const authKey		= potassiumUtil.toBytes(decrypted, 0, oneTimeAuthKeyBytes);
+			const symmetricKey	= potassiumUtil.toBytes(decrypted, oneTimeAuthKeyBytes);
+			const isValid		= await this.oneTimeAuth.verify(mac, encrypted, authKey);
 
-				potassiumUtil.clearMemory(authKey);
-
+			try {
 				if (!isValid) {
-					potassiumUtil.clearMemory(plaintext);
 					throw new Error(`${name} auth validation failed.`);
 				}
 
-				return plaintext;
-			}))));
+				return await this.secretBox.open(symmetricCyphertext, symmetricKey);
+			}
+			finally {
+				potassiumUtil.clearMemory(decrypted);
+			}
 		}
 		catch (err) {
 			throw new Error(`${name} decryption error: ${err ? err.message : 'undefined'}`);
@@ -113,41 +113,35 @@ export class Box implements IBox {
 	private async publicKeyEncrypt (
 		plaintext: Uint8Array,
 		publicKey: Uint8Array,
-		cypher: {
-			encrypt: (plaintext: Uint8Array, publicKey: Uint8Array) => Promise<Uint8Array>;
-			plaintextBytes?: Promise<number>;
-		},
-		name: string
+		cypher: {encrypt: (plaintext: Uint8Array, publicKey: Uint8Array) => Promise<Uint8Array>},
+		name: string,
+		clearPlaintext: boolean = true
 	) : Promise<Uint8Array> {
 		const oneTimeAuthKeyBytes	= await this.oneTimeAuth.keyBytes;
-		const plaintextBytes		= await cypher.plaintextBytes || 0;
+		const secretBoxKeyBytes		= await this.secretBox.keyBytes;
 
 		try {
-			const chunks	= potassiumUtil.chunkBytes(
-				plaintext,
-				plaintextBytes - oneTimeAuthKeyBytes
-			);
+			const asymmetricPlaintext	= potassiumUtil.randomBytes(oneTimeAuthKeyBytes + secretBoxKeyBytes);
 
-			return potassiumUtil.chunkedBytesJoin(await Promise.all(chunks.map(async m => {
-				const authKey	= potassiumUtil.randomBytes(oneTimeAuthKeyBytes);
+			const symmetricKey			= potassiumUtil.toBytes(asymmetricPlaintext, oneTimeAuthKeyBytes);
+			const symmetricCyphertext	= await this.secretBox.seal(plaintext, symmetricKey);
 
-				const encrypted	= await cypher.encrypt(
-					potassiumUtil.concatMemory(false, authKey, m),
-					publicKey
-				);
+			const authKey				= potassiumUtil.toBytes(asymmetricPlaintext, 0, oneTimeAuthKeyBytes);
+			const encrypted				= await cypher.encrypt(asymmetricPlaintext, publicKey);
+			const mac					= await this.oneTimeAuth.sign(encrypted, authKey);
+			const asymmetricCyphertext	= potassiumUtil.concatMemory(true, mac, encrypted);
 
-				const mac		= await this.oneTimeAuth.sign(encrypted, authKey);
+			potassiumUtil.clearMemory(asymmetricPlaintext);
 
-				potassiumUtil.clearMemory(authKey);
-
-				return potassiumUtil.concatMemory(true, mac, encrypted);
-			})));
+			return potassiumUtil.joinBytes(asymmetricCyphertext, symmetricCyphertext);
 		}
 		catch (err) {
 			throw new Error(`${name} encryption error: ${err ? err.message : 'undefined'}`);
 		}
 		finally {
-			potassiumUtil.clearMemory(plaintext);
+			if (clearPlaintext) {
+				potassiumUtil.clearMemory(plaintext);
+			}
 		}
 	}
 
@@ -227,26 +221,13 @@ export class Box implements IBox {
 
 	/** @inheritDoc */
 	public async open (cyphertext: Uint8Array, keyPair: IKeyPair) : Promise<Uint8Array> {
-		const privateSubKeys			= await this.splitPrivateKey(keyPair.privateKey);
-		const publicSubKeys				= await this.splitPublicKey(keyPair.publicKey);
+		const privateSubKeys	= await this.splitPrivateKey(keyPair.privateKey);
+		const publicSubKeys		= await this.splitPublicKey(keyPair.publicKey);
 
-		const asymmetricCyphertextBytes	= potassiumUtil.toDataView(cyphertext).getUint32(0, true);
-
-		const asymmetricCyphertext		= potassiumUtil.toBytes(
-			cyphertext,
-			4,
-			asymmetricCyphertextBytes
-		);
-
-		const symmetricCyphertext		= potassiumUtil.toBytes(
-			cyphertext,
-			asymmetricCyphertextBytes + 4
-		);
-
-		const symmetricKey				= await this.publicKeyDecrypt(
+		return this.publicKeyDecrypt(
 			await this.publicKeyDecrypt(
 				await this.publicKeyDecrypt(
-					asymmetricCyphertext,
+					cyphertext,
 					privateSubKeys.ntru,
 					ntru,
 					'NTRU',
@@ -260,29 +241,20 @@ export class Box implements IBox {
 			this.classicalCypher,
 			'Classical'
 		);
-
-		try {
-			return await this.secretBox.open(symmetricCyphertext, symmetricKey);
-		}
-		finally {
-			potassiumUtil.clearMemory(symmetricKey);
-		}
 	}
 
 	/** @inheritDoc */
 	public async seal (plaintext: Uint8Array, publicKey: Uint8Array) : Promise<Uint8Array> {
-		const publicSubKeys			= await this.splitPublicKey(publicKey);
+		const publicSubKeys	= await this.splitPublicKey(publicKey);
 
-		const symmetricKey			= potassiumUtil.randomBytes(await this.secretBox.keyBytes);
-		const symmetricCyphertext	= await this.secretBox.seal(plaintext, symmetricKey);
-
-		const asymmetricCyphertext	= await this.publicKeyEncrypt(
+		return this.publicKeyEncrypt(
 			await this.publicKeyEncrypt(
 				await this.publicKeyEncrypt(
-					symmetricKey,
+					plaintext,
 					publicSubKeys.classical,
 					this.classicalCypher,
-					'Classical'
+					'Classical',
+					false
 				),
 				publicSubKeys.mceliece,
 				mceliece,
@@ -291,13 +263,6 @@ export class Box implements IBox {
 			publicSubKeys.ntru,
 			ntru,
 			'NTRU'
-		);
-
-		return potassiumUtil.concatMemory(
-			true,
-			new Uint32Array([asymmetricCyphertext.length]),
-			asymmetricCyphertext,
-			symmetricCyphertext
 		);
 	}
 
