@@ -102,11 +102,9 @@ then(function (continent) {
 then(function (downloadMetadata) {
 	return Promise.all([
 		downloadMetadata,
-		fetch(
+		cachingFetch(
 			downloadMetadata.cdnUrl + 'pkg?' + downloadMetadata.packageTimestamp
-		).then(function (response) {
-			return response.text();
-		})
+		)
 	]);
 }).
 
