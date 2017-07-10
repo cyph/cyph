@@ -118,16 +118,15 @@ export class SecretBox implements ISecretBox {
 			throw new Error('Invalid key.');
 		}
 
-		const nonce					= new Uint8Array(
-			cyphertext.buffer,
-			cyphertext.byteOffset,
+		const nonce					= potassiumUtil.toBytes(
+			cyphertext,
+			0,
 			this.helpers.nonceBytes
 		);
 
-		const symmetricCyphertext	= new Uint8Array(
-			cyphertext.buffer,
-			cyphertext.byteOffset + this.helpers.nonceBytes,
-			cyphertext.byteLength - this.helpers.nonceBytes
+		const symmetricCyphertext	= potassiumUtil.toBytes(
+			cyphertext,
+			this.helpers.nonceBytes
 		);
 
 		let paddedPlaintext: Uint8Array|undefined;
@@ -142,11 +141,7 @@ export class SecretBox implements ISecretBox {
 			paddedPlaintext			= await this.helpers.open(
 				dataToDecrypt,
 				nonce,
-				new Uint8Array(
-					key.buffer,
-					key.byteOffset + i,
-					keyBytes
-				),
+				potassiumUtil.toBytes(key, i, keyBytes),
 				await this.getAdditionalData(additionalData)
 			);
 
@@ -157,14 +152,10 @@ export class SecretBox implements ISecretBox {
 			throw new Error('Padded plaintext empty.');
 		}
 
-		const plaintext	= new Uint8Array(new Uint8Array(
-			paddedPlaintext.buffer,
-			new Uint8Array(paddedPlaintext.buffer, 0, 1)[0] + 1
-		));
-
-		potassiumUtil.clearMemory(paddedPlaintext);
-
-		return plaintext;
+		return potassiumUtil.toBytes(
+			paddedPlaintext,
+			potassiumUtil.toDataView(paddedPlaintext).getUint8(0) + 1
+		);
 	}
 
 	/** @ignore */
@@ -198,11 +189,7 @@ export class SecretBox implements ISecretBox {
 			symmetricCyphertext	= await this.helpers.seal(
 				dataToEncrypt,
 				nonce,
-				new Uint8Array(
-					key.buffer,
-					key.byteOffset + i,
-					keyBytes
-				),
+				potassiumUtil.toBytes(key, i, keyBytes),
 				await this.getAdditionalData(additionalData)
 			);
 
@@ -230,31 +217,11 @@ export class SecretBox implements ISecretBox {
 			return this.openChunk(cyphertext, key, additionalData);
 		}
 
-		const chunks: Uint8Array[]	= [];
-		const cyphertextView		= new DataView(
-			cyphertext.buffer,
-			cyphertext.byteOffset,
-			cyphertext.byteLength
-		);
-
-		for (let i = 0 ; i < cyphertext.length ; ) {
-			const chunkSize	= cyphertextView.getUint32(i, true);
-
-			i += 4;
-
-			chunks.push(await this.openChunk(
-				new Uint8Array(
-					cyphertext.buffer,
-					cyphertext.byteOffset + i,
-					chunkSize
-				),
-				key
-			));
-
-			i += chunkSize;
-		}
-
-		return potassiumUtil.concatMemory(true, ...chunks);
+		return potassiumUtil.concatMemory(true, ...(await Promise.all(
+			potassiumUtil.splitBytes(cyphertext).map(async c =>
+				this.openChunk(c, key)
+			)
+		)));
 	}
 
 	/** @inheritDoc */
@@ -267,28 +234,11 @@ export class SecretBox implements ISecretBox {
 			return this.sealChunk(plaintext, key, additionalData);
 		}
 
-		const chunks: Uint8Array[]	= [];
-
-		for (let i = 0 ; i < plaintext.length ; i += this.chunkSize) {
-			chunks.push(await this.sealChunk(
-				new Uint8Array(
-					plaintext.buffer,
-					i,
-					(plaintext.length - i) > this.chunkSize ?
-						this.chunkSize :
-						undefined
-				),
-				key
-			));
-		}
-
-		return potassiumUtil.concatMemory(true, ...chunks.map(chunk =>
-			potassiumUtil.concatMemory(
-				true,
-				new Uint32Array([chunk.length]),
-				chunk
+		return potassiumUtil.joinBytes(...(await Promise.all(
+			potassiumUtil.chunkBytes(plaintext, this.chunkSize).map(async m =>
+				this.sealChunk(m, key)
 			)
-		));
+		)));
 	}
 
 	constructor (

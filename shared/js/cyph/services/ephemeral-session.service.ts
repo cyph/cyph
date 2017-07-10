@@ -68,19 +68,16 @@ export class EphemeralSessionService extends SessionService {
 					}
 
 					this.anonymousCastleService.send(
-						await util.toBytes({
-							data: {
-								messages: this.plaintextSendQueue.splice(
-									0,
-									this.plaintextSendQueue.length
-								)
-							},
-							proto: SessionMessageList
+						await util.serialize(SessionMessageList, {
+							messages: this.plaintextSendQueue.splice(
+								0,
+								this.plaintextSendQueue.length
+							)
 						})
 					);
 				}
 			},
-			onMessage: (message: string) => {
+			onMessage: (message: Uint8Array) => {
 				this.anonymousCastleService.receive(message);
 			},
 			onOpen: async (isAlice: boolean) : Promise<void> => {
@@ -115,7 +112,7 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @ignore */
-	protected cyphertextSendHandler (message: string) : void {
+	protected cyphertextSendHandler (message: Uint8Array) : void {
 		super.cyphertextSendHandler(message);
 		this.channelService.send(message);
 	}

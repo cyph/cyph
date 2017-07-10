@@ -44,7 +44,7 @@ export class ImportHelper {
 			'jwk',
 			util.parse<JsonWebKey>(
 				potassiumUtil.toString(
-					new Uint8Array(key.buffer, key.byteOffset, key.indexOf(0))
+					potassiumUtil.toBytes(key, 0, key.indexOf(0))
 				)
 			),
 			algorithm,

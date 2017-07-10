@@ -4,6 +4,7 @@ import {AnonymousRemoteUser} from '../../crypto/castle/anonymous-remote-user';
 import {PairwiseSession} from '../../crypto/castle/pairwise-session';
 import {Transport} from '../../crypto/castle/transport';
 import {ICastle} from '../../crypto/icastle';
+import {LockFunction} from '../../lock-function-type';
 import {util} from '../../util';
 import {SessionService} from '../session.service';
 import {PotassiumService} from './potassium.service';
@@ -22,7 +23,15 @@ export class AnonymousCastleService implements ICastle {
 	;
 
 	/** @ignore */
+	private readonly pairwiseSessionLock: LockFunction			= util.lockFunction();
+
+	/** @ignore */
 	private resolvePairwiseSession: (pairwiseSession: PairwiseSession) => void;
+
+	/** @ignore */
+	private async getPairwiseSession () : Promise<PairwiseSession> {
+		return this.pairwiseSessionLock(async () => this.pairwiseSession);
+	}
 
 	/** Initializes service. */
 	public async init (
@@ -58,8 +67,8 @@ export class AnonymousCastleService implements ICastle {
 	}
 
 	/** @inheritDoc */
-	public async receive (cyphertext: string) : Promise<void> {
-		return (await this.pairwiseSession).receive(cyphertext);
+	public async receive (cyphertext: Uint8Array) : Promise<void> {
+		return (await this.getPairwiseSession()).receive(cyphertext);
 	}
 
 	/** @inheritDoc */
@@ -68,7 +77,7 @@ export class AnonymousCastleService implements ICastle {
 			timestamp	= await util.timestamp();
 		}
 
-		return (await this.pairwiseSession).send(plaintext, timestamp);
+		return (await this.getPairwiseSession()).send(plaintext, timestamp);
 	}
 
 	constructor () {}

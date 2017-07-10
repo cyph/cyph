@@ -14,7 +14,7 @@ export class Transport {
 
 
 	/** Queue of cyphertext interception handlers. */
-	public readonly cyphertextIntercepters: ((cyphertext: Uint8Array) => void)[]	= [];
+	public readonly cyphertextInterceptors: ((cyphertext: Uint8Array) => void)[]	= [];
 
 	/** Triggers abortion event. */
 	public abort () : void {
@@ -32,17 +32,17 @@ export class Transport {
 	 */
 	public async interceptIncomingCyphertext (timeout: number = 120000) : Promise<Uint8Array> {
 		return new Promise<Uint8Array>(async (resolve, reject) => {
-			this.cyphertextIntercepters.push(resolve);
+			this.cyphertextInterceptors.push(resolve);
 
 			if (timeout) {
 				await util.sleep(timeout);
 
-				const index	= this.cyphertextIntercepters.indexOf(resolve);
+				const index	= this.cyphertextInterceptors.indexOf(resolve);
 				if (index < 0) {
 					return;
 				}
 
-				this.cyphertextIntercepters.splice(index, 1);
+				this.cyphertextInterceptors.splice(index, 1);
 				reject('Cyphertext interception timeout.');
 			}
 		});
@@ -61,8 +61,8 @@ export class Transport {
 	public receive (cyphertext: Uint8Array, plaintext: Uint8Array, author: string) : void {
 		this.logCyphertext(potassiumUtil.toBase64(cyphertext), author);
 
-		const timestamp	= new DataView(plaintext.buffer, plaintext.byteOffset).getFloat64(0, true);
-		const data		= new Uint8Array(plaintext.buffer, plaintext.byteOffset + 8);
+		const timestamp	= potassiumUtil.toDataView(plaintext).getFloat64(0, true);
+		const data		= potassiumUtil.toBytes(plaintext, 8);
 
 		if (data.length > 0) {
 			this.session.castleHandler(
@@ -73,21 +73,18 @@ export class Transport {
 	}
 
 	/** Send outgoing encrypted message. */
-	public send (cyphertext: string|ArrayBufferView, messageId?: ArrayBufferView) : void {
-		const fullCyphertext	= potassiumUtil.toBase64(
-			!messageId ? cyphertext : potassiumUtil.concatMemory(
+	public send (cyphertext: Uint8Array, messageId?: Uint8Array) : void {
+		const fullCyphertext	= !messageId ?
+			cyphertext :
+			potassiumUtil.concatMemory(
 				true,
 				messageId,
 				potassiumUtil.fromBase64(cyphertext)
 			)
-		);
-
-		if (!messageId && typeof cyphertext !== 'string') {
-			potassiumUtil.clearMemory(cyphertext);
-		}
+		;
 
 		this.session.castleHandler(CastleEvents.send, fullCyphertext);
-		this.logCyphertext(fullCyphertext, users.me);
+		this.logCyphertext(potassiumUtil.toBase64(fullCyphertext), users.me);
 	}
 
 	constructor (

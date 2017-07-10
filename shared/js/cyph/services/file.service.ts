@@ -46,15 +46,13 @@ export class FileService {
 
 		/* tslint:disable-next-line:no-unbound-method */
 		if (canvas.toBlob) {
-			return new Promise<Uint8Array>(resolve => { canvas.toBlob(
-				(blob: Blob) => {
-					const reader	= new FileReader();
-					reader.onload	= () => { resolve(new Uint8Array(reader.result)); };
-					reader.readAsArrayBuffer(blob);
-				},
-				outputType,
-				outputQuality
-			); });
+			return new Promise<Uint8Array>(resolve => {
+				canvas.toBlob(
+					async (blob: Blob) => { resolve(await potassiumUtil.fromBlob(blob)); },
+					outputType,
+					outputQuality
+				);
+			});
 		}
 		else {
 			return potassiumUtil.fromBase64(

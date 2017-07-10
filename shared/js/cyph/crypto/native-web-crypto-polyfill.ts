@@ -26,7 +26,11 @@
 
 	(<any> self).crypto	= {
 		getRandomValues: (arrayBufferView: ArrayBufferView) => {
-			const bytes	= new Uint8Array(arrayBufferView.buffer);
+			const bytes	= new Uint8Array(
+				arrayBufferView.buffer,
+				arrayBufferView.byteOffset,
+				arrayBufferView.byteLength
+			);
 
 			for (let i = 0 ; i < bytes.length ; ++i) {
 				bytes[i]	= getRandomByte();

@@ -88,11 +88,7 @@ export class PairwiseSession {
 		}
 
 		const remotePublicKey	= await this.remoteUser.getPublicKey();
-
-		const cyphertext		= await this.potassium.box.seal(
-			secret,
-			remotePublicKey
-		);
+		const cyphertext		= await this.potassium.box.seal(secret, remotePublicKey);
 
 		this.potassium.clearMemory(remotePublicKey);
 
@@ -109,29 +105,22 @@ export class PairwiseSession {
 	}
 
 	/** Receive/decrypt incoming message. */
-	public async receive (cyphertext: string) : Promise<void> {
+	public async receive (cyphertext: Uint8Array) : Promise<void> {
 		if (this.isAborted) {
 			return;
 		}
 
-		let newMessageBytes: Uint8Array|undefined;
-		let newMessageId: number|undefined;
-
 		try {
-			newMessageBytes	= this.potassium.fromBase64(cyphertext);
+			const cyphertextInterceptor	= this.transport.cyphertextInterceptors.shift();
 
-			if (this.transport.cyphertextIntercepters.length > 0) {
-				const cyphertextIntercepter	= this.transport.cyphertextIntercepters.shift();
-
-				if (cyphertextIntercepter) {
-					cyphertextIntercepter(newMessageBytes);
-					return;
-				}
+			if (cyphertextInterceptor) {
+				cyphertextInterceptor(cyphertext);
+				return;
 			}
-
-			newMessageId	= new DataView(newMessageBytes.buffer).getFloat64(0, true);
 		}
 		catch (_) {}
+
+		const newMessageId	= this.potassium.toDataView(cyphertext).getFloat64(0, true);
 
 		return this.receiveLock(async () => {
 			const promises	= {
@@ -143,18 +132,14 @@ export class PairwiseSession {
 			const incomingMessages	= await promises.incomingMessages;
 			let incomingMessagesMax	= await promises.incomingMessagesMax;
 
-			if (
-				newMessageBytes !== undefined &&
-				newMessageId !== undefined &&
-				newMessageId >= incomingMessageId
-			) {
+			if (newMessageId >= incomingMessageId) {
 				if (newMessageId > incomingMessagesMax) {
 					incomingMessagesMax	= newMessageId;
 				}
 
 				const message					= incomingMessages[newMessageId] || [];
 				incomingMessages[newMessageId]	= message;
-				message.push(newMessageBytes);
+				message.push(cyphertext);
 			}
 
 			while (incomingMessageId <= incomingMessagesMax) {
@@ -172,13 +157,7 @@ export class PairwiseSession {
 						/* Part 2 of handshake for Alice */
 						if (this.localUser) {
 							const oldPlaintext	= this.potassium.toBytes(plaintext);
-							const plaintextData	= await this.handshakeOpenSecret(oldPlaintext);
-
-							plaintext	= new Uint8Array(
-								plaintextData.buffer,
-								plaintextData.byteOffset,
-								plaintextData.byteLength
-							);
+							plaintext			= await this.handshakeOpenSecret(oldPlaintext);
 
 							this.potassium.clearMemory(oldPlaintext);
 						}

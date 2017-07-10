@@ -54,7 +54,7 @@ export class LocalSessionService extends SessionService {
 					this.trigger(events.cyphertext, {
 						author: message.data.author,
 						cyphertext: potassiumUtil.toBase64(
-							message.data.bytes || new Uint8Array([])
+							message.data.bytes || new Uint8Array(0)
 						)
 					});
 				}

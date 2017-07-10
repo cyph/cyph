@@ -20,7 +20,7 @@ export interface ISession {
 	/** Castle event handler called by Castle.Transport. */
 	castleHandler (
 		event: CastleEvents,
-		data?: string|{author: string; plaintext: Uint8Array; timestamp: number}
+		data?: Uint8Array|{author: string; plaintext: Uint8Array; timestamp: number}
 	) : Promise<void>;
 
 	/** This kills the cyph. */

@@ -6,6 +6,7 @@ import {ISecretBox} from '../crypto/potassium/isecret-box';
 import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
 import {SessionTransfer, SessionTransferAnswer} from '../files';
+import {BinaryProto} from '../protos';
 import {rpcEvents, SessionMessage, users} from '../session';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
@@ -89,12 +90,15 @@ export class FileTransferService {
 		this.sessionService.send(new SessionMessage(rpcEvents.files, {transfer}));
 
 		if (transfer.answer === SessionTransferAnswer.ACCEPTED) {
-			const {result, progress}	= this.databaseService.downloadItem(transfer.url);
+			const {result, progress}	= this.databaseService.downloadItem(
+				transfer.url,
+				BinaryProto
+			);
 			const transferSetItem		= {metadata: transfer, progress};
 			this.transfers				= this.transfers.add(transferSetItem);
 
 			const plaintext: Uint8Array|undefined	= await (async () =>
-				await (await this.secretBox).open(await result, transfer.key)
+				await (await this.secretBox).open((await result).value, transfer.key)
 			)().catch(
 				() => undefined
 			);
@@ -257,12 +261,13 @@ export class FileTransferService {
 
 		this.transfers	= this.transfers.add(transferSetPlaceholder);
 
-		const url					= 'ephemeral/' + util.uuid();
+		const url					= `fileTransfers/${util.uuid()}`;
 		const plaintext				= await this.fileService.getBytes(file, image);
 		const {cyphertext, key}		= await this.encryptFile(plaintext);
-		const uploadTask			= await this.databaseService.uploadItem(url, cyphertext);
 
-		const transfer	= new SessionTransfer(
+		const uploadTask	= await this.databaseService.uploadItem(url, BinaryProto, cyphertext);
+
+		const transfer		= new SessionTransfer(
 			file.name,
 			file.type,
 			image,

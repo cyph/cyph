@@ -26,8 +26,8 @@ ngserve () {
 }
 
 
-node /node_modules/.bin/firebase-server -p 44000 &
-blockoomkiller ${!}
+# node /node_modules/.bin/firebase-server -p 44000 &
+# blockoomkiller ${!}
 
 cp -f backend/app.yaml backend/.build.yaml
 
@@ -50,7 +50,7 @@ dev_appserver.py \
 &
 blockoomkiller ${!}
 
-./commands/buildunbundledassets.sh
+./commands/buildunbundledassets.sh --test
 
 log 'Starting ng serve'
 

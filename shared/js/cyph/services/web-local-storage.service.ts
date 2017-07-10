@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import * as localforage from 'localforage';
-import {DataType} from '../data-type';
+import {IProto} from '../iproto';
+import {StringProto} from '../protos';
 import {util} from '../util';
 import {LocalStorageService} from './local-storage.service';
 
@@ -22,7 +23,7 @@ export class WebLocalStorageService extends LocalStorageService {
 						/* tslint:disable-next-line:ban */
 						const value	= localStorage.getItem(key);
 						if (value) {
-							await this.setItem(key, value, false);
+							await this.setItem(key, StringProto, value, false);
 						}
 					})
 			);
@@ -31,7 +32,11 @@ export class WebLocalStorageService extends LocalStorageService {
 	})();
 
 	/** @inheritDoc */
-	public async getItem (url: string, waitForReady: boolean = true) : Promise<Uint8Array> {
+	public async getItem<T> (
+		url: string,
+		proto: IProto<T>,
+		waitForReady: boolean = true
+	) : Promise<T> {
 		if (waitForReady) {
 			await this.ready;
 		}
@@ -44,7 +49,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			throw new Error(`Item ${url} not found.`);
 		}
 
-		return value;
+		return util.deserialize(proto, value);
 	}
 
 	/** @inheritDoc */
@@ -53,14 +58,16 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		await this.getItem(url);
-		await localforage.removeItem(url);
+		if (await this.hasItem(url)) {
+			await localforage.removeItem(url);
+		}
 	}
 
 	/** @inheritDoc */
-	public async setItem<T = never> (
+	public async setItem<T> (
 		url: string,
-		value: DataType<T>,
+		proto: IProto<T>,
+		value: T,
 		waitForReady: boolean = true
 	) : Promise<{url: string}> {
 		const promise	= (async () => {
@@ -68,7 +75,7 @@ export class WebLocalStorageService extends LocalStorageService {
 				await this.ready;
 			}
 
-			await localforage.setItem<Uint8Array>(url, await util.toBytes(value));
+			await localforage.setItem<Uint8Array>(url, await util.serialize(proto, value));
 			return {url};
 		})();
 
