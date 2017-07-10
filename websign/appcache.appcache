@@ -2,7 +2,6 @@ CACHE MANIFEST
 
 CACHE:
 /
-/js/workerhelper.js
 /appcache.appcache
 /manifest.json
 /serviceworker.js

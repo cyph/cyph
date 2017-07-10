@@ -1,4 +1,3 @@
-import {config} from './config';
 import {env} from './env';
 import {eventManager} from './event-manager';
 import {IThread} from './ithread';
@@ -194,26 +193,18 @@ export class Thread implements IThread {
 			threadSetupVars.seed[i]	= 0;
 		}
 
-		let blobUrl: string;
+		const blobUrl	= URL.createObjectURL(
+			new Blob([threadBody], {type: 'application/javascript'})
+		);
 
 		try {
-			blobUrl	= URL.createObjectURL(
-				new Blob([threadBody], {type: 'application/javascript'})
-			);
-
-			try {
-				this.worker	= new Worker(blobUrl);
-			}
-			catch (err) {
-				if (this.worker) {
-					this.worker.terminate();
-				}
-				throw err;
-			}
+			this.worker	= new Worker(blobUrl);
 		}
-		catch (_) {
-			this.worker	= new Worker(config.webSignConfig.workerHelper);
-			this.worker.postMessage(threadBody);
+		catch (err) {
+			if (this.worker) {
+				this.worker.terminate();
+			}
+			throw err;
 		}
 
 
