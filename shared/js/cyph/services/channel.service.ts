@@ -72,9 +72,6 @@ export class ChannelService {
 			err => {
 				handlers.onClose();
 				throw err;
-			},
-			() => {
-				handlers.onClose();
 			}
 		);
 
