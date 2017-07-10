@@ -24,7 +24,7 @@ export class ChatService {
 	private static readonly approximateKeyExchangeTime: number			= 18000;
 
 	/** @ignore */
-	private static readonly messageConfirmationSpinnerTimeout: number	= 3000;
+	private static readonly messageConfirmationSpinnerTimeout: number	= 5000;
 
 	/** @ignore */
 	private static readonly queuedMessageSelfDestructTimeout: number	= 15000;
