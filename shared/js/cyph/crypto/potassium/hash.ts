@@ -33,7 +33,7 @@ export class Hash implements IHash {
 			}
 
 			const hash	= await this.hash(input);
-			return potassiumUtil.toBytes(hash, undefined, outputBytes);
+			return potassiumUtil.toBytes(hash, 0, outputBytes);
 		}
 		finally {
 			if (clearInput) {

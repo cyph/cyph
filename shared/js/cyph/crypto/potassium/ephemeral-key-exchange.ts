@@ -58,7 +58,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 		const rlwePublicKey		= potassiumUtil.toBytes(
 			publicKey,
-			undefined,
+			0,
 			await rlwe.publicKeyBytes
 		);
 		const sodiumPublicKey	= potassiumUtil.toBytes(
@@ -69,7 +69,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 		const rlwePrivateKey	= potassiumUtil.toBytes(
 			privateKey,
-			undefined,
+			0,
 			await rlwe.privateKeyBytes
 		);
 		const sodiumPrivateKey	= potassiumUtil.toBytes(
@@ -108,7 +108,7 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 		const aliceRlwePublicKey	= potassiumUtil.toBytes(
 			alicePublicKey,
-			undefined,
+			0,
 			await rlwe.publicKeyBytes
 		);
 		const aliceSodiumPublicKey	= potassiumUtil.toBytes(

@@ -154,7 +154,7 @@ export class Box implements IBox {
 		return {
 			classical: potassiumUtil.toBytes(
 				privateKey,
-				undefined,
+				0,
 				this.classicalCypher.privateKeyBytes
 			),
 			mceliece: potassiumUtil.toBytes(
@@ -179,7 +179,7 @@ export class Box implements IBox {
 		return {
 			classical: potassiumUtil.toBytes(
 				publicKey,
-				undefined,
+				0,
 				this.classicalCypher.publicKeyBytes
 			),
 			mceliece: potassiumUtil.toBytes(
