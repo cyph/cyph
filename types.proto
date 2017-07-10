@@ -19,7 +19,7 @@ message ChatMessage {
 	required string id = 2;
 
 	/** @see SessionText.selfDestructTimeout */
-	double selfDestructTimeout = 3;
+	uint32 selfDestructTimeout = 3;
 
 	/** @see SessionText.text */
 	required string text = 4;
@@ -112,7 +112,7 @@ message SessionMessageList {
 /** Contains an actual chat text message. */
 message SessionText {
 	/** Self-destruction timeout. */
-	double selfDestructTimeout = 1;
+	uint32 selfDestructTimeout = 1;
 
 	/** Message text. */
 	required string text = 2;
@@ -145,7 +145,7 @@ message SessionTransfer {
 	required bool image = 4;
 
 	/** If image is true, this will be used as a self-destruct timeout for the message. */
-	required double imageSelfDestructTimeout = 5;
+	required uint32 imageSelfDestructTimeout = 5;
 
 	/** Indicates whether file is being sent from this Cyph instance. */
 	required bool isOutgoing = 6;
@@ -163,7 +163,7 @@ message SessionTransfer {
 	double receiptTimestamp = 10;
 
 	/** File size in bytes. */
-	required double size = 11;
+	required uint32 size = 11;
 
 	/** File URL. */
 	required string url = 12;
