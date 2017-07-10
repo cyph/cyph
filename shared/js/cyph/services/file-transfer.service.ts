@@ -261,7 +261,7 @@ export class FileTransferService {
 
 		this.transfers	= this.transfers.add(transferSetPlaceholder);
 
-		const url					= 'ephemeral/' + util.uuid();
+		const url					= `fileTransfers/${util.uuid()}`;
 		const plaintext				= await this.fileService.getBytes(file, image);
 		const {cyphertext, key}		= await this.encryptFile(plaintext);
 
