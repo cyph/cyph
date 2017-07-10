@@ -16,6 +16,10 @@ cat > "${domain}/index.html.tmp" <<- EOM
 					;
 				}
 				catch (_) {}
+				try {
+					navigator.storage.persist();
+				}
+				catch (_) {}
 
 				var☁storage	= {};
 				try {

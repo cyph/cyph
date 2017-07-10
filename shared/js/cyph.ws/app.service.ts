@@ -68,8 +68,6 @@ export class AppService implements CanActivate {
 		/** @ignore */
 		private readonly routerService: Router
 	) {
-		/* Request Persistent Storage permission to mitigate
-			edge case eviction of ServiceWorker/AppCache */
 		try {
 			(<any> navigator).storage.persist();
 		}
