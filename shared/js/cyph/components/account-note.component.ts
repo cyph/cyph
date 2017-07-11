@@ -26,8 +26,8 @@ export class AccountNoteComponent implements OnInit {
 			try {
 				const id: string|undefined	= o.id;
 
-				if (!this.accountDatabaseService.current || !id) {
-					throw new Error();
+				if (!id) {
+					throw new Error('Invalid note ID.');
 				}
 
 				this.note	= (await this.accountFilesService.getFile(

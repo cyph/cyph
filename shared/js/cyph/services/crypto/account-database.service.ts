@@ -3,8 +3,8 @@
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {AGSEPKICert, IAGSEPKICert, IKeyPair} from '../../../proto';
-import {User} from '../../account/user';
+import {AGSEPKICert, IAGSEPKICert} from '../../../proto';
+import {ICurrentUser} from '../../account';
 import {IAsyncValue} from '../../iasync-value';
 import {IProto} from '../../iproto';
 import {ITimedValue} from '../../itimed-value';
@@ -57,34 +57,23 @@ export class AccountDatabaseService {
 		]
 	};
 
-	/** Keys and profile of currently logged in user. Undefined if no user is signed in. */
-	public current?: {
-		keys: {
-			encryptionKeyPair: IKeyPair;
-			signingKeyPair: IKeyPair;
-			symmetricKey: Uint8Array;
-		};
-		user: User;
-	};
+	/** @see getCurrentUser */
+	public readonly currentUser: BehaviorSubject<ICurrentUser|undefined>	=
+		new BehaviorSubject<ICurrentUser|undefined>(undefined)
+	;
 
 	/** @ignore */
 	private async getItemInternal<T> (
 		url: string,
 		proto: IProto<T>,
-		publicData: boolean,
-		operation: string
+		publicData: boolean
 	) : Promise<{
 		progress: Observable<number>;
 		result: ITimedValue<T>;
 	}> {
 		await this.waitForUnlock(url);
 
-		url	= this.processURL(url);
-
-		const symmetricKey	= this.getSymmetricKey(
-			publicData,
-			`User not signed in. Cannot ${operation} private data at ${url}.`
-		);
+		url	= await this.processURL(url);
 
 		const downloadTask	= this.databaseService.downloadItem(url, BinaryProto);
 		const result		= await downloadTask.result;
@@ -93,17 +82,9 @@ export class AccountDatabaseService {
 			progress: downloadTask.progress,
 			result: {
 				timestamp: result.timestamp,
-				value: await this.open(url, proto, publicData, symmetricKey, result.value)
+				value: await this.open(url, proto, publicData, result.value)
 			}
 		};
-	}
-
-	/** @ignore */
-	private getSymmetricKey (publicData: boolean, failureMessage: string) : Uint8Array {
-		if (!publicData && !this.current) {
-			throw new Error(failureMessage);
-		}
-		return this.current === undefined ? new Uint8Array(0) : this.current.keys.symmetricKey;
 	}
 
 	/** @ignore */
@@ -111,48 +92,45 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		publicData: boolean,
-		symmetricKey: Uint8Array,
 		data: Uint8Array
 	) : Promise<T> {
+		const currentUser	= await this.getCurrentUser();
+
 		return util.deserialize(proto, await (async () => {
 			if (publicData) {
 				const username	= (url.match(/\/?users\/(.*?)\//) || [])[1] || '';
 
 				return this.potassiumService.sign.open(
 					data,
-					this.current && username === this.current.user.username ?
-						this.current.keys.signingKeyPair.publicKey :
+					username === currentUser.user.username ?
+						currentUser.keys.signingKeyPair.publicKey :
 						(await this.getUserPublicKeys(username)).publicSigningKey
 				);
 			}
 			else {
-				return this.potassiumService.secretBox.open(data, symmetricKey);
+				return this.potassiumService.secretBox.open(data, currentUser.keys.symmetricKey);
 			}
 		})());
 	}
 
 	/** @ignore */
-	private processLockURL (url: string) : string {
-		if (!this.current) {
-			throw new Error(`User not signed in. Cannot access current user lock at ${url}.`);
-		}
+	private async processLockURL (url: string) : Promise<string> {
+		const currentUser	= await this.getCurrentUser();
 
-		return this.processURL(url).replace(
-			`users/${this.current.user.username}/`,
-			`users/${this.current.user.username}/locks/`
+		return (await this.processURL(url)).replace(
+			`users/${currentUser.user.username}/`,
+			`users/${currentUser.user.username}/locks/`
 		);
 	}
 
 	/** @ignore */
-	private processURL (url: string) : string {
+	private async processURL (url: string) : Promise<string> {
 		if (url.match(/^\/?users/)) {
 			return url;
 		}
-		if (!this.current) {
-			throw new Error(`User not signed in. Cannot access current user data at ${url}.`);
-		}
 
-		return `users/${this.current.user.username}/${url}`;
+		const currentUser	= await this.getCurrentUser();
+		return `users/${currentUser.user.username}/${url}`;
 	}
 
 	/** @ignore */
@@ -160,25 +138,20 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		value: T,
-		publicData: boolean,
-		operation: string = 'set'
+		publicData: boolean
 	) : Promise<Uint8Array> {
-		if (!this.current) {
-			throw new Error(`User not signed in. Cannot ${operation} item at ${url}.`);
-		}
-
-		url	= this.processURL(url);
-
-		const data	= await util.serialize(proto, value);
+		const currentUser	= await this.getCurrentUser();
+		url					= await this.processURL(url);
+		const data			= await util.serialize(proto, value);
 
 		return publicData ?
 			await this.potassiumService.sign.sign(
 				data,
-				this.current.keys.signingKeyPair.privateKey
+				currentUser.keys.signingKeyPair.privateKey
 			) :
 			await this.potassiumService.secretBox.seal(
 				data,
-				this.current.keys.symmetricKey
+				currentUser.keys.symmetricKey
 			)
 		;
 	}
@@ -191,7 +164,7 @@ export class AccountDatabaseService {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
-			const downloadTask	= await this.getItemInternal(url, proto, publicData, 'download');
+			const downloadTask	= await this.getItemInternal(url, proto, publicData);
 
 			downloadTask.progress.subscribe(
 				n => { progress.next(n); },
@@ -211,32 +184,34 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		publicData: boolean = false
 	) : IAsyncValue<T> {
-		url	= this.processURL(url);
-
 		const defaultValue	= proto.create();
-		const symmetricKey	= this.getSymmetricKey(
-			publicData,
-			`User not signed in. Cannot get async value at ${url}.`
-		);
 
-		const {getValue, lock, setValue, updateValue}	= this.databaseService.getAsyncValue(
-			url,
-			BinaryProto,
-			this.lockFunction(url)
-		);
+		const asyncValue	= (async () => {
+			url	= await this.processURL(url);
+
+			return this.databaseService.getAsyncValue(
+				url,
+				BinaryProto,
+				this.lockFunction(url)
+			);
+		})();
 
 		return {
 			getValue: async () => (async () =>
-				this.open(url, proto, publicData, symmetricKey, await getValue())
+				this.open(url, proto, publicData, await (await asyncValue).getValue())
 			)().catch(
 				() => defaultValue
 			),
-			lock,
-			setValue: async value => setValue(await this.seal(url, proto, value, publicData)),
-			updateValue: async f => updateValue(async value => this.seal(
+			lock: async (f, reason) =>
+				(await asyncValue).lock(f, reason)
+			,
+			setValue: async value => (await asyncValue).setValue(
+				await this.seal(url, proto, value, publicData)
+			),
+			updateValue: async f => (await asyncValue).updateValue(async value => this.seal(
 				url,
 				proto,
-				await f(await this.open(url, proto, publicData, symmetricKey, value)),
+				await f(await this.open(url, proto, publicData, value)),
 				publicData
 			)),
 			watch: memoize(() =>
@@ -245,13 +220,27 @@ export class AccountDatabaseService {
 		};
 	}
 
+	/** Keys and profile of currently logged in user. */
+	public async getCurrentUser () : Promise<ICurrentUser> {
+		const currentUser	=
+			this.currentUser.value ||
+			await this.currentUser.skipWhile(o => !o).take(1).toPromise()
+		;
+
+		if (!currentUser) {
+			throw new Error('Cannot get current user.');
+		}
+
+		return currentUser;
+	}
+
 	/** @see DatabaseService.getItem */
 	public async getItem<T> (
 		url: string,
 		proto: IProto<T>,
 		publicData: boolean = false
 	) : Promise<T> {
-		return (await (await this.getItemInternal(url, proto, publicData, 'get')).result).value;
+		return (await (await this.getItemInternal(url, proto, publicData)).result).value;
 	}
 
 	/** Gets public keys belonging to the specified user. */
@@ -306,18 +295,16 @@ export class AccountDatabaseService {
 		f: (reason?: string) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
-		if (!this.current) {
-			throw new Error('User not signed in. Cannot lock.');
-		}
+		const currentUser	= await this.getCurrentUser();
 
 		return this.databaseService.lock(
-			this.processLockURL(url),
-			async r => f(!r || !this.current ?
+			await this.processLockURL(url),
+			async r => f(!r ?
 				undefined :
 				this.potassiumService.toString(
 					await this.potassiumService.secretBox.open(
 						this.potassiumService.fromBase64(r),
-						this.current.keys.symmetricKey
+						currentUser.keys.symmetricKey
 					)
 				)
 			),
@@ -326,7 +313,7 @@ export class AccountDatabaseService {
 				this.potassiumService.toBase64(
 					await this.potassiumService.secretBox.seal(
 						this.potassiumService.fromString(reason),
-						this.current.keys.symmetricKey
+						currentUser.keys.symmetricKey
 					)
 				)
 		);
@@ -341,18 +328,19 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.lockStatus */
 	public async lockStatus (url: string) : Promise<{locked: boolean; reason: string|undefined}> {
+		const currentUser		= await this.getCurrentUser();
 		const {locked, reason}	=
-			await this.databaseService.lockStatus(this.processLockURL(url))
+			await this.databaseService.lockStatus(await this.processLockURL(url))
 		;
 
 		return {
 			locked,
-			reason: !reason || !this.current ?
+			reason: !reason ?
 				undefined :
 				this.potassiumService.toString(
 					await this.potassiumService.secretBox.open(
 						this.potassiumService.fromBase64(reason),
-						this.current.keys.symmetricKey
+						currentUser.keys.symmetricKey
 					)
 				)
 		};
@@ -366,19 +354,15 @@ export class AccountDatabaseService {
 		publicData: boolean = false
 	) : Promise<{hash: string; url: string}> {
 		return this.databaseService.pushItem(
-			this.processURL(url),
+			await this.processURL(url),
 			BinaryProto,
-			await this.seal(url, proto, value, publicData, 'push')
+			await this.seal(url, proto, value, publicData)
 		);
 	}
 
 	/** @see DatabaseService.removeItem */
 	public async removeItem (url: string) : Promise<void> {
-		if (!this.current) {
-			throw new Error(`User not signed in. Cannot remove item at ${url}.`);
-		}
-
-		url	= this.processURL(url);
+		url	= await this.processURL(url);
 
 		return this.databaseService.removeItem(url);
 	}
@@ -391,7 +375,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false
 	) : Promise<{hash: string; url: string}> {
 		return this.lock(url, async () => this.databaseService.setItem(
-			this.processURL(url),
+			await this.processURL(url),
 			BinaryProto,
 			await this.seal(url, proto, value, publicData)
 		));
@@ -417,9 +401,9 @@ export class AccountDatabaseService {
 
 		const result	= (async () => {
 			const uploadTask	= this.databaseService.uploadItem(
-				this.processURL(url),
+				await this.processURL(url),
 				BinaryProto,
-				await this.seal(url, proto, value, publicData, 'upload')
+				await this.seal(url, proto, value, publicData)
 			);
 
 			cancelPromise.then(() => { uploadTask.cancel(); });
@@ -441,17 +425,18 @@ export class AccountDatabaseService {
 		reason: string|undefined;
 		wasLocked: boolean;
 	}> {
+		const currentUser			= await this.getCurrentUser();
 		const {reason, wasLocked}	=
-			await this.databaseService.waitForUnlock(this.processLockURL(url))
+			await this.databaseService.waitForUnlock(await this.processLockURL(url))
 		;
 
 		return {
-			reason: !reason || !this.current ?
+			reason: !reason ?
 				undefined :
 				this.potassiumService.toString(
 					await this.potassiumService.secretBox.open(
 						this.potassiumService.fromBase64(reason),
-						this.current.keys.symmetricKey
+						currentUser.keys.symmetricKey
 					)
 				)
 			,
@@ -465,17 +450,14 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		publicData: boolean = false
 	) : Observable<ITimedValue<T>> {
-		url	= this.processURL(url);
+		return util.flattenObservablePromise(async () => {
+			url	= await this.processURL(url);
 
-		const symmetricKey	= this.getSymmetricKey(
-			publicData,
-			`User not signed in. Cannot watch private data at ${url}.`
-		);
-
-		return this.databaseService.watch(url, BinaryProto).flatMap(async data => ({
-			timestamp: data.timestamp,
-			value: await this.open(url, proto, publicData, symmetricKey, data.value)
-		}));
+			return this.databaseService.watch(url, BinaryProto).flatMap(async data => ({
+				timestamp: data.timestamp,
+				value: await this.open(url, proto, publicData, data.value)
+			}));
+		});
 	}
 
 	/** @see DatabaseService.watchList */
@@ -484,19 +466,16 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		publicData: boolean = false
 	) : Observable<ITimedValue<T>[]> {
-		url	= this.processURL(url);
+		return util.flattenObservablePromise(async () => {
+			url	= await this.processURL(url);
 
-		const symmetricKey	= this.getSymmetricKey(
-			publicData,
-			`User not signed in. Cannot watch private data list at ${url}.`
-		);
-
-		return this.databaseService.watchList(url, BinaryProto).flatMap(async list =>
-			Promise.all(list.map(async data => ({
-				timestamp: data.timestamp,
-				value: await this.open(url, proto, publicData, symmetricKey, data.value)
-			})))
-		);
+			return this.databaseService.watchList(url, BinaryProto).flatMap(async list =>
+				Promise.all(list.map(async data => ({
+					timestamp: data.timestamp,
+					value: await this.open(url, proto, publicData, data.value)
+				})))
+			);
+		});
 	}
 
 	/** @see DatabaseService.watchListPushes */
@@ -505,17 +484,14 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		publicData: boolean = false
 	) : Observable<ITimedValue<T>> {
-		url	= this.processURL(url);
+		return util.flattenObservablePromise(async () => {
+			url	= await this.processURL(url);
 
-		const symmetricKey	= this.getSymmetricKey(
-			publicData,
-			`User not signed in. Cannot watch private data list at ${url}.`
-		);
-
-		return this.databaseService.watchListPushes(url, BinaryProto).flatMap(async data => ({
-			timestamp: data.timestamp,
-			value: await this.open(url, proto, publicData, symmetricKey, data.value)
-		}));
+			return this.databaseService.watchListPushes(url, BinaryProto).flatMap(async data => ({
+				timestamp: data.timestamp,
+				value: await this.open(url, proto, publicData, data.value)
+			}));
+		});
 	}
 
 	constructor (

@@ -32,8 +32,8 @@ export class AccountProfileComponent implements OnInit {
 			if (username) {
 				this.user	= await this.accountUserLookupService.getUser(username);
 			}
-			else if (this.accountDatabaseService.current) {
-				this.user	= this.accountDatabaseService.current.user;
+			else if (this.accountDatabaseService.currentUser.value) {
+				this.user	= this.accountDatabaseService.currentUser.value.user;
 			}
 		}
 		catch (_) {}
@@ -46,8 +46,8 @@ export class AccountProfileComponent implements OnInit {
 	/** Indicates whether this is the profile of the currently signed in user. */
 	public get isCurrentUser () : boolean {
 		return (
-			this.accountDatabaseService.current !== undefined &&
-			this.user === this.accountDatabaseService.current.user
+			this.accountDatabaseService.currentUser.value !== undefined &&
+			this.user === this.accountDatabaseService.currentUser.value.user
 		);
 	}
 

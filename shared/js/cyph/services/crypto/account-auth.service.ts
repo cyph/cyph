@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs';
 import {AccountLoginData, IAccountLoginData, IKeyPair, KeyPair} from '../../../proto';
 import {BinaryProto, StringProto} from '../../protos';
 import {util} from '../../util';
@@ -22,9 +21,6 @@ export class AccountAuthService {
 
 	/** @ignore */
 	private resolveReady: () => void;
-
-	/** Fires on successful login. */
-	public readonly onLogin: Subject<void>	= new Subject<void>();
 
 	/** Resolves when this service is ready for use. */
 	public readonly ready: Promise<void>	= new Promise<void>(resolve => {
@@ -57,7 +53,7 @@ export class AccountAuthService {
 	 * @returns Whether login was successful.
 	 */
 	public async login (username: string, password: string|Uint8Array) : Promise<boolean> {
-		this.accountDatabaseService.current	= undefined;
+		this.accountDatabaseService.currentUser.next(undefined);
 
 		if (!username || !password) {
 			return false;
@@ -82,7 +78,7 @@ export class AccountAuthService {
 			await this.localStorageService.setItem('username', StringProto, username);
 			await this.localStorageService.setItem('password', BinaryProto, password);
 
-			this.accountDatabaseService.current	= {
+			this.accountDatabaseService.currentUser.next({
 				keys: {
 					encryptionKeyPair: await this.getKeyPair(
 						`users/${username}/encryptionKeyPair`,
@@ -95,9 +91,7 @@ export class AccountAuthService {
 					symmetricKey: loginData.symmetricKey
 				},
 				user
-			};
-
-			this.onLogin.next();
+			});
 		}
 		catch (_) {
 			return false;
@@ -112,27 +106,27 @@ export class AccountAuthService {
 		await this.localStorageService.removeItem('username');
 		this.databaseService.logout();
 
-		if (!this.accountDatabaseService.current) {
+		if (!this.accountDatabaseService.currentUser.value) {
 			return;
 		}
 
 		this.potassiumService.clearMemory(
-			this.accountDatabaseService.current.keys.symmetricKey
+			this.accountDatabaseService.currentUser.value.keys.symmetricKey
 		);
 		this.potassiumService.clearMemory(
-			this.accountDatabaseService.current.keys.encryptionKeyPair.privateKey
+			this.accountDatabaseService.currentUser.value.keys.encryptionKeyPair.privateKey
 		);
 		this.potassiumService.clearMemory(
-			this.accountDatabaseService.current.keys.signingKeyPair.privateKey
+			this.accountDatabaseService.currentUser.value.keys.signingKeyPair.privateKey
 		);
 		this.potassiumService.clearMemory(
-			this.accountDatabaseService.current.keys.encryptionKeyPair.publicKey
+			this.accountDatabaseService.currentUser.value.keys.encryptionKeyPair.publicKey
 		);
 		this.potassiumService.clearMemory(
-			this.accountDatabaseService.current.keys.signingKeyPair.publicKey
+			this.accountDatabaseService.currentUser.value.keys.signingKeyPair.publicKey
 		);
 
-		this.accountDatabaseService.current	= undefined;
+		this.accountDatabaseService.currentUser.next(undefined);
 	}
 
 	/** Registers. */
