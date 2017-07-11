@@ -115,7 +115,7 @@ export class ChannelService {
 		this.localLock(async () => this.databaseService.pushItem(
 			`${(await this.state).url}/messages`,
 			ChannelMessage,
-			{cyphertext, author: this.userId}
+			{author: this.userId, cyphertext}
 		));
 	}
 
