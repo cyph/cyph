@@ -67,7 +67,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 	private cacheSet (url: string, value: Uint8Array, hash: string) : void {
 		this.localStorageService.setItem(`cache/${hash}`, BinaryProto, value).then(() => {
 			this.hashCache.set(url, hash);
-		});
+		}).catch(
+			() => {}
+		);
 	}
 
 	/** @ignore */
