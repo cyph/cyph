@@ -12,6 +12,7 @@ webSignedProject='cyph.ws'
 prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='im io me video audio'
 site=''
+noSimple=''
 test=true
 websign=true
 
@@ -20,6 +21,9 @@ if [ "${1}" == '--prod' ] ; then
 	shift
 elif [ "${1}" == '--simple' ] ; then
 	simple=true
+	shift
+elif [ "${1}" == '--no-simple' ] ; then
+	noSimple=true
 	shift
 fi
 
@@ -530,7 +534,7 @@ gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 cd "${dir}"
 rm -rf .build 2> /dev/null
 
-if [ "${test}" -a ! "${simple}" ] ; then
+if [ ! "${noSimple}" ] && [ "${test}" ] && [ ! "${simple}" ] ; then
 	mv ~/.build ~/.build.original
 	./commands/deploy.sh --simple $originalArgs
 elif [ -d ~/.build.original ] ; then
