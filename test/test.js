@@ -5,7 +5,9 @@ const webdriver	= require('selenium-webdriver');
 const shuffle	= require('shuffle-array');
 
 
-const browsers	= [
+const maxRetries	= 5;
+
+const browsers		= [
 	{
 		browserName: 'Chrome',
 		os: 'OS X',
@@ -165,11 +167,11 @@ const homeTest		= async o => {
 	}
 };
 
-const newCyphTest	= async o => {
+const newCyphTest	= async (o, i) => {
 	const driver	= getDriver(o);
 
 	try {
-		await driverSetURL(driver, await o.cyphLink);
+		await driverSetURL(driver, await o.cyphLinks[i]);
 		await driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
@@ -228,11 +230,11 @@ const runTests	= (backendURL, homeURL, newCyphURL, id) => Promise.resolve().then
 		const a	= acc.slice(-1)[0];
 
 		if (a.length === 1) {
-			o.cyphLink	= a[0].cyphLink;
+			o.cyphLinks	= a[0].cyphLinks;
 			a.push(o);
 		}
 		else {
-			o.cyphLink	= Cyph.initiateSession(
+			o.cyphLinks	= new Array(maxRetries).fill('').map(() => new Cyph.initiateSession(
 				process.env.AUTH,
 				undefined,
 				{
@@ -241,7 +243,7 @@ const runTests	= (backendURL, homeURL, newCyphURL, id) => Promise.resolve().then
 					video: `${newCyphURL}/#video/`,
 					voice: `${newCyphURL}/#audio/`
 				}
-			);
+			));
 
 			acc.push([o]);
 		}
@@ -254,9 +256,20 @@ const runTests	= (backendURL, homeURL, newCyphURL, id) => Promise.resolve().then
 		lastTestCase.push(lastTestCase[0]);
 	}
 
-	for (const testCase of testCases) {
-		await Promise.all(testCase.map(o => homeTest(o)));
-		await Promise.all(testCase.map(o => newCyphTest(o)));
+	for (testFunction of [homeTest, newCyphTest]) {
+		for (const testCase of testCases) {
+			for (let i = 0 ; true ; ++i) {
+				try {
+					await Promise.all(testCase.map(o => testFunction(o, i)));
+					break;
+				}
+				catch (err) {
+					if (i >= maxRetries) {
+						throw err;
+					}
+				}
+			}
+		}
 	}
 
 	return true;
