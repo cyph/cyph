@@ -185,8 +185,19 @@ export class AccountAuthService {
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
 	) { (async () => {
-		const username	= await this.localStorageService.getItem('username', StringProto);
-		const password	= await this.localStorageService.getItem('password', BinaryProto);
+		const username	= await this.localStorageService.getItem(
+			'username',
+			StringProto
+		).catch(
+			() => {}
+		);
+
+		const password	= await this.localStorageService.getItem(
+			'password',
+			BinaryProto
+		).catch(
+			() => {}
+		);
 
 		if (username && password) {
 			await this.login(username, password);
