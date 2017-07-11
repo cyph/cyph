@@ -5,7 +5,7 @@ const webdriver	= require('selenium-webdriver');
 const shuffle	= require('shuffle-array');
 
 
-const maxRetries	= 5;
+const maxRetries	= 3;
 
 const browsers		= [
 	{
@@ -15,37 +15,18 @@ const browsers		= [
 		resolution: '1920x1080'
 	},
 	{
-		browserName: 'Chrome',
-		os: 'OS X',
-		os_version: 'El Capitan',
-		resolution: '1600x1200'
-	},
-	{
-		browserName: 'Chrome',
-		os: 'Windows',
-		os_version: 'XP',
-		resolution: '1024x768'
-	},
-	{
 		browserName: 'Firefox',
-		browser_version: '47.0',
+		browser_version: '54.0',
 		os: 'OS X',
-		os_version: 'Yosemite',
+		os_version: 'Sierra',
 		resolution: '1280x960'
 	},
 	{
 		browserName: 'Firefox',
-		browser_version: '47.0',
+		browser_version: '54.0',
 		os: 'Windows',
 		os_version: '10',
-		resolution: '2048x1536'
-	},
-	{
-		browserName: 'Firefox',
-		browser_version: '47.0',
-		os: 'Windows',
-		os_version: 'XP',
-		resolution: '1024x768'
+		resolution: '1920x1200'
 	},
 	{
 		browserName: 'Edge',
@@ -55,7 +36,7 @@ const browsers		= [
 	},
 	{
 		browserName: 'Safari',
-		browser_version: '10.0',
+		browser_version: '10.1',
 		os: 'OS X',
 		os_version: 'Sierra',
 		resolution: '1920x1080'
@@ -64,11 +45,6 @@ const browsers		= [
 		browserName: 'iPhone',
 		platform: 'MAC',
 		device: 'iPhone 6S Plus'
-	},
-	{
-		browserName: 'iPad',
-		platform: 'MAC',
-		device: 'iPad Air 2'
 	}
 ];
 
@@ -129,12 +105,13 @@ const isTestPassing	= key => new Promise((resolve, reject) =>
 	})
 );
 
-const setTestResult	= (key, passing) => datastore.save({
-	key: testResultKey(key),
-	data: {
-		passing
-	}
-}, () => {});
+const setTestResult	= (key, passing) => datastore.save(
+	{
+		key: testResultKey(key),
+		data: {passing}
+	},
+	() => {}
+);
 
 const testResultKey	= key => datastore.key(['TestResult', key]);
 
@@ -150,7 +127,7 @@ const homeTest		= async o => {
 				setOnerror();
 				return document.querySelector('body.load-complete #new-cyph');
 			})),
-			30000
+			10000
 		);
 		await driverSetURL(driver, `${o.homeURL}/blog`);
 		await driverWait(
@@ -159,7 +136,7 @@ const homeTest		= async o => {
 				setOnerror();
 				return document.getElementsByClassName('postlist')[0];
 			})),
-			30000
+			10000
 		);
 	}
 	finally {
@@ -180,7 +157,6 @@ const newCyphTest	= async (o, i) => {
 			})),
 			60000
 		);
-		await new Promise(resolve => setTimeout(resolve, 10000));
 		await driverScript(driver, function () {
 			sendMessage('balls');
 		});
