@@ -220,6 +220,21 @@ export class Util {
 		);
 	}
 
+	/** Wraps an async Observable with a synchronously created one. */
+	public flattenObservablePromise<T> (
+		observable: Promise<Observable<T>>|(() => Promise<Observable<T>>)
+	) : Observable<T> {
+		return new Observable<T>(observer => {
+			(async () => (await (
+				typeof observable === 'function' ?
+					observable() :
+					observable
+			)).subscribe(
+				observer
+			))();
+		});
+	}
+
 	/** Gets a value from a map and sets a default value if none had previously been set. */
 	public getOrSetDefault<K, V> (map: Map<K, V>, key: K, defaultValue: () => V) : V {
 		if (!map.has(key)) {
