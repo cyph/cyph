@@ -75,6 +75,7 @@ read -r -d '' modules <<- EOM
 	dompurify
 	dragula
 	extract-text-webpack-plugin
+	fast-crc32c
 	fg-loadcss
 	file-loader
 	file-saver
@@ -84,6 +85,7 @@ read -r -d '' modules <<- EOM
 	firebase-server
 	firebase-tools
 	glob
+	google-cloud
 	google-closure-compiler
 	granim
 	gulp
