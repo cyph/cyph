@@ -1,4 +1,5 @@
 const functions	= require('firebase-functions');
+const storage	= require('@google-cloud/storage')();
 
 
 const channelDisconnectTimeout	= 2500;
@@ -24,7 +25,16 @@ exports.channelDisconnect	=
 				return;
 			}
 
-			return e.data.ref.parent.parent.remove();
+			const doomedRef	= e.data.ref.parent.parent;
+
+			if (doomedRef.key.length < 1) {
+				throw new Error('INVALID DOOMED REF');
+			}
+
+			return Promise.all([
+				doomedRef.remove(),
+				storage.deleteFiles({prefix: `channels/${doomedRef.key}/`})
+			]);
 		});
 	})
 ;
