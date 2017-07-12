@@ -5,7 +5,7 @@ const webdriver	= require('selenium-webdriver');
 const shuffle	= require('shuffle-array');
 
 
-const maxRetries	= 3;
+const maxAttempts	= 3;
 
 const browsers		= [
 	{
@@ -210,7 +210,7 @@ const runTests	= (backendURL, homeURL, newCyphURL, id) => Promise.resolve().then
 			a.push(o);
 		}
 		else {
-			o.cyphLinks	= new Array(maxRetries).fill('').map(() => new Cyph.initiateSession(
+			o.cyphLinks	= new Array(maxAttempts).fill('').map(() => new Cyph.initiateSession(
 				process.env.AUTH,
 				undefined,
 				{
@@ -240,7 +240,7 @@ const runTests	= (backendURL, homeURL, newCyphURL, id) => Promise.resolve().then
 					break;
 				}
 				catch (err) {
-					if (i >= maxRetries) {
+					if (i >= maxAttempts) {
 						throw err;
 					}
 				}
