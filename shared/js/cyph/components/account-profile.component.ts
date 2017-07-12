@@ -53,8 +53,6 @@ export class AccountProfileComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		await this.accountAuthService.ready;
-		this.setUser(this.activatedRouteService.snapshot.params.username);
 		this.activatedRouteService.params.subscribe(o => { this.setUser(o.username); });
 	}
 
