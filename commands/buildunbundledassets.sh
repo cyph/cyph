@@ -25,13 +25,17 @@ nodeModulesAssets="$(
 		uniq
 )"
 
-typescriptAssets="cyph/crypto/native-web-crypto-polyfill standalone/analytics $(
-	grep -roP "importScripts\('/assets/js/.*?\.js'\)" shared/js |
+typescriptAssets="
+	cyph/crypto/native-web-crypto-polyfill
+	cyph/crypto/potassium/index
+	standalone/analytics
+	$(grep -roP "importScripts\('/assets/js/.*?\.js'\)" shared/js |
 		perl -pe "s/^.*?'\/assets\/js\/(.*?)\.js'.*/\1/g" |
 		grep -vP '^standalone/global$' |
 		sort |
 		uniq
-)"
+	)
+"
 
 scssAssets="native/app $(
 	grep -oP "href='/assets/css/.*?\.css'" */src/index.html |
