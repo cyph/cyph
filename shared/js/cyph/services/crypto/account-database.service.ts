@@ -66,14 +66,16 @@ export class AccountDatabaseService {
 	private async getItemInternal<T> (
 		url: string,
 		proto: IProto<T>,
-		publicData: boolean
+		publicData: boolean,
+		anonymous: boolean = false
 	) : Promise<{
 		progress: Observable<number>;
 		result: ITimedValue<T>;
 	}> {
-		await this.waitForUnlock(url);
-
-		url	= await this.processURL(url);
+		if (anonymous && !this.currentUser.value) {
+			url	= await this.processURL(url);
+			await this.waitForUnlock(url);
+		}
 
 		const downloadTask	= this.databaseService.downloadItem(url, BinaryProto);
 		const result		= await downloadTask.result;
@@ -82,7 +84,7 @@ export class AccountDatabaseService {
 			progress: downloadTask.progress,
 			result: {
 				timestamp: result.timestamp,
-				value: await this.open(url, proto, publicData, result.value)
+				value: await this.open(url, proto, publicData, result.value, anonymous)
 			}
 		};
 	}
@@ -92,9 +94,10 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		publicData: boolean,
-		data: Uint8Array
+		data: Uint8Array,
+		anonymous: boolean = false
 	) : Promise<T> {
-		const currentUser	= await this.getCurrentUser();
+		const currentUser	= anonymous ? undefined : await this.getCurrentUser();
 
 		return util.deserialize(proto, await (async () => {
 			if (publicData) {
@@ -102,13 +105,16 @@ export class AccountDatabaseService {
 
 				return this.potassiumService.sign.open(
 					data,
-					username === currentUser.user.username ?
+					currentUser && username === currentUser.user.username ?
 						currentUser.keys.signingKeyPair.publicKey :
 						(await this.getUserPublicKeys(username)).publicSigningKey
 				);
 			}
-			else {
+			else if (currentUser) {
 				return this.potassiumService.secretBox.open(data, currentUser.keys.symmetricKey);
+			}
+			else {
+				throw new Error('Cannot anonymously open private data.');
 			}
 		})());
 	}
@@ -238,9 +244,10 @@ export class AccountDatabaseService {
 	public async getItem<T> (
 		url: string,
 		proto: IProto<T>,
-		publicData: boolean = false
+		publicData: boolean = false,
+		anonymous: boolean = false
 	) : Promise<T> {
-		return (await (await this.getItemInternal(url, proto, publicData)).result).value;
+		return (await (await this.getItemInternal(url, proto, publicData, anonymous)).result).value;
 	}
 
 	/** Gets public keys belonging to the specified user. */
