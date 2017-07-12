@@ -15,6 +15,7 @@ export class AccountUserLookupService {
 			await this.accountDatabaseService.getItem<IAccountUserProfile>(
 				`users/${username.toLowerCase()}/publicProfile`,
 				AccountUserProfile,
+				true,
 				true
 			)
 		);

@@ -72,7 +72,7 @@ export class AccountDatabaseService {
 		progress: Observable<number>;
 		result: ITimedValue<T>;
 	}> {
-		if (anonymous && !this.currentUser.value) {
+		if (!anonymous && this.currentUser.value) {
 			url	= await this.processURL(url);
 			await this.waitForUnlock(url);
 		}
