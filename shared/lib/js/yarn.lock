@@ -1758,8 +1758,8 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000187, caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000699"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000699.tgz#5af491ab1c777561a32b43fe253d6a7071ccf979"
+  version "1.0.30000700"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000700.tgz#97cfc483865eea8577dc7a3674929b9abf553095"
 
 capture-stack-trace@^1.0.0:
   version "1.0.0"
@@ -7867,9 +7867,9 @@ pretty-hrtime@^1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/pretty-hrtime/-/pretty-hrtime-1.0.3.tgz#b7e3ea42435a4c9b2759d99e0f201eb195802ee1"
 
-primeng@^4.1.0-rc.3:
-  version "4.1.0-rc.3"
-  resolved "https://registry.yarnpkg.com/primeng/-/primeng-4.1.0-rc.3.tgz#535a4bc5cdac28bb0a649787e6405c79a7faecf7"
+primeng@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/primeng/-/primeng-4.1.0.tgz#0868e68fa057b382ddd720cae02b4f5707f668fb"
 
 private@^0.1.6, private@~0.1.5:
   version "0.1.7"

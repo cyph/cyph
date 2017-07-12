@@ -404,7 +404,7 @@
     "od-virtualscroll": "^1.0.0",
     "prepack": "^0.2.5",
     "prepack-webpack-plugin": "^1.1.0",
-    "primeng": "^4.1.0-rc.3",
+    "primeng": "^4.1.0",
     "protobufjs": "^6.8.0",
     "protractor": "^5.1.2",
     "raw-loader": "^0.5.1",
