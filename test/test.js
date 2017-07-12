@@ -241,7 +241,7 @@ const runTests	= (backendURL, homeURL, newCyphURL, id) => Promise.resolve().then
 				}
 				catch (err) {
 					if (i >= maxAttempts) {
-						throw err;
+						return false;
 					}
 				}
 			}
@@ -251,13 +251,6 @@ const runTests	= (backendURL, homeURL, newCyphURL, id) => Promise.resolve().then
 	return true;
 }).catch(err => {
 	console.error(err);
-
-	/* Throw out results and retry when failure is caused by BrowserStack/Selenium bug. */
-	if (err.constructor === webdriver.error.WebDriverError) {
-		testLock	= false;
-		return;
-	}
-
 	return false;
 }).then(passing => {
 	if (passing === undefined) {
