@@ -262,7 +262,7 @@ cd libsodium.build
 
 # Temporary, pending https://github.com/jedisct1/libsodium/issues/561 landing in stable
 rm -rf libsodium
-git clone --depth 1 --recursive https://github.com/buu700/libsodium
+git clone --depth 1 --recursive https://github.com/jedisct1/libsodium
 
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 {
