@@ -36,6 +36,7 @@ read -r -d '' modules <<- EOM
 	@covalent/highlight
 	@covalent/http
 	@covalent/markdown
+	@google-cloud/storage
 	@ngrx/core
 	@ngrx/effects
 	@ngrx/router-store
@@ -85,7 +86,6 @@ read -r -d '' modules <<- EOM
 	firebase-server
 	firebase-tools
 	glob
-	google-cloud
 	google-closure-compiler
 	granim
 	gulp
