@@ -261,10 +261,10 @@ export class AccountDatabaseService {
 			BinaryProto
 		);
 
-		const dataView			= new DataView(certificate.buffer, certificate.byteOffset);
+		const dataView			= this.potassiumService.toDataView(certificate);
 		const rsaKeyIndex		= dataView.getUint32(0, true);
 		const sphincsKeyIndex	= dataView.getUint32(4, true);
-		const signed			= new Uint8Array(certificate.buffer, certificate.byteOffset + 8);
+		const signed			= this.potassiumService.toBytes(certificate, 8);
 
 		if (
 			rsaKeyIndex >= this.agsePublicSigningKeys.rsa.length ||
