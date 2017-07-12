@@ -85,7 +85,10 @@ cd js
 mv ~/node_modules ./
 cd node_modules
 
-cp -a ../libsodium ./
+for m in libsodium libsodium-sumo libsodium-wrappers libsodium-wrappers-sumo ; do
+	rm -rf ${m}/dist
+	cp -a ../libsodium/dist ${m}/
+done
 
 mkdir -p @types/libsodium
 cat > @types/libsodium/index.d.ts << EOM

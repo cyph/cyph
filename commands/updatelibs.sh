@@ -107,7 +107,10 @@ read -r -d '' modules <<- EOM
 	karma-jasmine-html-reporter
 	konami-code.js
 	lazy
+	libsodium
+	libsodium-sumo
 	libsodium-wrappers
+	libsodium-wrappers-sumo
 	localforage
 	lodash
 	long
