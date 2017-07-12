@@ -1,20 +1,20 @@
-<div fxFlex fxLayout='row' *ngIf='accountDatabaseService.current'>
+<div fxFlex fxLayout='row' *ngIf='accountDatabaseService.currentUser.value'>
 	<div fxFlex></div>
 	<div fxFlex='50' fxLayout='column' class='settings-wrapper'>
 		<h1>Account Settings</h1>
 		<div class='name'>
 			<span>Your Name: </span>
-			<span>{{accountDatabaseService.current.user.name}}</span>
+			<span>{{accountDatabaseService.currentUser.value.user.name}}</span>
 		</div>
 		<div class='email'>
 			<span>Your Email: </span>
-			<span>{{accountDatabaseService.current.user.email}}</span>
+			<span>{{accountDatabaseService.currentUser.value.user.email}}</span>
 		</div>
 		<div class='premium-status'>
 			<span>Premium Status: </span>
 			<span>
 				{{
-					accountDatabaseService.current.user.hasPremium ?
+					accountDatabaseService.currentUser.value.user.hasPremium ?
 						'Enabled' :
 						'Disabled'
 				}}

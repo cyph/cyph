@@ -4,7 +4,7 @@
 	class='menu'
 	[class.collapsed]='!accountService.menuExpanded'
 	[class.mobile]='envService.isMobile'
-	*ngIf='accountDatabaseService.current'
+	*ngIf='accountDatabaseService.currentUser.value'
 >
 	<div [fxFlex]='accountService.menuExpanded ? "25px" : "10px"'></div>
 
@@ -59,16 +59,16 @@
 			/>
 		</button>
 
-		<div fxLayoutAlign='center center' *ngIf='accountDatabaseService.current'>
+		<div fxLayoutAlign='center center'>
 			<div [fxFlex]='accountService.menuExpanded ? "60" : "6em"'>
 				<img
 					cyphTranslate
 					mdTooltip='Profile'
 					mdTooltipPosition='right'
 					class='avatar animated flipInX _1'
-					[ngClass]='userPresence[accountDatabaseService.current.user.status]'
+					[ngClass]='userPresence[accountDatabaseService.currentUser.value.user.status]'
 					alt='Profile Picture'
-					[src]='accountDatabaseService.current.user.avatar'
+					[src]='accountDatabaseService.currentUser.value.user.avatar'
 					routerLink='/account/profile'
 					(click)='click()'
 				/>
