@@ -42,8 +42,10 @@ export class AccountComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		this.activatedRouteService.url.subscribe(url => {
+		this.activatedRouteService.url.subscribe(async url => {
 			const path	= url[0].path;
+
+			await this.accountAuthService.ready;
 
 			if (this.accountDatabaseService.currentUser.value && path === 'login') {
 				this.routerService.navigate(['account']);

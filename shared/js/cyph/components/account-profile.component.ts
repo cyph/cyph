@@ -28,6 +28,8 @@ export class AccountProfileComponent implements OnInit {
 
 	/** @ignore */
 	private async setUser (username?: string) : Promise<void> {
+		await this.accountAuthService.ready;
+
 		try {
 			if (username) {
 				this.user	= await this.accountUserLookupService.getUser(username);
