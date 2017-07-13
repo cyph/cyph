@@ -60,9 +60,12 @@ export class AccountFilesService {
 		return {
 			progress,
 			result: (async () => {
+				const file	= (await this.getFile(id)).file;
+
 				await util.saveFile(
 					(await result).value,
-					(await this.getFile(id)).file.name
+					file.name,
+					file.mediaType
 				);
 			})()
 		};
