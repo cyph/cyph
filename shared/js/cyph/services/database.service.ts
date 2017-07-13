@@ -53,8 +53,6 @@ export class DatabaseService extends DataManagerService {
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
 		const asyncValue: IAsyncValue<T>	= {
 			getValue: async () => localLock(async () : Promise<T> => {
-				await this.waitForUnlock(url);
-
 				const {hash}	= await this.getMetadata(url);
 
 				/* tslint:disable-next-line:possible-timing-attack */
@@ -80,7 +78,7 @@ export class DatabaseService extends DataManagerService {
 				() => defaultValue
 			),
 			lock,
-			setValue: async (value: T) => localLock(async () => {
+			setValue: async value => localLock(async () => {
 				const oldValue	= currentValue;
 
 				currentHash		= (await this.setItem(url, proto, value)).hash;
