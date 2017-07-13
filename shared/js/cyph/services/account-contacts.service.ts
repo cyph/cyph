@@ -21,11 +21,13 @@ export class AccountContactsService {
 	/** List of contacts for current user, sorted by status and then alphabetically. */
 	public readonly contactsList: Observable<User[]>	=
 		this.contacts.watch().flatMap(async contacts =>
-			(
+			(<User[]> (
 				await Promise.all(contacts.map(async username =>
-					this.accountUserLookupService.getUser(username)
+					this.accountUserLookupService.getUser(username).catch(() => undefined)
 				))
-			).sort((a, b) => {
+			).filter(user =>
+				user !== undefined
+			)).sort((a, b) => {
 				const statusIndexA	= userPresenceSorted.indexOf(a.status);
 				const statusIndexB	= userPresenceSorted.indexOf(b.status);
 
