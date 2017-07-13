@@ -459,14 +459,17 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		publicData: boolean = false
 	) : Observable<ITimedValue<T>> {
-		return util.flattenObservablePromise(async () => {
-			url	= await this.processURL(url);
+		return util.flattenObservablePromise(
+			async () => {
+				url	= await this.processURL(url);
 
-			return this.databaseService.watch(url, BinaryProto).flatMap(async data => ({
-				timestamp: data.timestamp,
-				value: await this.open(url, proto, publicData, data.value)
-			}));
-		});
+				return this.databaseService.watch(url, BinaryProto).flatMap(async data => ({
+					timestamp: data.timestamp,
+					value: await this.open(url, proto, publicData, data.value)
+				}));
+			},
+			{timestamp: NaN, value: proto.create()}
+		);
 	}
 
 	/** @see DatabaseService.watchList */
@@ -475,16 +478,19 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		publicData: boolean = false
 	) : Observable<ITimedValue<T>[]> {
-		return util.flattenObservablePromise(async () => {
-			url	= await this.processURL(url);
+		return util.flattenObservablePromise(
+			async () => {
+				url	= await this.processURL(url);
 
-			return this.databaseService.watchList(url, BinaryProto).flatMap(async list =>
-				Promise.all(list.map(async data => ({
-					timestamp: data.timestamp,
-					value: await this.open(url, proto, publicData, data.value)
-				})))
-			);
-		});
+				return this.databaseService.watchList(url, BinaryProto).flatMap(async list =>
+					Promise.all(list.map(async data => ({
+						timestamp: data.timestamp,
+						value: await this.open(url, proto, publicData, data.value)
+					})))
+				);
+			},
+			[{timestamp: NaN, value: proto.create()}]
+		);
 	}
 
 	/** @see DatabaseService.watchListPushes */
@@ -493,14 +499,20 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		publicData: boolean = false
 	) : Observable<ITimedValue<T>> {
-		return util.flattenObservablePromise(async () => {
-			url	= await this.processURL(url);
+		return util.flattenObservablePromise(
+			async () => {
+				url	= await this.processURL(url);
 
-			return this.databaseService.watchListPushes(url, BinaryProto).flatMap(async data => ({
-				timestamp: data.timestamp,
-				value: await this.open(url, proto, publicData, data.value)
-			}));
-		});
+				return this.databaseService.watchListPushes(
+					url,
+					BinaryProto
+				).flatMap(async data => ({
+					timestamp: data.timestamp,
+					value: await this.open(url, proto, publicData, data.value)
+				}));
+			},
+			{timestamp: NaN, value: proto.create()}
+		);
 	}
 
 	constructor (

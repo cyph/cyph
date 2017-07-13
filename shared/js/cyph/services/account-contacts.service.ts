@@ -4,6 +4,7 @@ import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
 import {IAsyncValue} from '../iasync-value';
 import {StringArrayProto} from '../protos';
+import {util} from '../util';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 
@@ -19,7 +20,7 @@ export class AccountContactsService {
 	;
 
 	/** List of contacts for current user, sorted by status and then alphabetically. */
-	public readonly contactsList: Observable<User[]>	=
+	public readonly contactsList: Observable<User[]>	= util.flattenObservablePromise(
 		this.contacts.watch().flatMap(async contacts =>
 			(<User[]> (
 				await Promise.all(contacts.map(async username =>
@@ -42,8 +43,9 @@ export class AccountContactsService {
 					1
 				;
 			})
-		)
-	;
+		),
+		[]
+	);
 
 	constructor (
 		/** @ignore */
