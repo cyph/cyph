@@ -6,11 +6,9 @@ import {AccountChatService} from '../services/account-chat.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountSessionService} from '../services/account-session.service';
 import {ChannelService} from '../services/channel.service';
-import {ChatPotassiumService} from '../services/chat-potassium.service';
 import {ChatService} from '../services/chat.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AnonymousCastleService} from '../services/crypto/anonymous-castle.service';
-import {PotassiumService} from '../services/crypto/potassium.service';
 import {CyphertextService} from '../services/cyphertext.service';
 import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
@@ -42,10 +40,6 @@ import {StringsService} from '../services/strings.service';
 		{
 			provide: ChatService,
 			useExisting: AccountChatService
-		},
-		{
-			provide: PotassiumService,
-			useClass: ChatPotassiumService
 		},
 		{
 			provide: SessionService,
