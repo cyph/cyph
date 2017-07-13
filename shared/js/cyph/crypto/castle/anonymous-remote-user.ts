@@ -1,4 +1,5 @@
 import {IPotassium} from '../potassium/ipotassium';
+import {AnonymousLocalUser} from './anonymous-local-user';
 import {IRemoteUser} from './iremote-user';
 import {Transport} from './transport';
 
@@ -59,7 +60,7 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		this.sharedSecret			= (async () =>
 			(await this.potassium.passwordHash.hash(
 				sharedSecret,
-				new Uint8Array(await this.potassium.passwordHash.saltBytes)
+				AnonymousLocalUser.handshakeSalt
 			)).hash
 		)();
 	}
