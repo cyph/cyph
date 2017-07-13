@@ -37,10 +37,10 @@ export class Util {
 		})
 	;
 
-	/** @ignore */
+	/** Sets dialogService. */
 	public static resolveDialogService: (http: DialogService) => void;
 
-	/** @ignore */
+	/** Sets http. */
 	public static resolveHttp: (http: Http) => void;
 
 
@@ -514,7 +514,7 @@ export class Util {
 
 	/** Serializes data value to binary byte array. */
 	public async serialize<T> (proto: IProto<T>, data: T) : Promise<Uint8Array> {
-		const err	= proto.verify(data);
+		const err	= await proto.verify(data);
 		if (err) {
 			throw new Error(err);
 		}

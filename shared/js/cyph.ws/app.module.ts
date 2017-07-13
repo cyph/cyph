@@ -12,6 +12,7 @@ import '../standalone/translations';
 
 import {NgModule} from '@angular/core';
 import {Http} from '@angular/http';
+import {DomSanitizer} from '@angular/platform-browser';
 import {RouterModule} from '@angular/router';
 import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
 import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
@@ -20,6 +21,7 @@ import {HelpComponent} from '../cyph/components/help.component';
 import {CyphAppModule} from '../cyph/modules/cyph-app.module';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
+import {DataURIProto} from '../cyph/protos';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {ThreadedPotassiumService} from '../cyph/services/crypto/threaded-potassium.service';
 import {DialogService} from '../cyph/services/dialog.service';
@@ -64,8 +66,9 @@ import {LockdownComponent} from './lockdown.component';
 	]
 })
 export class AppModule {
-	constructor (dialogService: DialogService, http: Http) {
-		Util.resolveDialogService(dialogService);
+	constructor (domSanitizer: DomSanitizer, http: Http, dialogService: DialogService) {
+		DataURIProto.resolveDomSanitizer(domSanitizer);
 		Util.resolveHttp(http);
+		Util.resolveDialogService(dialogService);
 	}
 }
