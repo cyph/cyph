@@ -472,7 +472,11 @@ export class Util {
 	}
 
 	/** Opens the specified URL. */
-	public async saveFile (content: Uint8Array, fileName: string) : Promise<void> {
+	public async saveFile (
+		content: Uint8Array,
+		fileName: string,
+		mediaType?: string
+	) : Promise<void> {
 		const dialogService	= await Util.dialogService;
 		if (!dialogService) {
 			throw new Error('Dialog service not found.');
@@ -483,7 +487,14 @@ export class Util {
 
 		const save	= () => {
 			saveAs(
-				new Blob([content], {type: 'application/octet-stream'}),
+				new Blob(
+					[content],
+					{
+						type: mediaType && mediaType.indexOf('/') > 0 ?
+							mediaType :
+							'application/octet-stream'
+					}
+				),
 				fileName,
 				false
 			);
