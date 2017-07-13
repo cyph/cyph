@@ -48,19 +48,19 @@
 
 		@include transition(border 0.75s ease);
 
-		&.ONLINE {
+		&.Online {
 			border-color: map-get($mat-green, 700) !important;
 		}
 
-		&.AWAY {
+		&.Away {
 			border-color: map-get($mat-amber, 500) !important;
 		}
 
-		&.BUSY {
+		&.Busy {
 			border-color: map-get($mat-red, 700) !important;
 		}
 
-		&.OFFLINE {
+		&.Offline {
 			border-color: map-get($mat-grey, 900) !important;
 		}
 	}

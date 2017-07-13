@@ -15,7 +15,7 @@ import {AccountDatabaseService} from './crypto/account-database.service';
 export class AccountContactsService {
 	/** Async value of contacts list. */
 	public readonly contacts: IAsyncValue<string[]>	=
-		this.accountDatabaseService.getAsyncValue('contactsList', StringArrayProto)
+		this.accountDatabaseService.getAsyncValue('contactList', StringArrayProto)
 	;
 
 	/** List of contacts for current user, sorted by status and then alphabetically. */

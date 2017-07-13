@@ -56,7 +56,7 @@
 				cyphTranslate
 				class='animated shrink flipInX _4'
 				mdTooltip='Send Message'
-				*ngIf='user.status !== userPresence.ONLINE'
+				*ngIf='user.status !== userPresence.Online'
 			>
 				<md-icon>email</md-icon>
 			</button>
@@ -65,7 +65,7 @@
 				cyphTranslate
 				class='animated shrink pulldown flipInX _4'
 				mdTooltip='Start Chat'
-				*ngIf='user.status === userPresence.ONLINE'
+				*ngIf='user.status === userPresence.Online'
 				[routerLink]='"/account/chat/" + user.username'
 			>
 				<md-icon>chat_bubble</md-icon>

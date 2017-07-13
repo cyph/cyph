@@ -191,6 +191,7 @@ export class AccountDatabaseService {
 		publicData: boolean = false
 	) : IAsyncValue<T> {
 		const defaultValue	= proto.create();
+		const localLock		= util.lockFunction();
 
 		const asyncValue	= (async () => {
 			url	= await this.processURL(url);
@@ -203,17 +204,18 @@ export class AccountDatabaseService {
 		})();
 
 		return {
-			getValue: async () => (async () =>
-				this.open(url, proto, publicData, await (await asyncValue).getValue())
-			)().catch(
+			getValue: async () => localLock(async () => {
+				await this.waitForUnlock(url);
+				return this.open(url, proto, publicData, await (await asyncValue).getValue());
+			}).catch(
 				() => defaultValue
 			),
 			lock: async (f, reason) =>
 				(await asyncValue).lock(f, reason)
 			,
-			setValue: async value => (await asyncValue).setValue(
+			setValue: async value => localLock(async () => (await asyncValue).setValue(
 				await this.seal(url, proto, value, publicData)
-			),
+			)),
 			updateValue: async f => (await asyncValue).updateValue(async value => this.seal(
 				url,
 				proto,
