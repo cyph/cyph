@@ -5,7 +5,7 @@ const webdriver	= require('selenium-webdriver');
 const shuffle	= require('shuffle-array');
 
 
-const maxAttempts	= 3;
+const maxAttempts	= 5;
 
 const browsers		= [
 	{
