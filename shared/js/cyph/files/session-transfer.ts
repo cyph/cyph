@@ -35,7 +35,7 @@ export class SessionTransfer implements ISessionTransfer {
 		public readonly id: string = util.uuid(),
 
 		/** @inheritDoc */
-		public answer: SessionTransferAnswer = SessionTransferAnswer.EMPTY,
+		public answer: SessionTransferAnswer = SessionTransferAnswer.Empty,
 
 		/** @inheritDoc */
 		public author: string = users.me,
