@@ -247,7 +247,7 @@ export class Util {
 			return subject;
 		}
 		else {
-			return new Observable<T>(observer => { subscribe(observer) });
+			return new Observable<T>(observer => { subscribe(observer); });
 		}
 	}
 
