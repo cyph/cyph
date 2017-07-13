@@ -15,6 +15,7 @@ import './sham';
 import {NgModule} from '@angular/core';
 import {Http} from '@angular/http';
 import {MdSidenavModule, MdSliderModule, MdToolbarModule} from '@angular/material';
+import {DomSanitizer} from '@angular/platform-browser';
 import {RouterModule} from '@angular/router';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
 import {CheckoutComponent} from '../cyph/components/checkout.component';
@@ -24,6 +25,7 @@ import {DialogImageComponent} from '../cyph/components/dialog-image.component';
 import {HelpComponent} from '../cyph/components/help.component';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
+import {DataURIProto} from '../cyph/protos';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
@@ -93,8 +95,9 @@ import {SilentNotificationService} from './silent-notification.service';
 	]
 })
 export class AppModule {
-	constructor (dialogService: DialogService, http: Http) {
-		Util.resolveDialogService(dialogService);
+	constructor (domSanitizer: DomSanitizer, http: Http, dialogService: DialogService) {
+		DataURIProto.resolveDomSanitizer(domSanitizer);
 		Util.resolveHttp(http);
+		Util.resolveDialogService(dialogService);
 	}
 }

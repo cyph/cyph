@@ -81,8 +81,8 @@ import {NativeTitleService} from './native-title.service';
 	schemas: [NO_ERRORS_SCHEMA]
 })
 export class AppModule {
-	constructor (dialogService: DialogService, http: Http) {
-		Util.resolveDialogService(dialogService);
+	constructor (http: Http, dialogService: DialogService) {
 		Util.resolveHttp(http);
+		Util.resolveDialogService(dialogService);
 	}
 }
