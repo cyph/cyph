@@ -60,6 +60,9 @@ read -r -d '' modules <<- EOM
 	angular2-template-loader
 	animate.css
 	awesome-typescript-loader
+	babel-core
+	babel-loader
+	babel-preset-es2015
 	bourbon@4.2.7
 	braintree-web
 	braintree-web-drop-in
@@ -91,6 +94,7 @@ read -r -d '' modules <<- EOM
 	gulp
 	hammerjs
 	highlight.js
+	html-loader
 	html-minifier
 	htmlencode
 	htmllint
@@ -137,11 +141,13 @@ read -r -d '' modules <<- EOM
 	notify-cli
 	ntru
 	od-virtualscroll
+	parchment
 	prepack
 	prepack-webpack-plugin
 	primeng
 	protobufjs
 	protractor
+	quill
 	raw-loader
 	read
 	reflect-metadata
