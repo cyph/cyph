@@ -1,5 +1,6 @@
 import {IKeyPair} from '../../../proto';
 import {IPotassium} from '../potassium/ipotassium';
+import {potassiumUtil} from '../potassium/potassium-util';
 import {ILocalUser} from './ilocal-user';
 import {Transport} from './transport';
 
@@ -9,6 +10,12 @@ import {Transport} from './transport';
  * shared secret rather than AGSE signature.
  */
 export class AnonymousLocalUser implements ILocalUser {
+	/** Salt used for shared secret handshake. */
+	public static handshakeSalt: Uint8Array	= potassiumUtil.fromBase64(
+		'QmaEvu1jYA3SKXsVtoR+9/92/tvMIXOe0NRfwQR5bPw='
+	);
+
+
 	/** @ignore */
 	private keyPair: IKeyPair;
 
@@ -22,7 +29,7 @@ export class AnonymousLocalUser implements ILocalUser {
 
 		const sharedSecret	= (await this.potassium.passwordHash.hash(
 			this.sharedSecret,
-			new Uint8Array(await this.potassium.passwordHash.saltBytes)
+			AnonymousLocalUser.handshakeSalt
 		)).hash;
 
 		this.transport.send(await this.potassium.secretBox.seal(
