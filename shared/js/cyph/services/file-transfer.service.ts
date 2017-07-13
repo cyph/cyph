@@ -195,7 +195,7 @@ export class FileTransferService {
 			this.addImage(transfer, plaintext);
 		}
 		else {
-			util.saveFile(plaintext, transfer.name);
+			util.saveFile(plaintext, transfer.name, transfer.mediaType);
 		}
 	}
 
