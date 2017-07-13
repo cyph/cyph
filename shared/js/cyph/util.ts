@@ -2,7 +2,7 @@
 
 import {Headers, Http, Response, ResponseContentType} from '@angular/http';
 import {saveAs} from 'file-saver';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Observer} from 'rxjs';
 import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {env} from './env';
@@ -220,19 +220,35 @@ export class Util {
 		);
 	}
 
-	/** Wraps an async Observable with a synchronously created one. */
+	/**
+	 * Wraps an async Observable with a synchronously created one.
+	 * @param initialValue If included, will create a BehaviorSubject instead (for caching).
+	 */
 	public flattenObservablePromise<T> (
-		observable: Promise<Observable<T>>|(() => Promise<Observable<T>>)
+		observable:
+			Observable<T>|
+			Promise<Observable<T>>|
+			(() => Observable<T>)|
+			(() => Promise<Observable<T>>)
+		,
+		initialValue?: T
 	) : Observable<T> {
-		return new Observable<T>(observer => {
-			(async () => (await (
-				typeof observable === 'function' ?
-					observable() :
-					observable
-			)).subscribe(
+		const subscribe	= async (observer: Observer<T>) =>
+			(
+				await (typeof observable === 'function' ? observable() : observable)
+			).subscribe(
 				observer
-			))();
-		});
+			)
+		;
+
+		if (initialValue) {
+			const subject	= new BehaviorSubject(initialValue);
+			subscribe(subject);
+			return subject;
+		}
+		else {
+			return new Observable<T>(observer => { subscribe(observer) });
+		}
 	}
 
 	/** Gets a value from a map and sets a default value if none had previously been set. */
