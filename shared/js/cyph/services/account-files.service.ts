@@ -32,8 +32,8 @@ export class AccountFilesService {
 	 * @see files
 	 */
 	public readonly filteredFiles	= {
-		files: this.filterFiles(AccountFileRecord.RecordType.FILE),
-		notes: this.filterFiles(AccountFileRecord.RecordType.NOTE)
+		files: this.filterFiles(AccountFileRecord.RecordType.File),
+		notes: this.filterFiles(AccountFileRecord.RecordType.Note)
 	};
 
 	/** @ignore */
@@ -154,12 +154,12 @@ export class AccountFilesService {
 
 	/** Overwrites an existing note. */
 	public async updateNote (id: string, content: string) : Promise<void> {
-		await this.getFile(id, AccountFileRecord.RecordType.NOTE);
+		await this.getFile(id, AccountFileRecord.RecordType.Note);
 		await this.accountDatabaseService.setItem(`files/${id}`, StringProto, content);
 
 		await this.files.updateValue(async fileRecordList => {
 			const files		= fileRecordList.records || [];
-			const {file}	= await this.getFile(id, AccountFileRecord.RecordType.NOTE, files);
+			const {file}	= await this.getFile(id, AccountFileRecord.RecordType.Note, files);
 			file.size		= this.potassiumService.fromString(content).length;
 			file.timestamp	= await util.timestamp();
 
@@ -191,8 +191,8 @@ export class AccountFilesService {
 					,
 					name,
 					recordType: typeof file === 'string' ?
-						AccountFileRecord.RecordType.NOTE :
-						AccountFileRecord.RecordType.FILE
+						AccountFileRecord.RecordType.Note :
+						AccountFileRecord.RecordType.File
 					,
 					size: typeof file === 'string' ?
 						this.potassiumService.fromString(file).length :
