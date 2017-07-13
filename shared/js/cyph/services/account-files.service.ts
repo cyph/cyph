@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {SafeUrl} from '@angular/platform-browser';
 import {Observable} from 'rxjs';
 import {
 	AccountFileRecord,
@@ -81,7 +82,7 @@ export class AccountFilesService {
 	/** Downloads file and returns as data URI. */
 	public downloadURI (id: string) : {
 		progress: Observable<number>;
-		result: Promise<string>;
+		result: Promise<SafeUrl|string|undefined>;
 	} {
 		const {progress, result}	=
 			this.accountDatabaseService.downloadItem(`files/${id}`, DataURIProto)

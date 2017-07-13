@@ -1,3 +1,4 @@
+import {SafeUrl} from '@angular/platform-browser';
 import {IAccountUserProfile} from '../../proto';
 import {DataURIProto} from '../protos';
 import {util} from '../util';
@@ -9,10 +10,10 @@ import {UserPresence} from './enums';
  */
 export class User {
 	/** Image URI for avatar / profile picture. */
-	public avatar: string		= DataURIProto.create();
+	public avatar?: SafeUrl|string;
 
 	/** Image URI for cover image. */
-	public coverImage: string	= DataURIProto.create();
+	public coverImage?: SafeUrl|string;
 
 	/** @see IAccountUserProfile.description */
 	public description: string;
@@ -54,6 +55,7 @@ export class User {
 		this.externalUsernames	= accountUserProfile.externalUsernames || {};
 		this.hasPremium			= accountUserProfile.hasPremium;
 		this.name				= accountUserProfile.name;
+		this.realUsername		= accountUserProfile.realUsername;
 		this.status				= accountUserProfile.status;
 		this.username			= accountUserProfile.realUsername.toLowerCase();
 
