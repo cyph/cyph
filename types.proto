@@ -127,9 +127,9 @@ message SessionTextConfirmation {
 /** Represents an active file transfer. */
 message SessionTransfer {
 	enum Answer {
-		EMPTY = 0;
-		ACCEPTED = 1;
-		REJECTED = 2;
+		Empty = 0;
+		Accepted = 1;
+		Rejected = 2;
 	}
 
 	/** Indicates a non-response to, acceptance of, or rejection of a file transfer. */
