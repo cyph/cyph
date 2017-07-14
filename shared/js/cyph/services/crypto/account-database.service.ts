@@ -507,7 +507,7 @@ export class AccountDatabaseService {
 					})))
 				);
 			},
-			[{timestamp: NaN, value: proto.create()}]
+			[]
 		);
 	}
 
