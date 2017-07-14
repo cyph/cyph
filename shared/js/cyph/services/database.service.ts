@@ -109,6 +109,11 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.getList.');
 	}
 
+	/** Gets the keys of a list. */
+	public async getListKeys (_URL: string) : Promise<string[]> {
+		throw new Error('Must provide an implementation of DatabaseService.getListKeys.');
+	}
+
 	/** Gets the latest metadata known by the database. */
 	public async getMetadata (_URL: string) : Promise<{hash: string; timestamp: number}> {
 		throw new Error('Must provide an implementation of DatabaseService.getMetadata.');
