@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
+import {AccountContactRecordList, IAccountContactRecordList} from '../../proto';
 import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
 import {IAsyncValue} from '../iasync-value';
-import {StringArrayProto} from '../protos';
 import {util} from '../util';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -15,15 +15,15 @@ import {AccountDatabaseService} from './crypto/account-database.service';
 @Injectable()
 export class AccountContactsService {
 	/** Async value of contacts list. */
-	public readonly contacts: IAsyncValue<string[]>	=
-		this.accountDatabaseService.getAsyncValue('contactList', StringArrayProto)
+	public readonly contacts: IAsyncValue<IAccountContactRecordList>	=
+		this.accountDatabaseService.getAsyncValue('contactList', AccountContactRecordList)
 	;
 
 	/** List of contacts for current user, sorted by status and then alphabetically. */
 	public readonly contactsList: Observable<User[]>	= util.flattenObservablePromise(
-		this.contacts.watch().flatMap(async contacts =>
+		this.contacts.watch().flatMap(async ({records}) =>
 			(<User[]> (
-				await Promise.all(contacts.map(async username =>
+				await Promise.all((records || []).map(async ({username}) =>
 					this.accountUserLookupService.getUser(username).catch(() => undefined)
 				))
 			).filter(user =>

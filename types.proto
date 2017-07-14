@@ -1,6 +1,20 @@
 syntax = "proto3";
 
 
+/** Metadata of one contact relationship of an account. */
+message AccountContactRecord {
+	/** Relationship ID. */
+	required string id = 1;
+
+	/** Contact username. */
+	required string username = 2;
+}
+
+/** List of AccountContactRecords. */
+message AccountContactRecordList {
+	repeated AccountContactRecord records = 1;
+}
+
 /** Metadata of one file stored in an account. */
 message AccountFileRecord {
 	enum RecordTypes {
