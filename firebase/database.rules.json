@@ -91,6 +91,15 @@
 					}
 				},
 
+				"contactList": {
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				},
+
 				"contacts": {
 					"$contact": {
 						"messages": {
