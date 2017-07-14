@@ -597,8 +597,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchListKeys (url: string) : Observable<ITimedValue<string>[]> {
-		return new Observable<ITimedValue<string>[]>(observer => {
+	public watchListKeys (url: string) : Observable<string[]> {
+		return new Observable<string[]>(observer => {
 			let cleanup: Function;
 
 			(async () => {
@@ -609,19 +609,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						return;
 					}
 
-					const value: {[key: string]: {hash: string; timestamp: number}}	=
-						snapshot.val() || {}
-					;
-
-					observer.next(
-						Object.keys(value).map(k => {
-							const timestamp	= value[k].timestamp;
-							return {
-								timestamp: !isNaN(timestamp) ? timestamp : NaN,
-								value: k
-							};
-						})
-					);
+					observer.next(Object.keys(snapshot.val() || {}));
 				};
 
 				listRef.on('value', onValue);
