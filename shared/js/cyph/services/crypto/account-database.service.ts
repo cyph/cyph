@@ -252,6 +252,24 @@ export class AccountDatabaseService {
 		return (await (await this.getItemInternal(url, proto, publicData, anonymous)).result).value;
 	}
 
+	/** @see DatabaseService.getList */
+	public async getList<T> (
+		url: string,
+		proto: IProto<T>,
+		publicData: boolean = false,
+		anonymous: boolean = false
+	) : Promise<T[]> {
+		url	= await this.processURL(url);
+		return Promise.all((await this.getListKeys(url)).map(async k =>
+			this.getItem(k, proto, publicData, anonymous)
+		));
+	}
+
+	/** @see DatabaseService.getListKeys */
+	public async getListKeys (url: string) : Promise<string[]> {
+		return this.databaseService.getListKeys(await this.processURL(url));
+	}
+
 	/** Gets public keys belonging to the specified user. */
 	public async getUserPublicKeys (username: string) : Promise<IAGSEPKICert> {
 		if (!username) {
