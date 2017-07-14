@@ -511,6 +511,16 @@ export class AccountDatabaseService {
 		);
 	}
 
+	/** @see DatabaseService.watchListKeys */
+	public watchListKeys (url: string) : Observable<ITimedValue<string>[]> {
+		return util.flattenObservablePromise(
+			async () => {
+				return this.databaseService.watchListKeys(await this.processURL(url));
+			},
+			[]
+		);
+	}
+
 	/** @see DatabaseService.watchListPushes */
 	public watchListPushes<T> (
 		url: string,
