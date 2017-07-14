@@ -610,6 +610,44 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public watchListKeys (url: string) : Observable<ITimedValue<string>[]> {
+		return new Observable<ITimedValue<string>[]>(observer => {
+			let cleanup: Function;
+
+			(async () => {
+				const listRef	= await this.getDatabaseRef(url);
+
+				const onValue	= (snapshot: firebase.database.DataSnapshot) => {
+					if (!snapshot || !snapshot.exists()) {
+						return;
+					}
+
+					const value: {[key: string]: {hash: string; timestamp: number}}	=
+						snapshot.val() || {}
+					;
+
+					observer.next(
+						Object.keys(value).map(k => {
+							const timestamp	= value[k].timestamp;
+							return {
+								timestamp: !isNaN(timestamp) ? timestamp : NaN,
+								value: k
+							};
+						})
+					);
+				};
+
+				listRef.on('value', onValue);
+				cleanup	= () => { listRef.off('value', onValue); };
+			})();
+
+			return async () => {
+				(await util.waitForValue(() => cleanup))();
+			};
+		});
+	}
+
+	/** @inheritDoc */
 	public watchListPushes<T> (
 		url: string,
 		proto: IProto<T>,
