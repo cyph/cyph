@@ -5,7 +5,7 @@ import {ISessionMessageData, ISessionTransfer} from '../../proto';
 import {ISecretBox} from '../crypto/potassium/isecret-box';
 import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
-import {SessionTransfer, SessionTransferAnswer} from '../files';
+import {SessionTransfer, SessionTransferAnswers} from '../files';
 import {BinaryProto} from '../protos';
 import {rpcEvents, SessionMessage, users} from '../session';
 import {util} from '../util';
@@ -89,7 +89,7 @@ export class FileTransferService {
 
 		this.sessionService.send(new SessionMessage(rpcEvents.files, {transfer}));
 
-		if (transfer.answer === SessionTransferAnswer.Accepted) {
+		if (transfer.answer === SessionTransferAnswers.Accepted) {
 			const {result, progress}	= this.databaseService.downloadItem(
 				transfer.url,
 				BinaryProto
@@ -116,13 +116,13 @@ export class FileTransferService {
 
 	/** @ignore */
 	private uiCompleted (transfer: ISessionTransfer, plaintext: Uint8Array) : void {
-		if (transfer.answer === SessionTransferAnswer.Accepted && transfer.image) {
+		if (transfer.answer === SessionTransferAnswers.Accepted && transfer.image) {
 			this.addImage(transfer, plaintext);
 		}
 		else {
-			const message: string	= transfer.answer === SessionTransferAnswer.Accepted ?
+			const message: string	= transfer.answer === SessionTransferAnswers.Accepted ?
 				this.stringsService.outgoingFileSaved :
-				transfer.answer === SessionTransferAnswer.Rejected ?
+				transfer.answer === SessionTransferAnswers.Rejected ?
 					this.stringsService.outgoingFileRejected :
 					this.stringsService.outgoingFileError
 			;
@@ -138,7 +138,7 @@ export class FileTransferService {
 	private async uiConfirm (
 		transfer: ISessionTransfer,
 		isSave: boolean
-	) : Promise<SessionTransferAnswer> {
+	) : Promise<SessionTransferAnswers> {
 		const title	=
 			`${this.stringsService.incomingFile} ${transfer.name} ` +
 			`(${util.readableByteLength(transfer.size)})`
@@ -166,8 +166,8 @@ export class FileTransferService {
 				title
 			})
 		) ?
-			SessionTransferAnswer.Accepted :
-			SessionTransferAnswer.Rejected
+			SessionTransferAnswers.Accepted :
+			SessionTransferAnswers.Rejected
 		;
 	}
 
@@ -304,7 +304,7 @@ export class FileTransferService {
 
 			this.uiCompleted(transfer, plaintext);
 
-			if (transfer.answer !== SessionTransferAnswer.Accepted) {
+			if (transfer.answer !== SessionTransferAnswers.Accepted) {
 				this.transfers	= this.transfers.delete(transferSetItem);
 				uploadTask.cancel();
 			}
@@ -319,7 +319,7 @@ export class FileTransferService {
 			this.sessionService.send(new SessionMessage(rpcEvents.files, {transfer}));
 		}
 		catch (_) {
-			if (transfer.answer !== SessionTransferAnswer.Rejected) {
+			if (transfer.answer !== SessionTransferAnswers.Rejected) {
 				eventManager.trigger(completedEvent, transfer);
 			}
 		}
@@ -358,7 +358,7 @@ export class FileTransferService {
 		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
-		const downloadAnswers	= new Map<string, SessionTransferAnswer>();
+		const downloadAnswers	= new Map<string, SessionTransferAnswers>();
 
 		this.sessionService.on(rpcEvents.files, async (o: ISessionMessageData) => {
 			const transfer	= o.transfer;
@@ -368,31 +368,31 @@ export class FileTransferService {
 			transfer.author	= o.author;
 
 			/* Outgoing file transfer acceptance or rejection */
-			if (transfer.answer !== SessionTransferAnswer.Empty) {
+			if (transfer.answer !== SessionTransferAnswers.Empty) {
 				eventManager.trigger(`transfer-${transfer.id}`, transfer);
 			}
 			/* Incoming file transfer */
 			else if (downloadAnswers.has(transfer.id)) {
-				while (downloadAnswers.get(transfer.id) === SessionTransferAnswer.Empty) {
+				while (downloadAnswers.get(transfer.id) === SessionTransferAnswers.Empty) {
 					await util.sleep();
 				}
 
-				if (downloadAnswers.get(transfer.id) === SessionTransferAnswer.Accepted) {
+				if (downloadAnswers.get(transfer.id) === SessionTransferAnswers.Accepted) {
 					downloadAnswers.delete(transfer.id);
 					this.receiveTransfer(transfer);
 				}
 			}
 			/* Incoming file transfer request */
 			else {
-				downloadAnswers.set(transfer.id, SessionTransferAnswer.Empty);
+				downloadAnswers.set(transfer.id, SessionTransferAnswers.Empty);
 				this.uiStarted(transfer);
 
 				const answer	= await this.uiConfirm(transfer, false);
 				downloadAnswers.set(transfer.id, answer);
 
-				if (answer !== SessionTransferAnswer.Accepted) {
+				if (answer !== SessionTransferAnswers.Accepted) {
 					this.uiRejected(transfer);
-					transfer.answer				= SessionTransferAnswer.Rejected;
+					transfer.answer				= SessionTransferAnswers.Rejected;
 					transfer.receiptTimestamp	= o.timestamp;
 					this.sessionService.send(new SessionMessage(rpcEvents.files, {transfer}));
 				}

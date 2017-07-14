@@ -1,7 +1,7 @@
 import {ISessionTransfer} from '../../proto';
 import {users} from '../session/enums';
 import {util} from '../util';
-import {SessionTransferAnswer} from './session-transfer-answer';
+import {SessionTransferAnswers} from './session-transfer-answers';
 
 
 /** @inheritDoc */
@@ -35,7 +35,7 @@ export class SessionTransfer implements ISessionTransfer {
 		public readonly id: string = util.uuid(),
 
 		/** @inheritDoc */
-		public answer: SessionTransferAnswer = SessionTransferAnswer.Empty,
+		public answer: SessionTransferAnswers = SessionTransferAnswers.Empty,
 
 		/** @inheritDoc */
 		public author: string = users.me,
