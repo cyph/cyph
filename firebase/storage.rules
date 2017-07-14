@@ -41,6 +41,8 @@ service firebase.storage {
 
 			// match /files/{file} {}
 
+			// match /forms/{form} {}
+
 			match /loginData {
 				allow read;
 			}

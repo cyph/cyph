@@ -58,6 +58,7 @@ read -r -d '' modules <<- EOM
 	angular-smd@https://github.com/buu700/angular-smd-tmp
 	angular-ssr
 	angular2-template-loader
+	angular2-text-mask
 	animate.css
 	awesome-typescript-loader
 	babel-core
