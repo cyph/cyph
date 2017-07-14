@@ -195,6 +195,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public async getListKeys (url: string) : Promise<string[]> {
+		const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
+		return !value ?
+			[] :
+			Object.keys(value)
+		;
+	}
+
+	/** @inheritDoc */
 	public async getMetadata (url: string) : Promise<{hash: string; timestamp: number}> {
 		const {hash, timestamp}	=
 			(await (await this.getDatabaseRef(url)).once('value')).val() ||
