@@ -81,6 +81,7 @@ export class ChannelService {
 		this.databaseService.watchListPushes<IChannelMessage>(
 			`${url}/messages`,
 			ChannelMessage,
+			true,
 			true
 		).subscribe(
 			message => {

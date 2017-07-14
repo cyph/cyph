@@ -502,7 +502,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchList<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>[]> {
+	public watchList<T> (
+		url: string,
+		proto: IProto<T>,
+		completeOnEmpty: boolean = false
+	) : Observable<ITimedValue<T>[]> {
 		return new Observable<ITimedValue<T>[]>(observer => {
 			let cleanup: Function;
 
@@ -593,7 +597,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 				listRef.on('child_added', onChildAdded);
 				listRef.on('child_changed', onChildChanged);
 				listRef.on('child_removed', onChildRemoved);
-				listRef.on('value', onValue);
+
+				if (completeOnEmpty) {
+					listRef.on('value', onValue);
+				}
 
 				cleanup	= () => {
 					listRef.off('child_added', onChildAdded);
@@ -639,6 +646,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public watchListPushes<T> (
 		url: string,
 		proto: IProto<T>,
+		completeOnEmpty: boolean = false,
 		noCache: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return new Observable<ITimedValue<T>>(observer => {
@@ -672,7 +680,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 				};
 
 				listRef.on('child_added', onChildAdded);
-				listRef.on('value', onValue);
+
+				if (completeOnEmpty) {
+					listRef.on('value', onValue);
+				}
 
 				cleanup	= () => {
 					listRef.off('child_added', onChildAdded);
