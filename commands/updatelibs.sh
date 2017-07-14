@@ -79,6 +79,7 @@ read -r -d '' modules <<- EOM
 	datauri
 	dompurify
 	dragula
+	dropzone
 	extract-text-webpack-plugin
 	fast-crc32c
 	fg-loadcss
