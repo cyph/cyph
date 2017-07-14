@@ -11,6 +11,12 @@ import {LocalStorageService} from './local-storage.service';
  */
 @Injectable()
 export class WebLocalStorageService extends LocalStorageService {
+	/**
+	 * Created to use instead of localforage if setting ever fails,
+	 * mainly to avoid annoying repetitive user prompts in Safari.
+	 */
+	private failureFallback?: Map<string, Uint8Array>;
+
 	/** @ignore */
 	private ready: Promise<void>	= (async () => {
 		await localforage.ready();
@@ -43,7 +49,10 @@ export class WebLocalStorageService extends LocalStorageService {
 
 		await this.pendingSets.get(url);
 
-		const value	= await localforage.getItem<Uint8Array>(url);
+		const value	=
+			(await localforage.getItem<Uint8Array>(url).catch(() => undefined)) ||
+			(this.failureFallback ? this.failureFallback.get(url) : undefined)
+		;
 
 		if (!(value instanceof Uint8Array)) {
 			throw new Error(`Item ${url} not found.`);
@@ -58,8 +67,25 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		if (await this.hasItem(url)) {
+		if (!(await this.hasItem(url))) {
+			return;
+		}
+
+		const error	= await (async () => {
 			await localforage.removeItem(url);
+		})().catch(
+			(err: any) => err
+		);
+
+		if (this.failureFallback) {
+			const success	= this.failureFallback.delete(url);
+			if (success) {
+				return;
+			}
+		}
+
+		if (error) {
+			throw error;
 		}
 	}
 
@@ -70,12 +96,19 @@ export class WebLocalStorageService extends LocalStorageService {
 		value: T,
 		waitForReady: boolean = true
 	) : Promise<{url: string}> {
+		const data	= await util.serialize(proto, value);
+
+		if (this.failureFallback) {
+			this.failureFallback.set(url, data);
+			return {url};
+		}
+
 		const promise	= (async () => {
 			if (waitForReady) {
 				await this.ready;
 			}
 
-			await localforage.setItem<Uint8Array>(url, await util.serialize(proto, value));
+			await localforage.setItem<Uint8Array>(url, data);
 			return {url};
 		})();
 
@@ -83,6 +116,11 @@ export class WebLocalStorageService extends LocalStorageService {
 
 		try {
 			return await promise;
+		}
+		catch (_) {
+			this.failureFallback	= new Map<string, Uint8Array>();
+			this.failureFallback.set(url, data);
+			return {url};
 		}
 		finally {
 			this.pendingSets.delete(url);
