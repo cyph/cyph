@@ -28,8 +28,6 @@ service firebase.storage {
 				allow write: if false;
 			}
 
-			// match /contactList {}
-
 			// match /contacts/{contact} {
 			// 	match /messages/{message} {}
 			// 	match /session {}
