@@ -32,17 +32,17 @@ export class AccountFilesService {
 	 * @see files
 	 */
 	public readonly filteredFiles	= {
-		files: this.filterFiles(AccountFileRecord.RecordType.File),
-		notes: this.filterFiles(AccountFileRecord.RecordType.Note)
+		files: this.filterFiles(AccountFileRecord.RecordTypes.File),
+		notes: this.filterFiles(AccountFileRecord.RecordTypes.Note)
 	};
 
 	/** @ignore */
 	private filterFiles (
-		filterRecordType: AccountFileRecord.RecordType
+		filterRecordTypes: AccountFileRecord.RecordTypes
 	) : Observable<IAccountFileRecord[]> {
 		return this.files.watch().map(files =>
 			(files.records || []).filter(o =>
-				!filterRecordType || o.recordType === filterRecordType
+				!filterRecordTypes || o.recordType === filterRecordTypes
 			)
 		);
 	}
@@ -96,7 +96,7 @@ export class AccountFilesService {
 	/** Gets the specified file record. */
 	public async getFile (
 		id: string,
-		filterRecordType?: AccountFileRecord.RecordType,
+		filterRecordTypes?: AccountFileRecord.RecordTypes,
 		files?: IAccountFileRecord[]
 	) : Promise<{
 		file: IAccountFileRecord;
@@ -108,7 +108,7 @@ export class AccountFilesService {
 
 		const file	= files.find(o =>
 			o.id === id &&
-			(!filterRecordType || o.recordType === filterRecordType)
+			(!filterRecordTypes || o.recordType === filterRecordTypes)
 		);
 
 		if (!file) {
@@ -157,12 +157,12 @@ export class AccountFilesService {
 
 	/** Overwrites an existing note. */
 	public async updateNote (id: string, content: string) : Promise<void> {
-		await this.getFile(id, AccountFileRecord.RecordType.Note);
+		await this.getFile(id, AccountFileRecord.RecordTypes.Note);
 		await this.accountDatabaseService.setItem(`files/${id}`, StringProto, content);
 
 		await this.files.updateValue(async fileRecordList => {
 			const files		= fileRecordList.records || [];
-			const {file}	= await this.getFile(id, AccountFileRecord.RecordType.Note, files);
+			const {file}	= await this.getFile(id, AccountFileRecord.RecordTypes.Note, files);
 			file.size		= this.potassiumService.fromString(content).length;
 			file.timestamp	= await util.timestamp();
 
@@ -194,8 +194,8 @@ export class AccountFilesService {
 					,
 					name,
 					recordType: typeof file === 'string' ?
-						AccountFileRecord.RecordType.Note :
-						AccountFileRecord.RecordType.File
+						AccountFileRecord.RecordTypes.Note :
+						AccountFileRecord.RecordTypes.File
 					,
 					size: typeof file === 'string' ?
 						this.potassiumService.fromString(file).length :

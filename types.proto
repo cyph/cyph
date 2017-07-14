@@ -3,7 +3,7 @@ syntax = "proto3";
 
 /** Metadata of one file stored in an account. */
 message AccountFileRecord {
-	enum RecordType {
+	enum RecordTypes {
 		File = 1;
 		Note = 2;
 	}
@@ -18,7 +18,7 @@ message AccountFileRecord {
 	required string name = 3;
 
 	/** Type of file record. */
-	required RecordType recordType = 4;
+	required RecordTypes recordType = 4;
 
 	/** Size in bytes. */
 	required double size = 5;

@@ -32,7 +32,7 @@ export class AccountNoteComponent implements OnInit {
 
 				this.note	= (await this.accountFilesService.getFile(
 					id,
-					AccountFileRecord.RecordType.Note
+					AccountFileRecord.RecordTypes.Note
 				)).file;
 			}
 			catch (_) {
