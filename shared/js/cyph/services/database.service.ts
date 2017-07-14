@@ -209,6 +209,11 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.watchList.');
 	}
 
+	/** Subscribes to the keys of a list. */
+	public watchListKeys (_URL: string) : Observable<ITimedValue<string>[]> {
+		throw new Error('Must provide an implementation of DatabaseService.watchListKeys.');
+	}
+
 	/** Subscribes to new values pushed onto a list. */
 	public watchListPushes<T> (
 		_URL: string,
