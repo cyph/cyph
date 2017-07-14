@@ -204,8 +204,12 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.watch.');
 	}
 
-	/** Subscribes to a list of values. Completes when the list no longer exists. */
-	public watchList<T> (_URL: string, _PROTO: IProto<T>) : Observable<ITimedValue<T>[]> {
+	/** Subscribes to a list of values. */
+	public watchList<T> (
+		_URL: string,
+		_PROTO: IProto<T>,
+		_COMPLETE_ON_EMPTY: boolean = false
+	) : Observable<ITimedValue<T>[]> {
 		throw new Error('Must provide an implementation of DatabaseService.watchList.');
 	}
 
@@ -218,6 +222,7 @@ export class DatabaseService extends DataManagerService {
 	public watchListPushes<T> (
 		_URL: string,
 		_PROTO: IProto<T>,
+		_COMPLETE_ON_EMPTY: boolean = false,
 		_NO_CACHE: boolean = false
 	) : Observable<ITimedValue<T>> {
 		throw new Error('Must provide an implementation of DatabaseService.watchListPushes.');
