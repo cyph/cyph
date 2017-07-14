@@ -7,6 +7,7 @@ import {
 	MdButtonToggleModule,
 	MdCardModule,
 	MdCheckboxModule,
+	MdDatepickerModule,
 	MdDialogModule,
 	MdIconModule,
 	MdInputModule,
@@ -14,7 +15,9 @@ import {
 	MdMenuModule,
 	MdProgressBarModule,
 	MdProgressSpinnerModule,
+	MdRadioModule,
 	MdSelectModule,
+	MdSliderModule,
 	MdSlideToggleModule,
 	MdSnackBarModule,
 	MdTabsModule,
@@ -28,6 +31,7 @@ import {
 	SmdFabSpeedDialComponent,
 	SmdFabSpeedDialTrigger
 } from 'angular-smd/src/app/shared/component/smd-fab-speed-dial';
+import {TextMaskModule} from 'angular2-text-mask';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {DialogImageComponent} from '../components/dialog-image.component';
@@ -63,6 +67,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MdButtonToggleModule,
 		MdCardModule,
 		MdCheckboxModule,
+		MdDatepickerModule,
 		MdDialogModule,
 		MdIconModule,
 		MdInputModule,
@@ -70,7 +75,9 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MdMenuModule,
 		MdProgressBarModule,
 		MdProgressSpinnerModule,
+		MdRadioModule,
 		MdSelectModule,
+		MdSliderModule,
 		MdSlideToggleModule,
 		MdSnackBarModule,
 		MdTabsModule,
@@ -79,7 +86,8 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		RouterModule,
 		SmdFabSpeedDialActions,
 		SmdFabSpeedDialComponent,
-		SmdFabSpeedDialTrigger
+		SmdFabSpeedDialTrigger,
+		TextMaskModule
 	],
 	imports: [
 		BrowserAnimationsModule,
@@ -90,6 +98,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MdButtonModule,
 		MdCardModule,
 		MdCheckboxModule,
+		MdDatepickerModule,
 		MdDialogModule,
 		MdIconModule,
 		MdInputModule,
@@ -97,12 +106,15 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MdMenuModule,
 		MdProgressBarModule,
 		MdProgressSpinnerModule,
+		MdRadioModule,
 		MdSelectModule,
+		MdSliderModule,
 		MdSlideToggleModule,
 		MdSnackBarModule,
 		MdTabsModule,
 		MdTooltipModule,
-		RouterModule
+		RouterModule,
+		TextMaskModule
 	],
 	providers: [
 		{

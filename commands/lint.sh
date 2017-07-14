@@ -125,18 +125,24 @@ if [ ! "${fast}" ] ; then
 	# htmllint
 
 	output="${output}$({
-		find templates -type f -name '*.html' -not -path 'templates/native/*' -exec node -e '(async () => {
-			const result	= await require("htmllint")(
-				fs.readFileSync("{}").toString(),
-				JSON.parse(fs.readFileSync("templates/htmllint.json").toString())
-			);
+		find templates \
+			-type f \
+			-name '*.html' \
+			-not -path 'templates/native/*' \
+			-not -name dynamic-form.html \
+			-exec node -e '(async () => {
+				const result	= await require("htmllint")(
+					fs.readFileSync("{}").toString(),
+					JSON.parse(fs.readFileSync("templates/htmllint.json").toString())
+				);
 
-			if (result.length === 0) {
-				return;
-			}
+				if (result.length === 0) {
+					return;
+				}
 
-			console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
-		})()' \;;
+				console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
+			})()' \
+		\;;
 	} 2>&1)"
 
 	# Retire.js
