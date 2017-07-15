@@ -5,7 +5,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
@@ -352,35 +352,43 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async setConnectTracker (url: string) : Promise<Subscription> {
+	public async setConnectTracker (url: string) : Promise<() => void> {
 		const ref			= await this.getDatabaseRef(url);
 		const onDisconnect	= ref.onDisconnect();
 
 		ref.set(firebase.database.ServerValue.TIMESTAMP);
 		onDisconnect.remove();
 
-		return this.connectionStatus().subscribe(isConnected => {
+		this.connectionStatus().subscribe(isConnected => {
 			if (isConnected) {
 				ref.set(firebase.database.ServerValue.TIMESTAMP);
 			}
-			return () => { onDisconnect.cancel(); };
 		});
+
+		return () => {
+			ref.remove();
+			onDisconnect.cancel();
+		};
 	}
 
 	/** @inheritDoc */
-	public async setDisconnectTracker (url: string) : Promise<Subscription> {
+	public async setDisconnectTracker (url: string) : Promise<() => void> {
 		const ref			= await this.getDatabaseRef(url);
 		const onDisconnect	= ref.onDisconnect();
 
 		ref.remove();
 		onDisconnect.set(firebase.database.ServerValue.TIMESTAMP);
 
-		return this.connectionStatus().subscribe(isConnected => {
+		this.connectionStatus().subscribe(isConnected => {
 			if (isConnected) {
 				ref.remove();
 			}
-			return () => { onDisconnect.cancel(); };
 		});
+
+		return () => {
+			ref.set(firebase.database.ServerValue.TIMESTAMP);
+			onDisconnect.cancel();
+		};
 	}
 
 	/** @inheritDoc */

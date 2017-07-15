@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash';
-import {Observable, Subscription} from 'rxjs';
+import {Observable} from 'rxjs';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
@@ -167,12 +167,12 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Tracks connects at the specfied URL. */
-	public async setConnectTracker (_URL: string) : Promise<Subscription> {
+	public async setConnectTracker (_URL: string) : Promise<() => void> {
 		throw new Error('Must provide an implementation of DatabaseService.setConnectTracker.');
 	}
 
 	/** Tracks disconnects at the specfied URL. */
-	public async setDisconnectTracker (_URL: string) : Promise<Subscription> {
+	public async setDisconnectTracker (_URL: string) : Promise<() => void> {
 		throw new Error('Must provide an implementation of DatabaseService.setDisconnectTracker.');
 	}
 
