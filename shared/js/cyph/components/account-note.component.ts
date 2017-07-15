@@ -30,10 +30,10 @@ export class AccountNoteComponent implements OnInit {
 					throw new Error('Invalid note ID.');
 				}
 
-				this.note	= (await this.accountFilesService.getFile(
+				this.note	= await this.accountFilesService.getFile(
 					id,
 					AccountFileRecord.RecordTypes.Note
-				)).file;
+				);
 			}
 			catch (_) {
 				this.routerService.navigate(['404']);

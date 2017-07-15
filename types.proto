@@ -36,11 +36,6 @@ message AccountFileRecord {
 	required double timestamp = 6;
 }
 
-/** List of AccountFileRecords. */
-message AccountFileRecordList {
-	repeated AccountFileRecord records = 1;
-}
-
 /** Augmented PAKE login data. */
 message AccountLoginData {
 	/** Randomly generated password for database authentication. */

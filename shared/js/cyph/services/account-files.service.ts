@@ -1,13 +1,7 @@
 import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {Observable} from 'rxjs';
-import {
-	AccountFileRecord,
-	AccountFileRecordList,
-	IAccountFileRecord,
-	IAccountFileRecordList
-} from '../../proto';
-import {IAsyncValue} from '../iasync-value';
+import {AccountFileRecord, IAccountFileRecord} from '../../proto';
 import {BinaryProto, BlobProto, DataURIProto, StringProto} from '../protos';
 import {util} from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -23,9 +17,17 @@ export class AccountFilesService {
 	private readonly noteSnippets: Map<string, string>	= new Map<string, string>();
 
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
-	public readonly files: IAsyncValue<IAccountFileRecordList>	=
-		this.accountDatabaseService.getAsyncValue('fileList', AccountFileRecordList)
-	;
+	public readonly filesList: Observable<IAccountFileRecord[]>	= util.flattenObservablePromise(
+		this.accountDatabaseService.watchList<IAccountFileRecord>(
+			'fileRecords',
+			AccountFileRecord
+		).map(records =>
+			records.
+				map(({value}) => value).
+				sort((a, b) => b.timestamp - a.timestamp)
+		),
+		[]
+	);
 
 	/**
 	 * Files filtered by record type.
@@ -40,10 +42,11 @@ export class AccountFilesService {
 	private filterFiles (
 		filterRecordTypes: AccountFileRecord.RecordTypes
 	) : Observable<IAccountFileRecord[]> {
-		return this.files.watch().map(files =>
-			(files.records || []).filter(o =>
-				!filterRecordTypes || o.recordType === filterRecordTypes
-			)
+		return util.flattenObservablePromise(
+			this.filesList.map(files => files.filter(({recordType}) =>
+				!filterRecordTypes || recordType === filterRecordTypes
+			)),
+			[]
 		);
 	}
 
@@ -60,7 +63,7 @@ export class AccountFilesService {
 		return {
 			progress,
 			result: (async () => {
-				const file	= (await this.getFile(id)).file;
+				const file	= await this.getFile(id);
 
 				await util.saveFile(
 					(await result).value,
@@ -96,26 +99,18 @@ export class AccountFilesService {
 	/** Gets the specified file record. */
 	public async getFile (
 		id: string,
-		filterRecordTypes?: AccountFileRecord.RecordTypes,
-		files?: IAccountFileRecord[]
-	) : Promise<{
-		file: IAccountFileRecord;
-		files: IAccountFileRecord[];
-	}> {
-		if (!files) {
-			files	= (await this.files.getValue()).records || [];
-		}
-
-		const file	= files.find(o =>
-			o.id === id &&
-			(!filterRecordTypes || o.recordType === filterRecordTypes)
+		recordType?: AccountFileRecord.RecordTypes
+	) : Promise<IAccountFileRecord> {
+		const file	= await this.accountDatabaseService.getItem<IAccountFileRecord>(
+			`fileRecords/${id}`,
+			AccountFileRecord
 		);
 
-		if (!file) {
+		if (recordType !== undefined && file.recordType !== recordType) {
 			throw new Error('Specified file does not exist.');
 		}
 
-		return {file, files};
+		return file;
 	}
 
 	/** Gets the Material icon name for the file default thumbnail. */
@@ -157,17 +152,14 @@ export class AccountFilesService {
 
 	/** Overwrites an existing note. */
 	public async updateNote (id: string, content: string) : Promise<void> {
-		await this.getFile(id, AccountFileRecord.RecordTypes.Note);
-		await this.accountDatabaseService.setItem(`files/${id}`, StringProto, content);
+		const file		= await this.getFile(id, AccountFileRecord.RecordTypes.Note);
+		file.size		= this.potassiumService.fromString(content).length;
+		file.timestamp	= await util.timestamp();
 
-		await this.files.updateValue(async fileRecordList => {
-			const files		= fileRecordList.records || [];
-			const {file}	= await this.getFile(id, AccountFileRecord.RecordTypes.Note, files);
-			file.size		= this.potassiumService.fromString(content).length;
-			file.timestamp	= await util.timestamp();
-
-			return {records: files.sort((a, b) => b.timestamp - a.timestamp)};
-		});
+		await Promise.all([
+			this.accountDatabaseService.setItem(`files/${id}`, StringProto, content),
+			this.accountDatabaseService.setItem(`fileRecords/${id}`, AccountFileRecord, file)
+		]);
 	}
 
 	/** Uploads new file. */
@@ -185,8 +177,10 @@ export class AccountFilesService {
 
 		return {
 			progress,
-			result: result.then(async () => this.files.updateValue(async fileRecordList =>
-				({records: (fileRecordList.records || []).concat({
+			result: result.then(async () => { await this.accountDatabaseService.setItem(
+				`fileRecords/${id}`,
+				AccountFileRecord,
+				{
 					id,
 					mediaType: typeof file === 'string' ?
 						'text/plain' :
@@ -202,10 +196,8 @@ export class AccountFilesService {
 						file.size
 					,
 					timestamp: await util.timestamp()
-				}).sort(
-					(a, b) => b.timestamp - a.timestamp
-				)})
-			))
+				}
+			); })
 		};
 	}
 
