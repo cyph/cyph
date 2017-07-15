@@ -43,7 +43,7 @@ exports.channelDisconnect	=
 exports.userDisconnect	=
 	functions.database.ref('users/{user}/clientConnections/{clientConnection}').onDelete(e => {
 		e.data.ref.parent.once('value').then(clientConnections => {
-			if (Object.keys(clientConnections).length > 0) {
+			if (clientConnections.exists()) {
 				return;
 			}
 
