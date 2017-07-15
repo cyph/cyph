@@ -23,12 +23,20 @@ service firebase.storage {
 				;
 			}
 
+			match /avatar {
+				allow read;
+			}
+
+			match /coverImage {
+				allow read;
+			}
+
 			match /certificate {
 				allow read;
 				allow write: if false;
 			}
 
-			// match /contactList {}
+			// match /contactRecords/{contactRecord} {}
 
 			// match /contacts/{contact} {
 			// 	match /messages/{message} {}
@@ -37,13 +45,17 @@ service firebase.storage {
 
 			// match /encryptionKeyPair {}
 
-			// match /fileList {}
+			// match /fileRecords/{fileRecord} {}
 
 			// match /files/{file} {}
 
 			// match /forms/{form} {}
 
 			match /loginData {
+				allow read;
+			}
+
+			match /presence {
 				allow read;
 			}
 
