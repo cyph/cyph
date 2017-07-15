@@ -1,8 +1,8 @@
 import {sodium} from 'libsodium';
 import {IPasswordHash} from './ipassword-hash';
+import {ISecretBox} from './isecret-box';
 import * as NativeCrypto from './native-crypto';
 import {potassiumUtil} from './potassium-util';
-import {SecretBox} from './secret-box';
 
 
 /** @inheritDoc */
@@ -184,6 +184,6 @@ export class PasswordHash implements IPasswordHash {
 		private readonly isNative: boolean,
 
 		/** @ignore */
-		private readonly secretBox: SecretBox
+		private readonly secretBox: ISecretBox
 	) {}
 }
