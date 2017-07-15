@@ -1,6 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Subscription} from 'rxjs';
-import {AccountLoginData, IAccountLoginData, IKeyPair, KeyPair} from '../../../proto';
+import {
+	AccountLoginData,
+	AccountUserPresence,
+	IAccountLoginData,
+	IAccountUserPresence,
+	IKeyPair,
+	KeyPair
+} from '../../../proto';
 import {BinaryProto, StringProto} from '../../protos';
 import {util} from '../../util';
 import {AccountUserLookupService} from '../account-user-lookup.service';
@@ -99,6 +106,26 @@ export class AccountAuthService {
 					symmetricKey: loginData.symmetricKey
 				},
 				user
+			});
+
+			if (
+				(await user.accountUserPresence.getValue()).status ===
+				AccountUserPresence.Statuses.Offline
+			) {
+				await user.accountUserPresence.setValue(
+					await this.accountDatabaseService.getItem<IAccountUserPresence>(
+						'lastPresence',
+						AccountUserPresence
+					)
+				);
+			}
+
+			user.status.skip(1).subscribe(status => {
+				this.accountDatabaseService.setItem(
+					'lastPresence',
+					AccountUserPresence,
+					{status}
+				);
 			});
 		}
 		catch (_) {
