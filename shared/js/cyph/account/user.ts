@@ -53,10 +53,10 @@ export class User {
 		public readonly username: string,
 
 		/** Image URI for avatar / profile picture. */
-		public readonly avatar: Observable<SafeUrl|string>,
+		public readonly avatar: Observable<SafeUrl|string|undefined>,
 
 		/** Image URI for cover image. */
-		public readonly coverImage: Observable<SafeUrl|string>,
+		public readonly coverImage: Observable<SafeUrl|string|undefined>,
 
 		/** @see IAccountUserPresence */
 		public readonly accountUserPresence: IAsyncValue<IAccountUserPresence>,

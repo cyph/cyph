@@ -32,12 +32,16 @@ export class AccountUserLookupService {
 				DataURIProto,
 				true,
 				true
+			).map(
+				({value}) => value
 			),
 			this.accountDatabaseService.watch(
 				`${url}/coverImage`,
 				DataURIProto,
 				true,
 				true
+			).map(
+				({value}) => value
 			),
 			this.databaseService.getAsyncValue<IAccountUserPresence>(
 				`${url}/presence`,
