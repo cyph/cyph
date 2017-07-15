@@ -38,3 +38,25 @@ exports.channelDisconnect	=
 		});
 	})
 ;
+
+
+exports.userDisconnect	=
+	functions.database.ref('users/{user}/clientConnections/{clientConnection}').onDelete(e => {
+		e.data.ref.parent.once('value').then(clientConnections => {
+			if (Object.keys(clientConnections).length > 0) {
+				return;
+			}
+
+			const userRef	= e.data.ref.parent.parent;
+
+			if (userRef.key.length < 1) {
+				throw new Error('INVALID USER REF');
+			}
+
+			return Promise.all([
+				userRef.child('presence').remove(),
+				storage.file(`users/${userRef.key}/presence`).delete()
+			]);
+		});
+	})
+;

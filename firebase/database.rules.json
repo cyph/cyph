@@ -111,6 +111,12 @@
 					}
 				},
 
+				"clientConnections": {
+					"$clientConnection": {
+						".validate": "newData.val() === now"
+					}
+				},
+
 				"contactRecords": {
 					"$contactRecord": {
 						"hash": {
