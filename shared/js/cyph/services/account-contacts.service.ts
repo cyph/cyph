@@ -61,30 +61,37 @@ export class AccountContactsService {
 			'contactRecords',
 			AccountContactRecord
 		).subscribe(async records => {
-			const users	= <User[]> (await Promise.all(records.map(async ({value}) =>
-				this.accountUserLookupService.getUser(value.username).catch(() => undefined)
-			))).filter(user =>
-				user !== undefined
-			);
-
 			const oldUserStatuses	= this.userStatuses;
 			this.userStatuses		= new Map<User, UserPresence>();
 
-			for (const user of users) {
+			let ready	= false;
+
+			await Promise.all(records.map(async ({value}) => {
+				const user	= await this.accountUserLookupService.getUser(value.username).
+					catch(() => undefined)
+				;
+
+				if (!user) {
+					return;
+				}
+
 				const oldUserStatus	= oldUserStatuses.get(user);
 				if (oldUserStatus !== undefined) {
 					this.userStatuses.set(user, oldUserStatus);
-					continue;
+					return;
 				}
 
-				this.userStatuses.set(user, UserPresence.Offline);
-				user.status.subscribe(status => {
+				this.userStatuses.set(user, await user.status.take(1).toPromise());
+				user.status.skip(1).subscribe(async status => {
 					this.userStatuses.set(user, status);
-					this.updateContactsList();
+					if (ready) {
+						this.updateContactsList();
+					}
 				});
-			}
+			}));
 
-			return users;
+			this.updateContactsList();
+			ready	= true;
 		});
 	}
 }
