@@ -1878,7 +1878,7 @@ cheerio@^1.0.0-rc.1, cheerio@^1.0.0-rc.2:
     lodash "^4.15.0"
     parse5 "^3.0.1"
 
-chokidar@1.7.0, chokidar@^1.4.1, chokidar@^1.4.3, chokidar@^1.6.0, chokidar@^1.7.0:
+chokidar@1.7.0, chokidar@^1.4.1, chokidar@^1.6.0, chokidar@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-1.7.0.tgz#798e689778151c8076b4b360e5edd28cda2bb468"
   dependencies:
@@ -9493,9 +9493,9 @@ superagent@^3.0.0:
     qs "^6.1.0"
     readable-stream "^2.0.5"
 
-supersphincs@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-4.1.1.tgz#58b51bd2cf42426c402e85318dd8f6ecbf3e80ec"
+supersphincs@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-4.2.1.tgz#da84106e9638c8157698cc81eaeb03bfb12f6b68"
   dependencies:
     rsasign "*"
     sodiumutil "*"
@@ -10309,11 +10309,11 @@ walkdir@0.0.7:
   resolved "https://registry.yarnpkg.com/walkdir/-/walkdir-0.0.7.tgz#04da0270a87a778540173cdbf0a2db499a8d9e29"
 
 watchpack@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/watchpack/-/watchpack-1.3.1.tgz#7d8693907b28ce6013e7f3610aa2a1acf07dad87"
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/watchpack/-/watchpack-1.4.0.tgz#4a1472bcbb952bd0a9bb4036801f954dfb39faac"
   dependencies:
     async "^2.1.2"
-    chokidar "^1.4.3"
+    chokidar "^1.7.0"
     graceful-fs "^4.1.2"
 
 wbuf@^1.1.0, wbuf@^1.7.2:

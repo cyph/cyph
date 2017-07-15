@@ -433,7 +433,7 @@
     "style-loader": "^0.18.2",
     "stylelint": "^7.13.0",
     "stylelint-scss": "^1.5.1",
-    "supersphincs": "^4.1.1",
+    "supersphincs": "^4.2.1",
     "tab-indent": "^1.0.2",
     "textillate": "^0.4.1",
     "tns-android": "^3.1.1",
