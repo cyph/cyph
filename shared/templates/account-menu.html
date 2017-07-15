@@ -66,9 +66,11 @@
 					mdTooltip='Profile'
 					mdTooltipPosition='right'
 					class='avatar animated flipInX _1'
-					[ngClass]='userPresence[accountDatabaseService.currentUser.value.user.status]'
+					[ngClass]='userPresence[
+						(accountDatabaseService.currentUser.value.user.status | async)?
+					]'
 					alt='Profile Picture'
-					[src]='accountDatabaseService.currentUser.value.user.avatar'
+					[src]='accountDatabaseService.currentUser.value.user.avatar | async'
 					routerLink='/account/profile'
 					(click)='click()'
 				/>

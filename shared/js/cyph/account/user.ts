@@ -1,6 +1,7 @@
 import {SafeUrl} from '@angular/platform-browser';
-import {IAccountUserProfile} from '../../proto';
-import {DataURIProto} from '../protos';
+import {Observable} from 'rxjs';
+import {IAccountUserPresence, IAccountUserProfile} from '../../proto';
+import {IAsyncValue} from '../iasync-value';
 import {util} from '../util';
 import {UserPresence} from './enums';
 
@@ -9,59 +10,58 @@ import {UserPresence} from './enums';
  * Represents a user profile.
  */
 export class User {
-	/** Image URI for avatar / profile picture. */
-	public avatar?: SafeUrl|string;
-
-	/** Image URI for cover image. */
-	public coverImage?: SafeUrl|string;
-
 	/** @see IAccountUserProfile.description */
-	public description: string;
+	public readonly description: Observable<string>	= util.flattenObservablePromise(
+		this.accountUserProfile.watch().map(({description}) => description),
+		''
+	);
 
 	/** @see IAccountUserProfile.externalUsernames */
-	public readonly externalUsernames: {[k: string]: string};
+	public readonly externalUsernames: Observable<{[k: string]: string}>	=
+		util.flattenObservablePromise(
+			this.accountUserProfile.watch().map(({externalUsernames}) => externalUsernames || {}),
+			{}
+		)
+	;
 
 	/** @see IAccountUserProfile.hasPremium */
-	public hasPremium: boolean;
+	public readonly hasPremium: Observable<boolean>	= util.flattenObservablePromise(
+		this.accountUserProfile.watch().map(({hasPremium}) => hasPremium),
+		false
+	);
 
 	/** @see IAccountUserProfile.name */
-	public name: string;
+	public readonly name: Observable<string>	= util.flattenObservablePromise(
+		this.accountUserProfile.watch().map(({name}) => name),
+		''
+	);
 
 	/** @see IAccountUserProfile.realUsername */
-	public realUsername: string;
+	public readonly realUsername: Observable<string>	= util.flattenObservablePromise(
+		this.accountUserProfile.watch().map(({realUsername}) => realUsername),
+		''
+	);
 
 	/** @see IAccountUserProfile.status */
-	public status: UserPresence;
+	public readonly status: Observable<UserPresence>	= util.flattenObservablePromise(
+		this.accountUserPresence.watch().map(({status}) => status),
+		UserPresence.Offline
+	);
 
-	/** Username (all lowercase). */
-	public readonly username: string;
+	constructor (
+		/** Username (all lowercase). */
+		public readonly username: string,
 
-	/** Exports to IAccountUserProfile format. */
-	public async toAccountUserProfile () : Promise<IAccountUserProfile> {
-		return {
-			avatar: await util.serialize(DataURIProto, this.avatar),
-			coverImage: await util.serialize(DataURIProto, this.coverImage),
-			description: this.description,
-			externalUsernames: this.externalUsernames,
-			hasPremium: this.hasPremium,
-			name: this.name,
-			realUsername: this.realUsername,
-			status: this.status
-		};
-	}
+		/** Image URI for avatar / profile picture. */
+		public readonly avatar: Observable<SafeUrl|string>,
 
-	constructor (accountUserProfile: IAccountUserProfile) {
-		this.description		= accountUserProfile.description;
-		this.externalUsernames	= accountUserProfile.externalUsernames || {};
-		this.hasPremium			= accountUserProfile.hasPremium;
-		this.name				= accountUserProfile.name;
-		this.realUsername		= accountUserProfile.realUsername;
-		this.status				= accountUserProfile.status;
-		this.username			= accountUserProfile.realUsername.toLowerCase();
+		/** Image URI for cover image. */
+		public readonly coverImage: Observable<SafeUrl|string>,
 
-		(async () => {
-			this.avatar		= await util.deserialize(DataURIProto, accountUserProfile.avatar);
-			this.coverImage	= await util.deserialize(DataURIProto, accountUserProfile.coverImage);
-		})();
-	}
+		/** @see IAccountUserPresence */
+		public readonly accountUserPresence: IAsyncValue<IAccountUserPresence>,
+
+		/** @see IAccountUserProfile */
+		public readonly accountUserProfile: IAsyncValue<IAccountUserProfile>
+	) {}
 }

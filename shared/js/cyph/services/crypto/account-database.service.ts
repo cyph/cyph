@@ -170,14 +170,19 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.downloadItem */
-	public downloadItem<T> (url: string, proto: IProto<T>, publicData: boolean = false) : {
+	public downloadItem<T> (
+		url: string,
+		proto: IProto<T>,
+		publicData: boolean = false,
+		anonymous: boolean = false
+	) : {
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
-			const downloadTask	= await this.getItemInternal(url, proto, publicData);
+			const downloadTask	= await this.getItemInternal(url, proto, publicData, anonymous);
 
 			downloadTask.progress.subscribe(
 				n => { progress.next(n); },
@@ -195,7 +200,8 @@ export class AccountDatabaseService {
 	public getAsyncValue<T> (
 		url: string,
 		proto: IProto<T>,
-		publicData: boolean = false
+		publicData: boolean = false,
+		anonymous: boolean = false
 	) : IAsyncValue<T> {
 		const defaultValue	= proto.create();
 		const localLock		= util.lockFunction();
@@ -213,7 +219,13 @@ export class AccountDatabaseService {
 		return {
 			getValue: async () => localLock(async () => {
 				await this.waitForUnlock(url);
-				return this.open(url, proto, publicData, await (await asyncValue).getValue());
+				return this.open(
+					url,
+					proto,
+					publicData,
+					await (await asyncValue).getValue(),
+					anonymous
+				);
 			}).catch(
 				() => defaultValue
 			),
@@ -480,7 +492,8 @@ export class AccountDatabaseService {
 	public watch<T> (
 		url: string,
 		proto: IProto<T>,
-		publicData: boolean = false
+		publicData: boolean = false,
+		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return util.flattenObservablePromise(
 			async () => {
@@ -488,7 +501,7 @@ export class AccountDatabaseService {
 
 				return this.databaseService.watch(url, BinaryProto).flatMap(async data => ({
 					timestamp: data.timestamp,
-					value: await this.open(url, proto, publicData, data.value)
+					value: await this.open(url, proto, publicData, data.value, anonymous)
 				}));
 			},
 			{timestamp: NaN, value: proto.create()}
@@ -499,7 +512,8 @@ export class AccountDatabaseService {
 	public watchList<T> (
 		url: string,
 		proto: IProto<T>,
-		publicData: boolean = false
+		publicData: boolean = false,
+		anonymous: boolean = false
 	) : Observable<ITimedValue<T>[]> {
 		return util.flattenObservablePromise(
 			async () => {
@@ -508,7 +522,7 @@ export class AccountDatabaseService {
 				return this.databaseService.watchList(url, BinaryProto).flatMap(async list =>
 					Promise.all(list.map(async data => ({
 						timestamp: data.timestamp,
-						value: await this.open(url, proto, publicData, data.value)
+						value: await this.open(url, proto, publicData, data.value, anonymous)
 					})))
 				);
 			},
@@ -530,7 +544,8 @@ export class AccountDatabaseService {
 	public watchListPushes<T> (
 		url: string,
 		proto: IProto<T>,
-		publicData: boolean = false
+		publicData: boolean = false,
+		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return util.flattenObservablePromise(
 			async () => {
@@ -541,7 +556,7 @@ export class AccountDatabaseService {
 					BinaryProto
 				).flatMap(async data => ({
 					timestamp: data.timestamp,
-					value: await this.open(url, proto, publicData, data.value)
+					value: await this.open(url, proto, publicData, data.value, anonymous)
 				}));
 			},
 			{timestamp: NaN, value: proto.create()}

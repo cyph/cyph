@@ -1,9 +1,9 @@
-import {AccountUserProfile} from '../../../proto';
+import {AccountUserPresence} from '../../../proto';
 
 
-/** @see AccountUserProfile.Presence */
+/** @see AccountUserPresence.Statuses */
 /* tslint:disable-next-line:variable-name */
-export const UserPresence	= AccountUserProfile.Presence;
+export const UserPresence	= AccountUserPresence.Statuses;
 
-/** @see AccountUserProfile.Presence */
-export type UserPresence	= AccountUserProfile.Presence;
+/** @see AccountUserPresence.Statuses */
+export type UserPresence	= AccountUserPresence.Statuses;

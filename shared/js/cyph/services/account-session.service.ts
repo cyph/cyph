@@ -75,6 +75,8 @@ export class AccountSessionService extends SessionService {
 		}
 
 		this.user	= await this.accountUserLookupService.getUser(username);
+
+		this.setRemoteUsername(this.user.username);
 	}
 
 	constructor (

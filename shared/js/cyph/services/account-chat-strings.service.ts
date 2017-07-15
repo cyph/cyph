@@ -15,7 +15,8 @@ export class AccountChatStringsService extends ChatStringsService {
 			return '';
 		}
 
-		return this.accountSessionService.user.realUsername;
+		/* TODO: Show realUsername. */
+		return this.accountSessionService.user.username;
 	}
 
 	/** @ignore */
@@ -28,7 +29,5 @@ export class AccountChatStringsService extends ChatStringsService {
 		private readonly accountSessionService: AccountSessionService
 	) {
 		super(sessionService);
-
-		sessionService.setRemoteUsername(this.friend);
 	}
 }
