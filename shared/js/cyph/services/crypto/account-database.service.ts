@@ -512,14 +512,25 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return util.flattenObservablePromise(
-			async () => {
-				url	= await this.processURL(url);
+			this.currentUser.flatMap(async () => {
+				const processedURL	= await this.processURL(url);
 
-				return this.databaseService.watch(url, BinaryProto).flatMap(async data => ({
+				return this.databaseService.watch(
+					processedURL,
+					BinaryProto
+				).flatMap(async data => ({
 					timestamp: data.timestamp,
-					value: await this.open(url, proto, publicData, data.value, anonymous)
+					value: await this.open(
+						processedURL,
+						proto,
+						publicData,
+						data.value,
+						anonymous
+					)
 				}));
-			},
+			}).flatMap(
+				o => o
+			),
 			{timestamp: NaN, value: proto.create()}
 		);
 	}
@@ -532,16 +543,27 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>[]> {
 		return util.flattenObservablePromise(
-			async () => {
-				url	= await this.processURL(url);
+			this.currentUser.flatMap(async () => {
+				const processedURL	= await this.processURL(url);
 
-				return this.databaseService.watchList(url, BinaryProto).flatMap(async list =>
+				return this.databaseService.watchList(
+					processedURL,
+					BinaryProto
+				).flatMap(async list =>
 					Promise.all(list.map(async data => ({
 						timestamp: data.timestamp,
-						value: await this.open(url, proto, publicData, data.value, anonymous)
+						value: await this.open(
+							processedURL,
+							proto,
+							publicData,
+							data.value,
+							anonymous
+						)
 					})))
 				);
-			},
+			}).flatMap(
+				o => o
+			),
 			[]
 		);
 	}
@@ -549,9 +571,11 @@ export class AccountDatabaseService {
 	/** @see DatabaseService.watchListKeys */
 	public watchListKeys (url: string) : Observable<string[]> {
 		return util.flattenObservablePromise(
-			async () => {
-				return this.databaseService.watchListKeys(await this.processURL(url));
-			},
+			this.currentUser.flatMap(async () =>
+				this.databaseService.watchListKeys(await this.processURL(url))
+			).flatMap(
+				o => o
+			),
 			[]
 		);
 	}
@@ -564,17 +588,25 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return util.flattenObservablePromise(
-			async () => {
-				url	= await this.processURL(url);
+			this.currentUser.flatMap(async () => {
+				const processedURL	= await this.processURL(url);
 
 				return this.databaseService.watchListPushes(
-					url,
+					processedURL,
 					BinaryProto
 				).flatMap(async data => ({
 					timestamp: data.timestamp,
-					value: await this.open(url, proto, publicData, data.value, anonymous)
+					value: await this.open(
+						processedURL,
+						proto,
+						publicData,
+						data.value,
+						anonymous
+					)
 				}));
-			},
+			}).flatMap(
+				o => o
+			),
 			{timestamp: NaN, value: proto.create()}
 		);
 	}
