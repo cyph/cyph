@@ -218,7 +218,9 @@ export class AccountDatabaseService {
 
 		return {
 			getValue: async () => localLock(async () => {
-				await this.waitForUnlock(url);
+				if (!anonymous) {
+					await this.waitForUnlock(url);
+				}
 				return this.open(
 					url,
 					proto,
