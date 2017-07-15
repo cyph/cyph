@@ -82,7 +82,7 @@ export class AccountAuthService {
 			await this.localStorageService.setItem('username', StringProto, username);
 			await this.localStorageService.setItem('password', BinaryProto, password);
 
-			this.connectTracker	= this.databaseService.setConnectTracker(
+			this.connectTracker	= await this.databaseService.setConnectTracker(
 				`users/${username}/clientConnections/${util.uuid()}`
 			);
 
