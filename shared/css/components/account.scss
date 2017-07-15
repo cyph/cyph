@@ -1,6 +1,6 @@
 @import '../theme';
 
-:host /deep/ {
+:host ::ng-deep {
 	/* Staggered animation support. Usage: add any class from ._1 -> ._10 */
 
 	$interval: 0.25s;
