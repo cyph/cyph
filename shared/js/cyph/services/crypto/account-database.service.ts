@@ -12,6 +12,7 @@ import {LockFunction} from '../../lock-function-type';
 import {BinaryProto} from '../../protos';
 import {util} from '../../util';
 import {DatabaseService} from '../database.service';
+import {LocalStorageService} from '../local-storage.service';
 import {PotassiumService} from './potassium.service';
 
 
@@ -103,12 +104,20 @@ export class AccountDatabaseService {
 			if (publicData) {
 				const username	= (url.match(/\/?users\/(.*?)\//) || [])[1] || '';
 
-				return this.potassiumService.sign.open(
-					data,
-					currentUser && username === currentUser.user.username ?
-						currentUser.keys.signingKeyPair.publicKey :
-						(await this.getUserPublicKeys(username)).publicSigningKey,
-					url
+				return this.localStorageService.getOrSetDefault(
+					`AccountDatabaseService.open/${
+						username
+					}/${
+						await this.potassiumService.hash.hash(data)
+					}`,
+					BinaryProto,
+					async () => this.potassiumService.sign.open(
+						data,
+						currentUser && username === currentUser.user.username ?
+							currentUser.keys.signingKeyPair.publicKey :
+							(await this.getUserPublicKeys(username)).publicSigningKey,
+						url
+					)
 				);
 			}
 			else if (currentUser) {
@@ -297,33 +306,38 @@ export class AccountDatabaseService {
 			throw new Error('Invalid username.');
 		}
 
-		const certificate	= await this.databaseService.getItem(
-			`users/${username}/certificate`,
-			BinaryProto
-		);
+		const url	= `users/${username}/certificate`;
 
-		const dataView			= this.potassiumService.toDataView(certificate);
-		const rsaKeyIndex		= dataView.getUint32(0, true);
-		const sphincsKeyIndex	= dataView.getUint32(4, true);
-		const signed			= this.potassiumService.toBytes(certificate, 8);
-
-		if (
-			rsaKeyIndex >= this.agsePublicSigningKeys.rsa.length ||
-			sphincsKeyIndex >= this.agsePublicSigningKeys.sphincs.length
-		) {
-			throw new Error('Invalid AGSE-PKI certificate: bad key index.');
-		}
-
-		return await util.deserialize<IAGSEPKICert>(
+		return this.localStorageService.getOrSetDefault<IAGSEPKICert>(
+			`AccountDatabaseService.getUserPublicKeys/${url}`,
 			AGSEPKICert,
-			await this.potassiumService.sign.open(
-				signed,
-				await this.potassiumService.sign.importSuperSphincsPublicKeys(
-					this.agsePublicSigningKeys.rsa[rsaKeyIndex],
-					this.agsePublicSigningKeys.sphincs[sphincsKeyIndex]
-				),
-				username
-			)
+			async () => {
+				const certificate	= await this.databaseService.getItem(url, BinaryProto);
+
+				const dataView			= this.potassiumService.toDataView(certificate);
+				const rsaKeyIndex		= dataView.getUint32(0, true);
+				const sphincsKeyIndex	= dataView.getUint32(4, true);
+				const signed			= this.potassiumService.toBytes(certificate, 8);
+
+				if (
+					rsaKeyIndex >= this.agsePublicSigningKeys.rsa.length ||
+					sphincsKeyIndex >= this.agsePublicSigningKeys.sphincs.length
+				) {
+					throw new Error('Invalid AGSE-PKI certificate: bad key index.');
+				}
+
+				return await util.deserialize<IAGSEPKICert>(
+					AGSEPKICert,
+					await this.potassiumService.sign.open(
+						signed,
+						await this.potassiumService.sign.importSuperSphincsPublicKeys(
+							this.agsePublicSigningKeys.rsa[rsaKeyIndex],
+							this.agsePublicSigningKeys.sphincs[sphincsKeyIndex]
+						),
+						username
+					)
+				);
+			}
 		);
 	}
 
@@ -568,6 +582,9 @@ export class AccountDatabaseService {
 	constructor (
 		/** @ignore */
 		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
