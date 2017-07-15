@@ -19,7 +19,7 @@ log 'Starting Angular AOT build'
 for d in cyph.com cyph.ws ; do
 	cd "${d}"
 	../commands/ngprojectinit.sh
-	ng build --aot --prod
+	ng build --aot --sourcemaps=false --environment=prod
 	checkfail
 	cd ..
 done
