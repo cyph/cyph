@@ -23,7 +23,7 @@ import {PotassiumService} from './potassium.service';
 @Injectable()
 export class AccountAuthService {
 	/** @ignore */
-	private connectTracker?: Subscription;
+	private connectTrackerCleanup?: () => void;
 
 	/** @ignore */
 	private readonly loginDataSalt: Uint8Array	=
@@ -32,6 +32,9 @@ export class AccountAuthService {
 
 	/** @ignore */
 	private resolveReady: () => void;
+
+	/** @ignore */
+	private statusSaveSubscription?: Subscription;
 
 	/** Resolves when this service is ready for use. */
 	public readonly ready: Promise<void>	= new Promise<void>(resolve => {
@@ -89,7 +92,7 @@ export class AccountAuthService {
 			await this.localStorageService.setItem('username', StringProto, username);
 			await this.localStorageService.setItem('password', BinaryProto, password);
 
-			this.connectTracker	= await this.databaseService.setConnectTracker(
+			this.connectTrackerCleanup	= await this.databaseService.setConnectTracker(
 				`users/${username}/clientConnections/${util.uuid()}`
 			);
 
@@ -120,7 +123,7 @@ export class AccountAuthService {
 				);
 			}
 
-			user.status.skip(1).subscribe(status => {
+			this.statusSaveSubscription	= user.status.skip(1).subscribe(status => {
 				this.accountDatabaseService.setItem(
 					'lastPresence',
 					AccountUserPresence,
@@ -138,8 +141,14 @@ export class AccountAuthService {
 	/** Logs out. */
 	public async logout (clearSavedCredentials: boolean = true) : Promise<void> {
 		const user	= this.accountDatabaseService.currentUser.value;
-		this.accountDatabaseService.currentUser.next(undefined);
 
+		if (this.statusSaveSubscription) {
+			this.statusSaveSubscription.unsubscribe();
+		}
+		if (this.connectTrackerCleanup) {
+			this.connectTrackerCleanup();
+			this.connectTrackerCleanup	= undefined;
+		}
 		if (user) {
 			this.potassiumService.clearMemory(user.keys.symmetricKey);
 			this.potassiumService.clearMemory(user.keys.encryptionKeyPair.privateKey);
@@ -147,15 +156,12 @@ export class AccountAuthService {
 			this.potassiumService.clearMemory(user.keys.encryptionKeyPair.publicKey);
 			this.potassiumService.clearMemory(user.keys.signingKeyPair.publicKey);
 		}
-		if (this.connectTracker) {
-			this.connectTracker.unsubscribe();
-			this.connectTracker	= undefined;
-		}
 		if (clearSavedCredentials) {
 			await this.localStorageService.removeItem('password');
 			await this.localStorageService.removeItem('username');
 		}
 
+		this.accountDatabaseService.currentUser.next(undefined);
 		return this.databaseService.logout();
 	}
 
