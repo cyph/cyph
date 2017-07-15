@@ -21,7 +21,7 @@ export class AccountContactsService {
 	/** @ignore */
 	private userStatuses: Map<User, UserPresence>		= new Map<User, UserPresence>();
 
-	/** List of contacts for current user, sorted by status and then alphabetically. */
+	/** List of contacts for current user, sorted by status and then alphabetically by username. */
 	public readonly contactsList: Observable<User[]>	= this.contactsListSubject;
 
 	/** @ignore */
@@ -40,9 +40,7 @@ export class AccountContactsService {
 			return (
 				statusIndexA !== statusIndexB ?
 					statusIndexA < statusIndexB :
-					a.name !== b.name ?
-						a.name < b.name :
-						a.username < b.username
+					a.username < b.username
 			) ?
 				-1 :
 				1
