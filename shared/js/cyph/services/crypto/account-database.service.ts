@@ -107,11 +107,16 @@ export class AccountDatabaseService {
 					data,
 					currentUser && username === currentUser.user.username ?
 						currentUser.keys.signingKeyPair.publicKey :
-						(await this.getUserPublicKeys(username)).publicSigningKey
+						(await this.getUserPublicKeys(username)).publicSigningKey,
+					url
 				);
 			}
 			else if (currentUser) {
-				return this.potassiumService.secretBox.open(data, currentUser.keys.symmetricKey);
+				return this.potassiumService.secretBox.open(
+					data,
+					currentUser.keys.symmetricKey,
+					this.potassiumService.fromString(url)
+				);
 			}
 			else {
 				throw new Error('Cannot anonymously open private data.');
@@ -153,11 +158,13 @@ export class AccountDatabaseService {
 		return publicData ?
 			await this.potassiumService.sign.sign(
 				data,
-				currentUser.keys.signingKeyPair.privateKey
+				currentUser.keys.signingKeyPair.privateKey,
+				url
 			) :
 			await this.potassiumService.secretBox.seal(
 				data,
-				currentUser.keys.symmetricKey
+				currentUser.keys.symmetricKey,
+				this.potassiumService.fromString(url)
 			)
 		;
 	}
@@ -293,22 +300,17 @@ export class AccountDatabaseService {
 			throw new Error('Invalid AGSE-PKI certificate: bad key index.');
 		}
 
-		const verified	= await util.deserialize<IAGSEPKICert>(
+		return await util.deserialize<IAGSEPKICert>(
 			AGSEPKICert,
 			await this.potassiumService.sign.open(
 				signed,
 				await this.potassiumService.sign.importSuperSphincsPublicKeys(
 					this.agsePublicSigningKeys.rsa[rsaKeyIndex],
 					this.agsePublicSigningKeys.sphincs[sphincsKeyIndex]
-				)
+				),
+				username
 			)
 		);
-
-		if (verified.username !== username) {
-			throw new Error('Invalid AGSE-PKI certificate: bad username.');
-		}
-
-		return verified;
 	}
 
 	/** @see DatabaseService.hasItem */
@@ -323,15 +325,17 @@ export class AccountDatabaseService {
 		reason?: string
 	) : Promise<T> {
 		const currentUser	= await this.getCurrentUser();
+		url					= await this.processLockURL(url);
 
 		return this.databaseService.lock(
-			await this.processLockURL(url),
+			url,
 			async r => f(!r ?
 				undefined :
 				this.potassiumService.toString(
 					await this.potassiumService.secretBox.open(
 						this.potassiumService.fromBase64(r),
-						currentUser.keys.symmetricKey
+						currentUser.keys.symmetricKey,
+						this.potassiumService.fromString(url)
 					)
 				)
 			),
@@ -340,7 +344,8 @@ export class AccountDatabaseService {
 				this.potassiumService.toBase64(
 					await this.potassiumService.secretBox.seal(
 						this.potassiumService.fromString(reason),
-						currentUser.keys.symmetricKey
+						currentUser.keys.symmetricKey,
+						this.potassiumService.fromString(url)
 					)
 				)
 		);
@@ -356,9 +361,8 @@ export class AccountDatabaseService {
 	/** @see DatabaseService.lockStatus */
 	public async lockStatus (url: string) : Promise<{locked: boolean; reason: string|undefined}> {
 		const currentUser		= await this.getCurrentUser();
-		const {locked, reason}	=
-			await this.databaseService.lockStatus(await this.processLockURL(url))
-		;
+		url						= await this.processLockURL(url);
+		const {locked, reason}	= await this.databaseService.lockStatus(url);
 
 		return {
 			locked,
@@ -367,7 +371,8 @@ export class AccountDatabaseService {
 				this.potassiumService.toString(
 					await this.potassiumService.secretBox.open(
 						this.potassiumService.fromBase64(reason),
-						currentUser.keys.symmetricKey
+						currentUser.keys.symmetricKey,
+						this.potassiumService.fromString(url)
 					)
 				)
 		};
@@ -453,9 +458,8 @@ export class AccountDatabaseService {
 		wasLocked: boolean;
 	}> {
 		const currentUser			= await this.getCurrentUser();
-		const {reason, wasLocked}	=
-			await this.databaseService.waitForUnlock(await this.processLockURL(url))
-		;
+		url							= await this.processLockURL(url);
+		const {reason, wasLocked}	= await this.databaseService.waitForUnlock(url);
 
 		return {
 			reason: !reason ?
@@ -463,7 +467,8 @@ export class AccountDatabaseService {
 				this.potassiumService.toString(
 					await this.potassiumService.secretBox.open(
 						this.potassiumService.fromBase64(reason),
-						currentUser.keys.symmetricKey
+						currentUser.keys.symmetricKey,
+						this.potassiumService.fromString(url)
 					)
 				)
 			,

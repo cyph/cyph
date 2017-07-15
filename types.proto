@@ -91,9 +91,6 @@ message AGSEPKICert {
 
 	/** Potassium.Sign public key. */
 	required bytes publicSigningKey = 2;
-
-	/** Cyph username (lowercase). */
-	required string username = 3;
 }
 
 /** ChannelService message. */
