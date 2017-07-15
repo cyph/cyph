@@ -40,6 +40,6 @@
 }
 
 /* Temporary workaround for Safari bug */
-.chat-end-message /deep/ cyph-signup-form > form {
+.chat-end-message ::ng-deep cyph-signup-form > form {
 	display: block !important;
 }

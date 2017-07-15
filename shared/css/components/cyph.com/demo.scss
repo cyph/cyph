@@ -1,6 +1,6 @@
 @import '../../mixins';
 
-:host /deep/ .demo-root {
+:host ::ng-deep .demo-root {
 	opacity: 0;
 
 	@include transition(opacity 0.75s 0.5s ease);
