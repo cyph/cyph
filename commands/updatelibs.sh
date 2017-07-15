@@ -175,6 +175,7 @@ read -r -d '' modules <<- EOM
 	tns-core-modules-widgets
 	tns-ios
 	tns-platform-declarations
+	to-markdown
 	ts-loader
 	ts-node
 	tslint
