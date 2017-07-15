@@ -3,10 +3,10 @@ import {mceliece} from 'mceliece';
 import {ntru} from 'ntru';
 import {IKeyPair} from '../../../proto';
 import {IBox} from './ibox';
+import {IOneTimeAuth} from './ione-time-auth';
+import {ISecretBox} from './isecret-box';
 import * as NativeCrypto from './native-crypto';
-import {OneTimeAuth} from './one-time-auth';
 import {potassiumUtil} from './potassium-util';
-import {SecretBox} from './secret-box';
 
 
 /** @inheritDoc */
@@ -271,9 +271,9 @@ export class Box implements IBox {
 		private readonly isNative: boolean,
 
 		/** @ignore */
-		private readonly oneTimeAuth: OneTimeAuth,
+		private readonly oneTimeAuth: IOneTimeAuth,
 
 		/** @ignore */
-		private readonly secretBox: SecretBox
+		private readonly secretBox: ISecretBox
 	) {}
 }

@@ -1,8 +1,8 @@
 import {sodium} from 'libsodium';
 import {rlwe} from 'rlwe';
 import {IKeyPair} from '../../../proto';
-import {Hash} from './hash';
 import {IEphemeralKeyExchange} from './iephemeral-key-exchange';
+import {IHash} from './ihash';
 import {potassiumUtil} from './potassium-util';
 
 
@@ -152,6 +152,6 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 
 	constructor (
 		/** @ignore */
-		private readonly hash: Hash
+		private readonly hash: IHash
 	) {}
 }
