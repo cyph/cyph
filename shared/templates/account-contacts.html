@@ -21,7 +21,7 @@
 					md-card-avatar
 					cyphTranslate
 					class='avatar'
-					[ngClass]='userPresence[(contact.status | async)?]'
+					[ngClass]='userPresence[contact.status | async]'
 					[src]='contact.avatar | async'
 					alt='User Avatar'
 					mdTooltip='Open Profile'

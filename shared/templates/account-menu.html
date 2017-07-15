@@ -67,7 +67,7 @@
 					mdTooltipPosition='right'
 					class='avatar animated flipInX _1'
 					[ngClass]='userPresence[
-						(accountDatabaseService.currentUser.value.user.status | async)?
+						accountDatabaseService.currentUser.value.user.status | async
 					]'
 					alt='Profile Picture'
 					[src]='accountDatabaseService.currentUser.value.user.avatar | async'

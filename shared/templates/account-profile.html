@@ -12,7 +12,7 @@
 			<div>
 				<img
 					class='avatar animated flipInX _1'
-					[ngClass]='userPresence[(user.status | async)?]'
+					[ngClass]='userPresence[user.status | async]'
 					alt='Profile Picture'
 					[src]='user.avatar | async'
 				/>
