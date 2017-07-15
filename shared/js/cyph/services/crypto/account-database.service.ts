@@ -218,7 +218,7 @@ export class AccountDatabaseService {
 
 		return {
 			getValue: async () => localLock(async () => {
-				await this.waitForUnlock(url, anonymous);
+				await this.waitForUnlock(url);
 				return this.open(
 					url,
 					proto,
@@ -465,16 +465,16 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.waitForUnlock */
-	public async waitForUnlock (url: string, anonymous: boolean = false) : Promise<{
+	public async waitForUnlock (url: string) : Promise<{
 		reason: string|undefined;
 		wasLocked: boolean;
 	}> {
-		const currentUser			= anonymous ? undefined : await this.getCurrentUser();
-		url							= anonymous ? url : await this.processLockURL(url);
+		const currentUser			= await this.getCurrentUser();
+		url							= await this.processLockURL(url);
 		const {reason, wasLocked}	= await this.databaseService.waitForUnlock(url);
 
 		return {
-			reason: currentUser === undefined || !reason ?
+			reason: !reason ?
 				undefined :
 				this.potassiumService.toString(
 					await this.potassiumService.secretBox.open(
