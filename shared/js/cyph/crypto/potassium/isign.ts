@@ -21,25 +21,29 @@ export interface ISign {
 	/** Verifies combined signature and returns original message. */
 	open (
 		signed: Uint8Array|string,
-		publicKey: Uint8Array
+		publicKey: Uint8Array,
+		additionalData?: Uint8Array|string
 	) : Promise<Uint8Array>;
 
 	/** Signs message and returns it combined with signature. */
 	sign (
 		message: Uint8Array|string,
-		privateKey: Uint8Array
+		privateKey: Uint8Array,
+		additionalData?: Uint8Array|string
 	) : Promise<Uint8Array>;
 
 	/** Signs message and returns only the signature. */
 	signDetached (
 		message: Uint8Array|string,
-		privateKey: Uint8Array
+		privateKey: Uint8Array,
+		additionalData?: Uint8Array|string
 	) : Promise<Uint8Array>;
 
 	/** Verifies signature. */
 	verifyDetached (
 		signature: Uint8Array|string,
 		message: Uint8Array|string,
-		publicKey: Uint8Array
+		publicKey: Uint8Array,
+		additionalData?: Uint8Array|string
 	) : Promise<boolean>;
 }
