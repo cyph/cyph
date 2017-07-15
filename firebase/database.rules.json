@@ -193,6 +193,15 @@
 					}
 				},
 
+				"lastPresence": {
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				},
+
 				"locks": {
 					"$contender": {
 						"id": {
