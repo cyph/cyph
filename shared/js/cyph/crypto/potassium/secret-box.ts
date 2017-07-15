@@ -1,4 +1,5 @@
 import {sodium} from 'libsodium';
+import {IHash} from './ihash';
 import {ISecretBox} from './isecret-box';
 import * as NativeCrypto from './native-crypto';
 import {potassiumUtil} from './potassium-util';
@@ -97,13 +98,7 @@ export class SecretBox implements ISecretBox {
 			return input;
 		}
 
-		if (input.length > aeadBytes) {
-			throw new Error('Too much additional data.');
-		}
-
-		const output	= new Uint8Array(aeadBytes);
-		output.set(input);
-		return output;
+		return this.hash.deriveKey(input, aeadBytes);
 	}
 
 	/** @ignore */
@@ -243,6 +238,9 @@ export class SecretBox implements ISecretBox {
 
 	constructor (
 		/** @ignore */
-		private readonly isNative: boolean
+		private readonly isNative: boolean,
+
+		/** @ignore */
+		private readonly hash: IHash
 	) {}
 }
