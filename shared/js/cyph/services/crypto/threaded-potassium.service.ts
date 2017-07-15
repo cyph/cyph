@@ -678,9 +678,9 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 				eventManager.rpcOn(
 					threadEvents.sign.open,
 					async (o: {
+						additionalData?: Uint8Array|string;
 						publicKey: Uint8Array;
 						signed: Uint8Array|string;
-						additionalData?: Uint8Array|string;
 					}) =>
 						potassium.sign.open(o.signed, o.publicKey, o.additionalData)
 					,
@@ -702,9 +702,9 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 				eventManager.rpcOn(
 					threadEvents.sign.sign,
 					async (o: {
+						additionalData?: Uint8Array|string;
 						message: Uint8Array|string;
 						privateKey: Uint8Array;
-						additionalData?: Uint8Array|string;
 					}) =>
 						potassium.sign.sign(o.message, o.privateKey, o.additionalData)
 					,
@@ -714,9 +714,9 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 				eventManager.rpcOn(
 					threadEvents.sign.signDetached,
 					async (o: {
+						additionalData?: Uint8Array|string;
 						message: Uint8Array|string;
 						privateKey: Uint8Array;
-						additionalData?: Uint8Array|string;
 					}) =>
 						potassium.sign.signDetached(o.message, o.privateKey, o.additionalData)
 					,
@@ -726,10 +726,10 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 				eventManager.rpcOn(
 					threadEvents.sign.verifyDetached,
 					async (o: {
+						additionalData?: Uint8Array|string;
 						message: Uint8Array|string;
 						publicKey: Uint8Array;
 						signature: Uint8Array|string;
-						additionalData?: Uint8Array|string;
 					}) =>
 						potassium.sign.verifyDetached(
 							o.signature,
