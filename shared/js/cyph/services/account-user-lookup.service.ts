@@ -9,6 +9,7 @@ import {User} from '../account/user';
 import {DataURIProto} from '../protos';
 import {util} from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {DatabaseService} from './database.service';
 
 
 /**
@@ -38,11 +39,9 @@ export class AccountUserLookupService {
 				true,
 				true
 			),
-			this.accountDatabaseService.getAsyncValue<IAccountUserPresence>(
+			this.databaseService.getAsyncValue<IAccountUserPresence>(
 				`${url}/presence`,
-				AccountUserPresence,
-				true,
-				true
+				AccountUserPresence
 			),
 			this.accountDatabaseService.getAsyncValue<IAccountUserProfile>(
 				`${url}/publicProfile`,
@@ -59,6 +58,9 @@ export class AccountUserLookupService {
 
 	constructor (
 		/** @ignore */
-		private readonly accountDatabaseService: AccountDatabaseService
+		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly databaseService: DatabaseService
 	) {}
 }
