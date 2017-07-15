@@ -18,7 +18,7 @@
 			<span>Premium Status: </span>
 			<span>
 				{{
-					accountDatabaseService.currentUser.value.user.hasPremium ?
+					(accountDatabaseService.currentUser.value.user.hasPremium | async) ?
 						'Enabled' :
 						'Disabled'
 				}}
