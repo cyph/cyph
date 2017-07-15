@@ -80,6 +80,26 @@
 				".read": "($user + '@cyph.me') === auth.token.email",
 				".write": "($user + '@cyph.me') === auth.token.email",
 
+				"avatar": {
+					".read": true,
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				},
+
+				"coverImage": {
+					".read": true,
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				},
+
 				"certificate": {
 					".read": true,
 					".write": false,
@@ -91,12 +111,14 @@
 					}
 				},
 
-				"contactList": {
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
+				"contactRecords": {
+					"$contactRecord": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
 					}
 				},
 
@@ -132,12 +154,14 @@
 					}
 				},
 
-				"fileList": {
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
+				"fileRecords": {
+					"$fileRecord": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
 					}
 				},
 
@@ -175,6 +199,16 @@
 				},
 
 				"loginData": {
+					".read": true,
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				},
+
+				"presence": {
 					".read": true,
 					"hash": {
 						".validate": "newData.isString()"
