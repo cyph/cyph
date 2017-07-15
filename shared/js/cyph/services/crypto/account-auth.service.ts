@@ -177,14 +177,27 @@ export class AccountAuthService {
 		try {
 			await this.databaseService.register(username, loginData.secondaryPassword);
 
-			await this.databaseService.setItem(
-				`users/${username}/loginData`,
-				BinaryProto,
-				await this.potassiumService.secretBox.seal(
-					await util.serialize(AccountLoginData, loginData),
-					await this.passwordHash(password)
+			await Promise.all([
+				this.databaseService.setItem(
+					`users/${username}/loginData`,
+					BinaryProto,
+					await this.potassiumService.secretBox.seal(
+						await util.serialize(AccountLoginData, loginData),
+						await this.passwordHash(password)
+					)
+				),
+				this.databaseService.setItem(
+					`users/${username}/lastPresence`,
+					BinaryProto,
+					await this.potassiumService.secretBox.seal(
+						await util.serialize(
+							AccountUserPresence,
+							{status: AccountUserPresence.Statuses.Online}
+						),
+						loginData.symmetricKey
+					)
 				)
-			);
+			]);
 		}
 		catch (_) {
 			return false;
