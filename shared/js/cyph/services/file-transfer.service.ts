@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Set as ImmutableSet} from 'immutable';
 import {Observable} from 'rxjs';
 import {ISessionMessageData, ISessionTransfer} from '../../proto';
+import {Hash} from '../crypto/potassium/hash';
 import {ISecretBox} from '../crypto/potassium/isecret-box';
 import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
@@ -31,7 +32,7 @@ export class FileTransferService {
 	/** @ignore */
 	private readonly secretBox: Promise<ISecretBox>	= (async () =>
 		(await this.sessionCapabilitiesService.capabilities).nativeCrypto ?
-			new SecretBox(true) :
+			new SecretBox(true, new Hash(true)) :
 			this.potassiumService.secretBox
 	)();
 
