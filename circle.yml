@@ -6,7 +6,9 @@ jobs:
     working_directory: /cyph
     steps:
       - checkout
-      - run: |
-          export circleCI=true
-          source ~/.bashrc
-          /cyph/commands/build.sh
+      - run:
+          command: |
+            export circleCI=true
+            source ~/.bashrc
+            /cyph/commands/build.sh
+          no_output_timeout: 1800
