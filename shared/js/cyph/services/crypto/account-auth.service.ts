@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {Subscription} from 'rxjs';
 import {AccountLoginData, IAccountLoginData, IKeyPair, KeyPair} from '../../../proto';
 import {BinaryProto, StringProto} from '../../protos';
 import {util} from '../../util';
@@ -14,6 +15,9 @@ import {PotassiumService} from './potassium.service';
  */
 @Injectable()
 export class AccountAuthService {
+	/** @ignore */
+	private connectTracker?: Subscription;
+
 	/** @ignore */
 	private readonly loginDataSalt: Uint8Array	=
 		this.potassiumService.fromBase64('9BdfYbI5PggWwtnaAXbDRIsTHgMjLx/8hbHvgbQb+qs=')
@@ -53,7 +57,7 @@ export class AccountAuthService {
 	 * @returns Whether login was successful.
 	 */
 	public async login (username: string, password: string|Uint8Array) : Promise<boolean> {
-		this.accountDatabaseService.currentUser.next(undefined);
+		await this.logout(false);
 
 		if (!username || !password) {
 			return false;
@@ -78,6 +82,10 @@ export class AccountAuthService {
 			await this.localStorageService.setItem('username', StringProto, username);
 			await this.localStorageService.setItem('password', BinaryProto, password);
 
+			this.connectTracker	= this.databaseService.setConnectTracker(
+				`users/${username}/clientConnections/${util.uuid()}`
+			);
+
 			this.accountDatabaseService.currentUser.next({
 				keys: {
 					encryptionKeyPair: await this.getKeyPair(
@@ -101,32 +109,27 @@ export class AccountAuthService {
 	}
 
 	/** Logs out. */
-	public async logout () : Promise<void> {
-		await this.localStorageService.removeItem('password');
-		await this.localStorageService.removeItem('username');
-		this.databaseService.logout();
+	public async logout (clearSavedCredentials: boolean = true) : Promise<void> {
+		const user	= this.accountDatabaseService.currentUser.value;
+		this.accountDatabaseService.currentUser.next(undefined);
 
-		if (!this.accountDatabaseService.currentUser.value) {
-			return;
+		if (user) {
+			this.potassiumService.clearMemory(user.keys.symmetricKey);
+			this.potassiumService.clearMemory(user.keys.encryptionKeyPair.privateKey);
+			this.potassiumService.clearMemory(user.keys.signingKeyPair.privateKey);
+			this.potassiumService.clearMemory(user.keys.encryptionKeyPair.publicKey);
+			this.potassiumService.clearMemory(user.keys.signingKeyPair.publicKey);
+		}
+		if (this.connectTracker) {
+			this.connectTracker.unsubscribe();
+			this.connectTracker	= undefined;
+		}
+		if (clearSavedCredentials) {
+			await this.localStorageService.removeItem('password');
+			await this.localStorageService.removeItem('username');
 		}
 
-		this.potassiumService.clearMemory(
-			this.accountDatabaseService.currentUser.value.keys.symmetricKey
-		);
-		this.potassiumService.clearMemory(
-			this.accountDatabaseService.currentUser.value.keys.encryptionKeyPair.privateKey
-		);
-		this.potassiumService.clearMemory(
-			this.accountDatabaseService.currentUser.value.keys.signingKeyPair.privateKey
-		);
-		this.potassiumService.clearMemory(
-			this.accountDatabaseService.currentUser.value.keys.encryptionKeyPair.publicKey
-		);
-		this.potassiumService.clearMemory(
-			this.accountDatabaseService.currentUser.value.keys.signingKeyPair.publicKey
-		);
-
-		this.accountDatabaseService.currentUser.next(undefined);
+		return this.databaseService.logout();
 	}
 
 	/** Registers. */
