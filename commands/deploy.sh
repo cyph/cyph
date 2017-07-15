@@ -307,7 +307,7 @@ for d in $compiledProjects ; do
 	fi
 
 	if [ "${simple}" ] ; then
-		ng build --no-aot --sourcemaps || exit 1
+		ng build --no-aot --no-sourcemaps || exit 1
 	else
 		../commands/prodbuild.sh || exit 1
 	fi
