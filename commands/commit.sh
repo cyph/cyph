@@ -35,7 +35,8 @@ find shared/css \
 	-not -name mixins.scss \
 	-not -path 'shared/css/themes/*' \
 | xargs -I% bash -c '
-sed -i "s|>>>|/deep/|g" %
+sed -i "s|>>>|::ng-deep|g" %
+sed -i "s|/deep/|::ng-deep|g" %
 sass-convert --from scss --to scss --dasherize --indent t % | awk "{
 if (\$1 != \"/*\")
 	gsub(/\"/, \"'"'"'\", \$0)

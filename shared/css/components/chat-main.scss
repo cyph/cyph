@@ -1,6 +1,6 @@
 @import '../mixins';
 
-:host /deep/ {
+:host ::ng-deep {
 	.transfer-list {
 		max-height: 195px;
 

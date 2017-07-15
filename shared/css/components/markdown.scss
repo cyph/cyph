@@ -1,6 +1,6 @@
 @import '../mixins';
 
-:host /deep/ {
+:host ::ng-deep {
 	> span {
 		> p:only-child {
 			display: inline;
