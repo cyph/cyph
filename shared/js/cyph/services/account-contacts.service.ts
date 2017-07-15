@@ -85,6 +85,6 @@ export class AccountContactsService {
 			}
 
 			return users;
-		})
+		});
 	}
 }
