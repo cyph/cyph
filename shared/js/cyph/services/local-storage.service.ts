@@ -11,7 +11,7 @@ export class LocalStorageService extends DataManagerService {
 	protected pendingSets: Map<string, Promise<void>>	= new Map<string, Promise<void>>();
 
 	/** Wipes all local data. */
-	public clear () : Promise<void> {
+	public async clear () : Promise<void> {
 		throw new Error('Must provide an implementation of LocalStorageService.clear.');
 	}
 

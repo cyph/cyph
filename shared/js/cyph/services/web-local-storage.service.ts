@@ -38,7 +38,7 @@ export class WebLocalStorageService extends LocalStorageService {
 	})();
 
 	/** @inheritDoc */
-	public clear () : Promise<void> {
+	public async clear () : Promise<void> {
 		return localforage.clear();
 	}
 
