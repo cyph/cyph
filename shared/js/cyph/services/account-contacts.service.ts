@@ -98,7 +98,7 @@ export class AccountContactsService {
 				).status,
 				username
 			})
-		))).subscribe(async users => lock(async () => {
+		))).subscribe(async users => {
 			const oldUserStatuses	= this.userStatuses;
 			this.userStatuses		= new Map<User, UserPresence>();
 
@@ -106,18 +106,20 @@ export class AccountContactsService {
 				try {
 					const user	= await this.accountUserLookupService.getUser(username);
 
-					const oldUserStatus	= oldUserStatuses.get(user);
-					if (oldUserStatus !== undefined) {
-						this.userStatuses.set(user, oldUserStatus);
-						continue;
-					}
+					await lock(async () => {
+						const oldUserStatus	= oldUserStatuses.get(user);
+						if (oldUserStatus !== undefined) {
+							this.userStatuses.set(user, oldUserStatus);
+							return;
+						}
 
-					await user.avatar.filter(o => o !== undefined).take(1).toPromise();
+						await user.avatar.filter(o => o !== undefined).take(1).toPromise();
 
-					this.userStatuses.set(user, status);
-					user.status.skip(1).subscribe(async newStatus => {
-						this.userStatuses.set(user, newStatus);
-						this.updateContactsList();
+						this.userStatuses.set(user, status);
+						user.status.skip(1).subscribe(async newStatus => {
+							this.userStatuses.set(user, newStatus);
+							this.updateContactsList();
+						});
 					});
 				}
 				catch (_) {}
@@ -127,6 +129,6 @@ export class AccountContactsService {
 			}
 
 			this.initiated	= true;
-		}));
+		});
 	}
 }
