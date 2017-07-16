@@ -14,13 +14,13 @@ import {util} from '../util';
 })
 export class DynamicFormComponent {
 	/** @ignore */
-	private readonly maskCache: Map<Uint8Array, any>	= new Map<Uint8Array, any>();
+	private readonly maskCache: Map<Uint8Array, any>		= new Map<Uint8Array, any>();
 
 	/** @see Form */
 	@Input() public form: IForm;
 
 	/** @see Form */
-	@Output() public submit: EventEmitter<IForm>	= new EventEmitter<IForm>();
+	@Output() public submit: EventEmitter<IForm>			= new EventEmitter<IForm>();
 
 	/** @see Form.FormElement.Types */
 	public readonly types: typeof Form.FormElement.Types	= Form.FormElement.Types;

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ChannelMessage, IChannelMessage} from '../../proto';
+import {ChannelMessage} from '../../proto';
 import {LockFunction} from '../lock-function-type';
 import {StringProto} from '../protos';
 import {IChannelHandlers} from '../session';
@@ -78,7 +78,7 @@ export class ChannelService {
 			}
 		);
 
-		this.databaseService.watchListPushes<IChannelMessage>(
+		this.databaseService.watchListPushes(
 			`${url}/messages`,
 			ChannelMessage,
 			true,
