@@ -93,7 +93,15 @@ export class AccountAuthService {
 			await this.localStorageService.setItem('password', BinaryProto, password);
 
 			this.connectTrackerCleanup	= await this.databaseService.setConnectTracker(
-				`users/${username}/clientConnections/${util.uuid()}`
+				`users/${username}/clientConnections/${util.uuid()}`,
+				async () => {
+					user.accountUserPresence.setValue(
+						await this.accountDatabaseService.getItem<IAccountUserPresence>(
+							'lastPresence',
+							AccountUserPresence
+						)
+					);
+				}
 			);
 
 			this.accountDatabaseService.currentUser.next({
@@ -123,11 +131,18 @@ export class AccountAuthService {
 				);
 			}
 
-			this.statusSaveSubscription	= user.status.skip(1).subscribe(status => {
+			this.statusSaveSubscription	= this.databaseService.watch(
+				`users/${username}/presence`,
+				AccountUserPresence
+			).skip(1).subscribe(({timestamp, value}) => {
+				if (isNaN(timestamp)) {
+					return;
+				}
+
 				this.accountDatabaseService.setItem(
 					'lastPresence',
 					AccountUserPresence,
-					{status}
+					value
 				);
 			});
 		}
