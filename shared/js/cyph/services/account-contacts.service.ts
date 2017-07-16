@@ -19,10 +19,19 @@ export class AccountContactsService {
 	;
 
 	/** @ignore */
-	private userStatuses: Map<User, UserPresence>		= new Map<User, UserPresence>();
+	private userStatuses: Map<User, UserPresence>			= new Map<User, UserPresence>();
 
 	/** List of contacts for current user, sorted by status and then alphabetically by username. */
-	public readonly contactsList: Observable<User[]>	= this.contactsListSubject;
+	public readonly contactsList: Observable<User[]>		= this.contactsListSubject;
+
+	public readonly contactUsernames: Observable<string[]>	= util.flattenObservablePromise(
+		this.accountDatabaseService.watchList(
+			'contactRecords',
+			AccountContactRecord
+		).map(
+			contacts => contacts.map(o => o.value.username)
+		)
+	);
 
 	/** @ignore */
 	private updateContactsList () : void {
@@ -55,41 +64,31 @@ export class AccountContactsService {
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService
 	) {
-		this.accountDatabaseService.watchList(
-			'contactRecords',
-			AccountContactRecord
-		).subscribe(async records => {
+		this.contactUsernames.subscribe(async usernames => {
 			const oldUserStatuses	= this.userStatuses;
 			this.userStatuses		= new Map<User, UserPresence>();
 
-			let ready	= false;
+			for (const username of usernames) {
+				try {
+					const user	= await this.accountUserLookupService.getUser(username);
 
-			await Promise.all(records.map(async ({value}) => {
-				const user	= await this.accountUserLookupService.getUser(value.username).
-					catch(() => undefined)
-				;
-
-				if (!user) {
-					return;
-				}
-
-				const oldUserStatus	= oldUserStatuses.get(user);
-				if (oldUserStatus !== undefined) {
-					this.userStatuses.set(user, oldUserStatus);
-					return;
-				}
-
-				this.userStatuses.set(user, await user.status.take(1).toPromise());
-				user.status.skip(1).subscribe(async status => {
-					this.userStatuses.set(user, status);
-					if (ready) {
-						this.updateContactsList();
+					const oldUserStatus	= oldUserStatuses.get(user);
+					if (oldUserStatus !== undefined) {
+						this.userStatuses.set(user, oldUserStatus);
+						continue;
 					}
-				});
-			}));
 
-			this.updateContactsList();
-			ready	= true;
+					this.userStatuses.set(user, await user.status.take(1).toPromise());
+					user.status.skip(1).subscribe(async status => {
+						this.userStatuses.set(user, status);
+						this.updateContactsList();
+					});
+				}
+				catch (_) {}
+				finally {
+					this.updateContactsList();
+				}
+			}
 		});
 	}
 }
