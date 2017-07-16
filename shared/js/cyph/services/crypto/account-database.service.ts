@@ -108,7 +108,9 @@ export class AccountDatabaseService {
 					`AccountDatabaseService.open/${
 						username
 					}/${
-						await this.potassiumService.hash.hash(data)
+						this.potassiumService.toBase64(
+							await this.potassiumService.hash.hash(data)
+						)
 					}`,
 					BinaryProto,
 					async () => this.potassiumService.sign.open(
