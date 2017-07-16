@@ -92,18 +92,6 @@ export class AccountAuthService {
 			await this.localStorageService.setItem('username', StringProto, username);
 			await this.localStorageService.setItem('password', BinaryProto, password);
 
-			this.connectTrackerCleanup	= await this.databaseService.setConnectTracker(
-				`users/${username}/clientConnections/${util.uuid()}`,
-				async () => {
-					user.accountUserPresence.setValue(
-						await this.accountDatabaseService.getItem<IAccountUserPresence>(
-							'lastPresence',
-							AccountUserPresence
-						)
-					);
-				}
-			);
-
 			this.accountDatabaseService.currentUser.next({
 				keys: {
 					encryptionKeyPair: await this.getKeyPair(
@@ -119,17 +107,35 @@ export class AccountAuthService {
 				user
 			});
 
-			if (
-				(await user.accountUserPresence.getValue()).status ===
-				AccountUserPresence.Statuses.Offline
-			) {
-				await user.accountUserPresence.setValue(
-					await this.accountDatabaseService.getItem<IAccountUserPresence>(
-						'lastPresence',
-						AccountUserPresence
-					)
-				);
+			this.connectTrackerCleanup	= await this.databaseService.setConnectTracker(
+				`users/${username}/clientConnections/${util.uuid()}`,
+				async () => {
+					try {
+						user.accountUserPresence.setValue(
+							await this.accountDatabaseService.getItem<IAccountUserPresence>(
+								'lastPresence',
+								AccountUserPresence
+							)
+						);
+					}
+					catch (_) {}
+				}
+			);
+
+			try {
+				if (
+					(await user.accountUserPresence.getValue()).status ===
+					AccountUserPresence.Statuses.Offline
+				) {
+					await user.accountUserPresence.setValue(
+						await this.accountDatabaseService.getItem<IAccountUserPresence>(
+							'lastPresence',
+							AccountUserPresence
+						)
+					);
+				}
 			}
+			catch (_) {}
 
 			this.statusSaveSubscription	= this.databaseService.watch(
 				`users/${username}/presence`,
