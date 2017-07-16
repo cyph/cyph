@@ -8,6 +8,7 @@ import 'hammerjs';
 import 'rxjs/add/operator/toPromise';
 import '../standalone/custombuild';
 import '../standalone/init';
+import '../standalone/test-environment-setup';
 import '../standalone/translations';
 
 import {NgModule} from '@angular/core';

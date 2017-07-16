@@ -42,6 +42,7 @@ for (const k of [
 	'location',
 	'navigator',
 	'onthreadmessage',
+	'testEnvironmentSetup',
 	'translations'
 ]) {
 	if (!(k in self)) {

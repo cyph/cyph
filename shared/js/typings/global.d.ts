@@ -67,6 +67,14 @@ declare let onthreadmessage: ((e: MessageEvent) => any)|undefined;
 
 /**
  * @global
+ * Used in test environments for some setup.
+ */
+declare let testEnvironmentSetup: undefined|(
+	(databaseService: any, localStorageService: any) => Promise<void>
+);
+
+/**
+ * @global
  * Mapping of language codes to translations of English phrases
  * (populated during build process).
  */

@@ -5,6 +5,8 @@
 
 import 'nativescript-websockets';
 import 'rxjs/add/operator/toPromise';
+import './js/standalone/test-environment-setup';
+import './js/standalone/translations';
 
 import {NgModule, NgModuleFactoryLoader, NO_ERRORS_SCHEMA} from '@angular/core';
 import {Http} from '@angular/http';
