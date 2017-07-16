@@ -167,12 +167,18 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Tracks connects at the specfied URL. */
-	public async setConnectTracker (_URL: string) : Promise<() => void> {
+	public async setConnectTracker (
+		_URL: string,
+		_ON_RECONNECT?: () => void
+	) : Promise<() => void> {
 		throw new Error('Must provide an implementation of DatabaseService.setConnectTracker.');
 	}
 
 	/** Tracks disconnects at the specfied URL. */
-	public async setDisconnectTracker (_URL: string) : Promise<() => void> {
+	public async setDisconnectTracker (
+		_URL: string,
+		_ON_RECONNECT?: () => void
+	) : Promise<() => void> {
 		throw new Error('Must provide an implementation of DatabaseService.setDisconnectTracker.');
 	}
 

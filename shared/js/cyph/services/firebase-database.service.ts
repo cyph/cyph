@@ -156,6 +156,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				catch (_) {}
 
 				const request	= util.requestByteStream({
+					retries: 3,
 					url: await (await this.getStorageRef(url)).getDownloadURL()
 				});
 
@@ -352,16 +353,23 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async setConnectTracker (url: string) : Promise<() => void> {
+	public async setConnectTracker (
+		url: string,
+		onReconnect?: () => void
+	) : Promise<() => void> {
 		const ref			= await this.getDatabaseRef(url);
 		const onDisconnect	= ref.onDisconnect();
 
 		ref.set(firebase.database.ServerValue.TIMESTAMP);
 		onDisconnect.remove();
 
-		this.connectionStatus().subscribe(isConnected => {
-			if (isConnected) {
-				ref.set(firebase.database.ServerValue.TIMESTAMP);
+		this.connectionStatus().skip(1).subscribe(isConnected => {
+			if (!isConnected) {
+				return;
+			}
+			ref.set(firebase.database.ServerValue.TIMESTAMP);
+			if (onReconnect) {
+				onReconnect();
 			}
 		});
 
@@ -372,16 +380,23 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async setDisconnectTracker (url: string) : Promise<() => void> {
+	public async setDisconnectTracker (
+		url: string,
+		onReconnect?: () => void
+	) : Promise<() => void> {
 		const ref			= await this.getDatabaseRef(url);
 		const onDisconnect	= ref.onDisconnect();
 
 		ref.remove();
 		onDisconnect.set(firebase.database.ServerValue.TIMESTAMP);
 
-		this.connectionStatus().subscribe(isConnected => {
-			if (isConnected) {
-				ref.remove();
+		this.connectionStatus().skip(1).subscribe(isConnected => {
+			if (!isConnected) {
+				return;
+			}
+			ref.remove();
+			if (onReconnect) {
+				onReconnect();
 			}
 		});
 
