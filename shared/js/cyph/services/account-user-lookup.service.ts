@@ -43,11 +43,11 @@ export class AccountUserLookupService {
 			).map(
 				({value}) => value
 			),
-			this.databaseService.getAsyncValue<IAccountUserPresence>(
+			this.databaseService.getAsyncValue(
 				`${url}/presence`,
 				AccountUserPresence
 			),
-			this.accountDatabaseService.getAsyncValue<IAccountUserProfile>(
+			this.accountDatabaseService.getAsyncValue(
 				`${url}/publicProfile`,
 				AccountUserProfile,
 				true,

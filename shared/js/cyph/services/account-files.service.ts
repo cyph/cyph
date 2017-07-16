@@ -101,7 +101,7 @@ export class AccountFilesService {
 		id: string,
 		recordType?: AccountFileRecord.RecordTypes
 	) : Promise<IAccountFileRecord> {
-		const file	= await this.accountDatabaseService.getItem<IAccountFileRecord>(
+		const file	= await this.accountDatabaseService.getItem(
 			`fileRecords/${id}`,
 			AccountFileRecord
 		);

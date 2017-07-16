@@ -4,7 +4,6 @@ import {
 	AccountLoginData,
 	AccountUserPresence,
 	IAccountLoginData,
-	IAccountUserPresence,
 	IKeyPair,
 	KeyPair
 } from '../../../proto';
@@ -43,7 +42,7 @@ export class AccountAuthService {
 
 	/** @ignore */
 	private async getKeyPair (url: string, symmetricKey: Uint8Array) : Promise<IKeyPair> {
-		return util.deserialize<IKeyPair>(
+		return util.deserialize(
 			KeyPair,
 			await this.potassiumService.secretBox.open(
 				await this.databaseService.getItem(url, BinaryProto),
@@ -80,7 +79,7 @@ export class AccountAuthService {
 
 			const user		= await this.accountUserLookupService.getUser(username);
 
-			const loginData	= await util.deserialize<IAccountLoginData>(
+			const loginData	= await util.deserialize(
 				AccountLoginData,
 				await this.potassiumService.secretBox.open(
 					await this.databaseService.getItem(`users/${username}/loginData`, BinaryProto),
@@ -112,7 +111,7 @@ export class AccountAuthService {
 				async () => {
 					try {
 						user.accountUserPresence.setValue(
-							await this.accountDatabaseService.getItem<IAccountUserPresence>(
+							await this.accountDatabaseService.getItem(
 								'lastPresence',
 								AccountUserPresence
 							)
@@ -128,7 +127,7 @@ export class AccountAuthService {
 					AccountUserPresence.Statuses.Offline
 				) {
 					await user.accountUserPresence.setValue(
-						await this.accountDatabaseService.getItem<IAccountUserPresence>(
+						await this.accountDatabaseService.getItem(
 							'lastPresence',
 							AccountUserPresence
 						)

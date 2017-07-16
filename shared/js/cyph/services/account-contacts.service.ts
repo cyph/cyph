@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {AccountContactRecord, IAccountContactRecord} from '../../proto';
+import {AccountContactRecord} from '../../proto';
 import {UserPresence, userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
 import {util} from '../util';
@@ -55,7 +55,7 @@ export class AccountContactsService {
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService
 	) {
-		this.accountDatabaseService.watchList<IAccountContactRecord>(
+		this.accountDatabaseService.watchList(
 			'contactRecords',
 			AccountContactRecord
 		).subscribe(async records => {

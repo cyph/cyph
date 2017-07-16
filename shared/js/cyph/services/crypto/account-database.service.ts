@@ -308,7 +308,7 @@ export class AccountDatabaseService {
 
 		const url	= `users/${username}/certificate`;
 
-		return this.localStorageService.getOrSetDefault<IAGSEPKICert>(
+		return this.localStorageService.getOrSetDefault(
 			`AccountDatabaseService.getUserPublicKeys/${url}`,
 			AGSEPKICert,
 			async () => {
@@ -326,7 +326,7 @@ export class AccountDatabaseService {
 					throw new Error('Invalid AGSE-PKI certificate: bad key index.');
 				}
 
-				return await util.deserialize<IAGSEPKICert>(
+				return await util.deserialize(
 					AGSEPKICert,
 					await this.potassiumService.sign.open(
 						signed,
