@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {AccountContactRecord} from '../../proto';
+import {AccountContactRecord, AccountUserPresence} from '../../proto';
 import {UserPresence, userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
 import {util} from '../util';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {DatabaseService} from './database.service';
 
 
 /**
@@ -24,6 +25,7 @@ export class AccountContactsService {
 	/** List of contacts for current user, sorted by status and then alphabetically by username. */
 	public readonly contactsList: Observable<User[]>		= this.contactsListSubject;
 
+	/** List of usernames of contacts for current user. */
 	public readonly contactUsernames: Observable<string[]>	= util.flattenObservablePromise(
 		this.accountDatabaseService.watchList(
 			'contactRecords',
@@ -33,18 +35,14 @@ export class AccountContactsService {
 		)
 	);
 
+	/** Indicates whether the first load of the contacts list has completed. */
+	public initiated: boolean	= false;
+
 	/** @ignore */
-	private updateContactsList () : void {
-		const users	= Array.from(this.userStatuses.keys());
-
-		this.contactsListSubject.next(users.sort((a, b) => {
-			const statusIndexA	= userPresenceSorted.indexOf(
-				util.getOrSetDefault(this.userStatuses, a, () => UserPresence.Offline)
-			);
-
-			const statusIndexB	= userPresenceSorted.indexOf(
-				util.getOrSetDefault(this.userStatuses, b, () => UserPresence.Offline)
-			);
+	private sort<T> (users: (T&{status: AccountUserPresence.Statuses; username: string})[]) : T[] {
+		return users.sort((a, b) => {
+			const statusIndexA	= userPresenceSorted.indexOf(a.status);
+			const statusIndexB	= userPresenceSorted.indexOf(b.status);
 
 			return (
 				statusIndexA !== statusIndexB ?
@@ -54,7 +52,26 @@ export class AccountContactsService {
 				-1 :
 				1
 			;
-		}));
+		});
+	}
+
+	/** @ignore */
+	private updateContactsList () : void {
+		this.contactsListSubject.next(
+			this.sort(
+				Array.from(this.userStatuses.keys()).map(user => ({
+					status: util.getOrSetDefault(
+						this.userStatuses,
+						user,
+						() => UserPresence.Offline
+					),
+					user,
+					username: user.username
+				}))
+			).map(
+				({user}) => user
+			)
+		);
 	}
 
 	constructor (
@@ -62,13 +79,28 @@ export class AccountContactsService {
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
-		private readonly accountUserLookupService: AccountUserLookupService
+		private readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @ignore */
+		private readonly databaseService: DatabaseService
 	) {
-		this.contactUsernames.subscribe(async usernames => {
+		this.contactUsernames.flatMap(async usernames => Promise.all(
+			usernames.map(async username => ({
+				status: (
+					await this.databaseService.getItem(
+						`users/${username}/presence`,
+						AccountUserPresence
+					).catch(
+						() => ({status: AccountUserPresence.Statuses.Offline})
+					)
+				).status,
+				username
+			})
+		))).subscribe(async users => {
 			const oldUserStatuses	= this.userStatuses;
 			this.userStatuses		= new Map<User, UserPresence>();
 
-			for (const username of usernames) {
+			for (const {status, username} of this.sort(users)) {
 				try {
 					const user	= await this.accountUserLookupService.getUser(username);
 
@@ -78,9 +110,11 @@ export class AccountContactsService {
 						continue;
 					}
 
-					this.userStatuses.set(user, await user.status.take(1).toPromise());
-					user.status.skip(1).subscribe(async status => {
-						this.userStatuses.set(user, status);
+					await user.avatar.filter(o => o !== undefined).take(1).toPromise();
+
+					this.userStatuses.set(user, status);
+					user.status.skip(1).subscribe(async newStatus => {
+						this.userStatuses.set(user, newStatus);
 						this.updateContactsList();
 					});
 				}
@@ -89,6 +123,8 @@ export class AccountContactsService {
 					this.updateContactsList();
 				}
 			}
+
+			this.initiated	= true;
 		});
 	}
 }

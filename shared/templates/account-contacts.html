@@ -10,11 +10,12 @@
 
 		<md-card
 			[fxFlexOrder]='isActive(contact) ? "-1" : ""'
-			class='contact animated _{{i}}'
+			class='contact animated'
 			*ngFor='let contact of accountContactsService.contactsList | async; let i = index'
 			[attr.data-index]='i'
 			[class.active]='isActive(contact)'
 			[class.flipInY]='!isActive(contact)'
+			[ngClass]='accountContactsService.initiated ? ("_" + i) : ""'
 		>
 			<md-card-header fxLayout='row'>
 				<img
