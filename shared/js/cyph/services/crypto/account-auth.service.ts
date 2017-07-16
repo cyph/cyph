@@ -248,10 +248,6 @@ export class AccountAuthService {
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
 	) { (async () => {
-		if (testEnvironmentSetup) {
-			await testEnvironmentSetup(databaseService, localStorageService);
-		}
-
 		const username	= await this.localStorageService.getItem(
 			'username',
 			StringProto
@@ -265,6 +261,10 @@ export class AccountAuthService {
 		).catch(
 			() => {}
 		);
+
+		if (testEnvironmentSetup) {
+			await testEnvironmentSetup(databaseService, localStorageService);
+		}
 
 		if (username && password) {
 			await this.login(username, password);
