@@ -3,7 +3,7 @@
 	fxFlex
 	fxLayout='column'
 	fxLayoutAlign='center start'
-	(submit)='submit(form)'
+	(submit)='submit.emit(form)'
 	*ngIf='form'
 >
 	<div *ngFor='let o of form.elements'>
