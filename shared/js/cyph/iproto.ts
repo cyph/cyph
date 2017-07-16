@@ -13,5 +13,5 @@ export interface IProto<T> {
 	encode: (data: T) => Writer|Uint8Array|Promise<Writer>|Promise<Uint8Array>;
 
 	/** Verify that object can be successfully encoded. */
-	verify: (data: T) => any;
+	verify: (data: any) => any;
 }
