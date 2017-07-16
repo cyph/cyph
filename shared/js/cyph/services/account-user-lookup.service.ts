@@ -1,10 +1,5 @@
 import {Injectable} from '@angular/core';
-import {
-	AccountUserPresence,
-	AccountUserProfile,
-	IAccountUserPresence,
-	IAccountUserProfile
-} from '../../proto';
+import {AccountUserPresence, AccountUserProfile} from '../../proto';
 import {User} from '../account/user';
 import {DataURIProto} from '../protos';
 import {util} from '../util';
