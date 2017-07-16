@@ -10,6 +10,11 @@ export class LocalStorageService extends DataManagerService {
 	/** Used to prevent race condition getItem failures. */
 	protected pendingSets: Map<string, Promise<void>>	= new Map<string, Promise<void>>();
 
+	/** Wipes all local data. */
+	public clear () : Promise<void> {
+		throw new Error('Must provide an implementation of LocalStorageService.clear.');
+	}
+
 	constructor () {
 		super();
 	}

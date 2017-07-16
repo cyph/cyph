@@ -38,6 +38,11 @@ export class WebLocalStorageService extends LocalStorageService {
 	})();
 
 	/** @inheritDoc */
+	public clear () : Promise<void> {
+		return localforage.clear();
+	}
+
+	/** @inheritDoc */
 	public async getItem<T> (
 		url: string,
 		proto: IProto<T>,

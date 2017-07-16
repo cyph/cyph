@@ -15,6 +15,11 @@ export class NativeLocalStorageService extends LocalStorageService {
 	private readonly storage: SecureStorage	= new SecureStorage();
 
 	/** @inheritDoc */
+	public clear () : Promise<void> {
+		throw new Error('Blocked on nativescript-secure-storage adding support.');
+	}
+
+	/** @inheritDoc */
 	public async getItem<T> (url: string, proto: IProto<T>) : Promise<T> {
 		await this.pendingSets.get(url);
 
