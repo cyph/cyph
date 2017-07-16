@@ -84,6 +84,8 @@ export class AccountContactsService {
 		/** @ignore */
 		private readonly databaseService: DatabaseService
 	) {
+		const lock	= util.lockFunction();
+
 		this.contactUsernames.flatMap(async usernames => Promise.all(
 			usernames.map(async username => ({
 				status: (
@@ -96,7 +98,7 @@ export class AccountContactsService {
 				).status,
 				username
 			})
-		))).subscribe(async users => {
+		))).subscribe(async users => lock(async () => {
 			const oldUserStatuses	= this.userStatuses;
 			this.userStatuses		= new Map<User, UserPresence>();
 
@@ -125,6 +127,6 @@ export class AccountContactsService {
 			}
 
 			this.initiated	= true;
-		});
+		}));
 	}
 }
