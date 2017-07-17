@@ -33,11 +33,21 @@ export class Sign implements ISign {
 		additionalData?: Uint8Array|string,
 		decompress: boolean = false
 	) : Promise<Uint8Array> {
-		return superSphincs.open(
-			decompress ? lz4.decode(potassiumUtil.fromBase64(signed)) : signed,
-			publicKey,
-			additionalData
-		);
+		signed	= potassiumUtil.fromBase64(signed);
+
+		const bytes		= await this.bytes;
+		const signature	= potassiumUtil.toBytes(signed, 0, bytes);
+		let message		= potassiumUtil.toBytes(signed, bytes);
+
+		if (decompress) {
+			message	= lz4.decode(message);
+		}
+
+		if (!(await this.verifyDetached(signature, message, publicKey, additionalData))) {
+			throw new Error('Invalid signature.');
+		}
+
+		return message;
 	}
 
 	/** @inheritDoc */
@@ -47,8 +57,20 @@ export class Sign implements ISign {
 		additionalData?: Uint8Array|string,
 		compress: boolean = false
 	) : Promise<Uint8Array> {
-		const signed	= await superSphincs.sign(message, privateKey, additionalData);
-		return compress ? lz4.encode(signed) : signed;
+		message	= potassiumUtil.fromString(message);
+
+		const signature	= await superSphincs.signDetached(message, privateKey, additionalData);
+
+		try {
+			return potassiumUtil.concatMemory(
+				false,
+				signature,
+				compress ? lz4.encode(message) : message
+			);
+		}
+		finally {
+			potassiumUtil.clearMemory(signature);
+		}
 	}
 
 	/** @inheritDoc */
