@@ -65,7 +65,7 @@ export class Sign implements ISign {
 			return potassiumUtil.concatMemory(
 				false,
 				signature,
-				compress ? lz4.encode(message) : message
+				compress ? lz4.encode(message, {streamChecksum: false}) : message
 			);
 		}
 		finally {
