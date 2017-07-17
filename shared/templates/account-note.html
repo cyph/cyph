@@ -4,7 +4,7 @@
 			<md-card-header fxLayout='row'>
 				<md-card-title>Title: {{note.name}}</md-card-title>
 				<md-card-subtitle>
-					<div>Content: {{accountFilesService.downloadText(note.id) | async}}</div>
+					<div>Content: {{accountFilesService.downloadText(note.id).result | async}}</div>
 				</md-card-subtitle>
 				<div fxFlex fxLayoutAlign='end center'>
 					<button
