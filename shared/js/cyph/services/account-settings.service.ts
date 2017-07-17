@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {SecurityModels} from '../account';
 import {BlobProto} from '../protos';
 import {AccountDatabaseService} from './crypto/account-database.service';
 
@@ -10,7 +11,7 @@ import {AccountDatabaseService} from './crypto/account-database.service';
 export class AccountSettingsService {
 	/** @ignore */
 	private async setImage (file: File, prop: 'avatar'|'coverImage') : Promise<void> {
-		await this.accountDatabaseService.setItem(prop, BlobProto, file, true);
+		await this.accountDatabaseService.setItem(prop, BlobProto, file, SecurityModels.public);
 	}
 
 	/** Sets the currently signed in user's avatar. */

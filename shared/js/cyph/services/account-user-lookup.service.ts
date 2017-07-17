@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {AccountUserPresence, AccountUserProfile} from '../../proto';
-import {User} from '../account/user';
+import {SecurityModels, User} from '../account';
 import {DataURIProto} from '../protos';
 import {util} from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -25,7 +25,7 @@ export class AccountUserLookupService {
 			this.accountDatabaseService.watch(
 				`${url}/avatar`,
 				DataURIProto,
-				true,
+				SecurityModels.public,
 				true
 			).map(
 				({value}) => value
@@ -33,7 +33,7 @@ export class AccountUserLookupService {
 			this.accountDatabaseService.watch(
 				`${url}/coverImage`,
 				DataURIProto,
-				true,
+				SecurityModels.public,
 				true
 			).map(
 				({value}) => value
@@ -45,7 +45,7 @@ export class AccountUserLookupService {
 			this.accountDatabaseService.getAsyncValue(
 				`${url}/publicProfile`,
 				AccountUserProfile,
-				true,
+				SecurityModels.public,
 				true
 			)
 		));
