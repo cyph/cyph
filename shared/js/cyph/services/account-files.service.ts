@@ -91,7 +91,7 @@ export class AccountFilesService {
 	}
 
 	/** Downloads file and returns text. */
-	public downloadText (id: string) : {
+	public downloadNote (id: string) : {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
@@ -152,7 +152,7 @@ export class AccountFilesService {
 
 			(async () => {
 				const limit		= 75;
-				const content	= await this.downloadText(id).result;
+				const content	= await this.downloadNote(id).result;
 
 				this.noteSnippets.set(
 					id,

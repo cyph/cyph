@@ -1,11 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {Observable} from 'rxjs';
 import {AccountFileRecord, IAccountFileRecord} from '../../proto';
-import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
-import {AccountDatabaseService} from '../services/crypto/account-database.service';
-import {EnvService} from '../services/env.service';
-import {UtilService} from '../services/util.service';
+import {AccountAuthService} from '../services/crypto/account-auth.service';
 
 
 /**
@@ -18,7 +16,11 @@ import {UtilService} from '../services/util.service';
 })
 export class AccountNoteComponent implements OnInit {
 	/** Current note. */
-	public note?: IAccountFileRecord;
+	public note?: {
+		data: Promise<string>;
+		downloadProgress: Observable<number>;
+		metadata: Promise<IAccountFileRecord>;
+	};
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -30,10 +32,18 @@ export class AccountNoteComponent implements OnInit {
 					throw new Error('Invalid note ID.');
 				}
 
-				this.note	= await this.accountFilesService.getFile(
-					id,
-					AccountFileRecord.RecordTypes.Note
-				);
+				await this.accountAuthService.ready;
+
+				const downloadTask	= this.accountFilesService.downloadNote(id);
+
+				this.note	= {
+					data: downloadTask.result,
+					downloadProgress: downloadTask.progress,
+					metadata: this.accountFilesService.getFile(
+						id,
+						AccountFileRecord.RecordTypes.Note
+					)
+				};
 			}
 			catch (_) {
 				this.routerService.navigate(['404']);
@@ -48,19 +58,10 @@ export class AccountNoteComponent implements OnInit {
 		/** @ignore */
 		private readonly routerService: Router,
 
-		/** @see AccountContactsService */
-		public readonly accountContactsService: AccountContactsService,
+		/** @ignore */
+		private readonly accountAuthService: AccountAuthService,
 
-		/** @see AccountDatabaseService */
-		public readonly accountDatabaseService: AccountDatabaseService,
-
-		/** @see AccountFilesService */
-		public readonly accountFilesService: AccountFilesService,
-
-		/** @see EnvService */
-		public readonly envService: EnvService,
-
-		/** @see UtilService */
-		public readonly utilService: UtilService
+		/** @ignore */
+		private readonly accountFilesService: AccountFilesService
 	) {}
 }

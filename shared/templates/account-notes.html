@@ -7,7 +7,9 @@
 			[attr.data-index]='i'
 		>
 			<md-card-header fxLayout='row'>
-				<md-card-title>{{note.name}}</md-card-title>
+				<md-card-title>
+					<a [routerLink]='"/account/notes/" + note.id'>{{note.name}}</a>
+				</md-card-title>
 				<md-card-subtitle>
 					<div>{{accountFilesService.noteSnippet(note.id)}}</div>
 				</md-card-subtitle>
