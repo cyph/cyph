@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {Observable} from 'rxjs';
-import {AccountFileRecord, IAccountFileRecord} from '../../proto';
+import {AccountFileRecord, Form, IAccountFileRecord, IForm} from '../../proto';
+import {SecurityModels} from '../account';
 import {BinaryProto, BlobProto, DataURIProto, StringProto} from '../protos';
 import {util} from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -35,6 +36,7 @@ export class AccountFilesService {
 	 */
 	public readonly filteredFiles	= {
 		files: this.filterFiles(AccountFileRecord.RecordTypes.File),
+		forms: this.filterFiles(AccountFileRecord.RecordTypes.Form),
 		notes: this.filterFiles(AccountFileRecord.RecordTypes.Note)
 	};
 
@@ -72,6 +74,20 @@ export class AccountFilesService {
 				);
 			})()
 		};
+	}
+
+	/** Downloads file and returns form. */
+	public downloadForm (id: string) : {
+		progress: Observable<number>;
+		result: Promise<IForm>;
+	} {
+		const {progress, result}	= this.accountDatabaseService.downloadItem(
+			`files/${id}`,
+			Form,
+			SecurityModels.privateSigned
+		);
+
+		return {progress, result: (async () => (await result).value)()};
 	}
 
 	/** Downloads file and returns text. */
@@ -163,7 +179,7 @@ export class AccountFilesService {
 	}
 
 	/** Uploads new file. */
-	public upload (name: string, file: string|File) : {
+	public upload (name: string, file: string|File|IForm) : {
 		progress: Observable<number>;
 		result: Promise<void>;
 	} {
@@ -172,7 +188,14 @@ export class AccountFilesService {
 
 		const {progress, result}	= typeof file === 'string' ?
 			this.accountDatabaseService.uploadItem(url, StringProto, file) :
-			this.accountDatabaseService.uploadItem(url, BlobProto, file)
+			file instanceof Blob ?
+				this.accountDatabaseService.uploadItem(url, BlobProto, file) :
+				this.accountDatabaseService.uploadItem(
+					url,
+					Form,
+					file,
+					SecurityModels.privateSigned
+				)
 		;
 
 		return {
@@ -184,16 +207,22 @@ export class AccountFilesService {
 					id,
 					mediaType: typeof file === 'string' ?
 						'text/plain' :
-						file.type
+						file instanceof Blob ?
+							file.type :
+							'cyph/form'
 					,
 					name,
 					recordType: typeof file === 'string' ?
 						AccountFileRecord.RecordTypes.Note :
-						AccountFileRecord.RecordTypes.File
+						file instanceof Blob ?
+							AccountFileRecord.RecordTypes.File :
+							AccountFileRecord.RecordTypes.Form
 					,
 					size: typeof file === 'string' ?
 						this.potassiumService.fromString(file).length :
-						file.size
+							file instanceof Blob ?
+								file.size :
+								NaN
 					,
 					timestamp: await util.timestamp()
 				}
