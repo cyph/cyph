@@ -145,11 +145,11 @@ message Form {
 		/** Minimum numerical value. */
 		double min = 4;
 
-		/** Indicates whether required. */
-		bool required = 5;
-
 		/** Options to use if type Radio or Select. */
-		repeated string options = 6;
+		repeated string options = 5;
+
+		/** Indicates whether required. */
+		bool required = 6;
 
 		/** @see Type */
 		required Types type = 7;
