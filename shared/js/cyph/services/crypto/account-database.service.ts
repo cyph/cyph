@@ -67,7 +67,12 @@ export class AccountDatabaseService {
 				this.potassiumService.fromString(url)
 			)
 		,
-		sign: async (currentUser: ICurrentUser|undefined, data: Uint8Array, url: string) => {
+		sign: async (
+			currentUser: ICurrentUser|undefined,
+			data: Uint8Array,
+			url: string,
+			decompress: boolean
+		) => {
 			const username	= (url.match(/\/?users\/(.*?)\//) || [])[1] || '';
 
 			return this.localStorageService.getOrSetDefault(
@@ -84,7 +89,8 @@ export class AccountDatabaseService {
 					currentUser && username === currentUser.user.username ?
 						currentUser.keys.signingKeyPair.publicKey :
 						(await this.getUserPublicKeys(username)).publicSigningKey,
-					url
+					url,
+					decompress
 				)
 			);
 		}
@@ -99,11 +105,17 @@ export class AccountDatabaseService {
 				this.potassiumService.fromString(url)
 			)
 		,
-		sign: async (currentUser: ICurrentUser, data: Uint8Array, url: string) =>
+		sign: async (
+			currentUser: ICurrentUser,
+			data: Uint8Array,
+			url: string,
+			compress: boolean
+		) =>
 			this.potassiumService.sign.sign(
 				data,
 				currentUser.keys.signingKeyPair.privateKey,
-				url
+				url,
+				compress
 			)
 	};
 
@@ -151,7 +163,7 @@ export class AccountDatabaseService {
 
 		return util.deserialize(proto, await (async () => {
 			if (securityModel === SecurityModels.public) {
-				return this.openHelpers.sign(currentUser, data, url);
+				return this.openHelpers.sign(currentUser, data, url, true);
 			}
 
 			if (!currentUser) {
@@ -165,7 +177,8 @@ export class AccountDatabaseService {
 					return this.openHelpers.sign(
 						currentUser,
 						await this.openHelpers.secretBox(currentUser, data, url),
-						url
+						url,
+						false
 					);
 				default:
 					throw new Error('Invalid security model.');
@@ -210,11 +223,11 @@ export class AccountDatabaseService {
 			case SecurityModels.privateSigned:
 				return this.sealHelpers.secretBox(
 					currentUser,
-					await this.sealHelpers.sign(currentUser, data, url),
+					await this.sealHelpers.sign(currentUser, data, url, false),
 					url
 				);
 			case SecurityModels.public:
-				return this.sealHelpers.sign(currentUser, data, url);
+				return this.sealHelpers.sign(currentUser, data, url, true);
 			default:
 				throw new Error('Invalid security model.');
 		}
