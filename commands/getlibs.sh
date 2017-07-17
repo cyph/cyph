@@ -182,7 +182,7 @@ mkdir -p @types/lz4
 cat > @types/lz4/index.d.ts << EOM
 declare module 'lz4' {
 	const decode: (a: Uint8Array) => Uint8Array;
-	const encode: (a: Uint8Array) => Uint8Array;
+	const encode: (a: Uint8Array, opts?: {streamChecksum: boolean}) => Uint8Array;
 }
 EOM
 
