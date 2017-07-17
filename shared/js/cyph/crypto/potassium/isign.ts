@@ -22,14 +22,16 @@ export interface ISign {
 	open (
 		signed: Uint8Array|string,
 		publicKey: Uint8Array,
-		additionalData?: Uint8Array|string
+		additionalData?: Uint8Array|string,
+		decompress?: boolean
 	) : Promise<Uint8Array>;
 
 	/** Signs message and returns it combined with signature. */
 	sign (
 		message: Uint8Array|string,
 		privateKey: Uint8Array,
-		additionalData?: Uint8Array|string
+		additionalData?: Uint8Array|string,
+		compress?: boolean
 	) : Promise<Uint8Array>;
 
 	/** Signs message and returns only the signature. */

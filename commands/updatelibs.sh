@@ -123,6 +123,7 @@ read -r -d '' modules <<- EOM
 	lodash
 	long
 	lunr
+	lz4
 	markdown-it
 	markdown-it-emoji
 	markdown-it-sup
