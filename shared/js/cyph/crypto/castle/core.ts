@@ -1,8 +1,9 @@
-import {IAsyncValue} from '../../iasync-value';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
 import {util} from '../../util';
 import {IPotassium} from '../potassium/ipotassium';
+import {IAsymmetricRatchetState} from './iasymmetric-ratchet-state';
+import {ISymmetricRatchetState} from './isymmetric-ratchet-state';
 
 
 /**
@@ -41,8 +42,8 @@ export class Core {
 
 		const asymmetricKeys	= await (async () => {
 			const [privateKey, publicKey]	= await Promise.all([
-				this.asymmetricKeys.privateKey.getValue(),
-				this.asymmetricKeys.publicKey.getValue()
+				this.asymmetricRatchetState.privateKey.getValue(),
+				this.asymmetricRatchetState.publicKey.getValue()
 			]);
 
 			return {privateKey, publicKey};
@@ -52,7 +53,7 @@ export class Core {
 		if (this.isAlice && !asymmetricKeys.privateKey && !incomingPublicKey) {
 			const aliceKeyPair	= await this.potassium.ephemeralKeyExchange.aliceKeyPair();
 			outgoingPublicKey	= aliceKeyPair.publicKey;
-			this.asymmetricKeys.privateKey.setValue(aliceKeyPair.privateKey);
+			this.asymmetricRatchetState.privateKey.setValue(aliceKeyPair.privateKey);
 		}
 
 		/* Part 2a: Bob (incoming) */
@@ -64,13 +65,13 @@ export class Core {
 			;
 
 			secret	= secretData.secret;
-			this.asymmetricKeys.publicKey.setValue(secretData.publicKey);
+			this.asymmetricRatchetState.publicKey.setValue(secretData.publicKey);
 		}
 
 		/* Part 2b: Bob (outgoing) */
 		else if (!this.isAlice && asymmetricKeys.publicKey && !incomingPublicKey) {
 			outgoingPublicKey	= new Uint8Array(asymmetricKeys.publicKey);
-			this.asymmetricKeys.publicKey.setValue(undefined);
+			this.asymmetricRatchetState.publicKey.setValue(undefined);
 		}
 
 		/* Part 3: Alice (incoming) */
@@ -82,13 +83,13 @@ export class Core {
 				)
 			;
 
-			this.asymmetricKeys.privateKey.setValue(undefined);
+			this.asymmetricRatchetState.privateKey.setValue(undefined);
 		}
 
 		if (secret) {
 			const newKeys	= await Core.newSymmetricKeys(this.potassium, this.isAlice, secret);
-			this.symmetricKeys.next.incoming.setValue(newKeys.incoming);
-			this.symmetricKeys.next.outgoing.setValue(newKeys.outgoing);
+			this.symmetricRatchetState.next.incoming.setValue(newKeys.incoming);
+			this.symmetricRatchetState.next.outgoing.setValue(newKeys.outgoing);
 		}
 
 		if (outgoingPublicKey) {
@@ -117,7 +118,10 @@ export class Core {
 			const messageId	= this.potassium.toBytes(cyphertext, 0, 8);
 			const encrypted	= this.potassium.toBytes(cyphertext, 8);
 
-			for (const keys of [this.symmetricKeys.current, this.symmetricKeys.next]) {
+			for (const keys of [
+				this.symmetricRatchetState.current,
+				this.symmetricRatchetState.next
+			]) {
 				try {
 					const incomingKey	= await this.potassium.hash.deriveKey(
 						await keys.incoming.getValue()
@@ -142,14 +146,18 @@ export class Core {
 						startIndex += ephemeralKeyExchangePublicKeyBytes;
 					}
 
-					if (keys === this.symmetricKeys.next) {
+					if (keys === this.symmetricRatchetState.next) {
 						const [nextIncoming, nextOutgoing]	= await Promise.all([
-							this.symmetricKeys.next.incoming.getValue(),
-							this.symmetricKeys.next.outgoing.getValue()
+							this.symmetricRatchetState.next.incoming.getValue(),
+							this.symmetricRatchetState.next.outgoing.getValue()
 						]);
 
-						this.symmetricKeys.current.incoming.setValue(new Uint8Array(nextIncoming));
-						this.symmetricKeys.current.outgoing.setValue(new Uint8Array(nextOutgoing));
+						this.symmetricRatchetState.current.incoming.setValue(
+							new Uint8Array(nextIncoming)
+						);
+						this.symmetricRatchetState.current.outgoing.setValue(
+							new Uint8Array(nextOutgoing)
+						);
 					}
 
 					return this.potassium.toBytes(decrypted, startIndex);
@@ -173,10 +181,10 @@ export class Core {
 			const fullPlaintext	= this.potassium.concatMemory(false, ratchetData, plaintext);
 
 			const key			= await this.potassium.hash.deriveKey(
-				await this.symmetricKeys.current.outgoing.getValue()
+				await this.symmetricRatchetState.current.outgoing.getValue()
 			);
 
-			this.symmetricKeys.current.outgoing.setValue(new Uint8Array(key));
+			this.symmetricRatchetState.current.outgoing.setValue(new Uint8Array(key));
 			this.potassium.clearMemory(ratchetData);
 
 			return {fullPlaintext, key};
@@ -201,23 +209,11 @@ export class Core {
 		/** @ignore */
 		private readonly isAlice: boolean,
 
-		/** State of the symmetric (forward-secret) ratchet. */
-		private readonly symmetricKeys: {
-			current: {
-				incoming: IAsyncValue<Uint8Array>;
-				outgoing: IAsyncValue<Uint8Array>;
-			};
-			next: {
-				incoming: IAsyncValue<Uint8Array>;
-				outgoing: IAsyncValue<Uint8Array>;
-			};
-		},
+		/** @see ISymmetricRatchetState */
+		private readonly symmetricRatchetState: ISymmetricRatchetState,
 
-		/** State of the asymmetric (future-secret) ratchet. */
-		private readonly asymmetricKeys: {
-			privateKey: IAsyncValue<Uint8Array|undefined>;
-			publicKey: IAsyncValue<Uint8Array|undefined>;
-		} = {
+		/** @see IAsymmetricRatchetState */
+		private readonly asymmetricRatchetState: IAsymmetricRatchetState = {
 			privateKey: new LocalAsyncValue<Uint8Array|undefined>(undefined),
 			publicKey: new LocalAsyncValue<Uint8Array|undefined>(undefined)
 		},
