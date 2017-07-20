@@ -6,8 +6,8 @@
 	(submit)='submit.emit(form)'
 	*ngIf='form'
 >
-	<div fxLayout='row'>
-		<div *ngFor='let o of form.elements'>
+	<div fxLayout='row' *ngFor='let row of form.rows'>
+		<div [fxFlex]='o.width' fxLayout='column' *ngFor='let o of row.elements'>
 
 			<div *ngIf='o.type === types.Text'>
 				<h3>{{o.label}}</h3>
