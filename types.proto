@@ -42,13 +42,14 @@ message ChatMessage {
 
 /** Represents a form that a user can submit responses to. */
 message Form {
-	message FormComponent {
-		/** @see FormElementRow */
-		repeated FormElementRow rows = 1;
+	/** Reusable building block consisting of multiple forms. */
+	message Component {
+		/** @see ElementRow */
+		repeated ElementRow rows = 1;
 	}
 
-	/** One element of a form. */
-	message FormElement {
+	/** One element of a Form, and one column of an ElementRow. */
+	message Element {
 		/** Element input type. */
 		enum Types {
 			Text = 0;
@@ -96,13 +97,14 @@ message Form {
 		uint32 width = 11;
 	}
 
-	message FormElementRow {
-		/** @see FormElement */
-		repeated FormElement elements = 1;
+	/** Row of elements. */
+	message ElementRow {
+		/** @see Element */
+		repeated Element elements = 1;
 	}
 
-	/** @see FormComponent */
-	repeated FormComponent components = 1;
+	/** @see Component */
+	repeated Component components = 1;
 }
 
 /** An asymmetric key pair. */
@@ -203,6 +205,7 @@ message SessionTextConfirmation {
 
 /** Represents an active file transfer. */
 message SessionTransfer {
+	/** Possible responses to a transfer request. */
 	enum Answers {
 		Empty = 0;
 		Accepted = 1;

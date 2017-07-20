@@ -2,18 +2,18 @@ import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../../proto';
 
 
-const newForm				= (...components: Form.IFormComponent[]) : IForm => ({
+const newForm			= (...components: Form.IComponent[]) : IForm => ({
 	components
 });
 
-const newFormRow			= (...elements: (
-	Form.IFormElement|Form.IFormElement[])[]) : Form.IFormElementRow => ({
-	elements: elements.reduce<Form.IFormElement[]>((a, b) => a.concat(b), [])
+const newFormComponent	= (...rows: (
+	Form.IElementRow|Form.IElementRow[])[]) : Form.IComponent => ({
+	rows: rows.reduce<Form.IElementRow[]>((a, b) => a.concat(b), [])
 });
 
-const newFormComponent			= (...rows: (
-	Form.IFormElementRow|Form.IFormElementRow[])[]) : Form.IFormComponent => ({
-	rows: rows.reduce<Form.IFormElementRow[]>((a, b) => a.concat(b), [])
+const newFormRow		= (...elements: (
+	Form.IElement|Form.IElement[])[]) : Form.IElementRow => ({
+	elements: elements.reduce<Form.IElement[]>((a, b) => a.concat(b), [])
 });
 
 
@@ -26,8 +26,8 @@ const newFormElement	= <T extends {
 	required?: boolean;
 	value?: boolean|number|string;
 	width?: number;
-}> (elementType: Form.FormElement.Types) => (o?: T) => {
-	const element: Form.IFormElement	= {
+}> (elementType: Form.Element.Types) => (o?: T) => {
+	const element: Form.IElement	= {
 		label: o && o.label,
 		mask: o && o.mask && msgpack.encode(o.mask),
 		max: o && o.max,
@@ -57,7 +57,7 @@ export const checkbox		= newFormElement<{
 	required?: boolean;
 	value?: boolean;
 	width?: number;
-}>(Form.FormElement.Types.Checkbox);
+}>(Form.Element.Types.Checkbox);
 
 /** Creates a new datepicker form element. */
 export const datepicker		= newFormElement<{
@@ -65,7 +65,7 @@ export const datepicker		= newFormElement<{
 	required?: boolean;
 	value?: number;
 	width?: number;
-}>(Form.FormElement.Types.Datepicker);
+}>(Form.Element.Types.Datepicker);
 
 /** Creates a new text input form element. */
 export const input			= newFormElement<{
@@ -74,7 +74,7 @@ export const input			= newFormElement<{
 	required?: boolean;
 	value?: string;
 	width?: number;
-}>(Form.FormElement.Types.Input);
+}>(Form.Element.Types.Input);
 
 /** Creates a new number input form element. */
 export const numberInput	= newFormElement<{
@@ -85,7 +85,7 @@ export const numberInput	= newFormElement<{
 	required?: boolean;
 	value?: number;
 	width?: number;
-}>(Form.FormElement.Types.Number);
+}>(Form.Element.Types.Number);
 
 /** Creates a new password input form element. */
 export const passwordInput	= newFormElement<{
@@ -94,7 +94,7 @@ export const passwordInput	= newFormElement<{
 	required?: boolean;
 	value?: string;
 	width?: number;
-}>(Form.FormElement.Types.Password);
+}>(Form.Element.Types.Password);
 
 /** Creates a new radio button group form element. */
 export const radio			= newFormElement<{
@@ -103,7 +103,7 @@ export const radio			= newFormElement<{
 	required?: boolean;
 	value?: string;
 	width?: number;
-}>(Form.FormElement.Types.Radio);
+}>(Form.Element.Types.Radio);
 
 /** Creates a new select dropdown form element. */
 export const select			= newFormElement<{
@@ -112,7 +112,7 @@ export const select			= newFormElement<{
 	required?: boolean;
 	value?: string;
 	width?: number;
-}>(Form.FormElement.Types.Select);
+}>(Form.Element.Types.Select);
 
 /** Creates a new slider form element. */
 export const slider			= newFormElement<{
@@ -121,7 +121,7 @@ export const slider			= newFormElement<{
 	min?: number;
 	value?: number;
 	width?: number;
-}>(Form.FormElement.Types.Slider);
+}>(Form.Element.Types.Slider);
 
 /** Creates a new slide toggle button form element. */
 export const slideToggle	= newFormElement<{
@@ -129,14 +129,14 @@ export const slideToggle	= newFormElement<{
 	required?: boolean;
 	value?: boolean;
 	width?: number;
-}>(Form.FormElement.Types.SlideToggle);
+}>(Form.Element.Types.SlideToggle);
 
 /** Creates a new text form element. */
 export const text			= newFormElement<{
 	label?: string;
 	value?: string;
 	width?: number;
-}>(Form.FormElement.Types.Text);
+}>(Form.Element.Types.Text);
 
 /** Creates a new textbox form element. */
 export const textarea		= newFormElement<{
@@ -145,21 +145,25 @@ export const textarea		= newFormElement<{
 	required?: boolean;
 	value?: string;
 	width?: number;
-}>(Form.FormElement.Types.Textarea);
+}>(Form.Element.Types.Textarea);
 
-export const title		= (titleText: string) : Form.IFormElementRow => {
+/** Form title element row. */
+export const title		= (titleText: string) : Form.IElementRow => {
 	return newFormRow(text({label: titleText, width: 100}));
 };
 
-export const phone				= () : Form.IFormElementRow => {
+/** Phone number element row. */
+export const phone		= () : Form.IElementRow => {
 	return newFormRow([input({label: 'Phone Number'})]);
 };
 
-export const email				= () : Form.IFormElementRow => {
+/** Email address element row. */
+export const email		= () : Form.IElementRow => {
 	return newFormRow([input({label: 'Email', required: true})]);
 };
 
-export const name		= () : Form.IFormElementRow => {
+/** Name element row. */
+export const name		= () : Form.IElementRow => {
 	return newFormRow([
 		input({label: 'First Name', required: true}),
 		input({label: 'Middle Name'}),
@@ -167,7 +171,8 @@ export const name		= () : Form.IFormElementRow => {
 	]);
 };
 
-export const address	= () : Form.IFormElementRow => {
+/** Address element row. */
+export const address	= () : Form.IElementRow => {
 		return newFormRow([
 		input({label: 'Address'}),
 		input({label: 'City'}),
@@ -176,11 +181,13 @@ export const address	= () : Form.IFormElementRow => {
 	]);
 };
 
-export const ssn	= () : Form.IFormElementRow => {
+/** SSN element row. */
+export const ssn		= () : Form.IElementRow => {
 	return newFormRow([passwordInput({label: 'Social Security Number', width: 20})]);
 };
 
-export const contact			= () : Form.IFormComponent => {
+/** Contact information component. */
+export const contact			= () : Form.IComponent => {
 	return newFormComponent([
 		title('Contact Information'),
 		name(),
@@ -189,30 +196,33 @@ export const contact			= () : Form.IFormComponent => {
 	]);
 };
 
-export const insurance				= () : Form.IFormElementRow => {
+/** Insurance information element row. */
+export const insurance			= () : Form.IElementRow => {
 	return newFormRow([
-		input({label: 'Insured\'s name'}),
+		input({label: "Insured's name"}),
 		input({label: 'Relationship'}),
 		input({label: 'Employer'}),
 		input({label: 'Phone Number'})
 	]);
 };
 
-export const insuranceComponent	= () : Form.IFormComponent => {
+/** Insurance information component. */
+export const insuranceComponent	= () : Form.IComponent => {
 	return newFormComponent([
 		title('Primary Insurance'),
 		insurance(),
 		address(),
-		<Form.IFormElementRow> input({label: 'Insurance Company'}),
+		newFormRow(input({label: 'Insurance Company'})),
 		title('Secondary Insurance'),
 		insurance(),
 		address(),
-		<Form.IFormElementRow> input({label: 'Insurance Company'})
+		newFormRow(input({label: 'Insurance Company'}))
 	]);
 };
 
-export const newPatient		= () : IForm => newForm(
-	<Form.IFormComponent> title('New Patient Form'),
+/** New patient form. */
+export const newPatient			= () : IForm => newForm(
+	newFormComponent(title('New Patient Form')),
 	contact(),
 	insuranceComponent()
 );
