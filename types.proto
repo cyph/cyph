@@ -123,14 +123,13 @@ message Form {
 			Checkbox = 1;
 			Datepicker = 2;
 			Input = 3;
-			LineBreak = 4;
-			Number = 5;
-			Password = 6;
-			Radio = 7;
-			Select = 8;
-			Slider = 9;
-			SlideToggle = 10;
-			Textarea = 11;
+			Number = 4;
+			Password = 5;
+			Radio = 6;
+			Select = 7;
+			Slider = 8;
+			SlideToggle = 9;
+			Textarea = 10;
 		}
 
 		/** Title/label. */
@@ -160,10 +159,18 @@ message Form {
 			double valueNumber = 9;
 			string valueString = 10;
 		}
+
+		/** Flexbox column width (as a percentage of the total row width). */
+		uint32 width = 11;
 	}
 
-	/** @see FormElement */
-	repeated FormElement elements = 1;
+	message FormElementRow {
+		/** @see FormElement */
+		repeated FormElement elements = 1;
+	}
+
+	/** @see FormElementRow */
+	repeated FormElementRow rows = 1;
 }
 
 /** An asymmetric key pair. */

@@ -10,6 +10,7 @@ const newFormElement	= <T extends {
 	options?: string[];
 	required?: boolean;
 	value?: boolean|number|string;
+	width?: number;
 }> (elementType: Form.FormElement.Types) => (o?: T) => {
 	const element: Form.IFormElement	= {
 		label: o && o.label,
@@ -18,7 +19,8 @@ const newFormElement	= <T extends {
 		min: o && o.min,
 		options: o && o.options,
 		required: o && o.required,
-		type: elementType
+		type: elementType,
+		width: o && o.width
 	};
 
 	if (o && typeof o.value === 'boolean') {
@@ -40,6 +42,7 @@ export const checkbox		= newFormElement<{
 	label?: string;
 	required?: boolean;
 	value?: boolean;
+	width?: number;
 }>(Form.FormElement.Types.Checkbox);
 
 /** Creates a new datepicker form element. */
@@ -47,6 +50,7 @@ export const datepicker		= newFormElement<{
 	label?: string;
 	required?: boolean;
 	value?: number;
+	width?: number;
 }>(Form.FormElement.Types.Datepicker);
 
 /** Creates a new text input form element. */
@@ -55,10 +59,8 @@ export const input			= newFormElement<{
 	mask?: any;
 	required?: boolean;
 	value?: string;
+	width?: number;
 }>(Form.FormElement.Types.Input);
-
-/** Creates a new line break form element. */
-export const lineBreak		= newFormElement<never>(Form.FormElement.Types.LineBreak);
 
 /** Creates a new number input form element. */
 export const numberInput	= newFormElement<{
@@ -68,6 +70,7 @@ export const numberInput	= newFormElement<{
 	min?: number;
 	required?: boolean;
 	value?: number;
+	width?: number;
 }>(Form.FormElement.Types.Number);
 
 /** Creates a new password input form element. */
@@ -76,6 +79,7 @@ export const passwordInput	= newFormElement<{
 	mask?: any;
 	required?: boolean;
 	value?: string;
+	width?: number;
 }>(Form.FormElement.Types.Password);
 
 /** Creates a new radio button group form element. */
@@ -84,6 +88,7 @@ export const radio			= newFormElement<{
 	options?: string[];
 	required?: boolean;
 	value?: string;
+	width?: number;
 }>(Form.FormElement.Types.Radio);
 
 /** Creates a new select dropdown form element. */
@@ -92,6 +97,7 @@ export const select			= newFormElement<{
 	options?: string[];
 	required?: boolean;
 	value?: string;
+	width?: number;
 }>(Form.FormElement.Types.Select);
 
 /** Creates a new slider form element. */
@@ -100,6 +106,7 @@ export const slider			= newFormElement<{
 	max?: number;
 	min?: number;
 	value?: number;
+	width?: number;
 }>(Form.FormElement.Types.Slider);
 
 /** Creates a new slide toggle button form element. */
@@ -107,12 +114,14 @@ export const slideToggle	= newFormElement<{
 	label?: string;
 	required?: boolean;
 	value?: boolean;
+	width?: number;
 }>(Form.FormElement.Types.SlideToggle);
 
 /** Creates a new text form element. */
 export const text			= newFormElement<{
 	label?: string;
 	value?: string;
+	width?: number;
 }>(Form.FormElement.Types.Text);
 
 /** Creates a new textbox form element. */
@@ -121,4 +130,5 @@ export const textarea		= newFormElement<{
 	mask?: any;
 	required?: boolean;
 	value?: string;
+	width?: number;
 }>(Form.FormElement.Types.Textarea);
