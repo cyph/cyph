@@ -1,3 +1,4 @@
+import {config} from '../../config';
 import {denullifyAsyncValue} from '../../denullify-async-value';
 import {IAsyncValue} from '../../iasync-value';
 import {LocalAsyncValue} from '../../local-async-value';
@@ -66,8 +67,12 @@ export class PairwiseSession {
 	/** @ignore */
 	private async newOutgoingMessageId () : Promise<Uint8Array> {
 		const outgoingMessageId	= await this.outgoingMessageId.getValue();
-		this.outgoingMessageId.setValue(outgoingMessageId + 1);
-		return new Uint8Array(new Float64Array([outgoingMessageId]).buffer);
+		this.outgoingMessageId.setValue(
+			outgoingMessageId === config.maxUint32 ?
+				0 :
+				outgoingMessageId + 1
+		);
+		return new Uint8Array(new Uint32Array([outgoingMessageId]).buffer);
 	}
 
 	/** Receive/decrypt incoming message. */
@@ -77,7 +82,7 @@ export class PairwiseSession {
 			return;
 		}
 
-		const newMessageId	= this.potassium.toDataView(cyphertext).getFloat64(0, true);
+		const newMessageId	= this.potassium.toDataView(cyphertext).getUint32(0, true);
 
 		return this.receiveLock(async () => {
 			const promises	= {

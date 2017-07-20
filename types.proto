@@ -1,6 +1,18 @@
 syntax = "proto3";
 
 
+/** Castle incoming messages. */
+message CastleIncomingMessages {
+	/** List of received cyphertexts with a particular message ID. */	
+	message CastleIncomingMessageItem {
+		/** @see CastleIncomingMessageItem */
+		repeated bytes cyphertexts = 1;
+	}
+
+	/** Mapping of message IDs to CastleIncomingMessageItems. */
+	map<uint32, CastleIncomingMessageItem> incomingMessages = 1;
+}
+
 /** ChannelService message. */
 message ChannelMessage {
 	/** Cyphertext. */
@@ -260,3 +272,12 @@ message StringArray {
 message StringValue {
 	required string data = 1;
 }
+
+message Uint32Array {
+	repeated double data = 1;
+}
+
+message Uint32Value {
+	required double data = 1;
+}
+

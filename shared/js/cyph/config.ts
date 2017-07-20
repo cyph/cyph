@@ -84,6 +84,9 @@ export class Config {
 	/** Max unsigned 48-bit integer + 1, used by Util.random. */
 	public readonly maxSafeUint: number			= 281474976710656;
 
+	/** Max unsigned 32-bit integer. */
+	public readonly maxUint32: number			= 4294967295;
+
 	/** URL for Cyph Tor site. */
 	public readonly onionRoot: string			= 'cyphdbyhiddenbhs.onion';
 
