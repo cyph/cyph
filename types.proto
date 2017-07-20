@@ -1,89 +1,16 @@
 syntax = "proto3";
 
 
-/** Metadata of one contact relationship of an account. */
-message AccountContactRecord {
-	/** Relationship ID. */
-	required string id = 1;
-
-	/** Contact username. */
-	required string username = 2;
-}
-
-/** Metadata of one file stored in an account. */
-message AccountFileRecord {
-	enum RecordTypes {
-		File = 1;
-		Form = 3;
-		Note = 2;
+/** Castle incoming messages. */
+message CastleIncomingMessages {
+	/** List of received cyphertexts with a particular message ID. */	
+	message CastleIncomingMessageItem {
+		/** @see CastleIncomingMessageItem */
+		repeated bytes cyphertexts = 1;
 	}
 
-	/** File ID. */
-	required string id = 1;
-
-	/** File MIME type. */
-	required string mediaType = 2;
-
-	/** File name. */
-	required string name = 3;
-
-	/** Type of file record. */
-	required RecordTypes recordType = 4;
-
-	/** Size in bytes. */
-	required double size = 5;
-
-	/** Timestamp of upload or last save. */
-	required double timestamp = 6;
-}
-
-/** Augmented PAKE login data. */
-message AccountLoginData {
-	/** Randomly generated password for database authentication. */
-	required string secondaryPassword = 1;
-
-	/** Symmetric key for encrypting user data. */
-	required bytes symmetricKey = 2;
-}
-
-/** User public profile. */
-message AccountUserProfile {
-	/** Description. */
-	required string description = 1;
-
-	/** Premium account. */
-	required bool hasPremium = 2;
-
-	/** Full name. */
-	required string name = 3;
-
-	/** Username (capitalized according to user preference). */
-	required string realUsername = 4;
-
-	/** Usernames and similar identifiers for external services like social media. */
-	map<string, string> externalUsernames = 5;
-}
-
-/** User presence. */
-message AccountUserPresence {
-	enum Statuses {
-		Offline = 0;
-		Away = 1;
-		Busy = 2;
-		Online = 3;
-	}
-
-	/** Current presence status. */
-	required Statuses status = 7;
-}
-
-/** AGSE-PKI certificate. */
-message AGSEPKICert {
-	/** Potassium.Box public key. */
-	required bytes publicEncryptionKey = 1;
-
-	/** Potassium.Sign public key. */
-	required bytes publicSigningKey = 2;
+	/** Mapping of message IDs to CastleIncomingMessageItems. */
+	map<uint32, CastleIncomingMessageItem> incomingMessages = 1;
 }
 
 /** ChannelService message. */
@@ -345,3 +272,12 @@ message StringArray {
 message StringValue {
 	required string data = 1;
 }
+
+message Uint32Array {
+	repeated double data = 1;
+}
+
+message Uint32Value {
+	required double data = 1;
+}
+
