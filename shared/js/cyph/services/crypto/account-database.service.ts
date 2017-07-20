@@ -267,7 +267,6 @@ export class AccountDatabaseService {
 		securityModel: SecurityModels = SecurityModels.private,
 		anonymous: boolean = false
 	) : IAsyncValue<T> {
-		const defaultValue	= proto.create();
 		const localLock		= util.lockFunction();
 
 		const asyncValue	= (async () => {
@@ -279,6 +278,10 @@ export class AccountDatabaseService {
 				this.lockFunction(url)
 			);
 		})();
+
+		const watch	= memoize(() =>
+			this.watch(url, proto, securityModel).map<ITimedValue<T>, T>(o => o.value)
+		);
 
 		return {
 			getValue: async () => localLock(async () => {
@@ -293,7 +296,7 @@ export class AccountDatabaseService {
 					anonymous
 				);
 			}).catch(
-				() => defaultValue
+				async () => watch().take(2).toPromise()
 			),
 			lock: async (f, reason) =>
 				(await asyncValue).lock(f, reason)
@@ -307,9 +310,7 @@ export class AccountDatabaseService {
 				await f(await this.open(url, proto, securityModel, value)),
 				securityModel
 			)),
-			watch: memoize(() =>
-				this.watch(url, proto, securityModel).map<ITimedValue<T>, T>(o => o.value)
-			)
+			watch
 		};
 	}
 
