@@ -148,7 +148,7 @@ export const textarea		= newFormElement<{
 }>(Form.FormElement.Types.Textarea);
 
 export const title		= (titleText: string) : Form.IFormElementRow => {
-	return newFormRow(text({label: titleText}));
+	return newFormRow(text({label: titleText, width: 100}));
 };
 
 export const phone				= () : Form.IFormElementRow => {
@@ -171,9 +171,13 @@ export const address	= () : Form.IFormElementRow => {
 		return newFormRow([
 		input({label: 'Address'}),
 		input({label: 'City'}),
-		input({label: 'State'}),
-		input({label: 'Zip'})
+		input({label: 'State', width: 10}),
+		input({label: 'Zip', width: 25})
 	]);
+};
+
+export const ssn	= () : Form.IFormElementRow => {
+	return newFormRow([passwordInput({label: 'Social Security Number', width: 20})]);
 };
 
 export const contact			= () : Form.IFormComponent => {
@@ -187,7 +191,6 @@ export const contact			= () : Form.IFormComponent => {
 
 export const insurance				= () : Form.IFormElementRow => {
 	return newFormRow([
-		passwordInput({label: 'Social Security Number'}),
 		input({label: 'Insured\'s name'}),
 		input({label: 'Relationship'}),
 		input({label: 'Employer'}),
@@ -208,7 +211,8 @@ export const insuranceComponent	= () : Form.IFormComponent => {
 	]);
 };
 
-export const healthcareDefault		= () : IForm => newForm(
+export const newPatient		= () : IForm => newForm(
+	<Form.IFormComponent> title('New Patient Form'),
 	contact(),
 	insuranceComponent()
 );

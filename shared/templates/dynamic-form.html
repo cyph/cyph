@@ -1,159 +1,164 @@
 <form
 	ngNativeValidate
-	fxFlex
 	fxLayout='column'
-	fxLayoutAlign='center start'
+	fxLayoutAlign='center center'
 	(submit)='submit.emit(form)'
 	*ngIf='form'
 >
-	<div fxLayout='column' *ngFor='let component of form.components'>
-		<div fxLayout='row' *ngFor='let row of component.rows'>
-			<div [fxFlex]='o.width' fxLayout='column' *ngFor='let o of row.elements'>
+	<div fxLayout='column' fxLayoutAlign='center start'>
+		<div fxLayout='column' *ngFor='let component of form.components' class='component'>
+			<div fxLayout='row' *ngFor='let row of component.rows' class='row'>
+				<div [fxFlex]='o.width' fxLayout='column' *ngFor='let o of row.elements'>
 
-				<div *ngIf='o.type === types.Text'>
-					<h3>{{o.label}}</h3>
-					<div>{{o.valueString}}</div>
-				</div>
+					<div *ngIf='o.type === types.Text'>
+						<h3>{{o.label}}</h3>
+						<div>{{o.valueString}}</div>
+					</div>
 
-				<div *ngIf='o.type === types.Checkbox'>
-					<md-checkbox
-						[(ngModel)]='o.valueBoolean'
-						[name]='o.label'
-						[required]='o.required'
-					>
-						{{o.label}}
-					</md-checkbox>
-				</div>
-
-				<div *ngIf='o.type === types.Datepicker'>
-					<md-input-container fxFlex>
-						<input
-							mdInput
-							[mdDatepicker]='datepicker'
-							[ngModel]='o.valueNumber'
-							(ngModelChange)='o.valueNumber = $event ? $event.getTime() : 0'
-							[placeholder]='o.label'
+					<div *ngIf='o.type === types.Checkbox'>
+						<md-checkbox
+							[(ngModel)]='o.valueBoolean'
+							[name]='o.label'
 							[required]='o.required'
 						>
-						<button mdSuffix [mdDatepickerToggle]='datepicker'></button>
-					</md-input-container>
-					<md-datepicker #datepicker></md-datepicker>
-				</div>
+							{{o.label}}
+						</md-checkbox>
+					</div>
 
-				<div *ngIf='o.type === types.Input'>
-					<md-input-container fxFlex>
-						<input
-							mdInput
-							[textMask]='getMask(o)'
+					<div *ngIf='o.type === types.Datepicker'>
+						<md-input-container fxFlex>
+							<input
+								mdInput
+								[mdDatepicker]='datepicker'
+								[ngModel]='o.valueNumber'
+								(ngModelChange)='o.valueNumber = $event ? $event.getTime() : 0'
+								[placeholder]='o.label'
+								[required]='o.required'
+							>
+							<button mdSuffix [mdDatepickerToggle]='datepicker'></button>
+						</md-input-container>
+						<md-datepicker #datepicker></md-datepicker>
+					</div>
+
+					<div *ngIf='o.type === types.Input'>
+						<md-input-container fxFlex>
+							<input
+								mdInput
+								[textMask]='getMask(o)'
+								[(ngModel)]='o.valueString'
+								[name]='o.label'
+								type='text'
+								[placeholder]='o.label'
+								[required]='o.required'
+							/>
+						</md-input-container>
+					</div>
+
+					<div *ngIf='o.type === types.LineBreak'>
+						<div fxFlex style='width: 100%'></div>
+					</div>
+
+					<div *ngIf='o.type === types.Number'>
+						<md-input-container fxFlex>
+							<input
+								mdInput
+								[textMask]='getMask(o)'
+								[(ngModel)]='o.valueNumber'
+								[max]='o.max'
+								[min]='o.min'
+								[name]='o.label'
+								type='number'
+								[placeholder]='o.label'
+								[required]='o.required'
+							/>
+						</md-input-container>
+					</div>
+
+					<div *ngIf='o.type === types.Password'>
+						<md-input-container fxFlex>
+							<input
+								mdInput
+								[textMask]='getMask(o)'
+								[(ngModel)]='o.valueString'
+								[name]='o.label'
+								type='password'
+								[placeholder]='o.label'
+								[required]='o.required'
+							/>
+						</md-input-container>
+					</div>
+
+					<div *ngIf='o.type === types.Radio'>
+						<label>{{o.label}}</label>
+						<md-radio-group
+							fxFlex
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
-							type='text'
-							[placeholder]='o.label'
 							[required]='o.required'
-						/>
-					</md-input-container>
-				</div>
+						>
+							<md-radio-button *ngFor='let option of o.options' [value]='option'>
+								{{option}}
+							</md-radio-button>
+						</md-radio-group>
+					</div>
 
-				<div *ngIf='o.type === types.LineBreak'>
-					<div fxFlex style='width: 100%'></div>
-				</div>
+					<div *ngIf='o.type === types.Select'>
+						<md-select
+							fxFlex
+							[(ngModel)]='o.valueString'
+							[name]='o.label'
+							[required]='o.required'
+						>
+							<md-option *ngFor='let option of o.options' [value]='option'>
+								{{option}}
+							</md-option>
+						</md-select>
+					</div>
 
-				<div *ngIf='o.type === types.Number'>
-					<md-input-container fxFlex>
-						<input
-							mdInput
-							[textMask]='getMask(o)'
+					<div *ngIf='o.type === types.Slider'>
+						<h3>{{o.label}}</h3>
+						<md-slider
 							[(ngModel)]='o.valueNumber'
 							[max]='o.max'
 							[min]='o.min'
 							[name]='o.label'
-							type='number'
-							[placeholder]='o.label'
-							[required]='o.required'
-						/>
-					</md-input-container>
-				</div>
+						></md-slider>
+					</div>
 
-				<div *ngIf='o.type === types.Password'>
-					<md-input-container fxFlex>
-						<input
-							mdInput
-							[textMask]='getMask(o)'
-							[(ngModel)]='o.valueString'
+					<div *ngIf='o.type === types.SlideToggle'>
+						<md-slide-toggle
+							[(ngModel)]='o.valueBoolean'
 							[name]='o.label'
-							type='password'
-							[placeholder]='o.label'
 							[required]='o.required'
-						/>
-					</md-input-container>
-				</div>
+						>
+							{{o.label}}
+						</md-slide-toggle>
+					</div>
 
-				<div *ngIf='o.type === types.Radio'>
-					<label>{{o.label}}</label>
-					<md-radio-group
-						fxFlex
-						[(ngModel)]='o.valueString'
-						[name]='o.label'
-						[required]='o.required'
-					>
-						<md-radio-button *ngFor='let option of o.options' [value]='option'>
-							{{option}}
-						</md-radio-button>
-					</md-radio-group>
-				</div>
+					<div *ngIf='o.type === types.Textarea'>
+						<md-input-container fxFlex>
+							<textarea
+								mdInput
+								[textMask]='getMask(o)'
+								[(ngModel)]='o.valueString'
+								[name]='o.label'
+								[placeholder]='o.label'
+								[required]='o.required'
+							></textarea>
+						</md-input-container>
+					</div>
 
-				<div *ngIf='o.type === types.Select'>
-					<md-select
-						fxFlex
-						[(ngModel)]='o.valueString'
-						[name]='o.label'
-						[required]='o.required'
-					>
-						<md-option *ngFor='let option of o.options' [value]='option'>
-							{{option}}
-						</md-option>
-					</md-select>
 				</div>
-
-				<div *ngIf='o.type === types.Slider'>
-					<h3>{{o.label}}</h3>
-					<md-slider
-						[(ngModel)]='o.valueNumber'
-						[max]='o.max'
-						[min]='o.min'
-						[name]='o.label'
-					></md-slider>
-				</div>
-
-				<div *ngIf='o.type === types.SlideToggle'>
-					<md-slide-toggle
-						[(ngModel)]='o.valueBoolean'
-						[name]='o.label'
-						[required]='o.required'
-					>
-						{{o.label}}
-					</md-slide-toggle>
-				</div>
-
-				<div *ngIf='o.type === types.Textarea'>
-					<md-input-container fxFlex>
-						<textarea
-							mdInput
-							[textMask]='getMask(o)'
-							[(ngModel)]='o.valueString'
-							[name]='o.label'
-							[placeholder]='o.label'
-							[required]='o.required'
-						></textarea>
-					</md-input-container>
-				</div>
-
 			</div>
 		</div>
 	</div>
-	<div fxLayout='row'>
-		<button md-button fxFlex cyphTranslate type='submit'>
-			Submit
-		</button>
+	<div fxLayout='column' fxLayoutAlign='center center'>
+		<div fxLayout='row'>
+			<div fxFlex></div>
+			<button fxFlexAlign='center center' md-button fxFlex='none' cyphTranslate type='submit'>
+				Submit
+			</button>
+			<div fxFlex></div>
+		</div>
 	</div>
 </form>

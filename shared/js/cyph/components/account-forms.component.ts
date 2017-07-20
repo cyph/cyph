@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit} from '@angular/core';
 import {IForm} from '../../proto';
-import {healthcareDefault} from '../forms/.';
+import {newPatient} from '../forms/.';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
 
@@ -14,7 +14,7 @@ import {EnvService} from '../services/env.service';
 })
 
 export class AccountFormsComponent implements OnInit {
-	public healthcareDefault: IForm	= healthcareDefault();
+	public newPatient: IForm	= newPatient();
 
 	public ngOnInit () : void {
 		/** To-do */
