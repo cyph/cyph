@@ -23,10 +23,10 @@ export class DynamicFormComponent {
 	@Output() public submit: EventEmitter<IForm>			= new EventEmitter<IForm>();
 
 	/** @see Form.FormElement.Types */
-	public readonly types: typeof Form.FormElement.Types	= Form.FormElement.Types;
+	public readonly types: typeof Form.Element.Types	= Form.Element.Types;
 
 	/** Decode mask bytes. */
-	public getMask ({mask}: Form.IFormElement) : any {
+	public getMask ({mask}: Form.IElement) : any {
 		if (!mask) {
 			return;
 		}
