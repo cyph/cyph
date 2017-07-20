@@ -14,6 +14,33 @@
 					}
 				},
 
+				"handshake": {
+					"alicePublicKey": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+					"bobPublicKey": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+					"initialSecretCyphertext": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				},
+
 				"lock": {
 					"$contender": {
 						"id": {

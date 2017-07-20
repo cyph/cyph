@@ -1,5 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ChannelMessage} from '../../proto';
+import {IAsyncValue} from '../iasync-value';
+import {IProto} from '../iproto';
 import {LockFunction} from '../lock-function-type';
 import {StringProto} from '../protos';
 import {IChannelHandlers} from '../session';
@@ -40,6 +42,11 @@ export class ChannelService {
 		this.isClosed	= true;
 
 		await this.databaseService.removeItem((await this.state).url);
+	}
+
+	/** @see DatabaseService.getAsyncValue */
+	public async getAsyncValue<T> (url: string, proto: IProto<T>) : Promise<IAsyncValue<T>> {
+		return this.databaseService.getAsyncValue(`${(await this.state).url}/${url}`, proto);
 	}
 
 	/**

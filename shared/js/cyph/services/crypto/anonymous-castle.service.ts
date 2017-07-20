@@ -42,15 +42,17 @@ export class AnonymousCastleService implements ICastle {
 
 		const transport			= new Transport(sessionService);
 
+		const handshakeState	= await sessionService.handshakeState();
+
 		const localUser			= new AnonymousLocalUser(
 			potassiumService,
-			transport,
+			handshakeState,
 			sessionService.state.sharedSecret
 		);
 
 		const remoteUser		= new AnonymousRemoteUser(
 			potassiumService,
-			transport,
+			handshakeState,
 			sessionService.state.sharedSecret,
 			sessionService.remoteUsername
 		);
@@ -60,7 +62,7 @@ export class AnonymousCastleService implements ICastle {
 			transport,
 			localUser,
 			remoteUser,
-			sessionService.state.isAlice
+			handshakeState
 		));
 
 		sessionService.state.sharedSecret	= '';

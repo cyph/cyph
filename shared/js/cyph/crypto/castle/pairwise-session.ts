@@ -1,11 +1,16 @@
+import {denullifyAsyncValue} from '../../denullify-async-value';
 import {IAsyncValue} from '../../iasync-value';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
 import {util} from '../../util';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
+import {HandshakeSteps} from './enums';
+import {IAsymmetricRatchetState} from './iasymmetric-ratchet-state';
+import {IHandshakeState} from './ihandshake-state';
 import {ILocalUser} from './ilocal-user';
 import {IRemoteUser} from './iremote-user';
+import {ISymmetricRatchetStateMaybe} from './isymmetric-ratchet-state-maybe';
 import {Transport} from './transport';
 
 
@@ -19,80 +24,41 @@ export class PairwiseSession {
 	});
 
 	/** @ignore */
-	private isAborted: boolean;
-
-	/** @ignore */
-	private isConnected: boolean;
-
-	/** @ignore */
-	private localUser?: ILocalUser;
-
-	/** @ignore */
-	private remoteUser?: IRemoteUser;
-
-	/** @ignore */
-	private remoteUsername: string;
-
-	/** @ignore */
 	private resolveCore: (core: Core) => void;
 
 	/** @ignore */
-	private abort () : void {
-		if (this.isAborted) {
-			return;
-		}
-
-		this.isAborted	= true;
+	private async abort () : Promise<void> {
+		await this.handshakeState.currentStep.setValue(HandshakeSteps.Aborted);
 		this.transport.abort();
 	}
 
 	/** @ignore */
-	private connect () : void {
-		if (this.isConnected) {
+	private async connect () : Promise<void> {
+		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Complete) {
 			return;
 		}
 
-		this.isConnected	= true;
+		await this.handshakeState.currentStep.setValue(HandshakeSteps.Complete);
 		this.transport.connect();
 	}
 
 	/** @ignore */
 	private async handshakeOpenSecret (cyphertext: Uint8Array) : Promise<Uint8Array> {
-		try {
-			if (!this.localUser) {
-				throw new Error('Local user not found.');
-			}
+		const keyPair	= await this.localUser.getKeyPair();
+		const secret	= await this.potassium.box.open(cyphertext, keyPair);
 
-			const keyPair	= await this.localUser.getKeyPair();
-			const secret	= await this.potassium.box.open(cyphertext, keyPair);
+		this.potassium.clearMemory(keyPair.privateKey);
+		this.potassium.clearMemory(keyPair.publicKey);
 
-			this.potassium.clearMemory(keyPair.privateKey);
-			this.potassium.clearMemory(keyPair.publicKey);
-
-			this.localUser	= undefined;
-
-			return secret;
-		}
-		catch (err) {
-			throw new Error(
-				`handshakeOpenSecret failed: ${err ? err.message : 'undefined'}` +
-				`\n\ncyphertext: ${this.potassium.toBase64(cyphertext)}`
-			);
-		}
+		return secret;
 	}
 
 	/** @ignore */
 	private async handshakeSendSecret (secret: Uint8Array) : Promise<Uint8Array> {
-		if (!this.remoteUser) {
-			throw new Error('Remote user not found.');
-		}
-
 		const remotePublicKey	= await this.remoteUser.getPublicKey();
 		const cyphertext		= await this.potassium.box.seal(secret, remotePublicKey);
 
 		this.potassium.clearMemory(remotePublicKey);
-
-		this.remoteUser	= undefined;
 
 		return cyphertext;
 	}
@@ -106,19 +72,10 @@ export class PairwiseSession {
 
 	/** Receive/decrypt incoming message. */
 	public async receive (cyphertext: Uint8Array) : Promise<void> {
-		if (this.isAborted) {
+		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Aborted) {
+			await this.abort();
 			return;
 		}
-
-		try {
-			const cyphertextInterceptor	= this.transport.cyphertextInterceptors.shift();
-
-			if (cyphertextInterceptor) {
-				cyphertextInterceptor(cyphertext);
-				return;
-			}
-		}
-		catch (_) {}
 
 		const newMessageId	= this.potassium.toDataView(cyphertext).getFloat64(0, true);
 
@@ -155,25 +112,44 @@ export class PairwiseSession {
 						let plaintext	= await (await this.core).decrypt(cyphertextBytes);
 
 						/* Part 2 of handshake for Alice */
-						if (this.localUser) {
+						if (
+							(
+								await this.handshakeState.currentStep.getValue()
+							) === HandshakeSteps.PostCoreInit
+						) {
 							const oldPlaintext	= this.potassium.toBytes(plaintext);
 							plaintext			= await this.handshakeOpenSecret(oldPlaintext);
 
 							this.potassium.clearMemory(oldPlaintext);
+							await this.handshakeState.currentStep.setValue(
+								HandshakeSteps.PostMutualVerification
+							);
 						}
 
 						/* Completion of handshake */
-						if (!this.remoteUser) {
-							this.connect();
+						if (
+							(
+								await this.handshakeState.currentStep.getValue()
+							) === HandshakeSteps.PostMutualVerification
+						) {
+							await this.connect();
 						}
 
-						this.transport.receive(cyphertextBytes, plaintext, this.remoteUsername);
+						this.transport.receive(
+							cyphertextBytes,
+							plaintext,
+							await this.remoteUser.getUsername()
+						);
 
 						++incomingMessageId;
 						break;
 					}
 					catch (err) {
-						if (!this.isConnected) {
+						if (
+							(
+								await this.handshakeState.currentStep.getValue()
+							) !== HandshakeSteps.Complete
+						) {
 							this.abort();
 							throw err;
 						}
@@ -194,7 +170,8 @@ export class PairwiseSession {
 
 	/** Send/encrypt outgoing message. */
 	public async send (plaintext: string|ArrayBufferView, timestamp?: number) : Promise<void> {
-		if (this.isAborted) {
+		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Aborted) {
+			await this.abort();
 			return;
 		}
 
@@ -212,11 +189,17 @@ export class PairwiseSession {
 		);
 
 		return this.sendLock(async () => {
+			let bobHandshakeMutualVerification	= false;
+
 			/* Part 2 of handshake for Bob */
-			if (this.remoteUser) {
+			if (
+				(await this.handshakeState.currentStep.getValue()) === HandshakeSteps.PostCoreInit
+			) {
 				const oldData	= data;
 				data			= await this.handshakeSendSecret(oldData);
 				this.potassium.clearMemory(oldData);
+
+				bobHandshakeMutualVerification	= true;
 			}
 
 			const messageId		= await this.newOutgoingMessageId();
@@ -224,6 +207,12 @@ export class PairwiseSession {
 
 			this.potassium.clearMemory(data);
 			this.transport.send(cyphertext, messageId);
+
+			if (bobHandshakeMutualVerification) {
+				await this.handshakeState.currentStep.setValue(
+					HandshakeSteps.PostMutualVerification
+				);
+			}
 		});
 	}
 
@@ -234,11 +223,32 @@ export class PairwiseSession {
 		/** @ignore */
 		private readonly transport: Transport,
 
-		localUser: ILocalUser,
+		/** @ignore */
+		private readonly localUser: ILocalUser,
 
-		remoteUser: IRemoteUser,
+		/** @ignore */
+		private readonly remoteUser: IRemoteUser,
 
-		isAlice: boolean,
+		/** @ignore */
+		private readonly handshakeState: IHandshakeState,
+
+		symmetricRatchetState: ISymmetricRatchetStateMaybe = {
+			current: {
+				incoming: new LocalAsyncValue(undefined),
+				outgoing: new LocalAsyncValue(undefined)
+			},
+			next: {
+				incoming: new LocalAsyncValue(undefined),
+				outgoing: new LocalAsyncValue(undefined)
+			}
+		},
+
+		asymmetricRatchetState: IAsymmetricRatchetState = {
+			privateKey: new LocalAsyncValue(undefined),
+			publicKey: new LocalAsyncValue(undefined)
+		},
+
+		coreLock: LockFunction	= util.lockFunction(),
 
 		/** @ignore */
 		private readonly incomingMessageId: IAsyncValue<number> = new LocalAsyncValue(0),
@@ -261,45 +271,89 @@ export class PairwiseSession {
 		private readonly sendLock: LockFunction = util.lockFunction()
 	) { (async () => {
 		try {
-			this.localUser	= localUser;
-			this.remoteUser	= remoteUser;
-
-			const aliceRemoteSecret	= !isAlice ? this.localUser.getRemoteSecret() : undefined;
-
-			this.remoteUsername		= await this.remoteUser.getUsername();
-
 			await this.localUser.getKeyPair();
 
-			let secret: Uint8Array;
-			if (aliceRemoteSecret === undefined) {
-				secret	= this.potassium.randomBytes(
-					await potassium.ephemeralKeyExchange.secretBytes
-				);
+			while (true) {
+				const initialSecret			=
+					await this.handshakeState.initialSecret.getValue()
+				;
 
-				this.transport.send(await this.handshakeSendSecret(secret));
-			}
-			else {
-				secret	= await this.handshakeOpenSecret(await aliceRemoteSecret);
+				const symmetricRatchetReady	=
+					(await symmetricRatchetState.current.incoming.getValue()) !== undefined
+				;
 
-				this.send('');
-			}
+				/* Bootstrap asymmetric ratchet */
+				if (initialSecret === undefined) {
+					if (this.handshakeState.isAlice) {
+						const newInitialSecret	= this.potassium.randomBytes(
+							await potassium.ephemeralKeyExchange.secretBytes
+						);
 
-			const symmetricKeys	= await Core.newSymmetricKeys(this.potassium, isAlice, secret);
+						await this.handshakeState.initialSecretCyphertext.setValue(
+							await this.handshakeSendSecret(newInitialSecret)
+						);
 
-			this.resolveCore(new Core(
-				this.potassium,
-				isAlice,
-				{
-					current: {
-						incoming: new LocalAsyncValue(symmetricKeys.incoming),
-						outgoing: new LocalAsyncValue(symmetricKeys.outgoing)
-					},
-					next: {
-						incoming: new LocalAsyncValue(new Uint8Array(symmetricKeys.incoming)),
-						outgoing: new LocalAsyncValue(new Uint8Array(symmetricKeys.outgoing))
+						await this.handshakeState.initialSecret.setValue(newInitialSecret);
+					}
+					else {
+						await this.handshakeState.initialSecret.setValue(
+							await this.handshakeOpenSecret(
+								await this.handshakeState.initialSecretCyphertext.getValue()
+							)
+						);
 					}
 				}
-			));
+
+				/* Initialize symmetric ratchet */
+				else if (!symmetricRatchetReady) {
+					const symmetricKeys	= await Core.newSymmetricKeys(
+						this.potassium,
+						this.handshakeState.isAlice,
+						initialSecret
+					);
+
+					await Promise.all([
+						symmetricRatchetState.current.incoming.setValue(symmetricKeys.incoming),
+						symmetricRatchetState.current.outgoing.setValue(symmetricKeys.outgoing),
+						symmetricRatchetState.next.incoming.setValue(
+							new Uint8Array(symmetricKeys.incoming)
+						),
+						symmetricRatchetState.next.outgoing.setValue(
+							new Uint8Array(symmetricKeys.outgoing)
+						)
+					]);
+				}
+
+				/* Ready to activate Core */
+				else {
+					const [
+						currentIncoming,
+						currentOutgoing,
+						nextIncoming,
+						nextOutgoing
+					]	= await Promise.all([
+						denullifyAsyncValue(symmetricRatchetState.current.incoming),
+						denullifyAsyncValue(symmetricRatchetState.current.outgoing),
+						denullifyAsyncValue(symmetricRatchetState.next.incoming),
+						denullifyAsyncValue(symmetricRatchetState.next.outgoing)
+					]);
+
+					this.resolveCore(new Core(
+						this.potassium,
+						this.handshakeState.isAlice,
+						{
+							current: {incoming: currentIncoming, outgoing: currentOutgoing},
+							next: {incoming: nextIncoming, outgoing: nextOutgoing}
+						},
+						asymmetricRatchetState,
+						coreLock
+					));
+
+					await this.handshakeState.currentStep.setValue(HandshakeSteps.PostCoreInit);
+
+					return;
+				}
+			}
 		}
 		catch (err) {
 			this.abort();

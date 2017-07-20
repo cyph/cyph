@@ -7,7 +7,4 @@ import {IKeyPair} from '../../../proto';
 export interface ILocalUser {
 	/** Potassium.Box key pair. */
 	getKeyPair () : Promise<IKeyPair>;
-
-	/** Encrypted secret from remote user. */
-	getRemoteSecret () : Promise<Uint8Array>;
 }
