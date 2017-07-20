@@ -75,7 +75,7 @@ export class DatabaseService extends DataManagerService {
 
 				return currentValue;
 			}).catch(
-				() => defaultValue
+				async () => asyncValue.watch().take(2).toPromise()
 			),
 			lock,
 			setValue: async value => localLock(async () => {

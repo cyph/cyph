@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ISessionMessage, ISessionMessageData, SessionMessageList} from '../../proto';
+import {IHandshakeState} from '../crypto/castle/ihandshake-state';
 import {eventManager} from '../event-manager';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {CastleEvents, events, rpcEvents, SessionMessage} from '../session';
@@ -217,6 +218,11 @@ export abstract class SessionService implements ISessionService {
 	/** @inheritDoc */
 	public close () : void {
 		throw new Error('Must provide an implementation of SessionService.close.');
+	}
+
+	/** @inheritDoc */
+	public async handshakeState () : Promise<IHandshakeState> {
+		throw new Error('Must provide an implementation of SessionService.handshakeState.');
 	}
 
 	/** @inheritDoc */

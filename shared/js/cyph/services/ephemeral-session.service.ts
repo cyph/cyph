@@ -1,6 +1,9 @@
 import {Injectable} from '@angular/core';
 import {ISessionMessage, SessionMessageList} from '../../proto';
+import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {env} from '../env';
+import {LocalAsyncValue} from '../local-async-value';
+import {BinaryProto} from '../protos';
 import {events, rpcEvents} from '../session/enums';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
@@ -120,6 +123,27 @@ export class EphemeralSessionService extends SessionService {
 	/** @inheritDoc */
 	public close () : void {
 		this.channelService.close();
+	}
+
+	/** @inheritDoc */
+	public async handshakeState () : Promise<IHandshakeState> {
+		return {
+			currentStep: new LocalAsyncValue(HandshakeSteps.Start),
+			initialSecret: new LocalAsyncValue<Uint8Array|undefined>(undefined),
+			initialSecretCyphertext: await this.channelService.getAsyncValue(
+				'handshake/initialSecretCyphertext',
+				BinaryProto
+			),
+			isAlice: this.state.isAlice,
+			localPublicKey: await this.channelService.getAsyncValue(
+				`handshake/${this.state.isAlice ? 'alice' : 'bob'}PublicKey`,
+				BinaryProto
+			),
+			remotePublicKey: await this.channelService.getAsyncValue(
+				`handshake/${this.state.isAlice ? 'bob' : 'alice'}PublicKey`,
+				BinaryProto
+			)
+		};
 	}
 
 	/** @inheritDoc */

@@ -1,6 +1,4 @@
-import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
-import {util} from '../../util';
 import {IPotassium} from '../potassium/ipotassium';
 import {IAsymmetricRatchetState} from './iasymmetric-ratchet-state';
 import {ISymmetricRatchetState} from './isymmetric-ratchet-state';
@@ -209,16 +207,13 @@ export class Core {
 		/** @ignore */
 		private readonly isAlice: boolean,
 
-		/** @see ISymmetricRatchetState */
+		/** @ignore */
 		private readonly symmetricRatchetState: ISymmetricRatchetState,
 
-		/** @see IAsymmetricRatchetState */
-		private readonly asymmetricRatchetState: IAsymmetricRatchetState = {
-			privateKey: new LocalAsyncValue<Uint8Array|undefined>(undefined),
-			publicKey: new LocalAsyncValue<Uint8Array|undefined>(undefined)
-		},
+		/** @ignore */
+		private readonly asymmetricRatchetState: IAsymmetricRatchetState,
 
-		/** Lock function. */
-		private readonly lock: LockFunction = util.lockFunction()
+		/** @ignore */
+		private readonly lock: LockFunction
 	) {}
 }

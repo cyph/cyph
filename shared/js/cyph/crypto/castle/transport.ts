@@ -1,6 +1,5 @@
 import {CastleEvents, events, users} from '../../session/enums';
 import {ISession} from '../../session/isession';
-import {util} from '../../util';
 import {potassiumUtil} from '../potassium/potassium-util';
 
 
@@ -13,9 +12,6 @@ export class Transport {
 	private static readonly cyphertextLimit: number	= 200000;
 
 
-	/** Queue of cyphertext interception handlers. */
-	public readonly cyphertextInterceptors: ((cyphertext: Uint8Array) => void)[]	= [];
-
 	/** Triggers abortion event. */
 	public abort () : void {
 		this.session.castleHandler(CastleEvents.abort);
@@ -24,28 +20,6 @@ export class Transport {
 	/** Triggers connection event. */
 	public connect () : void {
 		this.session.castleHandler(CastleEvents.connect);
-	}
-
-	/**
-	 * Intercept raw data of next incoming message before
-	 * it ever hits the core Castle protocol logic.
-	 */
-	public async interceptIncomingCyphertext (timeout: number = 120000) : Promise<Uint8Array> {
-		return new Promise<Uint8Array>(async (resolve, reject) => {
-			this.cyphertextInterceptors.push(resolve);
-
-			if (timeout) {
-				await util.sleep(timeout);
-
-				const index	= this.cyphertextInterceptors.indexOf(resolve);
-				if (index < 0) {
-					return;
-				}
-
-				this.cyphertextInterceptors.splice(index, 1);
-				reject('Cyphertext interception timeout.');
-			}
-		});
 	}
 
 	/** Trigger event for logging cyphertext. */

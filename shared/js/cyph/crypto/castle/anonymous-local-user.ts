@@ -1,13 +1,12 @@
 import {IKeyPair} from '../../../proto';
 import {IPotassium} from '../potassium/ipotassium';
 import {potassiumUtil} from '../potassium/potassium-util';
+import {IHandshakeState} from './ihandshake-state';
 import {ILocalUser} from './ilocal-user';
-import {Transport} from './transport';
 
 
 /**
- * An anonymous user with an ephemeral key pair, authenticated via
- * shared secret rather than AGSE signature.
+ * An anonymous user with an ephemeral key pair, authenticated via shared secret.
  */
 export class AnonymousLocalUser implements ILocalUser {
 	/** Salt used for shared secret handshake. */
@@ -17,36 +16,28 @@ export class AnonymousLocalUser implements ILocalUser {
 
 
 	/** @ignore */
-	private keyPair: IKeyPair;
-
-	/** @inheritDoc */
-	public async getKeyPair () : Promise<IKeyPair> {
-		if (this.keyPair) {
-			return this.keyPair;
-		}
-
-		this.keyPair		= await this.potassium.box.keyPair();
+	private keyPair: Promise<IKeyPair>	= (async () => {
+		const keyPair		= await this.potassium.box.keyPair();
 
 		const sharedSecret	= (await this.potassium.passwordHash.hash(
 			this.sharedSecret,
 			AnonymousLocalUser.handshakeSalt
 		)).hash;
 
-		this.transport.send(await this.potassium.secretBox.seal(
-			this.keyPair.publicKey,
-			sharedSecret
-		));
+		await this.handshakeState.localPublicKey.setValue(
+			await this.potassium.secretBox.seal(keyPair.publicKey, sharedSecret)
+		);
 
 		this.potassium.clearMemory(sharedSecret);
 
 		this.sharedSecret	= '';
 
-		return this.keyPair;
-	}
+		return keyPair;
+	})();
 
 	/** @inheritDoc */
-	public async getRemoteSecret () : Promise<Uint8Array> {
-		return this.transport.interceptIncomingCyphertext();
+	public async getKeyPair () : Promise<IKeyPair> {
+		return this.keyPair;
 	}
 
 	constructor (
@@ -54,7 +45,7 @@ export class AnonymousLocalUser implements ILocalUser {
 		private readonly potassium: IPotassium,
 
 		/** @ignore */
-		private readonly transport: Transport,
+		private readonly handshakeState: IHandshakeState,
 
 		/** @ignore */
 		private sharedSecret: string

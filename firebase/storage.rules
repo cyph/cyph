@@ -5,6 +5,12 @@ service firebase.storage {
 				allow read, write;
 			}
 
+			// match /handshake {
+			// 	match /alicePublicKey {}
+			// 	match /bobPublicKey {}
+			// 	match /initialSecretCyphertext {}
+			// }
+
 			// match /messages/{message} {}
 
 			// match /users/{user} {}

@@ -1,4 +1,5 @@
 import {ISessionMessage} from '../../proto';
+import {IHandshakeState} from '../crypto/castle/ihandshake-state';
 import {CastleEvents} from './enums';
 
 
@@ -25,6 +26,9 @@ export interface ISession {
 
 	/** This kills the cyph. */
 	close () : void;
+
+	/** @see IHandshakeState */
+	handshakeState () : Promise<IHandshakeState>;
 
 	/** @see ChannelService.lock */
 	lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T>;

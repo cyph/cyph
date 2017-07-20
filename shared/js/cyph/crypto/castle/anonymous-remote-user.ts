@@ -1,19 +1,15 @@
 import {IPotassium} from '../potassium/ipotassium';
 import {AnonymousLocalUser} from './anonymous-local-user';
+import {IHandshakeState} from './ihandshake-state';
 import {IRemoteUser} from './iremote-user';
-import {Transport} from './transport';
 
 
 /**
- * An anonymous user with an ephemeral key pair, authenticated via
- * shared secret rather than AGSE signature.
+ * An anonymous user with an ephemeral key pair, authenticated via shared secret.
  */
 export class AnonymousRemoteUser implements IRemoteUser {
 	/** @ignore */
-	private readonly encryptedPublicBoxKey: Promise<Uint8Array>;
-
-	/** @ignore */
-	private publicKey: Uint8Array;
+	private publicKey?: Promise<Uint8Array>;
 
 	/** @ignore */
 	private readonly sharedSecret: Promise<Uint8Array>;
@@ -24,16 +20,20 @@ export class AnonymousRemoteUser implements IRemoteUser {
 			return this.publicKey;
 		}
 
-		const encryptedPublicBoxKey	= await this.encryptedPublicBoxKey;
-		const sharedSecret			= await this.sharedSecret;
+		this.publicKey	= (async () => {
+			const encryptedPublicBoxKey	= await this.handshakeState.remotePublicKey.getValue();
+			const sharedSecret			= await this.sharedSecret;
 
-		this.publicKey		= await this.potassium.secretBox.open(
-			encryptedPublicBoxKey,
-			sharedSecret
-		);
+			const publicKey	= await this.potassium.secretBox.open(
+				encryptedPublicBoxKey,
+				sharedSecret
+			);
 
-		this.potassium.clearMemory(encryptedPublicBoxKey);
-		this.potassium.clearMemory(sharedSecret);
+			this.potassium.clearMemory(encryptedPublicBoxKey);
+			this.potassium.clearMemory(sharedSecret);
+
+			return publicKey;
+		})();
 
 		return this.publicKey;
 	}
@@ -48,15 +48,13 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		private readonly potassium: IPotassium,
 
 		/** @ignore */
-		private readonly transport: Transport,
+		private readonly handshakeState: IHandshakeState,
 
 		sharedSecret: string,
 
 		/** @ignore */
 		private readonly username: Promise<string>
 	) {
-		this.encryptedPublicBoxKey	= this.transport.interceptIncomingCyphertext();
-
 		this.sharedSecret			= (async () =>
 			(await this.potassium.passwordHash.hash(
 				sharedSecret,
