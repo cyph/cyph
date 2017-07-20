@@ -1,5 +1,20 @@
 import * as msgpack from 'msgpack-lite';
-import {Form} from '../../proto';
+import {Form, IForm} from '../../proto';
+
+
+const newForm				= (...components: Form.IFormComponent[]) : IForm => ({
+	components
+});
+
+const newFormRow			= (...elements: (
+	Form.IFormElement|Form.IFormElement[])[]) : Form.IFormElementRow => ({
+	elements: elements.reduce<Form.IFormElement[]>((a, b) => a.concat(b), [])
+});
+
+const newFormComponent			= (...rows: (
+	Form.IFormElementRow|Form.IFormElementRow[])[]) : Form.IFormComponent => ({
+	rows: rows.reduce<Form.IFormElementRow[]>((a, b) => a.concat(b), [])
+});
 
 
 const newFormElement	= <T extends {
@@ -35,7 +50,6 @@ const newFormElement	= <T extends {
 
 	return element;
 };
-
 
 /** Creates a new checkbox form element. */
 export const checkbox		= newFormElement<{
@@ -132,3 +146,73 @@ export const textarea		= newFormElement<{
 	value?: string;
 	width?: number;
 }>(Form.FormElement.Types.Textarea);
+
+export const title		= (titleText: string) : Form.IFormElementRow => {
+	return newFormRow(text({label: titleText, width: 100}));
+};
+
+export const phone				= () : Form.IFormElementRow => {
+	return newFormRow([input({label: 'Phone Number'})]);
+};
+
+export const email				= () : Form.IFormElementRow => {
+	return newFormRow([input({label: 'Email', required: true})]);
+};
+
+export const name		= () : Form.IFormElementRow => {
+	return newFormRow([
+		input({label: 'First Name', required: true}),
+		input({label: 'Middle Name'}),
+		input({label: 'Last Name', required: true})
+	]);
+};
+
+export const address	= () : Form.IFormElementRow => {
+		return newFormRow([
+		input({label: 'Address'}),
+		input({label: 'City'}),
+		input({label: 'State', width: 10}),
+		input({label: 'Zip', width: 25})
+	]);
+};
+
+export const ssn	= () : Form.IFormElementRow => {
+	return newFormRow([passwordInput({label: 'Social Security Number', width: 20})]);
+};
+
+export const contact			= () : Form.IFormComponent => {
+	return newFormComponent([
+		title('Contact Information'),
+		name(),
+		email(),
+		phone()
+	]);
+};
+
+export const insurance				= () : Form.IFormElementRow => {
+	return newFormRow([
+		input({label: 'Insured\'s name'}),
+		input({label: 'Relationship'}),
+		input({label: 'Employer'}),
+		input({label: 'Phone Number'})
+	]);
+};
+
+export const insuranceComponent	= () : Form.IFormComponent => {
+	return newFormComponent([
+		title('Primary Insurance'),
+		insurance(),
+		address(),
+		<Form.IFormElementRow> input({label: 'Insurance Company'}),
+		title('Secondary Insurance'),
+		insurance(),
+		address(),
+		<Form.IFormElementRow> input({label: 'Insurance Company'})
+	]);
+};
+
+export const newPatient		= () : IForm => newForm(
+	<Form.IFormComponent> title('New Patient Form'),
+	contact(),
+	insuranceComponent()
+);

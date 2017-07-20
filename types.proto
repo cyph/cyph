@@ -30,6 +30,11 @@ message ChatMessage {
 
 /** Represents a form that a user can submit responses to. */
 message Form {
+	message FormComponent {
+		/** @see FormElementRow */
+		repeated FormElementRow rows = 1;
+	}
+
 	/** One element of a form. */
 	message FormElement {
 		/** Element input type. */
@@ -84,8 +89,8 @@ message Form {
 		repeated FormElement elements = 1;
 	}
 
-	/** @see FormElementRow */
-	repeated FormElementRow rows = 1;
+	/** @see FormComponent */
+	repeated FormComponent components = 1;
 }
 
 /** An asymmetric key pair. */
