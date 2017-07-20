@@ -28,7 +28,7 @@ export const account: Route	= {
 		{path: 'contacts/:username', component: AccountContactsComponent},
 		{path: 'home', redirectTo: ''},
 		{path: 'files', component: AccountFilesComponent},
-		{path: 'form', component: AccountFormsComponent},
+		{path: 'forms', component: AccountFormsComponent},
 		{path: 'login', component: AccountLoginComponent},
 		{path: 'logout', component: AccountLogoutComponent},
 		{path: 'notes', component: AccountNotesComponent},

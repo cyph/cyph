@@ -14,12 +14,7 @@ import './sham';
 
 import {NgModule} from '@angular/core';
 import {Http} from '@angular/http';
-import {
-	MdDatepickerModule,
-	MdNativeDateModule,
-	MdSidenavModule,
-	MdToolbarModule
-} from '@angular/material';
+import {MdSidenavModule, MdToolbarModule} from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
 import {RouterModule} from '@angular/router';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
@@ -74,8 +69,6 @@ import {SilentNotificationService} from './silent-notification.service';
 		RouterModule.forRoot(appRoutes),
 		CyphCommonModule,
 		CyphWebModule,
-		MdDatepickerModule,
-		MdNativeDateModule,
 		MdSidenavModule,
 		MdToolbarModule
 	],
