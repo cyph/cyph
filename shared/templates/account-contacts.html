@@ -11,7 +11,7 @@
 		<md-card
 			[fxFlexOrder]='isActive(contact) ? "-1" : ""'
 			class='contact animated'
-			*ngFor='let contact of accountContactsService.contactsList | async; let i = index'
+			*ngFor='let contact of accountContactsService.contactList | async; let i = index'
 			[attr.data-index]='i'
 			[class.active]='isActive(contact)'
 			[class.flipInY]='!isActive(contact)'

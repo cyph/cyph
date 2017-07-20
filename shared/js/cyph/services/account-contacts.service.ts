@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {AccountContactRecord, AccountUserPresence} from '../../proto';
+import {AccountContactRecord, AccountUserPresence, IAccountContactRecord} from '../../proto';
 import {UserPresence, userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
 import {util} from '../util';
@@ -15,28 +15,70 @@ import {DatabaseService} from './database.service';
 @Injectable()
 export class AccountContactsService {
 	/** @ignore */
-	private readonly contactsListSubject: BehaviorSubject<User[]>	=
+	private readonly contactListSubject: BehaviorSubject<User[]>			=
 		new BehaviorSubject<User[]>([])
 	;
+
+	/** @ignore */
+	private readonly contactRecordMappings									= {
+		id: new Map<string, IAccountContactRecord>(),
+		username: new Map<string, IAccountContactRecord>()
+	};
+
+	/** @ignore */
+	private readonly contactRecords: Observable<IAccountContactRecord[]>	=
+		util.flattenObservablePromise(
+			this.accountDatabaseService.watchList(
+				'contactRecords',
+				AccountContactRecord
+			).map(
+				contacts => contacts.map(o => o.value)
+			)
+		)
+	;
+
+	/** @ignore */
+	private readonly contactRecordsReady: Promise<void>		= new Promise<void>(resolve => {
+		this.resolveContactRecordsReady	= resolve;
+	});
+
+	/** @ignore */
+	private resolveContactRecordsReady: () => void;
 
 	/** @ignore */
 	private userStatuses: Map<User, UserPresence>			= new Map<User, UserPresence>();
 
 	/** List of contacts for current user, sorted by status and then alphabetically by username. */
-	public readonly contactsList: Observable<User[]>		= this.contactsListSubject;
+	public readonly contactList: Observable<User[]>			= this.contactListSubject;
 
 	/** List of usernames of contacts for current user. */
-	public readonly contactUsernames: Observable<string[]>	= util.flattenObservablePromise(
-		this.accountDatabaseService.watchList(
-			'contactRecords',
-			AccountContactRecord
-		).map(
-			contacts => contacts.map(o => o.value.username)
-		)
+	public readonly contactUsernames: Observable<string[]>	= this.contactRecords.map(
+		contactRecords => contactRecords.map(o => o.username)
 	);
 
 	/** Indicates whether the first load of the contacts list has completed. */
 	public initiated: boolean	= false;
+
+	/** @ignore */
+	private async getContactRecord (
+		{id, username}: {id?: string; username?: string}
+	) : Promise<IAccountContactRecord> {
+		await this.contactRecordsReady;
+
+		const contactRecord	=
+			id !== undefined ?
+				this.contactRecordMappings.id.get(id) :
+				username !== undefined ?
+					this.contactRecordMappings.username.get(username) :
+					undefined
+		;
+
+		if (!contactRecord) {
+			throw new Error('Contact not found.');
+		}
+
+		return contactRecord;
+	}
 
 	/** @ignore */
 	private sort<T> (users: (T&{status: AccountUserPresence.Statuses; username: string})[]) : T[] {
@@ -57,7 +99,7 @@ export class AccountContactsService {
 
 	/** @ignore */
 	private updateContactsList () : void {
-		this.contactsListSubject.next(
+		this.contactListSubject.next(
 			this.sort(
 				Array.from(this.userStatuses.keys()).map(user => ({
 					status: util.getOrSetDefault(
@@ -74,6 +116,16 @@ export class AccountContactsService {
 		);
 	}
 
+	/** Gets contact ID based on username. */
+	public async getContactID (username: string) : Promise<string> {
+		return (await this.getContactRecord({username})).id;
+	}
+
+	/** Gets contact username based on ID. */
+	public async getContactUsername (id: string) : Promise<string> {
+		return (await this.getContactRecord({id})).username;
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
@@ -85,6 +137,15 @@ export class AccountContactsService {
 		private readonly databaseService: DatabaseService
 	) {
 		const lock	= util.lockFunction();
+
+		this.contactRecords.subscribe(contactRecords => {
+			for (const contactRecord of contactRecords) {
+				this.contactRecordMappings.id.set(contactRecord.id, contactRecord);
+				this.contactRecordMappings.username.set(contactRecord.username, contactRecord);
+			}
+
+			this.resolveContactRecordsReady();
+		});
 
 		this.contactUsernames.flatMap(async usernames => Promise.all(
 			usernames.map(async username => ({

@@ -8,7 +8,7 @@ import {AccountSessionService} from '../services/account-session.service';
 import {ChannelService} from '../services/channel.service';
 import {ChatService} from '../services/chat.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
-import {AnonymousCastleService} from '../services/crypto/anonymous-castle.service';
+import {AccountCastleService} from '../services/crypto/account-castle.service';
 import {CyphertextService} from '../services/cyphertext.service';
 import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
@@ -28,7 +28,7 @@ import {StringsService} from '../services/strings.service';
 	providers: [
 		AccountChatService,
 		AccountSessionService,
-		AnonymousCastleService,
+		AccountCastleService,
 		ChannelService,
 		CyphertextService,
 		FileTransferService,
