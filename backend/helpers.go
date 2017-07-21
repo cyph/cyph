@@ -73,8 +73,8 @@ var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
 var prefineryKey = os.Getenv("PREFINERY_KEY")
 
-func isValidCyphId(id string) bool {
-	return len(id) == config.AllowedCyphIdLength && config.AllowedCyphIds.MatchString(id)
+func isValidCyphID(id string) bool {
+	return len(id) == config.AllowedCyphIDLength && config.AllowedCyphIDs.MatchString(id)
 }
 
 func generateApiKey() (string, error) {
@@ -227,7 +227,7 @@ func trackEvent(h HandlerArgs, category, action, label string, value int) error 
 	data := url.Values{}
 
 	data.Set("v", "1")
-	data.Set("tid", config.AnalId)
+	data.Set("tid", config.AnalID)
 	data.Set("cid", "555")
 	data.Set("t", "event")
 	data.Set("ec", category)

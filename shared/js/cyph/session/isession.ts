@@ -10,7 +10,7 @@ import {CastleEvents} from './enums';
 export interface ISession {
 	/** State of the cyph (referenced by UI). */
 	readonly state: {
-		cyphId: string;
+		cyphID: string;
 		isAlice: boolean;
 		isAlive: boolean;
 		sharedSecret: string;

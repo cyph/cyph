@@ -23,16 +23,16 @@ import {util} from '../../util';
 @Injectable()
 export class ThreadedPotassiumService extends PotassiumUtil implements IPotassium {
 	/** @ignore */
-	private readonly eventId: string	= util.uuid();
+	private readonly eventID: string	= util.uuid();
 
 	/** @ignore */
 	private thread: Thread;
 
 	/** @ignore */
-	private readonly threadEvents: ThreadEvents	= new ThreadEvents(this.eventId);
+	private readonly threadEvents: ThreadEvents	= new ThreadEvents(this.eventID);
 
 	/** @ignore */
-	private readonly threadInit: Promise<void>	= eventManager.one<void>(this.eventId);
+	private readonly threadInit: Promise<void>	= eventManager.one<void>(this.eventID);
 
 	/** @inheritDoc */
 	public readonly box: IBox	= {
@@ -324,14 +324,14 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 
 				/* tslint:disable-next-line:no-shadowed-variable */
 				const eventManager: EventManager					= (<any> self).eventManager;
-				const locals: {eventId: string; isNative: boolean}	= (<any> self).locals;
+				const locals: {eventID: string; isNative: boolean}	= (<any> self).locals;
 				/* tslint:disable-next-line:variable-name */
 				const Potassium: any								= (<any> self).Potassium;
 				/* tslint:disable-next-line:no-shadowed-variable variable-name */
 				const ThreadEvents: any								= (<any> self).ThreadEvents;
 
 				const potassium: IPotassium			= new Potassium(locals.isNative);
-				const threadEvents: ThreadEvents	= new ThreadEvents(locals.eventId);
+				const threadEvents: ThreadEvents	= new ThreadEvents(locals.eventID);
 
 				const clearData	= (
 					input: Uint8Array|undefined|{
@@ -745,10 +745,10 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 					clearData
 				);
 
-				eventManager.trigger<void>(locals.eventId, undefined, true);
+				eventManager.trigger<void>(locals.eventID, undefined, true);
 			},
 			{
-				eventId: this.eventId,
+				eventID: this.eventID,
 				isNative: await this.native()
 			}
 		); })();

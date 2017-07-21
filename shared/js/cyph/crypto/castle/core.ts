@@ -113,7 +113,7 @@ export class Core {
 		;
 
 		return this.lock(async () => {
-			const messageId	= this.potassium.toBytes(cyphertext, 0, 4);
+			const messageID	= this.potassium.toBytes(cyphertext, 0, 4);
 			const encrypted	= this.potassium.toBytes(cyphertext, 4);
 
 			for (const keys of [
@@ -128,7 +128,7 @@ export class Core {
 					const decrypted		= await this.potassium.secretBox.open(
 						encrypted,
 						incomingKey,
-						messageId
+						messageID
 					);
 
 					keys.incoming.setValue(incomingKey);
@@ -170,10 +170,10 @@ export class Core {
 	/**
 	 * Encrypt outgoing plaintext.
 	 * @param plaintext Data to be encrypted.
-	 * @param messageId Used to enforce message ordering.
+	 * @param messageID Used to enforce message ordering.
 	 * @returns Cyphertext.
 	 */
-	public async encrypt (plaintext: Uint8Array, messageId: Uint8Array) : Promise<Uint8Array> {
+	public async encrypt (plaintext: Uint8Array, messageID: Uint8Array) : Promise<Uint8Array> {
 		const o	= await this.lock(async () => {
 			const ratchetData	= await this.asymmetricRatchet();
 			const fullPlaintext	= this.potassium.concatMemory(false, ratchetData, plaintext);
@@ -191,7 +191,7 @@ export class Core {
 		const cyphertext	= await this.potassium.secretBox.seal(
 			o.fullPlaintext,
 			o.key,
-			messageId
+			messageID
 		);
 
 		this.potassium.clearMemory(o.key);

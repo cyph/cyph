@@ -31,7 +31,7 @@ export class ChannelService {
 	;
 
 	/** @ignore */
-	private readonly userId: string	= util.uuid();
+	private readonly userID: string	= util.uuid();
 
 	/** This kills the channel. */
 	public async close () : Promise<void> {
@@ -58,7 +58,7 @@ export class ChannelService {
 		const url	= `channels/${channelName}`;
 
 		this.resolveState({lock: this.databaseService.lockFunction(`${url}/lock`), url});
-		this.databaseService.setDisconnectTracker(`${url}/disconnects/${this.userId}`);
+		this.databaseService.setDisconnectTracker(`${url}/disconnects/${this.userID}`);
 
 		let isConnected	= false;
 		const usersSubscription	= this.databaseService.watchList(
@@ -71,7 +71,7 @@ export class ChannelService {
 				}
 				if (!isConnected) {
 					isConnected	= true;
-					handlers.onOpen(users[0].value === this.userId);
+					handlers.onOpen(users[0].value === this.userID);
 				}
 				if (users.length < 2) {
 					return;
@@ -92,7 +92,7 @@ export class ChannelService {
 			true
 		).subscribe(
 			message => {
-				if (message.value.author !== this.userId) {
+				if (message.value.author !== this.userID) {
 					handlers.onMessage(message.value.cyphertext);
 				}
 			},
@@ -105,7 +105,7 @@ export class ChannelService {
 			}
 		);
 
-		this.databaseService.pushItem(`${url}/users`, StringProto, this.userId);
+		this.databaseService.pushItem(`${url}/users`, StringProto, this.userID);
 	}
 
 	/** Indicates whether this channel is available for sending and receiving. */
@@ -123,7 +123,7 @@ export class ChannelService {
 		this.localLock(async () => this.databaseService.pushItem(
 			`${(await this.state).url}/messages`,
 			ChannelMessage,
-			{author: this.userId, cyphertext}
+			{author: this.userID, cyphertext}
 		));
 	}
 

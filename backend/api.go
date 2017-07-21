@@ -49,10 +49,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		lastName = names[1]
 	}
 
-	planId := ""
+	planID := ""
 	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("category")), 10, 64); err == nil {
 		if item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("item")), 10, 64); err == nil {
-			planId = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
+			planID = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
 		}
 	}
 
@@ -105,7 +105,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 		tx, err := bt.Subscription().Create(&braintree.SubscriptionRequest{
 			PaymentMethodToken: paymentMethod.GetToken(),
-			PlanId:             planId,
+			PlanId:             planID,
 		})
 
 		if err != nil {
@@ -123,7 +123,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				datastore.NewKey(h.Context, "Customer", apiKey, 0, nil),
 				&Customer{
 					ApiKey:      apiKey,
-					BraintreeId: customer.Id,
+					BraintreeID: customer.Id,
 				},
 			)
 
@@ -145,8 +145,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		bt.Transaction().SubmitForSettlement(tx.Id)
 
 		success = tx.Status == "authorized"
-		txJson, _ := json.Marshal(tx)
-		txLog = string(txJson)
+		txJSON, _ := json.Marshal(tx)
+		txLog = string(txJSON)
 	}
 
 	subject := "SALE SALE SALE"
@@ -159,7 +159,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		Subject: subject,
 		Body: ("" +
 			"Nonce: " + nonce +
-			"\nPlan ID: " + planId +
+			"\nPlan ID: " + planID +
 			"\nAmount: " + amountString +
 			"\nSubscription: " + subscriptionString +
 			"\nCompany: " + company +
@@ -191,7 +191,7 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 
 	id := sanitize(h.Vars["id"])
 
-	if !isValidCyphId(id) {
+	if !isValidCyphID(id) {
 		return "Invalid ID.", http.StatusForbidden
 	}
 
@@ -290,7 +290,7 @@ func getTimestamp(h HandlerArgs) (interface{}, int) {
 func preAuth(h HandlerArgs) (interface{}, int) {
 	id := sanitize(h.Vars["id"])
 
-	if !isValidCyphId(id) {
+	if !isValidCyphID(id) {
 		return "Invalid ID.", http.StatusForbidden
 	}
 
@@ -309,7 +309,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	}
 
 	bt := braintreeInit(h)
-	braintreeCustomer, err := bt.Customer().Find(customer.BraintreeId)
+	braintreeCustomer, err := bt.Customer().Find(customer.BraintreeID)
 
 	if err != nil {
 		return err.Error(), http.StatusTeapot
@@ -374,7 +374,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	customer.LastSession = now.Unix()
 	customer.SessionCount += 1
 
-	proFeaturesJson, err := json.Marshal(proFeatures)
+	proFeaturesJSON, err := json.Marshal(proFeatures)
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
 	}
@@ -388,8 +388,8 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		[]interface{}{
 			customer,
 			&PreAuthorizedCyph{
-				Id:          id,
-				ProFeatures: proFeaturesJson,
+				ID:          id,
+				ProFeatures: proFeaturesJSON,
 				Timestamp:   customer.LastSession,
 			},
 		},
