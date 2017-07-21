@@ -104,6 +104,6 @@ export class LocalSessionService extends SessionService {
 		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
-		super(analyticsService, errorService);
+		super(analyticsService, <any> undefined, <any> undefined, errorService);
 	}
 }

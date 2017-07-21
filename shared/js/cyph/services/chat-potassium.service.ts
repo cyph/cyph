@@ -21,6 +21,6 @@ export class ChatPotassiumService extends ThreadedPotassiumService {
 		private readonly sessionService: SessionService
 	) {
 		super();
-		this.sessionService.init(this);
+		/* TODO: Find better solution for this: this.sessionService.init(this); */
 	}
 }

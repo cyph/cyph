@@ -1,16 +1,13 @@
 import {Injectable} from '@angular/core';
-import {ISessionMessage, SessionMessageList} from '../../proto';
-import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
+import {SessionMessage} from '../../proto';
 import {env} from '../env';
-import {LocalAsyncValue} from '../local-async-value';
-import {BinaryProto} from '../protos';
-import {events, rpcEvents} from '../session/enums';
+import {events} from '../session/enums';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';
-import {AnonymousCastleService} from './crypto/anonymous-castle.service';
+import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {ErrorService} from './error.service';
 import {SessionInitService} from './session-init.service';
@@ -22,6 +19,34 @@ import {SessionService} from './session.service';
  */
 @Injectable()
 export class EphemeralSessionService extends SessionService {
+	/** @ignore */
+	private pingPongTimeouts: number	= 0;
+
+	/**
+	 * @ignore
+	 * Intermittent check to verify chat is still alive and send fake encrypted chatter.
+	 */
+	private async pingPong () : Promise<void> {
+		while (this.state.isAlive) {
+			await util.sleep(util.random(90000, 30000));
+
+			if (
+				this.lastIncomingMessageTimestamp !== 0 &&
+				(await util.timestamp()) - this.lastIncomingMessageTimestamp > 180000 &&
+				this.pingPongTimeouts++ < 2
+			) {
+				this.analyticsService.sendEvent({
+					eventAction: 'detected',
+					eventCategory: 'ping-pong-timeout',
+					eventValue: 1,
+					hitType: 'event'
+				});
+			}
+
+			this.send(new SessionMessage());
+		}
+	}
+
 	/** @ignore */
 	private setID (id: string) : void {
 		if (
@@ -43,132 +68,45 @@ export class EphemeralSessionService extends SessionService {
 		this.state.sharedSecret	= this.state.sharedSecret || id;
 	}
 
-	/** @ignore */
-	private setUpChannel (channelDescriptor: string) : void {
-		const handlers	= {
-			onClose: () => {
-				this.state.isAlive	= false;
-
-				/* If aborting before the cyph begins,
-					block friend from trying to join */
-				util.request({
-					method: 'POST',
-					url: `${env.baseUrl}channels/${this.state.cyphID}`
-				}).catch(
-					() => {}
-				);
-
-				this.trigger(events.closeChat);
-			},
-			onConnect: async () => {
-				this.trigger(events.connect);
-
-				while (this.state.isAlive) {
-					await util.sleep(this.plaintextSendInterval);
-
-					if (this.plaintextSendQueue.length < 1) {
-						continue;
-					}
-
-					this.anonymousCastleService.send(
-						await util.serialize(SessionMessageList, {
-							messages: this.plaintextSendQueue.splice(
-								0,
-								this.plaintextSendQueue.length
-							)
-						})
-					);
-				}
-			},
-			onMessage: (message: Uint8Array) => {
-				this.anonymousCastleService.receive(message);
-			},
-			onOpen: async (isAlice: boolean) : Promise<void> => {
-				this.state.isAlice	= isAlice;
-
-				if (this.state.isAlice) {
-					this.trigger(events.beginWaiting);
-				}
-				else {
-					this.pingPong();
-
-					this.analyticsService.sendEvent({
-						eventAction: 'started',
-						eventCategory: 'cyph',
-						eventValue: 1,
-						hitType: 'event'
-					});
-
-					if (this.state.wasInitiatedByAPI) {
-						this.analyticsService.sendEvent({
-							eventAction: 'started',
-							eventCategory: 'api-initiated-cyph',
-							eventValue: 1,
-							hitType: 'event'
-						});
-					}
-				}
-			}
-		};
-
-		this.channelService.init(channelDescriptor, handlers);
-	}
-
-	/** @ignore */
-	protected cyphertextSendHandler (message: Uint8Array) : void {
-		super.cyphertextSendHandler(message);
-		this.channelService.send(message);
-	}
-
 	/** @inheritDoc */
-	public close () : void {
-		this.channelService.close();
-	}
+	protected async channelOnClose () : Promise<void> {
+		super.channelOnClose();
 
-	/** @inheritDoc */
-	public async handshakeState () : Promise<IHandshakeState> {
-		return {
-			currentStep: new LocalAsyncValue(HandshakeSteps.Start),
-			initialSecret: new LocalAsyncValue<Uint8Array|undefined>(undefined),
-			initialSecretCyphertext: await this.channelService.getAsyncValue(
-				'handshake/initialSecretCyphertext',
-				BinaryProto
-			),
-			isAlice: this.state.isAlice,
-			localPublicKey: await this.channelService.getAsyncValue(
-				`handshake/${this.state.isAlice ? 'alice' : 'bob'}PublicKey`,
-				BinaryProto
-			),
-			remotePublicKey: await this.channelService.getAsyncValue(
-				`handshake/${this.state.isAlice ? 'bob' : 'alice'}PublicKey`,
-				BinaryProto
-			)
-		};
-	}
-
-	/** @inheritDoc */
-	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
-		const potassiumService	= await this.potassiumService;
-
-		return this.channelService.lock(
-			async r => f(!r ?
-				undefined :
-				potassiumService.toString(
-					await potassiumService.secretBox.open(
-						potassiumService.fromBase64(r),
-						await this.symmetricKey
-					)
-				)
-			),
-			!reason ?
-				undefined :
-				potassiumService.toBase64(
-					await potassiumService.secretBox.seal(
-						potassiumService.fromString(reason),
-						await this.symmetricKey
-					)
-				)
+		/* If aborting before the cyph begins, block friend from trying to join */
+		util.request({
+			method: 'POST',
+			url: `${env.baseUrl}channels/${this.state.cyphID}`
+		}).catch(
+			() => {}
 		);
+	}
+
+	/** @inheritDoc */
+	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
+		super.channelOnOpen(isAlice);
+
+		if (this.state.isAlice) {
+			this.trigger(events.beginWaiting);
+		}
+		else {
+			this.pingPong();
+
+			this.analyticsService.sendEvent({
+				eventAction: 'started',
+				eventCategory: 'cyph',
+				eventValue: 1,
+				hitType: 'event'
+			});
+
+			if (this.state.wasInitiatedByAPI) {
+				this.analyticsService.sendEvent({
+					eventAction: 'started',
+					eventCategory: 'api-initiated-cyph',
+					eventValue: 1,
+					hitType: 'event'
+				});
+			}
+		}
 	}
 
 	/** @inheritDoc */
@@ -184,30 +122,12 @@ export class EphemeralSessionService extends SessionService {
 		);
 	}
 
-	/** @inheritDoc */
-	public async send (...messages: ISessionMessage[]) : Promise<void> {
-		for (const message of messages) {
-			message.data.timestamp	= await util.timestamp();
-			if (message.event === rpcEvents.text) {
-				this.trigger(rpcEvents.text, message.data);
-			}
-		}
-
-		this.plaintextSendHandler(messages);
-	}
-
 	constructor (
 		analyticsService: AnalyticsService,
-
+		castleService: CastleService,
+		channelService: ChannelService,
 		errorService: ErrorService,
-
 		potassiumService: PotassiumService,
-
-		/** @ignore */
-		private readonly anonymousCastleService: AnonymousCastleService,
-
-		/** @ignore */
-		private readonly channelService: ChannelService,
 
 		/** @ignore */
 		private readonly configService: ConfigService,
@@ -215,9 +135,7 @@ export class EphemeralSessionService extends SessionService {
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService
 	) {
-		super(analyticsService, errorService);
-
-		this.init(potassiumService);
+		super(analyticsService, castleService, channelService, errorService);
 
 		let id	= this.sessionInitService.id;
 
@@ -253,25 +171,18 @@ export class EphemeralSessionService extends SessionService {
 
 		this.setID(id);
 
-		if (this.state.startingNewCyph !== false) {
-			this.trigger(events.newCyph);
-		}
-
-		const channelDescriptor: string	=
+		const channelID: string	=
 			this.state.startingNewCyph === false ?
 				'' :
 				util.uuid()
 		;
 
 		(async () => {
-			this.anonymousCastleService.init(await this.potassiumService, this);
-		})();
-
-		(async () => {
 			try {
-				this.setUpChannel(
+				this.init(
+					potassiumService,
 					await util.request({
-						data: {channelDescriptor, proFeatures: this.proFeatures},
+						data: {channelID, proFeatures: this.proFeatures},
 						method: 'POST',
 						retries: 5,
 						url: `${env.baseUrl}channels/${this.state.cyphID}`
