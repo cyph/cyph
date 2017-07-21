@@ -59,6 +59,35 @@ export class AccountCastleService implements ICastle {
 			localUser,
 			remoteUser,
 			handshakeState,
+			this.accountDatabaseService.getAsyncValue(
+				`${sessionURL}/incomingMessageID`,
+				Uint32Proto
+			),
+			this.accountDatabaseService.getAsyncValue(
+				`${sessionURL}/incomingMessage`,
+				CastleIncomingMessagesProto
+			),
+			this.accountDatabaseService.getAsyncValue(
+				`${sessionURL}/incomingMessagesMax`,
+				Uint32Proto
+			),
+			this.accountDatabaseService.getAsyncValue(
+				`${sessionURL}/outgoingMessageID`,
+				Uint32Proto
+			),
+			this.accountDatabaseService.lockFunction(`${sessionURL}/receiveLock`),
+			this.accountDatabaseService.lockFunction(`${sessionURL}/sendLock`),
+			this.accountDatabaseService.lockFunction(`${sessionURL}/coreLock`),
+			{
+				privateKey: this.accountDatabaseService.getAsyncValue(
+					`${sessionURL}/asymmetricRatchetState/privateKey`,
+					MaybeBinaryProto
+				),
+				publicKey: this.accountDatabaseService.getAsyncValue(
+					`${sessionURL}/asymmetricRatchetState/publicKey`,
+					MaybeBinaryProto
+				)
+			},
 			{
 				current: {
 					incoming: this.accountDatabaseService.getAsyncValue(
@@ -80,36 +109,7 @@ export class AccountCastleService implements ICastle {
 						MaybeBinaryProto
 					)
 				}
-			},
-			{
-				privateKey: this.accountDatabaseService.getAsyncValue(
-					`${sessionURL}/asymmetricRatchetState/privateKey`,
-					MaybeBinaryProto
-				),
-				publicKey: this.accountDatabaseService.getAsyncValue(
-					`${sessionURL}/asymmetricRatchetState/publicKey`,
-					MaybeBinaryProto
-				)
-			},
-			this.accountDatabaseService.lockFunction(`${sessionURL}/coreLock`),
-			this.accountDatabaseService.getAsyncValue(
-				`${sessionURL}/incomingMessageID`,
-				Uint32Proto
-			),
-			this.accountDatabaseService.getAsyncValue(
-				`${sessionURL}/incomingMessage`,
-				CastleIncomingMessagesProto
-			),
-			this.accountDatabaseService.getAsyncValue(
-				`${sessionURL}/incomingMessagesMax`,
-				Uint32Proto
-			),
-			this.accountDatabaseService.getAsyncValue(
-				`${sessionURL}/outgoingMessageID`,
-				Uint32Proto
-			),
-			this.accountDatabaseService.lockFunction(`${sessionURL}/receiveLock`),
-			this.accountDatabaseService.lockFunction(`${sessionURL}/sendLock`)
+			}
 		));
 	}
 
