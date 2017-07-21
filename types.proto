@@ -68,7 +68,7 @@ message Form {
 		/** Title/label. */
 		string label = 1;
 
-		/** Input mask. */
+		/** Input mask (serialized with MessagePack). */
 		bytes mask = 2;
 
 		/** Maximum numerical value. */
