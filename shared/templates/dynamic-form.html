@@ -40,6 +40,20 @@
 						<md-datepicker #datepicker></md-datepicker>
 					</div>
 
+					<div *ngIf='o.type === types.Email'>
+						<md-input-container fxFlex>
+							<input
+								mdInput
+								[textMask]='getMask(o)'
+								[(ngModel)]='o.valueString'
+								[name]='o.label'
+								type='email'
+								[placeholder]='o.label'
+								[required]='o.required'
+							/>
+						</md-input-container>
+					</div>
+
 					<div *ngIf='o.type === types.Input'>
 						<md-input-container fxFlex>
 							<input
@@ -145,6 +159,34 @@
 								[placeholder]='o.label'
 								[required]='o.required'
 							></textarea>
+						</md-input-container>
+					</div>
+
+					<div *ngIf='o.type === types.Time'>
+						<md-input-container fxFlex>
+							<input
+								mdInput
+								[textMask]='getMask(o)'
+								[(ngModel)]='o.valueString'
+								[name]='o.label'
+								type='time'
+								[placeholder]='o.label'
+								[required]='o.required'
+							/>
+						</md-input-container>
+					</div>
+
+					<div *ngIf='o.type === types.URL'>
+						<md-input-container fxFlex>
+							<input
+								mdInput
+								[textMask]='getMask(o)'
+								[(ngModel)]='o.valueString'
+								[name]='o.label'
+								type='url'
+								[placeholder]='o.label'
+								[required]='o.required'
+							/>
 						</md-input-container>
 					</div>
 
