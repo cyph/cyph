@@ -22,9 +22,6 @@ import {ErrorService} from './error.service';
 @Injectable()
 export abstract class SessionService implements ISessionService {
 	/** @ignore */
-	private resolvePotassiumService: (potassiumService: PotassiumService) => void;
-
-	/** @ignore */
 	private resolveSymmetricKey: (symmetricKey: Uint8Array) => void;
 
 	/** @ignore */
@@ -38,13 +35,6 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected readonly plaintextSendQueue: ISessionMessage[]		= [];
-
-	/** @ignore */
-	protected readonly potassiumService: Promise<PotassiumService>	=
-		new Promise<PotassiumService>(resolve => {
-			this.resolvePotassiumService	= resolve;
-		})
-	;
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string>				= new Set<string>();
@@ -170,7 +160,7 @@ export abstract class SessionService implements ISessionService {
 				this.trigger(events.beginChat);
 
 				if (this.state.isAlice) {
-					const potassiumService	= await this.potassiumService;
+					const potassiumService	= this.potassiumService;
 					const symmetricKey		= potassiumService.randomBytes(
 						await potassiumService.secretBox.keyBytes
 					);
@@ -266,15 +256,9 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
-	public async init (
-		potassiumService: PotassiumService,
-		channelID: string,
-		userID?: string
-	) : Promise<void> {
-		this.resolvePotassiumService(potassiumService);
-
+	public async init (channelID: string, userID?: string) : Promise<void> {
 		await Promise.all([
-			this.castleService.init(potassiumService, this),
+			this.castleService.init(this.potassiumService, this),
 			this.channelService.init(channelID, userID, {
 				onClose: () => { this.channelOnClose(); },
 				onConnect: () => { this.channelOnConnect(); },
@@ -286,23 +270,21 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
-		const potassiumService	= await this.potassiumService;
-
 		return this.channelService.lock(
 			async r => f(!r ?
 				undefined :
-				potassiumService.toString(
-					await potassiumService.secretBox.open(
-						potassiumService.fromBase64(r),
+				this.potassiumService.toString(
+					await this.potassiumService.secretBox.open(
+						this.potassiumService.fromBase64(r),
 						await this.symmetricKey
 					)
 				)
 			),
 			!reason ?
 				undefined :
-				potassiumService.toBase64(
-					await potassiumService.secretBox.seal(
-						potassiumService.fromString(reason),
+				this.potassiumService.toBase64(
+					await this.potassiumService.secretBox.seal(
+						this.potassiumService.fromString(reason),
 						await this.symmetricKey
 					)
 				)
@@ -357,6 +339,9 @@ export abstract class SessionService implements ISessionService {
 		protected readonly channelService: ChannelService,
 
 		/** @ignore */
-		private readonly errorService: ErrorService
+		private readonly errorService: ErrorService,
+
+		/** @ignore */
+		protected readonly potassiumService: PotassiumService
 	) {}
 }

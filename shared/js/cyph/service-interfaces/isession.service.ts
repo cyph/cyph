@@ -1,4 +1,3 @@
-import {PotassiumService} from '../services/crypto/potassium.service';
 import {ISession} from '../session/isession';
 import {ProFeatures} from '../session/profeatures';
 
@@ -24,9 +23,9 @@ export interface ISessionService extends ISession {
 	/** Remote username (e.g. "friend" or "alice"). */
 	readonly remoteUsername: Promise<string>;
 
+	/** Initializes service. */
+	init (channelID: string, userID?: string) : void;
+
 	/** Sets remote username. */
 	setRemoteUsername: (remoteUsername: string) => void;
-
-	/** Initializes service. */
-	init (potassiumService: PotassiumService, channelID: string, userID?: string) : void;
 }

@@ -135,7 +135,7 @@ export class EphemeralSessionService extends SessionService {
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService
 	) {
-		super(analyticsService, castleService, channelService, errorService);
+		super(analyticsService, castleService, channelService, errorService, potassiumService);
 
 		let id	= this.sessionInitService.id;
 
@@ -180,7 +180,6 @@ export class EphemeralSessionService extends SessionService {
 		(async () => {
 			try {
 				this.init(
-					potassiumService,
 					await util.request({
 						data: {channelID, proFeatures: this.proFeatures},
 						method: 'POST',
