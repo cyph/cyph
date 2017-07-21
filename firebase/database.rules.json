@@ -168,11 +168,93 @@
 							}
 						},
 						"session": {
-							"hash": {
-								".validate": "newData.isString()"
+							"asymmetricRatchetState": {
+								"privateKey": {
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								},
+								"publicKey": {
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								}
 							},
-							"timestamp": {
-								".validate": "newData.val() === now"
+							"incomingMessageID": {
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							},
+							"incomingMessages": {
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							},
+							"incomingMessagesMax": {
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							},
+							"outgoingMessageID": {
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							},
+							"symmetricRatchetState": {
+								"current": {
+									"incoming": {
+										"hash": {
+											".validate": "newData.isString()"
+										},
+										"timestamp": {
+											".validate": "newData.val() === now"
+										}
+									},
+									"outgoing": {
+										"hash": {
+											".validate": "newData.isString()"
+										},
+										"timestamp": {
+											".validate": "newData.val() === now"
+										}
+									}
+								},
+								"next": {
+									"incoming": {
+										"hash": {
+											".validate": "newData.isString()"
+										},
+										"timestamp": {
+											".validate": "newData.val() === now"
+										}
+									},
+									"outgoing": {
+										"hash": {
+											".validate": "newData.isString()"
+										},
+										"timestamp": {
+											".validate": "newData.val() === now"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -230,12 +312,14 @@
 				},
 
 				"locks": {
-					"$contender": {
-						"id": {
-							".validate": "newData.isString()"
-						},
-						"reason": {
-							".validate": "newData.isString()"
+					"$lock": {
+						"$contender": {
+							"id": {
+								".validate": "newData.isString()"
+							},
+							"reason": {
+								".validate": "newData.isString()"
+							}
 						}
 					}
 				},
