@@ -183,7 +183,17 @@ export const title		= (titleText: string) : Form.IElementRow => {
 
 /** Phone number element row. */
 export const phone		= () : Form.IElementRow => {
-	return newFormRow([input({label: 'Phone Number'})]);
+	return newFormRow([input({
+		label: 'Phone Number',
+		mask: {
+			mask: [
+				'(', /[1-9]/, /\d/, /\d/, ')', ' ',
+				/\d/, /\d/, /\d/, '-',
+				/\d/, /\d/, /\d/, /\d/
+			],
+			showMask: true
+		}
+	})]);
 };
 
 /** Email address element row. */
@@ -212,7 +222,19 @@ export const address	= () : Form.IElementRow => {
 
 /** SSN element row. */
 export const ssn		= () : Form.IElementRow => {
-	return newFormRow([passwordInput({label: 'Social Security Number', width: 20})]);
+	return newFormRow([input({
+		label: 'Social Security Number',
+		mask: {
+			mask: [
+				/\d/, /\d/, /\d/, '-',
+				/\d/, /\d/, '-',
+				/\d/, /\d/, /\d/, /\d/
+			],
+			placeholderChar: '#',
+			showMask: true
+		},
+		width: 20
+	})]);
 };
 
 /** Contact information component. */
