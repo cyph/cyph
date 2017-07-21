@@ -67,6 +67,15 @@ export const datepicker		= newFormElement<{
 	width?: number;
 }>(Form.Element.Types.Datepicker);
 
+/** Creates a new email input form element. */
+export const emailInput		= newFormElement<{
+	label?: string;
+	mask?: any;
+	required?: boolean;
+	value?: string;
+	width?: number;
+}>(Form.Element.Types.Email);
+
 /** Creates a new text input form element. */
 export const input			= newFormElement<{
 	label?: string;
@@ -147,6 +156,26 @@ export const textarea		= newFormElement<{
 	width?: number;
 }>(Form.Element.Types.Textarea);
 
+/** Creates a new time input form element. */
+export const timeInput		= newFormElement<{
+	label?: string;
+	mask?: any;
+	max?: number;
+	min?: number;
+	required?: boolean;
+	value?: string;
+	width?: number;
+}>(Form.Element.Types.Time);
+
+/** Creates a new URL input form element. */
+export const urlInput		= newFormElement<{
+	label?: string;
+	mask?: any;
+	required?: boolean;
+	value?: string;
+	width?: number;
+}>(Form.Element.Types.URL);
+
 /** Form title element row. */
 export const title		= (titleText: string) : Form.IElementRow => {
 	return newFormRow(text({label: titleText, width: 100}));
@@ -159,7 +188,7 @@ export const phone		= () : Form.IElementRow => {
 
 /** Email address element row. */
 export const email		= () : Form.IElementRow => {
-	return newFormRow([input({label: 'Email', required: true})]);
+	return newFormRow([emailInput({label: 'Email', required: true})]);
 };
 
 /** Name element row. */

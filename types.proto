@@ -142,14 +142,17 @@ message Form {
 			Text = 0;
 			Checkbox = 1;
 			Datepicker = 2;
-			Input = 3;
-			Number = 4;
-			Password = 5;
-			Radio = 6;
-			Select = 7;
-			Slider = 8;
-			SlideToggle = 9;
-			Textarea = 10;
+			Email = 3;
+			Input = 4;
+			Number = 5;
+			Password = 6;
+			Radio = 7;
+			Select = 8;
+			Slider = 9;
+			SlideToggle = 10;
+			Textarea = 11;
+			Time = 12;
+			URL = 13;
 		}
 
 		/** Title/label. */
