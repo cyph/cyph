@@ -170,6 +170,7 @@ read -r -d '' modules <<- EOM
 	stylelint-scss
 	supersphincs
 	tab-indent
+	text-mask-addons
 	textillate
 	tns-android
 	tns-core-modules
