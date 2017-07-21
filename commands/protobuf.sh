@@ -14,7 +14,10 @@ checkfail
 while
 	{
 		cat shared/js/proto/index.d.ts | tr '\n' ' ' | grep -P "$(
-			grep -oP '^\s*message [A-Za-z0-9]+' types.proto | awk '{print $2}' | tr '\n' '☁' | sed 's|☁|.*|g'
+			grep -oP '^\s*message [A-Za-z0-9]+' types.proto |
+				awk '{print $2}' |
+				tr '\n' '~' |
+				sed 's|~| .* |g'
 		)" ||
 		echo 0;
 	} &> /dev/null && 
