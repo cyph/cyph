@@ -25,12 +25,12 @@
 
 				for (var i = 0 ; i < args.length ; ++i) {
 					var arg			= args[i];
-					var callbackId	= arg && arg.callbackId;
+					var callbackID	= arg && arg.callbackID;
 
-					if (callbackId) {
+					if (callbackID) {
 						args[i]	= function () {
 							e.source.postMessage({
-								callbackId: callbackId,
+								callbackID: callbackID,
 								args: JSON.stringify(Array.prototype.slice.call(arguments))
 							}, e.origin);
 						};

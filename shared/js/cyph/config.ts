@@ -69,7 +69,7 @@ export class Config {
 	public readonly cyphCountdown: number		= 600000;
 
 	/** Length of server ID for a cyph. */
-	public readonly cyphIdLength: number		= 7;
+	public readonly cyphIDLength: number		= 7;
 
 	/** Indicates the original language of any content to be translated. */
 	public readonly defaultLanguage: string		= 'en';
@@ -175,10 +175,10 @@ export class Config {
 	};
 
 	/**
-	 * Characters used by Util.readableId (includes all alphanumeric
+	 * Characters used by Util.readableID (includes all alphanumeric
 	 * characters except 'l' and 'I').
 	 */
-	public readonly readableIdCharacters: string[]	= [
+	public readonly readableIDCharacters: string[]	= [
 		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
 		'k', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',

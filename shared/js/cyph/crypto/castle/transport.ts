@@ -47,12 +47,12 @@ export class Transport {
 	}
 
 	/** Send outgoing encrypted message. */
-	public send (cyphertext: Uint8Array, messageId?: Uint8Array) : void {
-		const fullCyphertext	= !messageId ?
+	public send (cyphertext: Uint8Array, messageID?: Uint8Array) : void {
+		const fullCyphertext	= !messageID ?
 			cyphertext :
 			potassiumUtil.concatMemory(
 				true,
-				messageId,
+				messageID,
 				potassiumUtil.fromBase64(cyphertext)
 			)
 		;

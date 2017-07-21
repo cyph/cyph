@@ -418,11 +418,11 @@ export class Util {
 		return `${o.n.toFixed(2).replace(/\.?0+$/, '')} ${o.s}B`;
 	}
 
-	/** Random ID meant optimized for readability by humans. Uses Config.readableIdCharacters. */
-	public readableId (length: number = 0) : string {
+	/** Random ID meant optimized for readability by humans. Uses Config.readableIDCharacters. */
+	public readableID (length: number = 0) : string {
 		let id	= '';
 		for (let i = 0 ; i < length ; ++i) {
-			id += config.readableIdCharacters[this.random(config.readableIdCharacters.length)];
+			id += config.readableIDCharacters[this.random(config.readableIDCharacters.length)];
 		}
 		return id;
 	}

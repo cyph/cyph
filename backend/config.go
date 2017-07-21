@@ -9,7 +9,7 @@ type none struct{}
 
 type Customer struct {
 	ApiKey       string
-	BraintreeId  string
+	BraintreeID  string
 	LastSession  int64
 	SessionCount int64
 }
@@ -20,7 +20,7 @@ type Plan struct {
 }
 
 type PreAuthorizedCyph struct {
-	Id          string
+	ID          string
 	ProFeatures []byte
 	Timestamp   int64
 }
@@ -28,12 +28,12 @@ type PreAuthorizedCyph struct {
 var empty = struct{}{}
 
 var config = struct {
-	AllowedCyphIds             *regexp.Regexp
-	AllowedCyphIdLength        int
+	AllowedCyphIDs             *regexp.Regexp
+	AllowedCyphIDLength        int
 	AllowedHeaders             string
 	AllowedMethods             string
 	AllowedHosts               map[string]none
-	AnalId                     string
+	AnalID                     string
 	ApiKeyByteLength           int
 	Continents                 map[string]none
 	DefaultContinent           string

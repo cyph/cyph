@@ -23,7 +23,7 @@ export abstract class SessionService implements ISessionService {
 	private resolveSymmetricKey: (symmetricKey: Uint8Array) => void;
 
 	/** @ignore */
-	protected readonly eventId: string								= util.uuid();
+	protected readonly eventID: string								= util.uuid();
 
 	/** @ignore */
 	protected lastIncomingMessageTimestamp: number					= 0;
@@ -75,7 +75,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public readonly state							= {
-		cyphId: '',
+		cyphID: '',
 		isAlice: false,
 		isAlive: true,
 		sharedSecret: '',
@@ -237,17 +237,17 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public off<T> (event: string, handler: (data: T) => void) : void {
-		eventManager.off<T>(event + this.eventId, handler);
+		eventManager.off<T>(event + this.eventID, handler);
 	}
 
 	/** @inheritDoc */
 	public on<T> (event: string, handler: (data: T) => void) : void {
-		eventManager.on<T>(event + this.eventId, handler);
+		eventManager.on<T>(event + this.eventID, handler);
 	}
 
 	/** @inheritDoc */
 	public async one<T> (event: string) : Promise<T> {
-		return eventManager.one<T>(event + this.eventId);
+		return eventManager.one<T>(event + this.eventID);
 	}
 
 	/** @inheritDoc */
@@ -262,7 +262,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public trigger (event: string, data?: any) : void {
-		eventManager.trigger(event + this.eventId, data);
+		eventManager.trigger(event + this.eventID, data);
 	}
 
 	constructor (

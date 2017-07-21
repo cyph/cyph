@@ -23,7 +23,7 @@ import {SessionService} from './session.service';
 @Injectable()
 export class EphemeralSessionService extends SessionService {
 	/** @ignore */
-	private setId (id: string) : void {
+	private setID (id: string) : void {
 		if (
 			/* Too short */
 			id.length < this.configService.secretLength ||
@@ -31,15 +31,15 @@ export class EphemeralSessionService extends SessionService {
 			/* Contains invalid character(s) */
 			!id.split('').reduce(
 				(isValid: boolean, c: string) : boolean =>
-					isValid && this.configService.readableIdCharacters.indexOf(c) > -1
+					isValid && this.configService.readableIDCharacters.indexOf(c) > -1
 				,
 				true
 			)
 		) {
-			id	= util.readableId(this.configService.secretLength);
+			id	= util.readableID(this.configService.secretLength);
 		}
 
-		this.state.cyphId		= id.substring(0, this.configService.cyphIdLength);
+		this.state.cyphID		= id.substring(0, this.configService.cyphIDLength);
 		this.state.sharedSecret	= this.state.sharedSecret || id;
 	}
 
@@ -53,7 +53,7 @@ export class EphemeralSessionService extends SessionService {
 					block friend from trying to join */
 				util.request({
 					method: 'POST',
-					url: `${env.baseUrl}channels/${this.state.cyphId}`
+					url: `${env.baseUrl}channels/${this.state.cyphID}`
 				}).catch(
 					() => {}
 				);
@@ -251,7 +251,7 @@ export class EphemeralSessionService extends SessionService {
 					false
 		;
 
-		this.setId(id);
+		this.setID(id);
 
 		if (this.state.startingNewCyph !== false) {
 			this.trigger(events.newCyph);
@@ -274,7 +274,7 @@ export class EphemeralSessionService extends SessionService {
 						data: {channelDescriptor, proFeatures: this.proFeatures},
 						method: 'POST',
 						retries: 5,
-						url: `${env.baseUrl}channels/${this.state.cyphId}`
+						url: `${env.baseUrl}channels/${this.state.cyphID}`
 					})
 				);
 			}

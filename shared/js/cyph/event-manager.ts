@@ -72,15 +72,15 @@ export class EventManager {
 		handler: (data: I) => O|Promise<O>,
 		postHandler?: (input: I, output: O) => void
 	) : void {
-		this.on(event, async (o: {data: I; eventId: string}) => {
+		this.on(event, async (o: {data: I; eventID: string}) => {
 			let output: O;
 
 			try {
 				output	= await handler(o.data);
-				this.trigger(o.eventId, {data: output}, true);
+				this.trigger(o.eventID, {data: output}, true);
 			}
 			catch (err) {
-				this.trigger(o.eventId, {error: {message: err && err.message || ''}}, true);
+				this.trigger(o.eventID, {error: {message: err && err.message || ''}}, true);
 				return;
 			}
 
@@ -97,15 +97,15 @@ export class EventManager {
 	 * @param init Optional promise to wait on for initialization of handler before triggering.
 	 */
 	public async rpcTrigger<O, I = any> (event: string, data?: I, init?: Promise<void>) : Promise<O> {
-		const eventId			= util.uuid();
+		const eventID			= util.uuid();
 		const responsePromise	=
 			this.one<{data: O; error: undefined}|{data: never; error: {message: string}}>(
-				eventId
+				eventID
 			)
 		;
 
 		await init;
-		this.trigger(event, {data, eventId}, true);
+		this.trigger(event, {data, eventID}, true);
 
 		const response	= await responsePromise;
 

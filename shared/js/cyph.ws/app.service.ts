@@ -35,7 +35,7 @@ export class AppService implements CanActivate {
 	public isLockedDown: boolean			=
 		!!customBuildPassword &&
 		!locationData.hash.match(
-			new RegExp(`[${config.readableIdCharacters.join('|')}]{${config.secretLength}}$`)
+			new RegExp(`[${config.readableIDCharacters.join('|')}]{${config.secretLength}}$`)
 		)
 	;
 

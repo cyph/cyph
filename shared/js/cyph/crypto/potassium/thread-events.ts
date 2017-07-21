@@ -4,73 +4,73 @@
 export class ThreadEvents {
 	/** @see IBox */
 	public readonly box	= {
-		keyPair: `${this.eventId}.box.keyPair`,
-		open: `${this.eventId}.box.open`,
-		privateKeyBytes: `${this.eventId}.box.privateKeyBytes`,
-		publicKeyBytes: `${this.eventId}.box.publicKeyBytes`,
-		seal: `${this.eventId}.box.seal`
+		keyPair: `${this.eventID}.box.keyPair`,
+		open: `${this.eventID}.box.open`,
+		privateKeyBytes: `${this.eventID}.box.privateKeyBytes`,
+		publicKeyBytes: `${this.eventID}.box.publicKeyBytes`,
+		seal: `${this.eventID}.box.seal`
 	};
 
 	/** @see IEphemeralKeyExchange */
 	public readonly ephemeralKeyExchange	= {
-		aliceKeyPair: `${this.eventId}.ephemeralKeyExchange.aliceKeyPair`,
-		aliceSecret: `${this.eventId}.ephemeralKeyExchange.aliceSecret`,
-		bobSecret: `${this.eventId}.ephemeralKeyExchange.bobSecret`,
-		privateKeyBytes: `${this.eventId}.ephemeralKeyExchange.privateKeyBytes`,
-		publicKeyBytes: `${this.eventId}.ephemeralKeyExchange.publicKeyBytes`,
-		secretBytes: `${this.eventId}.ephemeralKeyExchange.secretBytes`
+		aliceKeyPair: `${this.eventID}.ephemeralKeyExchange.aliceKeyPair`,
+		aliceSecret: `${this.eventID}.ephemeralKeyExchange.aliceSecret`,
+		bobSecret: `${this.eventID}.ephemeralKeyExchange.bobSecret`,
+		privateKeyBytes: `${this.eventID}.ephemeralKeyExchange.privateKeyBytes`,
+		publicKeyBytes: `${this.eventID}.ephemeralKeyExchange.publicKeyBytes`,
+		secretBytes: `${this.eventID}.ephemeralKeyExchange.secretBytes`
 	};
 
 	/** @see IHash */
 	public readonly hash	= {
-		bytes: `${this.eventId}.hash.bytes`,
-		deriveKey: `${this.eventId}.hash.deriveKey`,
-		hash: `${this.eventId}.hash.hash`
+		bytes: `${this.eventID}.hash.bytes`,
+		deriveKey: `${this.eventID}.hash.deriveKey`,
+		hash: `${this.eventID}.hash.hash`
 	};
 
 	/** @see IOneTimeAuth */
 	public readonly oneTimeAuth	= {
-		bytes: `${this.eventId}.oneTimeAuth.bytes`,
-		keyBytes: `${this.eventId}.oneTimeAuth.keyBytes`,
-		sign: `${this.eventId}.oneTimeAuth.sign`,
-		verify: `${this.eventId}.oneTimeAuth.verify`
+		bytes: `${this.eventID}.oneTimeAuth.bytes`,
+		keyBytes: `${this.eventID}.oneTimeAuth.keyBytes`,
+		sign: `${this.eventID}.oneTimeAuth.sign`,
+		verify: `${this.eventID}.oneTimeAuth.verify`
 	};
 
 	/** @see IPasswordHash */
 	public readonly passwordHash	= {
-		algorithm: `${this.eventId}.passwordHash.algorithm`,
-		hash: `${this.eventId}.passwordHash.hash`,
-		memLimitInteractive: `${this.eventId}.passwordHash.memLimitInteractive`,
-		memLimitSensitive: `${this.eventId}.passwordHash.memLimitSensitive`,
-		opsLimitInteractive: `${this.eventId}.passwordHash.opsLimitInteractive`,
-		opsLimitSensitive: `${this.eventId}.passwordHash.opsLimitSensitive`,
-		parseMetadata: `${this.eventId}.passwordHash.parseMetadata`,
-		saltBytes: `${this.eventId}.passwordHash.saltBytes`
+		algorithm: `${this.eventID}.passwordHash.algorithm`,
+		hash: `${this.eventID}.passwordHash.hash`,
+		memLimitInteractive: `${this.eventID}.passwordHash.memLimitInteractive`,
+		memLimitSensitive: `${this.eventID}.passwordHash.memLimitSensitive`,
+		opsLimitInteractive: `${this.eventID}.passwordHash.opsLimitInteractive`,
+		opsLimitSensitive: `${this.eventID}.passwordHash.opsLimitSensitive`,
+		parseMetadata: `${this.eventID}.passwordHash.parseMetadata`,
+		saltBytes: `${this.eventID}.passwordHash.saltBytes`
 	};
 
 	/** @see ISecretBox */
 	public readonly secretBox	= {
-		aeadBytes: `${this.eventId}.secretBox.aeadBytes`,
-		keyBytes: `${this.eventId}.secretBox.keyBytes`,
-		open: `${this.eventId}.secretBox.open`,
-		seal: `${this.eventId}.secretBox.seal`
+		aeadBytes: `${this.eventID}.secretBox.aeadBytes`,
+		keyBytes: `${this.eventID}.secretBox.keyBytes`,
+		open: `${this.eventID}.secretBox.open`,
+		seal: `${this.eventID}.secretBox.seal`
 	};
 
 	/** @see ISign */
 	public readonly sign	= {
-		bytes: `${this.eventId}.sign.bytes`,
-		importSuperSphincsPublicKeys: `${this.eventId}.sign.importSuperSphincsPublicKeys`,
-		keyPair: `${this.eventId}.sign.keyPair`,
-		open: `${this.eventId}.sign.open`,
-		privateKeyBytes: `${this.eventId}.sign.privateKeyBytes`,
-		publicKeyBytes: `${this.eventId}.sign.publicKeyBytes`,
-		sign: `${this.eventId}.sign.sign`,
-		signDetached: `${this.eventId}.sign.signDetached`,
-		verifyDetached: `${this.eventId}.sign.verifyDetached`
+		bytes: `${this.eventID}.sign.bytes`,
+		importSuperSphincsPublicKeys: `${this.eventID}.sign.importSuperSphincsPublicKeys`,
+		keyPair: `${this.eventID}.sign.keyPair`,
+		open: `${this.eventID}.sign.open`,
+		privateKeyBytes: `${this.eventID}.sign.privateKeyBytes`,
+		publicKeyBytes: `${this.eventID}.sign.publicKeyBytes`,
+		sign: `${this.eventID}.sign.sign`,
+		signDetached: `${this.eventID}.sign.signDetached`,
+		verifyDetached: `${this.eventID}.sign.verifyDetached`
 	};
 
 	constructor (
 		/** @ignore */
-		private readonly eventId: string
+		private readonly eventID: string
 	) {}
 }
