@@ -237,24 +237,6 @@ export class PairwiseSession {
 		/** @ignore */
 		private readonly handshakeState: IHandshakeState,
 
-		symmetricRatchetState: ISymmetricRatchetStateMaybe = {
-			current: {
-				incoming: new LocalAsyncValue(undefined),
-				outgoing: new LocalAsyncValue(undefined)
-			},
-			next: {
-				incoming: new LocalAsyncValue(undefined),
-				outgoing: new LocalAsyncValue(undefined)
-			}
-		},
-
-		asymmetricRatchetState: IAsymmetricRatchetState = {
-			privateKey: new LocalAsyncValue(undefined),
-			publicKey: new LocalAsyncValue(undefined)
-		},
-
-		coreLock: LockFunction	= util.lockFunction(),
-
 		/** @ignore */
 		private readonly incomingMessageID: IAsyncValue<number> = new LocalAsyncValue(0),
 
@@ -273,7 +255,25 @@ export class PairwiseSession {
 		private readonly receiveLock: LockFunction = util.lockFunction(),
 
 		/** @ignore */
-		private readonly sendLock: LockFunction = util.lockFunction()
+		private readonly sendLock: LockFunction = util.lockFunction(),
+
+		coreLock: LockFunction	= util.lockFunction(),
+
+		asymmetricRatchetState: IAsymmetricRatchetState = {
+			privateKey: new LocalAsyncValue(undefined),
+			publicKey: new LocalAsyncValue(undefined)
+		},
+
+		symmetricRatchetState: ISymmetricRatchetStateMaybe = {
+			current: {
+				incoming: new LocalAsyncValue(undefined),
+				outgoing: new LocalAsyncValue(undefined)
+			},
+			next: {
+				incoming: new LocalAsyncValue(undefined),
+				outgoing: new LocalAsyncValue(undefined)
+			}
+		}
 	) { (async () => {
 		try {
 			await this.localUser.getKeyPair();
