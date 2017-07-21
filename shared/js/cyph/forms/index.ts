@@ -173,7 +173,7 @@ export const name		= () : Form.IElementRow => {
 
 /** Address element row. */
 export const address	= () : Form.IElementRow => {
-		return newFormRow([
+	return newFormRow([
 		input({label: 'Address'}),
 		input({label: 'City'}),
 		input({label: 'State', width: 10}),
