@@ -190,9 +190,13 @@ export class AccountDatabaseService {
 	private async processLockURL (url: string) : Promise<string> {
 		const currentUser	= await this.getCurrentUser();
 
-		return (await this.processURL(url)).replace(
-			`users/${currentUser.user.username}/`,
-			`users/${currentUser.user.username}/locks/`
+		return `users/${currentUser.user.username}/locks/` + this.potassiumService.toHex(
+			await this.potassiumService.hash.hash(
+				(await this.processURL(url)).replace(
+					`users/${currentUser.user.username}/`,
+					''
+				)
+			)
 		);
 	}
 
