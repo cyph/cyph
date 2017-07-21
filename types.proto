@@ -277,10 +277,9 @@ message StringValue {
 }
 
 message Uint32Array {
-	repeated double data = 1;
+	repeated uint32 data = 1;
 }
 
 message Uint32Value {
-	required double data = 1;
+	required uint32 data = 1;
 }
-
