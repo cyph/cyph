@@ -9,6 +9,7 @@ import {ChannelService} from '../services/channel.service';
 import {ChatService} from '../services/chat.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountCastleService} from '../services/crypto/account-castle.service';
+import {CastleService} from '../services/crypto/castle.service';
 import {CyphertextService} from '../services/cyphertext.service';
 import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
@@ -28,7 +29,6 @@ import {StringsService} from '../services/strings.service';
 	providers: [
 		AccountChatService,
 		AccountSessionService,
-		AccountCastleService,
 		ChannelService,
 		CyphertextService,
 		FileTransferService,
@@ -37,6 +37,10 @@ import {StringsService} from '../services/strings.service';
 		ScrollService,
 		SessionCapabilitiesService,
 		SessionInitService,
+		{
+			provide: CastleService,
+			useClass: AccountCastleService
+		},
 		{
 			provide: ChatService,
 			useExisting: AccountChatService

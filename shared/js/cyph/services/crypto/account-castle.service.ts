@@ -5,13 +5,11 @@ import {
 	RegisteredRemoteUser,
 	Transport
 } from '../../crypto/castle';
-import {ICastle} from '../../crypto/icastle';
-import {LockFunction} from '../../lock-function-type';
 import {CastleIncomingMessagesProto, MaybeBinaryProto, Uint32Proto} from '../../protos';
-import {util} from '../../util';
 import {AccountContactsService} from '../account-contacts.service';
 import {SessionService} from '../session.service';
 import {AccountDatabaseService} from './account-database.service';
+import {CastleService} from './castle.service';
 import {PotassiumService} from './potassium.service';
 
 
@@ -19,31 +17,13 @@ import {PotassiumService} from './potassium.service';
  * Castle instance between two registered users.
  */
 @Injectable()
-export class AccountCastleService implements ICastle {
-	/** @ignore */
-	private readonly pairwiseSession: Promise<PairwiseSession>	=
-		new Promise<PairwiseSession>(resolve => {
-			this.resolvePairwiseSession	= resolve;
-		})
-	;
-
-	/** @ignore */
-	private readonly pairwiseSessionLock: LockFunction			= util.lockFunction();
-
-	/** @ignore */
-	private resolvePairwiseSession: (pairwiseSession: PairwiseSession) => void;
-
-	/** @ignore */
-	private async getPairwiseSession () : Promise<PairwiseSession> {
-		return this.pairwiseSessionLock(async () => this.pairwiseSession);
-	}
-
-	/** Initializes service. */
+export class AccountCastleService extends CastleService {
+	/** @inheritDoc */
 	public async init (
-		username: string,
 		potassiumService: PotassiumService,
 		sessionService: SessionService
 	) : Promise<void> {
+		const username			= await sessionService.remoteUsername;
 		const transport			= new Transport(sessionService);
 		const handshakeState	= await sessionService.handshakeState();
 		const localUser			= new RegisteredLocalUser(this.accountDatabaseService);
@@ -113,25 +93,13 @@ export class AccountCastleService implements ICastle {
 		));
 	}
 
-	/** @inheritDoc */
-	public async receive (cyphertext: Uint8Array) : Promise<void> {
-		return (await this.getPairwiseSession()).receive(cyphertext);
-	}
-
-	/** @inheritDoc */
-	public async send (plaintext: string|ArrayBufferView, timestamp?: number) : Promise<void> {
-		if (timestamp === undefined) {
-			timestamp	= await util.timestamp();
-		}
-
-		return (await this.getPairwiseSession()).send(plaintext, timestamp);
-	}
-
 	constructor (
 		/** @ignore */
 		private readonly accountContactsService: AccountContactsService,
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService
-	) {}
+	) {
+		super();
+	}
 }
