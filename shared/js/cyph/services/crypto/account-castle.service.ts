@@ -64,7 +64,7 @@ export class AccountCastleService implements ICastle {
 				Uint32Proto
 			),
 			this.accountDatabaseService.getAsyncValue(
-				`${sessionURL}/incomingMessage`,
+				`${sessionURL}/incomingMessages`,
 				CastleIncomingMessagesProto
 			),
 			this.accountDatabaseService.getAsyncValue(
