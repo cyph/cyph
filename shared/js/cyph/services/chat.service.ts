@@ -254,8 +254,8 @@ export class ChatService {
 		if (message) {
 			this.sessionService.send(new SessionMessage(
 				rpcEvents.text,
-				{text: {selfDestructTimeout, text: message}})
-			);
+				{text: {selfDestructTimeout, text: message}}
+			));
 		}
 	}
 

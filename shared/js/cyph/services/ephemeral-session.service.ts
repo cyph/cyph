@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
-import {SessionMessage} from '../../proto';
 import {env} from '../env';
-import {events} from '../session/enums';
-import {ProFeatures} from '../session/profeatures';
+import {events, ProFeatures, SessionMessage} from '../session';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
