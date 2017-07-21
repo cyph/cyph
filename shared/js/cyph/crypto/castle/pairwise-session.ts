@@ -65,14 +65,14 @@ export class PairwiseSession {
 	}
 
 	/** @ignore */
-	private async newOutgoingMessageId () : Promise<Uint8Array> {
-		const outgoingMessageId	= await this.outgoingMessageId.getValue();
-		this.outgoingMessageId.setValue(
-			outgoingMessageId === config.maxUint32 ?
+	private async newOutgoingMessageID () : Promise<Uint8Array> {
+		const outgoingMessageID	= await this.outgoingMessageID.getValue();
+		this.outgoingMessageID.setValue(
+			outgoingMessageID === config.maxUint32 ?
 				0 :
-				outgoingMessageId + 1
+				outgoingMessageID + 1
 		);
-		return new Uint8Array(new Uint32Array([outgoingMessageId]).buffer);
+		return new Uint8Array(new Uint32Array([outgoingMessageID]).buffer);
 	}
 
 	/** Receive/decrypt incoming message. */
@@ -82,30 +82,30 @@ export class PairwiseSession {
 			return;
 		}
 
-		const newMessageId	= this.potassium.toDataView(cyphertext).getUint32(0, true);
+		const newMessageID	= this.potassium.toDataView(cyphertext).getUint32(0, true);
 
 		return this.receiveLock(async () => {
 			const promises	= {
-				incomingMessageId: this.incomingMessageId.getValue(),
+				incomingMessageID: this.incomingMessageID.getValue(),
 				incomingMessages: this.incomingMessages.getValue(),
 				incomingMessagesMax: this.incomingMessagesMax.getValue()
 			};
-			let incomingMessageId	= await promises.incomingMessageId;
+			let incomingMessageID	= await promises.incomingMessageID;
 			const incomingMessages	= await promises.incomingMessages;
 			let incomingMessagesMax	= await promises.incomingMessagesMax;
 
-			if (newMessageId >= incomingMessageId) {
-				if (newMessageId > incomingMessagesMax) {
-					incomingMessagesMax	= newMessageId;
+			if (newMessageID >= incomingMessageID) {
+				if (newMessageID > incomingMessagesMax) {
+					incomingMessagesMax	= newMessageID;
 				}
 
-				const message					= incomingMessages[newMessageId] || [];
-				incomingMessages[newMessageId]	= message;
+				const message					= incomingMessages[newMessageID] || [];
+				incomingMessages[newMessageID]	= message;
 				message.push(cyphertext);
 			}
 
-			while (incomingMessageId <= incomingMessagesMax) {
-				const id		= incomingMessageId;
+			while (incomingMessageID <= incomingMessagesMax) {
+				const id		= incomingMessageID;
 				const message	= incomingMessages[id];
 
 				if (message === undefined) {
@@ -146,7 +146,7 @@ export class PairwiseSession {
 							await this.remoteUser.getUsername()
 						);
 
-						++incomingMessageId;
+						++incomingMessageID;
 						break;
 					}
 					catch (err) {
@@ -167,7 +167,7 @@ export class PairwiseSession {
 				delete incomingMessages[id];
 			}
 
-			this.incomingMessageId.setValue(incomingMessageId);
+			this.incomingMessageID.setValue(incomingMessageID);
 			this.incomingMessages.setValue(incomingMessages);
 			this.incomingMessagesMax.setValue(incomingMessagesMax);
 		});
@@ -207,11 +207,11 @@ export class PairwiseSession {
 				bobHandshakeMutualVerification	= true;
 			}
 
-			const messageId		= await this.newOutgoingMessageId();
-			const cyphertext	= await (await this.core).encrypt(data, messageId);
+			const messageID		= await this.newOutgoingMessageID();
+			const cyphertext	= await (await this.core).encrypt(data, messageID);
 
 			this.potassium.clearMemory(data);
-			this.transport.send(cyphertext, messageId);
+			this.transport.send(cyphertext, messageID);
 
 			if (bobHandshakeMutualVerification) {
 				await this.handshakeState.currentStep.setValue(
@@ -256,7 +256,7 @@ export class PairwiseSession {
 		coreLock: LockFunction	= util.lockFunction(),
 
 		/** @ignore */
-		private readonly incomingMessageId: IAsyncValue<number> = new LocalAsyncValue(0),
+		private readonly incomingMessageID: IAsyncValue<number> = new LocalAsyncValue(0),
 
 		/** @ignore */
 		private readonly incomingMessages: IAsyncValue<{[id: number]: Uint8Array[]|undefined}> =
@@ -267,7 +267,7 @@ export class PairwiseSession {
 		private readonly incomingMessagesMax: IAsyncValue<number> = new LocalAsyncValue(0),
 
 		/** @ignore */
-		private readonly outgoingMessageId: IAsyncValue<number> = new LocalAsyncValue(0),
+		private readonly outgoingMessageID: IAsyncValue<number> = new LocalAsyncValue(0),
 
 		/** @ignore */
 		private readonly receiveLock: LockFunction = util.lockFunction(),
