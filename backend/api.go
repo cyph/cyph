@@ -221,7 +221,7 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
-	channelDescriptor := ""
+	channelID := ""
 	status := http.StatusOK
 
 	if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
@@ -235,30 +235,30 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 			timestamp, _ := strconv.ParseInt(valueLines[0], 10, 64)
 
 			if now-timestamp < config.NewCyphTimeout {
-				channelDescriptor = valueLines[1]
+				channelID = valueLines[1]
 			}
 		}
 	} else {
-		channelDescriptor = sanitize(h.Request.FormValue("channelDescriptor"))
+		channelID = sanitize(h.Request.FormValue("channelID"))
 
-		if len(channelDescriptor) > config.MaxChannelDescriptorLength {
-			channelDescriptor = ""
+		if len(channelID) > config.MaxChannelDescriptorLength {
+			channelID = ""
 		}
 
-		if channelDescriptor != "" {
+		if channelID != "" {
 			memcache.Set(h.Context, &memcache.Item{
 				Key:        id,
-				Value:      []byte(strconv.FormatInt(now, 10) + "\n" + channelDescriptor),
+				Value:      []byte(strconv.FormatInt(now, 10) + "\n" + channelID),
 				Expiration: config.MemcacheExpiration,
 			})
 		}
 	}
 
-	if channelDescriptor == "" {
+	if channelID == "" {
 		status = http.StatusNotFound
 	}
 
-	return channelDescriptor, status
+	return channelID, status
 }
 
 func getContinent(h HandlerArgs) (interface{}, int) {
