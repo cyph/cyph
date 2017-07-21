@@ -46,7 +46,26 @@ service firebase.storage {
 
 			// match /contacts/{contact} {
 			// 	match /messages/{message} {}
-			// 	match /session {}
+			// 	match /session {
+			// 		/asymmetricRatchetState {
+			// 			/privateKey {}
+			// 			/publicKey {}
+			// 		}
+			// 		/incomingMessageID {}
+			// 		/incomingMessages {}
+			// 		/incomingMessagesMax {}
+			// 		/outgoingMessageID {}
+			// 		/symmetricRatchetState {
+			// 			/current {
+			// 				/incoming {}
+			// 				/outgoing {}
+			// 			}
+			// 			/next {
+			// 				/incoming {}
+			// 				/outgoing {}
+			// 			}
+			// 		}
+			// 	}
 			// }
 
 			// match /encryptionKeyPair {}
