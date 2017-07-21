@@ -29,12 +29,6 @@ export class Events {
 	/** @see Events */
 	public readonly cyphNotFound: string		= 'cyphNotFound';
 
-	/** @see Events */
-	public readonly newCyph: string				= 'newCyph';
-
-	/** @see Events */
-	public readonly p2pUI: string				= 'p2pUI';
-
 	constructor () {}
 }
 

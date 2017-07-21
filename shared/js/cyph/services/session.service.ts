@@ -1,12 +1,17 @@
 import {Injectable} from '@angular/core';
 import {ISessionMessage, ISessionMessageData, SessionMessageList} from '../../proto';
-import {IHandshakeState} from '../crypto/castle/ihandshake-state';
+import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {eventManager} from '../event-manager';
+import {IAsyncValue} from '../iasync-value';
+import {LocalAsyncValue} from '../local-async-value';
+import {BinaryProto} from '../protos';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {CastleEvents, events, rpcEvents, SessionMessage} from '../session';
 import {ProFeatures} from '../session/profeatures';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
+import {ChannelService} from './channel.service';
+import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {ErrorService} from './error.service';
 
@@ -27,9 +32,6 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected lastIncomingMessageTimestamp: number					= 0;
-
-	/** @ignore */
-	protected pingPongTimeouts: number								= 0;
 
 	/** @ignore */
 	protected readonly plaintextSendInterval: number				= 1776;
@@ -83,6 +85,44 @@ export abstract class SessionService implements ISessionService {
 		wasInitiatedByAPI: false
 	};
 
+	/** @see IChannelHandlers.onClose */
+	protected channelOnClose () : void {
+		this.state.isAlive	= false;
+		this.trigger(events.closeChat);
+	}
+
+	/** @see IChannelHandlers.onConnect */
+	protected async channelOnConnect () : Promise<void> {
+		this.trigger(events.connect);
+
+		while (this.state.isAlive) {
+			await util.sleep(this.plaintextSendInterval);
+
+			if (this.plaintextSendQueue.length < 1) {
+				continue;
+			}
+
+			this.castleService.send(
+				await util.serialize(SessionMessageList, {
+					messages: this.plaintextSendQueue.splice(
+						0,
+						this.plaintextSendQueue.length
+					)
+				})
+			);
+		}
+	}
+
+	/** @see IChannelHandlers.onMessage */
+	protected channelOnMessage (message: Uint8Array) : void {
+		this.castleService.receive(message);
+	}
+
+	/** @see IChannelHandlers.onOpen */
+	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
+		this.state.isAlice	= isAlice;
+	}
+
 	/** @ignore */
 	protected cyphertextReceiveHandler (message: ISessionMessage) : void {
 		if (!message.data.id || this.receivedMessages.has(message.data.id)) {
@@ -97,39 +137,15 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @ignore */
-	protected cyphertextSendHandler (_MESSAGE: Uint8Array) : void {
+	protected cyphertextSendHandler (message: Uint8Array) : void {
+		this.channelService.send(message);
+
 		this.analyticsService.sendEvent({
 			eventAction: 'sent',
 			eventCategory: 'message',
 			eventValue: 1,
 			hitType: 'event'
 		});
-	}
-
-	/**
-	 * @ignore
-	 * Intermittent check to verify chat is still alive and send fake encrypted chatter.
-	 */
-	protected async pingPong () : Promise<void> {
-		while (this.state.isAlive) {
-			await util.sleep(util.random(90000, 30000));
-
-			if (
-				this.lastIncomingMessageTimestamp !== 0 &&
-				(await util.timestamp()) - this.lastIncomingMessageTimestamp > 180000
-			) {
-				if (this.pingPongTimeouts++ < 2) {
-					this.analyticsService.sendEvent({
-						eventAction: 'detected',
-						eventCategory: 'ping-pong-timeout',
-						eventValue: 1,
-						hitType: 'event'
-					});
-				}
-			}
-
-			this.send(new SessionMessage());
-		}
 	}
 
 	/** @ignore */
@@ -217,22 +233,80 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public close () : void {
-		throw new Error('Must provide an implementation of SessionService.close.');
+		this.channelService.close();
 	}
 
 	/** @inheritDoc */
-	public async handshakeState () : Promise<IHandshakeState> {
-		throw new Error('Must provide an implementation of SessionService.handshakeState.');
+	public async handshakeState (
+		currentStep: IAsyncValue<HandshakeSteps> =
+			new LocalAsyncValue(HandshakeSteps.Start)
+		,
+		initialSecret: IAsyncValue<Uint8Array|undefined> =
+			new LocalAsyncValue<Uint8Array|undefined>(undefined)
+	) : Promise<IHandshakeState> {
+		await this.connected;
+
+		return {
+			currentStep,
+			initialSecret,
+			initialSecretCyphertext: await this.channelService.getAsyncValue(
+				'handshake/initialSecretCyphertext',
+				BinaryProto
+			),
+			isAlice: this.state.isAlice,
+			localPublicKey: await this.channelService.getAsyncValue(
+				`handshake/${this.state.isAlice ? 'alice' : 'bob'}PublicKey`,
+				BinaryProto
+			),
+			remotePublicKey: await this.channelService.getAsyncValue(
+				`handshake/${this.state.isAlice ? 'bob' : 'alice'}PublicKey`,
+				BinaryProto
+			)
+		};
 	}
 
 	/** @inheritDoc */
-	public async init (potassiumService: PotassiumService) : Promise<void> {
+	public async init (
+		potassiumService: PotassiumService,
+		channelID: string,
+		userID?: string
+	) : Promise<void> {
 		this.resolvePotassiumService(potassiumService);
+
+		await Promise.all([
+			this.castleService.init(potassiumService, this),
+			this.channelService.init(channelID, userID, {
+				onClose: () => { this.channelOnClose(); },
+				onConnect: () => { this.channelOnConnect(); },
+				onMessage: (message: Uint8Array) => { this.channelOnMessage(message); },
+				onOpen: (isAlice: boolean) => { this.channelOnOpen(isAlice); }
+			})
+		]);
 	}
 
 	/** @inheritDoc */
-	public async lock<T> (_F: (reason?: string) => Promise<T>, _REASON?: string) : Promise<T> {
-		throw new Error('Must provide an implementation of SessionService.lock.');
+	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
+		const potassiumService	= await this.potassiumService;
+
+		return this.channelService.lock(
+			async r => f(!r ?
+				undefined :
+				potassiumService.toString(
+					await potassiumService.secretBox.open(
+						potassiumService.fromBase64(r),
+						await this.symmetricKey
+					)
+				)
+			),
+			!reason ?
+				undefined :
+				potassiumService.toBase64(
+					await potassiumService.secretBox.seal(
+						potassiumService.fromString(reason),
+						await this.symmetricKey
+					)
+				)
+		);
 	}
 
 	/** @inheritDoc */
@@ -256,8 +330,15 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
-	public send (..._MESSAGES: ISessionMessage[]) : void {
-		throw new Error('Must provide an implementation of SessionService.send.');
+	public async send (...messages: ISessionMessage[]) : Promise<void> {
+		for (const message of messages) {
+			message.data.timestamp	= await util.timestamp();
+			if (message.event === rpcEvents.text) {
+				this.trigger(rpcEvents.text, message.data);
+			}
+		}
+
+		this.plaintextSendHandler(messages);
 	}
 
 	/** @inheritDoc */
@@ -268,6 +349,12 @@ export abstract class SessionService implements ISessionService {
 	constructor (
 		/** @ignore */
 		protected readonly analyticsService: AnalyticsService,
+
+		/** @ignore */
+		protected readonly castleService: CastleService,
+
+		/** @ignore */
+		protected readonly channelService: ChannelService,
 
 		/** @ignore */
 		private readonly errorService: ErrorService

@@ -10,6 +10,7 @@ import {ChatEnvService} from '../cyph/services/chat-env.service';
 import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
 import {AnonymousCastleService} from '../cyph/services/crypto/anonymous-castle.service';
+import {CastleService} from '../cyph/services/crypto/castle.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
@@ -38,7 +39,6 @@ import {ChatRootStates} from './enums';
 @Component({
 	animations: [fadeIn],
 	providers: [
-		AnonymousCastleService,
 		ChannelService,
 		ChatService,
 		CyphertextService,
@@ -47,6 +47,10 @@ import {ChatRootStates} from './enums';
 		P2PWebRTCService,
 		ScrollService,
 		SessionCapabilitiesService,
+		{
+			provide: CastleService,
+			useClass: AnonymousCastleService
+		},
 		{
 			provide: EnvService,
 			useClass: ChatEnvService

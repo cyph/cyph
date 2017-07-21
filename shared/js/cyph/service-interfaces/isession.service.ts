@@ -28,5 +28,5 @@ export interface ISessionService extends ISession {
 	setRemoteUsername: (remoteUsername: string) => void;
 
 	/** Initializes service. */
-	init (potassiumService: PotassiumService) : void;
+	init (potassiumService: PotassiumService, channelID: string, userID?: string) : void;
 }

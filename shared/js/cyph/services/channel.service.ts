@@ -15,6 +15,9 @@ import {DatabaseService} from './database.service';
 @Injectable()
 export class ChannelService {
 	/** @ignore */
+	private ephemeral: boolean	= false;
+
+	/** @ignore */
 	private isClosed: boolean	= false;
 
 	/** @ignore */
@@ -31,7 +34,7 @@ export class ChannelService {
 	;
 
 	/** @ignore */
-	private readonly userID: string	= util.uuid();
+	private userID?: string;
 
 	/** This kills the channel. */
 	public async close () : Promise<void> {
@@ -51,16 +54,29 @@ export class ChannelService {
 
 	/**
 	 * Initializes service.
-	 * @param channelName Name of this channel.
+	 * @param channelID ID of this channel.
+	 * @param userID If specified, will treat as long-lived channel. Else, will treat as ephemeral.
 	 * @param handlers Event handlers for this channel.
 	 */
-	public async init (channelName: string, handlers: IChannelHandlers) : Promise<void> {
-		const url	= `channels/${channelName}`;
+	public async init (
+		channelID: string,
+		userID: string|undefined,
+		handlers: IChannelHandlers
+	) : Promise<void> {
+		const url	= `channels/${channelID}`;
 
 		this.resolveState({lock: this.databaseService.lockFunction(`${url}/lock`), url});
-		this.databaseService.setDisconnectTracker(`${url}/disconnects/${this.userID}`);
 
-		let isConnected	= false;
+		if (userID) {
+			this.userID	= userID;
+		}
+		else {
+			this.ephemeral	= true;
+			this.userID		= util.uuid();
+			this.databaseService.setDisconnectTracker(`${url}/disconnects/${this.userID}`);
+		}
+
+		let isOpen	= false;
 		const usersSubscription	= this.databaseService.watchList(
 			`${url}/users`,
 			StringProto
@@ -69,8 +85,8 @@ export class ChannelService {
 				if (users.length < 1) {
 					return;
 				}
-				if (!isConnected) {
-					isConnected	= true;
+				if (!isOpen) {
+					isOpen	= true;
 					handlers.onOpen(users[0].value === this.userID);
 				}
 				if (users.length < 2) {
@@ -105,12 +121,14 @@ export class ChannelService {
 			}
 		);
 
-		this.databaseService.pushItem(`${url}/users`, StringProto, this.userID);
-	}
-
-	/** Indicates whether this channel is available for sending and receiving. */
-	public get isAlive () : boolean {
-		return !this.isClosed;
+		if (
+			this.ephemeral ||
+			(
+				await this.databaseService.getList(`${url}/users`, StringProto).catch(() => [])
+			).indexOf(this.userID) < 0
+		) {
+			this.databaseService.pushItem(`${url}/users`, StringProto, this.userID);
+		}
 	}
 
 	/** @see DatabaseService.lock */
@@ -123,7 +141,7 @@ export class ChannelService {
 		this.localLock(async () => this.databaseService.pushItem(
 			`${(await this.state).url}/messages`,
 			ChannelMessage,
-			{author: this.userID, cyphertext}
+			{author: await util.waitForValue(() => this.userID), cyphertext}
 		));
 	}
 
