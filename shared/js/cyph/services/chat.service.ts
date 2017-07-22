@@ -3,6 +3,7 @@ import {BehaviorSubject} from 'rxjs';
 import {IChatMessage, ISessionMessageData} from '../../proto';
 import {IChatData, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
+import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {events, rpcEvents, SessionMessage, users} from '../session';
@@ -41,7 +42,7 @@ export class ChatService {
 		isFriendTyping: new BehaviorSubject(false),
 		isMessageChanged: false,
 		keyExchangeProgress: 0,
-		messages: new LocalAsyncValue<IChatMessage[]>([]),
+		messages: new LocalAsyncList<IChatMessage>([]),
 		queuedMessageSelfDestruct: false,
 		state: States.none,
 		unconfirmedMessages: new LocalAsyncValue<{[id: string]: boolean|undefined}>({})
@@ -118,24 +119,12 @@ export class ChatService {
 			}
 		}
 
-		const message: IChatMessage	= {
+		await this.chat.messages.pushValue({
 			author,
 			id,
 			selfDestructTimeout,
 			text,
 			timestamp
-		};
-
-		await this.chat.messages.updateValue(async messages => {
-			for (let i = messages.length - 1 ; i >= -1 ; --i) {
-				const o	= messages[i];
-				if (!o || message.timestamp > o.timestamp) {
-					messages.splice(i + 1, 0, message);
-					break;
-				}
-			}
-
-			return messages;
 		});
 
 		if (author === users.me) {

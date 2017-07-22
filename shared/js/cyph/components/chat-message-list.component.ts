@@ -35,6 +35,8 @@ export class ChatMessageListComponent implements AfterViewInit {
 					message.id,
 					() => new ChatMessage(message)
 				)
+			).sort((a, b) =>
+				a.timestamp - b.timestamp
 			)
 		)
 	;
