@@ -27,5 +27,5 @@ export interface ISessionService extends ISession {
 	init (channelID: string, userID?: string) : void;
 
 	/** Sets remote username. */
-	setRemoteUsername: (remoteUsername: string) => void;
+	setRemoteUsername (remoteUsername: string) : void;
 }
