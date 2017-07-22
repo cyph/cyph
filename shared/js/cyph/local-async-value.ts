@@ -10,7 +10,7 @@ import {util} from './util';
  */
 export class LocalAsyncValue<T> implements IAsyncValue<T> {
 	/** @ignore */
-	private readonly subject: BehaviorSubject<T>	= new BehaviorSubject(this.value);
+	protected readonly subject: BehaviorSubject<T>	= new BehaviorSubject(this.value);
 
 	/** @inheritDoc */
 	public readonly lock: LockFunction	= util.lockFunction();
@@ -24,6 +24,13 @@ export class LocalAsyncValue<T> implements IAsyncValue<T> {
 	public async setValue (newValue: T) : Promise<void> {
 		if (ArrayBuffer.isView(this.value)) {
 			potassiumUtil.clearMemory(this.value);
+		}
+		else if (this.value instanceof Array) {
+			for (const v of this.value) {
+				if (ArrayBuffer.isView(v)) {
+					potassiumUtil.clearMemory(v);
+				}
+			}
 		}
 
 		this.value	= newValue;
@@ -52,6 +59,6 @@ export class LocalAsyncValue<T> implements IAsyncValue<T> {
 
 	constructor (
 		/** @ignore */
-		private value: T
+		protected value: T
 	) {}
 }
