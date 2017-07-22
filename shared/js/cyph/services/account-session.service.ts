@@ -5,6 +5,9 @@ import {rpcEvents} from '../session/enums';
 import {util} from '../util';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';
+import {ChannelService} from './channel.service';
+import {CastleService} from './crypto/castle.service';
+import {PotassiumService} from './crypto/potassium.service';
 import {ErrorService} from './error.service';
 import {SessionService} from './session.service';
 
@@ -30,7 +33,7 @@ export class AccountSessionService extends SessionService {
 	public close () : void {}
 
 	/** @inheritDoc */
-	public send (...messages: ISessionMessage[]) : void {
+	public async send (...messages: ISessionMessage[]) : Promise<void> {
 		for (const message of messages) {
 			if (message.event !== rpcEvents.text) {
 				continue;
@@ -81,11 +84,14 @@ export class AccountSessionService extends SessionService {
 
 	constructor (
 		analyticsService: AnalyticsService,
+		castleService: CastleService,
+		channelService: ChannelService,
 		errorService: ErrorService,
+		potassiumService: PotassiumService,
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService
 	) {
-		super(analyticsService, errorService);
+		super(analyticsService, castleService, channelService, errorService, potassiumService);
 	}
 }
