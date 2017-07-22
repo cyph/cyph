@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {AccountChatComponent} from '../components/account-chat.component';
 import {AccountContactsComponent} from '../components/account-contacts.component';
 import {AccountFilesComponent} from '../components/account-files.component';
+import {AccountFormComponent} from '../components/account-form.component';
 import {AccountFormsComponent} from '../components/account-forms.component';
 import {AccountHomeComponent} from '../components/account-home.component';
 import {AccountLoginComponent} from '../components/account-login.component';
@@ -40,6 +41,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountComponent,
 		AccountContactsComponent,
 		AccountFilesComponent,
+		AccountFormComponent,
 		AccountFormsComponent,
 		AccountHomeComponent,
 		AccountLoginComponent,
