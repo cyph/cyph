@@ -5,6 +5,7 @@ import {memoize} from 'lodash';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {AGSEPKICert, IAGSEPKICert} from '../../../proto';
 import {ICurrentUser, SecurityModels} from '../../account';
+import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';
 import {IProto} from '../../iproto';
 import {ITimedValue} from '../../itimed-value';
@@ -264,6 +265,38 @@ export class AccountDatabaseService {
 		return {progress, result};
 	}
 
+	/** @see DatabaseService.getAsyncList */
+	public getAsyncList<T> (
+		url: string,
+		proto: IProto<T>,
+		securityModel: SecurityModels = SecurityModels.private,
+		anonymous: boolean = false
+	) : IAsyncList<T> {
+		const localLock		= util.lockFunction();
+
+		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
+		/* tslint:disable-next-line:no-unnecessary-local-variable */
+		const asyncList: IAsyncList<T>	= {
+			getValue: async () => localLock(async () => this.getList(url, proto)),
+			lock: async (f, reason) => this.lock(url, f, reason),
+			pushValue: async value => localLock(async () => {
+				await this.pushItem(url, proto, value);
+			}),
+			setValue: async value => localLock(async () => this.setList(url, proto, value)),
+			updateValue: async f => asyncList.lock(async () => {
+				asyncList.setValue(await f(await asyncList.getValue()));
+			}),
+			watch: memoize(() =>
+				this.watchList(url, proto).map<ITimedValue<T>[], T[]>(arr => arr.map(o => o.value))
+			),
+			watchPushes: memoize(() =>
+				this.watchListPushes(url, proto).map<ITimedValue<T>, T>(o => o.value)
+			)
+		};
+
+		return asyncList;
+	}
+
 	/** @see DatabaseService.getAsyncValue */
 	public getAsyncValue<T> (
 		url: string,
@@ -502,6 +535,20 @@ export class AccountDatabaseService {
 			await this.processURL(url),
 			BinaryProto,
 			await this.seal(url, proto, value, securityModel)
+		));
+	}
+
+	/** @see DatabaseService.setList */
+	public async setList<T> (
+		url: string,
+		proto: IProto<T>,
+		value: T[],
+		securityModel: SecurityModels = SecurityModels.private
+	) : Promise<void> {
+		return this.lock(url, async () => this.databaseService.setList(
+			await this.processURL(url),
+			BinaryProto,
+			await Promise.all(value.map(async v => this.seal(url, proto, v, securityModel)))
 		));
 	}
 
