@@ -1,8 +1,8 @@
 <div fxFlexFill fxLayout='row' fxLayoutAlign='center start'>
 	<div fxFlex='90' fxFlex.gt-sm='65' fxFlex.gt-md='40' fxLayout='column' fxLayoutGap='16px'>
-		<h1 class='header'>Secure Files</h1>
+		<h1 class='header'>Files</h1>
 		<md-card
-			class='contact animated flipInY _{{i}}'
+			class='file animated flipInY _{{i}}'
 			*ngFor='let file of accountFilesService.filteredFiles.files | async; let i = index'
 			[attr.data-index]='i'
 		>

@@ -142,13 +142,37 @@
 		<button
 			md-icon-button
 			cyphTranslate
-			mdTooltip='Settings'
+			mdTooltip='Notes'
 			mdTooltipPosition='right'
-			routerLink='/account/settings'
+			routerLink='/account/notes'
 			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
 		>
 			<md-icon>library_books</md-icon>
+		</button>
+
+		<button
+			md-button
+			cyphTranslate
+			mdTooltip='Forms'
+			mdTooltipPosition='right'
+			routerLink='/account/forms'
+			(click)='click()'
+			*ngIf='accountService.menuExpanded'
+		>
+			<md-icon>content_paste</md-icon>
+			<span>Forms</span>
+		</button>
+		<button
+			md-icon-button
+			cyphTranslate
+			mdTooltip='Forms'
+			mdTooltipPosition='right'
+			routerLink='/account/forms'
+			(click)='click()'
+			*ngIf='!accountService.menuExpanded'
+		>
+			<md-icon>content_paste</md-icon>
 		</button>
 
 		<button

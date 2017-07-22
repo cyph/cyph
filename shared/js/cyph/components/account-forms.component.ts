@@ -1,41 +1,34 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
-import {IForm} from '../../proto';
-import {newPatient} from '../forms/.';
-import {AccountDatabaseService} from '../services/crypto/account-database.service';
+import {Component} from '@angular/core';
+import {AccountContactsService} from '../services/account-contacts.service';
+import {AccountFilesService} from '../services/account-files.service';
+import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
+import {UtilService} from '../services/util.service';
+
 
 /**
- * Angular component for account forms UI.
+ * Angular component for forms UI.
  */
 @Component({
 	selector: 'cyph-account-forms',
 	styleUrls: ['../../../css/components/account-forms.scss'],
 	templateUrl: '../../../templates/account-forms.html'
 })
-
-export class AccountFormsComponent implements OnInit {
-	public newPatient: IForm	= newPatient();
-
-	public ngOnInit () : void {
-		/** To-do */
-	}
-
-	/** @see AccountFormsService.submit */
-	public async submit () : Promise<void> {
-		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
-			/* TODO: HANDLE NATIVE */
-			return;
-		}
-
-	}
+export class AccountFormsComponent {
 	constructor (
-		/** @see AccountDatabaseService */
-		public readonly accountDatabaseService: AccountDatabaseService,
+		/** @see AccountAuthService */
+		public readonly accountAuthService: AccountAuthService,
 
-		/** @ignore */
-		private readonly elementRef: ElementRef,
+		/** @see AccountContactsService */
+		public readonly accountContactsService: AccountContactsService,
+
+		/** @see AccountFilesService */
+		public readonly accountFilesService: AccountFilesService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see UtilService */
+		public readonly utilService: UtilService
 	) {}
 }

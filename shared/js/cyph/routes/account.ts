@@ -4,6 +4,7 @@ import {Route} from '@angular/router';
 import {AccountChatComponent} from '../components/account-chat.component';
 import {AccountContactsComponent} from '../components/account-contacts.component';
 import {AccountFilesComponent} from '../components/account-files.component';
+import {AccountFormComponent} from '../components/account-form.component';
 import {AccountFormsComponent} from '../components/account-forms.component';
 import {AccountHomeComponent} from '../components/account-home.component';
 import {AccountLoginComponent} from '../components/account-login.component';
@@ -29,6 +30,7 @@ export const account: Route	= {
 		{path: 'home', redirectTo: ''},
 		{path: 'files', component: AccountFilesComponent},
 		{path: 'forms', component: AccountFormsComponent},
+		{path: 'forms/:id', component: AccountFormComponent},
 		{path: 'login', component: AccountLoginComponent},
 		{path: 'logout', component: AccountLogoutComponent},
 		{path: 'notes', component: AccountNotesComponent},
