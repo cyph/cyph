@@ -1,12 +1,14 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {IChatMessage} from '../../proto';
+import {ChatMessage} from '../../proto';
 import {IChatData, States} from '../chat';
-import {LocalAsyncValue} from '../local-async-value';
-import {users} from '../session/enums';
+import {ChatUnconfirmedMessagesProto} from '../protos';
+import {util} from '../util';
+import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionService} from './account-session.service';
 import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
+import {AccountDatabaseService} from './crypto/account-database.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
 import {ScrollService} from './scroll.service';
@@ -31,36 +33,30 @@ export class AccountChatService extends ChatService {
 			return;
 		}
 
+		const contactURL	=
+			`contacts/${await this.accountContactsService.getContactID(username)}`
+		;
+
 		await this.accountSessionService.setUser(username);
 
-		const chat	= this.chats.get(username);
-
-		if (chat) {
-			this.chat	= chat;
-		}
-		else {
-			this.chat	= {
-				currentMessage: '',
-				isConnected: true,
-				isDisconnected: false,
-				isFriendTyping: new BehaviorSubject(false),
-				isMessageChanged: false,
-				keyExchangeProgress: 0,
-				messages: new LocalAsyncValue<IChatMessage[]>([]),
-				queuedMessageSelfDestruct: false,
-				state: States.chat,
-				unconfirmedMessages: new LocalAsyncValue<{[id: string]: boolean|undefined}>({})
-			};
-
-			this.chats.set(username, this.chat);
-
-			this.addMessage(
-				this.stringsService.introductoryMessage,
-				users.app,
-				undefined,
-				false
-			);
-		}
+		this.chat	= util.getOrSetDefault(this.chats, username, () => ({
+			currentMessage: '',
+			isConnected: true,
+			isDisconnected: false,
+			isFriendTyping: new BehaviorSubject(false),
+			isMessageChanged: false,
+			keyExchangeProgress: 0,
+			messages: this.accountDatabaseService.getAsyncList(
+				`${contactURL}/messages`,
+				ChatMessage
+			),
+			queuedMessageSelfDestruct: false,
+			state: States.chat,
+			unconfirmedMessages: this.accountDatabaseService.getAsyncValue(
+				`${contactURL}/unconfirmedMessages`,
+				ChatUnconfirmedMessagesProto
+			)
+		}));
 	}
 
 	constructor (
@@ -70,6 +66,12 @@ export class AccountChatService extends ChatService {
 		scrollService: ScrollService,
 		sessionService: SessionService,
 		stringsService: StringsService,
+
+		/** @ignore */
+		private readonly accountContactsService: AccountContactsService,
+
+		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly accountSessionService: AccountSessionService

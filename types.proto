@@ -127,6 +127,12 @@ message ChatMessage {
 	required double timestamp = 5;
 }
 
+/** Chat unconfirmed messages. */
+message ChatUnconfirmedMessages {
+	/** Mapping of message IDs to confirmation statuses. */
+	map<string, bool> unconfirmedMessages = 1;
+}
+
 /** Represents a form that a user can submit responses to. */
 message Form {
 	/** Reusable building block consisting of multiple forms. */
