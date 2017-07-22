@@ -1,5 +1,6 @@
 import {Subject} from 'rxjs';
 import {IChatMessage} from '../../proto';
+import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
 import {States} from './enums';
 
@@ -27,7 +28,7 @@ export interface IChatData {
 	keyExchangeProgress: number;
 
 	/** Message list. */
-	messages: IAsyncValue<IChatMessage[]>;
+	messages: IAsyncList<IChatMessage>;
 
 	/** The previous message sent. */
 	previousMessage?: string;
