@@ -66,6 +66,7 @@ service firebase.storage {
 			// 			}
 			// 		}
 			// 	}
+			// 	match /unconfirmedMessages {}
 			// }
 
 			// match /encryptionKeyPair {}

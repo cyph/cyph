@@ -256,6 +256,14 @@
 									}
 								}
 							}
+						},
+						"unconfirmedMessages": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
 						}
 					}
 				},
