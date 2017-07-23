@@ -14,6 +14,7 @@ export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncLis
 	public async pushValue (value: T) : Promise<void> {
 		this.value.push(value);
 		this.pushes.next(value);
+		this.subject.next(this.value);
 	}
 
 	/** @inheritDoc */
