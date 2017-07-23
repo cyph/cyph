@@ -17,7 +17,7 @@ while
 			grep -oP '^\s*message [A-Za-z0-9]+' types.proto |
 				awk '{print $2}' |
 				tr '\n' '~' |
-				sed 's|~| .* |g'
+				sed 's|~| { .* |g'
 		)" ||
 		echo 0;
 	} &> /dev/null && 
