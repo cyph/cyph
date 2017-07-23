@@ -23,14 +23,23 @@ export class AccountCastleService extends CastleService {
 		potassiumService: PotassiumService,
 		sessionService: SessionService
 	) : Promise<void> {
-		const username			= await sessionService.remoteUsername;
 		const transport			= new Transport(sessionService);
-		const handshakeState	= await sessionService.handshakeState();
-		const localUser			= new RegisteredLocalUser(this.accountDatabaseService);
-		const remoteUser		= new RegisteredRemoteUser(this.accountDatabaseService, username);
 
-		const sessionURL	=
-			`contacts/${await this.accountContactsService.getContactID(username)}/session`
+		const handshakeState	= await sessionService.handshakeState();
+
+		const localUser			= new RegisteredLocalUser(this.accountDatabaseService);
+
+		const remoteUser		= new RegisteredRemoteUser(
+			this.accountDatabaseService,
+			sessionService.remoteUsername
+		);
+
+		const sessionURL		=
+			`contacts/${
+				await this.accountContactsService.getContactID(
+					await sessionService.remoteUsername.take(1).toPromise()
+				)
+			}/session`
 		;
 
 		this.resolvePairwiseSession(new PairwiseSession(

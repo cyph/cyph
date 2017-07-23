@@ -403,7 +403,7 @@ export class AccountDatabaseService {
 			throw new Error('Invalid username.');
 		}
 
-		const url	= `users/${username}/certificate`;
+		const url	= `users/${username.toLowerCase()}/certificate`;
 
 		return this.localStorageService.getOrSetDefault(
 			`AccountDatabaseService.getUserPublicKeys/${url}`,

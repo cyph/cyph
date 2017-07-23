@@ -1,3 +1,4 @@
+import {Observable} from 'rxjs';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {IRemoteUser} from './iremote-user';
 
@@ -9,7 +10,9 @@ export class RegisteredRemoteUser implements IRemoteUser {
 	/** @ignore */
 	private publicKey: Promise<Uint8Array>	= (async () =>
 		(
-			await this.accountDatabaseService.getUserPublicKeys(await this.username)
+			await this.accountDatabaseService.getUserPublicKeys(
+				await this.username.take(1).toPromise()
+			)
 		).publicEncryptionKey
 	)();
 
@@ -18,16 +21,11 @@ export class RegisteredRemoteUser implements IRemoteUser {
 		return this.publicKey;
 	}
 
-	/** @inheritDoc */
-	public async getUsername () : Promise<string> {
-		return this.username;
-	}
-
 	constructor (
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 
-		/** @ignore */
-		private readonly username: string|Promise<string>
+		/** @inheritDoc */
+		public readonly username: Observable<string>
 	) {}
 }

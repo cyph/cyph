@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {UserPresence} from '../account/enums';
-import {AccountChatStringsService} from '../services/account-chat-strings.service';
 import {AccountChatService} from '../services/account-chat.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountSessionService} from '../services/account-session.service';
@@ -19,7 +18,6 @@ import {ScrollService} from '../services/scroll.service';
 import {SessionCapabilitiesService} from '../services/session-capabilities.service';
 import {SessionInitService} from '../services/session-init.service';
 import {SessionService} from '../services/session.service';
-import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -48,10 +46,6 @@ import {StringsService} from '../services/strings.service';
 		{
 			provide: SessionService,
 			useExisting: AccountSessionService
-		},
-		{
-			provide: StringsService,
-			useClass: AccountChatStringsService
 		}
 	],
 	selector: 'cyph-account-chat',

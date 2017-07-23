@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
-import {ISessionMessage} from '../../proto';
 import {User} from '../account/user';
-import {rpcEvents} from '../session/enums';
+import {ISessionMessageAdditionalData, rpcEvents} from '../session';
 import {util} from '../util';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';
@@ -10,6 +9,7 @@ import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {ErrorService} from './error.service';
 import {SessionService} from './session.service';
+import {StringsService} from './strings.service';
 
 
 /**
@@ -33,8 +33,8 @@ export class AccountSessionService extends SessionService {
 	public close () : void {}
 
 	/** @inheritDoc */
-	public async send (...messages: ISessionMessage[]) : Promise<void> {
-		for (const message of messages) {
+	public async send (...messages: [string, ISessionMessageAdditionalData][]) : Promise<void> {
+		for (const message of await this.newMessages(messages)) {
 			if (message.event !== rpcEvents.text) {
 				continue;
 			}
@@ -79,7 +79,7 @@ export class AccountSessionService extends SessionService {
 
 		this.user	= await this.accountUserLookupService.getUser(username);
 
-		this.setRemoteUsername(this.user.username);
+		this.user.realUsername.subscribe(this.remoteUsername);
 	}
 
 	constructor (
@@ -88,10 +88,18 @@ export class AccountSessionService extends SessionService {
 		channelService: ChannelService,
 		errorService: ErrorService,
 		potassiumService: PotassiumService,
+		stringsService: StringsService,
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService
 	) {
-		super(analyticsService, castleService, channelService, errorService, potassiumService);
+		super(
+			analyticsService,
+			castleService,
+			channelService,
+			errorService,
+			potassiumService,
+			stringsService
+		);
 	}
 }
