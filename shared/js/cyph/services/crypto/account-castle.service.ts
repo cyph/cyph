@@ -1,11 +1,17 @@
 import {Injectable} from '@angular/core';
 import {
+	HandshakeSteps,
 	PairwiseSession,
 	RegisteredLocalUser,
 	RegisteredRemoteUser,
 	Transport
 } from '../../crypto/castle';
-import {CastleIncomingMessagesProto, MaybeBinaryProto, Uint32Proto} from '../../protos';
+import {
+	CastleIncomingMessagesProto,
+	MaybeBinaryProto,
+	NumberProto,
+	Uint32Proto
+} from '../../protos';
 import {util} from '../../util';
 import {AccountContactsService} from '../account-contacts.service';
 import {SessionService} from '../session.service';
@@ -36,7 +42,22 @@ export class AccountCastleService extends CastleService {
 
 			this.pairwiseSessionLock(async () => { this.pairwiseSession.next(
 				await util.getOrSetDefaultAsync(this.pairwiseSessions, username, async () => {
-					const handshakeState	= await sessionService.handshakeState();
+					const sessionURL		=
+						`contacts/${
+							await this.accountContactsService.getContactID(username)
+						}/session`
+					;
+
+					const handshakeState	= await sessionService.handshakeState(
+						this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
+							`${sessionURL}/handshake/currentStep`,
+							NumberProto
+						),
+						this.accountDatabaseService.getAsyncValue(
+							`${sessionURL}/handshake/initialSecret`,
+							MaybeBinaryProto
+						)
+					);
 
 					const localUser			= new RegisteredLocalUser(this.accountDatabaseService);
 
@@ -44,12 +65,6 @@ export class AccountCastleService extends CastleService {
 						this.accountDatabaseService,
 						sessionService.remoteUsername
 					);
-
-					const sessionURL		=
-						`contacts/${
-							await this.accountContactsService.getContactID(username)
-						}/session`
-					;
 
 					return new PairwiseSession(
 						potassiumService,

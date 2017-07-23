@@ -43,5 +43,7 @@ export class AccountSessionService extends SessionService {
 			potassiumService,
 			stringsService
 		);
+
+		this.init();
 	}
 }
