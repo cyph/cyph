@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {List} from 'immutable';
-import {IChatMessage} from '../../proto';
+import {Observable} from 'rxjs';
+import {ChatMessage} from '../chat';
 import {events} from '../session/enums';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
@@ -25,14 +26,14 @@ export class CyphertextService {
 	public isVisible: boolean	= false;
 
 	/** Cyphertext message list. */
-	public messages: List<IChatMessage>	= List<IChatMessage>();
+	public messages: List<ChatMessage>	= List<ChatMessage>();
 
 	/**
 	 * Logs new cyphertext message.
 	 * @param text
 	 * @param author
 	 */
-	private async log (text: string, author: string) : Promise<void> {
+	private async log (text: string, author: Observable<string>) : Promise<void> {
 		if (!text || !this.isEnabled) {
 			return;
 		}
@@ -45,12 +46,16 @@ export class CyphertextService {
 				messages.size > (this.envService.isMobile ? 5 : 50) ?
 					messages.shift() :
 					messages
-			).push({
-				author,
-				id: '',
-				text,
-				timestamp
-			})
+			).push(new ChatMessage(
+				{
+					authorID: '',
+					authorType: ChatMessage.AuthorTypes.App,
+					id: '',
+					text,
+					timestamp
+				},
+				author
+			))
 		);
 	}
 
@@ -99,7 +104,7 @@ export class CyphertextService {
 		if (this.isEnabled) {
 			this.sessionService.on(
 				events.cyphertext,
-				(o: {author: string; cyphertext: string}) => {
+				(o: {author: Observable<string>; cyphertext: string}) => {
 					this.log(o.cyphertext, o.author);
 				}
 			);

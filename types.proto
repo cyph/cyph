@@ -24,20 +24,30 @@ message ChannelMessage {
 
 /** Represents one message in a chat. */
 message ChatMessage {
-	/** @see SessionMessageData.author */
-	required string author = 1;
+	/** Author types. */
+	enum AuthorTypes {
+		App = 0;
+		Local = 1;
+		Remote = 2;
+	}
+
+	/** Author user ID. */
+	string authorID = 1;
+
+	/** @see AuthorTypes */
+	required AuthorTypes authorType = 2;
 
 	/** @see SessionMessageData.id */
-	required string id = 2;
+	required string id = 3;
 
 	/** @see SessionText.selfDestructTimeout */
-	uint32 selfDestructTimeout = 3;
+	uint32 selfDestructTimeout = 4;
 
 	/** @see SessionText.text */
-	required string text = 4;
+	required string text = 5;
 
 	/** @see SessionMessageData.timestamp */
-	required double timestamp = 5;
+	required double timestamp = 6;
 }
 
 /** Represents a form that a user can submit responses to. */
@@ -50,7 +60,7 @@ message Form {
 
 	/** One element of a Form, and one column of an ElementRow. */
 	message Element {
-		/** Element input type. */
+		/** Element input types. */
 		enum Types {
 			Text = 0;
 			Checkbox = 1;
@@ -154,35 +164,32 @@ message SessionMessage {
 
 /** Message data. */
 message SessionMessageData {
-	/** Author of this message. */
-	required string author = 1;
-
 	/** Unique ID. */
-	required string id = 2;
+	required string id = 1;
 
 	/** Timestamp of this message. */
-	required double timestamp = 3;
+	required double timestamp = 2;
 
 	/** Arbitrary bytes. */
-	bytes bytes = 4;
+	bytes bytes = 3;
 
 	/** @see SessionCapabilities */
-	SessionCapabilities capabilities = 5;
+	SessionCapabilities capabilities = 4;
 
 	/** @see SessionChatState */
-	SessionChatState chatState = 6;
+	SessionChatState chatState = 5;
 
 	/** @see SessionCommand */
-	SessionCommand command = 7;
+	SessionCommand command = 6;
 
 	/** @see SessionText */
-	SessionText text = 8;
+	SessionText text = 7;
 
 	/** @see SessionTextConfirmation */
-	SessionTextConfirmation textConfirmation = 9;
+	SessionTextConfirmation textConfirmation = 8;
 
 	/** @see SessionTransfer */
-	SessionTransfer transfer = 10;
+	SessionTransfer transfer = 9;
 }
 
 /** Array of session messages. */
@@ -218,38 +225,35 @@ message SessionTransfer {
 	/** Indicates a non-response to, acceptance of, or rejection of a file transfer. */
 	required Answers answer = 1;
 
-	/** @see SessionMessageData.author */
-	required string author = 2;
-
 	/** Unique ID to represent this file transfer. */
-	required string id = 3;
+	required string id = 2;
 
 	/** Indicates whether file should be handled as an image. */
-	required bool image = 4;
+	required bool image = 3;
 
 	/** If image is true, this will be used as a self-destruct timeout for the message. */
-	required uint32 imageSelfDestructTimeout = 5;
+	required uint32 imageSelfDestructTimeout = 4;
 
 	/** Indicates whether file is being sent from this Cyph instance. */
-	required bool isOutgoing = 6;
+	required bool isOutgoing = 5;
 
 	/** Symmetric key used for encrypting file over the wire. */
-	required bytes key = 7;
+	required bytes key = 6;
 
 	/** MIME type. */
-	required string mediaType = 8;
+	required string mediaType = 7;
 
 	/** File name. */
-	required string name = 9;
+	required string name = 8;
 
 	/** Indicates the time at which the file was received. */
-	double receiptTimestamp = 10;
+	double receiptTimestamp = 9;
 
 	/** File size in bytes. */
-	required uint32 size = 11;
+	required uint32 size = 10;
 
 	/** File URL. */
-	required string url = 12;
+	required string url = 11;
 }
 
 

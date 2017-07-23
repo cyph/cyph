@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
-import {IChatMessage, ISessionMessageData} from '../../proto';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {ChatMessage, IChatMessage} from '../../proto';
 import {IChatData, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
-import {events, rpcEvents, SessionMessage, users} from '../session';
+import {events, ISessionMessageData, rpcEvents} from '../session';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
@@ -62,10 +62,7 @@ export class ChatService {
 		}
 		else if (!this.chat.isDisconnected) {
 			this.chat.isDisconnected	= true;
-			this.addMessage(
-				this.stringsService.disconnectNotification,
-				users.app
-			);
+			this.addMessage(this.stringsService.disconnectNotification);
 			this.sessionService.close();
 		}
 	}
@@ -88,16 +85,16 @@ export class ChatService {
 	 */
 	public async addMessage (
 		text: string,
-		author: string,
+		author: Observable<string> = this.sessionService.appUsername,
 		timestamp?: number,
-		shouldNotify: boolean = author !== users.me,
+		shouldNotify: boolean = author !== this.sessionService.localUsername,
 		selfDestructTimeout?: number,
 		id: string = util.uuid()
 	) : Promise<void> {
 		if (
 			!text ||
 			this.chat.state === States.aborted ||
-			(author !== users.app && this.chat.isDisconnected)
+			(author !== this.sessionService.appUsername && this.chat.isDisconnected)
 		) {
 			return;
 		}
@@ -106,12 +103,12 @@ export class ChatService {
 			timestamp	= await util.timestamp();
 		}
 
-		while (author !== users.app && !this.chat.isConnected) {
+		while (author !== this.sessionService.appUsername && !this.chat.isConnected) {
 			await util.sleep(500);
 		}
 
 		if (this.notificationService && shouldNotify) {
-			if (author === users.app) {
+			if (author === this.sessionService.appUsername) {
 				this.notificationService.notify(text);
 			}
 			else {
@@ -120,14 +117,29 @@ export class ChatService {
 		}
 
 		await this.chat.messages.pushValue({
-			author,
+			authorID:
+				(
+					author === this.sessionService.appUsername ||
+					author === this.sessionService.localUsername ||
+					author === this.sessionService.remoteUsername
+				) ?
+					undefined :
+					(() => { throw new Error('Not yet implemented.'); })()
+			,
+			authorType:
+				author === this.sessionService.appUsername ?
+					ChatMessage.AuthorTypes.App :
+					author === this.sessionService.localUsername ?
+						ChatMessage.AuthorTypes.Local :
+						ChatMessage.AuthorTypes.Remote
+			,
 			id,
 			selfDestructTimeout,
 			text,
 			timestamp
 		});
 
-		if (author === users.me) {
+		if (author === this.sessionService.localUsername) {
 			this.scrollService.scrollDown();
 		}
 	}
@@ -160,7 +172,7 @@ export class ChatService {
 
 		this.addMessage(
 			this.stringsService.introductoryMessage,
-			users.app,
+			undefined,
 			(await util.timestamp()) - 30000,
 			false
 		);
@@ -217,10 +229,10 @@ export class ChatService {
 
 				if (this.chat.isMessageChanged !== isMessageChanged) {
 					this.chat.isMessageChanged	= isMessageChanged;
-					this.sessionService.send(new SessionMessage(
+					this.sessionService.send([
 						rpcEvents.typing,
 						{chatState: {isTyping: this.chat.isMessageChanged}}
-					));
+					]);
 
 					await util.sleep(1000);
 				}
@@ -241,10 +253,10 @@ export class ChatService {
 		}
 
 		if (message) {
-			this.sessionService.send(new SessionMessage(
+			this.sessionService.send([
 				rpcEvents.text,
 				{text: {selfDestructTimeout, text: message}}
-			));
+			]);
 		}
 	}
 
@@ -312,12 +324,12 @@ export class ChatService {
 			});
 		});
 
-		this.sessionService.on(rpcEvents.text, (o: ISessionMessageData) => {
+		this.sessionService.on(rpcEvents.text, async (o: ISessionMessageData) => {
 			if (!o.text) {
 				return;
 			}
 
-			if (o.author === users.me) {
+			if (o.author === this.sessionService.localUsername) {
 				(async () => {
 					await this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
 						unconfirmedMessages[o.id]	= false;
@@ -336,9 +348,7 @@ export class ChatService {
 				})();
 			}
 			else {
-				this.sessionService.send(
-					new SessionMessage(rpcEvents.confirm, {textConfirmation: {id: o.id}})
-				);
+				this.sessionService.send([rpcEvents.confirm, {textConfirmation: {id: o.id}}]);
 			}
 
 			this.addMessage(

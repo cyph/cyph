@@ -1,6 +1,7 @@
-import {ISessionMessage} from '../../proto';
+import {Observable} from 'rxjs';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
 import {CastleEvents} from './enums';
+import {ISessionMessageAdditionalData} from './isession-message-additional-data';
 
 
 /**
@@ -21,7 +22,7 @@ export interface ISession {
 	/** Castle event handler called by Castle.Transport. */
 	castleHandler (
 		event: CastleEvents,
-		data?: Uint8Array|{author: string; plaintext: Uint8Array; timestamp: number}
+		data?: Uint8Array|{author: Observable<string>; plaintext: Uint8Array; timestamp: number}
 	) : Promise<void>;
 
 	/** This kills the cyph. */
@@ -57,7 +58,7 @@ export interface ISession {
 	 * Send at least one message through the session.
 	 * @param messages
 	 */
-	send (...messages: ISessionMessage[]) : void;
+	send (...messages: [string, ISessionMessageAdditionalData][]) : void;
 
 	/**
 	 * Trigger event, passing in optional data.

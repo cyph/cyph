@@ -7,7 +7,6 @@ import {fadeIn} from '../cyph/animations';
 import {States as ChatStates} from '../cyph/chat/enums';
 import {ChannelService} from '../cyph/services/channel.service';
 import {ChatEnvService} from '../cyph/services/chat-env.service';
-import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
 import {AnonymousCastleService} from '../cyph/services/crypto/anonymous-castle.service';
 import {CastleService} from '../cyph/services/crypto/castle.service';
@@ -62,10 +61,6 @@ import {ChatRootStates} from './enums';
 		{
 			provide: SessionService,
 			useClass: EphemeralSessionService
-		},
-		{
-			provide: StringsService,
-			useClass: ChatStringsService
 		}
 	],
 	selector: 'cyph-ephemeral-chat-root',

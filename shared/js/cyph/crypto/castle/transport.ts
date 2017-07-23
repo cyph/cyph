@@ -1,5 +1,6 @@
-import {CastleEvents, events, users} from '../../session/enums';
-import {ISession} from '../../session/isession';
+import {Observable} from 'rxjs';
+import {ISessionService} from '../../service-interfaces/isession.service';
+import {CastleEvents, events} from '../../session/enums';
 import {potassiumUtil} from '../potassium/potassium-util';
 
 
@@ -14,32 +15,36 @@ export class Transport {
 
 	/** Triggers abortion event. */
 	public abort () : void {
-		this.session.castleHandler(CastleEvents.abort);
+		this.sessionService.castleHandler(CastleEvents.abort);
 	}
 
 	/** Triggers connection event. */
 	public connect () : void {
-		this.session.castleHandler(CastleEvents.connect);
+		this.sessionService.castleHandler(CastleEvents.connect);
 	}
 
 	/** Trigger event for logging cyphertext. */
-	public logCyphertext (cyphertext: string, author: string) : void {
+	public logCyphertext (author: Observable<string>, cyphertext: string) : void {
 		if (cyphertext.length >= Transport.cyphertextLimit) {
 			return;
 		}
 
-		this.session.trigger(events.cyphertext, {author, cyphertext});
+		this.sessionService.trigger(events.cyphertext, {author, cyphertext});
 	}
 
 	/** Handle decrypted incoming message. */
-	public receive (cyphertext: Uint8Array, plaintext: Uint8Array, author: string) : void {
-		this.logCyphertext(potassiumUtil.toBase64(cyphertext), author);
+	public receive (
+		cyphertext: Uint8Array,
+		plaintext: Uint8Array,
+		author: Observable<string>
+	) : void {
+		this.logCyphertext(author, potassiumUtil.toBase64(cyphertext));
 
 		const timestamp	= potassiumUtil.toDataView(plaintext).getFloat64(0, true);
 		const data		= potassiumUtil.toBytes(plaintext, 8);
 
 		if (data.length > 0) {
-			this.session.castleHandler(
+			this.sessionService.castleHandler(
 				CastleEvents.receive,
 				{author, plaintext: data, timestamp}
 			);
@@ -57,12 +62,16 @@ export class Transport {
 			)
 		;
 
-		this.session.castleHandler(CastleEvents.send, fullCyphertext);
-		this.logCyphertext(potassiumUtil.toBase64(fullCyphertext), users.me);
+		this.sessionService.castleHandler(CastleEvents.send, fullCyphertext);
+
+		this.logCyphertext(
+			this.sessionService.localUsername,
+			potassiumUtil.toBase64(fullCyphertext)
+		);
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly session: ISession
+		private readonly sessionService: ISessionService
 	) {}
 }

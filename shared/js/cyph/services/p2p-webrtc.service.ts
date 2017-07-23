@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
 import * as SimpleWebRTC from 'simplewebrtc';
-import {ISessionCommand, ISessionMessageData} from '../../proto';
+import {ISessionCommand} from '../../proto';
 import {env} from '../env';
 import {eventManager} from '../event-manager';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
-import {events, rpcEvents, SessionMessage} from '../session';
+import {events, ISessionMessageData, rpcEvents} from '../session';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
@@ -159,16 +159,11 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				this.isAccepted
 			);
 
-			this.sessionService.send(
-				new SessionMessage(
-					rpcEvents.p2p,
-					{command: {
-						method: ok ?
-							P2PWebRTCService.constants.accept :
-							P2PWebRTCService.constants.decline
-					}}
-				)
-			);
+			this.sessionService.send([rpcEvents.p2p, {command: {
+				method: ok ?
+					P2PWebRTCService.constants.accept :
+					P2PWebRTCService.constants.decline
+			}}]);
 
 			if (!ok) {
 				return;
@@ -220,12 +215,10 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @inheritDoc */
 	public close () : void {
-		this.sessionService.send(
-			new SessionMessage(
-				rpcEvents.p2p,
-				{command: {method: P2PWebRTCService.constants.kill}}
-			)
-		);
+		this.sessionService.send([
+			rpcEvents.p2p,
+			{command: {method: P2PWebRTCService.constants.kill}}
+		]);
 
 		this.commands.kill();
 	}
@@ -285,15 +278,10 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 						lastArg(undefined, {clients: {friend: {video: true}}});
 					}
 					else {
-						this.sessionService.send(
-							new SessionMessage(
-								rpcEvents.p2p,
-								{command: {
-									argument: msgpack.encode({args, event}),
-									method: P2PWebRTCService.constants.webRTC
-								}}
-							)
-						);
+						this.sessionService.send([rpcEvents.p2p, {command: {
+							argument: msgpack.encode({args, event}),
+							method: P2PWebRTCService.constants.webRTC
+						}}]);
 					}
 				},
 				getSessionid: () => this.sessionService.state.cyphID,
@@ -378,12 +366,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 				this.accept(callType);
 
-				this.sessionService.send(
-					new SessionMessage(
-						rpcEvents.p2p,
-						{command: {method: callType}}
-					)
-				);
+				this.sessionService.send([rpcEvents.p2p, {command: {method: callType}}]);
 
 				await util.sleep();
 				(await this.handlers).requestConfirmation();

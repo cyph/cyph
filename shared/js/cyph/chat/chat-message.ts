@@ -1,44 +1,48 @@
-import {IChatMessage} from '../../proto';
+import {Observable} from 'rxjs';
+import {ChatMessage as ChatMessageInternal, IChatMessage} from '../../proto';
 import {Timer} from '../timer';
 import {util} from '../util';
 
 
 /** @inheritDoc */
 export class ChatMessage implements IChatMessage {
-	/** @inheritDoc */
-	public get author () : string {
-		return this.message.author;
-	}
+	/** @see ChatMessageInternal.AuthorTypes */
+	/* tslint:disable-next-line:variable-name */
+	public static readonly AuthorTypes: typeof ChatMessageInternal.AuthorTypes	=
+		ChatMessageInternal.AuthorTypes
+	;
+
 
 	/** @inheritDoc */
-	public get id () : string {
-		return this.message.id;
-	}
+	public authorID?: string			= this.message.authorID;
+
+	/** @inheritDoc */
+	public authorType: ChatMessageInternal.AuthorTypes	= this.message.authorType;
+
+	/** @inheritDoc */
+	public id: string					= this.message.id;
+
+	/** @inheritDoc */
+	public selfDestructTimeout?: number	= this.message.selfDestructTimeout;
 
 	/** @inheritDoc */
 	public readonly selfDestructTimer?: Timer;
 
 	/** @inheritDoc */
-	public get selfDestructTimeout () : number|undefined {
-		return this.message.selfDestructTimeout;
-	}
+	public text: string					= this.message.text;
 
 	/** @inheritDoc */
-	public get text () : string {
-		return this.message.text;
-	}
-
-	/** @inheritDoc */
-	public get timestamp () : number {
-		return this.message.timestamp;
-	}
+	public timestamp: number			= this.message.timestamp;
 
 	/** @inheritDoc */
 	public readonly timeString: string	= util.getTimeString(this.message.timestamp);
 
 	constructor (
 		/** @ignore */
-		private readonly message: IChatMessage
+		private readonly message: IChatMessage,
+
+		/** Author of this message. */
+		public readonly author: Observable<string>
 	) {
 		if (
 			this.message.selfDestructTimeout === undefined ||

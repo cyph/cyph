@@ -1,18 +1,27 @@
 import {Injectable} from '@angular/core';
-import {ISessionMessage, ISessionMessageData, SessionMessageList} from '../../proto';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {ISessionMessage, SessionMessageList} from '../../proto';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {eventManager} from '../event-manager';
 import {IAsyncValue} from '../iasync-value';
 import {LocalAsyncValue} from '../local-async-value';
 import {BinaryProto} from '../protos';
 import {ISessionService} from '../service-interfaces/isession.service';
-import {CastleEvents, events, ProFeatures, rpcEvents, SessionMessage} from '../session';
+import {
+	CastleEvents,
+	events,
+	ISessionMessageAdditionalData,
+	ISessionMessageData,
+	ProFeatures,
+	rpcEvents
+} from '../session';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {ErrorService} from './error.service';
+import {StringsService} from './strings.service';
 
 
 /**
@@ -46,7 +55,7 @@ export abstract class SessionService implements ISessionService {
 	;
 
 	/** @inheritDoc */
-	public readonly apiFlags						= {
+	public readonly apiFlags								= {
 		forceTURN: false,
 		modestBranding: false,
 		nativeCrypto: false,
@@ -54,18 +63,23 @@ export abstract class SessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly connected: Promise<void>		= this.one<void>(events.connect);
+	public readonly appUsername: Observable<string>			= Observable.of('');
 
 	/** @inheritDoc */
-	public readonly remoteUsername: Promise<string>	= new Promise<string>(resolve => {
-		this.setRemoteUsername	= resolve;
-	});
+	public readonly connected: Promise<void>				= this.one<void>(events.connect);
 
 	/** @inheritDoc */
-	public setRemoteUsername: (remoteUsername: string) => void;
+	public readonly localUsername: Observable<string>		= new BehaviorSubject<string>(
+		this.stringsService.me
+	);
 
 	/** @inheritDoc */
-	public readonly state							= {
+	public readonly remoteUsername: BehaviorSubject<string>	= new BehaviorSubject<string>(
+		this.stringsService.friend
+	);
+
+	/** @inheritDoc */
+	public readonly state									= {
 		cyphID: '',
 		isAlice: false,
 		isAlive: true,
@@ -138,6 +152,34 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @ignore */
+	protected async newMessages (
+		messages: [string, ISessionMessageAdditionalData][]
+	) : Promise<ISessionMessage[]> {
+		const newMessages: ISessionMessage[]	= [];
+
+		for (const message of messages) {
+			const [event, additionalData]	= message;
+
+			const data: ISessionMessageData	= {
+				author: this.localUsername,
+				bytes: additionalData.bytes,
+				capabilities: additionalData.capabilities,
+				chatState: additionalData.chatState,
+				command: additionalData.command,
+				id: util.uuid(),
+				text: additionalData.text,
+				textConfirmation: additionalData.textConfirmation,
+				timestamp: await util.timestamp(),
+				transfer: additionalData.transfer
+			};
+
+			newMessages.push({event, data});
+		}
+
+		return newMessages;
+	}
+
+	/** @ignore */
 	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
 		for (const message of messages) {
 			this.plaintextSendQueue.push(message);
@@ -147,7 +189,7 @@ export abstract class SessionService implements ISessionService {
 	/** @inheritDoc */
 	public async castleHandler (
 		event: CastleEvents,
-		data?: Uint8Array|{author: string; plaintext: Uint8Array; timestamp: number}
+		data?: Uint8Array|{author: Observable<string>; plaintext: Uint8Array; timestamp: number}
 	) : Promise<void> {
 		switch (event) {
 			case CastleEvents.abort: {
@@ -164,7 +206,7 @@ export abstract class SessionService implements ISessionService {
 						await potassiumService.secretBox.keyBytes
 					);
 					this.resolveSymmetricKey(symmetricKey);
-					this.send(new SessionMessage(rpcEvents.symmetricKey, {bytes: symmetricKey}));
+					this.send([rpcEvents.symmetricKey, {bytes: symmetricKey}]);
 				}
 				else {
 					this.resolveSymmetricKey(
@@ -204,7 +246,7 @@ export abstract class SessionService implements ISessionService {
 					}
 
 					this.lastIncomingMessageTimestamp	= message.data.timestamp;
-					message.data.author					= data.author;
+					(<any> message.data).author			= data.author;
 
 					this.cyphertextReceiveHandler(message);
 				}
@@ -311,15 +353,16 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
-	public async send (...messages: ISessionMessage[]) : Promise<void> {
-		for (const message of messages) {
-			message.data.timestamp	= await util.timestamp();
+	public async send (...messages: [string, ISessionMessageAdditionalData][]) : Promise<void> {
+		const newMessages	= await this.newMessages(messages);
+
+		for (const message of newMessages) {
 			if (message.event === rpcEvents.text) {
 				this.trigger(rpcEvents.text, message.data);
 			}
 		}
 
-		this.plaintextSendHandler(messages);
+		this.plaintextSendHandler(newMessages);
 	}
 
 	/** @inheritDoc */
@@ -341,6 +384,9 @@ export abstract class SessionService implements ISessionService {
 		private readonly errorService: ErrorService,
 
 		/** @ignore */
-		protected readonly potassiumService: PotassiumService
+		protected readonly potassiumService: PotassiumService,
+
+		/** @ignore */
+		protected readonly stringsService: StringsService
 	) {}
 }

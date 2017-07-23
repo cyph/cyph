@@ -4,7 +4,6 @@ import {AppService} from './app.service';
 import {ChatRootStates} from './js/cyph.ws/enums';
 import {fadeIn} from './js/cyph/animations';
 import {ChatEnvService} from './js/cyph/services/chat-env.service';
-import {ChatStringsService} from './js/cyph/services/chat-strings.service';
 import {ChatService} from './js/cyph/services/chat.service';
 import {CyphertextService} from './js/cyph/services/cyphertext.service';
 import {DialogService} from './js/cyph/services/dialog.service';
@@ -46,10 +45,6 @@ import {events} from './js/cyph/session/enums';
 		{
 			provide: SessionService,
 			useClass: EphemeralSessionService
-		},
-		{
-			provide: StringsService,
-			useClass: ChatStringsService
 		}
 	],
 	selector: 'cyph-chat-root',

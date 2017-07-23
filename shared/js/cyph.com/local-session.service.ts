@@ -5,7 +5,12 @@ import {EnvService} from '../cyph/services/env.service';
 import {ErrorService} from '../cyph/services/error.service';
 import {SessionService} from '../cyph/services/session.service';
 import {StringsService} from '../cyph/services/strings.service';
-import {events, rpcEvents, SessionMessage, users} from '../cyph/session';
+import {
+	events,
+	ISessionMessageAdditionalData,
+	ISessionMessageData,
+	rpcEvents
+} from '../cyph/session';
 import {util} from '../cyph/util';
 import {ISessionMessage} from '../proto';
 import {ChatData} from './chat-data';
@@ -43,12 +48,12 @@ export class LocalSessionService extends SessionService {
 		this.state.isAlive	= true;
 
 		this.chatData.channelIncoming.subscribe(
-			(message: ISessionMessage) => {
+			(message: ISessionMessage&{data: ISessionMessageData}) => {
 				if (!message.event) {
 					return;
 				}
 
-				message.data.author	= this.stringsService.friend;
+				(<any> message.data).author	= this.remoteUsername;
 
 				if (message.event === events.cyphertext) {
 					this.trigger(events.cyphertext, {
@@ -72,22 +77,27 @@ export class LocalSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	public async send (...messages: ISessionMessage[]) : Promise<void> {
+	public async send (...messages: [string, ISessionMessageAdditionalData][]) : Promise<void> {
 		while (!this.chatData) {
 			await util.sleep();
 		}
 
-		for (const message of messages) {
+		const newMessages	= await this.newMessages(messages);
+
+		for (const message of newMessages) {
 			const cyphertext	= potassiumUtil.randomBytes(util.random(1024, 100));
 
-			this.trigger(events.cyphertext, {author: users.me, cyphertext});
+			this.trigger(events.cyphertext, {
+				author: this.localUsername,
+				cyphertext
+			});
 
 			if (message.event === rpcEvents.text) {
 				this.trigger(rpcEvents.text, message.data);
 			}
 
 			this.chatData.channelOutgoing.next(
-				new SessionMessage(events.cyphertext, {bytes: cyphertext})
+				(await this.newMessages([[events.cyphertext, {bytes: cyphertext}]]))[0]
 			);
 			this.chatData.channelOutgoing.next(message);
 		}
@@ -96,13 +106,18 @@ export class LocalSessionService extends SessionService {
 	constructor (
 		analyticsService: AnalyticsService,
 		errorService: ErrorService,
+		stringsService: StringsService,
 
 		/** @ignore */
-		private readonly envService: EnvService,
-
-		/** @ignore */
-		private readonly stringsService: StringsService
+		private readonly envService: EnvService
 	) {
-		super(analyticsService, <any> undefined, <any> undefined, errorService, <any> undefined);
+		super(
+			analyticsService,
+			<any> undefined,
+			<any> undefined,
+			errorService,
+			<any> undefined,
+			stringsService
+		);
 	}
 }

@@ -143,7 +143,7 @@ export class PairwiseSession {
 						this.transport.receive(
 							cyphertextBytes,
 							plaintext,
-							await this.remoteUser.getUsername()
+							this.remoteUser.username
 						);
 
 						++incomingMessageID;
