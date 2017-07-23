@@ -3,14 +3,14 @@
  */
 export interface IChannelHandlers {
 	/** Close handler. */
-	onClose: () => void;
+	onClose: () => Promise<void>;
 
 	/** Connect handler. */
-	onConnect: () => void;
+	onConnect: () => Promise<void>;
 
 	/** Message handler. */
-	onMessage: (message: Uint8Array) => void;
+	onMessage: (message: Uint8Array) => Promise<void>;
 
 	/** Open handler. */
-	onOpen: (isAlice: boolean) => void;
+	onOpen: (isAlice: boolean) => Promise<void>;
 }

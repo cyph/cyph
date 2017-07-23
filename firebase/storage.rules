@@ -51,6 +51,7 @@ service firebase.storage {
 			// 			/privateKey {}
 			// 			/publicKey {}
 			// 		}
+			// 		/channelUserID {}
 			// 		/incomingMessageID {}
 			// 		/incomingMessages {}
 			// 		/incomingMessagesMax {}

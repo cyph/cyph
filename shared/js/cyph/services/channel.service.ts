@@ -1,19 +1,20 @@
 import {Injectable} from '@angular/core';
+import {Subject} from 'rxjs';
 import {ChannelMessage} from '../../proto';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {LockFunction} from '../lock-function-type';
 import {StringProto} from '../protos';
+import {IChannelService} from '../service-interfaces/ichannel.service';
+import {ISessionService} from '../service-interfaces/isession.service';
 import {IChannelHandlers} from '../session';
 import {util} from '../util';
 import {DatabaseService} from './database.service';
 
 
-/**
- * Bidirectional network connection that sends and receives data.
- */
+/** @inheritDoc */
 @Injectable()
-export class ChannelService {
+export class ChannelService implements IChannelService {
 	/** @ignore */
 	private ephemeral: boolean	= false;
 
@@ -22,6 +23,9 @@ export class ChannelService {
 
 	/** @ignore */
 	private readonly localLock: LockFunction	= util.lockFunction();
+
+	/** @ignore */
+	private pauseLock?: Subject<void>;
 
 	/** @ignore */
 	private resolveState: (state: {lock: LockFunction; url: string}) => void;
@@ -36,9 +40,9 @@ export class ChannelService {
 	/** @ignore */
 	private userID?: string;
 
-	/** This kills the channel. */
+	/** @inheritDoc */
 	public async close () : Promise<void> {
-		if (this.isClosed) {
+		if (this.isClosed || !this.ephemeral) {
 			return;
 		}
 
@@ -47,22 +51,22 @@ export class ChannelService {
 		await this.databaseService.removeItem((await this.state).url);
 	}
 
-	/** @see DatabaseService.getAsyncValue */
+	/** @inheritDoc */
 	public async getAsyncValue<T> (url: string, proto: IProto<T>) : Promise<IAsyncValue<T>> {
 		return this.databaseService.getAsyncValue(`${(await this.state).url}/${url}`, proto);
 	}
 
-	/**
-	 * Initializes service.
-	 * @param channelID ID of this channel.
-	 * @param userID If specified, will treat as long-lived channel. Else, will treat as ephemeral.
-	 * @param handlers Event handlers for this channel.
-	 */
+	/** @inheritDoc */
 	public async init (
-		channelID: string,
+		_SESSION_SERVICE: ISessionService,
+		channelID: string|undefined,
 		userID: string|undefined,
 		handlers: IChannelHandlers
 	) : Promise<void> {
+		if (!channelID) {
+			throw new Error('Invalid channel ID.');
+		}
+
 		const url	= `channels/${channelID}`;
 
 		this.resolveState({lock: this.databaseService.lockFunction(`${url}/lock`), url});
@@ -107,10 +111,17 @@ export class ChannelService {
 			true,
 			true
 		).subscribe(
-			message => {
-				if (message.value.author !== this.userID) {
-					handlers.onMessage(message.value.cyphertext);
+			async message => {
+				if (message.value.author === this.userID) {
+					return;
 				}
+
+				if (this.pauseLock) {
+					await this.pauseLock.toPromise();
+				}
+
+				await handlers.onMessage(message.value.cyphertext);
+				await this.databaseService.removeItem(message.url);
 			},
 			err => {
 				handlers.onClose();
@@ -131,14 +142,25 @@ export class ChannelService {
 		}
 	}
 
-	/** @see DatabaseService.lock */
+	/** @inheritDoc */
 	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
 		return (await this.state).lock(f, reason);
 	}
 
-	/** Sends message through this channel. */
-	public send (cyphertext: Uint8Array) : void {
-		this.localLock(async () => this.databaseService.pushItem(
+	/** Pauses handling of new messages. */
+	public pauseOnMessage (pause: boolean) : void {
+		if (pause && !this.pauseLock) {
+			this.pauseLock	= new Subject();
+		}
+		else if (!pause && this.pauseLock) {
+			this.pauseLock.complete();
+			this.pauseLock	= undefined;
+		}
+	}
+
+	/** @inheritDoc */
+	public async send (cyphertext: Uint8Array) : Promise<void> {
+		await this.localLock(async () => this.databaseService.pushItem(
 			`${(await this.state).url}/messages`,
 			ChannelMessage,
 			{author: await util.waitForValue(() => this.userID), cyphertext}

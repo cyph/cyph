@@ -692,8 +692,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 		proto: IProto<T>,
 		completeOnEmpty: boolean = false,
 		noCache: boolean = false
-	) : Observable<ITimedValue<T>> {
-		return new Observable<ITimedValue<T>>(observer => {
+	) : Observable<ITimedValue<T>&{url: string}> {
+		return new Observable<ITimedValue<T>&{url: string}>(observer => {
 			let cleanup: Function;
 
 			(async () => {
@@ -705,8 +705,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 						return;
 					}
 
-					const itemUrl	= `${url}/${snapshot.key}`;
-					observer.next(await (await this.downloadItem(itemUrl, proto)).result);
+					const itemUrl				= `${url}/${snapshot.key}`;
+					const {timestamp, value}	=
+						await (await this.downloadItem(itemUrl, proto)).result
+					;
+
+					observer.next({timestamp, url: itemUrl, value});
 
 					if (noCache) {
 						this.cacheRemove({url: itemUrl});
