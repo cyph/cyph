@@ -26,13 +26,6 @@ export class AccountChatService extends ChatService {
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (username: string) : Promise<void> {
-		if (
-			this.accountSessionService.user &&
-			username === this.accountSessionService.user.username
-		) {
-			return;
-		}
-
 		const contactURL	=
 			`contacts/${await this.accountContactsService.getContactID(username)}`
 		;
