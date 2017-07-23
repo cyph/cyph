@@ -186,6 +186,14 @@
 									}
 								}
 							},
+							"channelUserID": {
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							},
 							"incomingMessageID": {
 								"hash": {
 									".validate": "newData.isString()"

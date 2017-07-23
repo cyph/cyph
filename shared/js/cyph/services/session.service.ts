@@ -89,7 +89,7 @@ export abstract class SessionService implements ISessionService {
 	};
 
 	/** @see IChannelHandlers.onClose */
-	protected channelOnClose () : void {
+	protected async channelOnClose () : Promise<void> {
 		this.state.isAlive	= false;
 		this.trigger(events.closeChat);
 	}
@@ -117,8 +117,8 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @see IChannelHandlers.onMessage */
-	protected channelOnMessage (message: Uint8Array) : void {
-		this.castleService.receive(message);
+	protected async channelOnMessage (message: Uint8Array) : Promise<void> {
+		await this.castleService.receive(message);
 	}
 
 	/** @see IChannelHandlers.onOpen */
@@ -297,14 +297,14 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
-	public async init (channelID: string, userID?: string) : Promise<void> {
+	public async init (channelID?: string, userID?: string) : Promise<void> {
 		await Promise.all([
 			this.castleService.init(this.potassiumService, this),
-			this.channelService.init(channelID, userID, {
-				onClose: () => { this.channelOnClose(); },
-				onConnect: () => { this.channelOnConnect(); },
-				onMessage: (message: Uint8Array) => { this.channelOnMessage(message); },
-				onOpen: (isAlice: boolean) => { this.channelOnOpen(isAlice); }
+			this.channelService.init(this, channelID, userID, {
+				onClose: async () => this.channelOnClose(),
+				onConnect: async () => this.channelOnConnect(),
+				onMessage: async (message: Uint8Array) => this.channelOnMessage(message),
+				onOpen: async (isAlice: boolean) => this.channelOnOpen(isAlice)
 			})
 		]);
 	}
