@@ -14,6 +14,9 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountSessionService extends SessionService {
+	/** @inheritDoc */
+	protected async channelOnClose () : Promise<void> {}
+
 	/** Sets the remote user we're chatting with. */
 	public async setUser (username: string) : Promise<void> {
 		(await this.accountUserLookupService.getUser(username)).realUsername.subscribe(
