@@ -277,20 +277,28 @@ export class AccountDatabaseService {
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
 		const asyncList: IAsyncList<T>	= {
-			getValue: async () => localLock(async () => this.getList(url, proto)),
+			getValue: async () => localLock(async () =>
+				this.getList(url, proto, securityModel, anonymous)
+			),
 			lock: async (f, reason) => this.lock(url, f, reason),
 			pushValue: async value => localLock(async () => {
-				await this.pushItem(url, proto, value);
+				await this.pushItem(url, proto, value, securityModel);
 			}),
-			setValue: async value => localLock(async () => this.setList(url, proto, value)),
+			setValue: async value => localLock(async () =>
+				this.setList(url, proto, value, securityModel)
+			),
 			updateValue: async f => asyncList.lock(async () => {
 				asyncList.setValue(await f(await asyncList.getValue()));
 			}),
 			watch: memoize(() =>
-				this.watchList(url, proto).map<ITimedValue<T>[], T[]>(arr => arr.map(o => o.value))
+				this.watchList(url, proto, securityModel, anonymous).map<ITimedValue<T>[], T[]>(
+					arr => arr.map(o => o.value)
+				)
 			),
 			watchPushes: memoize(() =>
-				this.watchListPushes(url, proto).map<ITimedValue<T>, T>(o => o.value)
+				this.watchListPushes(url, proto, securityModel, anonymous).map<ITimedValue<T>, T>(
+					o => o.value
+				)
 			)
 		};
 
