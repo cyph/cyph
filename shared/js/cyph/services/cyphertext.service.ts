@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {List} from 'immutable';
 import {Observable} from 'rxjs';
 import {ChatMessage} from '../chat';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {events} from '../session/enums';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
@@ -30,10 +31,10 @@ export class CyphertextService {
 
 	/**
 	 * Logs new cyphertext message.
-	 * @param text
 	 * @param author
+	 * @param cyphertext
 	 */
-	private async log (text: string, author: Observable<string>) : Promise<void> {
+	private async log (author: Observable<string>, text: string) : Promise<void> {
 		if (!text || !this.isEnabled) {
 			return;
 		}
@@ -104,8 +105,8 @@ export class CyphertextService {
 		if (this.isEnabled) {
 			this.sessionService.on(
 				events.cyphertext,
-				(o: {author: Observable<string>; cyphertext: string}) => {
-					this.log(o.cyphertext, o.author);
+				(o: {author: Observable<string>; cyphertext: Uint8Array}) => {
+					this.log(o.author, potassiumUtil.toBase64(o.cyphertext));
 				}
 			);
 		}
