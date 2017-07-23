@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {Subject} from 'rxjs';
 import {PairwiseSession} from '../../crypto/castle/pairwise-session';
 import {ICastle} from '../../crypto/icastle';
 import {LockFunction} from '../../lock-function-type';
@@ -13,21 +14,16 @@ import {PotassiumService} from './potassium.service';
 @Injectable()
 export class CastleService implements ICastle {
 	/** @ignore */
-	protected readonly pairwiseSession: Promise<PairwiseSession>	=
-		new Promise<PairwiseSession>(resolve => {
-			this.resolvePairwiseSession	= resolve;
-		})
+	protected readonly pairwiseSession: Subject<PairwiseSession>	=
+		new Subject<PairwiseSession>()
 	;
 
 	/** @ignore */
 	protected readonly pairwiseSessionLock: LockFunction			= util.lockFunction();
 
 	/** @ignore */
-	protected resolvePairwiseSession: (pairwiseSession: PairwiseSession) => void;
-
-	/** @ignore */
 	protected async getPairwiseSession () : Promise<PairwiseSession> {
-		return this.pairwiseSessionLock(async () => this.pairwiseSession);
+		return this.pairwiseSessionLock(async () => this.pairwiseSession.take(1).toPromise());
 	}
 
 	/** Initializes service. */

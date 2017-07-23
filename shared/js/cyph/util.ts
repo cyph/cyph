@@ -266,6 +266,25 @@ export class Util {
 		return value;
 	}
 
+	/** Async variant of getOrSetDefault. */
+	public async getOrSetDefaultAsync<K, V> (
+		map: Map<K, V>,
+		key: K,
+		defaultValue: () => V|Promise<V>
+	) : Promise<V> {
+		if (!map.has(key)) {
+			map.set(key, await defaultValue());
+		}
+
+		const value	= map.get(key);
+
+		if (value === undefined) {
+			throw new Error("Util.getOrSetDefaultAsync doesn't support nullable types.");
+		}
+
+		return value;
+	}
+
 	/** Returns a human-readable representation of the time (e.g. "3:37pm"). */
 	public getTimeString (timestamp: number) : string {
 		const date: Date		= new Date(timestamp);
