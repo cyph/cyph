@@ -80,9 +80,7 @@ export class LocalSessionService extends SessionService {
 			await util.sleep();
 		}
 
-		const newMessages	= await this.newMessages(messages);
-
-		for (const message of newMessages) {
+		for (const message of await this.newMessages(messages)) {
 			const cyphertext	= potassiumUtil.randomBytes(util.random(1024, 100));
 
 			this.trigger(events.cyphertext, {
