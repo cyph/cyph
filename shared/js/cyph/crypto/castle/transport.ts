@@ -24,7 +24,7 @@ export class Transport {
 	}
 
 	/** Trigger event for logging cyphertext. */
-	public logCyphertext (author: Observable<string>, cyphertext: string) : void {
+	public logCyphertext (author: Observable<string>, cyphertext: Uint8Array) : void {
 		if (cyphertext.length >= Transport.cyphertextLimit) {
 			return;
 		}
@@ -38,7 +38,7 @@ export class Transport {
 		plaintext: Uint8Array,
 		author: Observable<string>
 	) : void {
-		this.logCyphertext(author, potassiumUtil.toBase64(cyphertext));
+		this.logCyphertext(author, cyphertext);
 
 		const timestamp	= potassiumUtil.toDataView(plaintext).getFloat64(0, true);
 		const data		= potassiumUtil.toBytes(plaintext, 8);
@@ -52,21 +52,18 @@ export class Transport {
 	}
 
 	/** Send outgoing encrypted message. */
-	public send (cyphertext: Uint8Array, messageID?: Uint8Array) : void {
-		const fullCyphertext	= !messageID ?
-			cyphertext :
-			potassiumUtil.concatMemory(
-				true,
-				messageID,
-				potassiumUtil.fromBase64(cyphertext)
-			)
-		;
+	public send (cyphertext: Uint8Array, messageID: Uint8Array) : void {
+		const fullCyphertext	= potassiumUtil.concatMemory(
+			true,
+			messageID,
+			potassiumUtil.fromBase64(cyphertext)
+		);
 
 		this.sessionService.castleHandler(CastleEvents.send, fullCyphertext);
 
 		this.logCyphertext(
 			this.sessionService.localUsername,
-			potassiumUtil.toBase64(fullCyphertext)
+			fullCyphertext
 		);
 	}
 

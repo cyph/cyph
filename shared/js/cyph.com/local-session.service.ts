@@ -58,9 +58,7 @@ export class LocalSessionService extends SessionService {
 				if (message.event === events.cyphertext) {
 					this.trigger(events.cyphertext, {
 						author: message.data.author,
-						cyphertext: potassiumUtil.toBase64(
-							message.data.bytes || new Uint8Array(0)
-						)
+						cyphertext: message.data.bytes || new Uint8Array(0)
 					});
 				}
 				else if (message.event in rpcEvents) {
