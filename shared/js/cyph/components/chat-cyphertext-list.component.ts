@@ -1,8 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {List} from 'immutable';
-import {IChatMessage} from '../../proto';
+import {ChatMessage} from '../chat';
 import {StringsService} from '../services/strings.service';
-import {Users, users} from '../session/enums';
 
 
 /**
@@ -16,10 +15,7 @@ import {Users, users} from '../session/enums';
 })
 export class ChatCyphertextListComponent {
 	/** @see CyphertextService.messages */
-	@Input() public messages: List<IChatMessage>;
-
-	/** @see Users */
-	public readonly users: Users	= users;
+	@Input() public messages: List<ChatMessage>;
 
 	constructor (
 		/** @see StringsService */

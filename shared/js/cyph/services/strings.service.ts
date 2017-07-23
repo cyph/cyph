@@ -73,6 +73,9 @@ export class StringsService {
 	);
 
 	/** @see StringsService */
+	public readonly doctor: string					= util.translate(`doctor`);
+
+	/** @see StringsService */
 	public readonly fileCall: string				= util.translate(`file transfer`);
 
 	/** @see StringsService */
@@ -252,6 +255,9 @@ export class StringsService {
 	public readonly p2pWarningVideoPassive: string	= util.translate(
 		`Starting video call (P2P). Close this window to abort.`
 	);
+
+	/** @see StringsService */
+	public readonly patient: string					= util.translate(`patient`);
 
 	/** @see StringsService */
 	public readonly queuedMessageSaved: string		= util.translate(`Queued message saved.`);

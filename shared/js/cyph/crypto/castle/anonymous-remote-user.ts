@@ -1,3 +1,4 @@
+import {Observable} from 'rxjs';
 import {IPotassium} from '../potassium/ipotassium';
 import {AnonymousLocalUser} from './anonymous-local-user';
 import {IHandshakeState} from './ihandshake-state';
@@ -38,11 +39,6 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		return this.publicKey;
 	}
 
-	/** @inheritDoc */
-	public async getUsername () : Promise<string> {
-		return this.username;
-	}
-
 	constructor (
 		/** @ignore */
 		private readonly potassium: IPotassium,
@@ -52,8 +48,8 @@ export class AnonymousRemoteUser implements IRemoteUser {
 
 		sharedSecret: string,
 
-		/** @ignore */
-		private readonly username: Promise<string>
+		/** @inheritDoc */
+		public readonly username: Observable<string>
 	) {
 		this.sharedSecret			= (async () =>
 			(await this.potassium.passwordHash.hash(

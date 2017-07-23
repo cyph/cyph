@@ -1,12 +1,7 @@
 <div fxLayout='column' fxLayoutGap='32px'>
 	<div fxLayout='row' *ngFor='let message of messages'>
 		<div class='message'>
-			<strong *ngIf='message.author === users.me'>
-				{{stringsService.me}}:
-			</strong>
-			<strong *ngIf='message.author !== users.me'>
-				{{message.author}}:
-			</strong>
+			<strong>{{message.author | async}}:</strong>
 			<span>{{message.text}}</span>
 		</div>
 	</div>

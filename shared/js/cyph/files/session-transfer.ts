@@ -1,12 +1,15 @@
-import {ISessionTransfer} from '../../proto';
-import {users} from '../session/enums';
+import {Observable} from 'rxjs';
 import {util} from '../util';
+import {ISessionTransfer} from './isession-transfer';
 import {SessionTransferAnswers} from './session-transfer-answers';
 
 
 /** @inheritDoc */
 export class SessionTransfer implements ISessionTransfer {
 	constructor (
+		/** @inheritDoc */
+		public author: Observable<string>,
+
 		/** @inheritDoc */
 		public readonly name: string = '',
 
@@ -36,9 +39,6 @@ export class SessionTransfer implements ISessionTransfer {
 
 		/** @inheritDoc */
 		public answer: SessionTransferAnswers = SessionTransferAnswers.Empty,
-
-		/** @inheritDoc */
-		public author: string = users.me,
 
 		/** @inheritDoc */
 		public receiptTimestamp?: number

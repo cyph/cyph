@@ -2,12 +2,9 @@
 	[fxFlex]='mobile ? "nogrow" : ""'
 	class='message-item'
 	[class.mobile]='mobile'
-	[class.author-app]='message.author === users.app'
-	[class.author-me]='message.author === users.me'
-	[class.author-other]='
-		message.author !== users.app &&
-		message.author !== users.me
-	'
+	[class.author-app]='message.authorType === authorTypes.App'
+	[class.author-local]='message.authorType === authorTypes.Local'
+	[class.author-remote]='message.authorType === authorTypes.Remote'
 	[class.self-destructed]='message.selfDestructTimer?.isComplete | async'
 >
 	<div>
@@ -15,19 +12,9 @@
 			<div class='message'>
 				<strong
 					class='message-author'
-					*ngIf='!mobile && message.author === users.me'
+					*ngIf='!mobile && message.authorType !== authorTypes.App'
 				>
-					{{stringsService.me}}:
-				</strong>
-				<strong
-					class='message-author'
-					*ngIf='
-						!mobile &&
-						message.author !== users.me &&
-						message.author !== users.app
-					'
-				>
-					{{message.author}}:
+					{{message.author | async}}:
 				</strong>
 				<cyph-markdown
 					class='message-text'
@@ -36,8 +23,8 @@
 			</div>
 			<div fxFlex fxLayoutAlign='end center' class='message-timestamp'>
 				<div fxLayout='row'>
-					<div *ngIf='mobile && message.author === users.me'>
-						{{stringsService.me}} &nbsp;&mdash;&nbsp;
+					<div *ngIf='mobile && message.authorType === authorTypes.Local'>
+						{{message.author | async}} &nbsp;&mdash;&nbsp;
 					</div>
 
 					<md-progress-spinner
@@ -51,13 +38,9 @@
 					</ng-template>
 
 					<div
-						*ngIf='
-							mobile &&
-							message.author !== users.me &&
-							message.author !== users.app
-						'
+						*ngIf='mobile && message.authorType === authorTypes.Remote'
 					>
-						&nbsp;&mdash;&nbsp; {{message.author}}
+						&nbsp;&mdash;&nbsp; {{message.author | async}}
 					</div>
 				</div>
 			</div>

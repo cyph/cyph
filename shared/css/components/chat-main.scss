@@ -93,7 +93,7 @@
 			}
 		}
 
-		.message-item.author-me {
+		.message-item.author-local {
 			margin-right: 5%;
 
 			.message {
@@ -106,7 +106,7 @@
 			}
 		}
 
-		.message-item.author-me {
+		.message-item.author-local {
 			&:after {
 				content: '';
 				position: absolute;
@@ -117,7 +117,7 @@
 			}
 		}
 
-		.message-item.author-other {
+		.message-item.author-remote {
 			margin-left: 5%;
 
 			&:after {

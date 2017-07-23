@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {ISessionCapabilities, ISessionMessageData} from '../../proto';
-import {events, rpcEvents, SessionMessage} from '../session';
+import {ISessionCapabilities} from '../../proto';
+import {events, ISessionMessageData, rpcEvents} from '../session';
 import {PotassiumService} from './crypto/potassium.service';
 import {SessionService} from './session.service';
 
@@ -52,9 +52,7 @@ export class SessionCapabilitiesService {
 		this.sessionService.one(events.beginChat).then(async () => {
 			const localCapabilities		= await this.localCapabilities;
 
-			this.sessionService.send(new SessionMessage(rpcEvents.capabilities, {
-				capabilities: localCapabilities
-			}));
+			this.sessionService.send([rpcEvents.capabilities, {capabilities: localCapabilities}]);
 
 			const remoteCapabilities	= await this.remoteCapabilities;
 

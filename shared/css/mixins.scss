@@ -108,7 +108,7 @@
 				background-color: map-get(map-get($cyph-message-colors, app), mobile);
 			}
 
-			.message-item.author-me {
+			.message-item.author-local {
 				background-color: map-get(map-get($cyph-message-colors, me), mobile);
 
 				&:after {
@@ -116,7 +116,7 @@
 				}
 			}
 
-			.message-item.author-other {
+			.message-item.author-remote {
 				background-color: map-get(map-get($cyph-message-colors, other), mobile);
 
 				&:after {
@@ -145,7 +145,7 @@
 				)));
 			}
 
-			&.author-me {
+			&.author-local {
 				background-color: map-get(map-get($cyph-message-colors, me), desktop);
 				color: map-get(map-get($cyph-message-colors, me), text);
 
@@ -156,7 +156,7 @@
 				)));
 			}
 
-			&.author-other {
+			&.author-remote {
 				background-color: map-get(map-get($cyph-message-colors, other), desktop);
 				color: map-get(map-get($cyph-message-colors, other), text);
 

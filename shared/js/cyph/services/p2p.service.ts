@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
-import {users} from '../session/enums';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
@@ -42,7 +41,7 @@ export class P2PService {
 			if (isConnected) {
 				this.chatService.addMessage(
 					this.stringsService.p2pConnect,
-					users.app,
+					undefined,
 					undefined,
 					false
 				);
@@ -56,7 +55,7 @@ export class P2PService {
 
 				this.chatService.addMessage(
 					this.stringsService.p2pDisconnect,
-					users.app,
+					undefined,
 					undefined,
 					false
 				);
@@ -86,7 +85,7 @@ export class P2PService {
 		requestConfirmation: () => {
 			this.chatService.addMessage(
 				this.stringsService.p2pRequestConfirmation,
-				users.app,
+				undefined,
 				undefined,
 				false
 			);

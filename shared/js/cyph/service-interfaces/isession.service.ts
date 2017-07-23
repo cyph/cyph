@@ -1,4 +1,5 @@
-import {ISession} from '../session/isession';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {ISession} from '../session';
 import {ProFeatures} from '../session/profeatures';
 
 
@@ -14,18 +15,21 @@ export interface ISessionService extends ISession {
 		telehealth: boolean;
 	};
 
+	/** App username. Currently just an empty string. */
+	readonly appUsername: Observable<string>;
+
 	/** Resolves when this session is connected. */
 	readonly connected: Promise<void>;
+
+	/** Local username (e.g. "me"). */
+	readonly localUsername: Observable<string>;
 
 	/** @see ProFeatures */
 	readonly proFeatures: ProFeatures;
 
 	/** Remote username (e.g. "friend" or "alice"). */
-	readonly remoteUsername: Promise<string>;
+	readonly remoteUsername: BehaviorSubject<string>;
 
 	/** Initializes service. */
 	init (channelID: string, userID?: string) : void;
-
-	/** Sets remote username. */
-	setRemoteUsername (remoteUsername: string) : void;
 }

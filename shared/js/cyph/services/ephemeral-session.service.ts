@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {env} from '../env';
-import {events, ProFeatures, SessionMessage} from '../session';
+import {events, ProFeatures} from '../session';
 import {util} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
@@ -10,6 +10,7 @@ import {PotassiumService} from './crypto/potassium.service';
 import {ErrorService} from './error.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
+import {StringsService} from './strings.service';
 
 
 /**
@@ -41,7 +42,7 @@ export class EphemeralSessionService extends SessionService {
 				});
 			}
 
-			this.send(new SessionMessage());
+			this.send(['', {}]);
 		}
 	}
 
@@ -126,6 +127,7 @@ export class EphemeralSessionService extends SessionService {
 		channelService: ChannelService,
 		errorService: ErrorService,
 		potassiumService: PotassiumService,
+		stringsService: StringsService,
 
 		/** @ignore */
 		private readonly configService: ConfigService,
@@ -133,7 +135,14 @@ export class EphemeralSessionService extends SessionService {
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService
 	) {
-		super(analyticsService, castleService, channelService, errorService, potassiumService);
+		super(
+			analyticsService,
+			castleService,
+			channelService,
+			errorService,
+			potassiumService,
+			stringsService
+		);
 
 		let id	= this.sessionInitService.id;
 
@@ -154,6 +163,13 @@ export class EphemeralSessionService extends SessionService {
 				eventValue: 1,
 				hitType: 'event'
 			});
+		}
+
+		if (this.apiFlags.telehealth) {
+			this.remoteUsername.next(this.state.isAlice ?
+				this.stringsService.patient :
+				this.stringsService.doctor
+			);
 		}
 
 		this.state.wasInitiatedByAPI	= id.length > this.configService.secretLength;

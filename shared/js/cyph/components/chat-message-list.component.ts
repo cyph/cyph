@@ -6,6 +6,7 @@ import {ChatMessage} from '../chat';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
+import {SessionService} from '../services/session.service';
 import {util} from '../util';
 
 
@@ -33,7 +34,16 @@ export class ChatMessageListComponent implements AfterViewInit {
 				util.getOrSetDefault(
 					this.messageCache,
 					message.id,
-					() => new ChatMessage(message)
+					() => new ChatMessage(
+						message,
+						message.authorType === ChatMessage.AuthorTypes.App ?
+							this.sessionService.appUsername :
+							message.authorType === ChatMessage.AuthorTypes.Local ?
+								this.sessionService.localUsername :
+								message.authorID === undefined ?
+									this.sessionService.remoteUsername :
+									(() => { throw new Error('Not yet implemented.'); })()
+					)
 				)
 			).sort((a, b) =>
 				a.timestamp - b.timestamp
@@ -74,6 +84,9 @@ export class ChatMessageListComponent implements AfterViewInit {
 
 		/** @ignore */
 		private readonly scrollService: ScrollService,
+
+		/** @ignore */
+		private readonly sessionService: SessionService,
 
 		/** @see ChatService */
 		public readonly chatService: ChatService
