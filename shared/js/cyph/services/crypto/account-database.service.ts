@@ -405,6 +405,22 @@ export class AccountDatabaseService {
 		return this.databaseService.getListKeys(await this.processURL(url));
 	}
 
+	/** @see DatabaseService.getOrSetDefault */
+	public async getOrSetDefault<T> (
+		url: string,
+		proto: IProto<T>,
+		defaultValue: () => T|Promise<T>
+	) : Promise<T> {
+		try {
+			return await this.getItem(url, proto);
+		}
+		catch (_) {
+			const value	= await defaultValue();
+			this.setItem(url, proto, value).catch(() => {});
+			return value;
+		}
+	}
+
 	/** Gets public keys belonging to the specified user. */
 	public async getUserPublicKeys (username: string) : Promise<IAGSEPKICert> {
 		if (!username) {

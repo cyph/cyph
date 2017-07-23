@@ -71,9 +71,10 @@ export class AccountChannelService implements IChannelService {
 						channelService.init(
 							sessionService,
 							contactID,
-							await this.accountDatabaseService.getItem(
+							await this.accountDatabaseService.getOrSetDefault(
 								`contacts/${contactID}/session/channelUserID`,
-								StringProto
+								StringProto,
+								() => util.uuid()
 							),
 							handlers
 						);
