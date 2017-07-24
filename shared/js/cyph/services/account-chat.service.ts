@@ -53,6 +53,7 @@ export class AccountChatService extends ChatService {
 	}
 
 	constructor (
+		accountContactsService: AccountContactsService,
 		analyticsService: AnalyticsService,
 		dialogService: DialogService,
 		notificationService: NotificationService,
@@ -61,15 +62,13 @@ export class AccountChatService extends ChatService {
 		stringsService: StringsService,
 
 		/** @ignore */
-		private readonly accountContactsService: AccountContactsService,
-
-		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly accountSessionService: AccountSessionService
 	) {
 		super(
+			accountContactsService,
 			analyticsService,
 			dialogService,
 			notificationService,

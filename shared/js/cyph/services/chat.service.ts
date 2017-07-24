@@ -8,6 +8,7 @@ import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {util} from '../util';
+import {AccountContactsService} from './account-contacts.service';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
@@ -124,7 +125,9 @@ export class ChatService {
 					author === this.sessionService.remoteUsername
 				) ?
 					undefined :
-					(() => { throw new Error('Not yet implemented.'); })()
+					await this.accountContactsService.getContactID(
+						await author.take(1).toPromise()
+					)
 			,
 			authorType:
 				author === this.sessionService.appUsername ?
@@ -268,7 +271,10 @@ export class ChatService {
 
 	constructor (
 		/** @ignore */
-		private readonly analyticsService: AnalyticsService,
+		protected readonly accountContactsService: AccountContactsService,
+
+		/** @ignore */
+		protected readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
 		protected readonly dialogService: DialogService,
