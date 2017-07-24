@@ -310,8 +310,10 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
-		anonymous: boolean = false
+		anonymous: boolean = false,
+		blockGetValue: boolean = false
 	) : IAsyncValue<T> {
+		const defaultValue	= proto.create();
 		const localLock		= util.lockFunction();
 
 		const asyncValue	= (async () => {
@@ -320,7 +322,8 @@ export class AccountDatabaseService {
 			return this.databaseService.getAsyncValue(
 				url,
 				BinaryProto,
-				this.lockFunction(url)
+				this.lockFunction(url),
+				blockGetValue
 			);
 		})();
 
@@ -340,8 +343,9 @@ export class AccountDatabaseService {
 					await (await asyncValue).getValue(),
 					anonymous
 				);
-			}).catch(
-				async () => watch().take(2).toPromise()
+			}).catch(async () => blockGetValue ?
+				watch().take(2).toPromise() :
+				defaultValue
 			),
 			lock: async (f, reason) =>
 				(await asyncValue).lock(f, reason)
