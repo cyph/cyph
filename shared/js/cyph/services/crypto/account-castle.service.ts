@@ -42,11 +42,17 @@ export class AccountCastleService extends CastleService {
 
 			this.pairwiseSessionLock(async () => { this.pairwiseSession.next(
 				await util.getOrSetDefaultAsync(this.pairwiseSessions, username, async () => {
-					const sessionURL		=
-						`contacts/${
-							await this.accountContactsService.getContactID(username)
-						}/session`
+					const id				=
+						await this.accountContactsService.getContactID(username).catch(
+							() => undefined
+						)
 					;
+
+					if (!id) {
+						return;
+					}
+
+					const sessionURL		= `contacts/${id}/session`;
 
 					const handshakeState	= await sessionService.handshakeState(
 						this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
