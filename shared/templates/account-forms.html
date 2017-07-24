@@ -10,9 +10,6 @@
 				<md-card-title>
 					<a [routerLink]='"/account/forms/" + form.id'>{{form.name}}</a>
 				</md-card-title>
-				<md-card-subtitle>
-					<div>{{accountFilesService.formSnippet(form.id)}}</div>
-				</md-card-subtitle>
 				<div fxFlex fxLayoutAlign='end center'>
 					<button
 						md-icon-button
