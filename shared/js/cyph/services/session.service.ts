@@ -282,16 +282,19 @@ export abstract class SessionService implements ISessionService {
 			initialSecret,
 			initialSecretCyphertext: await this.channelService.getAsyncValue(
 				'handshake/initialSecretCyphertext',
-				BinaryProto
+				BinaryProto,
+				true
 			),
 			isAlice: this.state.isAlice,
 			localPublicKey: await this.channelService.getAsyncValue(
 				`handshake/${this.state.isAlice ? 'alice' : 'bob'}PublicKey`,
-				BinaryProto
+				BinaryProto,
+				true
 			),
 			remotePublicKey: await this.channelService.getAsyncValue(
 				`handshake/${this.state.isAlice ? 'bob' : 'alice'}PublicKey`,
-				BinaryProto
+				BinaryProto,
+				true
 			)
 		};
 	}

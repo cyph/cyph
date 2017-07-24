@@ -69,11 +69,16 @@ export class DatabaseService extends DataManagerService {
 		return asyncList;
 	}
 
-	/** Gets an IAsyncValue wrapper for an item. */
+	/**
+	 * Gets an IAsyncValue wrapper for an item.
+	 * @param blockGetValue If true, getValue will block until a value is set.
+	 * Otherwise, when a value has not been set, a default value will be returned.
+	 */
 	public getAsyncValue<T> (
 		url: string,
 		proto: IProto<T>,
-		lock: LockFunction = this.lockFunction(url)
+		lock: LockFunction = this.lockFunction(url),
+		blockGetValue: boolean = false
 	) : IAsyncValue<T> {
 		const defaultValue	= proto.create();
 		const localLock		= util.lockFunction();
@@ -106,8 +111,9 @@ export class DatabaseService extends DataManagerService {
 				currentValue	= value;
 
 				return currentValue;
-			}).catch(
-				async () => asyncValue.watch().take(2).toPromise()
+			}).catch(async () => blockGetValue ?
+				asyncValue.watch().take(2).toPromise() :
+				defaultValue
 			),
 			lock,
 			setValue: async value => localLock(async () => {
