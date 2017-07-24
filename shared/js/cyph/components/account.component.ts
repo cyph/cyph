@@ -29,6 +29,7 @@ export class AccountComponent implements OnInit {
 			'chat',
 			'contacts',
 			'files',
+			'forms',
 			'notes',
 			'profile',
 			'settings'
