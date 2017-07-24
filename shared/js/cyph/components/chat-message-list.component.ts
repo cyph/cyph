@@ -75,7 +75,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			return;
 		}
 
-		const {messages, unconfirmedMessages}	= util.getOrSetDefault(
+		const observables	= util.getOrSetDefault(
 			this.observableCache,
 			this.chat,
 			() => ({
@@ -105,8 +105,8 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			})
 		);
 
-		this.messages				= messages;
-		this.unconfirmedMessages	= unconfirmedMessages;
+		this.messages				= observables.messages;
+		this.unconfirmedMessages	= observables.unconfirmedMessages;
 	}
 
 	constructor (
