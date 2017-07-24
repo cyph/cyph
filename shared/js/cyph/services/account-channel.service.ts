@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {LockFunction} from '../lock-function-type';
@@ -20,8 +20,13 @@ import {DatabaseService} from './database.service';
 @Injectable()
 export class AccountChannelService implements IChannelService {
 	/** @ignore */
-	protected readonly channelService: Subject<ChannelService>		=
-		new Subject<ChannelService>()
+	protected readonly channelService: BehaviorSubject<ChannelService|undefined>	=
+		new BehaviorSubject<ChannelService|undefined>(undefined)
+	;
+
+	/** @ignore */
+	protected readonly channelServiceFiltered: Observable<ChannelService>			=
+		<any> this.channelService.filter(o => o !== undefined)
 	;
 
 	/** @ignore */
@@ -34,7 +39,10 @@ export class AccountChannelService implements IChannelService {
 
 	/** @ignore */
 	protected async getChannelService () : Promise<ChannelService> {
-		return this.channelServiceLock(async () => this.channelService.take(1).toPromise());
+		await this.channelServiceFiltered.first().toPromise();
+		return this.channelServiceLock(async () =>
+			this.channelServiceFiltered.take(1).toPromise()
+		);
 	}
 
 	/** @inheritDoc */
