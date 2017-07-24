@@ -1,9 +1,15 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	Input,
+	OnChanges
+} from '@angular/core';
 import * as $ from 'jquery';
 import {Observable} from 'rxjs';
 import {fadeInOut} from '../animations';
-import {ChatMessage} from '../chat';
-import {ChatService} from '../services/chat.service';
+import {ChatMessage, IChatData} from '../chat';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
@@ -20,36 +26,24 @@ import {util} from '../util';
 	styleUrls: ['../../../css/components/chat-message-list.scss'],
 	templateUrl: '../../../templates/chat-message-list.html'
 })
-export class ChatMessageListComponent implements AfterViewInit {
+export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** @ignore */
 	private readonly messageCache: Map<string, ChatMessage>	= new Map<string, ChatMessage>();
+
+	/** @ignore */
+	private readonly observableCache	= new Map<IChatData, {
+		messages: Observable<ChatMessage[]>;
+		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>;
+	}>();
+
+	/** @see IChatData */
+	@Input() public chat: IChatData;
 
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean;
 
 	/** Message list. */
-	public messages: Observable<ChatMessage[]>	=
-		this.chatService.chat.messages.watch().map(messages =>
-			messages.map(message =>
-				util.getOrSetDefault(
-					this.messageCache,
-					message.id,
-					() => new ChatMessage(
-						message,
-						message.authorType === ChatMessage.AuthorTypes.App ?
-							this.sessionService.appUsername :
-							message.authorType === ChatMessage.AuthorTypes.Local ?
-								this.sessionService.localUsername :
-								message.authorID === undefined ?
-									this.sessionService.remoteUsername :
-									(() => { throw new Error('Not yet implemented.'); })()
-					)
-				)
-			).sort((a, b) =>
-				a.timestamp - b.timestamp
-			)
-		)
-	;
+	public messages?: Observable<ChatMessage[]>;
 
 	/** @see ChatMessageComponent.mobile */
 	@Input() public mobile: boolean;
@@ -58,9 +52,7 @@ export class ChatMessageListComponent implements AfterViewInit {
 	@Input() public showDisconnectMessage: boolean;
 
 	/** @see IChatData.unconfirmedMessages */
-	@Input() public unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>	=
-		this.chatService.chat.unconfirmedMessages.watch()
-	;
+	public unconfirmedMessages?: Observable<{[id: string]: boolean|undefined}>;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
@@ -75,6 +67,44 @@ export class ChatMessageListComponent implements AfterViewInit {
 		);
 	}
 
+	/** @inheritDoc */
+	public ngOnChanges () : void {
+		if (!this.chat) {
+			return;
+		}
+
+		const {messages, unconfirmedMessages}	= util.getOrSetDefault(
+			this.observableCache,
+			this.chat,
+			() => ({
+				messages: this.chat.messages.watch().map(messages =>
+					messages.map(message =>
+						util.getOrSetDefault(
+							this.messageCache,
+							message.id,
+							() => new ChatMessage(
+								message,
+								message.authorType === ChatMessage.AuthorTypes.App ?
+									this.sessionService.appUsername :
+									message.authorType === ChatMessage.AuthorTypes.Local ?
+										this.sessionService.localUsername :
+										message.authorID === undefined ?
+											this.sessionService.remoteUsername :
+											(() => { throw new Error('Not yet implemented.'); })()
+							)
+						)
+					).sort((a, b) =>
+						a.timestamp - b.timestamp
+					)
+				),
+				unconfirmedMessages: this.chat.unconfirmedMessages.watch()
+			})
+		);
+
+		this.messages				= messages;
+		this.unconfirmedMessages	= unconfirmedMessages;
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly elementRef: ElementRef,
@@ -86,9 +116,6 @@ export class ChatMessageListComponent implements AfterViewInit {
 		private readonly scrollService: ScrollService,
 
 		/** @ignore */
-		private readonly sessionService: SessionService,
-
-		/** @see ChatService */
-		public readonly chatService: ChatService
+		private readonly sessionService: SessionService
 	) {}
 }

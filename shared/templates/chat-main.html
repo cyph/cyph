@@ -254,6 +254,7 @@
 	<cyph-chat-message-list
 		fxFlex
 		fxFlexFill
+		[chat]='chatService.chat'
 		[messageCountInTitle]='messageCountInTitle'
 		[mobile]='envService.isMobile || p2pService.isActive'
 		[showDisconnectMessage]='chatService.chat.isDisconnected && !hideDisconnectMessage'
