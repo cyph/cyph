@@ -35,98 +35,100 @@ export class AccountCastleService extends CastleService {
 		sessionService.remoteUsername.subscribe(username => {
 			username	= username.toLowerCase();
 
-			this.pairwiseSessionLock(async () => { this.pairwiseSession.next(
-				await util.getOrSetDefaultAsync(this.pairwiseSessions, username, async () => {
-					const id				=
-						await this.accountContactsService.getContactID(username).catch(
-							() => undefined
-						)
-					;
+			this.pairwiseSessionLock(async () => {
+				const contactID	= await this.accountContactsService.getContactID(username).catch(
+					() => undefined
+				);
 
-					if (!id) {
-						return;
-					}
+				if (!contactID) {
+					return;
+				}
 
-					const sessionURL		= `contacts/${id}/session`;
+				this.pairwiseSession.next(
+					await util.getOrSetDefaultAsync(this.pairwiseSessions, username, async () => {
+						const sessionURL		= `contacts/${contactID}/session`;
 
-					const handshakeState	= await sessionService.handshakeState(
-						this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
-							`${sessionURL}/handshake/currentStep`,
-							Uint32Proto
-						),
-						this.accountDatabaseService.getAsyncValue(
-							`${sessionURL}/handshake/initialSecret`,
-							MaybeBinaryProto
-						)
-					);
-
-					const localUser			= new RegisteredLocalUser(this.accountDatabaseService);
-
-					const remoteUser		= new RegisteredRemoteUser(
-						this.accountDatabaseService,
-						sessionService.remoteUsername
-					);
-
-					return new PairwiseSession(
-						potassiumService,
-						transport,
-						localUser,
-						remoteUser,
-						handshakeState,
-						this.accountDatabaseService.getAsyncValue(
-							`${sessionURL}/incomingMessageID`,
-							Uint32Proto
-						),
-						this.accountDatabaseService.getAsyncValue(
-							`${sessionURL}/incomingMessages`,
-							CastleIncomingMessagesProto
-						),
-						this.accountDatabaseService.getAsyncValue(
-							`${sessionURL}/incomingMessagesMax`,
-							Uint32Proto
-						),
-						this.accountDatabaseService.getAsyncValue(
-							`${sessionURL}/outgoingMessageID`,
-							Uint32Proto
-						),
-						this.accountDatabaseService.lockFunction(`${sessionURL}/receiveLock`),
-						this.accountDatabaseService.lockFunction(`${sessionURL}/sendLock`),
-						this.accountDatabaseService.lockFunction(`${sessionURL}/coreLock`),
-						{
-							privateKey: this.accountDatabaseService.getAsyncValue(
-								`${sessionURL}/asymmetricRatchetState/privateKey`,
-								MaybeBinaryProto
+						const handshakeState	= await sessionService.handshakeState(
+							this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
+								`${sessionURL}/handshake/currentStep`,
+								Uint32Proto
 							),
-							publicKey: this.accountDatabaseService.getAsyncValue(
-								`${sessionURL}/asymmetricRatchetState/publicKey`,
+							this.accountDatabaseService.getAsyncValue(
+								`${sessionURL}/handshake/initialSecret`,
 								MaybeBinaryProto
 							)
-						},
-						{
-							current: {
-								incoming: this.accountDatabaseService.getAsyncValue(
-									`${sessionURL}/symmetricRatchetState/current/incoming`,
+						);
+
+						const localUser			= new RegisteredLocalUser(
+							this.accountDatabaseService
+						);
+
+						const remoteUser		= new RegisteredRemoteUser(
+							this.accountDatabaseService,
+							sessionService.remoteUsername
+						);
+
+						return new PairwiseSession(
+							potassiumService,
+							transport,
+							localUser,
+							remoteUser,
+							handshakeState,
+							this.accountDatabaseService.getAsyncValue(
+								`${sessionURL}/incomingMessageID`,
+								Uint32Proto
+							),
+							this.accountDatabaseService.getAsyncValue(
+								`${sessionURL}/incomingMessages`,
+								CastleIncomingMessagesProto
+							),
+							this.accountDatabaseService.getAsyncValue(
+								`${sessionURL}/incomingMessagesMax`,
+								Uint32Proto
+							),
+							this.accountDatabaseService.getAsyncValue(
+								`${sessionURL}/outgoingMessageID`,
+								Uint32Proto
+							),
+							this.accountDatabaseService.lockFunction(`${sessionURL}/receiveLock`),
+							this.accountDatabaseService.lockFunction(`${sessionURL}/sendLock`),
+							this.accountDatabaseService.lockFunction(`${sessionURL}/coreLock`),
+							{
+								privateKey: this.accountDatabaseService.getAsyncValue(
+									`${sessionURL}/asymmetricRatchetState/privateKey`,
 									MaybeBinaryProto
 								),
-								outgoing: this.accountDatabaseService.getAsyncValue(
-									`${sessionURL}/symmetricRatchetState/current/outgoing`,
+								publicKey: this.accountDatabaseService.getAsyncValue(
+									`${sessionURL}/asymmetricRatchetState/publicKey`,
 									MaybeBinaryProto
 								)
 							},
-							next: {
-								incoming: this.accountDatabaseService.getAsyncValue(
-									`${sessionURL}/symmetricRatchetState/next/incoming`,
-									MaybeBinaryProto
-								),
-								outgoing: this.accountDatabaseService.getAsyncValue(
-									`${sessionURL}/symmetricRatchetState/next/outgoing`,
-									MaybeBinaryProto
-								)
+							{
+								current: {
+									incoming: this.accountDatabaseService.getAsyncValue(
+										`${sessionURL}/symmetricRatchetState/current/incoming`,
+										MaybeBinaryProto
+									),
+									outgoing: this.accountDatabaseService.getAsyncValue(
+										`${sessionURL}/symmetricRatchetState/current/outgoing`,
+										MaybeBinaryProto
+									)
+								},
+								next: {
+									incoming: this.accountDatabaseService.getAsyncValue(
+										`${sessionURL}/symmetricRatchetState/next/incoming`,
+										MaybeBinaryProto
+									),
+									outgoing: this.accountDatabaseService.getAsyncValue(
+										`${sessionURL}/symmetricRatchetState/next/outgoing`,
+										MaybeBinaryProto
+									)
+								}
 							}
-						}
-					);
-				})
-			); });
+						);
+					})
+				);
+			});
 		});
 	}
 

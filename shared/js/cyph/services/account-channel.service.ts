@@ -58,14 +58,18 @@ export class AccountChannelService implements IChannelService {
 			username	= username.toLowerCase();
 
 			this.channelServiceLock(async () => {
+				const contactID	= await this.accountContactsService.getContactID(username).catch(
+					() => undefined
+				);
+
+				if (!contactID) {
+					return;
+				}
+
 				const next	= await util.getOrSetDefaultAsync(
 					this.channelServices,
 					username,
 					async () => {
-						const contactID			=
-							await this.accountContactsService.getContactID(username)
-						;
-
 						const channelService	= new ChannelService(this.databaseService);
 
 						channelService.init(
