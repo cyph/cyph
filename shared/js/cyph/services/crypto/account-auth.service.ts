@@ -25,11 +25,6 @@ export class AccountAuthService {
 	private connectTrackerCleanup?: () => void;
 
 	/** @ignore */
-	private readonly loginDataSalt: Uint8Array	=
-		this.potassiumService.fromBase64('9BdfYbI5PggWwtnaAXbDRIsTHgMjLx/8hbHvgbQb+qs=')
-	;
-
-	/** @ignore */
 	private resolveReady: () => void;
 
 	/** @ignore */
@@ -52,11 +47,16 @@ export class AccountAuthService {
 	}
 
 	/** @ignore */
-	private async passwordHash (password: string) : Promise<Uint8Array> {
+	private async passwordHash (username: string, password: string) : Promise<Uint8Array> {
+		username	= username.toLowerCase();
+
 		return (
 			await this.potassiumService.passwordHash.hash(
 				password,
-				this.loginDataSalt
+				await this.potassiumService.hash.deriveKey(
+					username + '9BdfYbI5PggWwtnaAXbDRIsTHgMjLx/8hbHvgbQb+qs=',
+					await this.potassiumService.passwordHash.saltBytes
+				)
 			)
 		).hash;
 	}
@@ -73,8 +73,10 @@ export class AccountAuthService {
 		}
 
 		try {
+			username	= username.toLowerCase();
+
 			if (typeof password === 'string') {
-				password	= await this.passwordHash(password);
+				password	= await this.passwordHash(username, password);
 			}
 
 			const user		= await this.accountUserLookupService.getUser(username);
@@ -191,6 +193,8 @@ export class AccountAuthService {
 			return false;
 		}
 
+		username	= username.toLowerCase();
+
 		const loginData: IAccountLoginData	= {
 			secondaryPassword: this.potassiumService.toBase64(
 				this.potassiumService.randomBytes(64)
@@ -209,7 +213,7 @@ export class AccountAuthService {
 					BinaryProto,
 					await this.potassiumService.secretBox.seal(
 						await util.serialize(AccountLoginData, loginData),
-						await this.passwordHash(password)
+						await this.passwordHash(username, password)
 					)
 				),
 				this.databaseService.setItem(
