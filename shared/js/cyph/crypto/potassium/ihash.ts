@@ -5,7 +5,7 @@ export interface IHash {
 
 	/** Stretches input to the specified number of bytes. */
 	deriveKey (
-		input: Uint8Array,
+		input: Uint8Array|string,
 		outputBytes?: number,
 		clearInput?: boolean
 	) : Promise<Uint8Array>;
