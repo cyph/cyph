@@ -30,6 +30,9 @@ import {StringsService} from './strings.service';
 @Injectable()
 export abstract class SessionService implements ISessionService {
 	/** @ignore */
+	private resolveOpened: () => void;
+
+	/** @ignore */
 	private resolveSymmetricKey: (symmetricKey: Uint8Array) => void;
 
 	/** @ignore */
@@ -37,6 +40,13 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected lastIncomingMessageTimestamp: number					= 0;
+
+	/** @ignore */
+	protected readonly opened: Promise<void>						=
+		new Promise<void>(resolve => {
+			this.resolveOpened	= resolve;
+		})
+	;
 
 	/** @ignore */
 	protected readonly plaintextSendInterval: number				= 1776;
@@ -124,6 +134,7 @@ export abstract class SessionService implements ISessionService {
 	/** @see IChannelHandlers.onOpen */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
 		this.state.isAlice	= isAlice;
+		this.resolveOpened();
 	}
 
 	/** @ignore */
@@ -275,7 +286,7 @@ export abstract class SessionService implements ISessionService {
 		initialSecret: IAsyncValue<Uint8Array|undefined> =
 			new LocalAsyncValue<Uint8Array|undefined>(undefined)
 	) : Promise<IHandshakeState> {
-		await this.connected;
+		await this.opened;
 
 		return {
 			currentStep,
