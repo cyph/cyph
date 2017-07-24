@@ -13,7 +13,7 @@
 				mdTooltip='Friend is typing...'
 				cyphTranslate
 				class='ellipsis-spinner'
-				*ngIf='chatService.chat.isFriendTyping | async'
+				*ngIf='chat.isFriendTyping | async'
 				[@fadeInOut]='"in"'
 			>
 				<div class='bounce1'></div>
