@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {PairwiseSession} from '../../crypto/castle/pairwise-session';
 import {ICastle} from '../../crypto/icastle';
 import {LockFunction} from '../../lock-function-type';
@@ -14,16 +14,24 @@ import {PotassiumService} from './potassium.service';
 @Injectable()
 export class CastleService implements ICastle {
 	/** @ignore */
-	protected readonly pairwiseSession: Subject<PairwiseSession>	=
-		new Subject<PairwiseSession>()
+	protected readonly pairwiseSession: BehaviorSubject<PairwiseSession|undefined>	=
+		new BehaviorSubject<PairwiseSession|undefined>(undefined)
 	;
 
 	/** @ignore */
-	protected readonly pairwiseSessionLock: LockFunction			= util.lockFunction();
+	protected readonly pairwiseSessionFiltered: Observable<PairwiseSession>			=
+		<any> this.pairwiseSession.filter(o => o !== undefined)
+	;
+
+	/** @ignore */
+	protected readonly pairwiseSessionLock: LockFunction	= util.lockFunction();
 
 	/** @ignore */
 	protected async getPairwiseSession () : Promise<PairwiseSession> {
-		return this.pairwiseSessionLock(async () => this.pairwiseSession.take(1).toPromise());
+		await this.pairwiseSessionFiltered.first().toPromise();
+		return this.pairwiseSessionLock(async () =>
+			this.pairwiseSessionFiltered.take(1).toPromise()
+		);
 	}
 
 	/** Initializes service. */
