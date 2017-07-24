@@ -6,12 +6,7 @@ import {
 	RegisteredRemoteUser,
 	Transport
 } from '../../crypto/castle';
-import {
-	CastleIncomingMessagesProto,
-	MaybeBinaryProto,
-	NumberProto,
-	Uint32Proto
-} from '../../protos';
+import {CastleIncomingMessagesProto, MaybeBinaryProto, Uint32Proto} from '../../protos';
 import {util} from '../../util';
 import {AccountContactsService} from '../account-contacts.service';
 import {SessionService} from '../session.service';
@@ -57,7 +52,7 @@ export class AccountCastleService extends CastleService {
 					const handshakeState	= await sessionService.handshakeState(
 						this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
 							`${sessionURL}/handshake/currentStep`,
-							NumberProto
+							Uint32Proto
 						),
 						this.accountDatabaseService.getAsyncValue(
 							`${sessionURL}/handshake/initialSecret`,
