@@ -52,8 +52,17 @@ export class ChannelService implements IChannelService {
 	}
 
 	/** @inheritDoc */
-	public async getAsyncValue<T> (url: string, proto: IProto<T>) : Promise<IAsyncValue<T>> {
-		return this.databaseService.getAsyncValue(`${(await this.state).url}/${url}`, proto);
+	public async getAsyncValue<T> (
+		url: string,
+		proto: IProto<T>,
+		blockGetValue?: boolean
+	) : Promise<IAsyncValue<T>> {
+		return this.databaseService.getAsyncValue(
+			`${(await this.state).url}/${url}`,
+			proto,
+			undefined,
+			blockGetValue
+		);
 	}
 
 	/** @inheritDoc */

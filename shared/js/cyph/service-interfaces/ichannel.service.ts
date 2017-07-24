@@ -12,7 +12,11 @@ export interface IChannelService {
 	close () : Promise<void>;
 
 	/** @see DatabaseService.getAsyncValue */
-	getAsyncValue<T> (url: string, proto: IProto<T>) : Promise<IAsyncValue<T>>;
+	getAsyncValue<T> (
+		url: string,
+		proto: IProto<T>,
+		blockGetValue?: boolean
+	) : Promise<IAsyncValue<T>>;
 
 	/**
 	 * Initializes service.
