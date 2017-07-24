@@ -11,10 +11,15 @@ export class Hash implements IHash {
 
 	/** @inheritDoc */
 	public async deriveKey (
-		input: Uint8Array,
+		input: Uint8Array|string,
 		outputBytes?: number,
 		clearInput?: boolean
 	) : Promise<Uint8Array> {
+		if (typeof input === 'string') {
+			input		= potassiumUtil.fromString(input);
+			clearInput	= true;
+		}
+
 		try {
 			const bytes	= await this.bytes;
 
