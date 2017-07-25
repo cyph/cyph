@@ -65,7 +65,7 @@ export class AccountDatabaseService {
 			this.potassiumService.secretBox.open(
 				data,
 				currentUser.keys.symmetricKey,
-				this.potassiumService.fromString(url)
+				url
 			)
 		,
 		sign: async (
@@ -103,7 +103,7 @@ export class AccountDatabaseService {
 			this.potassiumService.secretBox.seal(
 				data,
 				currentUser.keys.symmetricKey,
-				this.potassiumService.fromString(url)
+				url
 			)
 		,
 		sign: async (
@@ -488,7 +488,7 @@ export class AccountDatabaseService {
 					await this.potassiumService.secretBox.open(
 						this.potassiumService.fromBase64(r),
 						currentUser.keys.symmetricKey,
-						this.potassiumService.fromString(url)
+						url
 					)
 				)
 			),
@@ -498,7 +498,7 @@ export class AccountDatabaseService {
 					await this.potassiumService.secretBox.seal(
 						this.potassiumService.fromString(reason),
 						currentUser.keys.symmetricKey,
-						this.potassiumService.fromString(url)
+						url
 					)
 				)
 		);
@@ -525,7 +525,7 @@ export class AccountDatabaseService {
 					await this.potassiumService.secretBox.open(
 						this.potassiumService.fromBase64(reason),
 						currentUser.keys.symmetricKey,
-						this.potassiumService.fromString(url)
+						url
 					)
 				)
 		};
@@ -635,7 +635,7 @@ export class AccountDatabaseService {
 					await this.potassiumService.secretBox.open(
 						this.potassiumService.fromBase64(reason),
 						currentUser.keys.symmetricKey,
-						this.potassiumService.fromString(url)
+						url
 					)
 				)
 			,
