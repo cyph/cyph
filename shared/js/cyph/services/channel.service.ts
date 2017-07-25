@@ -89,10 +89,42 @@ export class ChannelService implements IChannelService {
 			this.databaseService.setDisconnectTracker(`${url}/disconnects/${this.userID}`);
 		}
 
+		this.databaseService.watchListPushes(
+			`${url}/messages`,
+			ChannelMessage,
+			undefined,
+			true
+		).subscribe(async message => {
+			if (message.value.author === this.userID) {
+				return;
+			}
+
+			if (this.pauseLock) {
+				await this.pauseLock.toPromise();
+			}
+
+			await handlers.onMessage(message.value.cyphertext);
+
+			if (!this.ephemeral) {
+				await util.sleep(5000);
+				await this.databaseService.removeItem(message.url).catch(() => {});
+			}
+		});
+
+		if (
+			this.ephemeral ||
+			(
+				await this.databaseService.getList(`${url}/users`, StringProto).catch(() => [])
+			).indexOf(this.userID) < 0
+		) {
+			await this.databaseService.pushItem(`${url}/users`, StringProto, this.userID);
+		}
+
 		let isOpen	= false;
 		const usersSubscription	= this.databaseService.watchList(
 			`${url}/users`,
-			StringProto
+			StringProto,
+			true
 		).subscribe(
 			users => {
 				if (users.length < 1) {
@@ -111,44 +143,11 @@ export class ChannelService implements IChannelService {
 			err => {
 				handlers.onClose();
 				throw err;
-			}
-		);
-
-		this.databaseService.watchListPushes(
-			`${url}/messages`,
-			ChannelMessage,
-			true,
-			true
-		).subscribe(
-			async message => {
-				if (message.value.author === this.userID) {
-					return;
-				}
-
-				if (this.pauseLock) {
-					await this.pauseLock.toPromise();
-				}
-
-				await handlers.onMessage(message.value.cyphertext);
-				await this.databaseService.removeItem(message.url);
-			},
-			err => {
-				handlers.onClose();
-				throw err;
 			},
 			() => {
 				handlers.onClose();
 			}
 		);
-
-		if (
-			this.ephemeral ||
-			(
-				await this.databaseService.getList(`${url}/users`, StringProto).catch(() => [])
-			).indexOf(this.userID) < 0
-		) {
-			this.databaseService.pushItem(`${url}/users`, StringProto, this.userID);
-		}
 	}
 
 	/** @inheritDoc */
