@@ -114,31 +114,7 @@ export class PairwiseSession {
 
 				for (const cyphertextBytes of message) {
 					try {
-						let plaintext	= await (await this.core).decrypt(cyphertextBytes);
-
-						/* Part 2 of handshake for Alice */
-						if (
-							(
-								await this.handshakeState.currentStep.getValue()
-							) === HandshakeSteps.PostCoreInit
-						) {
-							const oldPlaintext	= this.potassium.toBytes(plaintext);
-							plaintext			= await this.handshakeOpenSecret(oldPlaintext);
-
-							this.potassium.clearMemory(oldPlaintext);
-							await this.handshakeState.currentStep.setValue(
-								HandshakeSteps.PostMutualVerification
-							);
-						}
-
-						/* Completion of handshake */
-						if (
-							(
-								await this.handshakeState.currentStep.getValue()
-							) === HandshakeSteps.PostMutualVerification
-						) {
-							await this.connect();
-						}
+						const plaintext	= await (await this.core).decrypt(cyphertextBytes);
 
 						this.transport.receive(
 							cyphertextBytes,
@@ -194,30 +170,11 @@ export class PairwiseSession {
 		);
 
 		return this.sendLock(async () => {
-			let bobHandshakeMutualVerification	= false;
-
-			/* Part 2 of handshake for Bob */
-			if (
-				(await this.handshakeState.currentStep.getValue()) === HandshakeSteps.PostCoreInit
-			) {
-				const oldData	= data;
-				data			= await this.handshakeSendSecret(oldData);
-				this.potassium.clearMemory(oldData);
-
-				bobHandshakeMutualVerification	= true;
-			}
-
 			const messageID		= await this.newOutgoingMessageID();
 			const cyphertext	= await (await this.core).encrypt(data, messageID);
 
 			this.potassium.clearMemory(data);
 			this.transport.send(cyphertext, messageID);
-
-			if (bobHandshakeMutualVerification) {
-				await this.handshakeState.currentStep.setValue(
-					HandshakeSteps.PostMutualVerification
-				);
-			}
 		});
 	}
 
@@ -287,26 +244,70 @@ export class PairwiseSession {
 					(await symmetricRatchetState.current.incoming.getValue()) !== undefined
 				;
 
-				/* Bootstrap asymmetric ratchet */
+				/* Start bootstrapping asymmetric ratchet */
 				if (initialSecret === undefined) {
 					if (this.handshakeState.isAlice) {
-						const newInitialSecret	= this.potassium.randomBytes(
+						const initialSecretPart	= this.potassium.randomBytes(
 							await potassium.ephemeralKeyExchange.secretBytes
 						);
 
-						await this.handshakeState.initialSecretCyphertext.setValue(
-							await this.handshakeSendSecret(newInitialSecret)
+						await this.handshakeState.initialSecretAliceCyphertext.setValue(
+							await this.handshakeSendSecret(initialSecretPart)
 						);
 
-						await this.handshakeState.initialSecret.setValue(newInitialSecret);
+						await this.handshakeState.initialSecret.setValue(initialSecretPart);
 					}
 					else {
 						await this.handshakeState.initialSecret.setValue(
 							await this.handshakeOpenSecret(
-								await this.handshakeState.initialSecretCyphertext.getValue()
+								await this.handshakeState.initialSecretAliceCyphertext.getValue()
 							)
 						);
 					}
+				}
+
+				/* Second half of ratchet bootstrap for mutual public key verification */
+				else if (
+					(
+						await this.handshakeState.currentStep.getValue()
+					) === HandshakeSteps.Start
+				) {
+					if (this.handshakeState.isAlice) {
+						await this.handshakeState.initialSecret.setValue(
+							await potassium.hash.deriveKey(
+								this.potassium.concatMemory(
+									true,
+									initialSecret,
+									await this.handshakeOpenSecret(
+										await this.handshakeState.initialSecretBobCyphertext.getValue()
+									)
+								),
+								await potassium.ephemeralKeyExchange.secretBytes
+							)
+						);
+					}
+					else {
+						const initialSecretPart	= this.potassium.randomBytes(
+							await potassium.ephemeralKeyExchange.secretBytes
+						);
+
+						await this.handshakeState.initialSecretBobCyphertext.setValue(
+							await this.handshakeSendSecret(initialSecretPart)
+						);
+
+						await this.handshakeState.initialSecret.setValue(
+							await potassium.hash.deriveKey(
+								this.potassium.concatMemory(
+									true,
+									initialSecret,
+									initialSecretPart
+								),
+								await potassium.ephemeralKeyExchange.secretBytes
+							)
+						);
+					}
+
+					await this.handshakeState.currentStep.setValue(HandshakeSteps.PostBootstrap);
 				}
 
 				/* Initialize symmetric ratchet */
@@ -354,7 +355,7 @@ export class PairwiseSession {
 						coreLock
 					));
 
-					await this.handshakeState.currentStep.setValue(HandshakeSteps.PostCoreInit);
+					await this.connect();
 
 					return;
 				}
