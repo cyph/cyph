@@ -227,7 +227,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		open: async (
 			cyphertext: Uint8Array,
 			key: Uint8Array,
-			additionalData?: Uint8Array
+			additionalData?: Uint8Array|string
 		) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.secretBox.open,
 			{additionalData, cyphertext, key},
@@ -236,7 +236,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		seal: async (
 			plaintext: Uint8Array,
 			key: Uint8Array,
-			additionalData?: Uint8Array
+			additionalData?: Uint8Array|string
 		) => eventManager.rpcTrigger<Uint8Array>(
 			this.threadEvents.secretBox.seal,
 			{additionalData, key, plaintext},
@@ -631,7 +631,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 				eventManager.rpcOn(
 					threadEvents.secretBox.open,
 					async (o: {
-						additionalData?: Uint8Array;
+						additionalData?: Uint8Array|string;
 						cyphertext: Uint8Array;
 						key: Uint8Array;
 					}) =>
@@ -643,7 +643,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 				eventManager.rpcOn(
 					threadEvents.secretBox.seal,
 					async (o: {
-						additionalData?: Uint8Array;
+						additionalData?: Uint8Array|string;
 						key: Uint8Array;
 						plaintext: Uint8Array;
 					}) =>
