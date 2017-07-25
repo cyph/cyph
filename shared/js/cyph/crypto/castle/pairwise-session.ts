@@ -186,21 +186,22 @@ export class PairwiseSession {
 			timestamp	= await util.timestamp();
 		}
 
-		const plaintextBytes	= this.potassium.fromString(plaintext);
-		const timestampBytes	= new Float64Array([timestamp]);
-
-		const data	= this.potassium.concatMemory(
+		const fullPlaintext	= this.potassium.concatMemory(
 			true,
-			timestampBytes,
-			plaintextBytes
+			new Float64Array([timestamp]),
+			this.potassium.fromString(plaintext)
 		);
 
 		return this.sendLock(async () => {
 			const messageID		= await this.newOutgoingMessageID();
-			const cyphertext	= await (await this.core).encrypt(data, messageID);
+			const cyphertext	= await (await this.core).encrypt(fullPlaintext, messageID);
 
-			this.potassium.clearMemory(data);
-			this.transport.send(cyphertext, messageID);
+			this.potassium.clearMemory(fullPlaintext);
+			this.transport.send(this.potassium.concatMemory(
+				true,
+				messageID,
+				cyphertext
+			));
 		});
 	}
 

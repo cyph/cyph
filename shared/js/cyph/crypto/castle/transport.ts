@@ -52,19 +52,9 @@ export class Transport {
 	}
 
 	/** Send outgoing encrypted message. */
-	public send (cyphertext: Uint8Array, messageID: Uint8Array) : void {
-		const fullCyphertext	= potassiumUtil.concatMemory(
-			true,
-			messageID,
-			potassiumUtil.fromBase64(cyphertext)
-		);
-
-		this.sessionService.castleHandler(CastleEvents.send, fullCyphertext);
-
-		this.logCyphertext(
-			this.sessionService.localUsername,
-			fullCyphertext
-		);
+	public send (cyphertext: Uint8Array) : void {
+		this.sessionService.castleHandler(CastleEvents.send, cyphertext);
+		this.logCyphertext(this.sessionService.localUsername, cyphertext);
 	}
 
 	constructor (
