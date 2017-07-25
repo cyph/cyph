@@ -121,7 +121,7 @@ export class ChannelService implements IChannelService {
 		}
 
 		let isOpen	= false;
-		const usersSubscription	= this.databaseService.watchList(
+		this.databaseService.watchList(
 			`${url}/users`,
 			StringProto,
 			true
@@ -137,7 +137,6 @@ export class ChannelService implements IChannelService {
 				if (users.length < 2) {
 					return;
 				}
-				usersSubscription.unsubscribe();
 				handlers.onConnect();
 			},
 			err => {
