@@ -10,13 +10,13 @@ export interface ISecretBox {
 	open (
 		cyphertext: Uint8Array,
 		key: Uint8Array,
-		additionalData?: Uint8Array
+		additionalData?: Uint8Array|string
 	) : Promise<Uint8Array>;
 
 	/** Encrypts plaintext. */
 	seal (
 		plaintext: Uint8Array,
 		key: Uint8Array,
-		additionalData?: Uint8Array
+		additionalData?: Uint8Array|string
 	) : Promise<Uint8Array>;
 }

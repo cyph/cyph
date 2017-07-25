@@ -206,8 +206,12 @@ export class SecretBox implements ISecretBox {
 	public async open (
 		cyphertext: Uint8Array,
 		key: Uint8Array,
-		additionalData?: Uint8Array
+		additionalData?: Uint8Array|string
 	) : Promise<Uint8Array> {
+		if (typeof additionalData === 'string') {
+			additionalData	= potassiumUtil.fromString(additionalData);
+		}
+
 		if (this.isNative) {
 			return this.openChunk(cyphertext, key, additionalData);
 		}
@@ -223,8 +227,12 @@ export class SecretBox implements ISecretBox {
 	public async seal (
 		plaintext: Uint8Array,
 		key: Uint8Array,
-		additionalData?: Uint8Array
+		additionalData?: Uint8Array|string
 	) : Promise<Uint8Array> {
+		if (typeof additionalData === 'string') {
+			additionalData	= potassiumUtil.fromString(additionalData);
+		}
+
 		if (this.isNative) {
 			return this.sealChunk(plaintext, key, additionalData);
 		}
