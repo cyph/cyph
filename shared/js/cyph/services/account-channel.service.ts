@@ -49,8 +49,16 @@ export class AccountChannelService implements IChannelService {
 	public async close () : Promise<void> {}
 
 	/** @inheritDoc */
-	public async getAsyncValue<T> (url: string, proto: IProto<T>) : Promise<IAsyncValue<T>> {
-		return (await this.getChannelService()).getAsyncValue(url, proto);
+	public async getAsyncValue<T> (
+		url: string,
+		proto: IProto<T>,
+		blockGetValue?: boolean
+	) : Promise<IAsyncValue<T>> {
+		return (await this.getChannelService()).getAsyncValue(
+			url,
+			proto,
+			blockGetValue
+		);
 	}
 
 	/** @inheritDoc */
