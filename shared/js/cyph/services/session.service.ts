@@ -291,8 +291,13 @@ export abstract class SessionService implements ISessionService {
 		return {
 			currentStep,
 			initialSecret,
-			initialSecretCyphertext: await this.channelService.getAsyncValue(
-				'handshake/initialSecretCyphertext',
+			initialSecretAliceCyphertext: await this.channelService.getAsyncValue(
+				'handshake/initialSecretAliceCyphertext',
+				BinaryProto,
+				true
+			),
+			initialSecretBobCyphertext: await this.channelService.getAsyncValue(
+				'handshake/initialSecretBobCyphertext',
 				BinaryProto,
 				true
 			),

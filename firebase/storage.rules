@@ -8,7 +8,8 @@ service firebase.storage {
 			// match /handshake {
 			// 	match /alicePublicKey {}
 			// 	match /bobPublicKey {}
-			// 	match /initialSecretCyphertext {}
+			// 	match /initialSecretAliceCyphertext {}
+			// 	match /initialSecretBobCyphertext {}
 			// }
 
 			// match /messages/{message} {}
