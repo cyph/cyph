@@ -77,7 +77,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	success := false
 
 	if subscription {
-		apiKey, err := generateApiKey()
+		apiKey, err := generateAPIKey()
 
 		if err != nil {
 			return err.Error(), http.StatusTeapot
@@ -122,7 +122,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				h.Context,
 				datastore.NewKey(h.Context, "Customer", apiKey, 0, nil),
 				&Customer{
-					ApiKey:      apiKey,
+					APIKey:      apiKey,
 					BraintreeID: customer.Id,
 				},
 			)
@@ -177,9 +177,9 @@ func braintreeToken(h HandlerArgs) (interface{}, int) {
 
 	if err == nil {
 		return token, http.StatusOK
-	} else {
-		return braintreeToken(h)
 	}
+
+	return braintreeToken(h)
 }
 
 func channelSetup(h HandlerArgs) (interface{}, int) {
@@ -372,7 +372,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	}
 
 	customer.LastSession = now.Unix()
-	customer.SessionCount += 1
+	customer.SessionCount++
 
 	proFeaturesJSON, err := json.Marshal(proFeatures)
 	if err != nil {

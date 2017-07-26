@@ -7,18 +7,21 @@ import (
 
 type none struct{}
 
+// Customer : Braintree customer
 type Customer struct {
-	ApiKey       string
+	APIKey       string
 	BraintreeID  string
 	LastSession  int64
 	SessionCount int64
 }
 
+// Plan : Braintree plan
 type Plan struct {
 	ProFeatures       map[string]bool
 	SessionCountLimit int64
 }
 
+// PreAuthorizedCyph : Representation of an approved usage of the API
 type PreAuthorizedCyph struct {
 	ID          string
 	ProFeatures []byte
@@ -34,7 +37,7 @@ var config = struct {
 	AllowedMethods             string
 	AllowedHosts               map[string]none
 	AnalID                     string
-	ApiKeyByteLength           int
+	APIKeyByteLength           int
 	Continents                 map[string]none
 	DefaultContinent           string
 	DefaultContinentCode       string
