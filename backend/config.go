@@ -96,7 +96,7 @@ var config = struct {
 
 	"UA-56220601-1",
 
-	16,
+	24,
 
 	map[string]none{
 		"af": empty,
