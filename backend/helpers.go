@@ -23,13 +23,18 @@ import (
 	"google.golang.org/appengine/urlfetch"
 )
 
+// HandlerArgs : Arguments to Handler
 type HandlerArgs struct {
 	Context context.Context
 	Request *http.Request
 	Writer  http.ResponseWriter
 	Vars    map[string]string
 }
+
+// Handler : API route handler
 type Handler func(HandlerArgs) (interface{}, int)
+
+// Handlers : Mapping of HTTP methods to Handlers for a particular route
 type Handlers map[string]Handler
 
 var methods = struct {
@@ -77,8 +82,8 @@ func isValidCyphID(id string) bool {
 	return len(id) == config.AllowedCyphIDLength && config.AllowedCyphIDs.MatchString(id)
 }
 
-func generateApiKey() (string, error) {
-	bytes := make([]byte, config.ApiKeyByteLength)
+func generateAPIKey() (string, error) {
+	bytes := make([]byte, config.APIKeyByteLength)
 	if _, err := rand.Read(bytes); err != nil {
 		return "", err
 	}
@@ -212,15 +217,11 @@ func getTwilioToken(h HandlerArgs) map[string]interface{} {
 
 			if err == nil {
 				return token
-			} else {
-				return getTwilioToken(h)
 			}
-		} else {
-			return getTwilioToken(h)
 		}
-	} else {
-		return getTwilioToken(h)
 	}
+
+	return getTwilioToken(h)
 }
 
 func trackEvent(h HandlerArgs, category, action, label string, value int) error {
@@ -338,7 +339,7 @@ func sanitize(s string, params ...int) string {
 
 	if maxLength > -1 && len(sanitized) > maxLength {
 		return sanitized[:maxLength]
-	} else {
-		return sanitized
 	}
+
+	return sanitized
 }
