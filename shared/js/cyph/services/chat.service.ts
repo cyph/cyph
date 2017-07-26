@@ -121,12 +121,13 @@ export class ChatService {
 			authorID:
 				(
 					author === this.sessionService.appUsername ||
-					author === this.sessionService.localUsername ||
-					author === this.sessionService.remoteUsername
+					author === this.sessionService.localUsername
 				) ?
 					undefined :
 					await this.accountContactsService.getContactID(
 						await author.take(1).toPromise()
+					).catch(
+						() => undefined
 					)
 			,
 			authorType:
