@@ -173,6 +173,7 @@ const shellScripts			= {
 
 			cd ~/brotli
 			git pull
+			git checkout 172a378debedec81eb19747c96c28a81d917d284
 			make brotli
 			sudo mv bin/brotli /usr/bin/
 
