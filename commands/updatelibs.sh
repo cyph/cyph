@@ -161,7 +161,7 @@ read -r -d '' modules <<- EOM
 	sass-loader
 	script-ext-html-webpack-plugin
 	sidh
-	simplewebrtc
+	simplewebrtc@3.0.0
 	sodiumutil
 	sphincs
 	stacktrace-js
