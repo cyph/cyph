@@ -30,6 +30,9 @@ export interface IChatData {
 	/** Message list. */
 	messages: IAsyncList<IChatMessage>;
 
+	/** If true, key exchange state should be skipped. */
+	noKeyExchangeState?: boolean;
+
 	/** The previous message sent. */
 	previousMessage?: string;
 

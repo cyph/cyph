@@ -43,6 +43,7 @@ export class AccountChatService extends ChatService {
 				`${contactURL}/messages`,
 				ChatMessage
 			),
+			noKeyExchangeState: true,
 			queuedMessageSelfDestruct: false,
 			state: States.chat,
 			unconfirmedMessages: this.accountDatabaseService.getAsyncValue(

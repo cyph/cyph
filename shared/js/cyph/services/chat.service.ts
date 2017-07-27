@@ -161,25 +161,27 @@ export class ChatService {
 			this.notificationService.notify(this.stringsService.connectedNotification);
 		}
 
-		this.chat.keyExchangeProgress	= 100;
-		this.chat.state					= States.chatBeginMessage;
+		if (!this.chat.noKeyExchangeState) {
+			this.chat.keyExchangeProgress	= 100;
+			this.chat.state					= States.chatBeginMessage;
 
-		await util.sleep(3000);
+			await util.sleep(3000);
 
-		if (<States> this.chat.state === States.aborted) {
-			return;
+			if (<States> this.chat.state === States.aborted) {
+				return;
+			}
+
+			this.sessionService.trigger(events.beginChatComplete);
+
+			this.chat.state	= States.chat;
+
+			this.addMessage(
+				this.stringsService.introductoryMessage,
+				undefined,
+				(await util.timestamp()) - 30000,
+				false
+			);
 		}
-
-		this.sessionService.trigger(events.beginChatComplete);
-
-		this.chat.state	= States.chat;
-
-		this.addMessage(
-			this.stringsService.introductoryMessage,
-			undefined,
-			(await util.timestamp()) - 30000,
-			false
-		);
 
 		this.chat.isConnected	= true;
 
@@ -301,6 +303,10 @@ export class ChatService {
 		});
 
 		this.sessionService.connected.then(async () => {
+			if (this.chat.noKeyExchangeState) {
+				return;
+			}
+
 			this.chat.state	= States.keyExchange;
 
 			const interval		= 250;
