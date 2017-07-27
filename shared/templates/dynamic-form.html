@@ -44,7 +44,7 @@
 						<md-input-container fxFlex>
 							<input
 								mdInput
-								[textMask]='getMask(o)'
+								[attr.textMask]='getMask(o)'
 								[(ngModel)]='o.valueString'
 								[name]='o.label'
 								type='email'
@@ -58,7 +58,7 @@
 						<md-input-container fxFlex>
 							<input
 								mdInput
-								[textMask]='getMask(o)'
+								[attr.textMask]='getMask(o)'
 								[(ngModel)]='o.valueString'
 								[name]='o.label'
 								type='text'
@@ -68,15 +68,11 @@
 						</md-input-container>
 					</div>
 
-					<div *ngIf='o.type === types.LineBreak'>
-						<div fxFlex style='width: 100%'></div>
-					</div>
-
 					<div *ngIf='o.type === types.Number'>
 						<md-input-container fxFlex>
 							<input
 								mdInput
-								[textMask]='getMask(o)'
+								[attr.textMask]='getMask(o)'
 								[(ngModel)]='o.valueNumber'
 								[max]='o.max'
 								[min]='o.min'
@@ -92,7 +88,7 @@
 						<md-input-container fxFlex>
 							<input
 								mdInput
-								[textMask]='getMask(o)'
+								[attr.textMask]='getMask(o)'
 								[(ngModel)]='o.valueString'
 								[name]='o.label'
 								type='password'
@@ -153,7 +149,7 @@
 						<md-input-container fxFlex>
 							<textarea
 								mdInput
-								[textMask]='getMask(o)'
+								[attr.textMask]='getMask(o)'
 								[(ngModel)]='o.valueString'
 								[name]='o.label'
 								[placeholder]='o.label'
@@ -166,7 +162,7 @@
 						<md-input-container fxFlex>
 							<input
 								mdInput
-								[textMask]='getMask(o)'
+								[attr.textMask]='getMask(o)'
 								[(ngModel)]='o.valueString'
 								[name]='o.label'
 								type='time'
@@ -180,7 +176,7 @@
 						<md-input-container fxFlex>
 							<input
 								mdInput
-								[textMask]='getMask(o)'
+								[attr.textMask]='getMask(o)'
 								[(ngModel)]='o.valueString'
 								[name]='o.label'
 								type='url'
@@ -197,7 +193,7 @@
 	<div fxLayout='column' fxLayoutAlign='center center'>
 		<div fxLayout='row'>
 			<div fxFlex></div>
-			<button fxFlexAlign='center center' md-button fxFlex='none' cyphTranslate type='submit'>
+			<button md-button fxFlex='none' fxFlexAlign='center center' cyphTranslate type='submit'>
 				Submit
 			</button>
 			<div fxFlex></div>
