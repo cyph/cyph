@@ -106,7 +106,7 @@ export class ChannelService implements IChannelService {
 			await handlers.onMessage(message.value.cyphertext);
 
 			if (!this.ephemeral) {
-				await util.sleep(5000);
+				await util.sleep(600000);
 				await this.databaseService.removeItem(message.url).catch(() => {});
 			}
 		});
