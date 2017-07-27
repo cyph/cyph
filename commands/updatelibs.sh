@@ -161,7 +161,7 @@ read -r -d '' modules <<- EOM
 	sass-loader
 	script-ext-html-webpack-plugin
 	sidh
-	simplewebrtc@3.0.0
+	simplewebrtc
 	sodiumutil
 	sphincs
 	stacktrace-js
@@ -192,7 +192,7 @@ read -r -d '' modules <<- EOM
 	webpack
 	webpack-closure-compiler
 	webpack-sources
-	webrtc-adapter
+	webrtc-adapter@4.0.2
 	webrtcsupport@https://github.com/buu700/webrtcsupport
 	whatwg-fetch
 	wowjs
