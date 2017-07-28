@@ -192,7 +192,7 @@ read -r -d '' modules <<- EOM
 	webpack
 	webpack-closure-compiler
 	webpack-sources
-	webrtc-adapter@4.0.2
+	webrtc-adapter
 	webrtcsupport@https://github.com/buu700/webrtcsupport
 	whatwg-fetch
 	wowjs

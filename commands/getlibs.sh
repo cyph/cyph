@@ -223,7 +223,7 @@ done
 
 sed -i 's/saveAs\s*||/self.saveAs||/g' file-saver/*.js
 
-cp simplewebrtc/out/simplewebrtc-with-adapter.bundle.js simplewebrtc/simplewebrtc.js
+cp -f simplewebrtc/out/simplewebrtc-with-adapter.bundle.js simplewebrtc/src/simplewebrtc.js
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/simplewebrtc.js
 
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
