@@ -467,20 +467,24 @@ export class FirebaseDatabaseService extends DatabaseService {
 						progress.next(snapshot.bytesTransferred / snapshot.totalBytes * 100);
 					},
 					reject,
-					async () => {
-						try {
-							await (await this.getDatabaseRef(url)).set({
-								hash,
-								timestamp: firebase.database.ServerValue.TIMESTAMP
-							}).then();
-							this.cacheSet(url, data, hash);
-							progress.next(100);
-							progress.complete();
-							resolve({hash, url});
-						}
-						catch (err) {
-							reject(err);
-						}
+					() => {
+						(async () => {
+							try {
+								await (await this.getDatabaseRef(url)).set({
+									hash,
+									timestamp: firebase.database.ServerValue.TIMESTAMP
+								}).then();
+								this.cacheSet(url, data, hash);
+								progress.next(100);
+								progress.complete();
+								resolve({hash, url});
+							}
+							catch (err) {
+								reject(err);
+							}
+						})();
+
+						return undefined;
 					}
 				);
 			});
