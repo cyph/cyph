@@ -7,6 +7,8 @@ import {BinaryProto, BlobProto, DataURIProto, StringProto} from '../protos';
 import {util} from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {DialogService} from './dialog.service';
+import {StringsService} from './strings.service';
 
 
 /**
@@ -166,6 +168,24 @@ export class AccountFilesService {
 		return this.noteSnippets.get(id) || '';
 	}
 
+	/** Removes a file. */
+	public async remove (id: string, confirm: boolean = true) : Promise<void> {
+		if (
+			confirm &&
+			!(await this.dialogService.confirm({
+				content: `${this.stringsService.deleteMessage} ${(await this.getFile(id)).name}?`,
+				title: this.stringsService.deleteConfirm
+			}))
+		) {
+			return;
+		}
+
+		await Promise.all([
+			this.accountDatabaseService.removeItem(`files/${id}`),
+			this.accountDatabaseService.removeItem(`fileRecords/${id}`)
+		]);
+	}
+
 	/** Overwrites an existing note. */
 	public async updateNote (id: string, content: string) : Promise<void> {
 		const file		= await this.getFile(id, AccountFileRecord.RecordTypes.Note);
@@ -235,6 +255,12 @@ export class AccountFilesService {
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
-		private readonly potassiumService: PotassiumService
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly potassiumService: PotassiumService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {}
 }

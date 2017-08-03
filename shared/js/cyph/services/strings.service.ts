@@ -49,6 +49,12 @@ export class StringsService {
 	public readonly decline: string					= util.translate(`decline`);
 
 	/** @see StringsService */
+	public readonly deleteConfirm: string			= util.translate(`Confirm Deletion`);
+
+	/** @see StringsService */
+	public readonly deleteMessage: string			= util.translate(`Delete`);
+
+	/** @see StringsService */
 	public readonly discard: string					= util.translate(`discard`);
 
 	/** @see StringsService */

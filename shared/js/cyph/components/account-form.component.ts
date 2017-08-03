@@ -61,7 +61,7 @@ export class AccountFormComponent implements OnInit {
 		/** @ignore */
 		private readonly accountAuthService: AccountAuthService,
 
-		/** @ignore */
-		private readonly accountFilesService: AccountFilesService
+		/** @see AccountFilesService */
+		public readonly accountFilesService: AccountFilesService
 	) {}
 }

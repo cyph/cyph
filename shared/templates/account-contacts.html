@@ -34,18 +34,8 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						class='shrink'
-						mdTooltip='Send Message'
-						*ngIf='(contact.status | async) !== userPresence.Online'
-					>
-						<md-icon>email</md-icon>
-					</button>
-					<button
-						md-icon-button
-						cyphTranslate
 						class='shrink pulldown'
-						mdTooltip='Start Chat'
-						*ngIf='(contact.status | async) === userPresence.Online'
+						mdTooltip='Open Chat'
 						[routerLink]='"/account/chat/" + contact.username'
 					>
 						<md-icon>chat_bubble</md-icon>
@@ -54,6 +44,7 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Video Call'
+						(click)='accountService.notImplemented("Video call button")'
 					>
 						<md-icon>video_call</md-icon>
 					</button>
@@ -61,6 +52,7 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Send File'
+						(click)='accountService.notImplemented("File transfer button")'
 					>
 						<md-icon>attachment</md-icon>
 					</button>

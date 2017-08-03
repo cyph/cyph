@@ -15,6 +15,7 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Edit Form'
+						*ngIf='false'
 					>
 						<md-icon>edit</md-icon>
 					</button>
@@ -22,6 +23,7 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Delete Form'
+						(click)='accountFilesService.remove(form.id)'
 					>
 						<md-icon>delete</md-icon>
 					</button>

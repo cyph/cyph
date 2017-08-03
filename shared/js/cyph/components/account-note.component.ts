@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
 import {AccountFileRecord, IAccountFileRecord} from '../../proto';
 import {AccountFilesService} from '../services/account-files.service';
+import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 
 
@@ -61,7 +62,10 @@ export class AccountNoteComponent implements OnInit {
 		/** @ignore */
 		private readonly accountAuthService: AccountAuthService,
 
-		/** @ignore */
-		private readonly accountFilesService: AccountFilesService
+		/** @see AccountService */
+		public readonly accountService: AccountService,
+
+		/** @see AccountFilesService */
+		public readonly accountFilesService: AccountFilesService
 	) {}
 }

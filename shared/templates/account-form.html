@@ -14,6 +14,7 @@
 					md-icon-button
 					cyphTranslate
 					mdTooltip='Delete Note'
+					(click)='accountFilesService.remove(form.id)'
 				>
 					<md-icon>delete</md-icon>
 				</button>

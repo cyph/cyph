@@ -7,6 +7,7 @@
 					md-icon-button
 					cyphTranslate
 					mdTooltip='Edit Note'
+					(click)='accountService.notImplemented("Editing notes")'
 				>
 					<md-icon>edit</md-icon>
 				</button>
@@ -14,6 +15,7 @@
 					md-icon-button
 					cyphTranslate
 					mdTooltip='Delete Note'
+					(click)='accountFilesService.remove(note.id)'
 				>
 					<md-icon>delete</md-icon>
 				</button>

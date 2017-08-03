@@ -10,7 +10,12 @@
 				<md-icon md-card-avatar>
 					{{accountFilesService.getThumbnail(file.mediaType)}}
 				</md-icon>
-				<md-card-title>{{file.name}}</md-card-title>
+				<md-card-title>
+					<a
+						routerLink='/account/files'
+						(click)='accountFilesService.downloadAndSave(file.id)'
+					>{{file.name}}</a>
+				</md-card-title>
 				<md-card-subtitle>
 					<div>File type: {{file.mediaType}}</div>
 					<div>File size: {{utilService.readableByteLength(file.size)}}</div>
@@ -20,16 +25,17 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='File Settings'
+						*ngIf='false'
 					>
 						<md-icon>settings</md-icon>
 					</button>
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Download File'
-						(click)='accountFilesService.downloadAndSave(file.id)'
+						mdTooltip='Delete File'
+						(click)='accountFilesService.remove(file.id)'
 					>
-						<md-icon>file_download</md-icon>
+						<md-icon>delete</md-icon>
 					</button>
 				</div>
 			</md-card-header>

@@ -52,18 +52,8 @@
 			<button
 				md-mini-fab
 				cyphTranslate
-				class='animated shrink flipInX _4'
-				mdTooltip='Send Message'
-				*ngIf='(user.status | async) !== userPresence.Online'
-			>
-				<md-icon>email</md-icon>
-			</button>
-			<button
-				md-mini-fab
-				cyphTranslate
 				class='animated shrink pulldown flipInX _4'
-				mdTooltip='Start Chat'
-				*ngIf='(user.status | async) === userPresence.Online'
+				mdTooltip='Open Chat'
 				[routerLink]='"/account/chat/" + user.username'
 			>
 				<md-icon>chat_bubble</md-icon>
