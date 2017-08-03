@@ -6,15 +6,16 @@
 				<button
 					md-icon-button
 					cyphTranslate
-					mdTooltip='Edit Note'
+					mdTooltip='Edit Form'
+					*ngIf='false'
 				>
 					<md-icon>edit</md-icon>
 				</button>
 				<button
 					md-icon-button
 					cyphTranslate
-					mdTooltip='Delete Note'
-					(click)='accountFilesService.remove(form.id)'
+					mdTooltip='Delete Form'
+					(click)='accountFilesService.remove((form.metadata | async)?.id)'
 				>
 					<md-icon>delete</md-icon>
 				</button>
