@@ -15,7 +15,7 @@
 					md-icon-button
 					cyphTranslate
 					mdTooltip='Delete Note'
-					(click)='accountFilesService.remove((note.metadata | async)?.id)'
+					(click)='note.metadata.then(o => accountFilesService.remove(o.id))'
 				>
 					<md-icon>delete</md-icon>
 				</button>

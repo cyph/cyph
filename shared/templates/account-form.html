@@ -15,7 +15,7 @@
 					md-icon-button
 					cyphTranslate
 					mdTooltip='Delete Form'
-					(click)='accountFilesService.remove((form.metadata | async)?.id)'
+					(click)='form.metadata.then(o => accountFilesService.remove(o.id))'
 				>
 					<md-icon>delete</md-icon>
 				</button>
