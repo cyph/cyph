@@ -169,7 +169,14 @@ export class AccountFilesService {
 	}
 
 	/** Removes a file. */
-	public async remove (id: string, confirm: boolean = true) : Promise<void> {
+	public async remove (
+		id: string|IAccountFileRecord|Promise<IAccountFileRecord>,
+		confirm: boolean = true
+	) : Promise<void> {
+		if (typeof id !== 'string') {
+			id	= (await id).id;
+		}
+
 		if (
 			confirm &&
 			!(await this.dialogService.confirm({
