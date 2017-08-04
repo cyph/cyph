@@ -90,6 +90,18 @@
 		}
 	}
 
+	cyph-account-menu {
+		.menu {
+			background-color: if($cyph-is-dark, map-get($cyph-accent, darker), $cyph-background);
+		}
+	}
+
+	cyph-account-profile {
+		.profile .buttons button {
+			background-color: map-get($cyph-primary, default);
+		}
+	}
+
 	cyph-chat-main {
 		.chat-main.video .friend-is-typing .ellipsis-spinner > div {
 			background-color: $cyph-inverted;

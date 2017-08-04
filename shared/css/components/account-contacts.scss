@@ -1,1 +1,17 @@
 @import '../mixins';
+
+.contact {
+	@include transition(filter 0.5s ease);
+
+	button {
+		@include transition(transform 0.5s ease);
+	}
+
+	&.active {
+		@include filter(brightness(1.2));
+
+		button {
+			@include transform(scaleX(0));
+		}
+	}
+}

@@ -21,7 +21,6 @@ import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
 import {DialogImageComponent} from './dialog-image.component';
-import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 import {HelpComponent} from './js/cyph/components/help.component';
 import {CyphAppModule} from './js/cyph/modules/cyph-app.module';
 import {CyphCommonModule} from './js/cyph/modules/cyph-common.module';
@@ -42,8 +41,7 @@ import {NativeTitleService} from './native-title.service';
 	bootstrap: [AppComponent],
 	declarations: [
 		AppComponent,
-		DialogImageComponent,
-		EphemeralChatRootComponent
+		DialogImageComponent
 	],
 	entryComponents: [HelpComponent],
 	imports: [
