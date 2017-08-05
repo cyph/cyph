@@ -62,7 +62,7 @@ export class MarkdownComponent implements OnChanges {
 
 		this.html	= this.domSanitizer.bypassSecurityTrustHtml(
 			this.htmlSanitizerService.sanitize(
-				this.markdownIt.render(this.markdown).
+				this.markdownIt.render(this.markdown || '').
 
 					/* Merge blockquotes like reddit */
 					replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
