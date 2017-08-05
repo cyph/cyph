@@ -106,7 +106,7 @@ export class AccountFilesService {
 	/** Downloads file and returns as data URI. */
 	public downloadURI (id: string) : {
 		progress: Observable<number>;
-		result: Promise<SafeUrl|string|undefined>;
+		result: Promise<SafeUrl|string>;
 	} {
 		const {progress, result}	=
 			this.accountDatabaseService.downloadItem(`files/${id}`, DataURIProto)
