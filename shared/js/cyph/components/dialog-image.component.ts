@@ -11,7 +11,7 @@ import {Component} from '@angular/core';
 })
 export class DialogImageComponent {
 	/** Image src. */
-	public src: string;
+	public src: SafeUrl|string;
 
 	constructor () {}
 }

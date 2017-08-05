@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ComponentType} from '@angular/material';
+import {SafeUrl} from '@angular/platform-browser';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {SnackBar} from 'nativescript-snackbar';
 import {alert, confirm} from 'tns-core-modules/ui/dialogs';
@@ -71,7 +72,11 @@ export class NativeDialogService implements DialogService {
 	}
 
 	/** @inheritDoc */
-	public async image (src: string) : Promise<void> {
+	public async image (src: SafeUrl|string) : Promise<void> {
+		if (typeof src !== 'string') {
+			throw new Error('Unsupported src type.');
+		}
+
 		return this.lock(async () => {
 			await this.modalDialogService.showModal(DialogImageComponent, {context: src});
 		});
