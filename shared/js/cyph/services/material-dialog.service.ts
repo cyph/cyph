@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ComponentType, MdDialog, MdSnackBar} from '@angular/material';
+import {SafeUrl} from '@angular/platform-browser';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {DialogImageComponent} from '../components/dialog-image.component';
@@ -104,7 +105,7 @@ export class MaterialDialogService implements DialogService {
 	}
 
 	/** @inheritDoc */
-	public async image (src: string) : Promise<void> {
+	public async image (src: SafeUrl|string) : Promise<void> {
 		return this.lock(async () => {
 			const mdDialogRef	= this.mdDialog.open(DialogImageComponent);
 

@@ -61,12 +61,12 @@ export class DataURIProto {
 	}
 
 	/** @see IProto.create */
-	public static create () : SafeUrl|undefined {
-		return;
+	public static create () : SafeUrl {
+		return {};
 	}
 
 	/** @see IProto.decode */
-	public static async decode (bytes: Uint8Array) : Promise<SafeUrl|undefined> {
+	public static async decode (bytes: Uint8Array) : Promise<SafeUrl> {
 		if (bytes.length < 1) {
 			return;
 		}

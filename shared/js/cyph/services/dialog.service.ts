@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ComponentType} from '@angular/material';
+import {SafeUrl} from '@angular/platform-browser';
 
 
 /**
@@ -32,7 +33,7 @@ export class DialogService {
 	}
 
 	/** Displays image. */
-	public async image (_SRC: string) : Promise<void> {
+	public async image (_SRC: SafeUrl|string) : Promise<void> {
 		throw new Error('Must provide an implementation of DialogService.image.');
 	}
 
