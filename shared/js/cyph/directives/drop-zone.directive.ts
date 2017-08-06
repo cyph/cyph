@@ -17,8 +17,14 @@ export class DropZoneDirective implements OnInit {
 
 		this.renderer.addClass(this.elementRef.nativeElement, id);
 
-		/* tslint:disable-next-line:no-unused-expression */
-		new Dropzone(`.${id}`, {accept: file => { this.fileDrop.emit(file); }});
+		const dropZone	= new Dropzone(`.${id}`, {
+			accept: (file, done) => {
+				done('ignore');
+				dropZone.removeAllFiles();
+				this.fileDrop.emit(file);
+			},
+			url: 'data:text/plain;ascii,'
+		});
 	}
 
 	constructor (
