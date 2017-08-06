@@ -1,4 +1,5 @@
 import {NgModule} from '@angular/core';
+import {QuillModule} from 'ngx-quill';
 import {AccountChatComponent} from '../components/account-chat.component';
 import {AccountContactsComponent} from '../components/account-contacts.component';
 import {AccountFilesComponent} from '../components/account-files.component';
@@ -32,8 +33,6 @@ import {FirebaseDatabaseService} from '../services/firebase-database.service';
 import {HtmlSanitizerService} from '../services/html-sanitizer.service';
 import {CyphCommonModule} from './cyph-common.module';
 import {CyphWebModule} from './cyph-web.module';
-import {QuillModule} from 'ngx-quill';
-
 
 
 /**

@@ -1,6 +1,6 @@
 @import '../mixins';
 
-.fileUpload {
+.file-upload {
 	height: auto;
 	border: dashed white 1.5px;
 	cursor: pointer;
@@ -10,19 +10,21 @@
 		margin: 65px;
 	}
 
-	.dz-preview {
-		margin: 20px 20px 20px -120px !important;
-	}
+	::ng-deep {
+		.dz-preview {
+			margin: 20px 20px 20px -120px !important;
+		}
 
-	.dz-success-mark, .dz-error-mark {
-		float: left;
-		display: inherit;
-		margin-top: 15px;
-		display: none;
-	}
+		.dz-success-mark, .dz-error-mark {
+			float: left;
+			display: inherit;
+			margin-top: 15px;
+			display: none;
+		}
 
-	.dz-details {
-		text-align: center;
-		margin-top: 7px;
+		.dz-details {
+			text-align: center;
+			margin-top: 7px;
+		}
 	}
 }
