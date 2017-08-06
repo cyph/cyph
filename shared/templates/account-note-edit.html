@@ -1,5 +1,4 @@
 <md-card-header fxLayout='row'>
-	<md-card-title>{{(note.metadata | async)?.name}}</md-card-title>
 	<div fxFlex fxLayoutAlign='end center'>
 		<button
 			md-icon-button
@@ -12,13 +11,12 @@
 			md-icon-button
 			cyphTranslate
 			mdTooltip='Delete Note'
-			(click)='accountFilesService.remove(note.metadata)'
+			(click)='accountFilesService.remove(accountFilesService.activeNote.metadata)'
 		>
 			<md-icon>delete</md-icon>
 		</button>
 	</div>
 </md-card-header>
 <md-card-content>
-	<quill-editor *ngIf='note' [ngModel]='note.data|async'>
-	</quill-editor>
+	<quill-editor [ngModel]='accountFilesService.activeNote.data | async'></quill-editor>
 </md-card-content>

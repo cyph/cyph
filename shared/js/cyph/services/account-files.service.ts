@@ -19,6 +19,13 @@ export class AccountFilesService {
 	/** @ignore */
 	private readonly noteSnippets: Map<string, string>	= new Map<string, string>();
 
+	/** Currently active note. */
+	public activeNote?: {
+		data: Promise<string>;
+		downloadProgress: Observable<number>;
+		metadata: Promise<IAccountFileRecord>;
+	};
+
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
 	public readonly filesList: Observable<IAccountFileRecord[]>	= util.flattenObservablePromise(
 		this.accountDatabaseService.watchList<IAccountFileRecord>(

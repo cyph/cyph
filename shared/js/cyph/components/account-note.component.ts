@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable} from 'rxjs';
-import {AccountFileRecord, IAccountFileRecord} from '../../proto';
+import {AccountFileRecord} from '../../proto';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
@@ -16,13 +15,6 @@ import {AccountAuthService} from '../services/crypto/account-auth.service';
 	templateUrl: '../../../templates/account-note.html'
 })
 export class AccountNoteComponent implements OnInit {
-	/** Current note. */
-	public note?: {
-		data: Promise<string>;
-		downloadProgress: Observable<number>;
-		metadata: Promise<IAccountFileRecord>;
-	};
-
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.activatedRouteService.params.subscribe(async o => {
@@ -37,7 +29,7 @@ export class AccountNoteComponent implements OnInit {
 
 				const downloadTask	= this.accountFilesService.downloadNote(id);
 
-				this.note	= {
+				this.accountFilesService.activeNote	= {
 					data: downloadTask.result,
 					downloadProgress: downloadTask.progress,
 					metadata: this.accountFilesService.getFile(
