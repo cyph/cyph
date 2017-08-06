@@ -168,13 +168,14 @@ export class AccountFilesService {
 		return this.noteSnippets.get(id) || '';
 	}
 
-	/** Previews image files */
+	/** Opens a file. */
 	public async openFile (id: string) : Promise<void> {
 		const file	= await this.getFile(id);
+
 		if (file.mediaType.indexOf('image/') === 0) {
 			this.dialogService.image(await this.downloadURI(id).result);
 		}
-		if (file.mediaType.indexOf('image/') === 1) {
+		else {
 			this.downloadAndSave(id);
 		}
 	}
