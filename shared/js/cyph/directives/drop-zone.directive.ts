@@ -16,7 +16,7 @@ export class DropZoneDirective implements OnInit {
 		const id	= `id-${util.uuid()}`;
 
 		this.renderer.addClass(this.elementRef.nativeElement, id);
-		new Dropzone(`.${id}`, {accept: (file) => { this.fileDrop.emit(file); }});
+		new Dropzone(`.${id}`, {accept: (file) => { this.fileDrop.emit(file); }, url: '/files'});
 	}
 
 	constructor (
