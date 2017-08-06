@@ -39,7 +39,7 @@ export class DataURIProto {
 	public static resolveDomSanitizer: (domSanitizer: DomSanitizer) => void;
 
 	/** @ignore */
-	private static async safeUrlToString (data?: SafeUrl|string) : Promise<string> {
+	private static async safeUrlToString (data: SafeUrl|string) : Promise<string> {
 		if (typeof data === 'string') {
 			return data;
 		}
@@ -68,7 +68,7 @@ export class DataURIProto {
 	/** @see IProto.decode */
 	public static async decode (bytes: Uint8Array) : Promise<SafeUrl> {
 		if (bytes.length < 1) {
-			return;
+			return {};
 		}
 
 		return (await DataURIProto.domSanitizer).bypassSecurityTrustUrl(
@@ -77,7 +77,7 @@ export class DataURIProto {
 	}
 
 	/** @see IProto.encode */
-	public static async encode (data?: SafeUrl|string) : Promise<Uint8Array> {
+	public static async encode (data: SafeUrl|string) : Promise<Uint8Array> {
 		try {
 			data	= await DataURIProto.safeUrlToString(data);
 		}
@@ -91,7 +91,7 @@ export class DataURIProto {
 	}
 
 	/** @see IProto.verify */
-	public static async verify (data?: SafeUrl|string) : Promise<string|undefined> {
+	public static async verify (data: SafeUrl|string) : Promise<string|undefined> {
 		try {
 			data	= await DataURIProto.safeUrlToString(data);
 		}
