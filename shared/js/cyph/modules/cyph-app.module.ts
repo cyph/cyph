@@ -32,6 +32,8 @@ import {FirebaseDatabaseService} from '../services/firebase-database.service';
 import {HtmlSanitizerService} from '../services/html-sanitizer.service';
 import {CyphCommonModule} from './cyph-common.module';
 import {CyphWebModule} from './cyph-web.module';
+import {QuillModule} from 'ngx-quill';
+
 
 
 /**
@@ -81,7 +83,8 @@ import {CyphWebModule} from './cyph-web.module';
 	],
 	imports: [
 		CyphCommonModule,
-		CyphWebModule
+		CyphWebModule,
+		QuillModule
 	],
 	providers: [
 		AccountAuthService,

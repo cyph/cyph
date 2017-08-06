@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
 import {AccountFileRecord, IAccountFileRecord} from '../../proto';
 import {AccountFilesService} from '../services/account-files.service';
@@ -12,8 +12,8 @@ import {AccountAuthService} from '../services/crypto/account-auth.service';
  */
 @Component({
 	selector: 'cyph-account-note-edit',
-	styleUrls: ['../../../css/components/account-note.scss'],
-	templateUrl: '../../../templates/account-note.html'
+	styleUrls: ['../../../css/components/account-note-edit.scss'],
+	templateUrl: '../../../templates/account-note-edit.html'
 })
 export class AccountNoteEditComponent implements OnInit {
 	/** Current note. */
@@ -47,7 +47,7 @@ export class AccountNoteEditComponent implements OnInit {
 				};
 			}
 			catch (_) {
-				this.routerService.navigate(['404']);
+				//this.routerService.navigate(['404']);
 			}
 		});
 	}
@@ -56,8 +56,6 @@ export class AccountNoteEditComponent implements OnInit {
 		/** @ignore */
 		private readonly activatedRouteService: ActivatedRoute,
 
-		/** @ignore */
-		private readonly routerService: Router,
 
 		/** @ignore */
 		private readonly accountAuthService: AccountAuthService,

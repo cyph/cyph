@@ -12,8 +12,8 @@ import {AccountAuthService} from '../services/crypto/account-auth.service';
  */
 @Component({
 	selector: 'cyph-account-note-view',
-	styleUrls: ['../../../css/components/account-note.scss'],
-	templateUrl: '../../../templates/account-note.html'
+	styleUrls: ['../../../css/components/account-note-view.scss'],
+	templateUrl: '../../../templates/account-note-view.html'
 })
 export class AccountNoteViewComponent implements OnInit {
 	/** Current note. */

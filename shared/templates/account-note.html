@@ -1,28 +1,5 @@
 <div fxFlexFill fxLayoutAlign='center start' *ngIf='note'>
 	<md-card fxFlex='90' class='note'>
-		<md-card-header fxLayout='row'>
-			<md-card-title>{{(note.metadata | async)?.name}}</md-card-title>
-			<div fxFlex fxLayoutAlign='end center'>
-				<button
-					md-icon-button
-					cyphTranslate
-					mdTooltip='Edit Note'
-					(click)='accountService.notImplemented("Editing notes")'
-				>
-					<md-icon>edit</md-icon>
-				</button>
-				<button
-					md-icon-button
-					cyphTranslate
-					mdTooltip='Delete Note'
-					(click)='accountFilesService.remove(note.metadata)'
-				>
-					<md-icon>delete</md-icon>
-				</button>
-			</div>
-		</md-card-header>
-		<md-card-content>
-			<cyph-markdown [markdown]='note.data | async'></cyph-markdown>
-		</md-card-content>
+		<router-outlet></router-outlet>
 	</md-card>
 </div>

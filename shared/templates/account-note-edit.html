@@ -1,3 +1,24 @@
-<div fxFlexFill fxLayoutAlign='center start' *ngIf='note'>
-	Note Edit
-</div>
+<md-card-header fxLayout='row'>
+	<md-card-title>{{(note.metadata | async)?.name}}</md-card-title>
+	<div fxFlex fxLayoutAlign='end center'>
+		<button
+			md-icon-button
+			cyphTranslate
+			mdTooltip='Save Note'
+		>
+			<md-icon>save</md-icon>
+		</button>
+		<button
+			md-icon-button
+			cyphTranslate
+			mdTooltip='Delete Note'
+			(click)='accountFilesService.remove(note.metadata)'
+		>
+			<md-icon>delete</md-icon>
+		</button>
+	</div>
+</md-card-header>
+<md-card-content>
+	<quill-editor *ngIf='note' [ngModel]='note.data|async'>
+	</quill-editor>
+</md-card-content>
