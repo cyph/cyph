@@ -40,8 +40,14 @@
 				</div>
 			</md-card-header>
 		</md-card>
-	<div fxLayoutAlign='center' fxLayout='row' cyphDropZone (filedrop)='file = $event' class='fileUpload'>
-		<md-icon>file_upload</md-icon>
 	</div>
+	<div
+		fxLayoutAlign='center'
+		fxLayout='row'
+		cyphDropZone
+		(fileDrop)='accountFilesService.upload($event.name, $event)'
+		class='fileUpload'
+	>
+		<md-icon>file_upload</md-icon>
 	</div>
 </div>
