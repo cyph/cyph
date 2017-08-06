@@ -46,6 +46,7 @@ read -r -d '' modules <<- EOM
 	@types/braintree-web
 	@types/clipboard-js
 	@types/dompurify
+	@types/dropzone
 	@types/file-saver
 	@types/jasmine
 	@types/jquery@^2
