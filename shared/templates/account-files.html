@@ -13,7 +13,7 @@
 				<md-card-title>
 					<a
 						routerLink='/account/files'
-						(click)='accountFilesService.downloadAndSave(file.id)'
+						(click)='accountFilesService.openFile(file.id)'
 					>{{file.name}}</a>
 				</md-card-title>
 				<md-card-subtitle>
