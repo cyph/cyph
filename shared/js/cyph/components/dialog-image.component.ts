@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {SafeUrl} from '@angular/platform-browser';
 
 
 /**
