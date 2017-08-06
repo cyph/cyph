@@ -36,6 +36,7 @@ import {TextMaskModule} from 'angular2-text-mask';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {DialogImageComponent} from '../components/dialog-image.component';
+import {DropZoneDirective} from '../directives/drop-zone.directive';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 import {DialogService} from '../services/dialog.service';
 import {LocalStorageService} from '../services/local-storage.service';
@@ -51,6 +52,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogImageComponent,
+		DropZoneDirective,
 		NanoScrollerDirective,
 		SmdFabSpeedDialActions,
 		SmdFabSpeedDialComponent,
@@ -62,6 +64,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogImageComponent,
+		DropZoneDirective,
 		FlexLayoutModule,
 		FormsModule,
 		MdButtonModule,

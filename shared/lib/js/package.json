@@ -284,6 +284,7 @@
     "@types/braintree-web": "^3.6.2",
     "@types/clipboard-js": "^0.3.2",
     "@types/dompurify": "^0.0.29",
+    "@types/dropzone": "^5.0.0",
     "@types/file-saver": "^0.0.1",
     "@types/jasmine": "^2.5.53",
     "@types/jquery": "^2",
