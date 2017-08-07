@@ -3,6 +3,6 @@
 		<md-card-title *ngIf='accountFilesService.activeNote'>
 			{{(accountFilesService.activeNote.metadata | async)?.name}}
 		</md-card-title>
-		<router-outlet *ngIf='accountFilesService.activeNote'></router-outlet>
+		<router-outlet></router-outlet>
 	</md-card>
 </div>

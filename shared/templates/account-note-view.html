@@ -1,4 +1,4 @@
-<md-card-header fxLayout='row'>
+<md-card-header fxLayout='row' *ngIf='accountFilesService.activeNote'>
 	<div fxFlex fxLayoutAlign='end center'>
 		<button
 			md-icon-button
@@ -18,6 +18,6 @@
 		</button>
 	</div>
 </md-card-header>
-<md-card-content>
+<md-card-content *ngIf='accountFilesService.activeNote'>
 	<cyph-markdown [markdown]='accountFilesService.activeNote.data | async'></cyph-markdown>
 </md-card-content>
