@@ -60,7 +60,7 @@ read -r -d '' modules <<- EOM
 	angular-ssr
 	angular2-template-loader
 	angular2-text-mask
-	animate.css
+	animate.css@https://github.com/daneden/animate.css
 	awesome-typescript-loader
 	babel-core
 	babel-loader
