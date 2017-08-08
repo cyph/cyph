@@ -18,7 +18,7 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Edit Note'
-						(click)='accountService.notImplemented("Editing notes")'
+						[routerLink]='"/account/notes/" + note.id + "/edit"'
 					>
 						<md-icon>edit</md-icon>
 					</button>
