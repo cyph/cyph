@@ -35,3 +35,18 @@ body:not(.mobile) {
 cyph-chat-message-box smd-fab-speed-dial:not(.smd-opened) smd-fab-actions {
 	height: 0px !important;
 }
+
+/** QuillJS Toolbar Styling */
+.ql-snow .ql-stroke, .ql-snow .ql-fill, .ql-snow path {
+	stroke: white !important;
+}
+.ql-script path {
+	fill: white !important;
+}
+.ql-snow .ql-picker-label::before {
+	color: white;
+}
+
+.ql-strike svg path {
+	fill: white !important;
+}
