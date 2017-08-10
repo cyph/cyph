@@ -1,10 +1,10 @@
 @import '../mixins';
 
 .contact {
-	@include transition(filter 0.5s ease);
+	@include transition(filter 0s ease);
 
 	button {
-		@include transition(transform 0.5s ease);
+		@include transition(transform 0s ease);
 	}
 
 	&.active {
@@ -14,4 +14,11 @@
 			@include transform(scaleX(0));
 		}
 	}
+}
+
+.bounceInRight {
+	-webkit-animation:	bounceInRight 1s; /* Safari 4+ */
+	-moz-animation:		bounceInRight 1s; /* Fx 5+ */
+	-o-animation:		bounceInRight 1s; /* Opera 12+ */
+	animation:			bounceInRight 1s; /* IE 10+, Fx 29+ */
 }

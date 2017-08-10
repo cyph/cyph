@@ -11,7 +11,7 @@
 		<div fxLayoutAlign='center center'>
 			<div>
 				<img
-					class='avatar animated flipInX _1'
+					class='avatar animated jackInTheBox _1'
 					[ngClass]='userPresence[user.status | async]'
 					alt='Profile Picture'
 					[src]='user.avatar | async'
@@ -21,7 +21,7 @@
 				<div class='description animated flipInX _3'>{{user.description | async}}</div>
 			</div>
 		</div>
-		
+
 		<div fxLayoutAlign='center center' class='status' *ngIf='isCurrentUser'>
 			<md-select
 				fxFlex='50'

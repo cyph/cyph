@@ -50,18 +50,22 @@
 
 		&.Online {
 			border-color: map-get($mat-green, 700) !important;
+			@include animation-name(pusle);
 		}
 
 		&.Away {
 			border-color: map-get($mat-amber, 500) !important;
+			@include animation-name(bounce);
 		}
 
 		&.Busy {
 			border-color: map-get($mat-red, 700) !important;
+			@include animation-name(pulse);
 		}
 
 		&.Offline {
 			border-color: map-get($mat-grey, 900) !important;
+			@include animation-name(bounce);
 		}
 	}
 

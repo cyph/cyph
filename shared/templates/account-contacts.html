@@ -14,7 +14,7 @@
 			*ngFor='let contact of accountContactsService.contactList | async; let i = index'
 			[attr.data-index]='i'
 			[class.active]='isActive(contact)'
-			[class.flipInY]='!isActive(contact)'
+			[class.bounceInRight]='!isActive(contact)'
 			[ngClass]='accountContactsService.initiated ? ("_" + i) : ""'
 		>
 			<md-card-header fxLayout='row'>
