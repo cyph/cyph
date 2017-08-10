@@ -34,7 +34,13 @@
 		</md-card-header>
 	</div>
 	<md-card-content fxFlex fxLayout='column' *ngIf='accountFilesService.activeNote'>
-		<quill-editor [readOnly]='!editable' [theme]='editable ? "snow" : "bubble"' [ngModel]='accountFilesService.activeNote.data | async'></quill-editor>
+		<quill-editor
+			[readOnly]='!editable'
+			[theme]='editable ? "snow" : "bubble"'
+			[ngModel]='accountFilesService.activeNote.data | async'
+			[class]='editable ? "editable" : "readonly"'
+		>
+		</quill-editor>
 	</md-card-content>
 </div>
 

@@ -51,3 +51,8 @@ cyph-chat-message-box smd-fab-speed-dial:not(.smd-opened) smd-fab-actions {
 .ql-strike svg path {
 	fill: white !important;
 }
+
+.editable .ql-editor {
+	background-color: rgba(243, 243, 243, 0.95);
+	color: #101010;
+}
