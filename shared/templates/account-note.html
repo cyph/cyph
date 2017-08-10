@@ -1,8 +1,5 @@
 <div fxFlexFill fxLayoutAlign='center start'>
 	<md-card fxFlex='90' class='note'>
-		<md-card-title *ngIf='accountFilesService.activeNote'>
-			{{(accountFilesService.activeNote.metadata | async)?.name}}
-		</md-card-title>
 		<router-outlet></router-outlet>
 	</md-card>
 </div>

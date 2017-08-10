@@ -3,3 +3,8 @@
 md-card-header.mat-card-header {
 	margin-bottom: 25px;
 }
+
+.mat-card-header {
+	top: -8px;
+	position: relative;
+}

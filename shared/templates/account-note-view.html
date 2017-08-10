@@ -1,23 +1,34 @@
-<md-card-header fxLayout='row' *ngIf='accountFilesService.activeNote'>
-	<div fxFlex fxLayoutAlign='end center'>
-		<button
-			md-icon-button
-			cyphTranslate
-			mdTooltip='Edit Note'
-			routerLink='edit'
-		>
-			<md-icon>edit</md-icon>
-		</button>
-		<button
-			md-icon-button
-			cyphTranslate
-			mdTooltip='Delete Note'
-			(click)='accountFilesService.remove(accountFilesService.activeNote.metadata)'
-		>
-			<md-icon>delete</md-icon>
-		</button>
+<div fxLayout='column'>
+	<div fxLayout='row'>
+		<div fxFlex></div>
+		<md-card-title *ngIf='accountFilesService.activeNote'>
+			{{(accountFilesService.activeNote.metadata | async)?.name}}
+		</md-card-title>
+		<div fxFlex></div>
+		<md-card-header *ngIf='accountFilesService.activeNote'>
+
+				<button
+					md-icon-button
+					cyphTranslate
+					mdTooltip='Edit Note'
+					routerLink='edit'
+				>
+					<md-icon>edit</md-icon>
+				</button>
+				<button
+					md-icon-button
+					cyphTranslate
+					mdTooltip='Delete Note'
+					(click)='accountFilesService.remove(accountFilesService.activeNote.metadata)'
+				>
+					<md-icon>delete</md-icon>
+				</button>
+
+		</md-card-header>
+		<div fxFlex></div>
 	</div>
-</md-card-header>
-<md-card-content *ngIf='accountFilesService.activeNote'>
-	<cyph-markdown [markdown]='accountFilesService.activeNote.data | async'></cyph-markdown>
-</md-card-content>
+	<md-card-content fxFlex fxLayout='column' *ngIf='accountFilesService.activeNote'>
+		<quill-editor [readOnly]='true' theme='bubble' [ngModel]='accountFilesService.activeNote.data | async'></quill-editor>
+	</md-card-content>
+</div>
+
