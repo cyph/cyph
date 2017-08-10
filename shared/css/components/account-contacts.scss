@@ -17,8 +17,5 @@
 }
 
 .bounceInRight {
-	-webkit-animation:	bounceInRight 1s; /* Safari 4+ */
-	-moz-animation:		bounceInRight 1s; /* Fx 5+ */
-	-o-animation:		bounceInRight 1s; /* Opera 12+ */
-	animation:			bounceInRight 1s; /* IE 10+, Fx 29+ */
+	@include animation(bounceInRight 1s);
 }
