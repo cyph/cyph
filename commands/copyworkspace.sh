@@ -3,7 +3,7 @@
 
 source="$(cd "$(dirname "$0")/.." ; pwd)"
 
-./commands/protobuf.sh
+${source}/commands/protobuf.sh
 
 find "${1}" -type d -name node_modules -not -path '*/node_modules/*' -exec unbindmount "{}" \; 2> /dev/null
 rm -rf "${1}" 2> /dev/null
