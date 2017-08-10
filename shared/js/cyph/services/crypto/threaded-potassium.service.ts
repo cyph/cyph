@@ -8,6 +8,7 @@ import {IHash} from '../../crypto/potassium/ihash';
 import {IOneTimeAuth} from '../../crypto/potassium/ione-time-auth';
 import {IPasswordHash} from '../../crypto/potassium/ipassword-hash';
 import {IPotassium} from '../../crypto/potassium/ipotassium';
+import {isNativeCryptoSupported} from '../../crypto/potassium/is-native-crypto-supported';
 import {ISecretBox} from '../../crypto/potassium/isecret-box';
 import {ISign} from '../../crypto/potassium/isign';
 import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
@@ -308,6 +309,11 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			this.threadInit
 		)
 	};
+
+	/** @inheritDoc */
+	public async isNativeCryptoSupported () : Promise<boolean> {
+		return isNativeCryptoSupported();
+	}
 
 	/** @inheritDoc */
 	public async native () : Promise<boolean> {

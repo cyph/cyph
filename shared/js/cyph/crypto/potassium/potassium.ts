@@ -2,6 +2,7 @@ import {Box} from './box';
 import {EphemeralKeyExchange} from './ephemeral-key-exchange';
 import {Hash} from './hash';
 import {IPotassium} from './ipotassium';
+import {isNativeCryptoSupported} from './is-native-crypto-supported';
 import {OneTimeAuth} from './one-time-auth';
 import {PasswordHash} from './password-hash';
 import {PotassiumUtil} from './potassium-util';
@@ -33,6 +34,11 @@ export class Potassium extends PotassiumUtil implements IPotassium {
 
 	/** @inheritDoc */
 	public readonly sign: Sign;
+
+	/** @inheritDoc */
+	public async isNativeCryptoSupported () : Promise<boolean> {
+		return isNativeCryptoSupported();
+	}
 
 	/** @inheritDoc */
 	public async native () : Promise<boolean> {

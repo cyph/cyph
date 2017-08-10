@@ -37,6 +37,13 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	public readonly sign: ISign;
 
 	/** @inheritDoc */
+	public async isNativeCryptoSupported () : Promise<boolean> {
+		throw new Error(
+			'Must provide an implementation of PotassiumService.isNativeCryptoSupported.'
+		);
+	}
+
+	/** @inheritDoc */
 	public async native () : Promise<boolean> {
 		throw new Error('Must provide an implementation of PotassiumService.native.');
 	}
