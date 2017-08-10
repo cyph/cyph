@@ -1,6 +1,11 @@
 @import '../mixins';
 
 .mat-card-header {
-	top: -8px;
-	position: relative;
+	top: 14px;
+	position: absolute;
+	right: 25px;
+}
+
+.mat-card-title {
+	margin-bottom: 25px;
 }

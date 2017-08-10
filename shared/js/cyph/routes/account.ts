@@ -9,7 +9,6 @@ import {AccountFormsComponent} from '../components/account-forms.component';
 import {AccountHomeComponent} from '../components/account-home.component';
 import {AccountLoginComponent} from '../components/account-login.component';
 import {AccountLogoutComponent} from '../components/account-logout.component';
-import {AccountNoteEditComponent} from '../components/account-note-edit.component';
 import {AccountNoteViewComponent} from '../components/account-note-view.component';
 import {AccountNoteComponent} from '../components/account-note.component';
 import {AccountNotesComponent} from '../components/account-notes.component';
@@ -41,7 +40,7 @@ export const account: Route	= {
 			component: AccountNoteComponent,
 			children: [
 				{path: '', component: AccountNoteViewComponent},
-				{path: 'edit', component: AccountNoteEditComponent}
+				{path: 'edit', component: AccountNoteViewComponent}
 			]
 		},
 		{path: 'profile', component: AccountProfileComponent},
