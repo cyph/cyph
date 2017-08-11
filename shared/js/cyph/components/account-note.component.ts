@@ -1,9 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {AccountFileRecord} from '../../proto';
+import {DeltaStatic} from 'quill';
+import {Observable} from 'rxjs';
+import {AccountFileRecord, IAccountFileRecord} from '../../proto';
+import {LockFunction} from '../lock-function-type';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
+import {util} from '../util';
 
 
 /**
@@ -15,8 +19,23 @@ import {AccountAuthService} from '../services/crypto/account-auth.service';
 	templateUrl: '../../../templates/account-note.html'
 })
 export class AccountNoteComponent implements OnInit {
+	/** @ignore */
+	private readonly saveLock: LockFunction	= util.lockFunction();
+
 	/** Indicates whether or not the edit view should be displayed. */
 	public editable: boolean	= false;
+
+	/** Currently active note. */
+	public note?: {
+		metadata: IAccountFileRecord;
+		observable: Observable<DeltaStatic>;
+	};
+
+	/** Most recent note data. */
+	public noteData?: {
+		content: DeltaStatic;
+		id: string;
+	};
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -34,20 +53,30 @@ export class AccountNoteComponent implements OnInit {
 
 				await this.accountAuthService.ready;
 
-				const downloadTask	= this.accountFilesService.downloadNote(id);
+				const metadata	= await this.accountFilesService.getFile(
+					id,
+					AccountFileRecord.RecordTypes.Note
+				);
 
-				this.accountFilesService.activeNote	= {
-					data: downloadTask.result,
-					downloadProgress: downloadTask.progress,
-					metadata: this.accountFilesService.getFile(
-						id,
-						AccountFileRecord.RecordTypes.Note
-					)
+				this.note	= {
+					metadata,
+					observable: this.accountFilesService.watchNote(metadata.id)
 				};
 			}
 			catch (_) {
 				this.routerService.navigate(['404']);
 			}
+		});
+	}
+
+	/** Saves note. */
+	public saveNote () : void {
+		this.saveLock(async () => {
+			if (!this.note || !this.noteData || this.note.metadata.id !== this.noteData.id) {
+				return;
+			}
+
+			await this.accountFilesService.updateNote(this.noteData.id, this.noteData.content);
 		});
 	}
 

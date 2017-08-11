@@ -3,22 +3,21 @@
 		<div fxLayout='column'>
 			<div fxLayoutAlign='center center' fxLayout='row'>
 				<div fxFlex='grow'></div>
-				<md-card-title fxFlex='noshrink' *ngIf='accountFilesService.activeNote'>
+				<md-card-title fxFlex='noshrink' *ngIf='note'>
 					<div *ngIf='!editable'>
-						{{(accountFilesService.activeNote.metadata | async)?.name}}
+						{{note.metadata.name}}
 					</div>
 					<a
 						[routerLink]='
-							"/account/notes/" +
-							(accountFilesService.activeNote.metadata | async)?.id
+							"/account/notes/" + note.metadata.id
 						'
 						*ngIf='editable'
 					>
-						{{(accountFilesService.activeNote.metadata | async)?.name}}
+						{{note.metadata.name}}
 					</a>
 				</md-card-title>
 				<div fxFlex='grow'></div>
-				<md-card-header *ngIf='accountFilesService.activeNote'>
+				<md-card-header *ngIf='note'>
 					<button
 						md-icon-button
 						cyphTranslate
@@ -32,6 +31,7 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Save Note'
+						(click)='saveNote()'
 						*ngIf='editable'
 					>
 						<md-icon>save</md-icon>
@@ -40,21 +40,20 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Delete Note'
-						(click)='
-							accountFilesService.remove(accountFilesService.activeNote.metadata)
-						'
+						(click)='accountFilesService.remove(note)'
 					>
 						<md-icon>delete</md-icon>
 					</button>
 				</md-card-header>
 			</div>
-			<md-card-content fxFlex fxLayout='column' *ngIf='accountFilesService.activeNote'>
+			<md-card-content fxFlex fxLayout='column' *ngIf='note'>
 				<quill-editor
-					[readOnly]='!editable'
-					[ngModel]='accountFilesService.activeNote.data | async'
 					[class]='editable ? "editable" : "read-only"'
+					[readOnly]='!editable'
+					[ngModel]='note.observable | async'
+					(ngModelChange)='noteData = {content: $event, id: note.metadata.id}'
 				></quill-editor>
 			</md-card-content>
-		</div>		
+		</div>
 	</md-card>
 </div>
