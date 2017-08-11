@@ -48,6 +48,7 @@ read -r -d '' modules <<- EOM
 	@types/dompurify
 	@types/dropzone
 	@types/file-saver
+	@types/html-to-text
 	@types/jasmine
 	@types/jquery@^2
 	@types/lodash
@@ -99,6 +100,7 @@ read -r -d '' modules <<- EOM
 	highlight.js
 	html-loader
 	html-minifier
+	html-to-text
 	htmlencode
 	htmllint
 	image-type
