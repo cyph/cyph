@@ -15,8 +15,15 @@ import {AccountAuthService} from '../services/crypto/account-auth.service';
 	templateUrl: '../../../templates/account-note.html'
 })
 export class AccountNoteComponent implements OnInit {
+	/** Indicates whether or not the edit view should be displayed. */
+	public editable: boolean	= false;
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		this.routerService.events.subscribe(({url}: any) => {
+			this.editable	= typeof url === 'string' && url.split('/').slice(-1)[0] === 'edit';
+		});
+
 		this.activatedRouteService.params.subscribe(async o => {
 			try {
 				const id: string|undefined	= o.id;

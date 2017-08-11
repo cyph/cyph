@@ -10,3 +10,23 @@ md-card-title.mat-card-title {
 	font-weight: 600;
 	font-size: 28px;
 }
+
+.mat-card-header {
+	top: 14px;
+	position: absolute;
+	right: 25px;
+}
+
+.mat-card-title {
+	margin-bottom: 25px;
+}
+
+quill-editor.read-only ::ng-deep {
+	> .ql-toolbar {
+		display: none;
+	}
+
+	> .ql-container {
+		border: none;
+	}
+}
