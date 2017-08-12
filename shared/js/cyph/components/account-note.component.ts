@@ -94,26 +94,33 @@ export class AccountNoteComponent implements OnInit {
 
 	/** Saves note. */
 	public saveNote () : void {
-		this.accountService.setInterstitial(true);
-		this.saveLock(async () => {
-			if (this.newNote && this.noteData) {
-				this.noteData.id	=
-					await this.accountFilesService.upload(this.newNoteTitle, this.noteData.content).result
-				;
-				await this.setNote(this.noteData.id);
-			}
-			else if (this.note && this.noteData && this.note.metadata.id === this.noteData.id) {
-				await this.accountFilesService.updateNote(this.noteData.id, this.noteData.content);
-			}
-			else {
-				return;
-			}
+		if (this.newNoteTitle || this.note && this.note.metadata.name) {
+			this.saveLock(async () => {
+				if (this.newNote && this.noteData) {
+					this.accountService.setInterstitial(true);
+					this.noteData.id	=
+						await this.accountFilesService.upload(this.newNoteTitle, this.noteData.content).result
+					;
+					await this.setNote(this.noteData.id);
+				}
+				else if (this.note && this.noteData && this.note.metadata.id === this.noteData.id) {
+					this.accountService.setInterstitial(true);
+					await this.accountFilesService.updateNote(this.noteData.id, this.noteData.content);
+				}
+				else {
+					return;
+				}
 
-			this.routerService.navigate(['account/notes/' + this.noteData.id]);
-			await util.sleep(1500);
-			this.accountService.setInterstitial(false);
-			this.dialogService.toast(this.stringsService.noteSaved, 2500);
-		});
+				this.routerService.navigate(['account/notes/' + this.noteData.id]);
+				await util.sleep(1500);
+				this.accountService.setInterstitial(false);
+				this.dialogService.toast(this.stringsService.noteSaved, 2500);
+			});
+		}
+		else {
+			this.dialogService.toast(this.stringsService.titleRequired, 2500);
+			return;
+		}
 	}
 
 	constructor (
