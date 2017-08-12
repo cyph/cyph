@@ -1,5 +1,4 @@
 import {NgModule} from '@angular/core';
-import {QuillModule} from 'ngx-quill';
 import {AccountChatComponent} from '../components/account-chat.component';
 import {AccountContactsComponent} from '../components/account-contacts.component';
 import {AccountFilesComponent} from '../components/account-files.component';
@@ -81,8 +80,7 @@ import {CyphWebModule} from './cyph-web.module';
 	],
 	imports: [
 		CyphCommonModule,
-		CyphWebModule,
-		QuillModule
+		CyphWebModule
 	],
 	providers: [
 		AccountAuthService,
