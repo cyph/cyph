@@ -87,9 +87,7 @@
 
 	.logo-animation {
 		margin-top: 33vh;
-		margin-left: 45vw;
-		margin-right: 45vw;
-		margin-bottom: 33vh;
-		transform: scale(0.5);
+
+		@include transform(scale(0.5));
 	}
 }

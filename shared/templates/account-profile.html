@@ -18,15 +18,12 @@
 				/>
 				<div class='name animated flipInX _2'>{{user.name | async}}</div>
 				<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
-				<div class='description animated flipInX _3'
-					*ngIf='!editMode'
-				>
+				<div class='description animated flipInX _3' *ngIf='!editMode'>
 					{{user.description | async}}
 				</div>
-				<md-input-container *ngIf='editMode && user'>
+				<md-input-container class='description-edit' *ngIf='editMode && user'>
 					<input
 						mdInput
-						*ngIf='user.description'
 						[ngModel]='user.description | async'
 						(ngModelChange)='descriptionDraft = $event'
 					/>

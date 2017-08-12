@@ -21,7 +21,8 @@ export class AccountProfileComponent implements OnInit {
 	/** Current draft of user profile description. */
 	public descriptionDraft: string	= '';
 
-	public editMode: boolean	= false;
+	/** Profile edit mode. */
+	public editMode: boolean		= false;
 
 	/** @see UserPresence */
 	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;

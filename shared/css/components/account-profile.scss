@@ -34,7 +34,13 @@
 		margin: 25px auto;
 	}
 
-	.username, .description {
+	.description-edit {
+		width: 200%;
+		margin-left: -50%;
+		margin-bottom: 20px;
+	}
+
+	.username, .description, .description-edit {
 		font-size: 24px;
 	}
 }

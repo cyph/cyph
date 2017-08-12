@@ -163,6 +163,7 @@ export class AccountContactsService {
 			const oldUserStatuses	= this.userStatuses;
 			this.userStatuses		= new Map<User, UserPresence>();
 
+			let i	= 0;
 			for (const {status, username} of this.sort(users)) {
 				try {
 					const user	= await this.accountUserLookupService.getUser(username);
@@ -186,6 +187,10 @@ export class AccountContactsService {
 				catch (_) {}
 				finally {
 					this.updateContactsList();
+				}
+
+				if (++i > 8) {
+					this.initiated	= true;
 				}
 			}
 

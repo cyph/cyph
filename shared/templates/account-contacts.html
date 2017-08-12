@@ -1,11 +1,15 @@
-<div fxFlexFill fxLayout='row' fxLayoutAlign='center start'>
+<div
+	fxFlexFill
+	fxLayout='row'
+	fxLayoutAlign='center start'
+	[class.initiating]='!accountContactsService.initiated'
+>
 	<div
 		fxFlex='90'
 		[fxFlex.gt-sm]='sidebar ? "90" : "65"'
 		[fxFlex.gt-md]='sidebar ? "90" : "40"'
 		fxLayout='column'
 		fxLayoutGap='16px'
-		[class.initiating]='!accountContactsService.initiated'
 	>
 		<div></div>
 
