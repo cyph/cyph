@@ -1,4 +1,15 @@
 <div fxFlexFill fxLayout='row' [class.mobile]='envService.isMobile'>
+	<div *ngIf='accountService.interstitial' class='interstitial'>
+		<div class='loading'>
+			<div class='logo-animation'>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</div>
+	</div>
 	<canvas class='cyph-gradient'></canvas>
 
 	<cyph-account-menu

@@ -300,6 +300,8 @@ export class StringsService {
 	/** @see StringsService */
 	public readonly timeExtended: string			= util.translate(`Added time to countdown.`);
 
+	public readonly titleRequired: string			= util.translate(`Title required in order to save.`);
+
 	/** @see StringsService */
 	public readonly videoCall: string				= util.translate(`video call`);
 
