@@ -121,6 +121,10 @@ export class AccountNoteComponent implements OnInit {
 	/** Saves note. */
 	public saveNote () : void {
 		this.saveLock(async () => {
+			if (!this.noteData.name) {
+				return;
+			}
+
 			if (!this.noteData.content) {
 				if (this.note) {
 					this.noteData.content	= await this.note.content.take(1).toPromise();
@@ -129,6 +133,8 @@ export class AccountNoteComponent implements OnInit {
 					return;
 				}
 			}
+
+			this.accountService.setInterstitial(true);
 
 			if (this.newNote) {
 				this.noteData.id	=
@@ -153,6 +159,7 @@ export class AccountNoteComponent implements OnInit {
 			if (this.noteData.id) {
 				this.routerService.navigate(['account', 'notes', this.noteData.id]);
 				await util.sleep(1500);
+				this.accountService.setInterstitial(false);
 				this.dialogService.toast(this.stringsService.noteSaved, 2500);
 			}
 		});
