@@ -77,6 +77,7 @@ export class AccountNoteComponent implements OnInit {
 			}
 
 			await this.accountFilesService.updateNote(this.noteData.id, this.noteData.content);
+			this.routerService.navigate(['account/notes/'+this.noteData.id]);
 		});
 	}
 
