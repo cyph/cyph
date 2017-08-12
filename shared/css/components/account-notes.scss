@@ -10,3 +10,9 @@
 		@include word-wrap;
 	}
 }
+
+button.mat-fab {
+	position: absolute;
+	right: 42px;
+	bottom: 42px;
+}
