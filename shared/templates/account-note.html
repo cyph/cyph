@@ -53,7 +53,7 @@
 						cyphTranslate
 						mdTooltip='Delete Note'
 						*ngIf='!newNote'
-						(click)='accountFilesService.remove(note)'
+						(click)='accountFilesService.remove(note.metadata)'
 					>
 						<md-icon>delete</md-icon>
 					</button>

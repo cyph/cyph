@@ -77,6 +77,14 @@
 		color: $cyph-foreground;
 	}
 
+	a, cyph-quill > .read-only .ql-snow a {
+		color: $cyph-hyperlinks;
+	}
+
+	md-card-title > a {
+		color: inherit;
+	}
+
 	blockquote {
 		border-left: 2px solid $cyph-foreground;
 	}
