@@ -84,6 +84,36 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 		['clean']
 	];
 
+	/** @ignore */
+	private stripExternalSubresources (delta: Quill.DeltaStatic) : Quill.DeltaStatic {
+		if (!delta.ops) {
+			return delta;
+		}
+
+		for (let i = 0 ; i < delta.ops.length ; ++i) {
+			const {insert}	= delta.ops[i];
+			if (!insert) {
+				continue;
+			}
+
+			for (const k of ['image', 'video']) {
+				const url	= !insert[k] ? undefined : insert[k].url ? insert[k].url : insert[k];
+				if (typeof url !== 'string' || url.startsWith('data:')) {
+					continue;
+				}
+
+				if (insert[k].url) {
+					insert[k].url	= '';
+				}
+				else {
+					insert[k]		= '';
+				}
+			}
+		}
+
+		return delta;
+	}
+
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
@@ -92,9 +122,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 		}
 
 		this.quill	= new Quill(`#${this.containerID}`, {
-			modules: {
-				toolbar: this.toolbar
-			},
+			modules: {toolbar: this.toolbar},
 			theme: 'snow'
 		});
 
@@ -130,7 +158,9 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 		for (const k of Object.keys(changes)) {
 			switch (k) {
 				case 'content':
-					this.quill.setContents(this.content);
+					this.quill.setContents(
+						this.stripExternalSubresources(this.content)
+					);
 					break;
 
 				case 'deltas':
@@ -143,7 +173,9 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 							throw new Error('No Quill.');
 						}
 
-						this.quill.updateContents(delta);
+						this.quill.updateContents(
+							this.stripExternalSubresources(delta)
+						);
 					});
 					break;
 
