@@ -3,27 +3,39 @@
 		<div fxLayout='column'>
 			<div fxLayoutAlign='center center' fxLayout='row'>
 				<div fxFlex='grow'></div>
-				<md-card-title fxFlex='noshrink' *ngIf='note'>
-					<div *ngIf='!editable'>
-						{{note.metadata.name}}
+				<md-card-title fxFlex='noshrink'>
+					<div *ngIf='!editable && !newNote'>
+						{{note?.metadata.name}}
 					</div>
-					<a
-						[routerLink]='
-							"/account/notes/" + note.metadata.id
-						'
-						*ngIf='editable'
-					>
-						{{note.metadata.name}}
-					</a>
+					<md-input-container fxFlex *ngIf='newNote'>
+							<input
+								mdInput
+								cyphTranslate
+								[(ngModel)]='newNoteTitle'
+								name='Title'
+								placeholder='Note Title'
+								required
+							/>
+						</md-input-container>
+					<md-input-container fxFlex *ngIf='note && editable'>
+						<input
+							mdInput
+							cyphTranslate
+							[(ngModel)]='note.metadata.name'
+							name='Title'
+							placeholder='Note Title'
+							required
+						/>
+					</md-input-container>
 				</md-card-title>
 				<div fxFlex='grow'></div>
-				<md-card-header *ngIf='note'>
+				<md-card-header *ngIf='note || newNote'>
 					<button
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Edit Note'
 						routerLink='edit'
-						*ngIf='!editable'
+						*ngIf='!editable && !newNote'
 					>
 						<md-icon>edit</md-icon>
 					</button>
@@ -32,7 +44,7 @@
 						cyphTranslate
 						mdTooltip='Save Note'
 						(click)='saveNote()'
-						*ngIf='editable'
+						*ngIf='editable || newNote'
 					>
 						<md-icon>save</md-icon>
 					</button>
@@ -40,21 +52,22 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Delete Note'
+						*ngIf='!newNote'
 						(click)='accountFilesService.remove(note)'
 					>
 						<md-icon>delete</md-icon>
 					</button>
 				</md-card-header>
 			</div>
-			<md-card-content fxFlex fxLayout='column' *ngIf='note'>
-				<div [class.cyph-light-theme]='editable'>
-					<md-card [class.no-shadow]='!editable'>
+			<md-card-content fxFlex fxLayout='column' *ngIf='note || newNote'>
+				<div [class.cyph-light-theme]='editable || newNote'>
+					<md-card [class.no-shadow]='!editable || !newNote'>
 						<md-card-content>
 							<cyph-quill
-								[content]='note.observable | async'
-								[readOnly]='!editable'
+								[content]='note?.observable | async'
+								[readOnly]='!editable && !newNote'
 								(onChange)='
-									noteData = {content: $event.content, id: note.metadata.id}
+									noteData = {content: $event.content, id: note?.metadata.id}
 								'
 							></cyph-quill>
 						</md-card-content>

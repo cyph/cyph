@@ -27,6 +27,12 @@ export class AccountNoteComponent implements OnInit {
 	/** Indicates whether or not the edit view should be displayed. */
 	public editable: boolean	= false;
 
+	/** Indicates whether or not this is a new note */
+	public newNote: boolean	= false;
+
+	/** Title for new notes */
+	public newNoteTitle: string;
+
 	/** Currently active note. */
 	public note?: {
 		metadata: IAccountFileRecord;
@@ -40,53 +46,68 @@ export class AccountNoteComponent implements OnInit {
 	};
 
 	/** @ignore */
-	private setEditable (url: string) : void {
+	private async setNote (id: string) : Promise<void> {
+		const metadata	= await this.accountFilesService.getFile(
+			id,
+			AccountFileRecord.RecordTypes.Note
+		);
+
+		this.note	= {
+			metadata,
+			observable: this.accountFilesService.watchNote(metadata.id)
+		};
+	}
+
+	/** @ignore */
+	private setStatus (url: string) : void {
 		this.editable	= url.split('/').slice(-1)[0] === 'edit';
+		this.newNote		= url.split('/').slice(-1)[0] === 'new';
 	}
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.setEditable(this.routerService.url);
+		this.setStatus(this.routerService.url);
 		this.routerService.events.subscribe(({url}: any) => {
 			if (typeof url === 'string') {
-				this.setEditable(url);
+				this.setStatus(url);
 			}
 		});
 
-		this.activatedRouteService.params.subscribe(async o => {
-			try {
-				const id: string|undefined	= o.id;
+		if (!this.newNote) {
+			this.activatedRouteService.params.subscribe(async o => {
+				try {
+					const id: string|undefined	= o.id;
 
-				if (!id) {
-					throw new Error('Invalid note ID.');
+					if (!id) {
+						throw new Error('Invalid note ID.');
+					}
+
+					await this.accountAuthService.ready;
+					await this.setNote(id);
 				}
-
-				await this.accountAuthService.ready;
-
-				const metadata	= await this.accountFilesService.getFile(
-					id,
-					AccountFileRecord.RecordTypes.Note
-				);
-
-				this.note	= {
-					metadata,
-					observable: this.accountFilesService.watchNote(metadata.id)
-				};
-			}
-			catch (_) {
-				this.routerService.navigate(['404']);
-			}
-		});
+				catch (_) {
+					this.routerService.navigate(['404']);
+				}
+			});
+		}
 	}
 
 	/** Saves note. */
 	public saveNote () : void {
 		this.saveLock(async () => {
-			if (!this.note || !this.noteData || this.note.metadata.id !== this.noteData.id) {
+			if (this.newNote && this.noteData) {
+				this.noteData.id	=
+					await this.accountFilesService.upload(this.newNoteTitle, this.noteData.content).result
+				;
+				await this.setNote(this.noteData.id);
+			}
+			else if (this.note && this.noteData && this.note.metadata.id === this.noteData.id) {
+				await this.accountFilesService.updateNote(this.noteData.id, this.noteData.content);
+			}
+			else {
 				return;
 			}
 
-			await this.accountFilesService.updateNote(this.noteData.id, this.noteData.content);
 			this.routerService.navigate(['account/notes/' + this.noteData.id]);
 			await util.sleep(1500);
 			this.dialogService.toast(this.stringsService.noteSaved, 2500);
