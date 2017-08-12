@@ -190,10 +190,13 @@ export class AccountFilesService {
 
 	/** Removes a file. */
 	public async remove (
-		id: string|IAccountFileRecord|Promise<IAccountFileRecord>,
+		id: string|IAccountFileRecord|Observable<IAccountFileRecord>|Promise<IAccountFileRecord>,
 		confirm: boolean = true
 	) : Promise<void> {
 		if (typeof id !== 'string') {
+			if (id instanceof Observable) {
+				id	= id.take(1).toPromise();
+			}
 			id	= (await id).id;
 		}
 
@@ -289,6 +292,19 @@ export class AccountFilesService {
 				return id;
 			})
 		};
+	}
+
+	/** Watches file record. */
+	public watchMetadata (
+		id: string,
+		recordType?: AccountFileRecord.RecordTypes
+	) : Observable<IAccountFileRecord> {
+		return this.accountDatabaseService.watch(
+			`fileRecords/${id}`,
+			AccountFileRecord
+		).map(o =>
+			o.value
+		);
 	}
 
 	/** Watches note. */

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DeltaStatic} from 'quill';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {AccountFileRecord, IAccountFileRecord} from '../../proto';
 import {LockFunction} from '../lock-function-type';
 import {AccountFilesService} from '../services/account-files.service';
@@ -25,6 +25,9 @@ export class AccountNoteComponent implements OnInit {
 	private editView: boolean	= false;
 
 	/** @ignore */
+	private nameSubscription?: Subscription;
+
+	/** @ignore */
 	private readonly saveLock: LockFunction	= util.lockFunction();
 
 	/** Indicates whether or not this is a new note. */
@@ -32,8 +35,8 @@ export class AccountNoteComponent implements OnInit {
 
 	/** Currently active note. */
 	public note?: {
-		metadata: IAccountFileRecord;
-		observable: Observable<DeltaStatic>;
+		content: Observable<DeltaStatic>;
+		metadata: Observable<IAccountFileRecord>;
 	};
 
 	/** Most recent note data. */
@@ -47,18 +50,30 @@ export class AccountNoteComponent implements OnInit {
 
 	/** @ignore */
 	private async setNote (id: string) : Promise<void> {
-		const metadata	= await this.accountFilesService.getFile(
+		const metadata		= this.accountFilesService.watchMetadata(
 			id,
 			AccountFileRecord.RecordTypes.Note
 		);
 
-		this.noteData.id	= metadata.id;
-		this.noteData.name	= metadata.name;
+		const metadataValue	= await metadata.filter(o => !!o.id).take(1).toPromise();
+
+		this.noteData.id	= metadataValue.id;
+		this.noteData.name	= metadataValue.name;
 
 		this.note			= {
 			metadata,
-			observable: this.accountFilesService.watchNote(metadata.id)
+			content: this.accountFilesService.watchNote(metadataValue.id)
 		};
+
+		if (this.nameSubscription) {
+			this.nameSubscription.unsubscribe();
+		}
+
+		this.nameSubscription	= metadata.subscribe(({id, name}) => {
+			if (id === this.noteData.id) {
+				this.noteData.name	= name;
+			}
+		});
 	}
 
 	/** @ignore */
@@ -108,7 +123,7 @@ export class AccountNoteComponent implements OnInit {
 		this.saveLock(async () => {
 			if (!this.noteData.content) {
 				if (this.note) {
-					this.noteData.content	= await this.note.observable.take(1).toPromise();
+					this.noteData.content	= await this.note.content.take(1).toPromise();
 				}
 				else {
 					return;
@@ -124,7 +139,10 @@ export class AccountNoteComponent implements OnInit {
 				;
 				await this.setNote(this.noteData.id);
 			}
-			else if (this.note && this.note.metadata.id === this.noteData.id) {
+			else if (
+				this.note &&
+				(await this.note.metadata.take(1).toPromise()).id === this.noteData.id
+			) {
 				await this.accountFilesService.updateNote(
 					this.noteData.id,
 					this.noteData.content,

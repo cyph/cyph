@@ -19,7 +19,7 @@ export class AccountFormComponent implements OnInit {
 	public form?: {
 		data: Promise<IForm>;
 		downloadProgress: Observable<number>;
-		metadata: Promise<IAccountFileRecord>;
+		metadata: Observable<IAccountFileRecord>;
 	};
 
 	/** @inheritDoc */
@@ -39,7 +39,7 @@ export class AccountFormComponent implements OnInit {
 				this.form	= {
 					data: downloadTask.result,
 					downloadProgress: downloadTask.progress,
-					metadata: this.accountFilesService.getFile(
+					metadata: this.accountFilesService.watchMetadata(
 						id,
 						AccountFileRecord.RecordTypes.Form
 					)

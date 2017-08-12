@@ -5,7 +5,7 @@
 				<div fxFlex='grow'></div>
 				<md-card-title fxFlex='noshrink'>
 					<div *ngIf='!editable'>
-						{{note?.metadata.name}}
+						{{(note?.metadata | async)?.name}}
 					</div>
 					<md-input-container fxFlex *ngIf='editable'>
 						<input
@@ -54,7 +54,7 @@
 					<md-card [class.no-shadow]='!editable'>
 						<md-card-content>
 							<cyph-quill
-								[content]='note?.observable | async'
+								[content]='note?.content | async'
 								[readOnly]='!editable'
 								(onChange)='noteData.content = $event.content'
 							></cyph-quill>
