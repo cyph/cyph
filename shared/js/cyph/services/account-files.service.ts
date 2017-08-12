@@ -232,7 +232,7 @@ export class AccountFilesService {
 	/** Uploads new file. */
 	public upload (name: string, file: DeltaStatic|File|IForm) : {
 		progress: Observable<number>;
-		result: Promise<void>;
+		result: Promise<string>;
 	} {
 		const id	= util.uuid();
 		const url	= `files/${id}`;
@@ -251,35 +251,39 @@ export class AccountFilesService {
 
 		return {
 			progress,
-			result: result.then(async () => { await this.accountDatabaseService.setItem(
-				`fileRecords/${id}`,
-				AccountFileRecord,
-				{
-					id,
-					mediaType: file instanceof Blob ?
-						file.type :
-						this.fileIsDelta(file) ?
-							'cyph/note' :
-							'cyph/form'
-					,
-					name,
-					recordType: file instanceof Blob ?
-						AccountFileRecord.RecordTypes.File :
-						this.fileIsDelta(file) ?
-							AccountFileRecord.RecordTypes.Note :
-							AccountFileRecord.RecordTypes.Form
-					,
-					size: file instanceof Blob ?
-						file.size :
-						this.fileIsDelta(file) ?
-							this.potassiumService.fromString(
-								this.deltaToString(<DeltaStatic> file)
-							).length :
-							NaN
-					,
-					timestamp: await util.timestamp()
-				}
-			); })
+			result: result.then(async () => {
+				await this.accountDatabaseService.setItem(
+					`fileRecords/${id}`,
+					AccountFileRecord,
+					{
+						id,
+						mediaType: file instanceof Blob ?
+							file.type :
+							this.fileIsDelta(file) ?
+								'cyph/note' :
+								'cyph/form'
+						,
+						name,
+						recordType: file instanceof Blob ?
+							AccountFileRecord.RecordTypes.File :
+							this.fileIsDelta(file) ?
+								AccountFileRecord.RecordTypes.Note :
+								AccountFileRecord.RecordTypes.Form
+						,
+						size: file instanceof Blob ?
+							file.size :
+							this.fileIsDelta(file) ?
+								this.potassiumService.fromString(
+									this.deltaToString(<DeltaStatic> file)
+								).length :
+								NaN
+						,
+						timestamp: await util.timestamp()
+					}
+				);
+
+				return id;
+			})
 		};
 	}
 
