@@ -223,6 +223,23 @@
 			color: $cyph-speed-dial-action-alt-foreground !important;
 		}
 	}
+
+	.cyph-inverted-theme {
+		color: $cyph-inverted;
+
+		@include angular-material-theme(cyph-theme(
+			$cyph-primary,
+			$cyph-accent,
+			$cyph-warn,
+			$cyph-foreground,
+			$cyph-inverted,
+			not $cyph-is-dark
+		));
+
+		md-card {
+			background-color: rgba(255, 255, 255, 0.95);
+		}
+	}
 }
 
 @function cyph-theme($primary, $accent, $warn, $background, $foreground, $isDark) {
