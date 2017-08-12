@@ -76,11 +76,11 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 		[{size: []}],
 		['bold', 'italic', 'underline', 'strike'],
 		[{color: []}, {background: []}],
-		[{script: 'super'}, {script: 'sub'}],
-		[{header: '1'}, {header: '2'}, 'blockquote', 'code-block'],
-		[{list: 'ordered'}, {list: 'bullet'}, {indent: '-1'}, {indent: '+1'}],
-		['direction', {align: []}],
 		['link', 'image'],
+		[{align: ''}, {align: 'center'}, {align: 'right'}, {align: 'justify'}],
+		[{list: 'ordered'}, {list: 'bullet'}],
+		[{indent: '-1'}, {indent: '+1'}],
+		['blockquote', 'code-block'],
 		['clean']
 	];
 
