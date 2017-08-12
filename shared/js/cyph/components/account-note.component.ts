@@ -134,7 +134,7 @@ export class AccountNoteComponent implements OnInit {
 				}
 			}
 
-			this.accountService.setInterstitial(true);
+			this.accountService.interstitial	= true;
 
 			if (this.newNote) {
 				this.noteData.id	=
@@ -159,7 +159,7 @@ export class AccountNoteComponent implements OnInit {
 			if (this.noteData.id) {
 				this.routerService.navigate(['account', 'notes', this.noteData.id]);
 				await util.sleep(1500);
-				this.accountService.setInterstitial(false);
+				this.accountService.interstitial	= false;
 				this.dialogService.toast(this.stringsService.noteSaved, 2500);
 			}
 		});

@@ -8,7 +8,7 @@ import {DialogService} from './dialog.service';
 @Injectable()
 export class AccountService {
 	/** Indicates the status of the interstitial. */
-	public interstitial				= false;
+	public interstitial: boolean	= false;
 
 	/** Indicates whether the browser extension UI should be used. */
 	public isExtension: boolean		= false;
@@ -26,8 +26,6 @@ export class AccountService {
 			title: 'Cyph Accounts'
 		});
 	}
-
-	public setInterstitial	= (bool: boolean) => { this.interstitial	= bool; };
 
 	/** Toggles account menu. */
 	public toggleMenu (menuExpanded?: boolean) : void {
