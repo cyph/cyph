@@ -214,10 +214,14 @@ export class AccountFilesService {
 	}
 
 	/** Overwrites an existing note. */
-	public async updateNote (id: string, content: DeltaStatic) : Promise<void> {
+	public async updateNote (id: string, content: DeltaStatic, name?: string) : Promise<void> {
 		const file		= await this.getFile(id, AccountFileRecord.RecordTypes.Note);
 		file.size		= this.potassiumService.fromString(this.deltaToString(content)).length;
 		file.timestamp	= await util.timestamp();
+
+		if (name) {
+			file.name	= name;
+		}
 
 		await Promise.all([
 			this.accountDatabaseService.setItem(

@@ -36,10 +36,10 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 	public readonly containerID: string	= `id-${util.uuid()}`;
 
 	/** Entire contents of the editor. */
-	@Input() public content: Quill.DeltaStatic;
+	@Input() public content?: Quill.DeltaStatic;
 
 	/** Stream of deltas to apply. */
-	@Input() public deltas: Observable<Quill.DeltaStatic>;
+	@Input() public deltas?: Observable<Quill.DeltaStatic>;
 
 	/** Emits on change. */
 	@Output() public onChange: EventEmitter<{
@@ -90,8 +90,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 			return delta;
 		}
 
-		for (let i = 0 ; i < delta.ops.length ; ++i) {
-			const {insert}	= delta.ops[i];
+		for (const {insert} of delta.ops) {
 			if (!insert) {
 				continue;
 			}
@@ -158,12 +157,19 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 		for (const k of Object.keys(changes)) {
 			switch (k) {
 				case 'content':
+					if (!this.content) {
+						break;
+					}
 					this.quill.setContents(
 						this.stripExternalSubresources(this.content)
 					);
 					break;
 
 				case 'deltas':
+					if (!this.deltas) {
+						break;
+					}
+
 					if (this.deltasSubscription) {
 						this.deltasSubscription.unsubscribe();
 					}

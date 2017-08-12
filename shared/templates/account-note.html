@@ -4,24 +4,14 @@
 			<div fxLayoutAlign='center center' fxLayout='row'>
 				<div fxFlex='grow'></div>
 				<md-card-title fxFlex='noshrink'>
-					<div *ngIf='!editable && !newNote'>
+					<div *ngIf='!editable'>
 						{{note?.metadata.name}}
 					</div>
-					<md-input-container fxFlex *ngIf='newNote'>
-							<input
-								mdInput
-								cyphTranslate
-								[(ngModel)]='newNoteTitle'
-								name='Title'
-								placeholder='Note Title'
-								required
-							/>
-						</md-input-container>
-					<md-input-container fxFlex *ngIf='note && editable'>
+					<md-input-container fxFlex *ngIf='editable'>
 						<input
 							mdInput
 							cyphTranslate
-							[(ngModel)]='note.metadata.name'
+							[(ngModel)]='noteData.name'
 							name='Title'
 							placeholder='Note Title'
 							required
@@ -29,13 +19,13 @@
 					</md-input-container>
 				</md-card-title>
 				<div fxFlex='grow'></div>
-				<md-card-header *ngIf='note || newNote'>
+				<md-card-header>
 					<button
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Edit Note'
 						routerLink='edit'
-						*ngIf='!editable && !newNote'
+						*ngIf='!editable'
 					>
 						<md-icon>edit</md-icon>
 					</button>
@@ -44,7 +34,7 @@
 						cyphTranslate
 						mdTooltip='Save Note'
 						(click)='saveNote()'
-						*ngIf='editable || newNote'
+						*ngIf='editable'
 					>
 						<md-icon>save</md-icon>
 					</button>
@@ -59,16 +49,14 @@
 					</button>
 				</md-card-header>
 			</div>
-			<md-card-content fxFlex fxLayout='column' *ngIf='note || newNote'>
-				<div [class.cyph-light-theme]='editable || newNote'>
-					<md-card [class.no-shadow]='!editable || !newNote'>
+			<md-card-content fxFlex fxLayout='column'>
+				<div [class.cyph-light-theme]='editable'>
+					<md-card [class.no-shadow]='!editable'>
 						<md-card-content>
 							<cyph-quill
 								[content]='note?.observable | async'
-								[readOnly]='!editable && !newNote'
-								(onChange)='
-									noteData = {content: $event.content, id: note?.metadata.id}
-								'
+								[readOnly]='!editable'
+								(onChange)='noteData.content = $event.content'
 							></cyph-quill>
 						</md-card-content>
 					</md-card>

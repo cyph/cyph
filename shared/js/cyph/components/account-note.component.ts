@@ -22,16 +22,13 @@ import {util} from '../util';
 })
 export class AccountNoteComponent implements OnInit {
 	/** @ignore */
+	private editView: boolean	= false;
+
+	/** @ignore */
 	private readonly saveLock: LockFunction	= util.lockFunction();
 
-	/** Indicates whether or not the edit view should be displayed. */
-	public editable: boolean	= false;
-
-	/** Indicates whether or not this is a new note */
+	/** Indicates whether or not this is a new note. */
 	public newNote: boolean	= false;
-
-	/** Title for new notes */
-	public newNoteTitle: string;
 
 	/** Currently active note. */
 	public note?: {
@@ -40,9 +37,12 @@ export class AccountNoteComponent implements OnInit {
 	};
 
 	/** Most recent note data. */
-	public noteData?: {
-		content: DeltaStatic;
-		id: string;
+	public readonly noteData: {
+		content?: DeltaStatic;
+		id?: string;
+		name: string;
+	}	= {
+		name: ''
 	};
 
 	/** @ignore */
@@ -52,65 +52,91 @@ export class AccountNoteComponent implements OnInit {
 			AccountFileRecord.RecordTypes.Note
 		);
 
-		this.note	= {
+		this.noteData.id	= metadata.id;
+		this.noteData.name	= metadata.name;
+
+		this.note			= {
 			metadata,
 			observable: this.accountFilesService.watchNote(metadata.id)
 		};
 	}
 
 	/** @ignore */
-	private setStatus (url: string) : void {
-		this.editable	= url.split('/').slice(-1)[0] === 'edit';
-		this.newNote		= url.split('/').slice(-1)[0] === 'new';
+	private setURL (url: string) : void {
+		this.editView	= url.split('/').slice(-1)[0] === 'edit';
+	}
+
+	/** Indicates whether or not the edit view should be displayed. */
+	public get editable () : boolean {
+		return this.editView || this.newNote;
 	}
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.setStatus(this.routerService.url);
+		this.setURL(this.routerService.url);
 		this.routerService.events.subscribe(({url}: any) => {
 			if (typeof url === 'string') {
-				this.setStatus(url);
+				this.setURL(url);
 			}
 		});
 
-		if (!this.newNote) {
-			this.activatedRouteService.params.subscribe(async o => {
-				try {
-					const id: string|undefined	= o.id;
+		this.activatedRouteService.params.subscribe(async o => {
+			try {
+				const id: string|undefined	= o.id;
 
-					if (!id) {
-						throw new Error('Invalid note ID.');
-					}
+				if (!id) {
+					throw new Error('Invalid note ID.');
+				}
 
+				if (id === 'new') {
+					this.newNote	= true;
+				}
+				else {
+					this.newNote	= false;
 					await this.accountAuthService.ready;
 					await this.setNote(id);
 				}
-				catch (_) {
-					this.routerService.navigate(['404']);
-				}
-			});
-		}
+			}
+			catch (_) {
+				this.routerService.navigate(['404']);
+			}
+		});
 	}
 
 	/** Saves note. */
 	public saveNote () : void {
 		this.saveLock(async () => {
-			if (this.newNote && this.noteData) {
+			if (!this.noteData.content) {
+				if (this.note) {
+					this.noteData.content	= await this.note.observable.take(1).toPromise();
+				}
+				else {
+					return;
+				}
+			}
+
+			if (this.newNote) {
 				this.noteData.id	=
-					await this.accountFilesService.upload(this.newNoteTitle, this.noteData.content).result
+					await this.accountFilesService.upload(
+						this.noteData.name,
+						this.noteData.content
+					).result
 				;
 				await this.setNote(this.noteData.id);
 			}
-			else if (this.note && this.noteData && this.note.metadata.id === this.noteData.id) {
-				await this.accountFilesService.updateNote(this.noteData.id, this.noteData.content);
-			}
-			else {
-				return;
+			else if (this.note && this.note.metadata.id === this.noteData.id) {
+				await this.accountFilesService.updateNote(
+					this.noteData.id,
+					this.noteData.content,
+					this.noteData.name
+				);
 			}
 
-			this.routerService.navigate(['account/notes/' + this.noteData.id]);
-			await util.sleep(1500);
-			this.dialogService.toast(this.stringsService.noteSaved, 2500);
+			if (this.noteData.id) {
+				this.routerService.navigate([`account/notes/${this.noteData.id}`]);
+				await util.sleep(1500);
+				this.dialogService.toast(this.stringsService.noteSaved, 2500);
+			}
 		});
 	}
 
