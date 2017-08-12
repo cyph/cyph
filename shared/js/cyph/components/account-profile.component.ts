@@ -17,6 +17,9 @@ import {EnvService} from '../services/env.service';
 	templateUrl: '../../../templates/account-profile.html'
 })
 export class AccountProfileComponent implements OnInit {
+	/** Current draft of user profile description. */
+	public descriptionDraft: string	= '';
+
 	/** @see UserPresence */
 	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
 
@@ -56,6 +59,17 @@ export class AccountProfileComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		this.activatedRouteService.params.subscribe(o => { this.setUser(o.username); });
+	}
+
+	/** Publishes new user description. */
+	public async saveUserDescription () : Promise<void> {
+		if (!this.user || !this.isCurrentUser) {
+			throw new Error("Cannot modify another user's description.");
+		}
+
+		const profile		= await this.user.accountUserProfile.getValue();
+		profile.description	= this.descriptionDraft;
+		await this.user.accountUserProfile.setValue(profile);
 	}
 
 	constructor (
