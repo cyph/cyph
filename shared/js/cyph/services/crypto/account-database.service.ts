@@ -100,11 +100,11 @@ export class AccountDatabaseService {
 	/** @ignore */
 	private readonly sealHelpers	= {
 		secretBox: async (currentUser: ICurrentUser, data: Uint8Array, url: string) =>
-			this.potassiumService.secretBox.seal(
+			util.retryUntilSuccessful(async () => this.potassiumService.secretBox.seal(
 				data,
 				currentUser.keys.symmetricKey,
 				url
-			)
+			))
 		,
 		sign: async (
 			currentUser: ICurrentUser,
@@ -112,12 +112,12 @@ export class AccountDatabaseService {
 			url: string,
 			compress: boolean
 		) =>
-			this.potassiumService.sign.sign(
+			util.retryUntilSuccessful(async () => this.potassiumService.sign.sign(
 				data,
 				currentUser.keys.signingKeyPair.privateKey,
 				url,
 				compress
-			)
+			))
 	};
 
 	/** @see getCurrentUser */
