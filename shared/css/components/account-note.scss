@@ -20,3 +20,7 @@ md-card-title.mat-card-title {
 .mat-card-title {
 	margin-bottom: 25px;
 }
+
+.mat-card:not([class*=mat-elevation-z]) {
+	box-shadow: none !important;
+}
