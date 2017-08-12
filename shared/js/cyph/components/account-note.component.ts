@@ -7,6 +7,8 @@ import {LockFunction} from '../lock-function-type';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
+import {DialogService} from '../services/dialog.service';
+import {StringsService} from '../services/strings.service';
 import {util} from '../util';
 
 
@@ -85,6 +87,9 @@ export class AccountNoteComponent implements OnInit {
 			}
 
 			await this.accountFilesService.updateNote(this.noteData.id, this.noteData.content);
+			this.routerService.navigate(['account/notes/' + this.noteData.id]);
+			await util.sleep(1500);
+			this.dialogService.toast(this.stringsService.noteSaved, 2500);
 		});
 	}
 
@@ -102,6 +107,12 @@ export class AccountNoteComponent implements OnInit {
 		public readonly accountService: AccountService,
 
 		/** @see AccountFilesService */
-		public readonly accountFilesService: AccountFilesService
+		public readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
+		public readonly dialogService: DialogService,
+
+		/** @ignore */
+		public readonly stringsService: StringsService
 	) {}
 }

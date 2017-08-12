@@ -183,6 +183,9 @@ export class StringsService {
 	public readonly no: string						= util.translate(`no`);
 
 	/** @see StringsService */
+	public readonly noteSaved: string				= util.translate(`Note saved!`);
+
+	/** @see StringsService */
 	public readonly ok: string						= util.translate(`ok`);
 
 	/** @see StringsService */
