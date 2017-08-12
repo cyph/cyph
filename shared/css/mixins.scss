@@ -81,6 +81,10 @@
 		color: $cyph-hyperlinks;
 	}
 
+	md-card-title > a {
+		color: inherit;
+	}
+
 	blockquote {
 		border-left: 2px solid $cyph-foreground;
 	}
