@@ -5,6 +5,7 @@
 		[fxFlex.gt-md]='sidebar ? "90" : "40"'
 		fxLayout='column'
 		fxLayoutGap='16px'
+		[class.initiating]='!accountContactsService.initiated'
 	>
 		<div></div>
 
@@ -63,3 +64,8 @@
 		<div></div>
 	</div>
 </div>
+
+<md-progress-spinner
+	mode='indeterminate'
+	*ngIf='!accountContactsService.initiated'
+></md-progress-spinner>

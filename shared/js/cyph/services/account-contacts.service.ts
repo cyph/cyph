@@ -159,7 +159,7 @@ export class AccountContactsService {
 				).status,
 				username
 			})
-		))).subscribe(async users => {
+		))).skip(1).subscribe(async users => {
 			const oldUserStatuses	= this.userStatuses;
 			this.userStatuses		= new Map<User, UserPresence>();
 

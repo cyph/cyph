@@ -19,3 +19,19 @@
 .bounceInRight {
 	@include animation(bounceInRight 1s);
 }
+
+.initiating {
+	opacity: 0.5;
+}
+
+md-progress-spinner {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+
+	@include transform(translate(-50%, -50%));
+}
+
+:host {
+	position: relative;
+}
