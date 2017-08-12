@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UserPresence, userPresenceSelectOptions} from '../account/enums';
 import {User} from '../account/user';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
+import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
@@ -19,6 +20,8 @@ import {EnvService} from '../services/env.service';
 export class AccountProfileComponent implements OnInit {
 	/** Current draft of user profile description. */
 	public descriptionDraft: string	= '';
+
+	public editMode: boolean	= false;
 
 	/** @see UserPresence */
 	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
@@ -48,6 +51,11 @@ export class AccountProfileComponent implements OnInit {
 		}
 	}
 
+	/** Toggles profile edit state. */
+	public edit (bool: boolean) {
+		this.editMode	= bool;
+	}
+
 	/** Indicates whether this is the profile of the currently signed in user. */
 	public get isCurrentUser () : boolean {
 		return (
@@ -67,9 +75,12 @@ export class AccountProfileComponent implements OnInit {
 			throw new Error("Cannot modify another user's description.");
 		}
 
+		this.accountService.interstitial	= true;
 		const profile		= await this.user.accountUserProfile.getValue();
 		profile.description	= this.descriptionDraft;
 		await this.user.accountUserProfile.setValue(profile);
+		this.accountService.interstitial	= false;
+		this.edit(false);
 	}
 
 	constructor (
@@ -81,6 +92,9 @@ export class AccountProfileComponent implements OnInit {
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
+
+		/** @see AccountService */
+		public readonly accountService: AccountService,
 
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,

@@ -42,3 +42,10 @@
 .file-upload {
 	pointer-events: none;
 }
+
+button.mat-fab {
+	position: relative;
+	float: right;
+	bottom: 80px;
+	right: 10px;
+}

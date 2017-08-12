@@ -18,7 +18,19 @@
 				/>
 				<div class='name animated flipInX _2'>{{user.name | async}}</div>
 				<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
-				<div class='description animated flipInX _3'>{{user.description | async}}</div>
+				<div class='description animated flipInX _3'
+					*ngIf='!editMode'
+				>
+					{{user.description | async}}
+				</div>
+				<md-input-container *ngIf='editMode && user'>
+					<input
+						mdInput
+						*ngIf='user.description'
+						[ngModel]='user.description | async'
+						(ngModelChange)='descriptionDraft = $event'
+					/>
+				</md-input-container>
 			</div>
 		</div>
 
@@ -63,3 +75,17 @@
 		</div>
 	</div>
 </div>
+<button
+	md-fab
+	*ngIf='!editMode'
+	(click)='edit(true)'
+>
+	<md-icon >edit</md-icon>
+</button>
+<button
+	md-fab
+	*ngIf='editMode'
+	(click)='saveUserDescription()'
+>
+	<md-icon>save</md-icon>
+</button>
