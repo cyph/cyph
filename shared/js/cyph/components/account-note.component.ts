@@ -37,10 +37,18 @@ export class AccountNoteComponent implements OnInit {
 		id: string;
 	};
 
+	/** @ignore */
+	private setEditable (url: string) : void {
+		this.editable	= url.split('/').slice(-1)[0] === 'edit';
+	}
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		this.setEditable(this.routerService.url);
 		this.routerService.events.subscribe(({url}: any) => {
-			this.editable	= typeof url === 'string' && url.split('/').slice(-1)[0] === 'edit';
+			if (typeof url === 'string') {
+				this.setEditable(url);
+			}
 		});
 
 		this.activatedRouteService.params.subscribe(async o => {
