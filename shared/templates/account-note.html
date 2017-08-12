@@ -47,12 +47,11 @@
 				</md-card-header>
 			</div>
 			<md-card-content fxFlex fxLayout='column' *ngIf='note'>
-				<quill-editor
-					[class]='editable ? "editable" : "read-only"'
+				<cyph-quill
+					[content]='note.observable | async'
 					[readOnly]='!editable'
-					[ngModel]='note.observable | async'
-					(ngModelChange)='noteData = {content: $event, id: note.metadata.id}'
-				></quill-editor>
+					(onChange)='noteData = {content: $event.content, id: note.metadata.id}'
+				></cyph-quill>
 			</md-card-content>
 		</div>
 	</md-card>

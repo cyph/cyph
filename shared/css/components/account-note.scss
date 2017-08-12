@@ -20,13 +20,3 @@ md-card-title.mat-card-title {
 .mat-card-title {
 	margin-bottom: 25px;
 }
-
-quill-editor.read-only ::ng-deep {
-	> .ql-toolbar {
-		display: none;
-	}
-
-	> .ql-container {
-		border: none;
-	}
-}
