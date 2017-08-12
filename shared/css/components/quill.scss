@@ -1,11 +1,11 @@
 @import '../mixins';
 
-:host > .read-only ::ng-deep {
-	> .ql-toolbar {
-		display: none;
-	}
+:host > .read-only ::ng-deep .ql-toolbar {
+	display: none;
+}
 
-	> .ql-container {
-		border: none;
+::ng-deep {
+	.ql-toolbar, .ql-container {
+		border: none !important;
 	}
 }

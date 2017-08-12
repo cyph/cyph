@@ -47,11 +47,19 @@
 				</md-card-header>
 			</div>
 			<md-card-content fxFlex fxLayout='column' *ngIf='note'>
-				<cyph-quill
-					[content]='note.observable | async'
-					[readOnly]='!editable'
-					(onChange)='noteData = {content: $event.content, id: note.metadata.id}'
-				></cyph-quill>
+				<div [class.cyph-inverted-theme]='editable'>
+					<md-card>
+						<md-card-content>
+							<cyph-quill
+								[content]='note.observable | async'
+								[readOnly]='!editable'
+								(onChange)='
+									noteData = {content: $event.content, id: note.metadata.id}
+								'
+							></cyph-quill>
+						</md-card-content>
+					</md-card>
+				</div>
 			</md-card-content>
 		</div>
 	</md-card>
