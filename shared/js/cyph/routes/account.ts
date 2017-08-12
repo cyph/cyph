@@ -38,7 +38,6 @@ export const account: Route	= {
 			path: 'notes/:id',
 			component: AccountNoteComponent,
 			children: [
-				{path: '', component: AccountNoteComponent},
 				{path: 'edit', component: AccountNoteComponent}
 			]
 		},

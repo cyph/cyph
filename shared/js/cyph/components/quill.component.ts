@@ -158,20 +158,22 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 			switch (k) {
 				case 'content':
 					if (!this.content) {
-						break;
+						this.quill.setText('');
 					}
-					this.quill.setContents(
-						this.stripExternalSubresources(this.content)
-					);
+					else {
+						this.quill.setContents(
+							this.stripExternalSubresources(this.content)
+						);
+					}
 					break;
 
 				case 'deltas':
-					if (!this.deltas) {
-						break;
-					}
-
 					if (this.deltasSubscription) {
 						this.deltasSubscription.unsubscribe();
+					}
+
+					if (!this.deltas) {
+						break;
 					}
 
 					this.deltasSubscription	= this.deltas.subscribe(delta => {

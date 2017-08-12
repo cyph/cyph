@@ -295,10 +295,7 @@ export class AccountFilesService {
 	}
 
 	/** Watches file record. */
-	public watchMetadata (
-		id: string,
-		recordType?: AccountFileRecord.RecordTypes
-	) : Observable<IAccountFileRecord> {
+	public watchMetadata (id: string) : Observable<IAccountFileRecord> {
 		return this.accountDatabaseService.watch(
 			`fileRecords/${id}`,
 			AccountFileRecord

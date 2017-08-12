@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DeltaStatic} from 'quill';
 import {Observable, Subscription} from 'rxjs';
-import {AccountFileRecord, IAccountFileRecord} from '../../proto';
+import {IAccountFileRecord} from '../../proto';
 import {LockFunction} from '../lock-function-type';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
@@ -50,28 +50,24 @@ export class AccountNoteComponent implements OnInit {
 
 	/** @ignore */
 	private async setNote (id: string) : Promise<void> {
-		const metadata		= this.accountFilesService.watchMetadata(
-			id,
-			AccountFileRecord.RecordTypes.Note
-		);
-
+		const metadata		= this.accountFilesService.watchMetadata(id);
 		const metadataValue	= await metadata.filter(o => !!o.id).take(1).toPromise();
 
 		this.noteData.id	= metadataValue.id;
 		this.noteData.name	= metadataValue.name;
 
 		this.note			= {
-			metadata,
-			content: this.accountFilesService.watchNote(metadataValue.id)
+			content: this.accountFilesService.watchNote(metadataValue.id),
+			metadata
 		};
 
 		if (this.nameSubscription) {
 			this.nameSubscription.unsubscribe();
 		}
 
-		this.nameSubscription	= metadata.subscribe(({id, name}) => {
-			if (id === this.noteData.id) {
-				this.noteData.name	= name;
+		this.nameSubscription	= metadata.subscribe(o => {
+			if (o.id === this.noteData.id) {
+				this.noteData.name	= o.name;
 			}
 		});
 	}
@@ -104,7 +100,11 @@ export class AccountNoteComponent implements OnInit {
 				}
 
 				if (id === 'new') {
-					this.newNote	= true;
+					this.newNote			= true;
+					this.note				= undefined;
+					this.noteData.content	= undefined;
+					this.noteData.id		= undefined;
+					this.noteData.name		= '';
 				}
 				else {
 					this.newNote	= false;
@@ -151,7 +151,7 @@ export class AccountNoteComponent implements OnInit {
 			}
 
 			if (this.noteData.id) {
-				this.routerService.navigate([`account/notes/${this.noteData.id}`]);
+				this.routerService.navigate(['account', 'notes', this.noteData.id]);
 				await util.sleep(1500);
 				this.dialogService.toast(this.stringsService.noteSaved, 2500);
 			}

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
-import {AccountFileRecord, IAccountFileRecord, IForm} from '../../proto';
+import {IAccountFileRecord, IForm} from '../../proto';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 
@@ -39,10 +39,7 @@ export class AccountFormComponent implements OnInit {
 				this.form	= {
 					data: downloadTask.result,
 					downloadProgress: downloadTask.progress,
-					metadata: this.accountFilesService.watchMetadata(
-						id,
-						AccountFileRecord.RecordTypes.Form
-					)
+					metadata: this.accountFilesService.watchMetadata(id)
 				};
 			}
 			catch (_) {
