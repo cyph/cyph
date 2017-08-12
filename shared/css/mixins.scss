@@ -225,17 +225,29 @@
 	}
 
 	.cyph-inverted-theme {
-		color: $cyph-inverted;
+		@include cyph-inverted-theme;
+	}
 
-		@include angular-material-theme(cyph-theme(
-			$cyph-primary,
-			$cyph-accent,
-			$cyph-warn,
-			$cyph-foreground,
-			$cyph-inverted,
-			not $cyph-is-dark
-		));
+	@if $cyph-is-dark {
+		.cyph-light-theme {
+			@include cyph-inverted-theme;
+		}
+	}
+}
 
+@mixin cyph-inverted-theme {
+	color: $cyph-inverted;
+
+	@include angular-material-theme(cyph-theme(
+		$cyph-primary,
+		$cyph-accent,
+		$cyph-warn,
+		$cyph-foreground,
+		$cyph-inverted,
+		not $cyph-is-dark
+	));
+
+	@if $cyph-is-dark {
 		md-card {
 			background-color: rgba(255, 255, 255, 0.95);
 		}
