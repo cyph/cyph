@@ -94,6 +94,7 @@ export class AccountNoteComponent implements OnInit {
 
 	/** Saves note. */
 	public saveNote () : void {
+		this.accountService.setInterstitial(true);
 		this.saveLock(async () => {
 			if (this.newNote && this.noteData) {
 				this.noteData.id	=
@@ -110,6 +111,7 @@ export class AccountNoteComponent implements OnInit {
 
 			this.routerService.navigate(['account/notes/' + this.noteData.id]);
 			await util.sleep(1500);
+			this.accountService.setInterstitial(false);
 			this.dialogService.toast(this.stringsService.noteSaved, 2500);
 		});
 	}

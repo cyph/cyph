@@ -77,3 +77,19 @@
 		text-align: center;
 	}
 }
+
+.interstitial {
+	position: fixed;
+	background-color: rgba(139, 98, 217, 0.69) !important;
+	width: 100%;
+	height: 100%;
+	z-index: 2;
+
+	.logo-animation {
+		margin-top: 33vh;
+		margin-left: 45vw;
+		margin-right: 45vw;
+		margin-bottom: 33vh;
+		transform: scale(.5);
+	}
+}
