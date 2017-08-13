@@ -54,3 +54,18 @@
 	bottom: 80px;
 	right: 10px;
 }
+
+.edit-hide {
+	@include transition(opacity 0.35s ease-in-out);
+}
+
+@media (max-height: 600px) {
+	:host > .editing .edit-hide {
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	:host > :not(.editing) .edit-hide {
+		opacity: 1;
+	}
+}

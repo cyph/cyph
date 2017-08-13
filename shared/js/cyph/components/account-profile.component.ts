@@ -18,6 +18,9 @@ import {EnvService} from '../services/env.service';
 	templateUrl: '../../../templates/account-profile.html'
 })
 export class AccountProfileComponent implements OnInit {
+	/** @ignore */
+	private editorFocus: boolean	= false;
+
 	/** Current draft of user profile description. */
 	public descriptionDraft: string	= '';
 
@@ -58,6 +61,15 @@ export class AccountProfileComponent implements OnInit {
 			this.accountDatabaseService.currentUser.value !== undefined &&
 			this.user === this.accountDatabaseService.currentUser.value.user
 		);
+	}
+
+	/** Indicates whether the profile editor is in focus. */
+	public get isEditorFocused () : boolean {
+		return this.editorFocus && this.editMode;
+	}
+
+	public set isEditorFocused (value : boolean) {
+		this.editorFocus	= value;
 	}
 
 	/** @inheritDoc */
