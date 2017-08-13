@@ -227,9 +227,11 @@
 		@include mat-button-theme($cyph-speed-dial-action-theme);
 	}
 
-	button.alt.mat-fab {
-		background-color: $cyph-speed-dial-action-alt-background !important;
-		color: $cyph-speed-dial-action-alt-foreground !important;
+	button.alt {
+		&.mat-fab, &.mat-mini-fab {
+			background-color: $cyph-speed-dial-action-alt-background !important;
+			color: $cyph-speed-dial-action-alt-foreground !important;
+		}
 	}
 
 	.cyph-inverted-theme {
