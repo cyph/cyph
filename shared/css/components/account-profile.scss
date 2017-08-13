@@ -31,16 +31,15 @@
 	}
 
 	.description {
-		margin: 25px auto;
+		margin: 25px;
+		min-height: 100px;
+
+		input {
+			text-align: center;
+		}
 	}
 
-	.description-edit {
-		width: 125%;
-		margin-left: -12.5%;
-		margin-bottom: 20px;
-	}
-
-	.username, .description, .description-edit {
+	.username, .description {
 		font-size: 24px;
 	}
 }
@@ -49,7 +48,7 @@
 	pointer-events: none;
 }
 
-button.mat-fab {
+.edit-buttons {
 	position: relative;
 	float: right;
 	bottom: 80px;

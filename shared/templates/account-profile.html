@@ -9,19 +9,23 @@
 		[class.mobile]='envService.isMobile'
 	>
 		<div fxLayoutAlign='center center'>
-			<div>
-				<img
-					class='avatar animated jackInTheBox _1'
-					[ngClass]='userPresence[user.status | async]'
-					alt='Profile Picture'
-					[src]='user.avatar | async'
-				/>
+			<div fxFlex fxLayout='column' fxLayoutAlign='center stretch'>
+				<div fxLayoutAlign='center center'>
+					<img
+						class='avatar animated jackInTheBox _1'
+						[ngClass]='userPresence[user.status | async]'
+						alt='Profile Picture'
+						[src]='user.avatar | async'
+					/>
+				</div>
 				<div class='name animated flipInX _2'>{{user.name | async}}</div>
 				<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
-				<div class='description animated flipInX _3' *ngIf='!editMode'>
-					{{user.description | async}}
+				<div class='description animated flipInX _3' fxLayoutAlign='center center' *ngIf='!editMode'>
+					<div>
+						{{user.description | async}}
+					</div>
 				</div>
-				<md-input-container class='description-edit' *ngIf='editMode && user'>
+				<md-input-container class='description' *ngIf='editMode && user'>
 					<input
 						mdInput
 						[ngModel]='user.description | async'
@@ -72,13 +76,26 @@
 		</div>
 	</div>
 </div>
-<button
-	md-fab
-	cyphTranslate
-	[mdTooltip]='editMode ? "Save" : "Edit"'
-	mdTooltipPosition='above'
-	(click)='editMode ? saveUserDescription() : editMode = true'
->
-	<md-icon *ngIf='editMode'>save</md-icon>
-	<md-icon *ngIf='!editMode'>edit</md-icon>
-</button>
+<div class='edit-buttons' fxLayout='row' fxLayoutGap='16px'>
+	<button
+		md-fab
+		cyphTranslate
+		class='alt'
+		mdTooltip='Close'
+		mdTooltipPosition='above'
+		(click)='editMode = false'
+		*ngIf='editMode'
+	>
+		<md-icon>close</md-icon>
+	</button>
+	<button
+		md-fab
+		cyphTranslate
+		[mdTooltip]='editMode ? "Save" : "Edit"'
+		mdTooltipPosition='above'
+		(click)='editMode ? saveUserDescription() : editMode = true'
+	>
+		<md-icon *ngIf='editMode'>save</md-icon>
+		<md-icon *ngIf='!editMode'>edit</md-icon>
+	</button>
+</div>
