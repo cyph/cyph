@@ -78,6 +78,10 @@ section {
 	font-weight: initial !important;
 }
 
+[ng-reflect-router-link], [routerlink] {
+	cursor: pointer;
+}
+
 md-card-title {
 	max-width: 100%;
 }

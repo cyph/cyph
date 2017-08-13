@@ -77,7 +77,7 @@
 		color: $cyph-foreground;
 	}
 
-	a, cyph-quill > .read-only .ql-snow a {
+	a[href], cyph-quill > .read-only .ql-snow a {
 		color: $cyph-hyperlinks;
 	}
 
@@ -239,9 +239,11 @@
 		@include mat-button-theme($cyph-speed-dial-action-theme);
 	}
 
-	button.alt.mat-fab {
-		background-color: $cyph-speed-dial-action-alt-background !important;
-		color: $cyph-speed-dial-action-alt-foreground !important;
+	button.alt {
+		&.mat-fab, &.mat-mini-fab {
+			background-color: $cyph-speed-dial-action-alt-background !important;
+			color: $cyph-speed-dial-action-alt-foreground !important;
+		}
 	}
 
 	.cyph-inverted-theme {
