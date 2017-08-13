@@ -15,7 +15,7 @@ node -e 'console.log(`
 	(<any> self).translations = ${JSON.stringify(require("../commands/translations"))};
 `.trim())' > src/js/standalone/translations.ts
 
-ng eject --aot --prod --build-optimizer --no-sourcemaps
+ng eject --aot --prod --no-sourcemaps
 
 cat > webpack.js <<- EOM
 	const ExtractTextPlugin						= require('extract-text-webpack-plugin');

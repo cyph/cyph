@@ -142,7 +142,6 @@ read -r -d '' modules <<- EOM
 	nativescript-dev-typescript
 	nativescript-dev-webpack
 	nativescript-theme-core
-	ngx-quill
 	node-fetch
 	node-sass
 	notify-cli
@@ -155,6 +154,7 @@ read -r -d '' modules <<- EOM
 	protobufjs
 	protractor
 	quill
+	quill-delta
 	quill-delta-to-html
 	raw-loader
 	read
