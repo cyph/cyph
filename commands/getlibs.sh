@@ -192,6 +192,7 @@ for anyType in \
 	konami-code.js \
 	markdown-it-emoji \
 	markdown-it-sup \
+	quill-delta \
 	quill-delta-to-html \
 	simplewebrtc \
 	tab-indent \

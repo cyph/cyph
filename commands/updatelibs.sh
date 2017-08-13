@@ -154,6 +154,7 @@ read -r -d '' modules <<- EOM
 	protobufjs
 	protractor
 	quill
+	quill-delta
 	quill-delta-to-html
 	raw-loader
 	read
