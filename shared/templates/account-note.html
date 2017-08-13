@@ -2,8 +2,7 @@
 	<md-card fxFlex='90' class='note'>
 		<div fxLayout='column'>
 			<div fxLayoutAlign='center center' fxLayout='row'>
-				<div fxFlex='grow'></div>
-				<md-card-title fxFlex='noshrink'>
+				<md-card-title fxFlex>
 					<div *ngIf='!editable'>
 						{{(note?.metadata | async)?.name}}
 					</div>
@@ -12,13 +11,10 @@
 							mdInput
 							cyphTranslate
 							[(ngModel)]='noteData.name'
-							name='Title'
-							placeholder='Note Title'
 							required
 						/>
 					</md-input-container>
 				</md-card-title>
-				<div fxFlex='grow'></div>
 				<md-card-header>
 					<button
 						md-icon-button

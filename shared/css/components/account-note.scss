@@ -5,21 +5,19 @@ md-card.note {
 	overflow: -webkit-paged-x;
 }
 
-md-card-title.mat-card-title {
-	text-align: center;
-	font-weight: 600;
-	font-size: 28px;
-	padding-top: 30px;
+md-card-title {
+	> div, input {
+		text-align: center;
+		font-weight: 600;
+		font-size: 28px;
+		width: 100%;
+	}
 }
 
-.mat-card-header {
+md-card-header {
 	top: 14px;
 	position: absolute;
 	right: 25px;
-}
-
-.mat-card-title {
-	margin-bottom: 25px;
 }
 
 md-card.no-shadow {
