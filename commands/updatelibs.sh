@@ -142,6 +142,7 @@ read -r -d '' modules <<- EOM
 	nativescript-dev-typescript
 	nativescript-dev-webpack
 	nativescript-theme-core
+	ng2-truncate
 	node-fetch
 	node-sass
 	notify-cli
