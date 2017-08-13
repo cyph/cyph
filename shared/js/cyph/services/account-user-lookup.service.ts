@@ -27,16 +27,16 @@ export class AccountUserLookupService {
 				DataURIProto,
 				SecurityModels.public,
 				true
-			).map(
-				({value}) => value
+			).map(({value}) =>
+				typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
 			),
 			this.accountDatabaseService.watch(
 				`${url}/coverImage`,
 				DataURIProto,
 				SecurityModels.public,
 				true
-			).map(
-				({value}) => value
+			).map(({value}) =>
+				typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
 			),
 			this.databaseService.getAsyncValue(
 				`${url}/presence`,
