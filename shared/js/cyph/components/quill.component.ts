@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import * as Quill from 'quill';
 import {Observable, Subscription} from 'rxjs';
+import {LockFunction} from '../lock-function-type';
 import {EnvService} from '../services/env.service';
 import {util} from '../util';
 
@@ -27,7 +28,16 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 	private deltasSubscription?: Subscription;
 
 	/** @ignore */
+	private editablePromise?: Promise<void>;
+
+	/** @ignore */
 	private quill?: Quill.Quill;
+
+	/** @ignore */
+	private resolveEditablePromise?: () => void;
+
+	/** @ignore */
+	private readonly selectionLock: LockFunction	= util.lockFunction();
 
 	/** @ignore */
 	private selectionsSubscription?: Subscription;
@@ -189,9 +199,17 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 
 				case 'readOnly':
 					if (this.readOnly) {
+						this.editablePromise	= new Promise(resolve => {
+							this.resolveEditablePromise	= resolve;
+						});
 						this.quill.disable();
 					}
 					else {
+						if (this.resolveEditablePromise) {
+							this.resolveEditablePromise();
+							this.editablePromise		= undefined;
+							this.resolveEditablePromise	= undefined;
+						}
 						this.quill.enable();
 					}
 					break;
@@ -202,15 +220,15 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 					}
 
 					this.selectionsSubscription	= this.selections.subscribe(({index, length}) => {
-						if (this.readOnly) {
-							return;
-						}
+						this.selectionLock(async () => {
+							await this.editablePromise;
 
-						if (!this.quill) {
-							throw new Error('No Quill.');
-						}
+							if (!this.quill) {
+								throw new Error('No Quill.');
+							}
 
-						this.quill.setSelection(index, length);
+							this.quill.setSelection(index, length);
+						});
 					});
 			}
 		}
