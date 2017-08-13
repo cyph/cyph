@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {ChatMessage, IChatMessage} from '../../proto';
 import {IChatData, States} from '../chat';
@@ -8,7 +8,6 @@ import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {util} from '../util';
-import {AccountContactsService} from './account-contacts.service';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
@@ -124,9 +123,11 @@ export class ChatService {
 					author === this.sessionService.localUsername
 				) ?
 					undefined :
-					await this.accountContactsService.getContactID(
-						await author.take(1).toPromise()
-					).catch(
+					await (async () =>
+						this.injector.get('AccountContactsService').getContactID(
+							await author.take(1).toPromise()
+						)
+					)().catch(
 						() => undefined
 					)
 			,
@@ -274,7 +275,7 @@ export class ChatService {
 
 	constructor (
 		/** @ignore */
-		protected readonly accountContactsService: AccountContactsService,
+		private readonly injector: Injector,
 
 		/** @ignore */
 		protected readonly analyticsService: AnalyticsService,

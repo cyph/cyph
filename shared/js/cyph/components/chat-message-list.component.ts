@@ -3,6 +3,7 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
+	Injector,
 	Input,
 	OnChanges
 } from '@angular/core';
@@ -10,8 +11,6 @@ import * as $ from 'jquery';
 import {Observable} from 'rxjs';
 import {fadeInOut} from '../animations';
 import {ChatMessage, IChatData} from '../chat';
-import {AccountContactsService} from '../services/account-contacts.service';
-import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
@@ -91,8 +90,12 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 									this.sessionService.localUsername :
 									message.authorID === undefined ?
 										this.sessionService.remoteUsername :
-										(await this.accountUserLookupService.getUser(
-											await this.accountContactsService.getContactUsername(
+										(await this.injector.get(
+											'AccountUserLookupService'
+										).getUser(
+											await this.injector.get(
+												'AccountContactsService'
+											).getContactUsername(
 												message.authorID
 											)
 										)).realUsername
@@ -114,10 +117,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly accountContactsService: AccountContactsService,
-
-		/** @ignore */
-		private readonly accountUserLookupService: AccountUserLookupService,
+		private readonly injector: Injector,
 
 		/** @ignore */
 		private readonly envService: EnvService,
