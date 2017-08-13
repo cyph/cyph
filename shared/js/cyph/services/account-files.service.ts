@@ -46,6 +46,9 @@ export class AccountFilesService {
 		notes: this.filterFiles(AccountFileRecord.RecordTypes.Note)
 	};
 
+	/** Indicates whether the first load has completed. */
+	public initiated: boolean	= false;
+
 	/** @ignore */
 	private deltaToString (delta: DeltaStatic) : string {
 		return htmlToText.fromString(new QuillDeltaToHtml(delta.ops).convert());
@@ -323,5 +326,9 @@ export class AccountFilesService {
 
 		/** @ignore */
 		private readonly stringsService: StringsService
-	) {}
+	) {
+		this.filesList.take(2).toPromise().then(() => {
+			this.initiated	= true;
+		});
+	}
 }

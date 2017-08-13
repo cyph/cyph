@@ -2,7 +2,7 @@
 	fxFlexFill
 	fxLayout='row'
 	fxLayoutAlign='center start'
-	[class.initiating]='!accountContactsService.initiated'
+	[class.initiating]='accountContactsService.showSpinner'
 >
 	<div
 		fxFlex='90'
@@ -19,7 +19,7 @@
 			*ngFor='let contact of accountContactsService.contactList | async; let i = index'
 			[attr.data-index]='i'
 			[class.active]='isActive(contact)'
-			[class.bounceInRight]='!isActive(contact)'
+			[class.bounceInRight]='!isActive(contact) && !accountContactsService.initiated'
 			[ngClass]='accountContactsService.initiated ? ("_" + i) : ""'
 		>
 			<md-card-header fxLayout='row'>
@@ -71,5 +71,5 @@
 
 <md-progress-spinner
 	mode='indeterminate'
-	*ngIf='!accountContactsService.initiated'
+	*ngIf='accountContactsService.showSpinner'
 ></md-progress-spinner>

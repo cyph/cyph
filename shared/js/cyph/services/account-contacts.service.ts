@@ -56,8 +56,11 @@ export class AccountContactsService {
 		contactRecords => contactRecords.map(o => o.username)
 	);
 
-	/** Indicates whether the first load of the contacts list has completed. */
+	/** Indicates whether the first load has completed. */
 	public initiated: boolean	= false;
+
+	/** Indicates whether spinner should be displayed. */
+	public showSpinner: boolean	= true;
 
 	/** @ignore */
 	private async getContactRecord (
@@ -190,11 +193,12 @@ export class AccountContactsService {
 				}
 
 				if (++i > 8) {
-					this.initiated	= true;
+					this.showSpinner	= false;
 				}
 			}
 
-			this.initiated	= true;
+			this.initiated		= true;
+			this.showSpinner	= false;
 		});
 	}
 }

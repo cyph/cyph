@@ -2,9 +2,11 @@
 	<div fxFlex='90' fxFlex.gt-sm='65' fxFlex.gt-md='40' fxLayout='column' fxLayoutGap='16px'>
 		<h1 class='header'>Forms</h1>
 		<md-card
-			class='form animated bounceInRight _{{i}}'
+			class='form animated'
 			*ngFor='let form of accountFilesService.filteredFiles.forms | async; let i = index'
 			[attr.data-index]='i'
+			[class.bounceInRight]='!accountFilesService.initiated'
+			[ngClass]='accountFilesService.initiated ? ("_" + i) : ""'
 		>
 			<md-card-header fxLayout='row'>
 				<md-card-title>
