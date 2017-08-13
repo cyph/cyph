@@ -7,10 +7,11 @@
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			[ngClass]='accountFilesService.initiated ? ("_" + i) : ""'
+			[routerLink]='"/account/forms/" + form.id'
 		>
 			<md-card-header fxLayout='row'>
 				<md-card-title>
-					<a [routerLink]='"/account/forms/" + form.id'>{{form.name}}</a>
+					{{form.name}}
 				</md-card-title>
 				<div fxFlex fxLayoutAlign='end center'>
 					<button
@@ -25,7 +26,7 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Delete Form'
-						(click)='accountFilesService.remove(form)'
+						(click)='accountFilesService.remove(form); $event.stopPropagation();'
 					>
 						<md-icon>delete</md-icon>
 					</button>

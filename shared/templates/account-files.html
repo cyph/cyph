@@ -7,16 +7,15 @@
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			[ngClass]='accountFilesService.initiated ? ("_" + i) : ""'
+			routerLink='/account/files'
+			(click)='accountFilesService.openFile(file.id)'
 		>
 			<md-card-header fxLayout='row'>
 				<md-icon md-card-avatar>
 					{{accountFilesService.getThumbnail(file.mediaType)}}
 				</md-icon>
 				<md-card-title>
-					<a
-						routerLink='/account/files'
-						(click)='accountFilesService.openFile(file.id)'
-					>{{file.name}}</a>
+					{{file.name}}
 				</md-card-title>
 				<md-card-subtitle>
 					<div>File type: {{file.mediaType}}</div>
@@ -35,7 +34,7 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Delete File'
-						(click)='accountFilesService.remove(file)'
+						(click)='accountFilesService.remove(file); $event.stopPropagation();'
 					>
 						<md-icon>delete</md-icon>
 					</button>

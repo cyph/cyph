@@ -7,10 +7,11 @@
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			[ngClass]='accountFilesService.initiated ? ("_" + i) : ""'
+			[routerLink]='"/account/notes/" + note.id'
 		>
 			<md-card-header fxLayout='row'>
 				<md-card-title>
-					<a [routerLink]='"/account/notes/" + note.id'>{{note.name}}</a>
+					{{note.name}}
 				</md-card-title>
 				<md-card-subtitle>
 					<div>{{accountFilesService.noteSnippet(note.id)}}</div>
@@ -28,7 +29,7 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Delete Note'
-						(click)='accountFilesService.remove(note)'
+						(click)='accountFilesService.remove(note); $event.stopPropagation();'
 					>
 						<md-icon>delete</md-icon>
 					</button>

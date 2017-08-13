@@ -21,6 +21,7 @@
 			[class.active]='isActive(contact)'
 			[class.bounceInRight]='!isActive(contact) && !accountContactsService.initiated'
 			[ngClass]='accountContactsService.initiated ? ("_" + i) : ""'
+			[routerLink]='"/account/chat/" + contact.username'
 		>
 			<md-card-header fxLayout='row'>
 				<img
@@ -35,33 +36,6 @@
 				/>
 				<md-card-title>{{contact.name | async}}</md-card-title>
 				<md-card-subtitle>{{contact.realUsername | async}}</md-card-subtitle>
-				<div fxFlex fxLayoutAlign='end center'>
-					<button
-						md-icon-button
-						cyphTranslate
-						class='shrink pulldown'
-						mdTooltip='Open Chat'
-						[routerLink]='"/account/chat/" + contact.username'
-					>
-						<md-icon>chat_bubble</md-icon>
-					</button>
-					<button
-						md-icon-button
-						cyphTranslate
-						mdTooltip='Video Call'
-						(click)='accountService.notImplemented("Contact list video call button")'
-					>
-						<md-icon>video_call</md-icon>
-					</button>
-					<button
-						md-icon-button
-						cyphTranslate
-						mdTooltip='Send File'
-						(click)='accountService.notImplemented("Contact list file transfer button")'
-					>
-						<md-icon>attachment</md-icon>
-					</button>
-				</div>
 			</md-card-header>
 		</md-card>
 
