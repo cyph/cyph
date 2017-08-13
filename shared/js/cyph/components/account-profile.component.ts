@@ -27,6 +27,9 @@ export class AccountProfileComponent implements OnInit {
 	/** Profile edit mode. */
 	public editMode: boolean		= false;
 
+	/** Maximum length of profile description. */
+	public readonly maxDescriptionLength: number	= 140;
+
 	/** @see UserPresence */
 	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
 

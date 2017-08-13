@@ -27,7 +27,7 @@
 						*ngIf='!editMode'
 					>
 						<div>
-							{{user.description | async}}
+							{{user.description | async | slice:0:maxDescriptionLength}}
 						</div>
 					</div>
 					<md-input-container class='description' *ngIf='editMode && user'>
@@ -35,6 +35,7 @@
 							mdInput
 							(blur)='isEditorFocused = false'
 							(focus)='isEditorFocused = true'
+							[maxlength]='maxDescriptionLength'
 							[ngModel]='user.description | async'
 							(ngModelChange)='descriptionDraft = $event'
 						/>
