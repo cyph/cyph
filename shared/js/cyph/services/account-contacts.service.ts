@@ -38,14 +38,6 @@ export class AccountContactsService {
 	;
 
 	/** @ignore */
-	private readonly contactRecordsReady: Promise<void>		= new Promise<void>(resolve => {
-		this.resolveContactRecordsReady	= resolve;
-	});
-
-	/** @ignore */
-	private resolveContactRecordsReady: () => void;
-
-	/** @ignore */
 	private userStatuses: Map<User, UserPresence>			= new Map<User, UserPresence>();
 
 	/** List of contacts for current user, sorted by status and then alphabetically by username. */
@@ -66,8 +58,6 @@ export class AccountContactsService {
 	private async getContactRecord (
 		{id, username}: {id?: string; username?: string}
 	) : Promise<IAccountContactRecord> {
-		await this.contactRecordsReady;
-
 		const contactRecord	=
 			id !== undefined ?
 				this.contactRecordMappings.id.get(id) :
@@ -77,7 +67,13 @@ export class AccountContactsService {
 		;
 
 		if (!contactRecord) {
-			throw new Error('Contact not found.');
+			if (this.initiated) {
+				throw new Error('Contact not found.');
+			}
+			else {
+				await util.sleep();
+				return this.getContactRecord({id, username});
+			}
 		}
 
 		return contactRecord;
@@ -146,8 +142,6 @@ export class AccountContactsService {
 				this.contactRecordMappings.id.set(contactRecord.id, contactRecord);
 				this.contactRecordMappings.username.set(contactRecord.username, contactRecord);
 			}
-
-			this.resolveContactRecordsReady();
 		});
 
 		this.contactUsernames.flatMap(async usernames => Promise.all(
