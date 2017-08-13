@@ -21,18 +21,23 @@
 }
 
 .initiating {
-	opacity: 0.5;
 	overflow-y: hidden;
+	pointer-events: none;
+
+	> div {
+		opacity: 0.5;
+	}
 }
 
 md-progress-spinner {
 	position: absolute;
-	top: 50%;
+	top: 50vh;
 	left: 50%;
+	z-index: 1;
 
 	@include transform(translate(-50%, -50%));
 }
 
-:host {
+:host > div {
 	position: relative;
 }
