@@ -48,10 +48,14 @@
 
 		@include transition(border 0.75s ease);
 
+		&.profile-init {
+			@include animation-name(jackInTheBox !important);
+		}
+
 		&.Online {
 			border-color: map-get($mat-green, 700) !important;
 
-			@include animation-name(pusle);
+			@include animation-name(pulse);
 		}
 
 		&.Away {

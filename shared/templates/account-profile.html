@@ -13,7 +13,8 @@
 				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch'>
 					<div fxLayoutAlign='center center'>
 						<img
-							class='avatar animated jackInTheBox _1'
+							class='avatar animated _1'
+							[class.profile-init]='initializing'
 							[ngClass]='userPresence[user.status | async]'
 							alt='Profile Picture'
 							[src]='user.avatar | async'
