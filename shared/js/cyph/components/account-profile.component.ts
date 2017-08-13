@@ -52,11 +52,6 @@ export class AccountProfileComponent implements OnInit {
 		}
 	}
 
-	/** Toggles profile edit state. */
-	public edit (bool: boolean) {
-		this.editMode	= bool;
-	}
-
 	/** Indicates whether this is the profile of the currently signed in user. */
 	public get isCurrentUser () : boolean {
 		return (
@@ -77,11 +72,13 @@ export class AccountProfileComponent implements OnInit {
 		}
 
 		this.accountService.interstitial	= true;
-		const profile		= await this.user.accountUserProfile.getValue();
-		profile.description	= this.descriptionDraft;
+		const profile						= await this.user.accountUserProfile.getValue();
+		profile.description					= this.descriptionDraft;
+
 		await this.user.accountUserProfile.setValue(profile);
+
 		this.accountService.interstitial	= false;
-		this.edit(false);
+		this.editMode						= false;
 	}
 
 	constructor (

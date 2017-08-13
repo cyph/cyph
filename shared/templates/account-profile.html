@@ -74,15 +74,11 @@
 </div>
 <button
 	md-fab
-	*ngIf='!editMode'
-	(click)='edit(true)'
+	cyphTranslate
+	[mdTooltip]='editMode ? "Save" : "Edit"'
+	mdTooltipPosition='above'
+	(click)='editMode ? saveUserDescription() : editMode = true'
 >
-	<md-icon >edit</md-icon>
-</button>
-<button
-	md-fab
-	*ngIf='editMode'
-	(click)='saveUserDescription()'
->
-	<md-icon>save</md-icon>
+	<md-icon *ngIf='editMode'>save</md-icon>
+	<md-icon *ngIf='!editMode'>edit</md-icon>
 </button>
