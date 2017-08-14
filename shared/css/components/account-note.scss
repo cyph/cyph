@@ -6,6 +6,10 @@ md-card.note {
 }
 
 md-card-title {
+	> div {
+		padding-top: 1em;
+	}
+
 	> div, input {
 		text-align: center;
 		font-weight: 600;

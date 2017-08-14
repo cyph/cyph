@@ -27,20 +27,18 @@
 	}
 
 	.username {
+		font-size: 24px;
 		opacity: 0.6;
 	}
 
 	.description {
+		font-size: 20px;
 		margin: 25px;
 		min-height: 100px;
 
 		input {
 			text-align: center;
 		}
-	}
-
-	.username, .description {
-		font-size: 24px;
 	}
 }
 

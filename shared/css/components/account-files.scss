@@ -1,13 +1,14 @@
 @import '../mixins';
 
 .file-upload {
-	height: auto;
+	height: 10em;
 	border: dashed white 1.5px;
 	cursor: pointer;
 
 	md-icon {
-		font-size: 42px;
-		margin: 65px;
+		@include icon-size(42px);
+
+		@include vertical-align;
 	}
 
 	::ng-deep {

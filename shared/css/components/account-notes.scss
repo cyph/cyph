@@ -1,14 +1,7 @@
 @import '../mixins';
 
-.note {
-	md-card-title {
-		font-weight: bold;
-		font-size: 20px;
-	}
-
-	md-card-subtitle {
-		@include word-wrap;
-	}
+.note md-card-subtitle {
+	@include word-wrap;
 }
 
 button.mat-fab {
