@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {ChatMessage} from '../../proto';
 import {IChatData, States} from '../chat';
@@ -54,7 +54,7 @@ export class AccountChatService extends ChatService {
 	}
 
 	constructor (
-		accountContactsService: AccountContactsService,
+		injector: Injector,
 		analyticsService: AnalyticsService,
 		dialogService: DialogService,
 		notificationService: NotificationService,
@@ -63,13 +63,16 @@ export class AccountChatService extends ChatService {
 		stringsService: StringsService,
 
 		/** @ignore */
+		private readonly accountContactsService: AccountContactsService,
+
+		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly accountSessionService: AccountSessionService
 	) {
 		super(
-			accountContactsService,
+			injector,
 			analyticsService,
 			dialogService,
 			notificationService,
