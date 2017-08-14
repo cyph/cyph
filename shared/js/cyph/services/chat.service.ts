@@ -117,15 +117,6 @@ export class ChatService {
 		}
 
 		await this.chat.messages.pushValue({
-			authorID:
-				(
-					author === this.sessionService.appUsername ||
-					author === this.sessionService.localUsername ||
-					author === this.sessionService.remoteUsername
-				) ?
-					undefined :
-					(() => { throw new Error('Not yet implemented.'); })()
-			,
 			authorType:
 				author === this.sessionService.appUsername ?
 					ChatMessage.AuthorTypes.App :
