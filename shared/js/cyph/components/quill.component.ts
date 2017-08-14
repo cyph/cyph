@@ -130,7 +130,8 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 			return;
 		}
 
-		this.quill	= new Quill(`#${this.containerID}`, {
+		/* Temporary workaround for https://github.com/DefinitelyTyped/DefinitelyTyped/issues/18946 */
+		this.quill	= <Quill.Quill> new (<any> Quill)(`#${this.containerID}`, {
 			modules: {toolbar: this.toolbar},
 			theme: 'snow'
 		});
