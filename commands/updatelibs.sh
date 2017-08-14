@@ -56,6 +56,7 @@ read -r -d '' modules <<- EOM
 	@types/markdown-it
 	@types/msgpack-lite
 	@types/node
+	@types/quill
 	@types/stacktrace-js
 	angular-smd@https://github.com/buu700/angular-smd-tmp
 	angular-ssr
