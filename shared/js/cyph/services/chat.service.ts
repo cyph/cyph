@@ -8,6 +8,7 @@ import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {util} from '../util';
+import {AccountContactsService} from './account-contacts.service';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
@@ -124,7 +125,8 @@ export class ChatService {
 				) ?
 					undefined :
 					await (async () =>
-						this.injector.get('AccountContactsService').getContactID(
+						/* tslint:disable-next-line:deprecation */
+						this.injector.get(AccountContactsService).getContactID(
 							await author.take(1).toPromise()
 						)
 					)().catch(

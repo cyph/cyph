@@ -80,7 +80,7 @@ export class AccountProfileComponent implements OnInit {
 		return this.editorFocus && this.editMode;
 	}
 
-	public set isEditorFocused (value : boolean) {
+	public set isEditorFocused (value: boolean) {
 		this.editorFocus	= value;
 	}
 

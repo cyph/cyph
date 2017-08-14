@@ -11,6 +11,8 @@ import * as $ from 'jquery';
 import {Observable} from 'rxjs';
 import {fadeInOut} from '../animations';
 import {ChatMessage, IChatData} from '../chat';
+import {AccountContactsService} from '../services/account-contacts.service';
+import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
@@ -90,11 +92,11 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 									this.sessionService.localUsername :
 									message.authorID === undefined ?
 										this.sessionService.remoteUsername :
-										(await this.injector.get(
-											'AccountUserLookupService'
-										).getUser(
+										/* tslint:disable-next-line:deprecation */
+										(await this.injector.get(AccountUserLookupService).getUser(
+											/* tslint:disable-next-line:deprecation */
 											await this.injector.get(
-												'AccountContactsService'
+												AccountContactsService
 											).getContactUsername(
 												message.authorID
 											)
