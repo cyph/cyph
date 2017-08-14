@@ -5,6 +5,9 @@
 		"baseUrl": "src",
 		"declaration": false,
 		"outDir": "./dist/out-tsc",
+		"paths": {
+			"supersphincs": ["js/externals/supersphincs"]
+		},
 		"typeRoots": [
 			"node_modules/@types"
 		]
