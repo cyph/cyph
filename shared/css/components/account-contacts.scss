@@ -16,8 +16,22 @@
 	}
 }
 
-.bounceInRight {
-	@include animation(bounceInRight 1s);
+.avatar {
+	&.Online {
+		@include animation-name(pulse);
+	}
+
+	&.Away {
+		@include animation-name(bounce);
+	}
+
+	&.Busy {
+		@include animation-name(pulse);
+	}
+
+	&.Offline {
+		@include animation-name(bounce);
+	}
 }
 
 .initiating {

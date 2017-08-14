@@ -7,7 +7,6 @@ import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
-import {util} from '../util';
 
 
 /**
@@ -28,9 +27,6 @@ export class AccountProfileComponent implements OnInit {
 	/** Profile edit mode. */
 	public editMode: boolean		= false;
 
-	/** Indicates whether this profile is initializing. */
-	public initializing: boolean	= true;
-
 	/** Maximum length of profile description. */
 	public readonly maxDescriptionLength: number	= 140;
 
@@ -45,8 +41,6 @@ export class AccountProfileComponent implements OnInit {
 
 	/** @ignore */
 	private async setUser (username?: string) : Promise<void> {
-		this.initializing	= true;
-
 		await this.accountAuthService.ready;
 
 		try {
@@ -56,9 +50,6 @@ export class AccountProfileComponent implements OnInit {
 			else if (this.accountDatabaseService.currentUser.value) {
 				this.user	= this.accountDatabaseService.currentUser.value.user;
 			}
-
-			await util.sleep(5000);
-			this.initializing	= false;
 		}
 		catch (_) {}
 

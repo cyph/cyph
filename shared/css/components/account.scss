@@ -48,32 +48,20 @@
 
 		@include transition(border 0.75s ease);
 
-		&.profile-init {
-			@include animation-name(jackInTheBox !important);
-		}
-
 		&.Online {
 			border-color: map-get($mat-green, 700) !important;
-
-			@include animation-name(pulse);
 		}
 
 		&.Away {
 			border-color: map-get($mat-amber, 500) !important;
-
-			@include animation-name(bounce);
 		}
 
 		&.Busy {
 			border-color: map-get($mat-red, 700) !important;
-
-			@include animation-name(pulse);
 		}
 
 		&.Offline {
 			border-color: map-get($mat-grey, 900) !important;
-
-			@include animation-name(bounce);
 		}
 	}
 
