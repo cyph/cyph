@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
+import {Router} from '@angular/router';
 import * as htmlToText from 'html-to-text';
 import * as msgpack from 'msgpack-lite';
 import {DeltaStatic} from 'quill';
@@ -194,7 +195,7 @@ export class AccountFilesService {
 	/** Removes a file. */
 	public async remove (
 		id: string|IAccountFileRecord|Observable<IAccountFileRecord>|Promise<IAccountFileRecord>,
-		confirm: boolean = true
+		confirmAndRedirect: boolean = true
 	) : Promise<void> {
 		if (typeof id !== 'string') {
 			if (id instanceof Observable) {
@@ -203,14 +204,27 @@ export class AccountFilesService {
 			id	= (await id).id;
 		}
 
-		if (
-			confirm &&
-			!(await this.dialogService.confirm({
-				content: `${this.stringsService.deleteMessage} ${(await this.getFile(id)).name}?`,
+		if (confirmAndRedirect) {
+			const file	= await this.getFile(id);
+
+			if (await this.dialogService.confirm({
+				content: `${this.stringsService.deleteMessage} ${file.name}?`,
 				title: this.stringsService.deleteConfirm
-			}))
-		) {
-			return;
+			})) {
+				this.routerService.navigate([
+					'account',
+					file.recordType === AccountFileRecord.RecordTypes.File ?
+						'files' :
+						file.recordType === AccountFileRecord.RecordTypes.Form ?
+							'forms' :
+							'notes'
+				]);
+
+				await util.sleep();
+			}
+			else {
+				return;
+			}
 		}
 
 		await Promise.all([
@@ -315,6 +329,9 @@ export class AccountFilesService {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly routerService: Router,
+
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 
