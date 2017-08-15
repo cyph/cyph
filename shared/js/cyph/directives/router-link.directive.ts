@@ -5,6 +5,7 @@ import {Directive, ElementRef, Renderer2} from '@angular/core';
  * Adds router-link CSS class to router links.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: '[routerLink]'
 })
 export class RouterLinkDirective {
