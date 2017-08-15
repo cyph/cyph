@@ -28,6 +28,15 @@
 					<button
 						md-icon-button
 						cyphTranslate
+						mdTooltip='Close Editor'
+						routerLink='.'
+						*ngIf='editable'
+					>
+						<md-icon>close</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
 						mdTooltip='Save Note'
 						(click)='saveNote()'
 						*ngIf='editable'
