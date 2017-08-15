@@ -302,6 +302,19 @@
 					}
 				},
 
+				"docs": {
+					"$doc": {
+						"$delta": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					}
+				},
+
 				"encryptionKeyPair": {
 					"hash": {
 						".validate": "newData.isString()"

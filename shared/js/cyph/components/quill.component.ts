@@ -10,6 +10,8 @@ import {
 } from '@angular/core';
 import * as Quill from 'quill';
 import {Observable, Subscription} from 'rxjs';
+import {IQuillDelta} from '../iquill-delta';
+import {IQuillRange} from '../iquill-range';
 import {LockFunction} from '../lock-function-type';
 import {EnvService} from '../services/env.service';
 import {util} from '../util';
@@ -24,6 +26,9 @@ import {util} from '../util';
 	templateUrl: '../../../templates/quill.html'
 })
 export class QuillComponent implements AfterViewInit, OnChanges {
+	/** @ignore */
+	private clientID: string	= util.uuid();
+
 	/** @ignore */
 	private deltasSubscription?: Subscription;
 
@@ -46,32 +51,32 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 	public readonly containerID: string	= `id-${util.uuid()}`;
 
 	/** Entire contents of the editor. */
-	@Input() public content?: Quill.DeltaStatic;
+	@Input() public content?: IQuillDelta;
 
 	/** Stream of deltas to apply. */
-	@Input() public deltas?: Observable<Quill.DeltaStatic>;
+	@Input() public deltas?: Observable<IQuillDelta>;
 
 	/** Emits on change. */
 	@Output() public onChange: EventEmitter<{
-		content: Quill.DeltaStatic;
-		delta: Quill.DeltaStatic;
-		oldContents: Quill.DeltaStatic;
+		content: IQuillDelta;
+		delta: IQuillDelta;
+		oldContents: IQuillDelta;
 	}>	=
 		new EventEmitter<{
-			content: Quill.DeltaStatic;
-			delta: Quill.DeltaStatic;
-			oldContents: Quill.DeltaStatic;
+			content: IQuillDelta;
+			delta: IQuillDelta;
+			oldContents: IQuillDelta;
 		}>()
 	;
 
 	/** Emits on selection change. */
 	@Output() public onSelectionChange: EventEmitter<{
-		oldRange: Quill.RangeStatic;
-		range: Quill.RangeStatic;
+		oldRange: IQuillRange;
+		range: IQuillRange;
 	}>	=
 		new EventEmitter<{
-			oldRange: Quill.RangeStatic;
-			range: Quill.RangeStatic;
+			oldRange: IQuillRange;
+			range: IQuillRange;
 		}>()
 	;
 
@@ -79,7 +84,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 	@Input() public readOnly: boolean;
 
 	/** Stream of selections to apply. */
-	@Input() public selections: Observable<Quill.RangeStatic>;
+	@Input() public selections: Observable<IQuillRange>;
 
 	/** Toolbar configuration. */
 	@Input() public toolbar: any	= [
@@ -95,7 +100,18 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 	];
 
 	/** @ignore */
-	private stripExternalSubresources (delta: Quill.DeltaStatic) : Quill.DeltaStatic {
+	private addClientID<T> (t: T) : T&{clientID: string} {
+		if (!t) {
+			return t;
+		}
+
+		const newT		= <any> t;
+		newT.clientID	= this.clientID;
+		return newT;
+	}
+
+	/** @ignore */
+	private stripExternalSubresources (delta: IQuillDelta) : IQuillDelta {
 		if (!delta.ops) {
 			return delta;
 		}
@@ -142,9 +158,9 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 			}
 
 			this.onChange.emit({
-				content: oldDelta.compose(delta),
-				delta,
-				oldContents: oldDelta
+				content: this.addClientID(oldDelta.compose(delta)),
+				delta: this.addClientID(delta),
+				oldContents: this.addClientID(oldDelta)
 			});
 		});
 
@@ -153,7 +169,10 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 				return;
 			}
 
-			this.onSelectionChange.emit({oldRange, range});
+			this.onSelectionChange.emit({
+				oldRange: this.addClientID(oldRange),
+				range: this.addClientID(range)
+			});
 		});
 	}
 
@@ -168,10 +187,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 		for (const k of Object.keys(changes)) {
 			switch (k) {
 				case 'content':
-					if (!this.content) {
-						this.quill.setText('');
-					}
-					else {
+					if (this.content && this.content.clientID !== this.clientID) {
 						this.quill.setContents(
 							this.stripExternalSubresources(this.content)
 						);
@@ -191,10 +207,11 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 						if (!this.quill) {
 							throw new Error('No Quill.');
 						}
-
-						this.quill.updateContents(
-							this.stripExternalSubresources(delta)
-						);
+						else if (delta.clientID !== this.clientID) {
+							this.quill.updateContents(
+								this.stripExternalSubresources(delta)
+							);
+						}
 					});
 					break;
 
@@ -220,15 +237,20 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 						this.selectionsSubscription.unsubscribe();
 					}
 
-					this.selectionsSubscription	= this.selections.subscribe(({index, length}) => {
+					if (!this.selections) {
+						break;
+					}
+
+					this.selectionsSubscription	= this.selections.subscribe(range => {
 						this.selectionLock(async () => {
 							await this.editablePromise;
 
 							if (!this.quill) {
 								throw new Error('No Quill.');
 							}
-
-							this.quill.setSelection(index, length);
+							else if (range.clientID !== this.clientID) {
+								this.quill.setSelection(range.index, range.length);
+							}
 						});
 					});
 			}

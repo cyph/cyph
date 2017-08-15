@@ -3,11 +3,12 @@ import {SafeUrl} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import * as htmlToText from 'html-to-text';
 import * as msgpack from 'msgpack-lite';
-import {DeltaStatic} from 'quill';
 import * as QuillDeltaToHtml from 'quill-delta-to-html';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {AccountFileRecord, Form, IAccountFileRecord, IForm} from '../../proto';
 import {SecurityModels} from '../account';
+import {IQuillDelta} from '../iquill-delta';
+import {IQuillRange} from '../iquill-range';
 import {BinaryProto, BlobProto, DataURIProto} from '../protos';
 import {util} from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -42,6 +43,7 @@ export class AccountFilesService {
 	 * @see files
 	 */
 	public readonly filteredFiles	= {
+		docs: this.filterFiles(AccountFileRecord.RecordTypes.Doc),
 		files: this.filterFiles(AccountFileRecord.RecordTypes.File),
 		forms: this.filterFiles(AccountFileRecord.RecordTypes.Form),
 		notes: this.filterFiles(AccountFileRecord.RecordTypes.Note)
@@ -51,12 +53,12 @@ export class AccountFilesService {
 	public initiated: boolean	= false;
 
 	/** @ignore */
-	private deltaToString (delta: DeltaStatic) : string {
+	private deltaToString (delta: IQuillDelta) : string {
 		return htmlToText.fromString(new QuillDeltaToHtml(delta.ops).convert());
 	}
 
 	/** @ignore */
-	private fileIsDelta (file: DeltaStatic|File|IForm) : boolean {
+	private fileIsDelta (file: IQuillDelta|File|IForm) : boolean {
 		const maybeDelta	= <any> file;
 		return typeof maybeDelta.chop === 'function' || maybeDelta.ops instanceof Array;
 	}
@@ -213,11 +215,13 @@ export class AccountFilesService {
 			})) {
 				this.routerService.navigate([
 					'account',
-					file.recordType === AccountFileRecord.RecordTypes.File ?
-						'files' :
-						file.recordType === AccountFileRecord.RecordTypes.Form ?
-							'forms' :
-							'notes'
+					file.recordType === AccountFileRecord.RecordTypes.Doc ?
+						'docs' :
+						file.recordType === AccountFileRecord.RecordTypes.File ?
+							'files' :
+							file.recordType === AccountFileRecord.RecordTypes.Form ?
+								'forms' :
+								'notes'
 				]);
 
 				await util.sleep();
@@ -228,13 +232,40 @@ export class AccountFilesService {
 		}
 
 		await Promise.all([
+			this.accountDatabaseService.removeItem(`docs/${id}`),
 			this.accountDatabaseService.removeItem(`files/${id}`),
 			this.accountDatabaseService.removeItem(`fileRecords/${id}`)
 		]);
 	}
 
 	/** Overwrites an existing note. */
-	public async updateNote (id: string, content: DeltaStatic, name?: string) : Promise<void> {
+	public async updateDoc (id: string, delta: IQuillDelta|IQuillRange) : Promise<void> {
+		await this.accountDatabaseService.pushItem(
+			`docs/${id}`,
+			BinaryProto,
+			msgpack.encode(delta)
+		);
+	}
+
+	/** Overwrites an existing note. */
+	public async updateMetadata (id: string, metadata: {
+		mediaType?: string;
+		name?: string;
+		size?: number;
+	}) : Promise<void> {
+		const original	= await this.getFile(id);
+		await this.accountDatabaseService.setItem(`fileRecords/${id}`, AccountFileRecord, {
+			id,
+			mediaType: metadata.mediaType === undefined ? original.mediaType : metadata.mediaType,
+			name: metadata.name === undefined ? original.name : metadata.name,
+			recordType: original.recordType,
+			size: metadata.size === undefined ? original.size : metadata.size,
+			timestamp: await util.timestamp()
+		});
+	}
+
+	/** Overwrites an existing note. */
+	public async updateNote (id: string, content: IQuillDelta, name?: string) : Promise<void> {
 		const file		= await this.getFile(id, AccountFileRecord.RecordTypes.Note);
 		file.size		= this.potassiumService.fromString(this.deltaToString(content)).length;
 		file.timestamp	= await util.timestamp();
@@ -254,7 +285,7 @@ export class AccountFilesService {
 	}
 
 	/** Uploads new file. */
-	public upload (name: string, file: DeltaStatic|File|IForm) : {
+	public upload (name: string, file: IQuillDelta|IQuillDelta[]|File|IForm) : {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
@@ -263,14 +294,37 @@ export class AccountFilesService {
 
 		const {progress, result}	= file instanceof Blob ?
 			this.accountDatabaseService.uploadItem(url, BlobProto, file) :
-			this.fileIsDelta(file) ?
-				this.accountDatabaseService.uploadItem(url, BinaryProto, msgpack.encode(file)) :
-				this.accountDatabaseService.uploadItem(
-					url,
-					Form,
-					file,
-					SecurityModels.privateSigned
-				)
+			file instanceof Array ?
+				(() => {
+					const docProgress	= new BehaviorSubject(0);
+
+					return {progress: docProgress, result: (async () => {
+						for (let i = 0 ; i < file.length ; ++i) {
+							docProgress.next(Math.round(i / file.length * 100));
+
+							await this.accountDatabaseService.pushItem(
+								`docs/${id}`,
+								BinaryProto,
+								msgpack.encode(file[i])
+							);
+						}
+
+						docProgress.next(100);
+						return {hash: '', url: ''};
+					})()};
+				})() :
+				this.fileIsDelta(file) ?
+					this.accountDatabaseService.uploadItem(
+						url,
+						BinaryProto,
+						msgpack.encode(file)
+					) :
+					this.accountDatabaseService.uploadItem(
+						url,
+						Form,
+						file,
+						SecurityModels.privateSigned
+					)
 		;
 
 		return {
@@ -283,22 +337,26 @@ export class AccountFilesService {
 						id,
 						mediaType: file instanceof Blob ?
 							file.type :
-							this.fileIsDelta(file) ?
-								'cyph/note' :
-								'cyph/form'
+							file instanceof Array ?
+								'cyph/doc' :
+								this.fileIsDelta(file) ?
+									'cyph/note' :
+									'cyph/form'
 						,
 						name,
 						recordType: file instanceof Blob ?
 							AccountFileRecord.RecordTypes.File :
-							this.fileIsDelta(file) ?
-								AccountFileRecord.RecordTypes.Note :
-								AccountFileRecord.RecordTypes.Form
+							file instanceof Array ?
+								AccountFileRecord.RecordTypes.Doc :
+								this.fileIsDelta(file) ?
+									AccountFileRecord.RecordTypes.Note :
+									AccountFileRecord.RecordTypes.Form
 						,
 						size: file instanceof Blob ?
 							file.size :
-							this.fileIsDelta(file) ?
+							!(file instanceof Array) && this.fileIsDelta(file) ?
 								this.potassiumService.fromString(
-									this.deltaToString(<DeltaStatic> file)
+									this.deltaToString(<IQuillDelta> file)
 								).length :
 								NaN
 						,
@@ -308,6 +366,23 @@ export class AccountFilesService {
 
 				return id;
 			})
+		};
+	}
+
+	/** Watches doc. */
+	public watchDoc (id: string) : {
+		deltas: Observable<IQuillDelta>;
+		selections: Observable<IQuillRange>;
+	} {
+		const doc	=
+			this.accountDatabaseService.watchListPushes(`docs/${id}`, BinaryProto).map(o =>
+				o.value.length > 0 ? msgpack.decode(o.value) : undefined
+			)
+		;
+
+		return {
+			deltas: doc.filter(o => o && typeof o.index !== 'number'),
+			selections: doc.filter(o => o && typeof o.index === 'number')
 		};
 	}
 
@@ -322,7 +397,7 @@ export class AccountFilesService {
 	}
 
 	/** Watches note. */
-	public watchNote (id: string) : Observable<DeltaStatic> {
+	public watchNote (id: string) : Observable<IQuillDelta> {
 		return this.accountDatabaseService.watch(`files/${id}`, BinaryProto).map(o =>
 			o.value.length > 0 ? msgpack.decode(o.value) : {ops: []}
 		);

@@ -27,16 +27,26 @@ export const account: Route	= {
 		{path: 'chat/:username', component: AccountChatComponent},
 		{path: 'contacts', component: AccountContactsComponent},
 		{path: 'contacts/:username', component: AccountContactsComponent},
+		{path: 'docs', component: AccountNotesComponent, data: {realTime: true}},
+		{
+			path: 'docs/:id',
+			component: AccountNoteComponent,
+			data: {realTime: true},
+			children: [
+				{path: 'edit', component: AccountNoteComponent}
+			]
+		},
 		{path: 'home', redirectTo: ''},
 		{path: 'files', component: AccountFilesComponent},
 		{path: 'forms', component: AccountFormsComponent},
 		{path: 'forms/:id', component: AccountFormComponent},
 		{path: 'login', component: AccountLoginComponent},
 		{path: 'logout', component: AccountLogoutComponent},
-		{path: 'notes', component: AccountNotesComponent},
+		{path: 'notes', component: AccountNotesComponent, data: {realTime: false}},
 		{
 			path: 'notes/:id',
 			component: AccountNoteComponent,
+			data: {realTime: false},
 			children: [
 				{path: 'edit', component: AccountNoteComponent}
 			]

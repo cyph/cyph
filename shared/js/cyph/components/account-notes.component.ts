@@ -1,4 +1,7 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {Observable} from 'rxjs';
+import {IAccountFileRecord} from '../../proto';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
@@ -15,8 +18,29 @@ import {UtilService} from '../services/util.service';
 	styleUrls: ['../../../css/components/account-notes.scss'],
 	templateUrl: '../../../templates/account-notes.html'
 })
-export class AccountNotesComponent {
+export class AccountNotesComponent implements OnInit {
+	/** Indicates whether or not the real-time doc UI is enabled. */
+	public realTime: boolean	= false;
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.activatedRouteService.data.subscribe(o => {
+			this.realTime	= o.realTime;
+		});
+	}
+
+	/** List of notes to display. */
+	public get notes () : Observable<IAccountFileRecord[]> {
+		return this.realTime ?
+			this.accountFilesService.filteredFiles.docs :
+			this.accountFilesService.filteredFiles.notes
+		;
+	}
+
 	constructor (
+		/** @ignore */
+		private readonly activatedRouteService: ActivatedRoute,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 

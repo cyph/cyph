@@ -19,7 +19,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Edit Note'
+						mdTooltip='Edit'
 						routerLink='edit'
 						*ngIf='!editable'
 					>
@@ -37,16 +37,25 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Save Note'
+						mdTooltip='Save'
 						(click)='saveNote()'
-						*ngIf='editable'
+						*ngIf='editable && !realTime'
 					>
 						<md-icon>save</md-icon>
 					</button>
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Delete Note'
+						mdTooltip='Save Title'
+						(click)='realTimeTitleUpdate(noteData.name)'
+						*ngIf='editable && realTime'
+					>
+						<md-icon>save</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Delete'
 						*ngIf='!newNote'
 						(click)='accountFilesService.remove(note.metadata)'
 					>
@@ -60,8 +69,11 @@
 						<md-card-content>
 							<cyph-quill
 								[content]='note?.content | async'
+								[deltas]='note?.deltas'
+								[selections]='note?.selections'
 								[readOnly]='!editable'
-								(onChange)='noteData.content = $event.content'
+								(onChange)='onChange($event)'
+								(onSelectionChange)='onSelectionChange($event)'
 							></cyph-quill>
 						</md-card-content>
 					</md-card>

@@ -28,6 +28,7 @@ export class AccountComponent implements OnInit {
 		return this.accountDatabaseService.currentUser.value !== undefined && [
 			'chat',
 			'contacts',
+			'docs',
 			'files',
 			'forms',
 			'notes',

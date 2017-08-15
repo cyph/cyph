@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {DeltaStatic} from 'quill';
 import {Observable, Subscription} from 'rxjs';
 import {IAccountFileRecord} from '../../proto';
+import {IQuillDelta} from '../iquill-delta';
+import {IQuillRange} from '../iquill-range';
 import {LockFunction} from '../lock-function-type';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
@@ -35,18 +36,29 @@ export class AccountNoteComponent implements OnInit {
 
 	/** Currently active note. */
 	public note?: {
-		content: Observable<DeltaStatic>;
+		content?: Observable<IQuillDelta>;
+		deltas?: Observable<IQuillDelta>;
 		metadata: Observable<IAccountFileRecord>;
+		selections?: Observable<IQuillRange>;
 	};
 
 	/** Most recent note data. */
 	public readonly noteData: {
-		content?: DeltaStatic;
+		content?: IQuillDelta;
 		id?: string;
 		name: string;
 	}	= {
 		name: ''
 	};
+
+	/** Indicates whether or not the real-time doc UI is enabled. */
+	public realTime: boolean	= false;
+
+	/** @ignore */
+	private async initDoc () : Promise<void> {
+		await this.setNote(await this.accountFilesService.upload(this.noteData.name, []).result);
+		this.routerService.navigate(['account', 'docs', this.noteData.id, 'edit']);
+	}
 
 	/** @ignore */
 	private async setNote (id: string) : Promise<void> {
@@ -56,10 +68,16 @@ export class AccountNoteComponent implements OnInit {
 		this.noteData.id	= metadataValue.id;
 		this.noteData.name	= metadataValue.name;
 
-		this.note			= {
-			content: this.accountFilesService.watchNote(metadataValue.id),
-			metadata
-		};
+		this.note			= {metadata};
+
+		if (this.realTime) {
+			const doc			= this.accountFilesService.watchDoc(metadataValue.id);
+			this.note.deltas	= doc.deltas;
+			this.note.selections	= doc.selections;
+		}
+		else {
+			this.note.content	= this.accountFilesService.watchNote(metadataValue.id);
+		}
 
 		if (this.nameSubscription) {
 			this.nameSubscription.unsubscribe();
@@ -91,6 +109,14 @@ export class AccountNoteComponent implements OnInit {
 			}
 		});
 
+		this.activatedRouteService.data.subscribe(o => {
+			this.realTime	= o.realTime;
+
+			if (this.realTime && this.newNote) {
+				this.initDoc();
+			}
+		});
+
 		this.activatedRouteService.params.subscribe(async o => {
 			try {
 				const id: string|undefined	= o.id;
@@ -104,7 +130,11 @@ export class AccountNoteComponent implements OnInit {
 					this.note				= undefined;
 					this.noteData.content	= undefined;
 					this.noteData.id		= undefined;
-					this.noteData.name		= '';
+					this.noteData.name		= 'Untitled';
+
+					if (this.realTime) {
+						this.initDoc();
+					}
 				}
 				else {
 					this.newNote	= false;
@@ -118,6 +148,59 @@ export class AccountNoteComponent implements OnInit {
 		});
 	}
 
+	/** Note change handler. */
+	public async onChange (change: {
+		content: IQuillDelta;
+		delta: IQuillDelta;
+		oldContents: IQuillDelta;
+	}) : Promise<void> {
+		if (!this.realTime) {
+			this.noteData.content	= change.content;
+			return;
+		}
+
+		return this.saveLock(async () => {
+			if (!this.noteData.id) {
+				return;
+			}
+
+			return this.accountFilesService.updateDoc(this.noteData.id, change.delta);
+		});
+	}
+
+	/** Note selection change handler. */
+	public async onSelectionChange (change: {
+		oldRange: IQuillRange;
+		range: IQuillRange;
+	}) : Promise<void> {
+		if (!this.realTime) {
+			return;
+		}
+
+		return this.saveLock(async () => {
+			if (!this.noteData.id) {
+				return;
+			}
+
+			this.accountFilesService.updateDoc(this.noteData.id, change.range);
+		});
+	}
+
+	/** Updates real-time doc title. */
+	public realTimeTitleUpdate (name: string) : void {
+		if (!this.realTime) {
+			return;
+		}
+
+		this.saveLock(async () => {
+			if (!this.noteData.id || !name) {
+				return;
+			}
+
+			this.accountFilesService.updateMetadata(this.noteData.id, {name});
+		});
+	}
+
 	/** Saves note. */
 	public saveNote () : void {
 		this.saveLock(async () => {
@@ -126,7 +209,7 @@ export class AccountNoteComponent implements OnInit {
 			}
 
 			if (!this.noteData.content) {
-				if (this.note) {
+				if (this.note && this.note.content) {
 					this.noteData.content	= await this.note.content.take(1).toPromise();
 				}
 				else {

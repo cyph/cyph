@@ -75,6 +75,10 @@ service firebase.storage {
 			// 	match /unconfirmedMessages {}
 			// }
 
+			// match /docs/{doc} {
+			// 	match /{delta} {}
+			// }
+
 			// match /encryptionKeyPair {}
 
 			// match /fileRecords/{fileRecord} {}

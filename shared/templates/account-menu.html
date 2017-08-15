@@ -136,7 +136,7 @@
 			(click)='click()'
 			*ngIf='accountService.menuExpanded'
 		>
-			<md-icon>library_books</md-icon>
+			<md-icon>create</md-icon>
 			<span>Notes</span>
 		</button>
 		<button
@@ -145,6 +145,30 @@
 			mdTooltip='Notes'
 			mdTooltipPosition='right'
 			routerLink='/account/notes'
+			(click)='click()'
+			*ngIf='!accountService.menuExpanded'
+		>
+			<md-icon>create</md-icon>
+		</button>
+
+		<button
+			md-button
+			cyphTranslate
+			mdTooltip='Docs'
+			mdTooltipPosition='right'
+			routerLink='/account/docs'
+			(click)='click()'
+			*ngIf='accountService.menuExpanded'
+		>
+			<md-icon>library_books</md-icon>
+			<span>Docs</span>
+		</button>
+		<button
+			md-icon-button
+			cyphTranslate
+			mdTooltip='Docs'
+			mdTooltipPosition='right'
+			routerLink='/account/docs'
 			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
 		>
