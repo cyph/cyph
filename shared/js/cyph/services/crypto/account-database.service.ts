@@ -665,6 +665,8 @@ export class AccountDatabaseService {
 						securityModel,
 						data.value,
 						anonymous
+					).catch(
+						() => proto.create()
 					)
 				}));
 			}).flatMap(
@@ -697,6 +699,8 @@ export class AccountDatabaseService {
 							securityModel,
 							data.value,
 							anonymous
+						).catch(
+							() => proto.create()
 						)
 					})))
 				);
