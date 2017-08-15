@@ -187,10 +187,8 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 		for (const k of Object.keys(changes)) {
 			switch (k) {
 				case 'content':
-					if (this.content && this.content.clientID !== this.clientID) {
-						this.quill.setContents(
-							this.stripExternalSubresources(this.content)
-						);
+					if (this.content) {
+						this.quill.setContents(this.stripExternalSubresources(this.content));
 					}
 					break;
 
@@ -208,9 +206,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 							throw new Error('No Quill.');
 						}
 						else if (delta.clientID !== this.clientID) {
-							this.quill.updateContents(
-								this.stripExternalSubresources(delta)
-							);
+							this.quill.updateContents(this.stripExternalSubresources(delta));
 						}
 					});
 					break;

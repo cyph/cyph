@@ -11,6 +11,7 @@
 							mdInput
 							cyphTranslate
 							[(ngModel)]='noteData.name'
+							(blur)='realTimeTitleUpdate(noteData.name)'
 							required
 						/>
 					</md-input-container>
@@ -29,7 +30,7 @@
 						md-icon-button
 						cyphTranslate
 						mdTooltip='Close Editor'
-						routerLink='.'
+						[routerLink]='newNote ? ".." : "."'
 						*ngIf='editable'
 					>
 						<md-icon>close</md-icon>
@@ -40,15 +41,6 @@
 						mdTooltip='Save'
 						(click)='saveNote()'
 						*ngIf='editable && !realTime'
-					>
-						<md-icon>save</md-icon>
-					</button>
-					<button
-						md-icon-button
-						cyphTranslate
-						mdTooltip='Save Title'
-						(click)='realTimeTitleUpdate(noteData.name)'
-						*ngIf='editable && realTime'
 					>
 						<md-icon>save</md-icon>
 					</button>

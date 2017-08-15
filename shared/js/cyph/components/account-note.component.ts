@@ -71,8 +71,8 @@ export class AccountNoteComponent implements OnInit {
 		this.note			= {metadata};
 
 		if (this.realTime) {
-			const doc			= this.accountFilesService.watchDoc(metadataValue.id);
-			this.note.deltas	= doc.deltas;
+			const doc				= this.accountFilesService.watchDoc(metadataValue.id);
+			this.note.deltas		= doc.deltas;
 			this.note.selections	= doc.selections;
 		}
 		else {
@@ -209,12 +209,10 @@ export class AccountNoteComponent implements OnInit {
 			}
 
 			if (!this.noteData.content) {
-				if (this.note && this.note.content) {
-					this.noteData.content	= await this.note.content.take(1).toPromise();
-				}
-				else {
-					return;
-				}
+				this.noteData.content	= this.note && this.note.content ?
+					await this.note.content.take(1).toPromise() :
+					<IQuillDelta> (<any> {clientID: '', ops: []})
+				;
 			}
 
 			this.accountService.interstitial	= true;
@@ -241,7 +239,7 @@ export class AccountNoteComponent implements OnInit {
 
 			if (this.noteData.id) {
 				this.routerService.navigate(['account', 'notes', this.noteData.id]);
-				await util.sleep(1500);
+				await util.sleep();
 				this.accountService.interstitial	= false;
 				this.dialogService.toast(this.stringsService.noteSaved, 2500);
 			}
