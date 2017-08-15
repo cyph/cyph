@@ -91,6 +91,10 @@
 		"justification": "Dev dependency"
 	},
 	{
+		"path": "scandirectory",
+		"justification": "Dev dependency"
+	},
+	{
 		"path": "selenium-webdriver",
 		"justification": "Dev dependency"
 	},
