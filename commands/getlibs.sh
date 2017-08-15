@@ -237,6 +237,8 @@ wget https://raw.githubusercontent.com/dcodeIO/protobuf.js/952c7d1b478cc7c6de824
 ./.bin/pbjs --help &> /dev/null
 ./.bin/pbts --help &> /dev/null
 
+rm grpc/node_modules/protobufjs/src/bower.json
+
 cd firebase
 for m in $(ls *-node.js | sed 's|-node\.js$||') ; do
 	mv ${m}-node.js ${m}.js

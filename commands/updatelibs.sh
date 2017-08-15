@@ -51,11 +51,13 @@ read -r -d '' modules <<- EOM
 	@types/html-to-text
 	@types/jasmine
 	@types/jquery@^2
+	@types/jspdf
 	@types/lodash
 	@types/long
 	@types/markdown-it
 	@types/msgpack-lite
 	@types/node
+	@types/pdfkit
 	@types/quill
 	@types/stacktrace-js
 	angular-smd@https://github.com/buu700/angular-smd-tmp
@@ -111,6 +113,7 @@ read -r -d '' modules <<- EOM
 	jasmine-spec-reporter
 	jquery
 	jquery.appear@https://github.com/morr/jquery.appear
+	jspdf
 	karma
 	karma-chrome-launcher
 	karma-cli
@@ -143,12 +146,14 @@ read -r -d '' modules <<- EOM
 	nativescript-dev-typescript
 	nativescript-dev-webpack
 	nativescript-theme-core
+	ng2-pdf-viewer
 	ng2-truncate
 	node-fetch
 	node-sass
 	notify-cli
 	ntru
 	od-virtualscroll
+	pdfkit
 	parchment
 	prepack
 	prepack-webpack-plugin
