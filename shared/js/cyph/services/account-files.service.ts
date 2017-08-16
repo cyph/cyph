@@ -52,6 +52,9 @@ export class AccountFilesService {
 	/** Indicates whether the first load has completed. */
 	public initiated: boolean	= false;
 
+	/** Indicates whether spinner should be displayed. */
+	public showSpinner: boolean	= true;
+
 	/** @ignore */
 	private deltaToString (delta: IQuillDelta) : string {
 		return htmlToText.fromString(new QuillDeltaToHtml(delta.ops).convert());
@@ -419,8 +422,10 @@ export class AccountFilesService {
 		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
-		this.filesList.take(2).toPromise().then(() => {
-			this.initiated	= true;
+		this.filesList.filter(o => o.length > 0).take(1).toPromise().then(async x => {
+			await util.sleep(x.length);
+			this.initiated		= true;
+			this.showSpinner	= false;
 		});
 	}
 }
