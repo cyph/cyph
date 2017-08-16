@@ -422,8 +422,7 @@ export class AccountFilesService {
 		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
-		this.filesList.filter(o => o.length > 0).take(1).toPromise().then(async x => {
-			await util.sleep(x.length);
+		this.filesList.filter(o => o.length > 0).take(1).toPromise().then(() => {
 			this.initiated		= true;
 			this.showSpinner	= false;
 		});
