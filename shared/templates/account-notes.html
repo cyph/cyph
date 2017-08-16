@@ -2,6 +2,10 @@
 	<div fxFlex='90' fxFlex.gt-sm='65' fxFlex.gt-md='40' fxLayout='column' fxLayoutGap='16px'>
 		<h1 class='header' *ngIf='!realTime'>Notes</h1>
 		<h1 class='header' *ngIf='realTime'>Docs</h1>
+		<md-progress-spinner
+			mode='indeterminate'
+			*ngIf='accountFilesService.showSpinner'
+		></md-progress-spinner>
 		<md-card
 			class='note animated'
 			*ngFor='let note of notes | async; let i = index'
