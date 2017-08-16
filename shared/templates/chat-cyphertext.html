@@ -1,5 +1,6 @@
 <div class='chat-cyphertext mat-app-background' *ngIf='cyphertextService.isEnabled'>
 	<cyph-chat-cyphertext-list
+		[accounts]='accounts'
 		[messages]='cyphertextService.messages'
 	></cyph-chat-cyphertext-list>
 	<button

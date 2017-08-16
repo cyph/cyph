@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
 import {CyphertextService} from '../services/cyphertext.service';
 import {EnvService} from '../services/env.service';
@@ -13,6 +13,9 @@ import {EnvService} from '../services/env.service';
 	templateUrl: '../../../templates/chat-cyphertext.html'
 })
 export class ChatCyphertextComponent implements OnInit {
+	/** Indicates whether this is the accounts UI. */
+	@Input() public accounts: boolean	= false;
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		if (!this.envService.isWeb) {

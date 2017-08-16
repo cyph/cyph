@@ -14,6 +14,9 @@ import {ScrollService} from '../services/scroll.service';
 	templateUrl: '../../../templates/chat-message.html'
 })
 export class ChatMessageComponent implements OnInit {
+	/** Indicates whether this is the accounts UI. */
+	@Input() public accounts: boolean	= false;
+
 	/** @see ChatMessage.AuthorTypes */
 	public readonly authorTypes: typeof ChatMessage.AuthorTypes	= ChatMessage.AuthorTypes;
 

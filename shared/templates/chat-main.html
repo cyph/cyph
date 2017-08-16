@@ -210,6 +210,7 @@
 
 	<cyph-chat-message-box
 		class='video-call-message-box'
+		[accounts]='accounts'
 		*ngIf='p2pService.isActive'
 	></cyph-chat-message-box>
 
@@ -254,6 +255,7 @@
 	<cyph-chat-message-list
 		fxFlex
 		fxFlexFill
+		[accounts]='accounts'
 		[chat]='chatService.chat'
 		[messageCountInTitle]='messageCountInTitle'
 		[mobile]='envService.isMobile || p2pService.isActive'

@@ -22,6 +22,9 @@ import {UtilService} from '../services/util.service';
 	templateUrl: '../../../templates/chat-main.html'
 })
 export class ChatMainComponent implements AfterViewInit {
+	/** Indicates whether this is the accounts UI. */
+	@Input() public accounts: boolean	= false;
+
 	/** Indicates whether projected disconnection message should be hidden. */
 	@Input() public hideDisconnectMessage: boolean;
 

@@ -39,6 +39,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>;
 	}>();
 
+	/** Indicates whether this is the accounts UI. */
+	@Input() public accounts: boolean	= false;
+
 	/** @see IChatData */
 	@Input() public chat: IChatData;
 
