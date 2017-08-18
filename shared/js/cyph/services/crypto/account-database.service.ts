@@ -400,7 +400,7 @@ export class AccountDatabaseService {
 	) : Promise<T[]> {
 		url	= await this.processURL(url);
 		return Promise.all((await this.getListKeys(url)).map(async k =>
-			this.getItem(k, proto, securityModel, anonymous)
+			this.getItem(`${url}/${k}`, proto, securityModel, anonymous)
 		));
 	}
 
