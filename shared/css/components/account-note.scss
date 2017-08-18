@@ -3,6 +3,10 @@
 md-card.note {
 	margin: 2%;
 	overflow: -webkit-paged-x;
+
+	md-card:not(.editable) {
+		box-shadow: none;
+	}
 }
 
 md-card-title {
@@ -22,8 +26,4 @@ md-card-header {
 	top: 14px;
 	position: absolute;
 	right: 25px;
-}
-
-md-card.no-shadow {
-	box-shadow: none;
 }

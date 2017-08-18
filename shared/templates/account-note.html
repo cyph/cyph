@@ -57,7 +57,7 @@
 			</div>
 			<md-card-content fxFlex fxLayout='column'>
 				<div [class.cyph-light-theme]='editable'>
-					<md-card [class.no-shadow]='!editable'>
+					<md-card [class.editable]='editable'>
 						<md-card-content>
 							<cyph-quill
 								[content]='note?.content | async'
