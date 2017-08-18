@@ -71,7 +71,7 @@ export class AccountNoteComponent implements OnInit {
 		this.note			= {metadata};
 
 		if (this.realTime) {
-			const doc				= this.accountFilesService.watchDoc(metadataValue.id);
+			const doc				= await this.accountFilesService.watchDoc(metadataValue.id);
 			this.note.deltas		= doc.deltas;
 			this.note.selections	= doc.selections;
 		}
@@ -133,7 +133,7 @@ export class AccountNoteComponent implements OnInit {
 					this.noteData.name		= 'Untitled';
 
 					if (this.realTime) {
-						this.initDoc();
+						await this.initDoc();
 					}
 				}
 				else {

@@ -3,6 +3,8 @@ import {SafeUrl} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import * as htmlToText from 'html-to-text';
 import * as msgpack from 'msgpack-lite';
+import {DeltaOperation, DeltaStatic} from 'quill';
+import * as Delta from 'quill-delta';
 import * as QuillDeltaToHtml from 'quill-delta-to-html';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {AccountFileRecord, Form, IAccountFileRecord, IForm} from '../../proto';
@@ -373,18 +375,31 @@ export class AccountFilesService {
 	}
 
 	/** Watches doc. */
-	public watchDoc (id: string) : {
+	public async watchDoc (id: string) : Promise<{
 		deltas: Observable<IQuillDelta>;
 		selections: Observable<IQuillRange>;
-	} {
-		const doc	=
+	}> {
+		const length	= (await this.accountDatabaseService.getListKeys(`docs/${id}`)).length;
+
+		const doc		=
 			this.accountDatabaseService.watchListPushes(`docs/${id}`, BinaryProto).map(o =>
 				o.value.length > 0 ? msgpack.decode(o.value) : undefined
 			)
 		;
 
 		return {
-			deltas: doc.filter(o => o && typeof o.index !== 'number'),
+			deltas: Observable.of({
+				clientID: '',
+				ops: (await doc.take(length).toArray().first().toPromise() || []).
+					filter(o => o && typeof o.index !== 'number').
+					map<DeltaOperation[]>(o => o.ops || []).
+					reduce<DeltaStatic>(
+						(delta, ops) => delta.compose(new Delta(ops)),
+						new Delta()
+					).ops || []
+			}).concat(
+				doc.filter(o => o && typeof o.index !== 'number')
+			),
 			selections: doc.filter(o => o && typeof o.index === 'number')
 		};
 	}

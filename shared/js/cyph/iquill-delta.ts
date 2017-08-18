@@ -1,7 +1,10 @@
-import {DeltaStatic} from 'quill';
+import {DeltaOperation} from 'quill';
 
 
-export interface IQuillDelta extends DeltaStatic {
+export interface IQuillDelta {
 	/** The originating client's unique ID. */
 	clientID: string;
+
+	/* @see DeltaStatic.ops */
+	ops?: DeltaOperation[];
 }

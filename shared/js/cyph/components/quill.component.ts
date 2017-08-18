@@ -9,6 +9,7 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import * as Quill from 'quill';
+import * as Delta from 'quill-delta';
 import {Observable, Subscription} from 'rxjs';
 import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
@@ -188,7 +189,9 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 			switch (k) {
 				case 'content':
 					if (this.content) {
-						this.quill.setContents(this.stripExternalSubresources(this.content));
+						this.quill.setContents(
+							new Delta(this.stripExternalSubresources(this.content).ops)
+						);
 					}
 					break;
 
@@ -206,7 +209,9 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 							throw new Error('No Quill.');
 						}
 						else if (delta.clientID !== this.clientID) {
-							this.quill.updateContents(this.stripExternalSubresources(delta));
+							this.quill.updateContents(
+								new Delta(this.stripExternalSubresources(delta).ops)
+							);
 						}
 					});
 					break;
