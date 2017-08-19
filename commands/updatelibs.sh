@@ -82,7 +82,7 @@ read -r -d '' modules <<- EOM
 	css-loader
 	d3
 	datauri
-	dompurify
+	dompurify@0.9.0
 	dragula
 	dropzone
 	extract-text-webpack-plugin
