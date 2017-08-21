@@ -19,6 +19,13 @@
 				</md-card-title>
 				<md-card-subtitle *ngIf='!realTime'>
 					<div>{{accountFilesService.noteSnippet(note.id)}}</div>
+					<div *ngIf='
+						accountDatabaseService.currentUser.value &&
+						accountDatabaseService.currentUser.value.user.username !== note.owner
+					'>
+						<span cyphTranslate>Owner:</span>
+						<a [routerLink]='"/account/profile/" + note.owner'>{{note.owner}}</a>
+					</div>
 				</md-card-subtitle>
 				<div fxFlex fxLayoutAlign='end center'>
 					<button

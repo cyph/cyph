@@ -22,8 +22,21 @@
 					{{file.name}}
 				</md-card-title>
 				<md-card-subtitle>
-					<div>File type: {{file.mediaType}}</div>
-					<div>File size: {{utilService.readableByteLength(file.size)}}</div>
+					<div>
+						<span cyphTranslate>Type:</span>
+						<span>{{file.mediaType}}</span>
+					</div>
+					<div>
+						<span cyphTranslate>Size:</span>
+						<span>{{utilService.readableByteLength(file.size)}}</span>
+					</div>
+					<div *ngIf='
+						accountDatabaseService.currentUser.value &&
+						accountDatabaseService.currentUser.value.user.username !== file.owner
+					'>
+						<span cyphTranslate>Owner:</span>
+						<a [routerLink]='"/account/profile/" + file.owner'>{{file.owner}}</a>
+					</div>
 				</md-card-subtitle>
 				<div fxFlex fxLayoutAlign='end center'>
 					<button

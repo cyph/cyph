@@ -17,6 +17,15 @@
 				<md-card-title>
 					{{form.name}}
 				</md-card-title>
+				<md-card-subtitle>
+					<div *ngIf='
+						accountDatabaseService.currentUser.value &&
+						accountDatabaseService.currentUser.value.user.username !== form.owner
+					'>
+						<span cyphTranslate>Owner:</span>
+						<a [routerLink]='"/account/profile/" + form.owner'>{{form.owner}}</a>
+					</div>
+				</md-card-subtitle>
 				<div fxFlex fxLayoutAlign='end center'>
 					<button
 						md-icon-button
