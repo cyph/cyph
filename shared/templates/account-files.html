@@ -8,7 +8,7 @@
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<md-card
 			class='file animated _{{i}}'
-			*ngFor='let file of accountFilesService.filteredFiles.files | async; let i = index'
+			*ngFor='let file of accountFilesService.filesListFiltered.files | async; let i = index'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			routerLink='/account/files'
@@ -31,11 +31,15 @@
 						<span>{{utilService.readableByteLength(file.size)}}</span>
 					</div>
 					<div *ngIf='
+						!!file.owner &&
 						accountDatabaseService.currentUser.value &&
 						accountDatabaseService.currentUser.value.user.username !== file.owner
 					'>
 						<span cyphTranslate>Owner:</span>
 						<a [routerLink]='"/account/profile/" + file.owner'>{{file.owner}}</a>
+					</div>
+					<div cyphTranslate *ngIf='!file.owner'>
+						Received from anonymous
 					</div>
 				</md-card-subtitle>
 				<div fxFlex fxLayoutAlign='end center'>
@@ -63,11 +67,74 @@
 			class='file-upload'
 			fxLayoutAlign='center'
 			fxLayout='row'
+			mdTooltip='Upload File'
+			mdTooltipPosition='above'
 			cyphDropZone
+			cyphTranslate
 			(fileDrop)='accountFilesService.upload($event.name, $event)'
 		>
 			<md-icon>file_upload</md-icon>
 		</div>
+
+		<h2
+			cyphTranslate
+			*ngIf='(accountFilesService.incomingFilesFiltered.files | async)?.length > 0'
+		>
+			Incoming Files
+		</h2>
+
+		<md-card
+			class='file animated _{{i}}'
+			*ngFor='
+				let file of accountFilesService.incomingFilesFiltered.files | async; let i = index
+			'
+			[attr.data-index]='i'
+			[class.bounceInRight]='!accountFilesService.initiated'
+		>
+			<md-card-header fxLayout='row'>
+				<md-icon md-card-avatar>
+					{{accountFilesService.getThumbnail(file.mediaType)}}
+				</md-icon>
+				<md-card-title>
+					{{file.name}}
+				</md-card-title>
+				<md-card-subtitle>
+					<div>
+						<span cyphTranslate>Type:</span>
+						<span>{{file.mediaType}}</span>
+					</div>
+					<div>
+						<span cyphTranslate>Size:</span>
+						<span>{{utilService.readableByteLength(file.size)}}</span>
+					</div>
+					<div *ngIf='!!file.owner'>
+						<span cyphTranslate>Shared by</span>
+						<a [routerLink]='"/account/profile/" + file.owner'>{{file.owner}}</a>
+					</div>
+					<div cyphTranslate *ngIf='!file.owner'>
+						Shared anonymously
+					</div>
+				</md-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Accept File'
+						(click)='accountFilesService.acceptIncomingFile(file)'
+					>
+						<md-icon>check</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Reject File'
+						(click)='accountFilesService.acceptIncomingFile(file, false)'
+					>
+						<md-icon>delete</md-icon>
+					</button>
+				</div>
+			</md-card-header>
+		</md-card>
 	</div>
 
 	<md-progress-spinner

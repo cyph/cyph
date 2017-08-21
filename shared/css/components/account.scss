@@ -65,6 +65,36 @@
 		}
 	}
 
+	.file-upload {
+		height: 75px;
+		border: dashed white 1.5px;
+		cursor: pointer;
+
+		md-icon {
+			pointer-events: none;
+
+			@include icon-size(42px);
+
+			@include vertical-align;
+		}
+
+		.dz-preview {
+			margin: 20px 20px 20px -120px !important;
+		}
+
+		.dz-success-mark, .dz-error-mark {
+			float: left;
+			display: inherit;
+			margin-top: 15px;
+			display: none;
+		}
+
+		.dz-details {
+			text-align: center;
+			margin-top: 7px;
+		}
+	}
+
 	.router-content {
 		position: relative;
 

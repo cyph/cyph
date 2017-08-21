@@ -58,9 +58,13 @@
 				</md-select>
 			</div>
 
-			<div fxLayout='row' fxLayoutGap='16px' class='buttons' *ngIf='!isCurrentUser'>
-				<div fxFlex></div>
-
+			<div
+				class='buttons'
+				fxLayout='row'
+				fxLayoutAlign='center center'
+				fxLayoutGap='16px'
+				*ngIf='!isCurrentUser'
+			>
 				<button
 					md-mini-fab
 					cyphTranslate
@@ -79,8 +83,21 @@
 				>
 					<md-icon>chat_bubble</md-icon>
 				</button>
+			</div>
 
-				<div fxFlex></div>
+			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isCurrentUser'>
+				<div
+					class='file-upload'
+					fxFlex='25'
+					fxLayoutAlign='center'
+					mdTooltip='Share File'
+					mdTooltipPosition='above'
+					cyphDropZone
+					cyphTranslate
+					(fileDrop)='accountFilesService.upload($event.name, $event, user.username)'
+				>
+					<md-icon>file_upload</md-icon>
+				</div>
 			</div>
 		</div>
 	</div>

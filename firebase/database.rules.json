@@ -304,6 +304,8 @@
 
 				"docs": {
 					"$doc": {
+						".read": true,
+
 						"$delta": {
 							"hash": {
 								".validate": "newData.isString()"
@@ -326,6 +328,8 @@
 
 				"fileRecords": {
 					"$fileRecord": {
+						".read": true,
+
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -348,6 +352,8 @@
 
 				"files": {
 					"$file": {
+						".read": true,
+
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -359,6 +365,8 @@
 
 				"forms": {
 					"$form": {
+						".read": true,
+
 						"hash": {
 							".validate": "newData.isString()"
 						},

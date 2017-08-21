@@ -36,8 +36,11 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountFilesService {
 	/** @ignore */
-	private readonly incomingFileCache: Map<Uint8Array, IAccountFileRecord>	=
-		new Map<Uint8Array, IAccountFileRecord>()
+	private readonly incomingFileCache: Map<
+		Uint8Array,
+		IAccountFileRecord&IAccountFileReference
+	>	=
+		new Map<Uint8Array, IAccountFileRecord&IAccountFileReference>()
 	;
 
 	/** @ignore */
@@ -77,15 +80,15 @@ export class AccountFilesService {
 	 * Files filtered by record type.
 	 * @see files
 	 */
-	public readonly filteredFiles	= {
-		docs: this.filterFiles(AccountFileRecord.RecordTypes.Doc),
-		files: this.filterFiles(AccountFileRecord.RecordTypes.File),
-		forms: this.filterFiles(AccountFileRecord.RecordTypes.Form),
-		notes: this.filterFiles(AccountFileRecord.RecordTypes.Note)
+	public readonly filesListFiltered	= {
+		docs: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Doc),
+		files: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.File),
+		forms: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Form),
+		notes: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Note)
 	};
 
 	/** Incoming files. */
-	public readonly incomingFiles: Observable<IAccountFileRecord[]>	=
+	public readonly incomingFiles: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=
 		this.accountDatabaseService.currentUser.flatMap(o =>
 			!o ? [] : this.databaseService.watchList(
 				`users/${o.user.username}/incomingFiles`,
@@ -94,17 +97,48 @@ export class AccountFilesService {
 				util.getOrSetDefaultAsync(
 					this.incomingFileCache,
 					value,
-					async () => util.deserialize(
-						AccountFileRecord,
-						await this.potassiumService.box.open(
-							value,
-							o.keys.encryptionKeyPair
-						)
-					)
+					async () => {
+						const reference	= await util.deserialize(
+							AccountFileReference,
+							await this.potassiumService.box.open(
+								value,
+								o.keys.encryptionKeyPair
+							)
+						);
+
+						const record	= await this.accountDatabaseService.getItem(
+							`users/${reference.owner}/fileRecords/${reference.id}`,
+							AccountFileRecord,
+							undefined,
+							reference.key
+						);
+
+						return {
+							id: record.id,
+							key: reference.key,
+							mediaType: record.mediaType,
+							name: record.name,
+							owner: reference.owner,
+							recordType: record.recordType,
+							size: record.size,
+							timestamp: record.timestamp
+						};
+					}
 				)
 			)))
 		)
 	;
+
+	/**
+	 * Incoming files filtered by record type.
+	 * @see files
+	 */
+	public readonly incomingFilesFiltered	= {
+		docs: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Doc),
+		files: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.File),
+		forms: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Form),
+		notes: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Note)
+	};
 
 	/** Indicates whether the first load has completed. */
 	public initiated: boolean	= false;
@@ -145,24 +179,30 @@ export class AccountFilesService {
 	}
 
 	/** @ignore */
-	private filterFiles (
+	private filterFiles<T> (
+		filesList: Observable<(IAccountFileRecord&T)[]>,
 		filterRecordTypes: AccountFileRecord.RecordTypes
-	) : Observable<IAccountFileRecord[]> {
+	) : Observable<(IAccountFileRecord&T)[]> {
 		return util.flattenObservablePromise(
-			this.filesList.map(files => files.filter(({recordType}) =>
+			filesList.map(files => files.filter(({recordType}) =>
 				!filterRecordTypes || recordType === filterRecordTypes
 			)),
 			[]
 		);
 	}
 
-	/** Accepts incoming file. */
-	public async acceptIncomingFile (incomingFile: IAccountFileReference) : Promise<void> {
-		await this.accountDatabaseService.pushItem(
-			`fileReferences/${incomingFile.id}`,
-			AccountFileReference,
-			incomingFile
-		);
+	/** Accepts or rejects incoming file. */
+	public async acceptIncomingFile (
+		incomingFile: IAccountFileReference,
+		shouldAccept: boolean = true
+	) : Promise<void> {
+		if (shouldAccept) {
+			await this.accountDatabaseService.setItem(
+				`fileReferences/${incomingFile.id}`,
+				AccountFileReference,
+				incomingFile
+			);
+		}
 
 		await this.accountDatabaseService.removeItem(`incomingFiles/${incomingFile.id}`);
 	}
@@ -343,6 +383,10 @@ export class AccountFilesService {
 
 	/** Shares file with another user. */
 	public async shareFile (id: string, username: string) : Promise<void> {
+		if (username === (await this.accountDatabaseService.getCurrentUser()).user.username) {
+			return;
+		}
+
 		await this.databaseService.setItem(
 			`users/${username}/incomingFiles/${id}`,
 			BinaryProto,
@@ -417,8 +461,15 @@ export class AccountFilesService {
 		]);
 	}
 
-	/** Uploads new file. */
-	public upload (name: string, file: IQuillDelta|IQuillDelta[]|File|IForm) : {
+	/**
+	 * Uploads new file.
+	 * @param shareWithUser Username of another user to optionally share this file with.
+	 */
+	public upload (
+		name: string,
+		file: IQuillDelta|IQuillDelta[]|File|IForm,
+		shareWithUser?: string
+	) : {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
@@ -516,6 +567,10 @@ export class AccountFilesService {
 						owner: (await this.accountDatabaseService.getCurrentUser()).user.username
 					}
 				);
+
+				if (shareWithUser) {
+					this.shareFile(id, shareWithUser);
+				}
 
 				return id;
 			})

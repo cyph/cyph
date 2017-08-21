@@ -20,11 +20,15 @@
 				<md-card-subtitle *ngIf='!realTime'>
 					<div>{{accountFilesService.noteSnippet(note.id)}}</div>
 					<div *ngIf='
+						!!note.owner &&
 						accountDatabaseService.currentUser.value &&
 						accountDatabaseService.currentUser.value.user.username !== note.owner
 					'>
 						<span cyphTranslate>Owner:</span>
 						<a [routerLink]='"/account/profile/" + note.owner'>{{note.owner}}</a>
+					</div>
+					<div cyphTranslate *ngIf='!note.owner'>
+						Received from anonymous
 					</div>
 				</md-card-subtitle>
 				<div fxFlex fxLayoutAlign='end center'>
@@ -41,6 +45,50 @@
 						cyphTranslate
 						mdTooltip='Delete Note'
 						(click)='accountFilesService.remove(note); $event.stopPropagation();'
+					>
+						<md-icon>delete</md-icon>
+					</button>
+				</div>
+			</md-card-header>
+		</md-card>
+
+		<h2 cyphTranslate *ngIf='(incomingNotes | async)?.length > 0'>
+			Incoming Notes
+		</h2>
+
+		<md-card
+			class='note animated _{{i}}'
+			*ngFor='let note of incomingNotes | async; let i = index'
+			[attr.data-index]='i'
+			[class.bounceInRight]='!accountFilesService.initiated'
+		>
+			<md-card-header fxLayout='row'>
+				<md-card-title>
+					{{note.name}}
+				</md-card-title>
+				<md-card-subtitle>
+					<div *ngIf='!!note.owner'>
+						<span cyphTranslate>Shared by</span>
+						<a [routerLink]='"/account/profile/" + note.owner'>{{note.owner}}</a>
+					</div>
+					<div cyphTranslate *ngIf='!note.owner'>
+						Shared anonymously
+					</div>
+				</md-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Accept File'
+						(click)='accountFilesService.acceptIncomingFile(note)'
+					>
+						<md-icon>check</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Reject File'
+						(click)='accountFilesService.acceptIncomingFile(note, false)'
 					>
 						<md-icon>delete</md-icon>
 					</button>

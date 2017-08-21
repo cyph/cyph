@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
-import {IAccountFileRecord} from '../../proto';
+import {IAccountFileRecord, IAccountFileReference} from '../../proto';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
@@ -23,6 +23,14 @@ export class AccountNotesComponent implements OnInit {
 	/** Indicates whether or not the real-time doc UI is enabled. */
 	public realTime: boolean	= false;
 
+	/** List of incoming notes to display. */
+	public get incomingNotes () : Observable<(IAccountFileRecord&IAccountFileReference)[]> {
+		return this.realTime ?
+			this.accountFilesService.incomingFilesFiltered.docs :
+			this.accountFilesService.incomingFilesFiltered.notes
+		;
+	}
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.activatedRouteService.data.subscribe(o => {
@@ -31,10 +39,10 @@ export class AccountNotesComponent implements OnInit {
 	}
 
 	/** List of notes to display. */
-	public get notes () : Observable<IAccountFileRecord[]> {
+	public get notes () : Observable<(IAccountFileRecord&{owner: string})[]> {
 		return this.realTime ?
-			this.accountFilesService.filteredFiles.docs :
-			this.accountFilesService.filteredFiles.notes
+			this.accountFilesService.filesListFiltered.docs :
+			this.accountFilesService.filesListFiltered.notes
 		;
 	}
 

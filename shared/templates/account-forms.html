@@ -8,7 +8,7 @@
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<md-card
 			class='form animated _{{i}}'
-			*ngFor='let form of accountFilesService.filteredFiles.forms | async; let i = index'
+			*ngFor='let form of accountFilesService.filesListFiltered.forms | async; let i = index'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			[routerLink]='"/account/forms/" + form.id'
@@ -19,11 +19,15 @@
 				</md-card-title>
 				<md-card-subtitle>
 					<div *ngIf='
+						!!form.owner &&
 						accountDatabaseService.currentUser.value &&
 						accountDatabaseService.currentUser.value.user.username !== form.owner
 					'>
 						<span cyphTranslate>Owner:</span>
 						<a [routerLink]='"/account/profile/" + form.owner'>{{form.owner}}</a>
+					</div>
+					<div cyphTranslate *ngIf='!form.owner'>
+						Received from anonymous
 					</div>
 				</md-card-subtitle>
 				<div fxFlex fxLayoutAlign='end center'>
@@ -40,6 +44,55 @@
 						cyphTranslate
 						mdTooltip='Delete Form'
 						(click)='accountFilesService.remove(form); $event.stopPropagation();'
+					>
+						<md-icon>delete</md-icon>
+					</button>
+				</div>
+			</md-card-header>
+		</md-card>
+
+		<h2
+			cyphTranslate
+			*ngIf='(accountFilesService.incomingFilesFiltered.forms | async)?.length > 0'
+		>
+			Incoming Forms
+		</h2>
+
+		<md-card
+			class='form animated _{{i}}'
+			*ngFor='
+				let form of accountFilesService.incomingFilesFiltered.forms | async; let i = index
+			'
+			[attr.data-index]='i'
+			[class.bounceInRight]='!accountFilesService.initiated'
+		>
+			<md-card-header fxLayout='row'>
+				<md-card-title>
+					{{form.name}}
+				</md-card-title>
+				<md-card-subtitle>
+					<div *ngIf='!!form.owner'>
+						<span cyphTranslate>Shared by</span>
+						<a [routerLink]='"/account/profile/" + form.owner'>{{form.owner}}</a>
+					</div>
+					<div cyphTranslate *ngIf='!form.owner'>
+						Shared anonymously
+					</div>
+				</md-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Accept File'
+						(click)='accountFilesService.acceptIncomingFile(form)'
+					>
+						<md-icon>check</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Reject File'
+						(click)='accountFilesService.acceptIncomingFile(form, false)'
 					>
 						<md-icon>delete</md-icon>
 					</button>

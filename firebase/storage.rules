@@ -75,19 +75,27 @@ service firebase.storage {
 			// 	match /unconfirmedMessages {}
 			// }
 
-			// match /docs/{doc} {
-			// 	match /{delta} {}
-			// }
+			match /docs/{doc} {
+				allow read;
+
+				// match /{delta} {}
+			}
 
 			// match /encryptionKeyPair {}
 
-			// match /fileRecords/{fileRecord} {}
+			match /fileRecords/{fileRecord} {
+				allow read;
+			}
 
 			// match /fileReferences/{fileReference} {}
 
-			// match /files/{file} {}
+			match /files/{file} {
+				allow read;
+			}
 
-			// match /forms/{form} {}
+			match /forms/{form} {
+				allow read;
+			}
 
 			match /incomingFiles/{incomingFile} {
 				allow write: if

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserPresence, userPresenceSelectOptions} from '../account/enums';
 import {User} from '../account/user';
+import {AccountFilesService} from '../services/account-files.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
@@ -117,6 +118,9 @@ export class AccountProfileComponent implements OnInit {
 
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @see AccountFilesService */
+		public readonly accountFilesService: AccountFilesService,
 
 		/** @see AccountUserLookupService */
 		public readonly accountUserLookupService: AccountUserLookupService,
