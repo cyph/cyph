@@ -45,6 +45,33 @@ section {
 	z-index: 2;
 }
 
+.card-list {
+	position: relative;
+
+	&.initiating {
+		overflow-y: hidden;
+		pointer-events: none;
+
+		> div {
+			opacity: 0.5;
+		}
+	}
+
+	> div {
+		min-height: 100%;
+		padding-bottom: 1rem;
+	}
+
+	md-progress-spinner {
+		position: absolute;
+		top: 50vh;
+		left: 50%;
+		z-index: 1;
+
+		@include transform(translate(-50%, -50%));
+	}
+}
+
 .cyph-foreground {
 	font-size: 1.08rem;
 }

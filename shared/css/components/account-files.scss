@@ -29,20 +29,3 @@
 		}
 	}
 }
-
-.initiating {
-	overflow-y: hidden;
-	pointer-events: none;
-
-	> div {
-		opacity: 0.5;
-	}
-}
-
-md-progress-spinner {
-	position: relative;
-	top: 6vh;
-	left: 50%;
-	z-index: 1;
-	@include transform(translate(-50%, -50%));
-}

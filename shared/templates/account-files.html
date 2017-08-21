@@ -1,16 +1,16 @@
-<div fxFlexFill fxLayout='row' fxLayoutAlign='center start'>
-	<div fxFlex='90' fxFlex.gt-sm='65' fxFlex.gt-md='40' fxLayout='column' fxLayoutGap='16px'>
-		<h1 class='header'>Files</h1>
-		<md-progress-spinner
-		mode='indeterminate'
-		*ngIf='accountFilesService.showSpinner'
-		></md-progress-spinner>
+<div
+	fxFlexFill
+	fxLayout='row'
+	fxLayoutAlign='center start'
+	class='card-list'
+	[class.initiating]='accountFilesService.showSpinner'
+>
+	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<md-card
-			class='file animated'
+			class='file animated _{{i}}'
 			*ngFor='let file of accountFilesService.filteredFiles.files | async; let i = index'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
-			[ngClass]='accountFilesService.initiated ? ("_" + i) : ""'
 			routerLink='/account/files'
 			(click)='accountFilesService.openFile(file.id)'
 		>
@@ -45,14 +45,20 @@
 				</div>
 			</md-card-header>
 		</md-card>
+
 		<div
+			class='file-upload'
 			fxLayoutAlign='center'
 			fxLayout='row'
 			cyphDropZone
 			(fileDrop)='accountFilesService.upload($event.name, $event)'
-			class='file-upload'
 		>
 			<md-icon>file_upload</md-icon>
 		</div>
 	</div>
+
+	<md-progress-spinner
+		mode='indeterminate'
+		*ngIf='accountContactsService.showSpinner'
+	></md-progress-spinner>
 </div>

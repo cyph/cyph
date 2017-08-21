@@ -6,6 +6,7 @@ import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
+import {util} from '../util';
 
 
 /**
@@ -23,9 +24,30 @@ import {EnvService} from '../services/env.service';
 	templateUrl: '../../../templates/account.html'
 })
 export class AccountComponent implements OnInit {
+	/** @ignore */
+	private get route () : string {
+		return (
+			this.activatedRouteService.snapshot.firstChild &&
+			this.activatedRouteService.snapshot.firstChild.url.length > 0
+		) ?
+			this.activatedRouteService.snapshot.firstChild.url[0].path :
+			''
+		;
+	}
+
+	/** Header title for current section. */
+	public get header () : string|undefined {
+		if (!this.route) {
+			return;
+		}
+
+		return util.translate(this.route[0].toUpperCase() + this.route.slice(1));
+	}
+
 	/** Indicates whether menu should be displayed. */
 	public get menuVisible () : boolean {
 		return this.accountDatabaseService.currentUser.value !== undefined && [
+			'',
 			'chat',
 			'contacts',
 			'docs',
@@ -34,11 +56,8 @@ export class AccountComponent implements OnInit {
 			'notes',
 			'profile',
 			'settings'
-		].filter(path =>
-			this.activatedRouteService.snapshot.firstChild && (
-				this.activatedRouteService.snapshot.firstChild.url.length < 1 ||
-				this.activatedRouteService.snapshot.firstChild.url.map(o => o.path)[0] === path
-			)
+		].filter(
+			path => this.route === path
 		).length > 0;
 	}
 
@@ -95,12 +114,10 @@ export class AccountComponent implements OnInit {
 		return this.accountDatabaseService.currentUser.value !== undefined &&
 			!this.envService.isMobile &&
 			[
+				'',
 				'chat'
-			].filter(path =>
-				this.activatedRouteService.snapshot.firstChild && (
-					this.activatedRouteService.snapshot.firstChild.url.length < 1 ||
-					this.activatedRouteService.snapshot.firstChild.url.map(o => o.path)[0] === path
-				)
+			].filter(
+				path => this.route === path
 			).length > 0
 		;
 	}

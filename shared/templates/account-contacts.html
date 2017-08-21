@@ -2,25 +2,22 @@
 	fxFlexFill
 	fxLayout='row'
 	fxLayoutAlign='center start'
+	class='card-list'
 	[class.initiating]='accountContactsService.showSpinner'
 >
 	<div
-		fxFlex='90'
-		[fxFlex.gt-sm]='sidebar ? "90" : "65"'
-		[fxFlex.gt-md]='sidebar ? "90" : "40"'
+		[fxFlex]='sidebar ? "90" : ""'
 		fxLayout='column'
+		fxLayoutAlign='start stretch'
 		fxLayoutGap='16px'
 	>
-		<div></div>
-
 		<md-card
 			[fxFlexOrder]='isActive(contact) ? "-1" : ""'
-			class='contact animated'
+			class='contact animated _{{i}}'
 			*ngFor='let contact of accountContactsService.contactList | async; let i = index'
 			[attr.data-index]='i'
 			[class.active]='isActive(contact)'
 			[class.bounceInRight]='!isActive(contact) && !accountContactsService.initiated'
-			[ngClass]='accountContactsService.initiated ? ("_" + i) : ""'
 			[routerLink]='"/account/chat/" + contact.username'
 		>
 			<md-card-header fxLayout='row'>
@@ -38,8 +35,6 @@
 				<md-card-subtitle>{{contact.realUsername | async}}</md-card-subtitle>
 			</md-card-header>
 		</md-card>
-
-		<div></div>
 	</div>
 
 	<md-progress-spinner
