@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {Router} from '@angular/router';
@@ -9,12 +11,14 @@ import * as QuillDeltaToHtml from 'quill-delta-to-html';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {AccountFileRecord, Form, IAccountFileRecord, IForm} from '../../proto';
 import {SecurityModels} from '../account';
+import {IProto} from '../iproto';
 import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
 import {BinaryProto, BlobProto, DataURIProto} from '../protos';
 import {util} from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {StringsService} from './strings.service';
 
@@ -24,6 +28,11 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountFilesService {
+	/** @ignore */
+	private readonly incomingFileCache: Map<Uint8Array, IAccountFileRecord>	=
+		new Map<Uint8Array, IAccountFileRecord>()
+	;
+
 	/** @ignore */
 	private readonly noteSnippets: Map<string, string>	= new Map<string, string>();
 
@@ -51,6 +60,28 @@ export class AccountFilesService {
 		notes: this.filterFiles(AccountFileRecord.RecordTypes.Note)
 	};
 
+	/** Incoming files. */
+	public readonly incomingFiles: Observable<IAccountFileRecord[]>	=
+		this.accountDatabaseService.currentUser.flatMap(o =>
+			!o ? [] : this.databaseService.watchList(
+				`users/${o.user.username}/incomingFiles`,
+				BinaryProto
+			).flatMap(async arr => Promise.all(arr.map(async ({value}) =>
+				util.getOrSetDefaultAsync(
+					this.incomingFileCache,
+					value,
+					async () => util.deserialize(
+						AccountFileRecord,
+						await this.potassiumService.box.open(
+							value,
+							o.keys.encryptionKeyPair
+						)
+					)
+				)
+			)))
+		)
+	;
+
 	/** Indicates whether the first load has completed. */
 	public initiated: boolean	= false;
 
@@ -60,6 +91,25 @@ export class AccountFilesService {
 	/** @ignore */
 	private deltaToString (delta: IQuillDelta) : string {
 		return htmlToText.fromString(new QuillDeltaToHtml(delta.ops).convert());
+	}
+
+	/** @ignore */
+	private downloadItem<T> (
+		id: string,
+		proto: IProto<T>,
+		securityModel?: SecurityModels
+	) : {
+		progress: Observable<number>;
+		result: Promise<T>;
+	} {
+		const {progress, result}	= this.accountDatabaseService.downloadItem(
+			(async () => `${(await this.getFile(id)).owner}/files/${id}`)(),
+			proto,
+			securityModel,
+			(async () => (await this.getFile(id)).key)()
+		);
+
+		return {progress, result: (async () => (await result).value)()};
 	}
 
 	/** @ignore */
@@ -80,17 +130,23 @@ export class AccountFilesService {
 		);
 	}
 
+	/** Accepts incoming file. */
+	public async acceptIncomingFile (incomingFile: IAccountFileRecord) : Promise<void> {
+		await this.accountDatabaseService.pushItem(
+			`fileRecords/${incomingFile.id}`,
+			AccountFileRecord,
+			incomingFile
+		);
+
+		await this.accountDatabaseService.removeItem(`incomingFiles/${incomingFile.id}`);
+	}
+
 	/** Downloads and saves file. */
 	public downloadAndSave (id: string) : {
 		progress: Observable<number>;
 		result: Promise<void>;
 	} {
-		const {progress, result}	= this.accountDatabaseService.downloadItem(
-			`files/${id}`,
-			BinaryProto,
-			undefined,
-			(async () => (await this.getFile(id)).key)()
-		);
+		const {progress, result}	= this.downloadItem(id, BinaryProto);
 
 		return {
 			progress,
@@ -98,7 +154,7 @@ export class AccountFilesService {
 				const file	= await this.getFile(id);
 
 				await util.saveFile(
-					(await result).value,
+					await result,
 					file.name,
 					file.mediaType
 				);
@@ -111,14 +167,7 @@ export class AccountFilesService {
 		progress: Observable<number>;
 		result: Promise<IForm>;
 	} {
-		const {progress, result}	= this.accountDatabaseService.downloadItem(
-			`files/${id}`,
-			Form,
-			SecurityModels.privateSigned,
-			(async () => (await this.getFile(id)).key)()
-		);
-
-		return {progress, result: (async () => (await result).value)()};
+		return this.downloadItem(id, Form, SecurityModels.privateSigned);
 	}
 
 	/** Downloads file and returns as data URI. */
@@ -126,14 +175,7 @@ export class AccountFilesService {
 		progress: Observable<number>;
 		result: Promise<SafeUrl|string>;
 	} {
-		const {progress, result}	= this.accountDatabaseService.downloadItem(
-			`files/${id}`,
-			DataURIProto,
-			undefined,
-			(async () => (await this.getFile(id)).key)()
-		);
-
-		return {progress, result: (async () => (await result).value)()};
+		return this.downloadItem(id, DataURIProto);
 	}
 
 	/** Gets the specified file record. */
@@ -255,6 +297,18 @@ export class AccountFilesService {
 		]);
 	}
 
+	/** Shares file with another user. */
+	public async shareFile (id: string, username: string) : Promise<void> {
+		await this.databaseService.setItem(
+			`users/${username}/incomingFiles/${id}`,
+			BinaryProto,
+			await this.potassiumService.box.seal(
+				await this.accountDatabaseService.getItem(`fileRecords/${id}`, BinaryProto),
+				(await this.accountDatabaseService.getUserPublicKeys(username)).publicEncryptionKey
+			)
+		);
+	}
+
 	/** Overwrites an existing note. */
 	public async updateDoc (id: string, delta: IQuillDelta|IQuillRange) : Promise<void> {
 		await this.accountDatabaseService.pushItem(
@@ -374,6 +428,7 @@ export class AccountFilesService {
 									'cyph/form'
 						,
 						name,
+						owner: (await this.accountDatabaseService.getCurrentUser()).user.username,
 						recordType: file instanceof Blob ?
 							AccountFileRecord.RecordTypes.File :
 							file instanceof Array ?
@@ -460,6 +515,9 @@ export class AccountFilesService {
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
 		private readonly dialogService: DialogService,

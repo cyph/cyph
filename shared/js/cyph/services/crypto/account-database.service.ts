@@ -137,7 +137,7 @@ export class AccountDatabaseService {
 
 	/** @ignore */
 	private async getItemInternal<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels,
 		customKey: Uint8Array|Promise<Uint8Array>|undefined,
@@ -146,6 +146,8 @@ export class AccountDatabaseService {
 		progress: Observable<number>;
 		result: ITimedValue<T>;
 	}> {
+		url	= await url;
+
 		if (!anonymous && this.currentUser.value) {
 			url	= await this.processURL(url);
 			await this.waitForUnlock(url);
@@ -172,13 +174,15 @@ export class AccountDatabaseService {
 
 	/** @ignore */
 	private async open<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels,
 		data: Uint8Array,
 		customKey: Uint8Array|Promise<Uint8Array>|undefined,
 		anonymous: boolean = false
 	) : Promise<T> {
+		url	= await url;
+
 		const currentUser	= anonymous ? undefined : await this.getCurrentUser();
 
 		return util.deserialize(proto, await (async () => {
@@ -207,7 +211,7 @@ export class AccountDatabaseService {
 	}
 
 	/** @ignore */
-	private async processLockURL (url: string) : Promise<string> {
+	private async processLockURL (url: string|Promise<string>) : Promise<string> {
 		const currentUser	= await this.getCurrentUser();
 
 		return `users/${currentUser.user.username}/locks/` + this.potassiumService.toHex(
@@ -221,7 +225,9 @@ export class AccountDatabaseService {
 	}
 
 	/** @ignore */
-	private async processURL (url: string) : Promise<string> {
+	private async processURL (url: string|Promise<string>) : Promise<string> {
+		url	= await url;
+
 		if (url.match(/^\/?users/)) {
 			return url;
 		}
@@ -232,7 +238,7 @@ export class AccountDatabaseService {
 
 	/** @ignore */
 	private async seal<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		value: T,
 		securityModel: SecurityModels,
@@ -261,7 +267,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.downloadItem */
 	public downloadItem<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: Uint8Array|Promise<Uint8Array>,
@@ -295,7 +301,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.getAsyncList */
 	public getAsyncList<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: Uint8Array|Promise<Uint8Array>,
@@ -344,7 +350,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.getAsyncValue */
 	public getAsyncValue<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: Uint8Array|Promise<Uint8Array>,
@@ -419,7 +425,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.getItem */
 	public async getItem<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: Uint8Array|Promise<Uint8Array>,
@@ -434,7 +440,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.getList */
 	public async getList<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: Uint8Array|Promise<Uint8Array>,
@@ -447,13 +453,13 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.getListKeys */
-	public async getListKeys (url: string) : Promise<string[]> {
+	public async getListKeys (url: string|Promise<string>) : Promise<string[]> {
 		return this.databaseService.getListKeys(await this.processURL(url));
 	}
 
 	/** @see DatabaseService.getOrSetDefault */
 	public async getOrSetDefault<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		defaultValue: () => T|Promise<T>
 	) : Promise<T> {
@@ -509,13 +515,13 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.hasItem */
-	public async hasItem (url: string) : Promise<boolean> {
-		return this.databaseService.hasItem(url);
+	public async hasItem (url: string|Promise<string>) : Promise<boolean> {
+		return this.databaseService.hasItem(await url);
 	}
 
 	/** @see DatabaseService.lock */
 	public async lock<T> (
-		url: string,
+		url: string|Promise<string>,
 		f: (reason?: string) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
@@ -530,7 +536,7 @@ export class AccountDatabaseService {
 					await this.potassiumService.secretBox.open(
 						this.potassiumService.fromBase64(r),
 						currentUser.keys.symmetricKey,
-						url
+						await url
 					)
 				)
 			),
@@ -547,14 +553,17 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.lockFunction */
-	public lockFunction (url: string) : LockFunction {
+	public lockFunction (url: string|Promise<string>) : LockFunction {
 		return async <T> (f: (reason?: string) => Promise<T>, reason?: string) =>
 			this.lock(url, f, reason)
 		;
 	}
 
 	/** @see DatabaseService.lockStatus */
-	public async lockStatus (url: string) : Promise<{locked: boolean; reason: string|undefined}> {
+	public async lockStatus (url: string|Promise<string>) : Promise<{
+		locked: boolean;
+		reason: string|undefined;
+	}> {
 		const currentUser		= await this.getCurrentUser();
 		url						= await this.processLockURL(url);
 		const {locked, reason}	= await this.databaseService.lockStatus(url);
@@ -575,7 +584,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.pushItem */
 	public async pushItem<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		value: T,
 		securityModel: SecurityModels = SecurityModels.private,
@@ -589,7 +598,7 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.removeItem */
-	public async removeItem (url: string) : Promise<void> {
+	public async removeItem (url: string|Promise<string>) : Promise<void> {
 		url	= await this.processURL(url);
 
 		return this.databaseService.removeItem(url);
@@ -597,7 +606,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.setItem */
 	public async setItem<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		value: T,
 		securityModel: SecurityModels = SecurityModels.private,
@@ -612,7 +621,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.setList */
 	public async setList<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		value: T[],
 		securityModel: SecurityModels = SecurityModels.private,
@@ -629,7 +638,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.uploadItem */
 	public uploadItem<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		value: T,
 		securityModel: SecurityModels = SecurityModels.private,
@@ -668,7 +677,7 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.waitForUnlock */
-	public async waitForUnlock (url: string) : Promise<{
+	public async waitForUnlock (url: string|Promise<string>) : Promise<{
 		reason: string|undefined;
 		wasLocked: boolean;
 	}> {
@@ -693,7 +702,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.watch */
 	public watch<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: Uint8Array|Promise<Uint8Array>,
@@ -728,7 +737,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.watchList */
 	public watchList<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: Uint8Array|Promise<Uint8Array>,
@@ -764,7 +773,7 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.watchListKeys */
-	public watchListKeys (url: string) : Observable<string[]> {
+	public watchListKeys (url: string|Promise<string>) : Observable<string[]> {
 		return util.flattenObservablePromise(
 			this.currentUser.flatMap(async () =>
 				this.databaseService.watchListKeys(await this.processURL(url))
@@ -777,7 +786,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.watchListPushes */
 	public watchListPushes<T> (
-		url: string,
+		url: string|Promise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: Uint8Array|Promise<Uint8Array>,

@@ -32,14 +32,17 @@ message AccountFileRecord {
 	/** File name. */
 	required string name = 4;
 
+	/** Username of owner. */
+	required string owner = 5;
+
 	/** Type of file record. */
-	required RecordTypes recordType = 5;
+	required RecordTypes recordType = 6;
 
 	/** Size in bytes. */
-	required double size = 6;
+	required double size = 7;
 
 	/** Timestamp of upload or last save. */
-	required double timestamp = 7;
+	required double timestamp = 8;
 }
 
 /** Augmented PAKE login data. */

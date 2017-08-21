@@ -357,6 +357,19 @@
 					}
 				},
 
+				"incomingFiles": {
+					"$incomingFile": {
+						".write": "!data.exists() && newData.exists()",
+
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				},
+
 				"lastPresence": {
 					"hash": {
 						".validate": "newData.isString()"
