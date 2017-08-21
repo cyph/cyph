@@ -87,7 +87,9 @@ export class AccountFilesService {
 	} {
 		const {progress, result}	= this.accountDatabaseService.downloadItem(
 			`files/${id}`,
-			BinaryProto
+			BinaryProto,
+			undefined,
+			(async () => (await this.getFile(id)).key)()
 		);
 
 		return {
@@ -112,7 +114,8 @@ export class AccountFilesService {
 		const {progress, result}	= this.accountDatabaseService.downloadItem(
 			`files/${id}`,
 			Form,
-			SecurityModels.privateSigned
+			SecurityModels.privateSigned,
+			(async () => (await this.getFile(id)).key)()
 		);
 
 		return {progress, result: (async () => (await result).value)()};
@@ -123,9 +126,13 @@ export class AccountFilesService {
 		progress: Observable<number>;
 		result: Promise<SafeUrl|string>;
 	} {
-		const {progress, result}	=
-			this.accountDatabaseService.downloadItem(`files/${id}`, DataURIProto)
-		;
+		const {progress, result}	= this.accountDatabaseService.downloadItem(
+			`files/${id}`,
+			DataURIProto,
+			undefined,
+			(async () => (await this.getFile(id)).key)()
+		);
+
 		return {progress, result: (async () => (await result).value)()};
 	}
 
@@ -171,7 +178,12 @@ export class AccountFilesService {
 				const limit		= 75;
 				const content	= this.deltaToString(
 					msgpack.decode(
-						await this.accountDatabaseService.getItem(`files/${id}`, BinaryProto)
+						await this.accountDatabaseService.getItem(
+							`files/${id}`,
+							BinaryProto,
+							undefined,
+							(await this.getFile(id)).key
+						)
 					)
 				);
 
@@ -248,7 +260,9 @@ export class AccountFilesService {
 		await this.accountDatabaseService.pushItem(
 			`docs/${id}`,
 			BinaryProto,
-			msgpack.encode(delta)
+			msgpack.encode(delta),
+			undefined,
+			(await this.getFile(id)).key
 		);
 	}
 
@@ -283,7 +297,9 @@ export class AccountFilesService {
 			this.accountDatabaseService.setItem(
 				`files/${id}`,
 				BinaryProto,
-				msgpack.encode(content)
+				msgpack.encode(content),
+				undefined,
+				(await this.getFile(id)).key
 			),
 			this.accountDatabaseService.setItem(`fileRecords/${id}`, AccountFileRecord, file)
 		]);
@@ -295,10 +311,13 @@ export class AccountFilesService {
 		result: Promise<string>;
 	} {
 		const id	= util.uuid();
+		const key	= (async () => this.potassiumService.randomBytes(
+			await this.potassiumService.secretBox.keyBytes
+		))();
 		const url	= `files/${id}`;
 
 		const {progress, result}	= file instanceof Blob ?
-			this.accountDatabaseService.uploadItem(url, BlobProto, file) :
+			this.accountDatabaseService.uploadItem(url, BlobProto, file, undefined, key) :
 			file instanceof Array ?
 				(() => {
 					const docProgress	= new BehaviorSubject(0);
@@ -310,7 +329,9 @@ export class AccountFilesService {
 							await this.accountDatabaseService.pushItem(
 								`docs/${id}`,
 								BinaryProto,
-								msgpack.encode(file[i])
+								msgpack.encode(file[i]),
+								undefined,
+								key
 							);
 						}
 
@@ -322,13 +343,16 @@ export class AccountFilesService {
 					this.accountDatabaseService.uploadItem(
 						url,
 						BinaryProto,
-						msgpack.encode(file)
+						msgpack.encode(file),
+						undefined,
+						key
 					) :
 					this.accountDatabaseService.uploadItem(
 						url,
 						Form,
 						file,
-						SecurityModels.privateSigned
+						SecurityModels.privateSigned,
+						key
 					)
 		;
 
@@ -340,6 +364,7 @@ export class AccountFilesService {
 					AccountFileRecord,
 					{
 						id,
+						key: await key,
 						mediaType: file instanceof Blob ?
 							file.type :
 							file instanceof Array ?
@@ -381,11 +406,14 @@ export class AccountFilesService {
 	}> {
 		const length	= (await this.accountDatabaseService.getListKeys(`docs/${id}`)).length;
 
-		const doc		=
-			this.accountDatabaseService.watchListPushes(`docs/${id}`, BinaryProto).map(o =>
-				o.value.length > 0 ? msgpack.decode(o.value) : undefined
-			)
-		;
+		const doc		= this.accountDatabaseService.watchListPushes(
+			`docs/${id}`,
+			BinaryProto,
+			undefined,
+			(await this.getFile(id)).key
+		).map(o =>
+			o.value.length > 0 ? msgpack.decode(o.value) : undefined
+		);
 
 		return {
 			deltas: Observable.of({
@@ -416,7 +444,12 @@ export class AccountFilesService {
 
 	/** Watches note. */
 	public watchNote (id: string) : Observable<IQuillDelta> {
-		return this.accountDatabaseService.watch(`files/${id}`, BinaryProto).map(o =>
+		return this.accountDatabaseService.watch(
+			`files/${id}`,
+			BinaryProto,
+			undefined,
+			(async () => (await this.getFile(id)).key)()
+		).map(o =>
 			o.value.length > 0 ? msgpack.decode(o.value) : {ops: []}
 		);
 	}

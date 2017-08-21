@@ -26,6 +26,7 @@ export class AccountUserLookupService {
 				`${url}/avatar`,
 				DataURIProto,
 				SecurityModels.public,
+				undefined,
 				true
 			).map(({value}) =>
 				typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
@@ -34,6 +35,7 @@ export class AccountUserLookupService {
 				`${url}/coverImage`,
 				DataURIProto,
 				SecurityModels.public,
+				undefined,
 				true
 			).map(({value}) =>
 				typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
@@ -46,6 +48,7 @@ export class AccountUserLookupService {
 				`${url}/publicProfile`,
 				AccountUserProfile,
 				SecurityModels.public,
+				undefined,
 				true
 			)
 		));

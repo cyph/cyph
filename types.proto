@@ -23,20 +23,23 @@ message AccountFileRecord {
 	/** File ID. */
 	required string id = 1;
 
+	/** Symmetric key used for encrypting file. */
+	required bytes key = 2;
+
 	/** File MIME type. */
-	required string mediaType = 2;
+	required string mediaType = 3;
 
 	/** File name. */
-	required string name = 3;
+	required string name = 4;
 
 	/** Type of file record. */
-	required RecordTypes recordType = 4;
+	required RecordTypes recordType = 5;
 
 	/** Size in bytes. */
-	required double size = 5;
+	required double size = 6;
 
 	/** Timestamp of upload or last save. */
-	required double timestamp = 6;
+	required double timestamp = 7;
 }
 
 /** Augmented PAKE login data. */

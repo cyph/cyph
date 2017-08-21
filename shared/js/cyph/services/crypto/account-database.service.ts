@@ -61,10 +61,15 @@ export class AccountDatabaseService {
 
 	/** @ignore */
 	private readonly openHelpers	= {
-		secretBox: async (currentUser: ICurrentUser, data: Uint8Array, url: string) =>
+		secretBox: async (
+			currentUser: ICurrentUser,
+			data: Uint8Array,
+			url: string,
+			customKey: Uint8Array|Promise<Uint8Array>|undefined
+		) =>
 			this.potassiumService.secretBox.open(
 				data,
-				currentUser.keys.symmetricKey,
+				(await customKey) || currentUser.keys.symmetricKey,
 				url
 			)
 		,
@@ -99,10 +104,15 @@ export class AccountDatabaseService {
 
 	/** @ignore */
 	private readonly sealHelpers	= {
-		secretBox: async (currentUser: ICurrentUser, data: Uint8Array, url: string) =>
+		secretBox: async (
+			currentUser: ICurrentUser,
+			data: Uint8Array,
+			url: string,
+			customKey: Uint8Array|Promise<Uint8Array>|undefined
+		) =>
 			util.retryUntilSuccessful(async () => this.potassiumService.secretBox.seal(
 				data,
-				currentUser.keys.symmetricKey,
+				(await customKey) || currentUser.keys.symmetricKey,
 				url
 			))
 		,
@@ -130,6 +140,7 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		securityModel: SecurityModels,
+		customKey: Uint8Array|Promise<Uint8Array>|undefined,
 		anonymous: boolean = false
 	) : Promise<{
 		progress: Observable<number>;
@@ -147,7 +158,14 @@ export class AccountDatabaseService {
 			progress: downloadTask.progress,
 			result: {
 				timestamp: result.timestamp,
-				value: await this.open(url, proto, securityModel, result.value, anonymous)
+				value: await this.open(
+					url,
+					proto,
+					securityModel,
+					result.value,
+					customKey,
+					anonymous
+				)
 			}
 		};
 	}
@@ -158,6 +176,7 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		securityModel: SecurityModels,
 		data: Uint8Array,
+		customKey: Uint8Array|Promise<Uint8Array>|undefined,
 		anonymous: boolean = false
 	) : Promise<T> {
 		const currentUser	= anonymous ? undefined : await this.getCurrentUser();
@@ -173,11 +192,11 @@ export class AccountDatabaseService {
 
 			switch (securityModel) {
 				case SecurityModels.private:
-					return this.openHelpers.secretBox(currentUser, data, url);
+					return this.openHelpers.secretBox(currentUser, data, url, customKey);
 				case SecurityModels.privateSigned:
 					return this.openHelpers.sign(
 						currentUser,
-						await this.openHelpers.secretBox(currentUser, data, url),
+						await this.openHelpers.secretBox(currentUser, data, url, customKey),
 						url,
 						false
 					);
@@ -216,7 +235,8 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		value: T,
-		securityModel: SecurityModels
+		securityModel: SecurityModels,
+		customKey: Uint8Array|Promise<Uint8Array>|undefined
 	) : Promise<Uint8Array> {
 		const currentUser	= await this.getCurrentUser();
 		url					= await this.processURL(url);
@@ -224,12 +244,13 @@ export class AccountDatabaseService {
 
 		switch (securityModel) {
 			case SecurityModels.private:
-				return this.sealHelpers.secretBox(currentUser, data, url);
+				return this.sealHelpers.secretBox(currentUser, data, url, customKey);
 			case SecurityModels.privateSigned:
 				return this.sealHelpers.secretBox(
 					currentUser,
 					await this.sealHelpers.sign(currentUser, data, url, false),
-					url
+					url,
+					customKey
 				);
 			case SecurityModels.public:
 				return this.sealHelpers.sign(currentUser, data, url, true);
@@ -243,6 +264,7 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : {
 		progress: Observable<number>;
@@ -251,7 +273,13 @@ export class AccountDatabaseService {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
-			const downloadTask	= await this.getItemInternal(url, proto, securityModel, anonymous);
+			const downloadTask	= await this.getItemInternal(
+				url,
+				proto,
+				securityModel,
+				customKey,
+				anonymous
+			);
 
 			downloadTask.progress.subscribe(
 				n => { progress.next(n); },
@@ -270,6 +298,7 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : IAsyncList<T> {
 		const localLock		= util.lockFunction();
@@ -278,28 +307,36 @@ export class AccountDatabaseService {
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
 		const asyncList: IAsyncList<T>	= {
 			getValue: async () => localLock(async () =>
-				this.getList(url, proto, securityModel, anonymous)
+				this.getList(url, proto, securityModel, customKey, anonymous)
 			),
 			lock: async (f, reason) => this.lock(url, f, reason),
 			pushValue: async value => localLock(async () => {
-				await this.pushItem(url, proto, value, securityModel);
+				await this.pushItem(url, proto, value, securityModel, customKey);
 			}),
 			setValue: async value => localLock(async () =>
-				this.setList(url, proto, value, securityModel)
+				this.setList(url, proto, value, securityModel, customKey)
 			),
 			updateValue: async f => asyncList.lock(async () => {
 				asyncList.setValue(await f(await asyncList.getValue()));
 			}),
-			watch: memoize(() =>
-				this.watchList(url, proto, securityModel, anonymous).map<ITimedValue<T>[], T[]>(
-					arr => arr.map(o => o.value)
-				)
-			),
-			watchPushes: memoize(() =>
-				this.watchListPushes(url, proto, securityModel, anonymous).map<ITimedValue<T>, T>(
-					o => o.value
-				)
-			)
+			watch: memoize(() => this.watchList(
+				url,
+				proto,
+				securityModel,
+				customKey,
+				anonymous
+			).map<ITimedValue<T>[], T[]>(
+				arr => arr.map(o => o.value)
+			)),
+			watchPushes: memoize(() => this.watchListPushes(
+				url,
+				proto,
+				securityModel,
+				customKey,
+				anonymous
+			).map<ITimedValue<T>, T>(
+				o => o.value
+			))
 		};
 
 		return asyncList;
@@ -310,6 +347,7 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false,
 		blockGetValue: boolean = false
 	) : IAsyncValue<T> {
@@ -341,6 +379,7 @@ export class AccountDatabaseService {
 					proto,
 					securityModel,
 					await (await asyncValue).getValue(),
+					customKey,
 					anonymous
 				);
 			}).catch(async () => blockGetValue ?
@@ -351,13 +390,14 @@ export class AccountDatabaseService {
 				(await asyncValue).lock(f, reason)
 			,
 			setValue: async value => localLock(async () => (await asyncValue).setValue(
-				await this.seal(url, proto, value, securityModel)
+				await this.seal(url, proto, value, securityModel, customKey)
 			)),
 			updateValue: async f => (await asyncValue).updateValue(async value => this.seal(
 				url,
 				proto,
-				await f(await this.open(url, proto, securityModel, value)),
-				securityModel
+				await f(await this.open(url, proto, securityModel, value, customKey)),
+				securityModel,
+				customKey
 			)),
 			watch
 		};
@@ -382,11 +422,12 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : Promise<T> {
 		return (
 			await (
-				await this.getItemInternal(url, proto, securityModel, anonymous)
+				await this.getItemInternal(url, proto, securityModel, customKey, anonymous)
 			).result
 		).value;
 	}
@@ -396,11 +437,12 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : Promise<T[]> {
 		url	= await this.processURL(url);
 		return Promise.all((await this.getListKeys(url)).map(async k =>
-			this.getItem(`${url}/${k}`, proto, securityModel, anonymous)
+			this.getItem(`${url}/${k}`, proto, securityModel, customKey, anonymous)
 		));
 	}
 
@@ -536,12 +578,13 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		value: T,
-		securityModel: SecurityModels = SecurityModels.private
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>
 	) : Promise<{hash: string; url: string}> {
 		return this.databaseService.pushItem(
 			await this.processURL(url),
 			BinaryProto,
-			await this.seal(url, proto, value, securityModel)
+			await this.seal(url, proto, value, securityModel, customKey)
 		);
 	}
 
@@ -557,12 +600,13 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		value: T,
-		securityModel: SecurityModels = SecurityModels.private
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>
 	) : Promise<{hash: string; url: string}> {
 		return this.lock(url, async () => this.databaseService.setItem(
 			await this.processURL(url),
 			BinaryProto,
-			await this.seal(url, proto, value, securityModel)
+			await this.seal(url, proto, value, securityModel, customKey)
 		));
 	}
 
@@ -571,12 +615,15 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		value: T[],
-		securityModel: SecurityModels = SecurityModels.private
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>
 	) : Promise<void> {
 		return this.lock(url, async () => this.databaseService.setList(
 			await this.processURL(url),
 			BinaryProto,
-			await Promise.all(value.map(async v => this.seal(url, proto, v, securityModel)))
+			await Promise.all(value.map(async v =>
+				this.seal(url, proto, v, securityModel, customKey)
+			))
 		));
 	}
 
@@ -585,7 +632,8 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		value: T,
-		securityModel: SecurityModels = SecurityModels.private
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>
 	) : {
 		cancel: () => void;
 		progress: Observable<number>;
@@ -602,7 +650,7 @@ export class AccountDatabaseService {
 			const uploadTask	= this.databaseService.uploadItem(
 				await this.processURL(url),
 				BinaryProto,
-				await this.seal(url, proto, value, securityModel)
+				await this.seal(url, proto, value, securityModel, customKey)
 			);
 
 			cancelPromise.then(() => { uploadTask.cancel(); });
@@ -648,6 +696,7 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return util.flattenObservablePromise(
@@ -664,6 +713,7 @@ export class AccountDatabaseService {
 						proto,
 						securityModel,
 						data.value,
+						customKey,
 						anonymous
 					).catch(
 						() => proto.create()
@@ -681,6 +731,7 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>[]> {
 		return util.flattenObservablePromise(
@@ -698,6 +749,7 @@ export class AccountDatabaseService {
 							proto,
 							securityModel,
 							data.value,
+							customKey,
 							anonymous
 						).catch(
 							() => proto.create()
@@ -728,6 +780,7 @@ export class AccountDatabaseService {
 		url: string,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return util.flattenObservablePromise(
@@ -744,6 +797,7 @@ export class AccountDatabaseService {
 						proto,
 						securityModel,
 						data.value,
+						customKey,
 						anonymous
 					)
 				}));
