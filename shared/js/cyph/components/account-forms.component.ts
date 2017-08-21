@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
+import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
 import {UtilService} from '../services/util.service';
 
@@ -21,6 +22,9 @@ export class AccountFormsComponent {
 
 		/** @see AccountContactsService */
 		public readonly accountContactsService: AccountContactsService,
+
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,

@@ -129,7 +129,7 @@ export class AccountFilesService {
 		const filePromise	= this.getFile(id);
 
 		const {progress, result}	= this.accountDatabaseService.downloadItem(
-			(async () => `${(await filePromise).owner}/files/${id}`)(),
+			(async () => `users/${(await filePromise).owner}/files/${id}`)(),
 			proto,
 			securityModel,
 			(async () => (await filePromise).key)()
@@ -563,9 +563,13 @@ export class AccountFilesService {
 
 	/** Watches file record. */
 	public watchMetadata (id: string) : Observable<IAccountFileRecord> {
+		const filePromise	= this.getFile(id);
+
 		return this.accountDatabaseService.watch(
-			(async () => `users/${(await this.getFile(id)).owner}/fileRecords/${id}`)(),
-			AccountFileRecord
+			(async () => `users/${(await filePromise).owner}/fileRecords/${id}`)(),
+			AccountFileRecord,
+			undefined,
+			(async () => (await filePromise).key)()
 		).map(o =>
 			o.value
 		);
@@ -573,11 +577,13 @@ export class AccountFilesService {
 
 	/** Watches note. */
 	public watchNote (id: string) : Observable<IQuillDelta> {
+		const filePromise	= this.getFile(id);
+
 		return this.accountDatabaseService.watch(
-			`files/${id}`,
+			(async () => `users/${(await filePromise).owner}/files/${id}`)(),
 			BinaryProto,
 			undefined,
-			(async () => (await this.getFile(id)).key)()
+			(async () => (await filePromise).key)()
 		).map(o =>
 			o.value.length > 0 ? msgpack.decode(o.value) : {ops: []}
 		);

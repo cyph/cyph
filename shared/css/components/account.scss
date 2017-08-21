@@ -65,9 +65,24 @@
 		}
 	}
 
-	.header {
-		text-align: center;
-		padding-bottom: 1rem;
+	.router-content {
+		position: relative;
+
+		&, > router-outlet ~ * {
+			height: 100%;
+		}
+
+		> .header {
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			text-align: center;
+
+			~ * .card-list {
+				padding-top: 6rem;
+			}
+		}
 	}
 }
 

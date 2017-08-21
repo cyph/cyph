@@ -37,7 +37,21 @@ export class AccountComponent implements OnInit {
 
 	/** Header title for current section. */
 	public get header () : string|undefined {
-		if (!this.route) {
+		const route	= this.route;
+
+		if (
+			[
+				'contacts',
+				'docs',
+				'files',
+				'forms',
+				'notes'
+			].indexOf(route) < 0 ||
+			(
+				this.activatedRouteService.snapshot.firstChild &&
+				this.activatedRouteService.snapshot.firstChild.url.slice(-1)[0].path !== route
+			)
+		) {
 			return;
 		}
 
