@@ -335,6 +335,17 @@
 					}
 				},
 
+				"fileReferences": {
+					"$fileReference": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				},
+
 				"files": {
 					"$file": {
 						"hash": {
