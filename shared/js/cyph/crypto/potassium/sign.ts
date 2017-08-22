@@ -30,7 +30,7 @@ export class Sign implements ISign {
 	public async open (
 		signed: Uint8Array|string,
 		publicKey: Uint8Array,
-		additionalData?: Uint8Array|string,
+		additionalData: Uint8Array|string = new Uint8Array(0),
 		decompress: boolean = false
 	) : Promise<Uint8Array> {
 		signed	= potassiumUtil.fromBase64(signed);
@@ -54,7 +54,7 @@ export class Sign implements ISign {
 	public async sign (
 		message: Uint8Array|string,
 		privateKey: Uint8Array,
-		additionalData?: Uint8Array|string,
+		additionalData: Uint8Array|string = new Uint8Array(0),
 		compress: boolean = false
 	) : Promise<Uint8Array> {
 		message	= potassiumUtil.fromString(message);
