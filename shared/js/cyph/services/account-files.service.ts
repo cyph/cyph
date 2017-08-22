@@ -458,7 +458,7 @@ export class AccountFilesService {
 		username: string
 	) : Promise<void> {
 		if (
-			this.accountDatabaseService.currentUser.value && 
+			this.accountDatabaseService.currentUser.value &&
 			this.accountDatabaseService.currentUser.value.user.username === username
 		) {
 			return;
@@ -578,7 +578,7 @@ export class AccountFilesService {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
-		let anonymous: boolean	= false;
+		let anonymous	= false;
 		let username: string;
 
 		if (this.accountDatabaseService.currentUser.value) {
