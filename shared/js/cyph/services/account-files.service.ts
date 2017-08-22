@@ -12,9 +12,11 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {
 	AccountFileRecord,
 	AccountFileReference,
+	AccountFileReferenceContainer,
 	Form,
 	IAccountFileRecord,
 	IAccountFileReference,
+	IAccountFileReferenceContainer,
 	IForm
 } from '../../proto';
 import {SecurityModels} from '../account';
@@ -98,20 +100,63 @@ export class AccountFilesService {
 					this.incomingFileCache,
 					value,
 					async () => {
-						const reference	= await util.deserialize(
-							AccountFileReference,
+						const referenceContainer	= await util.deserialize(
+							AccountFileReferenceContainer,
 							await this.potassiumService.box.open(
 								value,
 								o.keys.encryptionKeyPair
 							)
 						);
 
-						const record	= await this.accountDatabaseService.getItem(
-							`users/${reference.owner}/fileRecords/${reference.id}`,
-							AccountFileRecord,
-							undefined,
-							reference.key
-						);
+						let record: IAccountFileRecord;
+						let reference: IAccountFileReference;
+
+						if (
+							referenceContainer.anonymousShare &&
+							this.accountDatabaseService.currentUser.value
+						) {
+							record	= referenceContainer.anonymousShare.accountFileRecord;
+							record.wasAnonymousShare	= true;
+
+							reference	= {
+								id: record.id,
+								key: referenceContainer.anonymousShare.key,
+								owner: this.accountDatabaseService.currentUser.value.user.username
+							};
+						}
+						else if (
+							referenceContainer.signedShare &&
+							this.accountDatabaseService.currentUser.value
+						) {
+							reference	= await util.deserialize(
+								AccountFileReference,
+								await this.potassiumService.sign.open(
+									referenceContainer.signedShare.accountFileReference,
+									(await this.accountDatabaseService.getUserPublicKeys(
+										referenceContainer.signedShare.owner
+									)).publicSigningKey
+								)
+							);
+
+							record	= await this.accountDatabaseService.getItem(
+								`users/${reference.owner}/fileRecords/${reference.id}`,
+								AccountFileRecord,
+								undefined,
+								reference.key
+							);
+						}
+						else {
+							return {
+								id: '',
+								key: new Uint8Array(0),
+								mediaType: '',
+								name: '',
+								owner: '',
+								recordType: AccountFileRecord.RecordTypes.File,
+								size: NaN,
+								timestamp: 0
+							};
+						}
 
 						return {
 							id: record.id,
@@ -193,10 +238,18 @@ export class AccountFilesService {
 
 	/** Accepts or rejects incoming file. */
 	public async acceptIncomingFile (
-		incomingFile: IAccountFileReference,
+		incomingFile: IAccountFileRecord&IAccountFileReference,
 		shouldAccept: boolean = true
 	) : Promise<void> {
 		if (shouldAccept) {
+			if (incomingFile.wasAnonymousShare) {
+				await this.accountDatabaseService.setItem(
+					`fileRecords/${incomingFile.id}`,
+					AccountFileRecord,
+					incomingFile
+				);
+			}
+
 			await this.accountDatabaseService.setItem(
 				`fileReferences/${incomingFile.id}`,
 				AccountFileReference,
@@ -382,16 +435,47 @@ export class AccountFilesService {
 	}
 
 	/** Shares file with another user. */
-	public async shareFile (id: string, username: string) : Promise<void> {
-		if (username === (await this.accountDatabaseService.getCurrentUser()).user.username) {
+	public async shareFile (
+		id: string|AccountFileReferenceContainer.IAnonymousShare,
+		username: string
+	) : Promise<void> {
+		if (
+			this.accountDatabaseService.currentUser.value && 
+			this.accountDatabaseService.currentUser.value.user.username === username
+		) {
 			return;
+		}
+
+		let accountFileReferenceContainer: IAccountFileReferenceContainer;
+
+		/* Anonymous */
+		if (typeof id !== 'string') {
+			accountFileReferenceContainer	= {anonymousShare: id};
+		}
+		/* Non-anonymous/signed */
+		else if (this.accountDatabaseService.currentUser.value) {
+			const data	=
+				await this.accountDatabaseService.getItem(`fileReferences/${id}`, BinaryProto)
+			;
+
+			accountFileReferenceContainer	= {signedShare: {
+				accountFileReference: await this.potassiumService.sign.sign(
+					data,
+					this.accountDatabaseService.currentUser.value.keys.signingKeyPair.privateKey
+				),
+				owner: this.accountDatabaseService.currentUser.value.user.username
+			}};
+		}
+		/* Invalid attempt to perform signed share */
+		else {
+			throw new Error('Invalid AccountFilesService.shareFile input.');
 		}
 
 		await this.databaseService.setItem(
 			`users/${username}/incomingFiles/${id}`,
 			BinaryProto,
 			await this.potassiumService.box.seal(
-				await this.accountDatabaseService.getItem(`fileReferences/${id}`, BinaryProto),
+				await util.serialize(AccountFileReferenceContainer, accountFileReferenceContainer),
 				(await this.accountDatabaseService.getUserPublicKeys(username)).publicEncryptionKey
 			)
 		);
@@ -400,6 +484,7 @@ export class AccountFilesService {
 	/** Overwrites an existing note. */
 	public async updateDoc (id: string, delta: IQuillDelta|IQuillRange) : Promise<void> {
 		const file	= await this.getFile(id);
+
 		await this.accountDatabaseService.pushItem(
 			`users/${file.owner}/docs/${id}`,
 			BinaryProto,
@@ -416,6 +501,7 @@ export class AccountFilesService {
 		size?: number;
 	}) : Promise<void> {
 		const original	= await this.getFile(id);
+
 		await this.accountDatabaseService.setItem(
 			`users/${original.owner}/fileRecords/${id}`,
 			AccountFileRecord,
@@ -473,11 +559,25 @@ export class AccountFilesService {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
+		let anonymous: boolean	= false;
+		let username: string;
+
+		if (this.accountDatabaseService.currentUser.value) {
+			username	= this.accountDatabaseService.currentUser.value.user.username;
+		}
+		else if (shareWithUser) {
+			anonymous	= true;
+			username	= shareWithUser;
+		}
+		else {
+			throw new Error('Invalid AccountFilesService.upload input.');
+		}
+
 		const id	= util.uuid();
 		const key	= (async () => this.potassiumService.randomBytes(
 			await this.potassiumService.secretBox.keyBytes
 		))();
-		const url	= `files/${id}`;
+		const url	= `users/${username}/files/${id}`;
 
 		const {progress, result}	= file instanceof Blob ?
 			this.accountDatabaseService.uploadItem(url, BlobProto, file, undefined, key) :
@@ -490,7 +590,7 @@ export class AccountFilesService {
 							docProgress.next(Math.round(i / file.length * 100));
 
 							await this.accountDatabaseService.pushItem(
-								`docs/${id}`,
+								`users/${username}/docs/${id}`,
 								BinaryProto,
 								msgpack.encode(file[i]),
 								undefined,
@@ -522,54 +622,61 @@ export class AccountFilesService {
 		return {
 			progress,
 			result: result.then(async () => {
-				await this.accountDatabaseService.setItem(
-					`fileRecords/${id}`,
-					AccountFileRecord,
-					{
-						id,
-						mediaType: file instanceof Blob ?
-							file.type :
-							file instanceof Array ?
-								'cyph/doc' :
-								this.fileIsDelta(file) ?
-									'cyph/note' :
-									'cyph/form'
-						,
-						name,
-						recordType: file instanceof Blob ?
-							AccountFileRecord.RecordTypes.File :
-							file instanceof Array ?
-								AccountFileRecord.RecordTypes.Doc :
-								this.fileIsDelta(file) ?
-									AccountFileRecord.RecordTypes.Note :
-									AccountFileRecord.RecordTypes.Form
-						,
-						size: file instanceof Blob ?
-							file.size :
-							!(file instanceof Array) && this.fileIsDelta(file) ?
-								this.potassiumService.fromString(
-									this.deltaToString(<IQuillDelta> file)
-								).length :
-								NaN
-						,
-						timestamp: await util.timestamp()
-					},
-					undefined,
-					key
-				);
+				const accountFileRecord	= {
+					id,
+					mediaType: file instanceof Blob ?
+						file.type :
+						file instanceof Array ?
+							'cyph/doc' :
+							this.fileIsDelta(file) ?
+								'cyph/note' :
+								'cyph/form'
+					,
+					name,
+					recordType: file instanceof Blob ?
+						AccountFileRecord.RecordTypes.File :
+						file instanceof Array ?
+							AccountFileRecord.RecordTypes.Doc :
+							this.fileIsDelta(file) ?
+								AccountFileRecord.RecordTypes.Note :
+								AccountFileRecord.RecordTypes.Form
+					,
+					size: file instanceof Blob ?
+						file.size :
+						!(file instanceof Array) && this.fileIsDelta(file) ?
+							this.potassiumService.fromString(
+								this.deltaToString(<IQuillDelta> file)
+							).length :
+							NaN
+					,
+					timestamp: await util.timestamp()
+				};
 
-				await this.accountDatabaseService.setItem(
-					`fileReferences/${id}`,
-					AccountFileReference,
-					{
-						id,
-						key: await key,
-						owner: (await this.accountDatabaseService.getCurrentUser()).user.username
+				if (anonymous) {
+					await this.shareFile({accountFileRecord, key: await key}, username);
+				}
+				else {
+					await this.accountDatabaseService.setItem(
+						`fileRecords/${id}`,
+						AccountFileRecord,
+						accountFileRecord,
+						undefined,
+						key
+					);
+
+					await this.accountDatabaseService.setItem(
+						`fileReferences/${id}`,
+						AccountFileReference,
+						{
+							id,
+							key: await key,
+							owner: username
+						}
+					);
+
+					if (shareWithUser) {
+						await this.shareFile(id, shareWithUser);
 					}
-				);
-
-				if (shareWithUser) {
-					this.shareFile(id, shareWithUser);
 				}
 
 				return id;

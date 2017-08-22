@@ -9,6 +9,7 @@
 		<md-card
 			class='note animated _{{i}}'
 			*ngFor='let note of notes | async; let i = index'
+			*ngIf='!!note.owner'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			[routerLink]='note.id'
@@ -20,14 +21,14 @@
 				<md-card-subtitle *ngIf='!realTime'>
 					<div>{{accountFilesService.noteSnippet(note.id)}}</div>
 					<div *ngIf='
-						!!note.owner &&
+						!note.wasAnonymousShare &&
 						accountDatabaseService.currentUser.value &&
 						accountDatabaseService.currentUser.value.user.username !== note.owner
 					'>
 						<span cyphTranslate>Owner:</span>
 						<a [routerLink]='"/account/profile/" + note.owner'>{{note.owner}}</a>
 					</div>
-					<div cyphTranslate *ngIf='!note.owner'>
+					<div cyphTranslate *ngIf='note.wasAnonymousShare'>
 						Received from anonymous
 					</div>
 				</md-card-subtitle>
@@ -59,6 +60,7 @@
 		<md-card
 			class='note animated _{{i}}'
 			*ngFor='let note of incomingNotes | async; let i = index'
+			*ngIf='!!note.owner'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 		>
@@ -67,11 +69,11 @@
 					{{note.name}}
 				</md-card-title>
 				<md-card-subtitle>
-					<div *ngIf='!!note.owner'>
+					<div *ngIf='!note.wasAnonymousShare'>
 						<span cyphTranslate>Shared by</span>
 						<a [routerLink]='"/account/profile/" + note.owner'>{{note.owner}}</a>
 					</div>
-					<div cyphTranslate *ngIf='!note.owner'>
+					<div cyphTranslate *ngIf='note.wasAnonymousShare'>
 						Shared anonymously
 					</div>
 				</md-card-subtitle>

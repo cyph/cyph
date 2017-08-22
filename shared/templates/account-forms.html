@@ -9,6 +9,7 @@
 		<md-card
 			class='form animated _{{i}}'
 			*ngFor='let form of accountFilesService.filesListFiltered.forms | async; let i = index'
+			*ngIf='!!form.owner'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			[routerLink]='"/account/forms/" + form.id'
@@ -19,14 +20,14 @@
 				</md-card-title>
 				<md-card-subtitle>
 					<div *ngIf='
-						!!form.owner &&
+						!form.wasAnonymousShare &&
 						accountDatabaseService.currentUser.value &&
 						accountDatabaseService.currentUser.value.user.username !== form.owner
 					'>
 						<span cyphTranslate>Owner:</span>
 						<a [routerLink]='"/account/profile/" + form.owner'>{{form.owner}}</a>
 					</div>
-					<div cyphTranslate *ngIf='!form.owner'>
+					<div cyphTranslate *ngIf='form.wasAnonymousShare'>
 						Received from anonymous
 					</div>
 				</md-card-subtitle>
@@ -63,6 +64,7 @@
 			*ngFor='
 				let form of accountFilesService.incomingFilesFiltered.forms | async; let i = index
 			'
+			*ngIf='!!form.owner'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 		>
@@ -71,11 +73,11 @@
 					{{form.name}}
 				</md-card-title>
 				<md-card-subtitle>
-					<div *ngIf='!!form.owner'>
+					<div *ngIf='!form.wasAnonymousShare'>
 						<span cyphTranslate>Shared by</span>
 						<a [routerLink]='"/account/profile/" + form.owner'>{{form.owner}}</a>
 					</div>
-					<div cyphTranslate *ngIf='!form.owner'>
+					<div cyphTranslate *ngIf='form.wasAnonymousShare'>
 						Shared anonymously
 					</div>
 				</md-card-subtitle>

@@ -37,9 +37,12 @@ message AccountFileRecord {
 
 	/** Timestamp of upload or last save. */
 	required double timestamp = 6;
+
+	/** Indicates whether this file was originally an anonymous share. */
+	bool wasAnonymousShare = 7;
 }
 
-/** Sharable reference to a file record. */
+/** Shareable reference to a file record. */
 message AccountFileReference {
 	/** File record ID. */
 	required string id = 1;
@@ -49,6 +52,32 @@ message AccountFileReference {
 
 	/** Username of owner. */
 	required string owner = 3;
+}
+
+/** Contains a file reference. */
+message AccountFileReferenceContainer {
+	/** Anonymously shared file data. */
+	message AnonymousShare {
+		/** @see AccountFileRecord */
+		required AccountFileRecord accountFileRecord = 1;
+
+		/** @see AccountFileReference.key */
+		required bytes key = 2;
+	}
+
+	/** Signed file data. */
+	message SignedShare {
+		/** @see AccountFileReference */
+		required bytes accountFileReference = 1;
+
+		/** @see AccountFileReference.owner */
+		required string owner = 2;
+	}
+
+	oneof value {
+		AnonymousShare anonymousShare = 1;
+		SignedShare signedShare = 2;
+	}
 }
 
 /** Augmented PAKE login data. */

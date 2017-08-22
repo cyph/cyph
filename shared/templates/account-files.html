@@ -9,6 +9,7 @@
 		<md-card
 			class='file animated _{{i}}'
 			*ngFor='let file of accountFilesService.filesListFiltered.files | async; let i = index'
+			*ngIf='!!file.owner'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			routerLink='/account/files'
@@ -31,14 +32,14 @@
 						<span>{{utilService.readableByteLength(file.size)}}</span>
 					</div>
 					<div *ngIf='
-						!!file.owner &&
+						!file.wasAnonymousShare &&
 						accountDatabaseService.currentUser.value &&
 						accountDatabaseService.currentUser.value.user.username !== file.owner
 					'>
 						<span cyphTranslate>Owner:</span>
 						<a [routerLink]='"/account/profile/" + file.owner'>{{file.owner}}</a>
 					</div>
-					<div cyphTranslate *ngIf='!file.owner'>
+					<div cyphTranslate *ngIf='file.wasAnonymousShare'>
 						Received from anonymous
 					</div>
 				</md-card-subtitle>
@@ -88,6 +89,7 @@
 			*ngFor='
 				let file of accountFilesService.incomingFilesFiltered.files | async; let i = index
 			'
+			*ngIf='!!file.owner'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 		>
@@ -107,11 +109,11 @@
 						<span cyphTranslate>Size:</span>
 						<span>{{utilService.readableByteLength(file.size)}}</span>
 					</div>
-					<div *ngIf='!!file.owner'>
+					<div *ngIf='!file.wasAnonymousShare'>
 						<span cyphTranslate>Shared by</span>
 						<a [routerLink]='"/account/profile/" + file.owner'>{{file.owner}}</a>
 					</div>
-					<div cyphTranslate *ngIf='!file.owner'>
+					<div cyphTranslate *ngIf='file.wasAnonymousShare'>
 						Shared anonymously
 					</div>
 				</md-card-subtitle>

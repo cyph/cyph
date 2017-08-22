@@ -353,6 +353,7 @@
 				"files": {
 					"$file": {
 						".read": true,
+						".write": "($user + '@cyph.me') === auth.token.email || (!data.exists() && newData.exists())",
 
 						"hash": {
 							".validate": "newData.isString()"
