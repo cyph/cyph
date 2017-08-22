@@ -78,14 +78,20 @@ export class AccountComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		this.activatedRouteService.url.subscribe(async url => {
-			const path	= url[0].path;
+			const route	= this.route;
 
 			await this.accountAuthService.ready;
 
-			if (this.accountDatabaseService.currentUser.value && path === 'login') {
+			if (this.accountDatabaseService.currentUser.value && route === 'login') {
 				this.routerService.navigate(['account']);
 			}
-			else if (!this.accountDatabaseService.currentUser.value && path !== 'login') {
+			else if (
+				!this.accountDatabaseService.currentUser.value &&
+				[
+					'login',
+					'profile'
+				].indexOf(route) < 0
+			) {
 				this.routerService.navigate(['account', 'login']);
 			}
 		});

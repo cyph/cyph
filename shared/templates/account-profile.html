@@ -102,7 +102,7 @@
 		</div>
 	</div>
 
-	<div fxLayout='row' fxLayoutGap='16px' class='edit-buttons edit-hide'>
+	<div fxLayout='row' fxLayoutGap='16px' class='edit-buttons edit-hide' *ngIf='isCurrentUser'>
 		<button
 			md-fab
 			cyphTranslate
