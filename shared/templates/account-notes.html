@@ -35,7 +35,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Edit Note'
+						mdTooltip='Edit'
 						[routerLink]='note.id + "/edit"'
 					>
 						<md-icon>edit</md-icon>
@@ -43,7 +43,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Delete Note'
+						mdTooltip='Delete'
 						(click)='accountFilesService.remove(note); $event.stopPropagation();'
 					>
 						<md-icon>delete</md-icon>
@@ -52,8 +52,9 @@
 			</md-card-header>
 		</md-card>
 
-		<h2 cyphTranslate *ngIf='(incomingNotes | async)?.length > 0'>
-			Incoming Notes
+		<h2 *ngIf='(incomingNotes | async)?.length > 0'>
+			<span cyphTranslate *ngIf='realTime'>Incoming Docs</span>
+			<span cyphTranslate *ngIf='!realTime'>Incoming Notes</span>
 		</h2>
 
 		<md-card
@@ -79,7 +80,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Accept File'
+						mdTooltip='Accept'
 						(click)='accountFilesService.acceptIncomingFile(note)'
 					>
 						<md-icon>check</md-icon>
@@ -87,7 +88,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Reject File'
+						mdTooltip='Reject'
 						(click)='accountFilesService.acceptIncomingFile(note, false)'
 					>
 						<md-icon>delete</md-icon>

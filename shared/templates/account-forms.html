@@ -34,7 +34,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Edit Form'
+						mdTooltip='Edit'
 						*ngIf='false'
 					>
 						<md-icon>edit</md-icon>
@@ -42,7 +42,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Delete Form'
+						mdTooltip='Delete'
 						(click)='accountFilesService.remove(form); $event.stopPropagation();'
 					>
 						<md-icon>delete</md-icon>
@@ -83,7 +83,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Accept File'
+						mdTooltip='Accept'
 						(click)='accountFilesService.acceptIncomingFile(form)'
 					>
 						<md-icon>check</md-icon>
@@ -91,7 +91,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Reject File'
+						mdTooltip='Reject'
 						(click)='accountFilesService.acceptIncomingFile(form, false)'
 					>
 						<md-icon>delete</md-icon>

@@ -46,7 +46,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='File Settings'
+						mdTooltip='Settings'
 						*ngIf='false'
 					>
 						<md-icon>settings</md-icon>
@@ -54,7 +54,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Delete File'
+						mdTooltip='Delete'
 						(click)='accountFilesService.remove(file); $event.stopPropagation();'
 					>
 						<md-icon>delete</md-icon>
@@ -67,7 +67,7 @@
 			class='file-upload'
 			fxLayoutAlign='center'
 			fxLayout='row'
-			mdTooltip='Upload File'
+			mdTooltip='Upload'
 			mdTooltipPosition='above'
 			cyphDropZone
 			cyphTranslate
@@ -119,7 +119,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Accept File'
+						mdTooltip='Accept'
 						(click)='accountFilesService.acceptIncomingFile(file)'
 					>
 						<md-icon>check</md-icon>
@@ -127,7 +127,7 @@
 					<button
 						md-icon-button
 						cyphTranslate
-						mdTooltip='Reject File'
+						mdTooltip='Reject'
 						(click)='accountFilesService.acceptIncomingFile(file, false)'
 					>
 						<md-icon>delete</md-icon>
