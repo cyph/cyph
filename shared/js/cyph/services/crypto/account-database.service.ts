@@ -372,7 +372,13 @@ export class AccountDatabaseService {
 		})();
 
 		const watch	= memoize(() =>
-			this.watch(url, proto, securityModel).map<ITimedValue<T>, T>(o => o.value)
+			this.watch(
+				url,
+				proto,
+				securityModel,
+				customKey,
+				anonymous
+			).map<ITimedValue<T>, T>(o => o.value)
 		);
 
 		return {
