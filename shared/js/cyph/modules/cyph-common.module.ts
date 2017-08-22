@@ -52,6 +52,9 @@ import {CyphWebModule} from './cyph-web.module';
 		SignupFormComponent,
 		TranslateDirective
 	],
+	entryComponents: [
+		HelpComponent
+	],
 	exports: [
 		ChatCyphertextComponent,
 		ChatCyphertextListComponent,

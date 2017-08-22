@@ -15,10 +15,6 @@ import {NgModule} from '@angular/core';
 import {Http} from '@angular/http';
 import {DomSanitizer} from '@angular/platform-browser';
 import {RouterModule} from '@angular/router';
-import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
-import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
-import {DialogImageComponent} from '../cyph/components/dialog-image.component';
-import {HelpComponent} from '../cyph/components/help.component';
 import {CyphAppModule} from '../cyph/modules/cyph-app.module';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
@@ -44,12 +40,6 @@ import {LockdownComponent} from './lockdown.component';
 		AppComponent,
 		EphemeralChatRootComponent,
 		LockdownComponent
-	],
-	entryComponents: [
-		DialogAlertComponent,
-		DialogConfirmComponent,
-		DialogImageComponent,
-		HelpComponent
 	],
 	imports: [
 		RouterModule.forRoot(appRoutes, {useHash: true}),

@@ -21,7 +21,6 @@ import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
 import {DialogImageComponent} from './dialog-image.component';
-import {HelpComponent} from './js/cyph/components/help.component';
 import {CyphAppModule} from './js/cyph/modules/cyph-app.module';
 import {CyphCommonModule} from './js/cyph/modules/cyph-common.module';
 import {MainThreadPotassiumService} from './js/cyph/services/crypto/main-thread-potassium.service';
@@ -43,7 +42,9 @@ import {NativeTitleService} from './native-title.service';
 		AppComponent,
 		DialogImageComponent
 	],
-	entryComponents: [HelpComponent],
+	entryComponents: [
+		DialogImageComponent
+	],
 	imports: [
 		NativeScriptRouterModule.forRoot(appRoutes),
 		CyphAppModule,
