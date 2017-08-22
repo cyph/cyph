@@ -62,19 +62,17 @@ export class AccountDatabaseService {
 	/** @ignore */
 	private readonly openHelpers	= {
 		secretBox: async (
-			currentUser: ICurrentUser,
 			data: Uint8Array,
 			url: string,
 			customKey: Uint8Array|Promise<Uint8Array>|undefined
 		) =>
 			this.potassiumService.secretBox.open(
 				data,
-				(await customKey) || currentUser.keys.symmetricKey,
+				(await customKey) || (await this.getCurrentUser()).keys.symmetricKey,
 				url
 			)
 		,
 		sign: async (
-			currentUser: ICurrentUser|undefined,
 			data: Uint8Array,
 			url: string,
 			decompress: boolean
@@ -92,8 +90,8 @@ export class AccountDatabaseService {
 				BinaryProto,
 				async () => this.potassiumService.sign.open(
 					data,
-					currentUser && username === currentUser.user.username ?
-						currentUser.keys.signingKeyPair.publicKey :
+					this.currentUser.value && username === this.currentUser.value.user.username ?
+						this.currentUser.value.keys.signingKeyPair.publicKey :
 						(await this.getUserPublicKeys(username)).publicSigningKey,
 					url,
 					decompress
@@ -105,26 +103,24 @@ export class AccountDatabaseService {
 	/** @ignore */
 	private readonly sealHelpers	= {
 		secretBox: async (
-			currentUser: ICurrentUser,
 			data: Uint8Array,
 			url: string,
 			customKey: Uint8Array|Promise<Uint8Array>|undefined
 		) =>
 			util.retryUntilSuccessful(async () => this.potassiumService.secretBox.seal(
 				data,
-				(await customKey) || currentUser.keys.symmetricKey,
+				(await customKey) || (await this.getCurrentUser()).keys.symmetricKey,
 				url
 			))
 		,
 		sign: async (
-			currentUser: ICurrentUser,
 			data: Uint8Array,
 			url: string,
 			compress: boolean
 		) =>
 			util.retryUntilSuccessful(async () => this.potassiumService.sign.sign(
 				data,
-				currentUser.keys.signingKeyPair.privateKey,
+				(await this.getCurrentUser()).keys.signingKeyPair.privateKey,
 				url,
 				compress
 			))
@@ -187,7 +183,7 @@ export class AccountDatabaseService {
 
 		return util.deserialize(proto, await (async () => {
 			if (securityModel === SecurityModels.public) {
-				return this.openHelpers.sign(currentUser, data, url, true);
+				return this.openHelpers.sign(data, url, true);
 			}
 
 			if (!currentUser) {
@@ -196,11 +192,10 @@ export class AccountDatabaseService {
 
 			switch (securityModel) {
 				case SecurityModels.private:
-					return this.openHelpers.secretBox(currentUser, data, url, customKey);
+					return this.openHelpers.secretBox(data, url, customKey);
 				case SecurityModels.privateSigned:
 					return this.openHelpers.sign(
-						currentUser,
-						await this.openHelpers.secretBox(currentUser, data, url, customKey),
+						await this.openHelpers.secretBox(data, url, customKey),
 						url,
 						false
 					);
@@ -244,22 +239,20 @@ export class AccountDatabaseService {
 		securityModel: SecurityModels,
 		customKey: Uint8Array|Promise<Uint8Array>|undefined
 	) : Promise<Uint8Array> {
-		const currentUser	= await this.getCurrentUser();
-		url					= await this.processURL(url);
-		const data			= await util.serialize(proto, value);
+		url			= await this.processURL(url);
+		const data	= await util.serialize(proto, value);
 
 		switch (securityModel) {
 			case SecurityModels.private:
-				return this.sealHelpers.secretBox(currentUser, data, url, customKey);
+				return this.sealHelpers.secretBox(data, url, customKey);
 			case SecurityModels.privateSigned:
 				return this.sealHelpers.secretBox(
-					currentUser,
-					await this.sealHelpers.sign(currentUser, data, url, false),
+					await this.sealHelpers.sign(data, url, false),
 					url,
 					customKey
 				);
 			case SecurityModels.public:
-				return this.sealHelpers.sign(currentUser, data, url, true);
+				return this.sealHelpers.sign(data, url, true);
 			default:
 				throw new Error('Invalid security model.');
 		}

@@ -55,6 +55,19 @@ export class AccountFilesService {
 				'fileReferences',
 				AccountFileReference
 			).flatMap(async references => Promise.all(references.map(async ({value}) => {
+				if (!value.owner) {
+					return {
+						id: '',
+						mediaType: '',
+						name: '',
+						owner: '',
+						recordType: AccountFileRecord.RecordTypes.File,
+						size: NaN,
+						timestamp: 0,
+						wasAnonymousShare: false
+					};
+				}
+
 				const record	= await this.accountDatabaseService.getItem(
 					`users/${value.owner}/fileRecords/${value.id}`,
 					AccountFileRecord,
@@ -69,7 +82,8 @@ export class AccountFilesService {
 					owner: value.owner,
 					recordType: record.recordType,
 					size: record.size,
-					timestamp: record.timestamp
+					timestamp: record.timestamp,
+					wasAnonymousShare: record.wasAnonymousShare
 				};
 			}))).map(records =>
 				records.sort((a, b) => b.timestamp - a.timestamp)
@@ -154,7 +168,8 @@ export class AccountFilesService {
 								owner: '',
 								recordType: AccountFileRecord.RecordTypes.File,
 								size: NaN,
-								timestamp: 0
+								timestamp: 0,
+								wasAnonymousShare: false
 							};
 						}
 
@@ -166,7 +181,8 @@ export class AccountFilesService {
 							owner: reference.owner,
 							recordType: record.recordType,
 							size: record.size,
-							timestamp: record.timestamp
+							timestamp: record.timestamp,
+							wasAnonymousShare: record.wasAnonymousShare
 						};
 					}
 				)
@@ -246,7 +262,9 @@ export class AccountFilesService {
 				await this.accountDatabaseService.setItem(
 					`fileRecords/${incomingFile.id}`,
 					AccountFileRecord,
-					incomingFile
+					incomingFile,
+					undefined,
+					incomingFile.key
 				);
 			}
 
@@ -451,6 +469,7 @@ export class AccountFilesService {
 		/* Anonymous */
 		if (typeof id !== 'string') {
 			accountFileReferenceContainer	= {anonymousShare: id};
+			id	= id.accountFileRecord.id;
 		}
 		/* Non-anonymous/signed */
 		else if (this.accountDatabaseService.currentUser.value) {

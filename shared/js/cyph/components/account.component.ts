@@ -77,7 +77,7 @@ export class AccountComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		this.activatedRouteService.url.subscribe(async url => {
+		this.activatedRouteService.url.subscribe(async () => {
 			const route	= this.route;
 
 			await this.accountAuthService.ready;
