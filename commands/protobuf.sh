@@ -23,3 +23,5 @@ do
 	pbts shared/js/proto/index.js -o shared/js/proto/index.d.ts
 	checkfail
 done
+
+sed -i 's/|null/|undefined/g' shared/js/proto/index.d.ts
