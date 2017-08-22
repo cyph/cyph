@@ -224,13 +224,13 @@ export class AccountFilesService {
 	}
 
 	/** @ignore */
-	private filterFiles<T> (
+	private filterFiles<T extends {owner: string}> (
 		filesList: Observable<(IAccountFileRecord&T)[]>,
 		filterRecordTypes: AccountFileRecord.RecordTypes
 	) : Observable<(IAccountFileRecord&T)[]> {
 		return util.flattenObservablePromise(
-			filesList.map(files => files.filter(({recordType}) =>
-				!filterRecordTypes || recordType === filterRecordTypes
+			filesList.map(files => files.filter(({owner, recordType}) =>
+				!!owner && (!filterRecordTypes || recordType === filterRecordTypes)
 			)),
 			[]
 		);

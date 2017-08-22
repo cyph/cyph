@@ -9,7 +9,6 @@
 		<md-card
 			class='file animated _{{i}}'
 			*ngFor='let file of accountFilesService.filesListFiltered.files | async; let i = index'
-			*ngIf='!!file.owner'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			routerLink='/account/files'
@@ -89,7 +88,6 @@
 			*ngFor='
 				let file of accountFilesService.incomingFilesFiltered.files | async; let i = index
 			'
-			*ngIf='!!file.owner'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 		>

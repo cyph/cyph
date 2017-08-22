@@ -9,7 +9,6 @@
 		<md-card
 			class='form animated _{{i}}'
 			*ngFor='let form of accountFilesService.filesListFiltered.forms | async; let i = index'
-			*ngIf='!!form.owner'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			[routerLink]='"/account/forms/" + form.id'
@@ -64,7 +63,6 @@
 			*ngFor='
 				let form of accountFilesService.incomingFilesFiltered.forms | async; let i = index
 			'
-			*ngIf='!!form.owner'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 		>
