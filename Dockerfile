@@ -30,11 +30,7 @@ RUN apt-get -y --allow-downgrades install \
 	golang-go \
 	haxe \
 	inotify-tools \
-	lib32ncurses5 \
-	lib32z1 \
-	libbz2-1.0:i386 \
 	libsodium-dev \
-	libstdc++6:i386 \
 	libtool \
 	mono-complete \
 	nano \
