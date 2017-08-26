@@ -19,9 +19,9 @@ export class WebLocalStorageService extends LocalStorageService {
 
 	/** @ignore */
 	private ready: Promise<void>	= (async () => {
-		await localforage.ready();
-
 		try {
+			await localforage.ready();
+
 			await Promise.all(
 				Object.keys(localStorage).
 					filter(key => !key.startsWith('localforage/')).
