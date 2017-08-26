@@ -184,7 +184,7 @@ const shellScripts			= {
 
 			if [ "$(command -v gcloud)" ] ; then gcloud components update --quiet ; fi
 
-			haxelib update
+			echo | haxelib update > /dev/null
 
 			touch ~/.updated
 		`,
