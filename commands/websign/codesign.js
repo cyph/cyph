@@ -3,7 +3,7 @@
 
 const fs			= require('fs');
 const mkdirp		= require('mkdirp');
-const sign			= require('./sign');
+const sign			= require('../sign');
 
 
 (async () => {
@@ -52,7 +52,8 @@ try {
 	console.log('Code signing complete.');
 	process.exit(0);
 }
-catch (_) {
+catch (err) {
+	console.error(err);
 	console.log('Code signing failed.');
 	process.exit(1);
 }
