@@ -34,7 +34,11 @@ const publicKeys	= JSON.parse(
 		replace(/\/\*.*?\*\//g, '')
 );
 
-const dataToSign	= Buffer.from(JSON.stringify(items));
+const dataToSign	= Buffer.from(JSON.stringify(items, (_, v) =>
+	v instanceof Uint8Array ?
+		{data: sodium.to_base64(v).replace(/\s+/g, ''), isUint8Array: true} :
+		v
+));
 
 const id			= new Uint32Array(crypto.randomBytes(4).buffer)[0];
 const client		= dgram.createSocket('udp4');
@@ -85,7 +89,7 @@ server.on('message', async (message) => {
 		const signedItems	= items.map((item, i) =>
 			Buffer.concat([
 				Buffer.from(signatureData.signatures[i], 'base64'),
-				Buffer.from(item)
+				item.isUint8Array ? Buffer.from(item.data, 'base64') : Buffer.from(item)
 			]).toString('base64').replace(/\s+/g, '')
 		);
 
@@ -104,7 +108,11 @@ server.on('message', async (message) => {
 				))
 			);
 
-			if (items.filter((item, i) => openedItems[i] !== item).length > 0) {
+			if (items.filter((item, i) =>
+				item.isUint8Array ?
+					openedItems[i].toString('base64') !== item.data :
+					openedItems[i] !== item
+			).length > 0) {
 				throw new Error('Incorrect signed data.');
 			}
 

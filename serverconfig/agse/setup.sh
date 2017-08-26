@@ -79,7 +79,7 @@ cat > /tmp/agse/setup.sh << EndOfMessage
 
 cd /home/${username}
 
-npm install level libsodium-wrappers node-fetch read supersphincs
+npm install level libsodium-wrappers node-fetch read supersphincs validator
 echo
 
 /tmp/agse/generatekeys.js \
