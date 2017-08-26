@@ -86,7 +86,7 @@ cp -rf \
 	../shared/lib/native/tsconfig.aot.json \
 	../shared/lib/native/webpack.config.js \
 ./
-rm hooks/*/nativescript-dev-typescript.js
+rm hooks/*/nativescript-dev-typescript.js 2> /dev/null
 
 exceptions='nsWebpack.uglifyMangleExcludes'
 newExceptions="Array.from(new Set(${exceptions}.concat(require('../commands/mangleexceptions'))))"
