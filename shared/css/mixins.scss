@@ -77,7 +77,7 @@
 		color: $cyph-foreground;
 	}
 
-	cyph-chat-message a, cyph-quill > .read-only .ql-snow a {
+	cyph-chat-message a[href], cyph-quill > .read-only .ql-snow a {
 		color: $cyph-hyperlinks;
 	}
 
