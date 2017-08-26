@@ -9,7 +9,7 @@ const sodium		= require('libsodium-wrappers');
 const superSphincs	= require('supersphincs');
 
 
-const sign	= async (items) => {
+const sign	= async (items) => new Promise(async (resolve, reject) => {
 
 
 const remoteAddress	= '10.0.0.42';
@@ -24,7 +24,7 @@ const macAddress	= Buffer.from(
 );
 
 const publicKeysJS	= fs.readFileSync(
-	`${__dirname}/../../websign/js/keys.js`
+	`${__dirname}/../websign/js/keys.js`
 ).toString();
 const publicKeys	= JSON.parse(
 	publicKeysJS.
@@ -45,7 +45,7 @@ const client		= dgram.createSocket('udp4');
 const server		= dgram.createSocket('udp4');
 
 
-let incoming;
+let closed, incoming;
 server.on('message', async (message) => {
 	const metadata		= new Uint32Array(message.buffer, 0, 3);
 
@@ -117,14 +117,11 @@ server.on('message', async (message) => {
 			}
 
 			console.log('Signing complete.');
-			return {rsaIndex, signedItems, sphincsIndex};
+			resolve({rsaIndex, signedItems, sphincsIndex});
 		}
 		catch (err) {
 			console.error('Invalid signatures.');
-			throw err;
-		}
-		finally {
-			server.close();
+			reject(err);
 		}
 	}
 });
@@ -170,7 +167,7 @@ const sendData	= i => {
 sendData(0);
 
 
-};
+});
 
 
 if (require.main === module) {
