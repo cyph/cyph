@@ -19,7 +19,7 @@ read -r -d '' modules <<- EOM
 	@angular/compiler
 	@angular/compiler-cli
 	@angular/core
-	@angular/flex-layout@2.0.0-beta.8
+	@angular/flex-layout
 	@angular/forms
 	@angular/http
 	@angular/material
@@ -82,7 +82,7 @@ read -r -d '' modules <<- EOM
 	css-loader
 	d3
 	datauri
-	dompurify@0.9.0
+	dompurify
 	dragula
 	dropzone
 	extract-text-webpack-plugin
@@ -196,10 +196,10 @@ read -r -d '' modules <<- EOM
 	tsutils
 	typedoc
 	typescript
-	uglify-js@https://github.com/buu700/uglify-js-tmp
+	uglify-es
 	unsemantic
 	url-loader
-	web-animations-js@https://github.com/buu700/web-animations-js-tmp
+	web-animations-js
 	webpack
 	webpack-closure-compiler
 	webpack-sources
