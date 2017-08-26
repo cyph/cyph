@@ -57,6 +57,11 @@ if [ "${websign}" ] ; then
 	./commands/keycache.sh
 fi
 
+# Compile + translate + minify
+if [ "${compiledProjects}" ] && [ ! "${test}" ] ; then
+	./commands/lint.sh || exit 1
+fi
+
 log 'Initial setup'
 
 # Branch config setup
@@ -289,9 +294,6 @@ fi
 
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
-	if [ ! "${test}" ] ; then
-		./commands/lint.sh || exit 1
-	fi
 	./commands/buildunbundledassets.sh $(if [ "${simple}" ] ; then echo '--test' ; fi) || exit 1
 	rm -rf "${dir}/shared/assets"
 	cp -a shared/assets "${dir}/shared/"
