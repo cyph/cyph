@@ -172,6 +172,11 @@
 		}
 	}
 
+	cyph-chat-message a[href="no:link"] {
+		color: inherit;
+		text-decoration: none;
+	}
+
 	cyph-chat-main .chat-main.video .video-call {
 		&, .logo, .me, .sidebar, .buttons, ~ cyph-chat-message-list, ~ .video-call-message-box {
 			position: absolute;
