@@ -7,6 +7,7 @@ const level			= require('level');
 const read			= require('read');
 const stream		= require('stream');
 const superSphincs	= require('supersphincs');
+const validator		= require('validator');
 
 
 (async () => {
@@ -207,7 +208,10 @@ server.on('message', async (message) => {
 
 			if (
 				parsed instanceof Array &&
-				parsed.filter(s => typeof s !== 'string').length === 0
+				parsed.filter(o => !(
+					typeof o === 'string' ||
+					(o && o.isUint8Array && typeof o.data === 'string' && validator.isBase64(o.data))
+				)).length === 0
 			) {
 				return parsed;
 			}
@@ -230,8 +234,11 @@ server.on('message', async (message) => {
 		return;
 	}
 
-	const signatures	= await Promise.all(inputs.map(async (s) =>
-		superSphincs.signDetachedBase64(s, keyData.keyPair.privateKey)
+	const signatures	= await Promise.all(inputs.map(async (o) =>
+		superSphincs.signDetachedBase64(
+			o.isUint8Array ? Buffer.from(o.data, 'base64') : o,
+			keyData.keyPair.privateKey
+		)
 	));
 
 	console.log('Signatures generated.');

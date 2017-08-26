@@ -142,7 +142,6 @@ read -r -d '' modules <<- EOM
 	nativescript
 	nativescript-angular
 	nativescript-css-loader
-	nativescript-dev-android-snapshot
 	nativescript-dev-typescript
 	nativescript-dev-webpack
 	nativescript-theme-core

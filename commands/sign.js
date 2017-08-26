@@ -4,18 +4,12 @@
 const crypto		= require('crypto');
 const dgram			= require('dgram');
 const fs			= require('fs');
-const mkdirp		= require('mkdirp');
 const os			= require('os');
+const sodium		= require('libsodium-wrappers');
 const superSphincs	= require('supersphincs');
 
 
-(async () => {
-
-
-const args			= {
-	hashWhitelist: JSON.parse(process.argv[2]),
-	items: process.argv.slice(3).filter(s => s)
-};
+const sign	= async (items) => {
 
 
 const remoteAddress	= '10.0.0.42';
@@ -40,22 +34,10 @@ const publicKeys	= JSON.parse(
 		replace(/\/\*.*?\*\//g, '')
 );
 
-const signatureTTL	= 2.5; // Months
-const timestamp		= Date.now();
-
-const items			= args.items.map(s => s.split('=')).map(arr => ({
-	outputDir: arr[1],
-	inputData: JSON.stringify({
-		timestamp,
-		expires: timestamp + signatureTTL * 2.628e+9,
-		hashWhitelist: args.hashWhitelist,
-		package: fs.readFileSync(arr[0]).toString().trim(),
-		packageName: arr[1].split('/').slice(-1)[0]
-	})
-}));
-
-const dataToSign	= Buffer.from(JSON.stringify(
-	items.map(o => o.inputData)
+const dataToSign	= Buffer.from(JSON.stringify(items, (_, v) =>
+	v instanceof Uint8Array ?
+		{data: sodium.to_base64(v).replace(/\s+/g, ''), isUint8Array: true} :
+		v
 ));
 
 const id			= new Uint32Array(crypto.randomBytes(4).buffer)[0];
@@ -104,10 +86,10 @@ server.on('message', async (message) => {
 		const rsaIndex		= publicKeys.rsa.indexOf(signatureData.rsa);
 		const sphincsIndex	= publicKeys.sphincs.indexOf(signatureData.sphincs);
 
-		const signedItems	= items.map((o, i) =>
+		const signedItems	= items.map((item, i) =>
 			Buffer.concat([
 				Buffer.from(signatureData.signatures[i], 'base64'),
-				Buffer.from(o.inputData)
+				item.isUint8Array ? Buffer.from(item.data, 'base64') : Buffer.from(item)
 			]).toString('base64').replace(/\s+/g, '')
 		);
 
@@ -126,32 +108,23 @@ server.on('message', async (message) => {
 				))
 			);
 
-			if (items.filter((o, i) => openedItems[i] !== o.inputData).length > 0) {
+			if (items.filter((item, i) =>
+				item.isUint8Array ?
+					openedItems[i].toString('base64') !== item.data :
+					openedItems[i] !== item
+			).length > 0) {
 				throw new Error('Incorrect signed data.');
 			}
 
-			for (let i = 0 ; i < items.length ; ++i) {
-				const outputDir	= items[i].outputDir;
-
-				await new Promise(resolve => mkdirp(outputDir, resolve));
-
-				fs.writeFileSync(`${outputDir}/current`, timestamp);
-
-				fs.writeFileSync(`${outputDir}/pkg`,
-					signedItems[i] + '\n' +
-					rsaIndex + '\n' +
-					sphincsIndex
-				);
-
-				console.log(`${outputDir} signed.`);
-			}
-
 			console.log('Signing complete.');
-			process.exit(0);
+			return {rsaIndex, signedItems, sphincsIndex};
 		}
-		catch (_) {
+		catch (err) {
 			console.error('Invalid signatures.');
-			process.exit(1);
+			throw err;
+		}
+		finally {
+			server.close();
 		}
 	}
 });
@@ -197,4 +170,12 @@ const sendData	= i => {
 sendData(0);
 
 
-})();
+};
+
+
+if (require.main === module) {
+	console.log(sign(JSON.parse(process.argv[2])));
+}
+else {
+	module.exports	= sign;
+}

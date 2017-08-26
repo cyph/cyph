@@ -411,7 +411,7 @@ if [ "${websign}" ] ; then
 
 	notify 'Starting signing process'
 
-	./commands/websign/sign.js "${websignHashWhitelist}" $(
+	./commands/websign/codesign.js "${websignHashWhitelist}" $(
 		for p in ${packages} ; do
 			echo -n "pkg/${p}=cdn/${p} "
 		done

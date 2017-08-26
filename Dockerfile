@@ -1,4 +1,4 @@
-FROM debian:unstable
+FROM debian:stretch
 
 MAINTAINER Ryan Lester <hacker@linux.com>
 
@@ -8,7 +8,7 @@ RUN apt-get -y --allow-downgrades update
 RUN apt-get -y --allow-downgrades install apt-transport-https apt-utils curl gnupg lsb-release
 
 RUN dpkg --add-architecture i386
-RUN echo "deb https://deb.nodesource.com/node_8.x sid main" >> /etc/apt/sources.list
+RUN echo "deb https://deb.nodesource.com/node_8.x stretch main" >> /etc/apt/sources.list
 RUN echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN curl -s https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
@@ -17,7 +17,6 @@ RUN apt-get -y --allow-downgrades update
 RUN apt-get -y --allow-downgrades upgrade
 
 RUN apt-get -y --allow-downgrades install \
-	android-sdk \
 	autoconf \
 	automake \
 	build-essential \
@@ -30,7 +29,11 @@ RUN apt-get -y --allow-downgrades install \
 	golang-go \
 	haxe \
 	inotify-tools \
+	lib32ncurses5 \
+	lib32z1 \
+	libbz2-1.0:i386 \
 	libsodium-dev \
+	libstdc++6:i386 \
 	libtool \
 	mono-complete \
 	nano \
@@ -61,6 +64,7 @@ RUN echo '\
 \
 	export GIT_EDITOR="vim"; \
 	export GOPATH="/home/gibson/go"; \
+	export ANDROID_HOME="/home/gibson/androidsdk"; \
 	export JAVA_HOME="$( \
 		update-alternatives --query javac | sed -n -e "s/Best: *\(.*\)\/bin\/javac/\\1/p" \
 	)"; \
@@ -70,6 +74,8 @@ RUN echo '\
 		echo -n "/opt/local/sbin:"; \
 		echo -n "/usr/local/opt/go/libexec/bin:"; \
 		echo -n "${GOPATH}/bin:"; \
+		echo -n "${ANDROID_HOME}/platform-tools:"; \
+		echo -n "${ANDROID_HOME}/tools:"; \
 		echo -n "${PATH}:"; \
 		echo -n "/node_modules/.bin"; \
 	)"; \
@@ -103,6 +109,25 @@ RUN ls ~/*.tar.gz | xargs -I% tar xvzf % -C ~
 RUN rm ~/*.tar.gz
 
 RUN git clone https://github.com/google/brotli.git ~/brotli
+
+RUN mkdir ~/androidsdk
+RUN wget https://dl.google.com/android/repository/tools_r25.2.5-linux.zip -O ~/androidsdk.zip
+RUN unzip ~/androidsdk.zip -d ~/androidsdk
+RUN rm ~/androidsdk.zip
+RUN bash -c ' \
+	source ~/.bashrc; \
+	mv $ANDROID_HOME/tools $ANDROID_HOME/balls; \
+	ln -s $ANDROID_HOME/balls $ANDROID_HOME/tools; \
+	yes | $ANDROID_HOME/tools/bin/sdkmanager \
+		"tools" \
+		"platform-tools" \
+		"platforms;android-25" \
+		"build-tools;25.0.2" \
+		"extras;android;m2repository" \
+		"extras;google;m2repository" \
+	; \
+	rm -rf $ANDROID_HOME/balls; \
+'
 
 RUN mkdir ~/haxelib
 RUN haxelib setup ~/haxelib
