@@ -14,10 +14,10 @@ message AccountContactRecord {
 message AccountFileRecord {
 	/** Possible file record types. */
 	enum RecordTypes {
+		File = 0;
 		Doc = 1;
-		File = 2;
-		Form = 3;
-		Note = 4;
+		Form = 2;
+		Note = 3;
 	}
 
 	/** File ID. */
