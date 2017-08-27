@@ -1,5 +1,7 @@
 const functions	= require('firebase-functions');
-const storage	= require('@google-cloud/storage')();
+const storage	= require('@google-cloud/storage')().bucket(
+	`${functions.config().project.id}.appspot.com`
+);
 
 
 const channelDisconnectTimeout	= 2500;
@@ -34,7 +36,9 @@ exports.channelDisconnect	=
 			return Promise.all([
 				doomedRef.remove(),
 				storage.deleteFiles({prefix: `channels/${doomedRef.key}/`})
-			]);
+			]).catch(
+				() => {}
+			);
 		});
 	})
 ;
@@ -51,6 +55,8 @@ exports.userDisconnect	=
 		return Promise.all([
 			userRef.child('presence').remove(),
 			storage.file(`users/${userRef.key}/presence`).delete()
-		]);
+		]).catch(
+			() => {}
+		);
 	})
 ;

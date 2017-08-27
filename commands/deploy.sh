@@ -495,6 +495,7 @@ if \
 		firebaseProject='cyph-test'
 	fi
 	firebase use --add ${firebaseProject}
+	firebase functions:config:set project.id="${firebaseProject}"
 	gsutil cors set storage.cors.json gs://${firebaseProject}.appspot.com
 	cd functions
 	npm install
