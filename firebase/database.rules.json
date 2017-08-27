@@ -302,6 +302,21 @@
 					}
 				},
 
+				"docs": {
+					"$doc": {
+						".read": true,
+
+						"$delta": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					}
+				},
+
 				"encryptionKeyPair": {
 					"hash": {
 						".validate": "newData.isString()"
@@ -313,6 +328,19 @@
 
 				"fileRecords": {
 					"$fileRecord": {
+						".read": true,
+
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				},
+
+				"fileReferences": {
+					"$fileReference": {
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -324,6 +352,9 @@
 
 				"files": {
 					"$file": {
+						".read": true,
+						".write": "($user + '@cyph.me') === auth.token.email || (!data.exists() && newData.exists())",
+
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -335,6 +366,21 @@
 
 				"forms": {
 					"$form": {
+						".read": true,
+
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				},
+
+				"incomingFiles": {
+					"$incomingFile": {
+						".write": "!data.exists() && newData.exists()",
+
 						"hash": {
 							".validate": "newData.isString()"
 						},
