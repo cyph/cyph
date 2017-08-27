@@ -175,7 +175,7 @@
 	cyph-chat-message a[href='no:link'] {
 		color: inherit;
 		text-decoration: none;
-		cursor: default;
+		pointer-events: none;
 	}
 
 	cyph-chat-main .chat-main.video .video-call {
