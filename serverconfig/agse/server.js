@@ -63,6 +63,10 @@ const reviewText	= async (text) => {
 	return answer.trim().toLowerCase() === 'y';
 };
 
+const validateData	= o =>
+	typeof o === 'string' ||
+	(o && o.isUint8Array && typeof o.data === 'string' && validator.isBase64(o.data))
+;
 
 let keyData;
 while (!keyData) {
@@ -97,8 +101,8 @@ while (!keyData) {
 		for (let i = 0 ; i < allKeys.length ; ++i) {
 			const keys	= {
 				private: {
-					rsa: allKeys[0][i],
-					sphincs: allKeys[1][i]
+					rsa: allKeys[i][0],
+					sphincs: allKeys[i][1]
 				}
 			};
 
@@ -208,10 +212,15 @@ server.on('message', async (message) => {
 
 			if (
 				parsed instanceof Array &&
-				parsed.filter(o => !(
-					typeof o === 'string' ||
-					(o && o.isUint8Array && typeof o.data === 'string' && validator.isBase64(o.data))
-				)).length === 0
+				parsed.filter(input =>
+					input &&
+					Object.keys(input) === 2 &&
+					validateData(input.message) &&
+					(
+						validateData(input.additionalData) ||
+						(input.additionalData && input.additionalData.none)
+					)
+				).length === 0
 			) {
 				return parsed;
 			}
@@ -234,10 +243,15 @@ server.on('message', async (message) => {
 		return;
 	}
 
-	const signatures	= await Promise.all(inputs.map(async (o) =>
+	const signatures	= await Promise.all(inputs.map(async ({additionalData, message}) =>
 		superSphincs.signDetachedBase64(
-			o.isUint8Array ? Buffer.from(o.data, 'base64') : o,
-			keyData.keyPair.privateKey
+			message.isUint8Array ? Buffer.from(message.data, 'base64') : message,
+			keyData.keyPair.privateKey,
+			additionalData.none ?
+				undefined :
+				additionalData.isUint8Array ?
+					Buffer.from(additionalData.data, 'base64') :
+					additionalData
 		)
 	));
 

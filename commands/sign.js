@@ -9,7 +9,7 @@ const sodium		= require('libsodium-wrappers');
 const superSphincs	= require('supersphincs');
 
 
-const sign	= async (items) => new Promise(async (resolve, reject) => {
+const sign	= async (inputs) => new Promise(async (resolve, reject) => {
 
 
 const remoteAddress	= '10.0.0.42';
@@ -34,7 +34,7 @@ const publicKeys	= JSON.parse(
 		replace(/\/\*.*?\*\//g, '')
 );
 
-const dataToSign	= Buffer.from(JSON.stringify(items, (_, v) =>
+const dataToSign	= Buffer.from(JSON.stringify(inputs, (_, v) =>
 	v instanceof Uint8Array ?
 		{data: sodium.to_base64(v).replace(/\s+/g, ''), isUint8Array: true} :
 		v
@@ -86,10 +86,10 @@ server.on('message', async (message) => {
 		const rsaIndex		= publicKeys.rsa.indexOf(signatureData.rsa);
 		const sphincsIndex	= publicKeys.sphincs.indexOf(signatureData.sphincs);
 
-		const signedItems	= items.map((item, i) =>
+		const signedInputs	= inputs.map(({message}, i) =>
 			Buffer.concat([
 				Buffer.from(signatureData.signatures[i], 'base64'),
-				item.isUint8Array ? Buffer.from(item.data, 'base64') : Buffer.from(item)
+				message.isUint8Array ? Buffer.from(message.data, 'base64') : Buffer.from(message)
 			]).toString('base64').replace(/\s+/g, '')
 		);
 
@@ -101,23 +101,23 @@ server.on('message', async (message) => {
 				}
 			});
 
-			const openedItems	= await Promise.all(
-				signedItems.map(async (signed) => superSphincs.openString(
+			const openedInputs	= await Promise.all(
+				signedInputs.map(async (signed) => superSphincs.openString(
 					signed,
 					keyPair.publicKey
 				))
 			);
 
-			if (items.filter((item, i) =>
-				item.isUint8Array ?
-					openedItems[i].toString('base64') !== item.data :
-					openedItems[i] !== item
+			if (inputs.filter(({message}, i) =>
+				message.isUint8Array ?
+					openedInputs[i].toString('base64') !== message.data :
+					openedInputs[i] !== message
 			).length > 0) {
 				throw new Error('Incorrect signed data.');
 			}
 
 			console.log('Signing complete.');
-			resolve({rsaIndex, signedItems, sphincsIndex});
+			resolve({rsaIndex, signedInputs, sphincsIndex});
 		}
 		catch (err) {
 			console.error('Invalid signatures.');

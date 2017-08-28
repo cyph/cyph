@@ -11,37 +11,40 @@ const sign			= require('../sign');
 
 const args			= {
 	hashWhitelist: JSON.parse(process.argv[2]),
-	items: process.argv.slice(3).filter(s => s)
+	inputs: process.argv.slice(3).filter(s => s)
 };
 
 
 const signatureTTL	= 2.5; // Months
 const timestamp		= Date.now();
 
-const items			= args.items.map(s => s.split('=')).map(arr => ({
-	outputDir: arr[1],
-	inputData: JSON.stringify({
+const inputs		= args.inputs.map(s => s.split('=')).map(arr => ({
+	additionalData: {none: true},
+	message: JSON.stringify({
 		timestamp,
 		expires: timestamp + signatureTTL * 2.628e+9,
 		hashWhitelist: args.hashWhitelist,
 		package: fs.readFileSync(arr[0]).toString().trim(),
 		packageName: arr[1].split('/').slice(-1)[0]
-	})
+	}),
+	outputDir: arr[1]
 }));
 
 
 try {
-	const {rsaIndex, signedItems, sphincsIndex}	= await sign(items.map(o => o.inputData));
+	const {rsaIndex, signedInputs, sphincsIndex}	= await sign(
+		inputs.map(({additionalData, message}) => ({additionalData, message}))
+	);
 
-	for (let i = 0 ; i < items.length ; ++i) {
-		const outputDir	= items[i].outputDir;
+	for (let i = 0 ; i < inputs.length ; ++i) {
+		const outputDir	= inputs[i].outputDir;
 
 		await new Promise(resolve => mkdirp(outputDir, resolve));
 
 		fs.writeFileSync(`${outputDir}/current`, timestamp);
 
 		fs.writeFileSync(`${outputDir}/pkg`,
-			signedItems[i] + '\n' +
+			signedInputs[i] + '\n' +
 			rsaIndex + '\n' +
 			sphincsIndex
 		);
