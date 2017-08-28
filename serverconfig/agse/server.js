@@ -101,8 +101,8 @@ while (!keyData) {
 		for (let i = 0 ; i < allKeys.length ; ++i) {
 			const keys	= {
 				private: {
-					rsa: allKeys[0][i],
-					sphincs: allKeys[1][i]
+					rsa: allKeys[i][0],
+					sphincs: allKeys[i][1]
 				}
 			};
 
