@@ -117,7 +117,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			return {url};
 		})();
 
-		this.pendingSets.set(url, promise.then(() => {}));
+		this.pendingSets.set(url, promise.then(() => {}).catch(() => {}));
 
 		try {
 			return await promise;

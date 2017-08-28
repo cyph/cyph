@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
+import {LockFunction} from '../cyph/lock-function-type';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {EnvService} from '../cyph/services/env.service';
 import {ErrorService} from '../cyph/services/error.service';
@@ -23,6 +24,9 @@ import {ChatData} from './chat-data';
 export class LocalSessionService extends SessionService {
 	/** @ignore */
 	private chatData?: ChatData;
+
+	/** @ignore */
+	private readonly localLock: LockFunction	= util.lockFunction();
 
 	/** @inheritDoc */
 	public async close () : Promise<void> {
@@ -72,6 +76,11 @@ export class LocalSessionService extends SessionService {
 		await this.chatData.start;
 
 		this.trigger(events.beginChat);
+	}
+
+	/** @inheritDoc */
+	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
+		return this.localLock(f, reason);
 	}
 
 	/** @inheritDoc */
