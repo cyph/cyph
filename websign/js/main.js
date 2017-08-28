@@ -146,11 +146,13 @@ then(function (results) {
 		superSphincs.openString(
 			signed,
 			publicKey
-		).catch(() => superSphincs.openString(
-			signed,
-			publicKey,
-			new Uint8Array(0)
-		))
+		).catch(function () {
+			return superSphincs.openString(
+				signed,
+				publicKey,
+				new Uint8Array(0)
+			);
+		})
 	]);
 }).then(function (results) {
 	var downloadMetadata	= results[0];
