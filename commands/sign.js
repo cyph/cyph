@@ -86,10 +86,10 @@ server.on('message', async (message) => {
 		const rsaIndex		= publicKeys.rsa.indexOf(signatureData.rsa);
 		const sphincsIndex	= publicKeys.sphincs.indexOf(signatureData.sphincs);
 
-		const signedItems	= items.map((item, i) =>
+		const signedItems	= items.map(({message}, i) =>
 			Buffer.concat([
 				Buffer.from(signatureData.signatures[i], 'base64'),
-				item.isUint8Array ? Buffer.from(item.data, 'base64') : Buffer.from(item)
+				message.isUint8Array ? Buffer.from(message.data, 'base64') : Buffer.from(message)
 			]).toString('base64').replace(/\s+/g, '')
 		);
 
@@ -108,10 +108,10 @@ server.on('message', async (message) => {
 				))
 			);
 
-			if (items.filter((item, i) =>
-				item.isUint8Array ?
-					openedItems[i].toString('base64') !== item.data :
-					openedItems[i] !== item
+			if (items.filter(({message}, i) =>
+				message.isUint8Array ?
+					openedItems[i].toString('base64') !== message.data :
+					openedItems[i] !== message
 			).length > 0) {
 				throw new Error('Incorrect signed data.');
 			}

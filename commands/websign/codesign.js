@@ -19,19 +19,22 @@ const signatureTTL	= 2.5; // Months
 const timestamp		= Date.now();
 
 const items			= args.items.map(s => s.split('=')).map(arr => ({
-	outputDir: arr[1],
-	inputData: JSON.stringify({
+	additionalData: {none: true},
+	message: JSON.stringify({
 		timestamp,
 		expires: timestamp + signatureTTL * 2.628e+9,
 		hashWhitelist: args.hashWhitelist,
 		package: fs.readFileSync(arr[0]).toString().trim(),
 		packageName: arr[1].split('/').slice(-1)[0]
-	})
+	}),
+	outputDir: arr[1]
 }));
 
 
 try {
-	const {rsaIndex, signedItems, sphincsIndex}	= await sign(items.map(o => o.inputData));
+	const {rsaIndex, signedItems, sphincsIndex}	= await sign(
+		items.map(({additionalData, message}) => ({additionalData, message}))
+	);
 
 	for (let i = 0 ; i < items.length ; ++i) {
 		const outputDir	= items[i].outputDir;
