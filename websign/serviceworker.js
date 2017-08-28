@@ -19,7 +19,8 @@ var files	= [
 	'/img/favicon/apple-touch-icon-72x72.png',
 	'/img/favicon/apple-touch-icon-60x60.png',
 	'/img/favicon/apple-touch-icon-57x57.png',
-	'/img/favicon/mstile-144x144.png'
+	'/img/favicon/mstile-144x144.png',
+	'/img/logo.white.vertical.png'
 ].map(function (file) {
 	return new Request(file);
 });
