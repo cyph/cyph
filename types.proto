@@ -130,6 +130,15 @@ message AGSEPKICert {
 	required bytes publicSigningKey = 2;
 }
 
+/** AGSE-PKI certificate signing request. */
+message AGSEPKICSR {
+	/** @see AGSEPKICert */
+	required AGSEPKICert agsePKICert = 1;
+
+	/** Username. */
+	required string username = 2;
+}
+
 /** Castle incoming messages. */
 message CastleIncomingMessages {
 	/** List of received cyphertexts with a particular message ID. */	
