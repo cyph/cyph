@@ -118,6 +118,10 @@ service firebase.storage {
 				allow read;
 			}
 
+			match /publicEncryptionKey {
+				allow read;
+			}
+
 			match /publicProfile {
 				allow read;
 			}
