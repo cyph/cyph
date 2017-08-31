@@ -36,13 +36,11 @@ const issuedCerts	= (await Promise.all(
 	)
 )).reduce(
 	(o, csr) => {
-		o.publicEncryptionKeys.set(await getHash(csr.publicEncryptionKey), true);
 		o.publicSigningKeys.set(await getHash(csr.publicSigningKey), true);
 		o.usernames.set(csr.username, true);
 		return o;
 	},
 	{
-		publicEncryptionKeys: new Map(),
 		publicSigningKeys: new Map(),
 		usernames: new Map()
 	}
@@ -56,39 +54,29 @@ const csrs			= (await Promise.all(JSON.parse(fs.readFileSync(args.csrPath)).map(
 			new Uint8Array(bytes.buffer, bytes.byteOffset + await potassium.sign.bytes)
 		);
 
-		const agsePKICert	= csr.agsePKICert;
 		const username		= csr.username.toLowerCase().trim();
 
-		if (
-			!agsePKICert ||
-			!agsePKICert.publicEncryptionKey ||
-			!agsePKICert.publicSigningKey ||
-			!username
-		) {
+		if (!csr.publicSigningKey || csr.publicSigningKey.length < 1 || !username) {
 			return;
 		}
 
-		const publicEncryptionKeyHash	= await getHash(agsePKICert.publicEncryptionKey);
-		const publicSigningKeyHash		= await getHash(agsePKICert.publicSigningKey);
+		const publicSigningKeyHash		= await getHash(csr.publicSigningKey);
 
 		/* Validate that CSR data doesn't already belong to an existing user. */
 		if (
-			issuedCerts.publicEncryptionKeys.get(publicEncryptionKeyHash) ||
 			issuedCerts.publicSigningKeys.get(publicSigningKeyHash) ||
 			issuedCerts.usernames.get(username)
 		) {
 			return;
 		}
 
-		/* Validate CSR signature and that public keys are functional. */
-		await potassium.sign.open(bytes, agsePKICert.publicSigningKey);
-		await potassium.box.seal(crypto.randomBytes(32), agsePKICert.publicEncryptionKey);
+		/* Validate CSR signature. */
+		await potassium.sign.open(bytes, csr.publicSigningKey);
 
-		issuedCerts.publicEncryptionKeys.set(publicEncryptionKeyHash, true);
 		issuedCerts.publicSigningKeys.set(publicSigningKeyHash, true);
 		issuedCerts.usernames.set(username, true);
 
-		return {agsePKICert, username};
+		return {publicSigningKey, username};
 	}
 	catch (_) {}
 }))).filter(
@@ -102,8 +90,13 @@ try {
 		process.exit(0);
 	}
 
+	const timestamp	= Date.now();
+
 	const {rsaIndex, signedInputs, sphincsIndex}	= await sign(
-		csrs.map(csr => ({additionalData: csr.username, message: csr.agsePKICert}))
+		csrs.map(csr => ({
+			additionalData: csr.username,
+			message: {agsePKICSR: csr, timestamp}
+		}))
 	);
 
 	fs.writeFileSync(args.outputPath, JSON.stringify({
@@ -118,10 +111,7 @@ try {
 					cert
 				);
 
-				o[csr.username]	= potassium.toBase64(await potassium.box.seal(
-					fullCert,
-					csr.agsePKICert.publicEncryptionKey
-				));
+				o[csr.username]	= potassium.toBase64(fullCert);
 
 				potassium.clearMemory(cert);
 				potassium.clearMemory(fullCert);

@@ -122,18 +122,27 @@ message AccountUserPresence {
 }
 
 /** AGSE-PKI certificate. */
-message AGSEPKICert {
+message AccountUserPublicKeys {
 	/** Potassium.Box public key. */
-	required bytes publicEncryptionKey = 1;
+	required bytes encryption = 1;
 
 	/** Potassium.Sign public key. */
-	required bytes publicSigningKey = 2;
+	required bytes signing = 2;
+}
+
+/** AGSE-PKI certificate. */
+message AGSEPKICert {
+	/** @see AccountUserPublicKeys.signing */
+	required AGSEPKICSR agsePKICSR = 1;
+
+	/** Timestamp of certificate issuance. */
+	required double timestamp = 2;
 }
 
 /** AGSE-PKI certificate signing request. */
 message AGSEPKICSR {
-	/** @see AGSEPKICert */
-	required AGSEPKICert agsePKICert = 1;
+	/** @see AccountUserPublicKeys.signing */
+	required bytes publicSigningKey = 1;
 
 	/** Username. */
 	required string username = 2;

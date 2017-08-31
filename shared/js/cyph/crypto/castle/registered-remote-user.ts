@@ -13,7 +13,7 @@ export class RegisteredRemoteUser implements IRemoteUser {
 			await this.accountDatabaseService.getUserPublicKeys(
 				await this.username.take(1).toPromise()
 			)
-		).publicEncryptionKey
+		).encryption
 	)();
 
 	/** @inheritDoc */

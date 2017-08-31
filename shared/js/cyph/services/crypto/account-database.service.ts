@@ -3,7 +3,7 @@
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {AGSEPKICert, IAGSEPKICert} from '../../../proto';
+import {AccountUserPublicKeys, AGSEPKICert, IAccountUserPublicKeys} from '../../../proto';
 import {ICurrentUser, SecurityModels} from '../../account';
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';
@@ -92,7 +92,7 @@ export class AccountDatabaseService {
 					data,
 					this.currentUser.value && username === this.currentUser.value.user.username ?
 						this.currentUser.value.keys.signingKeyPair.publicKey :
-						(await this.getUserPublicKeys(username)).publicSigningKey,
+						(await this.getUserPublicKeys(username)).signing,
 					url,
 					decompress
 				)
@@ -221,9 +221,9 @@ export class AccountDatabaseService {
 
 	/** @ignore */
 	private async processURL (url: string|Promise<string>) : Promise<string> {
-		url	= await url;
+		url	= (await url).replace(/^\//, '');
 
-		if (url.match(/^\/?users/)) {
+		if (url.match(/^users/)) {
 			return url;
 		}
 
@@ -473,23 +473,26 @@ export class AccountDatabaseService {
 	}
 
 	/** Gets public keys belonging to the specified user. */
-	public async getUserPublicKeys (username: string) : Promise<IAGSEPKICert> {
+	public async getUserPublicKeys (username: string) : Promise<IAccountUserPublicKeys> {
 		if (!username) {
 			throw new Error('Invalid username.');
 		}
 
-		const url	= `users/${username.toLowerCase()}/certificate`;
+		username	= username.toLowerCase();
 
 		return this.localStorageService.getOrSetDefault(
-			`AccountDatabaseService.getUserPublicKeys/${url}`,
-			AGSEPKICert,
+			`AccountDatabaseService.getUserPublicKeys/${username}`,
+			AccountUserPublicKeys,
 			async () => {
-				const certificate	= await this.databaseService.getItem(url, BinaryProto);
+				const certBytes			= await this.databaseService.getItem(
+					`users/${username}/certificate`,
+					BinaryProto
+				);
 
-				const dataView			= this.potassiumService.toDataView(certificate);
+				const dataView			= this.potassiumService.toDataView(certBytes);
 				const rsaKeyIndex		= dataView.getUint32(0, true);
 				const sphincsKeyIndex	= dataView.getUint32(4, true);
-				const signed			= this.potassiumService.toBytes(certificate, 8);
+				const signed			= this.potassiumService.toBytes(certBytes, 8);
 
 				if (
 					rsaKeyIndex >= this.agsePublicSigningKeys.rsa.length ||
@@ -498,7 +501,7 @@ export class AccountDatabaseService {
 					throw new Error('Invalid AGSE-PKI certificate: bad key index.');
 				}
 
-				return await util.deserialize(
+				const cert	= await util.deserialize(
 					AGSEPKICert,
 					await this.potassiumService.sign.open(
 						signed,
@@ -509,6 +512,23 @@ export class AccountDatabaseService {
 						username
 					)
 				);
+
+				if (cert.agsePKICSR.username !== username) {
+					throw new Error('Invalid AGSE-PKI certificate: bad username.');
+				}
+
+				const encryptionURL	= await this.processURL(
+					`users/${username}/publicEncryptionKey`
+				);
+
+				return {
+					encryption: await this.potassiumService.sign.open(
+						await this.databaseService.getItem(encryptionURL, BinaryProto),
+						cert.agsePKICSR.publicSigningKey,
+						encryptionURL
+					),
+					signing: cert.agsePKICSR.publicSigningKey
+				};
 			}
 		);
 	}

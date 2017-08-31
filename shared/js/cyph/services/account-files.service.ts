@@ -148,7 +148,7 @@ export class AccountFilesService {
 									referenceContainer.signedShare.accountFileReference,
 									(await this.accountDatabaseService.getUserPublicKeys(
 										referenceContainer.signedShare.owner
-									)).publicSigningKey
+									)).signing
 								)
 							);
 
@@ -495,7 +495,7 @@ export class AccountFilesService {
 			BinaryProto,
 			await this.potassiumService.box.seal(
 				await util.serialize(AccountFileReferenceContainer, accountFileReferenceContainer),
-				(await this.accountDatabaseService.getUserPublicKeys(username)).publicEncryptionKey
+				(await this.accountDatabaseService.getUserPublicKeys(username)).encryption
 			)
 		);
 	}
