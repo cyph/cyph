@@ -93,7 +93,7 @@ export class Env extends EnvDeploy {
 			document.createEvent('TouchEvent');
 			return true;
 		}
-		catch (_) {
+		catch {
 			return false;
 		}
 	})();

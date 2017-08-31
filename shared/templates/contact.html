@@ -30,7 +30,7 @@
 				</md-select>
 			</div>
 			<div fxLayout='row' *ngIf='!feedbackForm'>
-				<md-input-container fxFlex>
+				<md-form-field fxFlex>
 					<input
 						mdInput
 						cyphTranslate
@@ -38,11 +38,11 @@
 						name='subject'
 						placeholder='Subject'
 					/>
-				</md-input-container>
+				</md-form-field>
 			</div>
 			<div fxLayout='row' *ngIf='responseRequested'>
 				<div fxFlex fxLayout.lt-md='column' fxLayoutGap='16px'>
-					<md-input-container fxFlex>
+					<md-form-field fxFlex>
 						<input
 							mdInput
 							cyphTranslate
@@ -50,8 +50,8 @@
 							name='name'
 							placeholder='Name'
 						/>
-					</md-input-container>
-					<md-input-container fxFlex>
+					</md-form-field>
+					<md-form-field fxFlex>
 						<input
 							mdInput
 							cyphTranslate
@@ -61,11 +61,11 @@
 							placeholder='Email'
 							required
 						/>
-					</md-input-container>
+					</md-form-field>
 				</div>
 			</div>			
 			<div fxLayout='row'>
-				<md-input-container fxFlex>
+				<md-form-field fxFlex>
 					<textarea
 						mdInput
 						cyphTranslate
@@ -74,7 +74,7 @@
 						placeholder='Message'
 						required
 					></textarea>
-				</md-input-container>
+				</md-form-field>
 			</div>			
 			<div fxLayout='row'>
 				<md-checkbox [(ngModel)]='responseRequested' name='response'>

@@ -215,7 +215,7 @@ export class Thread implements IThread {
 				try {
 					URL.revokeObjectURL(blobUrl);
 				}
-				catch (_) {}
+				catch {}
 
 				worker.postMessage(locals);
 			}

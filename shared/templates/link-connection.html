@@ -36,7 +36,7 @@
 			<br />
 
 			<div fxLayoutAlign='center center' *ngIf='!envService.isMobile'>
-				<md-input-container fxFlex='50'>
+				<md-form-field fxFlex='50'>
 					<input
 						mdInput
 						cyphTranslate
@@ -44,7 +44,7 @@
 						[(ngModel)]='link'
 						mdTooltip='Cyph Link'
 					/>
-				</md-input-container>
+				</md-form-field>
 				<button
 					md-icon-button
 					mdTooltip='Copy to Clipboard'
@@ -121,8 +121,8 @@
 				</md-slide-toggle>
 			</div>
 
-			<div fxLayout='row' *ngIf='advancedFeatures'>
-				<md-input-container fxFlex fxLayout='column'>
+			<div fxLayout='row' fxLayoutGap='16px' *ngIf='advancedFeatures'>
+				<md-form-field fxFlex fxLayout='column'>
 					<textarea
 						mdInput
 						cyphTranslate
@@ -130,8 +130,8 @@
 						placeholder='Queue up first message'
 						rows='3'
 					></textarea>
-				</md-input-container>
-				<div fxLayout='column' fxLayoutAlign='center center'>
+				</md-form-field>
+				<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
 					<button
 						md-icon-button
 						mdTooltip='Save'

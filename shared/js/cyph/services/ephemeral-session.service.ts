@@ -202,7 +202,7 @@ export class EphemeralSessionService extends SessionService {
 					})
 				);
 			}
-			catch (_) {
+			catch {
 				this.trigger(events.cyphNotFound);
 			}
 		})();

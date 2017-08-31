@@ -8,7 +8,7 @@ try {
 	crypto.getRandomValues(new Uint8Array(1));
 	cryptoSupported	= true;
 }
-catch (_) {}
+catch {}
 
 if (!(
 	cryptoSupported &&

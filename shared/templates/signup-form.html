@@ -17,7 +17,7 @@
 				*ngIf='!envService.isMobile'
 			>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container fxFlex='80'>
+					<md-form-field fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
@@ -26,10 +26,10 @@
 							type='email'
 							placeholder='Email'
 						/>
-					</md-input-container>
+					</md-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container fxFlex='80'>
+					<md-form-field fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
@@ -38,10 +38,10 @@
 							placeholder='Password'
 							[disabled]='true'
 						/>
-					</md-input-container>
+					</md-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container fxFlex='80'>
+					<md-form-field fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
@@ -50,10 +50,10 @@
 							placeholder='Confirm Password'
 							[disabled]='true'
 						/>
-					</md-input-container>
+					</md-form-field>
 				</div>
 				<div *ngIf='invite' fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container fxFlex='80'>
+					<md-form-field fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
@@ -62,7 +62,7 @@
 							type='text'
 							placeholder='Invite Code'
 						/>
-					</md-input-container>
+					</md-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center end' class='register-button'>
 					<button md-button type='submit' [disabled]='true' cyphTranslate>
@@ -100,7 +100,7 @@
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container fxFlex='80'>
+					<md-form-field fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
@@ -110,10 +110,10 @@
 							placeholder='Email'
 							required
 						/>
-					</md-input-container>
+					</md-form-field>
 				</div>
 				<div *ngIf='invite' fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container fxFlex='80'>
+					<md-form-field fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
@@ -123,7 +123,7 @@
 							placeholder='Invite Code'
 							required
 						/>
-					</md-input-container>
+					</md-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center end'>
 					<button md-button type='submit' cyphTranslate>
@@ -138,7 +138,7 @@
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-input-container fxFlex='80'>
+					<md-form-field fxFlex='80'>
 						<input
 							mdInput
 							cyphTranslate
@@ -146,7 +146,7 @@
 							name='name'
 							placeholder='Name (optional)'
 						/>
-					</md-input-container>
+					</md-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center end'>
 					<button md-button type='submit' cyphTranslate>

@@ -38,5 +38,10 @@ export class DynamicFormComponent {
 		);
 	}
 
+	/** Converts a timestamp into a Date. */
+	public timestampToDate (timestamp: number) : Date {
+		return new Date(timestamp);
+	}
+
 	constructor () {}
 }
