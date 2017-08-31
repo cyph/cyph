@@ -22,20 +22,20 @@
 						{{o.label}}
 					</md-checkbox>
 
-					<md-input-container *ngIf='o.type === types.Datepicker'>
+					<md-form-field *ngIf='o.type === types.Datepicker'>
 						<input
 							mdInput
 							[mdDatepicker]='datepicker'
-							[ngModel]='o.valueNumber'
+							[ngModel]='timestampToDate(o.valueNumber)'
 							(ngModelChange)='o.valueNumber = $event ? $event.getTime() : 0'
 							[placeholder]='o.label'
 							[required]='o.required'
 						>
-						<button mdSuffix [mdDatepickerToggle]='datepicker'></button>
-					</md-input-container>
+						<md-datepicker-toggle [for]='datepicker'></md-datepicker-toggle>
+					</md-form-field>
 					<md-datepicker *ngIf='o.type === types.Datepicker' #datepicker></md-datepicker>
 
-					<md-input-container *ngIf='o.type === types.Email'>
+					<md-form-field *ngIf='o.type === types.Email'>
 						<input
 							mdInput
 							[attr.textMask]='getMask(o)'
@@ -45,9 +45,9 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
-					</md-input-container>
+					</md-form-field>
 
-					<md-input-container *ngIf='o.type === types.Input'>
+					<md-form-field *ngIf='o.type === types.Input'>
 						<input
 							mdInput
 							[attr.textMask]='getMask(o)'
@@ -57,9 +57,9 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
-					</md-input-container>
+					</md-form-field>
 
-					<md-input-container *ngIf='o.type === types.Number'>
+					<md-form-field *ngIf='o.type === types.Number'>
 						<input
 							mdInput
 							[attr.textMask]='getMask(o)'
@@ -71,9 +71,9 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
-					</md-input-container>
+					</md-form-field>
 
-					<md-input-container *ngIf='o.type === types.Password'>
+					<md-form-field *ngIf='o.type === types.Password'>
 						<input
 							mdInput
 							[attr.textMask]='getMask(o)'
@@ -83,7 +83,7 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
-					</md-input-container>
+					</md-form-field>
 
 					<label *ngIf='o.type === types.Radio'>{{o.label}}</label>
 					<md-radio-group
@@ -128,7 +128,7 @@
 						{{o.label}}
 					</md-slide-toggle>
 
-					<md-input-container *ngIf='o.type === types.Textarea'>
+					<md-form-field *ngIf='o.type === types.Textarea'>
 						<textarea
 							mdInput
 							[attr.textMask]='getMask(o)'
@@ -137,9 +137,9 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						></textarea>
-					</md-input-container>
+					</md-form-field>
 
-					<md-input-container *ngIf='o.type === types.Time'>
+					<md-form-field *ngIf='o.type === types.Time'>
 						<input
 							mdInput
 							[attr.textMask]='getMask(o)'
@@ -149,9 +149,9 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
-					</md-input-container>
+					</md-form-field>
 
-					<md-input-container *ngIf='o.type === types.URL'>
+					<md-form-field *ngIf='o.type === types.URL'>
 						<input
 							mdInput
 							[attr.textMask]='getMask(o)'
@@ -161,7 +161,7 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
-					</md-input-container>
+					</md-form-field>
 
 				</div>
 			</div>
