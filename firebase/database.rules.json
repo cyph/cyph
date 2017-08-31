@@ -432,6 +432,16 @@
 					}
 				},
 
+				"publicEncryptionKey": {
+					".read": true,
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				},
+
 				"publicProfile": {
 					".read": true,
 					"hash": {
