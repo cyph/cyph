@@ -45,11 +45,11 @@ export class NotificationService implements INotificationService {
 					this.audio.play();
 				}
 			}
-			catch (_) {}
+			catch {}
 
 			return notification;
 		}
-		catch (_) {
+		catch {
 			options.audio	= this.config.audio;
 
 			const serviceWorkerRegistration	= await (<any> navigator).serviceWorker.
@@ -70,7 +70,7 @@ export class NotificationService implements INotificationService {
 				return;
 			}
 		}
-		catch (_) {}
+		catch {}
 
 		if (!this.disableNotify && !this.visibilityWatcherService.isVisible) {
 			this.disableNotify	= true;
@@ -85,7 +85,7 @@ export class NotificationService implements INotificationService {
 
 				this.openNotifications.push(notification);
 			}
-			catch (_) {}
+			catch {}
 		}
 	}
 
@@ -115,7 +115,7 @@ export class NotificationService implements INotificationService {
 					try {
 						notification.close();
 					}
-					catch (_) {}
+					catch {}
 				}
 
 				this.openNotifications.length	= 0;
@@ -128,6 +128,6 @@ export class NotificationService implements INotificationService {
 		try {
 			(<any> self).Notification.requestPermission();
 		}
-		catch (_) {}
+		catch {}
 	}
 }

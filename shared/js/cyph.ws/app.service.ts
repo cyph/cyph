@@ -71,7 +71,7 @@ export class AppService implements CanActivate {
 		try {
 			(<any> navigator).storage.persist();
 		}
-		catch (_) {}
+		catch {}
 
 		titleService.setTitle(util.translate(titleService.getTitle()));
 

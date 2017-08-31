@@ -31,7 +31,7 @@ export class AnalyticsService {
 				this.envService.baseUrl.slice(0, -1)
 			);
 		}
-		catch (_) {}
+		catch {}
 	}
 
 	/**
