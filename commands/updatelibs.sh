@@ -65,6 +65,7 @@ read -r -d '' modules <<- EOM
 	angular2-template-loader
 	angular2-text-mask
 	animate.css@https://github.com/daneden/animate.css
+	animated-scroll-to
 	awesome-typescript-loader
 	babel-core
 	babel-loader
