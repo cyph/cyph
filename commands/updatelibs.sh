@@ -280,10 +280,14 @@ mv package.json.new node_modules/tslint/package.json
 
 cd ~/lib/js
 
+# Temporarily skip libsodium update pending further investigation
+if [ true ] ; then
+	cp -a "${dir}/shared/lib/js/libsodium" ./
+else
+
 ${dir}/commands/libclone.sh https://github.com/jedisct1/libsodium.js libsodium.build
 cd libsodium.build
 
-# Temporary, pending https://github.com/jedisct1/libsodium/issues/561 landing in stable
 rm -rf libsodium
 git clone --depth 1 --recursive https://github.com/jedisct1/libsodium
 
@@ -426,6 +430,8 @@ cd ..
 mkdir libsodium
 mv libsodium.build/dist libsodium/
 rm -rf libsodium.build
+
+fi
 
 
 cd "${dir}"
