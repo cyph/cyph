@@ -182,7 +182,7 @@
 			mdTooltipPosition='right'
 			routerLink='/account/forms'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded'
+			*ngIf='accountService.isTelehealth && accountService.menuExpanded'
 		>
 			<md-icon>content_paste</md-icon>
 			<span>Forms</span>
@@ -194,7 +194,7 @@
 			mdTooltipPosition='right'
 			routerLink='/account/forms'
 			(click)='click()'
-			*ngIf='!accountService.menuExpanded'
+			*ngIf='accountService.isTelehealth && !accountService.menuExpanded'
 		>
 			<md-icon>content_paste</md-icon>
 		</button>
