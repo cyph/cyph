@@ -525,7 +525,8 @@ export class AccountDatabaseService {
 					encryption: await this.potassiumService.sign.open(
 						await this.databaseService.getItem(encryptionURL, BinaryProto),
 						cert.agsePKICSR.publicSigningKey,
-						encryptionURL
+						encryptionURL,
+						true
 					),
 					signing: cert.agsePKICSR.publicSigningKey
 				};
