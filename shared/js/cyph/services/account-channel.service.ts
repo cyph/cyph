@@ -71,7 +71,7 @@ export class AccountChannelService implements IChannelService {
 		let lastChannelService: ChannelService|undefined;
 
 		sessionService.remoteUsername.subscribe(username => {
-			username	= username.toLowerCase();
+			username	= util.normalize(username);
 
 			this.channelServiceLock(async () => {
 				const contactID	= await this.accountContactsService.getContactID(username).catch(

@@ -33,7 +33,7 @@ export class AccountCastleService extends CastleService {
 		const transport	= new Transport(sessionService);
 
 		sessionService.remoteUsername.subscribe(username => {
-			username	= username.toLowerCase();
+			username	= util.normalize(username);
 
 			this.pairwiseSessionLock(async () => {
 				const contactID	= await this.accountContactsService.getContactID(username).catch(

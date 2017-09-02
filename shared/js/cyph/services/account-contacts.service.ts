@@ -62,7 +62,7 @@ export class AccountContactsService {
 			id !== undefined ?
 				this.contactRecordMappings.id.get(id) :
 				username !== undefined ?
-					this.contactRecordMappings.username.get(username.toLowerCase()) :
+					this.contactRecordMappings.username.get(util.normalize(username)) :
 					undefined
 		;
 

@@ -363,6 +363,11 @@ export class Util {
 		return false;
 	}
 
+	/** Strips non-alphanumeric-or-underscore characters and converts to lowercase. */
+	public normalize (s: string) : string {
+		return s.toLowerCase().replace(/[^0-9a-z_]/g, '');
+	}
+
 	/** @see JSON.parse */
 	public parse<T> (text: string) : T {
 		/* tslint:disable-next-line:ban */

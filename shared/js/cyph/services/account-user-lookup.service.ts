@@ -17,7 +17,7 @@ export class AccountUserLookupService {
 
 	/** Tries to to get user object for the specified username. */
 	public async getUser (username: string) : Promise<User> {
-		username	= username.toLowerCase();
+		username	= util.normalize(username);
 		const url	= `users/${username}`;
 
 		const user	= util.getOrSetDefault(this.userCache, username, () => new User(

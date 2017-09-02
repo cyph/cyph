@@ -478,7 +478,7 @@ export class AccountDatabaseService {
 			throw new Error('Invalid username.');
 		}
 
-		username	= username.toLowerCase();
+		username	= util.normalize(username);
 
 		return this.localStorageService.getOrSetDefault(
 			`AccountDatabaseService.getUserPublicKeys/${username}`,

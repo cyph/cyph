@@ -48,7 +48,7 @@ export class AccountAuthService {
 
 	/** @ignore */
 	private async passwordHash (username: string, password: string) : Promise<Uint8Array> {
-		username	= username.toLowerCase();
+		username	= util.normalize(username);
 
 		return (
 			await this.potassiumService.passwordHash.hash(
@@ -73,7 +73,7 @@ export class AccountAuthService {
 		}
 
 		try {
-			username	= username.toLowerCase();
+			username	= util.normalize(username);
 
 			if (typeof password === 'string') {
 				password	= await this.passwordHash(username, password);
@@ -193,7 +193,7 @@ export class AccountAuthService {
 			return false;
 		}
 
-		username	= username.toLowerCase();
+		username	= util.normalize(username);
 
 		const loginData: IAccountLoginData	= {
 			secondaryPassword: this.potassiumService.toBase64(
