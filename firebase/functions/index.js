@@ -1,3 +1,4 @@
+const database	= require('firebase-admin').database();
 const functions	= require('firebase-functions');
 const storage	= require('@google-cloud/storage')().bucket(
 	`${functions.config().project.id}.appspot.com`
@@ -58,5 +59,22 @@ exports.userDisconnect	=
 		]).catch(
 			() => {}
 		);
+	})
+;
+
+
+exports.userRegistration	=
+	functions.database.ref('users/{user}/certificateRequest').onCreate(e => {
+		if (!e.data.exists()) {
+			return;
+		}
+
+		const userRef	= e.data.ref.parent;
+
+		if (userRef.key.length < 1) {
+			throw new Error('INVALID USER REF');
+		}
+
+		return database.ref('certificateRequests').push(userRef.key).catch(() => {});
 	})
 ;
