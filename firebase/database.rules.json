@@ -3,6 +3,12 @@
 		".read": false,
 		".write": false,
 
+		"certificateRequests": {
+			"$certificateRequest": {
+				".validate": "newData.isString()"
+			}
+		},
+
 		"channels": {
 			"$channel": {
 				".read": true,
