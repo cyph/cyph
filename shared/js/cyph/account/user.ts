@@ -38,7 +38,9 @@ export class User {
 
 	/** @see IAccountUserProfile.realUsername */
 	public readonly realUsername: Observable<string>	= util.flattenObservablePromise(
-		this.accountUserProfile.watch().map(({realUsername}) => realUsername),
+		this.accountUserProfile.watch().map(({realUsername}) =>
+			util.normalize(realUsername) === this.username ? realUsername : this.username
+		),
 		''
 	);
 
