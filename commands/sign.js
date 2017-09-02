@@ -34,9 +34,18 @@ const publicKeys	= JSON.parse(
 		replace(/\/\*.*?\*\//g, '')
 );
 
-const dataToSign	= Buffer.from(JSON.stringify(inputs, (_, v) =>
+const inputMessages	= inputs.map(({message}) =>
+	message instanceof Uint8Array ?
+		message :
+		Buffer.from(message)
+);
+
+const dataToSign	= Buffer.from(JSON.stringify(inputs, (k, v) =>
 	v instanceof Uint8Array ?
-		{data: sodium.to_base64(v).replace(/\s+/g, ''), isUint8Array: true} :
+		k === 'additionalData' ?
+			{data: sodium.to_base64(v).replace(/\s+/g, ''), isUint8Array: true} :
+			{data: (await superSphincs.hash(v)).hex, isBinaryHash: true}
+		:
 		v
 ));
 
@@ -86,10 +95,10 @@ server.on('message', async (message) => {
 		const rsaIndex		= publicKeys.rsa.indexOf(signatureData.rsa);
 		const sphincsIndex	= publicKeys.sphincs.indexOf(signatureData.sphincs);
 
-		const signedInputs	= inputs.map(({message}, i) =>
+		const signedInputs	= inputMessages.map((message, i) =>
 			Buffer.concat([
 				Buffer.from(signatureData.signatures[i], 'base64'),
-				message.isUint8Array ? Buffer.from(message.data, 'base64') : Buffer.from(message)
+				message
 			]).toString('base64').replace(/\s+/g, '')
 		);
 
@@ -102,16 +111,15 @@ server.on('message', async (message) => {
 			});
 
 			const openedInputs	= await Promise.all(
-				signedInputs.map(async (signed) => superSphincs.openString(
+				signedInputs.map(async (signed) => superSphincs.open(
 					signed,
 					keyPair.publicKey
 				))
 			);
 
-			if (inputs.filter(({message}, i) =>
-				message.isUint8Array ?
-					openedInputs[i].toString('base64') !== message.data :
-					openedInputs[i] !== message
+			if (inputMessages.filter((message, i) =>
+				openedInputs[i].length !== message.length ||
+				!sodium.memcmp(openedInputs[i], message)
 			).length > 0) {
 				throw new Error('Incorrect signed data.');
 			}

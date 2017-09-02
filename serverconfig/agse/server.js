@@ -63,9 +63,13 @@ const reviewText	= async (text) => {
 	return answer.trim().toLowerCase() === 'y';
 };
 
-const validateData	= o =>
+const validateData	= (o, binaryHashSupport) =>
 	typeof o === 'string' ||
-	(o && o.isUint8Array && typeof o.data === 'string' && validator.isBase64(o.data))
+	(o && o.isUint8Array && typeof o.data === 'string' && validator.isBase64(o.data)) ||
+	(
+		binaryHashSupport && 
+		(o && o.isBinaryHash && typeof o.data === 'string' && validator.isHexadecimal(o.data))
+	)
 ;
 
 let keyData;
@@ -215,7 +219,7 @@ server.on('message', async (message) => {
 				parsed.filter(input =>
 					input &&
 					Object.keys(input) === 2 &&
-					validateData(input.message) &&
+					validateData(input.message, true) &&
 					(
 						validateData(input.additionalData) ||
 						(input.additionalData && input.additionalData.none)
@@ -245,13 +249,20 @@ server.on('message', async (message) => {
 
 	const signatures	= await Promise.all(inputs.map(async ({additionalData, message}) =>
 		superSphincs.signDetachedBase64(
-			message.isUint8Array ? Buffer.from(message.data, 'base64') : message,
+			message.isBinaryHash ?
+				Buffer.from(message.data, 'hex') :
+				message.isUint8Array ?
+					Buffer.from(message.data, 'base64') :
+					message
+			,
 			keyData.keyPair.privateKey,
 			additionalData.none ?
 				undefined :
 				additionalData.isUint8Array ?
 					Buffer.from(additionalData.data, 'base64') :
 					additionalData
+			,
+			message.isBinaryHash
 		)
 	));
 
