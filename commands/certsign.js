@@ -54,9 +54,12 @@ const csrs			= (await Promise.all(JSON.parse(fs.readFileSync(args.csrPath)).map(
 			new Uint8Array(bytes.buffer, bytes.byteOffset + await potassium.sign.bytes)
 		);
 
-		const username		= csr.username.toLowerCase().trim();
-
-		if (!csr.publicSigningKey || csr.publicSigningKey.length < 1 || !username) {
+		if (
+			!csr.publicSigningKey ||
+			csr.publicSigningKey.length < 1 ||
+			!csr.username ||
+			csr.username !== csr.username.toLowerCase().replace(/[^0-9a-z_]/g, '')
+		) {
 			return;
 		}
 
@@ -65,18 +68,22 @@ const csrs			= (await Promise.all(JSON.parse(fs.readFileSync(args.csrPath)).map(
 		/* Validate that CSR data doesn't already belong to an existing user. */
 		if (
 			issuedCerts.publicSigningKeys.get(publicSigningKeyHash) ||
-			issuedCerts.usernames.get(username)
+			issuedCerts.usernames.get(csr.username)
 		) {
 			return;
 		}
 
 		/* Validate CSR signature. */
-		await potassium.sign.open(bytes, csr.publicSigningKey);
+		await potassium.sign.open(
+			bytes,
+			csr.publicSigningKey,
+			`users/${csr.username}/certificateRequest`
+		);
 
 		issuedCerts.publicSigningKeys.set(publicSigningKeyHash, true);
-		issuedCerts.usernames.set(username, true);
+		issuedCerts.usernames.set(csr.username, true);
 
-		return {publicSigningKey, username};
+		return csr;
 	}
 	catch (_) {}
 }))).filter(

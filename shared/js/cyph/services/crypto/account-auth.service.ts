@@ -3,6 +3,7 @@ import {Subscription} from 'rxjs';
 import {
 	AccountLoginData,
 	AccountUserPresence,
+	AGSEPKICSR,
 	IAccountLoginData,
 	IKeyPair,
 	KeyPair
@@ -93,16 +94,25 @@ export class AccountAuthService {
 			await this.localStorageService.setItem('username', StringProto, username);
 			await this.localStorageService.setItem('password', BinaryProto, password);
 
+			const signingKeyPair	= await this.getKeyPair(
+				`users/${username}/signingKeyPair`,
+				loginData.symmetricKey
+			);
+
+			if (!this.potassiumService.compareMemory(
+				signingKeyPair.publicKey,
+				(await this.accountDatabaseService.getUserPublicKeys(username)).signing
+			)) {
+				throw new Error('Invalid certificate.');
+			}
+
 			this.accountDatabaseService.currentUser.next({
 				keys: {
 					encryptionKeyPair: await this.getKeyPair(
 						`users/${username}/encryptionKeyPair`,
 						loginData.symmetricKey
 					),
-					signingKeyPair: await this.getKeyPair(
-						`users/${username}/signingKeyPair`,
-						loginData.symmetricKey
-					),
+					signingKeyPair,
 					symmetricKey: loginData.symmetricKey
 				},
 				user
@@ -193,19 +203,30 @@ export class AccountAuthService {
 			return false;
 		}
 
-		username	= util.normalize(username);
-
-		const loginData: IAccountLoginData	= {
-			secondaryPassword: this.potassiumService.toBase64(
-				this.potassiumService.randomBytes(64)
-			),
-			symmetricKey: this.potassiumService.randomBytes(
-				await this.potassiumService.secretBox.keyBytes
-			)
-		};
-
 		try {
-			await this.databaseService.register(username, loginData.secondaryPassword);
+			username	= util.normalize(username);
+
+			const loginData: IAccountLoginData	= {
+				secondaryPassword: this.potassiumService.toBase64(
+					this.potassiumService.randomBytes(64)
+				),
+				symmetricKey: this.potassiumService.randomBytes(
+					await this.potassiumService.secretBox.keyBytes
+				)
+			};
+
+			const [
+				encryptionKeyPair,
+				signingKeyPair,
+				certificateRequestURL,
+				publicEncryptionKeyURL
+			]	= await Promise.all([
+				this.potassiumService.box.keyPair(),
+				this.potassiumService.sign.keyPair(),
+				this.accountDatabaseService.normalizeURL(`users/${username}/certificateRequest`),
+				this.accountDatabaseService.normalizeURL(`users/${username}/publicEncryptionKey`),
+				this.databaseService.register(username, loginData.secondaryPassword)
+			]);
 
 			await Promise.all([
 				this.databaseService.setItem(
@@ -225,6 +246,44 @@ export class AccountAuthService {
 							{status: AccountUserPresence.Statuses.Online}
 						),
 						loginData.symmetricKey
+					)
+				),
+				this.databaseService.setItem(
+					`users/${username}/encryptionKeyPair`,
+					BinaryProto,
+					await this.potassiumService.secretBox.seal(
+						await util.serialize(KeyPair, encryptionKeyPair),
+						loginData.symmetricKey
+					)
+				),
+				this.databaseService.setItem(
+					`users/${username}/signingKeyPair`,
+					BinaryProto,
+					await this.potassiumService.secretBox.seal(
+						await util.serialize(KeyPair, signingKeyPair),
+						loginData.symmetricKey
+					)
+				),
+				this.databaseService.setItem(
+					certificateRequestURL,
+					BinaryProto,
+					await this.potassiumService.sign.sign(
+						await util.serialize(AGSEPKICSR, {
+							publicSigningKey: signingKeyPair.publicKey,
+							username
+						}),
+						signingKeyPair.privateKey,
+						certificateRequestURL
+					)
+				),
+				this.databaseService.setItem(
+					publicEncryptionKeyURL,
+					BinaryProto,
+					await this.potassiumService.sign.sign(
+						encryptionKeyPair.publicKey,
+						signingKeyPair.privateKey,
+						publicEncryptionKeyURL,
+						true
 					)
 				)
 			]);
