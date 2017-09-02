@@ -3,6 +3,12 @@
 		".read": false,
 		".write": false,
 
+		"certificateRequests": {
+			"$certificateRequest": {
+				".validate": "newData.isString()"
+			}
+		},
+
 		"channels": {
 			"$channel": {
 				".read": true,
@@ -138,6 +144,15 @@
 				"certificate": {
 					".read": true,
 					".write": false,
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				},
+
+				"certificateRequest": {
 					"hash": {
 						".validate": "newData.isString()"
 					},

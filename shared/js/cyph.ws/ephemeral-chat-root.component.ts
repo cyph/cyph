@@ -167,7 +167,10 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 			!(await this.sessionCapabilitiesService.localCapabilities).p2p
 		) {
 			await this.dialogService.alert({
-				content: this.stringsService.p2pDisabledLocal,
+				content: this.envService.isIOS ?
+					this.stringsService.p2pDisabledLocalIOS :
+					this.stringsService.p2pDisabledLocal
+				,
 				ok: this.stringsService.ok,
 				title: this.stringsService.p2pTitle
 			});

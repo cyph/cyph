@@ -43,6 +43,8 @@ service firebase.storage {
 				allow write: if false;
 			}
 
+			// match /certificateRequest {}
+
 			// match /contactRecords/{contactRecord} {}
 
 			// match /contacts/{contact} {

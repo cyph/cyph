@@ -333,6 +333,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 			this.usernameToEmail(username),
 			password
 		);
+
+		await this.login(username, password);
 	}
 
 	/** @inheritDoc */
