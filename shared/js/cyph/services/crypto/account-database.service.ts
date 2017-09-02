@@ -145,7 +145,7 @@ export class AccountDatabaseService {
 		url	= await url;
 
 		if (!anonymous && this.currentUser.value) {
-			url	= await this.processURL(url);
+			url	= await this.normalizeURL(url);
 			await this.waitForUnlock(url);
 		}
 
@@ -211,24 +211,12 @@ export class AccountDatabaseService {
 
 		return `users/${currentUser.user.username}/locks/` + this.potassiumService.toHex(
 			await this.potassiumService.hash.hash(
-				(await this.processURL(url)).replace(
+				(await this.normalizeURL(url)).replace(
 					`users/${currentUser.user.username}/`,
 					''
 				)
 			)
 		);
-	}
-
-	/** @ignore */
-	private async processURL (url: string|Promise<string>) : Promise<string> {
-		url	= (await url).replace(/^\//, '');
-
-		if (url.match(/^users/)) {
-			return url;
-		}
-
-		const currentUser	= await this.getCurrentUser();
-		return `users/${currentUser.user.username}/${url}`;
 	}
 
 	/** @ignore */
@@ -239,7 +227,7 @@ export class AccountDatabaseService {
 		securityModel: SecurityModels,
 		customKey: Uint8Array|Promise<Uint8Array>|undefined
 	) : Promise<Uint8Array> {
-		url			= await this.processURL(url);
+		url			= await this.normalizeURL(url);
 		const data	= await util.serialize(proto, value);
 
 		switch (securityModel) {
@@ -354,7 +342,7 @@ export class AccountDatabaseService {
 		const localLock		= util.lockFunction();
 
 		const asyncValue	= (async () => {
-			url	= await this.processURL(url);
+			url	= await this.normalizeURL(url);
 
 			return this.databaseService.getAsyncValue(
 				url,
@@ -445,7 +433,7 @@ export class AccountDatabaseService {
 		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : Promise<T[]> {
-		url	= await this.processURL(url);
+		url	= await this.normalizeURL(url);
 		return Promise.all((await this.getListKeys(url)).map(async k =>
 			this.getItem(`${url}/${k}`, proto, securityModel, customKey, anonymous)
 		));
@@ -453,7 +441,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.getListKeys */
 	public async getListKeys (url: string|Promise<string>) : Promise<string[]> {
-		return this.databaseService.getListKeys(await this.processURL(url));
+		return this.databaseService.getListKeys(await this.normalizeURL(url));
 	}
 
 	/** @see DatabaseService.getOrSetDefault */
@@ -517,7 +505,7 @@ export class AccountDatabaseService {
 					throw new Error('Invalid AGSE-PKI certificate: bad username.');
 				}
 
-				const encryptionURL	= await this.processURL(
+				const encryptionURL	= await this.normalizeURL(
 					`users/${username}/publicEncryptionKey`
 				);
 
@@ -602,6 +590,18 @@ export class AccountDatabaseService {
 		};
 	}
 
+	/** Normalizes URL. */
+	public async normalizeURL (url: string|Promise<string>) : Promise<string> {
+		url	= (await url).replace(/^\//, '');
+
+		if (url.match(/^users/)) {
+			return url;
+		}
+
+		const currentUser	= await this.getCurrentUser();
+		return `users/${currentUser.user.username}/${url}`;
+	}
+
 	/** @see DatabaseService.pushItem */
 	public async pushItem<T> (
 		url: string|Promise<string>,
@@ -611,7 +611,7 @@ export class AccountDatabaseService {
 		customKey?: Uint8Array|Promise<Uint8Array>
 	) : Promise<{hash: string; url: string}> {
 		return this.databaseService.pushItem(
-			await this.processURL(url),
+			await this.normalizeURL(url),
 			BinaryProto,
 			await this.seal(url, proto, value, securityModel, customKey)
 		);
@@ -619,7 +619,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.removeItem */
 	public async removeItem (url: string|Promise<string>) : Promise<void> {
-		url	= await this.processURL(url);
+		url	= await this.normalizeURL(url);
 
 		return this.databaseService.removeItem(url);
 	}
@@ -633,7 +633,7 @@ export class AccountDatabaseService {
 		customKey?: Uint8Array|Promise<Uint8Array>
 	) : Promise<{hash: string; url: string}> {
 		return this.lock(url, async () => this.databaseService.setItem(
-			await this.processURL(url),
+			await this.normalizeURL(url),
 			BinaryProto,
 			await this.seal(url, proto, value, securityModel, customKey)
 		));
@@ -648,7 +648,7 @@ export class AccountDatabaseService {
 		customKey?: Uint8Array|Promise<Uint8Array>
 	) : Promise<void> {
 		return this.lock(url, async () => this.databaseService.setList(
-			await this.processURL(url),
+			await this.normalizeURL(url),
 			BinaryProto,
 			await Promise.all(value.map(async v =>
 				this.seal(url, proto, v, securityModel, customKey)
@@ -677,7 +677,7 @@ export class AccountDatabaseService {
 
 		const result	= (async () => {
 			const uploadTask	= this.databaseService.uploadItem(
-				await this.processURL(url),
+				await this.normalizeURL(url),
 				BinaryProto,
 				await this.seal(url, proto, value, securityModel, customKey)
 			);
@@ -730,7 +730,7 @@ export class AccountDatabaseService {
 	) : Observable<ITimedValue<T>> {
 		return util.flattenObservablePromise(
 			this.currentUser.flatMap(async () => {
-				const processedURL	= await this.processURL(url);
+				const processedURL	= await this.normalizeURL(url);
 
 				return this.databaseService.watch(
 					processedURL,
@@ -765,7 +765,7 @@ export class AccountDatabaseService {
 	) : Observable<ITimedValue<T>[]> {
 		return util.flattenObservablePromise(
 			this.currentUser.flatMap(async () => {
-				const processedURL	= await this.processURL(url);
+				const processedURL	= await this.normalizeURL(url);
 
 				return this.databaseService.watchList(
 					processedURL,
@@ -796,7 +796,7 @@ export class AccountDatabaseService {
 	public watchListKeys (url: string|Promise<string>) : Observable<string[]> {
 		return util.flattenObservablePromise(
 			this.currentUser.flatMap(async () =>
-				this.databaseService.watchListKeys(await this.processURL(url))
+				this.databaseService.watchListKeys(await this.normalizeURL(url))
 			).flatMap(
 				o => o
 			),
@@ -814,7 +814,7 @@ export class AccountDatabaseService {
 	) : Observable<ITimedValue<T>> {
 		return util.flattenObservablePromise(
 			this.currentUser.flatMap(async () => {
-				const processedURL	= await this.processURL(url);
+				const processedURL	= await this.normalizeURL(url);
 
 				return this.databaseService.watchListPushes(
 					processedURL,
