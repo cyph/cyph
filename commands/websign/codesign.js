@@ -3,7 +3,7 @@
 
 const fs			= require('fs');
 const mkdirp		= require('mkdirp');
-const sign			= require('../sign');
+const {sign}		= require('../sign');
 
 
 (async () => {

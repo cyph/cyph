@@ -174,5 +174,5 @@ if (require.main === module) {
 	console.log(sign(JSON.parse(process.argv[2])));
 }
 else {
-	module.exports	= sign;
+	module.exports	= {agsePublicSigningKeys: publicKeys, sign};
 }
