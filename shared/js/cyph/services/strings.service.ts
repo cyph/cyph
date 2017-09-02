@@ -218,6 +218,12 @@ export class StringsService {
 	);
 
 	/** @see StringsService */
+	public readonly p2pDisabledLocalIOS: string		= util.translate(
+		`Voice/video calling is currently unsupported on iOS. ` +
+		`However, it will be supported after the upcoming release of iOS 11.`
+	);
+
+	/** @see StringsService */
 	public readonly p2pDisconnect: string			= util.translate(
 		`Call has been disconnected.`
 	);
