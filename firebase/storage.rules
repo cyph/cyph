@@ -1,5 +1,9 @@
 service firebase.storage {
 	match /b/{bucket}/o {
+		match /certificateHistory {
+			allow read, write: if false;
+		}
+
 		match /channels/{channel} {
 			match /{all=**} {
 				allow read, write;

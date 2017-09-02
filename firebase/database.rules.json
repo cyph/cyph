@@ -4,7 +4,7 @@
 		".write": false,
 
 		"certificateRequests": {
-			"$certificateRequest": {
+			"$username": {
 				".validate": "newData.isString()"
 			}
 		},
