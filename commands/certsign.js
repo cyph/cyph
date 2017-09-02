@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
 
-const crypto	= require('crypto');
-const fs		= require('fs');
-const potassium	= require('../modules/potassium');
-const sign		= require('./sign');
+const crypto						= require('crypto');
+const fs							= require('fs');
+const potassium						= require('../modules/potassium');
+const {agsePublicSigningKeys, sign}	= require('./sign');
 
 const {
 	AGSEPKICert,
 	AGSEPKICSR,
+	AGSEPKIIssuanceHistory,
 	deserialize,
 	serialize
 }	= require('../modules/proto');
@@ -17,36 +18,57 @@ const {
 (async () => {
 
 
-const args			= {
+const args				= {
 	/** List of new CSRs to be processed. */
 	csrPath: process.argv[2],
-	/** List of previous CSRs for issued certificates. */
-	issuedCertPath: process.argv[3],
+	/** Signed issuance history. */
+	issuanceHistoryPath: process.argv[3],
+	/** Last issuance timestamp. */
+	lastIssuanceTimestampPath: process.argv[4],
 	/** Output. */
-	outputPath: process.argv[4]
+	outputPath: process.argv[5]
 };
 
 
-const getHash		= async bytes => potassium.toHex(await potassium.hash.hash(bytes));
+const getHash			= async bytes => potassium.toHex(await potassium.hash.hash(bytes));
 
 
-const issuedCerts	= (await Promise.all(
-	JSON.parse(fs.readFileSync(args.issuedCertPath)).map(async s =>
-		deserialize(AGSEPKICSR, potassium.fromBase64(s))
-	)
-)).reduce(
-	(o, csr) => {
-		o.publicSigningKeys.set(await getHash(csr.publicSigningKey), true);
-		o.usernames.set(csr.username, true);
-		return o;
-	},
-	{
-		publicSigningKeys: new Map(),
-		usernames: new Map()
+const issuanceHistory	= await (async () => {
+	const bytes				= fs.readFileSync(args.issuanceHistoryPath);
+	const dataView			= potassium.toDataView(bytes);
+	const rsaKeyIndex		= dataView.getUint32(0, true);
+	const sphincsKeyIndex	= dataView.getUint32(4, true);
+	const signed			= potassium.toBytes(bytes, 8);
+
+	if (
+		rsaKeyIndex >= agsePublicSigningKeys.rsa.length ||
+		sphincsKeyIndex >= agsePublicSigningKeys.sphincs.length
+	) {
+		throw new Error('Invalid AGSE-PKI history: bad key index.');
 	}
-);
 
-const csrs			= (await Promise.all(JSON.parse(fs.readFileSync(args.csrPath)).map(async s => {
+	const o	= await util.deserialize(
+		AGSEPKIIssuanceHistory,
+		await this.potassiumService.sign.open(
+			signed,
+			await potassium.sign.importSuperSphincsPublicKeys(
+				agsePublicSigningKeys.rsa[rsaKeyIndex],
+				agsePublicSigningKeys.sphincs[sphincsKeyIndex]
+			),
+			'AGSEPKIIssuanceHistory'
+		)
+	);
+
+	if (parseFloat(fs.readFileSync(args.lastIssuanceTimestampPath).toString()) > o.timestamp) {
+		throw new Error('Invalid AGSE-PKI history: bad timestamp.');
+	}
+
+	return o;
+})();
+
+const csrs				= (await Promise.all(JSON.parse(
+	fs.readFileSync(args.csrPath).toString()
+).map(async s => {
 	try {
 		const bytes			= potassium.fromBase64(s);
 		const csr			= await deserialize(
@@ -67,8 +89,8 @@ const csrs			= (await Promise.all(JSON.parse(fs.readFileSync(args.csrPath)).map(
 
 		/* Validate that CSR data doesn't already belong to an existing user. */
 		if (
-			issuedCerts.publicSigningKeys.get(publicSigningKeyHash) ||
-			issuedCerts.usernames.get(csr.username)
+			issuanceHistory.publicSigningKeyHashes[publicSigningKeyHash] ||
+			issuanceHistory.usernames[csr.username]
 		) {
 			return;
 		}
@@ -80,8 +102,8 @@ const csrs			= (await Promise.all(JSON.parse(fs.readFileSync(args.csrPath)).map(
 			`users/${csr.username}/certificateRequest`
 		);
 
-		issuedCerts.publicSigningKeys.set(publicSigningKeyHash, true);
-		issuedCerts.usernames.set(csr.username, true);
+		issuanceHistory.publicSigningKeyHashes[publicSigningKeyHash]	= true;
+		issuanceHistory.usernames[csr.username]	= true;
 
 		return csr;
 	}
@@ -97,17 +119,34 @@ try {
 		process.exit(0);
 	}
 
-	const timestamp	= Date.now();
+	issuanceHistory.timestamp	= Date.now();
 
 	const {rsaIndex, signedInputs, sphincsIndex}	= await sign(
-		csrs.map(csr => ({
-			additionalData: csr.username,
-			message: {agsePKICSR: csr, timestamp}
-		}))
+		[{
+			additionalData: 'AGSEPKIIssuanceHistory',
+			message: await serialize(AGSEPKIIssuanceHistory, issuanceHistory)
+		}].concat(
+			csrs.map(csr => ({
+				additionalData: csr.username,
+				message: await serialize(AGSEPKICert, {
+					agsePKICSR: csr,
+					timestamp: issuanceHistory.timestamp
+				})
+			}))
+		)
 	);
 
+	fs.writeFileSync(args.lastIssuanceTimestampPath, issuanceHistory.timestamp.toString());
+
+	fs.writeFileSync(args.issuanceHistoryPath, potassium.concatMemory(
+		false,
+		new Uint32Array([rsaIndex]),
+		new Uint32Array([sphincsIndex]),
+		signedInputs[0]
+	));
+
 	fs.writeFileSync(args.outputPath, JSON.stringify({
-		certs: signedInputs.reduce(
+		certs: signedInputs.slice(1).reduce(
 			(o, cert, i) => {
 				const csr			= csrs[i];
 
