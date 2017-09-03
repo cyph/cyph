@@ -1,15 +1,13 @@
 #!/usr/bin/env node
 
 
-const crypto		= require('crypto');
-const dgram			= require('dgram');
-const fs			= require('fs');
-const os			= require('os');
-const sodium		= require('libsodium-wrappers');
-const superSphincs	= require('supersphincs');
-
-
-const sign	= async (inputs) => new Promise(async (resolve, reject) => {
+const crypto			= require('crypto');
+const dgram				= require('dgram');
+const fs				= require('fs');
+const os				= require('os');
+const sodium			= require('libsodium-wrappers');
+const superSphincs		= require('supersphincs');
+const superSphincsHash	= require('supersphincs/nacl-sha512');
 
 
 const remoteAddress	= '10.0.0.42';
@@ -34,6 +32,10 @@ const publicKeys	= JSON.parse(
 		replace(/\/\*.*?\*\//g, '')
 );
 
+
+const sign	= async (inputs) => new Promise(async (resolve, reject) => {
+
+
 const inputMessages	= inputs.map(({message}) =>
 	message instanceof Uint8Array ?
 		message :
@@ -44,7 +46,7 @@ const dataToSign	= Buffer.from(JSON.stringify(inputs, (k, v) =>
 	v instanceof Uint8Array ?
 		k === 'additionalData' ?
 			{data: sodium.to_base64(v).replace(/\s+/g, ''), isUint8Array: true} :
-			{data: (await superSphincs.hash(v)).hex, isBinaryHash: true}
+			{data: Buffer.from(superSphincsHash(v)).toString('hex'), isBinaryHash: true}
 		:
 		v
 ));
