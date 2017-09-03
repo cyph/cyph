@@ -2,7 +2,9 @@
 
 
 const crypto						= require('crypto');
+const firebase						= require('firebase-admin');
 const fs							= require('fs');
+const gcloudStorage					= require('@google-cloud/storage');
 const potassium						= require('../modules/potassium');
 const {agsePublicSigningKeys, sign}	= require('./sign');
 
@@ -18,23 +20,33 @@ const {
 (async () => {
 
 
-const args				= {
-	/** List of new CSRs to be processed. */
-	csrPath: process.argv[2],
-	/** Signed issuance history. */
-	issuanceHistoryPath: process.argv[3],
-	/** Last issuance timestamp. */
-	lastIssuanceTimestampPath: process.argv[4],
-	/** Output. */
-	outputPath: process.argv[5]
-};
+const configDir					= `${os.homedir()}/.cyph`;
+const lastIssuanceTimestampPath	= `${configDir}/certsign.timestamp`;
+const keyFilename				= `${configDir}/firebase.prod`;
+const projectId					= 'cyphme';
 
 
 const getHash			= async bytes => potassium.toHex(await potassium.hash.hash(bytes));
 
 
+firebase.initializeApp({
+	credential: firebase.credential.cert(JSON.parse(fs.readFileSync(keyFilename).toString())),
+	databaseURL: `https://${projectId}.firebaseio.com`
+});
+
+const database	= firebase.database();
+const storage	= gcloudStorage({keyFilename, projectId}).bucket(`${projectId}.appspot.com`);
+
+
+const usernames	= (await firebase.database().ref('certificateRequests').once('value')).val();
+
+if (!usernames || Object.keys(usernames).length < 1) {
+	console.log('No certificate requests.');
+	process.exit(0);
+}
+
 const issuanceHistory	= await (async () => {
-	const bytes				= fs.readFileSync(args.issuanceHistoryPath);
+	const bytes				= (await storage.file('certificateHistory').download())[0];
 	const dataView			= potassium.toDataView(bytes);
 	const rsaKeyIndex		= dataView.getUint32(0, true);
 	const sphincsKeyIndex	= dataView.getUint32(4, true);
@@ -59,18 +71,25 @@ const issuanceHistory	= await (async () => {
 		)
 	);
 
-	if (parseFloat(fs.readFileSync(args.lastIssuanceTimestampPath).toString()) > o.timestamp) {
+	if (parseFloat(fs.readFileSync(lastIssuanceTimestampPath).toString()) > o.timestamp) {
 		throw new Error('Invalid AGSE-PKI history: bad timestamp.');
 	}
 
 	return o;
 })();
 
-const csrs				= (await Promise.all(JSON.parse(
-	fs.readFileSync(args.csrPath).toString()
-).map(async s => {
+const csrs	= (await Promise.all(Object.keys(usernames).map(async k => {
 	try {
-		const bytes			= potassium.fromBase64(s);
+		const username	= usernames[k];
+
+		if (!username || username !== username.toLowerCase().replace(/[^0-9a-z_]/g, '')) {
+			return;
+		}
+
+		const bytes			=
+			(await storage.file(`users/${username}/certificateRequest`).download())[0]
+		;
+
 		const csr			= await deserialize(
 			AGSEPKICSR,
 			new Uint8Array(bytes.buffer, bytes.byteOffset + await potassium.sign.bytes)
@@ -80,7 +99,7 @@ const csrs				= (await Promise.all(JSON.parse(
 			!csr.publicSigningKey ||
 			csr.publicSigningKey.length < 1 ||
 			!csr.username ||
-			csr.username !== csr.username.toLowerCase().replace(/[^0-9a-z_]/g, '')
+			csr.username !== username
 		) {
 			return;
 		}
@@ -136,40 +155,49 @@ try {
 		)
 	);
 
-	fs.writeFileSync(args.lastIssuanceTimestampPath, issuanceHistory.timestamp.toString());
+	fs.writeFileSync(lastIssuanceTimestampPath, issuanceHistory.timestamp.toString());
 
-	fs.writeFileSync(args.issuanceHistoryPath, potassium.concatMemory(
+	await storage.file('certificateHistory').save(potassium.concatMemory(
 		false,
 		new Uint32Array([rsaIndex]),
 		new Uint32Array([sphincsIndex]),
 		signedInputs[0]
 	));
 
-	fs.writeFileSync(args.outputPath, JSON.stringify({
-		certs: signedInputs.slice(1).reduce(
-			(o, cert, i) => {
-				const csr			= csrs[i];
+	signedInputs.slice(1).forEach(async (cert, i) => {
+		const csr		= csrs[i];
 
-				const fullCert		= potassium.concatMemory(
-					false,
-					new Uint32Array([rsaIndex]),
-					new Uint32Array([sphincsIndex]),
-					cert
-				);
+		const fullCert	= potassium.concatMemory(
+			false,
+			new Uint32Array([rsaIndex]),
+			new Uint32Array([sphincsIndex]),
+			cert
+		);
 
-				o[csr.username]	= potassium.toBase64(fullCert);
+		const url		= `users/${csr.username}/certificate`;
 
-				potassium.clearMemory(cert);
-				potassium.clearMemory(fullCert);
+		await Promise.all([
+			storage.file(url).save(fullCert),
+			database.ref(url).set({
+				hash: await getHash(fullCert),
+				timestamp: firebase.database.ServerValue.TIMESTAMP
+			})
+		]);
 
-				return o;
-			},
-			{}
-		),
-		csrs: await Promise.all(csrs.map(async csr =>
-			potassium.toBase64(await serialize(AGSEPKICSR, csr))
-		))
-	}));
+		potassium.clearMemory(cert);
+		potassium.clearMemory(fullCert);
+	});
+
+	Object.keys(usernames).forEach(async k => {
+		const url	= `users/${usernames[k]}/certificateRequest`;
+
+		await Promise.all([
+			storage.file(url).delete(),
+			database.ref(url).remove()
+		]);
+
+		await database.ref(`certificateRequests/${k}`).remove();
+	});
 
 	console.log('Certificate signing complete.');
 	process.exit(0);
