@@ -64,11 +64,10 @@ const reviewText	= async (text) => {
 };
 
 const validateData	= (o, binaryHashSupport) =>
-	typeof o === 'string' ||
-	(o && o.isUint8Array && typeof o.data === 'string' && validator.isBase64(o.data)) ||
-	(
-		binaryHashSupport && 
-		(o && o.isBinaryHash && typeof o.data === 'string' && validator.isHexadecimal(o.data))
+	typeof o === 'string' || (
+		o &&
+		(o.isUint8Array || (binaryHashSupport && o.isBinaryHash)) &&
+		(typeof o.data === 'string' && validator.isBase64(o.data))
 	)
 ;
 
@@ -249,11 +248,9 @@ server.on('message', async (message) => {
 
 	const signatures	= await Promise.all(inputs.map(async ({additionalData, message}) =>
 		superSphincs.signDetachedBase64(
-			message.isBinaryHash ?
-				Buffer.from(message.data, 'hex') :
-				message.isUint8Array ?
-					Buffer.from(message.data, 'base64') :
-					message
+			message.isBinaryHash || message.isUint8Array ?
+				Buffer.from(message.data, 'base64') :
+				message
 			,
 			keyData.keyPair.privateKey,
 			additionalData.none ?
