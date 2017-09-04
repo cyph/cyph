@@ -45,6 +45,11 @@ export class Util {
 
 
 	/** @ignore */
+	private readonly getOrSetDefaultAsyncLocks: Map<any, LockFunction>	=
+		new Map<any, LockFunction>()
+	;
+
+	/** @ignore */
 	private readonly timestampData	= {
 		last: 0,
 		offset: (async () => {
@@ -272,17 +277,23 @@ export class Util {
 		key: K,
 		defaultValue: () => V|Promise<V>
 	) : Promise<V> {
-		if (!map.has(key)) {
-			map.set(key, await defaultValue());
-		}
+		return this.getOrSetDefault(
+			this.getOrSetDefaultAsyncLocks,
+			key,
+			() => this.lockFunction()
+		)(async () => {
+			if (!map.has(key)) {
+				map.set(key, await defaultValue());
+			}
 
-		const value	= map.get(key);
+			const value	= map.get(key);
 
-		if (value === undefined) {
-			throw new Error("Util.getOrSetDefaultAsync doesn't support nullable types.");
-		}
+			if (value === undefined) {
+				throw new Error("Util.getOrSetDefaultAsync doesn't support nullable types.");
+			}
 
-		return value;
+			return value;
+		});
 	}
 
 	/** Returns a human-readable representation of the time (e.g. "3:37pm"). */
