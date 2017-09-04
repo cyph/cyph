@@ -293,7 +293,7 @@ sendData(0);
 
 
 if (require.main === module) {
-	console.log(sign(JSON.parse(process.argv[2]), process.argv[3] === '--test'));
+	sign(JSON.parse(process.argv[2]), process.argv[3] === '--test');
 }
 else {
 	module.exports	= {agsePublicSigningKeys: publicKeys, sign};
