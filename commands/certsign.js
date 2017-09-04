@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
 
+const gcloudStorage					= require('@google-cloud/storage');
 const crypto						= require('crypto');
 const firebase						= require('firebase-admin');
 const fs							= require('fs');
-const gcloudStorage					= require('@google-cloud/storage');
+const os							= require('os');
 const potassium						= require('../modules/potassium');
 const {agsePublicSigningKeys, sign}	= require('./sign');
 
@@ -26,13 +27,16 @@ const keyFilename				= `${configDir}/firebase.${testSign ? 'test' : 'prod'}`;
 const projectId					= testSign ? 'cyph-test' : 'cyphme';
 
 
-const getHash	= async bytes => potassium.toHex(await potassium.hash.hash(bytes));
+const getHash	= async bytes => potassium.toBase64(await potassium.hash.hash(bytes));
 
 
-firebase.initializeApp({
-	credential: firebase.credential.cert(JSON.parse(fs.readFileSync(keyFilename).toString())),
-	databaseURL: `https://${projectId}.firebaseio.com`
-});
+try {
+	firebase.initializeApp({
+		credential: firebase.credential.cert(JSON.parse(fs.readFileSync(keyFilename).toString())),
+		databaseURL: `https://${projectId}.firebaseio.com`
+	});
+}
+catch (_) {}
 
 const database	= firebase.database();
 const storage	= gcloudStorage({keyFilename, projectId}).bucket(`${projectId}.appspot.com`);
@@ -76,7 +80,11 @@ const issuanceHistory	= await (async () => {
 	}
 
 	return o;
-})();
+})().catch(() => ({
+	publicSigningKeyHashes: {},
+	timestamp: 0,
+	usernames: {}
+}));
 
 const csrs	= (await Promise.all(Object.keys(usernames).map(async k => {
 	try {
@@ -150,13 +158,13 @@ try {
 			additionalData: 'AGSEPKIIssuanceHistory',
 			message: await serialize(AGSEPKIIssuanceHistory, issuanceHistory)
 		}].concat(
-			csrs.map(csr => ({
+			await Promise.all(csrs.map(async csr => ({
 				additionalData: csr.username,
 				message: await serialize(AGSEPKICert, {
 					agsePKICSR: csr,
 					timestamp: issuanceHistory.timestamp
 				})
-			}))
+			})))
 		),
 		testSign
 	);
@@ -170,7 +178,7 @@ try {
 		signedInputs[0]
 	));
 
-	signedInputs.slice(1).forEach(async (cert, i) => {
+	await Promise.all(signedInputs.slice(1).map(async (cert, i) => {
 		const csr		= csrs[i];
 
 		const fullCert	= potassium.concatMemory(
@@ -192,9 +200,9 @@ try {
 
 		potassium.clearMemory(cert);
 		potassium.clearMemory(fullCert);
-	});
+	}));
 
-	Object.keys(usernames).forEach(async k => {
+	await Promise.all(Object.keys(usernames).map(async k => {
 		const url	= `users/${usernames[k]}/certificateRequest`;
 
 		await Promise.all([
@@ -203,7 +211,7 @@ try {
 		]);
 
 		await database.ref(`certificateRequests/${k}`).remove();
-	});
+	}));
 
 	console.log('Certificate signing complete.');
 	if (standalone) {
