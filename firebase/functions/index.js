@@ -1,5 +1,7 @@
-const database	= require('firebase-admin').database();
+const firebase	= require('firebase-admin');
 const functions	= require('firebase-functions');
+firebase.initializeApp(functions.config().firebase);
+const database	= firebase.database();
 const storage	= require('@google-cloud/storage')().bucket(
 	`${functions.config().project.id}.appspot.com`
 );
