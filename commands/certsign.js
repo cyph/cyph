@@ -17,7 +17,7 @@ const {
 }	= require('../modules/proto');
 
 
-const certSign	= async (testSign) => new Promise(async (resolve, reject) => {
+const certSign	= async (testSign, standalone) => {
 
 
 const configDir					= `${os.homedir()}/.cyph`;
@@ -135,7 +135,12 @@ const csrs	= (await Promise.all(Object.keys(usernames).map(async k => {
 try {
 	if (csrs.length < 1) {
 		console.log('No certificates to sign.');
-		process.exit(0);
+		if (standalone) {
+			process.exit(0);
+		}
+		else {
+			return;
+		}
 	}
 
 	issuanceHistory.timestamp	= Date.now();
@@ -201,20 +206,27 @@ try {
 	});
 
 	console.log('Certificate signing complete.');
-	process.exit(0);
+	if (standalone) {
+		process.exit(0);
+	}
 }
 catch (err) {
 	console.error(err);
 	console.log('Certificate signing failed.');
-	process.exit(1);
+	if (standalone) {
+		process.exit(1);
+	}
+	else {
+		throw err;
+	}
 }
 
 
-});
+};
 
 
 if (require.main === module) {
-	console.log(certSign(process.argv[2] === '--test'));
+	certSign(process.argv[2] === '--test', true);
 }
 else {
 	module.exports	= certSign;
