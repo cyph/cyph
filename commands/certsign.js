@@ -17,16 +17,16 @@ const {
 }	= require('../modules/proto');
 
 
-(async () => {
+const certSign	= async (testSign) => new Promise(async (resolve, reject) => {
 
 
 const configDir					= `${os.homedir()}/.cyph`;
-const lastIssuanceTimestampPath	= `${configDir}/certsign.timestamp`;
-const keyFilename				= `${configDir}/firebase.prod`;
-const projectId					= 'cyphme';
+const lastIssuanceTimestampPath	= `${configDir}/certsign.timestamp.${testSign ? 'test' : 'prod'}`;
+const keyFilename				= `${configDir}/firebase.${testSign ? 'test' : 'prod'}`;
+const projectId					= testSign ? 'cyph-test' : 'cyphme';
 
 
-const getHash			= async bytes => potassium.toHex(await potassium.hash.hash(bytes));
+const getHash	= async bytes => potassium.toHex(await potassium.hash.hash(bytes));
 
 
 firebase.initializeApp({
@@ -152,7 +152,8 @@ try {
 					timestamp: issuanceHistory.timestamp
 				})
 			}))
-		)
+		),
+		testSign
 	);
 
 	fs.writeFileSync(lastIssuanceTimestampPath, issuanceHistory.timestamp.toString());
@@ -209,4 +210,12 @@ catch (err) {
 }
 
 
-})();
+});
+
+
+if (require.main === module) {
+	console.log(certSign(process.argv[2] === '--test'));
+}
+else {
+	module.exports	= certSign;
+}
