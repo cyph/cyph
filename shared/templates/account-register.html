@@ -112,7 +112,7 @@
 												name='password'
 												type='password'
 												placeholder='Master Key'
-												required
+												[required]='!useXkcdPassphrase'
 											/>
 										</md-form-field>
 									</div>
@@ -125,7 +125,7 @@
 												name='passwordConfirmation'
 												type='password'
 												placeholder='Confirm Master Key'
-												required
+												[required]='!useXkcdPassphrase'
 											/>
 										</md-form-field>
 									</div>
@@ -223,9 +223,11 @@
 				</md-tab-group>
 				
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<button md-button type='submit'>
-						<span cyphTranslate  *ngIf='tabIndex !== 3'>Next</span>
-						<span cyphTranslate  *ngIf='tabIndex === 3'>Register</span>
+					<button md-button (click)='next()' *ngIf='tabIndex !== 3'>
+						<span cyphTranslate>Next</span>
+					</button>
+					<button md-button type='submit' *ngIf='tabIndex === 3'>
+						<span cyphTranslate>Register</span>
 					</button>
 				</div>
 			</form>

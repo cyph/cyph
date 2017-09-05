@@ -48,6 +48,11 @@ export class AccountRegisterComponent {
 	/** Auto-generated password option. */
 	public xkcdPassphrase: Promise<string>	= xkcdPassphrase.generate();
 
+	/** Goes to next section. */
+	public next () : void {
+		this.tabIndex	= Math.min(this.tabIndex + 1, 3);
+	}
+
 	/** Initiates registration attempt. */
 	public async submit () : Promise<void> {
 		this.checking	= true;
