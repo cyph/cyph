@@ -10,6 +10,22 @@ import {UserPresence} from './enums';
  * Represents a user profile.
  */
 export class User {
+	/** Image URI for avatar / profile picture. */
+	public readonly avatar: Observable<SafeUrl|string|undefined>	=
+		util.flattenObservablePromise(
+			this.avatarInternal.map(avatar => avatar || '/assets/img/favicon/favicon-256x256.png'),
+			''
+		)
+	;
+
+	/** Image URI for cover image. */
+	public readonly coverImage: Observable<SafeUrl|string|undefined>	=
+		util.flattenObservablePromise(
+			this.coverImageInternal.map(coverImage => coverImage || '/assets/img/walken.png'),
+			''
+		)
+	;
+
 	/** @see IAccountUserProfile.description */
 	public readonly description: Observable<string>	= util.flattenObservablePromise(
 		this.accountUserProfile.watch().map(({description}) => description),
@@ -54,11 +70,11 @@ export class User {
 		/** Username (all lowercase). */
 		public readonly username: string,
 
-		/** Image URI for avatar / profile picture. */
-		public readonly avatar: Observable<SafeUrl|string|undefined>,
+		/** @ignore */
+		private readonly avatarInternal: Observable<SafeUrl|string|undefined>,
 
-		/** Image URI for cover image. */
-		public readonly coverImage: Observable<SafeUrl|string|undefined>,
+		/** @ignore */
+		private readonly coverImageInternal: Observable<SafeUrl|string|undefined>,
 
 		/** @see IAccountUserPresence */
 		public readonly accountUserPresence: IAsyncValue<IAccountUserPresence>,
