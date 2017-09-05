@@ -17,6 +17,7 @@
 					<md-tab>
 						<ng-template md-tab-label>
 							<md-icon>radio_button_checked</md-icon>
+							&nbsp;
 							<span cyphTranslate>Basic Information</span>
 						</ng-template>
 
@@ -67,6 +68,7 @@
 						<ng-template md-tab-label>
 							<md-icon *ngIf='tabIndex > 0'>radio_button_checked</md-icon>
 							<md-icon *ngIf='tabIndex <= 0'>radio_button_unchecked</md-icon>
+							&nbsp;
 							<span cyphTranslate>Master Key</span>
 						</ng-template>
 
@@ -135,6 +137,7 @@
 						<ng-template md-tab-label>
 							<md-icon *ngIf='tabIndex > 1'>radio_button_checked</md-icon>
 							<md-icon *ngIf='tabIndex <= 1'>radio_button_unchecked</md-icon>
+							&nbsp;
 							<span cyphTranslate>Lock Screen Password</span>
 						</ng-template>
 
@@ -153,6 +156,19 @@
 										type='password'
 										placeholder='Lock Screen Password'
 										required
+									/>
+								</md-form-field>
+							</div>
+
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<md-form-field fxFlex='60'>
+									<input
+										mdInput
+										cyphTranslate
+										[(ngModel)]='lockScreenTimeout'
+										name='lockScreenTimeout'
+										type='number'
+										placeholder='Lock Screen Timeout (days)'
 									/>
 								</md-form-field>
 							</div>

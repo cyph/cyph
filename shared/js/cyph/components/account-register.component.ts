@@ -18,25 +18,28 @@ export class AccountRegisterComponent {
 	/** Indicates whether registration attempt is in progress. */
 	public checking: boolean				= false;
 
-	/** Email addres to be used for registration attempt. */
+	/** Email addres. */
 	public email: string					= '';
 
 	/** Indicates whether the last registration attempt has failed. */
 	public error: boolean					= false;
 
-	/** Lock screen password to be used for registration attempt. */
+	/** Lock screen password. */
 	public lockScreenPassword: string		= '';
 
-	/** Name to be used for registration attempt. */
+	/** Lock screen timeout (# of days). */
+	public lockScreenTimeout?: number		= 30;
+
+	/** Name. */
 	public name: string						= '';
 
-	/** Password to be used for registration attempt. */
+	/** Password. */
 	public password: string					= '';
 
 	/** Form tab index. */
 	public tabIndex: number					= 0;
 
-	/** Username to be used for registration attempt. */
+	/** Username. */
 	public username: string					= '';
 
 	/** Indicates whether or not xkcdPassphrase should be used. */
