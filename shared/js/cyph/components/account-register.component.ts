@@ -15,22 +15,25 @@ import {StringsService} from '../services/strings.service';
 })
 export class AccountRegisterComponent {
 	/** Indicates whether registration attempt is in progress. */
-	public checking: boolean	= false;
+	public checking: boolean			= false;
 
 	/** Email addres to be used for registration attempt. */
-	public email: string		= '';
+	public email: string				= '';
 
 	/** Indicates whether the last registration attempt has failed. */
-	public error: boolean		= false;
+	public error: boolean				= false;
+
+	/** Lock screen password to be used for registration attempt. */
+	public lockScreenPassword: string	= '';
 
 	/** Name to be used for registration attempt. */
-	public name: string			= '';
+	public name: string					= '';
 
 	/** Password to be used for registration attempt. */
-	public password: string		= '';
+	public password: string				= '';
 
 	/** Username to be used for registration attempt. */
-	public username: string		= '';
+	public username: string				= '';
 
 	/** Initiates registration attempt. */
 	public async submit () : Promise<void> {

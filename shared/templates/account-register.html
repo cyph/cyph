@@ -48,6 +48,19 @@
 						<input
 							mdInput
 							cyphTranslate
+							[(ngModel)]='lockScreenPassword'
+							name='lockScreenPassword'
+							type='password'
+							placeholder='Lock Screen Password'
+							required
+						/>
+					</md-form-field>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<md-form-field fxFlex='60'>
+						<input
+							mdInput
+							cyphTranslate
 							[(ngModel)]='name'
 							name='name'
 							placeholder='Name (or pseudonym)'
