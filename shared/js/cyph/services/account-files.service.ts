@@ -789,9 +789,17 @@ export class AccountFilesService {
 		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
-		this.filesList.filter(arr => arr.length > 0).take(1).toPromise().then(() => {
-			this.initiated		= true;
-			this.showSpinner	= false;
-		});
+		(async () => {
+			if ((await this.accountDatabaseService.getListKeys('fileReferences')).length === 0) {
+				this.initiated		= true;
+				this.showSpinner	= false;
+			}
+			else {
+				this.filesList.filter(arr => arr.length > 0).take(1).toPromise().then(() => {
+					this.initiated		= true;
+					this.showSpinner	= false;
+				});
+			}
+		})();
 	}
 }
