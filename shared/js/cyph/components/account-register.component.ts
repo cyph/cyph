@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
+import {xkcdPassphrase} from 'xkcd-passphrase';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
@@ -15,25 +16,31 @@ import {StringsService} from '../services/strings.service';
 })
 export class AccountRegisterComponent {
 	/** Indicates whether registration attempt is in progress. */
-	public checking: boolean			= false;
+	public checking: boolean				= false;
 
 	/** Email addres to be used for registration attempt. */
-	public email: string				= '';
+	public email: string					= '';
 
 	/** Indicates whether the last registration attempt has failed. */
-	public error: boolean				= false;
+	public error: boolean					= false;
 
 	/** Lock screen password to be used for registration attempt. */
-	public lockScreenPassword: string	= '';
+	public lockScreenPassword: string		= '';
 
 	/** Name to be used for registration attempt. */
-	public name: string					= '';
+	public name: string						= '';
 
 	/** Password to be used for registration attempt. */
-	public password: string				= '';
+	public password: string					= '';
 
 	/** Username to be used for registration attempt. */
-	public username: string				= '';
+	public username: string					= '';
+
+	/** Indicates whether or not xkcdPassphrase should be used. */
+	public useXkcdPassphrase: boolean		= true;
+
+	/** Auto-generated password option. */
+	public xkcdPassphrase: Promise<string>	= xkcdPassphrase.generate();
 
 	/** Initiates registration attempt. */
 	public async submit () : Promise<void> {
@@ -41,7 +48,7 @@ export class AccountRegisterComponent {
 		this.error		= false;
 		this.error		= !(await this.accountAuthService.register(
 			this.username,
-			this.password,
+			this.useXkcdPassphrase ? (await this.xkcdPassphrase) : this.password,
 			this.name,
 			this.email
 		));
@@ -51,10 +58,12 @@ export class AccountRegisterComponent {
 			return;
 		}
 
-		this.email		= '';
-		this.name		= '';
-		this.password	= '';
-		this.username	= '';
+		this.email				= '';
+		this.name				= '';
+		this.password			= '';
+		this.username			= '';
+		this.useXkcdPassphrase	= false;
+		this.xkcdPassphrase		= Promise.resolve('');
 
 		this.routerService.navigate(['account', 'welcome']);
 	}
