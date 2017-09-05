@@ -1,1 +1,21 @@
 @import '../mixins';
+
+.description {
+	padding-top: 32px;
+}
+
+.master-key-deselected {
+	cursor: pointer;
+	opacity: 0.25;
+	border: dashed white 1.5px;
+
+	* {
+		pointer-events: none;
+	}
+}
+
+.xkcd-passphrase {
+	font-family: 'Ubuntu Mono';
+	font-size: 2em;
+	text-align: center;
+}

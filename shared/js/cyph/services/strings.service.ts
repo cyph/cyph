@@ -194,6 +194,9 @@ export class StringsService {
 	public readonly ok: string						= util.translate(`ok`);
 
 	/** @see StringsService */
+	public readonly omitted: string					= util.translate(`(omitted)`);
+
+	/** @see StringsService */
 	public readonly oopsTitle: string				= util.translate(`Oops!`);
 
 	/** @see StringsService */

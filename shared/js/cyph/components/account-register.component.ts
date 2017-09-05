@@ -33,6 +33,9 @@ export class AccountRegisterComponent {
 	/** Password to be used for registration attempt. */
 	public password: string					= '';
 
+	/** Form tab index. */
+	public tabIndex: number					= 0;
+
 	/** Username to be used for registration attempt. */
 	public username: string					= '';
 
