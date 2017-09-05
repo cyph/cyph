@@ -89,7 +89,9 @@ export class AccountComponent implements OnInit {
 				!this.accountDatabaseService.currentUser.value &&
 				[
 					'login',
-					'profile'
+					'profile',
+					'register',
+					'welcome'
 				].indexOf(route) < 0
 			) {
 				this.routerService.navigate(['account', 'login']);

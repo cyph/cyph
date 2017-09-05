@@ -1,3 +1,79 @@
-<div>
-	Register UI
+<div
+	fxFlexFill
+	fxLayoutAlign='center center'
+	class='login-form'
+	[class.checking]='checking'
+>
+	<md-card fxFlex fxFlex.gt-sm='50'>
+		<md-card-title cyphTranslate>
+			Join Cyph
+		</md-card-title>
+		<md-card-subtitle cyphTranslate>
+			[Subtitle]
+		</md-card-subtitle>
+		<md-card-content>
+			<form ngNativeValidate (submit)='submit()'>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<h3 class='cyph-banner warn' [style.visibility]='error ? "visible" : "hidden"'>
+						{{stringsService.signupFailed}}
+					</h3>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<md-form-field fxFlex='60'>
+						<input
+							mdInput
+							cyphTranslate
+							[(ngModel)]='username'
+							name='username'
+							placeholder='Username'
+							required
+						/>
+					</md-form-field>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<md-form-field fxFlex='60'>
+						<input
+							mdInput
+							cyphTranslate
+							[(ngModel)]='password'
+							name='password'
+							type='password'
+							placeholder='Master Key'
+							required
+						/>
+					</md-form-field>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<md-form-field fxFlex='60'>
+						<input
+							mdInput
+							cyphTranslate
+							[(ngModel)]='name'
+							name='name'
+							placeholder='Name (or pseudonym)'
+							required
+						/>
+					</md-form-field>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<md-form-field fxFlex='60'>
+						<input
+							mdInput
+							cyphTranslate
+							[(ngModel)]='email'
+							name='email'
+							type='email'
+							placeholder='Email (optional)'
+						/>
+					</md-form-field>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<button md-button type='submit' cyphTranslate>
+						Register
+					</button>
+				</div>
+			</form>
+		</md-card-content>
+		<md-progress-spinner mode='indeterminate'></md-progress-spinner>
+	</md-card>
 </div>

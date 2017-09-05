@@ -49,6 +49,11 @@ export class StringsService {
 	public readonly decline: string					= util.translate(`decline`);
 
 	/** @see StringsService */
+	public readonly defaultDescription: string		= util.translate(
+		`Check out my lit new video ;). https://youtu.be/oHg5SJYRHA0`
+	);
+
+	/** @see StringsService */
 	public readonly deleteConfirm: string			= util.translate(`Confirm Deletion`);
 
 	/** @see StringsService */
@@ -291,6 +296,11 @@ export class StringsService {
 	/** @see StringsService */
 	public readonly selfDestructDeactivated: string	= util.translate(
 		`Self-destruct deactivated.`
+	);
+
+	/** @see StringsService */
+	public readonly signupFailed: string			= util.translate(
+		`Signup failed.`
 	);
 
 	/** @see StringsService */

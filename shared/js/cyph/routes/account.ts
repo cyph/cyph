@@ -11,6 +11,7 @@ import {AccountLoginComponent} from '../components/account-login.component';
 import {AccountLogoutComponent} from '../components/account-logout.component';
 import {AccountNoteComponent} from '../components/account-note.component';
 import {AccountNotesComponent} from '../components/account-notes.component';
+import {AccountPostRegisterComponent} from '../components/account-post-register.component';
 import {AccountProfileComponent} from '../components/account-profile.component';
 import {AccountRegisterComponent} from '../components/account-register.component';
 import {AccountSettingsComponent} from '../components/account-settings.component';
@@ -54,6 +55,7 @@ export const account: Route	= {
 		{path: 'profile', component: AccountProfileComponent},
 		{path: 'profile/:username', component: AccountProfileComponent},
 		{path: 'register', component: AccountRegisterComponent},
-		{path: 'settings', component: AccountSettingsComponent}
+		{path: 'settings', component: AccountSettingsComponent},
+		{path: 'welcome', component: AccountPostRegisterComponent}
 	]
 };

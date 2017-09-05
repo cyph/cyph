@@ -3,16 +3,19 @@ import {Subscription} from 'rxjs';
 import {
 	AccountLoginData,
 	AccountUserPresence,
+	AccountUserProfile,
 	AGSEPKICSR,
 	IAccountLoginData,
 	IKeyPair,
 	KeyPair
 } from '../../../proto';
+import {ExternalServices} from '../../account';
 import {BinaryProto, StringProto} from '../../protos';
 import {util} from '../../util';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {DatabaseService} from '../database.service';
 import {LocalStorageService} from '../local-storage.service';
+import {StringsService} from '../strings.service';
 import {AccountDatabaseService} from './account-database.service';
 import {PotassiumService} from './potassium.service';
 
@@ -198,13 +201,23 @@ export class AccountAuthService {
 	}
 
 	/** Registers. */
-	public async register (username: string, password: string) : Promise<boolean> {
-		if (!username || !password) {
+	public async register (
+		realUsername: string,
+		password: string,
+		name: string,
+		email?: string
+	) : Promise<boolean> {
+		if (!realUsername || !password) {
 			return false;
 		}
 
 		try {
-			username	= util.normalize(username);
+			const username	= util.normalize(realUsername);
+
+			const externalUsernames: {[s: string]: string}	= {};
+			if (email) {
+				externalUsernames[ExternalServices.email]	= email;
+			}
 
 			const loginData: IAccountLoginData	= {
 				secondaryPassword: this.potassiumService.toBase64(
@@ -219,12 +232,14 @@ export class AccountAuthService {
 				encryptionKeyPair,
 				signingKeyPair,
 				certificateRequestURL,
-				publicEncryptionKeyURL
+				publicEncryptionKeyURL,
+				publicProfileURL
 			]	= await Promise.all([
 				this.potassiumService.box.keyPair(),
 				this.potassiumService.sign.keyPair(),
 				this.accountDatabaseService.normalizeURL(`users/${username}/certificateRequest`),
 				this.accountDatabaseService.normalizeURL(`users/${username}/publicEncryptionKey`),
+				this.accountDatabaseService.normalizeURL(`users/${username}/publicProfile`),
 				this.databaseService.register(username, loginData.secondaryPassword)
 			]);
 
@@ -235,6 +250,22 @@ export class AccountAuthService {
 					await this.potassiumService.secretBox.seal(
 						await util.serialize(AccountLoginData, loginData),
 						await this.passwordHash(username, password)
+					)
+				),
+				this.databaseService.setItem(
+					publicProfileURL,
+					BinaryProto,
+					await this.potassiumService.sign.sign(
+						await util.serialize(AccountUserProfile, {
+							description: this.stringsService.defaultDescription,
+							externalUsernames,
+							hasPremium: false,
+							name,
+							realUsername
+						}),
+						signingKeyPair.privateKey,
+						publicProfileURL,
+						true
 					)
 				),
 				this.databaseService.setItem(
@@ -309,7 +340,10 @@ export class AccountAuthService {
 		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
-		private readonly potassiumService: PotassiumService
+		private readonly potassiumService: PotassiumService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) { (async () => {
 		const username	= await this.localStorageService.getItem(
 			'username',
