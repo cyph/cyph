@@ -36,6 +36,9 @@ export class AccountRegisterComponent {
 	/** Password. */
 	public password: string					= '';
 
+	/** Password confirmation. */
+	public passwordConfirmation: string		= '';
+
 	/** Form tab index. */
 	public tabIndex: number					= 0;
 
@@ -55,6 +58,12 @@ export class AccountRegisterComponent {
 
 	/** Initiates registration attempt. */
 	public async submit () : Promise<void> {
+		if (!this.useXkcdPassphrase && this.password !== this.passwordConfirmation) {
+			this.checking	= false;
+			this.error		= true;
+			return;
+		}
+
 		this.checking	= true;
 		this.error		= false;
 		this.error		= !(await this.accountAuthService.register(
