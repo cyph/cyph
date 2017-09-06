@@ -54,7 +54,8 @@ export const account: Route	= {
 		},
 		{path: 'profile', component: AccountProfileComponent},
 		{path: 'profile/:username', component: AccountProfileComponent},
-		{path: 'register', component: AccountRegisterComponent},
+		{path: 'register', redirectTo: 'register/1'},
+		{path: 'register/:step', component: AccountRegisterComponent},
 		{path: 'settings', component: AccountSettingsComponent},
 		{path: 'welcome', component: AccountPostRegisterComponent}
 	]

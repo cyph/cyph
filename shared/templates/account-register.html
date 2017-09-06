@@ -13,7 +13,10 @@
 		</md-card-subtitle>
 		<md-card-content>
 			<form fxFlex fxLayout='column' fxLayoutGap='32px' ngNativeValidate (submit)='submit()'>
-				<md-tab-group [(selectedIndex)]='tabIndex'>
+				<md-tab-group
+					[(selectedIndex)]='tabIndex'
+					(selectedIndexChange)='updateRoute(0, $event)'
+				>
 					<md-tab>
 						<ng-template md-tab-label>
 							<md-icon>radio_button_checked</md-icon>
@@ -224,7 +227,7 @@
 				</md-tab-group>
 				
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<button md-button (click)='next()' *ngIf='tabIndex !== 3'>
+					<button md-button (click)='updateRoute(1)' *ngIf='tabIndex !== 3'>
 						<span cyphTranslate>Next</span>
 					</button>
 					<button md-button type='submit' *ngIf='tabIndex === 3'>

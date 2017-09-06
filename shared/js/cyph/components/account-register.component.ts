@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
-import {Router} from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
@@ -14,7 +14,10 @@ import {StringsService} from '../services/strings.service';
 	styleUrls: ['../../../css/components/account-register.scss'],
 	templateUrl: '../../../templates/account-register.html'
 })
-export class AccountRegisterComponent {
+export class AccountRegisterComponent implements OnInit {
+	/** @ignore */
+	private readonly totalSteps: number		= 4;
+
 	/** Indicates whether registration attempt is in progress. */
 	public checking: boolean				= false;
 
@@ -40,7 +43,7 @@ export class AccountRegisterComponent {
 	public passwordConfirmation: string		= '';
 
 	/** Form tab index. */
-	public tabIndex: number					= 0;
+	public tabIndex: number					= 3;
 
 	/** Username. */
 	public username: string					= '';
@@ -51,9 +54,21 @@ export class AccountRegisterComponent {
 	/** Auto-generated password option. */
 	public xkcdPassphrase: Promise<string>	= xkcdPassphrase.generate();
 
-	/** Goes to next section. */
-	public next () : void {
-		this.tabIndex	= Math.min(this.tabIndex + 1, 3);
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.activatedRouteService.params.subscribe(async o => {
+			try {
+				const step: number|undefined	= parseInt(o.step, 10);
+
+				if (!isNaN(step) && step > 0 && step <= this.totalSteps) {
+					this.tabIndex	= step - 1;
+					return;
+				}
+			}
+			catch {}
+
+			this.routerService.navigate(['account', 'register', '1']);
+		});
 	}
 
 	/** Initiates registration attempt. */
@@ -88,7 +103,19 @@ export class AccountRegisterComponent {
 		this.routerService.navigate(['account', 'welcome']);
 	}
 
+	/** Updates route for consistency with tabIndex. */
+	public updateRoute (increment: number = 0, tabIndex: number = this.tabIndex) : void {
+		this.routerService.navigate([
+			'account',
+			'register',
+			(tabIndex + increment + 1).toString()
+		]);
+	}
+
 	constructor (
+		/** @ignore */
+		private readonly activatedRouteService: ActivatedRoute,
+
 		/** @ignore */
 		private readonly routerService: Router,
 
