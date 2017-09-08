@@ -8,8 +8,8 @@ import 'rxjs/add/operator/toPromise';
 import './js/standalone/test-environment-setup';
 import './js/standalone/translations';
 
+import {HttpClient} from '@angular/common/http';
 import {NgModule, NgModuleFactoryLoader, NO_ERRORS_SCHEMA} from '@angular/core';
-import {Http} from '@angular/http';
 import {Title} from '@angular/platform-browser';
 import {NativeScriptAnimationsModule} from 'nativescript-angular/animations';
 import {NativeScriptFormsModule} from 'nativescript-angular/forms';
@@ -82,8 +82,8 @@ import {NativeTitleService} from './native-title.service';
 	schemas: [NO_ERRORS_SCHEMA]
 })
 export class AppModule {
-	constructor (http: Http, dialogService: DialogService) {
-		Util.resolveHttp(http);
+	constructor (httpClient: HttpClient, dialogService: DialogService) {
+		Util.resolveHttpClient(httpClient);
 		Util.resolveDialogService(dialogService);
 	}
 }

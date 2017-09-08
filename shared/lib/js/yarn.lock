@@ -23,9 +23,9 @@
     minimist "^1.2.0"
     rxjs "^5.4.2"
 
-"@angular/animations@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-5.0.0-beta.6.tgz#23ca05077154932fe0a1ff4652cb71bf41fc4acb"
+"@angular/animations@4.3.6":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-4.3.6.tgz#bf9283ec7c8c98b32f569d84dcda10890fdc0262"
   dependencies:
     tslib "^1.7.1"
 
@@ -98,31 +98,29 @@
   optionalDependencies:
     node-sass "^4.3.0"
 
-"@angular/common@^4", "@angular/common@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/common/-/common-5.0.0-beta.6.tgz#05406e54a92fe5e6e0aa4fa5a516a5625167a812"
+"@angular/common@4.3.6", "@angular/common@^4":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/common/-/common-4.3.6.tgz#ed37e9307c7506dd834797c1a6cf675e52b5b6ee"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/compiler-cli@^4.3.5", "@angular/compiler-cli@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/compiler-cli/-/compiler-cli-5.0.0-beta.6.tgz#bfb90af922483b53aa44189edaee5b81098dcea8"
+"@angular/compiler-cli@4.3.6", "@angular/compiler-cli@^4.3.5":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/compiler-cli/-/compiler-cli-4.3.6.tgz#6afa6aef68dd681e61b398be4d6270e5c8680b12"
   dependencies:
-    "@angular/tsc-wrapped" "5.0.0-beta.6"
-    chokidar "^1.4.2"
+    "@angular/tsc-wrapped" "4.3.6"
     minimist "^1.2.0"
     reflect-metadata "^0.1.2"
-    tsickle "^0.23.6"
 
-"@angular/compiler@^4", "@angular/compiler@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-5.0.0-beta.6.tgz#87925204037364bd09c55b58fd180a480106c8fc"
+"@angular/compiler@4.3.6", "@angular/compiler@^4":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-4.3.6.tgz#be170df098b71e835ccedf168d5fb7b23e5045b8"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/core@^4", "@angular/core@^4.3.5", "@angular/core@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/core/-/core-5.0.0-beta.6.tgz#dcd7673a1a416f75e7addf9f956242fbeab4ad84"
+"@angular/core@4.3.6", "@angular/core@^4", "@angular/core@^4.3.5":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/core/-/core-4.3.6.tgz#bbac63d68d0f7bcb389d12b34208652be3287e96"
   dependencies:
     tslib "^1.7.1"
 
@@ -132,15 +130,15 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/forms@^4", "@angular/forms@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-5.0.0-beta.6.tgz#d8b9328bba66b6ccea16bce48b8161bdf80f4c77"
+"@angular/forms@4.3.6", "@angular/forms@^4":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-4.3.6.tgz#0f20c4597c16a152745d7cd95559855a0a5c6687"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/http@^4", "@angular/http@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/http/-/http-5.0.0-beta.6.tgz#b741728a0d4c75e225c45704b171297d91f609a3"
+"@angular/http@^4":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/http/-/http-4.3.6.tgz#563827d1a7d5e89e3b7d86b77fbbd367b2c08591"
   dependencies:
     tslib "^1.7.1"
 
@@ -150,41 +148,41 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-browser-dynamic@^4", "@angular/platform-browser-dynamic@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-5.0.0-beta.6.tgz#f7095238597f8645e9e30dc037a0a45bc981cb5b"
+"@angular/platform-browser-dynamic@4.3.6", "@angular/platform-browser-dynamic@^4":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-4.3.6.tgz#9eabf826f119c98f85c2a96edcb18ab00b4efb1c"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-browser@^4", "@angular/platform-browser@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-5.0.0-beta.6.tgz#498e95ff42ab7747673b475fc3f7ddbb5e8b7a58"
+"@angular/platform-browser@4.3.6", "@angular/platform-browser@^4":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-4.3.6.tgz#6152b1f3b78d0246fc5e150e2f7b9ed4337e3ba6"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-server@^4.3.5", "@angular/platform-server@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/platform-server/-/platform-server-5.0.0-beta.6.tgz#c2fa174595438b5c139f6efe6debed9c49095d8a"
+"@angular/platform-server@4.3.6", "@angular/platform-server@^4.3.5":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/platform-server/-/platform-server-4.3.6.tgz#369d49844f1c0a9a10c7cba9b0cb78c2520741a5"
   dependencies:
-    domino "^1.0.29"
+    parse5 "^3.0.1"
     tslib "^1.7.1"
     xhr2 "^0.1.4"
 
-"@angular/platform-webworker-dynamic@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/platform-webworker-dynamic/-/platform-webworker-dynamic-5.0.0-beta.6.tgz#9934a35c7248ceedd2e894cae4c6376695350540"
+"@angular/platform-webworker-dynamic@4.3.6":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/platform-webworker-dynamic/-/platform-webworker-dynamic-4.3.6.tgz#6db733cdeeb8d9fcfb7a76cc16651d262b4bd31f"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-webworker@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/platform-webworker/-/platform-webworker-5.0.0-beta.6.tgz#b113c7032a248b9cca009add6dfb1af50ec2ea86"
+"@angular/platform-webworker@4.3.6":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/platform-webworker/-/platform-webworker-4.3.6.tgz#6090563fe1f38ab9608f319fa4775328d6980792"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/router@^4", "@angular/router@next":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/router/-/router-5.0.0-beta.6.tgz#6690512fff93580f113103fd2e5ed24debf23187"
+"@angular/router@4.3.6", "@angular/router@^4":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/router/-/router-4.3.6.tgz#64033edb4fcda08a323e7533b4a1820c0f28d130"
   dependencies:
     tslib "^1.7.1"
 
@@ -195,11 +193,11 @@
     base64-js "^1.1.2"
     jshashes "^1.0.5"
 
-"@angular/tsc-wrapped@4.3.6", "@angular/tsc-wrapped@5.0.0-beta.6":
-  version "5.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@angular/tsc-wrapped/-/tsc-wrapped-5.0.0-beta.6.tgz#f90825246d593db5b11258aa0ee63fc12951d4ae"
+"@angular/tsc-wrapped@4.3.6":
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@angular/tsc-wrapped/-/tsc-wrapped-4.3.6.tgz#1aa66e0ab2c4799a4ad14b675e13953aa5fcd436"
   dependencies:
-    tsickle "^0.23.5"
+    tsickle "^0.21.0"
 
 "@braintree/browser-detection@1.6.0", "@braintree/browser-detection@^1.5.0":
   version "1.6.0"
@@ -217,9 +215,9 @@
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@braintree/wrap-promise/-/wrap-promise-1.1.1.tgz#d22c76855e6d4b4012610060421fae1a37ec90b0"
 
-"@compodoc/compodoc@^1.0.0-beta.15":
-  version "1.0.0-beta.15"
-  resolved "https://registry.yarnpkg.com/@compodoc/compodoc/-/compodoc-1.0.0-beta.15.tgz#17f6c7220514a6a45ac89df9c8bfa6c73562983e"
+"@compodoc/compodoc@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@compodoc/compodoc/-/compodoc-1.0.1.tgz#6f2706ce3dc524ce6612fffbd9b557c41c74d88a"
   dependencies:
     "@compodoc/ngd-transformer" "^2.0.0-alpha.4"
     cheerio "^1.0.0-rc.2"
@@ -2013,7 +2011,7 @@ cheerio@^1.0.0-rc.2:
     lodash "^4.15.0"
     parse5 "^3.0.1"
 
-chokidar@1.7.0, chokidar@^1.4.1, chokidar@^1.4.2, chokidar@^1.6.0, chokidar@^1.7.0:
+chokidar@1.7.0, chokidar@^1.4.1, chokidar@^1.6.0, chokidar@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-1.7.0.tgz#798e689778151c8076b4b360e5edd28cda2bb468"
   dependencies:
@@ -3223,17 +3221,13 @@ domino-modernized@^1.0.46:
   version "1.0.46"
   resolved "https://registry.yarnpkg.com/domino-modernized/-/domino-modernized-1.0.46.tgz#c951b622221cdd339105f70021cb944620b47765"
 
-domino@^1.0.29:
-  version "1.0.29"
-  resolved "https://registry.yarnpkg.com/domino/-/domino-1.0.29.tgz#de8aa1f6f98e3c5538feb7a61fa69c1eabbace06"
-
 dompurify@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-1.0.2.tgz#7cf47d57614324a9723a1ba69143eeb7d3c617ac"
 
 domutils@1.1, domutils@1.5.1, domutils@^1.5.1:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.6.2.tgz#1958cc0b4c9426e9ed367fb1c8e854891b0fa3ff"
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.5.1.tgz#dcd8488a26f563d61079e48c9f7b7e32373682cf"
   dependencies:
     dom-serializer "0"
     domelementtype "1"
@@ -6769,11 +6763,11 @@ nativescript-dev-typescript@^0.5.0:
   dependencies:
     nativescript-hook "^0.2.0"
 
-nativescript-dev-webpack@^0.7.3:
-  version "0.7.3"
-  resolved "https://registry.yarnpkg.com/nativescript-dev-webpack/-/nativescript-dev-webpack-0.7.3.tgz#91ece46bee2b5ed9af62496a5d4d369a680dfbba"
+nativescript-dev-webpack@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/nativescript-dev-webpack/-/nativescript-dev-webpack-0.8.0.tgz#2112de3ca0de3212369d855259345b1141b206b4"
   dependencies:
-    adm-zip "^0.4.7"
+    semver "^5.4.1"
     shelljs "^0.6.0"
 
 nativescript-dialog@^0.1.0:
@@ -6855,13 +6849,13 @@ nativescript-social-share@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/nativescript-social-share/-/nativescript-social-share-1.4.0.tgz#0c71eb8b3f463468014ae7a0c4d45ec2650a1733"
 
-nativescript-telerik-ui-pro@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/nativescript-telerik-ui-pro/-/nativescript-telerik-ui-pro-3.0.4.tgz#493ce2b099d25278f0642b521e834621b09255a9"
+nativescript-telerik-ui-pro@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/nativescript-telerik-ui-pro/-/nativescript-telerik-ui-pro-3.1.0.tgz#96b408a34e502fef2aadf2f47c761121e3b1cfb5"
 
-nativescript-telerik-ui@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/nativescript-telerik-ui/-/nativescript-telerik-ui-3.0.4.tgz#8bb3160f629899c447feb59a9f0e0833f88ef16f"
+nativescript-telerik-ui@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/nativescript-telerik-ui/-/nativescript-telerik-ui-3.1.0.tgz#ce841d354680f7cc404e39058f4f73a7744211bb"
 
 nativescript-theme-core@^1.0.4:
   version "1.0.4"
@@ -6989,9 +6983,9 @@ node-ensure@^0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/node-ensure/-/node-ensure-0.0.0.tgz#ecae764150de99861ec5c810fd5d096b183932a7"
 
-node-fetch@^1.7.1, node-fetch@^1.7.2:
-  version "1.7.2"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-1.7.2.tgz#c54e9aac57e432875233525f3c891c4159ffefd7"
+node-fetch@^1.7.1, node-fetch@^1.7.3:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-1.7.3.tgz#980f6f72d85211a5347c6b2bc18c5b84c3eb47ef"
   dependencies:
     encoding "^0.1.11"
     is-stream "^1.0.1"
@@ -8668,8 +8662,8 @@ regex-not@^1.0.0:
     extend-shallow "^2.0.1"
 
 regex-parser@^2.2.1:
-  version "2.2.7"
-  resolved "https://registry.yarnpkg.com/regex-parser/-/regex-parser-2.2.7.tgz#bd090e09181849acc45457e765f7be2a63f50ef1"
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/regex-parser/-/regex-parser-2.2.8.tgz#da4c0cda5a828559094168930f455f532b6ffbac"
 
 regexpu-core@^1.0.0, regexpu-core@^2.0.0:
   version "2.0.0"
@@ -9116,7 +9110,7 @@ semver-dsl@^1.0.1:
   dependencies:
     semver "^5.3.0"
 
-"semver@2 >=2.2.1 || 3.x || 4 || 5", "semver@2 || 3 || 4 || 5", "semver@2.x || 3.x || 4 || 5", semver@5.3.0, semver@5.4.1, "semver@^2.3.0 || 3.x || 4 || 5", semver@^4.1.0, semver@^5.0.1, semver@^5.0.3, semver@^5.1.0, semver@^5.3.0, semver@~4.3.3, semver@~5.0.1, semver@~5.3.0:
+"semver@2 >=2.2.1 || 3.x || 4 || 5", "semver@2 || 3 || 4 || 5", "semver@2.x || 3.x || 4 || 5", semver@5.3.0, semver@5.4.1, "semver@^2.3.0 || 3.x || 4 || 5", semver@^4.1.0, semver@^5.0.1, semver@^5.0.3, semver@^5.1.0, semver@^5.3.0, semver@^5.4.1, semver@~4.3.3, semver@~5.0.1, semver@~5.3.0:
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.4.1.tgz#e059c09d8571f0540823733433505d3a2f00b18e"
 
@@ -10294,9 +10288,9 @@ tsconfig@^6.0.0:
     strip-bom "^3.0.0"
     strip-json-comments "^2.0.0"
 
-tsickle@^0.21.0, tsickle@^0.23.5, tsickle@^0.23.6:
-  version "0.23.6"
-  resolved "https://registry.yarnpkg.com/tsickle/-/tsickle-0.23.6.tgz#fcee57a5cb7f92a8c3a9e578ee0a286427dcfacd"
+tsickle@^0.21.0:
+  version "0.21.6"
+  resolved "https://registry.yarnpkg.com/tsickle/-/tsickle-0.21.6.tgz#53b01b979c5c13fdb13afb3fb958177e5991588d"
   dependencies:
     minimist "^1.2.0"
     mkdirp "^0.5.1"

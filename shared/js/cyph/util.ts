@@ -1,6 +1,6 @@
 /* tslint:disable:max-file-line-count */
 
-import {Headers, Http, Response, ResponseContentType} from '@angular/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {saveAs} from 'file-saver';
 import {BehaviorSubject, Observable, Observer} from 'rxjs';
 import {config} from './config';
@@ -27,21 +27,21 @@ export class Util {
 	;
 
 	/** @ignore */
-	private static readonly http: Promise<Http|undefined>	=
-		new Promise<Http|undefined>(resolve => {
+	private static readonly httpClient: Promise<HttpClient|undefined>	=
+		new Promise<HttpClient|undefined>(resolve => {
 			if (!env.isMainThread) {
 				resolve();
 			}
 
-			Util.resolveHttp	= resolve;
+			Util.resolveHttpClient	= resolve;
 		})
 	;
 
 	/** Sets dialogService. */
-	public static resolveDialogService: (http: DialogService) => void;
+	public static resolveDialogService: (dialogService: DialogService) => void;
 
 	/** Sets http. */
-	public static resolveHttp: (http: Http) => void;
+	public static resolveHttpClient: (httpClient: HttpClient) => void;
 
 
 	/** @ignore */
@@ -81,7 +81,7 @@ export class Util {
 			retries?: number;
 			url: string;
 		},
-		responseType: ResponseContentType,
+		responseType: 'arraybuffer'|'blob'|'json'|'text',
 		getResponseData: (res: Response) => Promise<T>
 	) : {
 		progress: Observable<number>;
@@ -92,8 +92,8 @@ export class Util {
 		return {
 			progress,
 			result: (async () => {
-				const http	= await Util.http;
-				if (!http) {
+				const httpClient	= await Util.httpClient;
+				if (!httpClient) {
 					throw new Error('HTTP service not found.');
 				}
 
@@ -106,7 +106,7 @@ export class Util {
 				if (url.slice(-5) === '.json') {
 					contentType	= 'application/json';
 				}
-				else if (responseType === ResponseContentType.Text) {
+				else if (responseType === 'text') {
 					contentType	= 'application/x-www-form-urlencoded';
 				}
 
@@ -134,13 +134,12 @@ export class Util {
 					try {
 						progress.next(0);
 
-						const req	= http.request(url, {
+						const req	= httpClient.request(method, url, {
 							body: data,
 							headers: contentType ?
-								new Headers({'Content-Type': contentType}) :
+								new HttpHeaders({'Content-Type': contentType}) :
 								undefined
 							,
-							method,
 							responseType
 						});
 
@@ -470,7 +469,7 @@ export class Util {
 		retries?: number;
 		url: string;
 	}) : Promise<string> {
-		return (await this.baseRequest(o, ResponseContentType.Text, async res =>
+		return (await this.baseRequest(o, 'text', async res =>
 			(await res.text()).trim()
 		)).result;
 	}
@@ -497,7 +496,7 @@ export class Util {
 		progress: Observable<number>;
 		result: Promise<Uint8Array>;
 	} {
-		return this.baseRequest(o, ResponseContentType.ArrayBuffer, async res =>
+		return this.baseRequest(o, 'arraybuffer', async res =>
 			new Uint8Array(await res.arrayBuffer())
 		);
 	}

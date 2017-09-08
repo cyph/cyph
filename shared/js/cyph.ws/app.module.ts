@@ -11,8 +11,8 @@ import '../standalone/init';
 import '../standalone/test-environment-setup';
 import '../standalone/translations';
 
+import {HttpClient} from '@angular/common/http';
 import {NgModule} from '@angular/core';
-import {Http} from '@angular/http';
 import {DomSanitizer} from '@angular/platform-browser';
 import {RouterModule} from '@angular/router';
 import {CyphAppModule} from '../cyph/modules/cyph-app.module';
@@ -57,9 +57,9 @@ import {LockdownComponent} from './lockdown.component';
 	]
 })
 export class AppModule {
-	constructor (domSanitizer: DomSanitizer, http: Http, dialogService: DialogService) {
+	constructor (domSanitizer: DomSanitizer, httpClient: HttpClient, dialogService: DialogService) {
 		DataURIProto.resolveDomSanitizer(domSanitizer);
-		Util.resolveHttp(http);
+		Util.resolveHttpClient(httpClient);
 		Util.resolveDialogService(dialogService);
 	}
 }
