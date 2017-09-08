@@ -21,7 +21,6 @@ read -r -d '' modules <<- EOM
 	@angular/core@next
 	@angular/flex-layout
 	@angular/forms@next
-	@angular/http@next
 	@angular/material
 	@angular/platform-browser@next
 	@angular/platform-browser-dynamic@next
