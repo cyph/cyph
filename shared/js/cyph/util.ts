@@ -1,6 +1,12 @@
 /* tslint:disable:max-file-line-count */
 
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {
+	HttpClient,
+	HttpEvent,
+	HttpEventType,
+	HttpHeaders,
+	HttpResponse
+} from '@angular/common/http';
 import {saveAs} from 'file-saver';
 import {BehaviorSubject, Observable, Observer} from 'rxjs';
 import {config} from './config';
@@ -72,7 +78,7 @@ export class Util {
 	};
 
 	/** Performs HTTP request. */
-	private baseRequest<T> (
+	private baseRequest<R, T> (
 		o: {
 			contentType?: string;
 			data?: any;
@@ -82,10 +88,10 @@ export class Util {
 			url: string;
 		},
 		responseType: 'arraybuffer'|'blob'|'json'|'text',
-		getResponseData: (res: Response) => Promise<T>
+		getResponseData: (res: HttpResponse<T>) => R|Promise<R>
 	) : {
 		progress: Observable<number>;
-		result: Promise<T>;
+		result: Promise<R>;
 	} {
 		const progress	= new BehaviorSubject(0);
 
@@ -126,7 +132,7 @@ export class Util {
 					;
 				}
 
-				let response: T|undefined;
+				let response: R|undefined;
 				let error: Error|undefined;
 				let statusOk	= false;
 
@@ -134,22 +140,29 @@ export class Util {
 					try {
 						progress.next(0);
 
-						const req	= httpClient.request(method, url, {
-							body: data,
-							headers: contentType ?
-								new HttpHeaders({'Content-Type': contentType}) :
-								undefined
-							,
-							responseType
-						});
+						const req: Observable<HttpEvent<T>>	=
+							httpClient.request(method, url, {
+								body: data,
+								headers: contentType ?
+									new HttpHeaders({'Content-Type': contentType}) :
+									undefined
+								,
+								observe: 'events',
+								responseType
+							})
+						;
 
-						const res	= await new Promise<Response>((resolve, reject) => {
-							let last: Response;
+						const res	= await new Promise<HttpResponse<T>>((resolve, reject) => {
+							let last: HttpResponse<T>;
 
 							req.subscribe(
-								r => {
-									last	= r;
-									progress.next(r.bytesLoaded / r.totalBytes * 100);
+								e => {
+									if (e.type === HttpEventType.DownloadProgress) {
+										progress.next(e.loaded / (e.total || e.loaded) * 100);
+									}
+									else if (e.type === HttpEventType.Response) {
+										last	= e;
+									}
 								},
 								reject,
 								() => {
@@ -469,8 +482,8 @@ export class Util {
 		retries?: number;
 		url: string;
 	}) : Promise<string> {
-		return (await this.baseRequest(o, 'text', async res =>
-			(await res.text()).trim()
+		return (await this.baseRequest<string, string>(o, 'text', res =>
+			(res.body || '').trim()
 		)).result;
 	}
 
@@ -496,8 +509,8 @@ export class Util {
 		progress: Observable<number>;
 		result: Promise<Uint8Array>;
 	} {
-		return this.baseRequest(o, 'arraybuffer', async res =>
-			new Uint8Array(await res.arrayBuffer())
+		return this.baseRequest<Uint8Array, ArrayBuffer>(o, 'arraybuffer', res =>
+			res.body ? new Uint8Array(res.body) : new Uint8Array(0)
 		);
 	}
 
