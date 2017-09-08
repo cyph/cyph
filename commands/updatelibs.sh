@@ -12,23 +12,23 @@ cd ~/tmplib/js
 
 
 read -r -d '' modules <<- EOM
-	@angular/animations@4.3.6
+	@angular/animations@next
 	@angular/cdk
 	@angular/cli
-	@angular/common@4.3.6
-	@angular/compiler@4.3.6
-	@angular/compiler-cli@4.3.6
-	@angular/core@4.3.6
+	@angular/common@next
+	@angular/compiler@next
+	@angular/compiler-cli@next
+	@angular/core@next
 	@angular/flex-layout
-	@angular/forms@4.3.6
-	@angular/http@4.3.6
+	@angular/forms@next
+	@angular/http@next
 	@angular/material
-	@angular/platform-browser@4.3.6
-	@angular/platform-browser-dynamic@4.3.6
-	@angular/platform-server@4.3.6
-	@angular/platform-webworker@4.3.6
-	@angular/platform-webworker-dynamic@4.3.6
-	@angular/router@4.3.6
+	@angular/platform-browser@next
+	@angular/platform-browser-dynamic@next
+	@angular/platform-server@next
+	@angular/platform-webworker@next
+	@angular/platform-webworker-dynamic@next
+	@angular/router@next
 	@angular/service-worker
 	@compodoc/compodoc
 	@covalent/core
