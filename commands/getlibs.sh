@@ -196,6 +196,7 @@ for anyType in \
 	quill-delta-to-html \
 	simplewebrtc \
 	tab-indent \
+	u2f-api-polyfill \
 	wowjs
 do
 	mkdir -p "@types/${anyType}"
