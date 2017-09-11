@@ -22,7 +22,14 @@ ngserve () {
 	cd "${1}"
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
-	ng serve --host '0.0.0.0' --live-reload false --no-aot --port "${2}" --no-sourcemaps ${args}
+	ng serve \
+		--host '0.0.0.0' \
+		--live-reload false \
+		--no-aot \
+		--port "${2}" \
+		--no-sourcemaps \
+		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
+		${args}
 }
 
 
