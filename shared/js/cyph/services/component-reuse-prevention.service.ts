@@ -8,6 +8,7 @@ import {RouteReuseStrategy} from '@angular/router';
 @Injectable()
 export class ComponentReusePreventionService implements RouteReuseStrategy {
 	/** @inheritDoc */
+	/* tslint:disable-next-line:no-null-keyword */
 	public retrieve () : null {
 		/* tslint:disable-next-line:no-null-keyword */
 		return null;
