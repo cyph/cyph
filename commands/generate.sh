@@ -56,6 +56,7 @@ else
 cat > shared/js/cyph/services/${selector}.service.ts << EOM
 import {Injectable} from '@angular/core';
 
+
 /**
  * Angular service for ${genericDescription}.
  */
@@ -63,7 +64,6 @@ import {Injectable} from '@angular/core';
 export class ${class} {
 	constructor () {}
 }
-
 EOM
 
 files="shared/js/cyph/services/${selector}.service.ts"
