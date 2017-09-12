@@ -57,6 +57,7 @@ export class ChatMessage implements IChatMessage {
 		this.selfDestructTimer.start().then(async () => {
 			await util.sleep(10000);
 			this.message.text	= '';
+			this.text			= '';
 		});
 	}
 }

@@ -133,6 +133,23 @@ export class ChatService {
 		if (author === this.sessionService.localUsername) {
 			this.scrollService.scrollDown();
 		}
+
+		if (
+			selfDestructTimeout !== undefined &&
+			!isNaN(selfDestructTimeout) &&
+			selfDestructTimeout > 0
+		) {
+			await util.sleep(selfDestructTimeout + 10000);
+			text	= '';
+
+			await this.chat.messages.updateValue(async messages => {
+				const i	= messages.findIndex(o => o.id === id);
+				if (i >= 0) {
+					messages.splice(i, 1);
+				}
+				return messages;
+			});
+		}
 	}
 
 	/** Begins chat. */
