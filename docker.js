@@ -97,6 +97,7 @@ const mounts				= [
 );
 
 const windowsWorkaround		= !isWindows ? '' : `
+	sudo touch /windows
 	sudo mv /bin/ln /bin/ln.old
 	echo '
 		#!/bin/bash

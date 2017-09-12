@@ -196,6 +196,7 @@ read -r -d '' modules <<- EOM
 	tsutils
 	typedoc
 	typescript
+	u2f-api-polyfill
 	uglify-es
 	unsemantic
 	url-loader
