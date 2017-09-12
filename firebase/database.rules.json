@@ -267,6 +267,14 @@
 									".validate": "newData.val() === now"
 								}
 							},
+							"symmetricKey": {
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							},
 							"symmetricRatchetState": {
 								"current": {
 									"incoming": {

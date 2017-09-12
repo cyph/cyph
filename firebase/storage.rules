@@ -67,6 +67,7 @@ service firebase.storage {
 			// 		/incomingMessages {}
 			// 		/incomingMessagesMax {}
 			// 		/outgoingMessageID {}
+			// 		/symmetricKey {}
 			// 		/symmetricRatchetState {
 			// 			/current {
 			// 				/incoming {}
