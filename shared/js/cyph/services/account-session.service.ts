@@ -1,7 +1,9 @@
 import {Injectable} from '@angular/core';
+import {BinaryProto} from '../protos';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
+import {AccountDatabaseService} from './crypto/account-database.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {ErrorService} from './error.service';
@@ -17,6 +19,14 @@ export class AccountSessionService extends SessionService {
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {}
 
+	/** @inheritDoc */
+	protected readonly symmetricKey: Promise<Uint8Array>	= (async () =>
+		this.accountDatabaseService.getItem(
+			`contacts/${this.remoteUsername.take(1).toPromise()}/session/symmetricKey`,
+			BinaryProto
+		)
+	)();
+
 	/** Sets the remote user we're chatting with. */
 	public async setUser (username: string) : Promise<void> {
 		(await this.accountUserLookupService.getUser(username)).realUsername.subscribe(
@@ -31,6 +41,9 @@ export class AccountSessionService extends SessionService {
 		errorService: ErrorService,
 		potassiumService: PotassiumService,
 		stringsService: StringsService,
+
+		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService

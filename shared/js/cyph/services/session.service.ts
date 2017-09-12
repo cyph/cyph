@@ -33,7 +33,7 @@ export abstract class SessionService implements ISessionService {
 	private resolveOpened: () => void;
 
 	/** @ignore */
-	private resolveSymmetricKey: (symmetricKey: Uint8Array) => void;
+	private resolveSymmetricKey?: (symmetricKey: Uint8Array) => void;
 
 	/** @ignore */
 	protected readonly eventID: string								= util.uuid();
@@ -57,7 +57,10 @@ export abstract class SessionService implements ISessionService {
 	/** @ignore */
 	protected readonly receivedMessages: Set<string>				= new Set<string>();
 
-	/** @ignore */
+	/**
+	 * Session key for misc stuff like locking.
+	 * TODO: Either change how AccountSessionService.setUser works or make this an observable.
+	 */
 	protected readonly symmetricKey: Promise<Uint8Array>			=
 		new Promise<Uint8Array>(resolve => {
 			this.resolveSymmetricKey	= resolve;
@@ -210,6 +213,10 @@ export abstract class SessionService implements ISessionService {
 			}
 			case CastleEvents.connect: {
 				this.trigger(events.beginChat);
+
+				if (!this.resolveSymmetricKey) {
+					return;
+				}
 
 				if (this.state.isAlice) {
 					const potassiumService	= this.potassiumService;
