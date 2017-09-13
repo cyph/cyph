@@ -264,6 +264,17 @@
 		</video>
 	</div>
 
+	<div
+		fxLayout='row'
+		fxLayoutAlign='center center'
+		fxLayoutGap='10px'
+		class='self-destruct-timer'
+		*ngIf='chatService.cyphSelfDestructTimer && !chatService.cyphSelfDestructed'
+	>
+		<div cyphTranslate>Message will self-destruct in</div>
+		<div class='countdown'>{{chatService.cyphSelfDestructTimer.timestamp | async}}</div>
+	</div>
+	
 	<cyph-chat-message-list
 		fxFlex
 		fxFlexFill

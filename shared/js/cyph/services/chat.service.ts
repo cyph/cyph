@@ -7,6 +7,7 @@ import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {events, ISessionMessageData, rpcEvents} from '../session';
+import {Timer} from '../timer';
 import {util} from '../util';
 import {AccountContactsService} from './account-contacts.service';
 import {AnalyticsService} from './analytics.service';
@@ -15,6 +16,7 @@ import {NotificationService} from './notification.service';
 import {ScrollService} from './scroll.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
+
 
 
 /**
@@ -59,6 +61,9 @@ export class ChatService {
 
 	/** Indicates whether the Cyph is self-destructing. */
 	public cyphSelfDestruct: boolean									= false;
+
+	/** @inheritDoc */
+	public cyphSelfDestructTimer?: Timer;
 
 	/** This kills the chat. */
 	private close () : void {
@@ -228,6 +233,8 @@ export class ChatService {
 		}
 
 		if (this.cyphSelfDestruct) {
+			this.cyphSelfDestructTimer	= new Timer(this.cyphSelfDestructTimeout * 1000);
+			this.cyphSelfDestructTimer.start();
 			await util.sleep(this.cyphSelfDestructTimeout * 1000);
 			this.cyphSelfDestructed	= true;
 			await util.sleep(500);
