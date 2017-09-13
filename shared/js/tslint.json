@@ -228,6 +228,8 @@
 		"banana-in-box": true,
 		"component-class-suffix": true,
 		"component-selector": [true, "element", "cyph", "kebab-case"],
+		"contextual-life-cycle": true,
+		"decorator-not-allowed": true,
 		"directive-class-suffix": true,
 		"directive-selector": [true, "attribute", "cyph", "camelCase"],
 		"import-destructuring-spacing": false,
