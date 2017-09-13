@@ -272,7 +272,10 @@
 		*ngIf='
 			chatService.initiated &&
 			chatService.chatSelfDestructTimer &&
-			!(chatService.chatSelfDestructed | async)
+			(
+				chatService.chatSelfDestructed === undefined ||
+				(chatService.chatSelfDestructed | async) === false
+			)
 		'
 	>
 		<div cyphTranslate>Message will self-destruct in</div>
