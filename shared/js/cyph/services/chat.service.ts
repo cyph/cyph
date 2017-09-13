@@ -18,7 +18,6 @@ import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
 
-
 /**
  * Manages a chat.
  */
@@ -33,17 +32,12 @@ export class ChatService {
 	/** @ignore */
 	private static readonly queuedMessageSelfDestructTimeout: number	= 15000;
 
-	/** Indicates whether the Cyph is self-destructed. */
-	private cyphSelfDestructed: boolean									= false;
 
 	/** Time in seconds until Cyph self-destructs */
 	private cyphSelfDestructTimeout: number								= 5;
 
 	/** @ignore */
 	private messageChangeLock: LockFunction								= util.lockFunction();
-
-	/** @ignore */
-	private selfDestructFxComplete: boolean								= false;
 
 	/** @see IChatData */
 	public chat: IChatData	= {
@@ -59,11 +53,17 @@ export class ChatService {
 		unconfirmedMessages: new LocalAsyncValue<{[id: string]: boolean|undefined}>({})
 	};
 
-	/** Indicates whether the Cyph is self-destructing. */
+	/** Indicates whether the chat is self-destructing. */
 	public cyphSelfDestruct: boolean									= false;
+
+	/** Indicates whether the chat is self-destructed. */
+	public cyphSelfDestructed: boolean									= false;
 
 	/** @inheritDoc */
 	public cyphSelfDestructTimer?: Timer;
+
+	/** Indicates whether the chat self-destruction effect is complete. */
+	public selfDestructFxComplete: boolean								= false;
 
 	/** This kills the chat. */
 	private close () : void {

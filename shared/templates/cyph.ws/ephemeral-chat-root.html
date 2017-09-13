@@ -54,9 +54,10 @@
 		></div>
 
 		<footer *ngIf='!p2pService.isActive'>
-			<cyph-chat-message-box
-				*ngIf='appService.chatRootState === chatRootStates.chat && !chatService.cyphSelfDestruct'
-			></cyph-chat-message-box>
+			<cyph-chat-message-box *ngIf='
+				appService.chatRootState === chatRootStates.chat &&
+				!chatService.cyphSelfDestruct
+			'></cyph-chat-message-box>
 
 			<cyph-footer *ngIf='!envService.isMobile'></cyph-footer>
 		</footer>

@@ -256,11 +256,15 @@
 	<div 
 		fxFlex
 		fxFlexFill
-		*ngIf='chatService.cyphSelfDestruct && chatService.cyphSelfDestructed && !chatService.selfDestructFxComplete'
+		*ngIf='
+			chatService.cyphSelfDestruct &&
+			chatService.cyphSelfDestructed &&
+			!chatService.selfDestructFxComplete
+		'
 		class='poof'
 	>
-		<video id="fx" autoplay>
-			<source src="./assets/video/poof.webm" type="video/webm">
+		<video id='fx' autoplay>
+			<source src='/assets/video/poof.webm' type='video/webm' />
 		</video>
 	</div>
 
