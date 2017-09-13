@@ -19,7 +19,7 @@ export class AccountSessionService extends SessionService {
 	/** @inheritDoc */
 	protected readonly symmetricKey: Promise<Uint8Array>	= (async () =>
 		this.accountDatabaseService.getItem(
-			`contacts/${this.remoteUsername.take(1).toPromise()}/session/symmetricKey`,
+			`contacts/${await this.remoteUsername.take(1).toPromise()}/session/symmetricKey`,
 			BinaryProto
 		)
 	)();
