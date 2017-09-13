@@ -31,9 +31,17 @@ export class ChatService {
 	/** @ignore */
 	private static readonly queuedMessageSelfDestructTimeout: number	= 15000;
 
+	/** Indicates whether the Cyph is self-destructed. */
+	private cyphSelfDestructed: boolean									= false;
 
 	/** @ignore */
-	private messageChangeLock: LockFunction	= util.lockFunction();
+	private cyphSelfDestructTimeout: number								= 5000;
+
+	/** @ignore */
+	private messageChangeLock: LockFunction								= util.lockFunction();
+
+	/** @ignore */
+	private selfDestructFxComplete: boolean								= false;
 
 	/** @see IChatData */
 	public chat: IChatData	= {
@@ -48,6 +56,9 @@ export class ChatService {
 		state: States.none,
 		unconfirmedMessages: new LocalAsyncValue<{[id: string]: boolean|undefined}>({})
 	};
+
+	/** Indicates whether the Cyph is self-destructing. */
+	public cyphSelfDestruct: boolean									= false;
 
 	/** This kills the chat. */
 	private close () : void {
@@ -195,12 +206,14 @@ export class ChatService {
 
 			this.chat.state	= States.chat;
 
-			this.addMessage(
-				this.stringsService.introductoryMessage,
-				undefined,
-				(await util.timestamp()) - 30000,
-				false
-			);
+			if (!this.cyphSelfDestruct) {
+				this.addMessage(
+					this.stringsService.introductoryMessage,
+					undefined,
+					(await util.timestamp()) - 30000,
+					false
+				);
+			}
 		}
 
 		this.chat.isConnected	= true;
@@ -212,6 +225,16 @@ export class ChatService {
 					ChatService.queuedMessageSelfDestructTimeout :
 					undefined
 			);
+		}
+
+		if (this.cyphSelfDestruct) {
+			await util.sleep(this.cyphSelfDestructTimeout);
+			this.cyphSelfDestructed	= true;
+			await util.sleep(500);
+			this.chat.messages.updateValue(async () => []);
+			await util.sleep(1500);
+			this.selfDestructFxComplete	= true;
+			this.close();
 		}
 	}
 

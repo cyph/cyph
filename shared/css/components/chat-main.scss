@@ -478,3 +478,20 @@
 		}
 	}
 }
+
+.poof {
+	position: absolute;
+	video#fx {
+		position: absolute;
+		z-index: 10;
+	}
+}
+
+.self-destruct {
+	cyph-chat-message {
+		height: 100vh;
+		text-align: center;
+		font-size: 50vw;
+	}
+}
+

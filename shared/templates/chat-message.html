@@ -5,6 +5,7 @@
 	[class.author-app]='message.authorType === authorTypes.App'
 	[class.author-local]='message.authorType === authorTypes.Local'
 	[class.author-remote]='message.authorType === authorTypes.Remote'
+	[class.self-destruct]='chatService.cyphSelfDestruct'
 	[class.self-destructed]='message.selfDestructTimer?.isComplete | async'
 >
 	<div>

@@ -1,6 +1,7 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
 import {ChatMessage} from '../chat';
+import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 
@@ -42,6 +43,9 @@ export class ChatMessageComponent implements OnInit {
 	}
 
 	constructor (
+		/** @see ChatService */
+		public readonly chatService: ChatService,
+
 		/** @ignore */
 		private readonly elementRef: ElementRef,
 

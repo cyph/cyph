@@ -45,6 +45,13 @@
 	}
 
 	/* Self-destruct animation */
+	&.self-destruct {
+		text-align: center;
+		.message-text * {
+			height: 100vh;
+			font-weight: 25vh;
+		}
+	}	
 	.self-destruct-cover {
 		content: ' ';
 		height: 100%;

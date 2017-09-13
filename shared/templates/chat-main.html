@@ -5,6 +5,7 @@
 	class='chat-main'
 	[class.video]='p2pService.isActive'
 	[class.mobile]='envService.isMobile'
+	[class.self-destruct]='chatService.cyphSelfDestruct'
 >
 	<div
 		fxFlex
@@ -250,6 +251,17 @@
 				</div>
 			</div>
 		</div>
+	</div>
+
+	<div 
+		fxFlex
+		fxFlexFill
+		*ngIf='chatService.cyphSelfDestruct && chatService.cyphSelfDestructed && !chatService.selfDestructFxComplete'
+		class='poof'
+	>
+		<video id="fx" autoplay>
+			<source src="./assets/video/poof.webm" type="video/webm">
+		</video>
 	</div>
 
 	<cyph-chat-message-list
