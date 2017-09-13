@@ -43,9 +43,6 @@ export class ChatMessageComponent implements OnInit {
 	}
 
 	constructor (
-		/** @see ChatService */
-		public readonly chatService: ChatService,
-
 		/** @ignore */
 		private readonly elementRef: ElementRef,
 
@@ -53,6 +50,9 @@ export class ChatMessageComponent implements OnInit {
 		private readonly envService: EnvService,
 
 		/** @ignore */
-		private readonly scrollService: ScrollService
+		private readonly scrollService: ScrollService,
+
+		/** @see ChatService */
+		public readonly chatService: ChatService
 	) {}
 }
