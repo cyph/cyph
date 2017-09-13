@@ -39,9 +39,6 @@ export interface IChatData {
 	/** Currently queued message for sending post-handshake. */
 	queuedMessage?: string;
 
-	/** Indicates whether the queued message is self-destructing. */
-	queuedMessageSelfDestruct: boolean;
-
 	/** Chat UI state/view. */
 	state: States;
 

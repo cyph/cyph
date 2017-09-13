@@ -256,11 +256,7 @@
 	<div 
 		fxFlex
 		fxFlexFill
-		*ngIf='
-			chatService.cyphSelfDestruct &&
-			chatService.cyphSelfDestructed &&
-			!chatService.selfDestructFxComplete
-		'
+		*ngIf='chatService.initiated && chatService.selfDestructFx'
 		class='poof'
 	>
 		<video class='fx' autoplay>
@@ -273,7 +269,11 @@
 		fxLayoutAlign='center center'
 		fxLayoutGap='10px'
 		class='self-destruct-timer'
-		*ngIf='chatService.cyphSelfDestructTimer && !chatService.cyphSelfDestructed'
+		*ngIf='
+			chatService.initiated &&
+			chatService.cyphSelfDestructTimer &&
+			!(chatService.cyphSelfDestructed | async)
+		'
 	>
 		<div cyphTranslate>Message will self-destruct in</div>
 		<div class='countdown'>{{chatService.cyphSelfDestructTimer.timestamp | async}}</div>

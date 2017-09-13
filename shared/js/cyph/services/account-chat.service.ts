@@ -44,7 +44,6 @@ export class AccountChatService extends ChatService {
 				ChatMessage
 			),
 			noKeyExchangeState: true,
-			queuedMessageSelfDestruct: false,
 			state: States.chat,
 			unconfirmedMessages: this.accountDatabaseService.getAsyncValue(
 				`${contactURL}/unconfirmedMessages`,

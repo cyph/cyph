@@ -365,11 +365,14 @@ message SessionMessageList {
 
 /** Contains an actual chat text message. */
 message SessionText {
+	/** Indicates whether entire chat should be self-destructed (only valid for first message). */
+	bool selfDestructChat = 1;
+
 	/** Self-destruction timeout. */
-	uint32 selfDestructTimeout = 1;
+	uint32 selfDestructTimeout = 2;
 
 	/** Message text. */
-	required string text = 2;
+	required string text = 3;
 }
 
 /** Receipt confirmation for a SessionText. */
