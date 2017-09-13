@@ -142,20 +142,20 @@
 						</button>
 						<md-button-toggle
 							mdTooltip='Self-destruct'
-							[checked]='chatService.cyphSelfDestruct'
-							(change)='chatService.cyphSelfDestruct = !chatService.cyphSelfDestruct'
+							[checked]='chatService.chatSelfDestruct'
+							(change)='chatService.chatSelfDestruct = !chatService.chatSelfDestruct'
 						>
 							<md-icon>timer</md-icon>
 						</md-button-toggle>
 					</div>
 					<div
-						*ngIf='chatService.cyphSelfDestruct'
+						*ngIf='chatService.chatSelfDestruct'
 						class='self-destruct-timer'
 					>
 						<md-form-field>
 							<input
 								mdInput
-								[(ngModel)]='chatService.cyphSelfDestructTimeout'
+								[(ngModel)]='chatService.chatSelfDestructTimeout'
 								name='timer'
 								max='9999'
 								type='number'

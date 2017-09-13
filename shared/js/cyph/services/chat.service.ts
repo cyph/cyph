@@ -30,7 +30,7 @@ export class ChatService {
 	private static readonly messageConfirmationSpinnerTimeout: number	= 5000;
 
 	/** Time in seconds until chat self-destructs. */
-	private cyphSelfDestructTimeout: number								= 5;
+	private chatSelfDestructTimeout: number								= 5;
 
 	/** @ignore */
 	private messageChangeLock: LockFunction								= util.lockFunction();
@@ -49,19 +49,19 @@ export class ChatService {
 	};
 
 	/** Indicates whether the chat is self-destructing. */
-	public cyphSelfDestruct: boolean									= false;
+	public chatSelfDestruct: boolean									= false;
 
 	/** Indicates whether the chat is self-destructed. */
-	public cyphSelfDestructed?: Observable<boolean>;
+	public chatSelfDestructed?: Observable<boolean>;
+
+	/** Indicates whether the chat self-destruction effect should be running. */
+	public chatSelfDestructEffect: boolean								= false;
 
 	/** Timer for chat self-destruction. */
-	public cyphSelfDestructTimer?: Timer;
+	public chatSelfDestructTimer?: Timer;
 
 	/** Indicates whether the chat is ready to be displayed. */
 	public initiated: boolean											= false;
-
-	/** Indicates whether the chat self-destruction effect is running. */
-	public selfDestructFx: boolean										= false;
 
 	/** This kills the chat. */
 	private close () : void {
@@ -77,7 +77,7 @@ export class ChatService {
 		}
 		else if (!this.chat.isDisconnected) {
 			this.chat.isDisconnected	= true;
-			if (!this.cyphSelfDestruct) {
+			if (!this.chatSelfDestruct) {
 				this.addMessage(this.stringsService.disconnectNotification);
 			}
 			this.sessionService.close();
@@ -196,10 +196,10 @@ export class ChatService {
 		if (this.chat.queuedMessage) {
 			this.send(
 				this.chat.queuedMessage,
-				this.cyphSelfDestruct ?
-					this.cyphSelfDestructTimeout * 1000 :
+				this.chatSelfDestruct ?
+					this.chatSelfDestructTimeout * 1000 :
 					undefined,
-				this.cyphSelfDestruct
+				this.chatSelfDestruct
 			);
 		}
 
@@ -222,13 +222,13 @@ export class ChatService {
 			this.chat.state	= States.chat;
 
 			for (let i = 0 ; i < 15 ; ++i) {
-				if (this.cyphSelfDestruct) {
+				if (this.chatSelfDestruct) {
 					break;
 				}
 				await util.sleep(100);
 			}
 
-			if (!this.cyphSelfDestruct) {
+			if (!this.chatSelfDestruct) {
 				this.addMessage(
 					this.stringsService.introductoryMessage,
 					undefined,
@@ -429,7 +429,7 @@ export class ChatService {
 			;
 
 			if (selfDestructChat) {
-				this.cyphSelfDestruct	= true;
+				this.chatSelfDestruct	= true;
 				await this.chat.messages.updateValue(async () => []);
 			}
 
@@ -443,16 +443,16 @@ export class ChatService {
 			);
 
 			if (selfDestructChat) {
-				this.cyphSelfDestructed		=
+				this.chatSelfDestructed		=
 					this.chat.messages.watch().map(messages => messages.length === 0)
 				;
-				this.cyphSelfDestructTimer	= new Timer(this.cyphSelfDestructTimeout * 1000);
-				await this.cyphSelfDestructTimer.start();
-				this.selfDestructFx	= true;
+				this.chatSelfDestructTimer	= new Timer(this.chatSelfDestructTimeout * 1000);
+				await this.chatSelfDestructTimer.start();
+				this.chatSelfDestructEffect	= true;
 				await util.sleep(500);
 				await this.chat.messages.updateValue(async () => []);
 				await util.sleep(1000);
-				this.selfDestructFx	= false;
+				this.chatSelfDestructEffect	= false;
 				await util.sleep(3000);
 				this.close();
 			}

@@ -57,7 +57,7 @@
 			<cyph-chat-message-box *ngIf='
 				appService.chatRootState === chatRootStates.chat &&
 				chatService.initiated &&
-				!chatService.cyphSelfDestruct
+				!chatService.chatSelfDestruct
 			'></cyph-chat-message-box>
 
 			<cyph-footer *ngIf='!envService.isMobile'></cyph-footer>
