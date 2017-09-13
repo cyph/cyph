@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BinaryProto} from '../protos';
+import {AccountContactsService} from './account-contacts.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
@@ -16,19 +17,32 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountSessionService extends SessionService {
+	/** @ignore */
+	private resolveAccountsSymmetricKey: (symmetricKey: Uint8Array) => void;
+
 	/** @inheritDoc */
-	protected readonly symmetricKey: Promise<Uint8Array>	= (async () =>
-		this.accountDatabaseService.getItem(
-			`contacts/${await this.remoteUsername.take(1).toPromise()}/session/symmetricKey`,
-			BinaryProto
-		)
-	)();
+	protected readonly symmetricKey: Promise<Uint8Array>	=
+		new Promise<Uint8Array>(resolve => {
+			this.resolveAccountsSymmetricKey	= resolve;
+		})
+	;
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {}
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (username: string) : Promise<void> {
+		(async () => {
+			const contactURL	=
+				`contacts/${await this.accountContactsService.getContactID(username)}`
+			;
+
+			this.resolveAccountsSymmetricKey(await this.accountDatabaseService.getItem(
+				`${contactURL}/session/symmetricKey`,
+				BinaryProto
+			));
+		})();
+
 		(await this.accountUserLookupService.getUser(username)).realUsername.subscribe(
 			this.remoteUsername
 		);
@@ -41,6 +55,9 @@ export class AccountSessionService extends SessionService {
 		errorService: ErrorService,
 		potassiumService: PotassiumService,
 		stringsService: StringsService,
+
+		/** @ignore */
+		private readonly accountContactsService: AccountContactsService,
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
