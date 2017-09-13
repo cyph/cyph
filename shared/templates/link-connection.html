@@ -131,24 +131,43 @@
 						rows='3'
 					></textarea>
 				</md-form-field>
-				<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
-					<button
-						md-icon-button
-						mdTooltip='Save'
-						(click)='chatService.setQueuedMessage(queuedMessageDraft)'
-					>
-						<md-icon>save</md-icon>
-					</button>
-					<md-button-toggle
-						mdTooltip='Self-destruct'
-						[checked]='chatService.cyphSelfDestruct'
-						(change)='
-							chatService.cyphSelfDestruct =
-								!chatService.cyphSelfDestruct
-						'
-					>
-						<md-icon>timer</md-icon>
-					</md-button-toggle>
+				<div fxLayout='row'>
+					<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
+						<button
+							md-icon-button
+							mdTooltip='Save'
+							(click)='chatService.setQueuedMessage(queuedMessageDraft)'
+						>
+							<md-icon>save</md-icon>
+						</button>
+							<md-button-toggle
+								mdTooltip='Self-destruct'
+								[checked]='chatService.cyphSelfDestruct'
+								(change)='
+									chatService.cyphSelfDestruct =
+										!chatService.cyphSelfDestruct
+								'
+							>
+								<md-icon>timer</md-icon>
+							</md-button-toggle>
+						</div>
+						<div
+							*ngIf='chatService.cyphSelfDestruct'
+							class='self-destruct-timer'
+						>
+							<md-form-field>
+								<input
+									mdInput
+									cyphTranslate
+									[(ngModel)]='chatService.cyphSelfDestructTimeout'
+									name='timer'
+									maxlength='4'
+									placeholder=''
+								/>
+								
+							</md-form-field>
+							<span> Seconds</span>
+						</div>
 				</div>
 			</div>
 		</div>

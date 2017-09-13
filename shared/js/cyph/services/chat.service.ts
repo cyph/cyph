@@ -34,8 +34,8 @@ export class ChatService {
 	/** Indicates whether the Cyph is self-destructed. */
 	private cyphSelfDestructed: boolean									= false;
 
-	/** @ignore */
-	private cyphSelfDestructTimeout: number								= 5000;
+	/** Time in seconds until Cyph self-destructs */
+	private cyphSelfDestructTimeout: number								= 5;
 
 	/** @ignore */
 	private messageChangeLock: LockFunction								= util.lockFunction();
@@ -228,7 +228,7 @@ export class ChatService {
 		}
 
 		if (this.cyphSelfDestruct) {
-			await util.sleep(this.cyphSelfDestructTimeout);
+			await util.sleep(this.cyphSelfDestructTimeout * 1000);
 			this.cyphSelfDestructed	= true;
 			await util.sleep(500);
 			this.chat.messages.updateValue(async () => []);

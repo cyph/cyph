@@ -19,3 +19,22 @@
 .countdown {
 	padding-left: 10px;
 }
+
+.self-destruct-timer {
+	top: 28px;
+	margin: auto auto auto 25px;
+	font-size: 17px;
+	position: relative;
+	span {
+		top: 5px;
+		position: relative;
+	}
+	md-form-field {
+		text-align: center;
+		width: 42px;
+		input {
+			margin: 0px 0px -5px -2px;
+			text-align: center;
+		}
+	}
+}
