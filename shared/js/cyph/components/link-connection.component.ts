@@ -35,7 +35,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 	public advancedFeatures: boolean;
 
 	/** Indicates whether advanced features UI should be displayed. */
-	public enableAdvancedFeatures: boolean	= this.envService.isLocalEnv;
+	public enableAdvancedFeatures: boolean	= !this.envService.isProd;
 
 	/** Indicates whether this link connection was initiated passively via API integration. */
 	public isPassive: boolean;
