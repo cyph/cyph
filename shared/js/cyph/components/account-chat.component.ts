@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, RouteReuseStrategy} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {UserPresence} from '../account/enums';
 import {AccountChannelService} from '../services/account-channel.service';
 import {AccountChatService} from '../services/account-chat.service';
@@ -7,7 +7,6 @@ import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountSessionService} from '../services/account-session.service';
 import {ChannelService} from '../services/channel.service';
 import {ChatService} from '../services/chat.service';
-import {ComponentReusePreventionService} from '../services/component-reuse-prevention.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountCastleService} from '../services/crypto/account-castle.service';
 import {CastleService} from '../services/crypto/castle.service';
@@ -47,10 +46,6 @@ import {SessionService} from '../services/session.service';
 		{
 			provide: ChatService,
 			useExisting: AccountChatService
-		},
-		{
-			provide: RouteReuseStrategy,
-			useExisting: ComponentReusePreventionService
 		},
 		{
 			provide: SessionService,
