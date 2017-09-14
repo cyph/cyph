@@ -1,5 +1,4 @@
 import {NgModule} from '@angular/core';
-import {RouteReuseStrategy} from '@angular/router';
 import {AccountChatComponent} from '../components/account-chat.component';
 import {AccountContactsComponent} from '../components/account-contacts.component';
 import {AccountFileSharingComponent} from '../components/account-file-sharing.component';
@@ -26,7 +25,6 @@ import {AccountFilesService} from '../services/account-files.service';
 import {AccountSettingsService} from '../services/account-settings.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountService} from '../services/account.service';
-import {ComponentReusePreventionService} from '../services/component-reuse-prevention.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {DatabaseService} from '../services/database.service';
@@ -108,10 +106,6 @@ import {CyphWebModule} from './cyph-web.module';
 		{
 			provide: HtmlSanitizerService,
 			useClass: DOMPurifyHtmlSanitizerService
-		},
-		{
-			provide: RouteReuseStrategy,
-			useClass: ComponentReusePreventionService
 		}
 	]
 })

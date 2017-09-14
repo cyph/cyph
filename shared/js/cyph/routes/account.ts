@@ -24,7 +24,6 @@ export const account: Route	= {
 	component: AccountComponent,
 	children: [
 		{path: '', component: AccountHomeComponent},
-		{path: 'chat', component: AccountChatComponent},
 		{path: 'chat/:username', component: AccountChatComponent},
 		{path: 'contacts', component: AccountContactsComponent},
 		{path: 'contacts/:username', component: AccountContactsComponent},

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {UserPresence} from '../account/enums';
 import {AccountChannelService} from '../services/account-channel.service';
 import {AccountChatService} from '../services/account-chat.service';
@@ -19,6 +19,7 @@ import {ScrollService} from '../services/scroll.service';
 import {SessionCapabilitiesService} from '../services/session-capabilities.service';
 import {SessionInitService} from '../services/session-init.service';
 import {SessionService} from '../services/session.service';
+import {util} from '../util';
 
 
 /**
@@ -57,28 +58,42 @@ import {SessionService} from '../services/session.service';
 	templateUrl: '../../../templates/account-chat.html'
 })
 export class AccountChatComponent implements OnInit {
+	/** @ignore */
+	private initiated: boolean	= false;
+
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.activatedRouteService.params.subscribe(o => {
+		this.activatedRouteService.params.subscribe(async o => {
 			const username: string|undefined	= o.username;
 
 			if (!username) {
 				return;
 			}
 
+			if (this.initiated) {
+				this.routerService.navigate(['account']);
+				await util.sleep(0);
+				this.routerService.navigate(['account', 'chat', username]);
+				return;
+			}
+
+			this.initiated	= true;
 			this.accountChatService.setUser(username);
 		});
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly accountChatService: AccountChatService,
+		private readonly activatedRouteService: ActivatedRoute,
 
 		/** @ignore */
-		private readonly activatedRouteService: ActivatedRoute,
+		private readonly routerService: Router,
+
+		/** @ignore */
+		private readonly accountChatService: AccountChatService,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
