@@ -453,7 +453,7 @@ export class ChatService {
 				await this.chat.messages.updateValue(async () => []);
 				await util.sleep(1000);
 				this.chatSelfDestructEffect	= false;
-				await util.sleep(3000);
+				await util.sleep(10000);
 				this.close();
 			}
 		});
