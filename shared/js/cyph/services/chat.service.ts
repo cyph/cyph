@@ -453,8 +453,11 @@ export class ChatService {
 				await this.chat.messages.updateValue(async () => []);
 				await util.sleep(1000);
 				this.chatSelfDestructEffect	= false;
-				await util.sleep(10000);
-				this.close();
+
+				if (o.author !== this.sessionService.localUsername) {
+					await util.sleep(10000);
+					this.close();
+				}
 			}
 		});
 
