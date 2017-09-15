@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserPresence} from '../account/enums';
 import {AccountChannelService} from '../services/account-channel.service';
@@ -57,12 +57,17 @@ import {util} from '../util';
 	styleUrls: ['../../../css/components/account-chat.scss'],
 	templateUrl: '../../../templates/account-chat.html'
 })
-export class AccountChatComponent implements OnInit {
+export class AccountChatComponent implements OnDestroy, OnInit {
 	/** @ignore */
 	private initiated: boolean	= false;
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		this.accountSessionService.state.isAlive	= false;
+	}
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -94,6 +99,9 @@ export class AccountChatComponent implements OnInit {
 
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,
+
+		/** @ignore */
+		private readonly accountSessionService: AccountSessionService,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
