@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {BinaryProto} from '../protos';
+import {BinaryProto, StringProto} from '../protos';
+import {util} from '../util';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';
@@ -18,6 +19,9 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountSessionService extends SessionService {
 	/** @ignore */
+	private initiated: boolean	= false;
+
+	/** @ignore */
 	private resolveAccountsSymmetricKey: (symmetricKey: Uint8Array) => void;
 
 	/** @inheritDoc */
@@ -32,14 +36,24 @@ export class AccountSessionService extends SessionService {
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (username: string) : Promise<void> {
+		if (this.initiated) {
+			throw new Error('User already set.')
+		}
+
+		this.initiated	= true;
+
 		(async () => {
-			const contactURL	=
-				`contacts/${await this.accountContactsService.getContactID(username)}`
-			;
+			const contactID	= await this.accountContactsService.getContactID(username);
 
 			this.resolveAccountsSymmetricKey(await this.accountDatabaseService.getItem(
-				`${contactURL}/session/symmetricKey`,
+				`contacts/${contactID}/session/symmetricKey`,
 				BinaryProto
+			));
+
+			this.init(contactID, await this.accountDatabaseService.getOrSetDefault(
+				`contacts/${contactID}/session/channelUserID`,
+				StringProto,
+				() => util.uuid()
 			));
 		})();
 
@@ -73,7 +87,5 @@ export class AccountSessionService extends SessionService {
 			potassiumService,
 			stringsService
 		);
-
-		this.init();
 	}
 }

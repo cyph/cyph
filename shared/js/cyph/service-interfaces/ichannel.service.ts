@@ -1,6 +1,5 @@
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
-import {ISessionService} from '../service-interfaces/isession.service';
 import {IChannelHandlers} from '../session';
 
 
@@ -23,7 +22,6 @@ export interface IChannelService {
 	 * @param userID If specified, will treat as long-lived channel. Else, will treat as ephemeral.
 	 */
 	init (
-		sessionService: ISessionService,
 		channelID: string|undefined,
 		userID: string|undefined,
 		handlers: IChannelHandlers

@@ -326,7 +326,7 @@ export abstract class SessionService implements ISessionService {
 	public async init (channelID?: string, userID?: string) : Promise<void> {
 		await Promise.all([
 			this.castleService.init(this.potassiumService, this),
-			this.channelService.init(this, channelID, userID, {
+			this.channelService.init(channelID, userID, {
 				onClose: async () => this.channelOnClose(),
 				onConnect: async () => this.channelOnConnect(),
 				onMessage: async (message: Uint8Array) => this.channelOnMessage(message),

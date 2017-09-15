@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserPresence} from '../account/enums';
-import {AccountChannelService} from '../services/account-channel.service';
 import {AccountChatService} from '../services/account-chat.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountSessionService} from '../services/account-session.service';
@@ -29,6 +28,7 @@ import {util} from '../util';
 	providers: [
 		AccountChatService,
 		AccountSessionService,
+		ChannelService,
 		CyphertextService,
 		FileTransferService,
 		P2PService,
@@ -39,10 +39,6 @@ import {util} from '../util';
 		{
 			provide: CastleService,
 			useClass: AccountCastleService
-		},
-		{
-			provide: ChannelService,
-			useClass: AccountChannelService
 		},
 		{
 			provide: ChatService,
