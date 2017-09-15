@@ -26,9 +26,6 @@ export class ChatService {
 	/** @ignore */
 	private static readonly approximateKeyExchangeTime: number			= 18000;
 
-	/** @ignore */
-	private static readonly messageConfirmationSpinnerTimeout: number	= 5000;
-
 	/** Time in seconds until chat self-destructs. */
 	private chatSelfDestructTimeout: number								= 5;
 
@@ -391,22 +388,10 @@ export class ChatService {
 			}
 
 			if (o.author === this.sessionService.localUsername) {
-				(async () => {
-					await this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
-						unconfirmedMessages[o.id]	= false;
-						return unconfirmedMessages;
-					});
-
-					await util.sleep(ChatService.messageConfirmationSpinnerTimeout);
-
-					await this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
-						if (unconfirmedMessages[o.id] === undefined) {
-							throw undefined;
-						}
-						unconfirmedMessages[o.id]	= true;
-						return unconfirmedMessages;
-					});
-				})();
+				await this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
+					unconfirmedMessages[o.id]	= true;
+					return unconfirmedMessages;
+				});
 			}
 			else {
 				this.sessionService.send([rpcEvents.confirm, {textConfirmation: {id: o.id}}]);
