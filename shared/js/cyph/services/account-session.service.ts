@@ -37,7 +37,7 @@ export class AccountSessionService extends SessionService {
 	/** Sets the remote user we're chatting with. */
 	public async setUser (username: string) : Promise<void> {
 		if (this.initiated) {
-			throw new Error('User already set.')
+			throw new Error('User already set.');
 		}
 
 		this.initiated	= true;
