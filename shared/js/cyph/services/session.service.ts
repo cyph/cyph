@@ -80,11 +80,9 @@ export abstract class SessionService implements ISessionService {
 	);
 
 	/** @ignore */
-	public readonly opened: Promise<boolean>				=
-		new Promise<boolean>(resolve => {
-			this.resolveOpened	= () => resolve(true);
-		})
-	;
+	public readonly opened: Promise<boolean>				= new Promise<boolean>(resolve => {
+		this.resolveOpened	= () => { resolve(true); };
+	});
 
 	/** @inheritDoc */
 	public readonly remoteUsername: BehaviorSubject<string>	= new BehaviorSubject<string>(
