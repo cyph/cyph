@@ -363,8 +363,8 @@ export class PairwiseSession {
 
 					await this.connect();
 
-					await this.outgoingMessageQueue.updateValue(async outgoingMessageQueue => {
-						for (const fullPlaintext of outgoingMessageQueue) {
+					await this.outgoingMessageQueue.updateValue(async messages => {
+						for (const fullPlaintext of messages) {
 							this.send(
 								this.potassium.toBytes(fullPlaintext, 8),
 								this.potassium.toDataView(fullPlaintext).getFloat64(0, true)
