@@ -1,6 +1,8 @@
 import {config} from '../../config';
 import {denullifyAsyncValue} from '../../denullify-async-value';
+import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';
+import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
 import {util} from '../../util';
@@ -21,8 +23,14 @@ import {Transport} from './transport';
 export class PairwiseSession {
 	/** @ignore */
 	private readonly core: Promise<Core>	= new Promise<Core>(resolve => {
-		this.resolveCore	= resolve;
+		this.resolveCore	= core => {
+			this.coreResolved	= true;
+			resolve(core);
+		};
 	});
+
+	/** @ignore */
+	private coreResolved: boolean	= false;
 
 	/** @ignore */
 	private resolveCore: (core: Core) => void;
@@ -192,6 +200,11 @@ export class PairwiseSession {
 			this.potassium.fromString(plaintext)
 		);
 
+		if (!this.coreResolved) {
+			await this.outgoingMessageQueue.pushValue(fullPlaintext);
+			return;
+		}
+
 		return this.sendLock(async () => {
 			const messageID		= await this.newOutgoingMessageID();
 			const cyphertext	= await (await this.core).encrypt(fullPlaintext, messageID);
@@ -234,6 +247,9 @@ export class PairwiseSession {
 
 		/** @ignore */
 		private readonly outgoingMessageID: IAsyncValue<number> = new LocalAsyncValue(0),
+
+		/** @ignore */
+		private readonly outgoingMessageQueue: IAsyncList<Uint8Array> = new LocalAsyncList([]),
 
 		/** @ignore */
 		private readonly receiveLock: LockFunction = util.lockFunction(),
@@ -346,6 +362,17 @@ export class PairwiseSession {
 					));
 
 					await this.connect();
+
+					await this.outgoingMessageQueue.updateValue(async outgoingMessageQueue => {
+						for (const fullPlaintext of outgoingMessageQueue) {
+							this.send(
+								this.potassium.toBytes(fullPlaintext, 8),
+								this.potassium.toDataView(fullPlaintext).getFloat64(0, true)
+							);
+						}
+
+						return [];
+					});
 
 					return;
 				}

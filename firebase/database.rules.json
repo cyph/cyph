@@ -267,6 +267,16 @@
 									".validate": "newData.val() === now"
 								}
 							},
+							"outgoingMessageQueue": {
+								"$outgoingMessage": {
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								}
+							},
 							"symmetricKey": {
 								"hash": {
 									".validate": "newData.isString()"

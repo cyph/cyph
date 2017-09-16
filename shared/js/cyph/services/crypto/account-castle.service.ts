@@ -6,7 +6,12 @@ import {
 	RegisteredRemoteUser,
 	Transport
 } from '../../crypto/castle';
-import {CastleIncomingMessagesProto, MaybeBinaryProto, Uint32Proto} from '../../protos';
+import {
+	BinaryProto,
+	CastleIncomingMessagesProto,
+	MaybeBinaryProto,
+	Uint32Proto
+} from '../../protos';
 import {util} from '../../util';
 import {AccountContactsService} from '../account-contacts.service';
 import {SessionService} from '../session.service';
@@ -89,6 +94,10 @@ export class AccountCastleService extends CastleService {
 							this.accountDatabaseService.getAsyncValue(
 								`${sessionURL}/outgoingMessageID`,
 								Uint32Proto
+							),
+							this.accountDatabaseService.getAsyncList(
+								`${sessionURL}/outgoingMessageQueue`,
+								BinaryProto
 							),
 							this.accountDatabaseService.lockFunction(`${sessionURL}/receiveLock`),
 							this.accountDatabaseService.lockFunction(`${sessionURL}/sendLock`),
