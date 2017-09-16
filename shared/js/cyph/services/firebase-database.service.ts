@@ -672,6 +672,32 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public watchListKeyPushes (url: string) : Observable<string> {
+		return new Observable<string>(observer => {
+			let cleanup: Function;
+
+			(async () => {
+				const listRef	= await this.getDatabaseRef(url);
+
+				const onChildAdded	= (snapshot: firebase.database.DataSnapshot) => {
+					if (!snapshot || !snapshot.exists() || !snapshot.key) {
+						return;
+					}
+
+					observer.next(snapshot.key);
+				};
+
+				listRef.on('child_added', onChildAdded);
+				cleanup	= () => { listRef.off('child_added', onChildAdded); };
+			})();
+
+			return async () => {
+				(await util.waitForValue(() => cleanup))();
+			};
+		});
+	}
+
+	/** @inheritDoc */
 	public watchListKeys (url: string) : Observable<string[]> {
 		return new Observable<string[]>(observer => {
 			let cleanup: Function;

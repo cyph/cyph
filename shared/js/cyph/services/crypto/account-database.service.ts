@@ -2,7 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {AccountUserPublicKeys, AGSEPKICert, IAccountUserPublicKeys} from '../../../proto';
 import {ICurrentUser, SecurityModels} from '../../account';
 import {IAsyncList} from '../../iasync-list';
@@ -302,6 +302,14 @@ export class AccountDatabaseService {
 			}),
 			setValue: async value => localLock(async () =>
 				this.setList(url, proto, value, securityModel, customKey)
+			),
+			subscribeAndPop: f => this.subscribeAndPop(
+				url,
+				proto,
+				f,
+				securityModel,
+				customKey,
+				anonymous
 			),
 			updateValue: async f => asyncList.lock(async () => {
 				asyncList.setValue(await f(await asyncList.getValue()));
@@ -656,6 +664,30 @@ export class AccountDatabaseService {
 		));
 	}
 
+	/** @see DatabaseService.subscribeAndPop */
+	public subscribeAndPop<T> (
+		url: string|Promise<string>,
+		proto: IProto<T>,
+		f: (value: T) => void|Promise<void>,
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>,
+		anonymous: boolean = false
+	) : Subscription {
+		return this.watchListKeyPushes(url).subscribe(async key => {
+			const fullURL	= `${url}/${key}`;
+
+			await f(await this.getItem(
+				fullURL,
+				proto,
+				securityModel,
+				customKey,
+				anonymous
+			));
+
+			await this.removeItem(fullURL);
+		});
+	}
+
 	/** @see DatabaseService.uploadItem */
 	public uploadItem<T> (
 		url: string|Promise<string>,
@@ -789,6 +821,17 @@ export class AccountDatabaseService {
 				o => o
 			),
 			[]
+		);
+	}
+
+	/** @see DatabaseService.watchListKeyPushes */
+	public watchListKeyPushes (url: string|Promise<string>) : Observable<string> {
+		return util.flattenObservablePromise(
+			this.currentUser.flatMap(async () =>
+				this.databaseService.watchListKeyPushes(await this.normalizeURL(url))
+			).flatMap(
+				o => o
+			)
 		);
 	}
 

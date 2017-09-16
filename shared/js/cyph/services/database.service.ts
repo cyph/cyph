@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
@@ -55,6 +55,7 @@ export class DatabaseService extends DataManagerService {
 				await this.pushItem(url, proto, value);
 			}),
 			setValue: async value => localLock(async () => this.setList(url, proto, value)),
+			subscribeAndPop: f => this.subscribeAndPop(url, proto, f),
 			updateValue: async f => asyncList.lock(async () => {
 				asyncList.setValue(await f(await asyncList.getValue()));
 			}),
@@ -221,7 +222,7 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/**
-	 * Set's an item's value.
+	 * Sets an item's value.
 	 * @returns Item database hash and URL.
 	 */
 	public async setItem<T> (_URL: string, _PROTO: IProto<T>, _VALUE: T) : Promise<{
@@ -231,12 +232,25 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.setItem.');
 	}
 
-	/** Set's a list's value. */
+	/** Sets a list's value. */
 	public async setList<T> (url: string, proto: IProto<T>, value: T[]) : Promise<void> {
 		await this.removeItem(url);
 		for (const v of value) {
 			await this.pushItem(url, proto, v);
 		}
+	}
+
+	/** Subscribes to pushed values and deletes them. */
+	public subscribeAndPop<T> (
+		url: string,
+		proto: IProto<T>,
+		f: (value: T) => void|Promise<void>
+	) : Subscription {
+		return this.watchListKeyPushes(url).subscribe(async key => {
+			const fullURL	= `${url}/${key}`;
+			await f(await this.getItem(fullURL, proto));
+			await this.removeItem(fullURL);
+		});
 	}
 
 	/** Uploads value and gives progress. */
@@ -268,6 +282,11 @@ export class DatabaseService extends DataManagerService {
 		_COMPLETE_ON_EMPTY: boolean = false
 	) : Observable<ITimedValue<T>[]> {
 		throw new Error('Must provide an implementation of DatabaseService.watchList.');
+	}
+
+	/** Subscribes to new keys of a list. */
+	public watchListKeyPushes (_URL: string) : Observable<string> {
+		throw new Error('Must provide an implementation of DatabaseService.watchListKeyPushes.');
 	}
 
 	/** Subscribes to the keys of a list. */

@@ -81,6 +81,9 @@ export class Config {
 		maxSize: 268435456
 	};
 
+	/** Max signed 32-bit integer. */
+	public readonly maxInt32: number			= 2147483647;
+
 	/** Max unsigned 48-bit integer + 1, used by Util.random. */
 	public readonly maxSafeUint: number			= 281474976710656;
 

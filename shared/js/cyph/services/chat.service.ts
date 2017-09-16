@@ -392,6 +392,8 @@ export class ChatService {
 					unconfirmedMessages[o.id]	= true;
 					return unconfirmedMessages;
 				});
+
+				await util.sleep();
 			}
 			else {
 				this.sessionService.send([rpcEvents.confirm, {textConfirmation: {id: o.id}}]);

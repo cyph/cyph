@@ -23,14 +23,8 @@ import {Transport} from './transport';
 export class PairwiseSession {
 	/** @ignore */
 	private readonly core: Promise<Core>	= new Promise<Core>(resolve => {
-		this.resolveCore	= core => {
-			this.coreResolved	= true;
-			resolve(core);
-		};
+		this.resolveCore	= resolve;
 	});
-
-	/** @ignore */
-	private coreResolved: boolean	= false;
 
 	/** @ignore */
 	private resolveCore: (core: Core) => void;
@@ -194,28 +188,11 @@ export class PairwiseSession {
 			timestamp	= await util.timestamp();
 		}
 
-		const fullPlaintext	= this.potassium.concatMemory(
+		await this.outgoingMessageQueue.pushValue(this.potassium.concatMemory(
 			true,
 			new Float64Array([timestamp]),
 			this.potassium.fromString(plaintext)
-		);
-
-		if (!this.coreResolved) {
-			await this.outgoingMessageQueue.pushValue(fullPlaintext);
-			return;
-		}
-
-		return this.sendLock(async () => {
-			const messageID		= await this.newOutgoingMessageID();
-			const cyphertext	= await (await this.core).encrypt(fullPlaintext, messageID);
-
-			this.potassium.clearMemory(fullPlaintext);
-			this.transport.send(this.potassium.concatMemory(
-				true,
-				messageID,
-				cyphertext
-			));
-		});
+		));
 	}
 
 	constructor (
@@ -363,15 +340,24 @@ export class PairwiseSession {
 
 					await this.connect();
 
-					await this.outgoingMessageQueue.updateValue(async messages => {
-						for (const fullPlaintext of messages) {
-							this.send(
-								this.potassium.toBytes(fullPlaintext, 8),
-								this.potassium.toDataView(fullPlaintext).getFloat64(0, true)
-							);
-						}
+					this.sendLock(async () => {
+						const sub	= this.outgoingMessageQueue.subscribeAndPop(async message => {
+							const messageID		= await this.newOutgoingMessageID();
 
-						return [];
+							const cyphertext	= await (await this.core).encrypt(
+								message,
+								messageID
+							);
+
+							this.transport.send(this.potassium.concatMemory(
+								true,
+								messageID,
+								cyphertext
+							));
+						});
+
+						await util.waitUntilTrue(() => !this.transport.isAlive);
+						sub.unsubscribe();
 					});
 
 					return;

@@ -23,6 +23,11 @@ export class Transport {
 		this.sessionService.castleHandler(CastleEvents.connect);
 	}
 
+	/** Indicates whether or not this transport is still usable. */
+	public get isAlive () : boolean {
+		return this.sessionService.state.isAlive;
+	}
+
 	/** Trigger event for logging cyphertext. */
 	public logCyphertext (author: Observable<string>, cyphertext: Uint8Array) : void {
 		if (cyphertext.length >= Transport.cyphertextLimit) {
