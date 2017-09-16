@@ -293,9 +293,6 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		private readonly routerService: Router,
 
 		/** @ignore */
-		private readonly sessionService: SessionService,
-
-		/** @ignore */
 		private readonly sessionCapabilitiesService: SessionCapabilitiesService,
 
 		/** @ignore */
@@ -318,6 +315,9 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,
+
+		/** @see SessionService */
+		public readonly sessionService: SessionService,
 
 		/** @see SplitTestingService */
 		public readonly splitTestingService: SplitTestingService,

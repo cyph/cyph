@@ -1,4 +1,4 @@
-<span [class.curtain]='cyphertextService.isVisible'>
+<span [class.curtain]='cyphertextService.isVisible' *ngIf='sessionService.opened | async'>
 	<section fxFlexFill fxLayout='column' id='main' class='cyph-foreground'>
 		<canvas [fxShow]='envService.showGranim' id='main-chat-gradient'></canvas>
 

@@ -1,5 +1,5 @@
 <div fxFlexFill fxLayoutAlign='center center' class='cyph-foreground'>
-	<div fxFlex='95' fxFlexFill fxLayout='column'>
+	<div fxFlex='95' fxFlexFill fxLayout='column' *ngIf='sessionService.opened | async'>
 		<cyph-chat-main fxFlex [accounts]='true'></cyph-chat-main>
 		<cyph-chat-message-box [accounts]='true'></cyph-chat-message-box>
 	</div>

@@ -42,13 +42,6 @@ export abstract class SessionService implements ISessionService {
 	protected lastIncomingMessageTimestamp: number					= 0;
 
 	/** @ignore */
-	protected readonly opened: Promise<void>						=
-		new Promise<void>(resolve => {
-			this.resolveOpened	= resolve;
-		})
-	;
-
-	/** @ignore */
 	protected readonly plaintextSendInterval: number				= 1776;
 
 	/** @ignore */
@@ -86,6 +79,13 @@ export abstract class SessionService implements ISessionService {
 		this.stringsService.me
 	);
 
+	/** @ignore */
+	public readonly opened: Promise<boolean>				=
+		new Promise<boolean>(resolve => {
+			this.resolveOpened	= () => resolve(true);
+		})
+	;
+
 	/** @inheritDoc */
 	public readonly remoteUsername: BehaviorSubject<string>	= new BehaviorSubject<string>(
 		this.stringsService.friend
@@ -110,6 +110,17 @@ export abstract class SessionService implements ISessionService {
 	/** @see IChannelHandlers.onConnect */
 	protected async channelOnConnect () : Promise<void> {
 		this.trigger(events.connect);
+	}
+
+	/** @see IChannelHandlers.onMessage */
+	protected async channelOnMessage (message: Uint8Array) : Promise<void> {
+		await this.castleService.receive(message);
+	}
+
+	/** @see IChannelHandlers.onOpen */
+	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
+		this.state.isAlice	= isAlice;
+		this.resolveOpened();
 
 		while (this.state.isAlive) {
 			await util.sleep(this.plaintextSendInterval);
@@ -127,17 +138,6 @@ export abstract class SessionService implements ISessionService {
 				})
 			);
 		}
-	}
-
-	/** @see IChannelHandlers.onMessage */
-	protected async channelOnMessage (message: Uint8Array) : Promise<void> {
-		await this.castleService.receive(message);
-	}
-
-	/** @see IChannelHandlers.onOpen */
-	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
-		this.state.isAlice	= isAlice;
-		this.resolveOpened();
 	}
 
 	/** @ignore */

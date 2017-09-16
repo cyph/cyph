@@ -62,7 +62,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
-		this.accountSessionService.state.isAlive	= false;
+		this.sessionService.state.isAlive	= false;
 	}
 
 	/** @inheritDoc */
@@ -96,9 +96,6 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,
 
-		/** @ignore */
-		private readonly accountSessionService: AccountSessionService,
-
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
 
@@ -106,6 +103,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		public readonly accountContactsService: AccountContactsService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see SessionService */
+		public readonly sessionService: SessionService
 	) {}
 }
