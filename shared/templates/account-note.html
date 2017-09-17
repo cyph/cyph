@@ -1,4 +1,8 @@
-<div fxFlexFill fxLayoutAlign='center start'>
+<div
+	fxFlexFill
+	fxLayoutAlign='center start'
+	*ngIf='!realTime || !envService.isProd || accountService.isTelehealth'
+>
 	<md-card fxFlex='90' class='note'>
 		<div fxLayout='column'>
 			<div fxLayoutAlign='center center' fxLayout='row'>

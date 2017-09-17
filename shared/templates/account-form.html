@@ -1,4 +1,8 @@
-<div fxFlexFill fxLayoutAlign='center start' *ngIf='form'>
+<div
+	fxFlexFill
+	fxLayoutAlign='center start'
+	*ngIf='form && (!envService.isProd || accountService.isTelehealth)'
+>
 	<md-card fxFlex='90' class='form'>
 		<md-card-header fxLayout='row'>
 			<md-card-title>{{(form.metadata | async)?.name}}</md-card-title>

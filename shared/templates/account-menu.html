@@ -158,7 +158,10 @@
 			mdTooltipPosition='right'
 			routerLink='/account/docs'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded'
+			*ngIf='
+				(!envService.isProd || accountService.isTelehealth) &&
+				accountService.menuExpanded
+			'
 		>
 			<md-icon>library_books</md-icon>
 			<span>Docs</span>
@@ -170,7 +173,10 @@
 			mdTooltipPosition='right'
 			routerLink='/account/docs'
 			(click)='click()'
-			*ngIf='!accountService.menuExpanded'
+			*ngIf='
+				(!envService.isProd || accountService.isTelehealth) &&
+				!accountService.menuExpanded
+			'
 		>
 			<md-icon>library_books</md-icon>
 		</button>
@@ -182,7 +188,10 @@
 			mdTooltipPosition='right'
 			routerLink='/account/forms'
 			(click)='click()'
-			*ngIf='accountService.isTelehealth && accountService.menuExpanded'
+			*ngIf='
+				(!envService.isProd || accountService.isTelehealth) &&
+				accountService.menuExpanded
+			'
 		>
 			<md-icon>content_paste</md-icon>
 			<span>Forms</span>
@@ -194,7 +203,10 @@
 			mdTooltipPosition='right'
 			routerLink='/account/forms'
 			(click)='click()'
-			*ngIf='accountService.isTelehealth && !accountService.menuExpanded'
+			*ngIf='
+				(!envService.isProd || accountService.isTelehealth) &&
+				!accountService.menuExpanded
+			'
 		>
 			<md-icon>content_paste</md-icon>
 		</button>
