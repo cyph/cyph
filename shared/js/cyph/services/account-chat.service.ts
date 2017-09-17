@@ -1,5 +1,5 @@
-import {Injectable, Injector} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {ChatMessage} from '../../proto';
 import {IChatData, States} from '../chat';
 import {ChatUnconfirmedMessagesProto} from '../protos';
@@ -23,6 +23,21 @@ import {StringsService} from './strings.service';
 export class AccountChatService extends ChatService {
 	/** @ignore */
 	private readonly chats	= new Map<string, IChatData>();
+
+	/** @inheritDoc */
+	protected async getAuthorID (author: Observable<string>) : Promise<string|undefined> {
+		return (
+			author === this.sessionService.appUsername ||
+			author === this.sessionService.localUsername
+		) ?
+			undefined :
+			await (async () =>
+				this.accountContactsService.getContactID(await author.take(1).toPromise())
+			)().catch(
+				() => undefined
+			)
+		;
+	}
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (username: string) : Promise<void> {
@@ -53,7 +68,6 @@ export class AccountChatService extends ChatService {
 	}
 
 	constructor (
-		injector: Injector,
 		analyticsService: AnalyticsService,
 		dialogService: DialogService,
 		notificationService: NotificationService,
@@ -71,7 +85,6 @@ export class AccountChatService extends ChatService {
 		private readonly accountSessionService: AccountSessionService
 	) {
 		super(
-			injector,
 			analyticsService,
 			dialogService,
 			notificationService,

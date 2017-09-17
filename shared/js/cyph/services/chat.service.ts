@@ -1,4 +1,4 @@
-import {Injectable, Injector} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {ChatMessage, IChatMessage} from '../../proto';
 import {IChatData, States} from '../chat';
@@ -9,7 +9,6 @@ import {LockFunction} from '../lock-function-type';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
 import {util} from '../util';
-import {AccountContactsService} from './account-contacts.service';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
@@ -81,6 +80,11 @@ export class ChatService {
 		}
 	}
 
+	/** Gets author ID for including in message list item. */
+	protected async getAuthorID (_AUTHOR: Observable<string>) : Promise<string|undefined> {
+		return undefined;
+	}
+
 	/** Aborts the process of chat initialisation and authentication. */
 	public abortSetup () : void {
 		this.chat.state	= States.aborted;
@@ -131,21 +135,7 @@ export class ChatService {
 		}
 
 		await this.chat.messages.pushValue({
-			authorID:
-				(
-					author === this.sessionService.appUsername ||
-					author === this.sessionService.localUsername
-				) ?
-					undefined :
-					await (async () =>
-						/* tslint:disable-next-line:deprecation */
-						this.injector.get(AccountContactsService).getContactID(
-							await author.take(1).toPromise()
-						)
-					)().catch(
-						() => undefined
-					)
-			,
+			authorID: await this.getAuthorID(author),
 			authorType:
 				author === this.sessionService.appUsername ?
 					ChatMessage.AuthorTypes.App :
@@ -318,9 +308,6 @@ export class ChatService {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly injector: Injector,
-
 		/** @ignore */
 		protected readonly analyticsService: AnalyticsService,
 
