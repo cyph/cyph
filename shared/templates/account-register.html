@@ -3,6 +3,7 @@
 	fxLayoutAlign='center center'
 	class='login-form'
 	[class.checking]='checking'
+	*ngIf='!envService.isProd'
 >
 	<md-card fxFlex fxFlex.gt-sm='50'>
 		<md-card-title cyphTranslate>
