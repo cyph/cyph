@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {IAccountFileRecord, IForm} from '../../proto';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
+import {EnvService} from '../services/env.service';
 
 
 /**
@@ -59,6 +60,9 @@ export class AccountFormComponent implements OnInit {
 		private readonly accountAuthService: AccountAuthService,
 
 		/** @see AccountFilesService */
-		public readonly accountFilesService: AccountFilesService
+		public readonly accountFilesService: AccountFilesService,
+
+		/** @see EnvService */
+		public readonly envService: EnvService
 	) {}
 }

@@ -9,6 +9,7 @@ import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {DialogService} from '../services/dialog.service';
+import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
 import {util} from '../util';
 
@@ -262,10 +263,13 @@ export class AccountNoteComponent implements OnInit {
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
 
-		/** @ignore */
+		/** @see DialogService */
 		public readonly dialogService: DialogService,
 
-		/** @ignore */
+		/** @see EnvService */
+		public readonly envService: EnvService,
+
+		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {}
 }

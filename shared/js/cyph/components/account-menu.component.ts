@@ -31,7 +31,7 @@ export class AccountMenuComponent {
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
-		/** @see EnvAuthService */
+		/** @see EnvService */
 		public readonly envService: EnvService
 	) {
 		this.accountService.toggleMenu(!this.envService.isMobile);
