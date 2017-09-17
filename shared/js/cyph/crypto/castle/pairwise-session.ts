@@ -1,6 +1,8 @@
 import {config} from '../../config';
 import {denullifyAsyncValue} from '../../denullify-async-value';
+import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';
+import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
 import {util} from '../../util';
@@ -186,23 +188,11 @@ export class PairwiseSession {
 			timestamp	= await util.timestamp();
 		}
 
-		const fullPlaintext	= this.potassium.concatMemory(
+		await this.outgoingMessageQueue.pushValue(this.potassium.concatMemory(
 			true,
 			new Float64Array([timestamp]),
 			this.potassium.fromString(plaintext)
-		);
-
-		return this.sendLock(async () => {
-			const messageID		= await this.newOutgoingMessageID();
-			const cyphertext	= await (await this.core).encrypt(fullPlaintext, messageID);
-
-			this.potassium.clearMemory(fullPlaintext);
-			this.transport.send(this.potassium.concatMemory(
-				true,
-				messageID,
-				cyphertext
-			));
-		});
+		));
 	}
 
 	constructor (
@@ -234,6 +224,9 @@ export class PairwiseSession {
 
 		/** @ignore */
 		private readonly outgoingMessageID: IAsyncValue<number> = new LocalAsyncValue(0),
+
+		/** @ignore */
+		private readonly outgoingMessageQueue: IAsyncList<Uint8Array> = new LocalAsyncList([]),
 
 		/** @ignore */
 		private readonly receiveLock: LockFunction = util.lockFunction(),
@@ -346,6 +339,26 @@ export class PairwiseSession {
 					));
 
 					await this.connect();
+
+					this.sendLock(async () => {
+						const sub	= this.outgoingMessageQueue.subscribeAndPop(async message => {
+							const messageID		= await this.newOutgoingMessageID();
+
+							const cyphertext	= await (await this.core).encrypt(
+								message,
+								messageID
+							);
+
+							this.transport.send(this.potassium.concatMemory(
+								true,
+								messageID,
+								cyphertext
+							));
+						});
+
+						await util.waitUntilTrue(() => !this.transport.isAlive);
+						sub.unsubscribe();
+					});
 
 					return;
 				}

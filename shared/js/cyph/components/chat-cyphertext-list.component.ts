@@ -14,6 +14,9 @@ import {StringsService} from '../services/strings.service';
 	templateUrl: '../../../templates/chat-cyphertext-list.html'
 })
 export class ChatCyphertextListComponent {
+	/** Indicates whether this is the accounts UI. */
+	@Input() public accounts: boolean	= false;
+
 	/** @see CyphertextService.messages */
 	@Input() public messages: List<ChatMessage>;
 

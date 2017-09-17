@@ -1,0 +1,70 @@
+<div fxFlexFill fxLayout='row' [class.mobile]='envService.isMobile'>
+	<div *ngIf='accountService.interstitial' class='interstitial'>
+		<div class='loading'>
+			<div class='logo-animation'>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</div>
+	</div>
+	<canvas class='cyph-gradient'></canvas>
+
+	<cyph-account-menu
+		fxLayout='column'
+		class='sidebar'
+		[fxFlex]='
+			!accountService.menuExpanded ?
+				"6em" :
+				envService.isMobile ?
+					"100" :
+					"20"
+		'
+		[fxFlex.gt-xs]='
+			!accountService.menuExpanded ?
+				"6em" :
+				envService.isMobile ?
+					"50" :
+					"20"
+		'
+		[fxFlex.gt-sm]='
+			!accountService.menuExpanded ?
+				"6em" :
+				envService.isMobile ?
+					"35" :
+					"20"
+		'
+		[fxFlex.gt-md]='
+			!accountService.menuExpanded ?
+				"6em" :
+				"20"
+		'
+		*ngIf='menuVisible'
+	></cyph-account-menu>
+
+	<div fxFlex fxLayout='column'>
+		<div fxFlexFill fxLayout='row' fxLayoutAlign='center start'>
+			<div
+				class='router-content'
+				[fxFlex]='header ? "90" : ""'
+				[fxFlex.gt-sm]='header ? "65" : ""'
+				[fxFlex.gt-md]='header ? "40" : ""'
+				fxLayout='column'
+			>
+				<h1 class='header' *ngIf='header !== undefined'>{{header}}</h1>
+				<router-outlet></router-outlet>
+			</div>
+		</div>
+	</div>
+
+	<div
+		fxFlex='25'
+		fxLayout='column'
+		class='sidebar'
+		*ngIf='sidebarVisible'
+	>
+		<cyph-account-contacts fxFlex fxFlexFill [sidebar]='true'></cyph-account-contacts>
+	</div>
+</div>

@@ -1,0 +1,80 @@
+<div
+	fxFlexFill
+	fxLayoutAlign='center start'
+	*ngIf='!realTime || !envService.isProd || accountService.isTelehealth'
+>
+	<md-card fxFlex='90' class='note'>
+		<div fxLayout='column'>
+			<div fxLayoutAlign='center center' fxLayout='row'>
+				<md-card-title fxFlex>
+					<div *ngIf='!editable'>
+						{{(note?.metadata | async)?.name}}
+					</div>
+					<md-input-container fxFlex *ngIf='editable'>
+						<input
+							mdInput
+							cyphTranslate
+							[(ngModel)]='noteData.name'
+							(blur)='realTimeTitleUpdate(noteData.name)'
+							required
+						/>
+					</md-input-container>
+				</md-card-title>
+				<md-card-header>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Edit'
+						routerLink='edit'
+						*ngIf='!editable'
+					>
+						<md-icon>edit</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Close Editor'
+						[routerLink]='newNote ? ".." : "."'
+						*ngIf='editable'
+					>
+						<md-icon>close</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Save'
+						(click)='saveNote()'
+						*ngIf='editable && !realTime'
+					>
+						<md-icon>save</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Delete'
+						*ngIf='!newNote'
+						(click)='accountFilesService.remove(note.metadata)'
+					>
+						<md-icon>delete</md-icon>
+					</button>
+				</md-card-header>
+			</div>
+			<md-card-content fxFlex fxLayout='column'>
+				<div [class.cyph-light-theme]='editable'>
+					<md-card [class.editable]='editable'>
+						<md-card-content>
+							<cyph-quill
+								[content]='note?.content | async'
+								[deltas]='note?.deltas'
+								[selections]='note?.selections'
+								[readOnly]='!editable'
+								(onChange)='onChange($event)'
+								(onSelectionChange)='onSelectionChange($event)'
+							></cyph-quill>
+						</md-card-content>
+					</md-card>
+				</div>
+			</md-card-content>
+		</div>
+	</md-card>
+</div>

@@ -1,0 +1,283 @@
+<div
+	fxFlexFill
+	fxLayout='row'
+	class='menu'
+	[class.collapsed]='!accountService.menuExpanded'
+	[class.mobile]='envService.isMobile'
+	*ngIf='accountDatabaseService.currentUser.value'
+>
+	<div [fxFlex]='accountService.menuExpanded ? "25px" : "10px"'></div>
+
+	<div
+		fxFlex
+		fxLayout='column'
+		[fxLayoutAlign]='accountService.menuExpanded ? "center stretch" : "center center"'
+		fxLayoutGap='16px'
+	>
+		<div></div>
+		<div *ngIf='accountService.menuExpanded'></div>
+
+		<button
+			md-button
+			fxFlex='2em'
+			cyphTranslate
+			class='home'
+			mdTooltip='Home'
+			mdTooltipPosition='right'
+			routerLink='/account'
+			(click)='click()'
+			*ngIf='accountService.menuExpanded'
+		>
+			<img
+				[src]='
+					!accountService.isTelehealth ?
+						"/assets/img/logo.white.horizontal.png" :
+						"/assets/img/logo.telehealth.horizontal.png"
+				'
+				class='logo'
+				alt='Cyph Logo'
+			/>
+		</button>
+		<button
+			md-icon-button
+			cyphTranslate
+			class='home'
+			mdTooltip='Home'
+			mdTooltipPosition='right'
+			routerLink='/account'
+			(click)='click()'
+			*ngIf='!accountService.menuExpanded'
+		>
+			<img
+				[src]='
+					!accountService.isTelehealth ?
+						"/assets/img/logo.white.icon.png" :
+						"/assets/img/logo.telehealth.icon.png"
+				'
+				class='logo'
+				alt='Cyph Logo'
+			/>
+		</button>
+
+		<div fxLayoutAlign='center center'>
+			<div [fxFlex]='accountService.menuExpanded ? "60" : "6em"'>
+				<img
+					cyphTranslate
+					mdTooltip='Profile'
+					mdTooltipPosition='right'
+					class='avatar animated flipInX _1'
+					[ngClass]='userPresence[
+						accountDatabaseService.currentUser.value.user.status | async
+					]'
+					alt='Profile Picture'
+					[src]='accountDatabaseService.currentUser.value.user.avatar | async'
+					routerLink='/account/profile'
+					(click)='click()'
+				/>
+			</div>
+		</div>
+
+		<div></div>
+
+		<button
+			md-button
+			cyphTranslate
+			mdTooltip='Contacts'
+			mdTooltipPosition='right'
+			routerLink='/account/contacts'
+			(click)='click()'
+			*ngIf='accountService.menuExpanded'
+		>
+			<md-icon>people</md-icon>
+			<span>Contacts</span>
+		</button>
+		<button
+			md-icon-button
+			cyphTranslate
+			mdTooltip='Contacts'
+			mdTooltipPosition='right'
+			routerLink='/account/contacts'
+			(click)='click()'
+			*ngIf='!accountService.menuExpanded'
+		>
+			<md-icon>people</md-icon>
+		</button>
+
+		<button
+			md-button
+			cyphTranslate
+			mdTooltip='Files'
+			mdTooltipPosition='right'
+			routerLink='/account/files'
+			(click)='click()'
+			*ngIf='accountService.menuExpanded'
+		>
+			<md-icon>folder</md-icon>
+			<span>Files</span>
+		</button>
+		<button
+			md-icon-button
+			cyphTranslate
+			mdTooltip='Files'
+			mdTooltipPosition='right'
+			routerLink='/account/files'
+			(click)='click()'
+			*ngIf='!accountService.menuExpanded'
+		>
+			<md-icon>folder</md-icon>
+		</button>
+
+		<button
+			md-button
+			cyphTranslate
+			mdTooltip='Notes'
+			mdTooltipPosition='right'
+			routerLink='/account/notes'
+			(click)='click()'
+			*ngIf='accountService.menuExpanded'
+		>
+			<md-icon>create</md-icon>
+			<span>Notes</span>
+		</button>
+		<button
+			md-icon-button
+			cyphTranslate
+			mdTooltip='Notes'
+			mdTooltipPosition='right'
+			routerLink='/account/notes'
+			(click)='click()'
+			*ngIf='!accountService.menuExpanded'
+		>
+			<md-icon>create</md-icon>
+		</button>
+
+		<button
+			md-button
+			cyphTranslate
+			mdTooltip='Docs'
+			mdTooltipPosition='right'
+			routerLink='/account/docs'
+			(click)='click()'
+			*ngIf='
+				(!envService.isProd || accountService.isTelehealth) &&
+				accountService.menuExpanded
+			'
+		>
+			<md-icon>library_books</md-icon>
+			<span>Docs</span>
+		</button>
+		<button
+			md-icon-button
+			cyphTranslate
+			mdTooltip='Docs'
+			mdTooltipPosition='right'
+			routerLink='/account/docs'
+			(click)='click()'
+			*ngIf='
+				(!envService.isProd || accountService.isTelehealth) &&
+				!accountService.menuExpanded
+			'
+		>
+			<md-icon>library_books</md-icon>
+		</button>
+
+		<button
+			md-button
+			cyphTranslate
+			mdTooltip='Forms'
+			mdTooltipPosition='right'
+			routerLink='/account/forms'
+			(click)='click()'
+			*ngIf='
+				(!envService.isProd || accountService.isTelehealth) &&
+				accountService.menuExpanded
+			'
+		>
+			<md-icon>content_paste</md-icon>
+			<span>Forms</span>
+		</button>
+		<button
+			md-icon-button
+			cyphTranslate
+			mdTooltip='Forms'
+			mdTooltipPosition='right'
+			routerLink='/account/forms'
+			(click)='click()'
+			*ngIf='
+				(!envService.isProd || accountService.isTelehealth) &&
+				!accountService.menuExpanded
+			'
+		>
+			<md-icon>content_paste</md-icon>
+		</button>
+
+		<div *ngIf='false'>
+		<button
+			md-button
+			cyphTranslate
+			mdTooltip='Settings'
+			mdTooltipPosition='right'
+			routerLink='/account/settings'
+			(click)='click()'
+			*ngIf='accountService.menuExpanded'
+		>
+			<md-icon>settings</md-icon>
+			<span>Settings</span>
+		</button>
+		<button
+			md-icon-button
+			cyphTranslate
+			mdTooltip='Settings'
+			mdTooltipPosition='right'
+			routerLink='/account/settings'
+			(click)='click()'
+			*ngIf='!accountService.menuExpanded'
+		>
+			<md-icon>settings</md-icon>
+		</button>
+		</div>
+
+		<div fxFlex></div>
+
+		<button
+			md-button
+			cyphTranslate
+			mdTooltip='Logout'
+			mdTooltipPosition='right'
+			routerLink='/account/logout'
+			(click)='click()'
+			*ngIf='accountService.menuExpanded'
+		>
+			<md-icon>exit_to_app</md-icon>
+			<span>Logout</span>
+		</button>
+		<button
+			md-icon-button
+			cyphTranslate
+			mdTooltip='Logout'
+			mdTooltipPosition='right'
+			routerLink='/account/logout'
+			(click)='click()'
+			*ngIf='!accountService.menuExpanded'
+		>
+			<md-icon>exit_to_app</md-icon>
+		</button>
+
+		<div></div>
+		<div *ngIf='accountService.menuExpanded'></div>
+	</div>
+
+	<button
+		md-button
+		fxFlex='25px'
+		cyphTranslate
+		class='menu-toggle'
+		mdTooltip='Toggle Menu'
+		mdTooltipPosition='right'
+		(click)='accountService.toggleMenu()'
+	>
+		<md-icon [class.flipped]='!accountService.menuExpanded'>
+			keyboard_arrow_left
+		</md-icon>
+	</button>
+</div>

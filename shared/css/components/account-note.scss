@@ -1,0 +1,29 @@
+@import '../mixins';
+
+md-card.note {
+	margin: 2%;
+	overflow: -webkit-paged-x;
+
+	md-card:not(.editable) {
+		box-shadow: none;
+	}
+}
+
+md-card-title {
+	> div {
+		padding-top: 1.1em;
+	}
+
+	> div, input {
+		text-align: center;
+		font-weight: 600;
+		font-size: 28px;
+		width: 100%;
+	}
+}
+
+md-card-header {
+	top: 14px;
+	position: absolute;
+	right: 25px;
+}

@@ -1,0 +1,16 @@
+@import '../mixins';
+
+:host > .read-only ::ng-deep .ql-toolbar {
+	display: none;
+}
+
+::ng-deep {
+	.ql-toolbar, .ql-container {
+		border: none !important;
+	}
+
+	blockquote {
+		margin-bottom: 0px !important;
+		margin-top: 0px !important;
+	}
+}

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {ChatMessage, IChatMessage} from '../../proto';
 import {IChatData, States} from '../chat';
@@ -7,7 +7,9 @@ import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {events, ISessionMessageData, rpcEvents} from '../session';
+import {Timer} from '../timer';
 import {util} from '../util';
+import {AccountContactsService} from './account-contacts.service';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
@@ -24,15 +26,11 @@ export class ChatService {
 	/** @ignore */
 	private static readonly approximateKeyExchangeTime: number			= 18000;
 
-	/** @ignore */
-	private static readonly messageConfirmationSpinnerTimeout: number	= 5000;
+	/** Time in seconds until chat self-destructs. */
+	private chatSelfDestructTimeout: number								= 5;
 
 	/** @ignore */
-	private static readonly queuedMessageSelfDestructTimeout: number	= 15000;
-
-
-	/** @ignore */
-	private messageChangeLock: LockFunction	= util.lockFunction();
+	private messageChangeLock: LockFunction								= util.lockFunction();
 
 	/** @see IChatData */
 	public chat: IChatData	= {
@@ -43,10 +41,24 @@ export class ChatService {
 		isMessageChanged: false,
 		keyExchangeProgress: 0,
 		messages: new LocalAsyncList<IChatMessage>([]),
-		queuedMessageSelfDestruct: false,
 		state: States.none,
 		unconfirmedMessages: new LocalAsyncValue<{[id: string]: boolean|undefined}>({})
 	};
+
+	/** Indicates whether the chat is self-destructing. */
+	public chatSelfDestruct: boolean									= false;
+
+	/** Indicates whether the chat is self-destructed. */
+	public chatSelfDestructed?: Observable<boolean>;
+
+	/** Indicates whether the chat self-destruction effect should be running. */
+	public chatSelfDestructEffect: boolean								= false;
+
+	/** Timer for chat self-destruction. */
+	public chatSelfDestructTimer?: Timer;
+
+	/** Indicates whether the chat is ready to be displayed. */
+	public initiated: boolean											= false;
 
 	/** This kills the chat. */
 	private close () : void {
@@ -62,7 +74,9 @@ export class ChatService {
 		}
 		else if (!this.chat.isDisconnected) {
 			this.chat.isDisconnected	= true;
-			this.addMessage(this.stringsService.disconnectNotification);
+			if (!this.chatSelfDestruct) {
+				this.addMessage(this.stringsService.disconnectNotification);
+			}
 			this.sessionService.close();
 		}
 	}
@@ -117,6 +131,21 @@ export class ChatService {
 		}
 
 		await this.chat.messages.pushValue({
+			authorID:
+				(
+					author === this.sessionService.appUsername ||
+					author === this.sessionService.localUsername
+				) ?
+					undefined :
+					await (async () =>
+						/* tslint:disable-next-line:deprecation */
+						this.injector.get(AccountContactsService).getContactID(
+							await author.take(1).toPromise()
+						)
+					)().catch(
+						() => undefined
+					)
+			,
 			authorType:
 				author === this.sessionService.appUsername ?
 					ChatMessage.AuthorTypes.App :
@@ -161,40 +190,54 @@ export class ChatService {
 		/* Workaround for Safari bug that breaks initiating a new chat */
 		this.sessionService.send(...[]);
 
+		if (this.chat.queuedMessage) {
+			this.send(
+				this.chat.queuedMessage,
+				this.chatSelfDestruct ?
+					this.chatSelfDestructTimeout * 1000 :
+					undefined,
+				this.chatSelfDestruct
+			);
+		}
+
 		if (this.notificationService) {
 			this.notificationService.notify(this.stringsService.connectedNotification);
 		}
 
-		this.chat.keyExchangeProgress	= 100;
-		this.chat.state					= States.chatBeginMessage;
+		if (!this.chat.noKeyExchangeState) {
+			this.chat.keyExchangeProgress	= 100;
+			this.chat.state					= States.chatBeginMessage;
 
-		await util.sleep(3000);
+			await util.sleep(3000);
 
-		if (<States> this.chat.state === States.aborted) {
-			return;
+			if (<States> this.chat.state === States.aborted) {
+				return;
+			}
+
+			this.sessionService.trigger(events.beginChatComplete);
+
+			this.chat.state	= States.chat;
+
+			for (let i = 0 ; i < 15 ; ++i) {
+				if (this.chatSelfDestruct) {
+					break;
+				}
+				await util.sleep(100);
+			}
+
+			if (!this.chatSelfDestruct) {
+				this.addMessage(
+					this.stringsService.introductoryMessage,
+					undefined,
+					(await util.timestamp()) - 30000,
+					false
+				);
+			}
+
+			this.initiated	= true;
 		}
-
-		this.sessionService.trigger(events.beginChatComplete);
-
-		this.chat.state	= States.chat;
-
-		this.addMessage(
-			this.stringsService.introductoryMessage,
-			undefined,
-			(await util.timestamp()) - 30000,
-			false
-		);
 
 		this.chat.isConnected	= true;
-
-		if (this.chat.queuedMessage) {
-			this.send(
-				this.chat.queuedMessage,
-				this.chat.queuedMessageSelfDestruct ?
-					ChatService.queuedMessageSelfDestructTimeout :
-					undefined
-			);
-		}
 	}
 
 	/** After confirmation dialog, this kills the chat. */
@@ -248,12 +291,12 @@ export class ChatService {
 		});
 	}
 
-	/**
-	 * Sends a message.
-	 * @param message
-	 * @param selfDestructTimeout
-	 */
-	public send (message?: string, selfDestructTimeout?: number) : void {
+	/** Sends a message. */
+	public send (
+		message?: string,
+		selfDestructTimeout?: number,
+		selfDestructChat: boolean = false
+	) : void {
 		if (!message) {
 			message						= this.chat.currentMessage;
 			this.chat.currentMessage	= '';
@@ -263,7 +306,7 @@ export class ChatService {
 		if (message) {
 			this.sessionService.send([
 				rpcEvents.text,
-				{text: {selfDestructTimeout, text: message}}
+				{text: {selfDestructChat, selfDestructTimeout, text: message}}
 			]);
 		}
 	}
@@ -276,7 +319,10 @@ export class ChatService {
 
 	constructor (
 		/** @ignore */
-		private readonly analyticsService: AnalyticsService,
+		private readonly injector: Injector,
+
+		/** @ignore */
+		protected readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
 		protected readonly dialogService: DialogService,
@@ -302,6 +348,10 @@ export class ChatService {
 		});
 
 		this.sessionService.connected.then(async () => {
+			if (this.chat.noKeyExchangeState) {
+				return;
+			}
+
 			this.chat.state	= States.keyExchange;
 
 			const interval		= 250;
@@ -338,35 +388,64 @@ export class ChatService {
 			}
 
 			if (o.author === this.sessionService.localUsername) {
-				(async () => {
-					await this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
-						unconfirmedMessages[o.id]	= false;
-						return unconfirmedMessages;
-					});
+				await this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
+					unconfirmedMessages[o.id]	= true;
+					return unconfirmedMessages;
+				});
 
-					await util.sleep(ChatService.messageConfirmationSpinnerTimeout);
-
-					await this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
-						if (unconfirmedMessages[o.id] === undefined) {
-							throw undefined;
-						}
-						unconfirmedMessages[o.id]	= true;
-						return unconfirmedMessages;
-					});
-				})();
+				await util.sleep();
 			}
 			else {
 				this.sessionService.send([rpcEvents.confirm, {textConfirmation: {id: o.id}}]);
 			}
 
-			this.addMessage(
+			const selfDestructChat	=
+				o.text.selfDestructChat &&
+				(
+					o.text.selfDestructTimeout !== undefined &&
+					!isNaN(o.text.selfDestructTimeout) &&
+					o.text.selfDestructTimeout > 0
+				) &&
+				await (async () => {
+					const messages	= await this.chat.messages.getValue();
+					return messages.length === 0 || (
+						messages.length === 1 &&
+						messages[0].authorType === ChatMessage.AuthorTypes.App
+					);
+				})()
+			;
+
+			if (selfDestructChat) {
+				this.chatSelfDestruct	= true;
+				await this.chat.messages.updateValue(async () => []);
+			}
+
+			await this.addMessage(
 				o.text.text,
 				o.author,
 				o.timestamp,
 				undefined,
-				o.text.selfDestructTimeout,
+				selfDestructChat ? undefined : o.text.selfDestructTimeout,
 				o.id
 			);
+
+			if (selfDestructChat) {
+				this.chatSelfDestructed		=
+					this.chat.messages.watch().map(messages => messages.length === 0)
+				;
+				this.chatSelfDestructTimer	= new Timer(this.chatSelfDestructTimeout * 1000);
+				await this.chatSelfDestructTimer.start();
+				this.chatSelfDestructEffect	= true;
+				await util.sleep(500);
+				await this.chat.messages.updateValue(async () => []);
+				await util.sleep(1000);
+				this.chatSelfDestructEffect	= false;
+
+				if (o.author !== this.sessionService.localUsername) {
+					await util.sleep(10000);
+					this.close();
+				}
+			}
 		});
 
 		this.sessionService.on(rpcEvents.typing, (o: ISessionMessageData) => {

@@ -1,31 +1,19 @@
 /* tslint:disable:object-literal-sort-keys */
 
 import {Routes} from '@angular/router';
-import {AccountContactsComponent} from '../cyph/components/account-contacts.component';
-import {AccountLoginComponent} from '../cyph/components/account-login.component';
-import {AccountProfileComponent} from '../cyph/components/account-profile.component';
-import {AccountRegisterComponent} from '../cyph/components/account-register.component';
-import {AccountSettingsComponent} from '../cyph/components/account-settings.component';
-import {RedirectComponent} from '../cyph/components/redirect.component';
+import {AccountComponent} from '../cyph/components/account.component';
+import {account, retry} from '../cyph/routes';
 import {AppService} from './app.service';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 
 
+account.canActivate	= [AppService];
+
 /** @see Routes */
 export const appRoutes: Routes	= [
-	{
-		path: 'retry', children: [
-			{path: '**', component: RedirectComponent}
-		]
-	},
-	{
-		path: 'account', canActivate: [AppService], children: [
-			{path: 'contacts', component: AccountContactsComponent},
-			{path: 'login', component: AccountLoginComponent},
-			{path: 'profile', component: AccountProfileComponent},
-			{path: 'register', component: AccountRegisterComponent},
-			{path: 'settings', component: AccountSettingsComponent}
-		]
-	},
+	retry,
+	account,
+	{path: 'extension', component: AccountComponent},
+	{path: 'telehealth', component: AccountComponent},
 	{path: '**', canActivate: [AppService], component: EphemeralChatRootComponent}
 ];

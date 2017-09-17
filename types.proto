@@ -1,6 +1,165 @@
 syntax = "proto3";
 
 
+/** Metadata of one contact relationship of an account. */
+message AccountContactRecord {
+	/** Relationship ID. */
+	required string id = 1;
+
+	/** Contact username. */
+	required string username = 2;
+}
+
+/** Metadata of one file stored in an account. */
+message AccountFileRecord {
+	/** Possible file record types. */
+	enum RecordTypes {
+		File = 0;
+		Doc = 1;
+		Form = 2;
+		Note = 3;
+	}
+
+	/** File ID. */
+	required string id = 1;
+
+	/** File MIME type. */
+	required string mediaType = 2;
+
+	/** File name. */
+	required string name = 3;
+
+	/** Type of file record. */
+	required RecordTypes recordType = 4;
+
+	/** Size in bytes. */
+	required double size = 5;
+
+	/** Timestamp of upload or last save. */
+	required double timestamp = 6;
+
+	/** Indicates whether this file was originally an anonymous share. */
+	bool wasAnonymousShare = 7;
+}
+
+/** Shareable reference to a file record. */
+message AccountFileReference {
+	/** File record ID. */
+	required string id = 1;
+
+	/** Symmetric key used for encrypting file. */
+	required bytes key = 2;
+
+	/** Username of owner. */
+	required string owner = 3;
+}
+
+/** Contains a file reference. */
+message AccountFileReferenceContainer {
+	/** Anonymously shared file data. */
+	message AnonymousShare {
+		/** @see AccountFileRecord */
+		required AccountFileRecord accountFileRecord = 1;
+
+		/** @see AccountFileReference.key */
+		required bytes key = 2;
+	}
+
+	/** Signed file data. */
+	message SignedShare {
+		/** @see AccountFileReference */
+		required bytes accountFileReference = 1;
+
+		/** @see AccountFileReference.owner */
+		required string owner = 2;
+	}
+
+	oneof value {
+		AnonymousShare anonymousShare = 1;
+		SignedShare signedShare = 2;
+	}
+}
+
+/** Augmented PAKE login data. */
+message AccountLoginData {
+	/** Randomly generated password for database authentication. */
+	required string secondaryPassword = 1;
+
+	/** Symmetric key for encrypting user data. */
+	required bytes symmetricKey = 2;
+}
+
+/** User public profile. */
+message AccountUserProfile {
+	/** Description. */
+	required string description = 1;
+
+	/** Premium account. */
+	required bool hasPremium = 2;
+
+	/** Full name. */
+	required string name = 3;
+
+	/** Username (capitalized according to user preference). */
+	required string realUsername = 4;
+
+	/** Usernames and similar identifiers for external services like social media. */
+	map<string, string> externalUsernames = 5;
+}
+
+/** User presence. */
+message AccountUserPresence {
+	/** Possible presence statuses. */
+	enum Statuses {
+		Offline = 0;
+		Away = 1;
+		Busy = 2;
+		Online = 3;
+	}
+
+	/** Current presence status. */
+	required Statuses status = 7;
+}
+
+/** AGSE-PKI certificate. */
+message AccountUserPublicKeys {
+	/** Potassium.Box public key. */
+	required bytes encryption = 1;
+
+	/** Potassium.Sign public key. */
+	required bytes signing = 2;
+}
+
+/** AGSE-PKI certificate. */
+message AGSEPKICert {
+	/** @see AccountUserPublicKeys.signing */
+	required AGSEPKICSR agsePKICSR = 1;
+
+	/** Timestamp of certificate issuance. */
+	required double timestamp = 2;
+}
+
+/** AGSE-PKI certificate signing request. */
+message AGSEPKICSR {
+	/** @see AccountUserPublicKeys.signing */
+	required bytes publicSigningKey = 1;
+
+	/** Username. */
+	required string username = 2;
+}
+
+/** AGSE-PKI history of previous issuances. */
+message AGSEPKIIssuanceHistory {
+	/** Public key hashes. */
+	map<string, bool> publicSigningKeyHashes = 1;
+
+	/** Timestamp. */
+	required double timestamp = 2;
+
+	/** Usernames. */
+	map<string, bool> usernames = 3;
+}
+
 /** Castle incoming messages. */
 message CastleIncomingMessages {
 	/** List of received cyphertexts with a particular message ID. */	
@@ -48,6 +207,12 @@ message ChatMessage {
 
 	/** @see SessionMessageData.timestamp */
 	required double timestamp = 6;
+}
+
+/** Chat unconfirmed messages. */
+message ChatUnconfirmedMessages {
+	/** Mapping of message IDs to confirmation statuses. */
+	map<string, bool> unconfirmedMessages = 1;
 }
 
 /** Represents a form that a user can submit responses to. */
@@ -200,11 +365,14 @@ message SessionMessageList {
 
 /** Contains an actual chat text message. */
 message SessionText {
+	/** Indicates whether entire chat should be self-destructed (only valid for first message). */
+	bool selfDestructChat = 1;
+
 	/** Self-destruction timeout. */
-	uint32 selfDestructTimeout = 1;
+	uint32 selfDestructTimeout = 2;
 
 	/** Message text. */
-	required string text = 2;
+	required string text = 3;
 }
 
 /** Receipt confirmation for a SessionText. */

@@ -1,0 +1,108 @@
+<div
+	fxFlexFill
+	fxLayout='row'
+	fxLayoutAlign='center start'
+	class='card-list'
+	[class.initiating]='accountFilesService.showSpinner'
+>
+	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
+		<md-card
+			class='form animated _{{i}}'
+			*ngFor='let form of accountFilesService.filesListFiltered.forms | async; let i = index'
+			[attr.data-index]='i'
+			[class.bounceInRight]='!accountFilesService.initiated'
+			[routerLink]='"/account/forms/" + form.id'
+		>
+			<md-card-header fxLayout='row'>
+				<md-card-title>
+					{{form.name}}
+				</md-card-title>
+				<md-card-subtitle>
+					<div *ngIf='
+						!form.wasAnonymousShare &&
+						accountDatabaseService.currentUser.value &&
+						accountDatabaseService.currentUser.value.user.username !== form.owner
+					'>
+						<span cyphTranslate>Owner:</span>
+						<a [routerLink]='"/account/profile/" + form.owner'>{{form.owner}}</a>
+					</div>
+					<div cyphTranslate *ngIf='form.wasAnonymousShare'>
+						Received from anonymous
+					</div>
+				</md-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Edit'
+						*ngIf='false'
+					>
+						<md-icon>edit</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Delete'
+						(click)='accountFilesService.remove(form); $event.stopPropagation();'
+					>
+						<md-icon>delete</md-icon>
+					</button>
+				</div>
+			</md-card-header>
+		</md-card>
+
+		<h2
+			cyphTranslate
+			*ngIf='(accountFilesService.incomingFilesFiltered.forms | async)?.length > 0'
+		>
+			Incoming Forms
+		</h2>
+
+		<md-card
+			class='form animated _{{i}}'
+			*ngFor='
+				let form of accountFilesService.incomingFilesFiltered.forms | async; let i = index
+			'
+			[attr.data-index]='i'
+			[class.bounceInRight]='!accountFilesService.initiated'
+		>
+			<md-card-header fxLayout='row'>
+				<md-card-title>
+					{{form.name}}
+				</md-card-title>
+				<md-card-subtitle>
+					<div *ngIf='!form.wasAnonymousShare'>
+						<span cyphTranslate>Shared by</span>
+						<a [routerLink]='"/account/profile/" + form.owner'>{{form.owner}}</a>
+					</div>
+					<div cyphTranslate *ngIf='form.wasAnonymousShare'>
+						Shared anonymously
+					</div>
+				</md-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Accept'
+						(click)='accountFilesService.acceptIncomingFile(form)'
+					>
+						<md-icon>check</md-icon>
+					</button>
+					<button
+						md-icon-button
+						cyphTranslate
+						mdTooltip='Reject'
+						(click)='accountFilesService.acceptIncomingFile(form, false)'
+					>
+						<md-icon>close</md-icon>
+					</button>
+				</div>
+			</md-card-header>
+		</md-card>
+	</div>
+
+	<md-progress-spinner
+		mode='indeterminate'
+		*ngIf='accountFilesService.showSpinner'
+	></md-progress-spinner>
+</div>

@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 
 
 /**
@@ -16,6 +16,9 @@ export interface IAsyncList<T> {
 
 	/** Sets value. */
 	setValue (value: T[]) : Promise<void>;
+
+	/** Subscribes to pushed values and deletes them. */
+	subscribeAndPop (f: (value: T) => void|Promise<void>) : Subscription;
 
 	/** Uses a function to transform value. Throwing aborts modification. */
 	updateValue (f: (value: T[]) => Promise<T[]>) : Promise<void>;

@@ -2,6 +2,7 @@
 	<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
 		<cyph-chat-message
 			fxLayout='row'
+			[accounts]='accounts'
 			[message]='message'
 			[mobile]='mobile'
 			[unconfirmedMessages]='unconfirmedMessages | async'

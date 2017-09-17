@@ -19,10 +19,6 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {RouterModule} from '@angular/router';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
 import {CheckoutComponent} from '../cyph/components/checkout.component';
-import {DialogAlertComponent} from '../cyph/components/dialog-alert.component';
-import {DialogConfirmComponent} from '../cyph/components/dialog-confirm.component';
-import {DialogImageComponent} from '../cyph/components/dialog-image.component';
-import {HelpComponent} from '../cyph/components/help.component';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
 import {DataURIProto} from '../cyph/protos';
@@ -59,11 +55,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		RouterComponent
 	],
 	entryComponents: [
-		BetaRegisterComponent,
-		DialogAlertComponent,
-		DialogConfirmComponent,
-		DialogImageComponent,
-		HelpComponent
+		BetaRegisterComponent
 	],
 	imports: [
 		RouterModule.forRoot(appRoutes),

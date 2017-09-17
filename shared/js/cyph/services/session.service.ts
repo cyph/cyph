@@ -33,20 +33,13 @@ export abstract class SessionService implements ISessionService {
 	private resolveOpened: () => void;
 
 	/** @ignore */
-	private resolveSymmetricKey: (symmetricKey: Uint8Array) => void;
+	private resolveSymmetricKey?: (symmetricKey: Uint8Array) => void;
 
 	/** @ignore */
 	protected readonly eventID: string								= util.uuid();
 
 	/** @ignore */
 	protected lastIncomingMessageTimestamp: number					= 0;
-
-	/** @ignore */
-	protected readonly opened: Promise<void>						=
-		new Promise<void>(resolve => {
-			this.resolveOpened	= resolve;
-		})
-	;
 
 	/** @ignore */
 	protected readonly plaintextSendInterval: number				= 1776;
@@ -57,7 +50,10 @@ export abstract class SessionService implements ISessionService {
 	/** @ignore */
 	protected readonly receivedMessages: Set<string>				= new Set<string>();
 
-	/** @ignore */
+	/**
+	 * Session key for misc stuff like locking.
+	 * TODO: Either change how AccountSessionService.setUser works or make this an observable.
+	 */
 	protected readonly symmetricKey: Promise<Uint8Array>			=
 		new Promise<Uint8Array>(resolve => {
 			this.resolveSymmetricKey	= resolve;
@@ -83,6 +79,11 @@ export abstract class SessionService implements ISessionService {
 		this.stringsService.me
 	);
 
+	/** @ignore */
+	public readonly opened: Promise<boolean>				= new Promise<boolean>(resolve => {
+		this.resolveOpened	= () => { resolve(true); };
+	});
+
 	/** @inheritDoc */
 	public readonly remoteUsername: BehaviorSubject<string>	= new BehaviorSubject<string>(
 		this.stringsService.friend
@@ -107,23 +108,6 @@ export abstract class SessionService implements ISessionService {
 	/** @see IChannelHandlers.onConnect */
 	protected async channelOnConnect () : Promise<void> {
 		this.trigger(events.connect);
-
-		while (this.state.isAlive) {
-			await util.sleep(this.plaintextSendInterval);
-
-			if (this.plaintextSendQueue.length < 1) {
-				continue;
-			}
-
-			this.castleService.send(
-				await util.serialize(SessionMessageList, {
-					messages: this.plaintextSendQueue.splice(
-						0,
-						this.plaintextSendQueue.length
-					)
-				})
-			);
-		}
 	}
 
 	/** @see IChannelHandlers.onMessage */
@@ -135,6 +119,27 @@ export abstract class SessionService implements ISessionService {
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
 		this.state.isAlice	= isAlice;
 		this.resolveOpened();
+
+		while (this.state.isAlive) {
+			await util.sleep(this.plaintextSendInterval);
+
+			if (this.plaintextSendQueue.length < 1) {
+				continue;
+			}
+
+			const messages	= this.plaintextSendQueue.splice(
+				0,
+				this.plaintextSendQueue.length
+			);
+
+			await this.castleService.send(await util.serialize(SessionMessageList, {messages}));
+
+			for (const message of messages) {
+				if (message.event === rpcEvents.text) {
+					this.trigger(rpcEvents.text, message.data);
+				}
+			}
+		}
 	}
 
 	/** @ignore */
@@ -210,6 +215,10 @@ export abstract class SessionService implements ISessionService {
 			}
 			case CastleEvents.connect: {
 				this.trigger(events.beginChat);
+
+				if (!this.resolveSymmetricKey) {
+					return;
+				}
 
 				if (this.state.isAlice) {
 					const potassiumService	= this.potassiumService;
@@ -319,7 +328,7 @@ export abstract class SessionService implements ISessionService {
 	public async init (channelID?: string, userID?: string) : Promise<void> {
 		await Promise.all([
 			this.castleService.init(this.potassiumService, this),
-			this.channelService.init(this, channelID, userID, {
+			this.channelService.init(channelID, userID, {
 				onClose: async () => this.channelOnClose(),
 				onConnect: async () => this.channelOnConnect(),
 				onMessage: async (message: Uint8Array) => this.channelOnMessage(message),
@@ -373,15 +382,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public async send (...messages: [string, ISessionMessageAdditionalData][]) : Promise<void> {
-		const newMessages	= await this.newMessages(messages);
-
-		for (const message of newMessages) {
-			if (message.event === rpcEvents.text) {
-				this.trigger(rpcEvents.text, message.data);
-			}
-		}
-
-		this.plaintextSendHandler(newMessages);
+		this.plaintextSendHandler(await this.newMessages(messages));
 	}
 
 	/** @inheritDoc */

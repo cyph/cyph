@@ -1,3 +1,128 @@
-<div>
-	Profile UI
+<div fxFlexFill [class.editing]='isEditorFocused'>
+	<div fxFlexFill fxLayout='row'>
+		<div
+			fxFlex
+			fxFlexFill
+			fxLayout='column'
+			fxLayoutAlign='center stretch'
+			class='profile'
+			*ngIf='user'
+			[class.mobile]='envService.isMobile'
+		>
+			<div fxLayoutAlign='center center'>
+				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch'>
+					<div fxLayoutAlign='center center'>
+						<img
+							class='avatar animated jackInTheBox _1'
+							[ngClass]='userPresence[user.status | async]'
+							alt='Profile Picture'
+							[src]='user.avatar | async'
+						/>
+					</div>
+					<div class='name animated flipInX _2'>{{user.name | async}}</div>
+					<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
+					<div
+						fxLayoutAlign='center center'
+						class='description animated flipInX _3'
+						*ngIf='!editMode'
+					>
+						<div>
+							{{user.description | async | slice:0:maxDescriptionLength}}
+						</div>
+					</div>
+					<md-input-container class='description' *ngIf='editMode && user'>
+						<input
+							mdInput
+							(blur)='isEditorFocused = false'
+							(focus)='isEditorFocused = true'
+							[maxlength]='maxDescriptionLength'
+							[ngModel]='user.description | async'
+							(ngModelChange)='descriptionDraft = $event'
+						/>
+					</md-input-container>
+				</div>
+			</div>
+
+			<div fxLayoutAlign='center center' class='edit-hide status' *ngIf='isCurrentUser'>
+				<md-select
+					fxFlex='50'
+					cyphTranslate
+					[ngModel]='user.status | async'
+					(ngModelChange)='user.accountUserPresence.setValue({status: $event})'
+					name='status'
+					placeholder='Status'
+				>
+					<md-option *ngFor='let status of statuses' [value]='status.value'>
+						{{status.text}}
+					</md-option>
+				</md-select>
+			</div>
+
+			<div
+				class='buttons'
+				fxLayout='row'
+				fxLayoutAlign='center center'
+				fxLayoutGap='16px'
+				*ngIf='!isCurrentUser'
+			>
+				<button
+					md-mini-fab
+					cyphTranslate
+					class='animated flipInX _4'
+					mdTooltip='Add User'
+				>
+					<md-icon>person_add</md-icon>
+				</button>
+
+				<button
+					md-mini-fab
+					cyphTranslate
+					class='animated shrink pulldown flipInX _4'
+					mdTooltip='Open Chat'
+					[routerLink]='"/account/chat/" + user.username'
+				>
+					<md-icon>chat_bubble</md-icon>
+				</button>
+			</div>
+
+			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isCurrentUser'>
+				<div
+					class='file-upload'
+					fxFlex='25'
+					fxLayoutAlign='center'
+					mdTooltip='Share File'
+					mdTooltipPosition='above'
+					cyphDropZone
+					cyphTranslate
+					(fileDrop)='accountFilesService.upload($event.name, $event, user.username)'
+				>
+					<md-icon>file_upload</md-icon>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div fxLayout='row' fxLayoutGap='16px' class='edit-buttons edit-hide' *ngIf='isCurrentUser'>
+		<button
+			md-fab
+			cyphTranslate
+			class='alt'
+			mdTooltip='Close'
+			mdTooltipPosition='above'
+			(click)='editMode = false'
+			*ngIf='editMode'
+		>
+			<md-icon>close</md-icon>
+		</button>
+		<button
+			md-fab
+			cyphTranslate
+			[mdTooltip]='editMode ? "Save" : "Edit"'
+			mdTooltipPosition='above'
+			(click)='editMode ? saveUserDescription() : editMode = true'
+		>
+			<md-icon *ngIf='editMode'>save</md-icon>
+			<md-icon *ngIf='!editMode'>edit</md-icon>
+		</button>
+	</div>
 </div>

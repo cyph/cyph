@@ -8,6 +8,9 @@ import {
 } from '@angular/router';
 import * as $ from 'jquery';
 import {config} from '../cyph/config';
+import {AccountService} from '../cyph/services/account.service';
+import {AccountAuthService} from '../cyph/services/crypto/account-auth.service';
+import {FaviconService} from '../cyph/services/favicon.service';
 import {util} from '../cyph/util';
 import {ChatRootStates} from './enums';
 
@@ -63,10 +66,17 @@ export class AppService implements CanActivate {
 	}
 
 	constructor (
+		accountAuthService: AccountAuthService,
+
+		faviconService: FaviconService,
+
 		titleService: Title,
 
 		/** @ignore */
-		private readonly routerService: Router
+		private readonly routerService: Router,
+
+		/** @ignore */
+		private readonly accountService: AccountService
 	) {
 		try {
 			(<any> navigator).storage.persist();
@@ -75,12 +85,15 @@ export class AppService implements CanActivate {
 
 		titleService.setTitle(util.translate(titleService.getTitle()));
 
-		self.onhashchange	= () => { location.reload(); };
+		self.onhashchange	= () => {
+			if (!locationData.hash.match(/^#?\/?account(\/|$)/)) {
+				location.reload();
+			}
+		};
 
 		(async () => {
 			if (this.isLockedDown) {
 				this.loadComplete();
-				return;
 			}
 
 			const urlSegmentPaths	=
@@ -93,7 +106,29 @@ export class AppService implements CanActivate {
 				).map(o => o.path)
 			;
 
-			if (urlSegmentPaths[0] !== 'account') {
+			let loadingAccounts	= urlSegmentPaths[0] === 'account';
+
+			/* Handle accounts special cases */
+			if (urlSegmentPaths[0] === 'extension') {
+				loadingAccounts						= true;
+				this.accountService.isExtension		= true;
+
+				routerService.navigate(['account', 'contacts']);
+			}
+			else if (urlSegmentPaths[0] === 'telehealth') {
+				loadingAccounts						= true;
+				this.accountService.isTelehealth	= true;
+
+				$(document.body).addClass('telehealth');
+				faviconService.setFavicon('telehealth');
+				routerService.navigate(['account']);
+			}
+
+			if (loadingAccounts) {
+				$(document.body).addClass('loading-accounts');
+				await accountAuthService.ready;
+			}
+			else {
 				while (this.chatRootState === ChatRootStates.blank) {
 					await util.sleep();
 				}

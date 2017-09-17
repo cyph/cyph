@@ -30,14 +30,14 @@ export interface IChatData {
 	/** Message list. */
 	messages: IAsyncList<IChatMessage>;
 
+	/** If true, key exchange state should be skipped. */
+	noKeyExchangeState?: boolean;
+
 	/** The previous message sent. */
 	previousMessage?: string;
 
 	/** Currently queued message for sending post-handshake. */
 	queuedMessage?: string;
-
-	/** Indicates whether the queued message is self-destructing. */
-	queuedMessageSelfDestruct: boolean;
 
 	/** Chat UI state/view. */
 	state: States;

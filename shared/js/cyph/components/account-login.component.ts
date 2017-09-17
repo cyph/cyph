@@ -1,7 +1,8 @@
 import {Component} from '@angular/core';
+import {Router} from '@angular/router';
+import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
-import {util} from '../util';
 
 
 /**
@@ -27,18 +28,28 @@ export class AccountLoginComponent {
 
 	/** Initiates login attempt. */
 	public async submit () : Promise<void> {
-		/* TODO: stop blatantly lying to people */
-
 		this.checking	= true;
 		this.error		= false;
-
-		await util.sleep(util.random(4000, 1500));
-
+		this.error		= !(await this.accountAuthService.login(this.username, this.password));
 		this.checking	= false;
-		this.error		= true;
+
+		if (this.error) {
+			return;
+		}
+
+		this.password	= '';
+		this.username	= '';
+
+		this.routerService.navigate(['account']);
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly routerService: Router,
+
+		/** @see AccountAuthService */
+		public readonly accountAuthService: AccountAuthService,
+
 		/** @see EnvService */
 		public readonly envService: EnvService,
 

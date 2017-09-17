@@ -6,7 +6,6 @@ import {IProto} from '../iproto';
 import {LockFunction} from '../lock-function-type';
 import {StringProto} from '../protos';
 import {IChannelService} from '../service-interfaces/ichannel.service';
-import {ISessionService} from '../service-interfaces/isession.service';
 import {IChannelHandlers} from '../session';
 import {util} from '../util';
 import {DatabaseService} from './database.service';
@@ -67,7 +66,6 @@ export class ChannelService implements IChannelService {
 
 	/** @inheritDoc */
 	public async init (
-		_SESSION_SERVICE: ISessionService,
 		channelID: string|undefined,
 		userID: string|undefined,
 		handlers: IChannelHandlers

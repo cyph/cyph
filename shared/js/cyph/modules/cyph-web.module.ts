@@ -58,6 +58,11 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		SmdFabSpeedDialComponent,
 		SmdFabSpeedDialTrigger
 	],
+	entryComponents: [
+		DialogAlertComponent,
+		DialogConfirmComponent,
+		DialogImageComponent
+	],
 	exports: [
 		BrowserAnimationsModule,
 		BrowserModule,

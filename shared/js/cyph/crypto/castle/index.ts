@@ -8,4 +8,6 @@ export * from './ilocal-user';
 export * from './iremote-user';
 export * from './isymmetric-ratchet-state';
 export * from './pairwise-session';
+export * from './registered-local-user';
+export * from './registered-remote-user';
 export * from './transport';

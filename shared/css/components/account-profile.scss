@@ -1,1 +1,71 @@
 @import '../mixins';
+
+.profile {
+	text-align: center;
+	font-family: Ubuntu;
+
+	&.mobile {
+		.avatar {
+			width: 10em;
+			height: 10em;
+		}
+	}
+
+	.avatar {
+		cursor: auto;
+		width: 18em;
+		height: 18em;
+		box-shadow: 0px 20px 42px 0px rgba(0, 0, 0, 0.3);
+		border-width: 10px !important;
+	}
+
+	.name {
+		font-size: 42px;
+		margin-top: 25px;
+		margin-bottom: 10px;
+		font-weight: 500;
+	}
+
+	.username {
+		font-size: 24px;
+		opacity: 0.6;
+	}
+
+	.description {
+		font-size: 20px;
+		margin: 25px;
+		min-height: 100px;
+		width: 100%;
+
+		input {
+			text-align: center;
+		}
+	}
+}
+
+.file-upload {
+	margin-top: 2rem;
+	min-width: 200px;
+}
+
+.edit-buttons {
+	position: relative;
+	float: right;
+	bottom: 80px;
+	right: 10px;
+}
+
+.edit-hide {
+	@include transition(opacity 0.35s ease-in-out);
+}
+
+@media (max-height: 600px) {
+	:host > .editing .edit-hide {
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	:host > :not(.editing) .edit-hide {
+		opacity: 1;
+	}
+}

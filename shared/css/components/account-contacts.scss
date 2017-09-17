@@ -1,1 +1,35 @@
 @import '../mixins';
+
+.contact {
+	@include transition(filter 0s ease);
+
+	button {
+		@include transition(transform 0s ease);
+	}
+
+	&.active {
+		@include filter(brightness(1.2));
+
+		button {
+			@include transform(scaleX(0));
+		}
+	}
+}
+
+.avatar {
+	&.Online {
+		@include animation-name(pulse);
+	}
+
+	&.Away {
+		@include animation-name(bounce);
+	}
+
+	&.Busy {
+		@include animation-name(pulse);
+	}
+
+	&.Offline {
+		@include animation-name(bounce);
+	}
+}

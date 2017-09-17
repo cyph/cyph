@@ -1,0 +1,32 @@
+<div
+	fxFlexFill
+	fxLayoutAlign='center start'
+	*ngIf='form && (!envService.isProd || accountService.isTelehealth)'
+>
+	<md-card fxFlex='90' class='form'>
+		<md-card-header fxLayout='row'>
+			<md-card-title>{{(form.metadata | async)?.name}}</md-card-title>
+			<div fxFlex fxLayoutAlign='end center'>
+				<button
+					md-icon-button
+					cyphTranslate
+					mdTooltip='Edit Form'
+					*ngIf='false'
+				>
+					<md-icon>edit</md-icon>
+				</button>
+				<button
+					md-icon-button
+					cyphTranslate
+					mdTooltip='Delete Form'
+					(click)='accountFilesService.remove(form.metadata)'
+				>
+					<md-icon>delete</md-icon>
+				</button>
+			</div>
+		</md-card-header>
+		<md-card-content>
+			<cyph-dynamic-form [form]='form.data | async'></cyph-dynamic-form>
+		</md-card-content>
+	</md-card>
+</div>

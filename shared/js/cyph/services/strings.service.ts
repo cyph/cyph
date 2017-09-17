@@ -49,6 +49,17 @@ export class StringsService {
 	public readonly decline: string					= util.translate(`decline`);
 
 	/** @see StringsService */
+	public readonly defaultDescription: string		= util.translate(
+		`Check out my lit new video ;). https://youtu.be/oHg5SJYRHA0`
+	);
+
+	/** @see StringsService */
+	public readonly deleteConfirm: string			= util.translate(`Confirm Deletion`);
+
+	/** @see StringsService */
+	public readonly deleteMessage: string			= util.translate(`Delete`);
+
+	/** @see StringsService */
 	public readonly discard: string					= util.translate(`discard`);
 
 	/** @see StringsService */
@@ -177,7 +188,13 @@ export class StringsService {
 	public readonly no: string						= util.translate(`no`);
 
 	/** @see StringsService */
+	public readonly noteSaved: string				= util.translate(`Note saved!`);
+
+	/** @see StringsService */
 	public readonly ok: string						= util.translate(`ok`);
+
+	/** @see StringsService */
+	public readonly omitted: string					= util.translate(`(omitted)`);
 
 	/** @see StringsService */
 	public readonly oopsTitle: string				= util.translate(`Oops!`);
@@ -285,6 +302,11 @@ export class StringsService {
 	);
 
 	/** @see StringsService */
+	public readonly signupFailed: string			= util.translate(
+		`Signup failed.`
+	);
+
+	/** @see StringsService */
 	public readonly signupMessage: string			= util.translate(
 		`Enjoying the service? Join our waitlist for Cyph v2! ` +
 		`More details are on the way, but the next version of Cyph will include ` +
@@ -296,6 +318,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly timeExtended: string			= util.translate(`Added time to countdown.`);
+
+	/** @see StringsService */
+	public readonly titleRequired: string			= util.translate(`Title required in order to save.`);
 
 	/** @see StringsService */
 	public readonly videoCall: string				= util.translate(`video call`);

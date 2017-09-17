@@ -144,45 +144,50 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		return {
 			progress,
-			result: (async () => {
-				const {hash, timestamp}	= await this.getMetadata(url);
+			result: util.retryUntilSuccessful(
+				async () => {
+					const {hash, timestamp}	= await this.getMetadata(url);
 
-				try {
-					const localData	= await this.cacheGet({hash});
+					try {
+						const localData	= await this.cacheGet({hash});
+						progress.next(100);
+						progress.complete();
+						return {timestamp, value: await util.deserialize(proto, localData)};
+					}
+					catch {}
+
+					progress.next(0);
+
+					const request	= util.requestByteStream({
+						retries: 3,
+						url: await (await this.getStorageRef(url)).getDownloadURL()
+					});
+
+					request.progress.subscribe(
+						n => { progress.next(n); },
+						err => { progress.next(err); }
+					);
+
+					const value	= await request.result;
+
+					if (
+						!this.potassiumService.compareMemory(
+							this.potassiumService.fromBase64(hash),
+							await this.potassiumService.hash.hash(value)
+						)
+					) {
+						const err	= new Error('Invalid data hash.');
+						progress.error(err);
+						throw err;
+					}
+
 					progress.next(100);
 					progress.complete();
-					return {timestamp, value: await util.deserialize(proto, localData)};
-				}
-				catch {}
-
-				const request	= util.requestByteStream({
-					retries: 3,
-					url: await (await this.getStorageRef(url)).getDownloadURL()
-				});
-
-				request.progress.subscribe(
-					n => { progress.next(n); },
-					err => { progress.next(err); }
-				);
-
-				const value	= await request.result;
-
-				if (
-					!this.potassiumService.compareMemory(
-						this.potassiumService.fromBase64(hash),
-						await this.potassiumService.hash.hash(value)
-					)
-				) {
-					const err	= new Error('Invalid data hash.');
-					progress.error(err);
-					throw err;
-				}
-
-				progress.next(100);
-				progress.complete();
-				this.cacheSet(url, value, hash);
-				return {timestamp, value: await util.deserialize(proto, value)};
-			})()
+					this.cacheSet(url, value, hash);
+					return {timestamp, value: await util.deserialize(proto, value)};
+				},
+				25
+			)
 		};
 	}
 
@@ -658,6 +663,32 @@ export class FirebaseDatabaseService extends DatabaseService {
 					listRef.off('child_removed', onChildRemoved);
 					listRef.off('value', onValue);
 				};
+			})();
+
+			return async () => {
+				(await util.waitForValue(() => cleanup))();
+			};
+		});
+	}
+
+	/** @inheritDoc */
+	public watchListKeyPushes (url: string) : Observable<string> {
+		return new Observable<string>(observer => {
+			let cleanup: Function;
+
+			(async () => {
+				const listRef	= await this.getDatabaseRef(url);
+
+				const onChildAdded	= (snapshot: firebase.database.DataSnapshot) => {
+					if (!snapshot || !snapshot.exists() || !snapshot.key) {
+						return;
+					}
+
+					observer.next(snapshot.key);
+				};
+
+				listRef.on('child_added', onChildAdded);
+				cleanup	= () => { listRef.off('child_added', onChildAdded); };
 			})();
 
 			return async () => {

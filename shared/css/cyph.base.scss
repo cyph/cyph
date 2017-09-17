@@ -45,6 +45,39 @@ section {
 	z-index: 2;
 }
 
+.card-list {
+	position: relative;
+
+	&.initiating {
+		overflow-y: hidden;
+		pointer-events: none;
+
+		> div {
+			opacity: 0.5;
+		}
+	}
+
+	> div {
+		min-height: 100%;
+		padding-bottom: 1rem;
+
+		> h2 {
+			text-align: center;
+			border-bottom: 1px solid;
+			padding-bottom: 0.25rem;
+		}
+	}
+
+	md-progress-spinner {
+		position: absolute;
+		top: 50vh;
+		left: 50%;
+		z-index: 1;
+
+		@include transform(translate(-50%, -50%));
+	}
+}
+
 .cyph-foreground {
 	font-size: 1.08rem;
 }
@@ -55,6 +88,26 @@ a {
 
 [md-button], [md-raised-button] {
 	text-transform: uppercase;
+}
+
+[md-icon-button] {
+	&.pulldown md-icon {
+		margin-bottom: -3px;
+	}
+
+	&.shrink md-icon {
+		@include icon-size(23px);
+	}
+}
+
+[md-mini-fab] {
+	&.pulldown md-icon {
+		margin-top: 1px;
+	}
+
+	&.shrink md-icon {
+		@include icon-size(22px);
+	}
 }
 
 [md-dialog-title] {
@@ -86,6 +139,10 @@ button, input, select, textarea {
 	font-family: 'Ubuntu Mono', monospace;
 	word-break: normal;
 	word-wrap: normal;
+}
+
+.flipped {
+	@include transform(rotate(180deg));
 }
 
 .small-font {

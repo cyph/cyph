@@ -326,6 +326,13 @@ export class Util {
 		return `${hour.toString()}:${minute}${ampm}`;
 	}
 
+	/** Sleeps forever. */
+	public async infiniteSleep () : Promise<void> {
+		while (true) {
+			await this.sleep(config.maxInt32);
+		}
+	}
+
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 	public async lock<T> (
 		lock: {promise?: Promise<any>; queue?: string[]; reason?: string},

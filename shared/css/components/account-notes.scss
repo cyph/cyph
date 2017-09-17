@@ -1,0 +1,11 @@
+@import '../mixins';
+
+.note md-card-subtitle {
+	@include word-wrap;
+}
+
+button.mat-fab {
+	position: fixed;
+	right: 42px;
+	bottom: 42px;
+}

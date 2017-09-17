@@ -1,6 +1,7 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
 import {ChatMessage} from '../chat';
+import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 
@@ -14,6 +15,9 @@ import {ScrollService} from '../services/scroll.service';
 	templateUrl: '../../../templates/chat-message.html'
 })
 export class ChatMessageComponent implements OnInit {
+	/** Indicates whether this is the accounts UI. */
+	@Input() public accounts: boolean	= false;
+
 	/** @see ChatMessage.AuthorTypes */
 	public readonly authorTypes: typeof ChatMessage.AuthorTypes	= ChatMessage.AuthorTypes;
 
@@ -46,6 +50,9 @@ export class ChatMessageComponent implements OnInit {
 		private readonly envService: EnvService,
 
 		/** @ignore */
-		private readonly scrollService: ScrollService
+		private readonly scrollService: ScrollService,
+
+		/** @see ChatService */
+		public readonly chatService: ChatService
 	) {}
 }

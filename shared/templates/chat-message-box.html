@@ -67,10 +67,10 @@
 			</button>
 		</div>
 
-		<button md-icon-button [mdMenuTriggerFor]='menu' class='menu-button'>
+		<button md-icon-button [mdMenuTriggerFor]='menu' class='menu-button' *ngIf='!accounts'>
 			<md-icon>more_horiz</md-icon>
 		</button>
-		<md-menu #menu='mdMenu'>
+		<md-menu #menu='mdMenu' *ngIf='!accounts'>
 			<button md-menu-item (click)='chatService.helpButton()'>
 				<md-icon>help_outline</md-icon>
 				<span>{{stringsService.help}}</span>

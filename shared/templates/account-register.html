@@ -1,3 +1,242 @@
-<div>
-	Register UI
+<div
+	fxFlexFill
+	fxLayoutAlign='center center'
+	class='login-form'
+	[class.checking]='checking'
+	*ngIf='!envService.isProd'
+>
+	<md-card fxFlex fxFlex.gt-sm='50'>
+		<md-card-title cyphTranslate>
+			Join Cyph
+		</md-card-title>
+		<md-card-subtitle cyphTranslate>
+			[Subtitle?]
+		</md-card-subtitle>
+		<md-card-content>
+			<form fxFlex fxLayout='column' fxLayoutGap='32px' ngNativeValidate (submit)='submit()'>
+				<md-tab-group
+					[(selectedIndex)]='tabIndex'
+					(selectedIndexChange)='updateRoute(0, $event)'
+				>
+					<md-tab>
+						<ng-template md-tab-label>
+							<md-icon>radio_button_checked</md-icon>
+							&nbsp;
+							<span cyphTranslate>Basic Information</span>
+						</ng-template>
+
+						<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+							<div fxLayout='row' fxLayoutAlign='center center' class='description'>
+								[Description]
+							</div>
+
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<md-form-field fxFlex='60'>
+									<input
+										mdInput
+										cyphTranslate
+										[(ngModel)]='username'
+										name='username'
+										placeholder='Username'
+										required
+									/>
+								</md-form-field>
+							</div>
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<md-form-field fxFlex='60'>
+									<input
+										mdInput
+										cyphTranslate
+										[(ngModel)]='name'
+										name='name'
+										placeholder='Name (or pseudonym)'
+										required
+									/>
+								</md-form-field>
+							</div>
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<md-form-field fxFlex='60'>
+									<input
+										mdInput
+										cyphTranslate
+										[(ngModel)]='email'
+										name='email'
+										type='email'
+										placeholder='Email (optional)'
+									/>
+								</md-form-field>
+							</div>
+						</div>
+					</md-tab>
+					<md-tab>
+						<ng-template md-tab-label>
+							<md-icon *ngIf='tabIndex > 0'>radio_button_checked</md-icon>
+							<md-icon *ngIf='tabIndex <= 0'>radio_button_unchecked</md-icon>
+							&nbsp;
+							<span cyphTranslate>Master Key</span>
+						</ng-template>
+
+						<div fxFlex fxLayout='column' fxLayoutGap='48px'>
+							<div fxLayout='row' fxLayoutAlign='center center' class='description'>
+								[Description]
+							</div>
+
+							<div
+								fxLayout='row'
+								(click)='useXkcdPassphrase = true'
+								[class.master-key-deselected]='!useXkcdPassphrase'
+							>
+								<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										[Securely Generated Master Key]
+									</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<div class='xkcd-passphrase'>
+											{{xkcdPassphrase | async}}
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div
+								fxLayout='row'
+								(click)='useXkcdPassphrase = false'
+								[class.master-key-deselected]='useXkcdPassphrase'
+							>
+								<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										[Custom Master Key]
+									</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<md-form-field fxFlex='60'>
+											<input
+												mdInput
+												cyphTranslate
+												[(ngModel)]='password'
+												name='password'
+												type='password'
+												placeholder='Master Key'
+												[required]='!useXkcdPassphrase'
+											/>
+										</md-form-field>
+									</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<md-form-field fxFlex='60'>
+											<input
+												mdInput
+												cyphTranslate
+												[(ngModel)]='passwordConfirmation'
+												name='passwordConfirmation'
+												type='password'
+												placeholder='Confirm Master Key'
+												[required]='!useXkcdPassphrase'
+											/>
+										</md-form-field>
+									</div>
+								</div>
+							</div>
+						</div>
+					</md-tab>
+					<md-tab>
+						<ng-template md-tab-label>
+							<md-icon *ngIf='tabIndex > 1'>radio_button_checked</md-icon>
+							<md-icon *ngIf='tabIndex <= 1'>radio_button_unchecked</md-icon>
+							&nbsp;
+							<span cyphTranslate>Lock Screen Password</span>
+						</ng-template>
+
+						<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+							<div fxLayout='row' fxLayoutAlign='center center' class='description'>
+								[Description]
+							</div>
+
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<md-form-field fxFlex='60'>
+									<input
+										mdInput
+										cyphTranslate
+										[(ngModel)]='lockScreenPassword'
+										name='lockScreenPassword'
+										type='password'
+										placeholder='Lock Screen Password'
+										required
+									/>
+								</md-form-field>
+							</div>
+
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<md-form-field fxFlex='60'>
+									<input
+										mdInput
+										cyphTranslate
+										[(ngModel)]='lockScreenTimeout'
+										name='lockScreenTimeout'
+										type='number'
+										placeholder='Lock Screen Timeout (days)'
+									/>
+								</md-form-field>
+							</div>
+						</div>
+					</md-tab>
+					<md-tab>
+						<ng-template md-tab-label>
+							<md-icon *ngIf='tabIndex > 2'>radio_button_checked</md-icon>
+							<md-icon *ngIf='tabIndex <= 2'>radio_button_unchecked</md-icon>
+							&nbsp;
+							<span cyphTranslate>Confirm</span>
+						</ng-template>
+
+						<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+							<div fxLayout='row' fxLayoutAlign='center center' class='description'>
+								[Description]
+							</div>
+
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<h3
+									class='cyph-banner warn'
+									[style.visibility]='error ? "visible" : "hidden"'
+								>
+									{{stringsService.signupFailed}}
+								</h3>
+							</div>
+
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<span cyphTranslate>Username:</span>
+								&nbsp;
+								<span>{{username}}</span>
+							</div>
+
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<span cyphTranslate>Name:</span>
+								&nbsp;
+								<span>{{name}}</span>
+							</div>
+
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<span cyphTranslate>Email:</span>
+								&nbsp;
+								<span>{{email || stringsService.omitted}}</span>
+							</div>
+
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<span cyphTranslate>Password:</span>
+								&nbsp;
+								<span>********************</span>
+							</div>
+						</div>
+					</md-tab>
+				</md-tab-group>
+				
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<button md-button (click)='updateRoute(1)' *ngIf='tabIndex !== 3'>
+						<span cyphTranslate>Next</span>
+					</button>
+					<button md-button type='submit' *ngIf='tabIndex === 3'>
+						<span cyphTranslate>Register</span>
+					</button>
+				</div>
+			</form>
+		</md-card-content>
+		<md-progress-spinner mode='indeterminate'></md-progress-spinner>
+	</md-card>
 </div>

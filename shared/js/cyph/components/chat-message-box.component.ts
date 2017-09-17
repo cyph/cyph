@@ -32,6 +32,9 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	/** @ignore */
 	private readonly mobileButtonLock: {}		= {};
 
+	/** Indicates whether this is the accounts UI. */
+	@Input() public accounts: boolean	= false;
+
 	/** @see FileInput.accept */
 	@Input() public fileAccept: string;
 
