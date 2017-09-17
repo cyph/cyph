@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
 import {IAccountFileRecord, IForm} from '../../proto';
 import {AccountFilesService} from '../services/account-files.service';
+import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
 
@@ -58,6 +59,9 @@ export class AccountFormComponent implements OnInit {
 
 		/** @ignore */
 		private readonly accountAuthService: AccountAuthService,
+
+		/** @see AccountService */
+		public readonly accountService: AccountService,
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
