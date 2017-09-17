@@ -38,6 +38,10 @@
 		background-repeat: repeat;
 		background-position-x: 50%;
 		z-index: 0;
+
+		~ * {
+			position: relative;
+		}
 	}
 
 	.avatar {
