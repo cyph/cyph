@@ -243,6 +243,10 @@ body.mobile #hero-section {
 	height: 35em;
 	display: flex;
 
+	&.disrupt {
+		height: 80em;
+	}
+
 	.hero-description {
 		height: auto;
 		font-size: 1.3em;
