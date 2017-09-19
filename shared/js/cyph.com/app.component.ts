@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {ConfigService} from '../cyph/services/config.service';
 import {EnvService} from '../cyph/services/env.service';
+import {SignupService} from '../cyph/services/signup.service';
 import {AppService} from './app.service';
 import {DemoService} from './demo.service';
 import {Promos, States} from './enums';
@@ -31,6 +32,9 @@ export class AppComponent {
 		public readonly demoService: DemoService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see SignupService */
+		public readonly signupService: SignupService
 	) {}
 }

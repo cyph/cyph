@@ -203,7 +203,11 @@
 			</div>
 		</md-sidenav>
 
-		<section id='hero-section' [class.promo]='appService.promo !== undefined'>
+		<section
+			id='hero-section'
+			[class.promo]='appService.promo !== undefined'
+			[class.disrupt]='appService.promo === promos.disrupt'
+		>
 			<div class='hero-foreground'>
 				<div
 					fxLayout='row'
@@ -231,7 +235,7 @@
 							/>
 						</md-card-title>
 						<md-card-content>
-							<p>
+							<p *ngIf='appService.promo !== promos.disrupt'>
 								<span cyphTranslate>Welcome</span>
 								<span *ngIf='appService.promo === promos.betalist'>
 									Betalisters!
@@ -261,13 +265,61 @@
 									<span cyphTranslate>listeners!</span>
 								</span>
 							</p>
-							<p>
+							<p *ngIf='appService.promo !== promos.disrupt'>
 								<a routerLink='/register' cyphTranslate>Sign up now</a>,
 								<span cyphTranslate>
 									and you'll get extra priority on our waitlist
 									for a Cyph beta account.
 								</span>
 							</p>
+							<span *ngIf='appService.promo === promos.disrupt'>
+								<p>
+									<span cyphTranslate>
+										The big new Cyph v2 beta release is right around the corner!
+										Check out the preview
+									</span>
+									<a
+										cyphTranslate
+										href='https://cyph.team/v2preview'
+										target='_blank'
+									>here</a>.
+								</p>
+								<p cyphTranslate>
+									To scale up and reward our biggest supporters with early access
+									to claim usernames, we're launching a crowdfunding campaign.
+									Submit your info for special access to a hidden perk when it
+									goes live.
+								</p>
+								<div fxLayout='row' fxLayoutAlign='center center'>
+									<md-form-field fxFlex='80'>
+										<input
+											mdInput
+											cyphTranslate
+											[(ngModel)]='signupService.data.email'
+											name='email'
+											type='email'
+											placeholder='Email'
+											required
+										/>
+									</md-form-field>
+								</div>
+								<div fxLayout='row' fxLayoutAlign='center center'>
+									<md-form-field fxFlex='80'>
+										<input
+											mdInput
+											cyphTranslate
+											[(ngModel)]='signupService.data.name'
+											name='name'
+											placeholder='Name (optional)'
+										/>
+									</md-form-field>
+								</div>
+								<div fxLayout='row' fxLayoutAlign='center end'>
+									<button md-button type='submit' cyphTranslate>
+										Submit
+									</button>
+								</div>
+							</span>
 						</md-card-content>
 					</md-card>
 				</div>

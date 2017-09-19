@@ -194,6 +194,18 @@ body:not(.mobile) #hero-section {
 	&.promo {
 		min-height: 75em;
 
+		&.disrupt {
+			height: calc(100vh - 200px + 40em);
+
+			.hero-foreground {
+				height: calc(100% - 40em);
+
+				.hero-foreground-main {
+					top: calc(50% + 40em);
+				}
+			}
+		}
+
 		.hero-foreground {
 			height: calc(100% - 15em);
 

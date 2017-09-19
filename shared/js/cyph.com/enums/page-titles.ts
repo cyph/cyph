@@ -31,6 +31,11 @@ export class PageTitles {
 	);
 
 	/** @see PageTitles */
+	public readonly disrupt: string			= util.translate(
+		`Cyph — TechCrunch Disrupt SF 2017`
+	);
+
+	/** @see PageTitles */
 	public readonly donate: string			= util.translate(
 		`Donate to Cyph`
 	);

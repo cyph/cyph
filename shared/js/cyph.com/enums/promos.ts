@@ -3,6 +3,7 @@
  */
 export enum Promos {
 	betalist,
+	disrupt,
 	jjgo,
 	judgejohn,
 	mybrother,

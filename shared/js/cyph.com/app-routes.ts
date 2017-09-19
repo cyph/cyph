@@ -14,6 +14,7 @@ export const appRoutes: Routes	= [
 	{path: 'checkout/:category/:item', component: AppComponent},
 	{path: 'contact', component: AppComponent},
 	{path: 'contact/:email', component: AppComponent},
+	{path: 'disrupt', component: AppComponent},
 	{path: 'donate', component: AppComponent},
 	{path: 'faq', component: AppComponent},
 	{path: 'features', component: AppComponent},
