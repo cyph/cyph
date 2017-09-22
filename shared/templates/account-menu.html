@@ -18,12 +18,12 @@
 		<div *ngIf='accountService.menuExpanded'></div>
 
 		<button
-			md-button
+			mat-button
 			fxFlex='2em'
 			cyphTranslate
 			class='home'
-			mdTooltip='Home'
-			mdTooltipPosition='right'
+			matTooltip='Home'
+			matTooltipPosition='right'
 			routerLink='/account'
 			(click)='click()'
 			*ngIf='accountService.menuExpanded'
@@ -39,11 +39,11 @@
 			/>
 		</button>
 		<button
-			md-icon-button
+			mat-icon-button
 			cyphTranslate
 			class='home'
-			mdTooltip='Home'
-			mdTooltipPosition='right'
+			matTooltip='Home'
+			matTooltipPosition='right'
 			routerLink='/account'
 			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
@@ -63,8 +63,8 @@
 			<div [fxFlex]='accountService.menuExpanded ? "60" : "6em"'>
 				<img
 					cyphTranslate
-					mdTooltip='Profile'
-					mdTooltipPosition='right'
+					matTooltip='Profile'
+					matTooltipPosition='right'
 					class='avatar animated flipInX _1'
 					[ngClass]='userPresence[
 						accountDatabaseService.currentUser.value.user.status | async
@@ -80,82 +80,82 @@
 		<div></div>
 
 		<button
-			md-button
+			mat-button
 			cyphTranslate
-			mdTooltip='Contacts'
-			mdTooltipPosition='right'
+			matTooltip='Contacts'
+			matTooltipPosition='right'
 			routerLink='/account/contacts'
 			(click)='click()'
 			*ngIf='accountService.menuExpanded'
 		>
-			<md-icon>people</md-icon>
+			<mat-icon>people</mat-icon>
 			<span>Contacts</span>
 		</button>
 		<button
-			md-icon-button
+			mat-icon-button
 			cyphTranslate
-			mdTooltip='Contacts'
-			mdTooltipPosition='right'
+			matTooltip='Contacts'
+			matTooltipPosition='right'
 			routerLink='/account/contacts'
 			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
 		>
-			<md-icon>people</md-icon>
+			<mat-icon>people</mat-icon>
 		</button>
 
 		<button
-			md-button
+			mat-button
 			cyphTranslate
-			mdTooltip='Files'
-			mdTooltipPosition='right'
+			matTooltip='Files'
+			matTooltipPosition='right'
 			routerLink='/account/files'
 			(click)='click()'
 			*ngIf='accountService.menuExpanded'
 		>
-			<md-icon>folder</md-icon>
+			<mat-icon>folder</mat-icon>
 			<span>Files</span>
 		</button>
 		<button
-			md-icon-button
+			mat-icon-button
 			cyphTranslate
-			mdTooltip='Files'
-			mdTooltipPosition='right'
+			matTooltip='Files'
+			matTooltipPosition='right'
 			routerLink='/account/files'
 			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
 		>
-			<md-icon>folder</md-icon>
+			<mat-icon>folder</mat-icon>
 		</button>
 
 		<button
-			md-button
+			mat-button
 			cyphTranslate
-			mdTooltip='Notes'
-			mdTooltipPosition='right'
+			matTooltip='Notes'
+			matTooltipPosition='right'
 			routerLink='/account/notes'
 			(click)='click()'
 			*ngIf='accountService.menuExpanded'
 		>
-			<md-icon>create</md-icon>
+			<mat-icon>create</mat-icon>
 			<span>Notes</span>
 		</button>
 		<button
-			md-icon-button
+			mat-icon-button
 			cyphTranslate
-			mdTooltip='Notes'
-			mdTooltipPosition='right'
+			matTooltip='Notes'
+			matTooltipPosition='right'
 			routerLink='/account/notes'
 			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
 		>
-			<md-icon>create</md-icon>
+			<mat-icon>create</mat-icon>
 		</button>
 
 		<button
-			md-button
+			mat-button
 			cyphTranslate
-			mdTooltip='Docs'
-			mdTooltipPosition='right'
+			matTooltip='Docs'
+			matTooltipPosition='right'
 			routerLink='/account/docs'
 			(click)='click()'
 			*ngIf='
@@ -163,14 +163,14 @@
 				accountService.menuExpanded
 			'
 		>
-			<md-icon>library_books</md-icon>
+			<mat-icon>library_books</mat-icon>
 			<span>Docs</span>
 		</button>
 		<button
-			md-icon-button
+			mat-icon-button
 			cyphTranslate
-			mdTooltip='Docs'
-			mdTooltipPosition='right'
+			matTooltip='Docs'
+			matTooltipPosition='right'
 			routerLink='/account/docs'
 			(click)='click()'
 			*ngIf='
@@ -178,14 +178,14 @@
 				!accountService.menuExpanded
 			'
 		>
-			<md-icon>library_books</md-icon>
+			<mat-icon>library_books</mat-icon>
 		</button>
 
 		<button
-			md-button
+			mat-button
 			cyphTranslate
-			mdTooltip='Forms'
-			mdTooltipPosition='right'
+			matTooltip='Forms'
+			matTooltipPosition='right'
 			routerLink='/account/forms'
 			(click)='click()'
 			*ngIf='
@@ -193,14 +193,14 @@
 				accountService.menuExpanded
 			'
 		>
-			<md-icon>content_paste</md-icon>
+			<mat-icon>content_paste</mat-icon>
 			<span>Forms</span>
 		</button>
 		<button
-			md-icon-button
+			mat-icon-button
 			cyphTranslate
-			mdTooltip='Forms'
-			mdTooltipPosition='right'
+			matTooltip='Forms'
+			matTooltipPosition='right'
 			routerLink='/account/forms'
 			(click)='click()'
 			*ngIf='
@@ -208,59 +208,59 @@
 				!accountService.menuExpanded
 			'
 		>
-			<md-icon>content_paste</md-icon>
+			<mat-icon>content_paste</mat-icon>
 		</button>
 
 		<div *ngIf='false'>
 		<button
-			md-button
+			mat-button
 			cyphTranslate
-			mdTooltip='Settings'
-			mdTooltipPosition='right'
+			matTooltip='Settings'
+			matTooltipPosition='right'
 			routerLink='/account/settings'
 			(click)='click()'
 			*ngIf='accountService.menuExpanded'
 		>
-			<md-icon>settings</md-icon>
+			<mat-icon>settings</mat-icon>
 			<span>Settings</span>
 		</button>
 		<button
-			md-icon-button
+			mat-icon-button
 			cyphTranslate
-			mdTooltip='Settings'
-			mdTooltipPosition='right'
+			matTooltip='Settings'
+			matTooltipPosition='right'
 			routerLink='/account/settings'
 			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
 		>
-			<md-icon>settings</md-icon>
+			<mat-icon>settings</mat-icon>
 		</button>
 		</div>
 
 		<div fxFlex></div>
 
 		<button
-			md-button
+			mat-button
 			cyphTranslate
-			mdTooltip='Logout'
-			mdTooltipPosition='right'
+			matTooltip='Logout'
+			matTooltipPosition='right'
 			routerLink='/account/logout'
 			(click)='click()'
 			*ngIf='accountService.menuExpanded'
 		>
-			<md-icon>exit_to_app</md-icon>
+			<mat-icon>exit_to_app</mat-icon>
 			<span>Logout</span>
 		</button>
 		<button
-			md-icon-button
+			mat-icon-button
 			cyphTranslate
-			mdTooltip='Logout'
-			mdTooltipPosition='right'
+			matTooltip='Logout'
+			matTooltipPosition='right'
 			routerLink='/account/logout'
 			(click)='click()'
 			*ngIf='!accountService.menuExpanded'
 		>
-			<md-icon>exit_to_app</md-icon>
+			<mat-icon>exit_to_app</mat-icon>
 		</button>
 
 		<div></div>
@@ -268,16 +268,16 @@
 	</div>
 
 	<button
-		md-button
+		mat-button
 		fxFlex='25px'
 		cyphTranslate
 		class='menu-toggle'
-		mdTooltip='Toggle Menu'
-		mdTooltipPosition='right'
+		matTooltip='Toggle Menu'
+		matTooltipPosition='right'
 		(click)='accountService.toggleMenu()'
 	>
-		<md-icon [class.flipped]='!accountService.menuExpanded'>
+		<mat-icon [class.flipped]='!accountService.menuExpanded'>
 			keyboard_arrow_left
-		</md-icon>
+		</mat-icon>
 	</button>
 </div>

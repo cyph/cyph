@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ComponentType, MdDialog, MdSnackBar} from '@angular/material';
+import {ComponentType, MatDialog, MatSnackBar} from '@angular/material';
 import {SafeUrl} from '@angular/platform-browser';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
@@ -123,10 +123,10 @@ export class MaterialDialogService implements DialogService {
 
 	constructor (
 		/** @ignore */
-		private readonly mdDialog: MdDialog,
+		private readonly mdDialog: MatDialog,
 
 		/** @ignore */
-		private readonly mdSnackbar: MdSnackBar,
+		private readonly mdSnackbar: MatSnackBar,
 
 		/** @ignore */
 		private readonly stringsService: StringsService

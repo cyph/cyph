@@ -21,12 +21,12 @@
 			[@slideInOutBottom]='"in"'
 		>
 			<button
-				md-icon-button
-				mdTooltip='Send'
+				mat-icon-button
+				matTooltip='Send'
 				(click)='mobileButtonHandlers.send()'
 				cyphTranslate
 			>
-				<md-icon>send</md-icon>
+				<mat-icon>send</mat-icon>
 			</button>
 		</div>
 		<div
@@ -35,31 +35,31 @@
 			[@slideInOutBottom]='"in"'
 		>
 			<button
-				md-icon-button
-				mdTooltip='Video Call'
+				mat-icon-button
+				matTooltip='Video Call'
 				(click)='mobileButtonHandlers.videoCall()'
 				[disabled]='!p2pService.isEnabled'
 				*ngIf='!p2pService.isActive'
 				cyphTranslate
 			>
-				<md-icon>video_call</md-icon>
+				<mat-icon>video_call</mat-icon>
 			</button>
 			<button
-				md-icon-button
-				mdTooltip='Voice Call'
+				mat-icon-button
+				matTooltip='Voice Call'
 				(click)='mobileButtonHandlers.voiceCall()'
 				[disabled]='!p2pService.isEnabled'
 				*ngIf='!p2pService.isActive'
 				cyphTranslate
 			>
-				<md-icon>call</md-icon>
+				<mat-icon>call</mat-icon>
 			</button>
 			<button
-				md-icon-button
-				mdTooltip='Send File or Photo'
+				mat-icon-button
+				matTooltip='Send File or Photo'
 				cyphTranslate
 			>
-				<md-icon>attach_file</md-icon>
+				<mat-icon>attach_file</mat-icon>
 				<cyph-file-input
 					[accept]='fileAccept'
 					(change)='mobileButtonHandlers.fileTransfer($event)'
@@ -67,88 +67,88 @@
 			</button>
 		</div>
 
-		<button md-icon-button [mdMenuTriggerFor]='menu' class='menu-button' *ngIf='!accounts'>
-			<md-icon>more_horiz</md-icon>
+		<button mat-icon-button [matMenuTriggerFor]='menu' class='menu-button' *ngIf='!accounts'>
+			<mat-icon>more_horiz</mat-icon>
 		</button>
-		<md-menu #menu='mdMenu' *ngIf='!accounts'>
-			<button md-menu-item (click)='chatService.helpButton()'>
-				<md-icon>help_outline</md-icon>
+		<mat-menu #menu='matMenu' *ngIf='!accounts'>
+			<button mat-menu-item (click)='chatService.helpButton()'>
+				<mat-icon>help_outline</mat-icon>
 				<span>{{stringsService.help}}</span>
 			</button>
-			<button md-menu-item (click)='chatService.disconnectButton()'>
-				<md-icon>close</md-icon>
+			<button mat-menu-item (click)='chatService.disconnectButton()'>
+				<mat-icon>close</mat-icon>
 				<span>{{stringsService.disconnect}}</span>
 			</button>
-		</md-menu>
+		</mat-menu>
 	</div>
 
-	<smd-fab-speed-dial
+	<smat-fab-speed-dial
 		[open]='isSpeedDialOpen'
 		(mouseleave)='isSpeedDialOpen = false'
 		*ngIf='!envService.isMobile'
 	>
-		<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
-			<button md-fab>
-				<md-icon>add</md-icon>
+		<smat-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
+			<button mat-fab>
+				<mat-icon>add</mat-icon>
 			</button>
-		</smd-fab-trigger>
-		<smd-fab-actions>
+		</smat-fab-trigger>
+		<smat-fab-actions>
 			<button
-				md-mini-fab
+				mat-mini-fab
 				cyphTranslate
-				mdTooltip='Send File or Photo'
-				mdTooltipPosition='left'
+				matTooltip='Send File or Photo'
+				matTooltipPosition='left'
 			>
-				<md-icon>attach_file</md-icon>
+				<mat-icon>attach_file</mat-icon>
 				<cyph-file-input
 					[accept]='fileAccept'
 					(change)='fileTransferService.send($event)'
 				></cyph-file-input>
 			</button>
 			<button
-				md-mini-fab
+				mat-mini-fab
 				cyphTranslate
-				mdTooltip='Voice Call'
-				mdTooltipPosition='left'
+				matTooltip='Voice Call'
+				matTooltipPosition='left'
 				[disabled]='!p2pService.isEnabled'
 				*ngIf='!p2pService.isActive'
 				(click)='p2pService.voiceCallButton()'
 			>
-				<md-icon>call</md-icon>
+				<mat-icon>call</mat-icon>
 			</button>
 			<button
-				md-mini-fab
+				mat-mini-fab
 				cyphTranslate
-				mdTooltip='Video Call'
-				mdTooltipPosition='left'
+				matTooltip='Video Call'
+				matTooltipPosition='left'
 				[disabled]='!p2pService.isEnabled'
 				*ngIf='!p2pService.isActive'
 				(click)='p2pService.videoCallButton()'
 			>
-				<md-icon>video_call</md-icon>
+				<mat-icon>video_call</mat-icon>
 			</button>
 			<button
-				md-mini-fab
+				mat-mini-fab
 				cyphTranslate
 				class='alt'
-				[mdTooltip]='stringsService.help'
-				mdTooltipPosition='left'
+				[matTooltip]='stringsService.help'
+				matTooltipPosition='left'
 				(click)='chatService.helpButton()'
 			>
-				<md-icon>help_outline</md-icon>
+				<mat-icon>help_outline</mat-icon>
 			</button>
 			<button
-				md-mini-fab
+				mat-mini-fab
 				cyphTranslate
 				class='alt'
-				[mdTooltip]='stringsService.disconnect'
-				mdTooltipPosition='left'
+				[matTooltip]='stringsService.disconnect'
+				matTooltipPosition='left'
 				(click)='chatService.disconnectButton()'
 			>
-				<md-icon>close</md-icon>
+				<mat-icon>close</mat-icon>
 			</button>
-		</smd-fab-actions>
-	</smd-fab-speed-dial>
+		</smat-fab-actions>
+	</smat-fab-speed-dial>
 
 	<h3
 		fxFlex

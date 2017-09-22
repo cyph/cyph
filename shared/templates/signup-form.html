@@ -17,55 +17,55 @@
 				*ngIf='!envService.isMobile'
 			>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-form-field fxFlex='80'>
+					<mat-form-field fxFlex='80'>
 						<input
-							mdInput
+							matInput
 							cyphTranslate
 							[(ngModel)]='signupService.data.email'
 							name='email'
 							type='email'
 							placeholder='Email'
 						/>
-					</md-form-field>
+					</mat-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-form-field fxFlex='80'>
+					<mat-form-field fxFlex='80'>
 						<input
-							mdInput
+							matInput
 							cyphTranslate
 							name='password'
 							type='password'
 							placeholder='Password'
 							[disabled]='true'
 						/>
-					</md-form-field>
+					</mat-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-form-field fxFlex='80'>
+					<mat-form-field fxFlex='80'>
 						<input
-							mdInput
+							matInput
 							cyphTranslate
 							name='confirmPassword'
 							type='password'
 							placeholder='Confirm Password'
 							[disabled]='true'
 						/>
-					</md-form-field>
+					</mat-form-field>
 				</div>
 				<div *ngIf='invite' fxLayout='row' fxLayoutAlign='center center'>
-					<md-form-field fxFlex='80'>
+					<mat-form-field fxFlex='80'>
 						<input
-							mdInput
+							matInput
 							cyphTranslate
 							[(ngModel)]='signupService.data.inviteCode'
 							name='inviteCode'
 							type='text'
 							placeholder='Invite Code'
 						/>
-					</md-form-field>
+					</mat-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center end' class='register-button'>
-					<button md-button type='submit' [disabled]='true' cyphTranslate>
+					<button mat-button type='submit' [disabled]='true' cyphTranslate>
 						Register
 					</button>
 				</div>
@@ -88,7 +88,7 @@
 					<br />
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center end' class='register-button'>
-					<button md-button type='submit' cyphTranslate>
+					<button mat-button type='submit' cyphTranslate>
 						Waitlist Signup
 					</button>
 				</div>
@@ -100,9 +100,9 @@
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-form-field fxFlex='80'>
+					<mat-form-field fxFlex='80'>
 						<input
-							mdInput
+							matInput
 							cyphTranslate
 							[(ngModel)]='signupService.data.email'
 							name='email'
@@ -110,12 +110,12 @@
 							placeholder='Email'
 							required
 						/>
-					</md-form-field>
+					</mat-form-field>
 				</div>
 				<div *ngIf='invite' fxLayout='row' fxLayoutAlign='center center'>
-					<md-form-field fxFlex='80'>
+					<mat-form-field fxFlex='80'>
 						<input
-							mdInput
+							matInput
 							cyphTranslate
 							[(ngModel)]='signupService.data.inviteCode'
 							name='inviteCode'
@@ -123,10 +123,10 @@
 							placeholder='Invite Code'
 							required
 						/>
-					</md-form-field>
+					</mat-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center end'>
-					<button md-button type='submit' cyphTranslate>
+					<button mat-button type='submit' cyphTranslate>
 						Waitlist Signup
 					</button>
 				</div>
@@ -138,18 +138,18 @@
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<md-form-field fxFlex='80'>
+					<mat-form-field fxFlex='80'>
 						<input
-							mdInput
+							matInput
 							cyphTranslate
 							[(ngModel)]='signupService.data.name'
 							name='name'
 							placeholder='Name (optional)'
 						/>
-					</md-form-field>
+					</mat-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center end'>
-					<button md-button type='submit' cyphTranslate>
+					<button mat-button type='submit' cyphTranslate>
 						Waitlist Signup
 					</button>
 				</div>

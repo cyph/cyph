@@ -1,15 +1,15 @@
 @import '../mixins';
 
-md-card.note {
+mat-card.note {
 	margin: 2%;
 	overflow: -webkit-paged-x;
 
-	md-card:not(.editable) {
+	mat-card:not(.editable) {
 		box-shadow: none;
 	}
 }
 
-md-card-title {
+mat-card-title {
 	> div {
 		padding-top: 1.1em;
 	}
@@ -22,7 +22,7 @@ md-card-title {
 	}
 }
 
-md-card-header {
+mat-card-header {
 	top: 14px;
 	position: absolute;
 	right: 25px;

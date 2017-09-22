@@ -19,11 +19,11 @@
 		right: 10px;
 		z-index: 30;
 
-		button md-icon {
+		button mat-icon {
 			opacity: 0.75;
 		}
 
-		button[disabled] md-icon {
+		button[disabled] mat-icon {
 			opacity: 0.25;
 		}
 	}

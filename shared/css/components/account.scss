@@ -74,7 +74,7 @@
 		border: dashed white 1.5px;
 		cursor: pointer;
 
-		md-icon {
+		mat-icon {
 			pointer-events: none;
 
 			@include icon-size(42px);
@@ -100,7 +100,7 @@
 	}
 
 	.login-form {
-		md-progress-spinner {
+		mat-progress-spinner {
 			display: none;
 			position: absolute;
 			top: 50%;
@@ -114,11 +114,11 @@
 		}
 
 		&.checking {
-			md-progress-spinner {
+			mat-progress-spinner {
 				display: block;
 			}
 
-			md-card > :not(md-progress-spinner) {
+			mat-card > :not(mat-progress-spinner) {
 				opacity: 0.15;
 			}
 		}

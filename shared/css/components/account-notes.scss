@@ -1,6 +1,6 @@
 @import '../mixins';
 
-.note md-card-subtitle {
+.note mat-card-subtitle {
 	@include word-wrap;
 }
 

@@ -4,7 +4,7 @@
 	id='main'
 	[class.unisection-mode]='appService.state !== states.home'
 >
-	<md-toolbar id='main-toolbar' class='wow animated fadeInDownBig' [fxHide]='sidenav.opened'>
+	<mat-toolbar id='main-toolbar' class='wow animated fadeInDownBig' [fxHide]='sidenav.opened'>
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row'>
@@ -22,10 +22,10 @@
 						fxHide.lt-lg class='link-wrapper-outer right'
 					>
 						<div class='link-wrapper-inner' cyphTranslate>
-							<a md-button routerLink='/intro'>Intro</a>
-							<a md-button routerLink='/features'>Features</a>
-							<a md-button routerLink='/about'>About</a>
-							<a md-button routerLink='/gettingstarted'>Getting Started</a>
+							<a mat-button routerLink='/intro'>Intro</a>
+							<a mat-button routerLink='/features'>Features</a>
+							<a mat-button routerLink='/about'>About</a>
+							<a mat-button routerLink='/gettingstarted'>Getting Started</a>
 						</div>
 					</div>
 				</div>
@@ -33,7 +33,7 @@
 
 			<div fxFlexAlign='center' fxLayout='column' fxLayoutAlign='center center'>
 				<a
-					md-raised-button
+					mat-raised-button
 					cyphTranslate
 					id='new-cyph'
 					class='breathe'
@@ -52,10 +52,10 @@
 						class='link-wrapper-outer left'
 					>
 						<div class='link-wrapper-inner' cyphTranslate>
-							<a md-button href='/blog'>Blog</a>
-							<a md-button routerLink='/faq'>FAQ</a>
-							<a md-button href='/pricing'>Pricing</a>
-							<a md-button routerLink='/register'>Register</a>
+							<a mat-button href='/blog'>Blog</a>
+							<a mat-button routerLink='/faq'>FAQ</a>
+							<a mat-button href='/pricing'>Pricing</a>
+							<a mat-button routerLink='/register'>Register</a>
 						</div>
 					</div>
 
@@ -64,9 +64,9 @@
 					<div fxLayout='column' fxLayoutAlign='center center'>
 						<div fxHide.lt-lg class='social-media'>
 							<a
-								md-icon-button
+								mat-icon-button
 								cyphTranslate
-								mdTooltip='GitHub'
+								matTooltip='GitHub'
 								rel='noopener noreferrer'
 								href='https://github.com/cyph/cyph'
 								target='_blank'
@@ -74,9 +74,9 @@
 								<img src='/assets/img/iconfinder/github.png' alt='GitHub icon' />
 							</a>
 							<a
-								md-icon-button
+								mat-icon-button
 								cyphTranslate
-								mdTooltip='Twitter'
+								matTooltip='Twitter'
 								rel='noopener noreferrer'
 								href='https://twitter.com/cyph'
 								target='_blank'
@@ -84,9 +84,9 @@
 								<img src='/assets/img/iconfinder/twitter.png' alt='Twitter icon' />
 							</a>
 							<a
-								md-icon-button
+								mat-icon-button
 								cyphTranslate
-								mdTooltip='Facebook'
+								matTooltip='Facebook'
 								rel='noopener noreferrer'
 								href='https://www.facebook.com/cyph'
 								target='_blank'
@@ -97,71 +97,71 @@
 
 						<div fxHide.gt-md>
 							<button
-								md-icon-button
+								mat-icon-button
 								cyphTranslate
-								mdTooltip='Menu'
+								matTooltip='Menu'
 								(click)='sidenav.toggle()'
 							>
-								<md-icon>menu</md-icon>
+								<mat-icon>menu</mat-icon>
 							</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</md-toolbar>
+	</mat-toolbar>
 
-	<md-sidenav-container (backdropClick)='sidenav.close()'>
-		<md-sidenav #sidenav align='end' mode='push' fxLayout='column' fxLayoutGap='8px'>
+	<mat-sidenav-container (backdropClick)='sidenav.close()'>
+		<mat-sidenav #sidenav align='end' mode='push' fxLayout='column' fxLayoutGap='8px'>
 			<div fxLayout='row'></div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate routerLink='/' (click)='sidenav.close()'>
+				<a mat-button fxFlex cyphTranslate routerLink='/' (click)='sidenav.close()'>
 					<img src='/assets/img/logo.white.horizontal.header.png' alt='Cyph logo' />
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate routerLink='/intro' (click)='sidenav.close()'>
+				<a mat-button fxFlex cyphTranslate routerLink='/intro' (click)='sidenav.close()'>
 					Intro
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate routerLink='/features' (click)='sidenav.close()'>
+				<a mat-button fxFlex cyphTranslate routerLink='/features' (click)='sidenav.close()'>
 					Features
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate routerLink='/about' (click)='sidenav.close()'>
+				<a mat-button fxFlex cyphTranslate routerLink='/about' (click)='sidenav.close()'>
 					About
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate routerLink='/gettingstarted' (click)='sidenav.close()'>
+				<a mat-button fxFlex cyphTranslate routerLink='/gettingstarted' (click)='sidenav.close()'>
 					Getting Started
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/blog' (click)='sidenav.close()'>
+				<a mat-button fxFlex cyphTranslate href='/blog' (click)='sidenav.close()'>
 					Blog
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate routerLink='/faq' (click)='sidenav.close()'>
+				<a mat-button fxFlex cyphTranslate routerLink='/faq' (click)='sidenav.close()'>
 					FAQ
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate href='/pricing' (click)='sidenav.close()'>
+				<a mat-button fxFlex cyphTranslate href='/pricing' (click)='sidenav.close()'>
 					Pricing
 				</a>
 			</div>
 			<div fxLayout='row'>
-				<a md-button fxFlex cyphTranslate routerLink='/register' (click)='sidenav.close()'>
+				<a mat-button fxFlex cyphTranslate routerLink='/register' (click)='sidenav.close()'>
 					Register
 				</a>
 			</div>
 			<div fxLayout='row'>
 				<a
-					md-button
+					mat-button
 					fxFlex
 					cyphTranslate
 					rel='noopener noreferrer'
@@ -175,7 +175,7 @@
 			</div>
 			<div fxLayout='row'>
 				<a
-					md-button
+					mat-button
 					fxFlex
 					cyphTranslate
 					rel='noopener noreferrer'
@@ -189,7 +189,7 @@
 			</div>
 			<div fxLayout='row'>
 				<a
-					md-button
+					mat-button
 					fxFlex
 					cyphTranslate
 					rel='noopener noreferrer'
@@ -201,7 +201,7 @@
 					<span>Facebook</span>
 				</a>
 			</div>
-		</md-sidenav>
+		</mat-sidenav>
 
 		<section
 			id='hero-section'
@@ -215,7 +215,7 @@
 					id='promo-section'
 					*ngIf='appService.promo !== undefined'
 				>
-					<md-card
+					<mat-card
 						fxFlex='33'
 						fxFlex.sm='66'
 						fxFlex.xs='100'
@@ -224,7 +224,7 @@
 						[class.bounceInLeft]='appService.promo === promos.jjgo'
 						[class.bounceInDown]='appService.promo !== promos.jjgo'
 					>
-						<md-card-title>
+						<mat-card-title>
 							<img
 								alt='Promo image'
 								[src]='
@@ -233,8 +233,8 @@
 									".png"
 								'
 							/>
-						</md-card-title>
-						<md-card-content>
+						</mat-card-title>
+						<mat-card-content>
 							<p *ngIf='appService.promo !== promos.disrupt'>
 								<span cyphTranslate>Welcome</span>
 								<span *ngIf='appService.promo === promos.betalist'>
@@ -291,9 +291,9 @@
 									goes live.
 								</p>
 								<div fxLayout='row' fxLayoutAlign='center center'>
-									<md-form-field fxFlex='80'>
+									<mat-form-field fxFlex='80'>
 										<input
-											mdInput
+											matInput
 											cyphTranslate
 											[(ngModel)]='signupService.data.email'
 											name='email'
@@ -301,27 +301,27 @@
 											placeholder='Email'
 											required
 										/>
-									</md-form-field>
+									</mat-form-field>
 								</div>
 								<div fxLayout='row' fxLayoutAlign='center center'>
-									<md-form-field fxFlex='80'>
+									<mat-form-field fxFlex='80'>
 										<input
-											mdInput
+											matInput
 											cyphTranslate
 											[(ngModel)]='signupService.data.name'
 											name='name'
 											placeholder='Name (optional)'
 										/>
-									</md-form-field>
+									</mat-form-field>
 								</div>
 								<div fxLayout='row' fxLayoutAlign='center end'>
-									<button md-button type='submit' cyphTranslate>
+									<button mat-button type='submit' cyphTranslate>
 										Submit
 									</button>
 								</div>
 							</span>
-						</md-card-content>
-					</md-card>
+						</mat-card-content>
+					</mat-card>
 				</div>
 
 				<div class='hero-foreground-main'>
@@ -490,25 +490,25 @@
 			</div>
 
 			<a
-				md-icon-button
+				mat-icon-button
 				class='nav-arrow'
 				routerLink='/intro'
-				mdTooltip='Scroll Down'
+				matTooltip='Scroll Down'
 				*ngIf='!envService.isMobile'
 			>
-				<md-icon>keyboard_arrow_down</md-icon>
+				<mat-icon>keyboard_arrow_down</mat-icon>
 			</a>
 		</section>
 
 		<section id='intro-section'>
 			<a
-				md-icon-button
+				mat-icon-button
 				class='nav-arrow'
 				routerLink='/'
-				mdTooltip='Scroll Up'
+				matTooltip='Scroll Up'
 				*ngIf='!envService.isMobile'
 			>
-				<md-icon>keyboard_arrow_up</md-icon>
+				<mat-icon>keyboard_arrow_up</mat-icon>
 			</a>
 
 			<cyph-demo></cyph-demo>
@@ -959,7 +959,7 @@
 					</div>
 				</div>
 				<div fxLayout='row'>
-					<md-slider
+					<mat-slider
 						fxFlex
 						fxLayout='column'
 						thumbLabel
@@ -967,15 +967,15 @@
 						step='1'
 						min='1'
 						max='1337'
-						mdTooltip='Donation Amount'
-					></md-slider>
+						matTooltip='Donation Amount'
+					></mat-slider>
 					<div fxLayout='column' class='donation-amount'>
 						${{appService.donationAmount}}
 					</div>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<button
-						md-button
+						mat-button
 						cyphTranslate
 						class='donate-button'
 						(click)='appService.updateCart(
@@ -999,8 +999,8 @@
 				Checkout
 			</h1>
 			<div fxLayout='row' fxLayoutAlign='center center'>
-				<md-card fxFlex='33' fxFlex.sm='80' fxFlex.xs='95'>
-					<md-card-content>
+				<mat-card fxFlex='33' fxFlex.sm='80' fxFlex.xs='95'>
+					<mat-card-content>
 						<div class='cart empty' *ngIf='!appService.cart'>
 							<h3 cyphTranslate>
 								There's nothing in your cart. What are you even doing here?
@@ -1038,8 +1038,8 @@
 								Payment confirmed! Follow-up instructions will be sent via email.
 							</div>
 						</cyph-checkout>
-					</md-card-content>
-				</md-card>
+					</mat-card-content>
+				</mat-card>
 			</div>
 		</section>
 
@@ -1053,13 +1053,13 @@
 			</h1>
 			<div fxLayout='row' fxLayoutAlign='center center' class='section-content-container'>
 				<div fxFlex='75' fxFlex.xs='95' fxLayout='column' fxLayoutGap='16px'>
-					<md-card>
-						<md-card-title>
+					<mat-card>
+						<mat-card-title>
 							<span cyphTranslate>
 								How do I use Cyph?
 							</span>
-						</md-card-title>
-						<md-card-content>
+						</mat-card-title>
+						<mat-card-content>
 							<p>
 								<span cyphTranslate>Simply go to</span>
 								<a [href]='envService.newCyphUrl'>cyph.im</a>
@@ -1070,28 +1070,28 @@
 									click it you both will enter a secure chat.
 								</span>
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
+						</mat-card-content>
+					</mat-card>
+					<mat-card>
+						<mat-card-title>
 							<span cyphTranslate>
 								How do I send files?
 							</span>
-						</md-card-title>
-						<md-card-content>
+						</mat-card-title>
+						<mat-card-content>
 							<p cyphTranslate>
 								Click the plus ("+") icon in the message composition textbox, click
 								the paperclip icon, and then select the file you wish to share.
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
+						</mat-card-content>
+					</mat-card>
+					<mat-card>
+						<mat-card-title>
 							<span cyphTranslate>
 								How do I start a video or voice call?
 							</span>
-						</md-card-title>
-						<md-card-content>
+						</mat-card-title>
+						<mat-card-content>
 							<p cyphTranslate>
 								Click the plus ("+") icon in the message composition textbox,
 								then click the video (or phone) icon. A warning will pop up
@@ -1101,29 +1101,29 @@
 								directly to the other party instead of going through our
 								servers).
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
+						</mat-card-content>
+					</mat-card>
+					<mat-card>
+						<mat-card-title>
 							<span cyphTranslate>
 								What data do you track?
 							</span>
-						</md-card-title>
-						<md-card-content>
+						</mat-card-title>
+						<mat-card-content>
 							<p cyphTranslate>
 								Currently, we only track numbers of: cyph sessions, messages,
 								timeouts, voice/video calls, file transfers, signups,
 								cyphertext UI views, help UI views, and calls to our API.
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
+						</mat-card-content>
+					</mat-card>
+					<mat-card>
+						<mat-card-title>
 							<span cyphTranslate>
 								How much does Cyph cost?
 							</span>
-						</md-card-title>
-						<md-card-content>
+						</mat-card-title>
+						<mat-card-content>
 							<p>
 								<span cyphTranslate>
 									The Cyph beta is free to use for individuals (we intend
@@ -1135,44 +1135,44 @@
 									cyphTranslate
 								>enterprise deployments of secure video and instant messaging</a>.
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
+						</mat-card-content>
+					</mat-card>
+					<mat-card>
+						<mat-card-title>
 							<span cyphTranslate>
 								Do you have an Android/iOS/TI-89 app?
 							</span>
-						</md-card-title>
-						<md-card-content>
+						</mat-card-title>
+						<mat-card-content>
 							<p cyphTranslate>
 								Native chat applications for Android and iOS are in the works.
 								We have no plans to support any Texas Instruments machines.
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
+						</mat-card-content>
+					</mat-card>
+					<mat-card>
+						<mat-card-title>
 							<span cyphTranslate>
 								Why do I keep getting the "I'm sorry,
 								but your cyph is in another castle" screen?
 							</span>
-						</md-card-title>
-						<md-card-content>
+						</mat-card-title>
+						<mat-card-content>
 							<p cyphTranslate>
 								Common reasons for landing on this page are: the cyph URL has
 								been opened more than once (only the first person who clicks
 								it is allowed into the chat) or the cyph link has already
 								expired.
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
+						</mat-card-content>
+					</mat-card>
+					<mat-card>
+						<mat-card-title>
 							<span cyphTranslate>
 								Has there been a third-party security audit of Cyph?
 							</span>
-						</md-card-title>
-						<md-card-content>
+						</mat-card-title>
+						<mat-card-content>
 							<p>
 								<span cyphTranslate>Yes,</span>
 								<a
@@ -1192,15 +1192,15 @@
 									cyphTranslate
 								>[Complete Cure53 Pentest Report]</a>
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
+						</mat-card-content>
+					</mat-card>
+					<mat-card>
+						<mat-card-title>
 							<span cyphTranslate>
 								How can I support Cyph?
 							</span>
-						</md-card-title>
-						<md-card-content>
+						</mat-card-title>
+						<mat-card-content>
 							<p>
 								<span cyphTranslate>
 									One of the best ways you can support Cyph is by
@@ -1215,15 +1215,15 @@
 									development and growth of Cyph.
 								</span>
 							</p>
-						</md-card-content>
-					</md-card>
-					<md-card>
-						<md-card-title>
+						</mat-card-content>
+					</mat-card>
+					<mat-card>
+						<mat-card-title>
 							<span cyphTranslate>
 								What should I do if I encounter a bug?
 							</span>
-						</md-card-title>
-						<md-card-content>
+						</mat-card-title>
+						<mat-card-content>
 							<p>
 								<span cyphTranslate>Please contact us at</span>
 								<a routerLink='/contact/bugs'>bugs@cyph.com</a>;
@@ -1233,8 +1233,8 @@
 									or other relevant information.
 								</span>
 							</p>
-						</md-card-content>
-					</md-card>
+						</mat-card-content>
+					</mat-card>
 				</div>
 			</div>
 		</section>
@@ -1463,5 +1463,5 @@
 				<a routerLink='/termsofservice' cyphTranslate>Terms of Service</a>
 			</div>
 		</footer>
-	</md-sidenav-container>
+	</mat-sidenav-container>
 </section>

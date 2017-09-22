@@ -21,7 +21,7 @@
 		text-align: right;
 	}
 
-	md-progress-spinner {
+	mat-progress-spinner {
 		margin-left: 12px;
 		margin-right: 12px;
 	}
@@ -88,7 +88,7 @@
 	}
 
 	&.mobile {
-		md-progress-spinner {
+		mat-progress-spinner {
 			width: 10px;
 			height: 10px;
 			margin: auto 9.5px;
@@ -110,7 +110,7 @@
 	}
 
 	&:not(.mobile) {
-		md-progress-spinner {
+		mat-progress-spinner {
 			width: 20px;
 			height: 20px;
 			margin-right: 16px;

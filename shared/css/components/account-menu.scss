@@ -8,7 +8,7 @@ button {
 	font-family: Ubuntu;
 	font-size: 24px;
 
-	&[md-icon-button] {
+	&[mat-icon-button] {
 		height: 1.75em;
 		width: 1.75em;
 
@@ -18,7 +18,7 @@ button {
 		}
 	}
 
-	md-icon {
+	mat-icon {
 		@include icon-size(32px);
 	}
 }
@@ -43,6 +43,6 @@ img {
 	}
 }
 
-.menu-toggle md-icon {
+.menu-toggle mat-icon {
 	margin-left: -4px;
 }

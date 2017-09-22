@@ -52,10 +52,10 @@
 			Securely Connected!
 		</div>
 
-		<md-progress-bar
+		<mat-progress-bar
 			class='key-exchange-progress'
 			[value]='chatService.chat.keyExchangeProgress'
-		></md-progress-bar>
+		></mat-progress-bar>
 	</div>
 
 	<div
@@ -145,19 +145,19 @@
 			muted
 		></video>
 
-		<md-progress-spinner
+		<mat-progress-spinner
 			mode='indeterminate'
 			*ngIf='p2pWebRTCService.loading'
-		></md-progress-spinner>
+		></mat-progress-spinner>
 
 		<button
-			md-icon-button
+			mat-icon-button
 			cyphTranslate
 			class='sidebar'
-			mdTooltip='Toggle Chat Sidebar'
+			matTooltip='Toggle Chat Sidebar'
 			(click)='p2pService.toggleSidebar()'
 		>
-			<md-icon>forum</md-icon>
+			<mat-icon>forum</mat-icon>
 		</button>
 
 		<div
@@ -168,43 +168,43 @@
 			class='buttons'
 		>
 			<button
-				md-icon-button
+				mat-icon-button
 				class='video-call-button'
 				(click)='p2pService.videoCallButton()'
-				[mdTooltip]='
+				[matTooltip]='
 					!p2pWebRTCService.outgoingStream.video ?
 						stringsService.cameraEnable :
 						stringsService.cameraDisable
 				'
-				mdTooltipPosition='above'
+				matTooltipPosition='above'
 			>
-				<md-icon *ngIf='!p2pWebRTCService.outgoingStream.video'>videocam</md-icon>
-				<md-icon *ngIf='p2pWebRTCService.outgoingStream.video'>videocam_off</md-icon>
+				<mat-icon *ngIf='!p2pWebRTCService.outgoingStream.video'>videocam</mat-icon>
+				<mat-icon *ngIf='p2pWebRTCService.outgoingStream.video'>videocam_off</mat-icon>
 			</button>
 			<button
-				md-icon-button
+				mat-icon-button
 				class='voice-call-button'
 				(click)='p2pService.voiceCallButton()'
-				[mdTooltip]='
+				[matTooltip]='
 					!p2pWebRTCService.outgoingStream.audio ?
 						stringsService.micEnable :
 						stringsService.micDisable
 				'
-				mdTooltipPosition='above'
+				matTooltipPosition='above'
 			>
-				<md-icon *ngIf='!p2pWebRTCService.outgoingStream.audio'>mic</md-icon>
-				<md-icon *ngIf='p2pWebRTCService.outgoingStream.audio'>mic_off</md-icon>
+				<mat-icon *ngIf='!p2pWebRTCService.outgoingStream.audio'>mic</mat-icon>
+				<mat-icon *ngIf='p2pWebRTCService.outgoingStream.audio'>mic_off</mat-icon>
 			</button>
 			<button
-				md-icon-button
+				mat-icon-button
 				cyphTranslate
-				mdTooltip='End Call'
-				mdTooltipPosition='above'
+				matTooltip='End Call'
+				matTooltipPosition='above'
 				color='warn'
 				class='close-button'
 				(click)='p2pService.closeButton()'
 			>
-				<md-icon>call_end</md-icon>
+				<mat-icon>call_end</mat-icon>
 			</button>
 		</div>
 	</div>
@@ -244,10 +244,10 @@
 							({{utilService.readableByteLength(transfer.metadata.size)}}):
 						</span>
 					</div>
-					<md-progress-bar
+					<mat-progress-bar
 						fxLayout='row'
 						[value]='transfer.progress | async'
-					></md-progress-bar>
+					></mat-progress-bar>
 				</div>
 			</div>
 		</div>

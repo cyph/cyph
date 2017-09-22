@@ -11,7 +11,7 @@
 		fxLayoutAlign='start stretch'
 		fxLayoutGap='16px'
 	>
-		<md-card
+		<mat-card
 			[fxFlexOrder]='isActive(contact) ? "-1" : ""'
 			class='contact animated _{{i}}'
 			*ngFor='let contact of accountContactsService.contactList | async; let i = index'
@@ -20,25 +20,25 @@
 			[class.bounceInRight]='!isActive(contact) && !accountContactsService.initiated'
 			[routerLink]='"/account/chat/" + contact.username'
 		>
-			<md-card-header fxLayout='row'>
+			<mat-card-header fxLayout='row'>
 				<img
-					md-card-avatar
+					mat-card-avatar
 					cyphTranslate
 					class='avatar'
 					[ngClass]='userPresence[contact.status | async]'
 					[src]='contact.avatar | async'
 					alt='User Avatar'
-					mdTooltip='Open Profile'
+					matTooltip='Open Profile'
 					[routerLink]='"/account/profile/" + contact.username'
 				/>
-				<md-card-title>{{contact.name | async}}</md-card-title>
-				<md-card-subtitle>{{contact.realUsername | async}}</md-card-subtitle>
-			</md-card-header>
-		</md-card>
+				<mat-card-title>{{contact.name | async}}</mat-card-title>
+				<mat-card-subtitle>{{contact.realUsername | async}}</mat-card-subtitle>
+			</mat-card-header>
+		</mat-card>
 	</div>
 
-	<md-progress-spinner
+	<mat-progress-spinner
 		mode='indeterminate'
 		*ngIf='accountContactsService.showSpinner'
-	></md-progress-spinner>
+	></mat-progress-spinner>
 </div>

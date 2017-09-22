@@ -11,7 +11,7 @@
 	@include animation-iteration-count(infinite !important);
 }
 
-/* Changes size of md-icon */
+/* Changes size of mat-icon */
 @mixin icon-size($size) {
 	font-size: $size;
 	height: $size;
@@ -68,7 +68,7 @@
 	@include mat-progress-spinner-theme($cyph-progress-theme);
 
 	/* Temporary workaround pending https://github.com/angular/material2/issues/4116 */
-	md-dialog-container, md-option {
+	mat-dialog-container, mat-option {
 		color: $cyph-foreground;
 	}
 
@@ -115,7 +115,7 @@
 			background-color: $cyph-foreground;
 		}
 
-		.chat-main.video .video-call ~ cyph-chat-message-box .menu-button md-icon {
+		.chat-main.video .video-call ~ cyph-chat-message-box .menu-button mat-icon {
 			color: $cyph-inverted !important;
 		}
 
@@ -195,7 +195,7 @@
 				}
 			}
 
-			.message-box-button-group button md-icon {
+			.message-box-button-group button mat-icon {
 				color: map-get($cyph-message-box-colors, buttons);
 			}
 
@@ -266,7 +266,7 @@
 	));
 
 	@if $cyph-is-dark {
-		md-card {
+		mat-card {
 			background-color: rgba(255, 255, 255, 0.95);
 		}
 	}

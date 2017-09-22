@@ -1,6 +1,6 @@
 <div [class.mobile]='envService.isMobile'>
-	<md-tab-group cyphNanoScroller [cyphNanoScrollerNoParent]='true'>
-		<md-tab cyphTranslate [label]='stringsService.formattingHelp'>
+	<mat-tab-group cyphNanoScroller [cyphNanoScrollerNoParent]='true'>
+		<mat-tab cyphTranslate [label]='stringsService.formattingHelp'>
 			<p>
 				<span>Cyph uses a version of Markdown called</span>
 				<a href='http://commonmark.org'>CommonMark</a>
@@ -106,8 +106,8 @@
 					</tr>
 				</tbody>
 			</table>
-		</md-tab>
-		<md-tab [label]='stringsService.contactCyph' *ngIf='!envService.coBranded'>
+		</mat-tab>
+		<mat-tab [label]='stringsService.contactCyph' *ngIf='!envService.coBranded'>
 			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 				<br />
 				<br />
@@ -122,6 +122,6 @@
 				<br />
 				<cyph-contact></cyph-contact>
 			</div>
-		</md-tab>
-	</md-tab-group>
+		</mat-tab>
+	</mat-tab-group>
 </div>

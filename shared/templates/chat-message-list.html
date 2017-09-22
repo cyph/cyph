@@ -11,7 +11,7 @@
 
 		<div fxLayout='row' class='friend-is-typing'>
 			<div
-				mdTooltip='Friend is typing...'
+				matTooltip='Friend is typing...'
 				cyphTranslate
 				class='ellipsis-spinner'
 				*ngIf='chat.isFriendTyping | async'
@@ -29,11 +29,11 @@
 			*ngIf='showDisconnectMessage'
 		>
 			<div fxFlexFill fxLayoutAlign='center center'>
-				<md-card fxFlex='90' fxFlex.gt-sm='50'>
-					<md-card-content>
+				<mat-card fxFlex='90' fxFlex.gt-sm='50'>
+					<mat-card-content>
 						<ng-content></ng-content>
-					</md-card-content>
-				</md-card>
+					</mat-card-content>
+				</mat-card>
 			</div>
 		</div>
 	</div>

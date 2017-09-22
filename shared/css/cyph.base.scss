@@ -5,7 +5,7 @@
 @include cyph-apply-theme(true);
 
 /* Temporary workaround */
-md-tab-body {
+mat-tab-body {
 	max-height: 70vh;
 }
 
@@ -68,7 +68,7 @@ section {
 		}
 	}
 
-	md-progress-spinner {
+	mat-progress-spinner {
 		position: absolute;
 		top: 50vh;
 		left: 50%;
@@ -86,31 +86,31 @@ a {
 	color: inherit;
 }
 
-[md-button], [md-raised-button] {
+[mat-button], [mat-raised-button] {
 	text-transform: uppercase;
 }
 
-[md-icon-button] {
-	&.pulldown md-icon {
+[mat-icon-button] {
+	&.pulldown mat-icon {
 		margin-bottom: -3px;
 	}
 
-	&.shrink md-icon {
+	&.shrink mat-icon {
 		@include icon-size(23px);
 	}
 }
 
-[md-mini-fab] {
-	&.pulldown md-icon {
+[mat-mini-fab] {
+	&.pulldown mat-icon {
 		margin-top: 1px;
 	}
 
-	&.shrink md-icon {
+	&.shrink mat-icon {
 		@include icon-size(22px);
 	}
 }
 
-[md-dialog-title] {
+[matDialogTitle] {
 	font-family: Ubuntu;
 	font-weight: initial !important;
 }
@@ -119,7 +119,7 @@ a {
 	cursor: pointer;
 }
 
-md-card-title {
+mat-card-title {
 	max-width: 100%;
 }
 
@@ -227,7 +227,7 @@ h3.cyph-banner {
 $nanoScrollbarWidth: 17px;
 
 @function nanoDefault() {
-	@return '&:not(md-tab-group)';
+	@return '&:not(mat-tab-group)';
 }
 
 @function nanoDefaultTarget() {
@@ -235,11 +235,11 @@ $nanoScrollbarWidth: 17px;
 }
 
 @function nanoTabGroup() {
-	@return 'md-tab-group#{&}';
+	@return 'mat-tab-group#{&}';
 }
 
 @function nanoTabGroupTarget() {
-	@return '#{nanoTabGroup()} md-tab-body';
+	@return '#{nanoTabGroup()} mat-tab-body';
 }
 
 .nano {
@@ -304,31 +304,31 @@ $nanoScrollbarWidth: 17px;
 /* Dialog sizing */
 
 @media (min-width: 1920px) {
-	md-dialog-container {
+	mat-dialog-container {
 		width: 33vw !important;
 	}
 }
 
 @media (min-width: 1280px) and (max-width: 1919px) {
-	md-dialog-container {
+	mat-dialog-container {
 		width: 40vw !important;
 	}
 }
 
 @media (min-width: 960px) and (max-width: 1279px) {
-	md-dialog-container {
+	mat-dialog-container {
 		width: 50vw !important;
 	}
 }
 
 @media (min-width: 600px) and (max-width: 959px) {
-	md-dialog-container {
+	mat-dialog-container {
 		width: 60vw !important;
 	}
 }
 
 @media (max-width: 599px) {
-	md-dialog-container {
+	mat-dialog-container {
 		width: 80vw !important;
 	}
 }

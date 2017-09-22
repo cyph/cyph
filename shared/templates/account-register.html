@@ -5,22 +5,22 @@
 	[class.checking]='checking'
 	*ngIf='!envService.isProd'
 >
-	<md-card fxFlex fxFlex.gt-sm='50'>
-		<md-card-title cyphTranslate>
+	<mat-card fxFlex fxFlex.gt-sm='50'>
+		<mat-card-title cyphTranslate>
 			Join Cyph
-		</md-card-title>
-		<md-card-subtitle cyphTranslate>
+		</mat-card-title>
+		<mat-card-subtitle cyphTranslate>
 			[Subtitle?]
-		</md-card-subtitle>
-		<md-card-content>
+		</mat-card-subtitle>
+		<mat-card-content>
 			<form fxFlex fxLayout='column' fxLayoutGap='32px' ngNativeValidate (submit)='submit()'>
-				<md-tab-group
+				<mat-tab-group
 					[(selectedIndex)]='tabIndex'
 					(selectedIndexChange)='updateRoute(0, $event)'
 				>
-					<md-tab>
-						<ng-template md-tab-label>
-							<md-icon>radio_button_checked</md-icon>
+					<mat-tab>
+						<ng-template mat-tab-label>
+							<mat-icon>radio_button_checked</mat-icon>
 							&nbsp;
 							<span cyphTranslate>Basic Information</span>
 						</ng-template>
@@ -31,47 +31,47 @@
 							</div>
 
 							<div fxLayout='row' fxLayoutAlign='center center'>
-								<md-form-field fxFlex='60'>
+								<mat-form-field fxFlex='60'>
 									<input
-										mdInput
+										matInput
 										cyphTranslate
 										[(ngModel)]='username'
 										name='username'
 										placeholder='Username'
 										required
 									/>
-								</md-form-field>
+								</mat-form-field>
 							</div>
 							<div fxLayout='row' fxLayoutAlign='center center'>
-								<md-form-field fxFlex='60'>
+								<mat-form-field fxFlex='60'>
 									<input
-										mdInput
+										matInput
 										cyphTranslate
 										[(ngModel)]='name'
 										name='name'
 										placeholder='Name (or pseudonym)'
 										required
 									/>
-								</md-form-field>
+								</mat-form-field>
 							</div>
 							<div fxLayout='row' fxLayoutAlign='center center'>
-								<md-form-field fxFlex='60'>
+								<mat-form-field fxFlex='60'>
 									<input
-										mdInput
+										matInput
 										cyphTranslate
 										[(ngModel)]='email'
 										name='email'
 										type='email'
 										placeholder='Email (optional)'
 									/>
-								</md-form-field>
+								</mat-form-field>
 							</div>
 						</div>
-					</md-tab>
-					<md-tab>
-						<ng-template md-tab-label>
-							<md-icon *ngIf='tabIndex > 0'>radio_button_checked</md-icon>
-							<md-icon *ngIf='tabIndex <= 0'>radio_button_unchecked</md-icon>
+					</mat-tab>
+					<mat-tab>
+						<ng-template mat-tab-label>
+							<mat-icon *ngIf='tabIndex > 0'>radio_button_checked</mat-icon>
+							<mat-icon *ngIf='tabIndex <= 0'>radio_button_unchecked</mat-icon>
 							&nbsp;
 							<span cyphTranslate>Master Key</span>
 						</ng-template>
@@ -108,9 +108,9 @@
 										[Custom Master Key]
 									</div>
 									<div fxLayout='row' fxLayoutAlign='center center'>
-										<md-form-field fxFlex='60'>
+										<mat-form-field fxFlex='60'>
 											<input
-												mdInput
+												matInput
 												cyphTranslate
 												[(ngModel)]='password'
 												name='password'
@@ -118,12 +118,12 @@
 												placeholder='Master Key'
 												[required]='!useXkcdPassphrase'
 											/>
-										</md-form-field>
+										</mat-form-field>
 									</div>
 									<div fxLayout='row' fxLayoutAlign='center center'>
-										<md-form-field fxFlex='60'>
+										<mat-form-field fxFlex='60'>
 											<input
-												mdInput
+												matInput
 												cyphTranslate
 												[(ngModel)]='passwordConfirmation'
 												name='passwordConfirmation'
@@ -131,16 +131,16 @@
 												placeholder='Confirm Master Key'
 												[required]='!useXkcdPassphrase'
 											/>
-										</md-form-field>
+										</mat-form-field>
 									</div>
 								</div>
 							</div>
 						</div>
-					</md-tab>
-					<md-tab>
-						<ng-template md-tab-label>
-							<md-icon *ngIf='tabIndex > 1'>radio_button_checked</md-icon>
-							<md-icon *ngIf='tabIndex <= 1'>radio_button_unchecked</md-icon>
+					</mat-tab>
+					<mat-tab>
+						<ng-template mat-tab-label>
+							<mat-icon *ngIf='tabIndex > 1'>radio_button_checked</mat-icon>
+							<mat-icon *ngIf='tabIndex <= 1'>radio_button_unchecked</mat-icon>
 							&nbsp;
 							<span cyphTranslate>Lock Screen Password</span>
 						</ng-template>
@@ -151,9 +151,9 @@
 							</div>
 
 							<div fxLayout='row' fxLayoutAlign='center center'>
-								<md-form-field fxFlex='60'>
+								<mat-form-field fxFlex='60'>
 									<input
-										mdInput
+										matInput
 										cyphTranslate
 										[(ngModel)]='lockScreenPassword'
 										name='lockScreenPassword'
@@ -161,27 +161,27 @@
 										placeholder='Lock Screen Password'
 										required
 									/>
-								</md-form-field>
+								</mat-form-field>
 							</div>
 
 							<div fxLayout='row' fxLayoutAlign='center center'>
-								<md-form-field fxFlex='60'>
+								<mat-form-field fxFlex='60'>
 									<input
-										mdInput
+										matInput
 										cyphTranslate
 										[(ngModel)]='lockScreenTimeout'
 										name='lockScreenTimeout'
 										type='number'
 										placeholder='Lock Screen Timeout (days)'
 									/>
-								</md-form-field>
+								</mat-form-field>
 							</div>
 						</div>
-					</md-tab>
-					<md-tab>
-						<ng-template md-tab-label>
-							<md-icon *ngIf='tabIndex > 2'>radio_button_checked</md-icon>
-							<md-icon *ngIf='tabIndex <= 2'>radio_button_unchecked</md-icon>
+					</mat-tab>
+					<mat-tab>
+						<ng-template mat-tab-label>
+							<mat-icon *ngIf='tabIndex > 2'>radio_button_checked</mat-icon>
+							<mat-icon *ngIf='tabIndex <= 2'>radio_button_unchecked</mat-icon>
 							&nbsp;
 							<span cyphTranslate>Confirm</span>
 						</ng-template>
@@ -224,19 +224,19 @@
 								<span>********************</span>
 							</div>
 						</div>
-					</md-tab>
-				</md-tab-group>
+					</mat-tab>
+				</mat-tab-group>
 				
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<button md-button (click)='updateRoute(1)' *ngIf='tabIndex !== 3'>
+					<button mat-button (click)='updateRoute(1)' *ngIf='tabIndex !== 3'>
 						<span cyphTranslate>Next</span>
 					</button>
-					<button md-button type='submit' *ngIf='tabIndex === 3'>
+					<button mat-button type='submit' *ngIf='tabIndex === 3'>
 						<span cyphTranslate>Register</span>
 					</button>
 				</div>
 			</form>
-		</md-card-content>
-		<md-progress-spinner mode='indeterminate'></md-progress-spinner>
-	</md-card>
+		</mat-card-content>
+		<mat-progress-spinner mode='indeterminate'></mat-progress-spinner>
+	</mat-card>
 </div>

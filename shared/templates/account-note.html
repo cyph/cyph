@@ -3,66 +3,66 @@
 	fxLayoutAlign='center start'
 	*ngIf='!realTime || !envService.isProd || accountService.isTelehealth'
 >
-	<md-card fxFlex='90' class='note'>
+	<mat-card fxFlex='90' class='note'>
 		<div fxLayout='column'>
 			<div fxLayoutAlign='center center' fxLayout='row'>
-				<md-card-title fxFlex>
+				<mat-card-title fxFlex>
 					<div *ngIf='!editable'>
 						{{(note?.metadata | async)?.name}}
 					</div>
-					<md-input-container fxFlex *ngIf='editable'>
+					<mat-form-field fxFlex *ngIf='editable'>
 						<input
-							mdInput
+							matInput
 							cyphTranslate
 							[(ngModel)]='noteData.name'
 							(blur)='realTimeTitleUpdate(noteData.name)'
 							required
 						/>
-					</md-input-container>
-				</md-card-title>
-				<md-card-header>
+					</mat-form-field>
+				</mat-card-title>
+				<mat-card-header>
 					<button
-						md-icon-button
+						mat-icon-button
 						cyphTranslate
-						mdTooltip='Edit'
+						matTooltip='Edit'
 						routerLink='edit'
 						*ngIf='!editable'
 					>
-						<md-icon>edit</md-icon>
+						<mat-icon>edit</mat-icon>
 					</button>
 					<button
-						md-icon-button
+						mat-icon-button
 						cyphTranslate
-						mdTooltip='Close Editor'
+						matTooltip='Close Editor'
 						[routerLink]='newNote ? ".." : "."'
 						*ngIf='editable'
 					>
-						<md-icon>close</md-icon>
+						<mat-icon>close</mat-icon>
 					</button>
 					<button
-						md-icon-button
+						mat-icon-button
 						cyphTranslate
-						mdTooltip='Save'
+						matTooltip='Save'
 						(click)='saveNote()'
 						*ngIf='editable && !realTime'
 					>
-						<md-icon>save</md-icon>
+						<mat-icon>save</mat-icon>
 					</button>
 					<button
-						md-icon-button
+						mat-icon-button
 						cyphTranslate
-						mdTooltip='Delete'
+						matTooltip='Delete'
 						*ngIf='!newNote'
 						(click)='accountFilesService.remove(note.metadata)'
 					>
-						<md-icon>delete</md-icon>
+						<mat-icon>delete</mat-icon>
 					</button>
-				</md-card-header>
+				</mat-card-header>
 			</div>
-			<md-card-content fxFlex fxLayout='column'>
+			<mat-card-content fxFlex fxLayout='column'>
 				<div [class.cyph-light-theme]='editable'>
-					<md-card [class.editable]='editable'>
-						<md-card-content>
+					<mat-card [class.editable]='editable'>
+						<mat-card-content>
 							<cyph-quill
 								[content]='note?.content | async'
 								[deltas]='note?.deltas'
@@ -71,10 +71,10 @@
 								(onChange)='onChange($event)'
 								(onSelectionChange)='onSelectionChange($event)'
 							></cyph-quill>
-						</md-card-content>
-					</md-card>
+						</mat-card-content>
+					</mat-card>
 				</div>
-			</md-card-content>
+			</mat-card-content>
 		</div>
-	</md-card>
+	</mat-card>
 </div>

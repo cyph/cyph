@@ -5,14 +5,14 @@
 		class='login-form'
 		[class.checking]='checking'
 	>
-		<md-card fxFlex fxFlex.gt-sm='50'>
-			<md-card-title cyphTranslate>
+		<mat-card fxFlex fxFlex.gt-sm='50'>
+			<mat-card-title cyphTranslate>
 				Log In
-			</md-card-title>
-			<md-card-subtitle cyphTranslate>
+			</mat-card-title>
+			<mat-card-subtitle cyphTranslate>
 				Welcome to Cyph! You must enter a password to access this environment.
-			</md-card-subtitle>
-			<md-card-content>
+			</mat-card-subtitle>
+			<mat-card-content>
 				<form ngNativeValidate (submit)='submit()'>
 					<div fxLayout='row' fxLayoutAlign='center center'>
 						<h3 class='cyph-banner warn' [style.visibility]='error ? "visible" : "hidden"'>
@@ -20,9 +20,9 @@
 						</h3>
 					</div>
 					<div fxLayout='row' fxLayoutAlign='center center'>
-						<md-form-field fxFlex='60'>
+						<mat-form-field fxFlex='60'>
 							<input
-								mdInput
+								matInput
 								cyphTranslate
 								[(ngModel)]='password'
 								name='password'
@@ -30,16 +30,16 @@
 								placeholder='Password'
 								required
 							/>
-						</md-form-field>
+						</mat-form-field>
 					</div>
 					<div fxLayout='row' fxLayoutAlign='center center'>
-						<button md-button type='submit' cyphTranslate>
+						<button mat-button type='submit' cyphTranslate>
 							Log In
 						</button>
 					</div>
 				</form>
-			</md-card-content>
-			<md-progress-spinner mode='indeterminate'></md-progress-spinner>
-		</md-card>
+			</mat-card-content>
+			<mat-progress-spinner mode='indeterminate'></mat-progress-spinner>
+		</mat-card>
 	</div>
 </section>

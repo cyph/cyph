@@ -335,7 +335,7 @@ body.mobile #hero-section {
 	background-color: rgba(97, 51, 163, 0.75);
 	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
 
-	&, md-toolbar-row {
+	&, mat-toolbar-row {
 		height: 2.5em !important;
 		min-height: 2.5em !important;
 	}
@@ -349,13 +349,13 @@ body.mobile #hero-section {
 	}
 }
 
-#main-toolbar, md-sidenav {
+#main-toolbar, mat-sidenav {
 	img {
 		height: 20px;
 	}
 }
 
-md-sidenav img {
+mat-sidenav img {
 	margin-right: 5px;
 }
 
@@ -630,7 +630,7 @@ body.mobile #features-section .carousel .logo.active > img {
 
 	@include transform(scale(1.65));
 
-	md-icon {
+	mat-icon {
 		opacity: 0.15;
 	}
 }

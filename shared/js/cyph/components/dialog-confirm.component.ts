@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 
 
 /**
@@ -25,6 +25,6 @@ export class DialogConfirmComponent {
 
 	constructor (
 		/** Dialog instance */
-		public readonly mdDialogRef: MdDialogRef<DialogConfirmComponent>
+		public readonly mdDialogRef: MatDialogRef<DialogConfirmComponent>
 	) {}
 }

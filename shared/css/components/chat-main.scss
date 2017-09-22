@@ -11,7 +11,7 @@
 				word-wrap: break-word;
 			}
 
-			md-progress-bar {
+			mat-progress-bar {
 				width: calc(100% - 40px);
 				margin-left: 20px;
 			}
@@ -178,7 +178,7 @@
 				right: 0px;
 			}
 
-			md-progress-spinner {
+			mat-progress-spinner {
 				position: absolute;
 				top: 50%;
 				left: 50%;
@@ -316,7 +316,7 @@
 			top: 10px;
 			right: 15px;
 
-			md-icon {
+			mat-icon {
 				opacity: 0.5;
 			}
 		}

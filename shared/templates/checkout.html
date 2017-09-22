@@ -1,23 +1,23 @@
-<md-progress-spinner mode='indeterminate' *ngIf='pending'></md-progress-spinner>
+<mat-progress-spinner mode='indeterminate' *ngIf='pending'></mat-progress-spinner>
 <form ngNativeValidate (submit)='submit()'>
 	<div fxLayout='column' fxLayoutGap='16px' *ngIf='!complete'>
 		<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui'>
 			<div [id]='containerID' class='braintree'></div>
 			<div>
 				<div fxLayout='column' fxLayout.gt-md='row' fxLayoutGap='16px'>
-					<md-form-field fxFlex>
+					<mat-form-field fxFlex>
 						<input
-							mdInput
+							matInput
 							cyphTranslate
 							[(ngModel)]='name'
 							name='name'
 							placeholder='Name'
 							required
 						/>
-					</md-form-field>
-					<md-form-field fxFlex>
+					</mat-form-field>
+					<mat-form-field fxFlex>
 						<input
-							mdInput
+							matInput
 							cyphTranslate
 							[(ngModel)]='email'
 							name='email'
@@ -25,23 +25,23 @@
 							placeholder='Email'
 							required
 						/>
-					</md-form-field>
+					</mat-form-field>
 				</div>
 			</div>
 			<div>
-				<md-form-field fxFlex>
+				<mat-form-field fxFlex>
 					<input
-						mdInput
+						matInput
 						cyphTranslate
 						[(ngModel)]='company'
 						name='company'
 						placeholder='Company (optional)'
 					/>
-				</md-form-field>
+				</mat-form-field>
 			</div>
 		</div>
 		<div fxLayoutAlign='center center'>
-			<button md-button type='submit'>
+			<button mat-button type='submit'>
 				<span cyphTranslate>Confirm</span>
 				<span>${{amount}}</span>
 				<span>

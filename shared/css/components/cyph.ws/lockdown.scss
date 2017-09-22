@@ -1,7 +1,7 @@
 @import '../../mixins';
 
 .login-form {
-	md-progress-spinner {
+	mat-progress-spinner {
 		display: none;
 		position: absolute;
 		top: 50%;
@@ -15,11 +15,11 @@
 	}
 
 	&.checking {
-		md-progress-spinner {
+		mat-progress-spinner {
 			display: block;
 		}
 
-		md-card > :not(md-progress-spinner) {
+		mat-card > :not(mat-progress-spinner) {
 			opacity: 0.15;
 		}
 	}

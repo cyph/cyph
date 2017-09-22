@@ -13,31 +13,31 @@
 					<h3 style='text-align: center' *ngIf='o.type === types.Text'>{{o.label}}</h3>
 					<div *ngIf='o.type === types.Text'>{{o.valueString}}</div>
 
-					<md-checkbox
+					<mat-checkbox
 						[(ngModel)]='o.valueBoolean'
 						[name]='o.label'
 						[required]='o.required'
 						*ngIf='o.type === types.Checkbox'
 					>
 						{{o.label}}
-					</md-checkbox>
+					</mat-checkbox>
 
-					<md-form-field *ngIf='o.type === types.Datepicker'>
+					<mat-form-field *ngIf='o.type === types.Datepicker'>
 						<input
-							mdInput
-							[mdDatepicker]='datepicker'
+							matInput
+							[matDatepicker]='datepicker'
 							[ngModel]='timestampToDate(o.valueNumber)'
 							(ngModelChange)='o.valueNumber = $event ? $event.getTime() : 0'
 							[placeholder]='o.label'
 							[required]='o.required'
 						>
-						<md-datepicker-toggle [for]='datepicker'></md-datepicker-toggle>
-					</md-form-field>
-					<md-datepicker *ngIf='o.type === types.Datepicker' #datepicker></md-datepicker>
+						<mat-datepicker-toggle [for]='datepicker'></mat-datepicker-toggle>
+					</mat-form-field>
+					<mat-datepicker *ngIf='o.type === types.Datepicker' #datepicker></mat-datepicker>
 
-					<md-form-field *ngIf='o.type === types.Email'>
+					<mat-form-field *ngIf='o.type === types.Email'>
 						<input
-							mdInput
+							matInput
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
@@ -45,11 +45,11 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
-					</md-form-field>
+					</mat-form-field>
 
-					<md-form-field *ngIf='o.type === types.Input'>
+					<mat-form-field *ngIf='o.type === types.Input'>
 						<input
-							mdInput
+							matInput
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
@@ -57,11 +57,11 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
-					</md-form-field>
+					</mat-form-field>
 
-					<md-form-field *ngIf='o.type === types.Number'>
+					<mat-form-field *ngIf='o.type === types.Number'>
 						<input
-							mdInput
+							matInput
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueNumber'
 							[max]='o.max'
@@ -71,11 +71,11 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
-					</md-form-field>
+					</mat-form-field>
 
-					<md-form-field *ngIf='o.type === types.Password'>
+					<mat-form-field *ngIf='o.type === types.Password'>
 						<input
-							mdInput
+							matInput
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
@@ -83,65 +83,65 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
-					</md-form-field>
+					</mat-form-field>
 
 					<label *ngIf='o.type === types.Radio'>{{o.label}}</label>
-					<md-radio-group
+					<mat-radio-group
 						fxFlex
 						[(ngModel)]='o.valueString'
 						[name]='o.label'
 						[required]='o.required'
 						*ngIf='o.type === types.Radio'
 					>
-						<md-radio-button *ngFor='let option of o.options' [value]='option'>
+						<mat-radio-button *ngFor='let option of o.options' [value]='option'>
 							{{option}}
-						</md-radio-button>
-					</md-radio-group>
+						</mat-radio-button>
+					</mat-radio-group>
 
-					<md-select
+					<mat-select
 						fxFlex
 						[(ngModel)]='o.valueString'
 						[name]='o.label'
 						[required]='o.required'
 						*ngIf='o.type === types.Select'
 					>
-						<md-option *ngFor='let option of o.options' [value]='option'>
+						<mat-option *ngFor='let option of o.options' [value]='option'>
 							{{option}}
-						</md-option>
-					</md-select>
+						</mat-option>
+					</mat-select>
 
 					<h3 *ngIf='o.type === types.Slider'>{{o.label}}</h3>
-					<md-slider
+					<mat-slider
 						[(ngModel)]='o.valueNumber'
 						[max]='o.max'
 						[min]='o.min'
 						[name]='o.label'
 						*ngIf='o.type === types.Slider'
-					></md-slider>
+					></mat-slider>
 
-					<md-slide-toggle
+					<mat-slide-toggle
 						[(ngModel)]='o.valueBoolean'
 						[name]='o.label'
 						[required]='o.required'
 						*ngIf='o.type === types.SlideToggle'
 					>
 						{{o.label}}
-					</md-slide-toggle>
+					</mat-slide-toggle>
 
-					<md-form-field *ngIf='o.type === types.Textarea'>
+					<mat-form-field *ngIf='o.type === types.Textarea'>
 						<textarea
-							mdInput
+							matInput
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
 							[placeholder]='o.label'
 							[required]='o.required'
 						></textarea>
-					</md-form-field>
+					</mat-form-field>
 
-					<md-form-field *ngIf='o.type === types.Time'>
+					<mat-form-field *ngIf='o.type === types.Time'>
 						<input
-							mdInput
+							matInput
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
@@ -149,11 +149,11 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
-					</md-form-field>
+					</mat-form-field>
 
-					<md-form-field *ngIf='o.type === types.URL'>
+					<mat-form-field *ngIf='o.type === types.URL'>
 						<input
-							mdInput
+							matInput
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
@@ -161,14 +161,14 @@
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
-					</md-form-field>
+					</mat-form-field>
 
 				</div>
 			</div>
 		</div>
 	</div>
 	<div fxLayout='row' fxLayoutAlign='center center'>
-		<button md-button cyphTranslate type='submit'>
+		<button mat-button cyphTranslate type='submit'>
 			Submit
 		</button>
 	</div>

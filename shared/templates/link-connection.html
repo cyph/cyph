@@ -36,22 +36,22 @@
 			<br />
 
 			<div fxLayoutAlign='center center' *ngIf='!envService.isMobile'>
-				<md-form-field fxFlex='50'>
+				<mat-form-field fxFlex='50'>
 					<input
-						mdInput
+						matInput
 						cyphTranslate
 						class='connect-link-input'
 						[(ngModel)]='link'
-						mdTooltip='Cyph Link'
+						matTooltip='Cyph Link'
 					/>
-				</md-form-field>
+				</mat-form-field>
 				<button
-					md-icon-button
-					mdTooltip='Copy to Clipboard'
+					mat-icon-button
+					matTooltip='Copy to Clipboard'
 					(click)='copyToClipboard()'
 					cyphTranslate
 				>
-					<md-icon>content_copy</md-icon>
+					<mat-icon>content_copy</mat-icon>
 				</button>
 			</div>
 
@@ -59,22 +59,22 @@
 				<a
 					class='connect-link-link'
 					[href]='link'
-					mdTooltip='Cyph Link'
+					matTooltip='Cyph Link'
 				>{{link}}</a>
 
 				<br />
 				<br />
 
-				<a md-mini-fab mdTooltip='SMS' [href]='linkSMS' cyphTranslate>
-					<md-icon>textsms</md-icon>
+				<a mat-mini-fab matTooltip='SMS' [href]='linkSMS' cyphTranslate>
+					<mat-icon>textsms</mat-icon>
 				</a>
 
 				<span class='divider'>
 					&nbsp;
 				</span>
 
-				<a md-mini-fab mdTooltip='Email' target='_self' [href]='linkMailto' cyphTranslate>
-					<md-icon>email</md-icon>
+				<a mat-mini-fab matTooltip='Email' target='_self' [href]='linkMailto' cyphTranslate>
+					<mat-icon>email</mat-icon>
 				</a>
 
 				<span class='divider'>
@@ -82,12 +82,12 @@
 				</span>
 
 				<button
-					md-mini-fab
-					mdTooltip='Copy to Clipboard'
+					mat-mini-fab
+					matTooltip='Copy to Clipboard'
 					(click)='copyToClipboard()'
 					cyphTranslate
 				>
-					<md-icon>content_copy</md-icon>
+					<mat-icon>content_copy</mat-icon>
 				</button>
 			</div>
 		</div>
@@ -101,11 +101,11 @@
 				{{timer.timestamp | async}}
 			</span>
 			<button
-				md-icon-button
+				mat-icon-button
 				(click)='addTime(60000)'
-				mdTooltip='Increase Time by One Minute'
+				matTooltip='Increase Time by One Minute'
 			>
-				<md-icon>alarm_add</md-icon>
+				<mat-icon>alarm_add</mat-icon>
 			</button>
 		</div>
 	</div>
@@ -116,51 +116,51 @@
 	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='enableAdvancedFeatures'>
 		<div fxFlex fxFlex.gt-md='50' fxLayout='column'>
 			<div fxLayout='row' fxLayoutAlign='center center'>
-				<md-slide-toggle [(ngModel)]='advancedFeatures' cyphTranslate>
+				<mat-slide-toggle [(ngModel)]='advancedFeatures' cyphTranslate>
 					Advanced Features
-				</md-slide-toggle>
+				</mat-slide-toggle>
 			</div>
 
 			<div fxLayout='row' fxLayoutGap='16px' *ngIf='advancedFeatures'>
-				<md-form-field fxFlex fxLayout='column'>
+				<mat-form-field fxFlex fxLayout='column'>
 					<textarea
-						mdInput
+						matInput
 						cyphTranslate
 						[(ngModel)]='queuedMessageDraft'
 						placeholder='Queue up first message'
 						rows='3'
 					></textarea>
-				</md-form-field>
+				</mat-form-field>
 				<div fxLayout='row'>
 					<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
 						<button
-							md-icon-button
-							mdTooltip='Save'
+							mat-icon-button
+							matTooltip='Save'
 							(click)='chatService.setQueuedMessage(queuedMessageDraft)'
 						>
-							<md-icon>save</md-icon>
+							<mat-icon>save</mat-icon>
 						</button>
-						<md-button-toggle
-							mdTooltip='Self-destruct'
+						<mat-button-toggle
+							matTooltip='Self-destruct'
 							[checked]='chatService.chatSelfDestruct'
 							(change)='chatService.chatSelfDestruct = !chatService.chatSelfDestruct'
 						>
-							<md-icon>timer</md-icon>
-						</md-button-toggle>
+							<mat-icon>timer</mat-icon>
+						</mat-button-toggle>
 					</div>
 					<div
 						*ngIf='chatService.chatSelfDestruct'
 						class='self-destruct-timer'
 					>
-						<md-form-field>
+						<mat-form-field>
 							<input
-								mdInput
+								matInput
 								[(ngModel)]='chatService.chatSelfDestructTimeout'
 								name='timer'
 								max='9999'
 								type='number'
 							/>
-						</md-form-field>
+						</mat-form-field>
 						&nbsp;
 						<span cyphTranslate>Seconds</span>
 					</div>
