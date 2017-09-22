@@ -9,6 +9,7 @@ import {
 	MatCheckboxModule,
 	MatDatepickerModule,
 	MatDialogModule,
+	MATERIAL_COMPATIBILITY_MODE,
 	MatIconModule,
 	MatInputModule,
 	MatListModule,
@@ -135,6 +136,10 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		{
 			provide: LocalStorageService,
 			useClass: WebLocalStorageService
+		},
+		{
+			provide: MATERIAL_COMPATIBILITY_MODE,
+			useValue: true
 		}
 	]
 })
