@@ -1,3 +1,6 @@
+/* Temporary workaround pending https://github.com/mgechev/codelyzer/issues/419. */
+/* tslint:disable:no-access-missing-member */
+
 import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
 import * as $ from 'jquery';
 import * as tabIndent from 'tab-indent';

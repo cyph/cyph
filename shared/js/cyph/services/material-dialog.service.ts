@@ -21,21 +21,21 @@ export class MaterialDialogService implements DialogService {
 	/** @inheritDoc */
 	public async alert (o: {content: string; ok?: string; title?: string}) : Promise<void> {
 		return this.lock(async () => {
-			const mdDialogRef	= this.mdDialog.open(DialogAlertComponent);
+			const matDialogRef	= this.matDialog.open(DialogAlertComponent);
 
-			mdDialogRef.componentInstance.content	= o.content;
+			matDialogRef.componentInstance.content	= o.content;
 
-			mdDialogRef.componentInstance.ok		= o.ok !== undefined ?
+			matDialogRef.componentInstance.ok		= o.ok !== undefined ?
 				o.ok :
 				this.stringsService.ok
 			;
 
-			mdDialogRef.componentInstance.title		= o.title !== undefined ?
+			matDialogRef.componentInstance.title		= o.title !== undefined ?
 				o.title :
 				''
 			;
 
-			await mdDialogRef.afterClosed().toPromise();
+			await matDialogRef.afterClosed().toPromise();
 		});
 	}
 
@@ -45,13 +45,13 @@ export class MaterialDialogService implements DialogService {
 		setInputs?: (componentInstance: T) => void
 	) : Promise<void> {
 		return this.lock(async () => {
-			const mdDialogRef	= this.mdDialog.open(componentType);
+			const matDialogRef	= this.matDialog.open(componentType);
 
 			if (setInputs) {
-				setInputs(mdDialogRef.componentInstance);
+				setInputs(matDialogRef.componentInstance);
 			}
 
-			await mdDialogRef.afterClosed().toPromise();
+			await matDialogRef.afterClosed().toPromise();
 		});
 	}
 
@@ -64,33 +64,33 @@ export class MaterialDialogService implements DialogService {
 		title?: string;
 	}) : Promise<boolean> {
 		return this.lock(async () => {
-			const mdDialogRef	= this.mdDialog.open(DialogConfirmComponent);
+			const matDialogRef	= this.matDialog.open(DialogConfirmComponent);
 
-			mdDialogRef.componentInstance.content	= o.content;
+			matDialogRef.componentInstance.content	= o.content;
 
-			mdDialogRef.componentInstance.cancel	= o.cancel !== undefined ?
+			matDialogRef.componentInstance.cancel	= o.cancel !== undefined ?
 				o.cancel :
 				this.stringsService.cancel
 			;
 
-			mdDialogRef.componentInstance.ok		= o.ok !== undefined ?
+			matDialogRef.componentInstance.ok		= o.ok !== undefined ?
 				o.ok :
 				this.stringsService.ok
 			;
 
-			mdDialogRef.componentInstance.title		= o.title !== undefined ?
+			matDialogRef.componentInstance.title		= o.title !== undefined ?
 				o.title :
 				''
 			;
 
-			const promise	= mdDialogRef.afterClosed().toPromise<boolean>();
+			const promise	= matDialogRef.afterClosed().toPromise<boolean>();
 
 			let hasReturned	= false;
 			if (o.timeout !== undefined && !isNaN(o.timeout)) {
 				(async () => {
 					await util.sleep(o.timeout);
 					if (!hasReturned) {
-						mdDialogRef.close(false);
+						matDialogRef.close(false);
 					}
 				})();
 			}
@@ -107,26 +107,26 @@ export class MaterialDialogService implements DialogService {
 	/** @inheritDoc */
 	public async image (src: SafeUrl|string) : Promise<void> {
 		return this.lock(async () => {
-			const mdDialogRef	= this.mdDialog.open(DialogImageComponent);
+			const matDialogRef	= this.matDialog.open(DialogImageComponent);
 
-			mdDialogRef.componentInstance.src	= src;
+			matDialogRef.componentInstance.src	= src;
 
-			await mdDialogRef.afterClosed().toPromise();
+			await matDialogRef.afterClosed().toPromise();
 		});
 	}
 
 	/** @inheritDoc */
 	public async toast (content: string, duration: number) : Promise<void> {
-		await this.mdSnackbar.open(content, undefined, {duration}).afterDismissed().toPromise();
+		await this.matSnackbar.open(content, undefined, {duration}).afterDismissed().toPromise();
 		await util.sleep(500);
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly mdDialog: MatDialog,
+		private readonly matDialog: MatDialog,
 
 		/** @ignore */
-		private readonly mdSnackbar: MatSnackBar,
+		private readonly matSnackbar: MatSnackBar,
 
 		/** @ignore */
 		private readonly stringsService: StringsService

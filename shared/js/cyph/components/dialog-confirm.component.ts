@@ -25,6 +25,6 @@ export class DialogConfirmComponent {
 
 	constructor (
 		/** Dialog instance */
-		public readonly mdDialogRef: MatDialogRef<DialogConfirmComponent>
+		public readonly matDialogRef: MatDialogRef<DialogConfirmComponent>
 	) {}
 }
