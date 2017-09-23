@@ -70,7 +70,7 @@
 		<button mat-icon-button [matMenuTriggerFor]='menu' class='menu-button' *ngIf='!accounts'>
 			<mat-icon>more_horiz</mat-icon>
 		</button>
-		<mat-menu #menu='matMenu' *ngIf='!accounts'>
+		<mat-menu #menu='matMenu'>
 			<button mat-menu-item (click)='chatService.helpButton()'>
 				<mat-icon>help_outline</mat-icon>
 				<span>{{stringsService.help}}</span>
