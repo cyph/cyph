@@ -82,17 +82,17 @@
 		</mat-menu>
 	</div>
 
-	<smat-fab-speed-dial
+	<smd-fab-speed-dial
 		[open]='isSpeedDialOpen'
 		(mouseleave)='isSpeedDialOpen = false'
 		*ngIf='!envService.isMobile'
 	>
-		<smat-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
+		<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
 			<button mat-fab>
 				<mat-icon>add</mat-icon>
 			</button>
-		</smat-fab-trigger>
-		<smat-fab-actions>
+		</smd-fab-trigger>
+		<smd-fab-actions>
 			<button
 				mat-mini-fab
 				cyphTranslate
@@ -147,8 +147,8 @@
 			>
 				<mat-icon>close</mat-icon>
 			</button>
-		</smat-fab-actions>
-	</smat-fab-speed-dial>
+		</smd-fab-actions>
+	</smd-fab-speed-dial>
 
 	<h3
 		fxFlex
