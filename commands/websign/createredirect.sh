@@ -9,60 +9,67 @@ cat > "${domain}/index.html.tmp" <<- EOM
 	<html☁manifest='/appcache.appcache'>
 		<body>
 			<script>
+				function☁redirect () {
+					var☁storage	= {};
+					try {
+						localStorage.isPersistent	= 'true';
+						storage						= localStorage;
+					}
+					catch (_) {}
+
+					var☁isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
+
+					$(if [ ! "${test}" ] ; then echo "
+						if (location.host.indexOf('www.') === 0) {
+							location.host	= location.host.replace('www.', '');
+						}
+						else☁if (
+							!isHiddenService &&
+							storage.isPersistent &&
+							!storage.webSignWWWPinned
+						) {
+							storage.webSignWWWPinned	= true;
+							location.host				= 'www.' + location.host;
+						}
+					" ; fi)
+
+					var☁path	= (
+						'/#' +
+						'$(if [ "${path}" ] ; then echo "${path}/" ; fi)' +
+						location.toString().
+							split(location.host)[1].
+							replace('#', '').
+							replace(/^\\//, '')
+					).replace(/\\/\$/, '');
+
+					var☁host	= '${package}';
+
+					if (isHiddenService) {
+						host	=
+							host.replace(/\\.ws\$/, '').replace(/\\./g, '_') +
+							'.cyphdbyhiddenbhs.onion'
+						;
+					}
+
+					location	= 'https://' + host + (path === '/#' ? '' : path);
+				}
+
 				try {
-					navigator.serviceWorker.
-						register('/serviceworker.js').
-						catch(function () {})
+					Promise.resolve().
+						then(function () {
+							return navigator.serviceWorker.register('/serviceworker.js');
+						}).
+						catch(function () {}).
+						then(function () {
+							return navigator.storage.persist();
+						}).
+						catch(function () {}).
+						then(redirect)
 					;
 				}
-				catch (_) {}
-				try {
-					navigator.storage.persist();
+				catch (_) {
+					redirect();
 				}
-				catch (_) {}
-
-				var☁storage	= {};
-				try {
-					localStorage.isPersistent	= 'true';
-					storage						= localStorage;
-				}
-				catch (_) {}
-
-				var☁isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
-
-				$(if [ ! "${test}" ] ; then echo "
-					if (location.host.indexOf('www.') === 0) {
-						location.host	= location.host.replace('www.', '');
-					}
-					else☁if (
-						!isHiddenService &&
-						storage.isPersistent &&
-						!storage.webSignWWWPinned
-					) {
-						storage.webSignWWWPinned	= true;
-						location.host				= 'www.' + location.host;
-					}
-				" ; fi)
-
-				var☁path	= (
-					'/#' +
-					'$(if [ "${path}" ] ; then echo "${path}/" ; fi)' +
-					location.toString().
-						split(location.host)[1].
-						replace('#', '').
-						replace(/^\\//, '')
-				).replace(/\\/\$/, '');
-
-				var☁host	= '${package}';
-
-				if (isHiddenService) {
-					host	=
-						host.replace(/\\.ws\$/, '').replace(/\\./g, '_') +
-						'.cyphdbyhiddenbhs.onion'
-					;
-				}
-
-				location	= 'https://' + host + (path === '/#' ? '' : path);
 			</script>
 		</body>
 	</html>
