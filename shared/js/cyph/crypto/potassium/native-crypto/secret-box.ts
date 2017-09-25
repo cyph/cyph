@@ -1,8 +1,17 @@
+import {Hash} from '../hash';
+import {IHash} from '../ihash';
+import {potassiumUtil} from '../potassium-util';
 import {importHelper} from './import-helper';
 
 
 /** Equivalent to sodium.crypto_secretbox. */
 export class SecretBox {
+	/** @ignore */
+	private readonly hash: IHash				= new Hash(true);
+
+	/** @ignore */
+	private readonly internalNonceBytes: number	= 12;
+
 	/** Additional data length. */
 	public readonly aeadBytes: number	= 16;
 
@@ -13,7 +22,35 @@ export class SecretBox {
 	public readonly keyBytes: number	= 32;
 
 	/** Nonce length. */
-	public readonly nonceBytes: number	= 12;
+	public readonly nonceBytes: number	= 24;
+
+	/** @ignore */
+	private async processKeyAndNonce (
+		key: Uint8Array,
+		nonce: Uint8Array,
+		purpose: string
+	) : Promise<{
+		cryptoKey: CryptoKey;
+		iv: Uint8Array;
+	}> {
+		const newKey	= await this.hash.deriveKey(
+			potassiumUtil.concatMemory(
+				false,
+				key,
+				potassiumUtil.toBytes(nonce, this.internalNonceBytes)
+			),
+			this.keyBytes
+		);
+
+		const cryptoKey	= await importHelper.importRawKey(newKey, this.algorithm, purpose);
+
+		potassiumUtil.clearMemory(newKey);
+
+		return {
+			cryptoKey,
+			iv: potassiumUtil.toBytes(nonce, 0, this.nonceBytes)
+		};
+	}
 
 	/** Decrypts cyphertext. */
 	public async open (
@@ -22,18 +59,16 @@ export class SecretBox {
 		key: Uint8Array,
 		additionalData: Uint8Array = new Uint8Array(this.aeadBytes)
 	) : Promise<Uint8Array> {
+		const {cryptoKey, iv}	= await this.processKeyAndNonce(key, nonce, 'decrypt');
+
 		return new Uint8Array(
 			await crypto.subtle.decrypt(
 				{
 					additionalData,
-					iv: nonce,
+					iv,
 					name: this.algorithm
 				},
-				await importHelper.importRawKey(
-					key,
-					this.algorithm,
-					'decrypt'
-				),
+				cryptoKey,
 				cyphertext
 			)
 		);
@@ -46,18 +81,16 @@ export class SecretBox {
 		key: Uint8Array,
 		additionalData: Uint8Array = new Uint8Array(this.aeadBytes)
 	) : Promise<Uint8Array> {
+		const {cryptoKey, iv}	= await this.processKeyAndNonce(key, nonce, 'encrypt');
+
 		return new Uint8Array(
 			await crypto.subtle.encrypt(
 				{
 					additionalData,
-					iv: nonce,
+					iv,
 					name: this.algorithm
 				},
-				await importHelper.importRawKey(
-					key,
-					this.algorithm,
-					'encrypt'
-				),
+				cryptoKey,
 				plaintext
 			)
 		);
