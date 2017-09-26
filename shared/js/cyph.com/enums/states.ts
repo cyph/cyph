@@ -3,6 +3,7 @@
  */
 export enum States {
 	checkout,
+	claimusername,
 	contact,
 	donate,
 	home,

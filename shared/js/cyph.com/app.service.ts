@@ -30,6 +30,9 @@ export class AppService {
 		subscription: boolean;
 	};
 
+	/** @see ClaimUsernameComponent.email. */
+	public claimUsernameEmail?: string;
+
 	/** @see ContactComponent.to. */
 	public contactTo?: string;
 
@@ -176,6 +179,10 @@ export class AppService {
 			catch {
 				this.routerService.navigate(['404']);
 			}
+		}
+		else if (state === States.claimusername) {
+			this.claimUsernameEmail	= urlSegmentPaths[1];
+			this.state				= state;
 		}
 		else if (state === States.contact) {
 			const to: string	= urlSegmentPaths[1];

@@ -1,1 +1,73 @@
-<div>ClaimUsername</div>
+<div fxLayout='column'>
+	<div fxLayout='row' fxLayoutAlign='center start'>
+		<form
+			ngNativeValidate
+			fxFlex
+			fxFlex.gt-md='75'
+			fxFlex.gt-lg='50'
+			fxLayout='column'
+			fxLayoutGap='16px'
+			(submit)='submit()'
+			*ngIf='!submitted'
+		>
+			<div>
+				<mat-form-field fxFlex>
+					<input
+						matInput
+						cyphTranslate
+						[(ngModel)]='email'
+						name='email'
+						type='email'
+						placeholder='Email'
+						required
+					/>
+				</mat-form-field>
+			</div>
+			<div>
+				<mat-form-field fxFlex>
+					<input
+						matInput
+						cyphTranslate
+						[textMask]='usernameMask'
+						[(ngModel)]='username'
+						name='username'
+						placeholder='Requested Username (allowed characters: 0-9, A-Z, a-z, _)'
+						required
+					/>
+				</mat-form-field>
+			</div>
+			<div></div>
+			<div>
+				<button mat-button fxFlex cyphTranslate type='submit'>
+					Submit
+				</button>
+			</div>
+		</form>
+		<div
+			fxFlex
+			fxFlex.gt-md='75'
+			fxFlex.gt-lg='50'
+			fxLayout='column'
+			fxLayoutGap='16px'
+			*ngIf='submitted'
+		>
+			<div>
+				<span cyphTranslate>
+					Your username request has been submitted! It isn't guaranteed, but if you are
+					on our approved list of users then
+				</span>
+				<span>{{username}}</span>
+				<span cyphTranslate>
+					will be set aside as reserved for you.
+				</span>
+			</div>
+			<div cyphTranslate>
+				If there's a specific reason we're unable to reserve your username, such
+				such as a conflict with an earlier username request, you will hear from us.
+			</div>
+			<div cyphTranslate>
+				Thank you for your continued support of Cyph!
+			</div>
+		</div>
+	</div>
+</div>

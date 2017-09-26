@@ -19,6 +19,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {RouterModule} from '@angular/router';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
 import {CheckoutComponent} from '../cyph/components/checkout.component';
+import {ClaimUsernameComponent} from '../cyph/components/claim-username.component';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
 import {DataURIProto} from '../cyph/protos';
@@ -51,6 +52,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		BetaRegisterComponent,
 		DemoChatRootComponent,
 		CheckoutComponent,
+		ClaimUsernameComponent,
 		DemoComponent,
 		RouterComponent
 	],

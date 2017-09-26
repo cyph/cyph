@@ -902,6 +902,23 @@
 		</section>
 
 		<section
+			id='claimusername'
+			*ngIf='appService.state === states.claimusername'
+			class='unisection'
+		>
+			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
+				Claim Your Username
+			</h1>
+			<div class='section-content-container' fxLayout='column' fxLayoutGap='32px'>
+				<div>
+					<cyph-claim-username
+						[email]='appService.claimUsernameEmail'
+					></cyph-claim-username>
+				</div>
+			</div>
+		</section>
+
+		<section
 			id='contact'
 			*ngIf='appService.state === states.contact'
 			class='unisection'

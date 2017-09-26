@@ -21,6 +21,11 @@ export class PageTitles {
 	);
 
 	/** @see PageTitles */
+	public readonly claimusername: string	= util.translate(
+		`Cyph - Claim Your Username`
+	);
+
+	/** @see PageTitles */
 	public readonly contact: string			= util.translate(
 		`Get in Touch with Cyph`
 	);
