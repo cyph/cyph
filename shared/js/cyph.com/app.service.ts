@@ -86,7 +86,7 @@ export class AppService {
 		/* Workaround for Prefinery bug */
 		/* tslint:disable-next-line:tab-equals */
 		if (location.search && location.search.match(/^\?r=/)) {
-			this.routerService.navigate(['register', location.search.split('r=')[1] || '']);
+			this.routerService.navigate(['invite', location.search.split('r=')[1] || '']);
 			return;
 		}
 
