@@ -74,12 +74,14 @@ export class AppService {
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:cyclomatic-complexity */
 	private async onUrlChange (url: string) : Promise<void> {
 		/* Workaround to allow triggering this method
 			even when URL hasn't changed (e.g. for scrolling). */
 		this.routerService.navigated	= false;
 
 		/* Workaround for Prefinery bug */
+		/* tslint:disable-next-line:tab-equals */
 		if (location.search && location.search.match(/^\?r=/)) {
 			this.routerService.navigate(['register', location.search.split('r=')[1] || '']);
 			return;
