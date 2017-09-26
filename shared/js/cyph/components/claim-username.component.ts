@@ -23,7 +23,7 @@ export class ClaimUsernameComponent {
 	/** Username text mask. */
 	public readonly usernameMask: any	= {
 		guide: false,
-		mask: new Array(64).fill(/[0-9A-Za-z_]/)
+		mask: new Array(50).fill(/[0-9A-Za-z_]/)
 	};
 
 	/** Submits form. */

@@ -6,10 +6,24 @@
 			fxFlex.gt-md='75'
 			fxFlex.gt-lg='50'
 			fxLayout='column'
-			fxLayoutGap='16px'
+			fxLayoutGap='8px'
 			(submit)='submit()'
 			*ngIf='!submitted'
 		>
+			<div cyphTranslate>
+				This won't immediately get you a Cyph account, but if you were invited by
+				the Cyph team to access this page, requesting a username now will let us know
+				to set it aside for you to use when you do get access to Cyph v2.
+			</div>
+			<div cyphTranslate>
+				Your username cannot exceed 50 characters, and is limited to alphanumeric
+				characters (0-9, A-Z, a-z) and underscores (_).
+			</div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
 			<div>
 				<mat-form-field fxFlex>
 					<input
@@ -31,11 +45,12 @@
 						[textMask]='usernameMask'
 						[(ngModel)]='username'
 						name='username'
-						placeholder='Requested Username (allowed characters: 0-9, A-Z, a-z, _)'
+						placeholder='Requested Username'
 						required
 					/>
 				</mat-form-field>
 			</div>
+			<div></div>
 			<div></div>
 			<div>
 				<button mat-button fxFlex cyphTranslate type='submit'>
