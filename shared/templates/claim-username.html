@@ -50,6 +50,18 @@
 					/>
 				</mat-form-field>
 			</div>
+			<div>
+				<mat-form-field fxFlex>
+					<input
+						matInput
+						cyphTranslate
+						[textMask]='usernameMask'
+						[(ngModel)]='usernameAlternate'
+						name='usernameAlternate'
+						placeholder='Alternate Username (optional)'
+					/>
+				</mat-form-field>
+			</div>
 			<div></div>
 			<div></div>
 			<div>

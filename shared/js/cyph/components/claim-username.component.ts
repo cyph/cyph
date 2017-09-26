@@ -12,23 +12,32 @@ import {util} from '../util';
 })
 export class ClaimUsernameComponent {
 	/** User's email address. */
-	@Input() public email: string		= '';
+	@Input() public email: string				= '';
 
 	/** Indicates whether form has been submitted. */
-	public submitted: boolean			= false;
+	public submitted: boolean					= false;
 
 	/** Requested username. */
-	@Input() public username: string	= '';
+	@Input() public username: string			= '';
+
+	/** Requested username alternate/backup. */
+	@Input() public usernameAlternate: string	= '';
 
 	/** Username text mask. */
-	public readonly usernameMask: any	= {
+	public readonly usernameMask: any			= {
 		guide: false,
 		mask: new Array(50).fill(/[0-9A-Za-z_]/)
 	};
 
 	/** Submits form. */
 	public submit () : void {
-		util.email('username-request@cyph.com', undefined, this.username, this.email);
+		util.email(
+			'username-request@cyph.com',
+			undefined,
+			`${this.username}\n${this.usernameAlternate}`,
+			this.email
+		);
+
 		this.submitted	= true;
 	}
 
