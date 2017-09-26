@@ -45,6 +45,8 @@ print \$0
 mv %.new %
 '
 
+find shared/js shared/css shared/templates -type f -exec sed -i 's/\s*$//g' {} \;
+
 chmod -R 700 .
 git commit -S -a -m "cleanup: ${comment}"
 
