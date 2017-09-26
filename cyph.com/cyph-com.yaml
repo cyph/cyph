@@ -11,7 +11,13 @@ handlers:
   secure: always
   # default_headers Cache-Control
 
-- url: /contact.*
+- url: /claimusername/.*
+  static_files: index.html
+  upload: index.html
+  secure: always
+  # default_headers Cache-Control
+
+- url: /contact/.*
   static_files: index.html
   upload: index.html
   secure: always
