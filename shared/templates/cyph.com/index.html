@@ -1465,6 +1465,26 @@
 			</div>
 		</section>
 
+		<section
+			id='waitlisttrack'
+			*ngIf='appService.state === states.waitlisttrack'
+			class='unisection'
+		>
+			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
+				Waitlist Position
+			</h1>
+			<div class='section-content-container'>
+				<p cyphTranslate>
+					There is no waitlist position tracker at this time. If you're seeing this page,
+					you were sent here by a bug in our waitlist management software.
+				</p>
+				<p cyphTranslate>
+					That said, everyone in the group that received the email with this link is near
+					the top of the waitlist, so you can expect to have your account fairly soon.
+				</p>
+			</div>
+		</section>
+
 		<footer id='footer'>
 			<div class='footer-info'>
 				<span>&copy; Cyph 2017</span>

@@ -89,6 +89,11 @@ export class AppService {
 			this.routerService.navigate(['invite', location.search.split('r=')[1] || '']);
 			return;
 		}
+		/* tslint:disable-next-line:tab-equals */
+		else if (location.search && location.search.match(/^\?ref-check=/)) {
+			this.routerService.navigate(['waitlisttrack']);
+			return;
+		}
 
 		const urlSegmentPaths: string[]	= url.split('/').slice(1);
 		const urlBasePath: string		= urlSegmentPaths[0];

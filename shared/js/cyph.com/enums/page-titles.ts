@@ -135,6 +135,11 @@ export class PageTitles {
 		`Cyph – We The People`
 	);
 
+	/** @see PageTitles */
+	public readonly waitlisttrack: string	= util.translate(
+		`Cyph – Waitlist Position`
+	);
+
 	constructor () {}
 }
 

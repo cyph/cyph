@@ -10,5 +10,6 @@ export enum States {
 	error,
 	faq,
 	privacypolicy,
-	termsofservice
+	termsofservice,
+	waitlisttrack
 }

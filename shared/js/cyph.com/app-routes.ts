@@ -34,5 +34,6 @@ export const appRoutes: Routes	= [
 	{path: 'security', component: AppComponent},
 	{path: 'termsofservice', component: AppComponent},
 	{path: 'testimonials', component: AppComponent},
-	{path: 'ventura', component: AppComponent}
+	{path: 'ventura', component: AppComponent},
+	{path: 'waitlisttrack', component: AppComponent}
 ];
