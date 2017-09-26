@@ -34,7 +34,11 @@ export class ClaimUsernameComponent {
 		util.email(
 			'username-request@cyph.com',
 			undefined,
-			`${this.username}\n${this.usernameAlternate}`,
+			JSON.stringify({
+				email: this.email,
+				username: this.username,
+				usernameAlternate: this.usernameAlternate
+			}),
 			this.email
 		);
 
