@@ -79,6 +79,12 @@ export class AppService {
 			even when URL hasn't changed (e.g. for scrolling). */
 		this.routerService.navigated	= false;
 
+		/* Workaround for Prefinery bug */
+		if (location.search && location.search.match(/^\?r=/)) {
+			this.routerService.navigate(['register', location.search.split('r=')[1] || '']);
+			return;
+		}
+
 		const urlSegmentPaths: string[]	= url.split('/').slice(1);
 		const urlBasePath: string		= urlSegmentPaths[0];
 
