@@ -63,7 +63,7 @@ export class Rule extends AbstractRule {
 		return !!(
 			(equalsPrefix.match(/\t/) && !equalsPrefix.match(/ /)) &&
 			(
-				(equalsSuffix[0] === '\n' && !equalsSuffix.match(/ /)) || 
+				(equalsSuffix[0] === '\n' && !equalsSuffix.match(/ /)) ||
 				(equalsSuffix[0] === ' ' && equalsSuffix.length === 1)
 			)
 		);

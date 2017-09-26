@@ -63,7 +63,7 @@
 						/>
 					</mat-form-field>
 				</div>
-			</div>			
+			</div>
 			<div fxLayout='row'>
 				<mat-form-field fxFlex>
 					<textarea
@@ -75,12 +75,12 @@
 						required
 					></textarea>
 				</mat-form-field>
-			</div>			
+			</div>
 			<div fxLayout='row'>
 				<mat-checkbox [(ngModel)]='responseRequested' name='response'>
 					Response Requested
 				</mat-checkbox>
-			</div>			
+			</div>
 			<div fxLayout='row'>
 				<button mat-button fxFlex cyphTranslate type='submit'>
 					Send
@@ -89,7 +89,7 @@
 		</form>
 		<div *ngIf='sent' cyphTranslate>
 			Your email has been sent!
-			If you requested a response, 
+			If you requested a response,
 			someone on the team will get back to you shortly.
 		</div>
 	</div>

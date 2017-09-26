@@ -115,7 +115,7 @@
 		*ngIf='p2pWebRTCService && chatService.chat.state === states.chat'
 	>
 		<a class='logo' rel='noopener noreferrer' [href]='envService.homeUrl'>
-			<img 
+			<img
 				*ngIf='!sessionService.apiFlags.telehealth'
 				src='/assets/img/betalogo.mobile.png'
 				alt='Beta logo'
@@ -253,7 +253,7 @@
 		</div>
 	</div>
 
-	<div 
+	<div
 		fxFlex
 		fxFlexFill
 		*ngIf='chatService.initiated && chatService.chatSelfDestructEffect'
@@ -281,7 +281,7 @@
 		<div cyphTranslate>Message will self-destruct in</div>
 		<div class='countdown'>{{chatService.chatSelfDestructTimer.timestamp | async}}</div>
 	</div>
-	
+
 	<cyph-chat-message-list
 		fxFlex
 		fxFlexFill
