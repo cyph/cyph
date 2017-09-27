@@ -48,7 +48,7 @@ export class SecretBox {
 
 		return {
 			cryptoKey,
-			iv: potassiumUtil.toBytes(nonce, 0, this.nonceBytes)
+			iv: potassiumUtil.toBytes(nonce, 0, this.internalNonceBytes)
 		};
 	}
 
