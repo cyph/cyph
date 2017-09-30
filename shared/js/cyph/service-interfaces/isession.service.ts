@@ -19,6 +19,9 @@ export interface ISessionService {
 	/** App username. Currently just an empty string. */
 	readonly appUsername: Observable<string>;
 
+	/** Resolves when this session is closed. */
+	readonly closed: Promise<void>;
+
 	/** Resolves when this session is connected. */
 	readonly connected: Promise<void>;
 

@@ -18,6 +18,11 @@ export class Transport {
 		this.sessionService.castleHandler(CastleEvents.abort);
 	}
 
+	/** @see ISessionService.closed */
+	public get closed () : Promise<void> {
+		return this.sessionService.closed;
+	}
+
 	/** Triggers connection event. */
 	public connect () : void {
 		this.sessionService.castleHandler(CastleEvents.connect);

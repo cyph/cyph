@@ -356,7 +356,7 @@ export class PairwiseSession {
 							));
 						});
 
-						await util.waitUntilTrue(() => !this.transport.isAlive);
+						await this.transport.closed;
 						sub.unsubscribe();
 					});
 

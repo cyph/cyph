@@ -72,6 +72,9 @@ export abstract class SessionService implements ISessionService {
 	public readonly appUsername: Observable<string>			= Observable.of('');
 
 	/** @inheritDoc */
+	public readonly closed: Promise<void>					= this.one<void>(events.closeChat);
+
+	/** @inheritDoc */
 	public readonly connected: Promise<void>				= this.one<void>(events.connect);
 
 	/** @inheritDoc */
