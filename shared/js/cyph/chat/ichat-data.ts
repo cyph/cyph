@@ -2,6 +2,7 @@ import {Subject} from 'rxjs';
 import {IChatMessage} from '../../proto';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
+import {LockFunction} from '../lock-function-type';
 import {States} from './enums';
 
 
@@ -38,6 +39,9 @@ export interface IChatData {
 
 	/** Currently queued message for sending post-handshake. */
 	queuedMessage?: string;
+
+	/** Lock for handling incoming messages. */
+	receiveTextLock: LockFunction;
 
 	/** Chat UI state/view. */
 	state: States;

@@ -59,6 +59,9 @@ export class AccountChatService extends ChatService {
 				ChatMessage
 			),
 			noKeyExchangeState: true,
+			receiveTextLock: this.accountDatabaseService.lockFunction(
+				`${contactURL}/receiveTextLock`
+			),
 			state: States.chat,
 			unconfirmedMessages: this.accountDatabaseService.getAsyncValue(
 				`${contactURL}/unconfirmedMessages`,

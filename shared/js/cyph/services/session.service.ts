@@ -136,12 +136,6 @@ export abstract class SessionService implements ISessionService {
 			);
 
 			await this.castleService.send(await util.serialize(SessionMessageList, {messages}));
-
-			for (const message of messages) {
-				if (message.event === rpcEvents.text) {
-					this.trigger(rpcEvents.text, message.data);
-				}
-			}
 		}
 	}
 
@@ -173,8 +167,8 @@ export abstract class SessionService implements ISessionService {
 	/** @ignore */
 	protected async newMessages (
 		messages: [string, ISessionMessageAdditionalData][]
-	) : Promise<ISessionMessage[]> {
-		const newMessages: ISessionMessage[]	= [];
+	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
+		const newMessages: (ISessionMessage&{data: ISessionMessageData})[]	= [];
 
 		for (const message of messages) {
 			const [event, additionalData]	= message;
@@ -384,8 +378,12 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
-	public async send (...messages: [string, ISessionMessageAdditionalData][]) : Promise<void> {
-		this.plaintextSendHandler(await this.newMessages(messages));
+	public async send (
+		...messages: [string, ISessionMessageAdditionalData][]
+	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
+		const newMessages	= await this.newMessages(messages);
+		this.plaintextSendHandler(newMessages);
+		return newMessages;
 	}
 
 	/** @inheritDoc */

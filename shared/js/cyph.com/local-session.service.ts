@@ -84,12 +84,16 @@ export class LocalSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	public async send (...messages: [string, ISessionMessageAdditionalData][]) : Promise<void> {
+	public async send (
+		...messages: [string, ISessionMessageAdditionalData][]
+	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
 		while (!this.chatData) {
 			await util.sleep();
 		}
 
-		for (const message of await this.newMessages(messages)) {
+		const newMessages	= await this.newMessages(messages);
+
+		for (const message of newMessages) {
 			const cyphertext	= potassiumUtil.randomBytes(util.random(1024, 100));
 
 			this.trigger(events.cyphertext, {
@@ -97,15 +101,13 @@ export class LocalSessionService extends SessionService {
 				cyphertext
 			});
 
-			if (message.event === rpcEvents.text) {
-				this.trigger(rpcEvents.text, message.data);
-			}
-
 			this.chatData.channelOutgoing.next(
 				(await this.newMessages([[events.cyphertext, {bytes: cyphertext}]]))[0]
 			);
 			this.chatData.channelOutgoing.next(message);
 		}
+
+		return newMessages;
 	}
 
 	constructor (

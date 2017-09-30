@@ -1,6 +1,12 @@
 import {BehaviorSubject, Observable} from 'rxjs';
+import {ISessionMessage} from '../../proto';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
-import {CastleEvents, ISessionMessageAdditionalData, ProFeatures} from '../session';
+import {
+	CastleEvents,
+	ISessionMessageAdditionalData,
+	ISessionMessageData,
+	ProFeatures
+} from '../session';
 
 
 /**
@@ -86,7 +92,9 @@ export interface ISessionService {
 	 * Send at least one message through the session.
 	 * @param messages
 	 */
-	send (...messages: [string, ISessionMessageAdditionalData][]) : void;
+	send (
+		...messages: [string, ISessionMessageAdditionalData][]
+	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]>;
 
 	/**
 	 * Trigger event, passing in optional data.
