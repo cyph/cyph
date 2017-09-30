@@ -70,6 +70,76 @@ export class PairwiseSession {
 	}
 
 	/** @ignore */
+	private async processIncomingMessages (
+		newMessageID: number,
+		cyphertext: Uint8Array
+	) : Promise<void> {
+		const promises	= {
+			incomingMessageID: this.incomingMessageID.getValue(),
+			incomingMessages: this.incomingMessages.getValue(),
+			incomingMessagesMax: this.incomingMessagesMax.getValue()
+		};
+
+		let incomingMessageID	= await promises.incomingMessageID;
+		const incomingMessages	= await promises.incomingMessages;
+		let incomingMessagesMax	= await promises.incomingMessagesMax;
+
+		if (newMessageID >= incomingMessageID) {
+			if (newMessageID > incomingMessagesMax) {
+				incomingMessagesMax	= newMessageID;
+			}
+
+			const message	= incomingMessages[newMessageID] || [];
+
+			incomingMessages[newMessageID]	= message;
+			message.push(cyphertext);
+		}
+
+		while (incomingMessageID <= incomingMessagesMax) {
+			const id		= incomingMessageID;
+			const message	= incomingMessages[id];
+
+			if (message === undefined) {
+				break;
+			}
+
+			for (const cyphertextBytes of message) {
+				try {
+					const plaintext	= await (await this.core).decrypt(cyphertextBytes);
+
+					this.transport.receive(
+						cyphertextBytes,
+						plaintext,
+						this.remoteUser.username
+					);
+
+					++incomingMessageID;
+					break;
+				}
+				catch (err) {
+					if (
+						(
+							await this.handshakeState.currentStep.getValue()
+						) !== HandshakeSteps.Complete
+					) {
+						this.abort();
+						throw err;
+					}
+				}
+				finally {
+					this.potassium.clearMemory(cyphertextBytes);
+				}
+			}
+
+			delete incomingMessages[id];
+		}
+
+		this.incomingMessageID.setValue(incomingMessageID);
+		this.incomingMessages.setValue(incomingMessages);
+		this.incomingMessagesMax.setValue(incomingMessagesMax);
+	}
+
+	/** @ignore */
 	private async ratchetBootstrapComplete (
 		initialSecretAlice: Uint8Array,
 		initialSecretBob: Uint8Array
@@ -294,75 +364,14 @@ export class PairwiseSession {
 					this.receiveLock(async () => {
 						const lock	= util.lockFunction();
 
-						const sub	= this.incomingMessageQueue.subscribe(async ({
-							cyphertext,
-							newMessageID
-						}) => lock(async () => {
-							const promises	= {
-								incomingMessageID: this.incomingMessageID.getValue(),
-								incomingMessages: this.incomingMessages.getValue(),
-								incomingMessagesMax: this.incomingMessagesMax.getValue()
-							};
-							let incomingMessageID	= await promises.incomingMessageID;
-							const incomingMessages	= await promises.incomingMessages;
-							let incomingMessagesMax	= await promises.incomingMessagesMax;
-
-							if (newMessageID >= incomingMessageID) {
-								if (newMessageID > incomingMessagesMax) {
-									incomingMessagesMax	= newMessageID;
-								}
-
-								const message	= incomingMessages[newMessageID] || [];
-
-								incomingMessages[newMessageID]	= message;
-								message.push(cyphertext);
-							}
-
-							while (incomingMessageID <= incomingMessagesMax) {
-								const id		= incomingMessageID;
-								const message	= incomingMessages[id];
-
-								if (message === undefined) {
-									break;
-								}
-
-								for (const cyphertextBytes of message) {
-									try {
-										const plaintext	=
-											await (await this.core).decrypt(cyphertextBytes)
-										;
-
-										this.transport.receive(
-											cyphertextBytes,
-											plaintext,
-											this.remoteUser.username
-										);
-
-										++incomingMessageID;
-										break;
-									}
-									catch (err) {
-										if (
-											(
-												await this.handshakeState.currentStep.getValue()
-											) !== HandshakeSteps.Complete
-										) {
-											this.abort();
-											throw err;
-										}
-									}
-									finally {
-										this.potassium.clearMemory(cyphertextBytes);
-									}
-								}
-
-								delete incomingMessages[id];
-							}
-
-							this.incomingMessageID.setValue(incomingMessageID);
-							this.incomingMessages.setValue(incomingMessages);
-							this.incomingMessagesMax.setValue(incomingMessagesMax);
-						}));
+						const sub	= this.incomingMessageQueue.subscribe(
+							async ({cyphertext, newMessageID}) => lock(async () =>
+								this.processIncomingMessages(
+									newMessageID,
+									cyphertext
+								)
+							)
+						);
 
 						this.isReceiving.next(true);
 						await this.transport.closed;

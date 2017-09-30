@@ -35,7 +35,7 @@ export class Core {
 
 
 	/** @ignore */
-	private readonly lock: LockFunction = util.lockFunction();
+	private readonly lock: LockFunction	= util.lockFunction();
 
 	/** @ignore */
 	private async asymmetricRatchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
