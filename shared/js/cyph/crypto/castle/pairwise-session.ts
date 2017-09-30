@@ -292,10 +292,12 @@ export class PairwiseSession {
 					await this.connect();
 
 					this.receiveLock(async () => {
+						const lock	= util.lockFunction();
+
 						const sub	= this.incomingMessageQueue.subscribe(async ({
 							cyphertext,
 							newMessageID
-						}) => {
+						}) => lock(async () => {
 							const promises	= {
 								incomingMessageID: this.incomingMessageID.getValue(),
 								incomingMessages: this.incomingMessages.getValue(),
@@ -360,7 +362,7 @@ export class PairwiseSession {
 							this.incomingMessageID.setValue(incomingMessageID);
 							this.incomingMessages.setValue(incomingMessages);
 							this.incomingMessagesMax.setValue(incomingMessagesMax);
-						});
+						}));
 
 						this.isReceiving.next(true);
 						await this.transport.closed;
@@ -370,20 +372,24 @@ export class PairwiseSession {
 					});
 
 					this.sendLock(async () => {
-						const sub	= this.outgoingMessageQueue.subscribeAndPop(async message => {
-							const messageID		= await this.newOutgoingMessageID();
+						const lock	= util.lockFunction();
 
-							const cyphertext	= await (await this.core).encrypt(
-								message,
-								messageID
-							);
+						const sub	= this.outgoingMessageQueue.subscribeAndPop(async message =>
+							lock(async () => {
+								const messageID		= await this.newOutgoingMessageID();
 
-							this.transport.send(this.potassium.concatMemory(
-								true,
-								messageID,
-								cyphertext
-							));
-						});
+								const cyphertext	= await (await this.core).encrypt(
+									message,
+									messageID
+								);
+
+								this.transport.send(this.potassium.concatMemory(
+									true,
+									messageID,
+									cyphertext
+								));
+							})
+						);
 
 						await this.transport.closed;
 						sub.unsubscribe();
