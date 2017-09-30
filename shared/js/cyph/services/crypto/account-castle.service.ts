@@ -101,7 +101,6 @@ export class AccountCastleService extends CastleService {
 							),
 							this.accountDatabaseService.lockFunction(`${sessionURL}/receiveLock`),
 							this.accountDatabaseService.lockFunction(`${sessionURL}/sendLock`),
-							this.accountDatabaseService.lockFunction(`${sessionURL}/coreLock`),
 							{
 								privateKey: this.accountDatabaseService.getAsyncValue(
 									`${sessionURL}/asymmetricRatchetState/privateKey`,

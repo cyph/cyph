@@ -1,4 +1,5 @@
 import {LockFunction} from '../../lock-function-type';
+import {util} from '../../util';
 import {IPotassium} from '../potassium/ipotassium';
 import {IAsymmetricRatchetState} from './iasymmetric-ratchet-state';
 import {ISymmetricRatchetState} from './isymmetric-ratchet-state';
@@ -32,6 +33,9 @@ export class Core {
 		;
 	}
 
+
+	/** @ignore */
+	private readonly lock: LockFunction = util.lockFunction();
 
 	/** @ignore */
 	private async asymmetricRatchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
@@ -211,9 +215,6 @@ export class Core {
 		private readonly symmetricRatchetState: ISymmetricRatchetState,
 
 		/** @ignore */
-		private readonly asymmetricRatchetState: IAsymmetricRatchetState,
-
-		/** @ignore */
-		private readonly lock: LockFunction
+		private readonly asymmetricRatchetState: IAsymmetricRatchetState
 	) {}
 }

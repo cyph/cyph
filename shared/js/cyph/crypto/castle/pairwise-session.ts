@@ -1,3 +1,4 @@
+import {BehaviorSubject, Subject} from 'rxjs';
 import {config} from '../../config';
 import {denullifyAsyncValue} from '../../denullify-async-value';
 import {IAsyncList} from '../../iasync-list';
@@ -25,6 +26,18 @@ export class PairwiseSession {
 	private readonly core: Promise<Core>	= new Promise<Core>(resolve => {
 		this.resolveCore	= resolve;
 	});
+
+	/** @ignore */
+	private readonly incomingMessageQueue: Subject<{
+		cyphertext: Uint8Array;
+		newMessageID: number;
+	}>	= new Subject<{
+		cyphertext: Uint8Array;
+		newMessageID: number;
+	}>();
+
+	/** @ignore */
+	private readonly isReceiving: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
 	/** @ignore */
 	private resolveCore: (core: Core) => void;
@@ -110,70 +123,11 @@ export class PairwiseSession {
 			return;
 		}
 
-		const newMessageID	= this.potassium.toDataView(cyphertext).getUint32(0, true);
+		await this.isReceiving.filter(b => b).take(1).toPromise();
 
-		return this.receiveLock(async () => {
-			const promises	= {
-				incomingMessageID: this.incomingMessageID.getValue(),
-				incomingMessages: this.incomingMessages.getValue(),
-				incomingMessagesMax: this.incomingMessagesMax.getValue()
-			};
-			let incomingMessageID	= await promises.incomingMessageID;
-			const incomingMessages	= await promises.incomingMessages;
-			let incomingMessagesMax	= await promises.incomingMessagesMax;
-
-			if (newMessageID >= incomingMessageID) {
-				if (newMessageID > incomingMessagesMax) {
-					incomingMessagesMax	= newMessageID;
-				}
-
-				const message					= incomingMessages[newMessageID] || [];
-				incomingMessages[newMessageID]	= message;
-				message.push(cyphertext);
-			}
-
-			while (incomingMessageID <= incomingMessagesMax) {
-				const id		= incomingMessageID;
-				const message	= incomingMessages[id];
-
-				if (message === undefined) {
-					break;
-				}
-
-				for (const cyphertextBytes of message) {
-					try {
-						const plaintext	= await (await this.core).decrypt(cyphertextBytes);
-
-						this.transport.receive(
-							cyphertextBytes,
-							plaintext,
-							this.remoteUser.username
-						);
-
-						++incomingMessageID;
-						break;
-					}
-					catch (err) {
-						if (
-							(
-								await this.handshakeState.currentStep.getValue()
-							) !== HandshakeSteps.Complete
-						) {
-							this.abort();
-							throw err;
-						}
-					}
-					finally {
-						this.potassium.clearMemory(cyphertextBytes);
-					}
-				}
-
-				delete incomingMessages[id];
-			}
-
-			this.incomingMessageID.setValue(incomingMessageID);
-			this.incomingMessages.setValue(incomingMessages);
-			this.incomingMessagesMax.setValue(incomingMessagesMax);
+		this.incomingMessageQueue.next({
+			cyphertext,
+			newMessageID: this.potassium.toDataView(cyphertext).getUint32(0, true)
 		});
 	}
 
@@ -233,8 +187,6 @@ export class PairwiseSession {
 
 		/** @ignore */
 		private readonly sendLock: LockFunction = util.lockFunction(),
-
-		coreLock: LockFunction	= util.lockFunction(),
 
 		asymmetricRatchetState: IAsymmetricRatchetState = {
 			privateKey: new LocalAsyncValue(undefined),
@@ -334,11 +286,88 @@ export class PairwiseSession {
 							current: {incoming: currentIncoming, outgoing: currentOutgoing},
 							next: {incoming: nextIncoming, outgoing: nextOutgoing}
 						},
-						asymmetricRatchetState,
-						coreLock
+						asymmetricRatchetState
 					));
 
 					await this.connect();
+
+					this.receiveLock(async () => {
+						const sub	= this.incomingMessageQueue.subscribe(async ({
+							cyphertext,
+							newMessageID
+						}) => {
+							const promises	= {
+								incomingMessageID: this.incomingMessageID.getValue(),
+								incomingMessages: this.incomingMessages.getValue(),
+								incomingMessagesMax: this.incomingMessagesMax.getValue()
+							};
+							let incomingMessageID	= await promises.incomingMessageID;
+							const incomingMessages	= await promises.incomingMessages;
+							let incomingMessagesMax	= await promises.incomingMessagesMax;
+
+							if (newMessageID >= incomingMessageID) {
+								if (newMessageID > incomingMessagesMax) {
+									incomingMessagesMax	= newMessageID;
+								}
+
+								const message	= incomingMessages[newMessageID] || [];
+
+								incomingMessages[newMessageID]	= message;
+								message.push(cyphertext);
+							}
+
+							while (incomingMessageID <= incomingMessagesMax) {
+								const id		= incomingMessageID;
+								const message	= incomingMessages[id];
+
+								if (message === undefined) {
+									break;
+								}
+
+								for (const cyphertextBytes of message) {
+									try {
+										const plaintext	=
+											await (await this.core).decrypt(cyphertextBytes)
+										;
+
+										this.transport.receive(
+											cyphertextBytes,
+											plaintext,
+											this.remoteUser.username
+										);
+
+										++incomingMessageID;
+										break;
+									}
+									catch (err) {
+										if (
+											(
+												await this.handshakeState.currentStep.getValue()
+											) !== HandshakeSteps.Complete
+										) {
+											this.abort();
+											throw err;
+										}
+									}
+									finally {
+										this.potassium.clearMemory(cyphertextBytes);
+									}
+								}
+
+								delete incomingMessages[id];
+							}
+
+							this.incomingMessageID.setValue(incomingMessageID);
+							this.incomingMessages.setValue(incomingMessages);
+							this.incomingMessagesMax.setValue(incomingMessagesMax);
+						});
+
+						this.isReceiving.next(true);
+						await this.transport.closed;
+						this.isReceiving.next(false);
+						await util.sleep();
+						sub.unsubscribe();
+					});
 
 					this.sendLock(async () => {
 						const sub	= this.outgoingMessageQueue.subscribeAndPop(async message => {
