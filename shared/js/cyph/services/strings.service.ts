@@ -170,6 +170,11 @@ export class StringsService {
 	public readonly message: string					= util.translate(`message`);
 
 	/** @see StringsService */
+	public readonly messageConfirmed: string		= util.translate(
+		`Message delivery confirmed`
+	);
+
+	/** @see StringsService */
 	public readonly messages: string				= util.translate(`messages`);
 
 	/** @see StringsService */

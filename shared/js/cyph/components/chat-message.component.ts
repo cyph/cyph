@@ -4,6 +4,7 @@ import {ChatMessage} from '../chat';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -53,6 +54,9 @@ export class ChatMessageComponent implements OnInit {
 		private readonly scrollService: ScrollService,
 
 		/** @see ChatService */
-		public readonly chatService: ChatService
+		public readonly chatService: ChatService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }
