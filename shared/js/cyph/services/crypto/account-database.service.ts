@@ -311,9 +311,9 @@ export class AccountDatabaseService {
 				customKey,
 				anonymous
 			),
-			updateValue: async f => asyncList.lock(async () => {
-				asyncList.setValue(await f(await asyncList.getValue()));
-			}),
+			updateValue: async f => asyncList.lock(async () =>
+				asyncList.setValue(await f(await asyncList.getValue()))
+			),
 			watch: memoize(() => this.watchList(
 				url,
 				proto,

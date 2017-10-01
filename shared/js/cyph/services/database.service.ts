@@ -56,9 +56,9 @@ export class DatabaseService extends DataManagerService {
 			}),
 			setValue: async value => localLock(async () => this.setList(url, proto, value)),
 			subscribeAndPop: f => this.subscribeAndPop(url, proto, f),
-			updateValue: async f => asyncList.lock(async () => {
-				asyncList.setValue(await f(await asyncList.getValue()));
-			}),
+			updateValue: async f => asyncList.lock(async () =>
+				asyncList.setValue(await f(await asyncList.getValue()))
+			),
 			watch: memoize(() =>
 				this.watchList(url, proto).map<ITimedValue<T>[], T[]>(arr => arr.map(o => o.value))
 			),
@@ -127,9 +127,9 @@ export class DatabaseService extends DataManagerService {
 					potassiumUtil.clearMemory(oldValue);
 				}
 			}),
-			updateValue: async f => asyncValue.lock(async () => {
-				asyncValue.setValue(await f(await asyncValue.getValue()));
-			}),
+			updateValue: async f => asyncValue.lock(async () =>
+				asyncValue.setValue(await f(await asyncValue.getValue()))
+			),
 			watch: memoize(() =>
 				this.watch(url, proto).map<ITimedValue<T>, T>(o => o.value)
 			)
