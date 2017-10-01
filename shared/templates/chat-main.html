@@ -269,8 +269,8 @@
 		fxLayoutAlign='center center'
 		fxLayoutGap='10px'
 		class='self-destruct-timer'
+		[style.visibility]='!chatService.initiated ? "hidden" : undefined'
 		*ngIf='
-			chatService.initiated &&
 			chatService.chatSelfDestructTimer &&
 			(
 				chatService.chatSelfDestructed === undefined ||
