@@ -23,42 +23,29 @@
 				></cyph-markdown>
 			</div>
 			<div fxFlex fxLayoutAlign='end center' class='message-timestamp'>
-				<div
-					fxLayout='row'
-					*ngIf='mobile && message.authorType === authorTypes.Local; else remoteUser'
-				>
-					<div>{{message.author | async}}</div>
+				<div fxLayout='row'>
+					<div *ngIf='mobile && message.authorType === authorTypes.Local'>
+						{{message.author | async}} &nbsp;&mdash;&nbsp;
+					</div>
+
+					<div>{{message.timeString}}</div>
+
+					<div *ngIf='mobile && message.authorType === authorTypes.Remote'>
+						&nbsp;&mdash;&nbsp; {{message.author | async}}
+					</div>
+
 					<div
+						class='delivery-confirmation'
 						[matTooltip]='stringsService.messageConfirmed'
-						*ngIf='!(message.id && unconfirmedMessages[message.id])'
+						[class.confirmed]='
+							message.authorType !== authorTypes.App &&
+							!(message.id && unconfirmedMessages[message.id])
+						'
+						*ngIf='!(mobile && message.authorType === authorTypes.App)'
 					>
-						&nbsp;&mdash;&nbsp; {{message.timeString}}
+						<mat-icon>check</mat-icon>
 					</div>
 				</div>
-				<ng-template #remoteUser>
-					<div
-						fxLayout='row'
-						*ngIf='mobile && message.authorType === authorTypes.Remote; else otherUser'
-					>
-						<div
-							[matTooltip]='stringsService.messageConfirmed'
-							*ngIf='!(message.id && unconfirmedMessages[message.id])'
-						>
-							{{message.timeString}} &nbsp;&mdash;&nbsp;
-						</div>
-						<div>{{message.author | async}}</div>
-					</div>
-				</ng-template>
-				<ng-template #otherUser>
-					<div fxLayout='row'>
-						<div
-							[matTooltip]='stringsService.messageConfirmed'
-							*ngIf='!(message.id && unconfirmedMessages[message.id])'
-						>
-							{{message.timeString}}
-						</div>
-					</div>
-				</ng-template>
 			</div>
 		</div>
 		<div

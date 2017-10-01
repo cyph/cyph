@@ -21,9 +21,9 @@
 		text-align: right;
 	}
 
-	mat-progress-spinner {
-		margin-left: 12px;
-		margin-right: 12px;
+	.delivery-confirmation:not(.confirmed) {
+		pointer-events: none;
+		visibility: hidden;
 	}
 
 	img, .image-frame {
@@ -88,10 +88,13 @@
 	}
 
 	&.mobile {
-		mat-progress-spinner {
-			width: 10px;
-			height: 10px;
-			margin: auto 9.5px;
+		.delivery-confirmation {
+			margin-left: 9px;
+			margin-top: -3.5px;
+
+			mat-icon {
+				@include icon-size(16px);
+			}
 		}
 
 		.message-timestamp {
@@ -110,10 +113,9 @@
 	}
 
 	&:not(.mobile) {
-		mat-progress-spinner {
-			width: 20px;
-			height: 20px;
-			margin-right: 16px;
+		.delivery-confirmation {
+			margin-left: 7.5px;
+			margin-top: -2.5px;
 		}
 
 		.message-item {
