@@ -1,4 +1,7 @@
 {
+	"angularCompilerOptions": {
+		"preserveWhitespaces": false
+	},
 	"compileOnSave": true,
 	"compilerOptions": {
 		"emitDecoratorMetadata": true,
