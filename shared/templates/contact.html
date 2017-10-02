@@ -11,7 +11,7 @@
 			*ngIf='!sent'
 		>
 			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='feedbackForm'>
-				<h3>Submit Feedback</h3>
+				<h3 cyphTranslate>Submit Feedback to Cyph</h3>
 			</div>
 			<div fxLayout='row' *ngIf='!feedbackForm'>
 				<mat-select
@@ -88,8 +88,7 @@
 			</div>
 		</form>
 		<div *ngIf='sent' cyphTranslate>
-			Your email has been sent!
-			If you requested a response,
+			Your email has been sent! If you requested a response,
 			someone on the team will get back to you shortly.
 		</div>
 	</div>
