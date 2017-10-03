@@ -13,7 +13,13 @@ account.canActivate	= [AppService];
 export const appRoutes: Routes	= [
 	retry,
 	account,
-	{path: 'extension', component: AccountComponent},
-	{path: 'telehealth', component: AccountComponent},
+	{
+		path: 'extension',
+		children: [{path: '**', component: AccountComponent}]
+	},
+	{
+		path: 'telehealth',
+		children: [{path: '**', component: AccountComponent}]
+	},
 	{path: '**', canActivate: [AppService], component: EphemeralChatRootComponent}
 ];

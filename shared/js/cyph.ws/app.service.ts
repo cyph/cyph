@@ -96,17 +96,14 @@ export class AppService implements CanActivate {
 				this.loadComplete();
 			}
 
-			const urlSegmentPaths	=
-				(
-					await (
-						await util.waitForValue(() =>
-							routerService.routerState.root.firstChild || undefined
-						)
-					).url.first().toPromise()
-				).map(o => o.path)
-			;
+			await (
+				await util.waitForValue(() =>
+					routerService.routerState.root.firstChild || undefined
+				)
+			).url.first().toPromise();
 
-			let loadingAccounts	= urlSegmentPaths[0] === 'account';
+			const urlSegmentPaths	= routerService.url.split('/').slice(1);
+			let loadingAccounts		= urlSegmentPaths[0] === 'account';
 
 			/* Handle accounts special cases */
 			if (urlSegmentPaths[0] === 'extension') {
@@ -121,7 +118,7 @@ export class AppService implements CanActivate {
 
 				$(document.body).addClass('telehealth');
 				faviconService.setFavicon('telehealth');
-				routerService.navigate(['account']);
+				routerService.navigate(['account'].concat(urlSegmentPaths.slice(1)));
 			}
 
 			if (loadingAccounts) {
