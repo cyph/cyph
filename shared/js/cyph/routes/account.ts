@@ -40,7 +40,10 @@ export const account: Route	= {
 		{path: 'files', component: AccountFilesComponent},
 		{path: 'forms', component: AccountFormsComponent},
 		{path: 'forms/:id', component: AccountFormComponent},
-		{path: 'login', component: AccountLoginComponent},
+		{
+			path: 'login',
+			children: [{path: '**', component: AccountLoginComponent}]
+		},
 		{path: 'logout', component: AccountLogoutComponent},
 		{path: 'notes', component: AccountNotesComponent, data: {realTime: false}},
 		{

@@ -94,7 +94,11 @@ export class AccountComponent implements OnInit {
 					'welcome'
 				].indexOf(route) < 0
 			) {
-				this.routerService.navigate(['account', 'login']);
+				this.routerService.navigate(['account', 'login'].concat(
+					this.activatedRouteService.snapshot.firstChild ?
+						this.activatedRouteService.snapshot.firstChild.url.map(o => o.path) :
+						[]
+				));
 			}
 		});
 

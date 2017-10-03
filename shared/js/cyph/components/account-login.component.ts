@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
@@ -40,10 +40,15 @@ export class AccountLoginComponent {
 		this.password	= '';
 		this.username	= '';
 
-		this.routerService.navigate(['account']);
+		this.routerService.navigate(['account'].concat(
+			this.activatedRouteService.snapshot.url.map(o => o.path)
+		));
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly activatedRouteService: ActivatedRoute,
+
 		/** @ignore */
 		private readonly routerService: Router,
 
