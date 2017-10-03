@@ -8,6 +8,8 @@
 	min-height: 0px;
 	position: relative;
 
+	@include transition(opacity 0.25s linear);
+
 	.message {
 		max-width: 100%;
 		padding-bottom: 5px;
@@ -21,9 +23,8 @@
 		text-align: right;
 	}
 
-	.delivery-confirmation:not(.confirmed) {
-		pointer-events: none;
-		visibility: hidden;
+	&:not(.confirmed) {
+		opacity: 0.65;
 	}
 
 	img, .image-frame {
@@ -88,15 +89,6 @@
 	}
 
 	&.mobile {
-		.delivery-confirmation {
-			margin-left: 9px;
-			margin-top: -3.5px;
-
-			mat-icon {
-				@include icon-size(16px);
-			}
-		}
-
 		.message-timestamp {
 			height: 12px;
 		}
@@ -113,11 +105,6 @@
 	}
 
 	&:not(.mobile) {
-		.delivery-confirmation {
-			margin-left: 7.5px;
-			margin-top: -2.5px;
-		}
-
 		.message-item {
 			border-radius: 1px;
 		}

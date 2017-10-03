@@ -178,6 +178,11 @@ export class StringsService {
 	public readonly messages: string				= util.translate(`messages`);
 
 	/** @see StringsService */
+	public readonly messageUnconfirmed: string		= util.translate(
+		`Message delivery unconfirmed`
+	);
+
+	/** @see StringsService */
 	public readonly micDisable: string				= util.translate(`Disable Mic`);
 
 	/** @see StringsService */

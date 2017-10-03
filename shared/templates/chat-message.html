@@ -5,8 +5,10 @@
 	[class.author-app]='message.authorType === authorTypes.App'
 	[class.author-local]='message.authorType === authorTypes.Local'
 	[class.author-remote]='message.authorType === authorTypes.Remote'
+	[class.confirmed]='confirmed'
 	[class.self-destruct]='chatService.chatSelfDestruct'
 	[class.self-destructed]='message.selfDestructTimer?.isComplete | async'
+	[matTooltip]='confirmed ? undefined : stringsService.messageUnconfirmed'
 >
 	<div>
 		<div fxLayout='row'>
@@ -32,18 +34,6 @@
 
 					<div *ngIf='mobile && message.authorType === authorTypes.Remote'>
 						&nbsp;&mdash;&nbsp; {{message.author | async}}
-					</div>
-
-					<div
-						class='delivery-confirmation'
-						[matTooltip]='stringsService.messageConfirmed'
-						[class.confirmed]='
-							message.authorType !== authorTypes.App &&
-							!(message.id && unconfirmedMessages[message.id])
-						'
-						*ngIf='!(mobile && message.authorType === authorTypes.App)'
-					>
-						<mat-icon>check</mat-icon>
 					</div>
 				</div>
 			</div>

@@ -31,6 +31,14 @@ export class ChatMessageComponent implements OnInit {
 	/** @see IChatData.unconfirmedMessages */
 	@Input() public unconfirmedMessages: {[id: string]: boolean|undefined};
 
+	/** Indicates whether message is confirmed. */
+	public get confirmed () : boolean {
+		return (
+			this.message.authorType !== ChatMessage.AuthorTypes.Local ||
+			!(this.message.id && this.unconfirmedMessages[this.message.id])
+		);
+	}
+
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
