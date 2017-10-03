@@ -60,7 +60,7 @@ let css	= '';
 try {
 	css	= compileSCSS(`
 		${!o.backgroundColor ? '' : `
-			$cyph-background: ${o.backgroundColor} !important;
+			$cyph-background: ${o.backgroundColor};
 
 			#main-chat-gradient {
 				display: none !important;
@@ -68,7 +68,7 @@ try {
 		`}
 
 		${!o.foregroundColor ? '' : `
-			$cyph-foreground: ${o.foregroundColor} !important;
+			$cyph-foreground: ${o.foregroundColor};
 		`}
 
 		${fs.readFileSync(args.customBuildTheme).toString()}
