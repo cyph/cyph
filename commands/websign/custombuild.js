@@ -60,15 +60,15 @@ let css	= '';
 try {
 	css	= compileSCSS(`
 		${!o.backgroundColor ? '' : `
-			$cyph-background: ${o.backgroundColor};
+			$cyph-background: ${o.backgroundColor} !important;
 
 			#main-chat-gradient {
-				display: none;
+				display: none !important;
 			}
 		`}
 
 		${!o.foregroundColor ? '' : `
-			$cyph-foreground: ${o.foregroundColor};
+			$cyph-foreground: ${o.foregroundColor} !important;
 		`}
 
 		${fs.readFileSync(args.customBuildTheme).toString()}
@@ -76,8 +76,8 @@ try {
 		@include cyph-apply-theme(true);
 
 		${!o.background ? '' : `
-			chat-main {
-				.message-list:after {
+			cyph-chat-main {
+				cyph-chat-message-list:after {
 					background-image: url(${o.background}) !important;
 				}
 
