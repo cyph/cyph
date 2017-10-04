@@ -355,7 +355,7 @@ if [ "${websign}" ] ; then
 			bash -c "cd ~/.cyph/${repo} ; git reset --hard ; git clean -dfx ; git pull"
 			cp -rf ~/.cyph/${repo} ./
 		else
-			git clone git@github.com:cyph/${repo}.git
+			git clone --recursive git@github.com:cyph/${repo}.git
 			rm -rf ~/.cyph/${repo} 2> /dev/null
 			cp -rf ${repo} ~/.cyph/
 		fi
