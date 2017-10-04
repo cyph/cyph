@@ -82,7 +82,7 @@ try {
 				}
 
 				.video-call .logo {
-					height: 75% !important;
+					height: 30px !important;
 					opacity: 0.4 !important;
 				}
 			}
