@@ -12,7 +12,7 @@ export class SecretBox implements ISecretBox {
 
 	/** @ignore */
 	private readonly helpers: {
-		nonceBytes: number;
+		nonceBytes: Promise<number>;
 		open: (
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
@@ -26,11 +26,11 @@ export class SecretBox implements ISecretBox {
 			additionalData?: Uint8Array
 		) => Promise<Uint8Array>;
 	}	= {
-		nonceBytes:
+		nonceBytes: sodium.ready.then(async () =>
 			this.isNative ?
 				NativeCrypto.secretBox.nonceBytes :
 				sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
-		,
+		),
 
 		open: async (
 			cyphertext: Uint8Array,
@@ -45,13 +45,13 @@ export class SecretBox implements ISecretBox {
 					key,
 					additionalData
 				) :
-				sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
+				sodium.ready.then(async () => sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
 					undefined,
 					cyphertext,
 					additionalData,
 					nonce,
 					key
-				)
+				))
 		,
 
 		seal: async (
@@ -67,24 +67,24 @@ export class SecretBox implements ISecretBox {
 					key,
 					additionalData
 				) :
-				sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
+				sodium.ready.then(async () => sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
 					plaintext,
 					additionalData,
 					undefined,
 					nonce,
 					key
-				)
+				))
 	};
 
 	/** @inheritDoc */
-	public readonly aeadBytes: Promise<number>	= Promise.resolve(
+	public readonly aeadBytes: Promise<number>	= sodium.ready.then(async () =>
 		this.isNative ?
 			NativeCrypto.secretBox.aeadBytes :
 			sodium.crypto_aead_xchacha20poly1305_ietf_ABYTES
 	);
 
 	/** @inheritDoc */
-	public readonly keyBytes: Promise<number>	= Promise.resolve(
+	public readonly keyBytes: Promise<number>	= sodium.ready.then(async () =>
 		this.isNative ?
 			NativeCrypto.secretBox.keyBytes :
 			sodium.crypto_aead_xchacha20poly1305_ietf_KEYBYTES
@@ -116,12 +116,12 @@ export class SecretBox implements ISecretBox {
 		const nonce					= potassiumUtil.toBytes(
 			cyphertext,
 			0,
-			this.helpers.nonceBytes
+			await this.helpers.nonceBytes
 		);
 
 		const symmetricCyphertext	= potassiumUtil.toBytes(
 			cyphertext,
-			this.helpers.nonceBytes
+			await this.helpers.nonceBytes
 		);
 
 		let paddedPlaintext: Uint8Array|undefined;
@@ -174,7 +174,7 @@ export class SecretBox implements ISecretBox {
 			plaintext
 		);
 
-		const nonce	= potassiumUtil.randomBytes(this.helpers.nonceBytes);
+		const nonce	= potassiumUtil.randomBytes(await this.helpers.nonceBytes);
 
 		let symmetricCyphertext: Uint8Array|undefined;
 

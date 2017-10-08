@@ -185,7 +185,9 @@ export class Thread implements IThread {
 				}
 			};
 
-			self.postMessage('ready');
+			self.sodium.ready.then(function () {
+				self.postMessage('ready');
+			});
 		`;
 
 		for (let i = 0 ; i < threadSetupVars.seed.length ; ++i) {

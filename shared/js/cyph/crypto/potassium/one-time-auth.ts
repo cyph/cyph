@@ -6,14 +6,14 @@ import * as NativeCrypto from './native-crypto';
 /** @inheritDoc */
 export class OneTimeAuth implements IOneTimeAuth {
 	/** @inheritDoc */
-	public readonly bytes: Promise<number>		= Promise.resolve(
+	public readonly bytes: Promise<number>		= sodium.ready.then(async () =>
 		this.isNative ?
 			NativeCrypto.oneTimeAuth.bytes :
 			sodium.crypto_onetimeauth_BYTES
 	);
 
 	/** @inheritDoc */
-	public readonly keyBytes: Promise<number>	= Promise.resolve(
+	public readonly keyBytes: Promise<number>	= sodium.ready.then(async () =>
 		this.isNative ?
 			NativeCrypto.oneTimeAuth.keyBytes :
 			sodium.crypto_onetimeauth_KEYBYTES
@@ -26,7 +26,7 @@ export class OneTimeAuth implements IOneTimeAuth {
 	) : Promise<Uint8Array> {
 		return this.isNative ?
 			NativeCrypto.oneTimeAuth.sign(message, key) :
-			sodium.crypto_onetimeauth(message, key)
+			sodium.ready.then(async () => sodium.crypto_onetimeauth(message, key))
 		;
 	}
 
@@ -38,7 +38,7 @@ export class OneTimeAuth implements IOneTimeAuth {
 	) : Promise<boolean> {
 		return this.isNative ?
 			NativeCrypto.oneTimeAuth.verify(mac, message, key) :
-			sodium.crypto_onetimeauth_verify(mac, message, key)
+			sodium.ready.then(async () => sodium.crypto_onetimeauth_verify(mac, message, key))
 		;
 	}
 

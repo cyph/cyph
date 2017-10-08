@@ -17,54 +17,59 @@ export class Box implements IBox {
 			async (cyphertext: Uint8Array, keyPair: IKeyPair) =>
 				NativeCrypto.box.open(cyphertext, keyPair)
 			:
-			async (cyphertext: Uint8Array, keyPair: IKeyPair) =>
+			async (cyphertext: Uint8Array, keyPair: IKeyPair) => sodium.ready.then(async () =>
 				sodium.crypto_box_curve25519xchacha20poly1305_seal_open(
 					cyphertext,
 					keyPair.publicKey,
 					keyPair.privateKey
 				)
+			)
 		,
 
 		encrypt: this.isNative ?
 			async (plaintext: Uint8Array, publicKey: Uint8Array) =>
 				NativeCrypto.box.seal(plaintext, publicKey)
 			:
-			async (plaintext: Uint8Array, publicKey: Uint8Array) =>
+			async (plaintext: Uint8Array, publicKey: Uint8Array) => sodium.ready.then(async () =>
 				sodium.crypto_box_curve25519xchacha20poly1305_seal(plaintext, publicKey)
+			)
 		,
 
 		keyPair: this.isNative ?
 			async () => NativeCrypto.box.keyPair() :
-			async () => sodium.crypto_box_curve25519xchacha20poly1305_keypair()
+			async () => sodium.ready.then(async () =>
+				sodium.crypto_box_curve25519xchacha20poly1305_keypair()
+			)
 		,
 
-		nonceBytes: this.isNative ?
-				NativeCrypto.secretBox.nonceBytes :
-				sodium.crypto_box_curve25519xchacha20poly1305_NONCEBYTES
-		,
+		nonceBytes: sodium.ready.then(async () => this.isNative ?
+			NativeCrypto.secretBox.nonceBytes :
+			sodium.crypto_box_curve25519xchacha20poly1305_NONCEBYTES
+		),
 
-		privateKeyBytes: this.isNative ?
+		privateKeyBytes: sodium.ready.then(async () => this.isNative ?
 			NativeCrypto.box.privateKeyBytes :
 			sodium.crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES
-		,
+		),
 
-		publicKeyBytes: this.isNative ?
+		publicKeyBytes: sodium.ready.then(async () => this.isNative ?
 			NativeCrypto.box.publicKeyBytes :
 			sodium.crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES
+		)
 	};
 
 	/** @inheritDoc */
 	public readonly privateKeyBytes: Promise<number>	= (async () =>
 		(await mceliece.privateKeyBytes) +
 		(await ntru.privateKeyBytes) +
-		this.classicalCypher.privateKeyBytes
+		(await this.classicalCypher.privateKeyBytes)
 	)();
 
 	/** @inheritDoc */
 	public readonly publicKeyBytes: Promise<number>		= (async () =>
 		(await mceliece.publicKeyBytes) +
 		(await ntru.publicKeyBytes) +
-		this.classicalCypher.publicKeyBytes
+		(await this.classicalCypher.publicKeyBytes)
 	)();
 
 	/** @ignore */
@@ -155,16 +160,16 @@ export class Box implements IBox {
 			classical: potassiumUtil.toBytes(
 				privateKey,
 				0,
-				this.classicalCypher.privateKeyBytes
+				await this.classicalCypher.privateKeyBytes
 			),
 			mceliece: potassiumUtil.toBytes(
 				privateKey,
-				this.classicalCypher.privateKeyBytes,
+				await this.classicalCypher.privateKeyBytes,
 				await mceliece.privateKeyBytes
 			),
 			ntru: potassiumUtil.toBytes(
 				privateKey,
-				this.classicalCypher.privateKeyBytes + await mceliece.privateKeyBytes,
+				(await this.classicalCypher.privateKeyBytes) + (await mceliece.privateKeyBytes),
 				await ntru.privateKeyBytes
 			)
 		};
@@ -180,16 +185,16 @@ export class Box implements IBox {
 			classical: potassiumUtil.toBytes(
 				publicKey,
 				0,
-				this.classicalCypher.publicKeyBytes
+				await this.classicalCypher.publicKeyBytes
 			),
 			mceliece: potassiumUtil.toBytes(
 				publicKey,
-				this.classicalCypher.publicKeyBytes,
+				await this.classicalCypher.publicKeyBytes,
 				await mceliece.publicKeyBytes
 			),
 			ntru: potassiumUtil.toBytes(
 				publicKey,
-				this.classicalCypher.publicKeyBytes + await mceliece.publicKeyBytes,
+				(await this.classicalCypher.publicKeyBytes) + (await mceliece.publicKeyBytes),
 				await ntru.publicKeyBytes
 			)
 		};

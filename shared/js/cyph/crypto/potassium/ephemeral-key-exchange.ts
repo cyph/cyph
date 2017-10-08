@@ -9,22 +9,24 @@ import {potassiumUtil} from './potassium-util';
 /** @inheritDoc */
 export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 	/** @inheritDoc */
-	public readonly privateKeyBytes: Promise<number>	= (async () =>
+	public readonly privateKeyBytes: Promise<number>	= sodium.ready.then(async () =>
 		(await rlwe.privateKeyBytes) +
 		sodium.crypto_scalarmult_SCALARBYTES
-	)();
+	);
 
 	/** @inheritDoc */
-	public readonly publicKeyBytes: Promise<number>		= (async () =>
+	public readonly publicKeyBytes: Promise<number>		= sodium.ready.then(async () =>
 		(await rlwe.publicKeyBytes) +
 		sodium.crypto_scalarmult_BYTES
-	)();
+	);
 
 	/** @inheritDoc */
 	public readonly secretBytes: Promise<number>		= Promise.resolve(64);
 
 	/** @inheritDoc */
 	public async aliceKeyPair () : Promise<IKeyPair> {
+		await sodium.ready;
+
 		const rlweKeyPair		= await rlwe.aliceKeyPair();
 
 		const sodiumPrivateKey	= potassiumUtil.randomBytes(
@@ -54,6 +56,8 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 		publicKey: Uint8Array,
 		privateKey: Uint8Array
 	) : Promise<Uint8Array> {
+		await sodium.ready;
+
 		const secretBytes	= await this.secretBytes;
 
 		const rlwePublicKey		= potassiumUtil.toBytes(
@@ -104,6 +108,8 @@ export class EphemeralKeyExchange implements IEphemeralKeyExchange {
 		publicKey: Uint8Array;
 		secret: Uint8Array;
 	}> {
+		await sodium.ready;
+
 		const secretBytes	= await this.secretBytes;
 
 		const aliceRlwePublicKey	= potassiumUtil.toBytes(

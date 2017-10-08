@@ -108,6 +108,7 @@ declare module 'libsodium' {
 		crypto_pwhash_scryptsalsa208sha256_SALTBYTES: number;
 		crypto_scalarmult_BYTES: number;
 		crypto_scalarmult_SCALARBYTES: number;
+		ready: Promise<void>;
 
 		crypto_aead_xchacha20poly1305_ietf_decrypt (
 			secretNonce: Uint8Array|undefined,

@@ -34,6 +34,7 @@ export class Hash implements IHash {
 			}
 
 			if (!this.isNative) {
+				await sodium.ready;
 				return sodium.crypto_generichash(outputBytes, input);
 			}
 

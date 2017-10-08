@@ -32,13 +32,13 @@ export class PasswordHash implements IPasswordHash {
 					opsLimit,
 					memLimit
 				) :
-				sodium.crypto_pwhash_scryptsalsa208sha256(
+				sodium.ready.then(async () => sodium.crypto_pwhash_scryptsalsa208sha256(
 					outputBytes,
 					plaintext,
 					salt,
 					opsLimit,
 					memLimit
-				)
+				))
 	};
 
 	/** @inheritDoc */
@@ -52,7 +52,7 @@ export class PasswordHash implements IPasswordHash {
 	);
 
 	/** @inheritDoc */
-	public readonly memLimitInteractive: Promise<number>	= Promise.resolve(
+	public readonly memLimitInteractive: Promise<number>	= sodium.ready.then(async () =>
 		this.isNative ?
 			NativeCrypto.passwordHash.memLimitInteractive :
 			sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE
@@ -66,21 +66,21 @@ export class PasswordHash implements IPasswordHash {
 	);
 
 	/** @inheritDoc */
-	public readonly opsLimitInteractive: Promise<number>	= Promise.resolve(
+	public readonly opsLimitInteractive: Promise<number>	= sodium.ready.then(async () =>
 		this.isNative ?
 			NativeCrypto.passwordHash.opsLimitInteractive :
 			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE
 	);
 
 	/** @inheritDoc */
-	public readonly opsLimitSensitive: Promise<number>		= Promise.resolve(
+	public readonly opsLimitSensitive: Promise<number>		= sodium.ready.then(async () =>
 		this.isNative ?
 			NativeCrypto.passwordHash.opsLimitSensitive :
 			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE
 	);
 
 	/** @inheritDoc */
-	public readonly saltBytes: Promise<number>				= Promise.resolve(
+	public readonly saltBytes: Promise<number>				= sodium.ready.then(async () =>
 		this.isNative ?
 			NativeCrypto.passwordHash.saltBytes :
 			sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
