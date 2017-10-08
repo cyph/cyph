@@ -180,7 +180,7 @@ const shellScripts			= {
 
 			emsdk update
 			emsdk install latest
-			emsdk uninstall $(emsdk list | grep INSTALLED | grep node | awk "{print $2}")
+			emsdk uninstall $(emsdk list | grep INSTALLED | tr '*' ' ' | grep node | awk '{print $1}')
 			emsdk activate latest
 
 			if [ "$(command -v gcloud)" ] ; then gcloud components update --quiet ; fi
