@@ -1,7 +1,5 @@
 FROM debian:stretch
 
-MAINTAINER Ryan Lester <hacker@linux.com>
-
 LABEL Name="cyph"
 
 RUN apt-get -y --allow-downgrades update
