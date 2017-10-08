@@ -281,16 +281,10 @@ mv package.json.new node_modules/tslint/package.json
 
 cd ~/lib/js
 
-# Temporarily skip libsodium update pending further investigation
-if [ true ] ; then
-	cp -a "${dir}/shared/lib/js/libsodium" ./
-else
 
-${dir}/commands/libclone.sh https://github.com/jedisct1/libsodium.js libsodium.build
+git clone --depth 1 --recursive https://github.com/jedisct1/libsodium.js libsodium.build
 cd libsodium.build
-
-rm -rf libsodium
-git clone --depth 1 --recursive https://github.com/jedisct1/libsodium
+rm -rf .git
 
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 {
@@ -431,8 +425,6 @@ cd ..
 mkdir libsodium
 mv libsodium.build/dist libsodium/
 rm -rf libsodium.build
-
-fi
 
 
 cd "${dir}"
