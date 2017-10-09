@@ -410,14 +410,8 @@ node -e '
 	])));
 '
 
-cat Makefile |
-	perl -pe 's/git submodule update.*/echo/g' |
-	perl -pe 's/^(\s+).*--browser-tests.*/\1\@echo/g' |
-	perl -pe 's/^(\s+).*BROWSERS_TEST_DIR.*/\1\@echo/g' |
-	perl -pe 's/^(\s+)ln /\1ln -f /g' \
-> Makefile.new
+cat Makefile | perl -pe 's/^(\s+)ln /\1ln -f /g' > Makefile.new
 mv Makefile.new Makefile
-make libsodium/configure
 # sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
 make
 find dist -type f -name '*.min.js' -exec bash -c 'mv {} "$(echo "{}" | sed "s|\.min||")"' \;
