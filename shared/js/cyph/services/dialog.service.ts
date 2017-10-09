@@ -1,5 +1,5 @@
+import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
-import {ComponentType} from '@angular/material';
 import {SafeUrl} from '@angular/platform-browser';
 
 
