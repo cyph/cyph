@@ -766,7 +766,7 @@ amdefine@>=0.0.4:
 
 "angular-smd@https://github.com/buu700/angular-smd-tmp":
   version "1337.0.0"
-  resolved "https://github.com/buu700/angular-smd-tmp#dc3f05e912675b2a1d50112ec5902302a736e8e5"
+  resolved "https://github.com/buu700/angular-smd-tmp#cc436800bb939559d52854b4f047d0fc37ee261d"
   dependencies:
     "@angular/common" "^4"
     "@angular/compiler" "^4"
