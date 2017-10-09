@@ -202,7 +202,7 @@ if [ "${test}" ] ; then
 	sed -i "s|CYPH-ME|https://${version}-dot-cyph-me-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|databaseURL: .*,|databaseURL: 'https://cyph-test.firebaseio.com',|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|databaseURL: .*,|databaseURL: 'wss://cyph-test.firebaseio.com',|g" shared/js/cyph/env-deploy.ts
 
 	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
 
@@ -231,7 +231,7 @@ else
 	sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|apiKey: .*,|apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|authDomain: .*,|authDomain: 'cyphme.firebaseapp.com',|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|databaseURL: .*,|databaseURL: 'https://cyphme.firebaseio.com',|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|databaseURL: .*,|databaseURL: 'wss://cyphme.firebaseio.com',|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|storageBucket: .*,|storageBucket: 'cyphme.appspot.com',|g" shared/js/cyph/env-deploy.ts
 
 	homeURL='https://www.cyph.com'

@@ -93,7 +93,7 @@ export class EnvDeploy {
 	public readonly firebaseConfig				= {
 		apiKey: 'AIzaSyBQmgjG4klHr0TWUrBsGAgKPGSFFM1FSeI',
 		authDomain: 'cyph-test.firebaseapp.com',
-		databaseURL: 'https://cyph-test.firebaseio.com', // `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`,
+		databaseURL: 'wss://cyph-test.firebaseio.com', // `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`,
 		storageBucket: 'cyph-test.appspot.com',
 	};
 
