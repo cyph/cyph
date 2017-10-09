@@ -68,6 +68,7 @@ read -r -d '' modules <<- EOM
 	awesome-typescript-loader
 	babel-core
 	babel-loader
+	babel-preset-env
 	babel-preset-es2015
 	bourbon@4.2.7
 	braintree-web
