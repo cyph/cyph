@@ -92,7 +92,7 @@ export class Thread implements IThread {
 
 		importScripts('/assets/js/cyph/crypto/web-crypto-polyfill.js');
 		(<any> self).webCryptoPolyfill(new Uint8Array(threadSetupVars.seed));
-		importScripts('/assets/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js');
+		importScripts('/assets/node_modules/libsodium/dist/browsers-sumo/sodium.js');
 		(<any> self).sodium.memzero(threadSetupVars.seed);
 
 		threadSetupVars	= undefined;
