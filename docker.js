@@ -179,13 +179,9 @@ const shellScripts			= {
 			sudo mv bin/brotli /usr/bin/
 
 			emsdk update
-			# Temporary, pending merge of https://github.com/kripken/emscripten/pull/5296
-			sed -i 's|kripken/emscripten.git|buu700/emscripten.git|g' ~/emsdk-portable/emsdk_manifest.json
-			emsdk install binaryen-master-64bit clang-incoming-64bit emscripten-incoming-64bit
-			emsdk activate binaryen-master-64bit clang-incoming-64bit emscripten-incoming-64bit
-			# emsdk install latest
-			# emsdk uninstall $(emsdk list | grep INSTALLED | perl -pe 's/\(?\*\)?//g' | grep node | awk '{print $1}')
-			# emsdk activate latest
+			emsdk install latest
+			emsdk uninstall $(emsdk list | grep INSTALLED | perl -pe 's/\(?\*\)?//g' | grep node | awk '{print $1}')
+			emsdk activate latest
 
 			if [ "$(command -v gcloud)" ] ; then gcloud components update --quiet ; fi
 
