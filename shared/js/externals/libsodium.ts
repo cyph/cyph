@@ -3,4 +3,4 @@
 /** @file libsodium external. */
 
 
-export const sodium	= (<any> self).sodium;
+export const sodium	= (<any> self).sodium || {ready: Promise.resolve()};
