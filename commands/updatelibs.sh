@@ -186,7 +186,7 @@ read -r -d '' modules <<- EOM
 	text-mask-addons
 	textillate
 	tns-android
-	tns-core-modules
+	tns-core-modules@next
 	tns-core-modules-widgets
 	tns-ios
 	tns-platform-declarations
