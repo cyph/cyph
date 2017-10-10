@@ -230,7 +230,7 @@ export class AppService {
 			Math.abs($(document).scrollTop() - position)
 		;
 
-		$(document.body).animate({scrollTop: position}, delay);
+		$(document.documentElement).animate({scrollTop: position}, delay);
 
 		if (onComplete) {
 			await util.sleep(delay + 50);
