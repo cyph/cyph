@@ -184,7 +184,7 @@ const shellScripts			= {
 			emsdk install binaryen-master-64bit clang-incoming-64bit emscripten-incoming-64bit
 			emsdk activate binaryen-master-64bit clang-incoming-64bit emscripten-incoming-64bit
 			# emsdk install latest
-			# emsdk uninstall $(emsdk list | grep INSTALLED | tr '*' ' ' | grep node | awk '{print $1}')
+			# emsdk uninstall $(emsdk list | grep INSTALLED | perl -pe 's/\(?\*\)?//g' | grep node | awk '{print $1}')
 			# emsdk activate latest
 
 			if [ "$(command -v gcloud)" ] ; then gcloud components update --quiet ; fi
