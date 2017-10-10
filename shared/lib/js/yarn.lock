@@ -10099,11 +10099,11 @@ tns-core-modules-widgets@3.2.0, tns-core-modules-widgets@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/tns-core-modules-widgets/-/tns-core-modules-widgets-3.2.0.tgz#6d320ae9d1e1cae76c7443c4a5faeabedb004773"
 
-tns-core-modules@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/tns-core-modules/-/tns-core-modules-3.2.0.tgz#bf471895b73cb5e5549c44f25341df7f5d34f9c2"
+tns-core-modules@next:
+  version "3.3.0-2017-10-6-1"
+  resolved "https://registry.yarnpkg.com/tns-core-modules/-/tns-core-modules-3.3.0-2017-10-6-1.tgz#dafb05ba3d05c76c2f9802f46af863ab2a7a1ccc"
   dependencies:
-    tns-core-modules-widgets "3.2.0"
+    tns-core-modules-widgets next
 
 tns-ios@^3.2.0:
   version "3.2.0"

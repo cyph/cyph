@@ -484,7 +484,7 @@
     "text-mask-addons": "^3.6.0",
     "textillate": "^0.4.1",
     "tns-android": "^3.2.0",
-    "tns-core-modules": "^3.2.0",
+    "tns-core-modules": "next",
     "tns-core-modules-widgets": "^3.2.0",
     "tns-ios": "^3.2.0",
     "tns-platform-declarations": "^3.2.0",
