@@ -25,46 +25,52 @@
 							<span cyphTranslate>Basic Information</span>
 						</ng-template>
 
-						<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+						<div fxFlex fxLayout='column' fxLayoutGap='48px'>
 							<div fxLayout='row' fxLayoutAlign='center center' class='description'>
-								[Description]
+								Congratulations on securing your Cyph account invite! You'll be
+								getting early access to premium features, and will still be able
+								to easily communicate with anyone who doesn't have an account yet.
 							</div>
 
 							<div fxLayout='row' fxLayoutAlign='center center'>
-								<mat-form-field fxFlex='60'>
-									<input
-										matInput
-										cyphTranslate
-										[(ngModel)]='username'
-										name='username'
-										placeholder='Username'
-										required
-									/>
-								</mat-form-field>
-							</div>
-							<div fxLayout='row' fxLayoutAlign='center center'>
-								<mat-form-field fxFlex='60'>
-									<input
-										matInput
-										cyphTranslate
-										[(ngModel)]='name'
-										name='name'
-										placeholder='Name (or pseudonym)'
-										required
-									/>
-								</mat-form-field>
-							</div>
-							<div fxLayout='row' fxLayoutAlign='center center'>
-								<mat-form-field fxFlex='60'>
-									<input
-										matInput
-										cyphTranslate
-										[(ngModel)]='email'
-										name='email'
-										type='email'
-										placeholder='Email (optional)'
-									/>
-								</mat-form-field>
+								<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<mat-form-field fxFlex='60'>
+											<input
+												matInput
+												cyphTranslate
+												[(ngModel)]='username'
+												name='username'
+												placeholder='Username'
+												required
+											/>
+										</mat-form-field>
+									</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<mat-form-field fxFlex='60'>
+											<input
+												matInput
+												cyphTranslate
+												[(ngModel)]='name'
+												name='name'
+												placeholder='Name (or pseudonym)'
+												required
+											/>
+										</mat-form-field>
+									</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<mat-form-field fxFlex='60'>
+											<input
+												matInput
+												cyphTranslate
+												[(ngModel)]='email'
+												name='email'
+												type='email'
+												placeholder='Email (optional)'
+											/>
+										</mat-form-field>
+									</div>
+								</div>
 							</div>
 						</div>
 					</mat-tab>
@@ -76,9 +82,10 @@
 							<span cyphTranslate>Master Key</span>
 						</ng-template>
 
-						<div fxFlex fxLayout='column' fxLayoutGap='48px'>
+						<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
 							<div fxLayout='row' fxLayoutAlign='center center' class='description'>
-								[Description]
+								Who are you? Associate your Cyph account with your identity or an
+								alias.
 							</div>
 
 							<div
@@ -88,8 +95,42 @@
 							>
 								<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 									<div fxLayout='row' fxLayoutAlign='center center'>
-										[Securely Generated Master Key]
+										This is your Cyph master key. It's like a password, but
+										you'll only need it when first setting up a new device.
 									</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										We've generated a mathematically-proven secure master key
+										for you to use. You can optionally pick your own instead,
+										but to ensure the integrity of your data it must be at
+										least 20 characters and very difficult to guess.
+									</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<span>
+											<strong>Warning:</strong>
+											<span>
+												If you lose this key, you will not be able to
+												recover your data, initialize new devices, or
+												access your account in any way. Keep it somewhere
+												safe and
+											</span>
+											<i>offline</i>.
+										</span>
+									</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<span>
+											<span>
+												For example, write it down on paper and hide it or
+												lock it in a vault; and
+											</span>
+											<strong>DO NOT</strong>
+											<span>
+												reuse this as a password for any other service, or
+												store it in a third-party encrypted manager
+												service.
+											</span>
+										</span>
+									</div>
+									<div fxLayout='row'></div>
 									<div fxLayout='row' fxLayoutAlign='center center'>
 										<div class='xkcd-passphrase'>
 											{{xkcdPassphrase | async}}
@@ -100,12 +141,13 @@
 
 							<div
 								fxLayout='row'
+								cyphTranslate
 								(click)='useXkcdPassphrase = false'
 								[class.master-key-deselected]='useXkcdPassphrase'
 							>
 								<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 									<div fxLayout='row' fxLayoutAlign='center center'>
-										[Custom Master Key]
+										Custom Master Key
 									</div>
 									<div fxLayout='row' fxLayoutAlign='center center'>
 										<mat-form-field fxFlex='60'>
@@ -145,36 +187,41 @@
 							<span cyphTranslate>Lock Screen Password</span>
 						</ng-template>
 
-						<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+						<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
 							<div fxLayout='row' fxLayoutAlign='center center' class='description'>
-								[Description]
+								Set your password that you will use to reauthenticate on already
+								activated devices.
 							</div>
 
 							<div fxLayout='row' fxLayoutAlign='center center'>
-								<mat-form-field fxFlex='60'>
-									<input
-										matInput
-										cyphTranslate
-										[(ngModel)]='lockScreenPassword'
-										name='lockScreenPassword'
-										type='password'
-										placeholder='Lock Screen Password'
-										required
-									/>
-								</mat-form-field>
-							</div>
+								<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<mat-form-field fxFlex='60'>
+											<input
+												matInput
+												cyphTranslate
+												[(ngModel)]='lockScreenPassword'
+												name='lockScreenPassword'
+												type='password'
+												placeholder='Lock Screen Password'
+												required
+											/>
+										</mat-form-field>
+									</div>
 
-							<div fxLayout='row' fxLayoutAlign='center center'>
-								<mat-form-field fxFlex='60'>
-									<input
-										matInput
-										cyphTranslate
-										[(ngModel)]='lockScreenTimeout'
-										name='lockScreenTimeout'
-										type='number'
-										placeholder='Lock Screen Timeout (days)'
-									/>
-								</mat-form-field>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<mat-form-field fxFlex='60'>
+											<input
+												matInput
+												cyphTranslate
+												[(ngModel)]='lockScreenTimeout'
+												name='lockScreenTimeout'
+												type='number'
+												placeholder='Lock Screen Timeout (days)'
+											/>
+										</mat-form-field>
+									</div>
+								</div>
 							</div>
 						</div>
 					</mat-tab>
@@ -186,42 +233,46 @@
 							<span cyphTranslate>Confirm</span>
 						</ng-template>
 
-						<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+						<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
 							<div fxLayout='row' fxLayoutAlign='center center' class='description'>
-								[Description]
+								Does this all look right?
 							</div>
 
 							<div fxLayout='row' fxLayoutAlign='center center'>
-								<h3
-									class='cyph-banner warn'
-									[style.visibility]='error ? "visible" : "hidden"'
-								>
-									{{stringsService.signupFailed}}
-								</h3>
-							</div>
+								<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<h3
+											class='cyph-banner warn'
+											[style.visibility]='error ? "visible" : "hidden"'
+										>
+											{{stringsService.signupFailed}}
+										</h3>
+									</div>
 
-							<div fxLayout='row' fxLayoutAlign='center center'>
-								<span cyphTranslate>Username:</span>
-								&nbsp;
-								<span>{{username}}</span>
-							</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<span cyphTranslate>Username:</span>
+										&nbsp;
+										<span>{{username}}</span>
+									</div>
 
-							<div fxLayout='row' fxLayoutAlign='center center'>
-								<span cyphTranslate>Name:</span>
-								&nbsp;
-								<span>{{name}}</span>
-							</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<span cyphTranslate>Name:</span>
+										&nbsp;
+										<span>{{name}}</span>
+									</div>
 
-							<div fxLayout='row' fxLayoutAlign='center center'>
-								<span cyphTranslate>Email:</span>
-								&nbsp;
-								<span>{{email || stringsService.omitted}}</span>
-							</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<span cyphTranslate>Email:</span>
+										&nbsp;
+										<span>{{email || stringsService.omitted}}</span>
+									</div>
 
-							<div fxLayout='row' fxLayoutAlign='center center'>
-								<span cyphTranslate>Password:</span>
-								&nbsp;
-								<span>********************</span>
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<span cyphTranslate>Password:</span>
+										&nbsp;
+										<span>********************</span>
+									</div>
+								</div>
 							</div>
 						</div>
 					</mat-tab>
