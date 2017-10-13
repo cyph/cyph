@@ -116,8 +116,8 @@ RUN bash -c ' \
 	source ~/.bashrc; \
 	mv $ANDROID_HOME/tools $ANDROID_HOME/balls; \
 	ln -s $ANDROID_HOME/balls $ANDROID_HOME/tools; \
-	echo -e "y\ny\ny\ny\ny" > ~/y; \
-	$ANDROID_HOME/tools/bin/sdkmanager \
+	echo -e "y\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny" > ~/y; \
+	yes | $ANDROID_HOME/tools/bin/sdkmanager \
 		"tools" \
 		"platform-tools" \
 		"platforms;android-25" \
