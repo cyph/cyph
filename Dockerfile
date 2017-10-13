@@ -116,7 +116,6 @@ RUN bash -c ' \
 	source ~/.bashrc; \
 	mv $ANDROID_HOME/tools $ANDROID_HOME/balls; \
 	ln -s $ANDROID_HOME/balls $ANDROID_HOME/tools; \
-	echo -e "y\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny" > ~/y; \
 	while true ; do sleep 5 ; echo y ; done | $ANDROID_HOME/tools/bin/sdkmanager \
 		"tools" \
 		"platform-tools" \
@@ -124,8 +123,8 @@ RUN bash -c ' \
 		"build-tools;25.0.2" \
 		"extras;android;m2repository" \
 		"extras;google;m2repository" \
-	< ~/y; \
-	rm -rf $ANDROID_HOME/balls ~/y; \
+	; \
+	rm -rf $ANDROID_HOME/balls; \
 '
 
 RUN mkdir ~/haxelib
