@@ -5,13 +5,10 @@
 	[class.checking]='checking'
 	*ngIf='!envService.isProd'
 >
-	<mat-card fxFlex fxFlex.gt-sm='50'>
+	<mat-card fxFlex>
 		<mat-card-title cyphTranslate>
-			Join Cyph
+			Register
 		</mat-card-title>
-		<mat-card-subtitle cyphTranslate>
-			[Subtitle?]
-		</mat-card-subtitle>
 		<mat-card-content>
 			<form fxFlex fxLayout='column' fxLayoutGap='32px' ngNativeValidate (submit)='submit()'>
 				<mat-tab-group
