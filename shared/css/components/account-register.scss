@@ -5,13 +5,23 @@
 	font-size: 1.25em;
 }
 
-.master-key-deselected {
-	cursor: pointer;
-	opacity: 0.25;
-	border: dashed white 1.5px;
+.master-key {
+	background-color: rgba(255, 255, 255, 0.1);
+	padding: 20px;
 
-	* {
-		pointer-events: none;
+	&.deselected {
+		cursor: pointer;
+		opacity: 0.25;
+		border: dashed white 1.5px;
+		background-color: transparent;
+
+		* {
+			pointer-events: none;
+		}
+	}
+
+	h3 {
+		margin-top: 0px;
 	}
 }
 

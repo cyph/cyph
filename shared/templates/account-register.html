@@ -27,7 +27,7 @@
 								<ng-template mat-tab-label>
 									<mat-icon>radio_button_checked</mat-icon>
 									&nbsp;
-									<span cyphTranslate>Basic Information</span>
+									<span cyphTranslate>Welcome</span>
 								</ng-template>
 
 								<div fxFlex fxLayout='column' fxLayoutGap='48px'>
@@ -37,9 +37,34 @@
 										class='description'
 									>
 										Congratulations on securing your Cyph account invite!
+									</div>
+									<div fxLayout='row' fxLayoutAlign='center center'>
 										You'll be getting early access to premium features, and
 										will still be able to easily communicate with anyone who
 										doesn't have an account yet.
+									</div>
+								</div>
+							</mat-tab>
+							<mat-tab>
+								<ng-template mat-tab-label>
+									<mat-icon *ngIf='tabIndex > 0'>
+										radio_button_checked
+									</mat-icon>
+									<mat-icon *ngIf='tabIndex <= 0'>
+										radio_button_unchecked
+									</mat-icon>
+									&nbsp;
+									<span cyphTranslate>Basic Information</span>
+								</ng-template>
+
+								<div fxFlex fxLayout='column' fxLayoutGap='48px'>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										class='description'
+									>
+										Who are you? Associate your Cyph account with your identity
+										or an alias.
 									</div>
 
 									<div fxLayout='row' fxLayoutAlign='center center'>
@@ -86,10 +111,10 @@
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='tabIndex > 0'>
+									<mat-icon *ngIf='tabIndex > 1'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='tabIndex <= 0'>
+									<mat-icon *ngIf='tabIndex <= 1'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
@@ -102,21 +127,13 @@
 										fxLayoutAlign='center center'
 										class='description'
 									>
-										Who are you? Associate your Cyph account with your identity
-										or an alias.
+										This is your Cyph master key. It's like a password,
+										but you'll only need it when first setting up a new
+										device.
 									</div>
 
-									<div
-										fxLayout='row'
-										(click)='useXkcdPassphrase = true'
-										[class.master-key-deselected]='!useXkcdPassphrase'
-									>
+									<div fxLayout='row' cyphTranslate>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												This is your Cyph master key. It's like a password,
-												but you'll only need it when first setting up a new
-												device.
-											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												We've generated a mathematically-proven secure
 												master key for you to use. You can optionally pick
@@ -125,32 +142,67 @@
 												very difficult to guess.
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<span>
-													<strong>Warning:</strong>
-													<span>
-														If you lose this key, you will not be able
-														to recover your data, initialize new
-														devices, or access your account in any way.
-														Keep it somewhere safe and
-													</span>
-													<i>offline</i>.
-												</span>
+												<div
+													fxLayout='column'
+													fxLayoutGap='8px'
+													class='cyph-banner warn'
+												>
+													<div
+														fxLayout='row'
+														fxLayoutAlign='center center'
+													>
+														<span>
+															<strong>WARNING:</strong>
+															<span>
+																If you lose this key, you will not
+																be able to recover your data,
+																initialize new devices, or access
+																your account in any way.
+															</span>
+														</span>
+													</div>
+													<div
+														fxLayout='row'
+														fxLayoutAlign='center center'
+													>
+														<span>
+															<span>Keep it somewhere safe and</span>
+															<i>offline</i>.
+															<span>
+																For example, write it down on paper
+																and hide it or lock it in a vault.
+															</span>
+														</span>
+													</div>
+													<div
+														fxLayout='row'
+														fxLayoutAlign='center center'
+													>
+														<span>
+															<strong>DO NOT</strong>
+															<span>
+																reuse this as a password for any
+																other service, or store it in a
+																third-party encrypted password
+																management service.
+															</span>
+														</span>
+													</div>
+												</div>
 											</div>
+										</div>
+									</div>
+
+									<div
+										fxLayout='row'
+										(click)='useXkcdPassphrase = true'
+										class='master-key'
+										[class.deselected]='!useXkcdPassphrase'
+									>
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<span>
-													<span>
-														For example, write it down on paper and
-														hide it or lock it in a vault; and
-													</span>
-													<strong>DO NOT</strong>
-													<span>
-														reuse this as a password for any other
-														service, or store it in a third-party
-														encrypted password management service.
-													</span>
-												</span>
+												<h3>Securely Generated Master Key</h3>
 											</div>
-											<div fxLayout='row'></div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<div class='xkcd-passphrase'>
 													{{xkcdPassphrase | async}}
@@ -163,11 +215,12 @@
 										fxLayout='row'
 										cyphTranslate
 										(click)='useXkcdPassphrase = false'
-										[class.master-key-deselected]='useXkcdPassphrase'
+										class='master-key'
+										[class.deselected]='useXkcdPassphrase'
 									>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												Custom Master Key
+												<h3>Custom Master Key</h3>
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<mat-form-field fxFlex='60'>
@@ -201,10 +254,10 @@
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='tabIndex > 1'>
+									<mat-icon *ngIf='tabIndex > 2'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='tabIndex <= 1'>
+									<mat-icon *ngIf='tabIndex <= 2'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
@@ -255,10 +308,10 @@
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='tabIndex > 2'>
+									<mat-icon *ngIf='tabIndex > 3'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='tabIndex <= 2'>
+									<mat-icon *ngIf='tabIndex <= 3'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
@@ -316,14 +369,18 @@
 							</mat-tab>
 						</mat-tab-group>
 
-						<div fxLayout='row' fxLayoutAlign='center center' *ngIf='tabIndex === 3'>
+						<div
+							fxLayout='row'
+							fxLayoutAlign='center center'
+							*ngIf='tabIndex === totalSteps'
+						>
 							<button mat-button type='submit'>
 								<span cyphTranslate>Register</span>
 							</button>
 						</div>
 					</form>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='tabIndex !== 3'>
+				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='tabIndex !== totalSteps'>
 					<button mat-button (click)='updateRoute(1)'>
 						<span cyphTranslate>Next</span>
 					</button>

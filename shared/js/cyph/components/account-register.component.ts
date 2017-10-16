@@ -15,9 +15,6 @@ import {StringsService} from '../services/strings.service';
 	templateUrl: '../../../templates/account-register.html'
 })
 export class AccountRegisterComponent implements OnInit {
-	/** @ignore */
-	private readonly totalSteps: number		= 4;
-
 	/** Indicates whether registration attempt is in progress. */
 	public checking: boolean				= false;
 
@@ -45,6 +42,9 @@ export class AccountRegisterComponent implements OnInit {
 	/** Form tab index. */
 	public tabIndex: number					= 3;
 
+	/** Total number of steps/tabs. */
+	public readonly totalSteps: number		= 4;
+
 	/** Username. */
 	public username: string					= '';
 
@@ -60,7 +60,7 @@ export class AccountRegisterComponent implements OnInit {
 			try {
 				const step: number|undefined	= parseInt(o.step, 10);
 
-				if (!isNaN(step) && step > 0 && step <= this.totalSteps) {
+				if (!isNaN(step) && step > 0 && step <= (this.totalSteps + 1)) {
 					this.tabIndex	= step - 1;
 					return;
 				}
