@@ -132,63 +132,46 @@
 										device.
 									</div>
 
-									<div fxLayout='row' cyphTranslate>
-										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												We've generated a mathematically-proven secure
-												master key for you to use. You can optionally pick
-												your own instead, but to ensure the integrity of
-												your data it must be at least 20 characters and
-												very difficult to guess.
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<div
+											fxLayout='column'
+											fxLayoutGap='16px'
+											class='cyph-banner warn'
+										>
+											<div
+												fxLayout='row'
+												fxLayoutAlign='center center'
+											>
+												<span>
+													<strong>WARNING:</strong>
+													<span>
+														If you lose this key, you will not
+														be able to recover your data,
+														initialize new devices, or access
+														your account in any way.
+													</span>
+													<span>Keep it somewhere safe and</span>
+													<i>offline</i>.
+													<span>
+														For example, write it down on paper
+														and hide it or lock it in a vault.
+													</span>
+												</span>
 											</div>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<div
-													fxLayout='column'
-													fxLayoutGap='8px'
-													class='cyph-banner warn'
-												>
-													<div
-														fxLayout='row'
-														fxLayoutAlign='center center'
-													>
-														<span>
-															<strong>WARNING:</strong>
-															<span>
-																If you lose this key, you will not
-																be able to recover your data,
-																initialize new devices, or access
-																your account in any way.
-															</span>
-														</span>
-													</div>
-													<div
-														fxLayout='row'
-														fxLayoutAlign='center center'
-													>
-														<span>
-															<span>Keep it somewhere safe and</span>
-															<i>offline</i>.
-															<span>
-																For example, write it down on paper
-																and hide it or lock it in a vault.
-															</span>
-														</span>
-													</div>
-													<div
-														fxLayout='row'
-														fxLayoutAlign='center center'
-													>
-														<span>
-															<strong>DO NOT</strong>
-															<span>
-																reuse this as a password for any
-																other service, or store it in a
-																third-party encrypted password
-																management service.
-															</span>
-														</span>
-													</div>
-												</div>
+											<div
+												fxLayout='row'
+												fxLayoutAlign='center center'
+											>
+												<span>
+													<span>And</span>
+													<strong>DO NOT</strong>
+													<span>
+														reuse this as a password for any
+														other service, or store it in a
+														third-party encrypted password
+														management service.
+													</span>
+												</span>
 											</div>
 										</div>
 									</div>
@@ -201,7 +184,13 @@
 									>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3>Securely Generated Master Key</h3>
+												<h3>Option #1: Securely Generated Master Key</h3>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												We've generated a mathematically-proven secure
+												master key for you to use. You may pick your own
+												instead, but to ensure your privacy it must be at
+												least 20 characters and very difficult to guess.
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<div class='xkcd-passphrase'>
@@ -220,7 +209,7 @@
 									>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3>Custom Master Key</h3>
+												<h3>Option #2: Custom Master Key</h3>
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<mat-form-field fxFlex='60'>
