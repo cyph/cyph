@@ -10,280 +10,325 @@
 			Register
 		</mat-card-title>
 		<mat-card-content>
-			<form fxFlex fxLayout='column' fxLayoutGap='32px' ngNativeValidate (submit)='submit()'>
-				<mat-tab-group
-					[(selectedIndex)]='tabIndex'
-					(selectedIndexChange)='updateRoute(0, $event)'
-				>
-					<mat-tab>
-						<ng-template mat-tab-label>
-							<mat-icon>radio_button_checked</mat-icon>
-							&nbsp;
-							<span cyphTranslate>Basic Information</span>
-						</ng-template>
+			<div fxLayout='column' fxLayoutGap='32px'>
+				<div fxLayout='row'>
+					<form
+						fxFlex
+						fxLayout='column'
+						fxLayoutGap='32px'
+						ngNativeValidate
+						(submit)='submit()'
+					>
+						<mat-tab-group
+							[(selectedIndex)]='tabIndex'
+							(selectedIndexChange)='updateRoute(0, $event)'
+						>
+							<mat-tab>
+								<ng-template mat-tab-label>
+									<mat-icon>radio_button_checked</mat-icon>
+									&nbsp;
+									<span cyphTranslate>Basic Information</span>
+								</ng-template>
 
-						<div fxFlex fxLayout='column' fxLayoutGap='48px'>
-							<div fxLayout='row' fxLayoutAlign='center center' class='description'>
-								Congratulations on securing your Cyph account invite! You'll be
-								getting early access to premium features, and will still be able
-								to easily communicate with anyone who doesn't have an account yet.
-							</div>
+								<div fxFlex fxLayout='column' fxLayoutGap='48px'>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										class='description'
+									>
+										Congratulations on securing your Cyph account invite!
+										You'll be getting early access to premium features, and
+										will still be able to easily communicate with anyone who
+										doesn't have an account yet.
+									</div>
 
-							<div fxLayout='row' fxLayoutAlign='center center'>
-								<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 									<div fxLayout='row' fxLayoutAlign='center center'>
-										<mat-form-field fxFlex='60'>
-											<input
-												matInput
-												cyphTranslate
-												[(ngModel)]='username'
-												name='username'
-												placeholder='Username'
-												required
-											/>
-										</mat-form-field>
-									</div>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<mat-form-field fxFlex='60'>
-											<input
-												matInput
-												cyphTranslate
-												[(ngModel)]='name'
-												name='name'
-												placeholder='Name (or pseudonym)'
-												required
-											/>
-										</mat-form-field>
-									</div>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<mat-form-field fxFlex='60'>
-											<input
-												matInput
-												cyphTranslate
-												[(ngModel)]='email'
-												name='email'
-												type='email'
-												placeholder='Email (optional)'
-											/>
-										</mat-form-field>
-									</div>
-								</div>
-							</div>
-						</div>
-					</mat-tab>
-					<mat-tab>
-						<ng-template mat-tab-label>
-							<mat-icon *ngIf='tabIndex > 0'>radio_button_checked</mat-icon>
-							<mat-icon *ngIf='tabIndex <= 0'>radio_button_unchecked</mat-icon>
-							&nbsp;
-							<span cyphTranslate>Master Key</span>
-						</ng-template>
-
-						<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
-							<div fxLayout='row' fxLayoutAlign='center center' class='description'>
-								Who are you? Associate your Cyph account with your identity or an
-								alias.
-							</div>
-
-							<div
-								fxLayout='row'
-								(click)='useXkcdPassphrase = true'
-								[class.master-key-deselected]='!useXkcdPassphrase'
-							>
-								<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										This is your Cyph master key. It's like a password, but
-										you'll only need it when first setting up a new device.
-									</div>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										We've generated a mathematically-proven secure master key
-										for you to use. You can optionally pick your own instead,
-										but to ensure the integrity of your data it must be at
-										least 20 characters and very difficult to guess.
-									</div>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<span>
-											<strong>Warning:</strong>
-											<span>
-												If you lose this key, you will not be able to
-												recover your data, initialize new devices, or
-												access your account in any way. Keep it somewhere
-												safe and
-											</span>
-											<i>offline</i>.
-										</span>
-									</div>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<span>
-											<span>
-												For example, write it down on paper and hide it or
-												lock it in a vault; and
-											</span>
-											<strong>DO NOT</strong>
-											<span>
-												reuse this as a password for any other service, or
-												store it in a third-party encrypted password
-												management service.
-											</span>
-										</span>
-									</div>
-									<div fxLayout='row'></div>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<div class='xkcd-passphrase'>
-											{{xkcdPassphrase | async}}
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='username'
+														name='username'
+														placeholder='Username'
+														required
+													/>
+												</mat-form-field>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='name'
+														name='name'
+														placeholder='Name (or pseudonym)'
+														required
+													/>
+												</mat-form-field>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='email'
+														name='email'
+														type='email'
+														placeholder='Email (optional)'
+													/>
+												</mat-form-field>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
+							</mat-tab>
+							<mat-tab>
+								<ng-template mat-tab-label>
+									<mat-icon *ngIf='tabIndex > 0'>
+										radio_button_checked
+									</mat-icon>
+									<mat-icon *ngIf='tabIndex <= 0'>
+										radio_button_unchecked
+									</mat-icon>
+									&nbsp;
+									<span cyphTranslate>Master Key</span>
+								</ng-template>
 
-							<div
-								fxLayout='row'
-								cyphTranslate
-								(click)='useXkcdPassphrase = false'
-								[class.master-key-deselected]='useXkcdPassphrase'
-							>
-								<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										Custom Master Key
-									</div>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<mat-form-field fxFlex='60'>
-											<input
-												matInput
-												cyphTranslate
-												[(ngModel)]='password'
-												name='password'
-												type='password'
-												placeholder='Master Key'
-												[required]='!useXkcdPassphrase'
-											/>
-										</mat-form-field>
-									</div>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<mat-form-field fxFlex='60'>
-											<input
-												matInput
-												cyphTranslate
-												[(ngModel)]='passwordConfirmation'
-												name='passwordConfirmation'
-												type='password'
-												placeholder='Confirm Master Key'
-												[required]='!useXkcdPassphrase'
-											/>
-										</mat-form-field>
-									</div>
-								</div>
-							</div>
-						</div>
-					</mat-tab>
-					<mat-tab>
-						<ng-template mat-tab-label>
-							<mat-icon *ngIf='tabIndex > 1'>radio_button_checked</mat-icon>
-							<mat-icon *ngIf='tabIndex <= 1'>radio_button_unchecked</mat-icon>
-							&nbsp;
-							<span cyphTranslate>Lock Screen Password</span>
-						</ng-template>
-
-						<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
-							<div fxLayout='row' fxLayoutAlign='center center' class='description'>
-								Set your password that you will use to reauthenticate on already
-								activated devices.
-							</div>
-
-							<div fxLayout='row' fxLayoutAlign='center center'>
-								<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<mat-form-field fxFlex='60'>
-											<input
-												matInput
-												cyphTranslate
-												[(ngModel)]='lockScreenPassword'
-												name='lockScreenPassword'
-												type='password'
-												placeholder='Lock Screen Password'
-												required
-											/>
-										</mat-form-field>
+								<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										class='description'
+									>
+										Who are you? Associate your Cyph account with your identity
+										or an alias.
 									</div>
 
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<mat-form-field fxFlex='60'>
-											<input
-												matInput
-												cyphTranslate
-												[(ngModel)]='lockScreenTimeout'
-												name='lockScreenTimeout'
-												type='number'
-												placeholder='Lock Screen Timeout (days)'
-											/>
-										</mat-form-field>
-									</div>
-								</div>
-							</div>
-						</div>
-					</mat-tab>
-					<mat-tab>
-						<ng-template mat-tab-label>
-							<mat-icon *ngIf='tabIndex > 2'>radio_button_checked</mat-icon>
-							<mat-icon *ngIf='tabIndex <= 2'>radio_button_unchecked</mat-icon>
-							&nbsp;
-							<span cyphTranslate>Confirm</span>
-						</ng-template>
-
-						<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
-							<div fxLayout='row' fxLayoutAlign='center center' class='description'>
-								Does this all look right?
-							</div>
-
-							<div fxLayout='row' fxLayoutAlign='center center'>
-								<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<h3
-											class='cyph-banner warn'
-											[style.visibility]='error ? "visible" : "hidden"'
-										>
-											{{stringsService.signupFailed}}
-										</h3>
-									</div>
-
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<span cyphTranslate>Username:</span>
-										&nbsp;
-										<span>{{username}}</span>
-									</div>
-
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<span cyphTranslate>Name:</span>
-										&nbsp;
-										<span>{{name}}</span>
-									</div>
-
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<span cyphTranslate>Email:</span>
-										&nbsp;
-										<span>{{email || stringsService.omitted}}</span>
+									<div
+										fxLayout='row'
+										(click)='useXkcdPassphrase = true'
+										[class.master-key-deselected]='!useXkcdPassphrase'
+									>
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												This is your Cyph master key. It's like a password,
+												but you'll only need it when first setting up a new
+												device.
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												We've generated a mathematically-proven secure
+												master key for you to use. You can optionally pick
+												your own instead, but to ensure the integrity of
+												your data it must be at least 20 characters and
+												very difficult to guess.
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<span>
+													<strong>Warning:</strong>
+													<span>
+														If you lose this key, you will not be able
+														to recover your data, initialize new
+														devices, or access your account in any way.
+														Keep it somewhere safe and
+													</span>
+													<i>offline</i>.
+												</span>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<span>
+													<span>
+														For example, write it down on paper and
+														hide it or lock it in a vault; and
+													</span>
+													<strong>DO NOT</strong>
+													<span>
+														reuse this as a password for any other
+														service, or store it in a third-party
+														encrypted password management service.
+													</span>
+												</span>
+											</div>
+											<div fxLayout='row'></div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<div class='xkcd-passphrase'>
+													{{xkcdPassphrase | async}}
+												</div>
+											</div>
+										</div>
 									</div>
 
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<span cyphTranslate>Password:</span>
-										&nbsp;
-										<span>********************</span>
+									<div
+										fxLayout='row'
+										cyphTranslate
+										(click)='useXkcdPassphrase = false'
+										[class.master-key-deselected]='useXkcdPassphrase'
+									>
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												Custom Master Key
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='password'
+														name='password'
+														type='password'
+														placeholder='Master Key'
+														[required]='!useXkcdPassphrase'
+													/>
+												</mat-form-field>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='passwordConfirmation'
+														name='passwordConfirmation'
+														type='password'
+														placeholder='Confirm Master Key'
+														[required]='!useXkcdPassphrase'
+													/>
+												</mat-form-field>
+											</div>
+										</div>
 									</div>
 								</div>
-							</div>
-						</div>
-					</mat-tab>
-				</mat-tab-group>
+							</mat-tab>
+							<mat-tab>
+								<ng-template mat-tab-label>
+									<mat-icon *ngIf='tabIndex > 1'>
+										radio_button_checked
+									</mat-icon>
+									<mat-icon *ngIf='tabIndex <= 1'>
+										radio_button_unchecked
+									</mat-icon>
+									&nbsp;
+									<span cyphTranslate>Lock Screen Password</span>
+								</ng-template>
 
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<button mat-button (click)='updateRoute(1)' *ngIf='tabIndex !== 3'>
+								<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										class='description'
+									>
+										Set your password that you will use to reauthenticate on
+										already activated devices.
+									</div>
+
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='lockScreenPassword'
+														name='lockScreenPassword'
+														type='password'
+														placeholder='Lock Screen Password'
+														required
+													/>
+												</mat-form-field>
+											</div>
+
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<mat-form-field fxFlex='60'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='lockScreenTimeout'
+														name='lockScreenTimeout'
+														type='number'
+														placeholder='Lock Screen Timeout (days)'
+													/>
+												</mat-form-field>
+											</div>
+										</div>
+									</div>
+								</div>
+							</mat-tab>
+							<mat-tab>
+								<ng-template mat-tab-label>
+									<mat-icon *ngIf='tabIndex > 2'>
+										radio_button_checked
+									</mat-icon>
+									<mat-icon *ngIf='tabIndex <= 2'>
+										radio_button_unchecked
+									</mat-icon>
+									&nbsp;
+									<span cyphTranslate>Confirm</span>
+								</ng-template>
+
+								<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										class='description'
+									>
+										Does this all look right?
+									</div>
+
+									<div fxLayout='row' fxLayoutAlign='center center'>
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<h3
+													class='cyph-banner warn'
+													[style.visibility]='
+														error ? "visible" : "hidden"
+													'
+												>
+													{{stringsService.signupFailed}}
+												</h3>
+											</div>
+
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<span cyphTranslate>Username:</span>
+												&nbsp;
+												<span>{{username}}</span>
+											</div>
+
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<span cyphTranslate>Name:</span>
+												&nbsp;
+												<span>{{name}}</span>
+											</div>
+
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<span cyphTranslate>Email:</span>
+												&nbsp;
+												<span>{{email || stringsService.omitted}}</span>
+											</div>
+
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<span cyphTranslate>Password:</span>
+												&nbsp;
+												<span>********************</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</mat-tab>
+						</mat-tab-group>
+
+						<div fxLayout='row' fxLayoutAlign='center center' *ngIf='tabIndex === 3'>
+							<button mat-button type='submit'>
+								<span cyphTranslate>Register</span>
+							</button>
+						</div>
+					</form>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='tabIndex !== 3'>
+					<button mat-button (click)='updateRoute(1)'>
 						<span cyphTranslate>Next</span>
 					</button>
-					<button mat-button type='submit' *ngIf='tabIndex === 3'>
-						<span cyphTranslate>Register</span>
-					</button>
 				</div>
-			</form>
+			</div>
 		</mat-card-content>
 		<mat-progress-spinner mode='indeterminate'></mat-progress-spinner>
 	</mat-card>
