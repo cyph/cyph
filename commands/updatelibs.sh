@@ -43,7 +43,6 @@ read -r -d '' modules <<- EOM
 	@ngrx/store-devtools
 	@ngtools/webpack
 	@types/braintree-web
-	@types/clipboard-js
 	@types/dompurify
 	@types/dropzone
 	@types/file-saver
@@ -76,7 +75,7 @@ read -r -d '' modules <<- EOM
 	check-tslint-all
 	cheerio
 	clean-css-cli
-	clipboard-js@https://github.com/lgarron/clipboard-polyfill
+	clipboard-polyfill
 	codelyzer
 	copy-webpack-plugin
 	core-js
