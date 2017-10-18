@@ -5,6 +5,9 @@
 
 const userAgent: string	= navigator.userAgent.toLowerCase();
 
+const isIOS: boolean	= /ipad|iphone|ipod/.test(userAgent);
+
+
 const isFirefoxOS: boolean		=
 	/firefox/.test(userAgent) &&
 	/mobile/.test(userAgent) &&
@@ -12,11 +15,12 @@ const isFirefoxOS: boolean		=
 ;
 
 const isOldIOS: boolean			=
-	/ipad|iphone|ipod/.test(userAgent) &&
+	isIOS &&
 	(parseInt((userAgent.match(/os (\d+)_(\d+)_?(\d+)?/) || [])[1], 10) || 0) < 9
 ;
 
-const isOldSafari: boolean			=
+const isOldSafari: boolean		=
+	!isIOS &&
 	navigator.vendor === 'Apple Computer, Inc.' &&
 	(parseInt((userAgent.match(/version\/(\d+)/) || [])[1], 10) || 0) < 9
 ;
