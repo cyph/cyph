@@ -241,12 +241,11 @@ wget https://raw.githubusercontent.com/dcodeIO/protobuf.js/952c7d1b478cc7c6de824
 
 rm grpc/node_modules/protobufjs/src/bower.json
 
-cd firebase
-for m in $(ls *-node.js | sed 's|-node\.js$||') ; do
-	mv ${m}-node.js ${m}.js
-	grep -rl "${m}-node" | xargs -I% sed -i "s|${m}-node|${m}|g" %
-done
-cd ../../..
+find firebase @firebase -type f -name '*.node.js' -exec bash -c '
+	cp -f {} $(echo "{}" | sed "s|\.node\.js$|.js|")
+' \;
+
+cd ../..
 
 mv js/node_modules .js.tmp/
 rm -rf js
