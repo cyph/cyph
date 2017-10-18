@@ -76,7 +76,7 @@ read -r -d '' modules <<- EOM
 	check-tslint-all
 	cheerio
 	clean-css-cli
-	clipboard-js
+	clipboard-js@https://github.com/lgarron/clipboard-polyfill
 	codelyzer
 	copy-webpack-plugin
 	core-js
