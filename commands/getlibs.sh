@@ -241,9 +241,10 @@ wget https://raw.githubusercontent.com/dcodeIO/protobuf.js/952c7d1b478cc7c6de824
 
 rm grpc/node_modules/protobufjs/src/bower.json
 
-find firebase @firebase -type f -name '*.node.js' -exec bash -c '
-	cp -f {} $(echo "{}" | sed "s|\.node\.js$|.js|")
-' \;
+# Temporarily commented out pending https://github.com/angular/angular-cli/issues/8117
+# find firebase @firebase -type f -name '*.node.js' -exec bash -c '
+# 	cp -f {} $(echo "{}" | sed "s|\.node\.js$|.js|")
+# ' \;
 
 cd ../..
 
