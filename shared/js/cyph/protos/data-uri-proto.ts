@@ -81,7 +81,7 @@ export class DataURIProto {
 		try {
 			data	= await DataURIProto.safeUrlToString(data);
 		}
-		catch {}
+		catch (_) {}
 
 		if (typeof data !== 'string') {
 			return new Uint8Array(0);
@@ -95,7 +95,7 @@ export class DataURIProto {
 		try {
 			data	= await DataURIProto.safeUrlToString(data);
 		}
-		catch {}
+		catch (_) {}
 
 		if (
 			typeof data === 'string' &&

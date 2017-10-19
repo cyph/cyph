@@ -44,7 +44,7 @@ export class AccountFormComponent implements OnInit {
 					metadata: this.accountFilesService.watchMetadata(id)
 				};
 			}
-			catch {
+			catch (_) {
 				this.routerService.navigate(['404']);
 			}
 		});

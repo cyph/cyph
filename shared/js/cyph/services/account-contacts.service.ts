@@ -181,7 +181,7 @@ export class AccountContactsService {
 						});
 					});
 				}
-				catch {}
+				catch (_) {}
 				finally {
 					this.updateContactsList();
 				}

@@ -32,7 +32,7 @@ export class DataManagerService {
 			try {
 				return await this.getItem(url, proto);
 			}
-			catch {
+			catch (_) {
 				const value	= await defaultValue();
 				this.setItem(url, proto, value).catch(() => {});
 				return value;
@@ -46,7 +46,7 @@ export class DataManagerService {
 			await this.getItem(url, BinaryProto);
 			return true;
 		}
-		catch {
+		catch (_) {
 			return false;
 		}
 	}

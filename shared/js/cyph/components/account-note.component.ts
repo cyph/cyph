@@ -143,7 +143,7 @@ export class AccountNoteComponent implements OnInit {
 					await this.setNote(id);
 				}
 			}
-			catch {
+			catch (_) {
 				this.routerService.navigate(['404']);
 			}
 		});

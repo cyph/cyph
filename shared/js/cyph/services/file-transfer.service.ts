@@ -72,7 +72,7 @@ export class FileTransferService {
 				key
 			};
 		}
-		catch {
+		catch (_) {
 			return {
 				cyphertext: new Uint8Array(0),
 				key: new Uint8Array(0)
@@ -317,7 +317,7 @@ export class FileTransferService {
 			await uploadTask.result;
 			this.sessionService.send([rpcEvents.files, {transfer}]);
 		}
-		catch {
+		catch (_) {
 			if (transfer.answer !== SessionTransferAnswers.Rejected) {
 				eventManager.trigger(completedEvent, transfer);
 			}

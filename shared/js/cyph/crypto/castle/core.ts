@@ -164,7 +164,7 @@ export class Core {
 
 					return this.potassium.toBytes(decrypted, startIndex);
 				}
-				catch {}
+				catch (_) {}
 			}
 
 			throw new Error('Invalid cyphertext.');

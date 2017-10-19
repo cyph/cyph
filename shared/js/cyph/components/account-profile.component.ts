@@ -52,7 +52,7 @@ export class AccountProfileComponent implements OnInit {
 				this.user	= this.accountDatabaseService.currentUser.value.user;
 			}
 		}
-		catch {}
+		catch (_) {}
 
 		if (!this.user) {
 			this.routerService.navigate(['account', 'login']);

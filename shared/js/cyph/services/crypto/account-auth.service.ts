@@ -132,7 +132,7 @@ export class AccountAuthService {
 							)
 						);
 					}
-					catch {}
+					catch (_) {}
 				}
 			);
 
@@ -149,7 +149,7 @@ export class AccountAuthService {
 					);
 				}
 			}
-			catch {}
+			catch (_) {}
 
 			this.statusSaveSubscription	= this.databaseService.watch(
 				`users/${username}/presence`,
@@ -166,7 +166,7 @@ export class AccountAuthService {
 				);
 			});
 		}
-		catch {
+		catch (_) {
 			return false;
 		}
 
@@ -319,7 +319,7 @@ export class AccountAuthService {
 				)
 			]);
 		}
-		catch {
+		catch (_) {
 			return false;
 		}
 

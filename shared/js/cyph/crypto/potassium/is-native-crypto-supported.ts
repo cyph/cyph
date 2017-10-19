@@ -12,7 +12,7 @@ export const isNativeCryptoSupported	= async () : Promise<boolean> => {
 		);
 		return true;
 	}
-	catch {
+	catch (_) {
 		return false;
 	}
 };

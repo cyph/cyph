@@ -34,7 +34,7 @@ export class WebLocalStorageService extends LocalStorageService {
 					})
 			);
 		}
-		catch {}
+		catch (_) {}
 	})();
 
 	/** @inheritDoc */
@@ -122,7 +122,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		try {
 			return await promise;
 		}
-		catch {
+		catch (_) {
 			this.failureFallback	= new Map<string, Uint8Array>();
 			this.failureFallback.set(url, data);
 			return {url};

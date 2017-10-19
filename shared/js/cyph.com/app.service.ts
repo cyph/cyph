@@ -181,7 +181,7 @@ export class AppService {
 					amount > 0
 				);
 			}
-			catch {
+			catch (_) {
 				this.routerService.navigate(['404']);
 			}
 		}
@@ -318,20 +318,20 @@ export class AppService {
 				try {
 					(<HTMLVideoElement> elements.backgroundVideo()[0]).currentTime	= 1.25;
 				}
-				catch {}
+				catch (_) {}
 
 				(<any> elements.backgroundVideo()).appear().
 					on('appear', () => {
 						try {
 							(<any> elements.backgroundVideo()[0]).play().catch(() => {});
 						}
-						catch {}
+						catch (_) {}
 					}).
 					on('disappear', () => {
 						try {
 							(<HTMLVideoElement> elements.backgroundVideo()[0]).pause();
 						}
-						catch {}
+						catch (_) {}
 					})
 				;
 			}

@@ -45,7 +45,7 @@ export class LocalAsyncValue<T> implements IAsyncValue<T> {
 			try {
 				newValue	= await f(value);
 			}
-			catch {
+			catch (_) {
 				return;
 			}
 			this.setValue(newValue);

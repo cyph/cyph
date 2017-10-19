@@ -65,7 +65,7 @@ export class AccountRegisterComponent implements OnInit {
 					return;
 				}
 			}
-			catch {}
+			catch (_) {}
 
 			this.routerService.navigate(['account', 'register', '1']);
 		});
