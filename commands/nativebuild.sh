@@ -55,7 +55,7 @@ node -e 'console.log(`
 	(function () {
 		var exports	= undefined;
 		var print	= function (s) { console.log(s); };
-		importScripts("/assets/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js");
+		importScripts("/assets/node_modules/libsodium/dist/browsers-sumo/sodium.js");
 	})();
 
 	self.translations = ${JSON.stringify(require("../commands/translations"))};
