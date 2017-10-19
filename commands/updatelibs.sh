@@ -12,22 +12,23 @@ cd ~/tmplib/js
 
 
 read -r -d '' modules <<- EOM
-	@angular/animations
+	@angular/animations@next
 	@angular/cdk
-	@angular/cli
-	@angular/common
-	@angular/compiler
-	@angular/compiler-cli
-	@angular/core
+	@angular/cli@next
+	@angular/common@next
+	@angular/compiler@next
+	@angular/compiler-cli@next
+	@angular/core@next
 	@angular/flex-layout
-	@angular/forms
+	@angular/forms@next
+	@angular/http@next
 	@angular/material
-	@angular/platform-browser
-	@angular/platform-browser-dynamic
-	@angular/platform-server
-	@angular/platform-webworker
-	@angular/platform-webworker-dynamic
-	@angular/router
+	@angular/platform-browser@next
+	@angular/platform-browser-dynamic@next
+	@angular/platform-server@next
+	@angular/platform-webworker@next
+	@angular/platform-webworker-dynamic@next
+	@angular/router@next
 	@angular/service-worker
 	@compodoc/compodoc
 	@covalent/core
@@ -41,7 +42,7 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
-	@ngtools/webpack
+	@ngtools/webpack@next
 	@types/braintree-web
 	@types/dompurify
 	@types/dropzone
@@ -172,7 +173,7 @@ read -r -d '' modules <<- EOM
 	retire
 	rlwe
 	rsvp
-	rxjs@5.4.3
+	rxjs
 	sass-loader
 	script-ext-html-webpack-plugin
 	sidh
