@@ -181,7 +181,7 @@
 		"interface-name": [true, "always-prefix"],
 		"interface-over-type-literal": true,
 		"jsdoc-format": true,
-		"match-default-export-name": true,
+		"match-default-export-name": false,
 		"new-parens": true,
 		"newline-before-return": false,
 		"no-angle-bracket-type-assertion": false,
