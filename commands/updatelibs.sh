@@ -14,7 +14,7 @@ cd ~/tmplib/js
 read -r -d '' modules <<- EOM
 	@angular/animations@next
 	@angular/cdk
-	@angular/cli@next
+	@angular/cli@1.3.1
 	@angular/common@next
 	@angular/compiler@next
 	@angular/compiler-cli@next
