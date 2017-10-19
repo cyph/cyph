@@ -26,9 +26,9 @@
     minimist "^1.2.0"
     rxjs "^5.4.2"
 
-"@angular/animations@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-4.4.5.tgz#5a5a551d757e5a5560098f6f8535c102d93954d7"
+"@angular/animations@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-4.4.6.tgz#fa661899a8a4e38cb7c583c7a5c97ce65d592a35"
   dependencies:
     tslib "^1.7.1"
 
@@ -99,29 +99,29 @@
   optionalDependencies:
     node-sass "^4.3.0"
 
-"@angular/common@^4", "@angular/common@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/common/-/common-4.4.5.tgz#bd5179dc922adbf4c3ea6dfb19e73cb849ffdc37"
+"@angular/common@^4", "@angular/common@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/common/-/common-4.4.6.tgz#4b81420724e0828a0e839b95a55eb1a7e83918f2"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/compiler-cli@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/compiler-cli/-/compiler-cli-4.4.5.tgz#61fa0336acd1a208c5f1c5c6d4df679e99953248"
+"@angular/compiler-cli@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/compiler-cli/-/compiler-cli-4.4.6.tgz#bafd3d1e260e99087eb9a8cf7532dbd603abb9b1"
   dependencies:
-    "@angular/tsc-wrapped" "4.4.5"
+    "@angular/tsc-wrapped" "4.4.6"
     minimist "^1.2.0"
     reflect-metadata "^0.1.2"
 
-"@angular/compiler@^4", "@angular/compiler@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-4.4.5.tgz#8721a5910f2bb52f09e2d404cad264f35ede5902"
+"@angular/compiler@^4", "@angular/compiler@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-4.4.6.tgz#2ee1faf25b757e1d128979074be7fae529b3bc20"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/core@^4", "@angular/core@^4.3.4", "@angular/core@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/core/-/core-4.4.5.tgz#54acbcbda11719f883c786a906974abeb132f1a0"
+"@angular/core@^4", "@angular/core@^4.3.4", "@angular/core@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/core/-/core-4.4.6.tgz#13031fd10dcfe438875419b38f21120958bc2354"
   dependencies:
     tslib "^1.7.1"
 
@@ -131,15 +131,15 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/forms@^4", "@angular/forms@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-4.4.5.tgz#e9552086232aab2ce1d08ef198b62204ea13c43b"
+"@angular/forms@^4", "@angular/forms@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-4.4.6.tgz#fe64ace42435c1b80f49034b7c41ce8caf14a44a"
   dependencies:
     tslib "^1.7.1"
 
 "@angular/http@^4":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/http/-/http-4.4.5.tgz#2c735ed842401fc2356419268e288dcf2396e84f"
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/http/-/http-4.4.6.tgz#0af680c6710bdc026d940e225cfd0f6a5c005d0c"
   dependencies:
     tslib "^1.7.1"
 
@@ -149,41 +149,41 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-browser-dynamic@^4", "@angular/platform-browser-dynamic@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-4.4.5.tgz#774dbdc1d90f775dbf1e319f6ed42b260623b61f"
+"@angular/platform-browser-dynamic@^4", "@angular/platform-browser-dynamic@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-4.4.6.tgz#4d3d9a6a7bf2cf3de4058a615ae059eff641fa36"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-browser@^4", "@angular/platform-browser@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-4.4.5.tgz#74eb91c0b758126f26d53ee56c7cf4668bd9cac5"
+"@angular/platform-browser@^4", "@angular/platform-browser@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-4.4.6.tgz#a9839c547e1b654fa1d24a89780c8ba6ab8dcce0"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-server@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/platform-server/-/platform-server-4.4.5.tgz#76f23b2c384ed7395dc1793cf85978883ba2cb50"
+"@angular/platform-server@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/platform-server/-/platform-server-4.4.6.tgz#431248f4891a635c76ad15a17d03e9c87e1a3837"
   dependencies:
     parse5 "^3.0.1"
     tslib "^1.7.1"
     xhr2 "^0.1.4"
 
-"@angular/platform-webworker-dynamic@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/platform-webworker-dynamic/-/platform-webworker-dynamic-4.4.5.tgz#f387193f6a5498e2f7890978cf17b17da7a766f5"
+"@angular/platform-webworker-dynamic@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/platform-webworker-dynamic/-/platform-webworker-dynamic-4.4.6.tgz#c3d51afe62b298ddc022e25147580cd31115c021"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-webworker@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/platform-webworker/-/platform-webworker-4.4.5.tgz#c0f7e3072465a0587f69b3da3585de0205f025dd"
+"@angular/platform-webworker@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/platform-webworker/-/platform-webworker-4.4.6.tgz#9bdded751dd7e1446791f1ba317eeed91c27431e"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/router@^4", "@angular/router@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/router/-/router-4.4.5.tgz#f73130cf487d9a32cc1988afda59665f44a28a89"
+"@angular/router@^4", "@angular/router@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/router/-/router-4.4.6.tgz#0f6ad29ae0ff8d2c9ea379bd320447217b7ec866"
   dependencies:
     tslib "^1.7.1"
 
@@ -194,9 +194,9 @@
     base64-js "^1.1.2"
     jshashes "^1.0.5"
 
-"@angular/tsc-wrapped@4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@angular/tsc-wrapped/-/tsc-wrapped-4.4.5.tgz#30a0cbb43a663aa75dca984894be4813778ddc9c"
+"@angular/tsc-wrapped@4.4.6":
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/@angular/tsc-wrapped/-/tsc-wrapped-4.4.6.tgz#16787cbbf50bdc7e738123b19c32527f244e178d"
   dependencies:
     tsickle "^0.21.0"
 
@@ -2327,9 +2327,9 @@ cli@0.11.3:
     exit "0.1.2"
     glob "^7.0.5"
 
-clipboard-polyfill@^2.0.3:
+"clipboard-polyfill@https://github.com/buu700/clipboard-polyfill-tmp":
   version "2.0.3"
-  resolved "https://registry.yarnpkg.com/clipboard-polyfill/-/clipboard-polyfill-2.0.3.tgz#54e231509d32e6dfa9094e8b021445c4ab607bee"
+  resolved "https://github.com/buu700/clipboard-polyfill-tmp#2d6ac3c765b57bbf880321f2664dc1d28f4c8657"
   dependencies:
     es6-promise "4.1.1"
 
@@ -6042,25 +6042,25 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-libsodium-sumo@0.7.1, libsodium-sumo@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/libsodium-sumo/-/libsodium-sumo-0.7.1.tgz#2a2eeb6015691f526fecbab82a42034d5c1ec9a0"
+libsodium-sumo@0.7.2, libsodium-sumo@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/libsodium-sumo/-/libsodium-sumo-0.7.2.tgz#7aee8642cad53dabfac8ed19c42ebacb985a21ba"
 
-libsodium-wrappers-sumo@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/libsodium-wrappers-sumo/-/libsodium-wrappers-sumo-0.7.1.tgz#38bdf663fe1f3f871df5f72459c41a174ba8373f"
+libsodium-wrappers-sumo@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/libsodium-wrappers-sumo/-/libsodium-wrappers-sumo-0.7.2.tgz#a1ffe7e30f7132444a27d9232e618a94fa77a0c7"
   dependencies:
-    libsodium-sumo "0.7.1"
+    libsodium-sumo "0.7.2"
 
-libsodium-wrappers@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/libsodium-wrappers/-/libsodium-wrappers-0.7.1.tgz#3218361e6100abd51d9ebd833916bf12b56beb68"
+libsodium-wrappers@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/libsodium-wrappers/-/libsodium-wrappers-0.7.2.tgz#d10c60f1698fee4c95c80921697b8e0490f996b0"
   dependencies:
-    libsodium "0.7.1"
+    libsodium "0.7.2"
 
-libsodium@0.7.1, libsodium@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/libsodium/-/libsodium-0.7.1.tgz#a46d4fbea78e15106e9f38cf4d690b402ec7eb54"
+libsodium@0.7.2, libsodium@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/libsodium/-/libsodium-0.7.2.tgz#aae809057f637b5c43eb08fa0445f987735df854"
 
 license-webpack-plugin@^1.0.0:
   version "1.1.0"
