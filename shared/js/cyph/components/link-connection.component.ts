@@ -76,7 +76,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 		await util.lockTryOnce(
 			this.copyLock,
 			async () => this.dialogService.toast(
-				await clipboard.copy(this.linkConstant).
+				await clipboard.writeText(this.linkConstant).
 					then(() => this.stringsService.linkCopied).
 					catch(() => this.stringsService.linkCopyFail)
 				,
