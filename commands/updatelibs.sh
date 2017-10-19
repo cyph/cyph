@@ -87,6 +87,7 @@ read -r -d '' modules <<- EOM
 	dropzone
 	extract-text-webpack-plugin
 	fast-crc32c
+	faye-websocket
 	fg-loadcss
 	file-loader
 	file-saver
@@ -166,9 +167,11 @@ read -r -d '' modules <<- EOM
 	raw-loader
 	read
 	reflect-metadata
+	request
 	resolve-url-loader
 	retire
 	rlwe
+	rsvp
 	rxjs@5.4.3
 	sass-loader
 	script-ext-html-webpack-plugin
