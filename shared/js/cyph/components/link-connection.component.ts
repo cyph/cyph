@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import * as clipboard from 'clipboard-polyfill';
+import clipboard from 'clipboard-polyfill';
 import * as $ from 'jquery';
 import {ChatService} from '../services/chat.service';
 import {ConfigService} from '../services/config.service';
