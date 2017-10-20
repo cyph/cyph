@@ -2,6 +2,7 @@
 
 
 cd $(cd "$(dirname "$0")" ; pwd)/..
+dir="$PWD"
 
 fast=''
 if [ "${1}" == '--fast' ] ; then
@@ -115,6 +116,7 @@ node -e "
 	);
 "
 
+cp ${dir}/shared/lib/js/package.json ./
 cp -rf css templates js/
 
 output="$(

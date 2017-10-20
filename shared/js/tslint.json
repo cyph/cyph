@@ -179,7 +179,21 @@
 		"callable-types": true,
 		"class-name": true,
 		"comment-format": [true, "check-space", "check-uppercase"],
-		"completed-docs": true,
+		"completed-docs": [false, { /* Pending https://github.com/palantir/tslint/issues/3365: true, */
+			"classes": {"visibilities": ["exported"]},
+			"enums": {"visibilities": ["exported"]},
+			"functions": {"visibilities": ["exported"]},
+			"interfaces": {"visibilities": ["exported"]},
+			"methods": {"privacies": ["protected", "public"]},
+			"namespaces": {"visibilities": ["exported"]},
+			"properties": {"privacies": ["protected", "public"]},
+			"types": {"visibilities": ["exported"]},
+			"variables": {"visibilities": ["exported"]},
+			"tags": {
+				"content": {"see": [".*"]},
+				"exists": ["inheritDoc"]
+			}
+		}],
 		"encoding": true,
 		"file-header": false,
 		"import-spacing": true,
