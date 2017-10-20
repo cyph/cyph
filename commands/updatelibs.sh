@@ -12,23 +12,23 @@ cd ~/tmplib/js
 
 
 read -r -d '' modules <<- EOM
-	@angular/animations@next
+	@angular/animations
 	@angular/cdk
-	@angular/cli@1.3.1
-	@angular/common@next
-	@angular/compiler@next
-	@angular/compiler-cli@next
-	@angular/core@next
+	@angular/cli@1.2.6
+	@angular/common
+	@angular/compiler
+	@angular/compiler-cli
+	@angular/core
 	@angular/flex-layout
-	@angular/forms@next
-	@angular/http@next
+	@angular/forms
+	@angular/http
 	@angular/material
-	@angular/platform-browser@next
-	@angular/platform-browser-dynamic@next
-	@angular/platform-server@next
-	@angular/platform-webworker@next
-	@angular/platform-webworker-dynamic@next
-	@angular/router@next
+	@angular/platform-browser
+	@angular/platform-browser-dynamic
+	@angular/platform-server
+	@angular/platform-webworker
+	@angular/platform-webworker-dynamic
+	@angular/router
 	@angular/service-worker
 	@compodoc/compodoc
 	@covalent/core
@@ -42,7 +42,6 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
-	@ngtools/webpack@next
 	@types/braintree-web
 	@types/dompurify
 	@types/dropzone
@@ -200,7 +199,7 @@ read -r -d '' modules <<- EOM
 	tslint-microsoft-contrib
 	tsutils
 	typedoc
-	typescript@2.4.2
+	typescript@2.3.2
 	u2f-api-polyfill
 	uglify-es
 	unsemantic
