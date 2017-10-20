@@ -480,7 +480,7 @@
     "retire": "^1.4.0",
     "rlwe": "^3.1.0",
     "rsvp": "^4.7.0",
-    "rxjs": "^5.5.0",
+    "rxjs": "5.4.3",
     "sass-loader": "^6.0.6",
     "script-ext-html-webpack-plugin": "^1.8.5",
     "sidh": "^4.1.0",
