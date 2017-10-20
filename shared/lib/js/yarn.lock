@@ -2289,9 +2289,9 @@ cli@0.11.3:
     exit "0.1.2"
     glob "^7.0.5"
 
-clipboard-polyfill@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/clipboard-polyfill/-/clipboard-polyfill-2.1.0.tgz#fc4efc522b5526cd18c60c59fa79240c21cdb470"
+"clipboard-polyfill@https://github.com/buu700/clipboard-polyfill-tmp":
+  version "2.0.3"
+  resolved "https://github.com/buu700/clipboard-polyfill-tmp#2d6ac3c765b57bbf880321f2664dc1d28f4c8657"
   dependencies:
     es6-promise "4.1.1"
 
@@ -4421,8 +4421,8 @@ gauge@~2.7.1, gauge@~2.7.3:
     wide-align "^1.1.0"
 
 gaze@1.1.0, gaze@^0.5.1, gaze@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.0.tgz#74d3ffb0110ede715c9f15bba56c6e9b851d3ce0"
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.2.tgz#847224677adb8870d679257ed3388fdb61e40105"
   dependencies:
     globule "^1.0.0"
 
