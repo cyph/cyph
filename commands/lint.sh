@@ -84,6 +84,12 @@ mv tslint.json.old tslint.json
 unbindmount node_modules
 cd ..
 
+if [ "${circleCI}" ] ; then
+	for f in js/tslint-rules/*.ts ; do
+		sed -i 's|tslint/node_modules/typescript|typescript|g' "${f}"
+	done
+fi
+
 tsc --skipLibCheck js/tslint-rules/*.ts || exit 1
 
 node -e "
