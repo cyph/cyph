@@ -77,6 +77,7 @@ read -r -d '' modules <<- EOM
 	clean-css-cli
 	clipboard-polyfill
 	codelyzer
+	comlinkjs
 	copy-webpack-plugin
 	core-js
 	css-loader
