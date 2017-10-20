@@ -2007,7 +2007,7 @@ bufferutil@1.2.x:
     bindings "1.2.x"
     nan "^2.0.5"
 
-builtin-modules@^1.0.0:
+builtin-modules@^1.0.0, builtin-modules@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/builtin-modules/-/builtin-modules-1.1.1.tgz#270f076c5a72c02f5b65a47df94c5fe3a278892f"
 
@@ -2289,9 +2289,9 @@ cli@0.11.3:
     exit "0.1.2"
     glob "^7.0.5"
 
-"clipboard-polyfill@https://github.com/buu700/clipboard-polyfill-tmp":
-  version "2.0.3"
-  resolved "https://github.com/buu700/clipboard-polyfill-tmp#2d6ac3c765b57bbf880321f2664dc1d28f4c8657"
+clipboard-polyfill@^2.1.4:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/clipboard-polyfill/-/clipboard-polyfill-2.1.4.tgz#6363c2bec9fc5913cf93d26371e5347680aa11c6"
   dependencies:
     es6-promise "4.1.1"
 
@@ -10364,12 +10364,13 @@ tslint-microsoft-contrib@^5.0.1:
   dependencies:
     tsutils "^1.4.0"
 
-tslint@^5.7.0:
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/tslint/-/tslint-5.7.0.tgz#c25e0d0c92fa1201c2bc30e844e08e682b4f3552"
+tslint@^5.8.0:
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/tslint/-/tslint-5.8.0.tgz#1f49ad5b2e77c76c3af4ddcae552ae4e3612eb13"
   dependencies:
     babel-code-frame "^6.22.0"
-    colors "^1.1.2"
+    builtin-modules "^1.1.1"
+    chalk "^2.1.0"
     commander "^2.9.0"
     diff "^3.2.0"
     glob "^7.1.1"
@@ -10377,9 +10378,9 @@ tslint@^5.7.0:
     resolve "^1.3.2"
     semver "^5.3.0"
     tslib "^1.7.1"
-    tsutils "^2.8.1"
+    tsutils "^2.12.1"
 
-tsutils@^1.4.0, tsutils@^2.12.1, tsutils@^2.8.1:
+tsutils@^1.4.0, tsutils@^2.12.1:
   version "2.12.1"
   resolved "https://registry.yarnpkg.com/tsutils/-/tsutils-2.12.1.tgz#f4d95ce3391c8971e46e54c4cf0edb0a21dd5b24"
   dependencies:
