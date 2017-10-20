@@ -8,6 +8,7 @@
 		/* TypeScript-Specific */
 
 		"adjacent-overload-signatures": true,
+		"ban-comma-operator": true,
 		"ban-types": [
 			true,
 			["Boolean", "Use boolean."],
@@ -105,17 +106,20 @@
 		"no-construct": true,
 		"no-debugger": true,
 		"no-duplicate-super": true,
+		"no-duplicate-switch-case": true,
 		"no-duplicate-variable": true,
 		"no-empty": false,
 		"no-eval": true,
 		"no-floating-promises": false,
 		"no-for-in-array": true,
+		"no-implicit-dependencies": true,
 		"no-inferred-empty-object-type": true,
 		"no-invalid-template-strings": true,
 		"no-invalid-this": [true, "check-function-in-method"],
 		"no-misused-new": true,
 		"no-null-keyword": true,
 		"no-object-literal-type-assertion": false,
+		"no-return-await": true,
 		"no-shadowed-variable": true,
 		"no-sparse-arrays": true,
 		"no-string-literal": true,
@@ -124,6 +128,7 @@
 		"no-switch-case-fall-through": true,
 		"no-this-assignment": true,
 		"no-unbound-method": true,
+		"no-unnecessary-class": false,
 		"no-unsafe-any": false,
 		"no-unsafe-finally": true,
 		"no-unused-expression": true,
@@ -139,7 +144,7 @@
 		"switch-default": false,
 		"strict-type-predicates": true,
 		"triple-equals": true,
-		"typeof-compare": true,
+		"typeof-compare": false, /* Deprecated */
 		"use-default-type-parameter": true,
 		"use-isnan": true,
 
@@ -174,7 +179,7 @@
 		"callable-types": true,
 		"class-name": true,
 		"comment-format": [true, "check-space", "check-uppercase"],
-		"completed-docs": false, /* Pending fix: true, */
+		"completed-docs": true,
 		"encoding": true,
 		"file-header": false,
 		"import-spacing": true,
@@ -189,6 +194,7 @@
 		"no-consecutive-blank-lines": [true, 2],
 		"no-irregular-whitespace": true,
 		"no-parameter-properties": false,
+		"no-redundant-jsdoc": true,
 		"no-reference-import": true,
 		"no-unnecessary-callback-wrapper": true,
 		"no-unnecessary-initializer": true,

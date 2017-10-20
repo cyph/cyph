@@ -115,7 +115,6 @@ output="$(
 	tslint \
 		-e '/node_modules/**' \
 		--project js/tsconfig.tslint.json \
-		--type-check \
 	2>&1 |
 		if [ "${fast}" ] ; then grep -v js/native/js ; else cat - ; fi |
 		grep -vP "Warning: Cannot read property '.*?' of undefined"
