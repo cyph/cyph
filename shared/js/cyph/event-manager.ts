@@ -13,11 +13,7 @@ export class EventManager {
 	/** List of all active threads. */
 	public readonly threads: Set<IThread>	= new Set<IThread>();
 
-	/**
-	 * Removes handler from event.
-	 * @param event
-	 * @param handler
-	 */
+	/** Removes handler from event. */
 	public off<T> (event: string, handler?: (data: T) => void) : void {
 		const eventMapping	= this.eventMappings.get(event);
 
@@ -34,11 +30,7 @@ export class EventManager {
 		}
 	}
 
-	/**
-	 * Attaches handler to event.
-	 * @param event
-	 * @param handler
-	 */
+	/** Attaches handler to event. */
 	public on<T> (event: string, handler: (data: T) => void) : void {
 		util.getOrSetDefault(
 			this.eventMappings,
@@ -49,10 +41,7 @@ export class EventManager {
 		);
 	}
 
-	/**
-	 * Resolves on first occurrence of event.
-	 * @param event
-	 */
+	/** Resolves on first occurrence of event. */
 	public async one<T> (event: string) : Promise<T> {
 		return new Promise<T>(resolve => {
 			let f: (data: T) => void;
@@ -92,8 +81,6 @@ export class EventManager {
 
 	/**
 	 * EventManager.trigger wrapper that allows receiving a response from EventManager.on.
-	 * @param event
-	 * @param data
 	 * @param init Optional promise to wait on for initialization of handler before triggering.
 	 */
 	public async rpcTrigger<O, I = any> (event: string, data?: I, init?: Promise<void>) : Promise<O> {
@@ -119,8 +106,6 @@ export class EventManager {
 
 	/**
 	 * Triggers event.
-	 * @param event
-	 * @param data
 	 * @param crossThread Indicates whether event should be propagated to other threads.
 	 */
 	public trigger<T> (event: string, data?: T, crossThread: boolean = false) : void {

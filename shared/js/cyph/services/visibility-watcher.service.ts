@@ -25,10 +25,7 @@ export class VisibilityWatcherService {
 		eventManager.trigger(this.visibilityChangeEvent, this.isVisible);
 	}
 
-	/**
-	 * Sets handler to run when visibility changes.
-	 * @param handler
-	 */
+	/** Sets handler to run when visibility changes. */
 	public onChange (handler: (isVisible: boolean) => void) : void {
 		eventManager.on(this.visibilityChangeEvent, handler);
 	}

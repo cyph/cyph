@@ -98,7 +98,7 @@ export class FileTransferService {
 			this.transfers				= this.transfers.add(transferSetItem);
 
 			const plaintext: Uint8Array|undefined	= await (async () =>
-				await (await this.secretBox).open((await result).value, transfer.key)
+				(await this.secretBox).open((await result).value, transfer.key)
 			)().catch(
 				() => undefined
 			);
@@ -222,10 +222,8 @@ export class FileTransferService {
 
 	/**
 	 * Sends file.
-	 * @param file
 	 * @param image If true, file is processed as an image
 	 * (compressed and displayed in the message list).
-	 * @param imageSelfDestructTimeout
 	 */
 	public async send (
 		file: File,

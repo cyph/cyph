@@ -29,11 +29,7 @@ export class CyphertextService {
 	/** Cyphertext message list. */
 	public messages: List<ChatMessage>	= List<ChatMessage>();
 
-	/**
-	 * Logs new cyphertext message.
-	 * @param author
-	 * @param cyphertext
-	 */
+	/** Logs new cyphertext message. */
 	private async log (author: Observable<string>, text: string) : Promise<void> {
 		if (!text || !this.isEnabled) {
 			return;

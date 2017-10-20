@@ -31,10 +31,7 @@ export class VirtualKeyboardWatcherService {
 		);
 	}
 
-	/**
-	 * Sets handler to run when keyboard status changes.
-	 * @param handler
-	 */
+	/** Sets handler to run when keyboard status changes. */
 	public onChange (handler: (isOpen: boolean) => void) : void {
 		eventManager.on(this.keyboardChangeEvent, handler);
 	}

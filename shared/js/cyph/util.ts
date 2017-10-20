@@ -641,7 +641,6 @@ export class Util {
 
 	/**
 	 * Serializes o to a query string (cf. jQuery.param).
-	 * @param o
 	 * @param parent Ignore this (internal use).
 	 */
 	public toQueryString (o: any, parent?: string) : string {
@@ -661,7 +660,6 @@ export class Util {
 
 	/**
 	 * Attempts to translate text into the user's language.
-	 * @param text
 	 * @param defaultValue Falls back to this if no translation exists.
 	 */
 	public translate (text: string, defaultValue: string = text) : string {

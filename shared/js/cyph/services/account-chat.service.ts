@@ -31,7 +31,7 @@ export class AccountChatService extends ChatService {
 			author === this.sessionService.localUsername
 		) ?
 			undefined :
-			await (async () =>
+			(async () =>
 				this.accountContactsService.getContactID(await author.take(1).toPromise())
 			)().catch(
 				() => undefined

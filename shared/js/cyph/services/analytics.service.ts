@@ -34,18 +34,12 @@ export class AnalyticsService {
 		catch (_) {}
 	}
 
-	/**
-	 * Send event.
-	 * @param args
-	 */
+	/** Send event. */
 	public sendEvent (...args: any[]) : void {
 		this.baseEventSubmit('send', args);
 	}
 
-	/**
-	 * Set event.
-	 * @param args
-	 */
+	/** Set event. */
 	public setEvent (...args: any[]) : void {
 		this.baseEventSubmit('set', args);
 	}

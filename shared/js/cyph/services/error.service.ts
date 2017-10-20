@@ -10,14 +10,7 @@ import {EnvService} from './env.service';
  */
 @Injectable()
 export class ErrorService implements ErrorHandler {
-	/**
-	 * Logs generic error.
-	 * @param errorMessage
-	 * @param url
-	 * @param line
-	 * @param column
-	 * @param errorObject
-	 */
+	/** Logs generic error. */
 	public readonly log			= this.baseErrorLog('CYPH ERROR', true);
 
 	/**

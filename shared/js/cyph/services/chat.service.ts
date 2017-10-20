@@ -162,12 +162,8 @@ export class ChatService {
 
 	/**
 	 * Adds a message to the chat.
-	 * @param text
-	 * @param author
 	 * @param timestamp If not set, will use Util.timestamp().
 	 * @param shouldNotify If true, a notification will be sent.
-	 * @param selfDestructTimeout
-	 * @param id
 	 */
 	public async addMessage (
 		text: string,

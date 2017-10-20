@@ -68,38 +68,20 @@ export interface ISessionService {
 	/** @see ChannelService.lock */
 	lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T>;
 
-	/**
-	 * Remove event listener.
-	 * @param event
-	 * @param handler
-	 */
+	/** Remove event listener. */
 	off<T> (event: string, handler: (data: T) => void) : void;
 
-	/**
-	 * Add event listener.
-	 * @param event
-	 * @param handler
-	 */
+	/** Add event listener. */
 	on<T> (event: string, handler: (data: T) => void) : void;
 
-	/**
-	 * Returns first occurrence of event.
-	 * @param event
-	 */
+	/** Returns first occurrence of event. */
 	one<T> (event: string) : Promise<T>;
 
-	/**
-	 * Send at least one message through the session.
-	 * @param messages
-	 */
+	/** Send at least one message through the session. */
 	send (
 		...messages: [string, ISessionMessageAdditionalData][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]>;
 
-	/**
-	 * Trigger event, passing in optional data.
-	 * @param event
-	 * @param data
-	 */
+	/** Trigger event, passing in optional data. */
 	trigger (event: string, data?: any) : void;
 }

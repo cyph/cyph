@@ -63,7 +63,6 @@ export class FileService {
 
 	/**
 	 * Converts File/Blob to byte array.
-	 * @param file
 	 * @param image If true, file is processed as an image (compressed).
 	 */
 	public async getBytes (file: Blob, image: boolean = this.isImage(file)) : Promise<Uint8Array> {
@@ -87,7 +86,6 @@ export class FileService {
 
 	/**
 	 * Converts File/Blob to base64 data URI.
-	 * @param file
 	 * @param image If true, file is processed as an image (compressed).
 	 */
 	public async getDataURI (file: Blob, image: boolean = this.isImage(file)) : Promise<string> {

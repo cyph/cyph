@@ -55,10 +55,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 	/** Counts down until link expires. */
 	public timer: Timer;
 
-	/**
-	 * Extends the countdown duration.
-	 * @param milliseconds
-	 */
+	/** Extends the countdown duration. */
 	public async addTime (milliseconds: number) : Promise<void> {
 		this.timer.addTime(milliseconds);
 

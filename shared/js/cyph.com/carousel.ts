@@ -28,10 +28,7 @@ export class Carousel {
 		() => this.rootElement.find('.quote')
 	);
 
-	/**
-	 * Sets the active item to be displayed.
-	 * @param itemNumber
-	 */
+	/** Sets the active item to be displayed. */
 	public async setItem (itemNumber: number = this.itemNumber) : Promise<void> {
 		const logos				= await this.logos;
 		const quoteContainer	= await this.quoteContainer;
