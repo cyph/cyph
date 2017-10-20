@@ -422,7 +422,13 @@ const updateCircleCI	= () => {
 		spawnAsync('docker', ['push', 'cyph/circleci:latest'])
 	).then(() => {
 		fs.unlinkSync('Dockerfile.tmp');
-	});
+	}).then(() => Promise.all(
+		spawn('docker', ['images', '-a']).
+			split('\n').
+			slice(1).
+			filter(s => s.indexOf('cyph/circleci') > -1).
+			map(s => spawnAsync('docker', ['rmi', s.split(/\s+/)[0]]))
+	));
 };
 
 
