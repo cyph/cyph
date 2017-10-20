@@ -2134,7 +2134,7 @@ cf-blob.js@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/cf-blob.js/-/cf-blob.js-0.0.1.tgz#f5ab7e12e798caf08ccf828c69aba0f063d83f99"
 
-chalk@1.1.0, chalk@^1.0.0, chalk@^1.1.0, chalk@^1.1.1, chalk@^1.1.3, chalk@^2.0.0, chalk@^2.0.1, chalk@^2.1.0:
+chalk@1.1.0, chalk@^1.0.0, chalk@^1.1.0, chalk@^1.1.1, chalk@^1.1.3, chalk@^2.0.0, chalk@^2.0.1, chalk@^2.1.0, chalk@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.2.0.tgz#477b3bf2f9b8fd5ca9e429747e37f724ee7af240"
   dependencies:
@@ -2289,9 +2289,9 @@ cli@0.11.3:
     exit "0.1.2"
     glob "^7.0.5"
 
-"clipboard-polyfill@https://github.com/buu700/clipboard-polyfill-tmp":
-  version "2.0.3"
-  resolved "https://github.com/buu700/clipboard-polyfill-tmp#2d6ac3c765b57bbf880321f2664dc1d28f4c8657"
+clipboard-polyfill@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/clipboard-polyfill/-/clipboard-polyfill-2.1.0.tgz#fc4efc522b5526cd18c60c59fa79240c21cdb470"
   dependencies:
     es6-promise "4.1.1"
 
@@ -2453,6 +2453,10 @@ combined-stream@^1.0.5, combined-stream@~1.0.5:
   resolved "https://registry.yarnpkg.com/combined-stream/-/combined-stream-1.0.5.tgz#938370a57b4a51dea2c77c15d5c5fdf895164009"
   dependencies:
     delayed-stream "~1.0.0"
+
+comlinkjs@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/comlinkjs/-/comlinkjs-2.3.0.tgz#e00caf677c0283ca15bc8ec099dde987f7d54bb2"
 
 commander@2, commander@2.11.0, commander@2.11.x, commander@2.5.x, commander@2.9.0, commander@2.x, commander@^2.8.1, commander@^2.9.0, commander@~2.11.0:
   version "2.11.0"
@@ -3442,8 +3446,8 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
 electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.24:
-  version "1.3.26"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.26.tgz#996427294861a74d9c7c82b9260ea301e8c02d66"
+  version "1.3.27"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.27.tgz#78ecb8a399066187bb374eede35d9c70565a803d"
 
 elliptic@^6.0.0:
   version "6.4.0"
@@ -4417,8 +4421,8 @@ gauge@~2.7.1, gauge@~2.7.3:
     wide-align "^1.1.0"
 
 gaze@1.1.0, gaze@^0.5.1, gaze@^1.0.0:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.2.tgz#847224677adb8870d679257ed3388fdb61e40105"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.0.tgz#74d3ffb0110ede715c9f15bba56c6e9b851d3ce0"
   dependencies:
     globule "^1.0.0"
 
@@ -10219,8 +10223,8 @@ tns-core-modules-widgets@^3.2.0, tns-core-modules-widgets@next:
   resolved "https://registry.yarnpkg.com/tns-core-modules-widgets/-/tns-core-modules-widgets-3.3.0-2017-8-29-1.tgz#f3574aea742c8f4d619d65444c2ab444902c542e"
 
 tns-core-modules@next:
-  version "3.3.0-2017-10-18-3"
-  resolved "https://registry.yarnpkg.com/tns-core-modules/-/tns-core-modules-3.3.0-2017-10-18-3.tgz#baed88bc17a59d4fea9b422e44499ebbb607fd52"
+  version "3.3.0-2017-10-20-5"
+  resolved "https://registry.yarnpkg.com/tns-core-modules/-/tns-core-modules-3.3.0-2017-10-20-5.tgz#d0ea13f535fb79e3f909145c4c08e03ca3e1a1bb"
   dependencies:
     tns-core-modules-widgets next
 
@@ -10310,11 +10314,11 @@ try-require@^1.0.0:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/try-require/-/try-require-1.2.1.tgz#34489a2cac0c09c1cc10ed91ba011594d4333be2"
 
-ts-loader@^3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-3.0.3.tgz#2b25865c220529093f40c997e81197444955e652"
+ts-loader@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-3.0.5.tgz#a22a50eda4258de6fcbd9ed4e7a356130a64cfa0"
   dependencies:
-    chalk "^2.0.1"
+    chalk "^2.2.0"
     enhanced-resolve "^3.0.0"
     loader-utils "^1.0.2"
     semver "^5.0.1"
