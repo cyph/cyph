@@ -172,7 +172,7 @@ read -r -d '' modules <<- EOM
 	retire
 	rlwe
 	rsvp
-	rxjs
+	rxjs@5.4.3
 	sass-loader
 	script-ext-html-webpack-plugin
 	sidh
