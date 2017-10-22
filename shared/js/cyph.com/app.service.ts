@@ -3,6 +3,7 @@ import {Title} from '@angular/platform-browser';
 import {NavigationEnd, Router} from '@angular/router';
 import * as $ from 'jquery';
 import * as WOW from 'wowjs';
+import {SubscriptionTypes} from '../cyph/checkout';
 import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
 import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
@@ -22,12 +23,12 @@ export class AppService {
 	/** @ignore */
 	private disableNextScroll: boolean	= false;
 
-	/** Amount, category, and item respectively in cart. */
+	/** Amount, category, and item in cart. */
 	public cart: {
 		amount: number;
 		category: number;
 		item: number;
-		subscription: boolean;
+		subscriptionType?: SubscriptionTypes;
 	};
 
 	/** @see ClaimUsernameComponent.email. */
@@ -164,22 +165,21 @@ export class AppService {
 
 		if (state === States.checkout) {
 			try {
-				const category: string	= urlSegmentPaths[1];
-				const item: string		= urlSegmentPaths[2].replace(
+				const categoryID	= urlSegmentPaths[1];
+				const itemID		= urlSegmentPaths[2].replace(
 					/-(.)/g,
 					(_, s) => s.toUpperCase()
 				);
+				const amount		= parseFloat(urlSegmentPaths[3]);
 
-				const amount	=
-					this.configService.pricingConfig.categories[category].items[item].amount
-				;
+				const category	= this.configService.pricingConfig.categories[categoryID];
+				const item		= category && category.items ? category.items[itemID] : undefined;
 
-				this.updateCart(
-					amount,
-					this.configService.pricingConfig.categories[category].id,
-					this.configService.pricingConfig.categories[category].items[item].id,
-					amount > 0
-				);
+				if (isNaN(amount) || amount < 0 || item === undefined) {
+					throw new Error('Invalid checkout arguments.');
+				}
+
+				this.updateCart(amount, category.id, item.id, item.subscriptionType);
 			}
 			catch (_) {
 				this.routerService.navigate(['404']);
@@ -243,13 +243,13 @@ export class AppService {
 		amount: number,
 		category: number,
 		item: number,
-		subscription?: boolean
+		subscriptionType?: SubscriptionTypes
 	) : void {
 		this.cart	= {
 			amount,
 			category,
 			item,
-			subscription: subscription === true
+			subscriptionType
 		};
 
 		this.state	= States.checkout;

@@ -45,8 +45,13 @@
 				<span cyphTranslate>Confirm</span>
 				<span>${{amount}}</span>
 				<span>
-					<span *ngIf='!subscription' cyphTranslate>payment</span>
-					<span *ngIf='subscription' cyphTranslate>monthly subscription</span>
+					<span *ngIf='subscriptionType === undefined' cyphTranslate>payment</span>
+					<span *ngIf='subscriptionType === subscriptionTypes.annual' cyphTranslate>
+						annual subscription
+					</span>
+					<span *ngIf='subscriptionType === subscriptionTypes.monthly' cyphTranslate>
+						monthly subscription
+					</span>
 				</span>
 			</button>
 		</div>

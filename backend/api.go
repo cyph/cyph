@@ -103,10 +103,37 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return err.Error(), http.StatusTeapot
 		}
 
-		tx, err := bt.Subscription().Create(&braintree.SubscriptionRequest{
+		plan, err := bt.Plan().Find(planID)
+
+		if err != nil {
+			return err.Error(), http.StatusTeapot
+		}
+
+		priceDelta := amount - braintreeDecimalToCents(plan.Price)
+
+		if priceDelta < 0 {
+			return err.Error(), http.StatusTeapot
+		}
+
+		subscriptionRequest := &braintree.SubscriptionRequest{
 			PaymentMethodToken: paymentMethod.GetToken(),
 			PlanId:             planID,
-		})
+		}
+
+		if priceDelta > 0 {
+			subscriptionRequest.AddOns = &braintree.ModificationsRequest{
+				Add: []braintree.AddModificationRequest{
+					braintree.AddModificationRequest{
+						ModificationRequest: braintree.ModificationRequest{
+							Amount:       braintree.NewDecimal(priceDelta, 2),
+							NeverExpires: true,
+						},
+					},
+				},
+			}
+		}
+
+		tx, err := bt.Subscription().Create(subscriptionRequest)
 
 		if err != nil {
 			return err.Error(), http.StatusTeapot

@@ -2,6 +2,7 @@
 
 import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
 import * as braintreeDropIn from 'braintree-web-drop-in';
+import {SubscriptionTypes} from '../checkout';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
 import {util} from '../util';
@@ -46,8 +47,11 @@ export class CheckoutComponent implements AfterViewInit {
 	/** Indicates whether payment is pending. */
 	public pending: boolean;
 
-	/** Indicates whether this will be a recurring purchase. */
-	@Input() public subscription: boolean;
+	/** @see SubscriptionTypes */
+	@Input() public subscriptionType?: SubscriptionTypes;
+
+	/** @see SubscriptionTypes */
+	@Input() public subscriptionTypes: typeof SubscriptionTypes	= SubscriptionTypes;
 
 	/** Indicates whether checkout is complete. */
 	public success: boolean;
@@ -117,7 +121,7 @@ export class CheckoutComponent implements AfterViewInit {
 						item: this.item,
 						name: this.name,
 						nonce: paymentMethod.data.nonce,
-						subscription: this.subscription
+						subscription: this.subscriptionType !== undefined
 					},
 					method: 'POST',
 					url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint

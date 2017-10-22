@@ -1,3 +1,4 @@
+import {SubscriptionTypes} from './checkout';
 import {ISessionService} from './service-interfaces/isession.service';
 
 
@@ -100,8 +101,8 @@ export class Config {
 				id: number;
 				items: {
 					[item: string]: {
-						amount: number;
 						id: number;
+						subscriptionType?: SubscriptionTypes;
 					};
 				};
 			};
@@ -111,53 +112,48 @@ export class Config {
 			accounting: {
 				id: 5,
 				items: {
-					generic: {
-						amount: 0,
-						id: 0
-					}
+					generic: {id: 0}
 				}
 			},
 			donation: {
 				id: 0,
 				items: {
-					generic: {
-						amount: 0,
-						id: 0
-					}
+					generic: {id: 0}
 				}
 			},
 			enterprise: {
 				id: 2,
 				items: {
 					basics: {
-						amount: 0,
-						id: 1
+						id: 1,
+						subscriptionType: SubscriptionTypes.monthly
 					},
-					beta: {
-						amount: 499,
-						id: 0
-					},
-					works: {
-						amount: 0,
-						id: 2
-					}
+					beta: {id: 0},
+					works: {id: 2}
 				}
 			},
 			individual: {
 				id: 1,
 				items: {
-					pro: {
-						amount: 0,
-						id: 0
-					}
+					pro: {id: 0}
 				}
 			},
 			legal: {
 				id: 4,
 				items: {
-					generic: {
-						amount: 0,
-						id: 0
+					generic: {id: 0}
+				}
+			},
+			subscription: {
+				id: 6,
+				items: {
+					annual: {
+						id: 0,
+						subscriptionType: SubscriptionTypes.annual
+					},
+					monthly: {
+						id: 1,
+						subscriptionType: SubscriptionTypes.monthly
 					}
 				}
 			},
@@ -165,12 +161,12 @@ export class Config {
 				id: 3,
 				items: {
 					singlePractitioner: {
-						amount: 250,
-						id: 0
+						id: 0,
+						subscriptionType: SubscriptionTypes.monthly
 					},
 					smallPractice: {
-						amount: 1000,
-						id: 1
+						id: 1,
+						subscriptionType: SubscriptionTypes.monthly
 					}
 				}
 			}

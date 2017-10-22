@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"net"
 	"net/http"
 	"net/url"
@@ -176,6 +177,14 @@ func getOrg(h HandlerArgs) string {
 
 func getIP(h HandlerArgs) []byte {
 	return net.ParseIP(h.Request.RemoteAddr)
+}
+
+func braintreeDecimalToCents(d *braintree.Decimal) int64 {
+	if d.Scale == 2 {
+		return d.Unscaled
+	}
+
+	return int64(float64(d.Unscaled) / math.Pow10(d.Scale-2))
 }
 
 func braintreeInit(h HandlerArgs) *braintree.Braintree {
