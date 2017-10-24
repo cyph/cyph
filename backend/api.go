@@ -124,6 +124,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			subscriptionRequest.AddOns = &braintree.ModificationsRequest{
 				Add: []braintree.AddModificationRequest{
 					braintree.AddModificationRequest{
+						InheritedFromID: "default",
 						ModificationRequest: braintree.ModificationRequest{
 							Amount:       braintree.NewDecimal(priceDelta, 2),
 							NeverExpires: true,
