@@ -243,7 +243,7 @@
 		.checkout-ui {
 			color: map-get(map-get($cyph-checkout-theme, foreground), text);
 
-			@include mat-input-theme($cyph-checkout-theme);
+			@include mat-form-field-theme($cyph-checkout-theme);
 		}
 	}
 
