@@ -7,16 +7,13 @@
 		background-image: url(/assets/img/betalogo.png);
 		background-repeat: no-repeat;
 		background-size: cover;
-		position: absolute;
 		width: 50vh;
 		height: 50vh;
-		left: 50%;
-		top: 50%;
 		z-index: -1;
 		opacity: 0.10;
 		content: ' ';
 
-		@include transform(translateX(-50%) translateY(-50%));
+		@include center;
 	}
 }
 

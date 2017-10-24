@@ -292,13 +292,11 @@
 		}
 
 		img.friend {
-			top: 50%;
-			left: 50%;
 			min-width: 0px;
 			min-height: 0px;
 			margin: 0px;
 
-			@include transform(translateX(-50%) translateY(-50%));
+			@include center;
 
 			@include transition(none !important);
 		}

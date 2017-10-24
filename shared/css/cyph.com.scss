@@ -26,14 +26,12 @@ body:not(.load-complete) {
 
 		> img.background {
 			display: block;
-			position: absolute;
 			pointer-events: none;
 			z-index: 0;
 			max-width: 75%;
-			top: calc(50% + 60px);
-			left: 50%;
+			top: calc(50% + 60px) !important;
 
-			@include transform(translateY(-50%) translateX(-50%));
+			@include center;
 
 			&.full {
 				min-width: 100%;
@@ -174,11 +172,10 @@ body:not(.load-complete) {
 		margin: auto;
 
 		> div {
+			position: relative;
 			top: 50%;
 
 			@include transform(translateY(-50%));
-
-			position: relative;
 
 			> :first-child {
 				margin-top: 0px;
@@ -677,11 +674,11 @@ body.mobile .demo-root {
 	> .hero-text {
 		width: auto;
 
-		@include transform(translateX(-50%) translateY(calc(-100% - 50px)));
+		@include transform(translateX(-50%, calc(-100% - 50px)));
 	}
 
 	> .section-content-container {
-		@include transform(translateX(-50%) translateY(calc(100% + 10px)));
+		@include transform(translateX(-50%, calc(100% + 10px)));
 	}
 }
 

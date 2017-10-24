@@ -51,7 +51,7 @@
 					font-size: 90%;
 
 					&:after {
-						@include transform(translateX(-50%) translateY(-60%));
+						@include transform(translate(-50%, -60%));
 					}
 				}
 
