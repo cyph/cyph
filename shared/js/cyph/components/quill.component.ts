@@ -141,11 +141,13 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 	}
 
 	/** @inheritDoc */
-	public ngAfterViewInit () : void {
+	public async ngAfterViewInit () : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
 		}
+
+		await util.sleep(0);
 
 		/* Temporary workaround for https://github.com/DefinitelyTyped/DefinitelyTyped/issues/18946 */
 		this.quill	= <Quill.Quill> new (<any> Quill)(`#${this.containerID}`, {

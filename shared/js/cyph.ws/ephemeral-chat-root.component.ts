@@ -76,6 +76,8 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
+		await util.sleep(0);
+
 		this.appService.chatRootState	= ChatRootStates.blank;
 
 		const granimStates	= {

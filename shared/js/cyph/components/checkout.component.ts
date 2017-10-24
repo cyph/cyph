@@ -63,6 +63,8 @@ export class CheckoutComponent implements AfterViewInit {
 			return;
 		}
 
+		await util.sleep(0);
+
 		this.complete	= false;
 
 		const authorization: string	= await util.request({
