@@ -69,12 +69,9 @@ section {
 	}
 
 	mat-progress-spinner {
-		position: absolute;
-		top: 50vh;
-		left: 50%;
 		z-index: 1;
 
-		@include transform(translate(-50%, -50%));
+		@include spinner-center;
 	}
 }
 

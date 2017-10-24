@@ -102,11 +102,8 @@
 	.login-form {
 		mat-progress-spinner {
 			display: none;
-			position: absolute;
-			top: 50%;
-			left: 50%;
 
-			@include transform(translate(-50%, -50%));
+			@include spinner-center;
 		}
 
 		h3.cyph-banner {

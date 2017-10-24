@@ -11,6 +11,14 @@
 	@include animation-iteration-count(infinite !important);
 }
 
+@mixin center {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+
+	@include transform(translate(-50%, -50%));
+}
+
 /* Changes size of mat-icon */
 @mixin icon-size($size) {
 	font-size: $size;
@@ -22,6 +30,14 @@
 
 @mixin shadow {
 	@include filter(drop-shadow((-2px) 2px 2px rgba(0, 0, 0, 0.15)));
+}
+
+/* Centers mat-progress-spinner */
+@mixin spinner-center {
+	height: auto !important;
+	width: auto !important;
+
+	@include center;
 }
 
 @mixin vertical-align {

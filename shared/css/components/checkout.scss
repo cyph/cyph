@@ -17,11 +17,7 @@ button {
 }
 
 mat-progress-spinner {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-
-	@include transform(translate(-50%, -50%));
+	@include spinner-center;
 
 	+ form {
 		opacity: 0.15;
