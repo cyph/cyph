@@ -90,7 +90,10 @@ const csrs	= (await Promise.all(Object.keys(usernames).map(async k => {
 	try {
 		const username	= usernames[k];
 
-		if (!username || username !== username.toLowerCase().replace(/[^0-9a-z_]/g, '')) {
+		if (
+			!username ||
+			username !== username.toLowerCase().replace(/[^0-9a-z_]/g, '').slice(0, 50)
+		) {
 			return;
 		}
 
