@@ -13,10 +13,10 @@ import {DatabaseService} from './database.service';
 @Injectable()
 export class AccountUserLookupService {
 	/** @ignore */
-	private readonly existsCache: Map<string, boolean>	= new Map<string, boolean>();
+	private readonly existsCache: Set<string>		= new Set<string>();
 
 	/** @ignore */
-	private readonly userCache: Map<string, User>		= new Map<string, User>();
+	private readonly userCache: Map<string, User>	= new Map<string, User>();
 
 	/**
 	 * Checks to see if a username is owned by an existing user.
@@ -28,16 +28,10 @@ export class AccountUserLookupService {
 		username	= util.normalize(username);
 		const url	= `users/${username}`;
 
-		if (!username) {
-			return false;
-		}
-
-		return util.getOrSetDefaultAsync(this.existsCache, username, async () => {
-			if (this.userCache.has(username)) {
-				return true;
-			}
-
-			return confirmedOnly ?
+		const exists	= username.length > 0 && (
+			this.existsCache.has(username) ||
+			this.userCache.has(username) ||
+			await (confirmedOnly ?
 				this.accountDatabaseService.getItem(
 					`${url}/publicProfile`,
 					AccountUserProfile,
@@ -50,8 +44,14 @@ export class AccountUserLookupService {
 					() => false
 				) :
 				this.accountDatabaseService.hasItem(`${url}/publicProfile`)
-			;
-		});
+			)
+		);
+
+		if (exists) {
+			this.existsCache.add(username);
+		}
+
+		return exists;
 	}
 
 	/** Tries to to get user object for the specified username. */
