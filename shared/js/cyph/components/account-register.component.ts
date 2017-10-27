@@ -21,6 +21,9 @@ export class AccountRegisterComponent implements OnInit {
 	/** Indicates whether registration attempt is in progress. */
 	public checking: boolean				= false;
 
+	/** Minimum length of custom password. */
+	public customPasswordLength: number		= 20;
+
 	/** Email addres. */
 	public email: string					= '';
 
@@ -83,9 +86,24 @@ export class AccountRegisterComponent implements OnInit {
 		});
 	}
 
+	/** Indicates whether we're ready to initiate a registration attempt. */
+	public get readyToSubmit () : boolean {
+		return !(
+			!this.username.value ||
+			this.username.errors ||
+			!this.lockScreenPassword ||
+			(
+				!this.useXkcdPassphrase && (
+					this.password !== this.passwordConfirmation ||
+					this.password.length < this.customPasswordLength
+				)
+			)
+		);
+	}
+
 	/** Initiates registration attempt. */
 	public async submit () : Promise<void> {
-		if (!this.useXkcdPassphrase && this.password !== this.passwordConfirmation) {
+		if (!this.readyToSubmit) {
 			this.checking	= false;
 			this.error		= true;
 			return;

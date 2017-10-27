@@ -408,7 +408,7 @@
 							fxLayoutAlign='center center'
 							*ngIf='tabIndex === totalSteps'
 						>
-							<button mat-button type='submit'>
+							<button mat-button type='submit' [disabled]='!readyToSubmit'>
 								<span cyphTranslate>Register</span>
 							</button>
 						</div>
