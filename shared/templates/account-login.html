@@ -24,6 +24,7 @@
 							matInput
 							cyphTranslate
 							[(ngModel)]='username'
+							[textMask]='usernameMask'
 							name='username'
 							placeholder='Username'
 							required
@@ -50,6 +51,6 @@
 				</div>
 			</form>
 		</mat-card-content>
-		<mat-progress-spinner mode='indeterminate'></mat-progress-spinner>
+		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
 	</mat-card>
 </div>

@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
+import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {xkcdPassphrase} from 'xkcd-passphrase';
+import {usernameMask} from '../account';
+import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
@@ -46,7 +49,16 @@ export class AccountRegisterComponent implements OnInit {
 	public readonly totalSteps: number		= 4;
 
 	/** Username. */
-	public username: string					= '';
+	public username: FormControl			= new FormControl('', undefined, [
+		async control =>
+			await this.accountUserLookupService.exists(control.value, false) ?
+				{usernameTaken: {value: control.value}} :
+				/* tslint:disable-next-line:no-null-keyword */
+				null
+	]);
+
+	/** @see usernameMask */
+	public readonly usernameMask: any		= usernameMask;
 
 	/** Indicates whether or not xkcdPassphrase should be used. */
 	public useXkcdPassphrase: boolean		= true;
@@ -82,7 +94,7 @@ export class AccountRegisterComponent implements OnInit {
 		this.checking	= true;
 		this.error		= false;
 		this.error		= !(await this.accountAuthService.register(
-			this.username,
+			this.username.value,
 			this.useXkcdPassphrase ? (await this.xkcdPassphrase) : this.password,
 			this.name,
 			this.email
@@ -96,7 +108,7 @@ export class AccountRegisterComponent implements OnInit {
 		this.email				= '';
 		this.name				= '';
 		this.password			= '';
-		this.username			= '';
+		this.username.setValue('');
 		this.useXkcdPassphrase	= false;
 		this.xkcdPassphrase		= Promise.resolve('');
 
@@ -118,6 +130,9 @@ export class AccountRegisterComponent implements OnInit {
 
 		/** @ignore */
 		private readonly routerService: Router,
+
+		/** @ignore */
+		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

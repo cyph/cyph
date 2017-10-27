@@ -13,7 +13,46 @@ import {DatabaseService} from './database.service';
 @Injectable()
 export class AccountUserLookupService {
 	/** @ignore */
-	private readonly userCache: Map<string, User>	= new Map<string, User>();
+	private readonly existsCache: Map<string, boolean>	= new Map<string, boolean>();
+
+	/** @ignore */
+	private readonly userCache: Map<string, User>		= new Map<string, User>();
+
+	/**
+	 * Checks to see if a username is owned by an existing user.
+	 * @param confirmedOnly If true, limits check to fully registered users and fails
+	 * when a user cert fails to verify. Otherwise, simply checks that the server has
+	 * a record of either an account with this username or a pending registration request.
+	 */
+	public async exists (username: string, confirmedOnly: boolean = true) : Promise<boolean> {
+		username	= util.normalize(username);
+		const url	= `users/${username}`;
+
+		if (!username) {
+			return false;
+		}
+
+		return util.getOrSetDefaultAsync(this.existsCache, username, async () => {
+			if (this.userCache.has(username)) {
+				return true;
+			}
+
+			return confirmedOnly ?
+				this.accountDatabaseService.getItem(
+					`${url}/publicProfile`,
+					AccountUserProfile,
+					SecurityModels.public,
+					undefined,
+					true
+				).then(
+					() => true
+				).catch(
+					() => false
+				) :
+				this.accountDatabaseService.hasItem(`${url}/publicProfile`)
+			;
+		});
+	}
 
 	/** Tries to to get user object for the specified username. */
 	public async getUser (username: string) : Promise<User> {

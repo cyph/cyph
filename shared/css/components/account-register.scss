@@ -31,6 +31,19 @@
 	text-align: center;
 }
 
+.username-pending {
+	width: 24px;
+	height: 24px;
+	position: relative;
+	overflow: hidden;
+
+	> mat-progress-spinner {
+		position: absolute;
+		top: -108px;
+		left: -108px;
+	}
+}
+
 form {
 	width: 100%;
 }

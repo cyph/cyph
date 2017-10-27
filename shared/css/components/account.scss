@@ -100,7 +100,7 @@
 	}
 
 	.login-form {
-		mat-progress-spinner {
+		mat-progress-spinner.global {
 			display: none;
 
 			@include spinner-center;
@@ -111,11 +111,11 @@
 		}
 
 		&.checking {
-			mat-progress-spinner {
+			mat-progress-spinner.global {
 				display: block;
 			}
 
-			mat-card > :not(mat-progress-spinner) {
+			mat-card > :not(mat-progress-spinner):not(.global) {
 				opacity: 0.15;
 			}
 		}

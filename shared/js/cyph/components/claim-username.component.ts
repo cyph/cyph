@@ -1,4 +1,5 @@
 import {Component, Input} from '@angular/core';
+import {usernameMask} from '../account';
 import {util} from '../util';
 
 
@@ -23,11 +24,8 @@ export class ClaimUsernameComponent {
 	/** Requested username alternate/backup. */
 	@Input() public usernameAlternate: string	= '';
 
-	/** Username text mask. */
-	public readonly usernameMask: any			= {
-		guide: false,
-		mask: new Array(50).fill(/[0-9A-Za-z_]/)
-	};
+	/** @see usernameMask */
+	public readonly usernameMask: any			= usernameMask;
 
 	/** Submits form. */
 	public submit () : void {

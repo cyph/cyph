@@ -74,11 +74,55 @@
 													<input
 														matInput
 														cyphTranslate
-														[(ngModel)]='username'
+														[formControl]='username'
+														[textMask]='usernameMask'
 														name='username'
 														placeholder='Username'
 														required
 													/>
+													<div
+														matSuffix
+														cyphTranslate
+														class='username-pending'
+														matTooltip='Checking availability...'
+														*ngIf='username.pending'
+													>
+														<mat-progress-spinner
+															diameter='24'
+															strokeWidth='2'
+															mode='indeterminate'
+														></mat-progress-spinner>
+													</div>
+													<mat-icon
+														matSuffix
+														cyphTranslate
+														matTooltip='Cannot use this username'
+														*ngIf='
+															!username.pending &&
+															username.value &&
+															username.errors
+														'
+													>
+														error_outline
+													</mat-icon>
+													<mat-icon
+														matSuffix
+														cyphTranslate
+														matTooltip='Username available!'
+														*ngIf='
+															!username.pending &&
+															username.value &&
+															!username.errors
+														'
+													>
+														check
+													</mat-icon>
+													<mat-error
+														cyphTranslate
+														*ngIf='username.hasError("usernameTaken")'
+													>
+														Username is taken
+													</mat-error>
 												</mat-form-field>
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
@@ -377,6 +421,6 @@
 				</div>
 			</div>
 		</mat-card-content>
-		<mat-progress-spinner mode='indeterminate'></mat-progress-spinner>
+		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
 	</mat-card>
 </div>

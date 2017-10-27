@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {usernameMask} from '../account';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
@@ -15,16 +16,19 @@ import {StringsService} from '../services/strings.service';
 })
 export class AccountLoginComponent {
 	/** Indicates whether login attempt is in progress. */
-	public checking: boolean	= false;
+	public checking: boolean			= false;
 
 	/** Indicates whether the last login attempt has failed. */
-	public error: boolean		= false;
+	public error: boolean				= false;
 
 	/** Password to be used for login attempt. */
-	public password: string		= '';
+	public password: string				= '';
 
 	/** Username to be used for login attempt. */
-	public username: string		= '';
+	public username: string				= '';
+
+	/** @see usernameMask */
+	public readonly usernameMask: any	= usernameMask;
 
 	/** Initiates login attempt. */
 	public async submit () : Promise<void> {

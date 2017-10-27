@@ -1,7 +1,7 @@
 import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {
 	MatButtonModule,
 	MatButtonToggleModule,
@@ -94,6 +94,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatTabsModule,
 		MatTooltipModule,
 		NanoScrollerDirective,
+		ReactiveFormsModule,
 		RouterModule,
 		SmdFabSpeedDialActions,
 		SmdFabSpeedDialComponent,
@@ -125,6 +126,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatSnackBarModule,
 		MatTabsModule,
 		MatTooltipModule,
+		ReactiveFormsModule,
 		RouterModule,
 		TextMaskModule
 	],
