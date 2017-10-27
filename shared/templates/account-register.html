@@ -96,7 +96,7 @@
 													<mat-icon
 														matSuffix
 														cyphTranslate
-														matTooltip='Cannot use this username'
+														matTooltip='Username unavailable'
 														*ngIf='
 															!username.pending &&
 															username.value &&
@@ -121,7 +121,7 @@
 														cyphTranslate
 														*ngIf='username.hasError("usernameTaken")'
 													>
-														Username is taken
+														Username unavailable
 													</mat-error>
 												</mat-form-field>
 											</div>
