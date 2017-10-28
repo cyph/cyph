@@ -13,6 +13,8 @@ const superSphincs	= require('supersphincs');
 
 const filesToCacheBust	= glob.sync('*', {nodir: true}).concat(
 	glob.sync('assets/**', {nodir: true})
+).filter(path =>
+	!path.endsWith('index.html')
 );
 
 const filesToModify		= glob.sync('**', {nodir: true}).filter(path =>
