@@ -266,6 +266,7 @@
 														type='password'
 														placeholder='Master Key'
 														[required]='!useXkcdPassphrase'
+														[pattern]='".{" + customPasswordLength + ",}"'
 													/>
 												</mat-form-field>
 											</div>
@@ -279,6 +280,7 @@
 														type='password'
 														placeholder='Confirm Master Key'
 														[required]='!useXkcdPassphrase'
+														[pattern]='password'
 													/>
 												</mat-form-field>
 											</div>
@@ -361,6 +363,7 @@
 														type='password'
 														placeholder='Lock Screen Password'
 														[required]='!useLockScreenPIN'
+														[pattern]='".{" + lockScreenPasswordLength + ",}"'
 													/>
 												</mat-form-field>
 											</div>
@@ -374,6 +377,7 @@
 														type='password'
 														placeholder='Confirm Lock Screen Password'
 														[required]='!useLockScreenPIN'
+														[pattern]='lockScreenPassword'
 													/>
 												</mat-form-field>
 											</div>
