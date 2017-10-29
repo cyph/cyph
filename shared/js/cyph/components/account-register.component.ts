@@ -20,7 +20,7 @@ import {StringsService} from '../services/strings.service';
 })
 export class AccountRegisterComponent implements OnInit {
 	/** @ignore */
-	private _lockScreenPIN: string						= '';
+	private lockScreenPINInternal: string				= '';
 
 	/** Indicates whether registration attempt is in progress. */
 	public checking: boolean							= false;
@@ -69,6 +69,9 @@ export class AccountRegisterComponent implements OnInit {
 	/** Total number of steps/tabs. */
 	public readonly totalSteps: number					= 4;
 
+	/** Indicates whether or not lockScreenPIN should be used in place of lockScreenPassword. */
+	public useLockScreenPIN: boolean					= true;
+
 	/** Username. */
 	public username: FormControl						= new FormControl('', undefined, [
 		async control =>
@@ -80,9 +83,6 @@ export class AccountRegisterComponent implements OnInit {
 
 	/** @see usernameMask */
 	public readonly usernameMask: typeof usernameMask	= usernameMask;
-
-	/** Indicates whether or not lockScreenPIN should be used in place of lockScreenPassword. */
-	public useLockScreenPIN: boolean					= true;
 
 	/** Indicates whether or not xkcdPassphrase should be used. */
 	public useXkcdPassphrase: boolean					= true;
@@ -104,11 +104,11 @@ export class AccountRegisterComponent implements OnInit {
 
 	/** Lock screen PIN. */
 	public get lockScreenPIN () : string {
-		return this._lockScreenPIN.replace(/[^\d]/g, '');
+		return this.lockScreenPINInternal.replace(/[^\d]/g, '');
 	}
 
 	public set lockScreenPIN (value: string) {
-		this._lockScreenPIN	= value;
+		this.lockScreenPINInternal	= value;
 	}
 
 	/** @inheritDoc */
