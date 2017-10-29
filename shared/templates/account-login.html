@@ -39,11 +39,18 @@
 							cyphTranslate
 							[(ngModel)]='password'
 							name='password'
-							type='password'
+							[type]='hidePassword ? "password" : "text"'
 							placeholder='Password'
 							required
 							data-lpignore='true'
 						/>
+						<mat-icon
+							matSuffix
+							class='visibility-toggle'
+							(click)='hidePassword = !hidePassword'
+						>
+							{{hidePassword ? 'visibility' : 'visibility_off'}}
+						</mat-icon>
 					</mat-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center'>

@@ -21,6 +21,9 @@ export class AccountLoginComponent {
 	/** Indicates whether the last login attempt has failed. */
 	public error: boolean				= false;
 
+	/** Password visibility setting. */
+	public hidePassword: boolean		= true;
+
 	/** Password to be used for login attempt. */
 	public password: string				= '';
 

@@ -34,6 +34,14 @@ export class AccountRegisterComponent implements OnInit {
 	/** Indicates whether the last registration attempt has failed. */
 	public error: boolean								= false;
 
+	/** Password visibility settings. */
+	public readonly hidePassword						= {
+		lockScreen: true,
+		lockScreenConfirm: true,
+		masterKey: true,
+		masterKeyConfirm: true
+	};
+
 	/** Lock screen password. */
 	public lockScreenPassword: string					= '';
 

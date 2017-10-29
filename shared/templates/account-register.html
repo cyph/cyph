@@ -266,12 +266,29 @@
 														cyphTranslate
 														[(ngModel)]='password'
 														name='password'
-														type='password'
+														[type]='hidePassword.masterKey ?
+															"password" :
+															"text"
+														'
 														placeholder='Master Key'
 														[required]='!useXkcdPassphrase'
 														[pattern]='".{" + customPasswordLength + ",}"'
 														data-lpignore='true'
 													/>
+													<mat-icon
+														matSuffix
+														class='visibility-toggle'
+														(click)='
+															hidePassword.masterKey =
+																!hidePassword.masterKey
+														'
+													>
+														{{
+															hidePassword.masterKey ?
+																'visibility' :
+																'visibility_off'
+														}}
+													</mat-icon>
 												</mat-form-field>
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
@@ -281,12 +298,29 @@
 														cyphTranslate
 														[(ngModel)]='passwordConfirmation'
 														name='passwordConfirmation'
-														type='password'
+														[type]='hidePassword.masterKeyConfirm ?
+															"password" :
+															"text"
+														'
 														placeholder='Confirm Master Key'
 														[required]='!useXkcdPassphrase'
 														[pattern]='password'
 														data-lpignore='true'
 													/>
+													<mat-icon
+														matSuffix
+														class='visibility-toggle'
+														(click)='
+															hidePassword.masterKeyConfirm =
+																!hidePassword.masterKeyConfirm
+														'
+													>
+														{{
+															hidePassword.masterKeyConfirm ?
+																'visibility' :
+																'visibility_off'
+														}}
+													</mat-icon>
 												</mat-form-field>
 											</div>
 										</div>
@@ -366,12 +400,29 @@
 														cyphTranslate
 														[(ngModel)]='lockScreenPassword'
 														name='lockScreenPassword'
-														type='password'
+														[type]='hidePassword.lockScreen ?
+															"password" :
+															"text"
+														'
 														placeholder='Lock Screen Password'
 														[required]='!useLockScreenPIN'
 														[pattern]='".{" + lockScreenPasswordLength + ",}"'
 														data-lpignore='true'
 													/>
+													<mat-icon
+														matSuffix
+														class='visibility-toggle'
+														(click)='
+															hidePassword.lockScreen =
+																!hidePassword.lockScreen
+														'
+													>
+														{{
+															hidePassword.lockScreen ?
+																'visibility' :
+																'visibility_off'
+														}}
+													</mat-icon>
 												</mat-form-field>
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
@@ -381,12 +432,29 @@
 														cyphTranslate
 														[(ngModel)]='lockScreenPasswordConfirmation'
 														name='lockScreenPasswordConfirmation'
-														type='password'
+														[type]='hidePassword.lockScreenConfirm ?
+															"password" :
+															"text"
+														'
 														placeholder='Confirm Lock Screen Password'
 														[required]='!useLockScreenPIN'
 														[pattern]='lockScreenPassword'
 														data-lpignore='true'
 													/>
+													<mat-icon
+														matSuffix
+														class='visibility-toggle'
+														(click)='
+															hidePassword.lockScreenConfirm =
+																!hidePassword.lockScreenConfirm
+														'
+													>
+														{{
+															hidePassword.lockScreenConfirm ?
+																'visibility' :
+																'visibility_off'
+														}}
+													</mat-icon>
 												</mat-form-field>
 											</div>
 										</div>
