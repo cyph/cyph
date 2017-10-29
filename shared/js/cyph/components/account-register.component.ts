@@ -125,6 +125,7 @@ export class AccountRegisterComponent implements OnInit {
 		return !(
 			!this.username.value ||
 			this.username.errors ||
+			!this.name ||
 			(
 				this.useLockScreenPIN ?
 					this.lockScreenPIN.length !== this.lockScreenPasswordLength :
