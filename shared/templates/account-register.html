@@ -264,15 +264,15 @@
 													<input
 														matInput
 														cyphTranslate
-														[(ngModel)]='password'
-														name='password'
+														[(ngModel)]='masterKey'
+														name='masterKey'
 														[type]='hidePassword.masterKey ?
 															"password" :
 															"text"
 														'
 														placeholder='Master Key'
 														[required]='!useXkcdPassphrase'
-														[pattern]='".{" + customPasswordLength + ",}"'
+														[pattern]='".{" + masterKeyLength + ",}"'
 														data-lpignore='true'
 													/>
 													<mat-icon
@@ -296,15 +296,15 @@
 													<input
 														matInput
 														cyphTranslate
-														[(ngModel)]='passwordConfirmation'
-														name='passwordConfirmation'
+														[(ngModel)]='masterKeyConfirm'
+														name='masterKeyConfirm'
 														[type]='hidePassword.masterKeyConfirm ?
 															"password" :
 															"text"
 														'
 														placeholder='Confirm Master Key'
 														[required]='!useXkcdPassphrase'
-														[pattern]='password'
+														[pattern]='masterKey'
 														data-lpignore='true'
 													/>
 													<mat-icon
@@ -430,8 +430,8 @@
 													<input
 														matInput
 														cyphTranslate
-														[(ngModel)]='lockScreenPasswordConfirmation'
-														name='lockScreenPasswordConfirmation'
+														[(ngModel)]='lockScreenPasswordConfirm'
+														name='lockScreenPasswordConfirm'
 														[type]='hidePassword.lockScreenConfirm ?
 															"password" :
 															"text"

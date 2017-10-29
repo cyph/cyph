@@ -25,9 +25,6 @@ export class AccountRegisterComponent implements OnInit {
 	/** Indicates whether registration attempt is in progress. */
 	public checking: boolean							= false;
 
-	/** Minimum length of custom password. */
-	public customPasswordLength: number					= 20;
-
 	/** Email addres. */
 	public email: string								= '';
 
@@ -46,19 +43,22 @@ export class AccountRegisterComponent implements OnInit {
 	public lockScreenPassword: string					= '';
 
 	/** Lock screen password confirmation. */
-	public lockScreenPasswordConfirmation: string		= '';
+	public lockScreenPasswordConfirm: string			= '';
 
 	/** Minimum length of lock screen PIN/password. */
 	public lockScreenPasswordLength: number				= 4;
 
+	/** Master key (main account password). */
+	public masterKey: string							= '';
+
+	/** Master key confirmation. */
+	public masterKeyConfirm: string						= '';
+
+	/** Minimum length of custom master key. */
+	public masterKeyLength: number						= 20;
+
 	/** Name. */
 	public name: string									= '';
-
-	/** Password. */
-	public password: string								= '';
-
-	/** Password confirmation. */
-	public passwordConfirmation: string					= '';
 
 	/** @see pinMask */
 	public readonly pinMask: typeof pinMask				= pinMask;
@@ -138,14 +138,14 @@ export class AccountRegisterComponent implements OnInit {
 				this.useLockScreenPIN ?
 					this.lockScreenPIN.length !== this.lockScreenPasswordLength :
 					(
-						this.lockScreenPassword !== this.lockScreenPasswordConfirmation ||
+						this.lockScreenPassword !== this.lockScreenPasswordConfirm ||
 						this.lockScreenPassword.length < this.lockScreenPasswordLength
 					)
 			) ||
 			(
 				!this.useXkcdPassphrase && (
-					this.password !== this.passwordConfirmation ||
-					this.password.length < this.customPasswordLength
+					this.masterKey !== this.masterKeyConfirm ||
+					this.masterKey.length < this.masterKeyLength
 				)
 			)
 		);
@@ -163,7 +163,7 @@ export class AccountRegisterComponent implements OnInit {
 		this.error		= false;
 		this.error		= !(await this.accountAuthService.register(
 			this.username.value,
-			this.useXkcdPassphrase ? (await this.xkcdPassphrase) : this.password,
+			this.useXkcdPassphrase ? (await this.xkcdPassphrase) : this.masterKey,
 			this.name,
 			this.email
 		));
@@ -174,8 +174,8 @@ export class AccountRegisterComponent implements OnInit {
 		}
 
 		this.email				= '';
+		this.masterKey			= '';
 		this.name				= '';
-		this.password			= '';
 		this.username.setValue('');
 		this.useXkcdPassphrase	= false;
 		this.xkcdPassphrase		= Promise.resolve('');
