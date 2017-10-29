@@ -428,25 +428,25 @@
 											</div>
 
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<span cyphTranslate>Username:</span>
+												<strong cyphTranslate>Username:</strong>
 												&nbsp;
 												<span>{{username.value}}</span>
 											</div>
 
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<span cyphTranslate>Name:</span>
+												<strong cyphTranslate>Name:</strong>
 												&nbsp;
 												<span>{{name}}</span>
 											</div>
 
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<span cyphTranslate>Email:</span>
+												<strong cyphTranslate>Email:</strong>
 												&nbsp;
 												<span>{{email || stringsService.omitted}}</span>
 											</div>
 
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<span cyphTranslate>PIN:</span>
+												<strong cyphTranslate>PIN:</strong>
 												&nbsp;
 												<span *ngIf='useLockScreenPIN'>
 													{{lockScreenPIN}}
