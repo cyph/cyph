@@ -21,6 +21,10 @@ service firebase.storage {
 			// match /users/{user} {}
 		}
 
+		match /emails/{email} {
+			allow read;
+		}
+
 		match /fileTransfers/{file} {
 			allow read;
 			allow write: if request.resource == null || request.resource.size < 300000000;

@@ -90,6 +90,18 @@
 			}
 		},
 
+		"emails": {
+			"$email": {
+				".read": true,
+				"hash": {
+					".validate": "newData.isString()"
+				},
+				"timestamp": {
+					".validate": "newData.val() === now"
+				}
+			}
+		},
+
 		"fileTransfers": {
 			"$file": {
 				".read": true,
