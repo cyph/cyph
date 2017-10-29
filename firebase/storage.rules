@@ -30,6 +30,10 @@ service firebase.storage {
 			allow write: if request.resource == null || request.resource.size < 300000000;
 		}
 
+		match /inviteCodes/{code} {
+			allow read;
+		}
+
 		match /users/{user} {
 			match /{all=**} {
 				allow read, write: if
@@ -119,6 +123,8 @@ service firebase.storage {
 					resource == null
 				;
 			}
+
+			// match /inviteCodes/{form} {}
 
 			// match /lastPresence {}
 

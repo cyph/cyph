@@ -115,6 +115,18 @@
 			}
 		},
 
+		"inviteCodes": {
+			"$code": {
+				".read": true,
+				"hash": {
+					".validate": "newData.isString()"
+				},
+				"timestamp": {
+					".validate": "newData.val() === now"
+				}
+			}
+		},
+
 		"pushlocks": {
 			"$contender": {
 				".read": true,
@@ -426,6 +438,17 @@
 					"$incomingFile": {
 						".write": "!data.exists() && newData.exists()",
 
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				},
+
+				"inviteCodes": {
+					"$code": {
 						"hash": {
 							".validate": "newData.isString()"
 						},
