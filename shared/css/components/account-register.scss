@@ -5,7 +5,7 @@
 	font-size: 1.25em;
 }
 
-.master-key {
+.password-option {
 	background-color: rgba(255, 255, 255, 0.1);
 	padding: 20px;
 
@@ -22,6 +22,17 @@
 
 	h3 {
 		margin-top: 0px;
+	}
+}
+
+.pin {
+	cursor: text;
+	font-family: 'Ubuntu Mono';
+	font-size: 3em;
+
+	input {
+		pointer-events: none;
+		text-align: center;
 	}
 }
 

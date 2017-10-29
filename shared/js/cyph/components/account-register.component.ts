@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
+import * as $ from 'jquery';
 import {xkcdPassphrase} from 'xkcd-passphrase';
-import {usernameMask} from '../account';
+import {pinMask, usernameMask} from '../account';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
@@ -18,41 +19,50 @@ import {StringsService} from '../services/strings.service';
 	templateUrl: '../../../templates/account-register.html'
 })
 export class AccountRegisterComponent implements OnInit {
+	/** @ignore */
+	private _lockScreenPIN: string						= '';
+
 	/** Indicates whether registration attempt is in progress. */
-	public checking: boolean				= false;
+	public checking: boolean							= false;
 
 	/** Minimum length of custom password. */
-	public customPasswordLength: number		= 20;
+	public customPasswordLength: number					= 20;
 
 	/** Email addres. */
-	public email: string					= '';
+	public email: string								= '';
 
 	/** Indicates whether the last registration attempt has failed. */
-	public error: boolean					= false;
+	public error: boolean								= false;
 
 	/** Lock screen password. */
-	public lockScreenPassword: string		= '';
+	public lockScreenPassword: string					= '';
 
-	/** Lock screen timeout (# of days). */
-	public lockScreenTimeout?: number		= 30;
+	/** Lock screen password confirmation. */
+	public lockScreenPasswordConfirmation: string		= '';
+
+	/** Minimum length of lock screen PIN/password. */
+	public lockScreenPasswordLength: number				= 4;
 
 	/** Name. */
-	public name: string						= '';
+	public name: string									= '';
 
 	/** Password. */
-	public password: string					= '';
+	public password: string								= '';
 
 	/** Password confirmation. */
-	public passwordConfirmation: string		= '';
+	public passwordConfirmation: string					= '';
+
+	/** @see pinMask */
+	public readonly pinMask: typeof pinMask				= pinMask;
 
 	/** Form tab index. */
-	public tabIndex: number					= 3;
+	public tabIndex: number								= 3;
 
 	/** Total number of steps/tabs. */
-	public readonly totalSteps: number		= 4;
+	public readonly totalSteps: number					= 4;
 
 	/** Username. */
-	public username: FormControl			= new FormControl('', undefined, [
+	public username: FormControl						= new FormControl('', undefined, [
 		async control =>
 			await this.accountUserLookupService.exists(control.value, false) ?
 				{usernameTaken: {value: control.value}} :
@@ -61,13 +71,37 @@ export class AccountRegisterComponent implements OnInit {
 	]);
 
 	/** @see usernameMask */
-	public readonly usernameMask: any		= usernameMask;
+	public readonly usernameMask: typeof usernameMask	= usernameMask;
+
+	/** Indicates whether or not lockScreenPIN should be used in place of lockScreenPassword. */
+	public useLockScreenPIN: boolean					= true;
 
 	/** Indicates whether or not xkcdPassphrase should be used. */
-	public useXkcdPassphrase: boolean		= true;
+	public useXkcdPassphrase: boolean					= true;
 
 	/** Auto-generated password option. */
-	public xkcdPassphrase: Promise<string>	= xkcdPassphrase.generate();
+	public xkcdPassphrase: Promise<string>				= xkcdPassphrase.generate();
+
+	/** Focuses PIN input. */
+	public async focusPIN (e: MouseEvent) : Promise<void> {
+		/* x3 to account for spaces in pinMask */
+		const index	= this.lockScreenPIN.length * 3;
+
+		const $elem	= $(e.target).find('input');
+		const elem	= <HTMLInputElement> $elem[0];
+
+		$elem.focus();
+		elem.setSelectionRange(index, index);
+	}
+
+	/** Lock screen PIN. */
+	public get lockScreenPIN () : string {
+		return this._lockScreenPIN.replace(/[^\d]/g, '');
+	}
+
+	public set lockScreenPIN (value: string) {
+		this._lockScreenPIN	= value;
+	}
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -91,7 +125,14 @@ export class AccountRegisterComponent implements OnInit {
 		return !(
 			!this.username.value ||
 			this.username.errors ||
-			!this.lockScreenPassword ||
+			(
+				this.useLockScreenPIN ?
+					this.lockScreenPIN.length !== this.lockScreenPasswordLength :
+					(
+						this.lockScreenPassword !== this.lockScreenPasswordConfirmation ||
+						this.lockScreenPassword.length < this.lockScreenPasswordLength
+					)
+			) ||
 			(
 				!this.useXkcdPassphrase && (
 					this.password !== this.passwordConfirmation ||

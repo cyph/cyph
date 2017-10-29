@@ -230,7 +230,7 @@
 									<div
 										fxLayout='row'
 										(click)='useXkcdPassphrase = true'
-										class='master-key'
+										class='password-option'
 										[class.deselected]='!useXkcdPassphrase'
 									>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
@@ -249,7 +249,7 @@
 										fxLayout='row'
 										cyphTranslate
 										(click)='useXkcdPassphrase = false'
-										class='master-key'
+										class='password-option'
 										[class.deselected]='useXkcdPassphrase'
 									>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
@@ -295,7 +295,7 @@
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
-									<span cyphTranslate>Lock Screen Password</span>
+									<span cyphTranslate>PIN</span>
 								</ng-template>
 
 								<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
@@ -304,12 +304,53 @@
 										fxLayoutAlign='center center'
 										class='description'
 									>
-										Set your password that you will use to reauthenticate on
-										already activated devices.
+										This is a simple passcode used to lock your
+										account when you're away.
 									</div>
 
 									<div fxLayout='row' fxLayoutAlign='center center'>
+										A four-digit number is fine in most cases. However, you may
+										choose to use a longer custom password, which will be more
+										secure if you plan to sign in to Cyph on a shared device.
+									</div>
+
+									<div
+										fxLayout='row'
+										(click)='useLockScreenPIN = true'
+										class='password-option'
+										[class.deselected]='!useLockScreenPIN'
+									>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<h3>Option #1: Four-Digit Number</h3>
+											</div>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<div fxFlex class='pin' (click)='focusPIN($event)'>
+													<input
+														matInput
+														cyphTranslate
+														[(ngModel)]='lockScreenPIN'
+														[textMask]='pinMask'
+														name='lockScreenPIN'
+														placeholder='PIN'
+														[required]='!useLockScreenPIN'
+													/>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div
+										fxLayout='row'
+										cyphTranslate
+										(click)='useLockScreenPIN = false'
+										class='password-option'
+										[class.deselected]='useLockScreenPIN'
+									>
+										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+											<div fxLayout='row' fxLayoutAlign='center center'>
+												<h3>Option #2: Custom Password</h3>
+											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<mat-form-field fxFlex='60'>
 													<input
@@ -319,20 +360,20 @@
 														name='lockScreenPassword'
 														type='password'
 														placeholder='Lock Screen Password'
-														required
+														[required]='!useLockScreenPIN'
 													/>
 												</mat-form-field>
 											</div>
-
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<mat-form-field fxFlex='60'>
 													<input
 														matInput
 														cyphTranslate
-														[(ngModel)]='lockScreenTimeout'
-														name='lockScreenTimeout'
-														type='number'
-														placeholder='Lock Screen Timeout (days)'
+														[(ngModel)]='lockScreenPasswordConfirmation'
+														name='lockScreenPasswordConfirmation'
+														type='password'
+														placeholder='Confirm Lock Screen Password'
+														[required]='!useLockScreenPIN'
 													/>
 												</mat-form-field>
 											</div>
@@ -393,9 +434,12 @@
 											</div>
 
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<span cyphTranslate>Password:</span>
+												<span cyphTranslate>PIN:</span>
 												&nbsp;
-												<span>********************</span>
+												<span *ngIf='useLockScreenPIN'>
+													{{lockScreenPIN}}
+												</span>
+												<span *ngIf='!useLockScreenPIN'>****</span>
 											</div>
 										</div>
 									</div>
