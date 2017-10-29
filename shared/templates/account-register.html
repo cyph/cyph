@@ -79,6 +79,7 @@
 														name='username'
 														placeholder='Username'
 														required
+														data-lpignore='true'
 													/>
 													<div
 														matSuffix
@@ -134,6 +135,7 @@
 														name='name'
 														placeholder='Name (or pseudonym)'
 														required
+														data-lpignore='true'
 													/>
 												</mat-form-field>
 											</div>
@@ -146,6 +148,7 @@
 														name='email'
 														type='email'
 														placeholder='Email (optional)'
+														data-lpignore='true'
 													/>
 												</mat-form-field>
 											</div>
@@ -267,6 +270,7 @@
 														placeholder='Master Key'
 														[required]='!useXkcdPassphrase'
 														[pattern]='".{" + customPasswordLength + ",}"'
+														data-lpignore='true'
 													/>
 												</mat-form-field>
 											</div>
@@ -281,6 +285,7 @@
 														placeholder='Confirm Master Key'
 														[required]='!useXkcdPassphrase'
 														[pattern]='password'
+														data-lpignore='true'
 													/>
 												</mat-form-field>
 											</div>
@@ -336,6 +341,7 @@
 														name='lockScreenPIN'
 														placeholder='PIN'
 														[required]='!useLockScreenPIN'
+														data-lpignore='true'
 													/>
 												</div>
 											</div>
@@ -364,6 +370,7 @@
 														placeholder='Lock Screen Password'
 														[required]='!useLockScreenPIN'
 														[pattern]='".{" + lockScreenPasswordLength + ",}"'
+														data-lpignore='true'
 													/>
 												</mat-form-field>
 											</div>
@@ -378,6 +385,7 @@
 														placeholder='Confirm Lock Screen Password'
 														[required]='!useLockScreenPIN'
 														[pattern]='lockScreenPassword'
+														data-lpignore='true'
 													/>
 												</mat-form-field>
 											</div>
