@@ -75,8 +75,8 @@ EndOfMessage
 staticSSL='$(
 	echo "${sslconf}" |
 	sed "s|ssl/websign|ssl|g" |
-	sed "s|\${keyHash}|L8VDNR3M39gVmkDK8uGIc5Qx9Cms3fh8/hw5rWqPEbA=|g" |
-	sed "s|\${backupHash}|qkfPaU8MSHYMoMxAH8DGToHOQJNW8NgpNvx+EtIPCbw=|g"
+	sed "s|${keyHash}|L8VDNR3M39gVmkDK8uGIc5Qx9Cms3fh8/hw5rWqPEbA=|g" |
+	sed "s|${backupHash}|qkfPaU8MSHYMoMxAH8DGToHOQJNW8NgpNvx+EtIPCbw=|g"
 )'
 
 read -r -d '' nginxconf <<- EOM
