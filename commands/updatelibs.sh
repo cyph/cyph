@@ -14,7 +14,7 @@ cd ~/tmplib/js
 read -r -d '' modules <<- EOM
 	@angular/animations
 	@angular/cdk
-	@angular/cli@1.2.6
+	@angular/cli
 	@angular/common
 	@angular/compiler
 	@angular/compiler-cli
@@ -42,6 +42,7 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
+	@ngtools/webpack@https://github.com/buu700/ngtools-webpack-tmp
 	@types/braintree-web
 	@types/dompurify
 	@types/dropzone
