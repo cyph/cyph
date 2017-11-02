@@ -317,12 +317,17 @@
 
 		/* rxjs */
 
+		"rxjs-add": false,
 		"rxjs-no-add": true,
+		"rxjs-no-do": false,
 		"rxjs-no-patched": true,
+		"rxjs-no-subject-unsubscribe": false,
+		"rxjs-no-unused-add": false,
 		"rxjs-no-wholesale": true
 	},
 	"rulesDirectory": [
 		"/node_modules/codelyzer",
+		"/node_modules/rxjs-tslint-rules",
 		"/node_modules/tslint-microsoft-contrib",
 		"tslint-rules"
 	]
