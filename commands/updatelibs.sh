@@ -13,7 +13,7 @@ cd ~/tmplib/js
 
 read -r -d '' modules <<- EOM
 	@angular/animations
-	@angular/cdk
+	@angular/cdk@https://github.com/buu700/angular-cdk-tmp
 	@angular/cli
 	@angular/common
 	@angular/compiler
@@ -22,7 +22,7 @@ read -r -d '' modules <<- EOM
 	@angular/flex-layout
 	@angular/forms
 	@angular/http
-	@angular/material
+	@angular/material@https://github.com/buu700/angular-material-tmp
 	@angular/platform-browser
 	@angular/platform-browser-dynamic
 	@angular/platform-server
