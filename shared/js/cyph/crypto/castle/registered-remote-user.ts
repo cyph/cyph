@@ -1,4 +1,5 @@
 import {Observable} from 'rxjs/Observable';
+import {take} from 'rxjs/operators/take';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {IRemoteUser} from './iremote-user';
 
@@ -11,7 +12,7 @@ export class RegisteredRemoteUser implements IRemoteUser {
 	private publicKey: Promise<Uint8Array>	= (async () =>
 		(
 			await this.accountDatabaseService.getUserPublicKeys(
-				await this.username.take(1).toPromise()
+				await this.username.pipe(take(1)).toPromise()
 			)
 		).encryption
 	)();

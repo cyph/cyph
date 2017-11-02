@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {skip} from 'rxjs/operators/skip';
 import {Subscription} from 'rxjs/Subscription';
 import {
 	AccountLoginData,
@@ -154,7 +155,7 @@ export class AccountAuthService {
 			this.statusSaveSubscription	= this.databaseService.watch(
 				`users/${username}/presence`,
 				AccountUserPresence
-			).skip(1).subscribe(({timestamp, value}) => {
+			).pipe(skip(1)).subscribe(({timestamp, value}) => {
 				if (isNaN(timestamp)) {
 					return;
 				}

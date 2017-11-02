@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash';
 import {Observable} from 'rxjs/Observable';
+import {map} from 'rxjs/operators/map';
+import {take} from 'rxjs/operators/take';
 import {Subscription} from 'rxjs/Subscription';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IAsyncList} from '../iasync-list';
@@ -60,11 +62,11 @@ export class DatabaseService extends DataManagerService {
 			updateValue: async f => asyncList.lock(async () =>
 				asyncList.setValue(await f(await asyncList.getValue()))
 			),
-			watch: memoize(() =>
-				this.watchList(url, proto).map<ITimedValue<T>[], T[]>(arr => arr.map(o => o.value))
-			),
+			watch: memoize(() => this.watchList(url, proto).pipe(
+				map<ITimedValue<T>[], T[]>(arr => arr.map(o => o.value))
+			)),
 			watchPushes: memoize(() =>
-				this.watchListPushes(url, proto).map<ITimedValue<T>, T>(o => o.value)
+				this.watchListPushes(url, proto).pipe(map<ITimedValue<T>, T>(o => o.value))
 			)
 		};
 
@@ -114,7 +116,7 @@ export class DatabaseService extends DataManagerService {
 
 				return currentValue;
 			}).catch(async () => blockGetValue ?
-				asyncValue.watch().take(2).toPromise() :
+				asyncValue.watch().pipe(take(2)).toPromise() :
 				defaultValue
 			),
 			lock,
@@ -132,7 +134,7 @@ export class DatabaseService extends DataManagerService {
 				asyncValue.setValue(await f(await asyncValue.getValue()))
 			),
 			watch: memoize(() =>
-				this.watch(url, proto).map<ITimedValue<T>, T>(o => o.value)
+				this.watch(url, proto).pipe(map<ITimedValue<T>, T>(o => o.value))
 			)
 		};
 

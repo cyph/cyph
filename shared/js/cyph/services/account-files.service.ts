@@ -10,6 +10,14 @@ import * as Delta from 'quill-delta';
 import * as QuillDeltaToHtml from 'quill-delta-to-html';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {of} from 'rxjs/observable/of';
+import {concat} from 'rxjs/operators/concat';
+import {filter} from 'rxjs/operators/filter';
+import {first} from 'rxjs/operators/first';
+import {map} from 'rxjs/operators/map';
+import {mergeMap} from 'rxjs/operators/mergeMap';
+import {take} from 'rxjs/operators/take';
+import {toArray} from 'rxjs/operators/toArray';
 import {
 	AccountFileRecord,
 	AccountFileReference,
@@ -55,7 +63,7 @@ export class AccountFilesService {
 			this.accountDatabaseService.watchList(
 				'fileReferences',
 				AccountFileReference
-			).flatMap(async references => Promise.all(references.map(async ({value}) => {
+			).pipe(mergeMap(async references => Promise.all(references.map(async ({value}) => {
 				if (!value.owner) {
 					return {
 						id: '',
@@ -86,9 +94,9 @@ export class AccountFilesService {
 					timestamp: record.timestamp,
 					wasAnonymousShare: record.wasAnonymousShare
 				};
-			}))).map(records =>
+			}))), map(records =>
 				records.sort((a, b) => b.timestamp - a.timestamp)
-			),
+			)),
 			[]
 		)
 	;
@@ -106,11 +114,11 @@ export class AccountFilesService {
 
 	/** Incoming files. */
 	public readonly incomingFiles: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=
-		this.accountDatabaseService.currentUser.flatMap(o =>
+		this.accountDatabaseService.currentUser.pipe(mergeMap(o =>
 			!o ? [] : this.databaseService.watchList(
 				`users/${o.user.username}/incomingFiles`,
 				BinaryProto
-			).flatMap(async arr => Promise.all(arr.map(async ({value}) =>
+			).pipe(mergeMap(async arr => Promise.all(arr.map(async ({value}) =>
 				util.getOrSetDefaultAsync(
 					this.incomingFileCache,
 					value,
@@ -187,8 +195,8 @@ export class AccountFilesService {
 						};
 					}
 				)
-			)))
-		)
+			))))
+		))
 	;
 
 	/**
@@ -246,9 +254,9 @@ export class AccountFilesService {
 		filterRecordTypes: AccountFileRecord.RecordTypes
 	) : Observable<(IAccountFileRecord&T)[]> {
 		return util.flattenObservablePromise(
-			filesList.map(files => files.filter(({owner, recordType}) =>
+			filesList.pipe(map(files => files.filter(({owner, recordType}) =>
 				!!owner && recordType === filterRecordTypes
-			)),
+			))),
 			[]
 		);
 	}
@@ -415,7 +423,7 @@ export class AccountFilesService {
 	) : Promise<void> {
 		if (typeof id !== 'string') {
 			if (id instanceof Observable) {
-				id	= id.take(1).toPromise();
+				id	= id.pipe(take(1)).toPromise();
 			}
 			id	= (await id).id;
 		}
@@ -722,24 +730,24 @@ export class AccountFilesService {
 			BinaryProto,
 			undefined,
 			file.key
-		).map(o =>
+		).pipe(map(o =>
 			o.value.length > 0 ? msgpack.decode(o.value) : undefined
-		);
+		));
 
 		return {
-			deltas: Observable.of({
+			deltas: of({
 				clientID: '',
-				ops: (await doc.take(length).toArray().first().toPromise() || []).
+				ops: (await doc.pipe(take(length), toArray(), first()).toPromise() || []).
 					filter(o => o && typeof o.index !== 'number').
 					map<DeltaOperation[]>(o => o.ops || []).
 					reduce<DeltaStatic>(
 						(delta, ops) => delta.compose(new Delta(ops)),
 						new Delta()
 					).ops || []
-			}).concat(
-				doc.filter(o => o && typeof o.index !== 'number')
-			),
-			selections: doc.filter(o => o && typeof o.index === 'number')
+			}).pipe(concat(
+				doc.pipe(filter(o => o && typeof o.index !== 'number'))
+			)),
+			selections: doc.pipe(filter(o => o && typeof o.index === 'number'))
 		};
 	}
 
@@ -752,9 +760,9 @@ export class AccountFilesService {
 			AccountFileRecord,
 			undefined,
 			(async () => (await filePromise).key)()
-		).map(o =>
+		).pipe(map(o =>
 			o.value
-		);
+		));
 	}
 
 	/** Watches note. */
@@ -766,9 +774,9 @@ export class AccountFilesService {
 			BinaryProto,
 			undefined,
 			(async () => (await filePromise).key)()
-		).map(o =>
+		).pipe(map(o =>
 			o.value.length > 0 ? msgpack.decode(o.value) : {ops: []}
-		);
+		));
 	}
 
 	constructor (
@@ -796,7 +804,10 @@ export class AccountFilesService {
 				this.showSpinner	= false;
 			}
 			else {
-				this.filesList.filter(arr => arr.length > 0).take(1).toPromise().then(() => {
+				this.filesList.pipe(
+					filter(arr => arr.length > 0),
+					take(1)
+				).toPromise().then(() => {
 					this.initiated		= true;
 					this.showSpinner	= false;
 				});

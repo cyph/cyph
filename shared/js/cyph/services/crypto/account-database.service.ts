@@ -4,6 +4,10 @@ import {Injectable} from '@angular/core';
 import {memoize} from 'lodash';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {map} from 'rxjs/operators/map';
+import {mergeMap} from 'rxjs/operators/mergeMap';
+import {skipWhile} from 'rxjs/operators/skipWhile';
+import {take} from 'rxjs/operators/take';
 import {Subscription} from 'rxjs/Subscription';
 import {AccountUserPublicKeys, AGSEPKICert, IAccountUserPublicKeys} from '../../../proto';
 import {ICurrentUser, SecurityModels} from '../../account';
@@ -322,18 +326,18 @@ export class AccountDatabaseService {
 				securityModel,
 				customKey,
 				anonymous
-			).map<ITimedValue<T>[], T[]>(
+			).pipe(map<ITimedValue<T>[], T[]>(
 				arr => arr.map(o => o.value)
-			)),
+			))),
 			watchPushes: memoize(() => this.watchListPushes(
 				url,
 				proto,
 				securityModel,
 				customKey,
 				anonymous
-			).map<ITimedValue<T>, T>(
+			).pipe(map<ITimedValue<T>, T>(
 				o => o.value
-			))
+			)))
 		};
 
 		return asyncList;
@@ -369,7 +373,7 @@ export class AccountDatabaseService {
 				securityModel,
 				customKey,
 				anonymous
-			).map<ITimedValue<T>, T>(o => o.value)
+			).pipe(map<ITimedValue<T>, T>(o => o.value))
 		);
 
 		return {
@@ -386,7 +390,7 @@ export class AccountDatabaseService {
 					anonymous
 				);
 			}).catch(async () => blockGetValue ?
-				watch().take(2).toPromise() :
+				watch().pipe(take(2)).toPromise() :
 				defaultValue
 			),
 			lock: async (f, reason) =>
@@ -410,7 +414,7 @@ export class AccountDatabaseService {
 	public async getCurrentUser () : Promise<ICurrentUser> {
 		const currentUser	=
 			this.currentUser.value ||
-			await this.currentUser.skipWhile(o => !o).take(1).toPromise()
+			await this.currentUser.pipe(skipWhile(o => !o), take(1)).toPromise()
 		;
 
 		if (!currentUser) {
@@ -763,13 +767,13 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return util.flattenObservablePromise(
-			this.currentUser.flatMap(async () => {
+			this.currentUser.pipe(mergeMap(async () => {
 				const processedURL	= await this.normalizeURL(url);
 
 				return this.databaseService.watch(
 					processedURL,
 					BinaryProto
-				).flatMap(async data => ({
+				).pipe(mergeMap(async data => ({
 					timestamp: data.timestamp,
 					value: await this.open(
 						processedURL,
@@ -781,10 +785,10 @@ export class AccountDatabaseService {
 					).catch(
 						() => proto.create()
 					)
-				}));
-			}).flatMap(
+				})));
+			}), mergeMap(
 				o => o
-			),
+			)),
 			{timestamp: NaN, value: proto.create()}
 		);
 	}
@@ -798,13 +802,13 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>[]> {
 		return util.flattenObservablePromise(
-			this.currentUser.flatMap(async () => {
+			this.currentUser.pipe(mergeMap(async () => {
 				const processedURL	= await this.normalizeURL(url);
 
 				return this.databaseService.watchList(
 					processedURL,
 					BinaryProto
-				).flatMap(async list =>
+				).pipe(mergeMap(async list =>
 					Promise.all(list.map(async data => ({
 						timestamp: data.timestamp,
 						value: await this.open(
@@ -818,10 +822,10 @@ export class AccountDatabaseService {
 							() => proto.create()
 						)
 					})))
-				);
-			}).flatMap(
+				));
+			}), mergeMap(
 				o => o
-			),
+			)),
 			[]
 		);
 	}
@@ -829,22 +833,22 @@ export class AccountDatabaseService {
 	/** @see DatabaseService.watchListKeyPushes */
 	public watchListKeyPushes (url: string|Promise<string>) : Observable<string> {
 		return util.flattenObservablePromise(
-			this.currentUser.flatMap(async () =>
+			this.currentUser.pipe(mergeMap(async () =>
 				this.databaseService.watchListKeyPushes(await this.normalizeURL(url))
-			).flatMap(
+			), mergeMap(
 				o => o
-			)
+			))
 		);
 	}
 
 	/** @see DatabaseService.watchListKeys */
 	public watchListKeys (url: string|Promise<string>) : Observable<string[]> {
 		return util.flattenObservablePromise(
-			this.currentUser.flatMap(async () =>
+			this.currentUser.pipe(mergeMap(async () =>
 				this.databaseService.watchListKeys(await this.normalizeURL(url))
-			).flatMap(
+			), mergeMap(
 				o => o
-			),
+			)),
 			[]
 		);
 	}
@@ -858,13 +862,13 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return util.flattenObservablePromise(
-			this.currentUser.flatMap(async () => {
+			this.currentUser.pipe(mergeMap(async () => {
 				const processedURL	= await this.normalizeURL(url);
 
 				return this.databaseService.watchListPushes(
 					processedURL,
 					BinaryProto
-				).flatMap(async data => ({
+				).pipe(mergeMap(async data => ({
 					timestamp: data.timestamp,
 					value: await this.open(
 						processedURL,
@@ -874,10 +878,10 @@ export class AccountDatabaseService {
 						customKey,
 						anonymous
 					)
-				}));
-			}).flatMap(
+				})));
+			}), mergeMap(
 				o => o
-			),
+			)),
 			{timestamp: NaN, value: proto.create()}
 		);
 	}

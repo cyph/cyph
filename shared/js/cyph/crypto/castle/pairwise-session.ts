@@ -1,4 +1,6 @@
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {filter} from 'rxjs/operators/filter';
+import {take} from 'rxjs/operators/take';
 import {Subject} from 'rxjs/Subject';
 import {config} from '../../config';
 import {denullifyAsyncValue} from '../../denullify-async-value';
@@ -194,7 +196,7 @@ export class PairwiseSession {
 			return;
 		}
 
-		await this.isReceiving.filter(b => b).take(1).toPromise();
+		await this.isReceiving.pipe(filter(b => b), take(1)).toPromise();
 
 		this.incomingMessageQueue.next({
 			cyphertext,

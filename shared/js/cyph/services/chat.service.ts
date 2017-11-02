@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {map} from 'rxjs/operators/map';
 import {ChatMessage, IChatMessage} from '../../proto';
 import {IChatData, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
@@ -111,7 +112,7 @@ export class ChatService {
 
 		if (selfDestructChat) {
 			this.chatSelfDestructed		=
-				this.chat.messages.watch().map(messages => messages.length === 0)
+				this.chat.messages.watch().pipe(map(messages => messages.length === 0))
 			;
 			this.chatSelfDestructTimer	= new Timer(this.chatSelfDestructTimeout * 1000);
 			await this.chatSelfDestructTimer.start();

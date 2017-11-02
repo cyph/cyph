@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {of} from 'rxjs/observable/of';
 import {ISessionMessage, SessionMessageList} from '../../proto';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {eventManager} from '../event-manager';
@@ -70,7 +71,7 @@ export abstract class SessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly appUsername: Observable<string>			= Observable.of('');
+	public readonly appUsername: Observable<string>			= of('');
 
 	/** @inheritDoc */
 	public readonly closed: Promise<void>					= this.one<void>(events.closeChat);

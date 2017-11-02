@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
+import {filter} from 'rxjs/operators/filter';
+import {take} from 'rxjs/operators/take';
 import {Subscription} from 'rxjs/Subscription';
 import {IAccountFileRecord} from '../../proto';
 import {IQuillDelta} from '../iquill-delta';
@@ -65,7 +67,7 @@ export class AccountNoteComponent implements OnInit {
 	/** @ignore */
 	private async setNote (id: string) : Promise<void> {
 		const metadata		= this.accountFilesService.watchMetadata(id);
-		const metadataValue	= await metadata.filter(o => !!o.id).take(1).toPromise();
+		const metadataValue	= await metadata.pipe(filter(o => !!o.id), take(1)).toPromise();
 
 		this.noteData.id	= metadataValue.id;
 		this.noteData.name	= metadataValue.name;
@@ -212,7 +214,7 @@ export class AccountNoteComponent implements OnInit {
 
 			if (!this.noteData.content) {
 				this.noteData.content	= this.note && this.note.content ?
-					await this.note.content.take(1).toPromise() :
+					await this.note.content.pipe(take(1)).toPromise() :
 					<IQuillDelta> (<any> {clientID: '', ops: []})
 				;
 			}
@@ -230,7 +232,7 @@ export class AccountNoteComponent implements OnInit {
 			}
 			else if (
 				this.note &&
-				(await this.note.metadata.take(1).toPromise()).id === this.noteData.id
+				(await this.note.metadata.pipe(take(1)).toPromise()).id === this.noteData.id
 			) {
 				await this.accountFilesService.updateNote(
 					this.noteData.id,

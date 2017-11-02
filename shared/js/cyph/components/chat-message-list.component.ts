@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import * as $ from 'jquery';
 import {Observable} from 'rxjs/Observable';
+import {mergeMap} from 'rxjs/operators/mergeMap';
 import {fadeInOut} from '../animations';
 import {ChatMessage, IChatData} from '../chat';
 import {AccountContactsService} from '../services/account-contacts.service';
@@ -83,7 +84,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			this.observableCache,
 			this.chat,
 			() => ({
-				messages: this.chat.messages.watch().flatMap(async messages =>
+				messages: this.chat.messages.watch().pipe(mergeMap(async messages =>
 					(await Promise.all(messages.map(async message => util.getOrSetDefaultAsync(
 						this.messageCache,
 						message.id,
@@ -108,7 +109,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 					)))).sort((a, b) =>
 						a.timestamp - b.timestamp
 					)
-				),
+				)),
 				unconfirmedMessages: this.chat.unconfirmedMessages.watch()
 			})
 		);

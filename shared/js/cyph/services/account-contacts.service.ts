@@ -1,6 +1,11 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {filter} from 'rxjs/operators/filter';
+import {map} from 'rxjs/operators/map';
+import {mergeMap} from 'rxjs/operators/mergeMap';
+import {skip} from 'rxjs/operators/skip';
+import {take} from 'rxjs/operators/take';
 import {AccountContactRecord, AccountUserPresence, IAccountContactRecord} from '../../proto';
 import {UserPresence, userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
@@ -32,9 +37,9 @@ export class AccountContactsService {
 			this.accountDatabaseService.watchList(
 				'contactRecords',
 				AccountContactRecord
-			).map(
+			).pipe(map(
 				contacts => contacts.map(o => o.value)
-			)
+			))
 		)
 	;
 
@@ -45,9 +50,9 @@ export class AccountContactsService {
 	public readonly contactList: Observable<User[]>			= this.contactListSubject;
 
 	/** List of usernames of contacts for current user. */
-	public readonly contactUsernames: Observable<string[]>	= this.contactRecords.map(
+	public readonly contactUsernames: Observable<string[]>	= this.contactRecords.pipe(map(
 		contactRecords => contactRecords.map(o => o.username)
-	);
+	));
 
 	/** Indicates whether the first load has completed. */
 	public initiated: boolean	= false;
@@ -145,19 +150,22 @@ export class AccountContactsService {
 			}
 		});
 
-		this.contactUsernames.flatMap(async usernames => Promise.all(
-			usernames.map(async username => ({
-				status: (
-					await this.databaseService.getItem(
-						`users/${username}/presence`,
-						AccountUserPresence
-					).catch(
-						() => ({status: AccountUserPresence.Statuses.Offline})
-					)
-				).status,
-				username
-			})
-		))).skip(1).subscribe(async users => {
+		this.contactUsernames.pipe(
+			mergeMap(async usernames => Promise.all(
+				usernames.map(async username => ({
+					status: (
+						await this.databaseService.getItem(
+							`users/${username}/presence`,
+							AccountUserPresence
+						).catch(
+							() => ({status: AccountUserPresence.Statuses.Offline})
+						)
+					).status,
+					username
+				})
+			))),
+			skip(1)
+		).subscribe(async users => {
 			const oldUserStatuses	= this.userStatuses;
 			this.userStatuses		= new Map<User, UserPresence>();
 
@@ -173,10 +181,10 @@ export class AccountContactsService {
 							return;
 						}
 
-						await user.avatar.filter(o => o !== undefined).take(1).toPromise();
+						await user.avatar.pipe(filter(o => o !== undefined), take(1)).toPromise();
 
 						this.userStatuses.set(user, status);
-						user.status.skip(1).subscribe(async newStatus => {
+						user.status.pipe(skip(1)).subscribe(async newStatus => {
 							this.userStatuses.set(user, newStatus);
 							this.updateContactsList();
 						});

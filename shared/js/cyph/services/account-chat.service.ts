@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {take} from 'rxjs/operators/take';
 import {ChatMessage} from '../../proto';
 import {IChatData, States} from '../chat';
 import {ChatUnconfirmedMessagesProto} from '../protos';
@@ -33,7 +34,7 @@ export class AccountChatService extends ChatService {
 		) ?
 			undefined :
 			(async () =>
-				this.accountContactsService.getContactID(await author.take(1).toPromise())
+				this.accountContactsService.getContactID(await author.pipe(take(1)).toPromise())
 			)().catch(
 				() => undefined
 			)

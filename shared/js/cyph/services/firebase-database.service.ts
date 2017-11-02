@@ -7,6 +7,7 @@ import 'firebase/database';
 import 'firebase/storage';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {skip} from 'rxjs/operators/skip';
 import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
@@ -371,7 +372,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		ref.set(firebase.database.ServerValue.TIMESTAMP);
 		onDisconnect.remove();
 
-		this.connectionStatus().skip(1).subscribe(isConnected => {
+		this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
 			if (!isConnected) {
 				return;
 			}
@@ -398,7 +399,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		ref.remove();
 		onDisconnect.set(firebase.database.ServerValue.TIMESTAMP);
 
-		this.connectionStatus().skip(1).subscribe(isConnected => {
+		this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
 			if (!isConnected) {
 				return;
 			}

@@ -1,4 +1,5 @@
 import {Observable} from 'rxjs/Observable';
+import {map} from 'rxjs/operators/map';
 import {Subject} from 'rxjs/Subject';
 import {Subscription} from 'rxjs/Subscription';
 import {IAsyncList} from './iasync-list';
@@ -37,7 +38,7 @@ export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncLis
 
 	/** @inheritDoc */
 	public watchPushes () : Observable<T> {
-		return this.pushes.map(o => o.value);
+		return this.pushes.pipe(map(o => o.value));
 	}
 
 	constructor (value: T[]) {
