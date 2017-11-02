@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
 import {ChatMessage, IChatMessage} from '../../proto';
 import {IChatData, States} from '../chat';
 import {HelpComponent} from '../components/help.component';

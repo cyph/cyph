@@ -8,7 +8,7 @@ import {
 	OnChanges
 } from '@angular/core';
 import * as $ from 'jquery';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {fadeInOut} from '../animations';
 import {ChatMessage, IChatData} from '../chat';
 import {AccountContactsService} from '../services/account-contacts.service';

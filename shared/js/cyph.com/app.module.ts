@@ -7,7 +7,6 @@ import '../standalone/global';
 import 'hammerjs';
 import 'jquery';
 import 'jquery.appear';
-import 'rxjs/add/operator/toPromise';
 import '../standalone/init';
 import '../standalone/translations';
 import './sham';

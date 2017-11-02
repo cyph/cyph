@@ -1,5 +1,5 @@
 import {SafeUrl} from '@angular/platform-browser';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {IAccountUserPresence, IAccountUserProfile} from '../../proto';
 import {IAsyncValue} from '../iasync-value';
 import {util} from '../util';

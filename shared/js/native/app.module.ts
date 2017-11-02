@@ -4,7 +4,6 @@
 /// <reference path="./js/typings/index.d.ts" />
 
 import 'nativescript-websockets';
-import 'rxjs/add/operator/toPromise';
 import './js/standalone/test-environment-setup';
 import './js/standalone/translations';
 

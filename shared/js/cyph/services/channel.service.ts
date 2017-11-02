@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs';
+import {Subject} from 'rxjs/Subject';
 import {ChannelMessage} from '../../proto';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';

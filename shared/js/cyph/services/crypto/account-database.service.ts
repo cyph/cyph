@@ -2,7 +2,9 @@
 
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
+import {Subscription} from 'rxjs/Subscription';
 import {AccountUserPublicKeys, AGSEPKICert, IAccountUserPublicKeys} from '../../../proto';
 import {ICurrentUser, SecurityModels} from '../../account';
 import {IAsyncList} from '../../iasync-list';

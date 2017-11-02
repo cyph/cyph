@@ -1,4 +1,4 @@
-import {Subject} from 'rxjs';
+import {Subject} from 'rxjs/Subject';
 import {IChatMessage} from '../../proto';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';

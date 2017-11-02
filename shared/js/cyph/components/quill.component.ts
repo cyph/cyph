@@ -10,7 +10,8 @@ import {
 } from '@angular/core';
 import * as Quill from 'quill';
 import * as Delta from 'quill-delta';
-import {Observable, Subscription} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
+import {Subscription} from 'rxjs/Subscription';
 import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
 import {LockFunction} from '../lock-function-type';

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {List} from 'immutable';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {ChatMessage} from '../chat';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {events} from '../session/enums';

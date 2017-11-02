@@ -1,4 +1,5 @@
-import {BehaviorSubject, Subject} from 'rxjs';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Subject} from 'rxjs/Subject';
 import {config} from '../../config';
 import {denullifyAsyncValue} from '../../denullify-async-value';
 import {IAsyncList} from '../../iasync-list';

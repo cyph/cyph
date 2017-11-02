@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable, Subscription} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
+import {Subscription} from 'rxjs/Subscription';
 import {IAccountFileRecord} from '../../proto';
 import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';

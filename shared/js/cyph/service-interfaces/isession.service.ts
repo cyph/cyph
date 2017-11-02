@@ -1,4 +1,5 @@
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
 import {ISessionMessage} from '../../proto';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
 import {

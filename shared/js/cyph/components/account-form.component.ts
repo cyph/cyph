@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {IAccountFileRecord, IForm} from '../../proto';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';

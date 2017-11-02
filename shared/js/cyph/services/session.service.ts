@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
 import {ISessionMessage, SessionMessageList} from '../../proto';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {eventManager} from '../event-manager';

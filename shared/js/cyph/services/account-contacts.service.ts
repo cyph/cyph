@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
 import {AccountContactRecord, AccountUserPresence, IAccountContactRecord} from '../../proto';
 import {UserPresence, userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';

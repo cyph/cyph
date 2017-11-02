@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {ChatMessage as ChatMessageInternal, IChatMessage} from '../../proto';
 import {Timer} from '../timer';
 import {util} from '../util';

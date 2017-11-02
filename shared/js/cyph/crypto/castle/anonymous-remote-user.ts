@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {IPotassium} from '../potassium/ipotassium';
 import {AnonymousLocalUser} from './anonymous-local-user';
 import {IHandshakeState} from './ihandshake-state';

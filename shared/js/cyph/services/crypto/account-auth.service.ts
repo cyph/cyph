@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Subscription';
 import {
 	AccountLoginData,
 	AccountUserPresence,

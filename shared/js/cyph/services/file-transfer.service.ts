@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Set as ImmutableSet} from 'immutable';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {Hash} from '../crypto/potassium/hash';
 import {ISecretBox} from '../crypto/potassium/isecret-box';
 import {SecretBox} from '../crypto/potassium/secret-box';

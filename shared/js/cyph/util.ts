@@ -8,7 +8,9 @@ import {
 	HttpResponse
 } from '@angular/common/http';
 import {saveAs} from 'file-saver';
-import {BehaviorSubject, Observable, Observer} from 'rxjs';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
+import {Observer} from 'rxjs/Observer';
 import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {env} from './env';

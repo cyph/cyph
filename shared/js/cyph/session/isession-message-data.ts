@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {ISessionMessageData as ISessionMessageDataInternal} from '../../proto';
 
 

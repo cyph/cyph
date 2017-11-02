@@ -8,7 +8,8 @@ import * as msgpack from 'msgpack-lite';
 import {DeltaOperation, DeltaStatic} from 'quill';
 import * as Delta from 'quill-delta';
 import * as QuillDeltaToHtml from 'quill-delta-to-html';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
 import {
 	AccountFileRecord,
 	AccountFileReference,

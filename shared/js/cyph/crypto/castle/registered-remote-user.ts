@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {IRemoteUser} from './iremote-user';
 
