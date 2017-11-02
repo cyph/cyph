@@ -767,28 +767,31 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return util.flattenObservablePromise(
-			this.currentUser.pipe(mergeMap(async () => {
-				const processedURL	= await this.normalizeURL(url);
+			this.currentUser.pipe(
+				mergeMap(async () => {
+					const processedURL	= await this.normalizeURL(url);
 
-				return this.databaseService.watch(
-					processedURL,
-					BinaryProto
-				).pipe(mergeMap(async data => ({
-					timestamp: data.timestamp,
-					value: await this.open(
+					return this.databaseService.watch(
 						processedURL,
-						proto,
-						securityModel,
-						data.value,
-						customKey,
-						anonymous
-					).catch(
-						() => proto.create()
-					)
-				})));
-			}), mergeMap(
-				o => o
-			)),
+						BinaryProto
+					).pipe(mergeMap(async data => ({
+						timestamp: data.timestamp,
+						value: await this.open(
+							processedURL,
+							proto,
+							securityModel,
+							data.value,
+							customKey,
+							anonymous
+						).catch(
+							() => proto.create()
+						)
+					})));
+				}),
+				mergeMap(
+					o => o
+				)
+			),
 			{timestamp: NaN, value: proto.create()}
 		);
 	}
@@ -802,30 +805,33 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>[]> {
 		return util.flattenObservablePromise(
-			this.currentUser.pipe(mergeMap(async () => {
-				const processedURL	= await this.normalizeURL(url);
+			this.currentUser.pipe(
+				mergeMap(async () => {
+					const processedURL	= await this.normalizeURL(url);
 
-				return this.databaseService.watchList(
-					processedURL,
-					BinaryProto
-				).pipe(mergeMap(async list =>
-					Promise.all(list.map(async data => ({
-						timestamp: data.timestamp,
-						value: await this.open(
-							processedURL,
-							proto,
-							securityModel,
-							data.value,
-							customKey,
-							anonymous
-						).catch(
-							() => proto.create()
-						)
-					})))
-				));
-			}), mergeMap(
-				o => o
-			)),
+					return this.databaseService.watchList(
+						processedURL,
+						BinaryProto
+					).pipe(mergeMap(async list =>
+						Promise.all(list.map(async data => ({
+							timestamp: data.timestamp,
+							value: await this.open(
+								processedURL,
+								proto,
+								securityModel,
+								data.value,
+								customKey,
+								anonymous
+							).catch(
+								() => proto.create()
+							)
+						})))
+					));
+				}),
+				mergeMap(
+					o => o
+				)
+			),
 			[]
 		);
 	}
@@ -833,22 +839,28 @@ export class AccountDatabaseService {
 	/** @see DatabaseService.watchListKeyPushes */
 	public watchListKeyPushes (url: string|Promise<string>) : Observable<string> {
 		return util.flattenObservablePromise(
-			this.currentUser.pipe(mergeMap(async () =>
-				this.databaseService.watchListKeyPushes(await this.normalizeURL(url))
-			), mergeMap(
-				o => o
-			))
+			this.currentUser.pipe(
+				mergeMap(async () =>
+					this.databaseService.watchListKeyPushes(await this.normalizeURL(url))
+				),
+				mergeMap(
+					o => o
+				)
+			)
 		);
 	}
 
 	/** @see DatabaseService.watchListKeys */
 	public watchListKeys (url: string|Promise<string>) : Observable<string[]> {
 		return util.flattenObservablePromise(
-			this.currentUser.pipe(mergeMap(async () =>
-				this.databaseService.watchListKeys(await this.normalizeURL(url))
-			), mergeMap(
-				o => o
-			)),
+			this.currentUser.pipe(
+				mergeMap(async () =>
+					this.databaseService.watchListKeys(await this.normalizeURL(url))
+				),
+				mergeMap(
+					o => o
+				)
+			),
 			[]
 		);
 	}
@@ -862,26 +874,29 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return util.flattenObservablePromise(
-			this.currentUser.pipe(mergeMap(async () => {
-				const processedURL	= await this.normalizeURL(url);
+			this.currentUser.pipe(
+				mergeMap(async () => {
+					const processedURL	= await this.normalizeURL(url);
 
-				return this.databaseService.watchListPushes(
-					processedURL,
-					BinaryProto
-				).pipe(mergeMap(async data => ({
-					timestamp: data.timestamp,
-					value: await this.open(
+					return this.databaseService.watchListPushes(
 						processedURL,
-						proto,
-						securityModel,
-						data.value,
-						customKey,
-						anonymous
-					)
-				})));
-			}), mergeMap(
-				o => o
-			)),
+						BinaryProto
+					).pipe(mergeMap(async data => ({
+						timestamp: data.timestamp,
+						value: await this.open(
+							processedURL,
+							proto,
+							securityModel,
+							data.value,
+							customKey,
+							anonymous
+						)
+					})));
+				}),
+				mergeMap(
+					o => o
+				)
+			),
 			{timestamp: NaN, value: proto.create()}
 		);
 	}

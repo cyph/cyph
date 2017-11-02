@@ -63,40 +63,43 @@ export class AccountFilesService {
 			this.accountDatabaseService.watchList(
 				'fileReferences',
 				AccountFileReference
-			).pipe(mergeMap(async references => Promise.all(references.map(async ({value}) => {
-				if (!value.owner) {
+			).pipe(
+				mergeMap(async references => Promise.all(references.map(async ({value}) => {
+					if (!value.owner) {
+						return {
+							id: '',
+							mediaType: '',
+							name: '',
+							owner: '',
+							recordType: AccountFileRecord.RecordTypes.File,
+							size: NaN,
+							timestamp: 0,
+							wasAnonymousShare: false
+						};
+					}
+
+					const record	= await this.accountDatabaseService.getItem(
+						`users/${value.owner}/fileRecords/${value.id}`,
+						AccountFileRecord,
+						undefined,
+						value.key
+					);
+
 					return {
-						id: '',
-						mediaType: '',
-						name: '',
-						owner: '',
-						recordType: AccountFileRecord.RecordTypes.File,
-						size: NaN,
-						timestamp: 0,
-						wasAnonymousShare: false
+						id: record.id,
+						mediaType: record.mediaType,
+						name: record.name,
+						owner: value.owner,
+						recordType: record.recordType,
+						size: record.size,
+						timestamp: record.timestamp,
+						wasAnonymousShare: record.wasAnonymousShare
 					};
-				}
-
-				const record	= await this.accountDatabaseService.getItem(
-					`users/${value.owner}/fileRecords/${value.id}`,
-					AccountFileRecord,
-					undefined,
-					value.key
-				);
-
-				return {
-					id: record.id,
-					mediaType: record.mediaType,
-					name: record.name,
-					owner: value.owner,
-					recordType: record.recordType,
-					size: record.size,
-					timestamp: record.timestamp,
-					wasAnonymousShare: record.wasAnonymousShare
-				};
-			}))), map(records =>
-				records.sort((a, b) => b.timestamp - a.timestamp)
-			)),
+				}))),
+				map(records =>
+					records.sort((a, b) => b.timestamp - a.timestamp)
+				)
+			),
 			[]
 		)
 	;
