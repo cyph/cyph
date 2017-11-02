@@ -312,7 +312,14 @@
 		"prefer-type-cast": true,
 		"promise-must-complete": false,
 		"use-named-parameter": true,
-		"valid-typeof": true
+		"valid-typeof": true,
+
+
+		/* rxjs */
+
+		"rxjs-no-add": true,
+		"rxjs-no-patched": true,
+		"rxjs-no-wholesale": true
 	},
 	"rulesDirectory": [
 		"/node_modules/codelyzer",

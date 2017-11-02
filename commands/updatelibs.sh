@@ -175,6 +175,7 @@ read -r -d '' modules <<- EOM
 	rlwe
 	rsvp
 	rxjs
+	rxjs-tslint-rules
 	sass-loader
 	script-ext-html-webpack-plugin
 	sidh
