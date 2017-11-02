@@ -8,7 +8,7 @@ rekeyscript='base64 hpkpsuicide.sh'
 apikey='ASK RYAN FOR THIS'
 orderid='ASK RYAN FOR THIS'
 githubToken='ASK RYAN FOR THIS'
-csrSubject='/C=US/ST=Delaware/L=Dover/O=Cyph, Inc./CN=cyph.ws'
+csrSubject='/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=cyph.ws'
 
 
 sed -i 's/# deb /deb /g' /etc/apt/sources.list

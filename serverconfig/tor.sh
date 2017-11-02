@@ -7,7 +7,7 @@ rekeyscript='base64 hpkpsuicide.sh'
 
 apikey='ASK RYAN FOR THIS'
 orderid='ASK RYAN FOR THIS'
-csrSubject='/C=US/ST=Delaware/L=Dover/O=Cyph, Inc./CN=cyphdbyhiddenbhs.onion'
+csrSubject='/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=cyphdbyhiddenbhs.onion'
 
 onionaddress='cyphdbyhiddenbhs.onion'
 onionkey='ASK RYAN FOR THIS'
