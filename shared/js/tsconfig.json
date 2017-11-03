@@ -23,7 +23,6 @@
 			"request": ["js/externals/request"],
 			"rsvp": ["js/externals/rsvp"]
 		},
-		"rootDir": ".",
 		"skipLibCheck": true,
 		"sourceMap": false,
 		"strict": true,
