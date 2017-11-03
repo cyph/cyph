@@ -28,5 +28,9 @@
 		"sourceMap": false,
 		"strict": true,
 		"target": "es5"
-	}
+	},
+	"include": [
+		"*.ts",
+		"**/*.ts"
+	]
 }
