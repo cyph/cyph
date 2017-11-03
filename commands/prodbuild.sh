@@ -17,6 +17,11 @@ node -e 'console.log(`
 
 ng eject --aot --prod --no-sourcemaps
 
+# Temporary workaround for https://github.com/angular/angular-cli/issues/7371
+echo "const {PurifyPlugin} = require('@angular-devkit/build-optimizer');" > webpack.config.js.new
+cat webpack.config.js >> webpack.config.js.new
+mv webpack.config.js.new webpack.config.js
+
 cat > webpack.js <<- EOM
 	const ExtractTextPlugin						= require('extract-text-webpack-plugin');
 	const HtmlWebpackPlugin						= require('html-webpack-plugin');
