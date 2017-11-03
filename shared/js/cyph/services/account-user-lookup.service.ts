@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {map} from 'rxjs/operators/map';
 import {AccountUserPresence, AccountUserProfile} from '../../proto';
 import {SecurityModels, User} from '../account';
 import {DataURIProto} from '../protos';
@@ -67,18 +68,18 @@ export class AccountUserLookupService {
 				SecurityModels.public,
 				undefined,
 				true
-			).map(({value}) =>
+			).pipe(map(({value}) =>
 				typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
-			),
+			)),
 			this.accountDatabaseService.watch(
 				`${url}/coverImage`,
 				DataURIProto,
 				SecurityModels.public,
 				undefined,
 				true
-			).map(({value}) =>
+			).pipe(map(({value}) =>
 				typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
-			),
+			)),
 			this.databaseService.getAsyncValue(
 				`${url}/presence`,
 				AccountUserPresence

@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Set as ImmutableSet} from 'immutable';
 import {Observable} from 'rxjs/Observable';
+import {of} from 'rxjs/observable/of';
 import {Hash} from '../crypto/potassium/hash';
 import {ISecretBox} from '../crypto/potassium/isecret-box';
 import {SecretBox} from '../crypto/potassium/secret-box';
@@ -252,7 +253,7 @@ export class FileTransferService {
 				imageSelfDestructTimeout,
 				file.size
 			),
-			progress: Observable.of(0)
+			progress: of(0)
 		};
 
 		this.transfers	= this.transfers.add(transferSetPlaceholder);
