@@ -815,9 +815,9 @@ amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
 
-angular-speed-dial@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/angular-speed-dial/-/angular-speed-dial-1.0.1.tgz#c5d210da56df33dee9adbc3a27bc62c10e9ece63"
+angular-speed-dial@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/angular-speed-dial/-/angular-speed-dial-1.0.2.tgz#152233054d52b1ed6f3e1fbd6e4cadefa36d0397"
   dependencies:
     "@angular/core" "*"
     "@angular/material" "^2.0.0-beta"
