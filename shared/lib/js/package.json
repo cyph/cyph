@@ -491,7 +491,7 @@
     "style-loader": "^0.19.0",
     "stylelint": "^8.2.0",
     "stylelint-scss": "^2.1.0",
-    "supersphincs": "^6.0.0",
+    "supersphincs": "^6.0.1",
     "tab-indent": "^1.0.2",
     "text-mask-addons": "^3.7.0",
     "textillate": "^0.4.1",

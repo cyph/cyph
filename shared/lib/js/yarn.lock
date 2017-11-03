@@ -10085,9 +10085,9 @@ sugarss@^1.0.0:
   dependencies:
     postcss "^6.0.0"
 
-supersphincs@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-6.0.0.tgz#1f9f59c092514caa3d8e6a7c085793a8a024fa35"
+supersphincs@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-6.0.1.tgz#748146fcd65ad95954d165e17eb6726b39b83340"
   dependencies:
     rsasign "*"
     sodiumutil "*"
