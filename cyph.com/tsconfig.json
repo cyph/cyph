@@ -13,7 +13,7 @@
 		]
 	},
 	"exclude": [
-		"./src/js/native"
+		"src/js/native/**/*.ts"
 	],
 	"files": [
 		"src/js/cyph.com/main.ts"
