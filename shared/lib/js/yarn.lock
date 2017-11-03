@@ -101,7 +101,7 @@
   optionalDependencies:
     node-sass "^4.3.0"
 
-"@angular/common@^4", "@angular/common@^5.0.0":
+"@angular/common@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@angular/common/-/common-5.0.0.tgz#f96d66a517b995d1ba9b28309f15c2e359675825"
   dependencies:
@@ -116,13 +116,13 @@
     reflect-metadata "^0.1.2"
     tsickle "^0.24.0"
 
-"@angular/compiler@^4", "@angular/compiler@^5.0.0":
+"@angular/compiler@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-5.0.0.tgz#b9ffbf18c8a39d8b7dacec473193a90e24cc2bc9"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/core@^4", "@angular/core@^4.3.4", "@angular/core@^5.0.0":
+"@angular/core@*", "@angular/core@^4.3.4", "@angular/core@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@angular/core/-/core-5.0.0.tgz#4f976a225f7dddf34992f2cad824c9543a46f4c8"
   dependencies:
@@ -134,31 +134,31 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/forms@^4", "@angular/forms@^5.0.0":
+"@angular/forms@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-5.0.0.tgz#c7fddfa35396759ae9852920a30cdda8c41ed1de"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/http@^4", "@angular/http@^5.0.0":
+"@angular/http@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@angular/http/-/http-5.0.0.tgz#0728a2be0cfbb078727c5eb87d4c85d53fec9a51"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/material@^2.0.0-beta.3", "@angular/material@https://github.com/buu700/angular-material-tmp":
+"@angular/material@^2.0.0-beta", "@angular/material@https://github.com/buu700/angular-material-tmp":
   version "2.0.0-beta.12"
   resolved "https://github.com/buu700/angular-material-tmp#4cd8d04f281761db7b2d9cb5482919a3ea75b6b4"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-browser-dynamic@^4", "@angular/platform-browser-dynamic@^5.0.0":
+"@angular/platform-browser-dynamic@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-5.0.0.tgz#887e106c8b103b0415cf6156a425da6d83f4c89d"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-browser@^4", "@angular/platform-browser@^5.0.0":
+"@angular/platform-browser@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-5.0.0.tgz#c7038f7cde80705b62014897231e182eec976fed"
   dependencies:
@@ -184,7 +184,7 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/router@^4", "@angular/router@^5.0.0":
+"@angular/router@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@angular/router/-/router-5.0.0.tgz#fe4b521a6738408bce30f93a53499140c93a4f76"
   dependencies:
@@ -815,27 +815,12 @@ amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
 
-"angular-smd@https://github.com/buu700/angular-smd-tmp":
-  version "1337.0.0"
-  resolved "https://github.com/buu700/angular-smd-tmp#cc436800bb939559d52854b4f047d0fc37ee261d"
+angular-speed-dial@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/angular-speed-dial/-/angular-speed-dial-1.0.1.tgz#c5d210da56df33dee9adbc3a27bc62c10e9ece63"
   dependencies:
-    "@angular/common" "^4"
-    "@angular/compiler" "^4"
-    "@angular/core" "^4"
-    "@angular/forms" "^4"
-    "@angular/http" "^4"
-    "@angular/material" "^2.0.0-beta.3"
-    "@angular/platform-browser" "^4"
-    "@angular/platform-browser-dynamic" "^4"
-    "@angular/router" "^4"
-    babel-core "6.21.0"
-    babel-polyfill "6.20.0"
-    dateformat "2.0.0"
-    debug "2.5.2"
-    hammerjs "^2"
-    reflect-metadata "^0"
-    rxjs "^5"
-    zone.js "^0"
+    "@angular/core" "*"
+    "@angular/material" "^2.0.0-beta"
 
 angular-ssr@^0.10.40:
   version "0.10.40"
@@ -1173,7 +1158,7 @@ aws4@^1.2.1, aws4@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.6.0.tgz#83ef5ca860b2b32e4a0deedee8c771b9db57471e"
 
-babel-code-frame@^6.11.0, babel-code-frame@^6.20.0, babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
+babel-code-frame@^6.11.0, babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-code-frame/-/babel-code-frame-6.26.0.tgz#63fd43f7dc1e3bb7ce35947db8fe369a3f58c74b"
   dependencies:
@@ -1181,7 +1166,7 @@ babel-code-frame@^6.11.0, babel-code-frame@^6.20.0, babel-code-frame@^6.22.0, ba
     esutils "^2.0.2"
     js-tokens "^3.0.2"
 
-babel-core@6.21.0, babel-core@^6.26.0:
+babel-core@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-6.26.0.tgz#af32f78b31a6fcef119c87b0fd8d9753f03a0bb8"
   dependencies:
@@ -1205,7 +1190,7 @@ babel-core@6.21.0, babel-core@^6.26.0:
     slash "^1.0.0"
     source-map "^0.5.6"
 
-babel-generator@^6.18.0, babel-generator@^6.21.0, babel-generator@^6.26.0, babel-generator@^6.8.0:
+babel-generator@^6.18.0, babel-generator@^6.26.0, babel-generator@^6.8.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-generator/-/babel-generator-6.26.0.tgz#ac1ae20070b79f6e3ca1d3269613053774f20dc5"
   dependencies:
@@ -1320,7 +1305,7 @@ babel-helper-replace-supers@^6.24.1:
     babel-traverse "^6.24.1"
     babel-types "^6.24.1"
 
-babel-helpers@^6.16.0, babel-helpers@^6.24.1:
+babel-helpers@^6.24.1:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-helpers/-/babel-helpers-6.24.1.tgz#3471de9caec388e5c850e597e58a26ddf37602b2"
   dependencies:
@@ -1335,7 +1320,7 @@ babel-loader@^7.1.2:
     loader-utils "^1.0.2"
     mkdirp "^0.5.1"
 
-babel-messages@^6.23.0, babel-messages@^6.8.0:
+babel-messages@^6.23.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel-messages/-/babel-messages-6.23.0.tgz#f3cdf4703858035b2a2951c6ec5edf6c62f2630e"
   dependencies:
@@ -1568,14 +1553,6 @@ babel-plugin-transform-strict-mode@^6.24.1:
     babel-runtime "^6.22.0"
     babel-types "^6.24.1"
 
-babel-polyfill@6.20.0:
-  version "6.20.0"
-  resolved "https://registry.yarnpkg.com/babel-polyfill/-/babel-polyfill-6.20.0.tgz#de4a371006139e20990aac0be367d398331204e7"
-  dependencies:
-    babel-runtime "^6.20.0"
-    core-js "^2.4.0"
-    regenerator-runtime "^0.10.0"
-
 babel-preset-env@^1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/babel-preset-env/-/babel-preset-env-1.6.1.tgz#a18b564cc9b9afdf4aae57ae3c1b0d99188e6f48"
@@ -1640,7 +1617,7 @@ babel-preset-es2015@^6.24.1:
     babel-plugin-transform-es2015-unicode-regex "^6.24.1"
     babel-plugin-transform-regenerator "^6.24.1"
 
-babel-register@^6.18.0, babel-register@^6.26.0:
+babel-register@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-register/-/babel-register-6.26.0.tgz#6ed021173e2fcb486d7acb45c6009a856f647071"
   dependencies:
@@ -1652,7 +1629,7 @@ babel-register@^6.18.0, babel-register@^6.26.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.15"
 
-babel-runtime@5.8.29, babel-runtime@^6.11.6, babel-runtime@^6.18.0, babel-runtime@^6.20.0, babel-runtime@^6.22.0, babel-runtime@^6.26.0:
+babel-runtime@5.8.29, babel-runtime@^6.11.6, babel-runtime@^6.18.0, babel-runtime@^6.22.0, babel-runtime@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   dependencies:
@@ -1669,7 +1646,7 @@ babel-template@^6.16.0, babel-template@^6.24.1, babel-template@^6.26.0, babel-te
     babylon "^6.18.0"
     lodash "^4.17.4"
 
-babel-traverse@^6.18.0, babel-traverse@^6.21.0, babel-traverse@^6.24.1, babel-traverse@^6.26.0, babel-traverse@^6.9.0:
+babel-traverse@^6.18.0, babel-traverse@^6.24.1, babel-traverse@^6.26.0, babel-traverse@^6.9.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-traverse/-/babel-traverse-6.26.0.tgz#46a9cbd7edcc62c8e5c064e2d2d8d0f4035766ee"
   dependencies:
@@ -1683,7 +1660,7 @@ babel-traverse@^6.18.0, babel-traverse@^6.21.0, babel-traverse@^6.24.1, babel-tr
     invariant "^2.2.2"
     lodash "^4.17.4"
 
-babel-types@^6.18.0, babel-types@^6.19.0, babel-types@^6.21.0, babel-types@^6.24.1, babel-types@^6.26.0, babel-types@^6.9.0:
+babel-types@^6.18.0, babel-types@^6.19.0, babel-types@^6.24.1, babel-types@^6.26.0, babel-types@^6.9.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-types/-/babel-types-6.26.0.tgz#a3b073f94ab49eb6fa55cd65227a334380632497"
   dependencies:
@@ -1692,7 +1669,7 @@ babel-types@^6.18.0, babel-types@^6.19.0, babel-types@^6.21.0, babel-types@^6.24
     lodash "^4.17.4"
     to-fast-properties "^1.0.3"
 
-babylon@^6.11.0, babylon@^6.18.0:
+babylon@^6.18.0:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.18.0.tgz#af2f3b88fa6f5c1e4c634d1a0f8eac4f55b395e3"
 
@@ -2168,8 +2145,8 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000757"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000757.tgz#fa23a383213d857f4a1e6a3bee17b32668504cbf"
+  version "1.0.30000758"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000758.tgz#a235627b1922e878b63164942c991b84de92c810"
 
 caniuse-lite@^1.0.30000748, caniuse-lite@^1.0.30000757:
   version "1.0.30000757"
@@ -2672,7 +2649,7 @@ contra@1.9.4:
     atoa "1.0.0"
     ticky "1.0.1"
 
-convert-source-map@^0.3.3, convert-source-map@^1.1.0, convert-source-map@^1.1.1, convert-source-map@^1.3.0, convert-source-map@^1.5.0:
+convert-source-map@^0.3.3, convert-source-map@^1.1.1, convert-source-map@^1.3.0, convert-source-map@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-1.5.0.tgz#9acd70851c6d5dfdd93d9282e5edf94a03ff46b5"
 
@@ -3222,11 +3199,11 @@ date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
 
-dateformat@2.0.0, dateformat@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-2.0.0.tgz#2743e3abb5c3fc2462e527dca445e04e9f4dee17"
+dateformat@^2.0.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-2.2.0.tgz#4065e2013cf9fb916ddfd82efb506ad4c6769062"
 
-debug@*, debug@0.7.4, debug@1.0.4, debug@2, debug@2.2.0, debug@2.3.3, debug@2.5.2, debug@2.6.7, debug@2.6.8, debug@2.6.9, debug@^0.7.2, debug@^2.1.1, debug@^2.2, debug@^2.2.0, debug@^2.3.3, debug@^2.6.6, debug@^2.6.8, debug@^3.0.0, debug@^3.1.0, debug@~2.2.0:
+debug@*, debug@0.7.4, debug@1.0.4, debug@2, debug@2.2.0, debug@2.3.3, debug@2.6.7, debug@2.6.8, debug@2.6.9, debug@^0.7.2, debug@^2.2, debug@^2.2.0, debug@^2.3.3, debug@^2.6.6, debug@^2.6.8, debug@^3.0.0, debug@^3.1.0, debug@~2.2.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
   dependencies:
@@ -4838,7 +4815,7 @@ gulplog@^1.0.0:
   dependencies:
     glogg "^1.0.0"
 
-hammerjs@^2, hammerjs@^2.0.8:
+hammerjs@^2.0.8:
   version "2.0.8"
   resolved "https://registry.yarnpkg.com/hammerjs/-/hammerjs-2.0.8.tgz#04ef77862cff2bb79d30f7692095930222bf60f1"
 
@@ -6451,7 +6428,7 @@ lodash.without@~4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/lodash.without/-/lodash.without-4.4.0.tgz#3cd4574a00b67bae373a94b748772640507b7aac"
 
-lodash@3.10.1, lodash@3.2.0, lodash@3.6.0, lodash@4.13.1, lodash@4.17.4, lodash@^2.4.1, lodash@^3.10.0, lodash@^3.10.1, lodash@^3.3.1, lodash@^3.8.0, lodash@^4.0.0, lodash@^4.11.1, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.2, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0, lodash@^4.5.0, lodash@^4.6.1, lodash@~1.0.1, lodash@~3.10.0, lodash@~3.10.1, lodash@~4.17.4:
+lodash@3.10.1, lodash@3.2.0, lodash@3.6.0, lodash@4.13.1, lodash@4.17.4, lodash@^2.4.1, lodash@^3.10.0, lodash@^3.10.1, lodash@^3.3.1, lodash@^3.8.0, lodash@^4.0.0, lodash@^4.11.1, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.2, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.3.0, lodash@^4.5.0, lodash@^4.6.1, lodash@~1.0.1, lodash@~3.10.0, lodash@~3.10.1, lodash@~4.17.4:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -8837,7 +8814,7 @@ reduce-function-call@^1.0.1:
   dependencies:
     balanced-match "^0.4.2"
 
-reflect-metadata@^0, reflect-metadata@^0.1.10, reflect-metadata@^0.1.2, reflect-metadata@^0.1.8:
+reflect-metadata@^0.1.10, reflect-metadata@^0.1.2, reflect-metadata@^0.1.8:
   version "0.1.10"
   resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.10.tgz#b4f83704416acad89988c9b15635d47e03b9344a"
 
@@ -8845,7 +8822,7 @@ regenerate@^1.2.1:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.3.3.tgz#0c336d3980553d755c39b586ae3b20aa49c82b7f"
 
-regenerator-runtime@^0.10.0, regenerator-runtime@^0.11.0:
+regenerator-runtime@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.11.0.tgz#7e54fe5b5ccd5d6624ea6255c3473be090b802e1"
 
@@ -9198,7 +9175,7 @@ rxjs-tslint-rules@^3.0.4:
   dependencies:
     resolve "^1.4.0"
 
-rxjs@^5, rxjs@^5.4.1, rxjs@^5.5.2:
+rxjs@^5.4.1, rxjs@^5.5.2:
   version "5.5.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.2.tgz#28d403f0071121967f18ad665563255d54236ac3"
   dependencies:
@@ -9684,7 +9661,7 @@ source-map-url@^0.4.0, source-map-url@~0.3.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/source-map-url/-/source-map-url-0.4.0.tgz#3e935d7ddd73631b97659956d55128e87b5084a3"
 
-source-map@0.1.31, source-map@0.1.x, source-map@0.5.6, source-map@0.5.x, "source-map@>= 0.1.2", source-map@^0.1.38, source-map@^0.4.2, source-map@^0.4.4, source-map@^0.5.0, source-map@^0.5.1, source-map@^0.5.3, source-map@^0.5.6, source-map@^0.6.1, source-map@~0.1.30, source-map@~0.1.33, source-map@~0.1.7, source-map@~0.4.1, source-map@~0.5.0, source-map@~0.5.1, source-map@~0.5.3, source-map@~0.5.6, source-map@~0.6.1:
+source-map@0.1.31, source-map@0.1.x, source-map@0.5.6, source-map@0.5.x, "source-map@>= 0.1.2", source-map@^0.1.38, source-map@^0.4.2, source-map@^0.4.4, source-map@^0.5.1, source-map@^0.5.3, source-map@^0.5.6, source-map@^0.6.1, source-map@~0.1.30, source-map@~0.1.33, source-map@~0.1.7, source-map@~0.4.1, source-map@~0.5.0, source-map@~0.5.1, source-map@~0.5.3, source-map@~0.5.6, source-map@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
 
@@ -11452,6 +11429,6 @@ zombie@^5.0.7:
     tough-cookie "^2.2.0"
     ws "^1.0.1"
 
-zone.js@^0, zone.js@^0.8.14, zone.js@^0.8.18:
+zone.js@^0.8.14, zone.js@^0.8.18:
   version "0.8.18"
   resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.8.18.tgz#8cecb3977fcd1b3090562ff4570e2847e752b48d"
