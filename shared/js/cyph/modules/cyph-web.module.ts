@@ -31,7 +31,7 @@ import {
 	SmdFabSpeedDialActions,
 	SmdFabSpeedDialComponent,
 	SmdFabSpeedDialTrigger
-} from 'angular-smd/src/app/shared/component/smd-fab-speed-dial';
+} from 'angular-speed-dial';
 import {TextMaskModule} from 'angular2-text-mask';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';

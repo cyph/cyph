@@ -59,7 +59,7 @@ read -r -d '' modules <<- EOM
 	@types/pdfkit
 	@types/quill
 	@types/stacktrace-js
-	angular-smd@https://github.com/buu700/angular-smd-tmp
+	angular-speed-dial
 	angular-ssr
 	angular2-template-loader
 	angular2-text-mask

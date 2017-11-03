@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {SnackBar} from 'nativescript-snackbar';
-import {alert, confirm} from 'tns-core-modules/ui/dialogs';
+import {alert, confirm} from 'tns-core-modules/ui/dialogs/dialogs';
 import {DialogImageComponent} from './dialog-image.component';
 import {LockFunction} from './js/cyph/lock-function-type';
 import {DialogService} from './js/cyph/services/dialog.service';

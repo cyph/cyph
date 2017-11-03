@@ -3,7 +3,7 @@
 import {IRuleMetadata, RuleFailure} from 'tslint/lib/language/rule/rule';
 import {RuleWalker} from 'tslint/lib/language/walker';
 import {AbstractRule} from 'tslint/lib/rules';
-import * as ts from 'tslint/node_modules/typescript';
+import * as ts from 'tslint/node_modules/typescript/lib/typescript';
 
 
 export class Rule extends AbstractRule {
