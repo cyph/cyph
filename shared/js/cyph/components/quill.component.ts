@@ -49,17 +49,8 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 	/** @ignore */
 	private selectionsSubscription?: Subscription;
 
-	/** ID of Quill container element. */
-	public readonly containerID: string	= `id-${util.uuid()}`;
-
-	/** Entire contents of the editor. */
-	@Input() public content?: IQuillDelta;
-
-	/** Stream of deltas to apply. */
-	@Input() public deltas?: Observable<IQuillDelta>;
-
 	/** Emits on change. */
-	@Output() public onChange: EventEmitter<{
+	@Output() public readonly change: EventEmitter<{
 		content: IQuillDelta;
 		delta: IQuillDelta;
 		oldContents: IQuillDelta;
@@ -71,8 +62,20 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 		}>()
 	;
 
+	/** ID of Quill container element. */
+	public readonly containerID: string	= `id-${util.uuid()}`;
+
+	/** Entire contents of the editor. */
+	@Input() public content?: IQuillDelta;
+
+	/** Stream of deltas to apply. */
+	@Input() public deltas?: Observable<IQuillDelta>;
+
+	/** Indicates whether editor should be read-only. */
+	@Input() public readOnly: boolean;
+
 	/** Emits on selection change. */
-	@Output() public onSelectionChange: EventEmitter<{
+	@Output() public readonly selectionChange: EventEmitter<{
 		oldRange: IQuillRange;
 		range: IQuillRange;
 	}>	=
@@ -81,9 +84,6 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 			range: IQuillRange;
 		}>()
 	;
-
-	/** Indicates whether editor should be read-only. */
-	@Input() public readOnly: boolean;
 
 	/** Stream of selections to apply. */
 	@Input() public selections: Observable<IQuillRange>;
@@ -161,7 +161,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 				return;
 			}
 
-			this.onChange.emit({
+			this.change.emit({
 				content: this.addClientID(oldDelta.compose(delta)),
 				delta: this.addClientID(delta),
 				oldContents: this.addClientID(oldDelta)
@@ -173,7 +173,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 				return;
 			}
 
-			this.onSelectionChange.emit({
+			this.selectionChange.emit({
 				oldRange: this.addClientID(oldRange),
 				range: this.addClientID(range)
 			});

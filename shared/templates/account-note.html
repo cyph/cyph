@@ -68,8 +68,8 @@
 								[deltas]='note?.deltas'
 								[selections]='note?.selections'
 								[readOnly]='!editable'
-								(onChange)='onChange($event)'
-								(onSelectionChange)='onSelectionChange($event)'
+								(change)='onChange($event)'
+								(selectionChange)='onSelectionChange($event)'
 							></cyph-quill>
 						</mat-card-content>
 					</mat-card>
