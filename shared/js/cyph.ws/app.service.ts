@@ -7,6 +7,7 @@ import {
 	RouterStateSnapshot
 } from '@angular/router';
 import * as $ from 'jquery';
+import {first} from 'rxjs/operators/first';
 import {config} from '../cyph/config';
 import {AccountService} from '../cyph/services/account.service';
 import {AccountAuthService} from '../cyph/services/crypto/account-auth.service';
@@ -100,7 +101,7 @@ export class AppService implements CanActivate {
 				await util.waitForValue(() =>
 					routerService.routerState.root.firstChild || undefined
 				)
-			).url.first().toPromise();
+			).url.pipe(first()).toPromise();
 
 			const urlSegmentPaths	= routerService.url.split('/').slice(1);
 			let loadingAccounts		= urlSegmentPaths[0] === 'account';
