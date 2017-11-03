@@ -4,16 +4,18 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
-cd backend
-go build
-checkfail
-cd ..
+if [ "${1}" != '--angular-only' ] ; then
+	cd backend
+	go build
+	checkfail
+	cd ..
 
-output="$(./commands/buildunbundledassets.sh 2>&1)"
-checkfail "${output}"
+	output="$(./commands/buildunbundledassets.sh 2>&1)"
+	checkfail "${output}"
 
-./commands/lint.sh
-checkfail
+	./commands/lint.sh
+	checkfail
+fi
 
 log 'Starting Angular AOT build'
 for d in cyph.com cyph.ws ; do
