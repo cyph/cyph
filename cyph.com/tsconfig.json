@@ -12,9 +12,6 @@
 			"node_modules/@types"
 		]
 	},
-	"exclude": [
-		"src/js/native/**/*.ts"
-	],
 	"files": [
 		"src/js/cyph.com/main.ts"
 	]
