@@ -34,10 +34,10 @@
 
 /* Centers mat-progress-spinner */
 @mixin spinner-center {
-	height: auto !important;
-	width: auto !important;
-
 	@include center;
+
+	top: calc(50% - 50px);
+	left: calc(50% - 50px);
 }
 
 @mixin vertical-align {
