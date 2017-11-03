@@ -88,6 +88,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		NanoScrollerDirective,
 		ReactiveFormsModule,
 		RouterModule,
+		SmdFabSpeedDialModule,
 		TextMaskModule
 	],
 	imports: [
