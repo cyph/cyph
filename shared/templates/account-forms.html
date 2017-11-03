@@ -7,10 +7,11 @@
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<mat-card
-			class='form animated _{{i}}'
+			class='form animated'
 			*ngFor='let form of accountFilesService.filesListFiltered.forms | async; let i = index'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
+			[ngClass]='"_" + i'
 			[routerLink]='"/account/forms/" + form.id'
 		>
 			<mat-card-header fxLayout='row'>
@@ -59,12 +60,13 @@
 		</h2>
 
 		<mat-card
-			class='form animated _{{i}}'
+			class='form animated'
 			*ngFor='
 				let form of accountFilesService.incomingFilesFiltered.forms | async; let i = index
 			'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
+			[ngClass]='"_" + i'
 		>
 			<mat-card-header fxLayout='row'>
 				<mat-card-title>

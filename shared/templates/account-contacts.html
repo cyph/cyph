@@ -13,11 +13,12 @@
 	>
 		<mat-card
 			[fxFlexOrder]='isActive(contact) ? "-1" : ""'
-			class='contact animated _{{i}}'
+			class='contact animated'
 			*ngFor='let contact of accountContactsService.contactList | async; let i = index'
 			[attr.data-index]='i'
 			[class.active]='isActive(contact)'
 			[class.bounceInRight]='!isActive(contact) && !accountContactsService.initiated'
+			[ngClass]='"_" + i'
 			[routerLink]='"/account/chat/" + contact.username'
 		>
 			<mat-card-header fxLayout='row'>

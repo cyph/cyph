@@ -7,10 +7,11 @@
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<mat-card
-			class='file animated _{{i}}'
+			class='file animated'
 			*ngFor='let file of accountFilesService.filesListFiltered.files | async; let i = index'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
+			[ngClass]='"_" + i'
 			routerLink='/account/files'
 			(click)='accountFilesService.openFile(file.id)'
 		>
@@ -84,12 +85,13 @@
 		</h2>
 
 		<mat-card
-			class='file animated _{{i}}'
+			class='file animated'
 			*ngFor='
 				let file of accountFilesService.incomingFilesFiltered.files | async; let i = index
 			'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
+			[ngClass]='"_" + i'
 		>
 			<mat-card-header fxLayout='row'>
 				<mat-icon mat-card-avatar>

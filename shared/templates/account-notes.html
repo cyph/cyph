@@ -7,10 +7,11 @@
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<mat-card
-			class='note animated _{{i}}'
+			class='note animated'
 			*ngFor='let note of notes | async; let i = index'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
+			[ngClass]='"_" + i'
 			[routerLink]='note.id'
 		>
 			<mat-card-header fxLayout='row'>
@@ -58,10 +59,11 @@
 		</h2>
 
 		<mat-card
-			class='note animated _{{i}}'
+			class='note animated'
 			*ngFor='let note of incomingNotes | async; let i = index'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
+			[ngClass]='"_" + i'
 		>
 			<mat-card-header fxLayout='row'>
 				<mat-card-title>
