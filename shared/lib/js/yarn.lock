@@ -457,9 +457,9 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@ngtools/json-schema/-/json-schema-1.1.0.tgz#c3a0c544d62392acc2813a42c8a0dc6f58f86922"
 
-"@ngtools/webpack@1.8.0", "@ngtools/webpack@https://github.com/buu700/ngtools-webpack-tmp":
-  version "1337.0.0"
-  resolved "https://github.com/buu700/ngtools-webpack-tmp#80b49fd014393a75068ebe5c8da7cf4d446bdd26"
+"@ngtools/webpack@1.8.0", "@ngtools/webpack@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-1.8.0.tgz#443204e016aa3a287544eacadb4c95964ae6e2c4"
   dependencies:
     chalk "~2.2.0"
     enhanced-resolve "^3.1.0"
