@@ -42,7 +42,7 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
-	@ngtools/webpack@https://github.com/buu700/ngtools-webpack-tmp
+	@ngtools/webpack
 	@types/braintree-web
 	@types/dompurify
 	@types/dropzone
