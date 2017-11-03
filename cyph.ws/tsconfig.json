@@ -9,6 +9,9 @@
 			"node_modules/@types"
 		]
 	},
+	"exclude": [
+		"./src/js/native"
+	],
 	"files": [
 		"src/js/cyph.ws/main.ts"
 	]
