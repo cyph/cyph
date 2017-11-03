@@ -27,11 +27,7 @@ import {
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterModule} from '@angular/router';
-import {
-	SmdFabSpeedDialActions,
-	SmdFabSpeedDialComponent,
-	SmdFabSpeedDialTrigger
-} from 'angular-speed-dial';
+import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {TextMaskModule} from 'angular2-text-mask';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
@@ -53,10 +49,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogConfirmComponent,
 		DialogImageComponent,
 		DropZoneDirective,
-		NanoScrollerDirective,
-		SmdFabSpeedDialActions,
-		SmdFabSpeedDialComponent,
-		SmdFabSpeedDialTrigger
+		NanoScrollerDirective
 	],
 	entryComponents: [
 		DialogAlertComponent,
@@ -95,9 +88,6 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		NanoScrollerDirective,
 		ReactiveFormsModule,
 		RouterModule,
-		SmdFabSpeedDialActions,
-		SmdFabSpeedDialComponent,
-		SmdFabSpeedDialTrigger,
 		TextMaskModule
 	],
 	imports: [
@@ -127,6 +117,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatTooltipModule,
 		ReactiveFormsModule,
 		RouterModule,
+		SmdFabSpeedDialModule,
 		TextMaskModule
 	],
 	providers: [
