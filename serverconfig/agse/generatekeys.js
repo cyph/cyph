@@ -28,6 +28,8 @@ const args		= {
 };
 
 
+await sodium.ready;
+
 const db		= level('keys');
 
 const keyPairs	= await Promise.all(!args.keyBackupPath ?

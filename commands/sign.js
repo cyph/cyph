@@ -5,7 +5,7 @@ const crypto			= require('crypto');
 const dgram				= require('dgram');
 const fs				= require('fs');
 const os				= require('os');
-const sodium			= require('libsodium-wrappers');
+const sodiumUtil		= require('sodiumutil');
 const superSphincs		= require('supersphincs');
 
 
@@ -33,7 +33,7 @@ const publicKeys	= JSON.parse(
 
 
 const testKeyPair	= {
-	privateKey: sodium.from_base64(
+	privateKey: sodiumUtil.from_base64(
 		'eyJhbGciOiJSUzI1NiIsImQiOiJacU94bGlDLThycXBCbV9mdGxKUEwzMWcxV00ySklGMXVvWDV4VFg' +
 		'wQTFfaHBqcXZCbWhra3VHMkxXZTJERTZBSXlkd3VvZjM4dU1RUUtqVFJ6bXJfTVh2SlRic0g1Wnh6Vk' +
 		'M5bXdkVi0xRnpXWjJhVGdxVy11QlRfcXpsMVdNci03X3Q2TVBZeE12Q2otR2FfbGhhT3huSzV5cEdvS' +
@@ -83,7 +83,7 @@ const testKeyPair	= {
 		'Dm8Hf+8GxhmFdUBQiWLOjQo1E7Lfwx/CsiPD4sO2oz8wYPcp9SOLjUKGa9u4nC/kf9hbqFujTxKdLYo' +
 		'mI3pA=='
 	),
-	publicKey: sodium.from_base64(
+	publicKey: sodiumUtil.from_base64(
 		'eyJhbGciOiJSUzI1NiIsImUiOiJBUUFCIiwiZXh0Ijp0cnVlLCJrZXlfb3BzIjpbInZlcmlmeSJdLCJ' +
 		'rdHkiOiJSU0EiLCJuIjoidkVUOG1HY24zcWFyN1FfaXo1MVZjUmNKdHRFSG5VcWNmN1VybTVueko4bG' +
 		'80Q2RjQTZLN2dRMDl6bmx4a3NQLTg1RE1NSGdwU29mcU1BY2l6UTVmNW5McGxydEtJX0dtdFJ1T1k2d' +
@@ -126,14 +126,14 @@ const inputMessages	= inputs.map(({message}) =>
 const dataToSign	= Buffer.from(JSON.stringify(await Promise.all(inputs.map(async o => ({
 	additionalData: o.additionalData instanceof Uint8Array ?
 		{
-			data: sodium.to_base64(o.additionalData).replace(/\s+/g, ''),
+			data: sodiumUtil.to_base64(o.additionalData),
 			isUint8Array: true
 		} :
 		o.additionalData
 	,
 	message: o.message instanceof Uint8Array ?
 		{
-			data: sodium.to_base64(await superSphincs.hash(o.message, true)).replace(/\s+/g, ''),
+			data: sodiumUtil.to_base64(await superSphincs.hash(o.message, true)),
 			isBinaryHash: true
 		} :
 		o.message
@@ -225,7 +225,7 @@ server.on('message', async (message) => {
 
 			if (inputMessages.filter((message, i) =>
 				openedInputs[i].length !== message.length ||
-				!sodium.memcmp(openedInputs[i], message)
+				!sodiumUtil.memcmp(openedInputs[i], message)
 			).length > 0) {
 				throw new Error('Incorrect signed data.');
 			}
