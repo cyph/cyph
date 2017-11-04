@@ -23,12 +23,13 @@ cat webpack.config.js >> webpack.config.js.new
 mv webpack.config.js.new webpack.config.js
 
 cat > webpack.js <<- EOM
-	const ExtractTextPlugin						= require('extract-text-webpack-plugin');
-	const HtmlWebpackPlugin						= require('html-webpack-plugin');
-	const path									= require('path');
-	const {CommonsChunkPlugin, UglifyJsPlugin}	= require('webpack').optimize;
-	const mangleExceptions						= require('../commands/mangleexceptions');
-	const config								= require('./webpack.config.js');
+	const ExtractTextPlugin		= require('extract-text-webpack-plugin');
+	const HtmlWebpackPlugin		= require('html-webpack-plugin');
+	const path					= require('path');
+	const UglifyJsPlugin		= require('uglifyjs-webpack-plugin');
+	const {CommonsChunkPlugin}	= require('webpack').optimize;
+	const mangleExceptions		= require('../commands/mangleexceptions');
+	const config				= require('./webpack.config.js');
 
 	const chunks	=
 		'${dependencyModules}'.
@@ -129,23 +130,10 @@ cat > webpack.js <<- EOM
 	);
 
 	if (uglifyJsIndex > -1) {
-		config.plugins.splice(
-			uglifyJsIndex,
-			1,
-			new UglifyJsPlugin({
-				comments: false,
-				compress: {
-					screw_ie8: true,
-					sequences: false,
-					warnings: false
-				},
-				mangle: {
-					except: mangleExceptions,
-					screw_ie8: true
-				},
-				sourceMap: false
-			})
-		);
+		const uglifyJsPlugin	= config.plugins[uglifyJsIndex];
+
+		uglifyJsPlugin.options.uglifyOptions.compress.sequences	= false;
+		uglifyJsPlugin.options.uglifyOptions.mangle				= {reserved: mangleExceptions};
 	}
 
 	config.output.filename		= '[name].js';
