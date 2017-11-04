@@ -262,3 +262,10 @@ mv ${dir}/shared/lib/js/node_modules ${dir}/shared/
 sudo mv lib/js/node_modules /
 sudo chmod -R 777 /node_modules
 rm -rf lib
+
+# Temporary workaround pending AGSE update to SuperSPHINCS v6
+if [ ! -d oldsupersphincs ] ; then
+	mkdir oldsupersphincs
+	cd oldsupersphincs
+	yarn add supersphincs@^5
+fi
