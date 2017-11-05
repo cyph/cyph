@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {EnvService} from '../services/env.service';
 
 
 /**
@@ -10,5 +11,8 @@ import {Component} from '@angular/core';
 	templateUrl: '../../../templates/account-post-register.html'
 })
 export class AccountPostRegisterComponent {
-	constructor () {}
+	constructor (
+		/** @see EnvService */
+		public readonly envService: EnvService
+	) {}
 }
