@@ -124,7 +124,7 @@ service firebase.storage {
 				;
 			}
 
-			// match /inviteCodes/{form} {}
+			// match /inviteCodes/{code} {}
 
 			// match /lastPresence {}
 
