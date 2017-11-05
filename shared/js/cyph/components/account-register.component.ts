@@ -177,12 +177,17 @@ export class AccountRegisterComponent implements OnInit {
 			return;
 		}
 
-		this.email				= '';
-		this.masterKey			= '';
-		this.name				= '';
+		this.email						= '';
+		this.lockScreenPassword			= '';
+		this.lockScreenPasswordConfirm	= '';
+		this.lockScreenPIN				= '';
+		this.masterKey					= '';
+		this.masterKeyConfirm			= '';
+		this.name						= '';
 		this.username.setValue('');
-		this.useXkcdPassphrase	= false;
-		this.xkcdPassphrase		= Promise.resolve('');
+		this.useLockScreenPIN			= false;
+		this.useXkcdPassphrase			= false;
+		this.xkcdPassphrase				= Promise.resolve('');
 
 		this.routerService.navigate(['account', 'welcome']);
 	}
