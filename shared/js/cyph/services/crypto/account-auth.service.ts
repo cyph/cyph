@@ -11,7 +11,7 @@ import {
 	KeyPair
 } from '../../../proto';
 import {ExternalServices} from '../../account';
-import {BinaryProto, StringProto} from '../../protos';
+import {BinaryProto, BooleanProto, StringProto} from '../../protos';
 import {util} from '../../util';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {DatabaseService} from '../database.service';
@@ -205,6 +205,7 @@ export class AccountAuthService {
 	public async register (
 		realUsername: string,
 		password: string,
+		pin: {isCustom: boolean; value: string},
 		name: string,
 		email?: string
 	) : Promise<boolean> {
@@ -233,12 +234,16 @@ export class AccountAuthService {
 				encryptionKeyPair,
 				signingKeyPair,
 				certificateRequestURL,
+				pinHashURL,
+				pinIsCustomURL,
 				publicEncryptionKeyURL,
 				publicProfileURL
 			]	= await Promise.all([
 				this.potassiumService.box.keyPair(),
 				this.potassiumService.sign.keyPair(),
 				this.accountDatabaseService.normalizeURL(`users/${username}/certificateRequest`),
+				this.accountDatabaseService.normalizeURL(`users/${username}/pin/hash`),
+				this.accountDatabaseService.normalizeURL(`users/${username}/pin/isCustom`),
 				this.accountDatabaseService.normalizeURL(`users/${username}/publicEncryptionKey`),
 				this.accountDatabaseService.normalizeURL(`users/${username}/publicProfile`),
 				this.databaseService.register(username, loginData.secondaryPassword)
@@ -307,6 +312,19 @@ export class AccountAuthService {
 						signingKeyPair.privateKey,
 						certificateRequestURL
 					)
+				),
+				this.databaseService.setItem(
+					pinHashURL,
+					BinaryProto,
+					await this.potassiumService.secretBox.seal(
+						await this.passwordHash(username, pin.value),
+						loginData.symmetricKey
+					)
+				),
+				this.databaseService.setItem(
+					pinIsCustomURL,
+					BooleanProto,
+					pin.isCustom
 				),
 				this.databaseService.setItem(
 					publicEncryptionKeyURL,

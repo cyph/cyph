@@ -490,6 +490,26 @@
 					}
 				},
 
+				"pin": {
+					"hash": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+					"isCustom": {
+						".read": true,
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				},
+
 				"presence": {
 					".read": true,
 					"hash": {

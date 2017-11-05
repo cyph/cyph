@@ -164,6 +164,10 @@ export class AccountRegisterComponent implements OnInit {
 		this.error		= !(await this.accountAuthService.register(
 			this.username.value,
 			this.useXkcdPassphrase ? (await this.xkcdPassphrase) : this.masterKey,
+			{
+				isCustom: !this.useLockScreenPIN,
+				value: this.useLockScreenPIN ? this.lockScreenPIN : this.lockScreenPassword
+			},
 			this.name,
 			this.email
 		));
