@@ -313,7 +313,7 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly signupFailed: string			= util.translate(
-		`Signup failed.`
+		`Signup failed. Please try again later.`
 	);
 
 	/** @see StringsService */

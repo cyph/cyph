@@ -483,12 +483,7 @@
 									<div fxLayout='row' fxLayoutAlign='center center'>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3
-													class='cyph-banner warn'
-													[style.visibility]='
-														error ? "visible" : "hidden"
-													'
-												>
+												<h3 class='cyph-banner warn' *ngIf='error'>
 													{{stringsService.signupFailed}}
 												</h3>
 											</div>
