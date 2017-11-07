@@ -3,10 +3,9 @@
  */
 
 
-import {AnalyticsService} from '../cyph/services/analytics.service';
-import {EnvService} from '../cyph/services/env.service';
-import {WebLocalStorageService} from '../cyph/services/web-local-storage.service';
+import {Analytics} from '../cyph/analytics';
+import {env} from '../cyph/env';
 
 
-/** @see AnalyticsService */
-export const analytics	= new AnalyticsService(new EnvService(new WebLocalStorageService()));
+/** @see Analytics */
+export const analytics	= new Analytics(env);
