@@ -9,7 +9,7 @@ import {take} from 'rxjs/operators/take';
 import {AccountContactRecord, AccountUserPresence, IAccountContactRecord} from '../../proto';
 import {UserPresence, userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
-import {util} from '../util';
+import * as util from '../util';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';

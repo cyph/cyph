@@ -1,5 +1,5 @@
 import {ChatUnconfirmedMessages} from '../../proto';
-import {util} from '../util';
+import * as util from '../util';
 
 
 /** @see ChatUnconfirmedMessages */

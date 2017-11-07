@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import * as localforage from 'localforage';
 import {IProto} from '../iproto';
 import {StringProto} from '../protos';
-import {util} from '../util';
+import * as util from '../util';
 import {LocalStorageService} from './local-storage.service';
 
 

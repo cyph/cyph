@@ -9,7 +9,7 @@ import {eventManager} from '../event-manager';
 import {ISessionTransfer, SessionTransfer, SessionTransferAnswers} from '../files';
 import {BinaryProto} from '../protos';
 import {ISessionMessageData, rpcEvents} from '../session';
-import {util} from '../util';
+import * as util from '../util';
 import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
 import {ConfigService} from './config.service';

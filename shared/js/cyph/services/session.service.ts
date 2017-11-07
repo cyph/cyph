@@ -17,7 +17,7 @@ import {
 	ProFeatures,
 	rpcEvents
 } from '../session';
-import {util} from '../util';
+import * as util from '../util';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';

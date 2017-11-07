@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Env} from '../env';
 import {StringProto} from '../protos';
-import {util} from '../util';
+import * as util from '../util';
 import {LocalStorageService} from './local-storage.service';
 
 

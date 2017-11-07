@@ -10,7 +10,7 @@ import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
-import {util} from '../util';
+import * as util from '../util';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';

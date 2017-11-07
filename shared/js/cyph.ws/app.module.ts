@@ -22,7 +22,7 @@ import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {ThreadedPotassiumService} from '../cyph/services/crypto/threaded-potassium.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {FaviconService} from '../cyph/services/favicon.service';
-import {Util} from '../cyph/util';
+import * as util from '../cyph/util';
 import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
@@ -58,7 +58,7 @@ import {LockdownComponent} from './lockdown.component';
 export class AppModule {
 	constructor (domSanitizer: DomSanitizer, httpClient: HttpClient, dialogService: DialogService) {
 		DataURIProto.resolveDomSanitizer(domSanitizer);
-		Util.resolveHttpClient(httpClient);
-		Util.resolveDialogService(dialogService);
+		util.resolveHttpClient(httpClient);
+		util.resolveDialogService(dialogService);
 	}
 }

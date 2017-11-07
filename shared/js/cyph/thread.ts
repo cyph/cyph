@@ -1,7 +1,7 @@
 import {env} from './env';
 import {eventManager} from './event-manager';
 import {IThread} from './ithread';
-import {util} from './util';
+import * as util from './util';
 
 
 /** @inheritDoc */

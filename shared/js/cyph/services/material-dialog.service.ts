@@ -6,7 +6,7 @@ import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {DialogImageComponent} from '../components/dialog-image.component';
 import {LockFunction} from '../lock-function-type';
-import {util} from '../util';
+import * as util from '../util';
 import {DialogService} from './dialog.service';
 import {StringsService} from './strings.service';
 

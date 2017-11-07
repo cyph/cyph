@@ -1,7 +1,7 @@
 import {Observable} from 'rxjs/Observable';
 import {ChatMessage as ChatMessageInternal, IChatMessage} from '../../proto';
 import {Timer} from '../timer';
-import {util} from '../util';
+import * as util from '../util';
 
 
 /** @inheritDoc */

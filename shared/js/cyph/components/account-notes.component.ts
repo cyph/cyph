@@ -8,7 +8,6 @@ import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
-import {UtilService} from '../services/util.service';
 
 
 /**
@@ -66,9 +65,6 @@ export class AccountNotesComponent implements OnInit {
 		public readonly accountFilesService: AccountFilesService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService,
-
-		/** @see UtilService */
-		public readonly utilService: UtilService
+		public readonly envService: EnvService
 	) {}
 }

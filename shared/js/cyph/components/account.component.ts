@@ -6,7 +6,7 @@ import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
-import {util} from '../util';
+import * as util from '../util';
 
 
 /**

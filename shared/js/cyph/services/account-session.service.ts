@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BinaryProto, StringProto} from '../protos';
-import {util} from '../util';
+import * as util from '../util';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';

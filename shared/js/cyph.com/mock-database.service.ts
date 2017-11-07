@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {IProto} from '../cyph/iproto';
 import {ITimedValue} from '../cyph/itimed-value';
 import {DatabaseService} from '../cyph/services/database.service';
-import {util} from '../cyph/util';
+import * as util from '../cyph/util';
 
 
 /**

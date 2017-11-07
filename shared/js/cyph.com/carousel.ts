@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-import {util} from '../cyph/util';
+import * as util from '../cyph/util';
 
 
 /**

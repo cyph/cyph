@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {env} from '../env';
 import {events, ProFeatures} from '../session';
-import {util} from '../util';
+import * as util from '../util';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';

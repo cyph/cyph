@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {util} from '../util';
+import * as util from '../util';
 import {ThreadedPotassiumService} from './crypto/threaded-potassium.service';
 import {SessionService} from './session.service';
 

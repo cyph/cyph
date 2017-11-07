@@ -8,7 +8,7 @@ import {microlight} from 'microlight-string';
 import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {HtmlSanitizerService} from '../services/html-sanitizer.service';
-import {util} from '../util';
+import * as util from '../util';
 
 
 /**

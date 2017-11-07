@@ -9,7 +9,7 @@ import {P2PWebRTCService} from '../services/p2p-webrtc.service';
 import {P2PService} from '../services/p2p.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
-import {UtilService} from '../services/util.service';
+import {readableByteLength} from '../util';
 
 
 /**
@@ -30,6 +30,9 @@ export class ChatMainComponent implements AfterViewInit {
 
 	/** @see ChatMessageListComponent.messageCountInTitle */
 	@Input() public messageCountInTitle: boolean;
+
+	/** @see readableByteLength */
+	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
 
 	/** @see States */
 	public readonly states: typeof States	= States;
@@ -72,9 +75,6 @@ export class ChatMainComponent implements AfterViewInit {
 		public readonly sessionService: SessionService,
 
 		/** @see StringsService */
-		public readonly stringsService: StringsService,
-
-		/** @see UtilService */
-		public readonly utilService: UtilService
+		public readonly stringsService: StringsService
 	) {}
 }

@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {IAsyncValue} from './iasync-value';
 import {LockFunction} from './lock-function-type';
-import {util} from './util';
+import * as util from './util';
 
 
 /**

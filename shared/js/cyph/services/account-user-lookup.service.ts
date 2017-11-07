@@ -3,7 +3,7 @@ import {map} from 'rxjs/operators/map';
 import {AccountUserPresence, AccountUserProfile} from '../../proto';
 import {SecurityModels, User} from '../account';
 import {DataURIProto} from '../protos';
-import {util} from '../util';
+import * as util from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 
@@ -69,6 +69,7 @@ export class AccountUserLookupService {
 				undefined,
 				true
 			).pipe(map(({value}) =>
+				/* tslint:disable-next-line:strict-type-predicates */
 				typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
 			)),
 			this.accountDatabaseService.watch(
@@ -78,6 +79,7 @@ export class AccountUserLookupService {
 				undefined,
 				true
 			).pipe(map(({value}) =>
+				/* tslint:disable-next-line:strict-type-predicates */
 				typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
 			)),
 			this.databaseService.getAsyncValue(

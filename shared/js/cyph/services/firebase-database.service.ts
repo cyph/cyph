@@ -12,7 +12,7 @@ import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {BinaryProto} from '../protos';
-import {util} from '../util';
+import * as util from '../util';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {LocalStorageService} from './local-storage.service';

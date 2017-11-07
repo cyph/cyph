@@ -12,7 +12,7 @@ import {
 	ISessionMessageData,
 	rpcEvents
 } from '../cyph/session';
-import {util} from '../cyph/util';
+import * as util from '../cyph/util';
 import {ISessionMessage} from '../proto';
 import {ChatData} from './chat-data';
 

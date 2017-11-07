@@ -5,7 +5,7 @@ import * as braintreeDropIn from 'braintree-web-drop-in';
 import {SubscriptionTypes} from '../checkout';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
-import {util} from '../util';
+import * as util from '../util';
 
 
 /**

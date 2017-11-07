@@ -8,7 +8,7 @@ import {DialogImageComponent} from './dialog-image.component';
 import {LockFunction} from './js/cyph/lock-function-type';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {StringsService} from './js/cyph/services/strings.service';
-import {util} from './js/cyph/util';
+import * as util from './js/cyph/util';
 
 
 /**

@@ -3,7 +3,7 @@ import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {StringProto} from '../cyph/protos';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {StringsService} from '../cyph/services/strings.service';
-import {util} from '../cyph/util';
+import * as util from '../cyph/util';
 import {AppService} from './app.service';
 
 

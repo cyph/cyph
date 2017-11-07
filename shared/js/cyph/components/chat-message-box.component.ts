@@ -14,7 +14,7 @@ import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
-import {util} from '../util';
+import * as util from '../util';
 
 
 /**

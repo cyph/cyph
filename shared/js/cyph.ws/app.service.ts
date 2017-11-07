@@ -12,7 +12,7 @@ import {config} from '../cyph/config';
 import {AccountService} from '../cyph/services/account.service';
 import {AccountAuthService} from '../cyph/services/crypto/account-auth.service';
 import {FaviconService} from '../cyph/services/favicon.service';
-import {util} from '../cyph/util';
+import * as util from '../cyph/util';
 import {ChatRootStates} from './enums';
 
 

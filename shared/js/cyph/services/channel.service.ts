@@ -7,7 +7,7 @@ import {LockFunction} from '../lock-function-type';
 import {StringProto} from '../protos';
 import {IChannelService} from '../service-interfaces/ichannel.service';
 import {IChannelHandlers} from '../session';
-import {util} from '../util';
+import * as util from '../util';
 import {DatabaseService} from './database.service';
 
 

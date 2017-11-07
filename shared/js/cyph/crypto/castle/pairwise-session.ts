@@ -9,7 +9,7 @@ import {IAsyncValue} from '../../iasync-value';
 import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
-import {util} from '../../util';
+import * as util from '../../util';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
 import {HandshakeSteps} from './enums';

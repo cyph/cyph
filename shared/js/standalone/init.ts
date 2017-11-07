@@ -8,7 +8,7 @@
 
 import * as $ from 'jquery';
 import {env} from '../cyph/env';
-import {util} from '../cyph/util';
+import * as util from '../cyph/util';
 
 
 /* Mobile CSS class */

@@ -9,7 +9,7 @@ import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {SignupService} from '../cyph/services/signup.service';
-import {util} from '../cyph/util';
+import * as util from '../cyph/util';
 import {Carousel} from './carousel';
 import {elements} from './elements';
 import {HomeSections, pageTitles, Promos, States} from './enums';

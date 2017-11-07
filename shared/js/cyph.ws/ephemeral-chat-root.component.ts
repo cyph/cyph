@@ -27,7 +27,7 @@ import {StringsService} from '../cyph/services/strings.service';
 import {UrlSessionInitService} from '../cyph/services/url-session-init.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
 import {events} from '../cyph/session/enums';
-import {util} from '../cyph/util';
+import * as util from '../cyph/util';
 import {AppService} from './app.service';
 import {ChatRootStates} from './enums';
 

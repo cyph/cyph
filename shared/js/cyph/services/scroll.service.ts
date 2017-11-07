@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {Set as ImmutableSet} from 'immutable';
 import * as $ from 'jquery';
-import {util} from '../util';
+import * as util from '../util';
 import {EnvService} from './env.service';
 import {VisibilityWatcherService} from './visibility-watcher.service';
 

@@ -4,7 +4,7 @@ import {AccountFilesService} from '../services/account-files.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
-import {UtilService} from '../services/util.service';
+import {readableByteLength} from '../util';
 
 
 /**
@@ -16,6 +16,9 @@ import {UtilService} from '../services/util.service';
 	templateUrl: '../../../templates/account-files.html'
 })
 export class AccountFilesComponent {
+	/** @see readableByteLength */
+	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
+
 	constructor (
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
@@ -30,9 +33,6 @@ export class AccountFilesComponent {
 		public readonly accountFilesService: AccountFilesService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService,
-
-		/** @see UtilService */
-		public readonly utilService: UtilService
+		public readonly envService: EnvService
 	) {}
 }

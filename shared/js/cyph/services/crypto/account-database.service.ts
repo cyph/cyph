@@ -17,7 +17,7 @@ import {IProto} from '../../iproto';
 import {ITimedValue} from '../../itimed-value';
 import {LockFunction} from '../../lock-function-type';
 import {BinaryProto} from '../../protos';
-import {util} from '../../util';
+import * as util from '../../util';
 import {DatabaseService} from '../database.service';
 import {LocalStorageService} from '../local-storage.service';
 import {PotassiumService} from './potassium.service';

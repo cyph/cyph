@@ -1,6 +1,6 @@
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subject} from 'rxjs/Subject';
-import {util} from './util';
+import * as util from './util';
 
 
 /**

@@ -2,7 +2,7 @@ import {Directive, ElementRef, Renderer2} from '@angular/core';
 import * as $ from 'jquery';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
-import {util} from '../util';
+import * as util from '../util';
 
 
 /**

@@ -2,7 +2,7 @@ import {Component, ElementRef, Input} from '@angular/core';
 import * as $ from 'jquery';
 import {EnvService} from '../services/env.service';
 import {SignupService} from '../services/signup.service';
-import {util} from '../util';
+import * as util from '../util';
 
 
 /**

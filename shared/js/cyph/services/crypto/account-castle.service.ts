@@ -12,7 +12,7 @@ import {
 	MaybeBinaryProto,
 	Uint32Proto
 } from '../../protos';
-import {util} from '../../util';
+import * as util from '../../util';
 import {AccountContactsService} from '../account-contacts.service';
 import {SessionService} from '../session.service';
 import {AccountDatabaseService} from './account-database.service';

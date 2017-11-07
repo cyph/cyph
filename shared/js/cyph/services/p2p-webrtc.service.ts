@@ -7,7 +7,7 @@ import {eventManager} from '../event-manager';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
-import {util} from '../util';
+import * as util from '../util';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';

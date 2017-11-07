@@ -1,6 +1,6 @@
 import {env} from './env';
 import {IThread} from './ithread';
-import {util} from './util';
+import * as util from './util';
 
 
 /**

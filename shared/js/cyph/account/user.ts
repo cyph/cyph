@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {IAccountUserPresence, IAccountUserProfile} from '../../proto';
 import {IAsyncValue} from '../iasync-value';
-import {util} from '../util';
+import * as util from '../util';
 import {UserPresence} from './enums';
 
 

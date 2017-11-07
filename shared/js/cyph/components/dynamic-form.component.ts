@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../../proto';
-import {util} from '../util';
+import * as util from '../util';
 
 
 /**

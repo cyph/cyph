@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {EnvService} from '../cyph/services/env.service';
-import {util} from '../cyph/util';
+import * as util from '../cyph/util';
 import {ChatData} from './chat-data';
 
 

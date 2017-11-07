@@ -5,7 +5,7 @@ import {take} from 'rxjs/operators/take';
 import {ChatMessage} from '../../proto';
 import {IChatData, States} from '../chat';
 import {ChatUnconfirmedMessagesProto} from '../protos';
-import {util} from '../util';
+import * as util from '../util';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionService} from './account-session.service';
 import {AnalyticsService} from './analytics.service';

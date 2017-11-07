@@ -1,6 +1,6 @@
 import {ErrorHandler, Injectable} from '@angular/core';
 import {fromError} from 'stacktrace-js';
-import {util} from '../util';
+import * as util from '../util';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
 

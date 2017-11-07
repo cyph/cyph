@@ -12,7 +12,7 @@ import {
 } from '../../../proto';
 import {ExternalServices} from '../../account';
 import {BinaryProto, BooleanProto, StringProto} from '../../protos';
-import {util} from '../../util';
+import * as util from '../../util';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {DatabaseService} from '../database.service';
 import {LocalStorageService} from '../local-storage.service';

@@ -33,7 +33,7 @@ import {IProto} from '../iproto';
 import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
 import {BinaryProto, BlobProto, DataURIProto} from '../protos';
-import {util} from '../util';
+import * as util from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';

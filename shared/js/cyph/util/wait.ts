@@ -1,0 +1,48 @@
+import {sleep} from './sleep';
+
+
+/** Runs f until it returns with no errors. */
+export const retryUntilSuccessful	= async <T> (
+	f: () => (T|Promise<T>),
+	maxAttempts: number = 10
+) : Promise<T> => {
+	for (let i = 0 ; true ; ++i) {
+		try {
+			return await f();
+		}
+		catch (err) {
+			if (i > maxAttempts) {
+				throw err;
+			}
+			else {
+				await sleep();
+			}
+		}
+	}
+};
+
+/** Waits until value exists before resolving it in promise. */
+export const waitForValue	= async <T> (
+	f: () => T|undefined,
+	condition?: (value: T) => boolean
+) : Promise<T> => {
+	let value: T|undefined	= f();
+	while (value === undefined || (condition && !condition(value))) {
+		await sleep();
+		value	= f();
+	}
+	return value;
+};
+
+/** Waits for iterable value to exist and have at least minLength elements. */
+export const waitForIterable	= async <T> (
+	f: () => T&{length: number}|undefined,
+	minLength: number = 1
+) : Promise<T> => {
+	return waitForValue<T&{length: number}>(f, value => value.length >= minLength);
+};
+
+/** Waits until function returns true. */
+export const waitUntilTrue	= async (f: () => boolean) : Promise<void> => {
+	await waitForValue(() => f() || undefined);
+};

@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {usernameMask} from '../account';
-import {util} from '../util';
+import * as util from '../util';
 
 
 /**

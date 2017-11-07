@@ -29,7 +29,7 @@
 					</div>
 					<div>
 						<span cyphTranslate>Size:</span>
-						<span>{{utilService.readableByteLength(file.size)}}</span>
+						<span>{{readableByteLength(file.size)}}</span>
 					</div>
 					<div *ngIf='
 						!file.wasAnonymousShare &&
@@ -107,7 +107,7 @@
 					</div>
 					<div>
 						<span cyphTranslate>Size:</span>
-						<span>{{utilService.readableByteLength(file.size)}}</span>
+						<span>{{readableByteLength(file.size)}}</span>
 					</div>
 					<div *ngIf='!file.wasAnonymousShare'>
 						<span cyphTranslate>Shared by</span>

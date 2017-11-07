@@ -16,7 +16,7 @@ import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
 import {LockFunction} from '../lock-function-type';
 import {EnvService} from '../services/env.service';
-import {util} from '../util';
+import * as util from '../util';
 
 
 /**

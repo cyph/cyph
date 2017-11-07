@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
-import {util} from '../util';
+import * as util from '../util';
 
 
 /**
