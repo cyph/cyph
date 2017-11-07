@@ -19,7 +19,7 @@ read -r -d '' modules <<- EOM
 	@angular/compiler
 	@angular/compiler-cli
 	@angular/core
-	@angular/flex-layout
+	@angular/flex-layout@https://github.com/buu700/flex-layout-tmp
 	@angular/forms
 	@angular/http
 	@angular/material
