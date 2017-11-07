@@ -25,21 +25,29 @@ nodeModulesAssets="$(
 		uniq
 )"
 
-typescriptAssets="
-	cyph/crypto/native-web-crypto-polyfill
-	cyph/crypto/potassium/index
-	standalone/analytics
-	$(grep -roP "importScripts\('/assets/js/.*?\.js'\)" shared/js |
-		perl -pe "s/^.*?'\/assets\/js\/(.*?)\.js'.*/\1/g" |
-		grep -vP '^standalone/global$' |
+typescriptAssets="$(
+	{
+		echo cyph/crypto/native-web-crypto-polyfill;
+		echo cyph/crypto/potassium/index;
+		echo standalone/analytics;
+		grep -roP "importScripts\('/assets/js/.*?\.js'\)" shared/js |
+			perl -pe "s/^.*?'\/assets\/js\/(.*?)\.js'.*/\1/g" |
+			grep -vP '^standalone/global$' \
+		;
+	} |
 		sort |
 		uniq
-	)
-"
+)"
 
-scssAssets="native/app $(
-	grep -oP "href='/assets/css/.*?\.css'" */src/index.html |
-		perl -pe "s/^.*?'\/assets\/css\/(.*?)\.css'.*/\1/g" |
+scssAssets="$(
+	{
+		echo native/app;
+		echo cyph/crypto/potassium/index;
+		echo standalone/analytics;
+		grep -oP "href='/assets/css/.*?\.css'" */src/index.html |
+			perl -pe "s/^.*?'\/assets\/css\/(.*?)\.css'.*/\1/g" \
+		;
+	} |
 		sort |
 		uniq
 )"
@@ -123,9 +131,8 @@ for f in ${typescriptAssets} ; do
 	m="$(echo ${f} | perl -pe 's/.*\/([^\/]+)$/\u$1/' | perl -pe 's/[^A-Za-z0-9](.)?/\u$1/g')"
 
 	cat > webpack.js <<- EOM
-		const TsConfigPathsPlugin	= require('awesome-typescript-loader').TsConfigPathsPlugin;
-		const webpack				= require('webpack');
-		const mangleExceptions		= require('../../../commands/mangleexceptions');
+		const UglifyJsPlugin	= require('uglifyjs-webpack-plugin');
+		const mangleExceptions	= require('../../../commands/mangleexceptions');
 
 		module.exports	= {
 			entry: {
@@ -135,7 +142,13 @@ for f in ${typescriptAssets} ; do
 				rules: [
 					{
 						test: /\.ts$/,
-						use: [{loader: 'awesome-typescript-loader'}]
+						use: [{
+							loader: '@ngtools/webpack',
+							options: {
+								skipCodeGeneration: true,
+								tsConfigPath: 'tsconfig.json'
+							}
+						}]
 					}
 				]
 			},
@@ -147,29 +160,27 @@ for f in ${typescriptAssets} ; do
 			},
 			plugins: [
 				$(test "${test}" || echo "
-					new webpack.optimize.UglifyJsPlugin({
-						comments: false,
-						compress: {
-							screw_ie8: true,
-							sequences: false,
-							warnings: false
-						},
-						mangle: {
-							except: mangleExceptions,
-							screw_ie8: true
-						},
-						sourceMap: false
+					new UglifyJsPlugin({
+						uglifyOptions: {
+							compress: {
+								passes: 3,
+								pure_getters: true,
+								sequences: false
+							},
+							ecma: 5,
+							mangle: {
+								reserved: mangleExceptions
+							},
+							output: {
+								ascii_only: true,
+								comments: false
+							}
+						}
 					})
 				")
 			],
 			resolve: {
-				extensions: ['.js', '.ts'],
-				plugins: [
-					new TsConfigPathsPlugin({
-						compiler: "typescript",
-						configFileName: "tsconfig.json"
-					})
-				]
+				extensions: ['.js', '.ts']
 			}
 		};
 	EOM
