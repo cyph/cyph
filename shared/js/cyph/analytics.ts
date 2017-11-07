@@ -1,7 +1,7 @@
 import * as $ from 'jquery';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
-import {util} from './util';
 import {Env} from './env';
+import {util} from './util';
 
 
 /**

@@ -3,7 +3,7 @@ import {Analytics} from '../analytics';
 import {EnvService} from './env.service';
 
 
-/** @inheritDoc \*/
+/** @inheritDoc */
 @Injectable()
 export class AnalyticsService extends Analytics {
 	constructor (envService: EnvService) {
