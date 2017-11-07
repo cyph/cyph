@@ -1,6 +1,6 @@
 import {ErrorHandler, Injectable} from '@angular/core';
 import {fromError} from 'stacktrace-js';
-import * as util from '../util';
+import {email} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
 
@@ -53,7 +53,7 @@ export class ErrorService implements ErrorHandler {
 			}
 
 			if (numEmails++ < 50) {
-				util.email(
+				email(
 					'errors',
 					`[${await this.envService.packageName}] ${subject}`,
 					exception

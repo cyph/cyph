@@ -1,7 +1,7 @@
 import {AfterViewInit, Component} from '@angular/core';
 import * as $ from 'jquery';
 import {EnvService} from '../cyph/services/env.service';
-import * as util from '../cyph/util';
+import {sleep, waitForIterable} from '../cyph/util';
 import {DemoService} from './demo.service';
 import {elements} from './elements';
 
@@ -75,7 +75,7 @@ export class DemoComponent implements AfterViewInit {
 		}
 		else {
 			elements.screenshotLaptop().add(elements.screenshotPhone()).removeAttr('style');
-			await util.sleep();
+			await sleep();
 		}
 
 		this.demoService.isActive	= isActive;
@@ -85,7 +85,7 @@ export class DemoComponent implements AfterViewInit {
 	private async facebookJoke ($desktopPic: JQuery, $mobilePic: JQuery) : Promise<void> {
 		const picUrl	= await this.demoService.facebookPicDataUri;
 
-		const $picImg	= await util.waitForIterable(
+		const $picImg	= await waitForIterable(
 			() => elements.demoRoot().find(`img:visible[src='${picUrl}']`),
 			2
 		);
@@ -105,7 +105,7 @@ export class DemoComponent implements AfterViewInit {
 
 			$this.parent().replaceWith($placeholder);
 
-			await util.sleep();
+			await sleep();
 
 			const offset	= this.getOffset(
 				$placeholder,
@@ -141,16 +141,16 @@ export class DemoComponent implements AfterViewInit {
 	public async ngAfterViewInit () : Promise<void> {
 		const $window	= $(window);
 
-		await util.waitForIterable(elements.demoRoot);
-		await util.waitForIterable(elements.heroText);
+		await waitForIterable(elements.demoRoot);
+		await waitForIterable(elements.heroText);
 
 		if (!this.envService.isMobile) {
-			await util.waitForIterable(() =>
+			await waitForIterable(() =>
 				elements.screenshotLaptop().filter((_: number, elem: HTMLElement) =>
 					$(elem).offset().left > 0
 				)
 			);
-			await util.waitForIterable(() =>
+			await waitForIterable(() =>
 				elements.screenshotPhone().filter((_: number, elem: HTMLElement) =>
 					$(elem).offset().left < $window.width()
 				)
@@ -172,7 +172,7 @@ export class DemoComponent implements AfterViewInit {
 			});
 		}
 
-		await util.sleep(750);
+		await sleep(750);
 
 		if (!this.envService.isMobile) {
 			await this.activeTransition(true);
@@ -194,7 +194,7 @@ export class DemoComponent implements AfterViewInit {
 				}
 				previousWidth	= width;
 				this.activeTransition(false);
-				await util.sleep(1000);
+				await sleep(1000);
 				this.activeTransition();
 			});
 		}
@@ -207,8 +207,8 @@ export class DemoComponent implements AfterViewInit {
 		});
 
 		if (!this.envService.isMobile) {
-			await util.waitForIterable(elements.demoListDesktop);
-			await util.waitForIterable(elements.demoListMobile);
+			await waitForIterable(elements.demoListDesktop);
+			await waitForIterable(elements.demoListMobile);
 			elements.demoListDesktop().append($desktopFacebookPic);
 			elements.demoListMobile().append($mobileFacebookPic);
 		}

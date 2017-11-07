@@ -3,7 +3,7 @@ import {map} from 'rxjs/operators/map';
 import {AccountUserPresence, AccountUserProfile} from '../../proto';
 import {SecurityModels, User} from '../account';
 import {DataURIProto} from '../protos';
-import * as util from '../util';
+import {getOrSetDefault, normalize} from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 
@@ -26,7 +26,7 @@ export class AccountUserLookupService {
 	 * a record of either an account with this username or a pending registration request.
 	 */
 	public async exists (username: string, confirmedOnly: boolean = true) : Promise<boolean> {
-		username	= util.normalize(username);
+		username	= normalize(username);
 		const url	= `users/${username}`;
 
 		const exists	= username.length > 0 && (
@@ -57,10 +57,10 @@ export class AccountUserLookupService {
 
 	/** Tries to to get user object for the specified username. */
 	public async getUser (username: string) : Promise<User> {
-		username	= util.normalize(username);
+		username	= normalize(username);
 		const url	= `users/${username}`;
 
-		const user	= util.getOrSetDefault(this.userCache, username, () => new User(
+		const user	= getOrSetDefault(this.userCache, username, () => new User(
 			username,
 			this.accountDatabaseService.watch(
 				`${url}/avatar`,

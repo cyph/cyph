@@ -17,7 +17,7 @@ import {
 	ProFeatures,
 	rpcEvents
 } from '../session';
-import * as util from '../util';
+import {deserialize, getTimestamp, serialize, sleep, uuid} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';
@@ -38,7 +38,7 @@ export abstract class SessionService implements ISessionService {
 	private resolveSymmetricKey?: (symmetricKey: Uint8Array) => void;
 
 	/** @ignore */
-	protected readonly eventID: string								= util.uuid();
+	protected readonly eventID: string								= uuid();
 
 	/** @ignore */
 	protected lastIncomingMessageTimestamp: number					= 0;
@@ -126,7 +126,7 @@ export abstract class SessionService implements ISessionService {
 		this.resolveOpened();
 
 		while (this.state.isAlive) {
-			await util.sleep(this.plaintextSendInterval);
+			await sleep(this.plaintextSendInterval);
 
 			if (this.plaintextSendQueue.length < 1) {
 				continue;
@@ -137,7 +137,7 @@ export abstract class SessionService implements ISessionService {
 				this.plaintextSendQueue.length
 			);
 
-			await this.castleService.send(await util.serialize(SessionMessageList, {messages}));
+			await this.castleService.send(await serialize(SessionMessageList, {messages}));
 		}
 	}
 
@@ -181,10 +181,10 @@ export abstract class SessionService implements ISessionService {
 				capabilities: additionalData.capabilities,
 				chatState: additionalData.chatState,
 				command: additionalData.command,
-				id: util.uuid(),
+				id: uuid(),
 				text: additionalData.text,
 				textConfirmation: additionalData.textConfirmation,
-				timestamp: await util.timestamp(),
+				timestamp: await getTimestamp(),
 				transfer: additionalData.transfer
 			};
 
@@ -247,7 +247,7 @@ export abstract class SessionService implements ISessionService {
 					(
 						await (async () =>
 							(
-								await util.deserialize(SessionMessageList, data.plaintext)
+								await deserialize(SessionMessageList, data.plaintext)
 							).messages
 						)().catch(() => undefined)
 					) ||

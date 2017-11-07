@@ -9,7 +9,7 @@ import {IAsyncValue} from '../../iasync-value';
 import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
-import * as util from '../../util';
+import {getTimestamp, lockFunction, sleep} from '../../util';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
 import {HandshakeSteps} from './enums';
@@ -212,7 +212,7 @@ export class PairwiseSession {
 		}
 
 		if (timestamp === undefined) {
-			timestamp	= await util.timestamp();
+			timestamp	= await getTimestamp();
 		}
 
 		await this.outgoingMessageQueue.pushValue(this.potassium.concatMemory(
@@ -256,10 +256,10 @@ export class PairwiseSession {
 		private readonly outgoingMessageQueue: IAsyncList<Uint8Array> = new LocalAsyncList([]),
 
 		/** @ignore */
-		private readonly receiveLock: LockFunction = util.lockFunction(),
+		private readonly receiveLock: LockFunction = lockFunction(),
 
 		/** @ignore */
-		private readonly sendLock: LockFunction = util.lockFunction(),
+		private readonly sendLock: LockFunction = lockFunction(),
 
 		asymmetricRatchetState: IAsymmetricRatchetState = {
 			privateKey: new LocalAsyncValue(undefined),
@@ -365,7 +365,7 @@ export class PairwiseSession {
 					await this.connect();
 
 					this.receiveLock(async () => {
-						const lock	= util.lockFunction();
+						const lock	= lockFunction();
 
 						const sub	= this.incomingMessageQueue.subscribe(
 							async ({cyphertext, newMessageID}) => lock(async () =>
@@ -379,12 +379,12 @@ export class PairwiseSession {
 						this.isReceiving.next(true);
 						await this.transport.closed;
 						this.isReceiving.next(false);
-						await util.sleep();
+						await sleep();
 						sub.unsubscribe();
 					});
 
 					this.sendLock(async () => {
-						const lock	= util.lockFunction();
+						const lock	= lockFunction();
 
 						const sub	= this.outgoingMessageQueue.subscribeAndPop(async message =>
 							lock(async () => {

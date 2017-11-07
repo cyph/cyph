@@ -10,7 +10,7 @@ import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
-import * as util from '../util';
+import {getTimestamp, lockFunction, sleep, uuid} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
@@ -31,7 +31,7 @@ export class ChatService {
 	private chatSelfDestructTimeout: number								= 5;
 
 	/** @ignore */
-	private messageChangeLock: LockFunction								= util.lockFunction();
+	private messageChangeLock: LockFunction								= lockFunction();
 
 	/** @see IChatData */
 	public chat: IChatData	= {
@@ -42,7 +42,7 @@ export class ChatService {
 		isMessageChanged: false,
 		keyExchangeProgress: 0,
 		messages: new LocalAsyncList<IChatMessage>([]),
-		receiveTextLock: util.lockFunction(),
+		receiveTextLock: lockFunction(),
 		state: States.none,
 		unconfirmedMessages: new LocalAsyncValue<{[id: string]: boolean|undefined}>({})
 	};
@@ -74,7 +74,7 @@ export class ChatService {
 				return unconfirmedMessages;
 			});
 
-			await util.sleep();
+			await sleep();
 		}
 		else {
 			this.sessionService.send([rpcEvents.confirm, {textConfirmation: {id: o.id}}]);
@@ -117,13 +117,13 @@ export class ChatService {
 			this.chatSelfDestructTimer	= new Timer(this.chatSelfDestructTimeout * 1000);
 			await this.chatSelfDestructTimer.start();
 			this.chatSelfDestructEffect	= true;
-			await util.sleep(500);
+			await sleep(500);
 			await this.chat.messages.updateValue(async () => []);
-			await util.sleep(1000);
+			await sleep(1000);
 			this.chatSelfDestructEffect	= false;
 
 			if (o.author !== this.sessionService.localUsername) {
-				await util.sleep(10000);
+				await sleep(10000);
 				this.close();
 			}
 		}
@@ -164,7 +164,7 @@ export class ChatService {
 
 	/**
 	 * Adds a message to the chat.
-	 * @param timestamp If not set, will use Util.timestamp().
+	 * @param timestamp If not set, will use util/getTimestamp().
 	 * @param shouldNotify If true, a notification will be sent.
 	 */
 	public async addMessage (
@@ -173,7 +173,7 @@ export class ChatService {
 		timestamp?: number,
 		shouldNotify: boolean = author !== this.sessionService.localUsername,
 		selfDestructTimeout?: number,
-		id: string = util.uuid()
+		id: string = uuid()
 	) : Promise<void> {
 		if (
 			!text ||
@@ -184,11 +184,11 @@ export class ChatService {
 		}
 
 		if (!timestamp) {
-			timestamp	= await util.timestamp();
+			timestamp	= await getTimestamp();
 		}
 
 		while (author !== this.sessionService.appUsername && !this.chat.isConnected) {
-			await util.sleep(500);
+			await sleep(500);
 		}
 
 		if (this.notificationService && shouldNotify) {
@@ -224,7 +224,7 @@ export class ChatService {
 			!isNaN(selfDestructTimeout) &&
 			selfDestructTimeout > 0
 		) {
-			await util.sleep(selfDestructTimeout + 10000);
+			await sleep(selfDestructTimeout + 10000);
 			text	= '';
 
 			await this.chat.messages.updateValue(async messages => {
@@ -264,7 +264,7 @@ export class ChatService {
 			this.chat.keyExchangeProgress	= 100;
 			this.chat.state					= States.chatBeginMessage;
 
-			await util.sleep(3000);
+			await sleep(3000);
 
 			if (<States> this.chat.state === States.aborted) {
 				return;
@@ -278,14 +278,14 @@ export class ChatService {
 				if (this.chatSelfDestruct) {
 					break;
 				}
-				await util.sleep(100);
+				await sleep(100);
 			}
 
 			if (!this.chatSelfDestruct) {
 				this.addMessage(
 					this.stringsService.introductoryMessage,
 					undefined,
-					(await util.timestamp()) - 30000,
+					(await getTimestamp()) - 30000,
 					false
 				);
 			}
@@ -341,7 +341,7 @@ export class ChatService {
 						{chatState: {isTyping: this.chat.isMessageChanged}}
 					]);
 
-					await util.sleep(1000);
+					await sleep(1000);
 				}
 			}
 		});
@@ -411,7 +411,7 @@ export class ChatService {
 			const increment		= interval / ChatService.approximateKeyExchangeTime;
 
 			while (this.chat.keyExchangeProgress <= 100) {
-				await util.sleep(interval);
+				await sleep(interval);
 				this.chat.keyExchangeProgress += increment * 100;
 			}
 

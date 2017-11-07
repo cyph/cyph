@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import * as $ from 'jquery';
 import {EnvService} from '../services/env.service';
-import * as util from '../util';
+import {triggerClick, waitForIterable} from '../util';
 
 
 /**
@@ -26,7 +26,7 @@ export class FileInputComponent implements AfterViewInit {
 			return;
 		}
 
-		const $input	= await util.waitForIterable(
+		const $input	= await waitForIterable(
 			() => $(this.elementRef.nativeElement).children()
 		);
 
@@ -50,11 +50,11 @@ export class FileInputComponent implements AfterViewInit {
 			})
 		;
 
-		const $button	= await util.waitForIterable(
+		const $button	= await waitForIterable(
 			() => $input.closest('button')
 		);
 
-		$button.click(() => { util.triggerClick(input); });
+		$button.click(() => { triggerClick(input); });
 	}
 
 	constructor (

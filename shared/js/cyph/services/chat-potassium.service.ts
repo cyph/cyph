@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import * as util from '../util';
+import {waitForValue} from '../util';
 import {ThreadedPotassiumService} from './crypto/threaded-potassium.service';
 import {SessionService} from './session.service';
 
@@ -13,7 +13,7 @@ import {SessionService} from './session.service';
 export class ChatPotassiumService extends ThreadedPotassiumService {
 	/** @inheritDoc */
 	public async native () : Promise<boolean> {
-		return (await util.waitForValue(() => this.sessionService)).apiFlags.nativeCrypto;
+		return (await waitForValue(() => this.sessionService)).apiFlags.nativeCrypto;
 	}
 
 	constructor (

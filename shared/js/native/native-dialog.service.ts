@@ -8,7 +8,7 @@ import {DialogImageComponent} from './dialog-image.component';
 import {LockFunction} from './js/cyph/lock-function-type';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {StringsService} from './js/cyph/services/strings.service';
-import * as util from './js/cyph/util';
+import {lockFunction, sleep} from './js/cyph/util';
 
 
 /**
@@ -17,7 +17,7 @@ import * as util from './js/cyph/util';
 @Injectable()
 export class NativeDialogService implements DialogService {
 	/** @ignore */
-	private readonly lock: LockFunction	= util.lockFunction();
+	private readonly lock: LockFunction	= lockFunction();
 
 	/** @ignore */
 	private readonly snackbar: SnackBar	= new SnackBar();
@@ -89,11 +89,11 @@ export class NativeDialogService implements DialogService {
 			isPending	= false;
 		});
 
-		await util.sleep(duration);
+		await sleep(duration);
 		if (isPending) {
 			this.snackbar.dismiss();
 		}
-		await util.sleep(500);
+		await sleep(500);
 	}
 
 	constructor (

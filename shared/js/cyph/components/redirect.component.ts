@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import * as util from '../util';
+import {sleep} from '../util';
 
 
 /**
@@ -13,7 +13,7 @@ import * as util from '../util';
 export class RedirectComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		await util.sleep(0);
+		await sleep(0);
 
 		this.routerService.navigate(
 			(

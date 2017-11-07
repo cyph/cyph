@@ -12,7 +12,7 @@ import {config} from '../cyph/config';
 import {AccountService} from '../cyph/services/account.service';
 import {AccountAuthService} from '../cyph/services/crypto/account-auth.service';
 import {FaviconService} from '../cyph/services/favicon.service';
-import * as util from '../cyph/util';
+import {sleep, translate, waitForValue} from '../cyph/util';
 import {ChatRootStates} from './enums';
 
 
@@ -84,7 +84,7 @@ export class AppService implements CanActivate {
 		}
 		catch (_) {}
 
-		titleService.setTitle(util.translate(titleService.getTitle()));
+		titleService.setTitle(translate(titleService.getTitle()));
 
 		self.onhashchange	= () => {
 			if (!locationData.hash.match(/^#?\/?account(\/|$)/)) {
@@ -98,7 +98,7 @@ export class AppService implements CanActivate {
 			}
 
 			await (
-				await util.waitForValue(() =>
+				await waitForValue(() =>
 					routerService.routerState.root.firstChild || undefined
 				)
 			).url.pipe(first()).toPromise();
@@ -128,10 +128,10 @@ export class AppService implements CanActivate {
 			}
 			else {
 				while (this.chatRootState === ChatRootStates.blank) {
-					await util.sleep();
+					await sleep();
 				}
 
-				await util.sleep();
+				await sleep();
 			}
 
 			this.loadComplete();

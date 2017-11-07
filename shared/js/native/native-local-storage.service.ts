@@ -3,7 +3,7 @@ import {SecureStorage} from 'nativescript-secure-storage';
 import {potassiumUtil} from './js/cyph/crypto/potassium/potassium-util';
 import {IProto} from './js/cyph/iproto';
 import {LocalStorageService} from './js/cyph/services/local-storage.service';
-import * as util from './js/cyph/util';
+import {deserialize, serialize} from './js/cyph/util';
 
 
 /**
@@ -29,7 +29,7 @@ export class NativeLocalStorageService extends LocalStorageService {
 			throw new Error(`Item ${url} not found.`);
 		}
 
-		return util.deserialize(proto, potassiumUtil.fromBase64(value));
+		return deserialize(proto, potassiumUtil.fromBase64(value));
 	}
 
 	/** @inheritDoc */
@@ -44,7 +44,7 @@ export class NativeLocalStorageService extends LocalStorageService {
 		const promise	= (async () => {
 			await this.storage.set({
 				key: url,
-				value: potassiumUtil.toBase64(await util.serialize(proto, value))
+				value: potassiumUtil.toBase64(await serialize(proto, value))
 			});
 
 			return {url};

@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ConfigService} from '../services/config.service';
-import * as util from '../util';
+import {email} from '../util';
 
 
 /**
@@ -47,7 +47,7 @@ export class ContactComponent implements OnInit {
 
 	/** Sends email. */
 	public send () : void {
-		util.email(
+		email(
 			this.to,
 			this.subject,
 			this.message,

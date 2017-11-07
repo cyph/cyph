@@ -7,7 +7,7 @@ import {take} from 'rxjs/operators/take';
 import {PairwiseSession} from '../../crypto/castle/pairwise-session';
 import {ICastle} from '../../crypto/icastle';
 import {LockFunction} from '../../lock-function-type';
-import * as util from '../../util';
+import {getTimestamp, lockFunction} from '../../util';
 import {SessionService} from '../session.service';
 import {PotassiumService} from './potassium.service';
 
@@ -28,7 +28,7 @@ export class CastleService implements ICastle {
 	;
 
 	/** @ignore */
-	protected readonly pairwiseSessionLock: LockFunction	= util.lockFunction();
+	protected readonly pairwiseSessionLock: LockFunction	= lockFunction();
 
 	/** @ignore */
 	protected async getPairwiseSession () : Promise<PairwiseSession> {
@@ -54,7 +54,7 @@ export class CastleService implements ICastle {
 	/** @inheritDoc */
 	public async send (plaintext: string|ArrayBufferView, timestamp?: number) : Promise<void> {
 		if (timestamp === undefined) {
-			timestamp	= await util.timestamp();
+			timestamp	= await getTimestamp();
 		}
 
 		return (await this.getPairwiseSession()).send(plaintext, timestamp);

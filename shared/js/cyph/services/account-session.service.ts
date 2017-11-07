@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BinaryProto, StringProto} from '../protos';
-import * as util from '../util';
+import {uuid} from '../util';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';
@@ -53,7 +53,7 @@ export class AccountSessionService extends SessionService {
 			this.init(contactID, await this.accountDatabaseService.getOrSetDefault(
 				`contacts/${contactID}/session/channelUserID`,
 				StringProto,
-				() => util.uuid()
+				uuid
 			));
 		})();
 

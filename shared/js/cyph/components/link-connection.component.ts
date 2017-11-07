@@ -9,7 +9,7 @@ import {EnvService} from '../services/env.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {Timer} from '../timer';
-import * as util from '../util';
+import {lockTryOnce, sleep, waitForIterable, waitForValue} from '../util';
 
 
 /**
@@ -59,7 +59,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 	public async addTime (milliseconds: number) : Promise<void> {
 		this.timer.addTime(milliseconds);
 
-		await util.lockTryOnce(
+		await lockTryOnce(
 			this.addTimeLock,
 			async () => this.dialogService.toast(
 				this.stringsService.timeExtended,
@@ -70,7 +70,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 
 	/** Copies link to clipboard. */
 	public async copyToClipboard () : Promise<void> {
-		await util.lockTryOnce(
+		await lockTryOnce(
 			this.copyLock,
 			async () => this.dialogService.toast(
 				await clipboard.writeText(this.linkConstant).
@@ -86,7 +86,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 	public async ngAfterViewInit () : Promise<void> {
 		let isWaiting		= true;
 
-		await util.waitForValue(() => this.sessionService.state.sharedSecret || undefined);
+		await waitForValue(() => this.sessionService.state.sharedSecret || undefined);
 
 		this.isPassive		= this.sessionService.state.wasInitiatedByAPI;
 
@@ -117,7 +117,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 			const $element		= $(this.elementRef.nativeElement);
 
 			if (this.envService.isMobile) {
-				const $connectLinkLink	= await util.waitForIterable(
+				const $connectLinkLink	= await waitForIterable(
 					() => $element.find('.connect-link-link')
 				);
 
@@ -125,7 +125,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 				$connectLinkLink.click(e => e.preventDefault());
 			}
 			else {
-				const $connectLinkInput	= await util.waitForIterable(
+				const $connectLinkInput	= await waitForIterable(
 					() => $element.find('.connect-link-input')
 				);
 
@@ -133,7 +133,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 
 				(async () => {
 					while (isWaiting) {
-						await util.sleep(1000);
+						await sleep(1000);
 
 						if (this.advancedFeatures) {
 							continue;
@@ -149,7 +149,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 				})();
 			}
 
-			await util.waitForIterable(() => $element.filter(':visible'));
+			await waitForIterable(() => $element.filter(':visible'));
 		}
 		else {
 			/* TODO: HANDLE NATIVE */
@@ -165,7 +165,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 			this.timer.stop();
 		});
 
-		await util.sleep(1000);
+		await sleep(1000);
 		await this.timer.start();
 
 		if (isWaiting) {

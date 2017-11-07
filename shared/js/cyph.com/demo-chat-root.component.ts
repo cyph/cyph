@@ -12,7 +12,7 @@ import {ScrollService} from '../cyph/services/scroll.service';
 import {SessionCapabilitiesService} from '../cyph/services/session-capabilities.service';
 import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
-import * as util from '../cyph/util';
+import {sleep} from '../cyph/util';
 import {ChatData} from './chat-data';
 import {DemoEnvService} from './demo-env.service';
 import {DemoService} from './demo.service';
@@ -83,7 +83,7 @@ export class DemoChatRootComponent implements OnInit {
 				this.routerService.navigate([HomeSections[HomeSections.intro]]);
 
 				while (!this.demoService.isActive) {
-					await util.sleep();
+					await sleep();
 				}
 
 				if (env.isMobile) {
@@ -91,7 +91,7 @@ export class DemoChatRootComponent implements OnInit {
 				}
 				else {
 					this.demoService.desktop.showCyphertext.next();
-					await util.sleep(8000);
+					await sleep(8000);
 					this.demoService.mobile.showCyphertext.next();
 				}
 			});

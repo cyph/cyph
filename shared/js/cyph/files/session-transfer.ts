@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs/Observable';
-import * as util from '../util';
+import {uuid} from '../util';
 import {ISessionTransfer} from './isession-transfer';
 import {SessionTransferAnswers} from './session-transfer-answers';
 
@@ -35,7 +35,7 @@ export class SessionTransfer implements ISessionTransfer {
 		public readonly url: string = '',
 
 		/** @inheritDoc */
-		public readonly id: string = util.uuid(),
+		public readonly id: string = uuid(),
 
 		/** @inheritDoc */
 		public answer: SessionTransferAnswers = SessionTransferAnswers.Empty,

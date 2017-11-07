@@ -14,7 +14,7 @@ import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
-import * as util from '../util';
+import {lockTryOnce, sleep, waitForIterable} from '../util';
 
 
 /**
@@ -29,7 +29,7 @@ import * as util from '../util';
 export class ChatMessageBoxComponent implements AfterViewInit {
 	/** @ignore */
 	private readonly $textarea: Promise<JQuery>	=
-		util.waitForIterable(() => $(this.elementRef.nativeElement).find('textarea'))
+		waitForIterable(() => $(this.elementRef.nativeElement).find('textarea'))
 	;
 
 	/** @ignore */
@@ -73,12 +73,12 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 
 	/** @ignore */
 	private mobileButtonWrapper (leaveFocused: boolean, f: () => void) : void {
-		util.lockTryOnce(this.mobileButtonLock, async () => {
+		lockTryOnce(this.mobileButtonLock, async () => {
 			f();
 			if (leaveFocused && this.virtualKeyboardWatcherService.isOpen) {
 				(await this.$textarea).focus();
 			}
-			await util.sleep(500);
+			await sleep(500);
 		});
 	}
 
@@ -109,7 +109,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 
 		if (this.envService.isMobile) {
 			$textarea.focus(async () => {
-				await util.sleep(750);
+				await sleep(750);
 				this.scrollService.scrollDown();
 			});
 		}

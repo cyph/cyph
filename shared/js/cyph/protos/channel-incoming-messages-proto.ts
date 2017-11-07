@@ -1,5 +1,5 @@
 import {CastleIncomingMessages} from '../../proto';
-import * as util from '../util';
+import {deserialize, serialize} from '../util';
 
 
 /** @see CastleIncomingMessages */
@@ -13,7 +13,7 @@ export class CastleIncomingMessagesProto {
 	public static async decode (bytes: Uint8Array) : Promise<{
 		[id: number]: Uint8Array[]|undefined;
 	}> {
-		const {incomingMessages}	= await util.deserialize(CastleIncomingMessages, bytes);
+		const {incomingMessages}	= await deserialize(CastleIncomingMessages, bytes);
 
 		if (!incomingMessages) {
 			return {};
@@ -33,7 +33,7 @@ export class CastleIncomingMessagesProto {
 	public static async encode (
 		data: {[id: number]: Uint8Array[]|undefined}
 	) : Promise<Uint8Array> {
-		return util.serialize(
+		return serialize(
 			CastleIncomingMessages,
 			{
 				incomingMessages: Object.keys(data).reduce<{

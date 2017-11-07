@@ -1,7 +1,7 @@
 import {env} from './env';
 import {eventManager} from './event-manager';
 import {IThread} from './ithread';
-import * as util from './util';
+import {stringify} from './util';
 
 
 /** @inheritDoc */
@@ -169,7 +169,7 @@ export class Thread implements IThread {
 		};
 
 		const threadBody	= `
-			var threadSetupVars = ${util.stringify(threadSetupVars)};
+			var threadSetupVars = ${stringify(threadSetupVars)};
 			${
 				/* tslint:disable-next-line:no-unbound-method */
 				Thread.stringifyFunction(Thread.threadEnvSetup)

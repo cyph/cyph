@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {IProto} from '../cyph/iproto';
 import {ITimedValue} from '../cyph/itimed-value';
 import {DatabaseService} from '../cyph/services/database.service';
-import * as util from '../cyph/util';
+import {deserialize, getTimestamp, random, serialize, sleep} from '../cyph/util';
 
 
 /**
@@ -25,9 +25,9 @@ export class MockDatabaseService extends DatabaseService {
 		const increment			= (mbps * 131072) / 4;
 
 		while (bytesTransferred < size) {
-			await util.sleep();
+			await sleep();
 			bytesTransferred	= Math.min(
-				bytesTransferred + (util.random() * increment * 2),
+				bytesTransferred + (random() * increment * 2),
 				size
 			);
 			progress.next(bytesTransferred / size * 100);
@@ -51,8 +51,8 @@ export class MockDatabaseService extends DatabaseService {
 			}
 			await this.pretendToTransferData(50, value.length, progress);
 			return {
-				timestamp: await util.timestamp(),
-				value: await util.deserialize(proto, value)
+				timestamp: await getTimestamp(),
+				value: await deserialize(proto, value)
 			};
 		})();
 
@@ -68,7 +68,7 @@ export class MockDatabaseService extends DatabaseService {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
-			const data	= await util.serialize(proto, value);
+			const data	= await serialize(proto, value);
 			await this.pretendToTransferData(15, data.length, progress);
 			this.uploadedItems.set(url, data);
 			return {hash: '', url};

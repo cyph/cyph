@@ -1,5 +1,5 @@
 import {ChatUnconfirmedMessages} from '../../proto';
-import * as util from '../util';
+import {deserialize, serialize} from '../util';
 
 
 /** @see ChatUnconfirmedMessages */
@@ -13,7 +13,7 @@ export class ChatUnconfirmedMessagesProto {
 	public static async decode (bytes: Uint8Array) : Promise<{
 		[id: string]: boolean|undefined;
 	}> {
-		const {unconfirmedMessages}	= await util.deserialize(ChatUnconfirmedMessages, bytes);
+		const {unconfirmedMessages}	= await deserialize(ChatUnconfirmedMessages, bytes);
 
 		if (!unconfirmedMessages) {
 			return {};
@@ -26,7 +26,7 @@ export class ChatUnconfirmedMessagesProto {
 	public static async encode (
 		data: {[id: string]: boolean|undefined}
 	) : Promise<Uint8Array> {
-		return util.serialize(
+		return serialize(
 			ChatUnconfirmedMessages,
 			{unconfirmedMessages: <{[id: string]: boolean}> data}
 		);

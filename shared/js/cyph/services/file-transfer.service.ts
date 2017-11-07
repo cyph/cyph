@@ -9,7 +9,7 @@ import {eventManager} from '../event-manager';
 import {ISessionTransfer, SessionTransfer, SessionTransferAnswers} from '../files';
 import {BinaryProto} from '../protos';
 import {ISessionMessageData, rpcEvents} from '../session';
-import * as util from '../util';
+import {getTimestamp, readableByteLength, saveFile, sleep, uuid} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
 import {ConfigService} from './config.service';
@@ -86,7 +86,7 @@ export class FileTransferService {
 		transfer.isOutgoing			= false;
 
 		transfer.answer				= await this.uiConfirm(transfer, true);
-		transfer.receiptTimestamp	= await util.timestamp();
+		transfer.receiptTimestamp	= await getTimestamp();
 
 		this.sessionService.send([rpcEvents.files, {transfer}]);
 
@@ -139,7 +139,7 @@ export class FileTransferService {
 	) : Promise<SessionTransferAnswers> {
 		const title	=
 			`${this.stringsService.incomingFile} ${transfer.name} ` +
-			`(${util.readableByteLength(transfer.size)})`
+			`(${readableByteLength(transfer.size)})`
 		;
 
 		return (
@@ -193,7 +193,7 @@ export class FileTransferService {
 			this.addImage(transfer, plaintext);
 		}
 		else {
-			util.saveFile(plaintext, transfer.name, transfer.mediaType);
+			saveFile(plaintext, transfer.name, transfer.mediaType);
 		}
 	}
 
@@ -258,7 +258,7 @@ export class FileTransferService {
 
 		this.transfers	= this.transfers.add(transferSetPlaceholder);
 
-		const url					= `fileTransfers/${util.uuid()}`;
+		const url					= `fileTransfers/${uuid()}`;
 		const plaintext				= await this.fileService.getBytes(file, image);
 		const {cyphertext, key}		= await this.encryptFile(plaintext);
 
@@ -373,7 +373,7 @@ export class FileTransferService {
 			/* Incoming file transfer */
 			else if (downloadAnswers.has(transfer.id)) {
 				while (downloadAnswers.get(transfer.id) === SessionTransferAnswers.Empty) {
-					await util.sleep();
+					await sleep();
 				}
 
 				if (downloadAnswers.get(transfer.id) === SessionTransferAnswers.Accepted) {

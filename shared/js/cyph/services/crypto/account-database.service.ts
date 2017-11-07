@@ -17,7 +17,14 @@ import {IProto} from '../../iproto';
 import {ITimedValue} from '../../itimed-value';
 import {LockFunction} from '../../lock-function-type';
 import {BinaryProto} from '../../protos';
-import * as util from '../../util';
+import {
+	deserialize,
+	flattenObservablePromise,
+	lockFunction,
+	normalize,
+	retryUntilSuccessful,
+	serialize
+} from '../../util';
 import {DatabaseService} from '../database.service';
 import {LocalStorageService} from '../local-storage.service';
 import {PotassiumService} from './potassium.service';
@@ -113,7 +120,7 @@ export class AccountDatabaseService {
 			url: string,
 			customKey: Uint8Array|Promise<Uint8Array>|undefined
 		) =>
-			util.retryUntilSuccessful(async () => this.potassiumService.secretBox.seal(
+			retryUntilSuccessful(async () => this.potassiumService.secretBox.seal(
 				data,
 				(await customKey) || (await this.getCurrentUser()).keys.symmetricKey,
 				url
@@ -124,7 +131,7 @@ export class AccountDatabaseService {
 			url: string,
 			compress: boolean
 		) =>
-			util.retryUntilSuccessful(async () => this.potassiumService.sign.sign(
+			retryUntilSuccessful(async () => this.potassiumService.sign.sign(
 				data,
 				(await this.getCurrentUser()).keys.signingKeyPair.privateKey,
 				url,
@@ -187,7 +194,7 @@ export class AccountDatabaseService {
 
 		const currentUser	= anonymous ? undefined : await this.getCurrentUser();
 
-		return util.deserialize(proto, await (async () => {
+		return deserialize(proto, await (async () => {
 			if (securityModel === SecurityModels.public) {
 				return this.openHelpers.sign(data, url, true);
 			}
@@ -234,7 +241,7 @@ export class AccountDatabaseService {
 		customKey: Uint8Array|Promise<Uint8Array>|undefined
 	) : Promise<Uint8Array> {
 		url			= await this.normalizeURL(url);
-		const data	= await util.serialize(proto, value);
+		const data	= await serialize(proto, value);
 
 		switch (securityModel) {
 			case SecurityModels.private:
@@ -294,7 +301,7 @@ export class AccountDatabaseService {
 		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : IAsyncList<T> {
-		const localLock		= util.lockFunction();
+		const localLock		= lockFunction();
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
@@ -353,7 +360,7 @@ export class AccountDatabaseService {
 		blockGetValue: boolean = false
 	) : IAsyncValue<T> {
 		const defaultValue	= proto.create();
-		const localLock		= util.lockFunction();
+		const localLock		= lockFunction();
 
 		const asyncValue	= (async () => {
 			url	= await this.normalizeURL(url);
@@ -480,7 +487,7 @@ export class AccountDatabaseService {
 			throw new Error('Invalid username.');
 		}
 
-		username	= util.normalize(username);
+		username	= normalize(username);
 
 		return this.localStorageService.getOrSetDefault(
 			`AccountDatabaseService.getUserPublicKeys/${username}`,
@@ -503,7 +510,7 @@ export class AccountDatabaseService {
 					throw new Error('Invalid AGSE-PKI certificate: bad key index.');
 				}
 
-				const cert	= await util.deserialize(
+				const cert	= await deserialize(
 					AGSEPKICert,
 					await this.potassiumService.sign.open(
 						signed,
@@ -766,7 +773,7 @@ export class AccountDatabaseService {
 		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
-		return util.flattenObservablePromise(
+		return flattenObservablePromise(
 			this.currentUser.pipe(
 				mergeMap(async () => {
 					const processedURL	= await this.normalizeURL(url);
@@ -804,7 +811,7 @@ export class AccountDatabaseService {
 		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>[]> {
-		return util.flattenObservablePromise(
+		return flattenObservablePromise(
 			this.currentUser.pipe(
 				mergeMap(async () => {
 					const processedURL	= await this.normalizeURL(url);
@@ -838,7 +845,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.watchListKeyPushes */
 	public watchListKeyPushes (url: string|Promise<string>) : Observable<string> {
-		return util.flattenObservablePromise(
+		return flattenObservablePromise(
 			this.currentUser.pipe(
 				mergeMap(async () =>
 					this.databaseService.watchListKeyPushes(await this.normalizeURL(url))
@@ -852,7 +859,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.watchListKeys */
 	public watchListKeys (url: string|Promise<string>) : Observable<string[]> {
-		return util.flattenObservablePromise(
+		return flattenObservablePromise(
 			this.currentUser.pipe(
 				mergeMap(async () =>
 					this.databaseService.watchListKeys(await this.normalizeURL(url))
@@ -873,7 +880,7 @@ export class AccountDatabaseService {
 		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
-		return util.flattenObservablePromise(
+		return flattenObservablePromise(
 			this.currentUser.pipe(
 				mergeMap(async () => {
 					const processedURL	= await this.normalizeURL(url);

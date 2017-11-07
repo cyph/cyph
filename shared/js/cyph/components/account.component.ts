@@ -6,7 +6,7 @@ import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
-import * as util from '../util';
+import {translate} from '../util';
 
 
 /**
@@ -55,7 +55,7 @@ export class AccountComponent implements OnInit {
 			return;
 		}
 
-		return util.translate(this.route[0].toUpperCase() + this.route.slice(1));
+		return translate(this.route[0].toUpperCase() + this.route.slice(1));
 	}
 
 	/** Indicates whether menu should be displayed. */

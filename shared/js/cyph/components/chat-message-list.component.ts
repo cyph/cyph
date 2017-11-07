@@ -17,7 +17,7 @@ import {AccountUserLookupService} from '../services/account-user-lookup.service'
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
-import * as util from '../util';
+import {getOrSetDefault, getOrSetDefaultAsync} from '../util';
 
 
 /**
@@ -80,12 +80,12 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			return;
 		}
 
-		const observables	= util.getOrSetDefault(
+		const observables	= getOrSetDefault(
 			this.observableCache,
 			this.chat,
 			() => ({
 				messages: this.chat.messages.watch().pipe(mergeMap(async messages =>
-					(await Promise.all(messages.map(async message => util.getOrSetDefaultAsync(
+					(await Promise.all(messages.map(async message => getOrSetDefaultAsync(
 						this.messageCache,
 						message.id,
 						async () => new ChatMessage(

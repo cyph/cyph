@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import * as localforage from 'localforage';
 import {IProto} from '../iproto';
 import {StringProto} from '../protos';
-import * as util from '../util';
+import {deserialize, serialize} from '../util';
 import {LocalStorageService} from './local-storage.service';
 
 
@@ -63,7 +63,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			throw new Error(`Item ${url} not found.`);
 		}
 
-		return util.deserialize(proto, value);
+		return deserialize(proto, value);
 	}
 
 	/** @inheritDoc */
@@ -101,7 +101,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		value: T,
 		waitForReady: boolean = true
 	) : Promise<{url: string}> {
-		const data	= await util.serialize(proto, value);
+		const data	= await serialize(proto, value);
 
 		if (this.failureFallback) {
 			this.failureFallback.set(url, data);

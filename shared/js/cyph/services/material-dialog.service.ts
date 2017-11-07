@@ -6,7 +6,7 @@ import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {DialogImageComponent} from '../components/dialog-image.component';
 import {LockFunction} from '../lock-function-type';
-import * as util from '../util';
+import {lockFunction, sleep} from '../util';
 import {DialogService} from './dialog.service';
 import {StringsService} from './strings.service';
 
@@ -17,7 +17,7 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class MaterialDialogService implements DialogService {
 	/** @ignore */
-	private readonly lock: LockFunction	= util.lockFunction();
+	private readonly lock: LockFunction	= lockFunction();
 
 	/** @inheritDoc */
 	public async alert (o: {content: string; ok?: string; title?: string}) : Promise<void> {
@@ -89,7 +89,7 @@ export class MaterialDialogService implements DialogService {
 			let hasReturned	= false;
 			if (o.timeout !== undefined && !isNaN(o.timeout)) {
 				(async () => {
-					await util.sleep(o.timeout);
+					await sleep(o.timeout);
 					if (!hasReturned) {
 						matDialogRef.close(false);
 					}
@@ -119,7 +119,7 @@ export class MaterialDialogService implements DialogService {
 	/** @inheritDoc */
 	public async toast (content: string, duration: number) : Promise<void> {
 		await this.matSnackbar.open(content, undefined, {duration}).afterDismissed().toPromise();
-		await util.sleep(500);
+		await sleep(500);
 	}
 
 	constructor (

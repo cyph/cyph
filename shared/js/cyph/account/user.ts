@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {IAccountUserPresence, IAccountUserProfile} from '../../proto';
 import {IAsyncValue} from '../iasync-value';
-import * as util from '../util';
+import {flattenObservablePromise, normalize} from '../util';
 import {UserPresence} from './enums';
 
 
@@ -13,7 +13,7 @@ import {UserPresence} from './enums';
 export class User {
 	/** Image URI for avatar / profile picture. */
 	public readonly avatar: Observable<SafeUrl|string|undefined>	=
-		util.flattenObservablePromise(
+		flattenObservablePromise(
 			this.avatarInternal.pipe(
 				map(avatar => avatar || '/assets/img/favicon/favicon-256x256.png')
 			),
@@ -23,7 +23,7 @@ export class User {
 
 	/** Image URI for cover image. */
 	public readonly coverImage: Observable<SafeUrl|string|undefined>	=
-		util.flattenObservablePromise(
+		flattenObservablePromise(
 			this.coverImageInternal.pipe(
 				map(coverImage => coverImage || '/assets/img/walken.png')
 			),
@@ -32,14 +32,14 @@ export class User {
 	;
 
 	/** @see IAccountUserProfile.description */
-	public readonly description: Observable<string>	= util.flattenObservablePromise(
+	public readonly description: Observable<string>	= flattenObservablePromise(
 		this.accountUserProfile.watch().pipe(map(({description}) => description)),
 		''
 	);
 
 	/** @see IAccountUserProfile.externalUsernames */
 	public readonly externalUsernames: Observable<{[k: string]: string}>	=
-		util.flattenObservablePromise(
+		flattenObservablePromise(
 			this.accountUserProfile.watch().pipe(
 				map(({externalUsernames}) => externalUsernames || {})
 			),
@@ -48,27 +48,27 @@ export class User {
 	;
 
 	/** @see IAccountUserProfile.hasPremium */
-	public readonly hasPremium: Observable<boolean>	= util.flattenObservablePromise(
+	public readonly hasPremium: Observable<boolean>	= flattenObservablePromise(
 		this.accountUserProfile.watch().pipe(map(({hasPremium}) => hasPremium)),
 		false
 	);
 
 	/** @see IAccountUserProfile.name */
-	public readonly name: Observable<string>	= util.flattenObservablePromise(
+	public readonly name: Observable<string>	= flattenObservablePromise(
 		this.accountUserProfile.watch().pipe(map(({name}) => name)),
 		''
 	);
 
 	/** @see IAccountUserProfile.realUsername */
-	public readonly realUsername: Observable<string>	= util.flattenObservablePromise(
+	public readonly realUsername: Observable<string>	= flattenObservablePromise(
 		this.accountUserProfile.watch().pipe(map(({realUsername}) =>
-			util.normalize(realUsername) === this.username ? realUsername : this.username
+			normalize(realUsername) === this.username ? realUsername : this.username
 		)),
 		''
 	);
 
 	/** @see IAccountUserProfile.status */
-	public readonly status: Observable<UserPresence>	= util.flattenObservablePromise(
+	public readonly status: Observable<UserPresence>	= flattenObservablePromise(
 		this.accountUserPresence.watch().pipe(map(({status}) => status)),
 		UserPresence.Offline
 	);

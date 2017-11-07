@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {Set as ImmutableSet} from 'immutable';
 import * as $ from 'jquery';
-import * as util from '../util';
+import {lockTryOnce, sleep} from '../util';
 import {EnvService} from './env.service';
 import {VisibilityWatcherService} from './visibility-watcher.service';
 
@@ -72,11 +72,11 @@ export class ScrollService {
 	public async scrollDown () : Promise<void> {
 		const rootElement	= await this.rootElement;
 
-		await util.lockTryOnce(this.scrollDownLock, async () => {
+		await lockTryOnce(this.scrollDownLock, async () => {
 			this.unreadItems	= this.unreadItems.clear();
 			this.updateTitle();
 
-			await util.sleep();
+			await sleep();
 			await rootElement.animate(
 				{scrollTop: rootElement[0].scrollHeight},
 				350
@@ -112,7 +112,7 @@ export class ScrollService {
 				return;
 			}
 
-			await util.sleep();
+			await sleep();
 		}
 
 		this.unreadItems	= this.unreadItems.delete($elem);

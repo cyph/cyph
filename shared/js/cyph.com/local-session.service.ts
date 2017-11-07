@@ -12,7 +12,7 @@ import {
 	ISessionMessageData,
 	rpcEvents
 } from '../cyph/session';
-import * as util from '../cyph/util';
+import {lockFunction, random, sleep} from '../cyph/util';
 import {ISessionMessage} from '../proto';
 import {ChatData} from './chat-data';
 
@@ -26,12 +26,12 @@ export class LocalSessionService extends SessionService {
 	private chatData?: ChatData;
 
 	/** @ignore */
-	private readonly localLock: LockFunction	= util.lockFunction();
+	private readonly localLock: LockFunction	= lockFunction();
 
 	/** @inheritDoc */
 	public async close () : Promise<void> {
 		while (!this.chatData) {
-			await util.sleep();
+			await sleep();
 		}
 
 		if (!this.state.isAlive) {
@@ -88,13 +88,13 @@ export class LocalSessionService extends SessionService {
 		...messages: [string, ISessionMessageAdditionalData][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
 		while (!this.chatData) {
-			await util.sleep();
+			await sleep();
 		}
 
 		const newMessages	= await this.newMessages(messages);
 
 		for (const message of newMessages) {
-			const cyphertext	= potassiumUtil.randomBytes(util.random(1024, 100));
+			const cyphertext	= potassiumUtil.randomBytes(random(1024, 100));
 
 			this.trigger(events.cyphertext, {
 				author: this.localUsername,

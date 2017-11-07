@@ -9,7 +9,7 @@ import {take} from 'rxjs/operators/take';
 import {AccountContactRecord, AccountUserPresence, IAccountContactRecord} from '../../proto';
 import {UserPresence, userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
-import * as util from '../util';
+import {flattenObservablePromise, getOrSetDefault, lockFunction, normalize, sleep} from '../util';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
@@ -33,7 +33,7 @@ export class AccountContactsService {
 
 	/** @ignore */
 	private readonly contactRecords: Observable<IAccountContactRecord[]>	=
-		util.flattenObservablePromise(
+		flattenObservablePromise(
 			this.accountDatabaseService.watchList(
 				'contactRecords',
 				AccountContactRecord
@@ -68,7 +68,7 @@ export class AccountContactsService {
 			id !== undefined ?
 				this.contactRecordMappings.id.get(id) :
 				username !== undefined ?
-					this.contactRecordMappings.username.get(util.normalize(username)) :
+					this.contactRecordMappings.username.get(normalize(username)) :
 					undefined
 		;
 
@@ -77,7 +77,7 @@ export class AccountContactsService {
 				throw new Error('Contact not found.');
 			}
 			else {
-				await util.sleep();
+				await sleep();
 				return this.getContactRecord({id, username});
 			}
 		}
@@ -107,7 +107,7 @@ export class AccountContactsService {
 		this.contactListSubject.next(
 			this.sort(
 				Array.from(this.userStatuses.keys()).map(user => ({
-					status: util.getOrSetDefault(
+					status: getOrSetDefault(
 						this.userStatuses,
 						user,
 						() => UserPresence.Offline
@@ -141,7 +141,7 @@ export class AccountContactsService {
 		/** @ignore */
 		private readonly databaseService: DatabaseService
 	) {
-		const lock	= util.lockFunction();
+		const lock	= lockFunction();
 
 		this.contactRecords.subscribe(contactRecords => {
 			for (const contactRecord of contactRecords) {

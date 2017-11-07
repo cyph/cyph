@@ -15,7 +15,7 @@ import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
 import {ThreadEvents} from '../../crypto/potassium/thread-events';
 import {EventManager, eventManager} from '../../event-manager';
 import {Thread} from '../../thread';
-import * as util from '../../util';
+import {uuid} from '../../util';
 
 
 /**
@@ -24,7 +24,7 @@ import * as util from '../../util';
 @Injectable()
 export class ThreadedPotassiumService extends PotassiumUtil implements IPotassium {
 	/** @ignore */
-	private readonly eventID: string	= util.uuid();
+	private readonly eventID: string	= uuid();
 
 	/** @ignore */
 	private thread: Thread;

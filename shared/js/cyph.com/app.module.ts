@@ -27,7 +27,7 @@ import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {HtmlSanitizerService} from '../cyph/services/html-sanitizer.service';
 import {NotificationService} from '../cyph/services/notification.service';
-import * as util from '../cyph/util';
+import {resolveDialogService, resolveHttpClient} from '../cyph/util';
 import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
@@ -89,7 +89,7 @@ import {SilentNotificationService} from './silent-notification.service';
 export class AppModule {
 	constructor (domSanitizer: DomSanitizer, httpClient: HttpClient, dialogService: DialogService) {
 		DataURIProto.resolveDomSanitizer(domSanitizer);
-		util.resolveHttpClient(httpClient);
-		util.resolveDialogService(dialogService);
+		resolveHttpClient(httpClient);
+		resolveDialogService(dialogService);
 	}
 }

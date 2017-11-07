@@ -33,7 +33,16 @@ import {IProto} from '../iproto';
 import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
 import {BinaryProto, BlobProto, DataURIProto} from '../protos';
-import * as util from '../util';
+import {
+	deserialize,
+	flattenObservablePromise,
+	getOrSetDefaultAsync,
+	getTimestamp,
+	saveFile,
+	serialize,
+	sleep,
+	uuid
+} from '../util';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
@@ -59,7 +68,7 @@ export class AccountFilesService {
 
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
 	public readonly filesList: Observable<(IAccountFileRecord&{owner: string})[]>	=
-		util.flattenObservablePromise(
+		flattenObservablePromise(
 			this.accountDatabaseService.watchList(
 				'fileReferences',
 				AccountFileReference
@@ -122,11 +131,11 @@ export class AccountFilesService {
 				`users/${o.user.username}/incomingFiles`,
 				BinaryProto
 			).pipe(mergeMap(async arr => Promise.all(arr.map(async ({value}) =>
-				util.getOrSetDefaultAsync(
+				getOrSetDefaultAsync(
 					this.incomingFileCache,
 					value,
 					async () => {
-						const referenceContainer	= await util.deserialize(
+						const referenceContainer	= await deserialize(
 							AccountFileReferenceContainer,
 							await this.potassiumService.box.open(
 								value,
@@ -154,7 +163,7 @@ export class AccountFilesService {
 							referenceContainer.signedShare &&
 							this.accountDatabaseService.currentUser.value
 						) {
-							reference	= await util.deserialize(
+							reference	= await deserialize(
 								AccountFileReference,
 								await this.potassiumService.sign.open(
 									referenceContainer.signedShare.accountFileReference,
@@ -256,7 +265,7 @@ export class AccountFilesService {
 		filesList: Observable<(IAccountFileRecord&T)[]>,
 		filterRecordTypes: AccountFileRecord.RecordTypes
 	) : Observable<(IAccountFileRecord&T)[]> {
-		return util.flattenObservablePromise(
+		return flattenObservablePromise(
 			filesList.pipe(map(files => files.filter(({owner, recordType}) =>
 				!!owner && recordType === filterRecordTypes
 			))),
@@ -302,7 +311,7 @@ export class AccountFilesService {
 			result: (async () => {
 				const file	= await this.getFile(id);
 
-				await util.saveFile(
+				await saveFile(
 					await result,
 					file.name,
 					file.mediaType
@@ -449,7 +458,7 @@ export class AccountFilesService {
 								'notes'
 				]);
 
-				await util.sleep();
+				await sleep();
 			}
 			else {
 				return;
@@ -506,7 +515,7 @@ export class AccountFilesService {
 			`users/${username}/incomingFiles/${id}`,
 			BinaryProto,
 			await this.potassiumService.box.seal(
-				await util.serialize(AccountFileReferenceContainer, accountFileReferenceContainer),
+				await serialize(AccountFileReferenceContainer, accountFileReferenceContainer),
 				(await this.accountDatabaseService.getUserPublicKeys(username)).encryption
 			)
 		);
@@ -545,7 +554,7 @@ export class AccountFilesService {
 				name: metadata.name === undefined ? original.name : metadata.name,
 				recordType: original.recordType,
 				size: metadata.size === undefined ? original.size : metadata.size,
-				timestamp: await util.timestamp()
+				timestamp: await getTimestamp()
 			},
 			undefined,
 			original.key
@@ -556,7 +565,7 @@ export class AccountFilesService {
 	public async updateNote (id: string, content: IQuillDelta, name?: string) : Promise<void> {
 		const file		= await this.getFile(id, AccountFileRecord.RecordTypes.Note);
 		file.size		= this.potassiumService.fromString(this.deltaToString(content)).length;
-		file.timestamp	= await util.timestamp();
+		file.timestamp	= await getTimestamp();
 
 		if (name) {
 			file.name	= name;
@@ -604,7 +613,7 @@ export class AccountFilesService {
 			throw new Error('Invalid AccountFilesService.upload input.');
 		}
 
-		const id	= util.uuid();
+		const id	= uuid();
 		const key	= (async () => this.potassiumService.randomBytes(
 			await this.potassiumService.secretBox.keyBytes
 		))();
@@ -680,7 +689,7 @@ export class AccountFilesService {
 							).length :
 							NaN
 					,
-					timestamp: await util.timestamp()
+					timestamp: await getTimestamp()
 				};
 
 				if (anonymous) {

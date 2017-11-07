@@ -1,7 +1,7 @@
 import * as $ from 'jquery';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {Env} from './env';
-import * as util from './util';
+import {sleep, stringify} from './util';
 
 
 /**
@@ -25,7 +25,7 @@ export class Analytics {
 
 		try {
 			this.analFrame.contentWindow.postMessage(
-				{args: util.stringify(args)},
+				{args: stringify(args)},
 				this.env.baseUrl.slice(0, -1)
 			);
 		}
@@ -117,7 +117,7 @@ export class Analytics {
 			await new Promise<void>(resolve =>
 				$(this.analFrame).one('load', () => { resolve(); })
 			);
-			await util.sleep();
+			await sleep();
 
 			this.setEvent({appName, appVersion});
 

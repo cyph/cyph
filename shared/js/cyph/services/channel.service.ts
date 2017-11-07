@@ -7,7 +7,7 @@ import {LockFunction} from '../lock-function-type';
 import {StringProto} from '../protos';
 import {IChannelService} from '../service-interfaces/ichannel.service';
 import {IChannelHandlers} from '../session';
-import * as util from '../util';
+import {lockFunction, sleep, uuid, waitForValue} from '../util';
 import {DatabaseService} from './database.service';
 
 
@@ -21,7 +21,7 @@ export class ChannelService implements IChannelService {
 	private isClosed: boolean	= false;
 
 	/** @ignore */
-	private readonly localLock: LockFunction	= util.lockFunction();
+	private readonly localLock: LockFunction	= lockFunction();
 
 	/** @ignore */
 	private pauseLock?: Subject<void>;
@@ -83,7 +83,7 @@ export class ChannelService implements IChannelService {
 		}
 		else {
 			this.ephemeral	= true;
-			this.userID		= util.uuid();
+			this.userID		= uuid();
 			this.databaseService.setDisconnectTracker(`${url}/disconnects/${this.userID}`);
 		}
 
@@ -104,7 +104,7 @@ export class ChannelService implements IChannelService {
 			await handlers.onMessage(message.value.cyphertext);
 
 			if (!this.ephemeral) {
-				await util.sleep(600000);
+				await sleep(600000);
 				await this.databaseService.removeItem(message.url).catch(() => {});
 			}
 		});
@@ -168,7 +168,7 @@ export class ChannelService implements IChannelService {
 		await this.localLock(async () => this.databaseService.pushItem(
 			`${(await this.state).url}/messages`,
 			ChannelMessage,
-			{author: await util.waitForValue(() => this.userID), cyphertext}
+			{author: await waitForValue(() => this.userID), cyphertext}
 		));
 	}
 

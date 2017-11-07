@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {IAsyncValue} from './iasync-value';
 import {LockFunction} from './lock-function-type';
-import * as util from './util';
+import {lockFunction} from './util';
 
 
 /**
@@ -14,7 +14,7 @@ export class LocalAsyncValue<T> implements IAsyncValue<T> {
 	protected readonly subject: BehaviorSubject<T>	= new BehaviorSubject(this.value);
 
 	/** @inheritDoc */
-	public readonly lock: LockFunction	= util.lockFunction();
+	public readonly lock: LockFunction	= lockFunction();
 
 	/** @inheritDoc */
 	public async getValue () : Promise<T> {

@@ -1,6 +1,6 @@
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subject} from 'rxjs/Subject';
-import * as util from './util';
+import {getTimestamp, sleep} from './util';
 
 
 /**
@@ -62,24 +62,24 @@ export class Timer {
 			return;
 		}
 
-		await util.sleep(1000);
+		await sleep(1000);
 
-		this.endTime	= (await util.timestamp()) + this.countdown;
+		this.endTime	= (await getTimestamp()) + this.countdown;
 
 		for (
 			let timeRemaining = this.countdown;
 			timeRemaining > 0;
-			timeRemaining = this.endTime - (await util.timestamp())
+			timeRemaining = this.endTime - (await getTimestamp())
 		) {
 			if (this.isStopped) {
 				return;
 			}
 
 			this.timestamp.next(this.getTimestamp(timeRemaining));
-			await util.sleep();
+			await sleep();
 
 			if (timeRemaining < 1) {
-				await util.sleep(1000);
+				await sleep(1000);
 			}
 		}
 

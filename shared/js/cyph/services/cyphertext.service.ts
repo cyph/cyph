@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {ChatMessage} from '../chat';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {events} from '../session/enums';
-import * as util from '../util';
+import {getTimestamp} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
@@ -35,7 +35,7 @@ export class CyphertextService {
 			return;
 		}
 
-		const timestamp	= await util.timestamp();
+		const timestamp	= await getTimestamp();
 
 		this.messages	= this.messages.withMutations(messages =>
 			(

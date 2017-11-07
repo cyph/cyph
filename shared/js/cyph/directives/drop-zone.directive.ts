@@ -1,6 +1,6 @@
 import {Directive, ElementRef, EventEmitter, OnInit, Output, Renderer2} from '@angular/core';
 import * as Dropzone from 'dropzone';
-import * as util from '../util';
+import {uuid} from '../util';
 
 
 /** File drop zone. */
@@ -13,7 +13,7 @@ export class DropZoneDirective implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		const id	= `id-${util.uuid()}`;
+		const id	= `id-${uuid()}`;
 
 		this.renderer.addClass(this.elementRef.nativeElement, id);
 

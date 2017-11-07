@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import * as util from '../util';
+import {random} from '../util';
 import {AnalyticsService} from './analytics.service';
 
 
@@ -7,7 +7,7 @@ import {AnalyticsService} from './analytics.service';
 @Injectable()
 export class SplitTestingService {
 	/** Indicates whether this client has been placed in group A. */
-	public readonly groupA: boolean	= util.random() > 0.5;
+	public readonly groupA: boolean	= random() > 0.5;
 
 	/** Indicates whether this client has been placed in group B. */
 	public readonly groupB: boolean	= !this.groupA;

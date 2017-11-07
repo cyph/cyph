@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {usernameMask} from '../account';
-import * as util from '../util';
+import {email, stringify} from '../util';
 
 
 /**
@@ -29,10 +29,10 @@ export class ClaimUsernameComponent {
 
 	/** Submits form. */
 	public submit () : void {
-		util.email(
+		email(
 			'username-request@cyph.com',
 			undefined,
-			util.stringify({
+			stringify({
 				email: this.email,
 				username: this.username,
 				usernameAlternate: this.usernameAlternate

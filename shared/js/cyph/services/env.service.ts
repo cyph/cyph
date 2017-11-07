@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Env} from '../env';
 import {StringProto} from '../protos';
-import * as util from '../util';
+import {parse, request} from '../util';
 import {LocalStorageService} from './local-storage.service';
 
 
@@ -13,14 +13,14 @@ export class EnvService extends Env {
 	/** @ignore */
 	private readonly geolocationPromise	= (async () => {
 		try {
-			return util.parse<{
+			return parse<{
 				continent?: string;
 				continentCode?: string;
 				country?: string;
 				countryCode?: string;
 				org?: string;
 			}>(
-				await util.request({
+				await request({
 					retries: 5,
 					url: `${this.baseUrl}geolocation/${this.realLanguage}`
 				})

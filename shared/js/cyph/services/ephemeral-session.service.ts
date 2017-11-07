@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {env} from '../env';
 import {events, ProFeatures} from '../session';
-import * as util from '../util';
+import {getTimestamp, random, readableID, request, sleep, uuid} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';
@@ -27,11 +27,11 @@ export class EphemeralSessionService extends SessionService {
 	 */
 	private async pingPong () : Promise<void> {
 		while (this.state.isAlive) {
-			await util.sleep(util.random(90000, 30000));
+			await sleep(random(90000, 30000));
 
 			if (
 				this.lastIncomingMessageTimestamp !== 0 &&
-				(await util.timestamp()) - this.lastIncomingMessageTimestamp > 180000 &&
+				(await getTimestamp()) - this.lastIncomingMessageTimestamp > 180000 &&
 				this.pingPongTimeouts++ < 2
 			) {
 				this.analyticsService.sendEvent({
@@ -60,7 +60,7 @@ export class EphemeralSessionService extends SessionService {
 				true
 			)
 		) {
-			id	= util.readableID(this.configService.secretLength);
+			id	= readableID(this.configService.secretLength);
 		}
 
 		this.state.cyphID		= id.substring(0, this.configService.cyphIDLength);
@@ -72,7 +72,7 @@ export class EphemeralSessionService extends SessionService {
 		super.channelOnClose();
 
 		/* If aborting before the cyph begins, block friend from trying to join */
-		util.request({
+		request({
 			method: 'POST',
 			url: `${env.baseUrl}channels/${this.state.cyphID}`
 		}).catch(
@@ -188,13 +188,13 @@ export class EphemeralSessionService extends SessionService {
 		const channelID: string	=
 			this.state.startingNewCyph === false ?
 				'' :
-				util.uuid()
+				uuid()
 		;
 
 		(async () => {
 			try {
 				this.init(
-					await util.request({
+					await request({
 						data: {channelID, proFeatures: this.proFeatures},
 						method: 'POST',
 						retries: 5,

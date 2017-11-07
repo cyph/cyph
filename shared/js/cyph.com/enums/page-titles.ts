@@ -1,4 +1,4 @@
-import * as util from '../../cyph/util';
+import {translate} from '../../cyph/util';
 
 
 /**
@@ -6,137 +6,137 @@ import * as util from '../../cyph/util';
  */
 export class PageTitles {
 	/** @see PageTitles */
-	public readonly about: string			= util.translate(
+	public readonly about: string			= translate(
 		`About Cyph`
 	);
 
 	/** @see PageTitles */
-	public readonly betalist: string		= util.translate(
+	public readonly betalist: string		= translate(
 		`Cyph – BetaList`
 	);
 
 	/** @see PageTitles */
-	public readonly checkout: string		= util.translate(
+	public readonly checkout: string		= translate(
 		`Cyph - Checkout`
 	);
 
 	/** @see PageTitles */
-	public readonly claimusername: string	= util.translate(
+	public readonly claimusername: string	= translate(
 		`Cyph - Claim Your Username`
 	);
 
 	/** @see PageTitles */
-	public readonly contact: string			= util.translate(
+	public readonly contact: string			= translate(
 		`Get in Touch with Cyph`
 	);
 
 	/** @see PageTitles */
-	public readonly defaultTitle: string	= util.translate(
+	public readonly defaultTitle: string	= translate(
 		`Cyph – Encrypted Messenger`
 	);
 
 	/** @see PageTitles */
-	public readonly disrupt: string			= util.translate(
+	public readonly disrupt: string			= translate(
 		`Cyph — TechCrunch Disrupt SF 2017`
 	);
 
 	/** @see PageTitles */
-	public readonly donate: string			= util.translate(
+	public readonly donate: string			= translate(
 		`Donate to Cyph`
 	);
 
 	/** @see PageTitles */
-	public readonly error: string			= util.translate(
+	public readonly error: string			= translate(
 		`Page Not Found`
 	);
 
 	/** @see PageTitles */
-	public readonly faq: string				= util.translate(
+	public readonly faq: string				= translate(
 		`Frequently Asked Questions`
 	);
 
 	/** @see PageTitles */
-	public readonly features: string		= util.translate(
+	public readonly features: string		= translate(
 		`Cyph's Features`
 	);
 
 	/** @see PageTitles */
-	public readonly gettingstarted: string	= util.translate(
+	public readonly gettingstarted: string	= translate(
 		`Getting Started with Cyph`
 	);
 
 	/** @see PageTitles */
-	public readonly intro: string			= util.translate(
+	public readonly intro: string			= translate(
 		`Introduction to Cyph`
 	);
 
 	/** @see PageTitles */
-	public readonly invite: string			= util.translate(
+	public readonly invite: string			= translate(
 		`Cyph Account Invite`
 	);
 
 	/** @see PageTitles */
-	public readonly jjgo: string			= util.translate(
+	public readonly jjgo: string			= translate(
 		`Cyph – Jordan, Jesse, Go!`
 	);
 
 	/** @see PageTitles */
-	public readonly judgejohn: string		= util.translate(
+	public readonly judgejohn: string		= translate(
 		`Cyph – Judge John Hodgman`
 	);
 
 	/** @see PageTitles */
-	public readonly mybrother: string		= util.translate(
+	public readonly mybrother: string		= translate(
 		`Cyph – My Brother, My Brother and Me`
 	);
 
 	/** @see PageTitles */
-	public readonly penn: string			= util.translate(
+	public readonly penn: string			= translate(
 		`Cyph – Penn's Sunday School`
 	);
 
 	/** @see PageTitles */
-	public readonly pricing: string			= util.translate(
+	public readonly pricing: string			= translate(
 		`Cyph Pricing`
 	);
 
 	/** @see PageTitles */
-	public readonly privacypolicy: string	= util.translate(
+	public readonly privacypolicy: string	= translate(
 		`Cyph's Privacy Policy`
 	);
 
 	/** @see PageTitles */
-	public readonly register: string		= util.translate(
+	public readonly register: string		= translate(
 		`Cyph Account Signup`
 	);
 
 	/** @see PageTitles */
-	public readonly sawbones: string		= util.translate(
+	public readonly sawbones: string		= translate(
 		`Cyph – Sawbones`
 	);
 
 	/** @see PageTitles */
-	public readonly security: string		= util.translate(
+	public readonly security: string		= translate(
 		`Cyph – The Security Brief`
 	);
 
 	/** @see PageTitles */
-	public readonly termsofservice: string	= util.translate(
+	public readonly termsofservice: string	= translate(
 		`Cyph's Terms of Service`
 	);
 
 	/** @see PageTitles */
-	public readonly testimonials: string	= util.translate(
+	public readonly testimonials: string	= translate(
 		`What People Say about Cyph`
 	);
 
 	/** @see PageTitles */
-	public readonly ventura: string			= util.translate(
+	public readonly ventura: string			= translate(
 		`Cyph – We The People`
 	);
 
 	/** @see PageTitles */
-	public readonly waitlisttrack: string	= util.translate(
+	public readonly waitlisttrack: string	= translate(
 		`Cyph – Waitlist Position`
 	);
 

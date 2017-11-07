@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {EnvService} from '../cyph/services/env.service';
-import * as util from '../cyph/util';
+import {random, readableID, request, sleep, translate} from '../cyph/util';
 import {ChatData} from './chat-data';
 
 
@@ -16,7 +16,7 @@ export class DemoService {
 	public readonly facebookPicDataUri: Promise<string>		= (
 		!this.envService.isMobile ?
 			Promise.reject('') :
-			util.request({retries: 5, url: '/assets/img/fbimagealt.txt'})
+			request({retries: 5, url: '/assets/img/fbimagealt.txt'})
 	).catch(
 		() => 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs='
 	);
@@ -26,7 +26,7 @@ export class DemoService {
 		<div class='facebook-pic image-frame real'>
 			<iframe
 				src='https://www.facebook.com/plugins/comments.php?href=https://www.${
-					util.readableID(util.random(20, 5))
+					readableID(random(20, 5))
 				}.com&width=1000'
 			></iframe>
 		</div>
@@ -111,7 +111,7 @@ export class DemoService {
 	public async run (facebookJoke: () => void) : Promise<void> {
 		this.desktop.resolveStart();
 		this.mobile.resolveStart();
-		await util.sleep(2500);
+		await sleep(2500);
 
 		const messages				= await this.messages;
 		const facebookPicMessage	= await this.facebookPicMessage;
@@ -119,11 +119,11 @@ export class DemoService {
 		for (const message of messages) {
 			const chatData	= message.isMobile ? this.mobile : this.desktop;
 			const other		= message.isMobile ? this.desktop : this.mobile;
-			const text		= util.translate(message.text);
+			const text		= translate(message.text);
 			const maxDelay	= text.length > 15 ? 500 : 250;
 			const minDelay	= 125;
 
-			await util.sleep(util.random(maxDelay, minDelay));
+			await sleep(random(maxDelay, minDelay));
 
 			if (text === facebookPicMessage) {
 				chatData.message.next(text);
@@ -131,16 +131,16 @@ export class DemoService {
 
 				if (!this.envService.isMobile) {
 					facebookJoke();
-					await util.sleep();
+					await sleep();
 				}
 			}
 			else {
 				for (const c of text.split('')) {
 					chatData.message.next(c);
-					await util.sleep(util.random(50, 10));
+					await sleep(random(50, 10));
 				}
 
-				await util.sleep(util.random(maxDelay, minDelay));
+				await sleep(random(maxDelay, minDelay));
 
 				chatData.message.next('');
 				other.scrollDown.next();

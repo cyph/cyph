@@ -5,7 +5,7 @@ import {take} from 'rxjs/operators/take';
 import {ChatMessage} from '../../proto';
 import {IChatData, States} from '../chat';
 import {ChatUnconfirmedMessagesProto} from '../protos';
-import * as util from '../util';
+import {getOrSetDefault} from '../util';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionService} from './account-session.service';
 import {AnalyticsService} from './analytics.service';
@@ -49,7 +49,7 @@ export class AccountChatService extends ChatService {
 
 		await this.accountSessionService.setUser(username);
 
-		this.chat	= util.getOrSetDefault(this.chats, username, () => ({
+		this.chat	= getOrSetDefault(this.chats, username, () => ({
 			currentMessage: '',
 			isConnected: true,
 			isDisconnected: false,

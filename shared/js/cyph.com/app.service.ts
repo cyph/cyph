@@ -9,7 +9,7 @@ import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {SignupService} from '../cyph/services/signup.service';
-import * as util from '../cyph/util';
+import {request, sleep, waitForIterable} from '../cyph/util';
 import {Carousel} from './carousel';
 import {elements} from './elements';
 import {HomeSections, pageTitles, Promos, States} from './enums';
@@ -119,7 +119,7 @@ export class AppService {
 				this.signupService.promo	= Promos[promo];
 			}
 
-			await util.sleep();
+			await sleep();
 
 			switch (this.homeSection) {
 				case HomeSections.register:
@@ -146,8 +146,8 @@ export class AppService {
 				default:
 					const loadComplete	= () => $('body.load-complete');
 					if (loadComplete().length < 1) {
-						await util.waitForIterable(loadComplete);
-						await util.sleep(500);
+						await waitForIterable(loadComplete);
+						await sleep(500);
 					}
 
 					this.scroll(
@@ -214,7 +214,7 @@ export class AppService {
 			this.disableNextScroll	= false;
 		}
 		else {
-			await util.sleep(500);
+			await sleep(500);
 			this.scroll(0);
 		}
 	}
@@ -233,7 +233,7 @@ export class AppService {
 		$(document.documentElement).animate({scrollTop: position}, delay);
 
 		if (onComplete) {
-			await util.sleep(delay + 50);
+			await sleep(delay + 50);
 			onComplete();
 		}
 	}
@@ -277,7 +277,7 @@ export class AppService {
 		/* Redirect to Onion site when on Tor */
 		if (!this.envService.isOnion) {
 			(async () => {
-				const response: string	= await util.request({
+				const response: string	= await request({
 					url: `https://ping.${this.configService.onionRoot}`
 				}).catch(
 					() => ''
@@ -305,7 +305,7 @@ export class AppService {
 		(async () => {
 			/* Disable background video on mobile */
 
-			await util.waitForIterable(elements.backgroundVideo);
+			await waitForIterable(elements.backgroundVideo);
 
 			if (this.envService.isMobile) {
 				const $mobilePoster: JQuery	= $(document.createElement('img'));
@@ -338,8 +338,8 @@ export class AppService {
 
 			/* Carousels */
 
-			await util.waitForIterable(elements.featuresSection);
-			await util.waitForIterable(elements.testimonialsSection);
+			await waitForIterable(elements.featuresSection);
+			await waitForIterable(elements.testimonialsSection);
 
 			this.featureCarousel		= new Carousel(elements.featuresSection(), true);
 			this.testimonialCarousel	= new Carousel(
@@ -349,16 +349,16 @@ export class AppService {
 
 			/* Header / new cyph button animation */
 
-			await util.waitForIterable(elements.mainToolbar);
+			await waitForIterable(elements.mainToolbar);
 
 			let expanded	= this.routerService.routerState.snapshot.url === '';
 			elements.mainToolbar().toggleClass('new-cyph-expanded', expanded);
 
 			(async () => {
-				await util.sleep(3000);
+				await sleep(3000);
 
 				while (true) {
-					await util.sleep(500);
+					await sleep(500);
 
 					const shouldExpand	= this.state === States.home && (
 						(
@@ -381,14 +381,14 @@ export class AppService {
 
 			(async () => {
 				while (true) {
-					await util.sleep(4200);
+					await sleep(4200);
 					this.cycleFeatures();
 				}
 			})();
 
 			/* Load complete */
 
-			await util.waitForIterable(elements.heroSection);
+			await waitForIterable(elements.heroSection);
 			$(document.body).addClass('load-complete');
 		})();
 	}

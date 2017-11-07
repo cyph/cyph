@@ -1,7 +1,7 @@
 import {Observable} from 'rxjs/Observable';
 import {ChatMessage as ChatMessageInternal, IChatMessage} from '../../proto';
 import {Timer} from '../timer';
-import * as util from '../util';
+import {getTimeString, sleep} from '../util';
 
 
 /** @inheritDoc */
@@ -35,7 +35,7 @@ export class ChatMessage implements IChatMessage {
 	public timestamp: number			= this.message.timestamp;
 
 	/** @inheritDoc */
-	public readonly timeString: string	= util.getTimeString(this.message.timestamp);
+	public readonly timeString: string	= getTimeString(this.message.timestamp);
 
 	constructor (
 		/** @ignore */
@@ -55,7 +55,7 @@ export class ChatMessage implements IChatMessage {
 		this.selfDestructTimer	= new Timer(this.message.selfDestructTimeout);
 
 		this.selfDestructTimer.start().then(async () => {
-			await util.sleep(10000);
+			await sleep(10000);
 			this.message.text	= '';
 			this.text			= '';
 		});

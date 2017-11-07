@@ -85,7 +85,7 @@ export class Config {
 	/** Max signed 32-bit integer. */
 	public readonly maxInt32: number			= 2147483647;
 
-	/** Max unsigned 48-bit integer + 1, used by Util.random. */
+	/** Max unsigned 48-bit integer + 1, used by util/random. */
 	public readonly maxSafeUint: number			= 281474976710656;
 
 	/** Max unsigned 32-bit integer. */
@@ -174,7 +174,7 @@ export class Config {
 	};
 
 	/**
-	 * Characters used by Util.readableID (includes all alphanumeric
+	 * Characters used by util/readableID (includes all alphanumeric
 	 * characters except 'l' and 'I').
 	 */
 	public readonly readableIDCharacters: string[]	= [

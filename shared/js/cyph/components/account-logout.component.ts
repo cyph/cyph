@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
-import * as util from '../util';
+import {sleep} from '../util';
 
 
 /**
@@ -17,7 +17,7 @@ export class AccountLogoutComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		await this.accountAuthService.logout();
-		await util.sleep(500);
+		await sleep(500);
 		await this.routerService.navigate(['account', 'login']);
 
 		/* Get rid of any data still sitting in memory */

@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../../proto';
-import * as util from '../util';
+import {getOrSetDefault} from '../util';
 
 
 /**
@@ -31,7 +31,7 @@ export class DynamicFormComponent {
 			return;
 		}
 
-		return util.getOrSetDefault(
+		return getOrSetDefault(
 			this.maskCache,
 			mask,
 			() => msgpack.decode(mask)

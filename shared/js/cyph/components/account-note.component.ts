@@ -14,7 +14,7 @@ import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
-import * as util from '../util';
+import {lockFunction, sleep} from '../util';
 
 
 /**
@@ -33,7 +33,7 @@ export class AccountNoteComponent implements OnInit {
 	private nameSubscription?: Subscription;
 
 	/** @ignore */
-	private readonly saveLock: LockFunction	= util.lockFunction();
+	private readonly saveLock: LockFunction	= lockFunction();
 
 	/** Indicates whether or not this is a new note. */
 	public newNote: boolean	= false;
@@ -243,7 +243,7 @@ export class AccountNoteComponent implements OnInit {
 
 			if (this.noteData.id) {
 				this.routerService.navigate(['account', 'notes', this.noteData.id]);
-				await util.sleep();
+				await sleep();
 				this.accountService.interstitial	= false;
 				this.dialogService.toast(this.stringsService.noteSaved, 2500);
 			}

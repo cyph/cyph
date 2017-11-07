@@ -16,7 +16,7 @@ import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
 import {LockFunction} from '../lock-function-type';
 import {EnvService} from '../services/env.service';
-import * as util from '../util';
+import {lockFunction, sleep, uuid, waitForValue} from '../util';
 
 
 /**
@@ -29,7 +29,7 @@ import * as util from '../util';
 })
 export class QuillComponent implements AfterViewInit, OnChanges {
 	/** @ignore */
-	private clientID: string	= util.uuid();
+	private clientID: string	= uuid();
 
 	/** @ignore */
 	private deltasSubscription?: Subscription;
@@ -44,7 +44,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 	private resolveEditablePromise?: () => void;
 
 	/** @ignore */
-	private readonly selectionLock: LockFunction	= util.lockFunction();
+	private readonly selectionLock: LockFunction	= lockFunction();
 
 	/** @ignore */
 	private selectionsSubscription?: Subscription;
@@ -63,7 +63,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 	;
 
 	/** ID of Quill container element. */
-	public readonly containerID: string	= `id-${util.uuid()}`;
+	public readonly containerID: string	= `id-${uuid()}`;
 
 	/** Entire contents of the editor. */
 	@Input() public content?: IQuillDelta;
@@ -148,7 +148,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 			return;
 		}
 
-		await util.sleep(0);
+		await sleep(0);
 
 		/* Temporary workaround for https://github.com/DefinitelyTyped/DefinitelyTyped/issues/18946 */
 		this.quill	= <Quill.Quill> new (<any> Quill)(`#${this.containerID}`, {
@@ -182,7 +182,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 
 	/** @inheritDoc */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
-		await util.waitForValue(() => this.quill);
+		await waitForValue(() => this.quill);
 
 		if (!this.quill) {
 			throw new Error('No Quill.');

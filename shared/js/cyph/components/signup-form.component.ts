@@ -2,7 +2,7 @@ import {Component, ElementRef, Input} from '@angular/core';
 import * as $ from 'jquery';
 import {EnvService} from '../services/env.service';
 import {SignupService} from '../services/signup.service';
-import * as util from '../util';
+import {sleep} from '../util';
 
 
 /**
@@ -26,7 +26,7 @@ export class SignupFormComponent {
 			return;
 		}
 
-		await util.sleep();
+		await sleep();
 
 		const $input: JQuery	= $(this.elementRef.nativeElement).
 			find('input:visible:not([disabled])')

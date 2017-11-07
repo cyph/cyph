@@ -2,7 +2,7 @@ import {Directive, ElementRef, Renderer2} from '@angular/core';
 import * as $ from 'jquery';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
-import * as util from '../util';
+import {translate} from '../util';
 
 
 /**
@@ -47,7 +47,7 @@ export class TranslateDirective {
 			return;
 		}
 
-		const translation	= util.translate(value.trim(), undefined);
+		const translation	= translate(value.trim(), undefined);
 
 		if (!translation) {
 			return;

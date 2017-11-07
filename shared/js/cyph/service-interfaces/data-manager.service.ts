@@ -1,7 +1,7 @@
 import {IProto} from '../iproto';
 import {LockFunction} from '../lock-function-type';
 import {BinaryProto} from '../protos';
-import * as util from '../util';
+import {getOrSetDefault, lockFunction} from '../util';
 
 
 /**
@@ -24,10 +24,10 @@ export class DataManagerService {
 		proto: IProto<T>,
 		defaultValue: () => T|Promise<T>
 	) : Promise<T> {
-		return util.getOrSetDefault(
+		return getOrSetDefault(
 			this.getOrSetDefaultLocks,
 			url,
-			() => util.lockFunction()
+			lockFunction
 		)(async () => {
 			try {
 				return await this.getItem(url, proto);

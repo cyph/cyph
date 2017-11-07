@@ -7,7 +7,7 @@ import {eventManager} from '../event-manager';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
-import * as util from '../util';
+import {parse, request, sleep, waitForIterable} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
@@ -62,7 +62,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			this.isAccepted				= false;
 			this.isActive				= false;
 
-			await util.sleep(500);
+			await sleep(500);
 
 			this.incomingStream.audio	= false;
 			this.incomingStream.video	= false;
@@ -253,15 +253,15 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		let initialRefresh	= true;
 
-		const iceServers: string	= await util.request({
+		const iceServers: string	= await request({
 			retries: 5,
 			url: env.baseUrl + 'iceservers'
 		});
 
 		const webRTCEvents: string[]	= [];
 
-		const $localVideo	= await util.waitForIterable<JQuery>(await this.localVideo);
-		const $remoteVideo	= await util.waitForIterable<JQuery>(await this.remoteVideo);
+		const $localVideo	= await waitForIterable<JQuery>(await this.localVideo);
+		const $remoteVideo	= await waitForIterable<JQuery>(await this.remoteVideo);
 
 		const webRTC	= new SimpleWebRTC({
 			adjustPeerVolume: true,
@@ -314,7 +314,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		});
 
 		webRTC.webrtc.config.peerConnectionConfig.iceServers	=
-			util.parse<any>(iceServers).
+			parse<any>(iceServers).
 			filter((o: any) =>
 				!this.sessionService.apiFlags.forceTURN || o.url.indexOf('stun:') !== 0
 			)
@@ -341,7 +341,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			/* Possible edge case workaround */
 			if (initialRefresh) {
 				initialRefresh	= false;
-				await util.sleep();
+				await sleep();
 				this.refresh();
 			}
 		});
@@ -370,7 +370,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 				this.sessionService.send([rpcEvents.p2p, {command: {method: callType}}]);
 
-				await util.sleep();
+				await sleep();
 				(await this.handlers).requestConfirmation();
 			},
 			P2PWebRTCService.constants.requestCall
@@ -383,7 +383,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				return;
 			}
 
-			await util.sleep(1000);
+			await sleep(1000);
 		}
 
 		this.isAccepted	= false;
@@ -392,7 +392,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	/** @inheritDoc */
 	public async toggle (shouldPause?: boolean, medium?: 'audio'|'video') : Promise<void> {
 		while (!(this.webRTC && this.webRTC.connection)) {
-			await util.sleep();
+			await sleep();
 		}
 
 		if (shouldPause !== true && shouldPause !== false) {

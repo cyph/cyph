@@ -8,7 +8,7 @@ import {microlight} from 'microlight-string';
 import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {HtmlSanitizerService} from '../services/html-sanitizer.service';
-import * as util from '../util';
+import {sleep} from '../util';
 
 
 /**
@@ -50,7 +50,7 @@ export class MarkdownComponent implements OnChanges {
 			this.initiated	= true;
 		}
 		else if (this.initiated) {
-			await util.sleep(10000);
+			await sleep(10000);
 
 			const $element	= $(this.elementRef.nativeElement);
 

@@ -11,7 +11,7 @@ import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {LockFunction} from '../lock-function-type';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
-import * as util from '../util';
+import {lockFunction} from '../util';
 
 
 /**
@@ -47,7 +47,7 @@ export class DatabaseService extends DataManagerService {
 		proto: IProto<T>,
 		lock: LockFunction = this.lockFunction(url)
 	) : IAsyncList<T> {
-		const localLock		= util.lockFunction();
+		const localLock		= lockFunction();
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
@@ -85,7 +85,7 @@ export class DatabaseService extends DataManagerService {
 		blockGetValue: boolean = false
 	) : IAsyncValue<T> {
 		const defaultValue	= proto.create();
-		const localLock		= util.lockFunction();
+		const localLock		= lockFunction();
 
 		let currentHash: string|undefined;
 		let currentValue	= defaultValue;

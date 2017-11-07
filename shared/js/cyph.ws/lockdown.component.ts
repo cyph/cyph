@@ -3,7 +3,7 @@ import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {StringProto} from '../cyph/protos';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {StringsService} from '../cyph/services/strings.service';
-import * as util from '../cyph/util';
+import {random, sleep} from '../cyph/util';
 import {AppService} from './app.service';
 
 
@@ -61,7 +61,7 @@ export class LockdownComponent implements OnInit {
 		this.checking	= true;
 		this.error		= false;
 
-		await util.sleep(util.random(1000, 250));
+		await sleep(random(1000, 250));
 
 		/* tslint:disable-next-line:possible-timing-attack */
 		if (this.password === this.correctPassword) {

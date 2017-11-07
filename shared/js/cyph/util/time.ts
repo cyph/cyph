@@ -25,29 +25,11 @@ const timestampData	= {
 	subtime: 0
 };
 
-/** Returns a human-readable representation of the time (e.g. "3:37pm"). */
-export const getTimeString	= (unixMilliseconds: number) : string => {
-	const date: Date		= new Date(unixMilliseconds);
-	const minute: string	= ('0' + date.getMinutes().toString()).slice(-2);
-	let hour: number		= date.getHours();
-	let ampm				= 'am';
-
-	if (hour >= 12) {
-		hour	-= 12;
-		ampm	= 'pm';
-	}
-	if (hour === 0) {
-		hour	= 12;
-	}
-
-	return `${hour.toString()}:${minute}${ampm}`;
-};
-
 /**
  * Returns current timestamp, with logic to correct for incorrect
  * local clocks and ensure each output is unique.
  */
-export const timestamp	= async () : Promise<number> => {
+export const getTimestamp	= async () : Promise<number> => {
 	/* tslint:disable-next-line:ban */
 	let unixMilliseconds: number	= Date.now() + (await timestampData.offset);
 
@@ -61,4 +43,22 @@ export const timestamp	= async () : Promise<number> => {
 	}
 
 	return unixMilliseconds;
+};
+
+/** Returns a human-readable representation of the time (e.g. "3:37pm"). */
+export const getTimeString	= (timestamp: number) : string => {
+	const date: Date		= new Date(timestamp);
+	const minute: string	= ('0' + date.getMinutes().toString()).slice(-2);
+	let hour: number		= date.getHours();
+	let ampm				= 'am';
+
+	if (hour >= 12) {
+		hour	-= 12;
+		ampm	= 'pm';
+	}
+	if (hour === 0) {
+		hour	= 12;
+	}
+
+	return `${hour.toString()}:${minute}${ampm}`;
 };

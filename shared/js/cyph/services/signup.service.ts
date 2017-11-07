@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import * as util from '../util';
+import {request} from '../util';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
 
@@ -35,7 +35,7 @@ export class SignupService {
 			++this.state;
 		}
 
-		const signupResult: string	= await util.request({
+		const signupResult: string	= await request({
 			data: this.data,
 			method: 'PUT',
 			retries: 5,

@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-import * as util from '../cyph/util';
+import {sleep, waitForIterable} from '../cyph/util';
 
 
 /**
@@ -14,17 +14,17 @@ export class Carousel {
 	private itemNumber: number	= 0;
 
 	/** @ignore */
-	private logos: Promise<JQuery>			= util.waitForIterable(
+	private logos: Promise<JQuery>			= waitForIterable(
 		() => this.rootElement.find('.logo')
 	);
 
 	/** @ignore */
-	private quoteContainer: Promise<JQuery>	= util.waitForIterable(
+	private quoteContainer: Promise<JQuery>	= waitForIterable(
 		() => this.rootElement.find('.quote-container')
 	);
 
 	/** @ignore */
-	private quotes: Promise<JQuery>			= util.waitForIterable(
+	private quotes: Promise<JQuery>			= waitForIterable(
 		() => this.rootElement.find('.quote')
 	);
 
@@ -50,7 +50,7 @@ export class Carousel {
 			removeClass(Carousel.activeClass)
 		;
 
-		await util.sleep(600);
+		await sleep(600);
 
 		const timeout	=
 			(quotes.eq(this.itemNumber).text().length + 10) * 150
@@ -68,7 +68,7 @@ export class Carousel {
 			}
 		}
 
-		await util.sleep(timeout);
+		await sleep(timeout);
 	}
 
 	constructor (
@@ -82,8 +82,8 @@ export class Carousel {
 		await this.quoteContainer;
 		await this.quotes;
 
-		await util.waitForIterable(() => this.rootElement.filter(':appeared'));
-		await util.sleep(1000);
+		await waitForIterable(() => this.rootElement.filter(':appeared'));
+		await sleep(1000);
 
 		const rows	= this.rootElement.find('.quote-row');
 		rows.each((i, elem) => {

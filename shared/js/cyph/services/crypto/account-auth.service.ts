@@ -12,7 +12,7 @@ import {
 } from '../../../proto';
 import {ExternalServices} from '../../account';
 import {BinaryProto, BooleanProto, StringProto} from '../../protos';
-import * as util from '../../util';
+import {deserialize, normalize, serialize, uuid} from '../../util';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {DatabaseService} from '../database.service';
 import {LocalStorageService} from '../local-storage.service';
@@ -42,7 +42,7 @@ export class AccountAuthService {
 
 	/** @ignore */
 	private async getKeyPair (url: string, symmetricKey: Uint8Array) : Promise<IKeyPair> {
-		return util.deserialize(
+		return deserialize(
 			KeyPair,
 			await this.potassiumService.secretBox.open(
 				await this.databaseService.getItem(url, BinaryProto),
@@ -53,7 +53,7 @@ export class AccountAuthService {
 
 	/** @ignore */
 	private async passwordHash (username: string, password: string) : Promise<Uint8Array> {
-		username	= util.normalize(username);
+		username	= normalize(username);
 
 		return (
 			await this.potassiumService.passwordHash.hash(
@@ -78,7 +78,7 @@ export class AccountAuthService {
 		}
 
 		try {
-			username	= util.normalize(username);
+			username	= normalize(username);
 
 			if (typeof password === 'string') {
 				password	= await this.passwordHash(username, password);
@@ -86,7 +86,7 @@ export class AccountAuthService {
 
 			const user		= await this.accountUserLookupService.getUser(username);
 
-			const loginData	= await util.deserialize(
+			const loginData	= await deserialize(
 				AccountLoginData,
 				await this.potassiumService.secretBox.open(
 					await this.databaseService.getItem(`users/${username}/loginData`, BinaryProto),
@@ -123,7 +123,7 @@ export class AccountAuthService {
 			});
 
 			this.connectTrackerCleanup	= await this.databaseService.setConnectTracker(
-				`users/${username}/clientConnections/${util.uuid()}`,
+				`users/${username}/clientConnections/${uuid()}`,
 				async () => {
 					try {
 						user.accountUserPresence.setValue(
@@ -214,7 +214,7 @@ export class AccountAuthService {
 		}
 
 		try {
-			const username	= util.normalize(realUsername);
+			const username	= normalize(realUsername);
 
 			const externalUsernames: {[s: string]: string}	= {};
 			if (email) {
@@ -254,7 +254,7 @@ export class AccountAuthService {
 					`users/${username}/loginData`,
 					BinaryProto,
 					await this.potassiumService.secretBox.seal(
-						await util.serialize(AccountLoginData, loginData),
+						await serialize(AccountLoginData, loginData),
 						await this.passwordHash(username, password)
 					)
 				),
@@ -262,7 +262,7 @@ export class AccountAuthService {
 					publicProfileURL,
 					BinaryProto,
 					await this.potassiumService.sign.sign(
-						await util.serialize(AccountUserProfile, {
+						await serialize(AccountUserProfile, {
 							description: this.stringsService.defaultDescription,
 							externalUsernames,
 							hasPremium: false,
@@ -278,7 +278,7 @@ export class AccountAuthService {
 					`users/${username}/lastPresence`,
 					BinaryProto,
 					await this.potassiumService.secretBox.seal(
-						await util.serialize(
+						await serialize(
 							AccountUserPresence,
 							{status: AccountUserPresence.Statuses.Online}
 						),
@@ -289,7 +289,7 @@ export class AccountAuthService {
 					`users/${username}/encryptionKeyPair`,
 					BinaryProto,
 					await this.potassiumService.secretBox.seal(
-						await util.serialize(KeyPair, encryptionKeyPair),
+						await serialize(KeyPair, encryptionKeyPair),
 						loginData.symmetricKey
 					)
 				),
@@ -297,7 +297,7 @@ export class AccountAuthService {
 					`users/${username}/signingKeyPair`,
 					BinaryProto,
 					await this.potassiumService.secretBox.seal(
-						await util.serialize(KeyPair, signingKeyPair),
+						await serialize(KeyPair, signingKeyPair),
 						loginData.symmetricKey
 					)
 				),
@@ -305,7 +305,7 @@ export class AccountAuthService {
 					certificateRequestURL,
 					BinaryProto,
 					await this.potassiumService.sign.sign(
-						await util.serialize(AGSEPKICSR, {
+						await serialize(AGSEPKICSR, {
 							publicSigningKey: signingKeyPair.publicKey,
 							username
 						}),

@@ -12,7 +12,17 @@ import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {BinaryProto} from '../protos';
-import * as util from '../util';
+import {
+	deserialize,
+	getTimestamp,
+	getOrSetDefault,
+	lock,
+	requestByteStream,
+	retryUntilSuccessful,
+	serialize,
+	uuid,
+	waitForValue
+} from '../util';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {LocalStorageService} from './local-storage.service';
@@ -24,7 +34,7 @@ import {LocalStorageService} from './local-storage.service';
 @Injectable()
 export class FirebaseDatabaseService extends DatabaseService {
 	/** @ignore */
-	private app: Promise<firebase.app.App>	= util.retryUntilSuccessful(() => {
+	private app: Promise<firebase.app.App>	= retryUntilSuccessful(() => {
 		try {
 			for (const key of Object.keys(localStorage).filter(k => k.startsWith('firebase:'))) {
 				/* tslint:disable-next-line:ban */
@@ -76,7 +86,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @ignore */
 	private async getDatabaseRef (url: string) : Promise<firebase.database.Reference> {
-		return util.retryUntilSuccessful(async () =>
+		return retryUntilSuccessful(async () =>
 			/^https?:\/\//.test(url) ?
 				(await this.app).database().refFromURL(url) :
 				(await this.app).database().ref(url)
@@ -85,7 +95,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @ignore */
 	private async getStorageRef (url: string) : Promise<firebase.storage.Reference> {
-		return util.retryUntilSuccessful(async () =>
+		return retryUntilSuccessful(async () =>
 			/^https?:\/\//.test(url) ?
 				(await this.app).storage().refFromURL(url) :
 				(await this.app).storage().ref(url)
@@ -132,7 +142,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			})();
 
 			return async () => {
-				(await util.waitForValue(() => cleanup))();
+				(await waitForValue(() => cleanup))();
 			};
 		});
 	}
@@ -146,7 +156,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		return {
 			progress,
-			result: util.retryUntilSuccessful(
+			result: retryUntilSuccessful(
 				async () => {
 					const {hash, timestamp}	= await this.getMetadata(url);
 
@@ -154,13 +164,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 						const localData	= await this.cacheGet({hash});
 						progress.next(100);
 						progress.complete();
-						return {timestamp, value: await util.deserialize(proto, localData)};
+						return {timestamp, value: await deserialize(proto, localData)};
 					}
 					catch (_) {}
 
 					progress.next(0);
 
-					const request	= util.requestByteStream({
+					const request	= requestByteStream({
 						retries: 3,
 						url: await (await this.getStorageRef(url)).getDownloadURL()
 					});
@@ -186,7 +196,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					progress.next(100);
 					progress.complete();
 					this.cacheSet(url, value, hash);
-					return {timestamp, value: await util.deserialize(proto, value)};
+					return {timestamp, value: await deserialize(proto, value)};
 				},
 				25
 			)
@@ -242,17 +252,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 		f: (reason?: string) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
-		return util.lock(
-			util.getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
+		return lock(
+			getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
 			async () => {
-				let lock: firebase.database.ThenableReference|undefined;
+				let mutex: firebase.database.ThenableReference|undefined;
 
 				const queue	= await this.getDatabaseRef(url);
-				const id	= util.uuid();
+				const id	= uuid();
 
 				const contendForLock	= () => {
-					lock	= queue.push(reason ? {id, reason} : {id});
-					lock.onDisconnect().remove();
+					mutex	= queue.push(reason ? {id, reason} : {id});
+					mutex.onDisconnect().remove();
 				};
 
 				try {
@@ -286,8 +296,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 					return await f(lastReason);
 				}
 				finally {
-					if (lock) {
-						lock.remove();
+					if (mutex) {
+						mutex.remove();
 					}
 				}
 			},
@@ -319,7 +329,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async logout () : Promise<void> {
-		await util.retryUntilSuccessful(async () =>
+		await retryUntilSuccessful(async () =>
 			(await this.app).auth().signOut()
 		);
 	}
@@ -420,7 +430,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		hash: string;
 		url: string;
 	}> {
-		const data	= await util.serialize(proto, value);
+		const data	= await serialize(proto, value);
 		const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
 
 		/* tslint:disable-next-line:possible-timing-attack */
@@ -450,7 +460,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
-			const data	= await util.serialize(proto, value);
+			const data	= await serialize(proto, value);
 			const hash	= this.potassiumService.toBase64(
 				await this.potassiumService.hash.hash(data)
 			);
@@ -537,7 +547,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const onValue	= async (snapshot: firebase.database.DataSnapshot) => {
 				if (!snapshot || !snapshot.exists()) {
 					observer.next({
-						timestamp: await util.timestamp(),
+						timestamp: await getTimestamp(),
 						value: proto.create()
 					});
 				}
@@ -553,7 +563,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			})();
 
 			return async () => {
-				(await util.waitForValue(() => cleanup))();
+				(await waitForValue(() => cleanup))();
 			};
 		});
 	}
@@ -668,7 +678,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			})();
 
 			return async () => {
-				(await util.waitForValue(() => cleanup))();
+				(await waitForValue(() => cleanup))();
 			};
 		});
 	}
@@ -694,7 +704,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			})();
 
 			return async () => {
-				(await util.waitForValue(() => cleanup))();
+				(await waitForValue(() => cleanup))();
 			};
 		});
 	}
@@ -720,7 +730,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			})();
 
 			return async () => {
-				(await util.waitForValue(() => cleanup))();
+				(await waitForValue(() => cleanup))();
 			};
 		});
 	}
@@ -779,7 +789,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			})();
 
 			return async () => {
-				(await util.waitForValue(() => cleanup))();
+				(await waitForValue(() => cleanup))();
 			};
 		});
 	}

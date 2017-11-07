@@ -27,7 +27,7 @@ import {StringsService} from '../cyph/services/strings.service';
 import {UrlSessionInitService} from '../cyph/services/url-session-init.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
 import {events} from '../cyph/session/enums';
-import * as util from '../cyph/util';
+import {sleep} from '../cyph/util';
 import {AppService} from './app.service';
 import {ChatRootStates} from './enums';
 
@@ -76,7 +76,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
-		await util.sleep(0);
+		await sleep(0);
 
 		this.appService.chatRootState	= ChatRootStates.blank;
 
@@ -210,7 +210,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 					granim.changeState('paused');
 				}
 
-				await util.sleep(3000);
+				await sleep(3000);
 				granim.pause();
 			}
 		});
@@ -259,7 +259,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 				}
 
 				while (this.chatService.chat.state !== ChatStates.chat) {
-					await util.sleep();
+					await sleep();
 				}
 
 				this.cyphertextService.show();

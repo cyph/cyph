@@ -5,7 +5,7 @@ import * as braintreeDropIn from 'braintree-web-drop-in';
 import {SubscriptionTypes} from '../checkout';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
-import * as util from '../util';
+import {request, sleep, uuid} from '../util';
 
 
 /**
@@ -33,7 +33,7 @@ export class CheckoutComponent implements AfterViewInit {
 	public complete: boolean;
 
 	/** ID of Braintree container element. */
-	public readonly containerID: string	= `id-${util.uuid()}`;
+	public readonly containerID: string	= `id-${uuid()}`;
 
 	/** Email address. */
 	@Input() public email: string;
@@ -63,11 +63,11 @@ export class CheckoutComponent implements AfterViewInit {
 			return;
 		}
 
-		await util.sleep(0);
+		await sleep(0);
 
 		this.complete	= false;
 
-		const authorization: string	= await util.request({
+		const authorization: string	= await request({
 			retries: 5,
 			url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
 		});
@@ -114,7 +114,7 @@ export class CheckoutComponent implements AfterViewInit {
 			}
 
 			this.success	=
-				await util.request({
+				await request({
 					data: {
 						amount: Math.floor(this.amount * 100),
 						category: this.category,

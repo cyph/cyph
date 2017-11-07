@@ -12,7 +12,7 @@ import {
 	MaybeBinaryProto,
 	Uint32Proto
 } from '../../protos';
-import * as util from '../../util';
+import {getOrSetDefaultAsync, normalize} from '../../util';
 import {AccountContactsService} from '../account-contacts.service';
 import {SessionService} from '../session.service';
 import {AccountDatabaseService} from './account-database.service';
@@ -38,7 +38,7 @@ export class AccountCastleService extends CastleService {
 		const transport	= new Transport(sessionService);
 
 		sessionService.remoteUsername.subscribe(username => {
-			username	= util.normalize(username);
+			username	= normalize(username);
 
 			this.pairwiseSessionLock(async () => {
 				const contactID	= await this.accountContactsService.getContactID(username).catch(
@@ -50,7 +50,7 @@ export class AccountCastleService extends CastleService {
 				}
 
 				this.pairwiseSession.next(
-					await util.getOrSetDefaultAsync(this.pairwiseSessions, username, async () => {
+					await getOrSetDefaultAsync(this.pairwiseSessions, username, async () => {
 						const sessionURL		= `contacts/${contactID}/session`;
 
 						const handshakeState	= await sessionService.handshakeState(

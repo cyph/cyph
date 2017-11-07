@@ -18,7 +18,7 @@ import {ScrollService} from '../services/scroll.service';
 import {SessionCapabilitiesService} from '../services/session-capabilities.service';
 import {SessionInitService} from '../services/session-init.service';
 import {SessionService} from '../services/session.service';
-import * as util from '../util';
+import {sleep} from '../util';
 
 
 /**
@@ -76,7 +76,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 			if (this.initiated) {
 				this.routerService.navigate(['account']);
-				await util.sleep(0);
+				await sleep(0);
 				this.routerService.navigate(['account', 'chat', username]);
 				return;
 			}
