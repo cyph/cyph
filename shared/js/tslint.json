@@ -257,7 +257,7 @@
 		"no-attribute-parameter-decorator": true,
 		"no-forward-ref": true,
 		"no-input-rename": true,
-		"no-output-on-prefix-name": true,
+		"no-output-on-prefix": true,
 		"no-output-rename": true,
 		"no-unused-css": false,
 		"pipe-impure": true,
