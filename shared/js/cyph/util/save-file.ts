@@ -1,8 +1,8 @@
 import {saveAs} from 'file-saver';
 import {env} from '../env';
 import {DialogService} from '../services/dialog.service';
-import {sleep} from './sleep';
 import {translate} from './translate';
+import {sleep} from './wait';
 
 
 /** Sets dialogService. */
