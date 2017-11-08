@@ -14,7 +14,8 @@ import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
-import {lockTryOnce, sleep, waitForIterable} from '../util';
+import {lockTryOnce} from '../util/lock';
+import {sleep, waitForIterable} from '../util/wait';
 
 
 /**

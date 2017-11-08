@@ -1,7 +1,8 @@
 import * as $ from 'jquery';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {Env} from './env';
-import {sleep, stringify} from './util';
+import {stringify} from './util/serialization';
+import {sleep} from './util/wait';
 
 
 /**

@@ -8,7 +8,8 @@ import {DialogImageComponent} from './dialog-image.component';
 import {LockFunction} from './js/cyph/lock-function-type';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {StringsService} from './js/cyph/services/strings.service';
-import {lockFunction, sleep} from './js/cyph/util';
+import {lockFunction} from './js/cyph/util/lock';
+import {sleep} from './js/cyph/util/wait';
 
 
 /**

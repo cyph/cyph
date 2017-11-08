@@ -8,7 +8,8 @@
 
 import * as $ from 'jquery';
 import {env} from '../cyph/env';
-import {sleep, triggerClick} from '../cyph/util';
+import {triggerClick} from '../cyph/util/trigger-click';
+import {sleep} from '../cyph/util/wait';
 
 
 /* Mobile CSS class */

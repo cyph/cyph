@@ -1,7 +1,8 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import * as $ from 'jquery';
 import {EnvService} from '../services/env.service';
-import {triggerClick, waitForIterable} from '../util';
+import {triggerClick} from '../util/trigger-click';
+import {waitForIterable} from '../util/wait';
 
 
 /**

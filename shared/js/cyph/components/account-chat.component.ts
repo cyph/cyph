@@ -18,7 +18,7 @@ import {ScrollService} from '../services/scroll.service';
 import {SessionCapabilitiesService} from '../services/session-capabilities.service';
 import {SessionInitService} from '../services/session-init.service';
 import {SessionService} from '../services/session.service';
-import {sleep} from '../util';
+import {sleep} from '../util/wait';
 
 
 /**

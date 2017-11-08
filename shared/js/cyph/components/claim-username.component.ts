@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {usernameMask} from '../account';
-import {email, stringify} from '../util';
+import {email} from '../util/email';
+import {stringify} from '../util/serialization';
 
 
 /**

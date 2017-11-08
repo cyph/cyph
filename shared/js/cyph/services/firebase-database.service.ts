@@ -12,17 +12,13 @@ import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {BinaryProto} from '../protos';
-import {
-	deserialize,
-	getTimestamp,
-	getOrSetDefault,
-	lock,
-	requestByteStream,
-	retryUntilSuccessful,
-	serialize,
-	uuid,
-	waitForValue
-} from '../util';
+import {getOrSetDefault} from '../util/get-or-set-default';
+import {lock} from '../util/lock';
+import {requestByteStream} from '../util/request';
+import {deserialize, serialize} from '../util/serialization';
+import {getTimestamp} from '../util/time';
+import {uuid} from '../util/uuid';
+import {retryUntilSuccessful, waitForValue} from '../util/wait';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {LocalStorageService} from './local-storage.service';

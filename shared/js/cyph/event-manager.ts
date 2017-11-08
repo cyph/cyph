@@ -1,6 +1,7 @@
 import {env} from './env';
 import {IThread} from './ithread';
-import {getOrSetDefault, uuid} from './util';
+import {getOrSetDefault} from './util/get-or-set-default';
+import {uuid} from './util/uuid';
 
 
 /**

@@ -1,7 +1,7 @@
 import {AfterViewInit, Component} from '@angular/core';
 import * as $ from 'jquery';
 import {EnvService} from '../cyph/services/env.service';
-import {sleep, waitForIterable} from '../cyph/util';
+import {sleep, waitForIterable} from '../cyph/util/wait';
 import {DemoService} from './demo.service';
 import {elements} from './elements';
 

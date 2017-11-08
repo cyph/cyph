@@ -1,7 +1,8 @@
 import {IProto} from '../iproto';
 import {LockFunction} from '../lock-function-type';
 import {BinaryProto} from '../protos';
-import {getOrSetDefault, lockFunction} from '../util';
+import {getOrSetDefault} from '../util/get-or-set-default';
+import {lockFunction} from '../util/lock';
 
 
 /**

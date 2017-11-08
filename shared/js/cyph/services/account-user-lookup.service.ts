@@ -3,7 +3,8 @@ import {map} from 'rxjs/operators/map';
 import {AccountUserPresence, AccountUserProfile} from '../../proto';
 import {SecurityModels, User} from '../account';
 import {DataURIProto} from '../protos';
-import {getOrSetDefault, normalize} from '../util';
+import {normalize} from '../util/formatting';
+import {getOrSetDefault} from '../util/get-or-set-default';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 

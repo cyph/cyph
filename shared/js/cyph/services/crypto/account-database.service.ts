@@ -17,14 +17,11 @@ import {IProto} from '../../iproto';
 import {ITimedValue} from '../../itimed-value';
 import {LockFunction} from '../../lock-function-type';
 import {BinaryProto} from '../../protos';
-import {
-	deserialize,
-	flattenObservablePromise,
-	lockFunction,
-	normalize,
-	retryUntilSuccessful,
-	serialize
-} from '../../util';
+import {flattenObservablePromise} from '../../util/flatten-observable-promise';
+import {normalize} from '../../util/formatting';
+import {lockFunction} from '../../util/lock';
+import {deserialize, serialize} from '../../util/serialization';
+import {retryUntilSuccessful} from '../../util/wait';
 import {DatabaseService} from '../database.service';
 import {LocalStorageService} from '../local-storage.service';
 import {PotassiumService} from './potassium.service';

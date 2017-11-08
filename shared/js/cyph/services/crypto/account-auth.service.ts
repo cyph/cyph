@@ -12,7 +12,9 @@ import {
 } from '../../../proto';
 import {ExternalServices} from '../../account';
 import {BinaryProto, BooleanProto, StringProto} from '../../protos';
-import {deserialize, normalize, serialize, uuid} from '../../util';
+import {normalize} from '../../util/formatting';
+import {deserialize, serialize} from '../../util/serialization';
+import {uuid} from '../../util/uuid';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {DatabaseService} from '../database.service';
 import {LocalStorageService} from '../local-storage.service';

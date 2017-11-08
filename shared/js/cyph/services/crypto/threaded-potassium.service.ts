@@ -15,7 +15,7 @@ import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
 import {ThreadEvents} from '../../crypto/potassium/thread-events';
 import {EventManager, eventManager} from '../../event-manager';
 import {Thread} from '../../thread';
-import {uuid} from '../../util';
+import {uuid} from '../../util/uuid';
 
 
 /**

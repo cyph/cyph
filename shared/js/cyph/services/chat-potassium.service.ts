@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {waitForValue} from '../util';
+import {waitForValue} from '../util/wait';
 import {ThreadedPotassiumService} from './crypto/threaded-potassium.service';
 import {SessionService} from './session.service';
 

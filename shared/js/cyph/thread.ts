@@ -1,7 +1,7 @@
 import {env} from './env';
 import {eventManager} from './event-manager';
 import {IThread} from './ithread';
-import {stringify} from './util';
+import {stringify} from './util/serialization';
 
 
 /** @inheritDoc */

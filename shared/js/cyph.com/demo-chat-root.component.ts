@@ -12,7 +12,7 @@ import {ScrollService} from '../cyph/services/scroll.service';
 import {SessionCapabilitiesService} from '../cyph/services/session-capabilities.service';
 import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
-import {sleep} from '../cyph/util';
+import {sleep} from '../cyph/util/wait';
 import {ChatData} from './chat-data';
 import {DemoEnvService} from './demo-env.service';
 import {DemoService} from './demo.service';

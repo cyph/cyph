@@ -12,7 +12,8 @@ import {
 	MaybeBinaryProto,
 	Uint32Proto
 } from '../../protos';
-import {getOrSetDefaultAsync, normalize} from '../../util';
+import {normalize} from '../../util/formatting';
+import {getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {AccountContactsService} from '../account-contacts.service';
 import {SessionService} from '../session.service';
 import {AccountDatabaseService} from './account-database.service';

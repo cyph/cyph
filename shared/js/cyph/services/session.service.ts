@@ -17,7 +17,10 @@ import {
 	ProFeatures,
 	rpcEvents
 } from '../session';
-import {deserialize, getTimestamp, serialize, sleep, uuid} from '../util';
+import {deserialize, serialize} from '../util/serialization';
+import {getTimestamp} from '../util/time';
+import {uuid} from '../util/uuid';
+import {sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';

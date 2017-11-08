@@ -7,7 +7,8 @@ import {take} from 'rxjs/operators/take';
 import {PairwiseSession} from '../../crypto/castle/pairwise-session';
 import {ICastle} from '../../crypto/icastle';
 import {LockFunction} from '../../lock-function-type';
-import {getTimestamp, lockFunction} from '../../util';
+import {lockFunction} from '../../util/lock';
+import {getTimestamp} from '../../util/time';
 import {SessionService} from '../session.service';
 import {PotassiumService} from './potassium.service';
 

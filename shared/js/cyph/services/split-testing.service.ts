@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {random} from '../util';
+import {random} from '../util/random';
 import {AnalyticsService} from './analytics.service';
 
 

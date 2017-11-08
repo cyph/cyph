@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-import {sleep, waitForIterable} from '../cyph/util';
+import {sleep, waitForIterable} from '../cyph/util/wait';
 
 
 /**

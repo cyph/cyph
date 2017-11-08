@@ -1,5 +1,5 @@
 import {LockFunction} from '../../lock-function-type';
-import {lockFunction} from '../../util';
+import {lockFunction} from '../../util/lock';
 import {IPotassium} from '../potassium/ipotassium';
 import {IAsymmetricRatchetState} from './iasymmetric-ratchet-state';
 import {ISymmetricRatchetState} from './isymmetric-ratchet-state';

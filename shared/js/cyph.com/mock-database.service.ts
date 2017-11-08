@@ -4,7 +4,10 @@ import {Observable} from 'rxjs/Observable';
 import {IProto} from '../cyph/iproto';
 import {ITimedValue} from '../cyph/itimed-value';
 import {DatabaseService} from '../cyph/services/database.service';
-import {deserialize, getTimestamp, random, serialize, sleep} from '../cyph/util';
+import {random} from '../cyph/util/random';
+import {deserialize, serialize} from '../cyph/util/serialization';
+import {getTimestamp} from '../cyph/util/time';
+import {sleep} from '../cyph/util/wait';
 
 
 /**

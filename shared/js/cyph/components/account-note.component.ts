@@ -14,7 +14,8 @@ import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
-import {lockFunction, sleep} from '../util';
+import {lockFunction} from '../util/lock';
+import {sleep} from '../util/wait';
 
 
 /**

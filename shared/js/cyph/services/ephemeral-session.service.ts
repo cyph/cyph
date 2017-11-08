@@ -1,7 +1,11 @@
 import {Injectable} from '@angular/core';
 import {env} from '../env';
 import {events, ProFeatures} from '../session';
-import {getTimestamp, random, readableID, request, sleep, uuid} from '../util';
+import {random} from '../util/random';
+import {request} from '../util/request';
+import {getTimestamp} from '../util/time';
+import {readableID, uuid} from '../util/uuid';
+import {sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';

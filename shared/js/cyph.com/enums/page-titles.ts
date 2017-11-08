@@ -1,4 +1,4 @@
-import {translate} from '../../cyph/util';
+import {translate} from '../../cyph/util/translate';
 
 
 /**

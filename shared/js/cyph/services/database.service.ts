@@ -11,7 +11,7 @@ import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {LockFunction} from '../lock-function-type';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
-import {lockFunction} from '../util';
+import {lockFunction} from '../util/lock';
 
 
 /**

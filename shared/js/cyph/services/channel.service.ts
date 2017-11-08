@@ -7,7 +7,9 @@ import {LockFunction} from '../lock-function-type';
 import {StringProto} from '../protos';
 import {IChannelService} from '../service-interfaces/ichannel.service';
 import {IChannelHandlers} from '../session';
-import {lockFunction, sleep, uuid, waitForValue} from '../util';
+import {lockFunction} from '../util/lock';
+import {uuid} from '../util/uuid';
+import {sleep, waitForValue} from '../util/wait';
 import {DatabaseService} from './database.service';
 
 

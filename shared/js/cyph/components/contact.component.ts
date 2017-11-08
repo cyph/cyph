@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ConfigService} from '../services/config.service';
-import {email} from '../util';
+import {email} from '../util/email';
 
 
 /**

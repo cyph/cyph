@@ -9,7 +9,8 @@ import {EnvService} from '../services/env.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {Timer} from '../timer';
-import {lockTryOnce, sleep, waitForIterable, waitForValue} from '../util';
+import {lockTryOnce} from '../util/lock';
+import {sleep, waitForIterable, waitForValue} from '../util/wait';
 
 
 /**

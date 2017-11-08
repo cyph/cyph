@@ -1,4 +1,4 @@
-import {parse, stringify} from '../../../util';
+import {parse, stringify} from '../../../util/serialization';
 import {potassiumUtil} from '../potassium-util';
 
 

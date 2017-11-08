@@ -1,6 +1,7 @@
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subject} from 'rxjs/Subject';
-import {getTimestamp, sleep} from './util';
+import {getTimestamp} from './util/time';
+import {sleep} from './util/wait';
 
 
 /**

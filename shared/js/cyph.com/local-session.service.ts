@@ -12,7 +12,9 @@ import {
 	ISessionMessageData,
 	rpcEvents
 } from '../cyph/session';
-import {lockFunction, random, sleep} from '../cyph/util';
+import {lockFunction} from '../cyph/util/lock';
+import {random} from '../cyph/util/random';
+import {sleep} from '../cyph/util/wait';
 import {ISessionMessage} from '../proto';
 import {ChatData} from './chat-data';
 

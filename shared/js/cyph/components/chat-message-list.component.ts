@@ -17,7 +17,7 @@ import {AccountUserLookupService} from '../services/account-user-lookup.service'
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
-import {getOrSetDefault, getOrSetDefaultAsync} from '../util';
+import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 
 
 /**

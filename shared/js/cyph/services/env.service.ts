@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Env} from '../env';
 import {StringProto} from '../protos';
-import {parse, request} from '../util';
+import {request} from '../util/request';
+import {parse} from '../util/serialization';
 import {LocalStorageService} from './local-storage.service';
 
 

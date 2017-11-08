@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {request} from '../util';
+import {request} from '../util/request';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
 

@@ -9,7 +9,7 @@ import {P2PWebRTCService} from '../services/p2p-webrtc.service';
 import {P2PService} from '../services/p2p.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
-import {readableByteLength} from '../util';
+import {readableByteLength} from '../util/formatting';
 
 
 /**

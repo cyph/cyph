@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs/Observable';
-import {uuid} from '../util';
+import {uuid} from '../util/uuid';
 import {ISessionTransfer} from './isession-transfer';
 import {SessionTransferAnswers} from './session-transfer-answers';
 

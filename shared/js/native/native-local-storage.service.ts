@@ -3,7 +3,7 @@ import {SecureStorage} from 'nativescript-secure-storage';
 import {potassiumUtil} from './js/cyph/crypto/potassium/potassium-util';
 import {IProto} from './js/cyph/iproto';
 import {LocalStorageService} from './js/cyph/services/local-storage.service';
-import {deserialize, serialize} from './js/cyph/util';
+import {deserialize, serialize} from './js/cyph/util/serialization';
 
 
 /**

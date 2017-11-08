@@ -1,6 +1,6 @@
 import {Directive, ElementRef, EventEmitter, OnInit, Output, Renderer2} from '@angular/core';
 import * as Dropzone from 'dropzone';
-import {uuid} from '../util';
+import {uuid} from '../util/uuid';
 
 
 /** File drop zone. */

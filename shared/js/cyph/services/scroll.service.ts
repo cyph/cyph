@@ -2,7 +2,8 @@ import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {Set as ImmutableSet} from 'immutable';
 import * as $ from 'jquery';
-import {lockTryOnce, sleep} from '../util';
+import {lockTryOnce} from '../util/lock';
+import {sleep} from '../util/wait';
 import {EnvService} from './env.service';
 import {VisibilityWatcherService} from './visibility-watcher.service';
 

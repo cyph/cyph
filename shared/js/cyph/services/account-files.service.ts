@@ -33,16 +33,13 @@ import {IProto} from '../iproto';
 import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
 import {BinaryProto, BlobProto, DataURIProto} from '../protos';
-import {
-	deserialize,
-	flattenObservablePromise,
-	getOrSetDefaultAsync,
-	getTimestamp,
-	saveFile,
-	serialize,
-	sleep,
-	uuid
-} from '../util';
+import {flattenObservablePromise} from '../util/flatten-observable-promise';
+import {getOrSetDefaultAsync} from '../util/get-or-set-default';
+import {saveFile} from '../util/save-file';
+import {deserialize, serialize} from '../util/serialization';
+import {getTimestamp} from '../util/time';
+import {uuid} from '../util/uuid';
+import {sleep} from '../util/wait';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';

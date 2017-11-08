@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {sleep} from '../util';
+import {sleep} from '../util/wait';
 
 
 /**

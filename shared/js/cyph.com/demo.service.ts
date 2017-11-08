@@ -1,6 +1,10 @@
 import {Injectable} from '@angular/core';
 import {EnvService} from '../cyph/services/env.service';
-import {random, readableID, request, sleep, translate} from '../cyph/util';
+import {random} from '../cyph/util/random';
+import {request} from '../cyph/util/request';
+import {translate} from '../cyph/util/translate';
+import {readableID} from '../cyph/util/uuid';
+import {sleep} from '../cyph/util/wait';
 import {ChatData} from './chat-data';
 
 

@@ -12,7 +12,8 @@ import {config} from '../cyph/config';
 import {AccountService} from '../cyph/services/account.service';
 import {AccountAuthService} from '../cyph/services/crypto/account-auth.service';
 import {FaviconService} from '../cyph/services/favicon.service';
-import {sleep, translate, waitForValue} from '../cyph/util';
+import {translate} from '../cyph/util/translate';
+import {sleep, waitForValue} from '../cyph/util/wait';
 import {ChatRootStates} from './enums';
 
 

@@ -3,7 +3,8 @@ import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {StringProto} from '../cyph/protos';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {StringsService} from '../cyph/services/strings.service';
-import {random, sleep} from '../cyph/util';
+import {random} from '../cyph/util/random';
+import {sleep} from '../cyph/util/wait';
 import {AppService} from './app.service';
 
 
