@@ -42,8 +42,6 @@ typescriptAssets="$(
 scssAssets="$(
 	{
 		echo native/app;
-		echo cyph/crypto/potassium/index;
-		echo standalone/analytics;
 		grep -oP "href='/assets/css/.*?\.css'" */src/index.html |
 			perl -pe "s/^.*?'\/assets\/css\/(.*?)\.css'.*/\1/g" \
 		;
