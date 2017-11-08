@@ -141,18 +141,7 @@ for f in ${typescriptAssets} ; do
 				rules: [
 					{
 						test: /\.ts$/,
-						$(test "${test}" && echo "
-							use: [{
-								loader: '@ngtools/webpack',
-								options: {
-									skipCodeGeneration: true,
-									tsConfigPath: 'tsconfig.json'
-								}
-							}]
-						")
-						$(test "${test}" || echo "
-							use: [{loader: 'awesome-typescript-loader'}]
-						")
+						use: [{loader: 'awesome-typescript-loader'}]
 					}
 				]
 			},
@@ -185,14 +174,12 @@ for f in ${typescriptAssets} ; do
 			],
 			resolve: {
 				extensions: ['.js', '.ts'],
-				$(test "${test}" || echo "
-					plugins: [
-						new TsConfigPathsPlugin({
-							compiler: 'typescript',
-							configFileName: 'tsconfig.json'
-						})
-					]
-				")
+				plugins: [
+					new TsConfigPathsPlugin({
+						compiler: 'typescript',
+						configFileName: 'tsconfig.json'
+					})
+				]
 			}
 		};
 	EOM
