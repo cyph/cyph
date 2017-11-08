@@ -160,11 +160,11 @@ for f in ${typescriptAssets} ; do
 				$(test "${test}" || echo "
 					new UglifyJsPlugin({
 						uglifyOptions: {
-							compress: {
+							/* compress: {
 								passes: 3,
 								pure_getters: true,
 								sequences: false
-							},
+							}, */
 							ecma: 5,
 							mangle: {
 								reserved: mangleExceptions
@@ -187,6 +187,13 @@ for f in ${typescriptAssets} ; do
 	checkfail
 	rm webpack.js
 
+	if [ ! "${test}" ] ; then
+		for i in {1..3} ; do
+			uglifyjs "${f}.js" -c pure_getters=true,sequences=false -o "${f}.js"
+			checkfail
+		done
+	fi
+
 	{
 		echo '(function () {';
 		cat "${f}.js";
@@ -208,6 +215,10 @@ for f in ${typescriptAssets} ; do
 	checkfail
 
 	mv "${f}.js.tmp" "${f}.js"
+
+	echo
+	ls -lh "${f}.js"
+	echo -e '\n'
 done
 
 
