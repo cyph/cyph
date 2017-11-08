@@ -129,8 +129,9 @@ for f in ${typescriptAssets} ; do
 	m="$(echo ${f} | perl -pe 's/.*\/([^\/]+)$/\u$1/' | perl -pe 's/[^A-Za-z0-9](.)?/\u$1/g')"
 
 	cat > webpack.js <<- EOM
-		const UglifyJsPlugin	= require('uglifyjs-webpack-plugin');
-		const mangleExceptions	= require('../../../commands/mangleexceptions');
+		const {TsConfigPathsPlugin}	= require('awesome-typescript-loader');
+		const UglifyJsPlugin		= require('uglifyjs-webpack-plugin');
+		const mangleExceptions		= require('../../../commands/mangleexceptions');
 
 		module.exports	= {
 			entry: {
@@ -140,13 +141,18 @@ for f in ${typescriptAssets} ; do
 				rules: [
 					{
 						test: /\.ts$/,
-						use: [{
-							loader: '@ngtools/webpack',
-							options: {
-								skipCodeGeneration: true,
-								tsConfigPath: 'tsconfig.json'
-							}
-						}]
+						$(test "${test}" && echo "
+							use: [{
+								loader: '@ngtools/webpack',
+								options: {
+									skipCodeGeneration: true,
+									tsConfigPath: 'tsconfig.json'
+								}
+							}]
+						")
+						$(test "${test}" || echo "
+							use: [{loader: 'awesome-typescript-loader'}]
+						")
 					}
 				]
 			},
@@ -178,7 +184,15 @@ for f in ${typescriptAssets} ; do
 				")
 			],
 			resolve: {
-				extensions: ['.js', '.ts']
+				extensions: ['.js', '.ts'],
+				$(test "${test}" || echo "
+					plugins: [
+						new TsConfigPathsPlugin({
+							compiler: 'typescript',
+							configFileName: 'tsconfig.json'
+						})
+					]
+				")
 			}
 		};
 	EOM
