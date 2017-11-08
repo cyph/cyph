@@ -42,9 +42,9 @@ const browsers		= [
 		resolution: '1920x1080'
 	},
 	{
-		browserName: 'iPhone',
-		platform: 'MAC',
-		device: 'iPhone 6S Plus'
+		device: 'iPhone 7',
+		realMobile: true,
+		os_version: '10.0'
 	}
 ];
 
