@@ -6,6 +6,12 @@
 		"declaration": false,
 		"outDir": "./dist/out-tsc",
 		"paths": {
+			"_stream_duplex": ["js/externals/_stream_duplex"],
+			"_stream_writable": ["js/externals/_stream_writable"],
+			"faye-websocket": ["js/externals/faye-websocket"],
+			"libsodium": ["js/externals/libsodium"],
+			"request": ["js/externals/request"],
+			"rsvp": ["js/externals/rsvp"],
 			"supersphincs": ["js/externals/supersphincs"]
 		},
 		"typeRoots": [
