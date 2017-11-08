@@ -132,8 +132,7 @@ cat > webpack.js <<- EOM
 	if (uglifyJsIndex > -1) {
 		const uglifyJsPlugin	= config.plugins[uglifyJsIndex];
 
-		// uglifyJsPlugin.options.uglifyOptions.compress.sequences	= false;
-		uglifyJsPlugin.options.uglifyOptions.compress			= false;
+		uglifyJsPlugin.options.uglifyOptions.compress.sequences	= false;
 		uglifyJsPlugin.options.uglifyOptions.mangle				= {reserved: mangleExceptions};
 	}
 
@@ -144,10 +143,3 @@ cat > webpack.js <<- EOM
 EOM
 
 webpack --config webpack.js
-
-for f in dist/*.js ; do
-	for i in {1..3} ; do
-		uglifyjs "${f}" -c pure_getters=true,sequences=false -o "${f}"
-		checkfail
-	done
-done
