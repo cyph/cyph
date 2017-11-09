@@ -108,10 +108,10 @@ export class Env extends EnvDeploy {
 		/* Consistency in special cases */
 		return language === 'nb' ?
 			'no' :
-			language === 'zh-cn' ?
-				'zh-chs' :
-				language === 'zh-tw' ?
-					'zh-cht' :
+			this.fullLanguage === 'zh-tw' ?
+				'zh-cht' :
+				language === 'zh' ?
+					'zh-chs' :
 					language
 		;
 	})();
