@@ -17,6 +17,10 @@ checkfail () {
 	fi
 }
 
+download () {
+	curl -s --compressed --retry 50 ${1} > ${2}
+}
+
 fail () {
 	if [ "${*}" ] ; then
 		log "${*}\n\nFAIL"
@@ -50,6 +54,7 @@ unbindmount () {
 
 export -f bindmount
 export -f checkfail
+export -f download
 export -f fail
 export -f log
 export -f notify

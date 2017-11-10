@@ -306,12 +306,12 @@ grep -rl "'//' + disqus_shortname" |
 for id in cyph cyphtest ; do
 	mkdir js/${id}.disqus.com
 	for script in count embed ; do
-		wget --tries=50 https://${id}.disqus.com/${script}.js -O js/${id}.disqus.com/${script}.js
+		download https://${id}.disqus.com/${script}.js js/${id}.disqus.com/${script}.js
 	done
 done
 
 mkdir -p js/platform.twitter.com/js
-wget --tries=50 https://platform.twitter.com/jot.html -O js/platform.twitter.com/jot.html
+download https://platform.twitter.com/jot.html js/platform.twitter.com/jot.html
 for f in $(grep -rl https://platform.twitter.com) ; do
 	node -e "
 		const s	= '$(grep -oP '\{[a-z0-9_,:"]+button".*?\}.*?\{.*?\}' ${f})'.
@@ -325,7 +325,7 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 			console.log(\`\${a[k]}.\${b[k]}.js\`);
 		}
 	" |
-		xargs -I% wget --tries=50 "https://platform.twitter.com/js/%" -O "js/platform.twitter.com/js/%"
+		xargs -I% download "https://platform.twitter.com/js/%" "js/platform.twitter.com/js/%"
 
 	sed -i 's|https://platform.twitter.com|/blog/js/platform.twitter.com|g' ${f}
 done
@@ -342,7 +342,7 @@ for type in eot svg ttf woff woff2 ; do
 			path=\"fonts/\$(node -e \"(async () => { \
 				console.log((await require('supersphincs').hash('%')).hex); \
 			})()\").${type}\";
-			wget --tries=50 \"\${url}\" -O \"../\${path}\";
+			download \"\${url}\" \"../\${path}\";
 			grep -rl '%' | xargs -I{} sed -i \"s|%|/blog/\${path}|g\" {};
 		"
 done
