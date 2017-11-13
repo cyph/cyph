@@ -15,7 +15,7 @@ if (callType === 'audio' || callType === 'video') {
 	customBuildCallType	= callType;
 }
 
-$('head .custom-build-favicon').each((_: number, elem: HTMLElement) => {
+$('head .custom-build-favicon').each((_, elem) => {
 	if (elem instanceof HTMLLinkElement) {
 		elem.href		= customBuildFavicon || '';
 	}

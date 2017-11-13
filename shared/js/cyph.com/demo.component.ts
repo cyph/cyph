@@ -90,7 +90,7 @@ export class DemoComponent implements AfterViewInit {
 			2
 		);
 
-		$picImg.each((_: number, elem: HTMLElement) => { (async () => {
+		$picImg.each((_, elem) => { (async () => {
 			const $this: JQuery		= $(elem);
 
 			const isMobile: boolean	=
@@ -146,12 +146,12 @@ export class DemoComponent implements AfterViewInit {
 
 		if (!this.envService.isMobile) {
 			await waitForIterable(() =>
-				elements.screenshotLaptop().filter((_: number, elem: HTMLElement) =>
+				elements.screenshotLaptop().filter((_, elem) =>
 					$(elem).offset().left > 0
 				)
 			);
 			await waitForIterable(() =>
-				elements.screenshotPhone().filter((_: number, elem: HTMLElement) =>
+				elements.screenshotPhone().filter((_, elem) =>
 					$(elem).offset().left < $window.width()
 				)
 			);
