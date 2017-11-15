@@ -80,6 +80,12 @@ export class Env extends EnvDeploy {
 		typeof (<any> self).require === 'function'
 	;
 
+	/** Indicates whether this is a version of Firefox before 57 ("Quantum"). */
+	public readonly isOldFirefox: boolean	=
+		this.isFirefox &&
+		!(parseInt((Env.UA.match(/firefox\/(\d+)/) || [])[1], 10) >= 57)
+	;
+
 	/** Indicates whether this is Safari. */
 	public readonly isSafari: boolean		= navigatorData.vendor === 'Apple Computer, Inc.';
 
@@ -120,9 +126,7 @@ export class Env extends EnvDeploy {
 	public readonly realLanguage: string	= Env.language;
 
 	/** Indicates whether Granim gradient canvases should be displayed. */
-	public readonly showGranim: boolean		=
-		this.isChrome || this.isEdge || this.isIOS || this.isSafari
-	;
+	public readonly showGranim: boolean		= !this.isOldFirefox;
 
 	/** Base URI for sending an SMS. */
 	public readonly smsUriBase: string		= `sms:${this.isIOS ? '&' : '?'}body=`;
