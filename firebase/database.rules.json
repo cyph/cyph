@@ -87,6 +87,7 @@
 		"emails": {
 			"$email": {
 				".read": true,
+
 				"hash": {
 					".validate": "newData.isString()"
 				},
@@ -100,6 +101,7 @@
 			"$file": {
 				".read": true,
 				".write": true,
+
 				"hash": {
 					".validate": "newData.isString()"
 				},
@@ -112,6 +114,7 @@
 		"inviteCodes": {
 			"$code": {
 				".read": true,
+
 				"hash": {
 					".validate": "newData.isString()"
 				},
@@ -136,6 +139,7 @@
 			"$contender": {
 				".read": true,
 				".write": true,
+
 				"id": {
 					".validate": "newData.isString()"
 				},
@@ -152,6 +156,7 @@
 
 				"avatar": {
 					".read": true,
+
 					"hash": {
 						".validate": "newData.isString()"
 					},
@@ -162,6 +167,7 @@
 
 				"coverImage": {
 					".read": true,
+
 					"hash": {
 						".validate": "newData.isString()"
 					},
@@ -173,6 +179,7 @@
 				"certificate": {
 					".read": true,
 					".write": false,
+
 					"hash": {
 						".validate": "newData.isString()"
 					},
@@ -487,6 +494,7 @@
 
 				"loginData": {
 					".read": true,
+
 					"hash": {
 						".validate": "newData.isString()"
 					},
@@ -506,6 +514,7 @@
 					},
 					"isCustom": {
 						".read": true,
+
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -517,6 +526,7 @@
 
 				"presence": {
 					".read": true,
+
 					"hash": {
 						".validate": "newData.isString()"
 					},
@@ -527,6 +537,7 @@
 
 				"publicEncryptionKey": {
 					".read": true,
+
 					"hash": {
 						".validate": "newData.isString()"
 					},
@@ -537,6 +548,7 @@
 
 				"publicProfile": {
 					".read": true,
+
 					"hash": {
 						".validate": "newData.isString()"
 					},
