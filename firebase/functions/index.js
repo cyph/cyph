@@ -1,8 +1,11 @@
-const firebase	= require('firebase-admin');
-const functions	= require('firebase-functions');
-firebase.initializeApp(functions.config().firebase);
-const database	= firebase.database();
-const storage	= require('@google-cloud/storage')().bucket(
+const firebase		= require('firebase');
+const admin			= require('firebase-admin');
+const functions		= require('firebase-functions');
+admin.initializeApp(functions.config().firebase);
+const auth			= admin.auth();
+const database		= admin.database();
+const functionsUser	= functions.auth.user();
+const storage		= require('@google-cloud/storage')().bucket(
 	`${functions.config().project.id}.appspot.com`
 );
 
@@ -66,17 +69,22 @@ exports.userDisconnect	=
 
 
 exports.userRegistration	=
-	functions.database.ref('users/{user}/certificateRequest').onCreate(e => {
-		if (!e.data.exists()) {
-			return;
+	functionsUser.onCreate(e => {
+		const emailSplit	= (e.data.email || '').split('@');
+
+		if (
+			emailSplit.length !== 2 ||
+			e.data.providerData.length !== 1 ||
+			e.data.providerData[0].providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID
+		) {
+			return auth.deleteUser(e.data.uid);
 		}
 
-		const userRef	= e.data.ref.parent;
+		const username	= emailSplit[0];
 
-		if (userRef.key.length < 1) {
-			throw new Error('INVALID USER REF');
-		}
-
-		return database.ref('certificateRequests').push(userRef.key).catch(() => {});
+		return database.ref(`pendingSignups/{username}`).set({
+			timestamp: admin.database.ServerValue.TIMESTAMP,
+			uid: e.data.uid
+		});
 	})
 ;

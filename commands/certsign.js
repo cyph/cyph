@@ -38,13 +38,31 @@ try {
 }
 catch (_) {}
 
+const auth		= firebase.auth();
 const database	= firebase.database();
 const storage	= gcloudStorage({keyFilename, projectId}).bucket(`${projectId}.appspot.com`);
 
 
-const usernames	= (await firebase.database().ref('certificateRequests').once('value')).val();
+const pendingSignups	= (await database.ref('pendingSignups').once('value')).val();
+const usernames			= [];
 
-if (!usernames || Object.keys(usernames).length < 1) {
+await Promise.all(Object.keys(pendingSignups).map(async username => {
+	const pendingSignup	= pendingSignups[username];
+
+	/* If user has submitted a CSR, continue */
+	if ((await database.ref(`users/${username}/certificateRequest`).once('value')).val()) {
+		usernames.push(username);
+	}
+	/* Otherwise, if signup has been pending for at least 3 hours, delete the user */
+	else if ((Date.now() - pendingSignup.timestamp) > 10800) {
+		await Promise.all([
+			auth.deleteUser(pendingSignup.uid),
+			database.ref(`pendingSignups/${username}`).remove()
+		]);
+	}
+}));
+
+if (usernames.length < 1) {
 	console.log('No certificate requests.');
 	process.exit(0);
 }
@@ -86,10 +104,8 @@ const issuanceHistory	= await (async () => {
 	usernames: {}
 }));
 
-const csrs	= (await Promise.all(Object.keys(usernames).map(async k => {
+const csrs	= (await Promise.all(usernames.map(async username => {
 	try {
-		const username	= usernames[k];
-
 		if (
 			!username ||
 			username !== username.toLowerCase().replace(/[^0-9a-z_]/g, '').slice(0, 50)
@@ -205,15 +221,15 @@ try {
 		potassium.clearMemory(fullCert);
 	}));
 
-	await Promise.all(Object.keys(usernames).map(async k => {
-		const url	= `users/${usernames[k]}/certificateRequest`;
+	await Promise.all(usernames.map(async username => {
+		const url	= `users/${username}/certificateRequest`;
 
 		await Promise.all([
 			storage.file(url).delete(),
 			database.ref(url).remove()
 		]);
 
-		await database.ref(`certificateRequests/${k}`).remove();
+		await database.ref(`pendingSignups/${username}`).remove();
 	}));
 
 	console.log('Certificate signing complete.');

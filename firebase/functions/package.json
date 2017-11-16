@@ -3,6 +3,7 @@
 	"description": "Cloud Functions for Firebase",
 	"dependencies": {
 		"@google-cloud/storage": "*",
+		"firebase": "*",
 		"firebase-admin": "*",
 		"firebase-functions": "*"
 	},
