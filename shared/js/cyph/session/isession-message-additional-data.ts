@@ -5,7 +5,7 @@ import {
 	ISessionText,
 	ISessionTextConfirmation,
 	ISessionTransfer
-} from '../../proto';
+} from '../proto';
 
 
 /** Optional properties of ISessionMessageData. */

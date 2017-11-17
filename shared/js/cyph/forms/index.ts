@@ -1,5 +1,5 @@
 import * as msgpack from 'msgpack-lite';
-import {Form, IForm} from '../../proto';
+import {Form, IForm} from '../proto';
 
 
 const newForm			= (...components: Form.IComponent[]) : IForm => ({

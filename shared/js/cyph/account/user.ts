@@ -1,8 +1,8 @@
 import {SafeUrl} from '@angular/platform-browser';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
-import {IAccountUserPresence, IAccountUserProfile} from '../../proto';
 import {IAsyncValue} from '../iasync-value';
+import {IAccountUserPresence, IAccountUserProfile} from '../proto';
 import {flattenObservablePromise} from '../util/flatten-observable-promise';
 import {normalize} from '../util/formatting';
 import {UserPresence} from './enums';

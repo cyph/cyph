@@ -29,7 +29,7 @@ typescriptAssets="$(
 	{
 		echo cyph/crypto/native-web-crypto-polyfill;
 		echo cyph/crypto/potassium/index;
-		echo cyph/protos/index;
+		echo cyph/proto/index;
 		echo cyph/util/index;
 		echo standalone/analytics;
 		grep -roP "importScripts\('/assets/js/.*?\.js'\)" shared/js |

@@ -1,5 +1,5 @@
 import {Subject} from 'rxjs/Subject';
-import {ISessionMessage} from '../proto';
+import {ISessionMessage} from '../cyph/proto';
 
 
 /**

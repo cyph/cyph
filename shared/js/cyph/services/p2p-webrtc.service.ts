@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
 import * as SimpleWebRTC from 'simplewebrtc';
-import {ISessionCommand} from '../../proto';
 import {env} from '../env';
 import {eventManager} from '../event-manager';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
+import {ISessionCommand} from '../proto';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {request} from '../util/request';

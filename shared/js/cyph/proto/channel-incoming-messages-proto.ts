@@ -1,4 +1,4 @@
-import {CastleIncomingMessages} from '../../proto';
+import {CastleIncomingMessages} from '../proto';
 import {deserialize, serialize} from '../util/serialization';
 
 

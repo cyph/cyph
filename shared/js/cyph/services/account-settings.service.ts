@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {SecurityModels} from '../account';
-import {BlobProto} from '../protos';
+import {BlobProto} from '../proto';
 import {AccountDatabaseService} from './crypto/account-database.service';
 
 

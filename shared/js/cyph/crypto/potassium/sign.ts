@@ -1,6 +1,6 @@
 import * as lz4 from 'lz4';
 import {superSphincs} from 'supersphincs';
-import {IKeyPair} from '../../../proto';
+import {IKeyPair} from '../../proto';
 import {ISign} from './isign';
 import {potassiumUtil} from './potassium-util';
 

@@ -1,8 +1,8 @@
 import {Subject} from 'rxjs/Subject';
-import {IChatMessage} from '../../proto';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
 import {LockFunction} from '../lock-function-type';
+import {IChatMessage} from '../proto';
 import {States} from './enums';
 
 

@@ -1,4 +1,4 @@
-import {IKeyPair} from '../../../proto';
+import {IKeyPair} from '../../proto';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {ILocalUser} from './ilocal-user';
 

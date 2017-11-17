@@ -1,7 +1,6 @@
 /* tslint:disable:max-file-line-count max-func-body-length */
 
 import {Injectable} from '@angular/core';
-import {IKeyPair} from '../../../proto';
 import {IBox} from '../../crypto/potassium/ibox';
 import {IEphemeralKeyExchange} from '../../crypto/potassium/iephemeral-key-exchange';
 import {IHash} from '../../crypto/potassium/ihash';
@@ -14,6 +13,7 @@ import {ISign} from '../../crypto/potassium/isign';
 import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
 import {ThreadEvents} from '../../crypto/potassium/thread-events';
 import {EventManager, eventManager} from '../../event-manager';
+import {IKeyPair} from '../../proto';
 import {Thread} from '../../thread';
 import {uuid} from '../../util/uuid';
 

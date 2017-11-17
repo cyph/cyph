@@ -11,7 +11,7 @@ import {
 	CastleIncomingMessagesProto,
 	MaybeBinaryProto,
 	Uint32Proto
-} from '../../protos';
+} from '../../proto';
 import {normalize} from '../../util/formatting';
 import {getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {AccountContactsService} from '../account-contacts.service';

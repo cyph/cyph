@@ -21,7 +21,7 @@ import {CheckoutComponent} from '../cyph/components/checkout.component';
 import {ClaimUsernameComponent} from '../cyph/components/claim-username.component';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
-import {DataURIProto} from '../cyph/protos';
+import {DataURIProto} from '../cyph/proto';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';

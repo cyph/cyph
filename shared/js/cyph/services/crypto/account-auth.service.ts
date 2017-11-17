@@ -1,17 +1,19 @@
 import {Injectable} from '@angular/core';
 import {skip} from 'rxjs/operators/skip';
 import {Subscription} from 'rxjs/Subscription';
+import {ExternalServices} from '../../account';
 import {
 	AccountLoginData,
 	AccountUserPresence,
 	AccountUserProfile,
 	AGSEPKICSR,
+	BinaryProto,
+	BooleanProto,
 	IAccountLoginData,
 	IKeyPair,
-	KeyPair
-} from '../../../proto';
-import {ExternalServices} from '../../account';
-import {BinaryProto, BooleanProto, StringProto} from '../../protos';
+	KeyPair,
+	StringProto
+} from '../../proto';
 import {normalize} from '../../util/formatting';
 import {deserialize, serialize} from '../../util/serialization';
 import {uuid} from '../../util/uuid';

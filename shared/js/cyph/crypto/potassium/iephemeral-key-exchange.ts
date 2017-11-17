@@ -1,4 +1,4 @@
-import {IKeyPair} from '../../../proto';
+import {IKeyPair} from '../../proto';
 
 
 /** Equivalent to sodium.crypto_scalarmult. */

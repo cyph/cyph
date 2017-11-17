@@ -1,4 +1,4 @@
-import {IKeyPair} from '../../../../proto';
+import {IKeyPair} from '../../../proto';
 import {importHelper} from './import-helper';
 
 

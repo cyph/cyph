@@ -2,12 +2,11 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
-import {ISessionMessage, SessionMessageList} from '../../proto';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {eventManager} from '../event-manager';
 import {IAsyncValue} from '../iasync-value';
 import {LocalAsyncValue} from '../local-async-value';
-import {BinaryProto} from '../protos';
+import {BinaryProto, ISessionMessage, SessionMessageList} from '../proto';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {
 	CastleEvents,

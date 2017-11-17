@@ -1,4 +1,4 @@
-import {SessionTransfer} from '../../proto';
+import {SessionTransfer} from '../proto';
 
 
 /** @see SessionTransfer.Answers */

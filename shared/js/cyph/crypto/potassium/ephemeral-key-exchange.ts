@@ -1,6 +1,6 @@
 import {sodium} from 'libsodium';
 import {rlwe} from 'rlwe';
-import {IKeyPair} from '../../../proto';
+import {IKeyPair} from '../../proto';
 import {IEphemeralKeyExchange} from './iephemeral-key-exchange';
 import {IHash} from './ihash';
 import {potassiumUtil} from './potassium-util';

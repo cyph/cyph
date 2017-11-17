@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {LockFunction} from '../cyph/lock-function-type';
+import {ISessionMessage} from '../cyph/proto';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {EnvService} from '../cyph/services/env.service';
 import {ErrorService} from '../cyph/services/error.service';
@@ -15,7 +16,6 @@ import {
 import {lockFunction} from '../cyph/util/lock';
 import {random} from '../cyph/util/random';
 import {sleep} from '../cyph/util/wait';
-import {ISessionMessage} from '../proto';
 import {ChatData} from './chat-data';
 
 

@@ -1,4 +1,4 @@
-import {AccountUserPresence} from '../../../proto';
+import {AccountUserPresence} from '../../proto';
 
 
 /** @see AccountUserPresence.Statuses */

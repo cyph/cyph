@@ -1,7 +1,7 @@
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
-import {ISessionMessage} from '../../proto';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
+import {ISessionMessage} from '../proto';
 import {
 	CastleEvents,
 	ISessionMessageAdditionalData,

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
-import {StringProto} from '../cyph/protos';
+import {StringProto} from '../cyph/proto';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {random} from '../cyph/util/random';

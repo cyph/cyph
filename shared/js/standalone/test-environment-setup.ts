@@ -1,5 +1,5 @@
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
-import {BinaryProto} from '../cyph/protos';
+import {BinaryProto} from '../cyph/proto';
 import {DatabaseService} from '../cyph/services/database.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 

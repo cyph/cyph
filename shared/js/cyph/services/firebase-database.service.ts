@@ -11,7 +11,7 @@ import {skip} from 'rxjs/operators/skip';
 import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
-import {BinaryProto} from '../protos';
+import {BinaryProto} from '../proto';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lock} from '../util/lock';
 import {requestByteStream} from '../util/request';

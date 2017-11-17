@@ -9,14 +9,18 @@ import {mergeMap} from 'rxjs/operators/mergeMap';
 import {skipWhile} from 'rxjs/operators/skipWhile';
 import {take} from 'rxjs/operators/take';
 import {Subscription} from 'rxjs/Subscription';
-import {AccountUserPublicKeys, AGSEPKICert, IAccountUserPublicKeys} from '../../../proto';
 import {ICurrentUser, SecurityModels} from '../../account';
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';
 import {IProto} from '../../iproto';
 import {ITimedValue} from '../../itimed-value';
 import {LockFunction} from '../../lock-function-type';
-import {BinaryProto} from '../../protos';
+import {
+	AccountUserPublicKeys,
+	AGSEPKICert,
+	BinaryProto,
+	IAccountUserPublicKeys
+} from '../../proto';
 import {flattenObservablePromise} from '../../util/flatten-observable-promise';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';

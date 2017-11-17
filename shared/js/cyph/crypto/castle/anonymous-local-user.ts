@@ -1,4 +1,4 @@
-import {IKeyPair} from '../../../proto';
+import {IKeyPair} from '../../proto';
 import {IPotassium} from '../potassium/ipotassium';
 import {potassiumUtil} from '../potassium/potassium-util';
 import {IHandshakeState} from './ihandshake-state';

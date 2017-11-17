@@ -7,7 +7,7 @@ import {ISecretBox} from '../crypto/potassium/isecret-box';
 import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
 import {ISessionTransfer, SessionTransfer, SessionTransferAnswers} from '../files';
-import {BinaryProto} from '../protos';
+import {BinaryProto} from '../proto';
 import {ISessionMessageData, rpcEvents} from '../session';
 import {readableByteLength} from '../util/formatting';
 import {saveFile} from '../util/save-file';

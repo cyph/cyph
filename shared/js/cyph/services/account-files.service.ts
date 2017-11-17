@@ -18,21 +18,23 @@ import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
 import {toArray} from 'rxjs/operators/toArray';
+import {SecurityModels} from '../account';
+import {IProto} from '../iproto';
+import {IQuillDelta} from '../iquill-delta';
+import {IQuillRange} from '../iquill-range';
 import {
 	AccountFileRecord,
 	AccountFileReference,
 	AccountFileReferenceContainer,
+	BinaryProto,
+	BlobProto,
+	DataURIProto,
 	Form,
 	IAccountFileRecord,
 	IAccountFileReference,
 	IAccountFileReferenceContainer,
 	IForm
-} from '../../proto';
-import {SecurityModels} from '../account';
-import {IProto} from '../iproto';
-import {IQuillDelta} from '../iquill-delta';
-import {IQuillRange} from '../iquill-range';
-import {BinaryProto, BlobProto, DataURIProto} from '../protos';
+} from '../proto';
 import {flattenObservablePromise} from '../util/flatten-observable-promise';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {saveFile} from '../util/save-file';
