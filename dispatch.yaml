@@ -1,21 +1,21 @@
 dispatch:
 - url: "api.cyph.com/*"
-  module: default
+  service: default
 
 - url: "cyph.com/*"
-  module: nakedredirect
+  service: nakedredirect
 
 - url: "www.cyph.com/*"
-  module: cyph-com
+  service: cyph-com
 
 - url: "cyph.ws/*"
-  module: cyph-ws
+  service: cyph-ws
 
 - url: "cyph.me/*"
-  module: cyph-me
+  service: cyph-me
 
 - url: "cyph.video/*"
-  module: cyph-video
+  service: cyph-video
 
 - url: "cyph.audio/*"
-  module: cyph-audio
+  service: cyph-audio
