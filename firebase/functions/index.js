@@ -9,6 +9,7 @@ const {
 	database,
 	functionsUser,
 	getItem,
+	removeItem,
 	setItem,
 	storage
 }	= require('./database-service');
@@ -71,7 +72,10 @@ exports.userConsumeInvite	=
 
 		return Promise.all([
 			inviterRef.remove(),
-			setItem(`users/${userRef.key}/inviterUsername`, StringProto, inviterUsername)
+			setItem(`users/${userRef.key}/inviterUsername`, StringProto, inviterUsername),
+			!inviterUsername ?
+				undefined :
+				removeItem(`users/${inviterUsername}/inviteCodes/${inviteCode}`)
 		]);
 	})
 ;

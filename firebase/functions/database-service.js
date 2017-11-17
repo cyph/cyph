@@ -8,7 +8,12 @@ const admin						= require('firebase-admin');
 const functions					= require('firebase-functions');
 const potassium					= require('./potassium');
 const {StringProto}				= require('./proto');
-const {deserialize, serialize}	= require('./util');
+
+const {
+	deserialize,
+	retryUntilSuccessful,
+	serialize
+}	= require('./util');
 
 admin.initializeApp(functions.config().firebase);
 
@@ -36,6 +41,12 @@ module.exports	= {
 		}
 
 		return deserialize(proto, value);
+	},
+	removeItem: async url => {
+		return retryUntilSuccessful(async () => Promise.all([
+			database.ref(url).remove(),
+			storage.deleteFiles({force: true, prefix: `${url}/`})
+		]));
 	},
 	setItem: async (url, proto, value) => {
 		return Promise.all([
