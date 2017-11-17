@@ -45,7 +45,7 @@ exports.channelDisconnect	=
 
 
 exports.userConsumeInvite	=
-	functions.database.ref('users/{user}/inviteCode').onCreate(e => {
+	functions.database.ref('users/{user}/inviteCode').onCreate(async e => {
 		const inviteCode	= (e.data.val() || '').trim();
 		const userRef		= e.data.ref.parent;
 
@@ -71,7 +71,7 @@ exports.userConsumeInvite	=
 
 
 exports.userDisconnect	=
-	functions.database.ref('users/{user}/clientConnections').onDelete(e => {
+	functions.database.ref('users/{user}/clientConnections').onDelete(async e => {
 		const userRef	= e.data.ref.parent;
 
 		if (userRef.key.length < 1) {
@@ -89,7 +89,7 @@ exports.userDisconnect	=
 
 
 exports.userRegistration	=
-	functionsUser.onCreate(e => {
+	functionsUser.onCreate(async e => {
 		const emailSplit	= (e.data.email || '').split('@');
 
 		if (
