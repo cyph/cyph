@@ -66,9 +66,13 @@ const agseLocalInterface	= cat(path.join(homeDir, '.cyph', 'agse.local.interface
 const agseTempFile			= path.join(os.tmpdir(), 'balls');
 const commandAdditionalArgs	= [];
 
-const commandScriptExists	= fs.existsSync(
-	path.join(__dirname, 'commands', `${args.command}.sh`)
-);
+const commandScript			=
+	fs.existsSync(path.join(__dirname, 'commands', `${args.command}.sh`)) ?
+		`${args.command}.sh` :
+		fs.existsSync(path.join(__dirname, 'commands', `${args.command}.js`)) ?
+			`${args.command}.js` :
+			undefined
+;
 
 const isAgseDeploy			=
 	args.command === 'deploy' &&
@@ -196,7 +200,7 @@ const shellScripts			= {
 	command: `
 		source ~/.bashrc
 		${windowsWorkaround}
-		/cyph/commands/${args.command}.sh ${
+		/cyph/commands/${commandScript} ${
 			process.argv.
 				slice(3).
 				filter(s => s !== '--background').
@@ -497,7 +501,7 @@ switch (args.command) {
 		break;
 
 	default:
-		if (!commandScriptExists) {
+		if (!commandScript) {
 			throw new Error('fak u gooby');
 		}
 }
@@ -507,7 +511,7 @@ process.on('SIGINT', exitCleanup);
 process.on('uncaughtException', exitCleanup);
 
 initPromise.then(() => {
-	if (!commandScriptExists) {
+	if (!commandScript) {
 		return;
 	}
 
