@@ -97,8 +97,8 @@
 														matTooltip='Username unavailable'
 														*ngIf='
 															!username.pending &&
-															username.value &&
-															username.errors
+															!!username.value &&
+															!!username.errors
 														'
 													>
 														error_outline
@@ -109,7 +109,7 @@
 														matTooltip='Username available!'
 														*ngIf='
 															!username.pending &&
-															username.value &&
+															!!username.value &&
 															!username.errors
 														'
 													>
