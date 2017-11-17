@@ -3,6 +3,7 @@ const admin			= require('firebase-admin');
 const functions		= require('firebase-functions');
 const potassium		= require('./potassium');
 const {StringProto}	= require('./proto');
+const {sleep}		= require('./util');
 
 const {
 	auth,
@@ -19,38 +20,26 @@ const channelDisconnectTimeout	= 2500;
 
 
 exports.channelDisconnect	=
-	functions.database.ref('channels/{channel}/disconnects/{user}').onWrite(e => {
+	functions.database.ref('channels/{channel}/disconnects/{user}').onWrite(async e => {
 		if (!e.data.exists()) {
 			return;
 		}
 
 		const startingValue	= e.data.val();
 
-		new Promise(resolve =>
-			setTimeout(
-				resolve,
-				Math.max(channelDisconnectTimeout - (Date.now() - startingValue), 0)
-			)
-		).then(() =>
-			e.data.ref.once('value')
-		).then(newData => {
-			if (startingValue !== newData.val()) {
-				return;
-			}
+		await sleep(Math.max(channelDisconnectTimeout - (Date.now() - startingValue), 0));
 
-			const doomedRef	= e.data.ref.parent.parent;
+		if (startingValue !== (await e.data.ref.once('value')).val()) {
+			return;
+		}
 
-			if (doomedRef.key.length < 1) {
-				throw new Error('INVALID DOOMED REF');
-			}
+		const doomedRef	= e.data.ref.parent.parent;
 
-			return Promise.all([
-				doomedRef.remove(),
-				storage.deleteFiles({prefix: `channels/${doomedRef.key}/`})
-			]).catch(
-				() => {}
-			);
-		});
+		if (doomedRef.key.length < 1) {
+			throw new Error('INVALID DOOMED REF');
+		}
+
+		return removeItem(`channels/${doomedRef.key}`);
 	})
 ;
 
