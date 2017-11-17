@@ -53,7 +53,7 @@ return {
 	},
 	setItem: async (url, proto, value) => {
 		return Promise.all([
-			storage.file(url).save(serialize(proto, value)),
+			storage.file(url).save(await serialize(proto, value)),
 			database.ref(url).set({
 				hash: potassium.toBase64(await potassium.hash.hash(value)),
 				timestamp: admin.database.ServerValue.TIMESTAMP
