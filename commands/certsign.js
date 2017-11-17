@@ -1,25 +1,20 @@
 #!/usr/bin/env node
 
 
-const gcloudStorage					= require('@google-cloud/storage');
-const crypto						= require('crypto');
 const firebase						= require('firebase-admin');
 const fs							= require('fs');
 const os							= require('os');
+const databaseService				= require('../modules/database-service');
 const potassium						= require('../modules/potassium');
+const {deserialize, serialize}		= require('../modules/util');
 const {agsePublicSigningKeys, sign}	= require('./sign');
 
 const {
 	AGSEPKICert,
 	AGSEPKICSR,
-	AGSEPKIIssuanceHistory
+	AGSEPKIIssuanceHistory,
+	BinaryProto
 }	= require('../modules/proto');
-
-const {
-	deserialize,
-	retryUntilSuccessful,
-	serialize
-}	= require('../modules/util');
 
 
 const certSign	= async (testSign, standalone) => {
@@ -37,17 +32,21 @@ const requireInvite				= true;
 const getHash	= async bytes => potassium.toBase64(await potassium.hash.hash(bytes));
 
 
-try {
-	firebase.initializeApp({
+const {
+	auth,
+	database,
+	getItem,
+	removeItem,
+	setItem,
+	storage
+}	= databaseService({
+	firebase: {
 		credential: firebase.credential.cert(JSON.parse(fs.readFileSync(keyFilename).toString())),
 		databaseURL: `https://${projectId}.firebaseio.com`
-	});
-}
-catch (_) {}
-
-const auth		= firebase.auth();
-const database	= firebase.database();
-const storage	= gcloudStorage({keyFilename, projectId}).bucket(`${projectId}.appspot.com`);
+	},
+	project: {id: projectId},
+	storage: {keyFilename, projectId}
+});
 
 
 const pendingSignups	= (await database.ref('pendingSignups').once('value')).val();
@@ -68,12 +67,11 @@ await Promise.all(Object.keys(pendingSignups).map(async username => {
 	}
 	/* Otherwise, if signup has been pending for at least 3 hours, delete the user */
 	else if ((Date.now() - pendingSignup.timestamp) > 10800) {
-		await retryUntilSuccessful(async () => Promise.all([
+		await Promise.all([
 			auth.deleteUser(pendingSignup.uid),
 			database.ref(`pendingSignups/${username}`).remove(),
-			database.ref(`users/${username}`).remove(),
-			storage.deleteFiles({force: true, prefix: `users/${username}/`})
-		]));
+			removeItem(`users/${username}`).remove()
+		]);
 	}
 }));
 
@@ -83,7 +81,7 @@ if (usernames.length < 1) {
 }
 
 const issuanceHistory	= await (async () => {
-	const bytes				= (await storage.file('certificateHistory').download())[0];
+	const bytes				= await getItem('certificateHistory', BinaryProto);
 	const dataView			= potassium.toDataView(bytes);
 	const rsaKeyIndex		= dataView.getUint32(0, true);
 	const sphincsKeyIndex	= dataView.getUint32(4, true);
@@ -128,9 +126,7 @@ const csrs	= (await Promise.all(usernames.map(async username => {
 			return;
 		}
 
-		const bytes			=
-			(await storage.file(`users/${username}/certificateRequest`).download())[0]
-		;
+		const bytes			= await getItem(`users/${username}/certificateRequest`, BinaryProto);
 
 		const csr			= await deserialize(
 			AGSEPKICSR,
@@ -205,7 +201,7 @@ try {
 
 	fs.writeFileSync(lastIssuanceTimestampPath, issuanceHistory.timestamp.toString());
 
-	await storage.file('certificateHistory').save(potassium.concatMemory(
+	await setItem('certificateHistory', BinaryProto, potassium.concatMemory(
 		false,
 		new Uint32Array([rsaIndex]),
 		new Uint32Array([sphincsIndex]),
@@ -224,13 +220,7 @@ try {
 
 		const url		= `users/${csr.username}/certificate`;
 
-		await Promise.all([
-			storage.file(url).save(fullCert),
-			database.ref(url).set({
-				hash: await getHash(fullCert),
-				timestamp: firebase.database.ServerValue.TIMESTAMP
-			})
-		]);
+		await setItem(url, BinaryProto, fullCert);
 
 		potassium.clearMemory(cert);
 		potassium.clearMemory(fullCert);
@@ -239,11 +229,7 @@ try {
 	await Promise.all(usernames.map(async username => {
 		const url	= `users/${username}/certificateRequest`;
 
-		await Promise.all([
-			storage.file(url).delete(),
-			database.ref(url).remove()
-		]);
-
+		await removeItem(url);
 		await database.ref(`pendingSignups/${username}`).remove();
 	}));
 

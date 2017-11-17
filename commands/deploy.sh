@@ -501,6 +501,7 @@ if \
 	gsutil cors set storage.cors.json gs://${firebaseProject}.appspot.com
 	cd functions
 	npm install
+	cp ../../modules/database-service.js ./
 
 	# Temporary workaround for Cloud Functions using an outdated Node.js LTS
 	for f in *.js ; do mv "${f}" "$(echo "${f}" | sed 's|\.js$|.ts|')" ; done

@@ -15,15 +15,18 @@ const {
 	serialize
 }	= require('./util');
 
-admin.initializeApp(functions.config().firebase);
+
+module.exports	= config => {
+
+
+admin.initializeApp(config.firebase);
 
 const auth			= admin.auth();
 const database		= admin.database();
 const functionsUser	= functions.auth.user();
-const storage		= gcloudStorage().bucket(`${functions.config().project.id}.appspot.com`);
+const storage		= gcloudStorage(config.storage).bucket(`${config.project.id}.appspot.com`);
 
-
-module.exports	= {
+return {
 	auth,
 	database,
 	functionsUser,
@@ -58,4 +61,7 @@ module.exports	= {
 		]);
 	},
 	storage
+};
+
+
 };

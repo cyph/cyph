@@ -13,7 +13,7 @@ const {
 	removeItem,
 	setItem,
 	storage
-}	= require('./database-service');
+}	= require('./database-service')(functions.config());
 
 
 const channelDisconnectTimeout	= 2500;
