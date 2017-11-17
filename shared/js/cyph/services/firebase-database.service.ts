@@ -443,6 +443,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public async unregister (username: string, password: string) : Promise<void> {
+		await this.login(username, password);
+
+		const {currentUser}	= await (await this.app).auth();
+		if (currentUser) {
+			await currentUser.delete();
+		}
+	}
+
+	/** @inheritDoc */
 	public uploadItem<T> (url: string, proto: IProto<T>, value: T) : {
 		cancel: () => void;
 		progress: Observable<number>;

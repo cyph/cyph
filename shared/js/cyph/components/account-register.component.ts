@@ -39,6 +39,9 @@ export class AccountRegisterComponent implements OnInit {
 		masterKeyConfirm: true
 	};
 
+	/** Invite code. */
+	public inviteCode: string							= '';
+
 	/** Lock screen password. */
 	public lockScreenPassword: string					= '';
 
@@ -117,7 +120,11 @@ export class AccountRegisterComponent implements OnInit {
 			try {
 				const step: number|undefined	= parseInt(o.step, 10);
 
-				if (!isNaN(step) && step > 0 && step <= (this.totalSteps + 1)) {
+				/* Allow "step" parameter to double up as invite code */
+				if (isNaN(step) && !this.inviteCode) {
+					this.inviteCode	= o.step;
+				}
+				else if (!isNaN(step) && step > 0 && step <= (this.totalSteps + 1)) {
 					this.tabIndex	= step - 1;
 					return;
 				}
@@ -134,6 +141,7 @@ export class AccountRegisterComponent implements OnInit {
 			!this.username.value ||
 			this.username.errors ||
 			!this.name ||
+			!this.inviteCode ||
 			(
 				this.useLockScreenPIN ?
 					this.lockScreenPIN.length !== this.lockScreenPasswordLength :

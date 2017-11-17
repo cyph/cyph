@@ -113,14 +113,7 @@
 
 		"inviteCodes": {
 			"$code": {
-				".read": true,
-
-				"hash": {
-					".validate": "newData.isString()"
-				},
-				"timestamp": {
-					".validate": "newData.val() === now"
-				}
+				".validate": "newData.isString()"
 			}
 		},
 
@@ -459,7 +452,18 @@
 					}
 				},
 
+				"inviteCode": {
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				},
+
 				"inviteCodes": {
+					".write": false,
+
 					"$code": {
 						"hash": {
 							".validate": "newData.isString()"
@@ -467,6 +471,26 @@
 						"timestamp": {
 							".validate": "newData.val() === now"
 						}
+					}
+				},
+
+				"inviterUsername": {
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				},
+
+				"inviterUsernamePlaintext": {
+					".write": false,
+
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
 					}
 				},
 

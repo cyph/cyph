@@ -501,6 +501,7 @@ if \
 	gsutil cors set storage.cors.json gs://${firebaseProject}.appspot.com
 	cd functions
 	npm install
+	cp -rf ../../shared/assets/js ./
 	cd ..
 	firebase deploy
 	rm -rf functions/node_modules functions/package-lock.json

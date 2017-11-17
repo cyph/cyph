@@ -12,10 +12,14 @@ const {agsePublicSigningKeys, sign}	= require('./sign');
 const {
 	AGSEPKICert,
 	AGSEPKICSR,
-	AGSEPKIIssuanceHistory,
-	deserialize,
-	serialize
+	AGSEPKIIssuanceHistory
 }	= require('../modules/proto');
+
+const {
+	deserialize,
+	retryUntilSuccessful,
+	serialize
+}	= require('../modules/util');
 
 
 const certSign	= async (testSign, standalone) => {
@@ -25,6 +29,9 @@ const configDir					= `${os.homedir()}/.cyph`;
 const lastIssuanceTimestampPath	= `${configDir}/certsign.timestamp.${testSign ? 'test' : 'prod'}`;
 const keyFilename				= `${configDir}/firebase.${testSign ? 'test' : 'prod'}`;
 const projectId					= testSign ? 'cyph-test' : 'cyphme';
+
+/* Will remain hardcoded as true for the duration of the private beta */
+const requireInvite				= true;
 
 
 const getHash	= async bytes => potassium.toBase64(await potassium.hash.hash(bytes));
@@ -49,16 +56,24 @@ const usernames			= [];
 await Promise.all(Object.keys(pendingSignups).map(async username => {
 	const pendingSignup	= pendingSignups[username];
 
-	/* If user has submitted a CSR, continue */
-	if ((await database.ref(`users/${username}/certificateRequest`).once('value')).val()) {
+	/* If user has submitted a CSR and has a valid invite (if required), continue */
+	if (
+		(await database.ref(`users/${username}/certificateRequest`).once('value')).val() &&
+		(
+			!requireInvite ||
+			(await database.ref(`users/${username}/inviterUsernamePlaintext`).once('value')).val()
+		)
+	) {
 		usernames.push(username);
 	}
 	/* Otherwise, if signup has been pending for at least 3 hours, delete the user */
 	else if ((Date.now() - pendingSignup.timestamp) > 10800) {
-		await Promise.all([
+		await retryUntilSuccessful(async () => Promise.all([
 			auth.deleteUser(pendingSignup.uid),
-			database.ref(`pendingSignups/${username}`).remove()
-		]);
+			database.ref(`pendingSignups/${username}`).remove(),
+			database.ref(`users/${username}`).remove(),
+			storage.deleteFiles({force: true, prefix: `users/${username}/`})
+		]));
 	}
 }));
 
@@ -81,7 +96,7 @@ const issuanceHistory	= await (async () => {
 		throw new Error('Invalid AGSE-PKI history: bad key index.');
 	}
 
-	const o	= await util.deserialize(
+	const o	= await deserialize(
 		AGSEPKIIssuanceHistory,
 		await this.potassiumService.sign.open(
 			signed,

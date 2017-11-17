@@ -209,47 +209,72 @@ export class AccountAuthService {
 		password: string,
 		pin: {isCustom: boolean; value: string},
 		name: string,
-		email?: string
+		email?: string,
+		inviteCode?: string
 	) : Promise<boolean> {
 		if (!realUsername || !password) {
 			return false;
 		}
 
+		const username	= normalize(realUsername);
+
+		const externalUsernames: {[s: string]: string}	= {};
+		if (email) {
+			externalUsernames[ExternalServices.email]	= email;
+		}
+
+		const loginData: IAccountLoginData	= {
+			secondaryPassword: this.potassiumService.toBase64(
+				this.potassiumService.randomBytes(64)
+			),
+			symmetricKey: this.potassiumService.randomBytes(
+				await this.potassiumService.secretBox.keyBytes
+			)
+		};
+
 		try {
-			const username	= normalize(realUsername);
-
-			const externalUsernames: {[s: string]: string}	= {};
-			if (email) {
-				externalUsernames[ExternalServices.email]	= email;
-			}
-
-			const loginData: IAccountLoginData	= {
-				secondaryPassword: this.potassiumService.toBase64(
-					this.potassiumService.randomBytes(64)
-				),
-				symmetricKey: this.potassiumService.randomBytes(
-					await this.potassiumService.secretBox.keyBytes
-				)
-			};
-
 			const [
 				encryptionKeyPair,
 				signingKeyPair,
 				certificateRequestURL,
-				pinHashURL,
-				pinIsCustomURL,
 				publicEncryptionKeyURL,
 				publicProfileURL
 			]	= await Promise.all([
 				this.potassiumService.box.keyPair(),
 				this.potassiumService.sign.keyPair(),
 				this.accountDatabaseService.normalizeURL(`users/${username}/certificateRequest`),
-				this.accountDatabaseService.normalizeURL(`users/${username}/pin/hash`),
-				this.accountDatabaseService.normalizeURL(`users/${username}/pin/isCustom`),
 				this.accountDatabaseService.normalizeURL(`users/${username}/publicEncryptionKey`),
 				this.accountDatabaseService.normalizeURL(`users/${username}/publicProfile`),
 				this.databaseService.register(username, loginData.secondaryPassword)
 			]);
+
+			if (inviteCode) {
+				await this.databaseService.setItem(
+					`users/${username}/inviteCode`,
+					StringProto,
+					inviteCode
+				);
+
+				const inviterUsername	= await this.databaseService.getAsyncValue(
+					`users/${username}/inviterUsernamePlaintext`,
+					StringProto,
+					undefined,
+					true
+				).getValue();
+
+				if (!inviterUsername) {
+					throw new Error('Invalid invite code.');
+				}
+
+				await this.databaseService.setItem(
+					`users/${username}/inviterUsername`,
+					BinaryProto,
+					await this.potassiumService.secretBox.seal(
+						await serialize(StringProto, inviterUsername),
+						loginData.symmetricKey
+					)
+				);
+			}
 
 			await Promise.all([
 				this.databaseService.setItem(
@@ -316,7 +341,7 @@ export class AccountAuthService {
 					)
 				),
 				this.databaseService.setItem(
-					pinHashURL,
+					`users/${username}/pin/hash`,
 					BinaryProto,
 					await this.potassiumService.secretBox.seal(
 						await this.passwordHash(username, pin.value),
@@ -324,7 +349,7 @@ export class AccountAuthService {
 					)
 				),
 				this.databaseService.setItem(
-					pinIsCustomURL,
+					`users/${username}/pin/isCustom`,
 					BooleanProto,
 					pin.isCustom
 				),
@@ -341,6 +366,10 @@ export class AccountAuthService {
 			]);
 		}
 		catch (_) {
+			await this.databaseService.unregister(username, loginData.secondaryPassword).catch(
+				() => {}
+			);
+
 			return false;
 		}
 

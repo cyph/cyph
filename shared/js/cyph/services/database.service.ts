@@ -256,6 +256,11 @@ export class DatabaseService extends DataManagerService {
 		});
 	}
 
+	/** Deletes account and logs out. */
+	public async unregister (_USERNAME: string, _PASSWORD: string) : Promise<void> {
+		throw new Error('Must provide an implementation of DatabaseService.unregister.');
+	}
+
 	/** Uploads value and gives progress. */
 	public uploadItem<T> (_URL: string, _PROTO: IProto<T>, _VALUE: T) : {
 		cancel: () => void;

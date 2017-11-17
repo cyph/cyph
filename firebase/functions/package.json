@@ -5,7 +5,8 @@
 		"@google-cloud/storage": "*",
 		"firebase": "*",
 		"firebase-admin": "*",
-		"firebase-functions": "*"
+		"firebase-functions": "*",
+		"libsodium-wrappers-sumo": "*"
 	},
 	"private": true
 }

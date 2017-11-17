@@ -15,6 +15,7 @@ import {GenericArrayProto} from './generic-array-proto';
 import {GenericProto} from './generic-proto';
 
 
+export * from '../../proto';
 export * from './binary-proto';
 export * from './blob-proto';
 export * from './channel-incoming-messages-proto';

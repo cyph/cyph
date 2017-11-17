@@ -1,13 +1,17 @@
 const firebase		= require('firebase');
 const admin			= require('firebase-admin');
 const functions		= require('firebase-functions');
-admin.initializeApp(functions.config().firebase);
-const auth			= admin.auth();
-const database		= admin.database();
-const functionsUser	= functions.auth.user();
-const storage		= require('@google-cloud/storage')().bucket(
-	`${functions.config().project.id}.appspot.com`
-);
+const potassium		= require('./potassium');
+const {StringProto}	= require('./proto');
+
+const {
+	auth,
+	database,
+	functionsUser,
+	getItem,
+	setItem,
+	storage
+}	= require('./database-service');
 
 
 const channelDisconnectTimeout	= 2500;
@@ -46,6 +50,29 @@ exports.channelDisconnect	=
 				() => {}
 			);
 		});
+	})
+;
+
+
+exports.userConsumeInvite	=
+	functions.database.ref('users/{user}/inviteCode').onCreate(e => {
+		const inviteCode	= (e.data.val() || '').trim();
+		const userRef		= e.data.ref.parent;
+
+		if (!inviteCode) {
+			return;
+		}
+		else if (userRef.key.length < 1) {
+			throw new Error('INVALID USER REF');
+		}
+
+		const inviterRef		= database.ref(`inviteCodes/${inviteCode}`);
+		const inviterUsername	= (await inviterRef.once('value')).val() || '';
+
+		return Promise.all([
+			inviterRef.remove(),
+			setItem(`users/${userRef.key}/inviterUsername`, StringProto, inviterUsername)
+		]);
 	})
 ;
 
