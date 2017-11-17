@@ -1,4 +1,4 @@
-import {ChatUnconfirmedMessages} from '../proto';
+import {ChatUnconfirmedMessages} from '../../proto';
 import {deserialize, serialize} from '../util/serialization';
 
 
