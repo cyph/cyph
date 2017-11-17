@@ -78,12 +78,7 @@ exports.userDisconnect	=
 			throw new Error('INVALID USER REF');
 		}
 
-		return Promise.all([
-			userRef.child('presence').remove(),
-			storage.file(`users/${userRef.key}/presence`).delete()
-		]).catch(
-			() => {}
-		);
+		return removeItem(`users/${userRef.key}/presence`);
 	})
 ;
 
