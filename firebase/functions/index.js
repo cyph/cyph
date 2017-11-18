@@ -46,14 +46,16 @@ exports.channelDisconnect	=
 
 exports.userConsumeInvite	=
 	functions.database.ref('users/{user}/inviteCode').onCreate(async e => {
-		const inviteCode	= (e.data.val() || '').trim();
 		const userRef		= e.data.ref.parent;
+
+		if (userRef.key.length < 1) {
+			throw new Error('INVALID USER REF');
+		}
+
+		const inviteCode	= await getItem(`users/${userRef.key}/inviteCode`, StringProto);
 
 		if (!inviteCode) {
 			return;
-		}
-		else if (userRef.key.length < 1) {
-			throw new Error('INVALID USER REF');
 		}
 
 		const inviterRef		= database.ref(`inviteCodes/${inviteCode}`);
@@ -61,7 +63,7 @@ exports.userConsumeInvite	=
 
 		return Promise.all([
 			inviterRef.remove(),
-			setItem(`users/${userRef.key}/inviterUsername`, StringProto, inviterUsername),
+			setItem(`users/${userRef.key}/inviterUsernamePlaintext`, StringProto, inviterUsername),
 			!inviterUsername ?
 				undefined :
 				removeItem(`users/${inviterUsername}/inviteCodes/${inviteCode}`)
