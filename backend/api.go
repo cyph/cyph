@@ -83,7 +83,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return err.Error(), http.StatusTeapot
 		}
 
-		customer, err := bt.Customer().Create(&braintree.Customer{
+		customer, err := bt.Customer().Create(h.Context, &braintree.Customer{
 			Company:   company,
 			Email:     email,
 			FirstName: firstName,
@@ -94,7 +94,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return err.Error(), http.StatusTeapot
 		}
 
-		paymentMethod, err := bt.PaymentMethod().Create(&braintree.PaymentMethodRequest{
+		paymentMethod, err := bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
 			CustomerId:         customer.Id,
 			PaymentMethodNonce: nonce,
 		})
@@ -103,7 +103,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return err.Error(), http.StatusTeapot
 		}
 
-		plan, err := bt.Plan().Find(planID)
+		plan, err := bt.Plan().Find(h.Context, planID)
 
 		if err != nil {
 			return err.Error(), http.StatusTeapot
@@ -134,7 +134,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			}
 		}
 
-		tx, err := bt.Subscription().Create(subscriptionRequest)
+		tx, err := bt.Subscription().Create(h.Context, subscriptionRequest)
 
 		if err != nil {
 			return err.Error(), http.StatusTeapot
@@ -160,7 +160,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			}
 		}
 	} else {
-		tx, err := bt.Transaction().Create(&braintree.TransactionRequest{
+		tx, err := bt.Transaction().Create(h.Context, &braintree.TransactionRequest{
 			Type:               "sale",
 			Amount:             braintree.NewDecimal(amount, 2),
 			PaymentMethodNonce: nonce,
@@ -170,7 +170,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return err.Error(), http.StatusTeapot
 		}
 
-		bt.Transaction().SubmitForSettlement(tx.Id)
+		bt.Transaction().SubmitForSettlement(h.Context, tx.Id)
 
 		success = tx.Status == "authorized"
 		txJSON, _ := json.Marshal(tx)
@@ -201,7 +201,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 }
 
 func braintreeToken(h HandlerArgs) (interface{}, int) {
-	token, err := braintreeInit(h).ClientToken().Generate()
+	token, err := braintreeInit(h).ClientToken().Generate(h.Context)
 
 	if err == nil {
 		return token, http.StatusOK
@@ -337,7 +337,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	}
 
 	bt := braintreeInit(h)
-	braintreeCustomer, err := bt.Customer().Find(customer.BraintreeID)
+	braintreeCustomer, err := bt.Customer().Find(h.Context, customer.BraintreeID)
 
 	if err != nil {
 		return err.Error(), http.StatusTeapot
