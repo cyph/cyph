@@ -87,17 +87,18 @@ exports.userRegister	=
 	functionsUser.onCreate(async e => {
 		const emailSplit	= (e.data.email || '').split('@');
 
-		if (
-			emailSplit.length !== 2 ||
-			e.data.providerData.length !== 1 ||
-			e.data.providerData[0].providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID
-		) {
+		if (emailSplit.length !== 2 || (
+			e.data.providerData && (
+				e.data.providerData.length !== 1 ||
+				e.data.providerData[0].providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID
+			)
+		)) {
 			return auth.deleteUser(e.data.uid);
 		}
 
 		const username	= emailSplit[0];
 
-		return database.ref(`pendingSignups/{username}`).set({
+		return database.ref(`pendingSignups/${username}`).set({
 			timestamp: admin.database.ServerValue.TIMESTAMP,
 			uid: e.data.uid
 		});
