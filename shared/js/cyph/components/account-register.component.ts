@@ -177,7 +177,8 @@ export class AccountRegisterComponent implements OnInit {
 				value: this.useLockScreenPIN ? this.lockScreenPIN : this.lockScreenPassword
 			},
 			this.name,
-			this.email
+			this.email,
+			this.inviteCode
 		));
 		this.checking	= false;
 
