@@ -7,8 +7,8 @@ import {
 	NumberValue,
 	StringArray,
 	StringValue,
-	Uint32Array,
-	Uint32Value
+	Uint32NumberArray,
+	Uint32NumberValue
 } from '../../proto';
 import {IProto} from '../iproto';
 import {GenericArrayProto} from './generic-array-proto';
@@ -43,7 +43,7 @@ export const StringArrayProto: IProto<string[]>		= new GenericArrayProto(StringA
 export const StringProto: IProto<string>			= new GenericProto(StringValue);
 
 /** Uint32 array encoder/decoder. */
-export const Uint32ArrayProto: IProto<number[]>		= new GenericArrayProto(Uint32Array);
+export const Uint32ArrayProto: IProto<number[]>		= new GenericArrayProto(Uint32NumberArray);
 
 /** Uint32 encoder/decoder. */
-export const Uint32Proto: IProto<number>			= new GenericProto(Uint32Value);
+export const Uint32Proto: IProto<number>			= new GenericProto(Uint32NumberValue);

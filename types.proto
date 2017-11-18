@@ -451,10 +451,10 @@ message StringValue {
 	required string data = 1;
 }
 
-message Uint32Array {
+message Uint32NumberArray {
 	repeated uint32 data = 1;
 }
 
-message Uint32Value {
+message Uint32NumberValue {
 	required uint32 data = 1;
 }
