@@ -3,11 +3,12 @@
  */
 
 
-const gcloudStorage				= require('@google-cloud/storage');
-const admin						= require('firebase-admin');
-const functions					= require('firebase-functions');
-const potassium					= require('./potassium');
-const {StringProto}				= require('./proto');
+const gcloudStorage	= require('@google-cloud/storage');
+const admin			= require('firebase-admin');
+const functions		= require('firebase-functions');
+const potassium		= require('./potassium');
+const {StringProto}	= require('./proto');
+const {uuid}		= require('./util');
 
 const {
 	deserialize,
@@ -19,14 +20,14 @@ const {
 module.exports	= config => {
 
 
-admin.initializeApp(config.firebase);
-
-const auth			= admin.auth();
-const database		= admin.database();
+const app			= admin.initializeApp(config.firebase, uuid());
+const auth			= app.auth();
+const database		= app.database();
 const functionsUser	= functions.auth.user();
 const storage		= gcloudStorage(config.storage).bucket(`${config.project.id}.appspot.com`);
 
 return {
+	app,
 	auth,
 	database,
 	functionsUser,
