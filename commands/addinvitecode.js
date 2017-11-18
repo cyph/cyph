@@ -70,7 +70,10 @@ if (require.main === module) {
 
 		console.log(JSON.stringify(await addInviteCode(countByUser, test)));
 		process.exit(0);
-	})();
+	})().catch(err => {
+		console.error(err);
+		process.exit(1);
+	});
 }
 else {
 	module.exports	= addInviteCode;

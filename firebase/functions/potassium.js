@@ -1,7 +1,9 @@
 global.crypto	= require('crypto');
 
 crypto.getRandomValues = (arr) => {
-	arr.set(crypto.randomBytes(arr.byteLength));
+	new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength).set(
+		crypto.randomBytes(arr.byteLength)
+	);
 	return arr;
 };
 
