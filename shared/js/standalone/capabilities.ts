@@ -5,6 +5,7 @@
 
 let cryptoSupported	= false;
 try {
+	/* tslint:disable-next-line:ban */
 	crypto.getRandomValues(new Uint8Array(1));
 	cryptoSupported	= true;
 }

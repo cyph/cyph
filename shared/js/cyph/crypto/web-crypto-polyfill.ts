@@ -8,6 +8,7 @@ import {ISodium} from 'libsodium';
  */
 export const webCryptoPolyfill	= (seed: Uint8Array) => {
 	try {
+		/* tslint:disable-next-line:ban */
 		crypto.getRandomValues(new Uint8Array(1));
 		return;
 	}

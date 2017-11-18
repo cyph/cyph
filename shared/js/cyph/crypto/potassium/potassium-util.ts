@@ -106,9 +106,11 @@ export class PotassiumUtil {
 
 	/** Returns array of n random bytes. */
 	public randomBytes (n: number) : Uint8Array {
-		const bytes	= new Uint8Array(n);
-		crypto.getRandomValues(bytes);
-		return bytes;
+		return typeof (<any> crypto).randomBytes === 'function' ?
+			(<any> crypto).randomBytes(n) :
+			/* tslint:disable-next-line:ban */
+			crypto.getRandomValues(new Uint8Array(n))
+		;
 	}
 
 	/** Splits chunks that have been joined with joinBytes. */

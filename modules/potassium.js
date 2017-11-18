@@ -1,12 +1,4 @@
 global.crypto	= require('crypto');
-
-crypto.getRandomValues = (arr) => {
-	new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength).set(
-		crypto.randomBytes(arr.byteLength)
-	);
-	return arr;
-};
-
 global.sodium	= require('libsodium-wrappers-sumo');
 
 require('child_process').spawnSync('bash', ['../commands/buildunbundledassets.sh']);

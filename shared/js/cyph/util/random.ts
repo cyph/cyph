@@ -1,4 +1,5 @@
 import {config} from '../config';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
 
 
 /**
@@ -9,9 +10,7 @@ import {config} from '../config';
  * otherwise, returns float in range [0, 1) (like Math.random).
  */
 export const random	= (max?: number, min: number = 0) : number => {
-	const randomData: Uint16Array	= new Uint16Array(3);
-
-	crypto.getRandomValues(randomData);
+	const randomData	= new Uint16Array(potassiumUtil.randomBytes(6).buffer);
 
 	let randomUint	= 0;
 	for (let i = 0 ; i < randomData.length ; ++i) {

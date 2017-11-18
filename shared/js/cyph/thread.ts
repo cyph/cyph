@@ -1,3 +1,4 @@
+import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {env} from './env';
 import {eventManager} from './event-manager';
 import {IThread} from './ithread';
@@ -144,8 +145,7 @@ export class Thread implements IThread {
 		locals: any = {},
 		onmessage: (e: MessageEvent) => any = () => {}
 	) {
-		const seedBytes	= new Uint8Array(32);
-		crypto.getRandomValues(seedBytes);
+		const seedBytes	= potassiumUtil.randomBytes(32);
 
 		const threadSetupVars	= {
 			customBuild,
