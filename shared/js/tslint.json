@@ -318,6 +318,7 @@
 
 		"rxjs-add": false,
 		"rxjs-no-add": true,
+		"rxjs-no-create": true,
 		"rxjs-no-do": false,
 		"rxjs-no-operator": true,
 		"rxjs-no-patched": true,
