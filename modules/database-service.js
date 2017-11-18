@@ -33,18 +33,18 @@ return {
 	functionsUser,
 	getItem: async (url, proto) => {
 		const {hash}	= (await database.ref(url).once('value')).val();
-		const value		= (await storage.file(url).download())[0];
+		const bytes		= (await storage.file(url).download())[0];
 
 		if (
 			!potassium.compareMemory(
 				potassium.fromBase64(hash),
-				await potassium.hash.hash(value)
+				await potassium.hash.hash(bytes)
 			)
 		) {
 			throw new Error('Invalid data hash.');
 		}
 
-		return deserialize(proto, value);
+		return deserialize(proto, bytes);
 	},
 	removeItem: async url => {
 		return retryUntilSuccessful(async () => Promise.all([
@@ -53,13 +53,13 @@ return {
 		]));
 	},
 	setItem: async (url, proto, value) => {
-		return Promise.all([
-			storage.file(url).save(await serialize(proto, value)),
-			database.ref(url).set({
-				hash: potassium.toBase64(await potassium.hash.hash(value)),
-				timestamp: admin.database.ServerValue.TIMESTAMP
-			})
-		]);
+		const bytes	= await serialize(proto, value);
+
+		await storage.file(url).save(bytes);
+		await database.ref(url).set({
+			hash: potassium.toBase64(await potassium.hash.hash(bytes)),
+			timestamp: admin.database.ServerValue.TIMESTAMP
+		});
 	},
 	storage
 };
