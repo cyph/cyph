@@ -1,7 +1,7 @@
 global.crypto	= require('crypto');
 global.sodium	= require('libsodium-wrappers-sumo');
 
-require('child_process').spawnSync('bash', ['../commands/buildunbundledassets.sh']);
+require('child_process').spawnSync('bash', ['../commands/buildunbundledassets.sh', '--test']);
 require('../shared/assets/js/standalone/global');
 require('../shared/assets/js/cyph/crypto/potassium');
 
