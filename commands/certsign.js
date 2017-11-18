@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 
-const firebase						= require('firebase-admin');
-const fs							= require('fs');
-const os							= require('os');
-const databaseService				= require('../modules/database-service');
-const potassium						= require('../modules/potassium');
-const {deserialize, serialize}		= require('../modules/util');
-const {agsePublicSigningKeys, sign}	= require('./sign');
+const firebase							= require('firebase-admin');
+const fs								= require('fs');
+const os								= require('os');
+const databaseService					= require('../modules/database-service');
+const potassium							= require('../modules/potassium');
+const {deserialize, serialize, sleep}	= require('../modules/util');
+const {agsePublicSigningKeys, sign}		= require('./sign');
 
 const {
 	AGSEPKICert,
@@ -18,6 +18,7 @@ const {
 
 
 const certSign	= async (testSign, standalone) => {
+try {
 
 
 const configDir					= `${os.homedir()}/.cyph`;
@@ -52,7 +53,7 @@ const {
 const pendingSignups	= (await database.ref('pendingSignups').once('value')).val() || {};
 const usernames			= [];
 
-await Promise.all(Object.keys(pendingSignups).map(async username => {
+for (const username of Object.keys(pendingSignups)) {
 	const pendingSignup	= pendingSignups[username];
 
 	/* If user has submitted a CSR and has a valid invite (if required), continue */
@@ -70,10 +71,13 @@ await Promise.all(Object.keys(pendingSignups).map(async username => {
 		await Promise.all([
 			auth.deleteUser(pendingSignup.uid),
 			database.ref(`pendingSignups/${username}`).remove(),
-			removeItem(`users/${username}`).remove()
+			removeItem(`users/${username}`)
 		]);
+
+		/* Avoid {"code":400,"message":"QUOTA_EXCEEDED : Exceeded quota for deleting accounts."} */
+		await sleep(1000);
 	}
-}));
+}
 
 if (usernames.length < 1) {
 	console.log('No certificate requests.');
@@ -170,73 +174,74 @@ const csrs	= (await Promise.all(usernames.map(async username => {
 );
 
 
-try {
-	if (csrs.length < 1) {
-		console.log('No certificates to sign.');
-		if (standalone) {
-			process.exit(0);
-		}
-		else {
-			return;
-		}
-	}
-
-	issuanceHistory.timestamp	= Date.now();
-
-	const {rsaIndex, signedInputs, sphincsIndex}	= await sign(
-		[{
-			additionalData: 'AGSEPKIIssuanceHistory',
-			message: await serialize(AGSEPKIIssuanceHistory, issuanceHistory)
-		}].concat(
-			await Promise.all(csrs.map(async csr => ({
-				additionalData: csr.username,
-				message: await serialize(AGSEPKICert, {
-					agsePKICSR: csr,
-					timestamp: issuanceHistory.timestamp
-				})
-			})))
-		),
-		testSign
-	);
-
-	fs.writeFileSync(lastIssuanceTimestampPath, issuanceHistory.timestamp.toString());
-
-	await setItem('certificateHistory', BinaryProto, potassium.concatMemory(
-		false,
-		new Uint32Array([rsaIndex]),
-		new Uint32Array([sphincsIndex]),
-		signedInputs[0]
-	));
-
-	await Promise.all(signedInputs.slice(1).map(async (cert, i) => {
-		const csr		= csrs[i];
-
-		const fullCert	= potassium.concatMemory(
-			false,
-			new Uint32Array([rsaIndex]),
-			new Uint32Array([sphincsIndex]),
-			cert
-		);
-
-		const url		= `users/${csr.username}/certificate`;
-
-		await setItem(url, BinaryProto, fullCert);
-
-		potassium.clearMemory(cert);
-		potassium.clearMemory(fullCert);
-	}));
-
-	await Promise.all(usernames.map(async username => {
-		const url	= `users/${username}/certificateRequest`;
-
-		await removeItem(url);
-		await database.ref(`pendingSignups/${username}`).remove();
-	}));
-
-	console.log('Certificate signing complete.');
+if (csrs.length < 1) {
+	console.log('No certificates to sign.');
 	if (standalone) {
 		process.exit(0);
 	}
+	else {
+		return;
+	}
+}
+
+issuanceHistory.timestamp	= Date.now();
+
+const {rsaIndex, signedInputs, sphincsIndex}	= await sign(
+	[{
+		additionalData: 'AGSEPKIIssuanceHistory',
+		message: await serialize(AGSEPKIIssuanceHistory, issuanceHistory)
+	}].concat(
+		await Promise.all(csrs.map(async csr => ({
+			additionalData: csr.username,
+			message: await serialize(AGSEPKICert, {
+				agsePKICSR: csr,
+				timestamp: issuanceHistory.timestamp
+			})
+		})))
+	),
+	testSign
+);
+
+fs.writeFileSync(lastIssuanceTimestampPath, issuanceHistory.timestamp.toString());
+
+await setItem('certificateHistory', BinaryProto, potassium.concatMemory(
+	false,
+	new Uint32Array([rsaIndex]),
+	new Uint32Array([sphincsIndex]),
+	signedInputs[0]
+));
+
+await Promise.all(signedInputs.slice(1).map(async (cert, i) => {
+	const csr		= csrs[i];
+
+	const fullCert	= potassium.concatMemory(
+		false,
+		new Uint32Array([rsaIndex]),
+		new Uint32Array([sphincsIndex]),
+		cert
+	);
+
+	const url		= `users/${csr.username}/certificate`;
+
+	await setItem(url, BinaryProto, fullCert);
+
+	potassium.clearMemory(cert);
+	potassium.clearMemory(fullCert);
+}));
+
+await Promise.all(usernames.map(async username => {
+	const url	= `users/${username}/certificateRequest`;
+
+	await removeItem(url);
+	await database.ref(`pendingSignups/${username}`).remove();
+}));
+
+console.log('Certificate signing complete.');
+if (standalone) {
+	process.exit(0);
+}
+
+
 }
 catch (err) {
 	console.error(err);
@@ -248,8 +253,6 @@ catch (err) {
 		throw err;
 	}
 }
-
-
 };
 
 
