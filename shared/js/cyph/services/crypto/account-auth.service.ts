@@ -251,6 +251,10 @@ export class AccountAuthService {
 			]);
 
 			if (inviteCode) {
+				await this.databaseService.removeItem(
+					`users/${username}/inviterUsernamePlaintext`
+				);
+
 				await this.databaseService.setItem(
 					`users/${username}/inviteCode`,
 					StringProto,
