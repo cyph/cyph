@@ -23,7 +23,7 @@ installPackages () {
 }
 
 
-go get \
+go get -u \
 	github.com/gorilla/context \
 	github.com/gorilla/mux \
 	github.com/lionelbarrow/braintree-go \
