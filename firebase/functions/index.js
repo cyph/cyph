@@ -83,7 +83,7 @@ exports.userDisconnect	=
 ;
 
 
-exports.userRegistration	=
+exports.userRegister	=
 	functionsUser.onCreate(async e => {
 		const emailSplit	= (e.data.email || '').split('@');
 

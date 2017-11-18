@@ -49,7 +49,7 @@ const {
 });
 
 
-const pendingSignups	= (await database.ref('pendingSignups').once('value')).val();
+const pendingSignups	= (await database.ref('pendingSignups').once('value')).val() || {};
 const usernames			= [];
 
 await Promise.all(Object.keys(pendingSignups).map(async username => {
