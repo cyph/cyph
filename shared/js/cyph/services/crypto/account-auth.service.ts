@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {skip} from 'rxjs/operators/skip';
+import {take} from 'rxjs/operators/take';
 import {Subscription} from 'rxjs/Subscription';
 import {ExternalServices} from '../../account';
 import {
@@ -188,8 +189,8 @@ export class AccountAuthService {
 				),
 				this.localStorageService.setItem(
 					'username',
-					BinaryProto,
-					await this.accountDatabaseService.getItem('realUsername', BinaryProto)
+					StringProto,
+					await user.realUsername.pipe(take(1)).toPromise()
 				)
 			]);
 		}
