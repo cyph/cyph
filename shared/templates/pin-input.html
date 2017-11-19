@@ -6,7 +6,7 @@
 		[(ngModel)]='value'
 		[textMask]='mask'
 		[disabled]='isDisabled'
-		(blur)='onTouched()'
+		(blur)='onTouched && onTouched()'
 		[name]='name'
 		placeholder='PIN'
 		[required]='required'

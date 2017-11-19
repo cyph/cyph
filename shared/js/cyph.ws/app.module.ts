@@ -64,7 +64,7 @@ export class AppModule {
 		httpClient: HttpClient,
 		databaseService: DatabaseService,
 		dialogService: DialogService,
-		localStorageService: LocalStorageService,
+		localStorageService: LocalStorageService
 	) {
 		if (typeof testEnvironmentSetup === 'function') {
 			testEnvironmentSetup(databaseService, localStorageService);

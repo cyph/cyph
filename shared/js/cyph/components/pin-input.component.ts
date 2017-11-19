@@ -20,29 +20,29 @@ import * as $ from 'jquery';
 })
 export class PinInputComponent implements ControlValueAccessor {
 	/** Change event callback. */
-	private onChange: (s: string) => void	= () => {};
+	private onChange?: (s: string) => void;
 
 	/** @ignore */
-	private valueInternal: string			= '';
+	private valueInternal: string		= '';
 
 	/** Indicates whether input is disabled. */
-	public isDisabled: boolean				= false;
+	public isDisabled: boolean			= false;
 
 	/** PIN text mask. */
-	public readonly mask: any				= {
+	public readonly mask: any			= {
 		mask: [/\d/, ' ', ' ', /\d/, ' ', ' ', /\d/, ' ', ' ', /\d/],
 		placeholderChar: '_',
 		showMask: true
 	};
 
 	/** Form name. */
-	@Input() public name: string			= '';
+	@Input() public name: string		= '';
 
 	/** Touch event callback. */
-	public onTouched: () => void			= () => {};
+	public onTouched?: () => void;
 
 	/** Indicates whether input is required. */
-	@Input() public required: boolean		= false;
+	@Input() public required: boolean	= false;
 
 	/** @ignore */
 	private get valueExternal () : string {
@@ -85,8 +85,13 @@ export class PinInputComponent implements ControlValueAccessor {
 
 	/** @ignore */
 	public set value (s: string) {
-		if (this.valueInternal !== s) {
-			this.valueInternal	= s;
+		if (this.valueInternal === s) {
+			return;
+		}
+
+		this.valueInternal	= s;
+
+		if (this.onChange) {
 			this.onChange(this.valueExternal);
 		}
 	}
