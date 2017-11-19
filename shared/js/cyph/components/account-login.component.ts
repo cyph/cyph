@@ -68,6 +68,22 @@ export class AccountLoginComponent implements OnInit {
 		this.pinUnlock		= this.savedMasterKey !== undefined && this.savedUsername !== undefined;
 	}
 
+	/** Removes locally saved login credentials. */
+	public async removeSavedCredentials () : Promise<void> {
+		if (this.savedMasterKey) {
+			this.potassiumService.clearMemory(this.savedMasterKey);
+		}
+
+		await this.localStorageService.removeItem('masterKey');
+		await this.localStorageService.removeItem('pinIsCustom');
+		await this.localStorageService.removeItem('username');
+
+		this.pinIsCustom	= true;
+		this.pinUnlock		= false;
+		this.savedMasterKey	= undefined;
+		this.savedMasterKey	= undefined;
+	}
+
 	/** Initiates login attempt. */
 	public async submit () : Promise<void> {
 		this.checking	= true;
@@ -90,6 +106,7 @@ export class AccountLoginComponent implements OnInit {
 
 		this.masterKey		= '';
 		this.pin			= '';
+		this.pinIsCustom	= true;
 		this.savedMasterKey	= undefined;
 		this.savedMasterKey	= undefined;
 		this.username		= '';

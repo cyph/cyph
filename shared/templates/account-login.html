@@ -13,10 +13,22 @@
 			<p>
 				<span cyphTranslate>Welcome back</span>
 				<span>{{savedUsername}}!</span>
+				<span cyphTranslate>Enter your PIN below.</span>
 			</p>
-			<p cyphTranslate>
-				<span>Enter your PIN below, or</span>
-				<a href (click)='pinUnlock = false'>click here to sign in as a different user</a>.
+			<p>
+				<span cyphTranslate>Not</span>
+				<span>{{savedUsername}}?</span>
+				<a
+					cyphTranslate
+					href
+					(click)='pinUnlock = false'
+				>Click here to sign in as a different user</a>,
+				<span cyphTranslate>or</span>
+				<a
+					cyphTranslate
+					href
+					(click)='removeSavedCredentials()'
+				>click here to log out</a>.
 			</p>
 		</mat-card-subtitle>
 		<mat-card-content>
