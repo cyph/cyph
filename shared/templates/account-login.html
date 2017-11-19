@@ -18,17 +18,9 @@
 			<p>
 				<span cyphTranslate>Not</span>
 				<span>{{savedUsername}}?</span>
-				<a
-					cyphTranslate
-					href
-					(click)='pinUnlock = false'
-				>Sign in as a different user</a>,
+				<a cyphTranslate (click)='pinUnlock = false'>Sign in as a different user</a>,
 				<span cyphTranslate>or</span>
-				<a
-					cyphTranslate
-					href
-					(click)='removeSavedCredentials()'
-				>log out</a>.
+				<a cyphTranslate (click)='removeSavedCredentials()'>log out</a>.
 			</p>
 		</mat-card-subtitle>
 		<mat-card-content>
