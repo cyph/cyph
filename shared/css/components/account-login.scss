@@ -1,1 +1,9 @@
 @import '../mixins';
+
+form > div:last-child {
+	padding-top: 64px;
+}
+
+cyph-pin-input {
+	padding-bottom: 32px;
+}

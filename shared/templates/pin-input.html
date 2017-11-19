@@ -1,6 +1,7 @@
 <div fxFlex (click)='focusPIN($event)'>
 	<input
 		matInput
+		fxFlex
 		cyphTranslate
 		[(ngModel)]='value'
 		[textMask]='mask'
@@ -12,3 +13,6 @@
 		data-lpignore='true'
 	/>
 </div>
+
+<!-- Pulls in Material styling. TODO: Find better solution. -->
+<mat-form-field fxHide='true'><input matInput /></mat-form-field>
