@@ -221,6 +221,7 @@ export class AccountAuthService {
 		}
 		if (clearSavedCredentials) {
 			await this.localStorageService.removeItem('password');
+			await this.localStorageService.removeItem('pinIsCustom');
 			await this.localStorageService.removeItem('username');
 		}
 
