@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import * as $ from 'jquery';
 import {xkcdPassphrase} from 'xkcd-passphrase';
-import {pinMask, usernameMask} from '../account';
+import {usernameMask} from '../account';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
@@ -19,9 +18,6 @@ import {StringsService} from '../services/strings.service';
 	templateUrl: '../../../templates/account-register.html'
 })
 export class AccountRegisterComponent implements OnInit {
-	/** @ignore */
-	private lockScreenPINInternal: string				= '';
-
 	/** Indicates whether registration attempt is in progress. */
 	public checking: boolean							= false;
 
@@ -51,6 +47,9 @@ export class AccountRegisterComponent implements OnInit {
 	/** Minimum length of lock screen PIN/password. */
 	public lockScreenPasswordLength: number				= 4;
 
+	/** Lock screen PIN. */
+	public lockScreenPIN: string						= '';
+
 	/** Master key (main account password). */
 	public masterKey: string							= '';
 
@@ -62,9 +61,6 @@ export class AccountRegisterComponent implements OnInit {
 
 	/** Name. */
 	public name: string									= '';
-
-	/** @see pinMask */
-	public readonly pinMask: typeof pinMask				= pinMask;
 
 	/** Form tab index. */
 	public tabIndex: number								= 3;
@@ -92,27 +88,6 @@ export class AccountRegisterComponent implements OnInit {
 
 	/** Auto-generated password option. */
 	public xkcdPassphrase: Promise<string>				= xkcdPassphrase.generate();
-
-	/** Focuses PIN input. */
-	public async focusPIN (e: MouseEvent) : Promise<void> {
-		/* x3 to account for spaces in pinMask */
-		const index	= this.lockScreenPIN.length * 3;
-
-		const $elem	= $(e.target).find('input');
-		const elem	= <HTMLInputElement> $elem[0];
-
-		$elem.focus();
-		elem.setSelectionRange(index, index);
-	}
-
-	/** Lock screen PIN. */
-	public get lockScreenPIN () : string {
-		return this.lockScreenPINInternal.replace(/[^\d]/g, '');
-	}
-
-	public set lockScreenPIN (value: string) {
-		this.lockScreenPINInternal	= value;
-	}
 
 	/** @inheritDoc */
 	public ngOnInit () : void {

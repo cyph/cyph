@@ -1,1 +1,14 @@
-<div>PinInput</div>
+<div fxFlex (click)='focusPIN($event)'>
+	<input
+		matInput
+		cyphTranslate
+		[(ngModel)]='value'
+		[textMask]='mask'
+		[disabled]='isDisabled'
+		(blur)='onTouched()'
+		[name]='name'
+		placeholder='PIN'
+		[required]='required'
+		data-lpignore='true'
+	/>
+</div>

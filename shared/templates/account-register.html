@@ -377,18 +377,12 @@
 												<h3>Option #1: Four-Digit Number</h3>
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<div fxFlex class='pin' (click)='focusPIN($event)'>
-													<input
-														matInput
-														cyphTranslate
-														[(ngModel)]='lockScreenPIN'
-														[textMask]='pinMask'
-														name='lockScreenPIN'
-														placeholder='PIN'
-														[required]='!useLockScreenPIN'
-														data-lpignore='true'
-													/>
-												</div>
+												<cyph-pin-input
+													fxFlex
+													[(ngModel)]='lockScreenPIN'
+													name='lockScreenPIN'
+													[required]='useLockScreenPIN'
+												></cyph-pin-input>
 											</div>
 										</div>
 									</div>
