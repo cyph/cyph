@@ -172,6 +172,9 @@ export class StringsService {
 	public readonly logIn: string					= translate(`Log In`);
 
 	/** @see StringsService */
+	public readonly masterKey: string				= translate(`Master Key`);
+
+	/** @see StringsService */
 	public readonly me: string						= translate(`me`);
 
 	/** @see StringsService */
@@ -299,6 +302,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly patient: string					= translate(`patient`);
+
+	/** @see StringsService */
+	public readonly pin: string						= translate(`PIN`);
 
 	/** @see StringsService */
 	public readonly queuedMessageSaved: string		= translate(`Queued message saved.`);
