@@ -19,7 +19,7 @@ import {StringsService} from '../services/strings.service';
 })
 export class AccountLoginComponent implements OnInit {
 	/** @ignore */
-	private savedPassword?: Uint8Array;
+	private savedMasterKey?: Uint8Array;
 
 	/** Indicates whether login attempt is in progress. */
 	public checking: boolean			= false;
@@ -30,8 +30,8 @@ export class AccountLoginComponent implements OnInit {
 	/** Password visibility setting. */
 	public hidePassword: boolean		= true;
 
-	/** Password to be used for login attempt. */
-	public password: string				= '';
+	/** Master key to be used for login attempt. */
+	public masterKey: string			= '';
 
 	/** PIN to be used for login attempt. */
 	public pin: string					= '';
@@ -57,15 +57,15 @@ export class AccountLoginComponent implements OnInit {
 			await this.localStorageService.getItem('pinIsCustom', BooleanProto).catch(() => true)
 		;
 
-		this.savedPassword	=
-			await this.localStorageService.getItem('password', BinaryProto).catch(() => undefined)
+		this.savedMasterKey	=
+			await this.localStorageService.getItem('masterKey', BinaryProto).catch(() => undefined)
 		;
 
 		this.savedUsername	=
 			await this.localStorageService.getItem('username', StringProto).catch(() => undefined)
 		;
 
-		this.pinUnlock		= this.savedPassword !== undefined && this.savedUsername !== undefined;
+		this.pinUnlock		= this.savedMasterKey !== undefined && this.savedUsername !== undefined;
 	}
 
 	/** Initiates login attempt. */
@@ -73,9 +73,9 @@ export class AccountLoginComponent implements OnInit {
 		this.checking	= true;
 		this.error		= false;
 
-		this.error		= !(await (this.pinUnlock && this.savedPassword && this.savedUsername ?
-			this.accountAuthService.login(this.savedUsername, this.savedPassword, this.pin) :
-			this.accountAuthService.login(this.username, this.password)
+		this.error		= !(await (this.pinUnlock && this.savedMasterKey && this.savedUsername ?
+			this.accountAuthService.login(this.savedUsername, this.savedMasterKey, this.pin) :
+			this.accountAuthService.login(this.username, this.masterKey)
 		));
 
 		this.checking	= false;
@@ -84,14 +84,14 @@ export class AccountLoginComponent implements OnInit {
 			return;
 		}
 
-		if (this.savedPassword) {
-			this.potassiumService.clearMemory(this.savedPassword);
+		if (this.savedMasterKey) {
+			this.potassiumService.clearMemory(this.savedMasterKey);
 		}
 
-		this.password		= '';
+		this.masterKey		= '';
 		this.pin			= '';
-		this.savedPassword	= undefined;
-		this.savedPassword	= undefined;
+		this.savedMasterKey	= undefined;
+		this.savedMasterKey	= undefined;
 		this.username		= '';
 
 		this.routerService.navigate(['account'].concat(

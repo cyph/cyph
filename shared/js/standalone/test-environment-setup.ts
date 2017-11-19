@@ -26,7 +26,7 @@ testEnvironmentSetup = async (
 		return;
 	}
 
-	const keysToPreserve	= ['username', 'password', 'pinIsCustom'];
+	const keysToPreserve	= ['masterKey', 'pinIsCustom', 'username'];
 	const preservedValues	= new Map<string, Uint8Array|undefined>();
 
 	for (const k of keysToPreserve) {

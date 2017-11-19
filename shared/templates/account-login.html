@@ -48,7 +48,7 @@
 							[(ngModel)]='pinUnlock ? pin : password'
 							name='password'
 							[type]='hidePassword ? "password" : "text"'
-							placeholder='Password'
+							[placeholder]='pinUnlock ? "PIN" : "Master Key"'
 							required
 							data-lpignore='true'
 						/>

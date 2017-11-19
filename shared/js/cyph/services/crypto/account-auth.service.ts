@@ -69,24 +69,24 @@ export class AccountAuthService {
 	 */
 	public async login (
 		username: string,
-		password: string|Uint8Array,
+		masterKey: string|Uint8Array,
 		pin?: string
 	) : Promise<boolean> {
 		await this.logout(false);
 
-		if (!username || !password) {
+		if (!username || !masterKey) {
 			return false;
 		}
 
 		try {
 			username	= normalize(username);
 
-			if (typeof password === 'string') {
-				password	= await this.passwordHash(username, password);
+			if (typeof masterKey === 'string') {
+				masterKey	= await this.passwordHash(username, masterKey);
 			}
 			else if (typeof pin === 'string') {
-				password	= await this.potassiumService.secretBox.open(
-					password,
+				masterKey	= await this.potassiumService.secretBox.open(
+					masterKey,
 					await this.passwordHash(username, pin)
 				);
 			}
@@ -97,7 +97,7 @@ export class AccountAuthService {
 				AccountLoginData,
 				await this.potassiumService.secretBox.open(
 					await this.databaseService.getItem(`users/${username}/loginData`, BinaryProto),
-					password
+					masterKey
 				)
 			);
 
@@ -174,11 +174,11 @@ export class AccountAuthService {
 
 			await Promise.all([
 				this.localStorageService.setItem(
-					'password',
+					'masterKey',
 					BinaryProto,
 					/* Locally encrypt master key with PIN */
 					await this.potassiumService.secretBox.seal(
-						password,
+						masterKey,
 						await this.accountDatabaseService.getItem('pin/hash', BinaryProto)
 					)
 				),
@@ -220,7 +220,7 @@ export class AccountAuthService {
 			this.potassiumService.clearMemory(user.keys.signingKeyPair.publicKey);
 		}
 		if (clearSavedCredentials) {
-			await this.localStorageService.removeItem('password');
+			await this.localStorageService.removeItem('masterKey');
 			await this.localStorageService.removeItem('pinIsCustom');
 			await this.localStorageService.removeItem('username');
 		}
@@ -232,13 +232,13 @@ export class AccountAuthService {
 	/** Registers. */
 	public async register (
 		realUsername: string,
-		password: string,
+		masterKey: string,
 		pin: {isCustom: boolean; value: string},
 		name: string,
 		email?: string,
 		inviteCode?: string
 	) : Promise<boolean> {
-		if (!realUsername || !password) {
+		if (!realUsername || !masterKey) {
 			return false;
 		}
 
@@ -312,7 +312,7 @@ export class AccountAuthService {
 					BinaryProto,
 					await this.potassiumService.secretBox.seal(
 						await serialize(AccountLoginData, loginData),
-						await this.passwordHash(username, password)
+						await this.passwordHash(username, masterKey)
 					)
 				),
 				this.databaseService.setItem(
