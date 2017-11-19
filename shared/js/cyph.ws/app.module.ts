@@ -20,8 +20,10 @@ import {CyphWebModule} from '../cyph/modules/cyph-web.module';
 import {DataURIProto} from '../cyph/proto';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {ThreadedPotassiumService} from '../cyph/services/crypto/threaded-potassium.service';
+import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {FaviconService} from '../cyph/services/favicon.service';
+import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {resolveHttpClient} from '../cyph/util/request';
 import {resolveDialogService} from '../cyph/util/save-file';
 import {appRoutes} from './app-routes';
@@ -57,7 +59,17 @@ import {LockdownComponent} from './lockdown.component';
 	]
 })
 export class AppModule {
-	constructor (domSanitizer: DomSanitizer, httpClient: HttpClient, dialogService: DialogService) {
+	constructor (
+		domSanitizer: DomSanitizer,
+		httpClient: HttpClient,
+		databaseService: DatabaseService,
+		dialogService: DialogService,
+		localStorageService: LocalStorageService,
+	) {
+		if (typeof testEnvironmentSetup === 'function') {
+			testEnvironmentSetup(databaseService, localStorageService);
+		}
+
 		DataURIProto.resolveDomSanitizer(domSanitizer);
 		resolveHttpClient(httpClient);
 		resolveDialogService(dialogService);

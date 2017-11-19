@@ -138,12 +138,10 @@ service firebase.storage {
 				allow read;
 			}
 
-			match /pin {
+			// match /pin {
 			// 	match /hash {}
-				match /isCustom {
-					allow read;
-				}
-			}
+			// 	match /isCustom {}
+			// }
 
 			match /presence {
 				allow read;

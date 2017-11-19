@@ -4,7 +4,6 @@ import {Observable} from 'rxjs/Observable';
 import {IAccountFileRecord, IForm} from '../proto';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
-import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
 
 
@@ -34,8 +33,6 @@ export class AccountFormComponent implements OnInit {
 					throw new Error('Invalid form ID.');
 				}
 
-				await this.accountAuthService.ready;
-
 				const downloadTask	= this.accountFilesService.downloadForm(id);
 
 				this.form	= {
@@ -56,9 +53,6 @@ export class AccountFormComponent implements OnInit {
 
 		/** @ignore */
 		private readonly routerService: Router,
-
-		/** @ignore */
-		private readonly accountAuthService: AccountAuthService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

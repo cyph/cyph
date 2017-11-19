@@ -34,15 +34,7 @@ export class AccountAuthService {
 	private connectTrackerCleanup?: () => void;
 
 	/** @ignore */
-	private resolveReady: () => void;
-
-	/** @ignore */
 	private statusSaveSubscription?: Subscription;
-
-	/** Resolves when this service is ready for use. */
-	public readonly ready: Promise<void>	= new Promise<void>(resolve => {
-		this.resolveReady	= resolve;
-	});
 
 	/** @ignore */
 	private async getKeyPair (url: string, symmetricKey: Uint8Array) : Promise<IKeyPair> {
@@ -74,7 +66,11 @@ export class AccountAuthService {
 	 * Logs in.
 	 * @returns Whether login was successful.
 	 */
-	public async login (username: string, password: string|Uint8Array) : Promise<boolean> {
+	public async login (
+		username: string,
+		password: string|Uint8Array,
+		pin?: string
+	) : Promise<boolean> {
 		await this.logout(false);
 
 		if (!username || !password) {
@@ -86,6 +82,12 @@ export class AccountAuthService {
 
 			if (typeof password === 'string') {
 				password	= await this.passwordHash(username, password);
+			}
+			else if (typeof pin === 'string') {
+				password	= await this.potassiumService.secretBox.open(
+					password,
+					await this.passwordHash(username, pin)
+				);
 			}
 
 			const user		= await this.accountUserLookupService.getUser(username);
@@ -99,8 +101,6 @@ export class AccountAuthService {
 			);
 
 			await this.databaseService.login(username, loginData.secondaryPassword);
-			await this.localStorageService.setItem('username', StringProto, username);
-			await this.localStorageService.setItem('password', BinaryProto, password);
 
 			const signingKeyPair	= await this.getKeyPair(
 				`users/${username}/signingKeyPair`,
@@ -170,6 +170,28 @@ export class AccountAuthService {
 					value
 				);
 			});
+
+			await Promise.all([
+				this.localStorageService.setItem(
+					'password',
+					BinaryProto,
+					/* Locally encrypt master key with PIN */
+					await this.potassiumService.secretBox.seal(
+						password,
+						await this.accountDatabaseService.getItem('pin/hash', BinaryProto)
+					)
+				),
+				this.localStorageService.setItem(
+					'pinIsCustom',
+					BinaryProto,
+					await this.accountDatabaseService.getItem('pin/isCustom', BinaryProto)
+				),
+				this.localStorageService.setItem(
+					'username',
+					BinaryProto,
+					await this.accountDatabaseService.getItem('realUsername', BinaryProto)
+				)
+			]);
 		}
 		catch (_) {
 			return false;
@@ -356,8 +378,11 @@ export class AccountAuthService {
 				),
 				this.databaseService.setItem(
 					`users/${username}/pin/isCustom`,
-					BooleanProto,
-					pin.isCustom
+					BinaryProto,
+					await this.potassiumService.secretBox.seal(
+						await serialize(BooleanProto, pin.isCustom),
+						loginData.symmetricKey
+					)
 				),
 				this.databaseService.setItem(
 					publicEncryptionKeyURL,
@@ -400,29 +425,5 @@ export class AccountAuthService {
 
 		/** @ignore */
 		private readonly stringsService: StringsService
-	) { (async () => {
-		const username	= await this.localStorageService.getItem(
-			'username',
-			StringProto
-		).catch(
-			() => {}
-		);
-
-		const password	= await this.localStorageService.getItem(
-			'password',
-			BinaryProto
-		).catch(
-			() => {}
-		);
-
-		if (testEnvironmentSetup) {
-			await testEnvironmentSetup(databaseService, localStorageService);
-		}
-
-		if (username && password) {
-			await this.login(username, password);
-		}
-
-		this.resolveReady();
-	})(); }
+	) {}
 }

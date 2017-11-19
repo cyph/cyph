@@ -10,7 +10,6 @@ import {LockFunction} from '../lock-function-type';
 import {IAccountFileRecord} from '../proto';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
-import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
@@ -143,7 +142,6 @@ export class AccountNoteComponent implements OnInit {
 				}
 				else {
 					this.newNote	= false;
-					await this.accountAuthService.ready;
 					await this.setNote(id);
 				}
 			}
@@ -257,9 +255,6 @@ export class AccountNoteComponent implements OnInit {
 
 		/** @ignore */
 		private readonly routerService: Router,
-
-		/** @ignore */
-		private readonly accountAuthService: AccountAuthService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

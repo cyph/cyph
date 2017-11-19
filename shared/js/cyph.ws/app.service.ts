@@ -123,11 +123,7 @@ export class AppService implements CanActivate {
 				routerService.navigate(['account'].concat(urlSegmentPaths.slice(1)));
 			}
 
-			if (loadingAccounts) {
-				$(document.body).addClass('loading-accounts');
-				await accountAuthService.ready;
-			}
-			else {
+			if (!loadingAccounts) {
 				while (this.chatRootState === ChatRootStates.blank) {
 					await sleep();
 				}

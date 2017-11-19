@@ -26,6 +26,25 @@ testEnvironmentSetup = async (
 		return;
 	}
 
+	const keysToPreserve	= ['username', 'password', 'pinIsCustom'];
+	const preservedValues	= new Map<string, Uint8Array|undefined>();
+
+	for (const k of keysToPreserve) {
+		preservedValues.set(
+			k,
+			await localStorageService.getItem(k, BinaryProto).catch(() => undefined)
+		);
+	}
+
 	await localStorageService.clear();
 	await localStorageService.setItem('testDataVersion', BinaryProto, currentTestDataVersion);
+
+	for (const k of keysToPreserve) {
+		const v	= preservedValues.get(k);
+		if (v) {
+			await localStorageService.setItem(k, BinaryProto, v);
+		}
+	}
+
+	location.reload();
 };
