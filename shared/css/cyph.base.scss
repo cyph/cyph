@@ -81,6 +81,8 @@ section {
 
 a {
 	color: inherit;
+	cursor: pointer;
+	text-decoration: underline;
 }
 
 [mat-button], [mat-raised-button] {
