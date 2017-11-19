@@ -4,7 +4,7 @@
 	class='login-form'
 	[class.checking]='checking'
 >
-	<mat-card fxFlex fxFlex.gt-sm='50'>
+	<mat-card fxFlex fxFlex.gt-sm='50' *ngIf='pinUnlock !== undefined'>
 		<mat-card-title cyphTranslate>
 			<span cyphTranslate *ngIf='!pinUnlock'>Log in to Cyph</span>
 			<span cyphTranslate *ngIf='pinUnlock'>Unlock Cyph</span>
@@ -16,7 +16,7 @@
 			</p>
 			<p cyphTranslate>
 				<span>Enter your PIN below, or</span>
-				<a (click)='pinUnlock = false'>click here to sign in as a different user</a>.
+				<a href (click)='pinUnlock = false'>click here to sign in as a different user</a>.
 			</p>
 		</mat-card-subtitle>
 		<mat-card-content>
@@ -73,20 +73,9 @@
 					<button
 						mat-button
 						type='submit'
-						cyphTranslate
-						matTooltip='Log In'
-						*ngIf='!pinUnlock'
+						[matTooltip]='pinUnlock ? stringsService.unlock : stringsService.logIn'
 					>
-						Log In
-					</button>
-					<button
-						mat-button
-						type='submit'
-						cyphTranslate
-						matTooltip='Unlock'
-						*ngIf='pinUnlock'
-					>
-						Unlock
+						{{pinUnlock ? stringsService.unlock : stringsService.logIn}}
 					</button>
 				</div>
 			</form>

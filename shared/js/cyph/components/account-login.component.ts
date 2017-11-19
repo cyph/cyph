@@ -22,7 +22,7 @@ export class AccountLoginComponent implements OnInit {
 	private savedPassword?: Uint8Array;
 
 	/** Indicates whether login attempt is in progress. */
-	public checking: boolean			= true;
+	public checking: boolean			= false;
 
 	/** Indicates whether the last login attempt has failed. */
 	public error: boolean				= false;
@@ -40,7 +40,7 @@ export class AccountLoginComponent implements OnInit {
 	public pinIsCustom: boolean			= true;
 
 	/** Indicates whether a PIN unlock using saved credentials will be performed. */
-	public pinUnlock: boolean			= false;
+	public pinUnlock?: boolean;
 
 	/** Username saved in local storage from previous login. */
 	public savedUsername?: string;

@@ -164,6 +164,9 @@ export class StringsService {
 	public readonly linkExpiresAt: string			= translate(`Link expires at`);
 
 	/** @see StringsService */
+	public readonly logIn: string					= translate(`Log In`);
+
+	/** @see StringsService */
 	public readonly me: string						= translate(`me`);
 
 	/** @see StringsService */
@@ -331,6 +334,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly titleRequired: string			= translate(`Title required in order to save.`);
+
+	/** @see StringsService */
+	public readonly unlock: string					= translate(`Unlock`);
 
 	/** @see StringsService */
 	public readonly videoCall: string				= translate(`video call`);
