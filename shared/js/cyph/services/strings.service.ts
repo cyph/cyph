@@ -144,12 +144,17 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly invalidCredentials: string		= translate(
-		`Invalid username or password.`
+		`Invalid username or master key.`
 	);
 
 	/** @see StringsService */
 	public readonly invalidPassword: string			= translate(
 		`Invalid password.`
+	);
+
+	/** @see StringsService */
+	public readonly invalidPIN: string				= translate(
+		`Invalid PIN.`
 	);
 
 	/** @see StringsService */

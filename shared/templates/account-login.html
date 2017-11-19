@@ -23,7 +23,11 @@
 			<form ngNativeValidate (submit)='submit()'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<h3 class='cyph-banner warn' [style.visibility]='error ? "visible" : "hidden"'>
-						{{stringsService.invalidCredentials}}
+						{{
+							pinUnlock ?
+								stringsService.invalidPIN :
+								stringsService.invalidCredentials
+						}}
 					</h3>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!pinUnlock'>
