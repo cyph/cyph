@@ -109,4 +109,10 @@
 			border-radius: 1px;
 		}
 	}
+
+	/* Temporary workaround for matTooltip issue */
+
+	touch-action: inherit !important;
+
+	@include user-select(inherit !important);
 }
