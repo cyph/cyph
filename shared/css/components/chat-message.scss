@@ -27,6 +27,11 @@
 		opacity: 0.65;
 	}
 
+	a:not([href]) {
+		cursor: auto;
+		text-decoration: none;
+	}
+
 	img, .image-frame {
 		max-width: 25%;
 		margin-top: 10px;
