@@ -34,8 +34,8 @@ export class MarkdownComponent implements OnChanges {
 
 	/** Handle clicks to display image dialogs when needed. */
 	public click (event: MouseEvent) : void {
-		if (event.srcElement instanceof HTMLImageElement) {
-			this.dialogService.image(event.srcElement.src);
+		if (event.target instanceof HTMLImageElement) {
+			this.dialogService.image(event.target.src);
 		}
 	}
 
