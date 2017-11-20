@@ -441,7 +441,7 @@
 
 				"incomingFiles": {
 					"$incomingFile": {
-						".write": "!data.exists() && newData.exists()",
+						".write": "($user + '@cyph.me') === auth.token.email || (!data.exists() && newData.exists())",
 
 						"hash": {
 							".validate": "newData.isString()"
