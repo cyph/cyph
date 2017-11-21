@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BinaryProto, StringProto} from '../proto';
+import {ISessionMessageData, rpcEvents} from '../session';
 import {uuid} from '../util/uuid';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
@@ -45,16 +46,50 @@ export class AccountSessionService extends SessionService {
 		(async () => {
 			const contactID	= await this.accountContactsService.getContactID(username);
 
-			this.resolveAccountsSymmetricKey(await this.accountDatabaseService.getItem(
-				`contacts/${contactID}/session/symmetricKey`,
-				BinaryProto
-			));
-
 			this.init(contactID, await this.accountDatabaseService.getOrSetDefault(
 				`contacts/${contactID}/session/channelUserID`,
 				StringProto,
 				uuid
 			));
+
+			const symmetricKeyURL	= `contacts/${contactID}/session/symmetricKey`;
+
+			this.accountDatabaseService.getAsyncValue(
+				symmetricKeyURL,
+				BinaryProto
+			).getValue().then(symmetricKey => {
+				this.resolveAccountsSymmetricKey(symmetricKey);
+			});
+
+			if ((await this.accountDatabaseService.hasItem(symmetricKeyURL))) {
+				return;
+			}
+
+			if (this.state.isAlice) {
+				const symmetricKey	= this.potassiumService.randomBytes(
+					await this.potassiumService.secretBox.keyBytes
+				);
+
+				await Promise.all([
+					this.accountDatabaseService.setItem(
+						symmetricKeyURL,
+						BinaryProto,
+						symmetricKey
+					),
+					this.send([
+						rpcEvents.symmetricKey,
+						{bytes: symmetricKey}
+					])
+				]);
+			}
+			else {
+				await this.accountDatabaseService.setItem(
+					symmetricKeyURL,
+					BinaryProto,
+					(await this.one<ISessionMessageData>(rpcEvents.symmetricKey)).bytes ||
+						new Uint8Array(0)
+				);
+			}
 		})();
 
 		(await this.accountUserLookupService.getUser(username)).realUsername.subscribe(
