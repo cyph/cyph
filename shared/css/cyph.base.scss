@@ -47,6 +47,7 @@ section {
 
 .card-list {
 	position: relative;
+	overflow-x: hidden;
 
 	&.initiating {
 		overflow-y: hidden;
