@@ -19,10 +19,13 @@ testEnvironmentSetup = async (
 		'testDataVersion',
 		BinaryProto
 	).catch(
-		() => new Uint8Array(0)
+		() => undefined
 	);
 
-	if (potassiumUtil.compareMemory(currentTestDataVersion, localTestDataVersion)) {
+	if (
+		localTestDataVersion === undefined ||
+		potassiumUtil.compareMemory(currentTestDataVersion, localTestDataVersion)
+	) {
 		return;
 	}
 
