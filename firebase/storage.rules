@@ -53,7 +53,7 @@ service firebase.storage {
 
 			// match /certificateRequest {}
 
-			// match /contactRecords/{contactRecord} {}
+			// match /contactUsernames/{username} {}
 
 			// match /contacts/{contact} {
 			// 	match /messages/{message} {}
@@ -85,6 +85,7 @@ service firebase.storage {
 			// 		}
 			// 	}
 			// 	match /unconfirmedMessages {}
+			// 	match /username {}
 			// }
 
 			match /docs/{doc} {

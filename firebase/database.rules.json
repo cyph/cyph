@@ -196,8 +196,8 @@
 					}
 				},
 
-				"contactRecords": {
-					"$contactRecord": {
+				"contactUsernames": {
+					"$username": {
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -354,6 +354,14 @@
 							}
 						},
 						"unconfirmedMessages": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						},
+						"username": {
 							"hash": {
 								".validate": "newData.isString()"
 							},

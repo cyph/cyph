@@ -8,14 +8,14 @@ import {skip} from 'rxjs/operators/skip';
 import {take} from 'rxjs/operators/take';
 import {UserPresence, userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
-import {AccountContactRecord, AccountUserPresence, IAccountContactRecord} from '../proto';
+import {AccountUserPresence, StringProto} from '../proto';
 import {flattenObservablePromise} from '../util/flatten-observable-promise';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
-import {sleep} from '../util/wait';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 
 
@@ -25,26 +25,8 @@ import {DatabaseService} from './database.service';
 @Injectable()
 export class AccountContactsService {
 	/** @ignore */
-	private readonly contactListSubject: BehaviorSubject<User[]>			=
+	private readonly contactListSubject: BehaviorSubject<User[]>	=
 		new BehaviorSubject<User[]>([])
-	;
-
-	/** @ignore */
-	private readonly contactRecordMappings									= {
-		id: new Map<string, IAccountContactRecord>(),
-		username: new Map<string, IAccountContactRecord>()
-	};
-
-	/** @ignore */
-	private readonly contactRecords: Observable<IAccountContactRecord[]>	=
-		flattenObservablePromise(
-			this.accountDatabaseService.watchList(
-				'contactRecords',
-				AccountContactRecord
-			).pipe(map(
-				contacts => contacts.map(o => o.value)
-			))
-		)
 	;
 
 	/** @ignore */
@@ -54,40 +36,20 @@ export class AccountContactsService {
 	public readonly contactList: Observable<User[]>			= this.contactListSubject;
 
 	/** List of usernames of contacts for current user. */
-	public readonly contactUsernames: Observable<string[]>	= this.contactRecords.pipe(map(
-		contactRecords => contactRecords.map(o => o.username)
-	));
+	public readonly contactUsernames: Observable<string[]>	= flattenObservablePromise(
+		this.accountDatabaseService.watchList(
+			'contactUsernames',
+			StringProto
+		).pipe(map(
+			contacts => contacts.map(o => o.value)
+		))
+	);
 
 	/** Indicates whether the first load has completed. */
 	public initiated: boolean	= false;
 
 	/** Indicates whether spinner should be displayed. */
 	public showSpinner: boolean	= true;
-
-	/** @ignore */
-	private async getContactRecord (
-		{id, username}: {id?: string; username?: string}
-	) : Promise<IAccountContactRecord> {
-		const contactRecord	=
-			id !== undefined ?
-				this.contactRecordMappings.id.get(id) :
-				username !== undefined ?
-					this.contactRecordMappings.username.get(normalize(username)) :
-					undefined
-		;
-
-		if (!contactRecord) {
-			if (this.initiated) {
-				throw new Error('Contact not found.');
-			}
-			else {
-				await sleep();
-				return this.getContactRecord({id, username});
-			}
-		}
-
-		return contactRecord;
-	}
 
 	/** @ignore */
 	private sort<T> (users: (T&{status: AccountUserPresence.Statuses; username: string})[]) : T[] {
@@ -127,12 +89,20 @@ export class AccountContactsService {
 
 	/** Gets contact ID based on username. */
 	public async getContactID (username: string) : Promise<string> {
-		return (await this.getContactRecord({username})).id;
+		return this.potassiumService.toHex(await this.potassiumService.hash.hash(
+			[
+				(await this.accountDatabaseService.getCurrentUser()).user.username,
+				username
+			].
+				map(normalize).
+				sort().
+				join(' ')
+		));
 	}
 
 	/** Gets contact username based on ID. */
 	public async getContactUsername (id: string) : Promise<string> {
-		return (await this.getContactRecord({id})).username;
+		return this.accountDatabaseService.getItem(`contacts/${id}/username`, StringProto);
 	}
 
 	constructor (
@@ -143,16 +113,12 @@ export class AccountContactsService {
 		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
-		private readonly databaseService: DatabaseService
+		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly potassiumService: PotassiumService
 	) {
 		const lock	= lockFunction();
-
-		this.contactRecords.subscribe(contactRecords => {
-			for (const contactRecord of contactRecords) {
-				this.contactRecordMappings.id.set(contactRecord.id, contactRecord);
-				this.contactRecordMappings.username.set(contactRecord.username, contactRecord);
-			}
-		});
 
 		this.contactUsernames.pipe(
 			mergeMap(async usernames => Promise.all(

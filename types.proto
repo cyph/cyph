@@ -1,15 +1,6 @@
 syntax = "proto3";
 
 
-/** Metadata of one contact relationship of an account. */
-message AccountContactRecord {
-	/** Relationship ID. */
-	required string id = 1;
-
-	/** Contact username. */
-	required string username = 2;
-}
-
 /** Metadata of one file stored in an account. */
 message AccountFileRecord {
 	/** Possible file record types. */
