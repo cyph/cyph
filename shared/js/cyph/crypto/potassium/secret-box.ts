@@ -109,7 +109,7 @@ export class SecretBox implements ISecretBox {
 	) : Promise<Uint8Array> {
 		const keyBytes	= await this.keyBytes;
 
-		if (key.length % keyBytes !== 0) {
+		if (key.length === 0 || key.length % keyBytes !== 0) {
 			throw new Error('Invalid key.');
 		}
 
@@ -161,7 +161,7 @@ export class SecretBox implements ISecretBox {
 	) : Promise<Uint8Array> {
 		const keyBytes	= await this.keyBytes;
 
-		if (key.length % keyBytes !== 0) {
+		if (key.length === 0 || key.length % keyBytes !== 0) {
 			throw new Error('Invalid key.');
 		}
 
