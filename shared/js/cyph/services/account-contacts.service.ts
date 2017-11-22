@@ -117,7 +117,7 @@ export class AccountContactsService {
 
 	/** Gets contact username based on ID. */
 	public async getContactUsername (id: string) : Promise<string> {
-		return this.accountDatabaseService.getItem(`contacts/${id}/username`, StringProto);
+		return this.accountDatabaseService.getItem(`contactUsernames/${id}`, StringProto);
 	}
 
 	constructor (

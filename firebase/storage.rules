@@ -85,7 +85,6 @@ service firebase.storage {
 			// 		}
 			// 	}
 			// 	match /unconfirmedMessages {}
-			// 	match /username {}
 			// }
 
 			match /docs/{doc} {
