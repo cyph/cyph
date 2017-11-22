@@ -49,15 +49,31 @@
 					</mat-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!pinUnlock || pinIsCustom'>
-					<mat-form-field fxFlex='60'>
+					<mat-form-field fxFlex='60' *ngIf='pinUnlock'>
 						<input
 							matInput
-							[(ngModel)]='pinUnlock ? pin : masterKey'
+							[(ngModel)]='pin'
 							name='password'
 							[type]='hidePassword ? "password" : "text"'
-							[placeholder]='
-								pinUnlock ? stringsService.pin : stringsService.masterKey
-							'
+							[placeholder]='stringsService.pin'
+							required
+							data-lpignore='true'
+						/>
+						<mat-icon
+							matSuffix
+							class='visibility-toggle'
+							(click)='hidePassword = !hidePassword'
+						>
+							{{hidePassword ? 'visibility' : 'visibility_off'}}
+						</mat-icon>
+					</mat-form-field>
+					<mat-form-field fxFlex='60' *ngIf='!pinUnlock'>
+						<input
+							matInput
+							[(ngModel)]='masterKey'
+							name='password'
+							[type]='hidePassword ? "password" : "text"'
+							[placeholder]='stringsService.masterKey'
 							required
 							data-lpignore='true'
 						/>
