@@ -87,6 +87,21 @@ export class AccountContactsService {
 		);
 	}
 
+	/**
+	 * Adds contact.
+	 * @returns Contact ID.
+	 */
+	public async addContact (username: string) : Promise<string> {
+		const id	= await this.getContactID(username);
+		const url	= `contactUsernames/${id}`;
+
+		if (!(await this.accountDatabaseService.hasItem(url))) {
+			await this.accountDatabaseService.setItem(url, StringProto, normalize(username));
+		}
+
+		return id;
+	}
+
 	/** Gets contact ID based on username. */
 	public async getContactID (username: string) : Promise<string> {
 		return this.potassiumService.toHex(await this.potassiumService.hash.hash(
