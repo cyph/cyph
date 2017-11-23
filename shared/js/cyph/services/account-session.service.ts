@@ -56,7 +56,11 @@ export class AccountSessionService extends SessionService {
 
 			this.accountDatabaseService.getAsyncValue(
 				symmetricKeyURL,
-				BinaryProto
+				BinaryProto,
+				undefined,
+				undefined,
+				undefined,
+				true
 			).getValue().then(symmetricKey => {
 				this.resolveAccountsSymmetricKey(symmetricKey);
 			});
