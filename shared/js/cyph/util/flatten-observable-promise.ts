@@ -24,7 +24,7 @@ export const flattenObservablePromise	= <T> (
 		)
 	;
 
-	if (initialValue) {
+	if (initialValue !== undefined) {
 		const subject	= new BehaviorSubject(initialValue);
 		subscribe(subject);
 		return subject;
