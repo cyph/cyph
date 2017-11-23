@@ -22,7 +22,7 @@ import {DatabaseService} from './database.service';
 export class AccountContactsService {
 	/** @ignore */
 	private readonly contactIdCache: Map<string, Map<string, string>>	=
-		new Map<string, Map<string, string>>();
+		new Map<string, Map<string, string>>()
 	;
 
 	/** List of contacts for current user, sorted by status and then alphabetically by username. */
