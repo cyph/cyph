@@ -1,18 +1,14 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
-import {filter} from 'rxjs/operators/filter';
-import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {skip} from 'rxjs/operators/skip';
 import {take} from 'rxjs/operators/take';
-import {UserPresence, userPresenceSorted} from '../account/enums';
+import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
 import {AccountUserPresence, StringProto} from '../proto';
 import {flattenObservablePromise} from '../util/flatten-observable-promise';
 import {normalize} from '../util/formatting';
-import {getOrSetDefault} from '../util/get-or-set-default';
-import {lockFunction} from '../util/lock';
+import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
@@ -25,24 +21,38 @@ import {DatabaseService} from './database.service';
 @Injectable()
 export class AccountContactsService {
 	/** @ignore */
-	private readonly contactListSubject: BehaviorSubject<User[]>	=
-		new BehaviorSubject<User[]>([])
+	private readonly contactIdCache: Map<string, Map<string, string>>	=
+		new Map<string, Map<string, string>>();
 	;
 
-	/** @ignore */
-	private userStatuses: Map<User, UserPresence>			= new Map<User, UserPresence>();
-
 	/** List of contacts for current user, sorted by status and then alphabetically by username. */
-	public readonly contactList: Observable<User[]>			= this.contactListSubject;
+	public readonly contactList: Observable<User[]>;
+
+	/** Contact list length. */
+	public readonly contactListLength: number				= 10;
 
 	/** List of usernames of contacts for current user. */
 	public readonly contactUsernames: Observable<string[]>	= flattenObservablePromise(
-		this.accountDatabaseService.watchList(
-			'contactUsernames',
-			StringProto
-		).pipe(map(
-			contacts => contacts.map(o => o.value)
-		))
+		this.accountDatabaseService.watchListKeys('contactUsernames').pipe(mergeMap(async keys =>
+			(await Promise.all(
+				(await Promise.all(
+					keys.map(async key => ({
+						key,
+						username: await this.accountDatabaseService.getItem(
+							`contactUsernames/${key}`,
+							StringProto
+						)
+					}))
+				)).map(async ({key, username}) => ({
+					id: await this.getContactID(username),
+					key,
+					username
+				}))
+			)).
+				filter(({id, key}) => id === key).
+				map(({username}) => username)
+		)),
+		[]
 	);
 
 	/** Indicates whether the first load has completed. */
@@ -68,25 +78,6 @@ export class AccountContactsService {
 		});
 	}
 
-	/** @ignore */
-	private updateContactsList () : void {
-		this.contactListSubject.next(
-			this.sort(
-				Array.from(this.userStatuses.keys()).map(user => ({
-					status: getOrSetDefault(
-						this.userStatuses,
-						user,
-						() => UserPresence.Offline
-					),
-					user,
-					username: user.username
-				}))
-			).map(
-				({user}) => user
-			)
-		);
-	}
-
 	/**
 	 * Adds contact.
 	 * @returns Contact ID.
@@ -104,15 +95,21 @@ export class AccountContactsService {
 
 	/** Gets contact ID based on username. */
 	public async getContactID (username: string) : Promise<string> {
-		return this.potassiumService.toHex(await this.potassiumService.hash.hash(
-			[
-				(await this.accountDatabaseService.getCurrentUser()).user.username,
-				username
-			].
-				map(normalize).
-				sort().
-				join(' ')
-		));
+		const currentUserUsername	=
+			(await this.accountDatabaseService.getCurrentUser()).user.username
+		;
+
+		return getOrSetDefaultAsync(
+			getOrSetDefault(
+				this.contactIdCache,
+				currentUserUsername,
+				() => new Map<string, string>()
+			),
+			username,
+			async () => this.potassiumService.toHex(await this.potassiumService.hash.hash(
+				[currentUserUsername, username].map(normalize).sort().join(' ')
+			))
+		);
 	}
 
 	/** Gets contact username based on ID. */
@@ -133,58 +130,28 @@ export class AccountContactsService {
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
 	) {
-		const lock	= lockFunction();
-
-		this.contactUsernames.pipe(
-			mergeMap(async usernames => Promise.all(
-				usernames.map(async username => ({
-					status: (
-						await this.databaseService.getItem(
-							`users/${username}/presence`,
-							AccountUserPresence
-						).catch(
-							() => ({status: AccountUserPresence.Statuses.Offline})
-						)
-					).status,
-					username
-				})
+		this.contactList	= flattenObservablePromise(
+			this.contactUsernames.pipe(mergeMap(async usernames => Promise.all(
+				this.sort(await Promise.all(
+					usernames.map(async username => ({
+						status: (
+							await this.databaseService.getItem(
+								`users/${username}/presence`,
+								AccountUserPresence
+							).catch(
+								() => ({status: AccountUserPresence.Statuses.Offline})
+							)
+						).status,
+						username
+					})
+				))).
+					slice(0, this.contactListLength).
+					map(async ({username}) => this.accountUserLookupService.getUser(username))
 			))),
-			skip(1)
-		).subscribe(async users => {
-			const oldUserStatuses	= this.userStatuses;
-			this.userStatuses		= new Map<User, UserPresence>();
+			[]
+		);
 
-			let i	= 0;
-			for (const {status, username} of this.sort(users)) {
-				try {
-					const user	= await this.accountUserLookupService.getUser(username);
-
-					await lock(async () => {
-						const oldUserStatus	= oldUserStatuses.get(user);
-						if (oldUserStatus !== undefined) {
-							this.userStatuses.set(user, oldUserStatus);
-							return;
-						}
-
-						await user.avatar.pipe(filter(o => o !== undefined), take(1)).toPromise();
-
-						this.userStatuses.set(user, status);
-						user.status.pipe(skip(1)).subscribe(async newStatus => {
-							this.userStatuses.set(user, newStatus);
-							this.updateContactsList();
-						});
-					});
-				}
-				catch (_) {}
-				finally {
-					this.updateContactsList();
-				}
-
-				if (++i > 8) {
-					this.showSpinner	= false;
-				}
-			}
-
+		this.contactList.pipe(skip(3), take(1)).toPromise().then(() => {
 			this.initiated		= true;
 			this.showSpinner	= false;
 		});
