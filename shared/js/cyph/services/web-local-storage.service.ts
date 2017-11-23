@@ -11,17 +11,19 @@ import {LocalStorageService} from './local-storage.service';
  */
 @Injectable()
 export class WebLocalStorageService extends LocalStorageService {
-	/**
-	 * Created to use instead of localforage if setting ever fails,
-	 * mainly to avoid annoying repetitive user prompts in Safari.
-	 */
-	private failureFallback?: Map<string, Uint8Array>;
+	/** In-memory cache for faster access. */
+	private readonly cache: Map<string, Uint8Array>	= new Map<string, Uint8Array>();
+
+	/** If true, localForage failed and we should stop bugging the user for permission. */
+	private localForageSetFailed: boolean			= false;
 
 	/** @ignore */
 	private ready: Promise<void>	= (async () => {
 		try {
 			await localforage.ready();
-
+		}
+		catch (_) {}
+		try {
 			await Promise.all(
 				Object.keys(localStorage).
 					filter(key => !key.startsWith('localforage/')).
@@ -39,6 +41,8 @@ export class WebLocalStorageService extends LocalStorageService {
 
 	/** @inheritDoc */
 	public async clear () : Promise<void> {
+		await this.ready;
+		this.cache.clear();
 		return localforage.clear();
 	}
 
@@ -54,10 +58,14 @@ export class WebLocalStorageService extends LocalStorageService {
 
 		await this.pendingSets.get(url);
 
-		const value	=
-			(await localforage.getItem<Uint8Array>(url).catch(() => undefined)) ||
-			(this.failureFallback ? this.failureFallback.get(url) : undefined)
-		;
+		if (!this.cache.has(url)) {
+			try {
+				this.cache.set(url, await localforage.getItem<Uint8Array>(url));
+			}
+			catch (_) {}
+		}
+
+		const value	= this.cache.get(url);
 
 		if (!(value instanceof Uint8Array)) {
 			throw new Error(`Item ${url} not found.`);
@@ -72,26 +80,8 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		if (!(await this.hasItem(url))) {
-			return;
-		}
-
-		const error	= await (async () => {
-			await localforage.removeItem(url);
-		})().catch(
-			(err: any) => err
-		);
-
-		if (this.failureFallback) {
-			const success	= this.failureFallback.delete(url);
-			if (success) {
-				return;
-			}
-		}
-
-		if (error) {
-			throw error;
-		}
+		this.cache.delete(url);
+		await localforage.removeItem(url);
 	}
 
 	/** @inheritDoc */
@@ -101,19 +91,24 @@ export class WebLocalStorageService extends LocalStorageService {
 		value: T,
 		waitForReady: boolean = true
 	) : Promise<{url: string}> {
-		const data	= await serialize(proto, value);
-
-		if (this.failureFallback) {
-			this.failureFallback.set(url, data);
-			return {url};
-		}
-
 		const promise	= (async () => {
 			if (waitForReady) {
 				await this.ready;
 			}
 
-			await localforage.setItem<Uint8Array>(url, data);
+			const data	= await serialize(proto, value);
+
+			this.cache.set(url, data);
+
+			if (!this.localForageSetFailed) {
+				try {
+					await localforage.setItem<Uint8Array>(url, data);
+				}
+				catch (_) {
+					this.localForageSetFailed	= true;
+				}
+			}
+
 			return {url};
 		})();
 
@@ -121,11 +116,6 @@ export class WebLocalStorageService extends LocalStorageService {
 
 		try {
 			return await promise;
-		}
-		catch (_) {
-			this.failureFallback	= new Map<string, Uint8Array>();
-			this.failureFallback.set(url, data);
-			return {url};
 		}
 		finally {
 			this.pendingSets.delete(url);
