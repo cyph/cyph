@@ -96,15 +96,20 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 									this.sessionService.localUsername :
 									message.authorID === undefined ?
 										this.sessionService.remoteUsername :
-										/* tslint:disable-next-line:deprecation */
-										(await this.injector.get(AccountUserLookupService).getUser(
+										(
 											/* tslint:disable-next-line:deprecation */
-											await this.injector.get(
-												AccountContactsService
-											).getContactUsername(
-												message.authorID
-											)
-										)).realUsername
+											(await this.injector.get(
+												AccountUserLookupService
+											).getUser(
+												/* tslint:disable-next-line:deprecation */
+												await this.injector.get(
+													AccountContactsService
+												).getContactUsername(
+													message.authorID
+												)
+											)) ||
+											{realUsername: this.sessionService.remoteUsername}
+										).realUsername
 						)
 					)))).sort((a, b) =>
 						a.timestamp - b.timestamp

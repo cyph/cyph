@@ -166,23 +166,26 @@ export class AccountContactsService {
 		private readonly potassiumService: PotassiumService
 	) {
 		this.contactList	= flattenObservablePromise(
-			this.contactUsernames.pipe(mergeMap(async usernames => Promise.all(
-				this.sort(await Promise.all(
-					usernames.map(async username => ({
-						status: (
-							await this.databaseService.getItem(
-								`users/${username}/presence`,
-								AccountUserPresence
-							).catch(
-								() => ({status: AccountUserPresence.Statuses.Offline})
-							)
-						).status,
-						username
-					})
-				))).
-					slice(0, this.contactListLength).
-					map(async ({username}) => this.accountUserLookupService.getUser(username))
-			))),
+			this.contactUsernames.pipe(mergeMap(async usernames =>
+				<User[]> (await Promise.all(
+					this.sort(await Promise.all(
+						usernames.map(async username => ({
+							status: (
+								await this.databaseService.getItem(
+									`users/${username}/presence`,
+									AccountUserPresence
+								).catch(
+									() => ({status: AccountUserPresence.Statuses.Offline})
+								)
+							).status,
+							username
+						})
+					))).
+						slice(0, this.contactListLength).
+						map(async ({username}) => this.accountUserLookupService.getUser(username))
+				)).
+					filter(o => o)
+			)),
 			[]
 		);
 

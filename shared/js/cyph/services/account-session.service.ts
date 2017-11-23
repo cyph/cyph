@@ -96,9 +96,11 @@ export class AccountSessionService extends SessionService {
 			}
 		})();
 
-		(await this.accountUserLookupService.getUser(username)).realUsername.subscribe(
-			this.remoteUsername
-		);
+		const user	= await this.accountUserLookupService.getUser(username);
+
+		if (user) {
+			user.realUsername.subscribe(this.remoteUsername);
+		}
 	}
 
 	constructor (
