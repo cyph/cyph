@@ -155,52 +155,49 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		return {
 			progress,
-			result: retryUntilSuccessful(
-				async () => {
-					const url	= await urlPromise;
+			result: (async () => {
+				const url	= await urlPromise;
 
-					const {hash, timestamp}	= await this.getMetadata(url);
+				const {hash, timestamp}	= await this.getMetadata(url);
 
-					try {
-						const localData	= await this.cacheGet({hash});
-						progress.next(100);
-						progress.complete();
-						return {timestamp, value: await deserialize(proto, localData)};
-					}
-					catch (_) {}
-
-					progress.next(0);
-
-					const request	= requestByteStream({
-						retries: 3,
-						url: await (await this.getStorageRef(url)).getDownloadURL()
-					});
-
-					request.progress.subscribe(
-						n => { progress.next(n); },
-						err => { progress.next(err); }
-					);
-
-					const value	= await request.result;
-
-					if (
-						!this.potassiumService.compareMemory(
-							this.potassiumService.fromBase64(hash),
-							await this.potassiumService.hash.hash(value)
-						)
-					) {
-						const err	= new Error('Invalid data hash.');
-						progress.error(err);
-						throw err;
-					}
-
+				try {
+					const localData	= await this.cacheGet({hash});
 					progress.next(100);
 					progress.complete();
-					this.cacheSet(url, value, hash);
-					return {timestamp, value: await deserialize(proto, value)};
-				},
-				25
-			)
+					return {timestamp, value: await deserialize(proto, localData)};
+				}
+				catch (_) {}
+
+				progress.next(0);
+
+				const request	= requestByteStream({
+					retries: 3,
+					url: await (await this.getStorageRef(url)).getDownloadURL()
+				});
+
+				request.progress.subscribe(
+					n => { progress.next(n); },
+					err => { progress.next(err); }
+				);
+
+				const value	= await request.result;
+
+				if (
+					!this.potassiumService.compareMemory(
+						this.potassiumService.fromBase64(hash),
+						await this.potassiumService.hash.hash(value)
+					)
+				) {
+					const err	= new Error('Invalid data hash.');
+					progress.error(err);
+					throw err;
+				}
+
+				progress.next(100);
+				progress.complete();
+				this.cacheSet(url, value, hash);
+				return {timestamp, value: await deserialize(proto, value)};
+			})()
 		};
 	}
 
