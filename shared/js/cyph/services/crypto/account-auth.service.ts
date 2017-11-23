@@ -63,6 +63,15 @@ export class AccountAuthService {
 		).hash;
 	}
 
+	/** Indicates whether credentials are saved locally. */
+	public async hasSavedCredentials () : Promise<boolean> {
+		return (
+			await Promise.all(['masterKey', 'pinIsCustom', 'username'].map(async k =>
+				this.localStorageService.hasItem(k)
+			))
+		).filter(b => !b).length < 1;
+	}
+
 	/**
 	 * Logs in.
 	 * @returns Whether login was successful.

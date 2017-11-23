@@ -48,6 +48,17 @@ export class AccountProfileComponent implements OnInit {
 
 	/** @ignore */
 	private async setUser (username?: string) : Promise<void> {
+		if (
+			!this.accountDatabaseService.currentUser.value &&
+			await this.accountAuthService.hasSavedCredentials()
+		) {
+			this.routerService.navigate(username ?
+				['account', 'login', 'profile', username] :
+				['account', 'login']
+			);
+			return;
+		}
+
 		try {
 			if (username) {
 				this.isContact	= this.accountContactsService.watchIfContact(username);
