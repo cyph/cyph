@@ -6,6 +6,7 @@ import {take} from 'rxjs/operators/take';
 import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
 import {AccountUserPresence, StringProto} from '../proto';
+import {filterDuplicates} from '../util/compare';
 import {flattenObservablePromise} from '../util/flatten-observable-promise';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
@@ -33,25 +34,28 @@ export class AccountContactsService {
 
 	/** List of usernames of contacts for current user. */
 	public readonly contactUsernames: Observable<string[]>	= flattenObservablePromise(
-		this.accountDatabaseService.watchListKeys('contactUsernames').pipe(mergeMap(async keys =>
-			(await Promise.all(
+		this.accountDatabaseService.watchListKeys('contactUsernames').pipe(
+			mergeMap(async keys =>
 				(await Promise.all(
-					keys.map(async key => ({
+					(await Promise.all(
+						keys.map(async key => ({
+							key,
+							username: await this.accountDatabaseService.getItem(
+								`contactUsernames/${key}`,
+								StringProto
+							)
+						}))
+					)).map(async ({key, username}) => ({
+						id: await this.getContactID(username),
 						key,
-						username: await this.accountDatabaseService.getItem(
-							`contactUsernames/${key}`,
-							StringProto
-						)
+						username
 					}))
-				)).map(async ({key, username}) => ({
-					id: await this.getContactID(username),
-					key,
-					username
-				}))
-			)).
-				filter(({id, key}) => id === key).
-				map(({username}) => username)
-		)),
+				)).
+					filter(({id, key}) => id === key).
+					map(({username}) => username)
+			),
+			filterDuplicates()
+		),
 		[]
 	);
 
