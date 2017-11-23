@@ -13,9 +13,9 @@ export const compareArrays	= <T> (a: T[], b: T[], ...arrays: T[][]) : boolean =>
 		return false;
 	}
 
-	for (let i = 0 ; i < arrays.length ; ++i) {
+	for (const array of arrays) {
 		for (let j = 0 ; j < length ; ++j) {
-			if (arrays[i][j] !== a[j]) {
+			if (array[j] !== a[j]) {
 				return false;
 			}
 		}
@@ -38,7 +38,7 @@ export const compareValues	= <T> (a: T, b: T, ...values: T[]) : boolean => {
 	else {
 		return values.concat(b).filter(t => t !== a).length < 1;
 	}
-}
+};
 
 /** rxjs operator that filters out consecutive duplicate values. */
 export const filterDuplicates	= <T> () : (source: Observable<T>) => Observable<T> => {

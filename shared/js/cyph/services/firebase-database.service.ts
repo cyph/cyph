@@ -808,7 +808,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						return;
 					}
 
-					const newKeys = Object.keys(snapshot.val() || {});
+					const newKeys	= Object.keys(snapshot.val() || {});
 
 					if (keys && compareArrays(keys, newKeys)) {
 						return;
