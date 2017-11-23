@@ -804,6 +804,11 @@ export class AccountDatabaseService {
 		);
 	}
 
+	/** @see DatabaseService.watchExists */
+	public watchExists (url: string|Promise<string>) : Observable<boolean> {
+		return this.databaseService.watchExists(this.normalizeURL(url));
+	}
+
 	/** @see DatabaseService.watchList */
 	public watchList<T> (
 		url: string|Promise<string>,

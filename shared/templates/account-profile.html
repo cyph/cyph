@@ -68,6 +68,28 @@
 				<button
 					mat-mini-fab
 					cyphTranslate
+					class='animated flipInX _4'
+					matTooltip='Remove Contact'
+					(click)='accountContactsService.removeContact(user.username)'
+					*ngIf='isContact | async; else addContact'
+				>
+					<mat-icon>delete</mat-icon>
+				</button>
+				<ng-template #addContact>
+					<button
+						mat-mini-fab
+						cyphTranslate
+						class='animated flipInX _4'
+						matTooltip='Add Contact'
+						(click)='accountContactsService.addContact(user.username)'
+					>
+						<mat-icon>person_add</mat-icon>
+					</button>
+				</ng-template>
+
+				<button
+					mat-mini-fab
+					cyphTranslate
 					class='animated shrink pulldown flipInX _4'
 					matTooltip='Open Chat'
 					[routerLink]='"/account/chat/" + user.username'

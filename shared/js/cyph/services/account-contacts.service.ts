@@ -117,6 +117,37 @@ export class AccountContactsService {
 		return this.accountDatabaseService.getItem(`contactUsernames/${id}`, StringProto);
 	}
 
+	/** Indicates whether the user is already a contact. */
+	public async isContact (username: string) : Promise<boolean> {
+		return this.accountDatabaseService.hasItem(
+			`contactUsernames/${await this.getContactID(username)}`
+		);
+	}
+
+	/** Removes contact. */
+	public async removeContact (username: string) : Promise<void> {
+		await this.accountDatabaseService.removeItem(
+			`contactUsernames/${await this.getContactID(username)}`
+		);
+	}
+
+	/** Adds or removes contact. */
+	public async toggleContact (username: string) : Promise<void> {
+		if (await this.isContact(username)) {
+			await this.removeContact(username);
+		}
+		else {
+			await this.addContact(username);
+		}
+	}
+
+	/** Watches whether the user is a contact. */
+	public watchIfContact (username: string) : Observable<boolean> {
+		return this.accountDatabaseService.watchExists((async () =>
+			`contactUsernames/${await this.getContactID(username)}`
+		)());
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,

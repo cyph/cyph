@@ -115,7 +115,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async checkDisconnected (url: string) : Promise<boolean> {
+	public async checkDisconnected (urlPromise: string|Promise<string>) : Promise<boolean> {
+		const url	= await urlPromise;
+
 		return (await (await this.getDatabaseRef(url)).once('value')).val() !== undefined;
 	}
 
@@ -144,7 +146,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public downloadItem<T> (url: string, proto: IProto<T>) : {
+	public downloadItem<T> (urlPromise: string|Promise<string>, proto: IProto<T>) : {
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
@@ -154,6 +156,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 			progress,
 			result: retryUntilSuccessful(
 				async () => {
+					const url	= await urlPromise;
+
 					const {hash, timestamp}	= await this.getMetadata(url);
 
 					try {
@@ -200,7 +204,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async getList<T> (url: string, proto: IProto<T>) : Promise<T[]> {
+	public async getList<T> (urlPromise: string|Promise<string>, proto: IProto<T>) : Promise<T[]> {
+		const url	= await urlPromise;
+
 		const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
 		return !value ?
 			[] :
@@ -209,7 +215,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async getListKeys (url: string) : Promise<string[]> {
+	public async getListKeys (urlPromise: string|Promise<string>) : Promise<string[]> {
+		const url	= await urlPromise;
+
 		const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
 		return !value ?
 			[] :
@@ -218,7 +226,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async getMetadata (url: string) : Promise<{hash: string; timestamp: number}> {
+	public async getMetadata (urlPromise: string|Promise<string>) : Promise<{
+		hash: string;
+		timestamp: number;
+	}> {
+		const url	= await urlPromise;
+
 		const {hash, timestamp}	=
 			(await (await this.getDatabaseRef(url)).once('value')).val() ||
 			{hash: undefined, timestamp: undefined}
@@ -232,7 +245,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async hasItem (url: string) : Promise<boolean> {
+	public async hasItem (urlPromise: string|Promise<string>) : Promise<boolean> {
+		const url	= await urlPromise;
+
 		try {
 			await (await this.getStorageRef(url)).getDownloadURL();
 			return true;
@@ -244,10 +259,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async lock<T> (
-		url: string,
+		urlPromise: string|Promise<string>,
 		f: (reason?: string) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
+		const url	= await urlPromise;
+
 		return lock(
 			getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
 			async () => {
@@ -302,7 +319,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async lockStatus (url: string) : Promise<{locked: boolean; reason: string|undefined}> {
+	public async lockStatus (urlPromise: string|Promise<string>) : Promise<{
+		locked: boolean;
+		reason: string|undefined;
+	}> {
+		const url	= await urlPromise;
+
 		const value: {[key: string]: {id: string; reason?: string}}	=
 			(await (await this.getDatabaseRef(url)).once('value')).val() || {}
 		;
@@ -331,10 +353,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async pushItem<T> (url: string, proto: IProto<T>, value: T) : Promise<{
+	public async pushItem<T> (
+		urlPromise: string|Promise<string>,
+		proto: IProto<T>,
+		value: T
+	) : Promise<{
 		hash: string;
 		url: string;
 	}> {
+		const url	= await urlPromise;
+
 		return this.lock(`pushlocks/${url}`, async () =>
 			this.setItem(`${url}/${(await this.getDatabaseRef(url)).push().key}`, proto, value)
 		);
@@ -351,7 +379,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async removeItem (url: string) : Promise<void> {
+	public async removeItem (urlPromise: string|Promise<string>) : Promise<void> {
+		const url	= await urlPromise;
+
 		this.cacheRemove({url});
 
 		const databaseRef	= await this.getDatabaseRef(url);
@@ -369,9 +399,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async setConnectTracker (
-		url: string,
+		urlPromise: string|Promise<string>,
 		onReconnect?: () => void
 	) : Promise<() => void> {
+		const url	= await urlPromise;
+
 		const ref			= await this.getDatabaseRef(url);
 		const onDisconnect	= ref.onDisconnect();
 
@@ -396,9 +428,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async setDisconnectTracker (
-		url: string,
+		urlPromise: string|Promise<string>,
 		onReconnect?: () => void
 	) : Promise<() => void> {
+		const url	= await urlPromise;
+
 		const ref			= await this.getDatabaseRef(url);
 		const onDisconnect	= ref.onDisconnect();
 
@@ -422,10 +456,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async setItem<T> (url: string, proto: IProto<T>, value: T) : Promise<{
+	public async setItem<T> (
+		urlPromise: string|Promise<string>,
+		proto: IProto<T>,
+		value: T
+	) : Promise<{
 		hash: string;
 		url: string;
 	}> {
+		const url	= await urlPromise;
+
 		const data	= await serialize(proto, value);
 		const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
 
@@ -453,7 +493,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public uploadItem<T> (url: string, proto: IProto<T>, value: T) : {
+	public uploadItem<T> (urlPromise: string|Promise<string>, proto: IProto<T>, value: T) : {
 		cancel: () => void;
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
@@ -466,6 +506,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
+			const url	= await urlPromise;
+
 			const data	= await serialize(proto, value);
 			const hash	= this.potassiumService.toBase64(
 				await this.potassiumService.hash.hash(data)
@@ -519,11 +561,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async waitForUnlock (url: string) : Promise<{
+	public async waitForUnlock (urlPromise: string|Promise<string>) : Promise<{
 		reason: string|undefined;
 		wasLocked: boolean;
 	}> {
 		return new Promise<{reason: string|undefined; wasLocked: boolean}>(async resolve => {
+			const url	= await urlPromise;
+
 			let reason: string|undefined;
 			let wasLocked	= false;
 
@@ -546,11 +590,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watch<T> (url: string, proto: IProto<T>) : Observable<ITimedValue<T>> {
+	public watch<T> (
+		urlPromise: string|Promise<string>,
+		proto: IProto<T>
+	) : Observable<ITimedValue<T>> {
 		return new Observable<ITimedValue<T>>(observer => {
 			let cleanup: Function;
 
 			const onValue	= async (snapshot: firebase.database.DataSnapshot) => {
+				const url	= await urlPromise;
+
 				if (!snapshot || !snapshot.exists()) {
 					observer.next({
 						timestamp: await getTimestamp(),
@@ -563,6 +612,31 @@ export class FirebaseDatabaseService extends DatabaseService {
 			};
 
 			(async () => {
+				const url	= await urlPromise;
+
+				const ref	= await this.getDatabaseRef(url);
+				ref.on('value', onValue);
+				cleanup	= () => { ref.off('value', onValue); };
+			})();
+
+			return async () => {
+				(await waitForValue(() => cleanup))();
+			};
+		});
+	}
+
+	/** @inheritDoc */
+	public watchExists (urlPromise: string|Promise<string>) : Observable<boolean> {
+		return new Observable<boolean>(observer => {
+			let cleanup: Function;
+
+			const onValue	= (snapshot: firebase.database.DataSnapshot) => {
+				observer.next(!!snapshot && snapshot.exists());
+			};
+
+			(async () => {
+				const url	= await urlPromise;
+
 				const ref	= await this.getDatabaseRef(url);
 				ref.on('value', onValue);
 				cleanup	= () => { ref.off('value', onValue); };
@@ -576,7 +650,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public watchList<T> (
-		url: string,
+		urlPromise: string|Promise<string>,
 		proto: IProto<T>,
 		completeOnEmpty: boolean = false
 	) : Observable<ITimedValue<T>[]> {
@@ -584,6 +658,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 			let cleanup: Function;
 
 			(async () => {
+				const url	= await urlPromise;
+
 				const data		= new Map<string, {hash: string; timestamp: number; value: T}>();
 				const listRef	= await this.getDatabaseRef(url);
 				let initiated	= false;
@@ -690,11 +766,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchListKeyPushes (url: string) : Observable<string> {
+	public watchListKeyPushes (urlPromise: string|Promise<string>) : Observable<string> {
 		return new Observable<string>(observer => {
 			let cleanup: Function;
 
 			(async () => {
+				const url	= await urlPromise;
+
 				const listRef	= await this.getDatabaseRef(url);
 
 				const onChildAdded	= (snapshot: firebase.database.DataSnapshot) => {
@@ -716,11 +794,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchListKeys (url: string) : Observable<string[]> {
+	public watchListKeys (urlPromise: string|Promise<string>) : Observable<string[]> {
 		return new Observable<string[]>(observer => {
 			let cleanup: Function;
 
 			(async () => {
+				const url	= await urlPromise;
+
 				const listRef	= await this.getDatabaseRef(url);
 
 				const onValue	= (snapshot: firebase.database.DataSnapshot) => {
@@ -743,7 +823,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public watchListPushes<T> (
-		url: string,
+		urlPromise: string|Promise<string>,
 		proto: IProto<T>,
 		completeOnEmpty: boolean = false,
 		noCache: boolean = false
@@ -752,6 +832,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 			let cleanup: Function;
 
 			(async () => {
+				const url	= await urlPromise;
+
 				const listRef	= await this.getDatabaseRef(url);
 				let initiated	= false;
 

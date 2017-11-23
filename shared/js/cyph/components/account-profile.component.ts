@@ -1,7 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {Observable} from 'rxjs/Observable';
+import {of} from 'rxjs/observable/of';
 import {UserPresence, userPresenceSelectOptions} from '../account/enums';
 import {User} from '../account/user';
+import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountService} from '../services/account.service';
@@ -28,6 +31,9 @@ export class AccountProfileComponent implements OnInit {
 	/** Profile edit mode. */
 	public editMode: boolean		= false;
 
+	/** @see AccountContactsService.watchIfContact */
+	public isContact?: Observable<boolean>;
+
 	/** Maximum length of profile description. */
 	public readonly maxDescriptionLength: number	= 140;
 
@@ -44,10 +50,12 @@ export class AccountProfileComponent implements OnInit {
 	private async setUser (username?: string) : Promise<void> {
 		try {
 			if (username) {
-				this.user	= await this.accountUserLookupService.getUser(username);
+				this.isContact	= this.accountContactsService.watchIfContact(username);
+				this.user		= await this.accountUserLookupService.getUser(username);
 			}
 			else if (this.accountDatabaseService.currentUser.value) {
-				this.user	= this.accountDatabaseService.currentUser.value.user;
+				this.isContact	= of(false);
+				this.user		= this.accountDatabaseService.currentUser.value.user;
 			}
 		}
 		catch (_) {}
@@ -113,6 +121,9 @@ export class AccountProfileComponent implements OnInit {
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see AccountContactsService */
+		public readonly accountContactsService: AccountContactsService,
 
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
