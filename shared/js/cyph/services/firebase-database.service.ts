@@ -12,6 +12,7 @@ import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {BinaryProto} from '../proto';
+import {compareArrays} from '../util/compare';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lock} from '../util/lock';
 import {requestByteStream} from '../util/request';
@@ -803,12 +804,21 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				const listRef	= await this.getDatabaseRef(url);
 
+				let keys: string[];
+
 				const onValue	= (snapshot: firebase.database.DataSnapshot) => {
 					if (!snapshot || !snapshot.exists()) {
 						return;
 					}
 
-					observer.next(Object.keys(snapshot.val() || {}));
+					const newKeys = Object.keys(snapshot.val() || {});
+
+					if (keys && compareArrays(keys, newKeys)) {
+						return;
+					}
+
+					keys	= newKeys;
+					observer.next(keys);
 				};
 
 				listRef.on('value', onValue);

@@ -1,3 +1,4 @@
+export * from './compare';
 export * from './email';
 export * from './flatten-observable-promise';
 export * from './formatting';
