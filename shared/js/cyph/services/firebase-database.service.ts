@@ -42,7 +42,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return firebase.apps[0] || firebase.initializeApp(env.firebaseConfig);
 	});
 
-	/** Mapping of URLS to last known good hashes. */
+	/** Mapping of URLs to last known good hashes. */
 	private readonly hashCache: Map<string, string>	= new Map<string, string>();
 
 	/** @ignore */
