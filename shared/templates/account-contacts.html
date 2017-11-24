@@ -11,6 +11,30 @@
 		fxLayoutAlign='start stretch'
 		fxLayoutGap='16px'
 	>
+		<mat-form-field>
+			<input matInput [formControl]='searchControl' [matAutocomplete]='autoComplete' />
+		</mat-form-field>
+
+		<mat-autocomplete #autoComplete='matAutocomplete'>
+			<mat-option
+				[value]='contact.username'
+				(click)='setUserFilter(contact)'
+				*ngFor='let contact of searchOptions | async'
+			>
+				<img
+					cyphTranslate
+					aria-hidden
+					class='avatar'
+					[ngClass]='userPresence[contact.status | async]'
+					[src]='contact.avatar | async'
+				/>
+				<span>{{contact.name | async}}</span>
+				<small>{{contact.realUsername | async}}</small>
+			</mat-option>
+		</mat-autocomplete>
+
+		<cyph-contact class='active' [contact]='userFilter' *ngIf='userFilter'></cyph-contact>
+
 		<cyph-contact
 			[fxFlexOrder]='isActive(contact) ? "-1" : ""'
 			[class.active]='isActive(contact)'
@@ -18,6 +42,7 @@
 			[contact]='contact'
 			[ngClass]='"_" + i'
 			*ngFor='let contact of accountContactsService.contactList | async; let i = index'
+			*ngIf='!userFilter'
 		></cyph-contact>
 	</div>
 

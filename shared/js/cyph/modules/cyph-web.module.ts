@@ -2,6 +2,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatButtonModule} from '@angular/material/button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatCardModule} from '@angular/material/card';
@@ -63,6 +64,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DropZoneDirective,
 		FlexLayoutModule,
 		FormsModule,
+		MatAutocompleteModule,
 		MatButtonModule,
 		MatButtonToggleModule,
 		MatCardModule,
@@ -95,6 +97,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		FlexLayoutModule,
 		FormsModule,
 		HttpClientModule,
+		MatAutocompleteModule,
 		MatButtonModule,
 		MatCardModule,
 		MatCheckboxModule,
