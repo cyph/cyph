@@ -15,12 +15,8 @@
 			<input matInput [formControl]='searchControl' [matAutocomplete]='autoComplete' />
 		</mat-form-field>
 
-		<mat-autocomplete #autoComplete='matAutocomplete'>
-			<mat-option
-				[value]='contact.username'
-				(click)='setUserFilter(contact)'
-				*ngFor='let contact of searchOptions | async'
-			>
+		<mat-autocomplete #autoComplete='matAutocomplete' (optionSelected)='setUserFilter($event)'>
+			<mat-option [value]='contact' *ngFor='let contact of searchOptions | async'>
 				<img
 					cyphTranslate
 					aria-hidden
