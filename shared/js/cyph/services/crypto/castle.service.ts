@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
-import {filter} from 'rxjs/operators/filter';
 import {first} from 'rxjs/operators/first';
 import {take} from 'rxjs/operators/take';
 import {PairwiseSession} from '../../crypto/castle/pairwise-session';
 import {ICastle} from '../../crypto/icastle';
 import {LockFunction} from '../../lock-function-type';
+import {filterUndefinedOperator} from '../../util/filter';
 import {lockFunction} from '../../util/lock';
 import {getTimestamp} from '../../util/time';
 import {SessionService} from '../session.service';
@@ -25,7 +25,7 @@ export class CastleService implements ICastle {
 
 	/** @ignore */
 	protected readonly pairwiseSessionFiltered: Observable<PairwiseSession>			=
-		<any> this.pairwiseSession.pipe(filter(o => o !== undefined))
+		this.pairwiseSession.pipe(filterUndefinedOperator())
 	;
 
 	/** @ignore */

@@ -6,7 +6,7 @@ import {take} from 'rxjs/operators/take';
 import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
 import {AccountUserPresence, StringProto} from '../proto';
-import {filterDuplicates} from '../util/compare';
+import {filterDuplicatesOperator, filterUndefined} from '../util/filter';
 import {flattenObservablePromise} from '../util/flatten-observable-promise';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
@@ -54,7 +54,7 @@ export class AccountContactsService {
 					filter(({id, key}) => id === key).
 					map(({username}) => username)
 			),
-			filterDuplicates()
+			filterDuplicatesOperator()
 		),
 		[]
 	);
@@ -167,7 +167,7 @@ export class AccountContactsService {
 	) {
 		this.contactList	= flattenObservablePromise(
 			this.contactUsernames.pipe(mergeMap(async usernames =>
-				<User[]> (await Promise.all(
+				filterUndefined(await Promise.all(
 					this.sort(await Promise.all(
 						usernames.map(async username => ({
 							status: (
@@ -183,8 +183,7 @@ export class AccountContactsService {
 					))).
 						slice(0, this.contactListLength).
 						map(async ({username}) => this.accountUserLookupService.getUser(username))
-				)).
-					filter(o => o)
+				))
 			)),
 			[]
 		);

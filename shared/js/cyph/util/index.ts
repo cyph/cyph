@@ -1,5 +1,6 @@
 export * from './compare';
 export * from './email';
+export * from './filter';
 export * from './flatten-observable-promise';
 export * from './formatting';
 export * from './get-or-set-default';

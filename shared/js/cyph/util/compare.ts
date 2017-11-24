@@ -1,7 +1,3 @@
-import {Observable} from 'rxjs/Observable';
-import {filter} from 'rxjs/operators/filter';
-
-
 /**
  * Compares two or more arrays.
  * @returns True if equal, false otherwise.
@@ -38,15 +34,4 @@ export const compareValues	= <T> (a: T, b: T, ...values: T[]) : boolean => {
 	else {
 		return values.concat(b).filter(t => t !== a).length < 1;
 	}
-};
-
-/** rxjs operator that filters out consecutive duplicate values. */
-export const filterDuplicates	= <T> () : (source: Observable<T>) => Observable<T> => {
-	let last: T;
-
-	return filter<T>(value => {
-		const equal	= last !== undefined && compareValues(last, value);
-		last		= value;
-		return !equal;
-	});
 };
