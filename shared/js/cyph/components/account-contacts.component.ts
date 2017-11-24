@@ -31,7 +31,7 @@ export class AccountContactsComponent {
 
 	/** Search bar autocomplete options. */
 	public searchOptions: Observable<User[]>			= this.searchControl.valueChanges.pipe(
-		map(query => query.toLowercase().trim()),
+		map<string, string>(query => query.toLowerCase().trim()),
 		mergeMap<string, User[]>(query => this.accountContactsService.contactUsernames.pipe(
 			mergeMap(async usernames => {
 				if (!compareArrays(usernames, this.userCache.usernames)) {
@@ -90,9 +90,8 @@ export class AccountContactsComponent {
 	}
 
 	/** Sets user filter based on search query. */
-	public setUserFilter (user: User) : void {
-		this.userFilter	= user;
-		this.searchControl.setValue('');
+	public async setUserFilter (username: string) : Promise<void> {
+		this.userFilter	= await this.accountUserLookupService.getUser(username);
 	}
 
 	constructor (

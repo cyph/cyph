@@ -12,16 +12,24 @@
 		fxLayoutGap='16px'
 	>
 		<mat-form-field>
-			<input matInput [formControl]='searchControl' [matAutocomplete]='autoComplete' />
+			<input
+				matInput
+				cyphTranslate
+				placeholder='Search'
+				[formControl]='searchControl'
+				[matAutocomplete]='autoComplete'
+			/>
 		</mat-form-field>
 
-		<mat-autocomplete #autoComplete='matAutocomplete' (optionSelected)='setUserFilter($event)'>
-			<mat-option [value]='contact' *ngFor='let contact of searchOptions | async'>
+		<mat-autocomplete
+			#autoComplete='matAutocomplete'
+			(optionSelected)='setUserFilter($event.option.value)'
+		>
+			<mat-option [value]='contact.username' *ngFor='let contact of searchOptions | async'>
 				<img
 					cyphTranslate
 					aria-hidden
-					class='avatar'
-					[ngClass]='userPresence[contact.status | async]'
+					style='vertical-align: middle; height: 25px'
 					[src]='contact.avatar | async'
 				/>
 				<span>{{contact.name | async}}</span>
@@ -29,17 +37,23 @@
 			</mat-option>
 		</mat-autocomplete>
 
-		<cyph-contact class='active' [contact]='userFilter' *ngIf='userFilter'></cyph-contact>
+		<cyph-account-contact
+			class='active'
+			[contact]='userFilter'
+			*ngIf='userFilter'
+		></cyph-account-contact>
 
-		<cyph-contact
+		<cyph-account-contact
 			[fxFlexOrder]='isActive(contact) ? "-1" : ""'
 			[class.active]='isActive(contact)'
 			[class.bounceInRight]='isActive(contact) && !accountContactsService.initiated'
 			[contact]='contact'
 			[ngClass]='"_" + i'
-			*ngFor='let contact of accountContactsService.contactList | async; let i = index'
-			*ngIf='!userFilter'
-		></cyph-contact>
+			*ngFor='
+				let contact of (userFilter ? [] : accountContactsService.contactList | async);
+				let i = index
+			'
+		></cyph-account-contact>
 	</div>
 
 	<mat-progress-spinner
