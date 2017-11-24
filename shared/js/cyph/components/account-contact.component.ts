@@ -1,4 +1,5 @@
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
+import {User, UserPresence} from '../account';
 
 
 /**
@@ -10,5 +11,10 @@ import {Component} from '@angular/core';
 	templateUrl: '../../../templates/account-contact.html'
 })
 export class AccountContactComponent {
+	@Input() public contact: User;
+
+	/** @see UserPresence */
+	public readonly userPresence: typeof UserPresence	= UserPresence;
+
 	constructor () {}
 }

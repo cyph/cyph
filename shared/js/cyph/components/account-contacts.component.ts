@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {User, UserPresence} from '../account';
+import {User} from '../account';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
@@ -18,9 +18,6 @@ import {EnvService} from '../services/env.service';
 export class AccountContactsComponent {
 	/** Indicates whether this is contained within a sidebar. */
 	@Input() public sidebar: boolean	= false;
-
-	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence	= UserPresence;
 
 	/** Indicates whether the chat UI is open for this user. */
 	public isActive (contact: User) : boolean {

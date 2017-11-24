@@ -1,5 +1,6 @@
 import {NgModule} from '@angular/core';
 import {AccountChatComponent} from '../components/account-chat.component';
+import {AccountContactComponent} from '../components/account-contact.component';
 import {AccountContactsComponent} from '../components/account-contacts.component';
 import {AccountFileSharingComponent} from '../components/account-file-sharing.component';
 import {AccountFilesComponent} from '../components/account-files.component';
@@ -42,6 +43,7 @@ import {CyphWebModule} from './cyph-web.module';
 	declarations: [
 		AccountChatComponent,
 		AccountComponent,
+		AccountContactComponent,
 		AccountContactsComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
@@ -68,6 +70,7 @@ import {CyphWebModule} from './cyph-web.module';
 	exports: [
 		AccountChatComponent,
 		AccountComponent,
+		AccountContactComponent,
 		AccountContactsComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
