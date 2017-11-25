@@ -62,7 +62,7 @@
 		<cyph-account-contact
 			[fxFlexOrder]='isActive(contact) ? "-1" : ""'
 			[class.active]='isActive(contact)'
-			[class.bounceInRight]='isActive(contact) && !accountContactsService.initiated'
+			[class.bounceInRight]='!isActive(contact) && !accountContactsService.initiated'
 			[contact]='contact'
 			[ngClass]='"_" + i'
 			*ngFor='
