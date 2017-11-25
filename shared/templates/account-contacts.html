@@ -45,8 +45,9 @@
 				<img
 					cyphTranslate
 					aria-hidden
-					style='vertical-align: middle; height: 25px'
+					class='option-avatar'
 					[src]='contact.avatar | async'
+					alt='User Avatar'
 				/>
 				<span>{{contact.name | async}}</span>
 				<small>{{contact.realUsername | async}}</small>
