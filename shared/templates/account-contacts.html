@@ -11,7 +11,7 @@
 		fxLayoutAlign='start stretch'
 		fxLayoutGap='16px'
 	>
-		<mat-form-field>
+		<mat-form-field class='search-bar'>
 			<input
 				matInput
 				cyphTranslate
@@ -19,11 +19,19 @@
 				[formControl]='searchControl'
 				[matAutocomplete]='autoComplete'
 			/>
+			<mat-progress-spinner
+				matSuffix
+				class='custom'
+				diameter='20'
+				strokeWidth='2'
+				mode='indeterminate'
+				*ngIf='searchSpinner'
+			></mat-progress-spinner>
 			<mat-icon
 				matSuffix
 				class='suffix-button'
 				(click)='clearUserFilter()'
-				*ngIf='this.searchControl.value || userFilter'
+				*ngIf='!searchSpinner && (this.searchControl.value || userFilter)'
 			>
 				close
 			</mat-icon>

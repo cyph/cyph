@@ -69,7 +69,7 @@ section {
 		}
 	}
 
-	mat-progress-spinner {
+	mat-progress-spinner:not(.custom) {
 		z-index: 1;
 
 		@include spinner-center;

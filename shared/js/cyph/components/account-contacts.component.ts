@@ -35,12 +35,16 @@ export class AccountContactsComponent {
 		mergeMap<string, User[]>(query => this.accountContactsService.contactUsernames.pipe(
 			mergeMap(async usernames => {
 				if (!compareArrays(usernames, this.userCache.usernames)) {
-					this.userCache	= {
+					this.searchSpinner	= true;
+
+					this.userCache		= {
 						usernames,
 						users: filterUndefined(await Promise.all(usernames.map(async username =>
 							this.accountUserLookupService.getUser(username)
 						)))
 					};
+
+					this.searchSpinner	= false;
 				}
 
 				return (await Promise.all(this.userCache.users.map(async user => ({
@@ -67,6 +71,9 @@ export class AccountContactsComponent {
 			})
 		))
 	);
+
+	/** Indicates whether spinner should be displayed in search bar. */
+	public searchSpinner: boolean						= false;
 
 	/** Indicates whether this is contained within a sidebar. */
 	@Input() public sidebar: boolean					= false;

@@ -7,3 +7,13 @@ cyph-contact.active ::ng-deep .contact {
 		@include transform(scaleX(0));
 	}
 }
+
+.search-bar {
+	padding-top: 1em;
+
+	mat-progress-spinner {
+		position: absolute;
+		top: -80px;
+		right: -88px;
+	}
+}
