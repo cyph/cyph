@@ -61,12 +61,10 @@ export class LocalStorageService extends DataManagerService {
 	) : Promise<T> {
 		await this.pendingSets.get(url);
 
-		if (!this.cache.has(url)) {
-			try {
-				this.cache.set(url, await this.getItemInternal(url, waitForReady));
-			}
-			catch (_) {}
+		try {
+			this.cache.set(url, await this.getItemInternal(url, waitForReady));
 		}
+		catch (_) {}
 
 		const value	= this.cache.get(url);
 
