@@ -77,6 +77,12 @@ export class AccountContactsComponent {
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
+	/** Clears user filter. */
+	public clearUserFilter () : void {
+		this.userFilter	= undefined;
+		this.searchControl.setValue('');
+	}
+
 	/** Indicates whether the chat UI is open for this user. */
 	public isActive (contact: User) : boolean {
 		const snapshot	= this.activatedRouteService.snapshot.firstChild ?

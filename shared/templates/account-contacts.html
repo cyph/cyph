@@ -19,6 +19,14 @@
 				[formControl]='searchControl'
 				[matAutocomplete]='autoComplete'
 			/>
+			<mat-icon
+				matSuffix
+				class='suffix-button'
+				(click)='clearUserFilter()'
+				*ngIf='this.searchControl.value || userFilter'
+			>
+				close
+			</mat-icon>
 		</mat-form-field>
 
 		<mat-autocomplete
