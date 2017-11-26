@@ -1,8 +1,7 @@
 <mat-card
 	class='contact animated'
-	[attr.data-index]='i'
-	[ngClass]='"_" + i'
 	[routerLink]='"/account/chat/" + contact.username'
+	*ngIf='!!contact'
 >
 	<mat-card-header fxLayout='row'>
 		<img

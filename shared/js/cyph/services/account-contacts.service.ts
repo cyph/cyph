@@ -29,9 +29,6 @@ export class AccountContactsService {
 	/** List of contacts for current user, sorted by status and then alphabetically by username. */
 	public readonly contactList: Observable<User[]>;
 
-	/** Contact list length. */
-	public readonly contactListLength: number				= 10;
-
 	/** List of usernames of contacts for current user. */
 	public readonly contactUsernames: Observable<string[]>	= flattenObservablePromise(
 		this.accountDatabaseService.watchListKeys('contactUsernames').pipe(
@@ -181,7 +178,6 @@ export class AccountContactsService {
 							username
 						})
 					))).
-						slice(0, this.contactListLength).
 						map(async ({username}) => this.accountUserLookupService.getUser(username))
 				))
 			)),

@@ -143,6 +143,10 @@ mat-card-title {
 	max-width: 100%;
 }
 
+od-virtualscroll, od-virtualrow {
+	width: 100%;
+}
+
 html, button, input, select, textarea {
 	font-family: Roboto, 'Helvetica Neue', sans-serif;
 }

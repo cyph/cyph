@@ -1,16 +1,10 @@
 <div
 	fxFlexFill
 	fxLayout='row'
-	fxLayoutAlign='center start'
 	class='card-list'
 	[class.initiating]='accountContactsService.showSpinner'
 >
-	<div
-		[fxFlex]='sidebar ? "90" : ""'
-		fxLayout='column'
-		fxLayoutAlign='start stretch'
-		fxLayoutGap='16px'
-	>
+	<div fxFlexFill fxLayout='column' fxLayoutAlign='start stretch'>
 		<mat-form-field class='search-bar'>
 			<input
 				matInput
@@ -56,20 +50,29 @@
 		<cyph-account-contact
 			class='active'
 			[contact]='userFilter'
-			*ngIf='userFilter'
+			*ngIf='!!userFilter'
 		></cyph-account-contact>
 
 		<cyph-account-contact
-			[fxFlexOrder]='isActive(contact) ? "-1" : ""'
-			[class.active]='isActive(contact)'
-			[class.bounceInRight]='!isActive(contact) && !accountContactsService.initiated'
-			[contact]='contact'
-			[ngClass]='"_" + i'
-			*ngFor='
-				let contact of (userFilter ? [] : accountContactsService.contactList | async);
-				let i = index
-			'
+			class='active'
+			[contact]='activeUser | async'
+			*ngIf='!userFilter'
 		></cyph-account-contact>
+
+		<od-virtualscroll
+			[vsData]='contactList'
+			[vsEqualsFunc]='vsEqualsFunc'
+			[vsOptions]='vsOptions'
+			*ngIf='!userFilter && showContactList'
+		>
+			<ng-template let-item let-row='row'>
+				<cyph-account-contact
+					[class.bounceInRight]='!accountContactsService.initiated'
+					[contact]='item'
+					[ngClass]='"_" + row'
+				></cyph-account-contact>
+			</ng-template>
+		</od-virtualscroll>
 	</div>
 
 	<mat-progress-spinner

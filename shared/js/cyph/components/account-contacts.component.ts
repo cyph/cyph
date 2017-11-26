@@ -1,6 +1,7 @@
-import {Component, Input} from '@angular/core';
+import {Component, AfterViewInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
+import {IVirtualScrollOptions} from 'od-virtualscroll';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
@@ -11,8 +12,7 @@ import {AccountUserLookupService} from '../services/account-user-lookup.service'
 import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
-import {compareArrays} from '../util/compare';
-import {filterUndefined} from '../util/filter';
+import {sleep} from '../util/wait';
 
 
 /**
@@ -23,31 +23,45 @@ import {filterUndefined} from '../util/filter';
 	styleUrls: ['../../../css/components/account-contacts.scss'],
 	templateUrl: '../../../templates/account-contacts.html'
 })
-export class AccountContactsComponent {
-	private userCache: {usernames: string[]; users: User[]}	= {usernames: [], users: []};
+export class AccountContactsComponent implements AfterViewInit {
+	/** @ignore */
+	private readonly routeReactiveContactList: Observable<User[]>	=
+		this.activatedRouteService.url.pipe(
+			mergeMap(() => this.accountContactsService.contactList)
+		)
+	;
+
+	/** Full contact list with active contact filtered out. */
+	public readonly activeUser: Observable<User|undefined>	=
+		this.routeReactiveContactList.pipe(
+			map(contacts => contacts.find(contact => this.isActive(contact)))
+		)
+	;
+
+	/** Full contact list with active contact filtered out. */
+	public readonly contactList: Observable<User[]>			=
+		this.routeReactiveContactList.pipe(
+			map(contacts => contacts.filter(contact => !this.isActive(contact)))
+		)
+	;
 
 	/** Search bar control. */
-	public searchControl: FormControl					= new FormControl();
+	public searchControl: FormControl						= new FormControl();
+
+	/** Search bar autocomplete options list length. */
+	public readonly searchListLength: number				= 10;
 
 	/** Search bar autocomplete options. */
-	public searchOptions: Observable<User[]>			= this.searchControl.valueChanges.pipe(
-		map<string, string>(query => query.toLowerCase().trim()),
-		mergeMap<string, User[]>(query => this.accountContactsService.contactUsernames.pipe(
-			mergeMap(async usernames => {
-				if (!compareArrays(usernames, this.userCache.usernames)) {
-					this.searchSpinner	= true;
+	public searchOptions: Observable<User[]>				= this.searchControl.valueChanges.pipe(
+		map<string, string>(query => {
+			this.searchSpinner	= true;
+			return query.toLowerCase().trim();
+		}),
+		mergeMap<string, User[]>(query => this.accountContactsService.contactList.pipe(
+			mergeMap(async users => {
+				this.searchSpinner	= false;
 
-					this.userCache		= {
-						usernames,
-						users: filterUndefined(await Promise.all(usernames.map(async username =>
-							this.accountUserLookupService.getUser(username)
-						)))
-					};
-
-					this.searchSpinner	= false;
-				}
-
-				return (await Promise.all(this.userCache.users.map(async user => ({
+				return (await Promise.all(users.map(async user => ({
 					name: (await user.name.pipe(take(1)).toPromise()).toLowerCase(),
 					user,
 					username: user.username
@@ -66,32 +80,32 @@ export class AccountContactsComponent {
 									-1 :
 									1
 					).
-					slice(0, this.accountContactsService.contactListLength)
+					slice(0, this.searchListLength)
 				;
 			})
 		))
 	);
 
 	/** Indicates whether spinner should be displayed in search bar. */
-	public searchSpinner: boolean						= false;
+	public searchSpinner: boolean							= false;
 
-	/** Indicates whether this is contained within a sidebar. */
-	@Input() public sidebar: boolean					= false;
+	/** Indicates whether contact list should be displayed. */
+	public showContactList: boolean							= false;
 
 	/** Single contact to display instead of list. */
 	public userFilter?: User;
 
 	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence	= UserPresence;
+	public readonly userPresence: typeof UserPresence		= UserPresence;
 
-	/** Clears user filter. */
-	public clearUserFilter () : void {
-		this.userFilter	= undefined;
-		this.searchControl.setValue('');
-	}
+	/** Options for virtual scrolling. */
+	public readonly vsOptions: Observable<IVirtualScrollOptions>	= Observable.of({
+		itemHeight: 123,
+		numLimitColumns: 1
+	});
 
 	/** Indicates whether the chat UI is open for this user. */
-	public isActive (contact: User) : boolean {
+	private isActive (contact: User) : boolean {
 		const snapshot	= this.activatedRouteService.snapshot.firstChild ?
 			this.activatedRouteService.snapshot.firstChild :
 			this.activatedRouteService.snapshot
@@ -102,9 +116,26 @@ export class AccountContactsComponent {
 		;
 	}
 
+	/** Clears user filter. */
+	public clearUserFilter () : void {
+		this.userFilter	= undefined;
+		this.searchControl.setValue('');
+	}
+
+	/** @inheritDoc */
+	public async ngAfterViewInit () : Promise<void> {
+		await sleep(0);
+		this.showContactList	= true;
+	}
+
 	/** Sets user filter based on search query. */
 	public async setUserFilter (username: string) : Promise<void> {
 		this.userFilter	= await this.accountUserLookupService.getUser(username);
+	}
+
+	/** Equality function for virtual scrolling. */
+	public vsEqualsFunc () : boolean {
+		return false;
 	}
 
 	constructor (

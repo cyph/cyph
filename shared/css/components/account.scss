@@ -135,8 +135,9 @@
 			width: 100%;
 			text-align: center;
 
-			~ * .card-list {
+			~ :not(router-outlet) {
 				padding-top: 6rem;
+				height: calc(100% - 6rem);
 			}
 		}
 	}

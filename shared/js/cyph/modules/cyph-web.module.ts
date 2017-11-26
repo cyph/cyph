@@ -28,6 +28,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterModule} from '@angular/router';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {TextMaskModule} from 'angular2-text-mask';
+import {VirtualScrollModule} from 'od-virtualscroll';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {DialogImageComponent} from '../components/dialog-image.component';
@@ -89,7 +90,8 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		ReactiveFormsModule,
 		RouterModule,
 		SmdFabSpeedDialModule,
-		TextMaskModule
+		TextMaskModule,
+		VirtualScrollModule
 	],
 	imports: [
 		BrowserAnimationsModule,
@@ -120,7 +122,8 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		ReactiveFormsModule,
 		RouterModule,
 		SmdFabSpeedDialModule,
-		TextMaskModule
+		TextMaskModule,
+		VirtualScrollModule
 	],
 	providers: [
 		{

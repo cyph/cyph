@@ -1,6 +1,6 @@
 @import '../mixins';
 
-cyph-contact.active ::ng-deep .contact {
+cyph-account-contact.active ::ng-deep .contact {
 	@include filter(brightness(1.2));
 
 	button {
@@ -15,5 +15,13 @@ cyph-contact.active ::ng-deep .contact {
 		position: absolute;
 		top: -80px;
 		right: -88px;
+	}
+}
+
+.card-list > div {
+	padding-bottom: 0px;
+
+	> cyph-account-contact {
+		margin: 16px 0px;
 	}
 }
