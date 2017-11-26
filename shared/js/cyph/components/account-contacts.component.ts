@@ -1,10 +1,11 @@
-import {Component, AfterViewInit} from '@angular/core';
+import {AfterViewInit, Component} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {IVirtualScrollOptions} from 'od-virtualscroll';
 import {Observable} from 'rxjs/Observable';
+import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
-import {mergeMap} from 'rxjs/operators/mergeMap';
+import {mergeMap} from 'rxjs/operators/mergeMap'
 import {take} from 'rxjs/operators/take';
 import {User, UserPresence} from '../account';
 import {AccountContactsService} from '../services/account-contacts.service';
@@ -99,7 +100,7 @@ export class AccountContactsComponent implements AfterViewInit {
 	public readonly userPresence: typeof UserPresence		= UserPresence;
 
 	/** Options for virtual scrolling. */
-	public readonly vsOptions: Observable<IVirtualScrollOptions>	= Observable.of({
+	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
 		itemHeight: 123,
 		numLimitColumns: 1
 	});
