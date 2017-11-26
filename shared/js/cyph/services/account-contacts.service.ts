@@ -3,9 +3,8 @@ import {Observable} from 'rxjs/Observable';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {skip} from 'rxjs/operators/skip';
 import {take} from 'rxjs/operators/take';
-import {userPresenceSorted} from '../account/enums';
 import {User} from '../account/user';
-import {AccountUserPresence, StringProto} from '../proto';
+import {StringProto} from '../proto';
 import {filterDuplicatesOperator, filterUndefined} from '../util/filter';
 import {flattenObservablePromise} from '../util/flatten-observable-promise';
 import {normalize} from '../util/formatting';
@@ -13,7 +12,6 @@ import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default'
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
-import {DatabaseService} from './database.service';
 
 
 /**
@@ -49,35 +47,16 @@ export class AccountContactsService {
 					}))
 				)).
 					filter(({id, key}) => id === key).
-					map(({username}) => username)
+					map(({username}) => username).
+					sort()
 			),
 			filterDuplicatesOperator()
 		),
 		[]
 	);
 
-	/** Indicates whether the first load has completed. */
-	public initiated: boolean	= false;
-
 	/** Indicates whether spinner should be displayed. */
 	public showSpinner: boolean	= true;
-
-	/** @ignore */
-	private sort<T> (users: (T&{status: AccountUserPresence.Statuses; username: string})[]) : T[] {
-		return users.sort((a, b) => {
-			const statusIndexA	= userPresenceSorted.indexOf(a.status);
-			const statusIndexB	= userPresenceSorted.indexOf(b.status);
-
-			return (
-				statusIndexA !== statusIndexB ?
-					statusIndexA < statusIndexB :
-					a.username < b.username
-			) ?
-				-1 :
-				1
-			;
-		});
-	}
 
 	/**
 	 * Adds contact.
@@ -157,35 +136,20 @@ export class AccountContactsService {
 		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
-		private readonly databaseService: DatabaseService,
-
-		/** @ignore */
 		private readonly potassiumService: PotassiumService
 	) {
 		this.contactList	= flattenObservablePromise(
 			this.contactUsernames.pipe(mergeMap(async usernames =>
 				filterUndefined(await Promise.all(
-					this.sort(await Promise.all(
-						usernames.map(async username => ({
-							status: (
-								await this.databaseService.getItem(
-									`users/${username}/presence`,
-									AccountUserPresence
-								).catch(
-									() => ({status: AccountUserPresence.Statuses.Offline})
-								)
-							).status,
-							username
-						})
-					))).
-						map(async ({username}) => this.accountUserLookupService.getUser(username))
+					usernames.map(async username =>
+						this.accountUserLookupService.getUser(username)
+					)
 				))
 			)),
 			[]
 		);
 
 		this.contactList.pipe(skip(3), take(1)).toPromise().then(() => {
-			this.initiated		= true;
 			this.showSpinner	= false;
 		});
 	}

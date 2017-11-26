@@ -65,12 +65,8 @@
 			[vsOptions]='vsOptions'
 			*ngIf='!userFilter && showContactList'
 		>
-			<ng-template let-item let-row='row'>
-				<cyph-account-contact
-					[class.bounceInRight]='!accountContactsService.initiated'
-					[contact]='item'
-					[ngClass]='"_" + row'
-				></cyph-account-contact>
+			<ng-template let-item>
+				<cyph-account-contact [contact]='item'></cyph-account-contact>
 			</ng-template>
 		</od-virtualscroll>
 	</div>

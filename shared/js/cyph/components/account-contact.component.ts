@@ -11,6 +11,7 @@ import {User, UserPresence} from '../account';
 	templateUrl: '../../../templates/account-contact.html'
 })
 export class AccountContactComponent {
+	/** Contact. */
 	@Input() public contact: User;
 
 	/** @see UserPresence */

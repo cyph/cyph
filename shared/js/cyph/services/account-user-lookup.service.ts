@@ -71,7 +71,7 @@ export class AccountUserLookupService {
 			return undefined;
 		}
 
-		const user	= getOrSetDefault(this.userCache, username, () => new User(
+		return getOrSetDefault(this.userCache, username, () => new User(
 			username,
 			this.accountDatabaseService.watch(
 				`${url}/avatar`,
@@ -105,10 +105,6 @@ export class AccountUserLookupService {
 				true
 			)
 		));
-
-		await user.accountUserProfile.getValue();
-
-		return user;
 	}
 
 	constructor (

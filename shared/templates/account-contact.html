@@ -3,7 +3,7 @@
 	[routerLink]='"/account/chat/" + contact.username'
 	*ngIf='!!contact'
 >
-	<mat-card-header fxLayout='row'>
+	<mat-card-header fxLayout='row' *ngIf='contact.ready'>
 		<img
 			mat-card-avatar
 			cyphTranslate
@@ -16,5 +16,26 @@
 		/>
 		<mat-card-title>{{contact.name | async}}</mat-card-title>
 		<mat-card-subtitle>{{contact.realUsername | async}}</mat-card-subtitle>
+	</mat-card-header>
+
+	<mat-card-header class='pending' fxLayout='row' *ngIf='!contact.ready'>
+		<button
+			mat-card-avatar
+			mat-icon-button
+			cyphTranslate
+			matTooltip='Open Profile'
+			[routerLink]='"/account/profile/" + contact.username'
+		>
+			<mat-icon>person</mat-icon>
+		</button>
+		<mat-card-title>{{contact.username}}</mat-card-title>
+		<div fxFlex fxLayoutAlign='end center'>
+			<mat-progress-spinner
+				class='custom'
+				diameter='20'
+				strokeWidth='2'
+				mode='indeterminate'
+			></mat-progress-spinner>
+		</div>
 	</mat-card-header>
 </mat-card>

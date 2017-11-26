@@ -60,6 +60,9 @@ export class User {
 		''
 	);
 
+	/** Indicates whether user data is ready to be consumed. */
+	public ready: boolean	= false;
+
 	/** @see IAccountUserProfile.realUsername */
 	public readonly realUsername: Observable<string>	= flattenObservablePromise(
 		this.accountUserProfile.watch().pipe(map(({realUsername}) =>
@@ -89,5 +92,9 @@ export class User {
 
 		/** @see IAccountUserProfile */
 		public readonly accountUserProfile: IAsyncValue<IAccountUserProfile>
-	) {}
+	) {
+		this.accountUserProfile.getValue().then(() => {
+			this.ready	= true;
+		});
+	}
 }

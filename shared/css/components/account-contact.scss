@@ -1,6 +1,8 @@
 @import '../mixins';
 
 .contact {
+	overflow: hidden;
+
 	@include transition(filter 0s ease);
 
 	button {
@@ -23,5 +25,23 @@
 
 	&.Offline {
 		@include animation-name(bounce);
+	}
+}
+
+.pending {
+	button {
+		width: 50px;
+		height: 50px;
+	}
+
+	mat-card-title {
+		font-size: 1.2em;
+		margin-top: 15px;
+		margin-bottom: 23px;
+	}
+
+	mat-progress-spinner {
+		position: absolute;
+		margin-right: -80px;
 	}
 }
