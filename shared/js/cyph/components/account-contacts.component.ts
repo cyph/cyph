@@ -5,7 +5,7 @@ import {IVirtualScrollOptions} from 'od-virtualscroll';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
-import {mergeMap} from 'rxjs/operators/mergeMap'
+import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
 import {User, UserPresence} from '../account';
 import {AccountContactsService} from '../services/account-contacts.service';
