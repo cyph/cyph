@@ -15,7 +15,7 @@
 			[routerLink]='"/account/profile/" + contact.username'
 		/>
 		<mat-card-title>{{contact.name | async}}</mat-card-title>
-		<mat-card-subtitle>{{contact.realUsername | async}}</mat-card-subtitle>
+		<mat-card-subtitle>@{{contact.realUsername | async}}</mat-card-subtitle>
 	</mat-card-header>
 
 	<mat-card-header class='pending' fxLayout='row' *ngIf='!contact.ready'>
@@ -28,7 +28,7 @@
 		>
 			<mat-icon>person</mat-icon>
 		</button>
-		<mat-card-title>{{contact.username}}</mat-card-title>
+		<mat-card-title>@{{contact.username}}</mat-card-title>
 		<div fxFlex fxLayoutAlign='end center'>
 			<mat-progress-spinner
 				class='custom'
