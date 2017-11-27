@@ -6,8 +6,7 @@ import {Component} from '@angular/core';
  */
 @Component({
 	selector: 'cyph-blank',
-	styleUrls: ['../../../css/components/blank.scss'],
-	templateUrl: '../../../templates/blank.html'
+	template: ''
 })
 export class BlankComponent {
 	constructor () {}
