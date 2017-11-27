@@ -1,6 +1,7 @@
 import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
 import {Title} from '@angular/platform-browser';
+import {BlankComponent} from '../components/blank.component';
 import {ChatCyphertextListComponent} from '../components/chat-cyphertext-list.component';
 import {ChatCyphertextComponent} from '../components/chat-cyphertext.component';
 import {ChatMainComponent} from '../components/chat-main.component';
@@ -36,6 +37,7 @@ import {CyphWebModule} from './cyph-web.module';
  */
 @NgModule({
 	declarations: [
+		BlankComponent,
 		ChatCyphertextComponent,
 		ChatCyphertextListComponent,
 		ChatMainComponent,
@@ -57,6 +59,7 @@ import {CyphWebModule} from './cyph-web.module';
 		HelpComponent
 	],
 	exports: [
+		BlankComponent,
 		ChatCyphertextComponent,
 		ChatCyphertextListComponent,
 		ChatMainComponent,
