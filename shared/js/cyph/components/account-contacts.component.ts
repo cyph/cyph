@@ -60,8 +60,6 @@ export class AccountContactsComponent implements AfterViewInit {
 		}),
 		mergeMap<string, {externalUser?: string; users: User[]}>(query =>
 			this.accountContactsService.contactList.pipe(mergeMap(async users => {
-				this.searchSpinner	= false;
-
 				const results	= (await Promise.all(users.map(async user => ({
 					name: (await user.name.pipe(take(1)).toPromise()).toLowerCase(),
 					user,
@@ -84,16 +82,17 @@ export class AccountContactsComponent implements AfterViewInit {
 					slice(0, this.searchListLength)
 				;
 
-				return {
-					externalUser: (
-						(results.length < 1 || results[0].username !== query) &&
-						(await this.accountUserLookupService.exists(query))
-					) ?
-						query :
-						undefined
-					,
-					users: results
-				};
+				const externalUser	= (
+					(results.length < 1 || results[0].username !== query) &&
+					(await this.accountUserLookupService.exists(query))
+				) ?
+					query :
+					undefined
+				;
+
+				this.searchSpinner	= false;
+
+				return {externalUser, users: results};
 			}))
 		)
 	);
