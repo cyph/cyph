@@ -1,15 +1,6 @@
 /* tslint:disable:variable-name */
 
-import {
-	BooleanArray,
-	BooleanValue,
-	NumberArray,
-	NumberValue,
-	StringArray,
-	StringValue,
-	Uint32NumberArray,
-	Uint32NumberValue
-} from '../../proto';
+import {Internal} from '../../proto';
 import {IProto} from '../iproto';
 import {GenericArrayProto} from './generic-array-proto';
 import {GenericProto} from './generic-proto';
@@ -25,25 +16,25 @@ export * from './maybe-binary-proto';
 
 
 /** Boolean array encoder/decoder. */
-export const BooleanArrayProto: IProto<boolean[]>	= new GenericArrayProto(BooleanArray);
+export const BooleanArrayProto: IProto<boolean[]>	= new GenericArrayProto(Internal.BooleanArray);
 
 /** Boolean encoder/decoder. */
-export const BooleanProto: IProto<boolean>			= new GenericProto(BooleanValue);
+export const BooleanProto: IProto<boolean>			= new GenericProto(Internal.BooleanValue);
 
 /** Number array encoder/decoder. */
-export const NumberArrayProto: IProto<number[]>		= new GenericArrayProto(NumberArray);
+export const NumberArrayProto: IProto<number[]>		= new GenericArrayProto(Internal.NumberArray);
 
 /** Number encoder/decoder. */
-export const NumberProto: IProto<number>			= new GenericProto(NumberValue);
+export const NumberProto: IProto<number>			= new GenericProto(Internal.NumberValue);
 
 /** String array encoder/decoder. */
-export const StringArrayProto: IProto<string[]>		= new GenericArrayProto(StringArray);
+export const StringArrayProto: IProto<string[]>		= new GenericArrayProto(Internal.StringArray);
 
 /** String encoder/decoder. */
-export const StringProto: IProto<string>			= new GenericProto(StringValue);
+export const StringProto: IProto<string>			= new GenericProto(Internal.StringValue);
 
 /** Uint32 array encoder/decoder. */
-export const Uint32ArrayProto: IProto<number[]>		= new GenericArrayProto(Uint32NumberArray);
+export const Uint32ArrayProto: IProto<number[]>		= new GenericArrayProto(Internal.Uint32Array);
 
 /** Uint32 encoder/decoder. */
-export const Uint32Proto: IProto<number>			= new GenericProto(Uint32NumberValue);
+export const Uint32Proto: IProto<number>			= new GenericProto(Internal.Uint32Value);

@@ -418,34 +418,36 @@ message SessionTransfer {
 
 /* Generic/primitive types */
 
-message BooleanArray {
-	repeated bool data = 1;
-}
+message Internal {
+	message BooleanArray {
+		repeated bool data = 1;
+	}
 
-message BooleanValue {
-	required bool data = 1;
-}
+	message BooleanValue {
+		required bool data = 1;
+	}
 
-message NumberArray {
-	repeated double data = 1;
-}
+	message NumberArray {
+		repeated double data = 1;
+	}
 
-message NumberValue {
-	required double data = 1;
-}
+	message NumberValue {
+		required double data = 1;
+	}
 
-message StringArray {
-	repeated string data = 1;
-}
+	message StringArray {
+		repeated string data = 1;
+	}
 
-message StringValue {
-	required string data = 1;
-}
+	message StringValue {
+		required string data = 1;
+	}
 
-message Uint32NumberArray {
-	repeated uint32 data = 1;
-}
+	message Uint32Array {
+		repeated uint32 data = 1;
+	}
 
-message Uint32NumberValue {
-	required uint32 data = 1;
+	message Uint32Value {
+		required uint32 data = 1;
+	}
 }
