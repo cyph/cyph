@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 
 
 /**
- * Angular component for blank UI.
+ * Blank screen / no-op.
  */
 @Component({
 	selector: 'cyph-blank',
