@@ -178,9 +178,11 @@ export class ChatService {
 		selfDestructTimeout?: number,
 		id: string = uuid()
 	) : Promise<void> {
-		const form			= typeof value === 'string' ? undefined : value.form;
-		const quillDelta	= typeof value === 'string' ? undefined : value.quillDelta;
-		const text			= typeof value === 'string' ? value : value.text;
+		if (typeof value === 'string') {
+			value	= {text: value};
+		}
+
+		const {form, quillDelta, text}	= value;
 
 		if (form || quillDelta) {
 			throw new Error('Not yet implemented.');
