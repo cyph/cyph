@@ -3,7 +3,7 @@
     Content-Security-Policy: DEFAULT_CSP
     Expect-CT: enforce; max-age=0
     Referrer-Policy: "no-referrer"
-    Public-Key-Pins: max-age=5184000; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="unPe8YYMLOhkaAWcjfFF1q571QqcrI5NUfP+0eBT/po="; preload
+    Public-Key-Pins: max-age=5184000; pin-sha256="unPe8YYMLOhkaAWcjfFF1q571QqcrI5NUfP+0eBT/po="; pin-sha256="Hw4WoLZDs5AprzDc7tUWz8FDbWw/luIQq+FL03zozsw="; preload
     Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
     X-Content-Type-Options: nosniff
     X-DNS-Prefetch-Control: off
