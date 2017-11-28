@@ -66,90 +66,60 @@ while [ ! -f index.html ] ; do
 	ssh -i ~/.ssh/id_rsa_docker -f -N -L "${sourcePort}:${sourceOrigin}" "${sshServer}" &> /dev/null
 
 	command="$(node -e "(async () => {
-		const browser	= new (require('zombie'));
+		const browser	= await require('puppeteer').launch();
+		const page		= await browser.newPage();
 
-		setTimeout(() => process.exit(), 1200000);
+		setTimeout(() => process.exit(1), 600000);
 
-		await new Promise(resolve => browser.visit(
-			'${sourceURL}/wp-admin/admin.php?page=simply-static_settings',
-			resolve
-		));
+		await page.goto('${sourceURL}/wp-admin/admin.php?page=simply-static_settings');
 
-		await new Promise(resolve => browser.
-			fill('log', 'admin').
-			fill('pwd', 'hunter2').
-			pressButton('Log In', resolve)
-		);
+		await page.waitForSelector('#user_login');
+		await page.type('#user_login', 'admin');
+		await page.type('#user_pass', 'hunter2');
+		await page.keyboard.press('Enter');
+		await page.waitForNavigation();
 
-		await new Promise(resolve => browser.
-			select('destination_scheme', '${destinationProtocol}').
-			fill('destination_host', '${destinationURL}').
-			pressButton('Save Changes', resolve)
-		);
+		await page.waitForSelector('#destinationScheme');
+		await page.select('#destinationScheme', '${destinationProtocol}');
+		await page.click('#destinationHost');
+		await Promise.all([
+			page.keyboard.press('Control'),
+			page.keyboard.press('KeyA')
+		]);
+		await page.type('#destinationHost', '${destinationURL}');
+		await page.keyboard.press('Enter');
+		await page.waitForNavigation();
 
-		let hasInitiated	= false;
+		await page.goto('${sourceURL}/wp-admin/admin.php?page=simply-static');
 
 		while (true) {
-			try {
-				await new Promise(resolve => browser.visit(
-					'${sourceURL}/wp-admin/admin.php?page=simply-static',
-					() => setTimeout(resolve, 5000)
-				));
+			await page.waitForSelector('#generate');
+			await page.click('#generate');
+			await page.waitForSelector('#cancel:not(.hide)');
+			await page.waitForSelector('#generate:not(.hide)', {timeout: 3600000});
 
-				if (hasInitiated) {
-					const a	= browser.document.querySelectorAll(
-						'a[href*=\".zip\"]'
-					)[0];
+			const url		= await page.evaluate(() =>
+				(document.querySelectorAll('a[href*=\".zip\"]')[0] || {}).href
+			);
 
-					if (!a) {
-						throw 'Not found.';
-					}
-
-					const command	=
-						\`wget --header 'Cookie: \${browser.cookies.join('; ')}' \` +
-						\`--tries=50 '\${a.href}' -O wpstatic.zip ${commandComment}\`
-					;
-
-					browser.tabs.closeAll();
-					console.log(command);
-					process.exit();
-				}
-
-				await new Promise(resolve =>
-					!browser.document.querySelectorAll('#generate:not(.hide)')[0] ?
-						resolve() :
-						browser.pressButton(
-							'Generate Static Files',
-							() => setTimeout(() => {
-								hasInitiated	= true;
-								resolve();
-							}, 5000)
-						)
-				);
-			}
-			catch (err) {
-				console.warn('Ignored error:');
-				console.warn(err);
+			if (!url) {
+				await page.reload();
+				continue;
 			}
 
-			try {
-				await new Promise(resolve =>
-					!browser.document.querySelectorAll('#resume:not(.hide)')[0] ?
-						resolve() :
-						browser.pressButton(
-							'Resume',
-							() => setTimeout(resolve, 5000)
-						)
-				);
-			}
-			catch (err) {
-				console.warn('Ignored error:');
-				console.warn(err);
-			}
+			const cookies	=
+				(await page.cookies()).map(o => \`\${o.name}=\${o.value}\`).join('; ')
+			;
 
-			await new Promise(resolve => setTimeout(resolve, 10000));
+			console.log(
+				\`wget --header 'Cookie: \${cookies}' \` +
+				\`--tries=50 '\${url}' -O wpstatic.zip ${commandComment}\`
+			);
+
+			await browser.close();
+			process.exit();			
 		}
-	})()" 2> /dev/null | tail -n1)"
+	})().catch(() => process.exit(1))" 2> /dev/null | tail -n1)"
 
 	if [ "$(echo "${command}" | grep "${commandComment}")" ] ; then
 		log "${command}"
