@@ -2,7 +2,7 @@
 	<div fxLayout='row' *ngFor='let message of messages'>
 		<div class='message'>
 			<strong>{{message.author | async}}:</strong>
-			<span>{{message.text}}</span>
+			<span>{{message.value.text}}</span>
 		</div>
 	</div>
 </div>

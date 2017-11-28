@@ -19,10 +19,20 @@
 				>
 					{{message.author | async}}:
 				</strong>
-				<cyph-markdown
-					class='message-text'
-					[markdown]='message.text'
-				></cyph-markdown>
+				<div *ngIf='message.value.form; else quillDeltaValue'>
+					TODO: Form UI
+				</div>
+				<ng-template #quillDeltaValue>
+					<div *ngIf='message.value.quillDelta; else textValue'>
+						TODO: Quill UI
+					</div>
+				</ng-template>
+				<ng-template #quillDeltaValue>
+					<cyph-markdown
+						class='message-text'
+						[markdown]='message.value.text'
+					></cyph-markdown>
+				</ng-template>
 			</div>
 			<div fxFlex fxLayoutAlign='end center' class='message-timestamp'>
 				<div fxLayout='row'>

@@ -48,8 +48,8 @@ export class CyphertextService {
 					authorID: '',
 					authorType: ChatMessage.AuthorTypes.App,
 					id: '',
-					text,
-					timestamp
+					timestamp,
+					value: {text}
 				},
 				author
 			))

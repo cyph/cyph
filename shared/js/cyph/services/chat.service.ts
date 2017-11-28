@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
-import {IChatData, States} from '../chat';
+import {IChatData, IChatMessageValue, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncValue} from '../local-async-value';
@@ -105,7 +105,7 @@ export class ChatService {
 		}
 
 		await this.addMessage(
-			o.text.text,
+			o.text.value,
 			o.author,
 			o.timestamp,
 			undefined,
@@ -147,7 +147,7 @@ export class ChatService {
 		else if (!this.chat.isDisconnected) {
 			this.chat.isDisconnected	= true;
 			if (!this.chatSelfDestruct) {
-				this.addMessage(this.stringsService.disconnectNotification);
+				this.addMessage({text: this.stringsService.disconnectNotification});
 			}
 			this.sessionService.close();
 		}
@@ -171,13 +171,17 @@ export class ChatService {
 	 * @param shouldNotify If true, a notification will be sent.
 	 */
 	public async addMessage (
-		text: string,
+		{form, quillDelta, text}: IChatMessageValue,
 		author: Observable<string> = this.sessionService.appUsername,
 		timestamp?: number,
 		shouldNotify: boolean = author !== this.sessionService.localUsername,
 		selfDestructTimeout?: number,
 		id: string = uuid()
 	) : Promise<void> {
+		if (form || quillDelta) {
+			throw new Error('Not yet implemented.');
+		}
+
 		if (
 			!text ||
 			this.chat.state === States.aborted ||
@@ -214,8 +218,8 @@ export class ChatService {
 			,
 			id,
 			selfDestructTimeout,
-			text,
-			timestamp
+			timestamp,
+			value: {text}
 		});
 
 		if (author === this.sessionService.localUsername) {
@@ -286,7 +290,7 @@ export class ChatService {
 
 			if (!this.chatSelfDestruct) {
 				this.addMessage(
-					this.stringsService.introductoryMessage,
+					{text: this.stringsService.introductoryMessage},
 					undefined,
 					(await getTimestamp()) - 30000,
 					false
@@ -365,7 +369,7 @@ export class ChatService {
 		if (message) {
 			this.addTextMessage((await this.sessionService.send([
 				rpcEvents.text,
-				{text: {selfDestructChat, selfDestructTimeout, text: message}}
+				{text: {selfDestructChat, selfDestructTimeout, value: {text: message}}}
 			]))[0].data);
 		}
 	}
