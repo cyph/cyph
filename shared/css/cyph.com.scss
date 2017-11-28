@@ -674,11 +674,11 @@ body.mobile .demo-root {
 	> .hero-text {
 		width: auto;
 
-		@include transform(translateX(-50%, calc(-100% - 50px)));
+		@include transform(translate(-50%, calc(-100% - 50px)));
 	}
 
 	> .section-content-container {
-		@include transform(translateX(-50%, calc(100% + 10px)));
+		@include transform(translate(-50%, calc(100% + 10px)));
 	}
 }
 
