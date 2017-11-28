@@ -147,7 +147,7 @@ export class ChatService {
 		else if (!this.chat.isDisconnected) {
 			this.chat.isDisconnected	= true;
 			if (!this.chatSelfDestruct) {
-				this.addMessage({text: this.stringsService.disconnectNotification});
+				this.addMessage(this.stringsService.disconnectNotification);
 			}
 			this.sessionService.close();
 		}
@@ -171,13 +171,17 @@ export class ChatService {
 	 * @param shouldNotify If true, a notification will be sent.
 	 */
 	public async addMessage (
-		{form, quillDelta, text}: IChatMessageValue,
+		value: IChatMessageValue|string,
 		author: Observable<string> = this.sessionService.appUsername,
 		timestamp?: number,
 		shouldNotify: boolean = author !== this.sessionService.localUsername,
 		selfDestructTimeout?: number,
 		id: string = uuid()
 	) : Promise<void> {
+		const form			= typeof value === 'string' ? undefined : value.form;
+		const quillDelta	= typeof value === 'string' ? undefined : value.quillDelta;
+		const text			= typeof value === 'string' ? value : value.text;
+
 		if (form || quillDelta) {
 			throw new Error('Not yet implemented.');
 		}
@@ -232,7 +236,6 @@ export class ChatService {
 			selfDestructTimeout > 0
 		) {
 			await sleep(selfDestructTimeout + 10000);
-			text	= '';
 
 			await this.chat.messages.updateValue(async messages => {
 				const i	= messages.findIndex(o => o.id === id);
@@ -290,7 +293,7 @@ export class ChatService {
 
 			if (!this.chatSelfDestruct) {
 				this.addMessage(
-					{text: this.stringsService.introductoryMessage},
+					this.stringsService.introductoryMessage,
 					undefined,
 					(await getTimestamp()) - 30000,
 					false
