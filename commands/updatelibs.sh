@@ -156,13 +156,14 @@ read -r -d '' modules <<- EOM
 	notify-cli
 	ntru
 	od-virtualscroll
-	pdfkit
 	parchment
+	pdfkit
 	prepack
 	prepack-webpack-plugin
 	primeng
 	protobufjs
 	protractor
+	puppeteer
 	quill
 	quill-delta
 	quill-delta-to-html
