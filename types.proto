@@ -200,6 +200,27 @@ message ChatMessage {
 	required ChatMessageValue value = 6;
 }
 
+/** Metadata used to estimate message's size for virtual scrolling. */
+message ChatMessageDimensions {
+	/** Dimensions for one message line. */
+	message Line {
+		/** Line height on a big screen. */
+		required double bigScreenHeight = 1;
+
+		/** Line width on a big screen. */
+		required double bigScreenWidth = 2;
+
+		/** Line height on a small screen. */
+		required double smallScreenHeight = 3;
+
+		/** Line width on a small screen. */
+		required double smallScreenWidth = 4;
+	}
+
+	/** @see Line */
+	repeated Line lines = 1;
+}
+
 /** Possible values of a chat text message. */
 message ChatMessageValue {
 	/** Value. */
