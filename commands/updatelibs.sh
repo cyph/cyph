@@ -155,7 +155,7 @@ read -r -d '' modules <<- EOM
 	node-sass
 	notify-cli
 	ntru
-	od-virtualscroll
+	od-virtualscroll@https://github.com/buu700/od-virtualscroll-tmp
 	parchment
 	pdfkit
 	prepack
