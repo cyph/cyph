@@ -1,6 +1,6 @@
 **/*.js
 **/*.map
 **/*.tmp
+proto/*
 docs
-proto
 tsconfig.tslint.json

@@ -57,6 +57,7 @@ service firebase.storage {
 
 			// match /contacts/{contact} {
 			// 	match /messages/{message} {}
+			// 	match /messageValues/{messageValue} {}
 			// 	match /session {
 			// 		/asymmetricRatchetState {
 			// 			/privateKey {}

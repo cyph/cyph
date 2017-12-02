@@ -9,6 +9,7 @@
 	[class.self-destruct]='chatService.chatSelfDestruct'
 	[class.self-destructed]='message.selfDestructTimer?.isComplete | async'
 	[matTooltip]='confirmed ? undefined : stringsService.messageUnconfirmed'
+	*ngIf='message && message.value'
 >
 	<div>
 		<div fxLayout='row'>

@@ -33,7 +33,7 @@ export class ChatMessage implements IChatMessage {
 	public readonly selfDestructTimer?: Timer;
 
 	/** @inheritDoc */
-	public text?: string				= this.message.value.text;
+	public text?: string				= this.message.value && this.message.value.text;
 
 	/** @inheritDoc */
 	public timestamp: number			= this.message.timestamp;
@@ -42,7 +42,7 @@ export class ChatMessage implements IChatMessage {
 	public readonly timeString: string	= getTimeString(this.message.timestamp);
 
 	/** @ignore */
-	public readonly value: IChatMessageValue	= {
+	public readonly value?: IChatMessageValue	= this.message.value && {
 		form: this.message.value.form,
 		quillDelta: this.message.value.quillDeltaBytes ?
 			msgpack.decode(this.message.value.quillDeltaBytes) :
@@ -71,6 +71,12 @@ export class ChatMessage implements IChatMessage {
 
 		this.selfDestructTimer.start().then(async () => {
 			await sleep(10000);
+
+			this.text	= '';
+
+			if (!this.value || !this.message.value) {
+				return;
+			}
 
 			if (this.value.form) {
 				this.message.value.form				= undefined;

@@ -181,27 +181,6 @@ message ChatMessage {
 		Remote = 2;
 	}
 
-	/** Author user ID. */
-	string authorID = 1;
-
-	/** @see AuthorTypes */
-	required AuthorTypes authorType = 2;
-
-	/** @see SessionMessageData.id */
-	required string id = 3;
-
-	/** @see SessionText.selfDestructTimeout */
-	uint32 selfDestructTimeout = 4;
-
-	/** @see SessionMessageData.timestamp */
-	required double timestamp = 5;
-
-	/** @see ChatMessageValue */
-	required ChatMessageValue value = 6;
-}
-
-/** Metadata used to estimate message's size for virtual scrolling. */
-message ChatMessageDimensions {
 	/** Dimensions for one message line. */
 	message Line {
 		/** Line height on a big screen. */
@@ -217,8 +196,26 @@ message ChatMessageDimensions {
 		required double smallScreenWidth = 4;
 	}
 
-	/** @see Line */
-	repeated Line lines = 1;
+	/** Author user ID. */
+	string authorID = 1;
+
+	/** @see AuthorTypes */
+	required AuthorTypes authorType = 2;
+
+	/** Metadata used to estimate message's size for virtual scrolling. */
+	repeated Line dimensions = 3;
+
+	/** @see SessionMessageData.id */
+	required string id = 4;
+
+	/** @see SessionText.selfDestructTimeout */
+	uint32 selfDestructTimeout = 5;
+
+	/** @see SessionMessageData.timestamp */
+	required double timestamp = 6;
+
+	/** @see ChatMessageValue */
+	ChatMessageValue value = 7;
 }
 
 /** Possible values of a chat text message. */

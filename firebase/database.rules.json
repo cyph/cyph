@@ -219,6 +219,16 @@
 								}
 							}
 						},
+						"messageValues": {
+							"$messageValue": {
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						},
 						"session": {
 							"asymmetricRatchetState": {
 								"privateKey": {

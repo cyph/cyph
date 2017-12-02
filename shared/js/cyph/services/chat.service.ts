@@ -5,6 +5,7 @@ import {map} from 'rxjs/operators/map';
 import {IChatData, IChatMessageValue, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
 import {LocalAsyncList} from '../local-async-list';
+import {LocalAsyncMap} from '../local-async-map';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {ChatMessage, IChatMessage} from '../proto';
@@ -44,7 +45,10 @@ export class ChatService {
 		isFriendTyping: new BehaviorSubject(false),
 		isMessageChanged: false,
 		keyExchangeProgress: 0,
-		messages: new LocalAsyncList<IChatMessage>([]),
+		messages: new LocalAsyncList<IChatMessage>(),
+		/* See https://github.com/palantir/tslint/issues/3541 */
+		/* tslint:disable-next-line:object-literal-sort-keys */
+		messageValues: new LocalAsyncMap<string, IChatMessageValue>(),
 		receiveTextLock: lockFunction(),
 		state: States.none,
 		unconfirmedMessages: new LocalAsyncValue<{[id: string]: boolean|undefined}>({})
@@ -101,7 +105,7 @@ export class ChatService {
 
 		if (selfDestructChat) {
 			this.chatSelfDestruct	= true;
-			await this.chat.messages.updateValue(async () => []);
+			await this.chat.messages.clear();
 		}
 
 		await this.addMessage(
@@ -121,7 +125,7 @@ export class ChatService {
 			await this.chatSelfDestructTimer.start();
 			this.chatSelfDestructEffect	= true;
 			await sleep(500);
-			await this.chat.messages.updateValue(async () => []);
+			await this.chat.messages.clear();
 			await sleep(1000);
 			this.chatSelfDestructEffect	= false;
 
@@ -213,6 +217,7 @@ export class ChatService {
 			}
 		}
 
+		await this.chat.messageValues.setItem(id, {text});
 		await this.chat.messages.pushValue({
 			authorID: await this.getAuthorID(author),
 			authorType:
@@ -224,8 +229,7 @@ export class ChatService {
 			,
 			id,
 			selfDestructTimeout,
-			timestamp,
-			value: {text}
+			timestamp
 		});
 
 		if (author === this.sessionService.localUsername) {
@@ -318,6 +322,15 @@ export class ChatService {
 		})) {
 			this.close();
 		}
+	}
+
+	/** Gets message value if not already set. */
+	public async getMessageValue (message: IChatMessage) : Promise<IChatMessage> {
+		if (message.value === undefined) {
+			message.value	= await this.chat.messageValues.getItem(message.id);
+		}
+
+		return message;
 	}
 
 	/** Displays help information. */

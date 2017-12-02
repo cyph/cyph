@@ -27,7 +27,7 @@ export class ChatMessageComponent implements AfterViewInit, OnInit {
 	public readonly authorTypes: typeof ChatMessage.AuthorTypes	= ChatMessage.AuthorTypes;
 
 	/** @see ChatMessage */
-	@Input() public message: IChatMessage;
+	@Input() public message?: IChatMessage;
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean;
@@ -48,14 +48,21 @@ export class ChatMessageComponent implements AfterViewInit, OnInit {
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
 		return (
-			this.message.authorType !== ChatMessage.AuthorTypes.Local ||
+			this.message === undefined ||
 			this.unconfirmedMessages === undefined ||
+			this.message.authorType !== ChatMessage.AuthorTypes.Local ||
 			!(this.message.id && this.unconfirmedMessages[this.message.id])
 		);
 	}
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		if (this.message === undefined) {
+			return;
+		}
+
+		await this.chatService.getMessageValue(this.message);
+
 		if (this.unconfirmedMessages === undefined) {
 			return;
 		}

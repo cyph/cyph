@@ -1,5 +1,7 @@
 import {Subject} from 'rxjs/Subject';
+import {IChatMessageValue} from '../chat';
 import {IAsyncList} from '../iasync-list';
+import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {LockFunction} from '../lock-function-type';
 import {IChatMessage} from '../proto';
@@ -30,6 +32,9 @@ export interface IChatData {
 
 	/** Message list. */
 	messages: IAsyncList<IChatMessage>;
+
+	/** Map of message IDs to values. */
+	messageValues: IAsyncMap<string, IChatMessageValue>;
 
 	/** If true, key exchange state should be skipped. */
 	noKeyExchangeState?: boolean;

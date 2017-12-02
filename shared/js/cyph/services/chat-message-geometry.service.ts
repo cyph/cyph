@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import {ViewBase} from 'tns-core-modules/ui/core/view-base';
 import {ChatMessageComponent} from '../components/chat-message.component';
-import {IChatMessage, IChatMessageDimensions} from '../proto';
+import {IChatMessage} from '../proto';
 import {uuid} from '../util/uuid';
 import {EnvService} from './env.service';
 
@@ -18,15 +18,15 @@ import {EnvService} from './env.service';
 @Injectable()
 export class ChatMessageGeometryService {
 	/** Calculates the dimensions of a chat message at its maximum potential width. */
-	public async getDimensions (message: IChatMessage) : Promise<IChatMessageDimensions> {
+	public async getDimensions (message: IChatMessage) : Promise<IChatMessage> {
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
-			return {lines: [{
+			message.dimensions	= [{
 				bigScreenHeight: 0,
 				bigScreenWidth: 0,
 				smallScreenHeight: 0,
 				smallScreenWidth: 0
-			}]};
+			}];
 		}
 
 		const componentRef	= this.componentFactoryResolver.
@@ -57,7 +57,7 @@ export class ChatMessageGeometryService {
 		containerChild.style.fontSize	= '1.7em';
 
 		const getDimensionsHelper	= () => {
-			/* See https://github.com/palantir/tslint/issues/3505 */
+			/* See https://github.com/palantir/tslint/issues/3540 */
 			/* tslint:disable-next-line:no-unnecessary-type-assertion */
 			const lines	= <HTMLElement[]> Array.from(
 				document.querySelectorAll(`${id} cyph-markdown > span > *`)
@@ -99,19 +99,21 @@ export class ChatMessageGeometryService {
 			throw new Error('Invalid dimensions.');
 		}
 
-		return {lines: smallDimensions.map((smallScreen, i) => ({
+		message.dimensions	= smallDimensions.map((smallScreen, i) => ({
 			bigScreenHeight: bigDimensions[i].height,
 			bigScreenWidth: bigDimensions[i].width,
 			smallScreenHeight: smallScreen.height,
 			smallScreenWidth: smallScreen.width
-		}))};
+		}));
+
+		return message;
 	}
 
 	/** Calculates the height of a chat message for virtual scrolling. */
-	public getHeight (dimensions: IChatMessageDimensions, maxWidth: number) : number {
+	public getHeight ({dimensions}: IChatMessage, maxWidth: number) : number {
 		const bigScreen	= document.body.clientWidth >= 1920;
 
-		return (dimensions.lines || []).
+		return (dimensions || []).
 			map(o => {
 				const height	= bigScreen ? o.bigScreenHeight : o.smallScreenHeight;
 				const width		= bigScreen ? o.bigScreenWidth : o.smallScreenWidth;
