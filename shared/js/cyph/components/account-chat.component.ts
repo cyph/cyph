@@ -5,6 +5,7 @@ import {AccountChatService} from '../services/account-chat.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountSessionService} from '../services/account-session.service';
 import {ChannelService} from '../services/channel.service';
+import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {ChatService} from '../services/chat.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountCastleService} from '../services/crypto/account-castle.service';
@@ -29,6 +30,7 @@ import {sleep} from '../util/wait';
 		AccountChatService,
 		AccountSessionService,
 		ChannelService,
+		ChatMessageGeometryService,
 		CyphertextService,
 		FileTransferService,
 		P2PService,
