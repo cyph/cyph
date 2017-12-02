@@ -52,7 +52,7 @@ export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>> implements I
 		return this.watch().pipe(map(value => value.size));
 	}
 
-	constructor (value: Map<K, V>) {
-		super(value);
+	constructor (value?: Map<K, V>) {
+		super(value || new Map<K, V>());
 	}
 }

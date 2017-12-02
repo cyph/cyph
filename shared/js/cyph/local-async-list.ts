@@ -14,6 +14,12 @@ export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncLis
 	protected readonly pushes: Subject<{index: number; value: T}>	= new Subject();
 
 	/** @inheritDoc */
+	public async clear () : Promise<void> {
+		this.value.splice(0);
+		this.subject.next(this.value);
+	}
+
+	/** @inheritDoc */
 	public async pushValue (value: T) : Promise<void> {
 		this.pushes.next({index: this.value.push(value), value});
 		this.subject.next(this.value);
@@ -41,7 +47,7 @@ export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncLis
 		return this.pushes.pipe(map(o => o.value));
 	}
 
-	constructor (value: T[]) {
-		super(value);
+	constructor (value?: T[]) {
+		super(value || []);
 	}
 }

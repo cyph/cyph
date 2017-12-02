@@ -6,6 +6,9 @@ import {Subscription} from 'rxjs/Subscription';
  * Represents an asynchronous list/array value.
  */
 export interface IAsyncList<T> {
+	/** Deletes all values and resets this to an empty list. */
+	clear () : Promise<void>;
+
 	/** Gets value. */
 	getValue () : Promise<T[]>;
 

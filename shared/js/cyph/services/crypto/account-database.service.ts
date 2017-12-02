@@ -308,6 +308,7 @@ export class AccountDatabaseService {
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
 		const asyncList: IAsyncList<T>	= {
+			clear: async () => localLock(async () =>this.removeItem(url)),
 			getValue: async () => localLock(async () =>
 				this.getList(url, proto, securityModel, customKey, anonymous)
 			),

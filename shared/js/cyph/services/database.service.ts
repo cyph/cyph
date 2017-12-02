@@ -54,6 +54,7 @@ export class DatabaseService extends DataManagerService {
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
 		const asyncList: IAsyncList<T>	= {
+			clear: async () => this.removeItem(url),
 			getValue: async () => localLock(async () => this.getList(url, proto)),
 			lock,
 			pushValue: async value => localLock(async () => {
