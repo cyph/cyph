@@ -11,6 +11,7 @@ import {take} from 'rxjs/operators/take';
 import {Subscription} from 'rxjs/Subscription';
 import {ICurrentUser, SecurityModels} from '../../account';
 import {IAsyncList} from '../../iasync-list';
+import {IAsyncMap} from '../../iasync-map';
 import {IAsyncValue} from '../../iasync-value';
 import {IProto} from '../../iproto';
 import {ITimedValue} from '../../itimed-value';
@@ -302,7 +303,7 @@ export class AccountDatabaseService {
 		customKey?: Uint8Array|Promise<Uint8Array>,
 		anonymous: boolean = false
 	) : IAsyncList<T> {
-		const localLock		= lockFunction();
+		const localLock	= lockFunction();
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
@@ -349,6 +350,77 @@ export class AccountDatabaseService {
 		};
 
 		return asyncList;
+	}
+
+	/** @see DatabaseService.getAsyncMap */
+	public getAsyncMap<T> (
+		url: string|Promise<string>,
+		proto: IProto<T>,
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: Uint8Array|Promise<Uint8Array>,
+		anonymous: boolean = false
+	) : IAsyncMap<string, T> {
+		const localLock			= lockFunction();
+
+		const baseAsyncMap		= (async () => {
+			url	= await this.normalizeURL(url);
+
+			return this.databaseService.getAsyncMap(
+				url,
+				BinaryProto,
+				this.lockFunction(url)
+			);
+		})();
+
+		const getItem			= async (key: string) => this.getItem(
+			`${url}/${key}`,
+			proto,
+			securityModel,
+			customKey,
+			anonymous
+		);
+
+		const getValueHelper	= async (keys: string[]) => new Map<string, T>(
+			await Promise.all(keys.map(async (key) : Promise<[string, T]> => [
+				key,
+				await getItem(key)
+			]))
+		);
+
+		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
+		/* tslint:disable-next-line:no-unnecessary-local-variable */
+		const asyncMap: IAsyncMap<string, T>	= {
+			clear: async () => (await baseAsyncMap).clear(),
+			getItem,
+			getKeys: async () => this.getListKeys(url),
+			getValue: async () => localLock(async () => getValueHelper(await asyncMap.getKeys())),
+			hasItem: async key => (await baseAsyncMap).hasItem(key),
+			lock: async (f, reason) => (await baseAsyncMap).lock(f, reason),
+			removeItem: async key => (await baseAsyncMap).removeItem(key),
+			setItem: async (key, value) => {
+				await this.setItem(
+					`${url}/${key}`,
+					proto,
+					value,
+					securityModel,
+					customKey
+				);
+			},
+			setValue: async (mapValue: Map<string, T>) => localLock(async () => {
+				await asyncMap.clear();
+				await Promise.all(Array.from(mapValue.entries()).map(async ([key, value]) =>
+					asyncMap.setItem(key, value)
+				));
+			}),
+			size: async () => (await baseAsyncMap).size(),
+			updateValue: async f => asyncMap.lock(async () =>
+				asyncMap.setValue(await f(await asyncMap.getValue()))
+			),
+			watch: memoize(() => this.watchListKeys(url).pipe(mergeMap(getValueHelper))),
+			watchSize: () => flattenObservablePromise(async () => (await baseAsyncMap).watchSize())
+		};
+
+		return asyncMap;
 	}
 
 	/** @see DatabaseService.getAsyncValue */

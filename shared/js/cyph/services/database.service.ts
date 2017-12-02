@@ -2,10 +2,12 @@ import {Injectable} from '@angular/core';
 import {memoize} from 'lodash';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
+import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
 import {Subscription} from 'rxjs/Subscription';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IAsyncList} from '../iasync-list';
+import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
@@ -47,7 +49,7 @@ export class DatabaseService extends DataManagerService {
 		proto: IProto<T>,
 		lock: LockFunction = this.lockFunction(url)
 	) : IAsyncList<T> {
-		const localLock		= lockFunction();
+		const localLock	= lockFunction();
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
@@ -71,6 +73,55 @@ export class DatabaseService extends DataManagerService {
 		};
 
 		return asyncList;
+	}
+
+	/** Gets an IAsyncMap wrapper for a map. */
+	public getAsyncMap<T> (
+		url: string,
+		proto: IProto<T>,
+		lock: LockFunction = this.lockFunction(url)
+	) : IAsyncMap<string, T> {
+		const localLock			= lockFunction();
+
+		const getItem			= async (key: string) => this.getItem(`${url}/${key}`, proto);
+
+		const getValueHelper	= async (keys: string[]) => new Map<string, T>(
+			await Promise.all(keys.map(async (key) : Promise<[string, T]> => [
+				key,
+				await getItem(key)
+			]))
+		);
+
+		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
+		/* tslint:disable-next-line:no-unnecessary-local-variable */
+		const asyncMap: IAsyncMap<string, T>	= {
+			clear: async () => this.removeItem(url),
+			getItem,
+			getKeys: async () => this.getListKeys(url),
+			getValue: async () => localLock(async () => getValueHelper(await asyncMap.getKeys())),
+			hasItem: async key => this.hasItem(`${url}/${key}`),
+			lock,
+			removeItem: async key => this.removeItem(`${url}/${key}`),
+			setItem: async (key, value) => {
+				await this.setItem(`${url}/${key}`, proto, value);
+			},
+			setValue: async (mapValue: Map<string, T>) => localLock(async () => {
+				await asyncMap.clear();
+				await Promise.all(Array.from(mapValue.entries()).map(async ([key, value]) =>
+					asyncMap.setItem(key, value)
+				));
+			}),
+			size: async () => (await asyncMap.getKeys()).length,
+			updateValue: async f => asyncMap.lock(async () =>
+				asyncMap.setValue(await f(await asyncMap.getValue()))
+			),
+			watch: memoize(() => this.watchListKeys(url).pipe(mergeMap(getValueHelper))),
+			watchSize: memoize(() => this.watchListKeys(url).pipe(
+				mergeMap(async keys => keys.length)
+			))
+		};
+
+		return asyncMap;
 	}
 
 	/**
