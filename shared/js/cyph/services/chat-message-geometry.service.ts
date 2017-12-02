@@ -121,7 +121,7 @@ export class ChatMessageGeometryService {
 
 	/** Calculates max message width for current UI and screen size. */
 	public getMaxWidth (messageList: HTMLElement|ViewBase) : number {
-		if (messageList instanceof ViewBase) {
+		if (!(messageList instanceof HTMLElement)) {
 			/* TODO: HANDLE NATIVE */
 			return 0;
 		}
