@@ -8,16 +8,23 @@ import {
 	OnChanges
 } from '@angular/core';
 import * as $ from 'jquery';
+import {IVirtualScrollOptions} from 'od-virtualscroll';
 import {Observable} from 'rxjs/Observable';
+import {fromEvent} from 'rxjs/observable/fromEvent';
+import {of} from 'rxjs/observable/of';
+import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
+import {Subject} from 'rxjs/Subject';
 import {fadeInOut} from '../animations';
 import {ChatMessage, IChatData} from '../chat';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
+import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
+import {flattenObservablePromise} from '../util/flatten-observable-promise';
 
 
 /**
@@ -31,6 +38,28 @@ import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default'
 	templateUrl: '../../../templates/chat-message-list.html'
 })
 export class ChatMessageListComponent implements AfterViewInit, OnChanges {
+	/** @ignore */
+	private resolveViewInitiated: () => void;
+
+	/** @ignore */
+	private readonly viewInitiated: Promise<void>	= new Promise(resolve => {
+		this.resolveViewInitiated	= resolve;
+	});
+
+	/** @ignore */
+	private readonly vsMaxWidth: Observable<number>	= flattenObservablePromise(async () => {
+		await this.viewInitiated;
+
+		if (!this.envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return of(0);
+		}
+
+		return fromEvent(window, 'resize').pipe(mergeMap(async () =>
+			this.chatMessageGeometryService.getMaxWidth(this.elementRef.nativeElement)
+		));
+	});
+
 	/** @ignore */
 	private readonly messageCache: Map<string, ChatMessage>	= new Map<string, ChatMessage>();
 
@@ -49,20 +78,37 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean;
 
-	/** Message list. */
-	public messages?: Observable<ChatMessage[]>;
-
 	/** @see ChatMessageComponent.mobile */
 	@Input() public mobile: boolean;
 
 	/** Indicates whether disconnect message should be displayed. */
 	@Input() public showDisconnectMessage: boolean;
 
-	/** @see IChatData.unconfirmedMessages */
-	public unconfirmedMessages?: Observable<{[id: string]: boolean|undefined}>;
+	/** Data formatted for virtual scrolling. */
+	public vsData	= new Subject<{
+		accounts: boolean;
+		isFriendTyping: Observable<boolean>;
+		lastMessageIndex: number;
+		message: ChatMessage;
+		mobile: boolean;
+		showDisconnectMessage: boolean;
+		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>;
+	}[]>();
+
+	/** Options for virtual scrolling. */
+	public readonly vsOptions: Observable<IVirtualScrollOptions>	= this.vsMaxWidth.pipe(
+		map(maxWidth => ({
+			itemHeight: async (message: ChatMessage) =>
+				this.chatMessageGeometryService.getHeight(message, maxWidth)
+			,
+			numLimitColumns: 1
+		}))
+	);
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
+		this.resolveViewInitiated();
+
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
@@ -75,16 +121,18 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	}
 
 	/** @inheritDoc */
-	public ngOnChanges () : void {
+	public async ngOnChanges () : Promise<void> {
 		if (!this.chat) {
 			return;
 		}
 
+		const chat	= this.chat;
+
 		const observables	= getOrSetDefault(
 			this.observableCache,
-			this.chat,
+			chat,
 			() => ({
-				messages: this.chat.messages.watch().pipe(mergeMap(async messages =>
+				messages: chat.messages.watch().pipe(mergeMap(async messages =>
 					(await Promise.all(messages.map(async message => getOrSetDefaultAsync(
 						this.messageCache,
 						message.id,
@@ -115,12 +163,26 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 						a.timestamp - b.timestamp
 					)
 				)),
-				unconfirmedMessages: this.chat.unconfirmedMessages.watch()
+				unconfirmedMessages: chat.unconfirmedMessages.watch()
 			})
 		);
 
-		this.messages				= observables.messages;
-		this.unconfirmedMessages	= observables.unconfirmedMessages;
+		observables.messages.pipe(map(messages => messages.map(message => ({
+			accounts: this.accounts,
+			isFriendTyping: chat.isFriendTyping,
+			lastMessageIndex: messages.length,
+			message,
+			mobile: this.mobile,
+			showDisconnectMessage: this.showDisconnectMessage,
+			unconfirmedMessages: observables.unconfirmedMessages
+		})))).subscribe(
+			this.vsData
+		);
+	}
+
+	/** Equality function for virtual scrolling. */
+	public vsEqualsFunc () : boolean {
+		return false;
 	}
 
 	constructor (
@@ -129,6 +191,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 		/** @ignore */
 		private readonly injector: Injector,
+
+		/** @ignore */
+		private readonly chatMessageGeometryService: ChatMessageGeometryService,
 
 		/** @ignore */
 		private readonly envService: EnvService,

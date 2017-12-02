@@ -1,40 +1,56 @@
 <div cyphNanoScroller>
-	<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
-		<cyph-chat-message
-			fxLayout='row'
-			[accounts]='accounts'
-			[message]='message'
-			[mobile]='mobile'
-			[unconfirmedMessages]='unconfirmedMessages | async'
-			*ngFor='let message of messages | async'
-		></cyph-chat-message>
-
-		<div fxLayout='row' class='friend-is-typing'>
-			<div
-				matTooltip='Friend is typing...'
-				cyphTranslate
-				class='ellipsis-spinner'
-				*ngIf='chat.isFriendTyping | async'
-				[@fadeInOut]='"in"'
-			>
-				<div class='bounce1'></div>
-				<div class='bounce2'></div>
-				<div class='bounce3'></div>
-			</div>
-		</div>
-
-		<div
-			fxLayout='row'
-			class='chat-end-message'
-			*ngIf='showDisconnectMessage'
+	<div fxFlexFill fxLayout='column' class='message-list-background'>
+		<od-virtualscroll
+			fxFlexFill
+			[vsData]='vsData'
+			[vsEqualsFunc]='vsEqualsFunc'
+			[vsOptions]='vsOptions'
 		>
-			<div fxFlexFill fxLayoutAlign='center center'>
-				<mat-card fxFlex='90' fxFlex.gt-sm='50'>
-					<mat-card-content>
-						<ng-content></ng-content>
-					</mat-card-content>
-				</mat-card>
-			</div>
-		</div>
+			<ng-template let-item let-row='row'>
+				<div fxLayout='column' fxLayoutGap='15px' *ngIf='!item.mobile && row === 0'>
+					<div></div>
+					<div></div>
+				</div>
+
+				<cyph-chat-message
+					[accounts]='item.accounts'
+					[message]='item.message'
+					[mobile]='item.mobile'
+					[unconfirmedMessages]='item.unconfirmedMessages | async'
+				></cyph-chat-message>
+
+				<div fxLayout='column' fxLayoutGap='4px' *ngIf='row === item.lastMessageIndex'>
+					<div></div>
+
+					<div fxLayout='row' class='friend-is-typing'>
+						<div
+							matTooltip='Friend is typing...'
+							cyphTranslate
+							class='ellipsis-spinner'
+							*ngIf='item.isFriendTyping | async'
+							[@fadeInOut]='"in"'
+						>
+							<div class='bounce1'></div>
+							<div class='bounce2'></div>
+							<div class='bounce3'></div>
+						</div>
+					</div>
+
+					<div
+						fxLayout='row'
+						class='chat-end-message'
+						*ngIf='item.showDisconnectMessage'
+					>
+						<div fxFlexFill fxLayoutAlign='center center'>
+							<mat-card fxFlex='90' fxFlex.gt-sm='50'>
+								<mat-card-content>
+									<ng-content></ng-content>
+								</mat-card-content>
+							</mat-card>
+						</div>
+					</div>
+				</div>
+			</ng-template>
+		</od-virtualscroll>
 	</div>
 </div>
