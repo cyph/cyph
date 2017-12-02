@@ -57,6 +57,8 @@ export class ChatMessageGeometryService {
 		containerChild.style.fontSize	= '1.7em';
 
 		const getDimensionsHelper	= () => {
+			/* See https://github.com/palantir/tslint/issues/3505 */
+			/* tslint:disable-next-line:no-unnecessary-type-assertion */
 			const lines	= <HTMLElement[]> Array.from(
 				document.querySelectorAll(`${id} cyph-markdown > span > *`)
 			);
@@ -76,7 +78,7 @@ export class ChatMessageGeometryService {
 				const o	= {height: line.offsetHeight, width: line.offsetWidth};
 				line.style.display	= 'none';
 				return o;
-			})
+			});
 		};
 
 		document.body.appendChild(container);
