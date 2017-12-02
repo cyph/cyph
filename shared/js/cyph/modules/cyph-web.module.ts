@@ -34,11 +34,9 @@ import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {DialogImageComponent} from '../components/dialog-image.component';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
-import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {DialogService} from '../services/dialog.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {MaterialDialogService} from '../services/material-dialog.service';
-import {WebChatMessageGeometryService} from '../services/web-chat-message-geometry.service';
 import {WebLocalStorageService} from '../services/web-local-storage.service';
 
 
@@ -128,10 +126,6 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		VirtualScrollModule
 	],
 	providers: [
-		{
-			provide: ChatMessageGeometryService,
-			useClass: WebChatMessageGeometryService
-		},
 		{
 			provide: DialogService,
 			useClass: MaterialDialogService

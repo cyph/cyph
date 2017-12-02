@@ -1,17 +1,37 @@
-import {Injectable} from '@angular/core';
+import {
+	ApplicationRef,
+	ComponentFactoryResolver,
+	EmbeddedViewRef,
+	Injectable,
+	Injector
+} from '@angular/core';
 import * as $ from 'jquery';
-import {IChatMessageDimensions} from '../proto';
+import {ChatMessageComponent} from '../components/chat-message.component';
+import {IChatMessage, IChatMessageDimensions} from '../proto';
+import {ChatMessageGeometryService} from './chat-message-geometry.service';
 
 
 /**
  * ChatMessageGeometryService implementation for the web.
  */
 @Injectable()
-export class WebChatMessageGeometryService {
+export class WebChatMessageGeometryService extends ChatMessageGeometryService {
 	/** @inheritDoc */
-	public getDimensions (message: HTMLElement) : IChatMessageDimensions {
-		const $body		= $(document.body);
-		const $message	= $(message).clone();
+	public async getDimensions (message: IChatMessage) : Promise<IChatMessageDimensions> {
+		const componentRef	= this.componentFactoryResolver.
+			resolveComponentFactory(ChatMessageComponent).
+			create(this.injector)
+		;
+
+		componentRef.instance.message	= message;
+
+		this.applicationRef.attachView(componentRef.hostView);
+
+		const $body			= $(document.body);
+
+		const $message		= $(
+			(<EmbeddedViewRef<ChatMessageComponent>> componentRef.hostView).rootNodes[0]
+		);
 
 		const $container	= $(
 			`<div style='
@@ -25,9 +45,6 @@ export class WebChatMessageGeometryService {
 			</div>`
 		);
 
-		$body.append($container);
-		$container.children().append($message);
-
 		const getDimensionsHelper	= () =>
 			$message.find('cyph-markdown > span > *').hide().toArray().map(line => {
 				const $line	= $(line);
@@ -38,10 +55,17 @@ export class WebChatMessageGeometryService {
 			})
 		;
 
+		$body.append($container);
+		$container.children().append($message);
+
+		await componentRef.instance.viewInitiated;
+
 		const smallDimensions	= getDimensionsHelper();
 		$container.css('font-size', '17.5px');
 		const bigDimensions		= getDimensionsHelper();
 
+		this.applicationRef.detachView(componentRef.hostView);
+		componentRef.destroy();
 		$container.remove();
 
 		if (smallDimensions.length !== bigDimensions.length) {
@@ -75,5 +99,16 @@ export class WebChatMessageGeometryService {
 		return $(messageList).width() * 0.8 - 30;
 	}
 
-	constructor () {}
+	constructor (
+		/** @ignore */
+		private readonly componentFactoryResolver: ComponentFactoryResolver,
+
+		/** @ignore */
+		private readonly applicationRef: ApplicationRef,
+
+		/** @ignore */
+		private readonly injector: Injector
+	) {
+		super();
+	}
 }

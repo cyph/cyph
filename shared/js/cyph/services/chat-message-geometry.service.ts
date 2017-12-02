@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ViewBase} from 'tns-core-modules/ui/core/view-base';
-import {IChatMessageDimensions} from '../proto';
+import {IChatMessage, IChatMessageDimensions} from '../proto';
 
 
 /**
@@ -9,7 +9,7 @@ import {IChatMessageDimensions} from '../proto';
 @Injectable()
 export class ChatMessageGeometryService {
 	/** Calculates the dimensions of a chat message at its maximum potential width. */
-	public getDimensions (message: HTMLElement|ViewBase) : IChatMessageDimensions {
+	public async getDimensions (message: IChatMessage) : Promise<IChatMessageDimensions> {
 		throw new Error(
 			'Must provide an implementation of ChatMessageGeometryService.getDimensions.'
 		);

@@ -32,7 +32,7 @@ export class MaterialDialogService implements DialogService {
 				this.stringsService.ok
 			;
 
-			matDialogRef.componentInstance.title		= o.title !== undefined ?
+			matDialogRef.componentInstance.title	= o.title !== undefined ?
 				o.title :
 				''
 			;

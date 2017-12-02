@@ -1,6 +1,7 @@
-import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
 import {ChatMessage} from '../chat';
+import {IChatMessage} from '../proto';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
@@ -15,7 +16,10 @@ import {StringsService} from '../services/strings.service';
 	styleUrls: ['../../../css/components/chat-message.scss'],
 	templateUrl: '../../../templates/chat-message.html'
 })
-export class ChatMessageComponent implements OnInit {
+export class ChatMessageComponent implements AfterViewInit, OnInit {
+	/** @ignore */
+	private resolveViewInitiated: () => void;
+
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
 
@@ -23,24 +27,39 @@ export class ChatMessageComponent implements OnInit {
 	public readonly authorTypes: typeof ChatMessage.AuthorTypes	= ChatMessage.AuthorTypes;
 
 	/** @see ChatMessage */
-	@Input() public message: ChatMessage;
+	@Input() public message: IChatMessage;
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean;
 
 	/** @see IChatData.unconfirmedMessages */
-	@Input() public unconfirmedMessages: {[id: string]: boolean|undefined};
+	@Input() public unconfirmedMessages?: {[id: string]: boolean|undefined};
+
+	/** Resolves after view init. */
+	public readonly viewInitiated: Promise<void>	= new Promise(resolve => {
+		this.resolveViewInitiated	= resolve;
+	});
+
+	/** @inheritDoc */
+	public ngAfterViewInit () : void {
+		this.resolveViewInitiated();
+	}
 
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
 		return (
 			this.message.authorType !== ChatMessage.AuthorTypes.Local ||
+			this.unconfirmedMessages === undefined ||
 			!(this.message.id && this.unconfirmedMessages[this.message.id])
 		);
 	}
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		if (this.unconfirmedMessages === undefined) {
+			return;
+		}
+
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;

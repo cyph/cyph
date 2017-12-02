@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import * as Konami from 'konami-code.js';
 import {env} from '../cyph/env';
+import {ChatMessageGeometryService} from '../cyph/services/chat-message-geometry.service';
 import {ChatService} from '../cyph/services/chat.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {EnvService} from '../cyph/services/env.service';
@@ -12,6 +13,7 @@ import {ScrollService} from '../cyph/services/scroll.service';
 import {SessionCapabilitiesService} from '../cyph/services/session-capabilities.service';
 import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
+import {WebChatMessageGeometryService} from '../cyph/services/web-chat-message-geometry.service';
 import {sleep} from '../cyph/util/wait';
 import {ChatData} from './chat-data';
 import {DemoEnvService} from './demo-env.service';
@@ -35,6 +37,10 @@ import {LocalSessionService} from './local-session.service';
 		ScrollService,
 		SessionCapabilitiesService,
 		SessionInitService,
+		{
+			provide: ChatMessageGeometryService,
+			useClass: WebChatMessageGeometryService
+		},
 		{
 			provide: EnvService,
 			useExisting: DemoEnvService

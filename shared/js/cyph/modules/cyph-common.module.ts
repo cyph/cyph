@@ -20,7 +20,6 @@ import {SignupFormComponent} from '../components/signup-form.component';
 import {RouterLinkDirective} from '../directives/router-link.directive';
 import {TranslateDirective} from '../directives/translate.directive';
 import {AnalyticsService} from '../services/analytics.service';
-import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
 import {ErrorService} from '../services/error.service';
@@ -59,6 +58,7 @@ import {CyphWebModule} from './cyph-web.module';
 		TranslateDirective
 	],
 	entryComponents: [
+		ChatMessageComponent,
 		HelpComponent
 	],
 	exports: [
@@ -88,7 +88,6 @@ import {CyphWebModule} from './cyph-web.module';
 	],
 	providers: [
 		AnalyticsService,
-		ChatMessageGeometryService,
 		ConfigService,
 		EnvService,
 		ErrorService,

@@ -7,6 +7,7 @@ import {fadeIn} from '../cyph/animations';
 import {States as ChatStates} from '../cyph/chat/enums';
 import {ChannelService} from '../cyph/services/channel.service';
 import {ChatEnvService} from '../cyph/services/chat-env.service';
+import {ChatMessageGeometryService} from '../cyph/services/chat-message-geometry.service';
 import {ChatService} from '../cyph/services/chat.service';
 import {AnonymousCastleService} from '../cyph/services/crypto/anonymous-castle.service';
 import {CastleService} from '../cyph/services/crypto/castle.service';
@@ -26,6 +27,7 @@ import {SplitTestingService} from '../cyph/services/split-testing.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {UrlSessionInitService} from '../cyph/services/url-session-init.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
+import {WebChatMessageGeometryService} from '../cyph/services/web-chat-message-geometry.service';
 import {events} from '../cyph/session/enums';
 import {sleep} from '../cyph/util/wait';
 import {AppService} from './app.service';
@@ -49,6 +51,10 @@ import {ChatRootStates} from './enums';
 		{
 			provide: CastleService,
 			useClass: AnonymousCastleService
+		},
+		{
+			provide: ChatMessageGeometryService,
+			useClass: WebChatMessageGeometryService
 		},
 		{
 			provide: EnvService,
