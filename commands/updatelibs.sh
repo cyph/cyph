@@ -171,6 +171,7 @@ read -r -d '' modules <<- EOM
 	read
 	reflect-metadata
 	request
+	resize-observer-polyfill
 	resolve-url-loader
 	retire
 	rlwe
