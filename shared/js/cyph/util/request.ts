@@ -88,7 +88,7 @@ const baseRequest	= <R, T> (
 				try {
 					progress.next(0);
 
-					const req	= <Observable<HttpEvent<T>>> httpClient.request(method, url, {
+					const req: Observable<HttpEvent<T>>	= <any> httpClient.request(method, url, {
 						body: data,
 						headers: contentType ?
 							new HttpHeaders({'Content-Type': contentType}) :
