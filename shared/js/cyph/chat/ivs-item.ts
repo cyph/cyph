@@ -27,4 +27,4 @@ export interface IVsItem {
 
 	/** @see IChatData.unconfirmedMessages */
 	unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>;
-};
+}
