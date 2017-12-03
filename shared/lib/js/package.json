@@ -473,7 +473,7 @@
     "retire": "^1.4.0",
     "rlwe": "^3.1.0",
     "rsvp": "^4.7.0",
-    "rxjs": "^5.5.3",
+    "rxjs": "^5.5.2",
     "rxjs-tslint-rules": "^3.3.0",
     "sass-loader": "^6.0.6",
     "script-ext-html-webpack-plugin": "^1.8.8",
