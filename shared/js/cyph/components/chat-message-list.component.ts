@@ -173,7 +173,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			})
 		);
 
-		combineLatest([
+		combineLatest<ChatMessage[]|void>([
 			observables.messages,
 			this.maxWidthWatcher
 		]).pipe(map(([messages]: ChatMessage[][]) => messages.map((message, i) => ({
