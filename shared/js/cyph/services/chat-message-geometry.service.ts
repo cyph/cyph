@@ -6,8 +6,8 @@ import {
 	Injector
 } from '@angular/core';
 import {ViewBase} from 'tns-core-modules/ui/core/view-base';
+import {ChatMessage} from '../chat';
 import {ChatMessageComponent} from '../components/chat-message.component';
-import {IChatMessage} from '../proto';
 import {uuid} from '../util/uuid';
 import {EnvService} from './env.service';
 
@@ -18,7 +18,7 @@ import {EnvService} from './env.service';
 @Injectable()
 export class ChatMessageGeometryService {
 	/** Calculates the dimensions of a chat message at its maximum potential width. */
-	public async getDimensions (message: IChatMessage) : Promise<IChatMessage> {
+	public async getDimensions (message: ChatMessage) : Promise<ChatMessage> {
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			message.dimensions	= [{
@@ -110,8 +110,12 @@ export class ChatMessageGeometryService {
 	}
 
 	/** Calculates the height of a chat message for virtual scrolling. */
-	public getHeight ({dimensions}: IChatMessage, maxWidth: number) : number {
-		const bigScreen	= document.body.clientWidth >= 1920;
+	public getHeight (
+		{dimensions}: ChatMessage,
+		maxWidth: number,
+		viewportWidth: number = document.body.clientWidth
+	) : number {
+		const bigScreen	= viewportWidth >= 1920;
 
 		return (dimensions || []).
 			map(o => {

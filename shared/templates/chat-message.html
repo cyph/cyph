@@ -9,7 +9,7 @@
 	[class.self-destruct]='chatService.chatSelfDestruct'
 	[class.self-destructed]='message.selfDestructTimer?.isComplete | async'
 	[matTooltip]='confirmed ? undefined : stringsService.messageUnconfirmed'
-	*ngIf='message && message.value'
+	*ngIf='message?.valueWatcher | async; let value'
 >
 	<div>
 		<div fxLayout='row'>
@@ -20,18 +20,18 @@
 				>
 					{{message.author | async}}:
 				</strong>
-				<div *ngIf='message.value.form; else quillDeltaValue'>
+				<div *ngIf='value.form; else quillDeltaValue'>
 					TODO: Form UI
 				</div>
 				<ng-template #quillDeltaValue>
-					<div *ngIf='message.value.quillDelta; else textValue'>
+					<div *ngIf='value.quillDelta; else textValue'>
 						TODO: Quill UI
 					</div>
 				</ng-template>
 				<ng-template #quillDeltaValue>
 					<cyph-markdown
 						class='message-text'
-						[markdown]='message.value.text'
+						[markdown]='value.text'
 					></cyph-markdown>
 				</ng-template>
 			</div>

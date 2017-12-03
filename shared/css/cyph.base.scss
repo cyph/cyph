@@ -143,8 +143,8 @@ mat-card-title {
 	max-width: 100%;
 }
 
-od-virtualscroll, od-virtualrow {
-	width: 100%;
+od-virtualscroll, od-virtualrow, .od-scroll-container {
+	width: 100% !important;
 }
 
 html, button, input, select, textarea {

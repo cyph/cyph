@@ -2,13 +2,13 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
-import {IChatData, IChatMessageValue, States} from '../chat';
+import {ChatMessage, IChatData, IChatMessageValue, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncMap} from '../local-async-map';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
-import {ChatMessage, IChatMessage} from '../proto';
+import {IChatMessage} from '../proto';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
 import {lockFunction} from '../util/lock';
@@ -325,9 +325,9 @@ export class ChatService {
 	}
 
 	/** Gets message value if not already set. */
-	public async getMessageValue (message: IChatMessage) : Promise<IChatMessage> {
+	public async getMessageValue (message: ChatMessage) : Promise<IChatMessage> {
 		if (message.value === undefined) {
-			message.value	= await this.chat.messageValues.getItem(message.id);
+			message.setValue(await this.chat.messageValues.getItem(message.id));
 		}
 
 		return message;

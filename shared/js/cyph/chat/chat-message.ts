@@ -1,5 +1,7 @@
 import * as msgpack from 'msgpack-lite';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {ChatMessage as ChatMessageInternal, IChatMessage} from '../proto';
 import {Timer} from '../timer';
@@ -24,6 +26,9 @@ export class ChatMessage implements IChatMessage {
 	public authorType: ChatMessageInternal.AuthorTypes	= this.message.authorType;
 
 	/** @inheritDoc */
+	public dimensions?: ChatMessageInternal.ILine[]		= this.message.dimensions;
+
+	/** @inheritDoc */
 	public id: string					= this.message.id;
 
 	/** @inheritDoc */
@@ -33,16 +38,13 @@ export class ChatMessage implements IChatMessage {
 	public readonly selfDestructTimer?: Timer;
 
 	/** @inheritDoc */
-	public text?: string				= this.message.value && this.message.value.text;
-
-	/** @inheritDoc */
 	public timestamp: number			= this.message.timestamp;
 
 	/** @inheritDoc */
 	public readonly timeString: string	= getTimeString(this.message.timestamp);
 
 	/** @ignore */
-	public readonly value?: IChatMessageValue	= this.message.value && {
+	public value?: IChatMessageValue	= this.message.value && {
 		form: this.message.value.form,
 		quillDelta: this.message.value.quillDeltaBytes ?
 			msgpack.decode(this.message.value.quillDeltaBytes) :
@@ -51,6 +53,17 @@ export class ChatMessage implements IChatMessage {
 		quillDeltaBytes: this.message.value.quillDeltaBytes,
 		text: this.message.value.text
 	};
+
+	/** Observable of value. */
+	public readonly valueWatcher: Subject<IChatMessageValue|undefined>	=
+		new BehaviorSubject<IChatMessageValue|undefined>(this.value)
+	;
+
+	/** Sets value. */
+	public setValue (value: IChatMessageValue) : void {
+		this.value	= value;
+		this.valueWatcher.next(value);
+	}
 
 	constructor (
 		/** @ignore */
@@ -71,8 +84,6 @@ export class ChatMessage implements IChatMessage {
 
 		this.selfDestructTimer.start().then(async () => {
 			await sleep(10000);
-
-			this.text	= '';
 
 			if (!this.value || !this.message.value) {
 				return;

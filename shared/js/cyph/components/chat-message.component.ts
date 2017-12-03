@@ -1,7 +1,12 @@
-import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core';
+import {
+	AfterViewInit,
+	Component,
+	ElementRef,
+	Input,
+	OnInit
+} from '@angular/core';
 import * as $ from 'jquery';
 import {ChatMessage} from '../chat';
-import {IChatMessage} from '../proto';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
@@ -27,10 +32,10 @@ export class ChatMessageComponent implements AfterViewInit, OnInit {
 	public readonly authorTypes: typeof ChatMessage.AuthorTypes	= ChatMessage.AuthorTypes;
 
 	/** @see ChatMessage */
-	@Input() public message?: IChatMessage;
+	@Input() public message?: ChatMessage;
 
 	/** Indicates whether mobile version should be displayed. */
-	@Input() public mobile: boolean;
+	@Input() public mobile: boolean		= false;
 
 	/** @see IChatData.unconfirmedMessages */
 	@Input() public unconfirmedMessages?: {[id: string]: boolean|undefined};

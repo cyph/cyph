@@ -9,8 +9,9 @@ import {
 } from '@angular/core';
 import * as $ from 'jquery';
 import {IVirtualScrollOptions} from 'od-virtualscroll';
+import ResizeObserver from 'resize-observer-polyfill';
 import {Observable} from 'rxjs/Observable';
-import {fromEvent} from 'rxjs/observable/fromEvent';
+import {combineLatest} from 'rxjs/observable/combineLatest';
 import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
@@ -24,7 +25,6 @@ import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
-import {flattenObservablePromise} from '../util/flatten-observable-promise';
 
 
 /**
@@ -39,25 +39,32 @@ import {flattenObservablePromise} from '../util/flatten-observable-promise';
 })
 export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** @ignore */
-	private resolveViewInitiated: () => void;
+	private currentMaxWidth: number			= 0;
 
 	/** @ignore */
-	private readonly viewInitiated: Promise<void>	= new Promise(resolve => {
-		this.resolveViewInitiated	= resolve;
-	});
+	private currentViewportWidth: number	= 0;
 
 	/** @ignore */
-	private readonly vsMaxWidth: Observable<number>	= flattenObservablePromise(async () => {
-		await this.viewInitiated;
-
+	private readonly maxWidthWatcher: Observable<void>	= new Observable(observer => {
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
-			return of(0);
+			observer.next();
+			return;
 		}
 
-		return fromEvent(window, 'resize').pipe(mergeMap(async () =>
-			this.chatMessageGeometryService.getMaxWidth(this.elementRef.nativeElement)
-		));
+		const resizeObserver	= new ResizeObserver(async () => {
+			this.currentMaxWidth		=
+				await this.chatMessageGeometryService.getMaxWidth(this.elementRef.nativeElement)
+			;
+
+			this.currentViewportWidth	= document.body.clientWidth;
+
+			observer.next();
+		});
+
+		resizeObserver.observe(this.elementRef.nativeElement);
+
+		return () => { resizeObserver.disconnect(); };
 	});
 
 	/** @ignore */
@@ -87,8 +94,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** Data formatted for virtual scrolling. */
 	public vsData	= new Subject<{
 		accounts: boolean;
+		isEnd: boolean;
 		isFriendTyping: Observable<boolean>;
-		lastMessageIndex: number;
+		isStart: boolean;
 		message: ChatMessage;
 		mobile: boolean;
 		showDisconnectMessage: boolean;
@@ -96,19 +104,17 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	}[]>();
 
 	/** Options for virtual scrolling. */
-	public readonly vsOptions: Observable<IVirtualScrollOptions>	= this.vsMaxWidth.pipe(
-		map(maxWidth => ({
-			itemHeight: async (message: ChatMessage) =>
-				this.chatMessageGeometryService.getHeight(message, maxWidth)
-			,
-			numLimitColumns: 1
-		}))
-	);
+	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
+		itemHeight: async (message: ChatMessage) => this.chatMessageGeometryService.getHeight(
+			message,
+			this.currentMaxWidth,
+			this.currentViewportWidth
+		),
+		numLimitColumns: 1
+	});
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
-		this.resolveViewInitiated();
-
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
@@ -167,10 +173,14 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			})
 		);
 
-		observables.messages.pipe(map(messages => messages.map(message => ({
+		combineLatest([
+			observables.messages,
+			this.maxWidthWatcher
+		]).pipe(map(([messages]: ChatMessage[][]) => messages.map((message, i) => ({
 			accounts: this.accounts,
+			isEnd: (i + 1) === messages.length,
 			isFriendTyping: chat.isFriendTyping,
-			lastMessageIndex: messages.length,
+			isStart: i === 0,
 			message,
 			mobile: this.mobile,
 			showDisconnectMessage: this.showDisconnectMessage,

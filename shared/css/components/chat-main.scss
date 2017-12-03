@@ -48,18 +48,6 @@
 		}
 	}
 
-	.chat-main:not(.mobile):not(.video) cyph-chat-message-list .message-list-background > :first-child {
-		padding-top: 15px;
-	}
-
-	.chat-main.mobile.video cyph-chat-message-list .message-list-background {
-		padding-top: 0px;
-
-		> :first-child {
-			margin-top: 40px !important;
-		}
-	}
-
 	.chat-main.mobile, .chat-main.video .video-call ~ cyph-chat-message-list {
 		.message-item {
 			position: relative;
@@ -362,11 +350,6 @@
 					background-color: rgba(0, 0, 0, 0.3) !important;
 					color: #f1f1f1 !important;
 				}
-			}
-
-			.message-list-background {
-				padding-right: 0px;
-				padding-bottom: 120px;
 			}
 		}
 
