@@ -27,6 +27,18 @@ import {SessionService} from '../services/session.service';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 
 
+type VsItem	= {
+	accounts: boolean;
+	isEnd: boolean;
+	isFriendTyping: Observable<boolean>;
+	isStart: boolean;
+	message: ChatMessage;
+	mobile: boolean;
+	showDisconnectMessage: boolean;
+	unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>;
+};
+
+
 /**
  * Angular component for chat message list.
  */
@@ -92,20 +104,11 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	@Input() public showDisconnectMessage: boolean;
 
 	/** Data formatted for virtual scrolling. */
-	public vsData	= new Subject<{
-		accounts: boolean;
-		isEnd: boolean;
-		isFriendTyping: Observable<boolean>;
-		isStart: boolean;
-		message: ChatMessage;
-		mobile: boolean;
-		showDisconnectMessage: boolean;
-		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>;
-	}[]>();
+	public vsData	= new Subject<VsItem[]>();
 
 	/** Options for virtual scrolling. */
 	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
-		itemHeight: async (message: ChatMessage) => this.chatMessageGeometryService.getHeight(
+		itemHeight: async ({message}: VsItem) => this.chatMessageGeometryService.getHeight(
 			message,
 			this.currentMaxWidth,
 			this.currentViewportWidth

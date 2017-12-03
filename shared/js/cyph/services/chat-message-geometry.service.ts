@@ -27,6 +27,8 @@ export class ChatMessageGeometryService {
 				smallScreenHeight: 0,
 				smallScreenWidth: 0
 			}];
+
+			return message;
 		}
 
 		const componentRef	= this.componentFactoryResolver.
@@ -42,7 +44,7 @@ export class ChatMessageGeometryService {
 			(<EmbeddedViewRef<ChatMessageComponent>> componentRef.hostView).rootNodes[0]
 		;
 
-		const id			= uuid();
+		const id			= `id-${uuid()}`;
 		messageElement.id	= id;
 
 		const container			= document.createElement('div');
@@ -60,7 +62,7 @@ export class ChatMessageGeometryService {
 			/* See https://github.com/palantir/tslint/issues/3540 */
 			/* tslint:disable-next-line:no-unnecessary-type-assertion */
 			const lines	= <HTMLElement[]> Array.from(
-				document.querySelectorAll(`${id} cyph-markdown > span > *`)
+				document.querySelectorAll(`#${id} cyph-markdown > span > *`)
 			);
 
 			if (lines.length < 1) {
@@ -110,14 +112,18 @@ export class ChatMessageGeometryService {
 	}
 
 	/** Calculates the height of a chat message for virtual scrolling. */
-	public getHeight (
-		{dimensions}: ChatMessage,
+	public async getHeight (
+		message: ChatMessage,
 		maxWidth: number,
 		viewportWidth: number = document.body.clientWidth
-	) : number {
+	) : Promise<number> {
 		const bigScreen	= viewportWidth >= 1920;
 
-		return (dimensions || []).
+		if (message.dimensions === undefined) {
+			await this.getDimensions(message);
+		}
+
+		return (message.dimensions || []).
 			map(o => {
 				const height	= bigScreen ? o.bigScreenHeight : o.smallScreenHeight;
 				const width		= bigScreen ? o.bigScreenWidth : o.smallScreenWidth;

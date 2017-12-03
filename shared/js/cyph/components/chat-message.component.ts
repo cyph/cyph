@@ -11,6 +11,7 @@ import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {StringsService} from '../services/strings.service';
+import {waitForIterable} from '../util/wait';
 
 
 /**
@@ -46,7 +47,8 @@ export class ChatMessageComponent implements AfterViewInit, OnInit {
 	});
 
 	/** @inheritDoc */
-	public ngAfterViewInit () : void {
+	public async ngAfterViewInit () : Promise<void> {
+		await waitForIterable(() => $(this.elementRef.nativeElement).find('.message'));
 		this.resolveViewInitiated();
 	}
 
