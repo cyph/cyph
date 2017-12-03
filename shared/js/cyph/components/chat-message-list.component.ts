@@ -17,7 +17,7 @@ import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {Subject} from 'rxjs/Subject';
 import {fadeInOut} from '../animations';
-import {ChatMessage, IChatData} from '../chat';
+import {ChatMessage, IChatData, IVsItem} from '../chat';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
@@ -25,18 +25,6 @@ import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
-
-
-type VsItem	= {
-	accounts: boolean;
-	isEnd: boolean;
-	isFriendTyping: Observable<boolean>;
-	isStart: boolean;
-	message: ChatMessage;
-	mobile: boolean;
-	showDisconnectMessage: boolean;
-	unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>;
-};
 
 
 /**
@@ -104,11 +92,11 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	@Input() public showDisconnectMessage: boolean;
 
 	/** Data formatted for virtual scrolling. */
-	public vsData	= new Subject<VsItem[]>();
+	public vsData	= new Subject<IVsItem[]>();
 
 	/** Options for virtual scrolling. */
 	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
-		itemHeight: async ({message}: VsItem) => this.chatMessageGeometryService.getHeight(
+		itemHeight: async ({message}: IVsItem) => this.chatMessageGeometryService.getHeight(
 			message,
 			this.currentMaxWidth,
 			this.currentViewportWidth
