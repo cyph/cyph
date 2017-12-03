@@ -1,6 +1,7 @@
 import * as lz4 from 'lz4';
 import {superSphincs} from 'supersphincs';
 import {IKeyPair} from '../../proto';
+import {retryUntilSuccessful} from '../../util/wait';
 import {ISign} from './isign';
 import {potassiumUtil} from './potassium-util';
 
@@ -23,7 +24,22 @@ export class Sign implements ISign {
 
 	/** @inheritDoc */
 	public async keyPair () : Promise<IKeyPair> {
-		return superSphincs.keyPair();
+		return retryUntilSuccessful(async () => {
+			const keyPair	= await superSphincs.keyPair();
+
+			const testInput	= potassiumUtil.randomBytes(32);
+			if (!potassiumUtil.compareMemory(
+				testInput,
+				await this.open(
+					await this.sign(testInput, keyPair.privateKey),
+					keyPair.publicKey
+				)
+			)) {
+				throw new Error('Corrupt Potassium.Sign key.');
+			}
+
+			return keyPair;
+		});
 	}
 
 	/** @inheritDoc */

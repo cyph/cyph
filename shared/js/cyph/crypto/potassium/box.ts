@@ -2,6 +2,7 @@ import {sodium} from 'libsodium';
 import {mceliece} from 'mceliece';
 import {ntru} from 'ntru';
 import {IKeyPair} from '../../proto';
+import {retryUntilSuccessful} from '../../util/wait';
 import {IBox} from './ibox';
 import {IOneTimeAuth} from './ione-time-auth';
 import {ISecretBox} from './isecret-box';
@@ -202,26 +203,41 @@ export class Box implements IBox {
 
 	/** @inheritDoc */
 	public async keyPair () : Promise<IKeyPair> {
-		const keyPairs	= {
-			classical: await this.classicalCypher.keyPair(),
-			mceliece: await mceliece.keyPair(),
-			ntru: await ntru.keyPair()
-		};
+		return retryUntilSuccessful(async () => {
+			const keyPairs	= {
+				classical: await this.classicalCypher.keyPair(),
+				mceliece: await mceliece.keyPair(),
+				ntru: await ntru.keyPair()
+			};
 
-		return {
-			privateKey: potassiumUtil.concatMemory(
-				true,
-				keyPairs.classical.privateKey,
-				keyPairs.mceliece.privateKey,
-				keyPairs.ntru.privateKey
-			),
-			publicKey: potassiumUtil.concatMemory(
-				true,
-				keyPairs.classical.publicKey,
-				keyPairs.mceliece.publicKey,
-				keyPairs.ntru.publicKey
-			)
-		};
+			const keyPair	= {
+				privateKey: potassiumUtil.concatMemory(
+					true,
+					keyPairs.classical.privateKey,
+					keyPairs.mceliece.privateKey,
+					keyPairs.ntru.privateKey
+				),
+				publicKey: potassiumUtil.concatMemory(
+					true,
+					keyPairs.classical.publicKey,
+					keyPairs.mceliece.publicKey,
+					keyPairs.ntru.publicKey
+				)
+			};
+
+			const testInput	= potassiumUtil.randomBytes(32);
+			if (!potassiumUtil.compareMemory(
+				testInput,
+				await this.open(
+					await this.seal(testInput, keyPair.publicKey),
+					keyPair
+				)
+			)) {
+				throw new Error('Corrupt Potassium.Box key.');
+			}
+
+			return keyPair;
+		});
 	}
 
 	/** @inheritDoc */

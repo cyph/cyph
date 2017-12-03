@@ -88,17 +88,15 @@ const baseRequest	= <R, T> (
 				try {
 					progress.next(0);
 
-					const req: Observable<HttpEvent<T>>	=
-						httpClient.request(method, url, {
-							body: data,
-							headers: contentType ?
-								new HttpHeaders({'Content-Type': contentType}) :
-								undefined
-							,
-							observe: 'events',
-							responseType
-						})
-					;
+					const req	= <Observable<HttpEvent<T>>> httpClient.request(method, url, {
+						body: data,
+						headers: contentType ?
+							new HttpHeaders({'Content-Type': contentType}) :
+							undefined
+						,
+						observe: 'events',
+						responseType
+					});
 
 					const res	= await new Promise<HttpResponse<T>>((resolve, reject) => {
 						let last: HttpResponse<T>;
