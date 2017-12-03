@@ -7798,7 +7798,7 @@ obuf@^1.0.0, obuf@^1.1.1:
 
 "od-virtualscroll@https://github.com/buu700/od-virtualscroll-tmp":
   version "1.0.1"
-  resolved "https://github.com/buu700/od-virtualscroll-tmp#d6a29dc75137a355e43db7c1ec8a881f8d98ccc6"
+  resolved "https://github.com/buu700/od-virtualscroll-tmp#ea12a89b44f2da560e35e0677882ee9cc5096cf8"
 
 on-finished@^2.2.0, on-finished@~2.3.0:
   version "2.3.0"
