@@ -467,6 +467,10 @@ message Internal {
 		repeated string data = 1;
 	}
 
+	message StringMap {
+		map<string, string> data = 1;
+	}
+
 	message StringValue {
 		required string data = 1;
 	}

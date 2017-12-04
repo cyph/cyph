@@ -30,16 +30,19 @@
 	</mat-card>
 
 	<div>
-		<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px' cyphTranslate>
+		<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
 			<div>
 				<strong>
-					Already have a Cyph account?
+					<span cyphTranslate>Already have a</span>
+					<span>{{stringsService.product}}</span>
+					<span cyphTranslate>account?</span>
 				</strong>
 			</div>
 			<div>
 				<a
 					mat-button
 					[href]='envService.newCyphBaseUrl + "#account/login"'
+					cyphTranslate
 				>
 					Click here to login
 				</a>

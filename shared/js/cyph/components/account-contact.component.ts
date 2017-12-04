@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {User, UserPresence} from '../account';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -17,5 +18,8 @@ export class AccountContactComponent {
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
-	constructor () {}
+	constructor (
+		/** @see StringsService */
+		public readonly stringsService: StringsService
+	) {}
 }

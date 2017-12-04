@@ -5,6 +5,7 @@ import * as braintreeDropIn from 'braintree-web-drop-in';
 import {SubscriptionTypes} from '../checkout';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
+import {StringsService} from '../services/strings.service';
 import {request} from '../util/request';
 import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
@@ -149,6 +150,9 @@ export class CheckoutComponent implements AfterViewInit {
 		private readonly configService: ConfigService,
 
 		/** @ignore */
-		private readonly envService: EnvService
+		private readonly envService: EnvService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

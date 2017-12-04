@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import * as $ from 'jquery';
 import {EnvService} from '../services/env.service';
+import {StringsService} from '../services/strings.service';
 import {triggerClick} from '../util/trigger-click';
 import {waitForIterable} from '../util/wait';
 
@@ -63,6 +64,9 @@ export class FileInputComponent implements AfterViewInit {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly envService: EnvService
+		private readonly envService: EnvService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

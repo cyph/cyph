@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 
 
-const cheerio		= require('cheerio');
-const childProcess	= require('child_process');
-const datauri		= require('datauri');
-const fs			= require('fs');
-const htmlencode	= require('htmlencode');
-const superSphincs	= require('supersphincs');
+const cheerio			= require('cheerio');
+const childProcess		= require('child_process');
+const datauri			= require('datauri');
+const fs				= require('fs');
+const htmlencode		= require('htmlencode');
+const superSphincs		= require('supersphincs');
+const {potassium}		= require('../../modules/potassium');
+const {StringMapProto}	= require('../../modules/proto');
+const {serialize}		= require('../../modules/util');
 
 
 (async () => {
@@ -17,8 +20,9 @@ const args			= {
 	customBuildConfig: process.argv[3],
 	customBuildBackground: process.argv[4],
 	customBuildFavicon: process.argv[5],
-	customBuildStylesheet: process.argv[6],
-	customBuildTheme: process.argv[7]
+	customBuildStrings: process.argv[6],
+	customBuildStylesheet: process.argv[7],
+	customBuildTheme: process.argv[8]
 };
 
 
@@ -53,6 +57,14 @@ catch (_) {}
 
 try {
 	o.favicon		= datauri.sync(args.customBuildFavicon);
+}
+catch (_) {}
+
+try {
+	o.strings		= potassium.toBase64(await serialize(
+		StringMapProto,
+		JSON.parse(fs.readFileSync(args.customBuildStrings).toString())
+	));
 }
 catch (_) {}
 
@@ -157,6 +169,10 @@ if (o.password) {
 			Buffer.from(o.password).toString('base64')
 		}' />`
 	);
+}
+
+if (o.strings) {
+	$('head').append(`<meta name='custom-build-strings' content='${o.strings}' />`);
 }
 
 if (css) {

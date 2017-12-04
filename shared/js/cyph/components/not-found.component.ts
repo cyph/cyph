@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {EnvService} from '../services/env.service';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -13,6 +14,9 @@ import {EnvService} from '../services/env.service';
 export class NotFoundComponent {
 	constructor (
 		/** @see EnvService */
-		public readonly envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

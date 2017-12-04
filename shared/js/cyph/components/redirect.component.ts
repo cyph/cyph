@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
+import {StringsService} from '../services/strings.service';
 import {sleep} from '../util/wait';
 
 
@@ -30,6 +31,9 @@ export class RedirectComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly routerService: Router
+		private readonly routerService: Router,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

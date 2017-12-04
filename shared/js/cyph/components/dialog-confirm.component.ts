@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -25,6 +26,9 @@ export class DialogConfirmComponent {
 
 	constructor (
 		/** Dialog instance */
-		public readonly matDialogRef: MatDialogRef<DialogConfirmComponent>
+		public readonly matDialogRef: MatDialogRef<DialogConfirmComponent>,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

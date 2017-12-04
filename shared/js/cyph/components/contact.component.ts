@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ConfigService} from '../services/config.service';
+import {StringsService} from '../services/strings.service';
 import {email} from '../util/email';
 
 
@@ -60,6 +61,9 @@ export class ContactComponent implements OnInit {
 
 	constructor (
 		/** @see ConfigService */
-		public readonly configService: ConfigService
+		public readonly configService: ConfigService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

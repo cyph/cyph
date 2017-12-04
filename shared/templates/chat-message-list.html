@@ -24,7 +24,7 @@
 
 				<div fxLayout='row' class='friend-is-typing'>
 					<div
-						matTooltip='Friend is typing...'
+						[matTooltip]='stringsService.friendIsTyping'
 						cyphTranslate
 						class='ellipsis-spinner'
 						*ngIf='item.isFriendTyping | async'

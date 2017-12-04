@@ -1,12 +1,12 @@
 <mat-card fxFlex fxLayout='column' class='fullscreen'>
 	<mat-card-title cyphTranslate>
-		Welcome to Cyph
+		Welcome to {{stringsService.product}}
 	</mat-card-title>
 	<mat-card-content fxFlex>
 		<div fxFlexFill fxLayoutAlign='center center'>
-			<div fxFlex='90' fxFlex.gt-sm='50' fxLayout='column' fxLayoutGap='16px' cyphTranslate>
+			<div fxFlex='90' fxFlex.gt-sm='50' fxLayout='column' fxLayoutGap='16px'>
 				<p>
-					<span>
+					<span cyphTranslate>
 						Well, almost. We've received your information, and your public key is now
 						queued up to be cryptographically signed by one of the Cyph founders using
 						their personal
@@ -14,19 +14,24 @@
 					<a
 						target='_blank'
 						[href]='envService.homeUrl + "agse"'
+						cyphTranslate
 					>Air Gapped Signing Environment</a>
-					<span>
-						&mdash; a custom-designed hardware device that ensures the security of Cyph
+					<span cyphTranslate>
+						&mdash; a custom-designed hardware device that ensures the security of
+					</span>
+					<span>{{stringsService.product}}</span>
+					<span cyphTranslate>
 						for as long as it remains physically secure.
 					</span>
 				</p>
-				<p>
+				<p cyphTranslate>
 					You will receive an email as soon as your account is activated and ready for
 					use. (If you didn't give us your email address, then just try signing in in a
 					couple days and it should work.)
 				</p>
 				<p>
-					Thank you for joining Cyph!
+					<span cyphTranslate>Thank you for joining</span>
+					<span>{{stringsService.product}}!</span>
 				</p>
 			</div>
 		</div>

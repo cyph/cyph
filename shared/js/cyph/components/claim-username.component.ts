@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {usernameMask} from '../account';
+import {StringsService} from '../services/strings.service';
 import {email} from '../util/email';
 import {stringify} from '../util/serialization';
 
@@ -44,5 +45,8 @@ export class ClaimUsernameComponent {
 		this.submitted	= true;
 	}
 
-	constructor () {}
+	constructor (
+		/** @see StringsService */
+		public readonly stringsService: StringsService
+	) {}
 }

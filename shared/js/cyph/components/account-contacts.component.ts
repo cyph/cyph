@@ -13,6 +13,7 @@ import {AccountUserLookupService} from '../services/account-user-lookup.service'
 import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
+import {StringsService} from '../services/strings.service';
 import {sleep} from '../util/wait';
 
 
@@ -166,6 +167,9 @@ export class AccountContactsComponent implements AfterViewInit {
 		public readonly accountContactsService: AccountContactsService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

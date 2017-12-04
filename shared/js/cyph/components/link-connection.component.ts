@@ -188,9 +188,6 @@ export class LinkConnectionComponent implements AfterViewInit {
 		/** @ignore */
 		private readonly dialogService: DialogService,
 
-		/** @ignore */
-		private readonly stringsService: StringsService,
-
 		/** @see ChatService */
 		public readonly chatService: ChatService,
 
@@ -198,6 +195,9 @@ export class LinkConnectionComponent implements AfterViewInit {
 		public readonly envService: EnvService,
 
 		/** @see SessionService */
-		public readonly sessionService: SessionService
+		public readonly sessionService: SessionService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

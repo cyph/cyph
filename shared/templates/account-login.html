@@ -6,8 +6,8 @@
 >
 	<mat-card fxFlex fxFlex.gt-sm='50' *ngIf='pinUnlock !== undefined'>
 		<mat-card-title cyphTranslate>
-			<span cyphTranslate *ngIf='!pinUnlock'>Log in to Cyph</span>
-			<span cyphTranslate *ngIf='pinUnlock'>Unlock Cyph</span>
+			<span *ngIf='!pinUnlock'>{{stringsService.logInTitle}}</span>
+			<span *ngIf='pinUnlock'>{{stringsService.unlockTitle}}</span>
 		</mat-card-title>
 		<mat-card-subtitle *ngIf='pinUnlock'>
 			<p>

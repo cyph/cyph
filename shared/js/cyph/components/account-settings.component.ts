@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {AccountSettingsService} from '../services/account-settings.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -21,6 +22,9 @@ export class AccountSettingsComponent {
 		public readonly accountSettingsService: AccountSettingsService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

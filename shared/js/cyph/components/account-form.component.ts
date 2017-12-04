@@ -5,6 +5,7 @@ import {IAccountFileRecord, IForm} from '../proto';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
 import {EnvService} from '../services/env.service';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -61,6 +62,9 @@ export class AccountFormComponent implements OnInit {
 		public readonly accountFilesService: AccountFilesService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }
