@@ -12,11 +12,22 @@ export class AccountService {
 	/** Indicates whether the browser extension UI should be used. */
 	public isExtension: boolean		= false;
 
+	/** Indicates whether the UI is ready. */
+	public isUiReady: boolean		= false;
+
 	/** Indicates whether the telehealth UI should be used. */
 	public isTelehealth: boolean	= false;
 
 	/** Indicates whether menu is expanded. */
 	public menuExpanded: boolean	= false;
+
+	/** Resolves ready promise. */
+	public resolveUiReady: () => void;
+
+	/** Resolves after UI is ready. */
+	public readonly uiReady: Promise<void>	= new Promise(resolve => {
+		this.resolveUiReady	= resolve;
+	});
 
 	/** Toggles account menu. */
 	public toggleMenu (menuExpanded?: boolean) : void {
@@ -26,5 +37,9 @@ export class AccountService {
 		;
 	}
 
-	constructor () {}
+	constructor () {
+		this.uiReady.then(() => {
+			this.isUiReady	= true;
+		});
+	}
 }

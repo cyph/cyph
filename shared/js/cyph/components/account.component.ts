@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, AfterViewInit, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as Granim from 'granim';
 import {AccountEnvService} from '../services/account-env.service';
@@ -23,7 +23,15 @@ import {translate} from '../util/translate';
 	styleUrls: ['../../../css/components/account.scss'],
 	templateUrl: '../../../templates/account.html'
 })
-export class AccountComponent implements OnInit {
+export class AccountComponent implements AfterViewInit, OnInit {
+	/** @ignore */
+	private resolveViewInitiated: () => void;
+
+	/** Resolves after view init. */
+	public readonly viewInitiated: Promise<void>	= new Promise(resolve => {
+		this.resolveViewInitiated	= resolve;
+	});
+
 	/** @ignore */
 	private get route () : string {
 		return (
@@ -76,8 +84,13 @@ export class AccountComponent implements OnInit {
 	}
 
 	/** @inheritDoc */
+	public async ngAfterViewInit () : Promise<void> {
+		this.resolveViewInitiated();
+	}
+
+	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		this.activatedRouteService.url.subscribe(() => {
+		this.activatedRouteService.url.subscribe(async () => {
 			const route	= this.route;
 
 			if (this.accountDatabaseService.currentUser.value && route === 'login') {
@@ -106,10 +119,29 @@ export class AccountComponent implements OnInit {
 		}
 
 		if (!this.envService.coBranded && !this.accountService.isExtension) {
+			const selector	= '.cyph-gradient';
+
+			const started	= this.accountService.isUiReady ? undefined : new Promise(resolve => {
+				const elem	= document.querySelector(selector);
+				const event	= 'granim:start';
+
+				if (!elem) {
+					resolve();
+					return;
+				}
+
+				const handler	= () => {
+					resolve();
+					(<HTMLElement> elem).removeEventListener(event, handler);
+				};
+
+				(<HTMLElement> elem).addEventListener(event, handler);
+			});
+
 			/* tslint:disable-next-line:no-unused-expression */
 			new Granim({
 				direction: 'radial',
-				element: '.cyph-gradient',
+				element: selector,
 				isPausedWhenNotInView: true,
 				name: 'basic-gradient',
 				opacity: [1, 0.5, 0],
@@ -130,6 +162,13 @@ export class AccountComponent implements OnInit {
 					}
 				}
 			});
+
+			await started;
+		}
+
+		if (!this.accountService.isUiReady) {
+			await this.viewInitiated;
+			this.accountService.resolveUiReady();
 		}
 	}
 

@@ -125,7 +125,10 @@ export class AppService implements CanActivate {
 				routerService.navigate(['account'].concat(urlSegmentPaths.slice(1)));
 			}
 
-			if (!loadingAccounts) {
+			if (loadingAccounts) {
+				await this.accountService.uiReady;
+			}
+			else {
 				while (this.chatRootState === ChatRootStates.blank) {
 					await sleep();
 				}
