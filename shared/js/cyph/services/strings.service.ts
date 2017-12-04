@@ -35,7 +35,7 @@ export class StringsService {
 	/** @ignore */
 	private readonly internalSession: string		=
 		customBuildStrings.internalSession ||
-		`Cyph`
+		`cyph`
 	;
 
 	/** @see StringsService */

@@ -38,6 +38,7 @@ for (const k of [
 	'customBuildCallType',
 	'customBuildFavicon',
 	'customBuildPassword',
+	'customBuildStrings',
 	'history',
 	'location',
 	'navigator',
