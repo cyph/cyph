@@ -206,7 +206,8 @@ read -r -d '' modules <<- EOM
 	typedoc
 	typescript@2.4.2
 	u2f-api-polyfill
-	uglify-es@3.1.6
+	uglify-es
+	uglifyjs-webpack-plugin
 	unsemantic
 	url-loader
 	web-animations-js
