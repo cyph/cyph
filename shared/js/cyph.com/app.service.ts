@@ -391,6 +391,8 @@ export class AppService {
 
 			await waitForIterable(elements.heroSection);
 			$(document.body).addClass('load-complete');
+			await sleep(5000);
+			$('#pre-load').remove();
 		})();
 	}
 }

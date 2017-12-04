@@ -42,8 +42,10 @@ export class AppService implements CanActivate {
 	;
 
 	/** @ignore */
-	private loadComplete () : void {
+	private async loadComplete () : Promise<void> {
 		$(document.body).addClass('load-complete');
+		await sleep(5000);
+		$('#pre-load').remove();
 	}
 
 	/** @inheritDoc */
