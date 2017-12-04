@@ -13,6 +13,8 @@ prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='im io me video audio'
 site=''
 noSimple=''
+simple=''
+simpleProdBuild=''
 test=true
 websign=true
 
@@ -21,6 +23,10 @@ if [ "${1}" == '--prod' ] ; then
 	shift
 elif [ "${1}" == '--simple' ] ; then
 	simple=true
+	shift
+elif [ "${1}" == '--simple-prod-build' ] ; then
+	simple=true
+	simpleProdBuild=true
 	shift
 elif [ "${1}" == '--no-simple' ] ; then
 	noSimple=true
@@ -316,7 +322,7 @@ for d in $compiledProjects ; do
 		(<any> self).translations = ${JSON.stringify(require("../commands/translations"))};
 	`.trim())' > src/js/standalone/translations.ts
 
-	if [ "${simple}" ] ; then
+	if [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ; then
 		ng build --no-aot --no-sourcemaps || exit 1
 	else
 		../commands/prodbuild.sh || exit 1
