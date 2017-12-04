@@ -9,32 +9,38 @@ import {translate} from '../util/translate';
 @Injectable()
 export class StringsService {
 	/** @ignore */
+	private static readonly customBuildStrings: {[k: string]: string}	=
+		customBuildStrings || {}
+	;
+
+
+	/** @ignore */
 	private readonly internalCompany: string		=
-		customBuildStrings.internalCompany ||
+		StringsService.customBuildStrings.internalCompany ||
 		`Cyph`
 	;
 
 	/** @ignore */
 	private readonly internalFriend: string			=
-		customBuildStrings.internalFriend ||
+		StringsService.customBuildStrings.internalFriend ||
 		`friend`
 	;
 
 	/** @ignore */
 	private readonly internalProduct: string		=
-		customBuildStrings.internalProduct ||
+		StringsService.customBuildStrings.internalProduct ||
 		`Cyph`
 	;
 
 	/** @ignore */
 	private readonly internalProductShort: string	=
-		customBuildStrings.internalProductShort ||
+		StringsService.customBuildStrings.internalProductShort ||
 		`Cyph`
 	;
 
 	/** @ignore */
 	private readonly internalSession: string		=
-		customBuildStrings.internalSession ||
+		StringsService.customBuildStrings.internalSession ||
 		`cyph`
 	;
 
@@ -436,7 +442,7 @@ export class StringsService {
 				continue;
 			}
 
-			strings[k]	= translate(customBuildStrings[k] || s);
+			strings[k]	= translate(StringsService.customBuildStrings[k] || s);
 		}
 	}
 }
