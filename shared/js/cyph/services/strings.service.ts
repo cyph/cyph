@@ -257,8 +257,7 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly p2pDisabledLocalIOS: string		=
-		`Voice/video calling is currently unsupported on iOS. ` +
-		`However, it will be supported after the upcoming release of iOS 11.`
+		`Voice/video calling is currently unsupported on iOS.`
 	;
 
 	/** @see StringsService */
