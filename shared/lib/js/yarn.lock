@@ -6,7 +6,7 @@
   version "0.3.9"
   resolved "https://registry.yarnpkg.com/8fold-marked/-/8fold-marked-0.3.9.tgz#bb89c645612f8ccfaffac1ca6e3c11f168c9cf59"
 
-"@angular-devkit/build-optimizer@~0.0.31":
+"@angular-devkit/build-optimizer@~0.0.34":
   version "0.0.34"
   resolved "https://registry.yarnpkg.com/@angular-devkit/build-optimizer/-/build-optimizer-0.0.34.tgz#47a0482f5687db79d102cf9d416cf6fa6774d702"
   dependencies:
@@ -21,7 +21,7 @@
   dependencies:
     source-map "^0.5.6"
 
-"@angular-devkit/schematics@~0.0.34":
+"@angular-devkit/schematics@~0.0.38":
   version "0.0.38"
   resolved "https://registry.yarnpkg.com/@angular-devkit/schematics/-/schematics-0.0.38.tgz#b267141be27bb5dea4020b2bd6729db3629656ea"
   dependencies:
@@ -42,15 +42,15 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/cli@1.5.4", "@angular/cli@>=1.1.0":
-  version "1.5.4"
-  resolved "https://registry.yarnpkg.com/@angular/cli/-/cli-1.5.4.tgz#3eebfa0c6f8a4ea7a05d9462e55db9f150a3a015"
+"@angular/cli@>=1.1.0", "@angular/cli@^1.5.5":
+  version "1.5.5"
+  resolved "https://registry.yarnpkg.com/@angular/cli/-/cli-1.5.5.tgz#400ef304d88b13a82a72a4c4c42e2b53a0db04fd"
   dependencies:
-    "@angular-devkit/build-optimizer" "~0.0.31"
-    "@angular-devkit/schematics" "~0.0.34"
+    "@angular-devkit/build-optimizer" "~0.0.34"
+    "@angular-devkit/schematics" "~0.0.38"
     "@ngtools/json-schema" "1.1.0"
-    "@ngtools/webpack" "1.8.4"
-    "@schematics/angular" "~0.1.0"
+    "@ngtools/webpack" "1.8.5"
+    "@schematics/angular" "~0.1.8"
     autoprefixer "^6.5.3"
     chalk "~2.2.0"
     circular-dependency-plugin "^3.0.0"
@@ -466,9 +466,9 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@ngtools/json-schema/-/json-schema-1.1.0.tgz#c3a0c544d62392acc2813a42c8a0dc6f58f86922"
 
-"@ngtools/webpack@1.8.4":
-  version "1.8.4"
-  resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-1.8.4.tgz#345b726b9fa827b05ca1daadb6d7e29592ca5947"
+"@ngtools/webpack@1.8.5", "@ngtools/webpack@^1.8.5":
+  version "1.8.5"
+  resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-1.8.5.tgz#f35b646f58db1d4ac5938031051a0f9187d91961"
   dependencies:
     chalk "~2.2.0"
     enhanced-resolve "^3.1.0"
@@ -521,7 +521,7 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
 
-"@schematics/angular@~0.1.0":
+"@schematics/angular@~0.1.8":
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/@schematics/angular/-/angular-0.1.8.tgz#2c98cda013a2b87ff457a749775b95b3a2475698"
   dependencies:
@@ -2576,7 +2576,7 @@ comlinkjs@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/comlinkjs/-/comlinkjs-2.3.0.tgz#e00caf677c0283ca15bc8ec099dde987f7d54bb2"
 
-commander@2, commander@2.12.2, commander@2.12.x, commander@2.5.x, commander@2.9.0, commander@2.x, commander@^2.8.1, commander@^2.9.0, commander@~2.11.0, commander@~2.12.1:
+commander@2, commander@2.12.2, commander@2.12.x, commander@2.5.x, commander@2.9.0, commander@2.x, commander@^2.8.1, commander@^2.9.0, commander@~2.12.1:
   version "2.12.2"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.12.2.tgz#0f5946c427ed9ec0d91a46bb9def53e54650e555"
 
@@ -4347,9 +4347,9 @@ firebase-token-generator@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/firebase-token-generator/-/firebase-token-generator-2.0.0.tgz#9767d759ec13abdc99ba115fd5ea99d8b93d1206"
 
-firebase-tools@^3.15.4:
-  version "3.15.4"
-  resolved "https://registry.yarnpkg.com/firebase-tools/-/firebase-tools-3.15.4.tgz#ff50d7bf5f39a7fa2f9bffbe75f8c1da06bf7b89"
+firebase-tools@^3.16.0:
+  version "3.16.0"
+  resolved "https://registry.yarnpkg.com/firebase-tools/-/firebase-tools-3.16.0.tgz#1389fc160215ec241145441c76a848cfce9b7941"
   dependencies:
     JSONStream "^1.2.1"
     archiver "^2.1.0"
@@ -4615,8 +4615,8 @@ gauge@~2.7.1, gauge@~2.7.3:
     wide-align "^1.1.0"
 
 gaze@1.1.0, gaze@^0.5.1, gaze@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.0.tgz#74d3ffb0110ede715c9f15bba56c6e9b851d3ce0"
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.2.tgz#847224677adb8870d679257ed3388fdb61e40105"
   dependencies:
     globule "^1.0.0"
 
@@ -7087,8 +7087,8 @@ multipipe@^0.1.2:
     duplexer2 "0.0.2"
 
 mute-stream@0.0.4, mute-stream@0.0.5, mute-stream@~0.0.4:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.5.tgz#8fbfabb0a98a253d3184331f9e8deb7372fac6c0"
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
 
 mz@^2.6.0:
   version "2.7.0"
@@ -9471,8 +9471,8 @@ rtcpeerconnection-shim@^1.1.13:
     sdp "^2.2.0"
 
 rtcpeerconnection@^8.0.0:
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/rtcpeerconnection/-/rtcpeerconnection-8.0.1.tgz#9e775a7648691df34ac0b6011bb473ac1fa96432"
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/rtcpeerconnection/-/rtcpeerconnection-8.1.0.tgz#74ee3afb1eda657e23d033ececf456d23e432553"
   dependencies:
     lodash.clonedeep "^4.3.2"
     sdp-jingle-json "^3.0.0"
@@ -10674,8 +10674,8 @@ tns-core-modules-widgets@^3.3.0, tns-core-modules-widgets@next:
   resolved "https://registry.yarnpkg.com/tns-core-modules-widgets/-/tns-core-modules-widgets-3.4.0-2017-11-2-1.tgz#bda0d2bfaab814c1c8ff52a163c42a43b788fc82"
 
 tns-core-modules@next:
-  version "3.4.0-2017-12-1-1"
-  resolved "https://registry.yarnpkg.com/tns-core-modules/-/tns-core-modules-3.4.0-2017-12-1-1.tgz#0ca4054ff492af28961af610511d1ac2bb009f35"
+  version "3.4.0-2017-12-4-2"
+  resolved "https://registry.yarnpkg.com/tns-core-modules/-/tns-core-modules-3.4.0-2017-12-4-2.tgz#9471d4129e315f38d56a988eb0e7f131487f24f8"
   dependencies:
     tns-core-modules-widgets next
 
@@ -10952,11 +10952,11 @@ uc.micro@^1.0.1, uc.micro@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/uc.micro/-/uc.micro-1.0.3.tgz#7ed50d5e0f9a9fb0a573379259f2a77458d50192"
 
-uglify-es@3.1.6, uglify-es@^3.1.3:
-  version "3.1.6"
-  resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.1.6.tgz#b0f818c055a7e9538abc2286e70c743f2938311f"
+uglify-es@^3.1.3, uglify-es@^3.2.0, uglify-es@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.2.1.tgz#93de0aad8a1bb629c8a316f686351bc4d6ece687"
   dependencies:
-    commander "~2.11.0"
+    commander "~2.12.1"
     source-map "~0.6.1"
 
 uglify-js@3.2.x, uglify-js@^2.6, uglify-js@^2.8.29:
@@ -10970,15 +10970,15 @@ uglify-to-browserify@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/uglify-to-browserify/-/uglify-to-browserify-1.0.2.tgz#6e0924d6bda6b5afe349e39a6d632850a0f882b7"
 
-uglifyjs-webpack-plugin@1.0.0, uglifyjs-webpack-plugin@^0.4.6:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-1.0.0.tgz#1c58b5db1ed043e024aef66f8ade25e148206264"
+uglifyjs-webpack-plugin@1.0.0, uglifyjs-webpack-plugin@^0.4.6, uglifyjs-webpack-plugin@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-1.1.2.tgz#8a9abc238d01a33daaf86fa9a84c7ebc1e67b0f9"
   dependencies:
     cacache "^10.0.0"
     find-cache-dir "^1.0.0"
     schema-utils "^0.3.0"
-    source-map "^0.5.6"
-    uglify-es "^3.1.3"
+    source-map "^0.6.1"
+    uglify-es "^3.2.0"
     webpack-sources "^1.0.1"
     worker-farm "^1.4.1"
 
@@ -11399,14 +11399,14 @@ void-elements@^2.0.0, void-elements@^2.0.1:
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
 
 vscode-debugadapter@^1.24.0:
-  version "1.24.0"
-  resolved "https://registry.yarnpkg.com/vscode-debugadapter/-/vscode-debugadapter-1.24.0.tgz#28063b01cca8ac1e5f7a13d118e3207a6e887ffd"
+  version "1.25.0"
+  resolved "https://registry.yarnpkg.com/vscode-debugadapter/-/vscode-debugadapter-1.25.0.tgz#8b39ab4e0f7432a94ef51e3ec67c0c3e9fc98ab8"
   dependencies:
-    vscode-debugprotocol "^1.24.0"
+    vscode-debugprotocol "1.25.0"
 
-vscode-debugprotocol@^1.24.0:
-  version "1.24.0"
-  resolved "https://registry.yarnpkg.com/vscode-debugprotocol/-/vscode-debugprotocol-1.24.0.tgz#dbc10e8d7d95b102727a19af3f0fcef7e252b08e"
+vscode-debugprotocol@1.25.0, vscode-debugprotocol@^1.24.0:
+  version "1.25.0"
+  resolved "https://registry.yarnpkg.com/vscode-debugprotocol/-/vscode-debugprotocol-1.25.0.tgz#7a7e38df4cad8839e37ebcd06ed903902d97a7e3"
 
 walkdir@0.0.7:
   version "0.0.7"
@@ -11556,14 +11556,14 @@ webpack-sources@^0.2.3, webpack-sources@^1.0.0, webpack-sources@^1.0.1, webpack-
     source-map "~0.6.1"
 
 webpack-subresource-integrity@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/webpack-subresource-integrity/-/webpack-subresource-integrity-1.0.1.tgz#1fc09d46497da66e46743a2a51d2cc385b9cb0ed"
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/webpack-subresource-integrity/-/webpack-subresource-integrity-1.0.2.tgz#b2ed47e1caf4854f1faea96636372f2c581556da"
   dependencies:
     webpack-core "^0.6.8"
 
-webpack@^3.9.1, webpack@~3.8.1:
-  version "3.9.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.9.1.tgz#9a60aa544ed5d4d454c069e3f521aa007e02643c"
+webpack@^3.10.0, webpack@~3.8.1:
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.10.0.tgz#5291b875078cf2abf42bdd23afe3f8f96c17d725"
   dependencies:
     acorn "^5.0.0"
     acorn-dynamic-import "^2.0.0"
