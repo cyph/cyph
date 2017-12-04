@@ -3,6 +3,7 @@
 import {Internal} from '../../proto';
 import {IProto} from '../iproto';
 import {GenericArrayProto} from './generic-array-proto';
+import {GenericMapProto} from './generic-map-proto';
 import {GenericProto} from './generic-proto';
 
 
@@ -16,25 +17,46 @@ export * from './maybe-binary-proto';
 
 
 /** Boolean array encoder/decoder. */
-export const BooleanArrayProto: IProto<boolean[]>	= new GenericArrayProto(Internal.BooleanArray);
+export const BooleanArrayProto: IProto<boolean[]>			=
+	new GenericArrayProto(Internal.BooleanArray)
+;
 
 /** Boolean encoder/decoder. */
-export const BooleanProto: IProto<boolean>			= new GenericProto(Internal.BooleanValue);
+export const BooleanProto: IProto<boolean>					=
+	new GenericProto(Internal.BooleanValue)
+;
 
 /** Number array encoder/decoder. */
-export const NumberArrayProto: IProto<number[]>		= new GenericArrayProto(Internal.NumberArray);
+export const NumberArrayProto: IProto<number[]>				=
+	new GenericArrayProto(Internal.NumberArray)
+;
 
 /** Number encoder/decoder. */
-export const NumberProto: IProto<number>			= new GenericProto(Internal.NumberValue);
+export const NumberProto: IProto<number>					=
+	new GenericProto(Internal.NumberValue)
+;
 
 /** String array encoder/decoder. */
-export const StringArrayProto: IProto<string[]>		= new GenericArrayProto(Internal.StringArray);
+export const StringArrayProto: IProto<string[]>				=
+	new GenericArrayProto(Internal.StringArray)
+;
+
+/** String map encoder/decoder. */
+export const StringMapProto: IProto<{[k: string]: string}>	=
+	new GenericMapProto(Internal.StringMap)
+;
 
 /** String encoder/decoder. */
-export const StringProto: IProto<string>			= new GenericProto(Internal.StringValue);
+export const StringProto: IProto<string>					=
+	new GenericProto(Internal.StringValue)
+;
 
 /** Uint32 array encoder/decoder. */
-export const Uint32ArrayProto: IProto<number[]>		= new GenericArrayProto(Internal.Uint32Array);
+export const Uint32ArrayProto: IProto<number[]>				=
+	new GenericArrayProto(Internal.Uint32Array)
+;
 
 /** Uint32 encoder/decoder. */
-export const Uint32Proto: IProto<number>			= new GenericProto(Internal.Uint32Value);
+export const Uint32Proto: IProto<number>					=
+	new GenericProto(Internal.Uint32Value)
+;

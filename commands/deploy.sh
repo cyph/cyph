@@ -384,6 +384,7 @@ if [ "${websign}" ] ; then
 			customBuildConfig="${d}/config.json"
 			customBuildBackground="${d}/background.png"
 			customBuildFavicon="${d}/favicon.png"
+			customBuildStrings="${d}/strings.json"
 			customBuildTheme="${d}/theme.scss"
 			customBuildStylesheet="custom-builds/${customBuildBase}.css"
 			customBuilds="${customBuilds} ${customBuild}"
@@ -393,6 +394,7 @@ if [ "${websign}" ] ; then
 				"${customBuildConfig}" \
 				"${customBuildBackground}" \
 				"${customBuildFavicon}" \
+				"${customBuildStrings}" \
 				"${customBuildStylesheet}" \
 				"${customBuildTheme}"
 

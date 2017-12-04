@@ -3,8 +3,11 @@ import {IProto} from '../iproto';
 
 
 /** Deserializes bytes to data. */
-export const deserialize	= async <T> (proto: IProto<T>, bytes: Uint8Array) : Promise<T> => {
-	return proto.decode(bytes);
+export const deserialize	= async <T> (
+	proto: IProto<T>,
+	bytes: Uint8Array|string
+) : Promise<T> => {
+	return proto.decode(potassiumUtil.fromBase64(bytes));
 };
 
 /** @see JSON.parse */

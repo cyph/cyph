@@ -305,7 +305,6 @@
 		"no-unnecessary-local-variable": true,
 		"no-unnecessary-override": true,
 		"no-unnecessary-semicolons": true,
-		"no-var-self": true,
 		"no-with-statement": true,
 		"possible-timing-attack": true,
 		"prefer-type-cast": true,
