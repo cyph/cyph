@@ -9,9 +9,11 @@
 				(envService.webSignError | async)
 			'
 		>
-			WARNING: Your Cyph instance has a problem.
-			See <a href='https://www.cyph.com/websignerror'>here</a>
-			for more details and the solution.
+			<span cyphTranslate>WARNING: Your</span>
+			<span>{{stringsService.product}}</span>
+			<span cyphTranslate>instance has a problem. See</span>
+			<a href='https://www.cyph.com/websignerror' cyphTranslate>here</a>
+			<span cyphTranslate>for more details and the solution.</span>
 		</h3>
 
 		<cyph-chat-main

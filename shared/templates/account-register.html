@@ -3,8 +3,8 @@
 	[class.checking]='checking'
 >
 	<mat-card fxFlex class='fullscreen'>
-		<mat-card-title cyphTranslate>
-			Register
+		<mat-card-title>
+			{{stringsService.registerTitle}}
 		</mat-card-title>
 		<mat-card-content>
 			<div fxLayout='column' fxLayoutGap='32px'>
@@ -33,9 +33,15 @@
 										fxLayoutAlign='center center'
 										class='description'
 									>
-										Congratulations on securing your Cyph account invite!
+										<span cyphTranslate>Congratulations on securing your</span>
+										<span>{{stringsService.product}}</span>
+										<span cyphTranslate>account invite!</span>
 									</div>
-									<div fxLayout='row' fxLayoutAlign='center center'>
+									<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										cyphTranslate
+									>
 										You'll be getting early access to premium features, and
 										will still be able to easily communicate with anyone who
 										doesn't have an account yet.
@@ -60,8 +66,11 @@
 										fxLayoutAlign='center center'
 										class='description'
 									>
-										Who are you? Associate your Cyph account with your identity
-										or an alias.
+										<span cyphTranslate>Who are you? Associate your</span>
+										<span>{{stringsService.product}}</span>
+										<span cyphTranslate>
+											account with your identity or an alias.
+										</span>
 									</div>
 
 									<div fxLayout='row' fxLayoutAlign='center center'>
@@ -185,12 +194,15 @@
 										fxLayoutAlign='center center'
 										class='description'
 									>
-										This is your Cyph master key. It's like a normal password,
-										but must also be mathematically strong enough to encrypt
-										your data.
+										<span cyphTranslate>This is your</span>
+										<span>{{stringsService.product}}</span>
+										<span cyphTranslate>
+											master key. It's like a normal password, but must also
+											be mathematically strong enough to encrypt your data.
+										</span>
 									</div>
 
-									<div fxLayout='row' fxLayoutAlign='center center'>
+									<div fxLayout='row' fxLayoutAlign='center center' cyphTranslate>
 										We've automatically generated a secure master key for you.
 										You may pick your own instead, but to ensure your privacy
 										it must be at least 20 characters and very difficult to
@@ -207,7 +219,7 @@
 												fxLayout='row'
 												fxLayoutAlign='center center'
 											>
-												<span>
+												<span cyphTranslate>
 													<strong>WARNING:</strong>
 													<span>
 														If you lose this key, you will not
@@ -227,7 +239,7 @@
 												fxLayout='row'
 												fxLayoutAlign='center center'
 											>
-												<span>
+												<span cyphTranslate>
 													<span>And</span>
 													<strong>DO NOT</strong>
 													<span>
@@ -249,7 +261,9 @@
 									>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3>Option #1: Securely Generated Master Key</h3>
+												<h3 cyphTranslate>
+													Option #1: Securely Generated Master Key
+												</h3>
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<div class='xkcd-passphrase'>
@@ -268,7 +282,9 @@
 									>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3>Option #2: Custom Master Key</h3>
+												<h3 cyphTranslate>
+													Option #2: Custom Master Key
+												</h3>
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<mat-form-field fxFlex='60'>
@@ -361,9 +377,13 @@
 									</div>
 
 									<div fxLayout='row' fxLayoutAlign='center center'>
-										A four-digit number is fine in most cases. However, you may
-										choose to use a longer custom password, which will be more
-										secure if you plan to sign in to Cyph on a shared device.
+										<span cyphTranslate>
+											A four-digit number is fine in most cases. However,
+											you may choose to use a longer custom password, which
+											well be more secure if you plan to sign in to
+										</span>
+										<span>{{stringsService.product}}</span>
+										<span cyphTranslate>on a shared device.</span>
 									</div>
 
 									<div
@@ -374,7 +394,9 @@
 									>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3>Option #1: Four-Digit Number</h3>
+												<h3 cyphTranslate>
+													Option #1: Four-Digit Number
+												</h3>
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<cyph-pin-input
@@ -396,7 +418,9 @@
 									>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3>Option #2: Custom Password</h3>
+												<h3 cyphTranslate>
+													Option #2: Custom Password
+												</h3>
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<mat-form-field fxFlex='60'>
@@ -478,11 +502,12 @@
 									<span cyphTranslate>Confirm</span>
 								</ng-template>
 
-								<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
+								<div fxFlex fxLayout='column' fxLayoutGap='48px'>
 									<div
 										fxLayout='row'
 										fxLayoutAlign='center center'
 										class='description'
+										cyphTranslate
 									>
 										Does this all look right?
 									</div>

@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -10,5 +11,8 @@ import {Component} from '@angular/core';
 	templateUrl: '../../../templates/chat-compose.html'
 })
 export class ChatComposeComponent {
-	constructor () {}
+	constructor (
+		/** @see StringsService */
+		public readonly stringsService: StringsService
+	) {}
 }

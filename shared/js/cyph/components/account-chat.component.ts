@@ -18,6 +18,7 @@ import {ScrollService} from '../services/scroll.service';
 import {SessionCapabilitiesService} from '../services/session-capabilities.service';
 import {SessionInitService} from '../services/session-init.service';
 import {SessionService} from '../services/session.service';
+import {StringsService} from '../services/strings.service';
 import {sleep} from '../util/wait';
 
 
@@ -106,6 +107,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		public readonly envService: EnvService,
 
 		/** @see SessionService */
-		public readonly sessionService: SessionService
+		public readonly sessionService: SessionService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

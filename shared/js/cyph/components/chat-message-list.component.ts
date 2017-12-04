@@ -17,6 +17,7 @@ import {AccountUserLookupService} from '../services/account-user-lookup.service'
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
+import {StringsService} from '../services/strings.service';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 
 
@@ -137,6 +138,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		private readonly scrollService: ScrollService,
 
 		/** @ignore */
-		private readonly sessionService: SessionService
+		private readonly sessionService: SessionService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

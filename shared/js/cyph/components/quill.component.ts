@@ -16,6 +16,7 @@ import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
 import {LockFunction} from '../lock-function-type';
 import {EnvService} from '../services/env.service';
+import {StringsService} from '../services/strings.service';
 import {lockFunction} from '../util/lock';
 import {uuid} from '../util/uuid';
 import {sleep, waitForValue} from '../util/wait';
@@ -268,6 +269,9 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly envService: EnvService
+		private readonly envService: EnvService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

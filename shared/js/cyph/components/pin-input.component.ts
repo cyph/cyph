@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import * as $ from 'jquery';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -102,4 +103,9 @@ export class PinInputComponent implements ControlValueAccessor {
 			this.valueInternal	= s;
 		}
 	}
+
+	constructor (
+		/** @see StringsService */
+		public readonly stringsService: StringsService
+	) {}
 }

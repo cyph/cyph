@@ -28,6 +28,7 @@ echo "@import '../mixins';" > shared/css/native/components/${selector}.scss
 
 cat > shared/js/cyph/components/${selector}.component.ts << EOM
 import {Component} from '@angular/core';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -39,7 +40,10 @@ import {Component} from '@angular/core';
 	templateUrl: '../../../templates/${selector}.html'
 })
 export class ${class} {
-	constructor () {}
+	constructor (
+		/** @see StringsService */
+		public readonly stringsService: StringsService
+	) {}
 }
 EOM
 

@@ -39,10 +39,9 @@
 				<mat-form-field fxFlex='50'>
 					<input
 						matInput
-						cyphTranslate
 						class='connect-link-input'
 						[(ngModel)]='link'
-						matTooltip='Cyph Link'
+						[matTooltip]='stringsService.linkTooltip'
 					/>
 				</mat-form-field>
 				<button
@@ -59,7 +58,7 @@
 				<a
 					class='connect-link-link'
 					[href]='link'
-					matTooltip='Cyph Link'
+					[matTooltip]='stringsService.linkTooltip'
 				>{{link}}</a>
 
 				<br />

@@ -10,9 +10,15 @@
 			(submit)='submit()'
 			*ngIf='!submitted'
 		>
-			<div cyphTranslate>
-				Congratulations! If you're seeing this page, it means you've been invited to
-				reserve your Cyph username before the general public.
+			<div>
+				<span cyphTranslate>
+					Congratulations! If you're seeing this page, it means
+					you've been invited to reserve your
+				</span>
+				<span>{{stringsService.product}}</span>
+				<span cyphTranslate>
+					username before the general public.
+				</span>
 			</div>
 			<div cyphTranslate>
 				There's no character minimum, allowing you to reserve premium short usernames;
@@ -98,8 +104,9 @@
 				If you are unable to reserve your desired username or alternate, we will email you
 				with your options.
 			</div>
-			<div cyphTranslate>
-				Thank you for your continued support of Cyph!
+			<div>
+				<span cyphTranslate>Thank you for your continued support of</span>
+				<span>{{stringsService.company}}!</span>
 			</div>
 		</div>
 	</div>

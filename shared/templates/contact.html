@@ -11,7 +11,10 @@
 			*ngIf='!sent'
 		>
 			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='feedbackForm'>
-				<h3 cyphTranslate>Submit Feedback to Cyph</h3>
+				<h3>
+					<span cyphTranslate>Submit Feedback to</span>
+					<span>{{stringsService.company}}</span>
+				</h3>
 			</div>
 			<div fxLayout='row' *ngIf='!feedbackForm'>
 				<mat-select
@@ -19,7 +22,7 @@
 					fxFlex
 					[(ngModel)]='to'
 					name='to'
-					placeholder='Cyph Team to Contact'
+					[placeholder]='stringsService.teamToContact'
 				>
 					<mat-option
 						*ngFor='let address of configService.contactEmailAddresses'

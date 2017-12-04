@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {EnvService} from '../services/env.service';
 import {SessionService} from '../services/session.service';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -18,6 +19,9 @@ export class FooterComponent {
 		public readonly envService: EnvService,
 
 		/** @see SessionService */
-		public readonly sessionService: SessionService
+		public readonly sessionService: SessionService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

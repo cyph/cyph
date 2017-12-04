@@ -1,20 +1,21 @@
 <div [class.mobile]='envService.isMobile'>
 	<mat-tab-group cyphNanoScroller [cyphNanoScrollerNoParent]='true'>
-		<mat-tab cyphTranslate [label]='stringsService.formattingHelp'>
+		<mat-tab [label]='stringsService.formattingHelp'>
 			<p>
-				<span>Cyph uses a version of Markdown called</span>
-				<a href='http://commonmark.org'>CommonMark</a>
-				<span>for formatting.</span>
+				<span>{{stringsService.product}}</span>
+				<span cyphTranslate>uses a version of Markdown called</span>
+				<a href='http://commonmark.org' cyphTranslate>CommonMark</a>
+				<span cyphTranslate>for formatting.</span>
 				<br />
-				<span>
+				<span cyphTranslate>
 					We also support various extensions &ndash;
 					including emojis and code fencing.
 				</span>
 			</p>
-			<p>
+			<p cyphTranslate>
 				The following examples are shamelessly copied from reddit:
 			</p>
-			<table>
+			<table cyphTranslate>
 				<tbody>
 					<tr>
 						<th>you type:</th>
@@ -30,10 +31,12 @@
 					</tr>
 					<tr>
 						<td>
-							[cyph <span>me</span>!](https://cyph.com)
+							[{{stringsService.session}} <span>me</span>!](https://cyph.com)
 						</td>
 						<td>
-							<a href='https://cyph.com'>cyph <span>me</span>!</a>
+							<a href='https://cyph.com'>
+								{{stringsService.session}} <span>me</span>!
+							</a>
 						</td>
 					</tr>
 					<tr>
@@ -111,8 +114,8 @@
 			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 				<br />
 				<br />
-				<div fxLayoutAlign='center center' cyphTranslate>
-					<div>
+				<div fxLayoutAlign='center center'>
+					<div cyphTranslate>
 						<span>Please check out the</span>
 						<a [href]='envService.homeUrl + "faq"'>FAQs</a>
 						<span>first!</span>

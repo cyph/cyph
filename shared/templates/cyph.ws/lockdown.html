@@ -6,11 +6,15 @@
 		[class.checking]='checking'
 	>
 		<mat-card fxFlex fxFlex.gt-sm='50'>
-			<mat-card-title cyphTranslate>
-				Log In
+			<mat-card-title>
+				{{stringsService.unlockTitle}}
 			</mat-card-title>
-			<mat-card-subtitle cyphTranslate>
-				Welcome to Cyph! You must enter a password to access this environment.
+			<mat-card-subtitle>
+				<span cyphTranslate>Welcome to</span>
+				<span>{{stringsService.product}}!</span>
+				<span cyphTranslate>
+					You must enter a password to access this environment.
+				</span>
 			</mat-card-subtitle>
 			<mat-card-content>
 				<form ngNativeValidate (submit)='submit()'>

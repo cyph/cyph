@@ -75,7 +75,9 @@
 			/>
 		</div>
 		<div *ngIf='!sessionService.apiFlags.telehealth'>
-			<span cyphTranslate>This cyph has been aborted.</span>
+			<span cyphTranslate>This</span>
+			<span>{{stringsService.session}}</span>
+			<span cyphTranslate>has been aborted.</span>
 			<br />
 			<br />
 			<span cyphTranslate>Please</span>

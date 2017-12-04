@@ -8,6 +8,7 @@ import {microlight} from 'microlight-string';
 import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {HtmlSanitizerService} from '../services/html-sanitizer.service';
+import {StringsService} from '../services/strings.service';
 import {sleep} from '../util/wait';
 
 
@@ -94,7 +95,10 @@ export class MarkdownComponent implements OnChanges {
 		private readonly htmlSanitizerService: HtmlSanitizerService,
 
 		/** @ignore */
-		private readonly envService: EnvService
+		private readonly envService: EnvService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {
 		this.markdownIt	= new MarkdownIt({
 			breaks: true,

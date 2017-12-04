@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
 import {CyphertextService} from '../services/cyphertext.service';
 import {EnvService} from '../services/env.service';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -36,6 +37,9 @@ export class ChatCyphertextComponent implements OnInit {
 		private readonly envService: EnvService,
 
 		/** @see CyphertextService */
-		public readonly cyphertextService: CyphertextService
+		public readonly cyphertextService: CyphertextService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

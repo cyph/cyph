@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {EnvService} from '../services/env.service';
 import {SignupService} from '../services/signup.service';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -20,6 +21,9 @@ export class BetaRegisterComponent {
 		public readonly envService: EnvService,
 
 		/** @see SignupService */
-		public readonly signupService: SignupService
+		public readonly signupService: SignupService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

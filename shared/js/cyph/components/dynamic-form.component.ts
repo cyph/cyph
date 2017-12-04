@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
+import {StringsService} from '../services/strings.service';
 import {getOrSetDefault} from '../util/get-or-set-default';
 
 
@@ -43,5 +44,8 @@ export class DynamicFormComponent {
 		return new Date(timestamp);
 	}
 
-	constructor () {}
+	constructor (
+		/** @see StringsService */
+		public readonly stringsService: StringsService
+	) {}
 }

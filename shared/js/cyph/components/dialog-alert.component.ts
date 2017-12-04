@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -19,5 +20,8 @@ export class DialogAlertComponent {
 	/** Title. */
 	public title: string;
 
-	constructor () {}
+	constructor (
+		/** @see StringsService */
+		public readonly stringsService: StringsService
+	) {}
 }

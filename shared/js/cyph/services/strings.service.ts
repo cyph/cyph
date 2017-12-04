@@ -8,6 +8,36 @@ import {translate} from '../util/translate';
  */
 @Injectable()
 export class StringsService {
+	/** @ignore */
+	private readonly internalCompany: string		=
+		customBuildStrings.internalCompany ||
+		`Cyph`
+	;
+
+	/** @ignore */
+	private readonly internalFriend: string			=
+		customBuildStrings.internalFriend ||
+		`friend`
+	;
+
+	/** @ignore */
+	private readonly internalProduct: string		=
+		customBuildStrings.internalProduct ||
+		`Cyph`
+	;
+
+	/** @ignore */
+	private readonly internalProductShort: string	=
+		customBuildStrings.internalProductShort ||
+		`Cyph`
+	;
+
+	/** @ignore */
+	private readonly internalSession: string		=
+		customBuildStrings.internalSession ||
+		`Cyph`
+	;
+
 	/** @see StringsService */
 	public readonly accept: string					= `accept`;
 
@@ -24,17 +54,20 @@ export class StringsService {
 	public readonly cancel: string					= `cancel`;
 
 	/** @see StringsService */
+	public readonly company: string					= `${this.internalCompany}`;
+
+	/** @see StringsService */
 	public readonly connectedNotification: string	= `Connected!`;
 
 	/** @see StringsService */
-	public readonly contactCyph: string				= `Contact Cyph`;
+	public readonly contactCyph: string				= `Contact ${this.internalCompany}`;
 
 	/** @see StringsService */
 	public readonly continueDialogAction: string	= `continue`;
 
 	/** @see StringsService */
 	public readonly cypherToast1: string			=
-		`Prepare to witness the amazing nuts and bolts of Cyph.`
+		`Prepare to witness the amazing nuts and bolts of ${this.internalProductShort}.`
 	;
 
 	/** @see StringsService */
@@ -72,7 +105,7 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly disconnectNotification: string	=
-		`This cyph has been disconnected.`
+		`This ${this.internalSession} has been disconnected.`
 	;
 
 	/** @see StringsService */
@@ -80,7 +113,7 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly disconnectWarning: string		=
-		`After closing Cyph, your messages will no longer be retrievable.`
+		`After closing ${this.internalProduct}, your messages will no longer be retrievable.`
 	;
 
 	/** @see StringsService */
@@ -96,7 +129,7 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly fileTransferInitFriend: string	=
-		`Your friend is sending the file:`
+		`Your ${this.internalFriend} is sending the file:`
 	;
 
 	/** @see StringsService */
@@ -108,7 +141,12 @@ export class StringsService {
 	public readonly formattingHelp: string			= `Formatting Help`;
 
 	/** @see StringsService */
-	public readonly friend: string					= `friend`;
+	public readonly friend: string					= `${this.internalFriend}`;
+
+	/** @see StringsService */
+	public readonly friendIsTyping: string			=
+		`${this.capitalize(this.internalFriend)} is typing...`
+	;
 
 	/** @see StringsService */
 	public readonly help: string					= `Help`;
@@ -118,7 +156,7 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly incomingFileDownload: string	=
-		`Your friend would like to send you a file. Accept the file transfer?`
+		`Your ${this.internalFriend} would like to send you a file. Accept the file transfer?`
 	;
 
 	/** @see StringsService */
@@ -128,7 +166,7 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly incomingFileSave: string		=
-		`Your friend has sent you a file. It has not been scanned for malware; ` +
+		`Your ${this.internalFriend} has sent you a file. It has not been scanned for malware; ` +
 		`you may choose to accept it AT YOUR OWN RISK. Save this file?`
 	;
 
@@ -158,7 +196,9 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
-	public readonly linkCopied: string				= `Cyph link copied.`;
+	public readonly linkCopied: string				=
+		`${this.capitalize(this.internalSession)} link copied.`
+	;
 
 	/** @see StringsService */
 	public readonly linkCopyFail: string			=
@@ -169,7 +209,15 @@ export class StringsService {
 	public readonly linkExpiresAt: string			= `Link expires at`;
 
 	/** @see StringsService */
+	public readonly linkTooltip: string				=
+		`${this.capitalize(this.internalSession)} Link`
+	;
+
+	/** @see StringsService */
 	public readonly logIn: string					= `Log In`;
+
+	/** @see StringsService */
+	public readonly logInTitle: string				= `Log in to ${this.internalProduct}`;
 
 	/** @see StringsService */
 	public readonly masterKey: string				= `Master Key`;
@@ -227,12 +275,12 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly outgoingFileRejected: string	=
-		`Your "friend" has rejected the following file transfer:`
+		`Your "${this.internalFriend}" has rejected the following file transfer:`
 	;
 
 	/** @see StringsService */
 	public readonly outgoingFileSaved: string		=
-		`File transfer complete! Your friend has saved the following file:`
+		`File transfer complete! Your ${this.internalFriend} has saved the following file:`
 	;
 
 	/** @see StringsService */
@@ -240,12 +288,12 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly p2pDeny: string					=
-		`Your "friend" has rejected your call.`
+		`Your "${this.internalFriend}" has rejected your call.`
 	;
 
 	/** @see StringsService */
 	public readonly p2pDisabled: string				=
-		`Your or your friend's browser may lack support for video calling. ` +
+		`Your or your ${this.internalFriend}'s browser may lack support for video calling. ` +
 		`Try again with the latest Chrome or Firefox.`
 	;
 
@@ -272,7 +320,7 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly p2pRequest: string				=
-		`Your friend has requested an encrypted`
+		`Your ${this.internalFriend} has requested an encrypted`
 	;
 
 	/** @see StringsService */
@@ -281,12 +329,13 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
-	public readonly p2pTitle: string				= `Cyph Call`;
+	public readonly p2pTitle: string				= `${this.internalProduct} Call`;
 
 	/** @see StringsService */
 	public readonly p2pWarning: string				=
-		`This will involve sharing your IP address with your friend (which isn't a problem ` +
-		`unless you're actively hiding your current location from them). Continue?`
+		`This will involve sharing your IP address with your ${this.internalFriend} ` +
+		`(which isn't a problem unless you're actively hiding ` +
+		`your current location from them). Continue?`
 	;
 
 	/** @see StringsService */
@@ -306,7 +355,16 @@ export class StringsService {
 	public readonly pin: string						= `PIN`;
 
 	/** @see StringsService */
+	public readonly product: string					= `${this.internalProduct}`;
+
+	/** @see StringsService */
+	public readonly productShort: string			= `${this.internalProductShort}`;
+
+	/** @see StringsService */
 	public readonly queuedMessageSaved: string		= `Queued message saved.`;
+
+	/** @see StringsService */
+	public readonly registerTitle: string			= `Register for ${this.internalProduct}`;
 
 	/** @see StringsService */
 	public readonly reject: string					= `reject`;
@@ -316,7 +374,7 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly selfDestructActivated: string	=
-		`Cyph set to self-destruct.`
+		`${this.capitalize(this.internalSession)} set to self-destruct.`
 	;
 
 	/** @see StringsService */
@@ -325,19 +383,25 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
+	public readonly session: string					= `${this.internalSession}`;
+
+	/** @see StringsService */
 	public readonly signupFailed: string			=
 		`Signup failed. Please try again later.`
 	;
 
 	/** @see StringsService */
 	public readonly signupMessage: string			=
-		`Enjoying the service? Join our waitlist for Cyph v2! ` +
-		`More details are on the way, but the next version of Cyph will include ` +
-		`group messaging, user accounts, and encrypted chat history.`
+		`Enjoying the service? Join our waitlist for ${this.internalProductShort} v2! ` +
+		`More details are on the way, but the next version of ${this.internalProductShort} ` +
+		`will include group messaging, user accounts, and encrypted chat history.`
 	;
 
 	/** @see StringsService */
 	public readonly suregoahead: string				= `sure, go ahead`;
+
+	/** @see StringsService */
+	public readonly teamToContact: string			= `${this.internalCompany} Team to Contact`;
 
 	/** @see StringsService */
 	public readonly timeExtended: string			= `Added time to countdown.`;
@@ -349,10 +413,18 @@ export class StringsService {
 	public readonly unlock: string					= `Unlock`;
 
 	/** @see StringsService */
+	public readonly unlockTitle: string				= `Unlock ${this.internalProduct}`;
+
+	/** @see StringsService */
 	public readonly videoCall: string				= `video call`;
 
 	/** @see StringsService */
 	public readonly warningTitle: string			= `Warning`;
+
+	/** @ignore */
+	private capitalize (s: string) : string {
+		return s.length < 1 ? '' : s[0].toUpperCase() + s.slice(1);
+	}
 
 	constructor () {
 		/* tslint:disable-next-line:no-this-assignment */
@@ -360,7 +432,7 @@ export class StringsService {
 
 		for (const k of Object.keys(strings)) {
 			const s	= strings[k];
-			if (typeof s !== 'string') {
+			if (typeof s !== 'string' || k.startsWith('internal')) {
 				continue;
 			}
 

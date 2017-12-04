@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
+import {StringsService} from '../services/strings.service';
 import {sleep} from '../util/wait';
 
 
@@ -37,6 +38,9 @@ export class AccountLogoutComponent implements OnInit {
 		private readonly envService: EnvService,
 
 		/** @see AccountAuthService */
-		public readonly accountAuthService: AccountAuthService
+		public readonly accountAuthService: AccountAuthService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -14,5 +15,8 @@ export class DialogImageComponent {
 	/** Image src. */
 	public src: SafeUrl|string;
 
-	constructor () {}
+	constructor (
+		/** @see StringsService */
+		public readonly stringsService: StringsService
+	) {}
 }
