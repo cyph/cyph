@@ -14,7 +14,7 @@ cd ~/tmplib/js
 read -r -d '' modules <<- EOM
 	@angular/animations
 	@angular/cdk
-	@angular/cli
+	@angular/cli@1.5.4
 	@angular/common
 	@angular/compiler
 	@angular/compiler-cli
@@ -42,7 +42,7 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
-	@ngtools/webpack
+	@ngtools/webpack@1.8.4
 	@types/braintree-web
 	@types/dompurify
 	@types/dropzone
@@ -176,7 +176,7 @@ read -r -d '' modules <<- EOM
 	retire
 	rlwe
 	rsvp
-	rxjs
+	rxjs@5.5.2
 	rxjs-tslint-rules
 	sass-loader
 	script-ext-html-webpack-plugin

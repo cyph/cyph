@@ -119,10 +119,12 @@ cat > webpack.js <<- EOM
 	);
 
 	if (uglifyJsIndex > -1) {
-		const uglifyJsPlugin	= config.plugins[uglifyJsIndex];
+		const {options}	= config.plugins[uglifyJsIndex];
 
-		uglifyJsPlugin.options.uglifyOptions.compress.sequences	= false;
-		uglifyJsPlugin.options.uglifyOptions.mangle				= {reserved: mangleExceptions};
+		options.uglifyOptions.compress.sequences	= false;
+		options.uglifyOptions.mangle				= {reserved: mangleExceptions};
+
+		config.plugins.splice(uglifyJsIndex, 1, new UglifyJsPlugin(options));
 	}
 
 	config.output.filename		= '[name].js';
