@@ -310,6 +310,12 @@ for d in $compiledProjects ; do
 		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
 	fi
 
+	node -e 'console.log(`
+		/* tslint:disable */
+
+		(<any> self).translations = ${JSON.stringify(require("../commands/translations"))};
+	`.trim())' > src/js/standalone/translations.ts
+
 	if [ "${simple}" ] ; then
 		ng build --no-aot --no-sourcemaps || exit 1
 	else

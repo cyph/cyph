@@ -9,12 +9,6 @@ dependencyModules="$(
 		tr '\n' ' '
 )"
 
-node -e 'console.log(`
-	/* tslint:disable */
-
-	(<any> self).translations = ${JSON.stringify(require("../commands/translations"))};
-`.trim())' > src/js/standalone/translations.ts
-
 ng eject --aot --prod --no-sourcemaps
 
 cat > webpack.js <<- EOM
