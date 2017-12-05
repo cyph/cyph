@@ -3,6 +3,7 @@ import {INotificationService} from '../service-interfaces/inotification.service'
 import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 import {FaviconService} from './favicon.service';
+import {StringsService} from './strings.service';
 import {VisibilityWatcherService} from './visibility-watcher.service';
 
 
@@ -17,7 +18,7 @@ export class NotificationService implements INotificationService {
 	/** @ignore */
 	private readonly config: {audio?: string; title: string}	= {
 		audio: '/assets/audio/beep.mp3',
-		title: 'Cyph'
+		title: this.stringsService.product
 	};
 
 	/** Indicates whether notifications are currently silenced. */
@@ -98,6 +99,9 @@ export class NotificationService implements INotificationService {
 
 		/** @ignore */
 		private readonly faviconService: FaviconService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService,
 
 		/** @ignore */
 		private readonly visibilityWatcherService: VisibilityWatcherService
