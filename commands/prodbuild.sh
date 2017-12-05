@@ -121,12 +121,10 @@ cat > webpack.js <<- EOM
 	if (uglifyJsIndex > -1) {
 		const {options}	= config.plugins[uglifyJsIndex];
 
-		if (typeof options.uglifyOptions.mangle === 'object') {
-			options.uglifyOptions.mangle.reserved	= mangleExceptions;
-		}
-		else {
-			options.uglifyOptions.mangle			= {reserved: mangleExceptions};
-		}
+		options.uglifyOptions.compress.sequences	= false;
+		options.uglifyOptions.mangle				= {reserved: mangleExceptions};
+
+		options.uglifyOptions.compress.sequences	= false;
 
 		config.plugins.splice(uglifyJsIndex, 1, new UglifyJsPlugin(options));
 	}
