@@ -1,4 +1,4 @@
-import {Component, AfterViewInit, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as Granim from 'granim';
 import {AccountEnvService} from '../services/account-env.service';
@@ -122,22 +122,25 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		if (!this.envService.coBranded && !this.accountService.isExtension) {
 			const selector	= '.cyph-gradient';
 
-			const started	= this.accountService.isUiReady ? undefined : new Promise(resolve => {
-				const elem	= document.querySelector(selector);
-				const event	= 'granim:start';
+			const started	= this.accountService.isUiReady ?
+				undefined :
+				new Promise<void>(resolve => {
+					const elem	= document.querySelector(selector);
+					const event	= 'granim:start';
 
-				if (!elem) {
-					resolve();
-					return;
-				}
+					if (!elem) {
+						resolve();
+						return;
+					}
 
-				const handler	= () => {
-					resolve();
-					(<HTMLElement> elem).removeEventListener(event, handler);
-				};
+					const handler	= () => {
+						resolve();
+						(<HTMLElement> elem).removeEventListener(event, handler);
+					};
 
-				(<HTMLElement> elem).addEventListener(event, handler);
-			});
+					(<HTMLElement> elem).addEventListener(event, handler);
+				})
+			;
 
 			/* tslint:disable-next-line:no-unused-expression */
 			new Granim({
