@@ -15,13 +15,12 @@ const args	= {
 fs.writeFileSync(
 	args.path,
 	fs.readFileSync(args.path).toString().replace(
-		/,?(\s+)?importScripts\(["'](.*?)["']\)(\s+)?,?(\s+)?/g,
-		(_MATCH, _WHITESPACE, value) =>
-			';\n\n' +
+		/importScripts\(["'](.*?)["']\)/g,
+		(_, value) => '(function () {' +
 			fs.readFileSync(
 				value.slice(value[0] === '/' ? 1 : 0).split('?')[0]
 			).toString() +
-			';\n\n'
+		'}).call(this)'
 	)
 );
 
