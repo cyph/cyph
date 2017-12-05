@@ -36,9 +36,9 @@ declare let customBuildPassword: string|undefined;
 
 /**
  * @global
- * If applicable, replacement strings for this custom build.
+ * If applicable, replacement strings for this custom build (base64-encoded string map).
  */
-declare let customBuildStrings: {[k: string]: string}|undefined;
+declare let customBuildStrings: string|undefined;
 
 /**
  * @global
