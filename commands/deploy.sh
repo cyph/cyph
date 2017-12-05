@@ -370,7 +370,12 @@ touch .build.done
 if [ "${websign}" ] ; then
 	for repo in cdn custom-builds ; do
 		if [ -d ~/.cyph/${repo} ] ; then
-			bash -c "cd ~/.cyph/${repo} ; git reset --hard ; git clean -dfx ; git pull"
+			bash -c "
+				cd ~/.cyph/${repo};
+				git reset --hard;
+				git clean -dfx;
+				git pull --recurse-submodules;
+			"
 			cp -rf ~/.cyph/${repo} ./
 		else
 			git clone --recursive git@github.com:cyph/${repo}.git

@@ -61,10 +61,7 @@ try {
 catch (_) {}
 
 try {
-	o.strings		= potassium.toBase64(await serialize(
-		StringMapProto,
-		JSON.parse(fs.readFileSync(args.customBuildStrings).toString())
-	));
+	o.strings		= fs.readFileSync(args.customBuildStrings).toString();
 }
 catch (_) {}
 
@@ -172,7 +169,9 @@ if (o.password) {
 }
 
 if (o.strings) {
-	$('head').append(`<meta name='custom-build-strings' content='${o.strings}' />`);
+	$('head').append(`<meta name='custom-build-strings' content='${
+		potassium.toBase64(await serialize(StringMapProto, JSON.parse(o.strings)))
+	}' />`);
 }
 
 if (css) {
