@@ -1,4 +1,6 @@
 import {Injectable} from '@angular/core';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
+import {Internal} from '../proto';
 import {translate} from '../util/translate';
 
 
@@ -10,7 +12,9 @@ import {translate} from '../util/translate';
 export class StringsService {
 	/** @ignore */
 	private static readonly customBuildStrings: {[k: string]: string}	=
-		customBuildStrings || {}
+		customBuildStrings ?
+			Internal.StringMap.decode(potassiumUtil.fromBase64(customBuildStrings)).data :
+			{}
 	;
 
 
