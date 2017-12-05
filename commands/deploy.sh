@@ -15,6 +15,7 @@ site=''
 noSimple=''
 simple=''
 simpleProdBuild=''
+pack=''
 test=true
 websign=true
 
@@ -30,6 +31,11 @@ elif [ "${1}" == '--simple-prod-build' ] ; then
 	shift
 elif [ "${1}" == '--no-simple' ] ; then
 	noSimple=true
+	shift
+fi
+
+if [ "${1}" == '--pack' ] ; then
+	pack=true
 	shift
 fi
 
@@ -372,10 +378,11 @@ if [ "${websign}" ] ; then
 			cp -rf ${repo} ~/.cyph/
 		fi
 	done
+fi
+if [ "${websign}" ] || [ "${pack}" ] ; then
+	log "Pack ${package}"
 
 	cd "${webSignedProject}"
-
-	log "WebSign ${package}"
 
 	# Merge imported libraries into threads
 	find . -type f -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
@@ -383,6 +390,9 @@ if [ "${websign}" ] ; then
 	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.ws
 
 	cd ..
+fi
+if [ "${websign}" ] ; then
+	log "WebSign ${package}"
 
 	customBuilds=''
 
