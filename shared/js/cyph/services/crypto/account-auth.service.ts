@@ -336,6 +336,8 @@ export class AccountAuthService {
 							description: this.stringsService.defaultDescription,
 							externalUsernames,
 							hasPremium: false,
+							isDoctor: false,
+							isPatient: false,
 							name,
 							realUsername
 						}),

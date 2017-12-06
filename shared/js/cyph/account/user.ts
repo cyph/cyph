@@ -54,6 +54,18 @@ export class User {
 		false
 	);
 
+	/** @see IAccountUserProfile.isDoctor */
+	public readonly isDoctor: Observable<boolean>	= flattenObservablePromise(
+		this.accountUserProfile.watch().pipe(map(({isDoctor}) => isDoctor)),
+		false
+	);
+
+	/** @see IAccountUserProfile.isDoctor */
+	public readonly isPatient: Observable<boolean>	= flattenObservablePromise(
+		this.accountUserProfile.watch().pipe(map(({isPatient}) => isPatient)),
+		false
+	);
+
 	/** @see IAccountUserProfile.name */
 	public readonly name: Observable<string>	= flattenObservablePromise(
 		this.accountUserProfile.watch().pipe(map(({name}) => name)),
