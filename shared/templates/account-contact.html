@@ -1,8 +1,10 @@
 <mat-card
 	class='contact animated'
-	[routerLink]='"/account/" + 
+	[routerLink]='
+		"/account/" + 
 		(this.accountService.isTelehealth ? "profile" : "chat") + "/" +
-		contact.username'
+		contact.username
+	'
 	*ngIf='!!contact'
 >
 	<mat-card-header fxLayout='row' *ngIf='contact.ready'>
