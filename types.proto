@@ -80,24 +80,6 @@ message AccountLoginData {
 	required bytes symmetricKey = 2;
 }
 
-/** User public profile. */
-message AccountUserProfile {
-	/** Description. */
-	required string description = 1;
-
-	/** Premium account. */
-	required bool hasPremium = 2;
-
-	/** Full name. */
-	required string name = 3;
-
-	/** Username (capitalized according to user preference). */
-	required string realUsername = 4;
-
-	/** Usernames and similar identifiers for external services like social media. */
-	map<string, string> externalUsernames = 5;
-}
-
 /** User presence. */
 message AccountUserPresence {
 	/** Possible presence statuses. */
@@ -112,6 +94,27 @@ message AccountUserPresence {
 	required Statuses status = 1;
 }
 
+/** User public profile. */
+message AccountUserProfile {
+	/** Description. */
+	required string description = 1;
+
+	/** Usernames and similar identifiers for external services like social media. */
+	map<string, string> externalUsernames = 2;
+
+	/** Premium account. */
+	required bool hasPremium = 3;
+
+	/** Full name. */
+	required string name = 4;
+
+	/** Username (capitalized according to user preference). */
+	required string realUsername = 5;
+
+	/** @see AccountUserType */
+	required AccountUserType userType = 6;
+}
+
 /** AGSE-PKI certificate. */
 message AccountUserPublicKeys {
 	/** Potassium.Box public key. */
@@ -119,6 +122,13 @@ message AccountUserPublicKeys {
 
 	/** Potassium.Sign public key. */
 	required bytes signing = 2;
+}
+
+/** Account type for different Cyph-based applications. */
+enum AccountUserType {
+	Standard = 1;
+	TelehealthDoctor = 2;
+	TelehealthPatient = 3;
 }
 
 /** AGSE-PKI certificate. */

@@ -7,6 +7,7 @@ import {
 	AccountLoginData,
 	AccountUserPresence,
 	AccountUserProfile,
+	AccountUserType,
 	AGSEPKICSR,
 	BinaryProto,
 	BooleanProto,
@@ -337,7 +338,8 @@ export class AccountAuthService {
 							externalUsernames,
 							hasPremium: false,
 							name,
-							realUsername
+							realUsername,
+							userType: AccountUserType.Standard
 						}),
 						signingKeyPair.privateKey,
 						publicProfileURL,

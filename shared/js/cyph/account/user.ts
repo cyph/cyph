@@ -2,7 +2,7 @@ import {SafeUrl} from '@angular/platform-browser';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {IAsyncValue} from '../iasync-value';
-import {IAccountUserPresence, IAccountUserProfile} from '../proto';
+import {AccountUserType, IAccountUserPresence, IAccountUserProfile} from '../proto';
 import {flattenObservablePromise} from '../util/flatten-observable-promise';
 import {normalize} from '../util/formatting';
 import {UserPresence} from './enums';
@@ -75,6 +75,12 @@ export class User {
 	public readonly status: Observable<UserPresence>	= flattenObservablePromise(
 		this.accountUserPresence.watch().pipe(map(({status}) => status)),
 		UserPresence.Offline
+	);
+
+	/** @see IAccountUserProfile.userType */
+	public readonly userType: Observable<AccountUserType>	= flattenObservablePromise(
+		this.accountUserProfile.watch().pipe(map(({userType}) => userType)),
+		AccountUserType.Standard
 	);
 
 	constructor (
