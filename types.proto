@@ -109,7 +109,7 @@ message AccountUserPresence {
 	}
 
 	/** Current presence status. */
-	required Statuses status = 7;
+	required Statuses status = 1;
 }
 
 /** AGSE-PKI certificate. */
