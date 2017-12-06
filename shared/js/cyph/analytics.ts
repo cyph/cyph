@@ -115,9 +115,9 @@ export class Analytics {
 			document.body.appendChild(this.analFrame);
 
 			await new Promise<void>(resolve => $(() => { resolve(); }));
-			await new Promise<void>(resolve =>
-				$(this.analFrame).one('load', () => { resolve(); })
-			);
+			await new Promise<void>(resolve => {
+				$(this.analFrame).one('load', () => { resolve(); });
+			});
 			await sleep();
 
 			this.setEvent({appName, appVersion});

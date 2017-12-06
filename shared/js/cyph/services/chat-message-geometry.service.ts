@@ -75,19 +75,25 @@ export class ChatMessageGeometryService {
 				line.style.display	= 'none';
 			}
 
-			return lines.map(line => {
+			const dimensions	= lines.map(line => {
 				line.style.display	= defaultDisplay;
 				const o	= {height: line.offsetHeight, width: line.offsetWidth};
 				line.style.display	= 'none';
 				return o;
 			});
+
+			for (const line of lines) {
+				line.style.display	= defaultDisplay;
+			}
+
+			return dimensions;
 		};
 
 		document.body.appendChild(container);
 		container.appendChild(containerChild);
 		containerChild.appendChild(messageElement);
 
-		await componentRef.instance.viewInitiated;
+		await componentRef.instance.waitUntilInitiated();
 
 		const smallDimensions		= getDimensionsHelper();
 		container.style.fontSize	= '17.5px';

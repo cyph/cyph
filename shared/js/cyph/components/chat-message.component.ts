@@ -1,9 +1,9 @@
 import {
-	AfterViewInit,
 	Component,
 	ElementRef,
 	Input,
-	OnInit
+	OnInit,
+	Renderer2
 } from '@angular/core';
 import * as $ from 'jquery';
 import {ChatMessage} from '../chat';
@@ -22,10 +22,7 @@ import {waitForIterable} from '../util/wait';
 	styleUrls: ['../../../css/components/chat-message.scss'],
 	templateUrl: '../../../templates/chat-message.html'
 })
-export class ChatMessageComponent implements AfterViewInit, OnInit {
-	/** @ignore */
-	private resolveViewInitiated: () => void;
-
+export class ChatMessageComponent implements OnInit {
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
 
@@ -40,17 +37,6 @@ export class ChatMessageComponent implements AfterViewInit, OnInit {
 
 	/** @see IChatData.unconfirmedMessages */
 	@Input() public unconfirmedMessages?: {[id: string]: boolean|undefined};
-
-	/** Resolves after view init. */
-	public readonly viewInitiated: Promise<void>	= new Promise(resolve => {
-		this.resolveViewInitiated	= resolve;
-	});
-
-	/** @inheritDoc */
-	public async ngAfterViewInit () : Promise<void> {
-		await waitForIterable(() => $(this.elementRef.nativeElement).find('.message'));
-		this.resolveViewInitiated();
-	}
 
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
@@ -84,9 +70,28 @@ export class ChatMessageComponent implements AfterViewInit, OnInit {
 		}
 	}
 
+	/** Resolves after view init. */
+	public async waitUntilInitiated () : Promise<void> {
+		const $elem		= $(this.elementRef.nativeElement);
+		const $message	= await waitForIterable(() => $elem.find('.message'));
+
+		await Promise.all($message.find('*').toArray().map(async element => {
+			const promise	= new Promise<void>(async resolve => {
+				$(element).one('transitionend', () => { resolve(); });
+			});
+
+			this.renderer.addClass(element, 'transitionend');
+
+			await promise;
+		}));
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly renderer: Renderer2,
 
 		/** @ignore */
 		private readonly envService: EnvService,

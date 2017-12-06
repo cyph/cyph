@@ -17,6 +17,13 @@
 		> * {
 			padding-top: 5px;
 		}
+
+		/* https://stackoverflow.com/a/32085957/459881 */
+		.transitionend {
+			opacity: 0.18;
+
+			@include transition(opacity 0.1s linear);
+		}
 	}
 
 	.message-timestamp {
