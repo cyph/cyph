@@ -88,14 +88,20 @@ message AccountUserProfile {
 	/** Premium account. */
 	required bool hasPremium = 2;
 
+	/** Telehealth: Doctor Account */
+	required bool isDoctor = 3;
+
+	/** Telehealth: Patient Account */
+	required bool isPatient = 4;
+
 	/** Full name. */
-	required string name = 3;
+	required string name = 5;
 
 	/** Username (capitalized according to user preference). */
-	required string realUsername = 4;
+	required string realUsername = 6;
 
 	/** Usernames and similar identifiers for external services like social media. */
-	map<string, string> externalUsernames = 5;
+	map<string, string> externalUsernames = 7;
 }
 
 /** User presence. */
