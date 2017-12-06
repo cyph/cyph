@@ -108,10 +108,10 @@ export class ChatMessageGeometryService {
 		}
 
 		message.dimensions	= smallDimensions.map((smallScreen, i) => ({
-			bigScreenHeight: bigDimensions[i].height,
-			bigScreenWidth: bigDimensions[i].width,
-			smallScreenHeight: smallScreen.height,
-			smallScreenWidth: smallScreen.width
+			bigScreenHeight: Math.floor(bigDimensions[i].height),
+			bigScreenWidth: Math.floor(bigDimensions[i].width),
+			smallScreenHeight: Math.floor(smallScreen.height),
+			smallScreenWidth: Math.floor(smallScreen.width)
 		}));
 
 		return message;

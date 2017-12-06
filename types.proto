@@ -194,16 +194,16 @@ message ChatMessage {
 	/** Dimensions for one message line. */
 	message Line {
 		/** Line height on a big screen. */
-		required double bigScreenHeight = 1;
+		required uint32 bigScreenHeight = 1;
 
 		/** Line width on a big screen. */
-		required double bigScreenWidth = 2;
+		required uint32 bigScreenWidth = 2;
 
 		/** Line height on a small screen. */
-		required double smallScreenHeight = 3;
+		required uint32 smallScreenHeight = 3;
 
 		/** Line width on a small screen. */
-		required double smallScreenWidth = 4;
+		required uint32 smallScreenWidth = 4;
 	}
 
 	/** Author user ID. */
