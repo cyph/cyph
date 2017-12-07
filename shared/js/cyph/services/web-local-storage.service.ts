@@ -14,7 +14,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		try {
 			await localforage.ready();
 		}
-		catch (_) {}
+		catch {}
 		try {
 			await Promise.all(
 				Object.keys(localStorage).
@@ -28,7 +28,7 @@ export class WebLocalStorageService extends LocalStorageService {
 					})
 			);
 		}
-		catch (_) {}
+		catch {}
 	})();
 
 	/** @inheritDoc */

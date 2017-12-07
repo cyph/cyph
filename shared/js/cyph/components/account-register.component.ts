@@ -104,7 +104,7 @@ export class AccountRegisterComponent implements OnInit {
 					return;
 				}
 			}
-			catch (_) {}
+			catch {}
 
 			this.routerService.navigate(['account', 'register', '1']);
 		});

@@ -12,7 +12,7 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 		crypto.getRandomValues(new Uint8Array(1));
 		return;
 	}
-	catch (_) {}
+	catch {}
 
 	const nonce		= new Uint32Array(2);
 	let isActive	= false;

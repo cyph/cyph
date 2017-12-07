@@ -17,7 +17,7 @@ try {
 		(<any> self).crypto.subtle	= (<any> crypto).webkitSubtle;
 	}
 }
-catch (_) {}
+catch {}
 
 (<any> self).IS_WEB	= typeof IS_WEB !== 'undefined' ?
 	IS_WEB :
