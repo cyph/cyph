@@ -27,7 +27,7 @@ export class EnvService extends Env {
 				})
 			);
 		}
-		catch (_) {
+		catch {
 			return {};
 		}
 	})();
@@ -53,7 +53,7 @@ export class EnvService extends Env {
 				return `${this.host} ${timestamp.toString()}`;
 			}
 		}
-		catch (_) {}
+		catch {}
 
 		return this.host;
 	})();
@@ -98,7 +98,7 @@ export class EnvService extends Env {
 
 			return isAffectedBrowser && affectedWebSignHashes.indexOf(webSignHash) > -1;
 		}
-		catch (_) {
+		catch {
 			return false;
 		}
 	})();

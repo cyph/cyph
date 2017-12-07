@@ -64,7 +64,7 @@ export class LocalStorageService extends DataManagerService {
 		try {
 			this.cache.set(url, await this.getItemInternal(url, waitForReady));
 		}
-		catch (_) {}
+		catch {}
 
 		const value	= this.cache.get(url);
 
@@ -97,7 +97,7 @@ export class LocalStorageService extends DataManagerService {
 				try {
 					await this.setItemInternal(url, data, waitForReady);
 				}
-				catch (_) {
+				catch {
 					this.setInternalFailed	= true;
 				}
 			}

@@ -38,7 +38,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				localStorage.removeItem(key);
 			}
 		}
-		catch (_) {}
+		catch {}
 
 		return firebase.apps[0] || firebase.initializeApp(env.firebaseConfig);
 	});
@@ -166,7 +166,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					progress.complete();
 					return {timestamp, value: await deserialize(proto, localData)};
 				}
-				catch (_) {}
+				catch {}
 
 				progress.next(0);
 
@@ -250,7 +250,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			await (await this.getStorageRef(url)).getDownloadURL();
 			return true;
 		}
-		catch (_) {
+		catch {
 			return false;
 		}
 	}

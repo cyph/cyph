@@ -116,7 +116,7 @@ export class EventManager {
 					try {
 						thread.postMessage({data, event, isThreadEvent: true});
 					}
-					catch (_) {}
+					catch {}
 				}
 			}
 			else {

@@ -548,7 +548,7 @@ export class AccountDatabaseService {
 		try {
 			return await this.getItem(url, proto);
 		}
-		catch (_) {
+		catch {
 			const value	= await defaultValue();
 			this.setItem(url, proto, value).catch(() => {});
 			return value;

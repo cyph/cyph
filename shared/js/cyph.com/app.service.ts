@@ -182,7 +182,7 @@ export class AppService {
 
 				this.updateCart(amount, category.id, item.id, item.subscriptionType);
 			}
-			catch (_) {
+			catch {
 				this.routerService.navigate(['404']);
 			}
 		}
@@ -319,20 +319,20 @@ export class AppService {
 				try {
 					(<HTMLVideoElement> elements.backgroundVideo()[0]).currentTime	= 1.25;
 				}
-				catch (_) {}
+				catch {}
 
 				(<any> elements.backgroundVideo()).appear().
 					on('appear', () => {
 						try {
 							(<any> elements.backgroundVideo()[0]).play().catch(() => {});
 						}
-						catch (_) {}
+						catch {}
 					}).
 					on('disappear', () => {
 						try {
 							(<HTMLVideoElement> elements.backgroundVideo()[0]).pause();
 						}
-						catch (_) {}
+						catch {}
 					})
 				;
 			}

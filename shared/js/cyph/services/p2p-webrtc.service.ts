@@ -31,7 +31,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 					connection: {on: () => {}}
 				}).capabilities.support;
 			}
-			catch (_) {
+			catch {
 				return false;
 			}
 		})()

@@ -30,7 +30,7 @@ export class Analytics {
 				this.env.baseUrl.slice(0, -1)
 			);
 		}
-		catch (_) {}
+		catch {}
 	}
 
 	/** Send event. */

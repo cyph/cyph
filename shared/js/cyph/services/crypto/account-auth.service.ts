@@ -152,7 +152,7 @@ export class AccountAuthService {
 							)
 						);
 					}
-					catch (_) {}
+					catch {}
 				}
 			);
 
@@ -169,7 +169,7 @@ export class AccountAuthService {
 					);
 				}
 			}
-			catch (_) {}
+			catch {}
 
 			this.statusSaveSubscription	= this.databaseService.watch(
 				`users/${username}/presence`,
@@ -208,7 +208,7 @@ export class AccountAuthService {
 				)
 			]);
 		}
-		catch (_) {
+		catch {
 			return false;
 		}
 
@@ -413,7 +413,7 @@ export class AccountAuthService {
 				)
 			]);
 		}
-		catch (_) {
+		catch {
 			await this.databaseService.unregister(username, loginData.secondaryPassword).catch(
 				() => {}
 			);
