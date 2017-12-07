@@ -20,7 +20,7 @@
     "style-loader": "0.19.0",
     "tns-core-modules-widgets": "3.4.0",
     "tsutils": "2.13.0",
-    "typescript": "2.6.1",
+    "typescript": "2.5.3",
     "uglifyjs-webpack-plugin": "1.1.2",
     "webpack-sources": "1.1.0",
     "autoprefixer": "7.2.1",
