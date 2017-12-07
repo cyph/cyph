@@ -8032,9 +8032,9 @@ param-case@2.1.x:
   dependencies:
     no-case "^2.2.0"
 
-parchment@1.1.1, parchment@^1.1.2, parchment@^1.1.3:
+parchment@1.1.1, parchment@^1.1.2, parchment@^1.1.3, "parchment@https://github.com/buu700/parchment-tmp":
   version "1.1.3"
-  resolved "https://registry.yarnpkg.com/parchment/-/parchment-1.1.3.tgz#c0fd5c2765eb73b30bfe171d6567cb1ae748e9af"
+  resolved "https://github.com/buu700/parchment-tmp#494076e130f8e14084c6fc63bd242b8e4717b527"
 
 parse-asn1@^5.0.0:
   version "5.1.0"
