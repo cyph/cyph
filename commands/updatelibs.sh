@@ -156,7 +156,7 @@ read -r -d '' modules <<- EOM
 	notify-cli
 	ntru
 	od-virtualscroll@https://github.com/buu700/od-virtualscroll-tmp
-	parchment
+	parchment@https://github.com/buu700/parchment-tmp
 	pdfkit
 	prepack
 	prepack-webpack-plugin
