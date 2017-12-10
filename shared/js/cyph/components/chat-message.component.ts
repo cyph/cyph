@@ -2,15 +2,16 @@ import {
 	Component,
 	ElementRef,
 	Input,
-	OnInit,
-	Renderer2
+	OnChanges,
+	Renderer2,
+	SimpleChanges
 } from '@angular/core';
 import * as $ from 'jquery';
 import {ChatMessage} from '../chat';
 import {ChatService} from '../services/chat.service';
-import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {StringsService} from '../services/strings.service';
+import {VisibilityWatcherService} from '../services/visibility-watcher.service';
 import {waitForIterable} from '../util/wait';
 
 
@@ -22,7 +23,7 @@ import {waitForIterable} from '../util/wait';
 	styleUrls: ['../../../css/components/chat-message.scss'],
 	templateUrl: '../../../templates/chat-message.html'
 })
-export class ChatMessageComponent implements OnInit {
+export class ChatMessageComponent implements OnChanges {
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
 
@@ -49,24 +50,25 @@ export class ChatMessageComponent implements OnInit {
 	}
 
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
-		if (this.message === undefined) {
+	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
+		if (!changes.message || this.message === undefined) {
 			return;
 		}
 
 		await this.chatService.getMessageValue(this.message);
 
-		if (this.unconfirmedMessages === undefined) {
+		if (
+			this.unconfirmedMessages === undefined ||
+			this.message !== changes.message.currentValue ||
+			this.scrollService.isRead(this.message.id)
+		) {
 			return;
 		}
 
-		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
-			/* TODO: HANDLE NATIVE */
-			return;
-		}
+		await this.visibilityWatcherService.waitUntilVisible();
 
-		if (this.message.authorType === ChatMessage.AuthorTypes.Remote) {
-			this.scrollService.trackItem($(this.elementRef.nativeElement));
+		if (this.message === changes.message.currentValue) {
+			this.scrollService.setRead(this.message.id);
 		}
 	}
 
@@ -94,10 +96,10 @@ export class ChatMessageComponent implements OnInit {
 		private readonly renderer: Renderer2,
 
 		/** @ignore */
-		private readonly envService: EnvService,
+		private readonly scrollService: ScrollService,
 
 		/** @ignore */
-		private readonly scrollService: ScrollService,
+		private readonly visibilityWatcherService: VisibilityWatcherService,
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,

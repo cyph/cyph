@@ -113,7 +113,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		}
 
 		this.scrollService.init(
-			$(this.elementRef.nativeElement).children().first(),
+			$(this.elementRef.nativeElement).children().children().first(),
 			this.messageCountInTitle
 		);
 	}

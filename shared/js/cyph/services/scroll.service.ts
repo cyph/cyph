@@ -1,10 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {Set as ImmutableSet} from 'immutable';
-import * as $ from 'jquery';
 import {lockTryOnce} from '../util/lock';
 import {sleep} from '../util/wait';
-import {EnvService} from './env.service';
 import {VisibilityWatcherService} from './visibility-watcher.service';
 
 
@@ -15,6 +13,9 @@ import {VisibilityWatcherService} from './visibility-watcher.service';
 export class ScrollService {
 	/** @ignore */
 	private itemCountInTitle: boolean	= false;
+
+	/** @ignore */
+	private lastUnreadItemCount: number	= 0;
 
 	/** @ignore */
 	private resolveRootElement: (rootElement: JQuery) => void;
@@ -28,23 +29,11 @@ export class ScrollService {
 	private readonly scrollDownLock: {}	= {};
 
 	/** @ignore */
-	private unreadItems: ImmutableSet<JQuery>	= ImmutableSet<JQuery>();
+	private unreadItems: ImmutableSet<string>	= ImmutableSet<string>();
 
 	/** @ignore */
-	private async appeared ($elem: JQuery) : Promise<boolean> {
-		await this.visibilityWatcherService.waitUntilVisible();
-
-		const offset	= $elem.offset();
-		return offset.top > 0 && offset.top < (await this.rootElement).height();
-	}
-
-	/** @ignore */
-	private updateTitle ($elem?: JQuery) : void {
-		if ($elem) {
-			this.unreadItems	= this.unreadItems.add($elem);
-		}
-
-		if (!this.itemCountInTitle) {
+	private updateTitle () : void {
+		if (!this.itemCountInTitle || this.unreadItemCount === this.lastUnreadItemCount) {
 			return;
 		}
 
@@ -52,21 +41,19 @@ export class ScrollService {
 			(this.unreadItemCount > 0 ? `(${this.unreadItemCount.toString()}) ` : '') +
 			this.titleService.getTitle().replace(/^\(\d+\) /, '')
 		);
+
+		this.lastUnreadItemCount	= this.unreadItemCount;
 	}
 
 	/** Initializes service. */
 	public init (rootElement: JQuery, itemCountInTitle: boolean = false) : void {
 		this.itemCountInTitle	= itemCountInTitle;
 		this.resolveRootElement(rootElement);
+	}
 
-		if (!this.envService.isWeb) {
-			/* TODO: HANDLE NATIVE */
-			return;
-		}
-
-		/* Workaround for jQuery appear plugin */
-		const $window	= $(window);
-		rootElement.scroll(() => $window.trigger('scroll'));
+	/** Indicates whether item has been read. */
+	public isRead (id: string) : boolean {
+		return !this.unreadItems.has(id);
 	}
 
 	/** Scrolls to bottom. */
@@ -85,14 +72,15 @@ export class ScrollService {
 		});
 	}
 
-	/** Process read-ness and scrolling. */
-	public async trackItem ($elem: JQuery) : Promise<void> {
-		const rootElement	= await this.rootElement;
+	/** Set item as read. */
+	public async setRead (id: string) : Promise<void> {
+		this.unreadItems	= this.unreadItems.delete(id);
+		this.updateTitle();
+	}
 
-		if (!this.visibilityWatcherService.isVisible) {
-			this.updateTitle($elem);
-			await this.visibilityWatcherService.waitForChange();
-		}
+	/** Process new item. */
+	public async trackItem (id: string) : Promise<void> {
+		const rootElement	= await this.rootElement;
 
 		const scrollPosition	=
 			rootElement[0].scrollHeight -
@@ -102,21 +90,16 @@ export class ScrollService {
 			)
 		;
 
-		if (($elem.height() + 150) > scrollPosition) {
+		if (
+			this.visibilityWatcherService.isVisible &&
+			this.unreadItemCount < 1 &&
+			scrollPosition < 150
+		) {
 			this.scrollDown();
 			return;
 		}
 
-		this.updateTitle($elem);
-		while (!(await this.appeared($elem))) {
-			if (!this.unreadItems.has($elem)) {
-				return;
-			}
-
-			await sleep();
-		}
-
-		this.unreadItems	= this.unreadItems.delete($elem);
+		this.unreadItems	= this.unreadItems.add(id);
 		this.updateTitle();
 	}
 
@@ -126,9 +109,6 @@ export class ScrollService {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly envService: EnvService,
-
 		/** @ignore */
 		private readonly titleService: Title,
 

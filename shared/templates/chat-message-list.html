@@ -2,54 +2,76 @@
 	<od-virtualscroll
 		fxFlexFill
 		[vsData]='vsData'
-		[vsEqualsFunc]='vsEqualsFunc'
 		[vsOptions]='vsOptions'
 		class='message-list-background'
 	>
 		<ng-template let-item>
-			<div fxLayout='column' fxLayoutGap='15px' *ngIf='!item.mobile && item.isStart'>
-				<div></div>
-				<div></div>
+			<ng-container *ngTemplateOutlet='listItem; context: {item: item}'></ng-container>
+		</ng-template>
+	</od-virtualscroll>
+</div>
+
+<!--
+<div cyphNanoScroller>
+	<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
+		<ng-container *ngFor='let item of vsData | async'>
+			<ng-container *ngTemplateOutlet='listItem; context: {item: item}'></ng-container>
+		</ng-container>
+	</div>
+</div>
+-->
+
+<ng-template #listItem let-item='item'>
+	<div fxLayout='row'>
+		<div fxFlex fxLayout='column'>
+			<div fxLayout='row' *ngIf='!item.mobile && item.isStart'>
+				<div fxLayout='column' fxLayoutGap='15px'>
+					<div></div>
+					<div></div>
+				</div>
 			</div>
 
 			<cyph-chat-message
+				fxLayout='row'
 				[accounts]='item.accounts'
 				[message]='item.message'
 				[mobile]='item.mobile'
 				[unconfirmedMessages]='item.unconfirmedMessages | async'
 			></cyph-chat-message>
 
-			<div fxLayout='column' fxLayoutGap='4px' *ngIf='item.isEnd'>
-				<div></div>
+			<div fxLayout='row' *ngIf='item.isEnd'>
+				<div fxLayout='column' fxLayoutGap='4px'>
+					<div></div>
 
-				<div fxLayout='row' class='friend-is-typing'>
-					<div
-						[matTooltip]='stringsService.friendIsTyping'
-						cyphTranslate
-						class='ellipsis-spinner'
-						*ngIf='item.isFriendTyping | async'
-						[@fadeInOut]='"in"'
-					>
-						<div class='bounce1'></div>
-						<div class='bounce2'></div>
-						<div class='bounce3'></div>
+					<div fxLayout='row' class='friend-is-typing'>
+						<div
+							[matTooltip]='stringsService.friendIsTyping'
+							cyphTranslate
+							class='ellipsis-spinner'
+							*ngIf='item.isFriendTyping | async'
+							[@fadeInOut]='"in"'
+						>
+							<div class='bounce1'></div>
+							<div class='bounce2'></div>
+							<div class='bounce3'></div>
+						</div>
 					</div>
-				</div>
 
-				<div
-					fxLayout='row'
-					class='chat-end-message'
-					*ngIf='item.showDisconnectMessage'
-				>
-					<div fxFlexFill fxLayoutAlign='center center'>
-						<mat-card fxFlex='90' fxFlex.gt-sm='50'>
-							<mat-card-content>
-								<ng-content></ng-content>
-							</mat-card-content>
-						</mat-card>
+					<div
+						fxLayout='row'
+						class='chat-end-message'
+						*ngIf='item.showDisconnectMessage'
+					>
+						<div fxFlexFill fxLayoutAlign='center center'>
+							<mat-card fxFlex='90' fxFlex.gt-sm='50'>
+								<mat-card-content>
+									<ng-content></ng-content>
+								</mat-card-content>
+							</mat-card>
+						</div>
 					</div>
 				</div>
 			</div>
-		</ng-template>
-	</od-virtualscroll>
-</div>
+		</div>
+	</div>
+</ng-template>

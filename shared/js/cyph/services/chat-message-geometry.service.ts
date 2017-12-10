@@ -93,7 +93,15 @@ export class ChatMessageGeometryService {
 		container.appendChild(containerChild);
 		containerChild.appendChild(messageElement);
 
-		await componentRef.instance.waitUntilInitiated();
+		await Promise.all([
+			componentRef.instance.ngOnChanges({message: {
+				currentValue: message,
+				firstChange: true,
+				isFirstChange: () => true,
+				previousValue: undefined
+			}}),
+			componentRef.instance.waitUntilInitiated()
+		]);
 
 		const smallDimensions		= getDimensionsHelper();
 		container.style.fontSize	= '17.5px';
@@ -121,8 +129,18 @@ export class ChatMessageGeometryService {
 	public async getHeight (
 		message: ChatMessage,
 		maxWidth: number,
-		viewportWidth: number = document.body.clientWidth
+		viewportWidth?: number
 	) : Promise<number> {
+		if (viewportWidth === undefined) {
+			if (this.envService.isWeb) {
+				viewportWidth	= document.body.clientWidth;
+			}
+			else {
+				/* TODO: HANDLE NATIVE */
+				viewportWidth	= 0;
+			}
+		}
+
 		const bigScreen	= viewportWidth >= 1920;
 
 		if (message.dimensions === undefined) {

@@ -235,6 +235,9 @@ export class ChatService {
 		if (author === this.sessionService.localUsername) {
 			this.scrollService.scrollDown();
 		}
+		else if (author === this.sessionService.remoteUsername) {
+			this.scrollService.trackItem(id);
+		}
 
 		if (
 			selfDestructTimeout !== undefined &&
