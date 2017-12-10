@@ -23,10 +23,6 @@
 	@include shadow;
 }
 
-.message-item {
-	@include transition(opacity 0.75s ease-in-out);
-}
-
 .friend-is-typing {
 	margin: 20px 0px;
 	min-height: 18px;
