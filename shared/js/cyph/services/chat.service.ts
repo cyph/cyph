@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
@@ -32,20 +34,20 @@ export class ChatService {
 	private static readonly approximateKeyExchangeTime: number			= 18000;
 
 
-	/** @ignore */
-	private resolveChatMessageGeometryService: (chatMessageGeometryService: {
-		getDimensions: (message: ChatMessage) => Promise<ChatMessage>
-	}) => void;
-
 	/** Time in seconds until chat self-destructs. */
 	private chatSelfDestructTimeout: number								= 5;
 
 	/** @ignore */
 	private messageChangeLock: LockFunction								= lockFunction();
 
+	/** @ignore */
+	private resolveChatMessageGeometryService: (chatMessageGeometryService: {
+		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
+	}) => void;
+
 	/** @see ChatMessageGeometryService */
 	protected readonly chatMessageGeometryService: Promise<{
-		getDimensions: (message: ChatMessage) => Promise<ChatMessage>
+		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
 	}>	= new Promise(resolve => {
 		this.resolveChatMessageGeometryService	= resolve;
 	});
@@ -188,6 +190,7 @@ export class ChatService {
 	 * @param timestamp If not set, will use util/getTimestamp().
 	 * @param shouldNotify If true, a notification will be sent.
 	 */
+	/* tslint:disable-next-line:cyclomatic-complexity */
 	public async addMessage (
 		value: IChatMessageValue|string,
 		author: Observable<string> = this.sessionService.appUsername,
@@ -370,7 +373,7 @@ export class ChatService {
 
 	/** Initializes service. */
 	public init (chatMessageGeometryService: {
-		getDimensions: (message: ChatMessage) => Promise<ChatMessage>
+		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
 	}) : void {
 		this.resolveChatMessageGeometryService(chatMessageGeometryService);
 	}

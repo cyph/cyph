@@ -133,13 +133,11 @@ export class ChatMessageGeometryService {
 		viewportWidth?: number
 	) : Promise<number> {
 		if (viewportWidth === undefined) {
-			if (this.envService.isWeb) {
-				viewportWidth	= document.body.clientWidth;
-			}
-			else {
+			viewportWidth	= this.envService.isWeb ?
+				document.body.clientWidth :
 				/* TODO: HANDLE NATIVE */
-				viewportWidth	= 0;
-			}
+				0
+			;
 		}
 
 		const bigScreen	= viewportWidth >= 1920;

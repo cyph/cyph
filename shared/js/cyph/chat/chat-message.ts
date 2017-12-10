@@ -3,7 +3,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
-import {ChatMessage as ChatMessageInternal, IChatMessageLine, IChatMessage} from '../proto';
+import {ChatMessage as ChatMessageInternal, IChatMessage, IChatMessageLine} from '../proto';
 import {Timer} from '../timer';
 import {getTimeString} from '../util/time';
 import {sleep} from '../util/wait';
