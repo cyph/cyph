@@ -1,7 +1,7 @@
 <mat-card
 	class='contact animated'
 	[routerLink]='
-		"/account/" + 
+		"/account/" +
 		(this.accountService.isTelehealth ? "profile" : "chat") + "/" +
 		contact.username
 	'
