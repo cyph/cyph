@@ -191,21 +191,6 @@ message ChatMessage {
 		Remote = 2;
 	}
 
-	/** Dimensions for one message line. */
-	message Line {
-		/** Line height on a big screen. */
-		required uint32 bigScreenHeight = 1;
-
-		/** Line width on a big screen. */
-		required uint32 bigScreenWidth = 2;
-
-		/** Line height on a small screen. */
-		required uint32 smallScreenHeight = 3;
-
-		/** Line width on a small screen. */
-		required uint32 smallScreenWidth = 4;
-	}
-
 	/** Author user ID. */
 	string authorID = 1;
 
@@ -213,7 +198,7 @@ message ChatMessage {
 	required AuthorTypes authorType = 2;
 
 	/** Metadata used to estimate message's size for virtual scrolling. */
-	repeated Line dimensions = 3;
+	repeated ChatMessageLine dimensions = 3;
 
 	/** @see SessionMessageData.id */
 	required string id = 4;
@@ -226,6 +211,21 @@ message ChatMessage {
 
 	/** @see ChatMessageValue */
 	ChatMessageValue value = 7;
+}
+
+/** Dimensions for one message line. */
+message ChatMessageLine {
+	/** Line height on a big screen. */
+	required uint32 bigScreenHeight = 1;
+
+	/** Line width on a big screen. */
+	required uint32 bigScreenWidth = 2;
+
+	/** Line height on a small screen. */
+	required uint32 smallScreenHeight = 3;
+
+	/** Line width on a small screen. */
+	required uint32 smallScreenWidth = 4;
 }
 
 /** Possible values of a chat text message. */
@@ -394,14 +394,17 @@ message SessionMessageList {
 
 /** Contains an actual chat text message. */
 message SessionText {
+	/** @see ChatMessage.dimensions */
+	repeated ChatMessageLine dimensions = 1;
+
 	/** Indicates whether entire chat should be self-destructed (only valid for first message). */
-	bool selfDestructChat = 1;
+	bool selfDestructChat = 2;
 
 	/** Self-destruction timeout. */
-	uint32 selfDestructTimeout = 2;
+	uint32 selfDestructTimeout = 3;
 
 	/** @see ChatMessageValue */
-	required ChatMessageValue value = 3;
+	required ChatMessageValue value = 4;
 }
 
 /** Receipt confirmation for a SessionText. */

@@ -9,6 +9,7 @@ import {ViewBase} from 'tns-core-modules/ui/core/view-base/view-base';
 import {ChatMessage} from '../chat';
 import {ChatMessageComponent} from '../components/chat-message.component';
 import {uuid} from '../util/uuid';
+import {ChatService} from './chat.service';
 import {EnvService} from './env.service';
 
 
@@ -178,6 +179,11 @@ export class ChatMessageGeometryService {
 		private readonly injector: Injector,
 
 		/** @ignore */
+		private readonly chatService: ChatService,
+
+		/** @ignore */
 		private readonly envService: EnvService
-	) {}
+	) {
+		this.chatService.init(this);
+	}
 }

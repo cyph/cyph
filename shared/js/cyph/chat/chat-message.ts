@@ -3,7 +3,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
-import {ChatMessage as ChatMessageInternal, IChatMessage} from '../proto';
+import {ChatMessage as ChatMessageInternal, IChatMessageLine, IChatMessage} from '../proto';
 import {Timer} from '../timer';
 import {getTimeString} from '../util/time';
 import {sleep} from '../util/wait';
@@ -26,7 +26,7 @@ export class ChatMessage implements IChatMessage {
 	public authorType: ChatMessageInternal.AuthorTypes	= this.message.authorType;
 
 	/** @inheritDoc */
-	public dimensions?: ChatMessageInternal.ILine[]		= this.message.dimensions;
+	public dimensions?: IChatMessageLine[]				= this.message.dimensions;
 
 	/** @inheritDoc */
 	public id: string					= this.message.id;
@@ -58,12 +58,6 @@ export class ChatMessage implements IChatMessage {
 	public readonly valueWatcher: Subject<IChatMessageValue|undefined>	=
 		new BehaviorSubject<IChatMessageValue|undefined>(this.value)
 	;
-
-	/** Sets value. */
-	public setValue (value: IChatMessageValue) : void {
-		this.value	= value;
-		this.valueWatcher.next(value);
-	}
 
 	constructor (
 		/** @ignore */

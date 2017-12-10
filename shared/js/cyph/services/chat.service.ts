@@ -8,7 +8,7 @@ import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncMap} from '../local-async-map';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
-import {IChatMessage} from '../proto';
+import {IChatMessage, IChatMessageLine} from '../proto';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
 import {lockFunction} from '../util/lock';
@@ -31,11 +31,24 @@ export class ChatService {
 	/** @ignore */
 	private static readonly approximateKeyExchangeTime: number			= 18000;
 
+
+	/** @ignore */
+	private resolveChatMessageGeometryService: (chatMessageGeometryService: {
+		getDimensions: (message: ChatMessage) => Promise<ChatMessage>
+	}) => void;
+
 	/** Time in seconds until chat self-destructs. */
 	private chatSelfDestructTimeout: number								= 5;
 
 	/** @ignore */
 	private messageChangeLock: LockFunction								= lockFunction();
+
+	/** @see ChatMessageGeometryService */
+	protected readonly chatMessageGeometryService: Promise<{
+		getDimensions: (message: ChatMessage) => Promise<ChatMessage>
+	}>	= new Promise(resolve => {
+		this.resolveChatMessageGeometryService	= resolve;
+	});
 
 	/** @see IChatData */
 	public chat: IChatData	= {
@@ -114,6 +127,7 @@ export class ChatService {
 			o.timestamp,
 			undefined,
 			selfDestructChat ? undefined : o.text.selfDestructTimeout,
+			o.text.dimensions,
 			o.id
 		);
 
@@ -180,6 +194,7 @@ export class ChatService {
 		timestamp?: number,
 		shouldNotify: boolean = author !== this.sessionService.localUsername,
 		selfDestructTimeout?: number,
+		dimensions?: IChatMessageLine[],
 		id: string = uuid()
 	) : Promise<void> {
 		if (typeof value === 'string') {
@@ -227,6 +242,7 @@ export class ChatService {
 						ChatMessage.AuthorTypes.Local :
 						ChatMessage.AuthorTypes.Remote
 			,
+			dimensions,
 			id,
 			selfDestructTimeout,
 			timestamp
@@ -328,9 +344,13 @@ export class ChatService {
 	}
 
 	/** Gets message value if not already set. */
-	public async getMessageValue (message: ChatMessage) : Promise<IChatMessage> {
+	public async getMessageValue (message: IChatMessage) : Promise<IChatMessage> {
 		if (message.value === undefined) {
-			message.setValue(await this.chat.messageValues.getItem(message.id));
+			message.value	= await this.chat.messageValues.getItem(message.id);
+
+			if (message instanceof ChatMessage) {
+				message.valueWatcher.next(message.value);
+			}
 		}
 
 		return message;
@@ -346,6 +366,13 @@ export class ChatService {
 			eventValue: 1,
 			hitType: 'event'
 		});
+	}
+
+	/** Initializes service. */
+	public init (chatMessageGeometryService: {
+		getDimensions: (message: ChatMessage) => Promise<ChatMessage>
+	}) : void {
+		this.resolveChatMessageGeometryService(chatMessageGeometryService);
 	}
 
 	/**
@@ -387,12 +414,29 @@ export class ChatService {
 			this.messageChange();
 		}
 
-		if (message) {
-			this.addTextMessage((await this.sessionService.send([
-				rpcEvents.text,
-				{text: {selfDestructChat, selfDestructTimeout, value: {text: message}}}
-			]))[0].data);
+		if (!message) {
+			return;
 		}
+
+		const value			= {text: message};
+
+		const dimensions	= (
+			await (await this.chatMessageGeometryService).getDimensions(new ChatMessage(
+				{
+					authorID: '',
+					authorType: ChatMessage.AuthorTypes.Local,
+					id: '',
+					timestamp: 0,
+					value
+				},
+				this.sessionService.localUsername
+			))
+		).dimensions || [];
+
+		this.addTextMessage((await this.sessionService.send([
+			rpcEvents.text,
+			{text: {dimensions, selfDestructChat, selfDestructTimeout, value}}
+		]))[0].data);
 	}
 
 	/** Sets queued message to be sent after handshake. */
