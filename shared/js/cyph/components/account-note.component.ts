@@ -155,7 +155,7 @@ export class AccountNoteComponent implements OnInit {
 	public async onChange (change: {
 		content: IQuillDelta;
 		delta: IQuillDelta;
-		oldContents: IQuillDelta;
+		oldContent: IQuillDelta;
 	}) : Promise<void> {
 		if (!this.realTime) {
 			this.noteData.content	= change.content;

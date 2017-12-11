@@ -56,12 +56,12 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 	@Output() public readonly change: EventEmitter<{
 		content: IQuillDelta;
 		delta: IQuillDelta;
-		oldContents: IQuillDelta;
+		oldContent: IQuillDelta;
 	}>	=
 		new EventEmitter<{
 			content: IQuillDelta;
 			delta: IQuillDelta;
-			oldContents: IQuillDelta;
+			oldContent: IQuillDelta;
 		}>()
 	;
 
@@ -167,7 +167,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 			this.change.emit({
 				content: this.addClientID(oldDelta.compose(delta)),
 				delta: this.addClientID(delta),
-				oldContents: this.addClientID(oldDelta)
+				oldContent: this.addClientID(oldDelta)
 			});
 		});
 
