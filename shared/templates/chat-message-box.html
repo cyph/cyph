@@ -1,168 +1,194 @@
-<div
-	class='chat-message-box'
-	[class.mobile]='envService.isMobile'
-	*ngIf='chatService.chat.state === states.chat && sessionService.state.isAlive'
->
-	<div fxFlex>
-		<textarea
-			fxFlex
-			class='message-box tabIndent'
-			[(ngModel)]='chatService.chat.currentMessage'
-			(ngModelChange)='chatService.messageChange()'
-			placeholder='Send a secure message...'
+<div *ngIf='chatService.chat.state === states.chat && sessionService.state.isAlive'>
+	<div
+		class='form-message-box'
+		[class.mobile]='envService.isMobile'
+		*ngIf='messageType === chatMessageValueTypes.Form'
+	>
+		TODO: Form creation UI
+	</div>
+
+	<div
+		class='quill-message-box'
+		[class.mobile]='envService.isMobile'
+		*ngIf='messageType === chatMessageValueTypes.Quill'
+	>
+		<button
+			mat-icon-button
+			matTooltip='Send'
+			(click)='send()'
 			cyphTranslate
-		></textarea>
-	</div>
-
-	<div *ngIf='envService.isMobile'>
-		<div
-			class='message-box-button-group'
-			*ngIf='chatService.chat.currentMessage !== ""'
-			[@slideInOutBottom]='"in"'
 		>
-			<button
-				mat-icon-button
-				matTooltip='Send'
-				(click)='mobileButtonHandlers.send()'
-				cyphTranslate
-			>
-				<mat-icon>send</mat-icon>
-			</button>
-		</div>
-		<div
-			class='message-box-button-group'
-			*ngIf='chatService.chat.currentMessage === ""'
-			[@slideInOutBottom]='"in"'
-		>
-			<button
-				mat-icon-button
-				matTooltip='Video Call'
-				(click)='mobileButtonHandlers.videoCall()'
-				[disabled]='!p2pService.isEnabled'
-				*ngIf='!p2pService.isActive'
-				cyphTranslate
-			>
-				<mat-icon>video_call</mat-icon>
-			</button>
-			<button
-				mat-icon-button
-				matTooltip='Voice Call'
-				(click)='mobileButtonHandlers.voiceCall()'
-				[disabled]='!p2pService.isEnabled'
-				*ngIf='!p2pService.isActive'
-				cyphTranslate
-			>
-				<mat-icon>call</mat-icon>
-			</button>
-			<button
-				mat-icon-button
-				matTooltip='Send File or Photo'
-				cyphTranslate
-			>
-				<mat-icon>attach_file</mat-icon>
-				<cyph-file-input
-					[accept]='fileAccept'
-					(change)='mobileButtonHandlers.fileTransfer($event)'
-				></cyph-file-input>
-			</button>
-		</div>
-
-		<button mat-icon-button [matMenuTriggerFor]='menu' class='menu-button' *ngIf='!accounts'>
-			<mat-icon>more_horiz</mat-icon>
+			<mat-icon>send</mat-icon>
 		</button>
-		<mat-menu #menu='matMenu'>
-			<button mat-menu-item (click)='chatService.helpButton()'>
-				<mat-icon>help_outline</mat-icon>
-				<span>{{stringsService.help}}</span>
-			</button>
-			<button mat-menu-item (click)='chatService.disconnectButton()'>
-				<mat-icon>close</mat-icon>
-				<span>{{stringsService.disconnect}}</span>
-			</button>
-		</mat-menu>
+		<cyph-quill [(ngModel)]='chatService.chat.currentMessage.quillDelta'></cyph-quill>
 	</div>
 
-	<smd-fab-speed-dial
-		[open]='isSpeedDialOpen'
-		(mouseleave)='isSpeedDialOpen = false'
-		*ngIf='!envService.isMobile'
+	<div
+		class='text-message-box'
+		[class.mobile]='envService.isMobile'
+		*ngIf='messageType === chatMessageValueTypes.Text'
 	>
-		<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
-			<button mat-fab>
-				<mat-icon>add</mat-icon>
-			</button>
-		</smd-fab-trigger>
-		<smd-fab-actions>
-			<button
-				mat-mini-fab
+		<div fxFlex>
+			<textarea
+				fxFlex
+				class='message-box tabIndent'
+				[(ngModel)]='chatService.chat.currentMessage.text'
+				(ngModelChange)='chatService.messageChange()'
+				placeholder='Send a secure message...'
 				cyphTranslate
-				matTooltip='Send File or Photo'
-				matTooltipPosition='left'
-			>
-				<mat-icon>attach_file</mat-icon>
-				<cyph-file-input
-					[accept]='fileAccept'
-					(change)='fileTransferService.send($event)'
-				></cyph-file-input>
-			</button>
-			<button
-				mat-mini-fab
-				cyphTranslate
-				matTooltip='Voice Call'
-				matTooltipPosition='left'
-				[disabled]='!p2pService.isEnabled'
-				*ngIf='!p2pService.isActive'
-				(click)='p2pService.voiceCallButton()'
-			>
-				<mat-icon>call</mat-icon>
-			</button>
-			<button
-				mat-mini-fab
-				cyphTranslate
-				matTooltip='Video Call'
-				matTooltipPosition='left'
-				[disabled]='!p2pService.isEnabled'
-				*ngIf='!p2pService.isActive'
-				(click)='p2pService.videoCallButton()'
-			>
-				<mat-icon>video_call</mat-icon>
-			</button>
-			<button
-				mat-mini-fab
-				cyphTranslate
-				class='alt'
-				[matTooltip]='stringsService.help'
-				matTooltipPosition='left'
-				(click)='chatService.helpButton()'
-			>
-				<mat-icon>help_outline</mat-icon>
-			</button>
-			<button
-				mat-mini-fab
-				cyphTranslate
-				class='alt'
-				[matTooltip]='stringsService.disconnect'
-				matTooltipPosition='left'
-				(click)='chatService.disconnectButton()'
-			>
-				<mat-icon>close</mat-icon>
-			</button>
-		</smd-fab-actions>
-	</smd-fab-speed-dial>
+			></textarea>
+		</div>
 
-	<h3
-		fxFlex
-		class='new-messages cyph-banner emphasis'
-		*ngIf='scrollService.unreadItemCount > 0'
-		(click)='scrollService.scrollDown()'
-	>
-		↓&nbsp;
-		{{scrollService.unreadItemCount}}
-		{{stringsService.newString}}
-		{{
-			scrollService.unreadItemCount === 1 ?
-				stringsService.message :
-				stringsService.messages
-		}}
-	</h3>
+		<div *ngIf='envService.isMobile'>
+			<div
+				class='message-box-button-group'
+				*ngIf='!!chatService.chat.currentMessage.text'
+				[@slideInOutBottom]='"in"'
+			>
+				<button
+					mat-icon-button
+					matTooltip='Send'
+					(click)='mobileButtonHandlers.send()'
+					cyphTranslate
+				>
+					<mat-icon>send</mat-icon>
+				</button>
+			</div>
+			<div
+				class='message-box-button-group'
+				*ngIf='!chatService.chat.currentMessage.text'
+				[@slideInOutBottom]='"in"'
+			>
+				<button
+					mat-icon-button
+					matTooltip='Video Call'
+					(click)='mobileButtonHandlers.videoCall()'
+					[disabled]='!p2pService.isEnabled'
+					*ngIf='!p2pService.isActive'
+					cyphTranslate
+				>
+					<mat-icon>video_call</mat-icon>
+				</button>
+				<button
+					mat-icon-button
+					matTooltip='Voice Call'
+					(click)='mobileButtonHandlers.voiceCall()'
+					[disabled]='!p2pService.isEnabled'
+					*ngIf='!p2pService.isActive'
+					cyphTranslate
+				>
+					<mat-icon>call</mat-icon>
+				</button>
+				<button
+					mat-icon-button
+					matTooltip='Send File or Photo'
+					cyphTranslate
+				>
+					<mat-icon>attach_file</mat-icon>
+					<cyph-file-input
+						[accept]='fileAccept'
+						(change)='mobileButtonHandlers.fileTransfer($event)'
+					></cyph-file-input>
+				</button>
+			</div>
+
+			<button mat-icon-button [matMenuTriggerFor]='menu' class='menu-button' *ngIf='!accounts'>
+				<mat-icon>more_horiz</mat-icon>
+			</button>
+			<mat-menu #menu='matMenu'>
+				<button mat-menu-item (click)='chatService.helpButton()'>
+					<mat-icon>help_outline</mat-icon>
+					<span>{{stringsService.help}}</span>
+				</button>
+				<button mat-menu-item (click)='chatService.disconnectButton()'>
+					<mat-icon>close</mat-icon>
+					<span>{{stringsService.disconnect}}</span>
+				</button>
+			</mat-menu>
+		</div>
+
+		<smd-fab-speed-dial
+			[open]='isSpeedDialOpen'
+			(mouseleave)='isSpeedDialOpen = false'
+			*ngIf='!envService.isMobile'
+		>
+			<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
+				<button mat-fab>
+					<mat-icon>add</mat-icon>
+				</button>
+			</smd-fab-trigger>
+			<smd-fab-actions>
+				<button
+					mat-mini-fab
+					cyphTranslate
+					matTooltip='Send File or Photo'
+					matTooltipPosition='left'
+				>
+					<mat-icon>attach_file</mat-icon>
+					<cyph-file-input
+						[accept]='fileAccept'
+						(change)='fileTransferService.send($event)'
+					></cyph-file-input>
+				</button>
+				<button
+					mat-mini-fab
+					cyphTranslate
+					matTooltip='Voice Call'
+					matTooltipPosition='left'
+					[disabled]='!p2pService.isEnabled'
+					*ngIf='!p2pService.isActive'
+					(click)='p2pService.voiceCallButton()'
+				>
+					<mat-icon>call</mat-icon>
+				</button>
+				<button
+					mat-mini-fab
+					cyphTranslate
+					matTooltip='Video Call'
+					matTooltipPosition='left'
+					[disabled]='!p2pService.isEnabled'
+					*ngIf='!p2pService.isActive'
+					(click)='p2pService.videoCallButton()'
+				>
+					<mat-icon>video_call</mat-icon>
+				</button>
+				<button
+					mat-mini-fab
+					cyphTranslate
+					class='alt'
+					[matTooltip]='stringsService.help'
+					matTooltipPosition='left'
+					(click)='chatService.helpButton()'
+				>
+					<mat-icon>help_outline</mat-icon>
+				</button>
+				<button
+					mat-mini-fab
+					cyphTranslate
+					class='alt'
+					[matTooltip]='stringsService.disconnect'
+					matTooltipPosition='left'
+					(click)='chatService.disconnectButton()'
+				>
+					<mat-icon>close</mat-icon>
+				</button>
+			</smd-fab-actions>
+		</smd-fab-speed-dial>
+
+		<h3
+			fxFlex
+			class='new-messages cyph-banner emphasis'
+			*ngIf='scrollService.unreadItemCount > 0'
+			(click)='scrollService.scrollDown()'
+		>
+			↓&nbsp;
+			{{scrollService.unreadItemCount}}
+			{{stringsService.newString}}
+			{{
+				scrollService.unreadItemCount === 1 ?
+					stringsService.message :
+					stringsService.messages
+			}}
+		</h3>
+	</div>
 </div>

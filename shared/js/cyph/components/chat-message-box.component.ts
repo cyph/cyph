@@ -6,6 +6,7 @@ import * as $ from 'jquery';
 import * as tabIndent from 'tab-indent';
 import {slideInOutBottom} from '../animations';
 import {States} from '../chat/enums';
+import {ChatMessageValueTypes} from '../proto';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
@@ -39,11 +40,17 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
 
+	/** @see ChatMessageValueTypes */
+	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
+
 	/** @see FileInput.accept */
 	@Input() public fileAccept: string;
 
 	/** Indicates whether speed dial is open. */
 	public isSpeedDialOpen: boolean	= false;
+
+	/** Indicates which version of the message composition UI should be displayed. */
+	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
 
 	/** Wrappers for mobile button handlers. */
 	public readonly mobileButtonHandlers	= {
@@ -54,7 +61,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 		},
 		send: () => {
 			this.mobileButtonWrapper(true, () => {
-				this.chatService.send();
+				this.send();
 			});
 		},
 		videoCall: () => {
@@ -104,7 +111,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 			}
 
 			e.preventDefault();
-			this.chatService.send();
+			this.send();
 			$textarea.val('');
 		});
 
@@ -133,6 +140,11 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 
 			tabIndent.render($textarea[0]);
 		}
+	}
+
+	/** Sends current message. */
+	public async send () : Promise<void> {
+		await this.chatService.send(this.messageType);
 	}
 
 	constructor (

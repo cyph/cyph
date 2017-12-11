@@ -21,18 +21,15 @@
 					{{message.author | async}}:
 				</strong>
 				<div *ngIf='value.form; else quillDeltaValue'>
-					TODO: Form UI
+					<cyph-dynamic-form [form]='value.form'></cyph-dynamic-form>
 				</div>
 				<ng-template #quillDeltaValue>
 					<div *ngIf='value.quillDelta; else textValue'>
-						TODO: Quill UI
+						<cyph-quill [content]='value.quillDelta' [isDisabled]='true'></cyph-quill>
 					</div>
 				</ng-template>
-				<ng-template #quillDeltaValue>
-					<cyph-markdown
-						class='message-text'
-						[markdown]='value.text'
-					></cyph-markdown>
+				<ng-template #textValue>
+					<cyph-markdown class='message-text' [markdown]='value.text'></cyph-markdown>
 				</ng-template>
 			</div>
 			<div fxFlex fxLayoutAlign='end center' class='message-timestamp'>

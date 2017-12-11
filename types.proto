@@ -238,6 +238,13 @@ message ChatMessageValue {
 	}
 }
 
+/** Possible types of a chat text message value. */
+enum ChatMessageValueTypes {
+	Form = 0;
+	Quill = 1;
+	Text = 2;
+}
+
 /** Chat unconfirmed messages. */
 message ChatUnconfirmedMessages {
 	/** Mapping of message IDs to confirmation statuses. */

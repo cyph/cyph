@@ -13,7 +13,7 @@ import {States} from './enums';
  */
 export interface IChatData {
 	/** The current message being composed. */
-	currentMessage: string;
+	currentMessage: IChatMessageValue;
 
 	/** Indicates whether authentication has completed (still true even after disconnect). */
 	isConnected: boolean;

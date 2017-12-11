@@ -272,7 +272,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		if (this.envService.isWeb) {
 			(<any> self).sendMessage	=
 				(message?: string, selfDestructTimeout?: number) => {
-					this.chatService.send(message, selfDestructTimeout);
+					this.chatService.send(undefined, {text: message}, selfDestructTimeout);
 				}
 			;
 		}

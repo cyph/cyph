@@ -47,7 +47,7 @@ export class AccountChatService extends ChatService {
 		await this.accountSessionService.setUser(username);
 
 		this.chat	= getOrSetDefault(this.chats, username, () => ({
-			currentMessage: '',
+			currentMessage: {},
 			isConnected: true,
 			isDisconnected: false,
 			isFriendTyping: new BehaviorSubject(false),

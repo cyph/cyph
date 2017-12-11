@@ -10,7 +10,7 @@ import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncMap} from '../local-async-map';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
-import {IChatMessage, IChatMessageLine} from '../proto';
+import {ChatMessageValueTypes, IChatMessage, IChatMessageLine} from '../proto';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
 import {lockFunction} from '../util/lock';
@@ -54,7 +54,7 @@ export class ChatService {
 
 	/** @see IChatData */
 	public chat: IChatData	= {
-		currentMessage: '',
+		currentMessage: {},
 		isConnected: false,
 		isDisconnected: false,
 		isFriendTyping: new BehaviorSubject(false),
@@ -286,7 +286,8 @@ export class ChatService {
 
 		if (this.chat.queuedMessage) {
 			this.send(
-				this.chat.queuedMessage,
+				undefined,
+				{text: this.chat.queuedMessage},
 				this.chatSelfDestruct ?
 					this.chatSelfDestructTimeout * 1000 :
 					undefined,
@@ -386,11 +387,11 @@ export class ChatService {
 		return this.messageChangeLock(async () => {
 			for (let i = 0 ; i < 2 ; ++i) {
 				const isMessageChanged: boolean	=
-					this.chat.currentMessage !== '' &&
-					this.chat.currentMessage !== this.chat.previousMessage
+					this.chat.currentMessage.text !== '' &&
+					this.chat.currentMessage.text !== this.chat.previousMessage
 				;
 
-				this.chat.previousMessage	= this.chat.currentMessage;
+				this.chat.previousMessage	= this.chat.currentMessage.text;
 
 				if (this.chat.isMessageChanged !== isMessageChanged) {
 					this.chat.isMessageChanged	= isMessageChanged;
@@ -407,21 +408,42 @@ export class ChatService {
 
 	/** Sends a message. */
 	public async send (
-		message?: string,
+		messageType: ChatMessageValueTypes = ChatMessageValueTypes.Text,
+		message: IChatMessageValue = {},
 		selfDestructTimeout?: number,
 		selfDestructChat: boolean = false
 	) : Promise<void> {
-		if (!message) {
-			message						= this.chat.currentMessage;
-			this.chat.currentMessage	= '';
-			this.messageChange();
-		}
+		const value: IChatMessageValue	= {};
 
-		if (!message) {
-			return;
-		}
+		switch (messageType) {
+			case ChatMessageValueTypes.Form:
+				value.form	= (message && message.form) || this.chat.currentMessage.form;
+				if (!value.form) {
+					return;
+				}
+				break;
 
-		const value			= {text: message};
+			case ChatMessageValueTypes.Quill:
+				value.quillDelta	=
+					(message && message.quillDelta) || this.chat.currentMessage.quillDelta
+				;
+				if (!value.quillDelta) {
+					return;
+				}
+				break;
+
+			case ChatMessageValueTypes.Text:
+				value.text	= (message && message.text) || this.chat.currentMessage.text;
+				this.chat.currentMessage.text	= '';
+				this.messageChange();
+				if (!value.text) {
+					return;
+				}
+				break;
+
+			default:
+				throw new Error('Invalid ChatMessageValueTypes value.');
+		}
 
 		const dimensions	= (
 			await (await this.chatMessageGeometryService).getDimensions(new ChatMessage(
