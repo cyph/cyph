@@ -131,11 +131,15 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 
 	/** @ignore */
 	private setQuillContent () : void {
-		if (!this.quill || !this.content) {
+		if (!this.quill) {
 			return;
 		}
 
-		this.quill.setContents(new Delta(this.stripExternalSubresources(this.content).ops));
+		this.quill.setContents(
+			this.content ?
+				new Delta(this.stripExternalSubresources(this.content).ops) :
+				new Delta()
+		);
 	}
 
 	/** @ignore */

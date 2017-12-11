@@ -414,6 +414,7 @@ export class ChatService {
 		switch (messageType) {
 			case ChatMessageValueTypes.Form:
 				value.form	= (message && message.form) || this.chat.currentMessage.form;
+				this.chat.currentMessage.form	= undefined;
 				if (!value.form) {
 					return;
 				}
@@ -423,6 +424,7 @@ export class ChatService {
 				value.quillDelta	=
 					(message && message.quillDelta) || this.chat.currentMessage.quillDelta
 				;
+				this.chat.currentMessage.quillDelta	= undefined;
 				if (!value.quillDelta) {
 					return;
 				}
