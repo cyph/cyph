@@ -8,6 +8,7 @@ import {
 	Output,
 	SimpleChanges
 } from '@angular/core';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import * as Quill from 'quill';
 import * as Delta from 'quill-delta';
 import {Observable} from 'rxjs/Observable';
@@ -26,11 +27,18 @@ import {sleep, waitForValue} from '../util/wait';
  * Angular component for Quill editor.
  */
 @Component({
+	providers: [
+		{
+			multi: true,
+			provide: NG_VALUE_ACCESSOR,
+			useExisting: QuillComponent
+		}
+	],
 	selector: 'cyph-quill',
 	styleUrls: ['../../../css/components/quill.scss'],
 	templateUrl: '../../../templates/quill.html'
 })
-export class QuillComponent implements AfterViewInit, OnChanges {
+export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnChanges {
 	/** @ignore */
 	private clientID: string	= uuid();
 
@@ -39,6 +47,12 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 
 	/** @ignore */
 	private editablePromise?: Promise<void>;
+
+	/** Change event callback. */
+	private onChange?: (content: IQuillDelta) => void;
+
+	/** Touch event callback. */
+	private onTouched?: () => void;
 
 	/** @ignore */
 	private quill?: Quill.Quill;
@@ -75,7 +89,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 	@Input() public deltas?: Observable<IQuillDelta>;
 
 	/** Indicates whether editor should be read-only. */
-	@Input() public readOnly: boolean;
+	@Input() public isDisabled: boolean;
 
 	/** Emits on selection change. */
 	@Output() public readonly selectionChange: EventEmitter<{
@@ -113,6 +127,15 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 		const newT		= <any> t;
 		newT.clientID	= this.clientID;
 		return newT;
+	}
+
+	/** @ignore */
+	private setQuillContent () {
+		if (!this.quill || !this.content) {
+			return;
+		}
+
+		this.quill.setContents(new Delta(this.stripExternalSubresources(this.content).ops));
 	}
 
 	/** @ignore */
@@ -164,16 +187,26 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 				return;
 			}
 
+			const content	= this.addClientID(oldDelta.compose(delta));
+
 			this.change.emit({
-				content: this.addClientID(oldDelta.compose(delta)),
+				content,
 				delta: this.addClientID(delta),
 				oldContent: this.addClientID(oldDelta)
 			});
+
+			if (this.onChange) {
+				this.onChange(content);
+			}
 		});
 
 		this.quill.on('selection-change', (range, oldRange, source) => {
 			if (source !== 'user') {
 				return;
+			}
+
+			if (this.onTouched && range.length === 0 && oldRange.length !== 0) {
+				this.onTouched();
 			}
 
 			this.selectionChange.emit({
@@ -195,9 +228,7 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 			switch (k) {
 				case 'content':
 					if (this.content) {
-						this.quill.setContents(
-							new Delta(this.stripExternalSubresources(this.content).ops)
-						);
+						this.setQuillContent();
 					}
 					break;
 
@@ -222,8 +253,8 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 					});
 					break;
 
-				case 'readOnly':
-					if (this.readOnly) {
+				case 'isDisabled':
+					if (this.isDisabled) {
 						this.editablePromise	= new Promise(resolve => {
 							this.resolveEditablePromise	= resolve;
 						});
@@ -262,6 +293,32 @@ export class QuillComponent implements AfterViewInit, OnChanges {
 					});
 			}
 		}
+	}
+
+	/** @inheritDoc */
+	public registerOnChange (f: (content: IQuillDelta) => void) : void {
+		this.onChange	= f;
+	}
+
+	/** @inheritDoc */
+	public registerOnTouched (f: () => void) : void {
+		this.onTouched	= f;
+	}
+
+	/** @inheritDoc */
+	public setDisabledState (b: boolean) : void {
+		if (this.isDisabled !== b) {
+			this.isDisabled	= b;
+		}
+	}
+
+	/** @inheritDoc */
+	public writeValue (value: IQuillDelta) : void {
+		if (this.content !== value) {
+			this.content	= value;
+		}
+
+		this.setQuillContent();
 	}
 
 	constructor (

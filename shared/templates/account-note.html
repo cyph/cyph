@@ -67,7 +67,7 @@
 								[content]='note?.content | async'
 								[deltas]='note?.deltas'
 								[selections]='note?.selections'
-								[readOnly]='!editable'
+								[isDisabled]='!editable'
 								(change)='onChange($event)'
 								(selectionChange)='onSelectionChange($event)'
 							></cyph-quill>

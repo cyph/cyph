@@ -63,7 +63,7 @@ export class PinInputComponent implements ControlValueAccessor {
 	}
 
 	/** @inheritDoc */
-	public registerOnChange (f: () => void) : void {
+	public registerOnChange (f: (s: string) => void) : void {
 		this.onChange	= f;
 	}
 
