@@ -119,9 +119,9 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 	];
 
 	/** @ignore */
-	private addClientID<T> (t: T) : T&{clientID: string} {
+	private addClientID<T> (t: T|undefined) : T&{clientID: string} {
 		if (!t) {
-			return t;
+			return <any> {clientID: this.clientID};
 		}
 
 		const newT		= <any> t;
@@ -130,7 +130,7 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 	}
 
 	/** @ignore */
-	private setQuillContent () {
+	private setQuillContent () : void {
 		if (!this.quill || !this.content) {
 			return;
 		}
@@ -200,12 +200,20 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 			}
 		});
 
-		this.quill.on('selection-change', (range, oldRange, source) => {
+		this.quill.on('selection-change', (
+			range: Quill.RangeStatic|undefined,
+			oldRange: Quill.RangeStatic|undefined,
+			source
+		) => {
 			if (source !== 'user') {
 				return;
 			}
 
-			if (this.onTouched && range.length === 0 && oldRange.length !== 0) {
+			if (
+				this.onTouched &&
+				(!range || range.length === 0) &&
+				(!oldRange || oldRange.length === 0)
+			) {
 				this.onTouched();
 			}
 

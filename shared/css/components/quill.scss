@@ -1,6 +1,6 @@
 @import '../mixins';
 
-:host > .read-only ::ng-deep .ql-toolbar {
+:host > .disabled ::ng-deep .ql-toolbar {
 	display: none;
 }
 
