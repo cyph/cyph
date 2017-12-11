@@ -15,6 +15,7 @@ import {FileInputComponent} from '../components/file-input.component';
 import {HelpComponent} from '../components/help.component';
 import {MarkdownComponent} from '../components/markdown.component';
 import {PinInputComponent} from '../components/pin-input.component';
+import {QuillComponent} from '../components/quill.component';
 import {RedirectComponent} from '../components/redirect.component';
 import {SignupFormComponent} from '../components/signup-form.component';
 import {RouterLinkDirective} from '../directives/router-link.directive';
@@ -52,6 +53,7 @@ import {CyphWebModule} from './cyph-web.module';
 		HelpComponent,
 		MarkdownComponent,
 		PinInputComponent,
+		QuillComponent,
 		RedirectComponent,
 		RouterLinkDirective,
 		SignupFormComponent,
@@ -77,6 +79,7 @@ import {CyphWebModule} from './cyph-web.module';
 		HelpComponent,
 		MarkdownComponent,
 		PinInputComponent,
+		QuillComponent,
 		RedirectComponent,
 		RouterLinkDirective,
 		SignupFormComponent,

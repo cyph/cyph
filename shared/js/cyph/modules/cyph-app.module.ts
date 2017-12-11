@@ -20,7 +20,6 @@ import {AccountComponent} from '../components/account.component';
 import {FooterComponent} from '../components/footer.component';
 import {LinkConnectionComponent} from '../components/link-connection.component';
 import {NotFoundComponent} from '../components/not-found.component';
-import {QuillComponent} from '../components/quill.component';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountSettingsService} from '../services/account-settings.service';
@@ -61,8 +60,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountSettingsComponent,
 		FooterComponent,
 		LinkConnectionComponent,
-		NotFoundComponent,
-		QuillComponent
+		NotFoundComponent
 	],
 	entryComponents: [
 		AccountFileSharingComponent
@@ -87,8 +85,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountSettingsComponent,
 		FooterComponent,
 		LinkConnectionComponent,
-		NotFoundComponent,
-		QuillComponent
+		NotFoundComponent
 	],
 	imports: [
 		CyphCommonModule,
