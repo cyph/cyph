@@ -206,12 +206,8 @@ export class ChatService {
 
 		const {form, quillDelta, text}	= value;
 
-		if (form || quillDelta) {
-			throw new Error('Not yet implemented.');
-		}
-
 		if (
-			!text ||
+			!(form || quillDelta || text) ||
 			this.chat.state === States.aborted ||
 			(author !== this.sessionService.appUsername && this.chat.isDisconnected)
 		) {
@@ -227,15 +223,15 @@ export class ChatService {
 		}
 
 		if (this.notificationService && shouldNotify) {
-			if (author === this.sessionService.appUsername) {
-				this.notificationService.notify(text);
-			}
-			else {
+			if (author !== this.sessionService.appUsername) {
 				this.notificationService.notify(this.stringsService.newMessageNotification);
+			}
+			else if (text) {
+				this.notificationService.notify(text);
 			}
 		}
 
-		await this.chat.messageValues.setItem(id, {text});
+		await this.chat.messageValues.setItem(id, value);
 		await this.chat.messages.pushValue({
 			authorID: await this.getAuthorID(author),
 			authorType:
