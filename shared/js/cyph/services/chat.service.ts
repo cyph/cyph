@@ -206,7 +206,7 @@ export class ChatService {
 		}
 
 		if (
-			!(value.form || value.quill || value.text) ||
+			!(value.form || (value.quill && value.quill.length > 0) || value.text) ||
 			this.chat.state === States.aborted ||
 			(author !== this.sessionService.appUsername && this.chat.isDisconnected)
 		) {

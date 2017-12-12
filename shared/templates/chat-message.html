@@ -25,7 +25,7 @@
 					<cyph-dynamic-form [form]='value.form'></cyph-dynamic-form>
 				</div>
 				<ng-template #quillValue>
-					<div *ngIf='value.quill; else textValue'>
+					<div *ngIf='value.quill && value.quill.length > 0; else textValue'>
 						<cyph-quill
 							[content]='quill | async'
 							[isDisabled]='true'
