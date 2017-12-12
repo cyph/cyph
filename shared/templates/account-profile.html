@@ -4,46 +4,28 @@
 			fxFlex
 			fxFlexFill
 			fxLayout='column'
-			fxLayoutAlign='center stretch'
 			class='profile'
 			*ngIf='user'
 			[class.mobile]='envService.isMobile'
 		>
-			<div fxLayoutAlign='center center'>
-				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch'>
-					<div fxLayoutAlign='center center'>
+			<div fxLayout='column' class='header' fxLayoutAlign='center center'>
+					<div fxFlex fxLayout='row' class='user-info' fxLayoutAlign='center center'>
 						<img
 							class='avatar animated jackInTheBox _1'
 							[ngClass]='userPresence[user.status | async]'
 							alt='Profile Picture'
 							[src]='user.avatar | async'
 						/>
-					</div>
-					<div class='name animated flipInX _2'>{{user.name | async}}</div>
-					<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
-					<div
-						fxLayoutAlign='center center'
-						class='description animated flipInX _3'
-						*ngIf='!editMode'
-					>
-						<div>
-							{{user.description | async | slice:0:maxDescriptionLength}}
+						<div fxLayout='column'>
+							<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.Standard'>{{user.name | async}}</div>
+							<div class='username animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.Standard'>@{{user.username | async}}</div>
+							<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.TelehealthPatient'>Patient: {{user.name | async}}</div>
+							<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.TelehealthDoctor'>Dr. {{user.name | async}}</div>
 						</div>
 					</div>
-					<mat-form-field class='description' *ngIf='editMode && user'>
-						<input
-							matInput
-							(blur)='isEditorFocused = false'
-							(focus)='isEditorFocused = true'
-							[maxlength]='maxDescriptionLength'
-							[ngModel]='user.description | async'
-							(ngModelChange)='descriptionDraft = $event'
-						/>
-					</mat-form-field>
 				</div>
-			</div>
 
-			<div fxLayoutAlign='center center' class='edit-hide status' *ngIf='isCurrentUser'>
+			<div fxLayoutAlign='center center' class='edit-hide status' *ngIf='isCurrentUser && !accountService.isTelehealth'>
 				<mat-select
 					fxFlex='50'
 					cyphTranslate
@@ -63,7 +45,7 @@
 				fxLayout='row'
 				fxLayoutAlign='center center'
 				fxLayoutGap='16px'
-				*ngIf='!isCurrentUser'
+				*ngIf='!isCurrentUser && (user.userType | async) === accountUserType.Standard'
 			>
 				<button
 					mat-mini-fab
@@ -98,7 +80,7 @@
 				</button>
 			</div>
 
-			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isCurrentUser'>
+			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isCurrentUser && (user.userType | async) === accountUserType.Standard'>
 				<div
 					class='file-upload'
 					fxFlex='25'
