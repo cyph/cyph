@@ -5,6 +5,7 @@ import {
 	EventEmitter,
 	Input,
 	OnChanges,
+	OnDestroy,
 	Output,
 	SimpleChanges
 } from '@angular/core';
@@ -38,12 +39,15 @@ import {sleep, waitForValue} from '../util/wait';
 	styleUrls: ['../../../css/components/quill.scss'],
 	templateUrl: '../../../templates/quill.html'
 })
-export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnChanges {
+export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnChanges, OnDestroy {
 	/** @ignore */
 	private clientID: string	= uuid();
 
 	/** @ignore */
 	private deltasSubscription?: Subscription;
+
+	/** @ignore */
+	private destroyed: boolean	= false;
 
 	/** @ignore */
 	private editablePromise?: Promise<void>;
@@ -91,6 +95,9 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 	/** Indicates whether editor should be read-only. */
 	@Input() public isDisabled: boolean;
 
+	/** Emits on ready. */
+	@Output() public readonly ready: EventEmitter<void>	= new EventEmitter<void>();
+
 	/** Emits on selection change. */
 	@Output() public readonly selectionChange: EventEmitter<{
 		oldRange: IQuillRange;
@@ -131,7 +138,7 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 
 	/** @ignore */
 	private setQuillContent () : void {
-		if (!this.quill) {
+		if (!this.quill || this.destroyed) {
 			return;
 		}
 
@@ -180,6 +187,10 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 
 		await sleep(0);
 
+		if (this.destroyed) {
+			return;
+		}
+
 		/* Temporary workaround for https://github.com/DefinitelyTyped/DefinitelyTyped/issues/18946 */
 		this.quill	= <Quill.Quill> new (<any> Quill)(`#${this.containerID}`, {
 			modules: {toolbar: this.toolbar},
@@ -226,10 +237,16 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 				range: this.addClientID(range)
 			});
 		});
+
+		this.ready.emit();
 	}
 
 	/** @inheritDoc */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
+		if (this.destroyed) {
+			return;
+		}
+
 		await waitForValue(() => this.quill);
 
 		if (!this.quill) {
@@ -305,6 +322,11 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 					});
 			}
 		}
+	}
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		this.destroyed	= true;
 	}
 
 	/** @inheritDoc */

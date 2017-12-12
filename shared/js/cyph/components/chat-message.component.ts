@@ -3,10 +3,14 @@ import {
 	ElementRef,
 	Input,
 	OnChanges,
+	OnDestroy,
 	Renderer2,
 	SimpleChanges
 } from '@angular/core';
 import * as $ from 'jquery';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {filter} from 'rxjs/operators/filter';
+import {take} from 'rxjs/operators/take';
 import {ChatMessage} from '../chat';
 import {ChatService} from '../services/chat.service';
 import {ScrollService} from '../services/scroll.service';
@@ -23,7 +27,7 @@ import {waitForIterable} from '../util/wait';
 	styleUrls: ['../../../css/components/chat-message.scss'],
 	templateUrl: '../../../templates/chat-message.html'
 })
-export class ChatMessageComponent implements OnChanges {
+export class ChatMessageComponent implements OnChanges, OnDestroy {
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
 
@@ -38,6 +42,9 @@ export class ChatMessageComponent implements OnChanges {
 
 	/** @see IChatData.unconfirmedMessages */
 	@Input() public unconfirmedMessages?: {[id: string]: boolean|undefined};
+
+	/** Indicates whether view is ready. */
+	public readonly viewReady: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
@@ -57,6 +64,11 @@ export class ChatMessageComponent implements OnChanges {
 
 		await this.chatService.getMessageValue(this.message);
 
+		/* Run it here when it won't be triggered by an event handler in the template. */
+		if (this.message.value && !this.message.value.quillDelta) {
+			this.resolveViewReady();
+		}
+
 		if (
 			this.unconfirmedMessages === undefined ||
 			this.message !== changes.message.currentValue ||
@@ -72,12 +84,24 @@ export class ChatMessageComponent implements OnChanges {
 		}
 	}
 
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		this.viewReady.next(false);
+	}
+
+	/** Resolves viewReady. */
+	public resolveViewReady () : void {
+		this.viewReady.next(true);
+	}
+
 	/** Resolves after view init. */
 	public async waitUntilInitiated () : Promise<void> {
+		await this.viewReady.pipe(filter(b => b), take(1)).toPromise();
+
 		const $elem		= $(this.elementRef.nativeElement);
 		const $message	= await waitForIterable(() => $elem.find('.message'));
 
-		await Promise.all($message.find('*').toArray().map(async element => {
+		await Promise.all($message.children().toArray().map(async element => {
 			const promise	= new Promise<void>(async resolve => {
 				$(element).one('transitionend', () => { resolve(); });
 			});

@@ -3,7 +3,8 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
-import {ChatMessage as ChatMessageInternal, IChatMessage, IChatMessageLine} from '../proto';
+import {IChatMessage} from '../chat';
+import {ChatMessage as ChatMessageInternal, IChatMessageLine} from '../proto';
 import {Timer} from '../timer';
 import {getTimeString} from '../util/time';
 import {sleep} from '../util/wait';
@@ -46,9 +47,11 @@ export class ChatMessage implements IChatMessage {
 	/** @ignore */
 	public value?: IChatMessageValue	= this.message.value && {
 		form: this.message.value.form,
-		quillDelta: this.message.value.quillDeltaBytes ?
-			msgpack.decode(this.message.value.quillDeltaBytes) :
-			undefined
+		quillDelta: this.message.value.quillDelta || (
+			this.message.value.quillDeltaBytes ?
+				msgpack.decode(this.message.value.quillDeltaBytes) :
+				undefined
+			)
 		,
 		quillDeltaBytes: this.message.value.quillDeltaBytes,
 		text: this.message.value.text

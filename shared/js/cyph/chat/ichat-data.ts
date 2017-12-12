@@ -1,10 +1,9 @@
 import {Subject} from 'rxjs/Subject';
-import {IChatMessageValue} from '../chat';
+import {IChatMessage, IChatMessageValue} from '../chat';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {LockFunction} from '../lock-function-type';
-import {IChatMessage} from '../proto';
 import {States} from './enums';
 
 

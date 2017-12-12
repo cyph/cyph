@@ -32,6 +32,8 @@ export class ChatMessageGeometryService {
 			return message;
 		}
 
+		await this.chatService.getMessageValue(message);
+
 		const componentRef	= this.componentFactoryResolver.
 			resolveComponentFactory(ChatMessageComponent).
 			create(this.injector)
@@ -60,11 +62,19 @@ export class ChatMessageGeometryService {
 		containerChild.style.fontSize	= '1.7em';
 
 		const getDimensionsHelper	= () => {
+			if (!message || !message.value) {
+				return [];
+			}
+
 			/* See https://github.com/palantir/tslint/issues/3540 */
 			/* tslint:disable-next-line:no-unnecessary-type-assertion */
-			const lines	= <HTMLElement[]> Array.from(
-				document.querySelectorAll(`#${id} cyph-markdown > span > *`)
-			);
+			const lines	= <HTMLElement[]> Array.from(document.querySelectorAll(
+				message.value.form ?
+					`#${id} cyph-dynamic-form .row` :
+					message.value.quillDelta ?
+						`#${id} cyph-quill .ql-editor > *` :
+						`#${id} cyph-markdown > span > *`
+			));
 
 			if (lines.length < 1) {
 				return [];
@@ -85,6 +95,14 @@ export class ChatMessageGeometryService {
 
 			for (const line of lines) {
 				line.style.display	= defaultDisplay;
+			}
+
+			/* Adjustments for different message types */
+			if (message.value.quillDelta) {
+				dimensions.unshift({
+					height: 24,
+					width: 1
+				});
 			}
 
 			return dimensions;

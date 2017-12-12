@@ -8,6 +8,7 @@
 	[class.confirmed]='confirmed'
 	[class.self-destruct]='chatService.chatSelfDestruct'
 	[class.self-destructed]='message.selfDestructTimer?.isComplete | async'
+	[class.visibility-hidden]='(viewReady | async) === false'
 	[matTooltip]='confirmed ? undefined : stringsService.messageUnconfirmed'
 	*ngIf='message?.valueWatcher | async; let value'
 >
@@ -25,7 +26,11 @@
 				</div>
 				<ng-template #quillDeltaValue>
 					<div *ngIf='value.quillDelta; else textValue'>
-						<cyph-quill [content]='value.quillDelta' [isDisabled]='true'></cyph-quill>
+						<cyph-quill
+							[content]='value.quillDelta'
+							[isDisabled]='true'
+							(ready)='resolveViewReady()'
+						></cyph-quill>
 					</div>
 				</ng-template>
 				<ng-template #textValue>

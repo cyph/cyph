@@ -1,16 +1,17 @@
 /* tslint:disable:max-file-line-count */
 
 import {Injectable} from '@angular/core';
+import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
-import {ChatMessage, IChatData, IChatMessageValue, States} from '../chat';
+import {ChatMessage, IChatData, IChatMessage, IChatMessageValue, States} from '../chat';
 import {HelpComponent} from '../components/help.component';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncMap} from '../local-async-map';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
-import {ChatMessageValueTypes, IChatMessage, IChatMessageLine} from '../proto';
+import {ChatMessageValueTypes, IChatMessageLine} from '../proto';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
 import {lockFunction} from '../util/lock';
@@ -204,10 +205,12 @@ export class ChatService {
 			value	= {text: value};
 		}
 
-		const {form, quillDelta, text}	= value;
+		if (!value.quillDelta && value.quillDeltaBytes) {
+			value.quillDelta	= msgpack.decode(value.quillDeltaBytes);
+		}
 
 		if (
-			!(form || quillDelta || text) ||
+			!(value.form || value.quillDelta || value.text) ||
 			this.chat.state === States.aborted ||
 			(author !== this.sessionService.appUsername && this.chat.isDisconnected)
 		) {
@@ -226,8 +229,8 @@ export class ChatService {
 			if (author !== this.sessionService.appUsername) {
 				this.notificationService.notify(this.stringsService.newMessageNotification);
 			}
-			else if (text) {
-				this.notificationService.notify(text);
+			else if (value.text) {
+				this.notificationService.notify(value.text);
 			}
 		}
 
@@ -421,9 +424,12 @@ export class ChatService {
 				break;
 
 			case ChatMessageValueTypes.Quill:
-				value.quillDelta	=
+				value.quillDelta					= Object.assign(
+					{},
 					(message && message.quillDelta) || this.chat.currentMessage.quillDelta
-				;
+				);
+				(<any> value.quillDelta).clientID	= undefined;
+				value.quillDeltaBytes				= msgpack.encode(value.quillDelta);
 				this.chat.currentMessage.quillDelta	= undefined;
 				if (!value.quillDelta) {
 					return;
