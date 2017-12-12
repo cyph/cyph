@@ -248,6 +248,12 @@ find firebase @firebase -type f -name '*.node.js' -exec bash -c '
 	cp -f {} $(echo "{}" | sed "s|\.node\.js$|.js|")
 ' \;
 
+cd tslint
+cat package.json | grep -v tslint-test-config-non-relative > package.json.new
+mv package.json.new package.json
+yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
+cd ..
+
 cd ../..
 
 mv js/node_modules .js.tmp/
