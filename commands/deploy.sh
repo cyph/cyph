@@ -409,7 +409,9 @@ if [ "${websign}" ] ; then
 			customBuildBase="$(echo "${d}" | perl -pe 's/.*\/(.*)$/\1/')"
 			customBuild="$(projectname "${customBuildBase}")"
 			customBuildConfig="${d}/config.json"
+			customBuildAudioImage="${d}/audio-image.png"
 			customBuildBackground="${d}/background.png"
+			customBuildErrorImage="${d}/error-image.png"
 			customBuildFavicon="${d}/favicon.png"
 			customBuildStrings="${d}/strings.json"
 			customBuildTheme="${d}/theme.scss"
@@ -418,8 +420,10 @@ if [ "${websign}" ] ; then
 
 			../../commands/websign/custombuild.js \
 				"${customBuild}" \
-				"${customBuildConfig}" \
+				"${customBuildAudioImage}" \
 				"${customBuildBackground}" \
+				"${customBuildConfig}" \
+				"${customBuildErrorImage}" \
 				"${customBuildFavicon}" \
 				"${customBuildStrings}" \
 				"${customBuildStylesheet}" \

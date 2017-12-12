@@ -18,9 +18,21 @@ declare let customBuildApiFlags: string|undefined;
 
 /**
  * @global
+ * If applicable, voice call background image for this custom build.
+ */
+declare let customBuildAudioImage: string|undefined;
+
+/**
+ * @global
  * If applicable, call type for this custom build.
  */
 declare let customBuildCallType: 'audio'|'video'|undefined;
+
+/**
+ * @global
+ * If applicable, Walken image replacement for this custom build.
+ */
+declare let customBuildErrorImage: string|undefined;
 
 /**
  * @global

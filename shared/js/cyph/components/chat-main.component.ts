@@ -1,7 +1,9 @@
 import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
+import {SafeUrl} from '@angular/platform-browser';
 import * as $ from 'jquery';
 import {fadeIn} from '../animations';
 import {States} from '../chat/enums';
+import {DataURIProto} from '../proto';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
@@ -10,6 +12,7 @@ import {P2PService} from '../services/p2p.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {readableByteLength} from '../util/formatting';
+import {deserialize} from '../util/serialization';
 
 
 /**
@@ -24,6 +27,18 @@ import {readableByteLength} from '../util/formatting';
 export class ChatMainComponent implements AfterViewInit {
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
+
+	/** @see customBuildAudioImage */
+	public readonly customBuildAudioImage?: Promise<SafeUrl>	= customBuildAudioImage ?
+		deserialize(DataURIProto, customBuildAudioImage) :
+		undefined
+	;
+
+	/** @see customBuildErrorImage */
+	public readonly customBuildErrorImage?: Promise<SafeUrl>	= customBuildErrorImage ?
+		deserialize(DataURIProto, customBuildErrorImage) :
+		undefined
+	;
 
 	/** Indicates whether projected disconnection message should be hidden. */
 	@Input() public hideDisconnectMessage: boolean;
