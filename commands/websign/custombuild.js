@@ -17,12 +17,14 @@ const {serialize}		= require('../../modules/util');
 
 const args			= {
 	customBuild: process.argv[2],
-	customBuildConfig: process.argv[3],
+	customBuildAudioImage: process.argv[3],
 	customBuildBackground: process.argv[4],
-	customBuildFavicon: process.argv[5],
-	customBuildStrings: process.argv[6],
-	customBuildStylesheet: process.argv[7],
-	customBuildTheme: process.argv[8]
+	customBuildConfig: process.argv[5],
+	customBuildErrorImage: process.argv[6],
+	customBuildFavicon: process.argv[7],
+	customBuildStrings: process.argv[8],
+	customBuildStylesheet: process.argv[9],
+	customBuildTheme: process.argv[10],
 };
 
 
@@ -51,7 +53,17 @@ const o	= JSON.parse(
 );
 
 try {
+	o.audioImage	= potassium.toBase64(fs.readFileSync(args.customBuildAudioImage));
+}
+catch (_) {}
+
+try {
 	o.background	= datauri.sync(args.customBuildBackground);
+}
+catch (_) {}
+
+try {
+	o.errorImage	= potassium.toBase64(fs.readFileSync(args.customBuildErrorImage));
 }
 catch (_) {}
 
@@ -142,6 +154,14 @@ if (o.apiFlags) {
 
 if (o.callType) {
 	$('head').append(`<meta name='custom-build-call-type' content='${o.callType}' />`);
+}
+
+if (o.audioImage) {
+	$('head').append(`<meta name='custom-build-audio-image' content='${o.audioImage}' />`);
+}
+
+if (o.errorImage) {
+	$('head').append(`<meta name='custom-build-error-image' content='${o.errorImage}' />`);
 }
 
 if (o.favicon) {

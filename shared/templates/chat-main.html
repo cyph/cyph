@@ -68,9 +68,15 @@
 	>
 		<div class='image'>
 			<img
-				*ngIf='!sessionService.apiFlags.telehealth'
+				*ngIf='!(sessionService.apiFlags.telehealth || customBuildErrorImage)'
 				src='/assets/img/walken.png'
 				alt='Definitely not Christopher Walken'
+				cyphTranslate
+			/>
+			<img
+				*ngIf='!!customBuildErrorImage'
+				[src]='customBuildErrorImage | async'
+				alt='Error'
 				cyphTranslate
 			/>
 		</div>
@@ -135,10 +141,20 @@
 			[fxHide]='!p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
 		></div>
 		<img
+			*ngIf='!customBuildAudioImage'
 			class='friend'
 			[fxHide]='p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
 			src='/assets/img/voicecall.jpg'
 			alt='Voice call'
+			cyphTranslate
+		/>
+		<img
+			*ngIf='!!customBuildAudioImage'
+			class='friend'
+			[fxHide]='p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
+			[src]='customBuildAudioImage | async'
+			alt='Voice call'
+			cyphTranslate
 		/>
 		<video
 			class='me'
