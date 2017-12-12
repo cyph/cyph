@@ -124,7 +124,7 @@ export class AccountContactsComponent implements AfterViewInit {
 		;
 
 		return contact.username === snapshot.params.username &&
-			snapshot.url.map(o => o.path)[0] === 'chat'
+			snapshot.url.map(o => o.path)[0] === 'messages'
 		;
 	}
 
