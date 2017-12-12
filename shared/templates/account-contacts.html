@@ -5,74 +5,27 @@
 	[class.initiating]='accountContactsService.showSpinner'
 >
 	<div fxFlexFill fxLayout='column' fxLayoutAlign='start stretch'>
-		<mat-form-field class='search-bar'>
-			<input
-				matInput
-				cyphTranslate
-				placeholder='Search'
-				[formControl]='searchControl'
-				[matAutocomplete]='autoComplete'
-			/>
-			<mat-progress-spinner
-				matSuffix
-				class='custom'
-				diameter='20'
-				strokeWidth='2'
-				mode='indeterminate'
-				*ngIf='searchSpinner'
-			></mat-progress-spinner>
-			<mat-icon
-				matSuffix
-				class='suffix-button'
-				(click)='clearUserFilter()'
-				*ngIf='!searchSpinner && (this.searchControl.value || userFilter)'
-			>
-				close
-			</mat-icon>
-		</mat-form-field>
-
-		<mat-autocomplete
-			#autoComplete='matAutocomplete'
-			(optionSelected)='setUserFilter($event.option.value)'
-		>
-			<ng-container *ngIf='searchOptions | async as search'>
-				<mat-option
-					value=''
-					[routerLink]='"/account/profile/" + search.externalUser'
-					*ngIf='!!search.externalUser'
-				>
-					<span>Open @{{search.externalUser}}'s profile</span>
-				</mat-option>
-				<mat-option [value]='contact.username' *ngFor='let contact of search.users'>
-					<img
-						cyphTranslate
-						aria-hidden
-						[src]='contact.avatar | async'
-						alt='User Avatar'
-					/>
-					<span>{{contact.name | async}}</span>
-					<small>@{{contact.realUsername | async}}</small>
-				</mat-option>
-			</ng-container>
-		</mat-autocomplete>
+		<cyph-account-contacts-search
+			(userFilterChange)='$event.subscribe(userFilter)'
+		></cyph-account-contacts-search>
 
 		<cyph-account-contact
 			class='active'
-			[contact]='userFilter'
-			*ngIf='!!userFilter'
+			[contact]='userFilter | async'
+			*ngIf='(userFilter | async) !== undefined'
 		></cyph-account-contact>
 
 		<cyph-account-contact
 			class='active'
 			[contact]='activeUser | async'
-			*ngIf='!userFilter'
+			*ngIf='(userFilter | async) === undefined'
 		></cyph-account-contact>
 
 		<od-virtualscroll
 			[vsData]='contactList'
 			[vsEqualsFunc]='vsEqualsFunc'
 			[vsOptions]='vsOptions'
-			*ngIf='!userFilter && showContactList'
+			*ngIf='showContactList && (userFilter | async) === undefined'
 		>
 			<ng-template let-item>
 				<cyph-account-contact [contact]='item'></cyph-account-contact>

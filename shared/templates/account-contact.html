@@ -2,7 +2,7 @@
 	class='contact animated'
 	[routerLink]='
 		"/account/" +
-		(this.accountService.isTelehealth ? "profile" : "messages") + "/" +
+		(accountService.isTelehealth ? "profile" : "messages") + "/" +
 		contact.username
 	'
 	*ngIf='!!contact'
