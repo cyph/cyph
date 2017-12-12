@@ -233,7 +233,7 @@ message ChatMessageValue {
 	/** Value. */
 	oneof value {
 		Form form = 1;
-		bytes quillDeltaBytes = 2;
+		bytes quill = 2;
 		string text = 3;
 	}
 }

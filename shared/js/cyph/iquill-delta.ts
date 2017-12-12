@@ -3,7 +3,7 @@ import {DeltaOperation} from 'quill';
 
 export interface IQuillDelta {
 	/** The originating client's unique ID. */
-	clientID: string;
+	clientID?: string;
 
 	/* @see DeltaStatic.ops */
 	ops?: DeltaOperation[];

@@ -8,10 +8,12 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import * as $ from 'jquery';
+import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {filter} from 'rxjs/operators/filter';
 import {take} from 'rxjs/operators/take';
 import {ChatMessage} from '../chat';
+import {IQuillDelta} from '../iquill-delta';
 import {ChatService} from '../services/chat.service';
 import {ScrollService} from '../services/scroll.service';
 import {StringsService} from '../services/strings.service';
@@ -40,6 +42,11 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean		= false;
 
+	/** @see ChatMessageValue.quill */
+	public readonly quill: BehaviorSubject<IQuillDelta|undefined>	=
+		new BehaviorSubject(undefined)
+	;
+
 	/** @see IChatData.unconfirmedMessages */
 	@Input() public unconfirmedMessages?: {[id: string]: boolean|undefined};
 
@@ -64,8 +71,13 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 		await this.chatService.getMessageValue(this.message);
 
+		this.quill.next(this.message.value && this.message.value.quill ?
+			msgpack.decode(this.message.value.quill) :
+			undefined
+		);
+
 		/* Run it here when it won't be triggered by an event handler in the template. */
-		if (this.message.value && !this.message.value.quillDelta) {
+		if (this.message.value && !this.message.value.quill) {
 			this.resolveViewReady();
 		}
 

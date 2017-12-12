@@ -3,7 +3,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {take} from 'rxjs/operators/take';
 import {IChatData, States} from '../chat';
-import {ChatMessage, ChatMessageValueProto, ChatUnconfirmedMessagesProto} from '../proto';
+import {ChatMessage, ChatMessageValue, ChatUnconfirmedMessagesProto} from '../proto';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionService} from './account-session.service';
@@ -61,7 +61,7 @@ export class AccountChatService extends ChatService {
 			/* tslint:disable-next-line:object-literal-sort-keys */
 			messageValues: this.accountDatabaseService.getAsyncMap(
 				`${contactURL}/messageValues`,
-				ChatMessageValueProto
+				ChatMessageValue
 			),
 			noKeyExchangeState: true,
 			receiveTextLock: this.accountDatabaseService.lockFunction(

@@ -1,10 +1,11 @@
 import {Subject} from 'rxjs/Subject';
-import {IChatMessage, IChatMessageValue} from '../chat';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {LockFunction} from '../lock-function-type';
+import {IChatMessage, IChatMessageValue} from '../proto';
 import {States} from './enums';
+import {IChatMessageLiveValue} from './ichat-message-live-value';
 
 
 /**
@@ -12,7 +13,7 @@ import {States} from './enums';
  */
 export interface IChatData {
 	/** The current message being composed. */
-	currentMessage: IChatMessageValue;
+	currentMessage: IChatMessageLiveValue;
 
 	/** Indicates whether authentication has completed (still true even after disconnect). */
 	isConnected: boolean;

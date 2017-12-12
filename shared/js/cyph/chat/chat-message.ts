@@ -1,14 +1,16 @@
-import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
-import {IChatMessage} from '../chat';
-import {ChatMessage as ChatMessageInternal, IChatMessageLine} from '../proto';
+import {
+	ChatMessage as ChatMessageInternal,
+	IChatMessage,
+	IChatMessageLine,
+	IChatMessageValue
+} from '../proto';
 import {Timer} from '../timer';
 import {getTimeString} from '../util/time';
 import {sleep} from '../util/wait';
-import {IChatMessageValue} from './ichat-message-value';
 
 
 /** @inheritDoc */
@@ -47,13 +49,7 @@ export class ChatMessage implements IChatMessage {
 	/** @ignore */
 	public value?: IChatMessageValue	= this.message.value && {
 		form: this.message.value.form,
-		quillDelta: this.message.value.quillDelta || (
-			this.message.value.quillDeltaBytes ?
-				msgpack.decode(this.message.value.quillDeltaBytes) :
-				undefined
-			)
-		,
-		quillDeltaBytes: this.message.value.quillDeltaBytes,
+		quill: this.message.value.quill,
 		text: this.message.value.text
 	};
 
@@ -87,19 +83,18 @@ export class ChatMessage implements IChatMessage {
 			}
 
 			if (this.value.form) {
-				this.message.value.form				= undefined;
-				this.value.form						= undefined;
+				this.message.value.form		= undefined;
+				this.value.form				= undefined;
 			}
-			if (this.value.quillDeltaBytes) {
-				potassiumUtil.clearMemory(this.value.quillDeltaBytes);
-				this.value.quillDelta				= undefined;
-				this.value.quillDeltaBytes			= undefined;
-				this.message.value.quillDeltaBytes	= undefined;
+			if (this.value.quill) {
+				potassiumUtil.clearMemory(this.value.quill);
+				this.value.quill			= undefined;
+				this.message.value.quill	= undefined;
 
 			}
 			if (this.value.text) {
-				this.message.value.text				= '';
-				this.value.text						= '';
+				this.message.value.text		= '';
+				this.value.text				= '';
 			}
 		});
 	}

@@ -21,13 +21,13 @@
 				>
 					{{message.author | async}}:
 				</strong>
-				<div *ngIf='value.form; else quillDeltaValue'>
+				<div *ngIf='value.form; else quillValue'>
 					<cyph-dynamic-form [form]='value.form'></cyph-dynamic-form>
 				</div>
-				<ng-template #quillDeltaValue>
-					<div *ngIf='value.quillDelta; else textValue'>
+				<ng-template #quillValue>
+					<div *ngIf='value.quill; else textValue'>
 						<cyph-quill
-							[content]='value.quillDelta'
+							[content]='quill | async'
 							[isDisabled]='true'
 							(ready)='resolveViewReady()'
 						></cyph-quill>

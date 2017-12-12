@@ -71,7 +71,7 @@ export class ChatMessageGeometryService {
 			const lines	= <HTMLElement[]> Array.from(document.querySelectorAll(
 				message.value.form ?
 					`#${id} cyph-dynamic-form .row` :
-					message.value.quillDelta ?
+					message.value.quill ?
 						`#${id} cyph-quill .ql-editor > *` :
 						`#${id} cyph-markdown > span > *`
 			));
@@ -98,7 +98,7 @@ export class ChatMessageGeometryService {
 			}
 
 			/* Adjustments for different message types */
-			if (message.value.quillDelta) {
+			if (message.value.quill) {
 				dimensions.unshift({
 					height: 24,
 					width: 1

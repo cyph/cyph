@@ -11,7 +11,6 @@ export * from '../../proto';
 export * from './binary-proto';
 export * from './blob-proto';
 export * from './channel-incoming-messages-proto';
-export * from './chat-message-value-proto';
 export * from './chat-unconfirmed-messages-proto';
 export * from './data-uri-proto';
 export * from './maybe-binary-proto';
