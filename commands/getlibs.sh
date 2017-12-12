@@ -44,7 +44,9 @@ sudo rm -rf \
 	~/cyph \
 	~/lib \
 	~/node_modules \
+	shared/lib/.js.tmp \
 	shared/lib/native \
+	shared/node_modules \
 2> /dev/null
 
 cp -a shared/lib ~/
