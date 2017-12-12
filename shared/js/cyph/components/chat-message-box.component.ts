@@ -50,7 +50,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	public isSpeedDialOpen: boolean	= false;
 
 	/** Indicates which version of the message composition UI should be displayed. */
-	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Quill;
+	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
 
 	/** Wrappers for mobile button handlers. */
 	public readonly mobileButtonHandlers	= {
