@@ -16,11 +16,14 @@
 							alt='Profile Picture'
 							[src]='user.avatar | async'
 						/>
-						<div fxLayout='column'>
-							<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.Standard'>{{user.name | async}}</div>
-							<div class='username animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.Standard'>@{{user.username | async}}</div>
-							<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.TelehealthPatient'>Patient: {{user.name | async}}</div>
-							<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.TelehealthDoctor'>Dr. {{user.name | async}}</div>
+						<div fxLayout='row'>
+							<div fxLayout='column'>
+								<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.Standard'>{{user.name | async}}</div>
+								<div class='username animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.Standard'>@{{user.username | async}}</div>
+								<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.TelehealthPatient'>Patient: {{user.name | async}}</div>
+								<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.TelehealthDoctor'>Dr. {{user.name | async}}</div>
+							</div>
+							<cyph-account-user-rating *ngIf='accountService.isTelehealth && (user.userType | async) === accountUserType.TelehealthDoctor' ></cyph-account-user-rating>
 						</div>
 					</div>
 				</div>
