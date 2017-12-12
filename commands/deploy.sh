@@ -375,6 +375,7 @@ if [ "${websign}" ] ; then
 				git reset --hard;
 				git clean -dfx;
 				git pull --recurse-submodules;
+				git submodule update;
 			"
 			cp -rf ~/.cyph/${repo} ./
 		else
