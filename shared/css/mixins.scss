@@ -261,7 +261,7 @@
 	}
 }
 
-@mixin cyph-main-theme($cyph-theme) {
+@mixin cyph-main-theme {
 	$cyph-theme: cyph-theme-default();
 
 	$cyph-progress-theme: map-merge($cyph-theme, (
