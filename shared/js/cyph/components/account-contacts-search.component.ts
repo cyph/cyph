@@ -10,8 +10,8 @@ import {
 import {FormControl} from '@angular/forms';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
-import {mergeMap} from 'rxjs/operators/mergeMap';
 import {map} from 'rxjs/operators/map';
+import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
 import {Subscription} from 'rxjs/Subscription';
 import {User} from '../account/user';
