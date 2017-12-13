@@ -13,7 +13,7 @@ import '../standalone/translations';
 import {HttpClient} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
-import {RouterModule} from '@angular/router';
+import {RouterModule, UrlSerializer} from '@angular/router';
 import {CyphAppModule} from '../cyph/modules/cyph-app.module';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
@@ -29,6 +29,7 @@ import {resolveDialogService} from '../cyph/util/save-file';
 import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
+import {CustomUrlSerializer} from './custom-url-serializer';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 import {LockdownComponent} from './lockdown.component';
 
@@ -55,6 +56,10 @@ import {LockdownComponent} from './lockdown.component';
 		{
 			provide: PotassiumService,
 			useClass: ThreadedPotassiumService
+		},
+		{
+			provide: UrlSerializer,
+			useClass: CustomUrlSerializer
 		}
 	]
 })
