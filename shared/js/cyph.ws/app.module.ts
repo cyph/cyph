@@ -45,7 +45,7 @@ import {LockdownComponent} from './lockdown.component';
 		LockdownComponent
 	],
 	imports: [
-		RouterModule.forRoot(appRoutes, {useHash: true}),
+		RouterModule.forRoot(appRoutes, {onSameUrlNavigation: 'reload', useHash: true}),
 		CyphAppModule,
 		CyphCommonModule,
 		CyphWebModule
