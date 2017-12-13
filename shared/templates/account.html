@@ -60,16 +60,16 @@
 		</div>
 	</div>
 
-	<div fxFlex='1'></div>
-
 	<div
-		fxFlex='23'
+		fxFlex='25'
 		fxLayout='column'
 		class='sidebar'
 		*ngIf='sidebarVisible'
 	>
-		<cyph-account-contacts fxFlexFill></cyph-account-contacts>
+		<div fxFlexFill fxLayout='row'>
+			<div fxFlex='4'></div>
+			<cyph-account-contacts fxFlex></cyph-account-contacts>
+			<div fxFlex='4'></div>
+		</div>
 	</div>
-
-	<div fxFlex='1'></div>
 </div>
