@@ -10,10 +10,10 @@ import {
 import {FormControl} from '@angular/forms';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
-import {Subscription} from 'rxjs/Subscription';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {map} from 'rxjs/operators/map';
 import {take} from 'rxjs/operators/take';
+import {Subscription} from 'rxjs/Subscription';
 import {User} from '../account/user';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';

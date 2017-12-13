@@ -46,12 +46,6 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	/** @see FileInput.accept */
 	@Input() public fileAccept: string;
 
-	/** If false, hides buttons. */
-	@Input() public showButtons: boolean		= true;
-
-	/** If false, hides unread message indicator. */
-	@Input() public showUnreadCount: boolean	= true;
-
 	/** Indicates whether speed dial is open. */
 	public isSpeedDialOpen: boolean	= false;
 
@@ -81,6 +75,12 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 			});
 		}
 	};
+
+	/** If false, hides buttons. */
+	@Input() public showButtons: boolean		= true;
+
+	/** If false, hides unread message indicator. */
+	@Input() public showUnreadCount: boolean	= true;
 
 	/** @see States */
 	public readonly states: typeof States	= States;

@@ -50,21 +50,7 @@
 @mixin cyph-apply-theme($isRoot: false) {
 	$root: if($isRoot, 'html, body', '&');
 
-	$cyph-theme: cyph-theme(
-		$cyph-primary,
-		$cyph-accent,
-		$cyph-warn,
-		$cyph-background,
-		$cyph-foreground,
-		$cyph-is-dark
-	);
-
-	$cyph-progress-theme: map-merge($cyph-theme, (
-		primary: map-merge($cyph-primary, (
-			lighter: rgba(0, 0, 0, 0.15),
-			default: $cyph-progress-foreground
-		))
-	));
+	$cyph-theme: cyph-theme-default();
 
 	$cyph-speed-dial-action-palette: mat-palette($mat-grey, 50, 50, 100);
 
@@ -78,12 +64,6 @@
 		$cyph-foreground,
 		false
 	);
-
-	@mixin cyph-main-theme {
-		@include angular-material-theme($cyph-theme);
-		@include mat-progress-bar-theme($cyph-progress-theme);
-		@include mat-progress-spinner-theme($cyph-progress-theme);
-	}
 
 	@include cyph-main-theme;
 
@@ -281,6 +261,21 @@
 	}
 }
 
+@mixin cyph-main-theme($cyph-theme) {
+	$cyph-theme: cyph-theme-default();
+
+	$cyph-progress-theme: map-merge($cyph-theme, (
+		primary: map-merge($cyph-primary, (
+			lighter: rgba(0, 0, 0, 0.15),
+			default: $cyph-progress-foreground
+		))
+	));
+
+	@include angular-material-theme($cyph-theme);
+	@include mat-progress-bar-theme($cyph-progress-theme);
+	@include mat-progress-spinner-theme($cyph-progress-theme);
+}
+
 @mixin cyph-inverted-theme {
 	color: $cyph-inverted;
 
@@ -332,6 +327,17 @@
 				background:      $background
 			)
 		)
+	);
+}
+
+@function cyph-theme-default() {
+	@return cyph-theme(
+		$cyph-primary,
+		$cyph-accent,
+		$cyph-warn,
+		$cyph-background,
+		$cyph-foreground,
+		$cyph-is-dark
 	);
 }
 
