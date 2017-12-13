@@ -50,7 +50,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	public isSpeedDialOpen: boolean	= false;
 
 	/** Indicates which version of the message composition UI should be displayed. */
-	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Quill;
+	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
 
 	/** Wrappers for mobile button handlers. */
 	public readonly mobileButtonHandlers	= {
@@ -75,6 +75,12 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 			});
 		}
 	};
+
+	/** If false, hides buttons. */
+	@Input() public showButtons: boolean		= true;
+
+	/** If false, hides unread message indicator. */
+	@Input() public showUnreadCount: boolean	= true;
 
 	/** @see States */
 	public readonly states: typeof States	= States;

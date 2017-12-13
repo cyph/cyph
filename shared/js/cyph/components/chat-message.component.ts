@@ -71,13 +71,16 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 		await this.chatService.getMessageValue(this.message);
 
-		this.quill.next(this.message.value && this.message.value.quill ?
-			msgpack.decode(this.message.value.quill) :
-			undefined
+		this.quill.next(
+			this.message.value && this.message.value.quill && this.message.value.quill.length > 0 ?
+				msgpack.decode(this.message.value.quill) :
+				undefined
 		);
 
 		/* Run it here when it won't be triggered by an event handler in the template. */
-		if (this.message.value && !this.message.value.quill) {
+		if (this.message.value && !(
+			this.message.value.quill && this.message.value.quill.length > 0
+		)) {
 			this.resolveViewReady();
 		}
 

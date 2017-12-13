@@ -1,0 +1,11 @@
+@import '../mixins';
+
+.search-bar {
+	padding-top: 1em;
+
+	mat-progress-spinner {
+		position: absolute;
+		top: -80px;
+		right: -88px;
+	}
+}

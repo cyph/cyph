@@ -71,11 +71,12 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	public get menuVisible () : boolean {
 		return this.accountDatabaseService.currentUser.value !== undefined && [
 			'',
-			'chat',
+			'compose',
 			'contacts',
 			'docs',
 			'files',
 			'forms',
+			'messages',
 			'notes',
 			'profile',
 			'settings'
@@ -183,7 +184,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			!this.accountService.isTelehealth &&
 			[
 				'',
-				'chat'
+				'messages'
 			].filter(
 				path => this.route === path
 			).length > 0

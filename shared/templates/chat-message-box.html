@@ -1,4 +1,4 @@
-<div *ngIf='chatService.chat.state === states.chat && sessionService.state.isAlive'>
+<div fxFlexFill *ngIf='chatService.chat.state === states.chat && sessionService.state.isAlive'>
 	<div
 		class='form-message-box'
 		[class.mobile]='envService.isMobile'
@@ -10,6 +10,7 @@
 	<div
 		class='quill-message-box'
 		[class.mobile]='envService.isMobile'
+		fxFlexFill
 		*ngIf='messageType === chatMessageValueTypes.Quill'
 	>
 		<button
@@ -17,10 +18,14 @@
 			matTooltip='Send'
 			(click)='send()'
 			cyphTranslate
+			*ngIf='showButtons'
 		>
 			<mat-icon>send</mat-icon>
 		</button>
-		<cyph-quill [(ngModel)]='chatService.chat.currentMessage.quill'></cyph-quill>
+		<cyph-quill
+			fxFlexFill
+			[(ngModel)]='chatService.chat.currentMessage.quill'
+		></cyph-quill>
 	</div>
 
 	<div
@@ -42,7 +47,7 @@
 		<div *ngIf='envService.isMobile'>
 			<div
 				class='message-box-button-group'
-				*ngIf='!!chatService.chat.currentMessage.text'
+				*ngIf='showButtons && !!chatService.chat.currentMessage.text'
 				[@slideInOutBottom]='"in"'
 			>
 				<button
@@ -56,7 +61,7 @@
 			</div>
 			<div
 				class='message-box-button-group'
-				*ngIf='!chatService.chat.currentMessage.text'
+				*ngIf='showButtons && !chatService.chat.currentMessage.text'
 				[@slideInOutBottom]='"in"'
 			>
 				<button
@@ -92,7 +97,12 @@
 				</button>
 			</div>
 
-			<button mat-icon-button [matMenuTriggerFor]='menu' class='menu-button' *ngIf='!accounts'>
+			<button
+				mat-icon-button
+				[matMenuTriggerFor]='menu'
+				class='menu-button'
+				*ngIf='showButtons && !accounts'
+			>
 				<mat-icon>more_horiz</mat-icon>
 			</button>
 			<mat-menu #menu='matMenu'>
@@ -110,7 +120,7 @@
 		<smd-fab-speed-dial
 			[open]='isSpeedDialOpen'
 			(mouseleave)='isSpeedDialOpen = false'
-			*ngIf='!envService.isMobile'
+			*ngIf='showButtons && !envService.isMobile'
 		>
 			<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
 				<button mat-fab>
@@ -178,7 +188,7 @@
 		<h3
 			fxFlex
 			class='new-messages cyph-banner emphasis'
-			*ngIf='scrollService.unreadItemCount > 0'
+			*ngIf='showUnreadCount && scrollService.unreadItemCount > 0'
 			(click)='scrollService.scrollDown()'
 		>
 			↓&nbsp;

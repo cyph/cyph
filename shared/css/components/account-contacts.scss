@@ -4,16 +4,6 @@ cyph-account-contact.active ::ng-deep .contact {
 	@include filter(brightness(1.2));
 }
 
-.search-bar {
-	padding-top: 1em;
-
-	mat-progress-spinner {
-		position: absolute;
-		top: -80px;
-		right: -88px;
-	}
-}
-
 .card-list > div {
 	padding-bottom: 0px;
 
