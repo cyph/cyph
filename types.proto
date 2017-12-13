@@ -111,8 +111,8 @@ message AccountUserProfile {
 	/** Username (capitalized according to user preference). */
 	required string realUsername = 5;
 
-	/** @see AccountUserType */
-	required AccountUserType userType = 6;
+	/** @see AccountUserTypes */
+	required AccountUserTypes userType = 6;
 }
 
 /** AGSE-PKI certificate. */
@@ -124,11 +124,14 @@ message AccountUserPublicKeys {
 	required bytes signing = 2;
 }
 
-/** Account type for different Cyph-based applications. */
-enum AccountUserType {
-	Standard = 1;
-	TelehealthDoctor = 2;
-	TelehealthPatient = 3;
+/** Account types for different Cyph-based applications. */
+enum AccountUserTypes {
+	Standard = 0;
+	Org = 1;
+	TelehealthAdmin = 2;
+	TelehealthDoctor = 3;
+	TelehealthOrg = 4;
+	TelehealthPatient = 5;
 }
 
 /** AGSE-PKI certificate. */

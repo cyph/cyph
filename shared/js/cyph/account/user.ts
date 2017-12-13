@@ -2,7 +2,7 @@ import {SafeUrl} from '@angular/platform-browser';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {IAsyncValue} from '../iasync-value';
-import {AccountUserType, IAccountUserPresence, IAccountUserProfile} from '../proto';
+import {AccountUserTypes, IAccountUserPresence, IAccountUserProfile} from '../proto';
 import {flattenObservablePromise} from '../util/flatten-observable-promise';
 import {normalize} from '../util/formatting';
 import {UserPresence} from './enums';
@@ -78,9 +78,9 @@ export class User {
 	);
 
 	/** @see IAccountUserProfile.userType */
-	public readonly userType: Observable<AccountUserType>	= flattenObservablePromise(
+	public readonly userType: Observable<AccountUserTypes>	= flattenObservablePromise(
 		this.accountUserProfile.watch().pipe(map(({userType}) => userType)),
-		AccountUserType.Standard
+		AccountUserTypes.Standard
 	);
 
 	constructor (
