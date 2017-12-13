@@ -1,1 +1,10 @@
 @import '../mixins';
+
+mat-card {
+	margin: 2%;
+	overflow: -webkit-paged-x;
+
+	mat-card-title {
+		text-align: center;
+	}
+}

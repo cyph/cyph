@@ -71,6 +71,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	public get menuVisible () : boolean {
 		return this.accountDatabaseService.currentUser.value !== undefined && [
 			'',
+			'compose',
 			'contacts',
 			'docs',
 			'files',

@@ -79,9 +79,13 @@
 		false
 	);
 
-	@include angular-material-theme($cyph-theme);
-	@include mat-progress-bar-theme($cyph-progress-theme);
-	@include mat-progress-spinner-theme($cyph-progress-theme);
+	@mixin cyph-main-theme {
+		@include angular-material-theme($cyph-theme);
+		@include mat-progress-bar-theme($cyph-progress-theme);
+		@include mat-progress-spinner-theme($cyph-progress-theme);
+	}
+
+	@include cyph-main-theme;
 
 	/* Temporary workaround pending https://github.com/angular/material2/issues/4116 */
 	mat-dialog-container, mat-option {
@@ -260,11 +264,19 @@
 
 	.cyph-inverted-theme {
 		@include cyph-inverted-theme;
+
+		.cyph-main-theme {
+			@include cyph-main-theme;
+		}
 	}
 
 	@if $cyph-is-dark {
 		.cyph-light-theme {
 			@include cyph-inverted-theme;
+
+			.cyph-main-theme {
+				@include cyph-main-theme;
+			}
 		}
 	}
 }

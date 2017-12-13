@@ -1,6 +1,16 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {
+	Component,
+	EventEmitter,
+	Input,
+	OnChanges,
+	OnInit,
+	Output,
+	SimpleChanges
+} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
+import {Subscription} from 'rxjs/Subscription';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {map} from 'rxjs/operators/map';
 import {take} from 'rxjs/operators/take';
@@ -18,7 +28,13 @@ import {StringsService} from '../services/strings.service';
 	styleUrls: ['../../../css/components/account-contacts-search.scss'],
 	templateUrl: '../../../templates/account-contacts-search.html'
 })
-export class AccountContactsSearchComponent implements OnInit {
+export class AccountContactsSearchComponent implements OnChanges, OnInit {
+	/** @ignore */
+	private searchUsernameSubscription?: Subscription;
+
+	/** Placeholder string. */
+	@Input() public placeholder: string						= this.stringsService.search;
+
 	/** Search bar control. */
 	public searchControl: FormControl						= new FormControl();
 
@@ -73,6 +89,9 @@ export class AccountContactsSearchComponent implements OnInit {
 	/** Indicates whether spinner should be displayed in search bar. */
 	public searchSpinner: boolean							= false;
 
+	/** @see AccountContactsSearchComponent.searchUsername */
+	@Input() public searchUsername?: Observable<string>;
+
 	/** Single contact to display instead of list. */
 	public userFilter: BehaviorSubject<User|undefined>		= new BehaviorSubject(undefined);
 
@@ -87,13 +106,36 @@ export class AccountContactsSearchComponent implements OnInit {
 	}
 
 	/** @inheritDoc */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		if (!changes.searchUsername) {
+			return;
+		}
+
+		if (this.searchUsernameSubscription) {
+			this.searchUsernameSubscription.unsubscribe();
+		}
+
+		if (this.searchUsername) {
+			this.searchUsernameSubscription	= this.searchUsername.subscribe(username => {
+				this.searchControl.setValue(username);
+				this.setUserFilter(username);
+			});
+		}
+	}
+
+	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.userFilterChange.emit(this.userFilter);
 	}
 
 	/** Sets user filter based on search query. */
 	public async setUserFilter (username: string) : Promise<void> {
-		this.userFilter.next(await this.accountUserLookupService.getUser(username));
+		if (username) {
+			this.userFilter.next(await this.accountUserLookupService.getUser(username));
+		}
+		else {
+			this.userFilter.next(undefined);
+		}
 	}
 
 	constructor (

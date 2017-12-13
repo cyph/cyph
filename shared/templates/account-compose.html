@@ -1,1 +1,67 @@
-<div>AccountCompose</div>
+<div fxFlexFill fxLayoutAlign='center start' class='cyph-light-theme'>
+	<mat-card fxFlex='90'>
+		<mat-card-title>
+			<span cyphTranslate>New Message</span>
+		</mat-card-title>
+		<mat-card-content>
+			<div
+				fxFlexFill
+				fxLayout='column'
+				fxLayoutGap='8px'
+				*ngIf='(sent | async) === false'
+			>
+				<cyph-account-contacts-search
+					[placeholder]='stringsService.to'
+					[searchUsername]='searchUsername'
+					(userFilterChange)='$event.subscribe(recipient)'
+				></cyph-account-contacts-search>
+
+				<div>
+					<div fxLayoutGap='16px'>
+						<cyph-account-contact
+							fxFlex
+							[clickable]='false'
+							[contact]='recipient | async'
+							class='cyph-main-theme'
+							*ngIf='(recipient | async) !== undefined'
+						></cyph-account-contact>
+						<div
+							fxFlex='5'
+							fxFlex.lt-lg='10'
+							fxFlex.lt-md='15'
+							fxLayoutAlign='center center'
+						>
+							<button
+								mat-icon-button
+								matTooltip='Send'
+								[disabled]='(recipient | async) === undefined'
+								(click)='send()'
+								cyphTranslate
+							>
+								<mat-icon>send</mat-icon>
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<hr />
+
+				<cyph-chat-message-box
+					[accounts]='true'
+					[messageType]='messageType'
+					[showButtons]='false'
+					[showUnreadCount]='false'
+				></cyph-chat-message-box>
+			</div>
+			<div fxFlexFill fxLayoutAlign='center center' *ngIf='sent | async'>
+				<div>
+					<span cyphTranslate>Message sent to</span>
+					<span>
+						{{(recipient | async)?.name | async}}
+						(@{{(recipient | async)?.realUsername | async}})
+					</span>
+				</div>
+			</div>
+		</mat-card-content>
+	</mat-card>
+</div>

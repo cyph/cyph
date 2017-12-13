@@ -13,6 +13,9 @@ import {StringsService} from '../services/strings.service';
 	templateUrl: '../../../templates/account-contact.html'
 })
 export class AccountContactComponent {
+	/** Indicates whether links should be enabled. */
+	@Input() public clickable: boolean	= true;
+
 	/** Contact. */
 	@Input() public contact: User;
 

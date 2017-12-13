@@ -2,6 +2,7 @@
 
 import {Route} from '@angular/router';
 import {AccountChatComponent} from '../components/account-chat.component';
+import {AccountComposeComponent} from '../components/account-compose.component';
 import {AccountContactsComponent} from '../components/account-contacts.component';
 import {AccountFilesComponent} from '../components/account-files.component';
 import {AccountFormComponent} from '../components/account-form.component';
@@ -24,6 +25,8 @@ export const account: Route	= {
 	component: AccountComponent,
 	children: [
 		{path: '', component: AccountHomeComponent},
+		{path: 'compose', component: AccountComposeComponent},
+		{path: 'compose/:username', component: AccountComposeComponent},
 		{path: 'contacts', component: AccountContactsComponent},
 		{path: 'contacts/:username', component: AccountContactsComponent},
 		{path: 'docs', component: AccountNotesComponent, data: {realTime: true}},

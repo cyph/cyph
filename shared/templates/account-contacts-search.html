@@ -1,9 +1,8 @@
 <mat-form-field fxFlex class='search-bar'>
 	<input
 		matInput
-		cyphTranslate
-		placeholder='Search'
 		[formControl]='searchControl'
+		[placeholder]='placeholder'
 		[matAutocomplete]='autoComplete'
 	/>
 	<mat-progress-spinner

@@ -383,6 +383,9 @@ export class StringsService {
 	public readonly save: string					= `save`;
 
 	/** @see StringsService */
+	public readonly search: string					= `Search`;
+
+	/** @see StringsService */
 	public readonly selfDestructActivated: string	=
 		`${this.capitalize(this.internalSession)} set to self-destruct.`
 	;
@@ -418,6 +421,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly titleRequired: string			= `Title required in order to save.`;
+
+	/** @see StringsService */
+	public readonly to: string						= `To`;
 
 	/** @see StringsService */
 	public readonly unlock: string					= `Unlock`;
