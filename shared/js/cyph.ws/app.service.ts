@@ -104,7 +104,7 @@ export class AppService implements CanActivate {
 				)
 			).url.pipe(first()).toPromise();
 
-			const urlSegmentPaths	= routerService.url.split('/').slice(1);
+			const urlSegmentPaths	= routerService.url.split('/');
 			let loadingAccounts		= urlSegmentPaths[0] === 'account';
 
 			/* Handle accounts special cases */
