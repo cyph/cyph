@@ -589,6 +589,17 @@
 					}
 				},
 
+				"publicProfileExtra": {
+					".read": true,
+
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				},
+
 				"settings": {
 					"hash": {
 						".validate": "newData.isString()"

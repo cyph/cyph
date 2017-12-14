@@ -1,7 +1,12 @@
 import {Injectable} from '@angular/core';
 import {map} from 'rxjs/operators/map';
-import {SecurityModels, User} from '../account';
-import {AccountUserPresence, AccountUserProfile, DataURIProto} from '../proto';
+import {profileExtraTemp, SecurityModels, User} from '../account';
+import {
+	AccountUserPresence,
+	AccountUserProfile,
+	// AccountUserProfileExtra,
+	DataURIProto
+} from '../proto';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -103,7 +108,17 @@ export class AccountUserLookupService {
 				SecurityModels.public,
 				undefined,
 				true
+			),
+			profileExtraTemp
+			/*
+			this.accountDatabaseService.getAsyncValue(
+				`${url}/publicProfileExtra`,
+				AccountUserProfileExtra,
+				SecurityModels.public,
+				undefined,
+				true
 			)
+			*/
 		));
 	}
 
