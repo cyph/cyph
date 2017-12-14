@@ -102,6 +102,22 @@ declare module 'libsodium' {
 		crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES: number;
 		crypto_onetimeauth_BYTES: number;
 		crypto_onetimeauth_KEYBYTES: number;
+		crypto_pwhash_ALG_DEFAULT: number;
+		crypto_pwhash_BYTES_MAX: number;
+		crypto_pwhash_BYTES_MIN: number;
+		crypto_pwhash_MEMLIMIT_INTERACTIVE: number;
+		crypto_pwhash_MEMLIMIT_MAX: number;
+		crypto_pwhash_MEMLIMIT_MIN: number;
+		crypto_pwhash_MEMLIMIT_MODERATE: number;
+		crypto_pwhash_MEMLIMIT_SENSITIVE: number;
+		crypto_pwhash_OPSLIMIT_INTERACTIVE: number;
+		crypto_pwhash_OPSLIMIT_MAX: number;
+		crypto_pwhash_OPSLIMIT_MIN: number;
+		crypto_pwhash_OPSLIMIT_MODERATE: number;
+		crypto_pwhash_OPSLIMIT_SENSITIVE: number;
+		crypto_pwhash_PASSWD_MAX: number;
+		crypto_pwhash_PASSWD_MIN: number;
+		crypto_pwhash_SALTBYTES: number;
 		crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE: number;
 		crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE: number;
 		crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE: number;
@@ -151,6 +167,14 @@ declare module 'libsodium' {
 			message: Uint8Array,
 			key: Uint8Array
 		) : boolean;
+		crypto_pwhash (
+			keyBytes: number,
+			password: Uint8Array,
+			salt: Uint8Array,
+			opsLimit: number,
+			memLimit: number,
+			algorithm: number
+		) : Uint8Array;
 		crypto_pwhash_scryptsalsa208sha256 (
 			keyBytes: number,
 			password: Uint8Array,
