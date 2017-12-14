@@ -33,7 +33,7 @@ export class AccountNotesComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.activatedRouteService.data.subscribe(o => {
+		this.activatedRoute.data.subscribe(o => {
 			this.realTime	= o.realTime;
 		});
 	}
@@ -48,7 +48,7 @@ export class AccountNotesComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly activatedRouteService: ActivatedRoute,
+		private readonly activatedRoute: ActivatedRoute,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

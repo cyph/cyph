@@ -91,7 +91,7 @@ export class AccountRegisterComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.activatedRouteService.params.subscribe(async o => {
+		this.activatedRoute.params.subscribe(async o => {
 			try {
 				const step: number|undefined	= parseInt(o.step, 10);
 
@@ -106,7 +106,7 @@ export class AccountRegisterComponent implements OnInit {
 			}
 			catch {}
 
-			this.routerService.navigate(['account', 'register', '1']);
+			this.router.navigate(['account', 'register', '1']);
 		});
 	}
 
@@ -173,12 +173,12 @@ export class AccountRegisterComponent implements OnInit {
 		this.useXkcdPassphrase			= false;
 		this.xkcdPassphrase				= Promise.resolve('');
 
-		this.routerService.navigate(['account', 'welcome']);
+		this.router.navigate(['account', 'welcome']);
 	}
 
 	/** Updates route for consistency with tabIndex. */
 	public updateRoute (increment: number = 0, tabIndex: number = this.tabIndex) : void {
-		this.routerService.navigate([
+		this.router.navigate([
 			'account',
 			'register',
 			(tabIndex + increment + 1).toString()
@@ -187,10 +187,10 @@ export class AccountRegisterComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly activatedRouteService: ActivatedRoute,
+		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,

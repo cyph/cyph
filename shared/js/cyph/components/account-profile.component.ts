@@ -53,7 +53,7 @@ export class AccountProfileComponent implements OnInit {
 			!this.accountDatabaseService.currentUser.value &&
 			await this.accountAuthService.hasSavedCredentials()
 		) {
-			this.routerService.navigate(username ?
+			this.router.navigate(username ?
 				['account', 'login', 'profile', username] :
 				['account', 'login']
 			);
@@ -73,7 +73,7 @@ export class AccountProfileComponent implements OnInit {
 		catch {}
 
 		if (!this.user) {
-			this.routerService.navigate(['account', 'login']);
+			this.router.navigate(['account', 'login']);
 		}
 	}
 
@@ -96,7 +96,7 @@ export class AccountProfileComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		this.activatedRouteService.params.subscribe(o => { this.setUser(o.username); });
+		this.activatedRoute.params.subscribe(o => { this.setUser(o.username); });
 	}
 
 	/** Publishes new user description. */
@@ -123,10 +123,10 @@ export class AccountProfileComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly activatedRouteService: ActivatedRoute,
+		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

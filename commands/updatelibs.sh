@@ -132,6 +132,7 @@ read -r -d '' modules <<- EOM
 	libsodium-wrappers-sumo
 	localforage
 	lodash
+	lodash-es
 	long
 	lunr
 	lz4
