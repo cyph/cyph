@@ -83,17 +83,17 @@ export class AppService {
 	private async onUrlChange (url: string) : Promise<void> {
 		/* Workaround to allow triggering this method
 			even when URL hasn't changed (e.g. for scrolling). */
-		this.routerService.navigated	= false;
+		this.router.navigated	= false;
 
 		/* Workaround for Prefinery bug */
 		/* tslint:disable-next-line:tab-equals */
 		if (location.search && location.search.match(/^\?r=/)) {
-			this.routerService.navigate(['invite', location.search.split('r=')[1] || '']);
+			this.router.navigate(['invite', location.search.split('r=')[1] || '']);
 			return;
 		}
 		/* tslint:disable-next-line:tab-equals */
 		else if (location.search && location.search.match(/^\?ref-check=/)) {
-			this.routerService.navigate(['waitlisttrack']);
+			this.router.navigate(['waitlisttrack']);
 			return;
 		}
 
@@ -126,7 +126,7 @@ export class AppService {
 				case HomeSections.register:
 					await this.dialogService.baseDialog(BetaRegisterComponent);
 					this.disableNextScroll	= true;
-					this.routerService.navigate(['']);
+					this.router.navigate(['']);
 					break;
 
 				case HomeSections.invite:
@@ -141,7 +141,7 @@ export class AppService {
 					});
 
 					this.disableNextScroll	= true;
-					this.routerService.navigate(['']);
+					this.router.navigate(['']);
 					break;
 
 				default:
@@ -183,7 +183,7 @@ export class AppService {
 				this.updateCart(amount, category.id, item.id, item.subscriptionType);
 			}
 			catch {
-				this.routerService.navigate(['404']);
+				this.router.navigate(['404']);
 			}
 		}
 		else if (state === States.claimusername) {
@@ -208,7 +208,7 @@ export class AppService {
 			this.state	= States.error;
 		}
 		else {
-			this.routerService.navigate(['404']);
+			this.router.navigate(['404']);
 		}
 
 		if (this.disableNextScroll) {
@@ -267,7 +267,7 @@ export class AppService {
 		private readonly envService: EnvService,
 
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @ignore */
 		private readonly signupService: SignupService,
@@ -297,7 +297,7 @@ export class AppService {
 			new WOW({live: true}).init();
 		}
 
-		this.routerService.events.subscribe(e => {
+		this.router.events.subscribe(e => {
 			if (e instanceof NavigationEnd) {
 				this.onUrlChange(e.url);
 			}
@@ -352,7 +352,7 @@ export class AppService {
 
 			await waitForIterable(elements.mainToolbar);
 
-			let expanded	= this.routerService.routerState.snapshot.url === '';
+			let expanded	= this.router.routerState.snapshot.url === '';
 			elements.mainToolbar().toggleClass('new-cyph-expanded', expanded);
 
 			(async () => {

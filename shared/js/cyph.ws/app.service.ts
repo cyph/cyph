@@ -64,7 +64,7 @@ export class AppService implements CanActivate {
 		}
 
 		this.isLockedDown	= false;
-		this.routerService.navigateByUrl(await this.lockedDownRoute);
+		this.router.navigateByUrl(await this.lockedDownRoute);
 	}
 
 	constructor (
@@ -75,7 +75,7 @@ export class AppService implements CanActivate {
 		titleService: Title,
 
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @ignore */
 		private readonly accountService: AccountService
@@ -100,11 +100,11 @@ export class AppService implements CanActivate {
 
 			await (
 				await waitForValue(() =>
-					routerService.routerState.root.firstChild || undefined
+					router.routerState.root.firstChild || undefined
 				)
 			).url.pipe(first()).toPromise();
 
-			const urlSegmentPaths	= routerService.url.split('/');
+			const urlSegmentPaths	= router.url.split('/');
 			let loadingAccounts		= urlSegmentPaths[0] === 'account';
 
 			/* Handle accounts special cases */
@@ -112,7 +112,7 @@ export class AppService implements CanActivate {
 				loadingAccounts						= true;
 				this.accountService.isExtension		= true;
 
-				routerService.navigate(['account', 'contacts']);
+				router.navigate(['account', 'contacts']);
 			}
 			else if (urlSegmentPaths[0] === 'telehealth') {
 				loadingAccounts						= true;
@@ -120,7 +120,7 @@ export class AppService implements CanActivate {
 
 				$(document.body).addClass('telehealth');
 				faviconService.setFavicon('telehealth');
-				routerService.navigate(['account'].concat(urlSegmentPaths.slice(1)));
+				router.navigate(['account'].concat(urlSegmentPaths.slice(1)));
 			}
 
 			if (!loadingAccounts) {

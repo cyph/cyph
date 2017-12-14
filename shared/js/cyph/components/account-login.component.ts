@@ -111,17 +111,17 @@ export class AccountLoginComponent implements OnInit {
 		this.savedMasterKey	= undefined;
 		this.username		= '';
 
-		this.routerService.navigate(['account'].concat(
-			this.activatedRouteService.snapshot.url.map(o => o.path)
+		this.router.navigate(['account'].concat(
+			this.activatedRoute.snapshot.url.map(o => o.path)
 		));
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly activatedRouteService: ActivatedRoute,
+		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,

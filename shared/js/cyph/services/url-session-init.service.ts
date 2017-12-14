@@ -14,10 +14,10 @@ export class UrlSessionInitService implements SessionInitService {
 	/** @inheritDoc */
 	public readonly id: string;
 
-	constructor (routerService: Router) {
+	constructor (router: Router) {
 		const urlSegmentPaths	=
-			routerService.routerState.snapshot.root.firstChild ?
-				routerService.routerState.snapshot.root.firstChild.url.map(o => o.path) :
+			router.routerState.snapshot.root.firstChild ?
+				router.routerState.snapshot.root.firstChild.url.map(o => o.path) :
 				[]
 		;
 

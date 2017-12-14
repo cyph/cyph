@@ -80,7 +80,7 @@ export class DemoChatRootComponent implements OnInit {
 		if (this.cyphertextService.isEnabled) {
 			/* tslint:disable-next-line:no-unused-expression */
 			new Konami(async () => {
-				this.routerService.navigate([HomeSections[HomeSections.intro]]);
+				this.router.navigate([HomeSections[HomeSections.intro]]);
 
 				while (!this.demoService.isActive) {
 					await sleep();
@@ -112,7 +112,7 @@ export class DemoChatRootComponent implements OnInit {
 		private readonly localSessionService: LocalSessionService,
 
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @ignore */
 		private readonly scrollService: ScrollService,

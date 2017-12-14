@@ -16,13 +16,13 @@ export class RedirectComponent implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		await sleep(0);
 
-		this.routerService.navigate(
+		this.router.navigate(
 			(
-				this.routerService.routerState.snapshot.root.firstChild &&
-				this.routerService.routerState.snapshot.root.firstChild.firstChild &&
-				this.routerService.routerState.snapshot.root.firstChild.firstChild.url.length > 0
+				this.router.routerState.snapshot.root.firstChild &&
+				this.router.routerState.snapshot.root.firstChild.firstChild &&
+				this.router.routerState.snapshot.root.firstChild.firstChild.url.length > 0
 			) ?
-				this.routerService.routerState.snapshot.root.firstChild.firstChild.url.
+				this.router.routerState.snapshot.root.firstChild.firstChild.url.
 					map(o => o.path)
 				:
 				['']
@@ -31,7 +31,7 @@ export class RedirectComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

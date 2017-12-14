@@ -150,12 +150,12 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		if (this.sessionService.state.startingNewCyph !== true) {
 			this.appService.isLockedDown	= false;
 
-			this.routerService.navigate(
+			this.router.navigate(
 				(
-					this.routerService.routerState.snapshot.root.firstChild &&
-					this.routerService.routerState.snapshot.root.firstChild.url.length > 1
+					this.router.routerState.snapshot.root.firstChild &&
+					this.router.routerState.snapshot.root.firstChild.url.length > 1
 				) ?
-					this.routerService.routerState.snapshot.root.firstChild.url.
+					this.router.routerState.snapshot.root.firstChild.url.
 						slice(0, -1).
 						map(o => o.path)
 					:
@@ -247,7 +247,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 			}
 
 			this.appService.chatRootState	= ChatRootStates.error;
-			this.routerService.navigate(['404']);
+			this.router.navigate(['404']);
 		});
 
 		/* Cyphertext easter egg */
@@ -292,7 +292,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		private readonly p2pWebRTCService: P2PWebRTCService,
 
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @ignore */
 		private readonly sessionCapabilitiesService: SessionCapabilitiesService,
