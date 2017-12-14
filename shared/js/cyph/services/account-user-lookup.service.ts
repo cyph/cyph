@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {map} from 'rxjs/operators/map';
-import {SecurityModels, User} from '../account';
+import {profileExtraTemp, SecurityModels, User} from '../account';
 import {
 	AccountUserPresence,
 	AccountUserProfile,
-	AccountUserProfileExtra,
+	// AccountUserProfileExtra,
 	DataURIProto
 } from '../proto';
 import {normalize} from '../util/formatting';
@@ -109,6 +109,8 @@ export class AccountUserLookupService {
 				undefined,
 				true
 			),
+			profileExtraTemp
+			/*
 			this.accountDatabaseService.getAsyncValue(
 				`${url}/publicProfileExtra`,
 				AccountUserProfileExtra,
@@ -116,6 +118,7 @@ export class AccountUserLookupService {
 				undefined,
 				true
 			)
+			*/
 		));
 	}
 
