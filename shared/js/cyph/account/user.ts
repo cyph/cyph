@@ -55,20 +55,10 @@ export class User {
 	;
 
 	/** @see IAccountUserProfileExtra */
-	public readonly extra	= {
-		address: memoize(() => flattenObservablePromise(
-			this.accountUserProfileExtra.watch().pipe(map(({address}) => address)),
-			''
-		)),
-		education: memoize(() => flattenObservablePromise(
-			this.accountUserProfileExtra.watch().pipe(map(({education}) => education)),
-			[]
-		)),
-		work: memoize(() => flattenObservablePromise(
-			this.accountUserProfileExtra.watch().pipe(map(({work}) => work)),
-			[]
-		))
-	};
+	public readonly extra	= memoize(() => flattenObservablePromise(
+		this.accountUserProfileExtra.watch(),
+		{}
+	));
 
 	/** @see IAccountUserProfile.hasPremium */
 	public readonly hasPremium: Observable<boolean>	= flattenObservablePromise(

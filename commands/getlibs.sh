@@ -235,9 +235,6 @@ sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/src/simplewebrtc.
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
-# Temporary workaround for https://github.com/angular/angular-cli/issues/8117
-wget https://raw.githubusercontent.com/buu700/ngtools-webpack-tmp/master/src/paths-plugin.js -O @ngtools/webpack/src/paths-plugin.js
-
 # Temporary workaround for https://github.com/dcodeIO/protobuf.js/issues/863
 wget https://raw.githubusercontent.com/dcodeIO/protobuf.js/952c7d1b478cc7c6de82475a17a1387992e8651f/cli/pbts.js -O protobufjs/cli/pbts.js
 
