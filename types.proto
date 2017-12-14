@@ -115,6 +115,35 @@ message AccountUserProfile {
 	required AccountUserTypes userType = 6;
 }
 
+/** User public profile additional data. */
+message AccountUserProfileExtra {
+	message Position {
+		/** Extra information (e.g. position title or degree subject). */
+		string detail = 1;
+
+		/** End date timestamp. */
+		int32 endDate = 2;
+
+		/* Name of location/institution (e.g. SpaceX). */
+		string locationName = 3;
+
+		/* URL of location/institution (e.g. spacex.com). */
+		string locationURL = 4;
+
+		/** Start date timestamp. */
+		int32 startDate = 5;
+	}
+
+	/** Physical address. */
+	string address = 1;
+
+	/** Educational history. */
+	repeated Position education = 2;
+
+	/** Work history. */
+	repeated Position work = 3;
+}
+
 /** AGSE-PKI certificate. */
 message AccountUserPublicKeys {
 	/** Potassium.Box public key. */

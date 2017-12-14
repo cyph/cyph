@@ -156,6 +156,10 @@ service firebase.storage {
 				allow read;
 			}
 
+			match /publicProfileExtra {
+				allow read;
+			}
+
 			// match /settings {}
 
 			// match /signingKeyPair {}

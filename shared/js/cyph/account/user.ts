@@ -1,8 +1,14 @@
 import {SafeUrl} from '@angular/platform-browser';
+import {memoize} from 'lodash';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {IAsyncValue} from '../iasync-value';
-import {AccountUserTypes, IAccountUserPresence, IAccountUserProfile} from '../proto';
+import {
+	AccountUserTypes,
+	IAccountUserPresence,
+	IAccountUserProfile,
+	IAccountUserProfileExtra
+} from '../proto';
 import {flattenObservablePromise} from '../util/flatten-observable-promise';
 import {normalize} from '../util/formatting';
 import {UserPresence} from './enums';
@@ -47,6 +53,22 @@ export class User {
 			{}
 		)
 	;
+
+	/** @see IAccountUserProfileExtra */
+	public readonly extra	= {
+		address: memoize(() => flattenObservablePromise(
+			this.accountUserProfileExtra.watch().pipe(map(({address}) => address)),
+			''
+		)),
+		education: memoize(() => flattenObservablePromise(
+			this.accountUserProfileExtra.watch().pipe(map(({education}) => education)),
+			[]
+		)),
+		work: memoize(() => flattenObservablePromise(
+			this.accountUserProfileExtra.watch().pipe(map(({work}) => work)),
+			[]
+		))
+	};
 
 	/** @see IAccountUserProfile.hasPremium */
 	public readonly hasPremium: Observable<boolean>	= flattenObservablePromise(
@@ -97,7 +119,10 @@ export class User {
 		public readonly accountUserPresence: IAsyncValue<IAccountUserPresence>,
 
 		/** @see IAccountUserProfile */
-		public readonly accountUserProfile: IAsyncValue<IAccountUserProfile>
+		public readonly accountUserProfile: IAsyncValue<IAccountUserProfile>,
+
+		/** @see IAccountUserProfileExtra */
+		public readonly accountUserProfileExtra: IAsyncValue<IAccountUserProfileExtra>
 	) {
 		this.accountUserProfile.getValue().then(() => {
 			this.ready	= true;
