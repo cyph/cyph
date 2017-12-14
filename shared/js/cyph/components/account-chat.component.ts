@@ -34,7 +34,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.activatedRouteService.params.subscribe(async o => {
+		this.activatedRoute.params.subscribe(async o => {
 			const username: string|undefined	= o.username;
 
 			if (!username) {
@@ -42,9 +42,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			}
 
 			if (this.initiated) {
-				this.routerService.navigate(['account']);
+				this.router.navigate(['account']);
 				await sleep(0);
-				this.routerService.navigate(['account', 'messages', username]);
+				this.router.navigate(['account', 'messages', username]);
 				return;
 			}
 
@@ -55,10 +55,10 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly activatedRouteService: ActivatedRoute,
+		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,

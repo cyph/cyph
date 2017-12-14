@@ -446,7 +446,7 @@ export class AccountFilesService {
 				content: `${this.stringsService.deleteMessage} ${file.name}?`,
 				title: this.stringsService.deleteConfirm
 			})) {
-				this.routerService.navigate([
+				this.router.navigate([
 					'account',
 					file.recordType === AccountFileRecord.RecordTypes.Doc ?
 						'docs' :
@@ -792,7 +792,7 @@ export class AccountFilesService {
 
 	constructor (
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,

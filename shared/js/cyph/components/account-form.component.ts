@@ -26,7 +26,7 @@ export class AccountFormComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.activatedRouteService.params.subscribe(async o => {
+		this.activatedRoute.params.subscribe(async o => {
 			try {
 				const id: string|undefined	= o.id;
 
@@ -43,17 +43,17 @@ export class AccountFormComponent implements OnInit {
 				};
 			}
 			catch {
-				this.routerService.navigate(['404']);
+				this.router.navigate(['404']);
 			}
 		});
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly activatedRouteService: ActivatedRoute,
+		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

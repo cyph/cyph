@@ -26,7 +26,7 @@ import {sleep} from '../util/wait';
 export class AccountContactsComponent implements AfterViewInit {
 	/** @ignore */
 	private readonly routeReactiveContactList: Observable<User[]>	=
-		this.activatedRouteService.url.pipe(
+		this.activatedRoute.url.pipe(
 			mergeMap(() => this.accountContactsService.contactList)
 		)
 	;
@@ -62,9 +62,9 @@ export class AccountContactsComponent implements AfterViewInit {
 
 	/** Indicates whether the chat UI is open for this user. */
 	private isActive (contact: User) : boolean {
-		const snapshot	= this.activatedRouteService.snapshot.firstChild ?
-			this.activatedRouteService.snapshot.firstChild :
-			this.activatedRouteService.snapshot
+		const snapshot	= this.activatedRoute.snapshot.firstChild ?
+			this.activatedRoute.snapshot.firstChild :
+			this.activatedRoute.snapshot
 		;
 
 		return contact.username === snapshot.params.username &&
@@ -85,7 +85,7 @@ export class AccountContactsComponent implements AfterViewInit {
 
 	constructor (
 		/** @ignore */
-		private readonly activatedRouteService: ActivatedRoute,
+		private readonly activatedRoute: ActivatedRoute,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

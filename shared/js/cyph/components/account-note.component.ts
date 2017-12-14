@@ -61,7 +61,7 @@ export class AccountNoteComponent implements OnInit {
 	/** @ignore */
 	private async initDoc () : Promise<void> {
 		await this.setNote(await this.accountFilesService.upload(this.noteData.name, []).result);
-		this.routerService.navigate(['account', 'docs', this.noteData.id, 'edit']);
+		this.router.navigate(['account', 'docs', this.noteData.id, 'edit']);
 	}
 
 	/** @ignore */
@@ -106,14 +106,14 @@ export class AccountNoteComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.setURL(this.routerService.url);
-		this.routerService.events.subscribe(({url}: any) => {
+		this.setURL(this.router.url);
+		this.router.events.subscribe(({url}: any) => {
 			if (typeof url === 'string') {
 				this.setURL(url);
 			}
 		});
 
-		this.activatedRouteService.data.subscribe(o => {
+		this.activatedRoute.data.subscribe(o => {
 			this.realTime	= o.realTime;
 
 			if (this.realTime && this.newNote) {
@@ -121,7 +121,7 @@ export class AccountNoteComponent implements OnInit {
 			}
 		});
 
-		this.activatedRouteService.params.subscribe(async o => {
+		this.activatedRoute.params.subscribe(async o => {
 			try {
 				const id: string|undefined	= o.id;
 
@@ -146,7 +146,7 @@ export class AccountNoteComponent implements OnInit {
 				}
 			}
 			catch {
-				this.routerService.navigate(['404']);
+				this.router.navigate(['404']);
 			}
 		});
 	}
@@ -241,7 +241,7 @@ export class AccountNoteComponent implements OnInit {
 			}
 
 			if (this.noteData.id) {
-				this.routerService.navigate(['account', 'notes', this.noteData.id]);
+				this.router.navigate(['account', 'notes', this.noteData.id]);
 				await sleep();
 				this.accountService.interstitial	= false;
 				this.dialogService.toast(this.stringsService.noteSaved, 2500);
@@ -251,10 +251,10 @@ export class AccountNoteComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly activatedRouteService: ActivatedRoute,
+		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

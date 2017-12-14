@@ -36,10 +36,10 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	/** @ignore */
 	private get route () : string {
 		return (
-			this.activatedRouteService.snapshot.firstChild &&
-			this.activatedRouteService.snapshot.firstChild.url.length > 0
+			this.activatedRoute.snapshot.firstChild &&
+			this.activatedRoute.snapshot.firstChild.url.length > 0
 		) ?
-			this.activatedRouteService.snapshot.firstChild.url[0].path :
+			this.activatedRoute.snapshot.firstChild.url[0].path :
 			''
 		;
 	}
@@ -57,8 +57,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 				'notes'
 			].indexOf(route) < 0 ||
 			(
-				this.activatedRouteService.snapshot.firstChild &&
-				this.activatedRouteService.snapshot.firstChild.url.slice(-1)[0].path !== route
+				this.activatedRoute.snapshot.firstChild &&
+				this.activatedRoute.snapshot.firstChild.url.slice(-1)[0].path !== route
 			)
 		) {
 			return;
@@ -92,11 +92,11 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		this.activatedRouteService.url.subscribe(async () => {
+		this.activatedRoute.url.subscribe(() => {
 			const route	= this.route;
 
 			if (this.accountDatabaseService.currentUser.value && route === 'login') {
-				this.routerService.navigate(['account']);
+				this.router.navigate(['account']);
 			}
 			else if (
 				!this.accountDatabaseService.currentUser.value &&
@@ -107,9 +107,9 @@ export class AccountComponent implements AfterViewInit, OnInit {
 					'welcome'
 				].indexOf(route) < 0
 			) {
-				this.routerService.navigate(['account', 'login'].concat(
-					this.activatedRouteService.snapshot.firstChild ?
-						this.activatedRouteService.snapshot.firstChild.url.map(o => o.path) :
+				this.router.navigate(['account', 'login'].concat(
+					this.activatedRoute.snapshot.firstChild ?
+						this.activatedRoute.snapshot.firstChild.url.map(o => o.path) :
 						[]
 				));
 			}
@@ -193,10 +193,10 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly activatedRouteService: ActivatedRoute,
+		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
-		private readonly routerService: Router,
+		private readonly router: Router,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
