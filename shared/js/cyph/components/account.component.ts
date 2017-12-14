@@ -92,7 +92,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		this.activatedRoute.url.subscribe(async () => {
+		this.activatedRoute.url.subscribe(() => {
 			const route	= this.route;
 
 			if (this.accountDatabaseService.currentUser.value && route === 'login') {
