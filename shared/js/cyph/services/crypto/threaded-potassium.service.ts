@@ -160,7 +160,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		),
 		hash: async (
 			plaintext: Uint8Array|string,
-			salt?: Uint8Array,
+			salt?: Uint8Array|string,
 			outputBytes?: number,
 			opsLimit?: number,
 			memLimit?: number,

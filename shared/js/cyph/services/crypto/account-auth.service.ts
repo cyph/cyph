@@ -55,10 +55,7 @@ export class AccountAuthService {
 		return (
 			await this.potassiumService.passwordHash.hash(
 				password,
-				await this.potassiumService.hash.deriveKey(
-					username + '9BdfYbI5PggWwtnaAXbDRIsTHgMjLx/8hbHvgbQb+qs=',
-					await this.potassiumService.passwordHash.saltBytes
-				)
+				username + '9BdfYbI5PggWwtnaAXbDRIsTHgMjLx/8hbHvgbQb+qs='
 			)
 		).hash;
 	}
