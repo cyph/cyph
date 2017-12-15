@@ -14,10 +14,12 @@ import {
 	IAccountLoginData,
 	IKeyPair,
 	KeyPair,
+	NumberProto,
 	StringProto
 } from '../../proto';
 import {normalize} from '../../util/formatting';
 import {deserialize, serialize} from '../../util/serialization';
+import {getTimestamp} from '../../util/time';
 import {uuid} from '../../util/uuid';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {DatabaseService} from '../database.service';
@@ -56,12 +58,35 @@ export class AccountAuthService {
 		return (
 			await this.potassiumService.passwordHash.hash(
 				password,
-				await this.potassiumService.hash.deriveKey(
-					username + '9BdfYbI5PggWwtnaAXbDRIsTHgMjLx/8hbHvgbQb+qs=',
-					await this.potassiumService.passwordHash.saltBytes
-				)
+				username + '9BdfYbI5PggWwtnaAXbDRIsTHgMjLx/8hbHvgbQb+qs='
 			)
 		).hash;
+	}
+
+	/** Tries to get saved PIN hash. */
+	public async getSavedPIN () : Promise<Uint8Array|undefined> {
+		try {
+			const [pinDuration, pinHash, pinTimestamp, timestamp]	= await Promise.all([
+				this.localStorageService.getItem('pinDuration', NumberProto),
+				this.localStorageService.getItem('pinHash', BinaryProto),
+				this.localStorageService.getItem('pinTimestamp', NumberProto),
+				getTimestamp()
+			]);
+
+			if (timestamp > (pinDuration + pinTimestamp)) {
+				await Promise.all([
+					this.localStorageService.removeItem('pinDuration'),
+					this.localStorageService.removeItem('pinHash'),
+					this.localStorageService.removeItem('pinTimestamp')
+				]);
+			}
+			else {
+				return this.savePIN(pinHash);
+			}
+		}
+		catch {}
+
+		return;
 	}
 
 	/** Indicates whether credentials are saved locally. */
@@ -80,7 +105,7 @@ export class AccountAuthService {
 	public async login (
 		username: string,
 		masterKey: string|Uint8Array,
-		pin?: string
+		pin?: string|Uint8Array
 	) : Promise<boolean> {
 		await this.logout(false);
 
@@ -94,10 +119,10 @@ export class AccountAuthService {
 			if (typeof masterKey === 'string') {
 				masterKey	= await this.passwordHash(username, masterKey);
 			}
-			else if (typeof pin === 'string') {
+			else if (pin !== undefined) {
 				masterKey	= await this.potassiumService.secretBox.open(
 					masterKey,
-					await this.passwordHash(username, pin)
+					typeof pin !== 'string' ? pin : await this.passwordHash(username, pin)
 				);
 			}
 
@@ -234,9 +259,7 @@ export class AccountAuthService {
 			this.potassiumService.clearMemory(user.keys.signingKeyPair.publicKey);
 		}
 		if (clearSavedCredentials) {
-			await this.localStorageService.removeItem('masterKey');
-			await this.localStorageService.removeItem('pinIsCustom');
-			await this.localStorageService.removeItem('username');
+			await this.removeSavedCredentials();
 		}
 
 		this.accountDatabaseService.currentUser.next(undefined);
@@ -422,6 +445,56 @@ export class AccountAuthService {
 		}
 
 		return true;
+	}
+
+	/** Removes locally saved login credentials. */
+	public async removeSavedCredentials () : Promise<void> {
+		await Promise.all([
+			this.localStorageService.removeItem('masterKey'),
+			this.localStorageService.removeItem('pinDuration'),
+			this.localStorageService.removeItem('pinHash'),
+			this.localStorageService.removeItem('pinIsCustom'),
+			this.localStorageService.removeItem('pinTimestamp'),
+			this.localStorageService.removeItem('username')
+		]);
+	}
+
+	/**
+	 * Saves PIN locally for specified duration (minutes, default of 60).
+	 * @returns PIN hash.
+	 */
+	public async savePIN (pin: string|Uint8Array, duration?: number) : Promise<Uint8Array> {
+		const pinHash	= typeof pin !== 'string' ? pin : await this.passwordHash(
+			await this.localStorageService.getItem('username', StringProto),
+			pin
+		);
+
+		await Promise.all([
+			this.localStorageService.setItem(
+				'pinDuration',
+				NumberProto,
+				duration !== undefined ?
+					duration * 60000 :
+					await this.localStorageService.getItem(
+						'pinDuration',
+						NumberProto
+					).then(() =>
+						3600000
+					)
+			),
+			this.localStorageService.setItem(
+				'pinHash',
+				BinaryProto,
+				pinHash
+			),
+			this.localStorageService.setItem(
+				'pinTimestamp',
+				NumberProto,
+				await getTimestamp()
+			)
+		]);
+
+		return pinHash;
 	}
 
 	constructor (

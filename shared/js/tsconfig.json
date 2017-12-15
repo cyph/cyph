@@ -4,6 +4,7 @@
 	},
 	"compileOnSave": true,
 	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,
@@ -19,6 +20,7 @@
 			"_stream_duplex": ["js/externals/_stream_duplex"],
 			"_stream_writable": ["js/externals/_stream_writable"],
 			"faye-websocket": ["js/externals/faye-websocket"],
+			"lodash/*": ["node_modules/@types/lodash-es/*"],
 			"libsodium": ["js/externals/libsodium"],
 			"request": ["js/externals/request"],
 			"rsvp": ["js/externals/rsvp"]

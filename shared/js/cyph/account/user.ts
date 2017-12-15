@@ -1,5 +1,5 @@
 import {SafeUrl} from '@angular/platform-browser';
-import {memoize} from 'lodash';
+import memoize from 'lodash-es/memoize';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {IAsyncValue} from '../iasync-value';
