@@ -1,4 +1,5 @@
 import {sodium} from 'libsodium';
+import {IHash} from './ihash';
 import {IPasswordHash} from './ipassword-hash';
 import {ISecretBox} from './isecret-box';
 import * as NativeCrypto from './native-crypto';
@@ -32,12 +33,13 @@ export class PasswordHash implements IPasswordHash {
 					opsLimit,
 					memLimit
 				) :
-				sodium.ready.then(async () => sodium.crypto_pwhash_scryptsalsa208sha256(
+				sodium.ready.then(() => sodium.crypto_pwhash(
 					outputBytes,
 					plaintext,
 					salt,
 					opsLimit,
-					memLimit
+					memLimit,
+					sodium.crypto_pwhash_ALG_DEFAULT
 				))
 	};
 
@@ -48,14 +50,14 @@ export class PasswordHash implements IPasswordHash {
 				NativeCrypto.passwordHash.algorithm.name + '/' +
 				NativeCrypto.passwordHash.algorithm.hash.name
 			) :
-			'scrypt'
+			'argon2'
 	);
 
 	/** @inheritDoc */
-	public readonly memLimitInteractive: Promise<number>	= sodium.ready.then(async () =>
+	public readonly memLimitInteractive: Promise<number>	= sodium.ready.then(() =>
 		this.isNative ?
 			NativeCrypto.passwordHash.memLimitInteractive :
-			sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE
+			16777216 /* 16 MB */
 	);
 
 	/** @inheritDoc */
@@ -66,30 +68,30 @@ export class PasswordHash implements IPasswordHash {
 	);
 
 	/** @inheritDoc */
-	public readonly opsLimitInteractive: Promise<number>	= sodium.ready.then(async () =>
+	public readonly opsLimitInteractive: Promise<number>	= sodium.ready.then(() =>
 		this.isNative ?
 			NativeCrypto.passwordHash.opsLimitInteractive :
-			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE
+			3
 	);
 
 	/** @inheritDoc */
-	public readonly opsLimitSensitive: Promise<number>		= sodium.ready.then(async () =>
+	public readonly opsLimitSensitive: Promise<number>		= sodium.ready.then(() =>
 		this.isNative ?
 			NativeCrypto.passwordHash.opsLimitSensitive :
-			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE
+			6
 	);
 
 	/** @inheritDoc */
-	public readonly saltBytes: Promise<number>				= sodium.ready.then(async () =>
+	public readonly saltBytes: Promise<number>				= sodium.ready.then(() =>
 		this.isNative ?
 			NativeCrypto.passwordHash.saltBytes :
-			sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
+			sodium.crypto_pwhash_SALTBYTES
 	);
 
 	/** @inheritDoc */
 	public async hash (
 		plaintext: Uint8Array|string,
-		salt?: Uint8Array,
+		salt?: Uint8Array|string,
 		outputBytes?: number,
 		opsLimit?: number,
 		memLimit?: number,
@@ -105,10 +107,19 @@ export class PasswordHash implements IPasswordHash {
 		};
 	}> {
 		const algorithm	= await this.algorithm;
+		const saltBytes	= await this.saltBytes;
 
 		if (salt === undefined) {
-			salt		= potassiumUtil.randomBytes(await this.saltBytes);
+			salt	= potassiumUtil.randomBytes(saltBytes);
 		}
+		else if (typeof salt === 'string' || salt.length !== saltBytes) {
+			salt	= await this.potassiumHash.deriveKey(
+				salt,
+				saltBytes,
+				typeof salt === 'string'
+			);
+		}
+
 		if (outputBytes === undefined) {
 			outputBytes	= await this.secretBox.keyBytes;
 		}
@@ -182,6 +193,9 @@ export class PasswordHash implements IPasswordHash {
 	constructor (
 		/** @ignore */
 		private readonly isNative: boolean,
+
+		/** @ignore */
+		private readonly potassiumHash: IHash,
 
 		/** @ignore */
 		private readonly secretBox: ISecretBox

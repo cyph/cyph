@@ -11,7 +11,7 @@ import {ILocalUser} from './ilocal-user';
 export class AnonymousLocalUser implements ILocalUser {
 	/** Salt used for shared secret handshake. */
 	public static handshakeSalt: Uint8Array	= potassiumUtil.fromBase64(
-		'QmaEvu1jYA3SKXsVtoR+9/92/tvMIXOe0NRfwQR5bPw='
+		'NFsmRElh9RGWChCPUKvL9Q=='
 	);
 
 

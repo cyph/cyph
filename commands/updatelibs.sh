@@ -52,7 +52,7 @@ read -r -d '' modules <<- EOM
 	@types/jasmine
 	@types/jquery@^2
 	@types/jspdf
-	@types/lodash
+	@types/lodash-es
 	@types/long
 	@types/markdown-it
 	@types/msgpack-lite
@@ -131,7 +131,6 @@ read -r -d '' modules <<- EOM
 	libsodium-wrappers
 	libsodium-wrappers-sumo
 	localforage
-	lodash
 	lodash-es
 	long
 	lunr

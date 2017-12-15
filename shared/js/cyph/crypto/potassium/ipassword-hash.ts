@@ -21,7 +21,7 @@ export interface IPasswordHash {
 	/** Hashes plaintext. */
 	hash (
 		plaintext: Uint8Array|string,
-		salt?: Uint8Array,
+		salt?: Uint8Array|string,
 		outputBytes?: number,
 		opsLimit?: number,
 		memLimit?: number,
