@@ -77,7 +77,8 @@
 
 		"await-promise": false,
 		"ban": [true,
-			["crypto", "random", "Prefer potassiumUtil.randomBytes"],
+			["crypto", "getRandomValues", "Prefer potassiumUtil.randomBytes"],
+			["crypto", "randomBytes", "Prefer potassiumUtil.randomBytes"],
 			["Date", "now", "Prefer util.timestamp"],
 			[
 				"JSON",
