@@ -22,7 +22,7 @@ export class AccountLoginComponent implements OnInit {
 	private savedMasterKey?: Uint8Array;
 
 	/** Indicates whether login attempt is in progress. */
-	public checking: boolean			= false;
+	public checking: boolean			= true;
 
 	/** Indicates whether the last login attempt has failed. */
 	public error: boolean				= false;
@@ -40,7 +40,7 @@ export class AccountLoginComponent implements OnInit {
 	public pinIsCustom: boolean			= true;
 
 	/** Indicates whether a PIN unlock using saved credentials will be performed. */
-	public pinUnlock?: boolean;
+	public pinUnlock: boolean			= false;
 
 	/** Username saved in local storage from previous login. */
 	public savedUsername?: string;
@@ -51,21 +51,71 @@ export class AccountLoginComponent implements OnInit {
 	/** @see usernameMask */
 	public readonly usernameMask: any	= usernameMask;
 
+	/** @ignore */
+	private async postLogin () : Promise<void> {
+		if (this.savedMasterKey) {
+			this.potassiumService.clearMemory(this.savedMasterKey);
+		}
+
+		this.masterKey		= '';
+		this.pin			= '';
+		this.pinIsCustom	= true;
+		this.savedMasterKey	= undefined;
+		this.savedMasterKey	= undefined;
+		this.username		= '';
+
+		await this.router.navigate(['account'].concat(
+			this.activatedRoute.snapshot.url.map(o => o.path)
+		));
+	}
+
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		this.pinIsCustom	=
-			await this.localStorageService.getItem('pinIsCustom', BooleanProto).catch(() => true)
-		;
+		try {
+			this.pinIsCustom	= await this.localStorageService.getItem(
+				'pinIsCustom',
+				BooleanProto
+			).catch(
+				() => true
+			);
 
-		this.savedMasterKey	=
-			await this.localStorageService.getItem('masterKey', BinaryProto).catch(() => undefined)
-		;
+			this.savedMasterKey	= await this.localStorageService.getItem(
+				'masterKey',
+				BinaryProto
+			).catch(
+				() => undefined
+			);
 
-		this.savedUsername	=
-			await this.localStorageService.getItem('username', StringProto).catch(() => undefined)
-		;
+			this.savedUsername	= await this.localStorageService.getItem(
+				'username',
+				StringProto
+			).catch(
+				() => undefined
+			);
 
-		this.pinUnlock		= this.savedMasterKey !== undefined && this.savedUsername !== undefined;
+			if (!(this.savedMasterKey && this.savedUsername)) {
+				return;
+			}
+
+			this.pinUnlock	= true;
+
+			const savedPIN	= await this.accountAuthService.getSavedPIN();
+
+			if (
+				savedPIN &&
+				await this.accountAuthService.login(
+					this.savedUsername,
+					this.savedMasterKey,
+					savedPIN
+				)
+			) {
+				this.potassiumService.clearMemory(savedPIN);
+				await this.postLogin();
+			}
+		}
+		finally {
+			this.checking	= false;
+		}
 	}
 
 	/** Removes locally saved login credentials. */
@@ -74,9 +124,7 @@ export class AccountLoginComponent implements OnInit {
 			this.potassiumService.clearMemory(this.savedMasterKey);
 		}
 
-		await this.localStorageService.removeItem('masterKey');
-		await this.localStorageService.removeItem('pinIsCustom');
-		await this.localStorageService.removeItem('username');
+		await this.accountAuthService.removeSavedCredentials();
 
 		this.pinIsCustom	= true;
 		this.pinUnlock		= false;
@@ -100,20 +148,7 @@ export class AccountLoginComponent implements OnInit {
 			return;
 		}
 
-		if (this.savedMasterKey) {
-			this.potassiumService.clearMemory(this.savedMasterKey);
-		}
-
-		this.masterKey		= '';
-		this.pin			= '';
-		this.pinIsCustom	= true;
-		this.savedMasterKey	= undefined;
-		this.savedMasterKey	= undefined;
-		this.username		= '';
-
-		this.router.navigate(['account'].concat(
-			this.activatedRoute.snapshot.url.map(o => o.path)
-		));
+		await this.postLogin();
 	}
 
 	constructor (

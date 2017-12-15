@@ -29,7 +29,15 @@ testEnvironmentSetup = async (
 		return;
 	}
 
-	const keysToPreserve	= ['masterKey', 'pinIsCustom', 'username'];
+	const keysToPreserve	= [
+		'masterKey',
+		'pinDuration',
+		'pinHash',
+		'pinIsCustom',
+		'pinTimestamp',
+		'username'
+	];
+
 	const preservedValues	= new Map<string, Uint8Array|undefined>();
 
 	for (const k of keysToPreserve) {
