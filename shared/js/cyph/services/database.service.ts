@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {memoize} from 'lodash';
+import memoize from 'lodash-es/memoize';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {take} from 'rxjs/operators/take';
