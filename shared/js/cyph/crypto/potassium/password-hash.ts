@@ -33,7 +33,7 @@ export class PasswordHash implements IPasswordHash {
 					opsLimit,
 					memLimit
 				) :
-				sodium.ready.then(async () => sodium.crypto_pwhash(
+				sodium.ready.then(() => sodium.crypto_pwhash(
 					outputBytes,
 					plaintext,
 					salt,
@@ -54,7 +54,7 @@ export class PasswordHash implements IPasswordHash {
 	);
 
 	/** @inheritDoc */
-	public readonly memLimitInteractive: Promise<number>	= sodium.ready.then(async () =>
+	public readonly memLimitInteractive: Promise<number>	= sodium.ready.then(() =>
 		this.isNative ?
 			NativeCrypto.passwordHash.memLimitInteractive :
 			16777216 /* 16 MB */
@@ -68,21 +68,21 @@ export class PasswordHash implements IPasswordHash {
 	);
 
 	/** @inheritDoc */
-	public readonly opsLimitInteractive: Promise<number>	= sodium.ready.then(async () =>
+	public readonly opsLimitInteractive: Promise<number>	= sodium.ready.then(() =>
 		this.isNative ?
 			NativeCrypto.passwordHash.opsLimitInteractive :
 			3
 	);
 
 	/** @inheritDoc */
-	public readonly opsLimitSensitive: Promise<number>		= sodium.ready.then(async () =>
+	public readonly opsLimitSensitive: Promise<number>		= sodium.ready.then(() =>
 		this.isNative ?
 			NativeCrypto.passwordHash.opsLimitSensitive :
 			6
 	);
 
 	/** @inheritDoc */
-	public readonly saltBytes: Promise<number>				= sodium.ready.then(async () =>
+	public readonly saltBytes: Promise<number>				= sodium.ready.then(() =>
 		this.isNative ?
 			NativeCrypto.passwordHash.saltBytes :
 			sodium.crypto_pwhash_SALTBYTES

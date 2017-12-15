@@ -31,29 +31,29 @@ export class Box implements IBox {
 			async (plaintext: Uint8Array, publicKey: Uint8Array) =>
 				NativeCrypto.box.seal(plaintext, publicKey)
 			:
-			async (plaintext: Uint8Array, publicKey: Uint8Array) => sodium.ready.then(async () =>
+			async (plaintext: Uint8Array, publicKey: Uint8Array) => sodium.ready.then(() =>
 				sodium.crypto_box_curve25519xchacha20poly1305_seal(plaintext, publicKey)
 			)
 		,
 
 		keyPair: this.isNative ?
 			async () => NativeCrypto.box.keyPair() :
-			async () => sodium.ready.then(async () =>
+			async () => sodium.ready.then(() =>
 				sodium.crypto_box_curve25519xchacha20poly1305_keypair()
 			)
 		,
 
-		nonceBytes: sodium.ready.then(async () => this.isNative ?
+		nonceBytes: sodium.ready.then(() => this.isNative ?
 			NativeCrypto.secretBox.nonceBytes :
 			sodium.crypto_box_curve25519xchacha20poly1305_NONCEBYTES
 		),
 
-		privateKeyBytes: sodium.ready.then(async () => this.isNative ?
+		privateKeyBytes: sodium.ready.then(() => this.isNative ?
 			NativeCrypto.box.privateKeyBytes :
 			sodium.crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES
 		),
 
-		publicKeyBytes: sodium.ready.then(async () => this.isNative ?
+		publicKeyBytes: sodium.ready.then(() => this.isNative ?
 			NativeCrypto.box.publicKeyBytes :
 			sodium.crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES
 		)

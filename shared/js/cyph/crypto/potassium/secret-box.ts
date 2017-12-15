@@ -26,7 +26,7 @@ export class SecretBox implements ISecretBox {
 			additionalData?: Uint8Array
 		) => Promise<Uint8Array>;
 	}	= {
-		nonceBytes: sodium.ready.then(async () =>
+		nonceBytes: sodium.ready.then(() =>
 			this.isNative ?
 				NativeCrypto.secretBox.nonceBytes :
 				sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
@@ -45,7 +45,7 @@ export class SecretBox implements ISecretBox {
 					key,
 					additionalData
 				) :
-				sodium.ready.then(async () => sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
+				sodium.ready.then(() => sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
 					undefined,
 					cyphertext,
 					additionalData,
@@ -67,7 +67,7 @@ export class SecretBox implements ISecretBox {
 					key,
 					additionalData
 				) :
-				sodium.ready.then(async () => sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
+				sodium.ready.then(() => sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
 					plaintext,
 					additionalData,
 					undefined,
@@ -77,14 +77,14 @@ export class SecretBox implements ISecretBox {
 	};
 
 	/** @inheritDoc */
-	public readonly aeadBytes: Promise<number>	= sodium.ready.then(async () =>
+	public readonly aeadBytes: Promise<number>	= sodium.ready.then(() =>
 		this.isNative ?
 			NativeCrypto.secretBox.aeadBytes :
 			sodium.crypto_aead_xchacha20poly1305_ietf_ABYTES
 	);
 
 	/** @inheritDoc */
-	public readonly keyBytes: Promise<number>	= sodium.ready.then(async () =>
+	public readonly keyBytes: Promise<number>	= sodium.ready.then(() =>
 		this.isNative ?
 			NativeCrypto.secretBox.keyBytes :
 			sodium.crypto_aead_xchacha20poly1305_ietf_KEYBYTES
