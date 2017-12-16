@@ -211,6 +211,8 @@ export class AccountAuthService {
 				);
 			});
 
+			const pinHash	= await this.accountDatabaseService.getItem('pin/hash', BinaryProto);
+
 			await Promise.all([
 				this.localStorageService.setItem(
 					'masterKey',
@@ -218,7 +220,7 @@ export class AccountAuthService {
 					/* Locally encrypt master key with PIN */
 					await this.potassiumService.secretBox.seal(
 						masterKey,
-						await this.accountDatabaseService.getItem('pin/hash', BinaryProto)
+						pinHash
 					)
 				),
 				this.localStorageService.setItem(
@@ -230,7 +232,8 @@ export class AccountAuthService {
 					'username',
 					StringProto,
 					await user.realUsername.pipe(take(1)).toPromise()
-				)
+				),
+				this.savePIN(pinHash)
 			]);
 		}
 		catch {
@@ -478,7 +481,7 @@ export class AccountAuthService {
 					await this.localStorageService.getItem(
 						'pinDuration',
 						NumberProto
-					).then(() =>
+					).catch(() =>
 						3600000
 					)
 			),
