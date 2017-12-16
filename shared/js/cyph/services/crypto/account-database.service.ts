@@ -6,7 +6,6 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
-import {skipWhile} from 'rxjs/operators/skipWhile';
 import {take} from 'rxjs/operators/take';
 import {Subscription} from 'rxjs/Subscription';
 import {ICurrentUser, SecurityModels} from '../../account';
@@ -22,6 +21,7 @@ import {
 	BinaryProto,
 	IAccountUserPublicKeys
 } from '../../proto';
+import {filterUndefinedOperator} from '../../util/filter';
 import {flattenObservablePromise} from '../../util/flatten-observable-promise';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
@@ -144,6 +144,11 @@ export class AccountDatabaseService {
 	/** @see getCurrentUser */
 	public readonly currentUser: BehaviorSubject<ICurrentUser|undefined>	=
 		new BehaviorSubject<ICurrentUser|undefined>(undefined)
+	;
+
+	/** @see getCurrentUser */
+	public readonly currentUserFiltered: Observable<ICurrentUser>			=
+		this.currentUser.pipe(filterUndefinedOperator<ICurrentUser>())
 	;
 
 	/** @ignore */
@@ -495,7 +500,7 @@ export class AccountDatabaseService {
 	public async getCurrentUser () : Promise<ICurrentUser> {
 		const currentUser	=
 			this.currentUser.value ||
-			await this.currentUser.pipe(skipWhile(o => !o), take(1)).toPromise()
+			await this.currentUserFiltered.pipe(take(1)).toPromise()
 		;
 
 		if (!currentUser) {
@@ -848,7 +853,7 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return flattenObservablePromise(
-			this.currentUser.pipe(
+			this.watchCurrentUser(anonymous).pipe(
 				mergeMap(async () => {
 					const processedURL	= await this.normalizeURL(url);
 
@@ -877,6 +882,11 @@ export class AccountDatabaseService {
 		);
 	}
 
+	/** Returns currentUser observable. */
+	public watchCurrentUser (anonymous: boolean = false) : Observable<ICurrentUser|undefined> {
+		return anonymous ? this.currentUser : this.currentUserFiltered;
+	}
+
 	/** @see DatabaseService.watchExists */
 	public watchExists (url: string|Promise<string>) : Observable<boolean> {
 		return this.databaseService.watchExists(this.normalizeURL(url));
@@ -891,7 +901,7 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>[]> {
 		return flattenObservablePromise(
-			this.currentUser.pipe(
+			this.watchCurrentUser(anonymous).pipe(
 				mergeMap(async () => {
 					const processedURL	= await this.normalizeURL(url);
 
@@ -960,7 +970,7 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return flattenObservablePromise(
-			this.currentUser.pipe(
+			this.watchCurrentUser(anonymous).pipe(
 				mergeMap(async () => {
 					const processedURL	= await this.normalizeURL(url);
 
