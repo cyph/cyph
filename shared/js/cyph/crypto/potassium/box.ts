@@ -18,7 +18,7 @@ export class Box implements IBox {
 			async (cyphertext: Uint8Array, keyPair: IKeyPair) =>
 				NativeCrypto.box.open(cyphertext, keyPair)
 			:
-			async (cyphertext: Uint8Array, keyPair: IKeyPair) => sodium.ready.then(async () =>
+			async (cyphertext: Uint8Array, keyPair: IKeyPair) => sodium.ready.then(() =>
 				sodium.crypto_box_curve25519xchacha20poly1305_seal_open(
 					cyphertext,
 					keyPair.publicKey,
