@@ -23,7 +23,7 @@
 							[clickable]='false'
 							[contact]='recipient | async'
 							class='cyph-main-theme'
-							*ngIf='(recipient | async) !== undefined'
+							[class.visibility-hidden]='(recipient | async) === undefined'
 						></cyph-account-contact>
 						<div
 							fxFlex='5'
