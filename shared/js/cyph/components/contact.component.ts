@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ConfigService} from '../services/config.service';
 import {StringsService} from '../services/strings.service';
+import {trackBySelf} from '../track-by/track-by-self';
 import {email} from '../util/email';
 
 
@@ -14,28 +15,31 @@ import {email} from '../util/email';
 })
 export class ContactComponent implements OnInit {
 	/** Indicates whether the feedback form UI should be displayed. */
-	public feedbackForm: boolean		= false;
+	public feedbackForm: boolean			= false;
 
 	/** Sender email address. */
-	@Input() public fromEmail: string	= '';
+	@Input() public fromEmail: string		= '';
 
 	/** Sender name. */
-	@Input() public fromName: string	= '';
+	@Input() public fromName: string		= '';
 
 	/** Email body. */
-	@Input() public message: string		= '';
+	@Input() public message: string			= '';
 
 	/** Indicates whether response is requested. */
-	public responseRequested: boolean	= false;
+	public responseRequested: boolean		= false;
 
 	/** Indicates whether email has been sent. */
-	public sent: boolean				= false;
+	public sent: boolean					= false;
 
 	/** Email subject. */
-	@Input() public subject: string		= '';
+	@Input() public subject: string			= '';
 
 	/** Recipient @cyph.com email address ("@cyph.com" may be omitted). */
-	@Input() public to: string			= '';
+	@Input() public to: string				= '';
+
+	/** @see trackBySelf */
+	public trackBySelf: typeof trackBySelf	= trackBySelf;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {

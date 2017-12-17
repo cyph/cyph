@@ -1,5 +1,5 @@
 <div fxLayout='column' fxLayoutGap='32px'>
-	<div fxLayout='row' *ngFor='let message of messages'>
+	<div fxLayout='row' *ngFor='let message of messages; trackBy: trackByID'>
 		<div class='message'>
 			<strong>{{message.author | async}}:</strong>
 			<span>{{message.value.text}}</span>

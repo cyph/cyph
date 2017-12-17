@@ -25,7 +25,10 @@
 					[placeholder]='stringsService.teamToContact'
 				>
 					<mat-option
-						*ngFor='let address of configService.contactEmailAddresses'
+						*ngFor='
+							let address of configService.contactEmailAddresses;
+							trackBy: trackBySelf;
+						'
 						[value]='address'
 					>
 						{{address}}

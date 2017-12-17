@@ -18,6 +18,7 @@ import {User} from '../account/user';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {StringsService} from '../services/strings.service';
+import {trackByUser} from '../track-by/track-by-user';
 
 
 /**
@@ -91,6 +92,9 @@ export class AccountContactsSearchComponent implements OnChanges, OnInit {
 
 	/** @see AccountContactsSearchComponent.searchUsername */
 	@Input() public searchUsername?: Observable<string>;
+
+	/** @see trackByUser */
+	public readonly trackByUser: typeof trackByUser	= trackByUser;
 
 	/** Single contact to display instead of list. */
 	public userFilter: BehaviorSubject<User|undefined>		= new BehaviorSubject(undefined);

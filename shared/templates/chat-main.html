@@ -239,7 +239,10 @@
 		[@fadeIn]='"in"'
 	>
 		<div fxFlex fxLayout='column'>
-			<div fxLayout='row' *ngFor='let transfer of fileTransferService.transfers'>
+			<div
+				fxLayout='row'
+				*ngFor='let transfer of fileTransferService.transfers; trackBy: trackByTransfer'
+			>
 				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch' class='transfer-item'>
 					<div fxLayout='row'>
 						<span

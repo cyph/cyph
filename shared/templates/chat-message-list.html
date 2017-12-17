@@ -14,7 +14,7 @@
 <!--
 <div cyphNanoScroller>
 	<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
-		<ng-container *ngFor='let item of vsData | async'>
+		<ng-container *ngFor='let item of vsData | async; trackBy: trackByVsItem'>
 			<ng-container *ngTemplateOutlet='listItem; context: {item: item}'></ng-container>
 		</ng-container>
 	</div>

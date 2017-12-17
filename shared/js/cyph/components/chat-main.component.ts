@@ -11,6 +11,7 @@ import {P2PWebRTCService} from '../services/p2p-webrtc.service';
 import {P2PService} from '../services/p2p.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
+import {trackByTransfer} from '../track-by/track-by-transfer';
 import {readableByteLength} from '../util/formatting';
 import {deserialize} from '../util/serialization';
 
@@ -50,7 +51,10 @@ export class ChatMainComponent implements AfterViewInit {
 	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
 
 	/** @see States */
-	public readonly states: typeof States	= States;
+	public readonly states: typeof States							= States;
+
+	/** @see trackByTransfer */
+	public readonly trackByTransfer: typeof trackByTransfer			= trackByTransfer;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {

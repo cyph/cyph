@@ -5,6 +5,7 @@ import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
+import {trackByID} from '../track-by/track-by-id';
 
 
 /**
@@ -16,6 +17,9 @@ import {StringsService} from '../services/strings.service';
 	templateUrl: '../../../templates/account-forms.html'
 })
 export class AccountFormsComponent {
+	/** @see trackByID */
+	public readonly trackByID: typeof trackByID	= trackByID;
+
 	constructor (
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

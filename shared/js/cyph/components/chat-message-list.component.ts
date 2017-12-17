@@ -25,6 +25,7 @@ import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
+import {trackByVsItem} from '../track-by/track-by-vs-item';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 
 
@@ -91,6 +92,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 	/** Indicates whether disconnect message should be displayed. */
 	@Input() public showDisconnectMessage: boolean;
+
+	/** @see trackByVsItem */
+	public readonly trackByVsItem: typeof trackByVsItem	= trackByVsItem;
 
 	/** Data formatted for virtual scrolling. */
 	public vsData	= new Subject<IVsItem[]>();

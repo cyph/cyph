@@ -2,6 +2,8 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
 import {StringsService} from '../services/strings.service';
+import {trackByIndex} from '../track-by/track-by-index';
+import {trackBySelf} from '../track-by/track-by-self';
 import {getOrSetDefault} from '../util/get-or-set-default';
 
 
@@ -22,6 +24,12 @@ export class DynamicFormComponent {
 
 	/** @see Form */
 	@Output() public submit: EventEmitter<IForm>		= new EventEmitter<IForm>();
+
+	/** @see trackByIndex */
+	public readonly trackByIndex: typeof trackByIndex	= trackByIndex;
+
+	/** @see trackBySelf */
+	public readonly trackBySelf: typeof trackBySelf		= trackBySelf;
 
 	/** @see Form.FormElement.Types */
 	public readonly types: typeof Form.Element.Types	= Form.Element.Types;

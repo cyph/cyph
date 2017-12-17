@@ -265,8 +265,8 @@
 		"pipe-impure": true,
 		"pipe-naming": [true, "camelCase", "cyph"],
 		"templates-no-negated-async": true,
-		"track-by-function": false, /* TODO: true */
-		"trackBy-function": false, /* TODO: true */
+		"track-by-function": true,
+		"trackBy-function": true,
 		"use-host-property-decorator": true,
 		"use-input-property-decorator": true,
 		"use-life-cycle-interface": true,

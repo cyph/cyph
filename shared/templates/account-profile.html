@@ -52,7 +52,10 @@
 					name='status'
 					placeholder='Status'
 				>
-					<mat-option *ngFor='let status of statuses' [value]='status.value'>
+					<mat-option
+						*ngFor='let status of statuses; trackBy: trackByValue'
+						[value]='status.value'
+					>
 						{{status.text}}
 					</mat-option>
 				</mat-select>
