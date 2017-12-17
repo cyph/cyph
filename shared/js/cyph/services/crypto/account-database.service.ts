@@ -624,7 +624,7 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.hasItem */
 	public async hasItem (url: string|Promise<string>) : Promise<boolean> {
-		return this.databaseService.hasItem(await url);
+		return this.databaseService.hasItem(await this.normalizeURL(url));
 	}
 
 	/** @see DatabaseService.lock */
