@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {Injectable} from '@angular/core';
 import {skip} from 'rxjs/operators/skip';
 import {take} from 'rxjs/operators/take';

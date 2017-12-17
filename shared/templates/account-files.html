@@ -10,8 +10,8 @@
 			class='file animated'
 			*ngFor='
 				let file of accountFilesService.filesListFiltered.files | async;
-				let i = index;
 				trackBy: trackByID;
+				let i = index;
 			'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
@@ -92,8 +92,8 @@
 			class='file animated'
 			*ngFor='
 				let file of accountFilesService.incomingFilesFiltered.files | async;
-				let i = index;
 				trackBy: trackByID;
+				let i = index;
 			'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'

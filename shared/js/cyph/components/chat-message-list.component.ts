@@ -104,7 +104,6 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		const vsData	= this.vsData;
 
 		return (a: number, b: number) =>
-			vsData.value !== undefined &&
 			vsData.value.length > a &&
 			vsData.value.length > b &&
 			vsData.value[a].message.id === vsData.value[b].message.id

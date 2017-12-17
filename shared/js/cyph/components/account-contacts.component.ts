@@ -61,7 +61,6 @@ export class AccountContactsComponent implements AfterViewInit {
 		const contactList	= this.contactList;
 
 		return (a: number, b: number) =>
-			contactList.value !== undefined &&
 			contactList.value.length > a &&
 			contactList.value.length > b &&
 			contactList.value[a].username === contactList.value[b].username

@@ -10,8 +10,8 @@
 			class='form animated'
 			*ngFor='
 				let form of accountFilesService.filesListFiltered.forms | async;
-				let i = index;
 				trackBy: trackByID;
+				let i = index;
 			'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
@@ -67,8 +67,8 @@
 			class='form animated'
 			*ngFor='
 				let form of accountFilesService.incomingFilesFiltered.forms | async;
-				let i = index;
 				trackBy: trackByID;
+				let i = index;
 			'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'

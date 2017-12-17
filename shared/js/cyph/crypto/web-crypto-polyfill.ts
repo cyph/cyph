@@ -23,7 +23,7 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 		getRandomValues: (arrayBufferView: ArrayBufferView) => {
 			/* Handle circular dependency between this polyfill and libsodium */
 			const sodiumExists	=
-				typeof sodium() !== 'undefined' &&
+				typeof (<any> sodium()) !== 'undefined' &&
 				sodium().crypto_stream_chacha20
 			;
 
