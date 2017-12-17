@@ -56,10 +56,10 @@
 			<div fxFlexFill fxLayoutAlign='center center' *ngIf='sent | async'>
 				<div>
 					<span cyphTranslate>Message sent to</span>
-					<span>
+					<a [routerLink]='"/account/messages/" + (recipient | async)?.username'>
 						{{(recipient | async)?.name | async}}
 						(@{{(recipient | async)?.realUsername | async}})
-					</span>
+					</a>
 				</div>
 			</div>
 		</mat-card-content>

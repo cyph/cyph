@@ -39,6 +39,9 @@ export class AccountContactsComponent implements AfterViewInit {
 		)
 	;
 
+	/** @see AccountContactsSearchComponent.clearUserFilter */
+	public clearUserFilter: () => void;
+
 	/** Full contact list with active contact filtered out. */
 	public readonly contactList: BehaviorSubject<User[]>	= observableToBehaviorSubject(
 		this.routeReactiveContactList.pipe(

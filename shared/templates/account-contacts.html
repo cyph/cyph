@@ -6,12 +6,14 @@
 >
 	<div fxFlexFill fxLayout='column' fxLayoutAlign='start stretch'>
 		<cyph-account-contacts-search
+			(clearUserFilterFunction)='clearUserFilter = $event'
 			(userFilterChange)='$event.subscribe(userFilter)'
 		></cyph-account-contacts-search>
 
 		<cyph-account-contact
 			class='active'
 			[contact]='userFilter | async'
+			(click)='clearUserFilter()'
 			*ngIf='(userFilter | async) !== undefined'
 		></cyph-account-contact>
 
