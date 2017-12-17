@@ -6,6 +6,7 @@ import {States} from '../chat/enums';
 import {ChatMessageValueTypes} from '../proto';
 import {accountChatProviders} from '../providers';
 import {AccountChatService} from '../services/account-chat.service';
+import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 
@@ -51,6 +52,8 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 			this.searchUsername.next(username);
 		});
+
+		this.accountChatService.init(this.chatMessageGeometryService);
 	}
 
 	public async send () : Promise<void> {
@@ -58,8 +61,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 			return;
 		}
 
+		const currentMessage	= this.accountChatService.chat.currentMessage;
 		await this.accountChatService.setUser(this.recipient.value.username);
-		await this.accountChatService.send(this.messageType);
+		await this.accountChatService.send(this.messageType, currentMessage);
 		this.sent.next(true);
 	}
 
@@ -69,6 +73,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,
+
+		/** @ignore */
+		private readonly chatMessageGeometryService: ChatMessageGeometryService,
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
