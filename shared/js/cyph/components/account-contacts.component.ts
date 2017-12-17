@@ -12,6 +12,7 @@ import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
+import {observableToBehaviorSubject} from '../util/flatten-observable-promise';
 import {sleep} from '../util/wait';
 
 
@@ -39,11 +40,12 @@ export class AccountContactsComponent implements AfterViewInit {
 	;
 
 	/** Full contact list with active contact filtered out. */
-	public readonly contactList: Observable<User[]>			=
+	public readonly contactList: BehaviorSubject<User[]>	= observableToBehaviorSubject(
 		this.routeReactiveContactList.pipe(
 			map(contacts => contacts.filter(contact => !this.isActive(contact)))
-		)
-	;
+		),
+		[]
+	);
 
 	/** Indicates whether contact list should be displayed. */
 	public showContactList: boolean							= false;
@@ -53,6 +55,18 @@ export class AccountContactsComponent implements AfterViewInit {
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence		= UserPresence;
+
+	/** Equality function for virtual scrolling. */
+	public readonly vsEqualsFunc: (a: number, b: number) => boolean	= (() => {
+		const contactList	= this.contactList;
+
+		return (a: number, b: number) =>
+			contactList.value !== undefined &&
+			contactList.value.length > a &&
+			contactList.value.length > b &&
+			contactList.value[a].username === contactList.value[b].username
+		;
+	})();
 
 	/** Options for virtual scrolling. */
 	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
@@ -76,11 +90,6 @@ export class AccountContactsComponent implements AfterViewInit {
 	public async ngAfterViewInit () : Promise<void> {
 		await sleep(0);
 		this.showContactList	= true;
-	}
-
-	/** Equality function for virtual scrolling. */
-	public vsEqualsFunc () : boolean {
-		return false;
 	}
 
 	constructor (

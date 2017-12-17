@@ -10,12 +10,12 @@ import {
 import * as $ from 'jquery';
 import {IVirtualScrollOptions} from 'od-virtualscroll';
 import ResizeObserver from 'resize-observer-polyfill';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
-import {Subject} from 'rxjs/Subject';
 import {fadeInOut} from '../animations';
 import {ChatMessage, IChatData, IVsItem} from '../chat';
 import {AccountContactsService} from '../services/account-contacts.service';
@@ -97,7 +97,19 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	public readonly trackByVsItem: typeof trackByVsItem	= trackByVsItem;
 
 	/** Data formatted for virtual scrolling. */
-	public vsData	= new Subject<IVsItem[]>();
+	public readonly vsData: BehaviorSubject<IVsItem[]>	= new BehaviorSubject([]);
+
+	/** Equality function for virtual scrolling. */
+	public readonly vsEqualsFunc: (a: number, b: number) => boolean	= (() => {
+		const vsData	= this.vsData;
+
+		return (a: number, b: number) =>
+			vsData.value !== undefined &&
+			vsData.value.length > a &&
+			vsData.value.length > b &&
+			vsData.value[a].message.id === vsData.value[b].message.id
+		;
+	})();
 
 	/** Options for virtual scrolling. */
 	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
@@ -184,11 +196,6 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		})))).subscribe(
 			this.vsData
 		);
-	}
-
-	/** Equality function for virtual scrolling. */
-	public vsEqualsFunc () : boolean {
-		return false;
 	}
 
 	constructor (
