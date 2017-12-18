@@ -33,41 +33,6 @@ export const profileExtraTemp	= new LocalAsyncValue<IAccountUserProfileExtra>({
 			locationName: 'Vivek Wadhwa University',
 			locationURL: 'vivek.edu',
 			startDate: 707036400000
-		},
-	],
-	work: [
-		{
-			detail: 'CEO',
-			locationName: 'SpaceX',
-			locationURL: 'spacex.com',
-			startDate: 1022914800000
-		}
-	],
-	specialties: [
-		{
-			value: 'Internist'
-		},
-		{
-			value: 'Primary Care Doctor'
-		},
-		{
-			value: 'Oncology'
-		}
-	],
-	insurance: [
-		{
-			value: 'Blue Cross Blue Shield Federal Employee Program'
-		},
-		{
-			value: 'Anthem Blue Cross Blue Shield'
-		},
-		{
-			value: 'Virginia Health Network'
-		}
-	],
-	npi: [
-		{
-			value: '0123456789'
 		}
 	],
 	gender: [
@@ -82,6 +47,17 @@ export const profileExtraTemp	= new LocalAsyncValue<IAccountUserProfileExtra>({
 		},
 		{
 			value: 'Unknown'
+		}
+	],
+	insurance: [
+		{
+			value: 'Blue Cross Blue Shield Federal Employee Program'
+		},
+		{
+			value: 'Anthem Blue Cross Blue Shield'
+		},
+		{
+			value: 'Virginia Health Network'
 		}
 	],
 	languages: [
@@ -100,6 +76,30 @@ export const profileExtraTemp	= new LocalAsyncValue<IAccountUserProfileExtra>({
 		{
 			language: 'Spanish',
 			proficiency: 0
+		}
+	],
+	npi: [
+		{
+			value: '0123456789'
+		}
+	],
+	specialties: [
+		{
+			value: 'Internist'
+		},
+		{
+			value: 'Primary Care Doctor'
+		},
+		{
+			value: 'Oncology'
+		}
+	],
+	work: [
+		{
+			detail: 'CEO',
+			locationName: 'SpaceX',
+			locationURL: 'spacex.com',
+			startDate: 1022914800000
 		}
 	]
 });

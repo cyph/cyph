@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
 import {UserPresence, userPresenceSelectOptions} from '../account/enums';
 import {User} from '../account/user';
-import {AccountUserTypes} from '../proto'
+import {AccountUserTypes} from '../proto';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
@@ -27,6 +27,9 @@ export class AccountProfileComponent implements OnInit {
 	/** @ignore */
 	private editorFocus: boolean	= false;
 
+/** @see AccountUserTypes */
+	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+
 	/** Current draft of user profile description. */
 	public descriptionDraft: string	= '';
 
@@ -35,9 +38,6 @@ export class AccountProfileComponent implements OnInit {
 
 	/** @see AccountContactsService.watchIfContact */
 	public isContact?: Observable<boolean>;
-
-	/** @see AccountUserTypes */
-	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;	
 
 	/** Maximum length of profile description. */
 	public readonly maxDescriptionLength: number	= 140;

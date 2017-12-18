@@ -40,53 +40,52 @@
 					<div fxLayout='column' fxFlex='75'>
 					<mat-card>
 						<mat-card-content>
-								<h2>Specialties</h2>
+							<h2>Specialties</h2>
 							<mat-list>
 								<mat-list-item>
 									{{extra.specialties && extra.specialties.length > 0 ? extra.specialties[0].value : ''}}
 								</mat-list-item>
 								<mat-list-item>
-										{{extra.specialties && extra.specialties.length > 0 ? extra.specialties[1].value : ''}}
+									{{extra.specialties && extra.specialties.length > 0 ? extra.specialties[1].value : ''}}
 								</mat-list-item>
 							</mat-list>
-
-					<h2>Education & Training</h2>
-								<mat-list>
-									<mat-list-item>
-										<span>
-											<b>Bachelors:</b> {{extra.education && extra.education.length > 0 ? extra.education[0].locationName : ''}}
-										</span>
-									</mat-list-item>
-									<mat-list-item>
-										<span>
-											<b>Medical School:</b> {{extra.education && extra.education.length > 0 ? extra.education[0].locationName : ''}}
-										</span>
-									</mat-list-item>
-									<mat-list-item>
-										<b>Residency:</b> {{extra.education && extra.education.length > 0 ? extra.education[0].locationName : ''}}
-									</mat-list-item></mat-list>
-									<h2>Languages</h2>
-								<mat-list>
-									<mat-list-item>
-										{{extra.languages && extra.languages.length > 0 ? extra.languages[0].language : ''}}
-									</mat-list-item>
-									<mat-list-item>
-										{{extra.languages && extra.languages.length > 0 ? extra.languages[3].language : ''}}
-									</mat-list-item>
-								</mat-list>
-
-
-								<h2>Insurance</h2>
-								<mat-list>
-									<mat-list-item>
-										{{extra.insurance && extra.insurance.length > 0 ? extra.insurance[0].value : ''}}
-									</mat-list-item>
-									<mat-list-item>
-											{{extra.insurance && extra.insurance.length > 0 ? extra.insurance[1].value : ''}}
-										</mat-list-item>
-								</mat-list>
-							</mat-card-content>
-					</mat-card></div>
+							<h2>Education & Training</h2>
+							<mat-list>
+								<mat-list-item>
+									<span>
+										<b>Bachelors:</b> {{extra.education && extra.education.length > 0 ? extra.education[0].locationName : ''}}
+									</span>
+								</mat-list-item>
+								<mat-list-item>
+									<span>
+										<b>Medical School:</b> {{extra.education && extra.education.length > 0 ? extra.education[0].locationName : ''}}
+									</span>
+								</mat-list-item>
+								<mat-list-item>
+									<b>Residency:</b> {{extra.education && extra.education.length > 0 ? extra.education[0].locationName : ''}}
+								</mat-list-item>
+							</mat-list>
+							<h2>Languages</h2>
+							<mat-list>
+								<mat-list-item>
+									{{extra.languages && extra.languages.length > 0 ? extra.languages[0].language : ''}}
+								</mat-list-item>
+								<mat-list-item>
+									{{extra.languages && extra.languages.length > 0 ? extra.languages[3].language : ''}}
+								</mat-list-item>
+							</mat-list>
+							<h2>Insurance</h2>
+							<mat-list>
+								<mat-list-item>
+									{{extra.insurance && extra.insurance.length > 0 ? extra.insurance[0].value : ''}}
+								</mat-list-item>
+								<mat-list-item>
+										{{extra.insurance && extra.insurance.length > 0 ? extra.insurance[1].value : ''}}
+								</mat-list-item>
+							</mat-list>
+						</mat-card-content>
+					</mat-card>
+				</div>
 			</div>
 			<div fxLayoutAlign='center center' class='edit-hide status' *ngIf='isCurrentUser && !accountService.isTelehealth'>
 				<mat-select
