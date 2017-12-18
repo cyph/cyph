@@ -183,12 +183,9 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			!this.envService.isMobile &&
 			!this.accountService.isTelehealth &&
 			[
-				''
-			].concat(
-				this.accountService.isTelehealth ?
-					[] :
-					['messages']
-			).filter(
+				'',
+				'messages'
+			].filter(
 				path => this.route === path
 			).length > 0
 		;

@@ -130,6 +130,9 @@ export class StringsService {
 	public readonly doctor: string					= `doctor`;
 
 	/** @see StringsService */
+	public readonly dr: string						= `Dr.`;
+
+	/** @see StringsService */
 	public readonly fileCall: string				= `file transfer`;
 
 	/** @see StringsService */

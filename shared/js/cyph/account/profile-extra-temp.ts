@@ -23,7 +23,7 @@ export const profileExtraTemp	= new LocalAsyncValue<IAccountUserProfileExtra>({
 		{
 			detail: 'Doctor of Medicine',
 			endDate: 1513152000000,
-			locationName: 'University of California, Los Angeles ',
+			locationName: 'University of California, Los Angeles',
 			locationURL: '',
 			startDate: 707036400000
 		},
@@ -35,31 +35,12 @@ export const profileExtraTemp	= new LocalAsyncValue<IAccountUserProfileExtra>({
 			startDate: 707036400000
 		}
 	],
-	gender: [
-		{
-			value: 'Male'
-		},
-		{
-			value: 'Female'
-		},
-		{
-			value: 'Transgender'
-		},
-		{
-			value: 'Unknown'
-		}
-	],
-	insurance: [
-		{
-			value: 'Blue Cross Blue Shield Federal Employee Program'
-		},
-		{
-			value: 'Anthem Blue Cross Blue Shield'
-		},
-		{
-			value: 'Virginia Health Network'
-		}
-	],
+	gender: 'Male',
+	insurance: {data: [
+		'Blue Cross Blue Shield Federal Employee Program',
+		'Anthem Blue Cross Blue Shield',
+		'Virginia Health Network'
+	]},
 	languages: [
 		{
 			language: 'English',
@@ -78,22 +59,14 @@ export const profileExtraTemp	= new LocalAsyncValue<IAccountUserProfileExtra>({
 			proficiency: 0
 		}
 	],
-	npi: [
-		{
-			value: '0123456789'
-		}
-	],
-	specialties: [
-		{
-			value: 'Internist'
-		},
-		{
-			value: 'Primary Care Doctor'
-		},
-		{
-			value: 'Oncology'
-		}
-	],
+	npi: {data: [
+		'0123456789'
+	]},
+	specialties: {data: [
+		'Internist',
+		'Primary Care Doctor',
+		'Oncology'
+	]},
 	work: [
 		{
 			detail: 'CEO',

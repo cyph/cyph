@@ -10,161 +10,160 @@
 		>
 			<div fxLayout='column' class='header' fxLayoutAlign='center center'>
 				<div fxFlex fxLayout='row' class='user-info' fxLayoutAlign='center center'>
-				<img
-					class='avatar animated jackInTheBox _1'
-					[ngClass]='userPresence[user.status | async]'
-					alt='Profile Picture'
-					[src]='user.avatar | async'
-				/>
-				<div fxLayout='row'>
-					<div fxLayout='column' fxLayoutAlign='center center'>
-						<div 
-							class='name animated flipInX _2'
-						>
-					{{(user.userType | async) === accountUserTypes.TelehealthDoctor ? 'Dr.' : ''}}
-						{{user.name | async}}
+					<img
+						cyphTranslate
+						class='avatar animated jackInTheBox _1'
+						[ngClass]='userPresence[user.status | async]'
+						alt='Profile Picture'
+						[src]='user.avatar | async'
+					/>
+					<div fxLayout='row'>
+						<div fxLayout='column' fxLayoutAlign='center center'>
+							<div class='name animated flipInX _2'>
+								{{
+									(user.userType | async) === accountUserTypes.TelehealthDoctor ?
+										stringsService.dr :
+										''
+								}}
+								{{user.name | async}}
+							</div>
+							<div
+								class='username animated flipInX _2'
+								*ngIf='(user.userType | async) === accountUserTypes.Standard'
+							>
+								@{{user.realUsername | async}}
+							</div>
+							<div
+								class='practice'
+								fxLayout='row'
+								*ngIf='
+									(user.userType | async) === accountUserTypes.TelehealthDoctor
+								'
+							>
+								<div fxLayout='row' routerLink='/account/profile/nachc'>
+									<mat-icon>business</mat-icon>
+									<h3 cyphTranslate>Community Health Center</h3>
+								</div>
+							</div>
 						</div>
-						<div
-							class='username animated flipInX _2'
-							*ngIf='(user.userType | async) === accountUserTypes.Standard'
-						>
-							@{{user.username | async}}
-						</div>
-						<div
-							class='practice'
-							fxLayout='row'
-							*ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'
-						>
-							<div fxLayout='row' [routerLink]='"/account/profile/nachc"'>
-								<mat-icon>business</mat-icon>
-								<h3>Community Health Center</h3>
+							<div fxLayout='column' fxLayoutAlign='center center'>
+								<cyph-account-user-rating
+									*ngIf='
+										accountService.isTelehealth &&
+										(user.userType | async) ===
+											accountUserTypes.TelehealthDoctor
+									'
+								>
+								</cyph-account-user-rating>
 							</div>
 						</div>
 					</div>
-						<div fxLayout='column' fxLayoutAlign='center center'>
-							<cyph-account-user-rating
-								*ngIf='accountService.isTelehealth &&
-									(user.userType | async) === accountUserTypes.TelehealthDoctor'
-							>
-							</cyph-account-user-rating>
-						</div>
-					</div>
 				</div>
-			</div>
-			<div
-				fxLayout='column'
-				fxLayoutAlign='center center'
-				*ngIf='accountService.isTelehealth &&
-				(user.userType | async) === accountUserTypes.TelehealthDoctor ||
-				(user.userType | async) === accountUserTypes.TelehealthOrg ||
-				(user.userType | async) === accountUserTypes.TelehealthPatient'
-			>
-				
-						<mat-card fxFlex='33' *ngIf='user.extra() | async; let extra'>
-							<mat-card-content 
-							*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'>
-								<h2>Patient Info</h2>
-								<mat-list>
-									<mat-list-item>
-										<span>
-											<b>Gender: </b>
-											{{extra.gender ? extra.gender[0].value : ''}}
-										</span>
-									</mat-list-item>
-								</mat-list>
-							</mat-card-content>
-							<mat-card-content 
-							*ngIf='(user.userType | async) === accountUserTypes.TelehealthOrg'>
-								<h2>Address</h2>
-								<mat-list>
-									<mat-list-item>
-										<span>
-											{{extra.address ? extra.address : ''}}
-										</span>
-									</mat-list-item>
-								</mat-list>
-							</mat-card-content>
-							<mat-card-content 
-							*ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'>
-						<button 
-							mat-raised-button
-							color='primary'
-							[routerLink]='"/account/compose/"+user.username'
+				<div
+					fxLayout='column'
+					fxLayoutAlign='center center'
+					*ngIf='
+						accountService.isTelehealth &&
+						(user.userType | async) === accountUserTypes.TelehealthDoctor ||
+						(user.userType | async) === accountUserTypes.TelehealthOrg ||
+						(user.userType | async) === accountUserTypes.TelehealthPatient
+					'
+				>
+					<mat-card fxFlex='33' *ngIf='user.extra() | async; let extra'>
+						<mat-card-content 
+							*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'
 						>
-							Request Appointment
-						</button>
-								<h2>Specialties</h2>
-								<mat-list>
-									<mat-list-item>
-										<span>
-											{{extra.specialties ? extra.specialties[0].value : ''}}
-										</span>
-									</mat-list-item>
-									<mat-list-item>
-										<span>
-											{{extra.specialties ? extra.specialties[1].value : ''}}
-										</span>
-									</mat-list-item>
-								</mat-list>
-								<h2>Education & Training</h2>
-								<mat-list>
-									<mat-list-item>
-										<span>
-											<b>Bachelors:</b>
-										{{extra.education ? extra.education[0].locationName : ''}}
-										</span>
-									</mat-list-item>
-									<mat-list-item>
-										<span>
-											<b>Medical School:</b>
-										{{extra.education ? extra.education[0].locationName : ''}}
-										</span>
-									</mat-list-item>
-									<mat-list-item>
-										<span>
-											<b>Residency:</b>
-										{{extra.education ? extra.education[0].locationName : ''}}
-										</span>
-									</mat-list-item>
-								</mat-list>
-								<h2>Languages</h2>
-								<mat-list>
-									<mat-list-item>
-										<span>
-											{{extra.languages ? extra.languages[0].language : ''}}
-										</span>
-									</mat-list-item>
-									<mat-list-item>
-										<span>
-											{{extra.languages ? extra.languages[3].language : ''}}
-										</span>
-									</mat-list-item>
-								</mat-list>
-								<h2>Insurance</h2>
-								<mat-list>
-									<mat-list-item>
-										<span>
-											{{extra.insurance ? extra.insurance[0].value : ''}}
-										</span>
-									</mat-list-item>
-									<mat-list-item>
-										<span>
-											{{extra.insurance ? extra.insurance[1].value : ''}}
-										</span>
-									</mat-list-item>
-								</mat-list>
-								<h2>Misc</h2>
-								<mat-list>
-									<mat-list-item>
-										<span>
-											<b>NPI: </b>
-											{{extra.npi ? extra.npi[0].value : ''}}
-										</span>
-									</mat-list-item>
-								</mat-list>
-							</mat-card-content>
-						</mat-card>
-				
+							<h2 cyphTranslate>Patient Info</h2>
+							<mat-list>
+								<mat-list-item>
+									<span>
+										<strong cyphTranslate>Gender:</strong>
+										<span>{{extra.gender || ''}}</span>
+									</span>
+								</mat-list-item>
+							</mat-list>
+						</mat-card-content>
+						<mat-card-content 
+							*ngIf='(user.userType | async) === accountUserTypes.TelehealthOrg'
+						>
+							<h2 cyphTranslate>Address</h2>
+							<mat-list>
+								<mat-list-item>
+									<span>{{extra.address || ''}}</span>
+								</mat-list-item>
+							</mat-list>
+						</mat-card-content>
+						<mat-card-content 
+							*ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'
+						>
+							<button 
+								mat-raised-button
+								cyphTranslate
+								color='primary'
+								[routerLink]='"/account/compose/" + user.username'
+							>
+								Request Appointment
+							</button>
+							<h2 cyphTranslate>Specialties</h2>
+							<mat-list>
+								<mat-list-item>
+									<span>{{extra?.specialties.data[0] || ''}}</span>
+								</mat-list-item>
+								<mat-list-item>
+									<span>{{extra?.specialties.data[1] || ''}}</span>
+								</mat-list-item>
+							</mat-list>
+							<h2 cyphTranslate>Education & Training</h2>
+							<mat-list>
+								<mat-list-item>
+									<span>
+										<strong cyphTranslate>Bachelors:</strong>
+										<span>{{extra?.education[0].locationName || ''}}</span>
+									</span>
+								</mat-list-item>
+								<mat-list-item>
+									<span>
+										<strong cyphTranslate>Medical School:</strong>
+										<span>{{extra?.education[1].locationName || ''}}</span>
+									</span>
+								</mat-list-item>
+								<mat-list-item>
+									<span>
+										<strong cyphTranslate>Residency:</strong>
+										<span>{{extra?.education[2].locationName || ''}}</span>
+									</span>
+								</mat-list-item>
+							</mat-list>
+							<h2 cyphTranslate>Languages</h2>
+							<mat-list>
+								<mat-list-item>
+									<span>{{extra?.languages[0].language || ''}}</span>
+								</mat-list-item>
+								<mat-list-item>
+									<span>{{extra?.languages[3].language || ''}}</span>
+								</mat-list-item>
+							</mat-list>
+							<h2 cyphTranslate>Insurance</h2>
+							<mat-list>
+								<mat-list-item>
+									<span>{{extra?.insurance.data[0] || ''}}</span>
+								</mat-list-item>
+								<mat-list-item>
+									<span>{{extra?.insurance.data[1] || ''}}</span>
+								</mat-list-item>
+							</mat-list>
+							<h2 cyphTranslate>Misc</h2>
+							<mat-list>
+								<mat-list-item>
+									<span>
+										<strong cyphTranslate>NPI:</strong>
+										<span>{{extra?.npi.data[0] || ''}}</span>
+									</span>
+								</mat-list-item>
+							</mat-list>
+						</mat-card-content>
+					</mat-card>
+				</div>
 				<div 
 					fxLayoutAlign='center center'
 					class='edit-hide status'
@@ -248,6 +247,7 @@
 			</div>
 		</div>
 	</div>
+
 	<div fxLayout='row' fxLayoutGap='16px' class='edit-buttons edit-hide' *ngIf='isCurrentUser'>
 		<button
 			mat-fab
