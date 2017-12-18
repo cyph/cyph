@@ -39,6 +39,7 @@
 				[mobile]='item.mobile'
 				[uiStyle]='item.uiStyle'
 				[unconfirmedMessages]='item.unconfirmedMessages | async'
+				*ngIf='item.message !== undefined'
 			></cyph-chat-message>
 
 			<div fxLayout='row' *ngIf='item.isEnd'>

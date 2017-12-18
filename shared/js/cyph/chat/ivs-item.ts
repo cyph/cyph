@@ -18,7 +18,7 @@ export interface IVsItem {
 	isStart: boolean;
 
 	/** @see ChatMessage */
-	message: ChatMessage;
+	message?: ChatMessage;
 
 	/** @see ChatMessageListComponent.mobile */
 	mobile: boolean;

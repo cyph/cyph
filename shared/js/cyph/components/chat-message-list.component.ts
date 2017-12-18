@@ -125,11 +125,13 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 	/** Options for virtual scrolling. */
 	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
-		itemHeight: async ({message}: IVsItem) => this.chatMessageGeometryService.getHeight(
-			message,
-			this.currentMaxWidth,
-			this.currentViewportWidth
-		),
+		itemHeight: async ({message}: IVsItem) =>
+			message === undefined ? 0 : this.chatMessageGeometryService.getHeight(
+				message,
+				this.currentMaxWidth,
+				this.currentViewportWidth
+			)
+		,
 		numLimitColumns: 1
 	});
 
@@ -196,9 +198,11 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		combineLatest<ChatMessage[]|void>([
 			observables.messages,
 			this.maxWidthWatcher
-		]).pipe(map(([messages]: ChatMessage[][]) => messages.map((message, i) => ({
+		]).pipe(map(([messages]: ChatMessage[][]) => (
+			<(ChatMessage|undefined)[]> (messages.length < 1 ? [undefined] : messages)
+		).map((message, i, arr) => ({
 			accounts: this.accounts,
-			isEnd: (i + 1) === messages.length,
+			isEnd: (i + 1) === arr.length,
 			isFriendTyping: chat.isFriendTyping,
 			isStart: i === 0,
 			message,
