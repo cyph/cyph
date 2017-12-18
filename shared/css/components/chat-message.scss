@@ -12,6 +12,26 @@
 	}
 }
 
+.confirmation-checks {
+	vertical-align: middle;
+
+	mat-icon {
+		@include icon-size(14px);
+
+		&:first-child {
+			margin-right: -12px;
+		}
+	}
+}
+
+.mobile .confirmation-checks mat-icon {
+	@include icon-size(12px);
+
+	&:first-child {
+		margin-right: -11px;
+	}
+}
+
 :host ::ng-deep {
 	img {
 		cursor: pointer;
@@ -45,10 +65,6 @@
 
 		.message-timestamp {
 			text-align: right;
-		}
-
-		&:not(.confirmed) {
-			opacity: 0.65;
 		}
 
 		a:not([href]) {

@@ -5,11 +5,9 @@
 	[class.author-app]='message.authorType === authorTypes.App'
 	[class.author-local]='message.authorType === authorTypes.Local'
 	[class.author-remote]='message.authorType === authorTypes.Remote'
-	[class.confirmed]='confirmed'
 	[class.self-destruct]='chatService.chatSelfDestruct'
 	[class.self-destructed]='message.selfDestructTimer?.isComplete | async'
 	[class.visibility-hidden]='(viewReady | async) === false'
-	[matTooltip]='confirmed ? undefined : stringsService.messageUnconfirmed'
 	*ngIf='message?.valueWatcher | async; let value'
 >
 	<div>
@@ -33,6 +31,11 @@
 
 					<div>{{message.timeString}}</div>
 
+					<div *ngIf='!mobile || message.authorType === authorTypes.Local'>
+						<span>&nbsp;</span>
+						<ng-container *ngTemplateOutlet='messageConfirmation'></ng-container>
+					</div>
+
 					<div *ngIf='mobile && message.authorType === authorTypes.Remote'>
 						&nbsp;&mdash;&nbsp; {{message.author | async}}
 					</div>
@@ -52,7 +55,10 @@
 							<div fxFlex fxLayout='row'>
 								<strong>{{message.author | async}}</strong>
 								<div fxFlex></div>
-								<div>{{message.dateTimeString}}</div>
+								<div>
+									<span>{{message.dateTimeString}}</span>
+									<ng-container *ngTemplateOutlet='messageConfirmation'></ng-container>
+								</div>
 							</div>
 						</mat-card-title>
 					</mat-card-header>
@@ -79,6 +85,29 @@
 	</div>
 	<div class='self-destruct-cover'></div>
 </div>
+
+<ng-template #messageConfirmation>
+	<ng-container *ngIf='message.authorType !== authorTypes.Local; else messageConfirmed'>
+		<span class='confirmation-checks visibility-hidden'>
+			<mat-icon>check</mat-icon>
+			<mat-icon>check</mat-icon>
+		</span>
+	</ng-container>
+	<ng-template #messageConfirmed>
+		<ng-container *ngIf='confirmed; else messageUnconfirmed'>
+			<span class='confirmation-checks'>
+				<mat-icon>check</mat-icon>
+				<mat-icon>check</mat-icon>
+			</span>
+		</ng-container>
+	</ng-template>
+	<ng-template #messageUnconfirmed>
+		<span class='confirmation-checks' [matTooltip]='stringsService.messageUnconfirmed'>
+			<mat-icon>check</mat-icon>
+			<mat-icon class='visibility-hidden'>check</mat-icon>
+		</span>
+	</ng-template>
+</ng-template>
 
 <ng-template #messageContent let-value='value'>
 	<span (click)='click($event)'>
