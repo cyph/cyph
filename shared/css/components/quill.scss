@@ -4,6 +4,10 @@
 	display: none;
 }
 
+:host > :not(.disabled) ::ng-deep .ql-editor {
+	min-height: 200px;
+}
+
 ::ng-deep {
 	.ql-toolbar, .ql-container {
 		border: none !important;

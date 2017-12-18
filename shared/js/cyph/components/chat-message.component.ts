@@ -12,10 +12,10 @@ import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {filter} from 'rxjs/operators/filter';
 import {take} from 'rxjs/operators/take';
-import {ChatMessage} from '../chat';
+import {ChatMessage, UiStyles} from '../chat';
 import {IQuillDelta} from '../iquill-delta';
-import {ChatMessageValueTypes} from '../proto';
 import {ChatService} from '../services/chat.service';
+import {DialogService} from '../services/dialog.service';
 import {ScrollService} from '../services/scroll.service';
 import {StringsService} from '../services/strings.service';
 import {VisibilityWatcherService} from '../services/visibility-watcher.service';
@@ -40,9 +40,6 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 	/** @see ChatMessage */
 	@Input() public message?: ChatMessage;
 
-	/** Indicates which version of the UI should be displayed. */
-	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
-
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean		= false;
 
@@ -51,11 +48,24 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 		new BehaviorSubject(undefined)
 	;
 
+	/** @see ChatMainComponent.uiStyle */
+	@Input() public uiStyle: UiStyles			= UiStyles.default;
+
+	/** @see UiStyles */
+	public readonly uiStyles: typeof UiStyles	= UiStyles;
+
 	/** @see IChatData.unconfirmedMessages */
 	@Input() public unconfirmedMessages?: {[id: string]: boolean|undefined};
 
 	/** Indicates whether view is ready. */
 	public readonly viewReady: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+
+	/** Handle clicks to display image dialogs when needed. */
+	public click (event: MouseEvent) : void {
+		if (event.target instanceof HTMLImageElement) {
+			this.dialogService.image(event.target.src);
+		}
+	}
 
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
@@ -137,6 +147,9 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 		/** @ignore */
 		private readonly renderer: Renderer2,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
 
 		/** @ignore */
 		private readonly scrollService: ScrollService,

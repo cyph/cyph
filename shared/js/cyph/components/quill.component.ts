@@ -10,6 +10,7 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import * as $ from 'jquery';
 import * as Quill from 'quill';
 import * as Delta from 'quill-delta';
 import {Observable} from 'rxjs/Observable';
@@ -21,7 +22,7 @@ import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
 import {lockFunction} from '../util/lock';
 import {uuid} from '../util/uuid';
-import {sleep, waitForValue} from '../util/wait';
+import {sleep, waitForIterable, waitForValue} from '../util/wait';
 
 
 /**
@@ -190,6 +191,8 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 		if (this.destroyed) {
 			return;
 		}
+
+		await waitForIterable(() => $(`#${this.containerID}`));
 
 		/* Temporary workaround for https://github.com/DefinitelyTyped/DefinitelyTyped/issues/18946 */
 		this.quill	= <Quill.Quill> new (<any> Quill)(`#${this.containerID}`, {

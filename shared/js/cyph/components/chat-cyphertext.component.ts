@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 import * as $ from 'jquery';
-import {ChatMessageValueTypes} from '../proto';
 import {CyphertextService} from '../services/cyphertext.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
@@ -17,9 +16,6 @@ import {StringsService} from '../services/strings.service';
 export class ChatCyphertextComponent implements OnInit {
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
-
-	/** Indicates which version of the UI should be displayed. */
-	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {

@@ -1,14 +1,35 @@
 <div fxFlexFill fxLayoutAlign='center center' class='cyph-foreground'>
 	<div fxFlex='95' fxFlexFill fxLayout='column' *ngIf='accountSessionService.opened | async'>
-		<cyph-chat-main
-			fxFlex
-			[accounts]='true'
-			[messageType]='messageType | async'
-		></cyph-chat-main>
-		<cyph-account-chat-message-box
-			[messageType]='messageType | async'
-			[recipient]='accountSessionService.remoteUser'
-			[showHeader]='(messageType | async) !== chatMessageValueTypes.Text'
-		></cyph-account-chat-message-box>
+		<ng-container
+			*ngIf='(messageType | async) === chatMessageValueTypes.Text; else fullMessageBox'
+		>
+			<cyph-chat-main
+				fxFlex
+				[accounts]='true'
+				[messageType]='messageType | async'
+			></cyph-chat-main>
+
+			<cyph-account-chat-message-box
+				class='padding'
+				[messageType]='chatMessageValueTypes.Text'
+			></cyph-account-chat-message-box>
+		</ng-container>
+
+		<ng-template #fullMessageBox>
+			<cyph-chat-main
+				fxFlex
+				class='chat-end-margin'
+				[accounts]='true'
+				[messageType]='messageType | async'
+				[persistentEndMessage]='true'
+				[uiStyle]='uiStyles.email'
+			>
+				<cyph-account-chat-message-box
+					[messageType]='messageType | async'
+					[recipient]='accountSessionService.remoteUser'
+					[showHeader]='true'
+				></cyph-account-chat-message-box>
+			</cyph-chat-main>
+		</ng-template>
 	</div>
 </div>

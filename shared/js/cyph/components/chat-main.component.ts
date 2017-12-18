@@ -2,7 +2,7 @@ import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import * as $ from 'jquery';
 import {fadeIn} from '../animations';
-import {States} from '../chat/enums';
+import {States, UiStyles} from '../chat/enums';
 import {ChatMessageValueTypes, DataURIProto} from '../proto';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
@@ -30,34 +30,43 @@ export class ChatMainComponent implements AfterViewInit {
 	@Input() public accounts: boolean	= false;
 
 	/** @see customBuildAudioImage */
-	public readonly customBuildAudioImage?: Promise<SafeUrl>	= customBuildAudioImage ?
+	public readonly customBuildAudioImage?: Promise<SafeUrl>		= customBuildAudioImage ?
 		deserialize(DataURIProto, customBuildAudioImage) :
 		undefined
 	;
 
 	/** @see customBuildErrorImage */
-	public readonly customBuildErrorImage?: Promise<SafeUrl>	= customBuildErrorImage ?
+	public readonly customBuildErrorImage?: Promise<SafeUrl>		= customBuildErrorImage ?
 		deserialize(DataURIProto, customBuildErrorImage) :
 		undefined
 	;
 
 	/** Indicates whether projected disconnection message should be hidden. */
-	@Input() public hideDisconnectMessage: boolean;
+	@Input() public hideDisconnectMessage: boolean					= false;
 
 	/** @see ChatMessageListComponent.messageCountInTitle */
-	@Input() public messageCountInTitle: boolean;
+	@Input() public messageCountInTitle: boolean					= false;
 
-	/** Indicates which version of the UI should be displayed. */
-	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
+	/** @see ChatMessageBoxComponent.messageType */
+	@Input() public messageType: ChatMessageValueTypes				= ChatMessageValueTypes.Text;
 
 	/** @see readableByteLength */
 	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
+
+	/** @see ChatMessageListComponent.persistentEndMessage */
+	@Input() public persistentEndMessage: boolean					= false;
 
 	/** @see States */
 	public readonly states: typeof States							= States;
 
 	/** @see trackByTransfer */
 	public readonly trackByTransfer: typeof trackByTransfer			= trackByTransfer;
+
+	/** Indicates which version of the UI should be displayed. */
+	@Input() public uiStyle: UiStyles								= UiStyles.default;
+
+	/** @see UiStyles */
+	public readonly uiStyles: typeof UiStyles						= UiStyles;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {

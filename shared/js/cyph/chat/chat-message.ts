@@ -28,8 +28,11 @@ export class ChatMessage implements IChatMessage {
 	/** @inheritDoc */
 	public authorType: ChatMessageInternal.AuthorTypes	= this.message.authorType;
 
+	/** Human-readable date + time. */
+	public readonly dateTimeString: string		= getTimeString(this.message.timestamp, true);
+
 	/** @inheritDoc */
-	public dimensions?: IChatMessageLine[]				= this.message.dimensions;
+	public dimensions?: IChatMessageLine[]		= this.message.dimensions;
 
 	/** @inheritDoc */
 	public id: string					= this.message.id;
@@ -43,7 +46,7 @@ export class ChatMessage implements IChatMessage {
 	/** @inheritDoc */
 	public timestamp: number			= this.message.timestamp;
 
-	/** @inheritDoc */
+	/** Human-readable time. */
 	public readonly timeString: string	= getTimeString(this.message.timestamp);
 
 	/** @ignore */

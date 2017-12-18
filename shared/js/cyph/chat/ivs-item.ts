@@ -1,5 +1,6 @@
 import {Observable} from 'rxjs/Observable';
 import {ChatMessage} from './chat-message';
+import {UiStyles} from './enums';
 
 
 /** One item in the message list virtual scrolling UI. */
@@ -22,8 +23,14 @@ export interface IVsItem {
 	/** @see ChatMessageListComponent.mobile */
 	mobile: boolean;
 
+	/** @see ChatMessageListComponent.persistentEndMessage */
+	persistentEndMessage: boolean;
+
 	/** @see ChatMessageListComponent.showDisconnectMessage */
 	showDisconnectMessage: boolean;
+
+	/** @see ChatMainComponent.uiStyle */
+	uiStyle: UiStyles;
 
 	/** @see IChatData.unconfirmedMessages */
 	unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>;

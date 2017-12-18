@@ -308,9 +308,10 @@
 		[accounts]='accounts'
 		[chat]='chatService.chat'
 		[messageCountInTitle]='messageCountInTitle'
-		[messageType]='messageType'
 		[mobile]='envService.isMobile || p2pService.isActive'
+		[persistentEndMessage]='persistentEndMessage'
 		[showDisconnectMessage]='chatService.chat.isDisconnected && !hideDisconnectMessage'
+		[uiStyle]='uiStyle'
 		*ngIf='chatService.chat.state === states.chat'
 		[@fadeIn]='"in"'
 	>

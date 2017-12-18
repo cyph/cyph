@@ -36,8 +36,8 @@
 				fxLayout='row'
 				[accounts]='item.accounts'
 				[message]='item.message'
-				[messageType]='messageType'
 				[mobile]='item.mobile'
+				[uiStyle]='item.uiStyle'
 				[unconfirmedMessages]='item.unconfirmedMessages | async'
 			></cyph-chat-message>
 
@@ -62,10 +62,15 @@
 					<div
 						fxLayout='row'
 						class='chat-end-message'
-						*ngIf='item.showDisconnectMessage'
+						[class.chat-disconnect-message]='!item.persistentEndMessage'
+						[class.cyph-light-theme]='item.persistentEndMessage'
+						*ngIf='item.persistentEndMessage || item.showDisconnectMessage'
 					>
 						<div fxFlexFill fxLayoutAlign='center center'>
-							<mat-card fxFlex='90' fxFlex.gt-sm='50'>
+							<mat-card
+								[fxFlex]='item.persistentEndMessage ? 95 : 90'
+								[fxFlex.gt-sm]='item.persistentEndMessage ? 75 : 50'
+							>
 								<mat-card-content>
 									<ng-content></ng-content>
 								</mat-card-content>

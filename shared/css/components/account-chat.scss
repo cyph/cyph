@@ -1,8 +1,15 @@
 @import '../mixins';
 
 :host > div {
-	padding-bottom: 1em;
 	background-color: initial !important;
+}
+
+.padding {
+	padding-bottom: 1em;
+}
+
+.chat-end-margin ::ng-deep .chat-end-message mat-card {
+	margin-bottom: 1em;
 }
 
 cyph-chat-message-list:after {

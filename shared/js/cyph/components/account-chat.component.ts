@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {UserPresence} from '../account/enums';
+import {UiStyles} from '../chat/enums';
 import {ChatMessageValueTypes} from '../proto';
 import {accountChatProviders} from '../providers';
 import {AccountChatService} from '../services/account-chat.service';
@@ -34,6 +35,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	public messageType: BehaviorSubject<ChatMessageValueTypes>			= new BehaviorSubject(
 		ChatMessageValueTypes.Text
 	);
+
+	/** @see UiStyles */
+	public readonly uiStyles: typeof UiStyles							= UiStyles;
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence					= UserPresence;

@@ -4,6 +4,12 @@ import {request} from './request';
 
 
 /** @ignore */
+const stringFormats	= {
+	date: {day: 'numeric', hour: 'numeric', minute: 'numeric', month: 'short', year: 'numeric'},
+	time: {hour: 'numeric', minute: 'numeric'}
+};
+
+/** @ignore */
 const timestampData	= {
 	last: 0,
 	offset: (async () => {
@@ -46,19 +52,15 @@ export const getTimestamp	= async () : Promise<number> => {
 };
 
 /** Returns a human-readable representation of the time (e.g. "3:37pm"). */
-export const getTimeString	= (timestamp: number) : string => {
-	const date: Date		= new Date(timestamp);
-	const minute: string	= ('0' + date.getMinutes().toString()).slice(-2);
-	let hour: number		= date.getHours();
-	let ampm				= 'am';
-
-	if (hour >= 12) {
-		hour	-= 12;
-		ampm	= 'pm';
-	}
-	if (hour === 0) {
-		hour	= 12;
-	}
-
-	return `${hour.toString()}:${minute}${ampm}`;
-};
+export const getTimeString	= (timestamp: number, includeDate: boolean = false) : string =>
+	new Date(timestamp).toLocaleString(
+		undefined,
+		includeDate ? stringFormats.date : stringFormats.time
+	).replace(
+		' AM',
+		'am'
+	).replace(
+		' PM',
+		'pm'
+	)
+;

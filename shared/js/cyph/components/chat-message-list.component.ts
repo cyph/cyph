@@ -17,8 +17,7 @@ import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {fadeInOut} from '../animations';
-import {ChatMessage, IChatData, IVsItem} from '../chat';
-import {ChatMessageValueTypes} from '../proto';
+import {ChatMessage, IChatData, IVsItem, UiStyles} from '../chat';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
@@ -80,25 +79,31 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	}>();
 
 	/** Indicates whether this is the accounts UI. */
-	@Input() public accounts: boolean	= false;
+	@Input() public accounts: boolean					= false;
 
 	/** @see IChatData */
 	@Input() public chat: IChatData;
 
 	/** Indicates whether message count should be displayed in title. */
-	@Input() public messageCountInTitle: boolean;
-
-	/** Indicates which version of the UI should be displayed. */
-	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
+	@Input() public messageCountInTitle: boolean		= false;
 
 	/** @see ChatMessageComponent.mobile */
-	@Input() public mobile: boolean;
+	@Input() public mobile: boolean						= false;
+
+	/** Overrides showDisconnectMessage and always displays the end message. */
+	@Input() public persistentEndMessage: boolean		= false;
 
 	/** Indicates whether disconnect message should be displayed. */
-	@Input() public showDisconnectMessage: boolean;
+	@Input() public showDisconnectMessage: boolean		= false;
 
 	/** @see trackByVsItem */
 	public readonly trackByVsItem: typeof trackByVsItem	= trackByVsItem;
+
+	/** @see ChatMainComponent.uiStyle */
+	@Input() public uiStyle: UiStyles					= UiStyles.default;
+
+	/** @see UiStyles */
+	public readonly uiStyles: typeof UiStyles			= UiStyles;
 
 	/** Data formatted for virtual scrolling. */
 	public readonly vsData: BehaviorSubject<IVsItem[]>	= new BehaviorSubject([]);
@@ -198,7 +203,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			isStart: i === 0,
 			message,
 			mobile: this.mobile,
+			persistentEndMessage: this.persistentEndMessage,
 			showDisconnectMessage: this.showDisconnectMessage,
+			uiStyle: this.uiStyle,
 			unconfirmedMessages: observables.unconfirmedMessages
 		})))).subscribe(
 			this.vsData

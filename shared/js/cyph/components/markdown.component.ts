@@ -5,7 +5,6 @@ import * as MarkdownIt from 'markdown-it';
 import * as markdownItEmoji from 'markdown-it-emoji';
 import * as markdownItSup from 'markdown-it-sup';
 import {microlight} from 'microlight-string';
-import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {HtmlSanitizerService} from '../services/html-sanitizer.service';
 import {StringsService} from '../services/strings.service';
@@ -32,13 +31,6 @@ export class MarkdownComponent implements OnChanges {
 
 	/** String of Markdown to render as HTML and add to the DOM. */
 	@Input() public markdown: string;
-
-	/** Handle clicks to display image dialogs when needed. */
-	public click (event: MouseEvent) : void {
-		if (event.target instanceof HTMLImageElement) {
-			this.dialogService.image(event.target.src);
-		}
-	}
 
 	/** @inheritDoc */
 	public async ngOnChanges () : Promise<void> {
@@ -87,9 +79,6 @@ export class MarkdownComponent implements OnChanges {
 
 		/** @ignore */
 		private readonly elementRef: ElementRef,
-
-		/** @ignore */
-		private readonly dialogService: DialogService,
 
 		/** @ignore */
 		private readonly htmlSanitizerService: HtmlSanitizerService,

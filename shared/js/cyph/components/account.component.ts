@@ -182,9 +182,12 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		return this.accountDatabaseService.currentUser.value !== undefined &&
 			!this.envService.isMobile &&
 			[
-				'',
-				'messages'
-			].filter(
+				''
+			].concat(
+				this.accountService.isTelehealth ?
+					[] :
+					['messages']
+			).filter(
 				path => this.route === path
 			).length > 0
 		;
