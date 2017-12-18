@@ -69,13 +69,12 @@
 			.mat-list-item {
 				span {
 					text-align: center;
+					margin-left: auto;
+					margin-right: auto;
 				}
 			}
 		}
 	}
-}
-mat-list-item {
-	text-align: center;
 }
 	.name {
 		font-size: 42px;

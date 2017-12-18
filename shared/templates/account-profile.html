@@ -20,27 +20,15 @@
 					<div fxLayout='column' fxLayoutAlign='center center'>
 						<div 
 							class='name animated flipInX _2'
-							*ngIf='(user.userType | async) === (accountUserTypes.Standard || accountUserTypes.TelehealthOrg)'
 						>
-							{{user.name | async}}
+					{{(user.userType | async) === accountUserTypes.TelehealthDoctor ? 'Dr.' : ''}}
+						{{user.name | async}}
 						</div>
 						<div
 							class='username animated flipInX _2'
 							*ngIf='(user.userType | async) === accountUserTypes.Standard'
 						>
 							@{{user.username | async}}
-						</div>
-						<div
-							class='name animated flipInX _2'
-							*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'
-						>
-							{{user.name | async}}
-						</div>
-						<div
-							class='name animated flipInX _2'
-							*ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'
-						>
-							Dr. {{user.name | async}}
 						</div>
 						<div
 							class='practice'
@@ -64,27 +52,35 @@
 				</div>
 			</div>
 			<div
-				fxLayout='row'
+				fxLayout='column'
 				fxLayoutAlign='center center'
 				*ngIf='accountService.isTelehealth &&
 				(user.userType | async) === accountUserTypes.TelehealthDoctor ||
-				(user.userType | async) === accountUserTypes.TelehealthOrg'
+				(user.userType | async) === accountUserTypes.TelehealthOrg ||
+				(user.userType | async) === accountUserTypes.TelehealthPatient'
 			>
-				<div
-					fxFlex='100'
-					class='content'
-					fxLayoutGap='15px'
-					fxLayoutAlign='center center'
-					fxLayout='column' *ngIf='user.extra() | async; let extra'
-				>
-					<div fxLayout='column' fxFlex='75'>
-						<mat-card>
+
+						<mat-card fxFlex='33' *ngIf='user.extra() | async; let extra'>
+							<mat-card-content 
+							*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'>
+								<h2>Patient Info</h2>
+								<mat-list>
+									<mat-list-item>
+										<span>
+											<b>Gender: </b>
+											{{extra.gender ? extra.gender[0].value : ''}}
+										</span>
+									</mat-list-item>
+								</mat-list>
+							</mat-card-content>
 							<mat-card-content 
 							*ngIf='(user.userType | async) === accountUserTypes.TelehealthOrg'>
 								<h2>Address</h2>
 								<mat-list>
 									<mat-list-item>
-										{{extra.address ? extra.address : ''}}
+										<span>
+											{{extra.address ? extra.address : ''}}
+										</span>
 									</mat-list-item>
 								</mat-list>
 							</mat-card-content>
@@ -93,10 +89,14 @@
 								<h2>Specialties</h2>
 								<mat-list>
 									<mat-list-item>
-										{{extra.specialties ? extra.specialties[0].value : ''}}
+										<span>
+											{{extra.specialties ? extra.specialties[0].value : ''}}
+										</span>
 									</mat-list-item>
 									<mat-list-item>
-										{{extra.specialties && extra.specialties.length > 0 ? extra.specialties[1].value : ''}}
+										<span>
+											{{extra.specialties ? extra.specialties[1].value : ''}}
+										</span>
 									</mat-list-item>
 								</mat-list>
 								<h2>Education & Training</h2>
@@ -104,42 +104,60 @@
 									<mat-list-item>
 										<span>
 											<b>Bachelors:</b>
-											{{extra.education && extra.education.length > 0 ? extra.education[0].locationName : ''}}
+										{{extra.education ? extra.education[0].locationName : ''}}
 										</span>
 									</mat-list-item>
 									<mat-list-item>
 										<span>
 											<b>Medical School:</b>
-											{{extra.education && extra.education.length > 0 ? extra.education[0].locationName : ''}}
+										{{extra.education ? extra.education[0].locationName : ''}}
 										</span>
 									</mat-list-item>
 									<mat-list-item>
-										<b>Residency:</b>
-										{{extra.education && extra.education.length > 0 ? extra.education[0].locationName : ''}}
+										<span>
+											<b>Residency:</b>
+										{{extra.education ? extra.education[0].locationName : ''}}
+										</span>
 									</mat-list-item>
 								</mat-list>
 								<h2>Languages</h2>
 								<mat-list>
 									<mat-list-item>
-										{{extra.languages && extra.languages.length > 0 ? extra.languages[0].language : ''}}
+										<span>
+											{{extra.languages ? extra.languages[0].language : ''}}
+										</span>
 									</mat-list-item>
 									<mat-list-item>
-										{{extra.languages && extra.languages.length > 0 ? extra.languages[3].language : ''}}
+										<span>
+											{{extra.languages ? extra.languages[3].language : ''}}
+										</span>
 									</mat-list-item>
 								</mat-list>
 								<h2>Insurance</h2>
 								<mat-list>
 									<mat-list-item>
-										{{extra.insurance && extra.insurance.length > 0 ? extra.insurance[0].value : ''}}
+										<span>
+											{{extra.insurance ? extra.insurance[0].value : ''}}
+										</span>
 									</mat-list-item>
 									<mat-list-item>
-										{{extra.insurance && extra.insurance.length > 0 ? extra.insurance[1].value : ''}}
+										<span>
+											{{extra.insurance ? extra.insurance[1].value : ''}}
+										</span>
+									</mat-list-item>
+								</mat-list>
+								<h2>Misc</h2>
+								<mat-list>
+									<mat-list-item>
+										<span>
+											<b>NPI: </b>
+											{{extra.npi ? extra.npi[0].value : ''}}
+										</span>
 									</mat-list-item>
 								</mat-list>
 							</mat-card-content>
 						</mat-card>
-					</div>
-				</div>
+				
 				<div 
 					fxLayoutAlign='center center'
 					class='edit-hide status'
