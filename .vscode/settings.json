@@ -1,3 +1,4 @@
 {
+	"editor.rulers": [99],
 	"typescript.tsdk": "shared/node_modules/typescript/lib"
 }
