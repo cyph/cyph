@@ -10,24 +10,84 @@
 		>
 			<div fxLayout='column' class='header' fxLayoutAlign='center center'>
 					<div fxFlex fxLayout='row' class='user-info' fxLayoutAlign='center center'>
-						<img
-							class='avatar animated jackInTheBox _1'
-							[ngClass]='userPresence[user.status | async]'
-							alt='Profile Picture'
-							[src]='user.avatar | async'
-						/>
-						<div fxLayout='row'>
-							<div fxLayout='column'>
-								<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.Standard'>{{user.name | async}}</div>
-								<div class='username animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.Standard'>@{{user.username | async}}</div>
-								<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.TelehealthPatient'>Patient: {{user.name | async}}</div>
-								<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserType.TelehealthDoctor'>Dr. {{user.name | async}}</div>
+					<img
+						class='avatar animated jackInTheBox _1'
+						[ngClass]='userPresence[user.status | async]'
+						alt='Profile Picture'
+						[src]='user.avatar | async'
+					/>
+					<div fxLayout='row'>
+						<div fxLayout='column' fxLayoutAlign='center center'>
+							<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserTypes.Standard'>{{user.name | async}}</div>
+							<div class='username animated flipInX _2' *ngIf='(user.userType | async) === accountUserTypes.Standard'>@{{user.username | async}}</div>
+							<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'>Patient: {{user.name | async}}</div>
+							<div class='name animated flipInX _2' *ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'>Dr. {{user.name | async}}</div>
+							<div class='practice' fxLayout='row' *ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'>
+								<div fxLayout='row' [routerLink]='"/account/profile/nachc"'>
+									<mat-icon>business</mat-icon>
+									<h3>Community Health Center</h3>
+								</div>
 							</div>
-							<cyph-account-user-rating *ngIf='accountService.isTelehealth && (user.userType | async) === accountUserType.TelehealthDoctor' ></cyph-account-user-rating>
+						</div>
+						<div fxLayout='column' fxLayoutAlign='center center'>
+							<cyph-account-user-rating *ngIf='accountService.isTelehealth && (user.userType | async) === accountUserTypes.TelehealthDoctor' ></cyph-account-user-rating>
 						</div>
 					</div>
 				</div>
+			</div>
+			<div fxLayout='row' fxLayout='center center' *ngIf='accountService.isTelehealth && accountService.isTelehealth && (user.userType | async) === accountUserTypes.TelehealthDoctor'>
+				<div fxFlex='100' class='content' fxLayoutGap='15px' fxLayout='center center' fxLayout='column' *ngIf='user.extra() | async; let extra'>
+					<div fxLayout='column' fxFlex='75'>
+					<mat-card>
+						<mat-card-content>
+								<h2>Specialties</h2>
+							<mat-list>
+								<mat-list-item>
+									{{extra.specialties && extra.specialties.length > 0 ? extra.specialties[0].value : ''}}
+								</mat-list-item>
+								<mat-list-item>
+										{{extra.specialties && extra.specialties.length > 0 ? extra.specialties[1].value : ''}}
+								</mat-list-item>
+							</mat-list>
 
+					<h2>Education & Training</h2>
+								<mat-list>
+									<mat-list-item>
+										<span>
+											<b>Bachelors:</b> {{extra.education && extra.education.length > 0 ? extra.education[0].locationName : ''}}
+										</span>
+									</mat-list-item>
+									<mat-list-item>
+										<span>
+											<b>Medical School:</b> {{extra.education && extra.education.length > 0 ? extra.education[0].locationName : ''}}
+										</span>
+									</mat-list-item>
+									<mat-list-item>
+										<b>Residency:</b> {{extra.education && extra.education.length > 0 ? extra.education[0].locationName : ''}}
+									</mat-list-item></mat-list>
+									<h2>Languages</h2>
+								<mat-list>
+									<mat-list-item>
+										{{extra.languages && extra.languages.length > 0 ? extra.languages[0].language : ''}}
+									</mat-list-item>
+									<mat-list-item>
+										{{extra.languages && extra.languages.length > 0 ? extra.languages[3].language : ''}}
+									</mat-list-item>
+								</mat-list>
+
+
+								<h2>Insurance</h2>
+								<mat-list>
+									<mat-list-item>
+										{{extra.insurance && extra.insurance.length > 0 ? extra.insurance[0].value : ''}}
+									</mat-list-item>
+									<mat-list-item>
+											{{extra.insurance && extra.insurance.length > 0 ? extra.insurance[1].value : ''}}
+										</mat-list-item>
+								</mat-list>
+							</mat-card-content>
+					</mat-card></div>
+			</div>
 			<div fxLayoutAlign='center center' class='edit-hide status' *ngIf='isCurrentUser && !accountService.isTelehealth'>
 				<mat-select
 					fxFlex='50'
@@ -48,7 +108,7 @@
 				fxLayout='row'
 				fxLayoutAlign='center center'
 				fxLayoutGap='16px'
-				*ngIf='!isCurrentUser && (user.userType | async) === accountUserType.Standard'
+				*ngIf='!isCurrentUser && (user.userType | async) === accountUserTypes.Standard'
 			>
 				<button
 					mat-mini-fab
@@ -83,7 +143,7 @@
 				</button>
 			</div>
 
-			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isCurrentUser && (user.userType | async) === accountUserType.Standard'>
+			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isCurrentUser && (user.userType | async) === accountUserTypes.Standard'>
 				<div
 					class='file-upload'
 					fxFlex='25'
@@ -98,8 +158,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
-
+	
 	<div fxLayout='row' fxLayoutGap='16px' class='edit-buttons edit-hide' *ngIf='isCurrentUser'>
 		<button
 			mat-fab
@@ -122,5 +181,6 @@
 			<mat-icon *ngIf='editMode'>save</mat-icon>
 			<mat-icon *ngIf='!editMode'>edit</mat-icon>
 		</button>
+	</div>
 	</div>
 </div>

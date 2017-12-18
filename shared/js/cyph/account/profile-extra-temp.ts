@@ -19,7 +19,21 @@ export const profileExtraTemp	= new LocalAsyncValue<IAccountUserProfileExtra>({
 			locationName: 'Vivek Wadhwa University',
 			locationURL: 'vivek.edu',
 			startDate: 707036400000
-		}
+		},
+		{
+			detail: 'Doctor of Medicine',
+			endDate: 1513152000000,
+			locationName: 'University of California, Los Angeles ',
+			locationURL: '',
+			startDate: 707036400000
+		},
+		{
+			detail: 'Medicine, MD',
+			endDate: 1513152000000,
+			locationName: 'Vivek Wadhwa University',
+			locationURL: 'vivek.edu',
+			startDate: 707036400000
+		},
 	],
 	work: [
 		{
@@ -27,6 +41,65 @@ export const profileExtraTemp	= new LocalAsyncValue<IAccountUserProfileExtra>({
 			locationName: 'SpaceX',
 			locationURL: 'spacex.com',
 			startDate: 1022914800000
+		}
+	],
+	specialties: [
+		{
+			value: 'Internist'
+		},
+		{
+			value: 'Primary Care Doctor'
+		},
+		{
+			value: 'Oncology'
+		}
+	],
+	insurance: [
+		{
+			value: 'Blue Cross Blue Shield Federal Employee Program'
+		},
+		{
+			value: 'Anthem Blue Cross Blue Shield'
+		},
+		{
+			value: 'Virginia Health Network'
+		}
+	],
+	npi: [
+		{
+			value: '0123456789'
+		}
+	],
+	gender: [
+		{
+			value: 'Male'
+		},
+		{
+			value: 'Female'
+		},
+		{
+			value: 'Transgender'
+		},
+		{
+			value: 'Unknown'
+		}
+	],
+	languages: [
+		{
+			language: 'English',
+			proficiency: 3
+		},
+		{
+			language: 'German',
+			proficiency: 2
+		},
+		{
+			language: 'Farsi',
+			proficiency: 1
+		},
+		{
+			language: 'Spanish',
+			proficiency: 0
 		}
 	]
 });

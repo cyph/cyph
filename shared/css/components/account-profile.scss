@@ -15,7 +15,7 @@
 		cursor: auto;
 		width: 125px;
 		min-width: 42px;
-		top: 5px;
+		top: 25px;
 		position: relative;
 		margin: 25px;
 		border-width: 0.25vw !important;
@@ -23,12 +23,13 @@
 	}
 
 	.header {
-		height: 120px;
+		height: 135px;
+		min-height: 135px;
 		background-color: rgba(139, 98, 217, 0.9);
 		color: white;
 
 		.user-info {
-			top: 30px;
+			top: 10px;
 			position: relative;
 		}
 
@@ -40,9 +41,45 @@
 		}
 	}
 
+.content {
+	div {
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	}
+	margin-top: 5px;
+}
+
+
+
+.practice {
+	.mat-icon {
+		//margin: 12px 10px 0px 0px;
+		font-size: 24px;
+	}
+	h3 {
+		margin: 3px;
+	}
+}
+
+.mat-card {
+	z-index: -1;
+	.mat-card-content{
+		.mat-list {
+			.mat-list-item {
+				span {
+					text-align: center;
+				}
+			}
+		}
+	}
+}
+mat-list-item {
+	text-align: center;
+}
 	.name {
 		font-size: 42px;
-		margin-top: -22px;
+		margin-top: 3px;
 		margin-bottom: 0px;
 		font-weight: 500;
 	}
