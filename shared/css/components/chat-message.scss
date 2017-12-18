@@ -1,13 +1,22 @@
 @import '../mixins';
 
 .email-ui {
+	.avatar-image {
+		margin-top: -13px;
+		margin-left: -13px;
+	}
+
 	.email-divider {
 		border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 	}
 
 	::ng-deep {
-		.mat-card-header-text {
-			width: 100%;
+		mat-card-header {
+			margin-right: -17px;
+
+			.mat-card-header-text {
+				width: 100%;
+			}
 		}
 	}
 }
@@ -33,7 +42,7 @@
 }
 
 :host ::ng-deep {
-	img {
+	img:not(.avatar-image) {
 		cursor: pointer;
 	}
 
@@ -72,7 +81,7 @@
 			text-decoration: none;
 		}
 
-		img, .image-frame {
+		img:not(.avatar-image), .image-frame {
 			max-width: 25%;
 			margin-top: 10px;
 			margin-bottom: 10px;

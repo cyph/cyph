@@ -51,9 +51,23 @@
 			>
 				<mat-card fxFlex>
 					<mat-card-header>
+						<img
+							mat-card-avatar
+							cyphTranslate
+							class='avatar-image'
+							[src]='message.authorUser.avatar | async'
+							alt='User Avatar'
+							*ngIf='!!message.authorUser'
+						/>
 						<mat-card-title fxFlex>
 							<div fxFlex fxLayout='row'>
-								<strong>{{message.author | async}}</strong>
+								<span *ngIf='!!message.authorUser'>
+									<strong>{{message.authorUser.name | async}}&nbsp;</strong>
+									<small>{{message.author | async}}</small>
+								</span>
+								<strong *ngIf='!message.authorUser'>
+									{{message.author | async}}
+								</strong>
 								<div fxFlex></div>
 								<div>
 									<span>{{message.dateTimeString}}</span>

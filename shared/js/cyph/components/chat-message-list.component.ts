@@ -16,11 +16,13 @@ import {combineLatest} from 'rxjs/observable/combineLatest';
 import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
+import {User} from '../account/user';
 import {fadeInOut} from '../animations';
 import {ChatMessage, IChatData, IVsItem, UiStyles} from '../chat';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
+import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
@@ -164,29 +166,53 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 					(await Promise.all(messages.map(async message => getOrSetDefaultAsync(
 						this.messageCache,
 						message.id,
-						async () => new ChatMessage(
-							message,
-							message.authorType === ChatMessage.AuthorTypes.App ?
-								this.sessionService.appUsername :
-								message.authorType === ChatMessage.AuthorTypes.Local ?
-									this.sessionService.localUsername :
-									message.authorID === undefined ?
-										this.sessionService.remoteUsername :
-										(
-											/* tslint:disable-next-line:deprecation */
-											(await this.injector.get(
-												AccountUserLookupService
-											).getUser(
-												/* tslint:disable-next-line:deprecation */
-												await this.injector.get(
-													AccountContactsService
-												).getContactUsername(
-													message.authorID
-												)
-											)) ||
-											{realUsername: this.sessionService.remoteUsername}
-										).realUsername
-						)
+						async () => {
+							let author: Observable<string>;
+							let authorUser: User|undefined;
+
+							if (message.authorType === ChatMessage.AuthorTypes.App) {
+								author	= this.sessionService.appUsername;
+							}
+							else if (message.authorType === ChatMessage.AuthorTypes.Local) {
+								author	= this.sessionService.localUsername;
+
+								try {
+									const currentUser	=
+										/* tslint:disable-next-line:deprecation */
+										this.injector.get(AccountDatabaseService).currentUser.value
+									;
+
+									authorUser	= currentUser && currentUser.user;
+								}
+								catch {}
+							}
+							else if (message.authorID === undefined) {
+								author	= this.sessionService.remoteUsername;
+							}
+							else {
+								try {
+									/* tslint:disable-next-line:deprecation */
+									authorUser	= await this.injector.get(
+										AccountUserLookupService
+									).getUser(
+										/* tslint:disable-next-line:deprecation */
+										await this.injector.get(
+											AccountContactsService
+										).getContactUsername(
+											message.authorID
+										)
+									);
+								}
+								catch {}
+
+								author	= authorUser === undefined ?
+									this.sessionService.remoteUsername :
+									authorUser.realUsername
+								;
+							}
+
+							return new ChatMessage(message, author, authorUser);
+						}
 					)))).sort((a, b) =>
 						a.timestamp - b.timestamp
 					)
