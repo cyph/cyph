@@ -19,6 +19,7 @@ import {AccountPostRegisterComponent} from '../components/account-post-register.
 import {AccountProfileComponent} from '../components/account-profile.component';
 import {AccountRegisterComponent} from '../components/account-register.component';
 import {AccountSettingsComponent} from '../components/account-settings.component';
+import {AccountUserRatingComponent} from '../components/account-user-rating.component';
 import {AccountComponent} from '../components/account.component';
 import {FooterComponent} from '../components/footer.component';
 import {LinkConnectionComponent} from '../components/link-connection.component';
@@ -64,6 +65,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountProfileComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
+		AccountUserRatingComponent,
 		FooterComponent,
 		LinkConnectionComponent,
 		NotFoundComponent

@@ -4,120 +4,250 @@
 			fxFlex
 			fxFlexFill
 			fxLayout='column'
-			fxLayoutAlign='center stretch'
 			class='profile'
 			*ngIf='user'
 			[class.mobile]='envService.isMobile'
 		>
-			<div fxLayoutAlign='center center'>
-				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch'>
-					<div fxLayoutAlign='center center'>
-						<img
-							class='avatar animated jackInTheBox _1'
-							[ngClass]='userPresence[user.status | async]'
-							alt='Profile Picture'
-							[src]='user.avatar | async'
-						/>
-					</div>
-					<div class='name animated flipInX _2'>{{user.name | async}}</div>
-					<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
-					<div
-						fxLayoutAlign='center center'
-						class='description animated flipInX _3'
-						*ngIf='!editMode'
-					>
-						<div>
-							{{user.description | async | slice:0:maxDescriptionLength}}
+			<div fxLayout='column' class='header' fxLayoutAlign='center center'>
+				<div fxFlex fxLayout='row' class='user-info' fxLayoutAlign='center center'>
+				<img
+					class='avatar animated jackInTheBox _1'
+					[ngClass]='userPresence[user.status | async]'
+					alt='Profile Picture'
+					[src]='user.avatar | async'
+				/>
+				<div fxLayout='row'>
+					<div fxLayout='column' fxLayoutAlign='center center'>
+						<div 
+							class='name animated flipInX _2'
+						>
+					{{(user.userType | async) === accountUserTypes.TelehealthDoctor ? 'Dr.' : ''}}
+						{{user.name | async}}
+						</div>
+						<div
+							class='username animated flipInX _2'
+							*ngIf='(user.userType | async) === accountUserTypes.Standard'
+						>
+							@{{user.username | async}}
+						</div>
+						<div
+							class='practice'
+							fxLayout='row'
+							*ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'
+						>
+							<div fxLayout='row' [routerLink]='"/account/profile/nachc"'>
+								<mat-icon>business</mat-icon>
+								<h3>Community Health Center</h3>
+							</div>
 						</div>
 					</div>
-					<mat-form-field class='description' *ngIf='editMode && user'>
-						<input
-							matInput
-							(blur)='isEditorFocused = false'
-							(focus)='isEditorFocused = true'
-							[maxlength]='maxDescriptionLength'
-							[ngModel]='user.description | async'
-							(ngModelChange)='descriptionDraft = $event'
-						/>
-					</mat-form-field>
+						<div fxLayout='column' fxLayoutAlign='center center'>
+							<cyph-account-user-rating
+								*ngIf='accountService.isTelehealth &&
+									(user.userType | async) === accountUserTypes.TelehealthDoctor'
+							>
+							</cyph-account-user-rating>
+						</div>
+					</div>
 				</div>
 			</div>
-
-			<div fxLayoutAlign='center center' class='edit-hide status' *ngIf='isCurrentUser'>
-				<mat-select
-					fxFlex='50'
-					cyphTranslate
-					[ngModel]='user.status | async'
-					(ngModelChange)='user.accountUserPresence.setValue({status: $event})'
-					name='status'
-					placeholder='Status'
-				>
-					<mat-option
-						*ngFor='let status of statuses; trackBy: trackByValue'
-						[value]='status.value'
-					>
-						{{status.text}}
-					</mat-option>
-				</mat-select>
-			</div>
-
 			<div
-				class='buttons'
-				fxLayout='row'
+				fxLayout='column'
 				fxLayoutAlign='center center'
-				fxLayoutGap='16px'
-				*ngIf='!isCurrentUser'
+				*ngIf='accountService.isTelehealth &&
+				(user.userType | async) === accountUserTypes.TelehealthDoctor ||
+				(user.userType | async) === accountUserTypes.TelehealthOrg ||
+				(user.userType | async) === accountUserTypes.TelehealthPatient'
 			>
-				<button
-					mat-mini-fab
-					cyphTranslate
-					class='animated flipInX _4'
-					matTooltip='Remove Contact'
-					(click)='accountContactsService.removeContact(user.username)'
-					*ngIf='isContact | async; else addContact'
+				
+						<mat-card fxFlex='33' *ngIf='user.extra() | async; let extra'>
+							<mat-card-content 
+							*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'>
+								<h2>Patient Info</h2>
+								<mat-list>
+									<mat-list-item>
+										<span>
+											<b>Gender: </b>
+											{{extra.gender ? extra.gender[0].value : ''}}
+										</span>
+									</mat-list-item>
+								</mat-list>
+							</mat-card-content>
+							<mat-card-content 
+							*ngIf='(user.userType | async) === accountUserTypes.TelehealthOrg'>
+								<h2>Address</h2>
+								<mat-list>
+									<mat-list-item>
+										<span>
+											{{extra.address ? extra.address : ''}}
+										</span>
+									</mat-list-item>
+								</mat-list>
+							</mat-card-content>
+							<mat-card-content 
+							*ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'>
+						<button 
+							mat-raised-button
+							color='primary'
+							[routerLink]='"/account/compose/"+user.username'
+						>
+							Request Appointment
+						</button>
+								<h2>Specialties</h2>
+								<mat-list>
+									<mat-list-item>
+										<span>
+											{{extra.specialties ? extra.specialties[0].value : ''}}
+										</span>
+									</mat-list-item>
+									<mat-list-item>
+										<span>
+											{{extra.specialties ? extra.specialties[1].value : ''}}
+										</span>
+									</mat-list-item>
+								</mat-list>
+								<h2>Education & Training</h2>
+								<mat-list>
+									<mat-list-item>
+										<span>
+											<b>Bachelors:</b>
+										{{extra.education ? extra.education[0].locationName : ''}}
+										</span>
+									</mat-list-item>
+									<mat-list-item>
+										<span>
+											<b>Medical School:</b>
+										{{extra.education ? extra.education[0].locationName : ''}}
+										</span>
+									</mat-list-item>
+									<mat-list-item>
+										<span>
+											<b>Residency:</b>
+										{{extra.education ? extra.education[0].locationName : ''}}
+										</span>
+									</mat-list-item>
+								</mat-list>
+								<h2>Languages</h2>
+								<mat-list>
+									<mat-list-item>
+										<span>
+											{{extra.languages ? extra.languages[0].language : ''}}
+										</span>
+									</mat-list-item>
+									<mat-list-item>
+										<span>
+											{{extra.languages ? extra.languages[3].language : ''}}
+										</span>
+									</mat-list-item>
+								</mat-list>
+								<h2>Insurance</h2>
+								<mat-list>
+									<mat-list-item>
+										<span>
+											{{extra.insurance ? extra.insurance[0].value : ''}}
+										</span>
+									</mat-list-item>
+									<mat-list-item>
+										<span>
+											{{extra.insurance ? extra.insurance[1].value : ''}}
+										</span>
+									</mat-list-item>
+								</mat-list>
+								<h2>Misc</h2>
+								<mat-list>
+									<mat-list-item>
+										<span>
+											<b>NPI: </b>
+											{{extra.npi ? extra.npi[0].value : ''}}
+										</span>
+									</mat-list-item>
+								</mat-list>
+							</mat-card-content>
+						</mat-card>
+				
+				<div 
+					fxLayoutAlign='center center'
+					class='edit-hide status'
+					*ngIf='isCurrentUser && !accountService.isTelehealth'
 				>
-					<mat-icon>delete</mat-icon>
-				</button>
-				<ng-template #addContact>
+					<mat-select
+						fxFlex='50'
+						cyphTranslate
+						[ngModel]='user.status | async'
+						(ngModelChange)='user.accountUserPresence.setValue({status: $event})'
+						name='status'
+						placeholder='Status'
+					>
+						<mat-option
+							*ngFor='let status of statuses; trackBy: trackByValue'
+							[value]='status.value'
+						>
+							{{status.text}}
+						</mat-option>
+					</mat-select>
+				</div>
+
+				<div
+					class='buttons'
+					fxLayout='row'
+					fxLayoutAlign='center center'
+					fxLayoutGap='16px'
+					*ngIf='!isCurrentUser && (user.userType | async) === accountUserTypes.Standard'
+				>
 					<button
 						mat-mini-fab
 						cyphTranslate
 						class='animated flipInX _4'
-						matTooltip='Add Contact'
-						(click)='accountContactsService.addContact(user.username)'
+						matTooltip='Remove Contact'
+						(click)='accountContactsService.removeContact(user.username)'
+						*ngIf='isContact | async; else addContact'
 					>
-						<mat-icon>person_add</mat-icon>
+						<mat-icon>delete</mat-icon>
 					</button>
-				</ng-template>
+					<ng-template #addContact>
+						<button
+							mat-mini-fab
+							cyphTranslate
+							class='animated flipInX _4'
+							matTooltip='Add Contact'
+							(click)='accountContactsService.addContact(user.username)'
+						>
+							<mat-icon>person_add</mat-icon>
+						</button>
+					</ng-template>
 
-				<button
-					mat-mini-fab
-					cyphTranslate
-					class='animated shrink pulldown flipInX _4'
-					matTooltip='Open Messages'
-					[routerLink]='"/account/messages/" + user.username'
-				>
-					<mat-icon>chat_bubble</mat-icon>
-				</button>
-			</div>
+					<button
+						mat-mini-fab
+						cyphTranslate
+						class='animated shrink pulldown flipInX _4'
+						matTooltip='Open Messages'
+						[routerLink]='"/account/messages/" + user.username'
+					>
+						<mat-icon>chat_bubble</mat-icon>
+					</button>
+				</div>
 
-			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isCurrentUser'>
 				<div
-					class='file-upload'
-					fxFlex='25'
-					fxLayoutAlign='center'
-					matTooltip='Share File'
-					matTooltipPosition='above'
-					cyphDropZone
-					cyphTranslate
-					(fileDrop)='accountFilesService.upload($event.name, $event, user.username)'
+					fxLayout='row'
+					fxLayoutAlign='center center'
+					*ngIf='!isCurrentUser && (user.userType | async) === accountUserTypes.Standard'
 				>
-					<mat-icon>file_upload</mat-icon>
+					<div
+						class='file-upload'
+						fxFlex='25'
+						fxLayoutAlign='center'
+						matTooltip='Share File'
+						matTooltipPosition='above'
+						cyphDropZone
+						cyphTranslate
+						(fileDrop)='accountFilesService.upload($event.name, $event, user.username)'
+					>
+						<mat-icon>file_upload</mat-icon>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-
 	<div fxLayout='row' fxLayoutGap='16px' class='edit-buttons edit-hide' *ngIf='isCurrentUser'>
 		<button
 			mat-fab

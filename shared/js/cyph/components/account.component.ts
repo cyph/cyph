@@ -181,6 +181,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	public get sidebarVisible () : boolean {
 		return this.accountDatabaseService.currentUser.value !== undefined &&
 			!this.envService.isMobile &&
+			!this.accountService.isTelehealth &&
 			[
 				''
 			].concat(

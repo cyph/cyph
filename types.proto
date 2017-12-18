@@ -134,6 +134,22 @@ message AccountUserProfileExtra {
 		double startDate = 5;
 	}
 
+	message String {
+		string value = 1;
+	}
+
+	enum Proficiency {
+		Basic = 0;
+		Intermediate = 1;
+		Fluent = 2;
+		Native = 3;
+	}
+
+	message Language {
+		string language = 1;
+		Proficiency proficiency = 2;
+	}
+
 	/** Physical address. */
 	string address = 1;
 
@@ -142,6 +158,23 @@ message AccountUserProfileExtra {
 
 	/** Work history. */
 	repeated Position work = 3;
+
+	/** Specialties */
+	repeated String specialties = 4;
+
+	/** Insurance */
+	repeated String insurance = 5;
+
+	/** NPI Numbers */
+	repeated String npi = 6;
+
+	/** Gender */
+	repeated String gender = 7; 
+
+	/** Languages */
+	repeated Language languages = 8;
+
+
 }
 
 /** AGSE-PKI certificate. */
