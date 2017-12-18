@@ -14,6 +14,7 @@ import {filter} from 'rxjs/operators/filter';
 import {take} from 'rxjs/operators/take';
 import {ChatMessage} from '../chat';
 import {IQuillDelta} from '../iquill-delta';
+import {ChatMessageValueTypes} from '../proto';
 import {ChatService} from '../services/chat.service';
 import {ScrollService} from '../services/scroll.service';
 import {StringsService} from '../services/strings.service';
@@ -38,6 +39,9 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 	/** @see ChatMessage */
 	@Input() public message?: ChatMessage;
+
+	/** Indicates which version of the UI should be displayed. */
+	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean		= false;

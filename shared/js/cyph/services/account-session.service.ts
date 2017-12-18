@@ -1,4 +1,6 @@
 import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {User} from '../account/user';
 import {BinaryProto, StringProto} from '../proto';
 import {ISessionMessageData, rpcEvents} from '../session';
 import {uuid} from '../util/uuid';
@@ -34,6 +36,9 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {}
+
+	/** Remote user. */
+	public remoteUser: BehaviorSubject<User|undefined>	= new BehaviorSubject(undefined);
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (username: string) : Promise<void> {
@@ -101,6 +106,8 @@ export class AccountSessionService extends SessionService {
 		if (user) {
 			user.realUsername.subscribe(this.remoteUsername);
 		}
+
+		this.remoteUser.next(user);
 	}
 
 	constructor (

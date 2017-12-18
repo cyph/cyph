@@ -230,6 +230,7 @@
 	<cyph-chat-message-box
 		class='video-call-message-box'
 		[accounts]='accounts'
+		[messageType]='messageType'
 		*ngIf='p2pService.isActive'
 	></cyph-chat-message-box>
 
@@ -307,6 +308,7 @@
 		[accounts]='accounts'
 		[chat]='chatService.chat'
 		[messageCountInTitle]='messageCountInTitle'
+		[messageType]='messageType'
 		[mobile]='envService.isMobile || p2pService.isActive'
 		[showDisconnectMessage]='chatService.chat.isDisconnected && !hideDisconnectMessage'
 		*ngIf='chatService.chat.state === states.chat'

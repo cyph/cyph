@@ -18,6 +18,7 @@ import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {fadeInOut} from '../animations';
 import {ChatMessage, IChatData, IVsItem} from '../chat';
+import {ChatMessageValueTypes} from '../proto';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
@@ -86,6 +87,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean;
+
+	/** Indicates which version of the UI should be displayed. */
+	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
 
 	/** @see ChatMessageComponent.mobile */
 	@Input() public mobile: boolean;

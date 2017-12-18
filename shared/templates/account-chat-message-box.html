@@ -1,1 +1,38 @@
-<div>AccountChatMessageBox</div>
+<div fxFlexFill fxLayout='column' fxLayoutGap='8px'>
+	<div fxLayout='row' fxLayoutGap='16px' *ngIf='showHeader'>
+		<cyph-account-contact
+			fxFlex
+			[clickable]='false'
+			[contact]='recipient | async'
+			class='cyph-main-theme'
+			[class.visibility-hidden]='(recipient | async) === undefined'
+		></cyph-account-contact>
+		<div
+			fxFlex='5'
+			fxFlex.lt-lg='10'
+			fxFlex.lt-md='15'
+			fxLayoutAlign='center center'
+		>
+			<button
+				mat-icon-button
+				matTooltip='Send'
+				[disabled]='recipient !== undefined && (recipient | async) === undefined'
+				(click)='send()'
+				cyphTranslate
+			>
+				<mat-icon>send</mat-icon>
+			</button>
+		</div>
+	</div>
+
+	<hr *ngIf='showHeader' />
+
+	<cyph-chat-message-box
+		[accounts]='true'
+		[fileAccept]='fileAccept'
+		[messageType]='messageType'
+		[showSendButton]='!showHeader'
+		[showUnreadCount]='showUnreadCount'
+		(sendFunction)='send = send || $event'
+	></cyph-chat-message-box>
+</div>

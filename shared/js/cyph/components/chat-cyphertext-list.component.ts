@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {List} from 'immutable';
 import {ChatMessage} from '../chat';
+import {ChatMessageValueTypes} from '../proto';
 import {StringsService} from '../services/strings.service';
 import {trackByID} from '../track-by/track-by-id';
 
@@ -20,6 +21,9 @@ export class ChatCyphertextListComponent {
 
 	/** @see CyphertextService.messages */
 	@Input() public messages: List<ChatMessage>;
+
+	/** Indicates which version of the UI should be displayed. */
+	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
 
 	/** @see trackByID */
 	public readonly trackByID: typeof trackByID	= trackByID;

@@ -1,7 +1,15 @@
 /* Temporary workaround pending https://github.com/mgechev/codelyzer/issues/419. */
 /* tslint:disable:no-access-missing-member */
 
-import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
+import {
+	AfterViewInit,
+	Component,
+	ElementRef,
+	EventEmitter,
+	Input,
+	OnInit,
+	Output
+} from '@angular/core';
 import * as $ from 'jquery';
 import * as tabIndent from 'tab-indent';
 import {slideInOutBottom} from '../animations';
@@ -28,7 +36,7 @@ import {sleep, waitForIterable} from '../util/wait';
 	styleUrls: ['../../../css/components/chat-message-box.scss'],
 	templateUrl: '../../../templates/chat-message-box.html'
 })
-export class ChatMessageBoxComponent implements AfterViewInit {
+export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
 	/** @ignore */
 	private readonly $textarea: Promise<JQuery>	=
 		waitForIterable(() => $(this.elementRef.nativeElement).find('textarea'))
@@ -44,12 +52,12 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
 
 	/** @see FileInput.accept */
-	@Input() public fileAccept: string;
+	@Input() public fileAccept?: string;
 
 	/** Indicates whether speed dial is open. */
 	public isSpeedDialOpen: boolean	= false;
 
-	/** Indicates which version of the message composition UI should be displayed. */
+	/** Indicates which version of the UI should be displayed. */
 	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
 
 	/** Wrappers for mobile button handlers. */
@@ -76,8 +84,13 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 		}
 	};
 
-	/** If false, hides buttons. */
-	@Input() public showButtons: boolean		= true;
+	/** @see send */
+	@Output() public readonly sendFunction: EventEmitter<() => Promise<void>>	=
+		new EventEmitter<() => Promise<void>>()
+	;
+
+	/** If false, hides send button. */
+	@Input() public showSendButton: boolean		= true;
 
 	/** If false, hides unread message indicator. */
 	@Input() public showUnreadCount: boolean	= true;
@@ -146,6 +159,11 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 
 			tabIndent.render($textarea[0]);
 		}
+	}
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.sendFunction.emit(() => this.send());
 	}
 
 	/** Sends current message. */

@@ -1,6 +1,14 @@
 <div fxFlexFill fxLayoutAlign='center center' class='cyph-foreground'>
-	<div fxFlex='95' fxFlexFill fxLayout='column' *ngIf='sessionService.opened | async'>
-		<cyph-chat-main fxFlex [accounts]='true'></cyph-chat-main>
-		<cyph-chat-message-box [accounts]='true'></cyph-chat-message-box>
+	<div fxFlex='95' fxFlexFill fxLayout='column' *ngIf='accountSessionService.opened | async'>
+		<cyph-chat-main
+			fxFlex
+			[accounts]='true'
+			[messageType]='messageType | async'
+		></cyph-chat-main>
+		<cyph-account-chat-message-box
+			[messageType]='messageType | async'
+			[recipient]='accountSessionService.remoteUser'
+			[showHeader]='(messageType | async) !== chatMessageValueTypes.Text'
+		></cyph-account-chat-message-box>
 	</div>
 </div>

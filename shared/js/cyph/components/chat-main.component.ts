@@ -3,7 +3,7 @@ import {SafeUrl} from '@angular/platform-browser';
 import * as $ from 'jquery';
 import {fadeIn} from '../animations';
 import {States} from '../chat/enums';
-import {DataURIProto} from '../proto';
+import {ChatMessageValueTypes, DataURIProto} from '../proto';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
@@ -46,6 +46,9 @@ export class ChatMainComponent implements AfterViewInit {
 
 	/** @see ChatMessageListComponent.messageCountInTitle */
 	@Input() public messageCountInTitle: boolean;
+
+	/** Indicates which version of the UI should be displayed. */
+	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
 
 	/** @see readableByteLength */
 	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;

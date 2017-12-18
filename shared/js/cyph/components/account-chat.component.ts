@@ -1,12 +1,15 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {UserPresence} from '../account/enums';
+import {ChatMessageValueTypes} from '../proto';
 import {accountChatProviders} from '../providers';
 import {AccountChatService} from '../services/account-chat.service';
+import {AccountSessionService} from '../services/account-session.service';
+import {AccountService} from '../services/account.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
-import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {sleep} from '../util/wait';
 
@@ -24,16 +27,28 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	/** @ignore */
 	private initiated: boolean	= false;
 
+	/** @see ChatMessageValueTypes */
+	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
+
+	/** @see ChatMessageValueTypes */
+	public messageType: BehaviorSubject<ChatMessageValueTypes>			= new BehaviorSubject(
+		ChatMessageValueTypes.Text
+	);
+
 	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence	= UserPresence;
+	public readonly userPresence: typeof UserPresence					= UserPresence;
 
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
-		this.sessionService.state.isAlive	= false;
+		this.accountSessionService.state.isAlive	= false;
 	}
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		if (this.accountService.isTelehealth) {
+			this.messageType.next(ChatMessageValueTypes.Quill);
+		}
+
 		this.activatedRoute.params.subscribe(async o => {
 			const username: string|undefined	= o.username;
 
@@ -61,6 +76,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		private readonly router: Router,
 
 		/** @ignore */
+		private readonly accountService: AccountService,
+
+		/** @ignore */
 		private readonly accountChatService: AccountChatService,
 
 		/** @see AccountAuthService */
@@ -69,11 +87,11 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		/** @see AccountContactsService */
 		public readonly accountContactsService: AccountContactsService,
 
+		/** @see AccountSessionService */
+		public readonly accountSessionService: AccountSessionService,
+
 		/** @see EnvService */
 		public readonly envService: EnvService,
-
-		/** @see SessionService */
-		public readonly sessionService: SessionService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

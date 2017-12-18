@@ -1,4 +1,5 @@
 import {NgModule} from '@angular/core';
+import {AccountChatMessageBoxComponent} from '../components/account-chat-message-box.component';
 import {AccountChatComponent} from '../components/account-chat.component';
 import {AccountComposeComponent} from '../components/account-compose.component';
 import {AccountContactComponent} from '../components/account-contact.component';
@@ -43,6 +44,7 @@ import {CyphWebModule} from './cyph-web.module';
 @NgModule({
 	declarations: [
 		AccountChatComponent,
+		AccountChatMessageBoxComponent,
 		AccountComponent,
 		AccountComposeComponent,
 		AccountContactComponent,
@@ -71,6 +73,7 @@ import {CyphWebModule} from './cyph-web.module';
 	],
 	exports: [
 		AccountChatComponent,
+		AccountChatMessageBoxComponent,
 		AccountComponent,
 		AccountComposeComponent,
 		AccountContactComponent,
