@@ -105,6 +105,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 	/** Equality function for virtual scrolling. */
 	public readonly vsEqualsFunc: (a: number, b: number) => boolean	= (() => {
+		/*
 		const vsData	= this.vsData;
 
 		return (a: number, b: number) =>
@@ -112,6 +113,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			vsData.value.length > b &&
 			vsData.value[a].message.id === vsData.value[b].message.id
 		;
+		*/
+
+		return () => false;
 	})();
 
 	/** Options for virtual scrolling. */

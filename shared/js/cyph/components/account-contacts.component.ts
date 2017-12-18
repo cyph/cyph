@@ -61,6 +61,7 @@ export class AccountContactsComponent implements AfterViewInit {
 
 	/** Equality function for virtual scrolling. */
 	public readonly vsEqualsFunc: (a: number, b: number) => boolean	= (() => {
+		/*
 		const contactList	= this.contactList;
 
 		return (a: number, b: number) =>
@@ -68,6 +69,9 @@ export class AccountContactsComponent implements AfterViewInit {
 			contactList.value.length > b &&
 			contactList.value[a].username === contactList.value[b].username
 		;
+		*/
+
+		return () => false;
 	})();
 
 	/** Options for virtual scrolling. */
