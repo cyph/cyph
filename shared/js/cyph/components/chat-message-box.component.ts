@@ -163,7 +163,7 @@ export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.sendFunction.emit(() => this.send());
+		this.sendFunction.emit(async () => this.send());
 	}
 
 	/** Sends current message. */

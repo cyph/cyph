@@ -28,17 +28,17 @@ export class AccountSessionService extends SessionService {
 	private resolveAccountsSymmetricKey: (symmetricKey: Uint8Array) => void;
 
 	/** @inheritDoc */
-	protected readonly symmetricKey: Promise<Uint8Array>	=
+	protected readonly symmetricKey: Promise<Uint8Array>		=
 		new Promise<Uint8Array>(resolve => {
 			this.resolveAccountsSymmetricKey	= resolve;
 		})
 	;
 
+	/** Remote user. */
+	public readonly remoteUser: BehaviorSubject<User|undefined>	= new BehaviorSubject(undefined);
+
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {}
-
-	/** Remote user. */
-	public remoteUser: BehaviorSubject<User|undefined>	= new BehaviorSubject(undefined);
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (username: string) : Promise<void> {

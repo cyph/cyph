@@ -50,11 +50,11 @@ export class ChatMainComponent implements AfterViewInit {
 	/** @see ChatMessageBoxComponent.messageType */
 	@Input() public messageType: ChatMessageValueTypes				= ChatMessageValueTypes.Text;
 
-	/** @see readableByteLength */
-	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
-
 	/** @see ChatMessageListComponent.persistentEndMessage */
 	@Input() public persistentEndMessage: boolean					= false;
+
+	/** @see readableByteLength */
+	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
 
 	/** @see States */
 	public readonly states: typeof States							= States;

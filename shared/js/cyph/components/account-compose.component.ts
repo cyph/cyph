@@ -1,3 +1,5 @@
+/* tslint:disable:member-ordering */
+
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
@@ -52,6 +54,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 		this.accountChatService.chat.currentMessage.text	= '';
 
 		this.sent.next(true);
+	/* tslint:disable-next-line:semicolon */
 	};
 
 	/** Indicates whether message has been sent, or undefined for in-progress. */
