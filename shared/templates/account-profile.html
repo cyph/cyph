@@ -70,7 +70,7 @@
 					'
 				>
 					<mat-card fxFlex='33' *ngIf='user.extra() | async; let extra'>
-						<mat-card-content 
+						<mat-card-content
 							*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'
 						>
 							<h2 cyphTranslate>Patient Info</h2>
@@ -83,7 +83,7 @@
 								</mat-list-item>
 							</mat-list>
 						</mat-card-content>
-						<mat-card-content 
+						<mat-card-content
 							*ngIf='(user.userType | async) === accountUserTypes.TelehealthOrg'
 						>
 							<h2 cyphTranslate>Address</h2>
@@ -93,10 +93,10 @@
 								</mat-list-item>
 							</mat-list>
 						</mat-card-content>
-						<mat-card-content 
+						<mat-card-content
 							*ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'
 						>
-							<button 
+							<button
 								mat-raised-button
 								cyphTranslate
 								color='primary'
@@ -164,7 +164,7 @@
 						</mat-card-content>
 					</mat-card>
 				</div>
-				<div 
+				<div
 					fxLayoutAlign='center center'
 					class='edit-hide status'
 					*ngIf='isCurrentUser && !accountService.isTelehealth'

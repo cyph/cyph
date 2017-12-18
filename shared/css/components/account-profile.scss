@@ -42,39 +42,40 @@
 		}
 	}
 
-.content {
-	div {
-	margin-left: auto;
-	margin-right: auto;
-	position: relative;
+	.content {
+		div {
+			margin-left: auto;
+			margin-right: auto;
+			position: relative;
+		}
+
+		margin-top: 5px;
 	}
-	margin-top: 5px;
-}
 
+	.practice {
+		.mat-icon {
+			font-size: 24px;
+		}
 
-
-.practice {
-	.mat-icon {
-		font-size: 24px;
+		h3 {
+			margin: 3px;
+		}
 	}
-	h3 {
-		margin: 3px;
-	}
-}
 
-.mat-card {
-	.mat-card-content{
-		.mat-list {
-			.mat-list-item {
-				span {
-					text-align: center;
-					margin-left: auto;
-					margin-right: auto;
+	.mat-card {
+		.mat-card-content {
+			.mat-list {
+				.mat-list-item {
+					span {
+						text-align: center;
+						margin-left: auto;
+						margin-right: auto;
+					}
 				}
 			}
 		}
 	}
-}
+
 	.name {
 		font-size: 42px;
 		margin-top: 3px;
