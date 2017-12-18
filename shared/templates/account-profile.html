@@ -20,7 +20,7 @@
 					<div fxLayout='column' fxLayoutAlign='center center'>
 						<div 
 							class='name animated flipInX _2'
-							*ngIf='(user.userType | async) === accountUserTypes.Standard'
+							*ngIf='(user.userType | async) === (accountUserTypes.Standard || accountUserTypes.TelehealthOrg)'
 						>
 							{{user.name | async}}
 						</div>
@@ -34,7 +34,7 @@
 							class='name animated flipInX _2'
 							*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'
 						>
-							Patient: {{user.name | async}}
+							{{user.name | async}}
 						</div>
 						<div
 							class='name animated flipInX _2'
@@ -67,8 +67,8 @@
 				fxLayout='row'
 				fxLayoutAlign='center center'
 				*ngIf='accountService.isTelehealth &&
-				accountService.isTelehealth &&
-				(user.userType | async) === accountUserTypes.TelehealthDoctor'
+				(user.userType | async) === accountUserTypes.TelehealthDoctor ||
+				(user.userType | async) === accountUserTypes.TelehealthOrg'
 			>
 				<div
 					fxFlex='100'
@@ -79,7 +79,17 @@
 				>
 					<div fxLayout='column' fxFlex='75'>
 						<mat-card>
-							<mat-card-content>
+							<mat-card-content 
+							*ngIf='(user.userType | async) === accountUserTypes.TelehealthOrg'>
+								<h2>Address</h2>
+								<mat-list>
+									<mat-list-item>
+										{{extra.address ? extra.address : ''}}
+									</mat-list-item>
+								</mat-list>
+							</mat-card-content>
+							<mat-card-content 
+							*ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'>
 								<h2>Specialties</h2>
 								<mat-list>
 									<mat-list-item>
