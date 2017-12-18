@@ -32,24 +32,25 @@
 		}
 	}
 
-	.chat-main .message-item .message {
+	.chat-main .message-item.ui-style-default .message {
 		max-width: 85%;
 	}
 
-	.chat-main:not(.mobile):not(.video) .message-item.author-app .message {
+	.chat-main:not(.mobile):not(.video) .message-item.ui-style-default.author-app .message {
 		width: 85%;
 
 		@include transform(translateX(9.25%));
 	}
 
-	.chat-main:not(.mobile):not(.video) .message-item, .message-item.author-app {
+	.chat-main:not(.mobile):not(.video) .message-item.ui-style-default,
+	.message-item.ui-style-default.author-app {
 		&:after {
 			display: none;
 		}
 	}
 
 	.chat-main.mobile, .chat-main.video .video-call ~ cyph-chat-message-list {
-		.message-item {
+		.message-item.ui-style-default {
 			position: relative;
 			max-width: 80%;
 			min-width: 120px;
@@ -68,7 +69,7 @@
 				padding-bottom: 0px;
 			}
 
-			img, .image-frame {
+			img:not(.avatar-image), .image-frame {
 				margin-left: auto;
 			}
 
@@ -81,7 +82,7 @@
 			}
 		}
 
-		.message-item.author-local {
+		.message-item.ui-style-default.author-local {
 			margin-right: 5%;
 
 			.message {
@@ -94,7 +95,7 @@
 			}
 		}
 
-		.message-item.author-local {
+		.message-item.ui-style-default.author-local {
 			&:after {
 				content: '';
 				position: absolute;
@@ -105,7 +106,7 @@
 			}
 		}
 
-		.message-item.author-remote {
+		.message-item.ui-style-default.author-remote {
 			margin-left: 5%;
 
 			&:after {
@@ -127,7 +128,7 @@
 			}
 		}
 
-		.message-item.author-app {
+		.message-item.ui-style-default.author-app {
 			width: 90%;
 			background-color: transparent;
 
@@ -345,7 +346,7 @@
 
 			@include transform(translateX(0px));
 
-			.message-item {
+			.message-item.ui-style-default {
 				&.author-app {
 					background-color: rgba(0, 0, 0, 0.3) !important;
 					color: #f1f1f1 !important;

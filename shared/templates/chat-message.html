@@ -1,6 +1,7 @@
 <div
-	[fxFlex]='mobile ? "nogrow" : ""'
+	[fxFlex]='mobile && uiStyle === uiStyles.default ? "nogrow" : ""'
 	class='message-item'
+	[ngClass]='"ui-style-" + uiStyles[uiStyle]'
 	[class.mobile]='mobile'
 	[class.author-app]='message.authorType === authorTypes.App'
 	[class.author-local]='message.authorType === authorTypes.Local'
@@ -60,7 +61,7 @@
 							*ngIf='!!message.authorUser'
 						/>
 						<mat-card-title fxFlex>
-							<div fxFlex fxLayout='row'>
+							<div fxFlex [fxLayout]='mobile ? "column" : "row"'>
 								<span *ngIf='!!message.authorUser'>
 									<strong>{{message.authorUser.name | async}}&nbsp;</strong>
 									<small>{{message.author | async}}</small>
@@ -68,7 +69,7 @@
 								<strong *ngIf='!message.authorUser'>
 									{{message.author | async}}
 								</strong>
-								<div fxFlex></div>
+								<div fxFlex *ngIf='!mobile'></div>
 								<div>
 									<span>{{message.dateTimeString}}</span>
 									<ng-container *ngTemplateOutlet='messageConfirmation'></ng-container>

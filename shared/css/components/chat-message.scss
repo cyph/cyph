@@ -21,6 +21,10 @@
 	}
 }
 
+.message-item.mobile .email-ui ::ng-deep .mat-card-header-text {
+	margin-top: -10px;
+}
+
 .confirmation-checks {
 	vertical-align: middle;
 
