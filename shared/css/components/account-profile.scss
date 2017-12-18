@@ -53,8 +53,8 @@
 	}
 
 	.practice {
-		.mat-icon {
-			font-size: 24px;
+		mat-icon {
+			@include icon-size(24px);
 		}
 
 		h3 {
