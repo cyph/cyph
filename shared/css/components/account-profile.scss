@@ -27,6 +27,7 @@
 		min-height: 135px;
 		background-color: rgba(139, 98, 217, 0.9);
 		color: white;
+		z-index: 42;
 
 		.user-info {
 			top: 10px;
@@ -63,7 +64,6 @@
 }
 
 .mat-card {
-	z-index: -1;
 	.mat-card-content{
 		.mat-list {
 			.mat-list-item {

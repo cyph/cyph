@@ -59,7 +59,7 @@
 				(user.userType | async) === accountUserTypes.TelehealthOrg ||
 				(user.userType | async) === accountUserTypes.TelehealthPatient'
 			>
-
+				
 						<mat-card fxFlex='33' *ngIf='user.extra() | async; let extra'>
 							<mat-card-content 
 							*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'>
@@ -86,6 +86,13 @@
 							</mat-card-content>
 							<mat-card-content 
 							*ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'>
+						<button 
+							mat-raised-button
+							color='primary'
+							[routerLink]='"/account/compose/"+user.username'
+						>
+							Request Appointment
+						</button>
 								<h2>Specialties</h2>
 								<mat-list>
 									<mat-list-item>
