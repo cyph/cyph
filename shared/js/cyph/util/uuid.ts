@@ -12,14 +12,9 @@ export const readableID	= (length: number = 20) : string => {
 	return id;
 };
 
-/** Creates a hex string containing the current timestamp and 16 random bytes. */
+/** Creates a hex string containing 16 random bytes. */
 export const uuid	= () : string => {
-	const bytes	= potassiumUtil.concatMemory(
-		true,
-		/* tslint:disable-next-line:ban */
-		new Uint32Array([Date.now()]),
-		potassiumUtil.randomBytes(16)
-	);
+	const bytes	= potassiumUtil.randomBytes(16);
 	const hex	= potassiumUtil.toHex(bytes);
 	potassiumUtil.clearMemory(bytes);
 	return hex;

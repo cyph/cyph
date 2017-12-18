@@ -49,15 +49,6 @@ section {
 	position: relative;
 	overflow-x: hidden;
 
-	&.initiating {
-		overflow-y: hidden;
-		pointer-events: none;
-
-		> div {
-			opacity: 0.5;
-		}
-	}
-
 	> div {
 		min-height: 100%;
 		padding-bottom: 1rem;
@@ -68,8 +59,17 @@ section {
 			padding-bottom: 0.25rem;
 		}
 	}
+}
 
-	mat-progress-spinner:not(.custom) {
+.initiating {
+	overflow-y: hidden !important;
+	pointer-events: none !important;
+
+	> :first-child {
+		opacity: 0.5 !important;
+	}
+
+	> mat-progress-spinner:not(.custom) {
 		z-index: 1;
 
 		@include spinner-center;

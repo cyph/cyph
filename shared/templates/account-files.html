@@ -8,7 +8,11 @@
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<mat-card
 			class='file animated'
-			*ngFor='let file of accountFilesService.filesListFiltered.files | async; let i = index'
+			*ngFor='
+				let file of accountFilesService.filesListFiltered.files | async;
+				trackBy: trackByID;
+				let i = index;
+			'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			[ngClass]='"_" + i'
@@ -87,7 +91,9 @@
 		<mat-card
 			class='file animated'
 			*ngFor='
-				let file of accountFilesService.incomingFilesFiltered.files | async; let i = index
+				let file of accountFilesService.incomingFilesFiltered.files | async;
+				trackBy: trackByID;
+				let i = index;
 			'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'

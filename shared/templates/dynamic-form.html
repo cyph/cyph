@@ -5,10 +5,23 @@
 	(submit)='submit.emit(form)'
 	*ngIf='form'
 >
-	<div fxLayout='row' *ngFor='let component of form.components' class='component'>
+	<div
+		fxLayout='row'
+		class='component'
+		*ngFor='let component of form.components; trackBy: trackByIndex'
+	>
 		<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-			<div fxLayout='row' fxLayoutGap='16px' *ngFor='let row of component.rows' class='row'>
-				<div [fxFlex]='o.width || 100' fxLayout='column' *ngFor='let o of row.elements'>
+			<div
+				fxLayout='row'
+				fxLayoutGap='16px'
+				class='row'
+				*ngFor='let row of component.rows; trackBy: trackByIndex'
+			>
+				<div
+					[fxFlex]='o.width || 100'
+					fxLayout='column'
+					*ngFor='let o of row.elements; trackBy: trackByIndex'
+				>
 
 					<h3 style='text-align: center' *ngIf='o.type === types.Text'>{{o.label}}</h3>
 					<div *ngIf='o.type === types.Text'>{{o.valueString}}</div>
@@ -93,7 +106,10 @@
 						[required]='o.required'
 						*ngIf='o.type === types.Radio'
 					>
-						<mat-radio-button *ngFor='let option of o.options' [value]='option'>
+						<mat-radio-button
+							*ngFor='let option of o.options; trackBy: trackBySelf'
+							[value]='option'
+						>
 							{{option}}
 						</mat-radio-button>
 					</mat-radio-group>
@@ -105,7 +121,10 @@
 						[required]='o.required'
 						*ngIf='o.type === types.Select'
 					>
-						<mat-option *ngFor='let option of o.options' [value]='option'>
+						<mat-option
+							*ngFor='let option of o.options; trackBy: trackBySelf'
+							[value]='option'
+						>
 							{{option}}
 						</mat-option>
 					</mat-select>

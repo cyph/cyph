@@ -35,7 +35,10 @@
 		>
 			<span>Open @{{search.externalUser}}'s profile</span>
 		</mat-option>
-		<mat-option [value]='contact.username' *ngFor='let contact of search.users'>
+		<mat-option
+			[value]='contact.username'
+			*ngFor='let contact of search.users; trackBy: trackByUser'
+		>
 			<img
 				cyphTranslate
 				aria-hidden

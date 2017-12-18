@@ -340,6 +340,8 @@ export class AccountFilesService {
 		id: string,
 		recordType?: AccountFileRecord.RecordTypes
 	) : Promise<IAccountFileRecord&IAccountFileReference> {
+		await this.accountDatabaseService.getCurrentUser();
+
 		const reference	= await this.accountDatabaseService.getItem(
 			`fileReferences/${id}`,
 			AccountFileReference

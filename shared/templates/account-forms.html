@@ -8,7 +8,11 @@
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<mat-card
 			class='form animated'
-			*ngFor='let form of accountFilesService.filesListFiltered.forms | async; let i = index'
+			*ngFor='
+				let form of accountFilesService.filesListFiltered.forms | async;
+				trackBy: trackByID;
+				let i = index;
+			'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			[ngClass]='"_" + i'
@@ -62,7 +66,9 @@
 		<mat-card
 			class='form animated'
 			*ngFor='
-				let form of accountFilesService.incomingFilesFiltered.forms | async; let i = index
+				let form of accountFilesService.incomingFilesFiltered.forms | async;
+				trackBy: trackByID;
+				let i = index;
 			'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'

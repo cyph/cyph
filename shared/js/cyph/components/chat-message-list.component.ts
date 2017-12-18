@@ -10,12 +10,12 @@ import {
 import * as $ from 'jquery';
 import {IVirtualScrollOptions} from 'od-virtualscroll';
 import ResizeObserver from 'resize-observer-polyfill';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
-import {Subject} from 'rxjs/Subject';
 import {fadeInOut} from '../animations';
 import {ChatMessage, IChatData, IVsItem} from '../chat';
 import {AccountContactsService} from '../services/account-contacts.service';
@@ -25,6 +25,7 @@ import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
+import {trackByVsItem} from '../track-by/track-by-vs-item';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 
 
@@ -92,8 +93,22 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** Indicates whether disconnect message should be displayed. */
 	@Input() public showDisconnectMessage: boolean;
 
+	/** @see trackByVsItem */
+	public readonly trackByVsItem: typeof trackByVsItem	= trackByVsItem;
+
 	/** Data formatted for virtual scrolling. */
-	public vsData	= new Subject<IVsItem[]>();
+	public readonly vsData: BehaviorSubject<IVsItem[]>	= new BehaviorSubject([]);
+
+	/** Equality function for virtual scrolling. */
+	public readonly vsEqualsFunc: (a: number, b: number) => boolean	= (() => {
+		const vsData	= this.vsData;
+
+		return (a: number, b: number) =>
+			vsData.value.length > a &&
+			vsData.value.length > b &&
+			vsData.value[a].message.id === vsData.value[b].message.id
+		;
+	})();
 
 	/** Options for virtual scrolling. */
 	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
@@ -180,11 +195,6 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		})))).subscribe(
 			this.vsData
 		);
-	}
-
-	/** Equality function for virtual scrolling. */
-	public vsEqualsFunc () : boolean {
-		return false;
 	}
 
 	constructor (

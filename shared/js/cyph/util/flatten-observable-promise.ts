@@ -33,3 +33,11 @@ export const flattenObservablePromise	= <T> (
 		return new Observable<T>(observer => { subscribe(observer); });
 	}
 };
+
+/** @see flattenObservablePromise */
+export const observableToBehaviorSubject	= <T> (
+	observable: Observable<T>,
+	initialValue: T
+) : BehaviorSubject<T> =>
+	<BehaviorSubject<T>> flattenObservablePromise(observable, initialValue)
+;

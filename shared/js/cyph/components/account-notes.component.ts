@@ -9,6 +9,7 @@ import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
+import {trackByID} from '../track-by/track-by-id';
 
 
 /**
@@ -22,6 +23,9 @@ import {StringsService} from '../services/strings.service';
 export class AccountNotesComponent implements OnInit {
 	/** Indicates whether or not the real-time doc UI is enabled. */
 	public realTime: boolean	= false;
+
+	/** @see trackByID */
+	public readonly trackByID: typeof trackByID	= trackByID;
 
 	/** List of incoming notes to display. */
 	public get incomingNotes () : Observable<(IAccountFileRecord&IAccountFileReference)[]> {

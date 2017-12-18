@@ -16,26 +16,33 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 
 	const nonce		= new Uint32Array(2);
 	let isActive	= false;
+	const sodium	= () => <ISodium> (<any> self).sodium;
+	let sodiumReadyPromise: Promise<void>|undefined;
 
 	crypto	= {
 		getRandomValues: (arrayBufferView: ArrayBufferView) => {
 			/* Handle circular dependency between this polyfill and libsodium */
-			if (
-				typeof (<any> self).sodium !== 'undefined' &&
-				(<any> self).sodium.crypto_stream_chacha20
-			) {
-				isActive	= true;
-			}
-			else if (!isActive) {
+			const sodiumExists	=
+				typeof (<any> sodium()) !== 'undefined' &&
+				sodium().crypto_stream_chacha20
+			;
+
+			if (!isActive) {
+				if (sodiumExists && !sodiumReadyPromise) {
+					sodiumReadyPromise	= sodium().ready.then(() => {
+						isActive	= true;
+					});
+				}
+
 				return arrayBufferView;
 			}
-			else {
+			else if (!sodiumExists) {
 				throw new Error('No CSPRNG found.');
 			}
 
 			++nonce[nonce[0] === 4294967295 ? 1 : 0];
 
-			const newBytes	= (<ISodium> (<any> self).sodium).crypto_stream_chacha20(
+			const newBytes	= sodium().crypto_stream_chacha20(
 				arrayBufferView.byteLength,
 				seed,
 				new Uint8Array(nonce.buffer, nonce.byteOffset, nonce.byteLength)
@@ -46,7 +53,7 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 				arrayBufferView.byteOffset,
 				arrayBufferView.byteLength
 			).set(newBytes);
-			(<any> self).sodium.memzero(newBytes);
+			sodium().memzero(newBytes);
 
 			return arrayBufferView;
 		},

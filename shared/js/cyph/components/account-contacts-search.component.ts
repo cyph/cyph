@@ -18,6 +18,7 @@ import {User} from '../account/user';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {StringsService} from '../services/strings.service';
+import {trackByUser} from '../track-by/track-by-user';
 
 
 /**
@@ -31,6 +32,11 @@ import {StringsService} from '../services/strings.service';
 export class AccountContactsSearchComponent implements OnChanges, OnInit {
 	/** @ignore */
 	private searchUsernameSubscription?: Subscription;
+
+	/** @see clearUserFilter */
+	@Output() public readonly clearUserFilterFunction: EventEmitter<() => void>	=
+		new EventEmitter<() => void>()
+	;
 
 	/** Placeholder string. */
 	@Input() public placeholder: string						= this.stringsService.search;
@@ -92,6 +98,14 @@ export class AccountContactsSearchComponent implements OnChanges, OnInit {
 	/** @see AccountContactsSearchComponent.searchUsername */
 	@Input() public searchUsername?: Observable<string>;
 
+	/** @see setUserFilter */
+	@Output() public readonly setUserFilterFunction: EventEmitter<(username: string) => void>	=
+		new EventEmitter<(username: string) => void>()
+	;
+
+	/** @see trackByUser */
+	public readonly trackByUser: typeof trackByUser	= trackByUser;
+
 	/** Single contact to display instead of list. */
 	public userFilter: BehaviorSubject<User|undefined>		= new BehaviorSubject(undefined);
 
@@ -125,6 +139,8 @@ export class AccountContactsSearchComponent implements OnChanges, OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		this.clearUserFilterFunction.emit(() => { this.clearUserFilter(); });
+		this.setUserFilterFunction.emit(username => { this.setUserFilter(username); });
 		this.userFilterChange.emit(this.userFilter);
 	}
 

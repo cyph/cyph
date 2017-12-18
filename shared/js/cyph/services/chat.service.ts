@@ -406,14 +406,18 @@ export class ChatService {
 		messageType: ChatMessageValueTypes = ChatMessageValueTypes.Text,
 		message: IChatMessageLiveValue = {},
 		selfDestructTimeout?: number,
-		selfDestructChat: boolean = false
+		selfDestructChat: boolean = false,
+		keepCurrentMessage: boolean = false
 	) : Promise<void> {
-		const value: IChatMessageValue	= {};
+		const value: IChatMessageValue				= {};
+		const currentMessage: IChatMessageLiveValue	=
+			keepCurrentMessage ? {} : this.chat.currentMessage
+		;
 
 		switch (messageType) {
 			case ChatMessageValueTypes.Form:
 				value.form	= (message && message.form) || this.chat.currentMessage.form;
-				this.chat.currentMessage.form	= undefined;
+				currentMessage.form	= undefined;
 				if (!value.form) {
 					return;
 				}
@@ -427,7 +431,7 @@ export class ChatService {
 							msgpack.encode({ops: this.chat.currentMessage.quill.ops}) :
 							undefined
 				;
-				this.chat.currentMessage.quill	= undefined;
+				currentMessage.quill	= undefined;
 				if (!value.quill) {
 					return;
 				}
@@ -435,7 +439,7 @@ export class ChatService {
 
 			case ChatMessageValueTypes.Text:
 				value.text	= (message && message.text) || this.chat.currentMessage.text;
-				this.chat.currentMessage.text	= '';
+				currentMessage.text	= '';
 				this.messageChange();
 				if (!value.text) {
 					return;
@@ -459,7 +463,7 @@ export class ChatService {
 			))
 		).dimensions || [];
 
-		this.addTextMessage((await this.sessionService.send([
+		await this.addTextMessage((await this.sessionService.send([
 			rpcEvents.text,
 			{text: {dimensions, selfDestructChat, selfDestructTimeout, value}}
 		]))[0].data);
@@ -540,7 +544,7 @@ export class ChatService {
 		});
 
 		this.chat.receiveTextLock(async () => {
-			const f	= async (o: ISessionMessageData) => { this.addTextMessage(o); };
+			const f	= async (o: ISessionMessageData) => this.addTextMessage(o);
 			this.sessionService.on(rpcEvents.text, f);
 			await this.sessionService.closed;
 			this.sessionService.off(rpcEvents.text, f);

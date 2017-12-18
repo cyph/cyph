@@ -1,7 +1,9 @@
+<!--
 <div cyphNanoScroller>
 	<od-virtualscroll
 		fxFlexFill
 		[vsData]='vsData'
+		[vsEqualsFunc]='vsEqualsFunc'
 		[vsOptions]='vsOptions'
 		class='message-list-background'
 	>
@@ -10,16 +12,15 @@
 		</ng-template>
 	</od-virtualscroll>
 </div>
+-->
 
-<!--
 <div cyphNanoScroller>
 	<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
-		<ng-container *ngFor='let item of vsData | async'>
+		<ng-container *ngFor='let item of vsData | async; trackBy: trackByVsItem'>
 			<ng-container *ngTemplateOutlet='listItem; context: {item: item}'></ng-container>
 		</ng-container>
 	</div>
 </div>
--->
 
 <ng-template #listItem let-item='item'>
 	<div fxLayout='row'>

@@ -6,6 +6,7 @@ import {States} from '../chat/enums';
 import {ChatMessageValueTypes} from '../proto';
 import {accountChatProviders} from '../providers';
 import {AccountChatService} from '../services/account-chat.service';
+import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 
@@ -29,8 +30,8 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	/** @see AccountContactsSearchComponent.searchUsername */
 	public searchUsername: BehaviorSubject<string>		= new BehaviorSubject('');
 
-	/** Indicates whether message has been sent. */
-	public sent: BehaviorSubject<boolean>				= new BehaviorSubject(false);
+	/** Indicates whether message has been sent, or undefined for in-progress. */
+	public sent: BehaviorSubject<boolean|undefined>		= new BehaviorSubject(false);
 
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
@@ -51,6 +52,8 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 			this.searchUsername.next(username);
 		});
+
+		this.accountChatService.init(this.chatMessageGeometryService);
 	}
 
 	public async send () : Promise<void> {
@@ -58,8 +61,21 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 			return;
 		}
 
-		await this.accountChatService.setUser(this.recipient.value.username);
-		await this.accountChatService.send(this.messageType);
+		this.sent.next(undefined);
+
+		await this.accountChatService.setUser(this.recipient.value.username, true);
+		await this.accountChatService.send(
+			this.messageType,
+			undefined,
+			undefined,
+			undefined,
+			true
+		);
+
+		this.accountChatService.chat.currentMessage.form	= undefined;
+		this.accountChatService.chat.currentMessage.quill	= undefined;
+		this.accountChatService.chat.currentMessage.text	= '';
+
 		this.sent.next(true);
 	}
 
@@ -69,6 +85,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,
+
+		/** @ignore */
+		private readonly chatMessageGeometryService: ChatMessageGeometryService,
 
 		/** @ignore */
 		private readonly sessionService: SessionService,

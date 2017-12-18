@@ -13,7 +13,7 @@ const addInviteCode	= async (countByUser, test) => {
 
 
 const configDir		= `${os.homedir()}/.cyph`;
-const keyFilename	= `${configDir}/firebase.${test ? 'test' : 'prod'}`;
+const keyFilename	= `${configDir}/firebase.${test ? 'test.cyph-test' : 'prod'}`;
 const projectId		= test ? 'cyph-test' : 'cyphme';
 
 
