@@ -41,13 +41,13 @@ export class AccountChatService extends ChatService {
 	}
 
 	/** Sets the remote user we're chatting with. */
-	public async setUser (username: string) : Promise<void> {
+	public async setUser (username: string, keepCurrentMessage: boolean = false) : Promise<void> {
 		const contactURL	= `contacts/${await this.accountContactsService.addContact(username)}`;
 
 		await this.accountSessionService.setUser(username);
 
 		this.chat	= getOrSetDefault(this.chats, username, () => ({
-			currentMessage: {},
+			currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
 			isConnected: true,
 			isDisconnected: false,
 			isFriendTyping: new BehaviorSubject(false),
