@@ -17,14 +17,15 @@ const {
 }	= require('../modules/proto');
 
 
-const certSign	= async (testSign, standalone) => {
+const certSign	= async (testDataEnv, standalone) => {
 try {
 
 
 const configDir					= `${os.homedir()}/.cyph`;
-const lastIssuanceTimestampPath	= `${configDir}/certsign.timestamp.${testSign ? 'test' : 'prod'}`;
-const keyFilename				= `${configDir}/firebase.${testSign ? 'test' : 'prod'}`;
-const projectId					= testSign ? 'cyph-test' : 'cyphme';
+const fileExtension				= testDataEnv ? `test.${testDataEnv}` : 'prod';
+const lastIssuanceTimestampPath	= `${configDir}/certsign.timestamp.${fileExtension}`;
+const keyFilename				= `${configDir}/firebase.${fileExtension}`;
+const projectId					= testDataEnv || 'cyphme';
 
 /* Will remain hardcoded as true for the duration of the private beta */
 const requireInvite				= true;
@@ -199,7 +200,7 @@ const {rsaIndex, signedInputs, sphincsIndex}	= await sign(
 			})
 		})))
 	),
-	testSign
+	!!testDataEnv
 );
 
 fs.writeFileSync(lastIssuanceTimestampPath, issuanceHistory.timestamp.toString());
@@ -257,7 +258,7 @@ catch (err) {
 
 
 if (require.main === module) {
-	certSign(process.argv[2] === '--test', true);
+	certSign(process.argv[2] === '--test' ? 'cyph-test' : undefined, true);
 }
 else {
 	module.exports	= certSign;
