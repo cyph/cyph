@@ -96,7 +96,7 @@ read -r -d '' modules <<- EOM
 	fg-loadcss
 	file-loader
 	file-saver
-	firebase
+	firebase@4.8.0
 	firebase-admin
 	firebase-functions
 	firebase-server
