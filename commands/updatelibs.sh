@@ -37,6 +37,14 @@ read -r -d '' modules <<- EOM
 	@covalent/highlight
 	@covalent/http
 	@covalent/markdown
+	@firebase/app
+	@firebase/app-types
+	@firebase/auth
+	@firebase/auth-types
+	@firebase/database
+	@firebase/database-types
+	@firebase/storage
+	@firebase/storage-types
 	@google-cloud/storage
 	@ngrx/core
 	@ngrx/effects
@@ -96,7 +104,7 @@ read -r -d '' modules <<- EOM
 	fg-loadcss
 	file-loader
 	file-saver
-	firebase@4.8.0
+	firebase
 	firebase-admin
 	firebase-functions
 	firebase-server

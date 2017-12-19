@@ -1,10 +1,23 @@
 /* tslint:disable:max-file-line-count no-import-side-effect */
 
 import {Injectable} from '@angular/core';
-import * as firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/database';
-import 'firebase/storage';
+import {firebase} from '@firebase/app';
+import {FirebaseApp} from '@firebase/app-types';
+import '@firebase/auth';
+import {FirebaseAuth} from '@firebase/auth-types';
+import {ServerValue} from '@firebase/database';
+import {
+	DataSnapshot,
+	FirebaseDatabase,
+	Reference as DatabaseReference,
+	ThenableReference
+} from '@firebase/database-types';
+import '@firebase/storage';
+import {
+	FirebaseStorage,
+	Reference as StorageReference,
+	UploadTaskSnapshot
+} from '@firebase/storage-types';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {skip} from 'rxjs/operators/skip';
@@ -31,7 +44,11 @@ import {LocalStorageService} from './local-storage.service';
 @Injectable()
 export class FirebaseDatabaseService extends DatabaseService {
 	/** @ignore */
-	private app: Promise<firebase.app.App>	= retryUntilSuccessful(() => {
+	private app: Promise<FirebaseApp&{
+		auth: () => FirebaseAuth;
+		database: (databaseURL?: string) => FirebaseDatabase;
+		storage: (storageBucket?: string) => FirebaseStorage;
+	}>	= retryUntilSuccessful(() => {
 		try {
 			for (const key of Object.keys(localStorage).filter(k => k.startsWith('firebase:'))) {
 				/* tslint:disable-next-line:ban */
@@ -40,7 +57,19 @@ export class FirebaseDatabaseService extends DatabaseService {
 		}
 		catch {}
 
-		return firebase.apps[0] || firebase.initializeApp(env.firebaseConfig);
+		const app	= firebase.apps[0] || firebase.initializeApp(env.firebaseConfig);
+
+		if (app.auth === undefined) {
+			throw new Error('No Firebase Auth module.');
+		}
+		if (app.database === undefined) {
+			throw new Error('No Firebase Database module.');
+		}
+		if (app.storage === undefined) {
+			throw new Error('No Firebase Storage module.');
+		}
+
+		return <any> app;
 	});
 
 	/** Mapping of URLs to last known good hashes. */
@@ -82,7 +111,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @ignore */
-	private async getDatabaseRef (url: string) : Promise<firebase.database.Reference> {
+	private async getDatabaseRef (url: string) : Promise<DatabaseReference> {
 		return retryUntilSuccessful(async () =>
 			/^https?:\/\//.test(url) ?
 				(await this.app).database().refFromURL(url) :
@@ -91,7 +120,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @ignore */
-	private async getStorageRef (url: string) : Promise<firebase.storage.Reference> {
+	private async getStorageRef (url: string) : Promise<StorageReference> {
 		return retryUntilSuccessful(async () =>
 			/^https?:\/\//.test(url) ?
 				(await this.app).storage().refFromURL(url) :
@@ -130,7 +159,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			(async () => {
 				const connectedRef	= await this.getDatabaseRef('.info/connected');
 
-				const onValue		= async (snapshot: firebase.database.DataSnapshot) => {
+				const onValue		= async (snapshot: DataSnapshot) => {
 					if (snapshot) {
 						observer.next(snapshot.val() === true);
 					}
@@ -266,7 +295,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return lock(
 			getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
 			async () => {
-				let mutex: firebase.database.ThenableReference|undefined;
+				let mutex: ThenableReference|undefined;
 
 				const queue	= await this.getDatabaseRef(url);
 				const id	= uuid();
@@ -405,14 +434,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const ref			= await this.getDatabaseRef(url);
 		const onDisconnect	= ref.onDisconnect();
 
-		ref.set(firebase.database.ServerValue.TIMESTAMP);
+		ref.set(ServerValue.TIMESTAMP);
 		onDisconnect.remove();
 
 		this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
 			if (!isConnected) {
 				return;
 			}
-			ref.set(firebase.database.ServerValue.TIMESTAMP);
+			ref.set(ServerValue.TIMESTAMP);
 			if (onReconnect) {
 				onReconnect();
 			}
@@ -435,7 +464,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const onDisconnect	= ref.onDisconnect();
 
 		ref.remove();
-		onDisconnect.set(firebase.database.ServerValue.TIMESTAMP);
+		onDisconnect.set(ServerValue.TIMESTAMP);
 
 		this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
 			if (!isConnected) {
@@ -448,7 +477,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		});
 
 		return () => {
-			ref.set(firebase.database.ServerValue.TIMESTAMP);
+			ref.set(ServerValue.TIMESTAMP);
 			onDisconnect.cancel();
 		};
 	}
@@ -472,7 +501,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			await (await this.getStorageRef(url)).put(new Blob([data])).then();
 			await (await this.getDatabaseRef(url)).set({
 				hash,
-				timestamp: firebase.database.ServerValue.TIMESTAMP
+				timestamp: ServerValue.TIMESTAMP
 			}).then();
 			this.cacheSet(url, data, hash);
 		}
@@ -528,7 +557,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				uploadTask.on(
 					'state_changed',
-					(snapshot: firebase.storage.UploadTaskSnapshot) => {
+					(snapshot: UploadTaskSnapshot) => {
 						progress.next(snapshot.bytesTransferred / snapshot.totalBytes * 100);
 					},
 					reject,
@@ -537,7 +566,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							try {
 								await (await this.getDatabaseRef(url)).set({
 									hash,
-									timestamp: firebase.database.ServerValue.TIMESTAMP
+									timestamp: ServerValue.TIMESTAMP
 								}).then();
 								this.cacheSet(url, data, hash);
 								progress.next(100);
@@ -595,7 +624,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return new Observable<ITimedValue<T>>(observer => {
 			let cleanup: Function;
 
-			const onValue	= async (snapshot: firebase.database.DataSnapshot) => {
+			const onValue	= async (snapshot: DataSnapshot) => {
 				const url	= await urlPromise;
 
 				if (!snapshot || !snapshot.exists()) {
@@ -628,7 +657,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return new Observable<boolean>(observer => {
 			let cleanup: Function;
 
-			const onValue	= (snapshot: firebase.database.DataSnapshot) => {
+			const onValue	= (snapshot: DataSnapshot) => {
 				observer.next(!!snapshot && snapshot.exists());
 			};
 
@@ -695,7 +724,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					);
 				};
 
-				const onChildAdded	= async (snapshot: firebase.database.DataSnapshot) => {
+				const onChildAdded	= async (snapshot: DataSnapshot) => {
 					if (
 						!snapshot ||
 						!snapshot.key ||
@@ -707,7 +736,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					publishList();
 				};
 
-				const onChildChanged	= async (snapshot: firebase.database.DataSnapshot) => {
+				const onChildChanged	= async (snapshot: DataSnapshot) => {
 					if (
 						!snapshot ||
 						!snapshot.key ||
@@ -718,7 +747,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					publishList();
 				};
 
-				const onChildRemoved	= async (snapshot: firebase.database.DataSnapshot) => {
+				const onChildRemoved	= async (snapshot: DataSnapshot) => {
 					if (!snapshot || !snapshot.key) {
 						return;
 					}
@@ -726,7 +755,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					publishList();
 				};
 
-				const onValue			= async (snapshot: firebase.database.DataSnapshot) => {
+				const onValue			= async (snapshot: DataSnapshot) => {
 					if (!initiated) {
 						initiated	= true;
 						return;
@@ -773,7 +802,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				const listRef	= await this.getDatabaseRef(url);
 
-				const onChildAdded	= (snapshot: firebase.database.DataSnapshot) => {
+				const onChildAdded	= (snapshot: DataSnapshot) => {
 					if (!snapshot || !snapshot.exists() || !snapshot.key) {
 						return;
 					}
@@ -803,7 +832,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				let keys: string[];
 
-				const onValue	= (snapshot: firebase.database.DataSnapshot) => {
+				const onValue	= (snapshot: DataSnapshot) => {
 					if (!snapshot || !snapshot.exists()) {
 						return;
 					}
@@ -844,7 +873,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const listRef	= await this.getDatabaseRef(url);
 				let initiated	= false;
 
-				const onChildAdded	= async (snapshot: firebase.database.DataSnapshot) => {
+				const onChildAdded	= async (snapshot: DataSnapshot) => {
 					if (!snapshot || !snapshot.key) {
 						return;
 					}
@@ -861,7 +890,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					}
 				};
 
-				const onValue			= async (snapshot: firebase.database.DataSnapshot) => {
+				const onValue			= async (snapshot: DataSnapshot) => {
 					if (!initiated) {
 						initiated	= true;
 						return;
