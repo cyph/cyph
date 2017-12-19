@@ -24,9 +24,6 @@ import {getDate, timestampToDate} from '../util/time';
 	templateUrl: '../../../templates/calendar-invite.html'
 })
 export class CalendarInviteComponent implements ControlValueAccessor {
-	/** Change event callback. */
-	private onChange: (value: ICalendarInvite) => void		= () => {};
-
 	/** Indicates whether input is disabled. */
 	@Input() public isDisabled: boolean						= false;
 
@@ -35,6 +32,9 @@ export class CalendarInviteComponent implements ControlValueAccessor {
 
 	/** Current date. */
 	public readonly now: Promise<Date>						= getDate();
+
+	/** Change event callback. */
+	public onChange: (value: ICalendarInvite) => void		= () => {};
 
 	/** Touch event callback. */
 	public onTouched: () => void							= () => {};

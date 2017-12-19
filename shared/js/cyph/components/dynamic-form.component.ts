@@ -21,11 +21,11 @@ export class DynamicFormComponent {
 	/** @ignore */
 	private readonly maskCache: Map<Uint8Array, any>		= new Map<Uint8Array, any>();
 
-	/** Indicates whether input is disabled. */
-	@Input() public isDisabled: boolean						= false;
-
 	/** @see Form */
 	@Input() public form: IForm;
+
+	/** Indicates whether input is disabled. */
+	@Input() public isDisabled: boolean						= false;
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean							= this.envService.isMobile;
