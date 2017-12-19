@@ -70,35 +70,25 @@
 					<mat-card-content
 						*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'
 					>
+						<div fxLayout='column'>
 						<h2 cyphTranslate>Patient Info</h2>
-						<mat-list>
-							<mat-list-item>
 								<span>
 									<strong cyphTranslate>Gender:</strong>
 									<span>{{extra.gender || ''}}</span>
 								</span>
-							</mat-list-item>
-						</mat-list>
-						<mat-list>
-							<mat-list-item>
-								<span
+								<div
 									class='description' *ngIf='user.description'>
 									{{user.description | async}}
-								</span>
-							</mat-list-item>
-						</mat-list>
+							</div>
+						</div>
 					</mat-card-content>
 					<mat-card-content
 						*ngIf='(user.userType | async) === accountUserTypes.TelehealthOrg'
 					>
-						<mat-list>
-							<mat-list-item>
-								<span
-									class='description' *ngIf='user.description'>
-									{{user.description | async}}
-								</span>
-							</mat-list-item>
-						</mat-list>
+					<div
+							class='description' *ngIf='user.description'>
+							{{user.description | async}}
+					</div>
 						<h2 cyphTranslate>Address</h2>
 						<mat-list>
 							<mat-list-item>
@@ -122,10 +112,10 @@
 							<mat-list>
 								<mat-list-item>
 									<br />
-									<span
+									<div
 										*ngIf='user.description'>
 										{{user.description | async}}
-									</span>
+									</div>
 								</mat-list-item>
 							</mat-list>
 							<br />
