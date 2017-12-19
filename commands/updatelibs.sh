@@ -61,6 +61,7 @@ read -r -d '' modules <<- EOM
 	@types/pdfkit
 	@types/quill
 	@types/stacktrace-js
+	angular-material-clock-time-picker
 	angular-speed-dial
 	angular-ssr
 	angular2-template-loader
