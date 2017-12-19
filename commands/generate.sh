@@ -5,6 +5,13 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
 type="${1}"
+
+ngModel=''
+if [ "${type}" == 'component' ] && [ "${2}" == '--ng-model' ] ; then
+	ngModel=true
+	shift
+fi
+
 name="${2}"
 
 
@@ -26,7 +33,71 @@ echo "<Label text='${name}'></Label>" > shared/templates/native/${selector}.html
 echo "@import '../mixins';" > shared/css/components/${selector}.scss
 echo "@import '../mixins';" > shared/css/native/components/${selector}.scss
 
-cat > shared/js/cyph/components/${selector}.component.ts << EOM
+if [ "${ngModel}" ] ; then cat > shared/js/cyph/components/${selector}.component.ts << EOM
+import {Component} from '@angular/core';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {StringsService} from '../services/strings.service';
+
+
+/**
+ * Angular component for ${genericDescription} UI.
+ */
+@Component({
+	providers: [
+		{
+			multi: true,
+			provide: NG_VALUE_ACCESSOR,
+			useExisting: ${class}
+		}
+	],
+	selector: 'cyph-${selector}',
+	styleUrls: ['../../../css/components/${selector}.scss'],
+	templateUrl: '../../../templates/${selector}.html'
+})
+export class ${class} implements ControlValueAccessor {
+	/** Change event callback. */
+	private onChange: (value: string) => void	= () => {};
+
+	/** Indicates whether input is disabled. */
+	public isDisabled: boolean					= false;
+
+	/** Touch event callback. */
+	public onTouched: () => void				= () => {};
+
+	/** Value. */
+	public value: string						= '';
+
+	/** @inheritDoc */
+	public registerOnChange (f: (value: string) => void) : void {
+		this.onChange	= f;
+	}
+
+	/** @inheritDoc */
+	public registerOnTouched (f: () => void) : void {
+		this.onTouched	= f;
+	}
+
+	/** @inheritDoc */
+	public setDisabledState (isDisabled: boolean) : void {
+		if (this.isDisabled !== isDisabled) {
+			this.isDisabled	= isDisabled;
+		}
+	}
+
+	/** @inheritDoc */
+	public writeValue (value: string) : void {
+		if (this.value !== value) {
+			this.value	= value;
+		}
+	}
+
+	constructor (
+		/** @see StringsService */
+		public readonly stringsService: StringsService
+	) {}
+}
+EOM
+else cat > shared/js/cyph/components/${selector}.component.ts << EOM
 import {Component} from '@angular/core';
 import {StringsService} from '../services/strings.service';
 
@@ -46,6 +117,7 @@ export class ${class} {
 	) {}
 }
 EOM
+fi
 
 read -r -d '' files <<- EOM
 	shared/templates/${selector}.html
