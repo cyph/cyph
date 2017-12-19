@@ -38,9 +38,9 @@ import {sleep, waitForIterable} from '../util/wait';
 })
 export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
 	/** @ignore */
-	private readonly $textarea: Promise<JQuery>	=
-		waitForIterable(() => $(this.elementRef.nativeElement).find('textarea'))
-	;
+	private readonly $textarea: Promise<JQuery>	= waitForIterable(
+		() => $(this.elementRef.nativeElement).find('.text-message-box > textarea')
+	);
 
 	/** @ignore */
 	private readonly mobileButtonLock: {}		= {};

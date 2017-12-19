@@ -1,5 +1,26 @@
 <div fxFlexFill *ngIf='chatService.chat.state === states.chat && sessionService.state.isAlive'>
 	<div
+		class='calendar-invite-message-box'
+		[class.mobile]='envService.isMobile'
+		fxFlexFill
+		*ngIf='messageType === chatMessageValueTypes.CalendarInvite'
+	>
+		<button
+			mat-icon-button
+			matTooltip='Send'
+			(click)='send()'
+			cyphTranslate
+			*ngIf='showSendButton'
+		>
+			<mat-icon>send</mat-icon>
+		</button>
+		<cyph-calendar-invite
+			fxFlexFill
+			[(ngModel)]='chatService.chat.currentMessage.calendarInvite'
+		></cyph-calendar-invite>
+	</div>
+
+	<div
 		class='form-message-box'
 		[class.mobile]='envService.isMobile'
 		fxFlexFill

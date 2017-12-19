@@ -17,6 +17,7 @@ import {AccountProfileComponent} from '../components/account-profile.component';
 import {AccountRegisterComponent} from '../components/account-register.component';
 import {AccountSettingsComponent} from '../components/account-settings.component';
 import {AccountComponent} from '../components/account.component';
+import {ChatMessageValueTypes} from '../proto';
 
 
 /** Routing configuration for accounts UI. */
@@ -25,8 +26,16 @@ export const account: Route	= {
 	component: AccountComponent,
 	children: [
 		{path: '', component: AccountHomeComponent},
-		{path: 'compose', component: AccountComposeComponent},
-		{path: 'compose/:username', component: AccountComposeComponent},
+		{
+			path: 'compose',
+			component: AccountComposeComponent,
+			data: {messageType: ChatMessageValueTypes.Quill}
+		},
+		{
+			path: 'compose/:username',
+			component: AccountComposeComponent,
+			data: {messageType: ChatMessageValueTypes.Quill}
+		},
 		{path: 'contacts', component: AccountContactsComponent},
 		{path: 'contacts/:username', component: AccountContactsComponent},
 		{path: 'docs', component: AccountNotesComponent, data: {realTime: true}},
@@ -61,6 +70,16 @@ export const account: Route	= {
 		{path: 'profile/:username', component: AccountProfileComponent},
 		{path: 'register', redirectTo: 'register/1'},
 		{path: 'register/:step', component: AccountRegisterComponent},
+		{
+			path: 'request-appointment',
+			component: AccountComposeComponent,
+			data: {messageType: ChatMessageValueTypes.CalendarInvite}
+		},
+		{
+			path: 'request-appointment/:username',
+			component: AccountComposeComponent,
+			data: {messageType: ChatMessageValueTypes.CalendarInvite}
+		},
 		{path: 'settings', component: AccountSettingsComponent},
 		{path: 'welcome', component: AccountPostRegisterComponent}
 	]

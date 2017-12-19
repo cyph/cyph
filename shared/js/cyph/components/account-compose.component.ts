@@ -3,6 +3,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {map} from 'rxjs/operators/map';
 import {User} from '../account';
 import {States} from '../chat/enums';
 import {ChatMessageValueTypes} from '../proto';
@@ -11,6 +12,7 @@ import {AccountChatService} from '../services/account-chat.service';
 import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
+import {observableToBehaviorSubject} from '../util/flatten-observable-promise';
 
 
 /**
@@ -24,7 +26,15 @@ import {StringsService} from '../services/strings.service';
 })
 export class AccountComposeComponent implements OnDestroy, OnInit {
 	/** @see ChatMessageValueTypes */
-	public readonly messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Quill;
+	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
+
+	/** @see AccountChatMessageBoxComponent.messageType */
+	public readonly messageType: BehaviorSubject<ChatMessageValueTypes>	=
+		observableToBehaviorSubject(
+			this.activatedRoute.data.pipe(map((o: any) => o.messageType)),
+			ChatMessageValueTypes.Quill
+		)
+	;
 
 	/** @see AccountContactsSearchComponent.userFilter */
 	public recipient: BehaviorSubject<User|undefined>	= new BehaviorSubject(undefined);
@@ -42,16 +52,17 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 		await this.accountChatService.setUser(this.recipient.value.username, true);
 		await this.accountChatService.send(
-			this.messageType,
+			this.messageType.value,
 			undefined,
 			undefined,
 			undefined,
 			true
 		);
 
-		this.accountChatService.chat.currentMessage.form	= undefined;
-		this.accountChatService.chat.currentMessage.quill	= undefined;
-		this.accountChatService.chat.currentMessage.text	= '';
+		this.accountChatService.chat.currentMessage.calendarInvite	= undefined;
+		this.accountChatService.chat.currentMessage.form			= undefined;
+		this.accountChatService.chat.currentMessage.quill			= undefined;
+		this.accountChatService.chat.currentMessage.text			= '';
 
 		this.sent.next(true);
 	/* tslint:disable-next-line:semicolon */
@@ -70,7 +81,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 		this.accountChatService.chat.state	= States.chat;
 		this.sessionService.state.isAlive	= true;
 
-		this.activatedRouteService.params.subscribe(async o => {
+		this.activatedRoute.params.subscribe(async o => {
 			const username: string|undefined	= o.username;
 
 			if (!username) {
@@ -85,7 +96,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly activatedRouteService: ActivatedRoute,
+		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,

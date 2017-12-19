@@ -69,11 +69,13 @@ export class ChatMessageGeometryService {
 			/* See https://github.com/palantir/tslint/issues/3540 */
 			/* tslint:disable-next-line:no-unnecessary-type-assertion */
 			const lines	= <HTMLElement[]> Array.from(document.querySelectorAll(
-				message.value.form ?
-					`#${id} cyph-dynamic-form .row` :
-					message.value.quill && message.value.quill.length > 0 ?
-						`#${id} cyph-quill .ql-editor > *` :
-						`#${id} cyph-markdown > span > *`
+				message.value.calendarInvite ?
+					`#${id} cyph-calendar-invite > div > *` :
+					message.value.form ?
+						`#${id} cyph-dynamic-form .row` :
+						message.value.quill && message.value.quill.length > 0 ?
+							`#${id} cyph-quill .ql-editor > *` :
+							`#${id} cyph-markdown > span > *`
 			));
 
 			if (lines.length < 1) {

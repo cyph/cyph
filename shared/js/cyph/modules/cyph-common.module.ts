@@ -2,6 +2,7 @@ import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {BlankComponent} from '../components/blank.component';
+import {CalendarInviteComponent} from '../components/calendar-invite.component';
 import {ChatComposeComponent} from '../components/chat-compose.component';
 import {ChatCyphertextListComponent} from '../components/chat-cyphertext-list.component';
 import {ChatCyphertextComponent} from '../components/chat-cyphertext.component';
@@ -40,6 +41,7 @@ import {CyphWebModule} from './cyph-web.module';
 @NgModule({
 	declarations: [
 		BlankComponent,
+		CalendarInviteComponent,
 		ChatComposeComponent,
 		ChatCyphertextComponent,
 		ChatCyphertextListComponent,
@@ -65,6 +67,7 @@ import {CyphWebModule} from './cyph-web.module';
 	],
 	exports: [
 		BlankComponent,
+		CalendarInviteComponent,
 		ChatComposeComponent,
 		ChatCyphertextComponent,
 		ChatCyphertextListComponent,

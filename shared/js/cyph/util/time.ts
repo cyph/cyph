@@ -1,3 +1,4 @@
+import memoize from 'lodash-es/memoize';
 import {env} from '../env';
 import {random} from './random';
 import {request} from './request';
@@ -52,7 +53,7 @@ export const getTimestamp	= async () : Promise<number> => {
 };
 
 /** Returns a human-readable representation of the time (e.g. "3:37pm"). */
-export const getTimeString	= (timestamp: number, includeDate: boolean = false) : string =>
+export const getTimeString	= memoize((timestamp: number, includeDate: boolean = false) : string =>
 	new Date(timestamp).toLocaleString(
 		undefined,
 		includeDate ? stringFormats.date : stringFormats.time
@@ -63,4 +64,12 @@ export const getTimeString	= (timestamp: number, includeDate: boolean = false) :
 		' PM',
 		'pm'
 	)
-;
+);
+
+/** Converts a timestamp into a Date. */
+export const timestampToDate	= memoize((timestamp?: number) : Date =>
+	timestamp === undefined || isNaN(timestamp) ? new Date() : new Date(timestamp)
+);
+
+/** @see getTimestamp */
+export const getDate	= async () => timestampToDate(await getTimestamp());

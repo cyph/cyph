@@ -226,6 +226,21 @@ message AGSEPKIIssuanceHistory {
 	map<string, bool> usernames = 3;
 }
 
+/** Calendar invite. */
+message CalendarInvite {
+	/* Event description. */
+	string description = 1;
+
+	/** End timestamp. */
+	double endTime = 2;
+
+	/** Start timestamp. */
+	double startTime = 3;
+
+	/** Event title/subject. */
+	string title = 4;
+}
+
 /** Castle incoming messages. */
 message CastleIncomingMessages {
 	/** List of received cyphertexts with a particular message ID. */	
@@ -297,17 +312,19 @@ message ChatMessageLine {
 message ChatMessageValue {
 	/** Value. */
 	oneof value {
-		Form form = 1;
-		bytes quill = 2;
-		string text = 3;
+		CalendarInvite calendarInvite = 1;
+		Form form = 2;
+		bytes quill = 3;
+		string text = 4;
 	}
 }
 
 /** Possible types of a chat text message value. */
 enum ChatMessageValueTypes {
-	Form = 0;
-	Quill = 1;
-	Text = 2;
+	CalendarInvite = 0;
+	Form = 1;
+	Quill = 2;
+	Text = 3;
 }
 
 /** Chat unconfirmed messages. */

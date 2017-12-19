@@ -79,6 +79,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'messages',
 			'notes',
 			'profile',
+			'request-appointment',
 			'settings'
 		].filter(
 			path => this.route === path

@@ -1,1 +1,56 @@
-<div>CalendarInvite</div>
+<div fxFlexFill fxLayout='column' (blur)='onTouched()'>
+	<mat-form-field fxFlex>
+		<input
+			matInput
+			cyphTranslate
+			[disabled]='isDisabled'
+			[ngModel]='value.title'
+			(ngModelChange)='value.title = $event; onChange(value)'
+			type='text'
+			placeholder='Title'
+		/>
+	</mat-form-field>
+
+	<mat-form-field fxFlex>
+		<input
+			matInput
+			cyphTranslate
+			[disabled]='isDisabled'
+			[matDatepicker]='datepickerStart'
+			[min]='now | async'
+			[ngModel]='timestampToDate(value.startTime)'
+			(ngModelChange)='value.startTime = $event ? $event.getTime() : 0; onChange(value)'
+			placeholder='Start Date'
+		/>
+		<mat-datepicker-toggle [for]='datepickerStart'></mat-datepicker-toggle>
+	</mat-form-field>
+	<mat-datepicker [touchUi]='mobile' #datepickerStart></mat-datepicker>
+
+	<mat-form-field fxFlex>
+		<input
+			matInput
+			cyphTranslate
+			[disabled]='isDisabled'
+			[matDatepicker]='datepickerEnd'
+			[min]='timestampToDate(value.startTime)'
+			[ngModel]='timestampToDate(value.endTime)'
+			(ngModelChange)='value.endTime = $event ? $event.getTime() : 0; onChange(value)'
+			placeholder='End Date'
+		/>
+		<mat-datepicker-toggle [for]='datepickerEnd'></mat-datepicker-toggle>
+	</mat-form-field>
+	<mat-datepicker [touchUi]='mobile' #datepickerEnd></mat-datepicker>
+
+	<mat-form-field fxFlex>
+		<textarea
+			matInput
+			matTextareaAutosize
+			matAutosizeMinRows='4'
+			cyphTranslate
+			[disabled]='isDisabled'
+			[ngModel]='value.description'
+			(ngModelChange)='value.description = $event; onChange(value)'
+			placeholder='Description'
+		></textarea>
+	</mat-form-field>
+</div>

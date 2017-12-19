@@ -1,6 +1,11 @@
-import {Component} from '@angular/core';
+/* tslint:disable:member-ordering */
+
+import {Component, Input} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {ICalendarInvite} from '../proto';
+import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
+import {getDate, timestampToDate} from '../util/time';
 
 
 /**
@@ -20,19 +25,28 @@ import {StringsService} from '../services/strings.service';
 })
 export class CalendarInviteComponent implements ControlValueAccessor {
 	/** Change event callback. */
-	private onChange: (value: string) => void	= () => {};
+	private onChange: (value: ICalendarInvite) => void		= () => {};
 
 	/** Indicates whether input is disabled. */
-	public isDisabled: boolean					= false;
+	@Input() public isDisabled: boolean						= false;
+
+	/** Indicates whether mobile version should be displayed. */
+	@Input() public mobile: boolean							= this.envService.isMobile;
+
+	/** Current date. */
+	public readonly now: Promise<Date>						= getDate();
 
 	/** Touch event callback. */
-	public onTouched: () => void				= () => {};
+	public onTouched: () => void							= () => {};
+
+	/** @see timestampToDate */
+	public readonly timestampToDate: typeof timestampToDate	= timestampToDate;
 
 	/** Value. */
-	public value: string						= '';
+	public value: ICalendarInvite							= {};
 
 	/** @inheritDoc */
-	public registerOnChange (f: (value: string) => void) : void {
+	public registerOnChange (f: (value: ICalendarInvite) => void) : void {
 		this.onChange	= f;
 	}
 
@@ -49,13 +63,16 @@ export class CalendarInviteComponent implements ControlValueAccessor {
 	}
 
 	/** @inheritDoc */
-	public writeValue (value: string) : void {
-		if (this.value !== value) {
+	public writeValue (value?: ICalendarInvite) : void {
+		if (value && this.value !== value) {
 			this.value	= value;
 		}
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly envService: EnvService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {}

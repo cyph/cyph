@@ -206,7 +206,12 @@ export class ChatService {
 		}
 
 		if (
-			!(value.form || (value.quill && value.quill.length > 0) || value.text) ||
+			!(
+				value.calendarInvite ||
+				value.form ||
+				(value.quill && value.quill.length > 0) ||
+				value.text
+			) ||
 			this.chat.state === States.aborted ||
 			(author !== this.sessionService.appUsername && this.chat.isDisconnected)
 		) {
@@ -415,6 +420,17 @@ export class ChatService {
 		;
 
 		switch (messageType) {
+			case ChatMessageValueTypes.CalendarInvite:
+				value.calendarInvite			=
+					(message && message.calendarInvite) ||
+					this.chat.currentMessage.calendarInvite
+				;
+				currentMessage.calendarInvite	= undefined;
+				if (!value.calendarInvite) {
+					return;
+				}
+				break;
+
 			case ChatMessageValueTypes.Form:
 				value.form	= (message && message.form) || this.chat.currentMessage.form;
 				currentMessage.form	= undefined;

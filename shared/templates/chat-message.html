@@ -72,7 +72,9 @@
 								<div fxFlex *ngIf='!mobile'></div>
 								<div>
 									<span>{{message.dateTimeString}}</span>
-									<ng-container *ngTemplateOutlet='messageConfirmation'></ng-container>
+									<ng-container
+										*ngTemplateOutlet='messageConfirmation'
+									></ng-container>
 								</div>
 							</div>
 						</mat-card-title>
@@ -126,10 +128,19 @@
 
 <ng-template #messageContent let-value='value'>
 	<span (click)='click($event)'>
-		<cyph-dynamic-form
-			[form]='value.form'
-			*ngIf='value.form; else quillValue'
-		></cyph-dynamic-form>
+		<cyph-calendar-invite
+			[isDisabled]='true'
+			[mobile]='mobile'
+			[ngModel]='value.calendarInvite'
+			*ngIf='value.calendarInvite; else formValue'
+		></cyph-calendar-invite>
+		<ng-template #formValue>
+			<cyph-dynamic-form
+				[form]='value.form'
+				[mobile]='mobile'
+				*ngIf='value.form; else quillValue'
+			></cyph-dynamic-form>
+		</ng-template>
 		<ng-template #quillValue>
 			<cyph-quill
 				[content]='quill | async'

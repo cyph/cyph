@@ -6,7 +6,21 @@
 	<div fxFlex='90' class='cyph-light-theme'>
 		<mat-card fxFlex>
 			<mat-card-title>
-				<span cyphTranslate>New Message</span>
+				<span
+					cyphTranslate
+					*ngIf='(messageType | async) === chatMessageValueTypes.CalendarInvite'
+				>
+					Request Appointment
+				</span>
+				<span cyphTranslate *ngIf='(messageType | async) === chatMessageValueTypes.Form'>
+					Send Form
+				</span>
+				<span cyphTranslate *ngIf='
+					(messageType | async) === chatMessageValueTypes.Quill ||
+					(messageType | async) === chatMessageValueTypes.Text
+				'>
+					New Message
+				</span>
 			</mat-card-title>
 			<mat-card-content>
 				<div
@@ -21,7 +35,7 @@
 						(userFilterChange)='$event.subscribe(recipient)'
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box
-						[messageType]='messageType'
+						[messageType]='messageType | async'
 						[recipient]='recipient'
 						[send]='send'
 						[showHeader]='true'

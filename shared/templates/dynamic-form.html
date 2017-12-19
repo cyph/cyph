@@ -47,7 +47,7 @@
 							/>
 							<mat-datepicker-toggle [for]='datepicker'></mat-datepicker-toggle>
 						</mat-form-field>
-						<mat-datepicker #datepicker></mat-datepicker>
+						<mat-datepicker [touchUi]='mobile' #datepicker></mat-datepicker>
 					</ng-container>
 
 					<mat-form-field *ngIf='o.type === types.Email'>
@@ -152,6 +152,8 @@
 					<mat-form-field *ngIf='o.type === types.Textarea'>
 						<textarea
 							matInput
+							matTextareaAutosize
+							matAutosizeMinRows='4'
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='o.label'

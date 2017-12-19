@@ -52,6 +52,7 @@ export class ChatMessage implements IChatMessage {
 
 	/** @ignore */
 	public value?: IChatMessageValue	= this.message.value && {
+		calendarInvite: this.message.value.calendarInvite,
 		form: this.message.value.form,
 		quill: this.message.value.quill,
 		text: this.message.value.text
@@ -89,19 +90,23 @@ export class ChatMessage implements IChatMessage {
 				return;
 			}
 
+			if (this.value.calendarInvite) {
+				this.message.value.calendarInvite	= undefined;
+				this.value.calendarInvite			= undefined;
+			}
 			if (this.value.form) {
-				this.message.value.form		= undefined;
-				this.value.form				= undefined;
+				this.message.value.form				= undefined;
+				this.value.form						= undefined;
 			}
 			if (this.value.quill) {
 				potassiumUtil.clearMemory(this.value.quill);
-				this.value.quill			= undefined;
-				this.message.value.quill	= undefined;
+				this.value.quill					= undefined;
+				this.message.value.quill			= undefined;
 
 			}
 			if (this.value.text) {
-				this.message.value.text		= '';
-				this.value.text				= '';
+				this.message.value.text				= '';
+				this.value.text						= '';
 			}
 		});
 	}
