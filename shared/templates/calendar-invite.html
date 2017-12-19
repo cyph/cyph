@@ -7,7 +7,7 @@
 			[ngModel]='value.title'
 			(ngModelChange)='value.title = $event; onChange(value)'
 			type='text'
-			placeholder='Title'
+			placeholder='Reason for Appointment'
 		/>
 	</mat-form-field>
 
@@ -50,7 +50,7 @@
 			[disabled]='isDisabled'
 			[ngModel]='value.description'
 			(ngModelChange)='value.description = $event; onChange(value)'
-			placeholder='Description'
+			placeholder='Notes'
 		></textarea>
 	</mat-form-field>
 </div>

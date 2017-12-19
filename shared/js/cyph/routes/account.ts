@@ -57,6 +57,11 @@ export const account: Route	= {
 		},
 		{path: 'logout', component: AccountLogoutComponent},
 		{path: 'messages/:username', component: AccountChatComponent},
+		{
+			path: 'new-patient/:username',
+			component: AccountComposeComponent,
+			data: {messageType: ChatMessageValueTypes.Form}
+		},
 		{path: 'notes', component: AccountNotesComponent, data: {realTime: false}},
 		{
 			path: 'notes/:id',

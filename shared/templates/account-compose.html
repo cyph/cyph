@@ -8,7 +8,8 @@
 			<mat-card-title>
 				<span
 					cyphTranslate
-					*ngIf='(messageType | async) === chatMessageValueTypes.CalendarInvite'
+					*ngIf='(messageType | async) === chatMessageValueTypes.CalendarInvite &&
+					(sent | async) === false'
 				>
 					Request Appointment
 				</span>
@@ -30,6 +31,8 @@
 					*ngIf='(sent | async) === false'
 				>
 					<cyph-account-contacts-search
+						[class.visibility-hidden]='(messageType | async) ===
+						chatMessageValueTypes.CalendarInvite'
 						[placeholder]='stringsService.to'
 						[searchUsername]='searchUsername'
 						(userFilterChange)='$event.subscribe(recipient)'
@@ -43,12 +46,31 @@
 					></cyph-account-chat-message-box>
 				</div>
 				<div fxFlexFill fxLayoutAlign='center center' *ngIf='sent | async'>
-					<div>
+					<div *ngIf='(messageType | async) != chatMessageValueTypes.CalendarInvite'>
 						<span cyphTranslate>Message sent to</span>
 						<a [routerLink]='"/account/messages/" + (recipient | async)?.username'>
 							{{(recipient | async)?.name | async}}
 							(@{{(recipient | async)?.realUsername | async}})
 						</a>
+					</div>
+					<div 
+						fxLayout='column'
+						fxLayoutAlign='center center'
+						fxLayoutGap='5px'
+						*ngIf='(messageType | async) === chatMessageValueTypes.CalendarInvite'
+					>
+						<h1 cyphTranslate>Your appointment has been requested!</h1>
+						<h2 cyphTranslate>
+							Why don't you get ahead on those medical forms while you're waiting for
+							 confirmation?</h2>
+						<button
+							mat-raised-button
+							cyphTranslate
+							color='primary'
+							[routerLink]='"/account/new-patient/" + (recipient | async)?.username'
+						>
+							Patient Forms
+						</button>
 					</div>
 				</div>
 			</mat-card-content>
