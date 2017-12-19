@@ -137,6 +137,7 @@
 		<ng-template #formValue>
 			<cyph-dynamic-form
 				[form]='value.form'
+				[isDisabled]='true'
 				[mobile]='mobile'
 				*ngIf='value.form; else quillValue'
 			></cyph-dynamic-form>

@@ -26,7 +26,10 @@
 		fxFlexFill
 		*ngIf='messageType === chatMessageValueTypes.Form'
 	>
-		TODO: Form creation UI
+		<cyph-dynamic-form
+			[form]='chatService.chat.currentMessage.form'
+			(submit)='chatService.chat.currentMessage.form = $event; send()'
+		></cyph-dynamic-form>
 	</div>
 
 	<div
