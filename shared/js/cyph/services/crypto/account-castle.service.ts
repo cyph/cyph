@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {take} from 'rxjs/operators/take';
 import {
 	HandshakeSteps,
 	PairwiseSession,
@@ -12,10 +13,10 @@ import {
 	MaybeBinaryProto,
 	Uint32Proto
 } from '../../proto';
-import {normalize} from '../../util/formatting';
+import {filterUndefinedOperator} from '../../util/filter';
 import {getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {AccountContactsService} from '../account-contacts.service';
-import {SessionService} from '../session.service';
+import {AccountSessionService} from '../account-session.service';
 import {AccountDatabaseService} from './account-database.service';
 import {CastleService} from './castle.service';
 import {PotassiumService} from './potassium.service';
@@ -34,27 +35,29 @@ export class AccountCastleService extends CastleService {
 	/** @inheritDoc */
 	public async init (
 		potassiumService: PotassiumService,
-		sessionService: SessionService
+		accountSessionService: AccountSessionService
 	) : Promise<void> {
-		const transport	= new Transport(sessionService);
+		const transport	= new Transport(accountSessionService);
 
-		sessionService.remoteUsername.subscribe(username => {
-			username	= normalize(username);
-
+		accountSessionService.remoteUser.pipe(
+			filterUndefinedOperator(),
+			take(1)
+		).subscribe(user => {
 			this.pairwiseSessionLock(async () => {
-				const contactID	= await this.accountContactsService.getContactID(username).catch(
-					() => undefined
-				);
+				const contactID	= await this.accountContactsService.
+					getContactID(user.username).
+					catch(() => undefined)
+				;
 
 				if (!contactID) {
 					return;
 				}
 
 				this.pairwiseSession.next(
-					await getOrSetDefaultAsync(this.pairwiseSessions, username, async () => {
+					await getOrSetDefaultAsync(this.pairwiseSessions, user.username, async () => {
 						const sessionURL		= `contacts/${contactID}/session`;
 
-						const handshakeState	= await sessionService.handshakeState(
+						const handshakeState	= await accountSessionService.handshakeState(
 							this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
 								`${sessionURL}/handshake/currentStep`,
 								Uint32Proto
@@ -71,7 +74,7 @@ export class AccountCastleService extends CastleService {
 
 						const remoteUser		= new RegisteredRemoteUser(
 							this.accountDatabaseService,
-							sessionService.remoteUsername
+							user.realUsername
 						);
 
 						return new PairwiseSession(
