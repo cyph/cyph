@@ -71,24 +71,22 @@
 						*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'
 					>
 						<div fxLayout='column'>
-						<h2 cyphTranslate>Patient Info</h2>
-								<span>
-									<strong cyphTranslate>Gender:</strong>
-									<span>{{extra.gender || ''}}</span>
-								</span>
-								<div
-									class='description' *ngIf='user.description'>
-									{{user.description | async}}
+							<h2 cyphTranslate>Patient Info</h2>
+							<span>
+								<strong cyphTranslate>Gender:</strong>
+								<span>{{extra.gender || ''}}</span>
+							</span>
+							<div class='description' *ngIf='user.description'>
+								{{user.description | async}}
 							</div>
 						</div>
 					</mat-card-content>
 					<mat-card-content
 						*ngIf='(user.userType | async) === accountUserTypes.TelehealthOrg'
 					>
-					<div
-							class='description' *ngIf='user.description'>
+						<div class='description' *ngIf='user.description'>
 							{{user.description | async}}
-					</div>
+						</div>
 						<h2 cyphTranslate>Address</h2>
 						<mat-list>
 							<mat-list-item>
@@ -99,26 +97,25 @@
 					<mat-card-content
 						*ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'
 					>
-							<button
-								mat-raised-button
-								cyphTranslate
-								color='primary'
-								[routerLink]='"/account/request-appointment/" + user.username'
-							>
-								Request Appointment
-							</button>
-							<br />
-							<br />
-							<mat-list>
-								<mat-list-item>
-									<br />
-									<div
-										*ngIf='user.description'>
-										{{user.description | async}}
-									</div>
-								</mat-list-item>
-							</mat-list>
-							<br />
+						<button
+							mat-raised-button
+							cyphTranslate
+							color='primary'
+							[routerLink]='"/account/request-appointment/" + user.username'
+						>
+							Request Appointment
+						</button>
+						<br />
+						<br />
+						<mat-list>
+							<mat-list-item>
+								<br />
+								<div *ngIf='user.description'>
+									{{user.description | async}}
+								</div>
+							</mat-list-item>
+						</mat-list>
+						<br />
 						<h2 cyphTranslate>Specialties</h2>
 						<mat-list>
 							<mat-list-item>
