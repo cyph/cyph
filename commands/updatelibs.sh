@@ -44,6 +44,7 @@ read -r -d '' modules <<- EOM
 	@ngrx/store
 	@ngrx/store-devtools
 	@ngtools/webpack
+	@opentok/client
 	@types/braintree-web
 	@types/dompurify
 	@types/dropzone
@@ -157,6 +158,7 @@ read -r -d '' modules <<- EOM
 	notify-cli
 	ntru
 	od-virtualscroll@https://github.com/buu700/od-virtualscroll-tmp
+	opentok
 	parchment@https://github.com/buu700/parchment-tmp
 	pdfkit
 	prepack
