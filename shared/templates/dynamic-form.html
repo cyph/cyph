@@ -28,6 +28,7 @@
 
 					<mat-checkbox
 						[(ngModel)]='o.valueBoolean'
+						[disabled]='isDisabled'
 						[name]='o.label'
 						[required]='o.required'
 						*ngIf='o.type === types.Checkbox'
@@ -42,6 +43,7 @@
 								[matDatepicker]='datepicker'
 								[ngModel]='timestampToDate(o.valueNumber)'
 								(ngModelChange)='o.valueNumber = $event ? $event.getTime() : 0'
+								[disabled]='isDisabled'
 								[placeholder]='o.label'
 								[required]='o.required'
 							/>
@@ -57,6 +59,7 @@
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
 							type='email'
+							[disabled]='isDisabled'
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
@@ -69,6 +72,7 @@
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
 							type='text'
+							[disabled]='isDisabled'
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
@@ -83,6 +87,7 @@
 							[min]='o.min'
 							[name]='o.label'
 							type='number'
+							[disabled]='isDisabled'
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
@@ -94,7 +99,8 @@
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
-							type='password'
+							[type]='isDisabled ? "text" : "password"'
+							[disabled]='isDisabled'
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
@@ -105,6 +111,7 @@
 						fxFlex
 						[(ngModel)]='o.valueString'
 						[name]='o.label'
+						[disabled]='isDisabled'
 						[required]='o.required'
 						*ngIf='o.type === types.Radio'
 					>
@@ -120,6 +127,7 @@
 						fxFlex
 						[(ngModel)]='o.valueString'
 						[name]='o.label'
+						[disabled]='isDisabled'
 						[required]='o.required'
 						*ngIf='o.type === types.Select'
 					>
@@ -143,6 +151,7 @@
 					<mat-slide-toggle
 						[(ngModel)]='o.valueBoolean'
 						[name]='o.label'
+						[disabled]='isDisabled'
 						[required]='o.required'
 						*ngIf='o.type === types.SlideToggle'
 					>
@@ -157,6 +166,7 @@
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
+							[disabled]='isDisabled'
 							[placeholder]='o.label'
 							[required]='o.required'
 						></textarea>
@@ -169,6 +179,7 @@
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
 							type='time'
+							[disabled]='isDisabled'
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
@@ -181,6 +192,7 @@
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
 							type='url'
+							[disabled]='isDisabled'
 							[placeholder]='o.label'
 							[required]='o.required'
 						/>
@@ -190,7 +202,7 @@
 			</div>
 		</div>
 	</div>
-	<div fxLayout='row' fxLayoutAlign='center center'>
+	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isDisabled'>
 		<button mat-button cyphTranslate type='submit'>
 			Submit
 		</button>
