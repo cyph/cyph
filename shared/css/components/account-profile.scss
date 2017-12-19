@@ -63,6 +63,8 @@
 	}
 
 	.mat-card {
+		max-width: 50%;
+		overflow: scroll;
 		.mat-card-content {
 			.mat-list {
 				.mat-list-item {
@@ -91,8 +93,8 @@
 	.description {
 		font-size: 20px;
 		margin: 25px;
-		min-height: 100px;
-		width: 100%;
+		max-width: 42%;
+		position: relative;
 
 		input {
 			text-align: center;

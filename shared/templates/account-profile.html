@@ -66,7 +66,7 @@
 					(user.userType | async) === accountUserTypes.TelehealthPatient
 				'
 			>
-				<mat-card fxFlex='33' *ngIf='user.extra() | async; let extra'>
+				<mat-card *ngIf='user.extra() | async; let extra'>
 					<mat-card-content
 						*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'
 					>
@@ -79,10 +79,26 @@
 								</span>
 							</mat-list-item>
 						</mat-list>
+						<mat-list>
+							<mat-list-item>
+								<span
+									class='description' *ngIf='user.description'>
+									{{user.description | async}}
+								</span>
+							</mat-list-item>
+						</mat-list>
 					</mat-card-content>
 					<mat-card-content
 						*ngIf='(user.userType | async) === accountUserTypes.TelehealthOrg'
 					>
+						<mat-list>
+							<mat-list-item>
+								<span
+									class='description' *ngIf='user.description'>
+									{{user.description | async}}
+								</span>
+							</mat-list-item>
+						</mat-list>
 						<h2 cyphTranslate>Address</h2>
 						<mat-list>
 							<mat-list-item>
@@ -93,14 +109,26 @@
 					<mat-card-content
 						*ngIf='(user.userType | async) === accountUserTypes.TelehealthDoctor'
 					>
-						<button
-							mat-raised-button
-							cyphTranslate
-							color='primary'
-							[routerLink]='"/account/request-appointment/" + user.username'
-						>
-							Request Appointment
-						</button>
+							<button
+								mat-raised-button
+								cyphTranslate
+								color='primary'
+								[routerLink]='"/account/request-appointment/" + user.username'
+							>
+								Request Appointment
+							</button>
+							<br />
+							<br />
+							<mat-list>
+								<mat-list-item>
+									<br />
+									<span
+										*ngIf='user.description'>
+										{{user.description | async}}
+									</span>
+								</mat-list-item>
+							</mat-list>
+							<br />
 						<h2 cyphTranslate>Specialties</h2>
 						<mat-list>
 							<mat-list-item>
