@@ -116,63 +116,53 @@
 							</mat-list-item>
 						</mat-list>
 						<br />
-						<h2 cyphTranslate>Specialties</h2>
-						<mat-list>
-							<mat-list-item>
-								<span>{{(extra.specialties?.data || [])[0] || ''}}</span>
-							</mat-list-item>
-							<mat-list-item>
-								<span>{{(extra.specialties?.data || [])[1] || ''}}</span>
-							</mat-list-item>
-						</mat-list>
-						<h2 cyphTranslate>Education & Training</h2>
-						<mat-list>
-							<mat-list-item>
-								<span>
+						<mat-grid-list cols='6' colWidth='25px' rowHeight='125px'>
+							<mat-grid-tile colspan='3' rowspan='2'>
+								<div fxLayout='column'>
+									<h2 cyphTranslate>Education & Training</h2>
 									<strong cyphTranslate>Bachelors:</strong>
-									<span>{{(extra.education || [])[0]?.locationName || ''}}</span>
-								</span>
-							</mat-list-item>
-							<mat-list-item>
-								<span>
+									<span>
+										{{(extra.education || [])[0]?.locationName || ''}}
+									</span>
 									<strong cyphTranslate>Medical School:</strong>
-									<span>{{(extra.education || [])[1]?.locationName || ''}}</span>
-								</span>
-							</mat-list-item>
-							<mat-list-item>
-								<span>
+									<span>
+										{{(extra.education || [])[1]?.locationName || ''}}
+									</span>
 									<strong cyphTranslate>Residency:</strong>
-									<span>{{(extra.education || [])[2]?.locationName || ''}}</span>
-								</span>
-							</mat-list-item>
-						</mat-list>
-						<h2 cyphTranslate>Languages</h2>
-						<mat-list>
-							<mat-list-item>
-								<span>{{(extra.languages || [])[0]?.language || ''}}</span>
-							</mat-list-item>
-							<mat-list-item>
-								<span>{{(extra.languages || [])[3]?.language || ''}}</span>
-							</mat-list-item>
-						</mat-list>
-						<h2 cyphTranslate>Insurance</h2>
-						<mat-list>
-							<mat-list-item>
-								<span>{{(extra.insurance?.data || [])[0] || ''}}</span>
-							</mat-list-item>
-							<mat-list-item>
-								<span>{{(extra.insurance?.data || [])[1] || ''}}</span>
-							</mat-list-item>
-						</mat-list>
-						<h2 cyphTranslate>Misc</h2>
-						<mat-list>
-							<mat-list-item>
-								<span>
-									<strong cyphTranslate>NPI:</strong>
+									<span>
+										{{(extra.education || [])[2]?.locationName || ''}}
+									</span>
+								</div>
+							</mat-grid-tile>
+							<mat-grid-tile colspan='3' rowspan='2'>
+									<div fxLayout='column'>
+										<h2 cyphTranslate>Insurance</h2>
+										<span>{{(extra.insurance?.data || [])[0] || ''}}</span>
+										<span>{{(extra.insurance?.data || [])[1] || ''}}</span>
+									</div>
+								</mat-grid-tile>
+							<mat-grid-tile colspan='2'>
+								<div fxLayout='column'>
+									<h2 cyphTranslate>Specialties</h2>
+									<span>{{(extra.specialties?.data || [])[0] || ''}}</span>
+									<span>{{(extra.specialties?.data || [])[1] || ''}}</span>
+								</div>
+							</mat-grid-tile>
+							
+							<mat-grid-tile colspan='2'>
+								<div fxLayout='column'>
+									<h2 cyphTranslate>Languages</h2>
+									<span>{{(extra.languages || [])[0]?.language || ''}}</span>
+									<span>{{(extra.languages || [])[3]?.language || ''}}</span>
+								</div>
+							</mat-grid-tile>
+							<mat-grid-tile colspan='2'>
+								<div fxLayout='column'>
+									<h2 cyphTranslate>NPI:</h2>
 									<span>{{(extra.npi?.data || [])[0] || ''}}</span>
-								</span>
-							</mat-list-item>
-						</mat-list>
+								</div>
+							</mat-grid-tile>
+						</mat-grid-list>
 					</mat-card-content>
 				</mat-card>
 				<div

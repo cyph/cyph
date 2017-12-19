@@ -63,10 +63,13 @@
 	}
 
 	.mat-card {
-		max-width: 50%;
-		overflow: scroll;
+		max-width: 33%;
+		overflow: auto;
 
 		.mat-card-content {
+			button.mat-raised-button {
+				margin-bottom: 42px;
+			}
 			.mat-list {
 				.mat-list-item {
 					span {
