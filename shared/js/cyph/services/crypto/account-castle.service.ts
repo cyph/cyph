@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {skip} from 'rxjs/operators/skip';
 import {
 	HandshakeSteps,
 	PairwiseSession,
@@ -72,7 +71,7 @@ export class AccountCastleService extends CastleService {
 
 						const remoteUser		= new RegisteredRemoteUser(
 							this.accountDatabaseService,
-							sessionService.remoteUsername.pipe(skip(1))
+							sessionService.remoteUsername
 						);
 
 						return new PairwiseSession(
