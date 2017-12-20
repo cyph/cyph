@@ -290,7 +290,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				}
 			},
 			localVideoEl: $localVideo[0],
-			media: this.outgoingStream,
+			media: {audio: true, video: true},
 			remoteVideosEl: $remoteVideo[0]
 		});
 
@@ -334,6 +334,11 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		webRTC.startLocalVideo();
 		webRTC.connection.emit('connect');
+
+		if (!this.outgoingStream.video) {
+			this.toggle('video', true);
+		}
+
 		(await this.handlers).connected(true);
 
 		this.webRTC	= webRTC;
