@@ -193,22 +193,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		}
 	}
 
-	/** @ignore */
-	private refresh (webRTC: any = this.webRTC) : void {
-		this.loading	=
-			this.incomingStream.audio ||
-			this.incomingStream.video
-		;
-
-		if (!webRTC) {
-			return;
-		}
-
-		webRTC.leaveRoom();
-		webRTC.stopLocalVideo();
-		webRTC.startLocalVideo();
-	}
-
 	/** @inheritDoc */
 	public accept (callType?: 'audio'|'video') : void {
 		this.isAccepted				= true;
@@ -253,8 +237,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		this.isActive	= true;
 
-		let initialRefresh	= true;
-
 		const iceServers	= request({retries: 5, url: env.baseUrl + 'iceservers'});
 
 		const webRTCEvents: string[]	= [];
@@ -263,8 +245,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		const $remoteVideo	= await waitForIterable<JQuery>(await this.remoteVideo);
 
 		const webRTC	= new SimpleWebRTC({
-			adjustPeerVolume: true,
-			autoRemoveVideos: false,
+			adjustPeerVolume: false,
+			autoRemoveVideos: true,
 			autoRequestMedia: false,
 			connection: {
 				disconnect: () => {
@@ -331,8 +313,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 				return o;
 			}).
-			filter(o => o.urls && o.urls.length > 0).
-			slice(0, 2)
+			filter(o => o.urls && o.urls.length > 0)
 		;
 
 		webRTC.connection.on(
@@ -340,29 +321,20 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			(incomingStream: {audio: boolean; video: boolean}) => {
 				this.incomingStream.audio	= !!incomingStream.audio;
 				this.incomingStream.video	= !!incomingStream.video;
-				this.refresh(webRTC);
 			}
 		);
 
 		webRTC.on('videoAdded', () => {
-			$remoteVideo.find('video').slice(0, -1).remove();
-
 			this.loading	= false;
 		});
 
 		webRTC.on('readyToCall', async () => {
 			webRTC.joinRoom(P2PWebRTCService.constants.webRTC);
-
-			/* Possible edge case workaround */
-			if (initialRefresh) {
-				initialRefresh	= false;
-				await sleep();
-				this.refresh();
-			}
 		});
 
 		webRTC.startLocalVideo();
 		webRTC.connection.emit('connect');
+		(await this.handlers).connected(true);
 
 		this.webRTC	= webRTC;
 	}
@@ -405,7 +377,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	}
 
 	/** @inheritDoc */
-	public async toggle (shouldPause?: boolean, medium?: 'audio'|'video') : Promise<void> {
+	public async toggle (medium?: 'audio'|'video', shouldPause?: boolean) : Promise<void> {
 		while (!(this.webRTC && this.webRTC.connection)) {
 			await sleep();
 		}
@@ -428,7 +400,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		}
 
 		this.webRTC.connection.emit('streamUpdate', this.outgoingStream);
-		this.refresh();
 	}
 
 	constructor (

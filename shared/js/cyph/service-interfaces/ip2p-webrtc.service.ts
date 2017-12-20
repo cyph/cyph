@@ -40,11 +40,11 @@ export interface IP2PWebRTCService {
 
 	/**
 	 * Pauses all or a subset of the current outgoing stream.
-	 * @param shouldPause If not specified, will switch to the opposite
-	 * of the current state.
 	 * @param medium If specified ("video" or "audio"), will only pause
 	 * that subset of the stream. If not specified, the entire stream
 	 * will be affected.
+	 * @param shouldPause If not specified, will switch to the opposite
+	 * of the current state.
 	 */
-	toggle (shouldPause?: boolean, medium?: 'audio'|'video') : void;
+	toggle (medium?: 'audio'|'video', shouldPause?: boolean) : void;
 }
