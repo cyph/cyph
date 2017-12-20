@@ -160,7 +160,7 @@ export class P2PService {
 			this.p2pWebRTCService.request('video');
 		}
 		else {
-			this.p2pWebRTCService.toggle(undefined, 'video');
+			this.p2pWebRTCService.toggle('video');
 		}
 	}
 
@@ -177,7 +177,7 @@ export class P2PService {
 			this.p2pWebRTCService.request('audio');
 		}
 		else {
-			this.p2pWebRTCService.toggle(undefined, 'audio');
+			this.p2pWebRTCService.toggle('audio');
 		}
 	}
 
