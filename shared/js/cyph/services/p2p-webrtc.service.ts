@@ -9,7 +9,7 @@ import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {request} from '../util/request';
 import {parse} from '../util/serialization';
-import {sleep, waitForIterable} from '../util/wait';
+import {sleep, waitForIterable, waitForValue} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
@@ -378,25 +378,34 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @inheritDoc */
 	public async toggle (medium?: 'audio'|'video', shouldPause?: boolean) : Promise<void> {
-		while (!(this.webRTC && this.webRTC.connection)) {
-			await sleep();
-		}
+		await waitForValue(() => this.webRTC && this.webRTC.connection);
 
-		if (shouldPause !== true && shouldPause !== false) {
-			if (medium) {
-				(<any> this.outgoingStream)[medium]	= !(<any> this.outgoingStream)[medium];
+		if (medium === 'audio' || medium === undefined) {
+			this.outgoingStream.audio	=
+				shouldPause === false ||
+				(shouldPause === undefined && !this.outgoingStream.audio)
+			;
+
+			if (this.outgoingStream.audio) {
+				this.webRTC.unmute();
 			}
 			else {
-				this.outgoingStream.audio	= !this.outgoingStream.audio;
-				this.outgoingStream.video	= !this.outgoingStream.video;
+				this.webRTC.mute();
 			}
 		}
-		else if (medium) {
-			(<any> this.outgoingStream)[medium]	= !shouldPause;
-		}
-		else {
-			this.outgoingStream.audio	= !shouldPause;
-			this.outgoingStream.video	= !shouldPause;
+
+		if (medium === 'video' || medium === undefined) {
+			this.outgoingStream.video	=
+				shouldPause === false ||
+				(shouldPause === undefined && !this.outgoingStream.video)
+			;
+
+			if (this.outgoingStream.video) {
+				this.webRTC.resumeVideo();
+			}
+			else {
+				this.webRTC.pauseVideo();
+			}
 		}
 
 		this.webRTC.connection.emit('streamUpdate', this.outgoingStream);
