@@ -255,10 +255,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		let initialRefresh	= true;
 
-		const iceServers: string	= await request({
-			retries: 5,
-			url: env.baseUrl + 'iceservers'
-		});
+		const iceServers	= request({retries: 5, url: env.baseUrl + 'iceservers'});
 
 		const webRTCEvents: string[]	= [];
 
@@ -316,10 +313,26 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		});
 
 		webRTC.webrtc.config.peerConnectionConfig.iceServers	=
-			parse<any>(iceServers).
-			filter((o: any) =>
-				!this.sessionService.apiFlags.forceTURN || o.url.indexOf('stun:') !== 0
-			)
+			parse<RTCIceServer[]>(await iceServers).
+			map(o => {
+				if ((<any> o).url !== undefined) {
+					o.urls			= (<any> o).url;
+					(<any> o).url	= undefined;
+				}
+
+				if (this.sessionService.apiFlags.forceTURN) {
+					o.urls	= typeof o.urls === 'string' && o.urls.indexOf('stun:') !== 0 ?
+						o.urls :
+						o.urls instanceof Array ?
+							o.urls.filter((url: string) => url.indexOf('stun:') !== 0) :
+							undefined
+					;
+				}
+
+				return o;
+			}).
+			filter(o => o.urls && o.urls.length > 0).
+			slice(0, 2)
 		;
 
 		webRTC.connection.on(
