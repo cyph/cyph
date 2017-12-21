@@ -17,6 +17,7 @@ import {AccountProfileComponent} from '../components/account-profile.component';
 import {AccountRegisterComponent} from '../components/account-register.component';
 import {AccountSettingsComponent} from '../components/account-settings.component';
 import {AccountComponent} from '../components/account.component';
+import {newPatient} from '../forms';
 import {ChatMessageValueTypes} from '../proto';
 
 
@@ -58,9 +59,14 @@ export const account: Route	= {
 		{path: 'logout', component: AccountLogoutComponent},
 		{path: 'messages/:username', component: AccountChatComponent},
 		{
+			path: 'new-patient',
+			component: AccountComposeComponent,
+			data: {messageType: ChatMessageValueTypes.Form, value: newPatient}
+		},
+		{
 			path: 'new-patient/:username',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValueTypes.Form}
+			data: {messageType: ChatMessageValueTypes.Form, value: newPatient}
 		},
 		{path: 'notes', component: AccountNotesComponent, data: {realTime: false}},
 		{

@@ -31,7 +31,37 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	/** @see AccountChatMessageBoxComponent.messageType */
 	public readonly messageType: BehaviorSubject<ChatMessageValueTypes>	=
 		observableToBehaviorSubject(
-			this.activatedRoute.data.pipe(map((o: any) => o.messageType)),
+			this.activatedRoute.data.pipe(map((o: {
+				messageType: ChatMessageValueTypes;
+				value: any;
+			}) => {
+				const value	= typeof o.value === 'function' ? o.value() : o.value;
+
+				if (value !== undefined) {
+					switch (o.messageType) {
+						case ChatMessageValueTypes.CalendarInvite:
+							this.accountChatService.chat.currentMessage.calendarInvite	= value;
+							break;
+
+						case ChatMessageValueTypes.Form:
+							this.accountChatService.chat.currentMessage.form			= value;
+							break;
+
+						case ChatMessageValueTypes.Quill:
+							this.accountChatService.chat.currentMessage.quill			= value;
+							break;
+
+						case ChatMessageValueTypes.Text:
+							this.accountChatService.chat.currentMessage.text			= value;
+							break;
+
+						default:
+							throw new Error('Invalid chat message type.');
+					}
+				}
+
+				return o.messageType;
+			})),
 			ChatMessageValueTypes.Quill
 		)
 	;
