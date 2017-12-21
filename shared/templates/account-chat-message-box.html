@@ -12,6 +12,7 @@
 			fxFlex.lt-lg='10'
 			fxFlex.lt-md='15'
 			fxLayoutAlign='center center'
+			*ngIf='messageType !== chatMessageValueTypes.Form'
 		>
 			<button
 				mat-icon-button
@@ -29,10 +30,11 @@
 
 	<cyph-chat-message-box
 		[accounts]='true'
+		[customSendFunction]='customSendFunction'
 		[fileAccept]='fileAccept'
 		[messageType]='messageType'
 		[showSendButton]='!showHeader'
 		[showUnreadCount]='showUnreadCount'
-		(sendFunction)='send = send || $event'
+		(sendFunction)='send = $event'
 	></cyph-chat-message-box>
 </div>

@@ -1,5 +1,5 @@
 /* Temporary workaround pending https://github.com/mgechev/codelyzer/issues/419. */
-/* tslint:disable:no-access-missing-member */
+/* tslint:disable:no-access-missing-member member-ordering */
 
 import {
 	AfterViewInit,
@@ -45,11 +45,20 @@ export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
 	/** @ignore */
 	private readonly mobileButtonLock: {}		= {};
 
+	/** Default sendFunction value. */
+	private readonly defaultSendFunction: () => Promise<void>	= async () => {
+		await this.chatService.send(this.messageType);
+	/* tslint:disable-next-line:semicolon */
+	};
+
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
 
 	/** @see ChatMessageValueTypes */
 	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
+
+	/** Custom send function. */
+	@Input() public customSendFunction?: () => Promise<void>;
 
 	/** @see FileInput.accept */
 	@Input() public fileAccept?: string;
@@ -168,7 +177,7 @@ export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
 
 	/** Sends current message. */
 	public async send () : Promise<void> {
-		await this.chatService.send(this.messageType);
+		await (this.customSendFunction ? this.customSendFunction : this.defaultSendFunction)();
 	}
 
 	constructor (

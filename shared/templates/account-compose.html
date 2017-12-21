@@ -38,9 +38,9 @@
 						(userFilterChange)='$event.subscribe(recipient)'
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box
+						[customSendFunction]='send'
 						[messageType]='messageType | async'
 						[recipient]='recipient'
-						[send]='send'
 						[showHeader]='true'
 						[showUnreadCount]='false'
 					></cyph-account-chat-message-box>

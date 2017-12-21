@@ -14,6 +14,12 @@ import {StringsService} from '../services/strings.service';
 	templateUrl: '../../../templates/account-chat-message-box.html'
 })
 export class AccountChatMessageBoxComponent {
+	/** @see ChatMessageValueTypes */
+	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
+
+	/** @see ChatMessageBoxComponent.customSendFunction */
+	@Input() public customSendFunction?: () => Promise<void>;
+
 	/** @see ChatMessageBoxComponent.fileAccept */
 	@Input() public fileAccept?: string;
 
@@ -24,7 +30,7 @@ export class AccountChatMessageBoxComponent {
 	@Input() public recipient?: Observable<User|undefined>;
 
 	/** @see ChatMessageBoxComponent.send */
-	@Input() public send: () => Promise<void>;
+	public send: () => Promise<void>;
 
 	/** Shows header. */
 	@Input() public showHeader: boolean			= false;
