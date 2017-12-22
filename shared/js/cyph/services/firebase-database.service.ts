@@ -49,14 +49,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 		database: (databaseURL?: string) => FirebaseDatabase;
 		storage: (storageBucket?: string) => FirebaseStorage;
 	}>	= retryUntilSuccessful(() => {
-		try {
-			for (const key of Object.keys(localStorage).filter(k => k.startsWith('firebase:'))) {
-				/* tslint:disable-next-line:ban */
-				localStorage.removeItem(key);
-			}
-		}
-		catch {}
-
 		const app	= firebase.apps[0] || firebase.initializeApp(env.firebaseConfig);
 
 		if (app.auth === undefined) {
@@ -366,10 +358,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async login (username: string, password: string) : Promise<void> {
-		await (await this.app).auth().signInWithEmailAndPassword(
-			this.usernameToEmail(username),
-			password
-		);
+		const auth	= await (await this.app).auth();
+
+		await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+		await auth.signInWithEmailAndPassword(this.usernameToEmail(username), password);
 	}
 
 	/** @inheritDoc */

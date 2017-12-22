@@ -142,7 +142,12 @@ export class AccountAuthService {
 				)
 			);
 
-			await this.databaseService.login(username, loginData.secondaryPassword);
+			try {
+				await this.databaseService.getItem(`users/${username}/lastPresence`, BinaryProto);
+			}
+			catch {
+				await this.databaseService.login(username, loginData.secondaryPassword);
+			}
 
 			const signingKeyPair	= await this.getKeyPair(
 				`users/${username}/signingKeyPair`,
@@ -264,11 +269,13 @@ export class AccountAuthService {
 			this.potassiumService.clearMemory(user.keys.signingKeyPair.publicKey);
 		}
 		if (clearSavedCredentials) {
-			await this.removeSavedCredentials();
+			await Promise.all([
+				this.removeSavedCredentials(),
+				this.databaseService.logout()
+			]);
 		}
 
 		this.accountDatabaseService.currentUser.next(undefined);
-		return this.databaseService.logout();
 	}
 
 	/** Registers. */
