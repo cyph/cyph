@@ -303,7 +303,7 @@ mv package.json.new node_modules/tslint/package.json
 cd ~/lib/js
 
 
-git clone --depth 1 --recursive https://github.com/jedisct1/libsodium.js libsodium.build
+git clone --depth 1 --recursive https://github.com/buu700/libsodium.js libsodium.build
 cd libsodium.build
 rm -rf .git
 
