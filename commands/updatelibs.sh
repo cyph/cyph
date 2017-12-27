@@ -20,7 +20,7 @@ read -r -d '' modules <<- EOM
 	@angular/compiler
 	@angular/compiler-cli
 	@angular/core
-	@angular/flex-layout@https://github.com/buu700/flex-layout-tmp
+	@angular/flex-layout
 	@angular/forms
 	@angular/http
 	@angular/material
@@ -168,7 +168,7 @@ read -r -d '' modules <<- EOM
 	ntru
 	od-virtualscroll@https://github.com/buu700/od-virtualscroll-tmp
 	opentok
-	parchment@https://github.com/buu700/parchment-tmp
+	parchment
 	pdfkit
 	prepack
 	prepack-webpack-plugin
@@ -188,7 +188,7 @@ read -r -d '' modules <<- EOM
 	retire
 	rlwe
 	rsvp
-	rxjs@5.5.2
+	rxjs
 	rxjs-tslint-rules
 	sass-loader
 	script-ext-html-webpack-plugin
@@ -205,7 +205,7 @@ read -r -d '' modules <<- EOM
 	text-mask-addons
 	textillate
 	tns-android
-	tns-core-modules@next
+	tns-core-modules
 	tns-core-modules-widgets
 	tns-ios
 	tns-platform-declarations
