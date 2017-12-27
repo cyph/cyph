@@ -360,7 +360,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public async login (username: string, password: string) : Promise<void> {
 		const auth	= await (await this.app).auth();
 
-		await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+		if (firebase.auth) {
+			await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+		}
+
 		await auth.signInWithEmailAndPassword(this.usernameToEmail(username), password);
 	}
 
