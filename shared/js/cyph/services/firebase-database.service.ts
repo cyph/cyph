@@ -309,7 +309,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							;
 
 							const keys	= Object.keys(value).sort();
-							const o		= value[keys[0]] || {};
+							const o		= value[keys[0]] || {id: '', reason: undefined};
 
 							if (o.id === id) {
 								resolve();
@@ -352,7 +352,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		return {
 			locked: keys.length > 0,
-			reason: (value[keys[0]] || {}).reason
+			reason: (value[keys[0]] || {reason: undefined}).reason
 		};
 	}
 
