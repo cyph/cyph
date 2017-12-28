@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import * as $ from 'jquery';
-import {eventManager} from '../event-manager';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {filter} from 'rxjs/operators/filter';
+import {take} from 'rxjs/operators/take';
 import {EnvService} from './env.service';
 
 
@@ -9,39 +11,31 @@ import {EnvService} from './env.service';
  */
 @Injectable()
 export class VisibilityWatcherService {
-	/** @ignore */
-	private readonly visibilityChangeEvent: string	= 'visibilityChangeEvent';
-
 	/** Indicates whether the window is currently visible. */
-	public isVisible: boolean	= true;
+	public readonly visibility: BehaviorSubject<boolean>	= new BehaviorSubject(true);
 
 	/** @ignore */
 	private trigger (isVisible: boolean) : void {
-		if (this.isVisible === isVisible) {
+		if (this.visibility.value === isVisible) {
 			return;
 		}
 
-		this.isVisible	= isVisible;
-		eventManager.trigger(this.visibilityChangeEvent, this.isVisible);
-	}
-
-	/** Sets handler to run when visibility changes. */
-	public onChange (handler: (isVisible: boolean) => void) : void {
-		eventManager.on(this.visibilityChangeEvent, handler);
+		this.visibility.next(isVisible);
 	}
 
 	/**
 	 * Waits for the visibility to change once.
 	 */
 	public async waitForChange () : Promise<boolean> {
-		return eventManager.one<boolean>(this.visibilityChangeEvent);
+		const initialValue	= this.visibility.value;
+		return this.visibility.pipe(filter(value => value !== initialValue), take(1)).toPromise();
 	}
 
 	/**
 	 * Waits until the window is visible.
 	 */
 	public async waitUntilVisible () : Promise<void> {
-		if (this.isVisible) {
+		if (this.visibility.value) {
 			return;
 		}
 

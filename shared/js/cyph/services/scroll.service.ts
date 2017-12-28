@@ -91,7 +91,7 @@ export class ScrollService {
 		;
 
 		if (
-			this.visibilityWatcherService.isVisible &&
+			this.visibilityWatcherService.visibility.value &&
 			this.unreadItemCount < 1 &&
 			scrollPosition < 150
 		) {

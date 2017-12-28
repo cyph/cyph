@@ -73,7 +73,7 @@ export class NotificationService implements INotificationService {
 		}
 		catch {}
 
-		if (!this.disableNotify && !this.visibilityWatcherService.isVisible) {
+		if (!this.disableNotify && !this.visibilityWatcherService.visibility.value) {
 			this.disableNotify	= true;
 
 			try {
@@ -113,7 +113,7 @@ export class NotificationService implements INotificationService {
 			this.audio	= new Audio(this.config.audio);
 		}
 
-		this.visibilityWatcherService.onChange((isVisible: boolean) => {
+		this.visibilityWatcherService.visibility.subscribe(isVisible => {
 			if (isVisible) {
 				for (const notification of this.openNotifications) {
 					try {
