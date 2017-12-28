@@ -13,7 +13,7 @@ import {EnvService} from './env.service';
 export class WindowWatcherService {
 	/** Window height. */
 	public readonly height: BehaviorSubject<number>			= new BehaviorSubject(
-		this.envService.isWeb ? $(window).height() : 0
+		this.envService.isWeb ? window.outerHeight : 0
 	);
 
 	/** Indicates whether the window is currently visible. */
@@ -21,7 +21,7 @@ export class WindowWatcherService {
 
 	/** Window width. */
 	public readonly width: BehaviorSubject<number>			= new BehaviorSubject(
-		this.envService.isWeb ? $(window).width() : 0
+		this.envService.isWeb ? window.outerWidth : 0
 	);
 
 	/**
@@ -67,8 +67,8 @@ export class WindowWatcherService {
 		}
 
 		$window.resize(() => {
-			this.height.next($window.height());
-			this.width.next($window.width());
+			this.height.next(window.outerHeight);
+			this.width.next(window.outerWidth);
 		});
 	}
 }

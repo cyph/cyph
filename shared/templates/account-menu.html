@@ -60,20 +60,25 @@
 		</button>
 
 		<div fxLayoutAlign='center center'>
-			<div [fxFlex]='(accountService.menuExpanded | async) ? "60" : "6em"'>
-				<img
-					cyphTranslate
-					matTooltip='Profile'
-					matTooltipPosition='right'
-					class='avatar animated flipInX _1'
-					[ngClass]='userPresence[
-						accountDatabaseService.currentUser.value.user.status | async
-					]'
-					alt='Profile Picture'
-					[src]='accountDatabaseService.currentUser.value.user.avatar | async'
-					routerLink='/account/profile'
-					(click)='click()'
-				/>
+			<div
+				[fxFlex]='(accountService.menuExpanded | async) ? "60" : "6em"'
+				fxLayoutAlign='center center'
+			>
+				<div class='avatar-container'>
+					<img
+						cyphTranslate
+						matTooltip='Profile'
+						matTooltipPosition='right'
+						class='avatar animated flipInX _1'
+						[ngClass]='userPresence[
+							accountDatabaseService.currentUser.value.user.status | async
+						]'
+						alt='Profile Picture'
+						[src]='accountDatabaseService.currentUser.value.user.avatar | async'
+						routerLink='/account/profile'
+						(click)='click()'
+					/>
+				</div>
 			</div>
 		</div>
 

@@ -15,32 +15,8 @@
 	<cyph-account-menu
 		fxLayout='column'
 		class='sidebar'
-		[fxFlex]='
-			(accountService.menuExpanded | async) === false ?
-				"6em" :
-				envService.isMobile ?
-					"100" :
-					"20"
-		'
-		[fxFlex.gt-xs]='
-			(accountService.menuExpanded | async) === false ?
-				"6em" :
-				envService.isMobile ?
-					"50" :
-					"20"
-		'
-		[fxFlex.gt-sm]='
-			(accountService.menuExpanded | async) === false ?
-				"6em" :
-				envService.isMobile ?
-					"35" :
-					"20"
-		'
-		[fxFlex.gt-md]='
-			(accountService.menuExpanded | async) === false ?
-				"6em" :
-				"20"
-		'
+		fxFlex='100'
+		[style.max-width]='accountService.menuMaxWidth | async'
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
