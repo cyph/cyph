@@ -26,14 +26,19 @@ export class AccountService {
 	/** Indicates whether the UI is ready. */
 	public isUiReady: boolean					= false;
 
+	/** Indicates whether menu can be expanded. */
+	public readonly menuExpandable: Observable<boolean>	=
+		this.windowWatcherService.width.pipe(map(width =>
+			width >= (this.isTelehealth ? 1550 : 1200)
+		))
+	;
+
 	/** Indicates whether menu is expanded. */
-	public menuExpanded: Observable<boolean>	= combineLatest(
+	public readonly menuExpanded: Observable<boolean>	= combineLatest(
 		this.menuExpandedInternal,
-		this.windowWatcherService.width
-	).pipe(map(([menuExpanded, width]) =>
-		menuExpanded && width >= (
-			this.isTelehealth ? 1550 : 1200
-		)
+		this.menuExpandable
+	).pipe(map(([menuExpanded, menuExpandable]) =>
+		menuExpanded && menuExpandable
 	));
 
 	/** Resolves ready promise. */

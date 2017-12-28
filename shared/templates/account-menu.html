@@ -275,9 +275,12 @@
 		matTooltip='Toggle Menu'
 		matTooltipPosition='right'
 		(click)='accountService.toggleMenu()'
+		*ngIf='accountService.menuExpandable | async'
 	>
 		<mat-icon [class.flipped]='(accountService.menuExpanded | async) === false'>
 			keyboard_arrow_left
 		</mat-icon>
 	</button>
+
+	<div fxFlex='10px' *ngIf='(accountService.menuExpandable | async) === false'></div>
 </div>
