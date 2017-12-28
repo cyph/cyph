@@ -339,6 +339,12 @@ message Form {
 	message Component {
 		/** @see ElementRow */
 		repeated ElementRow rows = 1;
+
+		/** @see Form.id */
+		string id = 2;
+
+		/** @see Form.idSeparator */
+		string idSeparator = 3;
 	}
 
 	/** One element of a Form, and one column of an ElementRow. */
@@ -361,46 +367,61 @@ message Form {
 			URL = 13;
 		}
 
+		/** @see Form.id */
+		string id = 1;
+
 		/** Title/label. */
-		string label = 1;
+		string label = 2;
 
 		/** Input mask (serialized with MessagePack). */
-		bytes mask = 2;
+		bytes mask = 3;
 
 		/** Maximum numerical value. */
-		double max = 3;
+		double max = 4;
 
 		/** Minimum numerical value. */
-		double min = 4;
+		double min = 5;
 
 		/** Options to use if type Radio or Select. */
-		repeated string options = 5;
+		repeated string options = 6;
 
 		/** Indicates whether required. */
-		bool required = 6;
+		bool required = 7;
 
 		/** @see Type */
-		required Types type = 7;
+		required Types type = 8;
 
 		/** Value. */
 		oneof value {
-			bool valueBoolean = 8;
-			double valueNumber = 9;
-			string valueString = 10;
+			bool valueBoolean = 9;
+			double valueNumber = 10;
+			string valueString = 11;
 		}
 
 		/** Flexbox column width (as a percentage of the total row width). */
-		uint32 width = 11;
+		uint32 width = 12;
 	}
 
 	/** Row of elements. */
 	message ElementRow {
 		/** @see Element */
 		repeated Element elements = 1;
+
+		/** @see Form.id */
+		string id = 2;
+
+		/** @see Form.id */
+		string idSeparator = 3;
 	}
 
 	/** @see Component */
 	repeated Component components = 1;
+
+	/** Optional ID. Can be used for associating with fields in other systems. */
+	string id = 2;
+
+	/** Separator for concatenating element values when sending to another system. */
+	string idSeparator = 3;
 }
 
 /** An asymmetric key pair. */
