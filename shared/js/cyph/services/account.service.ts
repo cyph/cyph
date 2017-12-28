@@ -1,4 +1,9 @@
 import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
+import {combineLatest} from 'rxjs/observable/combineLatest';
+import {map} from 'rxjs/operators/map';
+import {WindowWatcherService} from './window-watcher.service';
 
 
 /**
@@ -6,20 +11,30 @@ import {Injectable} from '@angular/core';
  */
 @Injectable()
 export class AccountService {
+	/** @ignore */
+	private menuExpandedInternal: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+
 	/** Indicates the status of the interstitial. */
-	public interstitial: boolean	= false;
+	public interstitial: boolean				= false;
 
 	/** Indicates whether the browser extension UI should be used. */
-	public isExtension: boolean		= false;
+	public isExtension: boolean					= false;
 
 	/** Indicates whether the telehealth UI should be used. */
-	public isTelehealth: boolean	= false;
+	public isTelehealth: boolean				= false;
 
 	/** Indicates whether the UI is ready. */
-	public isUiReady: boolean		= false;
+	public isUiReady: boolean					= false;
 
 	/** Indicates whether menu is expanded. */
-	public menuExpanded: boolean	= false;
+	public menuExpanded: Observable<boolean>	= combineLatest(
+		this.menuExpandedInternal,
+		this.windowWatcherService.width
+	).pipe(map(([menuExpanded, width]) =>
+		menuExpanded && width >= (
+			this.isTelehealth ? 1550 : 1200
+		)
+	));
 
 	/** Resolves ready promise. */
 	public resolveUiReady: () => void;
@@ -31,13 +46,16 @@ export class AccountService {
 
 	/** Toggles account menu. */
 	public toggleMenu (menuExpanded?: boolean) : void {
-		this.menuExpanded	= typeof menuExpanded === 'boolean' ?
+		this.menuExpandedInternal.next(typeof menuExpanded === 'boolean' ?
 			menuExpanded :
-			!this.menuExpanded
-		;
+			!this.menuExpandedInternal.value
+		);
 	}
 
-	constructor () {
+	constructor (
+		/** @ignore */
+		private readonly windowWatcherService: WindowWatcherService
+	) {
 		this.uiReady.then(() => {
 			this.isUiReady	= true;
 		});

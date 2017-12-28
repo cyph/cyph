@@ -2,20 +2,20 @@
 	fxFlexFill
 	fxLayout='row'
 	class='menu'
-	[class.collapsed]='!accountService.menuExpanded'
+	[class.collapsed]='(accountService.menuExpanded | async) === false'
 	[class.mobile]='envService.isMobile'
 	*ngIf='accountDatabaseService.currentUser.value'
 >
-	<div [fxFlex]='accountService.menuExpanded ? "25px" : "10px"'></div>
+	<div [fxFlex]='(accountService.menuExpanded | async) ? "25px" : "10px"'></div>
 
 	<div
 		fxFlex
 		fxLayout='column'
-		[fxLayoutAlign]='accountService.menuExpanded ? "center stretch" : "center center"'
+		[fxLayoutAlign]='(accountService.menuExpanded | async) ? "center stretch" : "center center"'
 		fxLayoutGap='16px'
 	>
 		<div></div>
-		<div *ngIf='accountService.menuExpanded'></div>
+		<div *ngIf='accountService.menuExpanded | async'></div>
 
 		<button
 			mat-button
@@ -26,7 +26,7 @@
 			matTooltipPosition='right'
 			routerLink='/account'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded'
+			*ngIf='accountService.menuExpanded | async'
 		>
 			<img
 				[src]='
@@ -46,7 +46,7 @@
 			matTooltipPosition='right'
 			routerLink='/account'
 			(click)='click()'
-			*ngIf='!accountService.menuExpanded'
+			*ngIf='(accountService.menuExpanded | async) === false'
 		>
 			<img
 				[src]='
@@ -60,7 +60,7 @@
 		</button>
 
 		<div fxLayoutAlign='center center'>
-			<div [fxFlex]='accountService.menuExpanded ? "60" : "6em"'>
+			<div [fxFlex]='(accountService.menuExpanded | async) ? "60" : "6em"'>
 				<img
 					cyphTranslate
 					matTooltip='Profile'
@@ -86,7 +86,7 @@
 			matTooltipPosition='right'
 			routerLink='/account/contacts'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded'
+			*ngIf='accountService.menuExpanded | async'
 		>
 			<mat-icon>people</mat-icon>
 			<span>Contacts</span>
@@ -98,7 +98,7 @@
 			matTooltipPosition='right'
 			routerLink='/account/contacts'
 			(click)='click()'
-			*ngIf='!accountService.menuExpanded'
+			*ngIf='(accountService.menuExpanded | async) === false'
 		>
 			<mat-icon>people</mat-icon>
 		</button>
@@ -110,7 +110,7 @@
 			matTooltipPosition='right'
 			routerLink='/account/files'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded'
+			*ngIf='accountService.menuExpanded | async'
 		>
 			<mat-icon>folder</mat-icon>
 			<span>Files</span>
@@ -122,7 +122,7 @@
 			matTooltipPosition='right'
 			routerLink='/account/files'
 			(click)='click()'
-			*ngIf='!accountService.menuExpanded'
+			*ngIf='(accountService.menuExpanded | async) === false'
 		>
 			<mat-icon>folder</mat-icon>
 		</button>
@@ -134,7 +134,7 @@
 			matTooltipPosition='right'
 			routerLink='/account/notes'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded'
+			*ngIf='accountService.menuExpanded | async'
 		>
 			<mat-icon>create</mat-icon>
 			<span>Notes</span>
@@ -146,7 +146,7 @@
 			matTooltipPosition='right'
 			routerLink='/account/notes'
 			(click)='click()'
-			*ngIf='!accountService.menuExpanded'
+			*ngIf='(accountService.menuExpanded | async) === false'
 		>
 			<mat-icon>create</mat-icon>
 		</button>
@@ -160,7 +160,7 @@
 			(click)='click()'
 			*ngIf='
 				(!envService.isProd || accountService.isTelehealth) &&
-				accountService.menuExpanded
+				(accountService.menuExpanded | async)
 			'
 		>
 			<mat-icon>library_books</mat-icon>
@@ -175,7 +175,7 @@
 			(click)='click()'
 			*ngIf='
 				(!envService.isProd || accountService.isTelehealth) &&
-				!accountService.menuExpanded
+				(accountService.menuExpanded | async) === false
 			'
 		>
 			<mat-icon>library_books</mat-icon>
@@ -190,7 +190,7 @@
 			(click)='click()'
 			*ngIf='
 				(!envService.isProd || accountService.isTelehealth) &&
-				accountService.menuExpanded
+				(accountService.menuExpanded | async)
 			'
 		>
 			<mat-icon>content_paste</mat-icon>
@@ -205,7 +205,7 @@
 			(click)='click()'
 			*ngIf='
 				(!envService.isProd || accountService.isTelehealth) &&
-				!accountService.menuExpanded
+				(accountService.menuExpanded | async) === false
 			'
 		>
 			<mat-icon>content_paste</mat-icon>
@@ -219,7 +219,7 @@
 			matTooltipPosition='right'
 			routerLink='/account/settings'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded'
+			*ngIf='accountService.menuExpanded | async'
 		>
 			<mat-icon>settings</mat-icon>
 			<span>Settings</span>
@@ -231,7 +231,7 @@
 			matTooltipPosition='right'
 			routerLink='/account/settings'
 			(click)='click()'
-			*ngIf='!accountService.menuExpanded'
+			*ngIf='(accountService.menuExpanded | async) === false'
 		>
 			<mat-icon>settings</mat-icon>
 		</button>
@@ -246,7 +246,7 @@
 			matTooltipPosition='right'
 			routerLink='/account/logout'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded'
+			*ngIf='accountService.menuExpanded | async'
 		>
 			<mat-icon>exit_to_app</mat-icon>
 			<span>Logout</span>
@@ -258,13 +258,13 @@
 			matTooltipPosition='right'
 			routerLink='/account/logout'
 			(click)='click()'
-			*ngIf='!accountService.menuExpanded'
+			*ngIf='(accountService.menuExpanded | async) === false'
 		>
 			<mat-icon>exit_to_app</mat-icon>
 		</button>
 
 		<div></div>
-		<div *ngIf='accountService.menuExpanded'></div>
+		<div *ngIf='accountService.menuExpanded | async'></div>
 	</div>
 
 	<button
@@ -276,7 +276,7 @@
 		matTooltipPosition='right'
 		(click)='accountService.toggleMenu()'
 	>
-		<mat-icon [class.flipped]='!accountService.menuExpanded'>
+		<mat-icon [class.flipped]='(accountService.menuExpanded | async) === false'>
 			keyboard_arrow_left
 		</mat-icon>
 	</button>
