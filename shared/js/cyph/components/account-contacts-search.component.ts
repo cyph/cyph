@@ -126,6 +126,7 @@ export class AccountContactsSearchComponent {
 		async username => {
 			return this.accountUserLookupService.getUser(username);
 		}
+	/* tslint:disable-next-line:semicolon */
 	;
 
 	constructor (

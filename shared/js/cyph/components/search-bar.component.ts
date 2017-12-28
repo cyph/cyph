@@ -1,3 +1,5 @@
+/* tslint:disable:member-ordering */
+
 import {
 	Component,
 	EventEmitter,
