@@ -7,26 +7,27 @@ import {EnvService} from './env.service';
 
 
 /**
- * Keeps track of this window's visibility to user.
+ * Keeps track of this window.
  */
 @Injectable()
-export class VisibilityWatcherService {
+export class WindowWatcherService {
+	/** Window height. */
+	public readonly height: BehaviorSubject<number>			= new BehaviorSubject(
+		this.envService.isWeb ? $(window).height() : 0
+	);
+
 	/** Indicates whether the window is currently visible. */
 	public readonly visibility: BehaviorSubject<boolean>	= new BehaviorSubject(true);
 
-	/** @ignore */
-	private trigger (isVisible: boolean) : void {
-		if (this.visibility.value === isVisible) {
-			return;
-		}
-
-		this.visibility.next(isVisible);
-	}
+	/** Window width. */
+	public readonly width: BehaviorSubject<number>			= new BehaviorSubject(
+		this.envService.isWeb ? $(window).width() : 0
+	);
 
 	/**
 	 * Waits for the visibility to change once.
 	 */
-	public async waitForChange () : Promise<boolean> {
+	public async waitForVisibilityChange () : Promise<boolean> {
 		const initialValue	= this.visibility.value;
 		return this.visibility.pipe(filter(value => value !== initialValue), take(1)).toPromise();
 	}
@@ -39,7 +40,7 @@ export class VisibilityWatcherService {
 			return;
 		}
 
-		await this.waitForChange();
+		await this.waitForVisibilityChange();
 	}
 
 	constructor (
@@ -51,16 +52,23 @@ export class VisibilityWatcherService {
 			return;
 		}
 
+		const $window	= $(window);
+
 		if (this.envService.isMobile) {
 			document.addEventListener('visibilitychange', () => {
-				this.trigger(!document.hidden);
+				this.visibility.next(!document.hidden);
 			});
 		}
 		else {
-			$(window).
-				focus(() => { this.trigger(true); }).
-				blur(() => { this.trigger(false); })
+			$window.
+				focus(() => { this.visibility.next(true); }).
+				blur(() => { this.visibility.next(false); })
 			;
 		}
+
+		$window.resize(() => {
+			this.height.next($window.height());
+			this.width.next($window.width());
+		});
 	}
 }

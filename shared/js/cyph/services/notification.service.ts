@@ -4,7 +4,7 @@ import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 import {FaviconService} from './favicon.service';
 import {StringsService} from './strings.service';
-import {VisibilityWatcherService} from './visibility-watcher.service';
+import {WindowWatcherService} from './window-watcher.service';
 
 
 /**
@@ -73,7 +73,7 @@ export class NotificationService implements INotificationService {
 		}
 		catch {}
 
-		if (!this.disableNotify && !this.visibilityWatcherService.visibility.value) {
+		if (!this.disableNotify && !this.windowWatcherService.visibility.value) {
 			this.disableNotify	= true;
 
 			try {
@@ -104,7 +104,7 @@ export class NotificationService implements INotificationService {
 		private readonly stringsService: StringsService,
 
 		/** @ignore */
-		private readonly visibilityWatcherService: VisibilityWatcherService
+		private readonly windowWatcherService: WindowWatcherService
 	) {
 		if (this.envService.isMobile) {
 			this.config.audio	= undefined;
@@ -113,7 +113,7 @@ export class NotificationService implements INotificationService {
 			this.audio	= new Audio(this.config.audio);
 		}
 
-		this.visibilityWatcherService.visibility.subscribe(isVisible => {
+		this.windowWatcherService.visibility.subscribe(isVisible => {
 			if (isVisible) {
 				for (const notification of this.openNotifications) {
 					try {

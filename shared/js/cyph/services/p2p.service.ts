@@ -142,7 +142,7 @@ export class P2PService {
 		return this.p2pWebRTCService.isActive;
 	}
 
-	/** Toggle visibility of sidebar containing chat UI. */
+	/** Toggle window of sidebar containing chat UI. */
 	public toggleSidebar () : void {
 		this.isSidebarOpen	= !this.isSidebarOpen;
 	}

@@ -3,7 +3,7 @@ import {Title} from '@angular/platform-browser';
 import {Set as ImmutableSet} from 'immutable';
 import {lockTryOnce} from '../util/lock';
 import {sleep} from '../util/wait';
-import {VisibilityWatcherService} from './visibility-watcher.service';
+import {WindowWatcherService} from './window-watcher.service';
 
 
 /**
@@ -91,7 +91,7 @@ export class ScrollService {
 		;
 
 		if (
-			this.visibilityWatcherService.visibility.value &&
+			this.windowWatcherService.visibility.value &&
 			this.unreadItemCount < 1 &&
 			scrollPosition < 150
 		) {
@@ -113,6 +113,6 @@ export class ScrollService {
 		private readonly titleService: Title,
 
 		/** @ignore */
-		private readonly visibilityWatcherService: VisibilityWatcherService
+		private readonly windowWatcherService: WindowWatcherService
 	) {}
 }

@@ -26,7 +26,7 @@ import {SessionService} from '../cyph/services/session.service';
 import {SplitTestingService} from '../cyph/services/split-testing.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {UrlSessionInitService} from '../cyph/services/url-session-init.service';
-import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
+import {WindowWatcherService} from '../cyph/services/window-watcher.service';
 import {events} from '../cyph/session/enums';
 import {sleep} from '../cyph/util/wait';
 import {AppService} from './app.service';
@@ -206,7 +206,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 			}
 
 			if (granim) {
-				await this.visibilityWatcherService.waitUntilVisible();
+				await this.windowWatcherService.waitUntilVisible();
 
 				if (granimStates.paused) {
 					granim.changeState('paused');
@@ -303,7 +303,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		private readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
-		private readonly visibilityWatcherService: VisibilityWatcherService,
+		private readonly windowWatcherService: WindowWatcherService,
 
 		/** @see AppService */
 		public readonly appService: AppService,

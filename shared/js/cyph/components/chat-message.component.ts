@@ -18,7 +18,7 @@ import {ChatService} from '../services/chat.service';
 import {DialogService} from '../services/dialog.service';
 import {ScrollService} from '../services/scroll.service';
 import {StringsService} from '../services/strings.service';
-import {VisibilityWatcherService} from '../services/visibility-watcher.service';
+import {WindowWatcherService} from '../services/window-watcher.service';
 import {waitForIterable} from '../util/wait';
 
 
@@ -106,7 +106,7 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 			return;
 		}
 
-		await this.visibilityWatcherService.waitUntilVisible();
+		await this.windowWatcherService.waitUntilVisible();
 
 		if (this.message === changes.message.currentValue) {
 			this.scrollService.setRead(this.message.id);
@@ -155,7 +155,7 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 		private readonly scrollService: ScrollService,
 
 		/** @ignore */
-		private readonly visibilityWatcherService: VisibilityWatcherService,
+		private readonly windowWatcherService: WindowWatcherService,
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,

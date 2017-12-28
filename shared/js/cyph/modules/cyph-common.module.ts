@@ -31,7 +31,7 @@ import {SignupService} from '../services/signup.service';
 import {SplitTestingService} from '../services/split-testing.service';
 import {StringsService} from '../services/strings.service';
 import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
-import {VisibilityWatcherService} from '../services/visibility-watcher.service';
+import {WindowWatcherService} from '../services/window-watcher.service';
 import {CyphWebModule} from './cyph-web.module';
 
 
@@ -104,7 +104,7 @@ import {CyphWebModule} from './cyph-web.module';
 		StringsService,
 		Title,
 		VirtualKeyboardWatcherService,
-		VisibilityWatcherService,
+		WindowWatcherService,
 		{
 			provide: ErrorHandler,
 			useExisting: ErrorService
