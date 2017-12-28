@@ -1,1 +1,58 @@
-<div>SearchBar</div>
+<mat-form-field fxFlex class='search-bar'>
+	<input
+		matInput
+		[formControl]='control'
+		[placeholder]='placeholder'
+		[matAutocomplete]='autoComplete'
+	/>
+	<mat-progress-spinner
+		matSuffix
+		class='custom'
+		diameter='20'
+		strokeWidth='2'
+		mode='indeterminate'
+		*ngIf='spinner | async'
+	></mat-progress-spinner>
+	<mat-icon
+		matSuffix
+		class='suffix-button'
+		(click)='clearFilter()'
+		*ngIf='(spinner | async) === false && (control.value || (filter | async))'
+	>
+		close
+	</mat-icon>
+</mat-form-field>
+
+<mat-autocomplete
+	#autoComplete='matAutocomplete'
+	(optionSelected)='setFilter($event.option.value)'
+>
+	<ng-container *ngIf='options | async as search'>
+		<mat-option
+			value=''
+			[routerLink]='search.topOption.routerLink'
+			*ngIf='!!search.topOption'
+		>
+			<span *ngIf='search.topOption.text !== undefined'>
+				{{search.topOption.text}}
+			</span>
+		</mat-option>
+		<mat-option
+			[value]='item.value'
+			*ngFor='let item of search.items; trackBy: search.trackBy'
+		>
+			<img
+				aria-hidden
+				[src]='item.image | async'
+				[alt]='search.imageAltText'
+				*ngIf='!!search.imageAltText && (item.image | async) !== undefined'
+			/>
+			<span *ngIf='(item.text | async) !== undefined'>
+				{{item.text | async}}
+			</span>
+			<small *ngIf='(item.smallText | async) !== undefined'>
+				{{item.smallText | async}}
+			</small>
+		</mat-option>
+	</ng-container>
+</mat-autocomplete>

@@ -18,6 +18,7 @@ import {MarkdownComponent} from '../components/markdown.component';
 import {PinInputComponent} from '../components/pin-input.component';
 import {QuillComponent} from '../components/quill.component';
 import {RedirectComponent} from '../components/redirect.component';
+import {SearchBarComponent} from '../components/search-bar.component';
 import {SignupFormComponent} from '../components/signup-form.component';
 import {RouterLinkDirective} from '../directives/router-link.directive';
 import {TranslateDirective} from '../directives/translate.directive';
@@ -58,6 +59,7 @@ import {CyphWebModule} from './cyph-web.module';
 		QuillComponent,
 		RedirectComponent,
 		RouterLinkDirective,
+		SearchBarComponent,
 		SignupFormComponent,
 		TranslateDirective
 	],
@@ -85,6 +87,7 @@ import {CyphWebModule} from './cyph-web.module';
 		QuillComponent,
 		RedirectComponent,
 		RouterLinkDirective,
+		SearchBarComponent,
 		SignupFormComponent,
 		TranslateDirective
 	],

@@ -2,10 +2,7 @@ import {
 	Component,
 	EventEmitter,
 	Input,
-	OnChanges,
-	OnInit,
-	Output,
-	SimpleChanges
+	Output
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
@@ -13,8 +10,8 @@ import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
-import {Subscription} from 'rxjs/Subscription';
 import {User} from '../account/user';
+import {ISearchOptions} from '../isearch-options';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {StringsService} from '../services/strings.service';
@@ -29,31 +26,28 @@ import {trackByUser} from '../track-by/track-by-user';
 	styleUrls: ['../../../css/components/account-contacts-search.scss'],
 	templateUrl: '../../../templates/account-contacts-search.html'
 })
-export class AccountContactsSearchComponent implements OnChanges, OnInit {
-	/** @ignore */
-	private searchUsernameSubscription?: Subscription;
-
-	/** @see clearUserFilter */
+export class AccountContactsSearchComponent {
+	/** @see SearchBarComponent.clearFilter */
 	@Output() public readonly clearUserFilterFunction: EventEmitter<() => void>	=
 		new EventEmitter<() => void>()
 	;
 
-	/** Placeholder string. */
+	/** @see SearchBarComponent.placeholder */
 	@Input() public placeholder: string						= this.stringsService.search;
 
-	/** Search bar control. */
-	public searchControl: FormControl						= new FormControl();
+	/** @see SearchBarComponent.control */
+	@Input() public readonly searchControl: FormControl		= new FormControl();
 
-	/** Search bar autocomplete options list length. */
-	public readonly searchListLength: number				= 10;
+	/** @see SearchBarComponent.listLength */
+	@Input() public searchListLength: number				= 10;
 
-	/** Search bar autocomplete options. */
-	public searchOptions									= this.searchControl.valueChanges.pipe(
+	/** @see SearchBarComponent.options */
+	public searchOptions: Observable<ISearchOptions>		= this.searchControl.valueChanges.pipe(
 		map<string, string>(query => {
-			this.searchSpinner	= true;
+			this.searchSpinner.next(true);
 			return query.toLowerCase().trim();
 		}),
-		mergeMap<string, {externalUser?: string; users: User[]}>(query =>
+		mergeMap<string, ISearchOptions>(query =>
 			this.accountContactsService.contactList.pipe(mergeMap(async users => {
 				const results	= (await Promise.all(users.map(async user => ({
 					name: (await user.name.pipe(take(1)).toPromise()).toLowerCase(),
@@ -85,74 +79,54 @@ export class AccountContactsSearchComponent implements OnChanges, OnInit {
 					undefined
 				;
 
-				this.searchSpinner	= false;
+				this.searchSpinner.next(false);
 
-				return {externalUser, users: results};
+				return {
+					imageAltText: this.stringsService.userAvatar,
+					items: results.map(user => ({
+						image: user.avatar,
+						smallText: user.realUsername.pipe(map(realUsername => `@${realUsername}`)),
+						text: user.name,
+						value: user.username
+					})),
+					topOption: externalUser === undefined ? undefined : {
+						routerLink: `/account/profile/${externalUser}`,
+						text:
+							`${this.stringsService.open} ` +
+							`@${externalUser}${this.stringsService.s} ` +
+							this.stringsService.profile
+					},
+					trackBy: trackByUser
+				};
 			}))
 		)
 	);
 
-	/** Indicates whether spinner should be displayed in search bar. */
-	public searchSpinner: boolean							= false;
+	/** @see SearchBarComponent.spinner */
+	public readonly searchSpinner: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
-	/** @see AccountContactsSearchComponent.searchUsername */
+	/** @see SearchBarComponent.query */
 	@Input() public searchUsername?: Observable<string>;
 
-	/** @see setUserFilter */
+	/** @see SearchBarComponent.setFilter */
 	@Output() public readonly setUserFilterFunction: EventEmitter<(username: string) => void>	=
 		new EventEmitter<(username: string) => void>()
 	;
 
-	/** @see trackByUser */
-	public readonly trackByUser: typeof trackByUser	= trackByUser;
-
-	/** Single contact to display instead of list. */
+	/** @see SearchBarComponent.filter */
 	public userFilter: BehaviorSubject<User|undefined>		= new BehaviorSubject(undefined);
 
+	/** @see SearchBarComponent.filterChange */
 	@Output() public readonly userFilterChange: EventEmitter<BehaviorSubject<User|undefined>>	=
 		new EventEmitter<BehaviorSubject<User|undefined>>()
 	;
 
-	/** Clears user filter. */
-	public clearUserFilter () : void {
-		this.userFilter.next(undefined);
-		this.searchControl.setValue('');
-	}
-
-	/** @inheritDoc */
-	public ngOnChanges (changes: SimpleChanges) : void {
-		if (!changes.searchUsername) {
-			return;
+	/** @see SearchBarComponent.filterTransform */
+	public readonly userFilterTransform: (username: string) => Promise<User|undefined>	=
+		async username => {
+			return this.accountUserLookupService.getUser(username);
 		}
-
-		if (this.searchUsernameSubscription) {
-			this.searchUsernameSubscription.unsubscribe();
-		}
-
-		if (this.searchUsername) {
-			this.searchUsernameSubscription	= this.searchUsername.subscribe(username => {
-				this.searchControl.setValue(username);
-				this.setUserFilter(username);
-			});
-		}
-	}
-
-	/** @inheritDoc */
-	public ngOnInit () : void {
-		this.clearUserFilterFunction.emit(() => { this.clearUserFilter(); });
-		this.setUserFilterFunction.emit(username => { this.setUserFilter(username); });
-		this.userFilterChange.emit(this.userFilter);
-	}
-
-	/** Sets user filter based on search query. */
-	public async setUserFilter (username: string) : Promise<void> {
-		if (username) {
-			this.userFilter.next(await this.accountUserLookupService.getUser(username));
-		}
-		else {
-			this.userFilter.next(undefined);
-		}
-	}
+	;
 
 	constructor (
 		/** @ignore */

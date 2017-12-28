@@ -282,6 +282,9 @@ export class StringsService {
 	public readonly oopsTitle: string				= `Oops!`;
 
 	/** @see StringsService */
+	public readonly open: string					= `Open`;
+
+	/** @see StringsService */
 	public readonly outgoingFileError: string		=
 		`Failed to send the following file:`
 	;
@@ -374,6 +377,9 @@ export class StringsService {
 	public readonly productShort: string			= `${this.internalProductShort}`;
 
 	/** @see StringsService */
+	public readonly profile: string					= `profile`;
+
+	/** @see StringsService */
 	public readonly queuedMessageSaved: string		= `Queued message saved.`;
 
 	/** @see StringsService */
@@ -381,6 +387,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly reject: string					= `reject`;
+
+	/** @see StringsService */
+	public readonly s: string						= `'s`;
 
 	/** @see StringsService */
 	public readonly save: string					= `save`;
@@ -433,6 +442,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly unlockTitle: string				= `Unlock ${this.internalProduct}`;
+
+	/** @see StringsService */
+	public readonly userAvatar: string				= `User Avatar`;
 
 	/** @see StringsService */
 	public readonly videoCall: string				= `video call`;

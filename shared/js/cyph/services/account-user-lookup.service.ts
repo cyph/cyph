@@ -34,8 +34,16 @@ export class AccountUserLookupService {
 	 * a record of either an account with this username or a pending registration request.
 	 */
 	public async exists (username: string, confirmedOnly: boolean = true) : Promise<boolean> {
+		if (!username) {
+			return false;
+		}
+
 		username	= normalize(username);
 		const url	= `users/${username}`;
+
+		if (!username) {
+			return false;
+		}
 
 		const exists	= username.length > 0 && (
 			(confirmedOnly ? this.existsConfirmedCache : this.existsCache).has(username) ||
@@ -69,6 +77,10 @@ export class AccountUserLookupService {
 
 	/** Tries to to get user object for the specified username. */
 	public async getUser (username: string) : Promise<User|undefined> {
+		if (!username) {
+			return;
+		}
+
 		username	= normalize(username);
 		const url	= `users/${username}`;
 
