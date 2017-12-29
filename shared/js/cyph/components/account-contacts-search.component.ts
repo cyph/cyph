@@ -15,7 +15,6 @@ import {ISearchOptions} from '../isearch-options';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {StringsService} from '../services/strings.service';
-import {trackByUser} from '../track-by/track-by-user';
 
 
 /**
@@ -33,77 +32,80 @@ export class AccountContactsSearchComponent {
 	;
 
 	/** @see SearchBarComponent.placeholder */
-	@Input() public placeholder: string						= this.stringsService.search;
+	@Input() public placeholder: string							= this.stringsService.search;
 
 	/** @see SearchBarComponent.control */
-	@Input() public readonly searchControl: FormControl		= new FormControl();
+	@Input() public readonly searchControl: FormControl			= new FormControl();
 
 	/** @see SearchBarComponent.listLength */
-	@Input() public searchListLength: number				= 10;
+	@Input() public searchListLength: number					= 10;
 
 	/** @see SearchBarComponent.options */
-	public searchOptions: Observable<ISearchOptions>		= this.searchControl.valueChanges.pipe(
-		map<string, string>(query => {
-			this.searchSpinner.next(true);
-			return query.toLowerCase().trim();
-		}),
-		mergeMap<string, ISearchOptions>(query =>
-			this.accountContactsService.contactList.pipe(mergeMap(async users => {
-				const results	= (await Promise.all(users.map(async user => ({
-					name: (await user.name.pipe(take(1)).toPromise()).toLowerCase(),
-					user,
-					username: user.username
-				})))).
-					filter(({name, username}) =>
-						name.indexOf(query) > -1 ||
-						username.startsWith(query)
-					).
-					map(({user}) => user).
-					sort((a, b) =>
-						a.username === query ?
-							-1 :
-							b.username === query ?
-								1 :
-								a.username < b.username ?
-									-1 :
-									1
-					).
-					slice(0, this.searchListLength)
-				;
+	public readonly searchOptions: Observable<ISearchOptions>	=
+		this.searchControl.valueChanges.pipe(
+			map<string, string>(query => {
+				this.searchSpinner.next(true);
+				return query.toLowerCase().trim();
+			}),
+			mergeMap<string, ISearchOptions>(query =>
+				this.accountContactsService.contactList.pipe(mergeMap(async users => {
+					const results	= (await Promise.all(users.map(async user => ({
+						name: (await user.name.pipe(take(1)).toPromise()).toLowerCase(),
+						user,
+						username: user.username
+					})))).
+						filter(({name, username}) =>
+							name.indexOf(query) > -1 ||
+							username.startsWith(query)
+						).
+						map(({user}) => user).
+						sort((a, b) =>
+							a.username === query ?
+								-1 :
+								b.username === query ?
+									1 :
+									a.username < b.username ?
+										-1 :
+										1
+						).
+						slice(0, this.searchListLength)
+					;
 
-				const externalUser	= (
-					(results.length < 1 || results[0].username !== query) &&
-					(await this.accountUserLookupService.exists(query))
-				) ?
-					query :
-					undefined
-				;
+					const externalUser	= (
+						(results.length < 1 || results[0].username !== query) &&
+						(await this.accountUserLookupService.exists(query))
+					) ?
+						query :
+						undefined
+					;
 
-				this.searchSpinner.next(false);
+					this.searchSpinner.next(false);
 
-				return {
-					imageAltText: this.stringsService.userAvatar,
-					items: results.map(user => ({
-						image: user.avatar,
-						smallText: user.realUsername.pipe(map(realUsername => `@${realUsername}`)),
-						text: user.name,
-						value: user.username
-					})),
-					topOption: externalUser === undefined ? undefined : {
-						routerLink: `/account/profile/${externalUser}`,
-						text:
-							`${this.stringsService.open} ` +
-							`@${externalUser}${this.stringsService.s} ` +
-							this.stringsService.profile
-					},
-					trackBy: trackByUser
-				};
-			}))
+					return {
+						imageAltText: this.stringsService.userAvatar,
+						items: results.map(user => ({
+							image: user.avatar,
+							smallText: user.realUsername.pipe(map(realUsername =>
+								`@${realUsername}`
+							)),
+							text: user.name,
+							value: user.username
+						})),
+						topOption: externalUser === undefined ? undefined : {
+							routerLink: `/account/profile/${externalUser}`,
+							text:
+								`${this.stringsService.open} ` +
+								`@${externalUser}${this.stringsService.s} ` +
+								this.stringsService.profile
+						}
+					};
+				}))
+			)
 		)
-	);
+	;
 
 	/** @see SearchBarComponent.spinner */
-	public readonly searchSpinner: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+	public readonly searchSpinner: BehaviorSubject<boolean>		= new BehaviorSubject(false);
 
 	/** @see SearchBarComponent.query */
 	@Input() public searchUsername?: Observable<string>;
@@ -114,7 +116,7 @@ export class AccountContactsSearchComponent {
 	;
 
 	/** @see SearchBarComponent.filter */
-	public userFilter: BehaviorSubject<User|undefined>		= new BehaviorSubject(undefined);
+	public userFilter: BehaviorSubject<User|undefined>			= new BehaviorSubject(undefined);
 
 	/** @see SearchBarComponent.filterChange */
 	@Output() public readonly userFilterChange: EventEmitter<BehaviorSubject<User|undefined>>	=
@@ -122,7 +124,7 @@ export class AccountContactsSearchComponent {
 	;
 
 	/** @see SearchBarComponent.filterTransform */
-	public readonly userFilterTransform: (username: string) => Promise<User|undefined>	=
+	public readonly userFilterTransform: (username: string) => Promise<User|undefined>			=
 		async username => {
 			return this.accountUserLookupService.getUser(username);
 		}

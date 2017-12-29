@@ -16,6 +16,7 @@ import {of} from 'rxjs/observable/of';
 import {Subscription} from 'rxjs/Subscription';
 import {ISearchOptions} from '../isearch-options';
 import {StringsService} from '../services/strings.service';
+import {trackByValue} from '../track-by/track-by-value';
 
 
 /**
@@ -36,38 +37,41 @@ export class SearchBarComponent implements OnChanges, OnInit {
 	;
 
 	/** Search bar control. */
-	@Input() public control: FormControl			= new FormControl();
+	@Input() public control: FormControl					= new FormControl();
 
 	/** @see SearchBarComponent.filterTransform */
 	@Input() public filterTransform: (value: any) => any	= value => value;
 
 	/** Search bar autocomplete options list length. */
-	@Input() public listLength: number				= 10;
+	@Input() public listLength: number						= 10;
 
 	/** Search bar autocomplete options. */
 	@Input() public options?: Observable<ISearchOptions>;
 
 	/** Placeholder string. */
-	@Input() public placeholder: string				= this.stringsService.search;
+	@Input() public placeholder: string						= this.stringsService.search;
 
 	/** Indicates whether spinner should be displayed in search bar. */
-	@Input() public spinner: Observable<boolean>	= of(false);
+	@Input() public spinner: Observable<boolean>			= of(false);
 
 	/** Search query. */
 	@Input() public query?: Observable<string>;
 
 	/** @see setFilter */
-	@Output() public readonly setFilterFunction: EventEmitter<(value: string) => void>	=
+	@Output() public readonly setFilterFunction: EventEmitter<(value: string) => void>		=
 		new EventEmitter<(value: string) => void>()
 	;
 
 	/** Single item to display instead of list. */
-	public filter: BehaviorSubject<any|undefined>	= new BehaviorSubject(undefined);
+	public filter: BehaviorSubject<any|undefined>			= new BehaviorSubject(undefined);
 
 	/** Filter change event. */
 	@Output() public readonly filterChange: EventEmitter<BehaviorSubject<any|undefined>>	=
 		new EventEmitter<BehaviorSubject<any|undefined>>()
 	;
+
+	/** @see trackByValue */
+	public readonly trackByValue: typeof trackByValue		= trackByValue;
 
 	/** Clears filter. */
 	public clearFilter () : void {

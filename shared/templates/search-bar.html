@@ -39,7 +39,7 @@
 		</mat-option>
 		<mat-option
 			[value]='item.value'
-			*ngFor='let item of search.items; trackBy: search.trackBy'
+			*ngFor='let item of search.items; trackBy: trackByValue'
 		>
 			<img
 				aria-hidden
