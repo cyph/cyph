@@ -142,7 +142,7 @@ if [ "${htmlOnly}" ] || [ "${fast}" ] ; then
 			-not -name dynamic-form.html \
 			-exec node -e '(async () => {
 				const result	= await require("htmllint")(
-					fs.readFileSync("{}").toString().replace(/\[([A-Za-z0-9]+)\]/g, "$1")
+					fs.readFileSync("{}").toString().replace(/\[([A-Za-z0-9]+)\]/g, "$1"),
 					JSON.parse(fs.readFileSync("templates/htmllint.json").toString())
 				);
 
