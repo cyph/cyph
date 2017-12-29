@@ -305,7 +305,7 @@ cd ~/lib/js
 
 git clone --depth 1 --recursive https://github.com/buu700/libsodium.js libsodium.build
 cd libsodium.build
-rm -rf .git
+rm -rf .git libsodium/.git
 
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 {
@@ -434,8 +434,6 @@ cat Makefile | perl -pe 's/^(\s+)ln /\1ln -f /g' > Makefile.new
 mv Makefile.new Makefile
 # sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
 make
-find dist -type f -name '*.min.js' -exec bash -c 'mv {} "$(echo "{}" | sed "s|\.min||")"' \;
-find dist -type f -not -name '*.js' -exec rm {} \;
 cd ..
 mkdir libsodium
 mv libsodium.build/dist libsodium/
