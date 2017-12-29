@@ -17,23 +17,25 @@
 				</h3>
 			</div>
 			<div fxLayout='row' *ngIf='!feedbackForm'>
-				<mat-select
-					cyphTranslate
-					fxFlex
-					[(ngModel)]='to'
-					name='to'
-					[placeholder]='stringsService.teamToContact'
-				>
-					<mat-option
-						*ngFor='
-							let address of configService.contactEmailAddresses;
-							trackBy: trackBySelf;
-						'
-						[value]='address'
+				<mat-form-field fxFlex>
+					<mat-select
+						cyphTranslate
+						fxFlex
+						[(ngModel)]='to'
+						name='to'
+						[placeholder]='stringsService.teamToContact'
 					>
-						{{address}}
-					</mat-option>
-				</mat-select>
+						<mat-option
+							*ngFor='
+								let address of configService.contactEmailAddresses;
+								trackBy: trackBySelf;
+							'
+							[value]='address'
+						>
+							{{address}}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
 			</div>
 			<div fxLayout='row' *ngIf='!feedbackForm'>
 				<mat-form-field fxFlex>

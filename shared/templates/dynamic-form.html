@@ -123,21 +123,23 @@
 						</mat-radio-button>
 					</mat-radio-group>
 
-					<mat-select
-						fxFlex
-						[(ngModel)]='o.valueString'
-						[name]='o.label'
-						[disabled]='isDisabled'
-						[required]='o.required'
-						*ngIf='o.type === types.Select'
-					>
-						<mat-option
-							*ngFor='let option of o.options; trackBy: trackBySelf'
-							[value]='option'
+					<mat-form-field fxFlex>
+						<mat-select
+							fxFlex
+							[(ngModel)]='o.valueString'
+							[name]='o.label'
+							[disabled]='isDisabled'
+							[required]='o.required'
+							*ngIf='o.type === types.Select'
 						>
-							{{option}}
-						</mat-option>
-					</mat-select>
+							<mat-option
+								*ngFor='let option of o.options; trackBy: trackBySelf'
+								[value]='option'
+							>
+								{{option}}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
 
 					<h3 *ngIf='o.type === types.Slider'>{{o.label}}</h3>
 					<mat-slider

@@ -170,21 +170,23 @@
 					class='edit-hide status'
 					*ngIf='isCurrentUser && !accountService.isTelehealth'
 				>
-					<mat-select
-						fxFlex='50'
-						cyphTranslate
-						[ngModel]='user.status | async'
-						(ngModelChange)='user.accountUserPresence.setValue({status: $event})'
-						name='status'
-						placeholder='Status'
-					>
-						<mat-option
-							*ngFor='let status of statuses; trackBy: trackByValue'
-							[value]='status.value'
+					<mat-form-field fxFlex='50'>
+						<mat-select
+							fxFlex
+							cyphTranslate
+							[ngModel]='user.status | async'
+							(ngModelChange)='user.accountUserPresence.setValue({status: $event})'
+							name='status'
+							placeholder='Status'
 						>
-							{{status.text}}
-						</mat-option>
-					</mat-select>
+							<mat-option
+								*ngFor='let status of statuses; trackBy: trackByValue'
+								[value]='status.value'
+							>
+								{{status.text}}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
 				</div>
 
 				<div
