@@ -226,7 +226,7 @@ export class ChatService {
 			await sleep(500);
 		}
 
-		if (this.notificationService && shouldNotify) {
+		if (shouldNotify) {
 			if (author !== this.sessionService.appUsername) {
 				this.notificationService.notify(this.stringsService.newMessageNotification);
 			}
@@ -295,9 +295,7 @@ export class ChatService {
 			);
 		}
 
-		if (this.notificationService) {
-			this.notificationService.notify(this.stringsService.connectedNotification);
-		}
+		this.notificationService.notify(this.stringsService.connectedNotification);
 
 		if (!this.chat.noKeyExchangeState) {
 			this.chat.keyExchangeProgress	= 100;
