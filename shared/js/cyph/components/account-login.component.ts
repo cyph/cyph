@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {usernameMask} from '../account';
 import {BinaryProto, BooleanProto, StringProto} from '../proto';
+import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {PotassiumService} from '../services/crypto/potassium.service';
 import {EnvService} from '../services/env.service';
@@ -64,14 +65,14 @@ export class AccountLoginComponent implements OnInit {
 		this.savedMasterKey	= undefined;
 		this.username		= '';
 
-		await this.router.navigate(['account'].concat(
-			this.activatedRoute.snapshot.url.map(o => o.path)
-		));
+		await this.router.navigate(this.activatedRoute.snapshot.url.map(o => o.path));
 	}
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		try {
+			this.accountService.resolveUiReady();
+
 			this.pinIsCustom	= await this.localStorageService.getItem(
 				'pinIsCustom',
 				BooleanProto
@@ -157,6 +158,9 @@ export class AccountLoginComponent implements OnInit {
 
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly accountService: AccountService,
 
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,

@@ -8,7 +8,6 @@ import {AccountFilesComponent} from '../components/account-files.component';
 import {AccountFormComponent} from '../components/account-form.component';
 import {AccountFormsComponent} from '../components/account-forms.component';
 import {AccountHomeComponent} from '../components/account-home.component';
-import {AccountLoginComponent} from '../components/account-login.component';
 import {AccountLogoutComponent} from '../components/account-logout.component';
 import {AccountNoteComponent} from '../components/account-note.component';
 import {AccountNotesComponent} from '../components/account-notes.component';
@@ -19,12 +18,15 @@ import {AccountSettingsComponent} from '../components/account-settings.component
 import {AccountComponent} from '../components/account.component';
 import {newPatient} from '../forms';
 import {ChatMessageValueTypes} from '../proto';
+import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 
 
 /** Routing configuration for accounts UI. */
 export const account: Route	= {
 	path: 'account',
 	component: AccountComponent,
+	canActivate: [AccountAuthGuardService],
+	canActivateChild: [AccountAuthGuardService],
 	children: [
 		{path: '', component: AccountHomeComponent},
 		{path: 'audio/:username', component: AccountChatComponent, data: {callType: 'audio'}},
@@ -53,10 +55,6 @@ export const account: Route	= {
 		{path: 'files', component: AccountFilesComponent},
 		{path: 'forms', component: AccountFormsComponent},
 		{path: 'forms/:id', component: AccountFormComponent},
-		{
-			path: 'login',
-			children: [{path: '**', component: AccountLoginComponent}]
-		},
 		{path: 'logout', component: AccountLogoutComponent},
 		{path: 'messages/:username', component: AccountChatComponent},
 		{

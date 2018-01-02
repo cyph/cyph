@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import * as Granim from 'granim';
 import {AccountEnvService} from '../services/account-env.service';
 import {AccountService} from '../services/account.service';
@@ -95,29 +95,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		this.activatedRoute.url.subscribe(() => {
-			const route	= this.route;
-
-			if (this.accountDatabaseService.currentUser.value && route === 'login') {
-				this.router.navigate(['account']);
-			}
-			else if (
-				!this.accountDatabaseService.currentUser.value &&
-				[
-					'login',
-					'profile',
-					'register',
-					'welcome'
-				].indexOf(route) < 0
-			) {
-				this.router.navigate(['account', 'login'].concat(
-					this.activatedRoute.snapshot.firstChild ?
-						this.activatedRoute.snapshot.firstChild.url.map(o => o.path) :
-						[]
-				));
-			}
-		});
-
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
@@ -197,9 +174,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
-
-		/** @ignore */
-		private readonly router: Router,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

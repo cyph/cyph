@@ -35,3 +35,25 @@ body:not(.mobile) {
 cyph-chat-message-box smd-fab-speed-dial:not(.smd-opened) smd-fab-actions {
 	height: 0px !important;
 }
+
+.login-form {
+	mat-progress-spinner.global {
+		display: none;
+
+		@include spinner-center;
+	}
+
+	h3.cyph-banner {
+		margin: 20px;
+	}
+
+	&.checking {
+		mat-progress-spinner.global {
+			display: block;
+		}
+
+		mat-card > :not(mat-progress-spinner):not(.global) {
+			opacity: 0.15;
+		}
+	}
+}

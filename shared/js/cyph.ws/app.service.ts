@@ -107,7 +107,10 @@ export class AppService implements CanActivate {
 			).url.pipe(first()).toPromise();
 
 			const urlSegmentPaths	= router.url.split('/');
-			let loadingAccounts		= urlSegmentPaths[0] === 'account';
+			let loadingAccounts		=
+				urlSegmentPaths[0] === 'account' ||
+				urlSegmentPaths[0] === 'login'
+			;
 
 			/* Handle accounts special cases */
 			if (urlSegmentPaths[0] === 'extension') {

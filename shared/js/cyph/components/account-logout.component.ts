@@ -19,7 +19,7 @@ export class AccountLogoutComponent implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		await this.accountAuthService.logout();
 		await sleep(500);
-		await this.router.navigate(['account', 'login']);
+		await this.router.navigate(['login']);
 
 		/* Get rid of any data still sitting in memory */
 		if (this.envService.isWeb) {
