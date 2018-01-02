@@ -26,9 +26,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		!(env.isProd && env.isSafari) &&
 		(() => {
 			try {
-				return new SimpleWebRTC({
-					connection: {on: () => {}}
-				}).capabilities.support;
+				return new SimpleWebRTC({connection: {on: () => {}}}).capabilities.support;
 			}
 			catch {
 				return false;
@@ -395,7 +393,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				this.sessionService.send([rpcEvents.p2p, {command: {method: callType}}]);
 
 				await sleep();
-				(await this.handlers).requestConfirmation();
+				handlers.requestConfirmation();
 			},
 			P2PWebRTCService.constants.requestCall
 		);

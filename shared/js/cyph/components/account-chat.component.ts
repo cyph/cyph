@@ -12,6 +12,7 @@ import {AccountSessionService} from '../services/account-session.service';
 import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
+import {P2PService} from '../services/p2p.service';
 import {StringsService} from '../services/strings.service';
 import {sleep} from '../util/wait';
 
@@ -97,6 +98,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see P2PService */
+		public readonly p2pService: P2PService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

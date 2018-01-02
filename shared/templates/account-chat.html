@@ -12,6 +12,7 @@
 			<cyph-account-chat-message-box
 				class='padding'
 				[messageType]='chatMessageValueTypes.Text'
+				*ngIf='!p2pService.isActiveOrInitialCall'
 			></cyph-account-chat-message-box>
 		</ng-container>
 
@@ -28,6 +29,7 @@
 					[messageType]='messageType | async'
 					[recipient]='accountSessionService.remoteUser'
 					[showHeader]='true'
+					*ngIf='!p2pService.isActiveOrInitialCall'
 				></cyph-account-chat-message-box>
 			</cyph-chat-main>
 		</ng-template>

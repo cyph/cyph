@@ -1,15 +1,14 @@
 import {Injectable} from '@angular/core';
 import {ISessionCapabilities} from '../proto';
+import {ISessionCapabilitiesService} from '../service-interfaces/isession-capabilities.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {PotassiumService} from './crypto/potassium.service';
 import {SessionService} from './session.service';
 
 
-/**
- * Establishes mutually shared capabilities between all parties of a session.
- */
+/** @inheritDoc */
 @Injectable()
-export class SessionCapabilitiesService {
+export class SessionCapabilitiesService implements ISessionCapabilitiesService {
 	/** @ignore */
 	private readonly remoteCapabilities: Promise<ISessionCapabilities>	=
 		this.sessionService.one<ISessionMessageData>(rpcEvents.capabilities).then(o =>
@@ -20,14 +19,14 @@ export class SessionCapabilitiesService {
 	/** @ignore */
 	private resolveCapabilities: (capabilities: ISessionCapabilities) => void;
 
-	/** Mutual capabilities available for this session. */
+	/** @inheritDoc */
 	public readonly capabilities: Promise<ISessionCapabilities>			=
 		new Promise<ISessionCapabilities>(resolve => {
 			this.resolveCapabilities	= resolve;
 		})
 	;
 
-	/** Locally supported capabilities. */
+	/** @inheritDoc */
 	public readonly localCapabilities: Promise<ISessionCapabilities>	= (async () => {
 		const p2p	= new Promise<boolean>(resolve => {
 			this.resolveP2PSupport	= resolve;
@@ -39,7 +38,7 @@ export class SessionCapabilitiesService {
 		};
 	})();
 
-	/** Set localCapabilities.p2p. */
+	/** @inheritDoc */
 	public resolveP2PSupport: (isSupported: boolean) => void;
 
 	constructor (
