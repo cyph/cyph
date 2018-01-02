@@ -1,6 +1,6 @@
 import {AccountChatService} from '../services/account-chat.service';
-import {AccountSessionService} from '../services/account-session.service';
 import {AccountSessionInitService} from '../services/account-session-init.service';
+import {AccountSessionService} from '../services/account-session.service';
 import {ChannelService} from '../services/channel.service';
 import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {ChatService} from '../services/chat.service';

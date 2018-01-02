@@ -10,17 +10,17 @@ export interface IP2PHandlers {
 	) => Promise<boolean>;
 
 	/** Canceled handler. */
-	canceled: () => void;
+	canceled: () => void|Promise<void>;
 
 	/** Connected handler. */
-	connected: (isConnected: boolean) => void;
+	connected: (isConnected: boolean) => void|Promise<void>;
 
 	/** Request confirm handler. */
 	requestConfirm: (callType: 'audio'|'video', isAccepted: boolean) => Promise<boolean>;
 
 	/** Request confirmation handler. */
-	requestConfirmation: () => void;
+	requestConfirmation: () => void|Promise<void>;
 
 	/** Request rejection handler. */
-	requestRejection: () => void;
+	requestRejection: () => void|Promise<void>;
 }

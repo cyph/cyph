@@ -23,8 +23,8 @@ import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {ScrollService} from './scroll.service';
-import {SessionService} from './session.service';
 import {SessionInitService} from './session-init.service';
+import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
 
