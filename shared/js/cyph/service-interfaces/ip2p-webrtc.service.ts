@@ -1,4 +1,3 @@
-import {Subject} from 'rxjs/Subject';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 
 
@@ -21,14 +20,14 @@ export interface IP2PWebRTCService {
 	/** Description of outgoing data (passed directly into navigator.getUserMedia). */
 	readonly outgoingStream: {audio: boolean; video: boolean};
 
-	/** Completes when ready. */
-	readonly ready: Subject<void>;
+	/** Resolves when service is ready. */
+	readonly ready: Promise<boolean>;
 
 	/**
 	 * Accepts current call request (or preemptively accepts future call requests,
 	 * disabling the confirmation dialog).
 	 */
-	accept (callType?: 'audio'|'video') : void;
+	accept (callType?: 'audio'|'video', isPassive?: boolean) : void;
 
 	/** This kills the P2P session. */
 	close () : void;
@@ -44,6 +43,9 @@ export interface IP2PWebRTCService {
 	 * @param callType Requested session type.
 	 */
 	request (callType: 'audio'|'video', isPassive?: boolean) : Promise<void>;
+
+	/** Resolves ready. */
+	resolveReady () : void;
 
 	/**
 	 * Pauses all or a subset of the current outgoing stream.

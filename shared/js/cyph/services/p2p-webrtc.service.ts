@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
-import {Subject} from 'rxjs/Subject';
 import * as SimpleWebRTC from 'simplewebrtc';
 import {env} from '../env';
 import {eventManager} from '../event-manager';
@@ -151,8 +150,13 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	/** @inheritDoc */
 	public readonly outgoingStream			= {audio: false, video: false};
 
-	/** @ignore */
-	public readonly ready: Subject<void>	= new Subject();
+	/** @inheritDoc */
+	public readonly ready: Promise<boolean>	= new Promise<boolean>(resolve => {
+		this.resolveReady	= () => { resolve(true); };
+	});
+
+	/** @inheritDoc */
+	public resolveReady: () => void;
 
 	/** @ignore */
 	private async receiveCommand (command: ISessionCommand) : Promise<void> {
@@ -160,7 +164,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			return;
 		}
 
-		await this.ready.toPromise();
+		await this.ready;
 
 		const method: Function|undefined	= (<any> this.commands)[command.method];
 
@@ -209,11 +213,15 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	}
 
 	/** @inheritDoc */
-	public accept (callType?: 'audio'|'video') : void {
+	public accept (callType?: 'audio'|'video', isPassive: boolean = false) : void {
 		this.isAccepted				= true;
 		this.loading				= true;
 		this.outgoingStream.video	= callType === 'video';
 		this.outgoingStream.audio	= true;
+
+		if (isPassive) {
+			this.isActive	= true;
+		}
 	}
 
 	/** @inheritDoc */

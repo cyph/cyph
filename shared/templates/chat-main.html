@@ -312,7 +312,7 @@
 		[persistentEndMessage]='persistentEndMessage'
 		[showDisconnectMessage]='chatService.chat.isDisconnected && !hideDisconnectMessage'
 		[uiStyle]='uiStyle'
-		*ngIf='chatService.chat.state === states.chat'
+		*ngIf='chatService.chat.state === states.chat && (p2pWebRTCService.ready | async)'
 		[@fadeIn]='"in"'
 	>
 		<ng-content></ng-content>

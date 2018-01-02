@@ -543,15 +543,15 @@ export class ChatService {
 					ChatService.p2pPassiveConnectTime,
 					this.stringsService.cancel
 				).then(async canceled => {
-					this.p2pWebRTCService.ready.complete();
-
 					if (!canceled) {
-						this.p2pWebRTCService.accept(callType);
+						this.p2pWebRTCService.accept(callType, true);
 					}
 					else if (this.sessionInitService.ephemeral) {
 						this.close();
 						return;
 					}
+
+					this.p2pWebRTCService.resolveReady();
 
 					await beginChat;
 
@@ -564,7 +564,7 @@ export class ChatService {
 				});
 			}
 			else {
-				this.p2pWebRTCService.ready.complete();
+				this.p2pWebRTCService.resolveReady();
 			}
 
 			if (!this.sessionInitService.ephemeral) {
