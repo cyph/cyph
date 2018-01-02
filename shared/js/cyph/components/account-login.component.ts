@@ -65,7 +65,11 @@ export class AccountLoginComponent implements OnInit {
 		this.savedMasterKey	= undefined;
 		this.username		= '';
 
-		await this.router.navigate(this.activatedRoute.snapshot.url.map(o => o.path));
+		await this.router.navigate(
+			this.activatedRoute.snapshot.url.length > 0 ?
+				this.activatedRoute.snapshot.url.map(o => o.path) :
+				['account']
+		);
 	}
 
 	/** @inheritDoc */
