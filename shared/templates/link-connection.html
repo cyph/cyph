@@ -5,15 +5,12 @@
 	fxLayoutAlign='center stretch'
 	class='link-connection loading'
 >
-	<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation'>
+	<div class='logo-animation'>
 		<div></div>
 		<div></div>
 		<div></div>
 		<div></div>
 		<div></div>
-	</div>
-	<div *ngIf='sessionService.apiFlags.telehealth' class='telehealth-logo'>
-		<cyph-logo icon telehealth></cyph-logo>
 	</div>
 	<div>
 		<span *ngIf='isPassive && !sessionService.apiFlags.telehealth' cyphTranslate>
