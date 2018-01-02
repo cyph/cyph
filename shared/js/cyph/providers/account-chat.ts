@@ -1,5 +1,6 @@
 import {AccountChatService} from '../services/account-chat.service';
 import {AccountSessionService} from '../services/account-session.service';
+import {AccountSessionInitService} from '../services/account-session-init.service';
 import {ChannelService} from '../services/channel.service';
 import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {ChatService} from '../services/chat.service';
@@ -18,6 +19,7 @@ import {SessionService} from '../services/session.service';
 export const accountChatProviders	= [
 	AccountChatService,
 	AccountSessionService,
+	AccountSessionInitService,
 	ChannelService,
 	ChatMessageGeometryService,
 	CyphertextService,
@@ -26,7 +28,6 @@ export const accountChatProviders	= [
 	P2PWebRTCService,
 	ScrollService,
 	SessionCapabilitiesService,
-	SessionInitService,
 	{
 		provide: CastleService,
 		useClass: AccountCastleService
@@ -38,5 +39,9 @@ export const accountChatProviders	= [
 	{
 		provide: SessionService,
 		useExisting: AccountSessionService
+	},
+	{
+		provide: SessionInitService,
+		useExisting: AccountSessionInitService
 	}
 ];

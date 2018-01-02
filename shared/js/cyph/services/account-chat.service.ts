@@ -6,13 +6,16 @@ import {IChatData, States} from '../chat';
 import {ChatMessage, ChatMessageValue, ChatUnconfirmedMessagesProto} from '../proto';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {AccountContactsService} from './account-contacts.service';
+import {AccountSessionInitService} from './account-session-init.service';
 import {AccountSessionService} from './account-session.service';
 import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
+import {P2PWebRTCService} from './p2p-webrtc.service';
 import {ScrollService} from './scroll.service';
+import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
@@ -41,8 +44,14 @@ export class AccountChatService extends ChatService {
 	}
 
 	/** Sets the remote user we're chatting with. */
-	public async setUser (username: string, keepCurrentMessage: boolean = false) : Promise<void> {
+	public async setUser (
+		username: string,
+		keepCurrentMessage: boolean = false,
+		callType?: 'audio'|'video'
+	) : Promise<void> {
 		const contactURL	= `contacts/${await this.accountContactsService.addContact(username)}`;
+
+		this.accountSessionInitService.callType	= callType;
 
 		await this.accountSessionService.setUser(username);
 
@@ -63,7 +72,6 @@ export class AccountChatService extends ChatService {
 				`${contactURL}/messageValues`,
 				ChatMessageValue
 			),
-			noKeyExchangeState: true,
 			receiveTextLock: this.accountDatabaseService.lockFunction(
 				`${contactURL}/receiveTextLock`
 			),
@@ -79,8 +87,10 @@ export class AccountChatService extends ChatService {
 		analyticsService: AnalyticsService,
 		dialogService: DialogService,
 		notificationService: NotificationService,
+		p2pWebRTCService: P2PWebRTCService,
 		scrollService: ScrollService,
 		sessionService: SessionService,
+		sessionInitService: SessionInitService,
 		stringsService: StringsService,
 
 		/** @ignore */
@@ -90,14 +100,19 @@ export class AccountChatService extends ChatService {
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
-		private readonly accountSessionService: AccountSessionService
+		private readonly accountSessionService: AccountSessionService,
+
+		/** @ignore */
+		private readonly accountSessionInitService: AccountSessionInitService
 	) {
 		super(
 			analyticsService,
 			dialogService,
 			notificationService,
+			p2pWebRTCService,
 			scrollService,
 			sessionService,
+			sessionInitService,
 			stringsService
 		);
 	}

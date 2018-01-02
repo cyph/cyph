@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {combineLatest} from 'rxjs/observable/combineLatest';
 import {UserPresence} from '../account/enums';
 import {UiStyles} from '../chat/enums';
 import {ChatMessageValueTypes} from '../proto';
@@ -53,9 +54,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			this.messageType.next(ChatMessageValueTypes.Quill);
 		}
 
-		this.activatedRoute.params.subscribe(async o => {
-			const username: string|undefined	= o.username;
-
+		combineLatest(this.activatedRoute.data, this.activatedRoute.params).subscribe(async (
+			[{callType}, {username}]: [{callType?: 'audio'|'video'}, {username?: string}]
+		) => {
 			if (!username) {
 				return;
 			}
@@ -68,7 +69,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			}
 
 			this.initiated	= true;
-			this.accountChatService.setUser(username);
+			await this.accountChatService.setUser(username, undefined, callType);
 		});
 	}
 

@@ -92,6 +92,9 @@ export abstract class SessionService implements ISessionService {
 	});
 
 	/** @inheritDoc */
+	public readonly ready: Promise<void>					= Promise.resolve();
+
+	/** @inheritDoc */
 	public readonly remoteUsername: BehaviorSubject<string>	= new BehaviorSubject<string>(
 		this.stringsService.friend
 	);

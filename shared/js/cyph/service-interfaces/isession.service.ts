@@ -38,6 +38,9 @@ export interface ISessionService {
 	/** @see ProFeatures */
 	readonly proFeatures: ProFeatures;
 
+	/** Resolves when service is ready. */
+	readonly ready: Promise<void>;
+
 	/** Remote username (e.g. "friend" or "alice"). */
 	readonly remoteUsername: BehaviorSubject<string>;
 

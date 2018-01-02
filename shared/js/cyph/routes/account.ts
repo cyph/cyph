@@ -27,6 +27,7 @@ export const account: Route	= {
 	component: AccountComponent,
 	children: [
 		{path: '', component: AccountHomeComponent},
+		{path: 'audio/:username', component: AccountChatComponent, data: {callType: 'audio'}},
 		{
 			path: 'compose',
 			component: AccountComposeComponent,
@@ -92,6 +93,7 @@ export const account: Route	= {
 			data: {messageType: ChatMessageValueTypes.CalendarInvite}
 		},
 		{path: 'settings', component: AccountSettingsComponent},
+		{path: 'video/:username', component: AccountChatComponent, data: {callType: 'video'}},
 		{path: 'welcome', component: AccountPostRegisterComponent}
 	]
 };

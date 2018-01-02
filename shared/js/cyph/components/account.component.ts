@@ -71,6 +71,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	public get menuVisible () : boolean {
 		return this.accountDatabaseService.currentUser.value !== undefined && [
 			'',
+			'audio',
 			'compose',
 			'contacts',
 			'docs',
@@ -80,7 +81,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'notes',
 			'profile',
 			'request-appointment',
-			'settings'
+			'settings',
+			'video'
 		].filter(
 			path => this.route === path
 		).length > 0;

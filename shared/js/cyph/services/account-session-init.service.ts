@@ -1,10 +1,20 @@
 import {Injectable} from '@angular/core';
+import {SessionInitService} from './session-init.service';
 
 
 /**
- * Angular service for account session init.
+ * SessionInitService implementation for accounts.
  */
 @Injectable()
-export class AccountSessionInitService {
+export class AccountSessionInitService implements SessionInitService {
+	/** @inheritDoc */
+	public callType?: 'audio'|'video';
+
+	/** @inheritDoc */
+	public readonly ephemeral: boolean	= false;
+
+	/** @inheritDoc */
+	public readonly id: string			= '';
+
 	constructor () {}
 }

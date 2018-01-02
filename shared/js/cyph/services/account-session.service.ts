@@ -27,12 +27,20 @@ export class AccountSessionService extends SessionService {
 	/** @ignore */
 	private resolveAccountsSymmetricKey: (symmetricKey: Uint8Array) => void;
 
+	/** @ignore */
+	private resolveReady: () => void;
+
 	/** @inheritDoc */
 	protected readonly symmetricKey: Promise<Uint8Array>		=
 		new Promise<Uint8Array>(resolve => {
 			this.resolveAccountsSymmetricKey	= resolve;
 		})
 	;
+
+	/** @inheritDoc */
+	public readonly ready: Promise<void>						= new Promise<void>(resolve => {
+		this.resolveReady	= resolve;
+	});
 
 	/** Remote user. */
 	public readonly remoteUser: BehaviorSubject<User|undefined>	= new BehaviorSubject(undefined);
@@ -108,6 +116,7 @@ export class AccountSessionService extends SessionService {
 		}
 
 		this.remoteUser.next(user);
+		this.resolveReady();
 	}
 
 	constructor (

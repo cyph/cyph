@@ -521,97 +521,101 @@ export class ChatService {
 		/** @ignore */
 		protected readonly stringsService: StringsService
 	) {
-		const beginChat	= this.sessionService.one(events.beginChat);
+		this.sessionService.ready.then(() => {
+			const beginChat	= this.sessionService.one(events.beginChat);
 
-		beginChat.then(() => { this.begin(); });
+			beginChat.then(() => { this.begin(); });
 
-		this.sessionService.one(events.closeChat).then(() => {
-			this.close();
-		});
-
-		this.sessionService.connected.then(async () => {
-			const callType	= this.sessionInitService.callType;
-
-			if (callType !== undefined) {
-				this.p2pWebRTCService.initialCallPending	= true;
-
-				this.dialogService.toast(
-					callType === 'video' ?
-						this.stringsService.p2pWarningVideoPassive :
-						this.stringsService.p2pWarningAudioPassive
-					,
-					ChatService.p2pPassiveConnectTime,
-					this.stringsService.cancel
-				).then(async canceled => {
-					if (!canceled) {
-						this.p2pWebRTCService.accept(callType, true);
-					}
-					else if (this.sessionInitService.ephemeral) {
-						this.close();
-						return;
-					}
-
-					this.p2pWebRTCService.resolveReady();
-
-					await beginChat;
-
-					if (canceled) {
-						this.p2pWebRTCService.close();
-					}
-					else if (this.sessionService.state.isAlice) {
-						await this.p2pWebRTCService.request(callType, true);
-					}
-				});
-			}
-			else {
-				this.p2pWebRTCService.resolveReady();
-			}
-
-			if (!this.sessionInitService.ephemeral) {
-				return;
-			}
-
-			this.chat.state	= States.keyExchange;
-
-			const interval		= 250;
-			const increment		= interval / ChatService.approximateKeyExchangeTime;
-
-			while (this.chat.keyExchangeProgress <= 100) {
-				await sleep(interval);
-				this.chat.keyExchangeProgress += increment * 100;
-			}
-
-			this.chat.keyExchangeProgress	= 100;
-		});
-
-		this.sessionService.one(events.connectFailure).then(() => {
-			this.abortSetup();
-		});
-
-		this.sessionService.on(rpcEvents.confirm, (o: ISessionMessageData) => {
-			if (!o.textConfirmation || !o.textConfirmation.id) {
-				return;
-			}
-
-			const id	= o.textConfirmation.id;
-
-			this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
-				delete unconfirmedMessages[id];
-				return unconfirmedMessages;
+			this.sessionService.one(events.closeChat).then(() => {
+				this.close();
 			});
-		});
 
-		this.sessionService.on(rpcEvents.typing, (o: ISessionMessageData) => {
-			if (o.chatState) {
-				this.chat.isFriendTyping.next(o.chatState.isTyping);
-			}
-		});
+			this.sessionService.connected.then(async () => {
+				const callType	= this.sessionInitService.callType;
 
-		this.chat.receiveTextLock(async () => {
-			const f	= async (o: ISessionMessageData) => this.addTextMessage(o);
-			this.sessionService.on(rpcEvents.text, f);
-			await this.sessionService.closed;
-			this.sessionService.off(rpcEvents.text, f);
+				if (callType !== undefined) {
+					this.p2pWebRTCService.initialCallPending	= true;
+
+					this.dialogService.toast(
+						callType === 'video' ?
+							this.stringsService.p2pWarningVideoPassive :
+							this.stringsService.p2pWarningAudioPassive
+						,
+						ChatService.p2pPassiveConnectTime,
+						this.stringsService.cancel
+					).then(async canceled => {
+						if (!canceled) {
+							this.p2pWebRTCService.accept(callType, true);
+						}
+						else if (this.sessionInitService.ephemeral) {
+							this.close();
+							return;
+						}
+
+						this.p2pWebRTCService.resolveReady();
+
+						if (this.sessionInitService.ephemeral) {
+							await beginChat;
+						}
+
+						if (canceled) {
+							this.p2pWebRTCService.close();
+						}
+						else if (this.sessionService.state.isAlice) {
+							await this.p2pWebRTCService.request(callType, true);
+						}
+					});
+				}
+				else {
+					this.p2pWebRTCService.resolveReady();
+				}
+
+				if (!this.sessionInitService.ephemeral) {
+					return;
+				}
+
+				this.chat.state	= States.keyExchange;
+
+				const interval		= 250;
+				const increment		= interval / ChatService.approximateKeyExchangeTime;
+
+				while (this.chat.keyExchangeProgress <= 100) {
+					await sleep(interval);
+					this.chat.keyExchangeProgress += increment * 100;
+				}
+
+				this.chat.keyExchangeProgress	= 100;
+			});
+
+			this.sessionService.one(events.connectFailure).then(() => {
+				this.abortSetup();
+			});
+
+			this.sessionService.on(rpcEvents.confirm, (o: ISessionMessageData) => {
+				if (!o.textConfirmation || !o.textConfirmation.id) {
+					return;
+				}
+
+				const id	= o.textConfirmation.id;
+
+				this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
+					delete unconfirmedMessages[id];
+					return unconfirmedMessages;
+				});
+			});
+
+			this.sessionService.on(rpcEvents.typing, (o: ISessionMessageData) => {
+				if (o.chatState) {
+					this.chat.isFriendTyping.next(o.chatState.isTyping);
+				}
+			});
+
+			this.chat.receiveTextLock(async () => {
+				const f	= async (o: ISessionMessageData) => this.addTextMessage(o);
+				this.sessionService.on(rpcEvents.text, f);
+				await this.sessionService.closed;
+				this.sessionService.off(rpcEvents.text, f);
+			});
 		});
 	}
 }
