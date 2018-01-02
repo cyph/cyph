@@ -36,9 +36,6 @@ export interface IChatData {
 	/** Map of message IDs to values. */
 	messageValues: IAsyncMap<string, IChatMessageValue>;
 
-	/** If true, key exchange state should be skipped. */
-	noKeyExchangeState?: boolean;
-
 	/** The previous message sent. */
 	previousMessage?: string;
 

@@ -21,8 +21,10 @@ import {sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
+import {P2PWebRTCService} from './p2p-webrtc.service';
 import {ScrollService} from './scroll.service';
 import {SessionService} from './session.service';
+import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
 
 
@@ -33,6 +35,9 @@ import {StringsService} from './strings.service';
 export class ChatService {
 	/** @ignore */
 	private static readonly approximateKeyExchangeTime: number			= 18000;
+
+	/** @ignore */
+	private static readonly p2pPassiveConnectTime: number				= 5000;
 
 
 	/** Time in seconds until chat self-destructs. */
@@ -159,6 +164,7 @@ export class ChatService {
 			return;
 		}
 
+		this.dialogService.dismissToast();
 		this.chat.isFriendTyping.next(false);
 		this.scrollService.scrollDown();
 
@@ -182,6 +188,7 @@ export class ChatService {
 	/** Aborts the process of chat initialisation and authentication. */
 	public abortSetup () : void {
 		this.chat.state	= States.aborted;
+		this.dialogService.dismissToast();
 		this.sessionService.trigger(events.abort);
 		this.sessionService.close();
 	}
@@ -297,7 +304,7 @@ export class ChatService {
 
 		this.notificationService.notify(this.stringsService.connectedNotification);
 
-		if (!this.chat.noKeyExchangeState) {
+		if (this.sessionInitService.ephemeral) {
 			this.chat.keyExchangeProgress	= 100;
 			this.chat.state					= States.chatBeginMessage;
 
@@ -500,24 +507,67 @@ export class ChatService {
 		protected readonly notificationService: NotificationService,
 
 		/** @ignore */
+		protected readonly p2pWebRTCService: P2PWebRTCService,
+
+		/** @ignore */
 		protected readonly scrollService: ScrollService,
 
 		/** @ignore */
 		protected readonly sessionService: SessionService,
 
 		/** @ignore */
+		protected readonly sessionInitService: SessionInitService,
+
+		/** @ignore */
 		protected readonly stringsService: StringsService
 	) {
-		this.sessionService.one(events.beginChat).then(() => {
-			this.begin();
-		});
+		const beginChat	= this.sessionService.one(events.beginChat);
+
+		beginChat.then(() => { this.begin(); });
 
 		this.sessionService.one(events.closeChat).then(() => {
 			this.close();
 		});
 
 		this.sessionService.connected.then(async () => {
-			if (this.chat.noKeyExchangeState) {
+			const callType	= this.sessionInitService.callType;
+
+			if (callType !== undefined) {
+				this.p2pWebRTCService.initialCallPending	= true;
+
+				this.dialogService.toast(
+					callType === 'video' ?
+						this.stringsService.p2pWarningVideoPassive :
+						this.stringsService.p2pWarningAudioPassive
+					,
+					ChatService.p2pPassiveConnectTime,
+					this.stringsService.cancel
+				).then(async canceled => {
+					this.p2pWebRTCService.ready.complete();
+
+					if (!canceled) {
+						this.p2pWebRTCService.accept(callType);
+					}
+					else if (this.sessionInitService.ephemeral) {
+						this.close();
+						return;
+					}
+
+					await beginChat;
+
+					if (canceled) {
+						this.p2pWebRTCService.close();
+					}
+					else if (this.sessionService.state.isAlice) {
+						await this.p2pWebRTCService.request(callType, true);
+					}
+				});
+			}
+			else {
+				this.p2pWebRTCService.ready.complete();
+			}
+
+			if (!this.sessionInitService.ephemeral) {
 				return;
 			}
 

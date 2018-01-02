@@ -12,6 +12,9 @@ export class UrlSessionInitService implements SessionInitService {
 	public readonly callType?: 'audio'|'video';
 
 	/** @inheritDoc */
+	public readonly ephemeral: boolean	= true;
+
+	/** @inheritDoc */
 	public readonly id: string;
 
 	constructor (router: Router) {

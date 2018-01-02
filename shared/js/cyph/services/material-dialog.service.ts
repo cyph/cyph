@@ -2,6 +2,7 @@ import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
 import {MatDialog, MatSnackBar} from '@angular/material';
 import {SafeUrl} from '@angular/platform-browser';
+import {map} from 'rxjs/operators/map';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
 import {DialogImageComponent} from '../components/dialog-image.component';
@@ -107,6 +108,11 @@ export class MaterialDialogService implements DialogService {
 	}
 
 	/** @inheritDoc */
+	public async dismissToast () : Promise<void> {
+		this.matSnackbar.dismiss();
+	}
+
+	/** @inheritDoc */
 	public async image (src: SafeUrl|string) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(DialogImageComponent);
@@ -118,9 +124,24 @@ export class MaterialDialogService implements DialogService {
 	}
 
 	/** @inheritDoc */
-	public async toast (content: string, duration: number) : Promise<void> {
-		await this.matSnackbar.open(content, undefined, {duration}).afterDismissed().toPromise();
-		await sleep(500);
+	public async toast (content: string, duration: number, action?: string) : Promise<boolean> {
+		const snackbar				= this.matSnackbar.open(
+			content,
+			action === undefined ? undefined : action.toUpperCase(),
+			{duration}
+		);
+
+		const wasManuallyDismissed	=
+			(await snackbar.onAction().pipe(map(() => true)).toPromise()) || false
+		;
+
+		if (wasManuallyDismissed) {
+			return true;
+		}
+		else {
+			await sleep(500);
+			return false;
+		}
 	}
 
 	constructor (

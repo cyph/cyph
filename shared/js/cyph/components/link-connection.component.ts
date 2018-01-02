@@ -62,10 +62,10 @@ export class LinkConnectionComponent implements AfterViewInit {
 
 		await lockTryOnce(
 			this.addTimeLock,
-			async () => this.dialogService.toast(
+			async () => { await this.dialogService.toast(
 				this.stringsService.timeExtended,
 				2500
-			)
+			); }
 		);
 	}
 
@@ -73,13 +73,13 @@ export class LinkConnectionComponent implements AfterViewInit {
 	public async copyToClipboard () : Promise<void> {
 		await lockTryOnce(
 			this.copyLock,
-			async () => this.dialogService.toast(
+			async () => { await this.dialogService.toast(
 				await clipboard.writeText(this.linkConstant).
 					then(() => this.stringsService.linkCopied).
 					catch(() => this.stringsService.linkCopyFail)
 				,
 				2500
-			)
+			); }
 		);
 	}
 

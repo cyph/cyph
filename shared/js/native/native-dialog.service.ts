@@ -73,6 +73,11 @@ export class NativeDialogService implements DialogService {
 	}
 
 	/** @inheritDoc */
+	public async dismissToast () : Promise<void> {
+		await this.snackbar.dismiss();
+	}
+
+	/** @inheritDoc */
 	public async image (src: SafeUrl|string) : Promise<void> {
 		if (typeof src !== 'string') {
 			throw new Error('Unsupported src type.');
@@ -84,7 +89,17 @@ export class NativeDialogService implements DialogService {
 	}
 
 	/** @inheritDoc */
-	public async toast (content: string, duration: number) : Promise<void> {
+	public async toast (content: string, duration: number, action?: string) : Promise<boolean> {
+		if (action !== undefined) {
+			const args: any	= await this.snackbar.action({
+				actionText: action.toUpperCase(),
+				hideDelay: duration,
+				snackText: content
+			});
+
+			return args.command === 'Action';
+		}
+
 		let isPending	= true;
 		this.snackbar.simple(content).then(() => {
 			isPending	= false;
@@ -92,9 +107,10 @@ export class NativeDialogService implements DialogService {
 
 		await sleep(duration);
 		if (isPending) {
-			this.snackbar.dismiss();
+			await this.snackbar.dismiss();
 		}
 		await sleep(500);
+		return false;
 	}
 
 	constructor (

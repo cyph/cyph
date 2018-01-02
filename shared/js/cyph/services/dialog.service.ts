@@ -32,13 +32,21 @@ export class DialogService {
 		throw new Error('Must provide an implementation of DialogService.confirm.');
 	}
 
+	/** If applicable, dismisses active toast. */
+	public async dismissToast () : Promise<void> {
+		throw new Error('Must provide an implementation of DialogService.dismissToast.');
+	}
+
 	/** Displays image. */
 	public async image (_SRC: SafeUrl|string) : Promise<void> {
 		throw new Error('Must provide an implementation of DialogService.image.');
 	}
 
-	/** Displays toast notification. */
-	public async toast (_CONTENT: string, _DURATION: number) : Promise<void> {
+	/**
+	 * Displays toast notification.
+	 * @returns Whether it was manually dismissed.
+	 */
+	public async toast (_CONTENT: string, _DURATION: number, _ACTION?: string) : Promise<boolean> {
 		throw new Error('Must provide an implementation of DialogService.toast.');
 	}
 

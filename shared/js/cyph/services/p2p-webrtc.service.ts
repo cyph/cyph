@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
+import {Subject} from 'rxjs/Subject';
 import * as SimpleWebRTC from 'simplewebrtc';
 import {env} from '../env';
 import {eventManager} from '../event-manager';
@@ -12,7 +13,6 @@ import {parse} from '../util/serialization';
 import {sleep, waitForIterable, waitForValue} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
-import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 
 
@@ -60,9 +60,11 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		},
 
 		kill: async () : Promise<void> => {
-			const wasAccepted: boolean	= this.isAccepted;
+			const wasAccepted			= this.isAccepted;
+			const wasInitialCallPending	= this.initialCallPending;
 			this.isAccepted				= false;
 			this.isActive				= false;
+			this.initialCallPending		= false;
 
 			await sleep(500);
 
@@ -80,8 +82,13 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				this.webRTC	= undefined;
 			}
 
-			if (wasAccepted) {
-				(await this.handlers).connected(false);
+			const handlers	= await this.handlers;
+
+			if (wasInitialCallPending) {
+				await handlers.canceled();
+			}
+			else if (wasAccepted) {
+				await handlers.connected(false);
 			}
 		},
 
@@ -101,7 +108,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	;
 
 	/** @ignore */
-	private isAccepted: boolean;
+	private isAccepted: boolean							= false;
 
 	/** @ignore */
 	private readonly localVideo: Promise<() => JQuery>	=
@@ -130,22 +137,30 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	private webRTC: any;
 
 	/** @inheritDoc */
-	public readonly incomingStream	= {audio: false, video: false};
+	public readonly incomingStream			= {audio: false, video: false};
 
 	/** @inheritDoc */
-	public isActive: boolean		= this.sessionInitService.callType !== undefined;
+	public initialCallPending: boolean		= false;
 
 	/** @inheritDoc */
-	public loading: boolean;
+	public isActive: boolean				= false;
 
 	/** @inheritDoc */
-	public readonly outgoingStream	= {audio: false, video: false};
+	public loading: boolean					= false;
+
+	/** @inheritDoc */
+	public readonly outgoingStream			= {audio: false, video: false};
+
+	/** @ignore */
+	public readonly ready: Subject<void>	= new Subject();
 
 	/** @ignore */
 	private async receiveCommand (command: ISessionCommand) : Promise<void> {
 		if (!P2PWebRTCService.isSupported) {
 			return;
 		}
+
+		await this.ready.toPromise();
 
 		const method: Function|undefined	= (<any> this.commands)[command.method];
 
@@ -203,6 +218,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @inheritDoc */
 	public close () : void {
+		this.initialCallPending	= false;
+
 		this.sessionService.send([
 			rpcEvents.p2p,
 			{command: {method: P2PWebRTCService.constants.kill}}
@@ -341,12 +358,19 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		(await this.handlers).connected(true);
 
-		this.webRTC	= webRTC;
+		this.webRTC				= webRTC;
+		this.initialCallPending	= false;
 	}
 
 	/** @inheritDoc */
-	public async request (callType: 'audio'|'video') : Promise<void> {
-		const ok	= await (await this.handlers).requestConfirm(callType, this.isAccepted);
+	public async request (callType: 'audio'|'video', isPassive: boolean = false) : Promise<void> {
+		const handlers	= await this.handlers;
+
+		if (isPassive && !this.isAccepted) {
+			return;
+		}
+
+		const ok	= await handlers.requestConfirm(callType, this.isAccepted);
 
 		if (!ok) {
 			return;
@@ -421,9 +445,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		/** @ignore */
 		private readonly analyticsService: AnalyticsService,
-
-		/** @ignore */
-		private readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
 		private readonly sessionService: SessionService

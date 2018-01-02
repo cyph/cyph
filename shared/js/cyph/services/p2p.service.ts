@@ -37,6 +37,13 @@ export class P2PService {
 				title: this.stringsService.p2pTitle
 			});
 		},
+		canceled: () => {
+			this.dialogService.alert({
+				content: this.stringsService.p2pCanceled,
+				ok: this.stringsService.ok,
+				title: this.stringsService.p2pTitle
+			});
+		},
 		connected: (isConnected: boolean) => {
 			if (isConnected) {
 				this.chatService.addMessage(
@@ -128,10 +135,6 @@ export class P2PService {
 
 	/** Initializes service. */
 	public async init (localVideo: () => JQuery, remoteVideo: () => JQuery) : Promise<void> {
-		if (this.sessionInitService.callType !== undefined) {
-			this.p2pWebRTCService.accept(this.sessionInitService.callType);
-		}
-
 		this.p2pWebRTCService.init(this.handlers, localVideo, remoteVideo);
 
 		this.isEnabled	= (await this.sessionCapabilitiesService.capabilities).p2p;
@@ -140,6 +143,11 @@ export class P2PService {
 	/** @see P2PWebRTCService.isActive */
 	public get isActive () : boolean {
 		return this.p2pWebRTCService.isActive;
+	}
+
+	/** Is active or has initial call type. */
+	public get isActiveOrInitialCall () : boolean {
+		return this.isActive || this.sessionInitService.callType !== undefined;
 	}
 
 	/** Toggle window of sidebar containing chat UI. */

@@ -201,10 +201,6 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 
 			beforeUnloadMessage	= this.stringsService.disconnectWarning;
 
-			if (this.sessionInitService.callType && this.sessionService.state.isAlice) {
-				this.p2pWebRTCService.request(this.sessionInitService.callType);
-			}
-
 			if (granim) {
 				await this.windowWatcherService.waitUntilVisible();
 
@@ -231,16 +227,6 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 			}
 
 			this.appService.chatRootState	= ChatRootStates.chat;
-
-			if (this.sessionInitService.callType) {
-				this.dialogService.toast(
-					this.sessionInitService.callType === 'video' ?
-						this.stringsService.p2pWarningVideoPassive :
-						this.stringsService.p2pWarningAudioPassive
-					,
-					5000
-				);
-			}
 		});
 
 		this.sessionService.one(events.cyphNotFound).then(() => {
@@ -289,9 +275,6 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 
 		/** @ignore */
 		private readonly faviconService: FaviconService,
-
-		/** @ignore */
-		private readonly p2pWebRTCService: P2PWebRTCService,
 
 		/** @ignore */
 		private readonly router: Router,

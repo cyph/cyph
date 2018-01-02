@@ -55,7 +55,10 @@
 			*ngIf='appService.chatRootState === chatRootStates.blank'
 		></div>
 
-		<footer *ngIf='!(appService.chatRootState === chatRootStates.chat && p2pService.isActive)'>
+		<footer *ngIf='!(
+			appService.chatRootState === chatRootStates.chat &&
+			p2pService.isActiveOrInitialCall
+		)'>
 			<cyph-chat-message-box
 				[style.visibility]='!chatService.initiated ? "hidden" : undefined'
 				*ngIf='

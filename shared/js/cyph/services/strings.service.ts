@@ -300,6 +300,9 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
+	public readonly p2pCanceled: string				= `Call canceled.`;
+
+	/** @see StringsService */
 	public readonly p2pConnect: string				= `Call has started.`;
 
 	/** @see StringsService */
@@ -355,14 +358,10 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
-	public readonly p2pWarningAudioPassive: string	=
-		`Starting voice call (P2P). Close this window to abort.`
-	;
+	public readonly p2pWarningAudioPassive: string	= `Starting voice call (P2P).`;
 
 	/** @see StringsService */
-	public readonly p2pWarningVideoPassive: string	=
-		`Starting video call (P2P). Close this window to abort.`
-	;
+	public readonly p2pWarningVideoPassive: string	= `Starting video call (P2P).`;
 
 	/** @see StringsService */
 	public readonly patient: string					= `patient`;

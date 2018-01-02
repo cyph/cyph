@@ -9,6 +9,9 @@ export interface IP2PHandlers {
 		isAccepted: boolean
 	) => Promise<boolean>;
 
+	/** Canceled handler. */
+	canceled: () => void;
+
 	/** Connected handler. */
 	connected: (isConnected: boolean) => void;
 
