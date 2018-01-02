@@ -114,7 +114,7 @@ export class P2PService {
 
 	/** Close active P2P session. */
 	public closeButton () : void {
-		if (this.sessionInitService.callType === undefined) {
+		if (!this.sessionInitService.ephemeral || this.sessionInitService.callType === undefined) {
 			this.p2pWebRTCService.close();
 		}
 		else {
