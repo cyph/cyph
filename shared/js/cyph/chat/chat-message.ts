@@ -10,7 +10,7 @@ import {
 	IChatMessageValue
 } from '../proto';
 import {Timer} from '../timer';
-import {getTimeString} from '../util/time';
+import {getDateTimeString, getTimeString} from '../util/time';
 import {sleep} from '../util/wait';
 
 
@@ -24,34 +24,36 @@ export class ChatMessage implements IChatMessage {
 
 
 	/** @inheritDoc */
-	public authorID?: string			= this.message.authorID;
+	public authorID?: string							= this.message.authorID;
 
 	/** @inheritDoc */
 	public authorType: ChatMessageInternal.AuthorTypes	= this.message.authorType;
 
 	/** Human-readable date + time. */
-	public readonly dateTimeString: string		= getTimeString(this.message.timestamp, true);
+	public readonly dateTimeString: string				= getDateTimeString(
+		this.message.timestamp
+	);
 
 	/** @inheritDoc */
-	public dimensions?: IChatMessageLine[]		= this.message.dimensions;
+	public dimensions?: IChatMessageLine[]				= this.message.dimensions;
 
 	/** @inheritDoc */
-	public id: string					= this.message.id;
+	public id: string									= this.message.id;
 
 	/** @inheritDoc */
-	public selfDestructTimeout?: number	= this.message.selfDestructTimeout;
+	public selfDestructTimeout?: number					= this.message.selfDestructTimeout;
 
 	/** @inheritDoc */
 	public readonly selfDestructTimer?: Timer;
 
 	/** @inheritDoc */
-	public timestamp: number			= this.message.timestamp;
+	public timestamp: number							= this.message.timestamp;
 
 	/** Human-readable time. */
-	public readonly timeString: string	= getTimeString(this.message.timestamp);
+	public readonly timeString: string					= getTimeString(this.message.timestamp);
 
 	/** @ignore */
-	public value?: IChatMessageValue	= this.message.value && {
+	public value?: IChatMessageValue					= this.message.value && {
 		calendarInvite: this.message.value.calendarInvite,
 		form: this.message.value.form,
 		quill: this.message.value.quill,

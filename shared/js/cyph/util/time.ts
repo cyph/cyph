@@ -32,6 +32,25 @@ const timestampData	= {
 	subtime: 0
 };
 
+/** @ignore */
+const getTimeStringInternal	= (timestamp: number, includeDate: boolean) : string =>
+	new Date(timestamp).toLocaleString(
+		undefined,
+		includeDate ? stringFormats.date : stringFormats.time
+	).replace(
+		' AM',
+		'am'
+	).replace(
+		' PM',
+		'pm'
+	)
+;
+
+/** Returns a human-readable representation of the date and time (e.g. "Jan 1, 2018, 3:37pm"). */
+export const getDateTimeString	= memoize((timestamp: number) : string =>
+	getTimeStringInternal(timestamp, true)
+);
+
 /**
  * Returns current timestamp, with logic to correct for incorrect
  * local clocks and ensure each output is unique.
@@ -53,17 +72,8 @@ export const getTimestamp	= async () : Promise<number> => {
 };
 
 /** Returns a human-readable representation of the time (e.g. "3:37pm"). */
-export const getTimeString	= memoize((timestamp: number, includeDate: boolean = false) : string =>
-	new Date(timestamp).toLocaleString(
-		undefined,
-		includeDate ? stringFormats.date : stringFormats.time
-	).replace(
-		' AM',
-		'am'
-	).replace(
-		' PM',
-		'pm'
-	)
+export const getTimeString	= memoize((timestamp: number) : string =>
+	getTimeStringInternal(timestamp, false)
 );
 
 /** Converts a timestamp into a Date. */
