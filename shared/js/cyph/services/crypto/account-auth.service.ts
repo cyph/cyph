@@ -270,8 +270,8 @@ export class AccountAuthService {
 		}
 		if (clearSavedCredentials) {
 			await Promise.all([
-				this.removeSavedCredentials(),
-				this.databaseService.logout()
+				this.databaseService.logout(),
+				this.localStorageService.clear()
 			]);
 		}
 
