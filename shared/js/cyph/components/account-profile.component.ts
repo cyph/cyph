@@ -62,7 +62,7 @@ export class AccountProfileComponent implements OnInit {
 			await this.accountAuthService.hasSavedCredentials()
 		) {
 			this.router.navigate(username ?
-				['login', 'profile', username] :
+				['login', 'account', 'profile', username] :
 				['login']
 			);
 			return;
