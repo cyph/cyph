@@ -20,12 +20,14 @@ if (callType === 'audio' || callType === 'video') {
 	customBuildCallType	= callType;
 }
 
+const faviconURI	= customBuildFavicon ? `data:image/png;base64,${customBuildFavicon}` : '';
+
 $('head .custom-build-favicon').each((_, elem) => {
 	if (elem instanceof HTMLLinkElement) {
-		elem.href		= customBuildFavicon || '';
+		elem.href		= faviconURI;
 	}
 	else if (elem instanceof HTMLMetaElement) {
-		elem.content	= customBuildFavicon || '';
+		elem.content	= faviconURI;
 	}
 });
 

@@ -28,15 +28,7 @@
 			(click)='click()'
 			*ngIf='accountService.menuExpanded | async'
 		>
-			<img
-				[src]='
-					!accountService.isTelehealth ?
-						"/assets/img/logo.white.horizontal.png" :
-						"/assets/img/logo.telehealth.horizontal.png"
-				'
-				class='logo'
-				alt='Cyph Logo'
-			/>
+			<cyph-logo [telehealth]='accountService.isTelehealth'></cyph-logo>
 		</button>
 		<button
 			mat-icon-button
@@ -48,15 +40,7 @@
 			(click)='click()'
 			*ngIf='(accountService.menuExpanded | async) === false'
 		>
-			<img
-				[src]='
-					!accountService.isTelehealth ?
-						"/assets/img/logo.white.icon.png" :
-						"/assets/img/logo.telehealth.icon.png"
-				'
-				class='logo'
-				alt='Cyph Logo'
-			/>
+			<cyph-logo icon [telehealth]='accountService.isTelehealth'></cyph-logo>
 		</button>
 
 		<div fxLayoutAlign='center center'>

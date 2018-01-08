@@ -23,16 +23,16 @@ button {
 	}
 }
 
-img {
+cyph-logo {
+	max-height: 2.5em;
+}
+
+img, cyph-logo {
 	max-width: 100%;
+}
 
-	&.avatar {
-		width: calc(100% - 10px);
-	}
-
-	&.logo {
-		max-height: 2.5em;
-	}
+img.avatar {
+	width: calc(100% - 10px);
 }
 
 .avatar-container {

@@ -1,10 +1,10 @@
 import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
-import {SafeUrl} from '@angular/platform-browser';
 import * as $ from 'jquery';
 import {fadeIn} from '../animations';
 import {States, UiStyles} from '../chat/enums';
-import {ChatMessageValueTypes, DataURIProto} from '../proto';
+import {ChatMessageValueTypes} from '../proto';
 import {ChatService} from '../services/chat.service';
+import {CustomBuildService} from '../services/custom-build.service';
 import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
 import {P2PWebRTCService} from '../services/p2p-webrtc.service';
@@ -13,7 +13,6 @@ import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {trackByTransfer} from '../track-by/track-by-transfer';
 import {readableByteLength} from '../util/formatting';
-import {deserialize} from '../util/serialization';
 
 
 /**
@@ -28,18 +27,6 @@ import {deserialize} from '../util/serialization';
 export class ChatMainComponent implements AfterViewInit {
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
-
-	/** @see customBuildAudioImage */
-	public readonly customBuildAudioImage?: Promise<SafeUrl>		= customBuildAudioImage ?
-		deserialize(DataURIProto, customBuildAudioImage) :
-		undefined
-	;
-
-	/** @see customBuildErrorImage */
-	public readonly customBuildErrorImage?: Promise<SafeUrl>		= customBuildErrorImage ?
-		deserialize(DataURIProto, customBuildErrorImage) :
-		undefined
-	;
 
 	/** Indicates whether projected disconnection message should be hidden. */
 	@Input() public hideDisconnectMessage: boolean					= false;
@@ -89,6 +76,9 @@ export class ChatMainComponent implements AfterViewInit {
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,
+
+		/** @see CustomBuildService */
+		public readonly customBuildService: CustomBuildService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

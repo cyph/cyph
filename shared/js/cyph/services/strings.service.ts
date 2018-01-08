@@ -233,6 +233,9 @@ export class StringsService {
 	public readonly logInTitle: string				= `Log in to ${this.internalProduct}`;
 
 	/** @see StringsService */
+	public readonly logo: string					= `Logo`;
+
+	/** @see StringsService */
 	public readonly masterKey: string				= `Master Key`;
 
 	/** @see StringsService */

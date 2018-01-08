@@ -139,7 +139,7 @@ mat-card {
 		}
 	}
 
-	.header-logo {
+	.card-header-logo {
 		position: absolute;
 		height: 2em;
 		top: 24px;
@@ -148,7 +148,7 @@ mat-card {
 }
 
 @media (max-width: 799px) {
-	mat-card .header-logo {
+	mat-card .card-header-logo {
 		height: 17px;
 		top: 6px;
 		right: 50%;

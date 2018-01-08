@@ -71,7 +71,7 @@
 				}
 
 				&.sidebar-open {
-					.logo, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
+					cyph-logo, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
 						@include transform(translateX(-20vw));
 					}
 
@@ -121,7 +121,7 @@
 				}
 
 				&.sidebar-open {
-					.logo, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
+					cyph-logo, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
 						@include transform(translateX(calc(150px - 30vw)));
 					}
 
@@ -179,11 +179,11 @@
 	}
 
 	cyph-chat-main .chat-main.video .video-call {
-		&, .logo, .me, .sidebar, .buttons, ~ cyph-chat-message-list, ~ .video-call-message-box {
+		&, cyph-logo, .me, .sidebar, .buttons, ~ cyph-chat-message-list, ~ .video-call-message-box {
 			position: absolute;
 		}
 
-		.logo {
+		cyph-logo {
 			top: 17.5%;
 			left: 15px;
 		}

@@ -19,7 +19,7 @@
 		[@fadeIn]='"in"'
 	>
 		<div *ngIf='sessionService.apiFlags.telehealth; else animation' class='telehealth-logo'>
-			<img src='/assets/img/logo.telehealth.icon.png' alt='Telehealth logo' />
+			<cyph-logo icon telehealth></cyph-logo>
 		</div>
 
 		<ng-template #animation>
@@ -68,14 +68,14 @@
 	>
 		<div class='image'>
 			<img
-				*ngIf='!(sessionService.apiFlags.telehealth || customBuildErrorImage)'
+				*ngIf='!(sessionService.apiFlags.telehealth || customBuildService.errorImage)'
 				src='/assets/img/walken.png'
 				alt='Definitely not Christopher Walken'
 				cyphTranslate
 			/>
 			<img
-				*ngIf='!!customBuildErrorImage'
-				[src]='customBuildErrorImage | async'
+				*ngIf='!!customBuildService.errorImage'
+				[src]='customBuildService.errorImage | async'
 				alt='Error'
 				cyphTranslate
 			/>
@@ -123,25 +123,14 @@
 		*ngIf='p2pWebRTCService && chatService.chat.state === states.chat'
 	>
 		<a class='logo' rel='noopener noreferrer' [href]='envService.homeUrl'>
-			<img
-				*ngIf='!sessionService.apiFlags.telehealth'
-				src='/assets/img/betalogo.mobile.png'
-				alt='Beta logo'
-				cyphTranslate
-			/>
-			<img
-				*ngIf='sessionService.apiFlags.telehealth'
-				src='/assets/img/telehealth.video.logo.png'
-				alt='Telehealth logo'
-				cyphTranslate
-			/>
+			<cyph-logo video [telehealth]='sessionService.apiFlags.telehealth'></cyph-logo>
 		</a>
 		<div
 			class='friend stream'
 			[fxHide]='!p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
 		></div>
 		<img
-			*ngIf='!customBuildAudioImage'
+			*ngIf='!customBuildService.audioImage'
 			class='friend'
 			[fxHide]='p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
 			src='/assets/img/voicecall.jpg'
@@ -149,10 +138,10 @@
 			cyphTranslate
 		/>
 		<img
-			*ngIf='!!customBuildAudioImage'
+			*ngIf='!!customBuildService.audioImage'
 			class='friend'
 			[fxHide]='p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
-			[src]='customBuildAudioImage | async'
+			[src]='customBuildService.audioImage | async'
 			alt='Voice call'
 			cyphTranslate
 		/>

@@ -70,7 +70,7 @@ try {
 catch (_) {}
 
 try {
-	o.favicon			= datauri.sync(args.customBuildFavicon);
+	o.favicon			= potassium.toBase64(fs.readFileSync(args.customBuildFavicon));
 }
 catch (_) {}
 

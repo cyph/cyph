@@ -250,11 +250,11 @@
 			z-index: 1;
 		}
 
-		.logo, .me, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
+		cyph-logo, .me, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
 			@include transition(transform 0.5s ease-in-out !important);
 		}
 
-		.logo {
+		cyph-logo {
 			position: fixed;
 			top: 10px;
 			left: 15px;
@@ -382,7 +382,7 @@
 		}
 
 		&.sidebar-open {
-			.logo, .me, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
+			cyph-logo, .me, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
 				@include transform(translateX(-300px) !important);
 			}
 		}
@@ -400,7 +400,7 @@
 			}
 
 			&.sidebar-open {
-				.logo, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
+				cyph-logo, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
 					@include transform(translateX(-25vw) !important);
 				}
 
@@ -424,7 +424,7 @@
 			bottom: 10px;
 		}
 
-		&.sidebar-open .logo {
+		&.sidebar-open cyph-logo {
 			@include transform(translateX(0px) !important);
 		}
 	}
@@ -439,7 +439,7 @@
 			width: calc(100vw - 65px);
 		}
 
-		.logo {
+		cyph-logo {
 			pointer-events: none;
 		}
 
@@ -448,7 +448,7 @@
 		}
 
 		&.sidebar-open {
-			.logo, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
+			cyph-logo, .buttons, .sidebar, ~ cyph-chat-message-list, ~ .video-call-message-box {
 				@include transform(translateX(calc(65px - 100vw)) !important);
 			}
 
