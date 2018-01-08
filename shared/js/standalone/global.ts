@@ -39,6 +39,8 @@ for (const k of [
 	'customBuildCallType',
 	'customBuildErrorImage',
 	'customBuildFavicon',
+	'customBuildLogoHorizontal',
+	'customBuildLogoVertical',
 	'customBuildPassword',
 	'customBuildStrings',
 	'history',

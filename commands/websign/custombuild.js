@@ -22,9 +22,11 @@ const args			= {
 	customBuildConfig: process.argv[5],
 	customBuildErrorImage: process.argv[6],
 	customBuildFavicon: process.argv[7],
-	customBuildStrings: process.argv[8],
-	customBuildStylesheet: process.argv[9],
-	customBuildTheme: process.argv[10],
+	customBuildLogoHorizontal: process.argv[8],
+	customBuildLogoVertical: process.argv[9],
+	customBuildStrings: process.argv[10],
+	customBuildStylesheet: process.argv[11],
+	customBuildTheme: process.argv[12],
 };
 
 
@@ -53,27 +55,37 @@ const o	= JSON.parse(
 );
 
 try {
-	o.audioImage	= potassium.toBase64(fs.readFileSync(args.customBuildAudioImage));
+	o.audioImage		= potassium.toBase64(fs.readFileSync(args.customBuildAudioImage));
 }
 catch (_) {}
 
 try {
-	o.background	= datauri.sync(args.customBuildBackground);
+	o.background		= datauri.sync(args.customBuildBackground);
 }
 catch (_) {}
 
 try {
-	o.errorImage	= potassium.toBase64(fs.readFileSync(args.customBuildErrorImage));
+	o.errorImage		= potassium.toBase64(fs.readFileSync(args.customBuildErrorImage));
 }
 catch (_) {}
 
 try {
-	o.favicon		= datauri.sync(args.customBuildFavicon);
+	o.favicon			= datauri.sync(args.customBuildFavicon);
 }
 catch (_) {}
 
 try {
-	o.strings		= fs.readFileSync(args.customBuildStrings).toString();
+	o.logoHorizontal	= potassium.toBase64(fs.readFileSync(args.customBuildLogoHorizontal));
+}
+catch (_) {}
+
+try {
+	o.logoVertical		= potassium.toBase64(fs.readFileSync(args.customBuildLogoVertical));
+}
+catch (_) {}
+
+try {
+	o.strings			= fs.readFileSync(args.customBuildStrings).toString();
 }
 catch (_) {}
 
@@ -177,6 +189,14 @@ if (o.favicon) {
 	;
 
 	$('head').append(`<meta name='custom-build-favicon' content='${o.favicon}' />`);
+}
+
+if (o.logoHorizontal) {
+	$('head').append(`<meta name='custom-build-logo-horizontal' content='${o.logoHorizontal}' />`);
+}
+
+if (o.logoVertical) {
+	$('head').append(`<meta name='custom-build-logo-vertical' content='${o.logoVertical}' />`);
 }
 
 if (o.password) {

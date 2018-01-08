@@ -414,6 +414,8 @@ if [ "${websign}" ] ; then
 			customBuildBackground="${d}/background.png"
 			customBuildErrorImage="${d}/error-image.png"
 			customBuildFavicon="${d}/favicon.png"
+			customBuildLogoHorizontal="${d}/logo.horizontal.png"
+			customBuildLogoVertical="${d}/logo.vertical.png"
 			customBuildStrings="${d}/strings.json"
 			customBuildTheme="${d}/theme.scss"
 			customBuildStylesheet="custom-builds/${customBuildBase}.css"
@@ -426,6 +428,8 @@ if [ "${websign}" ] ; then
 				"${customBuildConfig}" \
 				"${customBuildErrorImage}" \
 				"${customBuildFavicon}" \
+				"${customBuildLogoHorizontal}" \
+				"${customBuildLogoVertical}" \
 				"${customBuildStrings}" \
 				"${customBuildStylesheet}" \
 				"${customBuildTheme}"

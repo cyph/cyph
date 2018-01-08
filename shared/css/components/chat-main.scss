@@ -258,11 +258,13 @@
 			position: fixed;
 			top: 10px;
 			left: 15px;
-			height: 35px;
+			height: 45px;
 			opacity: 0.5;
 
 			img {
 				height: 100%;
+
+				@include filter(brightness(0) invert(1));
 			}
 		}
 

@@ -42,6 +42,18 @@ declare let customBuildFavicon: string|undefined;
 
 /**
  * @global
+ * If applicable, horizontal logo for this custom build.
+ */
+declare let customBuildLogoHorizontal: string|undefined;
+
+/**
+ * @global
+ * If applicable, vertical logo for this custom build.
+ */
+declare let customBuildLogoVertical: string|undefined;
+
+/**
+ * @global
  * If applicable, password for this custom build.
  */
 declare let customBuildPassword: string|undefined;
