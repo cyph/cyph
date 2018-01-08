@@ -90,20 +90,20 @@ export class LogoComponent {
 
 	/** Indicates whether image is a logo in a card. */
 	@Input()
-	public get cardHeader () {
+	public get cardHeader () : boolean {
 		return this.cardHeaderInternal;
 	}
-	public set cardHeader (value: boolean|'') {
-		this.cardHeaderInternal	= value === '' ? true : value;
+	public set cardHeader (value: boolean) {
+		this.cardHeaderInternal	= (<any> value) === '' ? true : value;
 	}
 
 	/** Indicates whether to use icon image. */
 	@Input()
-	public get icon () {
+	public get icon () : boolean {
 		return this.iconInternal;
 	}
-	public set icon (value: boolean|'') {
-		this.iconInternal	= value === '' ? true : value;
+	public set icon (value: boolean) {
+		this.iconInternal	= (<any> value) === '' ? true : value;
 	}
 
 	/** Active logo. */
@@ -119,33 +119,33 @@ export class LogoComponent {
 		;
 
 		return this.telehealth ? logoSet.telehealth : logoSet.main;
-	};
+	}
 
 	/** Indicates whether to use telehealth image. */
 	@Input()
-	public get telehealth () {
+	public get telehealth () : boolean {
 		return this.telehealthInternal;
 	}
-	public set telehealth (value: boolean|'') {
-		this.telehealthInternal	= value === '' ? true : value;
+	public set telehealth (value: boolean) {
+		this.telehealthInternal	= (<any> value) === '' ? true : value;
 	}
 
 	/** Indicates whether to use vertical image. */
 	@Input()
-	public get vertical () {
+	public get vertical () : boolean {
 		return this.verticalInternal;
 	}
-	public set vertical (value: boolean|'') {
-		this.verticalInternal	= value === '' ? true : value;
+	public set vertical (value: boolean) {
+		this.verticalInternal	= (<any> value) === '' ? true : value;
 	}
 
 	/** Indicates whether to use video image. */
 	@Input()
-	public get video () {
+	public get video () : boolean {
 		return this.videoInternal;
 	}
-	public set video (value: boolean|'') {
-		this.videoInternal	= value === '' ? true : value;
+	public set video (value: boolean) {
+		this.videoInternal	= (<any> value) === '' ? true : value;
 	}
 
 	constructor (
