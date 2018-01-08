@@ -1,4 +1,14 @@
 <mat-card fxFlex fxLayout='column' class='fullscreen'>
+	<img
+		cyphTranslate
+		class='header-logo'
+		alt='Cyph Logo'
+		[src]='
+			!accountService.isTelehealth ?
+				"/assets/img/logo.white.horizontal.png" :
+				"/assets/img/logo.telehealth.horizontal.png"
+		'
+	/>
 	<mat-card-title cyphTranslate>
 		Welcome to {{stringsService.product}}
 	</mat-card-title>

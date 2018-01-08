@@ -3,6 +3,7 @@ import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../account';
+import {AccountService} from '../services/account.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
@@ -194,6 +195,9 @@ export class AccountRegisterComponent implements OnInit {
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @see AccountService */
+		public readonly accountService: AccountService,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

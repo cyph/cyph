@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {AccountService} from '../services/account.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
 
@@ -13,6 +14,9 @@ import {StringsService} from '../services/strings.service';
 })
 export class AccountPostRegisterComponent {
 	constructor (
+		/** @see AccountService */
+		public readonly accountService: AccountService,
+
 		/** @see EnvService */
 		public readonly envService: EnvService,
 

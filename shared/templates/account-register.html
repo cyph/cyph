@@ -3,6 +3,16 @@
 	[class.checking]='checking'
 >
 	<mat-card fxFlex class='fullscreen'>
+		<img
+			cyphTranslate
+			class='header-logo'
+			alt='Cyph Logo'
+			[src]='
+				!accountService.isTelehealth ?
+					"/assets/img/logo.white.horizontal.png" :
+					"/assets/img/logo.telehealth.horizontal.png"
+			'
+		/>
 		<mat-card-title>
 			{{stringsService.registerTitle}}
 		</mat-card-title>

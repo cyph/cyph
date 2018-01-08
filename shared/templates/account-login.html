@@ -5,6 +5,16 @@
 	[class.checking]='checking'
 >
 	<mat-card fxFlex fxFlex.gt-sm='50' *ngIf='pinUnlock !== undefined'>
+		<img
+			cyphTranslate
+			class='header-logo'
+			alt='Cyph Logo'
+			[src]='
+				!accountService.isTelehealth ?
+					"/assets/img/logo.white.horizontal.png" :
+					"/assets/img/logo.telehealth.horizontal.png"
+			'
+		/>
 		<mat-card-title cyphTranslate>
 			<span *ngIf='!pinUnlock'>{{stringsService.logInTitle}}</span>
 			<span *ngIf='pinUnlock'>{{stringsService.unlockTitle}}</span>

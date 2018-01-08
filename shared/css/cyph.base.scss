@@ -124,18 +124,36 @@ mat-option img {
 	cursor: pointer;
 }
 
-mat-card.fullscreen {
-	position: fixed !important;
-	width: 100% !important;
-	height: 100% !important;
-	max-width: 100% !important;
-	max-height: 100% !important;
-	top: 0px !important;
-	left: 0px !important;
-	padding: 25px !important;
+mat-card {
+	&.fullscreen {
+		position: fixed !important;
+		width: 100% !important;
+		height: 100% !important;
+		max-width: 100% !important;
+		max-height: 100% !important;
+		top: 0px !important;
+		left: 0px !important;
 
-	mat-card-title {
-		text-align: center !important;
+		mat-card-title {
+			text-align: center !important;
+		}
+	}
+
+	.header-logo {
+		position: absolute;
+		height: 2em;
+		top: 24px;
+		right: 24px;
+	}
+}
+
+@media (max-width: 799px) {
+	mat-card .header-logo {
+		height: 17px;
+		top: 6px;
+		right: 50%;
+
+		@include transform(translateX(50%));
 	}
 }
 
