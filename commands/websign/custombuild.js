@@ -18,15 +18,14 @@ const {serialize}		= require('../../modules/util');
 const args			= {
 	customBuild: process.argv[2],
 	customBuildAudioImage: process.argv[3],
-	customBuildBackground: process.argv[4],
-	customBuildConfig: process.argv[5],
-	customBuildErrorImage: process.argv[6],
-	customBuildFavicon: process.argv[7],
-	customBuildLogoHorizontal: process.argv[8],
-	customBuildLogoVertical: process.argv[9],
-	customBuildStrings: process.argv[10],
-	customBuildStylesheet: process.argv[11],
-	customBuildTheme: process.argv[12],
+	customBuildConfig: process.argv[4],
+	customBuildErrorImage: process.argv[5],
+	customBuildFavicon: process.argv[6],
+	customBuildLogoHorizontal: process.argv[7],
+	customBuildLogoVertical: process.argv[8],
+	customBuildStrings: process.argv[9],
+	customBuildStylesheet: process.argv[10],
+	customBuildTheme: process.argv[11],
 };
 
 
@@ -56,11 +55,6 @@ const o	= JSON.parse(
 
 try {
 	o.audioImage		= potassium.toBase64(fs.readFileSync(args.customBuildAudioImage));
-}
-catch (_) {}
-
-try {
-	o.background		= datauri.sync(args.customBuildBackground);
 }
 catch (_) {}
 
@@ -107,19 +101,6 @@ try {
 		${fs.readFileSync(args.customBuildTheme).toString()}
 
 		@include cyph-apply-theme(true);
-
-		${!o.background ? '' : `
-			cyph-chat-main {
-				cyph-chat-message-list:after {
-					background-image: url(${o.background}) !important;
-				}
-
-				.video-call .logo {
-					height: 30px !important;
-					opacity: 0.4 !important;
-				}
-			}
-		`}
 	`);
 }
 catch (_) {}

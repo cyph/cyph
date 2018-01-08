@@ -22,7 +22,7 @@
 		}
 	}
 
-	cyph-chat-message-list:after {
+	cyph-chat-message-list > .background-image {
 		display: none;
 	}
 
@@ -50,7 +50,7 @@
 				cyph-chat-message-list {
 					font-size: 90%;
 
-					&:after {
+					> .background-image {
 						@include transform(translate(-50%, -60%));
 					}
 				}

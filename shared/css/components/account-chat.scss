@@ -12,7 +12,7 @@
 	margin-bottom: 1em;
 }
 
-cyph-chat-message-list:after {
+cyph-chat-message-list ::ng-deep > .background-image {
 	display: none;
 }
 

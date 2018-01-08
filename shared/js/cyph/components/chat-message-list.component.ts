@@ -5,8 +5,10 @@ import {
 	ElementRef,
 	Injector,
 	Input,
-	OnChanges
+	OnChanges,
+	SecurityContext
 } from '@angular/core';
+import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 import * as $ from 'jquery';
 import {IVirtualScrollOptions} from 'od-virtualscroll';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -23,6 +25,7 @@ import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
+import {CustomBuildService} from '../services/custom-build.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
@@ -85,6 +88,18 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 	/** @see IChatData */
 	@Input() public chat: IChatData;
+
+	/** @see customBuildLogoVertical */
+	public readonly customBackgroundImage: Promise<SafeStyle|undefined>	=
+		this.customBuildService.logoVertical === undefined ?
+			Promise.resolve(undefined) :
+			this.customBuildService.logoVertical.then(logo => {
+				const url	= this.domSanitizer.sanitize(SecurityContext.URL, logo);
+				return !url ? undefined : this.domSanitizer.bypassSecurityTrustStyle(
+					`url(${url})`
+				);
+			})
+	;
 
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean		= false;
@@ -244,6 +259,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 	constructor (
 		/** @ignore */
+		private readonly domSanitizer: DomSanitizer,
+
+		/** @ignore */
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
@@ -251,6 +269,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 		/** @ignore */
 		private readonly chatMessageGeometryService: ChatMessageGeometryService,
+
+		/** @ignore */
+		private readonly customBuildService: CustomBuildService,
 
 		/** @ignore */
 		private readonly envService: EnvService,

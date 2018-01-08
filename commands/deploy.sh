@@ -411,7 +411,6 @@ if [ "${websign}" ] ; then
 			customBuild="$(projectname "${customBuildBase}")"
 			customBuildConfig="${d}/config.json"
 			customBuildAudioImage="${d}/audio-image.png"
-			customBuildBackground="${d}/background.png"
 			customBuildErrorImage="${d}/error-image.png"
 			customBuildFavicon="${d}/favicon.png"
 			customBuildLogoHorizontal="${d}/logo.horizontal.png"
@@ -424,7 +423,6 @@ if [ "${websign}" ] ; then
 			../../commands/websign/custombuild.js \
 				"${customBuild}" \
 				"${customBuildAudioImage}" \
-				"${customBuildBackground}" \
 				"${customBuildConfig}" \
 				"${customBuildErrorImage}" \
 				"${customBuildFavicon}" \

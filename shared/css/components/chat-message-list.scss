@@ -2,19 +2,19 @@
 
 :host {
 	position: relative;
+}
 
-	&:after {
-		background-image: url(/assets/img/betalogo.png);
-		background-repeat: no-repeat;
-		background-size: cover;
-		width: 50vh;
-		height: 50vh;
-		z-index: -1;
-		opacity: 0.10;
-		content: ' ';
+.background-image {
+	background-image: url(/assets/img/betalogo.png);
+	background-repeat: no-repeat;
+	background-size: cover;
+	width: 50vh;
+	height: 50vh;
+	z-index: -1;
+	opacity: 0.10;
+	content: ' ';
 
-		@include center;
-	}
+	@include center;
 }
 
 .message-list-background {

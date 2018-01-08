@@ -22,6 +22,11 @@
 	</div>
 </div>
 
+<div
+	class='background-image'
+	[style.background-image]='customBackgroundImage | async'
+></div>
+
 <ng-template #listItem let-item='item'>
 	<div fxLayout='row'>
 		<div fxFlex fxLayout='column'>
