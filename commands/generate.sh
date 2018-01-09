@@ -15,8 +15,11 @@ fi
 name="${2}"
 
 
-if [ "${type}" != 'component' -a "${type}" != 'service' ] || [ "${name}" == '' ] ; then
-	echo 'Usage: docker.js generate [component|service] MyNewThing'
+if \
+	[ "${type}" != 'component' -a "${type}" != 'resolver' -a "${type}" != 'service' ] || \
+	[ "${name}" == '' ] \
+; then
+	echo 'Usage: docker.js generate [component|resolver|service] MyNewThing'
 	exit 1
 fi
 
@@ -27,6 +30,8 @@ genericDescription="$(echo "${selector}" | sed 's|-| |g')"
 
 
 if [ "${type}" == 'component' ] ; then
+
+mkdir -p shared/js/cyph/components
 
 echo "<div>${name}</div>" > shared/templates/${selector}.html
 echo "<Label text='${name}'></Label>" > shared/templates/native/${selector}.html
@@ -127,9 +132,48 @@ read -r -d '' files <<- EOM
 	shared/js/cyph/components/${selector}.component.ts
 EOM
 
-else
 
-cat > shared/js/cyph/services/${selector}.service.ts << EOM
+elif [ "${type}" == 'resolver' ] ; then
+
+mkdir -p shared/js/cyph/resolvers
+
+file="shared/js/cyph/resolvers/${selector}-resolver.service.ts"
+
+cat > ${file} << EOM
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot} from '@angular/router';
+import {Observable} from 'rxjs/Observable';
+
+
+/**
+ * Angular resolver for ${genericDescription}.
+ */
+@Injectable()
+export class ${class}Service implements Resolve<Balls> {
+	public resolve (
+		route: ActivatedRouteSnapshot,
+		state: RouterStateSnapshot
+	) : Observable<Balls> {
+
+	}
+
+	constructor (
+		/** @ignore */
+		private readonly router: Router
+	) {}
+}
+EOM
+
+files="${file}"
+
+
+elif [ "${type}" == 'service' ] ; then
+
+mkdir -p shared/js/cyph/services
+
+file="shared/js/cyph/services/${selector}.service.ts"
+
+cat > ${file} << EOM
 import {Injectable} from '@angular/core';
 
 
@@ -142,7 +186,13 @@ export class ${class} {
 }
 EOM
 
-files="shared/js/cyph/services/${selector}.service.ts"
+files="${file}"
+
+
+else
+
+echo fak u gooby
+exit 1
 
 fi
 
