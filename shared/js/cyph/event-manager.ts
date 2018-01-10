@@ -45,9 +45,7 @@ export class EventManager {
 	/** Resolves on first occurrence of event. */
 	public async one<T> (event: string) : Promise<T> {
 		return new Promise<T>(resolve => {
-			let f: (data: T) => void;
-
-			f	= (data: T) => {
+			const f	= (data: T) => {
 				this.off(event, f);
 				resolve(data);
 			};
