@@ -121,10 +121,10 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	public async yt () : Promise<void> {
-		const id		= uuid();
+		return new Promise<void>(resolve => {
+			const id	= uuid();
 
-		const answer	= new Promise<void>(resolve => {
-			const f	= (o: ISessionMessageData) => {
+			const f		= (o: ISessionMessageData) => {
 				if (o.command && o.command.method === id) {
 					this.off(rpcEvents.pong, f);
 					resolve();
@@ -132,10 +132,8 @@ export class AccountSessionService extends SessionService {
 			};
 
 			this.on(rpcEvents.pong, f);
+			this.send([rpcEvents.ping, {command: {method: id}}]);
 		});
-
-		this.send([rpcEvents.ping, {command: {method: id}}]);
-		return answer;
 	}
 
 	constructor (
