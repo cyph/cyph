@@ -9,6 +9,7 @@ import {States} from '../chat/enums';
 import {ChatMessageValueTypes} from '../proto';
 import {accountChatProviders} from '../providers';
 import {AccountChatService} from '../services/account-chat.service';
+import {AccountService} from '../services/account.service';
 import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
@@ -136,6 +137,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
+
+		/** @see AccountService */
+		public readonly accountService: AccountService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

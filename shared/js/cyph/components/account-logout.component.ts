@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
+import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
@@ -19,7 +20,7 @@ export class AccountLogoutComponent implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		await this.accountAuthService.logout();
 		await sleep(500);
-		await this.router.navigate(['login']);
+		await this.router.navigate([accountRoot, 'login']);
 
 		/* Get rid of any data still sitting in memory */
 		if (this.envService.isWeb) {
@@ -36,6 +37,9 @@ export class AccountLogoutComponent implements OnInit {
 
 		/** @ignore */
 		private readonly envService: EnvService,
+
+		/** @see AccountService */
+		public readonly accountService: AccountService,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

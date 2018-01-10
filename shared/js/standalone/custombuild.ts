@@ -15,6 +15,10 @@ customBuildLogoHorizontal	= $('meta[name="custom-build-logo-horizontal"]').attr(
 customBuildLogoVertical		= $('meta[name="custom-build-logo-vertical"]').attr('content');
 customBuildStrings			= $('meta[name="custom-build-strings"]').attr('content');
 
+accountRoot	=
+	$('meta[name="custom-build-accounts-only"]').attr('content') === 'true' ? '' : 'account'
+;
+
 const callType	= $('meta[name="custom-build-call-type"]').attr('content');
 if (callType === 'audio' || callType === 'video') {
 	customBuildCallType	= callType;

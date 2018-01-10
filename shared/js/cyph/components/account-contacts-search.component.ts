@@ -14,6 +14,7 @@ import {User} from '../account/user';
 import {ISearchOptions} from '../isearch-options';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
+import {AccountService} from '../services/account.service';
 import {StringsService} from '../services/strings.service';
 
 
@@ -137,6 +138,9 @@ export class AccountContactsSearchComponent {
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @see AccountService */
+		public readonly accountService: AccountService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

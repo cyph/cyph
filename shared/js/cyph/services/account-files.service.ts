@@ -449,7 +449,7 @@ export class AccountFilesService {
 				title: this.stringsService.deleteConfirm
 			})) {
 				this.router.navigate([
-					'account',
+					accountRoot,
 					file.recordType === AccountFileRecord.RecordTypes.Doc ?
 						'docs' :
 						file.recordType === AccountFileRecord.RecordTypes.File ?

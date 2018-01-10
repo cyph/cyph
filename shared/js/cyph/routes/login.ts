@@ -6,6 +6,6 @@ import {AccountLoginComponent} from '../components/account-login.component';
 
 /** Routing configuration for login. */
 export const login: Route	= {
-	path: 'login',
+	path: `${accountRoot}${accountRoot === '' ? '' : '/'}login`,
 	children: [{path: '**', component: AccountLoginComponent}]
 };

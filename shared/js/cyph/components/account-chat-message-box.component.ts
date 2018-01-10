@@ -2,6 +2,7 @@ import {Component, Input} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {User} from '../account/user';
 import {ChatMessageValueTypes} from '../proto';
+import {AccountService} from '../services/account.service';
 import {StringsService} from '../services/strings.service';
 
 
@@ -39,6 +40,9 @@ export class AccountChatMessageBoxComponent {
 	@Input() public showUnreadCount: boolean	= true;
 
 	constructor (
+		/** @see AccountService */
+		public readonly accountService: AccountService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {}

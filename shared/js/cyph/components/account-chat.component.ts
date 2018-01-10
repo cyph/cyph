@@ -63,9 +63,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			}
 
 			if (this.initiated) {
-				this.router.navigate(['account']);
+				this.router.navigate([accountRoot]);
 				await sleep(0);
-				this.router.navigate(['account', 'messages', username]);
+				this.router.navigate([accountRoot, 'messages', username]);
 				return;
 			}
 
@@ -82,10 +82,10 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		private readonly router: Router,
 
 		/** @ignore */
-		private readonly accountService: AccountService,
-
-		/** @ignore */
 		private readonly accountChatService: AccountChatService,
+
+		/** @see AccountService */
+		public readonly accountService: AccountService,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

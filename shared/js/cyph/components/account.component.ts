@@ -175,14 +175,14 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
 
+		/** @see AccountService */
+		public readonly accountService: AccountService,
+
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
 
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
-
-		/** @see AccountService */
-		public readonly accountService: AccountService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

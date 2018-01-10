@@ -57,6 +57,9 @@ export class AccountService {
 	/** Resolves ready promise. */
 	public resolveUiReady: () => void;
 
+	/** Root for account routes. */
+	public readonly routeRoot: string		= accountRoot === '' ? '/' : `/${accountRoot}/`;
+
 	/** Resolves after UI is ready. */
 	public readonly uiReady: Promise<void>	= new Promise(resolve => {
 		this.resolveUiReady	= resolve;

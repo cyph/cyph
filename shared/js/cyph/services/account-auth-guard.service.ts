@@ -25,9 +25,9 @@ export class AccountAuthGuardService implements CanActivate, CanActivateChild {
 			return true;
 		}
 
-		this.router.navigate(['login'].concat(
+		this.router.navigate([accountRoot, 'login'].concat(
 			route.url.length > 0 ?
-				['account'].concat(route.url.map(o => o.path)) :
+				[accountRoot].concat(route.url.map(o => o.path)) :
 				[]
 		));
 

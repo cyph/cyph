@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {AccountContactsService} from '../services/account-contacts.service';
+import {AccountService} from '../services/account.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
@@ -15,6 +16,9 @@ import {StringsService} from '../services/strings.service';
 })
 export class AccountHomeComponent {
 	constructor (
+		/** @see AccountService */
+		public readonly accountService: AccountService,
+
 		/** @see AccountContactsService */
 		public readonly accountContactsService: AccountContactsService,
 

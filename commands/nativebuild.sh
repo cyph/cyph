@@ -58,7 +58,8 @@ node -e 'console.log(`
 		importScripts("/assets/node_modules/libsodium/dist/browsers-sumo/sodium.js");
 	})();
 
-	self.translations = ${JSON.stringify(require("../commands/translations"))};
+	self.accountRoot	= "";
+	self.translations	= ${JSON.stringify(require("../commands/translations"))};
 `)' >> starter.js
 cat app/starter.js >> starter.js
 

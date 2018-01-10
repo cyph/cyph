@@ -40,7 +40,10 @@
 									(user.userType | async) === accountUserTypes.TelehealthDoctor
 								'
 							>
-								<div fxLayout='row' routerLink='/account/profile/nachc'>
+								<div
+									fxLayout='row'
+									[routerLink]='accountService.routeRoot + "profile/nachc"'
+								>
 									<mat-icon>business</mat-icon>
 									<h3 cyphTranslate>Community Health Center</h3>
 								</div>
@@ -101,7 +104,9 @@
 							mat-raised-button
 							cyphTranslate
 							color='primary'
-							[routerLink]='"/account/request-appointment/" + user.username'
+							[routerLink]='
+								accountService.routeRoot + "request-appointment/" + user.username
+							'
 						>
 							Request Appointment
 						</button>
@@ -223,7 +228,7 @@
 						cyphTranslate
 						class='animated shrink pulldown flipInX _4'
 						matTooltip='Open Messages'
-						[routerLink]='"/account/messages/" + user.username'
+						[routerLink]='accountService.routeRoot + "messages/" + user.username'
 					>
 						<mat-icon>chat_bubble</mat-icon>
 					</button>

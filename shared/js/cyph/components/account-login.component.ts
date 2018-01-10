@@ -68,7 +68,7 @@ export class AccountLoginComponent implements OnInit {
 		await this.router.navigate(
 			this.activatedRoute.snapshot.url.length > 0 ?
 				this.activatedRoute.snapshot.url.map(o => o.path) :
-				['account']
+				[accountRoot]
 		);
 	}
 
@@ -164,13 +164,13 @@ export class AccountLoginComponent implements OnInit {
 		private readonly router: Router,
 
 		/** @ignore */
-		private readonly accountService: AccountService,
-
-		/** @ignore */
 		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService,
+
+		/** @see AccountService */
+		public readonly accountService: AccountService,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

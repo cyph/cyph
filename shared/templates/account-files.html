@@ -16,7 +16,7 @@
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			[ngClass]='"_" + i'
-			routerLink='/account/files'
+			[routerLink]='accountService.routeRoot + "files"'
 			(click)='accountFilesService.openFile(file.id)'
 		>
 			<mat-card-header fxLayout='row'>
@@ -41,7 +41,9 @@
 						accountDatabaseService.currentUser.value.user.username !== file.owner
 					'>
 						<span cyphTranslate>Owner:</span>
-						<a [routerLink]='"/account/profile/" + file.owner'>{{file.owner}}</a>
+						<a [routerLink]='accountService.routeRoot + "profile/" + file.owner'>
+							{{file.owner}}
+						</a>
 					</div>
 					<div cyphTranslate *ngIf='file.wasAnonymousShare'>
 						Received from anonymous
@@ -117,7 +119,9 @@
 					</div>
 					<div *ngIf='!file.wasAnonymousShare'>
 						<span cyphTranslate>Shared by</span>
-						<a [routerLink]='"/account/profile/" + file.owner'>{{file.owner}}</a>
+						<a [routerLink]='accountService.routeRoot + "profile/" + file.owner'>
+							{{file.owner}}
+						</a>
 					</div>
 					<div cyphTranslate *ngIf='file.wasAnonymousShare'>
 						Shared anonymously

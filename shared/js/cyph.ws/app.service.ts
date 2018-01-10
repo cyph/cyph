@@ -107,17 +107,14 @@ export class AppService implements CanActivate {
 			).url.pipe(first()).toPromise();
 
 			const urlSegmentPaths	= router.url.split('/');
-			let loadingAccounts		=
-				urlSegmentPaths[0] === 'account' ||
-				urlSegmentPaths[0] === 'login'
-			;
+			let loadingAccounts		= accountRoot === '' || urlSegmentPaths[0] === accountRoot;
 
 			/* Handle accounts special cases */
 			if (urlSegmentPaths[0] === 'extension') {
 				loadingAccounts						= true;
 				this.accountService.isExtension		= true;
 
-				router.navigate(['account', 'contacts']);
+				router.navigate([accountRoot, 'contacts']);
 			}
 			else if (urlSegmentPaths[0] === 'telehealth') {
 				loadingAccounts						= true;
@@ -125,7 +122,7 @@ export class AppService implements CanActivate {
 
 				$(document.body).addClass('telehealth');
 				faviconService.setFavicon('telehealth');
-				router.navigate(['account'].concat(urlSegmentPaths.slice(1)));
+				router.navigate([accountRoot].concat(urlSegmentPaths.slice(1)));
 			}
 
 			if (loadingAccounts) {

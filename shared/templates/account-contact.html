@@ -2,7 +2,7 @@
 	class='contact animated'
 	[class.non-clickable]='!clickable'
 	[routerLink]='!clickable ? undefined : (
-		"/account/" +
+		accountService.routeRoot +
 		(accountService.isTelehealth ? "profile" : "messages") + "/" +
 		contact.username
 	)'
@@ -17,7 +17,10 @@
 			[src]='contact.avatar | async'
 			alt='User Avatar'
 			matTooltip='Open Profile'
-			[routerLink]='!clickable ? undefined : "/account/profile/" + contact.username'
+			[routerLink]='!clickable ?
+				undefined :
+				accountService.routeRoot + "profile/" + contact.username
+			'
 		/>
 		<mat-card-title>{{contact.name | async}}</mat-card-title>
 		<mat-card-subtitle>@{{contact.realUsername | async}}</mat-card-subtitle>
@@ -29,7 +32,10 @@
 			mat-icon-button
 			cyphTranslate
 			matTooltip='Open Profile'
-			[routerLink]='!clickable ? undefined : "/account/profile/" + contact.username'
+			[routerLink]='!clickable ?
+				undefined :
+				accountService.routeRoot + "profile/" + contact.username
+			'
 		>
 			<mat-icon>person</mat-icon>
 		</button>

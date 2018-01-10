@@ -107,7 +107,7 @@ export class AccountRegisterComponent implements OnInit {
 			}
 			catch {}
 
-			this.router.navigate(['account', 'register', '1']);
+			this.router.navigate([accountRoot, 'register', '1']);
 		});
 	}
 
@@ -174,13 +174,13 @@ export class AccountRegisterComponent implements OnInit {
 		this.useXkcdPassphrase			= false;
 		this.xkcdPassphrase				= Promise.resolve('');
 
-		this.router.navigate(['account', 'welcome']);
+		this.router.navigate([accountRoot, 'welcome']);
 	}
 
 	/** Updates route for consistency with tabIndex. */
 	public updateRoute (increment: number = 0, tabIndex: number = this.tabIndex) : void {
 		this.router.navigate([
-			'account',
+			accountRoot,
 			'register',
 			(tabIndex + increment + 1).toString()
 		]);

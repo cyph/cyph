@@ -24,7 +24,7 @@
 			class='home'
 			matTooltip='Home'
 			matTooltipPosition='right'
-			routerLink='/account'
+			[routerLink]='accountService.routeRoot'
 			(click)='click()'
 			*ngIf='accountService.menuExpanded | async'
 		>
@@ -36,7 +36,7 @@
 			class='home'
 			matTooltip='Home'
 			matTooltipPosition='right'
-			routerLink='/account'
+			[routerLink]='accountService.routeRoot'
 			(click)='click()'
 			*ngIf='(accountService.menuExpanded | async) === false'
 		>
@@ -59,7 +59,7 @@
 						]'
 						alt='Profile Picture'
 						[src]='accountDatabaseService.currentUser.value.user.avatar | async'
-						routerLink='/account/profile'
+						[routerLink]='accountService.routeRoot + "profile"'
 						(click)='click()'
 					/>
 				</div>
@@ -73,7 +73,7 @@
 			cyphTranslate
 			matTooltip='Contacts'
 			matTooltipPosition='right'
-			routerLink='/account/contacts'
+			[routerLink]='accountService.routeRoot + "contacts"'
 			(click)='click()'
 			*ngIf='accountService.menuExpanded | async'
 		>
@@ -85,7 +85,7 @@
 			cyphTranslate
 			matTooltip='Contacts'
 			matTooltipPosition='right'
-			routerLink='/account/contacts'
+			[routerLink]='accountService.routeRoot + "contacts"'
 			(click)='click()'
 			*ngIf='(accountService.menuExpanded | async) === false'
 		>
@@ -97,7 +97,7 @@
 			cyphTranslate
 			matTooltip='Files'
 			matTooltipPosition='right'
-			routerLink='/account/files'
+			[routerLink]='accountService.routeRoot + "files"'
 			(click)='click()'
 			*ngIf='accountService.menuExpanded | async'
 		>
@@ -109,7 +109,7 @@
 			cyphTranslate
 			matTooltip='Files'
 			matTooltipPosition='right'
-			routerLink='/account/files'
+			[routerLink]='accountService.routeRoot + "files"'
 			(click)='click()'
 			*ngIf='(accountService.menuExpanded | async) === false'
 		>
@@ -121,7 +121,7 @@
 			cyphTranslate
 			matTooltip='Notes'
 			matTooltipPosition='right'
-			routerLink='/account/notes'
+			[routerLink]='accountService.routeRoot + "notes"'
 			(click)='click()'
 			*ngIf='accountService.menuExpanded | async'
 		>
@@ -133,7 +133,7 @@
 			cyphTranslate
 			matTooltip='Notes'
 			matTooltipPosition='right'
-			routerLink='/account/notes'
+			[routerLink]='accountService.routeRoot + "notes"'
 			(click)='click()'
 			*ngIf='(accountService.menuExpanded | async) === false'
 		>
@@ -145,7 +145,7 @@
 			cyphTranslate
 			matTooltip='Docs'
 			matTooltipPosition='right'
-			routerLink='/account/docs'
+			[routerLink]='accountService.routeRoot + "docs"'
 			(click)='click()'
 			*ngIf='
 				(!envService.isProd || accountService.isTelehealth) &&
@@ -160,7 +160,7 @@
 			cyphTranslate
 			matTooltip='Docs'
 			matTooltipPosition='right'
-			routerLink='/account/docs'
+			[routerLink]='accountService.routeRoot + "docs"'
 			(click)='click()'
 			*ngIf='
 				(!envService.isProd || accountService.isTelehealth) &&
@@ -175,7 +175,7 @@
 			cyphTranslate
 			matTooltip='Forms'
 			matTooltipPosition='right'
-			routerLink='/account/forms'
+			[routerLink]='accountService.routeRoot + "forms"'
 			(click)='click()'
 			*ngIf='
 				(!envService.isProd || accountService.isTelehealth) &&
@@ -190,7 +190,7 @@
 			cyphTranslate
 			matTooltip='Forms'
 			matTooltipPosition='right'
-			routerLink='/account/forms'
+			[routerLink]='accountService.routeRoot + "forms"'
 			(click)='click()'
 			*ngIf='
 				(!envService.isProd || accountService.isTelehealth) &&
@@ -206,7 +206,7 @@
 			cyphTranslate
 			matTooltip='Settings'
 			matTooltipPosition='right'
-			routerLink='/account/settings'
+			[routerLink]='accountService.routeRoot + "settings"'
 			(click)='click()'
 			*ngIf='accountService.menuExpanded | async'
 		>
@@ -218,7 +218,7 @@
 			cyphTranslate
 			matTooltip='Settings'
 			matTooltipPosition='right'
-			routerLink='/account/settings'
+			[routerLink]='accountService.routeRoot + "settings"'
 			(click)='click()'
 			*ngIf='(accountService.menuExpanded | async) === false'
 		>
@@ -233,7 +233,7 @@
 			cyphTranslate
 			matTooltip='Logout'
 			matTooltipPosition='right'
-			routerLink='/account/logout'
+			[routerLink]='accountService.routeRoot + "logout"'
 			(click)='click()'
 			*ngIf='accountService.menuExpanded | async'
 		>
@@ -245,7 +245,7 @@
 			cyphTranslate
 			matTooltip='Logout'
 			matTooltipPosition='right'
-			routerLink='/account/logout'
+			[routerLink]='accountService.routeRoot + "logout"'
 			(click)='click()'
 			*ngIf='(accountService.menuExpanded | async) === false'
 		>

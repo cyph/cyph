@@ -1,5 +1,11 @@
 /**
  * @global
+ * The root route of accounts.
+ */
+declare let accountRoot: string;
+
+/**
+ * @global
  * Message to return for beforeunload event.
  */
 declare let beforeUnloadMessage: string|undefined;

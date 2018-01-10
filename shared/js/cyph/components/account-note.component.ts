@@ -61,7 +61,7 @@ export class AccountNoteComponent implements OnInit {
 	/** @ignore */
 	private async initDoc () : Promise<void> {
 		await this.setNote(await this.accountFilesService.upload(this.noteData.name, []).result);
-		this.router.navigate(['account', 'docs', this.noteData.id, 'edit']);
+		this.router.navigate([accountRoot, 'docs', this.noteData.id, 'edit']);
 	}
 
 	/** @ignore */
@@ -241,7 +241,7 @@ export class AccountNoteComponent implements OnInit {
 			}
 
 			if (this.noteData.id) {
-				this.router.navigate(['account', 'notes', this.noteData.id]);
+				this.router.navigate([accountRoot, 'notes', this.noteData.id]);
 				await sleep();
 				this.accountService.interstitial	= false;
 				this.dialogService.toast(this.stringsService.noteSaved, 2500);

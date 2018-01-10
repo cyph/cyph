@@ -23,7 +23,7 @@ import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 
 /** Routing configuration for accounts UI. */
 export const account: Route	= {
-	path: 'account',
+	path: accountRoot,
 	component: AccountComponent,
 	canActivate: [AccountAuthGuardService],
 	canActivateChild: [AccountAuthGuardService],

@@ -141,6 +141,10 @@ if (headStyle) {
 
 $('head').append(`<meta name='custom-build' content='${args.customBuild}' />`);
 
+if (o.accountsOnly) {
+	$('head').append(`<meta name='custom-build-accounts-only' content='true' />`);
+}
+
 if (o.apiFlags) {
 	$('head').append(`<meta name='custom-build-api-flags' content='${o.apiFlags}' />`);
 }

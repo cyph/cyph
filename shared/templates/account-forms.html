@@ -16,7 +16,7 @@
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
 			[ngClass]='"_" + i'
-			[routerLink]='"/account/forms/" + form.id'
+			[routerLink]='accountService.routeRoot + "forms/" + form.id'
 		>
 			<mat-card-header fxLayout='row'>
 				<mat-card-title>
@@ -29,7 +29,9 @@
 						accountDatabaseService.currentUser.value.user.username !== form.owner
 					'>
 						<span cyphTranslate>Owner:</span>
-						<a [routerLink]='"/account/profile/" + form.owner'>{{form.owner}}</a>
+						<a [routerLink]='accountService.routeRoot + "profile/" + form.owner'>
+							{{form.owner}}
+						</a>
 					</div>
 					<div cyphTranslate *ngIf='form.wasAnonymousShare'>
 						Received from anonymous
@@ -81,7 +83,9 @@
 				<mat-card-subtitle>
 					<div *ngIf='!form.wasAnonymousShare'>
 						<span cyphTranslate>Shared by</span>
-						<a [routerLink]='"/account/profile/" + form.owner'>{{form.owner}}</a>
+						<a [routerLink]='accountService.routeRoot + "profile/" + form.owner'>
+							{{form.owner}}
+						</a>
 					</div>
 					<div cyphTranslate *ngIf='form.wasAnonymousShare'>
 						Shared anonymously

@@ -6,7 +6,6 @@ import {account, retry} from './js/cyph/routes';
 
 /** @see Routes */
 export const appRoutes: Routes	= [
-	{path: '', pathMatch: 'full', redirectTo: 'account'},
 	account,
 	retry
 ];
