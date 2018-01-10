@@ -2,7 +2,7 @@
 
 import {Routes} from '@angular/router';
 import {BlankComponent} from '../cyph/components/blank.component';
-import {account, login, retry} from '../cyph/routes';
+import {account, accountRedirect, login, retry} from '../cyph/routes';
 import {AppService} from './app.service';
 import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
 
@@ -14,6 +14,7 @@ export const appRoutes: Routes	= [
 	retry,
 	login,
 	account,
+	accountRedirect,
 	{
 		path: 'extension',
 		children: [{path: '**', component: BlankComponent}]

@@ -6,7 +6,5 @@ import {RedirectComponent} from '../components/redirect.component';
 
 /** Routing configuration for redirecting to anything after /retry/. */
 export const retry: Route	= {
-	path: 'retry', children: [
-		{path: '**', component: RedirectComponent}
-	]
+	path: 'retry', children: [{path: '**', component: RedirectComponent}]
 };
