@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {take} from 'rxjs/operators/take';
@@ -30,6 +30,9 @@ import {sleep} from '../util/wait';
 })
 export class AccountChatComponent implements OnDestroy, OnInit {
 	/** @ignore */
+	private destroyed: boolean	= false;
+
+	/** @ignore */
 	private initiated: boolean	= false;
 
 	/** @see ChatMessageValueTypes */
@@ -47,9 +50,14 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	public readonly userPresence: typeof UserPresence					= UserPresence;
 
 	/** @inheritDoc */
-	public ngOnDestroy () : void {
-		this.accountSessionService.state.isAlive	= false;
-		this.p2pWebRTCService.close();
+	public async ngOnDestroy () : Promise<void> {
+		this.destroyed	= true;
+
+		if (this.p2pWebRTCService.isActive) {
+			await this.p2pWebRTCService.close();
+		}
+
+		this.accountSessionService.destroy();
 	}
 
 	/** @inheritDoc */
@@ -58,9 +66,19 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			this.messageType.next(ChatMessageValueTypes.Quill);
 		}
 
-		combineLatest(this.activatedRoute.data, this.activatedRoute.params).subscribe(async (
-			[{callType}, {username}]: [{callType?: 'audio'|'video'}, {username?: string}]
-		) => {
+		combineLatest(
+			this.activatedRoute.data,
+			this.activatedRoute.params,
+			this.activatedRoute.url
+		).subscribe(async ([
+			{callType},
+			{username},
+			[{path}]
+		]: [
+			{callType?: 'audio'|'video'},
+			{username?: string},
+			UrlSegment[]
+		]) => {
 			if (!username) {
 				return;
 			}
@@ -68,7 +86,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			if (this.initiated) {
 				this.router.navigate([accountRoot]);
 				await sleep(0);
-				this.router.navigate([accountRoot, 'messages', username]);
+				this.router.navigate([accountRoot, path, username]);
 				return;
 			}
 
@@ -80,7 +98,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			}
 
 			this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(() => {
-				if (this.accountSessionService.state.isAlive) {
+				if (!this.destroyed) {
 					this.router.navigate([accountRoot, 'messages', username]);
 				}
 			});

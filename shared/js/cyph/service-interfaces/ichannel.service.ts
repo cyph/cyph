@@ -10,6 +10,9 @@ export interface IChannelService {
 	/** Closes and deletes the channel. */
 	close () : Promise<void>;
 
+	/** Cleans things up and tears down event handlers. */
+	destroy () : void;
+
 	/** @see DatabaseService.getAsyncValue */
 	getAsyncValue<T> (
 		url: string,

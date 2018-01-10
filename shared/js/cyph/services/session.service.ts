@@ -34,6 +34,9 @@ import {StringsService} from './strings.service';
 @Injectable()
 export abstract class SessionService implements ISessionService {
 	/** @ignore */
+	private readonly openEvents: Set<string>	= new Set();
+
+	/** @ignore */
 	private resolveOpened: () => void;
 
 	/** @ignore */
@@ -111,8 +114,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @see IChannelHandlers.onClose */
 	protected async channelOnClose () : Promise<void> {
-		this.state.isAlive	= false;
-		this.trigger(events.closeChat);
+		this.destroy();
 	}
 
 	/** @see IChannelHandlers.onConnect */
@@ -122,7 +124,9 @@ export abstract class SessionService implements ISessionService {
 
 	/** @see IChannelHandlers.onMessage */
 	protected async channelOnMessage (message: Uint8Array) : Promise<void> {
-		await this.castleService.receive(message);
+		if (this.state.isAlive) {
+			await this.castleService.receive(message);
+		}
 	}
 
 	/** @see IChannelHandlers.onOpen */
@@ -292,6 +296,22 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
+	public async destroy () : Promise<void> {
+		if (!this.state.isAlive) {
+			return;
+		}
+
+		this.state.isAlive	= false;
+		this.trigger(events.closeChat);
+
+		for (const event of Array.from(this.openEvents)) {
+			this.off(event);
+		}
+
+		this.channelService.destroy();
+	}
+
+	/** @inheritDoc */
 	public async handshakeState (
 		currentStep: IAsyncValue<HandshakeSteps> =
 			new LocalAsyncValue(HandshakeSteps.Start)
@@ -365,17 +385,19 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
-	public off<T> (event: string, handler: (data: T) => void) : void {
+	public off<T> (event: string, handler?: (data: T) => void) : void {
 		eventManager.off<T>(event + this.eventID, handler);
 	}
 
 	/** @inheritDoc */
 	public on<T> (event: string, handler: (data: T) => void) : void {
+		this.openEvents.add(event);
 		eventManager.on<T>(event + this.eventID, handler);
 	}
 
 	/** @inheritDoc */
 	public async one<T> (event: string) : Promise<T> {
+		this.openEvents.add(event);
 		return eventManager.one<T>(event + this.eventID);
 	}
 

@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
+import {Subscription} from 'rxjs/Subscription';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {LockFunction} from '../lock-function-type';
@@ -38,6 +39,9 @@ export class ChannelService implements IChannelService {
 	;
 
 	/** @ignore */
+	private subscriptions: Subscription[]	= [];
+
+	/** @ignore */
 	private userID?: string;
 
 	/** @inheritDoc */
@@ -49,6 +53,15 @@ export class ChannelService implements IChannelService {
 		this.isClosed	= true;
 
 		await this.databaseService.removeItem((await this.state).url);
+	}
+
+	/** @inheritDoc */
+	public destroy () : void {
+		this.pauseOnMessage(true);
+
+		for (const subscription of this.subscriptions) {
+			subscription.unsubscribe();
+		}
 	}
 
 	/** @inheritDoc */
@@ -88,7 +101,7 @@ export class ChannelService implements IChannelService {
 			this.databaseService.setDisconnectTracker(`${url}/disconnects/${this.userID}`);
 		}
 
-		this.databaseService.watchListPushes(
+		this.subscriptions.push(this.databaseService.watchListPushes(
 			`${url}/messages`,
 			ChannelMessage,
 			undefined,
@@ -108,7 +121,7 @@ export class ChannelService implements IChannelService {
 				await sleep(600000);
 				await this.databaseService.removeItem(message.url).catch(() => {});
 			}
-		});
+		}));
 
 		if (
 			this.ephemeral ||
@@ -120,7 +133,7 @@ export class ChannelService implements IChannelService {
 		}
 
 		let isOpen	= false;
-		this.databaseService.watchList(
+		this.subscriptions.push(this.databaseService.watchList(
 			`${url}/users`,
 			StringProto,
 			true
@@ -145,7 +158,7 @@ export class ChannelService implements IChannelService {
 			() => {
 				handlers.onClose();
 			}
-		);
+		));
 	}
 
 	/** @inheritDoc */

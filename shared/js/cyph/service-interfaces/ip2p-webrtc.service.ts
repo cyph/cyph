@@ -34,7 +34,7 @@ export interface IP2PWebRTCService {
 	accept (callType?: 'audio'|'video', isPassive?: boolean) : void;
 
 	/** This kills the P2P session. */
-	close () : void;
+	close () : Promise<void>;
 
 	/** Initializes service. */
 	init (handlers: IP2PHandlers, localVideo: () => JQuery, remoteVideo: () => JQuery) : void;

@@ -104,7 +104,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
-		this.sessionService.state.isAlive	= false;
+		this.sessionService.destroy();
 	}
 
 	/** @inheritDoc */

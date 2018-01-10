@@ -232,15 +232,16 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	}
 
 	/** @inheritDoc */
-	public close () : void {
+	public async close () : Promise<void> {
 		this.initialCallPending	= false;
 
-		this.sessionService.send([
-			rpcEvents.p2p,
-			{command: {method: P2PWebRTCService.constants.kill}}
+		await Promise.all([
+			this.sessionService.send([
+				rpcEvents.p2p,
+				{command: {method: P2PWebRTCService.constants.kill}}
+			]),
+			this.commands.kill()
 		]);
-
-		this.commands.kill();
 	}
 
 	/** @inheritDoc */

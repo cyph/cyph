@@ -63,6 +63,9 @@ export interface ISessionService {
 	/** This kills the cyph. */
 	close () : void;
 
+	/** Cleans things up and tears down event handlers. */
+	destroy () : void;
+
 	/** @see IHandshakeState */
 	handshakeState () : Promise<IHandshakeState>;
 
@@ -73,7 +76,7 @@ export interface ISessionService {
 	lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T>;
 
 	/** Remove event listener. */
-	off<T> (event: string, handler: (data: T) => void) : void;
+	off<T> (event: string, handler?: (data: T) => void) : void;
 
 	/** Add event listener. */
 	on<T> (event: string, handler: (data: T) => void) : void;

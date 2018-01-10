@@ -160,7 +160,7 @@ export class ChatService {
 
 	/** This kills the chat. */
 	private close () : void {
-		if (this.chat.state === States.aborted) {
+		if (!this.sessionInitService.ephemeral || this.chat.state === States.aborted) {
 			return;
 		}
 
@@ -558,7 +558,7 @@ export class ChatService {
 						}
 
 						if (canceled) {
-							this.p2pWebRTCService.close();
+							await this.p2pWebRTCService.close();
 						}
 						else {
 							await this.p2pWebRTCService.request(callType, true);
