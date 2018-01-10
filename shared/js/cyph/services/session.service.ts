@@ -52,7 +52,10 @@ export abstract class SessionService implements ISessionService {
 	protected readonly plaintextSendInterval: number				= 1776;
 
 	/** @ignore */
-	protected readonly plaintextSendQueue: ISessionMessage[]		= [];
+	protected readonly plaintextSendQueue: {
+		messages: ISessionMessage[];
+		resolve: () => void;
+	}[]	= [];
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string>				= new Set<string>();
@@ -141,12 +144,21 @@ export abstract class SessionService implements ISessionService {
 				continue;
 			}
 
-			const messages	= this.plaintextSendQueue.splice(
+			const messageGroups	= this.plaintextSendQueue.splice(
 				0,
 				this.plaintextSendQueue.length
 			);
 
+			const messages		= messageGroups.
+				map(o => o.messages).
+				reduce((a, b) => a.concat(b), [])
+			;
+
 			await this.castleService.send(await serialize(SessionMessageList, {messages}));
+
+			for (const {resolve} of messageGroups) {
+				resolve();
+			}
 		}
 	}
 
@@ -205,9 +217,9 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
-		for (const message of messages) {
-			this.plaintextSendQueue.push(message);
-		}
+		return new Promise<void>(resolve => {
+			this.plaintextSendQueue.push({messages, resolve});
+		});
 	}
 
 	/** @inheritDoc */
@@ -411,7 +423,7 @@ export abstract class SessionService implements ISessionService {
 		...messages: [string, ISessionMessageAdditionalData][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
 		const newMessages	= await this.newMessages(messages);
-		this.plaintextSendHandler(newMessages);
+		await this.plaintextSendHandler(newMessages);
 		return newMessages;
 	}
 
