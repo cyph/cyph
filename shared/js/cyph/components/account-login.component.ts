@@ -75,8 +75,6 @@ export class AccountLoginComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		try {
-			this.accountService.resolveUiReady();
-
 			this.pinIsCustom	= await this.localStorageService.getItem(
 				'pinIsCustom',
 				BooleanProto
@@ -120,6 +118,7 @@ export class AccountLoginComponent implements OnInit {
 		}
 		finally {
 			this.checking	= false;
+			this.accountService.resolveUiReady();
 		}
 	}
 
