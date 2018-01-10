@@ -62,7 +62,10 @@ export class AccountProfileComponent implements OnInit {
 			await this.accountAuthService.hasSavedCredentials()
 		) {
 			this.router.navigate(username ?
-				[accountRoot, 'login', accountRoot, 'profile', username] :
+				[accountRoot, 'login'].
+					concat(accountRoot ? [accountRoot] : []).
+					concat(['profile', username])
+				:
 				[accountRoot, 'login']
 			);
 			return;
