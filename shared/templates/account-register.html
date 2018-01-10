@@ -517,7 +517,10 @@
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<h3 class='cyph-banner warn' *ngIf='error'>
-													{{stringsService.signupFailed}}
+													{{
+														accountAuthService.errorMessage ||
+														stringsService.signupFailed
+													}}
 												</h3>
 											</div>
 

@@ -199,6 +199,11 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
+	public readonly invalidInviteCode: string		=
+		`Invalid invite code.`
+	;
+
+	/** @see StringsService */
 	public readonly invalidPassword: string			=
 		`Invalid password.`
 	;

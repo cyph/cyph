@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import {skip} from 'rxjs/operators/skip';
 import {take} from 'rxjs/operators/take';
 import {Subscription} from 'rxjs/Subscription';
-import {ExternalServices} from '../../account';
+import {ExternalServices, RegistrationErrorCodes} from '../../account';
 import {
 	AccountLoginData,
 	AccountUserPresence,
@@ -41,6 +41,9 @@ export class AccountAuthService {
 
 	/** @ignore */
 	private statusSaveSubscription?: Subscription;
+
+	/** Error message. */
+	public errorMessage?: string;
 
 	/** @ignore */
 	private async getKeyPair (url: string, symmetricKey: Uint8Array) : Promise<IKeyPair> {
@@ -334,16 +337,12 @@ export class AccountAuthService {
 					inviteCode
 				);
 
-				const inviterUsername	= await this.databaseService.getAsyncValue(
+				const inviterUsername	= await this.databaseService.getItem(
 					`users/${username}/inviterUsernamePlaintext`,
-					StringProto,
-					undefined,
-					true
-				).getValue();
-
-				if (!inviterUsername) {
-					throw new Error('Invalid invite code.');
-				}
+					StringProto
+				).catch(() => {
+					throw RegistrationErrorCodes.InvalidInviteCode;
+				});
 
 				await this.databaseService.setItem(
 					`users/${username}/inviterUsername`,
@@ -448,7 +447,16 @@ export class AccountAuthService {
 				)
 			]);
 		}
-		catch {
+		catch (errorCode) {
+			switch (errorCode) {
+				case RegistrationErrorCodes.InvalidInviteCode:
+					this.errorMessage	= this.stringsService.invalidInviteCode;
+					break;
+
+				default:
+					this.errorMessage	= undefined;
+			}
+
 			await this.databaseService.unregister(username, loginData.secondaryPassword).catch(
 				() => {}
 			);
