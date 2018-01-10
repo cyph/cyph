@@ -1,5 +1,7 @@
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
+import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
 import * as SimpleWebRTC from 'simplewebrtc';
 import {env} from '../env';
 import {eventManager} from '../event-manager';
@@ -77,6 +79,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				this.webRTC.leaveRoom();
 				this.webRTC.disconnect();
 				this.webRTC	= undefined;
+				this.disconnectInternal.next();
 			}
 
 			const handlers	= await this.handlers;
@@ -96,6 +99,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			);
 		}
 	};
+
+	/** @inheritDoc */
+	private readonly disconnectInternal: Subject<void>	= new Subject();
 
 	/** @ignore */
 	private readonly handlers: Promise<IP2PHandlers>	=
@@ -209,6 +215,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			});
 		}
 	}
+
+	/** @inheritDoc */
+	public readonly disconnect: Observable<void>	= this.disconnectInternal;
 
 	/** @inheritDoc */
 	public accept (callType?: 'audio'|'video', isPassive: boolean = false) : void {

@@ -1,3 +1,4 @@
+import {Observable} from 'rxjs/Observable';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 
 
@@ -5,6 +6,9 @@ import {IP2PHandlers} from '../p2p/ip2p-handlers';
  * Manages P2P WebRTC logic.
  */
 export interface IP2PWebRTCService {
+	/** Emits on session disconnect. */
+	readonly disconnect: Observable<void>;
+
 	/** Description of incoming data. */
 	readonly incomingStream: {audio: boolean; video: boolean};
 

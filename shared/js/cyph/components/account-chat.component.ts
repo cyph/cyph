@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {combineLatest} from 'rxjs/observable/combineLatest';
+import {take} from 'rxjs/operators/take';
 import {UserPresence} from '../account/enums';
 import {UiStyles} from '../chat/enums';
 import {ChatMessageValueTypes} from '../proto';
@@ -12,6 +13,7 @@ import {AccountSessionService} from '../services/account-session.service';
 import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {EnvService} from '../services/env.service';
+import {P2PWebRTCService} from '../services/p2p-webrtc.service';
 import {P2PService} from '../services/p2p.service';
 import {StringsService} from '../services/strings.service';
 import {sleep} from '../util/wait';
@@ -47,6 +49,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
 		this.accountSessionService.state.isAlive	= false;
+		this.p2pWebRTCService.close();
 	}
 
 	/** @inheritDoc */
@@ -71,6 +74,16 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 			this.initiated	= true;
 			await this.accountChatService.setUser(username, undefined, callType);
+
+			if (callType === undefined) {
+				return;
+			}
+
+			this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(() => {
+				if (this.accountSessionService.state.isAlive) {
+					this.router.navigate([accountRoot, 'messages', username]);
+				}
+			});
 		});
 	}
 
@@ -83,6 +96,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,
+
+		/** @ignore */
+		private readonly p2pWebRTCService: P2PWebRTCService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
