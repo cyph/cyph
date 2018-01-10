@@ -92,6 +92,7 @@ export const account: Route	= {
 		},
 		{path: 'settings', component: AccountSettingsComponent},
 		{path: 'video/:username', component: AccountChatComponent, data: {callType: 'video'}},
-		{path: 'welcome', component: AccountPostRegisterComponent}
+		{path: 'welcome', component: AccountPostRegisterComponent},
+		{path: ':username', redirectTo: 'profile/:username'}
 	]
 };
