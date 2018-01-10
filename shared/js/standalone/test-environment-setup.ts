@@ -23,8 +23,10 @@ testEnvironmentSetup = async (
 	);
 
 	if (
-		localTestDataVersion === undefined ||
-		potassiumUtil.compareMemory(currentTestDataVersion, localTestDataVersion)
+		currentTestDataVersion.length === 0 || (
+			localTestDataVersion !== undefined &&
+			potassiumUtil.compareMemory(currentTestDataVersion, localTestDataVersion)
+		)
 	) {
 		return;
 	}
