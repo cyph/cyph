@@ -173,6 +173,12 @@ button, input, select, textarea {
 	font-size: 100%;
 }
 
+button, [mat-button], [mat-raised-button] {
+	img {
+		pointer-events: none;
+	}
+}
+
 .suffix-button {
 	cursor: pointer;
 }
