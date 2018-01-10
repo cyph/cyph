@@ -11,6 +11,7 @@ import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {request} from '../util/request';
 import {parse} from '../util/serialization';
+import {uuid} from '../util/uuid';
 import {sleep, waitForIterable, waitForValue} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
@@ -53,7 +54,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		},
 
 		decline: async () : Promise<void> => {
-			this.isAccepted	= false;
+			this.isAccepted		= false;
+			this.p2pSessionID	= undefined;
 
 			(await this.handlers).requestRejection();
 		},
@@ -64,6 +66,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			this.isAccepted				= false;
 			this.isActive				= false;
 			this.initialCallPending		= false;
+			this.p2pSessionID			= undefined;
 
 			await sleep(500);
 
@@ -121,6 +124,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	;
 
 	/** @ignore */
+	private p2pSessionID?: string;
+
+	/** @ignore */
 	private readonly remoteVideo: Promise<() => JQuery>	=
 		new Promise<() => JQuery>(resolve => {
 			this.resolveRemoteVideo	= resolve;
@@ -173,11 +179,13 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		const method: Function|undefined	= (<any> this.commands)[command.method];
 
 		if (this.isAccepted && method) {
-			method(
-				command.argument && command.argument.length > 0 ?
-					msgpack.decode(command.argument) :
-					undefined
-			);
+			if (command.additionalData === this.p2pSessionID) {
+				method(
+					command.argument && command.argument.length > 0 ?
+						msgpack.decode(command.argument) :
+						undefined
+				);
+			}
 		}
 		else if (command.method === 'audio' || command.method === 'video') {
 			const ok	= await (await this.handlers).acceptConfirm(
@@ -187,6 +195,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			);
 
 			this.sessionService.send([rpcEvents.p2p, {command: {
+				additionalData: command.additionalData,
 				method: ok ?
 					P2PWebRTCService.constants.accept :
 					P2PWebRTCService.constants.decline
@@ -195,6 +204,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			if (!ok) {
 				return;
 			}
+
+			this.p2pSessionID	= command.additionalData;
 
 			this.accept(
 				command.method === 'audio' ?
@@ -236,10 +247,10 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		this.initialCallPending	= false;
 
 		await Promise.all([
-			this.sessionService.send([
-				rpcEvents.p2p,
-				{command: {method: P2PWebRTCService.constants.kill}}
-			]),
+			this.sessionService.send([rpcEvents.p2p, {command: {
+				additionalData: this.p2pSessionID,
+				method: P2PWebRTCService.constants.kill
+			}}]),
 			this.commands.kill()
 		]);
 	}
@@ -302,6 +313,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 					}
 					else {
 						this.sessionService.send([rpcEvents.p2p, {command: {
+							additionalData: this.p2pSessionID,
 							argument: msgpack.encode({args, event}),
 							method: P2PWebRTCService.constants.webRTC
 						}}]);
@@ -407,7 +419,12 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 				this.accept(callType);
 
-				this.sessionService.send([rpcEvents.p2p, {command: {method: callType}}]);
+				this.p2pSessionID	= uuid();
+
+				this.sessionService.send([rpcEvents.p2p, {command: {
+					additionalData: this.p2pSessionID,
+					method: callType
+				}}]);
 
 				await sleep();
 				handlers.requestConfirmation();

@@ -450,11 +450,14 @@ message SessionChatState {
 
 /** Contains an RPC call for a specific method. */
 message SessionCommand {
+	/** Used to ensure that the command is being run in the correct context (e.g. P2P session). */
+	string additionalData = 1;
+
 	/** Argument to pass to method (serialized with MessagePack). */
-	bytes argument = 1;
+	bytes argument = 2;
 
 	/** Method name. */
-	required string method = 2;
+	required string method = 3;
 }
 
 /** Message to be sent over a session, indicating some RPC event. */
