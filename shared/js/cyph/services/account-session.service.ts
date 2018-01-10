@@ -119,6 +119,25 @@ export class AccountSessionService extends SessionService {
 		this.resolveReady();
 	}
 
+	/** @inheritDoc */
+	public async yt () : Promise<void> {
+		const id		= uuid();
+
+		const answer	= new Promise<void>(resolve => {
+			const f	= (o: ISessionMessageData) => {
+				if (o.command && o.command.method === id) {
+					this.off(rpcEvents.pong, f);
+					resolve();
+				}
+			};
+
+			this.on(rpcEvents.pong, f);
+		});
+
+		this.send([rpcEvents.ping, {command: {method: id}}]);
+		return answer;
+	}
+
 	constructor (
 		analyticsService: AnalyticsService,
 		castleService: CastleService,
@@ -144,5 +163,11 @@ export class AccountSessionService extends SessionService {
 			potassiumService,
 			stringsService
 		);
+
+		this.on(rpcEvents.ping, (o: ISessionMessageData) => {
+			if (o.command && typeof o.command.method === 'string') {
+				this.send([rpcEvents.pong, {command: {method: o.command.method}}]);
+			}
+		});
 	}
 }

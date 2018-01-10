@@ -398,6 +398,9 @@ export abstract class SessionService implements ISessionService {
 		eventManager.trigger(event + this.eventID, data);
 	}
 
+	/** @inheritDoc */
+	public async yt () : Promise<void> {}
+
 	constructor (
 		/** @ignore */
 		protected readonly analyticsService: AnalyticsService,

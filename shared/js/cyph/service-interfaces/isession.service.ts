@@ -88,4 +88,7 @@ export interface ISessionService {
 
 	/** Trigger event, passing in optional data. */
 	trigger (event: string, data?: any) : void;
+
+	/** Resolves when other user is online. */
+	yt () : Promise<void>;
 }

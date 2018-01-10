@@ -523,6 +523,9 @@ export class ChatService {
 	) {
 		this.sessionService.ready.then(() => {
 			const beginChat	= this.sessionService.one(events.beginChat);
+			const callType	= this.sessionInitService.callType;
+
+			this.p2pWebRTCService.initialCallPending	= callType !== undefined;
 
 			beginChat.then(() => { this.begin(); });
 
@@ -531,19 +534,15 @@ export class ChatService {
 			});
 
 			this.sessionService.connected.then(async () => {
-				const callType	= this.sessionInitService.callType;
-
 				if (callType !== undefined) {
-					this.p2pWebRTCService.initialCallPending	= true;
-
-					this.dialogService.toast(
+					this.sessionService.yt().then(() => this.dialogService.toast(
 						callType === 'video' ?
 							this.stringsService.p2pWarningVideoPassive :
 							this.stringsService.p2pWarningAudioPassive
 						,
 						ChatService.p2pPassiveConnectTime,
 						this.stringsService.cancel
-					).then(async canceled => {
+					)).then(async canceled => {
 						if (!canceled) {
 							this.p2pWebRTCService.accept(callType, true);
 						}
@@ -561,7 +560,7 @@ export class ChatService {
 						if (canceled) {
 							this.p2pWebRTCService.close();
 						}
-						else if (this.sessionService.state.isAlice) {
+						else {
 							await this.p2pWebRTCService.request(callType, true);
 						}
 					});
