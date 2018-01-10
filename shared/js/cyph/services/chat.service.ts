@@ -535,7 +535,7 @@ export class ChatService {
 
 			this.sessionService.connected.then(async () => {
 				if (callType !== undefined) {
-					this.sessionService.yt().then(() => this.dialogService.toast(
+					this.sessionService.yt().then(async () => this.dialogService.toast(
 						callType === 'video' ?
 							this.stringsService.p2pWarningVideoPassive :
 							this.stringsService.p2pWarningAudioPassive

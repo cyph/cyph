@@ -96,10 +96,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		},
 
 		webRTC: (data: {args: any[]; event: string}) : void => {
-			eventManager.trigger(
-				P2PWebRTCService.constants.webRTC + data.event,
-				data.args
-			);
+			eventManager.trigger(P2PWebRTCService.constants.webRTC + data.event, data.args);
 		}
 	};
 
@@ -146,22 +143,25 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	private webRTC: any;
 
 	/** @inheritDoc */
-	public readonly incomingStream			= {audio: false, video: false};
+	public readonly disconnect: Observable<void>	= this.disconnectInternal;
 
 	/** @inheritDoc */
-	public initialCallPending: boolean		= false;
+	public readonly incomingStream					= {audio: false, video: false};
 
 	/** @inheritDoc */
-	public isActive: boolean				= false;
+	public initialCallPending: boolean				= false;
 
 	/** @inheritDoc */
-	public loading: boolean					= false;
+	public isActive: boolean						= false;
 
 	/** @inheritDoc */
-	public readonly outgoingStream			= {audio: false, video: false};
+	public loading: boolean							= false;
 
 	/** @inheritDoc */
-	public readonly ready: Promise<boolean>	= new Promise<boolean>(resolve => {
+	public readonly outgoingStream					= {audio: false, video: false};
+
+	/** @inheritDoc */
+	public readonly ready: Promise<boolean>			= new Promise<boolean>(resolve => {
 		this.resolveReady	= () => { resolve(true); };
 	});
 
@@ -196,9 +196,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 			this.sessionService.send([rpcEvents.p2p, {command: {
 				additionalData: command.additionalData,
-				method: ok ?
-					P2PWebRTCService.constants.accept :
-					P2PWebRTCService.constants.decline
+				method: ok ? P2PWebRTCService.constants.accept : P2PWebRTCService.constants.decline
 			}}]);
 
 			if (!ok) {
@@ -226,9 +224,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			});
 		}
 	}
-
-	/** @inheritDoc */
-	public readonly disconnect: Observable<void>	= this.disconnectInternal;
 
 	/** @inheritDoc */
 	public accept (callType?: 'audio'|'video', isPassive: boolean = false) : void {

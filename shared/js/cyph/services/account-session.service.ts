@@ -163,7 +163,7 @@ export class AccountSessionService extends SessionService {
 		);
 
 		this.on(rpcEvents.ping, (o: ISessionMessageData) => {
-			if (o.command && typeof o.command.method === 'string') {
+			if (o.command && o.command.method) {
 				this.send([rpcEvents.pong, {command: {method: o.command.method}}]);
 			}
 		});
