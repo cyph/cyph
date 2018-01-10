@@ -283,6 +283,13 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 					if (event === 'join' && typeof lastArg === 'function') {
 						lastArg(undefined, {clients: {friend: {video: true}}});
 					}
+					else if (
+						event === 'message' &&
+						typeof lastArg === 'object' &&
+						lastArg.type === 'connectivityError'
+					) {
+						this.close();
+					}
 					else {
 						this.sessionService.send([rpcEvents.p2p, {command: {
 							argument: msgpack.encode({args, event}),
