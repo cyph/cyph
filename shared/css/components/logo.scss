@@ -1,7 +1,15 @@
 @import '../mixins';
 
-img {
-	max-height: 100%;
-	max-width: 100%;
-	vertical-align: middle;
+:host {
+	display: inline-block;
+	height: 100%;
+	width: 100%;
+}
+
+div {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-size: contain;
+	height: 100%;
+	width: 100%;
 }

@@ -143,7 +143,11 @@ mat-card {
 		position: absolute;
 		height: 2em;
 		top: 24px;
-		right: 24px;
+		right: 0px;
+
+		> div {
+			background-position-x: calc(100% - 24px);
+		}
 	}
 }
 
@@ -151,9 +155,10 @@ mat-card {
 	mat-card .card-header-logo {
 		height: 17px;
 		top: 6px;
-		right: 50%;
 
-		@include transform(translateX(50%));
+		> div {
+			background-position-x: 50%;
+		}
 	}
 }
 

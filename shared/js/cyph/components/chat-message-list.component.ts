@@ -5,10 +5,9 @@ import {
 	ElementRef,
 	Injector,
 	Input,
-	OnChanges,
-	SecurityContext
+	OnChanges
 } from '@angular/core';
-import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
+import {SafeStyle} from '@angular/platform-browser';
 import * as $ from 'jquery';
 import {IVirtualScrollOptions} from 'od-virtualscroll';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -30,6 +29,7 @@ import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
+import {urlToSafeStyle} from '../util/safe-values';
 import {trackByVsItem} from '../track-by/track-by-vs-item';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 
@@ -93,12 +93,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	public readonly customBackgroundImage: Promise<SafeStyle|undefined>	=
 		this.customBuildService.logoVertical === undefined ?
 			Promise.resolve(undefined) :
-			this.customBuildService.logoVertical.then(logo => {
-				const url	= this.domSanitizer.sanitize(SecurityContext.URL, logo);
-				return !url ? undefined : this.domSanitizer.bypassSecurityTrustStyle(
-					`url(${url})`
-				);
-			})
+			urlToSafeStyle(this.customBuildService.logoVertical).catch(() => undefined)
 	;
 
 	/** Indicates whether message count should be displayed in title. */
@@ -258,9 +253,6 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly domSanitizer: DomSanitizer,
-
 		/** @ignore */
 		private readonly elementRef: ElementRef,
 

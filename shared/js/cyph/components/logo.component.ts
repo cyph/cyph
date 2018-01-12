@@ -1,7 +1,8 @@
-import {Component, Input} from '@angular/core';
+import {Component, HostBinding, Input} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {CustomBuildService} from '../services/custom-build.service';
 import {StringsService} from '../services/strings.service';
+import {urlToSafeStyle} from '../util/safe-values';
 
 
 /**
@@ -22,13 +23,13 @@ export class LogoComponent {
 	/** Possible logos. */
 	private readonly logos	= {
 		horizontal: {
-			main: Promise.resolve(
+			main: urlToSafeStyle(
 				this.customBuildService.logoHorizontal ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/logo.white.horizontal.png'
 				)
 			),
-			telehealth:  Promise.resolve(
+			telehealth: urlToSafeStyle(
 				this.customBuildService.logoHorizontal ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/logo.telehealth.horizontal.png'
@@ -36,13 +37,13 @@ export class LogoComponent {
 			)
 		},
 		icon: {
-			main:  Promise.resolve(
+			main: urlToSafeStyle(
 				this.customBuildService.favicon ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/logo.white.icon.png'
 				)
 			),
-			telehealth:  Promise.resolve(
+			telehealth: urlToSafeStyle(
 				this.customBuildService.favicon ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/logo.telehealth.icon.png'
@@ -50,13 +51,13 @@ export class LogoComponent {
 			)
 		},
 		vertical: {
-			main:  Promise.resolve(
+			main: urlToSafeStyle(
 				this.customBuildService.logoVertical ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/logo.white.vertical.png'
 				)
 			),
-			telehealth:  Promise.resolve(
+			telehealth: urlToSafeStyle(
 				this.customBuildService.logoVertical ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/logo.telehealth.vertical.png'
@@ -64,13 +65,13 @@ export class LogoComponent {
 			)
 		},
 		video: {
-			main:  Promise.resolve(
+			main: urlToSafeStyle(
 				this.customBuildService.logoHorizontal ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/betalogo.mobile.png'
 				)
 			),
-			telehealth:  Promise.resolve(
+			telehealth: urlToSafeStyle(
 				this.customBuildService.logoHorizontal ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/telehealth.video.logo.png'
@@ -89,6 +90,7 @@ export class LogoComponent {
 	private videoInternal: boolean		= false;
 
 	/** Indicates whether image is a logo in a card. */
+	@HostBinding('class.card-header-logo')
 	@Input()
 	public get cardHeader () : boolean {
 		return this.cardHeaderInternal;

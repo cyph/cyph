@@ -24,7 +24,12 @@ button {
 }
 
 cyph-logo {
-	max-height: 2.5em;
+	height: 2.5em;
+}
+
+[mat-icon-button] cyph-logo {
+	height: 40px;
+	margin-top: -8px;
 }
 
 img, cyph-logo {

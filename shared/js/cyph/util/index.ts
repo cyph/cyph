@@ -7,6 +7,7 @@ export * from './get-or-set-default';
 export * from './lock';
 export * from './random';
 export * from './request';
+export * from './safe-values';
 export * from './save-file';
 export * from './serialization';
 export * from './static-services';
