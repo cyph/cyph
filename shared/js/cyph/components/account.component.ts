@@ -150,11 +150,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 			await started;
 		}
-
-		if (!this.accountService.isUiReady) {
-			await this.viewInitiated;
-			this.accountService.resolveUiReady();
-		}
 	}
 
 	/** Indicates whether sidebar should be displayed. */
