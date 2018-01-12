@@ -9,7 +9,9 @@ export const urlToSafeStyle	=
 		const domSanitizer	= await staticDomSanitizer;
 
 		const urlValue	= await url;
-		const urlString	= typeof urlValue === 'string' ?
+
+		/* Temporary workaround for TypeScript 2.5 bug */
+		const urlString	= typeof (<any> urlValue) === 'string' ?
 			urlValue :
 			domSanitizer.sanitize(SecurityContext.URL, urlValue)
 		;
