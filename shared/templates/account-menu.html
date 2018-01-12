@@ -25,13 +25,18 @@
 	[class.mobile]='envService.isMobile'
 	*ngIf='accountDatabaseService.currentUser.value'
 >
-	<div [fxFlex]='(accountService.menuExpanded | async) ? "25px" : "10px"'></div>
+	<div
+		[fxFlex]='(accountService.menuExpanded | async) ? "25px" : "10px"'
+		*ngIf='(accountService.menuReduced | async) === false'
+	></div>
 
 	<div
 		fxFlex
 		fxLayout='column'
-		[fxLayoutAlign]='(accountService.menuExpanded | async) ? "center stretch" : "center center"'
-		fxLayoutGap='16px'
+		[fxLayoutAlign]='
+			(accountService.menuExpanded | async) ? "center stretch" : "center center"
+		'
+		[fxLayoutGap]='(accountService.menuReduced | async) ? "2px" : "16px"'
 	>
 		<div></div>
 		<div *ngIf='accountService.menuExpanded | async'></div>
@@ -62,30 +67,34 @@
 			<cyph-logo icon [telehealth]='accountService.isTelehealth'></cyph-logo>
 		</button>
 
-		<div fxLayoutAlign='center center'>
-			<div
-				[fxFlex]='(accountService.menuExpanded | async) ? "60" : "6em"'
-				fxLayoutAlign='center center'
-			>
-				<div class='avatar-container'>
-					<img
-						cyphTranslate
-						matTooltip='Profile'
-						matTooltipPosition='right'
-						class='avatar animated flipInX _1'
-						[ngClass]='userPresence[
-							accountDatabaseService.currentUser.value.user.status | async
-						]'
-						alt='Profile Picture'
-						[src]='accountDatabaseService.currentUser.value.user.avatar | async'
-						[routerLink]='accountService.routeRoot + "profile"'
-						(click)='click()'
-					/>
+		<div fxFlex *ngIf='accountService.menuReduced | async'></div>
+
+		<ng-container *ngIf='(accountService.menuReduced | async) === false'>
+			<div></div>
+			<div fxLayoutAlign='center center'>
+				<div
+					[fxFlex]='(accountService.menuExpanded | async) ? "60" : "6em"'
+					fxLayoutAlign='center center'
+				>
+					<div class='avatar-container'>
+						<img
+							cyphTranslate
+							matTooltip='Profile'
+							matTooltipPosition='right'
+							class='avatar animated flipInX _1'
+							[ngClass]='userPresence[
+								accountDatabaseService.currentUser.value.user.status | async
+							]'
+							alt='Profile Picture'
+							[src]='accountDatabaseService.currentUser.value.user.avatar | async'
+							[routerLink]='accountService.routeRoot + "profile"'
+							(click)='click()'
+						/>
+					</div>
 				</div>
 			</div>
-		</div>
-
-		<div></div>
+			<div></div>
+		</ng-container>
 
 		<ng-container *ngTemplateOutlet='buttons'></ng-container>
 
@@ -108,7 +117,10 @@
 		</mat-icon>
 	</button>
 
-	<div fxFlex='10px' *ngIf='(accountService.menuExpandable | async) === false'></div>
+	<div fxFlex='10px' *ngIf='
+		(accountService.menuExpandable | async) === false &&
+		(accountService.menuReduced | async) === false
+	'></div>
 </div>
 
 <ng-template #buttons>

@@ -4,7 +4,6 @@ import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {map} from 'rxjs/operators/map';
 import {ConfigService} from './config.service';
-import {EnvService} from './env.service';
 import {WindowWatcherService} from './window-watcher.service';
 
 
@@ -29,33 +28,20 @@ export class AccountService {
 	public isUiReady: boolean							= false;
 
 	/** Indicates whether menu can be expanded. */
-	public readonly menuExpandable: Observable<boolean>	=
-		this.windowWatcherService.width.pipe(map(width =>
-			this.envService.isMobile || width >= this.menuMinWidth
-		))
-	;
+	public readonly menuExpandable: Observable<boolean>;
 
 	/** Indicates whether menu is expanded. */
-	public readonly menuExpanded: Observable<boolean>	= combineLatest(
-		this.menuExpandedInternal,
-		this.menuExpandable,
-		this.windowWatcherService.width
-	).pipe(map(([menuExpandedInternal, menuExpandable, width]) =>
-		menuExpandedInternal && menuExpandable && width > this.configService.responsiveMaxWidths.xs
-	));
+	public readonly menuExpanded: Observable<boolean>;
 
 	/** Menu width. */
-	public readonly menuMaxWidth: Observable<string>	= combineLatest(
-		this.menuExpanded,
+	public readonly menuMaxWidth: Observable<string>;
+
+	/** Indicates whether simplified menu should be displayed. */
+	public readonly menuReduced: Observable<boolean>	= combineLatest(
+		this.windowWatcherService.height,
 		this.windowWatcherService.width
-	).pipe(map(([menuExpanded, width]) =>
-		width <= this.configService.responsiveMaxWidths.xs ?
-			'100%' :
-			!menuExpanded ?
-				'6em' :
-				this.menuMinWidth > width ?
-					'100%' :
-					`${this.menuExpandedMinWidth}px`
+	).pipe(map(([height, width]) =>
+		Math.min(height, width) <= this.configService.responsiveMaxWidths.xs
 	));
 
 	/** Resolves ready promise. */
@@ -92,11 +78,39 @@ export class AccountService {
 		private readonly configService: ConfigService,
 
 		/** @ignore */
-		private readonly envService: EnvService,
-
-		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
 	) {
+		this.menuExpandable	= combineLatest(
+			this.menuReduced,
+			this.windowWatcherService.width
+		).pipe(map(([menuReduced, width]) =>
+			!menuReduced && width >= this.menuMinWidth
+		));
+
+		this.menuExpanded	= combineLatest(
+			this.menuExpandedInternal,
+			this.menuExpandable,
+			this.windowWatcherService.width
+		).pipe(map(([menuExpandedInternal, menuExpandable, width]) =>
+			menuExpandedInternal &&
+			menuExpandable &&
+			width > this.configService.responsiveMaxWidths.xs
+		));
+
+		this.menuMaxWidth	= combineLatest(
+			this.menuExpanded,
+			this.windowWatcherService.width
+		).pipe(map(([menuExpanded, width]) =>
+			width <= this.configService.responsiveMaxWidths.xs ?
+				'100%' :
+				!menuExpanded ?
+					'6em' :
+					this.menuMinWidth > width ?
+						'100%' :
+						`${this.menuExpandedMinWidth}px`
+		));
+
+
 		this.uiReady.then(() => {
 			this.isUiReady	= true;
 		});
