@@ -1,6 +1,7 @@
 import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
-import {MatDialog, MatSnackBar} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
 import {map} from 'rxjs/operators/map';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
