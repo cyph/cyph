@@ -22,7 +22,7 @@ export const staticDialogService: Promise<DialogService>	=
 
 /** Sets domSanitizer. */
 let resolveDomSanitizer: (domSanitizer: DomSanitizer) => void;
-	
+
 /** @see DomSanitizer */
 export const staticDomSanitizer: Promise<DomSanitizer>	=
 	new Promise<DomSanitizer>(resolve => {
