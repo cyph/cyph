@@ -19,6 +19,7 @@ import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
 import {toArray} from 'rxjs/operators/toArray';
 import {SecurityModels} from '../account';
+import {Async} from '../async-type';
 import {IProto} from '../iproto';
 import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
@@ -41,7 +42,7 @@ import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {sleep} from '../util/wait';
+import {awaitAsync, sleep} from '../util/wait';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
@@ -431,14 +432,11 @@ export class AccountFilesService {
 
 	/** Removes a file. */
 	public async remove (
-		id: string|IAccountFileRecord|Observable<IAccountFileRecord>|Promise<IAccountFileRecord>,
+		id: string|Async<IAccountFileRecord>,
 		confirmAndRedirect: boolean = true
 	) : Promise<void> {
 		if (typeof id !== 'string') {
-			if (id instanceof Observable) {
-				id	= id.pipe(take(1)).toPromise();
-			}
-			id	= (await id).id;
+			id	= (await awaitAsync(id)).id;
 		}
 
 		const file	= await this.getFile(id);

@@ -15,6 +15,7 @@ import {IAsyncValue} from '../../iasync-value';
 import {IProto} from '../../iproto';
 import {ITimedValue} from '../../itimed-value';
 import {LockFunction} from '../../lock-function-type';
+import {MaybePromise} from '../../maybe-promise-type';
 import {
 	AccountUserPublicKeys,
 	AGSEPKICert,
@@ -79,7 +80,7 @@ export class AccountDatabaseService {
 		secretBox: async (
 			data: Uint8Array,
 			url: string,
-			customKey: Uint8Array|Promise<Uint8Array>|undefined
+			customKey: MaybePromise<Uint8Array>|undefined
 		) =>
 			this.potassiumService.secretBox.open(
 				data,
@@ -120,7 +121,7 @@ export class AccountDatabaseService {
 		secretBox: async (
 			data: Uint8Array,
 			url: string,
-			customKey: Uint8Array|Promise<Uint8Array>|undefined
+			customKey: MaybePromise<Uint8Array>|undefined
 		) =>
 			retryUntilSuccessful(async () => this.potassiumService.secretBox.seal(
 				data,
@@ -153,10 +154,10 @@ export class AccountDatabaseService {
 
 	/** @ignore */
 	private async getItemInternal<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels,
-		customKey: Uint8Array|Promise<Uint8Array>|undefined,
+		customKey: MaybePromise<Uint8Array>|undefined,
 		anonymous: boolean = false
 	) : Promise<{
 		progress: Observable<number>;
@@ -190,11 +191,11 @@ export class AccountDatabaseService {
 
 	/** @ignore */
 	private async open<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels,
 		data: Uint8Array,
-		customKey: Uint8Array|Promise<Uint8Array>|undefined,
+		customKey: MaybePromise<Uint8Array>|undefined,
 		anonymous: boolean = false
 	) : Promise<T> {
 		url	= await url;
@@ -226,7 +227,7 @@ export class AccountDatabaseService {
 	}
 
 	/** @ignore */
-	private async processLockURL (url: string|Promise<string>) : Promise<string> {
+	private async processLockURL (url: MaybePromise<string>) : Promise<string> {
 		const currentUser	= await this.getCurrentUser();
 
 		return `users/${currentUser.user.username}/locks/` + this.potassiumService.toHex(
@@ -241,11 +242,11 @@ export class AccountDatabaseService {
 
 	/** @ignore */
 	private async seal<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		value: T,
 		securityModel: SecurityModels,
-		customKey: Uint8Array|Promise<Uint8Array>|undefined
+		customKey: MaybePromise<Uint8Array>|undefined
 	) : Promise<Uint8Array> {
 		url			= await this.normalizeURL(url);
 		const data	= await serialize(proto, value);
@@ -268,10 +269,10 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.downloadItem */
 	public downloadItem<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>,
+		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : {
 		progress: Observable<number>;
@@ -302,10 +303,10 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.getAsyncList */
 	public getAsyncList<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>,
+		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : IAsyncList<T> {
 		const localLock	= lockFunction();
@@ -360,10 +361,10 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.getAsyncMap */
 	public getAsyncMap<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>,
+		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : IAsyncMap<string, T> {
 		const localLock			= lockFunction();
@@ -431,10 +432,10 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.getAsyncValue */
 	public getAsyncValue<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>,
+		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
 		blockGetValue: boolean = false
 	) : IAsyncValue<T> {
@@ -512,10 +513,10 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.getItem */
 	public async getItem<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>,
+		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Promise<T> {
 		return (
@@ -527,10 +528,10 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.getList */
 	public async getList<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>,
+		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Promise<T[]> {
 		url	= await this.normalizeURL(url);
@@ -540,15 +541,15 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.getListKeys */
-	public async getListKeys (url: string|Promise<string>) : Promise<string[]> {
+	public async getListKeys (url: MaybePromise<string>) : Promise<string[]> {
 		return this.databaseService.getListKeys(await this.normalizeURL(url));
 	}
 
 	/** @see DatabaseService.getOrSetDefault */
 	public async getOrSetDefault<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
-		defaultValue: () => T|Promise<T>
+		defaultValue: () => MaybePromise<T>
 	) : Promise<T> {
 		try {
 			return await this.getItem(url, proto);
@@ -623,13 +624,13 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.hasItem */
-	public async hasItem (url: string|Promise<string>) : Promise<boolean> {
+	public async hasItem (url: MaybePromise<string>) : Promise<boolean> {
 		return this.databaseService.hasItem(await this.normalizeURL(url));
 	}
 
 	/** @see DatabaseService.lock */
 	public async lock<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		f: (reason?: string) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
@@ -661,14 +662,14 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.lockFunction */
-	public lockFunction (url: string|Promise<string>) : LockFunction {
+	public lockFunction (url: MaybePromise<string>) : LockFunction {
 		return async <T> (f: (reason?: string) => Promise<T>, reason?: string) =>
 			this.lock(url, f, reason)
 		;
 	}
 
 	/** @see DatabaseService.lockStatus */
-	public async lockStatus (url: string|Promise<string>) : Promise<{
+	public async lockStatus (url: MaybePromise<string>) : Promise<{
 		locked: boolean;
 		reason: string|undefined;
 	}> {
@@ -691,7 +692,7 @@ export class AccountDatabaseService {
 	}
 
 	/** Normalizes URL. */
-	public async normalizeURL (url: string|Promise<string>) : Promise<string> {
+	public async normalizeURL (url: MaybePromise<string>) : Promise<string> {
 		url	= (await url).replace(/^\//, '');
 
 		if (url.match(/^users/)) {
@@ -704,11 +705,11 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.pushItem */
 	public async pushItem<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		value: T,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>
+		customKey?: MaybePromise<Uint8Array>
 	) : Promise<{hash: string; url: string}> {
 		return this.databaseService.pushItem(
 			await this.normalizeURL(url),
@@ -718,7 +719,7 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.removeItem */
-	public async removeItem (url: string|Promise<string>) : Promise<void> {
+	public async removeItem (url: MaybePromise<string>) : Promise<void> {
 		url	= await this.normalizeURL(url);
 
 		return this.databaseService.removeItem(url);
@@ -726,11 +727,11 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.setItem */
 	public async setItem<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		value: T,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>
+		customKey?: MaybePromise<Uint8Array>
 	) : Promise<{hash: string; url: string}> {
 		return this.lock(url, async () => this.databaseService.setItem(
 			await this.normalizeURL(url),
@@ -741,11 +742,11 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.setList */
 	public async setList<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		value: T[],
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>
+		customKey?: MaybePromise<Uint8Array>
 	) : Promise<void> {
 		return this.lock(url, async () => this.databaseService.setList(
 			await this.normalizeURL(url),
@@ -758,11 +759,11 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.subscribeAndPop */
 	public subscribeAndPop<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
-		f: (value: T) => void|Promise<void>,
+		f: (value: T) => MaybePromise<void>,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>,
+		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Subscription {
 		return this.watchListKeyPushes(url).subscribe(async key => {
@@ -782,11 +783,11 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.uploadItem */
 	public uploadItem<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		value: T,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>
+		customKey?: MaybePromise<Uint8Array>
 	) : {
 		cancel: () => void;
 		progress: Observable<number>;
@@ -821,7 +822,7 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.waitForUnlock */
-	public async waitForUnlock (url: string|Promise<string>) : Promise<{
+	public async waitForUnlock (url: MaybePromise<string>) : Promise<{
 		reason: string|undefined;
 		wasLocked: boolean;
 	}> {
@@ -846,10 +847,10 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.watch */
 	public watch<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>,
+		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return flattenObservablePromise(
@@ -888,16 +889,16 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.watchExists */
-	public watchExists (url: string|Promise<string>) : Observable<boolean> {
+	public watchExists (url: MaybePromise<string>) : Observable<boolean> {
 		return this.databaseService.watchExists(this.normalizeURL(url));
 	}
 
 	/** @see DatabaseService.watchList */
 	public watchList<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>,
+		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>[]> {
 		return flattenObservablePromise(
@@ -933,7 +934,7 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.watchListKeyPushes */
-	public watchListKeyPushes (url: string|Promise<string>) : Observable<string> {
+	public watchListKeyPushes (url: MaybePromise<string>) : Observable<string> {
 		return flattenObservablePromise(
 			this.currentUser.pipe(
 				mergeMap(async () =>
@@ -947,7 +948,7 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.watchListKeys */
-	public watchListKeys (url: string|Promise<string>) : Observable<string[]> {
+	public watchListKeys (url: MaybePromise<string>) : Observable<string[]> {
 		return flattenObservablePromise(
 			this.currentUser.pipe(
 				mergeMap(async () =>
@@ -963,10 +964,10 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.watchListPushes */
 	public watchListPushes<T> (
-		url: string|Promise<string>,
+		url: MaybePromise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: Uint8Array|Promise<Uint8Array>,
+		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
 		return flattenObservablePromise(

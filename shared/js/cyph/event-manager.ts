@@ -1,5 +1,6 @@
 import {env} from './env';
 import {IThread} from './ithread';
+import {MaybePromise} from './maybe-promise-type';
 import {getOrSetDefault} from './util/get-or-set-default';
 import {uuid} from './util/uuid';
 
@@ -57,7 +58,7 @@ export class EventManager {
 	/** EventManager.on wrapper that allows sending a response to EventManager.rpcTrigger. */
 	public rpcOn<I, O> (
 		event: string,
-		handler: (data: I) => O|Promise<O>,
+		handler: (data: I) => MaybePromise<O>,
 		postHandler?: (input: I, output: O) => void
 	) : void {
 		this.on(event, async (o: {data: I; eventID: string}) => {

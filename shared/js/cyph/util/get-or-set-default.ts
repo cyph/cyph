@@ -1,4 +1,5 @@
 import {LockFunction} from '../lock-function-type';
+import {MaybePromise} from '../maybe-promise-type';
 import {lockFunction} from './lock';
 
 
@@ -26,7 +27,7 @@ export const getOrSetDefault	= <K, V> (map: Map<K, V>, key: K, defaultValue: () 
 export const getOrSetDefaultAsync	= async <K, V> (
 	map: Map<K, V>,
 	key: K,
-	defaultValue: () => V|Promise<V>
+	defaultValue: () => MaybePromise<V>
 ) : Promise<V> => {
 	return getOrSetDefault(
 		getOrSetDefaultAsyncLocks,

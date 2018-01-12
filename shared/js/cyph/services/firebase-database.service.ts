@@ -24,6 +24,7 @@ import {skip} from 'rxjs/operators/skip';
 import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
+import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto} from '../proto';
 import {compareArrays} from '../util/compare';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -137,7 +138,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async checkDisconnected (urlPromise: string|Promise<string>) : Promise<boolean> {
+	public async checkDisconnected (urlPromise: MaybePromise<string>) : Promise<boolean> {
 		const url	= await urlPromise;
 
 		return (await (await this.getDatabaseRef(url)).once('value')).val() !== undefined;
@@ -168,7 +169,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public downloadItem<T> (urlPromise: string|Promise<string>, proto: IProto<T>) : {
+	public downloadItem<T> (urlPromise: MaybePromise<string>, proto: IProto<T>) : {
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
@@ -223,7 +224,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async getList<T> (urlPromise: string|Promise<string>, proto: IProto<T>) : Promise<T[]> {
+	public async getList<T> (urlPromise: MaybePromise<string>, proto: IProto<T>) : Promise<T[]> {
 		const url	= await urlPromise;
 
 		const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
@@ -234,7 +235,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async getListKeys (urlPromise: string|Promise<string>) : Promise<string[]> {
+	public async getListKeys (urlPromise: MaybePromise<string>) : Promise<string[]> {
 		const url	= await urlPromise;
 
 		const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
@@ -245,7 +246,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async getMetadata (urlPromise: string|Promise<string>) : Promise<{
+	public async getMetadata (urlPromise: MaybePromise<string>) : Promise<{
 		hash: string;
 		timestamp: number;
 	}> {
@@ -264,7 +265,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async hasItem (urlPromise: string|Promise<string>) : Promise<boolean> {
+	public async hasItem (urlPromise: MaybePromise<string>) : Promise<boolean> {
 		const url	= await urlPromise;
 
 		try {
@@ -278,7 +279,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async lock<T> (
-		urlPromise: string|Promise<string>,
+		urlPromise: MaybePromise<string>,
 		f: (reason?: string) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
@@ -338,7 +339,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async lockStatus (urlPromise: string|Promise<string>) : Promise<{
+	public async lockStatus (urlPromise: MaybePromise<string>) : Promise<{
 		locked: boolean;
 		reason: string|undefined;
 	}> {
@@ -376,7 +377,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async pushItem<T> (
-		urlPromise: string|Promise<string>,
+		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
 		value: T
 	) : Promise<{
@@ -401,7 +402,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async removeItem (urlPromise: string|Promise<string>) : Promise<void> {
+	public async removeItem (urlPromise: MaybePromise<string>) : Promise<void> {
 		const url	= await urlPromise;
 
 		this.cacheRemove({url});
@@ -421,7 +422,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async setConnectTracker (
-		urlPromise: string|Promise<string>,
+		urlPromise: MaybePromise<string>,
 		onReconnect?: () => void
 	) : Promise<() => void> {
 		const url	= await urlPromise;
@@ -450,7 +451,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async setDisconnectTracker (
-		urlPromise: string|Promise<string>,
+		urlPromise: MaybePromise<string>,
 		onReconnect?: () => void
 	) : Promise<() => void> {
 		const url	= await urlPromise;
@@ -479,7 +480,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async setItem<T> (
-		urlPromise: string|Promise<string>,
+		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
 		value: T
 	) : Promise<{
@@ -515,7 +516,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public uploadItem<T> (urlPromise: string|Promise<string>, proto: IProto<T>, value: T) : {
+	public uploadItem<T> (urlPromise: MaybePromise<string>, proto: IProto<T>, value: T) : {
 		cancel: () => void;
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
@@ -583,7 +584,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async waitForUnlock (urlPromise: string|Promise<string>) : Promise<{
+	public async waitForUnlock (urlPromise: MaybePromise<string>) : Promise<{
 		reason: string|undefined;
 		wasLocked: boolean;
 	}> {
@@ -613,7 +614,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public watch<T> (
-		urlPromise: string|Promise<string>,
+		urlPromise: MaybePromise<string>,
 		proto: IProto<T>
 	) : Observable<ITimedValue<T>> {
 		return new Observable<ITimedValue<T>>(observer => {
@@ -648,7 +649,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchExists (urlPromise: string|Promise<string>) : Observable<boolean> {
+	public watchExists (urlPromise: MaybePromise<string>) : Observable<boolean> {
 		return new Observable<boolean>(observer => {
 			let cleanup: Function;
 
@@ -672,7 +673,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public watchList<T> (
-		urlPromise: string|Promise<string>,
+		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
 		completeOnEmpty: boolean = false
 	) : Observable<ITimedValue<T>[]> {
@@ -788,7 +789,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchListKeyPushes (urlPromise: string|Promise<string>) : Observable<string> {
+	public watchListKeyPushes (urlPromise: MaybePromise<string>) : Observable<string> {
 		return new Observable<string>(observer => {
 			let cleanup: Function;
 
@@ -816,7 +817,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchListKeys (urlPromise: string|Promise<string>) : Observable<string[]> {
+	public watchListKeys (urlPromise: MaybePromise<string>) : Observable<string[]> {
 		return new Observable<string[]>(observer => {
 			let cleanup: Function;
 
@@ -854,7 +855,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public watchListPushes<T> (
-		urlPromise: string|Promise<string>,
+		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
 		completeOnEmpty: boolean = false,
 		noCache: boolean = false

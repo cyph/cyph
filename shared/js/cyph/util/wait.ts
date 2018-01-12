@@ -1,5 +1,18 @@
+import {Observable} from 'rxjs/Observable';
+import {take} from 'rxjs/operators/take';
+import {Async} from '../async-type';
 import {config} from '../config';
+import {MaybePromise} from '../maybe-promise-type';
 
+
+/** Converts Async to awaitable Promise. */
+export const awaitAsync	= async <T> (value: Async<T>) : Promise<T> => {
+	if (value instanceof Observable) {
+		return value.pipe(take(1)).toPromise();
+	}
+
+	return value;
+};
 
 /** Sleep for the specifed amount of time. */
 export const sleep	= async (ms: number = 250) : Promise<void> => {
@@ -16,7 +29,7 @@ export const infiniteSleep	= async () : Promise<void> => {
 
 /** Runs f until it returns with no errors. */
 export const retryUntilSuccessful	= async <T> (
-	f: () => (T|Promise<T>),
+	f: () => (MaybePromise<T>),
 	maxAttempts: number = 10
 ) : Promise<T> => {
 	for (let i = 0 ; true ; ++i) {

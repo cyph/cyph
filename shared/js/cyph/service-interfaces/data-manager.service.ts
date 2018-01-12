@@ -1,5 +1,6 @@
 import {IProto} from '../iproto';
 import {LockFunction} from '../lock-function-type';
+import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto} from '../proto';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
@@ -23,7 +24,7 @@ export class DataManagerService {
 	public async getOrSetDefault<T> (
 		url: string,
 		proto: IProto<T>,
-		defaultValue: () => T|Promise<T>
+		defaultValue: () => MaybePromise<T>
 	) : Promise<T> {
 		return getOrSetDefault(
 			this.getOrSetDefaultLocks,

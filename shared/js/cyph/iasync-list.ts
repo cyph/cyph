@@ -1,5 +1,6 @@
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
+import {MaybePromise} from './maybe-promise-type';
 
 
 /**
@@ -22,7 +23,7 @@ export interface IAsyncList<T> {
 	setValue (value: T[]) : Promise<void>;
 
 	/** Subscribes to pushed values and deletes them. */
-	subscribeAndPop (f: (value: T) => void|Promise<void>) : Subscription;
+	subscribeAndPop (f: (value: T) => MaybePromise<void>) : Subscription;
 
 	/** Uses a function to transform value. Throwing aborts modification. */
 	updateValue (f: (value: T[]) => Promise<T[]>) : Promise<void>;

@@ -1,3 +1,6 @@
+import {MaybePromise} from '../maybe-promise-type';
+
+
 /**
  * P2P handlers.
  */
@@ -10,17 +13,17 @@ export interface IP2PHandlers {
 	) => Promise<boolean>;
 
 	/** Canceled handler. */
-	canceled: () => void|Promise<void>;
+	canceled: () => MaybePromise<void>;
 
 	/** Connected handler. */
-	connected: (isConnected: boolean) => void|Promise<void>;
+	connected: (isConnected: boolean) => MaybePromise<void>;
 
 	/** Request confirm handler. */
 	requestConfirm: (callType: 'audio'|'video', isAccepted: boolean) => Promise<boolean>;
 
 	/** Request confirmation handler. */
-	requestConfirmation: () => void|Promise<void>;
+	requestConfirmation: () => MaybePromise<void>;
 
 	/** Request rejection handler. */
-	requestRejection: () => void|Promise<void>;
+	requestRejection: () => MaybePromise<void>;
 }

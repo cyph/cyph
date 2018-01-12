@@ -12,6 +12,7 @@ import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {LockFunction} from '../lock-function-type';
+import {MaybePromise} from '../maybe-promise-type';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {lockFunction} from '../util/lock';
 
@@ -26,7 +27,7 @@ export class DatabaseService extends DataManagerService {
 	 * @returns True if disconnected.
 	 * @see setDisconnectTracker
 	 */
-	public async checkDisconnected (_URL: string|Promise<string>) : Promise<boolean> {
+	public async checkDisconnected (_URL: MaybePromise<string>) : Promise<boolean> {
 		throw new Error('Must provide an implementation of DatabaseService.checkDisconnected.');
 	}
 
@@ -36,7 +37,7 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Downloads value and gives progress. */
-	public downloadItem<T> (_URL: string|Promise<string>, _PROTO: IProto<T>) : {
+	public downloadItem<T> (_URL: MaybePromise<string>, _PROTO: IProto<T>) : {
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
@@ -199,17 +200,17 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Gets a list of values. */
-	public async getList<T> (_URL: string|Promise<string>, _PROTO: IProto<T>) : Promise<T[]> {
+	public async getList<T> (_URL: MaybePromise<string>, _PROTO: IProto<T>) : Promise<T[]> {
 		throw new Error('Must provide an implementation of DatabaseService.getList.');
 	}
 
 	/** Gets the keys of a list. */
-	public async getListKeys (_URL: string|Promise<string>) : Promise<string[]> {
+	public async getListKeys (_URL: MaybePromise<string>) : Promise<string[]> {
 		throw new Error('Must provide an implementation of DatabaseService.getListKeys.');
 	}
 
 	/** Gets the latest metadata known by the database. */
-	public async getMetadata (_URL: string|Promise<string>) : Promise<{
+	public async getMetadata (_URL: MaybePromise<string>) : Promise<{
 		hash: string;
 		timestamp: number;
 	}> {
@@ -218,7 +219,7 @@ export class DatabaseService extends DataManagerService {
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 	public async lock<T> (
-		_URL: string|Promise<string>,
+		_URL: MaybePromise<string>,
 		_F: (reason?: string) => Promise<T>,
 		_REASON?: string
 	) : Promise<T> {
@@ -233,7 +234,7 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Checks whether a lock is currently claimed and what the specified reason is. */
-	public async lockStatus (_URL: string|Promise<string>) : Promise<{
+	public async lockStatus (_URL: MaybePromise<string>) : Promise<{
 		locked: boolean;
 		reason: string|undefined;
 	}> {
@@ -255,7 +256,7 @@ export class DatabaseService extends DataManagerService {
 	 * @returns Item database hash and URL.
 	 */
 	public async pushItem<T> (
-		_URL: string|Promise<string>,
+		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>,
 		_VALUE: T
 	) : Promise<{
@@ -272,7 +273,7 @@ export class DatabaseService extends DataManagerService {
 
 	/** Tracks connects at the specfied URL. */
 	public async setConnectTracker (
-		_URL: string|Promise<string>,
+		_URL: MaybePromise<string>,
 		_ON_RECONNECT?: () => void
 	) : Promise<() => void> {
 		throw new Error('Must provide an implementation of DatabaseService.setConnectTracker.');
@@ -280,7 +281,7 @@ export class DatabaseService extends DataManagerService {
 
 	/** Tracks disconnects at the specfied URL. */
 	public async setDisconnectTracker (
-		_URL: string|Promise<string>,
+		_URL: MaybePromise<string>,
 		_ON_RECONNECT?: () => void
 	) : Promise<() => void> {
 		throw new Error('Must provide an implementation of DatabaseService.setDisconnectTracker.');
@@ -291,7 +292,7 @@ export class DatabaseService extends DataManagerService {
 	 * @returns Item database hash and URL.
 	 */
 	public async setItem<T> (
-		_URL: string|Promise<string>,
+		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>,
 		_VALUE: T
 	) : Promise<{
@@ -313,7 +314,7 @@ export class DatabaseService extends DataManagerService {
 	public subscribeAndPop<T> (
 		url: string,
 		proto: IProto<T>,
-		f: (value: T) => void|Promise<void>
+		f: (value: T) => MaybePromise<void>
 	) : Subscription {
 		return this.watchListKeyPushes(url).subscribe(async key => {
 			const fullURL	= `${url}/${key}`;
@@ -328,7 +329,7 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Uploads value and gives progress. */
-	public uploadItem<T> (_URL: string|Promise<string>, _PROTO: IProto<T>, _VALUE: T) : {
+	public uploadItem<T> (_URL: MaybePromise<string>, _PROTO: IProto<T>, _VALUE: T) : {
 		cancel: () => void;
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
@@ -337,7 +338,7 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Waits for lock to be released. */
-	public async waitForUnlock (_URL: string|Promise<string>) : Promise<{
+	public async waitForUnlock (_URL: MaybePromise<string>) : Promise<{
 		reason: string|undefined;
 		wasLocked: boolean;
 	}> {
@@ -346,20 +347,20 @@ export class DatabaseService extends DataManagerService {
 
 	/** Subscribes to a value. */
 	public watch<T> (
-		_URL: string|Promise<string>,
+		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>
 	) : Observable<ITimedValue<T>> {
 		throw new Error('Must provide an implementation of DatabaseService.watch.');
 	}
 
 	/** Subscribes to whether or not a value exists. */
-	public watchExists (_URL: string|Promise<string>) : Observable<boolean> {
+	public watchExists (_URL: MaybePromise<string>) : Observable<boolean> {
 		throw new Error('Must provide an implementation of DatabaseService.watchExists.');
 	}
 
 	/** Subscribes to a list of values. */
 	public watchList<T> (
-		_URL: string|Promise<string>,
+		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>,
 		_COMPLETE_ON_EMPTY: boolean = false
 	) : Observable<ITimedValue<T>[]> {
@@ -367,18 +368,18 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Subscribes to new keys of a list. */
-	public watchListKeyPushes (_URL: string|Promise<string>) : Observable<string> {
+	public watchListKeyPushes (_URL: MaybePromise<string>) : Observable<string> {
 		throw new Error('Must provide an implementation of DatabaseService.watchListKeyPushes.');
 	}
 
 	/** Subscribes to the keys of a list. */
-	public watchListKeys (_URL: string|Promise<string>) : Observable<string[]> {
+	public watchListKeys (_URL: MaybePromise<string>) : Observable<string[]> {
 		throw new Error('Must provide an implementation of DatabaseService.watchListKeys.');
 	}
 
 	/** Subscribes to new values pushed onto a list. */
 	public watchListPushes<T> (
-		_URL: string|Promise<string>,
+		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>,
 		_COMPLETE_ON_EMPTY: boolean = false,
 		_NO_CACHE: boolean = false

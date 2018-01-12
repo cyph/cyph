@@ -1,4 +1,5 @@
 import {Writer} from 'protobufjs';
+import {MaybePromise} from './maybe-promise-type';
 
 
 /** A Protocol Buffers class that can decode and encode the specified type. */
@@ -7,10 +8,10 @@ export interface IProto<T> {
 	create: () => T;
 
 	/** Decode from bytes. */
-	decode: (bytes: Uint8Array) => T|Promise<T>;
+	decode: (bytes: Uint8Array) => MaybePromise<T>;
 
 	/** Encode as bytes. */
-	encode: (data: T) => Writer|Uint8Array|Promise<Writer>|Promise<Uint8Array>;
+	encode: (data: T) => MaybePromise<Uint8Array|Writer>;
 
 	/** Verify that object can be successfully encoded. */
 	verify: (data: any) => any;

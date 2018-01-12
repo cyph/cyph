@@ -6,6 +6,7 @@ import {
 } from '@angular/common/http';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {MaybePromise} from '../maybe-promise-type';
 import {stringify, toQueryString} from './serialization';
 import {staticHttpClient} from './static-services';
 
@@ -21,7 +22,7 @@ const baseRequest	= <R, T> (
 		url: string;
 	},
 	responseType: 'arraybuffer'|'blob'|'json'|'text',
-	getResponseData: (res: HttpResponse<T>) => R|Promise<R>
+	getResponseData: (res: HttpResponse<T>) => MaybePromise<R>
 ) : {
 	progress: Observable<number>;
 	result: Promise<R>;

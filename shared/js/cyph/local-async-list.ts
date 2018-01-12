@@ -4,6 +4,7 @@ import {Subject} from 'rxjs/Subject';
 import {Subscription} from 'rxjs/Subscription';
 import {IAsyncList} from './iasync-list';
 import {LocalAsyncValue} from './local-async-value';
+import {MaybePromise} from './maybe-promise-type';
 
 
 /**
@@ -34,7 +35,7 @@ export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncLis
 	}
 
 	/** @inheritDoc */
-	public subscribeAndPop (f: (value: T) => void|Promise<void>) : Subscription {
+	public subscribeAndPop (f: (value: T) => MaybePromise<void>) : Subscription {
 		return this.pushes.subscribe(async ({index, value}) => {
 			await f(value);
 			this.value.splice(index, 1);
