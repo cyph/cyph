@@ -123,14 +123,13 @@
 						</mat-radio-button>
 					</mat-radio-group>
 
-					<mat-form-field fxFlex>
+					<mat-form-field fxFlex *ngIf='o.type === types.Select'>
 						<mat-select
 							fxFlex
 							[(ngModel)]='o.valueString'
 							[name]='o.label'
 							[disabled]='isDisabled'
 							[required]='o.required'
-							*ngIf='o.type === types.Select'
 						>
 							<mat-option
 								*ngFor='let option of o.options; trackBy: trackBySelf'
