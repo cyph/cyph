@@ -59,5 +59,7 @@ testEnvironmentSetup = async (
 		}
 	}
 
-	location.reload();
+	if (localTestDataVersion !== undefined) {
+		location.reload();
+	}
 };
