@@ -57,6 +57,7 @@ read -r -d '' modules <<- EOM
 	@types/dompurify
 	@types/dropzone
 	@types/file-saver
+	@types/fullcalendar@3.5.2
 	@types/html-to-text
 	@types/jasmine
 	@types/jquery@^2
@@ -109,6 +110,7 @@ read -r -d '' modules <<- EOM
 	firebase-functions
 	firebase-server
 	firebase-tools
+	fullcalendar@3.6.1
 	glob
 	google-closure-compiler
 	granim
@@ -160,6 +162,7 @@ read -r -d '' modules <<- EOM
 	nativescript-dev-webpack
 	nativescript-theme-core
 	ng2-fittext
+	ng-fullcalendar
 	ng2-pdf-viewer
 	ng2-truncate
 	node-fetch
