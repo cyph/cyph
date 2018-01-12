@@ -30,8 +30,8 @@ import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {trackByVsItem} from '../track-by/track-by-vs-item';
-import {urlToSafeStyle} from '../util/safe-values';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
+import {urlToSafeStyle} from '../util/safe-values';
 
 
 /**
