@@ -60,7 +60,7 @@ read -r -d '' modules <<- EOM
 	@types/fullcalendar@3.5.2
 	@types/html-to-text
 	@types/jasmine
-	@types/jquery@^2
+	@types/jquery
 	@types/jspdf
 	@types/lodash-es
 	@types/long
