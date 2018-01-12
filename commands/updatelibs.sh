@@ -216,6 +216,7 @@ read -r -d '' modules <<- EOM
 	ts-loader
 	ts-node
 	tslint
+	tslint-immutable
 	tslint-microsoft-contrib
 	tsutils
 	typedoc
