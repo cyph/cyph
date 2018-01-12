@@ -1,32 +1,11 @@
 import {SecurityContext} from '@angular/core';
-import {DomSanitizer, SafeUrl, SafeValue} from '@angular/platform-browser';
+import {SafeUrl} from '@angular/platform-browser';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
-import {env} from '../env';
+import {staticDomSanitizer} from '../util/static-services';
 
 
 /** Base64 data URI encoder/decoder. (Doesn't actually use Protocol Buffers.) */
 export class DataURIProto {
-	/** @ignore */
-	private static readonly domSanitizer: Promise<DomSanitizer>	=
-		new Promise<DomSanitizer>(resolve => {
-			if (env.isWeb) {
-				DataURIProto.resolveDomSanitizer	= resolve;
-				return;
-			}
-
-			const notImplemented	= () => { throw new Error('Not implemented.'); };
-
-			resolve({
-				bypassSecurityTrustHtml: notImplemented,
-				bypassSecurityTrustResourceUrl: notImplemented,
-				bypassSecurityTrustScript: notImplemented,
-				bypassSecurityTrustStyle: notImplemented,
-				bypassSecurityTrustUrl: (data: string) => data,
-				sanitize: (_: any, data: SafeValue) => <string> data
-			});
-		})
-	;
-
 	/** @ignore */
 	private static readonly prefix: string	= 'data:application/octet-stream;base64,';
 
@@ -34,9 +13,6 @@ export class DataURIProto {
 	private static readonly prefixBytes: Uint8Array	= potassiumUtil.fromString(
 		DataURIProto.prefix
 	);
-
-	/** Sets domSanitizer. */
-	public static resolveDomSanitizer: (domSanitizer: DomSanitizer) => void;
 
 	/** @ignore */
 	private static async safeUrlToString (data: SafeUrl|string) : Promise<string> {
@@ -48,7 +24,7 @@ export class DataURIProto {
 			throw new Error('Undefined input.');
 		}
 
-		const sanitized	= (await DataURIProto.domSanitizer).sanitize(
+		const sanitized	= (await staticDomSanitizer).sanitize(
 			SecurityContext.RESOURCE_URL,
 			data
 		);
@@ -71,7 +47,7 @@ export class DataURIProto {
 			return {};
 		}
 
-		return (await DataURIProto.domSanitizer).bypassSecurityTrustUrl(
+		return (await staticDomSanitizer).bypassSecurityTrustUrl(
 			DataURIProto.prefix + potassiumUtil.toBase64(bytes)
 		);
 	}

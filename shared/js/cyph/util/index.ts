@@ -9,6 +9,7 @@ export * from './random';
 export * from './request';
 export * from './save-file';
 export * from './serialization';
+export * from './static-services';
 export * from './time';
 export * from './translate';
 export * from './trigger-click';

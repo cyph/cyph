@@ -17,15 +17,13 @@ import {RouterModule, UrlSerializer} from '@angular/router';
 import {CyphAppModule} from '../cyph/modules/cyph-app.module';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
-import {DataURIProto} from '../cyph/proto';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {ThreadedPotassiumService} from '../cyph/services/crypto/threaded-potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
-import {resolveHttpClient} from '../cyph/util/request';
-import {resolveDialogService} from '../cyph/util/save-file';
+import {resolveStaticServices} from '../cyph/util/static-services';
 import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
@@ -75,8 +73,6 @@ export class AppModule {
 			testEnvironmentSetup(databaseService, localStorageService);
 		}
 
-		DataURIProto.resolveDomSanitizer(domSanitizer);
-		resolveHttpClient(httpClient);
-		resolveDialogService(dialogService);
+		resolveStaticServices(dialogService, domSanitizer, httpClient);
 	}
 }

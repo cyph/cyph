@@ -1,5 +1,4 @@
 import {
-	HttpClient,
 	HttpEvent,
 	HttpEventType,
 	HttpHeaders,
@@ -7,23 +6,9 @@ import {
 } from '@angular/common/http';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
-import {env} from '../env';
 import {stringify, toQueryString} from './serialization';
+import {staticHttpClient} from './static-services';
 
-
-/** Sets http. */
-export let resolveHttpClient: (httpClient: HttpClient) => void;
-
-/** @ignore */
-const staticHttpClient: Promise<HttpClient|undefined>	=
-	new Promise<HttpClient|undefined>(resolve => {
-		if (!env.isMainThread) {
-			resolve();
-		}
-
-		resolveHttpClient	= resolve;
-	})
-;
 
 /** Performs HTTP request. */
 const baseRequest	= <R, T> (
@@ -47,9 +32,6 @@ const baseRequest	= <R, T> (
 		progress,
 		result: (async () => {
 			const httpClient	= await staticHttpClient;
-			if (!httpClient) {
-				throw new Error('HTTP service not found.');
-			}
 
 			const method: string			= o.method || 'GET';
 			const retries: number			= o.retries === undefined ? 0 : o.retries;

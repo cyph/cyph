@@ -21,14 +21,12 @@ import {CheckoutComponent} from '../cyph/components/checkout.component';
 import {ClaimUsernameComponent} from '../cyph/components/claim-username.component';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
-import {DataURIProto} from '../cyph/proto';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {HtmlSanitizerService} from '../cyph/services/html-sanitizer.service';
 import {NotificationService} from '../cyph/services/notification.service';
-import {resolveHttpClient} from '../cyph/util/request';
-import {resolveDialogService} from '../cyph/util/save-file';
+import {resolveStaticServices} from '../cyph/util/static-services';
 import {appRoutes} from './app-routes';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
@@ -88,9 +86,11 @@ import {SilentNotificationService} from './silent-notification.service';
 	]
 })
 export class AppModule {
-	constructor (domSanitizer: DomSanitizer, httpClient: HttpClient, dialogService: DialogService) {
-		DataURIProto.resolveDomSanitizer(domSanitizer);
-		resolveHttpClient(httpClient);
-		resolveDialogService(dialogService);
+	constructor (
+		domSanitizer: DomSanitizer,
+		httpClient: HttpClient,
+		dialogService: DialogService
+	) {
+		resolveStaticServices(dialogService, domSanitizer, httpClient);
 	}
 }
