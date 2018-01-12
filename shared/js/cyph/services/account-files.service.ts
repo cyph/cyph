@@ -36,6 +36,7 @@ import {
 	IAccountFileReferenceContainer,
 	IForm
 } from '../proto';
+import {filterUndefined} from '../util/filter';
 import {flattenObservablePromise} from '../util/flatten-observable-promise';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {saveFile} from '../util/save-file';
@@ -64,6 +65,19 @@ export class AccountFilesService {
 	;
 
 	/** @ignore */
+	private readonly nonexistentFile: IAccountFileRecord&IAccountFileReference	= {
+		id: '',
+		mediaType: '',
+		name: '',
+		key: new Uint8Array(0),
+		owner: '',
+		recordType: AccountFileRecord.RecordTypes.File,
+		size: NaN,
+		timestamp: 0,
+		wasAnonymousShare: false
+	};
+
+	/** @ignore */
 	private readonly noteSnippets: Map<string, string>	= new Map<string, string>();
 
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
@@ -73,38 +87,36 @@ export class AccountFilesService {
 				'fileReferences',
 				AccountFileReference
 			).pipe(
-				mergeMap(async references => Promise.all(references.map(async ({value}) => {
-					if (!value.owner) {
-						return {
-							id: '',
-							mediaType: '',
-							name: '',
-							owner: '',
-							recordType: AccountFileRecord.RecordTypes.File,
-							size: NaN,
-							timestamp: 0,
-							wasAnonymousShare: false
-						};
-					}
+				mergeMap(async references => filterUndefined(await Promise.all(
+					references.map(async ({value}) => {
+						try {
+							if (!value.owner) {
+								return;
+							}
 
-					const record	= await this.accountDatabaseService.getItem(
-						`users/${value.owner}/fileRecords/${value.id}`,
-						AccountFileRecord,
-						undefined,
-						value.key
-					);
+							const record	= await this.accountDatabaseService.getItem(
+								`users/${value.owner}/fileRecords/${value.id}`,
+								AccountFileRecord,
+								undefined,
+								value.key
+							);
 
-					return {
-						id: record.id,
-						mediaType: record.mediaType,
-						name: record.name,
-						owner: value.owner,
-						recordType: record.recordType,
-						size: record.size,
-						timestamp: record.timestamp,
-						wasAnonymousShare: record.wasAnonymousShare
-					};
-				}))),
+							return {
+								id: record.id,
+								mediaType: record.mediaType,
+								name: record.name,
+								owner: value.owner,
+								recordType: record.recordType,
+								size: record.size,
+								timestamp: record.timestamp,
+								wasAnonymousShare: record.wasAnonymousShare
+							};
+						}
+						catch {
+							return;
+						}
+					})
+				))),
 				map(records =>
 					records.sort((a, b) => b.timestamp - a.timestamp)
 				)
@@ -130,84 +142,80 @@ export class AccountFilesService {
 			!o ? [] : this.databaseService.watchList(
 				`users/${o.user.username}/incomingFiles`,
 				BinaryProto
-			).pipe(mergeMap(async arr => Promise.all(arr.map(async ({value}) =>
-				getOrSetDefaultAsync(
+			).pipe(mergeMap(async arr =>
+				(await Promise.all(arr.map(async ({value}) => getOrSetDefaultAsync(
 					this.incomingFileCache,
 					value,
 					async () => {
-						const referenceContainer	= await deserialize(
-							AccountFileReferenceContainer,
-							await this.potassiumService.box.open(
-								value,
-								o.keys.encryptionKeyPair
-							)
-						);
+						try {
+							const currentUser	= this.accountDatabaseService.currentUser.value;
 
-						let record: IAccountFileRecord;
-						let reference: IAccountFileReference;
+							if (!currentUser) {
+								return this.nonexistentFile;
+							}
 
-						if (
-							referenceContainer.anonymousShare &&
-							this.accountDatabaseService.currentUser.value
-						) {
-							record	= referenceContainer.anonymousShare.accountFileRecord;
-							record.wasAnonymousShare	= true;
-
-							reference	= {
-								id: record.id,
-								key: referenceContainer.anonymousShare.key,
-								owner: this.accountDatabaseService.currentUser.value.user.username
-							};
-						}
-						else if (
-							referenceContainer.signedShare &&
-							this.accountDatabaseService.currentUser.value
-						) {
-							reference	= await deserialize(
-								AccountFileReference,
-								await this.potassiumService.sign.open(
-									referenceContainer.signedShare.accountFileReference,
-									(await this.accountDatabaseService.getUserPublicKeys(
-										referenceContainer.signedShare.owner
-									)).signing
+							const referenceContainer	= await deserialize(
+								AccountFileReferenceContainer,
+								await this.potassiumService.box.open(
+									value,
+									o.keys.encryptionKeyPair
 								)
 							);
 
-							record	= await this.accountDatabaseService.getItem(
-								`users/${reference.owner}/fileRecords/${reference.id}`,
-								AccountFileRecord,
-								undefined,
-								reference.key
-							);
-						}
-						else {
+							let record: IAccountFileRecord;
+							let reference: IAccountFileReference;
+
+							if (referenceContainer.anonymousShare) {
+								record	= referenceContainer.anonymousShare.accountFileRecord;
+								record.wasAnonymousShare	= true;
+
+								reference	= {
+									id: record.id,
+									key: referenceContainer.anonymousShare.key,
+									owner: currentUser.user.username
+								};
+							}
+							else if (referenceContainer.signedShare) {
+								reference	= await deserialize(
+									AccountFileReference,
+									await this.potassiumService.sign.open(
+										referenceContainer.signedShare.accountFileReference,
+										(await this.accountDatabaseService.getUserPublicKeys(
+											referenceContainer.signedShare.owner
+										)).signing
+									)
+								);
+
+								record	= await this.accountDatabaseService.getItem(
+									`users/${reference.owner}/fileRecords/${reference.id}`,
+									AccountFileRecord,
+									undefined,
+									reference.key
+								);
+							}
+							else {
+								return this.nonexistentFile;
+							}
+
 							return {
-								id: '',
-								key: new Uint8Array(0),
-								mediaType: '',
-								name: '',
-								owner: '',
-								recordType: AccountFileRecord.RecordTypes.File,
-								size: NaN,
-								timestamp: 0,
-								wasAnonymousShare: false
+								id: record.id,
+								key: reference.key,
+								mediaType: record.mediaType,
+								name: record.name,
+								owner: reference.owner,
+								recordType: record.recordType,
+								size: record.size,
+								timestamp: record.timestamp,
+								wasAnonymousShare: record.wasAnonymousShare
 							};
 						}
-
-						return {
-							id: record.id,
-							key: reference.key,
-							mediaType: record.mediaType,
-							name: record.name,
-							owner: reference.owner,
-							recordType: record.recordType,
-							size: record.size,
-							timestamp: record.timestamp,
-							wasAnonymousShare: record.wasAnonymousShare
-						};
+						catch {
+							return this.nonexistentFile;
+						}
 					}
-				)
-			))))
+				)))).
+					filter(o => o !== this.nonexistentFile)
+			))
 		))
 	;
 
