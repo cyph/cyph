@@ -14,13 +14,13 @@
 
 	<cyph-account-menu
 		fxLayout='column'
+		fxLayout.xs='row'
 		class='sidebar'
-		fxFlex='100'
 		[style.max-width]='accountService.menuMaxWidth | async'
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
-	<div fxFlex fxFlexFill fxLayout='column'>
+	<div fxFlex fxFlexFill fxLayout='column' fxLayout.xs='row'>
 		<div fxFlexFill fxLayout='row' fxLayoutAlign='center start'>
 			<div
 				class='router-content'
@@ -38,6 +38,7 @@
 
 	<div
 		fxFlex='25'
+		fxHide.xs
 		fxLayout='column'
 		class='sidebar'
 		*ngIf='sidebarVisible'

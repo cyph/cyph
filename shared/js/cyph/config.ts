@@ -186,6 +186,15 @@ export class Config {
 		'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
 	];
 
+	/** @see {@link https://github.com/angular/flex-layout/wiki/Responsive-API} */
+	public readonly responsiveMaxWidths		= {
+		lg: 1919,
+		md: 1279,
+		sm: 959,
+		xl: 5000,
+		xs: 599
+	};
+
 	/** Length of random IDs in cyph links. */
 	public readonly secretLength: number	= 25;
 

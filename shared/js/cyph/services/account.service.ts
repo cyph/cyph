@@ -3,6 +3,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {map} from 'rxjs/operators/map';
+import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 import {WindowWatcherService} from './window-watcher.service';
 
@@ -37,9 +38,10 @@ export class AccountService {
 	/** Indicates whether menu is expanded. */
 	public readonly menuExpanded: Observable<boolean>	= combineLatest(
 		this.menuExpandedInternal,
-		this.menuExpandable
-	).pipe(map(([menuExpandedInternal, menuExpandable]) =>
-		menuExpandedInternal && menuExpandable
+		this.menuExpandable,
+		this.windowWatcherService.width
+	).pipe(map(([menuExpandedInternal, menuExpandable, width]) =>
+		menuExpandedInternal && menuExpandable && width > this.configService.responsiveMaxWidths.xs
 	));
 
 	/** Menu width. */
@@ -47,11 +49,13 @@ export class AccountService {
 		this.menuExpanded,
 		this.windowWatcherService.width
 	).pipe(map(([menuExpanded, width]) =>
-		!menuExpanded ?
-			'6em' :
-			this.menuMinWidth > width ?
-				'100%' :
-				`${this.menuExpandedMinWidth}px`
+		width <= this.configService.responsiveMaxWidths.xs ?
+			'100%' :
+			!menuExpanded ?
+				'6em' :
+				this.menuMinWidth > width ?
+					'100%' :
+					`${this.menuExpandedMinWidth}px`
 	));
 
 	/** Resolves ready promise. */
@@ -84,6 +88,9 @@ export class AccountService {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly configService: ConfigService,
+
 		/** @ignore */
 		private readonly envService: EnvService,
 

@@ -24,6 +24,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -89,6 +90,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatSlideToggleModule,
 		MatSnackBarModule,
 		MatTabsModule,
+		MatToolbarModule,
 		MatTooltipModule,
 		NanoScrollerDirective,
 		ReactiveFormsModule,
@@ -124,6 +126,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatSlideToggleModule,
 		MatSnackBarModule,
 		MatTabsModule,
+		MatToolbarModule,
 		MatTooltipModule,
 		ReactiveFormsModule,
 		RouterModule,
