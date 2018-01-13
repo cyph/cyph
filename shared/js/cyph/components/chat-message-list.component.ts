@@ -118,7 +118,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	public readonly uiStyles: typeof UiStyles			= UiStyles;
 
 	/** Data formatted for virtual scrolling. */
-	public readonly vsData: BehaviorSubject<IVsItem[]>	= new BehaviorSubject([]);
+	public readonly vsData: BehaviorSubject<IVsItem[]>	= new BehaviorSubject<IVsItem[]>([]);
 
 	/** Equality function for virtual scrolling. */
 	public readonly vsEqualsFunc: (a: number, b: number) => boolean	= (() => {
@@ -231,10 +231,10 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			})
 		);
 
-		combineLatest<ChatMessage[]|void>([
+		combineLatest(
 			observables.messages,
 			this.maxWidthWatcher
-		]).pipe(map(([messages]: ChatMessage[][]) => (
+		).pipe(map(([messages]) => (
 			<(ChatMessage|undefined)[]> (messages.length < 1 ? [undefined] : messages)
 		).map((message, i, arr) => ({
 			accounts: this.accounts,

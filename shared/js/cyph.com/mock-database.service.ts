@@ -16,7 +16,7 @@ import {sleep} from '../cyph/util/wait';
 @Injectable()
 export class MockDatabaseService extends DatabaseService {
 	/** @ignore */
-	private uploadedItems: Map<string, Uint8Array>	= new Map<string, Uint8Array>();
+	private readonly uploadedItems: Map<string, Uint8Array>	= new Map<string, Uint8Array>();
 
 	/** @ignore */
 	private async pretendToTransferData (

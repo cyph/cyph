@@ -39,7 +39,7 @@ export class ChannelService implements IChannelService {
 	;
 
 	/** @ignore */
-	private subscriptions: Subscription[]	= [];
+	private readonly subscriptions: Subscription[]	= [];
 
 	/** @ignore */
 	private userID?: string;
@@ -126,7 +126,9 @@ export class ChannelService implements IChannelService {
 		if (
 			this.ephemeral ||
 			(
-				await this.databaseService.getList(`${url}/users`, StringProto).catch(() => [])
+				await this.databaseService.getList(`${url}/users`, StringProto).catch(
+					() => <string[]> []
+				)
 			).indexOf(this.userID) < 0
 		) {
 			await this.databaseService.pushItem(`${url}/users`, StringProto, this.userID);

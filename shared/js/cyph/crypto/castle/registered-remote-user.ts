@@ -9,7 +9,7 @@ import {IRemoteUser} from './iremote-user';
  */
 export class RegisteredRemoteUser implements IRemoteUser {
 	/** @ignore */
-	private publicKey: Promise<Uint8Array>	= (async () =>
+	private readonly publicKey: Promise<Uint8Array>	= (async () =>
 		(
 			await this.accountDatabaseService.getUserPublicKeys(
 				await this.username.pipe(take(1)).toPromise()

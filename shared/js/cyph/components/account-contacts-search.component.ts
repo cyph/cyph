@@ -49,58 +49,60 @@ export class AccountContactsSearchComponent {
 				return query.toLowerCase().trim();
 			}),
 			mergeMap<string, ISearchOptions>(query =>
-				this.accountContactsService.contactList.pipe(mergeMap(async users => {
-					const results	= (await Promise.all(users.map(async user => ({
-						name: (await user.name.pipe(take(1)).toPromise()).toLowerCase(),
-						user,
-						username: user.username
-					})))).
-						filter(({name, username}) =>
-							name.indexOf(query) > -1 ||
-							username.startsWith(query)
-						).
-						map(({user}) => user).
-						sort((a, b) =>
-							a.username === query ?
-								-1 :
-								b.username === query ?
-									1 :
-									a.username < b.username ?
-										-1 :
-										1
-						).
-						slice(0, this.searchListLength)
-					;
+				this.accountContactsService.contactList.pipe(
+					mergeMap<User[], ISearchOptions>(async users => {
+						const results	= (await Promise.all(users.map(async user => ({
+							name: (await user.name.pipe(take(1)).toPromise()).toLowerCase(),
+							user,
+							username: user.username
+						})))).
+							filter(({name, username}) =>
+								name.indexOf(query) > -1 ||
+								username.startsWith(query)
+							).
+							map(({user}) => user).
+							sort((a, b) =>
+								a.username === query ?
+									-1 :
+									b.username === query ?
+										1 :
+										a.username < b.username ?
+											-1 :
+											1
+							).
+							slice(0, this.searchListLength)
+						;
 
-					const externalUser	= (
-						(results.length < 1 || results[0].username !== query) &&
-						(await this.accountUserLookupService.exists(query))
-					) ?
-						query :
-						undefined
-					;
+						const externalUser	= (
+							(results.length < 1 || results[0].username !== query) &&
+							(await this.accountUserLookupService.exists(query))
+						) ?
+							query :
+							undefined
+						;
 
-					this.searchSpinner.next(false);
+						this.searchSpinner.next(false);
 
-					return {
-						imageAltText: this.stringsService.userAvatar,
-						items: results.map(user => ({
-							image: user.avatar,
-							smallText: user.realUsername.pipe(map(realUsername =>
-								`@${realUsername}`
-							)),
-							text: user.name,
-							value: user.username
-						})),
-						topOption: externalUser === undefined ? undefined : {
-							routerLink: `/account/profile/${externalUser}`,
-							text:
-								`${this.stringsService.open} ` +
-								`@${externalUser}${this.stringsService.s} ` +
-								this.stringsService.profile
-						}
-					};
-				}))
+						return {
+							imageAltText: this.stringsService.userAvatar,
+							items: results.map(user => ({
+								image: user.avatar,
+								smallText: user.realUsername.pipe(map(realUsername =>
+									`@${realUsername}`
+								)),
+								text: user.name,
+								value: user.username
+							})),
+							topOption: externalUser === undefined ? undefined : {
+								routerLink: `/account/profile/${externalUser}`,
+								text:
+									`${this.stringsService.open} ` +
+									`@${externalUser}${this.stringsService.s} ` +
+									this.stringsService.profile
+							}
+						};
+					})
+				)
 			)
 		)
 	;
@@ -117,7 +119,9 @@ export class AccountContactsSearchComponent {
 	;
 
 	/** @see SearchBarComponent.filter */
-	public userFilter: BehaviorSubject<User|undefined>			= new BehaviorSubject(undefined);
+	public userFilter: BehaviorSubject<User|undefined>			=
+		new BehaviorSubject<User|undefined>(undefined)
+	;
 
 	/** @see SearchBarComponent.filterChange */
 	@Output() public readonly userFilterChange: EventEmitter<BehaviorSubject<User|undefined>>	=

@@ -16,7 +16,7 @@ export class AnonymousLocalUser implements ILocalUser {
 
 
 	/** @ignore */
-	private keyPair: Promise<IKeyPair>	= (async () => {
+	private readonly keyPair: Promise<IKeyPair>	= (async () => {
 		const keyPair		= await this.potassium.box.keyPair();
 
 		const sharedSecret	= (await this.potassium.passwordHash.hash(

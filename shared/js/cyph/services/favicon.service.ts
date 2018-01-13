@@ -109,23 +109,23 @@ export class FaviconService {
 			return;
 		}
 
-		this.faviconSets.default.apple114		= this.elements.apple('114').attr('href');
-		this.faviconSets.default.apple120		= this.elements.apple('120').attr('href');
-		this.faviconSets.default.apple144		= this.elements.apple('144').attr('href');
-		this.faviconSets.default.apple152		= this.elements.apple('152').attr('href');
-		this.faviconSets.default.apple180		= this.elements.apple('180').attr('href');
-		this.faviconSets.default.apple57		= this.elements.apple('57').attr('href');
-		this.faviconSets.default.apple60		= this.elements.apple('60').attr('href');
-		this.faviconSets.default.apple72		= this.elements.apple('72').attr('href');
-		this.faviconSets.default.apple76		= this.elements.apple('76').attr('href');
-		this.faviconSets.default.icon16			= this.elements.icon('16').attr('href');
-		this.faviconSets.default.icon160		= this.elements.icon('160').attr('href');
-		this.faviconSets.default.icon192		= this.elements.icon('192').attr('href');
-		this.faviconSets.default.icon256		= this.elements.icon('256').attr('href');
-		this.faviconSets.default.icon32			= this.elements.icon('32').attr('href');
-		this.faviconSets.default.icon96			= this.elements.icon('96').attr('href');
-		this.faviconSets.default.mask			= this.elements.mask().attr('href');
-		this.faviconSets.default.mstile			= this.elements.mstile().attr('content');
-		this.faviconSets.default.shortcut196	= this.elements.shortcut('196').attr('href');
+		this.faviconSets.default.apple114		= this.elements.apple('114').attr('href') || '';
+		this.faviconSets.default.apple120		= this.elements.apple('120').attr('href') || '';
+		this.faviconSets.default.apple144		= this.elements.apple('144').attr('href') || '';
+		this.faviconSets.default.apple152		= this.elements.apple('152').attr('href') || '';
+		this.faviconSets.default.apple180		= this.elements.apple('180').attr('href') || '';
+		this.faviconSets.default.apple57		= this.elements.apple('57').attr('href') || '';
+		this.faviconSets.default.apple60		= this.elements.apple('60').attr('href') || '';
+		this.faviconSets.default.apple72		= this.elements.apple('72').attr('href') || '';
+		this.faviconSets.default.apple76		= this.elements.apple('76').attr('href') || '';
+		this.faviconSets.default.icon16			= this.elements.icon('16').attr('href') || '';
+		this.faviconSets.default.icon160		= this.elements.icon('160').attr('href') || '';
+		this.faviconSets.default.icon192		= this.elements.icon('192').attr('href') || '';
+		this.faviconSets.default.icon256		= this.elements.icon('256').attr('href') || '';
+		this.faviconSets.default.icon32			= this.elements.icon('32').attr('href') || '';
+		this.faviconSets.default.icon96			= this.elements.icon('96').attr('href') || '';
+		this.faviconSets.default.mask			= this.elements.mask().attr('href') || '';
+		this.faviconSets.default.mstile			= this.elements.mstile().attr('content') || '';
+		this.faviconSets.default.shortcut196	= this.elements.shortcut('196').attr('href') || '';
 	}
 }

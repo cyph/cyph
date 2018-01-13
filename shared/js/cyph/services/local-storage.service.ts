@@ -10,13 +10,13 @@ import {deserialize, serialize} from '../util/serialization';
 @Injectable()
 export class LocalStorageService extends DataManagerService {
 	/** In-memory cache for faster access. */
-	private readonly cache: Map<string, Uint8Array>	= new Map<string, Uint8Array>();
+	private readonly cache: Map<string, Uint8Array>				= new Map<string, Uint8Array>();
 
 	/** Used to prevent race condition getItem failures. */
-	private pendingSets: Map<string, Promise<void>>	= new Map<string, Promise<void>>();
+	private readonly pendingSets: Map<string, Promise<void>>	= new Map<string, Promise<void>>();
 
 	/** If true, localForage failed and we should stop bugging the user for permission. */
-	private setInternalFailed: boolean				= false;
+	private setInternalFailed: boolean							= false;
 
 	/** Interface to platform-specific clear functionality. */
 	protected async clearInternal (_WAIT_FOR_READY: boolean) : Promise<void> {

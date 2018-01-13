@@ -14,17 +14,17 @@ export class Carousel {
 	private itemNumber: number	= 0;
 
 	/** @ignore */
-	private logos: Promise<JQuery>			= waitForIterable(
+	private readonly logos: Promise<JQuery>				= waitForIterable(
 		() => this.rootElement.find('.logo')
 	);
 
 	/** @ignore */
-	private quoteContainer: Promise<JQuery>	= waitForIterable(
+	private readonly quoteContainer: Promise<JQuery>	= waitForIterable(
 		() => this.rootElement.find('.quote-container')
 	);
 
 	/** @ignore */
-	private quotes: Promise<JQuery>			= waitForIterable(
+	private readonly quotes: Promise<JQuery>			= waitForIterable(
 		() => this.rootElement.find('.quote')
 	);
 
@@ -40,8 +40,8 @@ export class Carousel {
 			quoteContainer.height(
 				quotes.
 					toArray().
-					map((elem: HTMLElement) => $(elem).height()).
-					reduce((a: number, b: number) => Math.max(a, b))
+					map((elem: HTMLElement) => $(elem).height() || 0).
+					reduce((a, b) => Math.max(a, b))
 			);
 		}
 
@@ -90,7 +90,7 @@ export class Carousel {
 			const offset	= rows.
 				slice(0, i).
 				toArray().
-				map(row => $(row).height()).
+				map(row => $(row).height() || 0).
 				reduce((a, b) => a + b, 0).
 				toString()
 			;

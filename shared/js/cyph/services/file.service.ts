@@ -48,7 +48,9 @@ export class FileService {
 		if (canvas.toBlob) {
 			return new Promise<Uint8Array>(resolve => {
 				canvas.toBlob(
-					async (blob: Blob) => { resolve(await potassiumUtil.fromBlob(blob)); },
+					async blob => {
+						resolve(!blob ? new Uint8Array(0) : await potassiumUtil.fromBlob(blob));
+					},
 					outputType,
 					outputQuality
 				);

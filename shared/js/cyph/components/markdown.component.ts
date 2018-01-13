@@ -48,8 +48,8 @@ export class MarkdownComponent implements OnChanges {
 			const $element	= $(this.elementRef.nativeElement);
 
 			$element.
-				height($element.height()).
-				width($element.width())
+				height($element.height() || 0).
+				width($element.width() || 0)
 			;
 		}
 

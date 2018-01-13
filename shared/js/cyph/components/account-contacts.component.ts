@@ -54,7 +54,9 @@ export class AccountContactsComponent implements AfterViewInit {
 	public showContactList: boolean							= false;
 
 	/** @see AccountContactsSearchComponent.userFilter */
-	public userFilter: BehaviorSubject<User|undefined>		= new BehaviorSubject(undefined);
+	public userFilter: BehaviorSubject<User|undefined>		=
+		new BehaviorSubject<User|undefined>(undefined)
+	;
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence		= UserPresence;

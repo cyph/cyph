@@ -42,7 +42,7 @@ import {sleep, waitForIterable, waitForValue} from '../util/wait';
 })
 export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnChanges, OnDestroy {
 	/** @ignore */
-	private clientID: string	= uuid();
+	private readonly clientID: string	= uuid();
 
 	/** @ignore */
 	private deltasSubscription?: Subscription;

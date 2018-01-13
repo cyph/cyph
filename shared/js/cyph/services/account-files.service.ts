@@ -280,7 +280,7 @@ export class AccountFilesService {
 	) : Promise<void> {
 		if (shouldAccept) {
 			if (incomingFile.wasAnonymousShare) {
-				await this.accountDatabaseService.setItem(
+				await this.accountDatabaseService.setItem<IAccountFileRecord>(
 					`fileRecords/${incomingFile.id}`,
 					AccountFileRecord,
 					incomingFile,
@@ -289,7 +289,7 @@ export class AccountFilesService {
 				);
 			}
 
-			await this.accountDatabaseService.setItem(
+			await this.accountDatabaseService.setItem<IAccountFileReference>(
 				`fileReferences/${incomingFile.id}`,
 				AccountFileReference,
 				incomingFile
@@ -578,7 +578,7 @@ export class AccountFilesService {
 				undefined,
 				file.key
 			),
-			this.accountDatabaseService.setItem(
+			this.accountDatabaseService.setItem<IAccountFileRecord>(
 				`users/${file.owner}/fileRecords/${id}`,
 				AccountFileRecord,
 				file
@@ -645,14 +645,14 @@ export class AccountFilesService {
 					this.accountDatabaseService.uploadItem(
 						url,
 						BinaryProto,
-						msgpack.encode(file),
+						msgpack.encode(<IQuillDelta> file),
 						undefined,
 						key
 					) :
 					this.accountDatabaseService.uploadItem(
 						url,
 						Form,
-						file,
+						<Form> file,
 						SecurityModels.privateSigned,
 						key
 					)

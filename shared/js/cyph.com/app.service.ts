@@ -152,11 +152,14 @@ export class AppService {
 					}
 
 					this.scroll(
-						$(`#${HomeSections[this.homeSection]}-section`).offset().top -
+						(
+							$(`#${HomeSections[this.homeSection]}-section`).offset() ||
+							{left: 0, top: 0}
+						).top -
 						(
 							this.homeSection === HomeSections.gettingstarted ?
 								-1 :
-								elements.mainToolbar().height()
+								(elements.mainToolbar().height() || 0)
 						)
 					);
 			}
@@ -228,7 +231,7 @@ export class AppService {
 	) : Promise<void> {
 		const delay: number	=
 			delayFactor *
-			Math.abs($(document).scrollTop() - position)
+			Math.abs(($(document).scrollTop() || 0) - position)
 		;
 
 		$(document.documentElement).animate({scrollTop: position}, delay);
@@ -310,7 +313,7 @@ export class AppService {
 
 			if (this.envService.isMobile) {
 				const $mobilePoster: JQuery	= $(document.createElement('img'));
-				$mobilePoster.attr('src', elements.backgroundVideo().attr('mobile-poster'));
+				$mobilePoster.attr('src', elements.backgroundVideo().attr('mobile-poster') || '');
 
 				elements.backgroundVideo().replaceWith($mobilePoster).remove();
 				elements.backgroundVideo	= () => $mobilePoster;

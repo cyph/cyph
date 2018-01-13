@@ -27,9 +27,6 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 	private readonly eventID: string	= uuid();
 
 	/** @ignore */
-	private thread: Thread;
-
-	/** @ignore */
 	private readonly threadEvents: ThreadEvents	= new ThreadEvents(this.eventID);
 
 	/** @ignore */
@@ -323,7 +320,8 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 	constructor () {
 		super();
 
-		(async () => { this.thread	= new Thread(
+		/* tslint:disable-next-line:no-unused-expression */
+		(async () => { new Thread(
 			/* tslint:disable-next-line:only-arrow-functions */
 			async function () : Promise<void> {
 				importScripts('/assets/js/cyph/crypto/potassium/index.js');

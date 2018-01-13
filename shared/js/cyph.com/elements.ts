@@ -18,8 +18,7 @@ export class Elements {
 
 		return () => {
 			if (!cache || cache.length < 1) {
-				cache			= f();
-				cache.selector	= typeof selector === 'string' ? selector : '';
+				cache	= f();
 			}
 
 			return cache;

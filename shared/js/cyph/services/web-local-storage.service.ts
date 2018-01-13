@@ -10,7 +10,7 @@ import {LocalStorageService} from './local-storage.service';
 @Injectable()
 export class WebLocalStorageService extends LocalStorageService {
 	/** @ignore */
-	private ready: Promise<void>	= (async () => {
+	private readonly ready: Promise<void>	= (async () => {
 		try {
 			await localforage.ready();
 		}

@@ -34,17 +34,17 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class ChatService {
 	/** @ignore */
-	private static readonly approximateKeyExchangeTime: number			= 18000;
+	private static readonly approximateKeyExchangeTime: number	= 18000;
 
 	/** @ignore */
-	private static readonly p2pPassiveConnectTime: number				= 5000;
+	private static readonly p2pPassiveConnectTime: number		= 5000;
 
 
 	/** Time in seconds until chat self-destructs. */
-	private chatSelfDestructTimeout: number								= 5;
+	private readonly chatSelfDestructTimeout: number	= 5;
 
 	/** @ignore */
-	private messageChangeLock: LockFunction								= lockFunction();
+	private readonly messageChangeLock: LockFunction	= lockFunction();
 
 	/** @ignore */
 	private resolveChatMessageGeometryService: (chatMessageGeometryService: {
@@ -76,19 +76,19 @@ export class ChatService {
 	};
 
 	/** Indicates whether the chat is self-destructing. */
-	public chatSelfDestruct: boolean									= false;
+	public chatSelfDestruct: boolean		= false;
 
 	/** Indicates whether the chat is self-destructed. */
 	public chatSelfDestructed?: Observable<boolean>;
 
 	/** Indicates whether the chat self-destruction effect should be running. */
-	public chatSelfDestructEffect: boolean								= false;
+	public chatSelfDestructEffect: boolean	= false;
 
 	/** Timer for chat self-destruction. */
 	public chatSelfDestructTimer?: Timer;
 
 	/** Indicates whether the chat is ready to be displayed. */
-	public initiated: boolean											= false;
+	public initiated: boolean				= false;
 
 	/** @ignore */
 	private async addTextMessage (o: ISessionMessageData) : Promise<void> {

@@ -13,7 +13,7 @@ import {WindowWatcherService} from './window-watcher.service';
 @Injectable()
 export class AccountService {
 	/** @ignore */
-	private menuExpandedInternal: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+	private readonly menuExpandedInternal: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
 	/** Indicates the status of the interstitial. */
 	public interstitial: boolean						= false;

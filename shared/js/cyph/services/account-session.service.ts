@@ -43,7 +43,9 @@ export class AccountSessionService extends SessionService {
 	});
 
 	/** Remote user. */
-	public readonly remoteUser: BehaviorSubject<User|undefined>	= new BehaviorSubject(undefined);
+	public readonly remoteUser: BehaviorSubject<User|undefined>	=
+		new BehaviorSubject<User|undefined>(undefined)
+	;
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {}

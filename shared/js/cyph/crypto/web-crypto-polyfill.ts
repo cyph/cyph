@@ -20,7 +20,15 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 	let sodiumReadyPromise: Promise<void>|undefined;
 
 	crypto	= {
-		getRandomValues: (arrayBufferView: ArrayBufferView) => {
+		getRandomValues: <T extends
+			Int8Array|
+			Int16Array|
+			Int32Array|
+			Uint8Array|
+			Uint16Array|
+			Uint32Array|
+			Uint8ClampedArray
+		> (arrayBufferView: T) : T => {
 			/* Handle circular dependency between this polyfill and libsodium */
 			const sodiumExists	=
 				typeof (<any> sodium()) !== 'undefined' &&

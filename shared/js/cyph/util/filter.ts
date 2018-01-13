@@ -21,5 +21,5 @@ export const filterUndefined			= <T> (arr: (T|undefined)[]) : T[] =>
 
 /** rxjs operator that filters out undefined values. */
 export const filterUndefinedOperator	=
-	<T> () : (source: Observable<T|undefined>) => Observable<T> => filter<T>(t => t !== undefined)
+	<T> () => <(source: Observable<T|undefined>) => Observable<T>> filter<T>(t => t !== undefined)
 ;

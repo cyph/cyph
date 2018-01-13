@@ -32,14 +32,13 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	/** @see AccountChatMessageBoxComponent.messageType */
 	public readonly messageType: BehaviorSubject<ChatMessageValueTypes>	=
 		observableToBehaviorSubject(
-			this.activatedRoute.data.pipe(map((o: {
-				messageType: ChatMessageValueTypes;
-				value: any;
-			}) => {
+			this.activatedRoute.data.pipe(map(o => {
+				const messageType: ChatMessageValueTypes	= o.messageType;
+
 				const value	= typeof o.value === 'function' ? o.value() : o.value;
 
 				if (value !== undefined) {
-					switch (o.messageType) {
+					switch (messageType) {
 						case ChatMessageValueTypes.CalendarInvite:
 							this.accountChatService.chat.currentMessage.calendarInvite	= value;
 							break;
@@ -61,14 +60,16 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 					}
 				}
 
-				return o.messageType;
+				return messageType;
 			})),
 			ChatMessageValueTypes.Quill
 		)
 	;
 
 	/** @see AccountContactsSearchComponent.userFilter */
-	public recipient: BehaviorSubject<User|undefined>	= new BehaviorSubject(undefined);
+	public recipient: BehaviorSubject<User|undefined>	=
+		new BehaviorSubject<User|undefined>(undefined)
+	;
 
 	/** @see AccountContactsSearchComponent.searchUsername */
 	public searchUsername: BehaviorSubject<string>		= new BehaviorSubject('');
@@ -100,7 +101,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	};
 
 	/** Indicates whether message has been sent, or undefined for in-progress. */
-	public sent: BehaviorSubject<boolean|undefined>		= new BehaviorSubject(false);
+	public sent: BehaviorSubject<boolean|undefined>		=
+		new BehaviorSubject<boolean|undefined>(false)
+	;
 
 	/** @inheritDoc */
 	public ngOnDestroy () : void {

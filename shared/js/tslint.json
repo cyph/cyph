@@ -110,7 +110,7 @@
 		"no-duplicate-super": true,
 		"no-duplicate-switch-case": true,
 		"no-duplicate-variable": true,
-		"no-dynamic-delete": true,
+		"no-dynamic-delete": false,
 		"no-empty": false,
 		"no-eval": true,
 		"no-floating-promises": false,

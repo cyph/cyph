@@ -1,5 +1,5 @@
 import {Subject} from 'rxjs/Subject';
-import {ISessionMessage} from '../cyph/proto';
+import {ISessionMessage, ISessionMessageData} from '../cyph/proto';
 
 
 /**
@@ -17,19 +17,23 @@ export class ChatData {
 		public readonly isMobile: boolean,
 
 		/** Incoming end of local channel. */
-		public readonly channelIncoming: Subject<ISessionMessage> = new Subject<ISessionMessage>(),
+		public readonly channelIncoming: Subject<ISessionMessage&{data: ISessionMessageData}> =
+			new Subject()
+		,
 
 		/** Outgoing end of local channel. */
-		public readonly channelOutgoing: Subject<ISessionMessage> = new Subject<ISessionMessage>(),
+		public readonly channelOutgoing: Subject<ISessionMessage&{data: ISessionMessageData}> =
+			new Subject()
+		,
 
 		/** Stream of messages to send. */
-		public readonly message: Subject<string> = new Subject<string>(),
+		public readonly message: Subject<string> = new Subject(),
 
 		/** Stream of commands to scroll down. */
-		public readonly scrollDown: Subject<void> = new Subject<void>(),
+		public readonly scrollDown: Subject<void> = new Subject(),
 
 		/** Stream of commands to show the cyphertext UI. */
-		public readonly showCyphertext: Subject<void> = new Subject<void>()
+		public readonly showCyphertext: Subject<void> = new Subject()
 	) {
 		this.start	= new Promise<void>(resolve => {
 			this.resolveStart	= resolve;

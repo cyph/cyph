@@ -123,7 +123,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 				);
 
 				/* Only allow right-clicking (for copying the link) */
-				$connectLinkLink.click(e => e.preventDefault());
+				$connectLinkLink.click(e => { e.preventDefault(); });
 			}
 			else {
 				const $connectLinkInput	= await waitForIterable(

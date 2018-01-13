@@ -49,10 +49,10 @@ export class DemoComponent implements AfterViewInit {
 					verticalOffset: 100
 				}
 			]) {
-				const rootOffset	= o.$root.offset();
-				const offset		= o.$screenshot.offset();
-				const width			= o.$screenshot.width();
-				const height		= o.$screenshot.height();
+				const rootOffset	= o.$root.offset() || {left: 0, top: 0};
+				const offset		= o.$screenshot.offset() || {left: 0, top: 0};
+				const width			= o.$screenshot.width() || 0;
+				const height		= o.$screenshot.height() || 0;
 
 				o.$screenshot.css(
 					'transform',
@@ -128,8 +128,8 @@ export class DemoComponent implements AfterViewInit {
 
 	/** @ignore */
 	private getOffset (elem: JQuery, ancestor: JQuery) : {left: number; top: number} {
-		const elemOffset		= elem.offset();
-		const ancestorOffset	= ancestor.offset();
+		const elemOffset		= elem.offset() || {left: 0, top: 0};
+		const ancestorOffset	= ancestor.offset() || {left: 0, top: 0};
 
 		return {
 			left: Math.floor(elemOffset.left - ancestorOffset.left),
@@ -147,12 +147,12 @@ export class DemoComponent implements AfterViewInit {
 		if (!this.envService.isMobile) {
 			await waitForIterable(() =>
 				elements.screenshotLaptop().filter((_, elem) =>
-					$(elem).offset().left > 0
+					($(elem).offset() || {left: 0, top: 0}).left > 0
 				)
 			);
 			await waitForIterable(() =>
 				elements.screenshotPhone().filter((_, elem) =>
-					$(elem).offset().left < $window.width()
+					($(elem).offset() || {left: 0, top: 0}).left < ($window.width() || 0)
 				)
 			);
 		}

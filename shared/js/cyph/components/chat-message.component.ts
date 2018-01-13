@@ -45,7 +45,7 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 	/** @see ChatMessageValue.quill */
 	public readonly quill: BehaviorSubject<IQuillDelta|undefined>	=
-		new BehaviorSubject(undefined)
+		new BehaviorSubject<IQuillDelta|undefined>(undefined)
 	;
 
 	/** @see ChatMainComponent.uiStyle */

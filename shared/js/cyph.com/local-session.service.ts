@@ -54,7 +54,7 @@ export class LocalSessionService extends SessionService {
 		this.state.isAlive	= true;
 
 		this.chatData.channelIncoming.subscribe(
-			(message: ISessionMessage&{data: ISessionMessageData}) => {
+			message => {
 				if (!message.event) {
 					return;
 				}
@@ -63,7 +63,7 @@ export class LocalSessionService extends SessionService {
 
 				if (message.event === events.cyphertext) {
 					this.trigger(events.cyphertext, {
-						author: message.data.author,
+						author: (<any> message.data).author,
 						cyphertext: message.data.bytes || new Uint8Array(0)
 					});
 				}

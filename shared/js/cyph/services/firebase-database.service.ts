@@ -45,7 +45,7 @@ import {LocalStorageService} from './local-storage.service';
 @Injectable()
 export class FirebaseDatabaseService extends DatabaseService {
 	/** @ignore */
-	private app: Promise<FirebaseApp&{
+	private readonly app: Promise<FirebaseApp&{
 		auth: () => FirebaseAuth;
 		database: (databaseURL?: string) => FirebaseDatabase;
 		storage: (storageBucket?: string) => FirebaseStorage;
@@ -152,7 +152,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 			(async () => {
 				const connectedRef	= await this.getDatabaseRef('.info/connected');
 
-				const onValue		= async (snapshot: DataSnapshot) => {
+				/* tslint:disable-next-line:no-null-keyword */
+				const onValue		= async (snapshot: DataSnapshot|null) => {
 					if (snapshot) {
 						observer.next(snapshot.val() === true);
 					}
@@ -553,8 +554,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				uploadTask.on(
 					'state_changed',
-					(snapshot: UploadTaskSnapshot) => {
-						progress.next(snapshot.bytesTransferred / snapshot.totalBytes * 100);
+					o => {
+						if (o) {
+							const snapshot	= <UploadTaskSnapshot> o;
+							progress.next(snapshot.bytesTransferred / snapshot.totalBytes * 100);
+						}
 					},
 					reject,
 					() => {
@@ -620,7 +624,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return new Observable<ITimedValue<T>>(observer => {
 			let cleanup: Function;
 
-			const onValue	= async (snapshot: DataSnapshot) => {
+			/* tslint:disable-next-line:no-null-keyword */
+			const onValue	= async (snapshot: DataSnapshot|null) => {
 				const url	= await urlPromise;
 
 				if (!snapshot || !snapshot.exists()) {
@@ -653,7 +658,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return new Observable<boolean>(observer => {
 			let cleanup: Function;
 
-			const onValue	= (snapshot: DataSnapshot) => {
+			/* tslint:disable-next-line:no-null-keyword */
+			const onValue	= (snapshot: DataSnapshot|null) => {
 				observer.next(!!snapshot && snapshot.exists());
 			};
 
@@ -720,7 +726,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 					);
 				};
 
-				const onChildAdded	= async (snapshot: DataSnapshot) => {
+				/* tslint:disable-next-line:no-null-keyword */
+				const onChildAdded		= async (snapshot: DataSnapshot|null) => {
 					if (
 						!snapshot ||
 						!snapshot.key ||
@@ -732,7 +739,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 					publishList();
 				};
 
-				const onChildChanged	= async (snapshot: DataSnapshot) => {
+				/* tslint:disable-next-line:no-null-keyword */
+				const onChildChanged	= async (snapshot: DataSnapshot|null) => {
 					if (
 						!snapshot ||
 						!snapshot.key ||
@@ -743,7 +751,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 					publishList();
 				};
 
-				const onChildRemoved	= async (snapshot: DataSnapshot) => {
+				/* tslint:disable-next-line:no-null-keyword */
+				const onChildRemoved	= async (snapshot: DataSnapshot|null) => {
 					if (!snapshot || !snapshot.key) {
 						return;
 					}
@@ -751,7 +760,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 					publishList();
 				};
 
-				const onValue			= async (snapshot: DataSnapshot) => {
+				/* tslint:disable-next-line:no-null-keyword */
+				const onValue			= async (snapshot: DataSnapshot|null) => {
 					if (!initiated) {
 						initiated	= true;
 						return;
@@ -798,7 +808,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				const listRef	= await this.getDatabaseRef(url);
 
-				const onChildAdded	= (snapshot: DataSnapshot) => {
+				/* tslint:disable-next-line:no-null-keyword */
+				const onChildAdded	= (snapshot: DataSnapshot|null) => {
 					if (!snapshot || !snapshot.exists() || !snapshot.key) {
 						return;
 					}
@@ -828,7 +839,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				let keys: string[];
 
-				const onValue	= (snapshot: DataSnapshot) => {
+				/* tslint:disable-next-line:no-null-keyword */
+				const onValue	= (snapshot: DataSnapshot|null) => {
 					if (!snapshot || !snapshot.exists()) {
 						return;
 					}
@@ -869,7 +881,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const listRef	= await this.getDatabaseRef(url);
 				let initiated	= false;
 
-				const onChildAdded	= async (snapshot: DataSnapshot) => {
+				/* tslint:disable-next-line:no-null-keyword */
+				const onChildAdded	= async (snapshot: DataSnapshot|null) => {
 					if (!snapshot || !snapshot.key) {
 						return;
 					}
@@ -886,7 +899,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 					}
 				};
 
-				const onValue			= async (snapshot: DataSnapshot) => {
+				/* tslint:disable-next-line:no-null-keyword */
+				const onValue		= async (snapshot: DataSnapshot|null) => {
 					if (!initiated) {
 						initiated	= true;
 						return;

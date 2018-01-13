@@ -157,12 +157,11 @@ export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
 				10
 			);
 
-			$textarea.on('keyup', () =>
-				$textarea.height(
-					messageBoxLineHeight *
-					$textarea.val().split('\n').length
-				)
-			);
+			$textarea.on('keyup', () => {
+				const val		= $textarea.val();
+				const valString	= ((val instanceof Array ? val[0] : val) || '').toString();
+				return $textarea.height(messageBoxLineHeight * valString.split('\n').length);
+			});
 
 			/* Allow tabbing for code indentation */
 

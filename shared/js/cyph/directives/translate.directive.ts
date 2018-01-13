@@ -19,7 +19,7 @@ export class TranslateDirective {
 
 		for (const attr of ['alt', 'content', 'label', 'matTooltip', 'placeholder']) {
 			this.translate(
-				$element.attr(attr),
+				$element.attr(attr) || '',
 				translation => {
 					renderer.setAttribute(nativeElement, attr, translation);
 				}
