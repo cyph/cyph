@@ -67,9 +67,9 @@ export class AccountFilesService {
 	/** @ignore */
 	private readonly nonexistentFile: IAccountFileRecord&IAccountFileReference	= {
 		id: '',
+		key: new Uint8Array(0),
 		mediaType: '',
 		name: '',
-		key: new Uint8Array(0),
 		owner: '',
 		recordType: AccountFileRecord.RecordTypes.File,
 		size: NaN,
@@ -214,7 +214,7 @@ export class AccountFilesService {
 						}
 					}
 				)))).
-					filter(o => o !== this.nonexistentFile)
+					filter(file => file !== this.nonexistentFile)
 			))
 		))
 	;
