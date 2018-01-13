@@ -101,6 +101,7 @@ export class FaviconService {
 		this.elements.shortcut('196').attr('href', this.activeFaviconSet.shortcut196);
 	}
 
+	/* tslint:disable-next-line:cyclomatic-complexity */
 	constructor (
 		/** @ignore */
 		private readonly envService: EnvService
