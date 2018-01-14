@@ -499,6 +499,11 @@ switch (args.command) {
 		console.log(`docs: ${base}:42001/js/docs/index.html\n\n`);
 		break;
 
+	case 'test':
+		commandAdditionalArgs.push('-p');
+		commandAdditionalArgs.push('9876:9876');
+		break;
+
 	case 'updatecircleci':
 		updateCircleCI();
 		break;
