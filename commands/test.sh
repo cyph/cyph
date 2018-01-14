@@ -4,7 +4,7 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
-./commands/buildunbundledassets.sh
+./commands/buildunbundledassets.sh --test
 checkfail
 
 export CHROME_BIN="$(node -e 'console.log(require("puppeteer").executablePath())')"

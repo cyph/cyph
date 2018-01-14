@@ -57,7 +57,7 @@ hash="${test}$(
 		commands/buildunbundledassets.sh \
 		types.proto \
 		$(echo "${nodeModulesAssets}" | perl -pe 's/([^\s]+)/\/node_modules\/\1.js/g') \
-		$(find shared/js -type f -name '*.ts') \
+		$(find shared/js -type f -name '*.ts' -not -name '*.spec.ts') \
 		$(find shared/css -type f -name '*.scss') \
 	|
 		shasum -a 512 |
