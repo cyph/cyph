@@ -14,10 +14,6 @@ if [ "${1}" == 'cyph.ws' ] || [ "${1}" == 'cyph.com' ] ; then
 fi
 args="${@}"
 
-blockoomkiller () {
-	sudo bash -c "echo -17 > /proc/${1}/oom_adj ; renice -20 ${1}" > /dev/null
-}
-
 ngserve () {
 	cd "${1}"
 	../commands/ngprojectinit.sh
@@ -34,7 +30,6 @@ ngserve () {
 
 
 # node /node_modules/.bin/firebase-server -p 44000 &
-# blockoomkiller ${!}
 
 cp -f backend/app.yaml backend/.build.yaml
 
@@ -55,7 +50,6 @@ dev_appserver.py \
 	--storage_path /tmp/cyph0 \
 	backend/.build.yaml \
 &
-blockoomkiller ${!}
 
 ./commands/buildunbundledassets.sh --test
 
@@ -66,7 +60,6 @@ for arr in 'cyph.ws 42002' 'cyph.com 42001' ; do
 
 	if [ ! "${site}" ] || [ "${site}" == "${arr[0]}" ] ; then
 		ngserve "${arr[0]}" "${arr[1]}" &
-		blockoomkiller ${!}
 		sleep 60
 	fi
 done
