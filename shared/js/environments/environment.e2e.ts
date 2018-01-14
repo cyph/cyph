@@ -1,5 +1,5 @@
 /** Angular CLI environment configuration. */
 export const environment	= {
-	envName: 'dev',
+	envName: 'e2e',
 	production: false
 };

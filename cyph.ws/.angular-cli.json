@@ -25,6 +25,7 @@
 			"environmentSource": "js/environments/environment.ts",
 			"environments": {
 				"dev": "js/environments/environment.ts",
+				"e2e": "js/environments/environment.e2e.ts",
 				"prod": "js/environments/environment.prod.ts"
 			}
 		}
