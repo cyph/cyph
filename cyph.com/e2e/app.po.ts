@@ -1,12 +1,13 @@
 import {browser, element, by} from 'protractor';
 
 
-export class Cyph.WsPage {
-	public navigateTo () : void {
+export class CyphPage {
+	public async navigateTo () : Promise<any> {
+		await browser.waitForAngularEnabled(false);
 		return browser.get('/');
 	}
 
-	public getParagraphText () : void {
-		return element(by.css('app-root h1')).getText();
+	public async getParagraphText () : Promise<string> {
+		return element(by.css('footer > div > span:first-child')).getText();
 	}
 }

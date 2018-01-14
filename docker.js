@@ -502,6 +502,14 @@ switch (args.command) {
 	case 'test':
 		commandAdditionalArgs.push('-p');
 		commandAdditionalArgs.push('9876:9876');
+		commandAdditionalArgs.push('-p');
+		commandAdditionalArgs.push('42000:42000');
+		commandAdditionalArgs.push('-p');
+		commandAdditionalArgs.push('42001:42001');
+		commandAdditionalArgs.push('-p');
+		commandAdditionalArgs.push('42002:42002');
+		commandAdditionalArgs.push('-p');
+		commandAdditionalArgs.push('44000:44000');
 		break;
 
 	case 'updatecircleci':

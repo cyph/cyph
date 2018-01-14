@@ -7,18 +7,37 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 eval "$(./commands/getgitdata.sh)"
 
+e2e=''
 site=''
+if [ "${1}" == '--e2e' ] ; then
+	e2e=true
+	shift
+fi
 if [ "${1}" == 'cyph.ws' ] || [ "${1}" == 'cyph.com' ] ; then
 	site="${1}"
 	shift
 fi
 args="${@}"
 
+if [ "${e2e}" ] && [ ! "${site}" ] ; then
+	fail 'Must specify a site when serving with --e2e'
+fi
+
 ngserve () {
+	ngserveInternal () {
+		if [ "${e2e}" ] ; then
+			ng e2e "${@}"
+		else
+			ng serve "${@}"
+		fi
+
+		return $?
+	}
+
 	cd "${1}"
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
-	ng serve \
+	ngserveInternal \
 		--host '0.0.0.0' \
 		--live-reload false \
 		--no-aot \
@@ -26,6 +45,8 @@ ngserve () {
 		--no-sourcemaps \
 		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
 		${args}
+
+	return $?
 }
 
 
@@ -59,8 +80,13 @@ for arr in 'cyph.ws 42002' 'cyph.com 42001' ; do
 	read -ra arr <<< "${arr}"
 
 	if [ ! "${site}" ] || [ "${site}" == "${arr[0]}" ] ; then
-		ngserve "${arr[0]}" "${arr[1]}" &
-		sleep 60
+		if [ "${e2e}" ] ; then
+			ngserve "${arr[0]}" "${arr[1]}"
+			exit $?
+		else
+			ngserve "${arr[0]}" "${arr[1]}" &
+			sleep 60
+		fi
 	fi
 done
 

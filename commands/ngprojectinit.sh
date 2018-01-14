@@ -1,6 +1,10 @@
 #!/bin/bash
 
 
+if [ "$(ls -A node_modules)" ] ; then
+	exit
+fi
+
 rm src/favicon.ico 2> /dev/null
 cp ../shared/favicon.ico src/
 

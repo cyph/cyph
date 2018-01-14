@@ -1,15 +1,15 @@
-import {Cyph.WsPage} from './app.po';
+import {CyphPage} from './app.po';
 
 
-describe('cyph.com App', () => {
-	let page: Cyph.WsPage;
+describe('cyph.com', () => {
+	let page: CyphPage;
 
 	beforeEach(() => {
-		page = new Cyph.WsPage();
+		page	= new CyphPage();
 	});
 
-	it('should display message saying app works', () => {
+	it('should display footer', async () => {
 		page.navigateTo();
-		expect(page.getParagraphText()).toEqual('app works!');
+		expect(await page.getParagraphText()).toEqual('© Cyph 2018');
 	});
 });
