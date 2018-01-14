@@ -196,6 +196,7 @@ read -r -d '' modules <<- EOM
 	sass-loader
 	script-ext-html-webpack-plugin
 	sidh
+	simple-peer
 	simplewebrtc
 	sodiumutil
 	sphincs
