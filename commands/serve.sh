@@ -34,17 +34,23 @@ ngserve () {
 		return $?
 	}
 
-	cd "${1}"
+	project="${1}"
+	shift
+	port="${1}"
+	shift
+
+	cd "${project}"
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
 	ngserveInternal \
 		--host '0.0.0.0' \
 		--live-reload false \
 		--no-aot \
-		--port "${2}" \
+		--port "${port}" \
 		--no-sourcemaps \
 		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
-		${args}
+		${args} \
+		"${@}"
 
 	return $?
 }
