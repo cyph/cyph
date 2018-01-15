@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-if [ "$(ls -A node_modules)" ] ; then
+if [ "$(ls -A node_modules 2> /dev/null)" ] ; then
 	exit
 fi
 
