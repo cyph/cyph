@@ -43,6 +43,10 @@ read -r -d '' modules <<- EOM
 	@firebase/auth-types
 	@firebase/database
 	@firebase/database-types
+	@firebase/firestore
+	@firebase/firestore-types
+	@firebase/messaging
+	@firebase/messaging-types
 	@firebase/storage
 	@firebase/storage-types
 	@google-cloud/storage
