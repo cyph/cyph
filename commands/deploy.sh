@@ -572,21 +572,23 @@ if [ "${waitingForWpstatic}" ] ; then
 	rm .wpstatic.done .wpstatic.output
 fi
 
-gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
-	if [ "${site}" ] ; then
-		ls $site/*.yaml
-	else
-		ls */*.yaml
-	fi
-	if [ ! "${test}" ] ; then
-		echo dispatch.yaml
-	fi
-)
+if [ "${site}" != 'firebase' ] ; then
+	gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
+		if [ "${site}" ] ; then
+			ls $site/*.yaml
+		else
+			ls */*.yaml
+		fi
+		if [ ! "${test}" ] ; then
+			echo dispatch.yaml
+		fi
+	)
+fi
 
 cd "${dir}"
 rm -rf .build 2> /dev/null
 
-if [ ! "${noSimple}" ] && [ "${test}" ] && [ ! "${simple}" ] ; then
+if [ ! "${noSimple}" ] && [ "${test}" ] && [ ! "${simple}" ] && [ "${site}" != 'firebase' ] ; then
 	mv ~/.build ~/.build.original
 	./commands/deploy.sh --simple $originalArgs
 elif [ -d ~/.build.original ] ; then
