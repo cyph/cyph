@@ -4,6 +4,12 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
+firebaseBackup=''
+if [ "${1}" == '--firebase-backup' ] ; then
+	firebaseBackup=true
+	shift
+fi
+
 ./commands/buildunbundledassets.sh --test
 checkfail
 
@@ -18,7 +24,11 @@ if [ "${1}" != '--e2e' ] ; then
 fi
 
 if [ "${1}" != '--unit' ] ; then
-	../commands/serve.sh --e2e cyph.ws
+	if [ "${firebaseBackup}" ] ; then
+		../commands/serve.sh --firebase-backup --e2e cyph.ws
+	else
+		../commands/serve.sh --e2e cyph.ws
+	fi
 	checkfail
 fi
 
