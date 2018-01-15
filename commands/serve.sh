@@ -31,7 +31,7 @@ fi
 
 if [ "${firebaseBackup}" ] ; then
 	environment='localBackup'
-else if [ "${e2e}" ] ; then
+elif [ "${e2e}" ] ; then
 	environment='e2e'
 fi
 
