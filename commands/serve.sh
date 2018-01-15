@@ -7,8 +7,14 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 eval "$(./commands/getgitdata.sh)"
 
+firebaseBackup=''
 e2e=''
 site=''
+environment='local'
+if [ "${1}" == '--firebase-backup' ] ; then
+	firebaseBackup=true
+	shift
+fi
 if [ "${1}" == '--e2e' ] ; then
 	e2e=true
 	shift
@@ -21,6 +27,12 @@ args="${@}"
 
 if [ "${e2e}" ] && [ ! "${site}" ] ; then
 	fail 'Must specify a site when serving with --e2e'
+fi
+
+if [ "${firebaseBackup}" ] ; then
+	environment='localBackup'
+else if [ "${e2e}" ] ; then
+	environment='e2e'
 fi
 
 ngserve () {
@@ -43,6 +55,7 @@ ngserve () {
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
 	ngserveInternal \
+		--environment "${environment}" \
 		--host '0.0.0.0' \
 		--live-reload false \
 		--no-aot \
@@ -87,10 +100,10 @@ for arr in 'cyph.ws 42002' 'cyph.com 42001' ; do
 
 	if [ ! "${site}" ] || [ "${site}" == "${arr[0]}" ] ; then
 		if [ "${e2e}" ] ; then
-			ngserve "${arr[0]}" "${arr[1]}" --environment e2e
+			ngserve "${arr[0]}" "${arr[1]}"
 			exit $?
 		else
-			ngserve "${arr[0]}" "${arr[1]}" --environment local &
+			ngserve "${arr[0]}" "${arr[1]}" &
 			sleep 60
 		fi
 	fi

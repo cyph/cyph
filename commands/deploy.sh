@@ -17,8 +17,14 @@ simple=''
 simpleProdBuild=''
 pack=''
 environment=''
+firebaseBackup=''
 test=true
 websign=true
+
+if [ "${1}" == '--firebase-backup' ] ; then
+	firebaseBackup=true
+	shift
+fi
 
 if [ "${1}" == '--prod' ] ; then
 	test=''
@@ -88,8 +94,7 @@ if [ "${branch}" == 'prod' ] ; then
 		staging=true
 	fi
 elif [ ! "${test}" ] ; then
-	log 'Cannot do prod deploy from test branch'
-	exit 1
+	fail 'Cannot do prod deploy from test branch'
 fi
 version="${branch}"
 if [ "${test}" -a "${username}" != cyph ] ; then
@@ -99,7 +104,13 @@ if [ "${simple}" ] ; then
 	version="simple-${version}"
 fi
 
-if [ "${test}" ] && ( \
+if [ "${firebaseBackup}" ] ; then
+	if [ ! "${test}" ] ; then
+		fail 'Cannot use backup Firebase environment in prod'
+	fi
+
+	environment='--environment backup'
+elif [ "${test}" ] && ( \
 	[ "${branch}" == 'staging' ] || \
 	[ "${branch}" == 'beta' ] || \
 	[ "${branch}" == 'master' ] \
@@ -119,8 +130,7 @@ wget "https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-ISP&suff
 tar xzf geoisp.tar.gz
 mv */*.mmdb GeoIP2-ISP.mmdb
 if [ ! -f GeoIP2-ISP.mmdb ] ; then
-	log 'GeoIP2-ISP.mmdb missing'
-	exit 1
+	fail 'GeoIP2-ISP.mmdb missing'
 fi
 mv GeoIP2-ISP.mmdb ../backend/
 cd ..

@@ -24,10 +24,12 @@
 			"scripts": [],
 			"environmentSource": "js/environments/environment.ts",
 			"environments": {
+				"backup": "js/environments/environment.backup.ts",
 				"beta": "js/environments/environment.beta.ts",
 				"dev": "js/environments/environment.ts",
 				"e2e": "js/environments/environment.e2e.ts",
 				"local": "js/environments/environment.local.ts",
+				"localBackup": "js/environments/environment.local-backup.ts",
 				"master": "js/environments/environment.master.ts",
 				"prod": "js/environments/environment.prod.ts",
 				"staging": "js/environments/environment.staging.ts"
