@@ -31,6 +31,7 @@ read -r -d '' modules <<- EOM
 	@angular/platform-webworker-dynamic
 	@angular/router
 	@angular/service-worker
+	@asymmetrik/ngx-leaflet
 	@compodoc/compodoc
 	@covalent/core
 	@covalent/dynamic-forms
@@ -74,6 +75,7 @@ read -r -d '' modules <<- EOM
 	@types/pdfkit
 	@types/quill
 	@types/stacktrace-js
+	@yaga/leaflet-ng2
 	angular-material-clock-time-picker
 	angular-speed-dial
 	angular-ssr
@@ -142,6 +144,7 @@ read -r -d '' modules <<- EOM
 	karma-jasmine-html-reporter
 	konami-code.js
 	lazy
+	leaflet
 	libsodium
 	libsodium-sumo
 	libsodium-wrappers
