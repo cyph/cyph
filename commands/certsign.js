@@ -17,15 +17,22 @@ const {
 }	= require('../modules/proto');
 
 
-const certSign	= async (testDataEnv, standalone) => {
+const certSign	= async (projectId, standalone) => {
 try {
 
 
+if (projectId === undefined || projectId === '') {
+	projectId	= 'cyphme';
+}
+if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
+	throw new Error('Invalid Firebase project ID.');
+}
+
+
+const testSign					= projectId !== 'cyphme';
 const configDir					= `${os.homedir()}/.cyph`;
-const fileExtension				= testDataEnv ? `test.${testDataEnv}` : 'prod';
-const lastIssuanceTimestampPath	= `${configDir}/certsign.timestamp.${fileExtension}`;
-const keyFilename				= `${configDir}/firebase.${fileExtension}`;
-const projectId					= testDataEnv || 'cyphme';
+const lastIssuanceTimestampPath	= `${configDir}/certsign-timestamps/${projectId}`;
+const keyFilename				= `${configDir}/firebase-credentials/${projectId}.json`;
 
 /* Will remain hardcoded as true for the duration of the private beta */
 const requireInvite				= true;
@@ -200,7 +207,7 @@ const {rsaIndex, signedInputs, sphincsIndex}	= await sign(
 			})
 		})))
 	),
-	!!testDataEnv
+	testSign
 );
 
 fs.writeFileSync(lastIssuanceTimestampPath, issuanceHistory.timestamp.toString());
@@ -258,7 +265,7 @@ catch (err) {
 
 
 if (require.main === module) {
-	certSign(process.argv[2] === '--test' ? 'cyph-test' : undefined, true);
+	certSign(process.argv[2], true);
 }
 else {
 	module.exports	= certSign;

@@ -9,12 +9,16 @@ const {BooleanProto, StringProto}	= require('../modules/proto');
 const {readableID}					= require('../modules/util');
 
 
-const addInviteCode	= async (countByUser, test) => {
+const addInviteCode	= async (projectId, countByUser) => {
+
+
+if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
+	throw new Error('Invalid Firebase project ID.');
+}
 
 
 const configDir		= `${os.homedir()}/.cyph`;
-const keyFilename	= `${configDir}/firebase.${test ? 'test.cyph-test' : 'prod'}`;
-const projectId		= test ? 'cyph-test' : 'cyphme';
+const keyFilename	= `${configDir}/firebase-credentials/${projectId}.json`;
 
 
 const {
@@ -62,13 +66,13 @@ return inviteCodes.reduce(
 
 if (require.main === module) {
 	(async () => {
-		const test				= process.argv[2] === '--test';
-		const username			= process.argv[test ? 3 : 2];
-		const count				= parseInt(process.argv[test ? 4 : 3]);
+		const projectId			= process.argv[2];
+		const username			= process.argv[3];
+		const count				= parseInt(process.argv[4]);
 		const countByUser		= {};
 		countByUser[username]	= isNaN(count) ? 1 : count;
 
-		console.log(JSON.stringify(await addInviteCode(countByUser, test)));
+		console.log(JSON.stringify(await addInviteCode(projectId, countByUser)));
 		process.exit(0);
 	})().catch(err => {
 		console.error(err);
