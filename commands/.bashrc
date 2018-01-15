@@ -21,6 +21,10 @@ download () {
 	curl -s --compressed --retry 50 ${1} > ${2}
 }
 
+easyoptions () {
+	source ~/easyoptions/easyoptions
+}
+
 fail () {
 	if [ "${*}" ] ; then
 		log "${*}\n\nFAIL"
@@ -55,6 +59,7 @@ unbindmount () {
 export -f bindmount
 export -f checkfail
 export -f download
+export -f easyoptions
 export -f fail
 export -f log
 export -f notify

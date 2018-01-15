@@ -179,11 +179,21 @@ const shellScripts			= {
 
 			sudo gem update
 
+			while [ ! -d ~/brotli ] ; do
+				git clone https://github.com/google/brotli.git ~/brotli
+			done
 			cd ~/brotli
 			git pull
 			make clean
 			make brotli
 			sudo mv bin/brotli /usr/bin/
+
+			while [ ! -d ~/easyoptions ] ; do
+				git clone https://github.com/renatosilva/easyoptions.git ~/easyoptions
+			done
+			cd ~/easyoptions
+			git pull
+			chmod -R 777 .
 
 			emsdk update
 			emsdk install latest

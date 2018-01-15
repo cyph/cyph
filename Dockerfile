@@ -107,8 +107,6 @@ RUN wget \
 RUN ls ~/*.tar.gz | xargs -I% tar xvzf % -C ~
 RUN rm ~/*.tar.gz
 
-RUN git clone https://github.com/google/brotli.git ~/brotli
-
 RUN mkdir ~/androidsdk
 RUN wget https://dl.google.com/android/repository/tools_r25.2.5-linux.zip -O ~/androidsdk.zip
 RUN unzip ~/androidsdk.zip -d ~/androidsdk
