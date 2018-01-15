@@ -9,7 +9,7 @@ dependencyModules="$(
 		tr '\n' ' '
 )"
 
-ng eject --aot --prod --no-sourcemaps
+ng eject --aot --prod --no-sourcemaps "${@}"
 
 cat > webpack.js <<- EOM
 	const ExtractTextPlugin		= require('extract-text-webpack-plugin');

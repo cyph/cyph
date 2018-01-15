@@ -16,6 +16,7 @@ noSimple=''
 simple=''
 simpleProdBuild=''
 pack=''
+environment=''
 test=true
 websign=true
 
@@ -63,6 +64,14 @@ if [ "${simple}" ] ; then
 	websign=''
 else
 	cacheBustedProjects="$(echo "${cacheBustedProjects}" | sed "s|${webSignedProject}||")"
+fi
+
+if [ "${test}" ] && ( \
+	[ "${branch}" == 'staging' ] || \
+	[ "${branch}" == 'beta' ] || \
+	[ "${branch}" == 'master' ] \
+) ; then
+	environment="--environment ${branch}"
 fi
 
 if [ "${websign}" ] ; then
@@ -187,11 +196,6 @@ if [ ! "${simple}" ] ; then
 fi
 
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
-sed -i 's|isLocalEnv: boolean\s*= true|isLocalEnv: boolean\t= false|g' shared/js/cyph/env-deploy.ts
-
-if [ "${branch}" == 'staging' ] ; then
-	sed -i 's|isProd: boolean\s*= false|isProd: boolean\t= true|g' shared/js/cyph/env-deploy.ts
-fi
 
 if [ "${test}" ] ; then
 	newCyphURL="https://${version}.cyph.ws"
@@ -214,7 +218,6 @@ if [ "${test}" ] ; then
 	sed -i "s|CYPH-ME|https://${version}-dot-cyph-me-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|databaseURL: .*,|databaseURL: 'wss://cyph-test.firebaseio.com',|g" shared/js/cyph/env-deploy.ts
 
 	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
 
@@ -241,10 +244,6 @@ else
 	sed -i "s|CYPH-ME|https://cyph.me|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-VIDEO|https://cyph.video|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|apiKey: .*,|apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|authDomain: .*,|authDomain: 'cyphme.firebaseapp.com',|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|databaseURL: .*,|databaseURL: 'wss://cyphme.firebaseio.com',|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|storageBucket: .*,|storageBucket: 'cyphme.appspot.com',|g" shared/js/cyph/env-deploy.ts
 
 	homeURL='https://www.cyph.com'
 
@@ -329,9 +328,9 @@ for d in $compiledProjects ; do
 	`.trim())' > src/js/standalone/translations.ts
 
 	if [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ; then
-		ng build --no-aot --no-sourcemaps || exit 1
+		ng build --no-aot --no-sourcemaps ${environment} || exit 1
 	else
-		../commands/prodbuild.sh || exit 1
+		../commands/prodbuild.sh ${environment} || exit 1
 	fi
 
 	if [ "${d}" == 'cyph.com' ] ; then node -e '
@@ -523,19 +522,16 @@ done
 
 
 # Firebase deployment
-if \
-	( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && \
-	( [ "${branch}" == 'staging' ] && [ ! "${simple}" ] ) \
-; then
-	cd firebase
-	firebaseProject='cyphme'
+if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; then
+	firebaseProjects='cyphme'
 	if [ "${test}" ] ; then
-		firebaseProject='cyph-test'
+		firebaseProjects='cyph-test cyph-test2 cyph-test-e2e cyph-test-local'
 	fi
-	firebase use --add ${firebaseProject}
-	firebase functions:config:set project.id="${firebaseProject}"
-	gsutil cors set storage.cors.json gs://${firebaseProject}.appspot.com
-	cd functions
+	if [ "${environment}" ] ; then
+		firebaseProjects="${firebaseProjects} cyph-test-${branch}"
+	fi
+
+	cd firebase/functions
 	npm install
 	cp ../../modules/database-service.js ./
 
@@ -546,7 +542,14 @@ if \
 
 	cp -rf ../../shared/assets/js ./
 	cd ..
-	firebase deploy
+
+	for firebaseProject in ${firebaseProjects} ; do
+		firebase use --add "${firebaseProject}"
+		firebase functions:config:set project.id="${firebaseProject}"
+		gsutil cors set storage.cors.json "gs://${firebaseProject}.appspot.com"
+		firebase deploy
+	done
+
 	rm -rf functions/node_modules functions/package-lock.json
 	cd ..
 fi

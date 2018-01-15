@@ -1,5 +1,6 @@
 /* tslint:disable */
 
+import {environment} from '../environments/environment';
 import {config} from './config';
 
 
@@ -9,10 +10,10 @@ import {config} from './config';
  */
 export class EnvDeploy {
 	/** Indicates whether this is local dev environment. */
-	public readonly isLocalEnv: boolean			= true;
+	public readonly isLocalEnv: boolean			= environment.local;
 
 	/** Indicates whether this is the production environment. */
-	public readonly isProd: boolean 			= false;
+	public readonly isProd: boolean 			= environment.production;
 
 	/** Indicates whether this is our Tor site. */
 	public readonly isOnion: boolean			=
@@ -91,10 +92,10 @@ export class EnvDeploy {
 
 	/** Firebase-related config. */
 	public readonly firebaseConfig				= {
-		apiKey: 'AIzaSyBQmgjG4klHr0TWUrBsGAgKPGSFFM1FSeI',
-		authDomain: 'cyph-test.firebaseapp.com',
-		databaseURL: 'wss://cyph-test.firebaseio.com', // `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`,
-		storageBucket: 'cyph-test.appspot.com',
+		apiKey: environment.firebaseApiKey,
+		authDomain: `${environment.firebaseProject}.firebaseapp.com`,
+		databaseURL: `wss://${environment.firebaseProject}.firebaseio.com`, // `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`,
+		storageBucket: `${environment.firebaseProject}.appspot.com`,
 	};
 
 	/** Content Security Policy defined in shared/csp. */

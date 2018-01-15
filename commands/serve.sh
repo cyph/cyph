@@ -90,7 +90,7 @@ for arr in 'cyph.ws 42002' 'cyph.com 42001' ; do
 			ngserve "${arr[0]}" "${arr[1]}" --environment e2e
 			exit $?
 		else
-			ngserve "${arr[0]}" "${arr[1]}" &
+			ngserve "${arr[0]}" "${arr[1]}" --environment local &
 			sleep 60
 		fi
 	fi
