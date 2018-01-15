@@ -66,14 +66,6 @@ else
 	cacheBustedProjects="$(echo "${cacheBustedProjects}" | sed "s|${webSignedProject}||")"
 fi
 
-if [ "${test}" ] && ( \
-	[ "${branch}" == 'staging' ] || \
-	[ "${branch}" == 'beta' ] || \
-	[ "${branch}" == 'master' ] \
-) ; then
-	environment="--environment ${branch}"
-fi
-
 if [ "${websign}" ] ; then
 	./commands/keycache.sh
 fi
@@ -105,6 +97,14 @@ if [ "${test}" -a "${username}" != cyph ] ; then
 fi
 if [ "${simple}" ] ; then
 	version="simple-${version}"
+fi
+
+if [ "${test}" ] && ( \
+	[ "${branch}" == 'staging' ] || \
+	[ "${branch}" == 'beta' ] || \
+	[ "${branch}" == 'master' ] \
+) ; then
+	environment="--environment ${branch}"
 fi
 
 
@@ -530,6 +530,8 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; the
 	if [ "${environment}" ] ; then
 		firebaseProjects="${firebaseProjects} cyph-test-${branch}"
 	fi
+
+	./commands/buildunbundledassets.sh
 
 	cd firebase/functions
 	npm install
