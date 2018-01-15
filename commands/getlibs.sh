@@ -247,6 +247,8 @@ do
 	echo "module.exports = ${arr[1]};" >> "${arr[0]}"
 done
 
+for m in libsodium* ; do cd ${m} ; mv package-${m}.json package.json ; cd .. ; done
+
 sed -i 's/saveAs\s*||/self.saveAs||/g' file-saver/*.js
 
 cp -f simplewebrtc/out/simplewebrtc-with-adapter.bundle.js simplewebrtc/src/simplewebrtc.js

@@ -145,10 +145,10 @@ read -r -d '' modules <<- EOM
 	konami-code.js
 	lazy
 	leaflet
-	libsodium
-	libsodium-sumo
-	libsodium-wrappers
-	libsodium-wrappers-sumo
+	libsodium@https://github.com/jedisct1/libsodium.js
+	libsodium-sumo@https://github.com/jedisct1/libsodium.js
+	libsodium-wrappers@https://github.com/jedisct1/libsodium.js
+	libsodium-wrappers-sumo@https://github.com/jedisct1/libsodium.js
 	localforage
 	lodash-es
 	long
