@@ -81,5 +81,105 @@ export const timestampToDate	= memoize((timestamp?: number) : Date =>
 	timestamp === undefined || isNaN(timestamp) ? new Date() : new Date(timestamp)
 );
 
+/** Converts a timestamp into a 24-hour time. */
+export const timestampToTime	= memoize((
+	timestamp?: number,
+	roundToHalfHour: boolean = false,
+	minHours?: number,
+	minMinutes?: number,
+	maxHours?: number,
+	maxMinutes?: number
+) : string => {
+	if (minHours === undefined && minMinutes !== undefined) {
+		throw new Error('Cannot use minMinutes without minHours.');
+	}
+	else if (maxHours === undefined && maxMinutes !== undefined) {
+		throw new Error('Cannot use maxMinutes without maxHours.');
+	}
+	else if (minHours !== undefined && (isNaN(minHours) || minHours < 0 || minHours > 23)) {
+		throw new Error('Invalid minHours.');
+	}
+	else if (
+		minMinutes !== undefined && (isNaN(minMinutes) || minMinutes < 0 || minMinutes > 59)
+	) {
+		throw new Error('Invalid minMinutes.');
+	}
+	else if (maxHours !== undefined && (isNaN(maxHours) || maxHours < 0 || maxHours > 23)) {
+		throw new Error('Invalid maxHours.');
+	}
+	else if (
+		maxMinutes !== undefined && (isNaN(maxMinutes) || maxMinutes < 0 || maxMinutes > 59)
+	) {
+		throw new Error('Invalid maxMinutes.');
+	}
+	else if (
+		((minHours || 0) * 3600 + (minMinutes || 0) * 60) >
+		((maxHours || 0) * 3600 + (maxMinutes || 0) * 60)
+	) {
+		throw new Error('Lower bound cannot exceed upper bound.');
+	}
+	else if (roundToHalfHour && (
+		(minMinutes !== undefined && minMinutes !== 0 && minMinutes !== 30) ||
+		(maxMinutes !== undefined && maxMinutes !== 0 && maxMinutes !== 30)
+	)) {
+		throw new Error('minMinutes and maxMinutes must conform to roundToHalfHour.');
+	}
+
+	const date	= timestampToDate(timestamp);
+	let hours	= date.getHours();
+	let minutes	= date.getMinutes();
+
+	if (roundToHalfHour) {
+		if (minutes < 15) {
+			minutes	= 0;
+		}
+		else if (minutes >= 45 && hours < 23) {
+			minutes	= 0;
+			++hours;
+		}
+		else {
+			minutes	= 30;
+		}
+	}
+
+	if (minHours !== undefined && hours <= minHours) {
+		hours	= minHours;
+		if (minMinutes !== undefined && minutes < minMinutes) {
+			minutes	= minMinutes;
+		}
+	}
+
+	if (maxHours !== undefined && hours >= maxHours) {
+		hours	= maxHours;
+		if (maxMinutes !== undefined && minutes > maxMinutes) {
+			minutes	= maxMinutes;
+		}
+	}
+
+	return `${`0${hours.toString()}`.slice(-2)}:${`0${minutes.toString()}`.slice(-2)}`;
+});
+
+/** Changes the Date and/or time of a timestamp. */
+export const timestampUpdate	=
+	memoize((timestamp: number, date?: Date, time?: string) : number => {
+		const timestampDate		= timestampToDate(timestamp);
+
+		if (date !== undefined) {
+			timestampDate.setDate(date.getDate());
+			timestampDate.setMonth(date.getMonth());
+			timestampDate.setFullYear(date.getFullYear());
+		}
+
+		if (time !== undefined) {
+			const [hours, minutes]	= time.split(':').map(s => parseInt(s, 10));
+
+			timestampDate.setHours(hours || 0);
+			timestampDate.setMinutes(minutes || 0);
+		}
+
+		return timestampDate.getTime();
+	})
+;
+
 /** @see getTimestamp */
 export const getDate	= async () => timestampToDate(await getTimestamp());
