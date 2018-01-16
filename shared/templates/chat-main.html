@@ -18,20 +18,20 @@
 		'
 		[@fadeIn]='"in"'
 	>
-			<div
-				class='logo-animation'
-				*ngIf='chatService.chat.state === states.keyExchange'
-			>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-			</div>
-			<div
-				class='logo-animation connected'
-				*ngIf='chatService.chat.state === states.chatBeginMessage'
-			></div>
+		<div
+			class='logo-animation'
+			*ngIf='chatService.chat.state === states.keyExchange'
+		>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+		<div
+			class='logo-animation connected'
+			*ngIf='chatService.chat.state === states.chatBeginMessage'
+		></div>
 
 		<div
 			cyphTranslate
