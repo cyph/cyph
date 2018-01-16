@@ -290,8 +290,6 @@
 		"no-disable-auto-sanitization": true,
 		"no-document-domain": true,
 		"no-document-write": true,
-		"no-duplicate-case": true,
-		"no-empty-interfaces": true,
 		"no-empty-line-after-opening-brace": true,
 		"no-exec-script": true,
 		"no-for-in": true,
@@ -316,7 +314,6 @@
 		"prefer-type-cast": true,
 		"promise-must-complete": false,
 		"use-named-parameter": true,
-		"valid-typeof": true,
 
 
 		/* rxjs */
