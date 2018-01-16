@@ -127,6 +127,30 @@
 	<button
 		mat-button
 		cyphTranslate
+		matTooltip='Appointments'
+		matTooltipPosition='right'
+		[routerLink]='accountService.routeRoot + "appointments"'
+		(click)='click()'
+		*ngIf='accountService.isTelehealth && (accountService.menuExpanded | async)'
+	>
+		<mat-icon>date_range</mat-icon>
+		<span>Appointments</span>
+	</button>
+	<button
+		mat-icon-button
+		cyphTranslate
+		matTooltip='Appointments'
+		matTooltipPosition='right'
+		[routerLink]='accountService.routeRoot + "appointments"'
+		(click)='click()'
+		*ngIf='accountService.isTelehealth && (accountService.menuExpanded | async) === false'
+	>
+		<mat-icon>date_range</mat-icon>
+	</button>
+
+	<button
+		mat-button
+		cyphTranslate
 		matTooltip='Contacts'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "contacts"'
