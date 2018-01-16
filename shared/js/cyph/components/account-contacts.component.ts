@@ -100,6 +100,11 @@ export class AccountContactsComponent implements AfterViewInit {
 		this.showContactList	= true;
 	}
 
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.accountService.transitionEnd();
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,

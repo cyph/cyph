@@ -7,7 +7,7 @@
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<mat-card
-			class='note animated'
+			class='note animated slideInDown'
 			*ngFor='let note of notes | async; trackBy: trackByID; let i = index'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'

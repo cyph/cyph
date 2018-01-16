@@ -18,6 +18,8 @@ import {sleep} from '../util/wait';
 export class AccountLogoutComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		this.accountService.transitionEnd();
+
 		await this.accountAuthService.logout();
 		await sleep(500);
 		await this.router.navigate([accountRoot, 'login']);

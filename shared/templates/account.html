@@ -1,5 +1,11 @@
-<div fxFlexFill fxLayout='row' [class.mobile]='envService.isMobile'>
-	<div *ngIf='accountService.interstitial' class='interstitial'>
+<div
+	fxFlexFill
+	fxLayout='row'
+	fxLayout.xs='column'
+	[class.mobile]='envService.isMobile'
+	[class.transition]='accountService.transition | async'
+>
+	<div *ngIf='accountService.interstitial' class='interstitial animated fadeIn'>
 		<div class='loading'>
 			<div class='logo-animation'>
 				<div></div>
@@ -10,27 +16,36 @@
 			</div>
 		</div>
 	</div>
-	<canvas [fxShow]='envService.showGranim' class='cyph-gradient'></canvas>
+	<canvas [fxShow]='envService.showGranim' class='cyph-gradient animated fadeIn'></canvas>
 
 	<cyph-account-menu
 		fxLayout='column'
 		fxLayout.xs='row'
-		class='sidebar'
+		class='sidebar animated slideInLeft _0'
 		[style.max-width]='accountService.menuMaxWidth | async'
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
 	<div fxFlex fxFlexFill fxLayout='column' fxLayout.xs='row'>
-		<div fxFlexFill fxLayout='row' fxLayoutAlign='center start'>
+		<div fxFlexFill>
 			<div
-				class='router-content'
+				fxLayout='column'
+				class='header animated slideInDown'
+				[class.fadeOutUp]='accountService.transition | async'
+				fxLayoutAlign='center center'
+				*ngIf='header !== undefined'
+			>
+				<h1>{{header}}</h1>
+			</div>
+			<div
+				class='router-content animated'
+				[class.fadeOutUp]='(accountService.transition | async) === true'
+				[class.top]='header'
 				[fxFlex]='header ? "90" : ""'
 				[fxFlex.gt-sm]='header ? "65" : ""'
 				[fxFlex.gt-md]='header ? "40" : ""'
-				fxFlexFill
 				fxLayout='column'
 			>
-				<h1 class='header' *ngIf='header !== undefined'>{{header}}</h1>
 				<router-outlet></router-outlet>
 			</div>
 		</div>

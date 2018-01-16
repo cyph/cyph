@@ -107,6 +107,8 @@ export class AccountProfileComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		this.accountService.transitionEnd();
+
 		this.activatedRoute.params.subscribe(o => { this.setUser(o.username); });
 	}
 

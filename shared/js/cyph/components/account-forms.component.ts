@@ -21,6 +21,11 @@ export class AccountFormsComponent {
 	/** @see trackByID */
 	public readonly trackByID: typeof trackByID	= trackByID;
 
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.accountService.transitionEnd();
+	}
+
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,

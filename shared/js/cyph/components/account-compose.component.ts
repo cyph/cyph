@@ -112,6 +112,8 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		this.accountService.transitionEnd();
+
 		this.accountChatService.chat.state	= States.chat;
 		this.sessionService.state.isAlive	= true;
 

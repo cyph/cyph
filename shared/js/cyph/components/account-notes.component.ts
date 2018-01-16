@@ -37,6 +37,8 @@ export class AccountNotesComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		this.accountService.transitionEnd();
+
 		this.activatedRoute.data.subscribe(o => {
 			this.realTime	= o.realTime;
 		});
