@@ -54,4 +54,5 @@ if [ "${blockFailingBuild}" ] ; then
 	./commands/build.sh || exit 1
 fi
 
+git gc --aggressive --prune
 git push
