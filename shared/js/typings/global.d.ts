@@ -36,6 +36,12 @@ declare let customBuildCallType: 'audio'|'video'|undefined;
 
 /**
  * @global
+ * If applicable, indicates whether docs will be enabled for this custom build.
+ */
+declare let customBuildEnableDocs: boolean;
+
+/**
+ * @global
  * If applicable, Walken image replacement for this custom build.
  */
 declare let customBuildErrorImage: string|undefined;

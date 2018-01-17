@@ -228,7 +228,7 @@
 		[routerLink]='accountService.routeRoot + "docs"'
 		(click)='click()'
 		*ngIf='
-			(!envService.isProd || accountService.isTelehealth) &&
+			accountService.enableDocs &&
 			(accountService.menuExpanded | async)
 		'
 	>
@@ -243,7 +243,7 @@
 		[routerLink]='accountService.routeRoot + "docs"'
 		(click)='click()'
 		*ngIf='
-			(!envService.isProd || accountService.isTelehealth) &&
+			accountService.enableDocs &&
 			(accountService.menuExpanded | async) === false
 		'
 	>

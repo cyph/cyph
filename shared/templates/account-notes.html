@@ -4,6 +4,7 @@
 	fxLayoutAlign='center start'
 	class='card-list'
 	[class.initiating]='accountFilesService.showSpinner'
+	*ngIf='!realTime || accountService.enableDocs'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<mat-card

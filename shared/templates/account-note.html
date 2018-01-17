@@ -1,7 +1,7 @@
 <div
 	fxFlexFill
 	fxLayoutAlign='center start'
-	*ngIf='!realTime || !envService.isProd || accountService.isTelehealth'
+	*ngIf='!realTime || accountService.enableDocs'
 >
 	<mat-card fxFlex='90' class='note'>
 		<div fxLayout='column'>

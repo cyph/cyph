@@ -5,6 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {map} from 'rxjs/operators/map';
 import {ConfigService} from './config.service';
+import {EnvService} from './env.service';
 import {WindowWatcherService} from './window-watcher.service';
 
 
@@ -18,6 +19,11 @@ export class AccountService {
 
 	/** @ignore */
 	private readonly transitionInternal: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+
+	/** Indicates whether real-time Docs is enabled. */
+	public readonly enableDocs: boolean					=
+		customBuildEnableDocs || this.envService.isLocalEnv
+	;
 
 	/** Indicates the status of the interstitial. */
 	public interstitial: boolean						= false;
@@ -91,6 +97,9 @@ export class AccountService {
 
 		/** @ignore */
 		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly envService: EnvService,
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
