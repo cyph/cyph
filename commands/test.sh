@@ -4,10 +4,12 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
-firebaseBackup=''
-if [ "${1}" == '--firebase-backup' ] ; then
-	firebaseBackup=true
-	shift
+e2e=''
+unit=''
+if [ "${1}" == '--e2e' ] ; then
+	e2e=true
+elif [ "${1}" == '--unit' ] ; then
+	unit=true
 fi
 
 ./commands/buildunbundledassets.sh --test
@@ -18,17 +20,13 @@ export CHROME_BIN="$(node -e 'console.log(require("puppeteer").executablePath())
 cd cyph.ws
 ../commands/ngprojectinit.sh
 
-if [ "${1}" != '--e2e' ] ; then
+if [ ! "${e2e}" ] ; then
 	ng test --browsers ChromeHeadless
 	checkfail
 fi
 
-if [ "${1}" != '--unit' ] ; then
-	if [ "${firebaseBackup}" ] ; then
-		../commands/serve.sh --firebase-backup --e2e cyph.ws
-	else
-		../commands/serve.sh --e2e cyph.ws
-	fi
+if [ ! "${unit}" ] ; then
+	../commands/serve.sh "${@}" cyph.ws
 	checkfail
 fi
 

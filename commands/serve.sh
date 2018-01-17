@@ -9,14 +9,19 @@ eval "$(./commands/getgitdata.sh)"
 
 firebaseBackup=''
 e2e=''
+localSeleniumServer=''
 site=''
 environment='local'
+if [ "${1}" == '--e2e' ] ; then
+	e2e=true
+	shift
+fi
 if [ "${1}" == '--firebase-backup' ] ; then
 	firebaseBackup=true
 	shift
 fi
-if [ "${1}" == '--e2e' ] ; then
-	e2e=true
+if [ "${1}" == '--local-selenium-server' ] ; then
+	localSeleniumServer=true
 	shift
 fi
 if [ "${1}" == 'cyph.ws' ] || [ "${1}" == 'cyph.com' ] ; then
@@ -34,6 +39,11 @@ if [ "${firebaseBackup}" ] ; then
 elif [ "${e2e}" ] ; then
 	environment='e2e'
 fi
+
+if [ "${localSeleniumServer}" ] ; then
+	log 'On the host OS, run `java -jar selenium-server-standalone-$VERSION.jar -role hub`'
+fi
+
 
 ngserve () {
 	ngserveInternal () {
@@ -62,6 +72,9 @@ ngserve () {
 		--port "${port}" \
 		--no-sourcemaps \
 		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
+		$(if [ "${localSeleniumServer}" ] ; then
+			echo '--config protractor.local-selenium-server.js'
+		fi) \
 		${args} \
 		"${@}"
 
