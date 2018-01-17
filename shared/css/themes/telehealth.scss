@@ -54,9 +54,8 @@ body.telehealth {
 			margin-bottom: 20px;
 			position: relative;
 
-			&:after {
+			&:after, &:before {
 				content: '';
-				background-image: url(/assets/img/telehealth.animated.background.png);
 				background-repeat: no-repeat;
 				background-size: 42.71vh 42.71vh;
 				height: 43.71vh;
@@ -66,9 +65,14 @@ body.telehealth {
 				position: absolute;
 				z-index: -1;
 			}
+			&:after {
+				background-image: url(/assets/img/telehealth.animated.background.a.png);
+			}
+			&:before {
+				background-image: url(/assets/img/telehealth.animated.background.b.png);
+			}
 			> * {
 				background-image: url(/assets/img/telehealth.animated.castle.png);
-
 			}
 		}
 	}

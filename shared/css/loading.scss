@@ -57,19 +57,6 @@
 		margin-bottom: 20px;
 		position: relative;
 
-		&:after {
-			content: '';
-			background-image: url(/assets/img/telehealth-animated-background.png);
-			background-repeat: no-repeat;
-			background-size: 33vh 33vh;
-			top: 0px;
-			left: 0px;
-			height: 100%;
-			width: 100%;
-			position: absolute;
-			z-index: -1;
-		}
-
 		> * {
 			display: block;
 		}
