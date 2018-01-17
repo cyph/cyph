@@ -457,6 +457,32 @@ export class StringsService {
 	public readonly videoCall: string					= `video call`;
 
 	/** @see StringsService */
+	public readonly waitingRoomCheckedInDoctor: string	=
+		`Waiting for your patient to connect.`
+	;
+
+	/** @see StringsService */
+	public readonly waitingRoomCheckedInGeneric: string	=
+		`Waiting for the other party to join.`
+	;
+
+	/** @see StringsService */
+	public readonly waitingRoomCheckedInPatient: string	=
+		`You're all checked in and ready! You will be connected with your doctor momentarily.`
+	;
+
+	/** @see StringsService */
+	public readonly waitingRoomNotReadyForms: string	=
+		`Please ensure you've submitted all required patient forms.`
+	;
+
+	/** @see StringsService */
+	public readonly waitingRoomNotReadyTime: string		=
+		`It's not time to check in for your appointment yet. You can check in up to 20 minutes ` +
+		`before your scheduled appointment.`
+	;
+
+	/** @see StringsService */
 	public readonly warningTitle: string				= `Warning`;
 
 	/** @ignore */
