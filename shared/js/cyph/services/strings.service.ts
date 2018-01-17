@@ -19,445 +19,445 @@ export class StringsService {
 
 
 	/** @ignore */
-	private readonly internalCompany: string		=
+	private readonly internalCompany: string			=
 		StringsService.customBuildStrings.internalCompany ||
 		`Cyph`
 	;
 
 	/** @ignore */
-	private readonly internalFriend: string			=
+	private readonly internalFriend: string				=
 		StringsService.customBuildStrings.internalFriend ||
 		`friend`
 	;
 
 	/** @ignore */
-	private readonly internalProduct: string		=
+	private readonly internalProduct: string			=
 		StringsService.customBuildStrings.internalProduct ||
 		`Cyph`
 	;
 
 	/** @ignore */
-	private readonly internalProductShort: string	=
+	private readonly internalProductShort: string		=
 		StringsService.customBuildStrings.internalProductShort ||
 		`Cyph`
 	;
 
 	/** @ignore */
-	private readonly internalSession: string		=
+	private readonly internalSession: string			=
 		StringsService.customBuildStrings.internalSession ||
 		`cyph`
 	;
 
 	/** @see StringsService */
-	public readonly accept: string					= `accept`;
+	public readonly accept: string						= `accept`;
 
 	/** @see StringsService */
-	public readonly audioCall: string				= `call`;
+	public readonly audioCall: string					= `call`;
 
 	/** @see StringsService */
-	public readonly cameraDisable: string			= `Disable Camera`;
+	public readonly cameraDisable: string				= `Disable Camera`;
 
 	/** @see StringsService */
-	public readonly cameraEnable: string			= `Enable Camera`;
+	public readonly cameraEnable: string				= `Enable Camera`;
 
 	/** @see StringsService */
-	public readonly cancel: string					= `cancel`;
+	public readonly cancel: string						= `cancel`;
 
 	/** @see StringsService */
-	public readonly company: string					= `${this.internalCompany}`;
+	public readonly company: string						= `${this.internalCompany}`;
 
 	/** @see StringsService */
-	public readonly connectedNotification: string	= `Connected!`;
+	public readonly connectedNotification: string		= `Connected!`;
 
 	/** @see StringsService */
-	public readonly contactCyph: string				= `Contact ${this.internalCompany}`;
+	public readonly contactCyph: string					= `Contact ${this.internalCompany}`;
 
 	/** @see StringsService */
-	public readonly continueDialogAction: string	= `continue`;
+	public readonly continueDialogAction: string		= `continue`;
 
 	/** @see StringsService */
-	public readonly cypherToast1: string			=
+	public readonly cypherToast1: string				=
 		`Prepare to witness the amazing nuts and bolts of ${this.internalProductShort}.`
 	;
 
 	/** @see StringsService */
-	public readonly cypherToast2: string			=
+	public readonly cypherToast2: string				=
 		`This cyphertext is what outsiders spying on your traffic will see (nothing of value).`
 	;
 
 	/** @see StringsService */
-	public readonly cypherToast3: string			= `Thou art amazed.`;
+	public readonly cypherToast3: string				= `Thou art amazed.`;
 
 	/** @see StringsService */
-	public readonly decline: string					= `decline`;
+	public readonly decline: string						= `decline`;
 
 	/** @see StringsService */
-	public readonly defaultDescription: string		=
+	public readonly defaultDescription: string			=
 		`Check out my lit new video ;). https://youtu.be/oHg5SJYRHA0`
 	;
 
 	/** @see StringsService */
-	public readonly deleteConfirm: string			= `Confirm Deletion`;
+	public readonly deleteConfirm: string				= `Confirm Deletion`;
 
 	/** @see StringsService */
-	public readonly deleteMessage: string			= `Delete`;
+	public readonly deleteMessage: string				= `Delete`;
 
 	/** @see StringsService */
-	public readonly discard: string					= `discard`;
+	public readonly discard: string						= `discard`;
 
 	/** @see StringsService */
-	public readonly disconnect: string				= `Disconnect`;
+	public readonly disconnect: string					= `Disconnect`;
 
 	/** @see StringsService */
-	public readonly disconnectConfirm: string		=
+	public readonly disconnectConfirm: string			=
 		`Are you sure that you wish to disconnect?`
 	;
 
 	/** @see StringsService */
-	public readonly disconnectNotification: string	=
+	public readonly disconnectNotification: string		=
 		`This ${this.internalSession} has been disconnected.`
 	;
 
 	/** @see StringsService */
-	public readonly disconnectTitle: string			= `Disconnect`;
+	public readonly disconnectTitle: string				= `Disconnect`;
 
 	/** @see StringsService */
-	public readonly disconnectWarning: string		=
+	public readonly disconnectWarning: string			=
 		`After closing ${this.internalProduct}, your messages will no longer be retrievable.`
 	;
 
 	/** @see StringsService */
-	public readonly doctor: string					= `doctor`;
+	public readonly doctor: string						= `doctor`;
 
 	/** @see StringsService */
-	public readonly dr: string						= `Dr.`;
+	public readonly dr: string							= `Dr.`;
 
 	/** @see StringsService */
-	public readonly fileCall: string				= `file transfer`;
+	public readonly fileCall: string					= `file transfer`;
 
 	/** @see StringsService */
-	public readonly fileTooLarge: string			=
+	public readonly fileTooLarge: string				=
 		`The file that you are trying to send exceeds the 250 MB attachment limit.`
 	;
 
 	/** @see StringsService */
-	public readonly fileTransferInitFriend: string	=
+	public readonly fileTransferInitFriend: string		=
 		`Your ${this.internalFriend} is sending the file:`
 	;
 
 	/** @see StringsService */
-	public readonly fileTransferInitMe: string		=
+	public readonly fileTransferInitMe: string			=
 		`You are sending the file:`
 	;
 
 	/** @see StringsService */
-	public readonly formattingHelp: string			= `Formatting Help`;
+	public readonly formattingHelp: string				= `Formatting Help`;
 
 	/** @see StringsService */
-	public readonly friend: string					= `${this.internalFriend}`;
+	public readonly friend: string						= `${this.internalFriend}`;
 
 	/** @see StringsService */
-	public readonly friendIsTyping: string			=
+	public readonly friendIsTyping: string				=
 		`${this.capitalize(this.internalFriend)} is typing...`
 	;
 
 	/** @see StringsService */
-	public readonly help: string					= `Help`;
+	public readonly help: string						= `Help`;
 
 	/** @see StringsService */
-	public readonly incomingFile: string			= `Incoming File:`;
+	public readonly incomingFile: string				= `Incoming File:`;
 
 	/** @see StringsService */
-	public readonly incomingFileDownload: string	=
+	public readonly incomingFileDownload: string		=
 		`Your ${this.internalFriend} would like to send you a file. Accept the file transfer?`
 	;
 
 	/** @see StringsService */
-	public readonly incomingFileRejected: string	=
+	public readonly incomingFileRejected: string		=
 		`You have rejected the following file transfer:`
 	;
 
 	/** @see StringsService */
-	public readonly incomingFileSave: string		=
+	public readonly incomingFileSave: string			=
 		`Your ${this.internalFriend} has sent you a file. It has not been scanned for malware; ` +
 		`you may choose to accept it AT YOUR OWN RISK. Save this file?`
 	;
 
 	/** @see StringsService */
-	public readonly incomingFileSaveError: string	=
+	public readonly incomingFileSaveError: string		=
 		`Failed to save the following file:`
 	;
 
 	/** @see StringsService */
-	public readonly introductoryMessage: string		=
+	public readonly introductoryMessage: string			=
 		`You may now speak.`
 	;
 
 	/** @see StringsService */
-	public readonly invalidCredentials: string		=
+	public readonly invalidCredentials: string			=
 		`Invalid username or master key.`
 	;
 
 	/** @see StringsService */
-	public readonly invalidInviteCode: string		=
+	public readonly invalidInviteCode: string			=
 		`Invalid invite code.`
 	;
 
 	/** @see StringsService */
-	public readonly invalidPassword: string			=
+	public readonly invalidPassword: string				=
 		`Invalid password.`
 	;
 
 	/** @see StringsService */
-	public readonly invalidPIN: string				=
+	public readonly invalidPIN: string					=
 		`Invalid PIN.`
 	;
 
 	/** @see StringsService */
-	public readonly linkCopied: string				=
+	public readonly linkCopied: string					=
 		`${this.capitalize(this.internalSession)} link copied.`
 	;
 
 	/** @see StringsService */
-	public readonly linkCopyFail: string			=
+	public readonly linkCopyFail: string				=
 		`Automated clipboard copy unsupported in this browser.`
 	;
 
 	/** @see StringsService */
-	public readonly linkExpiresAt: string			= `Link expires at`;
+	public readonly linkExpiresAt: string				= `Link expires at`;
 
 	/** @see StringsService */
-	public readonly linkTooltip: string				=
+	public readonly linkTooltip: string					=
 		`${this.capitalize(this.internalSession)} Link`
 	;
 
 	/** @see StringsService */
-	public readonly logIn: string					= `Log In`;
+	public readonly logIn: string						= `Log In`;
 
 	/** @see StringsService */
-	public readonly logInTitle: string				= `Log in to ${this.internalProduct}`;
+	public readonly logInTitle: string					= `Log in to ${this.internalProduct}`;
 
 	/** @see StringsService */
-	public readonly logo: string					= `Logo`;
+	public readonly logo: string						= `Logo`;
 
 	/** @see StringsService */
-	public readonly masterKey: string				= `Master Key`;
+	public readonly masterKey: string					= `Master Key`;
 
 	/** @see StringsService */
-	public readonly me: string						= `me`;
+	public readonly me: string							= `me`;
 
 	/** @see StringsService */
-	public readonly message: string					= `message`;
+	public readonly message: string						= `message`;
 
 	/** @see StringsService */
-	public readonly messageConfirmed: string		=
+	public readonly messageConfirmed: string			=
 		`Message delivery confirmed`
 	;
 
 	/** @see StringsService */
-	public readonly messages: string				= `messages`;
+	public readonly messages: string					= `messages`;
 
 	/** @see StringsService */
-	public readonly messageUnconfirmed: string		=
+	public readonly messageUnconfirmed: string			=
 		`Message delivery unconfirmed`
 	;
 
 	/** @see StringsService */
-	public readonly micDisable: string				= `Disable Mic`;
+	public readonly micDisable: string					= `Disable Mic`;
 
 	/** @see StringsService */
-	public readonly micEnable: string				= `Enable Mic`;
+	public readonly micEnable: string					= `Enable Mic`;
 
 	/** @see StringsService */
-	public readonly newMessageNotification: string	= `New message!`;
+	public readonly newMessageNotification: string		= `New message!`;
 
 	/** @see StringsService */
-	public readonly newString: string				= `new`;
+	public readonly newString: string					= `new`;
 
 	/** @see StringsService */
-	public readonly no: string						= `no`;
+	public readonly no: string							= `no`;
 
 	/** @see StringsService */
-	public readonly noteSaved: string				= `Note saved!`;
+	public readonly noteSaved: string					= `Note saved!`;
 
 	/** @see StringsService */
-	public readonly ok: string						= `ok`;
+	public readonly ok: string							= `ok`;
 
 	/** @see StringsService */
-	public readonly omitted: string					= `(omitted)`;
+	public readonly omitted: string						= `(omitted)`;
 
 	/** @see StringsService */
-	public readonly oopsTitle: string				= `Oops!`;
+	public readonly oopsTitle: string					= `Oops!`;
 
 	/** @see StringsService */
-	public readonly open: string					= `Open`;
+	public readonly open: string						= `Open`;
 
 	/** @see StringsService */
-	public readonly outgoingFileError: string		=
+	public readonly outgoingFileError: string			=
 		`Failed to send the following file:`
 	;
 
 	/** @see StringsService */
-	public readonly outgoingFileRejected: string	=
+	public readonly outgoingFileRejected: string		=
 		`Your "${this.internalFriend}" has rejected the following file transfer:`
 	;
 
 	/** @see StringsService */
-	public readonly outgoingFileSaved: string		=
+	public readonly outgoingFileSaved: string			=
 		`File transfer complete! Your ${this.internalFriend} has saved the following file:`
 	;
 
 	/** @see StringsService */
-	public readonly p2pCanceled: string				= `Call canceled.`;
+	public readonly p2pCanceled: string					= `Call canceled.`;
 
 	/** @see StringsService */
-	public readonly p2pConnect: string				= `Call has started.`;
+	public readonly p2pConnect: string					= `Call has started.`;
 
 	/** @see StringsService */
-	public readonly p2pDeny: string					=
+	public readonly p2pDeny: string						=
 		`Your "${this.internalFriend}" has rejected your call.`
 	;
 
 	/** @see StringsService */
-	public readonly p2pDisabled: string				=
+	public readonly p2pDisabled: string					=
 		`Your or your ${this.internalFriend}'s browser may lack support for video calling. ` +
 		`Try again with the latest Chrome or Firefox.`
 	;
 
 	/** @see StringsService */
-	public readonly p2pDisabledLocal: string		=
+	public readonly p2pDisabledLocal: string			=
 		`Your browser does not support voice or video calling. ` +
 		`Try again with the latest Chrome or Firefox.`
 	;
 
 	/** @see StringsService */
-	public readonly p2pDisabledLocalIOS: string		=
+	public readonly p2pDisabledLocalIOS: string			=
 		`Voice/video calling is currently unsupported on iOS.`
 	;
 
 	/** @see StringsService */
-	public readonly p2pDisconnect: string			=
+	public readonly p2pDisconnect: string				=
 		`Call has been disconnected.`
 	;
 
 	/** @see StringsService */
-	public readonly p2pInit: string					=
+	public readonly p2pInit: string						=
 		`You are about to initiate an encrypted`
 	;
 
 	/** @see StringsService */
-	public readonly p2pRequest: string				=
+	public readonly p2pRequest: string					=
 		`Your ${this.internalFriend} has requested an encrypted`
 	;
 
 	/** @see StringsService */
-	public readonly p2pRequestConfirmation: string	=
+	public readonly p2pRequestConfirmation: string		=
 		`Your request has been sent.`
 	;
 
 	/** @see StringsService */
-	public readonly p2pTitle: string				= `${this.internalProduct} Call`;
+	public readonly p2pTitle: string					= `${this.internalProduct} Call`;
 
 	/** @see StringsService */
-	public readonly p2pWarning: string				=
+	public readonly p2pWarning: string					=
 		`This will involve sharing your IP address with your ${this.internalFriend} ` +
 		`(which isn't a problem unless you're actively hiding ` +
 		`your current location from them). Continue?`
 	;
 
 	/** @see StringsService */
-	public readonly p2pWarningAudioPassive: string	= `Starting voice call (P2P).`;
+	public readonly p2pWarningAudioPassive: string		= `Starting voice call (P2P).`;
 
 	/** @see StringsService */
-	public readonly p2pWarningVideoPassive: string	= `Starting video call (P2P).`;
+	public readonly p2pWarningVideoPassive: string		= `Starting video call (P2P).`;
 
 	/** @see StringsService */
-	public readonly patient: string					= `patient`;
+	public readonly patient: string						= `patient`;
 
 	/** @see StringsService */
-	public readonly pin: string						= `PIN`;
+	public readonly pin: string							= `PIN`;
 
 	/** @see StringsService */
-	public readonly product: string					= `${this.internalProduct}`;
+	public readonly product: string						= `${this.internalProduct}`;
 
 	/** @see StringsService */
-	public readonly productShort: string			= `${this.internalProductShort}`;
+	public readonly productShort: string				= `${this.internalProductShort}`;
 
 	/** @see StringsService */
-	public readonly profile: string					= `profile`;
+	public readonly profile: string						= `profile`;
 
 	/** @see StringsService */
-	public readonly queuedMessageSaved: string		= `Queued message saved.`;
+	public readonly queuedMessageSaved: string			= `Queued message saved.`;
 
 	/** @see StringsService */
-	public readonly registerTitle: string			= `Register for ${this.internalProduct}`;
+	public readonly registerTitle: string				= `Register for ${this.internalProduct}`;
 
 	/** @see StringsService */
-	public readonly reject: string					= `reject`;
+	public readonly reject: string						= `reject`;
 
 	/** @see StringsService */
-	public readonly s: string						= `'s`;
+	public readonly s: string							= `'s`;
 
 	/** @see StringsService */
-	public readonly save: string					= `save`;
+	public readonly save: string						= `save`;
 
 	/** @see StringsService */
-	public readonly search: string					= `Search`;
+	public readonly search: string						= `Search`;
 
 	/** @see StringsService */
-	public readonly selfDestructActivated: string	=
+	public readonly selfDestructActivated: string		=
 		`${this.capitalize(this.internalSession)} set to self-destruct.`
 	;
 
 	/** @see StringsService */
-	public readonly selfDestructDeactivated: string	=
+	public readonly selfDestructDeactivated: string		=
 		`Self-destruct deactivated.`
 	;
 
 	/** @see StringsService */
-	public readonly session: string					= `${this.internalSession}`;
+	public readonly session: string						= `${this.internalSession}`;
 
 	/** @see StringsService */
-	public readonly signupFailed: string			=
+	public readonly signupFailed: string				=
 		`Signup failed. Please try again later.`
 	;
 
 	/** @see StringsService */
-	public readonly signupMessage: string			=
+	public readonly signupMessage: string				=
 		`Enjoying the service? Join our waitlist for ${this.internalProductShort} v2! ` +
 		`More details are on the way, but the next version of ${this.internalProductShort} ` +
 		`will include group messaging, user accounts, and encrypted chat history.`
 	;
 
 	/** @see StringsService */
-	public readonly suregoahead: string				= `sure, go ahead`;
+	public readonly suregoahead: string					= `sure, go ahead`;
 
 	/** @see StringsService */
-	public readonly teamToContact: string			= `${this.internalCompany} Team to Contact`;
+	public readonly teamToContact: string				= `${this.internalCompany} Team to Contact`;
 
 	/** @see StringsService */
-	public readonly timeExtended: string			= `Added time to countdown.`;
+	public readonly timeExtended: string				= `Added time to countdown.`;
 
 	/** @see StringsService */
-	public readonly titleRequired: string			= `Title required in order to save.`;
+	public readonly titleRequired: string				= `Title required in order to save.`;
 
 	/** @see StringsService */
-	public readonly to: string						= `To`;
+	public readonly to: string							= `To`;
 
 	/** @see StringsService */
-	public readonly unlock: string					= `Unlock`;
+	public readonly unlock: string						= `Unlock`;
 
 	/** @see StringsService */
-	public readonly unlockTitle: string				= `Unlock ${this.internalProduct}`;
+	public readonly unlockTitle: string					= `Unlock ${this.internalProduct}`;
 
 	/** @see StringsService */
-	public readonly userAvatar: string				= `User Avatar`;
+	public readonly userAvatar: string					= `User Avatar`;
 
 	/** @see StringsService */
-	public readonly videoCall: string				= `video call`;
+	public readonly videoCall: string					= `video call`;
 
 	/** @see StringsService */
-	public readonly warningTitle: string			= `Warning`;
+	public readonly warningTitle: string				= `Warning`;
 
 	/** @ignore */
 	private capitalize (s: string) : string {
