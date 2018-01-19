@@ -69,8 +69,9 @@ ngserve () {
 		--host '0.0.0.0' \
 		--live-reload false \
 		--no-aot \
-		--port "${port}" \
 		--no-sourcemaps \
+		--port "${port}" \
+		--public-host "localhost:${port}" \
 		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
 		$(if [ "${localSeleniumServer}" ] ; then
 			echo '--config protractor.local-selenium-server.js'
