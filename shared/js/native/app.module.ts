@@ -26,8 +26,7 @@ import {MainThreadPotassiumService} from './js/cyph/services/crypto/main-thread-
 import {PotassiumService} from './js/cyph/services/crypto/potassium.service';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {LocalStorageService} from './js/cyph/services/local-storage.service';
-import {resolveHttpClient} from './js/cyph/util/request';
-import {resolveDialogService} from './js/cyph/util/save-file';
+import {resolveStaticServices} from './js/cyph/util/static-services';
 import {NativeDialogService} from './native-dialog.service';
 import {NativeLocalStorageService} from './native-local-storage.service';
 import {NativeTitleService} from './native-title.service';
@@ -83,7 +82,6 @@ import {NativeTitleService} from './native-title.service';
 })
 export class AppModule {
 	constructor (httpClient: HttpClient, dialogService: DialogService) {
-		resolveHttpClient(httpClient);
-		resolveDialogService(dialogService);
+		resolveStaticServices(dialogService, <any> undefined, httpClient);
 	}
 }
