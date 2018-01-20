@@ -1,4 +1,7 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {AccountUserTypes} from '../proto';
+import {AccountService} from '../services/account.service';
+import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {StringsService} from '../services/strings.service';
 
 
@@ -10,8 +13,22 @@ import {StringsService} from '../services/strings.service';
 	styleUrls: ['../../../css/components/account-call-waiting.scss'],
 	templateUrl: '../../../templates/account-call-waiting.html'
 })
-export class AccountCallWaitingComponent {
+export class AccountCallWaitingComponent implements OnInit {
+	/** @see AccountUserTypes */
+	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.accountService.transitionEnd();
+	}
+
 	constructor (
+		/** @see AccountService */
+		public readonly accountService: AccountService,
+
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {}

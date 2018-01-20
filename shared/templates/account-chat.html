@@ -1,5 +1,10 @@
 <div fxFlexFill fxLayoutAlign='center center' class='cyph-foreground'>
 	<div fxFlex='95' fxFlexFill fxLayout='column' *ngIf='accountSessionService.opened | async'>
+		<cyph-account-call-waiting
+			fxFlexFill
+			*ngIf='p2pWebRTCService.initialCallPending'
+		></cyph-account-call-waiting>
+
 		<ng-container
 			*ngIf='(messageType | async) === chatMessageValueTypes.Text; else fullMessageBox'
 		>
@@ -7,12 +12,14 @@
 				fxFlex
 				[accounts]='true'
 				[messageType]='messageType | async'
+				[class.visibility-hidden]='p2pWebRTCService.initialCallPending'
 			></cyph-chat-main>
 
 			<cyph-account-chat-message-box
 				class='padding'
 				[messageType]='chatMessageValueTypes.Text'
 				*ngIf='!p2pService.isActiveOrInitialCall'
+				[class.visibility-hidden]='p2pWebRTCService.initialCallPending'
 			></cyph-account-chat-message-box>
 		</ng-container>
 
@@ -24,6 +31,7 @@
 				[messageType]='messageType | async'
 				[persistentEndMessage]='true'
 				[uiStyle]='uiStyles.email'
+				[class.visibility-hidden]='p2pWebRTCService.initialCallPending'
 			>
 				<cyph-account-chat-message-box
 					[messageType]='messageType | async'
