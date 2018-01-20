@@ -52,6 +52,9 @@ export class StringsService {
 	public readonly accept: string						= `accept`;
 
 	/** @see StringsService */
+	public readonly appointmentDuration: string			= `Appointment Duration`;
+
+	/** @see StringsService */
 	public readonly audioCall: string					= `call`;
 
 	/** @see StringsService */
@@ -131,6 +134,12 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly dr: string							= `Dr.`;
+
+	/** @see StringsService */
+	public readonly endDate: string						= `End Date`;
+
+	/** @see StringsService */
+	public readonly endTime: string						= `End Time`;
 
 	/** @see StringsService */
 	public readonly fileCall: string					= `file transfer`;
@@ -278,6 +287,9 @@ export class StringsService {
 	public readonly no: string							= `no`;
 
 	/** @see StringsService */
+	public readonly notes: string						= `Notes`;
+
+	/** @see StringsService */
 	public readonly noteSaved: string					= `Note saved!`;
 
 	/** @see StringsService */
@@ -390,6 +402,9 @@ export class StringsService {
 	public readonly queuedMessageSaved: string			= `Queued message saved.`;
 
 	/** @see StringsService */
+	public readonly reasonForAppointment: string		= `Reason for Appointment`;
+
+	/** @see StringsService */
 	public readonly registerTitle: string				= `Register for ${this.internalProduct}`;
 
 	/** @see StringsService */
@@ -430,6 +445,12 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
+	public readonly startDate: string					= `Start Date`;
+
+	/** @see StringsService */
+	public readonly startTime: string					= `Start Time`;
+
+	/** @see StringsService */
 	public readonly suregoahead: string					= `sure, go ahead`;
 
 	/** @see StringsService */
@@ -437,6 +458,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly timeExtended: string				= `Added time to countdown.`;
+
+	/** @see StringsService */
+	public readonly timeZone: string					= `Time Zone`;
 
 	/** @see StringsService */
 	public readonly titleRequired: string				= `Title required in order to save.`;

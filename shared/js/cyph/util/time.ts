@@ -1,7 +1,10 @@
 import memoize from 'lodash-es/memoize';
 import {env} from '../env';
+import {ITime} from '../itime';
+import {ITimeRange} from '../itime-range';
 import {random} from './random';
 import {request} from './request';
+import {translate} from './translate';
 
 
 /** @ignore */
@@ -33,8 +36,68 @@ const timestampData	= {
 };
 
 /** @ignore */
-const getTimeStringInternal	= (timestamp: number, includeDate: boolean) : string =>
-	new Date(timestamp).toLocaleString(
+const getTimesInternal	= (
+	timeRange: ITimeRange,
+	increment: number,
+	startPadding: number,
+	endPadding: number
+) : ITime[] => {
+	const times: ITime[]	= [];
+	const endTime			= timeRange.end.hour * 60 + timeRange.end.minute + endPadding;
+
+	for (
+		let {hour, minute}	= {
+			hour: timeRange.start.hour,
+			minute: timeRange.start.minute + startPadding
+		};
+		(hour * 60 + minute) <= endTime;
+		minute += increment
+	) {
+		while (minute >= 60) {
+			minute -= 60;
+			++hour;
+		}
+
+		if (hour >= 24) {
+			break;
+		}
+
+		times.push({hour, minute});
+	}
+
+	return times;
+};
+
+/** @ignore */
+const getTimesInternalWrapper	=
+	memoize((endHour: number) =>
+		memoize((endMinute: number) =>
+			memoize((startHour: number) =>
+				memoize((startMinute: number) =>
+					memoize((increment: number) =>
+						memoize((startPadding: number) =>
+							memoize((endPadding: number) =>
+								getTimesInternal(
+									{
+										end: {hour: endHour, minute: endMinute},
+										start: {hour: startHour, minute: startMinute}
+									},
+									increment,
+									startPadding,
+									endPadding
+								)
+							)
+						)
+					)
+				)
+			)
+		)
+	)
+;
+
+/** @ignore */
+const getTimeStringInternal	= (timestamp: number|Date, includeDate: boolean) : string =>
+	(typeof timestamp === 'number' ? new Date(timestamp) : timestamp).toLocaleString(
 		undefined,
 		includeDate ? stringFormats.date : stringFormats.time
 	).replace(
@@ -50,6 +113,45 @@ const getTimeStringInternal	= (timestamp: number, includeDate: boolean) : string
 export const getDateTimeString	= memoize((timestamp: number) : string =>
 	getTimeStringInternal(timestamp, true)
 );
+
+/**
+ * Returns a human-readable representation of an amount of time (e.g. "1 Hour").
+ * @param time Number of milliseconds.
+ */
+export const getDurationString	= memoize((time: number) : string =>
+	time < 3600000 ?
+		`${time / 60000} ${translate('Minutes')}` :
+		`${(time / 3600000).toFixed(1).replace('.0', '')} ${translate('Hours')}`
+);
+
+/**
+ * Converts a time range into a list of times.
+ * @param increment Number of minutes between times in list.
+ * @param startPadding Skips this number of minutes at the start.
+ * @param endPadding Stops this number of minutes before the end.
+ */
+export const getTimes	= (
+	timeRange: ITimeRange,
+	increment: number = 30,
+	startPadding: number = 0,
+	endPadding: number = 0
+) : ITime[] =>
+	getTimesInternalWrapper(
+		timeRange.end.hour
+	)(
+		timeRange.end.minute
+	)(
+		timeRange.start.hour
+	)(
+		timeRange.start.minute
+	)(
+		increment
+	)(
+		startPadding
+	)(
+		endPadding
+	)
+;
 
 /**
  * Returns current timestamp, with logic to correct for incorrect
@@ -72,17 +174,19 @@ export const getTimestamp	= async () : Promise<number> => {
 };
 
 /** Returns a human-readable representation of the time (e.g. "3:37pm"). */
-export const getTimeString	= memoize((timestamp: number) : string =>
-	getTimeStringInternal(timestamp, false)
-);
+export const getTimeString	= memoize((timestamp: number|ITime) : string => {
+	if (typeof timestamp === 'number') {
+		return getTimeStringInternal(timestamp, false);
+	}
 
-/** Converts a timestamp into a Date. */
-export const timestampToDate	= memoize((timestamp?: number) : Date =>
-	timestamp === undefined || isNaN(timestamp) ? new Date() : new Date(timestamp)
-);
+	const date	= new Date();
+	date.setHours(timestamp.hour);
+	date.setMinutes(timestamp.minute);
+	return getTimeStringInternal(date, false);
+});
 
 /** Converts a timestamp into a 24-hour time. */
-export const timestampToTime	= memoize((
+export const timestampTo24HourTimeString	= memoize((
 	timestamp?: number,
 	roundToHalfHour: boolean = false,
 	minHours?: number,
@@ -159,9 +263,27 @@ export const timestampToTime	= memoize((
 	return `${`0${hours.toString()}`.slice(-2)}:${`0${minutes.toString()}`.slice(-2)}`;
 });
 
-/** Changes the Date and/or time of a timestamp. */
-export const timestampUpdate	=
-	memoize((timestamp: number, date?: Date, time?: string) : number => {
+/** Converts a timestamp into an ITime. */
+export const timestampToTime	= memoize((timestamp?: number) : ITime => {
+	const date	= timestampToDate(timestamp);
+
+	return {
+		hour: date.getHours(),
+		minute: date.getMinutes()
+	};
+});
+
+/** Converts a timestamp into a Date. */
+export const timestampToDate	= memoize((timestamp?: number) : Date =>
+	timestamp === undefined || isNaN(timestamp) ? new Date() : new Date(timestamp)
+);
+
+/**
+ * Changes the date and/or time of a timestamp.
+ * @param time 24-hour time or ITime.
+ */
+export const timestampUpdate	= memoize(
+	(timestamp: number, date?: Date, time?: string|ITime) : number => {
 		const timestampDate		= timestampToDate(timestamp);
 
 		if (date !== undefined) {
@@ -171,15 +293,28 @@ export const timestampUpdate	=
 		}
 
 		if (time !== undefined) {
-			const [hours, minutes]	= time.split(':').map(s => parseInt(s, 10));
+			const [hours, minutes]	= typeof time === 'string' ?
+				time.split(':').map(s => parseInt(s, 10)) :
+				[time.hour, time.minute]
+			;
 
 			timestampDate.setHours(hours || 0);
 			timestampDate.setMinutes(minutes || 0);
 		}
 
 		return timestampDate.getTime();
-	})
-;
+	},
+	(timestamp: number, date?: Date, time?: string|ITime) =>
+		`${timestamp.toString()}\n` +
+		`${date === undefined ? '' : date.getTime().toString()}\n` +
+		(
+			time === undefined ? '' : typeof time === 'string' ? time : `${
+				('0' + time.hour.toString()).slice(-2)
+			}:${
+				('0' + time.minute.toString()).slice(-2)
+			}`
+		)
+);
 
 /** @see getTimestamp */
 export const getDate	= async () => timestampToDate(await getTimestamp());

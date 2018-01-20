@@ -1,1 +1,5 @@
 @import '../mixins';
+
+.notes {
+	@include word-wrap;
+}
