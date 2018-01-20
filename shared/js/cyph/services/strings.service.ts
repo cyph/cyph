@@ -457,6 +457,9 @@ export class StringsService {
 	public readonly teamToContact: string				= `${this.internalCompany} Team to Contact`;
 
 	/** @see StringsService */
+	public readonly telehealthCallAbout: string			= `Telehealth Call About`;
+
+	/** @see StringsService */
 	public readonly timeExtended: string				= `Added time to countdown.`;
 
 	/** @see StringsService */

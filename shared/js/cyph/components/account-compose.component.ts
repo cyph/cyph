@@ -6,11 +6,13 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {map} from 'rxjs/operators/map';
 import {User} from '../account';
 import {States} from '../chat/enums';
-import {ChatMessageValueTypes} from '../proto';
+import {Appointment, ChatMessageValueTypes} from '../proto';
 import {accountChatProviders} from '../providers';
 import {AccountChatService} from '../services/account-chat.service';
+import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
 import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
+import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {observableToBehaviorSubject} from '../util/flatten-observable-promise';
@@ -76,20 +78,51 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 	/** Sends message. */
 	public readonly send: () => Promise<void>			= async () => {
-		if (!this.recipient.value) {
+		if (!this.recipient.value || !this.accountDatabaseService.currentUser.value) {
 			return;
 		}
 
 		this.sent.next(undefined);
 
-		await this.accountChatService.setUser(this.recipient.value.username, true);
-		await this.accountChatService.send(
-			this.messageType.value,
-			undefined,
-			undefined,
-			undefined,
-			true
-		);
+		if (
+			this.messageType.value === ChatMessageValueTypes.CalendarInvite &&
+			this.accountChatService.chat.currentMessage.calendarInvite !== undefined
+		) {
+			await this.accountFilesService.upload(
+				(
+					(
+						this.accountService.isTelehealth ?
+							`${this.stringsService.telehealthCallAbout} ` :
+							''
+					) +
+					this.accountChatService.chat.currentMessage.calendarInvite.title
+				),
+				{
+					calendarInvite: this.accountChatService.chat.currentMessage.calendarInvite,
+					participants: [
+						this.recipient.value.username,
+						this.accountDatabaseService.currentUser.value.user.username
+					],
+					roles: !this.accountService.isTelehealth ? {} : {
+						[this.recipient.value.username]: Appointment.Roles.TelehealthDoctor,
+						[
+							this.accountDatabaseService.currentUser.value.user.username
+						]: Appointment.Roles.TelehealthPatient
+					}
+				},
+				this.recipient.value.username
+			);
+		}
+		else {
+			await this.accountChatService.setUser(this.recipient.value.username, true);
+			await this.accountChatService.send(
+				this.messageType.value,
+				undefined,
+				undefined,
+				undefined,
+				true
+			);
+		}
 
 		this.accountChatService.chat.currentMessage.calendarInvite	= undefined;
 		this.accountChatService.chat.currentMessage.form			= undefined;
@@ -136,6 +169,12 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,
+
+		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly accountFilesService: AccountFilesService,
 
 		/** @ignore */
 		private readonly chatMessageGeometryService: ChatMessageGeometryService,
