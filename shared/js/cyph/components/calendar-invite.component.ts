@@ -1,5 +1,3 @@
-/* tslint:disable:member-ordering */
-
 import {Component, Input, OnInit} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import memoize from 'lodash-es/memoize';

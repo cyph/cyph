@@ -1,5 +1,3 @@
-/* tslint:disable:member-ordering */
-
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';

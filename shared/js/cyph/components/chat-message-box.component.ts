@@ -1,5 +1,3 @@
-/* tslint:disable:member-ordering */
-
 import {
 	AfterViewInit,
 	Component,

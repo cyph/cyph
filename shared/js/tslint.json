@@ -17,21 +17,24 @@
 			["String", "Use string."]
 		],
 		"member-access": true,
-		"member-ordering": [true, {"alphabetize": true, "order": [
-			"private-static-field",
-			"protected-static-field",
-			"public-static-field",
-			"private-static-method",
-			"protected-static-method",
-			"public-static-method",
-			"private-instance-field",
-			"protected-instance-field",
-			"public-instance-field",
-			"private-instance-method",
-			"protected-instance-method",
-			"public-instance-method",
-			"constructor"
-		]}],
+		"member-ordering": false /*
+			Pending https://github.com/palantir/tslint/issues/3589:
+			[true, {"alphabetize": true, "order": [
+				"private-static-field",
+				"protected-static-field",
+				"public-static-field",
+				"private-static-method",
+				"protected-static-method",
+				"public-static-method",
+				"private-instance-field",
+				"protected-instance-field",
+				"public-instance-field",
+				"private-instance-method",
+				"protected-instance-method",
+				"public-instance-method",
+				"constructor"
+			]}]
+		*/,
 		"no-any": false,
 		"no-empty-interface": true,
 		"no-import-side-effect": true,
