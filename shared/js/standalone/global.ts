@@ -38,6 +38,7 @@ for (const k of [
 	'customBuildApiFlags',
 	'customBuildAudioImage',
 	'customBuildCallType',
+	'customBuildEnableDocs',
 	'customBuildErrorImage',
 	'customBuildFavicon',
 	'customBuildLogoHorizontal',
