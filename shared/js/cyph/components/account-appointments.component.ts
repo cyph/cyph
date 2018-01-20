@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ViewChild} from '@angular/core';
-import memoize from 'lodash-es/memoize';
 import {Options} from 'fullcalendar';
+import memoize from 'lodash-es/memoize';
 import {CalendarComponent} from 'ng-fullcalendar';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
@@ -8,8 +8,8 @@ import {User} from '../account/user';
 import {IAccountFileRecord, IAppointment} from '../proto';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
-import {AccountService} from '../services/account.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
+import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
@@ -45,8 +45,8 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 			}
 		],
 		header: {
-			left: 'prev,next today',
 			center: 'title',
+			left: 'prev,next today',
 			right: 'month,agendaWeek,agendaDay,listMonth'
 		},
 		timezone: 'local'
@@ -84,6 +84,9 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 		)
 	;
 
+	/** @see trackByID */
+	public readonly trackByID: typeof trackByID		= trackByID;
+
 	/** Calendar clickButton event handler. */
 	public calendarClickButton (_EVENT_DETAIL: any) : void {}
 
@@ -100,7 +103,7 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 		await this.calendar.initialized.pipe(take(1)).toPromise();
 
 		this.accountFilesService.filesListFiltered.appointments.pipe(
-			mergeMap(records => Promise.all(records.map(async record =>
+			mergeMap(async records => Promise.all(records.map(async record =>
 				((await this.getAppointment(record)) || {appointment: undefined}).appointment
 			)))
 		).subscribe(appointments => {
@@ -119,9 +122,6 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 			this.calendar.fullCalendar('refetchEvents');
 		});
 	}
-
-	/** @see trackByID */
-	public readonly trackByID: typeof trackByID		= trackByID;
 
 	constructor (
 		/** @see AccountAuthService */

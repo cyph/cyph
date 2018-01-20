@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
@@ -17,7 +17,7 @@ import {trackByID} from '../track-by/track-by-id';
 	styleUrls: ['../../../css/components/account-forms.scss'],
 	templateUrl: '../../../templates/account-forms.html'
 })
-export class AccountFormsComponent {
+export class AccountFormsComponent implements OnInit {
 	/** @see trackByID */
 	public readonly trackByID: typeof trackByID	= trackByID;
 

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {IVirtualScrollOptions} from 'od-virtualscroll';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
@@ -24,7 +24,7 @@ import {sleep} from '../util/wait';
 	styleUrls: ['../../../css/components/account-contacts.scss'],
 	templateUrl: '../../../templates/account-contacts.html'
 })
-export class AccountContactsComponent implements AfterViewInit {
+export class AccountContactsComponent implements AfterViewInit, OnInit {
 	/** @ignore */
 	private readonly routeReactiveContactList: Observable<User[]>	=
 		this.activatedRoute.url.pipe(

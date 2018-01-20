@@ -266,7 +266,7 @@ export class AccountFilesService {
 			filePromise.then(file => file.key)
 		);
 
-		return {progress, result: result.then(result => result.value)};
+		return {progress, result: result.then(o => o.value)};
 	}
 
 	/** @ignore */

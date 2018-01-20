@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {Injectable} from '@angular/core';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {Internal} from '../proto';

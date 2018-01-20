@@ -95,7 +95,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 							`${this.stringsService.telehealthCallAbout} ` :
 							''
 					) +
-					this.accountChatService.chat.currentMessage.calendarInvite.title
+					(this.accountChatService.chat.currentMessage.calendarInvite.title || '?')
 				),
 				{
 					calendarInvite: this.accountChatService.chat.currentMessage.calendarInvite,

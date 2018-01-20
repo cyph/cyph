@@ -311,7 +311,7 @@
 						</mat-list>
 						<br />
 						<br />
-						<h2 cyphTranslate style='border-bottom: 1px solid'>Available Doctors</h2>
+						<h2 cyphTranslate class='user-list-header'>Available Doctors</h2>
 						<div class='cyph-light-theme'>
 							<span>TODO: $DOCTOR_LIST</span>
 							<cyph-account-contact
@@ -414,7 +414,8 @@
 									</mat-expansion-panel-header>
 									<div fxLayout='column'>
 										<div *ngFor='
-											let insurance of (extra.insurance?.data || [])
+											let insurance of (extra.insurance?.data || []);
+											trackBy: trackBySelf
 										'>
 											{{insurance}}
 										</div>

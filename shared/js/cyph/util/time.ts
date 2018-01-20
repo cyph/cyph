@@ -109,6 +109,11 @@ const getTimeStringInternal	= (timestamp: number|Date, includeDate: boolean) : s
 	)
 ;
 
+/** Converts a timestamp into a Date. */
+export const timestampToDate	= memoize((timestamp?: number) : Date =>
+	timestamp === undefined || isNaN(timestamp) ? new Date() : new Date(timestamp)
+);
+
 /** Returns a human-readable representation of the date and time (e.g. "Jan 1, 2018, 3:37pm"). */
 export const getDateTimeString	= memoize((timestamp: number) : string =>
 	getTimeStringInternal(timestamp, true)
@@ -186,6 +191,7 @@ export const getTimeString	= memoize((timestamp: number|ITime) : string => {
 });
 
 /** Converts a timestamp into a 24-hour time. */
+/* tslint:disable-next-line:cyclomatic-complexity */
 export const timestampTo24HourTimeString	= memoize((
 	timestamp?: number,
 	roundToHalfHour: boolean = false,
@@ -272,11 +278,6 @@ export const timestampToTime	= memoize((timestamp?: number) : ITime => {
 		minute: date.getMinutes()
 	};
 });
-
-/** Converts a timestamp into a Date. */
-export const timestampToDate	= memoize((timestamp?: number) : Date =>
-	timestamp === undefined || isNaN(timestamp) ? new Date() : new Date(timestamp)
-);
 
 /**
  * Changes the date and/or time of a timestamp.

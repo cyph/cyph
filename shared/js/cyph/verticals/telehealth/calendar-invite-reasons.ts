@@ -16,5 +16,7 @@ export const calendarInviteReasons	= [
 	'Diagnostic Tests: Blood Work/Lab Results Review',
 	'Injury'
 ].map(
+	/* Temporary workaround for https://github.com/palantir/tslint/issues/2430 */
+	/* tslint:disable-next-line:no-unnecessary-callback-wrapper */
 	s => translate(s)
 );

@@ -14,6 +14,7 @@ import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
+import {trackBySelf} from '../track-by/track-by-self';
 import {trackByValue} from '../track-by/track-by-value';
 
 
@@ -46,6 +47,9 @@ export class AccountProfileComponent implements OnInit {
 
 	/** @see UserPresence */
 	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
+
+	/** @see trackBySelf */
+	public readonly trackBySelf: typeof trackBySelf		= trackBySelf;
 
 	/** @see trackByValue */
 	public readonly trackByValue: typeof trackByValue	= trackByValue;
