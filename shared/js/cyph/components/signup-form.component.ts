@@ -16,7 +16,7 @@ import {sleep} from '../util/wait';
 })
 export class SignupFormComponent {
 	/** Indicates whether or not to display invite-code-related UI. */
-	@Input() public invite: boolean;
+	@Input() public invite: boolean	= false;
 
 	/** @see SignupService.submit */
 	public async submit () : Promise<void> {

@@ -51,10 +51,14 @@ import {LocalSessionService} from './local-session.service';
 })
 export class DemoChatRootComponent implements OnInit {
 	/** @see ChatData */
-	@Input() public data: ChatData;
+	@Input() public data?: ChatData;
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		if (!this.data) {
+			return;
+		}
+
 		this.demoEnvService.init(this.data);
 		this.localSessionService.initChatData(this.data);
 

@@ -26,7 +26,7 @@ import {translate} from '../util/translate';
 })
 export class AccountComponent implements AfterViewInit, OnInit {
 	/** @ignore */
-	private resolveViewInitiated: () => void;
+	private resolveViewInitiated: () => void	= () => {};
 
 	/** Resolves after view init. */
 	public readonly viewInitiated: Promise<void>	= new Promise(resolve => {

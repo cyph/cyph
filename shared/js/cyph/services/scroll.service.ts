@@ -18,7 +18,7 @@ export class ScrollService {
 	private lastUnreadItemCount: number	= 0;
 
 	/** @ignore */
-	private resolveRootElement: (rootElement: JQuery) => void;
+	private resolveRootElement: (rootElement: JQuery) => void	= () => {};
 
 	/** @ignore */
 	private readonly rootElement: Promise<JQuery>	= new Promise<JQuery>(resolve => {

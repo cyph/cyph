@@ -31,7 +31,7 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 	private calendarEvents: {end: number; start: number; title: string}[]	= [];
 
 	/** @see CalendarComponent */
-	@ViewChild(CalendarComponent) public calendar: CalendarComponent;
+	@ViewChild(CalendarComponent) public calendar?: CalendarComponent;
 
 	/** Calendar configuration. */
 	public readonly calendarOptions: Options	= {
@@ -100,7 +100,9 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 	public async ngAfterViewInit () : Promise<void> {
 		this.accountService.transitionEnd();
 
-		await this.calendar.initialized.pipe(take(1)).toPromise();
+		if (this.calendar) {
+			await this.calendar.initialized.pipe(take(1)).toPromise();
+		}
 
 		this.accountFilesService.filesListFiltered.appointments.pipe(
 			mergeMap(async records => Promise.all(records.map(async record =>
@@ -119,7 +121,9 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 				}))
 			;
 
-			this.calendar.fullCalendar('refetchEvents');
+			if (this.calendar) {
+				this.calendar.fullCalendar('refetchEvents');
+			}
 		});
 	}
 

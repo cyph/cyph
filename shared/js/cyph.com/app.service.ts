@@ -25,7 +25,7 @@ export class AppService {
 	private disableNextScroll: boolean	= false;
 
 	/** Amount, category, and item in cart. */
-	public cart: {
+	public cart?: {
 		amount: number;
 		category: number;
 		item: number;
@@ -42,7 +42,7 @@ export class AppService {
 	public readonly donationAmount: number	= 10;
 
 	/** Carousel of features. */
-	public featureCarousel: Carousel;
+	public featureCarousel?: Carousel;
 
 	/** Current feature displayed in hero section. */
 	public featureIndex: number			= 0;
@@ -66,7 +66,7 @@ export class AppService {
 	public state: States	= States.home;
 
 	/** Carousel of testimonials. */
-	public testimonialCarousel: Carousel;
+	public testimonialCarousel?: Carousel;
 
 	/** @ignore */
 	private cycleFeatures () : void {

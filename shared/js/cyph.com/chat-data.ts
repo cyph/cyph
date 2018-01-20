@@ -7,7 +7,7 @@ import {ISessionMessage, ISessionMessageData} from '../cyph/proto';
  */
 export class ChatData {
 	/** Gives command to start. */
-	public resolveStart: () => void;
+	public resolveStart: () => void	= () => {};
 
 	/** Awaits command to start. */
 	public readonly start: Promise<void>;

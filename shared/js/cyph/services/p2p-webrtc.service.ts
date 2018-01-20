@@ -131,13 +131,13 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	;
 
 	/** @ignore */
-	private resolveHandlers: (handlers: IP2PHandlers) => void;
+	private resolveHandlers: (handlers: IP2PHandlers) => void		= () => {};
 
 	/** @ignore */
-	private resolveLocalVideo: (localVideo: () => JQuery) => void;
+	private resolveLocalVideo: (localVideo: () => JQuery) => void	= () => {};
 
 	/** @ignore */
-	private resolveRemoteVideo: (remoteVideo: () => JQuery) => void;
+	private resolveRemoteVideo: (remoteVideo: () => JQuery) => void	= () => {};
 
 	/** @ignore */
 	private webRTC: any;
@@ -166,7 +166,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	});
 
 	/** @inheritDoc */
-	public resolveReady: () => void;
+	public resolveReady: () => void	= () => {};
 
 	/** @ignore */
 	private async receiveCommand (command: ISessionCommand) : Promise<void> {

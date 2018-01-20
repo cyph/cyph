@@ -30,19 +30,19 @@ export class LinkConnectionComponent implements AfterViewInit {
 	private readonly copyLock: {}		= {};
 
 	/** @ignore */
-	private linkConstant: string;
+	private linkConstant: string			= '';
 
 	/** Indicates whether the advanced features menu is open. */
-	public advancedFeatures: boolean;
+	public advancedFeatures: boolean		= false;
 
 	/** Indicates whether advanced features UI should be displayed. */
 	public enableAdvancedFeatures: boolean	= !this.envService.isProd;
 
 	/** Indicates whether this link connection was initiated passively via API integration. */
-	public isPassive: boolean;
+	public isPassive: boolean				= false;
 
 	/** The link to join this connection. */
-	public link: string;
+	public link?: string;
 
 	/** Mailto version of this link. */
 	public linkMailto?: SafeUrl;
@@ -54,11 +54,13 @@ export class LinkConnectionComponent implements AfterViewInit {
 	public queuedMessageDraft: string	= '';
 
 	/** Counts down until link expires. */
-	public timer: Timer;
+	public timer?: Timer;
 
 	/** Extends the countdown duration. */
 	public async addTime (milliseconds: number) : Promise<void> {
-		this.timer.addTime(milliseconds);
+		if (this.timer) {
+			this.timer.addTime(milliseconds);
+		}
 
 		await lockTryOnce(
 			this.addTimeLock,
@@ -163,7 +165,9 @@ export class LinkConnectionComponent implements AfterViewInit {
 			this.linkMailto		= undefined;
 			this.linkSMS		= undefined;
 
-			this.timer.stop();
+			if (this.timer) {
+				this.timer.stop();
+			}
 		});
 
 		await sleep(1000);

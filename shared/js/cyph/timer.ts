@@ -9,16 +9,16 @@ import {sleep} from './util/wait';
  */
 export class Timer {
 	/** @ignore */
-	private endTime: number;
+	private endTime?: number;
 
 	/** @ignore */
-	private includeHours: boolean;
+	private includeHours: boolean	= false;
 
 	/** @ignore */
-	private includeMinutes: boolean;
+	private includeMinutes: boolean	= false;
 
 	/** @ignore */
-	private isStopped: boolean;
+	private isStopped: boolean		= false;
 
 	/** Indicates whether timer's countdown has completed. */
 	public isComplete: Subject<boolean>	= new BehaviorSubject(false);

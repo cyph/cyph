@@ -22,7 +22,7 @@ export class DynamicFormComponent {
 	private readonly maskCache: Map<Uint8Array, any>		= new Map<Uint8Array, any>();
 
 	/** @see Form */
-	@Input() public form: IForm;
+	@Input() public form?: IForm;
 
 	/** Indicates whether input is disabled. */
 	@Input() public isDisabled: boolean						= false;

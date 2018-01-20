@@ -13,7 +13,7 @@ import {StringsService} from '../services/strings.service';
 })
 export class DialogImageComponent {
 	/** Image src. */
-	public src: SafeUrl|string;
+	public src?: SafeUrl|string;
 
 	constructor (
 		/** @see StringsService */

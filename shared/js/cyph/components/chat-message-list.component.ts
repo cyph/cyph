@@ -87,7 +87,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	@Input() public accounts: boolean					= false;
 
 	/** @see IChatData */
-	@Input() public chat: IChatData;
+	@Input() public chat?: IChatData;
 
 	/** @see customBuildLogoVertical */
 	public readonly customBackgroundImage: Promise<SafeStyle|undefined>	=

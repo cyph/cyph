@@ -10,14 +10,14 @@ import {SessionService} from './session.service';
 @Injectable()
 export class SessionCapabilitiesService implements ISessionCapabilitiesService {
 	/** @ignore */
-	private readonly remoteCapabilities: Promise<ISessionCapabilities>	=
+	private readonly remoteCapabilities: Promise<ISessionCapabilities>			=
 		this.sessionService.one<ISessionMessageData>(rpcEvents.capabilities).then(o =>
 			o.capabilities || {nativeCrypto: false, p2p: false}
 		)
 	;
 
 	/** @ignore */
-	private resolveCapabilities: (capabilities: ISessionCapabilities) => void;
+	private resolveCapabilities: (capabilities: ISessionCapabilities) => void	= () => {};
 
 	/** @inheritDoc */
 	public readonly capabilities: Promise<ISessionCapabilities>			=
@@ -39,7 +39,7 @@ export class SessionCapabilitiesService implements ISessionCapabilitiesService {
 	})();
 
 	/** @inheritDoc */
-	public resolveP2PSupport: (isSupported: boolean) => void;
+	public resolveP2PSupport: (isSupported: boolean) => void			= () => {};
 
 	constructor (
 		/** @ignore */

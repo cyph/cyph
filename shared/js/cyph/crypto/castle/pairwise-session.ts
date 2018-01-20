@@ -45,7 +45,7 @@ export class PairwiseSession {
 	private readonly isReceiving: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
 	/** @ignore */
-	private resolveCore: (core: Core) => void;
+	private resolveCore: (core: Core) => void	= () => {};
 
 	/** @ignore */
 	private async abort () : Promise<void> {

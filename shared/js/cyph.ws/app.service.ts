@@ -28,7 +28,7 @@ export class AppService implements CanActivate {
 	});
 
 	/** @ignore */
-	private resolveLockedDownRoute: (lockedDownRoute: string) => void;
+	private resolveLockedDownRoute: (lockedDownRoute: string) => void	= () => {};
 
 	/** @see ChatRootStates */
 	public chatRootState: ChatRootStates	= ChatRootStates.blank;

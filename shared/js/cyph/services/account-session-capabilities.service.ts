@@ -22,7 +22,7 @@ export class AccountSessionCapabilitiesService implements ISessionCapabilitiesSe
 	public readonly localCapabilities: Promise<ISessionCapabilities>	= this.capabilities;
 
 	/** @inheritDoc */
-	public resolveP2PSupport: (isSupported: boolean) => void;
+	public resolveP2PSupport: (isSupported: boolean) => void			= () => {};
 
 	constructor () {}
 }

@@ -107,10 +107,10 @@ export class P2PService {
 	};
 
 	/** Indicates whether P2P is possible (i.e. both clients support WebRTC). */
-	public isEnabled: boolean	= false;
+	public isEnabled: boolean		= false;
 
 	/** Indicates whether sidebar is open. */
-	public isSidebarOpen: boolean;
+	public isSidebarOpen: boolean	= false;
 
 	/** Close active P2P session. */
 	public closeButton () : void {

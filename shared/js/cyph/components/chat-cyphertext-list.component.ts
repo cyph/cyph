@@ -19,7 +19,7 @@ export class ChatCyphertextListComponent {
 	@Input() public accounts: boolean	= false;
 
 	/** @see CyphertextService.messages */
-	@Input() public messages: List<ChatMessage>;
+	@Input() public messages?: List<ChatMessage>;
 
 	/** @see trackByID */
 	public readonly trackByID: typeof trackByID	= trackByID;

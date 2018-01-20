@@ -16,7 +16,7 @@ import {waitForIterable} from '../util/wait';
 })
 export class FileInputComponent implements AfterViewInit {
 	/** Optional file type restriction. */
-	@Input() public accept: string;
+	@Input() public accept?: string;
 
 	/** Handler for uploaded files. */
 	@Output() public change: EventEmitter<File>	= new EventEmitter<File>();

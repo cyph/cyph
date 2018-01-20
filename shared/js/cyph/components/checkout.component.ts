@@ -24,31 +24,31 @@ export class CheckoutComponent implements AfterViewInit {
 	private braintreeInstance: any;
 
 	/** Amount in dollars. */
-	@Input() public amount: number;
+	@Input() public amount: number	= 0;
 
 	/** Item category ID number. */
-	@Input() public category: number;
+	@Input() public category?: number;
 
 	/** Company. */
-	@Input() public company: string;
+	@Input() public company?: string;
 
 	/** Indicates whether checkout is complete. */
-	public complete: boolean;
+	public complete: boolean			= false;
 
 	/** ID of Braintree container element. */
 	public readonly containerID: string	= `id-${uuid()}`;
 
 	/** Email address. */
-	@Input() public email: string;
+	@Input() public email?: string;
 
 	/** Item ID number. */
-	@Input() public item: number;
+	@Input() public item?: number;
 
 	/** Name. */
-	@Input() public name: string;
+	@Input() public name?: string;
 
 	/** Indicates whether payment is pending. */
-	public pending: boolean;
+	public pending: boolean				= false;
 
 	/** @see SubscriptionTypes */
 	@Input() public subscriptionType?: SubscriptionTypes;
@@ -57,7 +57,7 @@ export class CheckoutComponent implements AfterViewInit {
 	@Input() public subscriptionTypes: typeof SubscriptionTypes	= SubscriptionTypes;
 
 	/** Indicates whether checkout is complete. */
-	public success: boolean;
+	public success: boolean				= false;
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {

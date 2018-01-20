@@ -49,7 +49,7 @@ export class ChatService {
 	/** @ignore */
 	private resolveChatMessageGeometryService: (chatMessageGeometryService: {
 		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
-	}) => void;
+	}) => void	= () => {};
 
 	/** @see ChatMessageGeometryService */
 	protected readonly chatMessageGeometryService: Promise<{

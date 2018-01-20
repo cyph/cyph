@@ -12,13 +12,13 @@ import {StringsService} from '../services/strings.service';
 })
 export class DialogAlertComponent {
 	/** Content. */
-	public content: string;
+	public content?: string;
 
 	/** OK button text. */
-	public ok: string;
+	public ok?: string;
 
 	/** Title. */
-	public title: string;
+	public title?: string;
 
 	constructor (
 		/** @see StringsService */

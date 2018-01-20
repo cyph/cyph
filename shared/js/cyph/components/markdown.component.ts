@@ -30,7 +30,7 @@ export class MarkdownComponent implements OnChanges {
 	public html?: SafeHtml;
 
 	/** String of Markdown to render as HTML and add to the DOM. */
-	@Input() public markdown: string;
+	@Input() public markdown?: string;
 
 	/** @inheritDoc */
 	public async ngOnChanges () : Promise<void> {

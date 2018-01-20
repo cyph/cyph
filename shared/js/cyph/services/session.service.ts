@@ -37,7 +37,7 @@ export abstract class SessionService implements ISessionService {
 	private readonly openEvents: Set<string>	= new Set();
 
 	/** @ignore */
-	private resolveOpened: () => void;
+	private resolveOpened: () => void			= () => {};
 
 	/** @ignore */
 	private resolveSymmetricKey?: (symmetricKey: Uint8Array) => void;

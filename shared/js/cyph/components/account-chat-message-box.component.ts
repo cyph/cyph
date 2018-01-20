@@ -39,7 +39,7 @@ export class AccountChatMessageBoxComponent {
 	@Input() public recipient?: Observable<User|undefined>;
 
 	/** @see ChatMessageBoxComponent.send */
-	public send: () => Promise<void>;
+	public send?: () => Promise<void>;
 
 	/** Shows header. */
 	@Input() public showHeader: boolean			= false;

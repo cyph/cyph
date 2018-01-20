@@ -25,10 +25,10 @@ export class AccountSessionService extends SessionService {
 	private initiated: boolean	= false;
 
 	/** @ignore */
-	private resolveAccountsSymmetricKey: (symmetricKey: Uint8Array) => void;
+	private resolveAccountsSymmetricKey: (symmetricKey: Uint8Array) => void	= () => {};
 
 	/** @ignore */
-	private resolveReady: () => void;
+	private resolveReady: () => void	= () => {};
 
 	/** @inheritDoc */
 	protected readonly symmetricKey: Promise<Uint8Array>		=

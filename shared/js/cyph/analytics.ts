@@ -11,7 +11,7 @@ import {sleep} from './util/wait';
  */
 export class Analytics {
 	/** @ignore */
-	private analFrame: HTMLIFrameElement;
+	private analFrame?: HTMLIFrameElement;
 
 	/** @ignore */
 	private readonly enabled: Promise<boolean>;
@@ -25,10 +25,12 @@ export class Analytics {
 		args.unshift(method);
 
 		try {
-			this.analFrame.contentWindow.postMessage(
-				{args: stringify(args)},
-				this.env.baseUrl.slice(0, -1)
-			);
+			if (this.analFrame) {
+				this.analFrame.contentWindow.postMessage(
+					{args: stringify(args)},
+					this.env.baseUrl.slice(0, -1)
+				);
+			}
 		}
 		catch {}
 	}

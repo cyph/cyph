@@ -94,7 +94,7 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 	@Input() public deltas?: Observable<IQuillDelta>;
 
 	/** Indicates whether editor should be read-only. */
-	@Input() public isDisabled: boolean;
+	@Input() public isDisabled: boolean	= false;
 
 	/** Emits on ready. */
 	@Output() public readonly ready: EventEmitter<void>	= new EventEmitter<void>();
@@ -111,7 +111,7 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 	;
 
 	/** Stream of selections to apply. */
-	@Input() public selections: Observable<IQuillRange>;
+	@Input() public selections?: Observable<IQuillRange>;
 
 	/** Toolbar configuration. */
 	@Input() public toolbar: any	= [

@@ -11,7 +11,7 @@ import {EnvService} from '../services/env.service';
 })
 export class NanoScrollerDirective implements OnInit {
 	/** If true, sets nano class on this element. */
-	@Input() public cyphNanoScrollerNoParent: boolean;
+	@Input() public cyphNanoScrollerNoParent: boolean	= false;
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {

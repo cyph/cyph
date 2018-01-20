@@ -14,7 +14,7 @@ import {StringsService} from '../services/strings.service';
 })
 export class BetaRegisterComponent {
 	/** @see SignupFormComponent.invite */
-	@Input() public invite: boolean;
+	@Input() public invite: boolean	= false;
 
 	constructor (
 		/** @see EnvService */

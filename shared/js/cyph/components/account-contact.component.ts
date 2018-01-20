@@ -17,7 +17,7 @@ export class AccountContactComponent {
 	@Input() public clickable: boolean	= true;
 
 	/** Contact. */
-	@Input() public contact: User;
+	@Input() public contact?: User;
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;

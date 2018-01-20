@@ -55,7 +55,7 @@ export class AccountService {
 	));
 
 	/** Resolves ready promise. */
-	public resolveUiReady: () => void;
+	public resolveUiReady: () => void		= () => {};
 
 	/** Root for account routes. */
 	public readonly routeRoot: string		= accountRoot === '' ? '/' : `/${accountRoot}/`;

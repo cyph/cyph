@@ -29,7 +29,7 @@ export class ChannelService implements IChannelService {
 	private pauseLock?: Subject<void>;
 
 	/** @ignore */
-	private resolveState: (state: {lock: LockFunction; url: string}) => void;
+	private resolveState: (state: {lock: LockFunction; url: string}) => void	= () => {};
 
 	/** @ignore */
 	private readonly state: Promise<{lock: LockFunction; url: string}>	=

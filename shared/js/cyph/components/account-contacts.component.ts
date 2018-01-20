@@ -40,7 +40,7 @@ export class AccountContactsComponent implements AfterViewInit, OnInit {
 	;
 
 	/** @see AccountContactsSearchComponent.clearUserFilter */
-	public clearUserFilter: () => void;
+	public clearUserFilter?: () => void;
 
 	/** Full contact list with active contact filtered out. */
 	public readonly contactList: BehaviorSubject<User[]>	= observableToBehaviorSubject(
