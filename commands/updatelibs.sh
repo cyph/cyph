@@ -76,11 +76,14 @@ read -r -d '' modules <<- EOM
 	@types/quill
 	@types/stacktrace-js
 	@yaga/leaflet-ng2
+	angular-infinite-list
 	angular-material-clock-time-picker
 	angular-speed-dial
 	angular-ssr
+	angular2-cool-infinite-grid
 	angular2-template-loader
 	angular2-text-mask
+	angular2-virtual-scroll
 	animate.css@https://github.com/daneden/animate.css
 	animated-scroll-to
 	awesome-typescript-loader
@@ -168,10 +171,11 @@ read -r -d '' modules <<- EOM
 	nativescript-dev-typescript
 	nativescript-dev-webpack
 	nativescript-theme-core
-	ng2-fittext
 	ng-fullcalendar
+	ng2-fittext
 	ng2-pdf-viewer
 	ng2-truncate
+	ngx-infinite-scroll
 	node-fetch
 	node-sass
 	notify-cli
