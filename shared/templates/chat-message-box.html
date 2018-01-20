@@ -29,7 +29,7 @@
 	>
 		<cyph-dynamic-form
 			[form]='chatService.chat.currentMessage.form'
-			(submit)='chatService.chat.currentMessage.form = $event; send()'
+			(submitForm)='chatService.chat.currentMessage.form = $event; send()'
 		></cyph-dynamic-form>
 	</div>
 
@@ -119,7 +119,7 @@
 					<mat-icon>attach_file</mat-icon>
 					<cyph-file-input
 						[accept]='fileAccept'
-						(change)='mobileButtonHandlers.fileTransfer($event)'
+						(fileChange)='mobileButtonHandlers.fileTransfer($event)'
 					></cyph-file-input>
 				</button>
 			</div>
@@ -164,7 +164,7 @@
 					<mat-icon>attach_file</mat-icon>
 					<cyph-file-input
 						[accept]='fileAccept'
-						(change)='fileTransferService.send($event)'
+						(fileChange)='fileTransferService.send($event)'
 					></cyph-file-input>
 				</button>
 				<button

@@ -71,8 +71,14 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 	/** @ignore */
 	private selectionsSubscription?: Subscription;
 
+	/** ID of Quill container element. */
+	public readonly containerID: string	= `id-${uuid()}`;
+
+	/** Entire contents of the editor. */
+	@Input() public content?: IQuillDelta;
+
 	/** Emits on change. */
-	@Output() public readonly change: EventEmitter<{
+	@Output() public readonly contentChange: EventEmitter<{
 		content: IQuillDelta;
 		delta: IQuillDelta;
 		oldContent: IQuillDelta;
@@ -83,12 +89,6 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 			oldContent: IQuillDelta;
 		}>()
 	;
-
-	/** ID of Quill container element. */
-	public readonly containerID: string	= `id-${uuid()}`;
-
-	/** Entire contents of the editor. */
-	@Input() public content?: IQuillDelta;
 
 	/** Stream of deltas to apply. */
 	@Input() public deltas?: Observable<IQuillDelta>;
@@ -207,7 +207,7 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 
 			const content	= this.addClientID(oldDelta.compose(delta));
 
-			this.change.emit({
+			this.contentChange.emit({
 				content,
 				delta: this.addClientID(delta),
 				oldContent: this.addClientID(oldDelta)

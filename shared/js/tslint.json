@@ -265,6 +265,7 @@
 		"no-attribute-parameter-decorator": true,
 		"no-forward-ref": true,
 		"no-input-rename": true,
+		"no-output-named-after-standard-event": true,
 		"no-output-on-prefix": true,
 		"no-output-rename": true,
 		"no-unused-css": false,
@@ -322,9 +323,11 @@
 		/* rxjs */
 
 		"rxjs-add": false,
+		"rxjs-finnish": false,
 		"rxjs-no-add": true,
 		"rxjs-no-create": true,
 		"rxjs-no-do": false,
+		"rxjs-no-finnish": true,
 		"rxjs-no-operator": true,
 		"rxjs-no-patched": true,
 		"rxjs-no-subject-unsubscribe": false,

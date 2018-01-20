@@ -31,7 +31,7 @@ export class DynamicFormComponent {
 	@Input() public mobile: boolean							= this.envService.isMobile;
 
 	/** @see Form */
-	@Output() public submit: EventEmitter<IForm>			= new EventEmitter<IForm>();
+	@Output() public submitForm: EventEmitter<IForm>		= new EventEmitter<IForm>();
 
 	/** @see timestampToDate */
 	public readonly timestampToDate: typeof timestampToDate	= timestampToDate;

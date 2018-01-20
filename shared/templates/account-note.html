@@ -68,7 +68,7 @@
 								[deltas]='note?.deltas'
 								[selections]='note?.selections'
 								[isDisabled]='!editable'
-								(change)='onChange($event)'
+								(contentChange)='onChange($event)'
 								(selectionChange)='onSelectionChange($event)'
 							></cyph-quill>
 						</mat-card-content>
