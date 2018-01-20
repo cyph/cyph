@@ -54,6 +54,9 @@ export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
 
+	/** @see CalendarInviteComponent.reasons */
+	@Input() public calendarInviteReasons?: string[];
+
 	/** @see ChatMessageValueTypes */
 	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
 
