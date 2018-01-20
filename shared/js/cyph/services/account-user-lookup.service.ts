@@ -8,7 +8,7 @@ import {
 	DataURIProto
 } from '../proto';
 import {normalize} from '../util/formatting';
-import {getOrSetDefault} from '../util/get-or-set-default';
+import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 
@@ -84,54 +84,58 @@ export class AccountUserLookupService {
 		username	= normalize(username);
 		const url	= `users/${username}`;
 
-		if (!(await this.exists(username))) {
-			return undefined;
-		}
+		return getOrSetDefaultAsync(this.userCache, username, async () => {
+			if (!(await this.exists(username))) {
+				throw new Error('User does not exist.');
+			}
 
-		return getOrSetDefault(this.userCache, username, () => new User(
-			username,
-			this.accountDatabaseService.watch(
-				`${url}/avatar`,
-				DataURIProto,
-				SecurityModels.public,
-				undefined,
-				true
-			).pipe(map(({value}) =>
-				/* tslint:disable-next-line:strict-type-predicates */
-				typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
-			)),
-			this.accountDatabaseService.watch(
-				`${url}/coverImage`,
-				DataURIProto,
-				SecurityModels.public,
-				undefined,
-				true
-			).pipe(map(({value}) =>
-				/* tslint:disable-next-line:strict-type-predicates */
-				typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
-			)),
-			this.databaseService.getAsyncValue(
-				`${url}/presence`,
-				AccountUserPresence
-			),
-			this.accountDatabaseService.getAsyncValue(
-				`${url}/publicProfile`,
-				AccountUserProfile,
-				SecurityModels.public,
-				undefined,
-				true
-			),
-			profileExtraTemp
-			/*
-			this.accountDatabaseService.getAsyncValue(
-				`${url}/publicProfileExtra`,
-				AccountUserProfileExtra,
-				SecurityModels.public,
-				undefined,
-				true
-			)
-			*/
-		));
+			return new User(
+				username,
+				this.accountDatabaseService.watch(
+					`${url}/avatar`,
+					DataURIProto,
+					SecurityModels.public,
+					undefined,
+					true
+				).pipe(map(({value}) =>
+					/* tslint:disable-next-line:strict-type-predicates */
+					typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
+				)),
+				this.accountDatabaseService.watch(
+					`${url}/coverImage`,
+					DataURIProto,
+					SecurityModels.public,
+					undefined,
+					true
+				).pipe(map(({value}) =>
+					/* tslint:disable-next-line:strict-type-predicates */
+					typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
+				)),
+				this.databaseService.getAsyncValue(
+					`${url}/presence`,
+					AccountUserPresence
+				),
+				this.accountDatabaseService.getAsyncValue(
+					`${url}/publicProfile`,
+					AccountUserProfile,
+					SecurityModels.public,
+					undefined,
+					true
+				),
+				profileExtraTemp
+				/*
+				this.accountDatabaseService.getAsyncValue(
+					`${url}/publicProfileExtra`,
+					AccountUserProfileExtra,
+					SecurityModels.public,
+					undefined,
+					true
+				)
+				*/
+			);
+		}).catch(
+			() => undefined
+		);
 	}
 
 	constructor (

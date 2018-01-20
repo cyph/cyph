@@ -203,7 +203,7 @@
 			fxFlex
 			fxFlexFill
 			fxLayout='column'
-			class='profile'
+			class='profile telehealth'
 			[class.mobile]='envService.isMobile'
 		>
 			<div
@@ -315,7 +315,7 @@
 						<div class='cyph-light-theme'>
 							<span>TODO: $DOCTOR_LIST</span>
 							<cyph-account-contact
-								[contact]='accountUserLookupService.getUser("who") | async'
+								[contact]='doctorTmp | async'
 								class='cyph-main-theme'
 							></cyph-account-contact>
 						</div>

@@ -36,6 +36,11 @@ export class AccountProfileComponent implements OnInit {
 	/** Current draft of user profile description. */
 	public descriptionDraft: string	= '';
 
+	/** TODO: Doctor list. */
+	public readonly doctorTmp: Promise<User|undefined>	=
+		this.accountUserLookupService.getUser('who')
+	;
+
 	/** Profile edit mode. */
 	public editMode: boolean		= false;
 
