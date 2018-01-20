@@ -102,7 +102,7 @@
 
 	cyph-account {
 		.header {
-			color: $cyph-background;
+			color: if($cyph-is-dark, $cyph-foreground, $cyph-background);
 			background-color: map-get($cyph-accent, default);
 
 			&:after {
