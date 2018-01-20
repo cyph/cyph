@@ -454,7 +454,9 @@ export class StringsService {
 	public readonly suregoahead: string					= `sure, go ahead`;
 
 	/** @see StringsService */
-	public readonly teamToContact: string				= `${this.internalCompany} Team to Contact`;
+	public readonly teamToContact: string				=
+		`${this.internalCompany} Team to Contact`
+	;
 
 	/** @see StringsService */
 	public readonly telehealthCallAbout: string			= `Telehealth Call About`;
