@@ -4,6 +4,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {map} from 'rxjs/operators/map';
+import {sleep} from '../util/wait';
 import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 import {WindowWatcherService} from './window-watcher.service';
@@ -87,7 +88,8 @@ export class AccountService {
 	}
 
 	/** Triggers event to ends transition between components. */
-	public transitionEnd () : void {
+	public async transitionEnd () : Promise<void> {
+		await sleep(0);
 		this.transitionInternal.next(false);
 	}
 
