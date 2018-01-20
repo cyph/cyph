@@ -103,25 +103,39 @@
 		}
 	}
 
+	.header {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		width: 100%;
+		text-align: center;
+	}
+
 	.router-content {
 		position: relative;
+		width: 100%;
+		margin-left: auto;
+		margin-right: auto;
+
+		&.top {
+			top: 100px;
+		}
 
 		&, > router-outlet ~ * {
 			height: 100%;
 		}
+	}
+}
 
-		> .header {
-			position: absolute;
-			top: 0px;
-			left: 0px;
-			width: 100%;
-			text-align: center;
+.header {
+	height: 100px;
+	min-height: 100px;
+	z-index: 42;
 
-			~ :not(router-outlet) {
-				padding-top: 6rem;
-				height: calc(100% - 6rem);
-			}
-		}
+	&:after {
+		height: 20px;
+		width: 100%;
+		content: no-close-quote;
 	}
 }
 

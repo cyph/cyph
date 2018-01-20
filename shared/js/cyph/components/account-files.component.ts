@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
@@ -18,12 +18,17 @@ import {readableByteLength} from '../util/formatting';
 	styleUrls: ['../../../css/components/account-files.scss'],
 	templateUrl: '../../../templates/account-files.html'
 })
-export class AccountFilesComponent {
+export class AccountFilesComponent implements OnInit {
 	/** @see readableByteLength */
 	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
 
 	/** @see trackByID */
 	public readonly trackByID: typeof trackByID	= trackByID;
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.accountService.transitionEnd();
+	}
 
 	constructor (
 		/** @see AccountService */

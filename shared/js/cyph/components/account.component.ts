@@ -50,6 +50,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 		if (
 			[
+				'appointments',
 				'contacts',
 				'docs',
 				'files',
@@ -72,12 +73,14 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		return this.accountDatabaseService.currentUser.value !== undefined && [
 			'',
 			'audio',
+			'appointments',
 			'compose',
 			'contacts',
 			'docs',
 			'files',
 			'forms',
 			'messages',
+			'new-patient',
 			'notes',
 			'profile',
 			'request-appointment',
@@ -149,11 +152,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			});
 
 			await started;
-		}
-
-		if (!this.accountService.isUiReady) {
-			await this.viewInitiated;
-			this.accountService.resolveUiReady();
 		}
 	}
 

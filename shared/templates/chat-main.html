@@ -18,26 +18,20 @@
 		'
 		[@fadeIn]='"in"'
 	>
-		<div *ngIf='sessionService.apiFlags.telehealth; else animation' class='telehealth-logo'>
-			<cyph-logo icon telehealth></cyph-logo>
+		<div
+			class='logo-animation'
+			*ngIf='chatService.chat.state === states.keyExchange'
+		>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
 		</div>
-
-		<ng-template #animation>
-			<div
-				class='logo-animation'
-				*ngIf='chatService.chat.state === states.keyExchange'
-			>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-			</div>
-			<div
-				class='logo-animation connected'
-				*ngIf='chatService.chat.state === states.chatBeginMessage'
-			></div>
-		</ng-template>
+		<div
+			class='logo-animation connected'
+			*ngIf='chatService.chat.state === states.chatBeginMessage'
+		></div>
 
 		<div
 			cyphTranslate

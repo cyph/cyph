@@ -157,6 +157,10 @@ if (o.audioImage) {
 	$('head').append(`<meta name='custom-build-audio-image' content='${o.audioImage}' />`);
 }
 
+if (o.enableDocs) {
+	$('head').append(`<meta name='custom-build-enable-docs' content='true' />`);
+}
+
 if (o.errorImage) {
 	$('head').append(`<meta name='custom-build-error-image' content='${o.errorImage}' />`);
 }

@@ -18,7 +18,7 @@ export class WindowWatcherService {
 
 	/** @ignore */
 	private get windowWidth () : number {
-		return Math.min(window.innerWidth, window.outerWidth)
+		return Math.min(window.innerWidth, window.outerWidth);
 	}
 
 	/** Window height. */

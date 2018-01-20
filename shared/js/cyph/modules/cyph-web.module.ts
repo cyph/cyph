@@ -31,6 +31,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterModule} from '@angular/router';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {TextMaskModule} from 'angular2-text-mask';
+import {FullCalendarModule} from 'ng-fullcalendar';
 import {VirtualScrollModule} from 'od-virtualscroll';
 import {DialogAlertComponent} from '../components/dialog-alert.component';
 import {DialogConfirmComponent} from '../components/dialog-confirm.component';
@@ -68,6 +69,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DropZoneDirective,
 		FlexLayoutModule,
 		FormsModule,
+		FullCalendarModule,
 		MatAutocompleteModule,
 		MatButtonModule,
 		MatButtonToggleModule,
@@ -104,6 +106,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		BrowserModule,
 		FlexLayoutModule,
 		FormsModule,
+		FullCalendarModule,
 		HttpClientModule,
 		MatAutocompleteModule,
 		MatButtonModule,

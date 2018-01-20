@@ -27,6 +27,7 @@ import {
 	AccountFileRecord,
 	AccountFileReference,
 	AccountFileReferenceContainer,
+	Appointment,
 	BinaryProto,
 	BlobProto,
 	DataURIProto,
@@ -34,6 +35,7 @@ import {
 	IAccountFileRecord,
 	IAccountFileReference,
 	IAccountFileReferenceContainer,
+	IAppointment,
 	IForm
 } from '../proto';
 import {filterUndefined} from '../util/filter';
@@ -130,6 +132,7 @@ export class AccountFilesService {
 	 * @see files
 	 */
 	public readonly filesListFiltered	= {
+		appointments: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Appointment),
 		docs: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Doc),
 		files: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.File),
 		forms: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Form),
@@ -224,6 +227,10 @@ export class AccountFilesService {
 	 * @see files
 	 */
 	public readonly incomingFilesFiltered	= {
+		appointments: this.filterFiles(
+			this.incomingFiles,
+			AccountFileRecord.RecordTypes.Appointment
+		),
 		docs: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Doc),
 		files: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.File),
 		forms: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Form),
@@ -243,7 +250,7 @@ export class AccountFilesService {
 
 	/** @ignore */
 	private downloadItem<T> (
-		id: string,
+		id: string|IAccountFileRecord,
 		proto: IProto<T>,
 		securityModel?: SecurityModels
 	) : {
@@ -253,17 +260,23 @@ export class AccountFilesService {
 		const filePromise	= this.getFile(id);
 
 		const {progress, result}	= this.accountDatabaseService.downloadItem(
-			(async () => `users/${(await filePromise).owner}/files/${id}`)(),
+			filePromise.then(file => `users/${file.owner}/files/${file.id}`),
 			proto,
 			securityModel,
-			(async () => (await filePromise).key)()
+			filePromise.then(file => file.key)
 		);
 
-		return {progress, result: (async () => (await result).value)()};
+		return {progress, result: result.then(o => o.value)};
 	}
 
 	/** @ignore */
-	private fileIsDelta (file: IQuillDelta|File|IForm) : boolean {
+	private fileIsAppointment (file: IAppointment|IForm|IQuillDelta|File) : boolean {
+		const maybeAppointment	= <any> file;
+		return maybeAppointment.calendarInvite !== undefined;
+	}
+
+	/** @ignore */
+	private fileIsDelta (file: IAppointment|IForm|IQuillDelta|File) : boolean {
 		const maybeDelta	= <any> file;
 		return typeof maybeDelta.chop === 'function' || maybeDelta.ops instanceof Array;
 	}
@@ -286,25 +299,56 @@ export class AccountFilesService {
 		incomingFile: IAccountFileRecord&IAccountFileReference,
 		shouldAccept: boolean = true
 	) : Promise<void> {
-		if (shouldAccept) {
-			if (incomingFile.wasAnonymousShare) {
-				await this.accountDatabaseService.setItem<IAccountFileRecord>(
-					`fileRecords/${incomingFile.id}`,
-					AccountFileRecord,
-					incomingFile,
-					undefined,
-					incomingFile.key
-				);
-			}
+		if (!shouldAccept) {
+			await this.accountDatabaseService.removeItem(`incomingFiles/${incomingFile.id}`);
+			return;
+		}
 
-			await this.accountDatabaseService.setItem<IAccountFileReference>(
+		const promises	= [
+			this.accountDatabaseService.setItem<IAccountFileReference>(
 				`fileReferences/${incomingFile.id}`,
 				AccountFileReference,
 				incomingFile
-			);
+			)
+		];
+
+		if (incomingFile.wasAnonymousShare) {
+			promises.push(this.accountDatabaseService.setItem<IAccountFileRecord>(
+				`fileRecords/${incomingFile.id}`,
+				AccountFileRecord,
+				incomingFile,
+				undefined,
+				incomingFile.key
+			));
 		}
 
-		await this.accountDatabaseService.removeItem(`incomingFiles/${incomingFile.id}`);
+		if (incomingFile.recordType === AccountFileRecord.RecordTypes.Appointment) {
+			promises.push((async () => {
+				const currentUser	= this.accountDatabaseService.currentUser.value;
+
+				if (!currentUser) {
+					throw new Error('User not signed in. Cannot RSVP.');
+				}
+
+				const appointment	= await this.downloadAppointment(incomingFile).result;
+
+				if (!appointment.rsvps) {
+					appointment.rsvps	= {};
+				}
+
+				appointment.rsvps[currentUser.user.username]	= Appointment.RSVP.Yes;
+
+				return this.accountDatabaseService.setItem(
+					`users/${incomingFile.owner}/files/${incomingFile.id}`,
+					Appointment,
+					appointment,
+					undefined,
+					incomingFile.key
+				);
+			})());
+		}
+
+		await Promise.all(promises);
 	}
 
 	/** Downloads and saves file. */
@@ -328,8 +372,16 @@ export class AccountFilesService {
 		};
 	}
 
+	/** Downloads and returns appointment. */
+	public downloadAppointment (id: string|IAccountFileRecord) : {
+		progress: Observable<number>;
+		result: Promise<IAppointment>;
+	} {
+		return this.downloadItem(id, Appointment);
+	}
+
 	/** Downloads file and returns form. */
-	public downloadForm (id: string) : {
+	public downloadForm (id: string|IAccountFileRecord) : {
 		progress: Observable<number>;
 		result: Promise<IForm>;
 	} {
@@ -337,7 +389,7 @@ export class AccountFilesService {
 	}
 
 	/** Downloads file and returns as data URI. */
-	public downloadURI (id: string) : {
+	public downloadURI (id: string|IAccountFileRecord) : {
 		progress: Observable<number>;
 		result: Promise<SafeUrl|string>;
 	} {
@@ -346,9 +398,19 @@ export class AccountFilesService {
 
 	/** Gets the specified file record. */
 	public async getFile (
-		id: string,
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		recordType?: AccountFileRecord.RecordTypes
 	) : Promise<IAccountFileRecord&IAccountFileReference> {
+		if (typeof id !== 'string') {
+			const maybeFileReference: any	= id;
+			if (maybeFileReference.owner !== undefined && maybeFileReference.key !== undefined) {
+				return maybeFileReference;
+			}
+			else {
+				id	= id.id;
+			}
+		}
+
 		await this.accountDatabaseService.getCurrentUser();
 
 		const reference	= await this.accountDatabaseService.getItem(
@@ -456,13 +518,15 @@ export class AccountFilesService {
 			})) {
 				this.router.navigate([
 					accountRoot,
-					file.recordType === AccountFileRecord.RecordTypes.Doc ?
-						'docs' :
-						file.recordType === AccountFileRecord.RecordTypes.File ?
-							'files' :
-							file.recordType === AccountFileRecord.RecordTypes.Form ?
-								'forms' :
-								'notes'
+					file.recordType === AccountFileRecord.RecordTypes.Appointment ?
+						'appointments' :
+						file.recordType === AccountFileRecord.RecordTypes.Doc ?
+							'docs' :
+							file.recordType === AccountFileRecord.RecordTypes.File ?
+								'files' :
+								file.recordType === AccountFileRecord.RecordTypes.Form ?
+									'forms' :
+									'notes'
 				]);
 
 				await sleep();
@@ -600,7 +664,7 @@ export class AccountFilesService {
 	 */
 	public upload (
 		name: string,
-		file: IQuillDelta|IQuillDelta[]|File|IForm,
+		file: IQuillDelta|IQuillDelta[]|File|IAppointment|IForm,
 		shareWithUser?: string
 	) : {
 		progress: Observable<number>;
@@ -657,13 +721,21 @@ export class AccountFilesService {
 						undefined,
 						key
 					) :
-					this.accountDatabaseService.uploadItem(
-						url,
-						Form,
-						<Form> file,
-						SecurityModels.privateSigned,
-						key
-					)
+					this.fileIsAppointment(file) ?
+						this.accountDatabaseService.uploadItem(
+							url,
+							Appointment,
+							<Appointment> file,
+							undefined,
+							key
+						) :
+						this.accountDatabaseService.uploadItem(
+							url,
+							Form,
+							<Form> file,
+							SecurityModels.privateSigned,
+							key
+						)
 		;
 
 		return {
@@ -677,7 +749,9 @@ export class AccountFilesService {
 							'cyph/doc' :
 							this.fileIsDelta(file) ?
 								'cyph/note' :
-								'cyph/form'
+								this.fileIsAppointment(file) ?
+									'cyph/appointment' :
+									'cyph/form'
 					,
 					name,
 					recordType: file instanceof Blob ?
@@ -686,7 +760,9 @@ export class AccountFilesService {
 							AccountFileRecord.RecordTypes.Doc :
 							this.fileIsDelta(file) ?
 								AccountFileRecord.RecordTypes.Note :
-								AccountFileRecord.RecordTypes.Form
+								this.fileIsAppointment(file) ?
+									AccountFileRecord.RecordTypes.Appointment :
+									AccountFileRecord.RecordTypes.Form
 					,
 					size: file instanceof Blob ?
 						file.size :

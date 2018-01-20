@@ -1,6 +1,7 @@
 /* tslint:disable:object-literal-sort-keys */
 
 import {Route} from '@angular/router';
+import {AccountAppointmentsComponent} from '../components/account-appointments.component';
 import {AccountChatComponent} from '../components/account-chat.component';
 import {AccountComposeComponent} from '../components/account-compose.component';
 import {AccountContactsComponent} from '../components/account-contacts.component';
@@ -29,6 +30,7 @@ export const account: Route	= {
 	canActivateChild: [AccountAuthGuardService],
 	children: [
 		{path: '', component: AccountHomeComponent},
+		{path: 'appointments', component: AccountAppointmentsComponent},
 		{path: 'audio/:username', component: AccountChatComponent, data: {callType: 'audio'}},
 		{
 			path: 'compose',

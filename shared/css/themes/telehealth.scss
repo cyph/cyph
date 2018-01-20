@@ -41,6 +41,43 @@ body.telehealth {
 		width: 42vh;
 	}
 
+	.loading {
+		font-size: 1.43rem;
+
+		> .image, > .logo-animation {
+			height: 33vh;
+			width: 33vh;
+			min-height: 33vh;
+			min-width: 33vh;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 20px;
+			position: relative;
+
+			&:after, &:before {
+				content: '';
+				background-repeat: no-repeat;
+				background-size: 42.71vh 42.71vh;
+				height: 43.71vh;
+				width: 43.71vh;
+				top: -8.69vh;
+				left: -4.36vh;
+				position: absolute;
+				z-index: -1;
+			}
+			&:after {
+				background-image: url(/assets/img/telehealth.animated.background.a.png);
+			}
+			&:before {
+				background-image: url(/assets/img/telehealth.animated.background.b.png);
+			}
+			> * {
+				background-image: url(/assets/img/telehealth.animated.castle.png);
+			}
+		}
+	}
+
+
 	cyph-chat-message-list > .background-image, .chat-disconnect-message, .abort-screen .image {
 		display: none !important;
 	}

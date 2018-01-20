@@ -1,10 +1,17 @@
 <div
 	fxFlexFill
 	fxLayoutAlign='center center'
-	class='login-form'
+	class='login-form animated fadeIn'
 	[class.checking]='checking'
+	[class.mobile]='envService.isMobile'
 >
-	<mat-card fxFlex fxFlex.gt-sm='50' *ngIf='pinUnlock !== undefined'>
+	<mat-card
+		fxFlex='95'
+		fxFlex.gt-sm='75'
+		fxFlex.gt-md='50'
+		fxFlex.xs='100'
+		*ngIf='pinUnlock !== undefined'
+	>
 		<cyph-logo cardHeader [telehealth]='accountService.isTelehealth'></cyph-logo>
 		<mat-card-title cyphTranslate>
 			<span *ngIf='!pinUnlock'>{{stringsService.logInTitle}}</span>

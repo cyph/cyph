@@ -4,6 +4,7 @@ import {User} from '../account/user';
 import {ChatMessageValueTypes} from '../proto';
 import {AccountService} from '../services/account.service';
 import {StringsService} from '../services/strings.service';
+import {calendarInviteReasons} from '../verticals/telehealth/calendar-invite-reasons';
 
 
 /**
@@ -15,6 +16,13 @@ import {StringsService} from '../services/strings.service';
 	templateUrl: '../../../templates/account-chat-message-box.html'
 })
 export class AccountChatMessageBoxComponent {
+	/** @see ChatMessageBoxComponent.calendarInviteReasons */
+	@Input() public calendarInviteReasons?: string[]	=
+		this.accountService.isTelehealth ?
+			calendarInviteReasons :
+			undefined
+	;
+
 	/** @see ChatMessageValueTypes */
 	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
 

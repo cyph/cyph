@@ -1,0 +1,159 @@
+<div
+	fxFlexFill
+	fxLayout='row'
+	fxLayoutAlign='center start'
+	class='card-list'
+	[class.initiating]='accountFilesService.showSpinner'
+>
+	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
+		<mat-card *ngIf='calendarOptions' class='white-card'>
+			<mat-card-content>
+				<ng-fullcalendar
+					#calendar
+					[options]='calendarOptions'
+					(clickButton)='calendarClickButton($event.detail)'
+					(eventClick)='calendarEventClick($event.detail)'
+					(eventDrop)='calendarUpdateEvent($event.detail)'
+					(eventResize)='calendarUpdateEvent($event.detail)'
+				></ng-fullcalendar>
+			</mat-card-content>
+		</mat-card>
+
+		<div class='cyph-inverted-theme'>
+			<mat-accordion
+				class='appointment animated fadeInDown'
+				[class.bounceInRight]='!accountFilesService.initiated'
+			>
+				<ng-container *ngFor='
+					let record of accountFilesService.filesListFiltered.appointments | async;
+					trackBy: trackByID;
+					let i = index;
+				'>
+					<mat-expansion-panel *ngIf='getAppointment(record) | async as o'>
+						<mat-expansion-panel-header>
+							<mat-panel-title>
+								<div fxLayoutAlign='start center'>
+									<span>{{record.name}}</span>
+									<ng-container *ngIf='!record.wasAnonymousShare'>
+										<span>&nbsp;</span>
+										<span cyphTranslate>with</span>
+										<span>&nbsp;</span>
+										<a [routerLink]='
+											accountService.routeRoot + "profile/" + o.friend
+										'>
+											{{o.friend}}
+										</a>
+									</ng-container>
+								</div>
+							</mat-panel-title>
+							<mat-panel-description>
+								<div fxFlex fxLayoutGap='2px' fxLayoutAlign='end center'>
+									<button
+										mat-icon-button
+										cyphTranslate
+										matTooltip='Start Call'
+										[routerLink]='
+											accountService.routeRoot + "video/" + o.friend
+										'
+									>
+										<mat-icon>play_arrow</mat-icon>
+									</button>
+									<button
+										mat-icon-button
+										cyphTranslate
+										matTooltip='Delete'
+										(click)='
+											accountFilesService.remove(record);
+											$event.stopPropagation();
+										'
+									>
+										<mat-icon>delete</mat-icon>
+									</button>
+								</div>
+							</mat-panel-description>
+						</mat-expansion-panel-header>
+						<cyph-calendar-invite
+							[isDisabled]='true'
+							[ngModel]='o.appointment.calendarInvite'
+						></cyph-calendar-invite>
+					</mat-expansion-panel>
+				</ng-container>
+			</mat-accordion>
+		</div>
+
+		<h2
+			cyphTranslate
+			*ngIf='(accountFilesService.incomingFilesFiltered.appointments | async)?.length > 0'
+		>
+			Incoming Appointment Requests
+		</h2>
+
+		<div class='cyph-inverted-theme'>
+			<mat-accordion
+				class='appointment animated'
+				[class.bounceInRight]='!accountFilesService.initiated'
+			>
+				<ng-container *ngFor='
+					let record of accountFilesService.incomingFilesFiltered.appointments | async;
+					trackBy: trackByID;
+					let i = index;
+				'>
+					<mat-expansion-panel *ngIf='getAppointment(record) | async as o'>
+						<mat-expansion-panel-header>
+							<mat-panel-title>
+								<div fxLayoutAlign='start center'>
+									<span>{{record.name}}</span>
+									<ng-container *ngIf='!record.wasAnonymousShare'>
+										<span>&nbsp;</span>
+										<span cyphTranslate>with</span>
+										<span>&nbsp;</span>
+										<a [routerLink]='
+											accountService.routeRoot + "profile/" + record.owner
+										'>
+											{{record.owner}}
+										</a>
+									</ng-container>
+									<ng-container *ngIf='record.wasAnonymousShare'>
+										<span>&nbsp;</span>
+										<span cyphTranslate>(invited anonymously)</span>
+									</ng-container>
+								</div>
+							</mat-panel-title>
+							<mat-panel-description>
+								<div fxFlex fxLayoutGap='2px' fxLayoutAlign='end center'>
+									<button
+										mat-icon-button
+										cyphTranslate
+										matTooltip='Accept'
+										(click)='accountFilesService.acceptIncomingFile(record)'
+									>
+										<mat-icon>check</mat-icon>
+									</button>
+									<button
+										mat-icon-button
+										cyphTranslate
+										matTooltip='Reject'
+										(click)='
+											accountFilesService.acceptIncomingFile(record, false)
+										'
+									>
+										<mat-icon>close</mat-icon>
+									</button>
+								</div>
+							</mat-panel-description>
+						</mat-expansion-panel-header>
+						<cyph-calendar-invite
+							[isDisabled]='true'
+							[ngModel]='o.appointment.calendarInvite'
+						></cyph-calendar-invite>
+					</mat-expansion-panel>
+				</ng-container>
+			</mat-accordion>
+		</div>
+	</div>
+
+	<mat-progress-spinner
+		mode='indeterminate'
+		*ngIf='accountFilesService.showSpinner'
+	></mat-progress-spinner>
+</div>

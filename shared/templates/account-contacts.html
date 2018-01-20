@@ -1,7 +1,7 @@
 <div
 	fxFlexFill
 	fxLayout='row'
-	class='card-list'
+	class='card-list animated slideInDown'
 	[class.initiating]='accountContactsService.showSpinner'
 >
 	<div fxFlexFill fxLayout='column' fxLayoutAlign='start stretch'>
@@ -11,14 +11,14 @@
 		></cyph-account-contacts-search>
 
 		<cyph-account-contact
-			class='active'
+			class='active animated slideInDown'
 			[contact]='userFilter | async'
 			(click)='clearUserFilter()'
 			*ngIf='(userFilter | async) !== undefined'
 		></cyph-account-contact>
 
 		<cyph-account-contact
-			class='active'
+			class='active animated slideInDown'
 			[contact]='activeUser | async'
 			*ngIf='(userFilter | async) === undefined'
 		></cyph-account-contact>
@@ -30,7 +30,10 @@
 			*ngIf='showContactList && (userFilter | async) === undefined'
 		>
 			<ng-template let-item>
-				<cyph-account-contact [contact]='item'></cyph-account-contact>
+				<cyph-account-contact
+					[contact]='item'
+					class='animated slideInDown'
+				></cyph-account-contact>
 			</ng-template>
 		</od-virtualscroll>
 	</div>

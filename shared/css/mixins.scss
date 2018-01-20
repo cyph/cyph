@@ -67,6 +67,12 @@
 
 	@include cyph-main-theme;
 
+	@if $cyph-loading-animation-filter != null {
+		.logo-animation *, .logo-animation:after, cyph-account .cyph-gradient {
+			@include filter($cyph-loading-animation-filter);
+		}
+	}
+
 	/* Temporary workaround pending https://github.com/angular/material2/issues/4116 */
 	mat-dialog-container, mat-option {
 		color: $cyph-foreground;
@@ -91,6 +97,17 @@
 
 		&.warn {
 			color: map-get($cyph-warn, default);
+		}
+	}
+
+	cyph-account {
+		.header {
+			color: $cyph-background;
+			background-color: map-get($cyph-accent, default);
+
+			&:after {
+				background-color: map-get($cyph-accent, 300);
+			}
 		}
 	}
 

@@ -15,6 +15,8 @@ customBuildLogoHorizontal	= $('meta[name="custom-build-logo-horizontal"]').attr(
 customBuildLogoVertical		= $('meta[name="custom-build-logo-vertical"]').attr('content');
 customBuildStrings			= $('meta[name="custom-build-strings"]').attr('content');
 
+customBuildEnableDocs	= $('meta[name="custom-build-enable docs"]').attr('content') === 'true';
+
 accountRoot	=
 	$('meta[name="custom-build-accounts-only"]').attr('content') === 'true' ? '' : 'account'
 ;

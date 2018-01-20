@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
+import {NavigationStart, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {map} from 'rxjs/operators/map';
 import {ConfigService} from './config.service';
+import {EnvService} from './env.service';
 import {WindowWatcherService} from './window-watcher.service';
 
 
@@ -14,6 +16,14 @@ import {WindowWatcherService} from './window-watcher.service';
 export class AccountService {
 	/** @ignore */
 	private readonly menuExpandedInternal: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+
+	/** @ignore */
+	private readonly transitionInternal: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+
+	/** Indicates whether real-time Docs is enabled. */
+	public readonly enableDocs: boolean					=
+		customBuildEnableDocs || this.envService.isLocalEnv
+	;
 
 	/** Indicates the status of the interstitial. */
 	public interstitial: boolean						= false;
@@ -50,6 +60,9 @@ export class AccountService {
 	/** Root for account routes. */
 	public readonly routeRoot: string		= accountRoot === '' ? '/' : `/${accountRoot}/`;
 
+	/** Indicates when view is in transition. */
+	public readonly transition: Observable<boolean>	= this.transitionInternal;
+
 	/** Resolves after UI is ready. */
 	public readonly uiReady: Promise<void>	= new Promise(resolve => {
 		this.resolveUiReady	= resolve;
@@ -73,9 +86,20 @@ export class AccountService {
 		);
 	}
 
+	/** Triggers event to ends transition between components. */
+	public transitionEnd () : void {
+		this.transitionInternal.next(false);
+	}
+
 	constructor (
 		/** @ignore */
+		private readonly router: Router,
+
+		/** @ignore */
 		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly envService: EnvService,
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
@@ -110,6 +134,21 @@ export class AccountService {
 						`${this.menuExpandedMinWidth}px`
 		));
 
+
+		let lastSection	= '';
+
+		this.router.events.subscribe(e => {
+			if (!(e instanceof NavigationStart)) {
+				return;
+			}
+
+			const section	= (e.url.match(/^account\/(.*?)(\/|$).*/) || [])[1] || '';
+
+			if (section !== lastSection) {
+				lastSection	= section;
+				this.transitionInternal.next(true);
+			}
+		});
 
 		this.uiReady.then(() => {
 			this.isUiReady	= true;

@@ -1,4 +1,99 @@
-<div fxFlexFill [class.editing]='isEditorFocused'>
+<ng-template #buttons>
+	<div
+		class='buttons'
+		fxLayout='row'
+		fxLayoutAlign='center center'
+		fxLayoutGap='16px'
+		*ngIf='!isCurrentUser'
+	>
+		<button
+			mat-mini-fab
+			cyphTranslate
+			class='animated flipInX _4'
+			matTooltip='Remove Contact'
+			(click)='accountContactsService.removeContact(user.username)'
+			*ngIf='isContact | async; else buttonsAddContact'
+		>
+			<mat-icon>delete</mat-icon>
+		</button>
+		<ng-template #buttonsAddContact>
+			<button
+				mat-mini-fab
+				cyphTranslate
+				class='animated flipInX _4'
+				matTooltip='Add Contact'
+				(click)='accountContactsService.addContact(user.username)'
+			>
+				<mat-icon>person_add</mat-icon>
+			</button>
+		</ng-template>
+
+		<button
+			mat-mini-fab
+			cyphTranslate
+			class='animated flipInX _4'
+			matTooltip='New Message'
+			[routerLink]='accountService.routeRoot + "compose/" + user.username'
+		>
+			<mat-icon>email</mat-icon>
+		</button>
+
+		<button
+			mat-mini-fab
+			cyphTranslate
+			class='animated flipInX _4'
+			matTooltip='Open Messages'
+			[routerLink]='accountService.routeRoot + "messages/" + user.username'
+		>
+			<mat-icon>message</mat-icon>
+		</button>
+	</div>
+</ng-template>
+
+<ng-template #editButton>
+	<div fxLayout='row' fxLayoutGap='16px' class='edit-buttons edit-hide' *ngIf='isCurrentUser'>
+		<button
+			mat-fab
+			cyphTranslate
+			class='alt'
+			matTooltip='Close'
+			matTooltipPosition='above'
+			(click)='editMode = false'
+			*ngIf='editMode'
+		>
+			<mat-icon>close</mat-icon>
+		</button>
+		<button
+			mat-fab
+			cyphTranslate
+			[matTooltip]='editMode ? "Save" : "Edit"'
+			matTooltipPosition='above'
+			(click)='editMode ? saveUserDescription() : editMode = true'
+		>
+			<mat-icon *ngIf='editMode'>save</mat-icon>
+			<mat-icon *ngIf='!editMode'>edit</mat-icon>
+		</button>
+	</div>
+</ng-template>
+
+<ng-template #fileUpload>
+	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isCurrentUser'>
+		<div
+			class='file-upload'
+			fxFlex='25'
+			fxLayoutAlign='center'
+			matTooltip='Share File'
+			matTooltipPosition='above'
+			cyphDropZone
+			cyphTranslate
+			(fileDrop)='accountFilesService.upload($event.name, $event, user.username)'
+		>
+			<mat-icon>file_upload</mat-icon>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #standardProfile>
 	<div fxFlexFill fxLayout='row'>
 		<div
 			fxFlex
@@ -6,12 +101,12 @@
 			fxLayout='column'
 			fxLayoutAlign='center stretch'
 			fxLayoutGap='32px'
-			class='profile'
-			*ngIf='user'
+			class='profile standard'
 			[class.mobile]='envService.isMobile'
+			*ngIf='user'
 		>
 			<div fxLayoutAlign='center center'>
-				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch'>
+				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch' fxLayoutGap='16px'>
 					<div fxLayoutAlign='center center'>
 						<img
 							cyphTranslate
@@ -21,6 +116,7 @@
 							[src]='user.avatar | async'
 						/>
 					</div>
+					<div></div>
 					<div class='name animated flipInX _2'>{{user.name | async}}</div>
 					<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
 					<div
@@ -32,6 +128,8 @@
 							{{user.description | async | slice:0:maxDescriptionLength}}
 						</div>
 					</div>
+					<div></div>
+					<div></div>
 					<mat-form-field class='description' *ngIf='editMode && user'>
 						<input
 							matInput
@@ -65,84 +163,314 @@
 				</mat-form-field>
 			</div>
 
-			<div
-				class='buttons'
-				fxLayout='row'
-				fxLayoutAlign='center center'
-				fxLayoutGap='16px'
-				*ngIf='!isCurrentUser'
-			>
-				<button
-					mat-mini-fab
-					cyphTranslate
-					class='animated flipInX _4'
-					matTooltip='Remove Contact'
-					(click)='accountContactsService.removeContact(user.username)'
-					*ngIf='isContact | async; else addContact'
-				>
-					<mat-icon>delete</mat-icon>
-				</button>
-				<ng-template #addContact>
-					<button
-						mat-mini-fab
-						cyphTranslate
-						class='animated flipInX _4'
-						matTooltip='Add Contact'
-						(click)='accountContactsService.addContact(user.username)'
-					>
-						<mat-icon>person_add</mat-icon>
-					</button>
-				</ng-template>
+			<ng-container *ngTemplateOutlet='buttons'></ng-container>
+			<ng-container *ngTemplateOutlet='fileUpload'></ng-container>
+		</div>
+	</div>
+</ng-template>
 
-				<button
-					mat-mini-fab
-					cyphTranslate
-					class='animated shrink pulldown flipInX _4'
-					matTooltip='Open Messages'
-						[routerLink]='accountService.routeRoot + "messages/" + user.username'
+
+<!-- Standard view -->
+
+<div
+	fxFlexFill
+	[class.editing]='isEditorFocused'
+	*ngIf='!accountService.isTelehealth && user?.ready'
+>
+	<ng-container *ngTemplateOutlet='standardProfile'></ng-container>
+	<ng-container *ngTemplateOutlet='editButton'></ng-container>
+</div>
+
+
+<!-- Telehealth view -->
+
+<div
+	fxFlexFill
+	class='telehealth'
+	[class.editing]='isEditorFocused'
+	*ngIf='accountService.isTelehealth && user?.ready'
+>
+	<div
+		fxFlexFill
+		fxLayout='row'
+		*ngIf='
+			(user.userType | async) !== accountUserTypes.Standard &&
+			(user.userType | async) !== accountUserTypes.TelehealthPatient;
+			else standardProfile;
+		'
+	>
+		<div
+			fxFlex
+			fxFlexFill
+			fxLayout='column'
+			class='profile'
+			[class.mobile]='envService.isMobile'
+		>
+			<div
+				fxLayout='column'
+				class='header animated slideInDown'
+				[class.fadeOutUp]='accountService.transition | async'
+				fxLayoutAlign='center center'
+			>
+				<div
+					fxFlex
+					fxLayout='row'
+					fxLayout.xs='column'
+					fxLayoutAlign='center center'
+					class='user-info'
 				>
-					<mat-icon>chat_bubble</mat-icon>
-				</button>
+					<img
+						cyphTranslate
+						class='avatar animated _1'
+						[ngClass]='userPresence[user.status | async]'
+						alt='Profile Picture'
+						[src]='user.avatar | async'
+					/>
+
+					<div fxLayout='row' fxLayout.xs='column' >
+						<div fxLayout='column' fxLayoutAlign='center center'>
+							<div class='name animated _2'>
+								{{
+									(user.userType | async) === accountUserTypes.TelehealthDoctor ?
+										stringsService.dr :
+										''
+								}}
+								{{user.name | async}}
+							</div>
+							<div
+								class='username animated flipInX _2'
+								*ngIf='(user.userType | async) === accountUserTypes.Standard'
+							>
+								@{{user.realUsername | async}}
+							</div>
+							<div
+								class='practice'
+								fxLayout='row'
+								*ngIf='
+									(user.userType | async) === accountUserTypes.TelehealthDoctor
+								'
+							>
+								<div
+									fxLayout='row'
+									[routerLink]='accountService.routeRoot + "profile/nachc"'
+								>
+									<mat-icon>business</mat-icon>
+									<h3 cyphTranslate>TODO: $ORG</h3>
+								</div>
+							</div>
+						</div>
+						<div fxLayout='column' fxLayoutAlign='center center'>
+							<cyph-account-user-rating *ngIf='
+								(user.userType | async) === accountUserTypes.TelehealthDoctor
+							'></cyph-account-user-rating>
+						</div>
+					</div>
+				</div>
 			</div>
 
-			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isCurrentUser'>
-				<div
-					class='file-upload'
-					fxFlex='25'
-					fxLayoutAlign='center'
-					matTooltip='Share File'
-					matTooltipPosition='above'
-					cyphDropZone
-					cyphTranslate
-					(fileDrop)='accountFilesService.upload($event.name, $event, user.username)'
+			<div
+				fxLayout='column'
+				fxLayoutAlign='center center'
+				*ngIf='
+					(user.userType | async) === accountUserTypes.TelehealthDoctor ||
+					(user.userType | async) === accountUserTypes.TelehealthOrg ||
+					(user.userType | async) === accountUserTypes.TelehealthPatient
+				'
+			>
+				<mat-card
+					class='animated slideInDown'
+					fxLayout='column'
+					*ngIf='user.extra() | async; let extra'
+					[class.fadeOutUp]='(accountService.transition | async) === true'
 				>
-					<mat-icon>file_upload</mat-icon>
-				</div>
+					<mat-card-content
+						*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'
+					>
+						<div fxLayout='column'>
+							<h2 cyphTranslate>Patient Info</h2>
+							<span>
+								<strong cyphTranslate>Gender:</strong>
+								<span>{{extra.gender || ''}}</span>
+							</span>
+							<div class='description' *ngIf='user.description'>
+								{{user.description | async}}
+							</div>
+						</div>
+					</mat-card-content>
+					<mat-card-content *ngIf='
+						(user.userType | async) === accountUserTypes.TelehealthOrg
+					'>
+						<div class='description' *ngIf='user.description'>
+							{{user.description | async}}
+						</div>
+						<h2 cyphTranslate>Address</h2>
+						<mat-list>
+							<mat-list-item>
+								<span>{{extra.address || ''}}</span>
+							</mat-list-item>
+						</mat-list>
+						<br />
+						<br />
+						<h2 cyphTranslate class='user-list-header'>Available Doctors</h2>
+						<div class='cyph-light-theme'>
+							<span>TODO: $DOCTOR_LIST</span>
+							<cyph-account-contact
+								[contact]='accountUserLookupService.getUser("who") | async'
+								class='cyph-main-theme'
+							></cyph-account-contact>
+						</div>
+					</mat-card-content>
+					<mat-card-content *ngIf='
+						(user.userType | async) === accountUserTypes.TelehealthDoctor
+					'>
+						<div
+							fxLayout='row'
+							fxLayoutAlign='center center'
+							fxLayoutGap='16px'
+							[style.margin-top]='"20px"'
+						>
+							<button
+								mat-raised-button
+								cyphTranslate
+								color='primary'
+								[routerLink]='
+									accountService.routeRoot +
+									"request-appointment/" +
+									user.username
+								'
+								matTooltip='Request Appointment'
+							>
+								Request Appointment
+							</button>
+
+							<div></div>
+
+							<button
+								mat-mini-fab
+								cyphTranslate
+								matTooltip='New Message'
+								[routerLink]='
+									accountService.routeRoot + "compose/" + user.username
+								'
+							>
+								<mat-icon>email</mat-icon>
+							</button>
+
+							<button
+								mat-mini-fab
+								cyphTranslate
+								matTooltip='Open Messages'
+								[routerLink]='
+									accountService.routeRoot + "messages/" + user.username
+								'
+							>
+								<mat-icon>message</mat-icon>
+							</button>
+						</div>
+						<mat-list>
+							<mat-list-item *ngIf='user.description'>
+								{{user.description | async}}
+							</mat-list-item>
+						</mat-list>
+						<br />
+						<br />
+						<div class='cyph-inverted-theme'>
+							<mat-accordion>
+								<mat-expansion-panel expanded>
+									<mat-expansion-panel-header>
+										<mat-panel-title>
+											<h2 cyphTranslate>Education & Training</h2>
+										</mat-panel-title>
+									</mat-expansion-panel-header>
+									<div fxLayout='column'>
+										<div fxLayout='row'>
+											<span cyphTranslate>Bachelors</span>
+											<span>&mdash;</span>
+											<span>
+												{{(extra.education || [])[0]?.locationName || ''}}
+											</span>
+										</div>
+										<div fxLayout='row'>
+											<span cyphTranslate>Medical School</span>
+											<span>&mdash;</span>
+											<span>
+												{{(extra.education || [])[1]?.locationName || ''}}
+											</span>
+										</div>
+										<div fxLayout='row'>
+											<span cyphTranslate>Residency</span>
+											<span>&mdash;</span>
+											<span>
+												{{(extra.education || [])[2]?.locationName || ''}}
+											</span>
+										</div>
+									</div>
+								</mat-expansion-panel>
+								<mat-expansion-panel>
+									<mat-expansion-panel-header>
+										<mat-panel-title>
+											<h2 cyphTranslate>Insurance</h2>
+										</mat-panel-title>
+									</mat-expansion-panel-header>
+									<div fxLayout='column'>
+										<div *ngFor='
+											let insurance of (extra.insurance?.data || []);
+											trackBy: trackBySelf
+										'>
+											{{insurance}}
+										</div>
+									</div>
+								</mat-expansion-panel>
+								<mat-expansion-panel>
+									<mat-expansion-panel-header>
+										<mat-panel-title>
+											<h2 cyphTranslate>Specialties</h2>
+										</mat-panel-title>
+									</mat-expansion-panel-header>
+									<div fxLayout='column'>
+										<span>{{(extra.specialties?.data || [])[0] || ''}}</span>
+										<span>{{(extra.specialties?.data || [])[1] || ''}}</span>
+									</div>
+								</mat-expansion-panel>
+								<mat-expansion-panel>
+									<mat-expansion-panel-header>
+										<mat-panel-title>
+											<h2 cyphTranslate>Languages</h2>
+										</mat-panel-title>
+									</mat-expansion-panel-header>
+									<div fxLayout='column'>
+										<span>{{(extra.languages || [])[0]?.language || ''}}</span>
+										<span>{{(extra.languages || [])[3]?.language || ''}}</span>
+									</div>
+								</mat-expansion-panel>
+								<mat-expansion-panel>
+									<mat-expansion-panel-header>
+										<mat-panel-title>
+											<h2 cyphTranslate>Misc</h2>
+										</mat-panel-title>
+									</mat-expansion-panel-header>
+									<div fxLayout='column'>
+										<div fxLayout='row'>
+											<span cyphTranslate>NPI</span>
+											<span>&mdash;</span>
+											<span>
+												{{(extra.npi?.data || [])[0] || ''}}
+											</span>
+										</div>
+									</div>
+								</mat-expansion-panel>
+							</mat-accordion>
+						</div>
+					</mat-card-content>
+				</mat-card>
+
+				<ng-container *ngIf='(user.userType | async) === accountUserTypes.Standard'>
+					<ng-container *ngTemplateOutlet='buttons'></ng-container>
+					<ng-container *ngTemplateOutlet='fileUpload'></ng-container>
+				</ng-container>
 			</div>
 		</div>
 	</div>
 
-	<div fxLayout='row' fxLayoutGap='16px' class='edit-buttons edit-hide' *ngIf='isCurrentUser'>
-		<button
-			mat-fab
-			cyphTranslate
-			class='alt'
-			matTooltip='Close'
-			matTooltipPosition='above'
-			(click)='editMode = false'
-			*ngIf='editMode'
-		>
-			<mat-icon>close</mat-icon>
-		</button>
-		<button
-			mat-fab
-			cyphTranslate
-			[matTooltip]='editMode ? "Save" : "Edit"'
-			matTooltipPosition='above'
-			(click)='editMode ? saveUserDescription() : editMode = true'
-		>
-			<mat-icon *ngIf='editMode'>save</mat-icon>
-			<mat-icon *ngIf='!editMode'>edit</mat-icon>
-		</button>
-	</div>
+	<ng-container *ngTemplateOutlet='editButton'></ng-container>
 </div>
