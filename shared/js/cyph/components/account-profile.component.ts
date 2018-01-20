@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
+import {take} from 'rxjs/operators/take';
 import {UserPresence, userPresenceSelectOptions} from '../account/enums';
 import {User} from '../account/user';
 import {AccountUserTypes} from '../proto';
@@ -77,6 +78,23 @@ export class AccountProfileComponent implements OnInit {
 				this.user		= await this.accountUserLookupService.getUser(username);
 			}
 			else if (this.accountDatabaseService.currentUser.value) {
+				if (this.accountService.isTelehealth) {
+					const userType	=
+						await this.accountDatabaseService.currentUser.value.user.userType.pipe(
+							take(1)
+						).toPromise()
+					;
+
+					if (
+						userType === AccountUserTypes.Standard ||
+						userType === AccountUserTypes.TelehealthPatient
+					) {
+						/* TODO: Redirect to relevant org page. */
+						this.router.navigate([accountRoot, 'profile', 'nachc']);
+						return;
+					}
+				}
+
 				this.isContact	= of(false);
 				this.user		= this.accountDatabaseService.currentUser.value.user;
 			}
