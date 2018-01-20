@@ -25,21 +25,21 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 	/** @inheritDoc */
 	public readonly box: IBox	= {
-		privateKeyBytes: this.errorValue,
-		publicKeyBytes: this.errorValue,
 		keyPair: this.errorFunction,
 		open: this.errorFunction,
+		privateKeyBytes: this.errorValue,
+		publicKeyBytes: this.errorValue,
 		seal: this.errorFunction
 	};
 
 	/** @inheritDoc */
 	public readonly ephemeralKeyExchange: IEphemeralKeyExchange	= {
-		privateKeyBytes: this.errorValue,
-		publicKeyBytes: this.errorValue,
-		secretBytes: this.errorValue,
 		aliceKeyPair: this.errorFunction,
 		aliceSecret: this.errorFunction,
-		bobSecret: this.errorFunction
+		bobSecret: this.errorFunction,
+		privateKeyBytes: this.errorValue,
+		publicKeyBytes: this.errorValue,
+		secretBytes: this.errorValue
 	};
 
 	/** @inheritDoc */
@@ -60,13 +60,13 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	/** @inheritDoc */
 	public readonly passwordHash: IPasswordHash	= {
 		algorithm: this.errorValue,
+		hash: this.errorFunction,
 		memLimitInteractive: this.errorValue,
 		memLimitSensitive: this.errorValue,
 		opsLimitInteractive: this.errorValue,
 		opsLimitSensitive: this.errorValue,
-		saltBytes: this.errorValue,
-		hash: this.errorFunction,
-		parseMetadata: this.errorFunction
+		parseMetadata: this.errorFunction,
+		saltBytes: this.errorValue
 	};
 
 	/** @inheritDoc */
@@ -80,11 +80,11 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	/** @inheritDoc */
 	public readonly sign: ISign	= {
 		bytes: this.errorValue,
-		privateKeyBytes: this.errorValue,
-		publicKeyBytes: this.errorValue,
 		importSuperSphincsPublicKeys: this.errorFunction,
 		keyPair: this.errorFunction,
 		open: this.errorFunction,
+		privateKeyBytes: this.errorValue,
+		publicKeyBytes: this.errorValue,
 		sign: this.errorFunction,
 		signDetached: this.errorFunction,
 		verifyDetached: this.errorFunction

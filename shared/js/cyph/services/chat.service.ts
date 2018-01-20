@@ -49,6 +49,7 @@ export class ChatService {
 	/** @ignore */
 	private resolveChatMessageGeometryService: (chatMessageGeometryService: {
 		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
+	/* tslint:disable-next-line:semicolon */
 	}) => void	= () => {};
 
 	/** @see ChatMessageGeometryService */
