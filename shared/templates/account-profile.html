@@ -119,6 +119,7 @@
 					<div></div>
 					<div class='name animated flipInX _2'>{{user.name | async}}</div>
 					<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
+					<div></div>
 					<div
 						fxLayoutAlign='center center'
 						class='description animated flipInX _3'
@@ -128,7 +129,6 @@
 							{{user.description | async | slice:0:maxDescriptionLength}}
 						</div>
 					</div>
-					<div></div>
 					<div></div>
 					<mat-form-field class='description' *ngIf='editMode && user'>
 						<input
