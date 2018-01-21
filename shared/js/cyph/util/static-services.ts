@@ -61,12 +61,20 @@ export const staticHttpClient: Promise<HttpClient>	=
 ;
 
 
-export const resolveStaticServices	= (
-	dialogService: DialogService,
-	domSanitizer: DomSanitizer,
-	httpClient: HttpClient
-) => {
-	resolveDialogService(dialogService);
-	resolveDomSanitizer(domSanitizer);
-	resolveHttpClient(httpClient);
+export const resolveStaticServices	= ({dialogService, domSanitizer, httpClient}: {
+	dialogService?: DialogService;
+	domSanitizer?: DomSanitizer;
+	httpClient?: HttpClient;
+}) => {
+	if (dialogService) {
+		resolveDialogService(dialogService);
+	}
+
+	if (domSanitizer) {
+		resolveDomSanitizer(domSanitizer);
+	}
+
+	if (httpClient) {
+		resolveHttpClient(httpClient);
+	}
 };

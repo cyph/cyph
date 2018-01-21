@@ -73,6 +73,6 @@ export class AppModule {
 			testEnvironmentSetup(databaseService, localStorageService);
 		}
 
-		resolveStaticServices(dialogService, domSanitizer, httpClient);
+		resolveStaticServices({dialogService, domSanitizer, httpClient});
 	}
 }

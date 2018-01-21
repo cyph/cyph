@@ -82,6 +82,6 @@ import {NativeTitleService} from './native-title.service';
 })
 export class AppModule {
 	constructor (httpClient: HttpClient, dialogService: DialogService) {
-		resolveStaticServices(dialogService, <any> undefined, httpClient);
+		resolveStaticServices({dialogService, httpClient});
 	}
 }

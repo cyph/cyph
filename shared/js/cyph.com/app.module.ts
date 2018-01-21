@@ -92,6 +92,6 @@ export class AppModule {
 		httpClient: HttpClient,
 		dialogService: DialogService
 	) {
-		resolveStaticServices(dialogService, domSanitizer, httpClient);
+		resolveStaticServices({dialogService, domSanitizer, httpClient});
 	}
 }
