@@ -52,8 +52,6 @@ ngserve () {
 		else
 			ng serve "${@}"
 		fi
-
-		return $?
 	}
 
 	project="${1}"
@@ -77,9 +75,7 @@ ngserve () {
 			echo '--config protractor.local-selenium-server.js'
 		fi) \
 		${args} \
-		"${@}"
-
-	return $?
+		"${@}"\
 }
 
 
