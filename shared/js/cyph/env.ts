@@ -20,34 +20,34 @@ export class Env extends EnvDeploy {
 
 
 	/** Indicates whether this is a co-branded instance of Cyph. */
-	public readonly coBranded: boolean		=
+	public readonly coBranded: boolean			=
 		this.environment.customBuild !== undefined &&
 		this.environment.customBuild.favicon !== undefined
 	;
 
 	/** Complete (lowercase) language code, e.g. "en-us". */
-	public readonly fullLanguage: string	= Env.language.toLowerCase();
+	public readonly fullLanguage: string		= Env.language.toLowerCase();
 
 	/** Current URL host (with www subdomain removed). */
-	public readonly host: string			= locationData.host.replace('www.', '');
+	public readonly host: string				= locationData.host.replace('www.', '');
 
 	/** Indicates whether this is Android. */
-	public readonly isAndroid: boolean		= /android/.test(Env.UA);
+	public readonly isAndroid: boolean			= /android/.test(Env.UA);
 
 	/** Indicates whether this is Chrome. */
-	public readonly isChrome: boolean		= /chrome/.test(Env.UA) && !/edge/.test(Env.UA);
+	public readonly isChrome: boolean			= /chrome/.test(Env.UA) && !/edge/.test(Env.UA);
 
 	/** Indicates whether this is Edge. */
-	public readonly isEdge: boolean			= /edge\/\d+/.test(Env.UA);
+	public readonly isEdge: boolean				= /edge\/\d+/.test(Env.UA);
 
 	/** @see CustomBuildConfig.browserExtension */
-	public readonly isExtension: boolean	=
+	public readonly isExtension: boolean		=
 		this.environment.customBuild !== undefined &&
 		this.environment.customBuild.config.browserExtension === true
 	;
 
 	/** Indicates whether this is mobile Firefox. */
-	public readonly isFFMobile: boolean		=
+	public readonly isFFMobile: boolean			=
 		/fennec/.test(Env.UA) ||
 		(
 			/firefox/.test(Env.UA) &&
@@ -60,55 +60,55 @@ export class Env extends EnvDeploy {
 	;
 
 	/** Indicates whether this is Firefox. */
-	public readonly isFirefox: boolean		= /firefox/.test(Env.UA);
+	public readonly isFirefox: boolean			= /firefox/.test(Env.UA);
 
 	/** Indicates whether this is the Cyph corporate website (cyph.com). */
-	public readonly isHomeSite: boolean		=
+	public readonly isHomeSite: boolean			=
 		this.homeUrl.split('/')[2].replace('www.', '') === this.host
 	;
 
 	/** Indicates whether this is iOS. */
-	public readonly isIOS: boolean			= /ipad|iphone|ipod/.test(Env.UA);
+	public readonly isIOS: boolean				= /ipad|iphone|ipod/.test(Env.UA);
 
 	/** Indicates whether this is macOS / OS X. */
-	public readonly isMacOS: boolean		= /mac os x/.test(Env.UA);
+	public readonly isMacOS: boolean			= /mac os x/.test(Env.UA);
 
 	/** Indicates whether this is the main thread. */
-	public readonly isMainThread: boolean	= typeof (<any> self).importScripts !== 'function';
+	public readonly isMainThread: boolean		= typeof (<any> self).importScripts !== 'function';
 
 	/** Indicates whether this is mobile. */
-	public readonly isMobile: boolean		=
+	public readonly isMobile: boolean			=
 		this.isAndroid ||
 		this.isIOS ||
 		this.isFFMobile
 	;
 
 	/** Indicates whether this is Node.js/io.js. */
-	public readonly isNode: boolean			=
+	public readonly isNode: boolean				=
 		typeof (<any> self).process === 'object' &&
 		typeof (<any> self).require === 'function'
 	;
 
 	/** Indicates whether this is a version of Firefox before 57 ("Quantum"). */
-	public readonly isOldFirefox: boolean	=
+	public readonly isOldFirefox: boolean		=
 		this.isFirefox &&
 		!(parseInt((Env.UA.match(/firefox\/(\d+)/) || [])[1], 10) >= 57)
 	;
 
 	/** Indicates whether this is Safari. */
-	public readonly isSafari: boolean		= navigatorData.vendor === 'Apple Computer, Inc.';
+	public readonly isSafari: boolean			= navigatorData.vendor === 'Apple Computer, Inc.';
 
 	/** Indicates whether this should be considered a tablet. */
-	public readonly isTablet: boolean		= this.isMobile && self.outerWidth > 767;
+	public readonly isTablet: boolean			= this.isMobile && self.outerWidth > 767;
 
 	/** @see CustomBuildConfig.telehealth */
-	public readonly isTelehealth: boolean	=
+	public readonly isTelehealth: boolean		=
 		this.environment.customBuild !== undefined &&
 		this.environment.customBuild.config.telehealth === true
 	;
 
 	/** Indicates whether this is a touchscreen environment. */
-	public readonly isTouch: boolean		= (() => {
+	public readonly isTouch: boolean			= (() => {
 		/* TODO: HANDLE NATIVE */
 		try {
 			document.createEvent('TouchEvent');
@@ -120,10 +120,10 @@ export class Env extends EnvDeploy {
 	})();
 
 	/** Indicates whether this is (the main thread of) a Web environment. */
-	public readonly isWeb: boolean			= IS_WEB;
+	public readonly isWeb: boolean				= IS_WEB;
 
 	/** Normalized language code, used for translations. */
-	public readonly language: string		= (() => {
+	public readonly language: string			= (() => {
 		const language: string	= this.fullLanguage.split('-')[0];
 
 		/* Consistency in special cases */
@@ -138,16 +138,16 @@ export class Env extends EnvDeploy {
 	})();
 
 	/** Complete (original case) language code, e.g. "en-US". */
-	public readonly realLanguage: string	= Env.language;
+	public readonly realLanguage: string		= Env.language;
 
 	/** Indicates whether Granim gradient canvases should be displayed. */
-	public readonly showGranim: boolean		= !this.isOldFirefox;
+	public readonly showGranim: boolean			= !this.isOldFirefox;
 
 	/** Base URI for sending an SMS. */
-	public readonly smsUriBase: string		= `sms:${this.isIOS ? '&' : '?'}body=`;
+	public readonly smsUriBase: string			= `sms:${this.isIOS ? '&' : '?'}body=`;
 
 	/** Current user agent (lowercase). */
-	public readonly userAgent: string		= Env.UA;
+	public readonly userAgent: string			= Env.UA;
 
 	constructor () {
 		super();
