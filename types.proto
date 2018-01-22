@@ -448,23 +448,26 @@ message Environment {
 		/** If true, performs video call by default (takes priority over callTypeAudio). */
 		bool callTypeVideo = 5;
 
+		/** If true, forces the use of Twilio TURN infrastructure for lower-latency calls. */
+		bool disableP2P = 6;
+
 		/** Indicates whether docs will be enabled. */
-		bool enableDocs = 6;
+		bool enableDocs = 7;
 
 		/** Optional custom foreground color. */
-		string foregroundColor = 7;
+		string foregroundColor = 8;
 
 		/** Indicates whether native crypto will be used. */
-		bool nativeCrypto = 8;
+		bool nativeCrypto = 9;
 
 		/** Optional password to lock down environment (not a security feature). */
-		string password = 9;
+		string password = 10;
 
 		/** Indicates whether this is the telehealth version. */
-		bool telehealth = 10;
+		bool telehealth = 11;
 
 		/** Page title of this Cyph instance. */
-		string title = 11;
+		string title = 12;
 	}
 
 	/**

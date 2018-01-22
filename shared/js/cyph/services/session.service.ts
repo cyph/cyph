@@ -24,6 +24,7 @@ import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
 import {StringsService} from './strings.service';
 
@@ -72,7 +73,10 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public readonly apiFlags								= {
-		forceTURN: false,
+		forceTURN: !!(
+			this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.config.disableP2P
+		),
 		modestBranding: false
 	};
 
@@ -444,7 +448,10 @@ export abstract class SessionService implements ISessionService {
 		protected readonly channelService: ChannelService,
 
 		/** @ignore */
-		private readonly errorService: ErrorService,
+		protected readonly envService: EnvService,
+
+		/** @ignore */
+		protected readonly errorService: ErrorService,
 
 		/** @ignore */
 		protected readonly potassiumService: PotassiumService,

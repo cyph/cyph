@@ -114,16 +114,15 @@ export class LocalSessionService extends SessionService {
 
 	constructor (
 		analyticsService: AnalyticsService,
+		envService: EnvService,
 		errorService: ErrorService,
-		stringsService: StringsService,
-
-		/** @ignore */
-		private readonly envService: EnvService
+		stringsService: StringsService
 	) {
 		super(
 			analyticsService,
 			<any> undefined,
 			<any> undefined,
+			envService,
 			errorService,
 			<any> undefined,
 			stringsService
