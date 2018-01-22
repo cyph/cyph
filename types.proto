@@ -433,7 +433,7 @@ message Environment {
 
 	/** Custom build configuration. */
 	message CustomBuildConfig {
-		/** Boolean option to make an accounts-only environment. */
+		/** Indicates whether environment should be accounts-only (no ephemeral). */
 		bool accountsOnly = 1;
 
 		/** Optional custom background color. */
