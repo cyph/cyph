@@ -26,10 +26,14 @@
 			"environments": {
 				"backup": "js/environments/environment.backup.ts",
 				"beta": "js/environments/environment.beta.ts",
-				"dev": "js/environments/environment.ts",
+				"dev": "js/environments/environment.dev.ts",
 				"e2e": "js/environments/environment.e2e.ts",
 				"local": "js/environments/environment.local.ts",
 				"localBackup": "js/environments/environment.local-backup.ts",
+				"localBeta": "js/environments/environment.local-beta.ts",
+				"localDev": "js/environments/environment.local-dev.ts",
+				"localMaster": "js/environments/environment.local-master.ts",
+				"localStaging": "js/environments/environment.local-staging.ts",
 				"master": "js/environments/environment.master.ts",
 				"prod": "js/environments/environment.prod.ts",
 				"staging": "js/environments/environment.staging.ts"

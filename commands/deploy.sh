@@ -104,18 +104,28 @@ if [ "${simple}" ] ; then
 	version="simple-${version}"
 fi
 
+processEnvironmentName () {
+	if [ "${simple}" ] ; then
+		echo "local$(echo "${1}" | perl -pe 's/^([a-z])/\u$1/')"
+	else
+		echo "${1}"
+	fi
+}
+
 if [ "${firebaseBackup}" ] ; then
 	if [ ! "${test}" ] ; then
 		fail 'Cannot use backup Firebase environment in prod'
 	fi
 
-	environment='--environment backup'
+	environment="$(processEnvironmentName backup)"
 elif [ "${test}" ] && ( \
 	[ "${branch}" == 'staging' ] || \
 	[ "${branch}" == 'beta' ] || \
 	[ "${branch}" == 'master' ] \
 ) ; then
-	environment="--environment ${branch}"
+	environment="$(processEnvironmentName "${branch}")"
+else
+	environment="$(processEnvironmentName dev)"
 fi
 
 
@@ -212,8 +222,6 @@ if [ "${test}" ] ; then
 
 	if [ "${simple}" ] ; then
 		newCyphURL="https://${version}-dot-cyph-im-dot-cyphme.appspot.com"
-
-		sed -i 's|env\.isLocalEnv|true|g' shared/js/cyph/thread.ts
 	fi
 
 	sed -i "s|staging|${version}|g" backend/config.go
@@ -338,9 +346,9 @@ for d in $compiledProjects ; do
 	`.trim())' > src/js/standalone/translations.ts
 
 	if [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ; then
-		ng build --no-aot --no-sourcemaps ${environment} || exit 1
+		ng build --no-aot --no-sourcemaps --environment "${environment}" || exit 1
 	else
-		../commands/prodbuild.sh ${environment} || exit 1
+		../commands/prodbuild.sh --environment "${environment}" || exit 1
 	fi
 
 	if [ "${d}" == 'cyph.com' ] ; then node -e '
@@ -535,7 +543,7 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; the
 	if [ "${test}" ] ; then
 		firebaseProjects='cyph-test cyph-test2 cyph-test-e2e cyph-test-local'
 	fi
-	if [ "${environment}" ] ; then
+	if [ "${environment}" != 'dev' ] ; then
 		firebaseProjects="${firebaseProjects} cyph-test-${branch}"
 	fi
 

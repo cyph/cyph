@@ -1,11 +1,7 @@
-import {IEnvironment} from '../cyph/proto';
+import {environment} from './environment.backup';
 
 
-/** @inheritDoc */
-export const environment: IEnvironment	= {
-	envName: 'localBackup',
-	firebaseApiKey: 'AIzaSyCETz_4C2dmroy7TNqfX3Pi-63kDPN-em0',
-	firebaseProject: 'cyph-test2',
-	local: true,
-	production: false
-};
+environment.envName	= 'localBackup';
+environment.local	= true;
+
+export {environment};
