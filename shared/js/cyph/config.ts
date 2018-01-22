@@ -11,9 +11,6 @@ export class Config {
 		{
 			analEvent: 'modest-branding',
 			character: '!',
-			get: (sessionService: ISessionService) : string =>
-				sessionService.apiFlags.modestBranding ? this.apiFlags[1].character : ''
-			,
 			set: (sessionService: ISessionService) => {
 				sessionService.apiFlags.modestBranding	= true;
 			}
@@ -21,9 +18,6 @@ export class Config {
 		{
 			analEvent: 'force-turn',
 			character: '$',
-			get: (sessionService: ISessionService) : string =>
-				sessionService.apiFlags.forceTURN ? this.apiFlags[2].character : ''
-			,
 			set: (sessionService: ISessionService) => {
 				sessionService.apiFlags.forceTURN		= true;
 			}
