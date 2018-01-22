@@ -17,7 +17,7 @@ import {
 export interface ISessionService {
 	/** API flags passed into this session. */
 	readonly apiFlags: {
-		forceTURN: boolean;
+		disableP2P: boolean;
 		modestBranding: boolean;
 	};
 

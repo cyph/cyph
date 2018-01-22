@@ -7,7 +7,7 @@ export class ProFeatures {
 		/** @see ISession.state.wasInitiatedByAPI */
 		public readonly api: boolean = false,
 
-		/** @see ISessionService.apiFlags.forceTURN */
+		/** @see ISessionService.apiFlags.disableP2P */
 		public readonly disableP2P: boolean = false,
 
 		/** @see ISessionService.apiFlags.modestBranding */

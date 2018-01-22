@@ -349,7 +349,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 					(<any> o).url	= undefined;
 				}
 
-				if (this.sessionService.apiFlags.forceTURN) {
+				if (this.sessionService.apiFlags.disableP2P) {
 					o.urls	= typeof o.urls === 'string' && o.urls.indexOf('stun:') !== 0 ?
 						o.urls :
 						o.urls instanceof Array ?

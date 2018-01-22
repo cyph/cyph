@@ -19,7 +19,7 @@ export class Config {
 			analEvent: 'force-turn',
 			character: '$',
 			set: (sessionService: ISessionService) => {
-				sessionService.apiFlags.forceTURN		= true;
+				sessionService.apiFlags.disableP2P		= true;
 			}
 		}
 	];

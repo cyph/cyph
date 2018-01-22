@@ -73,7 +73,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public readonly apiFlags								= {
-		forceTURN: !!(
+		disableP2P: !!(
 			this.envService.environment.customBuild &&
 			this.envService.environment.customBuild.config.disableP2P
 		),

@@ -117,7 +117,7 @@ export class EphemeralSessionService extends SessionService {
 	public get proFeatures () : ProFeatures {
 		return new ProFeatures(
 			this.state.wasInitiatedByAPI,
-			this.apiFlags.forceTURN,
+			this.apiFlags.disableP2P,
 			this.apiFlags.modestBranding,
 			this.sessionInitService.callType === 'video',
 			this.sessionInitService.callType === 'audio'
