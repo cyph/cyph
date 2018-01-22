@@ -19,7 +19,6 @@ export interface ISessionService {
 	readonly apiFlags: {
 		forceTURN: boolean;
 		modestBranding: boolean;
-		nativeCrypto: boolean;
 		telehealth: boolean;
 	};
 

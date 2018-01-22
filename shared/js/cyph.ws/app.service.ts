@@ -11,6 +11,7 @@ import {first} from 'rxjs/operators/first';
 import {config} from '../cyph/config';
 import {AccountService} from '../cyph/services/account.service';
 import {AccountAuthService} from '../cyph/services/crypto/account-auth.service';
+import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {EnvService} from '../cyph/services/env.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {translate} from '../cyph/util/translate';
@@ -76,6 +77,8 @@ export class AppService implements CanActivate {
 
 		faviconService: FaviconService,
 
+		potassiumService: PotassiumService,
+
 		titleService: Title,
 
 		/** @ignore */
@@ -101,6 +104,15 @@ export class AppService implements CanActivate {
 		};
 
 		(async () => {
+			/* Redirect clients that cannot support native crypto when required */
+			if (
+				(await potassiumService.native()) &&
+				!(await potassiumService.isNativeCryptoSupported())
+			) {
+				location.pathname	= '/unsupportedbrowser';
+				return;
+			}
+
 			if (this.isLockedDown) {
 				this.loadComplete();
 			}

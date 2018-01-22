@@ -8,6 +8,7 @@ import {IPotassium} from '../../crypto/potassium/ipotassium';
 import {ISecretBox} from '../../crypto/potassium/isecret-box';
 import {ISign} from '../../crypto/potassium/isign';
 import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
+import {EnvService} from '../env.service';
 
 
 /**
@@ -99,10 +100,16 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 
 	/** @inheritDoc */
 	public async native () : Promise<boolean> {
-		throw new Error('Must provide an implementation of PotassiumService.native.');
+		return !!(
+			this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.config.nativeCrypto
+		);
 	}
 
-	constructor () {
+	constructor (
+		/** @ignore */
+		private readonly envService: EnvService
+	) {
 		super();
 	}
 }

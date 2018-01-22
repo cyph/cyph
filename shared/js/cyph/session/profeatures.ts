@@ -13,9 +13,6 @@ export class ProFeatures {
 		/** @see ISessionService.apiFlags.modestBranding */
 		public readonly modestBranding: boolean = false,
 
-		/** @see ISessionService.apiFlags.nativeCrypto */
-		public readonly nativeCrypto: boolean = false,
-
 		/** @see ISessionService.apiFlags.telehealth */
 		public readonly telehealth: boolean = false,
 

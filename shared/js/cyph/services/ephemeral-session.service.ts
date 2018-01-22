@@ -118,7 +118,6 @@ export class EphemeralSessionService extends SessionService {
 			this.state.wasInitiatedByAPI,
 			this.apiFlags.forceTURN,
 			this.apiFlags.modestBranding,
-			this.apiFlags.nativeCrypto,
 			this.apiFlags.telehealth,
 			this.sessionInitService.callType === 'video',
 			this.sessionInitService.callType === 'audio'

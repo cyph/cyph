@@ -451,11 +451,14 @@ message Environment {
 		/** Optional custom foreground color. */
 		string foregroundColor = 6;
 
+		/** Indicates whether native crypto will be used. */
+		bool nativeCrypto = 7;
+
 		/** Optional password to lock down environment (not a security feature). */
-		string password = 7;
+		string password = 8;
 
 		/** Page title of this Cyph instance. */
-		string title = 8;
+		string title = 9;
 	}
 
 	/**

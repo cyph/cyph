@@ -37,16 +37,6 @@ export class Config {
 			set: (sessionService: ISessionService) => {
 				sessionService.apiFlags.forceTURN		= true;
 			}
-		},
-		{
-			analEvent: 'native-crypto',
-			character: '*',
-			get: (sessionService: ISessionService) : string =>
-				sessionService.apiFlags.nativeCrypto ? this.apiFlags[3].character : ''
-			,
-			set: (sessionService: ISessionService) => {
-				sessionService.apiFlags.nativeCrypto	= true;
-			}
 		}
 	];
 

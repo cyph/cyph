@@ -74,7 +74,6 @@ export abstract class SessionService implements ISessionService {
 	public readonly apiFlags								= {
 		forceTURN: false,
 		modestBranding: false,
-		nativeCrypto: false,
 		telehealth: false
 	};
 

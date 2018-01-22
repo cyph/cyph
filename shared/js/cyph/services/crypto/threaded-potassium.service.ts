@@ -16,6 +16,7 @@ import {EventManager, eventManager} from '../../event-manager';
 import {IKeyPair} from '../../proto';
 import {Thread} from '../../thread';
 import {uuid} from '../../util/uuid';
+import {EnvService} from '../env.service';
 
 
 /**
@@ -314,10 +315,16 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 
 	/** @inheritDoc */
 	public async native () : Promise<boolean> {
-		return false;
+		return !!(
+			this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.config.nativeCrypto
+		);
 	}
 
-	constructor () {
+	constructor (
+		/** @ignore */
+		private readonly envService: EnvService
+	) {
 		super();
 
 		/* tslint:disable-next-line:no-unused-expression */
