@@ -96,7 +96,7 @@ export class AppService implements CanActivate {
 		catch {}
 
 		titleService.setTitle(translate(titleService.getTitle()));
-		
+
 		if (this.envService.isTelehealth) {
 			faviconService.setFavicon('telehealth');
 		}

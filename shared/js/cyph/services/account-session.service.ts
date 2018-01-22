@@ -11,6 +11,7 @@ import {ChannelService} from './channel.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
@@ -142,6 +143,7 @@ export class AccountSessionService extends SessionService {
 		analyticsService: AnalyticsService,
 		castleService: CastleService,
 		channelService: ChannelService,
+		envService: EnvService,
 		errorService: ErrorService,
 		potassiumService: PotassiumService,
 		stringsService: StringsService,
@@ -159,6 +161,7 @@ export class AccountSessionService extends SessionService {
 			analyticsService,
 			castleService,
 			channelService,
+			envService,
 			errorService,
 			potassiumService,
 			stringsService

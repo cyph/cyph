@@ -1,3 +1,5 @@
+/* tslint:disable:cyclomatic-complexity */
+
 import {config} from './config';
 import {EnvDeploy} from './env-deploy';
 
