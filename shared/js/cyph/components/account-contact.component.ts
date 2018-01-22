@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {User, UserPresence} from '../account';
 import {AccountService} from '../services/account.service';
+import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
 
 
@@ -25,6 +26,9 @@ export class AccountContactComponent {
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

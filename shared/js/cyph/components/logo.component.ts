@@ -81,9 +81,6 @@ export class LogoComponent {
 	};
 
 	/** @ignore */
-	private telehealthInternal: boolean	= false;
-
-	/** @ignore */
 	private verticalInternal: boolean	= false;
 
 	/** @ignore */
@@ -120,16 +117,7 @@ export class LogoComponent {
 						this.logos.horizontal
 		;
 
-		return this.telehealth ? logoSet.telehealth : logoSet.main;
-	}
-
-	/** Indicates whether to use telehealth image. */
-	@Input()
-	public get telehealth () : boolean {
-		return this.telehealthInternal;
-	}
-	public set telehealth (value: boolean) {
-		this.telehealthInternal	= (<any> value) === '' ? true : value;
+		return this.envService.isTelehealth ? logoSet.telehealth : logoSet.main;
 	}
 
 	/** Indicates whether to use vertical image. */

@@ -3,7 +3,7 @@
 	[class.non-clickable]='!clickable'
 	[routerLink]='!clickable ? undefined : (
 		accountService.routeRoot +
-		(accountService.isTelehealth ? "profile" : "messages") + "/" +
+		(envService.isTelehealth ? "profile" : "messages") + "/" +
 		contact.username
 	)'
 	*ngIf='!!contact'

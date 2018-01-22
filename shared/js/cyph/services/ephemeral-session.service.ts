@@ -11,6 +11,7 @@ import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
@@ -118,7 +119,6 @@ export class EphemeralSessionService extends SessionService {
 			this.state.wasInitiatedByAPI,
 			this.apiFlags.forceTURN,
 			this.apiFlags.modestBranding,
-			this.apiFlags.telehealth,
 			this.sessionInitService.callType === 'video',
 			this.sessionInitService.callType === 'audio'
 		);
@@ -134,6 +134,9 @@ export class EphemeralSessionService extends SessionService {
 
 		/** @ignore */
 		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly envService: EnvService,
 
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService
@@ -166,7 +169,7 @@ export class EphemeralSessionService extends SessionService {
 			});
 		}
 
-		if (this.apiFlags.telehealth) {
+		if (this.envService.isTelehealth) {
 			this.remoteUsername.next(this.state.isAlice ?
 				this.stringsService.patient :
 				this.stringsService.doctor

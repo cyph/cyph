@@ -175,7 +175,7 @@
 <div
 	fxFlexFill
 	[class.editing]='isEditorFocused'
-	*ngIf='!accountService.isTelehealth && user?.ready'
+	*ngIf='!envService.isTelehealth && user?.ready'
 >
 	<ng-container *ngTemplateOutlet='standardProfile'></ng-container>
 	<ng-container *ngTemplateOutlet='editButton'></ng-container>
@@ -188,7 +188,7 @@
 	fxFlexFill
 	class='telehealth'
 	[class.editing]='isEditorFocused'
-	*ngIf='accountService.isTelehealth && user?.ready'
+	*ngIf='envService.isTelehealth && user?.ready'
 >
 	<div
 		fxFlexFill

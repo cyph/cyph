@@ -103,7 +103,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			return;
 		}
 
-		if (!this.envService.coBranded && !this.accountService.isExtension) {
+		if (!this.envService.coBranded && !this.envService.isExtension) {
 			const selector	= '.cyph-gradient';
 
 			const started	= this.accountService.isUiReady ?
@@ -135,7 +135,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 				opacity: [1, 0.5, 0],
 				states: {
 					'default-state': {
-						gradients: !this.accountService.isTelehealth ?
+						gradients: !this.envService.isTelehealth ?
 							[
 								['#392859', '#624599'],
 								['#9368e6', '#624599']
@@ -159,7 +159,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	public get sidebarVisible () : boolean {
 		return this.accountDatabaseService.currentUser.value !== undefined &&
 			!this.envService.isMobile &&
-			!this.accountService.isTelehealth &&
+			!this.envService.isTelehealth &&
 			[
 				'',
 				'messages'

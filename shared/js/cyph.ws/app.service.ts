@@ -96,6 +96,10 @@ export class AppService implements CanActivate {
 		catch {}
 
 		titleService.setTitle(translate(titleService.getTitle()));
+		
+		if (this.envService.isTelehealth) {
+			faviconService.setFavicon('telehealth');
+		}
 
 		self.onhashchange	= () => {
 			if (!locationData.hash.match(/^#?\/?account(\/|$)/)) {
@@ -124,25 +128,12 @@ export class AppService implements CanActivate {
 			).url.pipe(first()).toPromise();
 
 			const urlSegmentPaths	= router.url.split('/');
-			let loadingAccounts		= accountRoot === '' || urlSegmentPaths[0] === accountRoot;
 
-			/* Handle accounts special cases */
-			if (urlSegmentPaths[0] === 'extension') {
-				loadingAccounts						= true;
-				this.accountService.isExtension		= true;
-
+			if (this.envService.isExtension) {
 				router.navigate([accountRoot, 'contacts']);
 			}
-			else if (urlSegmentPaths[0] === 'telehealth') {
-				loadingAccounts						= true;
-				this.accountService.isTelehealth	= true;
 
-				$(document.body).addClass('telehealth');
-				faviconService.setFavicon('telehealth');
-				router.navigate([accountRoot].concat(urlSegmentPaths.slice(1)));
-			}
-
-			if (loadingAccounts) {
+			if (accountRoot === '' || urlSegmentPaths[0] === accountRoot) {
 				await this.accountService.uiReady;
 			}
 			else {

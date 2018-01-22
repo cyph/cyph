@@ -4,7 +4,7 @@
 	<div
 		fxLayout='row'
 		fxLayoutGap='32px'
-		*ngIf='!envService.coBranded && !sessionService.apiFlags.telehealth'
+		*ngIf='!envService.coBranded && !envService.isTelehealth'
 	>
 		<div fxFlex='nogrow'>
 			<a [href]='envService.homeUrl'>
@@ -54,10 +54,10 @@
 		</div>
 	</div>
 
-	<div fxLayout='row' *ngIf='envService.coBranded || sessionService.apiFlags.telehealth'>
+	<div fxLayout='row' *ngIf='envService.coBranded || envService.isTelehealth'>
 		<div class='powered-by-cyph'>
 			<a [href]='envService.homeUrl' class='small-font'>
-				<span *ngIf='sessionService.apiFlags.telehealth' cyphTranslate>
+				<span *ngIf='envService.isTelehealth' cyphTranslate>
 					Telehealth Session
 				</span>
 				<span cyphTranslate>
@@ -68,7 +68,7 @@
 	</div>
 
 	<div fxFlex fxLayout='row' fxLayoutAlign='end center'>
-		<div cyphTranslate *ngIf='sessionService.apiFlags.telehealth'>
+		<div cyphTranslate *ngIf='envService.isTelehealth'>
 			<img src='/assets/img/websign.icon.png' alt='WebSign Validated' />
 			<img src='/assets/img/hipaa.icon.png' alt='HIPAA-Compliant' />
 		</div>

@@ -32,12 +32,6 @@ export class AccountService {
 	/** Indicates the status of the interstitial. */
 	public interstitial: boolean						= false;
 
-	/** Indicates whether the browser extension UI should be used. */
-	public isExtension: boolean							= false;
-
-	/** Indicates whether the telehealth UI should be used. */
-	public isTelehealth: boolean						= false;
-
 	/** Indicates whether the UI is ready. */
 	public isUiReady: boolean							= false;
 
@@ -79,7 +73,7 @@ export class AccountService {
 
 	/** Minimum expanded menu width. */
 	public get menuExpandedMinWidth () : number {
-		return this.isTelehealth ? 325 : 250;
+		return this.envService.isTelehealth ? 325 : 250;
 	}
 
 	/** Toggles account menu. */

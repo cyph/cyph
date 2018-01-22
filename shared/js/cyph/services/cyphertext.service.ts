@@ -19,7 +19,7 @@ import {StringsService} from './strings.service';
 export class CyphertextService {
 	/** Indicates whether cyphertext UI should be enabled. */
 	public readonly isEnabled: boolean	=
-		!this.sessionService.apiFlags.telehealth &&
+		!this.envService.isTelehealth &&
 		(this.envService.environment.local || this.envService.isHomeSite)
 	;
 

@@ -38,6 +38,10 @@ if (environment.customBuild) {
 		;
 	}
 
+	if (environment.customBuild.config.telehealth) {
+		$(document.body).addClass('telehealth');
+	}
+
 	if (environment.customBuild.config.title) {
 		$('title').text(environment.customBuild.config.title);
 	}

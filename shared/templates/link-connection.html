@@ -13,19 +13,19 @@
 		<div></div>
 	</div>
 	<div>
-		<span *ngIf='isPassive && !sessionService.apiFlags.telehealth' cyphTranslate>
+		<span *ngIf='isPassive && !envService.isTelehealth' cyphTranslate>
 			Waiting for user to join...
 		</span>
-		<span *ngIf='isPassive && sessionService.apiFlags.telehealth' cyphTranslate>
+		<span *ngIf='isPassive && envService.isTelehealth' cyphTranslate>
 			You have successfully checked in. Your telehealth session
 			will begin when the other party connects.
 		</span>
 		<div *ngIf='!isPassive'>
-			<span *ngIf='sessionService.apiFlags.telehealth' cyphTranslate>
+			<span *ngIf='envService.isTelehealth' cyphTranslate>
 				Send the link below to the patient. When they open it,
 				your telehealth session will begin.
 			</span>
-			<span *ngIf='!sessionService.apiFlags.telehealth' cyphTranslate>
+			<span *ngIf='!envService.isTelehealth' cyphTranslate>
 				Send the link below to another user. When they open it,
 				you'll be securely connected.
 			</span>

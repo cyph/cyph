@@ -73,8 +73,7 @@ export abstract class SessionService implements ISessionService {
 	/** @inheritDoc */
 	public readonly apiFlags								= {
 		forceTURN: false,
-		modestBranding: false,
-		telehealth: false
+		modestBranding: false
 	};
 
 	/** @inheritDoc */

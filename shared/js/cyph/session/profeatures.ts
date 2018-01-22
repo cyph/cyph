@@ -13,9 +13,6 @@ export class ProFeatures {
 		/** @see ISessionService.apiFlags.modestBranding */
 		public readonly modestBranding: boolean = false,
 
-		/** @see ISessionService.apiFlags.telehealth */
-		public readonly telehealth: boolean = false,
-
 		/** True if SessionInitService.callType is set to video. */
 		public readonly video: boolean = false,
 

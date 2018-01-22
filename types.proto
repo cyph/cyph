@@ -436,29 +436,35 @@ message Environment {
 		/** Indicates whether environment should be accounts-only (no ephemeral). */
 		bool accountsOnly = 1;
 
+		/** Indicates whether this is for a browser extension. */
+		bool browserExtension = 2;
+
 		/** Optional custom background color. */
-		string backgroundColor = 2;
+		string backgroundColor = 3;
 
 		/** If true, performs audio call by default. */
-		bool callTypeAudio = 3;
+		bool callTypeAudio = 4;
 
 		/** If true, performs video call by default (takes priority over callTypeAudio). */
-		bool callTypeVideo = 4;
+		bool callTypeVideo = 5;
 
 		/** Indicates whether docs will be enabled. */
-		bool enableDocs = 5;
+		bool enableDocs = 6;
 
 		/** Optional custom foreground color. */
-		string foregroundColor = 6;
+		string foregroundColor = 7;
 
 		/** Indicates whether native crypto will be used. */
-		bool nativeCrypto = 7;
+		bool nativeCrypto = 8;
 
 		/** Optional password to lock down environment (not a security feature). */
-		string password = 8;
+		string password = 9;
+
+		/** Indicates whether this is the telehealth version. */
+		bool telehealth = 10;
 
 		/** Page title of this Cyph instance. */
-		string title = 9;
+		string title = 11;
 	}
 
 	/**

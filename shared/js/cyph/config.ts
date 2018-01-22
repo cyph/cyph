@@ -9,16 +9,6 @@ export class Config {
 	/** Configuration of available API flags. */
 	public readonly apiFlags	= [
 		{
-			analEvent: 'telehealth',
-			character: '@',
-			get: (sessionService: ISessionService) : string =>
-				sessionService.apiFlags.telehealth ? this.apiFlags[0].character : ''
-			,
-			set: (sessionService: ISessionService) => {
-				sessionService.apiFlags.telehealth		= true;
-			}
-		},
-		{
 			analEvent: 'modest-branding',
 			character: '!',
 			get: (sessionService: ISessionService) : string =>

@@ -8,7 +8,7 @@
 		[routerLink]='accountService.routeRoot'
 		(click)='click()'
 	>
-		<cyph-logo icon [telehealth]='accountService.isTelehealth'></cyph-logo>
+		<cyph-logo icon></cyph-logo>
 	</button>
 
 	<div fxFlex></div>
@@ -52,7 +52,7 @@
 			(click)='click()'
 			*ngIf='accountService.menuExpanded | async'
 		>
-			<cyph-logo [telehealth]='accountService.isTelehealth'></cyph-logo>
+			<cyph-logo></cyph-logo>
 		</button>
 		<button
 			mat-icon-button
@@ -64,7 +64,7 @@
 			(click)='click()'
 			*ngIf='(accountService.menuExpanded | async) === false'
 		>
-			<cyph-logo icon [telehealth]='accountService.isTelehealth'></cyph-logo>
+			<cyph-logo icon></cyph-logo>
 		</button>
 
 		<div fxFlex *ngIf='accountService.menuReduced | async'></div>
@@ -131,7 +131,7 @@
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "appointments"'
 		(click)='click()'
-		*ngIf='accountService.isTelehealth && (accountService.menuExpanded | async)'
+		*ngIf='envService.isTelehealth && (accountService.menuExpanded | async)'
 	>
 		<mat-icon>date_range</mat-icon>
 		<span>Appointments</span>
@@ -143,7 +143,7 @@
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "appointments"'
 		(click)='click()'
-		*ngIf='accountService.isTelehealth && (accountService.menuExpanded | async) === false'
+		*ngIf='envService.isTelehealth && (accountService.menuExpanded | async) === false'
 	>
 		<mat-icon>date_range</mat-icon>
 	</button>
@@ -258,7 +258,7 @@
 		[routerLink]='accountService.routeRoot + "forms"'
 		(click)='click()'
 		*ngIf='
-			(!envService.environment.production || accountService.isTelehealth) &&
+			(!envService.environment.production || envService.isTelehealth) &&
 			(accountService.menuExpanded | async)
 		'
 	>
@@ -273,7 +273,7 @@
 		[routerLink]='accountService.routeRoot + "forms"'
 		(click)='click()'
 		*ngIf='
-			(!envService.environment.production || accountService.isTelehealth) &&
+			(!envService.environment.production || envService.isTelehealth) &&
 			(accountService.menuExpanded | async) === false
 		'
 	>

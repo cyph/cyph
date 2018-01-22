@@ -40,6 +40,12 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is Edge. */
 	public readonly isEdge: boolean			= /edge\/\d+/.test(Env.UA);
 
+	/** @see CustomBuildConfig.browserExtension */
+	public readonly isExtension: boolean	=
+		this.environment.customBuild !== undefined &&
+		this.environment.customBuild.config.browserExtension === true
+	;
+
 	/** Indicates whether this is mobile Firefox. */
 	public readonly isFFMobile: boolean		=
 		/fennec/.test(Env.UA) ||
@@ -94,6 +100,12 @@ export class Env extends EnvDeploy {
 
 	/** Indicates whether this should be considered a tablet. */
 	public readonly isTablet: boolean		= this.isMobile && self.outerWidth > 767;
+
+	/** @see CustomBuildConfig.telehealth */
+	public readonly isTelehealth: boolean	=
+		this.environment.customBuild !== undefined &&
+		this.environment.customBuild.config.telehealth === true
+	;
 
 	/** Indicates whether this is a touchscreen environment. */
 	public readonly isTouch: boolean		= (() => {

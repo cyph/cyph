@@ -15,7 +15,6 @@ import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {EphemeralSessionService} from '../cyph/services/ephemeral-session.service';
-import {FaviconService} from '../cyph/services/favicon.service';
 import {FileTransferService} from '../cyph/services/file-transfer.service';
 import {P2PWebRTCService} from '../cyph/services/p2p-webrtc.service';
 import {P2PService} from '../cyph/services/p2p.service';
@@ -83,7 +82,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		this.appService.chatRootState	= ChatRootStates.blank;
 
 		const granimStates	= {
-			'default-state': !this.sessionService.apiFlags.telehealth ?
+			'default-state': !this.envService.isTelehealth ?
 				{
 					gradients: [
 						['#392859', '#624599'],
@@ -103,7 +102,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 					transitionSpeed: 2500
 				}
 			,
-			'paused': !this.sessionService.apiFlags.telehealth ?
+			'paused': !this.envService.isTelehealth ?
 				{
 					gradients: [
 						['#624599', '#8b62d9'],
@@ -134,15 +133,6 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		if (this.sessionService.apiFlags.modestBranding) {
 			if (this.envService.isWeb) {
 				$(document.body).addClass('modest');
-			}
-			else {
-				/* TODO: HANDLE NATIVE */
-			}
-		}
-		if (this.sessionService.apiFlags.telehealth) {
-			if (this.envService.isWeb) {
-				$(document.body).addClass('telehealth');
-				this.faviconService.setFavicon('telehealth');
 			}
 			else {
 				/* TODO: HANDLE NATIVE */
@@ -272,9 +262,6 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 	constructor (
 		/** @ignore */
 		private readonly dialogService: DialogService,
-
-		/** @ignore */
-		private readonly faviconService: FaviconService,
 
 		/** @ignore */
 		private readonly router: Router,

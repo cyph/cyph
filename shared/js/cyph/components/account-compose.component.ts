@@ -11,6 +11,7 @@ import {AccountFilesService} from '../services/account-files.service';
 import {AccountService} from '../services/account.service';
 import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
+import {EnvService} from '../services/env.service';
 import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 import {observableToBehaviorSubject} from '../util/flatten-observable-promise';
@@ -89,7 +90,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 			await this.accountFilesService.upload(
 				(
 					(
-						this.accountService.isTelehealth ?
+						this.envService.isTelehealth ?
 							`${this.stringsService.telehealthCallAbout} ` :
 							''
 					) +
@@ -101,7 +102,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 						this.recipient.value.username,
 						this.accountDatabaseService.currentUser.value.user.username
 					],
-					roles: !this.accountService.isTelehealth ? {} : {
+					roles: !this.envService.isTelehealth ? {} : {
 						[this.recipient.value.username]: Appointment.Roles.TelehealthDoctor,
 						[
 							this.accountDatabaseService.currentUser.value.user.username
@@ -182,6 +183,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

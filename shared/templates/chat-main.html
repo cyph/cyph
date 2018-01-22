@@ -63,7 +63,7 @@
 		<div class='image'>
 			<img
 				*ngIf='!(
-					sessionService.apiFlags.telehealth ||
+					envService.isTelehealth ||
 					envService.customBuildImages.errorImage
 				)'
 				src='/assets/img/walken.png'
@@ -77,7 +77,7 @@
 				cyphTranslate
 			/>
 		</div>
-		<div *ngIf='!sessionService.apiFlags.telehealth'>
+		<div *ngIf='!envService.isTelehealth'>
 			<span cyphTranslate>This</span>
 			<span>{{stringsService.session}}</span>
 			<span cyphTranslate>has been aborted.</span>
@@ -89,7 +89,7 @@
 				[routerLink]='envService.newCyphUrlRetry'
 			>try again</a>.
 		</div>
-		<div *ngIf='sessionService.apiFlags.telehealth'>
+		<div *ngIf='envService.isTelehealth'>
 			<span cyphTranslate>This telehealth session has been aborted.</span>
 			<br />
 			<br />
@@ -120,7 +120,7 @@
 		*ngIf='p2pWebRTCService && chatService.chat.state === states.chat'
 	>
 		<a class='logo' rel='noopener noreferrer' [href]='envService.homeUrl'>
-			<cyph-logo video [telehealth]='sessionService.apiFlags.telehealth'></cyph-logo>
+			<cyph-logo video></cyph-logo>
 		</a>
 		<div
 			class='friend stream'

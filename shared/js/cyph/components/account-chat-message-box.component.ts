@@ -3,6 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import {User} from '../account/user';
 import {ChatMessageValueTypes} from '../proto';
 import {AccountService} from '../services/account.service';
+import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
 import {calendarInviteReasons} from '../verticals/telehealth/calendar-invite-reasons';
 
@@ -18,7 +19,7 @@ import {calendarInviteReasons} from '../verticals/telehealth/calendar-invite-rea
 export class AccountChatMessageBoxComponent {
 	/** @see ChatMessageBoxComponent.calendarInviteReasons */
 	@Input() public calendarInviteReasons?: string[]	=
-		this.accountService.isTelehealth ?
+		this.envService.isTelehealth ?
 			calendarInviteReasons :
 			undefined
 	;
@@ -48,6 +49,9 @@ export class AccountChatMessageBoxComponent {
 	@Input() public showUnreadCount: boolean	= true;
 
 	constructor (
+		/** @ignore */
+		private readonly envService: EnvService,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 

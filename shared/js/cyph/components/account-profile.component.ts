@@ -87,7 +87,7 @@ export class AccountProfileComponent implements OnInit {
 				this.user		= await this.accountUserLookupService.getUser(username);
 			}
 			else if (this.accountDatabaseService.currentUser.value) {
-				if (this.accountService.isTelehealth) {
+				if (this.envService.isTelehealth) {
 					const userType	=
 						await this.accountDatabaseService.currentUser.value.user.userType.pipe(
 							take(1)

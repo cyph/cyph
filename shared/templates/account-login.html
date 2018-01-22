@@ -12,7 +12,7 @@
 		fxFlex.xs='100'
 		*ngIf='pinUnlock !== undefined'
 	>
-		<cyph-logo cardHeader [telehealth]='accountService.isTelehealth'></cyph-logo>
+		<cyph-logo cardHeader></cyph-logo>
 		<mat-card-title cyphTranslate>
 			<span *ngIf='!pinUnlock'>{{stringsService.logInTitle}}</span>
 			<span *ngIf='pinUnlock'>{{stringsService.unlockTitle}}</span>

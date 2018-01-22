@@ -64,7 +64,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
 
-		if (this.accountService.isTelehealth) {
+		if (this.envService.isTelehealth) {
 			this.messageType.next(ChatMessageValueTypes.Quill);
 		}
 

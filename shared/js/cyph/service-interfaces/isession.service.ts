@@ -19,7 +19,6 @@ export interface ISessionService {
 	readonly apiFlags: {
 		forceTURN: boolean;
 		modestBranding: boolean;
-		telehealth: boolean;
 	};
 
 	/** App username. Currently just an empty string. */

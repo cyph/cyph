@@ -6,14 +6,14 @@
 		class='content'
 		*ngIf='accountDatabaseService.currentUser | async as currentUser'
 	>
-		<cyph-logo fxFlex='5em' telehealth></cyph-logo>
+		<cyph-logo fxFlex='5em'></cyph-logo>
 
-		<h1 cyphTranslate *ngIf='!accountService.isTelehealth'>Waiting to Start Call</h1>
-		<h1 cyphTranslate *ngIf='accountService.isTelehealth'>Waiting Room</h1>
+		<h1 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h1>
+		<h1 cyphTranslate *ngIf='envService.isTelehealth'>Waiting Room</h1>
 
 		<div *ngIf='currentUser.user.userType | async as userType'>
 			<h2 *ngIf='
-				accountService.isTelehealth && (
+				envService.isTelehealth && (
 					(currentUser.user.userType | async) === accountUserTypes.Standard ||
 					(currentUser.user.userType | async) === accountUserTypes.TelehealthPatient
 				);
@@ -23,7 +23,7 @@
 			</h2>
 			<ng-template #doctorMessage>
 				<h2 *ngIf='
-					accountService.isTelehealth && (
+					envService.isTelehealth && (
 						(currentUser.user.userType | async) === accountUserTypes.TelehealthDoctor
 					);
 					else genericMessage
