@@ -1,6 +1,6 @@
 import {Component, HostBinding, Input} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {CustomBuildService} from '../services/custom-build.service';
+import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
 import {urlToSafeStyle} from '../util/safe-values';
 
@@ -24,13 +24,13 @@ export class LogoComponent {
 	private readonly logos	= {
 		horizontal: {
 			main: urlToSafeStyle(
-				this.customBuildService.logoHorizontal ||
+				this.envService.customBuildImages.logoHorizontal ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/logo.white.horizontal.png'
 				)
 			),
 			telehealth: urlToSafeStyle(
-				this.customBuildService.logoHorizontal ||
+				this.envService.customBuildImages.logoHorizontal ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/logo.telehealth.horizontal.png'
 				)
@@ -38,13 +38,13 @@ export class LogoComponent {
 		},
 		icon: {
 			main: urlToSafeStyle(
-				this.customBuildService.favicon ||
+				this.envService.customBuildImages.favicon ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/logo.white.icon.png'
 				)
 			),
 			telehealth: urlToSafeStyle(
-				this.customBuildService.favicon ||
+				this.envService.customBuildImages.favicon ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/logo.telehealth.icon.png'
 				)
@@ -52,13 +52,13 @@ export class LogoComponent {
 		},
 		vertical: {
 			main: urlToSafeStyle(
-				this.customBuildService.logoVertical ||
+				this.envService.customBuildImages.logoVertical ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/logo.white.vertical.png'
 				)
 			),
 			telehealth: urlToSafeStyle(
-				this.customBuildService.logoVertical ||
+				this.envService.customBuildImages.logoVertical ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/logo.telehealth.vertical.png'
 				)
@@ -66,13 +66,13 @@ export class LogoComponent {
 		},
 		video: {
 			main: urlToSafeStyle(
-				this.customBuildService.logoHorizontal ||
+				this.envService.customBuildImages.logoHorizontal ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/betalogo.mobile.png'
 				)
 			),
 			telehealth: urlToSafeStyle(
-				this.customBuildService.logoHorizontal ||
+				this.envService.customBuildImages.logoHorizontal ||
 				this.domSanitizer.bypassSecurityTrustUrl(
 					'/assets/img/telehealth.video.logo.png'
 				)
@@ -155,7 +155,7 @@ export class LogoComponent {
 		private readonly domSanitizer: DomSanitizer,
 
 		/** @ignore */
-		private readonly customBuildService: CustomBuildService,
+		private readonly envService: EnvService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

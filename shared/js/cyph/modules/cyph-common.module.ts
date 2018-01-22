@@ -25,7 +25,6 @@ import {RouterLinkDirective} from '../directives/router-link.directive';
 import {TranslateDirective} from '../directives/translate.directive';
 import {AnalyticsService} from '../services/analytics.service';
 import {ConfigService} from '../services/config.service';
-import {CustomBuildService} from '../services/custom-build.service';
 import {EnvService} from '../services/env.service';
 import {ErrorService} from '../services/error.service';
 import {FileService} from '../services/file.service';
@@ -102,7 +101,6 @@ import {CyphWebModule} from './cyph-web.module';
 	providers: [
 		AnalyticsService,
 		ConfigService,
-		CustomBuildService,
 		EnvService,
 		ErrorService,
 		FileService,

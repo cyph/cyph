@@ -23,7 +23,10 @@ export class AccountService {
 
 	/** Indicates whether real-time Docs is enabled. */
 	public readonly enableDocs: boolean					=
-		customBuildEnableDocs || this.envService.isLocalEnv
+		this.envService.environment.local || (
+			!!this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.config.enableDocs === true
+		)
 	;
 
 	/** Indicates the status of the interstitial. */

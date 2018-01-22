@@ -19,7 +19,7 @@ export class Thread implements IThread {
 
 		/* Inherit these from main thread */
 
-		(<any> self).customBuild		= threadSetupVars.customBuild;
+		(<any> self).accountRoot		= threadSetupVars.accountRoot;
 		(<any> self).locationData		= threadSetupVars.locationData;
 		(<any> self).navigatorData		= threadSetupVars.navigatorData;
 		(<any> self).translations		= threadSetupVars.translations;
@@ -148,8 +148,8 @@ export class Thread implements IThread {
 		const seedBytes	= potassiumUtil.randomBytes(32);
 
 		const threadSetupVars	= {
-			customBuild,
-			isLocalEnv: env.isLocalEnv,
+			accountRoot,
+			isLocalEnv: env.environment.local,
 			locationData: {
 				hash: locationData.hash,
 				host: locationData.host,

@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Env} from '../env';
-import {StringProto} from '../proto';
+import {DataURIProto, StringProto} from '../proto';
 import {request} from '../util/request';
-import {parse} from '../util/serialization';
+import {deserialize, parse} from '../util/serialization';
 import {LocalStorageService} from './local-storage.service';
 
 
@@ -31,6 +31,34 @@ export class EnvService extends Env {
 			return {};
 		}
 	})();
+
+	/** Custom build images. */
+	public readonly customBuildImages	= {
+		audioImage:
+			this.environment.customBuild && this.environment.customBuild.audioImage ?
+				deserialize(DataURIProto, this.environment.customBuild.audioImage) :
+				undefined
+		,
+		errorImage:
+			this.environment.customBuild && this.environment.customBuild.errorImage ?
+				deserialize(DataURIProto, this.environment.customBuild.errorImage) :
+				undefined
+		,
+		favicon:
+			this.environment.customBuild && this.environment.customBuild.favicon ?
+				deserialize(DataURIProto, this.environment.customBuild.favicon) :
+				undefined
+		,
+		logoHorizontal:
+			this.environment.customBuild && this.environment.customBuild.logoHorizontal ?
+				deserialize(DataURIProto, this.environment.customBuild.logoHorizontal) :
+				undefined
+		,
+		logoVertical:
+			this.environment.customBuild && this.environment.customBuild.logoVertical ?
+				deserialize(DataURIProto, this.environment.customBuild.logoVertical) :
+				undefined
+	};
 
 	/** Geolocation data. */
 	public readonly geolocation	= {

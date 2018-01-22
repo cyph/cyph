@@ -1,31 +1,30 @@
 #!/usr/bin/env node
 
 
-const cheerio			= require('cheerio');
-const childProcess		= require('child_process');
-const datauri			= require('datauri');
-const fs				= require('fs');
-const htmlencode		= require('htmlencode');
-const superSphincs		= require('supersphincs');
-const {potassium}		= require('../../modules/potassium');
-const {StringMapProto}	= require('../../modules/proto');
-const {serialize}		= require('../../modules/util');
+const cheerio		= require('cheerio');
+const childProcess	= require('child_process');
+const datauri		= require('datauri');
+const fs			= require('fs');
+const htmlencode	= require('htmlencode');
+const superSphincs	= require('supersphincs');
+const {potassium}	= require('../../modules/potassium');
+const {Environment}	= require('../../modules/proto');
+const {serialize}	= require('../../modules/util');
 
 
 (async () => {
 
 
 const args			= {
-	customBuild: process.argv[2],
-	customBuildAudioImage: process.argv[3],
-	customBuildConfig: process.argv[4],
-	customBuildErrorImage: process.argv[5],
-	customBuildFavicon: process.argv[6],
-	customBuildLogoHorizontal: process.argv[7],
-	customBuildLogoVertical: process.argv[8],
-	customBuildStrings: process.argv[9],
-	customBuildStylesheet: process.argv[10],
-	customBuildTheme: process.argv[11],
+	id: process.argv[2],
+	audioImage: process.argv[3],
+	config: process.argv[4],
+	errorImage: process.argv[5],
+	favicon: process.argv[6],
+	logoHorizontal: process.argv[7],
+	logoVertical: process.argv[8],
+	strings: process.argv[9],
+	theme: process.argv[10]
 };
 
 
@@ -47,125 +46,62 @@ const compileSCSS	= scss =>
 	}).stdout.toString().trim()
 ;
 
+const tryReadFile	= (path, jsonParse) => {
+	const buffer	= fs.existsSync(path) ? fs.readFileSync(path) : undefined;
+	if (buffer && jsonParse) {
+		return JSON.parse(buffer.toString());
+	}
+	return buffer;
+};
+
+
 const $	= cheerio.load(fs.readFileSync('../cyph.ws').toString());
 
-const o	= JSON.parse(
-	fs.readFileSync(args.customBuildConfig).toString()
-);
+const customBuild	= {
+	audioImage: tryReadFile(args.audioImage),
+	config: tryReadFile(args.config, true) || {},
+	id: args.id,
+	errorImage: tryReadFile(args.errorImage),
+	favicon: tryReadFile(args.favicon),
+	logoHorizontal: tryReadFile(args.logoHorizontal),
+	logoVertical: tryReadFile(args.logoVertical),
+	strings: tryReadFile(args.strings, true)
+};
 
-try {
-	o.audioImage		= potassium.toBase64(fs.readFileSync(args.customBuildAudioImage));
+if (customBuild.config.title) {
+	customBuild.config.title	= htmlencode.htmlEncode(customBuild.config.title);
 }
-catch (_) {}
 
-try {
-	o.errorImage		= potassium.toBase64(fs.readFileSync(args.customBuildErrorImage));
-}
-catch (_) {}
 
-try {
-	o.favicon			= potassium.toBase64(fs.readFileSync(args.customBuildFavicon));
-}
-catch (_) {}
+const scss	= `
+	${!customBuild.config.backgroundColor ? '' : `
+		$cyph-background: ${customBuild.config.backgroundColor};
 
-try {
-	o.logoHorizontal	= potassium.toBase64(fs.readFileSync(args.customBuildLogoHorizontal));
-}
-catch (_) {}
+		#main-chat-gradient {
+			display: none !important;
+		}
 
-try {
-	o.logoVertical		= potassium.toBase64(fs.readFileSync(args.customBuildLogoVertical));
-}
-catch (_) {}
+		#pre-load {
+			background-color: ${customBuild.config.backgroundColor} !important;
+		}
+	`}
 
-try {
-	o.strings			= fs.readFileSync(args.customBuildStrings).toString();
-}
-catch (_) {}
+	${!customBuild.config.foregroundColor ? '' : `
+		$cyph-foreground: ${customBuild.config.foregroundColor};
+	`}
 
-let css	= '';
-try {
-	css	= compileSCSS(`
-		${!o.backgroundColor ? '' : `
-			$cyph-background: ${o.backgroundColor};
+	${(tryReadFile(args.theme) || '').toString()}
+`.trim();
 
-			#main-chat-gradient {
-				display: none !important;
-			}
-		`}
-
-		${!o.foregroundColor ? '' : `
-			$cyph-foreground: ${o.foregroundColor};
-		`}
-
-		${fs.readFileSync(args.customBuildTheme).toString()}
-
+if (scss) {
+	customBuild.css	= compileSCSS(`
+		${scss}
 		@include cyph-apply-theme(true);
 	`);
 }
-catch (_) {}
-
-const hash	= (await superSphincs.hash(css)).hex;
 
 
-if (o.title) {
-	$('title').text(htmlencode.htmlEncode(o.title));
-}
-
-let headStyle	= '';
-if (o.backgroundColor) {
-	$('head').find(
-		'meta[name="theme-color"],' + 
-		'meta[name="msapplication-TileColor"]'
-	).
-		attr('content', o.backgroundColor)
-	;
-
-	headStyle += `
-		#pre-load {
-			background-color: ${o.backgroundColor} !important;
-		}
-	`;
-}
-if (o.loadingAnimationFilter) {
-	headStyle += `
-		#pre-load > .transition, .loading > .logo-animation > *,
-		.loading > .logo-animation.connected, md-progress-bar {
-			@include filter(${o.loadingAnimationFilter});
-		}
-	`;
-}
-if (headStyle) {
-	$('head').append(`<style>${compileSCSS(headStyle)}</style>`);
-}
-
-$('head').append(`<meta name='custom-build' content='${args.customBuild}' />`);
-
-if (o.accountsOnly) {
-	$('head').append(`<meta name='custom-build-accounts-only' content='true' />`);
-}
-
-if (o.apiFlags) {
-	$('head').append(`<meta name='custom-build-api-flags' content='${o.apiFlags}' />`);
-}
-
-if (o.callType) {
-	$('head').append(`<meta name='custom-build-call-type' content='${o.callType}' />`);
-}
-
-if (o.audioImage) {
-	$('head').append(`<meta name='custom-build-audio-image' content='${o.audioImage}' />`);
-}
-
-if (o.enableDocs) {
-	$('head').append(`<meta name='custom-build-enable-docs' content='true' />`);
-}
-
-if (o.errorImage) {
-	$('head').append(`<meta name='custom-build-error-image' content='${o.errorImage}' />`);
-}
-
-if (o.favicon) {
+if (customBuild.favicon) {
 	$('head').find(
 		'link[type="image/png"],' + 
 		'meta[name="msapplication-TileImage"]'
@@ -173,50 +109,16 @@ if (o.favicon) {
 		removeAttr('websign-sri-path').
 		removeAttr('websign-sri-hash').
 		removeAttr('href').
-		removeAttr('content').
-		addClass('custom-build-favicon')
+		removeAttr('content')
 	;
-
-	$('head').append(`<meta name='custom-build-favicon' content='${o.favicon}' />`);
 }
 
-if (o.logoHorizontal) {
-	$('head').append(`<meta name='custom-build-logo-horizontal' content='${o.logoHorizontal}' />`);
-}
 
-if (o.logoVertical) {
-	$('head').append(`<meta name='custom-build-logo-vertical' content='${o.logoVertical}' />`);
-}
+$('head').append(`<meta name='custom-build' content='${
+	potassium.toBase64(await serialize(Environment.CustomBuild, customBuild))
+}' />`);
 
-if (o.password) {
-	/* Not going to pretend that this is a security feature. */
-	$('head').append(
-		`<meta name='custom-build-password' content='${
-			Buffer.from(o.password).toString('base64')
-		}' />`
-	);
-}
-
-if (o.strings) {
-	$('head').append(`<meta name='custom-build-strings' content='${
-		potassium.toBase64(await serialize(StringMapProto, JSON.parse(o.strings)))
-	}' />`);
-}
-
-if (css) {
-	$('body').append(`
-		<link
-			rel='stylesheet'
-			websign-sri-path='${args.customBuildStylesheet}'
-			websign-sri-hash='${hash}'
-		></link>
-	`);
-
-	fs.writeFileSync(args.customBuildStylesheet, css);
-	fs.writeFileSync(`${args.customBuildStylesheet}.srihash`, hash);
-}
-
-fs.writeFileSync(`../${args.customBuild}`, $.html().trim());
+fs.writeFileSync(`../${args.id}`, $.html().trim());
 
 
 })();

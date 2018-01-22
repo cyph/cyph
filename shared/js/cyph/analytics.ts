@@ -54,7 +54,7 @@ export class Analytics {
 			const appVersion: string	= this.env.isWeb ? 'Web' : 'Native';
 
 			/* TODO: HANDLE NATIVE */
-			if (this.env.isOnion || this.env.isLocalEnv || !this.env.isWeb) {
+			if (this.env.isOnion || this.env.environment.local || !this.env.isWeb) {
 				throw new Error('Analytics disabled.');
 			}
 

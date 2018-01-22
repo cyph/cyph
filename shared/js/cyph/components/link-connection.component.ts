@@ -36,7 +36,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 	public advancedFeatures: boolean		= false;
 
 	/** Indicates whether advanced features UI should be displayed. */
-	public enableAdvancedFeatures: boolean	= !this.envService.isProd;
+	public enableAdvancedFeatures: boolean	= !this.envService.environment.production;
 
 	/** Indicates whether this link connection was initiated passively via API integration. */
 	public isPassive: boolean				= false;
@@ -51,7 +51,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 	public linkSMS?: SafeUrl;
 
 	/** Draft of queued message. */
-	public queuedMessageDraft: string	= '';
+	public queuedMessageDraft: string		= '';
 
 	/** Counts down until link expires. */
 	public timer?: Timer;

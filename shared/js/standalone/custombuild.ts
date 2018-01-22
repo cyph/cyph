@@ -4,41 +4,65 @@
 
 
 import * as $ from 'jquery';
+import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
+import {Environment} from '../cyph/proto';
+import {environment} from '../environments/environment';
 
 
-customBuild					= $('meta[name="custom-build"]').attr('content');
-customBuildApiFlags			= $('meta[name="custom-build-api-flags"]').attr('content');
-customBuildAudioImage		= $('meta[name="custom-build-audio-image"]').attr('content');
-customBuildErrorImage		= $('meta[name="custom-build-error-image"]').attr('content');
-customBuildFavicon			= $('meta[name="custom-build-favicon"]').attr('content');
-customBuildLogoHorizontal	= $('meta[name="custom-build-logo-horizontal"]').attr('content');
-customBuildLogoVertical		= $('meta[name="custom-build-logo-vertical"]').attr('content');
-customBuildStrings			= $('meta[name="custom-build-strings"]').attr('content');
+const $customBuild		= $('meta[name="custom-build"]');
+const customBuildBase64	= $customBuild.attr('content');
+$customBuild.remove();
 
-customBuildEnableDocs	= $('meta[name="custom-build-enable docs"]').attr('content') === 'true';
-
-accountRoot	=
-	$('meta[name="custom-build-accounts-only"]').attr('content') === 'true' ? '' : 'account'
-;
-
-const callType	= $('meta[name="custom-build-call-type"]').attr('content');
-if (callType === 'audio' || callType === 'video') {
-	customBuildCallType	= callType;
+if (customBuildBase64) {
+	try {
+		environment.customBuild	= Environment.CustomBuild.decode(
+			potassiumUtil.fromBase64(customBuildBase64)
+		);
+	}
+	catch {}
 }
 
-const faviconURI	= customBuildFavicon ? `data:image/png;base64,${customBuildFavicon}` : '';
+accountRoot	= 'account';
 
-$('head .custom-build-favicon').each((_, elem) => {
-	if (elem instanceof HTMLLinkElement) {
-		elem.href		= faviconURI;
+if (environment.customBuild) {
+	if (environment.customBuild.config.accountsOnly) {
+		accountRoot	= '';
 	}
-	else if (elem instanceof HTMLMetaElement) {
-		elem.content	= faviconURI;
-	}
-});
 
-const $password	= $('meta[name="custom-build-password"]');
-if ($password.length > 0) {
-	customBuildPassword	= $password.attr('content');
-	$password.remove();
+	if (environment.customBuild.config.backgroundColor) {
+		$('head').find(
+			'meta[name="theme-color"],' +
+			'meta[name="msapplication-TileColor"]'
+		).
+			attr('content', environment.customBuild.config.backgroundColor)
+		;
+	}
+
+	if (environment.customBuild.config.title) {
+		$('title').text(environment.customBuild.config.title);
+	}
+
+	if (environment.customBuild.css) {
+		const style			= document.createElement('style');
+		style.textContent	= environment.customBuild.css;
+		document.head.appendChild(style);
+	}
+
+	if (environment.customBuild.favicon) {
+		const faviconURI	=
+			`data:image/png;base64,${potassiumUtil.toBase64(environment.customBuild.favicon)}`
+		;
+
+		$('head').find(
+			'link[type="image/png"],' +
+			'meta[name="msapplication-TileImage"]'
+		).each((_, elem) => {
+			if (elem instanceof HTMLLinkElement) {
+				elem.href		= faviconURI;
+			}
+			else if (elem instanceof HTMLMetaElement) {
+				elem.content	= faviconURI;
+			}
+		});
+	}
 }

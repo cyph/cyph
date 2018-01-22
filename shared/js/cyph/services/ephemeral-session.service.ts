@@ -152,13 +152,11 @@ export class EphemeralSessionService extends SessionService {
 
 		/* API flags */
 		for (const flag of this.configService.apiFlags) {
-			if (id[0] === flag.character) {
-				id	= id.substring(1);
-			}
-			else if (!customBuildApiFlags || customBuildApiFlags.indexOf(flag.character) < 0) {
+			if (id[0] !== flag.character) {
 				continue;
 			}
 
+			id	= id.substring(1);
 			flag.set(this);
 
 			this.analyticsService.sendEvent({

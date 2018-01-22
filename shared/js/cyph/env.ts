@@ -20,7 +20,10 @@ export class Env extends EnvDeploy {
 
 
 	/** Indicates whether this is a co-branded instance of Cyph. */
-	public readonly coBranded: boolean		= !!customBuild;
+	public readonly coBranded: boolean		=
+		this.environment.customBuild !== undefined &&
+		this.environment.customBuild.favicon !== undefined
+	;
 
 	/** Complete (lowercase) language code, e.g. "en-us". */
 	public readonly fullLanguage: string	= Env.language.toLowerCase();

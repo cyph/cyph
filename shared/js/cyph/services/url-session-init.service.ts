@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
+import {environment} from '../../environments/environment';
 import {SessionInitService} from './session-init.service';
 
 
@@ -35,7 +36,15 @@ export class UrlSessionInitService implements SessionInitService {
 		this.id	= urlSegmentPaths[this.callType ? 1 : 0] || '';
 
 		if (!this.callType) {
-			this.callType	= customBuildCallType;
+			this.callType	=
+				!environment.customBuild ?
+					undefined :
+					environment.customBuild.config.callTypeVideo ?
+						'video' :
+						environment.customBuild.config.callTypeAudio ?
+							'audio' :
+							undefined
+			;
 		}
 	}
 }

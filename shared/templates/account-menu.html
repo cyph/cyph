@@ -258,7 +258,7 @@
 		[routerLink]='accountService.routeRoot + "forms"'
 		(click)='click()'
 		*ngIf='
-			(!envService.isProd || accountService.isTelehealth) &&
+			(!envService.environment.production || accountService.isTelehealth) &&
 			(accountService.menuExpanded | async)
 		'
 	>
@@ -273,7 +273,7 @@
 		[routerLink]='accountService.routeRoot + "forms"'
 		(click)='click()'
 		*ngIf='
-			(!envService.isProd || accountService.isTelehealth) &&
+			(!envService.environment.production || accountService.isTelehealth) &&
 			(accountService.menuExpanded | async) === false
 		'
 	>

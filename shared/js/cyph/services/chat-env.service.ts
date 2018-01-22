@@ -4,7 +4,6 @@ import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 import {SessionInitService} from './session-init.service';
-import {SessionService} from './session.service';
 
 
 /**
@@ -18,30 +17,31 @@ export class ChatEnvService extends EnvService {
 			return base ? env.newCyphBaseUrl : env.newCyphUrl;
 		}
 
-		const flags		=
-			this.configService.apiFlags.map(flag =>
-				customBuildApiFlags && customBuildApiFlags.indexOf(flag.character) > -1 ?
-					'' :
-					flag.get(this.sessionService)
-			).join('')
-		;
-
-		const baseUrl	=
-			(
-				customBuildCallType === this.sessionInitService.callType ?
+		return (
+			this.sessionInitService.callType === 'video' ?
+				(
+					this.environment.customBuild &&
+					this.environment.customBuild.config.callTypeVideo
+				) ?
 					undefined :
-					this.sessionInitService.callType === 'audio' ?
-						(base ? env.cyphAudioBaseUrl : env.cyphAudioUrl) :
-						this.sessionInitService.callType === 'video' ?
-							(base ? env.cyphVideoBaseUrl : env.cyphVideoUrl) :
-							undefined
-			) ||
-				(base ? env.newCyphBaseUrl : env.newCyphUrl)
-		;
-
-		const divider	= baseUrl.indexOf('#') < 0 ? '#' : '';
-
-		return flags.length > 0 ? `${baseUrl}${divider}${flags}` : baseUrl;
+					base ?
+						env.cyphVideoBaseUrl :
+						env.cyphVideoUrl
+				:
+				this.sessionInitService.callType === 'audio' ?
+					(
+						this.environment.customBuild &&
+						this.environment.customBuild.config.callTypeAudio
+					) ?
+						undefined :
+						base ?
+							env.cyphAudioBaseUrl :
+							env.cyphAudioUrl
+					:
+					undefined
+		) || (
+			base ? env.newCyphBaseUrl : env.newCyphUrl
+		);
 	}
 
 	/** EnvService.newCyphBaseUrl adjusted for session API flags and initial call type. */
@@ -65,9 +65,6 @@ export class ChatEnvService extends EnvService {
 
 		/** @ignore */
 		private readonly configService: ConfigService,
-
-		/** @ignore */
-		private readonly sessionService: SessionService,
 
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService

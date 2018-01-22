@@ -1,7 +1,7 @@
 <div
 	fxFlexFill
 	fxLayoutAlign='center start'
-	*ngIf='form && (!envService.isProd || accountService.isTelehealth)'
+	*ngIf='form && (!envService.environment.production || accountService.isTelehealth)'
 >
 	<mat-card fxFlex='90' class='form'>
 		<mat-card-header fxLayout='row'>

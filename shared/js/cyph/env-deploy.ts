@@ -2,6 +2,7 @@
 
 import {environment} from '../environments/environment';
 import {config} from './config';
+import {IEnvironment} from './proto';
 
 
 /**
@@ -9,11 +10,11 @@ import {config} from './config';
  * the deploy script; exercise EXTREME caution when modifying this file.
  */
 export class EnvDeploy {
-	/** Indicates whether this is local dev environment. */
-	public readonly isLocalEnv: boolean			= environment.local;
+	/** @ignore */
+	private useBaseUrl: boolean	= !!environment.customBuild || environment.local;
 
-	/** Indicates whether this is the production environment. */
-	public readonly isProd: boolean 			= environment.production;
+	/** @see IEnvironment */
+	public readonly environment: IEnvironment	= environment;
 
 	/** Indicates whether this is our Tor site. */
 	public readonly isOnion: boolean			=
@@ -33,13 +34,13 @@ export class EnvDeploy {
 	;
 
 	/** Base URL for a new cyph link ("https://cyph.ws/" or equivalent). */
-	public readonly newCyphBaseUrl: string		= customBuild ?
-		`https://${customBuild}/` :
+	public readonly newCyphBaseUrl: string		= this.environment.customBuild ?
+		`https://${this.environment.customBuild}/` :
 		`${locationData.protocol}//${locationData.hostname}:42002/`
 	;
 
 	/** URL for starting a new cyph ("https://cyph.im/" or equivalent). */
-	public readonly newCyphUrl: string			= customBuild || this.isLocalEnv ?
+	public readonly newCyphUrl: string			= this.useBaseUrl ?
 		this.newCyphBaseUrl :
 		this.isOnion ?
 			`https://im.${config.onionRoot}/` :
@@ -50,7 +51,7 @@ export class EnvDeploy {
 	public readonly cyphMeBaseUrl: string		= `${this.newCyphBaseUrl}#me/`;
 
 	/** URL for starting a new me cyph ("https://cyph.me/" or equivalent). */
-	public readonly cyphMeUrl: string			= customBuild || this.isLocalEnv ?
+	public readonly cyphMeUrl: string			= this.useBaseUrl ?
 		this.cyphMeBaseUrl :
 		this.isOnion ?
 			`https://me.${config.onionRoot}/` :
@@ -61,7 +62,7 @@ export class EnvDeploy {
 	public readonly cyphIoBaseUrl: string		= `${this.newCyphBaseUrl}#io/`;
 
 	/** URL for starting a new io cyph ("https://cyph.io/" or equivalent). */
-	public readonly cyphIoUrl: string			= customBuild || this.isLocalEnv ?
+	public readonly cyphIoUrl: string			= this.useBaseUrl ?
 		this.cyphIoBaseUrl :
 		this.isOnion ?
 			`https://io.${config.onionRoot}/` :
@@ -72,7 +73,7 @@ export class EnvDeploy {
 	public readonly cyphVideoBaseUrl: string	= `${this.newCyphBaseUrl}#video/`;
 
 	/** URL for starting a new video cyph ("https://cyph.video/" or equivalent). */
-	public readonly cyphVideoUrl: string		= customBuild || this.isLocalEnv ?
+	public readonly cyphVideoUrl: string		= this.useBaseUrl ?
 		this.cyphVideoBaseUrl :
 		this.isOnion ?
 			`https://video.${config.onionRoot}/` :
@@ -83,7 +84,7 @@ export class EnvDeploy {
 	public readonly cyphAudioBaseUrl: string	= `${this.newCyphBaseUrl}#audio/`;
 
 	/** URL for starting a new audio cyph ("https://cyph.audio/" or equivalent). */
-	public readonly cyphAudioUrl: string		= customBuild || this.isLocalEnv ?
+	public readonly cyphAudioUrl: string		= this.useBaseUrl ?
 		this.cyphAudioBaseUrl :
 		this.isOnion ?
 			`https://audio.${config.onionRoot}/` :

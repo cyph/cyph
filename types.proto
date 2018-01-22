@@ -399,6 +399,87 @@ message ChatUnconfirmedMessages {
 	map<string, bool> unconfirmedMessages = 1;
 }
 
+/** Angular CLI environment configuration. */
+message Environment {
+	/** Custom build environment data. */
+	message CustomBuild {
+		/** Voice call background image for this custom build. */
+		bytes audioImage = 1;
+
+		/** @see CustomBuildConfig */
+		required CustomBuildConfig config = 2;
+
+		/** Custom styling. */
+		string css = 3;
+
+		/** Identifier of this custom build. */
+		required string id = 4;
+
+		/** Walken image replacement for this custom build. */
+		bytes errorImage = 5;
+
+		/** Favicon for this custom build. */
+		bytes favicon = 6;
+
+		/** Horizontal logo for this custom build. */
+		bytes logoHorizontal = 7;
+
+		/** Vertical logo for this custom build. */
+		bytes logoVertical = 8;
+
+		/** Replacement strings for this custom build. */
+		map<string, string> strings = 9;
+	}
+
+	/** Custom build configuration. */
+	message CustomBuildConfig {
+		/** Boolean option to make an accounts-only environment. */
+		bool accountsOnly = 1;
+
+		/** Optional custom background color. */
+		string backgroundColor = 2;
+
+		/** If true, performs audio call by default. */
+		bool callTypeAudio = 3;
+
+		/** If true, performs video call by default (takes priority over callTypeAudio). */
+		bool callTypeVideo = 4;
+
+		/** Indicates whether docs will be enabled. */
+		bool enableDocs = 5;
+
+		/** Optional custom foreground color. */
+		string foregroundColor = 6;
+
+		/** Optional password to lock down environment (not a security feature). */
+		string password = 7;
+
+		/** Page title of this Cyph instance. */
+		string title = 8;
+	}
+
+	/**
+	 * Exists if in a custom build environment.
+	 * @see CustomBuild
+	 */
+	CustomBuild customBuild = 1;
+
+	/** Name of this environment. */
+	required string envName = 2;
+
+	/** Firebase API key. */
+	required string firebaseApiKey = 3;
+
+	/** Firebase project ID. */
+	required string firebaseProject = 4;
+
+	/** Indicates whether this is local development environment. */
+	required bool local = 5;
+
+	/** Indicates whether this is prod. */
+	required bool production = 6;
+}
+
 /** Represents a form that a user can submit responses to. */
 message Form {
 	/** Reusable building block consisting of multiple forms. */

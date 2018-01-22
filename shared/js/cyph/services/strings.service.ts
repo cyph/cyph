@@ -1,9 +1,8 @@
 /* tslint:disable:max-file-line-count */
 
 import {Injectable} from '@angular/core';
-import {potassiumUtil} from '../crypto/potassium/potassium-util';
-import {Internal} from '../proto';
 import {translate} from '../util/translate';
+import {EnvService} from './env.service';
 
 
 /**
@@ -13,40 +12,42 @@ import {translate} from '../util/translate';
 @Injectable()
 export class StringsService {
 	/** @ignore */
-	private static readonly customBuildStrings: {[k: string]: string}	=
-		customBuildStrings ?
-			Internal.StringMap.decode(potassiumUtil.fromBase64(customBuildStrings)).data :
+	private readonly customBuildStrings: {[k: string]: string}	=
+		(
+			this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.strings
+		) ?
+			this.envService.environment.customBuild.strings :
 			{}
 	;
 
-
 	/** @ignore */
 	private readonly internalCompany: string			=
-		StringsService.customBuildStrings.internalCompany ||
+		this.customBuildStrings.internalCompany ||
 		`Cyph`
 	;
 
 	/** @ignore */
 	private readonly internalFriend: string				=
-		StringsService.customBuildStrings.internalFriend ||
+		this.customBuildStrings.internalFriend ||
 		`friend`
 	;
 
 	/** @ignore */
 	private readonly internalProduct: string			=
-		StringsService.customBuildStrings.internalProduct ||
+		this.customBuildStrings.internalProduct ||
 		`Cyph`
 	;
 
 	/** @ignore */
 	private readonly internalProductShort: string		=
-		StringsService.customBuildStrings.internalProductShort ||
+		this.customBuildStrings.internalProductShort ||
 		`Cyph`
 	;
 
 	/** @ignore */
 	private readonly internalSession: string			=
-		StringsService.customBuildStrings.internalSession ||
+		this.customBuildStrings.internalSession ||
 		`cyph`
 	;
 
@@ -521,7 +522,10 @@ export class StringsService {
 		return s.length < 1 ? '' : s[0].toUpperCase() + s.slice(1);
 	}
 
-	constructor () {
+	constructor (
+		/** @ignore */
+		private readonly envService: EnvService
+	) {
 		/* tslint:disable-next-line:no-this-assignment */
 		const strings: {[k: string]: any}	= this;
 
@@ -531,7 +535,7 @@ export class StringsService {
 				continue;
 			}
 
-			strings[k]	= translate(StringsService.customBuildStrings[k] || s);
+			strings[k]	= translate(this.customBuildStrings[k] || s);
 		}
 	}
 }

@@ -75,7 +75,10 @@ export class FaviconService {
 			return;
 		}
 
-		if (customBuildFavicon) {
+		if (
+			this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.favicon
+		) {
 			return;
 		}
 

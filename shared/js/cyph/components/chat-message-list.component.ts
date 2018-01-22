@@ -24,7 +24,6 @@ import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
-import {CustomBuildService} from '../services/custom-build.service';
 import {EnvService} from '../services/env.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
@@ -91,9 +90,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 	/** @see customBuildLogoVertical */
 	public readonly customBackgroundImage: Promise<SafeStyle|undefined>	=
-		this.customBuildService.logoVertical === undefined ?
+		this.envService.customBuildImages.logoVertical === undefined ?
 			Promise.resolve(undefined) :
-			urlToSafeStyle(this.customBuildService.logoVertical).catch(() => undefined)
+			urlToSafeStyle(this.envService.customBuildImages.logoVertical).catch(() => undefined)
 	;
 
 	/** Indicates whether message count should be displayed in title. */
@@ -261,9 +260,6 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 		/** @ignore */
 		private readonly chatMessageGeometryService: ChatMessageGeometryService,
-
-		/** @ignore */
-		private readonly customBuildService: CustomBuildService,
 
 		/** @ignore */
 		private readonly envService: EnvService,

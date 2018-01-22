@@ -1,5 +1,8 @@
-/** Angular CLI environment configuration. */
-export const environment	= {
+import {IEnvironment} from '../cyph/proto';
+
+
+/** @inheritDoc */
+export const environment: IEnvironment	= {
 	envName: 'local',
 	firebaseApiKey: 'AIzaSyAmjdBKsQMJ2STtIQ-VrKm7cYx1Ewn6D3o',
 	firebaseProject: 'cyph-test-local',

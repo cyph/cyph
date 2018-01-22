@@ -4,7 +4,6 @@ import {fadeIn} from '../animations';
 import {States, UiStyles} from '../chat/enums';
 import {ChatMessageValueTypes} from '../proto';
 import {ChatService} from '../services/chat.service';
-import {CustomBuildService} from '../services/custom-build.service';
 import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
 import {P2PWebRTCService} from '../services/p2p-webrtc.service';
@@ -76,9 +75,6 @@ export class ChatMainComponent implements AfterViewInit {
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,
-
-		/** @see CustomBuildService */
-		public readonly customBuildService: CustomBuildService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

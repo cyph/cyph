@@ -11,6 +11,7 @@ import {first} from 'rxjs/operators/first';
 import {config} from '../cyph/config';
 import {AccountService} from '../cyph/services/account.service';
 import {AccountAuthService} from '../cyph/services/crypto/account-auth.service';
+import {EnvService} from '../cyph/services/env.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {translate} from '../cyph/util/translate';
 import {sleep, waitForValue} from '../cyph/util/wait';
@@ -35,7 +36,8 @@ export class AppService implements CanActivate {
 
 	/** If true, app is locked down. */
 	public isLockedDown: boolean			=
-		!!customBuildPassword &&
+		!!this.envService.environment.customBuild &&
+		!!this.envService.environment.customBuild.config.password &&
 		!locationData.hash.match(
 			new RegExp(`[${config.readableIDCharacters.join('|')}]{${config.secretLength}}$`)
 		)
@@ -80,7 +82,10 @@ export class AppService implements CanActivate {
 		private readonly router: Router,
 
 		/** @ignore */
-		private readonly accountService: AccountService
+		private readonly accountService: AccountService,
+
+		/** @ignore */
+		private readonly envService: EnvService
 	) {
 		try {
 			(<any> navigator).storage.persist();

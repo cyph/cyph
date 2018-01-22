@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {StringProto} from '../cyph/proto';
+import {EnvService} from '../cyph/services/env.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {random} from '../cyph/util/random';
@@ -34,16 +34,15 @@ export class LockdownComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		if (!customBuildPassword) {
+		if (!(
+			this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.config.password
+		)) {
 			this.appService.isLockedDown	= false;
 			return;
 		}
 
-		this.correctPassword	= potassiumUtil.toString(
-			potassiumUtil.fromBase64(customBuildPassword)
-		);
-
-		customBuildPassword		= undefined;
+		this.correctPassword	= this.envService.environment.customBuild.config.password;
 
 		const password	=
 			await this.localStorageService.getItem('password', StringProto).catch(() => '')
@@ -78,6 +77,9 @@ export class LockdownComponent implements OnInit {
 	constructor (
 		/** @ignore */
 		private readonly appService: AppService,
+
+		/** @ignore */
+		private readonly envService: EnvService,
 
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,

@@ -426,7 +426,6 @@ if [ "${websign}" ] ; then
 			customBuildLogoVertical="${d}/logo.vertical.png"
 			customBuildStrings="${d}/strings.json"
 			customBuildTheme="${d}/theme.scss"
-			customBuildStylesheet="custom-builds/${customBuildBase}.css"
 			customBuilds="${customBuilds} ${customBuild}"
 
 			../../commands/websign/custombuild.js \
@@ -438,7 +437,6 @@ if [ "${websign}" ] ; then
 				"${customBuildLogoHorizontal}" \
 				"${customBuildLogoVertical}" \
 				"${customBuildStrings}" \
-				"${customBuildStylesheet}" \
 				"${customBuildTheme}"
 
 			rm -rf ${d}
