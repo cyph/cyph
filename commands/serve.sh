@@ -75,7 +75,7 @@ ngserve () {
 			echo '--config protractor.local-selenium-server.js'
 		fi) \
 		${args} \
-		"${@}"\
+		"${@}"
 }
 
 
