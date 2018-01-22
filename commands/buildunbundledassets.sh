@@ -18,6 +18,9 @@ checkfail () {
 }
 
 
+find shared/js -type f -name '*.js' -exec rm {} \;
+
+
 nodeModulesAssets="$(
 	grep -roP "importScripts\('/assets/node_modules/.*?\.js'\)" shared/js |
 		perl -pe "s/^.*?'\/assets\/node_modules\/(.*?)\.js'.*/\1/g" |
