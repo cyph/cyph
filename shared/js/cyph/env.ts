@@ -25,6 +25,15 @@ export class Env extends EnvDeploy {
 		this.environment.customBuild.favicon !== undefined
 	;
 
+	/** If applicable, default call type. */
+	public readonly callType?: 'audio'|'video'	= (
+		this.environment.customBuild && this.environment.customBuild.config.callTypeVideo ?
+			'video' :
+			this.environment.customBuild && this.environment.customBuild.config.callTypeAudio ?
+				'audio' :
+				undefined
+	);
+
 	/** Complete (lowercase) language code, e.g. "en-us". */
 	public readonly fullLanguage: string		= Env.language.toLowerCase();
 

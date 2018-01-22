@@ -12,6 +12,7 @@ import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DialogService} from './dialog.service';
+import {EnvService} from './env.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {ScrollService} from './scroll.service';
@@ -51,7 +52,7 @@ export class AccountChatService extends ChatService {
 	) : Promise<void> {
 		const contactURL	= `contacts/${await this.accountContactsService.addContact(username)}`;
 
-		this.accountSessionInitService.callType	= callType;
+		this.accountSessionInitService.callType	= callType || this.envService.callType;
 
 		await this.accountSessionService.setUser(username);
 
@@ -103,7 +104,10 @@ export class AccountChatService extends ChatService {
 		private readonly accountSessionService: AccountSessionService,
 
 		/** @ignore */
-		private readonly accountSessionInitService: AccountSessionInitService
+		private readonly accountSessionInitService: AccountSessionInitService,
+
+		/** @ignore */
+		private readonly envService: EnvService
 	) {
 		super(
 			analyticsService,

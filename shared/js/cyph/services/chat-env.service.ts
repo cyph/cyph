@@ -18,27 +18,13 @@ export class ChatEnvService extends EnvService {
 		}
 
 		return (
-			this.sessionInitService.callType === 'video' ?
-				(
-					this.environment.customBuild &&
-					this.environment.customBuild.config.callTypeVideo
-				) ?
-					undefined :
-					base ?
-						env.cyphVideoBaseUrl :
-						env.cyphVideoUrl
-				:
+			this.callType === this.sessionInitService.callType ?
+				undefined :
 				this.sessionInitService.callType === 'audio' ?
-					(
-						this.environment.customBuild &&
-						this.environment.customBuild.config.callTypeAudio
-					) ?
-						undefined :
-						base ?
-							env.cyphAudioBaseUrl :
-							env.cyphAudioUrl
-					:
-					undefined
+					(base ? env.cyphAudioBaseUrl : env.cyphAudioUrl) :
+					this.sessionInitService.callType === 'video' ?
+						(base ? env.cyphVideoBaseUrl : env.cyphVideoUrl) :
+						undefined
 		) || (
 			base ? env.newCyphBaseUrl : env.newCyphUrl
 		);
