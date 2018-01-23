@@ -172,8 +172,6 @@ export class AccountSessionService extends SessionService {
 			stringsService
 		);
 
-		this.resolveSymmetricKey	= undefined;
-
 		this.on(rpcEvents.ping, (o: ISessionMessageData) => {
 			if (o.command && o.command.method) {
 				this.send([rpcEvents.pong, {command: {method: o.command.method}}]);
