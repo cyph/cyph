@@ -25,6 +25,9 @@ node -e '(async () => {
 			}).
 			join("\n\n\n\n\n\n")
 	)).hex);
-})()'
+})().catch(err => {
+	console.error(err);
+	process.exit(1);
+})'
 
 rm -rf .index.html.tmp .index.html.tmp-subresources

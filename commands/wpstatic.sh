@@ -265,7 +265,10 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 			removeComments: true
 		}
 	));
-})()" ; done
+})().catch(err => {
+	console.error(err);
+	process.exit(1);
+})" ; done
 
 sed -i "s|https://fonts.googleapis.com/css|${fullDestinationURL}/$(grep -rl 'local(.Ubuntu.)')|g" \
 	wp-content/plugins/pricing-table-by-supsystic/js/table.min.js
@@ -311,7 +314,10 @@ for type in eot svg ttf woff woff2 ; do
 			url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${sourceURL}|g')\";
 			path=\"fonts/\$(node -e \"(async () => { \
 				console.log((await require('supersphincs').hash('%')).hex); \
-			})()\").${type}\";
+			})().catch(err => {
+				console.error(err);
+				process.exit(1);
+			})\").${type}\";
 			download \"\${url}\" \"../\${path}\";
 			grep -rl '%' | xargs -I{} sed -i \"s|%|/blog/\${path}|g\" {};
 		"

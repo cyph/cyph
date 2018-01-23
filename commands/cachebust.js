@@ -59,4 +59,7 @@ for (let file of filesToModify) {
 }
 
 
-})();
+})().catch(err => {
+	console.error(err);
+	process.exit(1);
+});

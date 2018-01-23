@@ -151,7 +151,10 @@ if [ "${htmlOnly}" ] || [ "${fast}" ] ; then
 				}
 
 				console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
-			})()' \
+			})().catch(err => {
+				console.error(err);
+				process.exit(1);
+			})' \
 		\;;
 	} 2>&1)"
 fi
