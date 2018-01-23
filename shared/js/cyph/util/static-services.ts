@@ -2,62 +2,46 @@ import {HttpClient} from '@angular/common/http';
 import {DomSanitizer, SafeValue} from '@angular/platform-browser';
 import {env} from '../env';
 import {DialogService} from '../services/dialog.service';
+import {resolvable} from './wait';
 
 
-/** Sets dialogService. */
-let resolveDialogService: (dialogService: DialogService) => void;
+/** Resolvable dialogService. */
+const resolvableDialogService	= !env.isMainThread ? undefined : resolvable<DialogService>();
 
 /** @ignore */
-export const staticDialogService: Promise<DialogService>	=
-	new Promise<DialogService>((resolve, reject) => {
-		if (env.isMainThread) {
-			resolveDialogService	= resolve;
-			return;
-		}
-
-		reject('Dialog service not found.');
-	})
+export const staticDialogService: Promise<DialogService>	= resolvableDialogService ?
+	resolvableDialogService.promise :
+	Promise.reject('Dialog service not found.')
 ;
 
 
-/** Sets domSanitizer. */
-let resolveDomSanitizer: (domSanitizer: DomSanitizer) => void;
+/** Resolvable domSanitizer. */
+const resolvableDomSanitizer	= resolvable<DomSanitizer>();
+
+if (!(env.isMainThread && env.isWeb)) {
+	const notImplemented	= () => { throw new Error('Not implemented.'); };
+
+	resolvableDomSanitizer.resolve({
+		bypassSecurityTrustHtml: notImplemented,
+		bypassSecurityTrustResourceUrl: notImplemented,
+		bypassSecurityTrustScript: notImplemented,
+		bypassSecurityTrustStyle: notImplemented,
+		bypassSecurityTrustUrl: (data: string) => data,
+		sanitize: (_: any, data: SafeValue) => <string> data
+	});
+}
 
 /** @see DomSanitizer */
-export const staticDomSanitizer: Promise<DomSanitizer>	=
-	new Promise<DomSanitizer>(resolve => {
-		if (env.isMainThread && env.isWeb) {
-			resolveDomSanitizer	= resolve;
-			return;
-		}
-
-		const notImplemented	= () => { throw new Error('Not implemented.'); };
-
-		resolve({
-			bypassSecurityTrustHtml: notImplemented,
-			bypassSecurityTrustResourceUrl: notImplemented,
-			bypassSecurityTrustScript: notImplemented,
-			bypassSecurityTrustStyle: notImplemented,
-			bypassSecurityTrustUrl: (data: string) => data,
-			sanitize: (_: any, data: SafeValue) => <string> data
-		});
-	})
-;
+export const staticDomSanitizer: Promise<DomSanitizer>	= resolvableDomSanitizer.promise;
 
 
-/** Sets httpClient. */
-let resolveHttpClient: (httpClient: HttpClient) => void;
+/** Resolvable httpClient. */
+const resolvableHttpClient	= !env.isMainThread ? undefined : resolvable<HttpClient>();
 
 /** @see HttpClient */
-export const staticHttpClient: Promise<HttpClient>	=
-	new Promise<HttpClient>((resolve, reject) => {
-		if (env.isMainThread) {
-			resolveHttpClient	= resolve;
-			return;
-		}
-
-		reject('HTTP service not found.');
-	})
+export const staticHttpClient: Promise<HttpClient>	= resolvableHttpClient ?
+	resolvableHttpClient.promise :
+	Promise.reject('HTTP service not found.')
 ;
 
 
@@ -66,15 +50,15 @@ export const resolveStaticServices	= ({dialogService, domSanitizer, httpClient}:
 	domSanitizer?: DomSanitizer;
 	httpClient?: HttpClient;
 }) => {
-	if (dialogService) {
-		resolveDialogService(dialogService);
+	if (dialogService && resolvableDialogService) {
+		resolvableDialogService.resolve(dialogService);
 	}
 
-	if (domSanitizer) {
-		resolveDomSanitizer(domSanitizer);
+	if (resolvableDomSanitizer && domSanitizer) {
+		resolvableDomSanitizer.resolve(domSanitizer);
 	}
 
-	if (httpClient) {
-		resolveHttpClient(httpClient);
+	if (resolvableHttpClient && httpClient) {
+		resolvableHttpClient.resolve(httpClient);
 	}
 };

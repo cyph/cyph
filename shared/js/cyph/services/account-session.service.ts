@@ -4,6 +4,7 @@ import {User} from '../account/user';
 import {BinaryProto, StringProto} from '../proto';
 import {ISessionMessageData, rpcEvents} from '../session';
 import {uuid} from '../util/uuid';
+import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';
@@ -23,25 +24,29 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountSessionService extends SessionService {
 	/** @ignore */
-	private initiated: boolean	= false;
+	private readonly _ACCOUNTS_SYMMETRIC_KEY	= resolvable<Uint8Array>();
 
 	/** @ignore */
-	private resolveAccountsSymmetricKey: (symmetricKey: Uint8Array) => void	= () => {};
+	private readonly _READY						= resolvable();
 
 	/** @ignore */
-	private resolveReady: () => void	= () => {};
+	private initiated: boolean					= false;
+
+	/** @ignore */
+	private readonly resolveAccountsSymmetricKey: (symmetricKey: Uint8Array) => void	=
+		this._ACCOUNTS_SYMMETRIC_KEY.resolve
+	;
+
+	/** @ignore */
+	private readonly resolveReady: () => void	= this._READY.resolve;
 
 	/** @inheritDoc */
-	protected readonly symmetricKey: Promise<Uint8Array>		=
-		new Promise<Uint8Array>(resolve => {
-			this.resolveAccountsSymmetricKey	= resolve;
-		})
+	protected readonly symmetricKey: Promise<Uint8Array>				=
+		this._ACCOUNTS_SYMMETRIC_KEY.promise
 	;
 
 	/** @inheritDoc */
-	public readonly ready: Promise<void>						= new Promise<void>(resolve => {
-		this.resolveReady	= resolve;
-	});
+	public readonly ready: Promise<void>						= this._READY.promise;
 
 	/** Remote user. */
 	public readonly remoteUser: BehaviorSubject<User|undefined>	=

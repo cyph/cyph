@@ -27,7 +27,7 @@ import {flattenObservablePromise} from '../../util/flatten-observable-promise';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
 import {deserialize, serialize} from '../../util/serialization';
-import {retryUntilSuccessful} from '../../util/wait';
+import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {DatabaseService} from '../database.service';
 import {LocalStorageService} from '../local-storage.service';
 import {PotassiumService} from './potassium.service';
@@ -793,11 +793,7 @@ export class AccountDatabaseService {
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
 	} {
-		let cancel	= () => {};
-		const cancelPromise	= new Promise<void>(resolve => {
-			cancel	= resolve;
-		});
-
+		const cancel	= resolvable();
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
@@ -807,7 +803,7 @@ export class AccountDatabaseService {
 				await this.seal(url, proto, value, securityModel, customKey)
 			);
 
-			cancelPromise.then(() => { uploadTask.cancel(); });
+			cancel.promise.then(() => { uploadTask.cancel(); });
 
 			uploadTask.progress.subscribe(
 				n => { progress.next(n); },
@@ -818,7 +814,7 @@ export class AccountDatabaseService {
 			return uploadTask.result;
 		})();
 
-		return {cancel, progress, result};
+		return {cancel: cancel.resolve, progress, result};
 	}
 
 	/** @see DatabaseService.waitForUnlock */

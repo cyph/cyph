@@ -33,7 +33,7 @@ import {requestByteStream} from '../util/request';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {retryUntilSuccessful, waitForValue} from '../util/wait';
+import {resolvable, retryUntilSuccessful, waitForValue} from '../util/wait';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {LocalStorageService} from './local-storage.service';
@@ -304,6 +304,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 					contendForLock();
 
+					/* tslint:disable-next-line:promise-must-complete */
 					await new Promise<void>(resolve => {
 						queue.on('value', async snapshot => {
 							const value: {[key: string]: {id: string; reason?: string}}	=
@@ -522,11 +523,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
 	} {
-		let cancel	= () => {};
-		const cancelPromise	= new Promise<void>(resolve => {
-			cancel	= resolve;
-		});
-
+		const cancel	= resolvable();
 		const progress	= new BehaviorSubject(0);
 
 		const result	= (async () => {
@@ -547,7 +544,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return new Promise<{hash: string; url: string}>(async (resolve, reject) => {
 				const uploadTask	= (await this.getStorageRef(url)).put(new Blob([data]));
 
-				cancelPromise.then(() => {
+				cancel.promise.then(() => {
 					reject('Upload canceled.');
 					uploadTask.cancel();
 				});
@@ -584,7 +581,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			});
 		})();
 
-		return {cancel, progress, result};
+		return {cancel: cancel.resolve, progress, result};
 	}
 
 	/** @inheritDoc */

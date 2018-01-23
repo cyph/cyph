@@ -316,7 +316,7 @@
 		"no-with-statement": true,
 		"possible-timing-attack": true,
 		"prefer-type-cast": true,
-		"promise-must-complete": false,
+		"promise-must-complete": true,
 		"use-named-parameter": true,
 
 

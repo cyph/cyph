@@ -17,7 +17,7 @@ import {Timer} from '../timer';
 import {lockFunction} from '../util/lock';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {sleep} from '../util/wait';
+import {resolvable, sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
@@ -40,6 +40,11 @@ export class ChatService {
 	private static readonly p2pPassiveConnectTime: number		= 5000;
 
 
+	/** @ignore */
+	private readonly _CHAT_GEOMETRY_SERVICE				= resolvable<{
+		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
+	}>();
+
 	/** Time in seconds until chat self-destructs. */
 	private readonly chatSelfDestructTimeout: number	= 5;
 
@@ -47,17 +52,19 @@ export class ChatService {
 	private readonly messageChangeLock: LockFunction	= lockFunction();
 
 	/** @ignore */
-	private resolveChatMessageGeometryService: (chatMessageGeometryService: {
+	private readonly resolveChatMessageGeometryService: (chatMessageGeometryService: {
 		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
 	/* tslint:disable-next-line:semicolon */
-	}) => void	= () => {};
+	}) => void	=
+		this._CHAT_GEOMETRY_SERVICE.resolve
+	;
 
 	/** @see ChatMessageGeometryService */
 	protected readonly chatMessageGeometryService: Promise<{
 		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
-	}>	= new Promise(resolve => {
-		this.resolveChatMessageGeometryService	= resolve;
-	});
+	}>	=
+		this._CHAT_GEOMETRY_SERVICE.promise
+	;
 
 	/** @see IChatData */
 	public chat: IChatData	= {

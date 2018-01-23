@@ -8,6 +8,7 @@ import {AccountDatabaseService} from '../services/crypto/account-database.servic
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
 import {translate} from '../util/translate';
+import {resolvable} from '../util/wait';
 
 
 /**
@@ -26,12 +27,13 @@ import {translate} from '../util/translate';
 })
 export class AccountComponent implements AfterViewInit, OnInit {
 	/** @ignore */
-	private resolveViewInitiated: () => void	= () => {};
+	private readonly _VIEW_INITIATED					= resolvable();
+
+	/** @ignore */
+	private readonly resolveViewInitiated: () => void	= this._VIEW_INITIATED.resolve;
 
 	/** Resolves after view init. */
-	public readonly viewInitiated: Promise<void>	= new Promise(resolve => {
-		this.resolveViewInitiated	= resolve;
-	});
+	public readonly viewInitiated: Promise<void>		= this._VIEW_INITIATED.promise;
 
 	/** @ignore */
 	private get route () : string {

@@ -12,7 +12,7 @@ import {events, ISessionMessageData, rpcEvents} from '../session';
 import {request} from '../util/request';
 import {parse} from '../util/serialization';
 import {uuid} from '../util/uuid';
-import {sleep, waitForIterable, waitForValue} from '../util/wait';
+import {resolvable, sleep, waitForIterable, waitForValue} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionService} from './session.service';
@@ -21,6 +21,18 @@ import {SessionService} from './session.service';
 /** @inheritDoc */
 @Injectable()
 export class P2PWebRTCService implements IP2PWebRTCService {
+	/** @ignore */
+	private readonly _HANDLERS		= resolvable<IP2PHandlers>();
+
+	/** @ignore */
+	private readonly _LOCAL_VIDEO	= resolvable<() => JQuery>();
+
+	/** @ignore */
+	private readonly _READY			= resolvable(true);
+
+	/** @ignore */
+	private readonly _REMOTE_VIDEO	= resolvable<() => JQuery>();
+
 	/** Indicates whether WebRTC is supported in the current environment. */
 	private static readonly isSupported: boolean	=
 		/* Temporarily blocking Edge until issue resolved in simplewebrtc/webrtc-adapter */
@@ -104,40 +116,34 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	private readonly disconnectInternal: Subject<void>	= new Subject();
 
 	/** @ignore */
-	private readonly handlers: Promise<IP2PHandlers>	=
-		new Promise<IP2PHandlers>(resolve => {
-			this.resolveHandlers	= resolve;
-		})
-	;
+	private readonly handlers: Promise<IP2PHandlers>	= this._HANDLERS.promise;
 
 	/** @ignore */
 	private isAccepted: boolean							= false;
 
 	/** @ignore */
-	private readonly localVideo: Promise<() => JQuery>	=
-		new Promise<() => JQuery>(resolve => {
-			this.resolveLocalVideo	= resolve;
-		})
-	;
+	private readonly localVideo: Promise<() => JQuery>	= this._LOCAL_VIDEO.promise;
 
 	/** @ignore */
 	private p2pSessionID?: string;
 
 	/** @ignore */
-	private readonly remoteVideo: Promise<() => JQuery>	=
-		new Promise<() => JQuery>(resolve => {
-			this.resolveRemoteVideo	= resolve;
-		})
+	private readonly remoteVideo: Promise<() => JQuery>	= this._REMOTE_VIDEO.promise;
+
+	/** @ignore */
+	private readonly resolveHandlers: (handlers: IP2PHandlers) => void			=
+		this._HANDLERS.resolve
 	;
 
 	/** @ignore */
-	private resolveHandlers: (handlers: IP2PHandlers) => void		= () => {};
+	private readonly resolveLocalVideo: (localVideo: () => JQuery) => void		=
+		this._LOCAL_VIDEO.resolve
+	;
 
 	/** @ignore */
-	private resolveLocalVideo: (localVideo: () => JQuery) => void	= () => {};
-
-	/** @ignore */
-	private resolveRemoteVideo: (remoteVideo: () => JQuery) => void	= () => {};
+	private readonly resolveRemoteVideo: (remoteVideo: () => JQuery) => void	=
+		this._REMOTE_VIDEO.resolve
+	;
 
 	/** @ignore */
 	private webRTC: any;
@@ -161,12 +167,10 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	public readonly outgoingStream					= {audio: false, video: false};
 
 	/** @inheritDoc */
-	public readonly ready: Promise<boolean>			= new Promise<boolean>(resolve => {
-		this.resolveReady	= () => { resolve(true); };
-	});
+	public readonly ready: Promise<boolean>			= this._READY.promise;
 
 	/** @inheritDoc */
-	public resolveReady: () => void	= () => {};
+	public readonly resolveReady: () => void		= this._READY.resolve;
 
 	/** @ignore */
 	private async receiveCommand (command: ISessionCommand) : Promise<void> {
@@ -267,14 +271,11 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			return;
 		}
 
-		this.webRTC		= {};
-
-		this.loading	= true;
-
+		this.webRTC					= {};
+		this.loading				= true;
 		this.incomingStream.audio	= this.outgoingStream.audio;
 		this.incomingStream.video	= this.outgoingStream.video;
-
-		this.isActive	= true;
+		this.isActive				= true;
 
 		const iceServers	= request({retries: 5, url: env.baseUrl + 'iceservers'});
 

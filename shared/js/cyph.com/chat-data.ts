@@ -1,16 +1,20 @@
 import {Subject} from 'rxjs/Subject';
 import {ISessionMessage, ISessionMessageData} from '../cyph/proto';
+import {resolvable} from '../cyph/util/wait';
 
 
 /**
  * Bridge between the demo service and chat UI.
  */
 export class ChatData {
+	/** @ignore */
+	private readonly _START	= resolvable();
+
 	/** Gives command to start. */
-	public resolveStart: () => void	= () => {};
+	public readonly resolveStart: () => void	= this._START.resolve;
 
 	/** Awaits command to start. */
-	public readonly start: Promise<void>;
+	public readonly start: Promise<void>		= this._START.promise;
 
 	constructor (
 		/** Indicates whether to display the mobile chat UI. */
@@ -34,9 +38,5 @@ export class ChatData {
 
 		/** Stream of commands to show the cyphertext UI. */
 		public readonly showCyphertext: Subject<void> = new Subject()
-	) {
-		this.start	= new Promise<void>(resolve => {
-			this.resolveStart	= resolve;
-		});
-	}
+	) {}
 }

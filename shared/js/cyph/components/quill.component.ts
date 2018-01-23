@@ -22,7 +22,7 @@ import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
 import {lockFunction} from '../util/lock';
 import {uuid} from '../util/uuid';
-import {sleep, waitForIterable, waitForValue} from '../util/wait';
+import {resolvable, sleep, waitForIterable, waitForValue} from '../util/wait';
 
 
 /**
@@ -287,9 +287,9 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 
 				case 'isDisabled':
 					if (this.isDisabled) {
-						this.editablePromise	= new Promise(resolve => {
-							this.resolveEditablePromise	= resolve;
-						});
+						const {resolve, promise}	= resolvable();
+						this.editablePromise		= promise;
+						this.resolveEditablePromise	= resolve;
 						this.quill.disable();
 					}
 					else {

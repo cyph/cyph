@@ -11,7 +11,7 @@ import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
 import {lockFunction} from '../../util/lock';
 import {getTimestamp} from '../../util/time';
-import {sleep} from '../../util/wait';
+import {resolvable, sleep} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
 import {HandshakeSteps} from './enums';
@@ -28,9 +28,10 @@ import {Transport} from './transport';
  */
 export class PairwiseSession {
 	/** @ignore */
-	private readonly core: Promise<Core>	= new Promise<Core>(resolve => {
-		this.resolveCore	= resolve;
-	});
+	private readonly _CORE					= resolvable<Core>();
+
+	/** @ignore */
+	private readonly core: Promise<Core>	= this._CORE.promise;
 
 	/** @ignore */
 	private readonly incomingMessageQueue: Subject<{
@@ -45,7 +46,7 @@ export class PairwiseSession {
 	private readonly isReceiving: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
 	/** @ignore */
-	private resolveCore: (core: Core) => void	= () => {};
+	private readonly resolveCore: (core: Core) => void		= this._CORE.resolve;
 
 	/** @ignore */
 	private async abort () : Promise<void> {

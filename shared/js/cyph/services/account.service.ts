@@ -4,7 +4,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {map} from 'rxjs/operators/map';
-import {sleep} from '../util/wait';
+import {resolvable, sleep} from '../util/wait';
 import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 import {WindowWatcherService} from './window-watcher.service';
@@ -15,6 +15,9 @@ import {WindowWatcherService} from './window-watcher.service';
  */
 @Injectable()
 export class AccountService {
+	/** @ignore */
+	private readonly _UI_READY	= resolvable();
+
 	/** @ignore */
 	private readonly menuExpandedInternal: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
@@ -53,18 +56,16 @@ export class AccountService {
 	));
 
 	/** Resolves ready promise. */
-	public resolveUiReady: () => void		= () => {};
+	public readonly resolveUiReady: () => void			= this._UI_READY.resolve;
 
 	/** Root for account routes. */
 	public readonly routeRoot: string		= accountRoot === '' ? '/' : `/${accountRoot}/`;
 
 	/** Indicates when view is in transition. */
-	public readonly transition: Observable<boolean>	= this.transitionInternal;
+	public readonly transition: Observable<boolean>		= this.transitionInternal;
 
 	/** Resolves after UI is ready. */
-	public readonly uiReady: Promise<void>	= new Promise(resolve => {
-		this.resolveUiReady	= resolve;
-	});
+	public readonly uiReady: Promise<void>				= this._UI_READY.promise;
 
 	/** @ignore */
 	private get menuMinWidth () : number {

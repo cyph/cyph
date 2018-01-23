@@ -9,13 +9,16 @@ import {IChannelService} from '../service-interfaces/ichannel.service';
 import {IChannelHandlers} from '../session';
 import {lockFunction} from '../util/lock';
 import {uuid} from '../util/uuid';
-import {sleep, waitForValue} from '../util/wait';
+import {resolvable, sleep, waitForValue} from '../util/wait';
 import {DatabaseService} from './database.service';
 
 
 /** @inheritDoc */
 @Injectable()
 export class ChannelService implements IChannelService {
+	/** @ignore */
+	private readonly _STATE		= resolvable<{lock: LockFunction; url: string}>();
+
 	/** @ignore */
 	private ephemeral: boolean	= false;
 
@@ -29,14 +32,12 @@ export class ChannelService implements IChannelService {
 	private pauseLock?: Subject<void>;
 
 	/** @ignore */
-	private resolveState: (state: {lock: LockFunction; url: string}) => void	= () => {};
+	private readonly resolveState: (state: {lock: LockFunction; url: string}) => void	=
+		this._STATE.resolve
+	;
 
 	/** @ignore */
-	private readonly state: Promise<{lock: LockFunction; url: string}>	=
-		new Promise<{lock: LockFunction; url: string}>(resolve => {
-			this.resolveState	= resolve;
-		})
-	;
+	private readonly state: Promise<{lock: LockFunction; url: string}>	= this._STATE.promise;
 
 	/** @ignore */
 	private readonly subscriptions: Subscription[]	= [];

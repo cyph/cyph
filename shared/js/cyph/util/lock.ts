@@ -1,5 +1,6 @@
 import {LockFunction} from '../lock-function-type';
 import {uuid} from './uuid';
+import {resolvable} from './wait';
 
 
 /** Executes a Promise within a mutual-exclusion lock in FIFO order. */
@@ -24,17 +25,15 @@ export const lock	= async <T> (
 	const lastReason	= mutex.reason;
 	mutex.reason		= reason;
 
-	let releaseLock	= () => {};
-	mutex.promise	= new Promise(resolve => {
-		releaseLock	= resolve;
-	});
+	const releaseLock	= resolvable();
+	mutex.promise		= releaseLock.promise;
 
 	try {
 		return await f(lastReason);
 	}
 	finally {
 		queue.shift();
-		releaseLock();
+		releaseLock.resolve();
 	}
 };
 

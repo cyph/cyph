@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {Set as ImmutableSet} from 'immutable';
 import {lockTryOnce} from '../util/lock';
-import {sleep} from '../util/wait';
+import {resolvable, sleep} from '../util/wait';
 import {WindowWatcherService} from './window-watcher.service';
 
 
@@ -12,18 +12,21 @@ import {WindowWatcherService} from './window-watcher.service';
 @Injectable()
 export class ScrollService {
 	/** @ignore */
+	private readonly _ROOT_ELEMENT		= resolvable<JQuery>();
+
+	/** @ignore */
 	private itemCountInTitle: boolean	= false;
 
 	/** @ignore */
 	private lastUnreadItemCount: number	= 0;
 
 	/** @ignore */
-	private resolveRootElement: (rootElement: JQuery) => void	= () => {};
+	private readonly resolveRootElement: (rootElement: JQuery) => void	=
+		this._ROOT_ELEMENT.resolve
+	;
 
 	/** @ignore */
-	private readonly rootElement: Promise<JQuery>	= new Promise<JQuery>(resolve => {
-		this.resolveRootElement	= resolve;
-	});
+	private readonly rootElement: Promise<JQuery>	= this._ROOT_ELEMENT.promise;
 
 	/** @ignore */
 	private readonly scrollDownLock: {}	= {};

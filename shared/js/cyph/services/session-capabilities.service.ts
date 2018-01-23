@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {ISessionCapabilities} from '../proto';
 import {ISessionCapabilitiesService} from '../service-interfaces/isession-capabilities.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
+import {resolvable} from '../util/wait';
 import {PotassiumService} from './crypto/potassium.service';
 import {SessionService} from './session.service';
 
@@ -10,36 +11,38 @@ import {SessionService} from './session.service';
 @Injectable()
 export class SessionCapabilitiesService implements ISessionCapabilitiesService {
 	/** @ignore */
-	private readonly remoteCapabilities: Promise<ISessionCapabilities>			=
+	private readonly _CAPABILITIES	= resolvable<ISessionCapabilities>();
+
+	/** @ignore */
+	private readonly _P2P_SUPPORT	= resolvable<boolean>();
+
+	/** @ignore */
+	private readonly remoteCapabilities: Promise<ISessionCapabilities>	=
 		this.sessionService.one<ISessionMessageData>(rpcEvents.capabilities).then(o =>
 			o.capabilities || {nativeCrypto: false, p2p: false}
 		)
 	;
 
 	/** @ignore */
-	private resolveCapabilities: (capabilities: ISessionCapabilities) => void	= () => {};
-
-	/** @inheritDoc */
-	public readonly capabilities: Promise<ISessionCapabilities>			=
-		new Promise<ISessionCapabilities>(resolve => {
-			this.resolveCapabilities	= resolve;
-		})
+	private readonly resolveCapabilities: (capabilities: ISessionCapabilities) => void	=
+		this._CAPABILITIES.resolve
 	;
 
 	/** @inheritDoc */
-	public readonly localCapabilities: Promise<ISessionCapabilities>	= (async () => {
-		const p2p	= new Promise<boolean>(resolve => {
-			this.resolveP2PSupport	= resolve;
-		});
-
-		return {
-			nativeCrypto: await this.potassiumService.isNativeCryptoSupported(),
-			p2p: await p2p
-		};
-	})();
+	public readonly capabilities: Promise<ISessionCapabilities>			=
+		this._CAPABILITIES.promise
+	;
 
 	/** @inheritDoc */
-	public resolveP2PSupport: (isSupported: boolean) => void			= () => {};
+	public readonly localCapabilities: Promise<ISessionCapabilities>	= (async () => ({
+		nativeCrypto: await this.potassiumService.isNativeCryptoSupported(),
+		p2p: await this._P2P_SUPPORT.promise
+	}))();
+
+	/** @inheritDoc */
+	public readonly resolveP2PSupport: (isSupported: boolean) => void	=
+		this._P2P_SUPPORT.resolve
+	;
 
 	constructor (
 		/** @ignore */

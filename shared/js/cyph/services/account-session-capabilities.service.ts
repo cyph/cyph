@@ -1,28 +1,28 @@
 import {Injectable} from '@angular/core';
 import {ISessionCapabilities} from '../proto';
 import {ISessionCapabilitiesService} from '../service-interfaces/isession-capabilities.service';
+import {resolvable} from '../util/wait';
 
 
 /** Accounts implementation of ISessionCapabilitiesService. */
 @Injectable()
 export class AccountSessionCapabilitiesService implements ISessionCapabilitiesService {
-	/** @inheritDoc */
-	public readonly capabilities: Promise<ISessionCapabilities>			= (async () => {
-		const p2p	= new Promise<boolean>(resolve => {
-			this.resolveP2PSupport	= resolve;
-		});
+	/** @ignore */
+	private readonly _P2P_SUPPORT	= resolvable<boolean>();
 
-		return {
-			nativeCrypto: false,
-			p2p: await p2p
-		};
-	})();
+	/** @inheritDoc */
+	public readonly capabilities: Promise<ISessionCapabilities>			= (async () => ({
+		nativeCrypto: false,
+		p2p: await this._P2P_SUPPORT.promise
+	}))();
 
 	/** @inheritDoc */
 	public readonly localCapabilities: Promise<ISessionCapabilities>	= this.capabilities;
 
 	/** @inheritDoc */
-	public resolveP2PSupport: (isSupported: boolean) => void			= () => {};
+	public readonly resolveP2PSupport: (isSupported: boolean) => void	=
+		this._P2P_SUPPORT.resolve
+	;
 
 	constructor () {}
 }

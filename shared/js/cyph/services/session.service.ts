@@ -19,7 +19,7 @@ import {
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {sleep} from '../util/wait';
+import {resolvable, sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';
@@ -35,22 +35,25 @@ import {StringsService} from './strings.service';
 @Injectable()
 export abstract class SessionService implements ISessionService {
 	/** @ignore */
+	private readonly _OPENED					= resolvable(true);
+
+	/** @ignore */
+	private readonly _SYMMETRIC_KEY				= resolvable<Uint8Array>();
+
+	/** @ignore */
 	private readonly openEvents: Set<string>	= new Set();
 
 	/** @ignore */
-	private resolveOpened: () => void			= () => {};
+	private readonly resolveOpened: () => void	= this._OPENED.resolve;
 
 	/** @ignore */
-	private resolveSymmetricKey?: (symmetricKey: Uint8Array) => void;
+	protected readonly eventID: string									= uuid();
 
 	/** @ignore */
-	protected readonly eventID: string								= uuid();
+	protected lastIncomingMessageTimestamp: number						= 0;
 
 	/** @ignore */
-	protected lastIncomingMessageTimestamp: number					= 0;
-
-	/** @ignore */
-	protected readonly plaintextSendInterval: number				= 1776;
+	protected readonly plaintextSendInterval: number					= 1776;
 
 	/** @ignore */
 	protected readonly plaintextSendQueue: {
@@ -59,16 +62,19 @@ export abstract class SessionService implements ISessionService {
 	}[]	= [];
 
 	/** @ignore */
-	protected readonly receivedMessages: Set<string>				= new Set<string>();
+	protected readonly receivedMessages: Set<string>					= new Set<string>();
+
+	/** @ignore */
+	protected resolveSymmetricKey?: (symmetricKey: Uint8Array) => void	=
+		this._SYMMETRIC_KEY.resolve
+	;
 
 	/**
 	 * Session key for misc stuff like locking.
 	 * TODO: Either change how AccountSessionService.setUser works or make this an observable.
 	 */
-	protected readonly symmetricKey: Promise<Uint8Array>			=
-		new Promise<Uint8Array>(resolve => {
-			this.resolveSymmetricKey	= resolve;
-		})
+	protected readonly symmetricKey: Promise<Uint8Array>				=
+		this._SYMMETRIC_KEY.promise
 	;
 
 	/** @inheritDoc */
@@ -95,9 +101,7 @@ export abstract class SessionService implements ISessionService {
 	);
 
 	/** @ignore */
-	public readonly opened: Promise<boolean>				= new Promise<boolean>(resolve => {
-		this.resolveOpened	= () => { resolve(true); };
-	});
+	public readonly opened: Promise<boolean>				= this._OPENED.promise;
 
 	/** @inheritDoc */
 	public readonly ready: Promise<void>					= Promise.resolve();
@@ -219,9 +223,9 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
-		return new Promise<void>(resolve => {
-			this.plaintextSendQueue.push({messages, resolve});
-		});
+		const {promise, resolve}	= resolvable();
+		this.plaintextSendQueue.push({messages, resolve});
+		return promise;
 	}
 
 	/** @inheritDoc */

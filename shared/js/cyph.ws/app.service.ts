@@ -15,7 +15,7 @@ import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {EnvService} from '../cyph/services/env.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {translate} from '../cyph/util/translate';
-import {sleep, waitForValue} from '../cyph/util/wait';
+import {resolvable, sleep, waitForValue} from '../cyph/util/wait';
 import {ChatRootStates} from './enums';
 
 
@@ -25,12 +25,15 @@ import {ChatRootStates} from './enums';
 @Injectable()
 export class AppService implements CanActivate {
 	/** @ignore */
-	private readonly lockedDownRoute: Promise<string>	= new Promise<string>(resolve => {
-		this.resolveLockedDownRoute	= resolve;
-	});
+	private readonly _LOCKED_DOWN_ROUTE					= resolvable<string>();
 
 	/** @ignore */
-	private resolveLockedDownRoute: (lockedDownRoute: string) => void	= () => {};
+	private readonly lockedDownRoute: Promise<string>	= this._LOCKED_DOWN_ROUTE.promise;
+
+	/** @ignore */
+	private readonly resolveLockedDownRoute: (lockedDownRoute: string) => void	=
+		this._LOCKED_DOWN_ROUTE.resolve
+	;
 
 	/** @see ChatRootStates */
 	public chatRootState: ChatRootStates	= ChatRootStates.blank;
