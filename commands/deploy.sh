@@ -384,24 +384,6 @@ touch .build.done
 
 
 # WebSign packaging
-if [ "${websign}" ] ; then
-	for repo in cdn custom-builds ; do
-		if [ -d ~/.cyph/${repo} ] ; then
-			bash -c "
-				cd ~/.cyph/${repo};
-				git reset --hard;
-				git clean -dfx;
-				git pull --recurse-submodules;
-				git submodule update;
-			"
-			cp -rf ~/.cyph/${repo} ./
-		else
-			git clone --recursive git@github.com:cyph/${repo}.git
-			rm -rf ~/.cyph/${repo} 2> /dev/null
-			cp -rf ${repo} ~/.cyph/
-		fi
-	done
-fi
 if [ "${websign}" ] || [ "${pack}" ] ; then
 	log "Pack ${package}"
 
@@ -416,6 +398,9 @@ if [ "${websign}" ] || [ "${pack}" ] ; then
 fi
 if [ "${websign}" ] ; then
 	log "WebSign ${package}"
+
+	./commands/updaterepos.js
+	cp -rf ~/.cyph/repos/cdn ~/.cyph/repos/custom-builds ./
 
 	customBuilds=''
 
