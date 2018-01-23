@@ -41,7 +41,7 @@ export class AccountSessionService extends SessionService {
 	private readonly resolveReady: () => void	= this._READY.resolve;
 
 	/** @inheritDoc */
-	protected readonly symmetricKey: Promise<Uint8Array>				=
+	protected readonly symmetricKey: Promise<Uint8Array>	=
 		this._ACCOUNTS_SYMMETRIC_KEY.promise
 	;
 
@@ -171,6 +171,8 @@ export class AccountSessionService extends SessionService {
 			potassiumService,
 			stringsService
 		);
+
+		this.resolveSymmetricKey	= undefined;
 
 		this.on(rpcEvents.ping, (o: ISessionMessageData) => {
 			if (o.command && o.command.method) {
