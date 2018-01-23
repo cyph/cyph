@@ -104,11 +104,13 @@ export class AppService implements CanActivate {
 			faviconService.setFavicon('telehealth');
 		}
 
-		self.onhashchange	= () => {
-			if (!locationData.hash.match(/^#?\/?account(\/|$)/)) {
-				location.reload();
-			}
-		};
+		if (accountRoot !== '') {
+			self.onhashchange	= () => {
+				if (!locationData.hash.match(new RegExp(`^#?/?${accountRoot}(/|$)`))) {
+					location.reload();
+				}
+			};
+		}
 
 		(async () => {
 			/* Redirect clients that cannot support native crypto when required */
