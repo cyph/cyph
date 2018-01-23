@@ -400,41 +400,15 @@ if [ "${websign}" ] ; then
 	log "WebSign ${package}"
 
 	./commands/updaterepos.js
-	cp -rf ~/.cyph/repos/cdn ~/.cyph/repos/custom-builds ./
+	cp -rf ~/.cyph/repos/cdn ./
 
 	customBuilds=''
 
 	if [ "${username}" == 'cyph' ] && [ "${branch}" == 'staging' ] ; then
-		cd pkg/cyph.ws-subresources
-		mv ../../custom-builds ./
-		rm -rf custom-builds/.git custom-builds/reference.json
-		for d in $(find custom-builds -mindepth 1 -maxdepth 1 -type d) ; do
-			customBuildBase="$(echo "${d}" | perl -pe 's/.*\/(.*)$/\1/')"
-			customBuild="$(projectname "${customBuildBase}")"
-			customBuildConfig="${d}/config.json"
-			customBuildAudioImage="${d}/audio-image.png"
-			customBuildErrorImage="${d}/error-image.png"
-			customBuildFavicon="${d}/favicon.png"
-			customBuildLogoHorizontal="${d}/logo.horizontal.png"
-			customBuildLogoVertical="${d}/logo.vertical.png"
-			customBuildStrings="${d}/strings.json"
-			customBuildTheme="${d}/theme.scss"
-			customBuilds="${customBuilds} ${customBuild}"
-
-			../../commands/websign/custombuild.js \
-				"${customBuild}" \
-				"${customBuildAudioImage}" \
-				"${customBuildConfig}" \
-				"${customBuildErrorImage}" \
-				"${customBuildFavicon}" \
-				"${customBuildLogoHorizontal}" \
-				"${customBuildLogoVertical}" \
-				"${customBuildStrings}" \
-				"${customBuildTheme}"
-
-			rm -rf ${d}
-		done
-		cd ../..
+		./commands/websign/custombuilds.js pkg/cyph.ws pkg "${version}"
+		checkfail
+		customBuilds="$(cat pkg/custombuilds.list)"
+		rm pkg/custombuilds.list
 	fi
 
 	packages="${package} ${customBuilds}"
