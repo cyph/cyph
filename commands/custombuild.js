@@ -112,7 +112,12 @@ const customBuild	= (id, version) => {
 	if (scss) {
 		o.css	= compileSCSS(`
 			${scss}
-			@include cyph-apply-theme(true);
+
+			html > body {
+				&, &.modest, &.telehealth {
+					@include cyph-apply-theme;
+				}
+			}
 		`);
 	}
 
