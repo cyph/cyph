@@ -12,6 +12,7 @@ import {
 	getDurationString,
 	getTimes,
 	getTimestamp,
+	getTimeString,
 	timestampTo24HourTimeString,
 	timestampToDate,
 	timestampToTime,
@@ -87,6 +88,9 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnInit {
 
 	/** @see getTimes */
 	public readonly getTimes: typeof getTimes						= getTimes;
+
+	/** @see getTimeString */
+	public readonly getTimeString: typeof getTimeString				= getTimeString;
 
 	/** Indicates whether input is disabled. */
 	@Input() public isDisabled: boolean								= false;
