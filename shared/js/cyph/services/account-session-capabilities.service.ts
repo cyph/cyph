@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {ISessionCapabilities} from '../proto';
 import {ISessionCapabilitiesService} from '../service-interfaces/isession-capabilities.service';
 import {resolvable} from '../util/wait';
+import {PotassiumService} from './crypto/potassium.service';
 
 
 /** Accounts implementation of ISessionCapabilitiesService. */
@@ -12,7 +13,9 @@ export class AccountSessionCapabilitiesService implements ISessionCapabilitiesSe
 
 	/** @inheritDoc */
 	public readonly capabilities: Promise<ISessionCapabilities>			= (async () => ({
-		nativeCrypto: false,
+		/* Note that for accounts we're checking whether the current Cyph environment *requires*
+			native crypto, not simple whether the local browser supports it. */
+		nativeCrypto: await this.potassiumService.native(),
 		p2p: await this._P2P_SUPPORT.promise
 	}))();
 
@@ -24,5 +27,8 @@ export class AccountSessionCapabilitiesService implements ISessionCapabilitiesSe
 		this._P2P_SUPPORT.resolve
 	;
 
-	constructor () {}
+	constructor (
+		/** @ignore */
+		private readonly potassiumService: PotassiumService
+	) {}
 }
