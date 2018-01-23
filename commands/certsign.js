@@ -268,5 +268,5 @@ if (require.main === module) {
 	certSign(process.argv[2], true);
 }
 else {
-	module.exports	= certSign;
+	module.exports	= {certSign};
 }

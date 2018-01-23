@@ -22,5 +22,5 @@ if (require.main === module) {
 	console.log(JSON.stringify(mangleExceptions));
 }
 else {
-	module.exports	= mangleExceptions;
+	module.exports	= {mangleExceptions};
 }

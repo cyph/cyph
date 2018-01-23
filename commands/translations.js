@@ -25,5 +25,5 @@ if (require.main) {
 	console.log(JSON.stringify(translations));
 }
 else {
-	module.exports	= translations;
+	module.exports	= {translations};
 }

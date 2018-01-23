@@ -136,7 +136,7 @@ for f in ${typescriptAssets} ; do
 	cat > webpack.js <<- EOM
 		const {TsConfigPathsPlugin}	= require('awesome-typescript-loader');
 		const UglifyJsPlugin		= require('uglifyjs-webpack-plugin');
-		const mangleExceptions		= require('../../../commands/mangleexceptions');
+		const {mangleExceptions}	= require('../../../commands/mangleexceptions');
 
 		module.exports	= {
 			entry: {

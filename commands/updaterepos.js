@@ -38,5 +38,5 @@ if (require.main === module) {
 	updateRepos();
 }
 else {
-	module.exports	= updateRepos;
+	module.exports	= {updateRepos};
 }

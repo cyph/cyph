@@ -17,7 +17,7 @@ cat > webpack.js <<- EOM
 	const path					= require('path');
 	const UglifyJsPlugin		= require('uglifyjs-webpack-plugin');
 	const {CommonsChunkPlugin}	= require('webpack').optimize;
-	const mangleExceptions		= require('../commands/mangleexceptions');
+	const {mangleExceptions}	= require('../commands/mangleexceptions');
 	const config				= require('./webpack.config.js');
 
 	const chunks	=

@@ -80,5 +80,5 @@ if (require.main === module) {
 	});
 }
 else {
-	module.exports	= addInviteCode;
+	module.exports	= {addInviteCode};
 }
