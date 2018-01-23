@@ -18,6 +18,7 @@ simpleProdBuild=''
 pack=''
 environment=''
 firebaseBackup=''
+customBuild=''
 test=true
 websign=true
 
@@ -31,6 +32,11 @@ if [ "${1}" == '--prod' ] ; then
 	shift
 elif [ "${1}" == '--simple' ] ; then
 	simple=true
+	shift
+elif [ "${1}" == '--simple-custom-build' ] ; then
+	shift
+	simple=true
+	customBuild="${1}"
 	shift
 elif [ "${1}" == '--simple-prod-build' ] ; then
 	simple=true
@@ -126,6 +132,13 @@ elif [ "${test}" ] && ( \
 	environment="$(processEnvironmentName "${branch}")"
 else
 	environment="$(processEnvironmentName dev)"
+fi
+
+if [ "${customBuild}" ] ; then
+	./commands/custombuildtoenvironment.js "${customBuild}" "${environment}" "${version}"
+	checkfail
+	environment='tmp'
+	version="${version}-$(echo "${customBuild}" | tr '.' '-')"
 fi
 
 
@@ -303,7 +316,10 @@ if [ "${cacheBustedProjects}" ] ; then
 		# Cache bust
 		log 'Cache bust' >> .wpstatic.output 2>&1
 		for d in ${cacheBustedProjects} ; do
-			cd \$d
+			if [ ! -d \"\${d}\" ] ; then
+				continue
+			fi
+			cd \"\${d}\"
 			../commands/cachebust.js >> ../.wpstatic.output 2>&1
 			cd ..
 		done
@@ -323,6 +339,10 @@ if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedP
 fi
 
 
+if [ "${customBuild}" ] ; then
+	mv cyph.com cyph.com.src
+fi
+
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
 	./commands/buildunbundledassets.sh $(if [ "${simple}" ] ; then echo '--test' ; fi) || exit 1
@@ -330,6 +350,11 @@ if [ "${compiledProjects}" ] ; then
 	cp -a shared/assets "${dir}/shared/"
 fi
 for d in $compiledProjects ; do
+	if [ ! -d "${d}" ] ; then
+		log "Skip $(projectname "${d}")"
+		continue
+	fi
+
 	log "Build $(projectname "${d}")"
 
 	cd "${d}"
@@ -550,11 +575,11 @@ if [ "${waitingForWpstatic}" ] ; then
 fi
 
 if [ "${site}" != 'firebase' ] ; then
-	gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
+	gcloud app deploy --quiet --no-promote --project cyphme --version "${version}" $(
 		if [ "${site}" ] ; then
-			ls $site/*.yaml
+			ls ${site}/*.yaml
 		else
-			ls */*.yaml
+			ls */*.yaml | grep -v '\.src/'
 		fi
 		if [ ! "${test}" ] ; then
 			echo dispatch.yaml

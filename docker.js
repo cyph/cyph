@@ -52,6 +52,7 @@ const args	= {
 	background: process.argv.indexOf('--background') > -1,
 	simple:
 		process.argv.indexOf('--simple') > -1 ||
+		process.argv.indexOf('--simple-custom-build') > -1 ||
 		process.argv.indexOf('--simple-prod-build') > -1
 	,
 	site: process.argv[(process.argv.indexOf('--site') + 1) || undefined]
