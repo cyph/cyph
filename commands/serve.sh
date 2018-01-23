@@ -7,6 +7,7 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 eval "$(./commands/getgitdata.sh)"
 
+customBuild=''
 firebaseBackup=''
 e2e=''
 localSeleniumServer=''
@@ -22,6 +23,11 @@ if [ "${1}" == '--firebase-backup' ] ; then
 fi
 if [ "${1}" == '--local-selenium-server' ] ; then
 	localSeleniumServer=true
+	shift
+fi
+if [ "${1}" == '--custom-build' ] ; then
+	shift
+	customBuild="${1}"
 	shift
 fi
 if [ "${1}" == 'cyph.ws' ] || [ "${1}" == 'cyph.com' ] ; then
@@ -42,6 +48,30 @@ fi
 
 if [ "${localSeleniumServer}" ] ; then
 	log 'On the host OS, run `java -jar selenium-server-standalone-$VERSION.jar -role hub`'
+fi
+
+if [ "${customBuild}" ] ; then
+	environmentImport="$(echo "${environment}" | perl -pe 's/([A-Z])/-\l$1/g')"
+	environment='tmp'
+
+	./commands/custombuildtojs.js \
+		"${customBuild}" \
+		shared/js/environments/.environment.tmp.ts \
+		"
+			/* tslint:disable */
+			import {environment} from './environment.${environmentImport}';
+
+
+			environment.envName	= 'tmp';
+			environment.local	= true;
+
+			environment.customBuild	=
+		" \
+		"
+			;
+
+			export {environment};
+		"
 fi
 
 

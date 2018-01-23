@@ -8,6 +8,8 @@ const os			= require('os');
 
 
 const updateRepos	= () => {
+	childProcess.spawnSync('bash', ['./keycache.sh'], {cwd: __dirname, stdio: 'inherit'});
+
 	for (const repo of ['cdn', 'custom-builds']) {
 		const path	= `${os.homedir()}/.cyph/repos/${repo}`;
 

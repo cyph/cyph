@@ -36,7 +36,8 @@
 				"localStaging": "js/environments/environment.local-staging.ts",
 				"master": "js/environments/environment.master.ts",
 				"prod": "js/environments/environment.prod.ts",
-				"staging": "js/environments/environment.staging.ts"
+				"staging": "js/environments/environment.staging.ts",
+				"tmp": "js/environments/.environment.tmp.ts"
 			}
 		}
 	],
