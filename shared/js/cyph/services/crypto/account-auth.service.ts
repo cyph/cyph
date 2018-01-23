@@ -134,7 +134,7 @@ export class AccountAuthService {
 			const user		= await this.accountUserLookupService.getUser(username);
 
 			if (!user) {
-				throw new Error('Non-existent user.');
+				throw new Error('Nonexistent user.');
 			}
 
 			const loginData	= await deserialize(
