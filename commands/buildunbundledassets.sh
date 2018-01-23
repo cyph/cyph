@@ -18,7 +18,7 @@ checkfail () {
 }
 
 
-find shared/js -type f -name '*.js' -exec rm {} \;
+find shared/js -type f -name '*.js' -not -path 'shared/js/proto/*' -exec rm {} \;
 
 
 nodeModulesAssets="$(
@@ -61,6 +61,7 @@ hash="${test}$(
 		types.proto \
 		$(echo "${nodeModulesAssets}" | perl -pe 's/([^\s]+)/\/node_modules\/\1.js/g') \
 		$(find shared/js -type f -name '*.ts' -not \( \
+			-name '*.d.ts' -or \
 			-name '*.spec.ts' -or \
 			-path 'shared/js/environments/*' \
 		\)) \
