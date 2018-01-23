@@ -51,27 +51,8 @@ if [ "${localSeleniumServer}" ] ; then
 fi
 
 if [ "${customBuild}" ] ; then
-	environmentImport="$(echo "${environment}" | perl -pe 's/([A-Z])/-\l$1/g')"
+	./commands/custombuildtoenvironment.js "${customBuild}" "${environment}"
 	environment='tmp'
-
-	./commands/custombuildtojs.js \
-		"${customBuild}" \
-		shared/js/environments/.environment.tmp.ts \
-		"
-			/* tslint:disable */
-			import {environment} from './environment.${environmentImport}';
-
-
-			environment.envName	= 'tmp';
-			environment.local	= true;
-
-			environment.customBuild	=
-		" \
-		"
-			;
-
-			export {environment};
-		"
 fi
 
 
