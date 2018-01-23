@@ -52,6 +52,7 @@ fi
 
 if [ "${customBuild}" ] ; then
 	./commands/custombuildtoenvironment.js "${customBuild}" "${environment}"
+	checkfail
 	environment='tmp'
 fi
 
