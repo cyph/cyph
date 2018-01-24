@@ -3,6 +3,8 @@
 
 const cheerio						= require('cheerio');
 const fs							= require('fs');
+const mkdirp						= require('mkdirp');
+const superSphincs					= require('supersphincs');
 const {potassium}					= require('../../modules/potassium');
 const {Environment}					= require('../../modules/proto');
 const {serialize}					= require('../../modules/util');
@@ -16,6 +18,38 @@ const args			= {
 	input: process.argv[2],
 	outputPath: process.argv[3],
 	version: process.argv[4]
+};
+
+
+const subresourceDir		= 'custom-builds';
+const subresourceDirParent	= `${args.outputPath}/cyph.ws-subresources`;
+
+mkdirp.sync(`${subresourceDirParent}/${subresourceDir}`);
+
+const addSubresource	= async ($, name, content) => {
+	content	= content.trim();
+
+	const hash	= (await superSphincs.hash(content)).hex;
+	const path	= `${subresourceDir}/${name}`
+
+	$('head').append((name.endsWith('.js') ?
+		`
+			<script
+				websign-sri-path='${path}'
+				websign-sri-hash='${hash}'
+			></script>
+		` :
+		`
+			<link
+				rel='stylesheet'
+				websign-sri-path='${path}'
+				websign-sri-hash='${hash}'
+			></link>
+		`
+	).trim());
+
+	fs.writeFileSync(`${subresourceDirParent}/${path}`, content);
+	fs.writeFileSync(`${subresourceDirParent}/${path}.srihash`, hash);
 };
 
 
@@ -38,16 +72,15 @@ for (const id of customBuildIds) {
 	}
 
 	if (o.css) {
-		const $style	= $('<style></style>');
-		$style.text(o.css);
-		$('head').append($style);
-
+		await addSubresource($, `${o.id}.css`, o.css);
 		o.css	= undefined;
 	}
 
-	$('head').append(`<meta name='custom-build' content='${
-		potassium.toBase64(await serialize(Environment.CustomBuild, o))
-	}' />`);
+	await addSubresource($, `${o.id}.js`, `
+		self.customBuildBase64	= ${
+			potassium.toBase64(await serialize(Environment.CustomBuild, o))
+		};
+	`);
 
 	fs.writeFileSync(`${args.outputPath}/${o.id}`, $.html().trim());
 	outputIds.push(o.id);

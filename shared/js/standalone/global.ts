@@ -34,6 +34,7 @@ for (const k of [
 	'accountRoot',
 	'Audio',
 	'beforeUnloadMessage',
+	'customBuildBase64',
 	'history',
 	'location',
 	'navigator',

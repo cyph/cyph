@@ -12,6 +12,12 @@ declare let beforeUnloadMessage: string|undefined;
 
 /**
  * @global
+ * Base64-encoded custom build object.
+ */
+declare let customBuildBase64: string|undefined;
+
+/**
+ * @global
  * WorkerGlobalScope API to load JavaScript file.
  * Reduced to accept just one script rather than
  * an array to accommodate WebSign packing.

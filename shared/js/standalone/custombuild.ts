@@ -9,10 +9,6 @@ import {Environment} from '../cyph/proto';
 import {environment} from '../environments/environment';
 
 
-const $customBuild		= $('meta[name="custom-build"]');
-const customBuildBase64	= $customBuild.attr('content');
-$customBuild.remove();
-
 if (customBuildBase64) {
 	try {
 		environment.customBuild	= Environment.CustomBuild.decode(
@@ -20,6 +16,9 @@ if (customBuildBase64) {
 		);
 	}
 	catch {}
+	finally {
+		customBuildBase64	= undefined;
+	}
 }
 
 accountRoot	= 'account';
