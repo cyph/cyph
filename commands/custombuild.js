@@ -48,7 +48,7 @@ const tryReadFile	= (path, jsonParse) => {
 
 
 const customBuild	= (id, version) => {
-	if (!id || typeof id !== 'string' || id.startsWith('.') || id.match(/[^a-z0-9\.-_]/)) {
+	if (!id || typeof id !== 'string' || id.startsWith('.') || id.match(/[^a-z0-9\.\-_]/)) {
 		throw new Error(`Invalid custom build ID: ${id}.`);
 	}
 
