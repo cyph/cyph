@@ -48,6 +48,13 @@ export class AccountChatMessageBoxComponent {
 	/** @see ChatMessageBoxComponent.showUnreadCount */
 	@Input() public showUnreadCount: boolean	= true;
 
+	/** Submits form. */
+	public async submit () : Promise<void> {
+		if (this.send) {
+			return this.send();
+		}
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly envService: EnvService,
