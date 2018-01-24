@@ -234,7 +234,7 @@ if [ "${test}" ] ; then
 	newCyphURL="https://${version}.cyph.ws"
 
 	if [ "${simple}" ] ; then
-		newCyphURL="https://${version}-dot-cyph-im-dot-cyphme.appspot.com"
+		newCyphURL="https://${version}-dot-cyph-ws-dot-cyphme.appspot.com"
 	fi
 
 	sed -i "s|staging|${version}|g" backend/config.go
@@ -508,17 +508,19 @@ fi
 
 # WebSign redirects
 
-for suffix in ${shortlinkProjects} ; do
-	d="cyph.${suffix}"
-	project="cyph-${suffix}"
+if [ ! "${simple}" ] ; then
+	for suffix in ${shortlinkProjects} ; do
+		d="cyph.${suffix}"
+		project="cyph-${suffix}"
 
-	# Special case for cyph.im to directly redirect to cyph.ws instead of cyph.ws/#im
-	if [ "${suffix}" == 'im' ] ; then suffix='' ; fi
+		# Special case for cyph.im to directly redirect to cyph.ws instead of cyph.ws/#im
+		if [ "${suffix}" == 'im' ] ; then suffix='' ; fi
 
-	mkdir "${d}"
-	cat cyph.ws/cyph-ws.yaml | sed "s|cyph-ws|${project}|g" > "${d}/${project}.yaml"
-	./commands/websign/createredirect.sh "${suffix}" "${d}" "${package}" "${test}"
-done
+		mkdir "${d}"
+		cat cyph.ws/cyph-ws.yaml | sed "s|cyph-ws|${project}|g" > "${d}/${project}.yaml"
+		./commands/websign/createredirect.sh "${suffix}" "${d}" "${package}" "${test}"
+	done
+fi
 
 
 # Firebase deployment
