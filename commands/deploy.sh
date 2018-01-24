@@ -138,7 +138,7 @@ if [ "${customBuild}" ] ; then
 	./commands/custombuildtoenvironment.js "${customBuild}" "${environment}" "${version}"
 	checkfail
 	environment='tmp'
-	version="${version}-$(echo "${customBuild}" | tr '.' '-')"
+	version="$(echo "${version}" | sed 's|^simple-||')-$(echo "${customBuild}" | tr '.' '-')"
 fi
 
 
