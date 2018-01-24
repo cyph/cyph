@@ -1,7 +1,7 @@
 import memoize from 'lodash-es/memoize';
 import {env} from '../env';
-import {ITime} from '../itime';
 import {ITimeRange} from '../itime-range';
+import {Time} from '../time-type';
 import {random} from './random';
 import {request} from './request';
 import {translate} from './translate';
@@ -35,15 +35,31 @@ const timestampData	= {
 	subtime: 0
 };
 
+/** Gets hour and minute of a Time or string of the form "hh:mm". */
+export const getHourAndMinuteOfTime	= (time: Time|string) : {hour: number; minute: number} => {
+	if (typeof time === 'string') {
+		const [hour, minute]	= time.split(':').map(s => parseInt(s, 10));
+		return {hour, minute};
+	}
+	else {
+		return {hour: Math.floor(time / 60), minute: time % 60};
+	}
+};
+
+/** Converts hour and minute into Time. */
+export const hourAndMinuteToTime	= (o: {hour: number; minute: number}) : Time =>
+	o.hour * 60 + o.minute
+;
+
 /** @ignore */
 const getTimesInternal	= (
 	timeRange: ITimeRange,
 	increment: number,
 	startPadding: number,
 	endPadding: number
-) : ITime[] => {
-	const times: ITime[]	= [];
-	const endTime			= timeRange.end.hour * 60 + timeRange.end.minute + endPadding;
+) : Time[] => {
+	const times: Time[]	= [];
+	const endTime		= hourAndMinuteToTime(timeRange.end) - endPadding;
 
 	for (
 		let {hour, minute}	= {
@@ -62,7 +78,7 @@ const getTimesInternal	= (
 			break;
 		}
 
-		times.push({hour, minute});
+		times.push(hourAndMinuteToTime({hour, minute}));
 	}
 
 	return times;
@@ -123,11 +139,14 @@ export const getDateTimeString	= memoize((timestamp: number) : string =>
  * Returns a human-readable representation of an amount of time (e.g. "1 Hour").
  * @param time Number of milliseconds.
  */
-export const getDurationString	= memoize((time: number) : string =>
-	time < 3600000 ?
-		`${time / 60000} ${translate('Minutes')}` :
-		`${(time / 3600000).toFixed(1).replace('.0', '')} ${translate('Hours')}`
-);
+export const getDurationString	= memoize((time: number) : string => {
+	const {n, unit}	= time < 3600000 ?
+		{n: (time / 60000).toString(), unit: 'Minute'} :
+		{n: (time / 3600000).toFixed(1).replace('.0', ''), unit: 'Hour'}
+	;
+
+	return `${n} ${translate(`${unit}${n === '1' ? '' : 's'}`)}`;
+});
 
 /**
  * Converts a time range into a list of times.
@@ -140,7 +159,7 @@ export const getTimes	= (
 	increment: number = 30,
 	startPadding: number = 0,
 	endPadding: number = 0
-) : ITime[] =>
+) : Time[] =>
 	getTimesInternalWrapper(
 		timeRange.end.hour
 	)(
@@ -179,16 +198,9 @@ export const getTimestamp	= async () : Promise<number> => {
 };
 
 /** Returns a human-readable representation of the time (e.g. "3:37pm"). */
-export const getTimeString	= memoize((timestamp: number|ITime) : string => {
-	if (typeof timestamp === 'number') {
-		return getTimeStringInternal(timestamp, false);
-	}
-
-	const date	= new Date();
-	date.setHours(timestamp.hour);
-	date.setMinutes(timestamp.minute);
-	return getTimeStringInternal(date, false);
-});
+export const getTimeString	= memoize((timestamp?: number) : string =>
+	getTimeStringInternal(timestamp === undefined ? new Date() : timestamp, false)
+);
 
 /** Converts a timestamp into a 24-hour time. */
 /* tslint:disable-next-line:cyclomatic-complexity */
@@ -269,14 +281,10 @@ export const timestampTo24HourTimeString	= memoize((
 	return `${`0${hours.toString()}`.slice(-2)}:${`0${minutes.toString()}`.slice(-2)}`;
 });
 
-/** Converts a timestamp into an ITime. */
-export const timestampToTime	= memoize((timestamp?: number) : ITime => {
+/** Converts a timestamp into a Time. */
+export const timestampToTime	= memoize((timestamp?: number) : Time => {
 	const date	= timestampToDate(timestamp);
-
-	return {
-		hour: date.getHours(),
-		minute: date.getMinutes()
-	};
+	return hourAndMinuteToTime({hour: date.getHours(), minute: date.getMinutes()});
 });
 
 /**
@@ -284,7 +292,7 @@ export const timestampToTime	= memoize((timestamp?: number) : ITime => {
  * @param time 24-hour time or ITime.
  */
 export const timestampUpdate	= memoize(
-	(timestamp: number, date?: Date, time?: string|ITime) : number => {
+	(timestamp: number, date?: Date, time?: string|Time) : number => {
 		const timestampDate		= timestampToDate(timestamp);
 
 		if (date !== undefined) {
@@ -294,28 +302,51 @@ export const timestampUpdate	= memoize(
 		}
 
 		if (time !== undefined) {
-			const [hours, minutes]	= typeof time === 'string' ?
-				time.split(':').map(s => parseInt(s, 10)) :
-				[time.hour, time.minute]
-			;
+			const {hour, minute}	= getHourAndMinuteOfTime(time);
 
-			timestampDate.setHours(hours || 0);
-			timestampDate.setMinutes(minutes || 0);
+			timestampDate.setHours(hour || 0);
+			timestampDate.setMinutes(minute || 0);
 		}
 
 		return timestampDate.getTime();
 	},
-	(timestamp: number, date?: Date, time?: string|ITime) =>
-		`${timestamp.toString()}\n` +
-		`${date === undefined ? '' : date.getTime().toString()}\n` +
-		(
-			time === undefined ? '' : typeof time === 'string' ? time : `${
-				('0' + time.hour.toString()).slice(-2)
+	(timestamp: number, date?: Date, time?: string|Time) => {
+		let timeString: string;
+
+		if (typeof time === 'string') {
+			timeString	= time;
+		}
+		else if (time === undefined) {
+			timeString	= '';
+		}
+		else {
+			const {hour, minute}	= getHourAndMinuteOfTime(time);
+
+			timeString	= `${
+				('0' + hour.toString()).slice(-2)
 			}:${
-				('0' + time.minute.toString()).slice(-2)
-			}`
-		)
+				('0' + minute.toString()).slice(-2)
+			}`;
+		}
+
+		return (
+			`${timestamp.toString()}\n` +
+			`${date === undefined ? '' : date.getTime().toString()}\n` +
+			timeString
+		);
+	}
 );
+
+/** Returns a human-readable representation of a Time (e.g. "3:37pm"). */
+export const timeToString	= memoize((time: Time) => {
+	const {hour, minute}	= getHourAndMinuteOfTime(time);
+	const date				= new Date();
+
+	date.setHours(hour);
+	date.setMinutes(minute);
+
+	return getTimeStringInternal(date, false);
+});
 
 /** @see getTimestamp */
 export const getDate	= async () => timestampToDate(await getTimestamp());

@@ -12,11 +12,11 @@ import {
 	getDurationString,
 	getTimes,
 	getTimestamp,
-	getTimeString,
 	timestampTo24HourTimeString,
 	timestampToDate,
 	timestampToTime,
-	timestampUpdate
+	timestampUpdate,
+	timeToString
 } from '../util/time';
 import {translate} from '../util/translate';
 
@@ -89,9 +89,6 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnInit {
 	/** @see getTimes */
 	public readonly getTimes: typeof getTimes						= getTimes;
 
-	/** @see getTimeString */
-	public readonly getTimeString: typeof getTimeString				= getTimeString;
-
 	/** Indicates whether input is disabled. */
 	@Input() public isDisabled: boolean								= false;
 
@@ -125,7 +122,7 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnInit {
 
 	/** List of possible reasons for this invite. */
 	@Input() public timeRange: ITimeRange							= {
-		end: {hour: 17, minute: 30},
+		end: {hour: 17, minute: 0},
 		start: {hour: 9, minute: 0}
 	};
 
@@ -142,6 +139,9 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnInit {
 
 	/** @see timestampUpdate */
 	public readonly timestampUpdate: typeof timestampUpdate			= timestampUpdate;
+
+	/** @see timeToString */
+	public readonly timeToString: typeof timeToString				= timeToString;
 
 	/** @see trackBySelf */
 	public trackBySelf: typeof trackBySelf							= trackBySelf;

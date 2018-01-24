@@ -1,11 +1,8 @@
-import {ITime} from './itime';
-
-
 /** Represents a range of times. */
 export interface ITimeRange {
 	/** End time. */
-	end: ITime;
+	end: {hour: number; minute: number};
 
 	/** Start time. */
-	start: ITime;
+	start: {hour: number; minute: number};
 }

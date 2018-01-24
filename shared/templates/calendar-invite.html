@@ -5,6 +5,7 @@
 			[ngModel]='value.title'
 			(ngModelChange)='value.title = $event; onChange(value)'
 			[placeholder]='stringsService.reasonForAppointment'
+			required
 		>
 			<mat-option [value]='reason' *ngFor='let reason of reasons; trackBy: trackBySelf'>
 				{{reason}}
@@ -20,6 +21,7 @@
 			(ngModelChange)='value.title = $event; onChange(value)'
 			type='text'
 			[placeholder]='stringsService.reasonForAppointment'
+			required
 		/>
 	</mat-form-field>
 
@@ -40,6 +42,7 @@
 					onChange(value);
 				'
 				[placeholder]='stringsService.appointmentDuration'
+				required
 			>
 				<mat-option
 					[value]='duration'
@@ -70,6 +73,7 @@
 					onChange(value);
 				'
 				[placeholder]='stringsService.startDate'
+				required
 			/>
 			<mat-datepicker-toggle matSuffix [for]='datepickerStart'></mat-datepicker-toggle>
 		</mat-form-field>
@@ -103,12 +107,13 @@
 					onChange(value);
 				'
 				[placeholder]='stringsService.startTime'
+				required
 			>
 				<mat-option [value]='time' *ngFor='
 					let time of getTimes(timeRange, timeIncrement, 0, duration / 60000);
 					trackBy: trackBySelf
 				'>
-					{{getTimeString(time)}}
+					{{timeToString(time)}}
 				</mat-option>
 			</mat-select>
 		</mat-form-field>
@@ -175,12 +180,13 @@
 					onChange(value);
 				'
 				[placeholder]='stringsService.endTime'
+				required
 			>
 				<mat-option [value]='time' *ngFor='
 					let time of getTimes(timeRange, timeIncrement, duration / 60000);
 					trackBy: trackBySelf
 				'>
-					{{getTimeString(time)}}
+					{{timeToString(time)}}
 				</mat-option>
 			</mat-select>
 		</mat-form-field>
