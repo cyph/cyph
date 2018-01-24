@@ -1,4 +1,4 @@
-<div fxFlexFill fxLayout='column' fxLayoutGap='8px'>
+<form ngNativeValidate fxFlexFill fxLayout='column' fxLayoutGap='8px' (submit)='send()'>
 	<div fxLayout='row' fxLayoutGap='16px' *ngIf='showHeader'>
 		<cyph-account-contact
 			fxFlex
@@ -18,7 +18,7 @@
 				mat-icon-button
 				matTooltip='Send'
 				[disabled]='recipient !== undefined && (recipient | async) === undefined'
-				(click)='send()'
+				type='submit'
 				cyphTranslate
 			>
 				<mat-icon>send</mat-icon>
@@ -38,4 +38,4 @@
 		[showUnreadCount]='showUnreadCount'
 		(sendFunction)='send = $event'
 	></cyph-chat-message-box>
-</div>
+</form>
