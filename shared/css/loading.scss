@@ -69,13 +69,15 @@
 	> .logo-animation {
 		@include filter(drop-shadow(3px 3px 3px rgba(68, 68, 68, 0.25)));
 
-		&.connected, > * {
+		> * {
 			background-color: transparent;
 			background-repeat: no-repeat;
 			background-size: 33vh 33vh;
 			background-image: url(/assets/img/logo.white.icon.png);
 			opacity: 0;
+		}
 
+		&.connected, > * {
 			@include animation-iteration-count(infinite !important);
 		}
 
@@ -83,7 +85,9 @@
 			@include animation(logoconnected 3250ms step-end);
 
 			> * {
-				display: none;
+				opacity: 1;
+
+				@include animation(none !important);
 			}
 		}
 
