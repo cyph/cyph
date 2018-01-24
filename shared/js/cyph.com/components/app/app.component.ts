@@ -12,7 +12,7 @@ import {Promos, States} from '../../enums';
  */
 @Component({
 	selector: 'cyph-app',
-	templateUrl: './app.component.component.html'
+	templateUrl: './app.component.html'
 })
 export class AppComponent {
 	/** @see Promos */
