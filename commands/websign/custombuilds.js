@@ -37,6 +37,14 @@ for (const id of customBuildIds) {
 		;
 	}
 
+	if (o.css) {
+		const $style	= $('<style></style>');
+		$style.text(o.css);
+		$('head').append($style);
+
+		o.css	= undefined;
+	}
+
 	$('head').append(`<meta name='custom-build' content='${
 		potassium.toBase64(await serialize(Environment.CustomBuild, o))
 	}' />`);
