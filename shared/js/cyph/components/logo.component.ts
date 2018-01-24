@@ -86,6 +86,9 @@ export class LogoComponent {
 	/** @ignore */
 	private videoInternal: boolean		= false;
 
+	/** Alignment of logo position. */
+	@Input() public alignment: 'bottom'|'center'|'left'|'right'|'top'	= 'center';
+
 	/** Indicates whether image is a logo in a card. */
 	@HostBinding('class.card-header-logo')
 	@Input()

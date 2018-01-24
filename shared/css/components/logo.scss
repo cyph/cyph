@@ -12,4 +12,20 @@ div {
 	background-size: contain;
 	height: 100%;
 	width: 100%;
+
+	&.alignment-bottom {
+		background-position-y: 100%;
+	}
+
+	&.alignment-left {
+		background-position-x: 0%;
+	}
+
+	&.alignment-right {
+		background-position-x: 100%;
+	}
+
+	&.alignment-top {
+		background-position-y: 0%;
+	}
 }
