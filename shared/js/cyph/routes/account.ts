@@ -1,6 +1,7 @@
 /* tslint:disable:object-literal-sort-keys */
 
 import {Route} from '@angular/router';
+import {AccountComponent} from '../components/account';
 import {AccountAppointmentsComponent} from '../components/account-appointments';
 import {AccountChatComponent} from '../components/account-chat';
 import {AccountComposeComponent} from '../components/account-compose';
@@ -16,7 +17,6 @@ import {AccountPostRegisterComponent} from '../components/account-post-register'
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
-import {AccountComponent} from '../components/account';
 import {newPatient} from '../forms';
 import {ChatMessageValueTypes} from '../proto';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
