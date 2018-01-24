@@ -1,7 +1,7 @@
 /* tslint:disable:object-literal-sort-keys */
 
 import {Route} from '@angular/router';
-import {RedirectComponent} from '../components/redirect.component';
+import {RedirectComponent} from '../components/redirect';
 
 
 /** Routing configuration for redirecting /account/* where relevant. */

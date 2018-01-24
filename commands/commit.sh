@@ -28,7 +28,7 @@ git commit -S -a -m "${comment}"
 
 find . -type f -name '*.go' | grep -v github.com | xargs -I% gofmt -w "%"
 
-find shared/css \
+find shared/css shared/js \
 	-type f \
 	-name '*.scss' \
 	-not -name theme.scss \
@@ -45,7 +45,7 @@ print \$0
 mv %.new %
 '
 
-find types.proto shared/js shared/css shared/templates -type f -exec sed -i 's/\s*$//g' {} \;
+find types.proto shared/css shared/js -type f -exec sed -i 's/\s*$//g' {} \;
 
 chmod -R 700 .
 git commit -S -a -m "cleanup: ${comment}"

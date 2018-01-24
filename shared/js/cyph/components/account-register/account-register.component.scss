@@ -1,0 +1,51 @@
+@import '../../../../css/mixins';
+
+.description {
+	padding-top: 32px;
+	font-size: 1.25em;
+}
+
+.password-option {
+	background-color: rgba(255, 255, 255, 0.1);
+	padding: 20px;
+
+	&.deselected {
+		cursor: pointer;
+		opacity: 0.25;
+		border: dashed white 1.5px;
+		background-color: transparent;
+
+		* {
+			pointer-events: none;
+		}
+	}
+
+	h3 {
+		margin-top: 0px;
+	}
+}
+
+.xkcd-passphrase {
+	font-family: 'Ubuntu Mono';
+	font-size: 2em;
+	text-align: center;
+	background-color: rgba(0, 0, 0, 0.1);
+	padding: 5px 10px;
+}
+
+.username-pending {
+	width: 24px;
+	height: 24px;
+	position: relative;
+	overflow: hidden;
+
+	> mat-progress-spinner {
+		position: absolute;
+		top: -108px;
+		left: -108px;
+	}
+}
+
+form {
+	width: 100%;
+}

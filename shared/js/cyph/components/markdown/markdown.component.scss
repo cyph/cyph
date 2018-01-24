@@ -1,0 +1,17 @@
+@import '../../../../css/mixins';
+
+:host ::ng-deep {
+	> span {
+		> p:only-child {
+			display: inline;
+		}
+
+		> :not(p), > p:not(:only-child) {
+			margin: 10px;
+
+			&:not(.mobile) {
+				margin-left: 25px;
+			}
+		}
+	}
+}

@@ -1,0 +1,20 @@
+@import '../../../../css/mixins';
+
+form > div:last-child {
+	padding-top: 64px;
+}
+
+cyph-pin-input {
+	padding-bottom: 32px;
+}
+
+.mobile {
+	.mat-card {
+		height: 100% !important;
+		width: 100%;
+	}
+
+	.mat-card-title {
+		text-align: center;
+	}
+}

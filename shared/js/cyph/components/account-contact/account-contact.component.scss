@@ -1,0 +1,53 @@
+@import '../../../../css/mixins';
+
+.contact {
+	overflow: hidden;
+
+	@include transition(filter 0s ease);
+
+	button {
+		@include transition(transform 0s ease);
+	}
+
+	&.non-clickable {
+		&, .router-link {
+			cursor: initial !important;
+		}
+	}
+}
+
+.avatar {
+	&.Online {
+		@include animation-name(pulse);
+	}
+
+	&.Away {
+		@include animation-name(bounce);
+	}
+
+	&.Busy {
+		@include animation-name(pulse);
+	}
+
+	&.Offline {
+		@include animation-name(bounce);
+	}
+}
+
+.pending {
+	button {
+		width: 50px;
+		height: 50px;
+	}
+
+	mat-card-title {
+		font-size: 1.2em;
+		margin-top: 15px;
+		margin-bottom: 23px;
+	}
+
+	mat-progress-spinner {
+		position: absolute;
+		margin-right: -80px;
+	}
+}

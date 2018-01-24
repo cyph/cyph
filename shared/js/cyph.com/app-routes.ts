@@ -1,7 +1,7 @@
 /* tslint:disable:object-literal-sort-keys */
 
 import {Routes} from '@angular/router';
-import {AppComponent} from './app.component';
+import {AppComponent} from './components/app';
 
 
 /** @see Routes */

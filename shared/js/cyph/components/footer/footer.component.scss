@@ -1,0 +1,13 @@
+@import '../../../../css/mixins';
+
+$height: 60px;
+
+.footer {
+	height: $height;
+	font-size: 1rem;
+	padding-top: 16px;
+
+	img {
+		max-height: $height;
+	}
+}

@@ -27,25 +27,27 @@ node -e "
 rm -rf app 2> /dev/null
 cp -rf ../shared/js/native app
 rm app/app.module.ngfactory.ts
-cp -rf ../shared/css/native ./css
-cp -r ../shared/css/* ./css/
-cp -rf ../shared/templates/native ./templates
+cp -rf ../shared/css ./css
 cp -rf \
 	../shared/assets \
 	../shared/js/typings \
 ./
 cp -rf \
 	../shared/assets \
-	../shared/assets/css/native/app.css \
+	../shared/assets/css/app.css \
 	package.json \
 app/
 
 rm -rf app/js
 mkdir app/js
 find ../shared/js -mindepth 1 -maxdepth 1 -type d -not -name native -exec cp -rf {} app/js/ \;
-for pattern in "styleUrls: \['../" "templateUrl: '../" ; do
-	grep -rl "${pattern}" app/js | xargs -I% sed -i "s|${pattern}|${pattern}../|" %
-done
+
+find app/js -regextype posix-extended -regex '.*/.*\.native\.(scss|html)' -exec bash -c '
+	f="$(echo "{}" | perl -pe "s/\.native\.[a-z]+$//g")";
+	ext="$(echo "{}" | perl -pe "s/.*\.([a-z]+)$/\1/g")";
+	cat "${f}.native.${ext}" | perl -pe "s/(\.\.\/\.\.\/\.\.\/\.\.\/css)/..\/\1/g" > "${f}.${ext}";
+	rm "${f}.native.${ext}";
+' \;
 
 find app/js -type f -name '*.module.ts' -exec bash -c '
 	cat "{}" |

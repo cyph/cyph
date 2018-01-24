@@ -1,0 +1,9 @@
+@import '../../../../css/mixins';
+
+:host {
+	font-size: 1.08em;
+}
+
+[disabled] {
+	cursor: not-allowed;
+}

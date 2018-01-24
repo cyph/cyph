@@ -1,0 +1,83 @@
+@import '../../../../css/mixins';
+
+.text-message-box {
+	position: relative;
+
+	smd-fab-speed-dial {
+		position: absolute;
+		bottom: 22px;
+		right: 25px;
+	}
+
+	.message-box {
+		resize: none;
+	}
+
+	.message-box-button-group {
+		position: absolute;
+		top: 50%;
+		right: 10px;
+		z-index: 30;
+
+		button mat-icon {
+			opacity: 0.75;
+		}
+
+		button[disabled] mat-icon {
+			opacity: 0.25;
+		}
+	}
+
+	.new-messages {
+		width: 100%;
+		margin-top: -20px;
+		cursor: pointer;
+		z-index: 4 !important;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+	}
+
+	&:not(.mobile) {
+		.message-box {
+			@include transition(all 0.35s ease-in-out);
+
+			outline: none;
+			padding: 3px;
+			border: 1px solid #dddddd;
+			margin: 0px 13px;
+			min-height: 100px;
+			max-height: 200px;
+			padding-right: 65px;
+		}
+	}
+
+	&.mobile {
+		.message-box {
+			height: 2.96em;
+			font-size: 1.12em;
+			line-height: 1.5em;
+			padding: 10px 60px 10px 15px;
+			margin: -2px;
+			margin-top: 0px;
+			box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
+			position: relative;
+			z-index: 30;
+			outline: none !important;
+		}
+
+		.message-box:focus ~ .new-messages {
+			display: none;
+		}
+
+		.new-messages {
+			z-index: 35 !important;
+		}
+
+		.menu-button {
+			position: fixed;
+			top: 5px;
+			right: 5px;
+		}
+	}
+}

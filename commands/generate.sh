@@ -31,17 +31,19 @@ genericDescription="$(echo "${selector}" | sed 's|-| |g')"
 
 if [ "${type}" == 'component' ] ; then
 
-mkdir -p shared/js/cyph/components
+dir="shared/js/cyph/components/${selector}"
+mkdir -p ${dir}
 
-echo "<div>${name}</div>" > shared/templates/${selector}.html
-echo "<Label text='${name}'></Label>" > shared/templates/native/${selector}.html
-echo "@import '../mixins';" > shared/css/components/${selector}.scss
-echo "@import '../mixins';" > shared/css/native/components/${selector}.scss
+echo "<div>${name}</div>" > ${dir}/${selector}.component.html
+echo "<Label text='${name}'></Label>" > ${dir}/${selector}.component.native.html
+echo "@import '../../../../css/mixins';" > ${dir}/${selector}.component.scss
+echo "@import '../../../../css/mixins';" > ${dir}/${selector}.component.native.scss
+echo "export * from './${selector}.component';" > ${dir}/index.ts
 
-if [ "${ngModel}" ] ; then cat > shared/js/cyph/components/${selector}.component.ts << EOM
+if [ "${ngModel}" ] ; then cat > ${dir}/${selector}.component.ts << EOM
 import {Component} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {StringsService} from '../services/strings.service';
+import {StringsService} from '../../services/strings.service';
 
 
 /**
@@ -56,8 +58,8 @@ import {StringsService} from '../services/strings.service';
 		}
 	],
 	selector: 'cyph-${selector}',
-	styleUrls: ['../../../css/components/${selector}.scss'],
-	templateUrl: '../../../templates/${selector}.html'
+	styleUrls: ['./${selector}.component.scss'],
+	templateUrl: './${selector}.component.html'
 })
 export class ${class} implements ControlValueAccessor {
 	/** Change event callback. */
@@ -102,9 +104,9 @@ export class ${class} implements ControlValueAccessor {
 	) {}
 }
 EOM
-else cat > shared/js/cyph/components/${selector}.component.ts << EOM
+else cat > ${dir}/${selector}.component.ts << EOM
 import {Component} from '@angular/core';
-import {StringsService} from '../services/strings.service';
+import {StringsService} from '../../services/strings.service';
 
 
 /**
@@ -112,8 +114,8 @@ import {StringsService} from '../services/strings.service';
  */
 @Component({
 	selector: 'cyph-${selector}',
-	styleUrls: ['../../../css/components/${selector}.scss'],
-	templateUrl: '../../../templates/${selector}.html'
+	styleUrls: ['./${selector}.component.scss'],
+	templateUrl: './${selector}.component.html'
 })
 export class ${class} {
 	constructor (
@@ -124,13 +126,7 @@ export class ${class} {
 EOM
 fi
 
-read -r -d '' files <<- EOM
-	shared/templates/${selector}.html
-	shared/templates/native/${selector}.html
-	shared/css/components/${selector}.scss
-	shared/css/native/components/${selector}.scss
-	shared/js/cyph/components/${selector}.component.ts
-EOM
+files="${dir}"
 
 
 elif [ "${type}" == 'resolver' ] ; then
@@ -198,5 +194,5 @@ fi
 
 
 git add ${files}
-chmod 777 ${files}
+chmod -R 777 ${files}
 git commit -S -m "generate ${class}" ${files}

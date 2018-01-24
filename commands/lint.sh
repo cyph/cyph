@@ -40,32 +40,22 @@ if [ ! "${htmlOnly}" ] ; then
 		node -e '
 			const glob	= require("glob");
 
-			/* Used to offset web AppComponents not having component stylesheets */
-			const webIndexHtml		= glob.sync("templates/**", {nodir: true}).filter(s =>
-				s.endsWith("/index.html") && s.indexOf("/native/") < 0
+			const componentFiles	= glob.sync("js/cyph/components/**", {nodir: true});
+
+			const webTemplates		= componentFiles.filter(s =>
+				s.endsWith(".html") && !s.endsWith(".native.html")
 			);
 
-			const webTemplates		= glob.sync("templates/**", {nodir: true}).filter(s =>
-				s.endsWith(".html") && s.indexOf("/native/") < 0
+			const nativeTemplates	= componentFiles.filter(s =>
+				s.endsWith(".native.html")
 			);
 
-			const nativeTemplates	= glob.sync("templates/native/**", {nodir: true}).filter(s =>
-				s.endsWith(".html") && s.indexOf("/app/") < 0
+			const webStylesheets	= componentFiles.filter(s =>
+				s.endsWith(".scss") && !s.endsWith(".native.scss")
 			);
 
-			const webStylesheets	= glob.sync("css/components/**", {nodir: true}).filter(s =>
-				s.endsWith(".scss")
-			).concat(
-				webIndexHtml
-			);
-
-			const nativeStylesheets	= glob.sync(
-				"css/native/components/**",
-				{nodir: true}
-			).filter(s =>
-				s.endsWith(".scss")
-			).concat(
-				webIndexHtml
+			const nativeStylesheets	= componentFiles.filter(s =>
+				s.endsWith(".native.scss")
 			);
 
 			console.log(
@@ -119,7 +109,6 @@ if [ ! "${htmlOnly}" ] ; then
 	"
 
 	cp ${dir}/shared/lib/js/package.json ./
-	cp -rf css templates js/
 
 	output="$(
 		tslint \
@@ -135,15 +124,15 @@ if [ "${htmlOnly}" ] || [ "${fast}" ] ; then
 	# htmllint
 
 	output="${output}$({
-		find templates \
+		find js \
 			-type f \
 			-name '*.html' \
-			-not -path 'templates/native/*' \
+			-not -name '*.native.html' \
 			-not -name dynamic-form.html \
 			-exec node -e '(async () => {
 				const result	= await require("htmllint")(
 					fs.readFileSync("{}").toString().replace(/\[([A-Za-z0-9]+)\]/g, "$1"),
-					JSON.parse(fs.readFileSync("templates/htmllint.json").toString())
+					JSON.parse(fs.readFileSync("js/htmllint.json").toString())
 				);
 
 				if (result.length === 0) {

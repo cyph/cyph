@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import {ViewBase} from 'tns-core-modules/ui/core/view-base/view-base';
 import {ChatMessage} from '../chat';
-import {ChatMessageComponent} from '../components/chat-message.component';
+import {ChatMessageComponent} from '../components/chat-message';
 import {uuid} from '../util/uuid';
 import {ChatService} from './chat.service';
 import {EnvService} from './env.service';

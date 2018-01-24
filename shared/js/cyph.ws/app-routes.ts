@@ -1,10 +1,10 @@
 /* tslint:disable:object-literal-sort-keys */
 
 import {Routes} from '@angular/router';
-import {BlankComponent} from '../cyph/components/blank.component';
+import {BlankComponent} from '../cyph/components/blank';
 import {account, accountRedirect, login, retry} from '../cyph/routes';
 import {AppService} from './app.service';
-import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
+import {EphemeralChatRootComponent} from './components/ephemeral-chat-root';
 
 
 account.canActivate	= [AppService];

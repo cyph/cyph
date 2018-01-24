@@ -1,0 +1,177 @@
+@import '../../../../css/mixins';
+
+.email-ui {
+	.avatar-image {
+		margin-top: -13px;
+		margin-left: -13px;
+	}
+
+	.email-divider {
+		border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+	}
+
+	::ng-deep {
+		mat-card-header {
+			margin-right: -17px;
+
+			.mat-card-header-text {
+				width: 100%;
+			}
+		}
+	}
+}
+
+.message-item.mobile .email-ui ::ng-deep .mat-card-header-text {
+	margin-top: -10px;
+}
+
+.confirmation-checks {
+	vertical-align: middle;
+
+	mat-icon {
+		@include icon-size(14px);
+
+		&:first-child {
+			margin-right: -12px;
+		}
+	}
+}
+
+.mobile .confirmation-checks mat-icon {
+	@include icon-size(12px);
+
+	&:first-child {
+		margin-right: -11px;
+	}
+}
+
+:host ::ng-deep {
+	img:not(.avatar-image) {
+		cursor: pointer;
+	}
+
+	.message-item {
+		word-wrap: break-word;
+		word-break: break-word;
+		padding: 7.5px 10px 5px 10px;
+		margin: 2.5px;
+		min-height: 0px;
+		position: relative;
+
+		@include transition(opacity 0.25s linear);
+
+		.message {
+			max-width: 100%;
+			padding-bottom: 5px;
+
+			> * {
+				padding-top: 5px;
+			}
+
+			/* https://stackoverflow.com/a/32085957/459881 */
+			.transitionend {
+				opacity: 0.18;
+
+				@include transition(opacity 0.1s linear);
+			}
+		}
+
+		.message-timestamp {
+			text-align: right;
+		}
+
+		a:not([href]) {
+			cursor: auto;
+			text-decoration: none;
+		}
+
+		img:not(.avatar-image), .image-frame {
+			max-width: 25%;
+			margin-top: 10px;
+			margin-bottom: 10px;
+			margin-left: 10vw;
+			margin-right: auto;
+			display: block;
+			box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.4);
+			position: relative;
+		}
+
+		.self-destruct-timer {
+			font-size: 2.3rem;
+			text-align: center;
+			padding: 20px;
+			display: block;
+		}
+
+		/* Self-destruct animation */
+		&.self-destruct {
+			text-align: center;
+
+			.message-text * {
+				height: 100vh;
+				font-weight: 25vh;
+			}
+		}
+
+		.self-destruct-cover {
+			content: ' ';
+			height: 100%;
+			width: 100%;
+			top: 0px;
+			left: 0px;
+			background-color: black;
+			position: absolute;
+			z-index: 5;
+
+			@include transform(scaleX(0));
+
+			@include transform-origin(top left);
+		}
+
+		&.self-destructed .self-destruct-cover {
+			@include transform(scaleX(1));
+
+			@include transition(transform 3s cubic-bezier(0.8, 0.4, 1, 0.3));
+		}
+
+		&.author-app .message {
+			text-align: center;
+
+			cyph-markdown {
+				margin-top: 20px;
+
+				* {
+					font-weight: bold;
+				}
+			}
+		}
+
+		&.mobile {
+			.message-timestamp {
+				height: 12px;
+			}
+
+			.self-destruct-cover {
+				left: -25vw;
+				width: 150vw;
+			}
+
+			.self-destruct-timer {
+				font-size: 1.43rem;
+				padding: 5px;
+			}
+		}
+
+		&:not(.mobile) {
+			.message-item {
+				border-radius: 1px;
+			}
+		}
+
+		/* Temporary workaround for matTooltip issue */
+
+		touch-action: inherit !important;
+
+		@include user-select(inherit !important);
+	}
+}

@@ -1,0 +1,31 @@
+@import '../../../../css/mixins';
+
+:host {
+	display: inline-block;
+	height: 100%;
+	width: 100%;
+}
+
+div {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-size: contain;
+	height: 100%;
+	width: 100%;
+
+	&.alignment-bottom {
+		background-position-y: 100%;
+	}
+
+	&.alignment-left {
+		background-position-x: 0%;
+	}
+
+	&.alignment-right {
+		background-position-x: 100%;
+	}
+
+	&.alignment-top {
+		background-position-y: 0%;
+	}
+}

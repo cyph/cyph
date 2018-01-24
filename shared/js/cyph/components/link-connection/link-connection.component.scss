@@ -1,0 +1,43 @@
+@import '../../../../css/mixins';
+
+.connect-link-input, .connect-link-link {
+	font-family: 'Ubuntu Mono';
+	text-align: center;
+}
+
+.connect-link-link {
+	font-size: 130%;
+	word-wrap: break-word;
+	word-break: break-all;
+}
+
+.connect-link-mobile .divider {
+	width: 21px;
+	display: inline-block;
+}
+
+.countdown {
+	padding-left: 10px;
+}
+
+.self-destruct-timer {
+	top: 28px;
+	margin: auto auto auto 25px;
+	font-size: 17px;
+	position: relative;
+
+	span {
+		top: 5px;
+		position: relative;
+	}
+
+	mat-form-field {
+		text-align: center;
+		width: 42px;
+
+		input {
+			margin: 0px 0px -5px -2px;
+			text-align: center;
+		}
+	}
+}

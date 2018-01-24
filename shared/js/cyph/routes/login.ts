@@ -1,7 +1,7 @@
 /* tslint:disable:object-literal-sort-keys */
 
 import {Route} from '@angular/router';
-import {AccountLoginComponent} from '../components/account-login.component';
+import {AccountLoginComponent} from '../components/account-login';
 
 
 /** Routing configuration for login. */

@@ -28,8 +28,9 @@ const filesToModify	= [
 	{dir: 'assets/css', ext: 'css'},
 	{dir: 'assets/js', ext: 'js'},
 	{dir: 'css', ext: 'scss'},
-	{dir: 'js', ext: 'ts'},
-	{dir: 'templates', ext: 'html'}
+	{dir: 'js', ext: 'html'},
+	{dir: 'js', ext: 'scss'},
+	{dir: 'js', ext: 'ts'}
 ].map(o =>
 	glob.sync(`${o.dir}/**`, {nodir: true}).filter(s => s.endsWith(`.${o.ext}`))
 ).reduce((a, b) =>

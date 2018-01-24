@@ -1,0 +1,42 @@
+@import '../../../../css/mixins';
+
+.not-found {
+	h1 {
+		text-align: center;
+		font-family: Ubuntu, sans-serif;
+	}
+
+	img {
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
+	}
+
+	li {
+		margin-bottom: 15px;
+	}
+
+	&.mobile {
+		padding: 5px;
+
+		h1 {
+			font-size: 1.5em;
+		}
+
+		img {
+			width: 100%;
+		}
+	}
+
+	&:not(.mobile) {
+		.explanation {
+			margin-left: auto;
+			margin-right: auto;
+			width: 75%;
+		}
+
+		img {
+			width: 75%;
+		}
+	}
+}

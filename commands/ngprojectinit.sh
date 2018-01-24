@@ -12,8 +12,7 @@ for arr in \
 	'/node_modules node_modules' \
 	'../shared/assets src/assets' \
 	'../shared/css src/css' \
-	'../shared/js src/js' \
-	'../shared/templates src/templates'
+	'../shared/js src/js'
 do
 	read -ra arr <<< "${arr}"
 	bindmount "${arr[0]}" "${arr[1]}"

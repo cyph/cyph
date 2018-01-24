@@ -1,0 +1,30 @@
+@import '../../../../css/mixins';
+
+pre {
+	margin: 1px;
+}
+
+table {
+	width: 100%;
+
+	th, td {
+		width: 50%;
+		padding-bottom: 20px;
+		vertical-align: top;
+	}
+
+	th {
+		font-family: Ubuntu;
+		font-weight: normal;
+		font-size: 115%;
+		text-align: left;
+	}
+}
+
+.spaces {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+:host > :not(.mobile) td {
+	padding-left: 20px;
+}

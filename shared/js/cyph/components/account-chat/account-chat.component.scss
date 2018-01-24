@@ -1,0 +1,21 @@
+@import '../../../../css/mixins';
+
+:host > div {
+	background-color: initial !important;
+}
+
+.padding {
+	padding-bottom: 1em;
+}
+
+.chat-end-margin ::ng-deep .chat-end-message mat-card {
+	margin-bottom: 1em;
+}
+
+cyph-chat-message-list ::ng-deep > .background-image {
+	display: none;
+}
+
+cyph-chat-message-box ::ng-deep .text-message-box.mobile {
+	padding: 0px 4px;
+}

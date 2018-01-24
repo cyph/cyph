@@ -25,11 +25,11 @@ import {FaviconService} from '../cyph/services/favicon.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {resolveStaticServices} from '../cyph/util/static-services';
 import {appRoutes} from './app-routes';
-import {AppComponent} from './app.component';
 import {AppService} from './app.service';
+import {AppComponent} from './components/app';
+import {EphemeralChatRootComponent} from './components/ephemeral-chat-root';
+import {LockdownComponent} from './components/lockdown';
 import {CustomUrlSerializer} from './custom-url-serializer';
-import {EphemeralChatRootComponent} from './ephemeral-chat-root.component';
-import {LockdownComponent} from './lockdown.component';
 
 
 /**

@@ -1,0 +1,40 @@
+@import '../../../../css/mixins';
+
+.checkout-ui {
+	margin: 8px 10px;
+	padding: 0px 12px 10px 9px;
+	opacity: 0.95;
+	background-color: white;
+
+	> .braintree {
+		min-height: 150px;
+	}
+}
+
+button {
+	max-width: 80%;
+	white-space: normal;
+}
+
+mat-progress-spinner {
+	@include spinner-center;
+
+	+ form {
+		opacity: 0.15;
+		pointer-events: none;
+	}
+}
+
+.confirmation {
+	font-size: 120%;
+	width: 100%;
+	text-align: center;
+	padding-top: 50%;
+
+	@include transform(translateY(-50%));
+}
+
+.retry {
+	cursor: pointer;
+	text-decoration: underline;
+}

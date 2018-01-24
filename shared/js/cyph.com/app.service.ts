@@ -4,7 +4,7 @@ import {NavigationEnd, Router} from '@angular/router';
 import * as $ from 'jquery';
 import * as WOW from 'wowjs';
 import {SubscriptionTypes} from '../cyph/checkout';
-import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
+import {BetaRegisterComponent} from '../cyph/components/beta-register';
 import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';

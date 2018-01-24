@@ -1,0 +1,17 @@
+@import '../../../../css/mixins';
+
+.chat-cyphertext {
+	z-index: 1;
+	position: fixed;
+	top: -1px;
+	left: -1px;
+	width: calc(100% + 2px);
+	height: calc(100% + 2px);
+	overflow-y: scroll;
+
+	.close-button {
+		position: fixed;
+		top: 30px;
+		right: 5%;
+	}
+}

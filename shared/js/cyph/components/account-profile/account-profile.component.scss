@@ -1,0 +1,193 @@
+@import '../../../../css/mixins';
+
+.profile {
+	text-align: center;
+	font-family: Ubuntu;
+
+	&.mobile {
+		.avatar {
+			width: 10em;
+			height: 10em;
+		}
+	}
+
+	.avatar {
+		cursor: auto;
+		width: 18em;
+		height: 18em;
+		box-shadow: 0px 20px 42px 0px rgba(0, 0, 0, 0.3);
+		border-width: 10px !important;
+	}
+
+	.name {
+		font-size: 42px;
+		margin-top: 25px;
+		margin-bottom: 10px;
+		font-weight: 500;
+	}
+
+	.username {
+		font-size: 24px;
+		opacity: 0.6;
+	}
+
+	.description {
+		font-size: 20px;
+		width: 100%;
+
+		input {
+			text-align: center;
+		}
+	}
+}
+
+.file-upload {
+	margin-top: 2rem;
+	min-width: 200px;
+}
+
+.edit-buttons {
+	position: relative;
+	float: right;
+	bottom: 80px;
+	right: 10px;
+}
+
+.edit-hide {
+	@include transition(opacity 0.35s ease-in-out);
+}
+
+@media (max-height: 600px) {
+	:host > .editing .edit-hide {
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	:host > :not(.editing) .edit-hide {
+		opacity: 1;
+	}
+}
+
+/* Telehealth version */
+
+:host > .telehealth {
+	.profile.telehealth {
+		text-align: left;
+
+		&.mobile {
+			.header {
+				height: 30% !important;
+				position: relative;
+
+				.avatar {
+					width: 4.2em;
+					height: 4.2em;
+					margin: 0;
+					top: -3px;
+				}
+
+				.name {
+					font-size: 26px;
+				}
+
+				.practice {
+					font-size: 12px;
+					height: 0px;
+
+					mat-icon {
+						font-size: 16px;
+						margin-top: 3px;
+					}
+				}
+
+				cyph-account-user-rating {
+					display: none;
+
+					span {
+						text-align: center !important;
+					}
+				}
+			}
+
+			.mat-card {
+				top: 0px !important;
+				max-width: 100% !important;
+				overflow: auto;
+
+				button.mat-raised-button {
+					margin-top: 0px !important;
+					margin-bottom: 20px;
+				}
+			}
+		}
+
+		.avatar {
+			width: 125px;
+			height: 125px;
+			top: 25px;
+			position: relative;
+			margin: 25px;
+			border-width: 0.42vw !important;
+		}
+
+		.header {
+			height: 135px;
+			min-height: 135px;
+			z-index: 42;
+
+			.user-info {
+				top: 10px;
+				position: relative;
+			}
+
+			&:after {
+				height: 20px;
+				width: 100%;
+				content: no-close-quote;
+			}
+		}
+
+		.user-list-header {
+			border-bottom: 1px solid;
+		}
+
+		.content {
+			margin-top: 5px;
+		}
+
+		.practice {
+			mat-icon {
+				@include icon-size(24px);
+			}
+
+			h3 {
+				margin: 3px;
+			}
+		}
+
+		.mat-card {
+			top: 135px;
+			max-width: 66%;
+			overflow: auto;
+		}
+
+		.mat-list-item {
+			height: auto;
+		}
+
+		.name {
+			margin-top: 3px;
+			margin-bottom: 0px;
+		}
+
+		.description {
+			margin: 20px auto auto auto;
+			max-width: 90%;
+			position: relative;
+		}
+
+		&.standard {
+			text-align: center;
+		}
+	}
+}

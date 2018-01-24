@@ -1,0 +1,16 @@
+@import '../../../../css/mixins';
+
+:host {
+	top: 5px;
+	position: relative;
+	margin-left: 5px;
+}
+
+mat-icon {
+	color: #ffc107;
+	margin: 0px 0px 0px 5px;
+}
+
+.router-link:hover {
+	color: #bba8df;
+}

@@ -6,7 +6,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {ChatMessage, IChatData, IChatMessageLiveValue, States} from '../chat';
-import {HelpComponent} from '../components/help.component';
+import {HelpComponent} from '../components/help';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncMap} from '../local-async-map';
 import {LocalAsyncValue} from '../local-async-value';
