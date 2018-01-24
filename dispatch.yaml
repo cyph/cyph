@@ -8,12 +8,6 @@ dispatch:
 - url: "www.cyph.com/*"
   service: cyph-com
 
-- url: "cyph.ws/*"
-  service: cyph-ws
-
-- url: "cyph.me/*"
-  service: cyph-me
-
 - url: "cyph.video/*"
   service: cyph-video
 

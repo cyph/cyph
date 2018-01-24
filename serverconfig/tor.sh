@@ -136,11 +136,6 @@ read -r -d '' nginxconf <<- EOM
 	}
 	server {
 		\${sslconf}
-		server_name me.cyphdbyhiddenbhs.onion;
-		\$(proxysite https://prod-dot-cyph-me-dot-cyphme.appspot.com)
-	}
-	server {
-		\${sslconf}
 		server_name video.cyphdbyhiddenbhs.onion;
 		\$(proxysite https://prod-dot-cyph-video-dot-cyphme.appspot.com)
 	}

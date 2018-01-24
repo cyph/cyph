@@ -65,7 +65,6 @@ while true ; do
 	node -e "console.log([
 		'cyph.im',
 		'cyph.io',
-		'cyph.me',
 		'cyph.video',
 		'cyph.audio'
 	].concat(
@@ -104,11 +103,6 @@ read -r -d '' nginxconf <<- EOM
 		\${sslconf}
 		server_name cyph.io www.cyph.io;
 		\$(proxysite https://prod-dot-cyph-io-dot-cyphme.appspot.com)
-	}
-	server {
-		\${sslconf}
-		server_name cyph.me www.cyph.me;
-		\$(proxysite https://prod-dot-cyph-me-dot-cyphme.appspot.com)
 	}
 	server {
 		\${sslconf}
