@@ -318,7 +318,7 @@
     "parseqs": "0.0.5",
     "parseuri": "0.0.5",
     "to-array": "0.1.4",
-    "bplist-parser": "0.2.0",
+    "bplist-parser": "0.1.1",
     "marked": "0.3.12",
     "plist": "2.1.0",
     "xmldom": "0.1.27",
