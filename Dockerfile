@@ -137,6 +137,10 @@ RUN haxelib install hxnodejs
 RUN rm -rf ~/.gnupg
 
 
+# Temporary workaround for https://github.com/yarnpkg/yarn/issues/3801
+RUN echo 'Package: yarn\nPin: version 0.24.6-1\nPin-Priority: 1337' | sudo tee -a /etc/apt/preferences
+
+
 #CIRCLECI:RUN sudo apt-get -y --allow-downgrades update
 #CIRCLECI:RUN sudo apt-get -y --allow-downgrades upgrade
 #CIRCLECI:RUN mkdir -p ~/getlibs/commands ~/getlibs/native ~/getlibs/shared/lib/js
