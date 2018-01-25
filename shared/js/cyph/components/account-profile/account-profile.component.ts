@@ -110,7 +110,10 @@ export class AccountProfileComponent implements OnInit {
 		}
 		catch {}
 
-		if (!this.user) {
+		if (this.user) {
+			this.accountService.resolveUiReady();
+		}
+		else {
 			this.router.navigate([accountRoot, 'login']);
 		}
 	}
