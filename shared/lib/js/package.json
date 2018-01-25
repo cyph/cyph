@@ -20,7 +20,7 @@
     "typescript": "2.6.2",
     "uglifyjs-webpack-plugin": "1.1.6",
     "webpack-sources": "1.1.0",
-    "webrtcsupport": "2.2.1",
+    "webrtcsupport": "2.2.0",
     "autoprefixer": "7.2.5",
     "chalk": "2.3.0",
     "fs-extra": "4.0.3",
