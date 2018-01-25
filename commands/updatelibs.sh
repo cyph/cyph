@@ -259,8 +259,10 @@ cd ..
 yarn add compare-versions
 cd -
 
+echo {} > package.json
+
 script -fc "
-	while [ ! -f yarn.done ] ; do
+	while true ; do
 		answer=\"\$(node -e 'console.log(
 			(
 				(
@@ -289,6 +291,10 @@ script -fc "
 			echo > yarn.out
 			echo \"\${answer}\"
 		fi
+
+		if [ \"\$(cat yarn.out | grep -P 'Done in \d+' 2> /dev/null)\" ] ; then
+			break
+		fi
 	done | bash -c '
 		yarn add \
 			--flat \
@@ -299,8 +305,6 @@ script -fc "
 			$(echo "${modules}" | tr '\n' ' ') \
 		|| \
 			touch yarn.failure
-
-		touch yarn.done
 	'
 " yarn.out
 
