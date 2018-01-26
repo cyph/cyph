@@ -299,53 +299,56 @@ export class AccountFilesService {
 		incomingFile: IAccountFileRecord&IAccountFileReference,
 		shouldAccept: boolean = true
 	) : Promise<void> {
-		if (!shouldAccept) {
-			await this.accountDatabaseService.removeItem(`incomingFiles/${incomingFile.id}`);
-			return;
-		}
+		const promises: Promise<any>[]	= [
+			this.accountDatabaseService.removeItem(`incomingFiles/${incomingFile.id}`)
+		];
 
-		const promises	= [
-			this.accountDatabaseService.setItem<IAccountFileReference>(
+		if (shouldAccept) {
+			promises.push(this.accountDatabaseService.setItem<IAccountFileReference>(
 				`fileReferences/${incomingFile.id}`,
 				AccountFileReference,
 				incomingFile
-			)
-		];
-
-		if (incomingFile.wasAnonymousShare) {
-			promises.push(this.accountDatabaseService.setItem<IAccountFileRecord>(
-				`fileRecords/${incomingFile.id}`,
-				AccountFileRecord,
-				incomingFile,
-				undefined,
-				incomingFile.key
 			));
-		}
 
-		if (incomingFile.recordType === AccountFileRecord.RecordTypes.Appointment) {
-			promises.push((async () => {
-				const currentUser	= this.accountDatabaseService.currentUser.value;
-
-				if (!currentUser) {
-					throw new Error('User not signed in. Cannot RSVP.');
-				}
-
-				const appointment	= await this.downloadAppointment(incomingFile).result;
-
-				if (!appointment.rsvps) {
-					appointment.rsvps	= {};
-				}
-
-				appointment.rsvps[currentUser.user.username]	= Appointment.RSVP.Yes;
-
-				return this.accountDatabaseService.setItem(
-					`users/${incomingFile.owner}/files/${incomingFile.id}`,
-					Appointment,
-					appointment,
+			if (incomingFile.wasAnonymousShare) {
+				promises.push(this.accountDatabaseService.setItem<IAccountFileRecord>(
+					`fileRecords/${incomingFile.id}`,
+					AccountFileRecord,
+					incomingFile,
 					undefined,
 					incomingFile.key
-				);
-			})());
+				));
+			}
+
+			if (incomingFile.recordType === AccountFileRecord.RecordTypes.Appointment) {
+				/*
+				Temporarily commented out pending final appointments architecture
+
+				promises.push((async () => {
+					const currentUser	= this.accountDatabaseService.currentUser.value;
+
+					if (!currentUser) {
+						throw new Error('User not signed in. Cannot RSVP.');
+					}
+
+					const appointment	= await this.downloadAppointment(incomingFile).result;
+
+					if (!appointment.rsvps) {
+						appointment.rsvps	= {};
+					}
+
+					appointment.rsvps[currentUser.user.username]	= Appointment.RSVP.Yes;
+
+					return this.accountDatabaseService.setItem(
+						`users/${incomingFile.owner}/files/${incomingFile.id}`,
+						Appointment,
+						appointment,
+						undefined,
+						incomingFile.key
+					);
+				})());
+				*/
+			}
 		}
 
 		await Promise.all(promises);
@@ -536,12 +539,22 @@ export class AccountFilesService {
 			}
 		}
 
-		await Promise.all([
-			this.accountDatabaseService.removeItem(`users/${file.owner}/docs/${id}`),
-			this.accountDatabaseService.removeItem(`users/${file.owner}/files/${id}`),
-			this.accountDatabaseService.removeItem(`users/${file.owner}/fileRecords/${id}`),
+		const promises	= [
 			this.accountDatabaseService.removeItem(`fileReferences/${id}`)
-		]);
+		];
+
+		if (
+			this.accountDatabaseService.currentUser.value &&
+			file.owner === this.accountDatabaseService.currentUser.value.user.username
+		) {
+			promises.push(...[
+				this.accountDatabaseService.removeItem(`users/${file.owner}/docs/${id}`),
+				this.accountDatabaseService.removeItem(`users/${file.owner}/files/${id}`),
+				this.accountDatabaseService.removeItem(`users/${file.owner}/fileRecords/${id}`)
+			]);
+		}
+
+		await Promise.all(promises);
 	}
 
 	/** Shares file with another user. */
