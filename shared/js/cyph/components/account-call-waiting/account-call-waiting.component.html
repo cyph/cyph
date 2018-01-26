@@ -11,7 +11,7 @@
 		<h1 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h1>
 		<h1 cyphTranslate *ngIf='envService.isTelehealth'>Waiting Room</h1>
 
-		<div *ngIf='currentUser.user.userType | async as userType'>
+		<div>
 			<h2 *ngIf='
 				envService.isTelehealth && (
 					(currentUser.user.userType | async) === accountUserTypes.Standard ||
