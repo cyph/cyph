@@ -262,11 +262,7 @@
 			width: 200px;
 			opacity: 0.5;
 
-			img {
-				height: 100%;
-
-				@include filter(brightness(0) invert(1));
-			}
+			@include filter(brightness(0) invert(1));
 		}
 
 		.friend {
