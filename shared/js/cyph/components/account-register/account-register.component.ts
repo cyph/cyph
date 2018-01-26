@@ -109,6 +109,8 @@ export class AccountRegisterComponent implements OnInit {
 
 			this.router.navigate([accountRoot, 'register', '1']);
 		});
+
+		this.accountService.resolveUiReady();
 	}
 
 	/** Indicates whether we're ready to initiate a registration attempt. */

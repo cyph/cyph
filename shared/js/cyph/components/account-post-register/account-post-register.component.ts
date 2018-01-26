@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -12,7 +12,12 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-post-register.component.scss'],
 	templateUrl: './account-post-register.component.html'
 })
-export class AccountPostRegisterComponent {
+export class AccountPostRegisterComponent implements OnInit {
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.accountService.resolveUiReady();
+	}
+
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,
