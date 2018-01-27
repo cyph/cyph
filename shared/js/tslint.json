@@ -328,9 +328,11 @@
 		"rxjs-no-create": true,
 		"rxjs-no-do": false,
 		"rxjs-no-finnish": true,
+		"rxjs-no-ignored-error": true,
 		"rxjs-no-operator": true,
 		"rxjs-no-patched": true,
 		"rxjs-no-subject-unsubscribe": false,
+		"rxjs-no-tap": false,
 		"rxjs-no-unused-add": false,
 		"rxjs-no-wholesale": true,
 		"rxjs-prefer-add": false
