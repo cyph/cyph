@@ -144,12 +144,7 @@ RUN echo 'Package: yarn\nPin: version 0.24.6-1\nPin-Priority: 1337' | sudo tee -
 #CIRCLECI:RUN sudo apt-get -y --allow-downgrades update
 #CIRCLECI:RUN sudo apt-get -y --allow-downgrades upgrade
 #CIRCLECI:RUN mkdir -p ~/getlibs/commands ~/getlibs/native ~/getlibs/shared/lib/js
-#CIRCLECI:RUN echo 'GETLIBS_BASE64' | base64 --decode > ~/getlibs/commands/getlibs.sh
-#CIRCLECI:RUN echo 'LIBCLONE_BASE64' | base64 --decode > ~/getlibs/commands/libclone.sh
-#CIRCLECI:RUN echo 'UPDATEIMAGE_BASE64' | base64 --decode > ~/getlibs/commands/updatedockerimage.sh
-#CIRCLECI:RUN echo 'PLUGINS_BASE64' | base64 --decode > ~/getlibs/native/plugins.list
-#CIRCLECI:RUN echo 'PACKAGEJSON_TEXT' > ~/getlibs/shared/lib/js/package.json
-#CIRCLECI:RUN echo 'YARNLOCK_TEXT' > ~/getlibs/shared/lib/js/yarn.lock
+#CIRCLECI:BASE64_FILES
 #CIRCLECI:RUN chmod -R 777 ~/getlibs
 #CIRCLECI:RUN ~/getlibs/commands/updatedockerimage.sh
 #CIRCLECI:RUN ~/getlibs/commands/getlibs.sh

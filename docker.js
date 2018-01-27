@@ -370,30 +370,21 @@ const updateCircleCI	= () => {
 			join('\n').
 			replace('WORKDIR /cyph/commands', 'WORKDIR /cyph').
 			replace(/#CIRCLECI:/g, '').
-			replace(
-				/GETLIBS_BASE64/g,
-				fs.readFileSync('commands/getlibs.sh').toString('base64')
-			).
-			replace(
-				/LIBCLONE_BASE64/g,
-				fs.readFileSync('commands/libclone.sh').toString('base64')
-			).
-			replace(
-				/UPDATEIMAGE_BASE64/g,
-				fs.readFileSync('commands/updatedockerimage.sh').toString('base64')
-			).
-			replace(
-				/PLUGINS_BASE64/g,
-				fs.readFileSync('native/plugins.list').toString('base64')
-			).
-			replace(
-				/PACKAGEJSON_TEXT/g,
-				fs.readFileSync('shared/lib/js/package.json').toString().replace(/\n/g, '\\n\\\n')
-			).
-			replace(
-				/YARNLOCK_TEXT/g,
-				fs.readFileSync('shared/lib/js/yarn.lock').toString().replace(/\n/g, '\\n\\\n')
-			)
+			replace(/BASE64_FILES/, [
+				[/GETLIBS_BASE64/g, 'commands/getlibs.sh'],
+				[/LIBCLONE_BASE64/g, 'commands/libclone.sh'],
+				[/UPDATEIMAGE_BASE64/g, 'commands/updatedockerimage.sh'],
+				[/PLUGINS_BASE64/g, 'native/plugins.list'],
+				[/PACKAGEJSON_BASE64/g, 'shared/lib/js/package.json'],
+				[/YARNLOCK_BASE64/g, 'shared/lib/js/yarn.lock'],
+			].map(([regexp, filePath]) => fs.readFileSync(filePath).toString().
+				match(/(.|\n){1,32768}/g).
+				map(s => Buffer.from(s).toString('base64')).
+				map(base64 => `RUN echo '${base64}' | base64 --decode >> ~/getlibs/${filePath}`).
+				join('\n')
+			).join(
+				'\n'
+			))
 	);
 
 	spawnAsync('docker', [
