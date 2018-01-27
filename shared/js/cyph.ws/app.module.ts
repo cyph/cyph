@@ -11,7 +11,7 @@ import '../standalone/test-environment-setup';
 import '../standalone/translations';
 
 import {HttpClient} from '@angular/common/http';
-import {NgModule} from '@angular/core';
+import {NgModule, NgZone} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import {RouterModule, UrlSerializer} from '@angular/router';
 import {CyphAppModule} from '../cyph/modules/cyph-app.module';
@@ -65,6 +65,7 @@ export class AppModule {
 	constructor (
 		domSanitizer: DomSanitizer,
 		httpClient: HttpClient,
+		ngZone: NgZone,
 		databaseService: DatabaseService,
 		dialogService: DialogService,
 		localStorageService: LocalStorageService
@@ -73,6 +74,6 @@ export class AppModule {
 			testEnvironmentSetup(databaseService, localStorageService);
 		}
 
-		resolveStaticServices({dialogService, domSanitizer, httpClient});
+		resolveStaticServices({dialogService, domSanitizer, httpClient, ngZone});
 	}
 }

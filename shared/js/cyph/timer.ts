@@ -1,5 +1,6 @@
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subject} from 'rxjs/Subject';
+import {staticNgZone} from './util/static-services';
 import {getTimestamp} from './util/time';
 import {sleep} from './util/wait';
 
@@ -63,29 +64,37 @@ export class Timer {
 			return;
 		}
 
-		await sleep(1000);
+		await (await staticNgZone).runOutsideAngular(async () => {
+			await sleep(1000);
 
-		this.endTime	= (await getTimestamp()) + this.countdown;
+			this.endTime	= (await getTimestamp()) + this.countdown;
 
-		for (
-			let timeRemaining = this.countdown;
-			timeRemaining > 0;
-			timeRemaining = this.endTime - (await getTimestamp())
-		) {
-			if (this.isStopped) {
-				return;
+			for (
+				let timeRemaining = this.countdown;
+				timeRemaining > 0;
+				timeRemaining = this.endTime - (await getTimestamp())
+			) {
+				if (this.isStopped) {
+					return;
+				}
+
+				this.timestamp.next(this.getTimestamp(timeRemaining));
+				await sleep();
+
+				if (timeRemaining < 1) {
+					await sleep(1000);
+				}
 			}
 
-			this.timestamp.next(this.getTimestamp(timeRemaining));
-			await sleep();
-
-			if (timeRemaining < 1) {
-				await sleep(1000);
-			}
-		}
-
-		this.isComplete.next(true);
-		this.timestamp.next(this.includeHours ? '0:00:00' : this.includeMinutes ? '0:00' : '0');
+			this.isComplete.next(true);
+			this.timestamp.next(
+				this.includeHours ?
+					'0:00:00' :
+					this.includeMinutes ?
+						'0:00' :
+						'0'
+			);
+		});
 	}
 
 	/** Stops countdown. */

@@ -1,6 +1,6 @@
 /* tslint:disable:max-file-line-count no-import-side-effect */
 
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {firebase} from '@firebase/app';
 import {FirebaseApp} from '@firebase/app-types';
 import '@firebase/auth';
@@ -49,7 +49,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		auth: () => FirebaseAuth;
 		database: (databaseURL?: string) => FirebaseDatabase;
 		storage: (storageBucket?: string) => FirebaseStorage;
-	}>	= retryUntilSuccessful(() => {
+	}>	= this.ngZone.runOutsideAngular(async () => retryUntilSuccessful(() => {
 		const app	= firebase.apps[0] || firebase.initializeApp(env.firebaseConfig);
 
 		if (app.auth === undefined) {
@@ -63,7 +63,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		}
 
 		return <any> app;
-	});
+	}));
 
 	/** Mapping of URLs to last known good hashes. */
 	private readonly hashCache: Map<string, string>	= new Map<string, string>();
@@ -139,14 +139,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async checkDisconnected (urlPromise: MaybePromise<string>) : Promise<boolean> {
-		const url	= await urlPromise;
+		return this.ngZone.runOutsideAngular(async () => {
+			const url	= await urlPromise;
 
-		return (await (await this.getDatabaseRef(url)).once('value')).val() !== undefined;
+			return (await (await this.getDatabaseRef(url)).once('value')).val() !== undefined;
+		});
 	}
 
 	/** @inheritDoc */
 	public connectionStatus () : Observable<boolean> {
-		return new Observable<boolean>(observer => {
+		return this.ngZone.runOutsideAngular(() => new Observable<boolean>(observer => {
 			let cleanup: Function;
 
 			(async () => {
@@ -166,7 +168,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return async () => {
 				(await waitForValue(() => cleanup))();
 			};
-		});
+		}));
 	}
 
 	/** @inheritDoc */
@@ -178,7 +180,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		return {
 			progress,
-			result: (async () => {
+			result: this.ngZone.runOutsideAngular(async () => {
 				const url	= await urlPromise;
 
 				const {hash, timestamp}	= await this.getMetadata(url);
@@ -220,30 +222,34 @@ export class FirebaseDatabaseService extends DatabaseService {
 				progress.complete();
 				this.cacheSet(url, value, hash);
 				return {timestamp, value: await deserialize(proto, value)};
-			})()
+			})
 		};
 	}
 
 	/** @inheritDoc */
 	public async getList<T> (urlPromise: MaybePromise<string>, proto: IProto<T>) : Promise<T[]> {
-		const url	= await urlPromise;
+		return this.ngZone.runOutsideAngular(async () => {
+			const url	= await urlPromise;
 
-		const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
-		return !value ?
-			[] :
-			Promise.all(Object.keys(value).map(async k => this.getItem(`${url}/${k}`, proto)))
-		;
+			const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
+			return !value ?
+				[] :
+				Promise.all(Object.keys(value).map(async k => this.getItem(`${url}/${k}`, proto)))
+			;
+		});
 	}
 
 	/** @inheritDoc */
 	public async getListKeys (urlPromise: MaybePromise<string>) : Promise<string[]> {
-		const url	= await urlPromise;
+		return this.ngZone.runOutsideAngular(async () => {
+			const url	= await urlPromise;
 
-		const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
-		return !value ?
-			[] :
-			Object.keys(value)
-		;
+			const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
+			return !value ?
+				[] :
+				Object.keys(value)
+			;
+		});
 	}
 
 	/** @inheritDoc */
@@ -251,31 +257,35 @@ export class FirebaseDatabaseService extends DatabaseService {
 		hash: string;
 		timestamp: number;
 	}> {
-		const url	= await urlPromise;
+		return this.ngZone.runOutsideAngular(async () => {
+			const url	= await urlPromise;
 
-		const {hash, timestamp}	=
-			(await (await this.getDatabaseRef(url)).once('value')).val() ||
-			{hash: undefined, timestamp: undefined}
-		;
+			const {hash, timestamp}	=
+				(await (await this.getDatabaseRef(url)).once('value')).val() ||
+				{hash: undefined, timestamp: undefined}
+			;
 
-		if (typeof hash !== 'string' || typeof timestamp !== 'number') {
-			throw new Error(`Item at ${url} not found.`);
-		}
+			if (typeof hash !== 'string' || typeof timestamp !== 'number') {
+				throw new Error(`Item at ${url} not found.`);
+			}
 
-		return {hash, timestamp};
+			return {hash, timestamp};
+		});
 	}
 
 	/** @inheritDoc */
 	public async hasItem (urlPromise: MaybePromise<string>) : Promise<boolean> {
-		const url	= await urlPromise;
+		return this.ngZone.runOutsideAngular(async () => {
+			const url	= await urlPromise;
 
-		try {
-			await (await this.getStorageRef(url)).getDownloadURL();
-			return true;
-		}
-		catch {
-			return false;
-		}
+			try {
+				await (await this.getStorageRef(url)).getDownloadURL();
+				return true;
+			}
+			catch {
+				return false;
+			}
+		});
 	}
 
 	/** @inheritDoc */
@@ -286,7 +296,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	) : Promise<T> {
 		const url	= await urlPromise;
 
-		return lock(
+		return this.ngZone.runOutsideAngular(async () => lock(
 			getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
 			async () => {
 				let mutex: ThenableReference|undefined;
@@ -337,7 +347,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}
 			},
 			reason
-		);
+		));
 	}
 
 	/** @inheritDoc */
@@ -345,36 +355,40 @@ export class FirebaseDatabaseService extends DatabaseService {
 		locked: boolean;
 		reason: string|undefined;
 	}> {
-		const url	= await urlPromise;
+		return this.ngZone.runOutsideAngular(async () => {
+			const url	= await urlPromise;
 
-		const value: {[key: string]: {id: string; reason?: string}}	=
-			(await (await this.getDatabaseRef(url)).once('value')).val() || {}
-		;
+			const value: {[key: string]: {id: string; reason?: string}}	=
+				(await (await this.getDatabaseRef(url)).once('value')).val() || {}
+			;
 
-		const keys	= Object.keys(value).sort();
+			const keys	= Object.keys(value).sort();
 
-		return {
-			locked: keys.length > 0,
-			reason: (value[keys[0]] || {reason: undefined}).reason
-		};
+			return {
+				locked: keys.length > 0,
+				reason: (value[keys[0]] || {reason: undefined}).reason
+			};
+		});
 	}
 
 	/** @inheritDoc */
 	public async login (username: string, password: string) : Promise<void> {
-		const auth	= await (await this.app).auth();
+		return this.ngZone.runOutsideAngular(async () => {
+			const auth	= await (await this.app).auth();
 
-		if (firebase.auth) {
-			await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-		}
+			if (firebase.auth) {
+				await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+			}
 
-		await auth.signInWithEmailAndPassword(this.usernameToEmail(username), password);
+			await auth.signInWithEmailAndPassword(this.usernameToEmail(username), password);
+		});
 	}
 
 	/** @inheritDoc */
 	public async logout () : Promise<void> {
-		await retryUntilSuccessful(async () =>
+		await this.ngZone.runOutsideAngular(async () => retryUntilSuccessful(async () =>
 			(await this.app).auth().signOut()
-		);
+		));
 	}
 
 	/** @inheritDoc */
@@ -388,38 +402,42 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}> {
 		const url	= await urlPromise;
 
-		return this.lock(`pushlocks/${url}`, async () =>
+		return this.ngZone.runOutsideAngular(async () => this.lock(`pushlocks/${url}`, async () =>
 			this.setItem(`${url}/${(await this.getDatabaseRef(url)).push().key}`, proto, value)
-		);
+		));
 	}
 
 	/** @inheritDoc */
 	public async register (username: string, password: string) : Promise<void> {
-		await (await this.app).auth().createUserWithEmailAndPassword(
-			this.usernameToEmail(username),
-			password
-		);
+		await this.ngZone.runOutsideAngular(async () => {
+			await (await this.app).auth().createUserWithEmailAndPassword(
+				this.usernameToEmail(username),
+				password
+			);
 
-		await this.login(username, password);
+			await this.login(username, password);
+		});
 	}
 
 	/** @inheritDoc */
 	public async removeItem (urlPromise: MaybePromise<string>) : Promise<void> {
-		const url	= await urlPromise;
+		await this.ngZone.runOutsideAngular(async () => {
+			const url	= await urlPromise;
 
-		this.cacheRemove({url});
+			this.cacheRemove({url});
 
-		const databaseRef	= await this.getDatabaseRef(url);
+			const databaseRef	= await this.getDatabaseRef(url);
 
-		await Promise.all(
-			this.recursivelyGetKeys(url, (await databaseRef.once('value')).val()).map(
-				async k => (await this.getStorageRef(k)).delete().then()
-			).concat(
-				(async () => databaseRef.remove().then())()
-			)
-		).catch(
-			() => {}
-		);
+			await Promise.all(
+				this.recursivelyGetKeys(url, (await databaseRef.once('value')).val()).map(
+					async k => (await this.getStorageRef(k)).delete().then()
+				).concat(
+					(async () => databaseRef.remove().then())()
+				)
+			).catch(
+				() => {}
+			);
+		});
 	}
 
 	/** @inheritDoc */
@@ -427,28 +445,30 @@ export class FirebaseDatabaseService extends DatabaseService {
 		urlPromise: MaybePromise<string>,
 		onReconnect?: () => void
 	) : Promise<() => void> {
-		const url	= await urlPromise;
+		return this.ngZone.runOutsideAngular(async () => {
+			const url	= await urlPromise;
 
-		const ref			= await this.getDatabaseRef(url);
-		const onDisconnect	= ref.onDisconnect();
+			const ref			= await this.getDatabaseRef(url);
+			const onDisconnect	= ref.onDisconnect();
 
-		ref.set(ServerValue.TIMESTAMP);
-		onDisconnect.remove();
-
-		this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
-			if (!isConnected) {
-				return;
-			}
 			ref.set(ServerValue.TIMESTAMP);
-			if (onReconnect) {
-				onReconnect();
-			}
-		});
+			onDisconnect.remove();
 
-		return () => {
-			ref.remove();
-			onDisconnect.cancel();
-		};
+			this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
+				if (!isConnected) {
+					return;
+				}
+				ref.set(ServerValue.TIMESTAMP);
+				if (onReconnect) {
+					onReconnect();
+				}
+			});
+
+			return () => {
+				ref.remove();
+				onDisconnect.cancel();
+			};
+		});
 	}
 
 	/** @inheritDoc */
@@ -456,28 +476,30 @@ export class FirebaseDatabaseService extends DatabaseService {
 		urlPromise: MaybePromise<string>,
 		onReconnect?: () => void
 	) : Promise<() => void> {
-		const url	= await urlPromise;
+		return this.ngZone.runOutsideAngular(async () => {
+			const url	= await urlPromise;
 
-		const ref			= await this.getDatabaseRef(url);
-		const onDisconnect	= ref.onDisconnect();
+			const ref			= await this.getDatabaseRef(url);
+			const onDisconnect	= ref.onDisconnect();
 
-		ref.remove();
-		onDisconnect.set(ServerValue.TIMESTAMP);
-
-		this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
-			if (!isConnected) {
-				return;
-			}
 			ref.remove();
-			if (onReconnect) {
-				onReconnect();
-			}
-		});
+			onDisconnect.set(ServerValue.TIMESTAMP);
 
-		return () => {
-			ref.set(ServerValue.TIMESTAMP);
-			onDisconnect.cancel();
-		};
+			this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
+				if (!isConnected) {
+					return;
+				}
+				ref.remove();
+				if (onReconnect) {
+					onReconnect();
+				}
+			});
+
+			return () => {
+				ref.set(ServerValue.TIMESTAMP);
+				onDisconnect.cancel();
+			};
+		});
 	}
 
 	/** @inheritDoc */
@@ -489,32 +511,38 @@ export class FirebaseDatabaseService extends DatabaseService {
 		hash: string;
 		url: string;
 	}> {
-		const url	= await urlPromise;
+		return this.ngZone.runOutsideAngular(async () => {
+			const url	= await urlPromise;
 
-		const data	= await serialize(proto, value);
-		const hash	= this.potassiumService.toBase64(await this.potassiumService.hash.hash(data));
+			const data	= await serialize(proto, value);
+			const hash	= this.potassiumService.toBase64(
+				await this.potassiumService.hash.hash(data)
+			);
 
-		/* tslint:disable-next-line:possible-timing-attack */
-		if (hash !== (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
-			await (await this.getStorageRef(url)).put(new Blob([data])).then();
-			await (await this.getDatabaseRef(url)).set({
-				hash,
-				timestamp: ServerValue.TIMESTAMP
-			}).then();
-			this.cacheSet(url, data, hash);
-		}
+			/* tslint:disable-next-line:possible-timing-attack */
+			if (hash !== (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
+				await (await this.getStorageRef(url)).put(new Blob([data])).then();
+				await (await this.getDatabaseRef(url)).set({
+					hash,
+					timestamp: ServerValue.TIMESTAMP
+				}).then();
+				this.cacheSet(url, data, hash);
+			}
 
-		return {hash, url};
+			return {hash, url};
+		});
 	}
 
 	/** @inheritDoc */
 	public async unregister (username: string, password: string) : Promise<void> {
-		await this.login(username, password);
+		await this.ngZone.runOutsideAngular(async () => {
+			await this.login(username, password);
 
-		const {currentUser}	= await (await this.app).auth();
-		if (currentUser) {
-			await currentUser.delete();
-		}
+			const {currentUser}	= await (await this.app).auth();
+			if (currentUser) {
+				await currentUser.delete();
+			}
+		});
 	}
 
 	/** @inheritDoc */
@@ -526,7 +554,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const cancel	= resolvable();
 		const progress	= new BehaviorSubject(0);
 
-		const result	= (async () => {
+		const result	= this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
 
 			const data	= await serialize(proto, value);
@@ -579,7 +607,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					}
 				);
 			});
-		})();
+		});
 
 		return {cancel: cancel.resolve, progress, result};
 	}
@@ -589,7 +617,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 		reason: string|undefined;
 		wasLocked: boolean;
 	}> {
-		return new Promise<{reason: string|undefined; wasLocked: boolean}>(async resolve => {
+		return this.ngZone.runOutsideAngular(async () => new Promise<{
+			reason: string|undefined;
+			wasLocked: boolean;
+		}>(async resolve => {
 			const url	= await urlPromise;
 
 			let reason: string|undefined;
@@ -610,7 +641,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				resolve({reason, wasLocked});
 			});
-		});
+		}));
 	}
 
 	/** @inheritDoc */
@@ -618,7 +649,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>
 	) : Observable<ITimedValue<T>> {
-		return new Observable<ITimedValue<T>>(observer => {
+		return this.ngZone.runOutsideAngular(() => new Observable<ITimedValue<T>>(observer => {
 			let cleanup: Function;
 
 			/* tslint:disable-next-line:no-null-keyword */
@@ -647,12 +678,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return async () => {
 				(await waitForValue(() => cleanup))();
 			};
-		});
+		}));
 	}
 
 	/** @inheritDoc */
 	public watchExists (urlPromise: MaybePromise<string>) : Observable<boolean> {
-		return new Observable<boolean>(observer => {
+		return this.ngZone.runOutsideAngular(() => new Observable<boolean>(observer => {
 			let cleanup: Function;
 
 			/* tslint:disable-next-line:no-null-keyword */
@@ -671,7 +702,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return async () => {
 				(await waitForValue(() => cleanup))();
 			};
-		});
+		}));
 	}
 
 	/** @inheritDoc */
@@ -680,7 +711,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		proto: IProto<T>,
 		completeOnEmpty: boolean = false
 	) : Observable<ITimedValue<T>[]> {
-		return new Observable<ITimedValue<T>[]>(observer => {
+		return this.ngZone.runOutsideAngular(() => new Observable<ITimedValue<T>[]>(observer => {
 			let cleanup: Function;
 
 			(async () => {
@@ -792,12 +823,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return async () => {
 				(await waitForValue(() => cleanup))();
 			};
-		});
+		}));
 	}
 
 	/** @inheritDoc */
 	public watchListKeyPushes (urlPromise: MaybePromise<string>) : Observable<string> {
-		return new Observable<string>(observer => {
+		return this.ngZone.runOutsideAngular(() => new Observable<string>(observer => {
 			let cleanup: Function;
 
 			(async () => {
@@ -821,12 +852,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return async () => {
 				(await waitForValue(() => cleanup))();
 			};
-		});
+		}));
 	}
 
 	/** @inheritDoc */
 	public watchListKeys (urlPromise: MaybePromise<string>) : Observable<string[]> {
-		return new Observable<string[]>(observer => {
+		return this.ngZone.runOutsideAngular(() => new Observable<string[]>(observer => {
 			let cleanup: Function;
 
 			(async () => {
@@ -859,7 +890,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return async () => {
 				(await waitForValue(() => cleanup))();
 			};
-		});
+		}));
 	}
 
 	/** @inheritDoc */
@@ -869,63 +900,68 @@ export class FirebaseDatabaseService extends DatabaseService {
 		completeOnEmpty: boolean = false,
 		noCache: boolean = false
 	) : Observable<ITimedValue<T>&{url: string}> {
-		return new Observable<ITimedValue<T>&{url: string}>(observer => {
-			let cleanup: Function;
+		return this.ngZone.runOutsideAngular(() =>
+			new Observable<ITimedValue<T>&{url: string}>(observer => {
+				let cleanup: Function;
 
-			(async () => {
-				const url	= await urlPromise;
+				(async () => {
+					const url	= await urlPromise;
 
-				const listRef	= await this.getDatabaseRef(url);
-				let initiated	= false;
+					const listRef	= await this.getDatabaseRef(url);
+					let initiated	= false;
 
-				/* tslint:disable-next-line:no-null-keyword */
-				const onChildAdded	= async (snapshot: DataSnapshot|null) => {
-					if (!snapshot || !snapshot.key) {
-						return;
+					/* tslint:disable-next-line:no-null-keyword */
+					const onChildAdded	= async (snapshot: DataSnapshot|null) => {
+						if (!snapshot || !snapshot.key) {
+							return;
+						}
+
+						const itemUrl				= `${url}/${snapshot.key}`;
+						const {timestamp, value}	=
+							await (await this.downloadItem(itemUrl, proto)).result
+						;
+
+						observer.next({timestamp, url: itemUrl, value});
+
+						if (noCache) {
+							this.cacheRemove({url: itemUrl});
+						}
+					};
+
+					/* tslint:disable-next-line:no-null-keyword */
+					const onValue		= async (snapshot: DataSnapshot|null) => {
+						if (!initiated) {
+							initiated	= true;
+							return;
+						}
+						if (snapshot && !snapshot.exists()) {
+							observer.complete();
+						}
+					};
+
+					listRef.on('child_added', onChildAdded);
+
+					if (completeOnEmpty) {
+						listRef.on('value', onValue);
 					}
 
-					const itemUrl				= `${url}/${snapshot.key}`;
-					const {timestamp, value}	=
-						await (await this.downloadItem(itemUrl, proto)).result
-					;
+					cleanup	= () => {
+						listRef.off('child_added', onChildAdded);
+						listRef.off('value', onValue);
+					};
+				})();
 
-					observer.next({timestamp, url: itemUrl, value});
-
-					if (noCache) {
-						this.cacheRemove({url: itemUrl});
-					}
+				return async () => {
+					(await waitForValue(() => cleanup))();
 				};
-
-				/* tslint:disable-next-line:no-null-keyword */
-				const onValue		= async (snapshot: DataSnapshot|null) => {
-					if (!initiated) {
-						initiated	= true;
-						return;
-					}
-					if (snapshot && !snapshot.exists()) {
-						observer.complete();
-					}
-				};
-
-				listRef.on('child_added', onChildAdded);
-
-				if (completeOnEmpty) {
-					listRef.on('value', onValue);
-				}
-
-				cleanup	= () => {
-					listRef.off('child_added', onChildAdded);
-					listRef.off('value', onValue);
-				};
-			})();
-
-			return async () => {
-				(await waitForValue(() => cleanup))();
-			};
-		});
+			})
+		);
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly ngZone: NgZone,
+
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,
 

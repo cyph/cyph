@@ -1,4 +1,5 @@
 import {HttpClient} from '@angular/common/http';
+import {NgZone} from '@angular/core';
 import {DomSanitizer, SafeValue} from '@angular/platform-browser';
 import {env} from '../env';
 import {DialogService} from '../services/dialog.service';
@@ -45,10 +46,18 @@ export const staticHttpClient: Promise<HttpClient>	= resolvableHttpClient ?
 ;
 
 
-export const resolveStaticServices	= ({dialogService, domSanitizer, httpClient}: {
+/** Resolvable ngZone. */
+const resolvableNgZone	= resolvable<NgZone>();
+
+/** @see NgZone */
+export const staticNgZone: Promise<NgZone>	= resolvableNgZone.promise;
+
+
+export const resolveStaticServices	= ({dialogService, domSanitizer, httpClient, ngZone}: {
 	dialogService?: DialogService;
 	domSanitizer?: DomSanitizer;
 	httpClient?: HttpClient;
+	ngZone: NgZone;
 }) => {
 	if (dialogService && resolvableDialogService) {
 		resolvableDialogService.resolve(dialogService);
@@ -61,4 +70,6 @@ export const resolveStaticServices	= ({dialogService, domSanitizer, httpClient}:
 	if (resolvableHttpClient && httpClient) {
 		resolvableHttpClient.resolve(httpClient);
 	}
+
+	resolvableNgZone.resolve(ngZone);
 };

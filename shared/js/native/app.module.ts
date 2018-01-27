@@ -8,7 +8,7 @@ import './js/standalone/test-environment-setup';
 import './js/standalone/translations';
 
 import {HttpClient} from '@angular/common/http';
-import {NgModule, NgModuleFactoryLoader, NO_ERRORS_SCHEMA} from '@angular/core';
+import {NgModule, NgModuleFactoryLoader, NgZone, NO_ERRORS_SCHEMA} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {NativeScriptAnimationsModule} from 'nativescript-angular/animations';
 import {NativeScriptFormsModule} from 'nativescript-angular/forms';
@@ -81,7 +81,7 @@ import {NativeTitleService} from './native-title.service';
 	schemas: [NO_ERRORS_SCHEMA]
 })
 export class AppModule {
-	constructor (httpClient: HttpClient, dialogService: DialogService) {
-		resolveStaticServices({dialogService, httpClient});
+	constructor (httpClient: HttpClient, dialogService: DialogService, ngZone: NgZone) {
+		resolveStaticServices({dialogService, httpClient, ngZone});
 	}
 }

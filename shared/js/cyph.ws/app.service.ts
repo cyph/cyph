@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {
 	ActivatedRouteSnapshot,
@@ -76,6 +76,8 @@ export class AppService implements CanActivate {
 	}
 
 	constructor (
+		ngZone: NgZone,
+
 		accountAuthService: AccountAuthService,
 
 		faviconService: FaviconService,
@@ -112,7 +114,7 @@ export class AppService implements CanActivate {
 			};
 		}
 
-		(async () => {
+		ngZone.runOutsideAngular(async () => {
 			/* Redirect clients that cannot support native crypto when required */
 			if (
 				(await potassiumService.native()) &&
@@ -149,7 +151,7 @@ export class AppService implements CanActivate {
 				await sleep();
 			}
 
-			this.loadComplete();
-		})();
+			await this.loadComplete();
+		});
 	}
 }

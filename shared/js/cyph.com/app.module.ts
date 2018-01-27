@@ -12,7 +12,7 @@ import '../standalone/translations';
 import './sham';
 
 import {HttpClient} from '@angular/common/http';
-import {NgModule} from '@angular/core';
+import {NgModule, NgZone} from '@angular/core';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -90,8 +90,9 @@ export class AppModule {
 	constructor (
 		domSanitizer: DomSanitizer,
 		httpClient: HttpClient,
+		ngZone: NgZone,
 		dialogService: DialogService
 	) {
-		resolveStaticServices({dialogService, domSanitizer, httpClient});
+		resolveStaticServices({dialogService, domSanitizer, httpClient, ngZone});
 	}
 }
