@@ -27,7 +27,7 @@ chmod -R 777 .
 
 emsdk update
 emsdk install latest
-emsdk uninstall $(emsdk list | grep INSTALLED | perl -pe 's/\\(?\\*\\)?//g' | grep node | awk '{print $1}')
+emsdk uninstall $(emsdk list | grep INSTALLED | perl -pe 's/\(?\*\)?//g' | grep node | awk '{print $1}')
 emsdk activate latest
 
 if [ "$(command -v gcloud)" ] ; then gcloud components update --quiet ; fi
