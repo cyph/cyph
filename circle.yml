@@ -10,5 +10,5 @@ jobs:
           command: |
             export circleCI=true
             source ~/.bashrc
-            /cyph/commands/build.sh
+            /cyph/commands/test.sh --build
           no_output_timeout: 1800

@@ -4,8 +4,13 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
+build=''
 e2e=''
 unit=''
+if [ "${1}" == '--build' ] ; then
+	build=true
+	shift
+fi
 if [ "${1}" == '--e2e' ] ; then
 	e2e=true
 	shift
@@ -17,8 +22,23 @@ else
 	unit=true
 fi
 
-./commands/buildunbundledassets.sh --test
+if [ "${build}" ] ; then
+	./commands/build.sh
+else
+	./commands/buildunbundledassets.sh --test
+fi
 checkfail
+
+
+# Limit full CircleCI test runs to beta and prod
+if [ "${circleCI}" ] ; then
+	eval "$(./commands/getgitdata.sh)"
+
+	if [ "${branch}" != 'prod' ] && [ "${branch}" != 'beta' ] ; then
+		pass
+	fi
+fi
+
 
 export CHROME_BIN="$(node -e 'console.log(require("puppeteer").executablePath())')"
 
