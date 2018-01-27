@@ -25,6 +25,7 @@ describe('Accounts', () => {
 		expect(await page.elements.profile.root().isPresent()).toBe(true);
 	});
 
+	/* TODO: Make concurrency-safe */
 	it('uploads file', async () => {
 		await page.logIn();
 		page.clickElement(page.elements.menu.files);
