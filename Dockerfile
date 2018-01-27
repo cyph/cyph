@@ -149,10 +149,8 @@ RUN echo 'Package: yarn\nPin: version 0.24.6-1\nPin-Priority: 1337' | sudo tee -
 #CIRCLECI:RUN echo 'PLUGINS_BASE64' | base64 --decode > ~/getlibs/native/plugins.list
 #CIRCLECI:RUN echo 'PACKAGEJSON_TEXT' > ~/getlibs/shared/lib/js/package.json
 #CIRCLECI:RUN echo 'YARNLOCK_TEXT' > ~/getlibs/shared/lib/js/yarn.lock
-#CIRCLECI:RUN git clone --depth 1 https://github.com/jedisct1/libsodium.js ~/getlibs/shared/lib/js/libsodium
 #CIRCLECI:RUN chmod -R 777 ~/getlibs
 #CIRCLECI:RUN ~/getlibs/commands/getlibs.sh
-#CIRCLECI:RUN bash -c 'cd /node_modules/tslint ; mkdir -p test/external ; cp -a ../ntru test/external/tslint-test-config-non-relative ; npm install .'
 #CIRCLECI:RUN sudo mkdir /cyph
 #CIRCLECI:RUN sudo chmod 777 /cyph
 
