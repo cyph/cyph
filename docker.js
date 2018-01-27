@@ -405,27 +405,23 @@ const updateCircleCI	= () => {
 			replace(/#CIRCLECI:/g, '').
 			replace(
 				/GETLIBS_BASE64/g,
-				fs.readFileSync(
-					'commands/getlibs.sh'
-				).toString('base64')
+				fs.readFileSync('commands/getlibs.sh').toString('base64')
 			).
 			replace(
 				/LIBCLONE_BASE64/g,
-				fs.readFileSync(
-					'commands/libclone.sh'
-				).toString('base64')
+				fs.readFileSync('commands/libclone.sh').toString('base64')
 			).
 			replace(
 				/PLUGINS_BASE64/g,
-				fs.readFileSync(
-					'native/plugins.list'
-				).toString('base64')
+				fs.readFileSync('native/plugins.list').toString('base64')
 			).
 			replace(
-				/PACKAGE_BASE64/g,
-				fs.readFileSync(
-					'shared/lib/js/package.json'
-				).toString('base64')
+				/PACKAGEJSON_TEXT/g,
+				fs.readFileSync('shared/lib/js/package.json').toString().replace(/\n/g, '\\n\\\n')
+			).
+			replace(
+				/YARNLOCK_TEXT/g,
+				fs.readFileSync('shared/lib/js/yarn.lock').toString().replace(/\n/g, '\\n\\\n')
 			)
 	);
 

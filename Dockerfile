@@ -147,8 +147,8 @@ RUN echo 'Package: yarn\nPin: version 0.24.6-1\nPin-Priority: 1337' | sudo tee -
 #CIRCLECI:RUN echo 'GETLIBS_BASE64' | base64 --decode > ~/getlibs/commands/getlibs.sh
 #CIRCLECI:RUN echo 'LIBCLONE_BASE64' | base64 --decode > ~/getlibs/commands/libclone.sh
 #CIRCLECI:RUN echo 'PLUGINS_BASE64' | base64 --decode > ~/getlibs/native/plugins.list
-#CIRCLECI:RUN echo 'PACKAGE_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/package.json
-#CIRCLECI:RUN touch ~/getlibs/shared/lib/js/yarn.lock
+#CIRCLECI:RUN echo 'PACKAGEJSON_TEXT' > ~/getlibs/shared/lib/js/package.json
+#CIRCLECI:RUN echo 'YARNLOCK_TEXT' > ~/getlibs/shared/lib/js/yarn.lock
 #CIRCLECI:RUN git clone --depth 1 https://github.com/jedisct1/libsodium.js ~/getlibs/shared/lib/js/libsodium
 #CIRCLECI:RUN chmod -R 777 ~/getlibs
 #CIRCLECI:RUN ~/getlibs/commands/getlibs.sh
