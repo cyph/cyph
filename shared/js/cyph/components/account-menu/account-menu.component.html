@@ -1,4 +1,11 @@
-<mat-toolbar fxFlex fxHide.gt-xs fxLayout='row' fxLayoutGap='2px'>
+<mat-toolbar
+	fxFlex
+	fxHide.gt-xs
+	fxLayout='row'
+	fxLayoutGap='2px'
+	ngClass.gt-xs='hidden'
+	class='menu-root'
+>
 	<button
 		mat-icon-button
 		cyphTranslate
@@ -20,7 +27,8 @@
 	fxFlexFill
 	fxHide.xs
 	fxLayout='row'
-	class='menu'
+	ngClass.xs='hidden'
+	class='menu menu-root'
 	[class.collapsed]='(accountService.menuExpanded | async) === false'
 	[class.mobile]='envService.isMobile'
 	*ngIf='accountDatabaseService.currentUser.value'
@@ -127,6 +135,7 @@
 	<button
 		mat-button
 		cyphTranslate
+		class='appointments'
 		matTooltip='Appointments'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "appointments"'
@@ -139,6 +148,7 @@
 	<button
 		mat-icon-button
 		cyphTranslate
+		class='appointments'
 		matTooltip='Appointments'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "appointments"'
@@ -151,6 +161,7 @@
 	<button
 		mat-button
 		cyphTranslate
+		class='contacts'
 		matTooltip='Contacts'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "contacts"'
@@ -163,6 +174,7 @@
 	<button
 		mat-icon-button
 		cyphTranslate
+		class='contacts'
 		matTooltip='Contacts'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "contacts"'
@@ -175,6 +187,7 @@
 	<button
 		mat-button
 		cyphTranslate
+		class='files'
 		matTooltip='Files'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "files"'
@@ -187,6 +200,7 @@
 	<button
 		mat-icon-button
 		cyphTranslate
+		class='files'
 		matTooltip='Files'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "files"'
@@ -199,6 +213,7 @@
 	<button
 		mat-button
 		cyphTranslate
+		class='notes'
 		matTooltip='Notes'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "notes"'
@@ -211,6 +226,7 @@
 	<button
 		mat-icon-button
 		cyphTranslate
+		class='notes'
 		matTooltip='Notes'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "notes"'
@@ -223,6 +239,7 @@
 	<button
 		mat-button
 		cyphTranslate
+		class='docs'
 		matTooltip='Docs'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "docs"'
@@ -238,6 +255,7 @@
 	<button
 		mat-icon-button
 		cyphTranslate
+		class='docs'
 		matTooltip='Docs'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "docs"'
@@ -253,6 +271,7 @@
 	<button
 		mat-button
 		cyphTranslate
+		class='forms'
 		matTooltip='Forms'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "forms"'
@@ -268,6 +287,7 @@
 	<button
 		mat-icon-button
 		cyphTranslate
+		class='forms'
 		matTooltip='Forms'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "forms"'
@@ -284,6 +304,7 @@
 	<button
 		mat-button
 		cyphTranslate
+		class='settings'
 		matTooltip='Settings'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "settings"'
@@ -296,6 +317,7 @@
 	<button
 		mat-icon-button
 		cyphTranslate
+		class='settings'
 		matTooltip='Settings'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "settings"'
@@ -311,6 +333,7 @@
 	<button
 		mat-button
 		cyphTranslate
+		class='logout'
 		matTooltip='Logout'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "logout"'
@@ -323,6 +346,7 @@
 	<button
 		mat-icon-button
 		cyphTranslate
+		class='logout'
 		matTooltip='Logout'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "logout"'

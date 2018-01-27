@@ -4,12 +4,13 @@ import {EphemeralPage} from './ephemeral.po';
 describe('Ephemeral chat', () => {
 	let page: EphemeralPage;
 
-	beforeEach(() => {
+	beforeEach(async (done) => {
 		page	= new EphemeralPage();
+		await page.navigateTo();
+		done();
 	});
 
 	it('should display footer', async () => {
-		await page.navigateTo();
 		expect(await page.getFooterText()).toEqual('© Cyph 2018');
 	});
 });

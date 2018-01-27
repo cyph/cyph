@@ -53,6 +53,7 @@
 					<button
 						mat-icon-button
 						cyphTranslate
+						class='settings'
 						matTooltip='Settings'
 						*ngIf='false'
 					>
@@ -61,6 +62,7 @@
 					<button
 						mat-icon-button
 						cyphTranslate
+						class='delete'
 						matTooltip='Delete'
 						(click)='accountFilesService.remove(file); $event.stopPropagation();'
 					>
@@ -131,6 +133,7 @@
 					<button
 						mat-icon-button
 						cyphTranslate
+						class='accept'
 						matTooltip='Accept'
 						(click)='accountFilesService.acceptIncomingFile(file)'
 					>
@@ -139,6 +142,7 @@
 					<button
 						mat-icon-button
 						cyphTranslate
+						class='reject'
 						matTooltip='Reject'
 						(click)='accountFilesService.acceptIncomingFile(file, false)'
 					>
