@@ -34,7 +34,7 @@ export class SignupFormComponent {
 		;
 
 		if ($input.length === 1) {
-			$input.focus();
+			$input.trigger('focus');
 		}
 	}
 

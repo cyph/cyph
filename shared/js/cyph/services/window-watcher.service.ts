@@ -71,12 +71,12 @@ export class WindowWatcherService {
 		}
 		else {
 			$window.
-				focus(() => { this.visibility.next(true); }).
-				blur(() => { this.visibility.next(false); })
+				on('focus', () => { this.visibility.next(true); }).
+				on('blur', () => { this.visibility.next(false); })
 			;
 		}
 
-		$window.resize(() => {
+		$window.on('resize', () => {
 			this.height.next(this.windowHeight);
 			this.width.next(this.windowWidth);
 		});

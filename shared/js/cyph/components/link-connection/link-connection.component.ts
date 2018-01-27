@@ -125,7 +125,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 				);
 
 				/* Only allow right-clicking (for copying the link) */
-				$connectLinkLink.click(e => { e.preventDefault(); });
+				$connectLinkLink.on('click', e => { e.preventDefault(); });
 			}
 			else {
 				const $connectLinkInput	= await waitForIterable(
@@ -146,7 +146,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 							this.link	= this.linkConstant;
 						}
 
-						$connectLinkInput.focus();
+						$connectLinkInput.trigger('focus');
 						connectLinkInput.setSelectionRange(0, this.linkConstant.length);
 					}
 				})();

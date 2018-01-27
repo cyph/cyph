@@ -112,7 +112,7 @@ export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
 		lockTryOnce(this.mobileButtonLock, async () => {
 			f();
 			if (leaveFocused && this.virtualKeyboardWatcherService.isOpen) {
-				(await this.$textarea).focus();
+				(await this.$textarea).trigger('focus');
 			}
 			await sleep(500);
 		});
@@ -129,7 +129,7 @@ export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
 
 		const $textarea	= await this.$textarea;
 
-		$textarea.keypress(e => {
+		$textarea.on('keypress', e => {
 			if (
 				(this.envService.isMobile && this.virtualKeyboardWatcherService.isOpen) ||
 				e.keyCode !== 13 ||
@@ -144,7 +144,7 @@ export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
 		});
 
 		if (this.envService.isMobile) {
-			$textarea.focus(async () => {
+			$textarea.on('focus', async () => {
 				await sleep(750);
 				this.scrollService.scrollDown();
 			});

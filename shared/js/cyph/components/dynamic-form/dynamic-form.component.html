@@ -23,7 +23,7 @@
 					*ngFor='let o of row.elements; trackBy: trackByIndex'
 				>
 
-					<h3 style='text-align: center' *ngIf='o.type === types.Text'>{{o.label}}</h3>
+					<h3 class='label' *ngIf='o.type === types.Text'>{{o.label}}</h3>
 					<div *ngIf='o.type === types.Text'>{{o.valueString}}</div>
 
 					<mat-checkbox
@@ -106,7 +106,7 @@
 						/>
 					</mat-form-field>
 
-					<label *ngIf='o.type === types.Radio'>{{o.label}}</label>
+					<h3 class='label' *ngIf='o.type === types.Radio'>{{o.label}}</h3>
 					<mat-radio-group
 						fxFlex
 						[(ngModel)]='o.valueString'

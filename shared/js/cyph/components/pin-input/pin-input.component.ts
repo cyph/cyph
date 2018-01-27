@@ -58,7 +58,7 @@ export class PinInputComponent implements ControlValueAccessor {
 		const $elem	= $(e.target).find('input');
 		const elem	= <HTMLInputElement> $elem[0];
 
-		$elem.focus();
+		$elem.trigger('focus');
 		elem.setSelectionRange(index, index);
 	}
 

@@ -35,7 +35,7 @@ export class FileInputComponent implements AfterViewInit {
 		const input		= <HTMLInputElement> $input[0];
 
 		$input.
-			change(e => {
+			on('change', e => {
 				e.stopPropagation();
 				e.preventDefault();
 
@@ -46,7 +46,7 @@ export class FileInputComponent implements AfterViewInit {
 				this.fileChange.emit(input.files[0]);
 				$input.val('');
 			}).
-			click(e => {
+			on('click', e => {
 				e.stopPropagation();
 				e.preventDefault();
 			})
@@ -56,7 +56,7 @@ export class FileInputComponent implements AfterViewInit {
 			() => $input.closest('button')
 		);
 
-		$button.click(() => { triggerClick(input); });
+		$button.on('click', () => { triggerClick(input); });
 	}
 
 	constructor (

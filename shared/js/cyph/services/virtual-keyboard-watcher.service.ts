@@ -62,7 +62,7 @@ export class VirtualKeyboardWatcherService {
 
 		/* Android */
 		if (this.envService.isAndroid) {
-			$window.resize(() => {
+			$window.on('resize', () => {
 				this.trigger(window.innerHeight < this.initialScreenSize);
 			});
 		}

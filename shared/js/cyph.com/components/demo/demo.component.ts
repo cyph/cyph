@@ -187,7 +187,7 @@ export class DemoComponent implements AfterViewInit {
 			elements.demoRoot().on('disappear', () => { this.activeTransition(); });
 
 			let previousWidth	= $window.width();
-			$window.resize(async () => {
+			$window.on('resize', async () => {
 				const width	= $window.width();
 				if (width === previousWidth) {
 					return;

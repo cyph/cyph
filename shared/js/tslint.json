@@ -328,7 +328,7 @@
 		"rxjs-no-create": true,
 		"rxjs-no-do": false,
 		"rxjs-no-finnish": true,
-		"rxjs-no-ignored-error": true,
+		"rxjs-no-ignored-error": false,
 		"rxjs-no-operator": true,
 		"rxjs-no-patched": true,
 		"rxjs-no-subject-unsubscribe": false,
