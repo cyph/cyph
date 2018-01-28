@@ -1,14 +1,21 @@
 #!/bin/bash
 
 
-cd
-
-./google-cloud-sdk/install.sh \
+~/google-cloud-sdk/install.sh \
 	--additional-components app-engine-go \
-	--command-completion true \
-	--path-update true \
-	--rc-path ~/.bashrc \
+	--command-completion false \
+	--path-update false \
 	--usage-reporting false
+
+cat >> ~/.bashrc <<- EOM
+	# Google Cloud SDK
+	if [ -f ~/google-cloud-sdk/path.bash.inc ] ; then
+		source ~/google-cloud-sdk/path.bash.inc
+	fi
+	if [ -f ~/google-cloud-sdk/completion.bash.inc ] ; then
+		source ~/google-cloud-sdk/completion.bash.inc
+	fi
+EOM
 
 source ~/.bashrc
 
