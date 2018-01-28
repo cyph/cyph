@@ -147,6 +147,7 @@ RUN echo 'Package: yarn\nPin: version 0.24.6-1\nPin-Priority: 1337' | sudo tee -
 #CIRCLECI:BASE64_FILES
 #CIRCLECI:RUN chmod -R 777 ~/getlibs
 #CIRCLECI:RUN ~/getlibs/commands/updatedockerimage.sh
+#CIRCLECI:RUN ~/getlibs/commands/dockerpostmake.sh
 #CIRCLECI:RUN ~/getlibs/commands/getlibs.sh
 #CIRCLECI:RUN sudo mkdir /cyph
 #CIRCLECI:RUN sudo chmod 777 /cyph

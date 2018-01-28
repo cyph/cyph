@@ -95,12 +95,15 @@ ngserve () {
 
 cp -f backend/app.yaml backend/.build.yaml
 
-cat ~/.cyph/backend.vars >> backend/.build.yaml
-if [ "${branch}" == 'prod' ] ; then
-	echo '  PROD: true' >> backend/.build.yaml
-	cat ~/.cyph/braintree.prod >> backend/.build.yaml
-else
-	cat ~/.cyph/braintree.sandbox >> backend/.build.yaml
+# Braintree, Prefinery, and Twilio unsupported in CircleCI for now, until needed
+if [ ! "${CIRCLECI}" ] ; then
+	cat ~/.cyph/backend.vars >> backend/.build.yaml
+	if [ "${branch}" == 'prod' ] ; then
+		echo '  PROD: true' >> backend/.build.yaml
+		cat ~/.cyph/braintree.prod >> backend/.build.yaml
+	else
+		cat ~/.cyph/braintree.sandbox >> backend/.build.yaml
+	fi
 fi
 
 mkdir /tmp/cyph0
@@ -113,7 +116,7 @@ dev_appserver.py \
 	backend/.build.yaml \
 &
 
-./commands/buildunbundledassets.sh --test
+./commands/buildunbundledassets.sh $(if [ ! "${CIRCLECI}" ] ; then echo -n '--test' ; fi)
 
 log 'Starting ng serve'
 

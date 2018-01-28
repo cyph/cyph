@@ -3,7 +3,7 @@
 bindmount () {
 	rm -rf "${2}" 2> /dev/null
 
-	if [ "${circleCI}" ] ; then
+	if [ "${CIRCLECI}" ] ; then
 		cp -a "${1}" "${2}"
 	else
 		mkdir "${2}" 2> /dev/null
@@ -49,7 +49,7 @@ pass () {
 }
 
 unbindmount () {
-	if [ ! "${circleCI}" ] ; then
+	if [ ! "${CIRCLECI}" ] ; then
 		sudo umount "${1}"
 	fi
 

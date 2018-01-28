@@ -202,19 +202,8 @@ const shellScripts			= {
 		`
 	},
 	setup: `
-		source ~/.bashrc
+		/cyph/commands/dockerpostmake.sh
 
-		tns error-reporting disable
-		tns usage-reporting disable
-
-		~/google-cloud-sdk/install.sh \
-			--additional-components app-engine-go \
-			--command-completion true \
-			--path-update true \
-			--rc-path ~/.bashrc \
-			--usage-reporting false
-		source ~/.bashrc
-		gcloud components update --quiet
 		notify 'Make complete'
 		gcloud init
 		echo
@@ -371,13 +360,14 @@ const updateCircleCI	= () => {
 			replace('WORKDIR /cyph/commands', 'WORKDIR /cyph').
 			replace(/#CIRCLECI:/g, '').
 			replace(/BASE64_FILES/, [
-				[/GETLIBS_BASE64/g, 'commands/getlibs.sh'],
-				[/LIBCLONE_BASE64/g, 'commands/libclone.sh'],
-				[/UPDATEIMAGE_BASE64/g, 'commands/updatedockerimage.sh'],
-				[/PLUGINS_BASE64/g, 'native/plugins.list'],
-				[/PACKAGEJSON_BASE64/g, 'shared/lib/js/package.json'],
-				[/YARNLOCK_BASE64/g, 'shared/lib/js/yarn.lock'],
-			].map(([regexp, filePath]) => fs.readFileSync(filePath).toString().
+				'commands/dockerpostmake.sh',
+				'commands/getlibs.sh',
+				'commands/libclone.sh',
+				'commands/updatedockerimage.sh',
+				'native/plugins.list',
+				'shared/lib/js/package.json',
+				'shared/lib/js/yarn.lock'
+			].map(filePath => fs.readFileSync(filePath).toString().
 				match(/(.|\n){1,32768}/g).
 				map(s => Buffer.from(s).toString('base64')).
 				map(base64 => `RUN echo '${base64}' | base64 --decode >> ~/getlibs/${filePath}`).

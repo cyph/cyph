@@ -31,12 +31,8 @@ checkfail
 
 
 # Limit full CircleCI test runs to beta and prod
-if [ "${circleCI}" ] ; then
-	eval "$(./commands/getgitdata.sh)"
-
-	if [ "${branch}" != 'prod' ] && [ "${branch}" != 'beta' ] ; then
-		pass
-	fi
+if [ "${CIRCLECI}" ] && [ "${CIRCLE_BRANCH}" != 'prod' ] && [ "${CIRCLE_BRANCH}" != 'beta' ] ; then
+	pass
 fi
 
 

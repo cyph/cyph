@@ -4,6 +4,16 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
+if [ "${CIRCLECI}" ] ; then
+	cat <<- EOM
+		branch="${CIRCLE_BRANCH}"
+		username="${CIRCLE_PROJECT_USERNAME}"
+	EOM
+
+	exit 0
+fi
+
+
 remote="$(
 	git branch -vv |
 	grep '^*' |
