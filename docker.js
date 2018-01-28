@@ -203,7 +203,7 @@ const shellScripts			= {
 	},
 	setup: `
 		/cyph/commands/dockerpostmake.sh
-
+		source ~/.bashrc
 		notify 'Make complete'
 		gcloud init
 		echo
