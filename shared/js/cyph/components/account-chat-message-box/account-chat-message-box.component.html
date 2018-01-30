@@ -29,6 +29,7 @@
 	<hr *ngIf='showHeader' />
 
 	<cyph-chat-message-box
+		#chatMessageBox
 		[accounts]='true'
 		[calendarInviteReasons]='calendarInviteReasons'
 		[customSendFunction]='customSendFunction'
@@ -36,6 +37,5 @@
 		[messageType]='messageType'
 		[showSendButton]='!showHeader'
 		[showUnreadCount]='showUnreadCount'
-		(sendFunction)='send = $event'
 	></cyph-chat-message-box>
 </form>

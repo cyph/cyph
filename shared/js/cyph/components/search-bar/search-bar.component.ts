@@ -1,10 +1,7 @@
 import {
 	Component,
-	EventEmitter,
 	Input,
 	OnChanges,
-	OnInit,
-	Output,
 	SimpleChanges
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
@@ -25,14 +22,9 @@ import {trackByValue} from '../../track-by/track-by-value';
 	styleUrls: ['./search-bar.component.scss'],
 	templateUrl: './search-bar.component.html'
 })
-export class SearchBarComponent implements OnChanges, OnInit {
+export class SearchBarComponent implements OnChanges {
 	/** @ignore */
 	private querySubscription?: Subscription;
-
-	/** @see clearFilter */
-	@Output() public readonly clearFilterFunction: EventEmitter<() => void>	=
-		new EventEmitter<() => void>()
-	;
 
 	/** Search bar control. */
 	@Input() public control: FormControl					= new FormControl();
@@ -55,18 +47,8 @@ export class SearchBarComponent implements OnChanges, OnInit {
 	/** Search query. */
 	@Input() public query?: Observable<string>;
 
-	/** @see setFilter */
-	@Output() public readonly setFilterFunction: EventEmitter<(value: string) => void>		=
-		new EventEmitter<(value: string) => void>()
-	;
-
 	/** Single item to display instead of list. */
-	public filter: BehaviorSubject<any|undefined>			= new BehaviorSubject(undefined);
-
-	/** Filter change event. */
-	@Output() public readonly filterChange: EventEmitter<BehaviorSubject<any|undefined>>	=
-		new EventEmitter<BehaviorSubject<any|undefined>>()
-	;
+	public readonly filter: BehaviorSubject<any|undefined>	= new BehaviorSubject(undefined);
 
 	/** @see trackByValue */
 	public readonly trackByValue: typeof trackByValue		= trackByValue;
@@ -93,13 +75,6 @@ export class SearchBarComponent implements OnChanges, OnInit {
 				this.setFilter(value);
 			});
 		}
-	}
-
-	/** @inheritDoc */
-	public ngOnInit () : void {
-		this.clearFilterFunction.emit(() => { this.clearFilter(); });
-		this.setFilterFunction.emit(value => { this.setFilter(value); });
-		this.filterChange.emit(this.filter);
 	}
 
 	/** Sets filter based on search query. */

@@ -3,11 +3,11 @@
 	class='message-item'
 	[ngClass]='"ui-style-" + uiStyles[uiStyle]'
 	[class.mobile]='mobile'
-	[class.author-app]='message.authorType === authorTypes.App'
-	[class.author-local]='message.authorType === authorTypes.Local'
-	[class.author-remote]='message.authorType === authorTypes.Remote'
+	[class.author-app]='message?.authorType === authorTypes.App'
+	[class.author-local]='message?.authorType === authorTypes.Local'
+	[class.author-remote]='message?.authorType === authorTypes.Remote'
 	[class.self-destruct]='chatService.chatSelfDestruct'
-	[class.self-destructed]='message.selfDestructTimer?.isComplete | async'
+	[class.self-destructed]='message?.selfDestructTimer?.isComplete | async'
 	[class.visibility-hidden]='(viewReady | async) === false'
 	*ngIf='message?.valueWatcher | async; let value'
 >
@@ -16,9 +16,9 @@
 			<div class='message'>
 				<strong
 					class='message-author'
-					*ngIf='!mobile && message.authorType !== authorTypes.App'
+					*ngIf='!mobile && message?.authorType !== authorTypes.App'
 				>
-					{{message.author | async}}:
+					{{message?.author | async}}:
 				</strong>
 				<ng-container
 					*ngTemplateOutlet='messageContent; context: {value: value}'
@@ -26,19 +26,19 @@
 			</div>
 			<div fxFlex fxLayoutAlign='end center' class='message-timestamp'>
 				<div fxLayout='row'>
-					<div *ngIf='mobile && message.authorType === authorTypes.Local'>
-						{{message.author | async}} &nbsp;&mdash;&nbsp;
+					<div *ngIf='mobile && message?.authorType === authorTypes.Local'>
+						{{message?.author | async}} &nbsp;&mdash;&nbsp;
 					</div>
 
-					<div>{{message.timeString}}</div>
+					<div>{{message?.timeString}}</div>
 
-					<div *ngIf='!mobile || message.authorType === authorTypes.Local'>
+					<div *ngIf='!mobile || message?.authorType === authorTypes.Local'>
 						<span>&nbsp;</span>
 						<ng-container *ngTemplateOutlet='messageConfirmation'></ng-container>
 					</div>
 
-					<div *ngIf='mobile && message.authorType === authorTypes.Remote'>
-						&nbsp;&mdash;&nbsp; {{message.author | async}}
+					<div *ngIf='mobile && message?.authorType === authorTypes.Remote'>
+						&nbsp;&mdash;&nbsp; {{message?.author | async}}
 					</div>
 				</div>
 			</div>
@@ -48,7 +48,7 @@
 			<div
 				fxLayout='row'
 				class='cyph-theme-light email-ui'
-				[class.email-local]='message.authorType === authorTypes.Local'
+				[class.email-local]='message?.authorType === authorTypes.Local'
 			>
 				<mat-card fxFlex>
 					<mat-card-header>
@@ -56,22 +56,22 @@
 							mat-card-avatar
 							cyphTranslate
 							class='avatar-image'
-							[src]='message.authorUser.avatar | async'
+							[src]='message?.authorUser?.avatar | async'
 							alt='User Avatar'
-							*ngIf='!!message.authorUser'
+							*ngIf='!!message?.authorUser'
 						/>
 						<mat-card-title fxFlex>
 							<div fxFlex [fxLayout]='mobile ? "column" : "row"'>
-								<span *ngIf='!!message.authorUser'>
-									<strong>{{message.authorUser.name | async}}&nbsp;</strong>
-									<small>{{message.author | async}}</small>
+								<span *ngIf='!!message?.authorUser'>
+									<strong>{{message?.authorUser?.name | async}}&nbsp;</strong>
+									<small>{{message?.author | async}}</small>
 								</span>
-								<strong *ngIf='!message.authorUser'>
-									{{message.author | async}}
+								<strong *ngIf='!message?.authorUser'>
+									{{message?.author | async}}
 								</strong>
 								<div fxFlex *ngIf='!mobile'></div>
 								<div>
-									<span>{{message.dateTimeString}}</span>
+									<span>{{message?.dateTimeString}}</span>
 									<ng-container
 										*ngTemplateOutlet='messageConfirmation'
 									></ng-container>
@@ -94,17 +94,17 @@
 			fxLayoutAlign='center center'
 			fxLayoutGap='10px'
 			class='self-destruct-timer'
-			*ngIf='message.selfDestructTimer'
+			*ngIf='message?.selfDestructTimer'
 		>
 			<div cyphTranslate>Message will self-destruct in</div>
-			<div class='countdown'>{{message.selfDestructTimer.timestamp | async}}</div>
+			<div class='countdown'>{{message?.selfDestructTimer?.timestamp | async}}</div>
 		</div>
 	</div>
 	<div class='self-destruct-cover'></div>
 </div>
 
 <ng-template #messageConfirmation>
-	<ng-container *ngIf='message.authorType !== authorTypes.Local; else messageConfirmed'>
+	<ng-container *ngIf='message?.authorType !== authorTypes.Local; else messageConfirmed'>
 		<span class='confirmation-checks visibility-hidden'>
 			<mat-icon>check</mat-icon>
 			<mat-icon>check</mat-icon>

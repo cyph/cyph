@@ -53,7 +53,7 @@
 						cyphTranslate
 						matTooltip='Delete'
 						*ngIf='!newNote'
-						(click)='accountFilesService.remove(note.metadata)'
+						(click)='accountFilesService.remove(note?.metadata)'
 					>
 						<mat-icon>delete</mat-icon>
 					</button>

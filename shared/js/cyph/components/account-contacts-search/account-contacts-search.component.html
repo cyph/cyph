@@ -1,11 +1,9 @@
 <cyph-search-bar
+	#searchBar
 	[control]='searchControl'
 	[filterTransform]='userFilterTransform'
 	[listLength]='searchListLength'
 	[options]='searchOptions'
 	[query]='searchUsername'
 	[spinner]='searchSpinner'
-	(clearFilterFunction)='clearUserFilterFunction.emit($event)'
-	(filterChange)='userFilterChange.emit($event)'
-	(setFilterFunction)='setUserFilterFunction.emit($event)'
 ></cyph-search-bar>

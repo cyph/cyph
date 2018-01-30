@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {IVirtualScrollOptions} from 'od-virtualscroll';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
@@ -7,6 +7,7 @@ import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {User, UserPresence} from '../../account';
+import {AccountContactsSearchComponent} from '../../components/account-contacts-search';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -39,9 +40,6 @@ export class AccountContactsComponent implements AfterViewInit, OnInit {
 		)
 	;
 
-	/** @see AccountContactsSearchComponent.clearUserFilter */
-	public clearUserFilter?: () => void;
-
 	/** Full contact list with active contact filtered out. */
 	public readonly contactList: BehaviorSubject<User[]>	= observableToBehaviorSubject(
 		this.routeReactiveContactList.pipe(
@@ -49,6 +47,10 @@ export class AccountContactsComponent implements AfterViewInit, OnInit {
 		),
 		[]
 	);
+
+	/** @see AccountContactsSearchComponent */
+	@ViewChild(AccountContactsComponent)
+	public accountContactsSearch?: AccountContactsSearchComponent;
 
 	/** Indicates whether contact list should be displayed. */
 	public showContactList: boolean							= false;

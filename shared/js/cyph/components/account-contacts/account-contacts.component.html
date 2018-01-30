@@ -5,29 +5,29 @@
 	[class.initiating]='accountContactsService.showSpinner'
 >
 	<div fxFlexFill fxLayout='column' fxLayoutAlign='start stretch'>
-		<cyph-account-contacts-search
-			(clearUserFilterFunction)='clearUserFilter = $event'
-			(userFilterChange)='$event.subscribe(userFilter)'
-		></cyph-account-contacts-search>
+		<cyph-account-contacts-search #accountContactsSearch></cyph-account-contacts-search>
 
 		<cyph-account-contact
 			class='active animated slideInDown'
-			[contact]='userFilter | async'
-			(click)='clearUserFilter()'
-			*ngIf='(userFilter | async) !== undefined'
+			[contact]='accountContactsSearch?.searchBar?.filter | async'
+			(click)='accountContactsSearch?.searchBar?.clearFilter()'
+			*ngIf='(accountContactsSearch?.searchBar?.filter | async) !== undefined'
 		></cyph-account-contact>
 
 		<cyph-account-contact
 			class='active animated slideInDown'
 			[contact]='activeUser | async'
-			*ngIf='(userFilter | async) === undefined'
+			*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
 		></cyph-account-contact>
 
 		<od-virtualscroll
 			[vsData]='contactList'
 			[vsEqualsFunc]='vsEqualsFunc'
 			[vsOptions]='vsOptions'
-			*ngIf='showContactList && (userFilter | async) === undefined'
+			*ngIf='
+				showContactList &&
+				(accountContactsSearch?.searchBar?.filter | async) === undefined
+			'
 		>
 			<ng-template let-item>
 				<cyph-account-contact

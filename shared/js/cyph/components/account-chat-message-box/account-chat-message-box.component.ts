@@ -1,7 +1,8 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {User} from '../../account/user';
 import {ChatMessageValueTypes} from '../../proto';
+import {ChatMessageBoxComponent} from '../../components/chat-message-box';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -24,6 +25,9 @@ export class AccountChatMessageBoxComponent {
 			undefined
 	;
 
+	/** @see ChatMessageBoxComponent */
+	@ViewChild(ChatMessageBoxComponent) public chatMessageBox?: ChatMessageBoxComponent;
+
 	/** @see ChatMessageValueTypes */
 	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
 
@@ -39,9 +43,6 @@ export class AccountChatMessageBoxComponent {
 	/** Message recipient to display in header. */
 	@Input() public recipient?: Observable<User|undefined>;
 
-	/** @see ChatMessageBoxComponent.send */
-	public send?: () => Promise<void>;
-
 	/** Shows header. */
 	@Input() public showHeader: boolean			= false;
 
@@ -50,8 +51,8 @@ export class AccountChatMessageBoxComponent {
 
 	/** Submits form. */
 	public async submit () : Promise<void> {
-		if (this.send) {
-			return this.send();
+		if (this.chatMessageBox) {
+			return this.chatMessageBox.send();
 		}
 	}
 

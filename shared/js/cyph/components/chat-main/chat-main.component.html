@@ -285,7 +285,7 @@
 		'
 	>
 		<div cyphTranslate>Message will self-destruct in</div>
-		<div class='countdown'>{{chatService.chatSelfDestructTimer.timestamp | async}}</div>
+		<div class='countdown'>{{chatService.chatSelfDestructTimer?.timestamp | async}}</div>
 	</div>
 
 	<cyph-chat-message-list

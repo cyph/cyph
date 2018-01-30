@@ -11,7 +11,7 @@
 			cyphTranslate
 			class='animated flipInX _4'
 			matTooltip='Remove Contact'
-			(click)='accountContactsService.removeContact(user.username)'
+			(click)='accountContactsService.removeContact(user?.username)'
 			*ngIf='isContact | async; else buttonsAddContact'
 		>
 			<mat-icon>delete</mat-icon>
@@ -22,7 +22,7 @@
 				cyphTranslate
 				class='animated flipInX _4'
 				matTooltip='Add Contact'
-				(click)='accountContactsService.addContact(user.username)'
+				(click)='accountContactsService.addContact(user?.username)'
 			>
 				<mat-icon>person_add</mat-icon>
 			</button>
@@ -33,7 +33,7 @@
 			cyphTranslate
 			class='animated flipInX _4'
 			matTooltip='New Message'
-			[routerLink]='accountService.routeRoot + "compose/" + user.username'
+			[routerLink]='accountService.routeRoot + "compose/" + user?.username'
 		>
 			<mat-icon>email</mat-icon>
 		</button>
@@ -43,7 +43,7 @@
 			cyphTranslate
 			class='animated flipInX _4'
 			matTooltip='Open Messages'
-			[routerLink]='accountService.routeRoot + "messages/" + user.username'
+			[routerLink]='accountService.routeRoot + "messages/" + user?.username'
 		>
 			<mat-icon>message</mat-icon>
 		</button>
@@ -86,7 +86,7 @@
 			matTooltipPosition='above'
 			cyphDropZone
 			cyphTranslate
-			(fileDrop)='accountFilesService.upload($event.name, $event, user.username)'
+			(fileDrop)='accountFilesService.upload($event.name, $event, user?.username)'
 		>
 			<mat-icon>file_upload</mat-icon>
 		</div>
@@ -111,14 +111,14 @@
 						<img
 							cyphTranslate
 							class='avatar animated jackInTheBox _1'
-							[ngClass]='userPresence[user.status | async]'
+							[ngClass]='userPresence[user?.status | async]'
 							alt='Profile Picture'
-							[src]='user.avatar | async'
+							[src]='user?.avatar | async'
 						/>
 					</div>
 					<div></div>
-					<div class='name animated flipInX _2'>{{user.name | async}}</div>
-					<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
+					<div class='name animated flipInX _2'>{{user?.name | async}}</div>
+					<div class='username animated flipInX _2'>@{{user?.realUsername | async}}</div>
 					<div></div>
 					<div
 						fxLayoutAlign='center center'
@@ -126,7 +126,7 @@
 						*ngIf='!editMode'
 					>
 						<div>
-							{{user.description | async | slice:0:maxDescriptionLength}}
+							{{user?.description | async | slice:0:maxDescriptionLength}}
 						</div>
 					</div>
 					<div></div>
@@ -136,7 +136,7 @@
 							(blur)='isEditorFocused = false'
 							(focus)='isEditorFocused = true'
 							[maxlength]='maxDescriptionLength'
-							[ngModel]='user.description | async'
+							[ngModel]='user?.description | async'
 							(ngModelChange)='descriptionDraft = $event'
 						/>
 					</mat-form-field>
@@ -148,8 +148,8 @@
 					<mat-select
 						fxFlex
 						cyphTranslate
-						[ngModel]='user.status | async'
-						(ngModelChange)='user.accountUserPresence.setValue({status: $event})'
+						[ngModel]='user?.status | async'
+						(ngModelChange)='user?.accountUserPresence.setValue({status: $event})'
 						name='status'
 						placeholder='Status'
 					>
@@ -194,8 +194,8 @@
 		fxFlexFill
 		fxLayout='row'
 		*ngIf='
-			(user.userType | async) !== accountUserTypes.Standard &&
-			(user.userType | async) !== accountUserTypes.TelehealthPatient;
+			(user?.userType | async) !== accountUserTypes.Standard &&
+			(user?.userType | async) !== accountUserTypes.TelehealthPatient;
 			else standardProfile;
 		'
 	>
@@ -222,32 +222,32 @@
 					<img
 						cyphTranslate
 						class='avatar animated _1'
-						[ngClass]='userPresence[user.status | async]'
+						[ngClass]='userPresence[user?.status | async]'
 						alt='Profile Picture'
-						[src]='user.avatar | async'
+						[src]='user?.avatar | async'
 					/>
 
 					<div fxLayout='row' fxLayout.xs='column' >
 						<div fxLayout='column' fxLayoutAlign='center center'>
 							<div class='name animated _2'>
 								{{
-									(user.userType | async) === accountUserTypes.TelehealthDoctor ?
+									(user?.userType | async) === accountUserTypes.TelehealthDoctor ?
 										stringsService.dr :
 										''
 								}}
-								{{user.name | async}}
+								{{user?.name | async}}
 							</div>
 							<div
 								class='username animated flipInX _2'
-								*ngIf='(user.userType | async) === accountUserTypes.Standard'
+								*ngIf='(user?.userType | async) === accountUserTypes.Standard'
 							>
-								@{{user.realUsername | async}}
+								@{{user?.realUsername | async}}
 							</div>
 							<div
 								class='practice'
 								fxLayout='row'
 								*ngIf='
-									(user.userType | async) === accountUserTypes.TelehealthDoctor
+									(user?.userType | async) === accountUserTypes.TelehealthDoctor
 								'
 							>
 								<div
@@ -261,7 +261,7 @@
 						</div>
 						<div fxLayout='column' fxLayoutAlign='center center'>
 							<cyph-account-user-rating *ngIf='
-								(user.userType | async) === accountUserTypes.TelehealthDoctor
+								(user?.userType | async) === accountUserTypes.TelehealthDoctor
 							'></cyph-account-user-rating>
 						</div>
 					</div>
@@ -272,19 +272,19 @@
 				fxLayout='column'
 				fxLayoutAlign='center center'
 				*ngIf='
-					(user.userType | async) === accountUserTypes.TelehealthDoctor ||
-					(user.userType | async) === accountUserTypes.TelehealthOrg ||
-					(user.userType | async) === accountUserTypes.TelehealthPatient
+					(user?.userType | async) === accountUserTypes.TelehealthDoctor ||
+					(user?.userType | async) === accountUserTypes.TelehealthOrg ||
+					(user?.userType | async) === accountUserTypes.TelehealthPatient
 				'
 			>
 				<mat-card
 					class='animated slideInDown'
 					fxLayout='column'
-					*ngIf='user.extra() | async; let extra'
+					*ngIf='user?.extra() | async; let extra'
 					[class.fadeOutUp]='(accountService.transition | async) === true'
 				>
 					<mat-card-content
-						*ngIf='(user.userType | async) === accountUserTypes.TelehealthPatient'
+						*ngIf='(user?.userType | async) === accountUserTypes.TelehealthPatient'
 					>
 						<div fxLayout='column'>
 							<h2 cyphTranslate>Patient Info</h2>
@@ -292,16 +292,16 @@
 								<strong cyphTranslate>Gender:</strong>
 								<span>{{extra.gender || ''}}</span>
 							</span>
-							<div class='description' *ngIf='user.description'>
-								{{user.description | async}}
+							<div class='description' *ngIf='user?.description'>
+								{{user?.description | async}}
 							</div>
 						</div>
 					</mat-card-content>
 					<mat-card-content *ngIf='
-						(user.userType | async) === accountUserTypes.TelehealthOrg
+						(user?.userType | async) === accountUserTypes.TelehealthOrg
 					'>
-						<div class='description' *ngIf='user.description'>
-							{{user.description | async}}
+						<div class='description' *ngIf='user?.description'>
+							{{user?.description | async}}
 						</div>
 						<h2 cyphTranslate>Address</h2>
 						<mat-list>
@@ -321,7 +321,7 @@
 						</div>
 					</mat-card-content>
 					<mat-card-content *ngIf='
-						(user.userType | async) === accountUserTypes.TelehealthDoctor
+						(user?.userType | async) === accountUserTypes.TelehealthDoctor
 					'>
 						<div
 							fxLayout='row'
@@ -336,7 +336,7 @@
 								[routerLink]='
 									accountService.routeRoot +
 									"request-appointment/" +
-									user.username
+									user?.username
 								'
 								matTooltip='Request Appointment'
 							>
@@ -350,7 +350,7 @@
 								cyphTranslate
 								matTooltip='New Message'
 								[routerLink]='
-									accountService.routeRoot + "compose/" + user.username
+									accountService.routeRoot + "compose/" + user?.username
 								'
 							>
 								<mat-icon>email</mat-icon>
@@ -361,15 +361,15 @@
 								cyphTranslate
 								matTooltip='Open Messages'
 								[routerLink]='
-									accountService.routeRoot + "messages/" + user.username
+									accountService.routeRoot + "messages/" + user?.username
 								'
 							>
 								<mat-icon>message</mat-icon>
 							</button>
 						</div>
 						<mat-list>
-							<mat-list-item *ngIf='user.description'>
-								{{user.description | async}}
+							<mat-list-item *ngIf='user?.description'>
+								{{user?.description | async}}
 							</mat-list-item>
 						</mat-list>
 						<br />
@@ -464,7 +464,7 @@
 					</mat-card-content>
 				</mat-card>
 
-				<ng-container *ngIf='(user.userType | async) === accountUserTypes.Standard'>
+				<ng-container *ngIf='(user?.userType | async) === accountUserTypes.Standard'>
 					<ng-container *ngTemplateOutlet='buttons'></ng-container>
 					<ng-container *ngTemplateOutlet='fileUpload'></ng-container>
 				</ng-container>

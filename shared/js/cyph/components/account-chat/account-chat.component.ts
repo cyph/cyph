@@ -117,9 +117,6 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,
 
-		/** @ignore */
-		private readonly p2pWebRTCService: P2PWebRTCService,
-
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
@@ -137,6 +134,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,
+
+		/** @see P2PWebRTCService */
+		public readonly p2pWebRTCService: P2PWebRTCService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

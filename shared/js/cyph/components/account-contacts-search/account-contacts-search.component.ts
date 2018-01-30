@@ -2,7 +2,8 @@ import {
 	Component,
 	EventEmitter,
 	Input,
-	Output
+	Output,
+	ViewChild
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
@@ -12,6 +13,7 @@ import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
 import {User} from '../../account/user';
 import {ISearchOptions} from '../../isearch-options';
+import {SearchBarComponent} from '../../components/search-bar';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -27,13 +29,11 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './account-contacts-search.component.html'
 })
 export class AccountContactsSearchComponent {
-	/** @see SearchBarComponent.clearFilter */
-	@Output() public readonly clearUserFilterFunction: EventEmitter<() => void>	=
-		new EventEmitter<() => void>()
-	;
-
 	/** @see SearchBarComponent.placeholder */
 	@Input() public placeholder: string							= this.stringsService.search;
+
+	/** @see SearchBarComponent */
+	@ViewChild(SearchBarComponent) public searchBar?: SearchBarComponent;
 
 	/** @see SearchBarComponent.control */
 	@Input() public readonly searchControl: FormControl			= new FormControl();
@@ -112,11 +112,6 @@ export class AccountContactsSearchComponent {
 
 	/** @see SearchBarComponent.query */
 	@Input() public searchUsername?: Observable<string>;
-
-	/** @see SearchBarComponent.setFilter */
-	@Output() public readonly setUserFilterFunction: EventEmitter<(username: string) => void>	=
-		new EventEmitter<(username: string) => void>()
-	;
 
 	/** @see SearchBarComponent.filter */
 	public userFilter: BehaviorSubject<User|undefined>			=

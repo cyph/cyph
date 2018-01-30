@@ -24,7 +24,7 @@
 					<div *ngIf='
 						!note.wasAnonymousShare &&
 						accountDatabaseService.currentUser.value &&
-						accountDatabaseService.currentUser.value.user.username !== note.owner
+						accountDatabaseService.currentUser.value?.user.username !== note.owner
 					'>
 						<span cyphTranslate>Owner:</span>
 						<a [routerLink]='accountService.routeRoot + "profile/" + note.owner'>

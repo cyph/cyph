@@ -2,10 +2,7 @@ import {
 	AfterViewInit,
 	Component,
 	ElementRef,
-	EventEmitter,
-	Input,
-	OnInit,
-	Output
+	Input
 } from '@angular/core';
 import * as $ from 'jquery';
 import * as tabIndent from 'tab-indent';
@@ -33,7 +30,7 @@ import {sleep, waitForIterable} from '../../util/wait';
 	styleUrls: ['./chat-message-box.component.scss'],
 	templateUrl: './chat-message-box.component.html'
 })
-export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
+export class ChatMessageBoxComponent implements AfterViewInit {
 	/** @ignore */
 	private readonly $textarea: Promise<JQuery>	= waitForIterable(
 		() => $(this.elementRef.nativeElement).find('.text-message-box textarea')
@@ -92,11 +89,6 @@ export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
 			});
 		}
 	};
-
-	/** @see send */
-	@Output() public readonly sendFunction: EventEmitter<() => Promise<void>>	=
-		new EventEmitter<() => Promise<void>>()
-	;
 
 	/** If false, hides send button. */
 	@Input() public showSendButton: boolean		= true;
@@ -167,11 +159,6 @@ export class ChatMessageBoxComponent implements AfterViewInit, OnInit {
 
 			tabIndent.render($textarea[0]);
 		}
-	}
-
-	/** @inheritDoc */
-	public ngOnInit () : void {
-		this.sendFunction.emit(async () => this.send());
 	}
 
 	/** Sends current message. */
