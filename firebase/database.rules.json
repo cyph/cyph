@@ -600,6 +600,21 @@
 					}
 				},
 
+				"reviews": {
+					".read": true,
+
+					"$username": {
+						".write": "($username + '@cyph.me') === auth.token.email",
+
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				},
+
 				"settings": {
 					"hash": {
 						".validate": "newData.isString()"

@@ -3,6 +3,11 @@ export const normalize	= (s: string) : string => {
 	return s.toLowerCase().replace(/[^0-9a-z_]/g, '');
 };
 
+/** Converts number to readable string. */
+export const numberToString	= (n: number) : string =>
+	n.toFixed(2).replace(/\.?0+$/, '')
+;
+
 /**
  * Converts b into a human-readable representation.
  * @param b Number of bytes.
@@ -23,5 +28,5 @@ export const readableByteLength	= (b: number) : string => {
 					{n: b, s: ''}
 	;
 
-	return `${o.n.toFixed(2).replace(/\.?0+$/, '')} ${o.s}B`;
+	return `${numberToString(o.n)} ${o.s}B`;
 };

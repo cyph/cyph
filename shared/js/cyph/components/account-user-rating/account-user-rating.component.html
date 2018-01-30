@@ -1,10 +1,15 @@
-<div fxLayout='column'>
+<div fxLayout='column' *ngIf='user'>
 	<div fxLayout='row'>
-		<mat-icon>star</mat-icon>
-		<mat-icon>star</mat-icon>
-		<mat-icon>star</mat-icon>
-		<mat-icon>star</mat-icon>
-		<mat-icon>star_half</mat-icon>
+		<mat-icon *ngFor='let star of getStars(user?.rating() | async)'>
+			{{star}}
+		</mat-icon>
 	</div>
-	<span>4.65/5 (63 reviews)</span>
+	<div>
+		<span *ngIf='(user?.reviews.watch() | async)?.size > 0'>
+			{{numberToString((user?.rating() | async) * ratingFactor)}}/5&nbsp;
+		</span>
+		<span>
+			({{(user?.reviews.watch() | async)?.size}} {{stringsService.reviews}})
+		</span>
+	</div>
 </div>

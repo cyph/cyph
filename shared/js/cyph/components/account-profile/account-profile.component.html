@@ -260,9 +260,12 @@
 							</div>
 						</div>
 						<div fxLayout='column' fxLayoutAlign='center center'>
-							<cyph-account-user-rating *ngIf='
-								(user?.userType | async) === accountUserTypes.TelehealthDoctor
-							'></cyph-account-user-rating>
+							<cyph-account-user-rating
+								[user]='user'
+								*ngIf='
+									(user?.userType | async) === accountUserTypes.TelehealthDoctor
+								'
+							></cyph-account-user-rating>
 						</div>
 					</div>
 				</div>

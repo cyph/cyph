@@ -1,4 +1,6 @@
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
+import {reviewMax, User} from '../../account';
+import {numberToString} from '../../util/formatting';
 import {AccountService} from '../../services/account.service';
 import {StringsService} from '../../services/strings.service';
 
@@ -12,6 +14,37 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './account-user-rating.component.html'
 })
 export class AccountUserRatingComponent {
+	/** @ignore */
+	private readonly uiMaxRating: number	= 5;
+
+	/** @see numberToString */
+	public readonly numberToString: typeof numberToString	= numberToString;
+
+	/** Factor to adjust ratings by for display in UI. */
+	public readonly ratingFactor: number	= this.uiMaxRating / reviewMax;
+
+	/** @see User */
+	@Input() public user?: User;
+
+	/** Array of star icons based on rating. */
+	public getStars (rating: number) : [
+		('star'|'star_border'|'star_half'),
+		('star'|'star_border'|'star_half'),
+		('star'|'star_border'|'star_half'),
+		('star'|'star_border'|'star_half'),
+		('star'|'star_border'|'star_half')
+	] {
+		rating *= this.ratingFactor;
+
+		return [
+			rating >= 1 ? 'star' : rating >= 0.5 ? 'star_half' : 'star_border',
+			rating >= 2 ? 'star' : rating >= 1.5 ? 'star_half' : 'star_border',
+			rating >= 3 ? 'star' : rating >= 2.5 ? 'star_half' : 'star_border',
+			rating >= 4 ? 'star' : rating >= 3.5 ? 'star_half' : 'star_border',
+			rating >= 5 ? 'star' : rating >= 4.5 ? 'star_half' : 'star_border'
+		];
+	}
+
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,

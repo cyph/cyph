@@ -2,16 +2,19 @@ import {SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
+import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {
 	AccountUserTypes,
 	IAccountUserPresence,
 	IAccountUserProfile,
-	IAccountUserProfileExtra
+	IAccountUserProfileExtra,
+	IReview
 } from '../proto';
 import {flattenObservablePromise} from '../util/flatten-observable-promise';
 import {normalize} from '../util/formatting';
 import {UserPresence} from './enums';
+import {reviewMax} from './review-max';
 
 
 /**
@@ -72,6 +75,20 @@ export class User {
 		''
 	);
 
+	/** Average rating. */
+	public readonly rating	= memoize(() => flattenObservablePromise(
+		this.reviews.watch().pipe(map(reviews =>
+			reviews.size < 1 ?
+				0 :
+				(
+					Array.from(reviews.values()).
+						map(review => Math.min(review.rating, reviewMax)).
+						reduce((a, b) => a + b, 0)
+				) / reviews.size
+		)),
+		0
+	));
+
 	/** Indicates whether user data is ready to be consumed. */
 	public ready: boolean	= false;
 
@@ -112,7 +129,10 @@ export class User {
 		public readonly accountUserProfile: IAsyncValue<IAccountUserProfile>,
 
 		/** @see IAccountUserProfileExtra */
-		public readonly accountUserProfileExtra: IAsyncValue<IAccountUserProfileExtra>
+		public readonly accountUserProfileExtra: IAsyncValue<IAccountUserProfileExtra>,
+
+		/** @see IReview */
+		public readonly reviews: IAsyncMap<string, IReview>
 	) {
 		this.accountUserProfile.getValue().then(() => {
 			this.ready	= true;

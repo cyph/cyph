@@ -5,7 +5,8 @@ import {
 	AccountUserPresence,
 	AccountUserProfile,
 	AccountUserProfileExtra,
-	DataURIProto
+	DataURIProto,
+	Review
 } from '../proto';
 import {normalize} from '../util/formatting';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
@@ -125,6 +126,13 @@ export class AccountUserLookupService {
 				this.accountDatabaseService.getAsyncValue(
 					`${url}/publicProfileExtra`,
 					AccountUserProfileExtra,
+					SecurityModels.public,
+					undefined,
+					true
+				),
+				this.accountDatabaseService.getAsyncMap(
+					`${url}/reviews`,
+					Review,
 					SecurityModels.public,
 					undefined,
 					true
