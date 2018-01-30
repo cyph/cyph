@@ -49,3 +49,8 @@
 form {
 	width: 100%;
 }
+
+::ng-deep mat-tab-header {
+	margin-left: auto;
+	margin-right: auto;
+}
