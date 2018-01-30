@@ -3,7 +3,6 @@ import {ErrorHandler, NgModule} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {BlankComponent} from '../components/blank';
 import {CalendarInviteComponent} from '../components/calendar-invite';
-import {ChatComposeComponent} from '../components/chat-compose';
 import {ChatCyphertextComponent} from '../components/chat-cyphertext';
 import {ChatCyphertextListComponent} from '../components/chat-cyphertext-list';
 import {ChatMainComponent} from '../components/chat-main';
@@ -44,7 +43,6 @@ import {CyphWebModule} from './cyph-web.module';
 	declarations: [
 		BlankComponent,
 		CalendarInviteComponent,
-		ChatComposeComponent,
 		ChatCyphertextComponent,
 		ChatCyphertextListComponent,
 		ChatMainComponent,
@@ -72,7 +70,6 @@ import {CyphWebModule} from './cyph-web.module';
 	exports: [
 		BlankComponent,
 		CalendarInviteComponent,
-		ChatComposeComponent,
 		ChatCyphertextComponent,
 		ChatCyphertextListComponent,
 		ChatMainComponent,
