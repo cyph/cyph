@@ -231,11 +231,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
 
-			const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
-			return !value ?
-				[] :
-				Promise.all(Object.keys(value).map(async k => this.getItem(`${url}/${k}`, proto)))
-			;
+			try {
+				const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
+
+				return !value ? [] : await Promise.all(
+					Object.keys(value).map(async k =>
+						this.getItem(`${url}/${k}`, proto)
+					)
+				);
+			}
+			catch {
+				return [];
+			}
 		});
 	}
 
@@ -244,11 +251,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
 
-			const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
-			return !value ?
-				[] :
-				Object.keys(value)
-			;
+			try {
+				const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
+
+				return !value ? [] : Object.keys(value);
+			}
+			catch {
+				return [];
+			}
 		});
 	}
 
@@ -818,7 +828,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 					listRef.off('child_removed', onChildRemoved);
 					listRef.off('value', onValue);
 				};
-			})();
+			})().catch(() => {
+				observer.next([]);
+				cleanup	= () => {};
+			});
 
 			return async () => {
 				(await waitForValue(() => cleanup))();
@@ -847,7 +860,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				listRef.on('child_added', onChildAdded);
 				cleanup	= () => { listRef.off('child_added', onChildAdded); };
-			})();
+			})().catch(() => {
+				cleanup	= () => {};
+			});
 
 			return async () => {
 				(await waitForValue(() => cleanup))();
@@ -885,7 +900,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				listRef.on('value', onValue);
 				cleanup	= () => { listRef.off('value', onValue); };
-			})();
+			})().catch(() => {
+				observer.next([]);
+				cleanup	= () => {};
+			});
 
 			return async () => {
 				(await waitForValue(() => cleanup))();
@@ -949,7 +967,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 						listRef.off('child_added', onChildAdded);
 						listRef.off('value', onValue);
 					};
-				})();
+				})().catch(() => {
+					cleanup	= () => {};
+				});
 
 				return async () => {
 					(await waitForValue(() => cleanup))();
