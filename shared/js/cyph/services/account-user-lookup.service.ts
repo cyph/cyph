@@ -133,7 +133,7 @@ export class AccountUserLookupService {
 				this.accountDatabaseService.getAsyncMap(
 					`${url}/reviews`,
 					Review,
-					SecurityModels.public,
+					SecurityModels.publicFromOtherUsers,
 					undefined,
 					true
 				)

@@ -4,5 +4,6 @@
 export enum SecurityModels {
 	private,
 	privateSigned,
-	public
+	public,
+	publicFromOtherUsers
 }
