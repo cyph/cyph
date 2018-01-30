@@ -30,7 +30,7 @@ export class AccountProfileComponent implements OnInit {
 	/** @ignore */
 	private editorFocus: boolean	= false;
 
-/** @see AccountUserTypes */
+	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
 	/** Current draft of user profile description. */
