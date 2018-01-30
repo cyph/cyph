@@ -49,6 +49,8 @@ export class Rule extends AbstractRule {
 			replace(/==/g, '').
 			replace(/\+=/g, '').
 			replace(/-=/g, '').
+			replace(/\*=/g, '').
+			replace(/\/=/g, '').
 			split(/['"`]/g)[0].
 			split('=')
 		;

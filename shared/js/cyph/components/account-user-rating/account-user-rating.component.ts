@@ -38,7 +38,7 @@ export class AccountUserRatingComponent {
 		('star'|'star_border'|'star_half'),
 		('star'|'star_border'|'star_half')
 	] {
-		rating	*= this.ratingFactor;
+		rating *= this.ratingFactor;
 
 		return [
 			rating >= 1 ? 'star' : rating >= 0.5 ? 'star_half' : 'star_border',
