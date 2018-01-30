@@ -228,6 +228,7 @@ read -r -d '' modules <<- EOM
 	ts-loader
 	ts-node
 	tslint
+	tslint-eslint-rules
 	tslint-immutable
 	tslint-microsoft-contrib
 	tsutils
