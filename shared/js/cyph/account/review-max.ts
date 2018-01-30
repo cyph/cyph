@@ -1,2 +1,2 @@
 /** Maximum value of a review rating. */
-export const reviewMax: number	= 100;
+export const reviewMax	= 100;

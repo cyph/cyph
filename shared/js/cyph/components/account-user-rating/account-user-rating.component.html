@@ -1,6 +1,6 @@
 <div fxLayout='column' *ngIf='user'>
 	<div fxLayout='row'>
-		<mat-icon *ngFor='let star of getStars(user?.rating() | async)'>
+		<mat-icon *ngFor='let star of getStars(user?.rating() | async); trackBy: trackByIndex'>
 			{{star}}
 		</mat-icon>
 	</div>

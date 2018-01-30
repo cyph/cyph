@@ -1,8 +1,9 @@
 import {Component, Input} from '@angular/core';
 import {reviewMax, User} from '../../account';
-import {numberToString} from '../../util/formatting';
 import {AccountService} from '../../services/account.service';
 import {StringsService} from '../../services/strings.service';
+import {trackByIndex} from '../../track-by/track-by-index';
+import {numberToString} from '../../util/formatting';
 
 
 /**
@@ -23,6 +24,9 @@ export class AccountUserRatingComponent {
 	/** Factor to adjust ratings by for display in UI. */
 	public readonly ratingFactor: number	= this.uiMaxRating / reviewMax;
 
+	/** @see trackByIndex */
+	public readonly trackByIndex: typeof trackByIndex	= trackByIndex;
+
 	/** @see User */
 	@Input() public user?: User;
 
@@ -34,7 +38,7 @@ export class AccountUserRatingComponent {
 		('star'|'star_border'|'star_half'),
 		('star'|'star_border'|'star_half')
 	] {
-		rating *= this.ratingFactor;
+		rating	*= this.ratingFactor;
 
 		return [
 			rating >= 1 ? 'star' : rating >= 0.5 ? 'star_half' : 'star_border',
