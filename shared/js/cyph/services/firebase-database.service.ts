@@ -157,7 +157,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 				/* tslint:disable-next-line:no-null-keyword */
 				const onValue		= async (snapshot: DataSnapshot|null) => {
 					if (snapshot) {
-						observer.next(snapshot.val() === true);
+						this.ngZone.run(() => {
+							observer.next(snapshot.val() === true);
+						});
 					}
 				};
 
@@ -187,13 +189,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				try {
 					const localData	= await this.cacheGet({hash});
-					progress.next(100);
-					progress.complete();
+					this.ngZone.run(() => {
+						progress.next(100);
+						progress.complete();
+					});
 					return {timestamp, value: await deserialize(proto, localData)};
 				}
 				catch {}
 
-				progress.next(0);
+				this.ngZone.run(() => { progress.next(0); });
 
 				const request	= requestByteStream({
 					retries: 3,
@@ -201,8 +205,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 				});
 
 				request.progress.subscribe(
-					n => { progress.next(n); },
-					err => { progress.next(err); }
+					n => { this.ngZone.run(() => { progress.next(n); }); },
+					err => { this.ngZone.run(() => { progress.next(err); }); }
 				);
 
 				const value	= await request.result;
@@ -214,12 +218,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 					)
 				) {
 					const err	= new Error('Invalid data hash.');
-					progress.error(err);
+					this.ngZone.run(() => { progress.error(err); });
 					throw err;
 				}
 
-				progress.next(100);
-				progress.complete();
+				this.ngZone.run(() => {
+					progress.next(100);
+					progress.complete();
+				});
 				this.cacheSet(url, value, hash);
 				return {timestamp, value: await deserialize(proto, value)};
 			})
@@ -231,11 +237,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
 
-			const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
-			return !value ?
-				[] :
-				Promise.all(Object.keys(value).map(async k => this.getItem(`${url}/${k}`, proto)))
-			;
+			try {
+				const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
+
+				return !value ? [] : await Promise.all(
+					Object.keys(value).map(async k =>
+						this.getItem(`${url}/${k}`, proto)
+					)
+				);
+			}
+			catch {
+				return [];
+			}
 		});
 	}
 
@@ -244,11 +257,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
 
-			const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
-			return !value ?
-				[] :
-				Object.keys(value)
-			;
+			try {
+				const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
+
+				return !value ? [] : Object.keys(value);
+			}
+			catch {
+				return [];
+			}
 		});
 	}
 
@@ -564,8 +580,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			/* tslint:disable-next-line:possible-timing-attack */
 			if (hash === (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
-				progress.next(100);
-				progress.complete();
+				this.ngZone.run(() => {
+					progress.next(100);
+					progress.complete();
+				});
 				return {hash, url};
 			}
 
@@ -582,7 +600,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 					o => {
 						if (o) {
 							const snapshot	= <UploadTaskSnapshot> o;
-							progress.next(snapshot.bytesTransferred / snapshot.totalBytes * 100);
+							this.ngZone.run(() => {
+								progress.next(
+									snapshot.bytesTransferred / snapshot.totalBytes * 100
+								);
+							});
 						}
 					},
 					reject,
@@ -594,8 +616,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 									timestamp: ServerValue.TIMESTAMP
 								}).then();
 								this.cacheSet(url, data, hash);
-								progress.next(100);
-								progress.complete();
+								this.ngZone.run(() => {
+									progress.next(100);
+									progress.complete();
+								});
 								resolve({hash, url});
 							}
 							catch (err) {
@@ -657,13 +681,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const url	= await urlPromise;
 
 				if (!snapshot || !snapshot.exists()) {
-					observer.next({
-						timestamp: await getTimestamp(),
-						value: proto.create()
+					const timestamp	= await getTimestamp();
+					this.ngZone.run(() => {
+						observer.next({timestamp, value: proto.create()});
 					});
 				}
 				else {
-					observer.next(await (await this.downloadItem(url, proto)).result);
+					const result	= await (await this.downloadItem(url, proto)).result;
+					this.ngZone.run(() => { observer.next(result); });
 				}
 			};
 
@@ -688,7 +713,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			/* tslint:disable-next-line:no-null-keyword */
 			const onValue	= (snapshot: DataSnapshot|null) => {
-				observer.next(!!snapshot && snapshot.exists());
+				this.ngZone.run(() => {
+					observer.next(!!snapshot && snapshot.exists());
+				});
 			};
 
 			(async () => {
@@ -743,15 +770,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 				};
 
 				const publishList	= () => {
-					observer.next(
-						Array.from(data.keys()).sort().map(k => {
-							const o	= data.get(k);
-							if (!o) {
-								throw new Error('Corrupt Map.');
-							}
-							return {timestamp: o.timestamp, value: o.value};
-						})
-					);
+					this.ngZone.run(() => {
+						observer.next(
+							Array.from(data.keys()).sort().map(k => {
+								const o	= data.get(k);
+								if (!o) {
+									throw new Error('Corrupt Map.');
+								}
+								return {timestamp: o.timestamp, value: o.value};
+							})
+						);
+					});
 				};
 
 				/* tslint:disable-next-line:no-null-keyword */
@@ -795,7 +824,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						return;
 					}
 					if (snapshot && !snapshot.exists()) {
-						observer.complete();
+						this.ngZone.run(() => { observer.complete(); });
 					}
 				};
 
@@ -818,7 +847,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 					listRef.off('child_removed', onChildRemoved);
 					listRef.off('value', onValue);
 				};
-			})();
+			})().catch(() => {
+				this.ngZone.run(() => { observer.next([]); });
+				cleanup	= () => {};
+			});
 
 			return async () => {
 				(await waitForValue(() => cleanup))();
@@ -838,16 +870,20 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				/* tslint:disable-next-line:no-null-keyword */
 				const onChildAdded	= (snapshot: DataSnapshot|null) => {
-					if (!snapshot || !snapshot.exists() || !snapshot.key) {
-						return;
-					}
+					this.ngZone.run(() => {
+						if (!snapshot || !snapshot.exists() || !snapshot.key) {
+							return;
+						}
 
-					observer.next(snapshot.key);
+						observer.next(snapshot.key);
+					});
 				};
 
 				listRef.on('child_added', onChildAdded);
 				cleanup	= () => { listRef.off('child_added', onChildAdded); };
-			})();
+			})().catch(() => {
+				cleanup	= () => {};
+			});
 
 			return async () => {
 				(await waitForValue(() => cleanup))();
@@ -880,12 +916,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 					}
 
 					keys	= newKeys;
-					observer.next(keys);
+					this.ngZone.run(() => { observer.next(keys); });
 				};
 
 				listRef.on('value', onValue);
 				cleanup	= () => { listRef.off('value', onValue); };
-			})();
+			})().catch(() => {
+				this.ngZone.run(() => { observer.next([]); });
+				cleanup	= () => {};
+			});
 
 			return async () => {
 				(await waitForValue(() => cleanup))();
@@ -921,7 +960,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 							await (await this.downloadItem(itemUrl, proto)).result
 						;
 
-						observer.next({timestamp, url: itemUrl, value});
+						this.ngZone.run(() => {
+							observer.next({timestamp, url: itemUrl, value});
+						});
 
 						if (noCache) {
 							this.cacheRemove({url: itemUrl});
@@ -935,7 +976,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							return;
 						}
 						if (snapshot && !snapshot.exists()) {
-							observer.complete();
+							this.ngZone.run(() => { observer.complete(); });
 						}
 					};
 
@@ -949,7 +990,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 						listRef.off('child_added', onChildAdded);
 						listRef.off('value', onValue);
 					};
-				})();
+				})().catch(() => {
+					cleanup	= () => {};
+				});
 
 				return async () => {
 					(await waitForValue(() => cleanup))();

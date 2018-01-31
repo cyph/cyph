@@ -40,6 +40,19 @@ import {PotassiumService} from './potassium.service';
  */
 @Injectable()
 export class AccountDatabaseService {
+	/** @ignore */
+	private async getUsernameFromURL (
+		url: MaybePromise<string>,
+		other: boolean = false
+	) : Promise<string> {
+		url	= await url;
+
+		return !other ?
+			(url.match(/\/?users\/(.*?)\//) || [])[1] || '' :
+			(url.match(/\/?users\/.*\/([^\/]+)$/) || [])[1] || ''
+		;
+	}
+
 	/** Public keys for AGSE-PKI certificate validation. */
 	private readonly agsePublicSigningKeys	= {
 		rsa: [
@@ -91,9 +104,10 @@ export class AccountDatabaseService {
 		sign: async (
 			data: Uint8Array,
 			url: string,
-			decompress: boolean
+			decompress: boolean,
+			usernameOther: boolean = false
 		) => {
-			const username	= (url.match(/\/?users\/(.*?)\//) || [])[1] || '';
+			const username	= await this.getUsernameFromURL(url, usernameOther);
 
 			return this.localStorageService.getOrSetDefault(
 				`AccountDatabaseService.open/${
@@ -108,7 +122,8 @@ export class AccountDatabaseService {
 					data,
 					this.currentUser.value && username === this.currentUser.value.user.username ?
 						this.currentUser.value.keys.signingKeyPair.publicKey :
-						(await this.getUserPublicKeys(username)).signing,
+						(await this.getUserPublicKeys(username)).signing
+					,
 					url,
 					decompress
 				)
@@ -206,6 +221,9 @@ export class AccountDatabaseService {
 			if (securityModel === SecurityModels.public) {
 				return this.openHelpers.sign(data, url, true);
 			}
+			else if (securityModel === SecurityModels.publicFromOtherUsers) {
+				return this.openHelpers.sign(data, url, true, true);
+			}
 
 			if (!currentUser) {
 				throw new Error('Cannot anonymously open private data.');
@@ -261,6 +279,7 @@ export class AccountDatabaseService {
 					customKey
 				);
 			case SecurityModels.public:
+			case SecurityModels.publicFromOtherUsers:
 				return this.sealHelpers.sign(data, url, true);
 			default:
 				throw new Error('Invalid security model.');
@@ -394,12 +413,23 @@ export class AccountDatabaseService {
 			]))
 		);
 
+		const usernamePromise	= this.getUsernameFromURL(url);
+
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
 		const asyncMap: IAsyncMap<string, T>	= {
 			clear: async () => (await baseAsyncMap).clear(),
 			getItem,
-			getKeys: async () => this.getListKeys(url),
+			getKeys: async () => {
+				const keys	= await this.getListKeys(url);
+
+				if (securityModel === SecurityModels.publicFromOtherUsers) {
+					const username	= await usernamePromise;
+					return keys.filter(k => k !== username);
+				}
+
+				return keys;
+			},
 			getValue: async () => localLock(async () => getValueHelper(await asyncMap.getKeys())),
 			hasItem: async key => (await baseAsyncMap).hasItem(key),
 			lock: async (f, reason) => (await baseAsyncMap).lock(f, reason),
