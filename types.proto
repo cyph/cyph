@@ -606,11 +606,8 @@ message Review {
 
 /** A set of supported capabilities. */
 message SessionCapabilities {
-	/** Native crypto / SubtleCrypto. */
-	required bool nativeCrypto = 1;
-
 	/** P2P networking / WebRTC. */
-	required bool p2p = 2;
+	required bool p2p = 1;
 }
 
 /** Misc information about the state of a chat. */

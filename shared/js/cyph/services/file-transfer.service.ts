@@ -2,9 +2,6 @@ import {Injectable} from '@angular/core';
 import {Set as ImmutableSet} from 'immutable';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
-import {Hash} from '../crypto/potassium/hash';
-import {ISecretBox} from '../crypto/potassium/isecret-box';
-import {SecretBox} from '../crypto/potassium/secret-box';
 import {eventManager} from '../event-manager';
 import {ISessionTransfer, SessionTransfer, SessionTransferAnswers} from '../files';
 import {BinaryProto} from '../proto';
@@ -21,7 +18,6 @@ import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {FileService} from './file.service';
-import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
@@ -33,13 +29,6 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class FileTransferService {
-	/** @ignore */
-	private readonly secretBox: Promise<ISecretBox>	= (async () =>
-		(await this.sessionCapabilitiesService.capabilities).nativeCrypto ?
-			new SecretBox(true, new Hash(true)) :
-			this.potassiumService.secretBox
-	)();
-
 	/** In-progress file transfers. */
 	public transfers: ImmutableSet<{
 		metadata: ISessionTransfer;
@@ -69,11 +58,11 @@ export class FileTransferService {
 	}> {
 		try {
 			const key: Uint8Array	= this.potassiumService.randomBytes(
-				await (await this.secretBox).keyBytes
+				await this.potassiumService.secretBox.keyBytes
 			);
 
 			return {
-				cyphertext: await (await this.secretBox).seal(plaintext, key),
+				cyphertext: await this.potassiumService.secretBox.seal(plaintext, key),
 				key
 			};
 		}
@@ -103,7 +92,7 @@ export class FileTransferService {
 			this.transfers				= this.transfers.add(transferSetItem);
 
 			const plaintext: Uint8Array|undefined	= await (async () =>
-				(await this.secretBox).open((await result).value, transfer.key)
+				this.potassiumService.secretBox.open((await result).value, transfer.key)
 			)().catch(
 				() => undefined
 			);
@@ -353,9 +342,6 @@ export class FileTransferService {
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
-
-		/** @ignore */
-		private readonly sessionCapabilitiesService: SessionCapabilitiesService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService

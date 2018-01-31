@@ -3,7 +3,6 @@ import {ISessionCapabilities} from '../proto';
 import {ISessionCapabilitiesService} from '../service-interfaces/isession-capabilities.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {resolvable} from '../util/wait';
-import {PotassiumService} from './crypto/potassium.service';
 import {SessionService} from './session.service';
 
 
@@ -19,7 +18,7 @@ export class SessionCapabilitiesService implements ISessionCapabilitiesService {
 	/** @ignore */
 	private readonly remoteCapabilities: Promise<ISessionCapabilities>	=
 		this.sessionService.one<ISessionMessageData>(rpcEvents.capabilities).then(o =>
-			o.capabilities || {nativeCrypto: false, p2p: false}
+			o.capabilities || {p2p: false}
 		)
 	;
 
@@ -35,7 +34,6 @@ export class SessionCapabilitiesService implements ISessionCapabilitiesService {
 
 	/** @inheritDoc */
 	public readonly localCapabilities: Promise<ISessionCapabilities>	= (async () => ({
-		nativeCrypto: await this.potassiumService.isNativeCryptoSupported(),
 		p2p: await this._P2P_SUPPORT.promise
 	}))();
 
@@ -45,9 +43,6 @@ export class SessionCapabilitiesService implements ISessionCapabilitiesService {
 	;
 
 	constructor (
-		/** @ignore */
-		private readonly potassiumService: PotassiumService,
-
 		/** @ignore */
 		private readonly sessionService: SessionService
 	) {
@@ -59,7 +54,6 @@ export class SessionCapabilitiesService implements ISessionCapabilitiesService {
 			const remoteCapabilities	= await this.remoteCapabilities;
 
 			this.resolveCapabilities({
-				nativeCrypto: localCapabilities.nativeCrypto && remoteCapabilities.nativeCrypto,
 				p2p: localCapabilities.p2p && remoteCapabilities.p2p
 			});
 		});
