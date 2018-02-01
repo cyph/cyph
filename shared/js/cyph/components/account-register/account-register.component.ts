@@ -110,6 +110,7 @@ export class AccountRegisterComponent implements OnInit {
 			this.router.navigate([accountRoot, 'register', '1']);
 		});
 
+		this.accountService.transitionEnd();
 		this.accountService.resolveUiReady();
 	}
 
