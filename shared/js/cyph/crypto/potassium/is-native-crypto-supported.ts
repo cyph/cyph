@@ -7,7 +7,7 @@ export const isNativeCryptoSupported	= async () : Promise<boolean> => {
 	try {
 		await oneTimeAuth.sign(
 			potassiumUtil.randomBytes(1),
-			potassiumUtil.randomBytes(oneTimeAuth.keyBytes),
+			potassiumUtil.randomBytes(oneTimeAuth.keyBytes)
 		);
 		return true;
 	}
