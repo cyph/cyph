@@ -5,10 +5,14 @@
 	[class.initiating]='accountContactsService.showSpinner'
 >
 	<div fxFlexFill fxLayout='column' fxLayoutAlign='start stretch'>
-		<cyph-account-contacts-search #accountContactsSearch></cyph-account-contacts-search>
+		<cyph-account-contacts-search
+			#accountContactsSearch
+			[contactList]='contactList'
+		></cyph-account-contacts-search>
 
 		<cyph-account-contact
 			class='active animated slideInDown'
+			[class.cyph-inverted-theme]='invertedTheme'
 			[contact]='accountContactsSearch?.searchBar?.filter | async'
 			(click)='accountContactsSearch?.searchBar?.clearFilter()'
 			*ngIf='(accountContactsSearch?.searchBar?.filter | async) !== undefined'
@@ -16,12 +20,13 @@
 
 		<cyph-account-contact
 			class='active animated slideInDown'
+			[class.cyph-inverted-theme]='invertedTheme'
 			[contact]='activeUser | async'
 			*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
 		></cyph-account-contact>
 
 		<od-virtualscroll
-			[vsData]='contactList'
+			[vsData]='filteredContactList'
 			[vsEqualsFunc]='vsEqualsFunc'
 			[vsOptions]='vsOptions'
 			*ngIf='
@@ -33,6 +38,7 @@
 				<cyph-account-contact
 					[contact]='item'
 					class='animated slideInDown'
+					[class.cyph-inverted-theme]='invertedTheme'
 				></cyph-account-contact>
 			</ng-template>
 		</od-virtualscroll>

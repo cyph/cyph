@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {IVirtualScrollOptions} from 'od-virtualscroll';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
@@ -28,40 +28,46 @@ import {sleep} from '../../util/wait';
 export class AccountContactsComponent implements AfterViewInit, OnInit {
 	/** @ignore */
 	private readonly routeReactiveContactList: Observable<User[]>	=
-		this.activatedRoute.url.pipe(
-			mergeMap(() => this.accountContactsService.contactList)
-		)
+		this.activatedRoute.url.pipe(mergeMap(() => this.contactList))
 	;
 
+	/** @see AccountContactsSearchComponent */
+	@ViewChild(AccountContactsComponent)
+	public accountContactsSearch?: AccountContactsSearchComponent;
+
 	/** Full contact list with active contact filtered out. */
-	public readonly activeUser: Observable<User|undefined>	=
+	public readonly activeUser: Observable<User|undefined>			=
 		this.routeReactiveContactList.pipe(
 			map(contacts => contacts.find(contact => this.isActive(contact)))
 		)
 	;
 
+	/** List of users to search. */
+	@Input() public contactList: Observable<User[]>					=
+		this.accountContactsService.contactList
+	;
+
 	/** Full contact list with active contact filtered out. */
-	public readonly contactList: BehaviorSubject<User[]>	= observableToBehaviorSubject(
+	public readonly filteredContactList: BehaviorSubject<User[]>	= observableToBehaviorSubject(
 		this.routeReactiveContactList.pipe(
 			map(contacts => contacts.filter(contact => !this.isActive(contact)))
 		),
 		[]
 	);
 
-	/** @see AccountContactsSearchComponent */
-	@ViewChild(AccountContactsComponent)
-	public accountContactsSearch?: AccountContactsSearchComponent;
+	/** Indicates whether to use inverted theme. */
+	@Input() public invertedTheme: boolean							= false;
 
 	/** Indicates whether contact list should be displayed. */
-	public showContactList: boolean							= false;
+	public showContactList: boolean									= false;
 
 	/** @see AccountContactsSearchComponent.userFilter */
-	public userFilter: BehaviorSubject<User|undefined>		=
+	public userFilter: BehaviorSubject<User|undefined>				=
 		new BehaviorSubject<User|undefined>(undefined)
 	;
 
 	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence		= UserPresence;
+	public readonly userPresence: typeof UserPresence				= UserPresence;
 
 	/** Equality function for virtual scrolling. */
 	public readonly vsEqualsFunc: (a: number, b: number) => boolean	= (() => {

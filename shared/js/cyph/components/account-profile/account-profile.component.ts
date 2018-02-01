@@ -1,10 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
 import {take} from 'rxjs/operators/take';
-import {Subscription} from 'rxjs/Subscription';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
 import {AccountUserTypes} from '../../proto';
@@ -32,9 +30,6 @@ import {trackByValue} from '../../track-by/track-by-value';
 export class AccountProfileComponent implements OnInit {
 	/** @ignore */
 	private editorFocus: boolean	= false;
-
-	/** @ignore */
-	private userMembersSubscription?: Subscription;
 
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
@@ -64,7 +59,7 @@ export class AccountProfileComponent implements OnInit {
 	public user?: User;
 
 	/** List of members, if user is an organization. */
-	public readonly userMembers: BehaviorSubject<User[]>	= new BehaviorSubject<User[]>([]);
+	public userMembers?: Observable<User[]>;
 
 	/** User parent organization profile. */
 	public userOrganiztion?: User;
@@ -124,17 +119,10 @@ export class AccountProfileComponent implements OnInit {
 		}
 		catch {}
 
-		if (this.userMembersSubscription) {
-			this.userMembersSubscription.unsubscribe();
-			this.userMembersSubscription	= undefined;
-		}
-
 		if (this.user) {
-			this.userMembersSubscription	=
-				this.accountOrganizationsService.getMembers(this.user).subscribe(this.userMembers)
-			;
+			this.userMembers		= this.accountOrganizationsService.getMembers(this.user);
 
-			this.userOrganiztion			=
+			this.userOrganiztion	=
 				await this.accountOrganizationsService.getOrganization(this.user)
 			;
 
@@ -143,7 +131,7 @@ export class AccountProfileComponent implements OnInit {
 			this.accountService.resolveUiReady();
 		}
 		else {
-			this.userMembers.next([]);
+			this.userMembers		= undefined;
 			this.userOrganiztion	= undefined;
 
 			this.router.navigate([accountRoot, 'login']);

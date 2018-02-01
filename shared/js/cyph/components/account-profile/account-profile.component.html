@@ -305,23 +305,26 @@
 					<mat-card-content *ngIf='
 						(user?.userType | async) === accountUserTypes.TelehealthOrg
 					'>
-						<div class='description' *ngIf='user?.description'>
-							{{user?.description | async}}
-						</div>
-						<h2 cyphTranslate>Address</h2>
-						<mat-list>
-							<mat-list-item>
-								<span>{{extra.address || ''}}</span>
-							</mat-list-item>
-						</mat-list>
-						<br />
-						<br />
-						<h2 cyphTranslate class='user-list-header'>Available Doctors</h2>
-						<div class='cyph-light-theme'>
-							<cyph-account-contacts-search
-								[contactList]='userMembers'
-								class='cyph-main-theme'
-							></cyph-account-contacts-search>
+						<div fxLayout='column'>
+							<div class='description' *ngIf='user?.description'>
+								{{user?.description | async}}
+							</div>
+							<h2 cyphTranslate>Address</h2>
+							<mat-list>
+								<mat-list-item>
+									<span>{{extra.address || ''}}</span>
+								</mat-list-item>
+							</mat-list>
+							<br />
+							<br />
+							<ng-container *ngIf='userMembers !== undefined'>
+								<h2 cyphTranslate class='user-list-header'>Available Doctors</h2>
+								<cyph-account-contacts
+									class='member-list'
+									[contactList]='userMembers'
+									[invertedTheme]='true'
+								></cyph-account-contacts>
+							</ng-container>
 						</div>
 					</mat-card-content>
 					<mat-card-content *ngIf='
