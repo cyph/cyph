@@ -318,11 +318,10 @@
 						<br />
 						<h2 cyphTranslate class='user-list-header'>Available Doctors</h2>
 						<div class='cyph-light-theme'>
-							<span>TODO: $DOCTOR_LIST</span>
-							<cyph-account-contact
-								[contact]='doctorTmp | async'
+							<cyph-account-contacts-search
+								[contactList]='userMembers'
 								class='cyph-main-theme'
-							></cyph-account-contact>
+							></cyph-account-contacts-search>
 						</div>
 					</mat-card-content>
 					<mat-card-content *ngIf='

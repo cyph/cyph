@@ -141,6 +141,9 @@ export class User {
 		/** @see IAccountUserProfileExtra */
 		public readonly accountUserProfileExtra: IAsyncValue<IAccountUserProfileExtra>,
 
+		/** If applicable, usernames of members of this organization. */
+		public readonly organizationMembers: IAsyncValue<{[username: string]: boolean}>,
+
 		/** @see IReview */
 		public readonly reviews: IAsyncMap<string, IReview>,
 

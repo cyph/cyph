@@ -29,6 +29,7 @@ import {NotFoundComponent} from '../components/not-found';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
+import {AccountOrganizationsService} from '../services/account-organizations.service';
 import {AccountSettingsService} from '../services/account-settings.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountService} from '../services/account.service';
@@ -115,6 +116,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountContactsService,
 		AccountDatabaseService,
 		AccountFilesService,
+		AccountOrganizationsService,
 		AccountService,
 		AccountSettingsService,
 		AccountUserLookupService,

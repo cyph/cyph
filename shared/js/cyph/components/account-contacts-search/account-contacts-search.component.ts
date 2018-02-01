@@ -29,6 +29,11 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './account-contacts-search.component.html'
 })
 export class AccountContactsSearchComponent {
+	/** List of users to search. */
+	@Input() public contactList: Observable<User[]>				=
+		this.accountContactsService.contactList
+	;
+
 	/** @see SearchBarComponent.placeholder */
 	@Input() public placeholder: string							= this.stringsService.search;
 
@@ -49,7 +54,7 @@ export class AccountContactsSearchComponent {
 				return query.toLowerCase().trim();
 			}),
 			mergeMap<string, ISearchOptions>(query =>
-				this.accountContactsService.contactList.pipe(
+				this.contactList.pipe(
 					mergeMap<User[], ISearchOptions>(async users => {
 						const results	= (await Promise.all(users.map(async user => ({
 							name: (await user.name.pipe(take(1)).toPromise()).toLowerCase(),

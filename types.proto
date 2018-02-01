@@ -751,6 +751,10 @@ message Internal {
 		repeated bool data = 1;
 	}
 
+	message BooleanMap {
+		map<string, bool> data = 1;
+	}
+
 	message BooleanValue {
 		required bool data = 1;
 	}

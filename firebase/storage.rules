@@ -139,6 +139,10 @@ service firebase.storage {
 				allow read;
 			}
 
+			match /organizationMembers {
+				allow read;
+			}
+
 			// match /pin {
 			// 	match /hash {}
 			// 	match /isCustom {}

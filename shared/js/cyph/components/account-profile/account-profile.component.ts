@@ -1,13 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
 import {take} from 'rxjs/operators/take';
+import {Subscription} from 'rxjs/Subscription';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
 import {AccountUserTypes} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountOrganizationsService} from '../../services/account-organizations.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -30,16 +33,14 @@ export class AccountProfileComponent implements OnInit {
 	/** @ignore */
 	private editorFocus: boolean	= false;
 
+	/** @ignore */
+	private userMembersSubscription?: Subscription;
+
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
 	/** Current draft of user profile description. */
 	public descriptionDraft: string	= '';
-
-	/** TODO: Doctor list. */
-	public readonly doctorTmp: Promise<User|undefined>	=
-		this.accountUserLookupService.getUser('who')
-	;
 
 	/** Profile edit mode. */
 	public editMode: boolean		= false;
@@ -62,7 +63,10 @@ export class AccountProfileComponent implements OnInit {
 	/** User profile. */
 	public user?: User;
 
-	/** User organization profile. */
+	/** List of members, if user is an organization. */
+	public readonly userMembers: BehaviorSubject<User[]>	= new BehaviorSubject<User[]>([]);
+
+	/** User parent organization profile. */
 	public userOrganiztion?: User;
 
 	/** @see UserPresence */
@@ -120,9 +124,18 @@ export class AccountProfileComponent implements OnInit {
 		}
 		catch {}
 
+		if (this.userMembersSubscription) {
+			this.userMembersSubscription.unsubscribe();
+			this.userMembersSubscription	= undefined;
+		}
+
 		if (this.user) {
-			this.userOrganiztion	=
-				await this.accountUserLookupService.getOrganization(this.user)
+			this.userMembersSubscription	=
+				this.accountOrganizationsService.getMembers(this.user).subscribe(this.userMembers)
+			;
+
+			this.userOrganiztion			=
+				await this.accountOrganizationsService.getOrganization(this.user)
 			;
 
 			await this.user.fetch();
@@ -130,6 +143,7 @@ export class AccountProfileComponent implements OnInit {
 			this.accountService.resolveUiReady();
 		}
 		else {
+			this.userMembers.next([]);
 			this.userOrganiztion	= undefined;
 
 			this.router.navigate([accountRoot, 'login']);
@@ -203,6 +217,9 @@ export class AccountProfileComponent implements OnInit {
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
+
+		/** @see AccountOrganizationsService */
+		public readonly accountOrganizationsService: AccountOrganizationsService,
 
 		/** @see AccountUserLookupService */
 		public readonly accountUserLookupService: AccountUserLookupService,

@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import {map} from 'rxjs/operators/map';
-import {take} from 'rxjs/operators/take';
 import {SecurityModels, User} from '../account';
 import {
 	AccountUserPresence,
 	AccountUserProfile,
 	AccountUserProfileExtra,
+	BooleanMapProto,
 	DataURIProto,
 	Review
 } from '../proto';
@@ -77,33 +77,17 @@ export class AccountUserLookupService {
 		return exists;
 	}
 
-	/** Tries to to get organization user object for the specified user. */
-	public async getOrganization (user: string|User) : Promise<User|undefined> {
-		if (typeof user === 'string') {
-			const maybeUser	= await this.getUser(user);
-			if (!maybeUser) {
-				return;
-			}
-			user	= maybeUser;
-		}
-
-		const {organization}	= await user.extra().pipe(take(1)).toPromise();
-
-		if (!organization) {
+	/** Tries to to get User object for the specified user. */
+	public async getUser (user: string|User, preFetch: boolean = false) : Promise<User|undefined> {
+		if (!user) {
 			return;
 		}
-
-		return this.getUser(organization);
-	}
-
-	/** Tries to to get user object for the specified username. */
-	public async getUser (username: string) : Promise<User|undefined> {
-		if (!username) {
-			return;
+		else if (user instanceof User) {
+			return user;
 		}
 
-		username	= normalize(username);
-		const url	= `users/${username}`;
+		const username	= normalize(user);
+		const url		= `users/${username}`;
 
 		return getOrSetDefaultAsync(this.userCache, username, async () => {
 			if (!(await this.exists(username))) {
@@ -150,13 +134,19 @@ export class AccountUserLookupService {
 					undefined,
 					true
 				),
+				this.accountDatabaseService.getAsyncValue(
+					`${url}/organizationMembers`,
+					BooleanMapProto,
+					SecurityModels.public
+				),
 				this.accountDatabaseService.getAsyncMap(
 					`${url}/reviews`,
 					Review,
 					SecurityModels.publicFromOtherUsers,
 					undefined,
 					true
-				)
+				),
+				preFetch
 			);
 		}).catch(
 			() => undefined
