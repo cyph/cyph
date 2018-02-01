@@ -1,14 +1,13 @@
-import {secretBox as nativeSecretBox} from './native-crypto/secret-box';
+import {oneTimeAuth} from './native-crypto/one-time-auth';
 import {potassiumUtil} from './potassium-util';
 
 
 /** @see IPotassium.isNativeCryptoSupported */
 export const isNativeCryptoSupported	= async () : Promise<boolean> => {
 	try {
-		await nativeSecretBox.seal(
+		await oneTimeAuth.sign(
 			potassiumUtil.randomBytes(1),
-			potassiumUtil.randomBytes(nativeSecretBox.nonceBytes),
-			potassiumUtil.randomBytes(nativeSecretBox.keyBytes)
+			potassiumUtil.randomBytes(oneTimeAuth.keyBytes),
 		);
 		return true;
 	}
