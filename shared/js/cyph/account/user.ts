@@ -63,6 +63,16 @@ export class User {
 		{}
 	));
 
+	/** Fetches user data and sets ready to true when complete. */
+	public async fetch () : Promise<void> {
+		if (this.ready) {
+			return;
+		}
+
+		await this.accountUserProfile.getValue();
+		this.ready	= true;
+	}
+
 	/** @see IAccountUserProfile.hasPremium */
 	public readonly hasPremium: Observable<boolean>	= flattenObservablePromise(
 		this.accountUserProfile.watch().pipe(map(({hasPremium}) => hasPremium)),
@@ -132,10 +142,13 @@ export class User {
 		public readonly accountUserProfileExtra: IAsyncValue<IAccountUserProfileExtra>,
 
 		/** @see IReview */
-		public readonly reviews: IAsyncMap<string, IReview>
+		public readonly reviews: IAsyncMap<string, IReview>,
+
+		/** Indicates whether we should immediately start fetching this user's data. */
+		preFetch: boolean = false
 	) {
-		this.accountUserProfile.getValue().then(() => {
-			this.ready	= true;
-		});
+		if (preFetch) {
+			this.fetch();
+		}
 	}
 }

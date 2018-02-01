@@ -125,6 +125,8 @@ export class AccountProfileComponent implements OnInit {
 				await this.accountUserLookupService.getOrganization(this.user)
 			;
 
+			await this.user.fetch();
+
 			this.accountService.resolveUiReady();
 		}
 		else {
