@@ -311,8 +311,24 @@
 												</h3>
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<div class='xkcd-passphrase'>
-													{{xkcdPassphrase | async}}
+												<div
+													class='spoiler'
+													[ngClass]='( spoiler ? "hidden" : "revealed")'
+													(click)='spoiler = !spoiler'>
+													<div class='xkcd-passphrase animated fadeIn'>
+														<span
+															*ngIf='spoiler'
+															class='animated fadeIn'
+														>
+															Click to Reveal
+														</span>
+														<span
+															*ngIf='!spoiler'
+															class='animated fadeIn'
+														>
+															{{xkcdPassphrase | async}}
+														</span>
+													</div>
 												</div>
 											</div>
 										</div>
