@@ -430,8 +430,11 @@ message Environment {
 		/** Vertical logo for this custom build. */
 		bytes logoVertical = 8;
 
+		/** Organization username to associate with this custom build. */
+		string organization = 9;
+
 		/** Replacement strings for this custom build. */
-		map<string, string> strings = 9;
+		map<string, string> strings = 10;
 	}
 
 	/** Custom build configuration. */

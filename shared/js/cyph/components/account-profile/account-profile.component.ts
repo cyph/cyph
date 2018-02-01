@@ -98,11 +98,18 @@ export class AccountProfileComponent implements OnInit {
 					;
 
 					if (
-						userType === AccountUserTypes.Standard ||
-						userType === AccountUserTypes.TelehealthPatient
+						this.envService.environment.customBuild &&
+						this.envService.environment.customBuild.organization &&
+						(
+							userType === AccountUserTypes.Standard ||
+							userType === AccountUserTypes.TelehealthPatient
+						)
 					) {
-						/* TODO: Redirect to relevant org page. */
-						this.router.navigate([accountRoot, 'profile', 'nachc']);
+						this.router.navigate([
+							accountRoot,
+							'profile',
+							this.envService.environment.customBuild.organization
+						]);
 						return;
 					}
 				}
