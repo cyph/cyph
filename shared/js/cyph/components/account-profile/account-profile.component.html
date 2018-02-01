@@ -246,16 +246,18 @@
 							<div
 								class='practice'
 								fxLayout='row'
-								*ngIf='
-									(user?.userType | async) === accountUserTypes.TelehealthDoctor
-								'
+								*ngIf='userOrganiztion !== undefined'
 							>
 								<div
 									fxLayout='row'
-									[routerLink]='accountService.routeRoot + "profile/nachc"'
+									[routerLink]='
+										accountService.routeRoot +
+										"profile/" +
+										userOrganiztion?.username
+									'
 								>
 									<mat-icon>business</mat-icon>
-									<h3 cyphTranslate>TODO: $ORG</h3>
+									<h3>{{userOrganiztion?.name | async}}</h3>
 								</div>
 							</div>
 						</div>

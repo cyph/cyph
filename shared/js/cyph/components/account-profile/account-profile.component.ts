@@ -62,6 +62,9 @@ export class AccountProfileComponent implements OnInit {
 	/** User profile. */
 	public user?: User;
 
+	/** User organization profile. */
+	public userOrganiztion?: User;
+
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
@@ -111,9 +114,15 @@ export class AccountProfileComponent implements OnInit {
 		catch {}
 
 		if (this.user) {
+			this.userOrganiztion	=
+				await this.accountUserLookupService.getOrganization(this.user)
+			;
+
 			this.accountService.resolveUiReady();
 		}
 		else {
+			this.userOrganiztion	= undefined;
+
 			this.router.navigate([accountRoot, 'login']);
 		}
 	}

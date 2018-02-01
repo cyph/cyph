@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {map} from 'rxjs/operators/map';
+import {take} from 'rxjs/operators/take';
 import {SecurityModels, User} from '../account';
 import {
 	AccountUserPresence,
@@ -74,6 +75,25 @@ export class AccountUserLookupService {
 		}
 
 		return exists;
+	}
+
+	/** Tries to to get organization user object for the specified user. */
+	public async getOrganization (user: string|User) : Promise<User|undefined> {
+		if (typeof user === 'string') {
+			const maybeUser	= await this.getUser(user);
+			if (!maybeUser) {
+				return;
+			}
+			user	= maybeUser;
+		}
+
+		const {organization}	= await user.extra().pipe(take(1)).toPromise();
+
+		if (!organization) {
+			return;
+		}
+
+		return this.getUser(organization);
 	}
 
 	/** Tries to to get user object for the specified username. */

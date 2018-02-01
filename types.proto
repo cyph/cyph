@@ -174,11 +174,14 @@ message AccountUserProfileExtra {
 	/** NPI Numbers */
 	StringArray npi = 7;
 
+	/** Username of parent organization. */
+	string organization = 8;
+
 	/** Specialties */
-	StringArray specialties = 8;
+	StringArray specialties = 9;
 
 	/** Work history. */
-	repeated Position work = 9;
+	repeated Position work = 10;
 }
 
 /** AGSE-PKI certificate. */
