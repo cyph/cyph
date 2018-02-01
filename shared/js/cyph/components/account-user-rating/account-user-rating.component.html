@@ -4,12 +4,13 @@
 			{{star}}
 		</mat-icon>
 	</div>
-	<div>
-		<span *ngIf='(user?.reviews.watch() | async)?.size > 0'>
+	<div *ngIf='user?.reviews.watch() | async as reviews'>
+		<span *ngIf='reviews.size > 0'>
 			{{numberToString((user?.rating() | async) * ratingFactor)}}/5&nbsp;
 		</span>
 		<span>
-			({{(user?.reviews.watch() | async)?.size}} {{stringsService.reviews}})
+			({{reviews.size}}
+			{{reviews.size === 1 ? stringsService.review : stringsService.reviews}})
 		</span>
 	</div>
 </div>

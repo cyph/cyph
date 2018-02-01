@@ -414,6 +414,9 @@ export class StringsService {
 	public readonly reject: string						= `reject`;
 
 	/** @see StringsService */
+	public readonly review: string						= `review`;
+
+	/** @see StringsService */
 	public readonly reviews: string						= `reviews`;
 
 	/** @see StringsService */
