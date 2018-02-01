@@ -99,7 +99,7 @@ export class AccountProfileComponent implements OnInit {
 
 					if (
 						this.envService.environment.customBuild &&
-						this.envService.environment.customBuild.organization &&
+						this.envService.environment.customBuild.config.organization &&
 						(
 							userType === AccountUserTypes.Standard ||
 							userType === AccountUserTypes.TelehealthPatient
@@ -108,7 +108,7 @@ export class AccountProfileComponent implements OnInit {
 						this.router.navigate([
 							accountRoot,
 							'profile',
-							this.envService.environment.customBuild.organization
+							this.envService.environment.customBuild.config.organization
 						]);
 						return;
 					}

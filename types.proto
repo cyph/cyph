@@ -430,11 +430,8 @@ message Environment {
 		/** Vertical logo for this custom build. */
 		bytes logoVertical = 8;
 
-		/** Organization username to associate with this custom build. */
-		string organization = 9;
-
 		/** Replacement strings for this custom build. */
-		map<string, string> strings = 10;
+		map<string, string> strings = 9;
 	}
 
 	/** Custom build configuration. */
@@ -466,14 +463,17 @@ message Environment {
 		/** Indicates whether native crypto will be used. */
 		bool nativeCrypto = 9;
 
+		/** Organization username to associate with this custom build. */
+		string organization = 10;
+
 		/** Optional password to lock down environment (not a security feature). */
-		string password = 10;
+		string password = 11;
 
 		/** Indicates whether this is the telehealth version. */
-		bool telehealth = 11;
+		bool telehealth = 12;
 
 		/** Page title of this Cyph instance. */
-		string title = 12;
+		string title = 13;
 	}
 
 	/**
