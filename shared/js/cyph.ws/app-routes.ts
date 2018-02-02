@@ -1,7 +1,6 @@
 /* tslint:disable:object-literal-sort-keys */
 
 import {Routes} from '@angular/router';
-import {BlankComponent} from '../cyph/components/blank';
 import {account, accountRedirect, login, retry} from '../cyph/routes';
 import {AppService} from './app.service';
 import {EphemeralChatRootComponent} from './components/ephemeral-chat-root';
@@ -16,14 +15,6 @@ export const appRoutes: Routes	= [
 	account
 ].concat(
 	accountRedirect
-).concat([
-	{
-		path: 'extension',
-		children: [{path: '**', component: BlankComponent}]
-	},
-	{
-		path: 'telehealth',
-		children: [{path: '**', component: BlankComponent}]
-	},
+).concat(
 	{path: '**', canActivate: [AppService], component: EphemeralChatRootComponent}
-]);
+);
