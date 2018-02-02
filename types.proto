@@ -474,6 +474,9 @@ message Environment {
 
 		/** Page title of this Cyph instance. */
 		string title = 13;
+
+		/** If true, environment will be full white label, with no "Powered by Cyph" notices. */
+		bool whiteLabel = 14;
 	}
 
 	/**

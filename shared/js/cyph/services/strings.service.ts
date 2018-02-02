@@ -139,6 +139,12 @@ export class StringsService {
 	public readonly dr: string							= `Dr.`;
 
 	/** @see StringsService */
+	public readonly email: string						= `Email`;
+
+	/** @see StringsService */
+	public readonly emailOptional: string				= `Email (Optional)`;
+
+	/** @see StringsService */
 	public readonly endDate: string						= `End Date`;
 
 	/** @see StringsService */
@@ -279,6 +285,12 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly micEnable: string					= `Enable Mic`;
+
+	/** @see StringsService */
+	public readonly name: string						= `Name`;
+
+	/** @see StringsService */
+	public readonly nameOrPseudonym: string				= `Name or Pseudonym`;
 
 	/** @see StringsService */
 	public readonly newMessageNotification: string		= `New message!`;

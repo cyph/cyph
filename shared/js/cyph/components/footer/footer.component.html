@@ -54,7 +54,9 @@
 		</div>
 	</div>
 
-	<div fxLayout='row' *ngIf='envService.coBranded || envService.isTelehealth'>
+	<div fxLayout='row' *ngIf='
+		(envService.coBranded && !envService.whiteLabel) || envService.isTelehealth
+	'>
 		<div class='powered-by-cyph'>
 			<a [href]='envService.homeUrl' class='small-font'>
 				<span *ngIf='envService.isTelehealth' cyphTranslate>

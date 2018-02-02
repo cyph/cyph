@@ -21,7 +21,7 @@ export class Env extends EnvDeploy {
 	private static readonly UA: string			= navigatorData.userAgent.toLowerCase();
 
 
-	/** Indicates whether this is a co-branded instance of Cyph. */
+	/** Indicates whether this is a co-branded (or white label) instance of Cyph. */
 	public readonly coBranded: boolean			=
 		this.environment.customBuild !== undefined &&
 		this.environment.customBuild.favicon !== undefined
@@ -159,6 +159,12 @@ export class Env extends EnvDeploy {
 
 	/** Current user agent (lowercase). */
 	public readonly userAgent: string			= Env.UA;
+
+	/** Indicates whether this is a full white label instance of Cyph. */
+	public readonly whiteLabel: boolean			=
+		this.environment.customBuild !== undefined &&
+		this.environment.customBuild.config.whiteLabel === true
+	;
 
 	constructor () {
 		super();
