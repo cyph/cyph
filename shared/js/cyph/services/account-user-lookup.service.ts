@@ -137,7 +137,9 @@ export class AccountUserLookupService {
 				this.accountDatabaseService.getAsyncValue(
 					`${url}/organizationMembers`,
 					BooleanMapProto,
-					SecurityModels.public
+					SecurityModels.public,
+					undefined,
+					true
 				),
 				this.accountDatabaseService.getAsyncMap(
 					`${url}/reviews`,
