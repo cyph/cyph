@@ -5,7 +5,7 @@ import {RedirectComponent} from '../components/redirect';
 
 
 /** Routing configuration for redirecting /account/* where relevant. */
-export const accountRedirect: Route	= accountRoot === '' ?
-	{path: 'account', children: [{path: '**', component: RedirectComponent}]} :
-	{path: '☁', children: []}
+export const accountRedirect: Route[]	= accountRoot === '' ?
+	[{path: 'account', children: [{path: '**', component: RedirectComponent}]}] :
+	[]
 ;

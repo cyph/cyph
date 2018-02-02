@@ -13,7 +13,7 @@ import '../standalone/translations';
 import {HttpClient} from '@angular/common/http';
 import {NgModule, NgZone} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
-import {RouterModule, UrlSerializer} from '@angular/router';
+import {Router, RouterModule, UrlSerializer} from '@angular/router';
 import {CyphAppModule} from '../cyph/modules/cyph-app.module';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
@@ -42,8 +42,13 @@ import {CustomUrlSerializer} from './custom-url-serializer';
 		EphemeralChatRootComponent,
 		LockdownComponent
 	],
+	entryComponents: [
+		AppComponent,
+		EphemeralChatRootComponent,
+		LockdownComponent
+	],
 	imports: [
-		RouterModule.forRoot(appRoutes, {onSameUrlNavigation: 'reload', useHash: true}),
+		RouterModule.forRoot([], {onSameUrlNavigation: 'reload', useHash: true}),
 		CyphAppModule,
 		CyphCommonModule,
 		CyphWebModule
@@ -66,10 +71,13 @@ export class AppModule {
 		domSanitizer: DomSanitizer,
 		httpClient: HttpClient,
 		ngZone: NgZone,
+		router: Router,
 		databaseService: DatabaseService,
 		dialogService: DialogService,
 		localStorageService: LocalStorageService
 	) {
+		router.resetConfig(appRoutes);
+
 		if (typeof testEnvironmentSetup === 'function') {
 			testEnvironmentSetup(databaseService, localStorageService);
 		}

@@ -13,8 +13,10 @@ account.canActivate	= [AppService];
 export const appRoutes: Routes	= [
 	retry,
 	login,
-	account,
-	accountRedirect,
+	account
+].concat(
+	accountRedirect
+).concat([
 	{
 		path: 'extension',
 		children: [{path: '**', component: BlankComponent}]
@@ -24,4 +26,4 @@ export const appRoutes: Routes	= [
 		children: [{path: '**', component: BlankComponent}]
 	},
 	{path: '**', canActivate: [AppService], component: EphemeralChatRootComponent}
-];
+]);

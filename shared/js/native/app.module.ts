@@ -10,12 +10,13 @@ import './js/standalone/translations';
 import {HttpClient} from '@angular/common/http';
 import {NgModule, NgModuleFactoryLoader, NgZone, NO_ERRORS_SCHEMA} from '@angular/core';
 import {Title} from '@angular/platform-browser';
+import {Router} from '@angular/router';
 import {NativeScriptAnimationsModule} from 'nativescript-angular/animations';
 import {NativeScriptFormsModule} from 'nativescript-angular/forms';
 import {NativeScriptHttpModule} from 'nativescript-angular/http';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {NativeScriptModule} from 'nativescript-angular/nativescript.module';
-import {NativeScriptRouterModule, NSModuleFactoryLoader} from 'nativescript-angular/router';
+import {NativeScriptRouterModule, NSModuleFactoryLoader,} from 'nativescript-angular/router';
 import {appRoutes} from './app-routes';
 import {AppService} from './app.service';
 import {AppComponent} from './components/app';
@@ -42,10 +43,11 @@ import {NativeTitleService} from './native-title.service';
 		DialogImageComponent
 	],
 	entryComponents: [
+		AppComponent,
 		DialogImageComponent
 	],
 	imports: [
-		NativeScriptRouterModule.forRoot(appRoutes),
+		NativeScriptRouterModule.forRoot([]),
 		CyphAppModule,
 		CyphCommonModule,
 		NativeScriptAnimationsModule,
@@ -81,7 +83,13 @@ import {NativeTitleService} from './native-title.service';
 	schemas: [NO_ERRORS_SCHEMA]
 })
 export class AppModule {
-	constructor (httpClient: HttpClient, dialogService: DialogService, ngZone: NgZone) {
+	constructor (
+		httpClient: HttpClient,
+		dialogService: DialogService,
+		ngZone: NgZone,
+		router: Router
+	) {
+		router.resetConfig(appRoutes);
 		resolveStaticServices({dialogService, httpClient, ngZone});
 	}
 }

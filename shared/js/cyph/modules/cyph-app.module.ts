@@ -77,7 +77,31 @@ import {CyphWebModule} from './cyph-web.module';
 		NotFoundComponent
 	],
 	entryComponents: [
-		AccountFileSharingComponent
+		AccountAppointmentsComponent,
+		AccountCallWaitingComponent,
+		AccountChatComponent,
+		AccountChatMessageBoxComponent,
+		AccountComponent,
+		AccountComposeComponent,
+		AccountContactComponent,
+		AccountContactsComponent,
+		AccountContactsSearchComponent,
+		AccountFilesComponent,
+		AccountFileSharingComponent,
+		AccountFormsComponent,
+		AccountHomeComponent,
+		AccountLoginComponent,
+		AccountLogoutComponent,
+		AccountMenuComponent,
+		AccountNoteComponent,
+		AccountNotesComponent,
+		AccountPostRegisterComponent,
+		AccountProfileComponent,
+		AccountRegisterComponent,
+		AccountSettingsComponent,
+		FooterComponent,
+		LinkConnectionComponent,
+		NotFoundComponent
 	],
 	exports: [
 		AccountAppointmentsComponent,

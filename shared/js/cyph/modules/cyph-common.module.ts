@@ -64,8 +64,25 @@ import {CyphWebModule} from './cyph-web.module';
 		TranslateDirective
 	],
 	entryComponents: [
+		BlankComponent,
+		CalendarInviteComponent,
+		ChatCyphertextComponent,
+		ChatCyphertextListComponent,
+		ChatMainComponent,
 		ChatMessageComponent,
-		HelpComponent
+		ChatMessageBoxComponent,
+		ChatMessageListComponent,
+		ContactComponent,
+		DynamicFormComponent,
+		FileInputComponent,
+		HelpComponent,
+		LogoComponent,
+		MarkdownComponent,
+		PinInputComponent,
+		QuillComponent,
+		RedirectComponent,
+		SearchBarComponent,
+		SignupFormComponent
 	],
 	exports: [
 		BlankComponent,
