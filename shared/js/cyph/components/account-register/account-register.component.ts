@@ -63,6 +63,9 @@ export class AccountRegisterComponent implements OnInit {
 	/** Name. */
 	public name: string									= '';
 
+	/** Sets a spoiler on generated master key */
+	public spoiler: boolean								= true;
+
 	/** Form tab index. */
 	public tabIndex: number								= 3;
 

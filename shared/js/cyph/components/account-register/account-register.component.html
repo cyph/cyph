@@ -21,14 +21,19 @@
 							[(selectedIndex)]='tabIndex'
 							(selectedIndexChange)='updateRoute(0, $event)'
 						>
-							<mat-tab>
+							<mat-tab *ngIf='!envService.isTelehealth'>
 								<ng-template mat-tab-label>
 									<mat-icon>radio_button_checked</mat-icon>
 									&nbsp;
 									<span cyphTranslate>Welcome</span>
 								</ng-template>
 
-								<div fxFlex fxLayout='column' fxLayoutGap='48px'>
+								<div
+									fxFlex
+									*ngIf='!envService.isTelehealth'
+									fxLayout='column'
+									fxLayoutGap='48px'
+								>
 									<div
 										fxLayout='row'
 										fxLayoutAlign='center center'
@@ -47,6 +52,15 @@
 										will still be able to easily communicate with anyone who
 										doesn't have an account yet.
 									</div>
+								</div>
+
+								<div
+									fxFlex
+									*ngIf='envService.isTelehealth'
+									fxLayout='column'
+									fxLayoutGap='48px'
+								>
+									
 								</div>
 							</mat-tab>
 							<mat-tab>
@@ -67,13 +81,19 @@
 										fxLayoutAlign='center center'
 										class='description'
 									>
-										<span cyphTranslate>Who are you? Associate your</span>
-										<span>&nbsp;{{stringsService.product}}&nbsp;</span>
-										<span cyphTranslate>
-											account with your identity or an alias.
-										</span>
-									</div>
-
+									<span cyphTranslate>Welcome to </span>
+									<span>&nbsp;{{stringsService.product}}&nbsp;</span>
+									<span cyphTranslate>powered by Cyph!</span>
+								</div>
+								<div
+									fxLayout='row'
+									fxLayoutAlign='center center'
+									cyphTranslate
+								>
+									Registering an account with us enables you to easily and 
+									safely share medical records with your doctors, schedule 
+									telehealth appointments, and more.
+								</div>
 									<div fxLayout='row' fxLayoutAlign='center center'>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 											<div fxLayout='row' fxLayoutAlign='center center'>
@@ -140,7 +160,7 @@
 														cyphTranslate
 														[(ngModel)]='name'
 														name='name'
-														placeholder='Name (or pseudonym)'
+														placeholder='Name {{(envService.isTelehealth ? "" : "or pseudonym")}}'
 														required
 														data-lpignore='true'
 													/>
@@ -154,13 +174,18 @@
 														[(ngModel)]='email'
 														name='email'
 														type='email'
-														placeholder='Email (optional)'
+														placeholder='Email {{(envService.isTelehealth ? "" : "(Optional)")}}'
+														[required]='envService.isTelehealth'
 														data-lpignore='true'
 													/>
 												</mat-form-field>
 											</div>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<mat-form-field fxFlex='60'>
+											<div
+												fxLayout='row'
+												fxLayoutAlign='center center'
+												*ngIf='!envService.isTelehealth'	
+											>
+												<mat-form-field fxFlex='60' >
 													<input
 														matInput
 														cyphTranslate
@@ -168,13 +193,32 @@
 														name='inviteCode'
 														type='inviteCode'
 														placeholder='Invite Code'
-														required
+														[required]='!envService.isTelehealth'
 														data-lpignore='true'
 													/>
 												</mat-form-field>
 											</div>
 										</div>
 									</div>
+								</div>
+							</mat-tab>
+							<mat-tab *ngIf='envService.isTelehealth'>
+								<ng-template mat-tab-label>
+									<mat-icon *ngIf='tabIndex > 1'>
+										radio_button_checked
+									</mat-icon>
+									<mat-icon *ngIf='tabIndex <= 1'>
+										radio_button_unchecked
+									</mat-icon>
+									&nbsp;
+									<span cyphTranslate>Patient Info & Insurance</span>
+								</ng-template>
+								<div
+										fxLayout='row'
+										fxLayoutAlign='center center'
+										class='description'
+									>
+										TODO: Add new patient forms & insurance
 								</div>
 							</mat-tab>
 							<mat-tab>
@@ -267,8 +311,24 @@
 												</h3>
 											</div>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<div class='xkcd-passphrase'>
-													{{xkcdPassphrase | async}}
+												<div
+													class='spoiler'
+													[ngClass]='( spoiler ? "hidden" : "revealed")'
+													(click)='spoiler = !spoiler'>
+													<div class='xkcd-passphrase animated fadeIn'>
+														<span
+															*ngIf='spoiler'
+															class='animated fadeIn'
+														>
+															Click to Reveal
+														</span>
+														<span
+															*ngIf='!spoiler'
+															class='animated fadeIn'
+														>
+															{{xkcdPassphrase | async}}
+														</span>
+													</div>
 												</div>
 											</div>
 										</div>
