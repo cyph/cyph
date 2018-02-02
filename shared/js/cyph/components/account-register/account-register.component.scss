@@ -33,18 +33,20 @@
 
 .spoiler .revealed {
 	.xkcd-passphrase {
-		 span.content{
+		span.content {
 			display: block;
 			cursor: text;
-		 }
+		}
 	}
 }
 
 .spoiler:not(.revealed) {
 	background-color: rgba(0, 0, 0, 1);
+
 	span {
 		color: white;
 	}
+
 	.xkcd-passphrase .content {
 		display: none;
 	}
