@@ -348,6 +348,7 @@ if [ "${compiledProjects}" ] ; then
 	./commands/buildunbundledassets.sh $(if [ "${simple}" ] ; then echo '--test' ; fi) || exit 1
 	rm -rf "${dir}/shared/assets"
 	cp -a shared/assets "${dir}/shared/"
+	touch shared/assets/frozen
 fi
 for d in $compiledProjects ; do
 	if [ ! -d "${d}" ] ; then

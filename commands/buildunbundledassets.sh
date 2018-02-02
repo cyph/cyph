@@ -18,6 +18,12 @@ checkfail () {
 }
 
 
+if [ -f shared/assets/frozen ] ; then
+	log 'Assets frozen'
+	exit
+fi
+
+
 find shared/js -type f -name '*.js' -not -path 'shared/js/proto/*' -exec rm {} \;
 
 
