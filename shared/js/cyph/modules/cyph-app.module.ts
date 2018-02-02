@@ -88,6 +88,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountContactsSearchComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
+		AccountFormComponent,
 		AccountFormsComponent,
 		AccountHomeComponent,
 		AccountLoginComponent,
@@ -99,6 +100,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountProfileComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
+		AccountUserRatingComponent,
 		FooterComponent,
 		LinkConnectionComponent,
 		NotFoundComponent
@@ -115,6 +117,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountContactsSearchComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
+		AccountFormComponent,
 		AccountFormsComponent,
 		AccountHomeComponent,
 		AccountLoginComponent,
@@ -126,6 +129,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountProfileComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
+		AccountUserRatingComponent,
 		FooterComponent,
 		LinkConnectionComponent,
 		NotFoundComponent
