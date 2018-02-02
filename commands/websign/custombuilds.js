@@ -77,9 +77,9 @@ for (const id of customBuildIds) {
 	}
 
 	await addSubresource($, `${o.id}.js`, `
-		self.customBuildBase64	= ${
+		self.customBuildBase64	= '${
 			potassium.toBase64(await serialize(Environment.CustomBuild, o))
-		};
+		}';
 	`);
 
 	fs.writeFileSync(`${args.outputPath}/${o.id}`, $.html().trim());
