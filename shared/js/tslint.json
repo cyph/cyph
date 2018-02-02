@@ -329,6 +329,7 @@
 		"rxjs-no-do": false,
 		"rxjs-no-finnish": true,
 		"rxjs-no-ignored-error": false,
+		"rxjs-no-ignored-subscribe": false,
 		"rxjs-no-operator": true,
 		"rxjs-no-patched": true,
 		"rxjs-no-subject-unsubscribe": false,
