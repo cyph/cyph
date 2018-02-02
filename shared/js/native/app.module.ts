@@ -16,7 +16,7 @@ import {NativeScriptFormsModule} from 'nativescript-angular/forms';
 import {NativeScriptHttpModule} from 'nativescript-angular/http';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {NativeScriptModule} from 'nativescript-angular/nativescript.module';
-import {NativeScriptRouterModule, NSModuleFactoryLoader,} from 'nativescript-angular/router';
+import {NativeScriptRouterModule, NSModuleFactoryLoader} from 'nativescript-angular/router';
 import {appRoutes} from './app-routes';
 import {AppService} from './app.service';
 import {AppComponent} from './components/app';
