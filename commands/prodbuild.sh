@@ -136,3 +136,7 @@ cat > webpack.js <<- EOM
 EOM
 
 webpack --config webpack.js
+
+# Temporary workaround for https://github.com/angular/angular-cli/issues/9484
+if [ ! -d dist/assets ] ; then cp -a src/assets dist/ ; fi
+if [ ! -f dist/favicon.ico ] ; then cp src/favicon.ico dist/ ; fi
