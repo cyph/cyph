@@ -118,11 +118,6 @@ export class AccountContactsSearchComponent {
 	/** @see SearchBarComponent.query */
 	@Input() public searchUsername?: Observable<string>;
 
-	/** @see SearchBarComponent.filter */
-	public userFilter: BehaviorSubject<User|undefined>			=
-		new BehaviorSubject<User|undefined>(undefined)
-	;
-
 	/** @see SearchBarComponent.filterChange */
 	@Output() public readonly userFilterChange: EventEmitter<BehaviorSubject<User|undefined>>	=
 		new EventEmitter<BehaviorSubject<User|undefined>>()
