@@ -2,6 +2,7 @@ import {SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
+import {mergeMap} from 'rxjs/operators/mergeMap';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {
@@ -13,6 +14,7 @@ import {
 } from '../proto';
 import {cacheObservable} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
+import {staticDomSanitizer} from '../util/static-services';
 import {UserPresence} from './enums';
 import {reviewMax} from './review-max';
 
@@ -21,25 +23,32 @@ import {reviewMax} from './review-max';
  * Represents a user profile.
  */
 export class User {
+	/** @ignore */
+	private static defaultAvatar: Promise<SafeUrl>		= staticDomSanitizer.then(domSanitizer =>
+		domSanitizer.bypassSecurityTrustUrl('/assets/img/favicon/favicon-256x256.png')
+	);
+
+	/** @ignore */
+	private static defaultCoverImage: Promise<SafeUrl>	= staticDomSanitizer.then(domSanitizer =>
+		domSanitizer.bypassSecurityTrustUrl('/assets/img/coverimage.png')
+	);
+
+
 	/** Image URI for avatar / profile picture. */
-	public readonly avatar: Observable<SafeUrl|string|undefined>	=
-		cacheObservable(
-			this.avatarInternal.pipe(
-				map(avatar => avatar || '/assets/img/favicon/favicon-256x256.png')
-			),
-			''
-		)
-	;
+	public readonly avatar: Observable<SafeUrl|undefined>	= cacheObservable(
+		this.avatarInternal.pipe(
+			mergeMap(async avatar => avatar || User.defaultAvatar)
+		),
+		undefined
+	);
 
 	/** Image URI for cover image. */
-	public readonly coverImage: Observable<SafeUrl|string|undefined>	=
-		cacheObservable(
-			this.coverImageInternal.pipe(
-				map(coverImage => coverImage || '/assets/img/walken.png')
-			),
-			''
-		)
-	;
+	public readonly coverImage: Observable<SafeUrl|undefined>	= cacheObservable(
+		this.coverImageInternal.pipe(
+			mergeMap(async coverImage => coverImage || User.defaultCoverImage)
+		),
+		undefined
+	);
 
 	/** @see IAccountUserProfile.description */
 	public readonly description: Observable<string>	= cacheObservable(
@@ -48,25 +57,27 @@ export class User {
 	);
 
 	/** @see IAccountUserProfile.externalUsernames */
-	public readonly externalUsernames: Observable<{[k: string]: string}>	=
+	public readonly externalUsernames: Observable<{[k: string]: string}|undefined>	=
 		cacheObservable(
 			this.accountUserProfile.watch().pipe(
 				map(({externalUsernames}) => externalUsernames || {})
 			),
-			{}
+			undefined
 		)
 	;
 
 	/** @see IAccountUserProfileExtra */
-	public readonly extra	= memoize(() => cacheObservable(
-		this.accountUserProfileExtra.watch(),
-		{}
-	));
+	public readonly extra: () => Observable<IAccountUserProfileExtra|undefined>	=
+		memoize(() => cacheObservable(
+			this.accountUserProfileExtra.watch(),
+			undefined
+		))
+	;
 
 	/** @see IAccountUserProfile.hasPremium */
-	public readonly hasPremium: Observable<boolean>	= cacheObservable(
+	public readonly hasPremium: Observable<boolean|undefined>	= cacheObservable(
 		this.accountUserProfile.watch().pipe(map(({hasPremium}) => hasPremium)),
-		false
+		undefined
 	);
 
 	/** @see IAccountUserProfile.name */
@@ -76,17 +87,17 @@ export class User {
 	);
 
 	/** Average rating. */
-	public readonly rating	= memoize(() => cacheObservable(
+	public readonly rating: () => Observable<number|undefined>	= memoize(() => cacheObservable(
 		this.reviews.watch().pipe(map(reviews =>
 			reviews.size < 1 ?
-				0 :
+				undefined :
 				(
 					Array.from(reviews.values()).
 						map(review => Math.min(review.rating, reviewMax)).
 						reduce((a, b) => a + b, 0)
 				) / reviews.size
 		)),
-		0
+		undefined
 	));
 
 	/** Indicates whether user data is ready to be consumed. */
@@ -107,9 +118,9 @@ export class User {
 	);
 
 	/** @see IAccountUserProfile.userType */
-	public readonly userType: Observable<AccountUserTypes>	= cacheObservable(
+	public readonly userType: Observable<AccountUserTypes|undefined>	= cacheObservable(
 		this.accountUserProfile.watch().pipe(map(({userType}) => userType)),
-		AccountUserTypes.Standard
+		undefined
 	);
 
 	/** Fetches user data and sets ready to true when complete. */

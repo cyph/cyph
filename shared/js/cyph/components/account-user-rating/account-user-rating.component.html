@@ -1,11 +1,14 @@
-<div fxLayout='column' *ngIf='user'>
+<div fxLayout='column' [class.visibility-hidden]='
+	(user?.rating() | async) === undefined ||
+	(user?.reviews.watch() | async) === undefined
+'>
 	<div fxLayout='row'>
 		<mat-icon *ngFor='let star of getStars(user?.rating() | async); trackBy: trackByIndex'>
 			{{star}}
 		</mat-icon>
 	</div>
 	<div *ngIf='user?.reviews.watch() | async as reviews'>
-		<span *ngIf='reviews.size > 0'>
+		<span>
 			{{numberToString((user?.rating() | async) * ratingFactor)}}/5&nbsp;
 		</span>
 		<span>
