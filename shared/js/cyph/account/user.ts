@@ -11,7 +11,7 @@ import {
 	IAccountUserProfileExtra,
 	IReview
 } from '../proto';
-import {flattenObservablePromise} from '../util/flatten-observable-promise';
+import {cacheObservable} from '../util/flatten-observable-promise';
 import {normalize} from '../util/formatting';
 import {UserPresence} from './enums';
 import {reviewMax} from './review-max';
@@ -23,7 +23,7 @@ import {reviewMax} from './review-max';
 export class User {
 	/** Image URI for avatar / profile picture. */
 	public readonly avatar: Observable<SafeUrl|string|undefined>	=
-		flattenObservablePromise(
+		cacheObservable(
 			this.avatarInternal.pipe(
 				map(avatar => avatar || '/assets/img/favicon/favicon-256x256.png')
 			),
@@ -33,7 +33,7 @@ export class User {
 
 	/** Image URI for cover image. */
 	public readonly coverImage: Observable<SafeUrl|string|undefined>	=
-		flattenObservablePromise(
+		cacheObservable(
 			this.coverImageInternal.pipe(
 				map(coverImage => coverImage || '/assets/img/walken.png')
 			),
@@ -42,14 +42,14 @@ export class User {
 	;
 
 	/** @see IAccountUserProfile.description */
-	public readonly description: Observable<string>	= flattenObservablePromise(
+	public readonly description: Observable<string>	= cacheObservable(
 		this.accountUserProfile.watch().pipe(map(({description}) => description)),
 		''
 	);
 
 	/** @see IAccountUserProfile.externalUsernames */
 	public readonly externalUsernames: Observable<{[k: string]: string}>	=
-		flattenObservablePromise(
+		cacheObservable(
 			this.accountUserProfile.watch().pipe(
 				map(({externalUsernames}) => externalUsernames || {})
 			),
@@ -58,25 +58,25 @@ export class User {
 	;
 
 	/** @see IAccountUserProfileExtra */
-	public readonly extra	= memoize(() => flattenObservablePromise(
+	public readonly extra	= memoize(() => cacheObservable(
 		this.accountUserProfileExtra.watch(),
 		{}
 	));
 
 	/** @see IAccountUserProfile.hasPremium */
-	public readonly hasPremium: Observable<boolean>	= flattenObservablePromise(
+	public readonly hasPremium: Observable<boolean>	= cacheObservable(
 		this.accountUserProfile.watch().pipe(map(({hasPremium}) => hasPremium)),
 		false
 	);
 
 	/** @see IAccountUserProfile.name */
-	public readonly name: Observable<string>	= flattenObservablePromise(
+	public readonly name: Observable<string>	= cacheObservable(
 		this.accountUserProfile.watch().pipe(map(({name}) => name)),
 		''
 	);
 
 	/** Average rating. */
-	public readonly rating	= memoize(() => flattenObservablePromise(
+	public readonly rating	= memoize(() => cacheObservable(
 		this.reviews.watch().pipe(map(reviews =>
 			reviews.size < 1 ?
 				0 :
@@ -93,7 +93,7 @@ export class User {
 	public ready: boolean	= false;
 
 	/** @see IAccountUserProfile.realUsername */
-	public readonly realUsername: Observable<string>	= flattenObservablePromise(
+	public readonly realUsername: Observable<string>	= cacheObservable(
 		this.accountUserProfile.watch().pipe(map(({realUsername}) =>
 			normalize(realUsername) === this.username ? realUsername : this.username
 		)),
@@ -101,13 +101,13 @@ export class User {
 	);
 
 	/** @see IAccountUserProfile.status */
-	public readonly status: Observable<UserPresence>	= flattenObservablePromise(
+	public readonly status: Observable<UserPresence>	= cacheObservable(
 		this.accountUserPresence.watch().pipe(map(({status}) => status)),
 		UserPresence.Offline
 	);
 
 	/** @see IAccountUserProfile.userType */
-	public readonly userType: Observable<AccountUserTypes>	= flattenObservablePromise(
+	public readonly userType: Observable<AccountUserTypes>	= cacheObservable(
 		this.accountUserProfile.watch().pipe(map(({userType}) => userType)),
 		AccountUserTypes.Standard
 	);

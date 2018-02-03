@@ -14,7 +14,7 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {EnvService} from '../../services/env.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
-import {observableToBehaviorSubject} from '../../util/flatten-observable-promise';
+import {cacheObservable} from '../../util/flatten-observable-promise';
 
 
 /**
@@ -31,41 +31,39 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
 
 	/** @see AccountChatMessageBoxComponent.messageType */
-	public readonly messageType: BehaviorSubject<ChatMessageValueTypes>	=
-		observableToBehaviorSubject(
-			this.activatedRoute.data.pipe(map(o => {
-				const messageType: ChatMessageValueTypes	= o.messageType;
+	public readonly messageType: BehaviorSubject<ChatMessageValueTypes>	= cacheObservable(
+		this.activatedRoute.data.pipe(map(o => {
+			const messageType: ChatMessageValueTypes	= o.messageType;
 
-				const value	= typeof o.value === 'function' ? o.value() : o.value;
+			const value	= typeof o.value === 'function' ? o.value() : o.value;
 
-				if (value !== undefined) {
-					switch (messageType) {
-						case ChatMessageValueTypes.CalendarInvite:
-							this.accountChatService.chat.currentMessage.calendarInvite	= value;
-							break;
+			if (value !== undefined) {
+				switch (messageType) {
+					case ChatMessageValueTypes.CalendarInvite:
+						this.accountChatService.chat.currentMessage.calendarInvite	= value;
+						break;
 
-						case ChatMessageValueTypes.Form:
-							this.accountChatService.chat.currentMessage.form			= value;
-							break;
+					case ChatMessageValueTypes.Form:
+						this.accountChatService.chat.currentMessage.form			= value;
+						break;
 
-						case ChatMessageValueTypes.Quill:
-							this.accountChatService.chat.currentMessage.quill			= value;
-							break;
+					case ChatMessageValueTypes.Quill:
+						this.accountChatService.chat.currentMessage.quill			= value;
+						break;
 
-						case ChatMessageValueTypes.Text:
-							this.accountChatService.chat.currentMessage.text			= value;
-							break;
+					case ChatMessageValueTypes.Text:
+						this.accountChatService.chat.currentMessage.text			= value;
+						break;
 
-						default:
-							throw new Error('Invalid chat message type.');
-					}
+					default:
+						throw new Error('Invalid chat message type.');
 				}
+			}
 
-				return messageType;
-			})),
-			ChatMessageValueTypes.Quill
-		)
-	;
+			return messageType;
+		})),
+		ChatMessageValueTypes.Quill
+	);
 
 	/** @see AccountContactsSearchComponent.userFilter */
 	public readonly recipient: BehaviorSubject<User|undefined>			=

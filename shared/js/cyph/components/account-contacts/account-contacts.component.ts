@@ -12,7 +12,7 @@ import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
-import {observableToBehaviorSubject} from '../../util/flatten-observable-promise';
+import {cacheObservable} from '../../util/flatten-observable-promise';
 import {sleep} from '../../util/wait';
 import {AccountContactsSearchComponent} from '../account-contacts-search';
 
@@ -48,7 +48,7 @@ export class AccountContactsComponent implements AfterViewInit, OnInit {
 	;
 
 	/** Full contact list with active contact filtered out. */
-	public readonly filteredContactList: BehaviorSubject<User[]>	= observableToBehaviorSubject(
+	public readonly filteredContactList: BehaviorSubject<User[]>	= cacheObservable(
 		this.routeReactiveContactList.pipe(
 			map(contacts => contacts.filter(contact => !this.isActive(contact)))
 		),

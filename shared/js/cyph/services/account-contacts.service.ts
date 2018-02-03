@@ -6,7 +6,7 @@ import {take} from 'rxjs/operators/take';
 import {User} from '../account/user';
 import {StringProto} from '../proto';
 import {filterDuplicatesOperator, filterUndefined} from '../util/filter';
-import {flattenObservablePromise} from '../util/flatten-observable-promise';
+import {cacheObservable} from '../util/flatten-observable-promise';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {AccountUserLookupService} from './account-user-lookup.service';
@@ -28,7 +28,7 @@ export class AccountContactsService {
 	public readonly contactList: Observable<User[]>;
 
 	/** List of usernames of contacts for current user. */
-	public readonly contactUsernames: Observable<string[]>	= flattenObservablePromise(
+	public readonly contactUsernames: Observable<string[]>	= cacheObservable(
 		this.accountDatabaseService.watchListKeys('contactUsernames').pipe(
 			mergeMap(async keys =>
 				(await Promise.all(
@@ -138,7 +138,7 @@ export class AccountContactsService {
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
 	) {
-		this.contactList	= flattenObservablePromise(
+		this.contactList	= cacheObservable(
 			this.contactUsernames.pipe(mergeMap(async usernames =>
 				filterUndefined(await Promise.all(
 					usernames.map(async username =>

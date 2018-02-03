@@ -23,7 +23,7 @@ import {
 	IAccountUserPublicKeys
 } from '../../proto';
 import {filterUndefinedOperator} from '../../util/filter';
-import {flattenObservablePromise} from '../../util/flatten-observable-promise';
+import {cacheObservable, flattenObservable} from '../../util/flatten-observable-promise';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
 import {deserialize, serialize} from '../../util/serialization';
@@ -454,7 +454,7 @@ export class AccountDatabaseService {
 				asyncMap.setValue(await f(await asyncMap.getValue()))
 			),
 			watch: memoize(() => this.watchListKeys(url).pipe(mergeMap(getValueHelper))),
-			watchSize: () => flattenObservablePromise(async () => (await baseAsyncMap).watchSize())
+			watchSize: () => flattenObservable(async () => (await baseAsyncMap).watchSize())
 		};
 
 		return asyncMap;
@@ -879,7 +879,7 @@ export class AccountDatabaseService {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
-		return flattenObservablePromise(
+		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
 				mergeMap(async () => {
 					const processedURL	= await this.normalizeURL(url);
@@ -927,7 +927,7 @@ export class AccountDatabaseService {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>[]> {
-		return flattenObservablePromise(
+		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
 				mergeMap(async () => {
 					const processedURL	= await this.normalizeURL(url);
@@ -961,21 +961,19 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.watchListKeyPushes */
 	public watchListKeyPushes (url: MaybePromise<string>) : Observable<string> {
-		return flattenObservablePromise(
-			this.currentUser.pipe(
-				mergeMap(async () =>
-					this.databaseService.watchListKeyPushes(await this.normalizeURL(url))
-				),
-				mergeMap(
-					o => o
-				)
+		return this.currentUser.pipe(
+			mergeMap(async () =>
+				this.databaseService.watchListKeyPushes(await this.normalizeURL(url))
+			),
+			mergeMap(
+				o => o
 			)
 		);
 	}
 
 	/** @see DatabaseService.watchListKeys */
 	public watchListKeys (url: MaybePromise<string>) : Observable<string[]> {
-		return flattenObservablePromise(
+		return cacheObservable(
 			this.currentUser.pipe(
 				mergeMap(async () =>
 					this.databaseService.watchListKeys(await this.normalizeURL(url))
@@ -996,7 +994,7 @@ export class AccountDatabaseService {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Observable<ITimedValue<T>> {
-		return flattenObservablePromise(
+		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
 				mergeMap(async () => {
 					const processedURL	= await this.normalizeURL(url);

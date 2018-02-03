@@ -3,41 +3,36 @@ import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
 
 
-/**
- * Wraps an async Observable with a synchronously created one.
- * @param initialValue If included, will create a BehaviorSubject instead (for caching).
- */
-export const flattenObservablePromise	= <T> (
-	observable:
-		Observable<T>|
-		Promise<Observable<T>>|
-		(() => Observable<T>)|
-		(() => Promise<Observable<T>>)
-	,
-	initialValue?: T
-) : Observable<T> => {
-	const subscribe	= async (observer: Observer<T>) =>
-		(
-			await (typeof observable === 'function' ? observable() : observable)
-		).subscribe(
-			observer
-		)
-	;
+/** A possibly-async Observable. */
+type AsyncObservable<T>	=
+	Observable<T>|
+	Promise<Observable<T>>|
+	(() => Observable<T>)|
+	(() => Promise<Observable<T>>)
+;
 
-	if (initialValue !== undefined) {
-		const subject	= new BehaviorSubject(initialValue);
-		subscribe(subject);
-		return subject;
-	}
-	else {
-		return new Observable<T>(observer => { subscribe(observer); });
-	}
+/** @ignore */
+const subscribeFactory	= <T> (observable: AsyncObservable<T>) => async (observer: Observer<T>) =>
+	(
+		await (typeof observable === 'function' ? observable() : observable)
+	).subscribe(
+		observer
+	)
+;
+
+/** Wraps an possibly-async Observable with a synchronously created BehaviorSubject. */
+export const cacheObservable	= <T> (
+	observable: AsyncObservable<T>,
+	initialValue: T
+) : BehaviorSubject<T> => {
+	const subscribe	= subscribeFactory(observable);
+	const subject	= new BehaviorSubject(initialValue);
+	subscribe(subject);
+	return subject;
 };
 
-/** @see flattenObservablePromise */
-export const observableToBehaviorSubject	= <T> (
-	observable: Observable<T>,
-	initialValue: T
-) : BehaviorSubject<T> =>
-	<BehaviorSubject<T>> flattenObservablePromise(observable, initialValue)
-;
+/** Wraps a possibly-async Observable with a synchronously created one. */
+export const flattenObservable	= <T> (observable: AsyncObservable<T>) : Observable<T> => {
+	const subscribe	= subscribeFactory(observable);
+	return new Observable<T>(observer => { subscribe(observer); });
+};

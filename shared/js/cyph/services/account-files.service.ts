@@ -39,7 +39,7 @@ import {
 	IForm
 } from '../proto';
 import {filterUndefined} from '../util/filter';
-import {flattenObservablePromise} from '../util/flatten-observable-promise';
+import {cacheObservable} from '../util/flatten-observable-promise';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';
@@ -84,7 +84,7 @@ export class AccountFilesService {
 
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
 	public readonly filesList: Observable<(IAccountFileRecord&{owner: string})[]>	=
-		flattenObservablePromise(
+		cacheObservable(
 			this.accountDatabaseService.watchList(
 				'fileReferences',
 				AccountFileReference
@@ -286,7 +286,7 @@ export class AccountFilesService {
 		filesList: Observable<(IAccountFileRecord&T)[]>,
 		filterRecordTypes: AccountFileRecord.RecordTypes
 	) : Observable<(IAccountFileRecord&T)[]> {
-		return flattenObservablePromise(
+		return cacheObservable(
 			filesList.pipe(map(files => files.filter(({owner, recordType}) =>
 				!!owner && recordType === filterRecordTypes
 			))),
