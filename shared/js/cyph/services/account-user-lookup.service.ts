@@ -5,6 +5,7 @@ import {
 	AccountUserPresence,
 	AccountUserProfile,
 	AccountUserProfileExtra,
+	AccountUserTypes,
 	BooleanMapProto,
 	DataURIProto,
 	Review
@@ -13,6 +14,7 @@ import {normalize} from '../util/formatting';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
+import {EnvService} from './env.service';
 
 
 /**
@@ -94,7 +96,7 @@ export class AccountUserLookupService {
 				throw new Error('User does not exist.');
 			}
 
-			return new User(
+			const user	= new User(
 				username,
 				this.accountDatabaseService.watch(
 					`${url}/avatar`,
@@ -150,9 +152,45 @@ export class AccountUserLookupService {
 				),
 				preFetch
 			);
+
+			const userTypeWhitelist	= await this.userTypeWhitelist();
+
+			if (
+				userTypeWhitelist !== undefined &&
+				userTypeWhitelist.indexOf((await user.accountUserProfile.getValue()).userType) < 0
+			) {
+				throw new Error('Non-whitelisted user type.');
+			}
+
+			return user;
 		}).catch(
 			() => undefined
 		);
+	}
+
+	/** If applicable, a whitelist of acceptable user types for this user to interact with. */
+	public async userTypeWhitelist () : Promise<AccountUserTypes[]|undefined> {
+		if (!this.accountDatabaseService.currentUser.value) {
+			return;
+		}
+
+		if (this.envService.isTelehealth) {
+			const {userType}	= await this.accountDatabaseService.currentUser.value.
+				user.
+				accountUserProfile.
+				getValue()
+			;
+
+			if (userType === AccountUserTypes.Standard) {
+				return [
+					AccountUserTypes.Org,
+					AccountUserTypes.TelehealthAdmin,
+					AccountUserTypes.TelehealthDoctor
+				];
+			}
+		}
+
+		return;
 	}
 
 	constructor (
@@ -160,6 +198,9 @@ export class AccountUserLookupService {
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
-		private readonly databaseService: DatabaseService
+		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly envService: EnvService
 	) {}
 }
