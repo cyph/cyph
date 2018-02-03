@@ -94,10 +94,10 @@ export class EnvDeploy {
 
 	/** Firebase-related config. */
 	public readonly firebaseConfig				= {
-		apiKey: environment.firebaseApiKey,
-		authDomain: `${environment.firebaseProject}.firebaseapp.com`,
-		databaseURL: `wss://${environment.firebaseProject}.firebaseio.com`, // `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`,
-		storageBucket: `${environment.firebaseProject}.appspot.com`,
+		apiKey: environment.firebase.apiKey,
+		authDomain: `${environment.firebase.project}.firebaseapp.com`,
+		databaseURL: `wss://${environment.firebase.project}.firebaseio.com`, // `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`,
+		storageBucket: `${environment.firebase.project}.appspot.com`,
 	};
 
 	/** Content Security Policy defined in shared/csp. */

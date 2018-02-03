@@ -477,6 +477,15 @@ message Environment {
 		bool whiteLabel = 14;
 	}
 
+	/** Firebase configuration. */
+	message Firebase {
+		/** API key. */
+		required string apiKey = 1;
+
+		/** Project ID. */
+		required string project = 2;
+	}
+
 	/**
 	 * Exists if in a custom build environment.
 	 * @see CustomBuild
@@ -486,17 +495,14 @@ message Environment {
 	/** Name of this environment. */
 	required string envName = 2;
 
-	/** Firebase API key. */
-	required string firebaseApiKey = 3;
-
-	/** Firebase project ID. */
-	required string firebaseProject = 4;
+	/** @see Firebase */
+	required Firebase firebase = 3;
 
 	/** Indicates whether this is local development environment. */
-	required bool local = 5;
+	required bool local = 4;
 
 	/** Indicates whether this is prod. */
-	required bool production = 6;
+	required bool production = 5;
 }
 
 /** Represents a form that a user can submit responses to. */
