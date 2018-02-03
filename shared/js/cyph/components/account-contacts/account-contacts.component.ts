@@ -7,7 +7,6 @@ import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {User, UserPresence} from '../../account';
-import {AccountContactsSearchComponent} from '../../components/account-contacts-search';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -15,6 +14,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {observableToBehaviorSubject} from '../../util/flatten-observable-promise';
 import {sleep} from '../../util/wait';
+import {AccountContactsSearchComponent} from '../account-contacts-search';
 
 
 /**

@@ -1,12 +1,12 @@
 import {Component, Input, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {User} from '../../account/user';
-import {ChatMessageBoxComponent} from '../../components/chat-message-box';
 import {ChatMessageValueTypes} from '../../proto';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {calendarInviteReasons} from '../../verticals/telehealth/calendar-invite-reasons';
+import {ChatMessageBoxComponent} from '../chat-message-box';
 
 
 /**
