@@ -35,12 +35,8 @@ export class AccountOrganizationsService {
 					}
 
 					if (
-						[
-							AccountUserTypes.Org,
-							AccountUserTypes.TelehealthOrg
-						].indexOf(
-							(await org.accountUserProfile.getValue()).userType
-						) < 0
+						(await org.accountUserProfile.getValue()).userType !==
+						AccountUserTypes.Org
 					) {
 						return of([]);
 					}

@@ -199,7 +199,6 @@ enum AccountUserTypes {
 	Org = 1;
 	TelehealthAdmin = 2;
 	TelehealthDoctor = 3;
-	TelehealthOrg = 4;
 }
 
 /** AGSE-PKI certificate. */
