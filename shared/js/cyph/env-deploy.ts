@@ -48,10 +48,10 @@ export class EnvDeploy {
 			`CYPH-IM/`
 	;
 
-	/** Base URL for a new me cyph link ("https://cyph.ws/#me/" or equivalent). */
-	public readonly cyphMeBaseUrl: string		= `${this.newCyphBaseUrl}#me/`;
+	/** Base URL for an accounts link ("https://cyph.ws/#account/" or equivalent). */
+	public readonly cyphMeBaseUrl: string		= `${this.newCyphBaseUrl}#account/`;
 
-	/** URL for starting a new me cyph ("https://cyph.me/" or equivalent). */
+	/** URL for an accounts link ("https://cyph.me/" or equivalent). */
 	public readonly cyphMeUrl: string			= this.useBaseUrl ?
 		this.cyphMeBaseUrl :
 		this.isOnion ?
