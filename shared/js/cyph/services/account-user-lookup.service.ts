@@ -81,91 +81,101 @@ export class AccountUserLookupService {
 
 	/** Tries to to get User object for the specified user. */
 	public async getUser (user: string|User, preFetch: boolean = false) : Promise<User|undefined> {
-		if (!user) {
+		const userValue	= await (async () => {
+			if (!user) {
+				return;
+			}
+			else if (user instanceof User) {
+				return user;
+			}
+
+			const username	= normalize(user);
+			const url		= `users/${username}`;
+
+			return getOrSetDefaultAsync(this.userCache, username, async () => {
+				if (!(await this.exists(username))) {
+					throw new Error('User does not exist.');
+				}
+
+				return new User(
+					username,
+					this.accountDatabaseService.watch(
+						`${url}/avatar`,
+						DataURIProto,
+						SecurityModels.public,
+						undefined,
+						true
+					).pipe(map(({value}) =>
+						/* tslint:disable-next-line:strict-type-predicates */
+						typeof value === 'string' || Object.keys(value).length > 0 ?
+							value :
+							undefined
+					)),
+					this.accountDatabaseService.watch(
+						`${url}/coverImage`,
+						DataURIProto,
+						SecurityModels.public,
+						undefined,
+						true
+					).pipe(map(({value}) =>
+						/* tslint:disable-next-line:strict-type-predicates */
+						typeof value === 'string' || Object.keys(value).length > 0 ?
+							value :
+							undefined
+					)),
+					this.databaseService.getAsyncValue(
+						`${url}/presence`,
+						AccountUserPresence
+					),
+					this.accountDatabaseService.getAsyncValue(
+						`${url}/publicProfile`,
+						AccountUserProfile,
+						SecurityModels.public,
+						undefined,
+						true
+					),
+					this.accountDatabaseService.getAsyncValue(
+						`${url}/publicProfileExtra`,
+						AccountUserProfileExtra,
+						SecurityModels.public,
+						undefined,
+						true
+					),
+					this.accountDatabaseService.getAsyncValue(
+						`${url}/organizationMembers`,
+						BooleanMapProto,
+						SecurityModels.public,
+						undefined,
+						true
+					),
+					this.accountDatabaseService.getAsyncMap(
+						`${url}/reviews`,
+						Review,
+						SecurityModels.publicFromOtherUsers,
+						undefined,
+						true
+					),
+					preFetch
+				);
+			}).catch(
+				() => undefined
+			);
+		})();
+
+		if (!userValue) {
 			return;
 		}
-		else if (user instanceof User) {
-			return user;
+
+		const userTypeWhitelist	= await this.userTypeWhitelist();
+
+		if (
+			userTypeWhitelist !== undefined &&
+			userTypeWhitelist.indexOf((await userValue.accountUserProfile.getValue()).userType) < 0
+		) {
+			return;
 		}
 
-		const username	= normalize(user);
-		const url		= `users/${username}`;
-
-		return getOrSetDefaultAsync(this.userCache, username, async () => {
-			if (!(await this.exists(username))) {
-				throw new Error('User does not exist.');
-			}
-
-			const user	= new User(
-				username,
-				this.accountDatabaseService.watch(
-					`${url}/avatar`,
-					DataURIProto,
-					SecurityModels.public,
-					undefined,
-					true
-				).pipe(map(({value}) =>
-					/* tslint:disable-next-line:strict-type-predicates */
-					typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
-				)),
-				this.accountDatabaseService.watch(
-					`${url}/coverImage`,
-					DataURIProto,
-					SecurityModels.public,
-					undefined,
-					true
-				).pipe(map(({value}) =>
-					/* tslint:disable-next-line:strict-type-predicates */
-					typeof value === 'string' || Object.keys(value).length > 0 ? value : undefined
-				)),
-				this.databaseService.getAsyncValue(
-					`${url}/presence`,
-					AccountUserPresence
-				),
-				this.accountDatabaseService.getAsyncValue(
-					`${url}/publicProfile`,
-					AccountUserProfile,
-					SecurityModels.public,
-					undefined,
-					true
-				),
-				this.accountDatabaseService.getAsyncValue(
-					`${url}/publicProfileExtra`,
-					AccountUserProfileExtra,
-					SecurityModels.public,
-					undefined,
-					true
-				),
-				this.accountDatabaseService.getAsyncValue(
-					`${url}/organizationMembers`,
-					BooleanMapProto,
-					SecurityModels.public,
-					undefined,
-					true
-				),
-				this.accountDatabaseService.getAsyncMap(
-					`${url}/reviews`,
-					Review,
-					SecurityModels.publicFromOtherUsers,
-					undefined,
-					true
-				),
-				preFetch
-			);
-
-			const userTypeWhitelist	= await this.userTypeWhitelist();
-
-			if (
-				userTypeWhitelist !== undefined &&
-				userTypeWhitelist.indexOf((await user.accountUserProfile.getValue()).userType) < 0
-			) {
-				throw new Error('Non-whitelisted user type.');
-			}
-
-			return user;
-		}).catch(
-			() => undefined
-		);
+		return userValue;
 	}
 
 	/** If applicable, a whitelist of acceptable user types for this user to interact with. */

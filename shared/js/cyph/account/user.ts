@@ -24,14 +24,18 @@ import {reviewMax} from './review-max';
  */
 export class User {
 	/** @ignore */
-	private static defaultAvatar: Promise<SafeUrl>		= staticDomSanitizer.then(domSanitizer =>
-		domSanitizer.bypassSecurityTrustUrl('/assets/img/favicon/favicon-256x256.png')
-	);
+	private static readonly defaultAvatar: Promise<SafeUrl>		=
+		staticDomSanitizer.then(domSanitizer =>
+			domSanitizer.bypassSecurityTrustUrl('/assets/img/favicon/favicon-256x256.png')
+		)
+	;
 
 	/** @ignore */
-	private static defaultCoverImage: Promise<SafeUrl>	= staticDomSanitizer.then(domSanitizer =>
-		domSanitizer.bypassSecurityTrustUrl('/assets/img/coverimage.png')
-	);
+	private static readonly defaultCoverImage: Promise<SafeUrl>	=
+		staticDomSanitizer.then(domSanitizer =>
+			domSanitizer.bypassSecurityTrustUrl('/assets/img/coverimage.png')
+		)
+	;
 
 
 	/** Image URI for avatar / profile picture. */
