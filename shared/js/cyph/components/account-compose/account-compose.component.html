@@ -30,10 +30,10 @@
 					*ngIf='(sent | async) === false'
 				>
 					<cyph-account-contacts-search
-						[class.visibility-hidden]='
+						[class.visibility-hidden]='!!searchUsername.value && (
 							(messageType | async) === chatMessageValueTypes.CalendarInvite ||
 							(messageType | async) === chatMessageValueTypes.Form
-						'
+						)'
 						[placeholder]='stringsService.to'
 						[searchUsername]='searchUsername'
 						(userFilterChange)='$event.subscribe(recipient)'

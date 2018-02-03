@@ -110,6 +110,12 @@ a {
 	}
 }
 
+[mat-fab].fixed-fab {
+	position: fixed;
+	right: 42px;
+	bottom: 42px;
+}
+
 mat-option img {
 	height: 25px;
 	vertical-align: middle;

@@ -156,4 +156,15 @@
 		mode='indeterminate'
 		*ngIf='accountFilesService.showSpinner'
 	></mat-progress-spinner>
+
+	<button
+		mat-fab
+		cyphTranslate
+		matTooltip='New Appointment Request'
+		matTooltipPosition='above'
+		[routerLink]='accountService.routeRoot + "request-appointment"'
+		class='fixed-fab'
+	>
+		<mat-icon>add</mat-icon>
+	</button>
 </div>
