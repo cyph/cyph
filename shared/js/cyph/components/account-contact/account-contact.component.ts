@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges} from '@angular/core';
 import {User, UserPresence} from '../../account';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
@@ -13,7 +13,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-contact.component.scss'],
 	templateUrl: './account-contact.component.html'
 })
-export class AccountContactComponent implements OnInit {
+export class AccountContactComponent implements OnChanges {
 	/** Indicates whether links should be enabled. */
 	@Input() public clickable: boolean	= true;
 
@@ -24,7 +24,7 @@ export class AccountContactComponent implements OnInit {
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
+	public async ngOnChanges () : Promise<void> {
 		if (this.contact) {
 			await this.contact.fetch();
 		}
