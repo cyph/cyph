@@ -14,8 +14,7 @@
 		<div *ngIf='(currentUser.user.userType | async) !== undefined'>
 			<h2 *ngIf='
 				envService.isTelehealth && (
-					(currentUser.user.userType | async) === accountUserTypes.Standard ||
-					(currentUser.user.userType | async) === accountUserTypes.TelehealthPatient
+					(currentUser.user.userType | async) === accountUserTypes.Standard
 				);
 				else doctorMessage;
 			'>

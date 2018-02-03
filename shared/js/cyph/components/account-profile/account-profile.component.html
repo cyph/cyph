@@ -194,8 +194,7 @@
 		fxFlexFill
 		fxLayout='row'
 		*ngIf='
-			(user?.userType | async) !== accountUserTypes.Standard &&
-			(user?.userType | async) !== accountUserTypes.TelehealthPatient;
+			(user?.userType | async) !== accountUserTypes.Standard;
 			else standardProfile;
 		'
 	>
@@ -273,15 +272,7 @@
 				</div>
 			</div>
 
-			<div
-				fxLayout='column'
-				fxLayoutAlign='center center'
-				*ngIf='
-					(user?.userType | async) === accountUserTypes.TelehealthDoctor ||
-					(user?.userType | async) === accountUserTypes.TelehealthOrg ||
-					(user?.userType | async) === accountUserTypes.TelehealthPatient
-				'
-			>
+			<div fxLayout='column' fxLayoutAlign='center center'>
 				<mat-card
 					class='animated slideInDown'
 					fxLayout='column'
@@ -289,7 +280,7 @@
 					[class.fadeOutUp]='(accountService.transition | async) === true'
 				>
 					<mat-card-content
-						*ngIf='(user?.userType | async) === accountUserTypes.TelehealthPatient'
+						*ngIf='(user?.userType | async) === accountUserTypes.Standard'
 					>
 						<div fxLayout='column'>
 							<h2 cyphTranslate>Patient Info</h2>
