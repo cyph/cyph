@@ -63,16 +63,6 @@ export class User {
 		{}
 	));
 
-	/** Fetches user data and sets ready to true when complete. */
-	public async fetch () : Promise<void> {
-		if (this.ready) {
-			return;
-		}
-
-		await this.accountUserProfile.getValue();
-		this.ready	= true;
-	}
-
 	/** @see IAccountUserProfile.hasPremium */
 	public readonly hasPremium: Observable<boolean>	= flattenObservablePromise(
 		this.accountUserProfile.watch().pipe(map(({hasPremium}) => hasPremium)),
@@ -121,6 +111,16 @@ export class User {
 		this.accountUserProfile.watch().pipe(map(({userType}) => userType)),
 		AccountUserTypes.Standard
 	);
+
+	/** Fetches user data and sets ready to true when complete. */
+	public async fetch () : Promise<void> {
+		if (this.ready) {
+			return;
+		}
+
+		await this.accountUserProfile.getValue();
+		this.ready	= true;
+	}
 
 	constructor (
 		/** Username (all lowercase). */

@@ -68,15 +68,15 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	;
 
 	/** @see AccountContactsSearchComponent.userFilter */
-	public recipient: BehaviorSubject<User|undefined>	=
+	public readonly recipient: BehaviorSubject<User|undefined>			=
 		new BehaviorSubject<User|undefined>(undefined)
 	;
 
 	/** @see AccountContactsSearchComponent.searchUsername */
-	public searchUsername: BehaviorSubject<string>		= new BehaviorSubject('');
+	public readonly searchUsername: BehaviorSubject<string>				= new BehaviorSubject('');
 
 	/** Sends message. */
-	public readonly send: () => Promise<void>			= async () => {
+	public readonly send: () => Promise<void>							= async () => {
 		if (!this.recipient.value || !this.accountDatabaseService.currentUser.value) {
 			return;
 		}
@@ -133,7 +133,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	};
 
 	/** Indicates whether message has been sent, or undefined for in-progress. */
-	public sent: BehaviorSubject<boolean|undefined>		=
+	public sent: BehaviorSubject<boolean|undefined>						=
 		new BehaviorSubject<boolean|undefined>(false)
 	;
 
