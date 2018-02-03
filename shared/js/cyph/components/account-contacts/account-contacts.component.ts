@@ -12,7 +12,7 @@ import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
-import {cacheObservable} from '../../util/flatten-observable-promise';
+import {cacheObservable} from '../../util/flatten-observable';
 import {sleep} from '../../util/wait';
 import {AccountContactsSearchComponent} from '../account-contacts-search';
 

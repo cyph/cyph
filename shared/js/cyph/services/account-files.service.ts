@@ -39,7 +39,7 @@ import {
 	IForm
 } from '../proto';
 import {filterUndefined} from '../util/filter';
-import {cacheObservable} from '../util/flatten-observable-promise';
+import {cacheObservable} from '../util/flatten-observable';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';

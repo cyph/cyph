@@ -5,7 +5,7 @@ import {mergeMap} from 'rxjs/operators/mergeMap';
 import {User} from '../account';
 import {AccountUserTypes} from '../proto';
 import {filterUndefined} from '../util/filter';
-import {cacheObservable} from '../util/flatten-observable-promise';
+import {cacheObservable} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {AccountUserLookupService} from './account-user-lookup.service';

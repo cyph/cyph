@@ -14,7 +14,7 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {EnvService} from '../../services/env.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
-import {cacheObservable} from '../../util/flatten-observable-promise';
+import {cacheObservable} from '../../util/flatten-observable';
 
 
 /**

@@ -11,7 +11,7 @@ import {
 	IAccountUserProfileExtra,
 	IReview
 } from '../proto';
-import {cacheObservable} from '../util/flatten-observable-promise';
+import {cacheObservable} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {UserPresence} from './enums';
 import {reviewMax} from './review-max';

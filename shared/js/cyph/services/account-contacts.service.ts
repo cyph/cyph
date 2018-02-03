@@ -6,7 +6,7 @@ import {take} from 'rxjs/operators/take';
 import {User} from '../account/user';
 import {StringProto} from '../proto';
 import {filterDuplicatesOperator, filterUndefined} from '../util/filter';
-import {cacheObservable} from '../util/flatten-observable-promise';
+import {cacheObservable} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {AccountUserLookupService} from './account-user-lookup.service';

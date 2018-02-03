@@ -23,7 +23,7 @@ import {
 	IAccountUserPublicKeys
 } from '../../proto';
 import {filterUndefinedOperator} from '../../util/filter';
-import {cacheObservable, flattenObservable} from '../../util/flatten-observable-promise';
+import {cacheObservable, flattenObservable} from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
 import {deserialize, serialize} from '../../util/serialization';
