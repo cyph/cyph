@@ -170,12 +170,20 @@
 </ng-template>
 
 
+<mat-progress-spinner
+	class='global'
+	mode='indeterminate'
+	*ngIf='!(user?.ready && (user?.userType | async) !== undefined); else profile'
+></mat-progress-spinner>
+<ng-template #profile>
+
+
 <!-- Standard view -->
 
 <div
 	fxFlexFill
 	[class.editing]='isEditorFocused'
-	*ngIf='!envService.isTelehealth && user?.ready && (user?.userType | async) !== undefined'
+	*ngIf='!envService.isTelehealth'
 >
 	<ng-container *ngTemplateOutlet='standardProfile'></ng-container>
 	<ng-container *ngTemplateOutlet='editButton'></ng-container>
@@ -188,7 +196,7 @@
 	fxFlexFill
 	class='telehealth'
 	[class.editing]='isEditorFocused'
-	*ngIf='envService.isTelehealth && user?.ready && (user?.userType | async) !== undefined'
+	*ngIf='envService.isTelehealth'
 >
 	<div
 		fxFlexFill
@@ -470,3 +478,6 @@
 
 	<ng-container *ngTemplateOutlet='editButton'></ng-container>
 </div>
+
+
+</ng-template>

@@ -121,6 +121,10 @@ mat-option img {
 	vertical-align: middle;
 }
 
+mat-progress-spinner.global {
+	@include spinner-center;
+}
+
 [matDialogTitle] {
 	font-family: Ubuntu;
 	font-weight: initial !important;

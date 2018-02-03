@@ -40,8 +40,6 @@ cyph-chat-message-box smd-fab-speed-dial:not(.smd-opened) smd-fab-actions {
 .login-form {
 	mat-progress-spinner.global {
 		display: none;
-
-		@include spinner-center;
 	}
 
 	h3.cyph-banner {
