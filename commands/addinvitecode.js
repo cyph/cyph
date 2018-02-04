@@ -9,11 +9,14 @@ const {BooleanProto, StringProto}	= require('../modules/proto');
 const {readableID}					= require('../modules/util');
 
 
-const addInviteCode	= async (projectId, countByUser) => {
+const addInviteCode	= async (projectId, countByUser, namespace) => {
 
 
 if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
 	throw new Error('Invalid Firebase project ID.');
+}
+if (typeof namespace !== 'string' || !namespace) {
+	namespace	= 'cyph.ws';
 }
 
 
@@ -46,8 +49,8 @@ const inviteCodes	= Object.keys(countByUser).map(username => ({
 await Promise.all(inviteCodes.map(async ({codes, username}) =>
 	Promise.all(codes.map(async code =>
 		Promise.all([
-			database.ref(`inviteCodes/${code}`).set(username),
-			setItem(`users/${username}/inviteCodes/${code}`, BooleanProto, true)
+			database.ref(`${namespace}/inviteCodes/${code}`).set(username),
+			setItem(namespace, `users/${username}/inviteCodes/${code}`, BooleanProto, true)
 		])
 	))
 ));
@@ -69,10 +72,11 @@ if (require.main === module) {
 		const projectId			= process.argv[2];
 		const username			= process.argv[3];
 		const count				= parseInt(process.argv[4]);
+		const namespace			= process.argv[5];
 		const countByUser		= {};
 		countByUser[username]	= isNaN(count) ? 1 : count;
 
-		console.log(JSON.stringify(await addInviteCode(projectId, countByUser)));
+		console.log(JSON.stringify(await addInviteCode(projectId, countByUser, namespace)));
 		process.exit(0);
 	})().catch(err => {
 		console.error(err);

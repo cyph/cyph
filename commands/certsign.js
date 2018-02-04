@@ -17,22 +17,25 @@ const {
 }	= require('../modules/proto');
 
 
-const certSign	= async (projectId, standalone) => {
+const certSign	= async (projectId, standalone, namespace) => {
 try {
 
 
-if (projectId === undefined || projectId === '') {
+if (typeof projectId !== 'string' || !projectId) {
 	projectId	= 'cyphme';
 }
-if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
+if (projectId.indexOf('cyph') !== 0) {
 	throw new Error('Invalid Firebase project ID.');
+}
+if (typeof namespace !== 'string' || !namespace) {
+	namespace	= 'cyph.ws';
 }
 
 
 const testSign					= projectId !== 'cyphme';
 const configDir					= `${os.homedir()}/.cyph`;
-const lastIssuanceTimestampPath	= `${configDir}/certsign-timestamps/${projectId}`;
-const keyFilename				= `${configDir}/firebase-credentials/${projectId}.json`;
+const lastIssuanceTimestampPath	= `${configDir}/certsign-timestamps/${projectId}.${namespace}`;
+const keyFilename				= `${configDir}/firebase-credentials/${projectId}.${namespace}.json`;
 
 /* Will remain hardcoded as true for the duration of the private beta */
 const requireInvite				= true;
@@ -58,7 +61,9 @@ const {
 });
 
 
-const pendingSignups	= (await database.ref('pendingSignups').once('value')).val() || {};
+const pendingSignups	=
+	(await database.ref(`${namespace}/pendingSignups`).once('value')).val() || {}
+;
 const usernames			= [];
 
 for (const username of Object.keys(pendingSignups)) {
@@ -66,10 +71,14 @@ for (const username of Object.keys(pendingSignups)) {
 
 	/* If user has submitted a CSR and has a valid invite (if required), continue */
 	if (
-		(await database.ref(`users/${username}/certificateRequest`).once('value')).val() &&
+		(await database.ref(
+			`${namespace}/users/${username}/certificateRequest`
+		).once('value')).val() &&
 		(
 			!requireInvite ||
-			(await database.ref(`users/${username}/inviterUsernamePlaintext`).once('value')).val()
+			(await database.ref(
+				`${namespace}/users/${username}/inviterUsernamePlaintext`
+			).once('value')).val()
 		)
 	) {
 		usernames.push(username);
@@ -78,8 +87,8 @@ for (const username of Object.keys(pendingSignups)) {
 	else if ((Date.now() - pendingSignup.timestamp) > 10800) {
 		await Promise.all([
 			auth.deleteUser(pendingSignup.uid),
-			database.ref(`pendingSignups/${username}`).remove(),
-			removeItem(`users/${username}`)
+			database.ref(`${namespace}/pendingSignups/${username}`).remove(),
+			removeItem(namespace, `users/${username}`)
 		]);
 
 		/* Avoid {"code":400,"message":"QUOTA_EXCEEDED : Exceeded quota for deleting accounts."} */
@@ -93,7 +102,7 @@ if (usernames.length < 1) {
 }
 
 const issuanceHistory	= await (async () => {
-	const bytes				= await getItem('certificateHistory', BinaryProto);
+	const bytes				= await getItem(namespace, 'certificateHistory', BinaryProto);
 	const dataView			= potassium.toDataView(bytes);
 	const rsaKeyIndex		= dataView.getUint32(0, true);
 	const sphincsKeyIndex	= dataView.getUint32(4, true);
@@ -138,7 +147,11 @@ const csrs	= (await Promise.all(usernames.map(async username => {
 			return;
 		}
 
-		const bytes			= await getItem(`users/${username}/certificateRequest`, BinaryProto);
+		const bytes			= await getItem(
+			namespace,
+			`users/${username}/certificateRequest`,
+			BinaryProto
+		);
 
 		const csr			= await deserialize(
 			AGSEPKICSR,
@@ -212,7 +225,7 @@ const {rsaIndex, signedInputs, sphincsIndex}	= await sign(
 
 fs.writeFileSync(lastIssuanceTimestampPath, issuanceHistory.timestamp.toString());
 
-await setItem('certificateHistory', BinaryProto, potassium.concatMemory(
+await setItem(namespace, 'certificateHistory', BinaryProto, potassium.concatMemory(
 	false,
 	new Uint32Array([rsaIndex]),
 	new Uint32Array([sphincsIndex]),
@@ -231,7 +244,7 @@ await Promise.all(signedInputs.slice(1).map(async (cert, i) => {
 
 	const url		= `users/${csr.username}/certificate`;
 
-	await setItem(url, BinaryProto, fullCert);
+	await setItem(namespace, url, BinaryProto, fullCert);
 
 	potassium.clearMemory(cert);
 	potassium.clearMemory(fullCert);
@@ -240,8 +253,8 @@ await Promise.all(signedInputs.slice(1).map(async (cert, i) => {
 await Promise.all(usernames.map(async username => {
 	const url	= `users/${username}/certificateRequest`;
 
-	await removeItem(url);
-	await database.ref(`pendingSignups/${username}`).remove();
+	await removeItem(namespace, url);
+	await database.ref(`${namespace}/pendingSignups/${username}`).remove();
 }));
 
 console.log('Certificate signing complete.');
@@ -265,7 +278,7 @@ catch (err) {
 
 
 if (require.main === module) {
-	certSign(process.argv[2], true);
+	certSign(process.argv[2], true, process.argv[3]);
 }
 else {
 	module.exports	= {certSign};

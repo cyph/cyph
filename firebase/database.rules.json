@@ -3,367 +3,44 @@
 		".read": false,
 		".write": false,
 
-		"channels": {
-			"$channel": {
-				".read": true,
-				".write": true,
-
-				"disconnects": {
-					"$user": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"handshake": {
-					"alicePublicKey": {
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					},
-					"bobPublicKey": {
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					},
-					"initialSecretAliceCyphertext": {
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					},
-					"initialSecretBobCyphertext": {
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					}
-				},
-
-				"lock": {
-					"$contender": {
-						"id": {
-							".validate": "newData.isString()"
-						},
-						"reason": {
-							".validate": "newData.isString()"
-						}
-					}
-				},
-
-				"messages": {
-					"$message": {
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					}
-				},
-
-				"users": {
-					"$user": {
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					}
-				}
-			}
-		},
-
-		"emails": {
-			"$email": {
-				".read": true,
-
-				"hash": {
-					".validate": "newData.isString()"
-				},
-				"timestamp": {
-					".validate": "newData.val() === now"
-				}
-			}
-		},
-
-		"fileTransfers": {
-			"$file": {
-				".read": true,
-				".write": true,
-
-				"hash": {
-					".validate": "newData.isString()"
-				},
-				"timestamp": {
-					".validate": "newData.val() === now"
-				}
-			}
-		},
-
-		"inviteCodes": {
-			"$code": {
-				".validate": "newData.isString()"
-			}
-		},
-
-		"pendingSignups": {
-			"$username": {
-				"timestamp": {
-					".validate": "newData.val() === now"
-				},
-				"uid": {
-					".validate": "newData.isString()"
-				}
-			}
-		},
-
-		"pushlocks": {
-			"$contender": {
-				".read": true,
-				".write": true,
-
-				"id": {
-					".validate": "newData.isString()"
-				},
-				"reason": {
-					".validate": "newData.isString()"
-				}
-			}
-		},
-
-		"users": {
-			"$user": {
-				".read": "($user + '@cyph.me') === auth.token.email",
-				".write": "($user + '@cyph.me') === auth.token.email",
-
-				"avatar": {
+		"$namespace": {
+			"channels": {
+				"$channel": {
 					".read": true,
+					".write": true,
 
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"coverImage": {
-					".read": true,
-
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"certificate": {
-					".read": true,
-					".write": false,
-
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"certificateRequest": {
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"clientConnections": {
-					"$clientConnection": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"contactUsernames": {
-					"$username": {
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
+					"disconnects": {
+						"$user": {
 							".validate": "newData.val() === now"
 						}
-					}
-				},
+					},
 
-				"contacts": {
-					"$contact": {
-						"messages": {
-							"$message": {
-								"hash": {
-									".validate": "newData.isString()"
-								},
-								"timestamp": {
-									".validate": "newData.val() === now"
-								}
+					"handshake": {
+						"alicePublicKey": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
 							}
 						},
-						"messageValues": {
-							"$messageValue": {
-								"hash": {
-									".validate": "newData.isString()"
-								},
-								"timestamp": {
-									".validate": "newData.val() === now"
-								}
+						"bobPublicKey": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
 							}
 						},
-						"session": {
-							"asymmetricRatchetState": {
-								"privateKey": {
-									"hash": {
-										".validate": "newData.isString()"
-									},
-									"timestamp": {
-										".validate": "newData.val() === now"
-									}
-								},
-								"publicKey": {
-									"hash": {
-										".validate": "newData.isString()"
-									},
-									"timestamp": {
-										".validate": "newData.val() === now"
-									}
-								}
+						"initialSecretAliceCyphertext": {
+							"hash": {
+								".validate": "newData.isString()"
 							},
-							"channelUserID": {
-								"hash": {
-									".validate": "newData.isString()"
-								},
-								"timestamp": {
-									".validate": "newData.val() === now"
-								}
-							},
-							"handshake": {
-								"currentStep": {
-									"hash": {
-										".validate": "newData.isString()"
-									},
-									"timestamp": {
-										".validate": "newData.val() === now"
-									}
-								},
-								"initialSecret": {
-									"hash": {
-										".validate": "newData.isString()"
-									},
-									"timestamp": {
-										".validate": "newData.val() === now"
-									}
-								}
-							},
-							"incomingMessageID": {
-								"hash": {
-									".validate": "newData.isString()"
-								},
-								"timestamp": {
-									".validate": "newData.val() === now"
-								}
-							},
-							"incomingMessages": {
-								"hash": {
-									".validate": "newData.isString()"
-								},
-								"timestamp": {
-									".validate": "newData.val() === now"
-								}
-							},
-							"incomingMessagesMax": {
-								"hash": {
-									".validate": "newData.isString()"
-								},
-								"timestamp": {
-									".validate": "newData.val() === now"
-								}
-							},
-							"outgoingMessageID": {
-								"hash": {
-									".validate": "newData.isString()"
-								},
-								"timestamp": {
-									".validate": "newData.val() === now"
-								}
-							},
-							"outgoingMessageQueue": {
-								"$outgoingMessage": {
-									"hash": {
-										".validate": "newData.isString()"
-									},
-									"timestamp": {
-										".validate": "newData.val() === now"
-									}
-								}
-							},
-							"symmetricKey": {
-								"hash": {
-									".validate": "newData.isString()"
-								},
-								"timestamp": {
-									".validate": "newData.val() === now"
-								}
-							},
-							"symmetricRatchetState": {
-								"current": {
-									"incoming": {
-										"hash": {
-											".validate": "newData.isString()"
-										},
-										"timestamp": {
-											".validate": "newData.val() === now"
-										}
-									},
-									"outgoing": {
-										"hash": {
-											".validate": "newData.isString()"
-										},
-										"timestamp": {
-											".validate": "newData.val() === now"
-										}
-									}
-								},
-								"next": {
-									"incoming": {
-										"hash": {
-											".validate": "newData.isString()"
-										},
-										"timestamp": {
-											".validate": "newData.val() === now"
-										}
-									},
-									"outgoing": {
-										"hash": {
-											".validate": "newData.isString()"
-										},
-										"timestamp": {
-											".validate": "newData.val() === now"
-										}
-									}
-								}
+							"timestamp": {
+								".validate": "newData.val() === now"
 							}
 						},
-						"unconfirmedMessages": {
+						"initialSecretBobCyphertext": {
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -371,150 +48,9 @@
 								".validate": "newData.val() === now"
 							}
 						}
-					}
-				},
-
-				"docs": {
-					"$doc": {
-						".read": true,
-
-						"$delta": {
-							"hash": {
-								".validate": "newData.isString()"
-							},
-							"timestamp": {
-								".validate": "newData.val() === now"
-							}
-						}
-					}
-				},
-
-				"encryptionKeyPair": {
-					"hash": {
-						".validate": "newData.isString()"
 					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
 
-				"fileRecords": {
-					"$fileRecord": {
-						".read": true,
-
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					}
-				},
-
-				"fileReferences": {
-					"$fileReference": {
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					}
-				},
-
-				"files": {
-					"$file": {
-						".read": true,
-						".write": "($user + '@cyph.me') === auth.token.email || (!data.exists() && newData.exists())",
-
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					}
-				},
-
-				"forms": {
-					"$form": {
-						".read": true,
-
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					}
-				},
-
-				"incomingFiles": {
-					"$incomingFile": {
-						".write": "($user + '@cyph.me') === auth.token.email || (!data.exists() && newData.exists())",
-
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					}
-				},
-
-				"inviteCode": {
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"inviteCodes": {
-					".write": false,
-
-					"$code": {
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					}
-				},
-
-				"inviterUsername": {
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"inviterUsernamePlaintext": {
-					".write": false,
-
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"lastPresence": {
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"locks": {
-					"$lock": {
+					"lock": {
 						"$contender": {
 							"id": {
 								".validate": "newData.isString()"
@@ -523,10 +59,34 @@
 								".validate": "newData.isString()"
 							}
 						}
-					}
-				},
+					},
 
-				"loginData": {
+					"messages": {
+						"$message": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"users": {
+						"$user": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					}
+				}
+			},
+
+			"emails": {
+				"$email": {
 					".read": true,
 
 					"hash": {
@@ -535,10 +95,13 @@
 					"timestamp": {
 						".validate": "newData.val() === now"
 					}
-				},
+				}
+			},
 
-				"organizationMembers": {
+			"fileTransfers": {
+				"$file": {
 					".read": true,
+					".write": true,
 
 					"hash": {
 						".validate": "newData.isString()"
@@ -546,10 +109,48 @@
 					"timestamp": {
 						".validate": "newData.val() === now"
 					}
-				},
+				}
+			},
 
-				"pin": {
-					"hash": {
+			"inviteCodes": {
+				"$code": {
+					".validate": "newData.isString()"
+				}
+			},
+
+			"pendingSignups": {
+				"$username": {
+					"timestamp": {
+						".validate": "newData.val() === now"
+					},
+					"uid": {
+						".validate": "newData.isString()"
+					}
+				}
+			},
+
+			"pushlocks": {
+				"$contender": {
+					".read": true,
+					".write": true,
+
+					"id": {
+						".validate": "newData.isString()"
+					},
+					"reason": {
+						".validate": "newData.isString()"
+					}
+				}
+			},
+
+			"users": {
+				"$user": {
+					".read": "($user + '@' + $namespace) === auth.token.email",
+					".write": "($user + '@' + $namespace) === auth.token.email",
+
+					"avatar": {
+						".read": true,
+
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -557,65 +158,9 @@
 							".validate": "newData.val() === now"
 						}
 					},
-					"isCustom": {
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					}
-				},
 
-				"presence": {
-					".read": true,
-
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"publicEncryptionKey": {
-					".read": true,
-
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"publicProfile": {
-					".read": true,
-
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"publicProfileExtra": {
-					".read": true,
-
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
-
-				"reviews": {
-					".read": true,
-
-					"$username": {
-						".write": "($username + '@cyph.me') === auth.token.email",
+					"coverImage": {
+						".read": true,
 
 						"hash": {
 							".validate": "newData.isString()"
@@ -623,29 +168,486 @@
 						"timestamp": {
 							".validate": "newData.val() === now"
 						}
-					}
-				},
-
-				"settings": {
-					"hash": {
-						".validate": "newData.isString()"
 					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
 
-				"signingKeyPair": {
-					"hash": {
-						".validate": "newData.isString()"
+					"certificate": {
+						".read": true,
+						".write": false,
+
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
 					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				},
 
-				"$other": {
-					".validate": false
+					"certificateRequest": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"clientConnections": {
+						"$clientConnection": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"contactUsernames": {
+						"$username": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"contacts": {
+						"$contact": {
+							"messages": {
+								"$message": {
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								}
+							},
+							"messageValues": {
+								"$messageValue": {
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								}
+							},
+							"session": {
+								"asymmetricRatchetState": {
+									"privateKey": {
+										"hash": {
+											".validate": "newData.isString()"
+										},
+										"timestamp": {
+											".validate": "newData.val() === now"
+										}
+									},
+									"publicKey": {
+										"hash": {
+											".validate": "newData.isString()"
+										},
+										"timestamp": {
+											".validate": "newData.val() === now"
+										}
+									}
+								},
+								"channelUserID": {
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								},
+								"handshake": {
+									"currentStep": {
+										"hash": {
+											".validate": "newData.isString()"
+										},
+										"timestamp": {
+											".validate": "newData.val() === now"
+										}
+									},
+									"initialSecret": {
+										"hash": {
+											".validate": "newData.isString()"
+										},
+										"timestamp": {
+											".validate": "newData.val() === now"
+										}
+									}
+								},
+								"incomingMessageID": {
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								},
+								"incomingMessages": {
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								},
+								"incomingMessagesMax": {
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								},
+								"outgoingMessageID": {
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								},
+								"outgoingMessageQueue": {
+									"$outgoingMessage": {
+										"hash": {
+											".validate": "newData.isString()"
+										},
+										"timestamp": {
+											".validate": "newData.val() === now"
+										}
+									}
+								},
+								"symmetricKey": {
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								},
+								"symmetricRatchetState": {
+									"current": {
+										"incoming": {
+											"hash": {
+												".validate": "newData.isString()"
+											},
+											"timestamp": {
+												".validate": "newData.val() === now"
+											}
+										},
+										"outgoing": {
+											"hash": {
+												".validate": "newData.isString()"
+											},
+											"timestamp": {
+												".validate": "newData.val() === now"
+											}
+										}
+									},
+									"next": {
+										"incoming": {
+											"hash": {
+												".validate": "newData.isString()"
+											},
+											"timestamp": {
+												".validate": "newData.val() === now"
+											}
+										},
+										"outgoing": {
+											"hash": {
+												".validate": "newData.isString()"
+											},
+											"timestamp": {
+												".validate": "newData.val() === now"
+											}
+										}
+									}
+								}
+							},
+							"unconfirmedMessages": {
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						}
+					},
+
+					"docs": {
+						"$doc": {
+							".read": true,
+
+							"$delta": {
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						}
+					},
+
+					"encryptionKeyPair": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"fileRecords": {
+						"$fileRecord": {
+							".read": true,
+
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"fileReferences": {
+						"$fileReference": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"files": {
+						"$file": {
+							".read": true,
+							".write": "($user + '@' + $namespace) === auth.token.email || (!data.exists() && newData.exists())",
+
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"forms": {
+						"$form": {
+							".read": true,
+
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"incomingFiles": {
+						"$incomingFile": {
+							".write": "($user + '@' + $namespace) === auth.token.email || (!data.exists() && newData.exists())",
+
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"inviteCode": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"inviteCodes": {
+						".write": false,
+
+						"$code": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"inviterUsername": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"inviterUsernamePlaintext": {
+						".write": false,
+
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"lastPresence": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"locks": {
+						"$lock": {
+							"$contender": {
+								"id": {
+									".validate": "newData.isString()"
+								},
+								"reason": {
+									".validate": "newData.isString()"
+								}
+							}
+						}
+					},
+
+					"loginData": {
+						".read": true,
+
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"organizationMembers": {
+						".read": true,
+
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"pin": {
+						"hash": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						},
+						"isCustom": {
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"presence": {
+						".read": true,
+
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"publicEncryptionKey": {
+						".read": true,
+
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"publicProfile": {
+						".read": true,
+
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"publicProfileExtra": {
+						".read": true,
+
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"reviews": {
+						".read": true,
+
+						"$username": {
+							".write": "($username + '@' + $namespace) === auth.token.email",
+
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"settings": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"signingKeyPair": {
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"$other": {
+						".validate": false
+					}
 				}
 			}
 		}

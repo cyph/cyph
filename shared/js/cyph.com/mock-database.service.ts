@@ -4,6 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {IProto} from '../cyph/iproto';
 import {ITimedValue} from '../cyph/itimed-value';
 import {DatabaseService} from '../cyph/services/database.service';
+import {EnvService} from '../cyph/services/env.service';
 import {random} from '../cyph/util/random';
 import {deserialize, serialize} from '../cyph/util/serialization';
 import {getTimestamp} from '../cyph/util/time';
@@ -80,7 +81,7 @@ export class MockDatabaseService extends DatabaseService {
 		return {cancel: () => {}, progress, result};
 	}
 
-	constructor () {
-		super();
+	constructor (envService: EnvService) {
+		super(envService);
 	}
 }

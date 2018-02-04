@@ -36,6 +36,7 @@ import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful, waitForValue} from '../util/wait';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
+import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 
 
@@ -108,7 +109,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return retryUntilSuccessful(async () =>
 			/^https?:\/\//.test(url) ?
 				(await this.app).database().refFromURL(url) :
-				(await this.app).database().ref(url)
+				(await this.app).database().ref(`/${this.namespace}/${url.replace(/^\//, '')}`)
 		);
 	}
 
@@ -117,7 +118,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return retryUntilSuccessful(async () =>
 			/^https?:\/\//.test(url) ?
 				(await this.app).storage().refFromURL(url) :
-				(await this.app).storage().ref(url)
+				(await this.app).storage().ref(`/${this.namespace}/${url.replace(/^\//, '')}`)
 		);
 	}
 
@@ -134,7 +135,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @ignore */
 	private usernameToEmail (username: string) : string {
-		return `${username}@cyph.me`;
+		return `${username}@${this.namespace}`;
 	}
 
 	/** @inheritDoc */
@@ -1002,6 +1003,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	constructor (
+		envService: EnvService,
+
 		/** @ignore */
 		private readonly ngZone: NgZone,
 
@@ -1011,6 +1014,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
 	) {
-		super();
+		super(envService);
 	}
 }

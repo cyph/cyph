@@ -15,6 +15,7 @@ import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {lockFunction} from '../util/lock';
+import {EnvService} from './env.service';
 
 
 /**
@@ -22,6 +23,16 @@ import {lockFunction} from '../util/lock';
  */
 @Injectable()
 export class DatabaseService extends DataManagerService {
+	/** Namespace for database usage. */
+	protected readonly namespace: string	=
+		(
+			this.envService.coBranded &&
+			this.envService.environment.customBuild !== undefined
+		) ?
+			this.envService.environment.customBuild.id :
+			'cyph.ws'
+	;
+
 	/**
 	 * Checks whether a disconnect is registered at the specified URL.
 	 * @returns True if disconnected.
@@ -387,7 +398,10 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.watchListPushes.');
 	}
 
-	constructor () {
+	constructor (
+		/** @ignore */
+		private readonly envService: EnvService
+	) {
 		super();
 	}
 }

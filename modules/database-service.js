@@ -31,7 +31,9 @@ return {
 	auth,
 	database,
 	functionsUser,
-	getItem: async (url, proto) => {
+	getItem: async (namespace, url, proto) => {
+		url	= `/${namespace}/${url.replace(/^\//, '')}`;
+
 		const {hash}	= (await database.ref(url).once('value')).val();
 		const bytes		= (await storage.file(url).download())[0];
 
@@ -46,13 +48,17 @@ return {
 
 		return deserialize(proto, bytes);
 	},
-	removeItem: async url => {
+	removeItem: async (namespace, url) => {
+		url	= `/${namespace}/${url.replace(/^\//, '')}`;
+
 		return retryUntilSuccessful(async () => Promise.all([
 			database.ref(url).remove(),
 			storage.deleteFiles({force: true, prefix: `${url}/`})
 		]));
 	},
-	setItem: async (url, proto, value) => {
+	setItem: async (namespace, url, proto, value) => {
+		url	= `/${namespace}/${url.replace(/^\//, '')}`;
+
 		const bytes	= await serialize(proto, value);
 
 		await storage.file(url).save(bytes);

@@ -1,180 +1,188 @@
 service firebase.storage {
 	match /b/{bucket}/o {
-		match /certificateHistory {
-			allow read, write: if false;
-		}
-
-		match /channels/{channel} {
-			match /{all=**} {
-				allow read, write;
+		match /{namespace} {
+			match /certificateHistory {
+				allow read, write: if false;
 			}
 
-			// match /handshake {
-			// 	match /alicePublicKey {}
-			// 	match /bobPublicKey {}
-			// 	match /initialSecretAliceCyphertext {}
-			// 	match /initialSecretBobCyphertext {}
-			// }
+			match /channels/{channel} {
+				match /{all=**} {
+					allow read, write;
+				}
 
-			// match /messages/{message} {}
+				// match /handshake {
+				// 	match /alicePublicKey {}
+				// 	match /bobPublicKey {}
+				// 	match /initialSecretAliceCyphertext {}
+				// 	match /initialSecretBobCyphertext {}
+				// }
 
-			// match /users/{user} {}
-		}
+				// match /messages/{message} {}
 
-		match /emails/{email} {
-			allow read;
-		}
-
-		match /fileTransfers/{file} {
-			allow read;
-			allow write: if request.resource == null || request.resource.size < 300000000;
-		}
-
-		match /users/{user} {
-			match /{all=**} {
-				allow read, write: if
-					request.auth != null &&
-					(user + '@cyph.me') == request.auth.token.email
-				;
+				// match /users/{user} {}
 			}
 
-			match /avatar {
+			match /emails/{email} {
 				allow read;
 			}
 
-			match /coverImage {
+			match /fileTransfers/{file} {
 				allow read;
+				allow write: if request.resource == null || request.resource.size < 300000000;
 			}
 
-			match /certificate {
-				allow read;
-				allow write: if false;
+			match /users/{user} {
+				match /{all=**} {
+					allow read, write: if
+						request.auth != null &&
+						(user + '@' + namespace) == request.auth.token.email
+					;
+				}
+
+				match /avatar {
+					allow read;
+				}
+
+				match /coverImage {
+					allow read;
+				}
+
+				match /certificate {
+					allow read;
+					allow write: if false;
+				}
+
+				// match /certificateRequest {}
+
+				// match /contactUsernames/{username} {}
+
+				// match /contacts/{contact} {
+				// 	match /messages/{message} {}
+				// 	match /messageValues/{messageValue} {}
+				// 	match /session {
+				// 		/asymmetricRatchetState {
+				// 			/privateKey {}
+				// 			/publicKey {}
+				// 		}
+				// 		/channelUserID {}
+				// 		/handshake {
+				// 			/currentStep {}
+				// 			/initialSecret {}
+				// 		}
+				// 		/incomingMessageID {}
+				// 		/incomingMessages {}
+				// 		/incomingMessagesMax {}
+				// 		/outgoingMessageID {}
+				// 		/outgoingMessageQueue {}
+				// 		/symmetricKey {}
+				// 		/symmetricRatchetState {
+				// 			/current {
+				// 				/incoming {}
+				// 				/outgoing {}
+				// 			}
+				// 			/next {
+				// 				/incoming {}
+				// 				/outgoing {}
+				// 			}
+				// 		}
+				// 	}
+				// 	match /unconfirmedMessages {}
+				// }
+
+				match /docs/{doc} {
+					allow read;
+
+					// match /{delta} {}
+				}
+
+				// match /encryptionKeyPair {}
+
+				match /fileRecords/{fileRecord} {
+					allow read;
+				}
+
+				// match /fileReferences/{fileReference} {}
+
+				match /files/{file} {
+					allow read;
+					allow write: if
+						(
+							request.auth != null &&
+							(user + '@' + namespace) == request.auth.token.email
+						) ||
+						resource == null
+					;
+				}
+
+				match /forms/{form} {
+					allow read;
+				}
+
+				match /incomingFiles/{incomingFile} {
+					allow write: if
+						(
+							request.auth != null &&
+							(user + '@' + namespace) == request.auth.token.email
+						) ||
+						resource == null
+					;
+				}
+
+				// match /inviteCode {}
+
+				match /inviteCodes/{code} {
+					allow write: if false;
+				}
+
+				// match /inviterUsername {}
+
+				match /inviterUsernamePlaintext {
+					allow write: if false;
+				}
+
+				// match /lastPresence {}
+
+				match /loginData {
+					allow read;
+				}
+
+				match /organizationMembers {
+					allow read;
+				}
+
+				// match /pin {
+				// 	match /hash {}
+				// 	match /isCustom {}
+				// }
+
+				match /presence {
+					allow read;
+				}
+
+				match /publicEncryptionKey {
+					allow read;
+				}
+
+				match /publicProfile {
+					allow read;
+				}
+
+				match /publicProfileExtra {
+					allow read;
+				}
+
+				match /reviews/{username} {
+					allow read;
+					allow write: if
+						request.auth != null &&
+						(username + '@' + namespace) == request.auth.token.email
+					;
+				}
+
+				// match /settings {}
+
+				// match /signingKeyPair {}
 			}
-
-			// match /certificateRequest {}
-
-			// match /contactUsernames/{username} {}
-
-			// match /contacts/{contact} {
-			// 	match /messages/{message} {}
-			// 	match /messageValues/{messageValue} {}
-			// 	match /session {
-			// 		/asymmetricRatchetState {
-			// 			/privateKey {}
-			// 			/publicKey {}
-			// 		}
-			// 		/channelUserID {}
-			// 		/handshake {
-			// 			/currentStep {}
-			// 			/initialSecret {}
-			// 		}
-			// 		/incomingMessageID {}
-			// 		/incomingMessages {}
-			// 		/incomingMessagesMax {}
-			// 		/outgoingMessageID {}
-			// 		/outgoingMessageQueue {}
-			// 		/symmetricKey {}
-			// 		/symmetricRatchetState {
-			// 			/current {
-			// 				/incoming {}
-			// 				/outgoing {}
-			// 			}
-			// 			/next {
-			// 				/incoming {}
-			// 				/outgoing {}
-			// 			}
-			// 		}
-			// 	}
-			// 	match /unconfirmedMessages {}
-			// }
-
-			match /docs/{doc} {
-				allow read;
-
-				// match /{delta} {}
-			}
-
-			// match /encryptionKeyPair {}
-
-			match /fileRecords/{fileRecord} {
-				allow read;
-			}
-
-			// match /fileReferences/{fileReference} {}
-
-			match /files/{file} {
-				allow read;
-				allow write: if
-					(request.auth != null && (user + '@cyph.me') == request.auth.token.email) ||
-					resource == null
-				;
-			}
-
-			match /forms/{form} {
-				allow read;
-			}
-
-			match /incomingFiles/{incomingFile} {
-				allow write: if
-					(request.auth != null && (user + '@cyph.me') == request.auth.token.email) ||
-					resource == null
-				;
-			}
-
-			// match /inviteCode {}
-
-			match /inviteCodes/{code} {
-				allow write: if false;
-			}
-
-			// match /inviterUsername {}
-
-			match /inviterUsernamePlaintext {
-				allow write: if false;
-			}
-
-			// match /lastPresence {}
-
-			match /loginData {
-				allow read;
-			}
-
-			match /organizationMembers {
-				allow read;
-			}
-
-			// match /pin {
-			// 	match /hash {}
-			// 	match /isCustom {}
-			// }
-
-			match /presence {
-				allow read;
-			}
-
-			match /publicEncryptionKey {
-				allow read;
-			}
-
-			match /publicProfile {
-				allow read;
-			}
-
-			match /publicProfileExtra {
-				allow read;
-			}
-
-			match /reviews/{username} {
-				allow read;
-				allow write: if
-					request.auth != null &&
-					(username + '@cyph.me') == request.auth.token.email
-				;
-			}
-
-			// match /settings {}
-
-			// match /signingKeyPair {}
 		}
 	}
 }
