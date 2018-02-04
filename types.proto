@@ -428,11 +428,11 @@ message Environment {
 		/** Vertical logo for this custom build. */
 		bytes logoVertical = 8;
 
-		/** Replacement strings for this custom build. */
-		map<string, string> strings = 9;
+		/** Environment namespace, the base ID without branch/version information. */
+		required string namespace = 9;
 
-		/** Environment version, generally undefined if prod or the branch name otherwise. */
-		string version = 10;
+		/** Replacement strings for this custom build. */
+		map<string, string> strings = 10;
 	}
 
 	/** Custom build configuration. */

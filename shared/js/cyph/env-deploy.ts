@@ -36,13 +36,7 @@ export class EnvDeploy {
 	/** Base URL for a new cyph link ("https://cyph.ws/" or equivalent). */
 	public readonly newCyphBaseUrl: string		=
 		this.environment.customBuild && !this.environment.local ?
-			`https://${
-				this.environment.customBuild.version === undefined ?
-					'' :
-					`${this.environment.customBuild.version}.`
-			}${
-				this.environment.customBuild.id
-			}/` :
+			`https://${this.environment.customBuild.id}/` :
 			`${locationData.protocol}//${locationData.hostname}:42002/`
 	;
 

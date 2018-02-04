@@ -29,7 +29,7 @@ export class DatabaseService extends DataManagerService {
 			this.envService.environment.customBuild !== undefined &&
 			this.envService.environment.customBuild.config.usePrimaryNamespace !== true
 		) ?
-			this.envService.environment.customBuild.id :
+			this.envService.environment.customBuild.namespace :
 			'cyph.ws'
 	;
 

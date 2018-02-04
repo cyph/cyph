@@ -79,11 +79,11 @@ const customBuild	= (id, version) => {
 		config: tryReadFile(paths.config, true) || {},
 		errorImage: tryReadFile(paths.errorImage),
 		favicon: tryReadFile(paths.favicon),
-		id,
+		id: typeof version === 'string' ? `${version}.${id}` : id,
 		logoHorizontal: tryReadFile(paths.logoHorizontal),
 		logoVertical: tryReadFile(paths.logoVertical),
-		strings: tryReadFile(paths.strings, true),
-		version
+		namespace: id,
+		strings: tryReadFile(paths.strings, true)
 	};
 
 	if (o.config.title) {
