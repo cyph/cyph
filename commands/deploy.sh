@@ -78,7 +78,7 @@ else
 	cacheBustedProjects="$(echo "${cacheBustedProjects}" | sed "s|${webSignedProject}||")"
 fi
 
-if [ "${websign}" ] || [ "${firebase}" ] ; then
+if [ "${websign}" ] || [ "${site}" == 'firebase' ] ; then
 	./commands/keycache.sh
 fi
 
