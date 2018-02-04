@@ -53,11 +53,11 @@ export class AccountsPage {
 		login: {
 			root: () => element(by.css('cyph-account-login')),
 
-			password: () => this.elements.login.root().element(
-				by.css('input[name="password"]')
+			masterKey: () => this.elements.login.root().element(
+				by.css('input[name="masterKey"]')
 			),
 			pin: () => this.elements.login.root().element(
-				by.css('cyph-pin-input > div > input')
+				by.css('cyph-pin-input > div > input, input[name="lockScreenPin"]')
 			),
 			spinner: () => this.elements.login.root().element(
 				by.css('mat-progress-spinner')
@@ -69,7 +69,7 @@ export class AccountsPage {
 				by.css('mat-card-title')
 			),
 			username: () => this.elements.login.root().element(
-				by.css('input[name="username"]')
+				by.css('input[name="cyphUsername"]')
 			)
 		},
 
@@ -139,7 +139,7 @@ export class AccountsPage {
 		}
 		else {
 			await this.elements.login.username().sendKeys(this.credentials.username);
-			await this.elements.login.password().sendKeys(this.credentials.password);
+			await this.elements.login.masterKey().sendKeys(this.credentials.password);
 		}
 
 		await this.clickElement(this.elements.login.submit);
