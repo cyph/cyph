@@ -535,18 +535,20 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; the
 	fi
 
 	./commands/buildunbundledassets.sh
-
 	./commands/updaterepos.js
-	DOMAIN="namespace$(
+
+	cd firebase
+
+	sed -i "s|DOMAIN|namespace$(
 		{ echo cyph.ws; ls ~/.cyph/repos/custom-builds; } |
 			sed 's/[^\.]//g' |
 			sort |
 			tail -n1 |
 			sed "s|\.|.replace('_', '.')|g"
-	)"
+	)|g" database.rules.json
+	
+	sed -i "s|DOMAIN|namespace.split('_').join('.')|g" storage.rules
 
-	cd firebase
-	sed -i "s|DOMAIN|${DOMAIN}|g" database.rules.json storage.rules
 	cd functions
 	npm install
 	cp ../../modules/database-service.js ./
