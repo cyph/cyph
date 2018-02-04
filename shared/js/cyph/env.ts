@@ -21,12 +21,6 @@ export class Env extends EnvDeploy {
 	private static readonly UA: string			= navigatorData.userAgent.toLowerCase();
 
 
-	/** Indicates whether this is a co-branded (or white label) instance of Cyph. */
-	public readonly coBranded: boolean			=
-		this.environment.customBuild !== undefined &&
-		this.environment.customBuild.favicon !== undefined
-	;
-
 	/** If applicable, default call type. */
 	public readonly callType?: 'audio'|'video'	= (
 		this.environment.customBuild && this.environment.customBuild.config.callTypeVideo ?
@@ -35,6 +29,12 @@ export class Env extends EnvDeploy {
 				'audio' :
 				undefined
 	);
+
+	/** Indicates whether this is a co-branded (or white label) instance of Cyph. */
+	public readonly coBranded: boolean			=
+		this.environment.customBuild !== undefined &&
+		this.environment.customBuild.favicon !== undefined
+	;
 
 	/** Complete (lowercase) language code, e.g. "en-us". */
 	public readonly fullLanguage: string		= Env.language.toLowerCase();
