@@ -14,6 +14,7 @@
 						fxFlex
 						fxLayout='column'
 						fxLayoutGap='32px'
+						autocomplete='off'
 						ngNativeValidate
 						(submit)='submit()'
 					>
@@ -120,7 +121,7 @@
 														cyphTranslate
 														[formControl]='username'
 														[textMask]='usernameMask'
-														name='username'
+														name='cyphUsername'
 														placeholder='Username'
 														required
 														data-lpignore='true'

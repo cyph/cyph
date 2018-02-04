@@ -32,7 +32,7 @@
 			</p>
 		</mat-card-subtitle>
 		<mat-card-content>
-			<form ngNativeValidate (submit)='submit()'>
+			<form autocomplete='off' ngNativeValidate (submit)='submit()'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<h3 class='cyph-banner warn' [style.visibility]='error ? "visible" : "hidden"'>
 						{{
@@ -49,7 +49,7 @@
 							cyphTranslate
 							[(ngModel)]='username'
 							[textMask]='usernameMask'
-							name='username'
+							name='cyphUsername'
 							placeholder='Username'
 							required
 							data-lpignore='true'
@@ -61,7 +61,7 @@
 						<input
 							matInput
 							[(ngModel)]='pin'
-							name='password'
+							name='lockScreenPIN'
 							[type]='hidePassword ? "password" : "text"'
 							[placeholder]='stringsService.pin'
 							required
@@ -79,7 +79,7 @@
 						<input
 							matInput
 							[(ngModel)]='masterKey'
-							name='password'
+							name='masterKey'
 							[type]='hidePassword ? "password" : "text"'
 							[placeholder]='stringsService.masterKey'
 							required
