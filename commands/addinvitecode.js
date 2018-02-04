@@ -49,7 +49,7 @@ const inviteCodes	= Object.keys(countByUser).map(username => ({
 await Promise.all(inviteCodes.map(async ({codes, username}) =>
 	Promise.all(codes.map(async code =>
 		Promise.all([
-			database.ref(`${namespace}/inviteCodes/${code}`).set(username),
+			database.ref(`${namespace.replace(/\./g, '_')}/inviteCodes/${code}`).set(username),
 			setItem(namespace, `users/${username}/inviteCodes/${code}`, BooleanProto, true)
 		])
 	))

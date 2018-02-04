@@ -109,7 +109,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return retryUntilSuccessful(async () =>
 			/^https?:\/\//.test(url) ?
 				(await this.app).database().refFromURL(url) :
-				(await this.app).database().ref(`/${this.namespace}/${url.replace(/^\//, '')}`)
+				(await this.app).database().ref(this.processURL(url))
 		);
 	}
 
@@ -118,7 +118,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return retryUntilSuccessful(async () =>
 			/^https?:\/\//.test(url) ?
 				(await this.app).storage().refFromURL(url) :
-				(await this.app).storage().ref(`/${this.namespace}/${url.replace(/^\//, '')}`)
+				(await this.app).storage().ref(this.processURL(url))
 		);
 	}
 

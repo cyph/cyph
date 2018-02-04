@@ -62,7 +62,8 @@ const {
 
 
 const pendingSignups	=
-	(await database.ref(`${namespace}/pendingSignups`).once('value')).val() || {}
+	(await database.ref(`${namespace.replace(/\./g, '_')}/pendingSignups`).once('value')).val() ||
+	{}
 ;
 const usernames			= [];
 
@@ -72,12 +73,12 @@ for (const username of Object.keys(pendingSignups)) {
 	/* If user has submitted a CSR and has a valid invite (if required), continue */
 	if (
 		(await database.ref(
-			`${namespace}/users/${username}/certificateRequest`
+			`${namespace.replace(/\./g, '_')}/users/${username}/certificateRequest`
 		).once('value')).val() &&
 		(
 			!requireInvite ||
 			(await database.ref(
-				`${namespace}/users/${username}/inviterUsernamePlaintext`
+				`${namespace.replace(/\./g, '_')}/users/${username}/inviterUsernamePlaintext`
 			).once('value')).val()
 		)
 	) {
@@ -87,7 +88,7 @@ for (const username of Object.keys(pendingSignups)) {
 	else if ((Date.now() - pendingSignup.timestamp) > 10800) {
 		await Promise.all([
 			auth.deleteUser(pendingSignup.uid),
-			database.ref(`${namespace}/pendingSignups/${username}`).remove(),
+			database.ref(`${namespace.replace(/\./g, '_')}/pendingSignups/${username}`).remove(),
 			removeItem(namespace, `users/${username}`)
 		]);
 
@@ -254,7 +255,7 @@ await Promise.all(usernames.map(async username => {
 	const url	= `users/${username}/certificateRequest`;
 
 	await removeItem(namespace, url);
-	await database.ref(`${namespace}/pendingSignups/${username}`).remove();
+	await database.ref(`${namespace.replace(/\./g, '_')}/pendingSignups/${username}`).remove();
 }));
 
 console.log('Certificate signing complete.');

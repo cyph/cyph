@@ -35,7 +35,7 @@ service firebase.storage {
 				match /{all=**} {
 					allow read, write: if
 						request.auth != null &&
-						(user + '@' + namespace) == request.auth.token.email
+						(user + '@' + DOMAIN) == request.auth.token.email
 					;
 				}
 
@@ -108,7 +108,7 @@ service firebase.storage {
 					allow write: if
 						(
 							request.auth != null &&
-							(user + '@' + namespace) == request.auth.token.email
+							(user + '@' + DOMAIN) == request.auth.token.email
 						) ||
 						resource == null
 					;
@@ -122,7 +122,7 @@ service firebase.storage {
 					allow write: if
 						(
 							request.auth != null &&
-							(user + '@' + namespace) == request.auth.token.email
+							(user + '@' + DOMAIN) == request.auth.token.email
 						) ||
 						resource == null
 					;
@@ -175,7 +175,7 @@ service firebase.storage {
 					allow read;
 					allow write: if
 						request.auth != null &&
-						(username + '@' + namespace) == request.auth.token.email
+						(username + '@' + DOMAIN) == request.auth.token.email
 					;
 				}
 

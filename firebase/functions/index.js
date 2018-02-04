@@ -113,7 +113,7 @@ exports.userRegister	=
 		}
 
 		const username	= emailSplit[0];
-		const namespace	= emailSplit[1];
+		const namespace	= emailSplit[1].replace(/\./g, '_');
 
 		return database.ref(`${namespace}/pendingSignups/${username}`).set({
 			timestamp: admin.database.ServerValue.TIMESTAMP,

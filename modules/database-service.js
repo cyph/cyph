@@ -26,13 +26,17 @@ const database		= app.database();
 const functionsUser	= functions.auth.user();
 const storage		= gcloudStorage(config.storage).bucket(`${config.project.id}.appspot.com`);
 
+const processURL	= (namespace, url) =>
+	`/${namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`
+;
+
 return {
 	app,
 	auth,
 	database,
 	functionsUser,
 	getItem: async (namespace, url, proto) => {
-		url	= `/${namespace}/${url.replace(/^\//, '')}`;
+		url	= processURL(namespace, url);
 
 		const {hash}	= (await database.ref(url).once('value')).val();
 		const bytes		= (await storage.file(url).download())[0];
@@ -49,7 +53,7 @@ return {
 		return deserialize(proto, bytes);
 	},
 	removeItem: async (namespace, url) => {
-		url	= `/${namespace}/${url.replace(/^\//, '')}`;
+		url	= processURL(namespace, url);
 
 		return retryUntilSuccessful(async () => Promise.all([
 			database.ref(url).remove(),
@@ -57,7 +61,7 @@ return {
 		]));
 	},
 	setItem: async (namespace, url, proto, value) => {
-		url	= `/${namespace}/${url.replace(/^\//, '')}`;
+		url	= processURL(namespace, url);
 
 		const bytes	= await serialize(proto, value);
 

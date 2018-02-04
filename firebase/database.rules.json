@@ -145,8 +145,8 @@
 
 			"users": {
 				"$user": {
-					".read": "($user + '@' + $namespace) === auth.token.email",
-					".write": "($user + '@' + $namespace) === auth.token.email",
+					".read": "($user + '@' + $DOMAIN) === auth.token.email",
+					".write": "($user + '@' + $DOMAIN) === auth.token.email",
 
 					"avatar": {
 						".read": true,
@@ -426,7 +426,7 @@
 					"files": {
 						"$file": {
 							".read": true,
-							".write": "($user + '@' + $namespace) === auth.token.email || (!data.exists() && newData.exists())",
+							".write": "($user + '@' + $DOMAIN) === auth.token.email || (!data.exists() && newData.exists())",
 
 							"hash": {
 								".validate": "newData.isString()"
@@ -452,7 +452,7 @@
 
 					"incomingFiles": {
 						"$incomingFile": {
-							".write": "($user + '@' + $namespace) === auth.token.email || (!data.exists() && newData.exists())",
+							".write": "($user + '@' + $DOMAIN) === auth.token.email || (!data.exists() && newData.exists())",
 
 							"hash": {
 								".validate": "newData.isString()"
@@ -616,7 +616,7 @@
 						".read": true,
 
 						"$username": {
-							".write": "($username + '@' + $namespace) === auth.token.email",
+							".write": "($username + '@' + $DOMAIN) === auth.token.email",
 
 							"hash": {
 								".validate": "newData.isString()"

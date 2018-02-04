@@ -33,6 +33,11 @@ export class DatabaseService extends DataManagerService {
 			'cyph.ws'
 	;
 
+	/** Adds namespace to URL. */
+	protected processURL (url: string) : string {
+		return `/${this.namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`;
+	}
+
 	/**
 	 * Checks whether a disconnect is registered at the specified URL.
 	 * @returns True if disconnected.
