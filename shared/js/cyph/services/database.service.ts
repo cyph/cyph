@@ -26,8 +26,8 @@ export class DatabaseService extends DataManagerService {
 	/** Namespace for database usage. */
 	protected readonly namespace: string	=
 		(
-			this.envService.coBranded &&
-			this.envService.environment.customBuild !== undefined
+			this.envService.environment.customBuild !== undefined &&
+			this.envService.environment.customBuild.config.usePrimaryNamespace !== true
 		) ?
 			this.envService.environment.customBuild.id :
 			'cyph.ws'

@@ -473,8 +473,11 @@ message Environment {
 		/** Page title of this Cyph instance. */
 		string title = 13;
 
+		/** Indicates whether this environment should share the main Cyph database namespace. */
+		bool usePrimaryNamespace = 14;
+
 		/** If true, environment will be full white label, with no "Powered by Cyph" notices. */
-		bool whiteLabel = 14;
+		bool whiteLabel = 15;
 	}
 
 	/** Firebase configuration. */
