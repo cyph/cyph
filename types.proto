@@ -413,14 +413,14 @@ message Environment {
 		/** Custom styling. */
 		string css = 3;
 
-		/** Identifier of this custom build. */
-		required string id = 4;
-
 		/** Walken image replacement for this custom build. */
-		bytes errorImage = 5;
+		bytes errorImage = 4;
 
 		/** Favicon for this custom build. */
-		bytes favicon = 6;
+		bytes favicon = 5;
+
+		/** Identifier of this custom build. */
+		required string id = 6;
 
 		/** Horizontal logo for this custom build. */
 		bytes logoHorizontal = 7;
@@ -430,6 +430,9 @@ message Environment {
 
 		/** Replacement strings for this custom build. */
 		map<string, string> strings = 9;
+
+		/** Environment version, generally undefined if prod or the branch name otherwise. */
+		string version = 10;
 	}
 
 	/** Custom build configuration. */

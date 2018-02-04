@@ -77,12 +77,13 @@ const customBuild	= (id, version) => {
 	const o	= {
 		audioImage: tryReadFile(paths.audioImage),
 		config: tryReadFile(paths.config, true) || {},
-		id: typeof version === 'string' ? `${version}.${id}` : id,
 		errorImage: tryReadFile(paths.errorImage),
 		favicon: tryReadFile(paths.favicon),
+		id,
 		logoHorizontal: tryReadFile(paths.logoHorizontal),
 		logoVertical: tryReadFile(paths.logoVertical),
-		strings: tryReadFile(paths.strings, true)
+		strings: tryReadFile(paths.strings, true),
+		version
 	};
 
 	if (o.config.title) {
