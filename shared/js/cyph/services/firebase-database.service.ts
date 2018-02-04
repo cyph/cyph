@@ -139,6 +139,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	protected processURL (url: string) : string {
+		return url.startsWith('.') ? url : super.processURL(url);
+	}
+
+	/** @inheritDoc */
 	public async checkDisconnected (urlPromise: MaybePromise<string>) : Promise<boolean> {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
