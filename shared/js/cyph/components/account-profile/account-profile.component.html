@@ -314,7 +314,7 @@
 							</mat-list>
 							<br />
 							<br />
-							<ng-container *ngIf='userMembers !== undefined'>
+							<ng-container *ngIf='(userMembers | async)?.length > 0'>
 								<h2 cyphTranslate class='user-list-header'>Available Doctors</h2>
 								<cyph-account-contacts
 									class='member-list'
