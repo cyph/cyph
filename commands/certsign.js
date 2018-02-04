@@ -35,7 +35,7 @@ if (typeof namespace !== 'string' || !namespace) {
 const testSign					= projectId !== 'cyphme';
 const configDir					= `${os.homedir()}/.cyph`;
 const lastIssuanceTimestampPath	= `${configDir}/certsign-timestamps/${projectId}.${namespace}`;
-const keyFilename				= `${configDir}/firebase-credentials/${projectId}.${namespace}.json`;
+const keyFilename				= `${configDir}/firebase-credentials/${projectId}.json`;
 
 /* Will remain hardcoded as true for the duration of the private beta */
 const requireInvite				= true;
