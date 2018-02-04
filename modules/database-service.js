@@ -38,8 +38,13 @@ return {
 	getItem: async (namespace, url, proto) => {
 		url	= processURL(namespace, url);
 
-		const {hash}	= (await database.ref(url).once('value')).val();
-		const bytes		= (await storage.file(url).download())[0];
+		const {hash}	= await retryUntilSuccessful(async () =>
+			(await database.ref(url).once('value')).val()
+		);
+
+		const bytes		= await retryUntilSuccessful(async () =>
+			(await storage.file(url).download())[0]
+		);
 
 		if (
 			!potassium.compareMemory(
@@ -65,11 +70,11 @@ return {
 
 		const bytes	= await serialize(proto, value);
 
-		await storage.file(url).save(bytes);
-		await database.ref(url).set({
+		await retryUntilSuccessful(async () => storage.file(url).save(bytes));
+		await retryUntilSuccessful(async () => database.ref(url).set({
 			hash: potassium.toBase64(await potassium.hash.hash(bytes)),
 			timestamp: admin.database.ServerValue.TIMESTAMP
-		});
+		}));
 	},
 	storage
 };
