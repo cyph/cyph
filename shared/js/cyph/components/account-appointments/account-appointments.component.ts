@@ -35,6 +35,7 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 
 	/** Calendar configuration. */
 	public readonly calendarOptions: Options	= {
+		defaultView: 'agendaDay',
 		editable: false,
 		eventLimit: false,
 		eventSources: [
