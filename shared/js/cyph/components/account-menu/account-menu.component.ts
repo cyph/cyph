@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {UserPresence} from '../../account/enums';
+import {AccountUserTypes} from '../../proto';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
@@ -15,6 +16,9 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './account-menu.component.html'
 })
 export class AccountMenuComponent {
+	/** @see AccountUserTypes */
+	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
 
