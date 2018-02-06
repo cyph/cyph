@@ -52,6 +52,10 @@
 			</span>
 			<small *ngIf='(item.smallText | async) !== undefined'>
 				{{item.smallText | async}}
+
+				<strong *ngIf='item.matchingText !== undefined'>
+					(matches: {{item.matchingText}})
+				</strong>
 			</small>
 		</mat-option>
 	</ng-container>

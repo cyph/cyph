@@ -10,6 +10,7 @@ export interface ISearchOptions {
 	/** Search items. */
 	items: {
 		image: Async<SafeUrl|string|undefined>;
+		matchingText?: string;
 		smallText: Async<string|undefined>;
 		text: Async<string|undefined>;
 		value: number|string;

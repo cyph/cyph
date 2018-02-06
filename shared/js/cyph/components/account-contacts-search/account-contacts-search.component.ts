@@ -17,6 +17,7 @@ import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {StringsService} from '../../services/strings.service';
+import {filterUndefined} from '../../util/filter';
 import {SearchBarComponent} from '../search-bar';
 
 
@@ -59,21 +60,31 @@ export class AccountContactsSearchComponent {
 			mergeMap<string, ISearchOptions>(query =>
 				this.contactList.pipe(
 					mergeMap<User[], ISearchOptions>(async users => {
-						const results	= (await Promise.all(users.map(async user => ({
-							extra: this.searchProfileExtra ?
-								await user.accountUserProfileExtra.getValue() :
-								undefined
-							,
-							name: (await user.accountUserProfile.getValue()).name,
-							user,
-							username: user.username
-						})))).
-							filter(({extra, name, username}) =>
-								username.startsWith(query) ||
-								[name].concat(extra === undefined ? [] : (<string[]> []).
-									concat(extra.address || []).
-									concat(
-										(<AccountUserProfileExtra.IPosition[]> []).
+						const results	= filterUndefined(
+							(await Promise.all(users.map(async user => ({
+								extra: this.searchProfileExtra ?
+									await user.accountUserProfileExtra.getValue() :
+									undefined
+								,
+								name: (await user.accountUserProfile.getValue()).name,
+								user,
+								username: user.username
+							})))).
+								map(({extra, name, user, username}) => {
+									if (
+										username.startsWith(query) ||
+										name.toLowerCase().indexOf(query) > -1
+									) {
+										return {matchingText: undefined, user};
+									}
+
+									if (extra === undefined) {
+										return;
+									}
+
+									const matchingText	= (<string[]> []).
+										concat(extra.address || []).
+										concat((<AccountUserProfileExtra.IPosition[]> []).
 											concat(extra.education || []).
 											concat(extra.work || []).
 											map(position => (<string[]> []).
@@ -81,21 +92,25 @@ export class AccountContactsSearchComponent {
 												concat(position.locationName || [])
 											).
 											reduce((a, b) => a.concat(b), [])
-									).
-									concat(extra.insurance && extra.insurance.data || []).
-									concat(extra.npi && extra.npi.data || []).
-									concat(extra.specialties && extra.specialties.data || [])
-								).find(
-									s => s.toLowerCase().indexOf(query) > -1
-								) !== undefined
-							).
-							map(({user}) => user).
+										).
+										concat(extra.insurance && extra.insurance.data || []).
+										concat(extra.npi && extra.npi.data || []).
+										concat(extra.specialties && extra.specialties.data || []).
+										find(s => s.toLowerCase().indexOf(query) > -1)
+									;
+
+									return matchingText === undefined ?
+										undefined :
+										{matchingText, user}
+									;
+								})
+						).
 							sort((a, b) =>
-								a.username === query ?
+								a.user.username === query ?
 									-1 :
-									b.username === query ?
+									b.user.username === query ?
 										1 :
-										a.username < b.username ?
+										a.user.username < b.user.username ?
 											-1 :
 											1
 							).
@@ -103,7 +118,7 @@ export class AccountContactsSearchComponent {
 						;
 
 						const externalUser	= (
-							(results.length < 1 || results[0].username !== query) &&
+							(results.length < 1 || results[0].user.username !== query) &&
 							(await this.accountUserLookupService.exists(query))
 						) ?
 							query :
@@ -114,8 +129,9 @@ export class AccountContactsSearchComponent {
 
 						return {
 							imageAltText: this.stringsService.userAvatar,
-							items: results.map(user => ({
+							items: results.map(({matchingText, user}) => ({
 								image: user.avatar,
+								matchingText,
 								smallText: user.realUsername.pipe(map(realUsername =>
 									`@${realUsername}`
 								)),
