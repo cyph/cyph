@@ -1,5 +1,6 @@
 import {Component, Input, OnChanges} from '@angular/core';
 import {User, UserPresence} from '../../account';
+import {AccountUserTypes} from '../../proto';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -19,6 +20,9 @@ export class AccountContactComponent implements OnChanges {
 
 	/** Contact. */
 	@Input() public contact?: User;
+
+	/** @see AccountUserTypes */
+	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
