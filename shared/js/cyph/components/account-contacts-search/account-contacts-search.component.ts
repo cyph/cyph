@@ -10,7 +10,6 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
-import {take} from 'rxjs/operators/take';
 import {User} from '../../account/user';
 import {ISearchOptions} from '../../isearch-options';
 import {AccountUserProfileExtra} from '../../proto';
@@ -62,10 +61,10 @@ export class AccountContactsSearchComponent {
 					mergeMap<User[], ISearchOptions>(async users => {
 						const results	= (await Promise.all(users.map(async user => ({
 							extra: this.searchProfileExtra ?
-								(await user.extra().pipe(take(1)).toPromise()) :
+								await user.accountUserProfileExtra.getValue() :
 								undefined
 							,
-							name: (await user.name.pipe(take(1)).toPromise()).toLowerCase(),
+							name: (await user.accountUserProfile.getValue()).name,
 							user,
 							username: user.username
 						})))).
@@ -87,7 +86,7 @@ export class AccountContactsSearchComponent {
 									concat(extra.npi && extra.npi.data || []).
 									concat(extra.specialties && extra.specialties.data || [])
 								).find(
-									s => s.indexOf(query) > -1
+									s => s.toLowerCase().indexOf(query) > -1
 								) !== undefined
 							).
 							map(({user}) => user).

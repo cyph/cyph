@@ -2,13 +2,13 @@
 
 import {Injectable} from '@angular/core';
 import {skip} from 'rxjs/operators/skip';
-import {take} from 'rxjs/operators/take';
 import {Subscription} from 'rxjs/Subscription';
 import {ExternalServices, RegistrationErrorCodes} from '../../account';
 import {
 	AccountLoginData,
 	AccountUserPresence,
 	AccountUserProfile,
+	AccountUserProfileExtra,
 	AccountUserTypes,
 	AGSEPKICSR,
 	BinaryProto,
@@ -241,7 +241,7 @@ export class AccountAuthService {
 				this.localStorageService.setItem(
 					'username',
 					StringProto,
-					await user.realUsername.pipe(take(1)).toPromise()
+					(await user.accountUserProfile.getValue()).realUsername
 				),
 				this.savePIN(pinHash)
 			]);
@@ -316,13 +316,15 @@ export class AccountAuthService {
 				signingKeyPair,
 				certificateRequestURL,
 				publicEncryptionKeyURL,
-				publicProfileURL
+				publicProfileURL,
+				publicProfileExtraURL
 			]	= await Promise.all([
 				this.potassiumService.box.keyPair(),
 				this.potassiumService.sign.keyPair(),
 				this.accountDatabaseService.normalizeURL(`users/${username}/certificateRequest`),
 				this.accountDatabaseService.normalizeURL(`users/${username}/publicEncryptionKey`),
 				this.accountDatabaseService.normalizeURL(`users/${username}/publicProfile`),
+				this.accountDatabaseService.normalizeURL(`users/${username}/publicProfileExtra`),
 				this.databaseService.register(username, loginData.secondaryPassword)
 			]);
 
@@ -377,6 +379,16 @@ export class AccountAuthService {
 						}),
 						signingKeyPair.privateKey,
 						publicProfileURL,
+						true
+					)
+				),
+				this.databaseService.setItem(
+					publicProfileURL,
+					BinaryProto,
+					await this.potassiumService.sign.sign(
+						await serialize(AccountUserProfileExtra, {}),
+						signingKeyPair.privateKey,
+						publicProfileExtraURL,
 						true
 					)
 				),
