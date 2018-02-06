@@ -170,6 +170,10 @@ export class AccountUserLookupService {
 
 		if (
 			userTypeWhitelist !== undefined &&
+			!(
+				this.accountDatabaseService.currentUser.value &&
+				userValue === this.accountDatabaseService.currentUser.value.user
+			) &&
 			userTypeWhitelist.indexOf((await userValue.accountUserProfile.getValue()).userType) < 0
 		) {
 			return;
