@@ -165,19 +165,19 @@ message AccountUserProfileExtra {
 	/** Gender. */
 	string gender = 4;
 
-	/** Insurance */
+	/** Insurance. */
 	StringArray insurance = 5;
 
-	/** Languages */
+	/** Languages. */
 	repeated Language languages = 6;
 
-	/** NPI Numbers */
+	/** NPI numbers. */
 	StringArray npi = 7;
 
 	/** Username of parent organization. */
 	string organization = 8;
 
-	/** Specialties */
+	/** Specialties. */
 	StringArray specialties = 9;
 
 	/** Work history. */
