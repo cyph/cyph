@@ -65,7 +65,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 		ChatMessageValueTypes.Quill
 	);
 
-	/** @see AccountContactsSearchComponent.userFilter */
+	/** @see SearchBarComponent.filter */
 	public readonly recipient: BehaviorSubject<User|undefined>			=
 		new BehaviorSubject<User|undefined>(undefined)
 	;

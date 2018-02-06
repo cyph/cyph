@@ -64,11 +64,6 @@ export class AccountContactsComponent implements AfterViewInit, OnInit {
 	/** Indicates whether contact list should be displayed. */
 	public showContactList: boolean									= false;
 
-	/** @see AccountContactsSearchComponent.userFilter */
-	public userFilter: BehaviorSubject<User|undefined>				=
-		new BehaviorSubject<User|undefined>(undefined)
-	;
-
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence				= UserPresence;
 
