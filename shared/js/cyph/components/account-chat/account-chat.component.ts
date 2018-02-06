@@ -57,7 +57,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			await this.p2pWebRTCService.close();
 		}
 
-		this.accountSessionService.destroy();
+		await this.accountSessionService.destroy();
 	}
 
 	/** @inheritDoc */

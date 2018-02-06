@@ -136,8 +136,8 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	;
 
 	/** @inheritDoc */
-	public ngOnDestroy () : void {
-		this.sessionService.destroy();
+	public async ngOnDestroy () : Promise<void> {
+		await this.sessionService.destroy();
 	}
 
 	/** @inheritDoc */
