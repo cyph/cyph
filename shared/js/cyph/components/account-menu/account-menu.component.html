@@ -157,11 +157,15 @@
 	>
 		<mat-icon>date_range</mat-icon>
 	</button>
-
 	<button
 		mat-button
 		cyphTranslate
 		class='contacts'
+		[hidden]='
+			!envService.isTelehealth ||
+			(envService.isTelehealth &&
+			(accountDatabaseService.currentUser.value.user.userType !== accountUserTypes.Standard))
+		'
 		matTooltip='Contacts'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "contacts"'
@@ -175,6 +179,11 @@
 		mat-icon-button
 		cyphTranslate
 		class='contacts'
+		[hidden]='
+			!envService.isTelehealth ||
+			(envService.isTelehealth &&
+			(accountDatabaseService.currentUser.value.user.userType !== accountUserTypes.Standard))
+		'
 		matTooltip='Contacts'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "contacts"'
@@ -188,6 +197,11 @@
 		mat-button
 		cyphTranslate
 		class='files'
+		[hidden]='
+			!envService.isTelehealth ||
+			(envService.isTelehealth &&
+			(accountDatabaseService.currentUser.value.user.userType !== accountUserTypes.Standard))
+		'
 		matTooltip='Files'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "files"'
@@ -201,6 +215,11 @@
 		mat-icon-button
 		cyphTranslate
 		class='files'
+		[hidden]='
+			!envService.isTelehealth ||
+			(envService.isTelehealth &&
+			(accountDatabaseService.currentUser.value.user.userType !== accountUserTypes.Standard))
+		'
 		matTooltip='Files'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "files"'
@@ -214,6 +233,11 @@
 		mat-button
 		cyphTranslate
 		class='notes'
+		[hidden]='
+			!envService.isTelehealth ||
+			(envService.isTelehealth &&
+			(accountDatabaseService.currentUser.value.user.userType !== accountUserTypes.Standard))
+		'
 		matTooltip='Notes'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "notes"'
@@ -227,6 +251,11 @@
 		mat-icon-button
 		cyphTranslate
 		class='notes'
+		[hidden]='
+			!envService.isTelehealth ||
+			(envService.isTelehealth &&
+			(accountDatabaseService.currentUser.value.user.userType !== accountUserTypes.Standard))
+		'
 		matTooltip='Notes'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "notes"'
@@ -240,6 +269,11 @@
 		mat-button
 		cyphTranslate
 		class='docs'
+		[hidden]='
+			!envService.isTelehealth ||
+			(envService.isTelehealth &&
+			(accountDatabaseService.currentUser.value.user.userType !== accountUserTypes.Standard))
+		'
 		matTooltip='Docs'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "docs"'
@@ -256,6 +290,11 @@
 		mat-icon-button
 		cyphTranslate
 		class='docs'
+		[hidden]='
+			!envService.isTelehealth ||
+			(envService.isTelehealth &&
+			(accountDatabaseService.currentUser.value.user.userType !== accountUserTypes.Standard))
+		'
 		matTooltip='Docs'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "docs"'
@@ -272,6 +311,11 @@
 		mat-button
 		cyphTranslate
 		class='forms'
+		[hidden]='
+			!envService.isTelehealth ||
+			(envService.isTelehealth &&
+			(accountDatabaseService.currentUser.value.user.userType !== accountUserTypes.Standard))
+		'
 		matTooltip='Forms'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "forms"'
@@ -288,6 +332,11 @@
 		mat-icon-button
 		cyphTranslate
 		class='forms'
+		[hidden]='
+			!envService.isTelehealth ||
+			(envService.isTelehealth &&
+			(accountDatabaseService.currentUser.value.user.userType !== accountUserTypes.Standard))
+		'
 		matTooltip='Forms'
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "forms"'
