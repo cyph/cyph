@@ -15,14 +15,14 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './account-contact.component.html'
 })
 export class AccountContactComponent implements OnChanges {
+	/** @see AccountUserTypes */
+	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+
 	/** Indicates whether links should be enabled. */
 	@Input() public clickable: boolean	= true;
 
 	/** Contact. */
 	@Input() public contact?: User;
-
-	/** @see AccountUserTypes */
-	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence	= UserPresence;
