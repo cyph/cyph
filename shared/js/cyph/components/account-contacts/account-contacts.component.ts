@@ -58,6 +58,9 @@ export class AccountContactsComponent implements AfterViewInit, OnInit {
 	/** Indicates whether to use inverted theme. */
 	@Input() public invertedTheme: boolean							= false;
 
+	/** @see AccountContactsSearchComponent.searchProfileExtra */
+	@Input() public searchProfileExtra: boolean						= false;
+
 	/** Indicates whether contact list should be displayed. */
 	public showContactList: boolean									= false;
 

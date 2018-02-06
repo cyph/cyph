@@ -13,6 +13,7 @@ import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
 import {User} from '../../account/user';
 import {ISearchOptions} from '../../isearch-options';
+import {AccountUserProfileExtra} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -46,6 +47,9 @@ export class AccountContactsSearchComponent {
 	/** @see SearchBarComponent.listLength */
 	@Input() public searchListLength: number					= 10;
 
+	/** If true, downloads User.extra and queries it for the search. */
+	@Input() public searchProfileExtra: boolean					= false;
+
 	/** @see SearchBarComponent.options */
 	public readonly searchOptions: Observable<ISearchOptions>	=
 		this.searchControl.valueChanges.pipe(
@@ -57,13 +61,34 @@ export class AccountContactsSearchComponent {
 				this.contactList.pipe(
 					mergeMap<User[], ISearchOptions>(async users => {
 						const results	= (await Promise.all(users.map(async user => ({
+							extra: this.searchProfileExtra ?
+								(await user.extra().pipe(take(1)).toPromise()) :
+								undefined
+							,
 							name: (await user.name.pipe(take(1)).toPromise()).toLowerCase(),
 							user,
 							username: user.username
 						})))).
-							filter(({name, username}) =>
-								name.indexOf(query) > -1 ||
-								username.startsWith(query)
+							filter(({extra, name, username}) =>
+								username.startsWith(query) ||
+								[name].concat(extra === undefined ? [] : (<string[]> []).
+									concat(extra.address || []).
+									concat(
+										(<AccountUserProfileExtra.IPosition[]> []).
+											concat(extra.education || []).
+											concat(extra.work || []).
+											map(position => (<string[]> []).
+												concat(position.detail || []).
+												concat(position.locationName || [])
+											).
+											reduce((a, b) => a.concat(b), [])
+									).
+									concat(extra.insurance && extra.insurance.data || []).
+									concat(extra.npi && extra.npi.data || []).
+									concat(extra.specialties && extra.specialties.data || [])
+								).find(
+									s => s.indexOf(query) > -1
+								) !== undefined
 							).
 							map(({user}) => user).
 							sort((a, b) =>
