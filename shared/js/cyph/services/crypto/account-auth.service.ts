@@ -329,9 +329,10 @@ export class AccountAuthService {
 			]);
 
 			if (inviteCode) {
-				await this.databaseService.removeItem(
-					`users/${username}/inviterUsernamePlaintext`
-				);
+				await Promise.all([
+					this.databaseService.removeItem(`users/${username}/inviteCode`),
+					this.databaseService.removeItem(`users/${username}/inviterUsernamePlaintext`)
+				]);
 
 				await this.databaseService.setItem(
 					`users/${username}/inviteCode`,
@@ -339,12 +340,18 @@ export class AccountAuthService {
 					inviteCode
 				);
 
-				const inviterUsername	= await this.databaseService.getItem(
-					`users/${username}/inviterUsernamePlaintext`,
-					StringProto
-				).catch(() => {
+				const inviterUsername	=
+					await this.databaseService.getAsyncValue(
+						`users/${username}/inviterUsernamePlaintext`,
+						StringProto,
+						undefined,
+						true
+					).getValue()
+				;
+
+				if (!inviterUsername) {
 					throw RegistrationErrorCodes.InvalidInviteCode;
-				});
+				}
 
 				await this.databaseService.setItem(
 					`users/${username}/inviterUsername`,

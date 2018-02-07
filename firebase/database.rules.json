@@ -495,7 +495,7 @@
 					},
 
 					"inviterUsernamePlaintext": {
-						".write": false,
+						".write": "!newData.exists()",
 
 						"hash": {
 							".validate": "newData.isString()"

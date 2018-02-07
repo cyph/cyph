@@ -3,17 +3,17 @@
  */
 
 
-const gcloudStorage	= require('@google-cloud/storage');
-const admin			= require('firebase-admin');
-const functions		= require('firebase-functions');
-const potassium		= require('./potassium');
-const {StringProto}	= require('./proto');
-const {uuid}		= require('./util');
+const gcloudStorage					= require('@google-cloud/storage');
+const admin							= require('firebase-admin');
+const functions						= require('firebase-functions');
+const potassium						= require('./potassium');
+const {BinaryProto, StringProto}	= require('./proto');
 
 const {
 	deserialize,
 	retryUntilSuccessful,
-	serialize
+	serialize,
+	uuid
 }	= require('./util');
 
 
@@ -35,7 +35,7 @@ return {
 	auth,
 	database,
 	functionsUser,
-	getItem: async (namespace, url, proto) => {
+	async getItem (namespace, url, proto) {
 		url	= processURL(namespace, url);
 
 		const {hash}	= await retryUntilSuccessful(async () =>
@@ -57,7 +57,16 @@ return {
 
 		return deserialize(proto, bytes);
 	},
-	removeItem: async (namespace, url) => {
+	async hasItem (namespace, url) {
+		try {
+			await this.getItem(namespace, url, BinaryProto);
+			return true;
+		}
+		catch {
+			return false;
+		}
+	},
+	async removeItem (namespace, url) {
 		url	= processURL(namespace, url);
 
 		return retryUntilSuccessful(async () => Promise.all([
@@ -65,7 +74,7 @@ return {
 			storage.deleteFiles({force: true, prefix: `${url}/`})
 		]));
 	},
-	setItem: async (namespace, url, proto, value) => {
+	async setItem (namespace, url, proto, value) {
 		url	= processURL(namespace, url);
 
 		const bytes	= await serialize(proto, value);

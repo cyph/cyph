@@ -137,7 +137,7 @@ service firebase.storage {
 				// match /inviterUsername {}
 
 				match /inviterUsernamePlaintext {
-					allow write: if false;
+					allow write: if request.resource == null;
 				}
 
 				// match /lastPresence {}
