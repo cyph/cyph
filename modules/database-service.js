@@ -62,7 +62,7 @@ return {
 			await this.getItem(namespace, url, BinaryProto);
 			return true;
 		}
-		catch {
+		catch (_) {
 			return false;
 		}
 	},
