@@ -1,5 +1,9 @@
 {
 	"extends": "../tsconfig.json",
+	"angularCompilerOptions": {
+		"fullTemplateTypeCheck": true,
+		"preserveWhitespaces": false
+	},
 	"compilerOptions": {
 		"outDir": "../out-tsc/app",
 		"module": "es2015",
