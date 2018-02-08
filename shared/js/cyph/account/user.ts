@@ -14,6 +14,7 @@ import {
 } from '../proto';
 import {cacheObservable} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
+import {lockTryOnce} from '../util/lock';
 import {staticDomSanitizer} from '../util/static-services';
 import {UserPresence} from './enums';
 import {reviewMax} from './review-max';
@@ -37,6 +38,9 @@ export class User {
 		)
 	;
 
+
+	/** @ignore */
+	private readonly fetchLock: {}	= {};
 
 	/** Image URI for avatar / profile picture. */
 	public readonly avatar: Observable<SafeUrl|undefined>	= cacheObservable(
@@ -133,8 +137,10 @@ export class User {
 			return;
 		}
 
-		await this.accountUserProfile.getValue();
-		this.ready	= true;
+		await lockTryOnce(this.fetchLock, async () => {
+			await this.accountUserProfile.getValue();
+			this.ready	= true;
+		});
 	}
 
 	constructor (
