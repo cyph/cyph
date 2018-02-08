@@ -302,7 +302,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			return (
 				typeof (await (await this.getDatabaseRef(url)).once('value')).val() === 'object' &&
-				await (await this.getStorageRef(url)).getDownloadURL().
+				(await this.getStorageRef(url)).getDownloadURL().
 					then(() => true).
 					catch(() => false)
 			);
