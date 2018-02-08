@@ -394,7 +394,7 @@
 							fxFlex
 							fxLayout='column'
 							class='logo'
-							(click)='appService.testimonialCarousel.setItem(0)'
+							(click)='appService.testimonialCarousel?.setItem(0)'
 						>
 							<img
 								cyphTranslate
@@ -407,7 +407,7 @@
 							fxFlex
 							fxLayout='column'
 							class='logo'
-							(click)='appService.testimonialCarousel.setItem(1)'
+							(click)='appService.testimonialCarousel?.setItem(1)'
 						>
 							<img
 								cyphTranslate
@@ -519,7 +519,7 @@
 				<div class='grid-parent grid-33 tablet-grid-33'>
 					<div
 						class='grid-100 tablet-grid-100 logo logo-text'
-						(click)='appService.featureCarousel.setItem(0)'
+						(click)='appService.featureCarousel?.setItem(0)'
 					>
 						<img
 							class='grid-25 tablet-grid-25'
@@ -535,7 +535,7 @@
 					</div>
 					<div
 						class='grid-100 tablet-grid-100 logo logo-text'
-						(click)='appService.featureCarousel.setItem(1)'
+						(click)='appService.featureCarousel?.setItem(1)'
 					>
 						<img
 							class='grid-25 tablet-grid-25'
@@ -554,7 +554,7 @@
 				<div class='grid-parent grid-33 tablet-grid-33'>
 					<div
 						class='grid-100 tablet-grid-100 logo logo-text'
-						(click)='appService.featureCarousel.setItem(2)'
+						(click)='appService.featureCarousel?.setItem(2)'
 					>
 						<img
 							class='grid-25 tablet-grid-25'
@@ -570,7 +570,7 @@
 					</div>
 					<div
 						class='grid-100 tablet-grid-100 logo logo-text'
-						(click)='appService.featureCarousel.setItem(3)'
+						(click)='appService.featureCarousel?.setItem(3)'
 					>
 						<img
 							class='grid-25 tablet-grid-25'
@@ -589,7 +589,7 @@
 				<div class='grid-parent grid-33 tablet-grid-33'>
 					<div
 						class='grid-100 tablet-grid-100 logo logo-text'
-						(click)='appService.featureCarousel.setItem(4)'
+						(click)='appService.featureCarousel?.setItem(4)'
 					>
 						<img
 							class='grid-25 tablet-grid-25'
@@ -605,7 +605,7 @@
 					</div>
 					<div
 						class='grid-100 tablet-grid-100 logo logo-text'
-						(click)='appService.featureCarousel.setItem(5)'
+						(click)='appService.featureCarousel?.setItem(5)'
 					>
 						<img
 							class='grid-25 tablet-grid-25'
@@ -1029,16 +1029,16 @@
 							.
 						</div>
 						<cyph-checkout
-							[amount]='appService.cart.amount'
-							[category]='appService.cart.category'
-							[item]='appService.cart.item'
-							[subscriptionType]='appService.cart.subscriptionType'
+							[amount]='appService.cart?.amount'
+							[category]='appService.cart?.category'
+							[item]='appService.cart?.item'
+							[subscriptionType]='appService.cart?.subscriptionType'
 							*ngIf='appService.cart'
 						>
 							<div
 								cyphTranslate
 								*ngIf='
-									appService.cart.category ===
+									appService.cart?.category ===
 									configService.pricingConfig.categories.donation.id
 								'
 							>
@@ -1047,7 +1047,7 @@
 							<div
 								cyphTranslate
 								*ngIf='
-									appService.cart.category !==
+									appService.cart?.category !==
 									configService.pricingConfig.categories.donation.id
 								'
 							>

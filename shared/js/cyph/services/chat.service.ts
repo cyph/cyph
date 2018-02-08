@@ -45,9 +45,6 @@ export class ChatService {
 		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
 	}>();
 
-	/** Time in seconds until chat self-destructs. */
-	private readonly chatSelfDestructTimeout: number	= 5;
-
 	/** @ignore */
 	private readonly messageChangeLock: LockFunction	= lockFunction();
 
@@ -91,6 +88,9 @@ export class ChatService {
 
 	/** Indicates whether the chat self-destruction effect should be running. */
 	public chatSelfDestructEffect: boolean	= false;
+
+	/** Time in seconds until chat self-destructs. */
+	public chatSelfDestructTimeout: number	= 5;
 
 	/** Timer for chat self-destruction. */
 	public chatSelfDestructTimer?: Timer;

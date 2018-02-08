@@ -27,7 +27,7 @@
 	#autoComplete='matAutocomplete'
 	(optionSelected)='setFilter($event.option.value)'
 >
-	<ng-container *ngIf='options | async as search'>
+	<ng-container *ngIf='options === undefined ? undefined : options | async as search'>
 		<mat-option
 			value=''
 			[routerLink]='search.topOption.routerLink'

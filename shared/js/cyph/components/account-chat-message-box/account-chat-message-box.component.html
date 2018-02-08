@@ -3,9 +3,11 @@
 		<cyph-account-contact
 			fxFlex
 			[clickable]='false'
-			[contact]='recipient | async'
+			[contact]='recipient === undefined ? undefined : recipient | async'
 			class='cyph-inverted-theme'
-			[class.visibility-hidden]='(recipient | async) === undefined'
+			[class.visibility-hidden]='
+				(recipient === undefined ? undefined : recipient | async) === undefined
+			'
 		></cyph-account-contact>
 		<div
 			fxFlex='5'

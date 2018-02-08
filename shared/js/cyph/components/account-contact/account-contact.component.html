@@ -13,7 +13,7 @@
 			mat-card-avatar
 			cyphTranslate
 			class='avatar'
-			[ngClass]='userPresence[contact?.status | async]'
+			[ngClass]='contact === undefined ? '' : userPresence[contact.status | async]'
 			[src]='contact?.avatar | async'
 			alt='User Avatar'
 			matTooltip='Open Profile'

@@ -90,9 +90,12 @@
 							matTooltip='Profile'
 							matTooltipPosition='right'
 							class='avatar animated fadeIn _1'
-							[ngClass]='userPresence[
-								accountDatabaseService.currentUser.value?.user.status | async
-							]'
+							[ngClass]='accountDatabaseService.currentUser.value === undefined ?
+								'' :
+								userPresence[
+									accountDatabaseService.currentUser.value.user.status | async
+								]
+							'
 							alt='Profile Picture'
 							[src]='accountDatabaseService.currentUser.value?.user.avatar | async'
 							[routerLink]='accountService.routeRoot + "profile"'
