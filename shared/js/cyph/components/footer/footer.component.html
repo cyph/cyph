@@ -9,20 +9,15 @@
 		<div fxFlex='nogrow'>
 			<a [href]='envService.homeUrl'>
 				<span>&copy; Cyph 2018</span>
-					&nbsp;&nbsp;&nbsp;
-				<span cyphTranslate>(Patents Pending) </span>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span class='pre-spaced'>{{stringsService.patents}}</span>
 			</a>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		</div>
 
 		<div fxFlex='nogrow'>
 			<a [href]='envService.homeUrl + "contact"' cyphTranslate>
 				Contact
-			</a>
-		</div>
-
-		<div fxFlex='nogrow'>
-			<a [href]='envService.homeUrl + "donate"' cyphTranslate>
-				Donate
 			</a>
 		</div>
 
@@ -38,6 +33,12 @@
 		<div fxFlex='nogrow'>
 			<a [href]='envService.homeUrl + "pricing"' cyphTranslate>
 				Business Pricing
+			</a>
+		</div>
+
+		<div fxFlex='nogrow'>
+			<a [href]='envService.homeUrl + "donate"' cyphTranslate>
+				Donate
 			</a>
 		</div>
 

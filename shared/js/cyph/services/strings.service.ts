@@ -399,6 +399,11 @@ export class StringsService {
 	public readonly p2pWarningVideoPassive: string		= `Starting video call (P2P).`;
 
 	/** @see StringsService */
+	public readonly patents: string						=
+		`(US Patents   9,794,070  9,906,369)`
+	;
+
+	/** @see StringsService */
 	public readonly patient: string						= `patient`;
 
 	/** @see StringsService */

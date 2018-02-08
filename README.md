@@ -13,7 +13,7 @@ through our cross-language SDK.
 
 As to the level of security provided:
 
-1. The research that led to our patent-pending in-browser
+1. The research that led to our patented in-browser
 [code signing](https://en.wikipedia.org/wiki/Code_signing) technology,
 WebSign, was recently validated by the security industry in the course of our
 successful talks at Black Hat 2016 and DEF CON 24. Before these talks, code
