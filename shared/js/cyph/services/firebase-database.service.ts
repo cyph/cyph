@@ -300,13 +300,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
 
-			try {
-				await (await this.getStorageRef(url)).getDownloadURL();
-				return true;
-			}
-			catch {
-				return false;
-			}
+			return (
+				typeof (await (await this.getDatabaseRef(url)).once('value')).val() === 'object' &&
+				await (await this.getStorageRef(url)).getDownloadURL().
+					then(() => true).
+					catch(() => false)
+			);
 		});
 	}
 
