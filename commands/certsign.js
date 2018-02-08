@@ -126,7 +126,7 @@ const issuanceHistory	= await (async () => {
 				agsePublicSigningKeys.rsa[rsaKeyIndex],
 				agsePublicSigningKeys.sphincs[sphincsKeyIndex]
 			),
-			'AGSEPKIIssuanceHistory'
+			`${namespace}:AGSEPKIIssuanceHistory`
 		)
 	);
 
@@ -212,11 +212,11 @@ issuanceHistory.timestamp	= Date.now();
 
 const {rsaIndex, signedInputs, sphincsIndex}	= await sign(
 	[{
-		additionalData: 'AGSEPKIIssuanceHistory',
+		additionalData: `${namespace}:AGSEPKIIssuanceHistory`,
 		message: await serialize(AGSEPKIIssuanceHistory, issuanceHistory)
 	}].concat(
 		await Promise.all(csrs.map(async csr => ({
-			additionalData: csr.username,
+			additionalData: `${namespace}:${csr.username}`,
 			message: await serialize(AGSEPKICert, {
 				agsePKICSR: csr,
 				timestamp: issuanceHistory.timestamp

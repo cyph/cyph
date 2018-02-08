@@ -89,13 +89,13 @@ export class AccountDatabaseService {
 	};
 
 	/** @ignore */
-	private readonly openHelpers	= {
+	private readonly openHelpers		= {
 		secretBox: async (
 			data: Uint8Array,
 			url: string,
 			customKey: MaybePromise<Uint8Array>|undefined
 		) =>
-			this.potassiumService.secretBox.open(
+			this.potassiumHelpers.secretBox.open(
 				data,
 				(await customKey) || (await this.getCurrentUser()).keys.symmetricKey,
 				url
@@ -118,13 +118,14 @@ export class AccountDatabaseService {
 					)
 				}`,
 				BinaryProto,
-				async () => this.potassiumService.sign.open(
+				async () => this.potassiumHelpers.sign.open(
 					data,
 					this.currentUser.value && username === this.currentUser.value.user.username ?
 						this.currentUser.value.keys.signingKeyPair.publicKey :
 						(await this.getUserPublicKeys(username)).signing
 					,
 					url,
+
 					decompress
 				)
 			);
@@ -132,13 +133,61 @@ export class AccountDatabaseService {
 	};
 
 	/** @ignore */
-	private readonly sealHelpers	= {
+	private readonly potassiumHelpers	= {
+		secretBox: {
+			open: async (
+				cyphertext: Uint8Array,
+				key: Uint8Array,
+				additionalData: string
+			) : Promise<Uint8Array> => this.potassiumService.secretBox.open(
+				cyphertext,
+				key,
+				`${this.databaseService.namespace}:${additionalData}`
+			),
+			seal: async (
+				plaintext: Uint8Array,
+				key: Uint8Array,
+				additionalData: string
+			) : Promise<Uint8Array> => this.potassiumService.secretBox.seal(
+				plaintext,
+				key,
+				`${this.databaseService.namespace}:${additionalData}`
+			)
+		},
+		sign: {
+			open: async (
+				signed: Uint8Array,
+				publicKey: Uint8Array,
+				additionalData: string,
+				decompress: boolean
+			) : Promise<Uint8Array> => this.potassiumService.sign.open(
+				signed,
+				publicKey,
+				`${this.databaseService.namespace}:${additionalData}`,
+				decompress
+			),
+			sign: async (
+				message: Uint8Array,
+				privateKey: Uint8Array,
+				additionalData: string,
+				compress: boolean
+			) : Promise<Uint8Array> => this.potassiumService.sign.sign(
+				message,
+				privateKey,
+				`${this.databaseService.namespace}:${additionalData}`,
+				compress
+			)
+		}
+	};
+
+	/** @ignore */
+	private readonly sealHelpers		= {
 		secretBox: async (
 			data: Uint8Array,
 			url: string,
 			customKey: MaybePromise<Uint8Array>|undefined
 		) =>
-			retryUntilSuccessful(async () => this.potassiumService.secretBox.seal(
+			retryUntilSuccessful(async () => this.potassiumHelpers.secretBox.seal(
 				data,
 				(await customKey) || (await this.getCurrentUser()).keys.symmetricKey,
 				url
@@ -149,7 +198,7 @@ export class AccountDatabaseService {
 			url: string,
 			compress: boolean
 		) =>
-			retryUntilSuccessful(async () => this.potassiumService.sign.sign(
+			retryUntilSuccessful(async () => this.potassiumHelpers.sign.sign(
 				data,
 				(await this.getCurrentUser()).keys.signingKeyPair.privateKey,
 				url,
@@ -622,13 +671,14 @@ export class AccountDatabaseService {
 
 				const cert	= await deserialize(
 					AGSEPKICert,
-					await this.potassiumService.sign.open(
+					await this.potassiumHelpers.sign.open(
 						signed,
 						await this.potassiumService.sign.importSuperSphincsPublicKeys(
 							this.agsePublicSigningKeys.rsa[rsaKeyIndex],
 							this.agsePublicSigningKeys.sphincs[sphincsKeyIndex]
 						),
-						username
+						username,
+						false
 					)
 				);
 
@@ -641,7 +691,7 @@ export class AccountDatabaseService {
 				);
 
 				return {
-					encryption: await this.potassiumService.sign.open(
+					encryption: await this.potassiumHelpers.sign.open(
 						await this.databaseService.getItem(encryptionURL, BinaryProto),
 						cert.agsePKICSR.publicSigningKey,
 						encryptionURL,
@@ -672,7 +722,7 @@ export class AccountDatabaseService {
 			async r => f(!r ?
 				undefined :
 				this.potassiumService.toString(
-					await this.potassiumService.secretBox.open(
+					await this.potassiumHelpers.secretBox.open(
 						this.potassiumService.fromBase64(r),
 						currentUser.keys.symmetricKey,
 						await url
@@ -682,7 +732,7 @@ export class AccountDatabaseService {
 			!reason ?
 				undefined :
 				this.potassiumService.toBase64(
-					await this.potassiumService.secretBox.seal(
+					await this.potassiumHelpers.secretBox.seal(
 						this.potassiumService.fromString(reason),
 						currentUser.keys.symmetricKey,
 						url
@@ -712,7 +762,7 @@ export class AccountDatabaseService {
 			reason: !reason ?
 				undefined :
 				this.potassiumService.toString(
-					await this.potassiumService.secretBox.open(
+					await this.potassiumHelpers.secretBox.open(
 						this.potassiumService.fromBase64(reason),
 						currentUser.keys.symmetricKey,
 						url
@@ -855,7 +905,7 @@ export class AccountDatabaseService {
 			reason: !reason ?
 				undefined :
 				this.potassiumService.toString(
-					await this.potassiumService.secretBox.open(
+					await this.potassiumHelpers.secretBox.open(
 						this.potassiumService.fromBase64(reason),
 						currentUser.keys.symmetricKey,
 						url

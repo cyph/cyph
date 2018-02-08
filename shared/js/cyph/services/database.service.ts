@@ -24,7 +24,7 @@ import {EnvService} from './env.service';
 @Injectable()
 export class DatabaseService extends DataManagerService {
 	/** Namespace for database usage. */
-	protected readonly namespace: string	=
+	public readonly namespace: string	=
 		(
 			this.envService.environment.customBuild !== undefined &&
 			this.envService.environment.customBuild.config.usePrimaryNamespace !== true
