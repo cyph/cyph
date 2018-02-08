@@ -111,7 +111,9 @@
 						<img
 							cyphTranslate
 							class='avatar animated jackInTheBox _1'
-							[ngClass]='user === undefined ? '' : userPresence[user.status | async]'
+							[ngClass]='
+								user === undefined ? undefined : userPresence[user?.status | async]
+							'
 							alt='Profile Picture'
 							[src]='user?.avatar | async'
 						/>
@@ -229,7 +231,9 @@
 					<img
 						cyphTranslate
 						class='avatar animated _1'
-						[ngClass]='user === undefined ? '' : userPresence[user.status | async]'
+						[ngClass]='
+							user === undefined ? undefined : userPresence[user?.status | async]
+						'
 						alt='Profile Picture'
 						[src]='user?.avatar | async'
 					/>
