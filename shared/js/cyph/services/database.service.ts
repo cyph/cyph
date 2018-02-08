@@ -35,7 +35,7 @@ export class DatabaseService extends DataManagerService {
 
 	/** Adds namespace to URL. */
 	protected processURL (url: string) : string {
-		return `/${this.namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`;
+		return `${this.namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`;
 	}
 
 	/**

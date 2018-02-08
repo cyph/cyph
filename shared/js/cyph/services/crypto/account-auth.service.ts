@@ -390,7 +390,7 @@ export class AccountAuthService {
 					)
 				),
 				this.databaseService.setItem(
-					publicProfileURL,
+					publicProfileExtraURL,
 					BinaryProto,
 					await this.potassiumService.sign.sign(
 						await serialize(AccountUserProfileExtra, {}),

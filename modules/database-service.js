@@ -27,10 +27,10 @@ const functionsUser	= functions.auth.user();
 const storage		= gcloudStorage(config.storage).bucket(`${config.project.id}.appspot.com`);
 
 const processURL	= (namespace, url) =>
-	`/${namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`
+	`${namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`
 ;
 
-return {
+const databaseService	= {
 	app,
 	auth,
 	database,
@@ -59,7 +59,7 @@ return {
 	},
 	async hasItem (namespace, url) {
 		try {
-			await this.getItem(namespace, url, BinaryProto);
+			await databaseService.getItem(namespace, url, BinaryProto);
 			return true;
 		}
 		catch (_) {
@@ -87,6 +87,8 @@ return {
 	},
 	storage
 };
+
+return databaseService;
 
 
 };
