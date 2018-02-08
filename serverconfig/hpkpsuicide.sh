@@ -43,30 +43,38 @@ curl -s -X POST \
 	}))")" \
 	'https://www.digicert.com/services/v2/order/certificate/ORDER_ID/reissue'
 
-sleep 1m
 
-certificateID="$(node -e "console.log(
-	JSON.parse(
-		child_process.spawnSync('curl', [
-			'-s',
-			'-H',
-			'X-DC-DEVKEY: API_KEY',
-			'https://www.digicert.com/services/v2/order/certificate/ORDER_ID'
-		]).
-			stdout.
-			toString().
-			replace(/\\\\r/g, '')
-	).
-		certificate.
-		id
-)")"
+certHash=''
+keyHash="$(openssl rsa -in key.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"
+backupHash="$(openssl rsa -in backup.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"
 
-curl -s \
-	-H 'X-DC-DEVKEY: API_KEY' \
-	"https://www.digicert.com/services/v2/certificate/${certificateID}/download/format/pem_all" \
-> \
-	cert.pem
+while [ "${certHash}" != "${keyHash}" ] ; do
+	sleep 1m
 
+	certificateID="$(node -e "console.log(
+		JSON.parse(
+			child_process.spawnSync('curl', [
+				'-s',
+				'-H',
+				'X-DC-DEVKEY: API_KEY',
+				'https://www.digicert.com/services/v2/order/certificate/ORDER_ID'
+			]).
+				stdout.
+				toString().
+				replace(/\\\\r/g, '')
+		).
+			certificate.
+			id
+	)")"
+
+	curl -s \
+		-H 'X-DC-DEVKEY: API_KEY' \
+		"https://www.digicert.com/services/v2/certificate/${certificateID}/download/format/pem_all" \
+	> \
+		cert.pem
+
+	certHash="$(openssl x509 -in cert.pem -pubkey -noout | openssl rsa -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)"
+done
 
 # LetsEncrypt
 #
@@ -87,11 +95,6 @@ curl -s \
 # mv /etc/letsencrypt/archive/*/fullchain*.pem cert.pem
 # mv /etc/letsencrypt/archive/*/privkey*.pem key.pem
 # rm -rf /etc/letsencrypt/archive /etc/letsencrypt/live
-
-
-certHash="$(openssl x509 -in cert.pem -pubkey -noout | openssl rsa -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)"
-keyHash="$(openssl rsa -in key.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"
-backupHash="$(openssl rsa -in backup.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"
 
 
 read -r -d '' sslconf <<- EOM
@@ -162,23 +165,21 @@ cat > /etc/nginx/nginx.conf.new <<- EOM
 EOM
 
 
-if [ "${certHash}" == "${keyHash}" ] ; then
-	mv ../key.pem key.old
-	mv ../dhparams.pem dhparams.old
-	mv ../cert.pem cert.old
+mv ../key.pem key.old
+mv ../dhparams.pem dhparams.old
+mv ../cert.pem cert.old
 
-	mv key.pem ../key.pem
-	mv dhparams.pem ../dhparams.pem
-	mv cert.pem ../cert.pem
+mv key.pem ../key.pem
+mv dhparams.pem ../dhparams.pem
+mv cert.pem ../cert.pem
 
-	mv /etc/nginx/nginx.conf.new /etc/nginx/nginx.conf
+mv /etc/nginx/nginx.conf.new /etc/nginx/nginx.conf
 
-	su -c 'service nginx restart'
+su -c 'service nginx restart'
 
-	mv key.old key.pem
-	mv dhparams.old dhparams.pem
-	mv cert.old cert.pem
-fi
+mv key.old key.pem
+mv dhparams.old dhparams.pem
+mv cert.old cert.pem
 
 for f in key.pem backup.pem dhparams.pem cert.pem csr.pem ; do
 	for i in {1..10} ; do
