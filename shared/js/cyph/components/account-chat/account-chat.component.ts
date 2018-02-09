@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, Input} from '@angular/core';
 import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {combineLatest} from 'rxjs/observable/combineLatest';
@@ -43,8 +43,13 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		ChatMessageValueTypes.Text
 	);
 
+	/** @see PromptFollowup */
+	@Input() public promptFollowup: boolean										= false;
+
 	/** @see UiStyles */
 	public readonly uiStyles: typeof UiStyles							= UiStyles;
+
+	@Input() public username?: string;
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence					= UserPresence;
@@ -101,7 +106,13 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 			this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(() => {
 				if (!this.destroyed) {
+					console.log('balls');
+					console.log('p2p'+this.p2pService.isActiveOrInitialCall);
+					console.log(this.promptFollowup);
 					this.router.navigate([accountRoot, 'messages', username]);
+					this.promptFollowup = true;
+					console.log(this.promptFollowup);
+					console.log('p2p'+this.p2pService.isActiveOrInitialCall);
 				}
 			});
 		});
@@ -140,5 +151,5 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {this.activatedRoute.params.subscribe(params => { this.username = params['username']; });}
 }
