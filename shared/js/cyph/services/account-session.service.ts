@@ -82,20 +82,25 @@ export class AccountSessionService extends SessionService {
 		this.sessionSubID	= sessionSubID;
 
 		(async () => {
-			const contactID	= await this.accountContactsService.getContactID(username);
+			const contactID			= await this.accountContactsService.getContactID(username);
+			const sessionURL		= `contacts/${contactID}/session`;
+			const symmetricKeyURL	= `${sessionURL}/symmetricKey`;
 
-			this.incomingMessageQueue	= this.accountDatabaseService.getAsyncList(
-				`contacts/${contactID}/session/incomingMessageQueue`,
+			this.incomingMessageQueue		= this.accountDatabaseService.getAsyncList(
+				`${sessionURL}/incomingMessageQueue`,
 				SessionMessage
 			);
 
+			this.incomingMessageQueueLock	= this.accountDatabaseService.lockFunction(
+				`${sessionURL}/incomingMessageQueueLock${sessionSubID ? `/${sessionSubID}` : ''}`
+			);
+
 			this.init(contactID, await this.accountDatabaseService.getOrSetDefault(
-				`contacts/${contactID}/session/channelUserID`,
+				`${sessionURL}/channelUserID`,
 				StringProto,
 				uuid
 			));
 
-			const symmetricKeyURL	= `contacts/${contactID}/session/symmetricKey`;
 
 			this.accountDatabaseService.getAsyncValue(
 				symmetricKeyURL,

@@ -9,6 +9,7 @@ import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncValue} from '../local-async-value';
+import {LockFunction} from '../lock-function-type';
 import {
 	BinaryProto,
 	ISessionMessage,
@@ -25,6 +26,7 @@ import {
 	rpcEvents
 } from '../session';
 import {normalize} from '../util/formatting';
+import {lockFunction} from '../util/lock';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -60,6 +62,9 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected incomingMessageQueue: IAsyncList<ISessionMessage>			= new LocalAsyncList();
+
+	/** @ignore */
+	protected incomingMessageQueueLock: LockFunction					= lockFunction();
 
 	/** @ignore */
 	protected lastIncomingMessageTimestamp: number						= 0;
@@ -399,9 +404,13 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public async init (channelID?: string, userID?: string) : Promise<void> {
-		this.incomingMessageQueue.subscribeAndPop(async message =>
-			this.cyphertextReceiveHandler(message)
-		);
+		this.incomingMessageQueueLock(async () => {
+			this.incomingMessageQueue.subscribeAndPop(async message =>
+				this.cyphertextReceiveHandler(message)
+			);
+
+			await this.closed;
+		});
 
 		await Promise.all([
 			this.castleService.init(this.potassiumService, this),
