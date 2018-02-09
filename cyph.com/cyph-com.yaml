@@ -37,6 +37,13 @@ handlers:
   ### Access-Control-Allow-Origin: "*"
   ### Access-Control-Allow-Methods: GET, OPTIONS
 
+- url: /blog/feed[/]?
+  static_files: blog/feed/index.xml
+  upload: blog/feed/index.xml
+  secure: always
+  # default_headers Cache-Control
+  ### Content-Type: text/plain
+
 # WPSTATIC
 - url: /PATH[/]?
   static_files: PATH/index.html

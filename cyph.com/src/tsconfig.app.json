@@ -2,7 +2,7 @@
 	"extends": "../tsconfig.json",
 	"angularCompilerOptions": {
 		"fullTemplateTypeCheck": true,
-		"preserveWhitespaces": false
+		"preserveWhitespaces": true
 	},
 	"compilerOptions": {
 		"outDir": "../out-tsc/app",
