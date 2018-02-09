@@ -74,11 +74,11 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			this.activatedRoute.url
 		).subscribe(async ([
 			{callType},
-			{username},
+			{sessionSubID, username},
 			[{path}]
 		]: [
 			{callType?: 'audio'|'video'},
-			{username?: string},
+			{sessionSubID?: string, username?: string},
 			UrlSegment[]
 		]) => {
 			if (!username) {
@@ -93,7 +93,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			}
 
 			this.initiated	= true;
-			await this.accountChatService.setUser(username, undefined, callType);
+			await this.accountChatService.setUser(username, undefined, callType, sessionSubID);
 
 			if (callType === undefined) {
 				return;

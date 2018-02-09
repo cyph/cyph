@@ -48,13 +48,14 @@ export class AccountChatService extends ChatService {
 	public async setUser (
 		username: string,
 		keepCurrentMessage: boolean = false,
-		callType?: 'audio'|'video'
+		callType?: 'audio'|'video',
+		sessionSubID?: string
 	) : Promise<void> {
 		const contactURL	= `contacts/${await this.accountContactsService.addContact(username)}`;
 
 		this.accountSessionInitService.callType	= callType || this.envService.callType;
 
-		await this.accountSessionService.setUser(username);
+		await this.accountSessionService.setUser(username, sessionSubID);
 
 		this.chat	= getOrSetDefault(this.chats, username, () => ({
 			currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},

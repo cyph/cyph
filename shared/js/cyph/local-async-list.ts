@@ -37,9 +37,12 @@ export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncLis
 	/** @inheritDoc */
 	public subscribeAndPop (f: (value: T) => MaybePromise<void>) : Subscription {
 		return this.pushes.subscribe(async ({index, value}) => {
-			await f(value);
-			this.value.splice(index, 1);
-			this.subject.next(this.value);
+			try {
+				await f(value);
+				this.value.splice(index, 1);
+				this.subject.next(this.value);
+			}
+			catch {}
 		});
 	}
 

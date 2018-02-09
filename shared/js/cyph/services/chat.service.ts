@@ -144,7 +144,8 @@ export class ChatService {
 			undefined,
 			selfDestructChat ? undefined : o.text.selfDestructTimeout,
 			o.text.dimensions,
-			o.id
+			o.id,
+			o.sessionSubID
 		);
 
 		if (selfDestructChat) {
@@ -214,7 +215,8 @@ export class ChatService {
 		shouldNotify: boolean = author !== this.sessionService.localUsername,
 		selfDestructTimeout?: number,
 		dimensions?: IChatMessageLine[],
-		id: string = uuid()
+		id: string = uuid(),
+		sessionSubID?: string
 	) : Promise<void> {
 		if (typeof value === 'string') {
 			value	= {text: value};
@@ -263,6 +265,7 @@ export class ChatService {
 			dimensions,
 			id,
 			selfDestructTimeout,
+			sessionSubID,
 			timestamp
 		});
 
