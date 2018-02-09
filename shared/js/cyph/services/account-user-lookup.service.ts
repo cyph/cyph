@@ -183,7 +183,7 @@ export class AccountUserLookupService {
 	}
 
 	/** If applicable, a whitelist of acceptable user types for this user to interact with. */
-	public async userTypeWhitelist () : Promise<AccountUserTypes[]|undefined> {
+	public async userTypeWhitelist () : Promise<AccountUserTypes[]|void> {
 		if (!this.accountDatabaseService.currentUser.value) {
 			return;
 		}
@@ -203,8 +203,12 @@ export class AccountUserLookupService {
 				];
 			}
 		}
-
-		return;
+		else {
+			return [
+				AccountUserTypes.Org,
+				AccountUserTypes.Standard
+			];
+		}
 	}
 
 	constructor (
