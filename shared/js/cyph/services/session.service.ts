@@ -364,9 +364,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public async handshakeState (
-		currentStep: IAsyncValue<HandshakeSteps> =
-			new LocalAsyncValue(HandshakeSteps.Start)
-		,
+		currentStep: IAsyncValue<HandshakeSteps> = new LocalAsyncValue(HandshakeSteps.Start),
 		initialSecret: IAsyncValue<Uint8Array|undefined> =
 			new LocalAsyncValue<Uint8Array|undefined>(undefined)
 	) : Promise<IHandshakeState> {
@@ -419,23 +417,18 @@ export abstract class SessionService implements ISessionService {
 	/** @inheritDoc */
 	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
 		return this.channelService.lock(
-			async r => f(!r ?
-				undefined :
-				this.potassiumService.toString(
-					await this.potassiumService.secretBox.open(
-						this.potassiumService.fromBase64(r),
-						await this.symmetricKey
-					)
+			async r => f(!r ? undefined : this.potassiumService.toString(
+				await this.potassiumService.secretBox.open(
+					this.potassiumService.fromBase64(r),
+					await this.symmetricKey
 				)
-			),
-			!reason ?
-				undefined :
-				this.potassiumService.toBase64(
-					await this.potassiumService.secretBox.seal(
-						this.potassiumService.fromString(reason),
-						await this.symmetricKey
-					)
+			)),
+			!reason ? undefined : this.potassiumService.toBase64(
+				await this.potassiumService.secretBox.seal(
+					this.potassiumService.fromString(reason),
+					await this.symmetricKey
 				)
+			)
 		);
 	}
 

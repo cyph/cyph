@@ -78,7 +78,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			[{path}]
 		]: [
 			{callType?: 'audio'|'video'},
-			{sessionSubID?: string, username?: string},
+			{sessionSubID?: string; username?: string},
 			UrlSegment[]
 		]) => {
 			if (!username) {
