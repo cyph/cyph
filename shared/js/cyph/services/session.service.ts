@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
@@ -369,7 +371,9 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public async handshakeState (
-		currentStep: IAsyncValue<HandshakeSteps> = new LocalAsyncValue(HandshakeSteps.Start),
+		currentStep: IAsyncValue<HandshakeSteps> =
+			new LocalAsyncValue(HandshakeSteps.Start)
+		,
 		initialSecret: IAsyncValue<Uint8Array|undefined> =
 			new LocalAsyncValue<Uint8Array|undefined>(undefined)
 	) : Promise<IHandshakeState> {
