@@ -156,32 +156,29 @@ message AccountUserProfileExtra {
 	/** Physical address. */
 	string address = 1;
 
-	/** Appointments. */
-	repeated Appointment appointments = 2;
-
 	/** Educational history. */
-	repeated Position education = 3;
+	repeated Position education = 2;
 
 	/** Gender. */
-	string gender = 4;
+	string gender = 3;
 
 	/** Insurance. */
-	StringArray insurance = 5;
+	repeated string insurance = 4;
 
 	/** Languages. */
-	repeated Language languages = 6;
+	repeated Language languages = 5;
 
 	/** NPI numbers. */
-	StringArray npi = 7;
+	repeated string npis = 6;
 
 	/** Username of parent organization. */
-	string organization = 8;
+	string organization = 7;
 
 	/** Specialties. */
-	StringArray specialties = 9;
+	repeated string specialties = 8;
 
 	/** Work history. */
-	repeated Position work = 10;
+	repeated Position work = 9;
 }
 
 /** AGSE-PKI certificate. */

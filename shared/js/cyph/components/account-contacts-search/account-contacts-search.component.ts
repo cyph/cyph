@@ -93,9 +93,9 @@ export class AccountContactsSearchComponent {
 											).
 											reduce((a, b) => a.concat(b), [])
 										).
-										concat(extra.insurance && extra.insurance.data || []).
-										concat(extra.npi && extra.npi.data || []).
-										concat(extra.specialties && extra.specialties.data || []).
+										concat(extra.insurance || []).
+										concat(extra.npis || []).
+										concat(extra.specialties || []).
 										find(s => s.toLowerCase().indexOf(query) > -1)
 									;
 

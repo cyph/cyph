@@ -422,7 +422,7 @@
 									</mat-expansion-panel-header>
 									<div fxLayout='column'>
 										<div *ngFor='
-											let insurance of (extra.insurance?.data || []);
+											let insurance of (extra.insurance || []);
 											trackBy: trackBySelf
 										'>
 											{{insurance}}
@@ -436,8 +436,8 @@
 										</mat-panel-title>
 									</mat-expansion-panel-header>
 									<div fxLayout='column'>
-										<span>{{(extra.specialties?.data || [])[0] || ''}}</span>
-										<span>{{(extra.specialties?.data || [])[1] || ''}}</span>
+										<span>{{(extra.specialties || [])[0] || ''}}</span>
+										<span>{{(extra.specialties || [])[1] || ''}}</span>
 									</div>
 								</mat-expansion-panel>
 								<mat-expansion-panel>
@@ -462,7 +462,7 @@
 											<span cyphTranslate>NPI</span>
 											<span>&nbsp;&mdash;&nbsp;</span>
 											<span>
-												{{(extra.npi?.data || [])[0] || ''}}
+												{{(extra.npi || [])[0] || ''}}
 											</span>
 										</div>
 									</div>
