@@ -17,7 +17,7 @@ const {
 }	= require('./util');
 
 
-module.exports	= config => {
+module.exports	= (config, isCloudFunction) => {
 
 
 const app			= admin.initializeApp(config.firebase, uuid());
@@ -26,9 +26,13 @@ const database		= app.database();
 const functionsUser	= functions.auth.user();
 const storage		= gcloudStorage(config.storage).bucket(`${config.project.id}.appspot.com`);
 
-const processURL	= (namespace, url) =>
+const processURL	= (namespace, url) => {
+	if (!namespace || !url) {
+		throw new Error('Invalid URL.');
+	}
+
 	`${namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`
-;
+};
 
 const databaseService	= {
 	app,
@@ -43,17 +47,8 @@ const databaseService	= {
 		);
 
 		const bytes		= await retryUntilSuccessful(async () =>
-			(await storage.file(url).download())[0]
+			(await storage.file(`${url}/${hash}`).download())[0]
 		);
-
-		if (
-			!potassium.compareMemory(
-				potassium.fromBase64(hash),
-				await potassium.hash.hash(bytes)
-			)
-		) {
-			throw new Error('Invalid data hash.');
-		}
 
 		return deserialize(proto, bytes);
 	},
@@ -69,19 +64,23 @@ const databaseService	= {
 	async removeItem (namespace, url) {
 		url	= processURL(namespace, url);
 
-		return retryUntilSuccessful(async () => Promise.all([
-			database.ref(url).remove(),
-			storage.deleteFiles({force: true, prefix: `${url}/`})
-		]));
+		await retryUntilSuccessful(async () => database.ref(url).remove());
+
+		if (isCloudFunction) {
+			await retryUntilSuccessful(async () =>
+				storage.deleteFiles({force: true, prefix: `${url}/`})
+			);
+		}
 	},
 	async setItem (namespace, url, proto, value) {
 		url	= processURL(namespace, url);
 
 		const bytes	= await serialize(proto, value);
+		const hash	= potassium.toHex(await potassium.hash.hash(bytes));
 
-		await retryUntilSuccessful(async () => storage.file(url).save(bytes));
+		await retryUntilSuccessful(async () => storage.file(`${url}/${hash}`).save(bytes));
 		await retryUntilSuccessful(async () => database.ref(url).set({
-			hash: potassium.toBase64(await potassium.hash.hash(bytes)),
+			hash,
 			timestamp: admin.database.ServerValue.TIMESTAMP
 		}));
 	},

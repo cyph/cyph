@@ -114,22 +114,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @ignore */
-	private async getStorageRef (url: string) : Promise<StorageReference> {
-		return retryUntilSuccessful(async () =>
-			/^https?:\/\//.test(url) ?
-				(await this.app).storage().refFromURL(url) :
-				(await this.app).storage().ref(this.processURL(url))
-		);
-	}
+	private async getStorageRef (url: string, hash: string) : Promise<StorageReference> {
+		const fullURL	= `${url}/${hash}`;
 
-	/** @ignore */
-	private recursivelyGetKeys (root: string, o: any) : string[] {
-		return (root ? [root] : []).concat(
-			typeof o === 'object' ?
-				[] :
-				Object.keys(o).
-					map(k => this.recursivelyGetKeys(`${root}/${k}`, o[k])).
-					reduce((a, b) => a.concat(b), [])
+		return retryUntilSuccessful(async () =>
+			/^https?:\/\//.test(fullURL) ?
+				(await this.app).storage().refFromURL(fullURL) :
+				(await this.app).storage().ref(this.processURL(fullURL))
 		);
 	}
 
@@ -207,7 +198,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				const request	= requestByteStream({
 					retries: 3,
-					url: await (await this.getStorageRef(url)).getDownloadURL()
+					url: await (await this.getStorageRef(url, hash)).getDownloadURL()
 				});
 
 				request.progress.subscribe(
@@ -216,17 +207,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 				);
 
 				const value	= await request.result;
-
-				if (
-					!this.potassiumService.compareMemory(
-						this.potassiumService.fromBase64(hash),
-						await this.potassiumService.hash.hash(value)
-					)
-				) {
-					const err	= new Error('Invalid data hash.');
-					this.ngZone.run(() => { progress.error(err); });
-					throw err;
-				}
 
 				this.ngZone.run(() => {
 					progress.next(100);
@@ -300,13 +280,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
 
-			return (
-				typeof (await (await this.getDatabaseRef(url)).once('value')).val() === 'object' &&
-				(await this.getStorageRef(url)).getDownloadURL().
-					then(() => true).
-					catch(() => false)
-			);
-		});
+			const metadata	= await this.getMetadata(url);
+
+			await (await this.getStorageRef(url, metadata.hash)).getDownloadURL();
+		}).
+			then(() => true).
+			catch(() => false)
+		;
 	}
 
 	/** @inheritDoc */
@@ -445,19 +425,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 		await this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
 
+			(await this.getDatabaseRef(url)).remove().then();
 			this.cacheRemove({url});
-
-			const databaseRef	= await this.getDatabaseRef(url);
-
-			await Promise.all(
-				this.recursivelyGetKeys(url, (await databaseRef.once('value')).val()).map(
-					async k => (await this.getStorageRef(k)).delete().then()
-				).concat(
-					(async () => databaseRef.remove().then())()
-				)
-			).catch(
-				() => {}
-			);
 		});
 	}
 
@@ -536,13 +505,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const url	= await urlPromise;
 
 			const data	= await serialize(proto, value);
-			const hash	= this.potassiumService.toBase64(
+			const hash	= this.potassiumService.toHex(
 				await this.potassiumService.hash.hash(data)
 			);
 
 			/* tslint:disable-next-line:possible-timing-attack */
 			if (hash !== (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
-				await (await this.getStorageRef(url)).put(new Blob([data])).then();
+				await (await this.getStorageRef(url, hash)).put(new Blob([data])).then();
 				await (await this.getDatabaseRef(url)).set({
 					hash,
 					timestamp: ServerValue.TIMESTAMP
@@ -579,7 +548,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const url	= await urlPromise;
 
 			const data	= await serialize(proto, value);
-			const hash	= this.potassiumService.toBase64(
+			const hash	= this.potassiumService.toHex(
 				await this.potassiumService.hash.hash(data)
 			);
 
@@ -593,7 +562,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			}
 
 			return new Promise<{hash: string; url: string}>(async (resolve, reject) => {
-				const uploadTask	= (await this.getStorageRef(url)).put(new Blob([data]));
+				const uploadTask	= (await this.getStorageRef(url, hash)).put(new Blob([data]));
 
 				cancel.promise.then(() => {
 					reject('Upload canceled.');

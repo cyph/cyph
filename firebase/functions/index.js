@@ -1,9 +1,9 @@
-const firebase		= require('firebase');
-const admin			= require('firebase-admin');
-const functions		= require('firebase-functions');
-const potassium		= require('./potassium');
-const {StringProto}	= require('./proto');
-const {sleep}		= require('./util');
+const firebase						= require('firebase');
+const admin							= require('firebase-admin');
+const functions						= require('firebase-functions');
+const potassium						= require('./potassium');
+const {StringProto}					= require('./proto');
+const {retryUntilSuccessful, sleep}	= require('./util');
 
 const {
 	auth,
@@ -13,10 +13,22 @@ const {
 	removeItem,
 	setItem,
 	storage
-}	= require('./database-service')(functions.config());
+}	= require('./database-service')(functions.config(), true);
 
 
 const channelDisconnectTimeout	= 2500;
+
+const getURL	= (adminRef, namespace) => {
+	const url	= adminRef.toString().split(
+		`${adminRef.root.toString()}${namespace ? `${namespace}/` : ''}`
+	)[1];
+
+	if (!url) {
+		throw new Error('Cannot get URL from input.');
+	}
+
+	return url;
+};
 
 
 exports.channelDisconnect	=
@@ -43,6 +55,61 @@ exports.channelDisconnect	=
 			return removeItem(e.params.namespace, `channels/${doomedRef.key}`);
 		}
 	)
+;
+
+
+exports.itemHashChange	=
+	functions.database.ref('{namespace}').onUpdate(async e => {
+		if (!e.data.exists() || e.data.key !== 'hash') {
+			return;
+		}
+
+		const hash	= e.data.val();
+
+		if (typeof hash !== 'string') {
+			return;
+		}
+
+		const url		= getURL(e.data.adminRef.parent);
+
+		const files	= await Promise.all(
+			(await storage.getFiles({prefix: `${url}/`}))[0].map(async file => {
+				const [metadata]	= await file.getMetadata();
+
+				return {
+					file,
+					name: metadata.name.split('/').slice(-1)[0],
+					timestamp: new Date(metadata.updated).getTime()
+				};
+			})
+		);
+
+		for (const o of files.sort((a, b) => a.timestamp > b.timestamp)) {
+			if (o.name === hash) {
+				return;
+			}
+
+			await retryUntilSuccessful(async () => {
+				const [exists]	= await o.file.exists();
+				if (!exists) {
+					return;
+				}
+
+				await o.file.delete();
+			});
+		}
+	})
+;
+
+
+exports.itemRemoved	=
+	functions.database.ref('{namespace}').onDelete(async e => {
+		if (e.data.exists()) {
+			return;
+		}
+
+		return removeItem(e.params.namespace, getURL(e.data.adminRef, e.params.namespace));
+	})
 ;
 
 
