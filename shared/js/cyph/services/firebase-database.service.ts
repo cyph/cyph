@@ -33,7 +33,7 @@ import {requestByteStream} from '../util/request';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {resolvable, retryUntilSuccessful, sleep, waitForValue} from '../util/wait';
+import {resolvable, retryUntilSuccessful, waitForValue} from '../util/wait';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {EnvService} from './env.service';
@@ -191,58 +191,49 @@ export class FirebaseDatabaseService extends DatabaseService {
 			result: this.ngZone.runOutsideAngular(async () => {
 				const url	= await urlPromise;
 
-				let tries	= 0;
-				while (true) {
-					const {hash, timestamp}	= await this.getMetadata(url);
+				const {hash, timestamp}	= await this.getMetadata(url);
 
-					try {
-						const localData	= await this.cacheGet({hash});
-						this.ngZone.run(() => {
-							progress.next(100);
-							progress.complete();
-						});
-						return {timestamp, value: await deserialize(proto, localData)};
-					}
-					catch {}
-
-					this.ngZone.run(() => { progress.next(0); });
-
-					const request	= requestByteStream({
-						retries: 3,
-						url: await (await this.getStorageRef(url)).getDownloadURL()
-					});
-
-					request.progress.subscribe(
-						n => { this.ngZone.run(() => { progress.next(n); }); },
-						err => { this.ngZone.run(() => { progress.next(err); }); }
-					);
-
-					const value	= await request.result;
-
-					if (
-						!this.potassiumService.compareMemory(
-							this.potassiumService.fromBase64(hash),
-							await this.potassiumService.hash.hash(value)
-						)
-					) {
-						if (tries < 5) {
-							await sleep(1000);
-							++tries;
-							continue;
-						}
-
-						const err	= new Error('Invalid data hash.');
-						this.ngZone.run(() => { progress.error(err); });
-						throw err;
-					}
-
+				try {
+					const localData	= await this.cacheGet({hash});
 					this.ngZone.run(() => {
 						progress.next(100);
 						progress.complete();
 					});
-					this.cacheSet(url, value, hash);
-					return {timestamp, value: await deserialize(proto, value)};
+					return {timestamp, value: await deserialize(proto, localData)};
 				}
+				catch {}
+
+				this.ngZone.run(() => { progress.next(0); });
+
+				const request	= requestByteStream({
+					retries: 3,
+					url: await (await this.getStorageRef(url)).getDownloadURL()
+				});
+
+				request.progress.subscribe(
+					n => { this.ngZone.run(() => { progress.next(n); }); },
+					err => { this.ngZone.run(() => { progress.next(err); }); }
+				);
+
+				const value	= await request.result;
+
+				if (
+					!this.potassiumService.compareMemory(
+						this.potassiumService.fromBase64(hash),
+						await this.potassiumService.hash.hash(value)
+					)
+				) {
+					const err	= new Error('Invalid data hash.');
+					this.ngZone.run(() => { progress.error(err); });
+					throw err;
+				}
+
+				this.ngZone.run(() => {
+					progress.next(100);
+					progress.complete();
+				});
+				this.cacheSet(url, value, hash);
+				return {timestamp, value: await deserialize(proto, value)};
 			})
 		};
 	}
