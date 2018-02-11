@@ -1,12 +1,23 @@
+/* tslint:disable:max-file-line-count */
+
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
+import {take} from 'rxjs/operators/take';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {eventManager} from '../event-manager';
+import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
+import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncValue} from '../local-async-value';
-import {BinaryProto, ISessionMessage, SessionMessageList} from '../proto';
+import {LockFunction} from '../lock-function-type';
+import {
+	BinaryProto,
+	ISessionMessage,
+	ISessionMessageData as ISessionMessageDataInternal,
+	SessionMessageList
+} from '../proto';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {
 	CastleEvents,
@@ -16,6 +27,8 @@ import {
 	ProFeatures,
 	rpcEvents
 } from '../session';
+import {normalize} from '../util/formatting';
+import {lockFunction} from '../util/lock';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -48,6 +61,12 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected readonly eventID: string									= uuid();
+
+	/** @ignore */
+	protected incomingMessageQueue: IAsyncList<ISessionMessage>			= new LocalAsyncList();
+
+	/** @ignore */
+	protected incomingMessageQueueLock: LockFunction					= lockFunction();
 
 	/** @ignore */
 	protected lastIncomingMessageTimestamp: number						= 0;
@@ -111,6 +130,9 @@ export abstract class SessionService implements ISessionService {
 		this.stringsService.friend
 	);
 
+	/** @see ISessionMessageData.sessionSubID */
+	public sessionSubID?: string;
+
 	/** @inheritDoc */
 	public readonly state									= {
 		cyphID: '',
@@ -169,9 +191,18 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @ignore */
-	protected cyphertextReceiveHandler (message: ISessionMessage) : void {
+	protected async cyphertextReceiveHandler (message: ISessionMessage) : Promise<void> {
+		if ((message.data.sessionSubID || undefined) !== this.sessionSubID) {
+			throw new Error('Different sub-session.');
+		}
+
 		if (!message.data.id || this.receivedMessages.has(message.data.id)) {
 			return;
+		}
+
+		const author	= await this.getSessionMessageAuthor(message.data);
+		if (author) {
+			(<any> message.data).author	= author;
 		}
 
 		this.receivedMessages.add(message.data.id);
@@ -194,6 +225,11 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @ignore */
+	protected async getSessionMessageAuthor (
+		message: ISessionMessageDataInternal
+	) : Promise<Observable<string>|void> {}
+
+	/** @ignore */
 	protected async newMessages (
 		messages: [string, ISessionMessageAdditionalData][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
@@ -209,6 +245,7 @@ export abstract class SessionService implements ISessionService {
 				chatState: additionalData.chatState,
 				command: additionalData.command,
 				id: uuid(),
+				sessionSubID: this.sessionSubID,
 				text: additionalData.text,
 				textConfirmation: additionalData.textConfirmation,
 				timestamp: await getTimestamp(),
@@ -281,6 +318,8 @@ export abstract class SessionService implements ISessionService {
 					[]
 				;
 
+				const authorID	= normalize(await data.author.pipe(take(1)).toPromise());
+
 				for (const message of messages) {
 					/* Discard messages without valid timestamps */
 					if (
@@ -293,8 +332,9 @@ export abstract class SessionService implements ISessionService {
 
 					this.lastIncomingMessageTimestamp	= message.data.timestamp;
 					(<any> message.data).author			= data.author;
+					message.data.authorID				= authorID;
 
-					this.cyphertextReceiveHandler(message);
+					this.incomingMessageQueue.pushValue(message);
 				}
 				break;
 			}
@@ -368,6 +408,14 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public async init (channelID?: string, userID?: string) : Promise<void> {
+		this.incomingMessageQueueLock(async () => {
+			this.incomingMessageQueue.subscribeAndPop(async message =>
+				this.cyphertextReceiveHandler(message)
+			);
+
+			await this.closed;
+		});
+
 		await Promise.all([
 			this.castleService.init(this.potassiumService, this),
 			this.channelService.init(channelID, userID, {
@@ -382,23 +430,18 @@ export abstract class SessionService implements ISessionService {
 	/** @inheritDoc */
 	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
 		return this.channelService.lock(
-			async r => f(!r ?
-				undefined :
-				this.potassiumService.toString(
-					await this.potassiumService.secretBox.open(
-						this.potassiumService.fromBase64(r),
-						await this.symmetricKey
-					)
+			async r => f(!r ? undefined : this.potassiumService.toString(
+				await this.potassiumService.secretBox.open(
+					this.potassiumService.fromBase64(r),
+					await this.symmetricKey
 				)
-			),
-			!reason ?
-				undefined :
-				this.potassiumService.toBase64(
-					await this.potassiumService.secretBox.seal(
-						this.potassiumService.fromString(reason),
-						await this.symmetricKey
-					)
+			)),
+			!reason ? undefined : this.potassiumService.toBase64(
+				await this.potassiumService.secretBox.seal(
+					this.potassiumService.fromString(reason),
+					await this.symmetricKey
 				)
+			)
 		);
 	}
 

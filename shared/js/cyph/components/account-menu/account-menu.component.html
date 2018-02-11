@@ -91,7 +91,8 @@
 							matTooltipPosition='right'
 							class='avatar animated fadeIn _1'
 							[ngClass]='userPresence[
-								accountDatabaseService.currentUser.value?.user.status | async
+								(accountDatabaseService.currentUser.value?.user.status | async) ||
+								0
 							]'
 							alt='Profile Picture'
 							[src]='accountDatabaseService.currentUser.value?.user.avatar | async'

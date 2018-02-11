@@ -30,10 +30,7 @@
 			[vsData]='filteredContactList'
 			[vsEqualsFunc]='vsEqualsFunc'
 			[vsOptions]='vsOptions'
-			*ngIf='
-				showContactList &&
-				(accountContactsSearch?.searchBar?.filter | async) === undefined
-			'
+			*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
 		>
 			<ng-template let-item>
 				<cyph-account-contact

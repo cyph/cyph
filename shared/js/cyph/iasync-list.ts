@@ -22,7 +22,10 @@ export interface IAsyncList<T> {
 	/** Sets value. */
 	setValue (value: T[]) : Promise<void>;
 
-	/** Subscribes to pushed values and deletes them. */
+	/**
+	 * Subscribes to pushed values and deletes them.
+	 * @param f Subscribing function; throws exception to abort deletion.
+	 */
 	subscribeAndPop (f: (value: T) => MaybePromise<void>) : Subscription;
 
 	/** Uses a function to transform value. Throwing aborts modification. */

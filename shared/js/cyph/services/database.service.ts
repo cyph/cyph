@@ -35,7 +35,7 @@ export class DatabaseService extends DataManagerService {
 
 	/** Adds namespace to URL. */
 	protected processURL (url: string) : string {
-		return `/${this.namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`;
+		return `${this.namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`;
 	}
 
 	/**
@@ -326,16 +326,22 @@ export class DatabaseService extends DataManagerService {
 		}
 	}
 
-	/** Subscribes to pushed values and deletes them. */
+	/**
+	 * Subscribes to pushed values and deletes them.
+	 * @param f Subscribing function; throws exception to abort deletion.
+	 */
 	public subscribeAndPop<T> (
 		url: string,
 		proto: IProto<T>,
 		f: (value: T) => MaybePromise<void>
 	) : Subscription {
 		return this.watchListKeyPushes(url).subscribe(async key => {
-			const fullURL	= `${url}/${key}`;
-			await f(await this.getItem(fullURL, proto));
-			await this.removeItem(fullURL);
+			try {
+				const fullURL	= `${url}/${key}`;
+				await f(await this.getItem(fullURL, proto));
+				await this.removeItem(fullURL);
+			}
+			catch {}
 		});
 	}
 

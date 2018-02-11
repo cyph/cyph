@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
 import {User} from '../account/user';
-import {BinaryProto, StringProto} from '../proto';
+import {BinaryProto, SessionMessage, StringProto} from '../proto';
 import {ISessionMessageData, rpcEvents} from '../session';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
@@ -56,24 +57,50 @@ export class AccountSessionService extends SessionService {
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {}
 
+	/** @ignore */
+	protected async getSessionMessageAuthor (
+		message: ISessionMessageData
+	) : Promise<Observable<string>|void> {
+		if (!message.authorID) {
+			return;
+		}
+
+		const user	= await this.accountUserLookupService.getUser(message.authorID);
+
+		if (user) {
+			return user.realUsername;
+		}
+	}
+
 	/** Sets the remote user we're chatting with. */
-	public async setUser (username: string) : Promise<void> {
+	public async setUser (username: string, sessionSubID?: string) : Promise<void> {
 		if (this.initiated) {
 			throw new Error('User already set.');
 		}
 
-		this.initiated	= true;
+		this.initiated		= true;
+		this.sessionSubID	= sessionSubID;
 
 		(async () => {
-			const contactID	= await this.accountContactsService.getContactID(username);
+			const contactID			= await this.accountContactsService.getContactID(username);
+			const sessionURL		= `contacts/${contactID}/session`;
+			const symmetricKeyURL	= `${sessionURL}/symmetricKey`;
+
+			this.incomingMessageQueue		= this.accountDatabaseService.getAsyncList(
+				`${sessionURL}/incomingMessageQueue`,
+				SessionMessage
+			);
+
+			this.incomingMessageQueueLock	= this.accountDatabaseService.lockFunction(
+				`${sessionURL}/incomingMessageQueueLock${sessionSubID ? `/${sessionSubID}` : ''}`
+			);
 
 			this.init(contactID, await this.accountDatabaseService.getOrSetDefault(
-				`contacts/${contactID}/session/channelUserID`,
+				`${sessionURL}/channelUserID`,
 				StringProto,
 				uuid
 			));
 
-			const symmetricKeyURL	= `contacts/${contactID}/session/symmetricKey`;
 
 			this.accountDatabaseService.getAsyncValue(
 				symmetricKeyURL,

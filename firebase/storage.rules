@@ -70,6 +70,7 @@ service firebase.storage {
 				// 			/initialSecret {}
 				// 		}
 				// 		/incomingMessageID {}
+				// 		/incomingMessageQueue {}
 				// 		/incomingMessages {}
 				// 		/incomingMessagesMax {}
 				// 		/outgoingMessageID {}

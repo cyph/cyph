@@ -353,11 +353,14 @@ message ChatMessage {
 	/** @see SessionText.selfDestructTimeout */
 	uint32 selfDestructTimeout = 5;
 
+	/** @see SessionMessageData.sessionSubID */
+	string sessionSubID = 6;
+
 	/** @see SessionMessageData.timestamp */
-	required double timestamp = 6;
+	required double timestamp = 7;
 
 	/** @see ChatMessageValue */
-	ChatMessageValue value = 7;
+	ChatMessageValue value = 8;
 }
 
 /** Dimensions for one message line. */
@@ -658,32 +661,38 @@ message SessionMessage {
 
 /** Message data. */
 message SessionMessageData {
+	/** @see ChatMessage.authorID */
+	string authorID = 1;
+
 	/** Unique ID. */
-	required string id = 1;
+	required string id = 2;
 
 	/** Timestamp of this message. */
-	required double timestamp = 2;
+	required double timestamp = 3;
 
 	/** Arbitrary bytes. */
-	bytes bytes = 3;
+	bytes bytes = 4;
 
 	/** @see SessionCapabilities */
-	SessionCapabilities capabilities = 4;
+	SessionCapabilities capabilities = 5;
 
 	/** @see SessionChatState */
-	SessionChatState chatState = 5;
+	SessionChatState chatState = 6;
 
 	/** @see SessionCommand */
-	SessionCommand command = 6;
+	SessionCommand command = 7;
+
+	/** If applicable, ID of an isolated exchange of messages within a session. */
+	string sessionSubID = 8;
 
 	/** @see SessionText */
-	SessionText text = 7;
+	SessionText text = 9;
 
 	/** @see SessionTextConfirmation */
-	SessionTextConfirmation textConfirmation = 8;
+	SessionTextConfirmation textConfirmation = 10;
 
 	/** @see SessionTransfer */
-	SessionTransfer transfer = 9;
+	SessionTransfer transfer = 11;
 }
 
 /** Array of session messages. */

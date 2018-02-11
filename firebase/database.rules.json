@@ -283,6 +283,14 @@
 										".validate": "newData.val() === now"
 									}
 								},
+								"incomingMessageQueue": {
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								},
 								"incomingMessages": {
 									"hash": {
 										".validate": "newData.isString()"

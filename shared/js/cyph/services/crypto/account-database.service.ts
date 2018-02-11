@@ -797,17 +797,12 @@ export class AccountDatabaseService {
 		anonymous: boolean = false
 	) : Subscription {
 		return this.watchListKeyPushes(url).subscribe(async key => {
-			const fullURL	= `${url}/${key}`;
-
-			await f(await this.getItem(
-				fullURL,
-				proto,
-				securityModel,
-				customKey,
-				anonymous
-			));
-
-			await this.removeItem(fullURL);
+			try {
+				const fullURL	= `${url}/${key}`;
+				await f(await this.getItem(fullURL, proto, securityModel, customKey, anonymous));
+				await this.removeItem(fullURL);
+			}
+			catch {}
 		});
 	}
 

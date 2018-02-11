@@ -175,12 +175,13 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 		const chat	= this.chat;
 
-		const observables	= getOrSetDefault(
-			this.observableCache,
-			chat,
-			() => ({
-				messages: chat.messages.watch().pipe(mergeMap(async messages =>
-					(await Promise.all(messages.map(async message => getOrSetDefaultAsync(
+		const observables	= getOrSetDefault(this.observableCache, chat, () => ({
+			messages: chat.messages.watch().pipe(mergeMap(async messages =>
+				(await Promise.all(messages.
+					filter(message =>
+						(message.sessionSubID || undefined) === this.sessionService.sessionSubID
+					).
+					map(async message => getOrSetDefaultAsync(
 						this.messageCache,
 						message.id,
 						async () => {
@@ -230,13 +231,13 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 							return new ChatMessage(message, author, authorUser);
 						}
-					)))).sort((a, b) =>
-						a.timestamp - b.timestamp
 					)
-				)),
-				unconfirmedMessages: chat.unconfirmedMessages.watch()
-			})
-		);
+				))).sort((a, b) =>
+					a.timestamp - b.timestamp
+				)
+			)),
+			unconfirmedMessages: chat.unconfirmedMessages.watch()
+		}));
 
 		combineLatest(
 			observables.messages,

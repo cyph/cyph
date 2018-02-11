@@ -12,7 +12,7 @@
 			class='animated flipInX _4'
 			matTooltip='Remove Contact'
 			(click)='accountContactsService.removeContact(user?.username)'
-			*ngIf='isContact | async; else buttonsAddContact'
+			*ngIf='isContact !== undefined && (isContact | async); else buttonsAddContact'
 		>
 			<mat-icon>delete</mat-icon>
 		</button>
@@ -111,7 +111,7 @@
 						<img
 							cyphTranslate
 							class='avatar animated jackInTheBox _1'
-							[ngClass]='userPresence[user?.status | async]'
+							[ngClass]='userPresence[(user?.status | async) || 0]'
 							alt='Profile Picture'
 							[src]='user?.avatar | async'
 						/>
@@ -229,7 +229,7 @@
 					<img
 						cyphTranslate
 						class='avatar animated _1'
-						[ngClass]='userPresence[user?.status | async]'
+						[ngClass]='userPresence[(user?.status | async) || 0]'
 						alt='Profile Picture'
 						[src]='user?.avatar | async'
 					/>
@@ -314,7 +314,10 @@
 							</mat-list>
 							<br />
 							<br />
-							<ng-container *ngIf='(userMembers | async)?.length > 0'>
+							<ng-container *ngIf='
+								userMembers !== undefined &&
+								(userMembers | async)?.length > 0
+							'>
 								<h2 cyphTranslate class='user-list-header'>Available Doctors</h2>
 								<cyph-account-contacts
 									class='member-list'

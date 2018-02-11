@@ -77,7 +77,7 @@ for (const username of Object.keys(pendingSignups)) {
 			!requireInvite ||
 			(
 				await getItem(
-					namespace
+					namespace,
 					`users/${username}/inviterUsernamePlaintext`,
 					StringProto
 				).catch(() => undefined)
@@ -120,7 +120,7 @@ const issuanceHistory	= await (async () => {
 
 	const o	= await deserialize(
 		AGSEPKIIssuanceHistory,
-		await this.potassiumService.sign.open(
+		await potassium.sign.open(
 			signed,
 			await potassium.sign.importSuperSphincsPublicKeys(
 				agsePublicSigningKeys.rsa[rsaKeyIndex],

@@ -39,7 +39,7 @@ export class AppService {
 	public contactTo?: string;
 
 	/** Donation amount in dollars. */
-	public readonly donationAmount: number	= 10;
+	public donationAmount: number	= 10;
 
 	/** Carousel of features. */
 	public featureCarousel?: Carousel;
