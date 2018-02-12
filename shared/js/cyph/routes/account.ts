@@ -18,7 +18,7 @@ import {AccountProfileComponent} from '../components/account-profile';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
 import {newPatient} from '../forms';
-import {ChatMessageValueTypes} from '../proto';
+import {ChatMessageValue} from '../proto';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 
 
@@ -41,12 +41,12 @@ export const account: Route	= {
 		{
 			path: 'compose',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValueTypes.Quill}
+			data: {messageType: ChatMessageValue.Types.Quill}
 		},
 		{
 			path: 'compose/:username',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValueTypes.Quill}
+			data: {messageType: ChatMessageValue.Types.Quill}
 		},
 		{path: 'contacts', component: AccountContactsComponent},
 		{path: 'contacts/:username', component: AccountContactsComponent},
@@ -69,12 +69,12 @@ export const account: Route	= {
 		{
 			path: 'new-patient',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValueTypes.Form, value: newPatient}
+			data: {messageType: ChatMessageValue.Types.Form, value: newPatient}
 		},
 		{
 			path: 'new-patient/:username',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValueTypes.Form, value: newPatient}
+			data: {messageType: ChatMessageValue.Types.Form, value: newPatient}
 		},
 		{path: 'notes', component: AccountNotesComponent, data: {realTime: false}},
 		{
@@ -92,17 +92,17 @@ export const account: Route	= {
 		{
 			path: 'request-appointment',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValueTypes.CalendarInvite}
+			data: {messageType: ChatMessageValue.Types.CalendarInvite}
 		},
 		{
 			path: 'request-appointment/:username',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValueTypes.CalendarInvite}
+			data: {messageType: ChatMessageValue.Types.CalendarInvite}
 		},
 		{
 			path: 'request-followup/:username',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValueTypes.CalendarInvite, appointmentFollowUp: true}
+			data: {messageType: ChatMessageValue.Types.CalendarInvite, appointmentFollowUp: true}
 		},
 		{path: 'settings', component: AccountSettingsComponent},
 		{path: 'video/:username', component: AccountChatComponent, data: {callType: 'video'}},

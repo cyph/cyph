@@ -11,7 +11,7 @@ import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncMap} from '../local-async-map';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
-import {ChatMessageValueTypes, IChatMessage, IChatMessageLine, IChatMessageValue} from '../proto';
+import {ChatMessageValue, IChatMessage, IChatMessageLine, IChatMessageValue} from '../proto';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
 import {lockFunction} from '../util/lock';
@@ -422,7 +422,7 @@ export class ChatService {
 
 	/** Sends a message. */
 	public async send (
-		messageType: ChatMessageValueTypes = ChatMessageValueTypes.Text,
+		messageType: ChatMessageValue.Types = ChatMessageValue.Types.Text,
 		message: IChatMessageLiveValue = {},
 		selfDestructTimeout?: number,
 		selfDestructChat: boolean = false,
@@ -434,7 +434,7 @@ export class ChatService {
 		;
 
 		switch (messageType) {
-			case ChatMessageValueTypes.CalendarInvite:
+			case ChatMessageValue.Types.CalendarInvite:
 				value.calendarInvite			=
 					(message && message.calendarInvite) ||
 					this.chat.currentMessage.calendarInvite
@@ -445,7 +445,7 @@ export class ChatService {
 				}
 				break;
 
-			case ChatMessageValueTypes.Form:
+			case ChatMessageValue.Types.Form:
 				value.form	= (message && message.form) || this.chat.currentMessage.form;
 				currentMessage.form	= undefined;
 				if (!value.form) {
@@ -453,7 +453,7 @@ export class ChatService {
 				}
 				break;
 
-			case ChatMessageValueTypes.Quill:
+			case ChatMessageValue.Types.Quill:
 				value.quill	=
 					message && message.quill ?
 						msgpack.encode({ops: message.quill.ops}) :
@@ -467,7 +467,7 @@ export class ChatService {
 				}
 				break;
 
-			case ChatMessageValueTypes.Text:
+			case ChatMessageValue.Types.Text:
 				value.text	= (message && message.text) || this.chat.currentMessage.text;
 				currentMessage.text	= '';
 				this.messageChange();
@@ -477,7 +477,7 @@ export class ChatService {
 				break;
 
 			default:
-				throw new Error('Invalid ChatMessageValueTypes value.');
+				throw new Error('Invalid ChatMessageValue.Types value.');
 		}
 
 		const dimensions	= (
