@@ -32,9 +32,10 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	/** @see ChatMessageValueTypes */
 	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
 
-	/** @ignore */
-	public readonly followUp: Observable<boolean>	=
-	this.activatedRoute.data.pipe(map(o => o.followUp === true));
+	/** @see AccountChatMessageBoxComponent.calendarInviteFollowUp */
+	public readonly appointmentFollowUp: Observable<boolean>			=
+		this.activatedRoute.data.pipe(map(o => o.appointmentFollowUp === true))
+	;
 
 	/** @see AccountChatMessageBoxComponent.messageType */
 	public readonly messageType: BehaviorSubject<ChatMessageValueTypes>	= cacheObservable(

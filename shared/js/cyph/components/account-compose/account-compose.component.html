@@ -6,11 +6,12 @@
 	<div fxFlex='90' class='cyph-light-theme'>
 		<mat-card class='animated slideInDown' fxFlex *ngIf='(sent | async) !== undefined'>
 			<mat-card-title>
-				<span
-					cyphTranslate
-					*ngIf='(messageType | async) === chatMessageValueTypes.CalendarInvite'
-				>
-					Request {{(followUp | async) ? "Follow-Up" : ""}} Appointment
+				<span *ngIf='(messageType | async) === chatMessageValueTypes.CalendarInvite'>
+					{{
+						(appointmentFollowUp | async) ?
+							stringsService.requestFollowUpAppointment :
+							stringsService.requestAppointment
+					}}
 				</span>
 				<span cyphTranslate *ngIf='(messageType | async) === chatMessageValueTypes.Form'>
 					Send Form
@@ -40,8 +41,7 @@
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box
 						[customSendFunction]='send'
-						[followUp]='followUp | async'
-						[promptFollowup]='promptFollowup | async'
+						[calendarInviteFollowUp]='appointmentFollowUp | async'
 						[messageType]='messageType | async'
 						[recipient]='recipient'
 						[showHeader]='true'

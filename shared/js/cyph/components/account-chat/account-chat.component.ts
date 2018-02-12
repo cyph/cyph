@@ -1,8 +1,6 @@
-import {Component, OnDestroy, OnInit, Input} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {map} from 'rxjs/operators/map';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {take} from 'rxjs/operators/take';
 import {UserPresence} from '../../account/enums';
@@ -53,14 +51,13 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		ChatMessageValueTypes.Text
 	);
 
-	/** @see promptFollowup */
-	public readonly promptFollowup: Observable<boolean>	=
-		this.activatedRoute.data.pipe(map(o => o.promptFollowup === true));
+	/** @see ChatMessageList.promptFollowup */
+	public readonly promptFollowup: BehaviorSubject<string|undefined>	=
+		new BehaviorSubject<string|undefined>(undefined)
+	;
 
 	/** @see UiStyles */
 	public readonly uiStyles: typeof UiStyles							= UiStyles;
-
-	@Input() public username?: string;
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence					= UserPresence;
@@ -89,11 +86,11 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			this.activatedRoute.params,
 			this.activatedRoute.url
 		).subscribe(async ([
-			{callType},
+			{callType, promptFollowup},
 			{appointmentID, sessionSubID, username},
 			[{path}]
 		]: [
-			{callType?: 'audio'|'video'},
+			{callType?: 'audio'|'video', promptFollowup?: boolean},
 			{appointmentID?: string; sessionSubID?: string; username?: string},
 			UrlSegment[]
 		]) => {
@@ -136,19 +133,24 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			}
 
 			this.initiated	= true;
+
+			if (promptFollowup) {
+				this.promptFollowup.next(username);
+			}
+
 			await this.accountChatService.setUser(username, undefined, callType, sessionSubID);
 
 			if (callType === undefined) {
 				return;
 			}
+
 			this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(() => {
 				if (!this.destroyed) {
 					this.router.navigate(
-						[
-							accountRoot,
-							(this.envService.isTelehealth ? 'appointment-end' : 'messages'),
-							 username
-						]);
+						appointmentID ?
+							[accountRoot, 'appointments', appointmentID, 'end'] :
+							[accountRoot, 'messages', username]
+					);
 				}
 			});
 		});
@@ -193,5 +195,5 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {this.activatedRoute.params.subscribe(params => { this.username = params['username']; });}
+	) {}
 }

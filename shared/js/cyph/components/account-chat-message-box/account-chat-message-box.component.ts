@@ -18,6 +18,9 @@ import {ChatMessageBoxComponent} from '../chat-message-box';
 	templateUrl: './account-chat-message-box.component.html'
 })
 export class AccountChatMessageBoxComponent {
+	/** @see ChatMessageBoxComponent.calendarInviteFollowUp */
+	@Input() public calendarInviteFollowUp?: boolean;
+
 	/** @see ChatMessageBoxComponent.calendarInviteReasons */
 	@Input() public calendarInviteReasons?: string[]	=
 		this.envService.isTelehealth ?
@@ -34,17 +37,11 @@ export class AccountChatMessageBoxComponent {
 	/** @see ChatMessageBoxComponent.customSendFunction */
 	@Input() public customSendFunction?: () => Promise<void>;
 
-	/** Defaults selection to a follow-up apointment */
-	@Input() public followUp?: boolean;
-
 	/** @see ChatMessageBoxComponent.fileAccept */
 	@Input() public fileAccept?: string;
 
 	/** @see ChatMessageBoxComponent.messageType */
 	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
-
-	/** Includes follow-up appointment button */
-	@Input() public promptFollowup?: boolean;
 
 	/** Message recipient to display in header. */
 	@Input() public recipient?: Observable<User|undefined>;

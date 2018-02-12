@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
@@ -36,7 +36,7 @@ import {translate} from '../../util/translate';
 	styleUrls: ['./calendar-invite.component.scss'],
 	templateUrl: './calendar-invite.component.html'
 })
-export class CalendarInviteComponent implements ControlValueAccessor, OnInit {
+export class CalendarInviteComponent implements ControlValueAccessor, OnChanges, OnInit {
 	/** @see CallTypes */
 	public readonly callTypes: typeof CallTypes						= CallTypes;
 
@@ -66,8 +66,8 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnInit {
 	/** List of possible durations (milliseconds). */
 	@Input() public durations: number[]								= [1800000, 3600000];
 
-	/** Defaults selection to a follow-up apointment */
-	@Input() public followUp?: boolean;
+	/** Defaults selection to a follow-up apointment. */
+	@Input() public followUp: boolean								= false;
 
 	/** Disallowed days of the week (Saturday and Sunday by default). */
 	@Input() public forbiddenDays: CalendarInvite.DaysOfWeek[]		= [
@@ -156,6 +156,25 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnInit {
 	public readonly valueSubject: BehaviorSubject<ICalendarInvite|undefined>	=
 		new BehaviorSubject<ICalendarInvite|undefined>(undefined)
 	;
+
+	/** Default appointment reason dropdown selection. */
+	public get defaultReasonForAppointment () : string|undefined {
+		return this.followUp ? this.stringsService.followUpNoun : undefined;
+	}
+
+	/** @inheritDoc */
+	public ngOnChanges () : void {
+		if (!this.followUp) {
+			return;
+		}
+
+		if (!this.reasons) {
+			this.reasons	= [this.stringsService.followUpNoun];
+		}
+		else if (this.reasons.indexOf(this.stringsService.followUpNoun) < 0) {
+			this.reasons	= [this.stringsService.followUpNoun].concat(this.reasons);
+		}
+	}
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {

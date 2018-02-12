@@ -64,6 +64,7 @@
 							<div class='bounce3'></div>
 						</div>
 					</div>
+
 					<div fxLayoutAlign='center center'>
 						<button
 							fxLayout
@@ -74,9 +75,9 @@
 							[routerLink]='
 								accountService.routeRoot +
 								"request-followup/" +
-								username
+								(promptFollowup || "")
 							'
-							*ngIf='promptFollowup && envService.isTelehealth'
+							*ngIf='!!promptFollowup'
 						>
 							Click to Schedule Follow-up Appointment
 						</button>

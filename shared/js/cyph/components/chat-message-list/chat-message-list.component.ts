@@ -106,8 +106,8 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** Overrides showDisconnectMessage and always displays the end message. */
 	@Input() public persistentEndMessage: boolean		= false;
 
-	/** Includes follow-up appointment button */
-	@Input() public promptFollowup?: boolean;
+	/** Username for follow-up appointment button. */
+	@Input() public promptFollowup?: string;
 
 	/** Indicates whether disconnect message should be displayed. */
 	@Input() public showDisconnectMessage: boolean		= false;
@@ -120,9 +120,6 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 	/** @see UiStyles */
 	public readonly uiStyles: typeof UiStyles			= UiStyles;
-
-	/** @ignore */
-	@Input() public username?: string					= '';
 
 	/** Data formatted for virtual scrolling. */
 	public readonly vsData: BehaviorSubject<IVsItem[]>	= new BehaviorSubject<IVsItem[]>([]);
@@ -279,10 +276,10 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		/** @ignore */
 		private readonly sessionService: SessionService,
 
-		/** @ignore */
+		/** @see AccountService */
 		public readonly accountService: AccountService,
 
-		/** @ignore */
+		/** @see P2PService */
 		public readonly p2pService: P2PService,
 
 		/** @see StringsService */

@@ -32,7 +32,11 @@ export const account: Route	= {
 		{path: '', component: AccountHomeComponent},
 		{path: 'appointments', component: AccountAppointmentsComponent},
 		{path: 'appointments/:appointmentID/call', component: AccountChatComponent},
-		{path: 'appointment-end/:username', component: AccountChatComponent, data: {promptFollowup: true}},
+		{
+			path: 'appointments/:appointmentID/end',
+			component: AccountChatComponent,
+			data: {promptFollowup: true}
+		},
 		{path: 'audio/:username', component: AccountChatComponent, data: {callType: 'audio'}},
 		{
 			path: 'compose',
@@ -98,7 +102,7 @@ export const account: Route	= {
 		{
 			path: 'request-followup/:username',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValueTypes.CalendarInvite, followUp: true}
+			data: {messageType: ChatMessageValueTypes.CalendarInvite, appointmentFollowUp: true}
 		},
 		{path: 'settings', component: AccountSettingsComponent},
 		{path: 'video/:username', component: AccountChatComponent, data: {callType: 'video'}},

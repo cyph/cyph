@@ -2,7 +2,7 @@
 	<mat-form-field fxFlex *ngIf='!!reasons && !isDisabled'>
 		<mat-select
 			fxFlex
-			[ngModel]='followUp ? reasons[3] : value.title'
+			[ngModel]='value.title || defaultReasonForAppointment'
 			(ngModelChange)='value.title = $event; onChange(value)'
 			[placeholder]='stringsService.reasonForAppointment'
 			required

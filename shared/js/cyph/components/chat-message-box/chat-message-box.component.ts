@@ -48,6 +48,9 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
 
+	/** @see CalendarInviteComponent.followUp */
+	@Input() public calendarInviteFollowUp?: boolean;
+
 	/** @see CalendarInviteComponent.reasons */
 	@Input() public calendarInviteReasons?: string[];
 
@@ -56,9 +59,6 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 
 	/** Custom send function. */
 	@Input() public customSendFunction?: () => Promise<void>;
-
-	/** Defaults selection to a follow-up apointment */
-	@Input() public followUp?: boolean;
 
 	/** @see FileInput.accept */
 	@Input() public fileAccept?: string;
@@ -92,9 +92,6 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 			});
 		}
 	};
-
-	/** Includes follow-up appointment button */
-	@Input() public promptFollowup?: boolean;
 
 	/** If false, hides send button. */
 	@Input() public showSendButton: boolean		= true;

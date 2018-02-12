@@ -39,11 +39,8 @@ export class ChatMainComponent implements AfterViewInit {
 	/** @see ChatMessageListComponent.persistentEndMessage */
 	@Input() public persistentEndMessage: boolean					= false;
 	
-	/** @ignore */
-	@Input() public promptFollowup?: boolean;
-
-	/** @ignore */
-	@Input() public username?: string;
+	/** @see ChatMessageListComponent.promptFollowup */
+	@Input() public promptFollowup?: string;
 
 	/** @see readableByteLength */
 	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;

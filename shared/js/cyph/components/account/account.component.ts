@@ -76,7 +76,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'',
 			'audio',
 			'appointments',
-			'appointment-end',
 			'compose',
 			'contacts',
 			'docs',

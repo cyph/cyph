@@ -172,6 +172,12 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
+	public readonly followUpAdjective: string			= `Follow-Up`;
+
+	/** @see StringsService */
+	public readonly followUpNoun: string				= `Follow Up`;
+
+	/** @see StringsService */
 	public readonly formattingHelp: string				= `Formatting Help`;
 
 	/** @see StringsService */
@@ -435,6 +441,12 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly reject: string						= `reject`;
+
+	/** @see StringsService */
+	public readonly requestAppointment: string			= `Request Appointment`;
+
+	/** @see StringsService */
+	public readonly requestFollowUpAppointment: string	= `Request Follow-Up Appointment`;
 
 	/** @see StringsService */
 	public readonly review: string						= `review`;
