@@ -1,7 +1,7 @@
 service firebase.storage {
 	match /b/{bucket}/o {
 		match /{namespace} {
-			match /certificateHistory {
+			match /certificateHistory/{hash} {
 				allow read, write: if false;
 			}
 
@@ -11,22 +11,22 @@ service firebase.storage {
 				}
 
 				// match /handshake {
-				// 	match /alicePublicKey {}
-				// 	match /bobPublicKey {}
-				// 	match /initialSecretAliceCyphertext {}
-				// 	match /initialSecretBobCyphertext {}
+				// 	match /alicePublicKey/{hash} {
+				// 	match /bobPublicKey/{hash} {
+				// 	match /initialSecretAliceCyphertext/{hash} {
+				// 	match /initialSecretBobCyphertext/{hash} {
 				// }
 
-				// match /messages/{message} {}
+				// match /messages/{message}/{hash} {
 
-				// match /users/{user} {}
+				// match /users/{user}/{hash} {
 			}
 
-			match /emails/{email} {
+			match /emails/{email}/{hash} {
 				allow read;
 			}
 
-			match /fileTransfers/{file} {
+			match /fileTransfers/{file}/{hash} {
 				allow read;
 				allow write: if request.resource == null || request.resource.size < 300000000;
 			}
@@ -39,72 +39,72 @@ service firebase.storage {
 					;
 				}
 
-				match /avatar {
+				match /avatar/{hash} {
 					allow read;
 				}
 
-				match /coverImage {
+				match /coverImage/{hash} {
 					allow read;
 				}
 
-				match /certificate {
+				match /certificate/{hash} {
 					allow read;
 					allow write: if false;
 				}
 
-				// match /certificateRequest {}
+				// match /certificateRequest/{hash} {
 
-				// match /contactUsernames/{username} {}
+				// match /contactUsernames/{username}/{hash} {
 
 				// match /contacts/{contact} {
-				// 	match /messages/{message} {}
-				// 	match /messageValues/{messageValue} {}
+				// 	match /messages/{message}/{hash} {
+				// 	match /messageValues/{messageValue}/{hash} {
 				// 	match /session {
 				// 		/asymmetricRatchetState {
-				// 			/privateKey {}
-				// 			/publicKey {}
+				// 			/privateKey/{hash} {
+				// 			/publicKey/{hash} {
 				// 		}
-				// 		/channelUserID {}
+				// 		/channelUserID/{hash} {
 				// 		/handshake {
-				// 			/currentStep {}
-				// 			/initialSecret {}
+				// 			/currentStep/{hash} {
+				// 			/initialSecret/{hash} {
 				// 		}
-				// 		/incomingMessageID {}
-				// 		/incomingMessageQueue {}
-				// 		/incomingMessages {}
-				// 		/incomingMessagesMax {}
-				// 		/outgoingMessageID {}
-				// 		/outgoingMessageQueue {}
-				// 		/symmetricKey {}
+				// 		/incomingMessageID/{hash} {
+				// 		/incomingMessageQueue/{hash} {
+				// 		/incomingMessages/{hash} {
+				// 		/incomingMessagesMax/{hash} {
+				// 		/outgoingMessageID/{hash} {
+				// 		/outgoingMessageQueue/{hash} {
+				// 		/symmetricKey/{hash} {
 				// 		/symmetricRatchetState {
 				// 			/current {
-				// 				/incoming {}
-				// 				/outgoing {}
+				// 				/incoming/{hash} {
+				// 				/outgoing/{hash} {
 				// 			}
 				// 			/next {
-				// 				/incoming {}
-				// 				/outgoing {}
+				// 				/incoming/{hash} {
+				// 				/outgoing/{hash} {
 				// 			}
 				// 		}
 				// 	}
-				// 	match /unconfirmedMessages {}
+				// 	match /unconfirmedMessages/{hash} {
 				// }
 
 				match /docs/{doc} {
 					allow read;
 
-					// match /{delta} {}
+					// match /{delta}/{hash} {
 				}
 
-				// match /encryptionKeyPair {}
+				// match /encryptionKeyPair/{hash} {
 
-				match /fileRecords/{fileRecord} {
+				match /fileRecords/{fileRecord}/{hash} {
 					allow read;
 				}
 
-				// match /fileReferences/{fileReference} {}
+				// match /fileReferences/{fileReference}/{hash} {
 
-				match /files/{file} {
+				match /files/{file}/{hash} {
 					allow read;
 					allow write: if
 						(
@@ -115,11 +115,11 @@ service firebase.storage {
 					;
 				}
 
-				match /forms/{form} {
+				match /forms/{form}/{hash} {
 					allow read;
 				}
 
-				match /incomingFiles/{incomingFile} {
+				match /incomingFiles/{incomingFile}/{hash} {
 					allow write: if
 						(
 							request.auth != null &&
@@ -129,50 +129,50 @@ service firebase.storage {
 					;
 				}
 
-				// match /inviteCode {}
+				// match /inviteCode/{hash} {
 
-				match /inviteCodes/{code} {
+				match /inviteCodes/{code}/{hash} {
 					allow write: if false;
 				}
 
-				// match /inviterUsername {}
+				// match /inviterUsername/{hash} {
 
-				match /inviterUsernamePlaintext {
+				match /inviterUsernamePlaintext/{hash} {
 					allow write: if request.resource == null;
 				}
 
-				// match /lastPresence {}
+				// match /lastPresence/{hash} {
 
-				match /loginData {
+				match /loginData/{hash} {
 					allow read;
 				}
 
-				match /organizationMembers {
+				match /organizationMembers/{hash} {
 					allow read;
 				}
 
 				// match /pin {
-				// 	match /hash {}
-				// 	match /isCustom {}
+				// 	match /hash/{hash} {
+				// 	match /isCustom/{hash} {
 				// }
 
-				match /presence {
+				match /presence/{hash} {
 					allow read;
 				}
 
-				match /publicEncryptionKey {
+				match /publicEncryptionKey/{hash} {
 					allow read;
 				}
 
-				match /publicProfile {
+				match /publicProfile/{hash} {
 					allow read;
 				}
 
-				match /publicProfileExtra {
+				match /publicProfileExtra/{hash} {
 					allow read;
 				}
 
-				match /reviews/{username} {
+				match /reviews/{username}/{hash} {
 					allow read;
 					allow write: if
 						request.auth != null &&
@@ -180,9 +180,9 @@ service firebase.storage {
 					;
 				}
 
-				// match /settings {}
+				// match /settings/{hash} {
 
-				// match /signingKeyPair {}
+				// match /signingKeyPair/{hash} {
 			}
 		}
 	}
