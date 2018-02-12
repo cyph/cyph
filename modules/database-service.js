@@ -31,7 +31,7 @@ const processURL	= (namespace, url) => {
 		throw new Error('Invalid URL.');
 	}
 
-	`${namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`
+	return `${namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`;
 };
 
 const databaseService	= {
