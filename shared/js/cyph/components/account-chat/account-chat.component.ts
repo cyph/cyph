@@ -1,6 +1,8 @@
 import {Component, OnDestroy, OnInit, Input} from '@angular/core';
 import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
+import {map} from 'rxjs/operators/map';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {take} from 'rxjs/operators/take';
 import {UserPresence} from '../../account/enums';
@@ -43,8 +45,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		ChatMessageValueTypes.Text
 	);
 
-	/** @see PromptFollowup */
-	@Input() public promptFollowup: boolean										= false;
+	/** @see promptFollowup */
+	public readonly promptFollowup: Observable<boolean>	=
+		this.activatedRoute.data.pipe(map(o => o.promptFollowup === true));
 
 	/** @see UiStyles */
 	public readonly uiStyles: typeof UiStyles							= UiStyles;
@@ -103,16 +106,14 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			if (callType === undefined) {
 				return;
 			}
-
 			this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(() => {
 				if (!this.destroyed) {
-					console.log('balls');
-					console.log('p2p'+this.p2pService.isActiveOrInitialCall);
-					console.log(this.promptFollowup);
-					this.router.navigate([accountRoot, 'messages', username]);
-					this.promptFollowup = true;
-					console.log(this.promptFollowup);
-					console.log('p2p'+this.p2pService.isActiveOrInitialCall);
+					this.router.navigate(
+						[
+							accountRoot,
+							(this.envService.isTelehealth ? 'appointment-end' : 'messages'),
+							 username
+						]);
 				}
 			});
 		});

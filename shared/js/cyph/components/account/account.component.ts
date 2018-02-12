@@ -76,6 +76,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'',
 			'audio',
 			'appointments',
+			'appointment-end',
 			'compose',
 			'contacts',
 			'docs',
@@ -86,6 +87,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'notes',
 			'profile',
 			'request-appointment',
+			'request-followup',
 			'settings',
 			'video'
 		].filter(

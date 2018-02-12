@@ -73,12 +73,12 @@
 							cyphTranslate
 							[routerLink]='
 								accountService.routeRoot +
-								"request-appointment/" +
+								"request-followup/" +
 								username
 							'
-							*ngIf='!p2pService.isActiveOrInitialCall && envService.isTelehealth'
+							*ngIf='promptFollowup && envService.isTelehealth'
 						>
-							Click to Schedule Appointment
+							Click to Schedule Follow-up Appointment
 						</button>
 					</div>
 					<div
