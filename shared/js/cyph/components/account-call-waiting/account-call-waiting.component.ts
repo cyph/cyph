@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {AccountUserTypes} from '../../proto';
+import {Component, Input, OnInit} from '@angular/core';
+import {AccountUserTypes, IAppointment} from '../../proto';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
@@ -17,6 +17,9 @@ import {StringsService} from '../../services/strings.service';
 export class AccountCallWaitingComponent implements OnInit {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+
+	/** @see AccountChatComponent */
+	@Input() public appointment?: IAppointment;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {

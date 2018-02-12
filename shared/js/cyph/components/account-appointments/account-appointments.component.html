@@ -53,7 +53,10 @@
 										cyphTranslate
 										matTooltip='Start Call'
 										[routerLink]='
-											accountService.routeRoot + "video/" + o.friend
+											accountService.routeRoot +
+											"appointments/" +
+											record.id +
+											"/call"
 										'
 									>
 										<mat-icon>play_arrow</mat-icon>

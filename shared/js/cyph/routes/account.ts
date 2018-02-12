@@ -31,6 +31,7 @@ export const account: Route	= {
 	children: [
 		{path: '', component: AccountHomeComponent},
 		{path: 'appointments', component: AccountAppointmentsComponent},
+		{path: 'appointments/:appointmentID/call', component: AccountChatComponent},
 		{path: 'audio/:username', component: AccountChatComponent, data: {callType: 'audio'}},
 		{
 			path: 'compose',

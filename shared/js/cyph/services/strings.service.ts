@@ -61,6 +61,9 @@ export class StringsService {
 	public readonly audioCall: string					= `call`;
 
 	/** @see StringsService */
+	public readonly callType: string					= `Call Type`;
+
+	/** @see StringsService */
 	public readonly cameraDisable: string				= `Disable Camera`;
 
 	/** @see StringsService */
@@ -302,6 +305,9 @@ export class StringsService {
 	public readonly no: string							= `no`;
 
 	/** @see StringsService */
+	public readonly noCall: string						= `No Call`;
+
+	/** @see StringsService */
 	public readonly notes: string						= `Notes`;
 
 	/** @see StringsService */
@@ -509,7 +515,13 @@ export class StringsService {
 	public readonly userAvatar: string					= `User Avatar`;
 
 	/** @see StringsService */
+	public readonly video: string						= `Video`;
+
+	/** @see StringsService */
 	public readonly videoCall: string					= `video call`;
+
+	/** @see StringsService */
+	public readonly voice: string						= `Voice`;
 
 	/** @see StringsService */
 	public readonly waitingRoomCheckedInDoctor: string	=

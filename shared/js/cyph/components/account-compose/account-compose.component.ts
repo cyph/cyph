@@ -4,7 +4,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {map} from 'rxjs/operators/map';
 import {User} from '../../account';
 import {States} from '../../chat/enums';
-import {Appointment, ChatMessageValueTypes} from '../../proto';
+import {ChatMessageValueTypes} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -15,6 +15,7 @@ import {EnvService} from '../../services/env.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {cacheObservable} from '../../util/flatten-observable';
+import {uuid} from '../../util/uuid';
 
 
 /**
@@ -100,12 +101,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 						this.recipient.value.username,
 						this.accountDatabaseService.currentUser.value.user.username
 					],
-					roles: !this.envService.isTelehealth ? {} : {
-						[this.recipient.value.username]: Appointment.Roles.TelehealthDoctor,
-						[
-							this.accountDatabaseService.currentUser.value.user.username
-						]: Appointment.Roles.TelehealthPatient
-					}
+					rsvpSessionSubID: uuid()
 				},
 				this.recipient.value.username
 			);

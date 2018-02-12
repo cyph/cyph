@@ -16,12 +16,11 @@
 	<mat-form-field fxFlex *ngIf='!reasons || isDisabled'>
 		<input
 			matInput
-			[disabled]='isDisabled'
 			[ngModel]='value.title'
-			(ngModelChange)='value.title = $event; onChange(value)'
-			type='text'
 			[placeholder]='stringsService.reasonForAppointment'
+			disabled
 			required
+			type='text'
 		/>
 	</mat-form-field>
 
@@ -55,6 +54,37 @@
 
 		<br />
 	</ng-container>
+
+	<mat-form-field fxFlex *ngIf='!isDisabled'>
+		<mat-select
+			fxFlex
+			[ngModel]='value.callType'
+			(ngModelChange)='value.callType = $event; onChange(value)'
+			[placeholder]='stringsService.callType'
+			required
+		>
+			<mat-option [value]='callTypes.None'>{{stringsService.noCall}}</mat-option>
+			<mat-option [value]='callTypes.Audio'>{{stringsService.voice}}</mat-option>
+			<mat-option [value]='callTypes.Video'>{{stringsService.video}}</mat-option>
+		</mat-select>
+	</mat-form-field>
+
+	<mat-form-field fxFlex *ngIf='isDisabled'>
+		<input
+			matInput
+			[ngModel]='
+				value.callType === callTypes.Audio ?
+					stringsService.voice :
+					value.callType === callTypes.Video ?
+						stringsService.video :
+						stringsService.noCall
+			'
+			[placeholder]='stringsService.callType'
+			disabled
+			required
+			type='text'
+		/>
+	</mat-form-field>
 
 	<br />
 

@@ -5,17 +5,20 @@ import {combineLatest} from 'rxjs/observable/combineLatest';
 import {take} from 'rxjs/operators/take';
 import {UserPresence} from '../../account/enums';
 import {UiStyles} from '../../chat/enums';
-import {ChatMessageValueTypes} from '../../proto';
+import {CallTypes, ChatMessageValueTypes, IAppointment} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
+import {AccountFilesService} from '../../services/account-files.service';
 import {AccountSessionService} from '../../services/account-session.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
+import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {P2PService} from '../../services/p2p.service';
 import {StringsService} from '../../services/strings.service';
+import {normalize} from '../../util/formatting';
 import {sleep} from '../../util/wait';
 
 
@@ -34,6 +37,11 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 	/** @ignore */
 	private initiated: boolean	= false;
+
+	/** Appointment data, when applicable. */
+	public readonly appointment: BehaviorSubject<IAppointment|undefined>	=
+		new BehaviorSubject<IAppointment|undefined>(undefined)
+	;
 
 	/** @see ChatMessageValueTypes */
 	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
@@ -74,13 +82,40 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			this.activatedRoute.url
 		).subscribe(async ([
 			{callType},
-			{sessionSubID, username},
+			{appointmentID, sessionSubID, username},
 			[{path}]
 		]: [
 			{callType?: 'audio'|'video'},
-			{sessionSubID?: string; username?: string},
+			{appointmentID?: string; sessionSubID?: string; username?: string},
 			UrlSegment[]
 		]) => {
+			if (appointmentID) {
+				const appointment	=
+					await this.accountFilesService.downloadAppointment(appointmentID).result
+				;
+
+				callType		=
+					appointment.calendarInvite.callType === CallTypes.Video ?
+						'video' :
+						appointment.calendarInvite.callType === CallTypes.Audio ?
+							'audio' :
+							undefined
+				;
+
+				sessionSubID	= appointmentID;
+
+				username		= appointment.participants === undefined ?
+					undefined :
+					appointment.participants.find(participant =>
+						this.accountDatabaseService.currentUser.value !== undefined &&
+						this.accountDatabaseService.currentUser.value.user.username !==
+							normalize(participant)
+					)
+				;
+
+				this.appointment.next(appointment);
+			}
+
 			if (!username) {
 				return;
 			}
@@ -117,6 +152,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,
 
+		/** @ignore */
+		private readonly accountFilesService: AccountFilesService,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
@@ -125,6 +163,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 		/** @see AccountContactsService */
 		public readonly accountContactsService: AccountContactsService,
+
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see AccountSessionService */
 		public readonly accountSessionService: AccountSessionService,

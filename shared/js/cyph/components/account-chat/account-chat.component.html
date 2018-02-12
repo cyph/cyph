@@ -2,6 +2,7 @@
 	<div fxFlex='95' fxFlexFill fxLayout='column' *ngIf='accountSessionService.opened | async'>
 		<cyph-account-call-waiting
 			fxFlexFill
+			[appointment]='appointment | async'
 			*ngIf='p2pWebRTCService.initialCallPending'
 		></cyph-account-call-waiting>
 

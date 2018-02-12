@@ -3,7 +3,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ITimeRange} from '../../itime-range';
-import {CalendarInvite, ICalendarInvite} from '../../proto';
+import {CalendarInvite, CallTypes, ICalendarInvite} from '../../proto';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
@@ -37,6 +37,9 @@ import {translate} from '../../util/translate';
 	templateUrl: './calendar-invite.component.html'
 })
 export class CalendarInviteComponent implements ControlValueAccessor, OnInit {
+	/** @see CallTypes */
+	public readonly callTypes: typeof CallTypes						= CallTypes;
+
 	/** Date filter to prevent forbidden days from being selected. */
 	public readonly dateFilter										= (d: Date) : boolean =>
 		this.forbiddenDays.indexOf(d.getDay()) < 0

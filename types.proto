@@ -233,13 +233,6 @@ message AGSEPKIIssuanceHistory {
 
 /** Appointment. */
 message Appointment {
-	/** Roles of participants. */
-	enum Roles {
-		Default = 0;
-		TelehealthDoctor = 1;
-		TelehealthPatient = 2;
-	}
-
 	/** RSVP statuses. */
 	enum RSVP {
 		Maybe = 0;
@@ -262,11 +255,8 @@ message Appointment {
 	/** Participant usernames. */
 	repeated string participants = 5;
 
-	/** Map of usernames to roles. */
-	map<string, Roles> roles = 6;
-
-	/** Map of usernames to RSVP statuses. TODO: Architect this as a group chat. */
-	map<string, RSVP> rsvps = 7;
+	/** Sub-session ID where RSVP statuses are posted. */
+	required string rsvpSessionSubID = 6;
 }
 
 /** Calendar invite. */
@@ -295,17 +285,27 @@ message CalendarInvite {
 	/** Preferred time frames days for counteroffers. */
 	map<uint32, bool> alternateTimeFrames = 2;
 
+	/** @see CallTypes */
+	CallTypes callType = 3;
+
 	/** Event description. */
-	string description = 3;
+	string description = 4;
 
 	/** End timestamp. */
-	double endTime = 4;
+	double endTime = 5;
 
 	/** Start timestamp. */
-	double startTime = 5;
+	double startTime = 6;
 
 	/** Event title/subject. */
-	string title = 6;
+	string title = 7;
+}
+
+/** Call types. */
+enum CallTypes {
+	None = 0;
+	Audio = 1;
+	Video = 2;
 }
 
 /** Castle incoming messages. */
@@ -385,7 +385,8 @@ message ChatMessageValue {
 		CalendarInvite calendarInvite = 1;
 		Form form = 2;
 		bytes quill = 3;
-		string text = 4;
+		Appointment.RSVP rsvp = 4;
+		string text = 5;
 	}
 }
 
@@ -394,7 +395,8 @@ enum ChatMessageValueTypes {
 	CalendarInvite = 0;
 	Form = 1;
 	Quill = 2;
-	Text = 3;
+	RSVP = 3;
+	Text = 4;
 }
 
 /** Chat unconfirmed messages. */
