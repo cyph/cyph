@@ -135,7 +135,11 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			this.initiated	= true;
 
 			if (promptFollowup) {
+				callType	= undefined;
 				this.promptFollowup.next(username);
+			}
+			else {
+				this.promptFollowup.next(undefined);
 			}
 
 			await this.accountChatService.setUser(username, undefined, callType, sessionSubID);
