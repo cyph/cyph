@@ -10,7 +10,7 @@
 					cyphTranslate
 					*ngIf='(messageType | async) === chatMessageValueTypes.CalendarInvite'
 				>
-					Request Appointment
+					Request {{(followUp | async) ? "Follow-Up" : ""}} Appointment
 				</span>
 				<span cyphTranslate *ngIf='(messageType | async) === chatMessageValueTypes.Form'>
 					Send Form
@@ -40,6 +40,8 @@
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box
 						[customSendFunction]='send'
+						[followUp]='followUp | async'
+						[promptFollowup]='promptFollowup | async'
 						[messageType]='messageType | async'
 						[recipient]='recipient'
 						[showHeader]='true'

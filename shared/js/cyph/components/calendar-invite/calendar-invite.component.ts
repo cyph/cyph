@@ -66,6 +66,9 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnInit {
 	/** List of possible durations (milliseconds). */
 	@Input() public durations: number[]								= [1800000, 3600000];
 
+	/** Defaults selection to a follow-up apointment */
+	@Input() public followUp?: boolean;
+
 	/** Disallowed days of the week (Saturday and Sunday by default). */
 	@Input() public forbiddenDays: CalendarInvite.DaysOfWeek[]		= [
 		CalendarInvite.DaysOfWeek.Sunday,

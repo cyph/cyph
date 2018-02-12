@@ -57,6 +57,9 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	/** Custom send function. */
 	@Input() public customSendFunction?: () => Promise<void>;
 
+	/** Defaults selection to a follow-up apointment */
+	@Input() public followUp?: boolean;
+
 	/** @see FileInput.accept */
 	@Input() public fileAccept?: string;
 
@@ -89,6 +92,9 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 			});
 		}
 	};
+
+	/** Includes follow-up appointment button */
+	@Input() public promptFollowup?: boolean;
 
 	/** If false, hides send button. */
 	@Input() public showSendButton: boolean		= true;

@@ -64,7 +64,23 @@
 							<div class='bounce3'></div>
 						</div>
 					</div>
-
+					<div fxLayoutAlign='center center'>
+						<button
+							fxLayout
+							mat-raised-button
+							class='follow-up'
+							color='accent'
+							cyphTranslate
+							[routerLink]='
+								accountService.routeRoot +
+								"request-followup/" +
+								username
+							'
+							*ngIf='promptFollowup && envService.isTelehealth'
+						>
+							Click to Schedule Follow-up Appointment
+						</button>
+					</div>
 					<div
 						fxLayout='row'
 						class='chat-end-message'

@@ -20,11 +20,13 @@ import {mergeMap} from 'rxjs/operators/mergeMap';
 import {User} from '../../account/user';
 import {fadeInOut} from '../../animations';
 import {ChatMessage, IChatData, IVsItem, UiStyles} from '../../chat';
+import {AccountService} from '../../services/account.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
+import {P2PService} from '../../services/p2p.service';
 import {ScrollService} from '../../services/scroll.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
@@ -104,6 +106,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** Overrides showDisconnectMessage and always displays the end message. */
 	@Input() public persistentEndMessage: boolean		= false;
 
+	/** Includes follow-up appointment button */
+	@Input() public promptFollowup?: boolean;
+
 	/** Indicates whether disconnect message should be displayed. */
 	@Input() public showDisconnectMessage: boolean		= false;
 
@@ -115,6 +120,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 	/** @see UiStyles */
 	public readonly uiStyles: typeof UiStyles			= UiStyles;
+
+	/** @ignore */
+	@Input() public username?: string					= '';
 
 	/** Data formatted for virtual scrolling. */
 	public readonly vsData: BehaviorSubject<IVsItem[]>	= new BehaviorSubject<IVsItem[]>([]);
@@ -270,6 +278,12 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		public readonly accountService: AccountService,
+
+		/** @ignore */
+		public readonly p2pService: P2PService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

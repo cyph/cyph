@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {User} from '../../account';
 import {States} from '../../chat/enums';
@@ -30,6 +31,10 @@ import {uuid} from '../../util/uuid';
 export class AccountComposeComponent implements OnDestroy, OnInit {
 	/** @see ChatMessageValueTypes */
 	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
+
+	/** @ignore */
+	public readonly followUp: Observable<boolean>	=
+	this.activatedRoute.data.pipe(map(o => o.followUp === true));
 
 	/** @see AccountChatMessageBoxComponent.messageType */
 	public readonly messageType: BehaviorSubject<ChatMessageValueTypes>	= cacheObservable(
