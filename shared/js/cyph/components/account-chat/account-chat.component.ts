@@ -94,8 +94,10 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			{appointmentID?: string; sessionSubID?: string; username?: string},
 			UrlSegment[]
 		]) => {
+			let appointment: IAppointment;
+
 			if (appointmentID) {
-				const appointment	=
+				appointment	=
 					await this.accountFilesService.downloadAppointment(appointmentID).result
 				;
 
@@ -148,13 +150,22 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 				return;
 			}
 
-			this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(() => {
+			this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(async () => {
 				if (!this.destroyed) {
 					this.router.navigate(
 						appointmentID ?
 							[accountRoot, 'appointments', appointmentID, 'end'] :
 							[accountRoot, 'messages', username]
 					);
+
+					if (appointment && appointmentID) {
+						appointment.occurred	= true;
+
+						await this.accountFilesService.updateAppointment(
+							appointmentID,
+							appointment
+						);
+					}
 				}
 			});
 		});
