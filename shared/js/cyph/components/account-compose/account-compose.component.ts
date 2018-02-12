@@ -29,14 +29,14 @@ import {uuid} from '../../util/uuid';
 	templateUrl: './account-compose.component.html'
 })
 export class AccountComposeComponent implements OnDestroy, OnInit {
+	/** @see AccountChatMessageBoxComponent.calendarInviteFollowUp */
+	public readonly appointmentFollowUp: Observable<boolean>				=
+		this.activatedRoute.data.pipe(map(o => o.appointmentFollowUp === true))
+	;
+
 	/** @see ChatMessageValue.Types */
 	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=
 		ChatMessageValue.Types
-	;
-
-	/** @see AccountChatMessageBoxComponent.calendarInviteFollowUp */
-	public readonly appointmentFollowUp: Observable<boolean>			=
-		this.activatedRoute.data.pipe(map(o => o.appointmentFollowUp === true))
 	;
 
 	/** @see AccountChatMessageBoxComponent.messageType */
