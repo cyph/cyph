@@ -108,6 +108,24 @@ if [ ! "${htmlOnly}" ] ; then
 		);
 	"
 
+	# Temporary workaround for https://github.com/palantir/tslint/issues/3709
+	if [ ! "${CIRCLECI}" ] ; then
+		node -e "
+			const tslint	= JSON.parse(
+				fs.readFileSync('js/tslint.json').toString().
+					replace(/\n/g, ' ').
+					replace(/\/\*.*?\*\//g, '')
+			);
+
+			tslint.rules.whitespace	= false;
+
+			fs.writeFileSync(
+				'js/tslint.json',
+				JSON.stringify(tslint)
+			);
+		"
+	fi
+
 	cp ${dir}/shared/lib/js/package.json ./
 
 	output="$(
