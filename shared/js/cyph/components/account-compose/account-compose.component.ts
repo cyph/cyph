@@ -5,7 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {User} from '../../account';
 import {States} from '../../chat/enums';
-import {ChatMessageValueTypes} from '../../proto';
+import {ChatMessageValue} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -29,8 +29,10 @@ import {uuid} from '../../util/uuid';
 	templateUrl: './account-compose.component.html'
 })
 export class AccountComposeComponent implements OnDestroy, OnInit {
-	/** @see ChatMessageValueTypes */
-	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
+	/** @see ChatMessageValue.Types */
+	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=
+		ChatMessageValue.Types
+	;
 
 	/** @see AccountChatMessageBoxComponent.calendarInviteFollowUp */
 	public readonly appointmentFollowUp: Observable<boolean>			=
@@ -38,27 +40,27 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	;
 
 	/** @see AccountChatMessageBoxComponent.messageType */
-	public readonly messageType: BehaviorSubject<ChatMessageValueTypes>	= cacheObservable(
+	public readonly messageType: BehaviorSubject<ChatMessageValue.Types>	= cacheObservable(
 		this.activatedRoute.data.pipe(map(o => {
-			const messageType: ChatMessageValueTypes	= o.messageType;
+			const messageType: ChatMessageValue.Types	= o.messageType;
 
 			const value	= typeof o.value === 'function' ? o.value() : o.value;
 
 			if (value !== undefined) {
 				switch (messageType) {
-					case ChatMessageValueTypes.CalendarInvite:
+					case ChatMessageValue.Types.CalendarInvite:
 						this.accountChatService.chat.currentMessage.calendarInvite	= value;
 						break;
 
-					case ChatMessageValueTypes.Form:
+					case ChatMessageValue.Types.Form:
 						this.accountChatService.chat.currentMessage.form			= value;
 						break;
 
-					case ChatMessageValueTypes.Quill:
+					case ChatMessageValue.Types.Quill:
 						this.accountChatService.chat.currentMessage.quill			= value;
 						break;
 
-					case ChatMessageValueTypes.Text:
+					case ChatMessageValue.Types.Text:
 						this.accountChatService.chat.currentMessage.text			= value;
 						break;
 
@@ -69,7 +71,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 			return messageType;
 		})),
-		ChatMessageValueTypes.Quill
+		ChatMessageValue.Types.Quill
 	);
 
 	/** @see SearchBarComponent.filter */
@@ -89,7 +91,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 		this.sent.next(undefined);
 
 		if (
-			this.messageType.value === ChatMessageValueTypes.CalendarInvite &&
+			this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
 			this.accountChatService.chat.currentMessage.calendarInvite !== undefined
 		) {
 			await this.accountFilesService.upload(

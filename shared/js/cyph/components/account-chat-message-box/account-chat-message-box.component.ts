@@ -1,7 +1,7 @@
 import {Component, Input, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {User} from '../../account/user';
-import {ChatMessageValueTypes} from '../../proto';
+import {ChatMessageValue} from '../../proto';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -31,8 +31,10 @@ export class AccountChatMessageBoxComponent {
 	/** @see ChatMessageBoxComponent */
 	@ViewChild(ChatMessageBoxComponent) public chatMessageBox?: ChatMessageBoxComponent;
 
-	/** @see ChatMessageValueTypes */
-	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
+	/** @see ChatMessageValue.Types */
+	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=
+		ChatMessageValue.Types
+	;
 
 	/** @see ChatMessageBoxComponent.customSendFunction */
 	@Input() public customSendFunction?: () => Promise<void>;
@@ -41,7 +43,7 @@ export class AccountChatMessageBoxComponent {
 	@Input() public fileAccept?: string;
 
 	/** @see ChatMessageBoxComponent.messageType */
-	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
+	@Input() public messageType: ChatMessageValue.Types	= ChatMessageValue.Types.Text;
 
 	/** Message recipient to display in header. */
 	@Input() public recipient?: Observable<User|undefined>;

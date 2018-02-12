@@ -2,7 +2,7 @@ import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
 import * as $ from 'jquery';
 import {fadeIn} from '../../animations';
 import {States, UiStyles} from '../../chat/enums';
-import {ChatMessageValueTypes} from '../../proto';
+import {ChatMessageValue} from '../../proto';
 import {ChatService} from '../../services/chat.service';
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
@@ -34,7 +34,7 @@ export class ChatMainComponent implements AfterViewInit {
 	@Input() public messageCountInTitle: boolean					= false;
 
 	/** @see ChatMessageBoxComponent.messageType */
-	@Input() public messageType: ChatMessageValueTypes				= ChatMessageValueTypes.Text;
+	@Input() public messageType: ChatMessageValue.Types				= ChatMessageValue.Types.Text;
 
 	/** @see ChatMessageListComponent.persistentEndMessage */
 	@Input() public persistentEndMessage: boolean					= false;

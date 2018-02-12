@@ -8,7 +8,7 @@ import * as $ from 'jquery';
 import * as tabIndent from 'tab-indent';
 import {slideInOutBottom} from '../../animations';
 import {States} from '../../chat/enums';
-import {ChatMessageValueTypes} from '../../proto';
+import {ChatMessageValue} from '../../proto';
 import {ChatService} from '../../services/chat.service';
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
@@ -54,8 +54,10 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	/** @see CalendarInviteComponent.reasons */
 	@Input() public calendarInviteReasons?: string[];
 
-	/** @see ChatMessageValueTypes */
-	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
+	/** @see ChatMessageValue.Types */
+	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=
+		ChatMessageValue.Types
+	;
 
 	/** Custom send function. */
 	@Input() public customSendFunction?: () => Promise<void>;
@@ -67,7 +69,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	public isSpeedDialOpen: boolean	= false;
 
 	/** Indicates which version of the UI should be displayed. */
-	@Input() public messageType: ChatMessageValueTypes	= ChatMessageValueTypes.Text;
+	@Input() public messageType: ChatMessageValue.Types	= ChatMessageValue.Types.Text;
 
 	/** Wrappers for mobile button handlers. */
 	public readonly mobileButtonHandlers	= {

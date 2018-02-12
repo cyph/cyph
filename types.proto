@@ -377,6 +377,15 @@ message ChatMessageLine {
 
 /** Possible values of a chat text message. */
 message ChatMessageValue {
+	/** Possible types of a chat text message value. */
+	enum Types {
+		CalendarInvite = 0;
+		Form = 1;
+		Quill = 2;
+		RSVP = 3;
+		Text = 4;
+	}
+
 	/** Value. */
 	oneof value {
 		CalendarInvite calendarInvite = 1;
@@ -385,15 +394,6 @@ message ChatMessageValue {
 		Appointment.RSVP rsvp = 4;
 		string text = 5;
 	}
-}
-
-/** Possible types of a chat text message value. */
-enum ChatMessageValueTypes {
-	CalendarInvite = 0;
-	Form = 1;
-	Quill = 2;
-	RSVP = 3;
-	Text = 4;
 }
 
 /** Chat unconfirmed messages. */

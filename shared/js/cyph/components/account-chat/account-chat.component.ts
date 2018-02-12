@@ -5,7 +5,7 @@ import {combineLatest} from 'rxjs/observable/combineLatest';
 import {take} from 'rxjs/operators/take';
 import {UserPresence} from '../../account/enums';
 import {UiStyles} from '../../chat/enums';
-import {CallTypes, ChatMessageValueTypes, IAppointment} from '../../proto';
+import {CallTypes, ChatMessageValue, IAppointment} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -43,12 +43,14 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		new BehaviorSubject<IAppointment|undefined>(undefined)
 	;
 
-	/** @see ChatMessageValueTypes */
-	public readonly chatMessageValueTypes: typeof ChatMessageValueTypes	= ChatMessageValueTypes;
+	/** @see ChatMessageValue.Types */
+	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=
+		ChatMessageValue.Types
+	;
 
-	/** @see ChatMessageValueTypes */
-	public messageType: BehaviorSubject<ChatMessageValueTypes>			= new BehaviorSubject(
-		ChatMessageValueTypes.Text
+	/** @see ChatMessageValue.Types */
+	public messageType: BehaviorSubject<ChatMessageValue.Types>			= new BehaviorSubject(
+		ChatMessageValue.Types.Text
 	);
 
 	/** @see ChatMessageList.promptFollowup */
@@ -78,7 +80,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		this.accountService.transitionEnd();
 
 		if (this.envService.isTelehealth) {
-			this.messageType.next(ChatMessageValueTypes.Quill);
+			this.messageType.next(ChatMessageValue.Types.Quill);
 		}
 
 		combineLatest(
