@@ -90,7 +90,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			{appointmentID, sessionSubID, username},
 			[{path}]
 		]: [
-			{callType?: 'audio'|'video', promptFollowup?: boolean},
+			{callType?: 'audio'|'video'; promptFollowup?: boolean},
 			{appointmentID?: string; sessionSubID?: string; username?: string},
 			UrlSegment[]
 		]) => {
