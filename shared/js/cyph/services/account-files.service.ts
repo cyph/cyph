@@ -605,6 +605,35 @@ export class AccountFilesService {
 		);
 	}
 
+	/** Overwrites an existing appointment. */
+	public async updateAppointment (
+		id: string,
+		content: IAppointment,
+		name?: string
+	) : Promise<void> {
+		const file		= await this.getFile(id, AccountFileRecord.RecordTypes.Appointment);
+		file.timestamp	= await getTimestamp();
+
+		if (name) {
+			file.name	= name;
+		}
+
+		await Promise.all([
+			this.accountDatabaseService.setItem(
+				`users/${file.owner}/files/${id}`,
+				Appointment,
+				content,
+				undefined,
+				file.key
+			),
+			this.accountDatabaseService.setItem<IAccountFileRecord>(
+				`users/${file.owner}/fileRecords/${id}`,
+				AccountFileRecord,
+				file
+			)
+		]);
+	}
+
 	/** Overwrites an existing note. */
 	public async updateDoc (id: string, delta: IQuillDelta|IQuillRange) : Promise<void> {
 		const file	= await this.getFile(id);
