@@ -58,6 +58,10 @@ exports.channelDisconnect	=
 ;
 
 
+/*
+TODO: Handle this as a cron job that searches for folders
+	with multiple items and deletes all but the oldest.
+
 exports.itemHashChange	=
 	functions.database.ref('{namespace}').onUpdate(async e => {
 		if (!e.data.exists() || e.data.key !== 'hash') {
@@ -100,6 +104,7 @@ exports.itemHashChange	=
 		}
 	})
 ;
+*/
 
 
 exports.itemRemoved	=
