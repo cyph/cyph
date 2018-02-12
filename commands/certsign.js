@@ -184,7 +184,7 @@ const csrs	= (await Promise.all(usernames.map(async username => {
 		await potassium.sign.open(
 			bytes,
 			csr.publicSigningKey,
-			`users/${csr.username}/certificateRequest`
+			`${namespace}:users/${csr.username}/certificateRequest`
 		);
 
 		issuanceHistory.publicSigningKeyHashes[publicSigningKeyHash]	= true;
