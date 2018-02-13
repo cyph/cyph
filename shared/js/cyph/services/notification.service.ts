@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {INotificationService} from '../service-interfaces/inotification.service';
-import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 import {FaviconService} from './favicon.service';
 import {StringsService} from './strings.service';
 import {WindowWatcherService} from './window-watcher.service';
+import {WorkerService} from './worker.service';
 
 
 /**
@@ -53,11 +53,7 @@ export class NotificationService implements INotificationService {
 		catch {
 			options.audio	= this.config.audio;
 
-			const serviceWorkerRegistration	= await (<any> navigator).serviceWorker.
-				register(this.configService.webSignConfig.serviceWorker)
-			;
-
-			return serviceWorkerRegistration.showNotification(
+			(await this.workerService.serviceWorkerRegistration).showNotification(
 				this.config.title,
 				options
 			);
@@ -92,9 +88,6 @@ export class NotificationService implements INotificationService {
 
 	constructor (
 		/** @ignore */
-		private readonly configService: ConfigService,
-
-		/** @ignore */
 		private readonly envService: EnvService,
 
 		/** @ignore */
@@ -104,7 +97,10 @@ export class NotificationService implements INotificationService {
 		private readonly stringsService: StringsService,
 
 		/** @ignore */
-		private readonly windowWatcherService: WindowWatcherService
+		private readonly windowWatcherService: WindowWatcherService,
+
+		/** @ignore */
+		private readonly workerService: WorkerService
 	) {
 		if (this.envService.isMobile) {
 			this.config.audio	= undefined;

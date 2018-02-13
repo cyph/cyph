@@ -17,20 +17,23 @@ export const awaitAsync	= async <T> (value: Async<T>) : Promise<T> => {
 /** Returns a promise and its resolver function. */
 export const resolvable	= <T = void> (value?: T) : {
 	promise: Promise<T>;
+	reject: (err?: any) => void;
 	resolve: (t?: T|PromiseLike<T>) => void;
 } => {
 	let resolve: ((t?: T|PromiseLike<T>) => void)|undefined;
+	let reject: ((err?: any) => void)|undefined;
 
 	/* tslint:disable-next-line:promise-must-complete */
-	const promise	= new Promise<T>(r => {
-		resolve	= value === undefined ? r : () => { r(value); };
+	const promise	= new Promise<T>((promiseResolve, promiseReject) => {
+		resolve	= value === undefined ? promiseResolve : () => { promiseResolve(value); };
+		reject	= promiseReject;
 	});
 
-	if (!resolve) {
+	if (!resolve || !reject) {
 		throw new Error('Promise constructor did not run.');
 	}
 
-	return {promise, resolve};
+	return {promise, reject, resolve};
 };
 
 /** Sleep for the specifed amount of time. */

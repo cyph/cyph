@@ -39,6 +39,7 @@ import {DatabaseService} from '../services/database.service';
 import {DOMPurifyHtmlSanitizerService} from '../services/dompurify-html-sanitizer.service';
 import {FirebaseDatabaseService} from '../services/firebase-database.service';
 import {HtmlSanitizerService} from '../services/html-sanitizer.service';
+import {WorkerService} from '../services/worker.service';
 import {CyphCommonModule} from './cyph-common.module';
 import {CyphWebModule} from './cyph-web.module';
 
@@ -148,6 +149,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountService,
 		AccountSettingsService,
 		AccountUserLookupService,
+		WorkerService,
 		{
 			provide: DatabaseService,
 			useClass: FirebaseDatabaseService

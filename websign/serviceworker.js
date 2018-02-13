@@ -106,3 +106,37 @@ self.addEventListener('notificationclick', function (e) {
 	}
 	catch (_) {}
 });
+
+self.addEventListener('message', function (e) {
+	if (!e.data || typeof e.data.scriptURL !== 'string' || !e.data.scriptURL.startsWith('blob:')) {
+		return;
+	}
+
+	importScripts(e.data.scriptURL);
+
+	var importedFunction	= self.importedFunction;
+	self.importedFunction	= undefined;
+
+	if (typeof importedFunction !== 'function') {
+		return;
+	}
+
+	new Promise(function (resolve) {
+		resolve(importedFunction(e.data.input));
+	}).then(function (output) {
+		return {id: e.data.id, output: output};
+	}).catch(function (err) {
+		return {err: err, id: e.data.id, rejection: true};
+	}).then(function (data) {
+		if (!(e.ports && e.ports.length > 0)) {
+			return;
+		}
+
+		for (var i = 0 ; i < e.ports.length ; ++i) {
+			var port	= e.ports[i];
+			if (port) {
+				port.postMessage(data);
+			}
+		}
+	});
+});

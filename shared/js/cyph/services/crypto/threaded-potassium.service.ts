@@ -14,9 +14,9 @@ import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
 import {ThreadEvents} from '../../crypto/potassium/thread-events';
 import {EventManager, eventManager} from '../../event-manager';
 import {IKeyPair} from '../../proto';
-import {Thread} from '../../thread';
 import {uuid} from '../../util/uuid';
 import {EnvService} from '../env.service';
+import {WorkerService} from '../worker.service';
 
 
 /**
@@ -323,12 +323,14 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 
 	constructor (
 		/** @ignore */
-		private readonly envService: EnvService
+		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly workerService: WorkerService
 	) {
 		super();
 
-		/* tslint:disable-next-line:no-unused-expression */
-		(async () => { new Thread(
+		this.workerService.createThread(
 			/* tslint:disable-next-line:only-arrow-functions */
 			async function () : Promise<void> {
 				importScripts('/assets/js/cyph/crypto/potassium/index.js');
@@ -758,10 +760,10 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 
 				eventManager.trigger<void>(locals.eventID, undefined, true);
 			},
-			{
+			(async () => ({
 				eventID: this.eventID,
 				isNative: await this.native()
-			}
-		); })();
+			}))()
+		);
 	}
 }
