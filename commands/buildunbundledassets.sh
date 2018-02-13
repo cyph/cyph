@@ -90,6 +90,15 @@ mkdir node_modules js css
 
 ../../commands/protobuf.sh
 
+if [ "${test}" ] ; then
+	node -e 'console.log(
+		fs.readFileSync("../../websign/serviceworker.js").toString().
+			split("/*** Non-WebSign-specific ***/")
+		[1]
+	)' \
+		> serviceworker.js
+fi
+
 
 cd node_modules
 

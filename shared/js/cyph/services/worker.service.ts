@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {MaybePromise} from '../maybe-promise-type';
 import {Thread} from '../thread';
 import {uuid} from '../util/uuid';
-import {resolvable} from '../util/wait';
+import {resolvable, waitForValue} from '../util/wait';
 import {ConfigService} from './config.service';
 
 
@@ -68,11 +68,10 @@ export class WorkerService {
 		/** @ignore */
 		private readonly configService: ConfigService
 	) {
-		this.serviceWorker	= this.serviceWorkerRegistration.then(() => {
-			const controller	= navigator.serviceWorker.controller;
-			if (!controller) {
-				throw new Error('No ServiceWorker controller.');
-			}
+		this.serviceWorker	= this.serviceWorkerRegistration.then(async () => {
+			const controller	= await waitForValue(() =>
+				navigator.serviceWorker.controller || undefined
+			);
 
 			controller.addEventListener('message', (e: any) => {
 				if (!e.data || typeof e.data.id !== 'string') {
@@ -94,5 +93,7 @@ export class WorkerService {
 
 			return controller;
 		});
+
+		this.serviceWorker.catch(() => {});
 	}
 }
