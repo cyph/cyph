@@ -2,7 +2,7 @@
 
 import {Injectable, NgZone} from '@angular/core';
 import {firebase} from '@firebase/app';
-import {FirebaseApp} from '@firebase/app-types';
+import {FirebaseApp, FirebaseNamespace} from '@firebase/app-types';
 import '@firebase/auth';
 import {FirebaseAuth} from '@firebase/auth-types';
 import {ServerValue} from '@firebase/database';
@@ -1001,6 +1001,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 		this.ngZone.runOutsideAngular(async () => {
 			const app						= await this.app;
 			const serviceWorkerRegistration	= await workerService.serviceWorkerRegistration;
+
+			await workerService.serviceWorkerFunction(envService.firebaseConfig, config => {
+				importScripts('/assets/node_modules/firebase/firebase-app.js');
+				importScripts('/assets/node_modules/firebase/firebase-messaging.js');
+
+				const firebase: FirebaseNamespace	= (<any> self).firebase;
+				firebase.initializeApp(config);
+
+				if (firebase.messaging) {
+					(<any> self).messaging	= firebase.messaging();
+				}
+			});
 
 			app.messaging().useServiceWorker(serviceWorkerRegistration);
 		}).catch(() => {});
