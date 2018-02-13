@@ -82,6 +82,17 @@ self.addEventListener('fetch', function (e) {
 	);
 });
 
+
+/*** Non-WebSign-specific ***/
+
+self.addEventListener('install', function (e) {
+	e.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener('activate', function (e) {
+	e.waitUntil(self.clients.claim());
+});
+
 self.addEventListener('notificationclick', function (e) {
 	try {
 		e.notification.close();

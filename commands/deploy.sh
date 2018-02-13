@@ -407,7 +407,12 @@ for d in $compiledProjects ; do
 	mv "${d}.src/dist" "${d}"
 
 	if [ "${simple}" ] && [ "${d}" == "${webSignedProject}" ] ; then
-		cp websign/serviceworker.js "${d}/"
+		node -e 'console.log(
+			fs.readFileSync("websign/serviceworker.js").toString().
+				split("/*** Non-WebSign-specific ***/")
+			[1]
+		)' \
+			> "${d}/serviceworker.js"
 	fi
 done
 touch .build.done
