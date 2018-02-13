@@ -1006,6 +1006,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				importScripts('/assets/node_modules/firebase/firebase-app.js');
 				importScripts('/assets/node_modules/firebase/firebase-messaging.js');
 
+				/* tslint:disable-next-line:no-shadowed-variable */
 				const firebase: FirebaseNamespace	= (<any> self).firebase;
 				firebase.initializeApp(config);
 
