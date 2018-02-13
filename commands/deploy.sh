@@ -360,7 +360,7 @@ for d in $compiledProjects ; do
 
 	cd "${d}"
 
-	if [ "${websign}" -a "${d}" == "${webSignedProject}" ] ; then
+	if [ "${websign}" ] && [ "${d}" == "${webSignedProject}" ] ; then
 		# Merge in base64'd images, fonts, video, and audio
 		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
 	fi
@@ -405,6 +405,10 @@ for d in $compiledProjects ; do
 
 	mv "${d}" "${d}.src"
 	mv "${d}.src/dist" "${d}"
+
+	if [ "${simple}" ] && [ "${d}" == "${webSignedProject}" ] ; then
+		cp websign/serviceworker.js "${d}/"
+	fi
 done
 touch .build.done
 
@@ -508,7 +512,6 @@ if [ "${websign}" ] ; then
 fi
 
 # WebSign redirects
-
 if [ ! "${simple}" ] ; then
 	for suffix in ${shortlinkProjects} ; do
 		d="cyph.${suffix}"
