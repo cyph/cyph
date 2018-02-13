@@ -12,6 +12,8 @@ import {
 	Reference as DatabaseReference,
 	ThenableReference
 } from '@firebase/database-types';
+import '@firebase/messaging';
+import {FirebaseMessaging} from '@firebase/messaging-types';
 import '@firebase/storage';
 import {
 	FirebaseStorage,
@@ -38,6 +40,7 @@ import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
+import {WorkerService} from './worker.service';
 
 
 /**
@@ -49,6 +52,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	private readonly app: Promise<FirebaseApp&{
 		auth: () => FirebaseAuth;
 		database: (databaseURL?: string) => FirebaseDatabase;
+		messaging: () => FirebaseMessaging;
 		storage: (storageBucket?: string) => FirebaseStorage;
 	}>	= this.ngZone.runOutsideAngular(async () => retryUntilSuccessful(() => {
 		const app	= firebase.apps[0] || firebase.initializeApp(env.firebaseConfig);
@@ -58,6 +62,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 		}
 		if (app.database === undefined) {
 			throw new Error('No Firebase Database module.');
+		}
+		if (app.messaging === undefined) {
+			throw new Error('No Firebase Messaging module.');
 		}
 		if (app.storage === undefined) {
 			throw new Error('No Firebase Storage module.');
@@ -978,6 +985,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 	constructor (
 		envService: EnvService,
 
+		workerService: WorkerService,
+
 		/** @ignore */
 		private readonly ngZone: NgZone,
 
@@ -988,5 +997,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 		private readonly potassiumService: PotassiumService
 	) {
 		super(envService);
+
+		this.ngZone.runOutsideAngular(async () => {
+			const app						= await this.app;
+			const serviceWorkerRegistration	= await workerService.serviceWorkerRegistration;
+
+			app.messaging().useServiceWorker(serviceWorkerRegistration);
+		}).catch(() => {});
 	}
 }

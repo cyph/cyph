@@ -490,8 +490,11 @@ message Environment {
 		/** API key. */
 		required string apiKey = 1;
 
+		/** Firebase Cloud Messaging ID. */
+		required string messagingSenderId = 2;
+
 		/** Project ID. */
-		required string project = 2;
+		required string project = 3;
 	}
 
 	/**
