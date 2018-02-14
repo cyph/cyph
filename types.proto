@@ -719,7 +719,7 @@ message PatientInfo {
 		Address address = 1;
 
 		/** Is there consent to share medical information with the contact? */
-		boolean consentToShare = 2;
+		bool consentToShare = 2;
 
 		/** Cyph username for the contact if they have one */
 		string cyphAccount = 3;
