@@ -681,7 +681,7 @@ message PatientInfo {
 		string city = 1;
 
 		/** Country for the address, e.g. 'US'. */
-		string country = 2; 
+		string country = 2;
 
 		/** County for the address, e.g. 'Fairfax'. */
 		string county = 3;
@@ -702,7 +702,7 @@ message PatientInfo {
 		message Reaction {
 			/** Code for the reaction, based on codeset. */
 			string code = 1;
-			
+
 			/** Code set used to identify the reaction. */
 			string codeset = 2;
 
@@ -761,7 +761,7 @@ message PatientInfo {
 	message Demographics {
 		/** The patient's address. */
 		Address address = 1;
-	
+
 		/** Reference: http:/** www.nationsonline.org/oneworld/country_code_list.htm */
 		repeated string citizenship = 2;
 
@@ -827,7 +827,7 @@ message PatientInfo {
 			string IDType = 3;
 
 			/** Name of insurance company (payor). */
-			string name = 4; 
+			string name = 4;
 
 			/** Insurance company's phone number. In E. 164 Format (i.e. +16085551234). */
 			string phone = 5;
