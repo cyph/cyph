@@ -151,6 +151,8 @@ service firebase.storage {
 					allow read;
 				}
 
+				// match /patientInfo/{hash} {}
+
 				// match /pin {
 				// 	match /hash/{hash} {
 				// 	match /isCustom/{hash} {
