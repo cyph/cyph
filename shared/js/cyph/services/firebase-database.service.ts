@@ -1002,7 +1002,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const app						= await this.app;
 			const serviceWorkerRegistration	= await workerService.serviceWorkerRegistration;
 
-			await workerService.serviceWorkerFunction(envService.firebaseConfig, config => {
+			await workerService.serviceWorkerFunction('FCM', envService.firebaseConfig, config => {
 				importScripts('/assets/node_modules/firebase/firebase-app.js');
 				importScripts('/assets/node_modules/firebase/firebase-messaging.js');
 

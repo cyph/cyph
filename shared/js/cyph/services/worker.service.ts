@@ -45,6 +45,7 @@ export class WorkerService {
 
 	/** Runs a function in the context of the ServiceWorker. */
 	public async serviceWorkerFunction<I, O> (
+		name: string,
 		input: MaybePromise<I>,
 		f: (input: I) => MaybePromise<O>
 	) : Promise<O> {
@@ -57,7 +58,7 @@ export class WorkerService {
 		));
 
 		this.serviceWorkerResolvers.set(id, output);
-		serviceWorker.postMessage({id, input: await input, scriptURL});
+		serviceWorker.postMessage({cyphFunction: true, id, input: await input, name, scriptURL});
 		await output.promise;
 		URL.revokeObjectURL(scriptURL);
 

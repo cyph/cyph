@@ -118,22 +118,38 @@ self.addEventListener('notificationclick', function (e) {
 	catch (_) {}
 });
 
+var executedScripts	= {};
+
 self.addEventListener('message', function (e) {
-	if (!e.data || typeof e.data.scriptURL !== 'string' || !e.data.scriptURL.startsWith('blob:')) {
+	if (
+		!e.data ||
+		e.data.cyphFunction !== true ||
+		!e.data.name ||
+		typeof e.data.scriptURL !== 'string' ||
+		!e.data.scriptURL.startsWith('blob:')
+	) {
 		return;
 	}
 
-	importScripts(e.data.scriptURL);
+	new Promise(function (resolve, reject) {
+		var importedFunction;
 
-	var importedFunction	= self.importedFunction;
-	self.importedFunction	= undefined;
+		var alreadyExecuted				= executedScripts[e.data.name];
+		executedScripts[e.data.name]	= true;
 
-	if (typeof importedFunction !== 'function') {
-		return;
-	}
+		if (!alreadyExecuted) {
+			importScripts(e.data.scriptURL);
 
-	new Promise(function (resolve) {
-		resolve(importedFunction(e.data.input));
+			importedFunction		= self.importedFunction;
+			self.importedFunction	= undefined;
+		}
+
+		if (typeof importedFunction !== 'function') {
+			reject(alreadyExecuted ? {alreadyExecuted: true} : {noFunctionProvided: true});
+		}
+		else {
+			resolve(importedFunction(e.data.input));
+		}
 	}).then(function (output) {
 		return {id: e.data.id, output: output};
 	}).catch(function (err) {
@@ -143,11 +159,49 @@ self.addEventListener('message', function (e) {
 			return;
 		}
 
-		for (var i = 0 ; i < e.ports.length ; ++i) {
-			var port	= e.ports[i];
+		e.ports.forEach(function (port) {
 			if (port) {
 				port.postMessage(data);
 			}
-		}
+		});
 	});
 });
+
+/* Make addEventListener available to functions sent from application. */
+
+var serviceWorkerEvents			= [
+	'activate',
+	'controllerchange',
+	'error',
+	'fetch',
+	'install',
+	'message',
+	'notificationclick',
+	'push',
+	'pushsubscriptionchange',
+	'statechange',
+	'updatefound'
+];
+
+var serviceWorkerEventHandlers	= {};
+
+serviceWorkerEvents.forEach(function (event) {
+	self.addEventListener(event, function (e) {
+		var handlers	= serviceWorkerEventHandlers[event];
+		if (!(handlers instanceof Array)) {
+			return;
+		}
+
+		handlers.forEach(function (handler) {
+			setTimeout(function () { handler(e); }, 0);
+		});
+	});
+});
+
+self.addEventListener	= function (event, handler) {
+	if (!(serviceWorkerEventHandlers[event] instanceof Array)) {
+		serviceWorkerEventHandlers[event]	= [];
+	}
+
+	serviceWorkerEventHandlers[event].push(handler);
+};
