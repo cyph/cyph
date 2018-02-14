@@ -104,7 +104,9 @@ self.addEventListener('notificationclick', function (e) {
 				var client	= clientList[i];
 
 				try {
-					return client.focus();
+					if (!client.focused) {
+						return client.focus();
+					}
 				}
 				catch (_) {
 					try {
