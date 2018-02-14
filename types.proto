@@ -237,36 +237,48 @@ message Appointment {
 		Yes = 2;
 	}
 
-	/** EHR data for the appointment */
+	/** EHR data for the appointment. */
 	message EHR {
-		/** An ID that can span several visits often related to the same issue - pregnancy, surgeries, research study, etc. */
+		/**
+		 * An ID that can span several visits often related to the same issue -
+		 * pregnancy, surgeries, research study, etc.
+		 */
 		string accountNumber = 1;
 
 		/** ID of the attending provider. This ID is required for Inpatient Visits. */
 		string attendingProviderID = 2;
 
-		/** ID type of the ID for the attending provider */
+		/** ID type of the ID for the attending provider. */
 		string attendingProviderIDType = 3;
 
-		/** Full name of the attending provider */
+		/** Full name of the attending provider. */
 		string attendingProviderName = 4;
 
-		/** Patient balance due for this visit. This field depends on whether or not the sending system has billing functionality, and whether they calculate this field. */
+		/**
+		 * Patient balance due for this visit. This field depends on whether or not the sending
+		 * system has billing functionality, and whether they calculate this field.
+		 */
 		double balance = 5;
 
 		/** Duration of the visit in minutes. */
 		double duration = 6;
 
-		/** Location of the visit */
+		/** Location of the visit. */
 		string location = 7;
 
-		/** Type of location. Examples: Clinic, Department, Home, Nursing Unit, Provider's Office, Phone*/
+		/**
+		 * Type of location.
+		 * Examples: Clinic, Department, Home, Nursing Unit, Provider's Office, Phone.
+		 */
 		string locationType = 8;
 
-		/** Facility. Example: Community Hospital */
+		/** Facility. Example: Community Hospital. */
 		string locationFacility = 9;
 
-		/** Patient class is used in many EHRs to determine where to put the patient. Examples: Inpatient, Outpatient, Emergency. (Redox required for Visit) */
+		/**
+		 * Patient class is used in many EHRs to determine where to put the patient.
+		 * Examples: Inpatient, Outpatient, Emergency. (Redox required for Visit).
+		 */
 		string patientClass = 10;
 
 		/** Reason for the visit. */
@@ -282,7 +294,7 @@ message Appointment {
 	/** @see CalendarInvite */
 	required CalendarInvite calendarInvite = 1;
 
-	/** EHR-specific data related to the appointment */
+	/** EHR-specific data related to the appointment. */
 	EHR data = 2;
 
 	/** Relevant forms. */
@@ -661,9 +673,9 @@ message KeyPair {
 	required bytes publicKey = 2;
 }
 
-/** Patient information for Telehealth */
+/** Patient information for Telehealth. */
 message PatientInfo {
-	/** Address/Physical Location */
+	/** Address/Physical Location. */
 	message Address {
 		/** City for the address, e.g. McLean. */
 		string city = 1;
@@ -684,17 +696,17 @@ message PatientInfo {
 		string zip = 6;
 	}
 
-	/** An allergy to a medication, food, or substance */
+	/** An allergy to a medication, food, or substance. */
 	message Allergy {
-		/** A reaction that occurs when the allergen is introduced */
+		/** A reaction that occurs when the allergen is introduced. */
 		message Reaction {
-			/** Code for the reaction, based on codeset.*/
+			/** Code for the reaction, based on codeset. */
 			string code = 1;
 			
-			/** Code set used to identify the reaction */
+			/** Code set used to identify the reaction. */
 			string codeset = 2;
 
-			/** Name of the reaction */
+			/** Name of the reaction. */
 			string name = 3;
 		}
 
@@ -713,41 +725,41 @@ message PatientInfo {
 		repeated Reaction reactions = 5;
 	}
 
-	/** Emergency Contact(s) for the patient */
+	/** Emergency Contact(s) for the patient. */
 	message Contact {
-		/** Contact's address */
+		/** Contact's address. */
 		Address address = 1;
 
 		/** Is there consent to share medical information with the contact? */
 		bool consentToShare = 2;
 
-		/** Cyph username for the contact if they have one */
+		/** Cyph username for the contact if they have one. */
 		string cyphAccount = 3;
 
-		/** List of emails for the contact */
+		/** List of emails for the contact. */
 		repeated string emails = 4;
 
-		/** Contact's full name */
-		Name fullname = 5;
+		/** Contact's full name. */
+		Name fullName = 5;
 
-		/** List of phone numbers for the contact */
+		/** List of phone numbers for the contact. */
 		repeated PhoneNumbers phoneNumbers = 6;
 
-		/** Personal relationship to the patient. e.x. Father, Spouse */
+		/** Personal relationship to the patient. e.g. Father, Spouse. */
 		string relationToPatient = 7;
 
-		/** Role of this contact for the patient. e.g. Employer, Emergency Contact */
+		/** Role of this contact for the patient. e.g. Employer, Emergency Contact. */
 		repeated string roles = 8;
 	}
 
-	/** List of emergency contacts */
+	/** List of emergency contacts. */
 	message Contacts {
 		repeated Contact contact = 1;
 	}
 
-	/** Descriptive patient information - modeled from Redox */
+	/** Descriptive patient information - modeled from Redox. */
 	message Demographics {
-		/** The patient's address */
+		/** The patient's address. */
 		Address address = 1;
 	
 		/** Reference: http:/** www.nationsonline.org/oneworld/country_code_list.htm */
@@ -759,11 +771,11 @@ message PatientInfo {
 		/** Patient's date of birth. (Redox: In ISO 8601 format) */
 		double DOB = 4;
 
-		/** List of emails for the patient */
+		/** List of emails for the patient. */
 		repeated string emails = 5;
 
-		/** The patient's full name */
-		Name fullname = 6;
+		/** The patient's full name. */
+		Name fullName = 6;
 
 		/** He's dead, Jim. */
 		bool isDeceased = 7;
@@ -777,84 +789,96 @@ message PatientInfo {
 		/** Supported values: http://www.hl7.org/FHIR/v2/0002/index.html */
 		string maritalStatus = 10;
 
-		/** List of phone numbers for the patient */
+		/** List of phone numbers for the patient. */
 		PhoneNumbers phoneNumbers = 11;
 
-		/** The patient's race */
+		/** The patient's race. */
 		string race = 12;
 
-		/** The patient's sex. One of the following: Female, Male, Unknown, Other (Redox values) */
+		/**
+		 * The patient's sex.
+		 * One of the following: "Female", "Male", "Unknown", "Other" (Redox).
+		 */
 		string sex = 13;
 
-		/** The patient's social security number */
+		/** The patient's social security number. */
 		string SSN = 14;
 	}
 
-	/** Identifiers - from Redox */
+	/** Identifiers - from Redox. */
 	message Identifiers {
 		required string id = 1;
 
-		/** Type of ID. E.g. MRN, EPI */
+		/** Type of ID. E.g. MRN, EPI. */
 		required string IDType = 2;
 	}
 
 	/** Patient's insurance info. */
 	message Insurance {
-		/** The insurance company */
+		/** The insurance company. */
 		message Company {
-			/** Insurance company's address */
+			/** Insurance company's address. */
 			Address address = 1;
 
-			/** ID of insurance company (payor) */
+			/** ID of insurance company (payor). */
 			string ID = 2;
 
-			/** ID type of insurance company (payor) */
+			/** ID type of insurance company (payor). */
 			string IDType = 3;
 
-			/** Name of insurance company (payor) */
+			/** Name of insurance company (payor). */
 			string name = 4; 
 
-			/** Insurance companys phone number. In E. 164 Format (i.e. +16085551234) */
+			/** Insurance company's phone number. In E. 164 Format (i.e. +16085551234). */
 			string phone = 5;
 		}
 
 		/** The insurance policy holder. */
 		message Insured {
-			/** Insurance policy holder's address */
+			/** Insurance policy holder's address. */
 			Address address = 1;
 
-			/** Insurance policy holder's date of birth */
+			/** Insurance policy holder's date of birth. */
 			double DOB = 2;
 
-			/** Insurance policy holder's full name */
+			/** Insurance policy holder's full name. */
 			Name fullName = 3;
 
-			/** Relationship of the insured to the patient. One of the following: "Self", "Spouse", "Other" (Redox) */
+			/**
+			 * Relationship of the insured to the patient.
+			 * One of the following: "Self", "Spouse", "Other" (Redox).
+			 */
 			string relationship = 4;
 		}
 
-		/** The insurance plan */
+		/** The insurance plan. */
 		message Plan {
-			/** Identifier of insurance plan */
+			/** Identifier of insurance plan. */
 			string ID = 1;
 
-			/** ID type of insurance plan */
+			/** ID type of insurance plan. */
 			string IDType = 2;
 
-			/** Name of insurance plan */
+			/** Name of insurance plan. */
 			string name = 3;
 
-			/** Type of insurance plan */
+			/** Type of insurance plan. */
 			string type = 4;
 		}
 
-		/** Type of insurance agreement. One of the following: "Standard", "Unified", "Maternity" */
+		/**
+		 * Type of insurance agreement.
+		 * One of the following: "Standard", "Unified", "Maternity" (Redox).
+		 */
 		string agreementType = 1;
 
-		/** Type of insurance agreement. One of the following: "Patient", "Clinic", "Insurance", "Other". Indicates who will be receiving the bill for the service. */
+		/**
+		 * Type of insurance agreement. Indicates who will be receiving the bill for the service.
+		 * One of the following: "Patient", "Clinic", "Insurance", "Other" (Redox).
+		 */
 		string coverageType = 2;
 
-		/** Effective date of this insurance policy. (redox uses YYY-MM-DD). */
+		/** Effective date of this insurance policy. (Redox uses YYYY-MM-DD). */
 		double effectiveDate = 3;
 
 		/** Expiration date of this insurance policy. */
@@ -866,16 +890,16 @@ message PatientInfo {
 		/** Insurance policy group name. */
 		string groupName = 6;
 
-		/** The insurance company */
+		/** The insurance company. */
 		Company insuranceCompany = 7;
 
 		/** Individual who has the agreement with the insurance company for the related policy. */
 		Insured insured = 8;
 
-		/** Insurance member number */
+		/** Insurance member number. */
 		string memberNumber = 9;
 
-		/** The insurance plan */
+		/** The insurance plan. */
 		Plan plan = 10;
 
 		/** Insurance policy number. */
@@ -884,76 +908,76 @@ message PatientInfo {
 
 	/** Someone's name. */
 	message Name {
-		/** Person's first name */
+		/** Person's first name. */
 		string firstName = 1;
 
-		/** Person's last name */
+		/** Person's last name. */
 		string lastName = 2;
 
-		/** Person's middle name - multiple middle names concatinated into this fiedl (Redox) */
+		/** Person's middle name - multiple middle names concatenated into this field (Redox). */
 		string middleName = 3;
 	}
 
-	/** Patient-level notes */
+	/** Patient-level notes. */
 	message Notes {
-		/** Patient-level note */
+		/** Patient-level note. */
 		repeated string note = 1;
 	}
 
-	/** Primary Care Provider for the Patient */
+	/** Primary Care Provider for the Patient. */
 	message PCP {
-		/** Address of the patient's primary care provider */
+		/** Address of the patient's primary care provider. */
 		Address address = 1;
 
 		/** e.g. M.D., Psy.D. */
 		repeated string credentials = 2;
 
-		/** Primary care povider's name */
+		/** Primary care provider's name. */
 		Name fullName = 3;
 
-		/** National Provider Identifier for the primary care povider */
+		/** National Provider Identifier for the primary care provider. */
 		string NPI = 4;
 	}
 
-	/** Someone's phone number */
+	/** Someone's phone number. */
 	message PhoneNumber {
-		/** Home phone number */
+		/** Home phone number. */
 		string home = 1;
 
-		/** Mobile phone number */
+		/** Mobile phone number. */
 		string mobile = 2;
 
-		/** Office phone number */
+		/** Office phone number. */
 		string office = 3;
 
-		/** Other phone number(s) */
+		/** Other phone number(s). */
 		repeated string other = 4;
 	}
 
-	/** List of phone numbers */
+	/** List of phone numbers. */
 	message PhoneNumbers {
 		repeated PhoneNumber phoneNumbers = 1;
 	}
 
-	/** List of patient's allergies */
+	/** List of patient's allergies. */
 	repeated Allergy allergies = 1;
 
-	/** List of (emergency) contacts for the patient */
+	/** List of (emergency) contacts for the patient. */
 	Contacts contacts = 2;
 
-	/** Descriptive patient information - modeled from Redox */
+	/** Descriptive patient information - modeled from Redox. */
 	Demographics demographics = 3;
 
-	/** Patient identifiers */
+	/** Patient identifiers. */
 	required Identifiers id = 4;
 
-	/** List of insurance(s) for the patient */
+	/** List of insurance(s) for the patient. */
 	repeated Insurance insurances = 5;
 
-	/** List of patient-level notes */
+	/** List of patient-level notes. */
 	Notes patientNotes = 6;
 
-	/** Patient's Primary Care Povder */
+	/** Patient's Primary Care Provider. */
 	PCP pcp = 7;
 }
 
