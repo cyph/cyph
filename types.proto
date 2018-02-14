@@ -675,7 +675,7 @@ message KeyPair {
 
 /** Patient information for Telehealth. */
 message PatientInfo {
-	/** Address/Physical Location. */
+	/** Address / Physical Location. */
 	message Address {
 		/** City for the address, e.g. McLean. */
 		string city = 1;
@@ -712,6 +712,7 @@ message PatientInfo {
 
 		/** Code for the allergy, based on codeset. */
 		string code = 1;
+
 		/** Code set used to identify the allergy. Typically RxNorm or SNOMED. */
 		string codeset = 2;
 
