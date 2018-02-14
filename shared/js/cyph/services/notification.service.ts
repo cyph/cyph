@@ -129,5 +129,32 @@ export class NotificationService implements INotificationService {
 			(<any> self).Notification.requestPermission();
 		}
 		catch {}
+
+		this.workerService.serviceWorkerFunction('NotificationService', undefined, () => {
+			self.addEventListener('notificationclick', (e: any) => {
+				try {
+					e.notification.close();
+
+					e.waitUntil(
+						(<any> self).clients.matchAll({type: 'window'}).then((clientList: any) => {
+							for (const client of clientList) {
+								try {
+									if (!client.focused) {
+										return client.focus();
+									}
+								}
+								catch (_) {
+									try {
+										return clientList.openWindow(client);
+									}
+									catch (_) {}
+								}
+							}
+						})
+					);
+				}
+				catch (_) {}
+			});
+		});
 	}
 }

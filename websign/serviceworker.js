@@ -93,32 +93,7 @@ self.addEventListener('activate', function (e) {
 	e.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('notificationclick', function (e) {
-	try {
-		e.notification.close();
-
-		e.waitUntil(clients.matchAll({
-			type: 'window'
-		}).then(function (clientList) {
-			for (var i = 0 ; i < clientList.length ; ++i) {
-				var client	= clientList[i];
-
-				try {
-					if (!client.focused) {
-						return client.focus();
-					}
-				}
-				catch (_) {
-					try {
-						return clients.openWindow(client);
-					}
-					catch (_) {}
-				}
-			}
-		}));
-	}
-	catch (_) {}
-});
+/* Enable running functions provided by the application */
 
 var executedScripts	= {};
 
@@ -169,7 +144,7 @@ self.addEventListener('message', function (e) {
 	});
 });
 
-/* Make addEventListener available to functions sent from application. */
+/* Make addEventListener available to functions provided by the application */
 
 var serviceWorkerEvents			= [
 	'activate',
