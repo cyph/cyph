@@ -28,6 +28,9 @@ export class NotificationService implements INotificationService {
 	private readonly openNotifications: any[]	= [];
 
 	/** @ignore */
+	private readonly tag: string				= 'NotificationService';
+
+	/** @ignore */
 	private async createNotification (message: string) : Promise<any> {
 		const options	= {
 			audio: <string|undefined> undefined,
@@ -130,9 +133,13 @@ export class NotificationService implements INotificationService {
 		}
 		catch {}
 
-		this.workerService.serviceWorkerFunction('NotificationService', undefined, () => {
+		this.workerService.serviceWorkerFunction(this.tag, this.tag, tag => {
 			self.addEventListener('notificationclick', (e: any) => {
 				try {
+					if (e.notification.tag !== tag) {
+						return;
+					}
+
 					e.notification.close();
 
 					e.waitUntil(
@@ -140,7 +147,7 @@ export class NotificationService implements INotificationService {
 							for (const client of clientList) {
 								try {
 									if (!client.focused) {
-										return client.focus();
+										return client.focus().catch(() => {});
 									}
 								}
 								catch (_) {
