@@ -122,7 +122,8 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 		}
 		else if (
 			this.messageType.value === ChatMessageValue.Types.Form &&
-			this.appointmentID.value !== undefined
+			this.appointmentID.value !== undefined &&
+			this.accountChatService.chat.currentMessage.form !== undefined
 		) {
 			const id			= this.appointmentID.value;
 			const appointment	= await this.accountFilesService.downloadAppointment(id).result;
