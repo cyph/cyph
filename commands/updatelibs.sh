@@ -165,6 +165,7 @@ read -r -d '' modules <<- EOM
 	mkdirp
 	moment
 	msgpack-lite
+	mustache
 	nativescript
 	nativescript-angular
 	nativescript-css-loader
