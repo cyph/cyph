@@ -319,7 +319,7 @@ const killEverything	= () => killContainer('cyph');
 
 const pullUpdates		= () => {
 	if (args.noUpdates) {
-		return;
+		return Promise.resolve();
 	}
 
 	return editImage(shellScripts.aptUpdate.command, shellScripts.aptUpdate.condition).then(() =>
