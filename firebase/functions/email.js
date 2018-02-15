@@ -1,3 +1,4 @@
+const fs			= require('fs')
 const nodemailer	= require('nodemailer')
 const auth			= require('./email-credentials');
 
