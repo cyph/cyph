@@ -573,6 +573,17 @@
 						}
 					},
 
+					"notifications": {
+						"$notification": {
+							"target": {
+								".validate": "newData.isString()"
+							},
+							"type": {
+								".validate": "newData.isNumber()"
+							}
+						}
+					},
+
 					"organizationMembers": {
 						".read": true,
 

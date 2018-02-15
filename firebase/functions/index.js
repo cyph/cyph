@@ -1,8 +1,13 @@
 const firebase									= require('firebase');
 const admin										= require('firebase-admin');
 const functions									= require('firebase-functions');
-const {AccountUserProfile, StringProto}			= require('./proto');
 const {normalize, retryUntilSuccessful, sleep}	= require('./util');
+
+const {
+	AccountUserProfile,
+	NotificationTypes,
+	StringProto
+}	= require('./proto');
 
 const {
 	auth,
@@ -198,7 +203,7 @@ exports.userEmailSet	=
 			throw new Error('INVALID USER REF');
 		}
 
-		const emailRef	= database.ref(`${namespace}/users/${username}/internal/email`);
+		const emailRef	= database.ref(`${e.params.namespace}/users/${username}/internal/email`);
 
 		const email		= await getItem(
 			e.params.namespace,
@@ -218,6 +223,48 @@ exports.userEmailSet	=
 ;
 
 
+/* TODO: Translations and user block lists. */
+exports.userNotification	=
+	functions.database.ref('{namespace}/users/{user}/notifications/{notification}').onCreate(
+		async e => {
+			const userRef	= e.data.ref.parent;
+
+			if (userRef.key.length < 1) {
+				throw new Error('INVALID USER REF');
+			}
+
+			const notification	= e.data.val();
+
+			if (!notification || !notification.target || isNaN(notification.type)) {
+				return;
+			}
+
+			const realUsername	= await getRealUsername(e.params.namespace, userRef.key);
+
+			const {subject, text}	=
+				notification.type === NotificationTypes.File ?
+					{
+						subject: 'Incoming Data',
+						text: `${realUsername} has shared something with you.`
+					} :
+				notification.type === NotificationTypes.Message ?
+					{
+						subject: 'New Message',
+						text: `${realUsername} has sent a message.`
+					} :
+				/* else */
+					{
+						subject: 'Sup Dog',
+						text: `${realUsername} says yo.`
+					}
+			;
+
+			await notify(e.params.namespace, notification.target, subject, text);
+		}
+	)
+;
+
+
 exports.userRealUsernameSet	=
 	functions.database.ref('{namespace}/users/{user}/publicProfile').onWrite(async e => {
 		const userRef	= e.data.ref.parent;
@@ -227,7 +274,7 @@ exports.userRealUsernameSet	=
 		}
 
 		const realUsernameRef	=
-			database.ref(`${namespace}/users/${username}/internal/realUsername`)
+			database.ref(`${e.params.namespace}/users/${username}/internal/realUsername`)
 		;
 
 		const publicProfile		= await getItem(

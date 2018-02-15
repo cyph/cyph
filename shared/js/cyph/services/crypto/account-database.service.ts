@@ -20,7 +20,8 @@ import {
 	AccountUserPublicKeys,
 	AGSEPKICert,
 	BinaryProto,
-	IAccountUserPublicKeys
+	IAccountUserPublicKeys,
+	NotificationTypes
 } from '../../proto';
 import {filterUndefinedOperator} from '../../util/filter';
 import {cacheObservable, flattenObservable} from '../../util/flatten-observable';
@@ -781,6 +782,18 @@ export class AccountDatabaseService {
 
 		const currentUser	= await this.getCurrentUser();
 		return `users/${currentUser.user.username}/${url}`;
+	}
+
+	/** @see DatabaseService.notify */
+	public async notify (
+		username: MaybePromise<string>,
+		notificationType: NotificationTypes
+	) : Promise<void> {
+		await this.databaseService.notify(
+			await this.normalizeURL('notifications'),
+			username,
+			notificationType
+		);
 	}
 
 	/** @see DatabaseService.pushItem */

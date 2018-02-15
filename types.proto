@@ -673,6 +673,13 @@ message KeyPair {
 	required bytes publicKey = 2;
 }
 
+/** Push notification types. */
+enum NotificationTypes {
+	Yo = 0;
+	File = 1;
+	Message = 2;
+}
+
 /** Patient information for Telehealth. */
 message PatientInfo {
 	/** Address / Physical Location. */

@@ -13,6 +13,7 @@ import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
+import {NotificationTypes} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {lockFunction} from '../util/lock';
 import {EnvService} from './env.service';
@@ -265,6 +266,15 @@ export class DatabaseService extends DataManagerService {
 	/** Logs out. */
 	public async logout () : Promise<void> {
 		throw new Error('Must provide an implementation of DatabaseService.logout.');
+	}
+
+	/** Triggers a push notification. */
+	public async notify (
+		_URL: MaybePromise<string>,
+		_TARGET: MaybePromise<string>,
+		_NOTIFICATION_TYPE: NotificationTypes
+	) {
+		throw new Error('Must provide an implementation of DatabaseService.notify.');
 	}
 
 	/**
