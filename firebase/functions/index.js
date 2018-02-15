@@ -20,6 +20,23 @@ const {notify}	= require('./notify')(database, messaging);
 
 const channelDisconnectTimeout	= 2500;
 
+const getRealUsername	= async (namespace, username) => {
+	try {
+		const realUsername	=
+			(await database.ref(
+				`${namespace}/users/${username}/internal/realUsername`
+			).once('value')).val()
+		;
+
+		if (realUsername) {
+			return realUsername;
+		}
+	}
+	catch {}
+
+	return username;
+};
+
 const getURL	= (adminRef, namespace) => {
 	const url	= adminRef.toString().split(
 		`${adminRef.root.toString()}${namespace ? `${namespace}/` : ''}`
