@@ -4,10 +4,11 @@
 
 
 const gcloudStorage					= require('@google-cloud/storage');
+const crypto						= require('crypto');
 const admin							= require('firebase-admin');
 const functions						= require('firebase-functions');
+const lz4							= require('lz4');
 const os							= require('os');
-const potassium						= require('./potassium');
 const {BinaryProto, StringProto}	= require('./proto');
 
 const {
@@ -58,18 +59,25 @@ const databaseService	= {
 	database,
 	functionsUser,
 	messaging,
-	async getItem (namespace, url, proto, skipSignature) {
+	async getItem (namespace, url, proto, skipSignature, decompress) {
 		url	= processURL(namespace, url);
 
 		const {hash}	= await retryUntilSuccessful(async () =>
 			(await database.ref(url).once('value')).val()
 		);
 
-		const bytes		= await retryUntilSuccessful(async () =>
+		let bytes		= await retryUntilSuccessful(async () =>
 			(await storage.file(`${url}/${hash}`).download())[0]
 		);
 
-		return deserialize(proto, !skipSignature ? bytes : bytes.slice(41256));
+		if (skipSignature) {
+			bytes	= bytes.slice(41256);
+		}
+		if (decompress) {
+			bytes	= lz4.decode(bytes);
+		}
+
+		return deserialize(proto, bytes);
 	},
 	async hasItem (namespace, url) {
 		try {
@@ -95,7 +103,7 @@ const databaseService	= {
 		url	= processURL(namespace, url);
 
 		const bytes	= await serialize(proto, value);
-		const hash	= potassium.toHex(await potassium.hash.hash(bytes));
+		const hash	= crypto.createHash('sha512').update(bytes).digest('hex');
 
 		await retryUntilSuccessful(async () => storage.file(`${url}/${hash}`).save(bytes));
 		await retryUntilSuccessful(async () => database.ref(url).set({

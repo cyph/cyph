@@ -303,6 +303,7 @@ exports.userRealUsernameSet	=
 			e.params.namespace,
 			`users/${userRef.key}/publicProfile`,
 			AccountUserProfile,
+			true,
 			true
 		).catch(
 			() => undefined
@@ -334,13 +335,10 @@ exports.userRegister	=
 		const username	= emailSplit[0];
 		const namespace	= emailSplit[1].replace(/\./g, '_');
 
-		return Promise.all([
-			database.ref(`${namespace}/pendingSignups/${username}`).set({
-				timestamp: admin.database.ServerValue.TIMESTAMP,
-				uid: e.data.uid
-			}),
-			database.ref(`${namespace}/users/${username}/internal/realUsername`).set(username)
-		]);
+		return database.ref(`${namespace}/pendingSignups/${username}`).set({
+			timestamp: admin.database.ServerValue.TIMESTAMP,
+			uid: e.data.uid
+		});
 	})
 ;
 
