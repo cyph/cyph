@@ -38,6 +38,7 @@
 						[placeholder]='stringsService.to'
 						[searchUsername]='searchUsername'
 						(userFilterChange)='$event.subscribe(recipient)'
+						*ngIf='(appointmentFormData | async) === undefined'
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box
 						[customSendFunction]='send'
@@ -49,48 +50,56 @@
 					></cyph-account-chat-message-box>
 				</div>
 				<div fxFlexFill fxLayoutAlign='center center' *ngIf='sent | async'>
-					<div *ngIf='(messageType | async) != chatMessageValueTypes.CalendarInvite'>
-						<span cyphTranslate>Message sent to</span>
-						<a [routerLink]='
-							accountService.routeRoot +
-							"messages/" +
-							(recipient | async)?.username
-						'>
-							{{(recipient | async)?.name | async}}
-							(@{{(recipient | async)?.realUsername | async}})
-						</a>
+					<div cyphTranslate *ngIf='
+						(appointmentFormData | async) !== undefined;
+						else messageSent
+					'>
+						Form submitted!
 					</div>
-					<div
-						fxLayout='column'
-						fxLayoutAlign='center center'
-						fxLayoutGap='5px'
-						*ngIf='(messageType | async) === chatMessageValueTypes.CalendarInvite'
-					>
-						<h1 cyphTranslate>Your appointment has been requested!</h1>
+					<ng-template #messageSent>
+						<div *ngIf='
+							(messageType | async) !== chatMessageValueTypes.CalendarInvite;
+							else appointmentRequested
+						'>
+							<span cyphTranslate>Message sent to</span>
+							<a [routerLink]='
+								accountService.routeRoot +
+								"messages/" +
+								(recipient | async)?.username
+							'>
+								{{(recipient | async)?.name | async}}
+								(@{{(recipient | async)?.realUsername | async}})
+							</a>
+						</div>
+					</ng-template>
+					<ng-template #appointmentRequested>
+						<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='5px'>
+							<h1 cyphTranslate>Your appointment has been requested!</h1>
 
-						<ng-container *ngIf='
-							envService.isTelehealth && (sentFileID | async) !== undefined
-						'>
-							<h2 cyphTranslate>
-								Why don't you get ahead on those medical forms while you're waiting
-								for confirmation?
-							</h2>
-							<br />
-							<div class='cyph-light-theme'>
-								<button
-									mat-raised-button
-									cyphTranslate
-									[routerLink]='
-										accountService.routeRoot +
-										"new-patient/" +
-										(sentFileID | async)
-									'
-								>
-									Patient Forms
-								</button>
-							</div>
-						</ng-container>
-					</div>
+							<ng-container *ngIf='
+								envService.isTelehealth && (sentFileID | async) !== undefined
+							'>
+								<h2 cyphTranslate>
+									Why don't you get ahead on those medical forms while you're waiting
+									for confirmation?
+								</h2>
+								<br />
+								<div class='cyph-light-theme'>
+									<button
+										mat-raised-button
+										cyphTranslate
+										[routerLink]='
+											accountService.routeRoot +
+											"new-patient/" +
+											(sentFileID | async)
+										'
+									>
+										Patient Forms
+									</button>
+								</div>
+							</ng-container>
+						</div>
+					</ng-template>
 				</div>
 			</mat-card-content>
 		</mat-card>

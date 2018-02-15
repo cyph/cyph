@@ -1,11 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
+import {combineLatest} from 'rxjs/observable/combineLatest';
 import {map} from 'rxjs/operators/map';
 import {User} from '../../account';
 import {States} from '../../chat/enums';
-import {ChatMessageValue} from '../../proto';
+import {ChatMessageValue, IForm} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -29,15 +29,14 @@ import {uuid} from '../../util/uuid';
 	templateUrl: './account-compose.component.html'
 })
 export class AccountComposeComponent implements OnDestroy, OnInit {
-	/** Appointment ID for attaching forms. */
-	public readonly appointmentID: BehaviorSubject<string|undefined>		= cacheObservable(
-		this.activatedRoute.params.pipe(map(o => o.appointmentID)),
-		undefined
-	);
-
 	/** @see AccountChatMessageBoxComponent.calendarInviteFollowUp */
-	public readonly appointmentFollowUp: Observable<boolean>				=
-		this.activatedRoute.data.pipe(map(o => o.appointmentFollowUp === true))
+	public readonly appointmentFollowUp: BehaviorSubject<boolean>			=
+		new BehaviorSubject(false)
+	;
+
+	/** Data for attaching a form to an appointment. */
+	public readonly appointmentFormData: BehaviorSubject<{id: string; form: IForm}|undefined>	=
+		new BehaviorSubject<{id: string; form: IForm}|undefined>(undefined)
 	;
 
 	/** @see ChatMessageValue.Types */
@@ -47,10 +46,15 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 	/** @see AccountChatMessageBoxComponent.messageType */
 	public readonly messageType: BehaviorSubject<ChatMessageValue.Types>	= cacheObservable(
-		this.activatedRoute.data.pipe(map(o => {
+		combineLatest(
+			this.activatedRoute.data,
+			this.activatedRoute.params
+		).pipe(map(([o, params]) => {
 			const messageType: ChatMessageValue.Types	= o.messageType;
 
 			const value	= typeof o.value === 'function' ? o.value() : o.value;
+
+			this.appointmentFollowUp.next(o.appointmentFollowUp === true);
 
 			if (value !== undefined) {
 				switch (messageType) {
@@ -60,6 +64,13 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 					case ChatMessageValue.Types.Form:
 						this.accountChatService.chat.currentMessage.form			= value;
+
+						this.appointmentFormData.next(
+							typeof params.appointmentID === 'string' ?
+								{id: params.appointmentID, form: value} :
+								undefined
+						);
+
 						break;
 
 					case ChatMessageValue.Types.Quill:
@@ -90,60 +101,59 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 	/** Sends message. */
 	public readonly send: () => Promise<void>							= async () => {
-		if (!this.recipient.value || !this.accountDatabaseService.currentUser.value) {
-			return;
-		}
-
 		this.sent.next(undefined);
 
-		if (
-			this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
-			this.accountChatService.chat.currentMessage.calendarInvite !== undefined
-		) {
-			this.sentFileID.next(await this.accountFilesService.upload(
-				(
-					(
-						this.envService.isTelehealth ?
-							`${this.stringsService.telehealthCallAbout} ` :
-							''
-					) +
-					(this.accountChatService.chat.currentMessage.calendarInvite.title || '?')
-				),
-				{
-					calendarInvite: this.accountChatService.chat.currentMessage.calendarInvite,
-					participants: [
-						this.recipient.value.username,
-						this.accountDatabaseService.currentUser.value.user.username
-					],
-					rsvpSessionSubID: uuid()
-				},
-				this.recipient.value.username
-			).result);
-		}
-		else if (
-			this.messageType.value === ChatMessageValue.Types.Form &&
-			this.appointmentID.value !== undefined &&
-			this.accountChatService.chat.currentMessage.form !== undefined
-		) {
-			const id			= this.appointmentID.value;
+		if (this.appointmentFormData.value !== undefined) {
+			const {id, form}	= this.appointmentFormData.value;
 			const appointment	= await this.accountFilesService.downloadAppointment(id).result;
 
 			if (appointment.forms === undefined) {
 				appointment.forms	= [];
 			}
-			appointment.forms.push(this.accountChatService.chat.currentMessage.form);
+			appointment.forms.push(form);
 
 			await this.accountFilesService.updateAppointment(id, appointment);
 		}
 		else {
-			await this.accountChatService.setUser(this.recipient.value.username, true);
-			await this.accountChatService.send(
-				this.messageType.value,
-				undefined,
-				undefined,
-				undefined,
-				true
-			);
+			if (!this.recipient.value || !this.accountDatabaseService.currentUser.value) {
+				this.sent.next(false);
+				return;
+			}
+
+			if (
+				this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
+				this.accountChatService.chat.currentMessage.calendarInvite !== undefined
+			) {
+				this.sentFileID.next(await this.accountFilesService.upload(
+					(
+						(
+							this.envService.isTelehealth ?
+								`${this.stringsService.telehealthCallAbout} ` :
+								''
+						) +
+						(this.accountChatService.chat.currentMessage.calendarInvite.title || '?')
+					),
+					{
+						calendarInvite: this.accountChatService.chat.currentMessage.calendarInvite,
+						participants: [
+							this.recipient.value.username,
+							this.accountDatabaseService.currentUser.value.user.username
+						],
+						rsvpSessionSubID: uuid()
+					},
+					this.recipient.value.username
+				).result);
+			}
+			else {
+				await this.accountChatService.setUser(this.recipient.value.username, true);
+				await this.accountChatService.send(
+					this.messageType.value,
+					undefined,
+					undefined,
+					undefined,
+					true
+				);
+			}
 		}
 
 		this.accountChatService.chat.currentMessage.calendarInvite	= undefined;
