@@ -94,7 +94,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 			this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
 			this.accountChatService.chat.currentMessage.calendarInvite !== undefined
 		) {
-			await this.accountFilesService.upload(
+			this.sentFileID.next(await (await this.accountFilesService.upload(
 				(
 					(
 						this.envService.isTelehealth ?
@@ -112,7 +112,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 					rsvpSessionSubID: uuid()
 				},
 				this.recipient.value.username
-			);
+			)).result);
 		}
 		else {
 			await this.accountChatService.setUser(this.recipient.value.username, true);
@@ -137,6 +137,11 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	/** Indicates whether message has been sent, or undefined for in-progress. */
 	public sent: BehaviorSubject<boolean|undefined>						=
 		new BehaviorSubject<boolean|undefined>(false)
+	;
+
+	/** ID of a file that has been sent, if applicable. */
+	public sentFileID: BehaviorSubject<string|undefined>				=
+		new BehaviorSubject<string|undefined>(undefined)
 	;
 
 	/** @inheritDoc */
