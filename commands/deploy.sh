@@ -407,7 +407,7 @@ for d in $compiledProjects ; do
 	mv "${d}.src/dist" "${d}"
 
 	if [ "${simple}" ] && [ "${d}" == "${webSignedProject}" ] ; then
-		cp -f shared/assets/serviceworker.js "${d}/"
+		cp -f shared/assets/serviceworker.js websign/manifest.json "${d}/"
 	fi
 done
 touch .build.done

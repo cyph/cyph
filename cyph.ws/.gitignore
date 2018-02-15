@@ -1,6 +1,7 @@
 # Cyph project bind mounts (see commands/cliprojectinit.sh)
 
 favicon.ico
+manifest.json
 serviceworker.js
 src/assets
 src/css
