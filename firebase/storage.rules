@@ -96,6 +96,8 @@ service firebase.storage {
 					// match /{delta}/{hash} {}
 				}
 
+				// match /email/{hash} {}
+
 				// match /encryptionKeyPair/{hash} {}
 
 				match /fileRecords/{fileRecord}/{hash} {

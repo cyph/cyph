@@ -1,6 +1,6 @@
 const sendMessage	= async (database, messaging, url, body) => {
-	const ref		= database.ref(url);
-	const tokens	= Object.keys(ref.val() || {});
+	const ref		= database.ref(`${url}/messagingTokens`);
+	const tokens	= Object.keys((await ref.once('value')).val() || {});
 
 	const response	= await messaging.sendToDevice(tokens, {
 		notification: {

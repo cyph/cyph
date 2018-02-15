@@ -3,7 +3,7 @@
 import {Injectable} from '@angular/core';
 import {skip} from 'rxjs/operators/skip';
 import {Subscription} from 'rxjs/Subscription';
-import {ExternalServices, RegistrationErrorCodes} from '../../account';
+import {RegistrationErrorCodes} from '../../account';
 import {
 	AccountLoginData,
 	AccountUserPresence,
@@ -304,11 +304,6 @@ export class AccountAuthService {
 
 		const username	= normalize(realUsername);
 
-		const externalUsernames: {[s: string]: string}	= {};
-		if (email) {
-			externalUsernames[ExternalServices.email]	= email;
-		}
-
 		const loginData: IAccountLoginData	= {
 			secondaryPassword: this.potassiumService.toBase64(
 				this.potassiumService.randomBytes(64)
@@ -386,7 +381,7 @@ export class AccountAuthService {
 					await this.potassiumService.sign.sign(
 						await serialize(AccountUserProfile, {
 							description: this.stringsService.defaultDescription,
-							externalUsernames,
+							externalUsernames: {},
 							hasPremium: false,
 							name,
 							realUsername,
@@ -417,6 +412,11 @@ export class AccountAuthService {
 						),
 						loginData.symmetricKey
 					)
+				),
+				!email ? Promise.resolve({hash: '', url: ''}) : this.databaseService.setItem(
+					`users/${username}/email`,
+					StringProto,
+					email
 				),
 				this.databaseService.setItem(
 					`users/${username}/encryptionKeyPair`,

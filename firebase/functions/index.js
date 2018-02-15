@@ -9,10 +9,13 @@ const {
 	database,
 	functionsUser,
 	getItem,
+	messaging,
 	removeItem,
 	setItem,
 	storage
 }	= require('./database-service')(functions.config(), true);
+
+const {notify}	= require('./notify')(database, messaging);
 
 
 const channelDisconnectTimeout	= 2500;
@@ -166,6 +169,34 @@ exports.userDisconnect	=
 		}
 
 		return removeItem(e.params.namespace, `users/${userRef.key}/presence`);
+	})
+;
+
+
+exports.userEmailSet	=
+	functions.database.ref('{namespace}/users/{user}/email').onWrite(async e => {
+		const userRef	= e.data.ref.parent;
+
+		if (userRef.key.length < 1) {
+			throw new Error('INVALID USER REF');
+		}
+
+		const emailRef	= database.ref(`${namespace}/users/${username}/emailInternal`);
+
+		const email		= await getItem(
+			e.params.namespace,
+			`users/${userRef.key}/email`,
+			StringProto
+		).catch(
+			() => undefined
+		);
+
+		if (email) {
+			return emailRef.set(email);
+		}
+		else {
+			return emailRef.remove();
+		}
 	})
 ;
 
