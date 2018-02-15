@@ -1,7 +1,6 @@
 const firebase						= require('firebase');
 const admin							= require('firebase-admin');
 const functions						= require('firebase-functions');
-const potassium						= require('./potassium');
 const {StringProto}					= require('./proto');
 const {retryUntilSuccessful, sleep}	= require('./util');
 
