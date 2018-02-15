@@ -50,6 +50,7 @@ const runScript		= script => {
 const args	= {
 	command: process.argv[2],
 	background: process.argv.indexOf('--background') > -1,
+	noUpdates: process.argv.indexOf('--no-updates') > -1,
 	simple:
 		process.argv.indexOf('--simple') > -1 ||
 		process.argv.indexOf('--simple-custom-build') > -1 ||
@@ -184,7 +185,7 @@ const shellScripts			= {
 		/cyph/commands/${commandScript} ${
 			process.argv.
 				slice(3).
-				filter(s => s !== '--background').
+				filter(s => s !== '--background' && s !== '--no-updates').
 				map(s => s.indexOf("'") ? `"${s}"` : `'${s}'`).
 				join(' ')
 		}
@@ -317,6 +318,10 @@ const killContainer		= name => {
 const killEverything	= () => killContainer('cyph');
 
 const pullUpdates		= () => {
+	if (args.noUpdates) {
+		return;
+	}
+
 	return editImage(shellScripts.aptUpdate.command, shellScripts.aptUpdate.condition).then(() =>
 		editImage(shellScripts.libUpdate.command, shellScripts.libUpdate.condition)
 	).then(() => {
