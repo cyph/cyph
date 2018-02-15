@@ -248,9 +248,12 @@ exports.userRegister	=
 		const username	= emailSplit[0];
 		const namespace	= emailSplit[1].replace(/\./g, '_');
 
-		return database.ref(`${namespace}/pendingSignups/${username}`).set({
-			timestamp: admin.database.ServerValue.TIMESTAMP,
-			uid: e.data.uid
-		});
+		return Promise.all([
+			database.ref(`${namespace}/pendingSignups/${username}`).set({
+				timestamp: admin.database.ServerValue.TIMESTAMP,
+				uid: e.data.uid
+			}),
+			database.ref(`${namespace}/users/${username}/internal/realUsername`).set(username)
+		]);
 	})
 ;
