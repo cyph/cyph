@@ -629,7 +629,9 @@ export class AccountFilesService {
 			this.accountDatabaseService.setItem<IAccountFileRecord>(
 				`users/${file.owner}/fileRecords/${id}`,
 				AccountFileRecord,
-				file
+				file,
+				undefined,
+				file.key
 			)
 		]);
 	}
@@ -695,7 +697,9 @@ export class AccountFilesService {
 			this.accountDatabaseService.setItem<IAccountFileRecord>(
 				`users/${file.owner}/fileRecords/${id}`,
 				AccountFileRecord,
-				file
+				file,
+				undefined,
+				file.key
 			)
 		]);
 	}
