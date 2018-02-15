@@ -175,7 +175,12 @@ serviceWorkerEvents.forEach(function (event) {
 		}
 
 		handlers.forEach(function (handler) {
-			setTimeout(function () { handler(e); }, 0);
+			try {
+				handler(e);
+			}
+			catch (err) {
+				setTimeout(function () { throw err; }, 0);
+			}
 		});
 	});
 });
