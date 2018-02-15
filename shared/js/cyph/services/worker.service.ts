@@ -70,11 +70,7 @@ export class WorkerService {
 		private readonly configService: ConfigService
 	) {
 		this.serviceWorker	= this.serviceWorkerRegistration.then(async () => {
-			const controller	= await waitForValue(() =>
-				navigator.serviceWorker.controller || undefined
-			);
-
-			controller.addEventListener('message', (e: any) => {
+			navigator.serviceWorker.addEventListener('message', (e: any) => {
 				if (!e.data || typeof e.data.id !== 'string') {
 					return;
 				}
@@ -92,7 +88,7 @@ export class WorkerService {
 				}
 			});
 
-			return controller;
+			return waitForValue(() => navigator.serviceWorker.controller || undefined);
 		});
 
 		this.serviceWorker.catch(() => {});

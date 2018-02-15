@@ -132,13 +132,18 @@ self.addEventListener('message', function (e) {
 	}).catch(function (err) {
 		return {err: err, id: e.data.id, rejection: true};
 	}).then(function (data) {
-		if (!(e.ports && e.ports.length > 0)) {
+		return Promise.all([data, self.clients.matchAll()]);
+	}).then(function (results) {
+		var data	= results[0];
+		var clients	= results[1];
+
+		if (!(clients && clients.length > 0)) {
 			return;
 		}
 
-		e.ports.forEach(function (port) {
-			if (port) {
-				port.postMessage(data);
+		clients.forEach(function (client) {
+			if (client) {
+				client.postMessage(data);
 			}
 		});
 	});
