@@ -11,15 +11,15 @@ service firebase.storage {
 				}
 
 				// match /handshake {
-				// 	match /alicePublicKey/{hash} {
-				// 	match /bobPublicKey/{hash} {
-				// 	match /initialSecretAliceCyphertext/{hash} {
-				// 	match /initialSecretBobCyphertext/{hash} {
+				// 	match /alicePublicKey/{hash} {}
+				// 	match /bobPublicKey/{hash} {}
+				// 	match /initialSecretAliceCyphertext/{hash} {}
+				// 	match /initialSecretBobCyphertext/{hash} {}
 				// }
 
-				// match /messages/{message}/{hash} {
+				// match /messages/{message}/{hash} {}
 
-				// match /users/{user}/{hash} {
+				// match /users/{user}/{hash} {}
 			}
 
 			match /emails/{email}/{hash} {
@@ -52,57 +52,57 @@ service firebase.storage {
 					allow write: if false;
 				}
 
-				// match /certificateRequest/{hash} {
+				// match /certificateRequest/{hash} {}
 
-				// match /contactUsernames/{username}/{hash} {
+				// match /contactUsernames/{username}/{hash} {}
 
 				// match /contacts/{contact} {
-				// 	match /messages/{message}/{hash} {
-				// 	match /messageValues/{messageValue}/{hash} {
+				// 	match /messages/{message}/{hash} {}
+				// 	match /messageValues/{messageValue}/{hash} {}
 				// 	match /session {
 				// 		/asymmetricRatchetState {
-				// 			/privateKey/{hash} {
-				// 			/publicKey/{hash} {
+				// 			/privateKey/{hash} {}
+				// 			/publicKey/{hash} {}
 				// 		}
-				// 		/channelUserID/{hash} {
+				// 		/channelUserID/{hash} {}
 				// 		/handshake {
-				// 			/currentStep/{hash} {
-				// 			/initialSecret/{hash} {
+				// 			/currentStep/{hash} {}
+				// 			/initialSecret/{hash} {}
 				// 		}
-				// 		/incomingMessageID/{hash} {
-				// 		/incomingMessageQueue/{hash} {
-				// 		/incomingMessages/{hash} {
-				// 		/incomingMessagesMax/{hash} {
-				// 		/outgoingMessageID/{hash} {
-				// 		/outgoingMessageQueue/{hash} {
-				// 		/symmetricKey/{hash} {
+				// 		/incomingMessageID/{hash} {}
+				// 		/incomingMessageQueue/{hash} {}
+				// 		/incomingMessages/{hash} {}
+				// 		/incomingMessagesMax/{hash} {}
+				// 		/outgoingMessageID/{hash} {}
+				// 		/outgoingMessageQueue/{hash} {}
+				// 		/symmetricKey/{hash} {}
 				// 		/symmetricRatchetState {
 				// 			/current {
-				// 				/incoming/{hash} {
-				// 				/outgoing/{hash} {
+				// 				/incoming/{hash} {}
+				// 				/outgoing/{hash} {}
 				// 			}
 				// 			/next {
-				// 				/incoming/{hash} {
-				// 				/outgoing/{hash} {
+				// 				/incoming/{hash} {}
+				// 				/outgoing/{hash} {}
 				// 			}
 				// 		}
 				// 	}
-				// 	match /unconfirmedMessages/{hash} {
+				// 	match /unconfirmedMessages/{hash} {}
 				// }
 
 				match /docs/{doc} {
 					allow read;
 
-					// match /{delta}/{hash} {
+					// match /{delta}/{hash} {}
 				}
 
-				// match /encryptionKeyPair/{hash} {
+				// match /encryptionKeyPair/{hash} {}
 
 				match /fileRecords/{fileRecord}/{hash} {
 					allow read;
 				}
 
-				// match /fileReferences/{fileReference}/{hash} {
+				// match /fileReferences/{fileReference}/{hash} {}
 
 				match /files/{file}/{hash} {
 					allow read;
@@ -129,19 +129,19 @@ service firebase.storage {
 					;
 				}
 
-				// match /inviteCode/{hash} {
+				// match /inviteCode/{hash} {}
 
 				match /inviteCodes/{code}/{hash} {
 					allow write: if false;
 				}
 
-				// match /inviterUsername/{hash} {
+				// match /inviterUsername/{hash} {}
 
 				match /inviterUsernamePlaintext/{hash} {
 					allow write: if request.resource == null;
 				}
 
-				// match /lastPresence/{hash} {
+				// match /lastPresence/{hash} {}
 
 				match /loginData/{hash} {
 					allow read;
@@ -154,8 +154,8 @@ service firebase.storage {
 				// match /patientInfo/{hash} {}
 
 				// match /pin {
-				// 	match /hash/{hash} {
-				// 	match /isCustom/{hash} {
+				// 	match /hash/{hash} {}
+				// 	match /isCustom/{hash} {}
 				// }
 
 				match /presence/{hash} {
@@ -182,9 +182,9 @@ service firebase.storage {
 					;
 				}
 
-				// match /settings/{hash} {
+				// match /settings/{hash} {}
 
-				// match /signingKeyPair/{hash} {
+				// match /signingKeyPair/{hash} {}
 			}
 		}
 	}
