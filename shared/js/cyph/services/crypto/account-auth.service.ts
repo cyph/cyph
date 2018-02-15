@@ -388,7 +388,7 @@ export class AccountAuthService {
 							userType: AccountUserTypes.Standard
 						}),
 						signingKeyPair.privateKey,
-						publicProfileURL,
+						`${this.databaseService.namespace}:${publicProfileURL}`,
 						true
 					)
 				),
@@ -398,7 +398,7 @@ export class AccountAuthService {
 					await this.potassiumService.sign.sign(
 						await serialize(AccountUserProfileExtra, {}),
 						signingKeyPair.privateKey,
-						publicProfileExtraURL,
+						`${this.databaseService.namespace}:${publicProfileExtraURL}`,
 						true
 					)
 				),
@@ -443,7 +443,7 @@ export class AccountAuthService {
 							username
 						}),
 						signingKeyPair.privateKey,
-						certificateRequestURL
+						`${this.databaseService.namespace}:${certificateRequestURL}`
 					)
 				),
 				this.databaseService.setItem(
@@ -468,7 +468,7 @@ export class AccountAuthService {
 					await this.potassiumService.sign.sign(
 						encryptionKeyPair.publicKey,
 						signingKeyPair.privateKey,
-						publicEncryptionKeyURL,
+						`${this.databaseService.namespace}:${publicEncryptionKeyURL}`,
 						true
 					)
 				)
