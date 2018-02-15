@@ -221,10 +221,11 @@ export class AccountAuthService {
 				);
 			});
 
-			const [pinHash]	= await Promise.all([
-				this.accountDatabaseService.getItem('pin/hash', BinaryProto),
-				this.databaseService.registerPushNotifications(`users/${username}/messagingTokens`)
-			]);
+			this.databaseService.registerPushNotifications(`users/${username}/messagingTokens`).
+				catch(() => {})
+			;
+
+			const pinHash	= await this.accountDatabaseService.getItem('pin/hash', BinaryProto);
 
 			await Promise.all([
 				this.localStorageService.setItem(
