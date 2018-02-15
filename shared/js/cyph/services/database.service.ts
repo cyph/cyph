@@ -287,6 +287,13 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.register.');
 	}
 
+	/** Registers a token with the database server for push notifications. */
+	public async registerPushNotifications (_URL: MaybePromise<string>) : Promise<void> {
+		throw new Error(
+			'Must provide an implementation of DatabaseService.registerPushNotifications.'
+		);
+	}
+
 	/** Tracks connects at the specfied URL. */
 	public async setConnectTracker (
 		_URL: MaybePromise<string>,
@@ -350,6 +357,13 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.unregister.');
 	}
 
+	/** Unegisters a push notification token from the database server. */
+	public async unregisterPushNotifications (_URL: MaybePromise<string>) : Promise<void> {
+		throw new Error(
+			'Must provide an implementation of DatabaseService.unregisterPushNotifications.'
+		);
+	}
+
 	/** Uploads value and gives progress. */
 	public uploadItem<T> (_URL: MaybePromise<string>, _PROTO: IProto<T>, _VALUE: T) : {
 		cancel: () => void;
@@ -410,8 +424,8 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly envService: EnvService
+		/** @see EnvService */
+		protected readonly envService: EnvService
 	) {
 		super();
 	}

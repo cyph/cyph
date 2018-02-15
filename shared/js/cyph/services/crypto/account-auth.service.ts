@@ -221,7 +221,10 @@ export class AccountAuthService {
 				);
 			});
 
-			const pinHash	= await this.accountDatabaseService.getItem('pin/hash', BinaryProto);
+			const [pinHash]	= await Promise.all([
+				this.accountDatabaseService.getItem('pin/hash', BinaryProto),
+				this.databaseService.registerPushNotifications(`users/${username}/messagingTokens`)
+			]);
 
 			await Promise.all([
 				this.localStorageService.setItem(
@@ -255,7 +258,7 @@ export class AccountAuthService {
 
 	/** Logs out. */
 	public async logout (clearSavedCredentials: boolean = true) : Promise<void> {
-		const user	= this.accountDatabaseService.currentUser.value;
+		const currentUser	= this.accountDatabaseService.currentUser.value;
 
 		if (this.statusSaveSubscription) {
 			this.statusSaveSubscription.unsubscribe();
@@ -264,12 +267,16 @@ export class AccountAuthService {
 			this.connectTrackerCleanup();
 			this.connectTrackerCleanup	= undefined;
 		}
-		if (user) {
-			this.potassiumService.clearMemory(user.keys.symmetricKey);
-			this.potassiumService.clearMemory(user.keys.encryptionKeyPair.privateKey);
-			this.potassiumService.clearMemory(user.keys.signingKeyPair.privateKey);
-			this.potassiumService.clearMemory(user.keys.encryptionKeyPair.publicKey);
-			this.potassiumService.clearMemory(user.keys.signingKeyPair.publicKey);
+		if (currentUser) {
+			await this.databaseService.unregisterPushNotifications(
+				`users/${currentUser.user.username}/messagingTokens`
+			);
+
+			this.potassiumService.clearMemory(currentUser.keys.symmetricKey);
+			this.potassiumService.clearMemory(currentUser.keys.encryptionKeyPair.privateKey);
+			this.potassiumService.clearMemory(currentUser.keys.signingKeyPair.privateKey);
+			this.potassiumService.clearMemory(currentUser.keys.encryptionKeyPair.publicKey);
+			this.potassiumService.clearMemory(currentUser.keys.signingKeyPair.publicKey);
 		}
 		if (clearSavedCredentials) {
 			await Promise.all([

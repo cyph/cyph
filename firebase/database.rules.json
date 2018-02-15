@@ -546,6 +546,12 @@
 						}
 					},
 
+					"messagingTokens": {
+						"$messagingToken": {
+							".validate": "newData.exists()"
+						}
+					},
+
 					"organizationMembers": {
 						".read": true,
 

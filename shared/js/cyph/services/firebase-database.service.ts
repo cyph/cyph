@@ -27,7 +27,7 @@ import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {MaybePromise} from '../maybe-promise-type';
-import {BinaryProto} from '../proto';
+import {BinaryProto, StringProto} from '../proto';
 import {compareArrays} from '../util/compare';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lock} from '../util/lock';
@@ -78,6 +78,38 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @ignore */
 	private readonly localLocks: Map<string, {}>	= new Map<string, {}>();
+
+	/** Firebase Cloud Messaging token. */
+	private readonly messagingToken: Promise<string|undefined>	=
+		this.ngZone.runOutsideAngular(async () => {
+			const app						= await this.app;
+			const messaging					= app.messaging();
+			const serviceWorkerRegistration	= await this.workerService.serviceWorkerRegistration;
+
+			await this.workerService.serviceWorkerFunction(
+				'FCM',
+				this.envService.firebaseConfig,
+				config => {
+					importScripts('/assets/node_modules/firebase/firebase-app.js');
+					importScripts('/assets/node_modules/firebase/firebase-messaging.js');
+
+					/* tslint:disable-next-line:no-shadowed-variable */
+					const firebase: FirebaseNamespace	= (<any> self).firebase;
+					firebase.initializeApp(config);
+
+					if (firebase.messaging) {
+						(<any> self).messaging	= firebase.messaging();
+					}
+				}
+			);
+
+			messaging.useServiceWorker(serviceWorkerRegistration);
+			await messaging.requestPermission();
+			return messaging.getToken();
+		}).catch(() =>
+			undefined
+		)
+	;
 
 	/** @ignore */
 	private async cacheGet (o: {hash?: string; url?: string}) : Promise<Uint8Array> {
@@ -428,6 +460,44 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public async registerPushNotifications (urlPromise: MaybePromise<string>) : Promise<void> {
+		const url			= await urlPromise;
+		let messagingToken	= await this.messagingToken;
+
+		await this.ngZone.runOutsideAngular(async () => {
+			let oldMessagingToken	= await this.localStorageService.getItem(
+				'FirebaseDatabaseService.messagingToken',
+				StringProto
+			).catch(() =>
+				undefined
+			);
+
+			if (messagingToken) {
+				await this.localStorageService.setItem(
+					'FirebaseDatabaseService.messagingToken',
+					StringProto,
+					messagingToken
+				);
+			}
+			else if (oldMessagingToken) {
+				messagingToken		= oldMessagingToken;
+				oldMessagingToken	= undefined;
+			}
+
+			if (!messagingToken) {
+				return;
+			}
+
+			const ref	= await this.getDatabaseRef(url);
+
+			await Promise.all([
+				ref.child(messagingToken).set(true).then(),
+				oldMessagingToken ? ref.child(oldMessagingToken).remove().then() : undefined
+			]);
+		});
+	}
+
+	/** @inheritDoc */
 	public async removeItem (urlPromise: MaybePromise<string>) : Promise<void> {
 		await this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
@@ -539,6 +609,26 @@ export class FirebaseDatabaseService extends DatabaseService {
 			if (currentUser) {
 				await currentUser.delete();
 			}
+		});
+	}
+
+	/** @inheritDoc */
+	public async unregisterPushNotifications (urlPromise: MaybePromise<string>) : Promise<void> {
+		const url	= await urlPromise;
+
+		await this.ngZone.runOutsideAngular(async () => {
+			const messagingToken	= await this.localStorageService.getItem(
+				'FirebaseDatabaseService.messagingToken',
+				StringProto
+			).catch(() =>
+				undefined
+			);
+
+			if (!messagingToken) {
+				return;
+			}
+
+			await (await this.getDatabaseRef(url)).child(messagingToken).remove().then();
 		});
 	}
 
@@ -985,8 +1075,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 	constructor (
 		envService: EnvService,
 
-		workerService: WorkerService,
-
 		/** @ignore */
 		private readonly ngZone: NgZone,
 
@@ -994,28 +1082,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
-		private readonly potassiumService: PotassiumService
+		private readonly potassiumService: PotassiumService,
+
+		/** @ignore */
+		private readonly workerService: WorkerService
 	) {
 		super(envService);
-
-		this.ngZone.runOutsideAngular(async () => {
-			const app						= await this.app;
-			const serviceWorkerRegistration	= await workerService.serviceWorkerRegistration;
-
-			await workerService.serviceWorkerFunction('FCM', envService.firebaseConfig, config => {
-				importScripts('/assets/node_modules/firebase/firebase-app.js');
-				importScripts('/assets/node_modules/firebase/firebase-messaging.js');
-
-				/* tslint:disable-next-line:no-shadowed-variable */
-				const firebase: FirebaseNamespace	= (<any> self).firebase;
-				firebase.initializeApp(config);
-
-				if (firebase.messaging) {
-					(<any> self).messaging	= firebase.messaging();
-				}
-			});
-
-			app.messaging().useServiceWorker(serviceWorkerRegistration);
-		}).catch(() => {});
 	}
 }

@@ -41,6 +41,7 @@ const app			= admin.initializeApp(config.firebase, uuid());
 const auth			= app.auth();
 const database		= app.database();
 const functionsUser	= functions.auth.user();
+const messaging		= app.messaging();
 const storage		= gcloudStorage(config.storage).bucket(`${config.project.id}.appspot.com`);
 
 const processURL	= (namespace, url) => {
@@ -56,6 +57,7 @@ const databaseService	= {
 	auth,
 	database,
 	functionsUser,
+	messaging,
 	async getItem (namespace, url, proto) {
 		url	= processURL(namespace, url);
 
