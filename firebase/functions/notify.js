@@ -4,8 +4,8 @@ const {sendMessage}	= require('./messaging');
 
 
 module.exports	= (database, messaging) => ({
-	notify: async (namespace, user, subject, text) => {
-		const url	= `${namespace}/users/${user}`;
+	notify: async (namespace, username, subject, text) => {
+		const url	= `${namespace}/users/${username}`;
 
 		subject	= sanitize(subject);
 		text	= sanitize(text);
