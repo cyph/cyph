@@ -25,6 +25,23 @@ const {notify}	= require('./notify')(database, messaging);
 
 const channelDisconnectTimeout	= 2500;
 
+const getName	= async (namespace, username) => {
+	try {
+		const name	=
+			(await database.ref(
+				`${namespace}/users/${username}/internal/name`
+			).once('value')).val()
+		;
+
+		if (name) {
+			return name;
+		}
+	}
+	catch {}
+
+	return username;
+};
+
 const getRealUsername	= async (namespace, username) => {
 	try {
 		const realUsername	=
@@ -287,7 +304,7 @@ exports.userNotification	=
 ;
 
 
-exports.userRealUsernameSet	=
+exports.userPublicProfileSet	=
 	functions.database.ref('{namespace}/users/{user}/publicProfile').onWrite(async e => {
 		const userRef	= e.data.ref.parent;
 
@@ -295,9 +312,9 @@ exports.userRealUsernameSet	=
 			throw new Error('INVALID USER REF');
 		}
 
-		const realUsernameRef	=
-			database.ref(`${e.params.namespace}/users/${userRef.key}/internal/realUsername`)
-		;
+		const internalURL		= `${e.params.namespace}/users/${userRef.key}/internal`;
+		const nameRef			= database.ref(`${internalURL}/name`);
+		const realUsernameRef	= database.ref(`${internalURL}/realUsername`);
 
 		const publicProfile		= await getItem(
 			e.params.namespace,
@@ -309,12 +326,18 @@ exports.userRealUsernameSet	=
 			() => undefined
 		);
 
-		if (publicProfile && normalize(publicProfile.realUsername) === userRef.key) {
-			return realUsernameRef.set(publicProfile.realUsername);
-		}
-		else {
-			return realUsernameRef.set(userRef.key);
-		}
+		return Promise.all([
+			name.set(
+				publicProfile && publicProfile.name ?
+					publicProfile.name :
+					userRef.key
+			),
+			realUsernameRef.set(
+				publicProfile && normalize(publicProfile.realUsername) === userRef.key ?
+					publicProfile.realUsername :
+					userRef.key
+			)
+		]);
 	})
 ;
 
@@ -351,13 +374,16 @@ exports.userRegisterConfirmed	=
 			throw new Error('INVALID USER REF');
 		}
 
-		const realUsername	= await getRealUsername(e.params.namespace, userRef.key);
+		const [name, realUsername]	= await Promise.all([
+			getName(e.params.namespace, userRef.key),
+			getRealUsername(e.params.namespace, userRef.key)
+		]);
 
 		await notify(
 			e.params.namespace,
 			userRef.key,
 			`Welcome to Cyph, ${realUsername}`,
-			`Congratulations, your account is now activated!\n` +
+			`Congratulations ${name}, your account ${realUsername} is now activated!\n` +
 				`Sign in at https://cyph.me/#login.`
 		);
 	});
