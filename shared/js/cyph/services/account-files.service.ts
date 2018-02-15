@@ -36,7 +36,8 @@ import {
 	IAccountFileReference,
 	IAccountFileReferenceContainer,
 	IAppointment,
-	IForm
+	IForm,
+	NotificationTypes
 } from '../proto';
 import {filterUndefined} from '../util/filter';
 import {cacheObservable} from '../util/flatten-observable';
@@ -603,6 +604,8 @@ export class AccountFilesService {
 				(await this.accountDatabaseService.getUserPublicKeys(username)).encryption
 			)
 		);
+
+		await this.accountDatabaseService.notify(username, NotificationTypes.File);
 	}
 
 	/** Overwrites an existing appointment. */

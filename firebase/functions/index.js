@@ -317,7 +317,37 @@ exports.userRegister	=
 				timestamp: admin.database.ServerValue.TIMESTAMP,
 				uid: e.data.uid
 			}),
-			database.ref(`${namespace}/users/${username}/internal/realUsername`).set(username)
+			database.ref(`${namespace}/users/${username}/internal/realUsername`).set(username),
+			notify(
+				namespace,
+				username,
+				`Your Registration is Being Processed`,
+				`We've received your registration request, and your account is on the way!\n` +
+					`You'll receive a notification to sign in as soon as one of the Cyph ` +
+					`founders (Ryan or Josh) activates your account using their personal ` +
+					`Air Gapped Signing Environment. Until then, feel free to continue ` +
+					`using the anonymous/ephemeral Cyph chat at https://cyph.ws.`
+			)
 		]);
 	})
 ;
+
+
+exports.userRegisterConfirmed	=
+	functions.database.ref('{namespace}/users/{user}/certificate').onCreate(async e => {
+		const userRef	= e.data.ref.parent;
+
+		if (userRef.key.length < 1) {
+			throw new Error('INVALID USER REF');
+		}
+
+		const realUsername	= await getRealUsername(e.params.namespace, userRef.key);
+
+		await notify(
+			e.params.namespace,
+			userRef.key,
+			`Welcome to Cyph, ${realUsername}`,
+			`Congratulations, your account is now activated!\n` +
+				`Sign in at https://cyph.me/#login.`
+		);
+	});

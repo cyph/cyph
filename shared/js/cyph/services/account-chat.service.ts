@@ -2,8 +2,13 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {take} from 'rxjs/operators/take';
-import {IChatData, States} from '../chat';
-import {ChatMessage, ChatMessageValue, ChatUnconfirmedMessagesProto} from '../proto';
+import {IChatData, IChatMessageLiveValue, States} from '../chat';
+import {
+	ChatMessage,
+	ChatMessageValue,
+	ChatUnconfirmedMessagesProto,
+	NotificationTypes
+} from '../proto';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionInitService} from './account-session-init.service';
@@ -42,6 +47,32 @@ export class AccountChatService extends ChatService {
 				() => undefined
 			)
 		;
+	}
+
+	/** @inheritDoc */
+	public async send (
+		messageType?: ChatMessageValue.Types,
+		message?: IChatMessageLiveValue,
+		selfDestructTimeout?: number,
+		selfDestructChat?: boolean,
+		keepCurrentMessage?: boolean
+	) : Promise<void> {
+		await super.send(
+			messageType,
+			message,
+			selfDestructTimeout,
+			selfDestructChat,
+			keepCurrentMessage
+		);
+
+		if (!this.accountSessionService.remoteUser.value) {
+			return;
+		}
+
+		await this.accountDatabaseService.notify(
+			this.accountSessionService.remoteUser.value.username,
+			NotificationTypes.Message
+		);
 	}
 
 	/** Sets the remote user we're chatting with. */
