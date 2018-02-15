@@ -1,14 +1,15 @@
 const fs			= require('fs')
+const mustache		= require('mustache');
 const nodemailer	= require('nodemailer')
 const auth			= require('./email-credentials');
 
 
-const template		= fs.readFileSync(__dirname + '/email.html').toString().split('${TEXT}');
+const template		= fs.readFileSync(__dirname + '/email.html').toString();
 const transporter	= nodemailer.createTransport({auth, service: 'gmail'});
 
 const sendMailInternal	= async (to, subject, text) => transporter.sendMail({
 	from: `Cyph <${auth.user}>`,
-	html: template[0] + text.split('\n').map(s => `<p>${s}</p>`).join('') + template[1],
+	html: mustache.render(template, {lines: text.split('\n')}),
 	subject,
 	text,
 	to

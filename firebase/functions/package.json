@@ -7,7 +7,9 @@
 		"firebase-admin": "*",
 		"firebase-functions": "*",
 		"libsodium-wrappers-sumo": "*",
-		"nodemailer": "4"
+		"mustache": "*",
+		"nodemailer": "4",
+		"sanitize-html": "*"
 	},
 	"private": true
 }
