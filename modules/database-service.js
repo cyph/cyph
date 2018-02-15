@@ -6,6 +6,7 @@
 const gcloudStorage					= require('@google-cloud/storage');
 const admin							= require('firebase-admin');
 const functions						= require('firebase-functions');
+const os							= require('os');
 const potassium						= require('./potassium');
 const {BinaryProto, StringProto}	= require('./proto');
 
@@ -18,6 +19,22 @@ const {
 
 
 module.exports	= (config, isCloudFunction) => {
+
+
+if (typeof config === 'string') {
+	const projectId		= config;
+	const configDir		= `${os.homedir()}/.cyph`;
+	const keyFilename	= `${configDir}/firebase-credentials/${projectId}.json`;
+
+	config	= {
+		firebase: {
+			credential: admin.credential.cert(JSON.parse(fs.readFileSync(keyFilename).toString())),
+			databaseURL: `https://${projectId}.firebaseio.com`
+		},
+		project: {id: projectId},
+		storage: {keyFilename, projectId}
+	};
+}
 
 
 const app			= admin.initializeApp(config.firebase, uuid());
