@@ -489,6 +489,9 @@
 						},
 						"realUsername": {
 							".validate": "newData.isString()"
+						},
+						"registrationEmailSent": {
+							".validate": "newData.isBoolean()"
 						}
 					},
 

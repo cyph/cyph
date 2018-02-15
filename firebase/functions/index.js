@@ -203,9 +203,11 @@ exports.userEmailSet	=
 			throw new Error('INVALID USER REF');
 		}
 
-		const emailRef	= database.ref(`${e.params.namespace}/users/${username}/internal/email`);
+		const internalURL				= `${e.params.namespace}/users/${userRef.key}/internal`;
+		const emailRef					= database.ref(`${internalURL}/email`);
+		const registrationEmailSentRef	= database.ref(`${internalURL}/registrationEmailSent`);
 
-		const email		= await getItem(
+		const email						= await getItem(
 			e.params.namespace,
 			`users/${userRef.key}/email`,
 			StringProto
@@ -214,11 +216,31 @@ exports.userEmailSet	=
 		);
 
 		if (email) {
-			return emailRef.set(email);
+			await emailRef.set(email);
 		}
 		else {
-			return emailRef.remove();
+			await emailRef.remove();
 		}
+
+		const registrationEmailSent		= (await registrationEmailSentRef.once('value')).val();
+
+		if (registrationEmailSent) {
+			return;
+		}
+
+		await Promise.all([
+			registrationEmailSentRef.set(true),
+			notify(
+				e.params.namespace,
+				userRef.key,
+				`Your Registration is Being Processed`,
+				`We've received your registration request, and your account is on the way!\n` +
+					`You'll receive a notification to sign in as soon as one of the Cyph ` +
+					`founders (Ryan or Josh) activates your account using their personal ` +
+					`Air Gapped Signing Environment. Until then, feel free to continue ` +
+					`using the anonymous/ephemeral Cyph chat at https://cyph.ws.`
+			)
+		]);
 	})
 ;
 
@@ -274,7 +296,7 @@ exports.userRealUsernameSet	=
 		}
 
 		const realUsernameRef	=
-			database.ref(`${e.params.namespace}/users/${username}/internal/realUsername`)
+			database.ref(`${e.params.namespace}/users/${userRef.key}/internal/realUsername`)
 		;
 
 		const publicProfile		= await getItem(
@@ -317,17 +339,7 @@ exports.userRegister	=
 				timestamp: admin.database.ServerValue.TIMESTAMP,
 				uid: e.data.uid
 			}),
-			database.ref(`${namespace}/users/${username}/internal/realUsername`).set(username),
-			notify(
-				namespace,
-				username,
-				`Your Registration is Being Processed`,
-				`We've received your registration request, and your account is on the way!\n` +
-					`You'll receive a notification to sign in as soon as one of the Cyph ` +
-					`founders (Ryan or Josh) activates your account using their personal ` +
-					`Air Gapped Signing Environment. Until then, feel free to continue ` +
-					`using the anonymous/ephemeral Cyph chat at https://cyph.ws.`
-			)
+			database.ref(`${namespace}/users/${username}/internal/realUsername`).set(username)
 		]);
 	})
 ;
