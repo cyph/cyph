@@ -6,7 +6,8 @@
 		"firebase": "*",
 		"firebase-admin": "*",
 		"firebase-functions": "*",
-		"libsodium-wrappers-sumo": "*"
+		"libsodium-wrappers-sumo": "*",
+		"nodemailer": "4"
 	},
 	"private": true
 }

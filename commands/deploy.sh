@@ -554,7 +554,8 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; the
 
 	cd functions
 	npm install
-	cp ../../modules/database-service.js ./
+	cp ../../modules/database-service.js ~/.cyph/email-credentials.js ./
+	html-minifier --collapse-whitespace --minify-css --remove-comments email.html -o email.html
 
 	# Temporary workaround for Cloud Functions using an outdated Node.js LTS
 	for f in *.js ; do mv "${f}" "$(echo "${f}" | sed 's|\.js$|.ts|')" ; done
