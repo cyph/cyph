@@ -436,7 +436,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		urlPromise: MaybePromise<string>,
 		targetPromise: MaybePromise<string>,
 		notificationType: NotificationTypes
-	) {
+	) : Promise<void> {
 		const url		= await urlPromise;
 		const target	= await targetPromise;
 
