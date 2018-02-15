@@ -58,7 +58,7 @@ const databaseService	= {
 	database,
 	functionsUser,
 	messaging,
-	async getItem (namespace, url, proto) {
+	async getItem (namespace, url, proto, skipSignature) {
 		url	= processURL(namespace, url);
 
 		const {hash}	= await retryUntilSuccessful(async () =>
@@ -69,7 +69,7 @@ const databaseService	= {
 			(await storage.file(`${url}/${hash}`).download())[0]
 		);
 
-		return deserialize(proto, bytes);
+		return deserialize(proto, !skipSignature ? bytes : bytes.slice(41256));
 	},
 	async hasItem (namespace, url) {
 		try {

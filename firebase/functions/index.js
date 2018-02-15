@@ -1,8 +1,8 @@
-const firebase						= require('firebase');
-const admin							= require('firebase-admin');
-const functions						= require('firebase-functions');
-const {StringProto}					= require('./proto');
-const {retryUntilSuccessful, sleep}	= require('./util');
+const firebase									= require('firebase');
+const admin										= require('firebase-admin');
+const functions									= require('firebase-functions');
+const {AccountUserProfile, StringProto}			= require('./proto');
+const {normalize, retryUntilSuccessful, sleep}	= require('./util');
 
 const {
 	auth,
@@ -196,6 +196,37 @@ exports.userEmailSet	=
 		}
 		else {
 			return emailRef.remove();
+		}
+	})
+;
+
+
+exports.userRealUsernameSet	=
+	functions.database.ref('{namespace}/users/{user}/publicProfile').onWrite(async e => {
+		const userRef	= e.data.ref.parent;
+
+		if (userRef.key.length < 1) {
+			throw new Error('INVALID USER REF');
+		}
+
+		const realUsernameRef	=
+			database.ref(`${namespace}/users/${username}/internal/realUsername`)
+		;
+
+		const publicProfile		= await getItem(
+			e.params.namespace,
+			`users/${userRef.key}/publicProfile`,
+			AccountUserProfile,
+			true
+		).catch(
+			() => undefined
+		);
+
+		if (publicProfile && normalize(publicProfile.realUsername) === userRef.key) {
+			return realUsernameRef.set(publicProfile.realUsername);
+		}
+		else {
+			return realUsernameRef.set(userRef.key);
 		}
 	})
 ;

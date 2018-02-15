@@ -486,6 +486,9 @@
 
 						"email": {
 							".validate": "newData.isString()"
+						},
+						"realUsername": {
+							".validate": "newData.isString()"
 						}
 					},
 
