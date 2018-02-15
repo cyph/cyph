@@ -67,12 +67,7 @@ export const account: Route	= {
 		{path: 'messages/:username', component: AccountChatComponent},
 		{path: 'messages/:username/:sessionSubID', component: AccountChatComponent},
 		{
-			path: 'new-patient',
-			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValue.Types.Form, value: newPatient}
-		},
-		{
-			path: 'new-patient/:username',
+			path: 'new-patient/:appointmentID',
 			component: AccountComposeComponent,
 			data: {messageType: ChatMessageValue.Types.Form, value: newPatient}
 		},

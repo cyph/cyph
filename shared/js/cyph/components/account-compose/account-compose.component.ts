@@ -29,6 +29,12 @@ import {uuid} from '../../util/uuid';
 	templateUrl: './account-compose.component.html'
 })
 export class AccountComposeComponent implements OnDestroy, OnInit {
+	/** Appointment ID for attaching forms. */
+	public readonly appointmentID: BehaviorSubject<string|undefined>		= cacheObservable(
+		this.activatedRoute.params.pipe(map(o => o.appointmentID)),
+		undefined
+	);
+
 	/** @see AccountChatMessageBoxComponent.calendarInviteFollowUp */
 	public readonly appointmentFollowUp: Observable<boolean>				=
 		this.activatedRoute.data.pipe(map(o => o.appointmentFollowUp === true))
@@ -113,6 +119,20 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 				},
 				this.recipient.value.username
 			).result);
+		}
+		else if (
+			this.messageType.value === ChatMessageValue.Types.Form &&
+			this.appointmentID.value !== undefined
+		) {
+			const id			= this.appointmentID.value;
+			const appointment	= await this.accountFilesService.downloadAppointment(id).result;
+
+			if (appointment.forms === undefined) {
+				appointment.forms	= [];
+			}
+			appointment.forms.push(this.accountChatService.chat.currentMessage.form);
+
+			await this.accountFilesService.updateAppointment(id, appointment);
 		}
 		else {
 			await this.accountChatService.setUser(this.recipient.value.username, true);
