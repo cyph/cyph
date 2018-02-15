@@ -26,7 +26,7 @@ const sendMailInternal	= async (to, subject, text) => transporter.sendMail({
 });
 
 const sendMail			= async (database, url, subject, text) => {
-	const ref	= database.ref(`${url}/emailInternal`);
+	const ref	= database.ref(`${url}/internal/email`);
 	const to	= (await ref.once('value')).val();
 
 	if (to) {

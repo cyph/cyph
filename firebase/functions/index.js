@@ -181,7 +181,7 @@ exports.userEmailSet	=
 			throw new Error('INVALID USER REF');
 		}
 
-		const emailRef	= database.ref(`${namespace}/users/${username}/emailInternal`);
+		const emailRef	= database.ref(`${namespace}/users/${username}/internal/email`);
 
 		const email		= await getItem(
 			e.params.namespace,

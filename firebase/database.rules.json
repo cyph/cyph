@@ -407,10 +407,6 @@
 						}
 					},
 
-					"emailInternal": {
-						".validate": "newData.isString()"
-					},
-
 					"encryptionKeyPair": {
 						"hash": {
 							".validate": "newData.isString()"
@@ -481,6 +477,15 @@
 							"timestamp": {
 								".validate": "newData.val() === now"
 							}
+						}
+					},
+
+					"internal": {
+						".read": false,
+						".write": false,
+
+						"email": {
+							".validate": "newData.isString()"
 						}
 					},
 
