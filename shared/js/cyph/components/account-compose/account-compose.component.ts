@@ -94,7 +94,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 			this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
 			this.accountChatService.chat.currentMessage.calendarInvite !== undefined
 		) {
-			this.sentFileID.next(await (await this.accountFilesService.upload(
+			this.sentFileID.next(await this.accountFilesService.upload(
 				(
 					(
 						this.envService.isTelehealth ?
@@ -112,7 +112,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 					rsvpSessionSubID: uuid()
 				},
 				this.recipient.value.username
-			)).result);
+			).result);
 		}
 		else {
 			await this.accountChatService.setUser(this.recipient.value.username, true);
