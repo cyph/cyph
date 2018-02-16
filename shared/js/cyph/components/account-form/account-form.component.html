@@ -1,37 +1,39 @@
-<div
-	fxFlexFill
-	fxLayoutAlign='center start'
-	*ngIf='form && (!envService.environment.production || envService.isTelehealth)'
->
-	<mat-card fxFlex='90' class='form'>
-		<mat-card-header fxLayout='row' *ngIf='!!form?.metadata; else nameHeader'>
-			<mat-card-title>{{(form?.metadata | async)?.name}}</mat-card-title>
-			<div fxFlex fxLayoutAlign='end center'>
-				<button
-					mat-icon-button
-					cyphTranslate
-					matTooltip='Edit Form'
-					*ngIf='false'
-				>
-					<mat-icon>edit</mat-icon>
-				</button>
-				<button
-					mat-icon-button
-					cyphTranslate
-					matTooltip='Delete Form'
-					(click)='accountFilesService.remove(form?.metadata)'
-				>
-					<mat-icon>delete</mat-icon>
-				</button>
-			</div>
-		</mat-card-header>
-		<ng-template #nameHeader>
-			<mat-card-header fxLayout='row' *ngIf='!!form?.name'>
-				<mat-card-title>{{(form?.name | async)}}</mat-card-title>
+<ng-container *ngIf='(!envService.environment.production || envService.isTelehealth)'>
+	<div
+		fxFlexFill
+		fxLayoutAlign='center start'
+		*ngIf='(form | async) as o'
+	>
+		<mat-card fxFlex='90' class='form'>
+			<mat-card-header fxLayout='row' *ngIf='!!o?.metadata; else nameHeader'>
+				<mat-card-title>{{(o?.metadata | async)?.name}}</mat-card-title>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Edit Form'
+						*ngIf='false'
+					>
+						<mat-icon>edit</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Delete Form'
+						(click)='accountFilesService.remove(o?.metadata)'
+					>
+						<mat-icon>delete</mat-icon>
+					</button>
+				</div>
 			</mat-card-header>
-		</ng-template>
-		<mat-card-content>
-			<cyph-dynamic-form [form]='form?.data | async'></cyph-dynamic-form>
-		</mat-card-content>
-	</mat-card>
-</div>
+			<ng-template #nameHeader>
+				<mat-card-header fxLayout='row' *ngIf='!!o?.name'>
+					<mat-card-title>{{(o?.name | async)}}</mat-card-title>
+				</mat-card-header>
+			</ng-template>
+			<mat-card-content>
+				<cyph-dynamic-form [form]='o?.data | async'></cyph-dynamic-form>
+			</mat-card-content>
+		</mat-card>
+	</div>
+</ng-container>

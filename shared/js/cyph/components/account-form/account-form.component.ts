@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {IAccountFileRecord, IForm} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -18,12 +19,12 @@ import {StringsService} from '../../services/strings.service';
 })
 export class AccountFormComponent implements OnInit {
 	/** Current form. */
-	public form?: {
+	public readonly form	= new BehaviorSubject<{
 		data: Promise<IForm>;
 		downloadProgress: Observable<number>;
 		metadata?: Observable<IAccountFileRecord>;
 		name?: Promise<string>;
-	};
+	}|undefined>(undefined);
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -38,7 +39,7 @@ export class AccountFormComponent implements OnInit {
 						this.accountFilesService.downloadAppointment(appointmentID)
 					;
 
-					this.form	= {
+					this.form.next({
 						data: downloadTask.result.then(o => {
 							const form	= o.forms ? o.forms[i] : undefined;
 							if (!form) {
@@ -50,18 +51,19 @@ export class AccountFormComponent implements OnInit {
 						name: downloadTask.result.then(o =>
 							o.calendarInvite.title || this.stringsService.form
 						)
-					};
+					});
 				}
 				else if (id) {
 					const downloadTask	= this.accountFilesService.downloadForm(id);
 
-					this.form	= {
+					this.form.next({
 						data: downloadTask.result,
 						downloadProgress: downloadTask.progress,
 						metadata: this.accountFilesService.watchMetadata(id)
-					};
+					});
 				}
 				else {
+					this.form.next(undefined);
 					throw new Error('Invalid form ID.');
 				}
 			}
