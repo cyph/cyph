@@ -21,26 +21,49 @@ export class AccountFormComponent implements OnInit {
 	public form?: {
 		data: Promise<IForm>;
 		downloadProgress: Observable<number>;
-		metadata: Observable<IAccountFileRecord>;
+		metadata?: Observable<IAccountFileRecord>;
+		name?: Promise<string>;
 	};
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.activatedRoute.params.subscribe(async o => {
 			try {
-				const id: string|undefined	= o.id;
+				const appointmentID: string|undefined	= o.appointmentID;
+				const id: string|undefined				= o.id;
 
-				if (!id) {
+				if (appointmentID && id) {
+					const i				= parseInt(id, 10);
+					const downloadTask	=
+						this.accountFilesService.downloadAppointment(appointmentID)
+					;
+
+					this.form	= {
+						data: downloadTask.result.then(o => {
+							const form	= o.forms ? o.forms[i] : undefined;
+							if (!form) {
+								throw new Error('Invalid form index.');
+							}
+							return form;
+						}),
+						downloadProgress: downloadTask.progress,
+						name: downloadTask.result.then(o =>
+							o.calendarInvite.title || this.stringsService.form
+						)
+					};
+				}
+				else if (id) {
+					const downloadTask	= this.accountFilesService.downloadForm(id);
+
+					this.form	= {
+						data: downloadTask.result,
+						downloadProgress: downloadTask.progress,
+						metadata: this.accountFilesService.watchMetadata(id)
+					};
+				}
+				else {
 					throw new Error('Invalid form ID.');
 				}
-
-				const downloadTask	= this.accountFilesService.downloadForm(id);
-
-				this.form	= {
-					data: downloadTask.result,
-					downloadProgress: downloadTask.progress,
-					metadata: this.accountFilesService.watchMetadata(id)
-				};
 			}
 			catch {
 				this.router.navigate(['404']);

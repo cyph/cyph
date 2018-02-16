@@ -178,6 +178,9 @@ export class StringsService {
 	public readonly followUpNoun: string				= `Follow Up`;
 
 	/** @see StringsService */
+	public readonly form: string						= `Form`;
+
+	/** @see StringsService */
 	public readonly formattingHelp: string				= `Formatting Help`;
 
 	/** @see StringsService */

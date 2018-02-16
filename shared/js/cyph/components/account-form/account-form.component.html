@@ -4,8 +4,8 @@
 	*ngIf='form && (!envService.environment.production || envService.isTelehealth)'
 >
 	<mat-card fxFlex='90' class='form'>
-		<mat-card-header fxLayout='row'>
-			<mat-card-title>{{(form.metadata | async)?.name}}</mat-card-title>
+		<mat-card-header fxLayout='row' *ngIf='!!form?.metadata; else nameHeader'>
+			<mat-card-title>{{(form?.metadata | async)?.name}}</mat-card-title>
 			<div fxFlex fxLayoutAlign='end center'>
 				<button
 					mat-icon-button
@@ -19,14 +19,19 @@
 					mat-icon-button
 					cyphTranslate
 					matTooltip='Delete Form'
-					(click)='accountFilesService.remove(form.metadata)'
+					(click)='accountFilesService.remove(form?.metadata)'
 				>
 					<mat-icon>delete</mat-icon>
 				</button>
 			</div>
 		</mat-card-header>
+		<ng-template #nameHeader>
+			<mat-card-header fxLayout='row' *ngIf='!!form?.name'>
+				<mat-card-title>{{(form?.name | async)}}</mat-card-title>
+			</mat-card-header>
+		</ng-template>
 		<mat-card-content>
-			<cyph-dynamic-form [form]='form.data | async'></cyph-dynamic-form>
+			<cyph-dynamic-form [form]='form?.data | async'></cyph-dynamic-form>
 		</mat-card-content>
 	</mat-card>
 </div>

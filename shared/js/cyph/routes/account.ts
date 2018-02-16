@@ -37,6 +37,7 @@ export const account: Route	= {
 			component: AccountChatComponent,
 			data: {promptFollowup: true}
 		},
+		{path: 'appointments/:appointmentID/forms/:id', component: AccountFormComponent},
 		{path: 'audio/:username', component: AccountChatComponent, data: {callType: 'audio'}},
 		{
 			path: 'compose',
