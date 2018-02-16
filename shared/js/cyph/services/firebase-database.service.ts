@@ -441,7 +441,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const target	= await targetPromise;
 
 		await this.ngZone.runOutsideAngular(async () =>
-			(await this.getDatabaseRef(url)).set({target, type: notificationType}).then()
+			(await this.getDatabaseRef(url)).push({target, type: notificationType}).then()
 		);
 	}
 
