@@ -274,6 +274,9 @@ export class AccountDatabaseService {
 			else if (securityModel === SecurityModels.publicFromOtherUsers) {
 				return this.openHelpers.sign(data, url, true, true);
 			}
+			else if (securityModel === SecurityModels.unprotected) {
+				return data;
+			}
 
 			if (!currentUser) {
 				throw new Error('Cannot anonymously open private data.');
@@ -331,6 +334,8 @@ export class AccountDatabaseService {
 			case SecurityModels.public:
 			case SecurityModels.publicFromOtherUsers:
 				return this.sealHelpers.sign(data, url, true);
+			case SecurityModels.unprotected:
+				return data;
 			default:
 				throw new Error('Invalid security model.');
 		}
