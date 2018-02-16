@@ -3,24 +3,26 @@ const sendMessage	= async (database, messaging, url, body) => {
 	const tokens	= Object.keys((await ref.once('value')).val() || {});
 
 	if (tokens.length < 1) {
-		return;
+		return false;
 	}
 
-	const response	= await messaging.sendToDevice(tokens, {
+	const results	= await Promise.all(tokens.map(async token => messaging.send({
 		notification: {
 			body,
 			icon: 'https://www.cyph.com/assets/img/favicon/favicon-256x256.png',
 			title: 'Cyph'
-		}
-	});
+		},
+		token
+	}).
+		then(() => {success: true, token}).
+		catch(() => {success: false, token})
+	));
 
-	await Promise.all(
-		results.
-			filter(result => !!result.error).
-			map(async (_, i) => ref.child(tokens[i]).remove())
-	).catch(
-		() => {}
-	);
+	const failures	= results.filter(o => !o.success);
+
+	await Promise.all(failures.map(async ({token}) => ref.child(token).remove())).catch(() => {});
+
+	return results.length > failures.length;
 };
 
 
