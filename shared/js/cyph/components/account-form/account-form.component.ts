@@ -27,10 +27,10 @@ export class AccountFormComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.activatedRoute.params.subscribe(async o => {
+		this.activatedRoute.params.subscribe(async params => {
 			try {
-				const appointmentID: string|undefined	= o.appointmentID;
-				const id: string|undefined				= o.id;
+				const appointmentID: string|undefined	= params.appointmentID;
+				const id: string|undefined				= params.id;
 
 				if (appointmentID && id) {
 					const i				= parseInt(id, 10);
