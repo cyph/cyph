@@ -5,15 +5,22 @@ const {normalize}	= require('./util');
 
 
 module.exports	= (database, messaging) => ({
-	notify: async (namespace, username, subject, text) => {
+	notify: async (namespace, username, subject, text, preferPush) => {
 		const url	= `${namespace}/users/${normalize(username)}`;
 
 		subject	= sanitize(subject);
 		text	= sanitize(text);
 
-		await Promise.all([
-			sendMail(database, url, subject, text),
-			sendMessage(database, messaging, url, subject)
-		]);
+		if (!preferPush) {
+			await Promise.all([
+				sendMail(database, url, subject, text),
+				sendMessage(database, messaging, url, subject)
+			]);
+			return;
+		}
+
+		if (!(await sendMessage(database, messaging, url, text))) {
+			await sendMail(database, url, subject, text);
+		}
 	}
 });

@@ -298,7 +298,7 @@ exports.userNotification	=
 					}
 			;
 
-			await notify(e.params.namespace, notification.target, subject, text);
+			await notify(e.params.namespace, notification.target, subject, text, true);
 		}
 	)
 ;
