@@ -327,7 +327,7 @@ exports.userPublicProfileSet	=
 		);
 
 		return Promise.all([
-			name.set(
+			nameRef.set(
 				publicProfile && publicProfile.name ?
 					publicProfile.name :
 					userRef.key
