@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {combineLatest} from 'rxjs/observable/combineLatest';
 import {IAccountFileRecord, IForm} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -22,16 +23,21 @@ export class AccountFormComponent implements OnInit {
 	public readonly form	= new BehaviorSubject<{
 		data: Promise<IForm>;
 		downloadProgress: Observable<number>;
+		editable: boolean;
 		metadata?: Observable<IAccountFileRecord>;
 		name?: Promise<string>;
 	}|undefined>(undefined);
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.activatedRoute.params.subscribe(async params => {
+		combineLatest(
+			this.activatedRoute.data,
+			this.activatedRoute.params
+		).subscribe(async ([data, params]) => {
 			try {
 				const appointmentID: string|undefined	= params.appointmentID;
 				const id: string|undefined				= params.id;
+				const editable							= data.editable === true;
 
 				if (appointmentID && id) {
 					const i				= parseInt(id, 10);
@@ -48,6 +54,7 @@ export class AccountFormComponent implements OnInit {
 							return form;
 						}),
 						downloadProgress: downloadTask.progress,
+						editable,
 						name: downloadTask.result.then(o =>
 							o.calendarInvite.title || this.stringsService.form
 						)
@@ -59,6 +66,7 @@ export class AccountFormComponent implements OnInit {
 					this.form.next({
 						data: downloadTask.result,
 						downloadProgress: downloadTask.progress,
+						editable,
 						metadata: this.accountFilesService.watchMetadata(id)
 					});
 				}

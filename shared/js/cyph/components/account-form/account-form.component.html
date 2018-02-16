@@ -32,7 +32,10 @@
 				</mat-card-header>
 			</ng-template>
 			<mat-card-content>
-				<cyph-dynamic-form [form]='o?.data | async'></cyph-dynamic-form>
+				<cyph-dynamic-form
+					[form]='o?.data | async'
+					[isDisabled]='!o?.editable'
+				></cyph-dynamic-form>
 			</mat-card-content>
 		</mat-card>
 	</div>
