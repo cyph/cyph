@@ -383,7 +383,7 @@ exports.userRegisterConfirmed	=
 			e.params.namespace,
 			userRef.key,
 			`Welcome to Cyph, ${realUsername}`,
-			`Congratulations ${name}, your account ${realUsername} is now activated!\n` +
+			`Congratulations ${name}, your account is now activated!\n` +
 				`Sign in at https://cyph.me/#login.`
 		);
 	});
