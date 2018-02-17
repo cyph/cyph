@@ -311,9 +311,9 @@ export class ChatService {
 			);
 		}
 
-		this.notificationService.notify(this.stringsService.connectedNotification);
-
 		if (this.sessionInitService.ephemeral) {
+			this.notificationService.notify(this.stringsService.connectedNotification);
+
 			this.chat.keyExchangeProgress	= 100;
 			this.chat.state					= States.chatBeginMessage;
 
