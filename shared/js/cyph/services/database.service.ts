@@ -200,9 +200,17 @@ export class DatabaseService extends DataManagerService {
 					potassiumUtil.clearMemory(oldValue);
 				}
 			}),
-			updateValue: async f => asyncValue.lock(async () =>
-				asyncValue.setValue(await f(await asyncValue.getValue()))
-			),
+			updateValue: async f => asyncValue.lock(async () => {
+				const value	= await asyncValue.getValue();
+				let newValue: T;
+				try {
+					newValue	= await f(value);
+				}
+				catch {
+					return;
+				}
+				await asyncValue.setValue(newValue);
+			}),
 			watch: memoize(() =>
 				this.watch(url, proto).pipe(map<ITimedValue<T>, T>(o => o.value))
 			)

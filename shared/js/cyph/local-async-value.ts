@@ -49,7 +49,7 @@ export class LocalAsyncValue<T> implements IAsyncValue<T> {
 			catch {
 				return;
 			}
-			this.setValue(newValue);
+			await this.setValue(newValue);
 		});
 	}
 

@@ -574,7 +574,10 @@ export class AccountDatabaseService {
 			updateValue: async f => (await asyncValue).updateValue(async value => this.seal(
 				url,
 				proto,
-				await f(await this.open(url, proto, securityModel, value, customKey)),
+				await f(
+					await this.open(url, proto, securityModel, value, customKey).
+						catch(() => defaultValue)
+				),
 				securityModel,
 				customKey
 			)),
