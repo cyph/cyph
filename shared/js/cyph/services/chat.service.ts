@@ -243,7 +243,9 @@ export class ChatService {
 
 		if (shouldNotify) {
 			if (author !== this.sessionService.appUsername) {
-				this.notificationService.notify(this.stringsService.newMessageNotification);
+				if (this.sessionInitService.ephemeral) {
+					this.notificationService.notify(this.stringsService.newMessageNotification);
+				}
 			}
 			else if (value.text) {
 				this.notificationService.notify(value.text);
