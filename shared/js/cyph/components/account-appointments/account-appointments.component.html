@@ -77,14 +77,16 @@
 							</mat-panel-description>
 						</mat-expansion-panel-header>
 						<div fxLayout='column'>
-							<div *ngFor='
-								let form of o.appointment.forms;
-								trackBy: trackByID;
-								let i = index;'
+							<div
+								*ngFor='
+									let form of o.appointment.forms;
+									trackBy: trackByID;
+									let i = index;
+								'
 								fxLayoutGap='5px'
 								fxLayoutAlign='center'
 								fxLayout='row'
-								>
+							>
 								<button
 									mat-raised-button
 									cyphTranslate
@@ -99,7 +101,8 @@
 									{{stringsService.patientForm}} #{{i+1}}
 								</button>
 							</div>
-							<div *ngIf='o.appointment.forms.length < 1'
+							<div
+								*ngIf='o.appointment.forms.length < 1'
 								fxFlex='50'
 								fxLayoutGap='5px'
 								fxLayoutAlign='center center'
@@ -107,7 +110,10 @@
 							>
 								<span>{{stringsService.patientFormsMissing}}</span>
 								<button
-									*ngIf='(currentUser.user.userType | async) === accountUserTypes.Standard'
+									*ngIf='
+										(currentUser.user.userType | async) ===
+										accountUserTypes.Standard
+									'
 									mat-raised-button
 									cyphTranslate
 									[routerLink]='
@@ -158,7 +164,7 @@
 										<a [routerLink]='
 											accountService.routeRoot + "profile/" + record.owner
 										'>
-											{{record.owner.name}}
+											{{record.name}}
 										</a>
 									</ng-container>
 									<ng-container *ngIf='record.wasAnonymousShare'>
