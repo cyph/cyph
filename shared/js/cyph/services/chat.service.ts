@@ -116,10 +116,7 @@ export class ChatService {
 			return;
 		}
 
-		if (o.author === this.sessionService.localUsername) {
-			await sleep();
-		}
-		else {
+		if (o.author !== this.sessionService.localUsername) {
 			this.sessionService.send([rpcEvents.confirm, {textConfirmation: {id: o.id}}]);
 		}
 
@@ -550,7 +547,7 @@ export class ChatService {
 
 			this.p2pWebRTCService.initialCallPending	= callType !== undefined;
 
-			this.unconfirmedMessagesSubscription	= combineLatest(
+			this.unconfirmedMessagesSubscription		= combineLatest(
 				this.chat.lastConfirmedMessage.watch(),
 				this.chat.messages.watch()
 			).pipe(map(([lastConfirmedMessage, messages]) => {

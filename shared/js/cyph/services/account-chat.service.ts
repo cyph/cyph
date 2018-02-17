@@ -86,8 +86,6 @@ export class AccountChatService extends ChatService {
 
 		this.accountSessionInitService.callType	= callType || this.envService.callType;
 
-		await this.accountSessionService.setUser(username, sessionSubID);
-
 		this.chat	= getOrSetDefault(this.chats, username, () => ({
 			currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
 			isConnected: true,
@@ -115,6 +113,8 @@ export class AccountChatService extends ChatService {
 			state: States.chat,
 			unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
 		}));
+
+		await this.accountSessionService.setUser(username, sessionSubID);
 	}
 
 	constructor (
