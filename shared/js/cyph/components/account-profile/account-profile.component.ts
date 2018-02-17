@@ -171,7 +171,7 @@ export class AccountProfileComponent implements OnInit {
 
 		const draft	= this.descriptionDraft.trim();
 
-		if (draft) {
+		if (draft !== undefined) {
 			const profile	= await this.user.accountUserProfile.getValue();
 
 			if (profile.description !== draft) {
