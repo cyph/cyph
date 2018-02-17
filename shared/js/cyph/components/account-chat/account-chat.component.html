@@ -1,5 +1,10 @@
 <div fxFlexFill fxLayoutAlign='center center' class='cyph-foreground'>
-	<div fxFlex='95' fxFlexFill fxLayout='column' *ngIf='accountSessionService.opened | async'>
+	<div
+		[fxFlex]='envService.isMobile ? 100 : 95'
+		fxFlexFill
+		fxLayout='column'
+		*ngIf='accountSessionService.opened | async'
+	>
 		<cyph-account-call-waiting
 			fxFlexFill
 			[appointment]='appointment | async'
@@ -17,7 +22,7 @@
 			></cyph-chat-main>
 
 			<cyph-account-chat-message-box
-				class='padding'
+				[class.padding]='!envService.isMobile'
 				[messageType]='chatMessageValueTypes.Text'
 				*ngIf='!p2pService.isActiveOrInitialCall'
 				[class.visibility-hidden]='p2pWebRTCService.initialCallPending'
