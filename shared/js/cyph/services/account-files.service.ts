@@ -578,7 +578,7 @@ export class AccountFilesService {
 				this.accountDatabaseService.getItem(
 					`fileReferences/${id}`,
 					AccountFileReference
-				).then(o =>
+				).then(async o =>
 					this.accountDatabaseService.getItem(
 						`fileRecords/${id}`,
 						AccountFileRecord,
