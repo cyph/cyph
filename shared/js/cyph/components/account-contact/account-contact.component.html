@@ -4,52 +4,54 @@
 	[routerLink]='!clickable ? undefined : (
 		accountService.routeRoot +
 		(envService.isTelehealth ? "profile" : "messages") + "/" +
-		contact?.username
+		(username || "")
 	)'
-	*ngIf='!!contact'
+	*ngIf='!!username'
 >
-	<mat-card-header fxLayout='row' *ngIf='contact?.ready'>
+	<mat-card-header fxLayout='row' *ngIf='(user | async)?.ready; else loading'>
 		<img
 			mat-card-avatar
 			cyphTranslate
 			class='avatar'
-			[ngClass]='userPresence[(contact?.status | async) || 0]'
-			[src]='contact?.avatar | async'
+			[ngClass]='userPresence[((user | async)?.status | async) || 0]'
+			[src]='(user | async)?.avatar | async'
 			alt='User Avatar'
 			matTooltip='Open Profile'
 			[routerLink]='!clickable ?
 				undefined :
-				accountService.routeRoot + "profile/" + contact?.username
+				accountService.routeRoot + "profile/" + (username || "")
 			'
 		/>
 		<mat-card-title>
 			{{
-				(contact?.userType | async) === accountUserTypes.TelehealthDoctor ?
+				((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor ?
 					stringsService.dr :
 					''
 			}}
-			{{contact?.name | async}}
+			{{(user | async)?.name | async}}
 		</mat-card-title>
-		<mat-card-subtitle>@{{contact?.realUsername | async}}</mat-card-subtitle>
+		<mat-card-subtitle>@{{(user | async)?.realUsername | async}}</mat-card-subtitle>
 		<cyph-account-user-rating
-			[user]='contact'
-			*ngIf='(contact?.userType | async) === accountUserTypes.TelehealthDoctor'
+			[user]='user | async'
+			*ngIf='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor'
 		></cyph-account-user-rating>
 	</mat-card-header>
 
-	<mat-card-header class='pending' fxLayout='row' *ngIf='!contact?.ready'>
-		<button
-			mat-card-avatar
-			mat-icon-button
-			cyphTranslate
-			matTooltip='Open Profile'
-			[routerLink]='!clickable ?
-				undefined :
-				accountService.routeRoot + "profile/" + contact?.username
-			'
-		>
-			<mat-icon>person</mat-icon>
-		</button>
-		<mat-card-title>@{{contact?.username}}</mat-card-title>
-	</mat-card-header>
+	<ng-template #loading>
+		<mat-card-header class='pending' fxLayout='row'>
+			<button
+				mat-card-avatar
+				mat-icon-button
+				cyphTranslate
+				matTooltip='Open Profile'
+				[routerLink]='!clickable ?
+					undefined :
+					accountService.routeRoot + "profile/" + (username || "")
+				'
+			>
+				<mat-icon>person</mat-icon>
+			</button>
+			<mat-card-title>@{{username}}</mat-card-title>
+		</mat-card-header>
+	</ng-template>
 </mat-card>

@@ -2,7 +2,7 @@
 	fxFlexFill
 	fxLayout='row'
 	class='card-list animated slideInDown'
-	[class.initiating]='accountContactsService.showSpinner'
+	[class.initiating]='accountContactsService.showSpinner | async'
 >
 	<div fxFlexFill fxLayout='column' fxLayoutAlign='start stretch'>
 		<cyph-account-contacts-search
@@ -44,6 +44,6 @@
 
 	<mat-progress-spinner
 		mode='indeterminate'
-		*ngIf='accountContactsService.showSpinner'
+		*ngIf='accountContactsService.showSpinner | async'
 	></mat-progress-spinner>
 </div>

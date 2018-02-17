@@ -10,7 +10,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
-import {User} from '../../account/user';
+import {IContactListItem, User} from '../../account';
 import {ISearchOptions} from '../../isearch-options';
 import {AccountUserProfileExtra} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -31,7 +31,7 @@ import {SearchBarComponent} from '../search-bar';
 })
 export class AccountContactsSearchComponent {
 	/** List of users to search. */
-	@Input() public contactList: Observable<User[]>				=
+	@Input() public contactList: Observable<IContactListItem[]>	=
 		this.accountContactsService.contactList
 	;
 
@@ -58,7 +58,7 @@ export class AccountContactsSearchComponent {
 				return query.toLowerCase().trim();
 			}),
 			mergeMap<string, ISearchOptions>(query =>
-				this.contactList.pipe(
+				this.accountContactsService.fullyLoadContactList(this.contactList).pipe(
 					mergeMap<User[], ISearchOptions>(async users => {
 						const results	= filterUndefined(
 							(await Promise.all(users.map(async user => ({

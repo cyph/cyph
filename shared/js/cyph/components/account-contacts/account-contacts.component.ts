@@ -6,7 +6,8 @@ import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
-import {User, UserPresence} from '../../account';
+import {mergeMap} from 'rxjs/operators/mergeMap';
+import {IContactListItem, User, UserPresence} from '../../account';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -25,14 +26,14 @@ import {AccountContactsSearchComponent} from '../account-contacts-search';
 })
 export class AccountContactsComponent implements OnChanges, OnInit {
 	/** @ignore */
-	private readonly contactListInternal: BehaviorSubject<User[]>	=
-		new BehaviorSubject<User[]>([])
+	private readonly contactListInternal: BehaviorSubject<IContactListItem[]>	=
+		new BehaviorSubject<IContactListItem[]>([])
 	;
 
 	/** @ignore */
 	private readonly routeReactiveContactList: Observable<{
-		activeUser?: User;
-		filteredContactList: User[];
+		activeUser?: Promise<User|undefined>;
+		filteredContactList: IContactListItem[];
 	}>	= combineLatest(
 		this.contactListInternal,
 		this.activatedRoute.url
@@ -55,7 +56,7 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 		}
 
 		return {
-			activeUser: contactList[index],
+			activeUser: contactList[index].user,
 			filteredContactList: contactList.slice(0, index).concat(contactList.slice(index + 1))
 		};
 	}));
@@ -65,31 +66,31 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 	public accountContactsSearch?: AccountContactsSearchComponent;
 
 	/** Full contact list with active contact filtered out. */
-	public readonly activeUser: Observable<User|undefined>			=
-		this.routeReactiveContactList.pipe(map(o => o.activeUser))
+	public readonly activeUser: Observable<User|undefined>				=
+		this.routeReactiveContactList.pipe(mergeMap(async o => o.activeUser))
 	;
 
 	/** List of users to search. */
-	@Input() public contactList: Observable<User[]>					=
+	@Input() public contactList: Observable<IContactListItem[]>			=
 		this.accountContactsService.contactList
 	;
 
 	/** Full contact list with active contact filtered out. */
-	public readonly filteredContactList: Observable<User[]>			=
+	public readonly filteredContactList: Observable<IContactListItem[]>	=
 		this.routeReactiveContactList.pipe(map(o => o.filteredContactList))
 	;
 
 	/** Indicates whether to use inverted theme. */
-	@Input() public invertedTheme: boolean							= false;
+	@Input() public invertedTheme: boolean								= false;
 
 	/** @see AccountContactsSearchComponent.searchProfileExtra */
-	@Input() public searchProfileExtra: boolean						= false;
+	@Input() public searchProfileExtra: boolean							= false;
 
 	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence				= UserPresence;
+	public readonly userPresence: typeof UserPresence					= UserPresence;
 
 	/** Equality function for virtual scrolling. */
-	public readonly vsEqualsFunc: (a: number, b: number) => boolean	= (() => {
+	public readonly vsEqualsFunc: (a: number, b: number) => boolean		= (() => {
 		/*
 		const contactList	= this.contactList;
 

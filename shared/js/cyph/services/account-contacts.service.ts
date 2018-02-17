@@ -1,9 +1,12 @@
 import {Injectable} from '@angular/core';
+import memoize from 'lodash-es/memoize';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {skip} from 'rxjs/operators/skip';
 import {take} from 'rxjs/operators/take';
-import {User} from '../account/user';
+import {IContactListItem, User} from '../account';
 import {StringProto} from '../proto';
 import {filterDuplicatesOperator, filterUndefined} from '../util/filter';
 import {cacheObservable} from '../util/flatten-observable';
@@ -24,11 +27,8 @@ export class AccountContactsService {
 		new Map<string, Map<string, string>>()
 	;
 
-	/** List of contacts for current user, sorted by status and then alphabetically by username. */
-	public readonly contactList: Observable<User[]>;
-
-	/** List of usernames of contacts for current user. */
-	public readonly contactUsernames: Observable<string[]>	= cacheObservable(
+	/** List of contacts for current user, sorted alphabetically by username. */
+	public readonly contactList: Observable<IContactListItem[]>	= cacheObservable(
 		this.accountDatabaseService.watchListKeys('contactUsernames').pipe(
 			mergeMap(async keys =>
 				(await Promise.all(
@@ -50,13 +50,29 @@ export class AccountContactsService {
 					map(({username}) => username).
 					sort()
 			),
-			filterDuplicatesOperator()
+			filterDuplicatesOperator(),
+			map(usernames => usernames.map(username => ({
+				user: this.accountUserLookupService.getUser(username),
+				username
+			})))
 		),
 		[]
 	);
 
+	/** Fully loads contact list. */
+	public readonly fullyLoadContactList	= memoize(
+		(contactList: Observable<IContactListItem[]>) : Observable<User[]> => cacheObservable(
+			contactList.pipe(mergeMap(async contacts =>
+				filterUndefined(await Promise.all(
+					contacts.map(async contact => contact.user)
+				))
+			)),
+			[]
+		)
+	);
+
 	/** Indicates whether spinner should be displayed. */
-	public showSpinner: boolean	= true;
+	public readonly showSpinner: BehaviorSubject<boolean>	= new BehaviorSubject(true);
 
 	/**
 	 * Adds contact.
@@ -138,19 +154,8 @@ export class AccountContactsService {
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
 	) {
-		this.contactList	= cacheObservable(
-			this.contactUsernames.pipe(mergeMap(async usernames =>
-				filterUndefined(await Promise.all(
-					usernames.map(async username =>
-						this.accountUserLookupService.getUser(username)
-					)
-				))
-			)),
-			[]
-		);
-
-		this.contactList.pipe(skip(3), take(1)).toPromise().then(() => {
-			this.showSpinner	= false;
+		this.contactList.pipe(skip(2), take(1)).toPromise().then(() => {
+			this.showSpinner.next(false);
 		});
 	}
 }
