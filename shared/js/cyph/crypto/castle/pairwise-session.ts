@@ -11,7 +11,7 @@ import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
 import {lockFunction} from '../../util/lock';
 import {getTimestamp} from '../../util/time';
-import {resolvable, sleep} from '../../util/wait';
+import {resolvable, retryUntilSuccessful, sleep} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
 import {HandshakeSteps} from './enums';
@@ -279,8 +279,8 @@ export class PairwiseSession {
 				outgoing: new LocalAsyncValue(undefined)
 			}
 		}
-	) { (async () => {
-		try {
+	) {
+		retryUntilSuccessful(async () => {
 			await this.localUser.getKeyPair();
 
 			while (true) {
@@ -413,10 +413,9 @@ export class PairwiseSession {
 					return;
 				}
 			}
-		}
-		catch (err) {
+		}).catch(err => {
 			this.abort();
 			throw err;
-		}
-	})(); }
+		});
+	}
 }
