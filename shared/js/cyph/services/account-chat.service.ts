@@ -113,7 +113,7 @@ export class AccountChatService extends ChatService {
 				`${contactURL}/receiveTextLock`
 			),
 			state: States.chat,
-			unconfirmedMessages: new BehaviorSubject({})
+			unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
 		}));
 	}
 

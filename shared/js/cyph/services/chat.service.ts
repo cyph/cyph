@@ -89,7 +89,7 @@ export class ChatService {
 		messageValues: new LocalAsyncMap<string, IChatMessageValue>(),
 		receiveTextLock: lockFunction(),
 		state: States.none,
-		unconfirmedMessages: new BehaviorSubject({})
+		unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
 	};
 
 	/** Indicates whether the chat is self-destructing. */
