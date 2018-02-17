@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
@@ -39,6 +39,9 @@ export class AccountProfileComponent implements OnInit {
 
 	/** Profile edit mode. */
 	public editMode: boolean		= false;
+
+	/** Indicates whether this is home component. */
+	@Input() public home: boolean	= false;
 
 	/** @see AccountContactsService.watchIfContact */
 	public isContact?: Observable<boolean>;
@@ -99,6 +102,7 @@ export class AccountProfileComponent implements OnInit {
 					if (
 						this.envService.environment.customBuild &&
 						this.envService.environment.customBuild.config.organization &&
+						this.home &&
 						userType === AccountUserTypes.Standard
 					) {
 						this.router.navigate([
