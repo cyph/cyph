@@ -1,4 +1,5 @@
 import {Component, Input, OnChanges} from '@angular/core';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {IContactListItem, User, UserPresence} from '../../account';
 import {AccountUserTypes} from '../../proto';
 import {AccountService} from '../../services/account.service';
@@ -24,23 +25,26 @@ export class AccountContactComponent implements OnChanges {
 	/** Contact. */
 	@Input() public contact?: IContactListItem|User;
 
+	/** This user. */
+	public readonly user: BehaviorSubject<User|undefined>	=
+		new BehaviorSubject<User|undefined>(undefined)
+	;
+
 	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence	= UserPresence;
+	public readonly userPresence: typeof UserPresence		= UserPresence;
 
 	/** @inheritDoc */
 	public async ngOnChanges () : Promise<void> {
-		const user	= await this.user;
+		const user	= !this.contact || this.contact instanceof User ?
+			this.contact :
+			await this.contact.user
+		;
+
+		this.user.next(user);
+
 		if (user) {
 			await user.fetch();
 		}
-	}
-
-	/** This user. */
-	public get user () : Promise<User|undefined> {
-		return !this.contact || this.contact instanceof User ?
-			Promise.resolve(this.contact) :
-			this.contact.user
-		;
 	}
 
 	/** This user's username. */
