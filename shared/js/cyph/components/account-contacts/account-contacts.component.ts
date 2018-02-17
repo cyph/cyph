@@ -6,8 +6,7 @@ import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
-import {mergeMap} from 'rxjs/operators/mergeMap';
-import {IContactListItem, User, UserPresence} from '../../account';
+import {IContactListItem, UserPresence} from '../../account';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -32,7 +31,7 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 
 	/** @ignore */
 	private readonly routeReactiveContactList: Observable<{
-		activeUser?: Promise<User|undefined>;
+		activeUser?: IContactListItem|undefined;
 		filteredContactList: IContactListItem[];
 	}>	= combineLatest(
 		this.contactListInternal,
@@ -56,7 +55,7 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 		}
 
 		return {
-			activeUser: contactList[index].user,
+			activeUser: contactList[index],
 			filteredContactList: contactList.slice(0, index).concat(contactList.slice(index + 1))
 		};
 	}));
@@ -66,8 +65,8 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 	public accountContactsSearch?: AccountContactsSearchComponent;
 
 	/** Full contact list with active contact filtered out. */
-	public readonly activeUser: Observable<User|undefined>				=
-		this.routeReactiveContactList.pipe(mergeMap(async o => o.activeUser))
+	public readonly activeUser: Observable<IContactListItem|undefined>	=
+		this.routeReactiveContactList.pipe(map(o => o.activeUser))
 	;
 
 	/** List of users to search. */
