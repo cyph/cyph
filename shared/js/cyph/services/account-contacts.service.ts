@@ -154,6 +154,12 @@ export class AccountContactsService {
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
 	) {
+		this.accountDatabaseService.getListKeys('contactUsernames').then(keys => {
+			if (keys.length < 1) {
+				this.showSpinner.next(false);
+			}
+		});
+
 		this.contactList.pipe(skip(2), take(1)).toPromise().then(() => {
 			this.showSpinner.next(false);
 		});
