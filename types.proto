@@ -383,6 +383,15 @@ message ChannelMessage {
 	required string author = 2;
 }
 
+/** Chat last confirmed message. */
+message ChatLastConfirmedMessage {
+	/** Message ID. */
+	required string id = 1;
+
+	/** Message index. */
+	required uint32 index = 2;
+}
+
 /** Represents one message in a chat. */
 message ChatMessage {
 	/** Author types. */
@@ -451,12 +460,6 @@ message ChatMessageValue {
 		Appointment.RSVP rsvp = 4;
 		string text = 5;
 	}
-}
-
-/** Chat unconfirmed messages. */
-message ChatUnconfirmedMessages {
-	/** Mapping of message IDs to confirmation statuses. */
-	map<string, bool> unconfirmedMessages = 1;
 }
 
 /** Angular CLI environment configuration. */

@@ -3,7 +3,7 @@ import {IAsyncList} from '../iasync-list';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {LockFunction} from '../lock-function-type';
-import {IChatMessage, IChatMessageValue} from '../proto';
+import {IChatLastConfirmedMessage, IChatMessage, IChatMessageValue} from '../proto';
 import {States} from './enums';
 import {IChatMessageLiveValue} from './ichat-message-live-value';
 
@@ -30,6 +30,9 @@ export interface IChatData {
 	/** Percentage complete with initial handshake (approximate / faked out). */
 	keyExchangeProgress: number;
 
+	/** Last outgoing message whose receipt has been confirmed. */
+	lastConfirmedMessage: IAsyncValue<IChatLastConfirmedMessage>;
+
 	/** Message list. */
 	messages: IAsyncList<IChatMessage>;
 
@@ -48,6 +51,6 @@ export interface IChatData {
 	/** Chat UI state/view. */
 	state: States;
 
-	/** IDs of outgoing messages whose receipt has yet to be confirmed. */
-	unconfirmedMessages: IAsyncValue<{[id: string]: boolean|undefined}>;
+	/** List of unconfirmed outgoing message IDs, based on lastConfirmedMessage. */
+	unconfirmedMessages: Subject<{[id: string]: boolean|undefined}>;
 }

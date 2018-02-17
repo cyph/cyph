@@ -4,9 +4,9 @@ import {Observable} from 'rxjs/Observable';
 import {take} from 'rxjs/operators/take';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {
+	ChatLastConfirmedMessage,
 	ChatMessage,
 	ChatMessageValue,
-	ChatUnconfirmedMessagesProto,
 	NotificationTypes
 } from '../proto';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -95,6 +95,10 @@ export class AccountChatService extends ChatService {
 			isFriendTyping: new BehaviorSubject(false),
 			isMessageChanged: false,
 			keyExchangeProgress: 0,
+			lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
+				`${contactURL}/lastConfirmedMessage`,
+				ChatLastConfirmedMessage
+			),
 			messages: this.accountDatabaseService.getAsyncList(
 				`${contactURL}/messages`,
 				ChatMessage
@@ -109,10 +113,7 @@ export class AccountChatService extends ChatService {
 				`${contactURL}/receiveTextLock`
 			),
 			state: States.chat,
-			unconfirmedMessages: this.accountDatabaseService.getAsyncValue(
-				`${contactURL}/unconfirmedMessages`,
-				ChatUnconfirmedMessagesProto
-			)
+			unconfirmedMessages: new BehaviorSubject({})
 		}));
 	}
 

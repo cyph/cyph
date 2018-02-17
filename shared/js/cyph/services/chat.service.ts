@@ -4,14 +4,22 @@ import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {combineLatest} from 'rxjs/observable/combineLatest';
 import {map} from 'rxjs/operators/map';
+import {Subscription} from 'rxjs/Subscription';
 import {ChatMessage, IChatData, IChatMessageLiveValue, States} from '../chat';
 import {HelpComponent} from '../components/help';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncMap} from '../local-async-map';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
-import {ChatMessageValue, IChatMessage, IChatMessageLine, IChatMessageValue} from '../proto';
+import {
+	ChatMessageValue,
+	IChatLastConfirmedMessage,
+	IChatMessage,
+	IChatMessageLine,
+	IChatMessageValue
+} from '../proto';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
 import {lockFunction} from '../util/lock';
@@ -56,6 +64,9 @@ export class ChatService {
 		this._CHAT_GEOMETRY_SERVICE.resolve
 	;
 
+	/** @ignore */
+	private unconfirmedMessagesSubscription?: Subscription;
+
 	/** @see ChatMessageGeometryService */
 	protected readonly chatMessageGeometryService: Promise<{
 		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
@@ -71,13 +82,14 @@ export class ChatService {
 		isFriendTyping: new BehaviorSubject(false),
 		isMessageChanged: false,
 		keyExchangeProgress: 0,
+		lastConfirmedMessage: new LocalAsyncValue({id: '', index: 0}),
 		messages: new LocalAsyncList<IChatMessage>(),
 		/* See https://github.com/palantir/tslint/issues/3541 */
 		/* tslint:disable-next-line:object-literal-sort-keys */
 		messageValues: new LocalAsyncMap<string, IChatMessageValue>(),
 		receiveTextLock: lockFunction(),
 		state: States.none,
-		unconfirmedMessages: new LocalAsyncValue<{[id: string]: boolean|undefined}>({})
+		unconfirmedMessages: new BehaviorSubject({})
 	};
 
 	/** Indicates whether the chat is self-destructing. */
@@ -105,11 +117,6 @@ export class ChatService {
 		}
 
 		if (o.author === this.sessionService.localUsername) {
-			await this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
-				unconfirmedMessages[o.id]	= true;
-				return unconfirmedMessages;
-			});
-
 			await sleep();
 		}
 		else {
@@ -168,6 +175,11 @@ export class ChatService {
 
 	/** This kills the chat. */
 	private async close () : Promise<void> {
+		if (this.unconfirmedMessagesSubscription) {
+			this.unconfirmedMessagesSubscription.unsubscribe();
+			this.unconfirmedMessagesSubscription	= undefined;
+		}
+
 		if (!this.sessionInitService.ephemeral || this.chat.state === States.aborted) {
 			return;
 		}
@@ -538,6 +550,27 @@ export class ChatService {
 
 			this.p2pWebRTCService.initialCallPending	= callType !== undefined;
 
+			this.unconfirmedMessagesSubscription	= combineLatest(
+				this.chat.lastConfirmedMessage.watch(),
+				this.chat.messages.watch()
+			).pipe(map(([lastConfirmedMessage, messages]) => {
+				const unconfirmedMessages: {[id: string]: boolean}	= {};
+
+				for (let i = messages.length - 1 ; i >= 0 ; --i) {
+					const id	= messages[i].id;
+					if (id === lastConfirmedMessage.id) {
+						break;
+					}
+					else {
+						unconfirmedMessages[id]	= true;
+					}
+				}
+
+				return unconfirmedMessages;
+			})).subscribe(
+				this.chat.unconfirmedMessages
+			);
+
 			beginChat.then(() => { this.begin(); });
 
 			this.sessionService.one(events.closeChat).then(async () =>
@@ -601,16 +634,36 @@ export class ChatService {
 				this.abortSetup()
 			);
 
-			this.sessionService.on(rpcEvents.confirm, (o: ISessionMessageData) => {
+			this.sessionService.on(rpcEvents.confirm, async (o: ISessionMessageData) => {
 				if (!o.textConfirmation || !o.textConfirmation.id) {
 					return;
 				}
 
-				const id	= o.textConfirmation.id;
+				const id		= o.textConfirmation.id;
+				const messages	= await this.chat.messages.getValue();
 
-				this.chat.unconfirmedMessages.updateValue(async unconfirmedMessages => {
-					delete unconfirmedMessages[id];
-					return unconfirmedMessages;
+				let newLastConfirmedMessage: IChatLastConfirmedMessage|undefined;
+				for (let i = messages.length - 1 ; i >= 0 ; --i) {
+					if (messages[i].id === id) {
+						newLastConfirmedMessage	= {id, index: i};
+						break;
+					}
+				}
+
+				if (!newLastConfirmedMessage) {
+					return;
+				}
+
+				this.chat.lastConfirmedMessage.updateValue(async lastConfirmedMessage => {
+					if (
+						!newLastConfirmedMessage ||
+						lastConfirmedMessage.id === newLastConfirmedMessage.id ||
+						lastConfirmedMessage.index > newLastConfirmedMessage.index
+					) {
+						throw newLastConfirmedMessage;
+					}
+
+					return newLastConfirmedMessage;
 				});
 			});
 

@@ -57,6 +57,7 @@ service firebase.storage {
 				// match /contactUsernames/{username}/{hash} {}
 
 				// match /contacts/{contact} {
+				// 	match /lastConfirmedMessage/{hash} {}
 				// 	match /messages/{message}/{hash} {}
 				// 	match /messageValues/{messageValue}/{hash} {}
 				// 	match /session {
@@ -87,7 +88,6 @@ service firebase.storage {
 				// 			}
 				// 		}
 				// 	}
-				// 	match /unconfirmedMessages/{hash} {}
 				// }
 
 				match /docs/{doc} {

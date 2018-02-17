@@ -233,7 +233,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 					a.timestamp - b.timestamp
 				)
 			)),
-			unconfirmedMessages: chat.unconfirmedMessages.watch()
+			unconfirmedMessages: chat.unconfirmedMessages
 		}));
 
 		combineLatest(

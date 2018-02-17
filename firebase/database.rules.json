@@ -210,6 +210,14 @@
 
 					"contacts": {
 						"$contact": {
+							"lastConfirmedMessage": {
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							},
 							"messages": {
 								"$message": {
 									"hash": {
@@ -370,14 +378,6 @@
 											}
 										}
 									}
-								}
-							},
-							"unconfirmedMessages": {
-								"hash": {
-									".validate": "newData.isString()"
-								},
-								"timestamp": {
-									".validate": "newData.val() === now"
 								}
 							}
 						}
