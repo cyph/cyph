@@ -161,13 +161,13 @@ export class ChatService {
 
 			if (o.author !== this.sessionService.localUsername) {
 				await sleep(10000);
-				this.close();
+				await this.close();
 			}
 		}
 	}
 
 	/** This kills the chat. */
-	private close () : void {
+	private async close () : Promise<void> {
 		if (!this.sessionInitService.ephemeral || this.chat.state === States.aborted) {
 			return;
 		}
@@ -177,7 +177,7 @@ export class ChatService {
 		this.scrollService.scrollDown();
 
 		if (!this.chat.isConnected) {
-			this.abortSetup();
+			await this.abortSetup();
 		}
 		else if (!this.chat.isDisconnected) {
 			this.chat.isDisconnected	= true;
@@ -194,11 +194,11 @@ export class ChatService {
 	}
 
 	/** Aborts the process of chat initialisation and authentication. */
-	public abortSetup () : void {
+	public async abortSetup () : Promise<void> {
 		this.chat.state	= States.aborted;
-		this.dialogService.dismissToast();
 		this.sessionService.trigger(events.abort);
 		this.sessionService.close();
+		await this.dialogService.dismissToast();
 	}
 
 	/**
@@ -357,7 +357,7 @@ export class ChatService {
 			ok: this.stringsService.continueDialogAction,
 			title: this.stringsService.disconnectTitle
 		})) {
-			this.close();
+			await this.close();
 		}
 	}
 
@@ -538,9 +538,9 @@ export class ChatService {
 
 			beginChat.then(() => { this.begin(); });
 
-			this.sessionService.one(events.closeChat).then(() => {
-				this.close();
-			});
+			this.sessionService.one(events.closeChat).then(async () =>
+				this.close()
+			);
 
 			this.sessionService.connected.then(async () => {
 				if (callType !== undefined) {
@@ -556,7 +556,7 @@ export class ChatService {
 							this.p2pWebRTCService.accept(callType, true);
 						}
 						else if (this.sessionInitService.ephemeral) {
-							this.close();
+							await this.close();
 							return;
 						}
 
@@ -595,9 +595,9 @@ export class ChatService {
 				this.chat.keyExchangeProgress	= 100;
 			});
 
-			this.sessionService.one(events.connectFailure).then(() => {
-				this.abortSetup();
-			});
+			this.sessionService.one(events.connectFailure).then(async () =>
+				this.abortSetup()
+			);
 
 			this.sessionService.on(rpcEvents.confirm, (o: ISessionMessageData) => {
 				if (!o.textConfirmation || !o.textConfirmation.id) {
