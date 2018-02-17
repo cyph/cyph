@@ -17,6 +17,7 @@ import {AccountPostRegisterComponent} from '../components/account-post-register'
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
+import {BlankComponent} from '../components/blank';
 import {newPatient} from '../forms';
 import {ChatMessageValue} from '../proto';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
@@ -39,6 +40,7 @@ export const account: Route	= {
 		},
 		{path: 'appointments/:appointmentID/forms/:id', component: AccountFormComponent},
 		{path: 'audio/:username', component: AccountChatComponent, data: {callType: 'audio'}},
+		{path: 'chat-transition', component: BlankComponent},
 		{
 			path: 'compose',
 			component: AccountComposeComponent,

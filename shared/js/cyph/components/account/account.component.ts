@@ -76,6 +76,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'',
 			'audio',
 			'appointments',
+			'chat-transition',
 			'compose',
 			'contacts',
 			'docs',
@@ -165,6 +166,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			!this.envService.isTelehealth &&
 			[
 				'',
+				'chat-transition',
 				'messages'
 			].filter(
 				path => this.route === path

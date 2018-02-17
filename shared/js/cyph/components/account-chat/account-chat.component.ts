@@ -130,7 +130,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			}
 
 			if (this.initiated) {
-				this.router.navigate([accountRoot]);
+				this.router.navigate([accountRoot, 'chat-transition']);
 				await sleep(0);
 				this.router.navigate([accountRoot, path, username]);
 				return;
