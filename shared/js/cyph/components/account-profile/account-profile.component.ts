@@ -81,7 +81,7 @@ export class AccountProfileComponent implements OnInit {
 					concat(accountRoot ? [accountRoot] : []).
 					concat(['profile', username])
 				:
-				[accountRoot, 'login']
+				[accountRoot, 'login'].concat(this.home ? [] : ['profile'])
 			);
 			return;
 		}
