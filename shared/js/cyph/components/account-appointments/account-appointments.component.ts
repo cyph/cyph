@@ -5,7 +5,7 @@ import {CalendarComponent} from 'ng-fullcalendar';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
 import {User} from '../../account/user';
-import {IAccountFileRecord, IAppointment} from '../../proto';
+import {AccountUserTypes, IAccountFileRecord, IAppointment} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
@@ -27,6 +27,9 @@ import {filterUndefined} from '../../util/filter';
 	templateUrl: './account-appointments.component.html'
 })
 export class AccountAppointmentsComponent implements AfterViewInit {
+	/** @see AccountUserTypes */
+	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+	
 	/** @ignore */
 	private calendarEvents: {end: number; start: number; title: string}[]	= [];
 

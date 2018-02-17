@@ -417,6 +417,15 @@ export class StringsService {
 	public readonly patient: string						= `patient`;
 
 	/** @see StringsService */
+	public readonly patientForm: string					= `Patient Form`;
+
+	/** @see StringsService */
+	public readonly patientForms: string				= `Patient Forms`;
+
+	/** @see StringsService */
+	public readonly patientFormsMissing: string			= `Patient forms not submitted.`;
+
+	/** @see StringsService */
 	public readonly pin: string							= `PIN`;
 
 	/** @see StringsService */
