@@ -328,7 +328,10 @@ exports.userNotification	=
 					}
 
 					const url	= `users/${notification.target}/${path}`;
-					const count	= await getItem(e.params.namespace, url, NumberProto);
+					const count	= await getItem(e.params.namespace, url, NumberProto).
+						catch(() => 0)
+					;
+
 					await setItem(e.params.namespace, url, NumberProto, count + 1);
 				})()
 			]);
