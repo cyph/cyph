@@ -169,16 +169,13 @@ export class AccountProfileComponent implements OnInit {
 			throw new Error("Cannot modify another user's description.");
 		}
 
-		const draft	= this.descriptionDraft.trim();
+		const draft		= this.descriptionDraft.trim();
+		const profile	= await this.user.accountUserProfile.getValue();
 
-		if (draft !== undefined) {
-			const profile	= await this.user.accountUserProfile.getValue();
-
-			if (profile.description !== draft) {
-				this.accountService.interstitial	= true;
-				profile.description					= draft;
-				await this.user.accountUserProfile.setValue(profile);
-			}
+		if (profile.description !== draft) {
+			this.accountService.interstitial	= true;
+			profile.description					= draft;
+			await this.user.accountUserProfile.setValue(profile);
 		}
 
 		this.accountService.interstitial	= false;
