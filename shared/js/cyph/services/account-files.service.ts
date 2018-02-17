@@ -575,8 +575,18 @@ export class AccountFilesService {
 		const fileType	=
 			typeof id !== 'string' ?
 				id.accountFileRecord.recordType :
-				this.accountDatabaseService.getItem(`fileRecords/${id}`, AccountFileRecord).then(
-					o => o.recordType
+				this.accountDatabaseService.getItem(
+					`fileReferences/${id}`,
+					AccountFileReference
+				).then(o =>
+					this.accountDatabaseService.getItem(
+						`fileRecords/${id}`,
+						AccountFileRecord,
+						undefined,
+						o.key
+					)
+				).then(o =>
+					o.recordType
 				)
 		;
 
