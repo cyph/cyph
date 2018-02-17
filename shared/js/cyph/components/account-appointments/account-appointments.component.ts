@@ -29,7 +29,7 @@ import {filterUndefined} from '../../util/filter';
 export class AccountAppointmentsComponent implements AfterViewInit {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
-	
+
 	/** @ignore */
 	private calendarEvents: {end: number; start: number; title: string}[]	= [];
 
