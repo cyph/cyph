@@ -4,17 +4,18 @@
 	font-size: 60px;
 	font-family: Ubuntu;
 	font-weight: 500;
+	position: relative;
 
-	&:after {
+	> .ellipsis {
 		overflow: hidden;
 		display: inline-block;
 		vertical-align: bottom;
-		content: '\2026';
-
-		/* ascii code for the ellipsis character */
 		width: 0px;
+		position: absolute;
+		bottom: 0px;
+		left: calc(100% + 10px);
 
-		@include animation(ellipsis steps(4, end) 900ms infinite);
+		@include animation(ellipsis steps(4, end) 1200ms infinite);
 	}
 }
 

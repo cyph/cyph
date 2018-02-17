@@ -258,8 +258,12 @@ export class AccountAuthService {
 	}
 
 	/** Logs out. */
-	public async logout (clearSavedCredentials: boolean = true) : Promise<void> {
+	public async logout (clearSavedCredentials: boolean = true) : Promise<boolean> {
 		const currentUser	= this.accountDatabaseService.currentUser.value;
+
+		if (!currentUser) {
+			return false;
+		}
 
 		if (this.statusSaveSubscription) {
 			this.statusSaveSubscription.unsubscribe();
@@ -268,17 +272,17 @@ export class AccountAuthService {
 			this.connectTrackerCleanup();
 			this.connectTrackerCleanup	= undefined;
 		}
-		if (currentUser) {
-			await this.databaseService.unregisterPushNotifications(
-				`users/${currentUser.user.username}/messagingTokens`
-			);
 
-			this.potassiumService.clearMemory(currentUser.keys.symmetricKey);
-			this.potassiumService.clearMemory(currentUser.keys.encryptionKeyPair.privateKey);
-			this.potassiumService.clearMemory(currentUser.keys.signingKeyPair.privateKey);
-			this.potassiumService.clearMemory(currentUser.keys.encryptionKeyPair.publicKey);
-			this.potassiumService.clearMemory(currentUser.keys.signingKeyPair.publicKey);
-		}
+		await this.databaseService.unregisterPushNotifications(
+			`users/${currentUser.user.username}/messagingTokens`
+		);
+
+		this.potassiumService.clearMemory(currentUser.keys.symmetricKey);
+		this.potassiumService.clearMemory(currentUser.keys.encryptionKeyPair.privateKey);
+		this.potassiumService.clearMemory(currentUser.keys.signingKeyPair.privateKey);
+		this.potassiumService.clearMemory(currentUser.keys.encryptionKeyPair.publicKey);
+		this.potassiumService.clearMemory(currentUser.keys.signingKeyPair.publicKey);
+
 		if (clearSavedCredentials) {
 			await Promise.all([
 				this.databaseService.logout(),
@@ -287,6 +291,7 @@ export class AccountAuthService {
 		}
 
 		this.accountDatabaseService.currentUser.next(undefined);
+		return true;
 	}
 
 	/** Registers. */
