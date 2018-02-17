@@ -101,11 +101,6 @@ export class StringsService {
 	public readonly decline: string						= `decline`;
 
 	/** @see StringsService */
-	public readonly defaultDescription: string			=
-		`Check out my lit new video ;). https://youtu.be/oHg5SJYRHA0`
-	;
-
-	/** @see StringsService */
 	public readonly deleteConfirm: string				= `Confirm Deletion`;
 
 	/** @see StringsService */

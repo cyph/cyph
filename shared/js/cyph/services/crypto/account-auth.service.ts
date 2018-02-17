@@ -380,7 +380,7 @@ export class AccountAuthService {
 					BinaryProto,
 					await this.potassiumService.sign.sign(
 						await serialize(AccountUserProfile, {
-							description: this.stringsService.defaultDescription,
+							description: '',
 							externalUsernames: {},
 							hasPremium: false,
 							name,
