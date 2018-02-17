@@ -4,8 +4,10 @@ const functions									= require('firebase-functions');
 const {normalize, retryUntilSuccessful, sleep}	= require('./util');
 
 const {
+	AccountFileRecord,
 	AccountUserProfile,
 	NotificationTypes,
+	NumberProto,
 	StringProto
 }	= require('./proto');
 
@@ -278,27 +280,58 @@ exports.userNotification	=
 				return;
 			}
 
-			const realUsername	= await getRealUsername(e.params.namespace, userRef.key);
+			await Promise.all([
+				(async () => {
+					const realUsername	= await getRealUsername(e.params.namespace, userRef.key);
 
-			const {subject, text}	=
-				notification.type === NotificationTypes.File ?
-					{
-						subject: 'Incoming Data',
-						text: `${realUsername} has shared something with you.`
-					} :
-				notification.type === NotificationTypes.Message ?
-					{
-						subject: 'New Message',
-						text: `${realUsername} has sent a message.`
-					} :
-				/* else */
-					{
-						subject: 'Sup Dog',
-						text: `${realUsername} says yo.`
+					const {subject, text}	=
+						notification.type === NotificationTypes.File ?
+							{
+								subject: 'Incoming Data',
+								text: `${realUsername} has shared something with you.`
+							} :
+						notification.type === NotificationTypes.Message ?
+							{
+								subject: 'New Message',
+								text: `${realUsername} has sent a message.`
+							} :
+						/* else */
+							{
+								subject: 'Sup Dog',
+								text: `${realUsername} says yo.`
+							}
+					;
+
+					await notify(e.params.namespace, notification.target, subject, text, true);
+				})(),
+				(async () => {
+					const path	=
+						notification.type === NotificationTypes.File ?
+							'unreadFileCounts/' +
+								(
+									(
+										!isNaN(notification.subType) &&
+										notification.subType in AccountFileRecord.RecordTypes
+									) ?
+										notification.subType :
+										AccountFileRecord.RecordTypes.File
+								).toString()
+							:
+						notification.type === NotificationTypes.Message ?
+							`unreadMessageCounts/${userRef.key}` :
+						/* else */
+							undefined
+					;
+
+					if (!path) {
+						return;
 					}
-			;
 
-			await notify(e.params.namespace, notification.target, subject, text, true);
+					const url	= `users/${notification.target}/${path}`;
+					const count	= await getItem(e.params.namespace, url, NumberProto);
+					await setItem(e.params.namespace, url, NumberProto, count + 1);
+				})()
+			]);
 		}
 	)
 ;

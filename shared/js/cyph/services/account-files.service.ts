@@ -572,6 +572,14 @@ export class AccountFilesService {
 
 		let accountFileReferenceContainer: IAccountFileReferenceContainer;
 
+		const fileType	=
+			typeof id !== 'string' ?
+				id.accountFileRecord.recordType :
+				this.accountDatabaseService.getItem(`fileRecords/${id}`, AccountFileRecord).then(
+					o => o.recordType
+				)
+		;
+
 		/* Anonymous */
 		if (typeof id !== 'string') {
 			accountFileReferenceContainer	= {anonymousShare: id};
@@ -605,7 +613,7 @@ export class AccountFilesService {
 			)
 		);
 
-		await this.accountDatabaseService.notify(username, NotificationTypes.File);
+		await this.accountDatabaseService.notify(username, NotificationTypes.File, await fileType);
 	}
 
 	/** Overwrites an existing appointment. */

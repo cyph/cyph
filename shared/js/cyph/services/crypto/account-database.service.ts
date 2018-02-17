@@ -792,12 +792,14 @@ export class AccountDatabaseService {
 	/** @see DatabaseService.notify */
 	public async notify (
 		username: MaybePromise<string>,
-		notificationType: NotificationTypes
+		type: NotificationTypes,
+		subType?: number
 	) : Promise<void> {
 		await this.databaseService.notify(
 			await this.normalizeURL('notifications'),
 			username,
-			notificationType
+			type,
+			subType
 		);
 	}
 

@@ -581,6 +581,9 @@
 
 					"notifications": {
 						"$notification": {
+							"subType": {
+								".validate": "newData.isNumber()"
+							},
 							"target": {
 								".validate": "newData.isString()"
 							},
