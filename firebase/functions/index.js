@@ -163,15 +163,10 @@ exports.itemRemoved	=
 
 exports.userConsumeInvite	=
 	functions.database.ref('{namespace}/users/{user}/inviteCode').onCreate(async e => {
-		const userRef		= e.data.ref.parent;
-
-		if (userRef.key.length < 1) {
-			throw new Error('INVALID USER REF');
-		}
-
+		const username		= e.params.user;
 		const inviteCode	= await getItem(
 			e.params.namespace,
-			`users/${userRef.key}/inviteCode`,
+			`users/${username}/inviteCode`,
 			StringProto
 		);
 
@@ -186,7 +181,7 @@ exports.userConsumeInvite	=
 			inviterRef.remove(),
 			setItem(
 				e.params.namespace,
-				`users/${userRef.key}/inviterUsernamePlaintext`,
+				`users/${username}/inviterUsernamePlaintext`,
 				StringProto,
 				inviterUsername
 			),
@@ -203,32 +198,23 @@ exports.userConsumeInvite	=
 
 exports.userDisconnect	=
 	functions.database.ref('{namespace}/users/{user}/clientConnections').onDelete(async e => {
-		const userRef	= e.data.ref.parent;
+		const username	= e.params.user;
 
-		if (userRef.key.length < 1) {
-			throw new Error('INVALID USER REF');
-		}
-
-		return removeItem(e.params.namespace, `users/${userRef.key}/presence`);
+		return removeItem(e.params.namespace, `users/${username}/presence`);
 	})
 ;
 
 
 exports.userEmailSet	=
 	functions.database.ref('{namespace}/users/{user}/email').onWrite(async e => {
-		const userRef	= e.data.ref.parent;
-
-		if (userRef.key.length < 1) {
-			throw new Error('INVALID USER REF');
-		}
-
-		const internalURL				= `${e.params.namespace}/users/${userRef.key}/internal`;
+		const username					= e.params.user;
+		const internalURL				= `${e.params.namespace}/users/${username}/internal`;
 		const emailRef					= database.ref(`${internalURL}/email`);
 		const registrationEmailSentRef	= database.ref(`${internalURL}/registrationEmailSent`);
 
 		const email						= await getItem(
 			e.params.namespace,
-			`users/${userRef.key}/email`,
+			`users/${username}/email`,
 			StringProto
 		).catch(
 			() => undefined
@@ -251,7 +237,7 @@ exports.userEmailSet	=
 			registrationEmailSentRef.set(true),
 			notify(
 				e.params.namespace,
-				userRef.key,
+				username,
 				`Your Registration is Being Processed`,
 				`We've received your registration request, and your account is on the way!\n` +
 					`You'll receive a notification to sign in as soon as one of the Cyph ` +
@@ -268,12 +254,7 @@ exports.userEmailSet	=
 exports.userNotification	=
 	functions.database.ref('{namespace}/users/{user}/notifications/{notification}').onCreate(
 		async e => {
-			const userRef	= e.data.ref.parent;
-
-			if (userRef.key.length < 1) {
-				throw new Error('INVALID USER REF');
-			}
-
+			const username		= e.params.user;
 			const notification	= e.data.val();
 
 			if (!notification || !notification.target || isNaN(notification.type)) {
@@ -282,7 +263,7 @@ exports.userNotification	=
 
 			await Promise.all([
 				(async () => {
-					const realUsername	= await getRealUsername(e.params.namespace, userRef.key);
+					const realUsername	= await getRealUsername(e.params.namespace, username);
 
 					const {subject, text}	=
 						notification.type === NotificationTypes.File ?
@@ -318,7 +299,7 @@ exports.userNotification	=
 								).toString()
 							:
 						notification.type === NotificationTypes.Message ?
-							`unreadMessageCounts/${userRef.key}` :
+							`unreadMessageCounts/${username}` :
 						/* else */
 							undefined
 					;
@@ -342,19 +323,14 @@ exports.userNotification	=
 
 exports.userPublicProfileSet	=
 	functions.database.ref('{namespace}/users/{user}/publicProfile').onWrite(async e => {
-		const userRef	= e.data.ref.parent;
-
-		if (userRef.key.length < 1) {
-			throw new Error('INVALID USER REF');
-		}
-
-		const internalURL		= `${e.params.namespace}/users/${userRef.key}/internal`;
+		const username			= e.params.user;
+		const internalURL		= `${e.params.namespace}/users/${username}/internal`;
 		const nameRef			= database.ref(`${internalURL}/name`);
 		const realUsernameRef	= database.ref(`${internalURL}/realUsername`);
 
 		const publicProfile		= await getItem(
 			e.params.namespace,
-			`users/${userRef.key}/publicProfile`,
+			`users/${username}/publicProfile`,
 			AccountUserProfile,
 			true,
 			true
@@ -366,12 +342,12 @@ exports.userPublicProfileSet	=
 			nameRef.set(
 				publicProfile && publicProfile.name ?
 					publicProfile.name :
-					userRef.key
+					username
 			),
 			realUsernameRef.set(
-				publicProfile && normalize(publicProfile.realUsername) === userRef.key ?
+				publicProfile && normalize(publicProfile.realUsername) === username ?
 					publicProfile.realUsername :
-					userRef.key
+					username
 			)
 		]);
 	})
@@ -404,20 +380,16 @@ exports.userRegister	=
 
 exports.userRegisterConfirmed	=
 	functions.database.ref('{namespace}/users/{user}/certificate').onCreate(async e => {
-		const userRef	= e.data.ref.parent;
-
-		if (userRef.key.length < 1) {
-			throw new Error('INVALID USER REF');
-		}
+		const username	= e.params.user;
 
 		const [name, realUsername]	= await Promise.all([
-			getName(e.params.namespace, userRef.key),
-			getRealUsername(e.params.namespace, userRef.key)
+			getName(e.params.namespace, username),
+			getRealUsername(e.params.namespace, username)
 		]);
 
 		await notify(
 			e.params.namespace,
-			userRef.key,
+			username,
 			`Welcome to Cyph, ${realUsername}`,
 			`Congratulations ${name}, your account is now activated!\n` +
 				`Sign in at https://cyph.me/#login.`
