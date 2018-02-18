@@ -27,11 +27,16 @@ describe('Accounts', () => {
 	/* TODO: Make concurrency-safe */
 	it('uploads file', async () => {
 		await page.logIn();
+		console.log('logged in');
 		page.clickElement(page.elements.menu.files);
 		await page.deleteAllFiles();
+		console.log('deleted all files');
 		expect(await page.elements.files.firstFile().isPresent()).toBe(false);
+		console.log('uploading file');
 		await page.elements.files.upload().sendKeys(page.filePath);
+		console.log('uploaded file');
 		await page.waitForElement(page.elements.files.firstFile);
+		console.log('waited for file list item');
 		expect(await page.elements.files.firstFile().isPresent()).toBe(true);
 	});
 });
