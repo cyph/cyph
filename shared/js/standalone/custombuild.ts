@@ -51,7 +51,7 @@ if (environment.customBuild) {
 		document.head.appendChild(style);
 	}
 
-	if (environment.customBuild.favicon) {
+	if (environment.customBuild.favicon && environment.customBuild.favicon.length > 0) {
 		const faviconURI	=
 			`data:image/png;base64,${potassiumUtil.toBase64(environment.customBuild.favicon)}`
 		;
