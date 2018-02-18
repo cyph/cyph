@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {User} from '../account/user';
-import {BinaryProto, SessionMessage, StringProto} from '../proto';
+import {BinaryProto, ISessionMessage, SessionMessage, StringProto} from '../proto';
 import {ISessionMessageData, rpcEvents} from '../session';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
@@ -57,7 +57,12 @@ export class AccountSessionService extends SessionService {
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {}
 
-	/** @ignore */
+	/** @inheritDoc */
+	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
+		await super.channelOnOpen(isAlice, false);
+	}
+
+	/** @inheritDoc */
 	protected async getSessionMessageAuthor (
 		message: ISessionMessageData
 	) : Promise<Observable<string>|void> {
@@ -70,6 +75,11 @@ export class AccountSessionService extends SessionService {
 		if (user) {
 			return user.realUsername;
 		}
+	}
+
+	/** @inheritDoc */
+	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
+		await this.castleSendMessages(messages);
 	}
 
 	/** Sets the remote user we're chatting with. */

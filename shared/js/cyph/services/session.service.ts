@@ -143,6 +143,11 @@ export abstract class SessionService implements ISessionService {
 		wasInitiatedByAPI: false
 	};
 
+	/** Sends messages through Castle. */
+	protected async castleSendMessages (messages: ISessionMessage[]) : Promise<void> {
+		await this.castleService.send(await serialize(SessionMessageList, {messages}));
+	}
+
 	/** @see IChannelHandlers.onClose */
 	protected async channelOnClose () : Promise<void> {
 		this.destroy();
@@ -161,9 +166,13 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @see IChannelHandlers.onOpen */
-	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
+	protected async channelOnOpen (isAlice: boolean, sendLoop: boolean = true) : Promise<void> {
 		this.state.isAlice	= isAlice;
 		this.resolveOpened();
+
+		if (!sendLoop) {
+			return;
+		}
 
 		while (this.state.isAlive) {
 			await sleep(this.plaintextSendInterval);
@@ -182,7 +191,7 @@ export abstract class SessionService implements ISessionService {
 				reduce((a, b) => a.concat(b), [])
 			;
 
-			await this.castleService.send(await serialize(SessionMessageList, {messages}));
+			await this.castleSendMessages(messages);
 
 			for (const {resolve} of messageGroups) {
 				resolve();
