@@ -4,7 +4,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {LockFunction} from '../lock-function-type';
-import {ChannelMessage, StringProto} from '../proto';
+import {ChannelMessage, IChannelMessage, StringProto} from '../proto';
 import {IChannelService} from '../service-interfaces/ichannel.service';
 import {IChannelHandlers} from '../session';
 import {lockFunction} from '../util/lock';
@@ -182,7 +182,7 @@ export class ChannelService implements IChannelService {
 
 	/** @inheritDoc */
 	public async send (cyphertext: Uint8Array) : Promise<void> {
-		await this.localLock(async () => this.databaseService.pushItem(
+		await this.localLock(async () => this.databaseService.pushItem<IChannelMessage>(
 			`${(await this.state).url}/messages`,
 			ChannelMessage,
 			{author: await waitForValue(() => this.userID), cyphertext}
