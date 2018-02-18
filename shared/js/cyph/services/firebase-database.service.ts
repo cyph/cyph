@@ -454,7 +454,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public async pushItem<T> (
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
-		value: T|((key: string, previousKey?: string) => MaybePromise<T>)
+		value: T|((key: string, previousKey: () => Promise<string|undefined>) => MaybePromise<T>)
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -464,7 +464,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () =>
 			this.lock(`pushlocks/${url}`, async () => {
 				const listRef	= await this.getDatabaseRef(url);
-				const key		= listRef.push().key;
+				const itemRef	= await listRef.push({timestamp: ServerValue.TIMESTAMP});
+				const key		= itemRef.key;
 
 				if (!key) {
 					throw new Error(`Failed to push item to ${url}.`);
@@ -475,15 +476,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 					endAt(key).
 					limitToLast(2).
 					once('child_added').
-					then(o => o.key ? o.key : undefined).
+					then(o => o.key && o.key !== key ? o.key : undefined).
 					catch(() => undefined)
 				;
 
-				return this.setItem(
-					`${url}/${key}`,
-					proto,
-					typeof value !== 'function' ? value : await value(key, await previousKey())
-				);
+				if (typeof value === 'function') {
+					value	= await value(key, previousKey);
+				}
+
+				await itemRef.remove();
+
+				return this.setItem(`${url}/${key}`, proto, value);
 			})
 		);
 	}
@@ -989,7 +992,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 				/* tslint:disable-next-line:no-null-keyword */
 				const onChildAdded	= (snapshot: DataSnapshot|null, previousKey?: string|null) => {
 					this.ngZone.run(() => {
-						if (!snapshot || !snapshot.exists() || !snapshot.key) {
+						if (
+							!snapshot ||
+							!snapshot.exists() ||
+							!snapshot.key ||
+							typeof (snapshot.val() || {}).hash !== 'string'
+						) {
 							return;
 						}
 
@@ -1076,7 +1084,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 						snapshot: DataSnapshot|null,
 						previousKey?: string|null
 					) => {
-						if (!snapshot || !snapshot.key) {
+						if (
+							!snapshot ||
+							!snapshot.key ||
+							typeof (snapshot.val() || {}).hash !== 'string'
+						) {
 							return;
 						}
 

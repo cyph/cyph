@@ -896,7 +896,7 @@ export class AccountDatabaseService {
 						value,
 						securityModel,
 						customKey,
-						immutable ? (previousKey || '') : undefined
+						immutable ? ((await previousKey()) || '') : undefined
 					),
 					!immutable ? Promise.resolve() : this.setItem(
 						`${url}-head`,
