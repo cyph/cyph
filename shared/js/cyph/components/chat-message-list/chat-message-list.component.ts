@@ -208,7 +208,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 									return {
 										message: cached.message,
 										pending: false
-									}
+									};
 								}
 							}
 
@@ -264,7 +264,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 					)
 				))).sort((a, b) =>
 					a.message.timestamp - b.message.timestamp
-				)
+				);
 			})),
 			unconfirmedMessages: chat.unconfirmedMessages
 		}));
