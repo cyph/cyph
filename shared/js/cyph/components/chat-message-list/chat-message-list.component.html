@@ -57,7 +57,7 @@
 							[matTooltip]='stringsService.friendIsTyping'
 							cyphTranslate
 							class='ellipsis-spinner'
-							*ngIf='item.isFriendTyping | async'
+							*ngIf='!item.accounts && (item.isFriendTyping | async)'
 							[@fadeInOut]='"in"'
 						>
 							<div class='bounce1'></div>
