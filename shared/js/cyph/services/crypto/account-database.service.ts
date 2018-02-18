@@ -223,7 +223,8 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		securityModel: SecurityModels,
 		customKey: MaybePromise<Uint8Array>|undefined,
-		anonymous: boolean = false
+		anonymous: boolean = false,
+		moreAdditionalData?: string
 	) : Promise<{
 		progress: Observable<number>;
 		result: ITimedValue<T>;
@@ -255,15 +256,39 @@ export class AccountDatabaseService {
 	}
 
 	/** @ignore */
+	private async getListInternal<T> (
+		keys: string[],
+		url: string,
+		proto: IProto<T>,
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: MaybePromise<Uint8Array>,
+		anonymous: boolean = false,
+		immutable: boolean = true
+	) : Promise<ITimedValue<T>[]> {
+		return Promise.all(keys.map(async (k, i) =>
+			(await this.getItemInternal(
+				`${url}/${k}`,
+				proto,
+				securityModel,
+				customKey,
+				anonymous,
+				!immutable ? undefined : i > 0 ? keys[i - 1] : ''
+			)).result
+		));
+	}
+
+	/** @ignore */
 	private async open<T> (
 		url: MaybePromise<string>,
 		proto: IProto<T>,
 		securityModel: SecurityModels,
 		data: Uint8Array,
 		customKey: MaybePromise<Uint8Array>|undefined,
-		anonymous: boolean = false
+		anonymous: boolean = false,
+		moreAdditionalData?: string
 	) : Promise<T> {
 		url	= await url;
+		url	= moreAdditionalData !== undefined ? `${url}?${moreAdditionalData}` : url;
 
 		const currentUser	= anonymous ? undefined : await this.getCurrentUser();
 
@@ -317,9 +342,11 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		value: T,
 		securityModel: SecurityModels,
-		customKey: MaybePromise<Uint8Array>|undefined
+		customKey: MaybePromise<Uint8Array>|undefined,
+		moreAdditionalData?: string
 	) : Promise<Uint8Array> {
 		url			= await this.normalizeURL(url);
+		url			= moreAdditionalData !== undefined ? `${url}?${moreAdditionalData}` : url;
 		const data	= await serialize(proto, value);
 
 		switch (securityModel) {
@@ -381,7 +408,8 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
-		anonymous: boolean = false
+		anonymous: boolean = false,
+		immutable: boolean = true
 	) : IAsyncList<T> {
 		const localLock	= lockFunction();
 
@@ -390,23 +418,29 @@ export class AccountDatabaseService {
 		const asyncList: IAsyncList<T>	= {
 			clear: async () => localLock(async () => this.removeItem(url)),
 			getValue: async () => localLock(async () =>
-				this.getList(url, proto, securityModel, customKey, anonymous)
+				this.getList(url, proto, securityModel, customKey, anonymous, immutable)
 			),
 			lock: async (f, reason) => this.lock(url, f, reason),
 			pushValue: async value => localLock(async () => {
-				await this.pushItem(url, proto, value, securityModel, customKey);
+				await this.pushItem(url, proto, value, securityModel, customKey, immutable);
 			}),
 			setValue: async value => localLock(async () =>
-				this.setList(url, proto, value, securityModel, customKey)
+				this.setList(url, proto, value, securityModel, customKey, immutable)
 			),
-			subscribeAndPop: f => this.subscribeAndPop(
-				url,
-				proto,
-				f,
-				securityModel,
-				customKey,
-				anonymous
-			),
+			subscribeAndPop: f => {
+				if (immutable) {
+					throw new Error('Cannot subscribeAndPop immutable list.');
+				}
+
+				return this.subscribeAndPop(
+					url,
+					proto,
+					f,
+					securityModel,
+					customKey,
+					anonymous
+				);
+			},
 			updateValue: async f => asyncList.lock(async () =>
 				asyncList.setValue(await f(await asyncList.getValue()))
 			),
@@ -415,7 +449,8 @@ export class AccountDatabaseService {
 				proto,
 				securityModel,
 				customKey,
-				anonymous
+				anonymous,
+				immutable
 			).pipe(map<ITimedValue<T>[], T[]>(
 				arr => arr.map(o => o.value)
 			))),
@@ -424,7 +459,8 @@ export class AccountDatabaseService {
 				proto,
 				securityModel,
 				customKey,
-				anonymous
+				anonymous,
+				immutable
 			).pipe(map<ITimedValue<T>, T>(
 				o => o.value
 			)))
@@ -620,12 +656,22 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
-		anonymous: boolean = false
+		anonymous: boolean = false,
+		immutable: boolean = true
 	) : Promise<T[]> {
 		url	= await this.normalizeURL(url);
-		return Promise.all((await this.getListKeys(url)).map(async k =>
-			this.getItem(`${url}/${k}`, proto, securityModel, customKey, anonymous)
-		));
+
+		return (await this.getListInternal(
+			await this.getListKeys(url),
+			url,
+			proto,
+			securityModel,
+			customKey,
+			anonymous,
+			immutable
+		)).map(o =>
+			o.value
+		);
 	}
 
 	/** @see DatabaseService.getListKeys */
@@ -812,12 +858,20 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		value: T,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: MaybePromise<Uint8Array>
+		customKey?: MaybePromise<Uint8Array>,
+		immutable: boolean = true
 	) : Promise<{hash: string; url: string}> {
 		return this.databaseService.pushItem(
 			await this.normalizeURL(url),
 			BinaryProto,
-			await this.seal(url, proto, value, securityModel, customKey)
+			async (key, previousKey) => this.seal(
+				`${url}/${key}`,
+				proto,
+				value,
+				securityModel,
+				customKey,
+				immutable ? (previousKey || '') : undefined
+			)
 		);
 	}
 
@@ -849,18 +903,23 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		value: T[],
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: MaybePromise<Uint8Array>
+		customKey?: MaybePromise<Uint8Array>,
+		immutable: boolean = true
 	) : Promise<void> {
-		return this.lock(url, async () => this.databaseService.setList(
-			await this.normalizeURL(url),
-			BinaryProto,
-			await Promise.all(value.map(async v =>
-				this.seal(url, proto, v, securityModel, customKey)
-			))
-		));
+		url	= await this.normalizeURL(url);
+
+		return this.lock(url, async () => {
+			await this.removeItem(url);
+			for (const v of value) {
+				await this.pushItem(url, proto, v, securityModel, customKey, immutable);
+			}
+		});
 	}
 
-	/** @see DatabaseService.subscribeAndPop */
+	/**
+	 * @see DatabaseService.subscribeAndPop
+	 * Note: Can only be used with mutable lists. Decryption will fail otherwise.
+	 */
 	public subscribeAndPop<T> (
 		url: MaybePromise<string>,
 		proto: IProto<T>,
@@ -869,7 +928,7 @@ export class AccountDatabaseService {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Subscription {
-		return this.watchListKeyPushes(url).subscribe(async key => {
+		return this.watchListKeyPushes(url).subscribe(async ({key}) => {
 			try {
 				const fullURL	= `${url}/${key}`;
 				await f(await this.getItem(fullURL, proto, securityModel, customKey, anonymous));
@@ -993,42 +1052,30 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
-		anonymous: boolean = false
+		anonymous: boolean = false,
+		immutable: boolean = true
 	) : Observable<ITimedValue<T>[]> {
 		return cacheObservable(
-			this.watchCurrentUser(anonymous).pipe(
-				mergeMap(async () => {
-					const processedURL	= await this.normalizeURL(url);
-
-					return this.databaseService.watchList(
-						processedURL,
-						BinaryProto
-					).pipe(mergeMap(async list =>
-						Promise.all(list.map(async data => ({
-							timestamp: data.timestamp,
-							value: await this.open(
-								processedURL,
-								proto,
-								securityModel,
-								data.value,
-								customKey,
-								anonymous
-							).catch(
-								() => proto.create()
-							)
-						})))
-					));
-				}),
-				mergeMap(
-					o => o
-				)
+			this.watchListKeys(url).pipe(
+				mergeMap(async keys => this.getListInternal(
+					keys,
+					await this.normalizeURL(url),
+					proto,
+					securityModel,
+					customKey,
+					anonymous,
+					immutable
+				))
 			),
 			[]
 		);
 	}
 
 	/** @see DatabaseService.watchListKeyPushes */
-	public watchListKeyPushes (url: MaybePromise<string>) : Observable<string> {
+	public watchListKeyPushes (url: MaybePromise<string>) : Observable<{
+		key: string;
+		previousKey?: string;
+	}> {
 		return this.currentUser.pipe(
 			mergeMap(async () =>
 				this.databaseService.watchListKeyPushes(await this.normalizeURL(url))
@@ -1060,7 +1107,8 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
-		anonymous: boolean = false
+		anonymous: boolean = false,
+		immutable: boolean = true
 	) : Observable<ITimedValue<T>> {
 		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
@@ -1073,12 +1121,13 @@ export class AccountDatabaseService {
 					).pipe(mergeMap(async data => ({
 						timestamp: data.timestamp,
 						value: await this.open(
-							processedURL,
+							`${processedURL}/${data.key}`,
 							proto,
 							securityModel,
 							data.value,
 							customKey,
-							anonymous
+							anonymous,
+							immutable ? (data.previousKey || '') : undefined
 						)
 					})));
 				}),

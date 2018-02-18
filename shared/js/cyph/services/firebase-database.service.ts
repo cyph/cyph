@@ -454,16 +454,38 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public async pushItem<T> (
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
-		value: T
+		value: T|((key: string, previousKey?: string) => MaybePromise<T>)
 	) : Promise<{
 		hash: string;
 		url: string;
 	}> {
 		const url	= await urlPromise;
 
-		return this.ngZone.runOutsideAngular(async () => this.lock(`pushlocks/${url}`, async () =>
-			this.setItem(`${url}/${(await this.getDatabaseRef(url)).push().key}`, proto, value)
-		));
+		return this.ngZone.runOutsideAngular(async () =>
+			this.lock(`pushlocks/${url}`, async () => {
+				const listRef	= await this.getDatabaseRef(url);
+				const key		= listRef.push().key;
+
+				if (!key) {
+					throw new Error(`Failed to push item to ${url}.`);
+				}
+
+				const previousKey	= async () : Promise<string|undefined> => listRef.
+					orderByKey().
+					endAt(key).
+					limitToLast(2).
+					once('child_added').
+					then(o => o.key ? o.key : undefined).
+					catch(() => undefined)
+				;
+
+				return this.setItem(
+					`${url}/${key}`,
+					proto,
+					typeof value !== 'function' ? value : await value(key, await previousKey())
+				);
+			})
+		);
 	}
 
 	/** @inheritDoc */
@@ -949,8 +971,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public watchListKeyPushes (urlPromise: MaybePromise<string>) : Observable<string> {
-		return this.ngZone.runOutsideAngular(() => new Observable<string>(observer => {
+	public watchListKeyPushes (urlPromise: MaybePromise<string>) : Observable<{
+		key: string;
+		previousKey?: string;
+	}> {
+		return this.ngZone.runOutsideAngular(() => new Observable<{
+			key: string;
+			previousKey?: string;
+		}>(observer => {
 			let cleanup: Function;
 
 			(async () => {
@@ -959,13 +987,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const listRef	= await this.getDatabaseRef(url);
 
 				/* tslint:disable-next-line:no-null-keyword */
-				const onChildAdded	= (snapshot: DataSnapshot|null) => {
+				const onChildAdded	= (snapshot: DataSnapshot|null, previousKey?: string|null) => {
 					this.ngZone.run(() => {
 						if (!snapshot || !snapshot.exists() || !snapshot.key) {
 							return;
 						}
 
-						observer.next(snapshot.key);
+						observer.next({key: snapshot.key, previousKey: previousKey || undefined});
 					});
 				};
 
@@ -1028,9 +1056,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 		proto: IProto<T>,
 		completeOnEmpty: boolean = false,
 		noCache: boolean = false
-	) : Observable<ITimedValue<T>&{url: string}> {
+	) : Observable<ITimedValue<T>&{key: string; previousKey?: string; url: string}> {
 		return this.ngZone.runOutsideAngular(() =>
-			new Observable<ITimedValue<T>&{url: string}>(observer => {
+			new Observable<ITimedValue<T>&{
+				key: string;
+				previousKey?: string;
+				url: string;
+			}>(observer => {
 				let cleanup: Function;
 
 				(async () => {
@@ -1040,18 +1072,28 @@ export class FirebaseDatabaseService extends DatabaseService {
 					let initiated	= false;
 
 					/* tslint:disable-next-line:no-null-keyword */
-					const onChildAdded	= async (snapshot: DataSnapshot|null) => {
+					const onChildAdded	= async (
+						snapshot: DataSnapshot|null,
+						previousKey?: string|null
+					) => {
 						if (!snapshot || !snapshot.key) {
 							return;
 						}
 
-						const itemUrl				= `${url}/${snapshot.key}`;
+						const key					= snapshot.key;
+						const itemUrl				= `${url}/${key}`;
 						const {timestamp, value}	=
 							await (await this.downloadItem(itemUrl, proto)).result
 						;
 
 						this.ngZone.run(() => {
-							observer.next({timestamp, url: itemUrl, value});
+							observer.next({
+								key,
+								previousKey: previousKey || undefined,
+								timestamp,
+								url: itemUrl,
+								value
+							});
 						});
 
 						if (noCache) {

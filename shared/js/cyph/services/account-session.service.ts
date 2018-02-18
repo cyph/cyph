@@ -88,7 +88,11 @@ export class AccountSessionService extends SessionService {
 
 			this.incomingMessageQueue		= this.accountDatabaseService.getAsyncList(
 				`${sessionURL}/incomingMessageQueue`,
-				SessionMessage
+				SessionMessage,
+				undefined,
+				undefined,
+				undefined,
+				false
 			);
 
 			this.incomingMessageQueueLock	= this.accountDatabaseService.lockFunction(

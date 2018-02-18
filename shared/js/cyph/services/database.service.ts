@@ -293,7 +293,7 @@ export class DatabaseService extends DataManagerService {
 	public async pushItem<T> (
 		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>,
-		_VALUE: T
+		_VALUE: T|((key: string, previousKey?: string) => MaybePromise<T>)
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -361,7 +361,7 @@ export class DatabaseService extends DataManagerService {
 		proto: IProto<T>,
 		f: (value: T) => MaybePromise<void>
 	) : Subscription {
-		return this.watchListKeyPushes(url).subscribe(async key => {
+		return this.watchListKeyPushes(url).subscribe(async ({key}) => {
 			try {
 				const fullURL	= `${url}/${key}`;
 				await f(await this.getItem(fullURL, proto));
@@ -423,7 +423,10 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Subscribes to new keys of a list. */
-	public watchListKeyPushes (_URL: MaybePromise<string>) : Observable<string> {
+	public watchListKeyPushes (_URL: MaybePromise<string>) : Observable<{
+		key: string;
+		previousKey?: string;
+	}> {
 		throw new Error('Must provide an implementation of DatabaseService.watchListKeyPushes.');
 	}
 
@@ -438,7 +441,7 @@ export class DatabaseService extends DataManagerService {
 		_PROTO: IProto<T>,
 		_COMPLETE_ON_EMPTY: boolean = false,
 		_NO_CACHE: boolean = false
-	) : Observable<ITimedValue<T>&{url: string}> {
+	) : Observable<ITimedValue<T>&{key: string; previousKey?: string; url: string}> {
 		throw new Error('Must provide an implementation of DatabaseService.watchListPushes.');
 	}
 

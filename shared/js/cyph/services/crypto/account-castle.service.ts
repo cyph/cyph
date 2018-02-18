@@ -101,7 +101,11 @@ export class AccountCastleService extends CastleService {
 							),
 							this.accountDatabaseService.getAsyncList(
 								`${sessionURL}/outgoingMessageQueue`,
-								BinaryProto
+								BinaryProto,
+								undefined,
+								undefined,
+								undefined,
+								false
 							),
 							this.accountDatabaseService.lockFunction(`${sessionURL}/receiveLock`),
 							this.accountDatabaseService.lockFunction(`${sessionURL}/sendLock`),

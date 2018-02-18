@@ -88,7 +88,11 @@ export class AccountFilesService {
 		cacheObservable(
 			this.accountDatabaseService.watchList(
 				'fileReferences',
-				AccountFileReference
+				AccountFileReference,
+				undefined,
+				undefined,
+				undefined,
+				false
 			).pipe(
 				mergeMap(async references => filterUndefined(await Promise.all(
 					references.map(async ({value}) => {
