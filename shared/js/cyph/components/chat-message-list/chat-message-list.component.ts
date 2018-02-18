@@ -162,7 +162,10 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		}
 
 		this.scrollService.init(
+			/* Pending virtual scrolling:
 			$(this.elementRef.nativeElement).children().children().first(),
+			*/
+			$(this.elementRef.nativeElement).children().first(),
 			this.messageCountInTitle
 		);
 	}

@@ -281,7 +281,10 @@ export class ChatService {
 					timestamp
 				};
 
-				if (!this.sessionInitService.ephemeral) {
+				if (this.sessionInitService.ephemeral) {
+					await this.chat.messages.pushValue(chatMessage);
+				}
+				else {
 					await this.chat.pendingMessages.pushValue({
 						...chatMessage,
 						pending: true,
@@ -289,16 +292,18 @@ export class ChatService {
 					});
 				}
 
-				await this.chat.messages.pushValue(chatMessage);
+				if (author === this.sessionService.localUsername) {
+					await this.scrollService.scrollDown();
+				}
+				else if (author === this.sessionService.remoteUsername) {
+					await this.scrollService.trackItem(id);
+				}
+
+				if (!this.sessionInitService.ephemeral) {
+					await this.chat.messages.pushValue(chatMessage);
+				}
 			})()
 		]);
-
-		if (author === this.sessionService.localUsername) {
-			this.scrollService.scrollDown();
-		}
-		else if (author === this.sessionService.remoteUsername) {
-			this.scrollService.trackItem(id);
-		}
 
 		if (
 			selfDestructTimeout !== undefined &&
