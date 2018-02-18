@@ -252,7 +252,8 @@ export class AccountDatabaseService {
 					securityModel,
 					result.value,
 					customKey,
-					anonymous
+					anonymous,
+					moreAdditionalData
 				)
 			}
 		};
