@@ -1,5 +1,4 @@
 import {AccountsPage} from './accounts.po';
-import { setTimeout } from 'timers';
 
 
 describe('Accounts', () => {
