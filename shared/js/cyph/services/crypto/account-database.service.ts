@@ -271,9 +271,10 @@ export class AccountDatabaseService {
 		immutable: boolean = true
 	) : Promise<ITimedValue<T>[]> {
 		if (head !== undefined) {
-			while (keys.length > 0 && keys[keys.length - 1] !== head) {
-				keys.pop();
-			}
+			keys	= keys.slice(0, keys.lastIndexOf(head) + 1);
+		}
+		else if (immutable) {
+			return [];
 		}
 
 		return Promise.all(keys.map(async (k, i) =>
@@ -889,17 +890,9 @@ export class AccountDatabaseService {
 		return this.databaseService.pushItem(
 			await this.normalizeURL(url),
 			BinaryProto,
-			async (key, previousKey) => {
-				const [sealed]	= await Promise.all([
-					this.seal(
-						`${url}/${key}`,
-						proto,
-						value,
-						securityModel,
-						customKey,
-						immutable ? ((await previousKey()) || '') : undefined
-					),
-					!immutable ? Promise.resolve() : this.setItem(
+			async (key, previousKey, o) => {
+				if (immutable) {
+					o.callback	= async () => this.setItem(
 						`${url}-head`,
 						StringProto,
 						key,
@@ -907,10 +900,17 @@ export class AccountDatabaseService {
 						customKey
 					).then(
 						() => {}
-					)
-				]);
+					);
+				}
 
-				return sealed;
+				return this.seal(
+					`${url}/${key}`,
+					proto,
+					value,
+					securityModel,
+					customKey,
+					immutable ? ((await previousKey()) || '') : undefined
+				);
 			}
 		);
 	}
@@ -1095,6 +1095,8 @@ export class AccountDatabaseService {
 		anonymous: boolean = false,
 		immutable: boolean = true
 	) : Observable<ITimedValue<T>[]> {
+		const cache: {head?: string; keys: number; value: ITimedValue<T>[]}	= {keys: 0, value: []};
+
 		return cacheObservable(
 			combineLatest(
 				this.watchListKeys(url),
@@ -1106,16 +1108,34 @@ export class AccountDatabaseService {
 					anonymous
 				)
 			).pipe(
-				mergeMap(async ([keys, head]) => this.getListInternal(
-					!isNaN(head.timestamp) ? head.value : undefined,
-					keys,
-					await this.normalizeURL(url),
-					proto,
-					securityModel,
-					customKey,
-					anonymous,
-					immutable
-				))
+				mergeMap(async ([keys, head]) => {
+					const headValue	= !isNaN(head.timestamp) ? head.value : undefined;
+
+					const getValue	= async () => this.getListInternal(
+						headValue,
+						keys,
+						await this.normalizeURL(url),
+						proto,
+						securityModel,
+						customKey,
+						anonymous,
+						immutable
+					);
+
+					if (!immutable) {
+						return getValue();
+					}
+					if (headValue === undefined) {
+						return [];
+					}
+					if (headValue !== cache.head) {
+						cache.head	= headValue;
+						cache.keys	= keys.length;
+						cache.value	= await getValue();
+					}
+
+					return cache.value;
+				})
 			),
 			[]
 		);

@@ -3,15 +3,16 @@
  * @returns True if equal, false otherwise.
  */
 export const compareArrays	= <T> (a: T[], b: T[], ...arrays: T[][]) : boolean => {
-	arrays	= arrays.concat([b]);
+	const length	= a.length;
+	arrays			= arrays.concat([b]);
 
-	if (arrays.filter(arr => arr.length !== a.length).length > 0) {
+	if (arrays.find(arr => arr.length !== length)) {
 		return false;
 	}
 
-	for (const array of arrays) {
+	for (const arr of arrays) {
 		for (let j = 0 ; j < length ; ++j) {
-			if (array[j] !== a[j]) {
+			if (arr[j] !== a[j]) {
 				return false;
 			}
 		}

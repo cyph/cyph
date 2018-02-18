@@ -293,7 +293,11 @@ export class DatabaseService extends DataManagerService {
 	public async pushItem<T> (
 		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>,
-		_VALUE: T|((key: string, previousKey: () => Promise<string|undefined>) => MaybePromise<T>)
+		_VALUE: T|((
+			key: string,
+			previousKey: () => Promise<string|undefined>,
+			o: {callback?: () => MaybePromise<void>}
+		) => MaybePromise<T>)
 	) : Promise<{
 		hash: string;
 		url: string;

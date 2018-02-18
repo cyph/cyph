@@ -454,7 +454,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public async pushItem<T> (
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
-		value: T|((key: string, previousKey: () => Promise<string|undefined>) => MaybePromise<T>)
+		value: T|((
+			key: string,
+			previousKey: () => Promise<string|undefined>,
+			o: {callback?: () => MaybePromise<void>}
+		) => MaybePromise<T>)
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -480,13 +484,21 @@ export class FirebaseDatabaseService extends DatabaseService {
 					catch(() => undefined)
 				;
 
+				const o: {callback?: () => Promise<void>}	= {};
+
 				if (typeof value === 'function') {
-					value	= await value(key, previousKey);
+					value	= await value(key, previousKey, o);
 				}
 
 				await itemRef.remove();
 
-				return this.setItem(`${url}/${key}`, proto, value);
+				const result	= await this.setItem(`${url}/${key}`, proto, value);
+
+				if (o.callback) {
+					await o.callback();
+				}
+
+				return result;
 			})
 		);
 	}
@@ -1027,7 +1039,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				const listRef	= await this.getDatabaseRef(url);
 
-				let keys: string[];
+				let keys: string[]|undefined;
 
 				/* tslint:disable-next-line:no-null-keyword */
 				const onValue	= (snapshot: DataSnapshot|null) => {
@@ -1035,14 +1047,22 @@ export class FirebaseDatabaseService extends DatabaseService {
 						return;
 					}
 
-					const newKeys	= Object.keys(snapshot.val() || {});
+					const val: any	= snapshot.val() || {};
+					const newKeys	= Object.keys(val);
+
+					for (let i = newKeys.length - 1 ; i >= 0 ; --i) {
+						const o	= val[newKeys[i]];
+						if (!o || typeof o.hash !== 'string') {
+							return;
+						}
+					}
 
 					if (keys && compareArrays(keys, newKeys)) {
 						return;
 					}
 
-					keys	= newKeys;
-					this.ngZone.run(() => { observer.next(keys); });
+					keys	= Array.from(newKeys);
+					this.ngZone.run(() => { observer.next(newKeys); });
 				};
 
 				listRef.on('value', onValue);
