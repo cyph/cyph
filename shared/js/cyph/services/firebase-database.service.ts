@@ -480,7 +480,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					endAt(key).
 					limitToLast(2).
 					once('child_added').
-					then(o => o.key && o.key !== key ? o.key : undefined).
+					then(child => child.key && child.key !== key ? child.key : undefined).
 					catch(() => undefined)
 				;
 
