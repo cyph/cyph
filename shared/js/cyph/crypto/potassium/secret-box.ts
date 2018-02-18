@@ -208,17 +208,18 @@ export class SecretBox implements ISecretBox {
 		key: Uint8Array,
 		additionalData?: Uint8Array|string
 	) : Promise<Uint8Array> {
-		if (typeof additionalData === 'string') {
-			additionalData	= potassiumUtil.fromString(additionalData);
-		}
+		const additionalDataBytes	= typeof additionalData === 'string' ?
+			potassiumUtil.fromString(additionalData) :
+			additionalData
+		;
 
 		if (this.isNative) {
-			return this.openChunk(cyphertext, key, additionalData);
+			return this.openChunk(cyphertext, key, additionalDataBytes);
 		}
 
 		return potassiumUtil.concatMemory(true, ...(await Promise.all(
 			potassiumUtil.splitBytes(cyphertext).map(async c =>
-				this.openChunk(c, key)
+				this.openChunk(c, key, additionalDataBytes)
 			)
 		)));
 	}
@@ -229,17 +230,18 @@ export class SecretBox implements ISecretBox {
 		key: Uint8Array,
 		additionalData?: Uint8Array|string
 	) : Promise<Uint8Array> {
-		if (typeof additionalData === 'string') {
-			additionalData	= potassiumUtil.fromString(additionalData);
-		}
+		const additionalDataBytes	= typeof additionalData === 'string' ?
+			potassiumUtil.fromString(additionalData) :
+			additionalData
+		;
 
 		if (this.isNative) {
-			return this.sealChunk(plaintext, key, additionalData);
+			return this.sealChunk(plaintext, key, additionalDataBytes);
 		}
 
 		return potassiumUtil.joinBytes(...(await Promise.all(
 			potassiumUtil.chunkBytes(plaintext, this.chunkSize).map(async m =>
-				this.sealChunk(m, key)
+				this.sealChunk(m, key, additionalDataBytes)
 			)
 		)));
 	}
