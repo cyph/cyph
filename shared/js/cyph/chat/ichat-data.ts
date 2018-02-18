@@ -2,6 +2,7 @@ import {Subject} from 'rxjs/Subject';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
+import {LocalAsyncList} from '../local-async-list';
 import {LockFunction} from '../lock-function-type';
 import {IChatLastConfirmedMessage, IChatMessage, IChatMessageValue} from '../proto';
 import {States} from './enums';
@@ -38,6 +39,9 @@ export interface IChatData {
 
 	/** Map of message IDs to values. */
 	messageValues: IAsyncMap<string, IChatMessageValue>;
+
+	/** Local message outbox. */
+	pendingMessages: LocalAsyncList<IChatMessage&{pending: true}>;
 
 	/** The previous message sent. */
 	previousMessage?: string;

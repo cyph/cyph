@@ -3,10 +3,12 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {take} from 'rxjs/operators/take';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
+import {LocalAsyncList} from '../local-async-list';
 import {
 	ChatLastConfirmedMessage,
 	ChatMessage,
 	ChatMessageValue,
+	IChatMessage,
 	NotificationTypes
 } from '../proto';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -110,6 +112,7 @@ export class AccountChatService extends ChatService {
 				`${contactURL}/messageValues`,
 				ChatMessageValue
 			),
+			pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
 			receiveTextLock: this.accountDatabaseService.lockFunction(
 				`${contactURL}/receiveTextLock`
 			),

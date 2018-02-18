@@ -20,6 +20,7 @@ import {mergeMap} from 'rxjs/operators/mergeMap';
 import {User} from '../../account/user';
 import {fadeInOut} from '../../animations';
 import {ChatMessage, IChatData, IVsItem, UiStyles} from '../../chat';
+import {IChatMessage} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -76,11 +77,13 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	});
 
 	/** @ignore */
-	private readonly messageCache: Map<string, ChatMessage>	= new Map<string, ChatMessage>();
+	private readonly messageCache: Map<string, {message: ChatMessage; pending: boolean}>	=
+		new Map()
+	;
 
 	/** @ignore */
 	private readonly observableCache	= new Map<IChatData, {
-		messages: Observable<ChatMessage[]>;
+		messages: Observable<{message: ChatMessage; pending: boolean}[]>;
 		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>;
 	}>();
 
@@ -173,15 +176,39 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		const chat	= this.chat;
 
 		const observables	= getOrSetDefault(this.observableCache, chat, () => ({
-			messages: chat.messages.watch().pipe(mergeMap(async messages =>
-				(await Promise.all(messages.
+			messages: combineLatest(
+				chat.messages.watch(),
+				chat.pendingMessages.watch()
+			).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
+				for (let i = pendingMessages.length - 1 ; i >= 0 ; --i) {
+					const pendingMessage	= pendingMessages[i];
+					if (onlineMessages.find(o => o.id === pendingMessage.id)) {
+						pendingMessages.splice(i, 1);
+					}
+				}
+
+				const messages: (IChatMessage&{pending?: true})[]	=
+					onlineMessages.concat(pendingMessages)
+				;
+
+				return (await Promise.all(messages.
 					filter(message =>
 						(message.sessionSubID || undefined) === this.sessionService.sessionSubID
 					).
 					map(async message => getOrSetDefaultAsync(
 						this.messageCache,
-						message.id,
+						message.id + (message.pending ? 'pending' : 'online'),
 						async () => {
+							if (!message.pending) {
+								const cached	= this.messageCache.get(message.id + 'pending');
+								if (cached) {
+									return {
+										message: cached.message,
+										pending: false
+									}
+								}
+							}
+
 							let author: Observable<string>;
 							let authorUser: User|undefined;
 
@@ -226,13 +253,16 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 								;
 							}
 
-							return new ChatMessage(message, author, authorUser);
+							return {
+								message: new ChatMessage(message, author, authorUser),
+								pending: message.pending === true
+							};
 						}
 					)
 				))).sort((a, b) =>
-					a.timestamp - b.timestamp
+					a.message.timestamp - b.message.timestamp
 				)
-			)),
+			})),
 			unconfirmedMessages: chat.unconfirmedMessages
 		}));
 
@@ -240,14 +270,16 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			observables.messages,
 			this.maxWidthWatcher
 		).pipe(map(([messages]) => (
-			<(ChatMessage|undefined)[]> (messages.length < 1 ? [undefined] : messages)
-		).map((message, i, arr) => ({
+			<({message?: ChatMessage; pending: boolean})[]>
+			(messages.length < 1 ? [{pending: false}] : messages)
+		).map(({message, pending}, i, arr) => ({
 			accounts: this.accounts,
 			isEnd: (i + 1) === arr.length,
 			isFriendTyping: chat.isFriendTyping,
 			isStart: i === 0,
 			message,
 			mobile: this.mobile,
+			pending,
 			persistentEndMessage: this.persistentEndMessage,
 			showDisconnectMessage: this.showDisconnectMessage,
 			uiStyle: this.uiStyle,

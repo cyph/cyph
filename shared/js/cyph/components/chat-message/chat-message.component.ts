@@ -43,6 +43,9 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean		= false;
 
+	/** Indicates whether message is pending locally. */
+	@Input() public pending: boolean	= false;
+
 	/** @see ChatMessageValue.quill */
 	public readonly quill: BehaviorSubject<IQuillDelta|undefined>	=
 		new BehaviorSubject<IQuillDelta|undefined>(undefined)

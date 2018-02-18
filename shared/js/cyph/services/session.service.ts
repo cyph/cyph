@@ -481,7 +481,7 @@ export abstract class SessionService implements ISessionService {
 		...messages: [string, ISessionMessageAdditionalData][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
 		const newMessages	= await this.newMessages(messages);
-		await this.plaintextSendHandler(newMessages);
+		this.plaintextSendHandler(newMessages);
 		return newMessages;
 	}
 

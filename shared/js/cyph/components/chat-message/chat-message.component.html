@@ -104,7 +104,10 @@
 </div>
 
 <ng-template #messageConfirmation>
-	<ng-container *ngIf='message?.authorType !== authorTypes.Local; else messageConfirmed'>
+	<ng-container *ngIf='
+		pending || message?.authorType !== authorTypes.Local;
+		else messageConfirmed
+	'>
 		<span class='confirmation-checks visibility-hidden'>
 			<mat-icon>check</mat-icon>
 			<mat-icon>check</mat-icon>

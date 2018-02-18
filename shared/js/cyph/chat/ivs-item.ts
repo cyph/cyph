@@ -23,6 +23,9 @@ export interface IVsItem {
 	/** @see ChatMessageListComponent.mobile */
 	mobile: boolean;
 
+	/** @see ChatMessageComponent.pending */
+	pending: boolean;
+
 	/** @see ChatMessageListComponent.persistentEndMessage */
 	persistentEndMessage: boolean;
 

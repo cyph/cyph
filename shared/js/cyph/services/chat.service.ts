@@ -87,6 +87,7 @@ export class ChatService {
 		/* See https://github.com/palantir/tslint/issues/3541 */
 		/* tslint:disable-next-line:object-literal-sort-keys */
 		messageValues: new LocalAsyncMap<string, IChatMessageValue>(),
+		pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
 		receiveTextLock: lockFunction(),
 		state: States.none,
 		unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
@@ -261,22 +262,36 @@ export class ChatService {
 			}
 		}
 
-		await this.chat.messageValues.setItem(id, value);
-		await this.chat.messages.pushValue({
-			authorID: await this.getAuthorID(author),
-			authorType:
-				author === this.sessionService.appUsername ?
-					ChatMessage.AuthorTypes.App :
-					author === this.sessionService.localUsername ?
-						ChatMessage.AuthorTypes.Local :
-						ChatMessage.AuthorTypes.Remote
-			,
-			dimensions,
-			id,
-			selfDestructTimeout,
-			sessionSubID: this.sessionService.sessionSubID,
-			timestamp
-		});
+		await Promise.all([
+			this.chat.messageValues.setItem(id, value),
+			(async () => {
+				const chatMessage	= {
+					authorID: await this.getAuthorID(author),
+					authorType:
+						author === this.sessionService.appUsername ?
+							ChatMessage.AuthorTypes.App :
+							author === this.sessionService.localUsername ?
+								ChatMessage.AuthorTypes.Local :
+								ChatMessage.AuthorTypes.Remote
+					,
+					dimensions,
+					id,
+					selfDestructTimeout,
+					sessionSubID: this.sessionService.sessionSubID,
+					timestamp
+				};
+
+				if (!this.sessionInitService.ephemeral) {
+					await this.chat.pendingMessages.pushValue({
+						...chatMessage,
+						pending: true,
+						value
+					});
+				}
+
+				await this.chat.messages.pushValue(chatMessage);
+			})()
+		]);
 
 		if (author === this.sessionService.localUsername) {
 			this.scrollService.scrollDown();
