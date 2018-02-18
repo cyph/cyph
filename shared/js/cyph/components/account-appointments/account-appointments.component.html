@@ -209,7 +209,6 @@
 							>
 								<button
 									mat-raised-button
-									cyphTranslate
 									[routerLink]='
 										accountService.routeRoot +
 										"appointments/" +
@@ -235,14 +234,13 @@
 										accountUserTypes.Standard
 									'
 									mat-raised-button
-									cyphTranslate
 									[routerLink]='
 										accountService.routeRoot +
 										"new-patient/" +
 										this.record.id
 									'
 								>
-									Submit {{stringsService.patientForms}}
+									{{stringsService.submitPatientForms}}
 								</button>
 							</div>
 							<cyph-calendar-invite

@@ -502,6 +502,9 @@ export class StringsService {
 	public readonly startTime: string					= `Start Time`;
 
 	/** @see StringsService */
+	public readonly submitPatientForms: string			= `Submit Patient Forms`;
+
+	/** @see StringsService */
 	public readonly suregoahead: string					= `sure, go ahead`;
 
 	/** @see StringsService */
