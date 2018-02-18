@@ -4,6 +4,7 @@ import {Injectable} from '@angular/core';
 import {skip} from 'rxjs/operators/skip';
 import {Subscription} from 'rxjs/Subscription';
 import {RegistrationErrorCodes} from '../../account';
+import {IProto} from '../../iproto';
 import {
 	AccountLoginData,
 	AccountUserPresence,
@@ -14,7 +15,6 @@ import {
 	BinaryProto,
 	BooleanProto,
 	IAccountLoginData,
-	IKeyPair,
 	KeyPair,
 	NumberProto,
 	StringProto
@@ -46,12 +46,19 @@ export class AccountAuthService {
 	public errorMessage?: string;
 
 	/** @ignore */
-	private async getKeyPair (url: string, symmetricKey: Uint8Array) : Promise<IKeyPair> {
+	private async getItem <T> (
+		url: string,
+		proto: IProto<T>,
+		key: Uint8Array
+	) : Promise<T> {
 		return deserialize(
-			KeyPair,
+			proto,
 			await this.potassiumService.secretBox.open(
 				await this.databaseService.getItem(url, BinaryProto),
-				symmetricKey
+				key,
+				`${this.databaseService.namespace}:${
+					await this.accountDatabaseService.normalizeURL(url)
+				}`
 			)
 		);
 	}
@@ -66,6 +73,40 @@ export class AccountAuthService {
 				username + '9BdfYbI5PggWwtnaAXbDRIsTHgMjLx/8hbHvgbQb+qs='
 			)
 		).hash;
+	}
+
+	/** @ignore */
+	private async setItem <T> (
+		url: string,
+		proto: IProto<T>,
+		data: T,
+		key: Uint8Array,
+		isPublic: boolean = false,
+		compressed: boolean = false
+	) : Promise<void> {
+		url	= await this.accountDatabaseService.normalizeURL(url);
+
+		const accountFormattedData	= {
+			url: `${this.databaseService.namespace}:${url}`,
+			value: await serialize(proto, data)
+		};
+
+		await this.databaseService.setItem(
+			url,
+			BinaryProto,
+			isPublic ?
+				await this.potassiumService.sign.sign(
+					accountFormattedData.value,
+					key,
+					accountFormattedData.url,
+					compressed
+				) :
+				await this.potassiumService.secretBox.seal(
+					accountFormattedData.value,
+					key,
+					accountFormattedData.url
+				)
+		);
 	}
 
 	/** Tries to get saved PIN hash. */
@@ -137,23 +178,23 @@ export class AccountAuthService {
 				throw new Error('Nonexistent user.');
 			}
 
-			const loginData	= await deserialize(
+			const loginData	= await this.getItem(
+				`users/${username}/loginData`,
 				AccountLoginData,
-				await this.potassiumService.secretBox.open(
-					await this.databaseService.getItem(`users/${username}/loginData`, BinaryProto),
-					masterKey
-				)
+				masterKey
 			);
 
 			try {
+				/* Test to see if we can fetch user data before initiating fresh log-in */
 				await this.databaseService.getItem(`users/${username}/lastPresence`, BinaryProto);
 			}
 			catch {
 				await this.databaseService.login(username, loginData.secondaryPassword);
 			}
 
-			const signingKeyPair	= await this.getKeyPair(
+			const signingKeyPair	= await this.getItem(
 				`users/${username}/signingKeyPair`,
+				KeyPair,
 				loginData.symmetricKey
 			);
 
@@ -166,8 +207,9 @@ export class AccountAuthService {
 
 			this.accountDatabaseService.currentUser.next({
 				keys: {
-					encryptionKeyPair: await this.getKeyPair(
+					encryptionKeyPair: await this.getItem(
 						`users/${username}/encryptionKeyPair`,
+						KeyPair,
 						loginData.symmetricKey
 					),
 					signingKeyPair,
@@ -319,163 +361,133 @@ export class AccountAuthService {
 		};
 
 		try {
-			const [
-				encryptionKeyPair,
-				signingKeyPair,
-				certificateRequestURL,
-				publicEncryptionKeyURL,
-				publicProfileURL,
-				publicProfileExtraURL
-			]	= await Promise.all([
+			const [encryptionKeyPair, signingKeyPair]	= await Promise.all([
 				this.potassiumService.box.keyPair(),
 				this.potassiumService.sign.keyPair(),
-				this.accountDatabaseService.normalizeURL(`users/${username}/certificateRequest`),
-				this.accountDatabaseService.normalizeURL(`users/${username}/publicEncryptionKey`),
-				this.accountDatabaseService.normalizeURL(`users/${username}/publicProfile`),
-				this.accountDatabaseService.normalizeURL(`users/${username}/publicProfileExtra`),
-				this.databaseService.register(username, loginData.secondaryPassword)
+				(async () => {
+					await this.databaseService.register(username, loginData.secondaryPassword);
+
+					if (inviteCode) {
+						await Promise.all([
+							this.databaseService.removeItem(`users/${username}/inviteCode`),
+							this.databaseService.removeItem(
+								`users/${username}/inviterUsernamePlaintext`
+							)
+						]);
+
+						await this.databaseService.setItem(
+							`users/${username}/inviteCode`,
+							StringProto,
+							inviteCode
+						);
+
+						const inviterUsername	=
+							await this.databaseService.getAsyncValue(
+								`users/${username}/inviterUsernamePlaintext`,
+								StringProto,
+								undefined,
+								true
+							).getValue()
+						;
+
+						if (!inviterUsername) {
+							throw RegistrationErrorCodes.InvalidInviteCode;
+						}
+
+						await this.setItem(
+							`users/${username}/inviterUsername`,
+							StringProto,
+							inviterUsername,
+							loginData.symmetricKey
+						);
+					}
+				})()
 			]);
 
-			if (inviteCode) {
-				await Promise.all([
-					this.databaseService.removeItem(`users/${username}/inviteCode`),
-					this.databaseService.removeItem(`users/${username}/inviterUsernamePlaintext`)
-				]);
-
-				await this.databaseService.setItem(
-					`users/${username}/inviteCode`,
-					StringProto,
-					inviteCode
-				);
-
-				const inviterUsername	=
-					await this.databaseService.getAsyncValue(
-						`users/${username}/inviterUsernamePlaintext`,
-						StringProto,
-						undefined,
-						true
-					).getValue()
-				;
-
-				if (!inviterUsername) {
-					throw RegistrationErrorCodes.InvalidInviteCode;
-				}
-
-				await this.databaseService.setItem(
-					`users/${username}/inviterUsername`,
-					BinaryProto,
-					await this.potassiumService.secretBox.seal(
-						await serialize(StringProto, inviterUsername),
-						loginData.symmetricKey
-					)
-				);
-			}
-
 			await Promise.all([
-				this.databaseService.setItem(
+				this.setItem(
 					`users/${username}/loginData`,
-					BinaryProto,
-					await this.potassiumService.secretBox.seal(
-						await serialize(AccountLoginData, loginData),
-						await this.passwordHash(username, masterKey)
-					)
+					AccountLoginData,
+					loginData,
+					await this.passwordHash(username, masterKey)
 				),
-				this.databaseService.setItem(
-					publicProfileURL,
-					BinaryProto,
-					await this.potassiumService.sign.sign(
-						await serialize(AccountUserProfile, {
-							description: '',
-							externalUsernames: {},
-							hasPremium: false,
-							name,
-							realUsername,
-							userType: AccountUserTypes.Standard
-						}),
-						signingKeyPair.privateKey,
-						`${this.databaseService.namespace}:${publicProfileURL}`,
-						true
-					)
+				this.setItem(
+					`users/${username}/publicProfile`,
+					AccountUserProfile,
+					{
+						description: '',
+						externalUsernames: {},
+						hasPremium: false,
+						name,
+						realUsername,
+						userType: AccountUserTypes.Standard
+					},
+					signingKeyPair.privateKey,
+					true,
+					true
 				),
-				this.databaseService.setItem(
-					publicProfileExtraURL,
-					BinaryProto,
-					await this.potassiumService.sign.sign(
-						await serialize(AccountUserProfileExtra, {}),
-						signingKeyPair.privateKey,
-						`${this.databaseService.namespace}:${publicProfileExtraURL}`,
-						true
-					)
+				this.setItem(
+					`users/${username}/publicProfileExtra`,
+					AccountUserProfileExtra,
+					{},
+					signingKeyPair.privateKey,
+					true,
+					true
 				),
-				this.databaseService.setItem(
+				this.setItem(
 					`users/${username}/lastPresence`,
-					BinaryProto,
-					await this.potassiumService.secretBox.seal(
-						await serialize(
-							AccountUserPresence,
-							{status: AccountUserPresence.Statuses.Online}
-						),
-						loginData.symmetricKey
-					)
+					AccountUserPresence,
+					{status: AccountUserPresence.Statuses.Online},
+					loginData.symmetricKey
 				),
-				!email ? Promise.resolve({hash: '', url: ''}) : this.databaseService.setItem(
+				!email ? Promise.resolve() : this.databaseService.setItem(
 					`users/${username}/email`,
 					StringProto,
 					email
+				).then(
+					() => {}
 				),
-				this.databaseService.setItem(
+				this.setItem(
 					`users/${username}/encryptionKeyPair`,
-					BinaryProto,
-					await this.potassiumService.secretBox.seal(
-						await serialize(KeyPair, encryptionKeyPair),
-						loginData.symmetricKey
-					)
+					KeyPair,
+					encryptionKeyPair,
+					loginData.symmetricKey
 				),
-				this.databaseService.setItem(
+				this.setItem(
 					`users/${username}/signingKeyPair`,
-					BinaryProto,
-					await this.potassiumService.secretBox.seal(
-						await serialize(KeyPair, signingKeyPair),
-						loginData.symmetricKey
-					)
+					KeyPair,
+					signingKeyPair,
+					loginData.symmetricKey
 				),
-				this.databaseService.setItem(
-					certificateRequestURL,
-					BinaryProto,
-					await this.potassiumService.sign.sign(
-						await serialize(AGSEPKICSR, {
-							publicSigningKey: signingKeyPair.publicKey,
-							username
-						}),
-						signingKeyPair.privateKey,
-						`${this.databaseService.namespace}:${certificateRequestURL}`
-					)
+				this.setItem(
+					`users/${username}/certificateRequest`,
+					AGSEPKICSR,
+					{
+						publicSigningKey: signingKeyPair.publicKey,
+						username
+					},
+					signingKeyPair.privateKey,
+					true
 				),
-				this.databaseService.setItem(
+				this.setItem(
 					`users/${username}/pin/hash`,
 					BinaryProto,
-					await this.potassiumService.secretBox.seal(
-						await this.passwordHash(username, pin.value),
-						loginData.symmetricKey
-					)
+					await this.passwordHash(username, pin.value),
+					loginData.symmetricKey
 				),
-				this.databaseService.setItem(
+				this.setItem(
 					`users/${username}/pin/isCustom`,
-					BinaryProto,
-					await this.potassiumService.secretBox.seal(
-						await serialize(BooleanProto, pin.isCustom),
-						loginData.symmetricKey
-					)
+					BooleanProto,
+					pin.isCustom,
+					loginData.symmetricKey
 				),
-				this.databaseService.setItem(
-					publicEncryptionKeyURL,
+				this.setItem(
+					`users/${username}/publicEncryptionKey`,
 					BinaryProto,
-					await this.potassiumService.sign.sign(
-						encryptionKeyPair.publicKey,
-						signingKeyPair.privateKey,
-						`${this.databaseService.namespace}:${publicEncryptionKeyURL}`,
-						true
-					)
+					encryptionKeyPair.publicKey,
+					signingKeyPair.privateKey,
+					true,
+					true
 				)
 			]);
 		}
