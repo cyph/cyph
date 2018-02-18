@@ -50,6 +50,9 @@ export class AccountChatService extends ChatService {
 	}
 
 	/** @inheritDoc */
+	public async messageChange () : Promise<void> {}
+
+	/** @inheritDoc */
 	public async send (
 		messageType?: ChatMessageValue.Types,
 		message?: IChatMessageLiveValue,
