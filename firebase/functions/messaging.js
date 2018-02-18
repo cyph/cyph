@@ -7,12 +7,14 @@ const sendMessage	= async (database, messaging, url, body) => {
 	}
 
 	const results	= await Promise.all(tokens.map(async token => messaging.send({
-		notification: {
-			body,
-			icon: 'https://www.cyph.com/assets/img/favicon/favicon-256x256.png',
-			title: 'Cyph'
-		},
-		token
+		token,
+		webpush: {
+			notification: {
+				body,
+				icon: 'https://www.cyph.com/assets/img/favicon/favicon-256x256.png',
+				title: 'Cyph'
+			}
+		}
 	}).
 		then(() => {success: true, token}).
 		catch(() => {success: false, token})
