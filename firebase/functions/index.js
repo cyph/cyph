@@ -25,7 +25,7 @@ const {
 const {notify}	= require('./notify')(database, messaging);
 
 
-const channelDisconnectTimeout	= 2500;
+const channelDisconnectTimeout	= 5000;
 
 const getName	= async (namespace, username) => {
 	try {
