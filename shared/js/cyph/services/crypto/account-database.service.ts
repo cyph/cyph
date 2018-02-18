@@ -4,6 +4,8 @@ import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {combineLatest} from 'rxjs/observable/combineLatest';
+import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
@@ -21,7 +23,8 @@ import {
 	AGSEPKICert,
 	BinaryProto,
 	IAccountUserPublicKeys,
-	NotificationTypes
+	NotificationTypes,
+	StringProto
 } from '../../proto';
 import {filterUndefinedOperator} from '../../util/filter';
 import {cacheObservable, flattenObservable} from '../../util/flatten-observable';
@@ -257,6 +260,7 @@ export class AccountDatabaseService {
 
 	/** @ignore */
 	private async getListInternal<T> (
+		head: string|undefined,
 		keys: string[],
 		url: string,
 		proto: IProto<T>,
@@ -265,6 +269,12 @@ export class AccountDatabaseService {
 		anonymous: boolean = false,
 		immutable: boolean = true
 	) : Promise<ITimedValue<T>[]> {
+		if (head !== undefined) {
+			while (keys.length > 0 && keys[keys.length - 1] !== head) {
+				keys.pop();
+			}
+		}
+
 		return Promise.all(keys.map(async (k, i) =>
 			(await this.getItemInternal(
 				`${url}/${k}`,
@@ -661,8 +671,22 @@ export class AccountDatabaseService {
 	) : Promise<T[]> {
 		url	= await this.normalizeURL(url);
 
+		const [keys, head]	= await Promise.all([
+			this.getListKeys(url),
+			!immutable ? Promise.resolve(undefined) : this.getItemInternal(
+				`${url}-head`,
+				StringProto,
+				securityModel,
+				customKey,
+				anonymous
+			).then(({result}) =>
+				result.value
+			)
+		]);
+
 		return (await this.getListInternal(
-			await this.getListKeys(url),
+			head,
+			keys,
 			url,
 			proto,
 			securityModel,
@@ -864,14 +888,29 @@ export class AccountDatabaseService {
 		return this.databaseService.pushItem(
 			await this.normalizeURL(url),
 			BinaryProto,
-			async (key, previousKey) => this.seal(
-				`${url}/${key}`,
-				proto,
-				value,
-				securityModel,
-				customKey,
-				immutable ? (previousKey || '') : undefined
-			)
+			async (key, previousKey) => {
+				const [sealed]	= await Promise.all([
+					this.seal(
+						`${url}/${key}`,
+						proto,
+						value,
+						securityModel,
+						customKey,
+						immutable ? (previousKey || '') : undefined
+					),
+					!immutable ? Promise.resolve() : this.setItem(
+						`${url}-head`,
+						StringProto,
+						key,
+						securityModel,
+						customKey
+					).then(
+						() => {}
+					)
+				]);
+
+				return sealed;
+			}
 		);
 	}
 
@@ -1056,8 +1095,18 @@ export class AccountDatabaseService {
 		immutable: boolean = true
 	) : Observable<ITimedValue<T>[]> {
 		return cacheObservable(
-			this.watchListKeys(url).pipe(
-				mergeMap(async keys => this.getListInternal(
+			combineLatest(
+				this.watchListKeys(url),
+				!immutable ? of({timestamp: NaN, value: ''}) : this.watch(
+					`${url}-head`,
+					StringProto,
+					securityModel,
+					customKey,
+					anonymous
+				)
+			).pipe(
+				mergeMap(async ([keys, head]) => this.getListInternal(
+					!isNaN(head.timestamp) ? head.value : undefined,
 					keys,
 					await this.normalizeURL(url),
 					proto,

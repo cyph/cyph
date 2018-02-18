@@ -228,6 +228,14 @@
 									}
 								}
 							},
+							"messages-head": {
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							},
 							"messageValues": {
 								"$messageValue": {
 									"hash": {
