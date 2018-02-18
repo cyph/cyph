@@ -661,7 +661,7 @@ export class AccountFilesService {
 		]);
 	}
 
-	/** Overwrites an existing note. */
+	/** Overwrites an existing doc. */
 	public async updateDoc (id: string, delta: IQuillDelta|IQuillRange) : Promise<void> {
 		const file	= await this.getFile(id);
 
@@ -674,7 +674,7 @@ export class AccountFilesService {
 		);
 	}
 
-	/** Overwrites an existing note. */
+	/** Updates file record with new metadata. */
 	public async updateMetadata (id: string, metadata: {
 		mediaType?: string;
 		name?: string;
