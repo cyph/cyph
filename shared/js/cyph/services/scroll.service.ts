@@ -12,7 +12,7 @@ import {WindowWatcherService} from './window-watcher.service';
 @Injectable()
 export class ScrollService {
 	/** @ignore */
-	private readonly _ROOT_ELEMENT		= resolvable<JQuery>();
+	private readonly _ROOT_ELEMENT		= resolvable<JQuery|undefined>();
 
 	/** @ignore */
 	private itemCountInTitle: boolean	= false;
@@ -21,12 +21,12 @@ export class ScrollService {
 	private lastUnreadItemCount: number	= 0;
 
 	/** @ignore */
-	private readonly resolveRootElement: (rootElement: JQuery) => void	=
+	private readonly resolveRootElement: (rootElement?: JQuery) => void	=
 		this._ROOT_ELEMENT.resolve
 	;
 
 	/** @ignore */
-	private readonly rootElement: Promise<JQuery>	= this._ROOT_ELEMENT.promise;
+	private readonly rootElement: Promise<JQuery|undefined>	= this._ROOT_ELEMENT.promise;
 
 	/** @ignore */
 	private readonly scrollDownLock: {}	= {};
@@ -49,7 +49,7 @@ export class ScrollService {
 	}
 
 	/** Initializes service. */
-	public init (rootElement: JQuery, itemCountInTitle: boolean = false) : void {
+	public init (rootElement?: JQuery, itemCountInTitle: boolean = false) : void {
 		this.itemCountInTitle	= itemCountInTitle;
 		this.resolveRootElement(rootElement);
 	}
@@ -62,6 +62,9 @@ export class ScrollService {
 	/** Scrolls to bottom. */
 	public async scrollDown () : Promise<void> {
 		const rootElement	= await this.rootElement;
+		if (!rootElement) {
+			return;
+		}
 
 		await lockTryOnce(this.scrollDownLock, async () => {
 			this.unreadItems	= this.unreadItems.clear();
@@ -84,6 +87,9 @@ export class ScrollService {
 	/** Process new item. */
 	public async trackItem (id: string) : Promise<void> {
 		const rootElement	= await this.rootElement;
+		if (!rootElement) {
+			return;
+		}
 
 		const scrollPosition	=
 			rootElement[0].scrollHeight -
