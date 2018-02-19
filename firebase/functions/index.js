@@ -268,7 +268,7 @@ exports.userNotification	=
 					const [senderName, senderUsername, targetName]	= await Promise.all([
 						getName(e.params.namespace, username),
 						getRealUsername(e.params.namespace, username),
-						getName(e.params.namespace, target)
+						getName(e.params.namespace, notification.target)
 					]);
 
 					const {subject, text}	=
