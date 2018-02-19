@@ -18,6 +18,9 @@ import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountMenuComponent} from '../components/account-menu';
 import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
+import {
+	AccountNotificationsSubscribeComponent
+} from '../components/account-notifications-subscribe';
 import {AccountPostRegisterComponent} from '../components/account-post-register';
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountRegisterComponent} from '../components/account-register';
@@ -68,6 +71,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountMenuComponent,
 		AccountNoteComponent,
 		AccountNotesComponent,
+		AccountNotificationsSubscribeComponent,
 		AccountPostRegisterComponent,
 		AccountProfileComponent,
 		AccountRegisterComponent,
@@ -97,6 +101,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountMenuComponent,
 		AccountNoteComponent,
 		AccountNotesComponent,
+		AccountNotificationsSubscribeComponent,
 		AccountPostRegisterComponent,
 		AccountProfileComponent,
 		AccountRegisterComponent,
@@ -126,6 +131,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountMenuComponent,
 		AccountNoteComponent,
 		AccountNotesComponent,
+		AccountNotificationsSubscribeComponent,
 		AccountPostRegisterComponent,
 		AccountProfileComponent,
 		AccountRegisterComponent,
