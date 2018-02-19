@@ -114,7 +114,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @ignore */
 	private readonly observableCaches	= {
 		watchExists: new Map<string, Observable<boolean>>(),
-		watchListKeyPushes: new Map<string, Observable<{key: string; previousKey?: string;}>>(),
+		watchListKeyPushes: new Map<string, Observable<{key: string; previousKey?: string}>>(),
 		watchListKeys: new Map<string, Observable<string[]>>()
 	};
 
