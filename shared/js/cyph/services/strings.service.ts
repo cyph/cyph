@@ -574,6 +574,9 @@ export class StringsService {
 	/** @see StringsService */
 	public readonly warningTitle: string				= `Warning`;
 
+	/** @see StringsService */
+	public readonly welcomeToProduct: string			= `Welcome to ${this.internalProduct}`;
+
 	/** @ignore */
 	private capitalize (s: string) : string {
 		return s.length < 1 ? '' : s[0].toUpperCase() + s.slice(1);
