@@ -1,6 +1,7 @@
 const firebase									= require('firebase');
 const admin										= require('firebase-admin');
 const functions									= require('firebase-functions');
+const namespaces								= require('./namespaces');
 const {normalize, retryUntilSuccessful, sleep}	= require('./util');
 
 const {
@@ -392,6 +393,6 @@ exports.userRegisterConfirmed	=
 			username,
 			`Welcome to Cyph, ${realUsername}`,
 			`Congratulations ${name}, your account is now activated!\n` +
-				`Sign in at https://cyph.me/#login.`
+				`Sign in at ${namespaces[e.params.namespace].accountsURL}login.`
 		);
 	});

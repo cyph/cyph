@@ -553,6 +553,27 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; the
 	sed -i "s|DOMAIN|namespace.split('_').join('.')|g" storage.rules
 
 	cd functions
+
+	node -e 'fs.writeFileSync("namespaces.js", `module.exports = ${JSON.stringify(
+		require("glob").sync(`${os.homedir()}/.cyph/repos/custom-builds/*/config.json`).
+			map(path => ({
+				domain: path.split("/").slice(-2)[0],
+				...JSON.parse(fs.readFileSync(path).toString())
+			})).
+			filter(o => !o.usePrimaryNamespace).
+			reduce(
+				(namespaces, {accountsOnly, domain}) => {
+					namespaces[domain]	= {
+						accountsURL: `https://${domain}/#${accountsOnly ? "" : "account/"}`,
+						domain
+					};
+					namespaces[domain.replace(/\./g, "_")]	= namespaces[domain];
+					return namespaces;
+				},
+				{}
+			)
+	)};`)'
+
 	npm install
 	cp ../../modules/database-service.js ~/.cyph/email-credentials.js ./
 	html-minifier --collapse-whitespace --minify-css --remove-comments email.html -o email.html
