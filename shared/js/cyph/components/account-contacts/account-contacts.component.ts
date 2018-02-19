@@ -122,6 +122,11 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 		this.accountService.transitionEnd();
 	}
 
+	/** If true, tell user when they have no friends. */
+	public get youHaveNoFriends () : boolean {
+		return this.contactList === this.accountContactsService.contactList;
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,

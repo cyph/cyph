@@ -4,42 +4,53 @@
 	class='card-list animated slideInDown'
 	[class.initiating]='accountContactsService.showSpinner | async'
 >
-	<div fxFlexFill fxLayout='column' fxLayoutAlign='start stretch'>
+	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch'>
 		<cyph-account-contacts-search
 			#accountContactsSearch
 			[contactList]='contactList'
 			[searchProfileExtra]='searchProfileExtra'
 		></cyph-account-contacts-search>
 
-		<cyph-account-contact
-			class='active animated slideInDown'
-			[class.cyph-inverted-theme]='invertedTheme'
-			[contact]='accountContactsSearch?.searchBar?.filter | async'
-			(click)='accountContactsSearch?.searchBar?.clearFilter()'
-			*ngIf='(accountContactsSearch?.searchBar?.filter | async) !== undefined'
-		></cyph-account-contact>
+		<div fxFlex fxLayoutAlign='center center' *ngIf='
+			youHaveNoFriends &&
+			(accountContactsService.showSpinner | async) === false &&
+			(contactList | async).length < 1;
+			else mainContactListView
+		'>
+			<div>{{stringsService.emptyContactList}}</div>
+		</div>
 
-		<cyph-account-contact
-			class='active animated slideInDown'
-			[class.cyph-inverted-theme]='invertedTheme'
-			[contact]='activeUser | async'
-			*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
-		></cyph-account-contact>
+		<ng-template #mainContactListView>
+			<cyph-account-contact
+				class='active animated slideInDown'
+				[class.cyph-inverted-theme]='invertedTheme'
+				[contact]='accountContactsSearch?.searchBar?.filter | async'
+				(click)='accountContactsSearch?.searchBar?.clearFilter()'
+				*ngIf='(accountContactsSearch?.searchBar?.filter | async) !== undefined'
+			></cyph-account-contact>
 
-		<od-virtualscroll
-			[vsData]='filteredContactList'
-			[vsEqualsFunc]='vsEqualsFunc'
-			[vsOptions]='vsOptions'
-			*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
-		>
-			<ng-template let-item>
-				<cyph-account-contact
-					[contact]='item'
-					class='animated slideInDown'
-					[class.cyph-inverted-theme]='invertedTheme'
-				></cyph-account-contact>
-			</ng-template>
-		</od-virtualscroll>
+			<cyph-account-contact
+				class='active animated slideInDown'
+				[class.cyph-inverted-theme]='invertedTheme'
+				[contact]='activeUser | async'
+				*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
+			></cyph-account-contact>
+
+			<od-virtualscroll
+				[vsData]='filteredContactList'
+				[vsEqualsFunc]='vsEqualsFunc'
+				[vsOptions]='vsOptions'
+				*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
+			>
+				<ng-template let-item>
+					<cyph-account-contact
+						[contact]='item'
+						class='animated slideInDown'
+						[class.cyph-inverted-theme]='invertedTheme'
+					></cyph-account-contact>
+				</ng-template>
+			</od-virtualscroll>
+		</ng-template>
 	</div>
 
 	<mat-progress-spinner
