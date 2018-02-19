@@ -48,6 +48,10 @@
 		}
 	}
 
+	.content, .sidebar.contacts {
+		overflow: hidden;
+	}
+
 	.avatar {
 		border-radius: 50%;
 		border-width: 5px;
