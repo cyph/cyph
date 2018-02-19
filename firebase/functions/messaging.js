@@ -16,8 +16,8 @@ const sendMessage	= async (database, messaging, url, body) => {
 			}
 		}
 	}).
-		then(() => {success: true, token}).
-		catch(() => {success: false, token})
+		then(() => ({success: true, token})).
+		catch(() => ({success: false, token}))
 	));
 
 	const failures	= results.filter(o => !o.success);
