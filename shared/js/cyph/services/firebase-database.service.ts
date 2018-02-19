@@ -1043,7 +1043,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				/* tslint:disable-next-line:no-null-keyword */
 				const onValue	= (snapshot: DataSnapshot|null) => {
-					if (!snapshot || !snapshot.exists()) {
+					if (!snapshot) {
 						return;
 					}
 
