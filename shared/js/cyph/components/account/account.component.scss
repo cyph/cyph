@@ -12,13 +12,9 @@
 		}
 	}
 
-	> div > :not(canvas) {
-		z-index: 1;
-
-		/* Scrollfix to pin Cyph background/gradient */
-		&:not(cyph-account-menu) {
-			overflow: scroll;
-		}
+	.router-content, .content {
+		scroll-behavior: smooth;
+		overflow-y: auto;
 	}
 
 	.telehealth .cyph-gradient {
@@ -46,10 +42,6 @@
 		~ * {
 			position: relative;
 		}
-	}
-
-	.content, .sidebar.contacts {
-		overflow: hidden;
 	}
 
 	.avatar {
