@@ -41,7 +41,7 @@ export class AccountNotificationsSubscribeComponent {
 		if (unsubscribe) {
 			const oldEmail	= await this.email.getValue().catch(() => '');
 			await this.email.setValue('');
-			return {email: oldEmail, unsubscribed: true}
+			return {email: oldEmail, unsubscribed: true};
 		}
 		else if (email) {
 			await this.email.setValue(email);
