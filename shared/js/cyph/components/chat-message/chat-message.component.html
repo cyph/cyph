@@ -69,11 +69,9 @@
 									&ngsp;
 									<small>{{message?.author | async}}</small>
 								</span>
-								&ngsp;
 								<strong *ngIf='!message?.authorUser'>
 									{{message?.author | async}}
 								</strong>
-								&ngsp;
 								<div fxFlex *ngIf='!mobile'></div>
 								<div>
 									<span>{{message?.dateTimeString}}</span>
