@@ -244,10 +244,9 @@ exports.userEmailSet	=
 			username,
 			`Your Registration is Being Processed, ${realUsername}`,
 			`We've received your registration request, and your account is on the way!\n` +
-				`You'll receive a notification to sign in as soon as one of the Cyph ` +
-				`founders (Ryan or Josh) activates your account using their personal ` +
-				`Air Gapped Signing Environment. Until then, feel free to continue ` +
-				`using the anonymous/ephemeral Cyph chat at https://cyph.ws.`
+				`You'll receive a follow-up email as soon as one of the Cyph founders ` +
+				`(Ryan or Josh) activates your account using their personal ` +
+				`Air Gapped Signing Environment.`
 		);
 	})
 ;
