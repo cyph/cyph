@@ -14,7 +14,7 @@
 		<div fxFlex fxLayoutAlign='center center' *ngIf='
 			youHaveNoFriends &&
 			(accountContactsService.showSpinner | async) === false &&
-			(contactList | async).length < 1;
+			(contactList | async)?.length < 1;
 			else mainContactListView
 		'>
 			<div>{{stringsService.emptyContactList}}</div>
