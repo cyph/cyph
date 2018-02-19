@@ -13,14 +13,14 @@ module.exports	= (database, messaging) => ({
 
 		if (!preferPush) {
 			await Promise.all([
-				sendMail(database, url, subject, text),
+				sendMail(database, namespace, url, subject, text),
 				sendMessage(database, messaging, url, subject)
 			]);
 			return;
 		}
 
 		if (!(await sendMessage(database, messaging, url, text))) {
-			await sendMail(database, url, subject, text);
+			await sendMail(database, namespace, url, subject, text);
 		}
 	}
 });

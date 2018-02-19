@@ -13,6 +13,7 @@ import {AccountService} from '../../services/account.service';
 import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
+import {ScrollService} from '../../services/scroll.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {cacheObservable} from '../../util/flatten-observable';
@@ -196,6 +197,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 		});
 
 		this.accountChatService.init(this.chatMessageGeometryService);
+		this.scrollService.init();
 		this.accountService.transitionEnd();
 	}
 
@@ -214,6 +216,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 		/** @ignore */
 		private readonly chatMessageGeometryService: ChatMessageGeometryService,
+
+		/** @ignore */
+		private readonly scrollService: ScrollService,
 
 		/** @ignore */
 		private readonly sessionService: SessionService,

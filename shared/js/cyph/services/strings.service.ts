@@ -143,6 +143,9 @@ export class StringsService {
 	public readonly emailOptional: string				= `Email (Optional)`;
 
 	/** @see StringsService */
+	public readonly emptyContactList: string			= `You have no friends.`;
+
+	/** @see StringsService */
 	public readonly endDate: string						= `End Date`;
 
 	/** @see StringsService */
@@ -573,6 +576,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly warningTitle: string				= `Warning`;
+
+	/** @see StringsService */
+	public readonly welcomeToProduct: string			= `Welcome to ${this.internalProduct}`;
 
 	/** @ignore */
 	private capitalize (s: string) : string {

@@ -1,5 +1,7 @@
+import {Observable} from 'rxjs/Observable';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
+import {cacheObservable} from './flatten-observable';
 import {lockFunction} from './lock';
 
 
@@ -25,15 +27,18 @@ export const getOrSetDefault	= <K, V> (map: Map<K, V>, key: K, defaultValue: () 
 
 /** Async variant of getOrSetDefault. */
 export const getOrSetDefaultAsync	= async <K, V> (
-	map: Map<K, V>,
-	key: K,
+	map: MaybePromise<Map<K, V>>,
+	key: MaybePromise<K>,
 	defaultValue: () => MaybePromise<V>
 ) : Promise<V> => {
 	return getOrSetDefault(
 		getOrSetDefaultAsyncLocks,
-		key,
+		await key,
 		lockFunction
 	)(async () => {
+		key	= await key;
+		map	= await map;
+
 		if (!map.has(key)) {
 			map.set(key, await defaultValue());
 		}
@@ -47,3 +52,14 @@ export const getOrSetDefaultAsync	= async <K, V> (
 		return value;
 	});
 };
+
+/** Observable variant of getOrSetDefault. */
+export const getOrSetDefaultObservable	= <K, V> (
+	map: MaybePromise<Map<K, Observable<V>>>,
+	key: MaybePromise<K>,
+	defaultValue: () => MaybePromise<Observable<V>>,
+	defaultObservableValue: V
+) : Observable<V> => cacheObservable(
+	getOrSetDefaultAsync(map, key, defaultValue),
+	defaultObservableValue
+);

@@ -425,7 +425,13 @@ export class AccountAuthService {
 					signingKeyPair.privateKey,
 					true,
 					true
-				),
+				).then(async () => !email ? Promise.resolve() : this.databaseService.setItem(
+					`users/${username}/email`,
+					StringProto,
+					email
+				).then(
+					() => {}
+				)),
 				this.setItem(
 					`users/${username}/publicProfileExtra`,
 					AccountUserProfileExtra,
@@ -439,13 +445,6 @@ export class AccountAuthService {
 					AccountUserPresence,
 					{status: AccountUserPresence.Statuses.Online},
 					loginData.symmetricKey
-				),
-				!email ? Promise.resolve() : this.databaseService.setItem(
-					`users/${username}/email`,
-					StringProto,
-					email
-				).then(
-					() => {}
 				),
 				this.setItem(
 					`users/${username}/encryptionKeyPair`,

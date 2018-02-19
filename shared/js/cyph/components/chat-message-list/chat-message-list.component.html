@@ -14,7 +14,7 @@
 </div>
 -->
 
-<div cyphNanoScroller>
+<div cyphNanoScroller [class.visibility-hidden]='initialScrollDown | async'>
 	<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
 		<ng-container *ngFor='let item of vsData | async; trackBy: trackByVsItem'>
 			<ng-container *ngTemplateOutlet='listItem; context: {item: item}'></ng-container>
@@ -43,8 +43,10 @@
 				[message]='item.message'
 				[mobile]='item.mobile'
 				[pending]='item.pending'
+				[scrollIntoView]='item.isEnd && (initialScrollDown | async)'
 				[uiStyle]='item.uiStyle'
 				[unconfirmedMessages]='item.unconfirmedMessages | async'
+				(scrolledIntoView)='initialScrollDown.next(false)'
 				*ngIf='item.message !== undefined'
 			></cyph-chat-message>
 

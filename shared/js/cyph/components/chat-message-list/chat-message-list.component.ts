@@ -100,6 +100,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			urlToSafeStyle(this.envService.customBuildImages.logoVertical).catch(() => undefined)
 	;
 
+	/** Used for initial scroll down on load. */
+	public readonly initialScrollDown: BehaviorSubject<boolean>	= new BehaviorSubject(true);
+
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean		= false;
 

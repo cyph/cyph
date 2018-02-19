@@ -1,6 +1,7 @@
 const firebase									= require('firebase');
 const admin										= require('firebase-admin');
 const functions									= require('firebase-functions');
+const namespaces								= require('./namespaces');
 const {normalize, retryUntilSuccessful, sleep}	= require('./util');
 
 const {
@@ -27,23 +28,6 @@ const {notify}	= require('./notify')(database, messaging);
 
 const channelDisconnectTimeout	= 5000;
 
-const getName	= async (namespace, username) => {
-	try {
-		const name	=
-			(await database.ref(
-				`${namespace}/users/${username}/internal/name`
-			).once('value')).val()
-		;
-
-		if (name) {
-			return name;
-		}
-	}
-	catch {}
-
-	return username;
-};
-
 const getRealUsername	= async (namespace, username) => {
 	try {
 		const realUsername	=
@@ -59,6 +43,23 @@ const getRealUsername	= async (namespace, username) => {
 	catch {}
 
 	return username;
+};
+
+const getName	= async (namespace, username) => {
+	try {
+		const name	=
+			(await database.ref(
+				`${namespace}/users/${username}/internal/name`
+			).once('value')).val()
+		;
+
+		if (name) {
+			return name;
+		}
+	}
+	catch {}
+
+	return getRealUsername(namespace, username);
 };
 
 const getURL	= (adminRef, namespace) => {
@@ -233,19 +234,20 @@ exports.userEmailSet	=
 			return;
 		}
 
-		await Promise.all([
-			registrationEmailSentRef.set(true),
-			notify(
-				e.params.namespace,
-				username,
-				`Your Registration is Being Processed`,
-				`We've received your registration request, and your account is on the way!\n` +
-					`You'll receive a notification to sign in as soon as one of the Cyph ` +
-					`founders (Ryan or Josh) activates your account using their personal ` +
-					`Air Gapped Signing Environment. Until then, feel free to continue ` +
-					`using the anonymous/ephemeral Cyph chat at https://cyph.ws.`
-			)
+		const [realUsername]	= await Promise.all([
+			getRealUsername(e.params.namespace, username),
+			registrationEmailSentRef.set(true)
 		]);
+
+		await notify(
+			e.params.namespace,
+			username,
+			`Your Registration is Being Processed, ${realUsername}`,
+			`We've received your registration request, and your account is on the way!\n` +
+				`You'll receive a follow-up email as soon as one of the Cyph founders ` +
+				`(Ryan or Josh) activates your account using their personal ` +
+				`Air Gapped Signing Environment.`
+		);
 	})
 ;
 
@@ -263,23 +265,27 @@ exports.userNotification	=
 
 			await Promise.all([
 				(async () => {
-					const realUsername	= await getRealUsername(e.params.namespace, username);
+					const [senderName, senderUsername, targetName]	= await Promise.all([
+						getName(e.params.namespace, username),
+						getRealUsername(e.params.namespace, username),
+						getName(e.params.namespace, target)
+					]);
 
 					const {subject, text}	=
 						notification.type === NotificationTypes.File ?
 							{
-								subject: 'Incoming Data',
-								text: `${realUsername} has shared something with you.`
+								subject: `Incoming Data from ${senderUsername}`,
+								text: `${targetName}, ${senderName} has shared something with you.`
 							} :
 						notification.type === NotificationTypes.Message ?
 							{
-								subject: 'New Message',
-								text: `${realUsername} has sent a message.`
+								subject: `New Message from ${senderUsername}`,
+								text: `${targetName}, ${senderName} has sent you a message.`
 							} :
 						/* else */
 							{
-								subject: 'Sup Dog',
-								text: `${realUsername} says yo.`
+								subject: `Sup Dog, it's ${senderUsername}`,
+								text: `${targetName}, ${senderName} says yo.`
 							}
 					;
 
@@ -392,6 +398,6 @@ exports.userRegisterConfirmed	=
 			username,
 			`Welcome to Cyph, ${realUsername}`,
 			`Congratulations ${name}, your account is now activated!\n` +
-				`Sign in at https://cyph.me/#login.`
+				`Sign in at ${namespaces[e.params.namespace].accountsURL}login.`
 		);
 	});

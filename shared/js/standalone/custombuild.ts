@@ -24,6 +24,13 @@ if (customBuildBase64) {
 accountRoot	= 'account';
 
 if (environment.customBuild) {
+	for (const k of Object.keys(environment.customBuild)) {
+		const o	= (<any> environment.customBuild)[k];
+		if (ArrayBuffer.isView(o) && o.byteLength < 1) {
+			(<any> environment.customBuild)[k]	= undefined;
+		}
+	}
+
 	if (environment.customBuild.config.accountsOnly) {
 		accountRoot	= '';
 	}
@@ -51,7 +58,7 @@ if (environment.customBuild) {
 		document.head.appendChild(style);
 	}
 
-	if (environment.customBuild.favicon && environment.customBuild.favicon.length > 0) {
+	if (environment.customBuild.favicon) {
 		const faviconURI	=
 			`data:image/png;base64,${potassiumUtil.toBase64(environment.customBuild.favicon)}`
 		;
