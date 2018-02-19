@@ -241,6 +241,7 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 			});
 		});
 
+		await waitForIterable(() => $(`#${this.containerID} .ql-editor:not(.ql-blank)`));
 		this.ready.emit();
 	}
 

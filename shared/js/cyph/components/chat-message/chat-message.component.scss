@@ -45,6 +45,13 @@
 	}
 }
 
+/* https://stackoverflow.com/a/32085957/459881 */
+:host:not(.disable-transitionend) ::ng-deep .message-item .message .transitionend {
+	opacity: 0.18;
+
+	@include transition(opacity 0.1s linear);
+}
+
 :host ::ng-deep {
 	img:not(.avatar-image) {
 		cursor: pointer;
@@ -66,13 +73,6 @@
 
 			> * {
 				padding-top: 5px;
-			}
-
-			/* https://stackoverflow.com/a/32085957/459881 */
-			.transitionend {
-				opacity: 0.18;
-
-				@include transition(opacity 0.1s linear);
 			}
 		}
 
