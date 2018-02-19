@@ -6,23 +6,17 @@ const sendMessage	= async (database, messaging, url, body) => {
 		return false;
 	}
 
-	const results	= await Promise.all(tokens.map(async token => messaging.send({
-		token,
-		webpush: {
-			notification: {
-				body,
-				icon: 'https://www.cyph.com/assets/img/favicon/favicon-256x256.png',
-				title: 'Cyph'
-			}
+	const results	= await messaging.sendToDevice(tokens, {
+		notification: {
+			body,
+			icon: 'https://www.cyph.com/assets/img/favicon/favicon-256x256.png',
+			title: 'Cyph'
 		}
-	}).
-		then(() => ({success: true, token})).
-		catch(() => ({success: false, token}))
-	));
+	});
 
-	const failures	= results.filter(o => !o.success);
+	const failures	= results.filter(o => !!o.error);
 
-	await Promise.all(failures.map(async ({token}) => ref.child(token).remove())).catch(() => {});
+	await Promise.all(failures.map(async (_, i) => ref.child(tokens[i]).remove())).catch(() => {});
 
 	return results.length > failures.length;
 };
