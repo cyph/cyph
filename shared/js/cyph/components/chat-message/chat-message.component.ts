@@ -1,9 +1,11 @@
 import {
 	Component,
 	ElementRef,
+	EventEmitter,
 	Input,
 	OnChanges,
 	OnDestroy,
+	Output,
 	Renderer2,
 	SimpleChanges
 } from '@angular/core';
@@ -19,7 +21,7 @@ import {DialogService} from '../../services/dialog.service';
 import {ScrollService} from '../../services/scroll.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
-import {waitForIterable} from '../../util/wait';
+import {sleep, waitForIterable} from '../../util/wait';
 
 
 /**
@@ -50,6 +52,12 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 	public readonly quill: BehaviorSubject<IQuillDelta|undefined>	=
 		new BehaviorSubject<IQuillDelta|undefined>(undefined)
 	;
+
+	/** If true, will scroll into view. */
+	@Input() public scrollIntoView: boolean							= false;
+
+	/** Fires after scrolling into view. */
+	@Output() public readonly scrolledIntoView: EventEmitter<void>	= new EventEmitter<void>();
 
 	/** @see ChatMainComponent.uiStyle */
 	@Input() public uiStyle: UiStyles			= UiStyles.default;
@@ -99,6 +107,16 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 			this.message.value.quill && this.message.value.quill.length > 0
 		)) {
 			this.resolveViewReady();
+		}
+
+		if (
+			this.scrollIntoView &&
+			this.elementRef.nativeElement &&
+			typeof this.elementRef.nativeElement.scrollIntoView === 'function'
+		) {
+			await sleep();
+			this.elementRef.nativeElement.scrollIntoView();
+			this.scrolledIntoView.emit();
 		}
 
 		if (
