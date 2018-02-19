@@ -20,6 +20,7 @@
 				>
 					{{message?.author | async}}:
 				</strong>
+				&ngsp;
 				<ng-container
 					*ngTemplateOutlet='messageContent; context: {value: value}'
 				></ng-container>
@@ -34,11 +35,12 @@
 
 					<div *ngIf='!mobile || message?.authorType === authorTypes.Local'>
 						<span>&nbsp;</span>
+						&ngsp;
 						<ng-container *ngTemplateOutlet='messageConfirmation'></ng-container>
 					</div>
 
 					<div *ngIf='mobile && message?.authorType === authorTypes.Remote'>
-						&nbsp;&mdash;&nbsp; {{message?.author | async}}
+						&nbsp;&mdash;&nbsp;&ngsp;{{message?.author | async}}
 					</div>
 				</div>
 			</div>
@@ -64,14 +66,18 @@
 							<div fxFlex [fxLayout]='mobile ? "column" : "row"'>
 								<span *ngIf='!!message?.authorUser'>
 									<strong>{{message?.authorUser?.name | async}}&nbsp;</strong>
+									&ngsp;
 									<small>{{message?.author | async}}</small>
 								</span>
+								&ngsp;
 								<strong *ngIf='!message?.authorUser'>
 									{{message?.author | async}}
 								</strong>
+								&ngsp;
 								<div fxFlex *ngIf='!mobile'></div>
 								<div>
 									<span>{{message?.dateTimeString}}</span>
+									&ngsp;
 									<ng-container
 										*ngTemplateOutlet='messageConfirmation'
 									></ng-container>
@@ -110,6 +116,7 @@
 	'>
 		<span class='confirmation-checks visibility-hidden'>
 			<mat-icon>check</mat-icon>
+			&ngsp;
 			<mat-icon>check</mat-icon>
 		</span>
 	</ng-container>
@@ -117,6 +124,7 @@
 		<ng-container *ngIf='confirmed; else messageUnconfirmed'>
 			<span class='confirmation-checks'>
 				<mat-icon>check</mat-icon>
+				&ngsp;
 				<mat-icon>check</mat-icon>
 			</span>
 		</ng-container>
@@ -124,6 +132,7 @@
 	<ng-template #messageUnconfirmed>
 		<span class='confirmation-checks' [matTooltip]='stringsService.messageUnconfirmed'>
 			<mat-icon>check</mat-icon>
+			&ngsp;
 			<mat-icon class='visibility-hidden'>check</mat-icon>
 		</span>
 	</ng-template>

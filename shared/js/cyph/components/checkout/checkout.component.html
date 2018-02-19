@@ -43,7 +43,9 @@
 		<div fxLayoutAlign='center center'>
 			<button mat-button type='submit'>
 				<span cyphTranslate>Confirm</span>
+				&ngsp;
 				<span>${{amount}}</span>
+				&ngsp;
 				<span>
 					<span *ngIf='subscriptionType === undefined' cyphTranslate>payment</span>
 					<span *ngIf='subscriptionType === subscriptionTypes.annual' cyphTranslate>
@@ -60,7 +62,9 @@
 		<ng-content *ngIf='success'></ng-content>
 		<div *ngIf='!success'>
 			<span cyphTranslate>Payment failed.</span>
+			&ngsp;
 			<span class='retry' (click)='ngAfterViewInit()' cyphTranslate>Click here</span>
+			&ngsp;
 			<span cyphTranslate>to try again.</span>
 		</div>
 	</div>

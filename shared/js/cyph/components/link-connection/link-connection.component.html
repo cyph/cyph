@@ -93,13 +93,16 @@
 			<span cyphTranslate>
 				Link expires in
 			</span>
+			&ngsp;
 			<span class='countdown'>
-				{{timer.timestamp | async}}
+				{{timer?.timestamp | async}}
 			</span>
+			&ngsp;
 			<button
 				mat-icon-button
 				(click)='addTime(60000)'
 				matTooltip='Increase Time by One Minute'
+				cyphTranslate
 			>
 				<mat-icon>alarm_add</mat-icon>
 			</button>

@@ -27,6 +27,7 @@
 						accountDatabaseService.currentUser.value?.user.username !== note.owner
 					'>
 						<span cyphTranslate>Owner:</span>
+						&ngsp;
 						<a [routerLink]='accountService.routeRoot + "profile/" + note.owner'>
 							{{note.owner}}
 						</a>
@@ -75,6 +76,7 @@
 				<mat-card-subtitle>
 					<div *ngIf='!note.wasAnonymousShare'>
 						<span cyphTranslate>Shared by</span>
+						&ngsp;
 						<a [routerLink]='accountService.routeRoot + "profile/" + note.owner'>
 							{{note.owner}}
 						</a>

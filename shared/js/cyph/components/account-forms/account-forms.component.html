@@ -26,9 +26,10 @@
 					<div *ngIf='
 						!form.wasAnonymousShare &&
 						accountDatabaseService.currentUser.value &&
-						accountDatabaseService.currentUser.value.user.username !== form.owner
+						accountDatabaseService.currentUser.value?.user.username !== form.owner
 					'>
 						<span cyphTranslate>Owner:</span>
+						&ngsp;
 						<a [routerLink]='accountService.routeRoot + "profile/" + form.owner'>
 							{{form.owner}}
 						</a>
@@ -83,6 +84,7 @@
 				<mat-card-subtitle>
 					<div *ngIf='!form.wasAnonymousShare'>
 						<span cyphTranslate>Shared by</span>
+						&ngsp;
 						<a [routerLink]='accountService.routeRoot + "profile/" + form.owner'>
 							{{form.owner}}
 						</a>
