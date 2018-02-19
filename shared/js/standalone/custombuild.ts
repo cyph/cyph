@@ -24,7 +24,7 @@ if (customBuildBase64) {
 accountRoot	= 'account';
 
 if (environment.customBuild) {
-	for (const k of Object.keys(environment.customBuild)) {
+	for (const k of Object.keys(Object.getPrototypeOf(environment.customBuild))) {
 		const o	= (<any> environment.customBuild)[k];
 		if (ArrayBuffer.isView(o) && o.byteLength < 1) {
 			(<any> environment.customBuild)[k]	= undefined;
