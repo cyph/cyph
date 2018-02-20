@@ -5,7 +5,7 @@
 
 import * as $ from 'jquery';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
-import {Environment} from '../cyph/proto';
+import {Environment} from '../proto';
 import {environment} from './environment';
 
 
