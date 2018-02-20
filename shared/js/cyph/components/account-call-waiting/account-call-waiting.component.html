@@ -1,8 +1,8 @@
 <mat-card fxFlexFill fxLayout='row' class='white-card'>
 	<div
-		fxFlex
+		fxFlexFill
 		fxLayout='column'
-		fxLayoutAlign='center center'
+		fxLayoutAlign='start center'
 		class='content'
 		*ngIf='accountDatabaseService.currentUser | async as currentUser'
 	>
@@ -10,6 +10,29 @@
 
 		<h1 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h1>
 		<h1 cyphTranslate *ngIf='envService.isTelehealth'>Waiting Room</h1>
+
+		<div *ngIf='envService.isTelehealth &&
+		(currentUser.user.userType | async) === accountUserTypes.Standard &&
+		getUser(appointment.participants[0]) | async as doctor'
+		fxLayout='column'
+		fxLayoutAlign='center'
+		fxLayoutGap='5px'
+
+		>
+			<h2>
+				Your {{appointment.calendarInvite.title}}
+					{{(appointment.calendarInvite.callType === callTypes.Video) ? 'Video' : ''}}
+					{{(appointment.calendarInvite.callType === callTypes.Audio) ? 'Audio' : ''}}
+						Telehealth Session with {{stringsService.dr}} 
+						{{(doctor.name | async)}}
+			</h2>
+			<img
+				cyphTranslate
+				class='avatar animated _1'
+				[alt]='stringsService.dr + " " + (doctor.name | async)'
+				[src]='doctor?.avatar | async'
+			/>
+		</div>
 
 		<div *ngIf='(currentUser.user.userType | async) !== undefined && !appointment.forms[0]'>
 			<div *ngIf='
