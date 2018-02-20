@@ -6,7 +6,7 @@
 import * as $ from 'jquery';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {Environment} from '../cyph/proto';
-import {environment} from '../environments/environment';
+import {environment} from './environment';
 
 
 if (customBuildBase64) {
@@ -76,3 +76,6 @@ if (environment.customBuild) {
 		});
 	}
 }
+
+
+export {environment};

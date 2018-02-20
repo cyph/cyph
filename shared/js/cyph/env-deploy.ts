@@ -1,6 +1,6 @@
 /* tslint:disable */
 
-import {environment} from '../environments/environment';
+import {environment} from '../environments';
 import {config} from './config';
 import {IEnvironment} from './proto';
 
