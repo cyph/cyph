@@ -7,7 +7,6 @@ import {take} from 'rxjs/operators/take';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
 import {AccountUserTypes} from '../../proto';
-import {cacheObservable} from '../../util/flatten-observable';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';
@@ -19,6 +18,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
+import {cacheObservable} from '../../util/flatten-observable';
 
 
 /**
@@ -29,7 +29,7 @@ import {trackByValue} from '../../track-by/track-by-value';
 	styleUrls: ['./account-profile.component.scss'],
 	templateUrl: './account-profile.component.html'
 })
-export class AccountProfileComponent implements OnInit {	
+export class AccountProfileComponent implements OnInit {
 	/** @ignore */
 	private editorFocus: boolean	= false;
 
@@ -167,10 +167,8 @@ export class AccountProfileComponent implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		this.accountService.transitionEnd();
 		this.activatedRoute.params.subscribe(o => { this.setUser(o.username); });
-		//Temporary workaround for listing doctors
-		if (this.doctorListOnly !== undefined) {
-			this.doctorListOnly.subscribe(o => o ? this.setUser('nachc') : '' );
-		}
+		// Temporary workaround for listing doctors
+		this.doctorListOnly.subscribe(o => o ? this.setUser('nachc') : '' );
 	}
 
 	/** Publishes new user description. */

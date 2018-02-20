@@ -1,9 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {User} from '../../account/user';
-import {AccountUserTypes, CallTypes, IAppointment,} from '../../proto';
-import {AccountService} from '../../services/account.service';
+import {AccountUserTypes, CallTypes, IAppointment} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
+import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';

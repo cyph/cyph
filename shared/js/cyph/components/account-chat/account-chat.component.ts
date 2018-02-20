@@ -101,7 +101,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			let appointment: IAppointment;
 
 			if (appointmentID) {
-				this.appointmentID = appointmentID;
+				this.appointmentID	= appointmentID;
 				appointment	=
 					await this.accountFilesService.downloadAppointment(appointmentID).result
 				;
