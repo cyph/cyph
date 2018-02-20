@@ -23,6 +23,7 @@ if (customBuildBase64) {
 
 accountRoot	= 'account';
 
+/* tslint:disable-next-line:strict-type-predicates */
 if (environment.customBuild && $ !== undefined && typeof window === 'object') {
 	for (const k of Object.keys(Object.getPrototypeOf(environment.customBuild))) {
 		const o	= (<any> environment.customBuild)[k];
