@@ -157,11 +157,9 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 			});
 
 			this.renderer.addClass(element, 'transitionend');
-
 			await promise;
+			this.renderer.removeClass(element, 'transitionend');
 		}));
-
-		this.renderer.addClass(this.elementRef.nativeElement, 'disable-transitionend');
 	}
 
 	constructor (
