@@ -142,10 +142,17 @@ then(function (results) {
 
 	return Promise.all([
 		downloadMetadata,
+		/* Temporary transitionary step */
 		superSphincs.openString(
 			signed,
 			publicKey
-		)
+		).catch(function () {
+			return superSphincs.openString(
+				signed,
+				publicKey,
+				new Uint8Array(0)
+			);
+		})
 	]);
 }).then(function (results) {
 	var downloadMetadata	= results[0];
