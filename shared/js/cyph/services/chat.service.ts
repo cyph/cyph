@@ -329,7 +329,7 @@ export class ChatService {
 		}
 
 		/* Workaround for Safari bug that breaks initiating a new chat */
-		this.sessionService.send(...[]);
+		this.sessionService.send([rpcEvents.ping, {}]);
 
 		if (this.chat.queuedMessage) {
 			this.send(
