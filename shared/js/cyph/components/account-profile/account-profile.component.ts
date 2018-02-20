@@ -168,7 +168,9 @@ export class AccountProfileComponent implements OnInit {
 		this.accountService.transitionEnd();
 		this.activatedRoute.params.subscribe(o => { this.setUser(o.username); });
 		// Temporary workaround for listing doctors
-		this.doctorListOnly.subscribe(o => o ? this.setUser('nachc') : '' );
+		this.doctorListOnly.subscribe(o => this.envService.environment.customBuild ?
+			(o ? this.setUser(this.envService.environment.customBuild.config.organization) : '' ) :
+			false);
 	}
 
 	/** Publishes new user description. */
