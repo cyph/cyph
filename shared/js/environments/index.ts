@@ -23,7 +23,7 @@ if (customBuildBase64) {
 
 accountRoot	= 'account';
 
-if (environment.customBuild) {
+if (environment.customBuild && $ !== undefined && typeof window === 'object') {
 	for (const k of Object.keys(Object.getPrototypeOf(environment.customBuild))) {
 		const o	= (<any> environment.customBuild)[k];
 		if (ArrayBuffer.isView(o) && o.byteLength < 1) {

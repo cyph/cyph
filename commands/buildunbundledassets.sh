@@ -154,6 +154,7 @@ for f in ${typescriptAssets} ; do
 
 	cat > webpack.js <<- EOM
 		const {TsConfigPathsPlugin}	= require('awesome-typescript-loader');
+		const path					= require('path');
 		const UglifyJsPlugin		= require('uglifyjs-webpack-plugin');
 		const {mangleExceptions}	= require('../../../commands/mangleexceptions');
 
@@ -197,6 +198,9 @@ for f in ${typescriptAssets} ; do
 				")
 			],
 			resolve: {
+				alias: {
+					jquery: path.resolve(__dirname, '../../js/native/externals/jquery.ts')
+				},
 				extensions: ['.js', '.ts'],
 				plugins: [
 					new TsConfigPathsPlugin({
