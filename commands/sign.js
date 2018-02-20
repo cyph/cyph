@@ -8,6 +8,9 @@ const os				= require('os');
 const sodiumUtil		= require('sodiumutil');
 const superSphincs		= require('supersphincs');
 
+// Temporary workaround pending AGSE update to SuperSPHINCS v6
+const oldSuperSphincs	= require('/home/gibson/oldsupersphincs/node_modules/supersphincs');
+
 
 const remoteAddress	= '10.0.0.42';
 const port			= 31337;
@@ -217,7 +220,7 @@ server.on('message', async (message) => {
 			});
 
 			const openedInputs	= await Promise.all(
-				signedInputs.map(async (signed) => superSphincs.open(
+				signedInputs.map(async (signed) => oldSuperSphincs.open(
 					signed,
 					keyPair.publicKey
 				))
