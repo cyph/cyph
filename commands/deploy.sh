@@ -111,7 +111,7 @@ if [ "${simple}" ] ; then
 fi
 
 processEnvironmentName () {
-	if [ "${simple}" ] ; then
+	if [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ; then
 		echo "local$(echo "${1}" | perl -pe 's/^([a-z])/\u$1/')"
 	else
 		echo "${1}"
