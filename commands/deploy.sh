@@ -124,11 +124,13 @@ if [ "${firebaseBackup}" ] ; then
 	fi
 
 	environment="$(processEnvironmentName backup)"
-elif [ "${test}" ] && ( \
+elif [ ! "${test}" ] ; then
+	environment="$(processEnvironmentName prod)"
+elif \
 	[ "${branch}" == 'staging' ] || \
 	[ "${branch}" == 'beta' ] || \
 	[ "${branch}" == 'master' ] \
-) ; then
+; then
 	environment="$(processEnvironmentName "${branch}")"
 else
 	environment="$(processEnvironmentName dev)"
