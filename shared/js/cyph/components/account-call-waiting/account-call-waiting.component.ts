@@ -21,6 +21,9 @@ export class AccountCallWaitingComponent implements OnInit {
 	/** @see AccountChatComponent */
 	@Input() public appointment?: IAppointment;
 
+	/** @see AccountChatComponent */
+	@Input() public appointmentID?: string;
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();

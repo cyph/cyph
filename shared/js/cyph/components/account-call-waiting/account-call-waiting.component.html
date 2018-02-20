@@ -11,28 +11,55 @@
 		<h1 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h1>
 		<h1 cyphTranslate *ngIf='envService.isTelehealth'>Waiting Room</h1>
 
-		<div *ngIf='(currentUser.user.userType | async) !== undefined'>
-			<h2 *ngIf='
-				envService.isTelehealth && (
-					(currentUser.user.userType | async) === accountUserTypes.Standard
-				);
-				else doctorMessage;
-			'>
-				{{stringsService.waitingRoomCheckedInPatient}}
-			</h2>
-			<ng-template #doctorMessage>
+		<div *ngIf='(currentUser.user.userType | async) !== undefined && !appointment.forms[0]'>
+			<div *ngIf='
+			envService.isTelehealth && (
+				(currentUser.user.userType | async) === accountUserTypes.Standard
+			);'
+			fxLayout='column'>
+				<h2 >
+					{{stringsService.patientFormsMissing}}
+				</h2>
+				<button
+					*ngIf='
+						(currentUser.user.userType | async) ===
+						accountUserTypes.Standard
+					'
+					color='primary'
+					mat-raised-button
+					[routerLink]='
+						accountService.routeRoot +
+						"new-patient/" +
+						appointmentID
+					'
+				>
+					{{stringsService.submitPatientForms}}
+				</button>
+			</div>
+		</div>
+
+		<div *ngIf='(currentUser.user.userType | async) !== undefined && appointment.forms[0]'>
 				<h2 *ngIf='
 					envService.isTelehealth && (
-						(currentUser.user.userType | async) === accountUserTypes.TelehealthDoctor
+						(currentUser.user.userType | async) === accountUserTypes.Standard
 					);
-					else genericMessage
+					else doctorMessage;
 				'>
-					{{stringsService.waitingRoomCheckedInDoctor}}
+					{{stringsService.waitingRoomCheckedInPatient}}
 				</h2>
-			</ng-template>
-			<ng-template #genericMessage>
-				<h2>{{stringsService.waitingRoomCheckedInGeneric}}</h2>
-			</ng-template>
-		</div>
+				<ng-template #doctorMessage>
+					<h2 *ngIf='
+						envService.isTelehealth && (
+							(currentUser.user.userType | async) === accountUserTypes.TelehealthDoctor
+						);
+						else genericMessage
+					'>
+						{{stringsService.waitingRoomCheckedInDoctor}}
+					</h2>
+				</ng-template>
+				<ng-template #genericMessage>
+					<h2>{{stringsService.waitingRoomCheckedInGeneric}}</h2>
+				</ng-template>
+			</div>
 	</div>
 </mat-card>
