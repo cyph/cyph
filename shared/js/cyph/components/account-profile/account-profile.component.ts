@@ -115,8 +115,7 @@ export class AccountProfileComponent implements OnInit {
 					) {
 						this.router.navigate([
 							accountRoot,
-							'profile',
-							this.envService.environment.customBuild.config.organization
+							'doctors'
 						]);
 						return;
 					}
