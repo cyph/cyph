@@ -163,6 +163,39 @@
 		envService.isTelehealth &&
 		(
 			accountDatabaseService.currentUser.value?.user.userType | async
+		) === accountUserTypes.Standard
+	)'>
+		<button
+			mat-button
+			cyphTranslate
+			class='doctors'
+			matTooltip='Doctors'
+			matTooltipPosition='right'
+			[routerLink]='accountService.routeRoot + "doctors"'
+			(click)='click()'
+			*ngIf='envService.isTelehealth && (accountService.menuExpanded | async)'
+		>
+			<mat-icon>local_hospital</mat-icon>
+			<span>Doctors</span>
+		</button>
+		<button
+			mat-icon-button
+			cyphTranslate
+			class='doctors'
+			matTooltip='Doctors'
+			matTooltipPosition='right'
+			[routerLink]='accountService.routeRoot + "doctors"'
+			(click)='click()'
+			*ngIf='envService.isTelehealth && (accountService.menuExpanded | async) === false'
+		>
+			<mat-icon>local_hospital</mat-icon>
+		</button>
+	</ng-container>
+
+	<ng-container *ngIf='!envService.isTelehealth || (
+		envService.isTelehealth &&
+		(
+			accountDatabaseService.currentUser.value?.user.userType | async
 		) !== accountUserTypes.Standard
 	)'>
 		<button

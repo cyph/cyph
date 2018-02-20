@@ -80,6 +80,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'compose',
 			'contacts',
 			'docs',
+			'doctors',
 			'files',
 			'forms',
 			'messages',

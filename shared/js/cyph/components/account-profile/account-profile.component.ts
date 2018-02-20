@@ -2,10 +2,12 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
+import {map} from 'rxjs/operators/map';
 import {take} from 'rxjs/operators/take';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
 import {AccountUserTypes} from '../../proto';
+import {cacheObservable} from '../../util/flatten-observable';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';
@@ -27,7 +29,7 @@ import {trackByValue} from '../../track-by/track-by-value';
 	styleUrls: ['./account-profile.component.scss'],
 	templateUrl: './account-profile.component.html'
 })
-export class AccountProfileComponent implements OnInit {
+export class AccountProfileComponent implements OnInit {	
 	/** @ignore */
 	private editorFocus: boolean	= false;
 
@@ -36,6 +38,12 @@ export class AccountProfileComponent implements OnInit {
 
 	/** Current draft of user profile description. */
 	public descriptionDraft: string	= '';
+
+	/** @see AccountProfileComponent.doctorListOnly */
+	public doctorListOnly: Observable<boolean|undefined>	= cacheObservable(
+		this.activatedRoute.data.pipe(map(o => o.doctorListOnly === true)),
+		undefined
+	);
 
 	/** Profile edit mode. */
 	public editMode: boolean		= false;
@@ -159,8 +167,11 @@ export class AccountProfileComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		this.accountService.transitionEnd();
-
 		this.activatedRoute.params.subscribe(o => { this.setUser(o.username); });
+		//Temporary workaround for listing doctors
+		if (this.doctorListOnly !== undefined) {
+			this.doctorListOnly.subscribe(o => o ? this.setUser('nachc') : '' );
+		}
 	}
 
 	/** Publishes new user description. */
