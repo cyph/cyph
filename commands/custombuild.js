@@ -79,7 +79,7 @@ const customBuild	= (id, version) => {
 		config: tryReadFile(paths.config, true) || {},
 		errorImage: tryReadFile(paths.errorImage),
 		favicon: tryReadFile(paths.favicon),
-		id: typeof version === 'string' ? `${version}.${id}` : id,
+		id: typeof version === 'string' && version !== 'prod' ? `${version}.${id}` : id,
 		logoHorizontal: tryReadFile(paths.logoHorizontal),
 		logoVertical: tryReadFile(paths.logoVertical),
 		namespace: id,

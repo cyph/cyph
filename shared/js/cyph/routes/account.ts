@@ -13,6 +13,9 @@ import {AccountHomeComponent} from '../components/account-home';
 import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
+import {
+	AccountNotificationsSubscribeComponent
+} from '../components/account-notifications-subscribe';
 import {AccountPostRegisterComponent} from '../components/account-post-register';
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountRegisterComponent} from '../components/account-register';
@@ -83,6 +86,19 @@ export const account: Route	= {
 			children: [
 				{path: 'edit', component: AccountNoteComponent}
 			]
+		},
+		{
+			path: 'notifications',
+			component: AccountNotificationsSubscribeComponent
+		},
+		{
+			path: 'notifications/subscribe/:email',
+			component: AccountNotificationsSubscribeComponent
+		},
+		{
+			path: 'notifications/unsubscribe',
+			component: AccountNotificationsSubscribeComponent,
+			data: {unsubscribe: true}
 		},
 		{path: 'profile', component: AccountProfileComponent},
 		{path: 'profile/:username', component: AccountProfileComponent},

@@ -1,6 +1,6 @@
 /* tslint:disable */
 
-import {environment} from '../environments/environment';
+import {environment} from '../environments';
 import {config} from './config';
 import {IEnvironment} from './proto';
 
@@ -11,7 +11,7 @@ import {IEnvironment} from './proto';
  */
 export class EnvDeploy {
 	/** @ignore */
-	private useBaseUrl: boolean	= !!environment.customBuild || environment.local;
+	private readonly useBaseUrl: boolean		= !!environment.customBuild || environment.local;
 
 	/** @see IEnvironment */
 	public readonly environment: IEnvironment	= environment;

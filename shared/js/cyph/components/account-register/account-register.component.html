@@ -44,15 +44,19 @@
 											envService.coBranded && !envService.whiteLabel;
 											else mainBasicWelcomeMessage
 										'>
-											<span cyphTranslate>Welcome to </span>
-											<span>&nbsp;{{stringsService.product}}&nbsp;</span>
+											<span cyphTranslate>Welcome to</span>
+											&nbsp;
+											<span>{{stringsService.product}}</span>
+											&nbsp;
 											<span cyphTranslate>powered by Cyph!</span>
 										</ng-container>
 										<ng-template #mainBasicWelcomeMessage>
 											<span cyphTranslate>
 												Congratulations on securing your
 											</span>
-											<span>&nbsp;{{stringsService.product}}&nbsp;</span>
+											&nbsp;
+											<span>{{stringsService.product}}</span>
+											&nbsp;
 											<span cyphTranslate>account invite!</span>
 										</ng-template>
 									</div>
@@ -104,7 +108,9 @@
 										class='description'
 									>
 										<span cyphTranslate>Who are you? Associate your</span>
-										<span>&nbsp;{{stringsService.product}}&nbsp;</span>
+										&nbsp;
+										<span>{{stringsService.product}}</span>
+										&nbsp;
 										<span cyphTranslate *ngIf='!envService.isTelehealth'>
 											account with your identity or an alias.
 										</span>
@@ -265,7 +271,9 @@
 										class='description'
 									>
 										<span cyphTranslate>This is your</span>
-										<span>&nbsp;{{stringsService.product}}&nbsp;</span>
+										&nbsp;
+										<span>{{stringsService.product}}</span>
+										&nbsp;
 										<span cyphTranslate>
 											master key. It's like a normal password, but must also
 											be mathematically strong enough to encrypt your data.
@@ -291,14 +299,18 @@
 											>
 												<span cyphTranslate>
 													<strong>WARNING:</strong>
+													&ngsp;
 													<span>
 														If you lose this key, you will not
 														be able to recover your data,
 														initialize new devices, or access
 														your account in any way.
 													</span>
+													&ngsp;
 													<span>Keep it somewhere safe and</span>
+													&ngsp;
 													<i>offline</i>.
+													&ngsp;
 													<span>
 														For example, write it down on paper
 														and hide it or lock it in a vault.
@@ -311,7 +323,9 @@
 											>
 												<span cyphTranslate>
 													<span>And</span>
+													&ngsp;
 													<strong>DO NOT</strong>
+													&ngsp;
 													<span>
 														reuse this as a password for any
 														other service, or store it in a
@@ -469,7 +483,9 @@
 											you may choose to use a longer custom password, which
 											well be more secure if you plan to sign in to
 										</span>
-										<span>&nbsp;{{stringsService.product}}&nbsp;</span>
+										&ngsp;
+										<span>{{stringsService.product}}</span>
+										&ngsp;
 										<span cyphTranslate>on a shared device.</span>
 									</div>
 

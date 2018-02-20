@@ -86,6 +86,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'messages',
 			'new-patient',
 			'notes',
+			'notifications',
 			'profile',
 			'request-appointment',
 			'request-followup',
@@ -168,7 +169,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			[
 				'',
 				'chat-transition',
-				'messages'
+				'messages',
+				'notifications'
 			].filter(
 				path => this.route === path
 			).length > 0

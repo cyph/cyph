@@ -111,7 +111,7 @@ if [ "${simple}" ] ; then
 fi
 
 processEnvironmentName () {
-	if [ "${simple}" ] ; then
+	if [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ; then
 		echo "local$(echo "${1}" | perl -pe 's/^([a-z])/\u$1/')"
 	else
 		echo "${1}"
@@ -570,7 +570,10 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; the
 					namespaces[domain.replace(/\./g, "_")]	= namespaces[domain];
 					return namespaces;
 				},
-				{}
+				{
+					"cyph.ws": {accountsURL: "https://cyph.me/#", domain: "cyph.me"},
+					"cyph_ws": {accountsURL: "https://cyph.me/#", domain: "cyph.me"}
+				}
 			)
 	)};`)'
 

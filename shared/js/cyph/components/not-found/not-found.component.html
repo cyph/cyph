@@ -9,7 +9,9 @@
 		<div>
 			<h1>
 				<span cyphTranslate>I'm sorry, but your</span>
+				&ngsp;
 				<span>{{stringsService.session}}</span>
+				&ngsp;
 				<span cyphTranslate>is in another castle...</span>
 			</h1>
 		</div>
@@ -17,6 +19,7 @@
 		<div class='explanation'>
 			<p>
 				<span cyphTranslate>Please</span>
+				&ngsp;
 				<a
 					cyphTranslate
 					[routerLink]='envService.newCyphUrlRetry'
@@ -26,12 +29,16 @@
 			<ul>
 				<li>
 					<span cyphTranslate>The</span>
+					&ngsp;
 					<span>{{stringsService.session}}</span>
+					&ngsp;
 					<span cyphTranslate>you're looking for has expired</span>
 				</li>
 				<li cyphTranslate>
 					<span cyphTranslate>The</span>
+					&ngsp;
 					<span>{{stringsService.session}}</span>
+					&ngsp;
 					<span cyphTranslate>
 						you're looking for has already been connected to
 						(someone else got there first, or you clicked twice)

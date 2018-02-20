@@ -79,11 +79,14 @@
 		</div>
 		<div *ngIf='!envService.isTelehealth'>
 			<span cyphTranslate>This</span>
+			&ngsp;
 			<span>{{stringsService.session}}</span>
+			&ngsp;
 			<span cyphTranslate>has been aborted.</span>
 			<br />
 			<br />
 			<span cyphTranslate>Please</span>
+			&ngsp;
 			<a
 				cyphTranslate
 				[routerLink]='envService.newCyphUrlRetry'
@@ -98,6 +101,7 @@
 					If this was a mistake or error,
 					you may generate a new link and
 				</span>
+				&ngsp;
 				<a
 					cyphTranslate
 					[routerLink]='envService.newCyphUrlRetry'

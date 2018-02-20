@@ -20,14 +20,20 @@
 		<mat-card-subtitle *ngIf='pinUnlock'>
 			<p>
 				<span cyphTranslate>Welcome back</span>
+				&ngsp;
 				<span>{{savedUsername}}!</span>
+				&ngsp;
 				<span cyphTranslate>Enter your PIN below.</span>
 			</p>
 			<p>
 				<span cyphTranslate>Not</span>
+				&ngsp;
 				<span>{{savedUsername}}?</span>
+				&ngsp;
 				<a cyphTranslate (click)='pinUnlock = false'>Sign in as a different user</a>
+				&ngsp;
 				<span cyphTranslate>or</span>
+				&ngsp;
 				<a cyphTranslate (click)='removeSavedCredentials()'>log out</a>.
 			</p>
 		</mat-card-subtitle>

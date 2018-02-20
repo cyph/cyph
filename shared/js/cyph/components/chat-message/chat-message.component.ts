@@ -21,7 +21,7 @@ import {DialogService} from '../../services/dialog.service';
 import {ScrollService} from '../../services/scroll.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
-import {sleep, waitForIterable} from '../../util/wait';
+import {waitForIterable} from '../../util/wait';
 
 
 /**
@@ -114,8 +114,8 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 			this.elementRef.nativeElement &&
 			typeof this.elementRef.nativeElement.scrollIntoView === 'function'
 		) {
-			await sleep();
-			this.elementRef.nativeElement.scrollIntoView();
+			await this.waitUntilInitiated();
+			this.elementRef.nativeElement.scrollIntoView(undefined, {behavior: 'instant'});
 			this.scrolledIntoView.emit();
 		}
 
@@ -157,8 +157,8 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 			});
 
 			this.renderer.addClass(element, 'transitionend');
-
 			await promise;
+			this.renderer.removeClass(element, 'transitionend');
 		}));
 	}
 

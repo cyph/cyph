@@ -5,7 +5,6 @@
 import '../standalone/global';
 
 import 'hammerjs';
-import '../standalone/custombuild';
 import '../standalone/init';
 import '../standalone/test-environment-setup';
 import '../standalone/translations';

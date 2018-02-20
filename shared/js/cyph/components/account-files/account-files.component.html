@@ -29,18 +29,21 @@
 				<mat-card-subtitle>
 					<div>
 						<span cyphTranslate>Type:</span>
+						&ngsp;
 						<span>{{file.mediaType}}</span>
 					</div>
 					<div>
 						<span cyphTranslate>Size:</span>
+						&ngsp;
 						<span>{{readableByteLength(file.size)}}</span>
 					</div>
 					<div *ngIf='
 						!file.wasAnonymousShare &&
 						accountDatabaseService.currentUser.value &&
-						accountDatabaseService.currentUser.value.user.username !== file.owner
+						accountDatabaseService.currentUser.value?.user.username !== file.owner
 					'>
 						<span cyphTranslate>Owner:</span>
+						&ngsp;
 						<a [routerLink]='accountService.routeRoot + "profile/" + file.owner'>
 							{{file.owner}}
 						</a>
@@ -113,14 +116,17 @@
 				<mat-card-subtitle>
 					<div>
 						<span cyphTranslate>Type:</span>
+						&ngsp;
 						<span>{{file.mediaType}}</span>
 					</div>
 					<div>
 						<span cyphTranslate>Size:</span>
+						&ngsp;
 						<span>{{readableByteLength(file.size)}}</span>
 					</div>
 					<div *ngIf='!file.wasAnonymousShare'>
 						<span cyphTranslate>Shared by</span>
+						&ngsp;
 						<a [routerLink]='accountService.routeRoot + "profile/" + file.owner'>
 							{{file.owner}}
 						</a>

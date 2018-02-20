@@ -268,7 +268,7 @@ exports.userNotification	=
 					const [senderName, senderUsername, targetName]	= await Promise.all([
 						getName(e.params.namespace, username),
 						getRealUsername(e.params.namespace, username),
-						getName(e.params.namespace, target)
+						getName(e.params.namespace, notification.target)
 					]);
 
 					const {subject, text}	=
@@ -388,16 +388,20 @@ exports.userRegisterConfirmed	=
 	functions.database.ref('{namespace}/users/{user}/certificate').onCreate(async e => {
 		const username	= e.params.user;
 
-		const [name, realUsername]	= await Promise.all([
+		const [name, realUsername, registrationEmailSentRef]	= await Promise.all([
 			getName(e.params.namespace, username),
-			getRealUsername(e.params.namespace, username)
+			getRealUsername(e.params.namespace, username),
+			database.ref(`${e.params.namespace}/users/${username}/internal/registrationEmailSent`)
 		]);
 
-		await notify(
-			e.params.namespace,
-			username,
-			`Welcome to Cyph, ${realUsername}`,
-			`Congratulations ${name}, your account is now activated!\n` +
-				`Sign in at ${namespaces[e.params.namespace].accountsURL}login.`
-		);
+		await Promise.all([
+			notify(
+				e.params.namespace,
+				username,
+				`Welcome to Cyph, ${realUsername}`,
+				`Congratulations ${name}, your account is now activated!\n` +
+					`Sign in at ${namespaces[e.params.namespace].accountsURL}login.`
+			),
+			registrationEmailSentRef.set(true)
+		]);
 	});

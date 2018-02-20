@@ -5,8 +5,13 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
 blockFailingBuild=''
+gc=''
 if [ "${1}" == '--block-failing-build' ] ; then
 	blockFailingBuild=true
+	shift
+fi
+if [ "${1}" == '--gc' ] ; then
+	gc=true
 	shift
 fi
 
@@ -53,6 +58,8 @@ git commit -S -a -m "cleanup: ${comment}"
 if [ "${blockFailingBuild}" ] ; then
 	./commands/build.sh || exit 1
 fi
+if [ "${gc}" ] ; then
+	git gc --aggressive --prune
+fi
 
-git gc --aggressive --prune
 git push

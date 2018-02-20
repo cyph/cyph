@@ -16,4 +16,4 @@ else if ((<any> module).hot) {
 	(<any> module).hot.accept();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule);
+platformBrowserDynamic().bootstrapModule(AppModule, {preserveWhitespaces: false});

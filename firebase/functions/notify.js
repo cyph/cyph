@@ -19,7 +19,7 @@ module.exports	= (database, messaging) => ({
 			return;
 		}
 
-		if (!(await sendMessage(database, messaging, url, text))) {
+		if (!(await sendMessage(database, messaging, url, subject))) {
 			await sendMail(database, namespace, url, subject, text);
 		}
 	}

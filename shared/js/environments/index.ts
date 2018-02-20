@@ -5,8 +5,8 @@
 
 import * as $ from 'jquery';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
-import {Environment} from '../cyph/proto';
-import {environment} from '../environments/environment';
+import {Environment} from '../proto';
+import {environment} from './environment';
 
 
 if (customBuildBase64) {
@@ -23,8 +23,9 @@ if (customBuildBase64) {
 
 accountRoot	= 'account';
 
-if (environment.customBuild) {
-	for (const k of Object.keys(environment.customBuild)) {
+/* tslint:disable-next-line:strict-type-predicates */
+if (environment.customBuild && $ !== undefined && typeof window === 'object') {
+	for (const k of Object.keys(Object.getPrototypeOf(environment.customBuild))) {
 		const o	= (<any> environment.customBuild)[k];
 		if (ArrayBuffer.isView(o) && o.byteLength < 1) {
 			(<any> environment.customBuild)[k]	= undefined;
@@ -76,3 +77,6 @@ if (environment.customBuild) {
 		});
 	}
 }
+
+
+export {environment};

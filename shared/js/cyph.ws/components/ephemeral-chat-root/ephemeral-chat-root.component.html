@@ -10,9 +10,13 @@
 			'
 		>
 			<span cyphTranslate>WARNING: Your</span>
+			&ngsp;
 			<span>{{stringsService.product}}</span>
+			&ngsp;
 			<span cyphTranslate>instance has a problem. See</span>
-			<a href='https://www.cyph.com/websignerror' cyphTranslate>here</a>
+			&ngsp;
+			<a [href]='envService.homeUrl + "websignerror"' cyphTranslate>here</a>
+			&ngsp;
 			<span cyphTranslate>for more details and the solution.</span>
 		</h3>
 
@@ -59,15 +63,17 @@
 			appService.chatRootState === chatRootStates.chat &&
 			p2pService.isActiveOrInitialCall
 		)'>
-			<cyph-chat-message-box
-				[style.visibility]='!chatService.initiated ? "hidden" : undefined'
-				*ngIf='
-					appService.chatRootState === chatRootStates.chat &&
-					!chatService.chatSelfDestruct
-				'
-			></cyph-chat-message-box>
+			<div>
+				<cyph-chat-message-box
+					[style.visibility]='!chatService.initiated ? "hidden" : undefined'
+					*ngIf='
+						appService.chatRootState === chatRootStates.chat &&
+						!chatService.chatSelfDestruct
+					'
+				></cyph-chat-message-box>
 
-			<cyph-footer *ngIf='!envService.isMobile'></cyph-footer>
+				<cyph-footer *ngIf='!envService.isMobile'></cyph-footer>
+			</div>
 		</footer>
 	</section>
 

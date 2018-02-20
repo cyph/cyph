@@ -1,0 +1,53 @@
+<div
+	fxFlexFill
+	fxLayout='column'
+	fxLayoutAlign='center center'
+	fxLayoutGap='8px'
+	*ngIf='status | async as o'
+>
+	<ng-container *ngIf='!((o.subscribed || o.unsubscribed) && o.email); else subscribed'>
+		<ng-container *ngIf='!!o.email'>
+			<div>
+				<span cyphTranslate>
+					You are subscribed to email notifications at the following address:
+				</span>
+				&ngsp;
+				<strong>{{o.email}}</strong>
+			</div>
+			<div>
+				<a cyphTranslate routerLink='./unsubscribe'>Click here to unsubscribe.</a>
+			</div>
+		</ng-container>
+		<div cyphTranslate *ngIf='!o.email'>
+			You are not subscribed to email notifications.
+		</div>
+	</ng-container>
+
+	<ng-template #subscribed>
+		<ng-container *ngIf='o.subscribed && !!o.email; else unsubscribed'>
+			<div>
+				<span cyphTranslate>
+					You have subscribed to email notifications at the following address:
+				</span>
+				&ngsp;
+				<strong>{{o.email}}</strong>
+			</div>
+			<div>
+				<a cyphTranslate routerLink='../../unsubscribe'>Click here to unsubscribe.</a>
+			</div>
+		</ng-container>
+	</ng-template>
+
+	<ng-template #unsubscribed>
+		<div cyphTranslate>
+			You have unsubscribed from email notifications.
+		</div>
+		<div>
+			<span cyphTranslate>Unsubscribed by mistake?</span>
+			&ngsp;
+			<a cyphTranslate [routerLink]='"../subscribe/" + o.email'>
+				Click here to resubscribe.
+			</a>
+		</div>
+	</ng-template>
+</div>
