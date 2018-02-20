@@ -47,7 +47,7 @@ export class WorkerService {
 	public async serviceWorkerFunction<I, O> (
 		name: string,
 		input: MaybePromise<I>,
-		f: (input: I) => MaybePromise<O>
+		f: (input: I, ...localVars: any[]) => MaybePromise<O>
 	) : Promise<O> {
 		const serviceWorker	= await this.serviceWorker;
 		const id			= uuid();
