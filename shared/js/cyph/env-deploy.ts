@@ -11,7 +11,7 @@ import {IEnvironment} from './proto';
  */
 export class EnvDeploy {
 	/** @ignore */
-	private useBaseUrl: boolean	= !!environment.customBuild || environment.local;
+	private readonly useBaseUrl: boolean		= !!environment.customBuild || environment.local;
 
 	/** @see IEnvironment */
 	public readonly environment: IEnvironment	= environment;
