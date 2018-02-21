@@ -21,7 +21,7 @@ import {DialogService} from '../../services/dialog.service';
 import {ScrollService} from '../../services/scroll.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
-import {waitForIterable} from '../../util/wait';
+import {sleep, waitForIterable} from '../../util/wait';
 
 
 /**
@@ -38,45 +38,51 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 		const ids			= new Set<string>();
 		const subject		= new BehaviorSubject(ids);
 
-		setInterval(async () => {
-			if (!ChatMessageComponent.visibilityWatcherService) {
-				return;
-			}
+		(async () => {
+			while (true) {
+				await sleep(500);
 
-			await ChatMessageComponent.visibilityWatcherService.waitUntilVisible();
-
-			const idCount	= ids.size;
-			const elements	= document.querySelectorAll('cyph-chat-message > .message-item[id]');
-
-			for (const elem of Array.from(elements)) {
-				const id	= (elem.id || '').split('message-id-')[1];
-				if (!id || ids.has(id)) {
+				if (!ChatMessageComponent.visibilityWatcherService) {
 					continue;
 				}
 
-				const rootElement	=
-					elem.parentElement &&
-					elem.parentElement.parentElement &&
-					elem.parentElement.parentElement.parentElement &&
-					elem.parentElement.parentElement.parentElement.parentElement &&
-					elem.parentElement.parentElement.parentElement.parentElement.parentElement
-				;
+				await ChatMessageComponent.visibilityWatcherService.waitUntilVisible();
 
-				if (!rootElement) {
-					continue;
+				const idCount	= ids.size;
+				const elements	= document.querySelectorAll(
+					'cyph-chat-message > .message-item[id]'
+				);
+
+				for (const elem of Array.from(elements)) {
+					const id	= (elem.id || '').split('message-id-')[1];
+					if (!id || ids.has(id)) {
+						continue;
+					}
+
+					const rootElement	=
+						elem.parentElement &&
+						elem.parentElement.parentElement &&
+						elem.parentElement.parentElement.parentElement &&
+						elem.parentElement.parentElement.parentElement.parentElement &&
+						elem.parentElement.parentElement.parentElement.parentElement.parentElement
+					;
+
+					if (!rootElement) {
+						continue;
+					}
+
+					const offset	= $(elem).offset();
+
+					if (offset && offset.top > 0 && offset.top < rootElement.clientHeight) {
+						ids.add(id);
+					}
 				}
 
-				const offset	= $(elem).offset();
-
-				if (offset && offset.top > 0 && offset.top < rootElement.clientHeight) {
-					ids.add(id);
+				if (ids.size !== idCount) {
+					subject.next(ids);
 				}
 			}
-
-			if (ids.size !== idCount) {
-				subject.next(ids);
-			}
-		}, 500);
+		})();
 
 		return subject;
 	})();
