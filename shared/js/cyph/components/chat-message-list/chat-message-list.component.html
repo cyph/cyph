@@ -76,11 +76,11 @@
 							color='accent'
 							cyphTranslate
 							[routerLink]='
-								accountService.routeRoot +
+								accountService?.routeRoot +
 								"request-followup/" +
 								(promptFollowup || "")
 							'
-							*ngIf='!!promptFollowup'
+							*ngIf='!!promptFollowup && !!accountService'
 						>
 							Click to Schedule Follow-up Appointment
 						</button>

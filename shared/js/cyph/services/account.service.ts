@@ -59,7 +59,9 @@ export class AccountService {
 	public readonly resolveUiReady: () => void			= this._UI_READY.resolve;
 
 	/** Root for account routes. */
-	public readonly routeRoot: string		= accountRoot === '' ? '/' : `/${accountRoot}/`;
+	public readonly routeRoot: string					=
+		accountRoot === '' ? '/' : `/${accountRoot}/`
+	;
 
 	/** Indicates when view is in transition. */
 	public readonly transition: Observable<boolean>		= this.transitionInternal;

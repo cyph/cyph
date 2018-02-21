@@ -63,6 +63,10 @@ export class DemoChatRootComponent implements OnInit {
 		this.localSessionService.initChatData(this.data);
 
 		this.data.message.subscribe(s => {
+			if (this.chatService.chat.currentMessage.text === undefined) {
+				this.chatService.chat.currentMessage.text	= '';
+			}
+
 			if (s.length === 1) {
 				this.chatService.chat.currentMessage.text += s;
 			}
