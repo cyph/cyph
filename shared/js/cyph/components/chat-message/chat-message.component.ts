@@ -33,6 +33,58 @@ import {waitForIterable} from '../../util/wait';
 	templateUrl: './chat-message.component.html'
 })
 export class ChatMessageComponent implements OnChanges, OnDestroy {
+	/** Temporary workaround pending ACCOUNTS-36. */
+	public static appeared: BehaviorSubject<Set<string>>	= (() => {
+		const ids			= new Set<string>();
+		const subject		= new BehaviorSubject(ids);
+
+		setInterval(async () => {
+			if (!ChatMessageComponent.visibilityWatcherService) {
+				return;
+			}
+
+			await ChatMessageComponent.visibilityWatcherService.waitUntilVisible();
+
+			const idCount	= ids.size;
+			const elements	= document.querySelectorAll('cyph-chat-message > .message-item[id]');
+
+			for (const elem of Array.from(elements)) {
+				const id	= (elem.id || '').split('message-id-')[1];
+				if (!id || ids.has(id)) {
+					continue;
+				}
+
+				const rootElement	=
+					elem.parentElement &&
+					elem.parentElement.parentElement &&
+					elem.parentElement.parentElement.parentElement &&
+					elem.parentElement.parentElement.parentElement.parentElement &&
+					elem.parentElement.parentElement.parentElement.parentElement.parentElement
+				;
+
+				if (!rootElement) {
+					continue;
+				}
+
+				const offset	= $(elem).offset();
+
+				if (offset && offset.top > 0 && offset.top < rootElement.clientHeight) {
+					ids.add(id);
+				}
+			}
+
+			if (ids.size !== idCount) {
+				subject.next(ids);
+			}
+		}, 500);
+
+		return subject;
+	})();
+
+	/** Temporary workaround pending ACCOUNTS-36. */
+	public static visibilityWatcherService?: {waitUntilVisible: () => Promise<void>};
+
+
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
 
@@ -90,9 +142,15 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 	/** @inheritDoc */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
+		if (!ChatMessageComponent.visibilityWatcherService) {
+			ChatMessageComponent.visibilityWatcherService	= this.windowWatcherService;
+		}
+
 		if (!changes.message || this.message === undefined) {
 			return;
 		}
+
+		const id	= this.message.id;
 
 		await this.chatService.getMessageValue(this.message);
 
@@ -128,6 +186,9 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 		}
 
 		await this.windowWatcherService.waitUntilVisible();
+
+		/* Temporary workaround pending ACCOUNTS-36 */
+		await ChatMessageComponent.appeared.pipe(filter(arr => arr.has(id)), take(1)).toPromise();
 
 		if (this.message === changes.message.currentValue) {
 			this.scrollService.setRead(this.message.id);
