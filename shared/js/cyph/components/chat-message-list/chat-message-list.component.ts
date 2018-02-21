@@ -300,18 +300,15 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 		/** @ignore */
 		@Inject(AccountContactsService) @Optional()
-			private readonly accountContactsService: AccountContactsService|undefined
-		,
+		private readonly accountContactsService: AccountContactsService|undefined,
 
 		/** @ignore */
 		@Inject(AccountDatabaseService) @Optional()
-			private readonly accountDatabaseService: AccountDatabaseService|undefined
-		,
+		private readonly accountDatabaseService: AccountDatabaseService|undefined,
 
 		/** @ignore */
 		@Inject(AccountUserLookupService) @Optional()
-			private readonly accountUserLookupService: AccountUserLookupService|undefined
-		,
+		private readonly accountUserLookupService: AccountUserLookupService|undefined,
 
 		/** @ignore */
 		private readonly chatMessageGeometryService: ChatMessageGeometryService,
@@ -327,8 +324,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 		/** @see AccountService */
 		@Inject(AccountService) @Optional()
-			public readonly accountService: AccountService|undefined
-		,
+		public readonly accountService: AccountService|undefined,
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,
