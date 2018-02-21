@@ -94,7 +94,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 					importScripts('/assets/node_modules/firebase/firebase-app.js');
 					importScripts('/assets/node_modules/firebase/firebase-messaging.js');
 
-					(<any> self).firebase	= firebase;
+					if (firebase) {
+						(<any> self).firebase	= firebase;
+					}
+					else {
+						firebase				= (<any> self).firebase;
+					}
+
 					firebase.initializeApp(config);
 
 					if (firebase.messaging) {
