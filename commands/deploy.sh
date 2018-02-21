@@ -535,12 +535,13 @@ fi
 
 # Firebase deployment
 if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; then
-	firebaseProjects='cyphme'
-	if [ "${test}" ] ; then
+	if [ ! "${test}" ] ; then
+		firebaseProjects='cyphme'
+	else
 		firebaseProjects='cyph-test cyph-test2 cyph-test-e2e cyph-test-local'
-	fi
-	if [ "${environment}" != 'dev' ] ; then
-		firebaseProjects="${firebaseProjects} cyph-test-${branch}"
+		if [ "${environment}" != 'dev' ] ; then
+			firebaseProjects="${firebaseProjects} cyph-test-${branch}"
+		fi
 	fi
 
 	./commands/buildunbundledassets.sh
