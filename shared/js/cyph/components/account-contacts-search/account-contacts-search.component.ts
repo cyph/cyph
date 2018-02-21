@@ -31,7 +31,7 @@ import {SearchBarComponent} from '../search-bar';
 })
 export class AccountContactsSearchComponent {
 	/** List of users to search. */
-	@Input() public contactList: Observable<IContactListItem[]>	=
+	@Input() public contactList: Observable<(IContactListItem|User)[]>	=
 		this.accountContactsService.contactList
 	;
 

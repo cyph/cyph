@@ -28,7 +28,7 @@ export class AccountContactsService {
 	;
 
 	/** List of contacts for current user, sorted alphabetically by username. */
-	public readonly contactList: Observable<IContactListItem[]>	= cacheObservable(
+	public readonly contactList: Observable<(IContactListItem|User)[]>	= cacheObservable(
 		this.accountDatabaseService.watchListKeys('contactUsernames').pipe(
 			mergeMap(async keys =>
 				(await Promise.all(
@@ -61,14 +61,17 @@ export class AccountContactsService {
 
 	/** Fully loads contact list. */
 	public readonly fullyLoadContactList	= memoize(
-		(contactList: Observable<IContactListItem[]>) : Observable<User[]> => cacheObservable(
-			contactList.pipe(mergeMap(async contacts =>
-				filterUndefined(await Promise.all(
-					contacts.map(async contact => contact.user)
-				))
-			)),
-			[]
-		)
+		(contactList: Observable<(IContactListItem|User)[]>) : Observable<User[]> =>
+			cacheObservable(
+				contactList.pipe(mergeMap(async contacts =>
+					filterUndefined(await Promise.all(
+						contacts.map(async contact =>
+							contact instanceof User ? contact : contact.user
+						)
+					))
+				)),
+				[]
+			)
 	);
 
 	/** Indicates whether spinner should be displayed. */
