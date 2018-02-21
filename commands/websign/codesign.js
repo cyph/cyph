@@ -44,7 +44,7 @@ try {
 		fs.writeFileSync(`${outputDir}/current`, timestamp);
 
 		fs.writeFileSync(`${outputDir}/pkg`,
-			signedInputs[i] + '\n' +
+			signedInputs[i].toString('base64').replace(/\s+/g, '') + '\n' +
 			rsaIndex + '\n' +
 			sphincsIndex
 		);
