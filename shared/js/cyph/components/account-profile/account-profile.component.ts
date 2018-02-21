@@ -20,7 +20,6 @@ import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
 import {cacheObservable} from '../../util/flatten-observable';
 
-
 /**
  * Angular component for account profile UI.
  */
@@ -168,9 +167,10 @@ export class AccountProfileComponent implements OnInit {
 		this.accountService.transitionEnd();
 		this.activatedRoute.params.subscribe(o => { this.setUser(o.username); });
 		// Temporary workaround for listing doctors
-		this.doctorListOnly.subscribe(o => this.envService.environment.customBuild ?
-			(o ? this.setUser(this.envService.environment.customBuild.config.organization) : '' ) :
-			false);
+		this.doctorListOnly.subscribe(o => (this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.config.organization) ?
+			(o ? this.setUser(this.envService.environment.customBuild.config.organization) : null ) :
+			null);
 	}
 
 	/** Publishes new user description. */

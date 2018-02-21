@@ -11,33 +11,38 @@
 		<h1 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h1>
 		<h1 cyphTranslate *ngIf='envService.isTelehealth'>Waiting Room</h1>
 
-		<div *ngIf='envService.isTelehealth &&
-		(currentUser.user.userType | async) === accountUserTypes.Standard &&
-		getUser(appointment.participants[0]) | async as doctor'
-		fxLayout='column'
-		fxLayoutAlign='center'
-		fxLayoutGap='5px'
+		<ng-container *ngIf='
+			envService.isTelehealth &&
+			appointment?.calendarInvite.title &&
+			appointment?.calendarInvite.callType &&
+			(currentUser?.user.userType | async) === accountUserTypes.Standard
+		'>
+			<div
+				*ngIf='getUser((appointment?.participants || [])[0] || "") | async as doctor'
+				fxLayout='column'
+				fxLayoutAlign='center'
+				fxLayoutGap='5px'
+			>
+				<h2>
+					Your {{appointment?.calendarInvite.title}}
+						{{(appointment?.calendarInvite.callType === callTypes.Video) ? 'Video' : ''}}
+						{{(appointment?.calendarInvite.callType === callTypes.Audio) ? 'Audio' : ''}}
+							Telehealth Session with {{stringsService.dr}} 
+							{{(doctor?.name | async)}}
+				</h2>
+				<img
+					cyphTranslate
+					class='avatar animated _1'
+					[alt]='stringsService.dr + " " + (doctor.name | async)'
+					[src]='doctor?.avatar | async'
+				/>
+			</div>
+		</ng-container>
 
-		>
-			<h2>
-				Your {{appointment.calendarInvite.title}}
-					{{(appointment.calendarInvite.callType === callTypes.Video) ? 'Video' : ''}}
-					{{(appointment.calendarInvite.callType === callTypes.Audio) ? 'Audio' : ''}}
-						Telehealth Session with {{stringsService.dr}} 
-						{{(doctor.name | async)}}
-			</h2>
-			<img
-				cyphTranslate
-				class='avatar animated _1'
-				[alt]='stringsService.dr + " " + (doctor.name | async)'
-				[src]='doctor?.avatar | async'
-			/>
-		</div>
-
-		<div *ngIf='(currentUser.user.userType | async) !== undefined && !appointment.forms[0]'>
+		<div *ngIf='appointment?.forms?.length < 1; else formsComplete'>
 			<div *ngIf='
 			envService.isTelehealth && (
-				(currentUser.user.userType | async) === accountUserTypes.Standard
+				(currentUser?.user.userType | async) === accountUserTypes.Standard
 			);'
 			fxLayout='column'>
 				<h2 >
@@ -45,15 +50,15 @@
 				</h2>
 				<button
 					*ngIf='
-						(currentUser.user.userType | async) ===
-						accountUserTypes.Standard
+						!!appointmentID &&
+						(currentUser?.user.userType | async) === accountUserTypes.Standard
 					'
 					color='primary'
 					mat-raised-button
 					[routerLink]='
 						accountService.routeRoot +
 						"new-patient/" +
-						appointmentID
+						(appointmentID || "")
 					'
 				>
 					{{stringsService.submitPatientForms}}
@@ -61,10 +66,11 @@
 			</div>
 		</div>
 
-		<div *ngIf='(currentUser.user.userType | async) !== undefined && appointment.forms[0]'>
+		<ng-template #formsComplete>
+			<div>
 				<h2 *ngIf='
 					envService.isTelehealth && (
-						(currentUser.user.userType | async) === accountUserTypes.Standard
+						(currentUser?.user.userType | async) === accountUserTypes.Standard
 					);
 					else doctorMessage;
 				'>
@@ -73,7 +79,7 @@
 				<ng-template #doctorMessage>
 					<h2 *ngIf='
 						envService.isTelehealth && (
-							(currentUser.user.userType | async) === accountUserTypes.TelehealthDoctor
+							(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor
 						);
 						else genericMessage
 					'>
@@ -84,5 +90,6 @@
 					<h2>{{stringsService.waitingRoomCheckedInGeneric}}</h2>
 				</ng-template>
 			</div>
+		</ng-template>
 	</div>
 </mat-card>
