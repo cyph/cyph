@@ -144,6 +144,10 @@ if [ "${customBuild}" ] ; then
 fi
 
 
+if [ ! "${simple}" ] ; then
+	rm shared/assets/frozen
+fi
+
 ./commands/copyworkspace.sh ~/.build
 cd ~/.build
 
