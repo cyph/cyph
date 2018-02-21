@@ -145,7 +145,7 @@ fi
 
 
 if [ ! "${simple}" ] ; then
-	rm shared/assets/frozen
+	rm shared/assets/frozen 2> /dev/null
 fi
 
 ./commands/copyworkspace.sh ~/.build
