@@ -169,8 +169,8 @@ export class AccountProfileComponent implements OnInit {
 		// Temporary workaround for listing doctors
 		this.doctorListOnly.subscribe(o => (this.envService.environment.customBuild &&
 			this.envService.environment.customBuild.config.organization) ?
-			(o ? this.setUser(this.envService.environment.customBuild.config.organization) : null ) :
-			null);
+			(o ? this.setUser(this.envService.environment.customBuild.config.organization) : undefined ) :
+			undefined);
 	}
 
 	/** Publishes new user description. */
