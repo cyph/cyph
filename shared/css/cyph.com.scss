@@ -356,6 +356,11 @@ mat-sidenav img {
 	margin-right: 5px;
 }
 
+/* Temporary workaround for Angular Material bug */
+mat-sidenav.disabled {
+	@include transform(none !important);
+}
+
 .mat-drawer-backdrop {
 	background-color: rgba(33, 33, 33, 0.48) !important;
 }
