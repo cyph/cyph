@@ -120,6 +120,21 @@ const testKeyPair	= {
 const sign	= async (inputs, testSign) => new Promise(async (resolve, reject) => {
 
 
+if (testSign) {
+	return resolve({
+		rsaIndex: 0,
+		signedInputs: await Promise.all(inputs.map(async ({additionalData, message}) =>
+			superSphincs.sign(
+				message,
+				testKeyPair.privateKey,
+				additionalData
+			)
+		)),
+		sphincsIndex: 0
+	});
+}
+
+
 const binaryInputs	= inputs.map(({additionalData, message}) => ({
 	additionalData,
 	message: message instanceof Uint8Array ?
@@ -128,12 +143,15 @@ const binaryInputs	= inputs.map(({additionalData, message}) => ({
 }));
 
 const dataToSign	= Buffer.from(JSON.stringify(await Promise.all(inputs.map(async o => ({
-	additionalData: o.additionalData instanceof Uint8Array ?
-		{
-			data: sodiumUtil.to_base64(o.additionalData),
-			isUint8Array: true
-		} :
-		o.additionalData
+	additionalData:
+		o.additionalData instanceof Uint8Array ?
+			{
+				data: sodiumUtil.to_base64(o.additionalData),
+				isUint8Array: true
+			} :
+		o.additionalData === undefined ?
+			{none: true} :
+			o.additionalData
 	,
 	message: o.message instanceof Uint8Array ?
 		{
@@ -142,21 +160,6 @@ const dataToSign	= Buffer.from(JSON.stringify(await Promise.all(inputs.map(async
 		} :
 		o.message
 })))));
-
-
-if (testSign) {
-	return resolve({
-		rsaIndex: 0,
-		signedInputs: await Promise.all(inputs.map(async ({additionalData, message}) =>
-			superSphincs.sign(
-				message,
-				testKeyPair.privateKey,
-				additionalData.none ? undefined : additionalData
-			)
-		)),
-		sphincsIndex: 0
-	});
-}
 
 
 const id			= new Uint32Array(crypto.randomBytes(4).buffer)[0];
