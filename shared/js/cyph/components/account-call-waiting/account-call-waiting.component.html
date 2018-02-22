@@ -1,4 +1,4 @@
-<mat-card fxFlexFill fxLayout='row' class='white-card'>
+<mat-card fxFlexFill fxLayout='column' class='white-card'>
 	<div
 		fxFlexFill
 		fxLayout='column'
@@ -8,13 +8,12 @@
 	>
 		<cyph-logo fxFlex='5em'></cyph-logo>
 
-		<h1 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h1>
-		<h1 cyphTranslate *ngIf='envService.isTelehealth'>Waiting Room</h1>
+		<h2 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h2>
 
 		<div *ngIf='
-		envService.isTelehealth &&
-		appointment?.calendarInvite.title &&
-		appointment?.calendarInvite.callType'
+			envService.isTelehealth &&
+			appointment?.calendarInvite.title &&
+			appointment?.calendarInvite.callType'
 		>
 			<ng-container
 				*ngIf='(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor;
@@ -26,19 +25,28 @@
 					fxLayoutAlign='center'
 					fxLayoutGap='5px'
 				>
-					<h2>
+					<h1>
 						Your {{appointment?.calendarInvite.title}}
 							{{(appointment?.calendarInvite.callType === callTypes.Video) ? 'Video' : ''}}
 							{{(appointment?.calendarInvite.callType === callTypes.Audio) ? 'Audio' : ''}}
 								Telehealth Session with 
 								{{(patient?.name | async)}}
-					</h2>
+					</h1>
 					<img
 						cyphTranslate
 						class='avatar animated _1'
 						[alt]='(patient?.name | async)'
 						[src]='patient?.avatar | async'
 					/>
+					<div class='loading'>
+						<div class='logo-animation'>
+							<div></div>
+							<div></div>
+							<div></div>
+							<div></div>
+							<div></div>
+						</div>
+					</div>
 				</div>
 			</ng-container>
 			<ng-template #standardView>
@@ -48,19 +56,28 @@
 						fxLayoutAlign='center'
 						fxLayoutGap='5px'
 					>
-						<h2>
+						<h1>
 							Your {{appointment?.calendarInvite.title}}
 								{{(appointment?.calendarInvite.callType === callTypes.Video) ? 'Video' : ''}}
 								{{(appointment?.calendarInvite.callType === callTypes.Audio) ? 'Audio' : ''}}
 									Telehealth Session with {{stringsService.dr}} 
 									{{(doctor?.name | async)}}
-						</h2>
+						</h1>
 						<cyph-account-contact
 							[clickable]='false'
 							[contact]='doctor'
 							class='cyph-inverted-theme animated fadeIn'
 							fxFlex='60'
 						></cyph-account-contact>
+						<div class='loading'>
+							<div class='logo-animation'>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+							</div>
+						</div>
 					</div>
 			</ng-template>
 		</div>
