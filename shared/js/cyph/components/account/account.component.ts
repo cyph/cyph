@@ -72,6 +72,14 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 	/** Indicates whether menu should be displayed. */
 	public get menuVisible () : boolean {
+		if (
+				this.route === 'appointments' &&
+				this.activatedRoute.snapshot.firstChild &&
+				this.activatedRoute.snapshot.firstChild.url.length > 1
+		) {
+				return false;
+		}
+
 		return this.accountDatabaseService.currentUser.value !== undefined && [
 			'',
 			'audio',

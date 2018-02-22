@@ -1,4 +1,4 @@
-<mat-card fxFlexFill fxLayout='column' class='white-card'>
+<mat-card fxFlexFill fxLayout='column' class='white-card animated fadeIn'>
 	<div
 		fxFlexFill
 		fxLayout='column'
@@ -63,6 +63,8 @@
 									Telehealth Session with {{stringsService.dr}} 
 									{{(doctor?.name | async)}}
 						</h1>
+						<br />
+						<br />
 						<cyph-account-contact
 							[clickable]='false'
 							[contact]='doctor'
