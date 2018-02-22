@@ -1,6 +1,7 @@
 <mat-card
 	class='contact animated'
 	[class.non-clickable]='!clickable'
+	[class.telehealth]='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor'
 	[routerLink]='!clickable ? undefined : (
 		accountService.routeRoot +
 		(envService.isTelehealth ? "profile" : "messages") + "/" +
@@ -22,15 +23,31 @@
 				accountService.routeRoot + "profile/" + (username || "")
 			'
 		/>
-		<mat-card-title>
-			{{
-				((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor ?
-					stringsService.dr :
-					''
-			}}
-			{{(user | async)?.name | async}}
-		</mat-card-title>
-		<mat-card-subtitle>@{{(user | async)?.realUsername | async}}</mat-card-subtitle>
+		<div fxLayout='column' fxLayoutAlign='center start'>
+			<mat-card-title>
+				{{
+					((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor ?
+						stringsService.dr :
+						''
+				}}
+				{{(user | async)?.name | async}}
+			</mat-card-title>
+			<mat-card-subtitle>
+				<ng-container
+					*ngIf='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor;
+					else standardView'
+				>
+					<ng-container *ngIf='getUserOrg(username) | async as org'>
+						<mat-icon>business</mat-icon>
+						{{(org?.name | async)}}
+					</ng-container>
+				</ng-container>
+
+				<ng-template #standardView>
+					@{{((user | async)?.realUsername | async)}}
+				</ng-template>		
+			</mat-card-subtitle>
+		</div>
 		<cyph-account-user-rating
 			[user]='user | async'
 			*ngIf='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor'
