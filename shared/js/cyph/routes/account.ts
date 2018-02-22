@@ -56,6 +56,7 @@ export const account: Route	= {
 		},
 		{path: 'contacts', component: AccountContactsComponent},
 		{path: 'contacts/:username', component: AccountContactsComponent},
+		{path: 'doctors', component: AccountProfileComponent, data: {doctorListOnly: true}},
 		{path: 'docs', component: AccountNotesComponent, data: {realTime: true}},
 		{
 			path: 'docs/:id',

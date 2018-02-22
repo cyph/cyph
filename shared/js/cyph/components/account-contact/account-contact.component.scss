@@ -2,6 +2,8 @@
 
 .contact {
 	overflow: hidden;
+	margin-left: auto;
+	margin-right: auto;
 
 	@include transition(filter 0s ease);
 
@@ -15,9 +17,36 @@
 		}
 	}
 
-	cyph-account-user-rating {
-		margin-left: auto;
-		text-align: center;
+	&.telehealth {
+		.avatar {
+			width: 4.5em;
+			height: 4.5em;
+		}
+		
+		mat-card-title {
+			font-size: 20px;
+			margin: 0 0 7px 0;
+		}
+
+		mat-card-subtitle {
+			font-size: 14px;
+			top: -10px;
+			position: relative;
+			margin: 0;
+
+			mat-icon {
+				font-size: 21px;
+				top: 3.5px;
+				margin-right: -4px;
+				position: relative;
+			}
+		}
+
+		cyph-account-user-rating {
+			margin-left: auto;
+			margin-bottom: 13px;
+			text-align: center;
+		}
 	}
 }
 

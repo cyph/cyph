@@ -1,7 +1,9 @@
 import {Component, Input, OnChanges} from '@angular/core';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {IContactListItem, User, UserPresence} from '../../account';
 import {AccountUserTypes} from '../../proto';
+import {AccountOrganizationsService} from '../../services/account-organizations.service';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -24,6 +26,15 @@ export class AccountContactComponent implements OnChanges {
 
 	/** Contact. */
 	@Input() public contact?: IContactListItem|User;
+
+	/** fxFlex amount for contact container */
+	@Input() public fxFlex?: string		= '100';
+
+	/** Gets user org. */
+	public readonly getUserOrg: (username: string) => Promise<User|undefined>	=
+	memoize(async (username: string) =>
+		this.accountOrganizationsService.getOrganization(username)
+	);
 
 	/** This user. */
 	public readonly user: BehaviorSubject<User|undefined>	=
@@ -55,6 +66,9 @@ export class AccountContactComponent implements OnChanges {
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see AccountOrganizationsService */
+		public readonly accountOrganizationsService: AccountOrganizationsService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
