@@ -17,7 +17,7 @@
 			[ngClass]='userPresence[((user | async)?.status | async) || 0]'
 			[src]='(user | async)?.avatar | async'
 			alt='User Avatar'
-			matTooltip='Open Profile'
+			[matTooltip]='clickable ? "Open Profile" : ""'
 			[routerLink]='!clickable ?
 				undefined :
 				accountService.routeRoot + "profile/" + (username || "")
