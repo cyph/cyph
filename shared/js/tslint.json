@@ -8,7 +8,6 @@
 		/* TypeScript-Specific */
 
 		"adjacent-overload-signatures": true,
-		"ban-comma-operator": true,
 		"ban-types": [
 			true,
 			["Boolean", "Use boolean."],
@@ -101,6 +100,7 @@
 			"setInterval",
 			"setTimeout"
 		],
+		"ban-comma-operator": true,
 		"curly": true,
 		"forin": true,
 		"import-blacklist": false,
