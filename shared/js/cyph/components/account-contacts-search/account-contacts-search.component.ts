@@ -37,6 +37,8 @@ export class AccountContactsSearchComponent implements OnInit {
 		this.accountContactsService.contactList
 	;
 
+	/** @see SearchBarComponent.placeholder */
+	@Input() public placeholder: string							= this.stringsService.search;
 
 	/** @see SearchBarComponent */
 	@ViewChild(SearchBarComponent) public searchBar?: SearchBarComponent;
@@ -46,12 +48,6 @@ export class AccountContactsSearchComponent implements OnInit {
 
 	/** @see SearchBarComponent.listLength */
 	@Input() public searchListLength: number					= 10;
-
-	/** If true, downloads User.extra and queries it for the search. */
-	@Input() public searchProfileExtra?: boolean;
-
-	/** @see SearchBarComponent.placeholder */
-	@Input() public placeholder: string							= this.stringsService.search;
 
 	/** @see SearchBarComponent.options */
 	public readonly searchOptions: Observable<ISearchOptions>	=
@@ -155,6 +151,9 @@ export class AccountContactsSearchComponent implements OnInit {
 		)
 	;
 
+	/** If true, downloads User.extra and queries it for the search. */
+	@Input() public searchProfileExtra?: boolean;
+
 	/** @see SearchBarComponent.spinner */
 	public readonly searchSpinner: BehaviorSubject<boolean>		= new BehaviorSubject(false);
 
@@ -176,7 +175,7 @@ export class AccountContactsSearchComponent implements OnInit {
 
 	public async ngOnInit () : Promise<void> {
 		if (this.envService.isTelehealth && this.searchProfileExtra) {
-			this.placeholder = this.stringsService.telehealthSearch;
+			this.placeholder	= this.stringsService.telehealthSearch;
 		}
 	}
 
