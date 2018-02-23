@@ -159,14 +159,14 @@
 							<mat-panel-title>
 								<div fxLayoutAlign='start center'>
 									<span>{{record.name}}</span>
-									&ngsp;
+									&nbsp;
 									<ng-container *ngIf='!record.wasAnonymousShare'>
 										<span cyphTranslate>with</span>
-										&ngsp;
+										&nbsp;
 										<a [routerLink]='
 											accountService.routeRoot + "profile/" + record.owner
 										'>
-											{{record.name}}
+											{{record.owner}}
 										</a>
 									</ng-container>
 									<ng-container *ngIf='record.wasAnonymousShare'>
