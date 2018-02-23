@@ -97,7 +97,7 @@ export class AccountRegisterComponent implements OnInit {
 	public ngOnInit () : void {
 		this.activatedRoute.params.subscribe(async o => {
 			try {
-				const step: number|undefined	= parseInt(o.step, 10);
+				const step	= Number.parseInt(o.step, 10);
 
 				/* Allow "step" parameter to double up as invite code */
 				if (isNaN(step) && !this.inviteCode) {

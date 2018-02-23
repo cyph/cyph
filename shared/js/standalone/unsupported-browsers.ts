@@ -16,13 +16,13 @@ const isFirefoxOS: boolean		=
 
 const isOldIOS: boolean			=
 	isIOS &&
-	(parseInt((userAgent.match(/os (\d+)_(\d+)_?(\d+)?/) || [])[1], 10) || 0) < 9
+	(Number.parseInt((userAgent.match(/os (\d+)_(\d+)_?(\d+)?/) || [])[1], 10) || 0) < 9
 ;
 
 const isOldSafari: boolean		=
 	!isIOS &&
 	navigator.vendor === 'Apple Computer, Inc.' &&
-	(parseInt((userAgent.match(/version\/(\d+)/) || [])[1], 10) || 0) < 9
+	(Number.parseInt((userAgent.match(/version\/(\d+)/) || [])[1], 10) || 0) < 9
 ;
 
 const isStockAndroid: boolean	=

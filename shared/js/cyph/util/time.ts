@@ -38,7 +38,7 @@ const timestampData	= {
 /** Gets hour and minute of a Time or string of the form "hh:mm". */
 export const getHourAndMinuteOfTime	= (time: Time|string) : {hour: number; minute: number} => {
 	if (typeof time === 'string') {
-		const [hour, minute]	= time.split(':').map(s => parseInt(s, 10));
+		const [hour, minute]	= time.split(':').map(s => Number.parseInt(s, 10));
 		return {hour, minute};
 	}
 	else {

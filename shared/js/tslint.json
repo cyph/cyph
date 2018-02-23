@@ -97,6 +97,7 @@
 			["localStorage", "removeItem", "Use LocalStorageService"],
 			["localStorage", "setItem", "Use LocalStorageService"],
 			["Math", "random", "Seriously?"],
+			{"name": "parseInt", "message": "Use Number.parseInt"},
 			"setInterval",
 			"setTimeout"
 		],

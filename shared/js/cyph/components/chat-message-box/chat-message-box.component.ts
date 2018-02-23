@@ -149,10 +149,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 		else {
 			/* Adapt message box to content size on desktop */
 
-			const messageBoxLineHeight: number	= parseInt(
-				$textarea.css('line-height'),
-				10
-			);
+			const messageBoxLineHeight	= Number.parseInt($textarea.css('line-height'), 10);
 
 			$textarea.on('keyup', () => {
 				const val		= $textarea.val();

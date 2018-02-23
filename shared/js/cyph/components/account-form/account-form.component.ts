@@ -40,7 +40,7 @@ export class AccountFormComponent implements OnInit {
 				const editable							= data.editable === true;
 
 				if (appointmentID && id) {
-					const i				= parseInt(id, 10);
+					const i				= Number.parseInt(id, 10);
 					const downloadTask	=
 						this.accountFilesService.downloadAppointment(appointmentID)
 					;

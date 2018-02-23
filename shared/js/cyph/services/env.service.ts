@@ -72,7 +72,7 @@ export class EnvService extends Env {
 	/** Package/environment name. */
 	public readonly packageName: Promise<string>	= (async () => {
 		try {
-			const timestamp	= parseInt(
+			const timestamp	= Number.parseInt(
 				await this.localStorageService.getItem('webSignPackageTimestamp', StringProto),
 				10
 			);

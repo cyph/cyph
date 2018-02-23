@@ -103,7 +103,7 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is a version of Firefox before 57 ("Quantum"). */
 	public readonly isOldFirefox: boolean		=
 		this.isFirefox &&
-		!(parseInt((Env.UA.match(/firefox\/(\d+)/) || [])[1], 10) >= 57)
+		!(Number.parseInt((Env.UA.match(/firefox\/(\d+)/) || [])[1], 10) >= 57)
 	;
 
 	/** Indicates whether this is Safari. */
