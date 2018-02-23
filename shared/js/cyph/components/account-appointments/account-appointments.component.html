@@ -32,6 +32,9 @@
 											{{o.friend}}
 										</a>
 									</ng-container>
+									<span>&nbsp; - {{getDateTimeString(
+											o.appointment.calendarInvite.startTime
+										) }}</span>
 								</div>
 							</mat-panel-title>
 							<mat-panel-description>
@@ -169,6 +172,9 @@
 									<ng-container *ngIf='record.wasAnonymousShare'>
 										<span cyphTranslate>(invited anonymously)</span>
 									</ng-container>
+									<span>&nbsp; - {{getDateTimeString(
+											o.appointment.calendarInvite.startTime
+										) }}</span>
 								</div>
 							</mat-panel-title>
 							<mat-panel-description>
