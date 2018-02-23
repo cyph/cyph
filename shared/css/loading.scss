@@ -1,5 +1,9 @@
 @import './theme';
 
+html, body {
+	background-color: $cyph-background;
+}
+
 #pre-load {
 	background-color: inherit !important;
 	position: fixed;
