@@ -81,14 +81,15 @@
 								envService.isTelehealth && (sentFileID | async) !== undefined
 							'>
 								<h2 cyphTranslate>
-									Why don't you get ahead on those medical forms while you're waiting
-									for confirmation?
+									Why don't you get ahead on those medical forms while you're 
+									waiting for confirmation?
 								</h2>
 								<br />
-								<div class='cyph-light-theme'>
+								<div fxLayout='row' fxLayoutGap='7px'>
 									<button
 										mat-raised-button
 										cyphTranslate
+										color='accent'
 										[routerLink]='
 											accountService.routeRoot +
 											"new-patient/" +
@@ -96,6 +97,15 @@
 										'
 									>
 										Patient Forms
+									</button>
+
+									<button
+										mat-raised-button
+										cyphTranslate
+										color='primary'
+										[routerLink]='accountService.routeRoot + "appointments/"'
+									>
+										I'll do this later
 									</button>
 								</div>
 							</ng-container>
