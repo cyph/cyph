@@ -1,5 +1,5 @@
 #!/bin/bash
-exit
+
 
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
