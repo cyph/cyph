@@ -52,6 +52,14 @@
 									<button
 										mat-icon-button
 										cyphTranslate
+										[disabled]='o.appointment.occured || 
+										!(
+											(o.appointment.calendarInvite.startTime <= 
+											(now - appointmentGracePeriod))
+										&& (o.appointment.calendarInvite.endTime >=
+											(now - appointmentGracePeriod))
+										)
+										'
 										matTooltip='Start Call'
 										[routerLink]='
 											accountService.routeRoot +
@@ -65,6 +73,10 @@
 									<button
 										mat-icon-button
 										cyphTranslate
+										[disabled]='o.appointment.occured ||
+										!(o.appointment.calendarInvite.endTime >=
+											(now - appointmentGracePeriod))
+										'
 										matTooltip='Delete'
 										(click)='
 											accountFilesService.remove(record);
