@@ -3,9 +3,10 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
-	Injector,
+	Inject,
 	Input,
-	OnChanges
+	OnChanges,
+	Optional
 } from '@angular/core';
 import {SafeStyle} from '@angular/platform-browser';
 import * as $ from 'jquery';
@@ -224,32 +225,30 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 							else if (message.authorType === ChatMessage.AuthorTypes.Local) {
 								author	= this.sessionService.localUsername;
 
-								try {
-									const currentUser	=
-										/* tslint:disable-next-line:deprecation */
-										this.injector.get(AccountDatabaseService).currentUser.value
-									;
+								const currentUser	=
+									this.accountDatabaseService ?
+										this.accountDatabaseService.currentUser.value :
+										undefined
+								;
 
-									authorUser	= currentUser && currentUser.user;
-								}
-								catch {}
+								authorUser	= currentUser && currentUser.user;
 							}
 							else if (message.authorID === undefined) {
 								author	= this.sessionService.remoteUsername;
 							}
 							else {
 								try {
-									/* tslint:disable-next-line:deprecation */
-									authorUser	= await this.injector.get(
-										AccountUserLookupService
-									).getUser(
-										/* tslint:disable-next-line:deprecation */
-										await this.injector.get(
-											AccountContactsService
-										).getContactUsername(
-											message.authorID
-										)
-									);
+									authorUser	= (
+										this.accountContactsService &&
+										this.accountUserLookupService
+									) ?
+										await this.accountUserLookupService.getUser(
+											await this.accountContactsService.getContactUsername(
+												message.authorID
+											)
+										) :
+										undefined
+									;
 								}
 								catch {}
 
@@ -300,7 +299,16 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly injector: Injector,
+		@Inject(AccountContactsService) @Optional()
+		private readonly accountContactsService: AccountContactsService|undefined,
+
+		/** @ignore */
+		@Inject(AccountDatabaseService) @Optional()
+		private readonly accountDatabaseService: AccountDatabaseService|undefined,
+
+		/** @ignore */
+		@Inject(AccountUserLookupService) @Optional()
+		private readonly accountUserLookupService: AccountUserLookupService|undefined,
 
 		/** @ignore */
 		private readonly chatMessageGeometryService: ChatMessageGeometryService,
@@ -315,7 +323,8 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		private readonly sessionService: SessionService,
 
 		/** @see AccountService */
-		public readonly accountService: AccountService,
+		@Inject(AccountService) @Optional()
+		public readonly accountService: AccountService|undefined,
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,

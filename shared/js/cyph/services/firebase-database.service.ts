@@ -89,12 +89,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 			await this.workerService.serviceWorkerFunction(
 				'FCM',
 				this.envService.firebaseConfig,
-				config => {
+				/* tslint:disable-next-line:no-shadowed-variable */
+				(config, firebase: FirebaseNamespace) => {
 					importScripts('/assets/node_modules/firebase/firebase-app.js');
 					importScripts('/assets/node_modules/firebase/firebase-messaging.js');
 
-					/* tslint:disable-next-line:no-shadowed-variable */
-					const firebase: FirebaseNamespace	= (<any> self).firebase;
+					if (firebase) {
+						(<any> self).firebase	= firebase;
+					}
+					else {
+						firebase				= (<any> self).firebase;
+					}
+
 					firebase.initializeApp(config);
 
 					if (firebase.messaging) {

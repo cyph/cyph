@@ -8,6 +8,9 @@ const os				= require('os');
 const sodiumUtil		= require('sodiumutil');
 const superSphincs		= require('supersphincs');
 
+// Temporary workaround pending AGSE update to SuperSPHINCS v6
+const oldSuperSphincs	= require('/home/gibson/oldsupersphincs/node_modules/supersphincs');
+
 
 const remoteAddress	= '10.0.0.42';
 const port			= 31337;
@@ -117,19 +120,38 @@ const testKeyPair	= {
 const sign	= async (inputs, testSign) => new Promise(async (resolve, reject) => {
 
 
-const inputMessages	= inputs.map(({message}) =>
-	message instanceof Uint8Array ?
+if (testSign) {
+	return resolve({
+		rsaIndex: 0,
+		signedInputs: await Promise.all(inputs.map(async ({additionalData, message}) =>
+			superSphincs.sign(
+				message,
+				testKeyPair.privateKey,
+				additionalData
+			)
+		)),
+		sphincsIndex: 0
+	});
+}
+
+
+const binaryInputs	= inputs.map(({additionalData, message}) => ({
+	additionalData,
+	message: message instanceof Uint8Array ?
 		message :
 		Buffer.from(message)
-);
+}));
 
 const dataToSign	= Buffer.from(JSON.stringify(await Promise.all(inputs.map(async o => ({
-	additionalData: o.additionalData instanceof Uint8Array ?
-		{
-			data: sodiumUtil.to_base64(o.additionalData),
-			isUint8Array: true
-		} :
-		o.additionalData
+	additionalData:
+		o.additionalData instanceof Uint8Array ?
+			{
+				data: sodiumUtil.to_base64(o.additionalData),
+				isUint8Array: true
+			} :
+		o.additionalData === undefined ?
+			{none: true} :
+			o.additionalData
 	,
 	message: o.message instanceof Uint8Array ?
 		{
@@ -138,21 +160,6 @@ const dataToSign	= Buffer.from(JSON.stringify(await Promise.all(inputs.map(async
 		} :
 		o.message
 })))));
-
-
-if (testSign) {
-	return resolve({
-		rsaIndex: 0,
-		signedInputs: await Promise.all(inputs.map(async ({additionalData, message}) =>
-			superSphincs.sign(
-				message,
-				testKeyPair.privateKey,
-				additionalData.none ? undefined : additionalData
-			)
-		)),
-		sphincsIndex: 0
-	});
-}
 
 
 const id			= new Uint32Array(crypto.randomBytes(4).buffer)[0];
@@ -201,12 +208,13 @@ server.on('message', async (message) => {
 		const rsaIndex		= publicKeys.rsa.indexOf(signatureData.rsa);
 		const sphincsIndex	= publicKeys.sphincs.indexOf(signatureData.sphincs);
 
-		const signedInputs	= inputMessages.map((message, i) =>
-			Buffer.concat([
+		const signedInputs	= binaryInputs.map(({additionalData, message}, i) => ({
+			additionalData,
+			signed: Buffer.concat([
 				Buffer.from(signatureData.signatures[i], 'base64'),
 				message
-			]).toString('base64').replace(/\s+/g, '')
-		);
+			])
+		}));
 
 		try {
 			const keyPair		= await superSphincs.importKeys({
@@ -217,13 +225,14 @@ server.on('message', async (message) => {
 			});
 
 			const openedInputs	= await Promise.all(
-				signedInputs.map(async (signed) => superSphincs.open(
+				signedInputs.map(async ({additionalData, signed}) => oldSuperSphincs.open(
 					signed,
-					keyPair.publicKey
+					keyPair.publicKey,
+					additionalData
 				))
 			);
 
-			if (inputMessages.filter((message, i) =>
+			if (binaryInputs.filter(({message}, i) =>
 				openedInputs[i].length !== message.length ||
 				!sodiumUtil.memcmp(openedInputs[i], message)
 			).length > 0) {
@@ -231,7 +240,7 @@ server.on('message', async (message) => {
 			}
 
 			console.log('Signing complete.');
-			resolve({rsaIndex, signedInputs, sphincsIndex});
+			resolve({rsaIndex, signedInputs: signedInputs.map(o => o.signed), sphincsIndex});
 		}
 		catch (err) {
 			console.error('Invalid signatures.');

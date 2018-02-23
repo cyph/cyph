@@ -5,13 +5,12 @@ dir="$PWD"
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
-eval "$(./commands/getgitdata.sh)"
-
 customBuild=''
 firebaseBackup=''
 e2e=''
 localSeleniumServer=''
 site=''
+prod=''
 environment='local'
 if [ "${1}" == '--e2e' ] ; then
 	e2e=true
@@ -19,6 +18,10 @@ if [ "${1}" == '--e2e' ] ; then
 fi
 if [ "${1}" == '--firebase-backup' ] ; then
 	firebaseBackup=true
+	shift
+fi
+if [ "${1}" == '--prod' ] ; then
+	prod=true
 	shift
 fi
 if [ "${1}" == '--local-selenium-server' ] ; then
@@ -44,6 +47,8 @@ if [ "${firebaseBackup}" ] ; then
 	environment='localBackup'
 elif [ "${e2e}" ] ; then
 	environment='e2e'
+elif [ "${prod}" ] ; then
+	environment='prod'
 fi
 
 if [ "${localSeleniumServer}" ] ; then
@@ -98,7 +103,7 @@ cp -f backend/app.yaml backend/.build.yaml
 # Braintree, Prefinery, and Twilio unsupported in CircleCI for now, until needed
 if [ ! "${CIRCLECI}" ] ; then
 	cat ~/.cyph/backend.vars >> backend/.build.yaml
-	if [ "${branch}" == 'prod' ] ; then
+	if [ "${prod}" ] ; then
 		echo '  PROD: true' >> backend/.build.yaml
 		cat ~/.cyph/braintree.prod >> backend/.build.yaml
 	else

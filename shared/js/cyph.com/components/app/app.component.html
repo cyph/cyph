@@ -112,94 +112,144 @@
 	</mat-toolbar>
 
 	<mat-sidenav-container (backdropClick)='sidenav.close()'>
-		<mat-sidenav #sidenav align='end' mode='push' fxLayout='column' fxLayoutGap='8px'>
-			<div fxLayout='row'></div>
-			<div fxLayout='row'>
-				<a mat-button fxFlex cyphTranslate routerLink='/' (click)='sidenav.close()'>
-					<img src='/assets/img/logo.white.horizontal.header.png' alt='Cyph logo' />
-				</a>
-			</div>
-			<div fxLayout='row'>
-				<a mat-button fxFlex cyphTranslate routerLink='/intro' (click)='sidenav.close()'>
-					Intro
-				</a>
-			</div>
-			<div fxLayout='row'>
-				<a mat-button fxFlex cyphTranslate routerLink='/features' (click)='sidenav.close()'>
-					Features
-				</a>
-			</div>
-			<div fxLayout='row'>
-				<a mat-button fxFlex cyphTranslate routerLink='/about' (click)='sidenav.close()'>
-					About
-				</a>
-			</div>
-			<div fxLayout='row'>
-				<a mat-button fxFlex cyphTranslate routerLink='/gettingstarted' (click)='sidenav.close()'>
-					Getting Started
-				</a>
-			</div>
-			<div fxLayout='row'>
-				<a mat-button fxFlex cyphTranslate href='/blog' (click)='sidenav.close()'>
-					Blog
-				</a>
-			</div>
-			<div fxLayout='row'>
-				<a mat-button fxFlex cyphTranslate routerLink='/faq' (click)='sidenav.close()'>
-					FAQ
-				</a>
-			</div>
-			<div fxLayout='row'>
-				<a mat-button fxFlex cyphTranslate href='/pricing' (click)='sidenav.close()'>
-					Pricing
-				</a>
-			</div>
-			<div fxLayout='row'>
-				<a mat-button fxFlex cyphTranslate routerLink='/register' (click)='sidenav.close()'>
-					Register
-				</a>
-			</div>
-			<div fxLayout='row'>
-				<a
-					mat-button
-					fxFlex
-					cyphTranslate
-					rel='noopener noreferrer'
-					href='https://github.com/cyph/cyph'
-					target='_blank'
-					(click)='sidenav.close()'
-				>
-					<img src='/assets/img/iconfinder/github.png' alt='GitHub icon' />
-					<span>GitHub</span>
-				</a>
-			</div>
-			<div fxLayout='row'>
-				<a
-					mat-button
-					fxFlex
-					cyphTranslate
-					rel='noopener noreferrer'
-					href='https://twitter.com/cyph'
-					target='_blank'
-					(click)='sidenav.close()'
-				>
-					<img src='/assets/img/iconfinder/twitter.png' alt='Twitter icon' />
-					<span>Twitter</span>
-				</a>
-			</div>
-			<div fxLayout='row'>
-				<a
-					mat-button
-					fxFlex
-					cyphTranslate
-					rel='noopener noreferrer'
-					href='https://www.facebook.com/cyph'
-					target='_blank'
-					(click)='sidenav.close()'
-				>
-					<img src='/assets/img/iconfinder/facebook.png' alt='Facebook icon' />
-					<span>Facebook</span>
-				</a>
+		<mat-sidenav #sidenav ngClass.gt-md='disabled' align='end' mode='push'>
+			<div fxLayout='column' fxLayoutGap='8px'>
+				<div fxLayout='row'></div>
+				<div fxLayout='row'>
+					<a mat-button fxFlex cyphTranslate routerLink='/' (click)='sidenav.close()'>
+						<img src='/assets/img/logo.white.horizontal.header.png' alt='Cyph logo' />
+					</a>
+				</div>
+				<div fxLayout='row'>
+					<a
+						mat-button
+						fxFlex
+						cyphTranslate
+						routerLink='/intro'
+						(click)='sidenav.close()'
+					>
+						Intro
+					</a>
+				</div>
+				<div fxLayout='row'>
+					<a
+						mat-button
+						fxFlex
+						cyphTranslate
+						routerLink='/features'
+						(click)='sidenav.close()'
+					>
+						Features
+					</a>
+				</div>
+				<div fxLayout='row'>
+					<a
+						mat-button
+						fxFlex
+						cyphTranslate
+						routerLink='/about'
+						(click)='sidenav.close()'
+					>
+						About
+					</a>
+				</div>
+				<div fxLayout='row'>
+					<a
+						mat-button
+						fxFlex
+						cyphTranslate
+						routerLink='/gettingstarted'
+						(click)='sidenav.close()'
+					>
+						Getting Started
+					</a>
+				</div>
+				<div fxLayout='row'>
+					<a
+						mat-button
+						fxFlex
+						cyphTranslate
+						href='/blog'
+						(click)='sidenav.close()'
+					>
+						Blog
+					</a>
+				</div>
+				<div fxLayout='row'>
+					<a
+						mat-button
+						fxFlex
+						cyphTranslate
+						routerLink='/faq'
+						(click)='sidenav.close()'
+					>
+						FAQ
+					</a>
+				</div>
+				<div fxLayout='row'>
+					<a
+						mat-button
+						fxFlex
+						cyphTranslate
+						href='/pricing'
+						(click)='sidenav.close()'
+					>
+						Pricing
+					</a>
+				</div>
+				<div fxLayout='row'>
+					<a
+						mat-button
+						fxFlex
+						cyphTranslate
+						routerLink='/register'
+						(click)='sidenav.close()'
+					>
+						Register
+					</a>
+				</div>
+				<div fxLayout='row'>
+					<a
+						mat-button
+						fxFlex
+						cyphTranslate
+						rel='noopener noreferrer'
+						href='https://github.com/cyph/cyph'
+						target='_blank'
+						(click)='sidenav.close()'
+					>
+						<img src='/assets/img/iconfinder/github.png' alt='GitHub icon' />
+						<span>GitHub</span>
+					</a>
+				</div>
+				<div fxLayout='row'>
+					<a
+						mat-button
+						fxFlex
+						cyphTranslate
+						rel='noopener noreferrer'
+						href='https://twitter.com/cyph'
+						target='_blank'
+						(click)='sidenav.close()'
+					>
+						<img src='/assets/img/iconfinder/twitter.png' alt='Twitter icon' />
+						<span>Twitter</span>
+					</a>
+				</div>
+				<div fxLayout='row'>
+					<a
+						mat-button
+						fxFlex
+						cyphTranslate
+						rel='noopener noreferrer'
+						href='https://www.facebook.com/cyph'
+						target='_blank'
+						(click)='sidenav.close()'
+					>
+						<img src='/assets/img/iconfinder/facebook.png' alt='Facebook icon' />
+						<span>Facebook</span>
+					</a>
+				</div>
 			</div>
 		</mat-sidenav>
 
@@ -892,14 +942,16 @@
 			<h1 class='hero-text' cyphTranslate>
 				Press The Button
 			</h1>
-			<div [fxFlex]='envService.isMobile' class='section-content-container'>
-				<p cyphTranslate>
-					The button will take you into the Cyph application, where you'll be given
-					a custom shortlink to share with one friend.
-				</p>
-				<p cyphTranslate>
-					When your friend opens this link, the conversation will begin.
-				</p>
+			<div class='section-content-container'>
+				<div [fxFlex]='envService.isMobile'>
+					<p cyphTranslate>
+						The button will take you into the Cyph application, where you'll be given
+						a custom shortlink to share with one friend.
+					</p>
+					<p cyphTranslate>
+						When your friend opens this link, the conversation will begin.
+					</p>
+				</div>
 			</div>
 		</section>
 

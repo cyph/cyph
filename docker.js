@@ -80,9 +80,14 @@ const commandScript			=
 ;
 
 const isAgseDeploy			=
-	args.command === 'deploy' &&
-	!args.simple &&
-	(!args.site || args.site === 'cyph.ws')
+	(
+		args.command === 'certsign' &&
+		process.argv[3] === 'cyphme'
+	) || (
+		args.command === 'deploy' &&
+		!args.simple &&
+		(!args.site || args.site === 'cyph.ws')
+	)
 ;
 
 const image					= 'cyph/' + (
@@ -411,6 +416,7 @@ let exitCleanup	= () => {};
 let initPromise	= Promise.resolve();
 
 switch (args.command) {
+	case 'certsign':
 	case 'deploy':
 		if (!isAgseDeploy) {
 			break;

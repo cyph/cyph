@@ -19,7 +19,6 @@ const signatureTTL	= 2.5; // Months
 const timestamp		= Date.now();
 
 const inputs		= args.inputs.map(s => s.split('=')).map(arr => ({
-	additionalData: {none: true},
 	message: JSON.stringify({
 		timestamp,
 		expires: timestamp + signatureTTL * 2.628e+9,
@@ -33,7 +32,7 @@ const inputs		= args.inputs.map(s => s.split('=')).map(arr => ({
 
 try {
 	const {rsaIndex, signedInputs, sphincsIndex}	= await sign(
-		inputs.map(({additionalData, message}) => ({additionalData, message}))
+		inputs.map(({message}) => ({message}))
 	);
 
 	for (let i = 0 ; i < inputs.length ; ++i) {
@@ -44,7 +43,7 @@ try {
 		fs.writeFileSync(`${outputDir}/current`, timestamp);
 
 		fs.writeFileSync(`${outputDir}/pkg`,
-			signedInputs[i] + '\n' +
+			signedInputs[i].toString('base64').replace(/\s+/g, '') + '\n' +
 			rsaIndex + '\n' +
 			sphincsIndex
 		);

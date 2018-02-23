@@ -12,7 +12,9 @@ const mangleExceptions	=
 				path.join(__dirname, '..', 'shared', 'assets', 'js', 'standalone', 'global.js')
 			).toString().match(
 				/[A-Za-z_\$][A-Za-z0-9_\$]*/g
-			)
+			).concat([
+				'firebase'
+			])
 		)
 	).sort()
 ;

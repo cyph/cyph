@@ -124,11 +124,13 @@ if [ "${firebaseBackup}" ] ; then
 	fi
 
 	environment="$(processEnvironmentName backup)"
-elif [ "${test}" ] && ( \
+elif [ ! "${test}" ] ; then
+	environment="$(processEnvironmentName prod)"
+elif \
 	[ "${branch}" == 'staging' ] || \
 	[ "${branch}" == 'beta' ] || \
 	[ "${branch}" == 'master' ] \
-) ; then
+; then
 	environment="$(processEnvironmentName "${branch}")"
 else
 	environment="$(processEnvironmentName dev)"
@@ -141,6 +143,10 @@ if [ "${customBuild}" ] ; then
 	version="$(echo "${version}" | sed 's|^simple-||')-$(echo "${customBuild}" | tr '.' '-')"
 fi
 
+
+if [ ! "${simple}" ] ; then
+	rm shared/assets/frozen 2> /dev/null
+fi
 
 ./commands/copyworkspace.sh ~/.build
 cd ~/.build
@@ -529,12 +535,13 @@ fi
 
 # Firebase deployment
 if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; then
-	firebaseProjects='cyphme'
-	if [ "${test}" ] ; then
+	if [ ! "${test}" ] ; then
+		firebaseProjects='cyphme'
+	else
 		firebaseProjects='cyph-test cyph-test2 cyph-test-e2e cyph-test-local'
-	fi
-	if [ "${environment}" != 'dev' ] ; then
-		firebaseProjects="${firebaseProjects} cyph-test-${branch}"
+		if [ "${environment}" != 'dev' ] ; then
+			firebaseProjects="${firebaseProjects} cyph-test-${branch}"
+		fi
 	fi
 
 	./commands/buildunbundledassets.sh
