@@ -10,7 +10,11 @@
 	[fxFlex]='fxFlex'
 	*ngIf='!!username'
 >
-	<mat-card-header fxLayout='row'fxLayoutAlign='center center' *ngIf='(user | async)?.ready; else loading'>
+	<mat-card-header 
+		fxLayout='row' 
+		fxLayoutAlign='center center'
+		*ngIf='(user | async)?.ready; else loading'
+	>
 		<img
 			mat-card-avatar
 			cyphTranslate

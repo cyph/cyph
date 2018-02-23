@@ -293,6 +293,7 @@
 			<div fxLayout='column' fxLayoutAlign='center center'>
 				<mat-card
 					class='animated slideInDown'
+					[class.doctor-list-only]='doctorListOnly | async'
 					fxLayout='column'
 					*ngIf='user?.extra() | async; let extra'
 					[class.fadeOutUp]='(accountService.transition | async) === true'
@@ -335,6 +336,7 @@
 								<cyph-account-contacts
 									fxFlex
 									class='member-list'
+									[class.doctor-list-only]='doctorListOnly | async'
 									[contactList]='userMembers'
 									[invertedTheme]='true'
 									[searchProfileExtra]='true'
