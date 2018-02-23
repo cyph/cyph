@@ -7,19 +7,6 @@
 	*ngIf='accountDatabaseService.currentUser | async as currentUser'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
-		<mat-card *ngIf='calendarOptions' class='white-card'>
-			<mat-card-content>
-				<ng-fullcalendar
-					#calendar
-					[options]='calendarOptions'
-					(clickButton)='calendarClickButton($event.detail)'
-					(eventClick)='calendarEventClick($event.detail)'
-					(eventDrop)='calendarUpdateEvent($event.detail)'
-					(eventResize)='calendarUpdateEvent($event.detail)'
-				></ng-fullcalendar>
-			</mat-card-content>
-		</mat-card>
-
 		<div class='cyph-inverted-theme'>
 			<mat-accordion
 				class='appointment animated fadeInDown'
@@ -267,6 +254,22 @@
 				</ng-container>
 			</mat-accordion>
 		</div>
+		<ng-container *ngIf='calendarOptions'>
+			<h2> Appointment Calendar </h2>
+			<mat-card class='white-card calendar'>
+				<mat-card-content>
+					<ng-fullcalendar
+						#calendar
+						[options]='calendarOptions'
+						(clickButton)='calendarClickButton($event.detail)'
+						(eventClick)='calendarEventClick($event.detail)'
+						(eventDrop)='calendarUpdateEvent($event.detail)'
+						(eventResize)='calendarUpdateEvent($event.detail)'
+					></ng-fullcalendar>
+				</mat-card-content>
+			</mat-card>
+		</ng-container>
+		
 	</div>
 
 	<mat-progress-spinner
@@ -285,3 +288,5 @@
 		<mat-icon>add</mat-icon>
 	</button>
 </div>
+
+
