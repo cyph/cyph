@@ -6,7 +6,7 @@ const sendMessage	= async (database, messaging, url, body) => {
 		return false;
 	}
 
-	const results	= await messaging.sendToDevice(tokens, {
+	const response	= await messaging.sendToDevice(tokens, {
 		notification: {
 			body,
 			icon: 'https://www.cyph.com/assets/img/favicon/favicon-256x256.png',
@@ -14,11 +14,11 @@ const sendMessage	= async (database, messaging, url, body) => {
 		}
 	});
 
-	const failures	= results.filter(o => !!o.error);
+	const failures	= response.results.filter(o => !!o.error);
 
 	await Promise.all(failures.map(async (_, i) => ref.child(tokens[i]).remove())).catch(() => {});
 
-	return results.length > failures.length;
+	return response.successCount > 0;
 };
 
 
