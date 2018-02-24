@@ -1,5 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {AccountUserTypes, IAppointment} from '../../proto';
+import memoize from 'lodash-es/memoize';
+import {User} from '../../account/user';
+import {AccountUserTypes, CallTypes, IAppointment} from '../../proto';
+import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
@@ -18,8 +21,20 @@ export class AccountCallWaitingComponent implements OnInit {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
+	/** @see AccountUserTypes */
+	public readonly callTypes: typeof CallTypes	= CallTypes;
+
 	/** @see AccountChatComponent */
 	@Input() public appointment?: IAppointment;
+
+	/** @see AccountChatComponent */
+	@Input() public appointmentID?: string;
+
+	/** Gets user. */
+	public readonly getUser: (username: string) => Promise<User|undefined>	=
+	memoize(async (username: string) =>
+		this.accountUserLookupService.getUser(username)
+	);
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -32,6 +47,10 @@ export class AccountCallWaitingComponent implements OnInit {
 
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
+
+
+		/** @see AccountUserLookupService */
+		public readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

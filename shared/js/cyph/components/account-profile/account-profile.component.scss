@@ -1,5 +1,7 @@
 @import '../../../../css/mixins';
 
+$header-size: 135px;
+
 .profile {
 	text-align: center;
 	font-family: Ubuntu;
@@ -19,7 +21,7 @@
 		border-width: 10px !important;
 	}
 
-	.member-list {
+	.member-list:not(.doctor-list-only) {
 		height: 340px;
 	}
 
@@ -43,6 +45,10 @@
 			text-align: center;
 		}
 	}
+}
+
+mat-card {
+	min-width: 50%;
 }
 
 .file-upload {
@@ -135,8 +141,8 @@
 		}
 
 		.header {
-			height: 135px;
-			min-height: 135px;
+			height: $header-size;
+			min-height: $header-size;
 			z-index: 42;
 
 			.user-info {
@@ -175,6 +181,14 @@
 			overflow: auto;
 		}
 
+		.mat-card.doctor-list-only {
+			@include calc("max-height", "95vh - #{$header-size}");
+			
+			.member-list {
+				@include calc("max-height", "75vh - #{$header-size}");
+			}
+		}
+
 		.mat-list-item {
 			height: auto;
 		}
@@ -183,6 +197,8 @@
 			margin-top: 3px;
 			margin-bottom: 0px;
 		}
+
+		
 
 		.description {
 			margin: 20px auto auto auto;
@@ -194,4 +210,8 @@
 			text-align: center;
 		}
 	}
+}
+::ng-deep od-virtualscroll {
+	overflow-y: auto !important;
+	min-height: 125px;
 }

@@ -16,6 +16,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
 import {filterUndefined} from '../../util/filter';
+import {getDateTimeString} from '../../util/time';
 
 
 /**
@@ -29,6 +30,9 @@ import {filterUndefined} from '../../util/filter';
 export class AccountAppointmentsComponent implements AfterViewInit {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+
+	/** Time in ms when user can check in - also used as cuttoff point for end time */
+	public readonly appointmentGracePeriod: number = 60000;
 
 	/** @ignore */
 	private calendarEvents: {end: number; start: number; title: string}[]	= [];
@@ -53,6 +57,7 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 			left: 'prev,next today',
 			right: 'month,agendaWeek,agendaDay,listMonth'
 		},
+		height: 'auto',
 		timezone: 'local'
 	};
 
@@ -88,6 +93,9 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 		)
 	;
 
+	/** @see getDateTimeSting */
+	public readonly getDateTimeString: typeof getDateTimeString				= getDateTimeString;
+
 	/** @see trackByID */
 	public readonly trackByID: typeof trackByID		= trackByID;
 
@@ -99,6 +107,9 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 
 	/** Calendar eventDrop/eventResize event handler. */
 	public calendarUpdateEvent (_EVENT_DETAIL: any) : void {}
+
+	/** Current time - used to check if appointment is within range */
+	public now: number = new Date().getTime(); 
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
@@ -153,7 +164,10 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 		/** @see EnvService */
 		public readonly envService: EnvService,
 
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {setInterval(() => {
+		this.now = new Date().getTime();
+	  }, 1000);}
 }

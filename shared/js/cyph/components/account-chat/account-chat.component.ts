@@ -43,6 +43,8 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		new BehaviorSubject<IAppointment|undefined>(undefined)
 	;
 
+	public appointmentID?: string;
+
 	/** @see ChatMessageValue.Types */
 	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=
 		ChatMessageValue.Types
@@ -99,6 +101,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			let appointment: IAppointment;
 
 			if (appointmentID) {
+				this.appointmentID	= appointmentID;
 				appointment	=
 					await this.accountFilesService.downloadAppointment(appointmentID).result
 				;

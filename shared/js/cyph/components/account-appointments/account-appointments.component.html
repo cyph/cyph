@@ -7,19 +7,6 @@
 	*ngIf='accountDatabaseService.currentUser | async as currentUser'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
-		<mat-card *ngIf='calendarOptions' class='white-card'>
-			<mat-card-content>
-				<ng-fullcalendar
-					#calendar
-					[options]='calendarOptions'
-					(clickButton)='calendarClickButton($event.detail)'
-					(eventClick)='calendarEventClick($event.detail)'
-					(eventDrop)='calendarUpdateEvent($event.detail)'
-					(eventResize)='calendarUpdateEvent($event.detail)'
-				></ng-fullcalendar>
-			</mat-card-content>
-		</mat-card>
-
 		<div class='cyph-inverted-theme'>
 			<mat-accordion
 				class='appointment animated fadeInDown'
@@ -45,6 +32,9 @@
 											{{o.friend}}
 										</a>
 									</ng-container>
+									<span>&nbsp; - {{getDateTimeString(
+											o.appointment.calendarInvite.startTime
+										) }}</span>
 								</div>
 							</mat-panel-title>
 							<mat-panel-description>
@@ -52,6 +42,14 @@
 									<button
 										mat-icon-button
 										cyphTranslate
+										[disabled]='o.appointment.occured || 
+										!(
+											(o.appointment.calendarInvite.startTime <= 
+											(now - appointmentGracePeriod))
+										&& (o.appointment.calendarInvite.endTime >=
+											(now - appointmentGracePeriod))
+										)
+										'
 										matTooltip='Start Call'
 										[routerLink]='
 											accountService.routeRoot +
@@ -65,6 +63,10 @@
 									<button
 										mat-icon-button
 										cyphTranslate
+										[disabled]='o.appointment.occured ||
+										!(o.appointment.calendarInvite.endTime >=
+											(now - appointmentGracePeriod))
+										'
 										matTooltip='Delete'
 										(click)='
 											accountFilesService.remove(record);
@@ -157,19 +159,22 @@
 							<mat-panel-title>
 								<div fxLayoutAlign='start center'>
 									<span>{{record.name}}</span>
-									&ngsp;
+									&nbsp;
 									<ng-container *ngIf='!record.wasAnonymousShare'>
 										<span cyphTranslate>with</span>
-										&ngsp;
+										&nbsp;
 										<a [routerLink]='
 											accountService.routeRoot + "profile/" + record.owner
 										'>
-											{{record.name}}
+											{{record.owner}}
 										</a>
 									</ng-container>
 									<ng-container *ngIf='record.wasAnonymousShare'>
 										<span cyphTranslate>(invited anonymously)</span>
 									</ng-container>
+									<span>&nbsp; - {{getDateTimeString(
+											o.appointment.calendarInvite.startTime
+										) }}</span>
 								</div>
 							</mat-panel-title>
 							<mat-panel-description>
@@ -255,6 +260,22 @@
 				</ng-container>
 			</mat-accordion>
 		</div>
+		<ng-container *ngIf='calendarOptions'>
+			<h2> Appointment Calendar </h2>
+			<mat-card class='white-card calendar'>
+				<mat-card-content>
+					<ng-fullcalendar
+						#calendar
+						[options]='calendarOptions'
+						(clickButton)='calendarClickButton($event.detail)'
+						(eventClick)='calendarEventClick($event.detail)'
+						(eventDrop)='calendarUpdateEvent($event.detail)'
+						(eventResize)='calendarUpdateEvent($event.detail)'
+					></ng-fullcalendar>
+				</mat-card-content>
+			</mat-card>
+		</ng-container>
+		
 	</div>
 
 	<mat-progress-spinner
@@ -273,3 +294,5 @@
 		<mat-icon>add</mat-icon>
 	</button>
 </div>
+
+

@@ -2,6 +2,7 @@ import {
 	Component,
 	EventEmitter,
 	Input,
+	OnInit,
 	Output,
 	ViewChild
 } from '@angular/core';
@@ -16,6 +17,7 @@ import {AccountUserProfileExtra} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
+import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {filterUndefined} from '../../util/filter';
 import {SearchBarComponent} from '../search-bar';
@@ -29,14 +31,12 @@ import {SearchBarComponent} from '../search-bar';
 	styleUrls: ['./account-contacts-search.component.scss'],
 	templateUrl: './account-contacts-search.component.html'
 })
-export class AccountContactsSearchComponent {
+export class AccountContactsSearchComponent implements OnInit {
 	/** List of users to search. */
 	@Input() public contactList: Observable<(IContactListItem|User)[]>	=
 		this.accountContactsService.contactList
 	;
 
-	/** @see SearchBarComponent.placeholder */
-	@Input() public placeholder: string							= this.stringsService.search;
 
 	/** @see SearchBarComponent */
 	@ViewChild(SearchBarComponent) public searchBar?: SearchBarComponent;
@@ -48,7 +48,10 @@ export class AccountContactsSearchComponent {
 	@Input() public searchListLength: number					= 10;
 
 	/** If true, downloads User.extra and queries it for the search. */
-	@Input() public searchProfileExtra: boolean					= false;
+	@Input() public searchProfileExtra?: boolean;
+
+	/** @see SearchBarComponent.placeholder */
+	@Input() public placeholder: string							= this.stringsService.search;
 
 	/** @see SearchBarComponent.options */
 	public readonly searchOptions: Observable<ISearchOptions>	=
@@ -171,6 +174,12 @@ export class AccountContactsSearchComponent {
 	/* tslint:disable-next-line:semicolon */
 	;
 
+	public async ngOnInit () : Promise<void> {
+		if (this.envService.isTelehealth && this.searchProfileExtra) {
+			this.placeholder = this.stringsService.telehealthSearch;
+		}
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly accountContactsService: AccountContactsService,
@@ -180,6 +189,9 @@ export class AccountContactsSearchComponent {
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see StringsService */
+		public readonly envService: EnvService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

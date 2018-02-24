@@ -519,6 +519,9 @@ export class StringsService {
 	public readonly telehealthCallAbout: string			= `Telehealth Call About`;
 
 	/** @see StringsService */
+	public readonly telehealthSearch: string			= `Search by Doctor, Insurance, Address, etc.`;
+
+	/** @see StringsService */
 	public readonly timeExtended: string				= `Added time to countdown.`;
 
 	/** @see StringsService */
