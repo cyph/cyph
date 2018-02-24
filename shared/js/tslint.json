@@ -324,9 +324,11 @@
 		/* rxjs */
 
 		"rxjs-add": false,
+		"rxjs-deep-operators": true,
 		"rxjs-finnish": false,
 		"rxjs-no-add": true,
 		"rxjs-no-create": false /* Pending fix: true */,
+		"rxjs-no-deep-operators": false,
 		"rxjs-no-do": false,
 		"rxjs-no-finnish": true,
 		"rxjs-no-ignored-error": false,
@@ -334,7 +336,9 @@
 		"rxjs-no-operator": true,
 		"rxjs-no-patched": false /* Pending fix: true */,
 		"rxjs-no-subject-unsubscribe": false,
+		"rxjs-no-subject-value": false,
 		"rxjs-no-tap": false,
+		"rxjs-no-unsafe-switchmap": true,
 		"rxjs-no-unused-add": false,
 		"rxjs-no-wholesale": true,
 		"rxjs-prefer-add": false
