@@ -10,5 +10,6 @@ export const environment: IEnvironment	= {
 		project: 'cyphme'
 	},
 	local: false,
-	production: true
+	production: true,
+	useProdSigningKeys: true
 };

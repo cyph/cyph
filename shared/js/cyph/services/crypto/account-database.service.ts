@@ -59,7 +59,7 @@ export class AccountDatabaseService {
 	}
 
 	/** @ignore */
-	private readonly agsePublicSigningKeys	= this.envService.environment.production ?
+	private readonly agsePublicSigningKeys	= this.envService.environment.useProdSigningKeys ?
 		publicSigningKeys.prod :
 		publicSigningKeys.test
 	;

@@ -574,6 +574,9 @@ message Environment {
 
 	/** Indicates whether this is prod. */
 	required bool production = 5;
+
+	/** Indicates whether production AGSE-PKI signing keys should be used. */
+	bool useProdSigningKeys = 6;
 }
 
 /** Represents a form that a user can submit responses to. */
