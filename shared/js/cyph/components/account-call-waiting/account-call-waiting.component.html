@@ -14,8 +14,8 @@
 			<div *ngIf='
 				envService.isTelehealth &&
 				appointment?.calendarInvite.title &&
-				appointment?.calendarInvite.callType'
-			>
+				appointment?.calendarInvite.callType
+			'>
 				<ng-container *ngIf='
 					(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor;
 					else standardView
