@@ -14,9 +14,13 @@ const sendMessage	= async (database, messaging, url, body) => {
 		}
 	});
 
-	const failures	= response.results.filter(o => !!o.error);
-
-	await Promise.all(failures.map(async (_, i) => ref.child(tokens[i]).remove())).catch(() => {});
+	await Promise.all(
+		response.results.
+			filter(o => !!o.error).
+			map(async (_, i) => ref.child(tokens[i]).remove())
+	).
+		catch(() => {})
+	;
 
 	return response.successCount > 0;
 };
