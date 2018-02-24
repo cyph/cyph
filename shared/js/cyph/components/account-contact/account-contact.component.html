@@ -7,7 +7,7 @@
 		(envService.isTelehealth ? "profile" : "messages") + "/" +
 		(username || "")
 	)'
-	[fxFlex]='fxFlex'
+	fxFlex
 	*ngIf='!!username'
 >
 	<mat-card-header 
@@ -22,7 +22,7 @@
 			[ngClass]='userPresence[((user | async)?.status | async) || 0]'
 			[src]='(user | async)?.avatar | async'
 			alt='User Avatar'
-			[matTooltip]='clickable ? "Open Profile" : ""'
+			[matTooltip]='clickable ? stringsService.openProfile : ""'
 			[routerLink]='!clickable ?
 				undefined :
 				accountService.routeRoot + "profile/" + (username || "")
@@ -38,13 +38,14 @@
 				{{(user | async)?.name | async}}
 			</mat-card-title>
 			<mat-card-subtitle>
-				<ng-container
-					*ngIf='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor;
-					else standardView'
-				>
+				<ng-container *ngIf='
+					((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor;
+					else standardView
+				'>
 					<ng-container *ngIf='getUserOrg(username) | async as org'>
 						<mat-icon>business</mat-icon>
-						{{(org?.name | async)}}
+						&ngsp;
+						<span>{{(org?.name | async)}}</span>
 					</ng-container>
 				</ng-container>
 

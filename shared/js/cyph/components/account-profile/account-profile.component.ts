@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
+import {combineLatest} from 'rxjs/observable/combineLatest';
 import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
 import {take} from 'rxjs/operators/take';
@@ -19,6 +20,7 @@ import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
 import {cacheObservable} from '../../util/flatten-observable';
+
 
 /**
  * Angular component for account profile UI.
@@ -39,9 +41,9 @@ export class AccountProfileComponent implements OnInit {
 	public descriptionDraft: string	= '';
 
 	/** @see AccountProfileComponent.doctorListOnly */
-	public doctorListOnly: Observable<boolean|undefined>	= cacheObservable(
+	public readonly doctorListOnly: Observable<boolean>			= cacheObservable(
 		this.activatedRoute.data.pipe(map(o => o.doctorListOnly === true)),
-		undefined
+		false
 	);
 
 	/** Profile edit mode. */
@@ -165,12 +167,23 @@ export class AccountProfileComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		this.accountService.transitionEnd();
-		this.activatedRoute.params.subscribe(o => { this.setUser(o.username); });
-		// Temporary workaround for listing doctors
-		this.doctorListOnly.subscribe(o => (this.envService.environment.customBuild &&
-			this.envService.environment.customBuild.config.organization) ?
-			(o ? this.setUser(this.envService.environment.customBuild.config.organization) : undefined ) :
-			undefined);
+
+		combineLatest(
+			this.activatedRoute.params,
+			this.doctorListOnly
+		).subscribe(async ([params, doctorListOnly]: [{username?: string}, boolean]) => {
+			/* Temporary workaround for listing doctors */
+			if (
+				doctorListOnly &&
+				this.envService.environment.customBuild &&
+				this.envService.environment.customBuild.config.organization
+			) {
+				await this.setUser(this.envService.environment.customBuild.config.organization);
+			}
+			else {
+				await this.setUser(params.username);
+			}
+		});
 	}
 
 	/** Publishes new user description. */

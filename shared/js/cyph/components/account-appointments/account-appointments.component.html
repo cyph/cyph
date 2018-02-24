@@ -32,23 +32,33 @@
 											{{o.friend}}
 										</a>
 									</ng-container>
-									<span>&nbsp; - {{getDateTimeString(
+									<span>
+										&nbsp; - {{getDateTimeString(
 											o.appointment.calendarInvite.startTime
-										) }}</span>
+										)}}
+									</span>
 								</div>
 							</mat-panel-title>
 							<mat-panel-description>
-								<div fxFlex fxLayoutGap='2px' fxLayoutAlign='end center'>
+								<div
+									fxFlex
+									fxLayoutGap='2px'
+									fxLayoutAlign='end center'
+									*ngIf='timestampWatcher | async as now'
+								>
 									<button
 										mat-icon-button
 										cyphTranslate
-										[disabled]='o.appointment.occured || 
-										!(
-											(o.appointment.calendarInvite.startTime <= 
-											(now - appointmentGracePeriod))
-										&& (o.appointment.calendarInvite.endTime >=
-											(now - appointmentGracePeriod))
-										)
+										[disabled]='
+											o.appointment.occurred ||
+											now < (
+												o.appointment.calendarInvite.startTime -
+												appointmentGracePeriod
+											) ||
+											now > (
+												o.appointment.calendarInvite.endTime -
+												appointmentGracePeriod
+											)
 										'
 										matTooltip='Start Call'
 										[routerLink]='
@@ -63,10 +73,10 @@
 									<button
 										mat-icon-button
 										cyphTranslate
-										[disabled]='o.appointment.occured ||
-										!(o.appointment.calendarInvite.endTime >=
-											(now - appointmentGracePeriod))
-										'
+										[disabled]='o.appointment.occured || now > (
+											o.appointment.calendarInvite.endTime -
+											appointmentGracePeriod
+										)'
 										matTooltip='Delete'
 										(click)='
 											accountFilesService.remove(record);
@@ -172,9 +182,11 @@
 									<ng-container *ngIf='record.wasAnonymousShare'>
 										<span cyphTranslate>(invited anonymously)</span>
 									</ng-container>
-									<span>&nbsp; - {{getDateTimeString(
+									<span>
+										&nbsp; - {{getDateTimeString(
 											o.appointment.calendarInvite.startTime
-										) }}</span>
+										)}}
+									</span>
 								</div>
 							</mat-panel-title>
 							<mat-panel-description>
@@ -260,8 +272,9 @@
 				</ng-container>
 			</mat-accordion>
 		</div>
+
 		<ng-container *ngIf='calendarOptions'>
-			<h2> Appointment Calendar </h2>
+			<h2>Appointment Calendar</h2>
 			<mat-card class='white-card calendar'>
 				<mat-card-content>
 					<ng-fullcalendar
@@ -275,7 +288,6 @@
 				</mat-card-content>
 			</mat-card>
 		</ng-container>
-		
 	</div>
 
 	<mat-progress-spinner
@@ -294,5 +306,3 @@
 		<mat-icon>add</mat-icon>
 	</button>
 </div>
-
-

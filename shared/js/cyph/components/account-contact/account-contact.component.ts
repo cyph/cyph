@@ -27,14 +27,12 @@ export class AccountContactComponent implements OnChanges {
 	/** Contact. */
 	@Input() public contact?: IContactListItem|User;
 
-	/** fxFlex amount for contact container */
-	@Input() public fxFlex?: string		= '100';
-
 	/** Gets user org. */
 	public readonly getUserOrg: (username: string) => Promise<User|undefined>	=
-	memoize(async (username: string) =>
-		this.accountOrganizationsService.getOrganization(username)
-	);
+		memoize(async (username: string) =>
+			this.accountOrganizationsService.getOrganization(username)
+		)
+	;
 
 	/** This user. */
 	public readonly user: BehaviorSubject<User|undefined>	=

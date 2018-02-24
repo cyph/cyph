@@ -8,7 +8,6 @@
 		<cyph-account-call-waiting
 			fxFlexFill
 			[appointment]='appointment | async'
-			[appointmentID]='appointmentID'
 			*ngIf='p2pWebRTCService.initialCallPending'
 		></cyph-account-call-waiting>
 

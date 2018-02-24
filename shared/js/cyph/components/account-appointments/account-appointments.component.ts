@@ -2,6 +2,7 @@ import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {Options} from 'fullcalendar';
 import memoize from 'lodash-es/memoize';
 import {CalendarComponent} from 'ng-fullcalendar';
+import {Observable} from 'rxjs/Observable';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
 import {User} from '../../account/user';
@@ -16,7 +17,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
 import {filterUndefined} from '../../util/filter';
-import {getDateTimeString} from '../../util/time';
+import {getDateTimeString, watchTimestamp} from '../../util/time';
 
 
 /**
@@ -28,14 +29,14 @@ import {getDateTimeString} from '../../util/time';
 	templateUrl: './account-appointments.component.html'
 })
 export class AccountAppointmentsComponent implements AfterViewInit {
+	/** @ignore */
+	private calendarEvents: {end: number; start: number; title: string}[]	= [];
+
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
 	/** Time in ms when user can check in - also used as cuttoff point for end time. */
 	public readonly appointmentGracePeriod: number				= 60000;
-
-	/** @ignore */
-	private calendarEvents: {end: number; start: number; title: string}[]	= [];
 
 	/** @see CalendarComponent */
 	@ViewChild(CalendarComponent) public calendar?: CalendarComponent;
@@ -108,8 +109,8 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 	/** Calendar eventDrop/eventResize event handler. */
 	public calendarUpdateEvent (_EVENT_DETAIL: any) : void {}
 
-	/** Current time - used to check if appointment is within range. TODO: make observable. */
-	public now: number	= new Date().getTime(); 
+	/** Current time - used to check if appointment is within range. */
+	public readonly timestampWatcher: Observable<number>	= watchTimestamp();
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
@@ -163,7 +164,6 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
-
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

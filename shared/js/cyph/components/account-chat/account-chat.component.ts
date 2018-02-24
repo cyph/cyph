@@ -39,11 +39,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	private initiated: boolean	= false;
 
 	/** Appointment data, when applicable. */
-	public readonly appointment: BehaviorSubject<IAppointment|undefined>	=
-		new BehaviorSubject<IAppointment|undefined>(undefined)
+	public readonly appointment: BehaviorSubject<(IAppointment&{id: string})|undefined>	=
+		new BehaviorSubject<(IAppointment&{id: string})|undefined>(undefined)
 	;
-
-	public appointmentID?: string;
 
 	/** @see ChatMessageValue.Types */
 	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=
@@ -98,13 +96,13 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			{appointmentID?: string; sessionSubID?: string; username?: string},
 			UrlSegment[]
 		]) => {
-			let appointment: IAppointment;
+			let appointment: IAppointment&{id: string};
 
 			if (appointmentID) {
-				this.appointmentID	= appointmentID;
-				appointment	=
-					await this.accountFilesService.downloadAppointment(appointmentID).result
-				;
+				appointment	= {
+					id: appointmentID,
+					...(await this.accountFilesService.downloadAppointment(appointmentID).result)
+				};
 
 				callType		=
 					appointment.calendarInvite.callType === CallTypes.Video ?

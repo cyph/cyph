@@ -4,7 +4,7 @@
 	[filterTransform]='userFilterTransform'
 	[listLength]='searchListLength'
 	[options]='searchOptions'
-	[placeholder]='placeholder'
+	[placeholder]='placeholder || defaultPlaceHolder'
 	[query]='searchUsername'
 	[spinner]='searchSpinner'
 	(filterChange)='userFilterChange.emit($event)'

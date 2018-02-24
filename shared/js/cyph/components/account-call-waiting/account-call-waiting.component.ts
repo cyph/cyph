@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import memoize from 'lodash-es/memoize';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {User} from '../../account/user';
 import {AccountUserTypes, CallTypes, IAppointment} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
@@ -17,7 +17,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-call-waiting.component.scss'],
 	templateUrl: './account-call-waiting.component.html'
 })
-export class AccountCallWaitingComponent implements OnInit {
+export class AccountCallWaitingComponent implements OnChanges, OnInit {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
@@ -25,16 +25,52 @@ export class AccountCallWaitingComponent implements OnInit {
 	public readonly callTypes: typeof CallTypes	= CallTypes;
 
 	/** @see AccountChatComponent */
-	@Input() public appointment?: IAppointment;
+	@Input() public appointment?: IAppointment&{id: string};
 
-	/** @see AccountChatComponent */
-	@Input() public appointmentID?: string;
+	/** Participants by type. */
+	public readonly participantsByType: BehaviorSubject<Map<AccountUserTypes, User[]>>	=
+		new BehaviorSubject(new Map())
+	;
 
-	/** Gets user. */
-	public readonly getUser: (username: string) => Promise<User|undefined>	=
-	memoize(async (username: string) =>
-		this.accountUserLookupService.getUser(username)
-	);
+	/** @inheritDoc */
+	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
+		if (!('appointment' in changes)) {
+			return;
+		}
+
+		const participantsByType	= new Map<AccountUserTypes, User[]>();
+
+		try {
+			if (
+				!this.appointment ||
+				!this.appointment.participants ||
+				this.appointment.participants.length < 1
+			) {
+				return;
+			}
+
+			const users	= await Promise.all(this.appointment.participants.map(async username => {
+				const user	= await this.accountUserLookupService.getUser(username);
+				if (!user) {
+					return user;
+				}
+				return {user, userType: (await user.accountUserProfile.getValue()).userType};
+			}));
+
+			for (const o of users) {
+				if (!o) {
+					continue;
+				}
+
+				const arr	= participantsByType.get(o.userType) || [];
+				arr.push(o.user);
+				participantsByType.set(o.userType, arr);
+			}
+		}
+		finally {
+			this.participantsByType.next(participantsByType);
+		}
+	}
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -47,7 +83,6 @@ export class AccountCallWaitingComponent implements OnInit {
 
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
-
 
 		/** @see AccountUserLookupService */
 		public readonly accountUserLookupService: AccountUserLookupService,

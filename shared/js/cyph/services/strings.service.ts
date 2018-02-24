@@ -333,6 +333,9 @@ export class StringsService {
 	public readonly open: string						= `Open`;
 
 	/** @see StringsService */
+	public readonly openProfile: string					= `Open Profile`;
+
+	/** @see StringsService */
 	public readonly outgoingFileError: string			=
 		`Failed to send the following file:`
 	;
@@ -519,7 +522,12 @@ export class StringsService {
 	public readonly telehealthCallAbout: string			= `Telehealth Call About`;
 
 	/** @see StringsService */
-	public readonly telehealthSearch: string			= `Search by Doctor, Insurance, Address, etc.`;
+	public readonly telehealthSearch: string			=
+		`Search by Doctor, Insurance, Address, etc.`
+	;
+
+	/** @see StringsService */
+	public readonly telehealthSessionWith: string		= `Telehealth Session with`;
 
 	/** @see StringsService */
 	public readonly timeExtended: string				= `Added time to countdown.`;
@@ -582,6 +590,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly welcomeToProduct: string			= `Welcome to ${this.internalProduct}`;
+
+	/** @see StringsService */
+	public readonly your: string						= `Your`;
 
 	/** @ignore */
 	private capitalize (s: string) : string {

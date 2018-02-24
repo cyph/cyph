@@ -250,7 +250,7 @@
 							</div>
 							<div
 								class='name animated _2'
-								*ngIf='(doctorListOnly | async) == true'
+								*ngIf='(doctorListOnly | async) === true'
 							>
 								Doctors
 							</div>
@@ -327,8 +327,7 @@
 								<br />
 								<br />
 							</div>
-							<ng-container 
-								*ngIf='
+							<ng-container *ngIf='
 								userMembers !== undefined &&
 								(userMembers | async)?.length > 0
 							'>

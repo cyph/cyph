@@ -1,4 +1,6 @@
 import memoize from 'lodash-es/memoize';
+import {interval} from 'rxjs/observable/interval';
+import {mergeMap} from 'rxjs/operators/mergeMap';
 import {env} from '../env';
 import {ITimeRange} from '../itime-range';
 import {Time} from '../time-type';
@@ -347,6 +349,11 @@ export const timeToString	= memoize((time: Time) => {
 
 	return getTimeStringInternal(date, false);
 });
+
+/** Watches timestamp with the specified interval. */
+export const watchTimestamp	= memoize((msInterval: number = 1000) =>
+	interval(msInterval).pipe(mergeMap(getTimestamp))
+);
 
 /** @see getTimestamp */
 export const getDate	= async () => timestampToDate(await getTimestamp());
