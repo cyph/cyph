@@ -21,18 +21,19 @@
 		.avatar {
 			width: 4.5em;
 			height: 4.5em;
+			margin: -1em 0px;
 		}
 
 		mat-card-title {
 			font-size: 20px;
-			margin: 0 0 7px 0;
+			margin: 0px 0px 7px 0px;
 		}
 
 		mat-card-subtitle {
 			font-size: 14px;
 			top: -10px;
 			position: relative;
-			margin: 0;
+			margin: 0px;
 
 			mat-icon {
 				font-size: 21px;
