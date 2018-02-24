@@ -182,10 +182,10 @@ mat-card {
 		}
 
 		.mat-card.doctor-list-only {
-			@include calc("max-height", "95vh - #{$header-size}");
-			
+			@include calc('max-height', '95vh - #{$header-size}');
+
 			.member-list {
-				@include calc("max-height", "75vh - #{$header-size}");
+				@include calc('max-height', '75vh - #{$header-size}');
 			}
 		}
 
@@ -198,8 +198,6 @@ mat-card {
 			margin-bottom: 0px;
 		}
 
-		
-
 		.description {
 			margin: 20px auto auto auto;
 			max-width: 90%;
@@ -211,6 +209,7 @@ mat-card {
 		}
 	}
 }
+
 ::ng-deep od-virtualscroll {
 	overflow-y: auto !important;
 	min-height: 125px;

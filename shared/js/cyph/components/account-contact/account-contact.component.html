@@ -10,8 +10,8 @@
 	fxFlex
 	*ngIf='!!username'
 >
-	<mat-card-header 
-		fxLayout='row' 
+	<mat-card-header
+		fxLayout='row'
 		fxLayoutAlign='center center'
 		*ngIf='(user | async)?.ready; else loading'
 	>
@@ -51,7 +51,7 @@
 
 				<ng-template #standardView>
 					@{{((user | async)?.realUsername | async)}}
-				</ng-template>		
+				</ng-template>
 			</mat-card-subtitle>
 		</div>
 		<cyph-account-user-rating

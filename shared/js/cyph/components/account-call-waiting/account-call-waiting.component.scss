@@ -30,7 +30,8 @@
 
 .loading {
 	.logo-animation {
-		@include transform(translate(0%, 15%) scale(.9));
+		@include transform(translate(0%, 15%) scale(0.9));
+
 		opacity: 0.95;
 	}
 }
