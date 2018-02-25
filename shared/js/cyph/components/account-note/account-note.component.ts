@@ -94,6 +94,8 @@ export class AccountNoteComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		this.accountService.transitionEnd();
+
 		this.setURL(this.router.url);
 		this.router.events.subscribe(({url}: any) => {
 			if (typeof url === 'string') {

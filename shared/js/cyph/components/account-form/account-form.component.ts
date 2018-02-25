@@ -30,6 +30,8 @@ export class AccountFormComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		this.accountService.transitionEnd();
+
 		combineLatest(
 			this.activatedRoute.data,
 			this.activatedRoute.params
