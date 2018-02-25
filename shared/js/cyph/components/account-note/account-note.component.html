@@ -67,11 +67,13 @@
 							<cyph-quill
 								[content]='note?.content | async'
 								[deltas]='note?.doc?.deltas'
-								[selections]='note?.doc?.selections'
 								[isDisabled]='!editable'
 								(contentChange)='onChange($event)'
-								(selectionChange)='onSelectionChange($event)'
 							></cyph-quill>
+							<!--
+								[selections]='note?.doc?.selections'
+								(selectionChange)='onSelectionChange($event)'
+							-->
 						</mat-card-content>
 					</mat-card>
 				</div>
