@@ -444,31 +444,31 @@ export class AccountFilesService {
 			)
 		};
 
-		const pushes	= docAsyncList.watchPushes();
+		const watchers	= docAsyncList.getValue().then(deltas => {
+			const pushes	= docAsyncList.watchPushes().pipe(skip(deltas.length));
 
-		const watchers	= docAsyncList.getValue().then(async deltas => ({
-			deltas: <Observable<IQuillDelta>> of({
-				clientID: '',
-				ops: deltas.length < 1 ? [] : deltas.
-					filter(o => o && typeof (<any> o).index !== 'number').
-					map<DeltaOperation[]|undefined>(o => (<any> o).ops).
-					reduce<DeltaStatic>(
-						(delta, ops) => ops ? delta.compose(new Delta(ops)) : delta,
-						new Delta()
-					).ops || []
-			}).pipe(concat(pushes.pipe(
-				skip(deltas.length),
-				filter((o: any) =>
-					o && typeof o.index !== 'number' && o.ops !== undefined
+			return {
+				deltas: <Observable<IQuillDelta>> of({
+					clientID: '',
+					ops: deltas.length < 1 ? [] : deltas.
+						filter(o => o && typeof (<any> o).index !== 'number').
+						map<DeltaOperation[]|undefined>(o => (<any> o).ops).
+						reduce<DeltaStatic>(
+							(delta, ops) => ops ? delta.compose(new Delta(ops)) : delta,
+							new Delta()
+						).ops || []
+				}).pipe(concat(pushes.pipe(
+					filter((o: any) =>
+						o && typeof o.index !== 'number' && o.ops !== undefined
+					)
+				))),
+				selections: <Observable<IQuillRange>> pushes.pipe(
+					filter((o: any) =>
+						o && typeof o.index === 'number' && typeof o.length === 'number'
+					)
 				)
-			))),
-			selections: <Observable<IQuillRange>> pushes.pipe(
-				skip(deltas.length),
-				filter((o: any) =>
-					o && typeof o.index === 'number' && typeof o.length === 'number'
-				)
-			)
-		}));
+			};
+		});
 
 		return {
 			asyncList: docAsyncList,
