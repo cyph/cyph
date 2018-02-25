@@ -114,8 +114,7 @@
 
 	<button
 		mat-fab
-		cyphTranslate
-		matTooltip='New Note'
+		[matTooltip]='realTime ? stringsService.newDoc : stringsService.newNote'
 		matTooltipPosition='above'
 		routerLink='new'
 		class='fixed-fab'

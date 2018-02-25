@@ -303,7 +303,13 @@ export class StringsService {
 	public readonly nameOrPseudonym: string				= `Name or Pseudonym`;
 
 	/** @see StringsService */
+	public readonly newDoc: string						= `New Doc`;
+
+	/** @see StringsService */
 	public readonly newMessageNotification: string		= `New message!`;
+
+	/** @see StringsService */
+	public readonly newNote: string						= `New Note`;
 
 	/** @see StringsService */
 	public readonly newString: string					= `new`;
