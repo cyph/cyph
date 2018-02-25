@@ -548,6 +548,9 @@ export class StringsService {
 	public readonly unlockTitle: string					= `Unlock ${this.internalProduct}`;
 
 	/** @see StringsService */
+	public readonly untitled: string					= `Untitled`;
+
+	/** @see StringsService */
 	public readonly userAvatar: string					= `User Avatar`;
 
 	/** @see StringsService */

@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {filter} from 'rxjs/operators/filter';
 import {take} from 'rxjs/operators/take';
-import {Subscription} from 'rxjs/Subscription';
+import {IAsyncList} from '../../iasync-list';
 import {IQuillDelta} from '../../iquill-delta';
 import {IQuillRange} from '../../iquill-range';
 import {LockFunction} from '../../lock-function-type';
@@ -30,9 +30,6 @@ export class AccountNoteComponent implements OnInit {
 	private editView: boolean	= false;
 
 	/** @ignore */
-	private nameSubscription?: Subscription;
-
-	/** @ignore */
 	private readonly saveLock: LockFunction	= lockFunction();
 
 	/** Indicates whether or not this is a new note. */
@@ -41,26 +38,30 @@ export class AccountNoteComponent implements OnInit {
 	/** Currently active note. */
 	public note?: {
 		content?: Observable<IQuillDelta>;
-		deltas?: Observable<IQuillDelta>;
+		doc?: {
+			asyncList: IAsyncList<IQuillDelta|IQuillRange>;
+			deltas: Observable<IQuillDelta>;
+			selections: Observable<IQuillRange>;
+		};
 		metadata: Observable<IAccountFileRecord>;
-		selections?: Observable<IQuillRange>;
 	};
 
 	/** Most recent note data. */
 	public readonly noteData: {
 		content?: IQuillDelta;
 		id?: string;
-		name: string;
-	}	= {
-		name: ''
-	};
+		nameChange?: string;
+	}	= {};
 
 	/** Indicates whether or not the real-time doc UI is enabled. */
 	public realTime: boolean	= false;
 
 	/** @ignore */
 	private async initDoc () : Promise<void> {
-		await this.setNote(await this.accountFilesService.upload(this.noteData.name, []).result);
+		await this.setNote(
+			await this.accountFilesService.upload(this.stringsService.untitled, []).result
+		);
+
 		this.router.navigate([accountRoot, 'docs', this.noteData.id, 'edit']);
 	}
 
@@ -70,28 +71,15 @@ export class AccountNoteComponent implements OnInit {
 		const metadataValue	= await metadata.pipe(filter(o => !!o.id), take(1)).toPromise();
 
 		this.noteData.id	= metadataValue.id;
-		this.noteData.name	= metadataValue.name;
 
 		this.note			= {metadata};
 
 		if (this.realTime) {
-			const doc				= await this.accountFilesService.watchDoc(metadataValue.id);
-			this.note.deltas		= doc.deltas;
-			this.note.selections	= doc.selections;
+			this.note.doc	= this.accountFilesService.getDoc(metadataValue.id);
 		}
 		else {
 			this.note.content	= this.accountFilesService.watchNote(metadataValue.id);
 		}
-
-		if (this.nameSubscription) {
-			this.nameSubscription.unsubscribe();
-		}
-
-		this.nameSubscription	= metadata.subscribe(o => {
-			if (o.id === this.noteData.id) {
-				this.noteData.name	= o.name;
-			}
-		});
 	}
 
 	/** @ignore */
@@ -134,7 +122,6 @@ export class AccountNoteComponent implements OnInit {
 					this.note				= undefined;
 					this.noteData.content	= undefined;
 					this.noteData.id		= undefined;
-					this.noteData.name		= 'Untitled';
 
 					if (this.realTime) {
 						await this.initDoc();
@@ -161,14 +148,9 @@ export class AccountNoteComponent implements OnInit {
 			this.noteData.content	= change.content;
 			return;
 		}
-
-		return this.saveLock(async () => {
-			if (!this.noteData.id) {
-				return;
-			}
-
-			return this.accountFilesService.updateDoc(this.noteData.id, change.delta);
-		});
+		else if (this.note && this.note.doc) {
+			this.note.doc.asyncList.pushValue(change.delta);
+		}
 	}
 
 	/** Note selection change handler. */
@@ -179,24 +161,22 @@ export class AccountNoteComponent implements OnInit {
 		if (!this.realTime) {
 			return;
 		}
-
-		return this.saveLock(async () => {
-			if (!this.noteData.id) {
-				return;
-			}
-
-			this.accountFilesService.updateDoc(this.noteData.id, change.range);
-		});
+		else if (this.note && this.note.doc) {
+			this.note.doc.asyncList.pushValue(change.range);
+		}
 	}
 
 	/** Updates real-time doc title. */
-	public realTimeTitleUpdate (name: string) : void {
-		if (!this.realTime) {
+	public realTimeTitleUpdate () : void {
+		if (!this.realTime || !this.noteData.nameChange) {
 			return;
 		}
 
+		const name					= this.noteData.nameChange;
+		this.noteData.nameChange	= undefined;
+
 		this.saveLock(async () => {
-			if (!this.noteData.id || !name) {
+			if (!this.noteData.id) {
 				return;
 			}
 
@@ -207,7 +187,7 @@ export class AccountNoteComponent implements OnInit {
 	/** Saves note. */
 	public saveNote () : void {
 		this.saveLock(async () => {
-			if (!this.noteData.name) {
+			if (!this.noteData.nameChange) {
 				return;
 			}
 
@@ -223,7 +203,7 @@ export class AccountNoteComponent implements OnInit {
 			if (this.newNote) {
 				this.noteData.id	=
 					await this.accountFilesService.upload(
-						this.noteData.name,
+						this.noteData.nameChange,
 						this.noteData.content
 					).result
 				;
@@ -236,7 +216,7 @@ export class AccountNoteComponent implements OnInit {
 				await this.accountFilesService.updateNote(
 					this.noteData.id,
 					this.noteData.content,
-					this.noteData.name
+					this.noteData.nameChange
 				);
 			}
 

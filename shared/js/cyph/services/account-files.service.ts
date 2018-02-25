@@ -4,6 +4,7 @@ import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import * as htmlToText from 'html-to-text';
+import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
 import {DeltaOperation, DeltaStatic} from 'quill';
 import * as Delta from 'quill-delta';
@@ -13,13 +14,13 @@ import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
 import {concat} from 'rxjs/operators/concat';
 import {filter} from 'rxjs/operators/filter';
-import {first} from 'rxjs/operators/first';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
+import {skip} from 'rxjs/operators/skip';
 import {take} from 'rxjs/operators/take';
-import {toArray} from 'rxjs/operators/toArray';
 import {SecurityModels} from '../account';
 import {Async} from '../async-type';
+import {IAsyncList} from '../iasync-list';
 import {IProto} from '../iproto';
 import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
@@ -40,7 +41,7 @@ import {
 	NotificationTypes
 } from '../proto';
 import {filterUndefined} from '../util/filter';
-import {cacheObservable} from '../util/flatten-observable';
+import {cacheObservable, flattenObservable} from '../util/flatten-observable';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';
@@ -402,6 +403,78 @@ export class AccountFilesService {
 		result: Promise<SafeUrl|string>;
 	} {
 		return this.downloadItem(id, DataURIProto);
+	}
+
+	/** Gets a doc in the form of an async list. */
+	public getDoc (id: string) : {
+		asyncList: IAsyncList<IQuillDelta|IQuillRange>;
+		deltas: Observable<IQuillDelta>;
+		selections: Observable<IQuillRange>;
+	} {
+		const file		= this.getFile(id);
+
+		const asyncList	= this.accountDatabaseService.getAsyncList(
+			file.then(({owner}) => `users/${owner}/docs/${id}`),
+			BinaryProto,
+			undefined,
+			file.then(({key}) => key)
+		);
+
+		const docAsyncList: IAsyncList<IQuillDelta|IQuillRange>	= {
+			clear: async () => asyncList.clear(),
+			getValue: async () => (await asyncList.getValue()).map(bytes => msgpack.decode(bytes)),
+			lock: async (f, reason) => asyncList.lock(f, reason),
+			pushValue: async delta => asyncList.pushValue(msgpack.encode(delta)),
+			setValue: async deltas =>
+				asyncList.setValue(deltas.map(delta => msgpack.encode(delta)))
+			,
+			subscribeAndPop: f => asyncList.subscribeAndPop(bytes => f(msgpack.decode(bytes))),
+			updateValue: async f => asyncList.updateValue(async bytesArray =>
+				(await f(bytesArray.map(bytes => msgpack.decode(bytes)))).map(delta =>
+					msgpack.encode(delta)
+				)
+			),
+			watch: memoize(() =>
+				asyncList.watch().pipe(map(deltas => deltas.map(delta => msgpack.decode(delta))))
+			),
+			watchPushes: memoize(() =>
+				asyncList.watchPushes().pipe(map(delta =>
+					delta.length > 0 ? msgpack.decode(delta) : {}
+				))
+			)
+		};
+
+		const pushes	= docAsyncList.watchPushes();
+
+		const watchers	= docAsyncList.getValue().then(async deltas => ({
+			deltas: <Observable<IQuillDelta>> of({
+				clientID: '',
+				ops: deltas.length < 1 ? [] : deltas.
+					filter(o => o && typeof (<any> o).index !== 'number').
+					map<DeltaOperation[]|undefined>(o => (<any> o).ops).
+					reduce<DeltaStatic>(
+						(delta, ops) => ops ? delta.compose(new Delta(ops)) : delta,
+						new Delta()
+					).ops || []
+			}).pipe(concat(pushes.pipe(
+				skip(deltas.length),
+				filter((o: any) =>
+					o && typeof o.index !== 'number' && o.ops !== undefined
+				)
+			))),
+			selections: <Observable<IQuillRange>> pushes.pipe(
+				skip(deltas.length),
+				filter((o: any) =>
+					o && typeof o.index === 'number' && typeof o.length === 'number'
+				)
+			)
+		}));
+
+		return {
+			asyncList: docAsyncList,
+			deltas: flattenObservable(watchers.then(o => o.deltas)),
+			selections: flattenObservable(watchers.then(o => o.selections))
+		};
 	}
 
 	/** Gets the specified file record. */
@@ -875,45 +948,6 @@ export class AccountFilesService {
 
 				return id;
 			})
-		};
-	}
-
-	/** Watches doc. */
-	public async watchDoc (id: string) : Promise<{
-		deltas: Observable<IQuillDelta>;
-		selections: Observable<IQuillRange>;
-	}> {
-		const file		= await this.getFile(id);
-
-		const length	=
-			(
-				await this.accountDatabaseService.getListKeys(`users/${file.owner}/docs/${id}`)
-			).length
-		;
-
-		const doc		= this.accountDatabaseService.watchListPushes(
-			`users/${file.owner}/docs/${id}`,
-			BinaryProto,
-			undefined,
-			file.key
-		).pipe(map(o =>
-			o.value.length > 0 ? msgpack.decode(o.value) : undefined
-		));
-
-		return {
-			deltas: of({
-				clientID: '',
-				ops: (await doc.pipe(take(length), toArray(), first()).toPromise() || []).
-					filter(o => o && typeof o.index !== 'number').
-					map<DeltaOperation[]>(o => o.ops || []).
-					reduce<DeltaStatic>(
-						(delta, ops) => delta.compose(new Delta(ops)),
-						new Delta()
-					).ops || []
-			}).pipe(concat(
-				doc.pipe(filter(o => o && typeof o.index !== 'number'))
-			)),
-			selections: doc.pipe(filter(o => o && typeof o.index === 'number'))
 		};
 	}
 

@@ -14,8 +14,9 @@
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='noteData.name'
-							(blur)='realTimeTitleUpdate(noteData.name)'
+							[ngModel]='(note?.metadata | async)?.name || stringsService.untitled'
+							(ngModelChange)='noteData.nameChange = $event'
+							(blur)='realTimeTitleUpdate()'
 							required
 						/>
 					</mat-form-field>
@@ -65,8 +66,8 @@
 						<mat-card-content>
 							<cyph-quill
 								[content]='note?.content | async'
-								[deltas]='note?.deltas'
-								[selections]='note?.selections'
+								[deltas]='note?.doc?.deltas'
+								[selections]='note?.doc?.selections'
 								[isDisabled]='!editable'
 								(contentChange)='onChange($event)'
 								(selectionChange)='onSelectionChange($event)'
