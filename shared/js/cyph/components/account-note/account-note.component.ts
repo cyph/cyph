@@ -1,5 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import * as Delta from 'quill-delta';
 import {Observable} from 'rxjs/Observable';
 import {filter} from 'rxjs/operators/filter';
 import {take} from 'rxjs/operators/take';
@@ -25,7 +26,7 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./account-note.component.scss'],
 	templateUrl: './account-note.component.html'
 })
-export class AccountNoteComponent implements OnInit {
+export class AccountNoteComponent implements OnDestroy, OnInit {
 	/** @ignore */
 	private editView: boolean	= false;
 
@@ -41,7 +42,9 @@ export class AccountNoteComponent implements OnInit {
 		doc?: {
 			asyncList: IAsyncList<IQuillDelta|IQuillRange>;
 			deltas: Observable<IQuillDelta>;
+			deltaSendQueue: IQuillDelta[];
 			selections: Observable<IQuillRange>;
+			selectionSendQueue?: IQuillRange;
 		};
 		metadata: Observable<IAccountFileRecord>;
 	};
@@ -71,11 +74,36 @@ export class AccountNoteComponent implements OnInit {
 		const metadataValue	= await metadata.pipe(filter(o => !!o.id), take(1)).toPromise();
 
 		this.noteData.id	= metadataValue.id;
-
 		this.note			= {metadata};
 
 		if (this.realTime) {
-			this.note.doc	= this.accountFilesService.getDoc(metadataValue.id);
+			this.note.doc	= {
+				deltaSendQueue: [],
+				...this.accountFilesService.getDoc(metadataValue.id)
+			};
+
+			(async () => {
+				while (this.note && this.note.doc && this.noteData.id === metadataValue.id) {
+					if (this.note.doc.deltaSendQueue.length > 0) {
+						await this.note.doc.asyncList.pushValue({
+							clientID: this.note.doc.deltaSendQueue[0].clientID,
+							ops: this.note.doc.deltaSendQueue.splice(
+								0,
+								this.note.doc.deltaSendQueue.length
+							).reduce(
+								(delta, {ops}) => ops ? delta.compose(new Delta(ops)) : delta,
+								new Delta()
+							).ops || []
+						});
+					}
+
+					if (this.note.doc.selectionSendQueue) {
+						await this.note.doc.asyncList.pushValue(this.note.doc.selectionSendQueue);
+					}
+
+					await sleep(1000);
+				}
+			})();
 		}
 		else {
 			this.note.content	= this.accountFilesService.watchNote(metadataValue.id);
@@ -90,6 +118,12 @@ export class AccountNoteComponent implements OnInit {
 	/** Indicates whether or not the edit view should be displayed. */
 	public get editable () : boolean {
 		return this.editView || this.newNote;
+	}
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		this.note			= undefined;
+		this.noteData.id	= undefined;
 	}
 
 	/** @inheritDoc */
@@ -151,7 +185,7 @@ export class AccountNoteComponent implements OnInit {
 			return;
 		}
 		else if (this.note && this.note.doc) {
-			this.note.doc.asyncList.pushValue(change.delta);
+			this.note.doc.deltaSendQueue.push(change.delta);
 		}
 	}
 
@@ -164,7 +198,7 @@ export class AccountNoteComponent implements OnInit {
 			return;
 		}
 		else if (this.note && this.note.doc) {
-			this.note.doc.asyncList.pushValue(change.range);
+			this.note.doc.selectionSendQueue	= change.range;
 		}
 	}
 
