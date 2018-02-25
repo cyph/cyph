@@ -101,7 +101,7 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 						await this.note.doc.asyncList.pushValue(this.note.doc.selectionSendQueue);
 					}
 
-					await sleep(1000);
+					await sleep(500);
 				}
 			})();
 		}
