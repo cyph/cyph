@@ -573,7 +573,7 @@ export class AccountFilesService {
 	public async openFile (id: string) : Promise<void> {
 		const file	= await this.getFile(id);
 
-		if (file.mediaType.indexOf('image/') === 0) {
+		if (file.mediaType.startsWith('image/') && !file.mediaType.startsWith('image/svg')) {
 			this.dialogService.image(await this.downloadURI(id).result);
 		}
 		else {

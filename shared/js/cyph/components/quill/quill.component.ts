@@ -163,7 +163,10 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 
 			for (const k of ['image', 'video']) {
 				const url	= !insert[k] ? undefined : insert[k].url ? insert[k].url : insert[k];
-				if (typeof url !== 'string' || url.startsWith('data:')) {
+				if (
+					(typeof url !== 'string' || url.startsWith('data:')) &&
+					!(typeof url === 'string' && url.startsWith('data:image/svg'))
+				) {
 					continue;
 				}
 
