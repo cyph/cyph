@@ -655,6 +655,8 @@ export class AccountDatabaseService {
 				anonymous
 			).then(({result}) =>
 				result.value
+			).catch(() =>
+				undefined
 			)
 		]);
 
@@ -859,8 +861,10 @@ export class AccountDatabaseService {
 		customKey?: MaybePromise<Uint8Array>,
 		immutable: boolean = true
 	) : Promise<{hash: string; url: string}> {
+		url	= await this.normalizeURL(url);
+
 		return this.databaseService.pushItem(
-			await this.normalizeURL(url),
+			url,
 			BinaryProto,
 			async (key, previousKey, o) => {
 				if (immutable) {
