@@ -438,7 +438,7 @@ export class AccountFilesService {
 				asyncList.watch().pipe(map(deltas => deltas.map(delta => msgpack.decode(delta))))
 			),
 			watchPushes: memoize(() =>
-				asyncList.watchPushes().pipe(map(delta =>
+				asyncList.watchPushes().pipe(skip(1), map(delta =>
 					delta.length > 0 ? msgpack.decode(delta) : {}
 				))
 			)
