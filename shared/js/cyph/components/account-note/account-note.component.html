@@ -8,7 +8,7 @@
 			<div fxLayoutAlign='center center' fxLayout='row'>
 				<mat-card-title fxFlex>
 					<div *ngIf='!editable'>
-						{{(note?.metadata | async)?.name}}
+						{{(note?.metadata | async)?.name || stringsService.untitled}}
 					</div>
 					<mat-form-field fxFlex *ngIf='editable'>
 						<input

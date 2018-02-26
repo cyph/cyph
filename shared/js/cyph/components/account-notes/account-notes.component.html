@@ -17,7 +17,7 @@
 		>
 			<mat-card-header fxLayout='row'>
 				<mat-card-title>
-					{{note.name}}
+					{{note.name || stringsService.untitled}}
 				</mat-card-title>
 				<mat-card-subtitle *ngIf='!realTime'>
 					<div>{{accountFilesService.noteSnippet(note.id)}}</div>
@@ -71,7 +71,7 @@
 		>
 			<mat-card-header fxLayout='row'>
 				<mat-card-title>
-					{{note.name}}
+					{{note.name || stringsService.untitled}}
 				</mat-card-title>
 				<mat-card-subtitle>
 					<div *ngIf='!note.wasAnonymousShare'>

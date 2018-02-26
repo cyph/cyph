@@ -223,10 +223,6 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 	/** Saves note. */
 	public saveNote () : void {
 		this.saveLock(async () => {
-			if (!this.noteData.nameChange) {
-				return;
-			}
-
 			if (!this.noteData.content) {
 				this.noteData.content	= this.note && this.note.content ?
 					await this.note.content.pipe(take(1)).toPromise() :
@@ -239,7 +235,7 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 			if (this.newNote) {
 				this.noteData.id	=
 					await this.accountFilesService.upload(
-						this.noteData.nameChange,
+						this.noteData.nameChange || '',
 						this.noteData.content
 					).result
 				;
