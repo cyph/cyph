@@ -8,7 +8,7 @@
 	<div
 		fxLayout='row'
 		class='component'
-		*ngFor='let component of form.components; trackBy: trackByIndex'
+		*ngFor='let component of form?.components; trackBy: trackByIndex'
 	>
 		<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 			<div
@@ -206,7 +206,7 @@
 		</div>
 	</div>
 	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isDisabled'>
-		<button mat-button cyphTranslate type='submit'>
+		<button mat-raised-button matTooltip='Submit' color='accent' type='submit' cyphTranslate>
 			Submit
 		</button>
 	</div>

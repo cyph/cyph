@@ -1,7 +1,6 @@
 <form ngNativeValidate fxFlexFill fxLayout='column' fxLayoutGap='8px' (submit)='submit()'>
-	<div fxLayout='row' fxLayoutGap='16px' *ngIf='showHeader'>
+	<ng-container *ngIf='showHeader'>
 		<cyph-account-contact
-			fxFlex
 			[clickable]='false'
 			[contact]='recipient === undefined ? undefined : recipient | async'
 			class='cyph-inverted-theme'
@@ -9,26 +8,9 @@
 				(recipient === undefined ? undefined : recipient | async) === undefined
 			'
 		></cyph-account-contact>
-		<div
-			fxFlex='5'
-			fxFlex.lt-lg='10'
-			fxFlex.lt-md='15'
-			fxLayoutAlign='center center'
-			*ngIf='messageType !== chatMessageValueTypes.Form'
-		>
-			<button
-				mat-icon-button
-				matTooltip='Send'
-				[disabled]='recipient !== undefined && (recipient | async) === undefined'
-				type='submit'
-				cyphTranslate
-			>
-				<mat-icon>send</mat-icon>
-			</button>
-		</div>
-	</div>
 
-	<hr *ngIf='showHeader' />
+		<hr />
+	</ng-container>
 
 	<cyph-chat-message-box
 		#chatMessageBox
@@ -41,4 +23,20 @@
 		[showSendButton]='!showHeader'
 		[showUnreadCount]='showUnreadCount'
 	></cyph-chat-message-box>
+
+	<div
+		fxLayoutAlign='left'
+		*ngIf='showHeader && messageType !== chatMessageValueTypes.Form'
+	>
+		<button
+			mat-raised-button
+			matTooltip='Send'
+			color='accent'
+			[disabled]='recipient !== undefined && (recipient | async) === undefined'
+			type='submit'
+			cyphTranslate
+		>
+			Send
+		</button>
+	</div>
 </form>
