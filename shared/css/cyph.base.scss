@@ -59,6 +59,14 @@ section {
 			padding-bottom: 0.25rem;
 		}
 	}
+
+	mat-card-title {
+		overflow-x: hidden;
+		text-overflow: ellipsis;
+
+		/* Temporary "reasonable cap" until better solution is implemented */
+		max-width: 400px;
+	}
 }
 
 .initiating {
