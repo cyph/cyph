@@ -338,7 +338,7 @@
 		"rxjs-no-subject-unsubscribe": false,
 		"rxjs-no-subject-value": false,
 		"rxjs-no-tap": false,
-		"rxjs-no-unsafe-switchmap": true,
+		"rxjs-no-unsafe-switchmap": false /* Pending fix: true */,
 		"rxjs-no-unused-add": false,
 		"rxjs-no-wholesale": true,
 		"rxjs-prefer-add": false
