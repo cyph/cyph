@@ -261,6 +261,11 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 		});
 	}
 
+	/** Indicates whether spinner should be displayed. */
+	public get showSpinner () : boolean {
+		return this.realTime && this.newNote;
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,

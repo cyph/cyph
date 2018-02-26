@@ -1,6 +1,7 @@
 <div
 	fxFlexFill
 	fxLayoutAlign='center start'
+	[class.initiating]='showSpinner'
 	*ngIf='!realTime || accountService.enableDocs'
 >
 	<mat-card fxFlex='90' class='note'>
@@ -81,4 +82,9 @@
 			</mat-card-content>
 		</div>
 	</mat-card>
+
+	<mat-progress-spinner
+		mode='indeterminate'
+		*ngIf='showSpinner'
+	></mat-progress-spinner>
 </div>
