@@ -138,7 +138,7 @@
 					<mat-icon>help_outline</mat-icon>
 					<span>{{stringsService.help}}</span>
 				</button>
-				<button mat-menu-item (click)='chatService.disconnectButton()'>
+				<button mat-menu-item (click)='chatService.disconnectButton()' *ngIf='!accounts'>
 					<mat-icon>close</mat-icon>
 					<span>{{stringsService.disconnect}}</span>
 				</button>
@@ -207,6 +207,7 @@
 					[matTooltip]='stringsService.disconnect'
 					matTooltipPosition='left'
 					(click)='chatService.disconnectButton()'
+					*ngIf='!accounts'
 				>
 					<mat-icon>close</mat-icon>
 				</button>
