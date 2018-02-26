@@ -78,7 +78,7 @@ export class AccountFormComponent implements OnInit {
 				}
 			}
 			catch {
-				this.router.navigate(['404']);
+				this.router.navigate([accountRoot, '404']);
 			}
 		});
 	}

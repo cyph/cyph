@@ -169,7 +169,7 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 				}
 			}
 			catch {
-				this.router.navigate(['404']);
+				this.router.navigate([accountRoot, '404']);
 			}
 		});
 	}

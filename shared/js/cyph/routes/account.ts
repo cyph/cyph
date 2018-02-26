@@ -21,6 +21,7 @@ import {AccountProfileComponent} from '../components/account-profile';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
 import {BlankComponent} from '../components/blank';
+import {NotFoundComponent} from '../components/not-found';
 import {newPatient} from '../forms';
 import {ChatMessageValue} from '../proto';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
@@ -34,6 +35,7 @@ export const account: Route	= {
 	canActivateChild: [AccountAuthGuardService],
 	children: [
 		{path: '', component: AccountHomeComponent},
+		{path: '404', component: NotFoundComponent},
 		{path: 'appointments', component: AccountAppointmentsComponent},
 		{path: 'appointments/:appointmentID/call', component: AccountChatComponent},
 		{

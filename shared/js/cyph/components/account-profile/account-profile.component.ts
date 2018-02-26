@@ -143,7 +143,7 @@ export class AccountProfileComponent implements OnInit {
 			this.userMembers		= undefined;
 			this.userOrganiztion	= undefined;
 
-			this.router.navigate([accountRoot, 'login']);
+			this.router.navigate([accountRoot, username ? '404' : 'login']);
 		}
 	}
 

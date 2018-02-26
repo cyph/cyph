@@ -8,6 +8,7 @@ import {AccountDatabaseService} from '../services/crypto/account-database.servic
 export class AccountAuthGuardService implements CanActivate, CanActivateChild {
 	/** @ignore */
 	private readonly anonymouslyAccessibleRoutes: string[]	= [
+		'404',
 		'logout',
 		'profile',
 		'register',
