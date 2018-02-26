@@ -1,4 +1,5 @@
 import {AccountChatService} from '../services/account-chat.service';
+import {AccountP2PService} from '../services/account-p2p.service';
 import {AccountSessionCapabilitiesService} from '../services/account-session-capabilities.service';
 import {AccountSessionInitService} from '../services/account-session-init.service';
 import {AccountSessionService} from '../services/account-session.service';
@@ -26,7 +27,6 @@ export const accountChatProviders	= [
 	ChatMessageGeometryService,
 	CyphertextService,
 	FileTransferService,
-	P2PService,
 	P2PWebRTCService,
 	ScrollService,
 	{
@@ -36,6 +36,10 @@ export const accountChatProviders	= [
 	{
 		provide: ChatService,
 		useExisting: AccountChatService
+	},
+	{
+		provide: P2PService,
+		useClass: AccountP2PService
 	},
 	{
 		provide: SessionService,

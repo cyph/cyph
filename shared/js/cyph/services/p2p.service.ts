@@ -112,6 +112,11 @@ export class P2PService {
 	/** Indicates whether sidebar is open. */
 	public isSidebarOpen: boolean	= false;
 
+	/** @see P2PWebRTCService.request */
+	protected async request (callType: 'audio'|'video') : Promise<void> {
+		await this.p2pWebRTCService.request(callType);
+	}
+
 	/** Close active P2P session. */
 	public closeButton () : void {
 		if (!this.sessionInitService.ephemeral || this.sessionInitService.callType === undefined) {
@@ -165,7 +170,7 @@ export class P2PService {
 		}
 
 		if (!this.p2pWebRTCService.isActive) {
-			this.p2pWebRTCService.request('video');
+			this.request('video');
 		}
 		else {
 			this.p2pWebRTCService.toggle('video');
@@ -182,7 +187,7 @@ export class P2PService {
 		}
 
 		if (!this.p2pWebRTCService.isActive) {
-			this.p2pWebRTCService.request('audio');
+			this.request('audio');
 		}
 		else {
 			this.p2pWebRTCService.toggle('audio');
