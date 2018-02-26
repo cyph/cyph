@@ -17,6 +17,7 @@
 							[ngModel]='(note?.metadata | async)?.name || stringsService.untitled'
 							(ngModelChange)='noteData.nameChange = $event'
 							(blur)='realTimeTitleUpdate()'
+							[maxlength]='accountFilesService.maxNameLength'
 							required
 						/>
 					</mat-form-field>

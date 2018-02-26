@@ -105,8 +105,9 @@ export class AccountFilesService {
 					).pipe(map(o => ({
 						timestamp: o.timestamp,
 						value: {
-							owner: value.owner,
-							...o.value
+							...o.value,
+							name: o.value.name.slice(0, this.maxNameLength),
+							owner: value.owner
 						}
 					})))
 				)))),
@@ -231,10 +232,13 @@ export class AccountFilesService {
 	};
 
 	/** Indicates whether the first load has completed. */
-	public initiated: boolean	= false;
+	public initiated: boolean				= false;
+
+	/** Maximum number of characters in a file name. */
+	public readonly maxNameLength: number	= 80;
 
 	/** Indicates whether spinner should be displayed. */
-	public showSpinner: boolean	= true;
+	public showSpinner: boolean				= true;
 
 	/** @ignore */
 	private deltaToString (delta: IQuillDelta) : string {
@@ -947,9 +951,10 @@ export class AccountFilesService {
 			AccountFileRecord,
 			undefined,
 			(async () => (await filePromise).key)()
-		).pipe(map(o =>
-			o.value
-		));
+		).pipe(map(o => ({
+			...o.value,
+			name: o.value.name.slice(0, this.maxNameLength)
+		})));
 	}
 
 	/** Watches note. */
