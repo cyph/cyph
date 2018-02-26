@@ -11,6 +11,7 @@ import * as Delta from 'quill-delta';
 import * as QuillDeltaToHtml from 'quill-delta-to-html';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {combineLatest} from 'rxjs/observable/combineLatest';
 import {of} from 'rxjs/observable/of';
 import {concat} from 'rxjs/operators/concat';
 import {filter} from 'rxjs/operators/filter';
@@ -95,38 +96,24 @@ export class AccountFilesService {
 				undefined,
 				false
 			).pipe(
-				mergeMap(async references => filterUndefined(await Promise.all(
-					references.map(async ({value}) => {
-						try {
-							if (!value.owner) {
-								return;
-							}
-
-							const record	= await this.accountDatabaseService.getItem(
-								`users/${value.owner}/fileRecords/${value.id}`,
-								AccountFileRecord,
-								undefined,
-								value.key
-							);
-
-							return {
-								id: record.id,
-								mediaType: record.mediaType,
-								name: record.name,
-								owner: value.owner,
-								recordType: record.recordType,
-								size: record.size,
-								timestamp: record.timestamp,
-								wasAnonymousShare: record.wasAnonymousShare
-							};
+				mergeMap(references => combineLatest(filterUndefined(references.map(({value}) =>
+					!value.owner ? undefined : this.accountDatabaseService.watch(
+						`users/${value.owner}/fileRecords/${value.id}`,
+						AccountFileRecord,
+						undefined,
+						value.key
+					).pipe(map(o => ({
+						timestamp: o.timestamp,
+						value: {
+							owner: value.owner,
+							...o.value
 						}
-						catch {
-							return;
-						}
-					})
-				))),
-				map(records =>
-					records.sort((a, b) => b.timestamp - a.timestamp)
+					})))
+				)))),
+				map(records => records.
+					filter(o => !isNaN(o.timestamp)).
+					sort((a, b) => b.timestamp - a.timestamp).
+					map(o => o.value)
 				)
 			),
 			[]
