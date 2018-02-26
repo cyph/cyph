@@ -15,6 +15,15 @@ export class AccountAuthGuardService implements CanActivate, CanActivateChild {
 		'welcome'
 	];
 
+	/** @ignore */
+	private getFullRoutePath (route: ActivatedRouteSnapshot) : string[] {
+		return route.url.map(o => o.path).concat(
+			route.children.
+				map(child => this.getFullRoutePath(child)).
+				reduce((a, b) => a.concat(b), [])
+		);
+	}
+
 	/** @inheritDoc */
 	public canActivate (route: ActivatedRouteSnapshot) : boolean {
 		if (
@@ -29,7 +38,7 @@ export class AccountAuthGuardService implements CanActivate, CanActivateChild {
 
 		this.router.navigate([accountRoot, 'login'].concat(
 			route.url.length > 0 ?
-				(accountRoot ? [accountRoot] : []).concat(route.url.map(o => o.path)) :
+				(accountRoot ? [accountRoot] : []).concat(this.getFullRoutePath(route)) :
 				[]
 		));
 
