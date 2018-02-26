@@ -134,7 +134,7 @@
 										this.record.id
 									'
 								>
-									Submit {{stringsService.patientForms}}
+									{{stringsService.submitPatientForms}}
 								</button>
 							</div>
 							<cyph-calendar-invite
@@ -274,7 +274,7 @@
 		</div>
 
 		<ng-container *ngIf='calendarOptions'>
-			<h2>Appointment Calendar</h2>
+			<h2 cyphTranslate>Appointment Calendar</h2>
 			<mat-card class='white-card calendar'>
 				<mat-card-content>
 					<ng-fullcalendar
