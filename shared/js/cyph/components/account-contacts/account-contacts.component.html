@@ -21,20 +21,24 @@
 		</div>
 
 		<ng-template #mainContactListView>
-			<cyph-account-contact
-				class='active animated slideInDown'
-				[class.cyph-inverted-theme]='invertedTheme'
-				[contact]='accountContactsSearch?.searchBar?.filter | async'
-				(click)='accountContactsSearch?.searchBar?.clearFilter()'
-				*ngIf='(accountContactsSearch?.searchBar?.filter | async) !== undefined'
-			></cyph-account-contact>
+			<div>
+				<cyph-account-contact
+					class='active animated slideInDown'
+					[class.cyph-inverted-theme]='invertedTheme'
+					[contact]='accountContactsSearch?.searchBar?.filter | async'
+					(click)='accountContactsSearch?.searchBar?.clearFilter()'
+					*ngIf='(accountContactsSearch?.searchBar?.filter | async) !== undefined'
+				></cyph-account-contact>
 
-			<cyph-account-contact
-				class='active animated slideInDown'
-				[class.cyph-inverted-theme]='invertedTheme'
-				[contact]='activeUser | async'
-				*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
-			></cyph-account-contact>
+				<cyph-account-contact
+					class='active animated slideInDown'
+					[class.cyph-inverted-theme]='invertedTheme'
+					[contact]='activeUser | async'
+					*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
+				></cyph-account-contact>
+			</div>
+
+			<br />
 
 			<od-virtualscroll
 				[vsData]='filteredContactList'
