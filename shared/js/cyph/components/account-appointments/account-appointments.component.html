@@ -20,20 +20,21 @@
 					<mat-expansion-panel *ngIf='getAppointment(record) | async as o'>
 						<mat-expansion-panel-header>
 							<mat-panel-title>
-								<div fxLayoutAlign='start center'>
+								<div>
 									<span>{{record.name}}</span>
+									&ngsp;
 									<ng-container *ngIf='!record.wasAnonymousShare'>
-										<span>&nbsp;</span>
 										<span cyphTranslate>with</span>
-										<span>&nbsp;</span>
+										&ngsp;
 										<a [routerLink]='
 											accountService.routeRoot + "profile/" + o.friend
-										'>
-											{{o.friend}}
-										</a>
+										'>{{
+											o.friend
+										}}</a>
+										&ngsp;
 									</ng-container>
 									<span>
-										&nbsp; - {{getDateTimeString(
+										&mdash; {{getDateTimeString(
 											o.appointment.calendarInvite.startTime
 										)}}
 									</span>
@@ -136,6 +137,7 @@
 								>
 									{{stringsService.submitPatientForms}}
 								</button>
+								<br />
 							</div>
 							<cyph-calendar-invite
 								[isDisabled]='true'
@@ -167,23 +169,24 @@
 					<mat-expansion-panel *ngIf='getAppointment(record) | async as o'>
 						<mat-expansion-panel-header>
 							<mat-panel-title>
-								<div fxLayoutAlign='start center'>
+								<div>
 									<span>{{record.name}}</span>
-									&nbsp;
+									&ngsp;
 									<ng-container *ngIf='!record.wasAnonymousShare'>
 										<span cyphTranslate>with</span>
-										&nbsp;
+										&ngsp;
 										<a [routerLink]='
 											accountService.routeRoot + "profile/" + record.owner
-										'>
-											{{record.owner}}
-										</a>
+										'>{{
+											record.owner
+										}}</a>
 									</ng-container>
 									<ng-container *ngIf='record.wasAnonymousShare'>
 										<span cyphTranslate>(invited anonymously)</span>
 									</ng-container>
+									&ngsp;
 									<span>
-										&nbsp; - {{getDateTimeString(
+										&mdash; {{getDateTimeString(
 											o.appointment.calendarInvite.startTime
 										)}}
 									</span>
@@ -258,6 +261,7 @@
 								>
 									{{stringsService.submitPatientForms}}
 								</button>
+								<br />
 							</div>
 							<cyph-calendar-invite
 								[isDisabled]='true'
