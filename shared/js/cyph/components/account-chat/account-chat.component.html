@@ -8,7 +8,7 @@
 		<cyph-account-call-waiting
 			fxFlexFill
 			[appointment]='appointment | async'
-			*ngIf='p2pWebRTCService.initialCallPending'
+			*ngIf='initialCallPending'
 		></cyph-account-call-waiting>
 
 		<ng-container
@@ -18,14 +18,14 @@
 				fxFlex
 				[accounts]='true'
 				[messageType]='messageType | async'
-				[class.visibility-hidden]='p2pWebRTCService.initialCallPending'
+				[class.visibility-hidden]='initialCallPending'
 			></cyph-chat-main>
 
 			<cyph-account-chat-message-box
 				[class.padding]='!envService.isMobile'
 				[messageType]='chatMessageValueTypes.Text'
 				*ngIf='!p2pService.isActiveOrInitialCall'
-				[class.visibility-hidden]='p2pWebRTCService.initialCallPending'
+				[class.visibility-hidden]='initialCallPending'
 			></cyph-account-chat-message-box>
 		</ng-container>
 
@@ -38,7 +38,7 @@
 				[persistentEndMessage]='true'
 				[promptFollowup]='promptFollowup | async'
 				[uiStyle]='uiStyles.email'
-				[class.visibility-hidden]='p2pWebRTCService.initialCallPending'
+				[class.visibility-hidden]='initialCallPending'
 			>
 				<cyph-account-chat-message-box
 					[messageType]='messageType | async'

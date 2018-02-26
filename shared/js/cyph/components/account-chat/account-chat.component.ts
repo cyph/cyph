@@ -64,6 +64,11 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence					= UserPresence;
 
+	/** Indicates whether call is pending or not yet loaded. */
+	public get initialCallPending () : boolean {
+		return this.p2pWebRTCService.initialCallPending || this.p2pWebRTCService.loading;
+	}
+
 	/** @inheritDoc */
 	public async ngOnDestroy () : Promise<void> {
 		this.destroyed	= true;
