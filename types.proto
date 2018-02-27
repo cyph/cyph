@@ -783,7 +783,7 @@ message PatientInfo {
 		double deathDateTime = 3;
 
 		/** Patient's date of birth. (Redox: In ISO 8601 format) */
-		double DOB = 4;
+		double dob = 4;
 
 		/** List of emails for the patient. */
 		repeated string emails = 5;
@@ -816,7 +816,7 @@ message PatientInfo {
 		string sex = 13;
 
 		/** The patient's social security number. */
-		string SSN = 14;
+		string ssn = 14;
 	}
 
 	/** Identifiers - from Redox. */
@@ -835,10 +835,10 @@ message PatientInfo {
 			Address address = 1;
 
 			/** ID of insurance company (payor). */
-			string ID = 2;
+			string id = 2;
 
 			/** ID type of insurance company (payor). */
-			string IDType = 3;
+			string idType = 3;
 
 			/** Name of insurance company (payor). */
 			string name = 4;
@@ -853,7 +853,7 @@ message PatientInfo {
 			Address address = 1;
 
 			/** Insurance policy holder's date of birth. */
-			double DOB = 2;
+			double dob = 2;
 
 			/** Insurance policy holder's full name. */
 			Name fullName = 3;
@@ -868,10 +868,10 @@ message PatientInfo {
 		/** The insurance plan. */
 		message Plan {
 			/** Identifier of insurance plan. */
-			string ID = 1;
+			string id = 1;
 
 			/** ID type of insurance plan. */
-			string IDType = 2;
+			string idType = 2;
 
 			/** Name of insurance plan. */
 			string name = 3;
@@ -950,7 +950,7 @@ message PatientInfo {
 		Name fullName = 3;
 
 		/** National Provider Identifier for the primary care provider. */
-		string NPI = 4;
+		string npi = 4;
 	}
 
 	/** Someone's phone number. */
