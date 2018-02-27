@@ -589,7 +589,7 @@ message Form {
 		/** @see Form.id */
 		string id = 2;
 
-		/** @see Form.idSeparator */
+		/** Separator for concatenating element values when sending to another system. */
 		string idSeparator = 3;
 	}
 
@@ -656,7 +656,7 @@ message Form {
 		/** @see Form.id */
 		string id = 2;
 
-		/** @see Form.id */
+		/** @see Component.idSeparator */
 		string idSeparator = 3;
 	}
 
@@ -665,9 +665,6 @@ message Form {
 
 	/** Optional ID. Can be used for associating with fields in other systems. */
 	string id = 2;
-
-	/** Separator for concatenating element values when sending to another system. */
-	string idSeparator = 3;
 }
 
 /** An asymmetric key pair. */
