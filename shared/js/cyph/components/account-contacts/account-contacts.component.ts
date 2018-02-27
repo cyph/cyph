@@ -6,12 +6,15 @@ import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
+import {mergeMap} from 'rxjs/operators/mergeMap';
 import {IContactListItem, User, UserPresence} from '../../account';
+import {AccountUserTypes} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
+import {filterUndefined} from '../../util/index';
 import {AccountContactsSearchComponent} from '../account-contacts-search';
 
 
@@ -35,14 +38,42 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 		filteredContactList: (IContactListItem|User)[];
 	}>	= combineLatest(
 		this.contactListInternal,
+		this.activatedRoute.data,
 		this.activatedRoute.url
-	).pipe(map(([contactList]) => {
+	).pipe(mergeMap(async ([contactList, data]) => {
 		const snapshot			= this.activatedRoute.snapshot.firstChild ?
 			this.activatedRoute.snapshot.firstChild :
 			this.activatedRoute.snapshot
 		;
 
 		const username: string	= snapshot.params.username;
+
+		let userTypeFilter: AccountUserTypes|undefined	= data.userTypeFilter;
+		let userTypeFilterOut: boolean					= data.userTypeFilterOut === true;
+
+		/* Filter out patients for healthcare workers in general case */
+		if (this.envService.isTelehealth && userTypeFilter === undefined) {
+			userTypeFilter		= AccountUserTypes.Standard;
+			userTypeFilterOut	= true;
+		}
+
+		if (userTypeFilter !== undefined) {
+			contactList	= filterUndefined(
+				await Promise.all(contactList.map(async contact => {
+					const user	= contact instanceof User ? contact : await contact.user;
+					return !user ? undefined : {
+						user,
+						userType: (await user.accountUserProfile.getValue()).userType
+					};
+				}))
+			).filter(contact =>
+				userTypeFilterOut ?
+					contact.userType !== userTypeFilter :
+					contact.userType === userTypeFilter
+			).map(contact =>
+				contact.user
+			);
+		}
 
 		if (!username) {
 			return {filteredContactList: contactList};

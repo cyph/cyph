@@ -57,7 +57,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 				'docs',
 				'files',
 				'forms',
-				'notes'
+				'notes',
+				'patients'
 			].indexOf(route) < 0 ||
 			(
 				this.activatedRoute.snapshot.firstChild &&
@@ -95,6 +96,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'new-patient',
 			'notes',
 			'notifications',
+			'patients',
 			'profile',
 			'request-appointment',
 			'request-followup',

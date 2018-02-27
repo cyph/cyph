@@ -164,6 +164,7 @@
 			class='sidebar'
 			matTooltip='Toggle Chat Sidebar'
 			(click)='p2pService.toggleSidebar()'
+			*ngIf='uiStyle !== uiStyles.email'
 		>
 			<mat-icon>forum</mat-icon>
 		</button>

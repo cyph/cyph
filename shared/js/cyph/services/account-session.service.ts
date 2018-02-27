@@ -41,6 +41,9 @@ export class AccountSessionService extends SessionService {
 	/** @ignore */
 	private readonly resolveReady: () => void	= this._READY.resolve;
 
+	/** @ignore */
+	private readonly stateResolver				= resolvable();
+
 	/** @inheritDoc */
 	protected readonly symmetricKey: Promise<Uint8Array>	=
 		this._ACCOUNTS_SYMMETRIC_KEY.promise
@@ -60,6 +63,7 @@ export class AccountSessionService extends SessionService {
 	/** @inheritDoc */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
 		await super.channelOnOpen(isAlice, false);
+		this.stateResolver.resolve();
 	}
 
 	/** @inheritDoc */
@@ -116,16 +120,26 @@ export class AccountSessionService extends SessionService {
 			));
 
 
-			this.accountDatabaseService.getAsyncValue(
+			const symmetricKeyPromise	= this.accountDatabaseService.getAsyncValue(
 				symmetricKeyURL,
 				BinaryProto,
 				undefined,
 				undefined,
 				undefined,
 				true
-			).getValue().then(symmetricKey => {
+			).getValue();
+
+			symmetricKeyPromise.then(symmetricKey => {
 				this.resolveAccountsSymmetricKey(symmetricKey);
 			});
+
+			await this.stateResolver.promise;
+
+			if (this.state.isAlice) {
+				this.on(rpcEvents.requestSymmetricKey, async () => {
+					this.send([rpcEvents.symmetricKey, {bytes: await symmetricKeyPromise}]);
+				});
+			}
 
 			if ((await this.accountDatabaseService.hasItem(symmetricKeyURL))) {
 				return;
@@ -149,12 +163,15 @@ export class AccountSessionService extends SessionService {
 				]);
 			}
 			else {
-				await this.accountDatabaseService.setItem(
-					symmetricKeyURL,
-					BinaryProto,
-					(await this.one<ISessionMessageData>(rpcEvents.symmetricKey)).bytes ||
-						new Uint8Array(0)
+				this.one<ISessionMessageData>(rpcEvents.symmetricKey).then(async ({bytes}) =>
+					this.accountDatabaseService.setItem(
+						symmetricKeyURL,
+						BinaryProto,
+						bytes || new Uint8Array(0)
+					)
 				);
+
+				await this.send([rpcEvents.requestSymmetricKey, {}]);
 			}
 		})();
 

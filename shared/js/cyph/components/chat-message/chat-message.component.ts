@@ -173,13 +173,17 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 			this.resolveViewReady();
 		}
 
-		if (
-			this.scrollIntoView &&
-			this.elementRef.nativeElement &&
-			typeof this.elementRef.nativeElement.scrollIntoView === 'function'
-		) {
-			await this.waitUntilInitiated();
-			this.elementRef.nativeElement.scrollIntoView(undefined, {behavior: 'instant'});
+		if (this.scrollIntoView) {
+			if (
+				this.elementRef.nativeElement &&
+				typeof this.elementRef.nativeElement.scrollIntoView === 'function' &&
+				/* Leave email-style UI at the top for now */
+				this.uiStyle !== UiStyles.email
+			) {
+				await this.waitUntilInitiated();
+				this.elementRef.nativeElement.scrollIntoView(undefined, {behavior: 'instant'});
+			}
+
 			this.scrolledIntoView.emit();
 		}
 

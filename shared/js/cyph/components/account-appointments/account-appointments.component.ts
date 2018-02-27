@@ -6,7 +6,7 @@ import {Observable} from 'rxjs/Observable';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
 import {User} from '../../account/user';
-import {AccountUserTypes, IAccountFileRecord, IAppointment} from '../../proto';
+import {AccountUserTypes, CallTypes, IAccountFileRecord, IAppointment} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
@@ -61,6 +61,9 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 		aspectRatio: 1.5,
 		timezone: 'local'
 	};
+
+	/** @see CallTypes */
+	public readonly callTypes: typeof CallTypes	= CallTypes;
 
 	/** Gets appointment. */
 	public readonly getAppointment:

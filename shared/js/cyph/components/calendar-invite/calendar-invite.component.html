@@ -160,7 +160,7 @@
 			/>
 		</mat-form-field>
 
-		<ng-container *ngIf='envService.environment.local'>
+		<ng-container *ngIf='envService.environment.local && !isDisabled'>
 			&nbsp;&nbsp;&nbsp;
 			<a mat-button matTooltip='Now' cyphTranslate (click)='setNow()'>Now</a>
 		</ng-container>
