@@ -209,6 +209,32 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 		}
 	}
 
+	/** Disable all validation and set appointment to now. Local environments only. */
+	public async setNow () : Promise<void> {
+		if (!this.envService.environment.local) {
+			return;
+		}
+
+		const timestamp	= new Date(await getTimestamp()).setMinutes(0);
+
+		this.duration		= 3600000;
+		this.forbiddenDays	= [];
+		this.timeRange		= {
+			end: {hour: 24, minute: 0},
+			start: {hour: 0, minute: 0}
+		};
+
+		if (this.durations.indexOf(this.duration) < 0) {
+			this.durations.push(this.duration);
+		}
+
+		this.valueSubject.next({
+			...this.valueSubject.value,
+			endTime: timestamp + this.duration,
+			startTime: timestamp
+		});
+	}
+
 	/** @inheritDoc */
 	public writeValue (value?: ICalendarInvite) : void {
 		if (value && this.valueSubject.value !== value) {
@@ -217,8 +243,8 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly envService: EnvService,
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

@@ -159,6 +159,11 @@
 				value='EST'
 			/>
 		</mat-form-field>
+
+		<ng-container *ngIf='envService.environment.local'>
+			&nbsp;&nbsp;&nbsp;
+			<a mat-button matTooltip='Now' cyphTranslate (click)='setNow()'>Now</a>
+		</ng-container>
 	</div>
 
 	<!-- End time selection hidden in favor of appointment duration selection, for now. -->
