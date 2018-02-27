@@ -41,6 +41,9 @@ export class AccountSessionService extends SessionService {
 	/** @ignore */
 	private readonly resolveReady: () => void	= this._READY.resolve;
 
+	/** @ignore */
+	private readonly stateResolver				= resolvable();
+
 	/** @inheritDoc */
 	protected readonly symmetricKey: Promise<Uint8Array>	=
 		this._ACCOUNTS_SYMMETRIC_KEY.promise
@@ -60,6 +63,7 @@ export class AccountSessionService extends SessionService {
 	/** @inheritDoc */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
 		await super.channelOnOpen(isAlice, false);
+		this.stateResolver.resolve();
 	}
 
 	/** @inheritDoc */
@@ -130,6 +134,8 @@ export class AccountSessionService extends SessionService {
 			if ((await this.accountDatabaseService.hasItem(symmetricKeyURL))) {
 				return;
 			}
+
+			await this.stateResolver.promise;
 
 			if (this.state.isAlice) {
 				const symmetricKey	= this.potassiumService.randomBytes(
