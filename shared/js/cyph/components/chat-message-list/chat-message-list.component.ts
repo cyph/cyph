@@ -180,6 +180,10 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			return;
 		}
 
+		if (this.uiStyle === UiStyles.email) {
+			this.initialScrollDown.next(false);
+		}
+
 		const chat	= this.chat;
 
 		const observables	= getOrSetDefault(this.observableCache, chat, () => ({
