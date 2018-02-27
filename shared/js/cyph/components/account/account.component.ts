@@ -95,6 +95,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'new-patient',
 			'notes',
 			'notifications',
+			'patients',
 			'profile',
 			'request-appointment',
 			'request-followup',

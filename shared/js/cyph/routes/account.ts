@@ -23,7 +23,7 @@ import {AccountSettingsComponent} from '../components/account-settings';
 import {BlankComponent} from '../components/blank';
 import {NotFoundComponent} from '../components/not-found';
 import {newPatient} from '../forms';
-import {ChatMessageValue} from '../proto';
+import {AccountUserTypes, ChatMessageValue} from '../proto';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 
 
@@ -101,6 +101,11 @@ export const account: Route	= {
 			path: 'notifications/unsubscribe',
 			component: AccountNotificationsSubscribeComponent,
 			data: {unsubscribe: true}
+		},
+		{
+			path: 'patients',
+			component: AccountContactsComponent,
+			data: {userTypeFilter: AccountUserTypes.Standard}
 		},
 		{path: 'profile', component: AccountProfileComponent},
 		{path: 'profile/:username', component: AccountProfileComponent},
