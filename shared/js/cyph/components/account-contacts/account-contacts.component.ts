@@ -48,7 +48,14 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 
 		const username: string	= snapshot.params.username;
 
-		const userTypeFilter: AccountUserTypes|undefined	= data.userTypeFilter;
+		let userTypeFilter: AccountUserTypes|undefined	= data.userTypeFilter;
+		let userTypeFilterOut: boolean					= data.userTypeFilterOut === true;
+
+		/* Filter out patients for healthcare workers in general case */
+		if (this.envService.isTelehealth && userTypeFilter === undefined) {
+			userTypeFilter		= AccountUserTypes.Standard;
+			userTypeFilterOut	= true;
+		}
 
 		if (userTypeFilter !== undefined) {
 			contactList	= filterUndefined(
@@ -60,7 +67,9 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 					};
 				}))
 			).filter(contact =>
-				contact.userType === userTypeFilter
+				userTypeFilterOut ?
+					contact.userType !== userTypeFilter :
+					contact.userType === userTypeFilter
 			).map(contact =>
 				contact.user
 			);
