@@ -7,12 +7,31 @@
 	}
 }
 
+::ng-deep {
+	.fc-divider {
+		background: #666;
+	}
+
+	.fc-today {
+		background: #7986cb !important;
+	}
+
+	.fc-list-heading td, .fc-header {
+		background: unset !important;
+	}
+}
+
 mat-expansion-panel.mat-expansion-panel {
 	margin-top: 2%;
 	margin-bottom: 2%;
 }
 
-mat-expansion-panel-header h2, h3 {
+mat-card h2 {
+	border-bottom: 1px solid;
+	padding-bottom: 0.25rem;
+}
+
+h2, h3 {
 	text-align: center;
 	margin-left: auto;
 	margin-right: auto;
