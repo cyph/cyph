@@ -17,7 +17,14 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountP2PService extends P2PService {
 	/** @ignore */
+	private readonly requestRedirect: boolean	= false;
+
+	/** @ignore */
 	protected async request (callType: 'audio'|'video') : Promise<void> {
+		if (!this.requestRedirect) {
+			return super.request(callType);
+		}
+
 		if (!this.accountSessionService.remoteUser.value) {
 			return;
 		}
