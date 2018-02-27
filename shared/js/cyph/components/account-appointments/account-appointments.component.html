@@ -7,6 +7,24 @@
 	*ngIf='accountDatabaseService.currentUser | async as currentUser'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
+		<ng-container *ngIf='calendarOptions'>
+			<mat-accordion class='calendar'>
+				<mat-expansion-panel>
+					<mat-expansion-panel-header>
+						<h2 cyphTranslate>Appointment Calendar</h2>
+					</mat-expansion-panel-header>
+						<ng-fullcalendar
+							#calendar
+							[options]='calendarOptions'
+							(clickButton)='calendarClickButton($event.detail)'
+							(eventClick)='calendarEventClick($event.detail)'
+							(eventDrop)='calendarUpdateEvent($event.detail)'
+							(eventResize)='calendarUpdateEvent($event.detail)'
+						></ng-fullcalendar>
+				</mat-expansion-panel>
+			</mat-accordion>
+		</ng-container>
+
 		<ng-container
 			*ngIf='(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor'
 		>
@@ -148,7 +166,7 @@
 				</ng-container>
 			</mat-accordion>
 		</div>
-		<h2>Appointments</h2>
+		<h2>Future Appointments</h2>
 		<div class='cyph-inverted-theme'>
 			<mat-accordion
 				class='appointment animated fadeInDown'
@@ -159,155 +177,295 @@
 					trackBy: trackByID;
 					let i = index;
 				'>
-					<mat-expansion-panel *ngIf='getAppointment(record) | async as o'>
-						<mat-expansion-panel-header>
-							<mat-panel-title>
-								<div fxLayoutAlign='left center'>
-									<div>
-										<span>{{record.name}}</span>
-										&ngsp;
-										<ng-container *ngIf='!record.wasAnonymousShare'>
-											<span cyphTranslate>with</span>
-											&ngsp;
-											<a [routerLink]='
-												accountService.routeRoot + "profile/" + o.friend
-											'>{{
-												o.friend
-											}}</a>
-											&ngsp;
-										</ng-container>
-										<span>
-											&mdash; {{getDateTimeString(
-												o.appointment.calendarInvite.startTime
-											)}}
-										</span>
+					<ng-container *ngIf='getAppointment(record) | async as o'>
+						<ng-container *ngIf='timestampWatcher | async as now'>
+							<mat-expansion-panel *ngIf='o.appointment.calendarInvite.startTime >= now'>
+								<mat-expansion-panel-header>
+									<mat-panel-title>
+										<div fxLayoutAlign='left center'>
+											<div>
+												<span>{{record.name}}</span>
+												&ngsp;
+												<ng-container *ngIf='!record.wasAnonymousShare'>
+													<span cyphTranslate>with</span>
+													&ngsp;
+													<a [routerLink]='
+														accountService.routeRoot + "profile/" + o.friend
+													'>{{
+														o.friend
+													}}</a>
+													&ngsp;
+												</ng-container>
+												<span>
+													&mdash; {{getDateTimeString(
+														o.appointment.calendarInvite.startTime
+													)}}
+												</span>
+											</div>
+										</div>
+									</mat-panel-title>
+									<mat-panel-description>
+										<div
+											fxFlex
+											fxLayoutGap='2px'
+											fxLayoutAlign='end center'
+											
+										>
+											<button
+												mat-icon-button
+												cyphTranslate
+												[disabled]='
+													o.appointment.occurred ||
+													now < (
+														o.appointment.calendarInvite.startTime -
+														appointmentGracePeriod
+													) ||
+													now > (
+														o.appointment.calendarInvite.endTime -
+														appointmentGracePeriod
+													)
+												'
+												matTooltip='Start Call'
+												[routerLink]='
+													accountService.routeRoot +
+													"appointments/" +
+													record.id +
+													"/call"
+												'
+											>
+												<mat-icon>play_arrow</mat-icon>
+											</button>
+											<button
+												mat-icon-button
+												cyphTranslate
+												[disabled]='o.appointment.occured || now > (
+													o.appointment.calendarInvite.endTime -
+													appointmentGracePeriod
+												)'
+												matTooltip='Delete'
+												(click)='
+													accountFilesService.remove(record);
+													$event.stopPropagation();
+												'
+											>
+												<mat-icon>delete</mat-icon>
+											</button>
+										</div>
+									</mat-panel-description>
+								</mat-expansion-panel-header>
+								<div fxLayout='column'>
+									<div
+										*ngFor='
+											let form of o.appointment.forms;
+											trackBy: trackByID;
+											let i = index;
+										'
+										fxLayoutGap='5px'
+										fxLayoutAlign='center'
+										fxLayout='row'
+									>
+										<button
+											mat-raised-button
+											cyphTranslate
+											[routerLink]='
+												accountService.routeRoot +
+												"appointments/" +
+												this.record.id +
+												"/forms/" +
+												i
+											'
+										>
+											{{stringsService.patientForm}} #{{i+1}}
+										</button>
 									</div>
-								</div>
-							</mat-panel-title>
-							<mat-panel-description>
-								<div
-									fxFlex
-									fxLayoutGap='2px'
-									fxLayoutAlign='end center'
-									*ngIf='timestampWatcher | async as now'
-								>
-									<button
-										mat-icon-button
-										cyphTranslate
-										[disabled]='
-											o.appointment.occurred ||
-											now < (
-												o.appointment.calendarInvite.startTime -
-												appointmentGracePeriod
-											) ||
-											now > (
-												o.appointment.calendarInvite.endTime -
-												appointmentGracePeriod
-											)
-										'
-										matTooltip='Start Call'
-										[routerLink]='
-											accountService.routeRoot +
-											"appointments/" +
-											record.id +
-											"/call"
-										'
+									<div
+										*ngIf='o.appointment.forms.length < 1'
+										fxFlex='50'
+										fxLayoutGap='5px'
+										fxLayoutAlign='center center'
+										fxLayout='column'
 									>
-										<mat-icon>play_arrow</mat-icon>
-									</button>
-									<button
-										mat-icon-button
-										cyphTranslate
-										[disabled]='o.appointment.occured || now > (
-											o.appointment.calendarInvite.endTime -
-											appointmentGracePeriod
-										)'
-										matTooltip='Delete'
-										(click)='
-											accountFilesService.remove(record);
-											$event.stopPropagation();
-										'
-									>
-										<mat-icon>delete</mat-icon>
-									</button>
+										<span>{{stringsService.patientFormsMissing}}</span>
+										<button
+											*ngIf='
+												(currentUser.user.userType | async) ===
+												accountUserTypes.Standard
+											'
+											mat-raised-button
+											cyphTranslate
+											[routerLink]='
+												accountService.routeRoot +
+												"new-patient/" +
+												this.record.id
+											'
+										>
+											{{stringsService.submitPatientForms}}
+										</button>
+										<br />
+									</div>
+									<cyph-calendar-invite
+										[isDisabled]='true'
+										[ngModel]='o.appointment.calendarInvite'
+									></cyph-calendar-invite>
 								</div>
-							</mat-panel-description>
-						</mat-expansion-panel-header>
-						<div fxLayout='column'>
-							<div
-								*ngFor='
-									let form of o.appointment.forms;
-									trackBy: trackByID;
-									let i = index;
-								'
-								fxLayoutGap='5px'
-								fxLayoutAlign='center'
-								fxLayout='row'
-							>
-								<button
-									mat-raised-button
-									cyphTranslate
-									[routerLink]='
-										accountService.routeRoot +
-										"appointments/" +
-										this.record.id +
-										"/forms/" +
-										i
-									'
-								>
-									{{stringsService.patientForm}} #{{i+1}}
-								</button>
-							</div>
-							<div
-								*ngIf='o.appointment.forms.length < 1'
-								fxFlex='50'
-								fxLayoutGap='5px'
-								fxLayoutAlign='center center'
-								fxLayout='column'
-							>
-								<span>{{stringsService.patientFormsMissing}}</span>
-								<button
-									*ngIf='
-										(currentUser.user.userType | async) ===
-										accountUserTypes.Standard
-									'
-									mat-raised-button
-									cyphTranslate
-									[routerLink]='
-										accountService.routeRoot +
-										"new-patient/" +
-										this.record.id
-									'
-								>
-									{{stringsService.submitPatientForms}}
-								</button>
-								<br />
-							</div>
-							<cyph-calendar-invite
-								[isDisabled]='true'
-								[ngModel]='o.appointment.calendarInvite'
-							></cyph-calendar-invite>
-						</div>
-					</mat-expansion-panel>
+							</mat-expansion-panel>
+						</ng-container>
+					</ng-container>
 				</ng-container>
 			</mat-accordion>
 		</div>
 
-		<ng-container *ngIf='calendarOptions'>
-			<h2 cyphTranslate>Appointment Calendar</h2>
-			<mat-card class='white-card calendar'>
-				<mat-card-content>
-					<ng-fullcalendar
-						#calendar
-						[options]='calendarOptions'
-						(clickButton)='calendarClickButton($event.detail)'
-						(eventClick)='calendarEventClick($event.detail)'
-						(eventDrop)='calendarUpdateEvent($event.detail)'
-						(eventResize)='calendarUpdateEvent($event.detail)'
-					></ng-fullcalendar>
-				</mat-card-content>
-			</mat-card>
-		</ng-container>
+		<h2>Past Appointments</h2>
+		<div class='cyph-inverted-theme'>
+			<mat-accordion
+				class='appointment animated fadeInDown'
+				[class.bounceInRight]='!accountFilesService.initiated'
+			>
+				<ng-container *ngFor='
+					let record of accountFilesService.filesListFiltered.appointments | async;
+					trackBy: trackByID;
+					let i = index;
+				'>
+					<ng-container *ngIf='getAppointment(record) | async as o'>
+						<ng-container *ngIf='timestampWatcher | async as now'>
+							<mat-expansion-panel
+								*ngIf='o.appointment.calendarInvite.startTime <= now &&
+								!o.appointment.occured'
+							>
+								<mat-expansion-panel-header>
+									<mat-panel-title>
+										<div fxLayoutAlign='left center'>
+											<div>
+												<span>{{record.name}}</span>
+												&ngsp;
+												<ng-container *ngIf='!record.wasAnonymousShare'>
+													<span cyphTranslate>with</span>
+													&ngsp;
+													<a [routerLink]='
+														accountService.routeRoot + "profile/" + o.friend
+													'>{{
+														o.friend
+													}}</a>
+													&ngsp;
+												</ng-container>
+												<span>
+													&mdash; {{getDateTimeString(
+														o.appointment.calendarInvite.startTime
+													)}}
+												</span>
+											</div>
+										</div>
+									</mat-panel-title>
+									<mat-panel-description>
+										<div
+											fxFlex
+											fxLayoutGap='2px'
+											fxLayoutAlign='end center'
+											
+										>
+											<button
+												mat-icon-button
+												cyphTranslate
+												[disabled]='
+													o.appointment.occurred ||
+													now < (
+														o.appointment.calendarInvite.startTime -
+														appointmentGracePeriod
+													) ||
+													now > (
+														o.appointment.calendarInvite.endTime -
+														appointmentGracePeriod
+													)
+												'
+												matTooltip='Start Call'
+												[routerLink]='
+													accountService.routeRoot +
+													"appointments/" +
+													record.id +
+													"/call"
+												'
+											>
+												<mat-icon>play_arrow</mat-icon>
+											</button>
+											<button
+												mat-icon-button
+												cyphTranslate
+												[disabled]='o.appointment.occured || now > (
+													o.appointment.calendarInvite.endTime -
+													appointmentGracePeriod
+												)'
+												matTooltip='Delete'
+												(click)='
+													accountFilesService.remove(record);
+													$event.stopPropagation();
+												'
+											>
+												<mat-icon>delete</mat-icon>
+											</button>
+										</div>
+									</mat-panel-description>
+								</mat-expansion-panel-header>
+								<div fxLayout='column'>
+									<div
+										*ngFor='
+											let form of o.appointment.forms;
+											trackBy: trackByID;
+											let i = index;
+										'
+										fxLayoutGap='5px'
+										fxLayoutAlign='center'
+										fxLayout='row'
+									>
+										<button
+											mat-raised-button
+											cyphTranslate
+											[routerLink]='
+												accountService.routeRoot +
+												"appointments/" +
+												this.record.id +
+												"/forms/" +
+												i
+											'
+										>
+											{{stringsService.patientForm}} #{{i+1}}
+										</button>
+									</div>
+									<div
+										*ngIf='o.appointment.forms.length < 1'
+										fxFlex='50'
+										fxLayoutGap='5px'
+										fxLayoutAlign='center center'
+										fxLayout='column'
+									>
+										<span>{{stringsService.patientFormsMissing}}</span>
+										<button
+											*ngIf='
+												(currentUser.user.userType | async) ===
+												accountUserTypes.Standard
+											'
+											mat-raised-button
+											cyphTranslate
+											[routerLink]='
+												accountService.routeRoot +
+												"new-patient/" +
+												this.record.id
+											'
+										>
+											{{stringsService.submitPatientForms}}
+										</button>
+										<br />
+									</div>
+									<cyph-calendar-invite
+										[isDisabled]='true'
+										[ngModel]='o.appointment.calendarInvite'
+									></cyph-calendar-invite>
+								</div>
+							</mat-expansion-panel>
+						</ng-container>
+					</ng-container>
+				</ng-container>
+			</mat-accordion>
+		</div>
 	</div>
 
 	<mat-progress-spinner

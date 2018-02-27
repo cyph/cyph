@@ -58,7 +58,7 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 			left: 'prev,next today',
 			right: 'month,agendaWeek,agendaDay,listMonth'
 		},
-		height: 'auto',
+		aspectRatio: 1.5,
 		timezone: 'local'
 	};
 

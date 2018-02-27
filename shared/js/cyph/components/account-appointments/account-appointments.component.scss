@@ -1,9 +1,10 @@
 @import '../../../../css/mixins';
 
-mat-card.calendar {
-	position: relative;
-	width: auto;
-	height: auto;
+.calendar {
+	.mat-expansion-panel-content .mat-expansion-panel-body {
+		min-height: 25vh;
+		height: 500px !important;
+	}
 }
 
 mat-expansion-panel.mat-expansion-panel {
@@ -11,6 +12,8 @@ mat-expansion-panel.mat-expansion-panel {
 	margin-bottom: 2%;
 }
 
-h3 {
+mat-expansion-panel-header h2, h3 {
 	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
 }
