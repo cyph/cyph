@@ -20,24 +20,26 @@
 					<mat-expansion-panel *ngIf='getAppointment(record) | async as o'>
 						<mat-expansion-panel-header>
 							<mat-panel-title>
-								<div>
-									<span>{{record.name}}</span>
-									&ngsp;
-									<ng-container *ngIf='!record.wasAnonymousShare'>
-										<span cyphTranslate>with</span>
+								<div fxLayoutAlign='left center'>
+									<div>
+										<span>{{record.name}}</span>
 										&ngsp;
-										<a [routerLink]='
-											accountService.routeRoot + "profile/" + o.friend
-										'>{{
-											o.friend
-										}}</a>
-										&ngsp;
-									</ng-container>
-									<span>
-										&mdash; {{getDateTimeString(
-											o.appointment.calendarInvite.startTime
-										)}}
-									</span>
+										<ng-container *ngIf='!record.wasAnonymousShare'>
+											<span cyphTranslate>with</span>
+											&ngsp;
+											<a [routerLink]='
+												accountService.routeRoot + "profile/" + o.friend
+											'>{{
+												o.friend
+											}}</a>
+											&ngsp;
+										</ng-container>
+										<span>
+											&mdash; {{getDateTimeString(
+												o.appointment.calendarInvite.startTime
+											)}}
+										</span>
+									</div>
 								</div>
 							</mat-panel-title>
 							<mat-panel-description>
@@ -169,27 +171,31 @@
 					<mat-expansion-panel *ngIf='getAppointment(record) | async as o'>
 						<mat-expansion-panel-header>
 							<mat-panel-title>
-								<div>
-									<span>{{record.name}}</span>
-									&ngsp;
-									<ng-container *ngIf='!record.wasAnonymousShare'>
-										<span cyphTranslate>with</span>
+								<div fxLayoutAlign='left center'>
+									<div>
+										<span>{{record.name}}</span>
 										&ngsp;
-										<a [routerLink]='
-											accountService.routeRoot + "profile/" + record.owner
-										'>{{
-											record.owner
-										}}</a>
-									</ng-container>
-									<ng-container *ngIf='record.wasAnonymousShare'>
-										<span cyphTranslate>(invited anonymously)</span>
-									</ng-container>
-									&ngsp;
-									<span>
-										&mdash; {{getDateTimeString(
-											o.appointment.calendarInvite.startTime
-										)}}
-									</span>
+										<ng-container *ngIf='!record.wasAnonymousShare'>
+											<span cyphTranslate>with</span>
+											&ngsp;
+											<a [routerLink]='
+												accountService.routeRoot +
+												"profile/" +
+												record.owner
+											'>{{
+												record.owner
+											}}</a>
+										</ng-container>
+										<ng-container *ngIf='record.wasAnonymousShare'>
+											<span cyphTranslate>(invited anonymously)</span>
+										</ng-container>
+										&ngsp;
+										<span>
+											&mdash; {{getDateTimeString(
+												o.appointment.calendarInvite.startTime
+											)}}
+										</span>
+									</div>
 								</div>
 							</mat-panel-title>
 							<mat-panel-description>
