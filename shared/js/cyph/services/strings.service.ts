@@ -55,6 +55,9 @@ export class StringsService {
 	public readonly accept: string						= `accept`;
 
 	/** @see StringsService */
+	public readonly appointmentCalendar: string			= `Appointment Calendar`;
+
+	/** @see StringsService */
 	public readonly appointmentDuration: string			= `Appointment Duration`;
 
 	/** @see StringsService */
@@ -190,7 +193,13 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
+	public readonly futureAppointments: string			= `Future Appointments`;
+
+	/** @see StringsService */
 	public readonly help: string						= `Help`;
+
+	/** @see StringsService */
+	public readonly incomingAppointments: string		= `Incoming Appointment Requests`;
 
 	/** @see StringsService */
 	public readonly incomingFile: string				= `Incoming File:`;
@@ -318,7 +327,14 @@ export class StringsService {
 	public readonly no: string							= `no`;
 
 	/** @see StringsService */
+	public readonly noAppointments: string				=  `You have no appointments`;
+
+	/** @see StringsService */
 	public readonly noCall: string						= `No Call`;
+
+	/** @see StringsService */
+	public readonly noIncomingAppointments: string		= 
+		`You have no incoming appointment requests`;
 
 	/** @see StringsService */
 	public readonly notes: string						= `Notes`;
@@ -420,6 +436,9 @@ export class StringsService {
 	/** @see StringsService */
 	public readonly p2pWarningVideoPassive: string		= `Starting video call (P2P).`;
 
+	/** @see StringsService */
+	public readonly pastAppointments: string			= `Past Appointments`;
+	
 	/** @see StringsService */
 	public readonly patents: string						=
 		`(US Patents   9,794,070  9,906,369)`

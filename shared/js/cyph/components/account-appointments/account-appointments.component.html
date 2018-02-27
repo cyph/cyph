@@ -12,7 +12,7 @@
 				<mat-accordion class='calendar'>
 					<mat-expansion-panel>
 						<mat-expansion-panel-header>
-							<h2 cyphTranslate>Appointment Calendar</h2>
+							<h2 cyphTranslate>{{stringsService.appointmentCalendar}}</h2>
 						</mat-expansion-panel-header>
 							<ng-fullcalendar
 								#calendar
@@ -34,14 +34,15 @@
 				<h2
 					cyphTranslate
 				>
-					Incoming Appointment Requests
+					{{stringsService.incomingAppointments}}
 				</h2>
 
 				<h3
 					cyphTranslate
 					*ngIf='(accountFilesService.incomingFilesFiltered.appointments | async)?.length
-					<= 0'>
-					You have no incoming appointment requests
+					<= 0'
+				>
+					{{stringsService.noIncomingAppointments}}
 				</h3>
 			
 				<div class='cyph-inverted-theme'>
@@ -172,12 +173,12 @@
 		</ng-container>
 
 		<mat-card>
-			<h2>Future Appointments</h2>
+			<h2>{{stringsService.futureAppointments}}</h2>
 			<h3
 				cyphTranslate
-				*ngIf='(accountFilesService.filesFiltered.appointments | async)?.length
+				*ngIf='(accountFilesService.filesListFiltered.appointments | async)?.length
 				<= 0'>
-				You have no appointments
+				{{stringsService.noAppointments}}
 			</h3>
 			<div class='cyph-inverted-theme'>
 				<mat-accordion
@@ -329,12 +330,12 @@
 		</mat-card>
 
 		<mat-card>
-		<h2>Past Appointments</h2>
+		<h2>{{stringsService.pastAppointments}}</h2>
 		<h3
 			cyphTranslate
-			*ngIf='(accountFilesService.filesFiltered.appointments | async)?.length
+			*ngIf='(accountFilesService.filesListFiltered.appointments | async)?.length
 			<= 0'>
-			You have no appointments
+			{{stringsService.noAppointments}}
 		</h3>
 		<div class='cyph-inverted-theme'>		
 			<mat-accordion
