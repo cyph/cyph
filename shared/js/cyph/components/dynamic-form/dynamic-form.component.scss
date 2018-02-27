@@ -7,3 +7,16 @@ h3.label {
 .mat-form-field {
 	width: auto;
 }
+
+mat-radio-group {
+	margin-left: auto;
+	margin-right: auto;
+
+	mat-radio-button {
+		padding: 10px;
+	}
+}
+
+#mat-checkbox-1 {
+	margin-left: auto;
+}
