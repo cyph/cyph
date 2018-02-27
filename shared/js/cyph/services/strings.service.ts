@@ -327,13 +327,13 @@ export class StringsService {
 	public readonly no: string							= `no`;
 
 	/** @see StringsService */
-	public readonly noAppointments: string				=  `You have no appointments`;
+	public readonly noAppointments: string				= `You have no appointments`;
 
 	/** @see StringsService */
 	public readonly noCall: string						= `No Call`;
 
 	/** @see StringsService */
-	public readonly noIncomingAppointments: string		= 
+	public readonly noIncomingAppointments: string		=
 		`You have no incoming appointment requests`;
 
 	/** @see StringsService */
@@ -438,7 +438,7 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly pastAppointments: string			= `Past Appointments`;
-	
+
 	/** @see StringsService */
 	public readonly patents: string						=
 		`(US Patents   9,794,070  9,906,369)`

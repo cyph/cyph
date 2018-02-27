@@ -43,6 +43,7 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 
 	/** Calendar configuration. */
 	public readonly calendarOptions: Options	= {
+		aspectRatio: 1.5,
 		defaultView: 'agendaDay',
 		editable: false,
 		eventLimit: false,
@@ -58,7 +59,6 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 			left: 'prev,next today',
 			right: 'month,agendaWeek,agendaDay,listMonth'
 		},
-		aspectRatio: 1.5,
 		timezone: 'local'
 	};
 
