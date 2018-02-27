@@ -54,6 +54,7 @@
 										cyphTranslate
 										[disabled]='
 											o.appointment.occurred ||
+											o.appointment.calendarInvite.callType === callTypes.None ||
 											now < (
 												o.appointment.calendarInvite.startTime -
 												appointmentGracePeriod
