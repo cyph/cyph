@@ -128,7 +128,7 @@ export class AccountSessionService extends SessionService {
 				undefined,
 				true
 			).getValue();
-			
+
 			symmetricKeyPromise.then(symmetricKey => {
 				this.resolveAccountsSymmetricKey(symmetricKey);
 			});
