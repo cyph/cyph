@@ -187,6 +187,10 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 				chat.messages.watch(),
 				chat.pendingMessages.watch()
 			).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
+				if (onlineMessages.length < 1) {
+					this.initialScrollDown.next(false);
+				}
+
 				for (let i = pendingMessages.length - 1 ; i >= 0 ; --i) {
 					const pendingMessage	= pendingMessages[i];
 					if (onlineMessages.find(o => o.id === pendingMessage.id)) {
