@@ -138,7 +138,7 @@ export class DynamicFormComponent implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		const dataSource	= await this.getDataSource();
 
-		if (!dataSource || !this.form || !this.form.components) {
+		if (this.isDisabled || !dataSource || !this.form || !this.form.components) {
 			return;
 		}
 
