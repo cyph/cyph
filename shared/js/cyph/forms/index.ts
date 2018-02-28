@@ -228,7 +228,7 @@ export const title		= (titleText: string) : Form.IElementRow => {
 };
 
 /** Phone number element row. */
-export const phone		= (id: string = 'phoneNumbers[0].home') : Form.IElement => {
+export const phone		= (id: string = 'phoneNumbers.phoneNumbers[0].home') : Form.IElement => {
 	return input({
 		id,
 		label: 'Phone Number',
