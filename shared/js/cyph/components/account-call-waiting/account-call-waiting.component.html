@@ -1,4 +1,4 @@
-<mat-card fxFlexFill fxLayout='column' class='white-card animated fadeIn'>
+<mat-card fxFlexFill fxLayout='column' class='white-card animated fadeIn' ngClass.lt-md='compact'>
 	<div
 		fxFlexFill
 		fxLayout='column'
@@ -93,7 +93,8 @@
 								[clickable]='false'
 								[contact]='doctor'
 								class='cyph-inverted-theme animated fadeIn'
-								fxFlex='60'
+								fxFlex
+								fxFlex.gt-sm='60'
 							></cyph-account-contact>
 						</div>
 						<div class='loading'>
