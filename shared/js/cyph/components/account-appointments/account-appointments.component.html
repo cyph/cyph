@@ -27,9 +27,9 @@
 			</div>
 		</ng-container>
 
-		<ng-container
-			*ngIf='(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor'
-		>
+		<ng-container *ngIf='
+			(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor
+		'>
 			<mat-card>
 				<h2>{{stringsService.incomingAppointments}}</h2>
 
