@@ -1,7 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
 import {IAsyncValue} from '../../iasync-value';
-import {Form, IForm} from '../../proto';
+import {MaybePromise} from '../../maybe-promise-type';
+import {Form, IForm, PatientInfo} from '../../proto';
+import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByIndex} from '../../track-by/track-by-index';
@@ -32,11 +34,19 @@ export class DynamicFormComponent implements OnInit {
 			undefined
 	;
 
+	/** Data source to pull data from on init and save data to on submit. */
+	@Input() public dataSource?: MaybePromise<IAsyncValue<any>|undefined>	=
+		(this.accountDatabaseService && this.envService.isTelehealth) ?
+			this.accountDatabaseService.getCurrentUser().then(() =>
+				this.accountDatabaseService ?
+					this.accountDatabaseService.getAsyncValue('patientInfo', PatientInfo) :
+					undefined
+			) :
+			undefined
+	;
+
 	/** @see Form */
 	@Input() public form?: IForm;
-
-	/** Data source to pull data from on init and save data to on submit. */
-	@Input() public dataSource?: IAsyncValue<any>;
 
 	/** Indicates whether input is disabled. */
 	@Input() public isDisabled: boolean						= false;
@@ -58,6 +68,13 @@ export class DynamicFormComponent implements OnInit {
 
 	/** @see Form.FormElement.Types */
 	public readonly types: typeof Form.Element.Types		= Form.Element.Types;
+
+	private async getDataSource () : Promise<IAsyncValue<any>|undefined> {
+		return this.dataSource instanceof Promise ?
+			this.dataSource.catch(() => undefined) :
+			this.dataSource
+		;
+	}
 
 	/** @ignore */
 	private iterateFormValues (
@@ -122,11 +139,13 @@ export class DynamicFormComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		if (!this.dataSource || !this.form || !this.form.components) {
+		const dataSource	= await this.getDataSource();
+
+		if (!dataSource || !this.form || !this.form.components) {
 			return;
 		}
 
-		const value	= await this.dataSource.getValue();
+		const value	= await dataSource.getValue();
 
 		this.iterateFormValues((id, segments, element) => {
 			const elementValue	= segments.reduce(this.segmentReducer, value);
@@ -156,8 +175,10 @@ export class DynamicFormComponent implements OnInit {
 
 	/** Submit handler. */
 	public async onSubmit () : Promise<void> {
-		if (this.dataSource) {
-			await this.dataSource.updateValue(value => {
+		const dataSource	= await this.getDataSource();
+
+		if (dataSource) {
+			await dataSource.updateValue(value => {
 				this.iterateFormValues((id, segments, element) => {
 					const elementValue	=
 						element.valueBoolean === undefined ?
@@ -190,6 +211,10 @@ export class DynamicFormComponent implements OnInit {
 	}
 
 	constructor (
+		/** @ignore */
+		@Inject(AccountDatabaseService) @Optional()
+		private readonly accountDatabaseService: AccountDatabaseService|undefined,
+
 		/** @ignore */
 		private readonly envService: EnvService,
 
