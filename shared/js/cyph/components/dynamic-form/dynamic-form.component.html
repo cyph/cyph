@@ -13,14 +13,14 @@
 		<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 			<div
 				fxLayout='row'
-				fxLayout.sm='column'
-				fxLayout.xs='column'
+				fxLayout.lt-md='column'
+				fxLayoutAlign.gt-sm='center center'
 				fxLayoutGap='16px'
 				class='row'
 				*ngFor='let row of component.rows; trackBy: trackByIndex'
 			>
 				<div
-					[fxFlex]='o.width || 100'
+					[fxFlex]='o.noGrow ? "nogrow" : (o.width || 100)'
 					fxLayout='column'
 					*ngFor='let o of row.elements; trackBy: trackByIndex'
 				>
@@ -46,10 +46,14 @@
 								[ngModel]='timestampToDate(o.valueNumber)'
 								(ngModelChange)='o.valueNumber = $event ? $event.getTime() : 0'
 								[disabled]='isDisabled'
+								[name]='getName(o)'
 								[placeholder]='o.label'
 								[required]='o.required'
 							/>
-							<mat-datepicker-toggle [for]='datepicker'></mat-datepicker-toggle>
+							<mat-datepicker-toggle
+								matSuffix
+								[for]='datepicker'
+							></mat-datepicker-toggle>
 						</mat-form-field>
 						<mat-datepicker [touchUi]='mobile' #datepicker></mat-datepicker>
 					</ng-container>

@@ -37,6 +37,7 @@ const newFormElement	= <T extends {
 	mask?: any;
 	max?: number;
 	min?: number;
+	noGrow?: boolean;
 	options?: string[];
 	required?: boolean;
 	value?: boolean|number|string;
@@ -48,6 +49,7 @@ const newFormElement	= <T extends {
 		mask: o && o.mask && msgpack.encode(o.mask),
 		max: o && o.max,
 		min: o && o.min,
+		noGrow: o && o.noGrow === true,
 		options: o && o.options,
 		required: o && o.required,
 		type: elementType,
@@ -71,6 +73,7 @@ const newFormElement	= <T extends {
 export const checkbox		= newFormElement<{
 	id?: string;
 	label?: string;
+	noGrow?: boolean;
 	required?: boolean;
 	value?: boolean;
 	width?: number;
@@ -80,6 +83,7 @@ export const checkbox		= newFormElement<{
 export const datepicker		= newFormElement<{
 	id?: string;
 	label?: string;
+	noGrow?: boolean;
 	required?: boolean;
 	value?: number;
 	width?: number;
@@ -90,6 +94,7 @@ export const emailInput		= newFormElement<{
 	id?: string;
 	label?: string;
 	mask?: any;
+	noGrow?: boolean;
 	required?: boolean;
 	value?: string;
 	width?: number;
@@ -100,6 +105,7 @@ export const input			= newFormElement<{
 	id?: string;
 	label?: string;
 	mask?: any;
+	noGrow?: boolean;
 	required?: boolean;
 	value?: string;
 	width?: number;
@@ -112,6 +118,7 @@ export const numberInput	= newFormElement<{
 	mask?: any;
 	max?: number;
 	min?: number;
+	noGrow?: boolean;
 	required?: boolean;
 	value?: number;
 	width?: number;
@@ -122,6 +129,7 @@ export const passwordInput	= newFormElement<{
 	id?: string;
 	label?: string;
 	mask?: any;
+	noGrow?: boolean;
 	required?: boolean;
 	value?: string;
 	width?: number;
@@ -131,6 +139,7 @@ export const passwordInput	= newFormElement<{
 export const radio			= newFormElement<{
 	id?: string;
 	label?: string;
+	noGrow?: boolean;
 	options?: string[];
 	required?: boolean;
 	value?: string;
@@ -141,6 +150,7 @@ export const radio			= newFormElement<{
 export const select			= newFormElement<{
 	id?: string;
 	label?: string;
+	noGrow?: boolean;
 	options?: string[];
 	required?: boolean;
 	value?: string;
@@ -153,6 +163,7 @@ export const slider			= newFormElement<{
 	label?: string;
 	max?: number;
 	min?: number;
+	noGrow?: boolean;
 	value?: number;
 	width?: number;
 }>(Form.Element.Types.Slider);
@@ -161,6 +172,7 @@ export const slider			= newFormElement<{
 export const slideToggle	= newFormElement<{
 	id?: string;
 	label?: string;
+	noGrow?: boolean;
 	required?: boolean;
 	value?: boolean;
 	width?: number;
@@ -170,6 +182,7 @@ export const slideToggle	= newFormElement<{
 export const text			= newFormElement<{
 	id?: string;
 	label?: string;
+	noGrow?: boolean;
 	value?: string;
 	width?: number;
 }>(Form.Element.Types.Text);
@@ -179,6 +192,7 @@ export const textarea		= newFormElement<{
 	id?: string;
 	label?: string;
 	mask?: any;
+	noGrow?: boolean;
 	required?: boolean;
 	value?: string;
 	width?: number;
@@ -191,6 +205,7 @@ export const timeInput		= newFormElement<{
 	mask?: any;
 	max?: number;
 	min?: number;
+	noGrow?: boolean;
 	required?: boolean;
 	value?: string;
 	width?: number;
@@ -201,6 +216,7 @@ export const urlInput		= newFormElement<{
 	id?: string;
 	label?: string;
 	mask?: any;
+	noGrow?: boolean;
 	required?: boolean;
 	value?: string;
 	width?: number;
@@ -223,7 +239,8 @@ export const phone		= (id: string = 'phoneNumbers[0].home') : Form.IElement => {
 				/\d/, /\d/, /\d/, /\d/
 			],
 			showMask: true
-		}
+		},
+		width: 20
 	});
 };
 
@@ -299,7 +316,7 @@ export const basicInfo			= (id?: string) : Form.IComponent => {
 				datepicker({label: 'Date of Birth', width: 20, required: true}),
 				radio({label: 'Sex', options: ['Male', 'Female'], required: true}),
 				radio({label: 'Marital Status', options: ['Single', 'Married']}),
-				numberInput({label: 'Height (in)', min: 20, max: 108, width: 15, required: true }),
+				numberInput({label: 'Height (in)', min: 20, max: 108, width: 15, required: true}),
 				numberInput({label: 'Weight (lbs)', max: 999, width: 15, required: true})
 			])
 		],
@@ -340,8 +357,8 @@ export const insuranceComponent	= (id?: string) : Form.IComponent => {
 /** Opt in or out of Cyph as preferred contact method & contact list */
 export const optInOut			= () : Form.IComponent => newFormComponent([
 	newFormRow([
-		checkbox({label: 'Use Cyph as preferred contact method', value: true}),
-		checkbox({label: 'Opt-In to receive updates & tips from Cyph'})
+		checkbox({label: 'Use Cyph as preferred contact method', noGrow: true, value: true}),
+		checkbox({label: 'Opt-In to receive updates & tips from Cyph', noGrow: true})
 	])
 ]);
 

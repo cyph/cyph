@@ -628,6 +628,9 @@ message Form {
 		/** Minimum numerical value. */
 		double min = 5;
 
+		/** Flex nogrow. */
+		bool noGrow = 13;
+
 		/** Options to use if type Radio or Select. */
 		repeated string options = 6;
 
