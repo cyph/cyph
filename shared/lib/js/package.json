@@ -416,7 +416,7 @@
     "angular-ssr": "^0.10.40",
     "angular2-cool-infinite-grid": "^1.4.1",
     "angular2-template-loader": "^0.6.2",
-    "angular2-text-mask": "https://github.com/buu700/angular2-text-mask-tmp",
+    "angular2-text-mask": "^8.0.4",
     "angular2-virtual-scroll": "^0.3.2",
     "animate.css": "https://github.com/daneden/animate.css",
     "animated-scroll-to": "^1.1.8",
