@@ -31,7 +31,7 @@
 					<mat-checkbox
 						[(ngModel)]='o.valueBoolean'
 						[disabled]='isDisabled'
-						[name]='o.label'
+						[name]='getName(o)'
 						[required]='o.required'
 						*ngIf='o.type === types.Checkbox'
 					>
@@ -59,7 +59,7 @@
 							matInput
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
-							[name]='o.label'
+							[name]='getName(o)'
 							type='email'
 							[disabled]='isDisabled'
 							[placeholder]='o.label'
@@ -72,7 +72,7 @@
 							matInput
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
-							[name]='o.label'
+							[name]='getName(o)'
 							type='text'
 							[disabled]='isDisabled'
 							[placeholder]='o.label'
@@ -87,7 +87,7 @@
 							[(ngModel)]='o.valueNumber'
 							[max]='o.max'
 							[min]='o.min'
-							[name]='o.label'
+							[name]='getName(o)'
 							type='number'
 							[disabled]='isDisabled'
 							[placeholder]='o.label'
@@ -100,7 +100,7 @@
 							matInput
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
-							[name]='o.label'
+							[name]='getName(o)'
 							[type]='isDisabled ? "text" : "password"'
 							[disabled]='isDisabled'
 							[placeholder]='o.label'
@@ -112,7 +112,7 @@
 					<mat-radio-group
 						fxFlex
 						[(ngModel)]='o.valueString'
-						[name]='o.label'
+						[name]='getName(o)'
 						[disabled]='isDisabled'
 						[required]='o.required'
 						*ngIf='o.type === types.Radio'
@@ -129,7 +129,7 @@
 						<mat-select
 							fxFlex
 							[(ngModel)]='o.valueString'
-							[name]='o.label'
+							[name]='getName(o)'
 							[disabled]='isDisabled'
 							[required]='o.required'
 						>
@@ -147,13 +147,13 @@
 						[(ngModel)]='o.valueNumber'
 						[max]='o.max'
 						[min]='o.min'
-						[name]='o.label'
+						[name]='getName(o)'
 						*ngIf='o.type === types.Slider'
 					></mat-slider>
 
 					<mat-slide-toggle
 						[(ngModel)]='o.valueBoolean'
-						[name]='o.label'
+						[name]='getName(o)'
 						[disabled]='isDisabled'
 						[required]='o.required'
 						*ngIf='o.type === types.SlideToggle'
@@ -168,7 +168,7 @@
 							matAutosizeMinRows='4'
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
-							[name]='o.label'
+							[name]='getName(o)'
 							[disabled]='isDisabled'
 							[placeholder]='o.label'
 							[required]='o.required'
@@ -180,7 +180,7 @@
 							matInput
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
-							[name]='o.label'
+							[name]='getName(o)'
 							type='time'
 							[disabled]='isDisabled'
 							[placeholder]='o.label'
@@ -193,7 +193,7 @@
 							matInput
 							[attr.textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
-							[name]='o.label'
+							[name]='getName(o)'
 							type='url'
 							[disabled]='isDisabled'
 							[placeholder]='o.label'

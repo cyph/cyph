@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '@angular/core';
+import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
 import {IAsyncValue} from '../../iasync-value';
 import {MaybePromise} from '../../maybe-promise-type';
@@ -10,6 +11,7 @@ import {trackByIndex} from '../../track-by/track-by-index';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {getOrSetDefault} from '../../util/get-or-set-default';
 import {timestampToDate} from '../../util/time';
+import {uuid} from '../../util/uuid';
 
 
 /**
@@ -37,6 +39,11 @@ export class DynamicFormComponent implements OnInit {
 
 	/** @see Form */
 	@Input() public form?: IForm;
+
+	/** Gets a random unique name for the specified Form item. */
+	public readonly getName	= memoize((_O: IForm|Form.IComponent|Form.IElement|Form.IElementRow) =>
+		uuid()
+	);
 
 	/** Indicates whether input is disabled. */
 	@Input() public isDisabled: boolean						= false;
