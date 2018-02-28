@@ -67,9 +67,10 @@ if [ ! "${htmlOnly}" ] ; then
 		'
 	)"
 
-	if [ "${componentConsistency}" != true ] ; then
-		fail 'Component template/stylesheet count mismatch'
-	fi
+	# Disable for now because there are legitimate uses for this
+	# if [ "${componentConsistency}" != true ] ; then
+	# 	fail 'Component template/stylesheet count mismatch'
+	# fi
 
 	# tslint
 
