@@ -214,8 +214,8 @@ export const title		= (titleText: string) : Form.IElementRow => {
 };
 
 /** Phone number element row. */
-export const phone		= (id: string = 'telecom') : Form.IElementRow => {
-	return newFormRow([input({
+export const phone		= (id: string = 'telecom') : Form.IElement => {
+	return input({
 		id,
 		label: 'Phone Number',
 		mask: {
@@ -226,12 +226,12 @@ export const phone		= (id: string = 'telecom') : Form.IElementRow => {
 			],
 			showMask: true
 		}
-	})]);
+	});
 };
 
 /** Email address element row. */
-export const email		= (id?: string) : Form.IElementRow => {
-	return newFormRow([emailInput({id, label: 'Email', required: true})]);
+export const email		= (id?: string) : Form.IElement => {
+	return emailInput({id, label: 'Email', required: true});
 };
 
 /** Name element row. */
@@ -262,8 +262,8 @@ export const address	= (id: string = 'address') : Form.IElementRow => {
 };
 
 /** SSN element row. */
-export const ssn		= (id?: string) : Form.IElementRow => {
-	return newFormRow([input({
+export const ssn		= (id?: string) : Form.IElement => {
+	return input({
 		id,
 		label: 'Social Security Number',
 		mask: {
@@ -276,17 +276,35 @@ export const ssn		= (id?: string) : Form.IElementRow => {
 			showMask: true
 		},
 		width: 20
-	})]);
+	});
 };
 
 /** Contact information component. */
 export const contact			= (id?: string) : Form.IComponent => {
 	return newFormComponent(
 		[
-			title('Contact Information'),
 			name(),
-			email(),
-			phone()
+			newFormRow([
+				email(),
+				phone(),
+				ssn()
+			])
+		],
+		id
+	);
+};
+
+/** Basic patient info for Telehealth Patients */
+export const basicInfo			= (id?: string) : Form.IComponent => {
+	return newFormComponent(
+		[
+			newFormRow([
+				datepicker({label: 'Date of Birth', width: 20, required: true}),
+				radio({label: 'Sex', options: ['Male', 'Female'], required: true}),
+				radio({label: 'Marital Status', options: ['Single', 'Married']}),
+				numberInput({label: 'Height (in)', min: 20, max: 108, width: 15, required: true }),
+				numberInput({label: 'Weight (lbs)', max: 999, width: 15, required: true})
+			])
 		],
 		id
 	);
@@ -322,12 +340,23 @@ export const insuranceComponent	= (id?: string) : Form.IComponent => {
 	);
 };
 
+/** Opt in or out of Cyph as preferred contact method & contact list */
+export const optInOut			= () : Form.IComponent => newFormComponent([
+	newFormRow([
+		checkbox({label: 'Use Cyph as preferred contact method', value: true}),
+		checkbox({label: 'Opt-In to receive updates & tips from Cyph'})
+	])
+]);
+
 /** New patient form. */
 export const newPatient			= () : IForm => newForm(
 	[
-		newFormComponent([title('New Patient Form')]),
+		newFormComponent([title('Basic Information')]),
 		contact(),
-		insuranceComponent('')
+		basicInfo(),
+		insuranceComponent(),
+		optInOut()
 	],
 	'patient'
 );
+
