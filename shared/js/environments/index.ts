@@ -43,6 +43,11 @@ if (environment.customBuild && $ !== undefined && typeof window === 'object') {
 		).
 			attr('content', environment.customBuild.config.backgroundColor)
 		;
+
+		$('head link[rel="mask-icon"]').attr(
+			'color',
+			environment.customBuild.config.backgroundColor
+		);
 	}
 
 	if (environment.customBuild.config.telehealth) {
