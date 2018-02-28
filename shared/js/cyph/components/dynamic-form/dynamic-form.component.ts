@@ -104,7 +104,7 @@ export class DynamicFormComponent implements OnInit {
 
 					const segments	= id.split('.').
 						map(s => {
-							const arrayIndex = (s.match(/\[\d+\]$/) || [])[0];
+							const arrayIndex	= (s.match(/\[\d+\]$/) || [])[0];
 							return !arrayIndex ? s : [
 								s.slice(0, 0 - arrayIndex.length),
 								Number.parseInt(arrayIndex.slice(1, -1), 10)
@@ -195,7 +195,7 @@ export class DynamicFormComponent implements OnInit {
 								element.valueString
 					;
 
-					const lastSegment	= segments.slice(-1)[0];
+					const lastSegment	= segments.length > 0 ? segments.slice(-1)[0] : undefined;
 
 					if (elementValue === undefined || lastSegment === undefined) {
 						return;
