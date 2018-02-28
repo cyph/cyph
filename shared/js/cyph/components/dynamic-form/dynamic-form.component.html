@@ -57,7 +57,7 @@
 					<mat-form-field *ngIf='o.type === types.Email'>
 						<input
 							matInput
-							[attr.textMask]='getMask(o)'
+							[textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='getName(o)'
 							type='email'
@@ -70,7 +70,7 @@
 					<mat-form-field *ngIf='o.type === types.Input'>
 						<input
 							matInput
-							[attr.textMask]='getMask(o)'
+							[textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='getName(o)'
 							type='text'
@@ -83,7 +83,7 @@
 					<mat-form-field *ngIf='o.type === types.Number'>
 						<input
 							matInput
-							[attr.textMask]='getMask(o)'
+							[textMask]='getMask(o)'
 							[(ngModel)]='o.valueNumber'
 							[max]='o.max'
 							[min]='o.min'
@@ -98,7 +98,7 @@
 					<mat-form-field *ngIf='o.type === types.Password'>
 						<input
 							matInput
-							[attr.textMask]='getMask(o)'
+							[textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='getName(o)'
 							[type]='isDisabled ? "text" : "password"'
@@ -166,7 +166,7 @@
 							matInput
 							matTextareaAutosize
 							matAutosizeMinRows='4'
-							[attr.textMask]='getMask(o)'
+							[textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='getName(o)'
 							[disabled]='isDisabled'
@@ -178,7 +178,7 @@
 					<mat-form-field *ngIf='o.type === types.Time'>
 						<input
 							matInput
-							[attr.textMask]='getMask(o)'
+							[textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='getName(o)'
 							type='time'
@@ -191,7 +191,7 @@
 					<mat-form-field *ngIf='o.type === types.URL'>
 						<input
 							matInput
-							[attr.textMask]='getMask(o)'
+							[textMask]='getMask(o)'
 							[(ngModel)]='o.valueString'
 							[name]='getName(o)'
 							type='url'
