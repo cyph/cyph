@@ -980,7 +980,7 @@ message PatientInfo {
 	Demographics demographics = 3;
 
 	/** Patient identifiers. */
-	required Identifiers id = 4;
+	Identifiers id = 4;
 
 	/** List of insurance(s) for the patient. */
 	repeated Insurance insurances = 5;

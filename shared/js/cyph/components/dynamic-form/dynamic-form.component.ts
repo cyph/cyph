@@ -24,16 +24,6 @@ export class DynamicFormComponent implements OnInit {
 	/** @ignore */
 	private readonly maskCache: Map<Uint8Array, any>		= new Map<Uint8Array, any>();
 
-	/** @ignore */
-	private readonly segmentReducer							= (v: any, segment: number|string) =>
-		(
-			(typeof segment === 'number' && v instanceof Array) ||
-			(typeof segment === 'string' && typeof v === 'object')
-		) ?
-			v[segment] :
-			undefined
-	;
-
 	/** Data source to pull data from on init and save data to on submit. */
 	@Input() public dataSource?: MaybePromise<IAsyncValue<any>|undefined>	=
 		(this.accountDatabaseService && this.envService.isTelehealth) ?
@@ -148,7 +138,17 @@ export class DynamicFormComponent implements OnInit {
 		const value	= await dataSource.getValue();
 
 		this.iterateFormValues((id, segments, element) => {
-			const elementValue	= segments.reduce(this.segmentReducer, value);
+			const elementValue	= segments.reduce(
+				(v, segment) =>
+					(
+						(typeof segment === 'number' && v instanceof Array) ||
+						(typeof segment === 'string' && typeof v === 'object')
+					) ?
+						v[segment] :
+						undefined
+				,
+				value
+			);
 
 			if (elementValue === undefined) {
 				return;
@@ -181,9 +181,9 @@ export class DynamicFormComponent implements OnInit {
 			await dataSource.updateValue(value => {
 				this.iterateFormValues((id, segments, element) => {
 					const elementValue	=
-						element.valueBoolean === undefined ?
+						element.valueBoolean !== undefined ?
 							element.valueBoolean :
-							element.valueNumber === undefined ?
+							element.valueNumber !== undefined ?
 								element.valueNumber :
 								element.valueString
 					;
@@ -194,10 +194,24 @@ export class DynamicFormComponent implements OnInit {
 						return;
 					}
 
-					const parentValue	= segments.slice(0, -1).reduce(this.segmentReducer, value);
+					let parentValue	= value;
 
-					if (parentValue === undefined) {
-						return;
+					for (let i = 0 ; i < segments.length - 1 ; ++i) {
+						const segment		= segments[i];
+						const nextSegment	= segments[i + 1];
+						const nextValue		= parentValue[segment];
+
+						if (typeof nextSegment === 'number' && !(nextValue instanceof Array)) {
+							parentValue[segment]	= [];
+						}
+						else if (
+							typeof nextSegment === 'string' &&
+							typeof nextValue !== 'object'
+						) {
+							parentValue[segment]	= {};
+						}
+
+						parentValue	= parentValue[segment];
 					}
 
 					parentValue[lastSegment]	= elementValue;
