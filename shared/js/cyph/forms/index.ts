@@ -321,7 +321,7 @@ export const basicInfo			= (id?: string) : Form.IComponent => {
 					options: ['Single', 'Married']
 				}),
 				numberInput({label: 'Height (in)', min: 20, max: 108, width: 15, required: true}),
-				numberInput({label: 'Weight (lbs)', max: 999, width: 15, required: true})
+				numberInput({label: 'Weight (lbs)', max: 1500, width: 15, required: true})
 			])
 		],
 		id
