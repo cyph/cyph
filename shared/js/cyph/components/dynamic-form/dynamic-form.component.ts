@@ -234,6 +234,11 @@ export class DynamicFormComponent implements OnInit {
 		this.submitForm.emit(this.form);
 	}
 
+	/** @see Number.parseInt */
+	public parseInt (s: string) : number {
+		return Number.parseInt(s, 10);
+	}
+
 	constructor (
 		/** @ignore */
 		@Inject(AccountDatabaseService) @Optional()
