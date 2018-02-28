@@ -4,12 +4,10 @@ import {Form, IForm} from '../proto';
 
 const newForm			= (
 	components: Form.IComponent[],
-	id?: string,
-	idSeparator?: string
+	id?: string
 ) : IForm => ({
 	components,
-	id,
-	idSeparator
+	id
 });
 
 const newFormComponent	= (
@@ -214,7 +212,7 @@ export const title		= (titleText: string) : Form.IElementRow => {
 };
 
 /** Phone number element row. */
-export const phone		= (id: string = 'telecom') : Form.IElement => {
+export const phone		= (id: string = 'phoneNumbers[0].home') : Form.IElement => {
 	return input({
 		id,
 		label: 'Phone Number',
@@ -230,20 +228,19 @@ export const phone		= (id: string = 'telecom') : Form.IElement => {
 };
 
 /** Email address element row. */
-export const email		= (id?: string) : Form.IElement => {
+export const email		= (id: string = 'emails[0]') : Form.IElement => {
 	return emailInput({id, label: 'Email', required: true});
 };
 
 /** Name element row. */
-export const name		= (id: string = 'name') : Form.IElementRow => {
+export const name		= (id: string = 'fullName') : Form.IElementRow => {
 	return newFormRow(
 		[
-			input({label: 'First Name', required: true}),
-			input({label: 'Middle Name'}),
-			input({label: 'Last Name', required: true})
+			input({id: 'firstName', label: 'First Name', required: true}),
+			input({id: 'middleName', label: 'Middle Name'}),
+			input({id: 'lastName', label: 'Last Name', required: true})
 		],
-		id,
-		' '
+		id
 	);
 };
 
@@ -251,18 +248,17 @@ export const name		= (id: string = 'name') : Form.IElementRow => {
 export const address	= (id: string = 'address') : Form.IElementRow => {
 	return newFormRow(
 		[
-			input({label: 'Address'}),
-			input({label: 'City'}),
-			input({label: 'State', width: 10}),
-			input({label: 'Zip', width: 25})
+			input({id: 'streetAddress', label: 'Address'}),
+			input({id: 'city', label: 'City'}),
+			input({id: 'state', label: 'State', width: 10}),
+			input({id: 'zip', label: 'Zip', width: 25})
 		],
-		id,
-		', '
+		id
 	);
 };
 
 /** SSN element row. */
-export const ssn		= (id?: string) : Form.IElement => {
+export const ssn		= (id: string = 'ssn') : Form.IElement => {
 	return input({
 		id,
 		label: 'Social Security Number',
@@ -288,7 +284,8 @@ export const contact			= (id?: string) : Form.IComponent => {
 				email(),
 				phone(),
 				ssn()
-			])
+			]),
+			address()
 		],
 		id
 	);
@@ -352,7 +349,7 @@ export const optInOut			= () : Form.IComponent => newFormComponent([
 export const newPatient			= () : IForm => newForm(
 	[
 		newFormComponent([title('Basic Information')]),
-		contact(),
+		contact('demographics'),
 		basicInfo(),
 		insuranceComponent(),
 		optInOut()
