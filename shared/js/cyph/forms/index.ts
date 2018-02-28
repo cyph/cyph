@@ -300,7 +300,7 @@ export const basicInfo			= (id?: string) : Form.IComponent => {
 		[
 			newFormRow([
 				datepicker({label: 'Date of Birth', width: 20, required: true}),
-				radio({label: 'Sex', options: ['Male','Female'], required: true}),
+				radio({label: 'Sex', options: ['Male', 'Female'], required: true}),
 				radio({label: 'Marital Status', options: ['Single', 'Married']}),
 				numberInput({label: 'Height (in)', min: 20, max: 108, width: 15, required: true }),
 				numberInput({label: 'Weight (lbs)', max: 999, width: 15, required: true})
@@ -359,5 +359,4 @@ export const newPatient			= () : IForm => newForm(
 	],
 	'patient'
 );
-
 
