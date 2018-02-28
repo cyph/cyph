@@ -43,7 +43,7 @@
 							<input
 								matInput
 								[matDatepicker]='datepicker'
-								[ngModel]='timestampToDate(o.valueNumber)'
+								[ngModel]='timestampToDate(o.valueNumber, true)'
 								(ngModelChange)='o.valueNumber = $event ? $event.getTime() : 0'
 								[disabled]='isDisabled'
 								[name]='getName(o)'

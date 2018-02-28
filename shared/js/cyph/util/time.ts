@@ -127,10 +127,21 @@ const getTimeStringInternal	= (timestamp: number|Date, includeDate: boolean) : s
 	)
 ;
 
+/** @ignore */
+const timestampToDateInternal	=
+	memoize((noZero: boolean) =>
+		memoize((timestamp?: number) : Date =>
+			timestamp === undefined || isNaN(timestamp) || (noZero && timestamp === 0) ?
+				new Date() :
+				new Date(timestamp)
+		)
+	)
+;
+
 /** Converts a timestamp into a Date. */
-export const timestampToDate	= memoize((timestamp?: number) : Date =>
-	timestamp === undefined || isNaN(timestamp) ? new Date() : new Date(timestamp)
-);
+export const timestampToDate	= (timestamp?: number, noZero: boolean = false) : Date =>
+	timestampToDateInternal(noZero)(timestamp)
+;
 
 /** Returns a human-readable representation of the date and time (e.g. "Jan 1, 2018, 3:37pm"). */
 export const getDateTimeString	= memoize((timestamp: number) : string =>
