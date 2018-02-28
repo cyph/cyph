@@ -24,6 +24,9 @@ import {uuid} from '../../util/uuid';
 })
 export class DynamicFormComponent implements OnInit {
 	/** @ignore */
+	private readonly maskDefaultKey: Uint8Array				= new Uint8Array(0);
+
+	/** @ignore */
 	private readonly maskCache: Map<Uint8Array, any>		= new Map<Uint8Array, any>();
 
 	/** Data source to pull data from on init and save data to on submit. */
@@ -123,14 +126,14 @@ export class DynamicFormComponent implements OnInit {
 
 	/** Decode mask bytes. */
 	public getMask ({mask}: Form.IElement) : any {
-		if (!mask || mask.length < 1) {
-			return;
-		}
+		const maskBytes	= !mask || mask.length < 1 ? this.maskDefaultKey : mask;
 
 		return getOrSetDefault(
 			this.maskCache,
-			mask,
-			() => msgpack.decode(mask)
+			maskBytes,
+			() => maskBytes !== this.maskDefaultKey ?
+				msgpack.decode(maskBytes) :
+				{mask: false}
 		);
 	}
 
