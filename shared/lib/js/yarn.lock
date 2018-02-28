@@ -1026,7 +1026,7 @@ angular2-template-loader@^0.6.2:
 
 "angular2-text-mask@https://github.com/buu700/angular2-text-mask-tmp":
   version "8.0.4"
-  resolved "https://github.com/buu700/angular2-text-mask-tmp#3758ba4c8adadcc1f22ed769cad83e9271ca6af0"
+  resolved "https://github.com/buu700/angular2-text-mask-tmp#a59c66225b1aaeae7cfddbcff97ee22f4da79c0c"
   dependencies:
     text-mask-core "^5.0.0"
 
