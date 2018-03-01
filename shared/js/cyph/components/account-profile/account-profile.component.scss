@@ -1,5 +1,6 @@
 @import '../../../../css/mixins';
 
+
 $header-size: 135px;
 
 .profile {
@@ -83,17 +84,50 @@ mat-card {
 :host > .telehealth {
 	.profile.telehealth {
 		text-align: left;
-
+		
 		&.mobile {
 			.header {
-				height: 30% !important;
 				position: relative;
+				$header-size: 75px;
+				height: $header-size;
+				min-height: $header-size;
+				
+				.name {
+					margin-top: 24px;
+				}
+
+				.user-info {
+					top: 0;
+				}
+
+				&.xs {
+					height: 60px !important;
+					min-height: 60px !important;
+					max-height: 60px !important;
+
+					.name {
+						margin-top: 7px;
+					}
+
+					&.avatar {
+						width: 3.5em;
+						height: 3.5em;
+					}
+				}
+
+				&:after{
+					height: 20px;
+					width: 100%;
+					content: no-close-quote;
+				}
 
 				.avatar {
 					width: 4.2em;
 					height: 4.2em;
 					margin: 0;
-					top: -3px;
+					top: 11px;
+					right: 11px;
+					border-width: 5px !important;
 				}
 
 				.name {
@@ -123,11 +157,6 @@ mat-card {
 				top: 0px !important;
 				max-width: 100% !important;
 				overflow: auto;
-
-				button.mat-raised-button {
-					margin-top: 0px !important;
-					margin-bottom: 20px;
-				}
 			}
 		}
 
@@ -140,7 +169,7 @@ mat-card {
 			border-width: 0.42vw !important;
 		}
 
-		.header {
+		 .header {
 			height: $header-size;
 			min-height: $header-size;
 			z-index: 42;
@@ -174,18 +203,32 @@ mat-card {
 				margin: 3px;
 			}
 		}
+		
+		&:not(.mobile) {
+			.mat-card {
+				top: 135px;
+				width: 50vw;
+				overflow: auto;
 
-		.mat-card {
-			top: 135px;
-			max-width: 66%;
-			overflow: auto;
-		}
+				&.lt-md {
+					min-width: 90%;
+				}
 
-		.mat-card.doctor-list-only {
-			@include calc('max-height', '95vh - #{$header-size}');
+				&.md {
+					min-width: 75%;
+				}
+			
+				&.doctor-list-only {
+					@include calc('max-height', '95vh - #{$header-size}');
 
-			.member-list {
-				@include calc('max-height', '75vh - #{$header-size}');
+					.member-list {
+						@include calc('max-height', '75vh - #{$header-size}');
+					}
+					
+					&.lt-md {
+						@include calc('height', '100vh - #{$header-size}');
+					}
+				}
 			}
 		}
 

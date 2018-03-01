@@ -123,13 +123,27 @@
 	}
 }
 
-.header {
+:not(.mobile) .header {
 	height: 100px;
 	min-height: 100px;
 	z-index: 42;
 
 	&:after {
 		height: 20px;
+		width: 100%;
+		position: absolute;
+		bottom: -2px;
+		content: no-close-quote;
+	}
+}
+
+.mobile .header {
+	height: 70px;
+	min-height: 50px;
+	z-index: 42;
+
+	&:after {
+		height: 5px;
 		width: 100%;
 		content: no-close-quote;
 	}

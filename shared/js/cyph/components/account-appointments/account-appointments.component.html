@@ -60,8 +60,7 @@
 												&ngsp;
 												<ng-container *ngIf='!record.wasAnonymousShare'>
 													<span 
-														fxHide.xs
-														fxHide.sm
+														fxHide.lt-md
 														cyphTranslate>with</span>
 													&ngsp;
 													<a [routerLink]='
@@ -69,8 +68,7 @@
 														"profile/" +
 														record.owner
 														'
-														fxHide.xs
-														fxHide.sm
+														fxHide.lt-md
 													>{{
 														record.owner
 													}}</a>
@@ -79,7 +77,7 @@
 													<span cyphTranslate>(invited anonymously)</span>
 												</ng-container>
 												&ngsp;
-												<span fxHide.xs fxHide.sm>
+												<span fxHide.lt-md>
 													&mdash; {{getDateTimeString(
 														o.appointment.calendarInvite.startTime
 													)}}
@@ -210,8 +208,7 @@
 													<ng-container *ngIf='!record.wasAnonymousShare'
 													>
 														<span 
-															fxHide.xs
-															fxHide.sm
+															fxHide.lt-md
 															cyphTranslate>with</span>
 														&ngsp;
 														<a [routerLink]='
@@ -219,14 +216,13 @@
 															"profile/" +
 															o.friend
 															'
-															fxHide.xs
-															fxHide.sm
+															fxHide.lt-md
 														>{{
 															o.friend
 														}}</a>
 														&ngsp;
 													</ng-container>
-													<span fxHide.xs fxHide.sm>
+													<span fxHide.lt-md>
 														&mdash; {{getDateTimeString(
 															o.appointment.calendarInvite.startTime
 														)}}
@@ -379,8 +375,7 @@
 													<ng-container *ngIf='!record.wasAnonymousShare'
 													>
 														<span 
-															fxHide.xs
-															fxHide.sm
+															fxHide.lt-md
 															cyphTranslate
 														>with</span>
 														&ngsp;
@@ -389,14 +384,13 @@
 															"profile/" +
 															o.friend
 															'
-															fxHide.xs
-															fxHide.sm
+															fxHide.lt-md
 														>{{
 															o.friend
 														}}</a>
 														&ngsp;
 													</ng-container>
-													<span fxHide.xs fxHide.sm>
+													<span fxHide.lt-md>
 														&mdash; {{getDateTimeString(
 															o.appointment.calendarInvite.startTime
 														)}}

@@ -216,6 +216,7 @@
 			<div
 				fxLayout='column'
 				class='header animated slideInDown'
+				ngClass.xs='xs'
 				[class.fadeOutUp]='accountService.transition | async'
 				fxLayoutAlign='center center'
 			>
@@ -230,9 +231,11 @@
 						cyphTranslate
 						class='avatar animated _1'
 						[ngClass]='userPresence[(user?.status | async) || 0]'
+						ngClass.xs='xs'
 						alt='Profile Picture'
 						[src]='user?.avatar | async'
 						*ngIf='(doctorListOnly | async) !== true'
+						fxHide.xs
 					/>
 
 					<div fxLayout='row' fxLayout.xs='column' >
@@ -284,16 +287,20 @@
 								*ngIf='
 									(user?.userType | async) === accountUserTypes.TelehealthDoctor
 								'
+								fxHide.xs
+								[fxHide]='envService.isMobile'
 							></cyph-account-user-rating>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div fxLayout='column' fxLayoutAlign='center center'>
+			<div fxLayout='column' [fxLayoutAlign]='envService.isMobile ? "center" : "center center"'>
 				<mat-card
 					class='animated slideInDown'
 					[class.doctor-list-only]='doctorListOnly | async'
+					ngClass.lt-md='lt-md'
+					ngClass.md='md'
 					fxLayout='column'
 					*ngIf='user?.extra() | async; let extra'
 					[class.fadeOutUp]='(accountService.transition | async) === true'
@@ -348,9 +355,10 @@
 					'>
 						<div
 							fxLayout='row'
+							fxLayout.lt-md='column'
 							fxLayoutAlign='center center'
-							fxLayoutGap='16px'
-							[style.margin-top]='"20px"'
+							fxLayoutGap='5px'
+							[style.margin]='"20px"'
 						>
 							<button
 								mat-raised-button
@@ -368,27 +376,29 @@
 
 							<div></div>
 
-							<button
-								mat-mini-fab
-								cyphTranslate
-								matTooltip='New Message'
-								[routerLink]='
-									accountService.routeRoot + "compose/" + user?.username
-								'
-							>
-								<mat-icon>email</mat-icon>
-							</button>
+							<div fxLayout='row' fxLayoutGap='16px'>
+								<button
+									mat-mini-fab
+									cyphTranslate
+									matTooltip='New Message'
+									[routerLink]='
+										accountService.routeRoot + "compose/" + user?.username
+									'
+								>
+									<mat-icon>email</mat-icon>
+								</button>
 
-							<button
-								mat-mini-fab
-								cyphTranslate
-								matTooltip='Open Messages'
-								[routerLink]='
-									accountService.routeRoot + "messages/" + user?.username
-								'
-							>
-								<mat-icon>message</mat-icon>
-							</button>
+								<button
+									mat-mini-fab
+									cyphTranslate
+									matTooltip='Open Messages'
+									[routerLink]='
+										accountService.routeRoot + "messages/" + user?.username
+									'
+								>
+									<mat-icon>message</mat-icon>
+								</button>
+							</div>
 						</div>
 						<mat-list>
 							<mat-list-item *ngIf='user?.description'>

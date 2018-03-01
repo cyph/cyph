@@ -37,7 +37,7 @@
 				}}
 				{{(user | async)?.name | async}}
 			</mat-card-title>
-			<mat-card-subtitle>
+			<mat-card-subtitle fxHide.lt-md>
 				<ng-container *ngIf='
 					((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor;
 					else standardView
@@ -57,6 +57,7 @@
 		<cyph-account-user-rating
 			[user]='user | async'
 			*ngIf='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor'
+			fxHide.lt-md
 		></cyph-account-user-rating>
 	</mat-card-header>
 
