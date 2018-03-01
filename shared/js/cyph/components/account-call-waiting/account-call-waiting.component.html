@@ -1,138 +1,136 @@
-<mat-card fxFlexFill fxLayout='column' class='white-card animated fadeIn' ngClass.lt-md='compact'>
+<ng-container *ngIf='accountDatabaseService.currentUser | async as currentUser'>
 	<div
 		fxFlexFill
-		fxLayout='column'
-		fxLayoutAlign='start center'
 		class='content'
-		*ngIf='accountDatabaseService.currentUser | async as currentUser'
+		[fxShow]='
+			(formCompose.sent | async) !== true &&
+			appointment?.forms?.length < 1 &&
+			envService.isTelehealth &&
+			(currentUser?.user.userType | async) === accountUserTypes.Standard
+		'
 	>
-		<ng-container *ngIf='participantsByType | async as participants'>
-			<cyph-logo fxFlex='5em'></cyph-logo>
+		<cyph-account-compose-no-providers #formCompose></cyph-account-compose-no-providers>
+	</div>
 
-			<h2 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h2>
+	<mat-card
+		fxFlexFill
+		fxLayout='column'
+		class='white-card animated fadeIn'
+		ngClass.lt-md='compact'
+		[fxHide]='
+			(formCompose.sent | async) !== true &&
+			appointment?.forms?.length < 1 &&
+			envService.isTelehealth &&
+			(currentUser?.user.userType | async) === accountUserTypes.Standard
+		'
+	>
+		<div fxFlexFill fxLayout='column' fxLayoutAlign='start center' class='content'>
+			<ng-container *ngIf='participantsByType | async as participants'>
+				<cyph-logo fxFlex='5em'></cyph-logo>
 
-			<div *ngIf='
-				envService.isTelehealth &&
-				appointment?.calendarInvite.title &&
-				appointment?.calendarInvite.callType
-			'>
-				<ng-container *ngIf='
-					(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor;
-					else standardView
+				<h2 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h2>
+
+				<div *ngIf='
+					envService.isTelehealth &&
+					appointment?.calendarInvite.title &&
+					appointment?.calendarInvite.callType
 				'>
-					<div
-						*ngIf='(participants.get(accountUserTypes.Standard) || [])[0] as patient'
-						fxLayout='column'
-						fxLayoutAlign='center'
-						fxLayoutGap='5px'
-					>
-						<h1>
-							{{stringsService.your}}
-							{{appointment?.calendarInvite.title}}
-							{{
-								(appointment?.calendarInvite.callType === callTypes.Video) ?
-									stringsService.video :
-									''
-							}}
-							{{
-								(appointment?.calendarInvite.callType === callTypes.Audio) ?
-									stringsService.voice :
-									''
-							}}
-							{{stringsService.telehealthSessionWith}}
-							{{(patient?.name | async)}}
-						</h1>
-						<img
-							cyphTranslate
-							class='avatar animated _1'
-							[alt]='(patient?.name | async)'
-							[src]='patient?.avatar | async'
-						/>
-						<div class='loading'>
-							<div class='logo-animation'>
-								<div></div>
-								<div></div>
-								<div></div>
-								<div></div>
-								<div></div>
+					<ng-container *ngIf='
+						(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor;
+						else standardView
+					'>
+						<div
+							*ngIf='
+								(participants.get(accountUserTypes.Standard) || [])[0] as patient
+							'
+							fxLayout='column'
+							fxLayoutAlign='center'
+							fxLayoutGap='5px'
+						>
+							<h1>
+								{{stringsService.your}}
+								{{appointment?.calendarInvite.title}}
+								{{
+									(appointment?.calendarInvite.callType === callTypes.Video) ?
+										stringsService.video :
+										''
+								}}
+								{{
+									(appointment?.calendarInvite.callType === callTypes.Audio) ?
+										stringsService.voice :
+										''
+								}}
+								{{stringsService.telehealthSessionWith}}
+								{{(patient?.name | async)}}
+							</h1>
+							<img
+								cyphTranslate
+								class='avatar animated _1'
+								[alt]='(patient?.name | async)'
+								[src]='patient?.avatar | async'
+							/>
+							<div class='loading'>
+								<div class='logo-animation'>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+								</div>
 							</div>
 						</div>
-					</div>
-				</ng-container>
-				<ng-template #standardView>
-					<div
-						*ngIf='
-							(participants.get(accountUserTypes.TelehealthDoctor) || [])[0] as
-							doctor
-						'
-						fxLayout='column'
-						fxLayoutAlign='center'
-						fxLayoutGap='5px'
-					>
-						<h1>
-							{{stringsService.your}}
-							{{appointment?.calendarInvite.title}}
-							{{
-								(appointment?.calendarInvite.callType === callTypes.Video) ?
-									stringsService.video :
-									''
-							}}
-							{{
-								(appointment?.calendarInvite.callType === callTypes.Audio) ?
-									stringsService.voice :
-									''
-							}}
-							{{stringsService.telehealthSessionWith}}
-							{{stringsService.dr}}
-							{{(doctor?.name | async)}}
-						</h1>
-						<br />
-						<br />
-						<div fxLayout='row' fxLayoutAlign='center'>
-							<cyph-account-contact
-								[clickable]='false'
-								[contact]='doctor'
-								class='cyph-inverted-theme animated fadeIn'
-								fxFlex
-								fxFlex.gt-sm='60'
-							></cyph-account-contact>
-						</div>
-						<div class='loading'>
-							<div class='logo-animation'>
-								<div></div>
-								<div></div>
-								<div></div>
-								<div></div>
-								<div></div>
+					</ng-container>
+					<ng-template #standardView>
+						<div
+							*ngIf='
+								(participants.get(accountUserTypes.TelehealthDoctor) || [])[0] as
+								doctor
+							'
+							fxLayout='column'
+							fxLayoutAlign='center'
+							fxLayoutGap='5px'
+						>
+							<h1>
+								{{stringsService.your}}
+								{{appointment?.calendarInvite.title}}
+								{{
+									(appointment?.calendarInvite.callType === callTypes.Video) ?
+										stringsService.video :
+										''
+								}}
+								{{
+									(appointment?.calendarInvite.callType === callTypes.Audio) ?
+										stringsService.voice :
+										''
+								}}
+								{{stringsService.telehealthSessionWith}}
+								{{stringsService.dr}}
+								{{(doctor?.name | async)}}
+							</h1>
+							<br />
+							<br />
+							<div fxLayout='row' fxLayoutAlign='center'>
+								<cyph-account-contact
+									[clickable]='false'
+									[contact]='doctor'
+									class='cyph-inverted-theme animated fadeIn'
+									fxFlex
+									fxFlex.gt-sm='60'
+								></cyph-account-contact>
+							</div>
+							<div class='loading'>
+								<div class='logo-animation'>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+								</div>
 							</div>
 						</div>
-					</div>
-				</ng-template>
-			</div>
-
-			<div *ngIf='appointment?.forms?.length < 1; else formsComplete'>
-				<div fxLayout='column' *ngIf='envService.isTelehealth && (
-					(currentUser?.user.userType | async) === accountUserTypes.Standard
-				)'>
-					<h2 >
-						{{stringsService.patientFormsMissing}}
-					</h2>
-					<button
-						*ngIf='(currentUser?.user.userType | async) === accountUserTypes.Standard'
-						color='primary'
-						mat-raised-button
-						[routerLink]='
-							accountService.routeRoot +
-							"new-patient/" +
-							(appointment?.id || "")
-						'
-					>
-						{{stringsService.submitPatientForms}}
-					</button>
+					</ng-template>
 				</div>
-			</div>
 
-			<ng-template #formsComplete>
 				<div>
 					<h2 *ngIf='
 						envService.isTelehealth && (
@@ -157,7 +155,7 @@
 						<h2>{{stringsService.waitingRoomCheckedInGeneric}}</h2>
 					</ng-template>
 				</div>
-			</ng-template>
-		</ng-container>
-	</div>
-</mat-card>
+			</ng-container>
+		</div>
+	</mat-card>
+</ng-container>

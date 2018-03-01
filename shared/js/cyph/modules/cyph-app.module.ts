@@ -5,6 +5,7 @@ import {AccountCallWaitingComponent} from '../components/account-call-waiting';
 import {AccountChatComponent} from '../components/account-chat';
 import {AccountChatMessageBoxComponent} from '../components/account-chat-message-box';
 import {AccountComposeComponent} from '../components/account-compose';
+import {AccountComposeNoProvidersComponent} from '../components/account-compose-no-providers';
 import {AccountContactComponent} from '../components/account-contact';
 import {AccountContactsComponent} from '../components/account-contacts';
 import {AccountContactsSearchComponent} from '../components/account-contacts-search';
@@ -58,6 +59,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountChatMessageBoxComponent,
 		AccountComponent,
 		AccountComposeComponent,
+		AccountComposeNoProvidersComponent,
 		AccountContactComponent,
 		AccountContactsComponent,
 		AccountContactsSearchComponent,
@@ -88,6 +90,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountChatMessageBoxComponent,
 		AccountComponent,
 		AccountComposeComponent,
+		AccountComposeNoProvidersComponent,
 		AccountContactComponent,
 		AccountContactsComponent,
 		AccountContactsSearchComponent,
@@ -118,6 +121,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountChatMessageBoxComponent,
 		AccountComponent,
 		AccountComposeComponent,
+		AccountComposeNoProvidersComponent,
 		AccountContactComponent,
 		AccountContactsComponent,
 		AccountContactsSearchComponent,

@@ -37,7 +37,14 @@ export const account: Route	= {
 		{path: '', component: AccountHomeComponent},
 		{path: '404', component: NotFoundComponent},
 		{path: 'appointments', component: AccountAppointmentsComponent},
-		{path: 'appointments/:appointmentID/call', component: AccountChatComponent},
+		{
+			path: 'appointments/:appointmentID/call',
+			component: AccountChatComponent,
+			data: {
+				messageType: ChatMessageValue.Types.Form,
+				value: newPatient
+			}
+		},
 		{
 			path: 'appointments/:appointmentID/end',
 			component: AccountChatComponent,
