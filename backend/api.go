@@ -83,7 +83,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return err.Error(), http.StatusTeapot
 		}
 
-		customer, err := bt.Customer().Create(h.Context, &braintree.Customer{
+		customer, err := bt.Customer().Create(h.Context, &braintree.CustomerRequest{
 			Company:   company,
 			Email:     email,
 			FirstName: firstName,
