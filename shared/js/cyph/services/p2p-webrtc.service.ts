@@ -410,33 +410,24 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		const ok	= await handlers.requestConfirm(callType, this.isAccepted);
 
-		if (!ok) {
+		if (!ok || this.p2pSessionData) {
 			return;
 		}
 
-		await this.sessionService.lock(
-			async reason => {
-				if (reason === P2PWebRTCService.constants.requestCall || this.p2pSessionData) {
-					return;
-				}
+		this.accept(callType);
 
-				this.accept(callType);
+		this.p2pSessionData	= {
+			iceServers: await request({retries: 5, url: env.baseUrl + 'iceservers'}),
+			id: uuid()
+		};
 
-				this.p2pSessionData	= {
-					iceServers: await request({retries: 5, url: env.baseUrl + 'iceservers'}),
-					id: uuid()
-				};
+		this.sessionService.send([rpcEvents.p2p, {command: {
+			additionalData: this.p2pSessionData.id + '\n' + this.p2pSessionData.iceServers,
+			method: callType
+		}}]);
 
-				this.sessionService.send([rpcEvents.p2p, {command: {
-					additionalData: this.p2pSessionData.id + '\n' + this.p2pSessionData.iceServers,
-					method: callType
-				}}]);
-
-				await sleep();
-				handlers.requestConfirmation();
-			},
-			P2PWebRTCService.constants.requestCall
-		);
+		await sleep();
+		handlers.requestConfirmation();
 
 		/* Time out if request hasn't been accepted within 10 minutes */
 
