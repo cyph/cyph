@@ -67,7 +67,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		decline: async () : Promise<void> => {
 			this.isAccepted		= false;
-			this.p2pSessionID	= undefined;
+			this.p2pSessionData	= undefined;
 
 			(await this.handlers).requestRejection();
 		},
@@ -78,7 +78,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			this.isAccepted				= false;
 			this.isActive				= false;
 			this.initialCallPending		= false;
-			this.p2pSessionID			= undefined;
+			this.p2pSessionData			= undefined;
 
 			await sleep(500);
 
@@ -125,7 +125,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	private readonly localVideo: Promise<() => JQuery>	= this._LOCAL_VIDEO.promise;
 
 	/** @ignore */
-	private p2pSessionID?: string;
+	private p2pSessionData?: {iceServers: string; id: string};
 
 	/** @ignore */
 	private readonly remoteVideo: Promise<() => JQuery>	= this._REMOTE_VIDEO.promise;
@@ -183,7 +183,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		const method: Function|undefined	= (<any> this.commands)[command.method];
 
 		if (this.isAccepted && method) {
-			if (command.additionalData === this.p2pSessionID) {
+			if (this.p2pSessionData && command.additionalData === this.p2pSessionData.id) {
 				method(
 					command.argument && command.argument.length > 0 ?
 						msgpack.decode(command.argument) :
@@ -207,7 +207,13 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				return;
 			}
 
-			this.p2pSessionID	= command.additionalData;
+			if (command.additionalData) {
+				const splitIndex	= command.additionalData.indexOf('\n');
+				this.p2pSessionData	= {
+					iceServers: command.additionalData.slice(splitIndex + 1),
+					id: command.additionalData.slice(0, splitIndex)
+				};
+			}
 
 			this.accept(
 				command.method === 'audio' ?
@@ -247,7 +253,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		await Promise.all([
 			this.sessionService.send([rpcEvents.p2p, {command: {
-				additionalData: this.p2pSessionID,
+				additionalData: this.p2pSessionData && this.p2pSessionData.id,
 				method: P2PWebRTCService.constants.kill
 			}}]),
 			this.commands.kill()
@@ -267,7 +273,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @inheritDoc */
 	public async join () : Promise<void> {
-		if (this.webRTC) {
+		if (this.webRTC || !this.p2pSessionData) {
 			return;
 		}
 
@@ -277,8 +283,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		this.incomingStream.video	= this.outgoingStream.video;
 		this.isActive				= true;
 
-		const iceServers	= request({retries: 5, url: env.baseUrl + 'iceservers'});
-
+		const p2pSessionData			= this.p2pSessionData;
 		const webRTCEvents: string[]	= [];
 
 		const $localVideo	= await waitForIterable<JQuery>(await this.localVideo);
@@ -309,7 +314,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 					}
 					else {
 						this.sessionService.send([rpcEvents.p2p, {command: {
-							additionalData: this.p2pSessionID,
+							additionalData: p2pSessionData.id,
 							argument: msgpack.encode({args, event}),
 							method: P2PWebRTCService.constants.webRTC
 						}}]);
@@ -339,30 +344,29 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			},
 			localVideoEl: $localVideo[0],
 			media: {audio: true, video: true},
+			peerConnectionConfig: {
+				iceServers: parse<RTCIceServer[]>(p2pSessionData.iceServers).
+					map(o => {
+						if ((<any> o).url !== undefined) {
+							o.urls			= (<any> o).url;
+							(<any> o).url	= undefined;
+						}
+
+						if (this.sessionService.apiFlags.disableP2P) {
+							o.urls	= typeof o.urls === 'string' && o.urls.indexOf('stun:') !== 0 ?
+								o.urls :
+								o.urls instanceof Array ?
+									o.urls.filter((url: string) => url.indexOf('stun:') !== 0) :
+									undefined
+							;
+						}
+
+						return o;
+					}).
+					filter(o => o.urls && o.urls.length > 0)
+			},
 			remoteVideosEl: $remoteVideo[0]
 		});
-
-		webRTC.webrtc.config.peerConnectionConfig.iceServers	=
-			parse<RTCIceServer[]>(await iceServers).
-			map(o => {
-				if ((<any> o).url !== undefined) {
-					o.urls			= (<any> o).url;
-					(<any> o).url	= undefined;
-				}
-
-				if (this.sessionService.apiFlags.disableP2P) {
-					o.urls	= typeof o.urls === 'string' && o.urls.indexOf('stun:') !== 0 ?
-						o.urls :
-						o.urls instanceof Array ?
-							o.urls.filter((url: string) => url.indexOf('stun:') !== 0) :
-							undefined
-					;
-				}
-
-				return o;
-			}).
-			filter(o => o.urls && o.urls.length > 0)
-		;
 
 		webRTC.connection.on(
 			'streamUpdate',
@@ -415,10 +419,13 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 				this.accept(callType);
 
-				this.p2pSessionID	= uuid();
+				this.p2pSessionData	= {
+					iceServers: await request({retries: 5, url: env.baseUrl + 'iceservers'}),
+					id: uuid()
+				};
 
 				this.sessionService.send([rpcEvents.p2p, {command: {
-					additionalData: this.p2pSessionID,
+					additionalData: this.p2pSessionData.id + '\n' + this.p2pSessionData.iceServers,
 					method: callType
 				}}]);
 
