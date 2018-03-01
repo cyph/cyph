@@ -189,6 +189,11 @@ mat-card-title {
 	max-width: 100%;
 }
 
+/* Temporary workaround for Material bug */
+mat-progress-bar > svg.mat-progress-bar-background {
+	visibility: hidden;
+}
+
 od-virtualscroll, od-virtualrow {
 	width: 100% !important;
 }

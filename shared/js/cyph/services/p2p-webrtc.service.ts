@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
 import {Observable} from 'rxjs/Observable';
@@ -198,24 +200,32 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				this.isAccepted
 			);
 
-			this.sessionService.send([rpcEvents.p2p, {command: {
-				additionalData: command.additionalData,
-				method: ok ? P2PWebRTCService.constants.accept : P2PWebRTCService.constants.decline
-			}}]);
+			const p2pSessionData	= !command.additionalData ? undefined : (() => {
+				const splitIndex	= command.additionalData.indexOf('\n');
+				return {
+					iceServers: command.additionalData.slice(splitIndex + 1),
+					id: command.additionalData.slice(0, splitIndex)
+				};
+			})();
+
+			if (p2pSessionData) {
+				this.sessionService.send([rpcEvents.p2p, {command: {
+					additionalData: p2pSessionData.id,
+					method: ok ?
+						P2PWebRTCService.constants.accept :
+						P2PWebRTCService.constants.decline
+				}}]);
+			}
 
 			if (!ok) {
 				return;
 			}
 
 			if (
-				command.additionalData &&
+				p2pSessionData &&
 				(!this.p2pSessionData || !this.sessionService.state.isAlice)
 			) {
-				const splitIndex	= command.additionalData.indexOf('\n');
-				this.p2pSessionData	= {
-					iceServers: command.additionalData.slice(splitIndex + 1),
-					id: command.additionalData.slice(0, splitIndex)
-				};
+				this.p2pSessionData	= p2pSessionData;
 			}
 
 			this.accept(
