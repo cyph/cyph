@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
 import {Observable} from 'rxjs/Observable';
