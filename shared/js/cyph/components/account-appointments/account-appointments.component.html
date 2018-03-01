@@ -59,13 +59,19 @@
 												<span>{{record.name}}</span>
 												&ngsp;
 												<ng-container *ngIf='!record.wasAnonymousShare'>
-													<span cyphTranslate>with</span>
+													<span 
+														fxHide.xs
+														fxHide.sm
+														cyphTranslate>with</span>
 													&ngsp;
 													<a [routerLink]='
 														accountService.routeRoot +
 														"profile/" +
 														record.owner
-													'>{{
+														'
+														fxHide.xs
+														fxHide.sm
+													>{{
 														record.owner
 													}}</a>
 												</ng-container>
@@ -73,7 +79,7 @@
 													<span cyphTranslate>(invited anonymously)</span>
 												</ng-container>
 												&ngsp;
-												<span>
+												<span fxHide.xs fxHide.sm>
 													&mdash; {{getDateTimeString(
 														o.appointment.calendarInvite.startTime
 													)}}
@@ -201,19 +207,26 @@
 												<div>
 													<span>{{record.name}}</span>
 													&ngsp;
-													<ng-container *ngIf='!record.wasAnonymousShare'>
-														<span cyphTranslate>with</span>
+													<ng-container *ngIf='!record.wasAnonymousShare'
+													>
+														<span 
+															fxHide.xs
+															fxHide.sm
+															cyphTranslate>with</span>
 														&ngsp;
 														<a [routerLink]='
 															accountService.routeRoot +
 															"profile/" +
 															o.friend
-														'>{{
+															'
+															fxHide.xs
+															fxHide.sm
+														>{{
 															o.friend
 														}}</a>
 														&ngsp;
 													</ng-container>
-													<span>
+													<span fxHide.xs fxHide.sm>
 														&mdash; {{getDateTimeString(
 															o.appointment.calendarInvite.startTime
 														)}}
@@ -363,19 +376,27 @@
 												<div>
 													<span>{{record.name}}</span>
 													&ngsp;
-													<ng-container *ngIf='!record.wasAnonymousShare'>
-														<span cyphTranslate>with</span>
+													<ng-container *ngIf='!record.wasAnonymousShare'
+													>
+														<span 
+															fxHide.xs
+															fxHide.sm
+															cyphTranslate
+														>with</span>
 														&ngsp;
 														<a [routerLink]='
 															accountService.routeRoot +
 															"profile/" +
 															o.friend
-														'>{{
+															'
+															fxHide.xs
+															fxHide.sm
+														>{{
 															o.friend
 														}}</a>
 														&ngsp;
 													</ng-container>
-													<span>
+													<span fxHide.xs fxHide.sm>
 														&mdash; {{getDateTimeString(
 															o.appointment.calendarInvite.startTime
 														)}}
