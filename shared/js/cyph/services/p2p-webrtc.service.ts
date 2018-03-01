@@ -207,7 +207,10 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				return;
 			}
 
-			if (command.additionalData) {
+			if (
+				command.additionalData &&
+				(!this.p2pSessionData || !this.sessionService.state.isAlice)
+			) {
 				const splitIndex	= command.additionalData.indexOf('\n');
 				this.p2pSessionData	= {
 					iceServers: command.additionalData.slice(splitIndex + 1),
@@ -413,7 +416,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		await this.sessionService.lock(
 			async reason => {
-				if (reason === P2PWebRTCService.constants.requestCall) {
+				if (reason === P2PWebRTCService.constants.requestCall || this.p2pSessionData) {
 					return;
 				}
 
