@@ -416,13 +416,19 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		this.accept(callType);
 
-		this.p2pSessionData	= {
-			iceServers: await request({retries: 5, url: env.baseUrl + 'iceservers'}),
-			id: uuid()
-		};
+		this.p2pSessionData	= isPassive && !this.sessionService.state.isAlice ?
+			undefined :
+			{
+				iceServers: await request({retries: 5, url: env.baseUrl + 'iceservers'}),
+				id: uuid()
+			}
+		;
 
 		this.sessionService.send([rpcEvents.p2p, {command: {
-			additionalData: this.p2pSessionData.id + '\n' + this.p2pSessionData.iceServers,
+			additionalData: this.p2pSessionData ?
+				this.p2pSessionData.id + '\n' + this.p2pSessionData.iceServers :
+				undefined
+			,
 			method: callType
 		}}]);
 
