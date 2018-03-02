@@ -21,6 +21,9 @@ import {AccountComposeComponent} from '../account-compose';
 	templateUrl: '../account-compose/account-compose.component.html'
 })
 export class AccountComposeNoProvidersComponent extends AccountComposeComponent {
+	/** @inheritDoc */
+	protected readonly hasOwnProviders: boolean	= false;
+
 	constructor (
 		activatedRoute: ActivatedRoute,
 		accountChatService: AccountChatService,

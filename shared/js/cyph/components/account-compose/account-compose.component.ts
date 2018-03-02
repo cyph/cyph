@@ -45,6 +45,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 		ChatMessageValue.Types
 	;
 
+	/** Indicates whether this component is using its own service providers. */
+	protected readonly hasOwnProviders: boolean								= true;
+
 	/** @see AccountChatMessageBoxComponent.messageType */
 	public readonly messageType: BehaviorSubject<ChatMessageValue.Types>	= cacheObservable(
 		combineLatest(
@@ -178,7 +181,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 	/** @inheritDoc */
 	public async ngOnDestroy () : Promise<void> {
-		await this.sessionService.destroy();
+		if (this.hasOwnProviders) {
+			await this.sessionService.destroy();
+		}
 	}
 
 	/** @inheritDoc */
