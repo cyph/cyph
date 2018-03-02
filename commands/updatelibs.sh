@@ -241,7 +241,7 @@ read -r -d '' modules <<- EOM
 	unsemantic
 	url-loader
 	web-animations-js
-	webpack
+	webpack@3
 	webpack-closure-compiler
 	webpack-sources
 	webrtc-adapter
