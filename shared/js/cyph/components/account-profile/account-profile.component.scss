@@ -1,6 +1,5 @@
 @import '../../../../css/mixins';
 
-
 $header-size: 135px;
 
 .profile {
@@ -84,14 +83,16 @@ mat-card {
 :host > .telehealth {
 	.profile.telehealth {
 		text-align: left;
-		
+
 		&.mobile {
 			.header {
 				position: relative;
+
 				$header-size: 75px;
+
 				height: $header-size;
 				min-height: $header-size;
-				
+
 				.name {
 					margin-top: 24px;
 				}
@@ -115,7 +116,7 @@ mat-card {
 					}
 				}
 
-				&:after{
+				&:after {
 					height: 20px;
 					width: 100%;
 					content: no-close-quote;
@@ -169,7 +170,7 @@ mat-card {
 			border-width: 0.42vw !important;
 		}
 
-		 .header {
+		.header {
 			height: $header-size;
 			min-height: $header-size;
 			z-index: 42;
@@ -203,7 +204,7 @@ mat-card {
 				margin: 3px;
 			}
 		}
-		
+
 		&:not(.mobile) {
 			.mat-card {
 				top: 135px;
@@ -217,14 +218,14 @@ mat-card {
 				&.md {
 					min-width: 75%;
 				}
-			
+
 				&.doctor-list-only {
 					@include calc('max-height', '95vh - #{$header-size}');
 
 					.member-list {
 						@include calc('max-height', '75vh - #{$header-size}');
 					}
-					
+
 					&.lt-md {
 						@include calc('height', '100vh - #{$header-size}');
 					}
