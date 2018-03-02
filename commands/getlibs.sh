@@ -272,6 +272,16 @@ find firebase @firebase -type f -name '*.node.js' -exec bash -c '
 	cp -f {} $(echo "{}" | sed "s|\.node\.js$|.js|")
 ' \;
 
+cd @types
+for d in * ; do if [ ! -f ${d}/package.json ] ; then cat > ${d}/package.json << EOM
+	{
+		"name": "${d}",
+		"version": "1.0.0",
+		"license": "Ms-RSL"
+	}
+EOM ; fi ; done
+cd ..
+
 cd tslint
 cat package.json | grep -v tslint-test-config-non-relative > package.json.new
 mv package.json.new package.json
