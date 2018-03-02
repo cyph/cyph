@@ -530,9 +530,9 @@
     tree-kill "^1.0.0"
     webpack-sources "^1.1.0"
 
-"@opentok/client@^2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@opentok/client/-/client-2.13.0.tgz#fa55d5f67bbb5bd6ff9f840208087655a77bdee1"
+"@opentok/client@^2.13.1":
+  version "2.13.1"
+  resolved "https://registry.yarnpkg.com/@opentok/client/-/client-2.13.1.tgz#939b6e66b6d56644232ef38a392c0327d5367f67"
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
@@ -5012,8 +5012,8 @@ gauge@~2.7.1, gauge@~2.7.3:
     wide-align "^1.1.0"
 
 gaze@1.1.0, gaze@^0.5.1, gaze@^1.0.0:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.2.tgz#847224677adb8870d679257ed3388fdb61e40105"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.0.tgz#74d3ffb0110ede715c9f15bba56c6e9b851d3ce0"
   dependencies:
     globule "^1.0.0"
 
