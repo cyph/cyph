@@ -273,13 +273,15 @@ find firebase @firebase -type f -name '*.node.js' -exec bash -c '
 ' \;
 
 cd @types
-for d in * ; do if [ ! -f ${d}/package.json ] ; then cat > ${d}/package.json << EOM
-	{
-		"name": "${d}",
-		"version": "1.0.0",
-		"license": "Ms-RSL"
-	}
-EOM ; fi ; done
+for d in * ; do if [ ! -f ${d}/package.json ] ; then
+cat > ${d}/package.json << EOM
+{
+	"name": "${d}",
+	"version": "1.0.0",
+	"license": "Ms-RSL"
+}
+EOM
+fi ; done
 cd ..
 
 cd tslint
