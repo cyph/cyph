@@ -171,7 +171,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 						await this.accountFilesService.updateAppointment(
 							appointmentID,
-							appointment
+							appointment,
+							undefined,
+							true
 						);
 					}
 				}

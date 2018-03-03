@@ -698,9 +698,20 @@ export class AccountFilesService {
 	public async updateAppointment (
 		id: string,
 		content: IAppointment,
-		name?: string
+		name?: string,
+		onlyIfOwner: boolean = false
 	) : Promise<void> {
 		const file		= await this.getFile(id, AccountFileRecord.RecordTypes.Appointment);
+
+		if (
+			onlyIfOwner && (
+				!this.accountDatabaseService.currentUser.value ||
+				file.owner !== this.accountDatabaseService.currentUser.value.user.username
+			)
+		) {
+			return;
+		}
+
 		file.timestamp	= await getTimestamp();
 
 		if (name) {
