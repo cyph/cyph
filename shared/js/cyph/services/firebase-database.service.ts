@@ -357,15 +357,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const queue	= await this.getDatabaseRef(url);
 				const id	= uuid();
 
-				const contendForLock	= () => {
-					mutex	= queue.push(reason ? {id, reason} : {id});
-					mutex.onDisconnect().remove();
+				const contendForLock	= async () => {
+					mutex	= queue.push();
+					await mutex.onDisconnect().remove();
+					await mutex.set(reason ? {id, reason} : {id});
 				};
 
 				try {
 					let lastReason: string|undefined;
 
-					contendForLock();
+					await contendForLock();
 
 					/* tslint:disable-next-line:promise-must-complete */
 					await new Promise<void>(resolve => {
@@ -386,7 +387,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							lastReason	= o.reason;
 
 							if (!keys.find(key => value[key].id === id)) {
-								contendForLock();
+								await contendForLock();
 							}
 						});
 					});
@@ -587,8 +588,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const ref			= await this.getDatabaseRef(url);
 			const onDisconnect	= ref.onDisconnect();
 
-			ref.set(ServerValue.TIMESTAMP);
-			onDisconnect.remove();
+			await onDisconnect.remove();
 
 			this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
 				if (!isConnected) {
@@ -600,9 +600,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}
 			});
 
-			return () => {
-				ref.remove();
-				onDisconnect.cancel();
+			await ref.set(ServerValue.TIMESTAMP);
+
+			return async () => {
+				await ref.remove();
+				await onDisconnect.cancel();
 			};
 		});
 	}
@@ -618,8 +620,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const ref			= await this.getDatabaseRef(url);
 			const onDisconnect	= ref.onDisconnect();
 
-			ref.remove();
-			onDisconnect.set(ServerValue.TIMESTAMP);
+			await onDisconnect.set(ServerValue.TIMESTAMP);
 
 			this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
 				if (!isConnected) {
@@ -631,9 +632,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}
 			});
 
-			return () => {
-				ref.set(ServerValue.TIMESTAMP);
-				onDisconnect.cancel();
+			await ref.remove();
+
+			return async () => {
+				await ref.set(ServerValue.TIMESTAMP);
+				await onDisconnect.cancel();
 			};
 		});
 	}
