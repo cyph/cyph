@@ -63,7 +63,7 @@
 								{{stringsService.telehealthSessionWith}}
 								{{(patient?.name | async)}}
 							</h1>
-							<div fxLayout='row'fxFlex='10' fxLayoutAlign='center'>
+							<div fxLayout='row' fxFlex='10' fxLayoutAlign='center'>
 								<cyph-account-contact
 									[clickable]='false'
 									[contact]='patient'
@@ -80,6 +80,12 @@
 									<div></div>
 									<div></div>
 								</div>
+							</div>
+							<div fxFlex='75' *ngIf='chatService'>
+								<mat-progress-bar
+									*ngIf='(chatService.chat.initProgress | async) > 0'
+									[value]='chatService.chat.initProgress | async'
+								></mat-progress-bar>
 							</div>
 						</div>
 					</ng-container>
@@ -130,34 +136,46 @@
 									<div></div>
 								</div>
 							</div>
+							<div fxFlex='75' *ngIf='chatService'>
+								<mat-progress-bar
+									*ngIf='(chatService.chat.initProgress | async) > 0'
+									[value]='chatService.chat.initProgress | async'
+								></mat-progress-bar>
+							</div>
 						</div>
 					</ng-template>
 				</div>
-
-				<div>
-					<h2 *ngIf='
-						envService.isTelehealth && (
-							(currentUser?.user.userType | async) === accountUserTypes.Standard
-						);
-						else doctorMessage
-					'>
-						{{stringsService.waitingRoomCheckedInPatient}}
-					</h2>
-					<ng-template #doctorMessage>
+				<ng-container *ngIf='chatService'>
+					<ng-container *ngIf='(chatService.chat.initProgress | async) === 0; else loading'>
 						<h2 *ngIf='
 							envService.isTelehealth && (
-								(currentUser?.user.userType | async) ===
-								accountUserTypes.TelehealthDoctor
+								(currentUser?.user.userType | async) === accountUserTypes.Standard
 							);
-							else genericMessage
+							else doctorMessage
 						'>
-							{{stringsService.waitingRoomCheckedInDoctor}}
+							{{stringsService.waitingRoomCheckedInPatient}}
+						</h2>
+						<ng-template #doctorMessage>
+							<h2 *ngIf='
+								envService.isTelehealth && (
+									(currentUser?.user.userType | async) ===
+									accountUserTypes.TelehealthDoctor
+								);
+								else genericMessage
+							'>
+								{{stringsService.waitingRoomCheckedInDoctor}}
+							</h2>
+						</ng-template>
+						<ng-template #genericMessage>
+							<h2>{{stringsService.waitingRoomCheckedInGeneric}}</h2>
+						</ng-template>
+					</ng-container>
+					<ng-template #loading>
+						<h2>
+							{{stringsService.connecting}}
 						</h2>
 					</ng-template>
-					<ng-template #genericMessage>
-						<h2>{{stringsService.waitingRoomCheckedInGeneric}}</h2>
-					</ng-template>
-				</div>
+				</ng-container>	
 			</ng-container>
 		</div>
 	</mat-card>

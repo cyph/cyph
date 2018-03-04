@@ -4,8 +4,10 @@ import {User} from '../../account/user';
 import {AccountUserTypes, CallTypes, IAppointment} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
+import {ChatService} from '../../services/chat.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
+import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -81,6 +83,9 @@ export class AccountCallWaitingComponent implements OnChanges, OnInit {
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
+		/** @ignore */
+		public readonly chatService: ChatService,
+
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
 
@@ -89,6 +94,9 @@ export class AccountCallWaitingComponent implements OnChanges, OnInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see P2PWebRTCService */
+		public readonly p2pWebRTCService: P2PWebRTCService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
