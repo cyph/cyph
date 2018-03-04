@@ -82,6 +82,9 @@ export class StringsService {
 	public readonly connectedNotification: string		= `Connected!`;
 
 	/** @see StringsService */
+	public readonly connecting: string					= `Now connecting...`;
+
+	/** @see StringsService */
 	public readonly contactCyph: string					= `Contact ${this.internalCompany}`;
 
 	/** @see StringsService */
@@ -602,7 +605,7 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly waitingRoomCheckedInPatient: string	=
-		`You're all checked in and ready! You will be connected with your doctor momentarily.`
+		`You're all checked in! Waiting for your doctor to connect. `
 	;
 
 	/** @see StringsService */
