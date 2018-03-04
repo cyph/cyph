@@ -377,11 +377,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 					/* tslint:disable-next-line:promise-must-complete */
 					await new Promise<void>(resolve => {
 						queue.on('value', async snapshot => {
-							const value: {[key: string]: {
-								id?: string;
-								reason?: string;
-								timestamp: number;
-							}}	=
+							const value: {
+								[key: string]: {
+									id?: string;
+									reason?: string;
+									timestamp: number;
+								};
+							}	=
 								(snapshot && snapshot.val()) || {}
 							;
 
