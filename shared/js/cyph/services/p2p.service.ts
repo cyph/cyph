@@ -71,7 +71,7 @@ export class P2PService {
 		},
 		loaded: async () => {
 			if (!this.sessionInitService.ephemeral) {
-				this.chatService.initProgressStart();
+				this.chatService.initProgressFinish();
 				await sleep(1000);
 			}
 		},
