@@ -9,8 +9,7 @@ import {ServerValue} from '@firebase/database';
 import {
 	DataSnapshot,
 	FirebaseDatabase,
-	Reference as DatabaseReference,
-	ThenableReference
+	Reference as DatabaseReference
 } from '@firebase/database-types';
 import '@firebase/messaging';
 import {FirebaseMessaging} from '@firebase/messaging-types';
@@ -352,20 +351,20 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () => lock(
 			getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
 			async () => {
-				let mutex: ThenableReference|undefined;
+				let mutex: DatabaseReference|undefined;
 
 				const queue	= await this.getDatabaseRef(url);
 				const id	= uuid();
 
-				const contendForLock	= async () => {
+				const contendForLock	= async () => retryUntilSuccessful(async () => {
 					if (mutex) {
 						return;
 					}
 
-					mutex	= queue.push();
-					await mutex.onDisconnect().remove();
-					await mutex.set(reason ? {id, reason} : {id});
-				};
+					mutex	= await queue.push().then();
+					await mutex.onDisconnect().remove().then();
+					await mutex.set(reason ? {id, reason} : {id}).then();
+				});
 
 				try {
 					let lastReason: string|undefined;
@@ -399,9 +398,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 					return await f(lastReason);
 				}
 				finally {
-					if (mutex) {
-						mutex.remove();
-					}
+					await retryUntilSuccessful(async () => {
+						if (mutex) {
+							await mutex.remove().then();
+							await mutex.onDisconnect().cancel().then();
+						}
+					});
 				}
 			},
 			reason
@@ -486,7 +488,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () =>
 			this.lock(`pushlocks/${url}`, async () => {
 				const listRef	= await this.getDatabaseRef(url);
-				const itemRef	= await listRef.push({timestamp: ServerValue.TIMESTAMP});
+				const itemRef	= await listRef.push({timestamp: ServerValue.TIMESTAMP}).then();
 				const key		= itemRef.key;
 
 				if (!key) {
@@ -508,7 +510,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					value	= await value(key, previousKey, o);
 				}
 
-				await itemRef.remove();
+				await itemRef.remove().then();
 
 				const result	= await this.setItem(`${url}/${key}`, proto, value);
 
@@ -592,7 +594,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const ref			= await this.getDatabaseRef(url);
 			const onDisconnect	= ref.onDisconnect();
 
-			await onDisconnect.remove();
+			await onDisconnect.remove().then();
 
 			this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
 				if (!isConnected) {
@@ -604,11 +606,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}
 			});
 
-			await ref.set(ServerValue.TIMESTAMP);
+			await ref.set(ServerValue.TIMESTAMP).then();
 
 			return async () => {
-				await ref.remove();
-				await onDisconnect.cancel();
+				await ref.remove().then();
+				await onDisconnect.cancel().then();
 			};
 		});
 	}
@@ -624,7 +626,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const ref			= await this.getDatabaseRef(url);
 			const onDisconnect	= ref.onDisconnect();
 
-			await onDisconnect.set(ServerValue.TIMESTAMP);
+			await onDisconnect.set(ServerValue.TIMESTAMP).then();
 
 			this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
 				if (!isConnected) {
@@ -636,11 +638,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}
 			});
 
-			await ref.remove();
+			await ref.remove().then();
 
 			return async () => {
-				await ref.set(ServerValue.TIMESTAMP);
-				await onDisconnect.cancel();
+				await ref.set(ServerValue.TIMESTAMP).then();
+				await onDisconnect.cancel().then();
 			};
 		});
 	}
@@ -683,7 +685,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			const {currentUser}	= await (await this.app).auth();
 			if (currentUser) {
-				await currentUser.delete();
+				await currentUser.delete().then();
 			}
 		});
 	}
