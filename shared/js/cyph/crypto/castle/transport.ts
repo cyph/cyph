@@ -43,18 +43,18 @@ export class Transport {
 	}
 
 	/** Handle decrypted incoming message. */
-	public receive (
+	public async receive (
 		cyphertext: Uint8Array,
 		plaintext: Uint8Array,
 		author: Observable<string>
-	) : void {
+	) : Promise<void> {
 		this.logCyphertext(author, cyphertext);
 
 		const timestamp	= potassiumUtil.toDataView(plaintext).getFloat64(0, true);
 		const data		= potassiumUtil.toBytes(plaintext, 8);
 
 		if (data.length > 0) {
-			this.sessionService.castleHandler(
+			await this.sessionService.castleHandler(
 				CastleEvents.receive,
 				{author, plaintext: data, timestamp}
 			);

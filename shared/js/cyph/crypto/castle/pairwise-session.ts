@@ -113,7 +113,7 @@ export class PairwiseSession {
 				try {
 					const plaintext	= await (await this.core).decrypt(cyphertextBytes);
 
-					this.transport.receive(
+					await this.transport.receive(
 						cyphertextBytes,
 						plaintext,
 						this.remoteUser.username
