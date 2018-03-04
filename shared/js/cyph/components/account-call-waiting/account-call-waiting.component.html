@@ -81,7 +81,7 @@
 									<div></div>
 								</div>
 							</div>
-							<div fxFlex='75' *ngIf='chatService'>
+							<div fxFlex='75'>
 								<mat-progress-bar
 									*ngIf='(chatService.chat.initProgress | async) > 0'
 									[value]='chatService.chat.initProgress | async'
@@ -136,7 +136,7 @@
 									<div></div>
 								</div>
 							</div>
-							<div fxFlex='75' *ngIf='chatService'>
+							<div fxFlex='75'>
 								<mat-progress-bar
 									*ngIf='(chatService.chat.initProgress | async) > 0'
 									[value]='chatService.chat.initProgress | async'
@@ -145,38 +145,36 @@
 						</div>
 					</ng-template>
 				</div>
-				<ng-container *ngIf='chatService'>
-					<ng-container *ngIf='(chatService.chat.initProgress | async) === 0; else loading'>
+				<ng-container *ngIf='(chatService.chat.initProgress | async) === 0; else loading'>
+					<h2 *ngIf='
+						envService.isTelehealth && (
+							(currentUser?.user.userType | async) === accountUserTypes.Standard
+						);
+						else doctorMessage
+					'>
+						{{stringsService.waitingRoomCheckedInPatient}}
+					</h2>
+					<ng-template #doctorMessage>
 						<h2 *ngIf='
 							envService.isTelehealth && (
-								(currentUser?.user.userType | async) === accountUserTypes.Standard
+								(currentUser?.user.userType | async) ===
+								accountUserTypes.TelehealthDoctor
 							);
-							else doctorMessage
+							else genericMessage
 						'>
-							{{stringsService.waitingRoomCheckedInPatient}}
-						</h2>
-						<ng-template #doctorMessage>
-							<h2 *ngIf='
-								envService.isTelehealth && (
-									(currentUser?.user.userType | async) ===
-									accountUserTypes.TelehealthDoctor
-								);
-								else genericMessage
-							'>
-								{{stringsService.waitingRoomCheckedInDoctor}}
-							</h2>
-						</ng-template>
-						<ng-template #genericMessage>
-							<h2>{{stringsService.waitingRoomCheckedInGeneric}}</h2>
-						</ng-template>
-					</ng-container>
-					<ng-template #loading>
-						<h2>
-							{{stringsService.connecting}}
+							{{stringsService.waitingRoomCheckedInDoctor}}
 						</h2>
 					</ng-template>
-				</ng-container>	
-			</ng-container>
+					<ng-template #genericMessage>
+						<h2>{{stringsService.waitingRoomCheckedInGeneric}}</h2>
+					</ng-template>
+				</ng-container>
+				<ng-template #loading>
+					<h2>
+						{{stringsService.connecting}}
+					</h2>
+				</ng-template>
+			</ng-container>	
 		</div>
 	</mat-card>
 </ng-container>

@@ -83,14 +83,14 @@ export class AccountCallWaitingComponent implements OnChanges, OnInit {
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
-		/** @ignore */
-		public readonly chatService: ChatService,
-
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see AccountUserLookupService */
 		public readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @see ChatService */
+		public readonly chatService: ChatService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

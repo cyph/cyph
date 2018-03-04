@@ -64,13 +64,11 @@
 														fxHide.lt-md
 														cyphTranslate>with</span>
 													&ngsp;
-													<a [routerLink]='
+													<a fxHide.lt-md [routerLink]='
 														accountService.routeRoot +
 														"profile/" +
 														record.owner
-														'
-														fxHide.lt-md
-													>{{
+													'>{{
 														record.owner
 													}}</a>
 												</ng-container>
@@ -92,9 +90,9 @@
 												mat-icon-button
 												cyphTranslate
 												matTooltip='Accept'
-												(click)='
-													accountFilesService.acceptIncomingFile(record)
-												'
+												(click)='accountFilesService.acceptIncomingFile(
+													record
+												)'
 											>
 												<mat-icon>check</mat-icon>
 											</button>
@@ -102,12 +100,10 @@
 												mat-icon-button
 												cyphTranslate
 												matTooltip='Reject'
-												(click)='
-													accountFilesService.acceptIncomingFile(
-														record,
-														false
-													)
-												'
+												(click)='accountFilesService.acceptIncomingFile(
+													record,
+													false
+												)'
 											>
 												<mat-icon>close</mat-icon>
 											</button>
