@@ -6,6 +6,7 @@ import {P2PWebRTCService} from './p2p-webrtc.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
+import {sleep} from '../util/wait';
 
 
 /**
@@ -66,6 +67,12 @@ export class P2PService {
 					undefined,
 					false
 				);
+			}
+		},
+		loaded: async () => {
+			if (!this.sessionInitService.ephemeral) {
+				this.chatService.initProgressStart();
+				await sleep(1000);
 			}
 		},
 		requestConfirm: async (callType: string, isAccepted: boolean) => {

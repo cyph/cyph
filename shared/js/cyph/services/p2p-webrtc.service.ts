@@ -389,7 +389,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			}
 		);
 
-		webRTC.on('videoAdded', () => {
+		webRTC.on('videoAdded', async () => {
+			await (await this.handlers).loaded();
 			this.loading	= false;
 		});
 

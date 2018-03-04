@@ -618,14 +618,20 @@ export class ChatService {
 
 			this.sessionService.connected.then(async () => {
 				if (callType !== undefined) {
-					this.sessionService.yt().then(async () => this.dialogService.toast(
-						callType === 'video' ?
-							this.stringsService.p2pWarningVideoPassive :
-							this.stringsService.p2pWarningAudioPassive
-						,
-						ChatService.p2pPassiveConnectTime,
-						this.stringsService.cancel
-					)).then(async canceled => {
+					this.sessionService.yt().then(async () => {
+						if (!this.sessionInitService.ephemeral) {
+							this.initProgressStart();
+						}
+
+						await this.dialogService.toast(
+							callType === 'video' ?
+								this.stringsService.p2pWarningVideoPassive :
+								this.stringsService.p2pWarningAudioPassive
+							,
+							ChatService.p2pPassiveConnectTime,
+							this.stringsService.cancel
+						);
+					}).then(async canceled => {
 						if (!canceled) {
 							this.p2pWebRTCService.accept(callType, true);
 						}
