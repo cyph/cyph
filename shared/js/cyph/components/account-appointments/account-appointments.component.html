@@ -28,7 +28,8 @@
 		</ng-container>
 
 		<ng-container *ngIf='
-			(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor
+			(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor ||
+			(accountFilesService.incomingFilesFiltered.appointments | async)?.length > 0
 		'>
 			<mat-card>
 				<h2>{{stringsService.incomingAppointments}}</h2>
