@@ -83,7 +83,7 @@
 							</div>
 							<div fxFlex='75'>
 								<mat-progress-bar
-									*ngIf='(chatService.chat.initProgress | async) > 0'
+									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
 									[value]='chatService.chat.initProgress | async'
 								></mat-progress-bar>
 							</div>
@@ -138,7 +138,7 @@
 							</div>
 							<div fxFlex='75'>
 								<mat-progress-bar
-									*ngIf='(chatService.chat.initProgress | async) > 0'
+									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
 									[value]='chatService.chat.initProgress | async'
 								></mat-progress-bar>
 							</div>
