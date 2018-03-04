@@ -83,6 +83,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 		return this.accountDatabaseService.currentUser.value !== undefined && [
 			'',
+			'404',
 			'audio',
 			'appointments',
 			'chat-transition',

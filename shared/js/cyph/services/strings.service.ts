@@ -343,6 +343,9 @@ export class StringsService {
 	public readonly noteSaved: string					= `Note saved!`;
 
 	/** @see StringsService */
+	public readonly notFound: string					= `404 page not found`;
+
+	/** @see StringsService */
 	public readonly ok: string							= `ok`;
 
 	/** @see StringsService */
