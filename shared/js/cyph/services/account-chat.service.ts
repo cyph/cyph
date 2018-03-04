@@ -93,11 +93,11 @@ export class AccountChatService extends ChatService {
 
 		this.chat	= getOrSetDefault(this.chats, username, () => ({
 			currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
+			initProgress: new BehaviorSubject(0),
 			isConnected: true,
 			isDisconnected: false,
 			isFriendTyping: new BehaviorSubject(false),
 			isMessageChanged: false,
-			keyExchangeProgress: 0,
 			lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
 				`${contactURL}/lastConfirmedMessage`,
 				ChatLastConfirmedMessage

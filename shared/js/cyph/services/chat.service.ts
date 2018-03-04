@@ -5,7 +5,9 @@ import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
+import {interval} from 'rxjs/observable/interval';
 import {map} from 'rxjs/operators/map';
+import {takeWhile} from 'rxjs/operators/takeWhile';
 import {Subscription} from 'rxjs/Subscription';
 import {ChatMessage, IChatData, IChatMessageLiveValue, States} from '../chat';
 import {HelpComponent} from '../components/help';
@@ -77,11 +79,11 @@ export class ChatService {
 	/** @see IChatData */
 	public chat: IChatData	= {
 		currentMessage: {},
+		initProgress: new BehaviorSubject(0),
 		isConnected: false,
 		isDisconnected: false,
 		isFriendTyping: new BehaviorSubject(false),
 		isMessageChanged: false,
-		keyExchangeProgress: 0,
 		lastConfirmedMessage: new LocalAsyncValue({id: '', index: 0}),
 		messages: new LocalAsyncList<IChatMessage>(),
 		/* See https://github.com/palantir/tslint/issues/3541 */
@@ -345,8 +347,8 @@ export class ChatService {
 		if (this.sessionInitService.ephemeral) {
 			this.notificationService.notify(this.stringsService.connectedNotification);
 
-			this.chat.keyExchangeProgress	= 100;
-			this.chat.state					= States.chatBeginMessage;
+			this.initProgressFinish();
+			this.chat.state	= States.chatBeginMessage;
 
 			await sleep(3000);
 
@@ -422,6 +424,26 @@ export class ChatService {
 		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
 	}) : void {
 		this.resolveChatMessageGeometryService(chatMessageGeometryService);
+	}
+
+	/** Sets incrementing chat.initProgress to 100. */
+	public initProgressFinish () : void {
+		this.chat.initProgress.next(100);
+	}
+
+	/** Starts incrementing chat.initProgress up to 100. */
+	public initProgressStart (
+		totalTime: number = ChatService.approximateKeyExchangeTime,
+		timeInterval: number = 250
+	) : void {
+		const increment	= timeInterval / ChatService.approximateKeyExchangeTime;
+
+		interval(timeInterval).pipe(
+			takeWhile(() => this.chat.initProgress.value < 100),
+			map(() => this.chat.initProgress.value + (increment * 100))
+		).subscribe(
+			this.chat.initProgress
+		);
 	}
 
 	/**
@@ -635,16 +657,7 @@ export class ChatService {
 				}
 
 				this.chat.state	= States.keyExchange;
-
-				const interval		= 250;
-				const increment		= interval / ChatService.approximateKeyExchangeTime;
-
-				while (this.chat.keyExchangeProgress <= 100) {
-					await sleep(interval);
-					this.chat.keyExchangeProgress += increment * 100;
-				}
-
-				this.chat.keyExchangeProgress	= 100;
+				this.initProgressStart();
 			});
 
 			this.sessionService.one(events.connectFailure).then(async () =>

@@ -48,7 +48,7 @@
 
 		<mat-progress-bar
 			class='key-exchange-progress'
-			[value]='chatService.chat.keyExchangeProgress'
+			[value]='chatService.chat.initProgress | async'
 		></mat-progress-bar>
 	</div>
 

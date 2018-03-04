@@ -1,4 +1,4 @@
-import {Subject} from 'rxjs/Subject';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
@@ -16,6 +16,9 @@ export interface IChatData {
 	/** The current message being composed. */
 	currentMessage: IChatMessageLiveValue;
 
+	/** Percentage complete of initial handshake or other loading process. */
+	initProgress: BehaviorSubject<number>;
+
 	/** Indicates whether authentication has completed (still true even after disconnect). */
 	isConnected: boolean;
 
@@ -23,13 +26,10 @@ export interface IChatData {
 	isDisconnected: boolean;
 
 	/** Indicates whether the other party is typing. */
-	isFriendTyping: Subject<boolean>;
+	isFriendTyping: BehaviorSubject<boolean>;
 
 	/** Indicates whether the current message changed before the last check. */
 	isMessageChanged: boolean;
-
-	/** Percentage complete with initial handshake (approximate / faked out). */
-	keyExchangeProgress: number;
 
 	/** Last outgoing message whose receipt has been confirmed. */
 	lastConfirmedMessage: IAsyncValue<IChatLastConfirmedMessage>;
@@ -56,5 +56,5 @@ export interface IChatData {
 	state: States;
 
 	/** List of unconfirmed outgoing message IDs, based on lastConfirmedMessage. */
-	unconfirmedMessages: Subject<{[id: string]: boolean|undefined}>;
+	unconfirmedMessages: BehaviorSubject<{[id: string]: boolean|undefined}>;
 }
