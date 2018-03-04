@@ -361,9 +361,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 						return;
 					}
 
-					mutex	= await queue.push().then();
+					mutex	= await queue.push({timestamp: ServerValue.TIMESTAMP}).then();
 					await mutex.onDisconnect().remove().then();
-					await mutex.set(reason ? {id, reason} : {id}).then();
+					await mutex.set(reason ?
+						{id, reason, timestamp: ServerValue.TIMESTAMP} :
+						{id, timestamp: ServerValue.TIMESTAMP}
+					).then();
 				});
 
 				try {
@@ -374,12 +377,21 @@ export class FirebaseDatabaseService extends DatabaseService {
 					/* tslint:disable-next-line:promise-must-complete */
 					await new Promise<void>(resolve => {
 						queue.on('value', async snapshot => {
-							const value: {[key: string]: {id: string; reason?: string}}	=
+							const value: {[key: string]: {
+								id?: string;
+								reason?: string;
+								timestamp: number;
+							}}	=
 								(snapshot && snapshot.val()) || {}
 							;
 
-							const keys	= Object.keys(value).sort();
-							const o		= value[keys[0]] || {id: '', reason: undefined};
+							const contenders	= Object.keys(value).
+								map(k => value[k]).
+								filter(contender => !!contender.id).
+								sort((a, b) => a.timestamp - b.timestamp)
+							;
+
+							const o	= contenders[0] || {id: '', reason: undefined, timestamp: NaN};
 
 							if (o.id === id) {
 								resolve();
@@ -389,7 +401,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 							lastReason	= o.reason;
 
-							if (!keys.find(key => value[key].id === id)) {
+							if (!contenders.find(contender => contender.id === id)) {
 								await contendForLock();
 							}
 						});

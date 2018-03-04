@@ -57,6 +57,9 @@
 							},
 							"reason": {
 								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
 							}
 						}
 					},
@@ -139,6 +142,9 @@
 					},
 					"reason": {
 						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
 					}
 				}
 			},
@@ -565,6 +571,9 @@
 								},
 								"reason": {
 									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
 								}
 							}
 						}
