@@ -45,7 +45,7 @@
 							'
 							fxLayout='column'
 							fxLayoutAlign='center'
-							fxLayoutGap='5px'
+							fxLayoutGap='10px'
 						>
 							<h1>
 								{{stringsService.your}}
@@ -63,12 +63,15 @@
 								{{stringsService.telehealthSessionWith}}
 								{{(patient?.name | async)}}
 							</h1>
-							<img
-								cyphTranslate
-								class='avatar animated _1'
-								[alt]='(patient?.name | async)'
-								[src]='patient?.avatar | async'
-							/>
+							<div fxLayout='row'fxFlex='10' fxLayoutAlign='center'>
+								<cyph-account-contact
+									[clickable]='false'
+									[contact]='patient'
+									class='cyph-inverted-theme animated fadeIn'
+									fxFlex
+									fxFlex.gt-sm='33'
+								></cyph-account-contact>
+							</div>
 							<div class='loading'>
 								<div class='logo-animation'>
 									<div></div>
