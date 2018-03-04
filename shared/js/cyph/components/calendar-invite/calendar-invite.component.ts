@@ -164,6 +164,13 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 	/** @inheritDoc */
 	public ngOnChanges () : void {
+		if (this.valueSubject.value && !this.valueSubject.value.title) {
+			this.valueSubject.next({
+				...this.valueSubject.value,
+				title: this.defaultReasonForAppointment
+			});
+		}
+
 		if (!this.followUp) {
 			return;
 		}
@@ -187,7 +194,7 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 				description: '',
 				endTime: timestamp + this.duration,
 				startTime: timestamp,
-				title: ''
+				title: this.defaultReasonForAppointment
 			});
 		}
 	}
