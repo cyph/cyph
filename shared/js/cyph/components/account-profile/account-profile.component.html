@@ -495,6 +495,41 @@
 							</mat-accordion>
 						</div>
 					</mat-card-content>
+
+					<mat-card-content
+						*ngIf='(user?.userType | async) === accountUserTypes.TelehealthAdmin'
+					>
+						<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='16px'>
+							<h2 cyphTranslate>Telehealth Administrator</h2>
+							<div class='description' *ngIf='user?.description'>
+								{{user?.description | async}}
+							</div>
+
+							<div fxLayout='row' fxLayoutGap='16px'>
+								<button
+									mat-mini-fab
+									cyphTranslate
+									matTooltip='New Message'
+									[routerLink]='
+										accountService.routeRoot + "compose/" + user?.username
+									'
+								>
+									<mat-icon>email</mat-icon>
+								</button>
+
+								<button
+									mat-mini-fab
+									cyphTranslate
+									matTooltip='Open Messages'
+									[routerLink]='
+										accountService.routeRoot + "messages/" + user?.username
+									'
+								>
+									<mat-icon>message</mat-icon>
+								</button>
+							</div>
+						</div>
+					</mat-card-content>
 				</mat-card>
 
 				<ng-container *ngIf='(user?.userType | async) === accountUserTypes.Standard'>
