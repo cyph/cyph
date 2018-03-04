@@ -85,6 +85,26 @@ export class AccountFilesService {
 	/** @ignore */
 	private readonly noteSnippets: Map<string, string>	= new Map<string, string>();
 
+	/** @ignore */
+	private readonly watchFile	= memoize(
+		(value: IAccountFileReference) =>
+			!value.owner ? undefined : this.accountDatabaseService.watch(
+				`users/${value.owner}/fileRecords/${value.id}`,
+				AccountFileRecord,
+				undefined,
+				value.key
+			).pipe(map(o => ({
+				timestamp: o.timestamp,
+				value: {
+					...o.value,
+					name: o.value.name.slice(0, this.maxNameLength),
+					owner: value.owner
+				}
+			})))
+		,
+		(value: IAccountFileReference) => value.id
+	);
+
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
 	public readonly filesList: Observable<(IAccountFileRecord&{owner: string})[]>	=
 		cacheObservable(
@@ -97,19 +117,7 @@ export class AccountFilesService {
 				false
 			).pipe(
 				mergeMap(references => combineLatest(filterUndefined(references.map(({value}) =>
-					!value.owner ? undefined : this.accountDatabaseService.watch(
-						`users/${value.owner}/fileRecords/${value.id}`,
-						AccountFileRecord,
-						undefined,
-						value.key
-					).pipe(map(o => ({
-						timestamp: o.timestamp,
-						value: {
-							...o.value,
-							name: o.value.name.slice(0, this.maxNameLength),
-							owner: value.owner
-						}
-					})))
+					this.watchFile(value)
 				)))),
 				map(records => records.
 					filter(o => !isNaN(o.timestamp)).
@@ -953,15 +961,29 @@ export class AccountFilesService {
 		};
 	}
 
-	/** Watches file record. */
-	public watchMetadata (id: string) : Observable<IAccountFileRecord> {
+	/** Watches appointment. */
+	public watchAppointment (id: string|IAccountFileRecord) : Observable<IAppointment> {
 		const filePromise	= this.getFile(id);
 
 		return this.accountDatabaseService.watch(
-			(async () => `users/${(await filePromise).owner}/fileRecords/${id}`)(),
+			filePromise.then(file => `users/${file.owner}/files/${file.id}`),
+			Appointment,
+			undefined,
+			filePromise.then(file => file.key)
+		).pipe(map(o =>
+			o.value
+		));
+	}
+
+	/** Watches file record. */
+	public watchMetadata (id: string|IAccountFileRecord) : Observable<IAccountFileRecord> {
+		const filePromise	= this.getFile(id);
+
+		return this.accountDatabaseService.watch(
+			filePromise.then(file => `users/${file.owner}/fileRecords/${file.id}`),
 			AccountFileRecord,
 			undefined,
-			(async () => (await filePromise).key)()
+			filePromise.then(file => file.key)
 		).pipe(map(o => ({
 			...o.value,
 			name: o.value.name.slice(0, this.maxNameLength)
@@ -969,14 +991,14 @@ export class AccountFilesService {
 	}
 
 	/** Watches note. */
-	public watchNote (id: string) : Observable<IQuillDelta> {
+	public watchNote (id: string|IAccountFileRecord) : Observable<IQuillDelta> {
 		const filePromise	= this.getFile(id);
 
 		return this.accountDatabaseService.watch(
-			(async () => `users/${(await filePromise).owner}/files/${id}`)(),
+			filePromise.then(file => `users/${file.owner}/files/${file.id}`),
 			BinaryProto,
 			undefined,
-			(async () => (await filePromise).key)()
+			filePromise.then(file => file.key)
 		).pipe(map(o =>
 			o.value.length > 0 ? msgpack.decode(o.value) : {ops: []}
 		));

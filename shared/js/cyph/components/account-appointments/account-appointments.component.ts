@@ -3,6 +3,8 @@ import {Options} from 'fullcalendar';
 import memoize from 'lodash-es/memoize';
 import {CalendarComponent} from 'ng-fullcalendar';
 import {Observable} from 'rxjs/Observable';
+import {combineLatest} from 'rxjs/observable/combineLatest';
+import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
 import {User} from '../../account/user';
@@ -67,28 +69,31 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 
 	/** Gets appointment. */
 	public readonly getAppointment:
-		(record: IAccountFileRecord) => Promise<
+		(record: IAccountFileRecord) => Observable<
 			{appointment: IAppointment; friend: string}|undefined
 		>
-	= memoize(async (record: IAccountFileRecord) => {
-		const currentUser	= this.accountDatabaseService.currentUser.value;
+	= memoize(
+		(record: IAccountFileRecord) => this.accountFilesService.watchAppointment(record).pipe(
+			map(appointment => {
+				const currentUser	= this.accountDatabaseService.currentUser.value;
 
-		if (!currentUser) {
-			return;
-		}
+				if (!currentUser) {
+					return;
+				}
 
-		const appointment	= await this.accountFilesService.downloadAppointment(record).result;
+				const friend		= (appointment.participants || []).
+					filter(participant => participant !== currentUser.user.username)
+				[0];
 
-		const friend		= (appointment.participants || []).
-			filter(participant => participant !== currentUser.user.username)
-		[0];
+				if (!friend) {
+					return;
+				}
 
-		if (!friend) {
-			return;
-		}
-
-		return {appointment, friend};
-	});
+				return {appointment, friend};
+			})
+		),
+		(record: IAccountFileRecord) => record.id
+	);
 
 	/** @see getDateTimeSting */
 	public readonly getDateTimeString: typeof getDateTimeString				= getDateTimeString;
@@ -124,9 +129,8 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 		}
 
 		this.accountFilesService.filesListFiltered.appointments.pipe(
-			mergeMap(async records => Promise.all(records.map(async record =>
-				((await this.getAppointment(record)) || {appointment: undefined}).appointment
-			)))
+			mergeMap(records => combineLatest(records.map(record => this.getAppointment(record)))),
+			map(arr => arr.map(o => o ? o.appointment : undefined))
 		).subscribe(appointments => {
 			this.calendarEvents	= filterUndefined(appointments).
 				filter(appointment =>
