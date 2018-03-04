@@ -358,6 +358,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const id	= uuid();
 
 				const contendForLock	= async () => {
+					if (mutex) {
+						return;
+					}
+
 					mutex	= queue.push();
 					await mutex.onDisconnect().remove();
 					await mutex.set(reason ? {id, reason} : {id});
