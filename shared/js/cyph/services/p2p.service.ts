@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
+import {sleep} from '../util/wait';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
-import {sleep} from '../util/wait';
 
 
 /**
