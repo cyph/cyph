@@ -1,59 +1,75 @@
-<div cyphNanoScroller>
-	<div
+<ng-container *ngIf='envService.isTelehealth; else standardView'>
+	<div 
 		fxFlex
 		fxFlexFill
 		fxLayout='column'
-		class='not-found'
-		[class.mobile]='envService.isMobile'
+		fxLayoutAlign='center center'
+		fxLayoutGap='16px'
 	>
-		<div>
-			<h1>
-				<span cyphTranslate>I'm sorry, but your</span>
-				&ngsp;
-				<span>{{stringsService.session}}</span>
-				&ngsp;
-				<span cyphTranslate>is in another castle...</span>
-			</h1>
-		</div>
-		<img src='/assets/img/404.png' alt='Funny Mario reference' cyphTranslate />
-		<div class='explanation'>
-			<p *ngIf='!accounts'>
-				<span cyphTranslate>Please</span>
-				&ngsp;
-				<a
-					cyphTranslate
-					[routerLink]='envService.newCyphUrlRetry'
-				>try again</a>.
-			</p>
-			<p cyphTranslate>Reasons why you may have landed here:</p>
-			<ul>
-				<li>
-					<span cyphTranslate>The</span>
+		<cyph-logo icon fxFlex='15'></cyph-logo>
+
+		<h1>{{stringsService.notFound}}</h1>
+	</div>
+</ng-container>
+<ng-template #standardView>
+	<div cyphNanoScroller>
+		<div
+			fxFlex
+			fxFlexFill
+			fxLayout='column'
+			class='not-found'
+			[class.mobile]='envService.isMobile'
+		>
+			<div>
+				<h1>
+					<span cyphTranslate>I'm sorry, but your</span>
 					&ngsp;
 					<span>{{stringsService.session}}</span>
 					&ngsp;
-					<span cyphTranslate>you're looking for has expired</span>
-				</li>
-				<li cyphTranslate>
-					<span cyphTranslate>The</span>
+					<span cyphTranslate>is in another castle...</span>
+				</h1>
+			</div>
+			<img src='/assets/img/404.png' alt='Funny Mario reference' cyphTranslate />
+			<div class='explanation'>
+				<p *ngIf='!accounts'>
+					<span cyphTranslate>Please</span>
 					&ngsp;
-					<span>{{stringsService.session}}</span>
-					&ngsp;
-					<span cyphTranslate>
-						you're looking for has already been connected to
-						(someone else got there first, or you clicked twice)
-					</span>
-				</li>
-				<li cyphTranslate>
-					A glitch in the matrix
-				</li>
-				<li cyphTranslate>
-					You're just guessing random URLs
-				</li>
-				<li cyphTranslate>
-					We broke something
-				</li>
-			</ul>
+					<a
+						cyphTranslate
+						[routerLink]='envService.newCyphUrlRetry'
+					>try again</a>.
+				</p>
+				<p cyphTranslate>Reasons why you may have landed here:</p>
+				<ul>
+					<li>
+						<span cyphTranslate>The</span>
+						&ngsp;
+						<span>{{stringsService.session}}</span>
+						&ngsp;
+						<span cyphTranslate>you're looking for has expired</span>
+					</li>
+					<li cyphTranslate>
+						<span cyphTranslate>The</span>
+						&ngsp;
+						<span>{{stringsService.session}}</span>
+						&ngsp;
+						<span cyphTranslate>
+							you're looking for has already been connected to
+							(someone else got there first, or you clicked twice)
+						</span>
+					</li>
+					<li cyphTranslate>
+						A glitch in the matrix
+					</li>
+					<li cyphTranslate>
+						You're just guessing random URLs
+					</li>
+					<li cyphTranslate>
+						We broke something
+					</li>
+				</ul>
+			</div>
 		</div>
 	</div>
-</div>
+</ng-template>
+
