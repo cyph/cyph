@@ -62,8 +62,8 @@ export class Transport {
 	}
 
 	/** Send outgoing encrypted message. */
-	public send (cyphertext: Uint8Array) : void {
-		this.sessionService.castleHandler(CastleEvents.send, cyphertext);
+	public async send (cyphertext: Uint8Array) : Promise<void> {
+		await this.sessionService.castleHandler(CastleEvents.send, cyphertext);
 		this.logCyphertext(this.sessionService.localUsername, cyphertext);
 	}
 

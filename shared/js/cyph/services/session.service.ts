@@ -222,8 +222,8 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @ignore */
-	protected cyphertextSendHandler (message: Uint8Array) : void {
-		this.channelService.send(message);
+	protected async cyphertextSendHandler (message: Uint8Array) : Promise<void> {
+		await this.channelService.send(message);
 
 		this.analyticsService.sendEvent({
 			eventAction: 'sent',
@@ -352,7 +352,7 @@ export abstract class SessionService implements ISessionService {
 					break;
 				}
 
-				this.cyphertextSendHandler(data);
+				await this.cyphertextSendHandler(data);
 			}
 		}
 	}

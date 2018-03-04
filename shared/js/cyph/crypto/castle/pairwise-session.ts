@@ -398,7 +398,7 @@ export class PairwiseSession {
 									messageID
 								);
 
-								this.transport.send(this.potassium.concatMemory(
+								await this.transport.send(this.potassium.concatMemory(
 									true,
 									messageID,
 									cyphertext
