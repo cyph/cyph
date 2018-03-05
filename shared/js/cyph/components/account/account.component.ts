@@ -123,10 +123,9 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			return;
 		}
 
-		/**
-		 ** Custom Icons
+		/** Custom Icons
 		 * TODO: Find better location
-		*/
+		 */
 		this.matIconRegistry.addSvgIcon(
 			'doctor',
 			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg')
@@ -214,7 +213,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
-		public readonly sanitizer: DomSanitizer,		
+		public readonly sanitizer: DomSanitizer,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
