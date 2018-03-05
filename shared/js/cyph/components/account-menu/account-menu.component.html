@@ -178,7 +178,7 @@
 			(click)='click()'
 			*ngIf='accountService.menuExpanded | async'
 		>
-			<mat-icon>local_hospital</mat-icon>
+			<mat-icon svgIcon='doctor'></mat-icon>
 			&ngsp;
 			<span>Doctors</span>
 		</button>
@@ -192,7 +192,7 @@
 			(click)='click()'
 			*ngIf='(accountService.menuExpanded | async) === false'
 		>
-			<mat-icon>local_hospital</mat-icon>
+			<mat-icon svgIcon='doctor'></mat-icon>
 		</button>
 	</ng-container>
 

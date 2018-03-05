@@ -1,4 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {MatIconRegistry} from '@angular/material';
+import {DomSanitizer} from '@angular/platform-browser';
 import {ActivatedRoute} from '@angular/router';
 import * as Granim from 'granim';
 import {AccountEnvService} from '../../services/account-env.service';
@@ -121,6 +123,12 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			return;
 		}
 
+		/** 
+		 **Custom Icons
+		 * TODO: Find better location
+		 */
+		this.matIconRegistry.addSvgIcon('doctor', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg'));
+
 		if (!this.envService.coBranded && !this.envService.isExtension) {
 			const selector	= '.cyph-gradient';
 
@@ -202,8 +210,14 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
 
+		/** @ignore */
+		public readonly sanitizer: DomSanitizer,		
+
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see EnvService */
+		public readonly matIconRegistry: MatIconRegistry,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
