@@ -1,7 +1,7 @@
 <mat-card
 	class='contact animated'
 	[class.non-clickable]='!clickable'
-	[class.telehealth]='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor'
+	[class.telehealth]='envService.isTelehealth'
 	[routerLink]='!clickable ? undefined : (
 		accountService.routeRoot +
 		(envService.isTelehealth ? "profile" : "messages") + "/" +
