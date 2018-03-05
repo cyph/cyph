@@ -123,11 +123,14 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			return;
 		}
 
-		/** 
-		 **Custom Icons
+		/**
+		 ** Custom Icons
 		 * TODO: Find better location
-		 */
-		this.matIconRegistry.addSvgIcon('doctor', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg'));
+		*/
+		this.matIconRegistry.addSvgIcon(
+			'doctor',
+			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg')
+		);
 
 		if (!this.envService.coBranded && !this.envService.isExtension) {
 			const selector	= '.cyph-gradient';

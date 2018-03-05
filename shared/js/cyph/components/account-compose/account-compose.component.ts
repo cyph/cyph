@@ -32,7 +32,7 @@ import {uuid} from '../../util/uuid';
 export class AccountComposeComponent implements OnDestroy, OnInit {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
-	
+
 	/** @see AccountChatMessageBoxComponent.calendarInviteFollowUp */
 	public readonly appointmentFollowUp: BehaviorSubject<boolean>			=
 		new BehaviorSubject(false)
