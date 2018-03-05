@@ -5,7 +5,7 @@ import {combineLatest} from 'rxjs/observable/combineLatest';
 import {map} from 'rxjs/operators/map';
 import {User} from '../../account';
 import {States} from '../../chat/enums';
-import {ChatMessageValue, IForm} from '../../proto';
+import {AccountUserTypes, ChatMessageValue, IForm} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -30,6 +30,9 @@ import {uuid} from '../../util/uuid';
 	templateUrl: './account-compose.component.html'
 })
 export class AccountComposeComponent implements OnDestroy, OnInit {
+	/** @see AccountUserTypes */
+	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+	
 	/** @see AccountChatMessageBoxComponent.calendarInviteFollowUp */
 	public readonly appointmentFollowUp: BehaviorSubject<boolean>			=
 		new BehaviorSubject(false)

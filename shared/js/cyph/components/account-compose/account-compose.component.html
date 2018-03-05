@@ -77,37 +77,55 @@
 						<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='5px'>
 							<h1 cyphTranslate>Your appointment has been requested!</h1>
 
-							<ng-container *ngIf='
-								envService.isTelehealth && (sentFileID | async) !== undefined
-							'>
-								<h2 cyphTranslate>
-									Why don't you get ahead on those medical forms while you're
-									waiting for confirmation?
-								</h2>
-								<br />
-								<div fxLayout='row' fxLayoutGap='7px'>
+							<ng-container *ngIf='accountDatabaseService.currentUser | async as currentUser'>
+								<ng-container *ngIf='
+									envService.isTelehealth && (sentFileID | async) !== undefined &&
+									(currentUser.user.userType | async) ===
+														accountUserTypes.Standard; else doctorView
+								'>
+									<h2 cyphTranslate>
+										Why don't you get ahead on those medical forms while you're
+										waiting for confirmation?
+									</h2>
+									<br />
+									<div fxLayout='row' fxLayoutGap='7px'>
+										<button
+											mat-raised-button
+											cyphTranslate
+											color='accent'
+											[routerLink]='
+												accountService.routeRoot +
+												"new-patient/" +
+												(sentFileID | async)
+											'
+										>
+											Patient Forms
+										</button>
+
+										<button
+											mat-raised-button
+											cyphTranslate
+											color='primary'
+											[routerLink]='accountService.routeRoot + "appointments/"'
+										>
+											I'll do this later
+										</button>
+									</div>
+								</ng-container>
+								<ng-template #doctorView>
+									<br />
 									<button
 										mat-raised-button
 										cyphTranslate
 										color='accent'
 										[routerLink]='
 											accountService.routeRoot +
-											"new-patient/" +
-											(sentFileID | async)
+											"appointments/"
 										'
 									>
-										Patient Forms
+										Back to Appointments
 									</button>
-
-									<button
-										mat-raised-button
-										cyphTranslate
-										color='primary'
-										[routerLink]='accountService.routeRoot + "appointments/"'
-									>
-										I'll do this later
-									</button>
-								</div>
+								</ng-template>
 							</ng-container>
 						</div>
 					</ng-template>
