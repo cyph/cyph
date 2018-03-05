@@ -201,10 +201,7 @@
 	<div
 		fxFlexFill
 		fxLayout='row'
-		*ngIf='
-			(user?.userType | async) !== accountUserTypes.Standard;
-			else standardProfile
-		'
+		
 	>
 		<div
 			fxFlex
@@ -309,11 +306,8 @@
 						*ngIf='(user?.userType | async) === accountUserTypes.Standard'
 					>
 						<div fxLayout='column'>
-							<h2 cyphTranslate>Patient Info</h2>
-							<span>
-								<strong cyphTranslate>Gender:</strong>
-								<span>{{extra.gender || ''}}</span>
-							</span>
+							<h1 cyphTranslate>Patient Info</h1>
+							<h2 cyphTranslate>Gender: {{extra.gender || ''}}</h2>
 							<div class='description' *ngIf='user?.description'>
 								{{user?.description | async}}
 							</div>
@@ -532,7 +526,9 @@
 					</mat-card-content>
 				</mat-card>
 
-				<ng-container *ngIf='(user?.userType | async) === accountUserTypes.Standard'>
+				<ng-container *ngIf='(user?.userType | async) === accountUserTypes.Standard && 
+					!envService.isTelehealth
+				'>
 					<ng-container *ngTemplateOutlet='buttons'></ng-container>
 					<ng-container *ngTemplateOutlet='fileUpload'></ng-container>
 				</ng-container>
