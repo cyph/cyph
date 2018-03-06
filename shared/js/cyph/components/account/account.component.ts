@@ -53,14 +53,15 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		const route	= this.route;
 
 		if (
-			[
+			[,
 				'appointments',
 				'contacts',
 				'docs',
 				'files',
 				'forms',
 				'notes',
-				'patients'
+				'patients',
+				'staff'
 			].indexOf(route) < 0 ||
 			(
 				this.activatedRoute.snapshot.firstChild &&
@@ -105,6 +106,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'request-appointment',
 			'request-followup',
 			'settings',
+			'staff',
 			'video'
 		].filter(
 			path => this.route === path

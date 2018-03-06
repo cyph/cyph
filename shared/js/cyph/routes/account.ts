@@ -134,6 +134,11 @@ export const account: Route	= {
 			data: {messageType: ChatMessageValue.Types.CalendarInvite, appointmentFollowUp: true}
 		},
 		{path: 'settings', component: AccountSettingsComponent},
+		{
+			path: 'staff',
+			component: AccountContactsComponent,
+			data: {userTypeFilter: AccountUserTypes.TelehealthAdmin}
+		},
 		{path: 'video/:username', component: AccountChatComponent, data: {callType: 'video'}},
 		{path: 'welcome', component: AccountPostRegisterComponent},
 		{path: ':username', redirectTo: 'profile/:username'}
