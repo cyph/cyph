@@ -133,6 +133,13 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg')
 		);
 
+		this.matIconRegistry.addSvgIcon(
+			'medical-forms',
+			this.sanitizer.bypassSecurityTrustResourceUrl(
+				'/assets/img/iconfinder/medical-forms.svg'
+			)
+		);
+
 		if (!this.envService.coBranded && !this.envService.isExtension) {
 			const selector	= '.cyph-gradient';
 
