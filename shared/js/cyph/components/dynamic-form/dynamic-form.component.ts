@@ -235,8 +235,8 @@ export class DynamicFormComponent implements OnInit {
 	}
 
 	/** @see Number.parseInt */
-	public parseInt (s: string) : number {
-		return Number.parseInt(s, 10);
+	public parseInt (s: string) : number|undefined {
+		return s ? Number.parseInt(s, 10) : undefined;
 	}
 
 	constructor (
