@@ -27,24 +27,24 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 	constructor (
 		activatedRoute: ActivatedRoute,
 		accountChatService: AccountChatService,
-		accountDatabaseService: AccountDatabaseService,
 		accountFilesService: AccountFilesService,
 		chatMessageGeometryService: ChatMessageGeometryService,
 		scrollService: ScrollService,
 		sessionService: SessionService,
 		accountService: AccountService,
+		accountDatabaseService: AccountDatabaseService,
 		envService: EnvService,
 		stringsService: StringsService
 	) {
 		super(
 			activatedRoute,
 			accountChatService,
-			accountDatabaseService,
 			accountFilesService,
 			chatMessageGeometryService,
 			scrollService,
 			sessionService,
 			accountService,
+			accountDatabaseService,
 			envService,
 			stringsService
 		);

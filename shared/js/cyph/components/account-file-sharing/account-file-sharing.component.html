@@ -1,24 +1,15 @@
 <div fxLayout='column' fxLayoutAlign='center' fxLayoutGap='16px'>
 	<cyph-account-contacts-search
+		#accountContactsSearch
 		[placeholder]='stringsService.to'
-		(userFilterChange)='$event.subscribe(user)'
 	></cyph-account-contacts-search>
 	<div>
-			<cyph-account-contact
-				class='active animated slideInDown'
-				[class.cyph-inverted-theme]='invertedTheme'
-				[contact]='accountContactsSearch?.searchBar?.filter | async'
-				(click)='accountContactsSearch?.searchBar?.clearFilter()'
-				*ngIf='(accountContactsSearch?.searchBar?.filter | async) !== undefined'
-			></cyph-account-contact>
-
-			<cyph-account-contact
-				class='active animated slideInDown'
-				[class.cyph-inverted-theme]='invertedTheme'
-				[contact]='activeUser | async'
-				*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
-			></cyph-account-contact>
-		</div>
+		<cyph-account-contact
+			class='active animated slideInDown'
+			[contact]='accountContactsSearch?.searchBar?.filter | async'
+			(click)='accountContactsSearch?.searchBar?.clearFilter()'
+		></cyph-account-contact>
+	</div>
 	<mat-card class='file' *ngIf='file'>
 		<mat-card-header fxLayout='row'>
 			<mat-icon mat-card-avatar>
@@ -36,11 +27,11 @@
 				<div>
 					<span cyphTranslate>Size:</span>
 					&ngsp;
-					<span>{{readableByteLength(file.size)}}</span>
+					<span>{{readableByteLength(file?.size)}}</span>
 				</div>
 			</mat-card-subtitle>
 		</mat-card-header>
 	</mat-card>
 
-	<button (click)='share(file?.id)' mat-raised-button>Share File</button>
+	<button (click)='share()' mat-raised-button>Share File</button>
 </div>
