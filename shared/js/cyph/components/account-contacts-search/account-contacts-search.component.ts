@@ -40,7 +40,7 @@ export class AccountContactsSearchComponent {
 	@Input() public placeholder?: string;
 
 	/** @see SearchBarComponent */
-	@ViewChild(SearchBarComponent) public searchBar?: SearchBarComponent;
+	@ViewChild(SearchBarComponent) public searchBar?: SearchBarComponent<User>;
 
 	/** @see SearchBarComponent.control */
 	@Input() public readonly searchControl: FormControl			= new FormControl();

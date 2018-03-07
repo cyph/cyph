@@ -25,7 +25,7 @@ import {trackByValue} from '../../track-by/track-by-value';
 	styleUrls: ['./search-bar.component.scss'],
 	templateUrl: './search-bar.component.html'
 })
-export class SearchBarComponent implements OnChanges, OnInit {
+export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
 	/** @ignore */
 	private querySubscription?: Subscription;
 
@@ -33,15 +33,17 @@ export class SearchBarComponent implements OnChanges, OnInit {
 	@Input() public control: FormControl					= new FormControl();
 
 	/** Single item to display instead of list. */
-	public readonly filter: BehaviorSubject<any|undefined>	= new BehaviorSubject(undefined);
+	public readonly filter: BehaviorSubject<T|undefined>	=
+		new BehaviorSubject<T|undefined>(undefined)
+	;
 
 	/** Filter change event. */
-	@Output() public readonly filterChange: EventEmitter<BehaviorSubject<any|undefined>>	=
-		new EventEmitter<BehaviorSubject<any|undefined>>()
+	@Output() public readonly filterChange: EventEmitter<BehaviorSubject<T|undefined>>	=
+		new EventEmitter<BehaviorSubject<T|undefined>>()
 	;
 
 	/** @see SearchBarComponent.filterTransform */
-	@Input() public filterTransform: (value: any) => any	= value => value;
+	@Input() public filterTransform: (value?: string) => T	= value => <any> value;
 
 	/** Search bar autocomplete options list length. */
 	@Input() public listLength: number						= 10;
@@ -91,7 +93,7 @@ export class SearchBarComponent implements OnChanges, OnInit {
 	}
 
 	/** Sets filter based on search query. */
-	public async setFilter (value?: any) : Promise<void> {
+	public async setFilter (value?: string) : Promise<void> {
 		this.filter.next(await this.filterTransform(value));
 	}
 
