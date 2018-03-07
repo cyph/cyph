@@ -355,6 +355,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 					);
 				}
 			},
+			debug: env.environment.local ? true : false,
 			localVideoEl: $localVideo[0],
 			media: {audio: true, video: true},
 			peerConnectionConfig: {
@@ -389,7 +390,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			}
 		);
 
-		webRTC.on('videoAdded', async () => {
+		webRTC.on('channelOpen', async () => {
 			await (await this.handlers).loaded();
 			this.loading	= false;
 		});

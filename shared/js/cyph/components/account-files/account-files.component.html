@@ -65,6 +65,15 @@
 					<button
 						mat-icon-button
 						cyphTranslate
+						class='share'
+						matTooltip='Share'
+						(click)='share(file)'
+					>
+						<mat-icon>share</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
 						class='delete'
 						matTooltip='Delete'
 						(click)='accountFilesService.remove(file); $event.stopPropagation();'

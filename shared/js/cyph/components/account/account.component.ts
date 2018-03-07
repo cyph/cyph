@@ -1,4 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {MatIconRegistry} from '@angular/material';
+import {DomSanitizer} from '@angular/platform-browser';
 import {ActivatedRoute} from '@angular/router';
 import * as Granim from 'granim';
 import {AccountEnvService} from '../../services/account-env.service';
@@ -51,14 +53,15 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		const route	= this.route;
 
 		if (
-			[
+			[,
 				'appointments',
 				'contacts',
 				'docs',
 				'files',
 				'forms',
 				'notes',
-				'patients'
+				'patients',
+				'staff'
 			].indexOf(route) < 0 ||
 			(
 				this.activatedRoute.snapshot.firstChild &&
@@ -103,6 +106,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'request-appointment',
 			'request-followup',
 			'settings',
+			'staff',
 			'video'
 		].filter(
 			path => this.route === path
@@ -120,6 +124,21 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			/* TODO: HANDLE NATIVE */
 			return;
 		}
+
+		/** Custom Icons
+		 * TODO: Find better location
+		 */
+		this.matIconRegistry.addSvgIcon(
+			'doctor',
+			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg')
+		);
+
+		this.matIconRegistry.addSvgIcon(
+			'medical-forms',
+			this.sanitizer.bypassSecurityTrustResourceUrl(
+				'/assets/img/iconfinder/medical-forms.svg'
+			)
+		);
 
 		if (!this.envService.coBranded && !this.envService.isExtension) {
 			const selector	= '.cyph-gradient';
@@ -202,8 +221,14 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
 
+		/** @ignore */
+		public readonly sanitizer: DomSanitizer,
+
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see EnvService */
+		public readonly matIconRegistry: MatIconRegistry,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
