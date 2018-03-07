@@ -4,6 +4,7 @@ import memoize from 'lodash-es/memoize';
 import {CalendarComponent} from 'ng-fullcalendar';
 import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
+import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
@@ -31,14 +32,80 @@ import {getDateTimeString, watchTimestamp} from '../../util/time';
 	templateUrl: './account-appointments.component.html'
 })
 export class AccountAppointmentsComponent implements AfterViewInit {
+	/** Time in ms when user can check in - also used as cuttoff point for end time. */
+	private readonly appointmentGracePeriod: number	= 60000;
+
 	/** @ignore */
 	private calendarEvents: {end: number; start: number; title: string}[]	= [];
+
+	/** Gets appointment. */
+	private readonly getAppointment:
+		(record: IAccountFileRecord) => Observable<
+			{appointment: IAppointment; friend: string}|undefined
+		>
+	= memoize(
+		(record: IAccountFileRecord) => this.accountFilesService.watchAppointment(record).pipe(
+			map(appointment => {
+				const currentUser	= this.accountDatabaseService.currentUser.value;
+
+				if (!currentUser) {
+					return;
+				}
+
+				const friend		= (appointment.participants || []).
+					filter(participant => participant !== currentUser.user.username)
+				[0];
+
+				if (!friend) {
+					return;
+				}
+
+				return {appointment, friend};
+			})
+		),
+		(record: IAccountFileRecord) => record.id
+	);
+
+	/** @ignore */
+	private readonly unfilteredAppointments	= this.getAppointments(
+		this.accountFilesService.filesListFiltered.appointments
+	);
 
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
-	/** Time in ms when user can check in - also used as cuttoff point for end time. */
-	public readonly appointmentGracePeriod: number				= 60000;
+	/** Appointment lists. */
+	public readonly appointments	= {
+		current: combineLatest(this.unfilteredAppointments, watchTimestamp()).pipe(
+			map(([appointments, now]) => appointments.filter(({appointment}) =>
+				!appointment.occurred &&
+				appointment.calendarInvite.startTime !== undefined &&
+				appointment.calendarInvite.endTime !== undefined &&
+				(now + this.appointmentGracePeriod) >= appointment.calendarInvite.startTime &&
+				(now - this.appointmentGracePeriod) <= appointment.calendarInvite.endTime
+			))
+		),
+		future: combineLatest(this.unfilteredAppointments, watchTimestamp()).pipe(
+			map(([appointments, now]) => appointments.filter(({appointment}) =>
+				!appointment.occurred &&
+				appointment.calendarInvite.startTime !== undefined &&
+				appointment.calendarInvite.endTime !== undefined &&
+				(now + this.appointmentGracePeriod) < appointment.calendarInvite.startTime
+			))
+		),
+		incoming: this.getAppointments(
+			this.accountFilesService.incomingFilesFiltered.appointments
+		),
+		past: combineLatest(this.unfilteredAppointments, watchTimestamp()).pipe(
+			map(([appointments, now]) => appointments.filter(({appointment}) =>
+				appointment.occurred || (
+					appointment.calendarInvite.startTime !== undefined &&
+					appointment.calendarInvite.endTime !== undefined &&
+					(now - this.appointmentGracePeriod) > appointment.calendarInvite.endTime
+				)
+			))
+		)
+	};
 
 	/** @see CalendarComponent */
 	@ViewChild(CalendarComponent) public calendar?: CalendarComponent;
@@ -67,34 +134,6 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 	/** @see CallTypes */
 	public readonly callTypes: typeof CallTypes	= CallTypes;
 
-	/** Gets appointment. */
-	public readonly getAppointment:
-		(record: IAccountFileRecord) => Observable<
-			{appointment: IAppointment; friend: string}|undefined
-		>
-	= memoize(
-		(record: IAccountFileRecord) => this.accountFilesService.watchAppointment(record).pipe(
-			map(appointment => {
-				const currentUser	= this.accountDatabaseService.currentUser.value;
-
-				if (!currentUser) {
-					return;
-				}
-
-				const friend		= (appointment.participants || []).
-					filter(participant => participant !== currentUser.user.username)
-				[0];
-
-				if (!friend) {
-					return;
-				}
-
-				return {appointment, friend};
-			})
-		),
-		(record: IAccountFileRecord) => record.id
-	);
-
 	/** @see getDateTimeSting */
 	public readonly getDateTimeString: typeof getDateTimeString				= getDateTimeString;
 
@@ -120,6 +159,27 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 	/** Current time - used to check if appointment is within range. */
 	public readonly timestampWatcher: Observable<number>	= watchTimestamp();
 
+	/** @ignore */
+	private getAppointments (recordsList: Observable<IAccountFileRecord[]>) : Observable<{
+		appointment: IAppointment;
+		friend: string;
+		record: IAccountFileRecord;
+	}[]> {
+		return recordsList.pipe(
+			mergeMap(records => combineLatest(
+				records.map(record =>
+					this.getAppointment(record).pipe(map(appointment =>
+						appointment ? {id: record.id, record, ...appointment} : undefined
+					))
+				).concat(
+					/* Workaround for it not emitting when recordsList changes */
+					of(undefined)
+				)
+			)),
+			map(arr => filterUndefined(arr))
+		);
+	}
+
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
 		this.accountService.transitionEnd();
@@ -128,16 +188,13 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 			await this.calendar.initialized.pipe(take(1)).toPromise();
 		}
 
-		this.accountFilesService.filesListFiltered.appointments.pipe(
-			mergeMap(records => combineLatest(records.map(record => this.getAppointment(record)))),
-			map(arr => arr.map(o => o ? o.appointment : undefined))
-		).subscribe(appointments => {
-			this.calendarEvents	= filterUndefined(appointments).
-				filter(appointment =>
+		this.unfilteredAppointments.subscribe(appointments => {
+			this.calendarEvents	= appointments.
+				filter(({appointment}) =>
 					appointment.calendarInvite.endTime !== undefined &&
 					appointment.calendarInvite.startTime !== undefined &&
 					appointment.calendarInvite.title !== undefined
-				).map(appointment => ({
+				).map(({appointment}) => ({
 					end: <number> appointment.calendarInvite.endTime,
 					start: <number> appointment.calendarInvite.startTime,
 					title: <string> appointment.calendarInvite.title

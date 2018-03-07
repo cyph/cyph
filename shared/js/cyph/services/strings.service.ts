@@ -91,6 +91,12 @@ export class StringsService {
 	public readonly continueDialogAction: string		= `continue`;
 
 	/** @see StringsService */
+	public readonly currentAppointment: string			= `Current Appointment`;
+
+	/** @see StringsService */
+	public readonly currentAppointments: string			= `Current Appointments`;
+
+	/** @see StringsService */
 	public readonly cypherToast1: string				=
 		`Prepare to witness the amazing nuts and bolts of ${this.internalProductShort}.`
 	;
