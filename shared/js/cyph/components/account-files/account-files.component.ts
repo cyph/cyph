@@ -36,10 +36,12 @@ export class AccountFilesComponent implements OnInit {
 		this.accountService.transitionEnd();
 	}
 
-	public readonly totalSize: Observable<number> =
-	this.accountFilesService.filesListFiltered.files.pipe(map(files =>
-		files.reduce((n, file) => n + file.size, 0)
-	));
+	/** Total size of all files. */
+	public readonly totalSize: Observable<number>	=
+		this.accountFilesService.filesListFiltered.files.pipe(map(files =>
+			files.reduce((n, {size}) => n + size, 0)
+		))
+	;
 
 	/** Shares a file with another user. */
 	public async share (file?: IAccountFileRecord, user?: User) : Promise<void> {
