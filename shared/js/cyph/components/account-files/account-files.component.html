@@ -166,17 +166,13 @@
 				</div>
 			</mat-card-header>
 		</mat-card>
-		<div
-			fxLayout='column'
-			class='free-space'
-			*ngIf='(totalSize | async) && accountFilesService.filesLimit'
-		>
+		<div fxLayout='column' class='free-space'>
 			<h3 cyphTranslate>
-				{{stringsService.totalSpace + readableByteLength(totalSize | async)}}/
-				{{readableByteLength(accountFilesService.filesLimit)}}
+				{{stringsService.totalSpace}} {{readableByteLength((totalSize | async) || 0)}} /
+				{{readableByteLength(accountFilesService.fileStorageLimit)}}
 			</h3>
 			<mat-progress-bar
-				[value]='((totalSize | async)/accountFilesService.filesLimit)*100'
+				[value]='((totalSize | async) || 0) / accountFilesService.fileStorageLimit * 100'
 			></mat-progress-bar>
 		</div>
 	</div>

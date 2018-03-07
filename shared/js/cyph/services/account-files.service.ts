@@ -55,6 +55,7 @@ import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {StringsService} from './strings.service';
 
+
 /**
  * Account file service.
  */
@@ -137,8 +138,8 @@ export class AccountFilesService {
 		notes: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Note)
 	};
 
-	// Total storage limit
-	public readonly filesLimit: Number = 1073741824;
+	/** Total storage limit. */
+	public readonly fileStorageLimit: number	= 1073741824;
 
 	/** Incoming files. */
 	public readonly incomingFiles: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=
