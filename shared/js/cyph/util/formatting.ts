@@ -9,8 +9,8 @@ const byteConversions	= {
 };
 
 /** Converts number of specified units to bytes. */
-export const convertStorageUnitsToBytes	= (n: number, storageUnit: StorageUnits) : number =>
-	n * (
+export const convertStorageUnitsToBytes	=
+	(n: number, storageUnit: StorageUnits = StorageUnits.b) : number => n * (
 		storageUnit === StorageUnits.kb ?
 			byteConversions.kb :
 		storageUnit === StorageUnits.mb ?
@@ -36,10 +36,7 @@ export const numberToString	= (n: number) : string =>
  * @param n Number of specified storage unit (bytes by default).
  * @example 32483478 -> "30.97 MB".
  */
-export const readableByteLength	= (
-	n: number,
-	storageUnit: StorageUnits = StorageUnits.b
-) : string => {
+export const readableByteLength	= (n: number, storageUnit?: StorageUnits) : string => {
 	const b	= convertStorageUnitsToBytes(n, storageUnit);
 
 	const gb	= b / byteConversions.gb;
