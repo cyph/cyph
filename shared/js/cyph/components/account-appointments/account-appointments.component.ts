@@ -33,7 +33,7 @@ import {getDateTimeString, watchTimestamp} from '../../util/time';
 })
 export class AccountAppointmentsComponent implements AfterViewInit {
 	/** Time in ms when user can check in - also used as cuttoff point for end time. */
-	private readonly appointmentGracePeriod: number	= 60000;
+	private readonly appointmentGracePeriod: number	= 600000;
 
 	/** @ignore */
 	private calendarEvents: {end: number; start: number; title: string}[]	= [];
