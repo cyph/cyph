@@ -38,7 +38,7 @@ export const numberToString	= (n: number) : string =>
  */
 export const readableByteLength	= (
 	n: number,
-	storageUnit: StorageUnits = StorageUnits.b
+	storageUnit: StorageUnits	= StorageUnits.b
 ) : string => {
 	const b	= convertStorageUnitsToBytes(n, storageUnit);
 

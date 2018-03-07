@@ -30,5 +30,7 @@ export class AccountSettingsComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		this.accountService.transitionEnd();
+	}
 }

@@ -5,3 +5,9 @@
 	margin-right: auto;
 	text-align: center;
 }
+
+::ng-deep .free-space {
+	max-width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+}

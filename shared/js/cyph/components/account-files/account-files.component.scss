@@ -4,7 +4,9 @@
 	height: 10em;
 }
 
-.free-space {
+::ng-deep .free-space {
+	max-width: 33%;
+	text-align: center;
 	position: relative;
 	margin-left: auto;
 	margin-right: auto;
