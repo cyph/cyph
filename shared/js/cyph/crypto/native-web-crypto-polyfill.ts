@@ -25,15 +25,7 @@
 	}
 
 	(<any> self).crypto	= {
-		getRandomValues: <T extends
-			Int8Array|
-			Int16Array|
-			Int32Array|
-			Uint8Array|
-			Uint16Array|
-			Uint32Array|
-			Uint8ClampedArray
-		> (arrayBufferView: T) : T => {
+		getRandomValues: <T extends ArrayBufferView> (arrayBufferView: T) : T => {
 			const bytes	= new Uint8Array(
 				arrayBufferView.buffer,
 				arrayBufferView.byteOffset,

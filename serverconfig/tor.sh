@@ -45,6 +45,8 @@ openssl dhparam -out /etc/nginx/ssl/dhparams.pem 2048
 echo 'tmpfs /etc/nginx/ssl/websign tmpfs rw,size=50M 0 0' >> /etc/fstab
 mount --all
 
+echo '*.cyphdbyhiddenbhs.onion' > /etc/nginx/sans.json
+
 echo '
 	HiddenServiceDir /var/lib/tor/hidden_service/
 	HiddenServicePort 80 127.0.0.1:8080

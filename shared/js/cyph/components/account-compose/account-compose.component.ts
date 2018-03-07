@@ -217,9 +217,6 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 		private readonly accountChatService: AccountChatService,
 
 		/** @ignore */
-		private readonly accountDatabaseService: AccountDatabaseService,
-
-		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
 
 		/** @ignore */
@@ -233,6 +230,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

@@ -2,20 +2,18 @@ import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {User} from '../../account/user';
+import {IAccountFileRecord} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
-import {AccountFileSharingComponent} from '../account-file-sharing/account-file-sharing.component';
-import {
-	IAccountFileRecord
-} from '../../proto';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
 import {readableByteLength} from '../../util/formatting';
+import {AccountFileSharingComponent} from '../account-file-sharing';
 
 
 /**
@@ -38,13 +36,15 @@ export class AccountFilesComponent implements OnInit {
 		this.accountService.transitionEnd();
 	}
 
+	/** Gets total size of files in list */
 	public readonly totalSize: Observable<number> =
 	this.accountFilesService.filesListFiltered.files.pipe(map(files =>
 		files.reduce((n, file) => n + file.size, 0)
 	));
 
+	/** Shares a file with another user. */
 	public async share (file?: IAccountFileRecord, user?: User) : Promise<void> {
-		await this.dialogService.baseDialog(AccountFileSharingComponent, o => {o.file = file});
+		await this.dialogService.baseDialog(AccountFileSharingComponent, o => { o.file	= file; });
 	}
 
 	constructor (
@@ -63,7 +63,7 @@ export class AccountFilesComponent implements OnInit {
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
 
-		/** @see dialogService */
+		/** @see DialogService */
 		public readonly dialogService: DialogService,
 
 		/** @see EnvService */
