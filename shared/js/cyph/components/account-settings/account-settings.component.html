@@ -7,18 +7,21 @@
 	<div class='name'>
 		<h3>
 			<span cyphTranslate>Your Name:</span>
+			&ngsp;
 			<span>{{accountDatabaseService.currentUser.value?.user.name | async}}</span>
 		</h3>
 	</div>
 	<div class='email'>
 		<h3>
 			<span cyphTranslate>Your Email:</span>
+			&ngsp;
 			<span>{{(email.watch() | async) || stringsService.unknown}}</span>
 		</h3>
 	</div>
 	<div class='premium-status'>
 		<h3>
 			<span cyphTranslate>Premium Status:</span>
+			&ngsp;
 			<span>{{
 				(accountDatabaseService.currentUser.value?.user.hasPremium | async) ?
 					stringsService.enabled :
