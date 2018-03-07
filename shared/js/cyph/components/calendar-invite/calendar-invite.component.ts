@@ -10,6 +10,7 @@ import {trackBySelf} from '../../track-by/track-by-self';
 import {
 	getDate,
 	getDurationString,
+	getStartPadding,
 	getTimes,
 	getTimestamp,
 	timestampTo24HourTimeString,
@@ -85,6 +86,9 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 	/** @see getDurationString */
 	public readonly getDurationString: typeof getDurationString		= getDurationString;
 
+	/** @see getStartPadding */
+	public readonly getStartPadding: typeof getStartPadding			= getStartPadding;
+
 	/** Returns a human-readable time frame string (e.g. "Morning"). */
 	public readonly getTimeFrameString								= memoize(
 		(timeFrame: CalendarInvite.TimeFrames) => translate(
@@ -149,6 +153,11 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 	/** @see timeToString */
 	public readonly timeToString: typeof timeToString				= timeToString;
 
+	/** Tomorrow's date. */
+	public readonly tomorrow: Promise<Date>							=
+		getTimestamp().then(timestamp => timestampToDate(timestamp + 86400000))
+	;
+
 	/** @see trackBySelf */
 	public trackBySelf: typeof trackBySelf							= trackBySelf;
 
@@ -185,7 +194,8 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		const timestamp	= await getTimestamp();
+		/* One week from today. */
+		const timestamp	= (await getTimestamp()) + 604800000;
 
 		if (this.valueSubject.value === undefined) {
 			this.valueSubject.next({

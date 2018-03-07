@@ -60,6 +60,9 @@ const getTimesInternal	= (
 	startPadding: number,
 	endPadding: number
 ) : Time[] => {
+	startPadding	= Math.ceil(startPadding / increment) * increment;
+	endPadding		= Math.ceil(endPadding / increment) * increment;
+
 	const times: Time[]	= [];
 	const endTime		= hourAndMinuteToTime(timeRange.end) - endPadding;
 
@@ -141,6 +144,70 @@ const timestampToDateInternal	=
 /** Converts a timestamp into a Date. */
 export const timestampToDate	= (timestamp?: number, noZero: boolean = false) : Date =>
 	timestampToDateInternal(noZero)(timestamp)
+;
+
+/** @ignore */
+const compareDatesInternal	= memoize((a: Date|number) => memoize((b: Date|number) : boolean => {
+	if (typeof a === 'number') {
+		if (isNaN(a)) {
+			return false;
+		}
+
+		a	= timestampToDate(a);
+	}
+	if (typeof b === 'number') {
+		if (isNaN(b)) {
+			return false;
+		}
+
+		b	= timestampToDate(b);
+	}
+
+	return (
+		a.getUTCFullYear() === b.getUTCFullYear() &&
+		a.getUTCMonth() === b.getUTCMonth() &&
+		a.getUTCDate() === b.getUTCDate()
+	);
+}));
+
+/** Returns true if both Dates/timestamps represent the same year, month, and day. */
+export const compareDates	= (a: Date|number, b: Date|number) : boolean =>
+	compareDatesInternal(a)(b)
+;
+
+/** @ignore */
+const getStartPaddingInternal	=
+	memoize((timeRange: ITimeRange) =>
+		memoize((now?: Date|number) =>
+			memoize((startTime?: Date|number) : number => {
+				if (
+					(typeof now !== 'number' && !(now instanceof Date)) ||
+					(typeof startTime !== 'number' && !(startTime instanceof Date)) ||
+					!compareDates(now, startTime)
+				) {
+					return 0;
+				}
+
+				if (typeof now === 'number') {
+					now	= timestampToDate(now);
+				}
+
+				return (
+					(now.getMinutes() + (now.getHours() * 60)) -
+					(timeRange.start.minute + (timeRange.start.hour * 60))
+				);
+			})
+		)
+	)
+;
+
+/** Calculates start time padding (minutes) to disallow times on this day before right now. */
+export const getStartPadding	= (
+	timeRange: ITimeRange,
+	now?: Date|number,
+	startTime?: Date|number
+) : number =>
+	getStartPaddingInternal(timeRange)(now)(startTime)
 ;
 
 /** Returns a human-readable representation of the date and time (e.g. "Jan 1, 2018, 3:37pm"). */

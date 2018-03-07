@@ -95,7 +95,18 @@
 				[disabled]='isDisabled'
 				[matDatepicker]='datepickerStart'
 				[matDatepickerFilter]='dateFilter'
-				[min]='now | async'
+				[min]='
+					(
+						getTimes(
+							timeRange,
+							timeIncrement,
+							getStartPadding(timeRange, now | async, now | async),
+							duration / 60000
+						).length > 0 ?
+							now :
+							tomorrow
+					) | async
+				'
 				[ngModel]='timestampToDate(value.startTime)'
 				(ngModelChange)='
 					value.startTime = timestampUpdate(value.startTime, $event);
@@ -140,7 +151,12 @@
 				required
 			>
 				<mat-option [value]='time' *ngFor='
-					let time of getTimes(timeRange, timeIncrement, 0, duration / 60000);
+					let time of getTimes(
+						timeRange,
+						timeIncrement,
+						getStartPadding(timeRange, now | async, value.startTime),
+						duration / 60000
+					);
 					trackBy: trackBySelf
 				'>
 					{{timeToString(time)}}
