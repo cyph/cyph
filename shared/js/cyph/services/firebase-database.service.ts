@@ -29,7 +29,7 @@ import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto, NotificationTypes, StringProto} from '../proto';
 import {compareArrays} from '../util/compare';
 import {getOrSetDefault, getOrSetDefaultObservable} from '../util/get-or-set-default';
-import {lock,lockFunction} from '../util/lock';
+import {lock, lockFunction} from '../util/lock';
 import {requestByteStream} from '../util/request';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
