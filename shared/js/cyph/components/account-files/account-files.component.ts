@@ -1,4 +1,6 @@
 import {Component, OnInit} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
+import {map} from 'rxjs/operators/map';
 import {User} from '../../account/user';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -35,6 +37,11 @@ export class AccountFilesComponent implements OnInit {
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
 	}
+
+	public readonly totalSize: Observable<number> =
+	this.accountFilesService.filesListFiltered.files.pipe(map(files =>
+		files.reduce((n, file) => n + file.size, 0)
+	));
 
 	public async share (file?: IAccountFileRecord, user?: User) : Promise<void> {
 		await this.dialogService.baseDialog(AccountFileSharingComponent, o => {o.file = file});

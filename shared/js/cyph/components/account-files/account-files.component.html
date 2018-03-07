@@ -166,6 +166,9 @@
 				</div>
 			</mat-card-header>
 		</mat-card>
+		<h3 cyphTranslate>
+			{{stringsService.totalSpace + readableByteLength(totalSize | async)}}
+		</h3>
 	</div>
 
 	<mat-progress-spinner

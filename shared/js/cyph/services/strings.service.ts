@@ -573,6 +573,9 @@ export class StringsService {
 	public readonly to: string							= `To`;
 
 	/** @see StringsService */
+	public readonly totalSpace: string					= `Total Space Used: `;
+
+	/** @see StringsService */
 	public readonly unlock: string						= `Unlock`;
 
 	/** @see StringsService */
