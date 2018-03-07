@@ -21,6 +21,7 @@ import {skip} from 'rxjs/operators/skip';
 import {take} from 'rxjs/operators/take';
 import {SecurityModels} from '../account';
 import {Async} from '../async-type';
+import {StorageUnits} from '../enums/storage-units';
 import {IAsyncList} from '../iasync-list';
 import {IProto} from '../iproto';
 import {IQuillDelta} from '../iquill-delta';
@@ -43,6 +44,7 @@ import {
 } from '../proto';
 import {filterUndefined} from '../util/filter';
 import {flattenObservable} from '../util/flatten-observable';
+import {convertStorageUnitsToBytes} from '../util/formatting';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';
@@ -139,7 +141,7 @@ export class AccountFilesService {
 	};
 
 	/** Total storage limit. */
-	public readonly fileStorageLimit: number	= 1073741824;
+	public readonly fileStorageLimit: number	= convertStorageUnitsToBytes(1, StorageUnits.gb);
 
 	/** Incoming files. */
 	public readonly incomingFiles: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=

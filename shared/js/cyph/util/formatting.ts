@@ -1,3 +1,26 @@
+import {StorageUnits} from '../enums/storage-units';
+
+
+const byteConversions	= {
+	b: 1,
+	gb: 1073741824,
+	kb: 1024,
+	mb: 1048576
+};
+
+/** Converts number of specified units to bytes. */
+export const convertStorageUnitsToBytes	= (n: number, storageUnit: StorageUnits) : number =>
+	n * (
+		storageUnit === StorageUnits.kb ?
+			byteConversions.kb :
+		storageUnit === StorageUnits.mb ?
+			byteConversions.mb :
+		storageUnit === StorageUnits.gb ?
+			byteConversions.gb :
+			byteConversions.b
+	)
+;
+
 /** Strips non-alphanumeric-or-underscore characters and converts to lowercase. */
 export const normalize	= (s: string) : string => {
 	return s.toLowerCase().replace(/[^0-9a-z_]/g, '');
@@ -9,14 +32,19 @@ export const numberToString	= (n: number) : string =>
 ;
 
 /**
- * Converts b into a human-readable representation.
- * @param b Number of bytes.
+ * Converts n into a human-readable representation.
+ * @param n Number of specified storage unit (bytes by default).
  * @example 32483478 -> "30.97 MB".
  */
-export const readableByteLength	= (b: number) : string => {
-	const gb: number	= b / 1073741824;
-	const mb: number	= b / 1048576;
-	const kb: number	= b / 1024;
+export const readableByteLength	= (
+	n: number,
+	storageUnit: StorageUnits = StorageUnits.b
+) : string => {
+	const b	= convertStorageUnitsToBytes(n, storageUnit);
+
+	const gb	= b / byteConversions.gb;
+	const mb	= b / byteConversions.mb;
+	const kb	= b / byteConversions.kb;
 
 	const o	=
 		gb >= 1 ?
