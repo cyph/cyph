@@ -53,7 +53,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		const route	= this.route;
 
 		if (
-			[,
+			[
 				'appointments',
 				'contacts',
 				'docs',
@@ -125,9 +125,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			return;
 		}
 
-		/** Custom Icons
-		 * TODO: Find better location
-		 */
+		/* Custom Icons. TODO: Find better location. */
+
 		this.matIconRegistry.addSvgIcon(
 			'doctor',
 			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg')
@@ -212,6 +211,12 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
 
+		/** @ignore */
+		private readonly sanitizer: DomSanitizer,
+
+		/** @see MatIconRegistry */
+		public readonly matIconRegistry: MatIconRegistry,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
@@ -221,14 +226,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
 
-		/** @ignore */
-		public readonly sanitizer: DomSanitizer,
-
 		/** @see EnvService */
 		public readonly envService: EnvService,
-
-		/** @see EnvService */
-		public readonly matIconRegistry: MatIconRegistry,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

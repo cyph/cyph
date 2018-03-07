@@ -42,7 +42,7 @@ import {
 	NotificationTypes
 } from '../proto';
 import {filterUndefined} from '../util/filter';
-import {cacheObservable, flattenObservable} from '../util/flatten-observable';
+import {flattenObservable} from '../util/flatten-observable';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';
@@ -107,25 +107,22 @@ export class AccountFilesService {
 
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
 	public readonly filesList: Observable<(IAccountFileRecord&{owner: string})[]>	=
-		cacheObservable(
-			this.accountDatabaseService.watchList(
-				'fileReferences',
-				AccountFileReference,
-				undefined,
-				undefined,
-				undefined,
-				false
-			).pipe(
-				mergeMap(references => combineLatest(filterUndefined(references.map(({value}) =>
-					this.watchFile(value)
-				)))),
-				map(records => records.
-					filter(o => !isNaN(o.timestamp)).
-					sort((a, b) => b.timestamp - a.timestamp).
-					map(o => o.value)
-				)
-			),
-			[]
+		this.accountDatabaseService.watchList(
+			'fileReferences',
+			AccountFileReference,
+			undefined,
+			undefined,
+			undefined,
+			false
+		).pipe(
+			mergeMap(references => combineLatest(filterUndefined(references.map(({value}) =>
+				this.watchFile(value)
+			)))),
+			map(records => records.
+				filter(o => !isNaN(o.timestamp)).
+				sort((a, b) => b.timestamp - a.timestamp).
+				map(o => o.value)
+			)
 		)
 	;
 
@@ -291,12 +288,9 @@ export class AccountFilesService {
 		filesList: Observable<(IAccountFileRecord&T)[]>,
 		filterRecordTypes: AccountFileRecord.RecordTypes
 	) : Observable<(IAccountFileRecord&T)[]> {
-		return cacheObservable(
-			filesList.pipe(map(files => files.filter(({owner, recordType}) =>
-				!!owner && recordType === filterRecordTypes
-			))),
-			[]
-		);
+		return filesList.pipe(map(files => files.filter(({owner, recordType}) =>
+			!!owner && recordType === filterRecordTypes
+		)));
 	}
 
 	/** Accepts or rejects incoming file. */

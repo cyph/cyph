@@ -198,11 +198,7 @@
 	[class.editing]='isEditorFocused'
 	*ngIf='envService.isTelehealth'
 >
-	<div
-		fxFlexFill
-		fxLayout='row'
-		
-	>
+	<div fxFlexFill fxLayout='row'>
 		<div
 			fxFlex
 			fxFlexFill
@@ -307,7 +303,10 @@
 					>
 						<div fxLayout='column'>
 							<h1 cyphTranslate>Patient Info</h1>
-							<h2 cyphTranslate>Gender: {{extra.gender || ''}}</h2>
+							<h2>
+								<span cyphTranslate>Gender:</span>
+								<span>{{extra.gender || ''}}</span>
+							</h2>
 							<div class='description' *ngIf='user?.description'>
 								{{user?.description | async}}
 							</div>
@@ -527,7 +526,8 @@
 					</mat-card-content>
 				</mat-card>
 
-				<ng-container *ngIf='(user?.userType | async) === accountUserTypes.Standard && 
+				<ng-container *ngIf='
+					(user?.userType | async) === accountUserTypes.Standard &&
 					!envService.isTelehealth
 				'>
 					<ng-container *ngTemplateOutlet='buttons'></ng-container>
