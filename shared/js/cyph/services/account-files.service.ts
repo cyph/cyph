@@ -137,8 +137,14 @@ export class AccountFilesService {
 		notes: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Note)
 	};
 
+	/** Total size of all files in list. */
+	public readonly filesTotalSize: Observable<number>	=
+		this.filesListFiltered.files.pipe(map(files =>
+			files.reduce((n, {size}) => n + size, 0)
+		));
+
 	// Total storage limit
-	public readonly filesLimit: Number = 1073741824;
+	public readonly filesLimit: number	= 1073741824;
 
 	/** Incoming files. */
 	public readonly incomingFiles: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=

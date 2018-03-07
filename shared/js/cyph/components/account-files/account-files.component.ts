@@ -1,6 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import {map} from 'rxjs/operators/map';
 import {User} from '../../account/user';
 import {IAccountFileRecord} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -36,12 +34,6 @@ export class AccountFilesComponent implements OnInit {
 		this.accountService.transitionEnd();
 	}
 
-	/** Total size of all files in list. */
-	public readonly totalSize: Observable<number>	=
-		this.accountFilesService.filesListFiltered.files.pipe(map(files =>
-			files.reduce((n, {size}) => n + size, 0)
-		))
-	;
 
 	/** Shares a file with another user. */
 	public async share (file?: IAccountFileRecord, user?: User) : Promise<void> {

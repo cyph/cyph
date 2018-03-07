@@ -26,6 +26,7 @@ import {AccountPostRegisterComponent} from '../components/account-post-register'
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
+import {AccountStorageAnalyticsComponent} from '../components/account-storage-analytics';
 import {AccountUserRatingComponent} from '../components/account-user-rating';
 import {FooterComponent} from '../components/footer';
 import {LinkConnectionComponent} from '../components/link-connection';
@@ -78,6 +79,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountProfileComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
+		AccountStorageAnalyticsComponent,
 		AccountUserRatingComponent,
 		FooterComponent,
 		LinkConnectionComponent,
@@ -109,6 +111,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountProfileComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
+		AccountStorageAnalyticsComponent,
 		AccountUserRatingComponent,
 		FooterComponent,
 		LinkConnectionComponent,
@@ -140,6 +143,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountProfileComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
+		AccountStorageAnalyticsComponent,
 		AccountUserRatingComponent,
 		FooterComponent,
 		LinkConnectionComponent,

@@ -1,34 +1,27 @@
-<div fxFlex fxLayout='row' *ngIf='accountDatabaseService.currentUser.value'>
-	<div fxFlex></div>
-	<div fxFlex='50' fxLayout='column' class='settings-wrapper'>
-		<h1>Account Settings</h1>
-		<div class='name'>
-			<span>Your Name: </span>
-			<span>{{accountDatabaseService.currentUser.value.user.name | async}}</span>
-		</div>
-		<div class='email'>
-			<span>Your Email: </span>
-			<span>{{
-				(
-					accountDatabaseService.currentUser.value.user.externalUsernames | async
-				)?.email || 'Unknown'
-			}}</span>
-		</div>
-		<div class='premium-status'>
-			<span>Premium Status: </span>
-			<span>
-				{{
-					(accountDatabaseService.currentUser.value.user.hasPremium | async) ?
-						'Enabled' :
-						'Disabled'
-				}}
-			</span>
-		</div>
-		<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
-			<mat-slide-toggle>Setting 1</mat-slide-toggle>
-			<mat-slide-toggle>Setting 2</mat-slide-toggle>
-			<mat-slide-toggle>Setting 3</mat-slide-toggle>
-		</div>
+<div
+	fxFlex='25'
+	fxLayout='column'
+	class='settings-wrapper'
+	*ngIf='accountDatabaseService.currentUser.value'
+>
+	<div class='name'>
+		<h3>Your Name: {{accountDatabaseService.currentUser.value.user.name | async}}</h3>
 	</div>
-	<div fxFlex></div>
+	<div class='email'>
+		<h3>Your Email: {{
+			(
+				accountDatabaseService.currentUser.value.user.externalUsernames | async
+			)?.email || 'Unknown'
+		}}</h3>
+	</div>
+	<div class='premium-status'>
+		<h3>Premium Status:
+			{{
+				(accountDatabaseService.currentUser.value.user.hasPremium | async) ?
+					'Enabled' :
+					'Disabled'
+			}}
+		</h3>
+	</div>
+	<cyph-account-storage-analytics></cyph-account-storage-analytics>
 </div>

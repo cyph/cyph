@@ -61,6 +61,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 				'forms',
 				'notes',
 				'patients',
+				'settings',
 				'staff'
 			].indexOf(route) < 0 ||
 			(
