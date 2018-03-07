@@ -36,7 +36,10 @@ export class AccountFilesComponent implements OnInit {
 		this.accountService.transitionEnd();
 	}
 
+<<<<<<< HEAD
 	/** Gets total size of files in list */
+=======
+>>>>>>> e1a3321afc32c062a997bc79794e50c2beb2f8a6
 	public readonly totalSize: Observable<number> =
 	this.accountFilesService.filesListFiltered.files.pipe(map(files =>
 		files.reduce((n, file) => n + file.size, 0)
