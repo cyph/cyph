@@ -363,10 +363,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 					mutex	= await queue.push({timestamp: ServerValue.TIMESTAMP}).then();
 					await mutex.onDisconnect().remove().then();
-					await mutex.set(reason ?
-						{id, reason, timestamp: ServerValue.TIMESTAMP} :
-						{id, timestamp: ServerValue.TIMESTAMP}
-					).then();
+					await mutex.set({
+						id,
+						timestamp: ServerValue.TIMESTAMP,
+						...(reason ? {reason} : {})
+					}).then();
 				});
 
 				try {
@@ -381,7 +382,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 								[key: string]: {
 									id?: string;
 									reason?: string;
-									timestamp: number;
+									timestamp?: number;
 								};
 							}	=
 								(snapshot && snapshot.val()) || {}
@@ -389,8 +390,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 							const contenders	= Object.keys(value).
 								map(k => value[k]).
-								filter(contender => !!contender.id).
-								sort((a, b) => a.timestamp - b.timestamp)
+								filter(contender =>
+									!!contender.id &&
+									contender.timestamp !== undefined &&
+									!isNaN(contender.timestamp)
+								).
+								sort((a, b) => (<number> a.timestamp) - (<number> b.timestamp))
 							;
 
 							const o	= contenders[0] || {id: '', reason: undefined, timestamp: NaN};
