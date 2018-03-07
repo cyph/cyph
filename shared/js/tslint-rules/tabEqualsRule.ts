@@ -27,7 +27,9 @@ export class Rule extends AbstractRule {
 
 	public static isCompliant (node: ts.Node) : boolean {
 		if (
-			node.kind === ts.SyntaxKind.CallExpression || (
+			node.kind === ts.SyntaxKind.CallExpression ||
+			node.kind === ts.SyntaxKind.Parameter ||
+			(
 				node.parent && (
 					node.parent.kind === ts.SyntaxKind.Constructor ||
 					node.parent.kind === ts.SyntaxKind.FunctionDeclaration ||
@@ -35,7 +37,7 @@ export class Rule extends AbstractRule {
 					node.parent.kind === ts.SyntaxKind.VariableDeclarationList
 				)
 			)
-		 ) {
+		) {
 			return true;
 		}
 
