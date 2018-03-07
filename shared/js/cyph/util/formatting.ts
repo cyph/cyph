@@ -14,8 +14,8 @@ export const numberToString	= (n: number) : string =>
  * @example 32483478 -> "30.97 MB".
  */
 export const readableByteLength	= (b: number) : string => {
-	const gb: number	= b / 1.074e+9;
-	const mb: number	= b / 1.049e+6;
+	const gb: number	= b / 1073741824;
+	const mb: number	= b / 1048576;
 	const kb: number	= b / 1024;
 
 	const o	=
