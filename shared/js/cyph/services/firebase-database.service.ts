@@ -29,7 +29,7 @@ import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto, NotificationTypes, StringProto} from '../proto';
 import {compareArrays} from '../util/compare';
 import {getOrSetDefault, getOrSetDefaultObservable} from '../util/get-or-set-default';
-import {lock} from '../util/lock';
+import {lock,lockFunction} from '../util/lock';
 import {requestByteStream} from '../util/request';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -353,21 +353,32 @@ export class FirebaseDatabaseService extends DatabaseService {
 			async () => {
 				let mutex: DatabaseReference|undefined;
 
-				const queue	= await this.getDatabaseRef(url);
-				const id	= uuid();
+				const queue		= await this.getDatabaseRef(url);
+				const id		= uuid();
+				const localLock	= lockFunction();
 
 				const contendForLock	= async () => retryUntilSuccessful(async () => {
-					if (mutex) {
-						return;
-					}
+					try {
+						if (mutex) {
+							return;
+						}
 
-					mutex	= await queue.push({timestamp: ServerValue.TIMESTAMP}).then();
-					await mutex.onDisconnect().remove().then();
-					await mutex.set({
-						id,
-						timestamp: ServerValue.TIMESTAMP,
-						...(reason ? {reason} : {})
-					}).then();
+						mutex	= await queue.push({timestamp: ServerValue.TIMESTAMP}).then();
+						await mutex.onDisconnect().remove().then();
+						await mutex.set({
+							id,
+							timestamp: ServerValue.TIMESTAMP,
+							...(reason ? {reason} : {})
+						}).then();
+					}
+					catch (err) {
+						if (mutex) {
+							await mutex.remove().then();
+							mutex	= undefined;
+						}
+
+						throw err;
+					}
 				});
 
 				try {
@@ -377,7 +388,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 					/* tslint:disable-next-line:promise-must-complete */
 					await new Promise<void>(resolve => {
-						queue.on('value', async snapshot => {
+						queue.on('value', async snapshot => localLock(async () => {
 							const value: {
 								[key: string]: {
 									id?: string;
@@ -409,9 +420,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 							lastReason	= o.reason;
 
 							if (!contenders.find(contender => contender.id === id)) {
+								if (mutex) {
+									await mutex.remove().then();
+									mutex	= undefined;
+								}
+
 								await contendForLock();
 							}
-						});
+						}));
 					});
 
 					return await f(lastReason);
@@ -420,7 +436,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 					await retryUntilSuccessful(async () => {
 						if (mutex) {
 							await mutex.remove().then();
-							await mutex.onDisconnect().cancel().then();
 						}
 					});
 				}
