@@ -629,26 +629,26 @@ message Form {
 		double min = 5;
 
 		/** Flex nogrow. */
-		bool noGrow = 13;
+		bool noGrow = 6;
 
 		/** Options to use if type Radio or Select. */
-		repeated string options = 6;
+		repeated string options = 7;
 
 		/** Indicates whether required. */
-		bool required = 7;
+		bool required = 8;
 
 		/** @see Type */
-		required Types type = 8;
+		required Types type = 9;
 
 		/** Value. */
 		oneof value {
-			bool valueBoolean = 9;
-			double valueNumber = 10;
-			string valueString = 11;
+			bool valueBoolean = 10;
+			double valueNumber = 11;
+			string valueString = 12;
 		}
 
 		/** Flexbox column width (as a percentage of the total row width). */
-		uint32 width = 12;
+		uint32 width = 13;
 	}
 
 	/** Row of elements. */
