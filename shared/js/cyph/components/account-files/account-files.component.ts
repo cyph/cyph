@@ -1,9 +1,15 @@
 import {Component, OnInit} from '@angular/core';
+import {User} from '../../account/user';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
+import {AccountFileSharingComponent} from '../account-file-sharing/account-file-sharing.component';
+import {
+	IAccountFileRecord
+} from '../../proto';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
@@ -30,6 +36,10 @@ export class AccountFilesComponent implements OnInit {
 		this.accountService.transitionEnd();
 	}
 
+	public async share (file?: IAccountFileRecord, user?: User) : Promise<void> {
+		await this.dialogService.baseDialog(AccountFileSharingComponent, o => {o.file = file});
+	}
+
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,
@@ -45,6 +55,9 @@ export class AccountFilesComponent implements OnInit {
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
+
+		/** @see dialogService */
+		public readonly dialogService: DialogService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
