@@ -144,7 +144,8 @@ export class AccountFilesService {
 	public readonly filesTotalSize: Observable<number>	=
 		this.filesListFiltered.files.pipe(map(files =>
 			files.reduce((n, {size}) => n + size, 0)
-		));
+		))
+	;
 
 	/** Total storage limit. */
 	public readonly fileStorageLimit: number	= convertStorageUnitsToBytes(1, StorageUnits.gb);

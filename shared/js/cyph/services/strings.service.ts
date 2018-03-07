@@ -113,6 +113,9 @@ export class StringsService {
 	public readonly deleteMessage: string				= `Delete`;
 
 	/** @see StringsService */
+	public readonly disabled: string					= `Disabled`;
+
+	/** @see StringsService */
 	public readonly discard: string						= `discard`;
 
 	/** @see StringsService */
@@ -150,6 +153,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly emptyContactList: string			= `You have no friends.`;
+
+	/** @see StringsService */
+	public readonly enabled: string						= `Enabled`;
 
 	/** @see StringsService */
 	public readonly endDate: string						= `End Date`;
@@ -574,6 +580,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly totalSpace: string					= `Total Space Used:`;
+
+	/** @see StringsService */
+	public readonly unknown: string						= `Unknown`;
 
 	/** @see StringsService */
 	public readonly unlock: string						= `Unlock`;

@@ -5,22 +5,25 @@
 	*ngIf='accountDatabaseService.currentUser.value'
 >
 	<div class='name'>
-		<h3>Your Name: {{accountDatabaseService.currentUser.value.user.name | async}}</h3>
+		<h3>
+			<span cyphTranslate>Your Name:</span>
+			<span>{{accountDatabaseService.currentUser.value?.user.name | async}}</span>
+		</h3>
 	</div>
 	<div class='email'>
-		<h3>Your Email: {{
-			(
-				accountDatabaseService.currentUser.value.user.externalUsernames | async
-			)?.email || 'Unknown'
-		}}</h3>
+		<h3>
+			<span cyphTranslate>Your Email:</span>
+			<span>{{(email.watch() | async) || stringsService.unknown}}</span>
+		</h3>
 	</div>
 	<div class='premium-status'>
-		<h3>Premium Status:
-			{{
-				(accountDatabaseService.currentUser.value.user.hasPremium | async) ?
-					'Enabled' :
-					'Disabled'
-			}}
+		<h3>
+			<span cyphTranslate>Premium Status:</span>
+			<span>{{
+				(accountDatabaseService.currentUser.value?.user.hasPremium | async) ?
+					stringsService.enabled :
+					stringsService.disabled
+			}}</span>
 		</h3>
 	</div>
 	<cyph-account-storage-analytics></cyph-account-storage-analytics>
