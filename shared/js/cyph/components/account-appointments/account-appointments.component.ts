@@ -79,8 +79,6 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 		current: combineLatest(this.unfilteredAppointments, watchTimestamp()).pipe(
 			map(([appointments, now]) => appointments.filter(({appointment}) =>
 				!appointment.occurred &&
-				appointment.calendarInvite.startTime !== undefined &&
-				appointment.calendarInvite.endTime !== undefined &&
 				(now + this.appointmentGracePeriod) >= appointment.calendarInvite.startTime &&
 				(now - this.appointmentGracePeriod) <= appointment.calendarInvite.endTime
 			))
@@ -88,8 +86,6 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 		future: combineLatest(this.unfilteredAppointments, watchTimestamp()).pipe(
 			map(([appointments, now]) => appointments.filter(({appointment}) =>
 				!appointment.occurred &&
-				appointment.calendarInvite.startTime !== undefined &&
-				appointment.calendarInvite.endTime !== undefined &&
 				(now + this.appointmentGracePeriod) < appointment.calendarInvite.startTime
 			))
 		),
@@ -99,8 +95,6 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 		past: combineLatest(this.unfilteredAppointments, watchTimestamp()).pipe(
 			map(([appointments, now]) => appointments.filter(({appointment}) =>
 				appointment.occurred || (
-					appointment.calendarInvite.startTime !== undefined &&
-					appointment.calendarInvite.endTime !== undefined &&
 					(now - this.appointmentGracePeriod) > appointment.calendarInvite.endTime
 				)
 			))
@@ -189,17 +183,11 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 		}
 
 		this.unfilteredAppointments.subscribe(appointments => {
-			this.calendarEvents	= appointments.
-				filter(({appointment}) =>
-					appointment.calendarInvite.endTime !== undefined &&
-					appointment.calendarInvite.startTime !== undefined &&
-					appointment.calendarInvite.title !== undefined
-				).map(({appointment}) => ({
-					end: <number> appointment.calendarInvite.endTime,
-					start: <number> appointment.calendarInvite.startTime,
-					title: <string> appointment.calendarInvite.title
-				}))
-			;
+			this.calendarEvents	= appointments.map(({appointment}) => ({
+				end: appointment.calendarInvite.endTime,
+				start: appointment.calendarInvite.startTime,
+				title: appointment.calendarInvite.title
+			}));
 
 			if (this.calendar) {
 				this.calendar.fullCalendar('refetchEvents');
