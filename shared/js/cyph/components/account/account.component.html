@@ -27,9 +27,8 @@
 	></cyph-account-menu>
 
 	<div class='content' fxFlex fxFlexFill fxLayout='column' fxLayout.xs='row'>
-		<div fxFlexFill>
+		<div fxFlexFill fxLayout='column' class='router-content'>
 			<div
-				fxLayout='column'
 				class='header animated slideInDown'
 				[class.fadeOutUp]='accountService.transition | async'
 				fxLayoutAlign='center center'
@@ -38,13 +37,13 @@
 				<h1>{{header}}</h1>
 			</div>
 			<div
-				class='router-content animated'
-				[class.fadeOutUp]='(accountService.transition | async) === true'
-				[class.top]='header'
-				[fxFlex]='header && !envService.isMobile? "90" : ""'
-				[fxFlex.gt-sm]='header ? "66" : ""'
-				[fxFlex.gt-md]='header ? "50" : ""'
-				fxLayout='column'
+				class='animated'
+				[class.fadeOutUp]='accountService.transition | async'
+				fxFlex
+				[style.height]='fill ? "100%" : undefined'
+				[ngStyle]='header && !envService.isMobile ? {padding: "0px 5vw"} : {}'
+				[ngStyle.gt-sm]='header ? {padding: "0px 16.5vw"} : {}'
+				[ngStyle.gt-md]='header ? {padding: "0px 25vw"} : {}'
 			>
 				<router-outlet></router-outlet>
 			</div>

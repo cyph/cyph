@@ -48,6 +48,18 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		;
 	}
 
+	/** Indicates whether section should take up 100% height. */
+	public get fill () : boolean {
+		return this.accountDatabaseService.currentUser.value !== undefined && [
+			'',
+			'contacts',
+			'patients',
+			'staff'
+		].find(
+			path => this.route === path
+		) !== undefined;
+	}
+
 	/** Header title for current section. */
 	public get header () : string|undefined {
 		const route	= this.route;
@@ -109,9 +121,9 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'settings',
 			'staff',
 			'video'
-		].filter(
+		].find(
 			path => this.route === path
-		).length > 0;
+		) !== undefined;
 	}
 
 	/** @inheritDoc */
@@ -202,9 +214,9 @@ export class AccountComponent implements AfterViewInit, OnInit {
 				'chat-transition',
 				'messages',
 				'notifications'
-			].filter(
+			].find(
 				path => this.route === path
-			).length > 0
+			) !== undefined
 		;
 	}
 

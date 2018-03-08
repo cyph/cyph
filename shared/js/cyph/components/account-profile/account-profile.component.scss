@@ -47,6 +47,13 @@ $header-size: 135px;
 	}
 }
 
+.header {
+	position: absolute;
+	width: 100%;
+	left: 0px;
+	top: 0px;
+}
+
 mat-card {
 	min-width: 50%;
 }
