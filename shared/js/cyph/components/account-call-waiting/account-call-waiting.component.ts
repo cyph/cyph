@@ -1,5 +1,9 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {combineLatest} from 'rxjs/observable/combineLatest';
+import {of} from 'rxjs/observable/of';
+import {map} from 'rxjs/operators/map';
+import {mergeMap} from 'rxjs/operators/mergeMap';
 import {User} from '../../account/user';
 import {AccountUserTypes, CallTypes, IAppointment} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
@@ -8,7 +12,10 @@ import {ChatService} from '../../services/chat.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
+import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
+import {sleep} from '../../util/wait';
+import {AccountComposeNoProvidersComponent} from '../account-compose-no-providers';
 
 
 /**
@@ -19,7 +26,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-call-waiting.component.scss'],
 	templateUrl: './account-call-waiting.component.html'
 })
-export class AccountCallWaitingComponent implements OnChanges, OnInit {
+export class AccountCallWaitingComponent implements AfterViewInit, OnChanges {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
@@ -28,6 +35,10 @@ export class AccountCallWaitingComponent implements OnChanges, OnInit {
 
 	/** @see AccountChatComponent */
 	@Input() public appointment?: IAppointment&{id: string};
+
+	/** Component for composing forms. */
+	@ViewChild(AccountComposeNoProvidersComponent)
+	public formCompose?: AccountComposeNoProvidersComponent;
 
 	/** Participants by type. */
 	public readonly participantsByType: BehaviorSubject<Map<AccountUserTypes, User[]>>	=
@@ -75,8 +86,35 @@ export class AccountCallWaitingComponent implements OnChanges, OnInit {
 	}
 
 	/** @inheritDoc */
-	public ngOnInit () : void {
-		this.accountService.transitionEnd();
+	public async ngAfterViewInit () : Promise<void> {
+		try {
+			if (!this.formCompose) {
+				throw new Error('No formCompose.');
+			}
+
+			if (!(
+				this.envService.isTelehealth &&
+				(this.appointment && this.appointment.forms && this.appointment.forms.length < 1)
+			)) {
+				return;
+			}
+
+			await sleep(0);
+
+			combineLatest(
+				this.accountDatabaseService.currentUser.pipe(mergeMap(o =>
+					o ? o.user.userType : of(undefined)
+				)),
+				this.formCompose.sent
+			).pipe(map(([userType, sent]) =>
+				sent !== true && userType === AccountUserTypes.Standard
+			)).subscribe(
+				this.sessionService.freezePong
+			);
+		}
+		finally {
+			this.accountService.transitionEnd();
+		}
 	}
 
 	constructor (
@@ -97,6 +135,9 @@ export class AccountCallWaitingComponent implements OnChanges, OnInit {
 
 		/** @see P2PWebRTCService */
 		public readonly p2pWebRTCService: P2PWebRTCService,
+
+		/** @see SessionService */
+		public readonly sessionService: SessionService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

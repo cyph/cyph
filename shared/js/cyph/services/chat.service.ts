@@ -6,7 +6,9 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {interval} from 'rxjs/observable/interval';
+import {filter} from 'rxjs/operators/filter';
 import {map} from 'rxjs/operators/map';
+import {take} from 'rxjs/operators/take';
 import {takeWhile} from 'rxjs/operators/takeWhile';
 import {Subscription} from 'rxjs/Subscription';
 import {ChatMessage, IChatData, IChatMessageLiveValue, States} from '../chat';
@@ -622,6 +624,11 @@ export class ChatService {
 						if (!this.sessionInitService.ephemeral) {
 							this.initProgressStart(42000);
 						}
+
+						await this.sessionService.freezePong.pipe(
+							filter(b => !b),
+							take(1)
+						).toPromise();
 
 						await this.dialogService.toast(
 							callType === 'video' ?

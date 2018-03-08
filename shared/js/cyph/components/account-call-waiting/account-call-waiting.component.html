@@ -2,12 +2,7 @@
 	<div
 		fxFlexFill
 		class='content'
-		[fxShow]='
-			(formCompose.sent | async) !== true &&
-			appointment?.forms?.length < 1 &&
-			envService.isTelehealth &&
-			(currentUser?.user.userType | async) === accountUserTypes.Standard
-		'
+		[fxShow]='sessionService.freezePong | async'
 	>
 		<cyph-account-compose-no-providers #formCompose></cyph-account-compose-no-providers>
 	</div>
@@ -17,12 +12,7 @@
 		fxLayout='column'
 		class='white-card animated fadeIn'
 		ngClass.lt-md='compact'
-		[fxHide]='
-			(formCompose.sent | async) !== true &&
-			appointment?.forms?.length < 1 &&
-			envService.isTelehealth &&
-			(currentUser?.user.userType | async) === accountUserTypes.Standard
-		'
+		[fxHide]='sessionService.freezePong | async'
 	>
 		<div fxFlexFill fxLayout='column' fxLayoutAlign='start center' class='content'>
 			<ng-container *ngIf='participantsByType | async as participants'>
