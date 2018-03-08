@@ -240,23 +240,25 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 		const timestamp	= new Date(await getTimestamp()).setMinutes(0);
 
-		this.currentDate.next(timestampToDate(timestamp - 86400000));
+		this.currentDate.next(timestampToDate(timestamp - 172800000));
 
-		this.duration		= 3600000;
+		const duration		= 14400000;
 		this.forbiddenDays	= [];
 		this.timeRange		= {
 			end: {hour: 24, minute: 0},
 			start: {hour: 0, minute: 0}
 		};
 
-		if (this.durations.indexOf(this.duration) < 0) {
-			this.durations.push(this.duration);
+		if (this.durations.indexOf(duration) < 0) {
+			this.durations.push(duration);
 		}
+
+		this.duration	= duration;
 
 		this.valueSubject.next({
 			...this.valueSubject.value,
-			endTime: timestamp + this.duration,
-			startTime: timestamp
+			endTime: timestamp + (duration / 2),
+			startTime: timestamp - (duration / 2)
 		});
 	}
 
