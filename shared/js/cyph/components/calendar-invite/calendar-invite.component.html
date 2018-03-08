@@ -1,308 +1,310 @@
-<div fxFlexFill fxLayout='column' (blur)='onTouched()' *ngIf='valueSubject | async; let value'>
-	<mat-form-field fxFlex *ngIf='!!reasons && !isDisabled'>
-		<mat-select
-			fxFlex
-			[ngModel]='value.title'
-			(ngModelChange)='value.title = $event; onChange(value)'
-			[placeholder]='stringsService.reasonForAppointment'
-			required
-		>
-			<mat-option [value]='reason' *ngFor='let reason of reasons; trackBy: trackBySelf'>
-				{{reason}}
-			</mat-option>
-		</mat-select>
-	</mat-form-field>
-
-	<mat-form-field fxFlex *ngIf='!reasons || isDisabled'>
-		<input
-			matInput
-			[ngModel]='value.title'
-			[placeholder]='stringsService.reasonForAppointment'
-			disabled
-			required
-			type='text'
-		/>
-	</mat-form-field>
-
-	<ng-container *ngIf='!isDisabled'>
-		<br />
-		<br />
-
-		<mat-form-field fxFlex>
+<ng-container *ngIf='currentDate | async as now'>
+	<div fxFlexFill fxLayout='column' (blur)='onTouched()' *ngIf='valueSubject | async as value'>
+		<mat-form-field fxFlex *ngIf='!!reasons && !isDisabled'>
 			<mat-select
 				fxFlex
-				[ngModel]='duration'
-				(ngModelChange)='
-					duration = $event;
-					value.endTime = value.startTime !== undefined ?
-						value.startTime + duration :
-						value.endTime
-					;
-					onChange(value);
-				'
-				[placeholder]='stringsService.appointmentDuration'
+				[ngModel]='value.title'
+				(ngModelChange)='value.title = $event; onChange(value)'
+				[placeholder]='stringsService.reasonForAppointment'
 				required
 			>
-				<mat-option
-					[value]='duration'
-					*ngFor='let duration of durations; trackBy: trackBySelf'
-				>
-					{{getDurationString(duration)}}
+				<mat-option [value]='reason' *ngFor='let reason of reasons; trackBy: trackBySelf'>
+					{{reason}}
 				</mat-option>
 			</mat-select>
+		</mat-form-field>
+
+		<mat-form-field fxFlex *ngIf='!reasons || isDisabled'>
+			<input
+				matInput
+				[ngModel]='value.title'
+				[placeholder]='stringsService.reasonForAppointment'
+				disabled
+				required
+				type='text'
+			/>
+		</mat-form-field>
+
+		<ng-container *ngIf='!isDisabled'>
+			<br />
+			<br />
+
+			<mat-form-field fxFlex>
+				<mat-select
+					fxFlex
+					[ngModel]='duration'
+					(ngModelChange)='
+						duration = $event;
+						value.endTime = value.startTime !== undefined ?
+							value.startTime + duration :
+							value.endTime
+						;
+						onChange(value);
+					'
+					[placeholder]='stringsService.appointmentDuration'
+					required
+				>
+					<mat-option
+						[value]='duration'
+						*ngFor='let duration of durations; trackBy: trackBySelf'
+					>
+						{{getDurationString(duration)}}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+
+			<br />
+		</ng-container>
+
+		<mat-form-field fxFlex *ngIf='!isDisabled'>
+			<mat-select
+				fxFlex
+				[ngModel]='value.callType'
+				(ngModelChange)='value.callType = $event; onChange(value)'
+				[placeholder]='stringsService.callType'
+				required
+			>
+				<mat-option [value]='callTypes.None'>{{stringsService.noCall}}</mat-option>
+				<mat-option [value]='callTypes.Audio'>{{stringsService.voice}}</mat-option>
+				<mat-option [value]='callTypes.Video'>{{stringsService.video}}</mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<mat-form-field fxFlex *ngIf='isDisabled'>
+			<input
+				matInput
+				[ngModel]='
+					value.callType === callTypes.Audio ?
+						stringsService.voice :
+						value.callType === callTypes.Video ?
+							stringsService.video :
+							stringsService.noCall
+				'
+				[placeholder]='stringsService.callType'
+				disabled
+				required
+				type='text'
+			/>
 		</mat-form-field>
 
 		<br />
-	</ng-container>
 
-	<mat-form-field fxFlex *ngIf='!isDisabled'>
-		<mat-select
-			fxFlex
-			[ngModel]='value.callType'
-			(ngModelChange)='value.callType = $event; onChange(value)'
-			[placeholder]='stringsService.callType'
-			required
-		>
-			<mat-option [value]='callTypes.None'>{{stringsService.noCall}}</mat-option>
-			<mat-option [value]='callTypes.Audio'>{{stringsService.voice}}</mat-option>
-			<mat-option [value]='callTypes.Video'>{{stringsService.video}}</mat-option>
-		</mat-select>
-	</mat-form-field>
+		<div fxFlex>
+			<mat-form-field>
+				<input
+					matInput
+					[disabled]='isDisabled'
+					[matDatepicker]='datepickerStart'
+					[matDatepickerFilter]='dateFilter'
+					[min]='
+						(
+							getTimes(
+								timeRange,
+								timeIncrement,
+								getStartPadding(timeRange, now, now),
+								duration / 60000
+							).length > 0 ?
+								now :
+								(tomorrow | async)
+						)
+					'
+					[ngModel]='timestampToDate(value.startTime)'
+					(ngModelChange)='
+						value.startTime = timestampUpdate(value.startTime, $event);
+						value.endTime = value.startTime + duration;
+						onChange(value);
+					'
+					[placeholder]='stringsService.startDate'
+					required
+				/>
+				<mat-datepicker-toggle matSuffix [for]='datepickerStart'></mat-datepicker-toggle>
+			</mat-form-field>
+			<mat-datepicker [touchUi]='mobile' #datepickerStart></mat-datepicker>
 
-	<mat-form-field fxFlex *ngIf='isDisabled'>
-		<input
-			matInput
-			[ngModel]='
-				value.callType === callTypes.Audio ?
-					stringsService.voice :
-					value.callType === callTypes.Video ?
-						stringsService.video :
-						stringsService.noCall
-			'
-			[placeholder]='stringsService.callType'
-			disabled
-			required
-			type='text'
-		/>
-	</mat-form-field>
+			&nbsp;&nbsp;&nbsp;
 
-	<br />
+			<mat-form-field *ngIf='isDisabled'>
+				<input
+					matInput
+					mat-timepicker
+					[disabled]='isDisabled'
+					[ngModel]='timestampTo24HourTimeString(value.startTime)'
+					(ngModelChange)='
+						value.startTime = timestampUpdate(value.startTime, undefined, $event);
+						value.endTime = value.startTime + duration;
+						onChange(value);
+					'
+					type='time'
+					[placeholder]='stringsService.startTime'
+				/>
+			</mat-form-field>
 
-	<div fxFlex>
-		<mat-form-field>
-			<input
-				matInput
-				[disabled]='isDisabled'
-				[matDatepicker]='datepickerStart'
-				[matDatepickerFilter]='dateFilter'
-				[min]='
-					(
-						getTimes(
+			<mat-form-field *ngIf='!isDisabled'>
+				<mat-select
+					fxFlex='180px'
+					[ngModel]='timestampToTime(value.startTime)'
+					(ngModelChange)='
+						value.startTime = timestampUpdate(value.startTime, undefined, $event);
+						value.endTime = value.startTime + duration;
+						onChange(value);
+					'
+					[placeholder]='stringsService.startTime'
+					required
+				>
+					<mat-option [value]='time' *ngFor='
+						let time of getTimes(
 							timeRange,
 							timeIncrement,
-							getStartPadding(timeRange, now | async, now | async),
+							getStartPadding(timeRange, now, value.startTime),
 							duration / 60000
-						).length > 0 ?
-							now :
-							tomorrow
-					) | async
-				'
-				[ngModel]='timestampToDate(value.startTime)'
-				(ngModelChange)='
-					value.startTime = timestampUpdate(value.startTime, $event);
-					value.endTime = value.startTime + duration;
-					onChange(value);
-				'
-				[placeholder]='stringsService.startDate'
-				required
-			/>
-			<mat-datepicker-toggle matSuffix [for]='datepickerStart'></mat-datepicker-toggle>
-		</mat-form-field>
-		<mat-datepicker [touchUi]='mobile' #datepickerStart></mat-datepicker>
+						);
+						trackBy: trackBySelf
+					'>
+						{{timeToString(time)}}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
 
-		&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;
 
-		<mat-form-field *ngIf='isDisabled'>
-			<input
-				matInput
-				mat-timepicker
+			<mat-form-field>
+				<input
+					matInput
+					disabled
+					type='text'
+					[placeholder]='stringsService.timeZone'
+					value='EST'
+				/>
+			</mat-form-field>
+
+			<ng-container *ngIf='envService.environment.local && !isDisabled'>
+				&nbsp;&nbsp;&nbsp;
+				<a mat-button matTooltip='Now' cyphTranslate (click)='setNow()'>Now</a>
+			</ng-container>
+		</div>
+
+		<!-- End time selection hidden in favor of appointment duration selection, for now. -->
+		<div fxFlex *ngIf='isDisabled'>
+			<mat-form-field>
+				<input
+					matInput
+					[disabled]='isDisabled'
+					[matDatepicker]='datepickerEnd'
+					[matDatepickerFilter]='dateFilter'
+					[min]='timestampToDate(value.startTime)'
+					[ngModel]='timestampToDate(value.endTime)'
+					(ngModelChange)='
+						value.endTime = timestampUpdate(value.endTime, $event);
+						value.startTime = value.endTime - duration;
+						onChange(value);
+					'
+					[placeholder]='stringsService.endDate'
+				/>
+				<mat-datepicker-toggle matSuffix [for]='datepickerEnd'></mat-datepicker-toggle>
+			</mat-form-field>
+			<mat-datepicker [touchUi]='mobile' #datepickerEnd></mat-datepicker>
+
+			&nbsp;&nbsp;&nbsp;
+
+			<mat-form-field *ngIf='isDisabled'>
+				<input
+					matInput
+					mat-timepicker
+					[disabled]='isDisabled'
+					[ngModel]='timestampTo24HourTimeString(value.endTime)'
+					(ngModelChange)='
+						value.endTime = timestampUpdate(value.endTime, undefined, $event);
+						value.startTime = value.endTime - duration;
+						onChange(value);
+					'
+					type='time'
+					[placeholder]='stringsService.endTime'
+				/>
+			</mat-form-field>
+
+			<mat-form-field *ngIf='!isDisabled'>
+				<mat-select
+					fxFlex='180px'
+					[ngModel]='timestampToTime(value.endTime)'
+					(ngModelChange)='
+						value.endTime = timestampUpdate(value.endTime, undefined, $event);
+						value.startTime = value.endTime - duration;
+						onChange(value);
+					'
+					[placeholder]='stringsService.endTime'
+					required
+				>
+					<mat-option [value]='time' *ngFor='
+						let time of getTimes(timeRange, timeIncrement, duration / 60000);
+						trackBy: trackBySelf
+					'>
+						{{timeToString(time)}}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+
+			&nbsp;&nbsp;&nbsp;
+
+			<mat-form-field>
+				<input
+					matInput
+					disabled
+					type='text'
+					[placeholder]='stringsService.timeZone'
+					value='EST'
+				/>
+			</mat-form-field>
+		</div>
+
+		<br />
+
+		<div cyphTranslate fxFlex>Alternatively, I'm generally available on:</div>
+
+		<br />
+
+		<div fxFlex>
+			<mat-checkbox
 				[disabled]='isDisabled'
-				[ngModel]='timestampTo24HourTimeString(value.startTime)'
-				(ngModelChange)='
-					value.startTime = timestampUpdate(value.startTime, undefined, $event);
-					value.endTime = value.startTime + duration;
-					onChange(value);
-				'
-				type='time'
-				[placeholder]='stringsService.startTime'
-			/>
-		</mat-form-field>
-
-		<mat-form-field *ngIf='!isDisabled'>
-			<mat-select
-				fxFlex='180px'
-				[ngModel]='timestampToTime(value.startTime)'
-				(ngModelChange)='
-					value.startTime = timestampUpdate(value.startTime, undefined, $event);
-					value.endTime = value.startTime + duration;
-					onChange(value);
-				'
-				[placeholder]='stringsService.startTime'
-				required
+				[ngModel]='value.alternateDays[day]'
+				(ngModelChange)='value.alternateDays[day] = $event; onChange(value)'
+				[value]='day'
+				*ngFor='let day of dayOfWeekValues; trackBy: trackBySelf'
 			>
-				<mat-option [value]='time' *ngFor='
-					let time of getTimes(
-						timeRange,
-						timeIncrement,
-						getStartPadding(timeRange, now | async, value.startTime),
-						duration / 60000
-					);
-					trackBy: trackBySelf
-				'>
-					{{timeToString(time)}}
-				</mat-option>
-			</mat-select>
-		</mat-form-field>
+				{{getDayString(day)}}
+				&nbsp;&nbsp;&nbsp;
+			</mat-checkbox>
+		</div>
 
-		&nbsp;&nbsp;&nbsp;
+		<br />
 
-		<mat-form-field>
-			<input
-				matInput
-				disabled
-				type='text'
-				[placeholder]='stringsService.timeZone'
-				value='EST'
-			/>
-		</mat-form-field>
-
-		<ng-container *ngIf='envService.environment.local && !isDisabled'>
-			&nbsp;&nbsp;&nbsp;
-			<a mat-button matTooltip='Now' cyphTranslate (click)='setNow()'>Now</a>
-		</ng-container>
-	</div>
-
-	<!-- End time selection hidden in favor of appointment duration selection, for now. -->
-	<div fxFlex *ngIf='isDisabled'>
-		<mat-form-field>
-			<input
-				matInput
+		<div fxFlex>
+			<mat-checkbox
 				[disabled]='isDisabled'
-				[matDatepicker]='datepickerEnd'
-				[matDatepickerFilter]='dateFilter'
-				[min]='timestampToDate(value.startTime)'
-				[ngModel]='timestampToDate(value.endTime)'
-				(ngModelChange)='
-					value.endTime = timestampUpdate(value.endTime, $event);
-					value.startTime = value.endTime - duration;
-					onChange(value);
-				'
-				[placeholder]='stringsService.endDate'
-			/>
-			<mat-datepicker-toggle matSuffix [for]='datepickerEnd'></mat-datepicker-toggle>
-		</mat-form-field>
-		<mat-datepicker [touchUi]='mobile' #datepickerEnd></mat-datepicker>
-
-		&nbsp;&nbsp;&nbsp;
-
-		<mat-form-field *ngIf='isDisabled'>
-			<input
-				matInput
-				mat-timepicker
-				[disabled]='isDisabled'
-				[ngModel]='timestampTo24HourTimeString(value.endTime)'
-				(ngModelChange)='
-					value.endTime = timestampUpdate(value.endTime, undefined, $event);
-					value.startTime = value.endTime - duration;
-					onChange(value);
-				'
-				type='time'
-				[placeholder]='stringsService.endTime'
-			/>
-		</mat-form-field>
-
-		<mat-form-field *ngIf='!isDisabled'>
-			<mat-select
-				fxFlex='180px'
-				[ngModel]='timestampToTime(value.endTime)'
-				(ngModelChange)='
-					value.endTime = timestampUpdate(value.endTime, undefined, $event);
-					value.startTime = value.endTime - duration;
-					onChange(value);
-				'
-				[placeholder]='stringsService.endTime'
-				required
+				[ngModel]='value.alternateTimeFrames[timeFrame]'
+				(ngModelChange)='value.alternateTimeFrames[timeFrame] = $event; onChange(value)'
+				[value]='timeFrame'
+				*ngFor='let timeFrame of timeFrameValues; trackBy: trackBySelf'
 			>
-				<mat-option [value]='time' *ngFor='
-					let time of getTimes(timeRange, timeIncrement, duration / 60000);
-					trackBy: trackBySelf
-				'>
-					{{timeToString(time)}}
-				</mat-option>
-			</mat-select>
-		</mat-form-field>
+				{{getTimeFrameString(timeFrame)}}
+				&nbsp;&nbsp;&nbsp;
+			</mat-checkbox>
+		</div>
 
-		&nbsp;&nbsp;&nbsp;
+		<br />
+		<br />
 
-		<mat-form-field>
-			<input
+		<mat-form-field fxFlex *ngIf='!isDisabled'>
+			<textarea
 				matInput
-				disabled
-				type='text'
-				[placeholder]='stringsService.timeZone'
-				value='EST'
-			/>
+				matTextareaAutosize
+				matAutosizeMinRows='4'
+				[ngModel]='value.description'
+				(ngModelChange)='value.description = $event; onChange(value)'
+				[placeholder]='stringsService.notes'
+			></textarea>
 		</mat-form-field>
+
+		<h4 fxFlex *ngIf='isDisabled'>{{stringsService.notes}}</h4>
+		<div fxFlex class='notes' *ngIf='isDisabled'>{{value.description}}</div>
 	</div>
-
-	<br />
-
-	<div cyphTranslate fxFlex>Alternatively, I'm generally available on:</div>
-
-	<br />
-
-	<div fxFlex>
-		<mat-checkbox
-			[disabled]='isDisabled'
-			[ngModel]='value.alternateDays[day]'
-			(ngModelChange)='value.alternateDays[day] = $event; onChange(value)'
-			[value]='day'
-			*ngFor='let day of dayOfWeekValues; trackBy: trackBySelf'
-		>
-			{{getDayString(day)}}
-			&nbsp;&nbsp;&nbsp;
-		</mat-checkbox>
-	</div>
-
-	<br />
-
-	<div fxFlex>
-		<mat-checkbox
-			[disabled]='isDisabled'
-			[ngModel]='value.alternateTimeFrames[timeFrame]'
-			(ngModelChange)='value.alternateTimeFrames[timeFrame] = $event; onChange(value)'
-			[value]='timeFrame'
-			*ngFor='let timeFrame of timeFrameValues; trackBy: trackBySelf'
-		>
-			{{getTimeFrameString(timeFrame)}}
-			&nbsp;&nbsp;&nbsp;
-		</mat-checkbox>
-	</div>
-
-	<br />
-	<br />
-
-	<mat-form-field fxFlex *ngIf='!isDisabled'>
-		<textarea
-			matInput
-			matTextareaAutosize
-			matAutosizeMinRows='4'
-			[ngModel]='value.description'
-			(ngModelChange)='value.description = $event; onChange(value)'
-			[placeholder]='stringsService.notes'
-		></textarea>
-	</mat-form-field>
-
-	<h4 fxFlex *ngIf='isDisabled'>{{stringsService.notes}}</h4>
-	<div fxFlex class='notes' *ngIf='isDisabled'>{{value.description}}</div>
-</div>
+</ng-container>

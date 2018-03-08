@@ -41,6 +41,9 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 	/** @see CallTypes */
 	public readonly callTypes: typeof CallTypes						= CallTypes;
 
+	/** Current date. */
+	public readonly currentDate: Promise<Date>						= getDate();
+
 	/** Date filter to prevent forbidden days from being selected. */
 	public readonly dateFilter										= (d: Date) : boolean =>
 		this.forbiddenDays.indexOf(d.getDay()) < 0
@@ -104,9 +107,6 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean									= this.envService.isMobile;
-
-	/** Current date. */
-	public readonly now: Promise<Date>								= getDate();
 
 	/** Change event callback. */
 	public onChange: (value: ICalendarInvite) => void				= () => {};

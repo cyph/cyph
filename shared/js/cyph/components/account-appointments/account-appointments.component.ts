@@ -176,7 +176,7 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 					of(undefined)
 				)
 			)),
-			map(arr => filterUndefined(arr))
+			map(filterUndefined)
 		);
 	}
 
