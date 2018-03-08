@@ -436,7 +436,7 @@ export class ChatService {
 		totalTime: number = ChatService.approximateKeyExchangeTime,
 		timeInterval: number = 250
 	) : void {
-		const increment	= timeInterval / ChatService.approximateKeyExchangeTime;
+		const increment	= timeInterval / totalTime;
 
 		interval(timeInterval).pipe(
 			takeWhile(() => this.chat.initProgress.value < 100),
