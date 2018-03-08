@@ -44,7 +44,7 @@ export class MaterialDialogService implements DialogService {
 			;
 
 			if (closeFunction) {
-				closeFunction.next(() => matDialogRef.close());
+				closeFunction.next(() => { matDialogRef.close(); });
 			}
 
 			await matDialogRef.afterClosed().toPromise();
@@ -61,7 +61,7 @@ export class MaterialDialogService implements DialogService {
 			const matDialogRef	= this.matDialog.open(componentType);
 
 			if (closeFunction) {
-				closeFunction.next(() => matDialogRef.close());
+				closeFunction.next(() => { matDialogRef.close(); });
 			}
 
 			if (setInputs) {
@@ -104,7 +104,7 @@ export class MaterialDialogService implements DialogService {
 			;
 
 			if (closeFunction) {
-				closeFunction.next(() => matDialogRef.close());
+				closeFunction.next(() => { matDialogRef.close(); });
 			}
 
 			const promise	= matDialogRef.afterClosed().toPromise<boolean>();
@@ -144,7 +144,7 @@ export class MaterialDialogService implements DialogService {
 			matDialogRef.componentInstance.src	= src;
 
 			if (closeFunction) {
-				closeFunction.next(() => matDialogRef.close());
+				closeFunction.next(() => { matDialogRef.close(); });
 			}
 
 			await matDialogRef.afterClosed().toPromise();
