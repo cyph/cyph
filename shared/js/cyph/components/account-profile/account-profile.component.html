@@ -50,6 +50,32 @@
 	</div>
 </ng-template>
 
+<ng-template #emailLikeButtons>
+	<div fxLayout='row' fxLayoutGap='16px'>
+		<button
+			mat-mini-fab
+			cyphTranslate
+			matTooltip='New Message'
+			[routerLink]='
+				accountService.routeRoot + "compose/" + user?.username
+			'
+		>
+			<mat-icon>email</mat-icon>
+		</button>
+
+		<button
+			mat-mini-fab
+			cyphTranslate
+			matTooltip='Open Messages'
+			[routerLink]='
+				accountService.routeRoot + "messages/" + user?.username
+			'
+		>
+			<mat-icon>message</mat-icon>
+		</button>
+	</div>
+</ng-template>
+
 <ng-template #editButton>
 	<div fxLayout='row' fxLayoutGap='16px' class='edit-buttons edit-hide' *ngIf='isCurrentUser'>
 		<button
@@ -301,7 +327,7 @@
 					<mat-card-content
 						*ngIf='(user?.userType | async) === accountUserTypes.Standard'
 					>
-						<div fxLayout='column'>
+						<div fxLayout='column' fxLayoutGap='16px'>
 							<h1 cyphTranslate>Patient Info</h1>
 							<h2>
 								<span cyphTranslate>Gender:</span>
@@ -310,6 +336,10 @@
 							</h2>
 							<div class='description' *ngIf='user?.description'>
 								{{user?.description | async}}
+							</div>
+
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<ng-container *ngTemplateOutlet='emailLikeButtons'></ng-container>
 							</div>
 						</div>
 					</mat-card-content>
@@ -371,29 +401,7 @@
 
 							<div></div>
 
-							<div fxLayout='row' fxLayoutGap='16px'>
-								<button
-									mat-mini-fab
-									cyphTranslate
-									matTooltip='New Message'
-									[routerLink]='
-										accountService.routeRoot + "compose/" + user?.username
-									'
-								>
-									<mat-icon>email</mat-icon>
-								</button>
-
-								<button
-									mat-mini-fab
-									cyphTranslate
-									matTooltip='Open Messages'
-									[routerLink]='
-										accountService.routeRoot + "messages/" + user?.username
-									'
-								>
-									<mat-icon>message</mat-icon>
-								</button>
-							</div>
+							<ng-container *ngTemplateOutlet='emailLikeButtons'></ng-container>
 						</div>
 						<mat-list>
 							<mat-list-item *ngIf='user?.description'>
@@ -500,29 +508,7 @@
 								{{user?.description | async}}
 							</div>
 
-							<div fxLayout='row' fxLayoutGap='16px'>
-								<button
-									mat-mini-fab
-									cyphTranslate
-									matTooltip='New Message'
-									[routerLink]='
-										accountService.routeRoot + "compose/" + user?.username
-									'
-								>
-									<mat-icon>email</mat-icon>
-								</button>
-
-								<button
-									mat-mini-fab
-									cyphTranslate
-									matTooltip='Open Messages'
-									[routerLink]='
-										accountService.routeRoot + "messages/" + user?.username
-									'
-								>
-									<mat-icon>message</mat-icon>
-								</button>
-							</div>
+							<ng-container *ngTemplateOutlet='emailLikeButtons'></ng-container>
 						</div>
 					</mat-card-content>
 				</mat-card>
