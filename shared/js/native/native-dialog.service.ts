@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {SnackBar} from 'nativescript-snackbar';
+import {Observer} from 'rxjs/Observer';
 import {alert, confirm} from 'tns-core-modules/ui/dialogs/dialogs';
 import {DialogImageComponent} from './components/dialog-image';
 import {LockFunction} from './js/cyph/lock-function-type';
@@ -25,14 +26,14 @@ export class NativeDialogService implements DialogService {
 
 	/**
 	 * @inheritDoc
-	 * @param getCloseFunction Currently unsupported (not implemented exception).
+	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async alert (
 		o: {content: string; ok?: string; title?: string},
-		getCloseFunction?: (close: () => void) => void
+		closeFunction?: Observer<() => void>
 	) : Promise<void> {
-		if (getCloseFunction) {
-			throw new Error('NativeDialogService.baseDialog getCloseFunction is unsupported.');
+		if (closeFunction) {
+			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
 		}
 
 		return this.lock(async () => {
@@ -47,18 +48,18 @@ export class NativeDialogService implements DialogService {
 	/**
 	 * @inheritDoc
 	 * @param setInputs Currently unsupported (not implemented exception).
-	 * @param getCloseFunction Currently unsupported (not implemented exception).
+	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async baseDialog<T> (
 		componentType: ComponentType<T>,
 		setInputs?: (componentInstance: T) => void,
-		getCloseFunction?: (close: () => void) => void
+		closeFunction?: Observer<() => void>
 	) : Promise<void> {
 		if (setInputs) {
 			throw new Error('NativeDialogService.baseDialog setInputs is unsupported.');
 		}
-		if (getCloseFunction) {
-			throw new Error('NativeDialogService.baseDialog getCloseFunction is unsupported.');
+		if (closeFunction) {
+			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
 		}
 
 		return this.lock(async () => {
@@ -69,7 +70,7 @@ export class NativeDialogService implements DialogService {
 	/**
 	 * @inheritDoc
 	 * @param o.timeout Currently unsupported (ignored).
-	 * @param getCloseFunction Currently unsupported (not implemented exception).
+	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async confirm (
 		o: {
@@ -79,7 +80,7 @@ export class NativeDialogService implements DialogService {
 			timeout?: number;
 			title?: string;
 		},
-		getCloseFunction?: (close: () => void) => void
+		closeFunction?: Observer<() => void>
 	) : Promise<boolean> {
 		return this.lock(async () => {
 			return !!(await confirm({
@@ -98,14 +99,14 @@ export class NativeDialogService implements DialogService {
 
 	/**
 	 * @inheritDoc
-	 * @param getCloseFunction Currently unsupported (not implemented exception).
+	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async image (
 		src: SafeUrl|string,
-		getCloseFunction?: (close: () => void) => void
+		closeFunction?: Observer<() => void>
 	) : Promise<void> {
-		if (getCloseFunction) {
-			throw new Error('NativeDialogService.baseDialog getCloseFunction is unsupported.');
+		if (closeFunction) {
+			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
 		}
 
 		if (typeof src !== 'string') {
