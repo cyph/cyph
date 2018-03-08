@@ -620,7 +620,7 @@ export class ChatService {
 				if (callType !== undefined) {
 					this.sessionService.yt().then(async () => {
 						if (!this.sessionInitService.ephemeral) {
-							this.initProgressStart();
+							this.initProgressStart(42000);
 						}
 
 						await this.dialogService.toast(
