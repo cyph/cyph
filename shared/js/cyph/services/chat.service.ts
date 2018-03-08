@@ -621,14 +621,14 @@ export class ChatService {
 			this.sessionService.connected.then(async () => {
 				if (callType !== undefined) {
 					this.sessionService.yt().then(async () => {
-						if (!this.sessionInitService.ephemeral) {
-							this.initProgressStart(42000);
-						}
-
 						await this.sessionService.freezePong.pipe(
 							filter(b => !b),
 							take(1)
 						).toPromise();
+
+						if (!this.sessionInitService.ephemeral) {
+							this.initProgressStart(42000);
+						}
 
 						await this.dialogService.toast(
 							callType === 'video' ?
