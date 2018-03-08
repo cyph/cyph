@@ -164,9 +164,7 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 	public trackBySelf: typeof trackBySelf							= trackBySelf;
 
 	/** Value. */
-	public readonly valueSubject: BehaviorSubject<ICalendarInvite|undefined>	=
-		new BehaviorSubject<ICalendarInvite|undefined>(undefined)
-	;
+	public value?: ICalendarInvite;
 
 	/** Default appointment reason dropdown selection. */
 	public get defaultReasonForAppointment () : string|undefined {
@@ -175,11 +173,8 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 	/** @inheritDoc */
 	public ngOnChanges () : void {
-		if (this.valueSubject.value && !this.valueSubject.value.title) {
-			this.valueSubject.next({
-				...this.valueSubject.value,
-				title: this.defaultReasonForAppointment
-			});
+		if (this.value && !this.value.title) {
+			this.value.title	= this.defaultReasonForAppointment;
 		}
 
 		if (!this.followUp) {
@@ -203,15 +198,15 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 		/* One week from today. */
 		const timestamp	= (await getTimestamp()) + 604800000;
 
-		if (this.valueSubject.value === undefined) {
-			this.valueSubject.next({
+		if (this.value === undefined) {
+			this.value	= {
 				alternateDays: {},
 				alternateTimeFrames: {},
 				description: '',
 				endTime: timestamp + this.duration,
 				startTime: timestamp,
 				title: this.defaultReasonForAppointment
-			});
+			};
 		}
 	}
 
@@ -234,7 +229,7 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 	/** Disable all validation and set appointment to now. Local environments only. */
 	public async setNow () : Promise<void> {
-		if (!this.envService.environment.local) {
+		if (!this.envService.environment.local || !this.value) {
 			return;
 		}
 
@@ -253,19 +248,14 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 			this.durations.push(duration);
 		}
 
-		this.duration	= duration;
-
-		this.valueSubject.next({
-			...this.valueSubject.value,
-			endTime: timestamp + (duration / 2),
-			startTime: timestamp - (duration / 2)
-		});
+		this.duration			= duration;
+		this.value.startTime	= timestamp - (duration / 2);
 	}
 
 	/** @inheritDoc */
 	public writeValue (value?: ICalendarInvite) : void {
-		if (value && this.valueSubject.value !== value) {
-			this.valueSubject.next(value);
+		if (value && this.value !== value) {
+			this.value	= value;
 		}
 	}
 
