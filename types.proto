@@ -340,19 +340,19 @@ message CalendarInvite {
 	map<uint32, bool> alternateTimeFrames = 2;
 
 	/** @see CallTypes */
-	CallTypes callType = 3;
+	required CallTypes callType = 3;
 
 	/** Event description. */
-	string description = 4;
+	required string description = 4;
 
 	/** End timestamp. */
-	double endTime = 5;
+	required double endTime = 5;
 
 	/** Start timestamp. */
-	double startTime = 6;
+	required double startTime = 6;
 
 	/** Event title/subject. */
-	string title = 7;
+	required string title = 7;
 }
 
 /** Call types. */

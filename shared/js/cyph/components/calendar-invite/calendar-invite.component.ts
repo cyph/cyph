@@ -167,8 +167,8 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 	public value?: ICalendarInvite;
 
 	/** Default appointment reason dropdown selection. */
-	public get defaultReasonForAppointment () : string|undefined {
-		return this.followUp ? this.stringsService.followUpNoun : undefined;
+	public get defaultReasonForAppointment () : string {
+		return this.followUp ? this.stringsService.followUpNoun : '';
 	}
 
 	/** @inheritDoc */
@@ -202,6 +202,7 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 			this.value	= {
 				alternateDays: {},
 				alternateTimeFrames: {},
+				callType: CallTypes.None,
 				description: '',
 				endTime: timestamp + this.duration,
 				startTime: timestamp,

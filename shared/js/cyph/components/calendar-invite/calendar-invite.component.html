@@ -1,5 +1,14 @@
 <ng-container *ngIf='currentDate | async as now'>
-	<div fxFlexFill fxLayout='column' (blur)='onTouched()' *ngIf='value !== undefined'>
+	<div fxFlexFill fxLayout='column' (blur)='onTouched()' *ngIf='
+		value !== undefined &&
+		value.alternateDays !== undefined &&
+		value.alternateTimeFrames !== undefined &&
+		value.callType !== undefined &&
+		value.description !== undefined &&
+		value.endTime !== undefined &&
+		value.startTime !== undefined &&
+		value.title !== undefined
+	'>
 		<mat-form-field fxFlex *ngIf='!!reasons && !isDisabled'>
 			<mat-select
 				fxFlex
