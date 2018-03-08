@@ -36,6 +36,9 @@ export class AccountContactsSearchComponent {
 		this.accountContactsService.contactList
 	;
 
+	/** Allows looking up non-contact users by exact username match and opening their profiles. */
+	@Input() public externalUsers: boolean	= false;
+
 	/** @see SearchBarComponent.placeholder */
 	@Input() public placeholder?: string;
 
@@ -116,6 +119,7 @@ export class AccountContactsSearchComponent {
 						;
 
 						const externalUser	= (
+							this.externalUsers &&
 							(results.length < 1 || results[0].user.username !== query) &&
 							(await this.accountUserLookupService.exists(query))
 						) ?
