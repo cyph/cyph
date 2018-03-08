@@ -90,6 +90,7 @@
 			<a
 				cyphTranslate
 				[routerLink]='envService.newCyphUrlRetry'
+				*ngIf='!accounts'
 			>try again</a>.
 		</div>
 		<div *ngIf='envService.isTelehealth'>
@@ -105,6 +106,7 @@
 				<a
 					cyphTranslate
 					[routerLink]='envService.newCyphUrlRetry'
+					*ngIf='!accounts'
 				>try again</a><span>.</span>
 			</div>
 			<div *ngIf='!sessionService.state.isAlice'>
