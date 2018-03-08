@@ -1,8 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {combineLatest} from 'rxjs/observable/combineLatest';
+import {concat} from 'rxjs/observable/concat';
+import {of} from 'rxjs/observable/of';
+import {filter} from 'rxjs/operators/filter';
 import {map} from 'rxjs/operators/map';
+import {mergeMap} from 'rxjs/operators/mergeMap';
 import {User} from '../../account';
 import {States} from '../../chat/enums';
 import {AccountUserTypes, ChatMessageValue, IForm} from '../../proto';
@@ -53,10 +57,16 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 	/** @see AccountChatMessageBoxComponent.messageType */
 	public readonly messageType: BehaviorSubject<ChatMessageValue.Types>	= cacheObservable(
-		combineLatest(
-			this.activatedRoute.data,
+		concat(
+			of(undefined),
+			this.router.events.pipe(filter(event => event instanceof NavigationEnd))
+		).pipe(mergeMap(() => combineLatest(
+			this.activatedRoute.firstChild ?
+				this.activatedRoute.firstChild.data :
+				this.activatedRoute.data
+			,
 			this.activatedRoute.params
-		).pipe(map(([o, params]) => {
+		))).pipe(map(([o, params]) => {
 			const messageType: ChatMessageValue.Types	= o.messageType;
 
 			const value	= typeof o.value === 'function' ? o.value() : o.value;
@@ -212,6 +222,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
+
+		/** @ignore */
+		private readonly router: Router,
 
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,

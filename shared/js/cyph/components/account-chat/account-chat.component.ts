@@ -1,7 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router, UrlSegment} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {combineLatest} from 'rxjs/observable/combineLatest';
+import {concat} from 'rxjs/observable/concat';
+import {of} from 'rxjs/observable/of';
+import {filter} from 'rxjs/operators/filter';
+import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
 import {UserPresence} from '../../account/enums';
 import {UiStyles} from '../../chat/enums';
@@ -19,6 +23,7 @@ import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {P2PService} from '../../services/p2p.service';
 import {StringsService} from '../../services/strings.service';
 import {normalize} from '../../util/formatting';
+import {lockFunction} from '../../util/lock';
 import {sleep} from '../../util/wait';
 
 
@@ -36,7 +41,10 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	private destroyed: boolean	= false;
 
 	/** @ignore */
-	private initiated: boolean	= false;
+	private initiatedAppointmentID?: string;
+
+	/** @ignore */
+	private initiatedUsername?: string;
 
 	/** Appointment data, when applicable. */
 	public readonly appointment: BehaviorSubject<(IAppointment&{id: string})|undefined>	=
@@ -88,11 +96,21 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			this.messageType.next(ChatMessageValue.Types.Quill);
 		}
 
-		combineLatest(
-			this.activatedRoute.data,
+		const lock	= lockFunction();
+
+		concat(
+			of(undefined),
+			this.router.events.pipe(filter(event => event instanceof NavigationEnd))
+		).pipe(mergeMap(() => combineLatest(
+			this.activatedRoute.firstChild ?
+				this.activatedRoute.firstChild.data :
+				this.activatedRoute.data
+			,
 			this.activatedRoute.params,
-			this.activatedRoute.url
-		).subscribe(async ([
+			this.activatedRoute.firstChild ?
+				this.activatedRoute.firstChild.url :
+				this.activatedRoute.url
+		))).subscribe(async ([
 			{callType, promptFollowup},
 			{appointmentID, sessionSubID, username},
 			[{path}]
@@ -100,85 +118,105 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			{callType?: 'audio'|'video'; promptFollowup?: boolean},
 			{appointmentID?: string; sessionSubID?: string; username?: string},
 			UrlSegment[]
-		]) => {
-			let appointment: IAppointment&{id: string};
+		]) => lock(async () => {
+			try {
+				if (this.initiatedAppointmentID) {
+					if (this.initiatedAppointmentID !== appointmentID) {
+						this.router.navigate([accountRoot, 'chat-transition']);
+						await sleep(0);
+						this.router.navigate([accountRoot, 'appointments', path, appointmentID]);
+					}
 
-			if (appointmentID) {
-				appointment	= {
-					id: appointmentID,
-					...(await this.accountFilesService.downloadAppointment(appointmentID).result)
-				};
+					return;
+				}
 
-				callType		=
-					appointment.calendarInvite.callType === CallTypes.Video ?
-						'video' :
+				if (this.initiatedUsername) {
+					if (this.initiatedUsername !== username) {
+						this.router.navigate([accountRoot, 'chat-transition']);
+						await sleep(0);
+						this.router.navigate([accountRoot, path, username]);
+					}
+
+					return;
+				}
+
+				let appointment: IAppointment&{id: string};
+
+				if (appointmentID) {
+					appointment	= {
+						id: appointmentID,
+						...(await this.accountFilesService.downloadAppointment(
+							appointmentID
+						).result)
+					};
+
+					callType		=
+						promptFollowup ?
+							undefined :
+						appointment.calendarInvite.callType === CallTypes.Video ?
+							'video' :
 						appointment.calendarInvite.callType === CallTypes.Audio ?
 							'audio' :
 							undefined
-				;
+					;
 
-				sessionSubID	= appointmentID;
+					sessionSubID	= appointmentID;
 
-				username		= appointment.participants === undefined ?
-					undefined :
-					appointment.participants.find(participant =>
-						this.accountDatabaseService.currentUser.value !== undefined &&
-						this.accountDatabaseService.currentUser.value.user.username !==
-							normalize(participant)
-					)
-				;
+					username		= appointment.participants === undefined ?
+						undefined :
+						appointment.participants.find(participant =>
+							this.accountDatabaseService.currentUser.value !== undefined &&
+							this.accountDatabaseService.currentUser.value.user.username !==
+								normalize(participant)
+						)
+					;
 
-				this.appointment.next(appointment);
-			}
-
-			if (!username) {
-				return;
-			}
-
-			if (this.initiated) {
-				this.router.navigate([accountRoot, 'chat-transition']);
-				await sleep(0);
-				this.router.navigate([accountRoot, path, username]);
-				return;
-			}
-
-			this.initiated	= true;
-
-			if (promptFollowup) {
-				callType	= undefined;
-				this.promptFollowup.next(username);
-			}
-			else {
-				this.promptFollowup.next(undefined);
-			}
-
-			await this.accountChatService.setUser(username, undefined, callType, sessionSubID);
-
-			if (callType === undefined) {
-				return;
-			}
-
-			this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(async () => {
-				if (!this.destroyed) {
-					this.router.navigate(
-						appointmentID ?
-							[accountRoot, 'appointments', appointmentID, 'end'] :
-							[accountRoot, 'messages', username]
-					);
-
-					if (appointment && appointmentID) {
-						appointment.occurred	= true;
-
-						await this.accountFilesService.updateAppointment(
-							appointmentID,
-							appointment,
-							undefined,
-							true
-						);
-					}
+					this.appointment.next(appointment);
 				}
-			});
-		});
+
+				this.initiatedAppointmentID	= appointmentID;
+				this.initiatedUsername		= username;
+
+				if (!username) {
+					return;
+				}
+
+				await this.accountChatService.setUser(username, undefined, callType, sessionSubID);
+
+				if (callType === undefined) {
+					return;
+				}
+
+				this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(async () => {
+					if (!this.destroyed) {
+						this.router.navigate(
+							appointmentID ?
+								[accountRoot, 'appointments', appointmentID, 'end'] :
+								[accountRoot, 'messages', username]
+						);
+
+						if (appointment && appointmentID) {
+							appointment.occurred	= true;
+
+							await this.accountFilesService.updateAppointment(
+								appointmentID,
+								appointment,
+								undefined,
+								true
+							);
+						}
+					}
+				});
+			}
+			finally {
+				if (promptFollowup) {
+					this.promptFollowup.next(username || this.initiatedUsername);
+				}
+				else {
+					this.promptFollowup.next(undefined);
+				}
+			}
+		}));
 	}
 
 	constructor (

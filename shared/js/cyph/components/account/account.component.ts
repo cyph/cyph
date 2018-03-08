@@ -92,8 +92,9 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		if (
 			this.route === 'appointments' &&
 			this.activatedRoute.snapshot.firstChild &&
-			this.activatedRoute.snapshot.firstChild.url.length > 1 &&
-			this.activatedRoute.snapshot.firstChild.url.slice(-1)[0].path !== 'end'
+			this.activatedRoute.snapshot.firstChild.firstChild &&
+			this.activatedRoute.snapshot.firstChild.firstChild.url.length > 0 &&
+			this.activatedRoute.snapshot.firstChild.firstChild.url[0].path !== 'end'
 		) {
 			return false;
 		}
