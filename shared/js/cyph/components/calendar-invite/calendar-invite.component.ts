@@ -42,7 +42,9 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 	public readonly callTypes: typeof CallTypes						= CallTypes;
 
 	/** Current date. */
-	public readonly currentDate: Promise<Date>						= getDate();
+	public readonly currentDate: BehaviorSubject<Date|undefined>	=
+		new BehaviorSubject<Date|undefined>(undefined)
+	;
 
 	/** Date filter to prevent forbidden days from being selected. */
 	public readonly dateFilter										= (d: Date) : boolean =>
@@ -194,6 +196,10 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		getDate().then(now => {
+			this.currentDate.next(now);
+		});
+
 		/* One week from today. */
 		const timestamp	= (await getTimestamp()) + 604800000;
 
@@ -233,6 +239,8 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 		}
 
 		const timestamp	= new Date(await getTimestamp()).setMinutes(0);
+
+		this.currentDate.next(timestampToDate(timestamp - 86400000));
 
 		this.duration		= 3600000;
 		this.forbiddenDays	= [];
