@@ -170,10 +170,6 @@ export class AccountUserLookupService {
 
 		if (
 			userTypeWhitelist !== undefined &&
-			!(
-				this.accountDatabaseService.currentUser.value &&
-				userValue === this.accountDatabaseService.currentUser.value.user
-			) &&
 			userTypeWhitelist.indexOf((await userValue.accountUserProfile.getValue()).userType) < 0
 		) {
 			return;
@@ -184,11 +180,11 @@ export class AccountUserLookupService {
 
 	/** If applicable, a whitelist of acceptable user types for this user to interact with. */
 	public async userTypeWhitelist () : Promise<AccountUserTypes[]|void> {
-		if (!this.accountDatabaseService.currentUser.value) {
-			return;
-		}
-
 		if (this.envService.isTelehealth) {
+			if (!this.accountDatabaseService.currentUser.value) {
+				return;
+			}
+
 			const {userType}	= await this.accountDatabaseService.currentUser.value.
 				user.
 				accountUserProfile.
