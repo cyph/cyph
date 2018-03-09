@@ -836,7 +836,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			(await (await this.getDatabaseRef(url))).on('value', async snapshot => {
 				const value: {
-					[key: string]: {id?: string; reason?: string; timestamp?: number}
+					[key: string]: {id?: string; reason?: string; timestamp?: number};
 				}	=
 					(snapshot && snapshot.val()) || {}
 				;
