@@ -402,8 +402,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 							const contenders	= Object.keys(value).
 								map(k => value[k]).
 								filter(contender =>
-									!!contender.id &&
-									contender.timestamp !== undefined &&
+									typeof contender.id === 'string' &&
+									typeof contender.timestamp === 'number' &&
 									!isNaN(contender.timestamp)
 								).
 								sort((a, b) => (<number> a.timestamp) - (<number> b.timestamp))
@@ -417,7 +417,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 								return;
 							}
 
-							lastReason	= o.reason;
+							lastReason	= typeof o.reason === 'string' ? o.reason : undefined;
 
 							if (!contenders.find(contender => contender.id === id)) {
 								if (mutex) {
@@ -452,15 +452,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
 
-			const value: {[key: string]: {id: string; reason?: string}}	=
+			const value: {[key: string]: {id?: string; reason?: string; timestamp?: number}}	=
 				(await (await this.getDatabaseRef(url)).once('value')).val() || {}
 			;
 
-			const keys	= Object.keys(value).sort();
+			const keys		= Object.keys(value).sort();
+			const reason	= (value[keys[0]] || {reason: undefined}).reason;
 
 			return {
 				locked: keys.length > 0,
-				reason: (value[keys[0]] || {reason: undefined}).reason
+				reason: typeof reason === 'string' ? reason : undefined
 			};
 		});
 	}
@@ -834,7 +835,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 			let wasLocked	= false;
 
 			(await (await this.getDatabaseRef(url))).on('value', async snapshot => {
-				const value: {[key: string]: {id: string; reason?: string}}	=
+				const value: {
+					[key: string]: {id?: string; reason?: string; timestamp?: number}
+				}	=
 					(snapshot && snapshot.val()) || {}
 				;
 
@@ -842,6 +845,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				if (keys.length > 0) {
 					reason		= value[keys[0]].reason;
+					reason		= typeof reason === 'string' ? reason : undefined;
 					wasLocked	= true;
 					return;
 				}
