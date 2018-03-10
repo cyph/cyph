@@ -6,7 +6,7 @@ import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {calendarInviteReasons} from '../../verticals/telehealth/calendar-invite-reasons';
-import {ChatMessageBoxComponent} from '../chat-message-box';
+import {ChatMessageBoxInheritNgFormComponent} from '../chat-message-box-inherit-ng-form';
 
 
 /**
@@ -28,8 +28,9 @@ export class AccountChatMessageBoxComponent {
 			undefined
 	;
 
-	/** @see ChatMessageBoxComponent */
-	@ViewChild(ChatMessageBoxComponent) public chatMessageBox?: ChatMessageBoxComponent;
+	/** @see ChatMessageBoxInheritNgFormComponent */
+	@ViewChild(ChatMessageBoxInheritNgFormComponent)
+	public chatMessageBox?: ChatMessageBoxInheritNgFormComponent;
 
 	/** @see ChatMessageValue.Types */
 	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=

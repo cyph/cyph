@@ -3,11 +3,13 @@ import {ErrorHandler, NgModule} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {BlankComponent} from '../components/blank';
 import {CalendarInviteComponent} from '../components/calendar-invite';
+import {CalendarInviteInheritNgFormComponent} from '../components/calendar-invite-inherit-ng-form';
 import {ChatCyphertextComponent} from '../components/chat-cyphertext';
 import {ChatCyphertextListComponent} from '../components/chat-cyphertext-list';
 import {ChatMainComponent} from '../components/chat-main';
 import {ChatMessageComponent} from '../components/chat-message';
 import {ChatMessageBoxComponent} from '../components/chat-message-box';
+import {ChatMessageBoxInheritNgFormComponent} from '../components/chat-message-box-inherit-ng-form';
 import {ChatMessageListComponent} from '../components/chat-message-list';
 import {ContactComponent} from '../components/contact';
 import {DynamicFormComponent} from '../components/dynamic-form';
@@ -43,11 +45,13 @@ import {CyphWebModule} from './cyph-web.module';
 	declarations: [
 		BlankComponent,
 		CalendarInviteComponent,
+		CalendarInviteInheritNgFormComponent,
 		ChatCyphertextComponent,
 		ChatCyphertextListComponent,
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
+		ChatMessageBoxInheritNgFormComponent,
 		ChatMessageListComponent,
 		ContactComponent,
 		DynamicFormComponent,
@@ -66,11 +70,13 @@ import {CyphWebModule} from './cyph-web.module';
 	entryComponents: [
 		BlankComponent,
 		CalendarInviteComponent,
+		CalendarInviteInheritNgFormComponent,
 		ChatCyphertextComponent,
 		ChatCyphertextListComponent,
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
+		ChatMessageBoxInheritNgFormComponent,
 		ChatMessageListComponent,
 		ContactComponent,
 		DynamicFormComponent,
@@ -87,11 +93,13 @@ import {CyphWebModule} from './cyph-web.module';
 	exports: [
 		BlankComponent,
 		CalendarInviteComponent,
+		CalendarInviteInheritNgFormComponent,
 		ChatCyphertextComponent,
 		ChatCyphertextListComponent,
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
+		ChatMessageBoxInheritNgFormComponent,
 		ChatMessageListComponent,
 		CommonModule,
 		ContactComponent,

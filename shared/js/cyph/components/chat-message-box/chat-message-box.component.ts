@@ -45,6 +45,9 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	/* tslint:disable-next-line:semicolon */
 	};
 
+	/** If true, viewProviders is set to use existing NgForm as ControlContainer. */
+	protected readonly inheritsNgForm: boolean	= false;
+
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
 

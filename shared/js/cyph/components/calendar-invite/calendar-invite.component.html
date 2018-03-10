@@ -12,6 +12,7 @@
 		<mat-form-field fxFlex *ngIf='!!reasons && !isDisabled'>
 			<mat-select
 				fxFlex
+				name='reason-for-appointment'
 				[ngModel]='value.title'
 				(ngModelChange)='value.title = $event; onChange(value)'
 				[placeholder]='stringsService.reasonForAppointment'
@@ -26,6 +27,7 @@
 		<mat-form-field fxFlex *ngIf='!reasons || isDisabled'>
 			<input
 				matInput
+				name='reason-for-appointment'
 				[ngModel]='value.title'
 				[placeholder]='stringsService.reasonForAppointment'
 				disabled
@@ -41,6 +43,7 @@
 			<mat-form-field fxFlex>
 				<mat-select
 					fxFlex
+					name='duration'
 					[ngModel]='duration'
 					(ngModelChange)='
 						duration = $event;
@@ -68,6 +71,7 @@
 		<mat-form-field fxFlex *ngIf='!isDisabled'>
 			<mat-select
 				fxFlex
+				name='call-type'
 				[ngModel]='value.callType'
 				(ngModelChange)='value.callType = $event; onChange(value)'
 				[placeholder]='stringsService.callType'
@@ -82,6 +86,7 @@
 		<mat-form-field fxFlex *ngIf='isDisabled'>
 			<input
 				matInput
+				name='call-type'
 				[ngModel]='
 					value.callType === callTypes.Audio ?
 						stringsService.voice :
@@ -102,6 +107,7 @@
 			<mat-form-field>
 				<input
 					matInput
+					name='start-date'
 					[disabled]='isDisabled'
 					[matDatepicker]='datepickerStart'
 					[matDatepickerFilter]='dateFilter'
@@ -136,6 +142,7 @@
 				<input
 					matInput
 					mat-timepicker
+					name='start-time'
 					[disabled]='isDisabled'
 					[ngModel]='timestampTo24HourTimeString(value.startTime)'
 					(ngModelChange)='
@@ -151,6 +158,7 @@
 			<mat-form-field *ngIf='!isDisabled'>
 				<mat-select
 					fxFlex='180px'
+					name='start-time'
 					[ngModel]='timestampToTime(value.startTime)'
 					(ngModelChange)='
 						value.startTime = timestampUpdate(value.startTime, undefined, $event);
@@ -197,6 +205,7 @@
 			<mat-form-field>
 				<input
 					matInput
+					name='end-date'
 					[disabled]='isDisabled'
 					[matDatepicker]='datepickerEnd'
 					[matDatepickerFilter]='dateFilter'
@@ -219,6 +228,7 @@
 				<input
 					matInput
 					mat-timepicker
+					name='end-time'
 					[disabled]='isDisabled'
 					[ngModel]='timestampTo24HourTimeString(value.endTime)'
 					(ngModelChange)='
@@ -234,6 +244,7 @@
 			<mat-form-field *ngIf='!isDisabled'>
 				<mat-select
 					fxFlex='180px'
+					name='end-time'
 					[ngModel]='timestampToTime(value.endTime)'
 					(ngModelChange)='
 						value.endTime = timestampUpdate(value.endTime, undefined, $event);
@@ -274,6 +285,7 @@
 		<div fxFlex>
 			<mat-checkbox
 				[disabled]='isDisabled'
+				[name]='"alternate-day-" + day.toString()'
 				[ngModel]='value.alternateDays[day]'
 				(ngModelChange)='value.alternateDays[day] = $event; onChange(value)'
 				[value]='day'
@@ -289,6 +301,7 @@
 		<div fxFlex>
 			<mat-checkbox
 				[disabled]='isDisabled'
+				[name]='"alternate-time-frame-" + timeFrame.toString()'
 				[ngModel]='value.alternateTimeFrames[timeFrame]'
 				(ngModelChange)='value.alternateTimeFrames[timeFrame] = $event; onChange(value)'
 				[value]='timeFrame'
@@ -307,6 +320,7 @@
 				matInput
 				matTextareaAutosize
 				matAutosizeMinRows='4'
+				name='notes'
 				[ngModel]='value.description'
 				(ngModelChange)='value.description = $event; onChange(value)'
 				[placeholder]='stringsService.notes'
