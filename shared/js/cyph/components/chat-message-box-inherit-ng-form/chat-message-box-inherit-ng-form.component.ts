@@ -25,7 +25,7 @@ import {ChatMessageBoxComponent} from '../chat-message-box';
 })
 export class ChatMessageBoxInheritNgFormComponent extends ChatMessageBoxComponent {
 	/** @inheritDoc */
-	protected readonly inheritsNgForm: boolean	= true;
+	public readonly inheritsNgForm: boolean	= true;
 
 	constructor (
 		elementRef: ElementRef,

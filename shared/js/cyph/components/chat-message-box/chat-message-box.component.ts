@@ -45,9 +45,6 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	/* tslint:disable-next-line:semicolon */
 	};
 
-	/** If true, viewProviders is set to use existing NgForm as ControlContainer. */
-	protected readonly inheritsNgForm: boolean	= false;
-
 	/** Indicates whether this is the accounts UI. */
 	@Input() public accounts: boolean	= false;
 
@@ -68,8 +65,11 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	/** @see FileInput.accept */
 	@Input() public fileAccept?: string;
 
+	/** If true, viewProviders is set to use existing NgForm as ControlContainer. */
+	public readonly inheritsNgForm: boolean	= false;
+
 	/** Indicates whether speed dial is open. */
-	public isSpeedDialOpen: boolean	= false;
+	public isSpeedDialOpen: boolean			= false;
 
 	/** Indicates which version of the UI should be displayed. */
 	@Input() public messageType: ChatMessageValue.Types	= ChatMessageValue.Types.Text;
