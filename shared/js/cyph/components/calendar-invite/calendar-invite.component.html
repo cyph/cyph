@@ -28,9 +28,9 @@
 			<input
 				matInput
 				name='reason-for-appointment'
-				[ngModel]='value.title'
+				[(ngModel)]='value.title'
 				[placeholder]='stringsService.reasonForAppointment'
-				disabled
+				[disabled]='isDisabled'
 				required
 				type='text'
 			/>
