@@ -208,7 +208,7 @@
 							</button>
 						</div>
 						<div
-							*ngIf='o.appointment.forms.length < 1'
+							*ngIf='envService.isTelehealth && o.appointment.forms.length < 1'
 							fxFlex='50'
 							fxLayoutGap='5px'
 							fxLayoutAlign='center center'
