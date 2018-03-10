@@ -12,6 +12,11 @@ localSeleniumServer=''
 site=''
 prod=''
 environment='local'
+if [ "${1}" == '--environment' ] ; then
+	shift
+	environment="${1}"
+	shift
+fi
 if [ "${1}" == '--e2e' ] ; then
 	e2e=true
 	shift
