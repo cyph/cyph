@@ -191,12 +191,12 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		getDate().then(now => {
-			this.currentDate.next(now);
-		});
+		const now	= await getDate();
 
-		/* One week from today. */
-		const timestamp	= (await getTimestamp()) + 604800000;
+		this.currentDate.next(now);
+
+		/* Two weeks from this Monday. */
+		const timestamp	= now.getTime() + (1 - now.getDay()) * 86400000 + 1209600000;
 
 		if (this.value === undefined) {
 			this.value	= {
