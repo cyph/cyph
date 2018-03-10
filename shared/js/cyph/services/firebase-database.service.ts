@@ -700,7 +700,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			);
 
 			/* tslint:disable-next-line:possible-timing-attack */
-			while (hash !== (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
+			if (hash !== (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
 				await (await this.getStorageRef(url, hash)).put(new Blob([data])).then();
 				await (await this.getDatabaseRef(url)).set({
 					hash,
