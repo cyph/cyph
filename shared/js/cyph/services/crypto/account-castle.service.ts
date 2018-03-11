@@ -60,11 +60,21 @@ export class AccountCastleService extends CastleService {
 						const handshakeState	= await accountSessionService.handshakeState(
 							this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
 								`${sessionURL}/handshake/currentStep`,
-								Uint32Proto
+								Uint32Proto,
+								undefined,
+								undefined,
+								undefined,
+								undefined,
+								true
 							),
 							this.accountDatabaseService.getAsyncValue(
 								`${sessionURL}/handshake/initialSecret`,
-								MaybeBinaryProto
+								MaybeBinaryProto,
+								undefined,
+								undefined,
+								undefined,
+								undefined,
+								true
 							)
 						);
 
@@ -85,19 +95,39 @@ export class AccountCastleService extends CastleService {
 							handshakeState,
 							this.accountDatabaseService.getAsyncValue(
 								`${sessionURL}/incomingMessageID`,
-								Uint32Proto
+								Uint32Proto,
+								undefined,
+								undefined,
+								undefined,
+								undefined,
+								true
 							),
 							this.accountDatabaseService.getAsyncValue(
 								`${sessionURL}/incomingMessages`,
-								CastleIncomingMessagesProto
+								CastleIncomingMessagesProto,
+								undefined,
+								undefined,
+								undefined,
+								undefined,
+								true
 							),
 							this.accountDatabaseService.getAsyncValue(
 								`${sessionURL}/incomingMessagesMax`,
-								Uint32Proto
+								Uint32Proto,
+								undefined,
+								undefined,
+								undefined,
+								undefined,
+								true
 							),
 							this.accountDatabaseService.getAsyncValue(
 								`${sessionURL}/outgoingMessageID`,
-								Uint32Proto
+								Uint32Proto,
+								undefined,
+								undefined,
+								undefined,
+								undefined,
+								true
 							),
 							this.accountDatabaseService.getAsyncList(
 								`${sessionURL}/outgoingMessageQueue`,
@@ -105,39 +135,70 @@ export class AccountCastleService extends CastleService {
 								undefined,
 								undefined,
 								undefined,
-								false
+								false,
+								true
 							),
 							this.accountDatabaseService.lockFunction(`${sessionURL}/receiveLock`),
 							this.accountDatabaseService.lockFunction(`${sessionURL}/sendLock`),
 							{
 								privateKey: this.accountDatabaseService.getAsyncValue(
 									`${sessionURL}/asymmetricRatchetState/privateKey`,
-									MaybeBinaryProto
+									MaybeBinaryProto,
+									undefined,
+									undefined,
+									undefined,
+									undefined,
+									true
 								),
 								publicKey: this.accountDatabaseService.getAsyncValue(
 									`${sessionURL}/asymmetricRatchetState/publicKey`,
-									MaybeBinaryProto
+									MaybeBinaryProto,
+									undefined,
+									undefined,
+									undefined,
+									undefined,
+									true
 								)
 							},
 							{
 								current: {
 									incoming: this.accountDatabaseService.getAsyncValue(
 										`${sessionURL}/symmetricRatchetState/current/incoming`,
-										MaybeBinaryProto
+										MaybeBinaryProto,
+										undefined,
+										undefined,
+										undefined,
+										undefined,
+										true
 									),
 									outgoing: this.accountDatabaseService.getAsyncValue(
 										`${sessionURL}/symmetricRatchetState/current/outgoing`,
-										MaybeBinaryProto
+										MaybeBinaryProto,
+										undefined,
+										undefined,
+										undefined,
+										undefined,
+										true
 									)
 								},
 								next: {
 									incoming: this.accountDatabaseService.getAsyncValue(
 										`${sessionURL}/symmetricRatchetState/next/incoming`,
-										MaybeBinaryProto
+										MaybeBinaryProto,
+										undefined,
+										undefined,
+										undefined,
+										undefined,
+										true
 									),
 									outgoing: this.accountDatabaseService.getAsyncValue(
 										`${sessionURL}/symmetricRatchetState/next/outgoing`,
-										MaybeBinaryProto
+										MaybeBinaryProto,
+										undefined,
+										undefined,
+										undefined,
+										undefined,
+										true
 									)
 								}
 							}
