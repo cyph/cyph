@@ -236,21 +236,21 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const {data, hash, timestamp}	= await this.getMetadata(url);
 
 				try {
-					const localData	= await this.cacheGet({hash}).catch(err => {
+					const localData		= await this.cacheGet({hash}).catch(err => {
 						if (data === undefined) {
 							throw err;
 						}
 						return this.potassiumService.fromBase64(data);
 					});
 
-					const value		= await deserialize(proto, localData);
+					const localValue	= await deserialize(proto, localData);
 
 					this.ngZone.run(() => {
 						progress.next(100);
 						progress.complete();
 					});
 
-					return {timestamp, value};
+					return {timestamp, value: localValue};
 				}
 				catch {}
 
@@ -785,12 +785,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		const result	= this.ngZone.runOutsideAngular(async () => {
 			if (noBlobStorage) {
-				const result	= await this.setItem(urlPromise, proto, value, true);
+				const setItemResult	= await this.setItem(urlPromise, proto, value, true);
 				this.ngZone.run(() => {
 					progress.next(100);
 					progress.complete();
 				});
-				return result;
+				return setItemResult;
 			}
 
 			const url	= await urlPromise;
