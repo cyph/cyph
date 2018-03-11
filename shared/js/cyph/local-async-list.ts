@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
-import {Subject} from 'rxjs/Subject';
+import {ReplaySubject} from 'rxjs/ReplaySubject';
 import {Subscription} from 'rxjs/Subscription';
 import {IAsyncList} from './iasync-list';
 import {LocalAsyncValue} from './local-async-value';
@@ -12,7 +12,7 @@ import {MaybePromise} from './maybe-promise-type';
  */
 export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncList<T> {
 	/** @ignore */
-	protected readonly pushes: Subject<{index: number; value: T}>	= new Subject();
+	protected readonly pushes: ReplaySubject<{index: number; value: T}>	= new ReplaySubject();
 
 	/** @inheritDoc */
 	public async clear () : Promise<void> {
