@@ -48,7 +48,7 @@
 
 		<mat-progress-bar
 			class='key-exchange-progress'
-			[value]='chatService.chat.initProgress | async'
+			[value]='(chatService.chat.initProgress | async) || 0'
 		></mat-progress-bar>
 	</div>
 
@@ -261,7 +261,7 @@
 					</div>
 					<mat-progress-bar
 						fxLayout='row'
-						[value]='transfer.progress | async'
+						[value]='(transfer.progress | async) || 0'
 					></mat-progress-bar>
 				</div>
 			</div>

@@ -30,6 +30,9 @@ export interface ISessionService {
 	/** Resolves when this session is connected. */
 	readonly connected: Promise<void>;
 
+	/** When true, blocks responding to pings. */
+	readonly freezePong: BehaviorSubject<boolean>;
+
 	/** Local username (e.g. "me"). */
 	readonly localUsername: Observable<string>;
 

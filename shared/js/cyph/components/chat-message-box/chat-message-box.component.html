@@ -16,10 +16,20 @@
 		</button>
 		<cyph-calendar-invite
 			fxFlexFill
+			name='calendar-invite-message'
 			[(ngModel)]='chatService.chat.currentMessage.calendarInvite'
 			[followUp]='calendarInviteFollowUp'
 			[reasons]='calendarInviteReasons'
+			*ngIf='!inheritsNgForm'
 		></cyph-calendar-invite>
+		<cyph-calendar-invite-inherit-ng-form
+			fxFlexFill
+			name='calendar-invite-message'
+			[(ngModel)]='chatService.chat.currentMessage.calendarInvite'
+			[followUp]='calendarInviteFollowUp'
+			[reasons]='calendarInviteReasons'
+			*ngIf='inheritsNgForm'
+		></cyph-calendar-invite-inherit-ng-form>
 	</div>
 
 	<div
@@ -51,6 +61,7 @@
 		</button>
 		<cyph-quill
 			fxFlexFill
+			name='quill-message'
 			[(ngModel)]='chatService.chat.currentMessage.quill'
 		></cyph-quill>
 	</div>
@@ -65,6 +76,7 @@
 			<textarea
 				fxFlex
 				class='message-box tabIndent'
+				name='text-message'
 				[(ngModel)]='chatService.chat.currentMessage.text'
 				(ngModelChange)='chatService.messageChange()'
 				placeholder='Send a secure message...'

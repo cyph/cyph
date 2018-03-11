@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -26,6 +26,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 
 	constructor (
 		activatedRoute: ActivatedRoute,
+		router: Router,
 		accountChatService: AccountChatService,
 		accountFilesService: AccountFilesService,
 		chatMessageGeometryService: ChatMessageGeometryService,
@@ -38,6 +39,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 	) {
 		super(
 			activatedRoute,
+			router,
 			accountChatService,
 			accountFilesService,
 			chatMessageGeometryService,

@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+import {filter} from 'rxjs/operators/filter';
+import {take} from 'rxjs/operators/take';
 import {User} from '../account/user';
 import {BinaryProto, ISessionMessage, SessionMessage, StringProto} from '../proto';
 import {ISessionMessageData, rpcEvents} from '../session';
@@ -230,8 +232,9 @@ export class AccountSessionService extends SessionService {
 			stringsService
 		);
 
-		this.on(rpcEvents.ping, (o: ISessionMessageData) => {
+		this.on(rpcEvents.ping, async (o: ISessionMessageData) => {
 			if (o.command && o.command.method) {
+				await this.freezePong.pipe(filter(b => !b), take(1)).toPromise();
 				this.send([rpcEvents.pong, {command: {method: o.command.method}}]);
 			}
 		});

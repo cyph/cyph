@@ -164,22 +164,17 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 	public trackBySelf: typeof trackBySelf							= trackBySelf;
 
 	/** Value. */
-	public readonly valueSubject: BehaviorSubject<ICalendarInvite|undefined>	=
-		new BehaviorSubject<ICalendarInvite|undefined>(undefined)
-	;
+	public value?: ICalendarInvite;
 
 	/** Default appointment reason dropdown selection. */
-	public get defaultReasonForAppointment () : string|undefined {
-		return this.followUp ? this.stringsService.followUpNoun : undefined;
+	public get defaultReasonForAppointment () : string {
+		return this.followUp ? this.stringsService.followUpNoun : '';
 	}
 
 	/** @inheritDoc */
 	public ngOnChanges () : void {
-		if (this.valueSubject.value && !this.valueSubject.value.title) {
-			this.valueSubject.next({
-				...this.valueSubject.value,
-				title: this.defaultReasonForAppointment
-			});
+		if (this.value && !this.value.title) {
+			this.value.title	= this.defaultReasonForAppointment;
 		}
 
 		if (!this.followUp) {
@@ -196,22 +191,23 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		getDate().then(now => {
-			this.currentDate.next(now);
-		});
+		const now	= await getDate();
 
-		/* One week from today. */
-		const timestamp	= (await getTimestamp()) + 604800000;
+		this.currentDate.next(now);
 
-		if (this.valueSubject.value === undefined) {
-			this.valueSubject.next({
+		/* Two weeks from this Monday. */
+		const timestamp	= now.getTime() + (1 - now.getDay()) * 86400000 + 1209600000;
+
+		if (this.value === undefined) {
+			this.value	= {
 				alternateDays: {},
 				alternateTimeFrames: {},
+				callType: CallTypes.None,
 				description: '',
 				endTime: timestamp + this.duration,
 				startTime: timestamp,
 				title: this.defaultReasonForAppointment
-			});
+			};
 		}
 	}
 
@@ -234,36 +230,33 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 	/** Disable all validation and set appointment to now. Local environments only. */
 	public async setNow () : Promise<void> {
-		if (!this.envService.environment.local) {
+		if (!this.envService.environment.local || !this.value) {
 			return;
 		}
 
 		const timestamp	= new Date(await getTimestamp()).setMinutes(0);
 
-		this.currentDate.next(timestampToDate(timestamp - 86400000));
+		this.currentDate.next(timestampToDate(timestamp - 172800000));
 
-		this.duration		= 3600000;
+		const duration		= 14400000;
 		this.forbiddenDays	= [];
 		this.timeRange		= {
 			end: {hour: 24, minute: 0},
 			start: {hour: 0, minute: 0}
 		};
 
-		if (this.durations.indexOf(this.duration) < 0) {
-			this.durations.push(this.duration);
+		if (this.durations.indexOf(duration) < 0) {
+			this.durations.push(duration);
 		}
 
-		this.valueSubject.next({
-			...this.valueSubject.value,
-			endTime: timestamp + this.duration,
-			startTime: timestamp
-		});
+		this.duration			= duration;
+		this.value.startTime	= timestamp - (duration / 2);
 	}
 
 	/** @inheritDoc */
 	public writeValue (value?: ICalendarInvite) : void {
-		if (value && this.valueSubject.value !== value) {
-			this.valueSubject.next(value);
+		if (value && this.value !== value) {
+			this.value	= value;
 		}
 	}
 

@@ -68,7 +68,10 @@
 						</div>
 					</div>
 
-					<div fxLayoutAlign='center center'>
+					<div
+						fxLayoutAlign='center center'
+						*ngIf='!!promptFollowup && !!accountService; else chatEndMessage'
+					>
 						<button
 							fxLayout
 							mat-raised-button
@@ -80,29 +83,30 @@
 								"request-followup/" +
 								(promptFollowup || "")
 							'
-							*ngIf='!!promptFollowup && !!accountService'
 						>
 							Click to Schedule Follow-up Appointment
 						</button>
 					</div>
-					<div
-						fxLayout='row'
-						class='chat-end-message'
-						[class.chat-disconnect-message]='!item.persistentEndMessage'
-						[class.cyph-light-theme]='item.persistentEndMessage'
-						*ngIf='item.persistentEndMessage || item.showDisconnectMessage'
-					>
-						<div fxFlexFill fxLayoutAlign='center center'>
-							<mat-card
-								[fxFlex]='item.persistentEndMessage ? 95 : 90'
-								[fxFlex.gt-sm]='item.persistentEndMessage ? 75 : 50'
-							>
-								<mat-card-content>
-									<ng-content></ng-content>
-								</mat-card-content>
-							</mat-card>
+					<ng-template #chatEndMessage>
+						<div
+							fxLayout='row'
+							class='chat-end-message'
+							[class.chat-disconnect-message]='!item.persistentEndMessage'
+							[class.cyph-light-theme]='item.persistentEndMessage'
+							*ngIf='item.persistentEndMessage || item.showDisconnectMessage'
+						>
+							<div fxFlexFill fxLayoutAlign='center center'>
+								<mat-card
+									[fxFlex]='item.persistentEndMessage ? 95 : 90'
+									[fxFlex.gt-sm]='item.persistentEndMessage ? 75 : 50'
+								>
+									<mat-card-content>
+										<ng-content></ng-content>
+									</mat-card-content>
+								</mat-card>
+							</div>
 						</div>
-					</div>
+					</ng-template>
 				</div>
 			</div>
 		</div>

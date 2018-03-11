@@ -1,4 +1,4 @@
-<form ngNativeValidate fxFlexFill fxLayout='column' fxLayoutGap='8px' (submit)='submit()'>
+<form #messageForm='ngForm' fxFlexFill fxLayout='column' fxLayoutGap='8px' (submit)='submit()'>
 	<ng-container *ngIf='showHeader'>
 		<cyph-account-contact
 			[clickable]='false'
@@ -12,7 +12,7 @@
 		<hr />
 	</ng-container>
 
-	<cyph-chat-message-box
+	<cyph-chat-message-box-inherit-ng-form
 		#chatMessageBox
 		[accounts]='true'
 		[calendarInviteFollowUp]='calendarInviteFollowUp'
@@ -22,7 +22,7 @@
 		[messageType]='messageType'
 		[showSendButton]='!showHeader'
 		[showUnreadCount]='showUnreadCount'
-	></cyph-chat-message-box>
+	></cyph-chat-message-box-inherit-ng-form>
 
 	<div
 		fxLayoutAlign='left'
@@ -32,7 +32,10 @@
 			mat-raised-button
 			matTooltip='Send'
 			color='accent'
-			[disabled]='recipient !== undefined && (recipient | async) === undefined'
+			[disabled]='
+				messageForm.invalid ||
+				(recipient !== undefined && (recipient | async) === undefined)
+			'
 			type='submit'
 			cyphTranslate
 		>

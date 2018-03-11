@@ -2,12 +2,7 @@
 	<div
 		fxFlexFill
 		class='content'
-		[fxShow]='
-			(formCompose.sent | async) !== true &&
-			appointment?.forms?.length < 1 &&
-			envService.isTelehealth &&
-			(currentUser?.user.userType | async) === accountUserTypes.Standard
-		'
+		[fxShow]='sessionService.freezePong | async'
 	>
 		<cyph-account-compose-no-providers #formCompose></cyph-account-compose-no-providers>
 	</div>
@@ -17,12 +12,7 @@
 		fxLayout='column'
 		class='white-card animated fadeIn'
 		ngClass.lt-md='compact'
-		[fxHide]='
-			(formCompose.sent | async) !== true &&
-			appointment?.forms?.length < 1 &&
-			envService.isTelehealth &&
-			(currentUser?.user.userType | async) === accountUserTypes.Standard
-		'
+		[fxHide]='sessionService.freezePong | async'
 	>
 		<div fxFlexFill fxLayout='column' fxLayoutAlign='start center' class='content'>
 			<ng-container *ngIf='participantsByType | async as participants'>
@@ -30,7 +20,7 @@
 
 				<h2 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h2>
 
-				<div *ngIf='
+				<div [style.width]='"100%"' *ngIf='
 					envService.isTelehealth &&
 					appointment?.calendarInvite.title &&
 					appointment?.calendarInvite.callType
@@ -63,15 +53,18 @@
 								{{stringsService.telehealthSessionWith}}
 								{{(patient?.name | async)}}
 							</h1>
-							<div fxLayout='row' fxFlex='10' fxLayoutAlign='center'>
+							<br />
+							<br />
+							<div fxLayout='row' fxLayoutAlign='center'>
 								<cyph-account-contact
 									[clickable]='false'
 									[contact]='patient'
 									class='cyph-inverted-theme animated fadeIn'
 									fxFlex
-									fxFlex.gt-sm='33'
+									fxFlex.gt-sm='40'
 								></cyph-account-contact>
 							</div>
+							<br />
 							<div class='loading'>
 								<div class='logo-animation'>
 									<div></div>
@@ -81,10 +74,11 @@
 									<div></div>
 								</div>
 							</div>
-							<div fxFlex='75'>
+							<div fxLayoutAlign='center'>
 								<mat-progress-bar
+									fxFlex='50'
 									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
-									[value]='chatService.chat.initProgress | async'
+									[value]='(chatService.chat.initProgress | async) || 0'
 								></mat-progress-bar>
 							</div>
 						</div>
@@ -97,7 +91,7 @@
 							'
 							fxLayout='column'
 							fxLayoutAlign='center'
-							fxLayoutGap='5px'
+							fxLayoutGap='10px'
 						>
 							<h1>
 								{{stringsService.your}}
@@ -124,9 +118,10 @@
 									[contact]='doctor'
 									class='cyph-inverted-theme animated fadeIn'
 									fxFlex
-									fxFlex.gt-sm='60'
+									fxFlex.gt-sm='40'
 								></cyph-account-contact>
 							</div>
+							<br />
 							<div class='loading'>
 								<div class='logo-animation'>
 									<div></div>
@@ -136,10 +131,11 @@
 									<div></div>
 								</div>
 							</div>
-							<div fxFlex='75'>
+							<div fxLayoutAlign='center'>
 								<mat-progress-bar
+									fxFlex='50'
 									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
-									[value]='chatService.chat.initProgress | async'
+									[value]='(chatService.chat.initProgress | async) || 0'
 								></mat-progress-bar>
 							</div>
 						</div>

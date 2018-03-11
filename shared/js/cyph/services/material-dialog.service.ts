@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
+import {Observer} from 'rxjs/Observer';
 import {map} from 'rxjs/operators/map';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
@@ -23,7 +24,10 @@ export class MaterialDialogService implements DialogService {
 	private readonly lock: LockFunction	= lockFunction();
 
 	/** @inheritDoc */
-	public async alert (o: {content: string; ok?: string; title?: string}) : Promise<void> {
+	public async alert (
+		o: {content: string; ok?: string; title?: string},
+		closeFunction?: Observer<() => void>
+	) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(DialogAlertComponent);
 
@@ -39,6 +43,10 @@ export class MaterialDialogService implements DialogService {
 				''
 			;
 
+			if (closeFunction) {
+				closeFunction.next(() => { matDialogRef.close(); });
+			}
+
 			await matDialogRef.afterClosed().toPromise();
 		});
 	}
@@ -46,10 +54,15 @@ export class MaterialDialogService implements DialogService {
 	/** @inheritDoc */
 	public async baseDialog<T> (
 		componentType: ComponentType<T>,
-		setInputs?: (componentInstance: T) => void
+		setInputs?: (componentInstance: T) => void,
+		closeFunction?: Observer<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(componentType);
+
+			if (closeFunction) {
+				closeFunction.next(() => { matDialogRef.close(); });
+			}
 
 			if (setInputs) {
 				setInputs(matDialogRef.componentInstance);
@@ -60,13 +73,16 @@ export class MaterialDialogService implements DialogService {
 	}
 
 	/** @inheritDoc */
-	public async confirm (o: {
-		cancel?: string;
-		content: string;
-		ok?: string;
-		timeout?: number;
-		title?: string;
-	}) : Promise<boolean> {
+	public async confirm (
+		o: {
+			cancel?: string;
+			content: string;
+			ok?: string;
+			timeout?: number;
+			title?: string;
+		},
+		closeFunction?: Observer<() => void>
+	) : Promise<boolean> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(DialogConfirmComponent);
 
@@ -86,6 +102,10 @@ export class MaterialDialogService implements DialogService {
 				o.title :
 				''
 			;
+
+			if (closeFunction) {
+				closeFunction.next(() => { matDialogRef.close(); });
+			}
 
 			const promise	= matDialogRef.afterClosed().toPromise<boolean>();
 
@@ -114,11 +134,18 @@ export class MaterialDialogService implements DialogService {
 	}
 
 	/** @inheritDoc */
-	public async image (src: SafeUrl|string) : Promise<void> {
+	public async image (
+		src: SafeUrl|string,
+		closeFunction?: Observer<() => void>
+	) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(DialogImageComponent);
 
 			matDialogRef.componentInstance.src	= src;
+
+			if (closeFunction) {
+				closeFunction.next(() => { matDialogRef.close(); });
+			}
 
 			await matDialogRef.afterClosed().toPromise();
 		});
