@@ -53,9 +53,30 @@ export class AccountCastleService extends CastleService {
 					return;
 				}
 
-				this.pairwiseSession.next(
-					await getOrSetDefaultAsync(this.pairwiseSessions, user.username, async () => {
+				this.pairwiseSession.next(await getOrSetDefaultAsync(
+					this.pairwiseSessions,
+					accountSessionService.ephemeralSubSession ? undefined : user.username,
+					async () => {
 						const sessionURL		= `contacts/${contactID}/session`;
+
+						const localUser			= new RegisteredLocalUser(
+							this.accountDatabaseService
+						);
+
+						const remoteUser		= new RegisteredRemoteUser(
+							this.accountDatabaseService,
+							user.realUsername
+						);
+
+						if (accountSessionService.ephemeralSubSession) {
+							return new PairwiseSession(
+								potassiumService,
+								transport,
+								localUser,
+								remoteUser,
+								await accountSessionService.handshakeState()
+							);
+						}
 
 						const handshakeState	= await accountSessionService.handshakeState(
 							this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
@@ -76,15 +97,6 @@ export class AccountCastleService extends CastleService {
 								undefined,
 								true
 							)
-						);
-
-						const localUser			= new RegisteredLocalUser(
-							this.accountDatabaseService
-						);
-
-						const remoteUser		= new RegisteredRemoteUser(
-							this.accountDatabaseService,
-							user.realUsername
 						);
 
 						return new PairwiseSession(
@@ -203,8 +215,8 @@ export class AccountCastleService extends CastleService {
 								}
 							}
 						);
-					})
-				);
+					}
+				));
 			});
 		});
 	}

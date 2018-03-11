@@ -79,23 +79,7 @@ export class ChatService {
 	;
 
 	/** @see IChatData */
-	public chat: IChatData	= {
-		currentMessage: {},
-		initProgress: new BehaviorSubject(0),
-		isConnected: false,
-		isDisconnected: false,
-		isFriendTyping: new BehaviorSubject(false),
-		isMessageChanged: false,
-		lastConfirmedMessage: new LocalAsyncValue({id: '', index: 0}),
-		messages: new LocalAsyncList<IChatMessage>(),
-		/* See https://github.com/palantir/tslint/issues/3541 */
-		/* tslint:disable-next-line:object-literal-sort-keys */
-		messageValues: new LocalAsyncMap<string, IChatMessageValue>(),
-		pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
-		receiveTextLock: lockFunction(),
-		state: States.none,
-		unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
-	};
+	public chat: IChatData;
 
 	/** Indicates whether the chat is self-destructing. */
 	public chatSelfDestruct: boolean		= false;
@@ -205,6 +189,27 @@ export class ChatService {
 	/** Gets author ID for including in message list item. */
 	protected async getAuthorID (_AUTHOR: Observable<string>) : Promise<string|undefined> {
 		return undefined;
+	}
+
+	/** Gets default chat data. */
+	protected getDefaultChatData () : IChatData {
+		return {
+			currentMessage: {},
+			initProgress: new BehaviorSubject(0),
+			isConnected: false,
+			isDisconnected: false,
+			isFriendTyping: new BehaviorSubject(false),
+			isMessageChanged: false,
+			lastConfirmedMessage: new LocalAsyncValue({id: '', index: 0}),
+			messages: new LocalAsyncList<IChatMessage>(),
+			/* See https://github.com/palantir/tslint/issues/3541 */
+			/* tslint:disable-next-line:object-literal-sort-keys */
+			messageValues: new LocalAsyncMap<string, IChatMessageValue>(),
+			pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
+			receiveTextLock: lockFunction(),
+			state: States.none,
+			unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
+		};
 	}
 
 	/** Aborts the process of chat initialisation and authentication. */
@@ -585,6 +590,8 @@ export class ChatService {
 		/** @ignore */
 		protected readonly stringsService: StringsService
 	) {
+		this.chat	= this.getDefaultChatData();
+
 		this.sessionService.ready.then(() => {
 			const beginChat	= this.sessionService.one(events.beginChat);
 			const callType	= this.sessionInitService.callType;

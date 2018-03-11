@@ -51,6 +51,9 @@ export class AccountSessionService extends SessionService {
 		this._ACCOUNTS_SYMMETRIC_KEY.promise
 	;
 
+	/** If true, this is an ephemeral sub-session. */
+	public ephemeralSubSession: boolean							= false;
+
 	/** @inheritDoc */
 	public readonly ready: Promise<void>						= this._READY.promise;
 
@@ -60,7 +63,11 @@ export class AccountSessionService extends SessionService {
 	;
 
 	/** @inheritDoc */
-	protected async channelOnClose () : Promise<void> {}
+	protected async channelOnClose () : Promise<void> {
+		if (this.ephemeralSubSession) {
+			await super.channelOnClose();
+		}
+	}
 
 	/** @inheritDoc */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
@@ -89,7 +96,11 @@ export class AccountSessionService extends SessionService {
 	}
 
 	/** Sets the remote user we're chatting with. */
-	public async setUser (username: string, sessionSubID?: string) : Promise<void> {
+	public async setUser (
+		username: string,
+		sessionSubID?: string,
+		ephemeralSubSession: boolean = false
+	) : Promise<void> {
 		if (this.initiated) {
 			throw new Error('User already set.');
 		}
@@ -99,6 +110,23 @@ export class AccountSessionService extends SessionService {
 
 		(async () => {
 			const contactID			= await this.accountContactsService.getContactID(username);
+
+			if (ephemeralSubSession) {
+				if (!this.sessionSubID) {
+					throw new Error('Cannot start ephemeral sub-session without sessionSubID.');
+				}
+
+				this.ephemeralSubSession	= true;
+
+				this.init(this.potassiumService.toHex(
+					await this.potassiumService.hash.hash(
+						`${contactID}-${this.sessionSubID}`
+					)
+				));
+
+				return;
+			}
+
 			const sessionURL		= `contacts/${contactID}/session`;
 			const symmetricKeyURL	= `${sessionURL}/symmetricKey`;
 

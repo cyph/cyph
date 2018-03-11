@@ -85,42 +85,50 @@ export class AccountChatService extends ChatService {
 		username: string,
 		keepCurrentMessage: boolean = false,
 		callType?: 'audio'|'video',
-		sessionSubID?: string
+		sessionSubID?: string,
+		ephemeralSubSession: boolean = false
 	) : Promise<void> {
 		const contactURL	= `contacts/${await this.accountContactsService.addContact(username)}`;
 
 		this.accountSessionInitService.callType	= callType || this.envService.callType;
 
-		this.chat	= getOrSetDefault(this.chats, username, () => ({
-			currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
-			initProgress: new BehaviorSubject(0),
-			isConnected: true,
-			isDisconnected: false,
-			isFriendTyping: new BehaviorSubject(false),
-			isMessageChanged: false,
-			lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
-				`${contactURL}/lastConfirmedMessage`,
-				ChatLastConfirmedMessage
-			),
-			messages: this.accountDatabaseService.getAsyncList(
-				`${contactURL}/messages`,
-				ChatMessage
-			),
-			/* See https://github.com/palantir/tslint/issues/3541 */
-			/* tslint:disable-next-line:object-literal-sort-keys */
-			messageValues: this.accountDatabaseService.getAsyncMap(
-				`${contactURL}/messageValues`,
-				ChatMessageValue
-			),
-			pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
-			receiveTextLock: this.accountDatabaseService.lockFunction(
-				`${contactURL}/receiveTextLock`
-			),
-			state: States.chat,
-			unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
-		}));
+		this.chat	= ephemeralSubSession ?
+			{
+				...this.getDefaultChatData(),
+				isConnected: true,
+				state: States.chat
+			} :
+			getOrSetDefault(this.chats, username, () => ({
+				currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
+				initProgress: new BehaviorSubject(0),
+				isConnected: true,
+				isDisconnected: false,
+				isFriendTyping: new BehaviorSubject(false),
+				isMessageChanged: false,
+				lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
+					`${contactURL}/lastConfirmedMessage`,
+					ChatLastConfirmedMessage
+				),
+				messages: this.accountDatabaseService.getAsyncList(
+					`${contactURL}/messages`,
+					ChatMessage
+				),
+				/* See https://github.com/palantir/tslint/issues/3541 */
+				/* tslint:disable-next-line:object-literal-sort-keys */
+				messageValues: this.accountDatabaseService.getAsyncMap(
+					`${contactURL}/messageValues`,
+					ChatMessageValue
+				),
+				pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
+				receiveTextLock: this.accountDatabaseService.lockFunction(
+					`${contactURL}/receiveTextLock`
+				),
+				state: States.chat,
+				unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
+			}))
+		;
 
-		await this.accountSessionService.setUser(username, sessionSubID);
+		await this.accountSessionService.setUser(username, sessionSubID, ephemeralSubSession);
 	}
 
 	constructor (
