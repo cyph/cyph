@@ -85,7 +85,7 @@ export class PairwiseSession {
 	) : Promise<{
 		cyphertextBytes: Uint8Array;
 		plaintext: Uint8Array;
-		username: Observable<string>
+		username: Observable<string>;
 	}[]> {
 		const promises	= {
 			incomingMessageID: this.incomingMessageID.getValue(),
@@ -111,7 +111,7 @@ export class PairwiseSession {
 		const decryptedMessages: {
 			cyphertextBytes: Uint8Array;
 			plaintext: Uint8Array;
-			username: Observable<string>
+			username: Observable<string>;
 		}[]	=
 			[]
 		;
