@@ -236,6 +236,7 @@ export class DatabaseService extends DataManagerService {
 
 	/** Gets the latest metadata known by the database. */
 	public async getMetadata (_URL: MaybePromise<string>) : Promise<{
+		data?: string;
 		hash: string;
 		timestamp: number;
 	}> {
@@ -297,7 +298,8 @@ export class DatabaseService extends DataManagerService {
 			key: string,
 			previousKey: () => Promise<string|undefined>,
 			o: {callback?: () => MaybePromise<void>}
-		) => MaybePromise<T>)
+		) => MaybePromise<T>),
+		_NO_BLOB_STORAGE?: boolean
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -340,7 +342,8 @@ export class DatabaseService extends DataManagerService {
 	public async setItem<T> (
 		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>,
-		_VALUE: T
+		_VALUE: T,
+		_NO_BLOB_STORAGE?: boolean
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -388,7 +391,12 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Uploads value and gives progress. */
-	public uploadItem<T> (_URL: MaybePromise<string>, _PROTO: IProto<T>, _VALUE: T) : {
+	public uploadItem<T> (
+		_URL: MaybePromise<string>,
+		_PROTO: IProto<T>,
+		_VALUE: T,
+		_NO_BLOB_STORAGE?: boolean
+	) : {
 		cancel: () => void;
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;

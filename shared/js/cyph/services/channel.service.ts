@@ -131,7 +131,7 @@ export class ChannelService implements IChannelService {
 				)
 			).indexOf(this.userID) < 0
 		) {
-			await this.databaseService.pushItem(`${url}/users`, StringProto, this.userID);
+			await this.databaseService.pushItem(`${url}/users`, StringProto, this.userID, true);
 		}
 
 		let isOpen	= false;
@@ -184,7 +184,8 @@ export class ChannelService implements IChannelService {
 		await this.localLock(async () => this.databaseService.pushItem<IChannelMessage>(
 			`${(await this.state).url}/messages`,
 			ChannelMessage,
-			{author: await waitForValue(() => this.userID), cyphertext}
+			{author: await waitForValue(() => this.userID), cyphertext},
+			true
 		));
 	}
 

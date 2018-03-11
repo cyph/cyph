@@ -233,15 +233,24 @@ export class FirebaseDatabaseService extends DatabaseService {
 			result: this.ngZone.runOutsideAngular(async () => {
 				const url	= await urlPromise;
 
-				const {hash, timestamp}	= await this.getMetadata(url);
+				const {data, hash, timestamp}	= await this.getMetadata(url);
 
 				try {
-					const localData	= await this.cacheGet({hash});
+					const localData	= await this.cacheGet({hash}).catch(err => {
+						if (data === undefined) {
+							throw err;
+						}
+						return this.potassiumService.fromBase64(data);
+					});
+
+					const value		= await deserialize(proto, localData);
+
 					this.ngZone.run(() => {
 						progress.next(100);
 						progress.complete();
 					});
-					return {timestamp, value: await deserialize(proto, localData)};
+
+					return {timestamp, value};
 				}
 				catch {}
 
@@ -307,22 +316,23 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async getMetadata (urlPromise: MaybePromise<string>) : Promise<{
+		data?: string;
 		hash: string;
 		timestamp: number;
 	}> {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
 
-			const {hash, timestamp}	=
+			const {data, hash, timestamp}	=
 				(await (await this.getDatabaseRef(url)).once('value')).val() ||
-				{hash: undefined, timestamp: undefined}
+				{data: undefined, hash: undefined, timestamp: undefined}
 			;
 
 			if (typeof hash !== 'string' || typeof timestamp !== 'number') {
 				throw new Error(`Item at ${url} not found.`);
 			}
 
-			return {hash, timestamp};
+			return {hash, timestamp, ...(typeof data === 'string' ? {data} : {})};
 		});
 	}
 
@@ -333,7 +343,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			const metadata	= await this.getMetadata(url);
 
-			await (await this.getStorageRef(url, metadata.hash)).getDownloadURL();
+			if (metadata.data === undefined) {
+				await (await this.getStorageRef(url, metadata.hash)).getDownloadURL();
+			}
 		}).
 			then(() => true).
 			catch(() => false)
@@ -513,7 +525,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 			key: string,
 			previousKey: () => Promise<string|undefined>,
 			o: {callback?: () => MaybePromise<void>}
-		) => MaybePromise<T>)
+		) => MaybePromise<T>),
+		noBlobStorage: boolean = false
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -547,7 +560,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				await itemRef.remove().then();
 
-				const result	= await this.setItem(`${url}/${key}`, proto, value);
+				const result	= await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);
 
 				if (o.callback) {
 					await o.callback();
@@ -686,7 +699,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public async setItem<T> (
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
-		value: T
+		value: T,
+		noBlobStorage: boolean = false
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -701,11 +715,21 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			/* tslint:disable-next-line:possible-timing-attack */
 			if (hash !== (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
-				await (await this.getStorageRef(url, hash)).put(new Blob([data])).then();
-				await (await this.getDatabaseRef(url)).set({
-					hash,
-					timestamp: ServerValue.TIMESTAMP
-				}).then();
+				if (noBlobStorage) {
+					await (await this.getDatabaseRef(url)).set({
+						data: this.potassiumService.toBase64(data),
+						hash,
+						timestamp: ServerValue.TIMESTAMP
+					}).then();
+				}
+				else {
+					await (await this.getStorageRef(url, hash)).put(new Blob([data])).then();
+					await (await this.getDatabaseRef(url)).set({
+						hash,
+						timestamp: ServerValue.TIMESTAMP
+					}).then();
+				}
+
 				this.cacheSet(url, data, hash);
 			}
 
@@ -746,7 +770,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public uploadItem<T> (urlPromise: MaybePromise<string>, proto: IProto<T>, value: T) : {
+	public uploadItem<T> (
+		urlPromise: MaybePromise<string>,
+		proto: IProto<T>,
+		value: T,
+		noBlobStorage: boolean = false
+	) : {
 		cancel: () => void;
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
@@ -755,6 +784,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= this.ngZone.runOutsideAngular(async () => {
+			if (noBlobStorage) {
+				const result	= await this.setItem(urlPromise, proto, value, true);
+				this.ngZone.run(() => {
+					progress.next(100);
+					progress.complete();
+				});
+				return result;
+			}
+
 			const url	= await urlPromise;
 
 			const data	= await serialize(proto, value);
