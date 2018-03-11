@@ -17,6 +17,9 @@
 
 					"handshake": {
 						"alicePublicKey": {
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -25,6 +28,9 @@
 							}
 						},
 						"bobPublicKey": {
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -33,6 +39,9 @@
 							}
 						},
 						"initialSecretAliceCyphertext": {
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -41,6 +50,9 @@
 							}
 						},
 						"initialSecretBobCyphertext": {
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -66,6 +78,9 @@
 
 					"messages": {
 						"$message": {
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -77,6 +92,9 @@
 
 					"users": {
 						"$user": {
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -92,6 +110,9 @@
 				"$email": {
 					".read": true,
 
+					"data": {
+						".validate": "newData.isString()"
+					},
 					"hash": {
 						".validate": "newData.isString()"
 					},
@@ -106,6 +127,9 @@
 					".read": true,
 					".write": true,
 
+					"data": {
+						".validate": "newData.isString()"
+					},
 					"hash": {
 						".validate": "newData.isString()"
 					},
@@ -157,6 +181,9 @@
 					"avatar": {
 						".read": true,
 
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -168,6 +195,9 @@
 					"coverImage": {
 						".read": true,
 
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -180,6 +210,9 @@
 						".read": true,
 						".write": false,
 
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -189,6 +222,9 @@
 					},
 
 					"certificateRequest": {
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -205,6 +241,9 @@
 
 					"contactUsernames": {
 						"$username": {
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -217,6 +256,9 @@
 					"contacts": {
 						"$contact": {
 							"lastConfirmedMessage": {
+								"data": {
+									".validate": "newData.isString()"
+								},
 								"hash": {
 									".validate": "newData.isString()"
 								},
@@ -226,6 +268,9 @@
 							},
 							"messages": {
 								"$message": {
+									"data": {
+										".validate": "newData.isString()"
+									},
 									"hash": {
 										".validate": "newData.isString()"
 									},
@@ -235,6 +280,9 @@
 								}
 							},
 							"messages-head": {
+								"data": {
+									".validate": "newData.isString()"
+								},
 								"hash": {
 									".validate": "newData.isString()"
 								},
@@ -244,6 +292,9 @@
 							},
 							"messageValues": {
 								"$messageValue": {
+									"data": {
+										".validate": "newData.isString()"
+									},
 									"hash": {
 										".validate": "newData.isString()"
 									},
@@ -255,6 +306,9 @@
 							"session": {
 								"asymmetricRatchetState": {
 									"privateKey": {
+										"data": {
+											".validate": "newData.isString()"
+										},
 										"hash": {
 											".validate": "newData.isString()"
 										},
@@ -263,6 +317,9 @@
 										}
 									},
 									"publicKey": {
+										"data": {
+											".validate": "newData.isString()"
+										},
 										"hash": {
 											".validate": "newData.isString()"
 										},
@@ -272,6 +329,9 @@
 									}
 								},
 								"channelUserID": {
+									"data": {
+										".validate": "newData.isString()"
+									},
 									"hash": {
 										".validate": "newData.isString()"
 									},
@@ -281,6 +341,9 @@
 								},
 								"handshake": {
 									"currentStep": {
+										"data": {
+											".validate": "newData.isString()"
+										},
 										"hash": {
 											".validate": "newData.isString()"
 										},
@@ -289,6 +352,9 @@
 										}
 									},
 									"initialSecret": {
+										"data": {
+											".validate": "newData.isString()"
+										},
 										"hash": {
 											".validate": "newData.isString()"
 										},
@@ -298,6 +364,9 @@
 									}
 								},
 								"incomingMessageID": {
+									"data": {
+										".validate": "newData.isString()"
+									},
 									"hash": {
 										".validate": "newData.isString()"
 									},
@@ -306,6 +375,9 @@
 									}
 								},
 								"incomingMessageQueue": {
+									"data": {
+										".validate": "newData.isString()"
+									},
 									"hash": {
 										".validate": "newData.isString()"
 									},
@@ -314,6 +386,9 @@
 									}
 								},
 								"incomingMessages": {
+									"data": {
+										".validate": "newData.isString()"
+									},
 									"hash": {
 										".validate": "newData.isString()"
 									},
@@ -322,6 +397,9 @@
 									}
 								},
 								"incomingMessagesMax": {
+									"data": {
+										".validate": "newData.isString()"
+									},
 									"hash": {
 										".validate": "newData.isString()"
 									},
@@ -330,6 +408,9 @@
 									}
 								},
 								"outgoingMessageID": {
+									"data": {
+										".validate": "newData.isString()"
+									},
 									"hash": {
 										".validate": "newData.isString()"
 									},
@@ -339,6 +420,9 @@
 								},
 								"outgoingMessageQueue": {
 									"$outgoingMessage": {
+										"data": {
+											".validate": "newData.isString()"
+										},
 										"hash": {
 											".validate": "newData.isString()"
 										},
@@ -348,6 +432,9 @@
 									}
 								},
 								"symmetricKey": {
+									"data": {
+										".validate": "newData.isString()"
+									},
 									"hash": {
 										".validate": "newData.isString()"
 									},
@@ -358,6 +445,9 @@
 								"symmetricRatchetState": {
 									"current": {
 										"incoming": {
+											"data": {
+												".validate": "newData.isString()"
+											},
 											"hash": {
 												".validate": "newData.isString()"
 											},
@@ -366,6 +456,9 @@
 											}
 										},
 										"outgoing": {
+											"data": {
+												".validate": "newData.isString()"
+											},
 											"hash": {
 												".validate": "newData.isString()"
 											},
@@ -376,6 +469,9 @@
 									},
 									"next": {
 										"incoming": {
+											"data": {
+												".validate": "newData.isString()"
+											},
 											"hash": {
 												".validate": "newData.isString()"
 											},
@@ -384,6 +480,9 @@
 											}
 										},
 										"outgoing": {
+											"data": {
+												".validate": "newData.isString()"
+											},
 											"hash": {
 												".validate": "newData.isString()"
 											},
@@ -402,6 +501,9 @@
 							".read": true,
 
 							"$delta": {
+								"data": {
+									".validate": "newData.isString()"
+								},
 								"hash": {
 									".validate": "newData.isString()"
 								},
@@ -413,6 +515,9 @@
 					},
 
 					"email": {
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -422,6 +527,9 @@
 					},
 
 					"encryptionKeyPair": {
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -434,6 +542,9 @@
 						"$fileRecord": {
 							".read": true,
 
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -445,6 +556,9 @@
 
 					"fileReferences": {
 						"$fileReference": {
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -459,6 +573,9 @@
 							".read": true,
 							".write": "($user + '@' + $DOMAIN) === auth.token.email || (!data.exists() && newData.exists())",
 
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -472,6 +589,9 @@
 						"$form": {
 							".read": true,
 
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -485,6 +605,9 @@
 						"$incomingFile": {
 							".write": "($user + '@' + $DOMAIN) === auth.token.email || (!data.exists() && newData.exists())",
 
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -513,6 +636,9 @@
 					},
 
 					"inviteCode": {
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -525,6 +651,9 @@
 						".write": false,
 
 						"$code": {
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -535,6 +664,9 @@
 					},
 
 					"inviterUsername": {
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -546,6 +678,9 @@
 					"inviterUsernamePlaintext": {
 						".write": "!newData.exists()",
 
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -555,6 +690,9 @@
 					},
 
 					"lastPresence": {
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -582,6 +720,9 @@
 					"loginData": {
 						".read": true,
 
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -613,6 +754,9 @@
 					"organizationMembers": {
 						".read": true,
 
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -622,6 +766,9 @@
 					},
 
 					"patientInfo": {
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -632,6 +779,9 @@
 
 					"pin": {
 						"hash": {
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -640,6 +790,9 @@
 							}
 						},
 						"isCustom": {
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -652,6 +805,9 @@
 					"presence": {
 						".read": true,
 
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -663,6 +819,9 @@
 					"publicEncryptionKey": {
 						".read": true,
 
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -674,6 +833,9 @@
 					"publicProfile": {
 						".read": true,
 
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -685,6 +847,9 @@
 					"publicProfileExtra": {
 						".read": true,
 
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -699,6 +864,9 @@
 						"$username": {
 							".write": "($username + '@' + $DOMAIN) === auth.token.email",
 
+							"data": {
+								".validate": "newData.isString()"
+							},
 							"hash": {
 								".validate": "newData.isString()"
 							},
@@ -709,6 +877,9 @@
 					},
 
 					"settings": {
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},
@@ -718,6 +889,9 @@
 					},
 
 					"signingKeyPair": {
+						"data": {
+							".validate": "newData.isString()"
+						},
 						"hash": {
 							".validate": "newData.isString()"
 						},

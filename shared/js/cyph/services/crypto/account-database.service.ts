@@ -393,7 +393,8 @@ export class AccountDatabaseService {
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
-		immutable: boolean = true
+		immutable: boolean = true,
+		noBlobStorage: boolean = false
 	) : IAsyncList<T> {
 		const localLock	= lockFunction();
 
@@ -406,10 +407,18 @@ export class AccountDatabaseService {
 			),
 			lock: async (f, reason) => this.lock(url, f, reason),
 			pushValue: async value => localLock(async () => {
-				await this.pushItem(url, proto, value, securityModel, customKey, immutable);
+				await this.pushItem(
+					url,
+					proto,
+					value,
+					securityModel,
+					customKey,
+					immutable,
+					noBlobStorage
+				);
 			}),
 			setValue: async value => localLock(async () =>
-				this.setList(url, proto, value, securityModel, customKey, immutable)
+				this.setList(url, proto, value, securityModel, customKey, immutable, noBlobStorage)
 			),
 			subscribeAndPop: f => {
 				if (immutable) {
@@ -459,7 +468,8 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
-		anonymous: boolean = false
+		anonymous: boolean = false,
+		noBlobStorage: boolean = false
 	) : IAsyncMap<string, T> {
 		const localLock			= lockFunction();
 
@@ -469,7 +479,8 @@ export class AccountDatabaseService {
 			return this.databaseService.getAsyncMap(
 				url,
 				BinaryProto,
-				this.lockFunction(url)
+				this.lockFunction(url),
+				noBlobStorage
 			);
 		})();
 
@@ -515,7 +526,8 @@ export class AccountDatabaseService {
 					proto,
 					value,
 					securityModel,
-					customKey
+					customKey,
+					noBlobStorage
 				);
 			},
 			setValue: async (mapValue: Map<string, T>) => localLock(async () => {
@@ -542,7 +554,8 @@ export class AccountDatabaseService {
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
-		blockGetValue: boolean = false
+		blockGetValue: boolean = false,
+		noBlobStorage: boolean = false
 	) : IAsyncValue<T> {
 		const defaultValue	= proto.create();
 		const localLock		= lockFunction();
@@ -554,7 +567,8 @@ export class AccountDatabaseService {
 				url,
 				BinaryProto,
 				this.lockFunction(url),
-				blockGetValue
+				blockGetValue,
+				noBlobStorage
 			);
 		})();
 
@@ -859,7 +873,8 @@ export class AccountDatabaseService {
 		value: T,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
-		immutable: boolean = true
+		immutable: boolean = true,
+		noBlobStorage: boolean = false
 	) : Promise<{hash: string; url: string}> {
 		url	= await this.normalizeURL(url);
 
@@ -873,7 +888,8 @@ export class AccountDatabaseService {
 						StringProto,
 						key,
 						securityModel,
-						customKey
+						customKey,
+						noBlobStorage
 					).then(
 						() => {}
 					);
@@ -887,7 +903,8 @@ export class AccountDatabaseService {
 					customKey,
 					immutable ? ((await previousKey()) || '') : undefined
 				);
-			}
+			},
+			noBlobStorage
 		);
 	}
 
@@ -904,12 +921,14 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		value: T,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: MaybePromise<Uint8Array>
+		customKey?: MaybePromise<Uint8Array>,
+		noBlobStorage: boolean = false
 	) : Promise<{hash: string; url: string}> {
 		return this.lock(url, async () => this.databaseService.setItem(
 			await this.normalizeURL(url),
 			BinaryProto,
-			await this.seal(url, proto, value, securityModel, customKey)
+			await this.seal(url, proto, value, securityModel, customKey),
+			noBlobStorage
 		));
 	}
 
@@ -920,14 +939,23 @@ export class AccountDatabaseService {
 		value: T[],
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
-		immutable: boolean = true
+		immutable: boolean = true,
+		noBlobStorage: boolean = false
 	) : Promise<void> {
 		url	= await this.normalizeURL(url);
 
 		return this.lock(url, async () => {
 			await this.removeItem(url);
 			for (const v of value) {
-				await this.pushItem(url, proto, v, securityModel, customKey, immutable);
+				await this.pushItem(
+					url,
+					proto,
+					v,
+					securityModel,
+					customKey,
+					immutable,
+					noBlobStorage
+				);
 			}
 		});
 	}
@@ -960,7 +988,8 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		value: T,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: MaybePromise<Uint8Array>
+		customKey?: MaybePromise<Uint8Array>,
+		noBlobStorage: boolean = false
 	) : {
 		cancel: () => void;
 		progress: Observable<number>;
@@ -973,7 +1002,8 @@ export class AccountDatabaseService {
 			const uploadTask	= this.databaseService.uploadItem(
 				await this.normalizeURL(url),
 				BinaryProto,
-				await this.seal(url, proto, value, securityModel, customKey)
+				await this.seal(url, proto, value, securityModel, customKey),
+				noBlobStorage
 			);
 
 			cancel.promise.then(() => { uploadTask.cancel(); });

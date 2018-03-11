@@ -1,4 +1,5 @@
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
 import {filter} from 'rxjs/operators/filter';
 import {take} from 'rxjs/operators/take';
 import {Subject} from 'rxjs/Subject';
@@ -37,9 +38,11 @@ export class PairwiseSession {
 	private readonly incomingMessageQueue: Subject<{
 		cyphertext: Uint8Array;
 		newMessageID: number;
+		resolve: () => void;
 	}>	= new Subject<{
 		cyphertext: Uint8Array;
 		newMessageID: number;
+		resolve: () => void;
 	}>();
 
 	/** @ignore */
@@ -79,7 +82,11 @@ export class PairwiseSession {
 	private async processIncomingMessages (
 		newMessageID: number,
 		cyphertext: Uint8Array
-	) : Promise<void> {
+	) : Promise<{
+		cyphertextBytes: Uint8Array;
+		plaintext: Uint8Array;
+		username: Observable<string>;
+	}[]> {
 		const promises	= {
 			incomingMessageID: this.incomingMessageID.getValue(),
 			incomingMessages: this.incomingMessages.getValue(),
@@ -101,6 +108,14 @@ export class PairwiseSession {
 			message.push(cyphertext);
 		}
 
+		const decryptedMessages: {
+			cyphertextBytes: Uint8Array;
+			plaintext: Uint8Array;
+			username: Observable<string>;
+		}[]	=
+			[]
+		;
+
 		while (incomingMessageID <= incomingMessagesMax) {
 			const id		= incomingMessageID;
 			const message	= incomingMessages[id];
@@ -113,11 +128,11 @@ export class PairwiseSession {
 				try {
 					const plaintext	= await (await this.core).decrypt(cyphertextBytes);
 
-					await this.transport.receive(
+					decryptedMessages.push({
 						cyphertextBytes,
 						plaintext,
-						this.remoteUser.username
-					);
+						username: this.remoteUser.username
+					});
 
 					++incomingMessageID;
 					break;
@@ -143,6 +158,8 @@ export class PairwiseSession {
 		this.incomingMessageID.setValue(incomingMessageID);
 		this.incomingMessages.setValue(incomingMessages);
 		this.incomingMessagesMax.setValue(incomingMessagesMax);
+
+		return decryptedMessages;
 	}
 
 	/** @ignore */
@@ -201,10 +218,15 @@ export class PairwiseSession {
 
 		await this.isReceiving.pipe(filter(b => b), take(1)).toPromise();
 
+		const {promise, resolve}	= resolvable();
+
 		this.incomingMessageQueue.next({
 			cyphertext,
-			newMessageID: this.potassium.toDataView(cyphertext).getUint32(0, true)
+			newMessageID: this.potassium.toDataView(cyphertext).getUint32(0, true),
+			resolve
 		});
+
+		return promise;
 	}
 
 	/** Send/encrypt outgoing message. */
@@ -368,15 +390,32 @@ export class PairwiseSession {
 					await this.connect();
 
 					this.receiveLock(async () => {
-						const lock	= lockFunction();
+						const lock					= lockFunction();
+						const sessionReceiveLock	= lockFunction();
 
 						const sub	= this.incomingMessageQueue.subscribe(
-							async ({cyphertext, newMessageID}) => lock(async () =>
-								this.processIncomingMessages(
+							async ({cyphertext, newMessageID, resolve}) => lock(async () => {
+								const decryptedMessages	= await this.processIncomingMessages(
 									newMessageID,
 									cyphertext
-								)
-							)
+								);
+
+								sessionReceiveLock(async () => {
+									for (const {
+										cyphertextBytes,
+										plaintext,
+										username
+									} of decryptedMessages) {
+										await this.transport.receive(
+											cyphertextBytes,
+											plaintext,
+											username
+										);
+									}
+
+									resolve();
+								});
+							})
 						);
 
 						this.isReceiving.next(true);

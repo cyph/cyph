@@ -333,7 +333,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 						}}]);
 					}
 				},
-				getSessionid: () => this.sessionService.state.cyphID,
+				getSessionid: () => p2pSessionData.id,
 				on: (event: string, callback: Function) => {
 					const fullEvent: string	= P2PWebRTCService.constants.webRTC + event;
 					webRTCEvents.push(fullEvent);
@@ -355,7 +355,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 					);
 				}
 			},
-			debug: env.environment.local ? true : false,
+			debug: env.environment.local,
 			localVideoEl: $localVideo[0],
 			media: {audio: true, video: true},
 			peerConnectionConfig: {

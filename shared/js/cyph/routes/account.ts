@@ -45,6 +45,7 @@ export const account: Route	= {
 					path: 'call',
 					component: AccountChatComponent,
 					data: {
+						ephemeralSubSession: true,
 						messageType: ChatMessageValue.Types.Form,
 						value: newPatient
 					}
@@ -52,7 +53,10 @@ export const account: Route	= {
 				{
 					path: 'end',
 					component: AccountChatComponent,
-					data: {promptFollowup: true}
+					data: {
+						ephemeralSubSession: true,
+						promptFollowup: true
+					}
 				}
 			]
 		},

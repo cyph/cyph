@@ -11,7 +11,15 @@ const getOrSetDefaultAsyncLocks: Map<any, LockFunction>	=
 ;
 
 /** Gets a value from a map and sets a default value if none had previously been set. */
-export const getOrSetDefault	= <K, V> (map: Map<K, V>, key: K, defaultValue: () => V) : V => {
+export const getOrSetDefault	= <K, V> (
+	map: Map<K, V>,
+	key: K|undefined,
+	defaultValue: () => V
+) : V => {
+	if (key === undefined) {
+		return defaultValue();
+	}
+
 	if (!map.has(key)) {
 		map.set(key, defaultValue());
 	}
@@ -28,7 +36,7 @@ export const getOrSetDefault	= <K, V> (map: Map<K, V>, key: K, defaultValue: () 
 /** Async variant of getOrSetDefault. */
 export const getOrSetDefaultAsync	= async <K, V> (
 	map: MaybePromise<Map<K, V>>,
-	key: MaybePromise<K>,
+	key: MaybePromise<K|undefined>,
 	defaultValue: () => MaybePromise<V>
 ) : Promise<V> => {
 	return getOrSetDefault(
@@ -38,6 +46,10 @@ export const getOrSetDefaultAsync	= async <K, V> (
 	)(async () => {
 		key	= await key;
 		map	= await map;
+
+		if (key === undefined) {
+			return defaultValue();
+		}
 
 		if (!map.has(key)) {
 			map.set(key, await defaultValue());

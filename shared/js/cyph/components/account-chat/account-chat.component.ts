@@ -111,11 +111,11 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 				this.activatedRoute.firstChild.url :
 				this.activatedRoute.url
 		))).subscribe(async ([
-			{callType, promptFollowup},
+			{callType, ephemeralSubSession, promptFollowup},
 			{appointmentID, sessionSubID, username},
 			[{path}]
 		]: [
-			{callType?: 'audio'|'video'; promptFollowup?: boolean},
+			{callType?: 'audio'|'video'; ephemeralSubSession?: boolean; promptFollowup?: boolean},
 			{appointmentID?: string; sessionSubID?: string; username?: string},
 			UrlSegment[]
 		]) => lock(async () => {
@@ -181,7 +181,13 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 					return;
 				}
 
-				await this.accountChatService.setUser(username, undefined, callType, sessionSubID);
+				await this.accountChatService.setUser(
+					username,
+					undefined,
+					callType,
+					sessionSubID,
+					ephemeralSubSession
+				);
 
 				if (callType === undefined) {
 					return;

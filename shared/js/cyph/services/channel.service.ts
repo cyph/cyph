@@ -9,7 +9,7 @@ import {IChannelService} from '../service-interfaces/ichannel.service';
 import {IChannelHandlers} from '../session';
 import {lockFunction} from '../util/lock';
 import {uuid} from '../util/uuid';
-import {resolvable, sleep, waitForValue} from '../util/wait';
+import {resolvable, waitForValue} from '../util/wait';
 import {DatabaseService} from './database.service';
 
 
@@ -119,7 +119,6 @@ export class ChannelService implements IChannelService {
 			await handlers.onMessage(message.value.cyphertext);
 
 			if (!this.ephemeral) {
-				await sleep(600000);
 				await this.databaseService.removeItem(message.url).catch(() => {});
 			}
 		}));
@@ -132,7 +131,7 @@ export class ChannelService implements IChannelService {
 				)
 			).indexOf(this.userID) < 0
 		) {
-			await this.databaseService.pushItem(`${url}/users`, StringProto, this.userID);
+			await this.databaseService.pushItem(`${url}/users`, StringProto, this.userID, true);
 		}
 
 		let isOpen	= false;
@@ -185,7 +184,8 @@ export class ChannelService implements IChannelService {
 		await this.localLock(async () => this.databaseService.pushItem<IChannelMessage>(
 			`${(await this.state).url}/messages`,
 			ChannelMessage,
-			{author: await waitForValue(() => this.userID), cyphertext}
+			{author: await waitForValue(() => this.userID), cyphertext},
+			true
 		));
 	}
 
