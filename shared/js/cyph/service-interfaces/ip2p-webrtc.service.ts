@@ -1,5 +1,6 @@
 import {Observable} from 'rxjs/Observable';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
+import {ChatService} from '../services/chat.service';
 
 
 /**
@@ -37,7 +38,12 @@ export interface IP2PWebRTCService {
 	close () : Promise<void>;
 
 	/** Initializes service. */
-	init (handlers: IP2PHandlers, localVideo: () => JQuery, remoteVideo: () => JQuery) : void;
+	init (
+		chatService: ChatService,
+		handlers: IP2PHandlers,
+		localVideo: () => JQuery,
+		remoteVideo: () => JQuery
+	) : void;
 
 	/** Sets up a new P2P session. */
 	join () : void;

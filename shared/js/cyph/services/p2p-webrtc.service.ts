@@ -16,6 +16,7 @@ import {parse} from '../util/serialization';
 import {uuid} from '../util/uuid';
 import {resolvable, sleep, waitForIterable, waitForValue} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
+import {ChatService} from './chat.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionService} from './session.service';
 
@@ -23,6 +24,9 @@ import {SessionService} from './session.service';
 /** @inheritDoc */
 @Injectable()
 export class P2PWebRTCService implements IP2PWebRTCService {
+	/** @ignore */
+	private readonly _CHAT_SERVICE	= resolvable<ChatService>();
+
 	/** @ignore */
 	private readonly _HANDLERS		= resolvable<IP2PHandlers>();
 
@@ -60,6 +64,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		webRTC: 'webRTC'
 	};
 
+
+	/** @ignore */
+	private readonly chatService: Promise<ChatService>	= this._CHAT_SERVICE.promise;
 
 	/** @ignore */
 	private readonly commands	= {
@@ -131,6 +138,11 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @ignore */
 	private readonly remoteVideo: Promise<() => JQuery>	= this._REMOTE_VIDEO.promise;
+
+	/** @ignore */
+	private readonly resolveChatService: (chat: ChatService) => void			=
+		this._CHAT_SERVICE.resolve
+	;
 
 	/** @ignore */
 	private readonly resolveHandlers: (handlers: IP2PHandlers) => void			=
@@ -275,10 +287,12 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @inheritDoc */
 	public init (
+		chatService: ChatService,
 		handlers: IP2PHandlers,
 		localVideo: () => JQuery,
 		remoteVideo: () => JQuery
 	) : void {
+		this.resolveChatService(chatService);
 		this.resolveHandlers(handlers);
 		this.resolveLocalVideo(localVideo);
 		this.resolveRemoteVideo(remoteVideo);
