@@ -65,7 +65,8 @@ export class DatabaseService extends DataManagerService {
 	public getAsyncList<T> (
 		url: string,
 		proto: IProto<T>,
-		lock: LockFunction = this.lockFunction(url)
+		lock: LockFunction = this.lockFunction(url),
+		noBlobStorage: boolean = false
 	) : IAsyncList<T> {
 		const localLock	= lockFunction();
 
@@ -76,9 +77,11 @@ export class DatabaseService extends DataManagerService {
 			getValue: async () => localLock(async () => this.getList(url, proto)),
 			lock,
 			pushValue: async value => localLock(async () => {
-				await this.pushItem(url, proto, value);
+				await this.pushItem(url, proto, value, noBlobStorage);
 			}),
-			setValue: async value => localLock(async () => this.setList(url, proto, value)),
+			setValue: async value => localLock(async () =>
+				this.setList(url, proto, value, noBlobStorage)
+			),
 			subscribeAndPop: f => this.subscribeAndPop(url, proto, f),
 			updateValue: async f => asyncList.lock(async () =>
 				asyncList.setValue(await f(await asyncList.getValue()))
@@ -98,7 +101,8 @@ export class DatabaseService extends DataManagerService {
 	public getAsyncMap<T> (
 		url: string,
 		proto: IProto<T>,
-		lock: LockFunction = this.lockFunction(url)
+		lock: LockFunction = this.lockFunction(url),
+		noBlobStorage: boolean = false
 	) : IAsyncMap<string, T> {
 		const localLock			= lockFunction();
 
@@ -122,7 +126,7 @@ export class DatabaseService extends DataManagerService {
 			lock,
 			removeItem: async key => this.removeItem(`${url}/${key}`),
 			setItem: async (key, value) => {
-				await this.setItem(`${url}/${key}`, proto, value);
+				await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);
 			},
 			setValue: async (mapValue: Map<string, T>) => localLock(async () => {
 				await asyncMap.clear();
@@ -152,7 +156,8 @@ export class DatabaseService extends DataManagerService {
 		url: string,
 		proto: IProto<T>,
 		lock: LockFunction = this.lockFunction(url),
-		blockGetValue: boolean = false
+		blockGetValue: boolean = false,
+		noBlobStorage: boolean = false
 	) : IAsyncValue<T> {
 		const defaultValue	= proto.create();
 		const localLock		= lockFunction();
@@ -193,7 +198,7 @@ export class DatabaseService extends DataManagerService {
 			setValue: async value => localLock(async () => {
 				const oldValue	= currentValue;
 
-				currentHash		= (await this.setItem(url, proto, value)).hash;
+				currentHash		= (await this.setItem(url, proto, value, noBlobStorage)).hash;
 				currentValue	= value;
 
 				if (ArrayBuffer.isView(oldValue)) {
@@ -352,10 +357,15 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Sets a list's value. */
-	public async setList<T> (url: string, proto: IProto<T>, value: T[]) : Promise<void> {
+	public async setList<T> (
+		url: string,
+		proto: IProto<T>,
+		value: T[],
+		noBlobStorage: boolean = false
+	) : Promise<void> {
 		await this.removeItem(url);
 		for (const v of value) {
-			await this.pushItem(url, proto, v);
+			await this.pushItem(url, proto, v, noBlobStorage);
 		}
 	}
 
