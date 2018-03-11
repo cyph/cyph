@@ -95,6 +95,13 @@ export class AccountSessionService extends SessionService {
 		await this.castleSendMessages(messages);
 	}
 
+	/** @inheritDoc */
+	public close () : void {
+		if (this.ephemeralSubSession) {
+			super.close();
+		}
+	}
+
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
 		username: string,

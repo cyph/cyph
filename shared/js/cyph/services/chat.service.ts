@@ -166,7 +166,11 @@ export class ChatService {
 			this.unconfirmedMessagesSubscription	= undefined;
 		}
 
-		if (!this.sessionInitService.ephemeral || this.chat.state === States.aborted) {
+		if (!this.sessionInitService.ephemeral) {
+			this.sessionService.close();
+			return;
+		}
+		else if (this.chat.state === States.aborted) {
 			return;
 		}
 
