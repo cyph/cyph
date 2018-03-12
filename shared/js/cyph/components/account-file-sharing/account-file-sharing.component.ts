@@ -1,4 +1,5 @@
 import {Component, Input, ViewChild} from '@angular/core';
+import {IResolvable} from '../../iresolvable';
 import {IAccountFileRecord} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -22,6 +23,9 @@ export class AccountFileSharingComponent {
 	@ViewChild(AccountContactsSearchComponent)
 	public accountContactsSearch?: AccountContactsSearchComponent;
 
+	/** Function to close dialog. */
+	public closeFunction?: IResolvable<() => void>;
+
 	/** File to share. */
 	@Input() public file?: IAccountFileRecord;
 
@@ -42,6 +46,10 @@ export class AccountFileSharingComponent {
 		}
 
 		await this.accountFilesService.shareFile(fileID, username);
+
+		if (this.closeFunction) {
+			(await this.closeFunction.promise)();
+		}
 	}
 
 	constructor (

@@ -27,6 +27,7 @@ import {IAsyncList} from '../iasync-list';
 import {IProto} from '../iproto';
 import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
+import {IResolvable} from '../iresolvable';
 import {
 	AccountFileRecord,
 	AccountFileReference,
@@ -69,7 +70,10 @@ export class AccountFilesService {
 	 * @see AccountFileSharingComponent
 	 */
 	public static accountFileSharingComponent	=
-		resolvable<ComponentType<{file?: IAccountFileRecord}>>()
+		resolvable<ComponentType<{
+			closeFunction?: IResolvable<() => void>;
+			file?: IAccountFileRecord;
+		}>>()
 	;
 
 
@@ -720,11 +724,15 @@ export class AccountFilesService {
 
 	/** Creates a dialog to share a file with another user. */
 	public async shareFilePrompt (file: IAccountFileRecord) : Promise<void> {
+		const closeFunction	= resolvable<() => void>();
+
 		await this.dialogService.baseDialog(
 			await AccountFilesService.accountFileSharingComponent.promise,
 			o => {
-				o.file	= file;
-			}
+				o.closeFunction	= closeFunction;
+				o.file			= file;
+			},
+			closeFunction
 		);
 	}
 
