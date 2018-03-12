@@ -1,3 +1,4 @@
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {MaybePromise} from './maybe-promise-type';
@@ -14,7 +15,10 @@ export interface IAsyncList<T> {
 	getValue () : Promise<T[]>;
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
-	lock<L> (f: (reason?: string) => Promise<L>, reason?: string) : Promise<L>;
+	lock<L> (
+		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<L>,
+		reason?: string
+	) : Promise<L>;
 
 	/** Pushes value to list. */
 	pushValue (value: T) : Promise<void>;

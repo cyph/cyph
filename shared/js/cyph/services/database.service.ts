@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
@@ -24,6 +25,12 @@ import {EnvService} from './env.service';
  */
 @Injectable()
 export class DatabaseService extends DataManagerService {
+	/** Configuration of DatabaseService.lock leasing algorithm. */
+	protected readonly lockLeaseConfig	= {
+		expirationLimit: 120000,
+		updateInterval: 30000
+	};
+
 	/** Namespace for database usage. */
 	public readonly namespace: string	=
 		(
@@ -251,7 +258,7 @@ export class DatabaseService extends DataManagerService {
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 	public async lock<T> (
 		_URL: MaybePromise<string>,
-		_F: (reason?: string) => Promise<T>,
+		_F: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
 		_REASON?: string
 	) : Promise<T> {
 		throw new Error('Must provide an implementation of DatabaseService.lock.');
@@ -259,7 +266,10 @@ export class DatabaseService extends DataManagerService {
 
 	/** Creates and returns a lock function that uses DatabaseService.lock. */
 	public lockFunction (url: string) : LockFunction {
-		return async <T> (f: (reason?: string) => Promise<T>, reason?: string) =>
+		return async <T> (
+			f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+			reason?: string
+		) =>
 			this.lock(url, f, reason)
 		;
 	}

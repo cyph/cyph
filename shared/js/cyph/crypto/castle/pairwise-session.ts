@@ -389,7 +389,7 @@ export class PairwiseSession {
 
 					await this.connect();
 
-					this.receiveLock(async () => {
+					this.receiveLock(async o => {
 						const lock					= lockFunction();
 						const sessionReceiveLock	= lockFunction();
 
@@ -419,13 +419,13 @@ export class PairwiseSession {
 						);
 
 						this.isReceiving.next(true);
-						await this.transport.closed;
+						await Promise.race([this.transport.closed, o.stillOwner.toPromise()]);
 						this.isReceiving.next(false);
 						await sleep();
 						sub.unsubscribe();
 					});
 
-					this.sendLock(async () => {
+					this.sendLock(async o => {
 						const lock	= lockFunction();
 
 						const sub	= this.outgoingMessageQueue.subscribeAndPop(async message =>
@@ -445,7 +445,7 @@ export class PairwiseSession {
 							})
 						);
 
-						await this.transport.closed;
+						await Promise.race([this.transport.closed, o.stillOwner.toPromise()]);
 						sub.unsubscribe();
 					});
 

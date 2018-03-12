@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subject} from 'rxjs/Subject';
 import {Subscription} from 'rxjs/Subscription';
 import {IAsyncValue} from '../iasync-value';
@@ -164,7 +165,10 @@ export class ChannelService implements IChannelService {
 	}
 
 	/** @inheritDoc */
-	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
+	public async lock<T> (
+		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		reason?: string
+	) : Promise<T> {
 		return (await this.state).lock(f, reason);
 	}
 

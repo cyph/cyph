@@ -1,3 +1,4 @@
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {LockFunction} from '../lock-function-type';
 import {uuid} from './uuid';
 import {resolvable} from './wait';
@@ -6,7 +7,7 @@ import {resolvable} from './wait';
 /** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 export const lock	= async <T> (
 	mutex: {promise?: Promise<any>; queue?: string[]; reason?: string},
-	f: (reason?: string) => Promise<T>,
+	f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
 	reason?: string
 ) : Promise<T> => {
 	if (mutex.queue === undefined) {
@@ -29,7 +30,7 @@ export const lock	= async <T> (
 	mutex.promise		= releaseLock.promise;
 
 	try {
-		return await f(lastReason);
+		return await f({reason: lastReason, stillOwner: new BehaviorSubject(true)});
 	}
 	finally {
 		queue.shift();
@@ -40,7 +41,10 @@ export const lock	= async <T> (
 /** Creates and returns a lock function that uses util/lock. */
 export const lockFunction	= () : LockFunction => {
 	const mutex	= {};
-	return async <T> (f: (reason?: string) => Promise<T>, reason?: string) =>
+	return async <T> (
+		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		reason?: string
+	) =>
 		lock(mutex, f, reason)
 	;
 };

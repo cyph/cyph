@@ -34,7 +34,7 @@ import {requestByteStream} from '../util/request';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {resolvable, retryUntilSuccessful, waitForValue} from '../util/wait';
+import {resolvable, retryUntilSuccessful, sleep, waitForValue} from '../util/wait';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {EnvService} from './env.service';
@@ -355,7 +355,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public async lock<T> (
 		urlPromise: MaybePromise<string>,
-		f: (reason?: string) => Promise<T>,
+		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
 		const url	= await urlPromise;
@@ -363,46 +363,95 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () => lock(
 			getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
 			async () => {
-				let mutex: DatabaseReference|undefined;
-
 				const queue		= await this.getDatabaseRef(url);
 				const id		= uuid();
 				const localLock	= lockFunction();
+				let isActive	= true;
+
+				const lockData: {
+					reason?: string;
+					stillOwner: BehaviorSubject<boolean>;
+				}	= {
+					stillOwner: new BehaviorSubject(false)
+				};
+
+				const mutex	= await queue.push().then();
+
+				const getLockTimestamp	= async () => {
+					const timestamp	= (await mutex.child('timestamp').once('value')).val();
+
+					if (typeof timestamp !== 'number' || isNaN(timestamp)) {
+						throw new Error('Invalid server timestamp.');
+					}
+
+					return timestamp;
+				};
 
 				const contendForLock	= async () => retryUntilSuccessful(async () => {
 					try {
-						if (mutex) {
-							return;
-						}
-
-						mutex	= await queue.push({timestamp: ServerValue.TIMESTAMP}).then();
+						await mutex.set({timestamp: ServerValue.TIMESTAMP}).then();
 						await mutex.onDisconnect().remove().then();
 						await mutex.set({
+							claimTimestamp: ServerValue.TIMESTAMP,
 							id,
 							timestamp: ServerValue.TIMESTAMP,
 							...(reason ? {reason} : {})
 						}).then();
+						return getLockTimestamp();
 					}
 					catch (err) {
-						if (mutex) {
-							await mutex.remove().then();
-							mutex	= undefined;
-						}
-
+						await mutex.remove().then();
 						throw err;
 					}
 				});
 
-				try {
-					let lastReason: string|undefined;
+				const surrenderLock		= () => {
+					isActive	= false;
+					lockData.stillOwner.next(false);
+					lockData.stillOwner.complete();
+					queue.off();
+				};
 
-					await contendForLock();
+				const updateLock		= async () => retryUntilSuccessful(async () => {
+					await mutex.child('timestamp').set(ServerValue.TIMESTAMP).then();
+					return getLockTimestamp();
+				});
+
+
+				try {
+					let lastUpdate	= await contendForLock();
+
+					(async () => {
+						while (isActive) {
+							if (
+								lockData.stillOwner.value &&
+								(
+									(await getTimestamp()) - lastUpdate
+								) >= this.lockLeaseConfig.expirationLimit
+							) {
+								return;
+							}
+
+							lastUpdate	= await updateLock();
+							await sleep(this.lockLeaseConfig.updateInterval);
+						}
+					})().
+						catch(() => {}).
+						then(surrenderLock)
+					;
 
 					/* tslint:disable-next-line:promise-must-complete */
 					await new Promise<void>(resolve => {
 						queue.on('value', async snapshot => localLock(async () => {
+							if (!isActive) {
+								return;
+							}
+
+							const timestamp	= await getTimestamp();
+
 							const value: {
 								[key: string]: {
+									claimTimestamp?: number;
 									id?: string;
 									reason?: string;
 									timestamp?: number;
@@ -411,45 +460,69 @@ export class FirebaseDatabaseService extends DatabaseService {
 								(snapshot && snapshot.val()) || {}
 							;
 
+							/* Clean up expired lock claims
+
+							for (const expiredContenderKey of Object.keys(value).filter(k => {
+								const contender	= value[k];
+								return (
+									typeof contender.timestamp === 'number' &&
+									!isNaN(contender.timestamp) &&
+									(
+										timestamp - contender.timestamp
+									) >= this.lockLeaseConfig.expirationLimit
+								);
+							})) {
+								queue.child(expiredContenderKey).remove();
+								delete value[expiredContenderKey];
+							}
+							*/
+
 							const contenders	= Object.keys(value).
 								map(k => value[k]).
 								filter(contender =>
+									typeof contender.claimTimestamp === 'number' &&
+									!isNaN(contender.claimTimestamp) &&
 									typeof contender.id === 'string' &&
 									typeof contender.timestamp === 'number' &&
-									!isNaN(contender.timestamp)
+									!isNaN(contender.timestamp) &&
+									(
+										timestamp - contender.timestamp
+									) < this.lockLeaseConfig.expirationLimit
 								).
-								sort((a, b) => (<number> a.timestamp) - (<number> b.timestamp))
+								sort((a, b) =>
+									(<number> a.claimTimestamp) - (<number> b.claimTimestamp)
+								)
 							;
 
-							const o	= contenders[0] || {id: '', reason: undefined, timestamp: NaN};
+							const o	= contenders[0] || {
+								claimTimestamp: NaN,
+								id: '',
+								reason: undefined,
+								timestamp: NaN
+							};
 
-							if (o.id === id) {
-								resolve();
-								queue.off();
-								return;
+							if (o.id !== id) {
+								lockData.reason	=
+									typeof o.reason === 'string' ? o.reason : undefined
+								;
 							}
 
-							lastReason	= typeof o.reason === 'string' ? o.reason : undefined;
-
-							if (!contenders.find(contender => contender.id === id)) {
-								if (mutex) {
-									await mutex.remove().then();
-									mutex	= undefined;
-								}
-
-								await contendForLock();
+							/* Claiming lock for the first time */
+							if (o.id === id && !lockData.stillOwner.value) {
+								lockData.stillOwner.next(true);
+								resolve();
+							}
+							/* Losing claim to lock */
+							else if (o.id !== id && lockData.stillOwner.value) {
+								surrenderLock();
 							}
 						}));
 					});
 
-					return await f(lastReason);
+					return await f(lockData);
 				}
 				finally {
-					await retryUntilSuccessful(async () => {
-						if (mutex) {
-							await mutex.remove().then();
-						}
-					});
+					await retryUntilSuccessful(async () => mutex.remove().then());
 				}
 			},
 			reason

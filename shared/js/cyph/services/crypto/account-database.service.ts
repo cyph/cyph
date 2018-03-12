@@ -780,7 +780,7 @@ export class AccountDatabaseService {
 	/** @see DatabaseService.lock */
 	public async lock<T> (
 		url: MaybePromise<string>,
-		f: (reason?: string) => Promise<T>,
+		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
 		const currentUser	= await this.getCurrentUser();
@@ -788,16 +788,19 @@ export class AccountDatabaseService {
 
 		return this.databaseService.lock(
 			url,
-			async r => f(!r ?
-				undefined :
-				this.potassiumService.toString(
-					await this.potassiumHelpers.secretBox.open(
-						this.potassiumService.fromBase64(r),
-						currentUser.keys.symmetricKey,
-						await url
-					)
-				)
-			),
+			async o => {
+				if (o.reason) {
+					o.reason	= this.potassiumService.toString(
+						await this.potassiumHelpers.secretBox.open(
+							this.potassiumService.fromBase64(o.reason),
+							currentUser.keys.symmetricKey,
+							await url
+						)
+					);
+				}
+
+				return f(o);
+			},
 			!reason ?
 				undefined :
 				this.potassiumService.toBase64(
@@ -812,7 +815,10 @@ export class AccountDatabaseService {
 
 	/** @see DatabaseService.lockFunction */
 	public lockFunction (url: MaybePromise<string>) : LockFunction {
-		return async <T> (f: (reason?: string) => Promise<T>, reason?: string) =>
+		return async <T> (
+			f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+			reason?: string
+		) =>
 			this.lock(url, f, reason)
 		;
 	}

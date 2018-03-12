@@ -420,12 +420,12 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public async init (channelID?: string, userID?: string) : Promise<void> {
-		this.incomingMessageQueueLock(async () => {
+		this.incomingMessageQueueLock(async o => {
 			this.incomingMessageQueue.subscribeAndPop(async message =>
 				this.cyphertextReceiveHandler(message)
 			);
 
-			await this.closed;
+			await Promise.race([this.closed, o.stillOwner.toPromise()]);
 		});
 
 		await Promise.all([
@@ -440,14 +440,23 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
-	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
+	public async lock<T> (
+		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		reason?: string
+	) : Promise<T> {
 		return this.channelService.lock(
-			async r => f(!r ? undefined : this.potassiumService.toString(
-				await this.potassiumService.secretBox.open(
-					this.potassiumService.fromBase64(r),
-					await this.symmetricKey
-				)
-			)),
+			async o => {
+				if (o.reason) {
+					o.reason	= this.potassiumService.toString(
+						await this.potassiumService.secretBox.open(
+							this.potassiumService.fromBase64(o.reason),
+							await this.symmetricKey
+						)
+					);
+				}
+
+				return f(o);
+			},
 			!reason ? undefined : this.potassiumService.toBase64(
 				await this.potassiumService.secretBox.seal(
 					this.potassiumService.fromString(reason),

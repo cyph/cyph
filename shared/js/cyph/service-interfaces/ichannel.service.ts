@@ -1,3 +1,4 @@
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {IChannelHandlers} from '../session';
@@ -31,7 +32,10 @@ export interface IChannelService {
 	) : Promise<void>;
 
 	/** @see DatabaseService.lock */
-	lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T>;
+	lock<T> (
+		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		reason?: string
+	) : Promise<T>;
 
 	/** Sends a message through the channel. */
 	send (cyphertext: Uint8Array) : Promise<void>;

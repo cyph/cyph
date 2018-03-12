@@ -74,7 +74,10 @@ export interface ISessionService {
 	init (channelID: string, userID?: string) : void;
 
 	/** @see ChannelService.lock */
-	lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T>;
+	lock<T> (
+		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		reason?: string
+	) : Promise<T>;
 
 	/** Remove event listener. */
 	off<T> (event: string, handler?: (data: T) => void) : void;

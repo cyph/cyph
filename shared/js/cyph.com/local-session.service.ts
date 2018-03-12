@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {LockFunction} from '../cyph/lock-function-type';
 import {ISessionMessage} from '../cyph/proto';
@@ -81,7 +82,10 @@ export class LocalSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	public async lock<T> (f: (reason?: string) => Promise<T>, reason?: string) : Promise<T> {
+	public async lock<T> (
+		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		reason?: string
+	) : Promise<T> {
 		return this.localLock(f, reason);
 	}
 
