@@ -3,11 +3,11 @@ import {Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
-import {Observer} from 'rxjs/Observer';
 import {map} from 'rxjs/operators/map';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogImageComponent} from '../components/dialog-image';
+import {IResolvable} from '../iresolvable';
 import {LockFunction} from '../lock-function-type';
 import {lockFunction} from '../util/lock';
 import {sleep} from '../util/wait';
@@ -26,7 +26,7 @@ export class MaterialDialogService implements DialogService {
 	/** @inheritDoc */
 	public async alert (
 		o: {content: string; ok?: string; title?: string},
-		closeFunction?: Observer<() => void>
+		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(DialogAlertComponent);
@@ -44,7 +44,7 @@ export class MaterialDialogService implements DialogService {
 			;
 
 			if (closeFunction) {
-				closeFunction.next(() => { matDialogRef.close(); });
+				closeFunction.resolve(() => { matDialogRef.close(); });
 			}
 
 			await matDialogRef.afterClosed().toPromise();
@@ -55,13 +55,13 @@ export class MaterialDialogService implements DialogService {
 	public async baseDialog<T> (
 		componentType: ComponentType<T>,
 		setInputs?: (componentInstance: T) => void,
-		closeFunction?: Observer<() => void>
+		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(componentType);
 
 			if (closeFunction) {
-				closeFunction.next(() => { matDialogRef.close(); });
+				closeFunction.resolve(() => { matDialogRef.close(); });
 			}
 
 			if (setInputs) {
@@ -81,7 +81,7 @@ export class MaterialDialogService implements DialogService {
 			timeout?: number;
 			title?: string;
 		},
-		closeFunction?: Observer<() => void>
+		closeFunction?: IResolvable<() => void>
 	) : Promise<boolean> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(DialogConfirmComponent);
@@ -104,7 +104,7 @@ export class MaterialDialogService implements DialogService {
 			;
 
 			if (closeFunction) {
-				closeFunction.next(() => { matDialogRef.close(); });
+				closeFunction.resolve(() => { matDialogRef.close(); });
 			}
 
 			const promise	= matDialogRef.afterClosed().toPromise<boolean>();
@@ -136,7 +136,7 @@ export class MaterialDialogService implements DialogService {
 	/** @inheritDoc */
 	public async image (
 		src: SafeUrl|string,
-		closeFunction?: Observer<() => void>
+		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(DialogImageComponent);
@@ -144,7 +144,7 @@ export class MaterialDialogService implements DialogService {
 			matDialogRef.componentInstance.src	= src;
 
 			if (closeFunction) {
-				closeFunction.next(() => { matDialogRef.close(); });
+				closeFunction.resolve(() => { matDialogRef.close(); });
 			}
 
 			await matDialogRef.afterClosed().toPromise();

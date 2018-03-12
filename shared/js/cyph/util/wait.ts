@@ -2,6 +2,7 @@ import {Observable} from 'rxjs/Observable';
 import {take} from 'rxjs/operators/take';
 import {Async} from '../async-type';
 import {config} from '../config';
+import {IResolvable} from '../iresolvable';
 import {MaybePromise} from '../maybe-promise-type';
 
 
@@ -15,11 +16,7 @@ export const awaitAsync	= async <T> (value: Async<T>) : Promise<T> => {
 };
 
 /** Returns a promise and its resolver function. */
-export const resolvable	= <T = void> (value?: T) : {
-	promise: Promise<T>;
-	reject: (err?: any) => void;
-	resolve: (t?: T|PromiseLike<T>) => void;
-} => {
+export const resolvable	= <T = void> (value?: T) : IResolvable<T> => {
 	let resolve: ((t?: T|PromiseLike<T>) => void)|undefined;
 	let reject: ((err?: any) => void)|undefined;
 
