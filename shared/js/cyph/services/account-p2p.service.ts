@@ -51,7 +51,7 @@ export class AccountP2PService extends P2PService {
 					callType === 'video' ?
 						this.stringsService.videoCall :
 						this.stringsService.audioCall
-				} [${this.stringsService.here}](${this.getCallURL(callType, username, id)}).`
+				}.`
 			)
 		);
 
