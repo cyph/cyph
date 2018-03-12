@@ -450,7 +450,7 @@ export class ChatService {
 		const increment	= timeInterval / totalTime;
 
 		interval(timeInterval).pipe(
-			takeWhile(() => this.chat.initProgress.value < 100),
+			takeWhile(() => this.chat.initProgress.value < 125),
 			map(() => this.chat.initProgress.value + (increment * 100))
 		).subscribe(
 			this.chat.initProgress

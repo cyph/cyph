@@ -77,10 +77,13 @@
 							<div fxLayoutAlign='center'>
 								<mat-progress-bar
 									fxFlex='50'
+									[mode]='(chatService.chat.initProgress | async) <= 110 ?
+											"determinate" : "indeterminate"'
 									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
 									[value]='(chatService.chat.initProgress | async) || 0'
 								></mat-progress-bar>
 							</div>
+							<h1>{{(chatService.chat.initProgress | async) || 0}}</h1>
 						</div>
 					</ng-container>
 					<ng-template #standardView>
@@ -134,10 +137,13 @@
 							<div fxLayoutAlign='center'>
 								<mat-progress-bar
 									fxFlex='50'
+									[mode]='(chatService.chat.initProgress | async) <= 110 ?
+											"determinate" : "indeterminate"'
 									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
 									[value]='(chatService.chat.initProgress | async) || 0'
 								></mat-progress-bar>
 							</div>
+							<h1>{{(chatService.chat.initProgress | async) || 0}}</h1>
 						</div>
 					</ng-template>
 				</div>
