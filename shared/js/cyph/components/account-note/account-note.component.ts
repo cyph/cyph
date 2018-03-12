@@ -84,12 +84,14 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 
 			(async () => {
 				while (this.note && this.note.doc && this.noteData.id === metadataValue.id) {
-					if (this.note.doc.deltaSendQueue.length > 0) {
-						await this.note.doc.asyncList.pushValue({
-							clientID: this.note.doc.deltaSendQueue[0].clientID,
-							ops: this.note.doc.deltaSendQueue.splice(
+					const doc	= this.note.doc;
+
+					if (doc.deltaSendQueue.length > 0) {
+						await doc.asyncList.pushValue({
+							clientID: doc.deltaSendQueue[0].clientID,
+							ops: doc.deltaSendQueue.splice(
 								0,
-								this.note.doc.deltaSendQueue.length
+								doc.deltaSendQueue.length
 							).reduce(
 								(delta, {ops}) => ops ? delta.compose(new Delta(ops)) : delta,
 								new Delta()
@@ -97,8 +99,8 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 						});
 					}
 
-					if (this.note.doc.selectionSendQueue) {
-						await this.note.doc.asyncList.pushValue(this.note.doc.selectionSendQueue);
+					if (doc.selectionSendQueue) {
+						await doc.asyncList.pushValue(doc.selectionSendQueue);
 					}
 
 					await sleep(500);
