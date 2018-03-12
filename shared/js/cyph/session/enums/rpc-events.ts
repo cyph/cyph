@@ -3,6 +3,9 @@
  */
 export class RpcEvents {
 	/** @see RpcEvents */
+	public readonly accountP2P: string			= 'accountP2P';
+
+	/** @see RpcEvents */
 	public readonly capabilities: string		= 'capabilities';
 
 	/** @see RpcEvents */

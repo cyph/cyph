@@ -203,21 +203,21 @@ export class P2PService {
 
 	constructor (
 		/** @ignore */
-		private readonly chatService: ChatService,
+		protected readonly chatService: ChatService,
 
 		/** @ignore */
-		private readonly dialogService: DialogService,
+		protected readonly dialogService: DialogService,
 
 		/** @ignore */
-		private readonly p2pWebRTCService: P2PWebRTCService,
+		protected readonly p2pWebRTCService: P2PWebRTCService,
 
 		/** @ignore */
-		private readonly sessionCapabilitiesService: SessionCapabilitiesService,
+		protected readonly sessionCapabilitiesService: SessionCapabilitiesService,
 
 		/** @ignore */
-		private readonly sessionInitService: SessionInitService,
+		protected readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
-		private readonly stringsService: StringsService
+		protected readonly stringsService: StringsService
 	) {}
 }

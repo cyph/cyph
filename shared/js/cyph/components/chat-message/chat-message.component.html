@@ -162,7 +162,11 @@
 			></cyph-quill>
 		</ng-template>
 		<ng-template #textValue>
-			<cyph-markdown class='message-text' [markdown]='value.text'></cyph-markdown>
+			<cyph-markdown
+				class='message-text'
+				[markdown]='value.text'
+				[targetSelf]='message?.authorType === authorTypes.App'
+			></cyph-markdown>
 		</ng-template>
 	</span>
 </ng-template>

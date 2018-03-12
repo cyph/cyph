@@ -498,6 +498,15 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
+	public async sendAndAwaitConfirmation (
+		...messages: [string, ISessionMessageAdditionalData][]
+	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
+		const newMessages	= await this.newMessages(messages);
+		await this.plaintextSendHandler(newMessages);
+		return newMessages;
+	}
+
+	/** @inheritDoc */
 	public trigger (event: string, data?: any) : void {
 		eventManager.trigger(event + this.eventID, data);
 	}

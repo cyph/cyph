@@ -32,6 +32,9 @@ export class MarkdownComponent implements OnChanges {
 	/** String of Markdown to render as HTML and add to the DOM. */
 	@Input() public markdown?: string;
 
+	/** If true, <a> tags with # links will be rendered with the attribute target='_self'. */
+	@Input() public targetSelf?: boolean;
+
 	/** @inheritDoc */
 	public async ngOnChanges () : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
@@ -53,24 +56,28 @@ export class MarkdownComponent implements OnChanges {
 			;
 		}
 
-		this.html	= this.domSanitizer.bypassSecurityTrustHtml(
-			this.htmlSanitizerService.sanitize(
-				this.markdownIt.render(this.markdown || '').
+		let html	= this.htmlSanitizerService.sanitize(
+			this.markdownIt.render(this.markdown || '').
 
-					/* Merge blockquotes like reddit */
-					replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
+				/* Merge blockquotes like reddit */
+				replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
 
-					/* Images */
-					replace(
-						/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
-						(_: string, value: string) => {
-							const img: HTMLImageElement	= document.createElement('img');
-							img.src	= value;
-							return img.outerHTML;
-						}
-					)
-			)
+				/* Images */
+				replace(
+					/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
+					(_: string, value: string) => {
+						const img: HTMLImageElement	= document.createElement('img');
+						img.src	= value;
+						return img.outerHTML;
+					}
+				)
 		);
+
+		if (this.targetSelf) {
+			html	= html.replace(/\<a href="#/g, '<a target="_self" href="#');
+		}
+
+		this.html	= this.domSanitizer.bypassSecurityTrustHtml(html);
 	}
 
 	constructor (

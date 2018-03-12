@@ -61,7 +61,14 @@ export const account: Route	= {
 			]
 		},
 		{path: 'appointments/:appointmentID/forms/:id', component: AccountFormComponent},
-		{path: 'audio/:username', component: AccountChatComponent, data: {callType: 'audio'}},
+		{
+			path: 'audio/:username/:sessionSubID',
+			component: AccountChatComponent,
+			data: {
+				callType: 'audio',
+				ephemeralSubSession: true
+			}
+		},
 		{path: 'chat-transition', component: BlankComponent},
 		{
 			path: 'compose',
@@ -154,7 +161,14 @@ export const account: Route	= {
 			component: AccountContactsComponent,
 			data: {userTypeFilter: AccountUserTypes.TelehealthAdmin}
 		},
-		{path: 'video/:username', component: AccountChatComponent, data: {callType: 'video'}},
+		{
+			path: 'video/:username/:sessionSubID',
+			component: AccountChatComponent,
+			data: {
+				callType: 'video',
+				ephemeralSubSession: true
+			}
+		},
 		{path: 'welcome', component: AccountPostRegisterComponent},
 		{path: ':username', redirectTo: 'profile/:username'}
 	]

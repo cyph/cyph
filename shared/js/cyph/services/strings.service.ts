@@ -76,6 +76,9 @@ export class StringsService {
 	public readonly cancel: string						= `cancel`;
 
 	/** @see StringsService */
+	public readonly clickHere: string					= `Click here`;
+
+	/** @see StringsService */
 	public readonly company: string						= `${this.internalCompany}`;
 
 	/** @see StringsService */
@@ -211,7 +214,13 @@ export class StringsService {
 	public readonly futureAppointments: string			= `Future Appointments`;
 
 	/** @see StringsService */
+	public readonly hasInvitedYouToA: string			= `has invited you to a`;
+
+	/** @see StringsService */
 	public readonly help: string						= `Help`;
+
+	/** @see StringsService */
+	public readonly here: string						= `here`;
 
 	/** @see StringsService */
 	public readonly incomingAppointments: string		= `Incoming Appointment Requests`;
@@ -585,6 +594,12 @@ export class StringsService {
 	public readonly to: string							= `To`;
 
 	/** @see StringsService */
+	public readonly toA: string							= `to a`;
+
+	/** @see StringsService */
+	public readonly toJoin: string						= `to join`;
+
+	/** @see StringsService */
 	public readonly totalSpace: string					= `Total Space Used:`;
 
 	/** @see StringsService */
@@ -642,6 +657,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly welcomeToProduct: string			= `Welcome to ${this.internalProduct}`;
+
+	/** @see StringsService */
+	public readonly youInvited: string					= `You invited`;
 
 	/** @see StringsService */
 	public readonly your: string						= `Your`;

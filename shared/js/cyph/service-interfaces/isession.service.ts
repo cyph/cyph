@@ -93,6 +93,11 @@ export interface ISessionService {
 		...messages: [string, ISessionMessageAdditionalData][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]>;
 
+	/** Variant of send that waits for confirmation. */
+	sendAndAwaitConfirmation (
+		...messages: [string, ISessionMessageAdditionalData][]
+	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]>;
+
 	/** Trigger event, passing in optional data. */
 	trigger (event: string, data?: any) : void;
 
