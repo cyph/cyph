@@ -29,7 +29,7 @@ import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto, NotificationTypes, StringProto} from '../proto';
 import {compareArrays} from '../util/compare';
 import {getOrSetDefault, getOrSetDefaultObservable} from '../util/get-or-set-default';
-import {lock, lockFunction} from '../util/lock';
+import {lock} from '../util/lock';
 import {requestByteStream} from '../util/request';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -365,7 +365,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 			async () => {
 				const queue		= await this.getDatabaseRef(url);
 				const id		= uuid();
-				const localLock	= lockFunction();
 				let isActive	= true;
 
 				const lockData: {
@@ -427,7 +426,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 								lockData.stillOwner.value &&
 								(
 									(await getTimestamp()) - lastUpdate
-								) >= this.lockLeaseConfig.expirationLimit
+								) >= this.lockLeaseConfig.expirationLowerLimit
 							) {
 								return;
 							}
@@ -442,12 +441,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 					/* tslint:disable-next-line:promise-must-complete */
 					await new Promise<void>(resolve => {
-						queue.on('value', async snapshot => localLock(async () => {
+						queue.on('value', snapshot => {
 							if (!isActive) {
 								return;
 							}
-
-							const timestamp	= await getTimestamp();
 
 							const value: {
 								[key: string]: {
@@ -460,7 +457,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 								(snapshot && snapshot.val()) || {}
 							;
 
-							/* Clean up expired lock claims
+							/* Clean up expired lock claims. TODO: Handle as Cloud Function.
 
 							for (const expiredContenderKey of Object.keys(value).filter(k => {
 								const contender	= value[k];
@@ -486,7 +483,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									typeof contender.timestamp === 'number' &&
 									!isNaN(contender.timestamp) &&
 									(
-										timestamp - contender.timestamp
+										lastUpdate - contender.timestamp
 									) < this.lockLeaseConfig.expirationLimit
 								).
 								sort((a, b) =>
@@ -516,7 +513,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							else if (o.id !== id && lockData.stillOwner.value) {
 								surrenderLock();
 							}
-						}));
+						});
 					});
 
 					return await f(lockData);

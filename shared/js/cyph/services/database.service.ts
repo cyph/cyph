@@ -27,7 +27,8 @@ import {EnvService} from './env.service';
 export class DatabaseService extends DataManagerService {
 	/** Configuration of DatabaseService.lock leasing algorithm. */
 	protected readonly lockLeaseConfig	= {
-		expirationLimit: 120000,
+		expirationLimit: 180000,
+		expirationLowerLimit: 120000,
 		updateInterval: 30000
 	};
 
