@@ -72,6 +72,14 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence					= UserPresence;
 
+	/** @ignore */
+	private async navigate (...url: string[]) : Promise<void> {
+		this.destroyed	= true;
+		this.router.navigate([accountRoot, 'chat-transition']);
+		await sleep(0);
+		this.router.navigate([accountRoot, ...url]);
+	}
+
 	/** Indicates whether call is pending or not yet loaded. */
 	public get initialCallPending () : boolean {
 		return this.p2pWebRTCService.initialCallPending || this.p2pWebRTCService.loading;
@@ -119,22 +127,22 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			{appointmentID?: string; sessionSubID?: string; username?: string},
 			UrlSegment[]
 		]) => lock(async () => {
+			if (this.destroyed) {
+				return;
+			}
+
 			try {
 				if (this.initiatedAppointmentID) {
-					if (this.initiatedAppointmentID !== appointmentID) {
-						this.router.navigate([accountRoot, 'chat-transition']);
-						await sleep(0);
-						this.router.navigate([accountRoot, 'appointments', path, appointmentID]);
+					if (appointmentID && this.initiatedAppointmentID !== appointmentID) {
+						await this.navigate('appointments', path, appointmentID);
 					}
 
 					return;
 				}
 
 				if (this.initiatedUsername) {
-					if (this.initiatedUsername !== username) {
-						this.router.navigate([accountRoot, 'chat-transition']);
-						await sleep(0);
-						this.router.navigate([accountRoot, path, username]);
+					if (username && this.initiatedUsername !== username) {
+						await this.navigate(path, username);
 					}
 
 					return;
