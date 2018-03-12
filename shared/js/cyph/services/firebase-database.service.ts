@@ -377,9 +377,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const mutex	= await queue.push().then();
 
 				const getLockTimestamp	= async () => {
-					const timestamp	= (await mutex.child('timestamp').once('value')).val();
+					const {id, timestamp}	= (await mutex.once('value')).val();
 
-					if (typeof timestamp !== 'number' || isNaN(timestamp)) {
+					if (
+						typeof id !== 'string' ||
+						!id ||
+						typeof timestamp !== 'number' ||
+						isNaN(timestamp)
+					) {
 						throw new Error('Invalid server timestamp.');
 					}
 
