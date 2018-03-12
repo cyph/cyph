@@ -210,6 +210,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 													};
 
 	/** @inheritDoc */
+	public localMediaError: boolean					= false;
+
+	/** @inheritDoc */
 	public readonly outgoingStream					= {audio: false, video: false};
 
 	/** @inheritDoc */
@@ -435,6 +438,10 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				this.incomingStream.video	= !!incomingStream.video;
 			}
 		);
+
+		webRTC.on('localMediaError', async () => {
+			this.localMediaError	= true;
+		});
 
 		webRTC.on(this.loadingEvents.readyToCall.event, async () => {
 			webRTC.joinRoom(P2PWebRTCService.constants.webRTC);
