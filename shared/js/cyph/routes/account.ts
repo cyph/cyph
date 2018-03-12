@@ -93,6 +93,11 @@ export const account: Route	= {
 		{path: 'messages/:username', component: AccountChatComponent},
 		{path: 'messages/:username/:sessionSubID', component: AccountChatComponent},
 		{
+			path: 'messages/ephemeral/:username/:sessionSubID',
+			component: AccountChatComponent,
+			data: {ephemeralSubSession: true}
+		},
+		{
 			path: 'new-patient/:appointmentID',
 			component: AccountComposeComponent,
 			data: {messageType: ChatMessageValue.Types.Form, value: newPatient}
