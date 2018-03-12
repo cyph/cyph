@@ -727,10 +727,10 @@ export class ChatService {
 				}
 			});
 
-			this.chat.receiveTextLock(async o => {
+			this.chat.receiveTextLock(async lockData => {
 				const f	= async (o: ISessionMessageData) => this.addTextMessage(o);
 				this.sessionService.on(rpcEvents.text, f);
-				await Promise.race([this.sessionService.closed, o.stillOwner.toPromise()]);
+				await Promise.race([this.sessionService.closed, lockData.stillOwner.toPromise()]);
 				this.sessionService.off(rpcEvents.text, f);
 			});
 		});
