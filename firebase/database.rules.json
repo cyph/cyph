@@ -64,6 +64,9 @@
 
 					"lock": {
 						"$contender": {
+							"claimTimestamp": {
+								".validate": "newData.val() === now"
+							},
 							"id": {
 								".validate": "newData.isString()"
 							},
@@ -161,6 +164,9 @@
 					".read": true,
 					".write": true,
 
+					"claimTimestamp": {
+						".validate": "newData.val() === now"
+					},
 					"id": {
 						".validate": "newData.isString()"
 					},
@@ -704,6 +710,9 @@
 					"locks": {
 						"$lock": {
 							"$contender": {
+								"claimTimestamp": {
+									".validate": "newData.val() === now"
+								},
 								"id": {
 									".validate": "newData.isString()"
 								},
