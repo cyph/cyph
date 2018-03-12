@@ -91,7 +91,7 @@ service firebase.storage {
 				// 	}
 				// }
 
-				match /docs/{doc} {
+				match /docs/{all=**} {
 					allow read;
 
 					// match /{delta}/{hash} {}
