@@ -19,13 +19,14 @@
 				<mat-card-title>
 					{{note.name || stringsService.untitled}}
 				</mat-card-title>
-				<mat-card-subtitle *ngIf='!realTime'>
+				<mat-card-subtitle>
 					<div>{{accountFilesService.noteSnippet(note.id)}}</div>
 					<div *ngIf='
 						!note.wasAnonymousShare &&
 						accountDatabaseService.currentUser.value &&
 						accountDatabaseService.currentUser.value?.user.username !== note.owner
 					'>
+						<br />
 						<span cyphTranslate>Owner:</span>
 						&ngsp;
 						<a [routerLink]='accountService.routeRoot + "profile/" + note.owner'>
@@ -42,6 +43,10 @@
 						cyphTranslate
 						matTooltip='Edit'
 						[routerLink]='note.id + "/edit"'
+						*ngIf='
+							accountDatabaseService.currentUser.value &&
+							accountDatabaseService.currentUser.value?.user.username === note.owner
+						'
 					>
 						<mat-icon>edit</mat-icon>
 					</button>
