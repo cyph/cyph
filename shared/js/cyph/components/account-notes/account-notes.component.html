@@ -48,8 +48,22 @@
 					<button
 						mat-icon-button
 						cyphTranslate
+						matTooltip='Share'
+						(click)='
+							accountFilesService.shareFilePrompt(note);
+							$event.stopPropagation();
+						'
+					>
+						<mat-icon>share</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
 						matTooltip='Delete'
-						(click)='accountFilesService.remove(note); $event.stopPropagation();'
+						(click)='
+							accountFilesService.remove(note);
+							$event.stopPropagation();
+						'
 					>
 						<mat-icon>delete</mat-icon>
 					</button>
