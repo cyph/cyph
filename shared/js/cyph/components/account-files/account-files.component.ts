@@ -1,6 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {User} from '../../account/user';
-import {IAccountFileRecord} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -11,7 +9,6 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
 import {readableByteLength} from '../../util/formatting';
-import {AccountFileSharingComponent} from '../account-file-sharing';
 
 
 /**
@@ -32,12 +29,6 @@ export class AccountFilesComponent implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
-	}
-
-
-	/** Shares a file with another user. */
-	public async share (file?: IAccountFileRecord, user?: User) : Promise<void> {
-		await this.dialogService.baseDialog(AccountFileSharingComponent, o => { o.file	= file; });
 	}
 
 	constructor (

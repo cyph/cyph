@@ -61,3 +61,6 @@ export class AccountFileSharingComponent {
 		public readonly stringsService: StringsService
 	) {}
 }
+
+
+AccountFilesService.accountFileSharingComponent.resolve(AccountFileSharingComponent);

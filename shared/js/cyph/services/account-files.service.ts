@@ -1,5 +1,6 @@
 /* tslint:disable:max-file-line-count */
 
+import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {Router} from '@angular/router';
@@ -50,7 +51,7 @@ import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {awaitAsync, sleep} from '../util/wait';
+import {awaitAsync, resolvable, sleep} from '../util/wait';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
@@ -63,6 +64,15 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountFilesService {
+	/**
+	 * Resolves circular dependency needed for shareFilePrompt to work.
+	 * @see AccountFileSharingComponent
+	 */
+	public static accountFileSharingComponent	=
+		resolvable<ComponentType<{file?: IAccountFileRecord}>>()
+	;
+
+
 	/** @ignore */
 	private readonly incomingFileCache: Map<
 		Uint8Array,
@@ -706,6 +716,16 @@ export class AccountFilesService {
 		);
 
 		await this.accountDatabaseService.notify(username, NotificationTypes.File, await fileType);
+	}
+
+	/** Creates a dialog to share a file with another user. */
+	public async shareFilePrompt (file: IAccountFileRecord) : Promise<void> {
+		await this.dialogService.baseDialog(
+			await AccountFilesService.accountFileSharingComponent.promise,
+			o => {
+				o.file	= file;
+			}
+		);
 	}
 
 	/** Overwrites an existing appointment. */
