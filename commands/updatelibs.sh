@@ -56,7 +56,7 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
-	@ngtools/webpack
+	@ngtools/webpack@1.9
 	@opentok/client
 	@types/braintree-web
 	@types/dompurify
@@ -241,7 +241,7 @@ read -r -d '' modules <<- EOM
 	unsemantic
 	url-loader
 	web-animations-js
-	webpack@3
+	webpack@3.10
 	webpack-closure-compiler
 	webpack-sources
 	webrtc-adapter
