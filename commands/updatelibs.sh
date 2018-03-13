@@ -15,7 +15,7 @@ read -r -d '' modules <<- EOM
 	@agm/core
 	@angular/animations
 	@angular/cdk
-	@angular/cli@1.6
+	@angular/cli
 	@angular/common
 	@angular/compiler
 	@angular/compiler-cli
