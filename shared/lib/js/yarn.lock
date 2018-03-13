@@ -525,9 +525,9 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@ngtools/json-schema/-/json-schema-1.1.0.tgz#c3a0c544d62392acc2813a42c8a0dc6f58f86922"
 
-"@ngtools/webpack@1.9.8", "@ngtools/webpack@^1.10.2":
-  version "1.10.2"
-  resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-1.10.2.tgz#373705fd19992b36e996203480b1d412e942c8d6"
+"@ngtools/webpack@1.9", "@ngtools/webpack@1.9.8":
+  version "1.9.8"
+  resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-1.9.8.tgz#c9d1d1884b86ea9a5fbbd6f65080dc3ac37c8d97"
   dependencies:
     chalk "~2.2.0"
     enhanced-resolve "^3.1.0"
@@ -1046,9 +1046,9 @@ angular2-virtual-scroll@^0.3.2:
   version "3.6.1"
   resolved "https://github.com/daneden/animate.css#da9afc06e8aa563baae6f406a0a844999ccc066b"
 
-animated-scroll-to@^1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/animated-scroll-to/-/animated-scroll-to-1.1.8.tgz#870b1670e899f0fb8ff039577ad7116366dea7d6"
+animated-scroll-to@^1.1.9:
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/animated-scroll-to/-/animated-scroll-to-1.1.9.tgz#b910e1da47c828b70582139602d79ecdc9ed9bd4"
 
 ansi-align@^1.1.0, ansi-align@^2.0.0:
   version "2.0.0"
@@ -7897,8 +7897,8 @@ nativescript-google-analytics@^0.4.1:
   resolved "https://registry.yarnpkg.com/nativescript-google-analytics/-/nativescript-google-analytics-0.4.1.tgz#22370592ec57d3358e9cf64f1eb091fa044001d1"
 
 nativescript-hook@0.2.2, nativescript-hook@^0.2.0, nativescript-hook@^0.2.1:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/nativescript-hook/-/nativescript-hook-0.2.2.tgz#34c0ca8ba47a780eb7673e005360d29bdec618e2"
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/nativescript-hook/-/nativescript-hook-0.2.3.tgz#17c01fe14f95eaefdbd21747507933e998044c02"
   dependencies:
     glob "^6.0.1"
     mkdirp "^0.5.1"
@@ -10648,7 +10648,7 @@ sdp-jingle-json@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/sdp-jingle-json/-/sdp-jingle-json-3.0.2.tgz#c0900f51537f6cf7f199866936fd1c990c67788e"
 
-sdp@^2.6.0:
+sdp@^2.6.0, sdp@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/sdp/-/sdp-2.7.0.tgz#02b64ea0c29d73179afa19794e466b123b1b29f3"
 
@@ -12722,14 +12722,14 @@ webpack-subresource-integrity@^1.0.1:
   dependencies:
     webpack-core "^0.6.8"
 
-webpack@3, webpack@~3.10.0:
-  version "3.11.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.11.0.tgz#77da451b1d7b4b117adaf41a1a93b5742f24d894"
+webpack@3.10, webpack@~3.10.0:
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.10.0.tgz#5291b875078cf2abf42bdd23afe3f8f96c17d725"
   dependencies:
     acorn "^5.0.0"
     acorn-dynamic-import "^2.0.0"
-    ajv "^6.1.0"
-    ajv-keywords "^3.1.0"
+    ajv "^5.1.5"
+    ajv-keywords "^2.0.0"
     async "^2.1.2"
     enhanced-resolve "^3.4.0"
     escope "^3.6.0"
@@ -12749,12 +12749,12 @@ webpack@3, webpack@~3.10.0:
     webpack-sources "^1.0.1"
     yargs "^8.0.2"
 
-webrtc-adapter@^6.1.3:
-  version "6.1.3"
-  resolved "https://registry.yarnpkg.com/webrtc-adapter/-/webrtc-adapter-6.1.3.tgz#81d736a59bf70a3615f43673a916a757853d6206"
+webrtc-adapter@^6.1.4:
+  version "6.1.4"
+  resolved "https://registry.yarnpkg.com/webrtc-adapter/-/webrtc-adapter-6.1.4.tgz#6fb13589fd29c1a1061b80cf86f6f2b1a0c45431"
   dependencies:
     rtcpeerconnection-shim "^1.2.9"
-    sdp "^2.6.0"
+    sdp "^2.7.0"
 
 webrtcsupport@^2.2.0, "webrtcsupport@https://github.com/buu700/webrtcsupport":
   version "2.2.1"
