@@ -344,7 +344,8 @@
 		"rxjs-no-unsafe-switchmap": false /* Pending fix: true */,
 		"rxjs-no-unused-add": false,
 		"rxjs-no-wholesale": true,
-		"rxjs-prefer-add": false
+		"rxjs-prefer-add": false,
+		"rxjs-throw-error": false
 	},
 	"rulesDirectory": [
 		"/node_modules/codelyzer",
