@@ -790,7 +790,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			/* tslint:disable-next-line:possible-timing-attack */
 			if (hash !== (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
-				if (noBlobStorage) {
+				if (noBlobStorage && data.length < this.nonBlobStorageLimit) {
 					await (await this.getDatabaseRef(url)).set({
 						data: this.potassiumService.toBase64(data),
 						hash,

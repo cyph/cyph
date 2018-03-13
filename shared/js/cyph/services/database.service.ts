@@ -32,6 +32,9 @@ export class DatabaseService extends DataManagerService {
 		updateInterval: 30000
 	};
 
+	/** Max number of bytes to upload to non-blob storage. */
+	protected readonly nonBlobStorageLimit: number	= 8192;
+
 	/** Namespace for database usage. */
 	public readonly namespace: string	=
 		(
