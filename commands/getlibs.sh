@@ -257,6 +257,9 @@ sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/src/simplewebrtc.
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
+# Temporary workaround for https://github.com/werk85/node-html-to-text/issues/151
+grep -rl lodash html-to-text | xargs -I% sed -i 's|lodash|lodash-es|g' %
+
 # Temporary workaround for https://github.com/Jamaks/ng-fullcalendar/issues/33
 rm -rf ng-fullcalendar/node_modules &> /dev/null
 
