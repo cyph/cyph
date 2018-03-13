@@ -29,7 +29,7 @@ import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto, NotificationTypes, StringProto} from '../proto';
 import {compareArrays} from '../util/compare';
 import {getOrSetDefault, getOrSetDefaultObservable} from '../util/get-or-set-default';
-import {lock} from '../util/lock';
+import {lock, lockFunction} from '../util/lock';
 import {requestByteStream} from '../util/request';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -363,7 +363,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () => lock(
 			getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
 			async () => {
+				let lastReason: string|undefined;
+				let onQueueUpdate: (() => Promise<void>)|undefined;
+
 				const queue		= await this.getDatabaseRef(url);
+				const localLock	= lockFunction();
 				const id		= uuid();
 				let isActive	= true;
 
@@ -409,11 +413,21 @@ export class FirebaseDatabaseService extends DatabaseService {
 					}
 				});
 
-				const surrenderLock		= () => {
+				const surrenderLock		= async () => {
 					isActive	= false;
-					lockData.stillOwner.next(false);
+
+					if (lockData.stillOwner.value) {
+						lockData.stillOwner.next(false);
+					}
 					lockData.stillOwner.complete();
-					queue.off();
+
+					if (onQueueUpdate) {
+						queue.off('child_added', onQueueUpdate);
+						queue.off('child_changed', onQueueUpdate);
+						queue.off('child_removed', onQueueUpdate);
+					}
+
+					await retryUntilSuccessful(async () => mutex.remove().then());
 				};
 
 				const updateLock		= async () => retryUntilSuccessful(async () => {
@@ -446,7 +460,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 					/* tslint:disable-next-line:promise-must-complete */
 					await new Promise<void>(resolve => {
-						queue.on('value', snapshot => {
+						onQueueUpdate	= async () => localLock(async () => {
 							if (!isActive) {
 								return;
 							}
@@ -459,8 +473,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 									timestamp?: number;
 								};
 							}	=
-								(snapshot && snapshot.val()) || {}
+								(await queue.once('value')).val() || {}
 							;
+
+							const timestamp	= await getTimestamp();
 
 							/* Clean up expired lock claims. TODO: Handle as Cloud Function.
 
@@ -488,7 +504,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									typeof contender.timestamp === 'number' &&
 									!isNaN(contender.timestamp) &&
 									(
-										lastUpdate - contender.timestamp
+										timestamp - contender.timestamp
 									) < this.lockLeaseConfig.expirationLimit
 								).
 								sort((a, b) =>
@@ -504,13 +520,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 							};
 
 							if (o.id !== id) {
-								lockData.reason	=
-									typeof o.reason === 'string' ? o.reason : undefined
-								;
+								lastReason	= typeof o.reason === 'string' ? o.reason : undefined;
 							}
 
 							/* Claiming lock for the first time */
 							if (o.id === id && !lockData.stillOwner.value) {
+								lockData.reason	= lastReason;
 								lockData.stillOwner.next(true);
 								resolve();
 							}
@@ -519,12 +534,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 								surrenderLock();
 							}
 						});
+
+						queue.on('child_added', onQueueUpdate);
+						queue.on('child_changed', onQueueUpdate);
+						queue.on('child_removed', onQueueUpdate);
+
+						onQueueUpdate();
 					});
 
 					return await f(lockData);
 				}
 				finally {
-					await retryUntilSuccessful(async () => mutex.remove().then());
+					await surrenderLock();
 				}
 			},
 			reason
