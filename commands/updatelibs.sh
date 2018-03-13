@@ -134,7 +134,7 @@ read -r -d '' modules <<- EOM
 	image-type
 	immutable@rc
 	interact.js
-	jasmine-core
+	jasmine-core@2
 	jasmine-spec-reporter
 	jquery
 	jquery.appear@https://github.com/morr/jquery.appear
