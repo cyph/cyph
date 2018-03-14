@@ -70,7 +70,6 @@ fi
 ngserve () {
 	ngserveInternal () {
 		if [ "${e2e}" ] ; then
-			sleep 60
 			ng e2e "${@}"
 		else
 			ng serve "${@}"
