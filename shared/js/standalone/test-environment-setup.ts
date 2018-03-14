@@ -2,12 +2,17 @@ import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {BinaryProto} from '../cyph/proto';
 import {DatabaseService} from '../cyph/services/database.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
+import {environment} from '../environments';
 
 
 testEnvironmentSetup = async (
 	databaseService: DatabaseService,
 	localStorageService: LocalStorageService
 ) => {
+	if (environment.envName === 'e2e') {
+		return;
+	}
+
 	const currentTestDataVersion	= await databaseService.getItem(
 		'users/testDataVersion/certificate',
 		BinaryProto
