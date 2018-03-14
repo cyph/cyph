@@ -1,5 +1,6 @@
 import * as path from 'path';
 import {browser, by, element, ElementFinder, ExpectedConditions} from 'protractor';
+import * as util from '../../modules/util';
 
 
 export class AccountsPage {
@@ -24,6 +25,9 @@ export class AccountsPage {
 		files: {
 			root: () => element(by.css('cyph-account-files')),
 
+			allFiles: () => this.elements.files.root().all(
+				by.css('mat-card')
+			),
 			deleteFirstFile: () => this.elements.files.firstFile().element(
 				by.css('button.delete')
 			),
@@ -110,10 +114,17 @@ export class AccountsPage {
 					return;
 				}
 
-				const text	= await this.elements.files.firstFile().getText();
+				const fileCount	= (await this.elements.files.allFiles()).length;
 
 				await this.clickElement(this.elements.files.deleteFirstFile);
 				await this.clickElement(this.elements.dialogConfirm.ok);
+
+				while (true) {
+					await util.sleep();
+					if (fileCount !== (await this.elements.files.allFiles()).length) {
+						break;
+					}
+				}
 			}
 			catch {}
 		}
