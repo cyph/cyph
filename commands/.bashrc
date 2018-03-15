@@ -71,3 +71,9 @@ if [ -f ~/.cyph/notify.key ] ; then
 	rm ~/.notifyreg 2> /dev/null
 	/node_modules/.bin/notify -r "$(cat ~/.cyph/notify.key)" > /dev/null
 fi
+
+
+# Workaround for localhost not working in CircleCI
+if [ "${CIRCLECI}" ] ; then
+	sed -i 's|localhost|0.0.0.0|g' /cyph/commands/serve.sh /cyph/*/protractor.conf.js
+fi
