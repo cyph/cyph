@@ -11,12 +11,7 @@ exports.config	= {
 	capabilities: {
 		browserName: 'chrome',
 		chromeOptions: {
-			args: [
-				'--headless',
-				'--dns-prefetch-disable',
-				'--disable-gpu',
-				'--window-size=1280,800'
-			],
+			args: ['--headless', '--disable-gpu', '--window-size=1280,800'],
 			binary: process.env.CHROME_BIN
 		}
 	},
