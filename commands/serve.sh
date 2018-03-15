@@ -68,18 +68,18 @@ fi
 
 
 ngserve () {
-	ngserveInternal () {
-		if [ "${e2e}" ] ; then
-			ng e2e "${@}"
-		else
-			ng serve "${@}"
-		fi
-	}
-
 	project="${1}"
 	shift
 	port="${1}"
 	shift
+
+	ngserveInternal () {
+		if [ "${e2e}" ] ; then
+			ng e2e --public-host "0.0.0.0:${port}" "${@}"
+		else
+			ng serve --public-host "localhost:${port}" "${@}"
+		fi
+	}
 
 	cd "${project}"
 	../commands/ngprojectinit.sh
@@ -91,7 +91,6 @@ ngserve () {
 		--no-aot \
 		--no-sourcemaps \
 		--port "${port}" \
-		--public-host "localhost:${port}" \
 		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
 		$(if [ "${localSeleniumServer}" ] ; then
 			echo '--config protractor.local-selenium-server.js'
