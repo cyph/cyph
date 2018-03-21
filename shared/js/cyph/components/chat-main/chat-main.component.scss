@@ -417,8 +417,14 @@
 	}
 
 	.chat-main:not(.mobile).video .video-call {
-		~ cyph-chat-message-list .message-item {
-			font-size: initial;
+		~ cyph-chat-message-list {
+			> div {
+				height: calc(100% - 110px);
+			}
+
+			.message-item {
+				font-size: initial;
+			}
 		}
 
 		~ .video-call-message-box {
@@ -433,6 +439,10 @@
 	.chat-main.mobile.video .video-call {
 		~ cyph-chat-message-list {
 			width: calc(100vw - 65px) !important;
+
+			> div {
+				height: calc(100% - 45px);
+			}
 		}
 
 		~ .video-call-message-box {
