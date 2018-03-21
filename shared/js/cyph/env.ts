@@ -30,6 +30,11 @@ export class Env extends EnvDeploy {
 				undefined
 	);
 
+	/** Google Chrome version, if applicable. */
+	public readonly chromeVersion: number		=
+		Number.parseInt((Env.UA.match(/chrome\/(\d+)/) || [])[1], 10)
+	;
+
 	/** Indicates whether this is a co-branded (or white label) instance of Cyph. */
 	public readonly coBranded: boolean			=
 		this.environment.customBuild !== undefined &&

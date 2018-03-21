@@ -18,6 +18,12 @@ if (env.isMobile) {
 	$(document.body).addClass('mobile');
 }
 
+/* Workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=821876 */
+
+if (!(env.isMacOS && env.isChrome && env.chromeVersion >= 65)) {
+	$(document.body).addClass('enable-drop-shadow');
+}
+
 /* Handle beforeunload */
 
 window.addEventListener('beforeunload', e => {

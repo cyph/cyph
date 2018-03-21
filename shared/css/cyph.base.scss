@@ -14,6 +14,13 @@ mat-tab-body {
 	height: 100%;
 }
 
+/* Workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=821876 */
+body:not(.enable-drop-shadow) {
+	.loading > .logo-animation, cyph-chat-message-list .message-list-background {
+		@include filter(none !important);
+	}
+}
+
 * {
 	-webkit-font-smoothing: antialiased !important;
 	-moz-osx-font-smoothing: grayscale !important;
