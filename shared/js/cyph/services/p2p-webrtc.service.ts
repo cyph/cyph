@@ -174,6 +174,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	/** @inheritDoc */
 	public readonly resolveReady: () => void		= this._READY.resolve;
 
+	/** @inheritDoc */
+	public videoEnabled								= false;
+
 	/** @ignore */
 	private async receiveCommand (command: ISessionCommand) : Promise<void> {
 		if (!P2PWebRTCService.isSupported) {
@@ -294,6 +297,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		this.loading				= true;
 		this.incomingStream.audio	= this.outgoingStream.audio;
 		this.incomingStream.video	= this.outgoingStream.video;
+		this.videoEnabled			= this.outgoingStream.video;
 		this.isActive				= true;
 
 		const p2pSessionData			= this.p2pSessionData;
@@ -357,7 +361,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			},
 			debug: env.environment.local,
 			localVideoEl: $localVideo[0],
-			media: {audio: true, video: true},
+			media: this.outgoingStream,
 			peerConnectionConfig: {
 				iceServers: parse<RTCIceServer[]>(p2pSessionData.iceServers).
 					map(o => {

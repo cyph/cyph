@@ -182,6 +182,7 @@
 				mat-icon-button
 				class='video-call-button'
 				(click)='p2pService.videoCallButton()'
+				[disabled]='!p2pWebRTCService.videoEnabled'
 				[matTooltip]='
 					!p2pWebRTCService.outgoingStream.video ?
 						stringsService.cameraEnable :

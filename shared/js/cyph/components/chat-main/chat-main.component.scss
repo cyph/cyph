@@ -326,7 +326,11 @@
 			button {
 				@include transform(scale(1.25));
 
-				&:hover {
+				&[disabled] {
+					opacity: 0.5;
+				}
+
+				&:hover:not([disabled]) {
 					@include transform(scale(1.4));
 				}
 			}
