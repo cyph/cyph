@@ -85,7 +85,7 @@ export class StringsService {
 	public readonly connectedNotification: string		= `Connected!`;
 
 	/** @see StringsService */
-	public readonly connecting: string					= `Now connecting...`;
+	public readonly connecting: string					= `Now Connecting...`;
 
 	/** @see StringsService */
 	public readonly contactCyph: string					= `Contact ${this.internalCompany}`;

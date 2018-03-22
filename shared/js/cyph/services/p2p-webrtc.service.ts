@@ -7,10 +7,12 @@ import {Subject} from 'rxjs/Subject';
 import * as SimpleWebRTC from 'simplewebrtc';
 import {env} from '../env';
 import {eventManager} from '../event-manager';
+import {LockFunction} from '../lock-function-type';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {ISessionCommand} from '../proto';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
+import {lockFunction} from '../util/lock';
 import {request} from '../util/request';
 import {parse} from '../util/serialization';
 import {uuid} from '../util/uuid';
@@ -131,10 +133,45 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	private isAccepted: boolean							= false;
 
 	/** @ignore */
+	private readonly loadingEvents						= {
+		connectionReady: {
+			name: 'connectionReady',
+			occurred: false
+		},
+		createdPeer: {
+			name: 'createdPeer',
+			occurred: false
+		},
+		finished: {
+			name: 'channelOpen',
+			occurred: false
+		},
+		joinedRoom: {
+			name: 'joinedRoom',
+			occurred: false
+		},
+		localStream: {
+			name: 'localStream',
+			occurred: false
+		},
+		readyToCall: {
+			name: 'readyToCall',
+			occurred: false
+		},
+		started: {
+			name: 'localStreamRequested',
+			occurred: false
+		}
+	};
+
+	/** @ignore */
 	private readonly localVideo: Promise<() => JQuery>	= this._LOCAL_VIDEO.promise;
 
 	/** @ignore */
 	private p2pSessionData?: {iceServers: string; id: string};
+
+	/** @ignore */
+	private readonly progressUpdateLock: LockFunction							= lockFunction();
 
 	/** @ignore */
 	private readonly remoteVideo: Promise<() => JQuery>	= this._REMOTE_VIDEO.promise;
@@ -178,38 +215,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	public loading: boolean							= false;
 
 	/** @inheritDoc */
-	public loadingEvents							= {
-														connectionReady : {
-															event : 'connectionReady',
-															occured: false
-														},
-														createdPeer : {
-															event : 'createdPeer',
-															occured: false
-														},
-														finished: {
-															event : 'channelOpen',
-															occured: false
-														},
-														joinedRoom : {
-															event : 'joinedRoom',
-															occured: false
-														},
-														localStream : {
-															event : 'localStream',
-															occured: false
-														},
-														readyToCall : {
-															event : 'readyToCall',
-															occured: false
-														},
-														started : {
-															event : 'localStreamRequested',
-															occured: false
-														}
-													};
-
-	/** @inheritDoc */
 	public localMediaError: boolean					= false;
 
 	/** @inheritDoc */
@@ -223,6 +228,34 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @inheritDoc */
 	public videoEnabled								= false;
+
+	/** @ignore */
+	private async handleLoadingEvent (
+		webRTC: {on: (event: string, f: () => void) => void},
+		event: {name: string; occurred: boolean},
+		value: number|(() => void)
+	) : Promise<void> {
+		event.occurred	= false;
+		webRTC.on(event.name, typeof value === 'function' ? value : async () =>
+			this.progressUpdate(event, value)
+		);
+	}
+
+	/** @ignore */
+	private async progressUpdate (event: {occurred: boolean}, value: number) : Promise<void> {
+		if (event.occurred) {
+			return;
+		}
+
+		event.occurred	= true;
+
+		await this.progressUpdateLock(async () => {
+			for (let i = (await this.chatService).chat.initProgress.value; i < value; ++i) {
+				(await this.chatService).chat.initProgress.next(i);
+				await sleep(25);
+			}
+		});
+	}
 
 	/** @ignore */
 	private async receiveCommand (command: ISessionCommand) : Promise<void> {
@@ -447,58 +480,20 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			this.localMediaError	= true;
 		});
 
-		webRTC.on(this.loadingEvents.readyToCall.event, async () => {
+		this.handleLoadingEvent(webRTC, this.loadingEvents.readyToCall, () => {
 			webRTC.joinRoom(P2PWebRTCService.constants.webRTC);
 		});
 
-		webRTC.on(this.loadingEvents.started.event, async () => {
-			if (!this.loadingEvents.started.occured &&
-				((await this.chatService).chat.initProgress.value < 10)) {
-					this.progressUpdate(10);
-			}
-			this.loadingEvents.started.occured	= true;
-		});
+		this.handleLoadingEvent(webRTC, this.loadingEvents.started, 10);
+		this.handleLoadingEvent(webRTC, this.loadingEvents.localStream, 20);
+		this.handleLoadingEvent(webRTC, this.loadingEvents.connectionReady, 40);
+		this.handleLoadingEvent(webRTC, this.loadingEvents.createdPeer, 60);
+		this.handleLoadingEvent(webRTC, this.loadingEvents.joinedRoom, 75);
 
-		webRTC.on(this.loadingEvents.localStream.event, async () => {
-			if (!this.loadingEvents.localStream.occured &&
-				((await this.chatService).chat.initProgress.value < 20)) {
-					this.progressUpdate(20);
-			}
-			this.loadingEvents.localStream.occured	= true;
-		});
-
-		webRTC.on(this.loadingEvents.connectionReady.event, async () => {
-			if (!this.loadingEvents.connectionReady.occured &&
-				((await this.chatService).chat.initProgress.value < 40)) {
-					this.progressUpdate(40);
-			}
-			this.loadingEvents.connectionReady.occured	= true;
-		});
-
-		webRTC.on(this.loadingEvents.createdPeer.event, async () => {
-			if (!this.loadingEvents.createdPeer.occured &&
-				((await this.chatService).chat.initProgress.value < 60)) {
-					this.progressUpdate(60);
-			}
-			this.loadingEvents.createdPeer.occured	= true;
-		});
-
-		webRTC.on(this.loadingEvents.joinedRoom.event, async () => {
-			if (!this.loadingEvents.joinedRoom.occured &&
-				((await this.chatService).chat.initProgress.value < 75)) {
-					this.progressUpdate(75);
-			}
-			this.loadingEvents.joinedRoom.occured	= true;
-		});
-
-		webRTC.on(this.loadingEvents.finished.event, async () => {
+		this.handleLoadingEvent(webRTC, this.loadingEvents.finished, async () => {
 			await (await this.handlers).loaded();
-			if (!this.loadingEvents.finished.occured &&
-				((await this.chatService).chat.initProgress.value < 100)) {
-					this.progressUpdate(100);
-			}
-			this.loadingEvents.finished.occured	= true;
 			this.loading	= false;
+			await this.progressUpdate(this.loadingEvents.finished, 100);
 		});
 
 		webRTC.startLocalVideo();
@@ -512,13 +507,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		this.webRTC				= webRTC;
 		this.initialCallPending	= false;
-	}
-
-	public async progressUpdate (value: number) : Promise<void> {
-		for ( let i = (await this.chatService).chat.initProgress.value; i < value; i++) {
-			(await this.chatService).chat.initProgress.next(i);
-			await sleep(25);
-		}
 	}
 
 	/** @inheritDoc */

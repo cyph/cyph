@@ -22,6 +22,9 @@ export interface IP2PWebRTCService {
 	/** Indicates whether session is currently loading. */
 	readonly loading: boolean;
 
+	/** Indicates whether starting local camera/microphone has failed. */
+	readonly localMediaError: boolean;
+
 	/** Description of outgoing data (passed directly into navigator.getUserMedia). */
 	readonly outgoingStream: {audio: boolean; video: boolean};
 
