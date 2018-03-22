@@ -85,12 +85,12 @@
 								<div fxLayoutAlign='center'>
 									<mat-progress-bar
 										fxFlex='50'
-										[mode]='
-											((chatService.chat.initProgress | async) <= 110 &&
-												!p2pWebRTCService.localMediaError)
-											?
-												"determinate" :
-												"indeterminate"
+										[mode]='(
+											((chatService.chat.initProgress | async) || 0) <= 110 &&
+											!p2pWebRTCService.localMediaError
+										) ?
+											"determinate" :
+											"indeterminate"
 										'
 										[color]='
 											p2pWebRTCService.localMediaError ? "warn" : "primary"
@@ -160,12 +160,12 @@
 								<div fxLayoutAlign='center'>
 									<mat-progress-bar
 										fxFlex='50'
-										[mode]='
-											((chatService.chat.initProgress | async) <= 110 &&
-												!p2pWebRTCService.localMediaError)
-											?
-												"determinate" :
-												"indeterminate"
+										[mode]='(
+											((chatService.chat.initProgress | async) || 0) <= 110 &&
+											!p2pWebRTCService.localMediaError
+										) ?
+											"determinate" :
+											"indeterminate"
 										'
 										[color]='
 											p2pWebRTCService.localMediaError ? "warn" : "primary"
