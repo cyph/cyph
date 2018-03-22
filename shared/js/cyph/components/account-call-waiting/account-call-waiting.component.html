@@ -10,17 +10,17 @@
 	<mat-card
 		fxFlexFill
 		fxLayout='column'
+		fxLayoutAlign='start center'
 		class='white-card animated fadeIn'
 		ngClass.lt-md='compact'
 		[fxHide]='sessionService.freezePong | async'
 	>
-		<div fxFlexFill fxLayout='column' fxLayoutAlign='start center' class='content'>
+		<div fxFlexFill fxLayout='column' fxLayoutAlign='center center' class='content'>
+			<cyph-logo fxFlex='5em'></cyph-logo>
 			<ng-container *ngIf='participantsByType | async as participants'>
-				<cyph-logo fxFlex='5em'></cyph-logo>
-
 				<h2 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h2>
 
-				<div [style.width]='"100%"' *ngIf='
+				<div fxFlex *ngIf='
 					envService.isTelehealth &&
 					appointment?.calendarInvite.title &&
 					appointment?.calendarInvite.callType
@@ -60,23 +60,32 @@
 									[clickable]='false'
 									[contact]='patient'
 									class='cyph-inverted-theme animated fadeIn'
+									[class.fadeOut]='((chatService.chat.initProgress | async) || 0)
+									> 0'
 									fxFlex
 									fxFlex.gt-sm='40'
+									*ngIf='((chatService.chat.initProgress | async) || 0) === 0'
 								></cyph-account-contact>
 							</div>
 							<br />
-							<div class='loading'>
-								<div class='logo-animation'>
+							<div class='loading' fxLayout='column' fxLayoutAlign='center center'>
+								<div
+									class='logo-animation'
+									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
+								>
 									<div></div>
 									<div></div>
 									<div></div>
 									<div></div>
 									<div></div>
 								</div>
-							</div>
-							<div fxLayoutAlign='center'>
+								<ng-container *ngTemplateOutlet='loadingMessage'></ng-container>
 								<mat-progress-bar
 									fxFlex='50'
+									[mode]='((chatService.chat.initProgress | async) <= 110 &&
+											!p2pWebRTCService.localMediaError) ?
+											"determinate" : "indeterminate"'
+									[color]='p2pWebRTCService.localMediaError ? "warn" : "primary"'
 									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
 									[value]='(chatService.chat.initProgress | async) || 0'
 								></mat-progress-bar>
@@ -117,23 +126,32 @@
 									[clickable]='false'
 									[contact]='doctor'
 									class='cyph-inverted-theme animated fadeIn'
+									[class.fadeOut]='((chatService.chat.initProgress | async) || 0)
+									> 0'
 									fxFlex
 									fxFlex.gt-sm='40'
+									*ngIf='((chatService.chat.initProgress | async) || 0) === 0'
 								></cyph-account-contact>
 							</div>
 							<br />
-							<div class='loading'>
-								<div class='logo-animation'>
+							<div class='loading' fxLayout='column' fxLayoutAlign='center center'>
+								<div
+									class='logo-animation'
+									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
+								>
 									<div></div>
 									<div></div>
 									<div></div>
 									<div></div>
 									<div></div>
 								</div>
-							</div>
-							<div fxLayoutAlign='center'>
+								<ng-container *ngTemplateOutlet='loadingMessage'></ng-container>
 								<mat-progress-bar
 									fxFlex='50'
+									[mode]='((chatService.chat.initProgress | async) <= 110 &&
+											!p2pWebRTCService.localMediaError) ?
+											"determinate" : "indeterminate"'
+									[color]='p2pWebRTCService.localMediaError ? "warn" : "primary"'
 									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
 									[value]='(chatService.chat.initProgress | async) || 0'
 								></mat-progress-bar>
@@ -141,34 +159,39 @@
 						</div>
 					</ng-template>
 				</div>
-				<ng-container *ngIf='(chatService.chat.initProgress | async) === 0; else loading'>
-					<h2 *ngIf='
-						envService.isTelehealth && (
-							(currentUser?.user.userType | async) === accountUserTypes.Standard
-						);
-						else doctorMessage
-					'>
-						{{stringsService.waitingRoomCheckedInPatient}}
-					</h2>
-					<ng-template #doctorMessage>
+				<ng-template #loadingMessage>
+					<ng-container *ngIf='(chatService.chat.initProgress | async) === 0; else loading'>
 						<h2 *ngIf='
 							envService.isTelehealth && (
-								(currentUser?.user.userType | async) ===
-								accountUserTypes.TelehealthDoctor
+								(currentUser?.user.userType | async) === accountUserTypes.Standard
 							);
-							else genericMessage
+							else doctorMessage
 						'>
-							{{stringsService.waitingRoomCheckedInDoctor}}
+							{{stringsService.waitingRoomCheckedInPatient}}
+						</h2>
+						<ng-template #doctorMessage>
+							<h2 *ngIf='
+								envService.isTelehealth && (
+									(currentUser?.user.userType | async) ===
+									accountUserTypes.TelehealthDoctor
+								);
+								else genericMessage
+							'>
+								{{stringsService.waitingRoomCheckedInDoctor}}
+							</h2>
+						</ng-template>
+						<ng-template #genericMessage>
+							<h2>{{stringsService.waitingRoomCheckedInGeneric}}</h2>
+						</ng-template>
+					</ng-container>
+					<ng-template #loading>
+						<h2 *ngIf='!p2pWebRTCService.localMediaError'>
+							{{stringsService.connecting}}
+						</h2>
+						<h2 *ngIf='p2pWebRTCService.localMediaError'>
+								{{stringsService.localMediaError}}
 						</h2>
 					</ng-template>
-					<ng-template #genericMessage>
-						<h2>{{stringsService.waitingRoomCheckedInGeneric}}</h2>
-					</ng-template>
-				</ng-container>
-				<ng-template #loading>
-					<h2>
-						{{stringsService.connecting}}
-					</h2>
 				</ng-template>
 			</ng-container>
 		</div>

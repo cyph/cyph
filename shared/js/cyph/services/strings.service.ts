@@ -293,6 +293,9 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
+	public readonly localMediaError: string				= `Error loading webcam and/or microphone`;
+
+	/** @see StringsService */
 	public readonly logIn: string						= `Log In`;
 
 	/** @see StringsService */

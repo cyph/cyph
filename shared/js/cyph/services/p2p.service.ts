@@ -146,8 +146,11 @@ export class P2PService {
 	}
 
 	/** Initializes service. */
-	public async init (localVideo: () => JQuery, remoteVideo: () => JQuery) : Promise<void> {
-		this.p2pWebRTCService.init(this.handlers, localVideo, remoteVideo);
+	public async init (
+		localVideo: () => JQuery,
+		remoteVideo: () => JQuery
+	) : Promise<void> {
+		this.p2pWebRTCService.init(this.chatService, this.handlers, localVideo, remoteVideo);
 
 		this.isEnabled	= (await this.sessionCapabilitiesService.capabilities).p2p;
 	}

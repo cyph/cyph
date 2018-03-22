@@ -1,5 +1,12 @@
 @import '../../../../css/mixins';
 
+cyph-logo {
+	margin-left: auto;
+	margin-right: auto;
+	height: 80%;
+	opacity: 0.75;
+}
+
 .content {
 	height: 100%;
 
@@ -7,15 +14,8 @@
 		margin-bottom: auto;
 	}
 
-	h1, h2 {
+	h1, h2, h5 {
 		text-align: center;
-	}
-
-	cyph-logo {
-		margin-left: auto;
-		margin-right: auto;
-		height: 80%;
-		opacity: 0.75;
 	}
 }
 
@@ -31,8 +31,12 @@
 .loading {
 	.logo-animation {
 		@include transform(translate(0%, 15%) scale(0.9));
-
-		opacity: 0.95;
+		opacity: 0.25;
+		position: absolute;
+		left: 0;
+		right: 0;
+		margin: auto;
+		z-index: -42;
 	}
 }
 
