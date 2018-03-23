@@ -59,7 +59,7 @@ node -e 'console.log(`
 	})();
 
 	self.accountRoot	= "";
-	self.translations	= ${JSON.stringify(require("../commands/translations"))};
+	self.translations	= ${JSON.stringify(require("../commands/translations").translations)};
 `)' >> starter.js
 cat app/starter.js >> starter.js
 

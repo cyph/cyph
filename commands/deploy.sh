@@ -374,7 +374,9 @@ for d in $compiledProjects ; do
 	node -e 'console.log(`
 		/* tslint:disable */
 
-		(<any> self).translations = ${JSON.stringify(require("../commands/translations"))};
+		(<any> self).translations = ${JSON.stringify(
+			require("../commands/translations").translations
+		)};
 	`.trim())' > src/js/standalone/translations.ts
 
 	if [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ; then
