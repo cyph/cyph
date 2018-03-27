@@ -42,7 +42,9 @@ import {
 	IAccountFileReferenceContainer,
 	IAppointment,
 	IForm,
-	NotificationTypes
+	IWallet,
+	NotificationTypes,
+	Wallet
 } from '../proto';
 import {filterUndefined} from '../util/filter';
 import {flattenObservable} from '../util/flatten-observable';
@@ -151,7 +153,8 @@ export class AccountFilesService {
 		docs: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Doc),
 		files: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.File),
 		forms: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Form),
-		notes: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Note)
+		notes: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Note),
+		wallets: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Wallet)
 	};
 
 	/** Total size of all files in list. */
@@ -259,7 +262,8 @@ export class AccountFilesService {
 		docs: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Doc),
 		files: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.File),
 		forms: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Form),
-		notes: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Note)
+		notes: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Note),
+		wallets: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Wallet)
 	};
 
 	/** Indicates whether the first load has completed. */
@@ -298,15 +302,21 @@ export class AccountFilesService {
 	}
 
 	/** @ignore */
-	private fileIsAppointment (file: IAppointment|IForm|IQuillDelta|File) : boolean {
+	private fileIsAppointment (file: IAppointment|IForm|IQuillDelta|IWallet|File) : boolean {
 		const maybeAppointment	= <any> file;
 		return maybeAppointment.calendarInvite !== undefined;
 	}
 
 	/** @ignore */
-	private fileIsDelta (file: IAppointment|IForm|IQuillDelta|File) : boolean {
+	private fileIsDelta (file: IAppointment|IForm|IQuillDelta|IWallet|File) : boolean {
 		const maybeDelta	= <any> file;
 		return typeof maybeDelta.chop === 'function' || maybeDelta.ops instanceof Array;
+	}
+
+	/** @ignore */
+	private fileIsForm (file: IAppointment|IForm|IQuillDelta|IWallet|File) : boolean {
+		const maybeForm	= <any> file;
+		return maybeForm.components instanceof Array;
 	}
 
 	/** @ignore */
@@ -422,6 +432,14 @@ export class AccountFilesService {
 		result: Promise<SafeUrl|string>;
 	} {
 		return this.downloadItem(id, DataURIProto);
+	}
+
+	/** Downloads file and returns wallet. */
+	public downloadWallet (id: string|IAccountFileRecord) : {
+		progress: Observable<number>;
+		result: Promise<IWallet>;
+	} {
+		return this.downloadItem(id, Wallet);
 	}
 
 	/** Gets a doc in the form of an async list. */
@@ -626,7 +644,9 @@ export class AccountFilesService {
 								'files' :
 								file.recordType === AccountFileRecord.RecordTypes.Form ?
 									'forms' :
-									'notes'
+									file.recordType === AccountFileRecord.RecordTypes.Note ?
+										'notes' :
+										'wallets'
 				]);
 
 				await sleep();
@@ -852,7 +872,7 @@ export class AccountFilesService {
 	 */
 	public upload (
 		name: string,
-		file: IQuillDelta|IQuillDelta[]|File|IAppointment|IForm,
+		file: IQuillDelta|IQuillDelta[]|File|IAppointment|IForm|IWallet,
 		shareWithUser?: string
 	) : {
 		progress: Observable<number>;
@@ -917,13 +937,21 @@ export class AccountFilesService {
 							undefined,
 							key
 						) :
-						this.accountDatabaseService.uploadItem(
-							url,
-							Form,
-							<Form> file,
-							SecurityModels.privateSigned,
-							key
-						)
+						this.fileIsForm(file) ?
+							this.accountDatabaseService.uploadItem(
+								url,
+								Form,
+								<Form> file,
+								SecurityModels.privateSigned,
+								key
+							) :
+							this.accountDatabaseService.uploadItem(
+								url,
+								Wallet,
+								<Wallet> file,
+								undefined,
+								key
+							)
 		;
 
 		return {
@@ -939,7 +967,9 @@ export class AccountFilesService {
 								'cyph/note' :
 								this.fileIsAppointment(file) ?
 									'cyph/appointment' :
-									'cyph/form'
+									this.fileIsForm(file) ?
+										'cyph/form' :
+										'cyph/wallet'
 					,
 					name,
 					recordType: file instanceof Blob ?
@@ -950,7 +980,9 @@ export class AccountFilesService {
 								AccountFileRecord.RecordTypes.Note :
 								this.fileIsAppointment(file) ?
 									AccountFileRecord.RecordTypes.Appointment :
-									AccountFileRecord.RecordTypes.Form
+									this.fileIsForm(file) ?
+										AccountFileRecord.RecordTypes.Form :
+										AccountFileRecord.RecordTypes.Wallet
 					,
 					size: file instanceof Blob ?
 						file.size :

@@ -28,6 +28,7 @@ import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
 import {AccountStorageAnalyticsComponent} from '../components/account-storage-analytics';
 import {AccountUserRatingComponent} from '../components/account-user-rating';
+import {AccountWalletsComponent} from '../components/account-wallets';
 import {FooterComponent} from '../components/footer';
 import {LinkConnectionComponent} from '../components/link-connection';
 import {NotFoundComponent} from '../components/not-found';
@@ -40,6 +41,7 @@ import {AccountUserLookupService} from '../services/account-user-lookup.service'
 import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
+import {CryptocurrencyService} from '../services/cryptocurrency.service';
 import {DatabaseService} from '../services/database.service';
 import {DOMPurifyHtmlSanitizerService} from '../services/dompurify-html-sanitizer.service';
 import {FirebaseDatabaseService} from '../services/firebase-database.service';
@@ -81,6 +83,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountSettingsComponent,
 		AccountStorageAnalyticsComponent,
 		AccountUserRatingComponent,
+		AccountWalletsComponent,
 		FooterComponent,
 		LinkConnectionComponent,
 		NotFoundComponent
@@ -163,6 +166,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountService,
 		AccountSettingsService,
 		AccountUserLookupService,
+		CryptocurrencyService,
 		WorkerService,
 		{
 			provide: DatabaseService,

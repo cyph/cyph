@@ -20,6 +20,7 @@ import {AccountPostRegisterComponent} from '../components/account-post-register'
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
+import {AccountWalletsComponent} from '../components/account-wallets';
 import {BlankComponent} from '../components/blank';
 import {NotFoundComponent} from '../components/not-found';
 import {newPatient} from '../forms';
@@ -169,6 +170,7 @@ export const account: Route	= {
 				ephemeralSubSession: true
 			}
 		},
+		{path: 'wallets', component: AccountWalletsComponent},
 		{path: 'welcome', component: AccountPostRegisterComponent},
 		{path: ':username', redirectTo: 'profile/:username'}
 	]

@@ -10,6 +10,7 @@ message AccountFileRecord {
 		Doc = 2;
 		Form = 3;
 		Note = 4;
+		Wallet = 5;
 	}
 
 	/** File ID. */
@@ -460,6 +461,31 @@ message ChatMessageValue {
 		Appointment.RSVP rsvp = 4;
 		string text = 5;
 	}
+}
+
+/** Cryptocurrencies. */
+enum Cryptocurrencies {
+	Bitcoin = 0;
+	BitcoinCash = 1;
+	Cyphcoin = 2;
+	Dash = 3;
+	Dogecoin = 4;
+	Ethereum = 5;
+	Filecoin = 6;
+	Litecoin = 7;
+	Monero = 8;
+	Nano = 9;
+	Neo = 10;
+	Ripple = 11;
+	Stellar = 12;
+	WaltonChain = 13;
+	Zcash = 14;
+}
+
+/** Government-backed currencies. */
+enum Currencies {
+	USD = 0;
+	EUR = 1;
 }
 
 /** Angular CLI environment configuration. */
@@ -1144,6 +1170,18 @@ message SessionTransfer {
 
 	/** File URL. */
 	required string url = 11;
+}
+
+/** A cryptocurrency wallet. */
+message Wallet {
+	/** @see Cryptocurrencies */
+	required Cryptocurrencies cryptocurrency = 1;
+
+	/** Private key. */
+	bytes privateKey = 2;
+
+	/** Public key. */
+	required bytes publicKey = 3;
 }
 
 
