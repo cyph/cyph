@@ -142,6 +142,11 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		/* Custom Icons. TODO: Find better location. */
 
 		this.matIconRegistry.addSvgIcon(
+			'bitcoin',
+			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/bitcoin.svg')
+		);
+
+		this.matIconRegistry.addSvgIcon(
 			'doctor',
 			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg')
 		);

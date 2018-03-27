@@ -32,6 +32,9 @@ export class AccountService {
 		)
 	;
 
+	/** Indicates whether Wallets is enabled. */
+	public readonly enableWallets: boolean				= true;
+
 	/** Indicates the status of the interstitial. */
 	public interstitial: boolean						= false;
 

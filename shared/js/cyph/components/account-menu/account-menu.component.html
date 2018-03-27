@@ -417,6 +417,39 @@
 		>
 			<mat-icon>content_paste</mat-icon>
 		</button>
+
+		<button
+			mat-button
+			cyphTranslate
+			class='wallets'
+			matTooltip='Wallets'
+			matTooltipPosition='right'
+			[routerLink]='accountService.routeRoot + "wallets"'
+			(click)='click()'
+			*ngIf='
+				accountService.enableWallets &&
+				(accountService.menuExpanded | async)
+			'
+		>
+			<mat-icon svgIcon='bitcoin'></mat-icon>
+			&ngsp;
+			<span>Wallets</span>
+		</button>
+		<button
+			mat-icon-button
+			cyphTranslate
+			class='wallets'
+			matTooltip='Wallets'
+			matTooltipPosition='right'
+			[routerLink]='accountService.routeRoot + "wallets"'
+			(click)='click()'
+			*ngIf='
+				accountService.enableWallets &&
+				(accountService.menuExpanded | async) === false
+			'
+		>
+			<mat-icon svgIcon='bitcoin'></mat-icon>
+		</button>
 	</ng-container>
 
 	<ng-container *ngIf='false'>
