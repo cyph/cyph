@@ -116,6 +116,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountSettingsComponent,
 		AccountStorageAnalyticsComponent,
 		AccountUserRatingComponent,
+		AccountWalletsComponent,
 		FooterComponent,
 		LinkConnectionComponent,
 		NotFoundComponent
@@ -148,6 +149,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountSettingsComponent,
 		AccountStorageAnalyticsComponent,
 		AccountUserRatingComponent,
+		AccountWalletsComponent,
 		FooterComponent,
 		LinkConnectionComponent,
 		NotFoundComponent

@@ -74,7 +74,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 				'notes',
 				'patients',
 				'settings',
-				'staff'
+				'staff',
+				'wallets'
 			].indexOf(route) < 0 ||
 			(
 				this.activatedRoute.snapshot.firstChild &&
@@ -121,7 +122,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'request-followup',
 			'settings',
 			'staff',
-			'video'
+			'video',
+			'wallets'
 		].find(
 			path => this.route === path
 		) !== undefined;
