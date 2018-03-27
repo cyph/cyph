@@ -29,6 +29,11 @@ export class CryptocurrencyService {
 		};
 	}
 
+	/** Gets address of a wallet. */
+	public async getAddress (wallet: IWallet) : Promise<string> {
+		return '1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd';
+	}
+
 	/**
 	 * Gets balance of a wallet.
 	 * Will throw an error if a private key is required and not present.
