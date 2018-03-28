@@ -540,14 +540,42 @@
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@ngtools/json-schema/-/json-schema-1.2.0.tgz#06e5ecd29e9a37d260a447dd873ea2becd228c4f"
 
-"@ngtools/webpack@1.10.2", "@ngtools/webpack@^6.0.0-beta.7":
-  version "6.0.0-beta.7"
-  resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-6.0.0-beta.7.tgz#b205c012fe043e1cb77521a16c36b64ea5e197ed"
+"@ngtools/webpack@1", "@ngtools/webpack@1.10.2":
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-1.10.2.tgz#373705fd19992b36e996203480b1d412e942c8d6"
   dependencies:
     chalk "~2.2.0"
+    enhanced-resolve "^3.1.0"
+    loader-utils "^1.0.2"
+    magic-string "^0.22.3"
     semver "^5.3.0"
+    source-map "^0.5.6"
     tree-kill "^1.0.0"
     webpack-sources "^1.1.0"
+
+"@ngxs/devtools-plugin@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@ngxs/devtools-plugin/-/devtools-plugin-2.0.0.tgz#fcbf39d2c57ffd635b447c7932ae102d1654114b"
+  dependencies:
+    tslib "^1.7.1"
+
+"@ngxs/logger-plugin@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@ngxs/logger-plugin/-/logger-plugin-2.0.0.tgz#4f4fa25ef928a756f9b38f7fc3f855d1b453bfe3"
+  dependencies:
+    tslib "^1.7.1"
+
+"@ngxs/storage-plugin@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@ngxs/storage-plugin/-/storage-plugin-2.0.0.tgz#2f43d7dc82b913d49130510eee65d8bbbaa5a2f2"
+  dependencies:
+    tslib "^1.7.1"
+
+"@ngxs/store@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@ngxs/store/-/store-2.0.0.tgz#a656ee230b6987b4be1beb30d34ead934436ed69"
+  dependencies:
+    tslib "^1.7.1"
 
 "@opentok/client@^2.13.2":
   version "2.13.2"
