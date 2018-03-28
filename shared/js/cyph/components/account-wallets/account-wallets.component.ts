@@ -1,4 +1,6 @@
 import {Component, OnInit} from '@angular/core';
+import {xkcdPassphrase} from 'xkcd-passphrase';
+import {Cryptocurrencies} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -21,6 +23,16 @@ import {trackByID} from '../../track-by/track-by-id';
 export class AccountWalletsComponent implements OnInit {
 	/** @see trackByID */
 	public readonly trackByID: typeof trackByID	= trackByID;
+
+	/** Generates and uploads a new wallet. */
+	public async generate (
+		cryptocurrency: Cryptocurrencies = Cryptocurrencies.Bitcoin
+	) : Promise<void> {
+		await this.accountFilesService.upload(
+			await xkcdPassphrase.generateWithWordCount(4),
+			await this.cryptocurrencyService.generateWallet(cryptocurrency)
+		);
+	}
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
