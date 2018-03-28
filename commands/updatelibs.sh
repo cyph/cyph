@@ -56,7 +56,11 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
-	@ngtools/webpack
+	@ngtools/webpack@1
+	@ngxs/devtools-plugin
+	@ngxs/logger-plugin
+	@ngxs/storage-plugin
+	@ngxs/store
 	@opentok/client
 	@types/braintree-web
 	@types/dompurify
@@ -209,6 +213,7 @@ read -r -d '' modules <<- EOM
 	script-ext-html-webpack-plugin
 	sidh
 	simple-peer
+	simplebtc
 	simplewebrtc
 	sodiumutil
 	sphincs
