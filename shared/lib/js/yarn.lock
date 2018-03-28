@@ -2985,7 +2985,7 @@ combine-lists@^1.0.0:
   dependencies:
     lodash "^4.5.0"
 
-combine-source-map@~0.7.1, combine-source-map@~0.8.0:
+combine-source-map@^0.8.0, combine-source-map@~0.8.0:
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/combine-source-map/-/combine-source-map-0.8.0.tgz#a58d0df042c186fcf822a8e8015f5450d2d79a8b"
   dependencies:
@@ -6054,11 +6054,11 @@ inquirer@0.9.0, inquirer@3.0.6, inquirer@^0.12.0:
     through "^2.3.6"
 
 insert-module-globals@^7.0.0:
-  version "7.0.4"
-  resolved "https://registry.yarnpkg.com/insert-module-globals/-/insert-module-globals-7.0.4.tgz#1f144b807884507894bdbbb564c0d70075460251"
+  version "7.0.5"
+  resolved "https://registry.yarnpkg.com/insert-module-globals/-/insert-module-globals-7.0.5.tgz#6d0a6f28d4a7e0eae171ad305e0f47bdfe0c258e"
   dependencies:
     JSONStream "^1.0.3"
-    combine-source-map "~0.7.1"
+    combine-source-map "^0.8.0"
     concat-stream "^1.6.1"
     is-buffer "^1.1.0"
     lexical-scope "^1.2.0"
@@ -6469,8 +6469,8 @@ istanbul-api@^1.1.14:
     once "^1.4.0"
 
 istanbul-instrumenter-loader@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/istanbul-instrumenter-loader/-/istanbul-instrumenter-loader-3.0.0.tgz#9f553923b22360bac95e617aaba01add1f7db0b2"
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/istanbul-instrumenter-loader/-/istanbul-instrumenter-loader-3.0.1.tgz#9957bd59252b373fae5c52b7b5188e6fde2a0949"
   dependencies:
     convert-source-map "^1.5.0"
     istanbul-lib-instrument "^1.7.3"
@@ -6780,9 +6780,9 @@ karma-coverage-istanbul-reporter@^1.4.2:
     istanbul-api "^1.1.14"
     minimatch "^3.0.4"
 
-karma-jasmine-html-reporter@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/karma-jasmine-html-reporter/-/karma-jasmine-html-reporter-1.0.0.tgz#0515b9ea0440c038c2091b13802c8ea638cc847a"
+karma-jasmine-html-reporter@0:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/karma-jasmine-html-reporter/-/karma-jasmine-html-reporter-0.2.2.tgz#48a8e5ef18807617ee2b5e33c1194c35b439524c"
   dependencies:
     karma-jasmine "^1.0.2"
 
@@ -6961,7 +6961,7 @@ libqp@1.1.0:
 
 "libsodium-sumo@https://github.com/jedisct1/libsodium.js", "libsodium-wrappers-sumo@https://github.com/jedisct1/libsodium.js", "libsodium-wrappers@https://github.com/jedisct1/libsodium.js", libsodium@0.7.3, "libsodium@https://github.com/jedisct1/libsodium.js":
   version "0.7.3"
-  resolved "https://github.com/jedisct1/libsodium.js#ae2d3af29fb861fb688d5aaba73c34c58e6402ab"
+  resolved "https://github.com/jedisct1/libsodium.js#75168b33191a3c652b046b194ecc16ff43f2b0b1"
   dependencies:
     libsodium "0.7.3"
 
@@ -8078,8 +8078,8 @@ nativescript-ui-core@^1.0.0:
   resolved "https://registry.yarnpkg.com/nativescript-ui-core/-/nativescript-ui-core-1.0.0.tgz#ad49027e55ccc3b7f5b326ebd0aa01946c1b68bf"
 
 nativescript-ui-listview@^3.5.0:
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/nativescript-ui-listview/-/nativescript-ui-listview-3.5.2.tgz#c5189cf4721f8fd9bf5bc37f7c3ea072b70911a1"
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/nativescript-ui-listview/-/nativescript-ui-listview-3.5.3.tgz#52a26396e377002631ea883df7517d799833f324"
   dependencies:
     nativescript-ui-core "^1.0.0"
 
@@ -9690,9 +9690,9 @@ pretty-hrtime@^1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/pretty-hrtime/-/pretty-hrtime-1.0.3.tgz#b7e3ea42435a4c9b2759d99e0f201eb195802ee1"
 
-primeng@^5.2.3:
-  version "5.2.3"
-  resolved "https://registry.yarnpkg.com/primeng/-/primeng-5.2.3.tgz#f4f9c1772d00cb54505d676be826e8886fd7f613"
+primeng@^5.2.4:
+  version "5.2.4"
+  resolved "https://registry.yarnpkg.com/primeng/-/primeng-5.2.4.tgz#79d9b030ea37fdeb23284dcbbca3b89dddc3e91e"
 
 private@^0.1.6, private@^0.1.7, private@~0.1.5:
   version "0.1.8"
@@ -10985,9 +10985,9 @@ simple-plist@0.2.1:
     bplist-parser "0.1.1"
     plist "2.0.1"
 
-simplebtc@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/simplebtc/-/simplebtc-1.0.5.tgz#0c2e1b62f5b502d3f745f256f3990b1b07ae52d9"
+simplebtc@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/simplebtc/-/simplebtc-1.0.6.tgz#32e0556354429ef35b2d6e982e51c6812eaf34c8"
   dependencies:
     "@types/bitcore-lib" "0"
     bitcore-lib "0"
