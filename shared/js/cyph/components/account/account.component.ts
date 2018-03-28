@@ -60,6 +60,15 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		) !== undefined;
 	}
 
+	/** Indicates whether section should take up 100% width. */
+	public get fullWidth () : boolean {
+		return this.accountDatabaseService.currentUser.value !== undefined && [
+			'wallets'
+		].find(
+			path => this.route === path
+		) !== undefined;
+	}
+
 	/** Header title for current section. */
 	public get header () : string|undefined {
 		const route	= this.route;

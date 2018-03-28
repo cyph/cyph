@@ -41,9 +41,10 @@
 				[class.fadeOutUp]='accountService.transition | async'
 				fxFlex
 				[style.height]='fill ? "100%" : undefined'
-				[ngStyle]='header !== undefined && !envService.isMobile ? {padding: "0px 5vw"} : {}'
-				[ngStyle.gt-sm]='header !== undefined ? {padding: "0px 16.5vw"} : {}'
-				[ngStyle.gt-md]='header !== undefined ? {padding: "0px 25vw"} : {}'
+				[ngStyle]='header !== undefined && !fullWidth &&
+							!envService.isMobile ? {padding: "0px 5vw"} : {}'
+				[ngStyle.gt-sm]='!fullWidth && header !== undefined ? {padding: "0px 16.5vw"} : {}'
+				[ngStyle.gt-md]='!fullWidth && header !== undefined ? {padding: "0px 25vw"} : {}'
 			>
 				<router-outlet></router-outlet>
 			</div>

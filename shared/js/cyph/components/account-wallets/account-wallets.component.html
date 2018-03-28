@@ -1,132 +1,23 @@
 <div
 	fxFlexFill
-	fxLayout='row'
-	fxLayoutAlign='center start'
-	class='card-list'
 	[class.initiating]='accountFilesService.showSpinner'
 >
-	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
-		<mat-card
-			class='wallet animated slideInDown'
+	<mat-tab-group>
+		<mat-tab
+			class='wallet'
 			*ngFor='
-				let wallet of accountFilesService.filesListFiltered.wallets | async;
-				trackBy: trackByID;
-				let i = index;
-			'
-			[attr.data-index]='i'
-			[class.bounceInRight]='!accountFilesService.initiated'
-			[ngClass]='"_" + i'
+			let wallet of accountFilesService.filesListFiltered.wallets | async;
+			trackBy: trackByID;
+			let i = index;
+		'
+		[attr.data-index]='i'
+		[class.bounceInRight]='!accountFilesService.initiated'
+		[label]='wallet.name'
+		[ngClass]='"_" + i'
 		>
-			<mat-card-header fxLayout='row'>
-				<mat-card-title>
-					{{wallet.name}}
-				</mat-card-title>
-				<mat-card-subtitle>
-					<div *ngIf='
-						!wallet.wasAnonymousShare &&
-						accountDatabaseService.currentUser.value &&
-						accountDatabaseService.currentUser.value?.user.username !== wallet.owner
-					'>
-						<span cyphTranslate>Owner:</span>
-						&ngsp;
-						<a [routerLink]='accountService.routeRoot + "profile/" + wallet.owner'>
-							{{wallet.owner}}
-						</a>
-					</div>
-					<div cyphTranslate *ngIf='wallet.wasAnonymousShare'>
-						Received from anonymous
-					</div>
-				</mat-card-subtitle>
-				<div fxFlex fxLayoutAlign='end center'>
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip='Edit'
-						*ngIf='false'
-					>
-						<mat-icon>edit</mat-icon>
-					</button>
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip='Share'
-						(click)='
-							accountFilesService.shareFilePrompt(wallet);
-							$event.stopPropagation();
-						'
-					>
-						<mat-icon>share</mat-icon>
-					</button>
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip='Delete'
-						(click)='
-							accountFilesService.remove(wallet);
-							$event.stopPropagation();
-						'
-					>
-						<mat-icon>delete</mat-icon>
-					</button>
-				</div>
-			</mat-card-header>
-		</mat-card>
-
-		<h2
-			cyphTranslate
-			*ngIf='(accountFilesService.incomingFilesFiltered.wallets | async)?.length > 0'
-		>
-			Incoming Wallets
-		</h2>
-
-		<mat-card
-			class='wallet animated'
-			*ngFor='
-				let wallet of accountFilesService.incomingFilesFiltered.wallets | async;
-				trackBy: trackByID;
-				let i = index;
-			'
-			[attr.data-index]='i'
-			[class.bounceInRight]='!accountFilesService.initiated'
-			[ngClass]='"_" + i'
-		>
-			<mat-card-header fxLayout='row'>
-				<mat-card-title>
-					{{wallet.name}}
-				</mat-card-title>
-				<mat-card-subtitle>
-					<div *ngIf='!wallet.wasAnonymousShare'>
-						<span cyphTranslate>Shared by</span>
-						&ngsp;
-						<a [routerLink]='accountService.routeRoot + "profile/" + wallet.owner'>
-							{{wallet.owner}}
-						</a>
-					</div>
-					<div cyphTranslate *ngIf='wallet.wasAnonymousShare'>
-						Shared anonymously
-					</div>
-				</mat-card-subtitle>
-				<div fxFlex fxLayoutAlign='end center'>
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip='Accept'
-						(click)='accountFilesService.acceptIncomingFile(wallet)'
-					>
-						<mat-icon>check</mat-icon>
-					</button>
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip='Reject'
-						(click)='accountFilesService.acceptIncomingFile(wallet, false)'
-					>
-						<mat-icon>close</mat-icon>
-					</button>
-				</div>
-			</mat-card-header>
-		</mat-card>
-	</div>
+			{{wallet.name}}
+		</mat-tab>
+	</mat-tab-group>
 
 	<mat-progress-spinner
 		mode='indeterminate'

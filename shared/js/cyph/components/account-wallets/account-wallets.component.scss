@@ -1,1 +1,10 @@
 @import '../../../../css/mixins';
+
+mat-tab-group {
+	margin-left: 5%;
+	margin-right: 5%;
+	
+	::ng-deep .mat-tab-label-active {
+		background-color: #673ab7;
+	}
+}
