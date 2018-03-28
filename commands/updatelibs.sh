@@ -209,6 +209,7 @@ read -r -d '' modules <<- EOM
 	script-ext-html-webpack-plugin
 	sidh
 	simple-peer
+	simplebtc
 	simplewebrtc
 	sodiumutil
 	sphincs
