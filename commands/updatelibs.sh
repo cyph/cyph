@@ -57,6 +57,10 @@ read -r -d '' modules <<- EOM
 	@ngrx/store
 	@ngrx/store-devtools
 	@ngtools/webpack@1
+	@ngxs/devtools-plugin
+	@ngxs/logger-plugin
+	@ngxs/storage-plugin
+	@ngxs/store
 	@opentok/client
 	@types/braintree-web
 	@types/dompurify
