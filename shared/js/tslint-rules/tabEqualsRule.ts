@@ -34,7 +34,13 @@ export class Rule extends AbstractRule {
 					node.parent.kind === ts.SyntaxKind.Constructor ||
 					node.parent.kind === ts.SyntaxKind.FunctionDeclaration ||
 					node.parent.kind === ts.SyntaxKind.MethodDeclaration ||
-					node.parent.kind === ts.SyntaxKind.VariableDeclarationList
+					node.parent.kind === ts.SyntaxKind.Parameter ||
+					node.parent.kind === ts.SyntaxKind.VariableDeclarationList ||
+					(
+						node.parent.parent && (
+							node.parent.parent.kind === ts.SyntaxKind.Parameter
+						)
+					)
 				)
 			)
 		) {
