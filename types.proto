@@ -66,6 +66,7 @@ message AccountFileReferenceContainer {
 		required string owner = 2;
 	}
 
+	/** Value. */
 	oneof value {
 		AnonymousShare anonymousShare = 1;
 		SignedShare signedShare = 2;
