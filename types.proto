@@ -465,21 +465,21 @@ message ChatMessageValue {
 
 /** Cryptocurrencies. */
 enum Cryptocurrencies {
-	Bitcoin = 0;
-	BitcoinCash = 1;
-	Cyphcoin = 2;
-	Dash = 3;
-	Dogecoin = 4;
-	Ethereum = 5;
-	Filecoin = 6;
-	Litecoin = 7;
-	Monero = 8;
-	Nano = 9;
-	Neo = 10;
-	Ripple = 11;
-	Stellar = 12;
-	WaltonChain = 13;
-	Zcash = 14;
+	BTC = 0;
+	BCH = 1;
+	CYPH = 2;
+	DASH = 3;
+	DOGE = 4;
+	ETH = 5;
+	FIL = 6;
+	LTC = 7;
+	NEO = 8;
+	XLM = 9;
+	XMR = 10;
+	XRB = 11;
+	XRP = 12;
+	WTC = 13;
+	ZEC = 14;
 }
 
 /** Government-backed currencies. */
@@ -1177,11 +1177,11 @@ message Wallet {
 	/** @see Cryptocurrencies */
 	required Cryptocurrencies cryptocurrency = 1;
 
-	/** Private key. */
-	bytes privateKey = 2;
-
-	/** Public key. */
-	required bytes publicKey = 3;
+	/** Value. */
+	oneof value {
+		string address = 2;
+		bytes key = 3;
+	}
 }
 
 

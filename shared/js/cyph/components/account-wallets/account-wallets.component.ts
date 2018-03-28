@@ -26,7 +26,7 @@ export class AccountWalletsComponent implements OnInit {
 
 	/** Generates and uploads a new wallet. */
 	public async generate (
-		cryptocurrency: Cryptocurrencies = Cryptocurrencies.Bitcoin
+		cryptocurrency: Cryptocurrencies = Cryptocurrencies.BTC
 	) : Promise<void> {
 		await this.accountFilesService.upload(
 			await xkcdPassphrase.generateWithWordCount(4),

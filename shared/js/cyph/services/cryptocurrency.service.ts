@@ -1,37 +1,77 @@
 import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
+import {getExchangeRates, Transaction, Wallet as SimpleBTCWallet} from 'simplebtc';
 import {GenericCurrency} from '../generic-currency-type';
-import {Cryptocurrencies, IWallet} from '../proto';
+import {Cryptocurrencies, Currencies, IWallet} from '../proto';
 
 
 /**
  * Angular service for cryptocurrency.
- * NOTE: Dummy service for now.
+ * Supported cryptocurrencies: BTC.
  */
 @Injectable()
 export class CryptocurrencyService {
+	/** @ignore */
+	private getSimpleBTCWallet (wallet: IWallet) : SimpleBTCWallet {
+		return new SimpleBTCWallet({address: wallet.address, key: wallet.key});
+	}
+
 	/** Converts between currency amounts. */
 	public async convert (
-		_AMOUNT: number,
-		_INPUT: GenericCurrency,
-		_OUTUT: GenericCurrency
+		amount: number,
+		input: GenericCurrency,
+		output: GenericCurrency
 	) : Promise<number> {
-		return 4.2;
+		if (
+			(
+				input.cryptocurrency !== undefined &&
+				input.cryptocurrency !== Cryptocurrencies.BTC
+			) ||
+			(
+				output.cryptocurrency !== undefined &&
+				output.cryptocurrency !== Cryptocurrencies.BTC
+			)
+		) {
+			throw new Error('Unsupported cryptocurrency.');
+		}
+
+		if (input.cryptocurrency !== undefined && output.cryptocurrency === undefined) {
+			const exchangeRate	= (await getExchangeRates())[Currencies[output.currency]];
+			return amount * exchangeRate;
+		}
+		else if (input.cryptocurrency === undefined && output.cryptocurrency !== undefined) {
+			const exchangeRate	= (await getExchangeRates())[Currencies[input.currency]];
+			return amount / exchangeRate;
+		}
+		else if (input.cryptocurrency !== undefined && output.cryptocurrency !== undefined) {
+			return amount;
+		}
+		else {
+			throw new Error('Converting between non-Bitcoin currencies is currently unsupported.');
+		}
 	}
 
 	/** Generates new wallet. */
 	public async generateWallet (
-		cryptocurrency: Cryptocurrencies = Cryptocurrencies.Bitcoin
+		cryptocurrency: Cryptocurrencies = Cryptocurrencies.BTC
 	) : Promise<IWallet> {
+		if (cryptocurrency !== Cryptocurrencies.BTC) {
+			throw new Error('Unsupported cryptocurrency.');
+		}
+
 		return {
 			cryptocurrency,
-			privateKey: new Uint8Array(0),
-			publicKey: new Uint8Array(0)
+			key: new SimpleBTCWallet().key.toBuffer()
 		};
 	}
 
 	/** Gets address of a wallet. */
 	public async getAddress (wallet: IWallet) : Promise<string> {
-		return '1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd';
+		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+			throw new Error('Unsupported cryptocurrency.');
+		}
+
+		return this.getSimpleBTCWallet(wallet).address;
 	}
 
 	/**
@@ -43,48 +83,77 @@ export class CryptocurrencyService {
 		convert?: GenericCurrency,
 		publicBalanceOnly: boolean = false
 	) : Promise<number> {
-		if (!wallet.privateKey && !publicBalanceOnly && (
-			wallet.cryptocurrency === Cryptocurrencies.Monero ||
-			wallet.cryptocurrency === Cryptocurrencies.Zcash
+		if (!wallet.key && !publicBalanceOnly && (
+			wallet.cryptocurrency === Cryptocurrencies.XMR ||
+			wallet.cryptocurrency === Cryptocurrencies.ZEC
 		)) {
 			throw new Error(
 				`Private key required to get ${Cryptocurrencies[wallet.cryptocurrency]} balance.`
 			);
 		}
 
-		const balance	= 1337;
+		if (
+			wallet.cryptocurrency !== Cryptocurrencies.BTC ||
+			(
+				convert &&
+				convert.cryptocurrency !== undefined &&
+				convert.cryptocurrency !== Cryptocurrencies.BTC
+			)
+		) {
+			throw new Error('Unsupported cryptocurrency.');
+		}
+
+		const balance	= (await this.getSimpleBTCWallet(wallet).getBalance()).btc;
+
 		return convert ? this.convert(balance, wallet, convert) : balance;
 	}
 
-	/** Returns full transaction history sorted in ascending order by timestamp. */
-	public async getTransactionHistory (_WALLET: IWallet) : Promise<{
-		amount: number;
-		recipient: string;
-		sender: string;
-		timestamp: number;
-	}[]> {
-		return [
-			{
-				amount: 0.002,
-				recipient: '1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd',
-				sender: '1E4G7mwKozrTSUijjB2eFqgbU9zxToZbkz',
-				timestamp: -296938800000
-			},
-			{
-				amount: 1000000,
-				recipient: '3P3QsMVK89JBNqZQv5zMAKG8FK3kJM4rjt',
-				sender: '1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd',
-				timestamp: 1497665016872
-			}
-		];
+	/** Returns full transaction history sorted in descending order by timestamp. */
+	public async getTransactionHistory (wallet: IWallet) : Promise<Transaction[]> {
+		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+			throw new Error('Unsupported cryptocurrency.');
+		}
+
+		return this.getSimpleBTCWallet(wallet).getTransactionHistory();
 	}
 
 	/** Sends money. */
-	public async send (
-		_WALLET: IWallet,
-		_RECIPIENT: IWallet|string,
-		_AMOUNT: number
-	) : Promise<void> {}
+	public async send (wallet: IWallet, recipient: IWallet|string, amount: number) : Promise<void> {
+		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+			throw new Error('Unsupported cryptocurrency.');
+		}
+
+		if (typeof recipient !== 'string' && wallet.cryptocurrency !== recipient.cryptocurrency) {
+			throw new Error(
+				`Cannot send ${Cryptocurrencies[wallet.cryptocurrency]} to ${
+					Cryptocurrencies[recipient.cryptocurrency]
+				} address.`
+			);
+		}
+
+		await this.getSimpleBTCWallet(wallet).send(
+			typeof recipient === 'string' ? recipient : this.getSimpleBTCWallet(recipient).address,
+			amount
+		);
+	}
+
+	/** Watches new transactions as they occur. */
+	public watchNewTransactions (wallet: IWallet) : Observable<Transaction> {
+		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+			throw new Error('Unsupported cryptocurrency.');
+		}
+
+		return this.getSimpleBTCWallet(wallet).watchNewTransactions();
+	}
+
+	/** Watches full transaction history sorted in descending order by timestamp. */
+	public watchTransactionHistory (wallet: IWallet) : Observable<Transaction[]> {
+		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+			throw new Error('Unsupported cryptocurrency.');
+		}
+
+		return this.getSimpleBTCWallet(wallet).watchTransactionHistory();
+	}
 
 	constructor () {}
 }
