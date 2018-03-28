@@ -56,7 +56,7 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
-	@ngtools/webpack
+	@ngtools/webpack@1
 	@opentok/client
 	@types/braintree-web
 	@types/dompurify
