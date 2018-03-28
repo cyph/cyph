@@ -52,16 +52,18 @@ export class CryptocurrencyService {
 	}
 
 	/** Generates new wallet. */
-	public async generateWallet (
-		cryptocurrency: Cryptocurrencies = Cryptocurrencies.BTC
-	) : Promise<IWallet> {
+	public async generateWallet ({address, cryptocurrency = Cryptocurrencies.BTC, key}: {
+		address?: string;
+		cryptocurrency?: Cryptocurrencies;
+		key?: Uint8Array|string;
+	}) : Promise<IWallet> {
 		if (cryptocurrency !== Cryptocurrencies.BTC) {
 			throw new Error('Unsupported cryptocurrency.');
 		}
 
 		return {
 			cryptocurrency,
-			key: new SimpleBTCWallet().key.toBuffer()
+			key: new SimpleBTCWallet({address, key}).key.toBuffer()
 		};
 	}
 
