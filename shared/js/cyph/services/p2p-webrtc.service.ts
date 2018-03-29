@@ -168,7 +168,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	private readonly localVideo: Promise<() => JQuery>	= this._LOCAL_VIDEO.promise;
 
 	/** @ignore */
-	private p2pSessionData?: {iceServers: string; id: string};
+	private p2pSessionData?: {iceServers: string; id: string; isAlice: boolean};
 
 	/** @ignore */
 	private readonly progressUpdateLock: LockFunction							= lockFunction();
@@ -287,7 +287,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				const splitIndex	= command.additionalData.indexOf('\n');
 				return {
 					iceServers: command.additionalData.slice(splitIndex + 1),
-					id: command.additionalData.slice(0, splitIndex)
+					id: command.additionalData.slice(0, splitIndex),
+					isAlice: false
 				};
 			})();
 
@@ -503,7 +504,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		webRTC.startLocalVideo();
 
-		if (this.sessionService.state.isAlice) {
+		if (p2pSessionData.isAlice) {
 			webRTC.connection.emit('connect', p2pSessionData.id);
 		}
 
@@ -533,7 +534,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			undefined :
 			{
 				iceServers: await request({retries: 5, url: env.baseUrl + 'iceservers'}),
-				id: uuid()
+				id: uuid(),
+				isAlice: true
 			}
 		;
 
