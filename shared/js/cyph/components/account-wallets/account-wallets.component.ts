@@ -25,12 +25,14 @@ export class AccountWalletsComponent implements OnInit {
 	public readonly trackByID: typeof trackByID	= trackByID;
 
 	/** Generates and uploads a new wallet. */
-	public async generate (
-		cryptocurrency: Cryptocurrencies = Cryptocurrencies.BTC
-	) : Promise<void> {
+	public async generate (options: {
+		address?: string;
+		cryptocurrency?: Cryptocurrencies;
+		key?: Uint8Array|string;
+	}) : Promise<void> {
 		await this.accountFilesService.upload(
 			await xkcdPassphrase.generateWithWordCount(4),
-			await this.cryptocurrencyService.generateWallet(cryptocurrency)
+			await this.cryptocurrencyService.generateWallet(options)
 		);
 	}
 
