@@ -111,7 +111,11 @@ export class AccountChatService extends ChatService {
 				),
 				messages: this.accountDatabaseService.getAsyncList(
 					`${contactURL}/messages`,
-					ChatMessage
+					ChatMessage,
+					undefined,
+					undefined,
+					undefined,
+					true
 				),
 				/* See https://github.com/palantir/tslint/issues/3541 */
 				/* tslint:disable-next-line:object-literal-sort-keys */
