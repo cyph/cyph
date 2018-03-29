@@ -182,13 +182,13 @@
 				mat-icon-button
 				class='video-call-button'
 				(click)='p2pService.videoCallButton()'
-				[disabled]='!p2pWebRTCService.videoEnabled'
 				[matTooltip]='
 					!p2pWebRTCService.outgoingStream.video ?
 						stringsService.cameraEnable :
 						stringsService.cameraDisable
 				'
 				matTooltipPosition='above'
+				*ngIf='p2pWebRTCService.videoEnabled'
 			>
 				<mat-icon *ngIf='!p2pWebRTCService.outgoingStream.video'>videocam</mat-icon>
 				<mat-icon *ngIf='p2pWebRTCService.outgoingStream.video'>videocam_off</mat-icon>
