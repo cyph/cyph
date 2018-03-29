@@ -469,7 +469,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 						!this.sessionService.apiFlags.disableP2P ?
 							{urls: 'stun:stun.l.google.com:19302'} :
 							[]
-					)
+					).
+					slice(0, 2)
 			},
 			remoteVideosEl: $remoteVideo[0]
 		});
