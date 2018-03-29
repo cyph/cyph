@@ -257,6 +257,9 @@ sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/src/simplewebrtc.
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
+# Temporary workaround for https://github.com/angular/angular-cli/issues/1548
+sed -i "s|crypto: 'empty'|crypto: true|g" @angular/cli/models/webpack-configs/browser.js
+
 # Temporary workaround for https://github.com/werk85/node-html-to-text/issues/151
 grep -rl lodash html-to-text | xargs -I% sed -i 's|lodash|lodash-es|g' %
 
