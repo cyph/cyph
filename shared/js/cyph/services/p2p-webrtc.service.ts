@@ -448,8 +448,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				iceServers: parse<RTCIceServer[]>(p2pSessionData.iceServers).
 					map(o => {
 						if ((<any> o).url !== undefined) {
-							o.urls			= (<any> o).url;
-							(<any> o).url	= undefined;
+							o.urls	= (<any> o).url;
+							delete (<any> o).url;
 						}
 
 						if (this.sessionService.apiFlags.disableP2P) {
@@ -463,7 +463,12 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 						return o;
 					}).
-					filter(o => o.urls && o.urls.length > 0)
+					filter(o => o.urls && o.urls.length > 0).
+					concat(
+						!this.sessionService.apiFlags.disableP2P ?
+							{urls: 'stun:stun.l.google.com:19302'} :
+							[]
+					)
 			},
 			remoteVideosEl: $remoteVideo[0]
 		});
@@ -497,10 +502,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		});
 
 		webRTC.startLocalVideo();
-		webRTC.connection.emit('connect');
 
-		if (!this.outgoingStream.video) {
-			this.toggle('video', true);
+		if (this.sessionService.state.isAlice) {
+			webRTC.connection.emit('connect', p2pSessionData.id);
 		}
 
 		(await this.handlers).connected(true);
