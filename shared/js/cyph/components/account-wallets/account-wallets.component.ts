@@ -25,7 +25,7 @@ export class AccountWalletsComponent implements OnInit {
 	public readonly trackByID: typeof trackByID	= trackByID;
 
 	/** Generates and uploads a new wallet. */
-	public async generate (options: {
+	public async generate (options?: {
 		address?: string;
 		cryptocurrency?: Cryptocurrencies;
 		key?: Uint8Array|string;
