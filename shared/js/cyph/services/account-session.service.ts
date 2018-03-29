@@ -143,7 +143,8 @@ export class AccountSessionService extends SessionService {
 				undefined,
 				undefined,
 				undefined,
-				false
+				false,
+				true
 			);
 
 			this.incomingMessageQueueLock	= this.accountDatabaseService.lockFunction(

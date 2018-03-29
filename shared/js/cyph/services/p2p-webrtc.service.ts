@@ -168,7 +168,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	private readonly localVideo: Promise<() => JQuery>	= this._LOCAL_VIDEO.promise;
 
 	/** @ignore */
-	private p2pSessionData?: {iceServers: string; id: string};
+	private p2pSessionData?: {iceServers: string; id: string; isAlice: boolean};
 
 	/** @ignore */
 	private readonly progressUpdateLock: LockFunction							= lockFunction();
@@ -287,7 +287,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				const splitIndex	= command.additionalData.indexOf('\n');
 				return {
 					iceServers: command.additionalData.slice(splitIndex + 1),
-					id: command.additionalData.slice(0, splitIndex)
+					id: command.additionalData.slice(0, splitIndex),
+					isAlice: false
 				};
 			})();
 
@@ -448,8 +449,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				iceServers: parse<RTCIceServer[]>(p2pSessionData.iceServers).
 					map(o => {
 						if ((<any> o).url !== undefined) {
-							o.urls			= (<any> o).url;
-							(<any> o).url	= undefined;
+							o.urls	= (<any> o).url;
+							delete (<any> o).url;
 						}
 
 						if (this.sessionService.apiFlags.disableP2P) {
@@ -463,7 +464,13 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 						return o;
 					}).
-					filter(o => o.urls && o.urls.length > 0)
+					filter(o => o.urls && o.urls.length > 0).
+					concat(
+						!this.sessionService.apiFlags.disableP2P ?
+							{urls: 'stun:stun.l.google.com:19302'} :
+							[]
+					).
+					slice(0, 2)
 			},
 			remoteVideosEl: $remoteVideo[0]
 		});
@@ -497,10 +504,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		});
 
 		webRTC.startLocalVideo();
-		webRTC.connection.emit('connect');
 
-		if (!this.outgoingStream.video) {
-			this.toggle('video', true);
+		if (p2pSessionData.isAlice) {
+			webRTC.connection.emit('connect', p2pSessionData.id);
 		}
 
 		(await this.handlers).connected(true);
@@ -529,7 +535,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			undefined :
 			{
 				iceServers: await request({retries: 5, url: env.baseUrl + 'iceservers'}),
-				id: uuid()
+				id: uuid(),
+				isAlice: true
 			}
 		;
 

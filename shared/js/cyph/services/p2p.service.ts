@@ -175,14 +175,14 @@ export class P2PService {
 	 * requesting new P2P session if necessary.
 	 */
 	public videoCallButton () : void {
-		if (!this.isEnabled || !this.p2pWebRTCService.videoEnabled) {
+		if (!this.isEnabled) {
 			return;
 		}
 
 		if (!this.p2pWebRTCService.isActive) {
 			this.request('video');
 		}
-		else {
+		else if (this.p2pWebRTCService.videoEnabled) {
 			this.p2pWebRTCService.toggle('video');
 		}
 	}
