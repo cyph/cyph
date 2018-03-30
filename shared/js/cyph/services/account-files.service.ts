@@ -157,6 +157,17 @@ export class AccountFilesService {
 		wallets: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Wallet)
 	};
 
+	/**
+	 * Includes downloaded data, where applicable.
+	 * @see filesListFiltered
+	 */
+	public readonly filesListFilteredWithData	= {
+		appointments: this.getFiles(this.filesListFiltered.appointments, Appointment),
+		files: this.getFiles(this.filesListFiltered.files, BinaryProto),
+		forms: this.getFiles(this.filesListFiltered.forms, Form, SecurityModels.privateSigned),
+		wallets: this.getFiles(this.filesListFiltered.wallets, Wallet)
+	};
+
 	/** Total size of all files in list. */
 	public readonly filesTotalSize: Observable<number>	=
 		this.filesListFiltered.files.pipe(map(files =>
@@ -266,6 +277,17 @@ export class AccountFilesService {
 		wallets: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Wallet)
 	};
 
+	/**
+	 * Includes downloaded data, where applicable.
+	 * @see incomingFilesFiltered
+	 */
+	public readonly incomingFilesFilteredWithData	= {
+		appointments: this.getFiles(this.incomingFilesFiltered.appointments, Appointment),
+		files: this.getFiles(this.incomingFilesFiltered.files, BinaryProto),
+		forms: this.getFiles(this.incomingFilesFiltered.forms, Form, SecurityModels.privateSigned),
+		wallets: this.getFiles(this.incomingFilesFiltered.wallets, Wallet)
+	};
+
 	/** Indicates whether the first load has completed. */
 	public initiated: boolean				= false;
 
@@ -327,6 +349,47 @@ export class AccountFilesService {
 		return filesList.pipe(map(files => files.filter(({owner, recordType}) =>
 			!!owner && recordType === filterRecordTypes
 		)));
+	}
+
+	/** @ignore */
+	private getFiles<T> (
+		filesList: Observable<IAccountFileRecord[]>,
+		proto: IProto<T>,
+		securityModel?: SecurityModels
+	) : () => Observable<{
+		data: T;
+		record: IAccountFileRecord;
+	}[]> {
+		return memoize(() => filesList.pipe(mergeMap(records => combineLatest(records.map(record =>
+			this.watchItem<T>()(record, proto, securityModel).pipe(map(data => ({
+				data,
+				record
+			})))
+		)))));
+	}
+
+	/** @ignore */
+	private watchItem<T> () : (
+		id: string|IAccountFileRecord,
+		proto: IProto<T>,
+		securityModel?: SecurityModels
+	) => Observable<T> {
+		return memoize((
+			id: string|IAccountFileRecord,
+			proto: IProto<T>,
+			securityModel?: SecurityModels
+		) : Observable<T> => {
+			const filePromise	= this.getFile(id);
+
+			return this.accountDatabaseService.watch(
+				filePromise.then(file => `users/${file.owner}/files/${file.id}`),
+				proto,
+				securityModel,
+				filePromise.then(file => file.key)
+			).pipe(map(o =>
+				o.value
+			));
+		});
 	}
 
 	/** Accepts or rejects incoming file. */
