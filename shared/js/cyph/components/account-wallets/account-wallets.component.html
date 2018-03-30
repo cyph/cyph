@@ -6,16 +6,29 @@
 		<mat-tab
 			class='wallet'
 			*ngFor='
-			let wallet of accountFilesService.filesListFiltered.wallets | async;
+			let wallet of accountFilesService.filesListFilteredWithData.wallets() | async;
 			trackBy: trackByID;
 			let i = index;
 		'
 		[attr.data-index]='i'
 		[class.bounceInRight]='!accountFilesService.initiated'
-		[label]='wallet.name'
+		[label]='wallet.record.name'
 		[ngClass]='"_" + i'
 		>
-			{{wallet.name}}
+		<mat-card fxLayout='column'>
+			<mat-chip-list>
+				<mat-chip class='mat-raised' *ngIf='wallet.data.cryptocurrency === cryptocurrencies.BTC'>
+					<mat-icon svgIcon='bitcoin'></mat-icon> Bitcoin
+				</mat-chip>
+				<button mat-icon-button><mat-icon>settings</mat-icon></button>
+			</mat-chip-list>
+			<div fxLayout='row' fxLayoutAlign='center center'>
+				<h2>{{wallet.record.name}}</h2>
+			</div>
+			
+			<h3>Wallet Address: {{cryptocurrencyService.getAddress(wallet.data) | async}}</h3>
+			<h3>Current Balance: {{cryptocurrencyService.watchBalance(wallet.data) | async}}</h3>
+			</mat-card>
 		</mat-tab>
 	</mat-tab-group>
 
