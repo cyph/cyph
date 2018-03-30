@@ -26,6 +26,37 @@ export class CryptocurrencyService {
 		)
 	;
 
+	/** Gets address of a wallet. */
+	public readonly getAddress	= memoize(async (wallet: IWallet) : Promise<string> => {
+		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+			throw new Error('Unsupported cryptocurrency.');
+		}
+
+		return this.getSimpleBTCWallet(wallet).address;
+	});
+
+	/** Watches new transactions as they occur. */
+	public readonly watchNewTransactions	= memoize(
+		(wallet: IWallet) : Observable<Transaction> => {
+			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+				throw new Error('Unsupported cryptocurrency.');
+			}
+
+			return this.getSimpleBTCWallet(wallet).watchNewTransactions();
+		}
+	);
+
+	/** Watches full transaction history sorted in descending order by timestamp. */
+	public readonly watchTransactionHistory	= memoize(
+		(wallet: IWallet) : Observable<Transaction[]> => {
+			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+				throw new Error('Unsupported cryptocurrency.');
+			}
+
+			return this.getSimpleBTCWallet(wallet).watchTransactionHistory();
+		}
+	);
+
 	/** @ignore */
 	private getSimpleBTCWallet (wallet: IWallet) : SimpleBTCWallet {
 		return new SimpleBTCWallet({address: wallet.address, key: wallet.key});
@@ -83,15 +114,6 @@ export class CryptocurrencyService {
 			key: new SimpleBTCWallet({address, key}).key.toBuffer()
 		};
 	}
-
-	/** Gets address of a wallet. */
-	public readonly getAddress	= memoize(async (wallet: IWallet) : Promise<string> => {
-		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
-			throw new Error('Unsupported cryptocurrency.');
-		}
-
-		return this.getSimpleBTCWallet(wallet).address;
-	});
 
 	/**
 	 * Gets balance of a wallet.
@@ -167,28 +189,6 @@ export class CryptocurrencyService {
 	) : Observable<number> {
 		return this.watchBalanceInternal(wallet)(convert)(publicBalanceOnly);
 	}
-
-	/** Watches new transactions as they occur. */
-	public readonly watchNewTransactions	= memoize(
-		(wallet: IWallet) : Observable<Transaction> => {
-			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
-				throw new Error('Unsupported cryptocurrency.');
-			}
-
-			return this.getSimpleBTCWallet(wallet).watchNewTransactions();
-		}
-	);
-
-	/** Watches full transaction history sorted in descending order by timestamp. */
-	public readonly watchTransactionHistory	= memoize(
-		(wallet: IWallet) : Observable<Transaction[]> => {
-			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
-				throw new Error('Unsupported cryptocurrency.');
-			}
-
-			return this.getSimpleBTCWallet(wallet).watchTransactionHistory();
-		}
-	);
 
 	constructor () {}
 }
