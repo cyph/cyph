@@ -505,8 +505,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		webRTC.startLocalVideo();
 
-		if (p2pSessionData.isAlice) {
-			webRTC.connection.emit('connect', p2pSessionData.id);
+		if (!p2pSessionData.isAlice) {
+			this.commands.webRTC({args: [p2pSessionData.id], event: 'connect'});
 		}
 
 		(await this.handlers).connected(true);
