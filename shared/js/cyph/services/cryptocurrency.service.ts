@@ -1,8 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
+import {mergeMap} from 'rxjs/operators/mergeMap';
 import {getExchangeRates, Transaction, Wallet as SimpleBTCWallet} from 'simplebtc';
 import {GenericCurrency} from '../generic-currency-type';
 import {Cryptocurrencies, Currencies, IWallet} from '../proto';
+import {getOrSetDefault} from '../util/get-or-set-default';
 
 
 /**
@@ -11,6 +13,9 @@ import {Cryptocurrencies, Currencies, IWallet} from '../proto';
  */
 @Injectable()
 export class CryptocurrencyService {
+	/** @ignore */
+	private readonly addressCache: Map<IWallet, string>	= new Map<IWallet, string>();
+
 	/** @ignore */
 	private getSimpleBTCWallet (wallet: IWallet) : SimpleBTCWallet {
 		return new SimpleBTCWallet({address: wallet.address, key: wallet.key});
@@ -75,7 +80,9 @@ export class CryptocurrencyService {
 			throw new Error('Unsupported cryptocurrency.');
 		}
 
-		return this.getSimpleBTCWallet(wallet).address;
+		return getOrSetDefault(this.addressCache, wallet, () =>
+			this.getSimpleBTCWallet(wallet).address
+		);
 	}
 
 	/**
@@ -139,6 +146,20 @@ export class CryptocurrencyService {
 			typeof recipient === 'string' ? recipient : this.getSimpleBTCWallet(recipient).address,
 			amount
 		);
+	}
+
+	/**
+	 * Watches balance of a wallet.
+	 * Will throw an error if a private key is required and not present.
+	 */
+	public watchBalance (
+		wallet: IWallet,
+		convert?: GenericCurrency,
+		publicBalanceOnly?: boolean
+	) : Observable<number> {
+		return this.watchTransactionHistory(wallet).pipe(mergeMap(async () =>
+			this.getBalance(wallet, convert, publicBalanceOnly)
+		));
 	}
 
 	/** Watches new transactions as they occur. */
