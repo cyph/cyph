@@ -352,8 +352,8 @@ export class AccountFilesService {
 	}
 
 	/** @ignore */
-	private getFiles<T> (
-		filesList: Observable<IAccountFileRecord[]>,
+	private getFiles<T, TRecord extends {owner: string}> (
+		filesList: Observable<(IAccountFileRecord&TRecord)[]>,
 		proto: IProto<T>,
 		securityModel?: SecurityModels
 	) : () => Observable<{
