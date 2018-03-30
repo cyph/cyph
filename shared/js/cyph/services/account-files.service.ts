@@ -125,7 +125,7 @@ export class AccountFilesService {
 
 	/** @ignore */
 	private readonly watchFileDataCache: Map<string|IAccountFileRecord, Observable<any>>	=
-		new Map<string|IAccountFileRecord, Observable<any>>();
+		new Map<string|IAccountFileRecord, Observable<any>>()
 	;
 
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
