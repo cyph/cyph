@@ -24,9 +24,11 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatTableModule} from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterModule} from '@angular/router';
@@ -86,6 +88,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatListModule,
 		MatMenuModule,
 		MatNativeDateModule,
+		MatPaginatorModule,
 		MatProgressBarModule,
 		MatProgressSpinnerModule,
 		MatRadioModule,
@@ -93,6 +96,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatSliderModule,
 		MatSlideToggleModule,
 		MatSnackBarModule,
+		MatTableModule,
 		MatTabsModule,
 		MatToolbarModule,
 		MatTooltipModule,
@@ -124,6 +128,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatListModule,
 		MatMenuModule,
 		MatNativeDateModule,
+		MatPaginatorModule,
 		MatProgressBarModule,
 		MatProgressSpinnerModule,
 		MatRadioModule,
@@ -131,6 +136,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatSliderModule,
 		MatSlideToggleModule,
 		MatSnackBarModule,
+		MatTableModule,
 		MatTabsModule,
 		MatToolbarModule,
 		MatTooltipModule,
