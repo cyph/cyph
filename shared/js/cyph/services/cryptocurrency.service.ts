@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
+import memoize from 'lodash-es/memoize';
 import {Observable} from 'rxjs/Observable';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {getExchangeRates, Transaction, Wallet as SimpleBTCWallet} from 'simplebtc';
 import {GenericCurrency} from '../generic-currency-type';
 import {Cryptocurrencies, Currencies, IWallet} from '../proto';
-import {getOrSetDefault} from '../util/get-or-set-default';
 
 
 /**
@@ -14,7 +14,17 @@ import {getOrSetDefault} from '../util/get-or-set-default';
 @Injectable()
 export class CryptocurrencyService {
 	/** @ignore */
-	private readonly addressCache: Map<IWallet, string>	= new Map<IWallet, string>();
+	private readonly watchBalanceInternal	=
+		memoize((wallet: IWallet) =>
+			memoize((convert?: GenericCurrency) =>
+				memoize((publicBalanceOnly?: boolean) =>
+					this.watchTransactionHistory(wallet).pipe(mergeMap(async () =>
+						this.getBalance(wallet, convert, publicBalanceOnly)
+					))
+				)
+			)
+		)
+	;
 
 	/** @ignore */
 	private getSimpleBTCWallet (wallet: IWallet) : SimpleBTCWallet {
@@ -75,15 +85,13 @@ export class CryptocurrencyService {
 	}
 
 	/** Gets address of a wallet. */
-	public async getAddress (wallet: IWallet) : Promise<string> {
+	public readonly getAddress	= memoize(async (wallet: IWallet) : Promise<string> => {
 		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
 			throw new Error('Unsupported cryptocurrency.');
 		}
 
-		return getOrSetDefault(this.addressCache, wallet, () =>
-			this.getSimpleBTCWallet(wallet).address
-		);
-	}
+		return this.getSimpleBTCWallet(wallet).address;
+	});
 
 	/**
 	 * Gets balance of a wallet.
@@ -150,35 +158,37 @@ export class CryptocurrencyService {
 
 	/**
 	 * Watches balance of a wallet.
-	 * Will throw an error if a private key is required and not present.
+	 * @see getBalance
 	 */
 	public watchBalance (
 		wallet: IWallet,
 		convert?: GenericCurrency,
 		publicBalanceOnly?: boolean
 	) : Observable<number> {
-		return this.watchTransactionHistory(wallet).pipe(mergeMap(async () =>
-			this.getBalance(wallet, convert, publicBalanceOnly)
-		));
+		return this.watchBalanceInternal(wallet)(convert)(publicBalanceOnly);
 	}
 
 	/** Watches new transactions as they occur. */
-	public watchNewTransactions (wallet: IWallet) : Observable<Transaction> {
-		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
-			throw new Error('Unsupported cryptocurrency.');
-		}
+	public readonly watchNewTransactions	= memoize(
+		(wallet: IWallet) : Observable<Transaction> => {
+			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+				throw new Error('Unsupported cryptocurrency.');
+			}
 
-		return this.getSimpleBTCWallet(wallet).watchNewTransactions();
-	}
+			return this.getSimpleBTCWallet(wallet).watchNewTransactions();
+		}
+	);
 
 	/** Watches full transaction history sorted in descending order by timestamp. */
-	public watchTransactionHistory (wallet: IWallet) : Observable<Transaction[]> {
-		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
-			throw new Error('Unsupported cryptocurrency.');
-		}
+	public readonly watchTransactionHistory	= memoize(
+		(wallet: IWallet) : Observable<Transaction[]> => {
+			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+				throw new Error('Unsupported cryptocurrency.');
+			}
 
-		return this.getSimpleBTCWallet(wallet).watchTransactionHistory();
-	}
+			return this.getSimpleBTCWallet(wallet).watchTransactionHistory();
+		}
+	);
 
 	constructor () {}
 }
