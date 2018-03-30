@@ -49,7 +49,7 @@ import {
 import {filterUndefined} from '../util/filter';
 import {flattenObservable} from '../util/flatten-observable';
 import {convertStorageUnitsToBytes} from '../util/formatting';
-import {getOrSetDefaultAsync} from '../util/get-or-set-default';
+import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -122,6 +122,11 @@ export class AccountFilesService {
 		,
 		(value: IAccountFileReference) => value.id
 	);
+
+	/** @ignore */
+	private readonly watchFileDataCache: Map<string|IAccountFileRecord, Observable<any>>	=
+		new Map<string|IAccountFileRecord, Observable<any>>()
+	;
 
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
 	public readonly filesList: Observable<(IAccountFileRecord&{owner: string})[]>	=
@@ -352,44 +357,49 @@ export class AccountFilesService {
 	}
 
 	/** @ignore */
-	private getFiles<T> (
-		filesList: Observable<IAccountFileRecord[]>,
+	private getFiles<T, TRecord extends {owner: string}> (
+		filesList: Observable<(IAccountFileRecord&TRecord)[]>,
 		proto: IProto<T>,
 		securityModel?: SecurityModels
 	) : () => Observable<{
 		data: T;
 		record: IAccountFileRecord;
 	}[]> {
-		return memoize(() => filesList.pipe(mergeMap(records => combineLatest(records.map(record =>
-			this.watchItem<T>()(record, proto, securityModel).pipe(map(data => ({
-				data,
-				record
-			})))
-		)))));
+		return memoize(() => filesList.pipe(
+			mergeMap(records => combineLatest(records.map(record =>
+				this.watchFileData(record, proto, securityModel).pipe(map(data => ({
+					data,
+					record
+				})))
+			))),
+			map(files =>
+				<any> files.filter(o => o.data !== undefined)
+			)
+		));
 	}
 
 	/** @ignore */
-	private watchItem<T> () : (
+	private watchFileData<T> (
 		id: string|IAccountFileRecord,
 		proto: IProto<T>,
 		securityModel?: SecurityModels
-	) => Observable<T> {
-		return memoize((
-			id: string|IAccountFileRecord,
-			proto: IProto<T>,
-			securityModel?: SecurityModels
-		) : Observable<T> => {
-			const filePromise	= this.getFile(id);
+	) : Observable<T|undefined> {
+		return getOrSetDefault(
+			this.watchFileDataCache,
+			typeof id === 'string' ? id : id.id,
+			() => {
+				const filePromise	= this.getFile(id);
 
-			return this.accountDatabaseService.watch(
-				filePromise.then(file => `users/${file.owner}/files/${file.id}`),
-				proto,
-				securityModel,
-				filePromise.then(file => file.key)
-			).pipe(map(o =>
-				o.value
-			));
-		});
+				return this.accountDatabaseService.watch(
+					filePromise.then(file => `users/${file.owner}/files/${file.id}`),
+					proto,
+					securityModel,
+					filePromise.then(file => file.key)
+				).pipe(map(o =>
+					isNaN(o.timestamp) ? undefined : o.value
+				));
+			}
+		);
 	}
 
 	/** Accepts or rejects incoming file. */
