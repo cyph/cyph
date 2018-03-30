@@ -25,7 +25,7 @@ export class Analytics {
 		args.unshift(method);
 
 		try {
-			if (this.analFrame) {
+			if (this.analFrame && this.analFrame.contentWindow) {
 				this.analFrame.contentWindow.postMessage(
 					{args: stringify(args)},
 					this.env.baseUrl.slice(0, -1)

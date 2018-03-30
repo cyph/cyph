@@ -20,7 +20,18 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 	let sodiumReadyPromise: Promise<void>|undefined;
 
 	crypto	= {
-		getRandomValues: <T extends ArrayBufferView> (arrayBufferView: T) : T => {
+		/* tslint:disable-next-line:no-null-keyword */
+		getRandomValues: <T extends ArrayBufferView> (array?: T|null) : T => {
+			if (!array) {
+				throw new TypeError(
+					`Failed to execute 'getRandomValues' on 'Crypto': ${
+						array === null ?
+							"parameter 1 is not of type 'ArrayBufferView'" :
+							'1 argument required, but only 0 present'
+					}.`
+				);
+			}
+
 			/* Handle circular dependency between this polyfill and libsodium */
 			const sodiumExists	=
 				typeof (<any> sodium()) !== 'undefined' &&
@@ -34,7 +45,7 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 					});
 				}
 
-				return arrayBufferView;
+				return array;
 			}
 			else if (!sodiumExists) {
 				throw new Error('No CSPRNG found.');
@@ -43,19 +54,19 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 			++nonce[nonce[0] === 4294967295 ? 1 : 0];
 
 			const newBytes	= sodium().crypto_stream_chacha20(
-				arrayBufferView.byteLength,
+				array.byteLength,
 				seed,
 				new Uint8Array(nonce.buffer, nonce.byteOffset, nonce.byteLength)
 			);
 
 			new Uint8Array(
-				arrayBufferView.buffer,
-				arrayBufferView.byteOffset,
-				arrayBufferView.byteLength
+				array.buffer,
+				array.byteOffset,
+				array.byteLength
 			).set(newBytes);
 			sodium().memzero(newBytes);
 
-			return arrayBufferView;
+			return array;
 		},
 
 		subtle: <SubtleCrypto> {}
