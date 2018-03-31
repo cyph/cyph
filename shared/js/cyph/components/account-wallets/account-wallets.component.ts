@@ -32,9 +32,10 @@ export class AccountWalletsComponent implements OnInit {
 		address?: string;
 		cryptocurrency?: Cryptocurrencies;
 		key?: Uint8Array|string;
+		name?: string;
 	}) : Promise<void> {
 		await this.accountFilesService.upload(
-			await xkcdPassphrase.generateWithWordCount(4),
+			name || (await xkcdPassphrase.generateWithWordCount(4)),
 			await this.cryptocurrencyService.generateWallet(options)
 		);
 	}
