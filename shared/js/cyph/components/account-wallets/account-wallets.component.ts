@@ -21,11 +21,11 @@ import {trackByID} from '../../track-by/track-by-id';
 	templateUrl: './account-wallets.component.html'
 })
 export class AccountWalletsComponent implements OnInit {
-	/** @see trackByID */
-	public readonly trackByID: typeof trackByID	= trackByID;
+	/** @see Cryptocurrencies */
+	public readonly cryptocurrencies: typeof Cryptocurrencies	= Cryptocurrencies;
 
 	/** @see trackByID */
-	public readonly cryptocurrencies: typeof Cryptocurrencies	= Cryptocurrencies;
+	public readonly trackByID: typeof trackByID					= trackByID;
 
 	/** Generates and uploads a new wallet. */
 	public async generate (options?: {
@@ -35,7 +35,7 @@ export class AccountWalletsComponent implements OnInit {
 		name?: string;
 	}) : Promise<void> {
 		await this.accountFilesService.upload(
-			name || (await xkcdPassphrase.generateWithWordCount(4)),
+			name || await xkcdPassphrase.generateWithWordCount(4),
 			await this.cryptocurrencyService.generateWallet(options)
 		);
 	}

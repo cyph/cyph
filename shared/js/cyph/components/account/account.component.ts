@@ -49,7 +49,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	}
 
 	/** Indicates whether section should take up 100% height. */
-	public get fill () : boolean {
+	public get fullHeight () : boolean {
 		return this.accountDatabaseService.currentUser.value !== undefined && [
 			'',
 			'contacts',
