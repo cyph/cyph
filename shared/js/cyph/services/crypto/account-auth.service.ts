@@ -316,7 +316,7 @@ export class AccountAuthService {
 			]);
 		}
 		catch (err) {
-			this.errorService.log('CYPH LOGIN FAILURE', {err, errorLogMessage});
+			this.errorService.log(`CYPH LOGIN FAILURE: ${errorLogMessage}`, err);
 			return false;
 		}
 
