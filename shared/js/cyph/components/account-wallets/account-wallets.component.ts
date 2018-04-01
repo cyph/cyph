@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {xkcdPassphrase} from 'xkcd-passphrase';
+import {NewWalletOptions} from '../../cryptocurrency';
 import {Cryptocurrencies} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -7,6 +8,7 @@ import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {CryptocurrencyService} from '../../services/cryptocurrency.service';
+import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
@@ -28,6 +30,12 @@ export class AccountWalletsComponent implements OnInit {
 	/** @see getDateTimeString */
 	public readonly getDateTimeString: typeof getDateTimeString	= getDateTimeString;
 
+	/** Indicates whether speed dial is open. */
+	public isSpeedDialOpen: boolean								= false;
+
+	/** @see NewWalletOptions */
+	public readonly newWalletOptions: typeof NewWalletOptions	= NewWalletOptions;
+
 	/** @see trackByID */
 	public readonly trackByID: typeof trackByID					= trackByID;
 
@@ -41,15 +49,58 @@ export class AccountWalletsComponent implements OnInit {
 	];
 
 	/** Generates and uploads a new wallet. */
-	public async generate (options?: {
-		address?: string;
-		cryptocurrency?: Cryptocurrencies;
-		key?: Uint8Array|string;
-		name?: string;
-	}) : Promise<void> {
+	public async generate (
+		newWalletOptions: NewWalletOptions = NewWalletOptions.generate,
+		cryptocurrency: Cryptocurrencies = Cryptocurrencies.BTC,
+		name: string|Promise<string> = xkcdPassphrase.generateWithWordCount(4)
+	) : Promise<void> {
+		let address: string|undefined	= undefined;
+		let key: string|undefined		= undefined;
+
+		switch (newWalletOptions) {
+			case NewWalletOptions.generate:
+				if (!(await this.dialogService.confirm({
+					content: this.stringsService.newWalletGenerateText,
+					title: this.stringsService.newWalletGenerate
+				}))) {
+					return;
+				}
+
+				break;
+
+			case NewWalletOptions.importAddress:
+				address	= await this.dialogService.prompt({
+					content: this.stringsService.newWalletImportAddressText,
+					placeholder: this.stringsService.newWalletImportAddressInput,
+					title: this.stringsService.newWalletImportAddress
+				});
+
+				if (!address) {
+					return;
+				}
+
+				break;
+
+			case NewWalletOptions.importKey:
+				key	= await this.dialogService.prompt({
+					content: this.stringsService.newWalletImportKeyText,
+					placeholder: this.stringsService.newWalletImportKeyInput,
+					title: this.stringsService.newWalletImportKey
+				});
+
+				if (!key) {
+					return;
+				}
+
+				break;
+
+			default:
+				return;
+		}
+
 		await this.accountFilesService.upload(
-			name || await xkcdPassphrase.generateWithWordCount(4),
-			await this.cryptocurrencyService.generateWallet(options)
+			await name,
+			await this.cryptocurrencyService.generateWallet({address, cryptocurrency, key})
 		);
 	}
 
@@ -59,6 +110,9 @@ export class AccountWalletsComponent implements OnInit {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly dialogService: DialogService,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 

@@ -116,13 +116,40 @@
 		*ngIf='accountFilesService.showSpinner'
 	></mat-progress-spinner>
 
-	<button
-		mat-fab
-		matTooltip='New Wallet'
-		matTooltipPosition='above'
+	<smd-fab-speed-dial
 		class='fixed-fab'
-		(click)='generate()'
+		[open]='isSpeedDialOpen'
+		(mouseleave)='isSpeedDialOpen = false'
 	>
-		<mat-icon>add</mat-icon>
-	</button>
+		<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
+			<button
+				mat-fab
+				[matTooltip]='stringsService.newWalletGenerate'
+				matTooltipPosition='left'
+				(click)='generate(newWalletOptions.generate)'
+			>
+				<mat-icon>add</mat-icon>
+			</button>
+		</smd-fab-trigger>
+		<smd-fab-actions>
+			<button
+				mat-mini-fab
+				cyphTranslate
+				[matTooltip]='stringsService.newWalletImportKey'
+				matTooltipPosition='left'
+				(click)='generate(newWalletOptions.importKey)'
+			>
+				<mat-icon>vpn_key</mat-icon>
+			</button>
+			<button
+				mat-mini-fab
+				cyphTranslate
+				[matTooltip]='stringsService.newWalletImportAddress'
+				matTooltipPosition='left'
+				(click)='generate(newWalletOptions.importAddress)'
+			>
+				<mat-icon>home</mat-icon>
+			</button>
+		</smd-fab-actions>
+	</smd-fab-speed-dial>
 </div>

@@ -354,6 +354,36 @@ export class StringsService {
 	public readonly newString: string					= `new`;
 
 	/** @see StringsService */
+	public readonly newWalletGenerate: string			= `Generate New Wallet`;
+
+	/** @see StringsService */
+	public readonly newWalletGenerateText: string		=
+		`This will generate a brand new wallet. Proceed?`
+	;
+
+	/** @see StringsService */
+	public readonly newWalletImportAddress: string		= `Watch Wallet Address`;
+
+	/** @see StringsService */
+	public readonly newWalletImportAddressInput: string	= `Address`;
+
+	/** @see StringsService */
+	public readonly newWalletImportAddressText: string	=
+		`Add a read-only wallet to track the following public address:`
+	;
+
+	/** @see StringsService */
+	public readonly newWalletImportKey: string			= `Import Wallet Key`;
+
+	/** @see StringsService */
+	public readonly newWalletImportKeyInput: string		= `WIF Key`;
+
+	/** @see StringsService */
+	public readonly newWalletImportKeyText: string		=
+		`Import existing wallet private key in WIF format:`
+	;
+
+	/** @see StringsService */
 	public readonly no: string							= `no`;
 
 	/** @see StringsService */
@@ -521,6 +551,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly requestFollowUpAppointment: string	= `Request Follow-Up Appointment`;
+
+	/** @see StringsService */
+	public readonly response: string					= `Response`;
 
 	/** @see StringsService */
 	public readonly review: string						= `review`;

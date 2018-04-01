@@ -21,6 +21,12 @@ export class DialogConfirmComponent {
 	/** OK button text. */
 	public ok?: string;
 
+	/** If not undefined, will prompt for input. */
+	public prompt?: string;
+
+	/** Prompt placeholder text. */
+	public promptPlaceholder?: string;
+
 	/** Title. */
 	public title?: string;
 

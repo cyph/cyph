@@ -3,9 +3,9 @@ import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {SnackBar} from 'nativescript-snackbar';
-import {Observer} from 'rxjs/Observer';
-import {alert, confirm} from 'tns-core-modules/ui/dialogs/dialogs';
+import {alert, confirm, prompt} from 'tns-core-modules/ui/dialogs/dialogs';
 import {DialogImageComponent} from './components/dialog-image';
+import {IResolvable} from './js/cyph/iresolvable';
 import {LockFunction} from './js/cyph/lock-function-type';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {StringsService} from './js/cyph/services/strings.service';
@@ -30,7 +30,7 @@ export class NativeDialogService implements DialogService {
 	 */
 	public async alert (
 		o: {content: string; ok?: string; title?: string},
-		closeFunction?: Observer<() => void>
+		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (closeFunction) {
 			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
@@ -53,7 +53,7 @@ export class NativeDialogService implements DialogService {
 	public async baseDialog<T> (
 		componentType: ComponentType<T>,
 		setInputs?: (componentInstance: T) => void,
-		closeFunction?: Observer<() => void>
+		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (setInputs) {
 			throw new Error('NativeDialogService.baseDialog setInputs is unsupported.');
@@ -80,8 +80,12 @@ export class NativeDialogService implements DialogService {
 			timeout?: number;
 			title?: string;
 		},
-		closeFunction?: Observer<() => void>
+		closeFunction?: IResolvable<() => void>
 	) : Promise<boolean> {
+		if (closeFunction) {
+			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
+		}
+
 		return this.lock(async () => {
 			return !!(await confirm({
 				cancelButtonText: o.ok !== undefined ? o.cancel : this.stringsService.cancel,
@@ -103,7 +107,7 @@ export class NativeDialogService implements DialogService {
 	 */
 	public async image (
 		src: SafeUrl|string,
-		closeFunction?: Observer<() => void>
+		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (closeFunction) {
 			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
@@ -115,6 +119,41 @@ export class NativeDialogService implements DialogService {
 
 		return this.lock(async () => {
 			await this.modalDialogService.showModal(DialogImageComponent, {context: src});
+		});
+	}
+
+	/**
+	 * @inheritDoc
+	 * @param o.timeout Currently unsupported (ignored).
+	 * @param closeFunction Currently unsupported (not implemented exception).
+	 */
+	public async prompt (
+		o: {
+			cancel?: string;
+			content: string;
+			ok?: string;
+			placeholder?: string;
+			timeout?: number;
+			title?: string;
+		},
+		closeFunction?: IResolvable<() => void>
+	) : Promise<string|undefined> {
+		if (closeFunction) {
+			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
+		}
+
+		return this.lock(async () => {
+			const {result, text}	= await prompt({
+				cancelButtonText: o.ok !== undefined ? o.cancel : this.stringsService.cancel,
+				defaultText:
+					o.placeholder !== undefined ? o.placeholder : this.stringsService.response
+				,
+				message: o.content,
+				okButtonText: o.ok !== undefined ? o.ok : this.stringsService.ok,
+				title: o.title
+			});
+
+			return result ? text : undefined;
 		});
 	}
 

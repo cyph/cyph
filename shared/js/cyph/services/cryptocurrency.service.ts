@@ -59,7 +59,9 @@ export class CryptocurrencyService {
 
 	/** @ignore */
 	private getSimpleBTCWallet (wallet: IWallet) : SimpleBTCWallet {
-		return new SimpleBTCWallet({address: wallet.address, key: wallet.key});
+		return new SimpleBTCWallet(
+			wallet.key && wallet.key.length > 0 ? {key: wallet.key} : {address: wallet.address}
+		);
 	}
 
 	/** Converts between currency amounts. */
@@ -109,9 +111,11 @@ export class CryptocurrencyService {
 			throw new Error('Unsupported cryptocurrency.');
 		}
 
+		const wallet	= new SimpleBTCWallet({address, key});
+
 		return {
 			cryptocurrency,
-			key: new SimpleBTCWallet({address, key}).key.toBuffer()
+			...(wallet.key ? {key: wallet.key.toBuffer()} : {address: wallet.address})
 		};
 	}
 

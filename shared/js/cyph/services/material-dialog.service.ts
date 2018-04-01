@@ -23,6 +23,75 @@ export class MaterialDialogService implements DialogService {
 	/** @ignore */
 	private readonly lock: LockFunction	= lockFunction();
 
+	/** @ignore */
+	private async confirmHelper (
+		o: {
+			cancel?: string;
+			content: string;
+			ok?: string;
+			placeholder?: string;
+			timeout?: number;
+			title?: string;
+		},
+		closeFunction?: IResolvable<() => void>,
+		prompt: boolean = false
+	) : Promise<{ok: boolean; promptResponse: string|undefined}> {
+		return this.lock(async () => {
+			const matDialogRef	= this.matDialog.open(DialogConfirmComponent);
+
+			matDialogRef.componentInstance.content				= o.content;
+
+			matDialogRef.componentInstance.cancel				= o.cancel !== undefined ?
+				o.cancel :
+				this.stringsService.cancel
+			;
+
+			matDialogRef.componentInstance.ok					= o.ok !== undefined ?
+				o.ok :
+				this.stringsService.ok
+			;
+
+			matDialogRef.componentInstance.prompt				= prompt ? '' : undefined;
+
+			matDialogRef.componentInstance.promptPlaceholder	= o.placeholder;
+
+			matDialogRef.componentInstance.title				= o.title !== undefined ?
+				o.title :
+				''
+			;
+
+			if (closeFunction) {
+				closeFunction.resolve(() => { matDialogRef.close(); });
+			}
+
+			const ok				= matDialogRef.afterClosed().toPromise<boolean>();
+
+			const promptResponse	= matDialogRef.beforeClose().toPromise().then(() =>
+				matDialogRef.componentInstance.prompt
+			);
+
+			let hasReturned	= false;
+			if (o.timeout !== undefined && !isNaN(o.timeout)) {
+				(async () => {
+					await sleep(o.timeout);
+					if (!hasReturned) {
+						matDialogRef.close(false);
+					}
+				})();
+			}
+
+			try {
+				return {
+					ok: await ok,
+					promptResponse: await promptResponse
+				};
+			}
+			finally {
+				hasReturned	= true;
+			}
+		});
+	}
+
 	/** @inheritDoc */
 	public async alert (
 		o: {content: string; ok?: string; title?: string},
@@ -83,49 +152,7 @@ export class MaterialDialogService implements DialogService {
 		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<boolean> {
-		return this.lock(async () => {
-			const matDialogRef	= this.matDialog.open(DialogConfirmComponent);
-
-			matDialogRef.componentInstance.content	= o.content;
-
-			matDialogRef.componentInstance.cancel	= o.cancel !== undefined ?
-				o.cancel :
-				this.stringsService.cancel
-			;
-
-			matDialogRef.componentInstance.ok		= o.ok !== undefined ?
-				o.ok :
-				this.stringsService.ok
-			;
-
-			matDialogRef.componentInstance.title		= o.title !== undefined ?
-				o.title :
-				''
-			;
-
-			if (closeFunction) {
-				closeFunction.resolve(() => { matDialogRef.close(); });
-			}
-
-			const promise	= matDialogRef.afterClosed().toPromise<boolean>();
-
-			let hasReturned	= false;
-			if (o.timeout !== undefined && !isNaN(o.timeout)) {
-				(async () => {
-					await sleep(o.timeout);
-					if (!hasReturned) {
-						matDialogRef.close(false);
-					}
-				})();
-			}
-
-			try {
-				return await promise;
-			}
-			finally {
-				hasReturned	= true;
-			}
-		});
+		return (await this.confirmHelper(o, closeFunction)).ok;
 	}
 
 	/** @inheritDoc */
@@ -149,6 +176,22 @@ export class MaterialDialogService implements DialogService {
 
 			await matDialogRef.afterClosed().toPromise();
 		});
+	}
+
+	/** @inheritDoc */
+	public async prompt (
+		o: {
+			cancel?: string;
+			content: string;
+			ok?: string;
+			placeholder?: string;
+			timeout?: number;
+			title?: string;
+		},
+		closeFunction?: IResolvable<() => void>
+	) : Promise<string|undefined> {
+		const {ok, promptResponse}	= await this.confirmHelper(o, closeFunction, true);
+		return ok ? promptResponse : undefined;
 	}
 
 	/** @inheritDoc */

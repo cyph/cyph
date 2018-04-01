@@ -53,6 +53,21 @@ export class DialogService {
 		throw new Error('Must provide an implementation of DialogService.image.');
 	}
 
+	/** Prompts for input. */
+	public async prompt (
+		_O: {
+			cancel?: string;
+			content: string;
+			ok?: string;
+			placeholder?: string;
+			timeout?: number;
+			title: string;
+		},
+		_CLOSE_FUNCTION?: IResolvable<() => void>
+	) : Promise<string|undefined> {
+		throw new Error('Must provide an implementation of DialogService.prompt.');
+	}
+
 	/**
 	 * Displays toast notification.
 	 * @returns Whether it was manually dismissed.
