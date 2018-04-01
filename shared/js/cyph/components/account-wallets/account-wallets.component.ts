@@ -54,8 +54,8 @@ export class AccountWalletsComponent implements OnInit {
 		cryptocurrency: Cryptocurrencies = Cryptocurrencies.BTC,
 		name: string|Promise<string> = xkcdPassphrase.generateWithWordCount(4)
 	) : Promise<void> {
-		let address: string|undefined	= undefined;
-		let key: string|undefined		= undefined;
+		let address: string|undefined;
+		let key: string|undefined;
 
 		switch (newWalletOptions) {
 			case NewWalletOptions.generate:
