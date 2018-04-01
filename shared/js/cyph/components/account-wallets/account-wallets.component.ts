@@ -10,6 +10,7 @@ import {CryptocurrencyService} from '../../services/cryptocurrency.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
+import {getDateTimeString} from '../../util/time';
 
 
 /**
@@ -24,8 +25,20 @@ export class AccountWalletsComponent implements OnInit {
 	/** @see Cryptocurrencies */
 	public readonly cryptocurrencies: typeof Cryptocurrencies	= Cryptocurrencies;
 
+	/** @see getDateTimeString */
+	public readonly getDateTimeString: typeof getDateTimeString	= getDateTimeString;
+
 	/** @see trackByID */
 	public readonly trackByID: typeof trackByID					= trackByID;
+
+	/** Transaction list columns. */
+	public readonly transactionListColumns: string[]			= [
+		'amount',
+		'senders',
+		'wasSentByMe',
+		'recipients',
+		'timestamp'
+	];
 
 	/** Generates and uploads a new wallet. */
 	public async generate (options?: {

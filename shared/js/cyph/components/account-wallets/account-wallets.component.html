@@ -45,6 +45,68 @@
 					&ngsp;
 					<span>{{cryptocurrencyService.watchBalance(wallet.data) | async}}</span>
 				</h3>
+
+				<mat-table
+					#table
+					[dataSource]='cryptocurrencyService.watchTransactionHistory(wallet.data)'
+				>
+					<ng-container matColumnDef='amount'>
+						<mat-header-cell fxFlex='10' *matHeaderCellDef cyphTranslate>
+							Amount
+						</mat-header-cell>
+						<mat-cell fxFlex='10' *matCellDef='let transaction'>
+							{{transaction.amount}}
+							{{cryptocurrencies[wallet.data.cryptocurrency]}}
+						</mat-cell>
+					</ng-container>
+
+					<ng-container matColumnDef='senders'>
+						<mat-header-cell *matHeaderCellDef cyphTranslate>
+							Senders
+						</mat-header-cell>
+						<mat-cell *matCellDef='let transaction'>
+							{{transaction.senders.join('\n')}}
+						</mat-cell>
+					</ng-container>
+
+					<ng-container matColumnDef='wasSentByMe'>
+						<mat-header-cell fxFlex='48px' *matHeaderCellDef></mat-header-cell>
+						<mat-cell fxFlex='48px' *matCellDef='let transaction'>
+							<span
+								[class.outgoing]='transaction.wasSentByMe'
+								[class.incoming]='!transaction.wasSentByMe'
+								[matTooltip]='
+									transaction.wasSentByMe ?
+										stringsService.outgoing :
+										stringsService.incoming
+								'
+							>
+								<mat-icon>arrow_forward</mat-icon>
+							</span>
+						</mat-cell>
+					</ng-container>
+
+					<ng-container matColumnDef='recipients'>
+						<mat-header-cell *matHeaderCellDef cyphTranslate>
+							Recipients
+						</mat-header-cell>
+						<mat-cell *matCellDef='let transaction'>
+							{{transaction.recipients.join('\n')}}
+						</mat-cell>
+					</ng-container>
+
+					<ng-container matColumnDef='timestamp'>
+						<mat-header-cell fxFlex='20' *matHeaderCellDef cyphTranslate>
+							Date
+						</mat-header-cell>
+						<mat-cell fxFlex='20' *matCellDef='let transaction'>
+							{{getDateTimeString(transaction.timestamp)}}
+						</mat-cell>
+					</ng-container>
+
+					<mat-header-row *matHeaderRowDef='transactionListColumns'></mat-header-row>
+					<mat-row *matRowDef='let row; columns: transactionListColumns'></mat-row>
+				</mat-table>
 			</mat-card>
 		</mat-tab>
 	</mat-tab-group>

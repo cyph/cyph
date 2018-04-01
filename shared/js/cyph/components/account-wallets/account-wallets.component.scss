@@ -33,3 +33,11 @@ mat-chip-list {
 }
 	
 }
+
+.incoming {
+	color: map-get($mat-green, 700);
+}
+
+.outgoing {
+	color: map-get($mat-red, 700);
+}

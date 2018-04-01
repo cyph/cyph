@@ -223,6 +223,9 @@ export class StringsService {
 	public readonly here: string						= `here`;
 
 	/** @see StringsService */
+	public readonly incoming: string					= `Incoming`;
+
+	/** @see StringsService */
 	public readonly incomingAppointments: string		= `Incoming Appointment Requests`;
 
 	/** @see StringsService */
@@ -386,6 +389,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly openProfile: string					= `Open Profile`;
+
+	/** @see StringsService */
+	public readonly outgoing: string					= `Outgoing`;
 
 	/** @see StringsService */
 	public readonly outgoingFileError: string			=
