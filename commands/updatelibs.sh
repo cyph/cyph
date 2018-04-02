@@ -110,6 +110,7 @@ read -r -d '' modules <<- EOM
 	d3
 	datauri
 	dompurify
+	dope-qr
 	dragula
 	dropzone
 	extract-text-webpack-plugin

@@ -25,6 +25,7 @@ import {getTimestamp} from '../../util/time';
 import {uuid} from '../../util/uuid';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {DatabaseService} from '../database.service';
+import {ErrorService} from '../error.service';
 import {LocalStorageService} from '../local-storage.service';
 import {StringsService} from '../strings.service';
 import {AccountDatabaseService} from './account-database.service';
@@ -159,24 +160,34 @@ export class AccountAuthService {
 			return false;
 		}
 
+		let errorLogMessage: string|undefined;
+
 		try {
 			username	= normalize(username);
 
 			if (typeof masterKey === 'string') {
+				errorLogMessage	= 'password-hashing masterKey';
+
 				masterKey	= await this.passwordHash(username, masterKey);
 			}
 			else if (pin !== undefined) {
+				errorLogMessage	= 'decrypting masterKey with PIN';
+
 				masterKey	= await this.potassiumService.secretBox.open(
 					masterKey,
 					typeof pin !== 'string' ? pin : await this.passwordHash(username, pin)
 				);
 			}
 
+			errorLogMessage	= 'getting user';
+
 			const user		= await this.accountUserLookupService.getUser(username);
 
 			if (!user) {
 				throw new Error('Nonexistent user.');
 			}
+
+			errorLogMessage	= 'getting loginData';
 
 			const loginData	= await this.getItem(
 				`users/${username}/loginData`,
@@ -189,8 +200,12 @@ export class AccountAuthService {
 				await this.databaseService.getItem(`users/${username}/lastPresence`, BinaryProto);
 			}
 			catch {
+				errorLogMessage	= 'database service login';
+
 				await this.databaseService.login(username, loginData.secondaryPassword);
 			}
+
+			errorLogMessage	= 'getting signingKeyPair';
 
 			const signingKeyPair	= await this.getItem(
 				`users/${username}/signingKeyPair`,
@@ -205,6 +220,8 @@ export class AccountAuthService {
 				throw new Error('Invalid certificate.');
 			}
 
+			errorLogMessage	= 'getting encryptionKeyPair';
+
 			this.accountDatabaseService.currentUser.next({
 				keys: {
 					encryptionKeyPair: await this.getItem(
@@ -217,6 +234,8 @@ export class AccountAuthService {
 				},
 				user
 			});
+
+			errorLogMessage	= 'tracking presence';
 
 			this.connectTrackerCleanup	= await this.databaseService.setConnectTracker(
 				`users/${username}/clientConnections/${uuid()}`,
@@ -267,7 +286,11 @@ export class AccountAuthService {
 				catch(() => {})
 			;
 
+			errorLogMessage	= 'getting pinHash';
+
 			const pinHash	= await this.accountDatabaseService.getItem('pin/hash', BinaryProto);
+
+			errorLogMessage	= 'saving credentials';
 
 			await Promise.all([
 				this.localStorageService.setItem(
@@ -292,7 +315,8 @@ export class AccountAuthService {
 				this.savePIN(pinHash)
 			]);
 		}
-		catch {
+		catch (err) {
+			this.errorService.log(`CYPH LOGIN FAILURE: ${errorLogMessage}`, err);
 			return false;
 		}
 
@@ -569,6 +593,9 @@ export class AccountAuthService {
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly errorService: ErrorService,
 
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,
