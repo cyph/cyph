@@ -52,7 +52,6 @@ export class CryptocurrencyService {
 			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
 				throw new Error('Unsupported cryptocurrency.');
 			}
-
 			return this.getSimpleBTCWallet(wallet).watchTransactionHistory();
 		}
 	);

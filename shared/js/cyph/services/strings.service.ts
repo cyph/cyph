@@ -406,6 +406,9 @@ export class StringsService {
 	public readonly notFound: string					= `404 page not found`;
 
 	/** @see StringsService */
+	public readonly noTransactions: string				= `No transaction history`;
+
+	/** @see StringsService */
 	public readonly noWallets: string					= `You have no wallets`;
 
 	/** @see StringsService */
@@ -646,6 +649,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly totalSpace: string					= `Total Space Used:`;
+
+	/** @see StringsService */
+	public readonly transactionHistory: string			= `Transaction History`;
 
 	/** @see StringsService */
 	public readonly unknown: string						= `Unknown`;

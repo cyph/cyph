@@ -2,6 +2,14 @@
 
 $header-size: 135px;
 
+mat-card {
+	.centered {
+		text-align: center;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
 mat-tab-group {
 	margin-left: 5%;
 	margin-right: 5%;
