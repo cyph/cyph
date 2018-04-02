@@ -40,6 +40,11 @@ mat-tab-group {
 	}
 }
 
+.fixed-fab {
+	mat-icon ::ng-deep svg * {
+		transform: scale(0.85);
+	}
+}
 .incoming {
 	color: map-get($mat-green, 700);
 }

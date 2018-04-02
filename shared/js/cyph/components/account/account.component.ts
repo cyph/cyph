@@ -154,12 +154,22 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 		this.matIconRegistry.addSvgIcon(
 			'bitcoin',
-			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/cryptocurrencies/BTC.svg')
+			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/cryptocurrencies/BTC.svg')
 		);
 
 		this.matIconRegistry.addSvgIcon(
 			'doctor',
 			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg')
+		);
+
+		this.matIconRegistry.addSvgIcon(
+			'key-add-light',
+			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-add-light.svg')
+		);
+
+		this.matIconRegistry.addSvgIcon(
+			'key-upload',
+			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-upload.svg')
 		);
 
 		this.matIconRegistry.addSvgIcon(

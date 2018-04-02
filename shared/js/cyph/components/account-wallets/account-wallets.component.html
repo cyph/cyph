@@ -128,7 +128,8 @@
 				matTooltipPosition='left'
 				(click)='generate(newWalletOptions.generate)'
 			>
-				<mat-icon>add</mat-icon>
+				<mat-icon *ngIf='!isSpeedDialOpen'>add</mat-icon>
+				<mat-icon svgIcon='key-add-light' *ngIf='isSpeedDialOpen'></mat-icon>
 			</button>
 		</smd-fab-trigger>
 		<smd-fab-actions>
@@ -139,7 +140,7 @@
 				matTooltipPosition='left'
 				(click)='generate(newWalletOptions.importKey)'
 			>
-				<mat-icon>vpn_key</mat-icon>
+				<mat-icon svgIcon='key-upload'></mat-icon>
 			</button>
 			<button
 				mat-mini-fab
@@ -148,7 +149,7 @@
 				matTooltipPosition='left'
 				(click)='generate(newWalletOptions.importAddress)'
 			>
-				<mat-icon>home</mat-icon>
+				<mat-icon>remove_red_eye</mat-icon>
 			</button>
 		</smd-fab-actions>
 	</smd-fab-speed-dial>
