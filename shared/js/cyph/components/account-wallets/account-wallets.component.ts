@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {NewWalletOptions} from '../../cryptocurrency';
-import {Cryptocurrencies} from '../../proto';
+import {Cryptocurrencies, Currencies} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -12,6 +12,7 @@ import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {QRService} from '../../services/qr.service';
 import {StringsService} from '../../services/strings.service';
+import {numberToString} from '../../util/formatting';
 import {trackByID} from '../../track-by/track-by-id';
 import {getDateTimeString} from '../../util/time';
 
@@ -28,6 +29,9 @@ export class AccountWalletsComponent implements OnInit {
 	/** @see Cryptocurrencies */
 	public readonly cryptocurrencies: typeof Cryptocurrencies	= Cryptocurrencies;
 
+	/** @see Currencies */
+	public readonly currencies: typeof Currencies				= Currencies;
+
 	/** @see getDateTimeString */
 	public readonly getDateTimeString: typeof getDateTimeString	= getDateTimeString;
 
@@ -36,6 +40,9 @@ export class AccountWalletsComponent implements OnInit {
 
 	/** @see NewWalletOptions */
 	public readonly newWalletOptions: typeof NewWalletOptions	= NewWalletOptions;
+
+	/** @see numberToString */
+	public readonly numberToString: typeof numberToString		= numberToString;
 
 	/** @see trackByID */
 	public readonly trackByID: typeof trackByID					= trackByID;
