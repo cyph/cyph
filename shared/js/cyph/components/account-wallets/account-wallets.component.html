@@ -89,6 +89,7 @@
 					</div>
 					<img
 						class='qr'
+						alt='QR Code'
 						[src]='(qrService.getQRCode({
 								text: "bitcoin:"+(cryptocurrencyService.getAddress(wallet.data) | async),
 								size: 250,

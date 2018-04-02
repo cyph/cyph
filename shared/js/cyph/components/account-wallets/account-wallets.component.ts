@@ -10,8 +10,8 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {CryptocurrencyService} from '../../services/cryptocurrency.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
-import {StringsService} from '../../services/strings.service';
 import {QRService} from '../../services/qr.service';
+import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
 import {getDateTimeString} from '../../util/time';
 
@@ -79,8 +79,6 @@ export class AccountWalletsComponent implements OnInit {
 				if (!address) {
 					return;
 				}
-
-				
 
 				break;
 
