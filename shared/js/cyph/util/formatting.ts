@@ -9,28 +9,6 @@ const byteConversions	= {
 	mb: 1048576
 };
 
-const readableByteLengthInternal	= memoize((n: number) =>
-	memoize((storageUnit?: StorageUnits) : string => {
-		const b	= convertStorageUnitsToBytes(n, storageUnit);
-
-		const gb	= b / byteConversions.gb;
-		const mb	= b / byteConversions.mb;
-		const kb	= b / byteConversions.kb;
-
-		const o	=
-			gb >= 1 ?
-				{n: gb, s: 'G'} :
-				mb >= 1 ?
-					{n: mb, s: 'M'} :
-					kb >= 1 ?
-						{n: kb, s: 'K'} :
-						{n: b, s: ''}
-		;
-
-		return `${numberToString(o.n)} ${o.s}B`;
-	})
-);
-
 /** Converts number of specified units to bytes. */
 export const convertStorageUnitsToBytes	=
 	(n: number, storageUnit: StorageUnits = StorageUnits.b) : number => n * (
@@ -52,6 +30,28 @@ export const normalize	= memoize((s: string) : string =>
 /** Converts number to readable string. */
 export const numberToString	= memoize((n: number) : string =>
 	n.toFixed(2).replace(/\.?0+$/, '')
+);
+
+const readableByteLengthInternal	= memoize((n: number) =>
+	memoize((storageUnit?: StorageUnits) : string => {
+		const b	= convertStorageUnitsToBytes(n, storageUnit);
+
+		const gb	= b / byteConversions.gb;
+		const mb	= b / byteConversions.mb;
+		const kb	= b / byteConversions.kb;
+
+		const o	=
+			gb >= 1 ?
+				{n: gb, s: 'G'} :
+				mb >= 1 ?
+					{n: mb, s: 'M'} :
+					kb >= 1 ?
+						{n: kb, s: 'K'} :
+						{n: b, s: ''}
+		;
+
+		return `${numberToString(o.n)} ${o.s}B`;
+	})
 );
 
 /**

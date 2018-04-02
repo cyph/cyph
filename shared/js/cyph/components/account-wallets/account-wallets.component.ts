@@ -12,8 +12,8 @@ import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {QRService} from '../../services/qr.service';
 import {StringsService} from '../../services/strings.service';
-import {numberToString} from '../../util/formatting';
 import {trackByID} from '../../track-by/track-by-id';
+import {numberToString} from '../../util/formatting';
 import {getDateTimeString} from '../../util/time';
 
 
