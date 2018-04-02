@@ -11,6 +11,7 @@ import {CryptocurrencyService} from '../../services/cryptocurrency.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
+import {QRService} from '../../services/qr.service';
 import {trackByID} from '../../track-by/track-by-id';
 import {getDateTimeString} from '../../util/time';
 
@@ -79,6 +80,8 @@ export class AccountWalletsComponent implements OnInit {
 					return;
 				}
 
+				
+
 				break;
 
 			case NewWalletOptions.importKey:
@@ -107,6 +110,7 @@ export class AccountWalletsComponent implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
+
 	}
 
 	constructor (
@@ -135,6 +139,9 @@ export class AccountWalletsComponent implements OnInit {
 		public readonly envService: EnvService,
 
 		/** @see StringsService */
-		public readonly stringsService: StringsService
+		public readonly stringsService: StringsService,
+
+		/** @see StringsService */
+		public readonly qrService: QRService
 	) {}
 }

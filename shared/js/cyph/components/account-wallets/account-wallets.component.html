@@ -70,21 +70,33 @@
 					<h2>{{wallet.record.name}}</h2>
 				</div>
 
-				<h3>
-					<span cyphTranslate>Wallet Address</span>:
-					&ngsp;
-					<span>{{cryptocurrencyService.getAddress(wallet.data) | async}}</span>
-				</h3>
+				<div fxLayout='row' fxLayoutAlign='center center' fxLayoutGap='10%'>
+					<div fxLayout='column'>
+						<h3>
+							<span cyphTranslate>Wallet Address</span>:
+							&ngsp;
+							<span>{{cryptocurrencyService.getAddress(wallet.data) | async}}</span>
+						</h3>
 
-				<h3>
-					<span cyphTranslate>Current Balance</span>:
-					&ngsp;
-					<span>
-						{{cryptocurrencyService.watchBalance(wallet.data) | async}}
-						{{wallet.data.cryptocurrency === cryptocurrencies.BTC ? ' BTC' : ''}}
-					</span>
-				</h3>
-
+						<h3>
+							<span cyphTranslate>Current Balance</span>:
+							&ngsp;
+							<span>
+								{{cryptocurrencyService.watchBalance(wallet.data) | async}}
+								{{wallet.data.cryptocurrency === cryptocurrencies.BTC ? ' BTC' : ''}}
+							</span>
+						</h3>
+					</div>
+					<img
+						class='qr'
+						[src]='(qrService.getQRCode({
+								text: "bitcoin:"+(cryptocurrencyService.getAddress(wallet.data) | async),
+								size: 250,
+								dotScale: 0.75
+							}) | async)'
+					/>
+				</div>
+				
 				<h2 class='centered'>{{stringsService.transactionHistory}}</h2>
 
 				<mat-table
