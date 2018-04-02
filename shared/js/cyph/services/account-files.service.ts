@@ -4,7 +4,7 @@ import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {Router} from '@angular/router';
-import htmlToText from 'html-to-text';
+import * as htmlToText from 'html-to-text';
 import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
 import {DeltaOperation, DeltaStatic} from 'quill';
