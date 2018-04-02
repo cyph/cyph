@@ -108,7 +108,6 @@ export class AccountWalletsComponent implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
-
 	}
 
 	constructor (
@@ -139,7 +138,7 @@ export class AccountWalletsComponent implements OnInit {
 		/** @see StringsService */
 		public readonly stringsService: StringsService,
 
-		/** @see StringsService */
+		/** @see QRService */
 		public readonly qrService: QRService
 	) {}
 }

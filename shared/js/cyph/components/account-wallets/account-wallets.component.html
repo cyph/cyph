@@ -2,42 +2,48 @@
 	fxFlexFill
 	[class.initiating]='accountFilesService.showSpinner'
 >
-<div
-	*ngIf='(accountFilesService.filesListFilteredWithData.wallets() | async) === null'
-	class='no-wallets'
-	fxLayout='column'
-	fxLayoutAlign='center center'
->
-	<h1>{{stringsService.noWallets}}</h1>
-	<div fxLayout='row' fxLayoutGap='16px'>
-		<button
-			mat-raised-button
-			[matTooltip]='stringsService.newWalletGenerate'
-			matTooltipPosition='top'
-			(click)='generate(newWalletOptions.generate)'
-		>
-			<mat-icon svgIcon='key-add-color'></mat-icon> {{stringsService.newWalletGenerate}}
-		</button>
-		<button
-			mat-raised-button
-			cyphTranslate
-			[matTooltip]='stringsService.newWalletImportKey'
-			matTooltipPosition='top'
-			(click)='generate(newWalletOptions.importKey)'
-		>
-			<mat-icon svgIcon='key-upload-color'></mat-icon> {{stringsService.newWalletImportKey}}
-		</button>
-		<button
-			mat-raised-button
-			cyphTranslate
-			[matTooltip]='stringsService.newWalletImportAddress'
-			matTooltipPosition='top'
-			(click)='generate(newWalletOptions.importAddress)'
-		>
-			<mat-icon>remove_red_eye</mat-icon> {{stringsService.newWalletImportAddress}}
-		</button>
+	<div
+		*ngIf='(accountFilesService.filesListFiltered.wallets | async)?.length < 1'
+		class='no-wallets'
+		fxLayout='column'
+		fxLayoutAlign='center center'
+	>
+		<h1>{{stringsService.noWallets}}</h1>
+		<div fxLayout='row' fxLayoutGap='16px'>
+			<button
+				mat-raised-button
+				[matTooltip]='stringsService.newWalletGenerate'
+				matTooltipPosition='top'
+				(click)='generate(newWalletOptions.generate)'
+			>
+				<mat-icon svgIcon='key-add-color'></mat-icon>
+				&ngsp;
+				<span>{{stringsService.newWalletGenerate}}</span>
+			</button>
+			<button
+				mat-raised-button
+				cyphTranslate
+				[matTooltip]='stringsService.newWalletImportKey'
+				matTooltipPosition='top'
+				(click)='generate(newWalletOptions.importKey)'
+			>
+				<mat-icon svgIcon='key-upload-color'></mat-icon>
+				&ngsp;
+				<span>{{stringsService.newWalletImportKey}}</span>
+			</button>
+			<button
+				mat-raised-button
+				cyphTranslate
+				[matTooltip]='stringsService.newWalletImportAddress'
+				matTooltipPosition='top'
+				(click)='generate(newWalletOptions.importAddress)'
+			>
+				<mat-icon>remove_red_eye</mat-icon>
+				&ngsp;
+				<span>{{stringsService.newWalletImportAddress}}</span>
+			</button>
+		</div>
 	</div>
-</div>
 	<mat-tab-group>
 		<mat-tab
 			class='wallet'
@@ -81,20 +87,23 @@
 						<h3>
 							<span cyphTranslate>Current Balance</span>:
 							&ngsp;
-							<span>
-								{{cryptocurrencyService.watchBalance(wallet.data) | async}}
-								{{wallet.data.cryptocurrency === cryptocurrencies.BTC ? ' BTC' : ''}}
-							</span>
+							<span>{{cryptocurrencyService.watchBalance(wallet.data) | async}}</span>
+							&ngsp;
+							<span>{{cryptocurrencies[wallet.data.cryptocurrency]}}</span>
 						</h3>
 					</div>
 					<img
 						class='qr'
 						alt='QR Code'
-						[src]='(qrService.getQRCode({
-								text: "bitcoin:"+(cryptocurrencyService.getAddress(wallet.data) | async),
+						[src]='
+							(qrService.getQRCode({
+								dotScale: 0.75,
 								size: 250,
-								dotScale: 0.75
-							}) | async)'
+								text:
+									"bitcoin:" +
+									(cryptocurrencyService.getAddress(wallet.data) | async)
+							}) | async) || ""
+						'
 					/>
 				</div>
 				
@@ -163,9 +172,15 @@
 					
 				</mat-table>
 				<h3
-				class='centered'
-				*ngIf='(cryptocurrencyService.watchTransactionHistory(wallet.data) | async)?.length
-				< 1'>{{stringsService.noTransactions}}</h3>
+					class='centered'
+					*ngIf='
+						(
+							cryptocurrencyService.watchTransactionHistory(wallet.data) | async
+						)?.length < 1
+					'
+				>
+					{{stringsService.noTransactions}}
+				</h3>
 			</mat-card>
 		</mat-tab>
 	</mat-tab-group>

@@ -19,7 +19,9 @@ export class QRService {
 		deserialize(
 			DataURIProto,
 			await this.localStorageService.getOrSetDefault(
-				`QRService/${await this.potassiumService.hash.hash(encode(options))}`,
+				`QRService/${this.potassiumService.toHex(
+					await this.potassiumService.hash.hash(encode(options))
+				)}`,
 				BinaryProto,
 				async () => generateQRCode(options)
 			)
