@@ -13,7 +13,7 @@
 			<button
 				mat-raised-button
 				[matTooltip]='stringsService.newWalletGenerate'
-				matTooltipPosition='top'
+				matTooltipPosition='above'
 				(click)='generate(newWalletOptions.generate)'
 			>
 				<mat-icon svgIcon='key-add-color'></mat-icon>
@@ -24,7 +24,7 @@
 				mat-raised-button
 				cyphTranslate
 				[matTooltip]='stringsService.newWalletImportKey'
-				matTooltipPosition='top'
+				matTooltipPosition='above'
 				(click)='generate(newWalletOptions.importKey)'
 			>
 				<mat-icon svgIcon='key-upload-color'></mat-icon>
@@ -35,7 +35,7 @@
 				mat-raised-button
 				cyphTranslate
 				[matTooltip]='stringsService.newWalletImportAddress'
-				matTooltipPosition='top'
+				matTooltipPosition='above'
 				(click)='generate(newWalletOptions.importAddress)'
 			>
 				<mat-icon>remove_red_eye</mat-icon>
