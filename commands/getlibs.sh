@@ -261,7 +261,10 @@ mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 sed -i "s|crypto: 'empty'|crypto: true|g" @angular/cli/models/webpack-configs/browser.js
 
 # Temporary workaround for https://github.com/werk85/node-html-to-text/issues/151
-grep -rl lodash html-to-text | xargs -I% sed -i 's|lodash|lodash-es|g' %
+for f in $(grep -rl lodash html-to-text) ; do
+	cat ${f} | perl -pe "s/(require\(['\"])lodash(\/.*?['\"]\))/\1lodash-es\2.default/g" > ${f}.new
+	mv ${f}.new ${f}
+done
 
 # Temporary workaround for https://github.com/Jamaks/ng-fullcalendar/issues/33
 rm -rf ng-fullcalendar/node_modules &> /dev/null
