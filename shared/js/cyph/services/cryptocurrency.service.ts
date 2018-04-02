@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {Observable} from 'rxjs/Observable';
-import {interval} from 'rxjs/observable/interval';
+import {timer} from 'rxjs/observable/timer';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {getExchangeRates, Transaction, Wallet as SimpleBTCWallet} from 'simplebtc';
 import {GenericCurrency} from '../generic-currency-type';
@@ -43,7 +43,7 @@ export class CryptocurrencyService {
 			input: GenericCurrency,
 			output: GenericCurrency
 		) : Observable<number> =>
-			interval(900000).pipe(mergeMap(async () => this.convert(amount, input, output)))
+			timer(0, 900000).pipe(mergeMap(async () => this.convert(amount, input, output)))
 	);
 
 	/** Watches new transactions as they occur. */
