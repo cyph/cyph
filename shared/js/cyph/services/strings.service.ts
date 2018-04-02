@@ -406,6 +406,9 @@ export class StringsService {
 	public readonly notFound: string					= `404 page not found`;
 
 	/** @see StringsService */
+	public readonly noWallets: string					= `You have no wallets`;
+
+	/** @see StringsService */
 	public readonly ok: string							= `ok`;
 
 	/** @see StringsService */

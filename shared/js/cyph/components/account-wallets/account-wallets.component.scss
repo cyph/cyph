@@ -1,5 +1,7 @@
 @import '../../../../css/mixins';
 
+$header-size: 135px;
+
 mat-tab-group {
 	margin-left: 5%;
 	margin-right: 5%;
@@ -40,11 +42,16 @@ mat-tab-group {
 	}
 }
 
-.fixed-fab {
+.fixed-fab, button ::ng-deep .mat-button-wrapper {
 	mat-icon ::ng-deep svg * {
 		transform: scale(0.85);
 	}
 }
+
+.no-wallets {
+	height: calc(98vh - 100px);
+}
+
 .incoming {
 	color: map-get($mat-green, 700);
 }

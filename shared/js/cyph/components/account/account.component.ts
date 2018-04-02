@@ -163,6 +163,11 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		);
 
 		this.matIconRegistry.addSvgIcon(
+			'key-add-color',
+			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-add-color.svg')
+		);
+
+		this.matIconRegistry.addSvgIcon(
 			'key-add-light',
 			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-add-light.svg')
 		);
@@ -170,6 +175,11 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		this.matIconRegistry.addSvgIcon(
 			'key-upload',
 			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-upload.svg')
+		);
+
+		this.matIconRegistry.addSvgIcon(
+			'key-upload-color',
+			this.sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-upload-color.svg')
 		);
 
 		this.matIconRegistry.addSvgIcon(

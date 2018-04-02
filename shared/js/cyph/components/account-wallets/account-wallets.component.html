@@ -2,6 +2,42 @@
 	fxFlexFill
 	[class.initiating]='accountFilesService.showSpinner'
 >
+<div
+	*ngIf='(accountFilesService.filesListFilteredWithData.wallets() | async) === null'
+	class='no-wallets'
+	fxLayout='column'
+	fxLayoutAlign='center center'
+>
+	<h1>{{stringsService.noWallets}}</h1>
+	<div fxLayout='row' fxLayoutGap='16px'>
+		<button
+			mat-raised-button
+			[matTooltip]='stringsService.newWalletGenerate'
+			matTooltipPosition='top'
+			(click)='generate(newWalletOptions.generate)'
+		>
+			<mat-icon svgIcon='key-add-color'></mat-icon> {{stringsService.newWalletGenerate}}
+		</button>
+		<button
+			mat-raised-button
+			cyphTranslate
+			[matTooltip]='stringsService.newWalletImportKey'
+			matTooltipPosition='top'
+			(click)='generate(newWalletOptions.importKey)'
+		>
+			<mat-icon svgIcon='key-upload-color'></mat-icon> {{stringsService.newWalletImportKey}}
+		</button>
+		<button
+			mat-raised-button
+			cyphTranslate
+			[matTooltip]='stringsService.newWalletImportAddress'
+			matTooltipPosition='top'
+			(click)='generate(newWalletOptions.importAddress)'
+		>
+			<mat-icon>remove_red_eye</mat-icon> {{stringsService.newWalletImportAddress}}
+		</button>
+	</div>
+</div>
 	<mat-tab-group>
 		<mat-tab
 			class='wallet'
