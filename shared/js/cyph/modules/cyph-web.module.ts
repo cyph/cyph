@@ -40,6 +40,7 @@ import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogImageComponent} from '../components/dialog-image';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
+import {EnterPressDirective} from '../directives/enter-press.directive';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 import {DialogService} from '../services/dialog.service';
 import {LocalStorageService} from '../services/local-storage.service';
@@ -56,6 +57,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogConfirmComponent,
 		DialogImageComponent,
 		DropZoneDirective,
+		EnterPressDirective,
 		NanoScrollerDirective
 	],
 	entryComponents: [
@@ -70,6 +72,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogConfirmComponent,
 		DialogImageComponent,
 		DropZoneDirective,
+		EnterPressDirective,
 		FlexLayoutModule,
 		FormsModule,
 		FullCalendarModule,

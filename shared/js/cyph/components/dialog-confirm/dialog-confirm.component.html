@@ -9,6 +9,7 @@
 				cyphTranslate
 				[(ngModel)]='prompt'
 				[placeholder]='promptPlaceholder || stringsService.response'
+				(cyphEnterPress)='matDialogRef.close(true)'
 				type='text'
 			/>
 		</mat-form-field>
