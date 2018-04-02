@@ -284,7 +284,7 @@ export abstract class SessionService implements ISessionService {
 	) : Promise<void> {
 		switch (event) {
 			case CastleEvents.abort: {
-				this.errorService.logAuthFail();
+				this.errorService.log('CYPH AUTHENTICATION FAILURE');
 				this.trigger(events.connectFailure);
 				break;
 			}
