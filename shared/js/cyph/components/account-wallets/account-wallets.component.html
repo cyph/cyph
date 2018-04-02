@@ -90,6 +90,18 @@
 							<span>{{cryptocurrencyService.watchBalance(wallet.data) | async}}</span>
 							&ngsp;
 							<span>{{cryptocurrencies[wallet.data.cryptocurrency]}}</span>
+							&ngsp; | &ngsp;
+							<span>
+								~${{numberToString(
+									(cryptocurrencyService.watchConversion(
+										(cryptocurrencyService.watchBalance(wallet.data) | async) || 0,
+										{cryptocurrency: cryptocurrencies.BTC},
+										{currency: currencies.USD}
+									) | async) || 0
+								)}}
+							</span>
+							&ngsp;
+							<span>USD</span>
 						</h3>
 					</div>
 					<img
