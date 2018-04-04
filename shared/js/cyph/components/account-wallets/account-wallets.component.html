@@ -87,7 +87,12 @@
 						<h3>
 							<span cyphTranslate>Current Balance</span>:
 							&ngsp;
-							<span>{{cryptocurrencyService.watchBalance(wallet.data) | async}}</span>
+							<span>
+								{{
+									(cryptocurrencyService.watchBalance(wallet.data) | async) ||
+									'...'
+								}}
+							</span>
 							&ngsp;
 							<span>{{cryptocurrencies[wallet.data.cryptocurrency]}}</span>
 						</h3>
