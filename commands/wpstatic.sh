@@ -93,6 +93,8 @@ while [ ! -f index.html ] ; do
 		await page.goto('${sourceURL}/wp-admin/admin.php?page=simply-static');
 
 		while (true) {
+			await page.waitForSelector('#cancel');
+			await page.click('#cancel').catch(() => {});
 			await page.waitForSelector('#generate');
 			await page.click('#generate');
 			await page.waitForSelector('#cancel:not(.hide)');
