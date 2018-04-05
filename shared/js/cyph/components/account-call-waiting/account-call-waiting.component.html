@@ -15,13 +15,13 @@
 		ngClass.lt-md='compact'
 		[fxHide]='sessionService.freezePong | async'
 	>
-		<div fxFlexFill fxLayout='column' fxLayoutAlign='center center' class='content'>
+		<div fxFlexFill fxLayout='column' fxLayoutAlign='stretch' class='content'>
 			<cyph-logo fxFlex='5em'></cyph-logo>
 
 			<ng-container *ngIf='participantsByType | async as participants'>
 				<h2 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h2>
 
-				<div [style.width]='"100%"' *ngIf='
+				<div fxFlex [style.width]='"100%"' *ngIf='
 					envService.isTelehealth &&
 					appointment?.calendarInvite.title &&
 					appointment?.calendarInvite.callType
@@ -34,8 +34,9 @@
 							*ngIf='
 								(participants.get(accountUserTypes.Standard) || [])[0] as patient
 							'
+							fxFlex
 							fxLayout='column'
-							fxLayoutAlign='center'
+							fxLayoutAlign='stretch'
 							fxLayoutGap='10px'
 						>
 							<h1>
@@ -70,7 +71,12 @@
 								></cyph-account-contact>
 							</div>
 							<br />
-							<div class='loading' fxLayout='column' fxLayoutAlign='center stretch'>
+							<div
+								class='loading'
+								fxFlex
+								fxLayout='column'
+								fxLayoutAlign='center stretch'
+							>
 								<div
 									class='logo-animation'
 									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
@@ -100,6 +106,10 @@
 									></mat-progress-bar>
 								</div>
 							</div>
+							<br />
+							<br />
+							<br />
+							<br />
 						</div>
 					</ng-container>
 					<ng-template #standardView>
@@ -108,8 +118,9 @@
 								(participants.get(accountUserTypes.TelehealthDoctor) || [])[0] as
 								doctor
 							'
+							fxFlex
 							fxLayout='column'
-							fxLayoutAlign='center'
+							fxLayoutAlign='stretch'
 							fxLayoutGap='10px'
 						>
 							<h1>
@@ -145,7 +156,12 @@
 								></cyph-account-contact>
 							</div>
 							<br />
-							<div class='loading' fxLayout='column' fxLayoutAlign='center stretch'>
+							<div
+								class='loading'
+								fxFlex
+								fxLayout='column'
+								fxLayoutAlign='center stretch'
+							>
 								<div
 									class='logo-animation'
 									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
@@ -175,6 +191,10 @@
 									></mat-progress-bar>
 								</div>
 							</div>
+							<br />
+							<br />
+							<br />
+							<br />
 						</div>
 					</ng-template>
 				</div>
