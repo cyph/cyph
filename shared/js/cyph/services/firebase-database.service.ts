@@ -11,6 +11,8 @@ import {
 	FirebaseDatabase,
 	Reference as DatabaseReference
 } from '@firebase/database-types';
+import '@firebase/functions';
+import {FirebaseFunctions} from '@firebase/functions-types';
 import '@firebase/messaging';
 import {FirebaseMessaging} from '@firebase/messaging-types';
 import '@firebase/storage';
@@ -51,6 +53,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	private readonly app: Promise<FirebaseApp&{
 		auth: () => FirebaseAuth;
 		database: (databaseURL?: string) => FirebaseDatabase;
+		functions: () => FirebaseFunctions;
 		messaging: () => FirebaseMessaging;
 		storage: (storageBucket?: string) => FirebaseStorage;
 	}>	= this.ngZone.runOutsideAngular(async () => retryUntilSuccessful(() => {
@@ -61,6 +64,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 		}
 		if (app.database === undefined) {
 			throw new Error('No Firebase Database module.');
+		}
+		if (app.functions === undefined) {
+			throw new Error('No Firebase Functions module.');
 		}
 		if (app.messaging === undefined) {
 			throw new Error('No Firebase Messaging module.');
@@ -183,6 +189,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	protected processURL (url: string) : string {
 		return url.startsWith('.') ? url : super.processURL(url);
+	}
+
+	/** @inheritDoc */
+	public async callFunction (name: string, data: any) : Promise<any> {
+		return (await (await this.app).functions().httpsCallable(name)(data)).data;
 	}
 
 	/** @inheritDoc */
