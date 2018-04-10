@@ -30,7 +30,7 @@ import {BinaryProto, NotificationTypes, StringProto} from '../proto';
 import {compareArrays} from '../util/compare';
 import {getOrSetDefault, getOrSetDefaultObservable} from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
-import {requestByteStream, request} from '../util/request';
+import {request, requestByteStream} from '../util/request';
 import {deserialize, parse, serialize, stringify} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -277,17 +277,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				this.ngZone.run(() => { progress.next(0); });
 
-				const request	= requestByteStream({
+				const req	= requestByteStream({
 					retries: 3,
 					url: await (await this.getStorageRef(url, hash)).getDownloadURL()
 				});
 
-				request.progress.subscribe(
+				req.progress.subscribe(
 					n => { this.ngZone.run(() => { progress.next(n); }); },
 					err => { this.ngZone.run(() => { progress.next(err); }); }
 				);
 
-				const value	= await request.result;
+				const value	= await req.result;
 
 				this.ngZone.run(() => {
 					progress.next(100);
