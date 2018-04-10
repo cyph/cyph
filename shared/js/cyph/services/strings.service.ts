@@ -612,6 +612,9 @@ export class StringsService {
 	public readonly unlock: string						= `Unlock`;
 
 	/** @see StringsService */
+	public readonly unlockedTitle: string				= `${this.internalProduct} Unlocked`;
+
+	/** @see StringsService */
 	public readonly unlockTitle: string					= `Unlock ${this.internalProduct}`;
 
 	/** @see StringsService */
@@ -657,6 +660,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly warningTitle: string				= `Warning`;
+
+	/** @see StringsService */
+	public readonly welcomeComma: string				= `Welcome,`;
 
 	/** @see StringsService */
 	public readonly welcomeToProduct: string			= `Welcome to ${this.internalProduct}`;
