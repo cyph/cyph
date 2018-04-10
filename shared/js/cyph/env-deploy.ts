@@ -98,6 +98,7 @@ export class EnvDeploy {
 		authDomain: `${environment.firebase.project}.firebaseapp.com`,
 		databaseURL: `wss://${environment.firebase.project}.firebaseio.com`, // `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`,
 		messagingSenderId: environment.firebase.messagingSenderId,
+		projectId: environment.firebase.project,
 		storageBucket: `${environment.firebase.project}.appspot.com`,
 	};
 
