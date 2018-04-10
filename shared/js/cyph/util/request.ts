@@ -157,6 +157,19 @@ export const requestByteStream	= (o: {
 };
 
 /** Performs HTTP request. */
+export const requestJSON	= async (o: {
+	contentType?: string;
+	data?: any;
+	method?: string;
+	retries?: number;
+	url: string;
+}) : Promise<any> => {
+	return (await baseRequest<any, any>({contentType: 'application/json', ...o}, 'json', res =>
+		res.body
+	)).result;
+};
+
+/** Performs HTTP request. */
 export const requestBytes	= async (o: {
 	contentType?: string;
 	data?: any;

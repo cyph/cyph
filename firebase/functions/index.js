@@ -103,12 +103,15 @@ exports.channelDisconnect	=
 
 
 exports.environmentUnlock	=
-	functions.https.onCall(async (data, context) => {
+	functions.https.onRequest(async (req, res) => {
 		try {
+			const data	= JSON.parse(req.body);
 			const ref	= database.ref(`${data.namespace}/lockdownIds/${data.id}`);
-			return (await ref.once('value')).val();
+			res.send((await ref.once('value')).val());
 		}
-		catch {}
+		catch {
+			res.send('');
+		}
 	})
 ;
 
