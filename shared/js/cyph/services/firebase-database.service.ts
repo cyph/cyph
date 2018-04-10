@@ -11,8 +11,6 @@ import {
 	FirebaseDatabase,
 	Reference as DatabaseReference
 } from '@firebase/database-types';
-import '@firebase/functions';
-import {FirebaseFunctions} from '@firebase/functions-types';
 import '@firebase/messaging';
 import {FirebaseMessaging} from '@firebase/messaging-types';
 import '@firebase/storage';
@@ -32,8 +30,8 @@ import {BinaryProto, NotificationTypes, StringProto} from '../proto';
 import {compareArrays} from '../util/compare';
 import {getOrSetDefault, getOrSetDefaultObservable} from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
-import {requestByteStream} from '../util/request';
-import {deserialize, serialize} from '../util/serialization';
+import {requestByteStream, request} from '../util/request';
+import {deserialize, parse, serialize, stringify} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful, sleep, waitForValue} from '../util/wait';
@@ -53,7 +51,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 	private readonly app: Promise<FirebaseApp&{
 		auth: () => FirebaseAuth;
 		database: (databaseURL?: string) => FirebaseDatabase;
-		functions: () => FirebaseFunctions;
 		messaging: () => FirebaseMessaging;
 		storage: (storageBucket?: string) => FirebaseStorage;
 	}>	= this.ngZone.runOutsideAngular(async () => retryUntilSuccessful(() => {
@@ -64,9 +61,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 		}
 		if (app.database === undefined) {
 			throw new Error('No Firebase Database module.');
-		}
-		if (app.functions === undefined) {
-			throw new Error('No Firebase Functions module.');
 		}
 		if (app.messaging === undefined) {
 			throw new Error('No Firebase Messaging module.');
@@ -193,7 +187,23 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async callFunction (name: string, data: any) : Promise<any> {
-		return (await (await this.app).functions().httpsCallable(name)(data)).data;
+		const result	= await request({
+			contentType: 'application/json',
+			data: stringify(data),
+			method: 'POST',
+			url:
+				/* TODO: Determine how to detect this after more regions are supported */
+				`https://us-central1-${
+					this.envService.firebaseConfig.projectId
+				}.cloudfunctions.net/${name}`
+		});
+
+		try {
+			return parse(result);
+		}
+		catch {
+			return result;
+		}
 	}
 
 	/** @inheritDoc */

@@ -37,44 +37,48 @@ export class LockdownComponent implements OnInit {
 
 	/** @ignore */
 	private async tryUnlock (password: string, passive: boolean = false) : Promise<boolean> {
+		let success	= false;
+
 		if (this.correctPassword) {
 			/* tslint:disable-next-line:possible-timing-attack */
-			if (this.password === this.correctPassword) {
-				await Promise.all([
-					this.appService.unlock(),
-					passive ?
-						Promise.resolve(undefined) :
-						this.localStorageService.setItem('password', StringProto, this.password)
-				]);
+			success	= this.password === this.correctPassword;
 
-				return true;
-			}
-			else {
-				return false;
+			if (!passive) {
+				await sleep(random(1000, 250));
 			}
 		}
+		else if (password) {
+			const owner	= await this.databaseService.callFunction('environmentUnlock', {
+				id: this.potassiumService.toHex(
+					await this.potassiumService.hash.hash(password)
+				),
+				namespace: this.databaseService.namespace
+			}).catch(
+				() => undefined
+			);
 
-		const owner	= await this.databaseService.callFunction('environmentUnlock', {
-			id: await this.potassiumService.toHex(
-				await this.potassiumService.hash.hash(password)
-			),
-			namespace: this.databaseService.namespace
-		}).catch(
-			() => undefined
-		);
+			if (typeof owner === 'string' && owner) {
+				success	= true;
 
-		if (typeof owner !== 'string' || !owner) {
-			return false;
+				if (!passive) {
+					await this.dialogService.alert({
+						content: `${this.stringsService.welcomeComma} ${owner}.`,
+						title: this.stringsService.unlockedTitle
+					});
+				}
+			}
 		}
 
-		if (!passive) {
-			await this.dialogService.alert({
-				content: `${this.stringsService.welcomeComma} ${owner}.`,
-				title: this.stringsService.unlockedTitle
-			});
+		if (success) {
+			await Promise.all([
+				this.appService.unlock(),
+				passive ?
+					Promise.resolve(undefined) :
+					this.localStorageService.setItem('password', StringProto, this.password)
+			]);
 		}
 
-		return true;
+		return success;
 	}
 
 	/** @inheritDoc */
@@ -103,18 +107,8 @@ export class LockdownComponent implements OnInit {
 	public async submit () : Promise<void> {
 		this.checking	= true;
 		this.error		= false;
-
-		await sleep(random(1000, 250));
-
-		/* tslint:disable-next-line:possible-timing-attack */
-		if (await this.tryUnlock(this.password)) {
-			this.appService.unlock();
-			await this.localStorageService.setItem('password', StringProto, this.password);
-			return;
-		}
-
+		this.error		= !(await this.tryUnlock(this.password));
 		this.checking	= false;
-		this.error		= true;
 	}
 
 	constructor (

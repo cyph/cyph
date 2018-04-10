@@ -148,6 +148,12 @@
 				}
 			},
 
+			"lockdownIds": {
+				"$lockdownId": {
+					".validate": "newData.isString()"
+				}
+			},
+
 			"pendingSignups": {
 				"$username": {
 					"timestamp": {
