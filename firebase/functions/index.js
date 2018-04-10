@@ -76,347 +76,340 @@ const getURL	= (adminRef, namespace) => {
 };
 
 
-exports.channelDisconnect	=
-	functions.database.ref('{namespace}/channels/{channel}/disconnects/{user}').onWrite(
-		async e => {
-			if (!e.data.exists()) {
-				return;
-			}
+exports.channelDisconnect	= functions.database.ref(
+	'{namespace}/channels/{channel}/disconnects/{user}'
+).onWrite(async (data, {params}) => {
+	if (!data.exists()) {
+		return;
+	}
 
-			const startingValue	= e.data.val();
+	const startingValue	= data.val();
 
-			await sleep(Math.max(channelDisconnectTimeout - (Date.now() - startingValue), 0));
+	await sleep(Math.max(channelDisconnectTimeout - (Date.now() - startingValue), 0));
 
-			if (startingValue !== (await e.data.ref.once('value')).val()) {
-				return;
-			}
+	if (startingValue !== (await data.ref.once('value')).val()) {
+		return;
+	}
 
-			const doomedRef	= e.data.ref.parent.parent;
+	const doomedRef	= data.ref.parent.parent;
 
-			if (doomedRef.key.length < 1) {
-				throw new Error('INVALID DOOMED REF');
-			}
+	if (doomedRef.key.length < 1) {
+		throw new Error('INVALID DOOMED REF');
+	}
 
-			return removeItem(e.params.namespace, `channels/${doomedRef.key}`);
-		}
-	)
-;
+	return removeItem(params.namespace, `channels/${doomedRef.key}`);
+});
 
 
-exports.environmentUnlock	=
-	functions.https.onRequest((req, res) => cors(req, res, async () => {
-		try {
-			const data	= JSON.parse(req.body);
-			const ref	= database.ref(`${data.namespace}/lockdownIds/${data.id}`);
-			res.send((await ref.once('value')).val());
-		}
-		catch {
-			res.send('');
-		}
-	}))
-;
+exports.environmentUnlock	= functions.https.onRequest((req, res) => cors(req, res, async () => {
+	try {
+		const data	= JSON.parse(req.body);
+		const ref	= database.ref(`${data.namespace}/lockdownIds/${data.id}`);
+		res.send((await ref.once('value')).val());
+	}
+	catch {
+		res.send('');
+	}
+}));
 
 
 /*
 TODO: Handle this as a cron job that searches for folders
 	with multiple items and deletes all but the oldest.
 
-exports.itemHashChange	=
-	functions.database.ref('{namespace}').onUpdate(async e => {
-		if (!e.data.exists() || e.data.key !== 'hash') {
+exports.itemHashChange	= functions.database.ref(
+	'{namespace}'
+).onUpdate(async (data, {params}) => {
+	if (!data.exists() || data.key !== 'hash') {
+		return;
+	}
+
+	const hash	= data.val();
+
+	if (typeof hash !== 'string') {
+		return;
+	}
+
+	const url		= getURL(data.adminRef.parent);
+
+	const files	= await Promise.all(
+		(await storage.getFiles({prefix: `${url}/`}))[0].map(async file => {
+			const [metadata]	= await file.getMetadata();
+
+			return {
+				file,
+				name: metadata.name.split('/').slice(-1)[0],
+				timestamp: new Date(metadata.updated).getTime()
+			};
+		})
+	);
+
+	for (const o of files.sort((a, b) => a.timestamp > b.timestamp)) {
+		if (o.name === hash) {
 			return;
 		}
 
-		const hash	= e.data.val();
-
-		if (typeof hash !== 'string') {
-			return;
-		}
-
-		const url		= getURL(e.data.adminRef.parent);
-
-		const files	= await Promise.all(
-			(await storage.getFiles({prefix: `${url}/`}))[0].map(async file => {
-				const [metadata]	= await file.getMetadata();
-
-				return {
-					file,
-					name: metadata.name.split('/').slice(-1)[0],
-					timestamp: new Date(metadata.updated).getTime()
-				};
-			})
-		);
-
-		for (const o of files.sort((a, b) => a.timestamp > b.timestamp)) {
-			if (o.name === hash) {
+		await retryUntilSuccessful(async () => {
+			const [exists]	= await o.file.exists();
+			if (!exists) {
 				return;
 			}
 
-			await retryUntilSuccessful(async () => {
-				const [exists]	= await o.file.exists();
-				if (!exists) {
-					return;
-				}
-
-				await o.file.delete();
-			});
-		}
-	})
-;
+			await o.file.delete();
+		});
+	}
+});
 */
 
 
-exports.itemRemoved	=
-	functions.database.ref('{namespace}').onDelete(async e => {
-		if (e.data.exists()) {
-			return;
-		}
+exports.itemRemoved	= functions.database.ref(
+	'{namespace}'
+).onDelete(async (data, {params}) => {
+	if (data.exists()) {
+		return;
+	}
 
-		return removeItem(e.params.namespace, getURL(e.data.adminRef, e.params.namespace));
-	})
-;
-
-
-exports.userConsumeInvite	=
-	functions.database.ref('{namespace}/users/{user}/inviteCode').onCreate(async e => {
-		const username		= e.params.user;
-		const inviteCode	= await getItem(
-			e.params.namespace,
-			`users/${username}/inviteCode`,
-			StringProto
-		);
-
-		if (!inviteCode) {
-			return;
-		}
-
-		const inviterRef		= database.ref(`${e.params.namespace}/inviteCodes/${inviteCode}`);
-		const inviterUsername	= (await inviterRef.once('value')).val() || '';
-
-		return Promise.all([
-			inviterRef.remove(),
-			setItem(
-				e.params.namespace,
-				`users/${username}/inviterUsernamePlaintext`,
-				StringProto,
-				inviterUsername
-			),
-			!inviterUsername ?
-				undefined :
-				removeItem(
-					e.params.namespace,
-					`users/${inviterUsername}/inviteCodes/${inviteCode}`
-				)
-		]);
-	})
-;
+	return removeItem(params.namespace, getURL(data.adminRef, params.namespace));
+});
 
 
-exports.userDisconnect	=
-	functions.database.ref('{namespace}/users/{user}/clientConnections').onDelete(async e => {
-		const username	= e.params.user;
+exports.userConsumeInvite	= functions.database.ref(
+	'{namespace}/users/{user}/inviteCode'
+).onCreate(async (data, {params}) => {
+	const username		= params.user;
+	const inviteCode	= await getItem(
+		params.namespace,
+		`users/${username}/inviteCode`,
+		StringProto
+	);
 
-		return removeItem(e.params.namespace, `users/${username}/presence`);
-	})
-;
+	if (!inviteCode) {
+		return;
+	}
+
+	const inviterRef		= database.ref(`${params.namespace}/inviteCodes/${inviteCode}`);
+	const inviterUsername	= (await inviterRef.once('value')).val() || '';
+
+	return Promise.all([
+		inviterRef.remove(),
+		setItem(
+			params.namespace,
+			`users/${username}/inviterUsernamePlaintext`,
+			StringProto,
+			inviterUsername
+		),
+		!inviterUsername ?
+			undefined :
+			removeItem(
+				params.namespace,
+				`users/${inviterUsername}/inviteCodes/${inviteCode}`
+			)
+	]);
+});
 
 
-exports.userEmailSet	=
-	functions.database.ref('{namespace}/users/{user}/email').onWrite(async e => {
-		const username					= e.params.user;
-		const internalURL				= `${e.params.namespace}/users/${username}/internal`;
-		const emailRef					= database.ref(`${internalURL}/email`);
-		const registrationEmailSentRef	= database.ref(`${internalURL}/registrationEmailSent`);
+exports.userDisconnect	= functions.database.ref(
+	'{namespace}/users/{user}/clientConnections'
+).onDelete(async (data, {params}) => {
+	const username	= params.user;
 
-		const email						= await getItem(
-			e.params.namespace,
-			`users/${username}/email`,
-			StringProto
-		).catch(
-			() => undefined
-		);
+	return removeItem(params.namespace, `users/${username}/presence`);
+});
 
-		if (email) {
-			await emailRef.set(email);
-		}
-		else {
-			await emailRef.remove();
-		}
 
-		const registrationEmailSent		= (await registrationEmailSentRef.once('value')).val();
+exports.userEmailSet	= functions.database.ref(
+	'{namespace}/users/{user}/email'
+).onWrite(async (data, {params}) => {
+	const username					= params.user;
+	const internalURL				= `${params.namespace}/users/${username}/internal`;
+	const emailRef					= database.ref(`${internalURL}/email`);
+	const registrationEmailSentRef	= database.ref(`${internalURL}/registrationEmailSent`);
 
-		if (registrationEmailSent) {
-			return;
-		}
+	const email						= await getItem(
+		params.namespace,
+		`users/${username}/email`,
+		StringProto
+	).catch(
+		() => undefined
+	);
 
-		const [realUsername]	= await Promise.all([
-			getRealUsername(e.params.namespace, username),
-			registrationEmailSentRef.set(true)
-		]);
+	if (email) {
+		await emailRef.set(email);
+	}
+	else {
+		await emailRef.remove();
+	}
 
-		await notify(
-			e.params.namespace,
-			username,
-			`Your Registration is Being Processed, ${realUsername}`,
-			`We've received your registration request, and your account is on the way!\n` +
-				`You'll receive a follow-up email as soon as one of the Cyph founders ` +
-				`(Ryan or Josh) activates your account using their personal ` +
-				`Air Gapped Signing Environment.`
-		);
-	})
-;
+	const registrationEmailSent		= (await registrationEmailSentRef.once('value')).val();
+
+	if (registrationEmailSent) {
+		return;
+	}
+
+	const [realUsername]	= await Promise.all([
+		getRealUsername(params.namespace, username),
+		registrationEmailSentRef.set(true)
+	]);
+
+	await notify(
+		params.namespace,
+		username,
+		`Your Registration is Being Processed, ${realUsername}`,
+		`We've received your registration request, and your account is on the way!\n` +
+			`You'll receive a follow-up email as soon as one of the Cyph founders ` +
+			`(Ryan or Josh) activates your account using their personal ` +
+			`Air Gapped Signing Environment.`
+	);
+});
 
 
 /* TODO: Translations and user block lists. */
-exports.userNotification	=
-	functions.database.ref('{namespace}/users/{user}/notifications/{notification}').onCreate(
-		async e => {
-			const username		= e.params.user;
-			const notification	= e.data.val();
+exports.userNotification	= functions.database.ref(
+	'{namespace}/users/{user}/notifications/{notification}'
+).onCreate(async (data, {params}) => {
+	const username		= params.user;
+	const notification	= data.val();
 
-			if (!notification || !notification.target || isNaN(notification.type)) {
+	if (!notification || !notification.target || isNaN(notification.type)) {
+		return;
+	}
+
+	await Promise.all([
+		(async () => {
+			const [senderName, senderUsername, targetName]	= await Promise.all([
+				getName(params.namespace, username),
+				getRealUsername(params.namespace, username),
+				getName(params.namespace, notification.target)
+			]);
+
+			const {subject, text}	=
+				notification.type === NotificationTypes.File ?
+					{
+						subject: `Incoming Data from ${senderUsername}`,
+						text: `${targetName}, ${senderName} has shared something with you.`
+					} :
+				notification.type === NotificationTypes.Message ?
+					{
+						subject: `New Message from ${senderUsername}`,
+						text: `${targetName}, ${senderName} has sent you a message.`
+					} :
+				/* else */
+					{
+						subject: `Sup Dog, it's ${senderUsername}`,
+						text: `${targetName}, ${senderName} says yo.`
+					}
+			;
+
+			await notify(params.namespace, notification.target, subject, text, true);
+		})(),
+		(async () => {
+			const path	=
+				notification.type === NotificationTypes.File ?
+					'unreadFileCounts/' +
+						(
+							(
+								!isNaN(notification.subType) &&
+								notification.subType in AccountFileRecord.RecordTypes
+							) ?
+								notification.subType :
+								AccountFileRecord.RecordTypes.File
+						).toString()
+					:
+				notification.type === NotificationTypes.Message ?
+					`unreadMessageCounts/${username}` :
+				/* else */
+					undefined
+			;
+
+			if (!path) {
 				return;
 			}
 
-			await Promise.all([
-				(async () => {
-					const [senderName, senderUsername, targetName]	= await Promise.all([
-						getName(e.params.namespace, username),
-						getRealUsername(e.params.namespace, username),
-						getName(e.params.namespace, notification.target)
-					]);
+			const url	= `users/${notification.target}/${path}`;
+			const count	= await getItem(params.namespace, url, NumberProto).
+				catch(() => 0)
+			;
 
-					const {subject, text}	=
-						notification.type === NotificationTypes.File ?
-							{
-								subject: `Incoming Data from ${senderUsername}`,
-								text: `${targetName}, ${senderName} has shared something with you.`
-							} :
-						notification.type === NotificationTypes.Message ?
-							{
-								subject: `New Message from ${senderUsername}`,
-								text: `${targetName}, ${senderName} has sent you a message.`
-							} :
-						/* else */
-							{
-								subject: `Sup Dog, it's ${senderUsername}`,
-								text: `${targetName}, ${senderName} says yo.`
-							}
-					;
-
-					await notify(e.params.namespace, notification.target, subject, text, true);
-				})(),
-				(async () => {
-					const path	=
-						notification.type === NotificationTypes.File ?
-							'unreadFileCounts/' +
-								(
-									(
-										!isNaN(notification.subType) &&
-										notification.subType in AccountFileRecord.RecordTypes
-									) ?
-										notification.subType :
-										AccountFileRecord.RecordTypes.File
-								).toString()
-							:
-						notification.type === NotificationTypes.Message ?
-							`unreadMessageCounts/${username}` :
-						/* else */
-							undefined
-					;
-
-					if (!path) {
-						return;
-					}
-
-					const url	= `users/${notification.target}/${path}`;
-					const count	= await getItem(e.params.namespace, url, NumberProto).
-						catch(() => 0)
-					;
-
-					await setItem(e.params.namespace, url, NumberProto, count + 1);
-				})()
-			]);
-		}
-	)
-;
+			await setItem(params.namespace, url, NumberProto, count + 1);
+		})()
+	]);
+});
 
 
-exports.userPublicProfileSet	=
-	functions.database.ref('{namespace}/users/{user}/publicProfile').onWrite(async e => {
-		const username			= e.params.user;
-		const internalURL		= `${e.params.namespace}/users/${username}/internal`;
-		const nameRef			= database.ref(`${internalURL}/name`);
-		const realUsernameRef	= database.ref(`${internalURL}/realUsername`);
+exports.userPublicProfileSet	= functions.database.ref(
+	'{namespace}/users/{user}/publicProfile'
+).onWrite(async (data, {params}) => {
+	const username			= params.user;
+	const internalURL		= `${params.namespace}/users/${username}/internal`;
+	const nameRef			= database.ref(`${internalURL}/name`);
+	const realUsernameRef	= database.ref(`${internalURL}/realUsername`);
 
-		const publicProfile		= await getItem(
-			e.params.namespace,
-			`users/${username}/publicProfile`,
-			AccountUserProfile,
-			true,
-			true
-		).catch(
-			() => undefined
-		);
+	const publicProfile		= await getItem(
+		params.namespace,
+		`users/${username}/publicProfile`,
+		AccountUserProfile,
+		true,
+		true
+	).catch(
+		() => undefined
+	);
 
-		return Promise.all([
-			nameRef.set(
-				publicProfile && publicProfile.name ?
-					publicProfile.name :
-					username
-			),
-			realUsernameRef.set(
-				publicProfile && normalize(publicProfile.realUsername) === username ?
-					publicProfile.realUsername :
-					username
-			)
-		]);
-	})
-;
-
-
-exports.userRegister	=
-	functionsUser.onCreate(async e => {
-		const emailSplit	= (e.data.email || '').split('@');
-
-		if (emailSplit.length !== 2 || (
-			e.data.providerData && (
-				e.data.providerData.length !== 1 ||
-				e.data.providerData[0].providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID
-			)
-		)) {
-			return auth.deleteUser(e.data.uid);
-		}
-
-		const username	= emailSplit[0];
-		const namespace	= emailSplit[1].replace(/\./g, '_');
-
-		return database.ref(`${namespace}/pendingSignups/${username}`).set({
-			timestamp: admin.database.ServerValue.TIMESTAMP,
-			uid: e.data.uid
-		});
-	})
-;
+	return Promise.all([
+		nameRef.set(
+			publicProfile && publicProfile.name ?
+				publicProfile.name :
+				username
+		),
+		realUsernameRef.set(
+			publicProfile && normalize(publicProfile.realUsername) === username ?
+				publicProfile.realUsername :
+				username
+		)
+	]);
+});
 
 
-exports.userRegisterConfirmed	=
-	functions.database.ref('{namespace}/users/{user}/certificate').onCreate(async e => {
-		const username	= e.params.user;
+exports.userRegister	= functionsUser.onCreate(async (data, {params}) => {
+	const emailSplit	= (data.email || '').split('@');
 
-		const [name, realUsername, registrationEmailSentRef]	= await Promise.all([
-			getName(e.params.namespace, username),
-			getRealUsername(e.params.namespace, username),
-			database.ref(`${e.params.namespace}/users/${username}/internal/registrationEmailSent`)
-		]);
+	if (emailSplit.length !== 2 || (
+		data.providerData && (
+			data.providerData.length !== 1 ||
+			data.providerData[0].providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID
+		)
+	)) {
+		return auth.deleteUser(data.uid);
+	}
 
-		await Promise.all([
-			notify(
-				e.params.namespace,
-				username,
-				`Welcome to Cyph, ${realUsername}`,
-				`Congratulations ${name}, your account is now activated!\n` +
-					`Sign in at ${namespaces[e.params.namespace].accountsURL}login.`
-			),
-			registrationEmailSentRef.set(true)
-		]);
+	const username	= emailSplit[0];
+	const namespace	= emailSplit[1].replace(/\./g, '_');
+
+	return database.ref(`${namespace}/pendingSignups/${username}`).set({
+		timestamp: admin.database.ServerValue.TIMESTAMP,
+		uid: data.uid
 	});
+});
+
+
+exports.userRegisterConfirmed	= functions.database.ref(
+	'{namespace}/users/{user}/certificate'
+).onCreate(async (data, {params}) => {
+	const username	= params.user;
+
+	const [name, realUsername, registrationEmailSentRef]	= await Promise.all([
+		getName(params.namespace, username),
+		getRealUsername(params.namespace, username),
+		database.ref(`${params.namespace}/users/${username}/internal/registrationEmailSent`)
+	]);
+
+	await Promise.all([
+		notify(
+			params.namespace,
+			username,
+			`Welcome to Cyph, ${realUsername}`,
+			`Congratulations ${name}, your account is now activated!\n` +
+				`Sign in at ${namespaces[params.namespace].accountsURL}login.`
+		),
+		registrationEmailSentRef.set(true)
+	]);
+});
