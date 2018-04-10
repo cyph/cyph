@@ -1,4 +1,4 @@
-const cors										= require('cors');
+const cors										= require('cors')({origin: true});
 const firebase									= require('firebase');
 const admin										= require('firebase-admin');
 const functions									= require('firebase-functions');
