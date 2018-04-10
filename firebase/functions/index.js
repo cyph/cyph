@@ -1,3 +1,4 @@
+const cors										= require('cors');
 const firebase									= require('firebase');
 const admin										= require('firebase-admin');
 const functions									= require('firebase-functions');
@@ -103,7 +104,7 @@ exports.channelDisconnect	=
 
 
 exports.environmentUnlock	=
-	functions.https.onRequest(async (req, res) => {
+	functions.https.onRequest((req, res) => cors(req, res, async () => {
 		try {
 			const data	= JSON.parse(req.body);
 			const ref	= database.ref(`${data.namespace}/lockdownIds/${data.id}`);
@@ -112,7 +113,7 @@ exports.environmentUnlock	=
 		catch {
 			res.send('');
 		}
-	})
+	}))
 ;
 
 
