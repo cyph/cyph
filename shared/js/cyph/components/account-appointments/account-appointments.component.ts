@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
 import {Options} from 'fullcalendar';
 import memoize from 'lodash-es/memoize';
 import {CalendarComponent} from 'ng-fullcalendar';
@@ -8,6 +8,7 @@ import {of} from 'rxjs/observable/of';
 import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {take} from 'rxjs/operators/take';
+import {Subscription} from 'rxjs/Subscription';
 import {User} from '../../account/user';
 import {AccountUserTypes, CallTypes, IAccountFileRecord, IAppointment} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -31,12 +32,15 @@ import {getDateTimeString, watchTimestamp} from '../../util/time';
 	styleUrls: ['./account-appointments.component.scss'],
 	templateUrl: './account-appointments.component.html'
 })
-export class AccountAppointmentsComponent implements AfterViewInit {
+export class AccountAppointmentsComponent implements AfterViewInit, OnDestroy {
 	/** Time in ms when user can check in - also used as cuttoff point for end time. */
 	private readonly appointmentGracePeriod: number	= 600000;
 
 	/** @ignore */
 	private calendarEvents: {end: number; start: number; title: string}[]	= [];
+
+	/** @ignore */
+	private calendarEventsSubscription?: Subscription;
 
 	/** Gets appointment. */
 	private readonly getAppointment:
@@ -182,7 +186,7 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 			await this.calendar.initialized.pipe(take(1)).toPromise();
 		}
 
-		this.unfilteredAppointments.subscribe(appointments => {
+		this.calendarEventsSubscription	= this.unfilteredAppointments.subscribe(appointments => {
 			this.calendarEvents	= appointments.map(({appointment}) => ({
 				end: appointment.calendarInvite.endTime,
 				start: appointment.calendarInvite.startTime,
@@ -193,6 +197,13 @@ export class AccountAppointmentsComponent implements AfterViewInit {
 				this.calendar.fullCalendar('refetchEvents');
 			}
 		});
+	}
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		if (this.calendarEventsSubscription) {
+			this.calendarEventsSubscription.unsubscribe();
+		}
 	}
 
 	constructor (

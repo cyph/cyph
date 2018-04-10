@@ -1,5 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {StringProto} from '../../../cyph/proto';
+import {PotassiumService} from '../../../cyph/services/crypto/potassium.service';
+import {DatabaseService} from '../../../cyph/services/database.service';
+import {DialogService} from '../../../cyph/services/dialog.service';
 import {EnvService} from '../../../cyph/services/env.service';
 import {LocalStorageService} from '../../../cyph/services/local-storage.service';
 import {StringsService} from '../../../cyph/services/strings.service';
@@ -32,11 +35,55 @@ export class LockdownComponent implements OnInit {
 	/** Indicates whether component has been initiated. */
 	public ready: boolean		= false;
 
+	/** @ignore */
+	private async tryUnlock (password: string, passive: boolean = false) : Promise<boolean> {
+		if (this.correctPassword) {
+			/* tslint:disable-next-line:possible-timing-attack */
+			if (this.password === this.correctPassword) {
+				await Promise.all([
+					this.appService.unlock(),
+					passive ?
+						Promise.resolve(undefined) :
+						this.localStorageService.setItem('password', StringProto, this.password)
+				]);
+
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+
+		const owner	= await this.databaseService.callFunction('environmentUnlock', {
+			id: await this.potassiumService.toHex(
+				await this.potassiumService.hash.hash(password)
+			),
+			namespace: this.databaseService.namespace
+		}).catch(
+			() => undefined
+		);
+
+		if (typeof owner !== 'string' || !owner) {
+			return false;
+		}
+
+		if (!passive) {
+			await this.dialogService.alert({
+				content: `${this.stringsService.welcomeComma} ${owner}.`,
+				title: this.stringsService.unlockedTitle
+			});
+		}
+
+		return true;
+	}
+
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		if (!(
-			this.envService.environment.customBuild &&
-			this.envService.environment.customBuild.config.password
+			this.envService.environment.customBuild && (
+				this.envService.environment.customBuild.config.lockedDown ||
+				this.envService.environment.customBuild.config.password
+			)
 		)) {
 			this.appService.isLockedDown	= false;
 			return;
@@ -44,14 +91,10 @@ export class LockdownComponent implements OnInit {
 
 		this.correctPassword	= this.envService.environment.customBuild.config.password;
 
-		const password	=
-			await this.localStorageService.getItem('password', StringProto).catch(() => '')
-		;
-
-		/* tslint:disable-next-line:possible-timing-attack */
-		if (password === this.correctPassword) {
-			this.appService.unlock();
-		}
+		await this.tryUnlock(
+			await this.localStorageService.getItem('password', StringProto).catch(() => ''),
+			true
+		);
 
 		this.ready	= true;
 	}
@@ -64,7 +107,7 @@ export class LockdownComponent implements OnInit {
 		await sleep(random(1000, 250));
 
 		/* tslint:disable-next-line:possible-timing-attack */
-		if (this.password === this.correctPassword) {
+		if (await this.tryUnlock(this.password)) {
 			this.appService.unlock();
 			await this.localStorageService.setItem('password', StringProto, this.password);
 			return;
@@ -79,10 +122,19 @@ export class LockdownComponent implements OnInit {
 		private readonly appService: AppService,
 
 		/** @ignore */
+		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
 		private readonly envService: EnvService,
 
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,
+
+		/** @ignore */
+		private readonly potassiumService: PotassiumService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

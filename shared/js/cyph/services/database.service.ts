@@ -50,6 +50,11 @@ export class DatabaseService extends DataManagerService {
 		return `${this.namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`;
 	}
 
+	/** Calls a function. */
+	public async callFunction (_NAME: string, _DATA: any) : Promise<any> {
+		throw new Error('Must provide an implementation of DatabaseService.callFunction.');
+	}
+
 	/**
 	 * Checks whether a disconnect is registered at the specified URL.
 	 * @returns True if disconnected.

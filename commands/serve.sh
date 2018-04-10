@@ -110,9 +110,9 @@ if [ ! "${CIRCLECI}" ] ; then
 	cat ~/.cyph/backend.vars >> backend/.build.yaml
 	if [ "${prod}" ] ; then
 		echo '  PROD: true' >> backend/.build.yaml
-		cat ~/.cyph/braintree.prod >> backend/.build.yaml
+		cat ~/.cyph/backend.vars.prod >> backend/.build.yaml
 	else
-		cat ~/.cyph/braintree.sandbox >> backend/.build.yaml
+		cat ~/.cyph/backend.vars.sandbox >> backend/.build.yaml
 	fi
 fi
 

@@ -102,6 +102,17 @@ exports.channelDisconnect	=
 ;
 
 
+exports.environmentUnlock	=
+	functions.https.onCall(async (data, context) => {
+		try {
+			const ref	= database.ref(`${data.namespace}/lockdownIds/${data.id}`);
+			return (await ref.once('value')).val();
+		}
+		catch {}
+	})
+;
+
+
 /*
 TODO: Handle this as a cron job that searches for folders
 	with multiple items and deletes all but the oldest.
