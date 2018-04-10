@@ -83,38 +83,34 @@
 			<span>{{stringsService.session}}</span>
 			&ngsp;
 			<span cyphTranslate>has been aborted.</span>
-			<br />
-			<br />
-			<span cyphTranslate>Please</span>
-			&ngsp;
-			<a
-				cyphTranslate
-				[routerLink]='envService.newCyphUrlRetry'
-				*ngIf='!accounts'
-			>try again</a>.
+			<ng-container *ngIf='!accounts'>
+				<br />
+				<br />
+				<span cyphTranslate>Please</span>
+				&ngsp;
+				<a cyphTranslate [routerLink]='envService.newCyphUrlRetry'>try again</a>.
+			</ng-container>
 		</div>
 		<div *ngIf='envService.isTelehealth'>
 			<span cyphTranslate>This telehealth session has been aborted.</span>
-			<br />
-			<br />
-			<div *ngIf='sessionService.state.isAlice'>
-				<span cyphTranslate>
-					If this was a mistake or error,
-					you may generate a new link and
-				</span>
-				&ngsp;
-				<a
-					cyphTranslate
-					[routerLink]='envService.newCyphUrlRetry'
-					*ngIf='!accounts'
-				>try again</a><span>.</span>
-			</div>
-			<div *ngIf='!sessionService.state.isAlice'>
-				<span cyphTranslate>
-					If this was a mistake or error,
-					your practitoner will send you a new link.
-				</span>
-			</div>
+			<ng-container *ngIf='!accounts'>
+				<br />
+				<br />
+				<ng-container *ngIf='sessionService.state.isAlice'>
+					<span cyphTranslate>
+						If this was a mistake or error,
+						you may generate a new link and
+					</span>
+					&ngsp;
+					<a cyphTranslate [routerLink]='envService.newCyphUrlRetry'>try again</a>.
+				</ng-container>
+				<ng-container *ngIf='!sessionService.state.isAlice'>
+					<span cyphTranslate>
+						If this was a mistake or error,
+						your practitoner will send you a new link.
+					</span>
+				</ng-container>
+			</ng-container>
 		</div>
 	</div>
 
