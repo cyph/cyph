@@ -103,11 +103,18 @@ exports.channelDisconnect	= functions.database.ref(
 
 exports.environmentUnlock	= functions.https.onRequest((req, res) => cors(req, res, async () => {
 	try {
-		const data	= JSON.parse(req.body);
-		const ref	= database.ref(`${data.namespace}/lockdownIds/${data.id}`);
-		res.send((await ref.once('value')).val());
+		let {id, namespace}	= JSON.parse(req.body);
+		namespace			= namespace.replace(/\./g, '_');
+
+		if (!id || !namespace || id.indexOf('/') > -1 || namespace.indexOf('/') > -1) {
+			throw new Error('Invalid data.');
+		}
+
+		const ref	= database.ref(`${namespace}/lockdownIds/${id}`);
+		res.send((await ref.once('value')).val() || '');
 	}
-	catch {
+	catch (err) {
+		console.error(err);
 		res.send('');
 	}
 }));
