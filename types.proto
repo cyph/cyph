@@ -536,17 +536,20 @@ message Environment {
 		/** Optional password to lock down environment (not a security feature). */
 		string password = 12;
 
+		/** Indicates whether this is a Cyph Pro environment. */
+		bool pro = 13;
+
 		/** Indicates whether this is the telehealth version. */
-		bool telehealth = 13;
+		bool telehealth = 14;
 
 		/** Page title of this Cyph instance. */
-		string title = 14;
+		string title = 15;
 
 		/** Indicates whether this environment should share the main Cyph database namespace. */
-		bool usePrimaryNamespace = 15;
+		bool usePrimaryNamespace = 16;
 
 		/** If true, environment will be full white label, with no "Powered by Cyph" notices. */
-		bool whiteLabel = 16;
+		bool whiteLabel = 17;
 	}
 
 	/** Firebase configuration. */

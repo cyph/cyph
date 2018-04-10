@@ -197,6 +197,15 @@ export class StringsService {
 	public readonly followUpNoun: string				= `Follow Up`;
 
 	/** @see StringsService */
+	public readonly footerMessageAPI: string			= `${this.internalProduct} API`;
+
+	/** @see StringsService */
+	public readonly footerMessageDefault: string		= `Individual Use Only`;
+
+	/** @see StringsService */
+	public readonly footerMessagePro: string			= `${this.internalProduct} Pro`;
+
+	/** @see StringsService */
 	public readonly form: string						= `Form`;
 
 	/** @see StringsService */
