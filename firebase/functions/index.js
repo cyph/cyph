@@ -103,7 +103,7 @@ exports.channelDisconnect	= functions.database.ref(
 
 exports.environmentUnlock	= functions.https.onRequest((req, res) => cors(req, res, async () => {
 	try {
-		let {id, namespace}	= JSON.parse(req.body);
+		let {id, namespace}	= req.body;
 		namespace			= namespace.replace(/\./g, '_');
 
 		if (!id || !namespace || id.indexOf('/') > -1 || namespace.indexOf('/') > -1) {
