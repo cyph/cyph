@@ -40,11 +40,13 @@ const baseRequest	= <R, T> (
 			let data: any					= o.data;
 			let url: string					= o.url;
 
-			if (url.slice(-5) === '.json') {
-				contentType	= 'application/json';
-			}
-			else if (responseType === 'text') {
-				contentType	= 'application/x-www-form-urlencoded';
+			if (!contentType) {
+				if (url.slice(-5) === '.json') {
+					contentType	= 'application/json';
+				}
+				else if (responseType === 'text') {
+					contentType	= 'application/x-www-form-urlencoded';
+				}
 			}
 
 			if (data && method === 'GET') {
