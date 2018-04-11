@@ -19,7 +19,9 @@ export class AccountService {
 	private readonly _UI_READY	= resolvable();
 
 	/** @ignore */
-	private readonly menuExpandedInternal: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+	private readonly menuExpandedInternal: BehaviorSubject<boolean>	= new BehaviorSubject(
+		!this.envService.isMobile
+	);
 
 	/** @ignore */
 	private readonly transitionInternal: BehaviorSubject<boolean>	= new BehaviorSubject(false);
@@ -127,11 +129,14 @@ export class AccountService {
 		this.menuExpanded	= combineLatest(
 			this.menuExpandedInternal,
 			this.menuExpandable,
+			this.mobileMenuOpen,
 			this.windowWatcherService.width
-		).pipe(map(([menuExpandedInternal, menuExpandable, width]) =>
-			menuExpandedInternal &&
-			menuExpandable &&
-			width > this.configService.responsiveMaxWidths.xs
+		).pipe(map(([menuExpandedInternal, menuExpandable, mobileMenuOpen, width]) =>
+			mobileMenuOpen || (
+				menuExpandedInternal &&
+				menuExpandable &&
+				width > this.configService.responsiveMaxWidths.xs
+			)
 		));
 
 		this.menuMaxWidth	= combineLatest(

@@ -5,9 +5,11 @@
 }
 
 :host.mobile {
+	z-index: 100;
+
 	button {
 		&:not(.home) {
-			font-size: 3.5em !important;
+			font-size: 2em !important;
 			margin-bottom: 1em !important;
 		}
 
@@ -29,6 +31,7 @@
 			position: absolute;
 			top: 0.25em;
 			right: -0.5em;
+			z-index: 1;
 		}
 	}
 }

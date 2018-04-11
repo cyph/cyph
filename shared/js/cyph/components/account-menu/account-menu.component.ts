@@ -24,9 +24,13 @@ export class AccountMenuComponent {
 
 	/** Handler for button clicks. */
 	public click () : void {
+		/*
 		if (this.envService.isMobile) {
 			this.accountService.toggleMenu(false);
 		}
+		*/
+
+		this.accountService.toggleMobileMenu(false);
 	}
 
 	constructor (
@@ -41,7 +45,5 @@ export class AccountMenuComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {
-		this.accountService.toggleMenu(!this.envService.isMobile);
-	}
+	) {}
 }

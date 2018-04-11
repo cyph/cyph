@@ -6,10 +6,12 @@ import * as Granim from 'granim';
 import {slideInOutRight} from '../../animations';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountService} from '../../services/account.service';
+import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
+import {WindowWatcherService} from '../../services/window-watcher.service';
 import {translate} from '../../util/translate';
 import {resolvable} from '../../util/wait';
 
@@ -83,7 +85,12 @@ export class AccountComponent implements AfterViewInit, OnInit {
 				this.activatedRoute.snapshot.firstChild.url.slice(-1)[0].path !== route
 			)
 		) {
-			return;
+			return (
+				this.windowWatcherService.width.value <= this.configService.responsiveMaxWidths.sm
+			) ?
+				'' :
+				undefined
+			;
 		}
 
 		return translate(this.route[0].toUpperCase() + this.route.slice(1));
@@ -229,6 +236,12 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 		/** @ignore */
 		private readonly sanitizer: DomSanitizer,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly windowWatcherService: WindowWatcherService,
 
 		/** @see MatIconRegistry */
 		public readonly matIconRegistry: MatIconRegistry,

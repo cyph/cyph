@@ -42,8 +42,10 @@
 				class='header animated slideInDown'
 				[class.fadeOutUp]='accountService.transition | async'
 				fxLayoutAlign='center center'
+				fxLayoutGap='24px'
 				*ngIf='header !== undefined'
 			>
+				<span></span>
 				<button
 					mat-icon-button
 					cyphTranslate
@@ -51,25 +53,22 @@
 					matTooltip='Home'
 					matTooltipPosition='right'
 					[routerLink]='accountService.routeRoot'
-					(click)='click()'
-					fxFlex='15'
 					fxHide.gt-sm
 				>
 					<cyph-logo icon></cyph-logo>
 				</button>
-				<h1 fxFlex='70'>{{header}}</h1>
+				<h1 fxFlex>{{header}}</h1>
 				<button
 					mat-icon-button
 					matTooltip='Menu'
 					matTooltipPosition='left'
 					fxLayoutAlign='center center'
-					fxLayoutGap='24px'
-					fxFlex='15'
 					(click)='accountService.toggleMobileMenu()'
 					fxHide.gt-sm
 				>
 					<mat-icon>menu</mat-icon>
 				</button>
+				<span></span>
 			</div>
 			<div
 				class='animated'

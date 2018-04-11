@@ -26,11 +26,10 @@
 			mat-icon-button
 			fxHide.gt-sm
 			class='menu-toggle-mobile'
-			(click)='accountService.toggleMobileMenu()'
+			(click)='click()'
 		>
 			<mat-icon>close</mat-icon>
 		</button>
-
 
 		<button
 			mat-button
@@ -79,7 +78,6 @@
 								0
 							]'
 							alt='Profile Picture'
-							
 							[src]='accountDatabaseService.currentUser.value?.user.avatar | async'
 							[routerLink]='accountService.routeRoot + "profile"'
 							(click)='click()'
