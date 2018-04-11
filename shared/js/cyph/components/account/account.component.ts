@@ -6,13 +6,10 @@ import * as Granim from 'granim';
 import {slideInOutRight} from '../../animations';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountService} from '../../services/account.service';
-import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
-import {WindowWatcherService} from '../../services/window-watcher.service';
-import {translate} from '../../util/translate';
 import {resolvable} from '../../util/wait';
 
 
@@ -62,38 +59,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		].find(
 			path => this.route === path
 		) !== undefined;
-	}
-
-	/** Header title for current section. */
-	public get header () : string|undefined {
-		const route	= this.route;
-
-		if (
-			[
-				'appointments',
-				'contacts',
-				'docs',
-				'files',
-				'forms',
-				'notes',
-				'patients',
-				'settings',
-				'staff'
-			].indexOf(route) < 0 ||
-			(
-				this.activatedRoute.snapshot.firstChild &&
-				this.activatedRoute.snapshot.firstChild.url.slice(-1)[0].path !== route
-			)
-		) {
-			return (
-				this.windowWatcherService.width.value <= this.configService.responsiveMaxWidths.sm
-			) ?
-				'' :
-				undefined
-			;
-		}
-
-		return translate(this.route[0].toUpperCase() + this.route.slice(1));
 	}
 
 	/** Indicates whether menu should be displayed. */
@@ -236,12 +201,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 		/** @ignore */
 		private readonly sanitizer: DomSanitizer,
-
-		/** @ignore */
-		private readonly configService: ConfigService,
-
-		/** @ignore */
-		private readonly windowWatcherService: WindowWatcherService,
 
 		/** @see MatIconRegistry */
 		public readonly matIconRegistry: MatIconRegistry,

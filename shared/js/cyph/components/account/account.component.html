@@ -43,7 +43,7 @@
 				[class.fadeOutUp]='accountService.transition | async'
 				fxLayoutAlign='center center'
 				fxLayoutGap='24px'
-				*ngIf='header !== undefined'
+				*ngIf='(accountService.header | async) !== undefined'
 			>
 				<span></span>
 				<button
@@ -57,7 +57,7 @@
 				>
 					<cyph-logo icon></cyph-logo>
 				</button>
-				<h1 fxFlex>{{header}}</h1>
+				<h1 fxFlex>{{(accountService.header | async) || ''}}</h1>
 				<button
 					mat-icon-button
 					matTooltip='Menu'
@@ -75,9 +75,20 @@
 				[class.fadeOutUp]='accountService.transition | async'
 				fxFlex
 				[style.height]='fill ? "100%" : undefined'
-				[ngStyle]='header !== undefined && !envService.isMobile ? {padding: "0px 5vw"} : {}'
-				[ngStyle.gt-sm]='header !== undefined ? {padding: "0px 16.5vw"} : {}'
-				[ngStyle.gt-md]='header !== undefined ? {padding: "0px 25vw"} : {}'
+				[ngStyle]='
+					(
+						(accountService.header | async) !== undefined &&
+						!envService.isMobile
+					) ?
+						{padding: "0px 5vw"} :
+						{}
+				'
+				[ngStyle.gt-sm]='
+					(accountService.header | async) !== undefined ? {padding: "0px 16.5vw"} : {}
+				'
+				[ngStyle.gt-md]='
+					(accountService.header | async) !== undefined ? {padding: "0px 25vw"} : {}
+				'
 			>
 				<router-outlet></router-outlet>
 			</div>
