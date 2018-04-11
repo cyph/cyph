@@ -40,11 +40,13 @@ const baseRequest	= <R, T> (
 			let data: any					= o.data;
 			let url: string					= o.url;
 
-			if (url.slice(-5) === '.json') {
-				contentType	= 'application/json';
-			}
-			else if (responseType === 'text') {
-				contentType	= 'application/x-www-form-urlencoded';
+			if (!contentType) {
+				if (url.slice(-5) === '.json') {
+					contentType	= 'application/json';
+				}
+				else if (responseType === 'text') {
+					contentType	= 'application/x-www-form-urlencoded';
+				}
 			}
 
 			if (data && method === 'GET') {
@@ -154,6 +156,19 @@ export const requestByteStream	= (o: {
 	return baseRequest<Uint8Array, ArrayBuffer>(o, 'arraybuffer', res =>
 		res.body ? new Uint8Array(res.body) : new Uint8Array(0)
 	);
+};
+
+/** Performs HTTP request. */
+export const requestJSON	= async (o: {
+	contentType?: string;
+	data?: any;
+	method?: string;
+	retries?: number;
+	url: string;
+}) : Promise<any> => {
+	return (await baseRequest<any, any>({contentType: 'application/json', ...o}, 'json', res =>
+		res.body
+	)).result;
 };
 
 /** Performs HTTP request. */

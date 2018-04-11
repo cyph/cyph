@@ -251,6 +251,7 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 		this.duration			= duration;
 		this.value.startTime	= timestamp - (duration / 2);
+		this.value.endTime		= timestamp + (duration / 2);
 
 		this.onChange(this.value);
 	}

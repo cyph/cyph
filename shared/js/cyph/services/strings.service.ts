@@ -197,6 +197,15 @@ export class StringsService {
 	public readonly followUpNoun: string				= `Follow Up`;
 
 	/** @see StringsService */
+	public readonly footerMessageAPI: string			= `${this.internalProduct} API`;
+
+	/** @see StringsService */
+	public readonly footerMessageDefault: string		= `Individual Use Only`;
+
+	/** @see StringsService */
+	public readonly footerMessagePro: string			= `${this.internalProduct} Pro`;
+
+	/** @see StringsService */
 	public readonly form: string						= `Form`;
 
 	/** @see StringsService */
@@ -660,6 +669,9 @@ export class StringsService {
 	public readonly unlock: string						= `Unlock`;
 
 	/** @see StringsService */
+	public readonly unlockedTitle: string				= `${this.internalProduct} Unlocked`;
+
+	/** @see StringsService */
 	public readonly unlockTitle: string					= `Unlock ${this.internalProduct}`;
 
 	/** @see StringsService */
@@ -705,6 +717,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly warningTitle: string				= `Warning`;
+
+	/** @see StringsService */
+	public readonly welcomeComma: string				= `Welcome,`;
 
 	/** @see StringsService */
 	public readonly welcomeToProduct: string			= `Welcome to ${this.internalProduct}`;

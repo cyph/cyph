@@ -209,8 +209,8 @@
 	.chat-main.video:not(.mobile) {
 		/* Message list is 15%; video UI is 100% - message list height - footer height */
 
-		.video-call {
-			height: calc(85% - 110px);
+		.video-call .friend {
+			height: calc(85% - 110px) !important;
 		}
 
 		cyph-chat-message-list {

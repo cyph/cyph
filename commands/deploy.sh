@@ -171,9 +171,9 @@ cat ~/.cyph/test.vars >> test/test.yaml
 cp ~/.cyph/GeoIP2-Country.mmdb backend/
 if [ "${branch}" == 'staging' ] ; then
 	echo '  PROD: true' >> backend/app.yaml
-	cat ~/.cyph/braintree.prod >> backend/app.yaml
+	cat ~/.cyph/backend.vars.prod >> backend/app.yaml
 else
-	cat ~/.cyph/braintree.sandbox >> backend/app.yaml
+	cat ~/.cyph/backend.vars.sandbox >> backend/app.yaml
 fi
 
 projectname () {

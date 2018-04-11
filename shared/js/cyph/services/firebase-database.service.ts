@@ -30,8 +30,8 @@ import {BinaryProto, NotificationTypes, StringProto} from '../proto';
 import {compareArrays} from '../util/compare';
 import {getOrSetDefault, getOrSetDefaultObservable} from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
-import {requestByteStream} from '../util/request';
-import {deserialize, serialize} from '../util/serialization';
+import {request, requestByteStream} from '../util/request';
+import {deserialize, parse, serialize, stringify} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful, sleep, waitForValue} from '../util/wait';
@@ -186,6 +186,27 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public async callFunction (name: string, data: any) : Promise<any> {
+		const result	= await request({
+			contentType: 'application/json',
+			data: stringify(data),
+			method: 'POST',
+			url:
+				/* TODO: Determine how to detect this after more regions are supported */
+				`https://us-central1-${
+					this.envService.firebaseConfig.projectId
+				}.cloudfunctions.net/${name}`
+		});
+
+		try {
+			return parse(result);
+		}
+		catch {
+			return result;
+		}
+	}
+
+	/** @inheritDoc */
 	public async checkDisconnected (urlPromise: MaybePromise<string>) : Promise<boolean> {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
@@ -256,17 +277,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				this.ngZone.run(() => { progress.next(0); });
 
-				const request	= requestByteStream({
+				const req	= requestByteStream({
 					retries: 3,
 					url: await (await this.getStorageRef(url, hash)).getDownloadURL()
 				});
 
-				request.progress.subscribe(
+				req.progress.subscribe(
 					n => { this.ngZone.run(() => { progress.next(n); }); },
 					err => { this.ngZone.run(() => { progress.next(err); }); }
 				);
 
-				const value	= await request.result;
+				const value	= await req.result;
 
 				this.ngZone.run(() => {
 					progress.next(100);

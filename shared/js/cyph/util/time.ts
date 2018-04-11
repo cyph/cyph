@@ -60,8 +60,17 @@ const getTimesInternal	= (
 	startPadding: number,
 	endPadding: number
 ) : Time[] => {
-	startPadding	= Math.ceil(startPadding / increment) * increment;
-	endPadding		= Math.ceil(endPadding / increment) * increment;
+	if (
+		timeRange.start.hour === 0 && timeRange.start.minute === 0 &&
+		timeRange.end.hour === 24 && timeRange.end.minute === 0
+	) {
+		startPadding	= 0;
+		endPadding		= 0;
+	}
+	else {
+		startPadding	= Math.ceil(startPadding / increment) * increment;
+		endPadding		= Math.ceil(endPadding / increment) * increment;
+	}
 
 	const times: Time[]	= [];
 	const endTime		= hourAndMinuteToTime(timeRange.end) - endPadding;

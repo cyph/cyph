@@ -46,6 +46,8 @@ read -r -d '' modules <<- EOM
 	@firebase/database-types
 	@firebase/firestore
 	@firebase/firestore-types
+	@firebase/functions
+	@firebase/functions-types
 	@firebase/messaging
 	@firebase/messaging-types
 	@firebase/storage

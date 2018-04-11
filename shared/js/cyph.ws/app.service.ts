@@ -41,7 +41,10 @@ export class AppService implements CanActivate {
 	/** If true, app is locked down. */
 	public isLockedDown: boolean			=
 		!!this.envService.environment.customBuild &&
-		!!this.envService.environment.customBuild.config.password &&
+		(
+			!!this.envService.environment.customBuild.config.lockedDown ||
+			!!this.envService.environment.customBuild.config.password
+		) &&
 		!locationData.hash.match(
 			new RegExp(`[${config.readableIDCharacters.join('|')}]{${config.secretLength}}$`)
 		)
