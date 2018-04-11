@@ -129,12 +129,25 @@
 
 .mobile .header {
 	height: 70px;
-	min-height: 50px;
+	min-height: 70px;
 
 	&:after {
 		height: 5px;
 		width: 100%;
 		content: no-close-quote;
+	}
+}
+
+.header {
+	bottom: 10px;
+
+	.mat-icon-button {
+		.mat-icon {
+			font-size: 35px;
+			height: 35px;
+			width: 35px;
+			line-height: 35px;
+		}
 	}
 }
 

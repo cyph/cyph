@@ -1,33 +1,6 @@
-<mat-toolbar
-	fxFlex
-	fxHide.gt-xs
-	fxLayout='row'
-	fxLayoutGap='2px'
-	ngClass.gt-xs='hidden'
-	class='menu-root'
->
-	<button
-		mat-icon-button
-		cyphTranslate
-		class='home'
-		matTooltip='Home'
-		matTooltipPosition='right'
-		[routerLink]='accountService.routeRoot'
-		(click)='click()'
-	>
-		<cyph-logo icon></cyph-logo>
-	</button>
-
-	<div fxFlex></div>
-
-	<ng-container *ngTemplateOutlet='buttons'></ng-container>
-</mat-toolbar>
-
 <div
 	fxFlexFill
-	fxHide.xs
 	fxLayout='row'
-	ngClass.xs='hidden'
 	class='menu menu-root'
 	[class.collapsed]='(accountService.menuExpanded | async) === false'
 	[class.mobile]='envService.isMobile'
@@ -48,6 +21,15 @@
 	>
 		<div></div>
 		<div *ngIf='accountService.menuExpanded | async'></div>
+
+		<button
+			mat-icon-button
+			fxHide.gt-sm
+			class='menu-toggle-mobile'
+			(click)='click()'
+		>
+			<mat-icon>close</mat-icon>
+		</button>
 
 		<button
 			mat-button
@@ -82,6 +64,7 @@
 			<div fxLayoutAlign='center center'>
 				<div
 					[fxFlex]='(accountService.menuExpanded | async) ? "60" : "6em"'
+					fxHide.lt-md
 					fxLayoutAlign='center center'
 				>
 					<div class='avatar-container'>
@@ -114,6 +97,7 @@
 	<button
 		mat-button
 		fxFlex='25px'
+		fxHide.lt-md
 		cyphTranslate
 		class='menu-toggle'
 		matTooltip='Toggle Menu'

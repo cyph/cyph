@@ -20,21 +20,55 @@
 
 	<cyph-account-menu
 		fxLayout='column'
-		fxLayout.xs='row'
+		fxHide.lt-md
 		class='sidebar animated slideInLeft _0'
 		[style.max-width]='accountService.menuMaxWidth | async'
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
+	<cyph-account-menu
+		fxLayout='column'
+		fxFlexFill
+		fxShow.lt-md
+		class='sidebar mobile animated _0'
+		[@slideInOutRight]='accountService.mobileMenuOpen | async'
+		*ngIf='accountService.mobileMenuOpen | async'
+	></cyph-account-menu>
+
 	<div class='content' fxFlex fxFlexFill fxLayout='column' fxLayout.xs='row'>
 		<div fxFlexFill fxLayout='column' class='router-content'>
 			<div
+				fxLayout='row'
 				class='header animated slideInDown'
 				[class.fadeOutUp]='accountService.transition | async'
 				fxLayoutAlign='center center'
-				*ngIf='header !== undefined'
+				fxLayoutGap='24px'
+				*ngIf='(accountService.header | async) !== undefined'
 			>
-				<h1>{{header}}</h1>
+				<span></span>
+				<button
+					mat-icon-button
+					cyphTranslate
+					class='home'
+					matTooltip='Home'
+					matTooltipPosition='right'
+					[routerLink]='accountService.routeRoot'
+					fxHide.gt-sm
+				>
+					<cyph-logo icon></cyph-logo>
+				</button>
+				<h1 fxFlex>{{(accountService.header | async) || ''}}</h1>
+				<button
+					mat-icon-button
+					matTooltip='Menu'
+					matTooltipPosition='left'
+					fxLayoutAlign='center center'
+					(click)='accountService.toggleMobileMenu()'
+					fxHide.gt-sm
+				>
+					<mat-icon>menu</mat-icon>
+				</button>
+				<span></span>
 			</div>
 			<div
 				class='animated'
@@ -42,12 +76,30 @@
 				fxFlex
 				[style.height]='fullHeight ? "100%" : undefined'
 				[ngStyle]='
-					header !== undefined && !fullWidth && !envService.isMobile ?
+					(
+						(accountService.header | async) !== undefined &&
+						!fullWidth &&
+						!envService.isMobile
+					) ?
 						{padding: "0px 5vw"} :
 						{}
 				'
-				[ngStyle.gt-sm]='!fullWidth && header !== undefined ? {padding: "0px 16.5vw"} : {}'
-				[ngStyle.gt-md]='!fullWidth && header !== undefined ? {padding: "0px 25vw"} : {}'
+				[ngStyle.gt-sm]='
+					(
+						(accountService.header | async) !== undefined &&
+						!fullWidth
+					) ?
+						{padding: "0px 16.5vw"} :
+						{}
+				'
+				[ngStyle.gt-md]='
+					(
+						(accountService.header | async) !== undefined &&
+						!fullWidth
+					) ?
+						{padding: "0px 25vw"} :
+						{}
+				'
 			>
 				<router-outlet></router-outlet>
 			</div>

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
@@ -30,7 +30,10 @@ import {cacheObservable} from '../../util/flatten-observable';
 	styleUrls: ['./account-profile.component.scss'],
 	templateUrl: './account-profile.component.html'
 })
-export class AccountProfileComponent implements OnInit {
+export class AccountProfileComponent implements OnDestroy, OnInit {
+	/** @ignore */
+	private destroyed: boolean		= false;
+
 	/** @ignore */
 	private editorFocus: boolean	= false;
 
@@ -137,6 +140,10 @@ export class AccountProfileComponent implements OnInit {
 
 			await this.user.fetch();
 
+			if (!this.destroyed) {
+				await this.accountService.setHeader(this.user);
+			}
+
 			this.accountService.resolveUiReady();
 		}
 		else {
@@ -162,6 +169,11 @@ export class AccountProfileComponent implements OnInit {
 
 	public set isEditorFocused (value: boolean) {
 		this.editorFocus	= value;
+	}
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		this.destroyed	= true;
 	}
 
 	/** @inheritDoc */

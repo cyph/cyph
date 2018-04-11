@@ -8,6 +8,7 @@ import {BinaryProto, ISessionMessage, SessionMessage, StringProto} from '../prot
 import {ISessionMessageData, rpcEvents} from '../session';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
+import {AccountService} from './account.service';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';
@@ -217,6 +218,7 @@ export class AccountSessionService extends SessionService {
 
 		if (user) {
 			user.realUsername.subscribe(this.remoteUsername);
+			await this.accountService.setHeader(user);
 		}
 
 		this.remoteUser.next(user);
@@ -248,6 +250,9 @@ export class AccountSessionService extends SessionService {
 		errorService: ErrorService,
 		potassiumService: PotassiumService,
 		stringsService: StringsService,
+
+		/** @ignore */
+		private readonly accountService: AccountService,
 
 		/** @ignore */
 		private readonly accountContactsService: AccountContactsService,

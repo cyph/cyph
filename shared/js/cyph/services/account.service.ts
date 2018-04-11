@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
-import {NavigationStart, Router} from '@angular/router';
+import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {combineLatest} from 'rxjs/observable/combineLatest';
 import {map} from 'rxjs/operators/map';
+import {User} from '../account';
+import {translate} from '../util/translate';
 import {resolvable, sleep} from '../util/wait';
 import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
@@ -19,10 +21,22 @@ export class AccountService {
 	private readonly _UI_READY	= resolvable();
 
 	/** @ignore */
-	private readonly menuExpandedInternal: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+	private readonly headerInternal: BehaviorSubject<string|undefined>	=
+		new BehaviorSubject<string|undefined>(undefined)
+	;
 
 	/** @ignore */
-	private readonly transitionInternal: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+	private readonly menuExpandedInternal: BehaviorSubject<boolean>		=
+		new BehaviorSubject(!this.envService.isMobile)
+	;
+
+	/** @ignore */
+	private readonly transitionInternal: BehaviorSubject<boolean>		=
+		new BehaviorSubject(false)
+	;
+
+	/** Header title for current section. */
+	public readonly header: Observable<string|undefined>;
 
 	/** Indicates whether real-time Docs is enabled. */
 	public readonly enableDocs: boolean					=
@@ -58,6 +72,9 @@ export class AccountService {
 		Math.min(height, width) <= this.configService.responsiveMaxWidths.xs
 	));
 
+	/** Indicates whether mobile menu is open. */
+	public readonly mobileMenuOpen: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+
 	/** Resolves ready promise. */
 	public readonly resolveUiReady: () => void			= this._UI_READY.resolve;
 
@@ -73,6 +90,30 @@ export class AccountService {
 	public readonly uiReady: Promise<void>				= this._UI_READY.promise;
 
 	/** @ignore */
+	private get routePath () : string[] {
+		let route	= (
+			this.activatedRoute.snapshot.firstChild &&
+			this.activatedRoute.snapshot.firstChild.url.length > 0
+		) ?
+			this.activatedRoute.snapshot.firstChild.url :
+			undefined
+		;
+
+		if (route && route[0].path === accountRoot) {
+			route	= (
+				this.activatedRoute.snapshot.firstChild &&
+				this.activatedRoute.snapshot.firstChild.firstChild &&
+				this.activatedRoute.snapshot.firstChild.firstChild.url.length > 0
+			) ?
+				this.activatedRoute.snapshot.firstChild.firstChild.url :
+				undefined
+			;
+		}
+
+		return route ? route.map(o => o.path) : [];
+	}
+
+	/** @ignore */
 	private get menuMinWidth () : number {
 		return this.menuExpandedMinWidth * 2.5;
 	}
@@ -80,6 +121,17 @@ export class AccountService {
 	/** Minimum expanded menu width. */
 	public get menuExpandedMinWidth () : number {
 		return this.envService.isTelehealth ? 325 : 250;
+	}
+
+	/** Sets custom header text. */
+	public async setHeader (header: string|User) : Promise<void> {
+		if (typeof header === 'string') {
+			this.headerInternal.next(header);
+		}
+		else {
+			const {name, realUsername}	= await header.accountUserProfile.getValue();
+			this.headerInternal.next(name || `@${realUsername}`);
+		}
 	}
 
 	/** Toggles account menu. */
@@ -90,6 +142,14 @@ export class AccountService {
 		);
 	}
 
+	/** Toggles mobile account menu. */
+	public toggleMobileMenu (menuOpen?: boolean) : void {
+		this.mobileMenuOpen.next(typeof menuOpen === 'boolean' ?
+			menuOpen :
+			!this.mobileMenuOpen.value
+		);
+	}
+
 	/** Triggers event to ends transition between components. */
 	public async transitionEnd () : Promise<void> {
 		await sleep(0);
@@ -97,6 +157,9 @@ export class AccountService {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly activatedRoute: ActivatedRoute,
+
 		/** @ignore */
 		private readonly router: Router,
 
@@ -109,6 +172,40 @@ export class AccountService {
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
 	) {
+		this.header	= combineLatest(
+			this.headerInternal,
+			this.windowWatcherService.width,
+			this.transitionInternal
+		).pipe(map(([header, width]) => {
+			const routePath	= this.routePath;
+			const route		= routePath[0];
+
+			if (
+				[
+					'appointments',
+					'contacts',
+					'docs',
+					'files',
+					'forms',
+					'notes',
+					'patients',
+					'settings',
+					'staff',
+					'wallets'
+				].indexOf(route) < 0 ||
+				(
+					routePath.length > 1
+				)
+			) {
+				return width <= this.configService.responsiveMaxWidths.sm ?
+					(header || '') :
+					undefined
+				;
+			}
+
+			return header || translate(route[0].toUpperCase() + route.slice(1));
+		}));
+
 		this.menuExpandable	= combineLatest(
 			this.menuReduced,
 			this.windowWatcherService.width
@@ -119,11 +216,14 @@ export class AccountService {
 		this.menuExpanded	= combineLatest(
 			this.menuExpandedInternal,
 			this.menuExpandable,
+			this.mobileMenuOpen,
 			this.windowWatcherService.width
-		).pipe(map(([menuExpandedInternal, menuExpandable, width]) =>
-			menuExpandedInternal &&
-			menuExpandable &&
-			width > this.configService.responsiveMaxWidths.xs
+		).pipe(map(([menuExpandedInternal, menuExpandable, mobileMenuOpen, width]) =>
+			mobileMenuOpen || (
+				menuExpandedInternal &&
+				menuExpandable &&
+				width > this.configService.responsiveMaxWidths.xs
+			)
 		));
 
 		this.menuMaxWidth	= combineLatest(
@@ -146,6 +246,8 @@ export class AccountService {
 			if (!(e instanceof NavigationStart)) {
 				return;
 			}
+
+			this.headerInternal.next(undefined);
 
 			const section	= (e.url.match(/^account\/(.*?)(\/|$).*/) || [])[1] || '';
 
