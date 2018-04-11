@@ -10,9 +10,16 @@ mat-card {
 	}
 }
 
+mat-tab-body {
+	max-height: 100vh !important;
+}
+
 mat-tab-group {
-	margin-left: 5%;
-	margin-right: 5%;
+	&:not(.lt-md) {
+		margin-left: 5%;
+		margin-right: 5%;
+	}
+
 	font-family: Roboto;
 
 	::ng-deep .mat-tab-label-active {
@@ -20,13 +27,25 @@ mat-tab-group {
 	}
 
 	mat-chip-list {
-		position: absolute;
-		right: 25px;
+		&:not(.lt-md){
+			position: absolute;
+			right: 25px;
+		}
 
 		button {
 			width: 42px;
 			bottom: 7px;
 			left: 7px;
+		}
+
+		&.lt-md {
+			
+			mat-chip {
+				margin-left: auto;
+				margin-right: auto;
+				position: relative;
+				left: 21px;
+			}
 		}
 
 		mat-chip {

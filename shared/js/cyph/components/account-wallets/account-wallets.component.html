@@ -9,7 +9,7 @@
 		fxLayoutAlign='center center'
 	>
 		<h1>{{stringsService.noWallets}}</h1>
-		<div fxLayout='row' fxLayoutGap='16px'>
+		<div fxLayout='row' fxLayout.lt-md='column' fxLayoutGap='16px'>
 			<button
 				mat-raised-button
 				[matTooltip]='stringsService.newWalletGenerate'
@@ -44,7 +44,7 @@
 			</button>
 		</div>
 	</div>
-	<mat-tab-group>
+	<mat-tab-group ngClass.lt-md='lt-md'>
 		<mat-tab
 			class='wallet'
 			*ngFor='
@@ -58,7 +58,7 @@
 			[ngClass]='"_" + i'
 		>
 			<mat-card fxLayout='column'>
-				<mat-chip-list>
+				<mat-chip-list ngClass.lt-md='lt-md'>
 					<mat-chip
 						class='mat-raised'
 						*ngIf='wallet.data.cryptocurrency === cryptocurrencies.BTC'
@@ -76,7 +76,7 @@
 					<h2>{{wallet.record.name}}</h2>
 				</div>
 
-				<div fxLayout='row' fxLayoutAlign='center center' fxLayoutGap='10%'>
+				<div fxLayout='row' fxLayout.lt-md='column' fxLayoutAlign='center center' fxLayoutGap='10%'>
 					<div fxLayout='column'>
 						<h3>
 							<span cyphTranslate>Wallet Address</span>:
@@ -92,6 +92,18 @@
 							</span>
 							&ngsp;
 							<span>{{cryptocurrencies[wallet.data.cryptocurrency]}}</span>
+							&ngsp; | &ngsp;
+							<span>
+								~${{numberToString(
+									(cryptocurrencyService.watchConversion(
+										(cryptocurrencyService.watchBalance(wallet.data) | async) || 0,
+										{cryptocurrency: cryptocurrencies.BTC},
+										{currency: currencies.USD}
+									) | async) || 0
+								)}}
+							</span>
+							&ngsp;
+							<span>USD</span>
 						</h3>
 					</div>
 					<img
