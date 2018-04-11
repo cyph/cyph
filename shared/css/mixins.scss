@@ -202,7 +202,7 @@
 		}
 	}
 
-	cyph-chat-message-box {
+	cyph-chat-message-box, cyph-chat-message-box-inherit-ng-form {
 		.text-message-box {
 			.message-box {
 				color: map-get($cyph-message-box-colors, text);
