@@ -27,7 +27,7 @@ mat-tab-group {
 	}
 
 	mat-chip-list {
-		&:not(.lt-md){
+		&:not(.lt-md) {
 			position: absolute;
 			right: 25px;
 		}
@@ -39,7 +39,6 @@ mat-tab-group {
 		}
 
 		&.lt-md {
-			
 			mat-chip {
 				margin-left: auto;
 				margin-right: auto;
