@@ -5,7 +5,7 @@
 @include cyph-apply-theme(true);
 
 /* Temporary workaround */
-mat-tab-body {
+mat-dialog-container mat-tab-body {
 	max-height: 70vh;
 }
 
