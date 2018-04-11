@@ -8,9 +8,9 @@ import {BinaryProto, ISessionMessage, SessionMessage, StringProto} from '../prot
 import {ISessionMessageData, rpcEvents} from '../session';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
-import {AccountService} from './account.service';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
+import {AccountService} from './account.service';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
