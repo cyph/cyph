@@ -138,6 +138,19 @@
 	}
 }
 
+.header {
+	bottom: 10px;
+
+	.mat-icon-button {
+		.mat-icon {
+			font-size: 35px;
+			height: 35px;
+			width: 35px;
+			line-height: 35px;
+		}
+	}
+}
+
 .interstitial {
 	position: fixed;
 	background-color: rgba(139, 98, 217, 0.69) !important;

@@ -20,21 +20,56 @@
 
 	<cyph-account-menu
 		fxLayout='column'
-		fxLayout.xs='row'
+		fxHide.lt-md
 		class='sidebar animated slideInLeft _0'
 		[style.max-width]='accountService.menuMaxWidth | async'
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
+	<cyph-account-menu
+		fxLayout='column'
+		fxFlexFill
+		fxShow.lt-md
+		class='sidebar mobile animated _0'
+		[@slideInOutRight]='accountService.mobileMenuOpen | async'
+		*ngIf='accountService.mobileMenuOpen | async'
+	></cyph-account-menu>
+
 	<div class='content' fxFlex fxFlexFill fxLayout='column' fxLayout.xs='row'>
 		<div fxFlexFill fxLayout='column' class='router-content'>
 			<div
+				fxLayout='row'
 				class='header animated slideInDown'
 				[class.fadeOutUp]='accountService.transition | async'
 				fxLayoutAlign='center center'
 				*ngIf='header !== undefined'
 			>
-				<h1>{{header}}</h1>
+				<button
+					mat-icon-button
+					cyphTranslate
+					class='home'
+					matTooltip='Home'
+					matTooltipPosition='right'
+					[routerLink]='accountService.routeRoot'
+					(click)='click()'
+					fxFlex='15'
+					fxHide.gt-sm
+				>
+					<cyph-logo icon></cyph-logo>
+				</button>
+				<h1 fxFlex='70'>{{header}}</h1>
+				<button
+					mat-icon-button
+					matTooltip='Menu'
+					matTooltipPosition='left'
+					fxLayoutAlign='center center'
+					fxLayoutGap='24px'
+					fxFlex='15'
+					(click)='accountService.toggleMobileMenu()'
+					fxHide.gt-sm
+				>
+					<mat-icon>menu</mat-icon>
+				</button>
 			</div>
 			<div
 				class='animated'

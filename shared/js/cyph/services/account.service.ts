@@ -55,6 +55,9 @@ export class AccountService {
 		Math.min(height, width) <= this.configService.responsiveMaxWidths.xs
 	));
 
+	/** Indicates whether mobile menu is open. */
+	public readonly mobileMenuOpen: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+
 	/** Resolves ready promise. */
 	public readonly resolveUiReady: () => void			= this._UI_READY.resolve;
 
@@ -84,6 +87,14 @@ export class AccountService {
 		this.menuExpandedInternal.next(typeof menuExpanded === 'boolean' ?
 			menuExpanded :
 			!this.menuExpandedInternal.value
+		);
+	}
+
+	/** Toggles mobile account menu. */
+	public toggleMobileMenu (menuOpen?: boolean) : void {
+		this.mobileMenuOpen.next(typeof menuOpen === 'boolean' ?
+			menuOpen :
+			!this.mobileMenuOpen.value
 		);
 	}
 
