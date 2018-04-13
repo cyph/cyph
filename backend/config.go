@@ -28,6 +28,31 @@ type PreAuthorizedCyph struct {
 	Timestamp   int64
 }
 
+// RedoxAuth : Current Redox auth data
+type RedoxAuth struct {
+	AccessToken  string
+	Expires      int64
+	RefreshToken string
+	RedoxAPIKey  string
+}
+
+// RedoxCredentials : Redox credentials
+type RedoxCredentials struct {
+	APIKey       string
+	MasterAPIKey string
+	RedoxAPIKey  string
+	RedoxSecret  string
+	Username     string
+}
+
+// RedoxRequestLog : Log of a Redox request
+type RedoxRequestLog struct {
+	RedoxCommand string
+	Response     string
+	Timestamp    int64
+	Username     string
+}
+
 var empty = struct{}{}
 
 var config = struct {
