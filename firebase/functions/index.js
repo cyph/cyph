@@ -380,11 +380,11 @@ exports.userRegister	= functionsUser.onCreate(async (userRecord, {params}) => {
 	const emailSplit	= (userRecord.email || '').split('@');
 
 	if (emailSplit.length !== 2 || (
-		userRecord.providerData && (
-			userRecord.providerData.length !== 1 ||
-			userRecord.providerData[0].providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID
+		userRecord.providerData && userRecord.providerData.find(o =>
+			o.providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID
 		)
 	)) {
+		console.error(`Deleting user: ${JSON.stringify(userRecord)}`);
 		return auth.deleteUser(userRecord.uid);
 	}
 
