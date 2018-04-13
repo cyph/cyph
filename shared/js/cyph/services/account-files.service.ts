@@ -419,6 +419,14 @@ export class AccountFilesService {
 		return this.downloadItem(id, Appointment);
 	}
 
+	/** Downloads and returns EHR API key. */
+	public downloadEhrApiKey (id: string|IAccountFileRecord) : {
+		progress: Observable<number>;
+		result: Promise<IEhrApiKey>;
+	} {
+		return this.downloadItem(id, EhrApiKey);
+	}
+
 	/** Downloads file and returns form. */
 	public downloadForm (id: string|IAccountFileRecord) : {
 		progress: Observable<number>;
