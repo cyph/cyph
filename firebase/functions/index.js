@@ -78,7 +78,7 @@ const getURL	= (adminRef, namespace) => {
 
 exports.channelDisconnect	= functions.database.ref(
 	'{namespace}/channels/{channel}/disconnects/{user}'
-).onWrite(async (data, {params}) => {
+).onWrite(async ({after: data}, {params}) => {
 	if (!data.exists()) {
 		return;
 	}
@@ -126,7 +126,7 @@ TODO: Handle this as a cron job that searches for folders
 
 exports.itemHashChange	= functions.database.ref(
 	'{namespace}'
-).onUpdate(async (data, {params}) => {
+).onUpdate(async ({after: data}, {params}) => {
 	if (!data.exists() || data.key !== 'hash') {
 		return;
 	}
@@ -226,7 +226,7 @@ exports.userDisconnect	= functions.database.ref(
 
 exports.userEmailSet	= functions.database.ref(
 	'{namespace}/users/{user}/email'
-).onWrite(async (data, {params}) => {
+).onWrite(async ({after: data}, {params}) => {
 	const username					= params.user;
 	const internalURL				= `${params.namespace}/users/${username}/internal`;
 	const emailRef					= database.ref(`${internalURL}/email`);
@@ -345,7 +345,7 @@ exports.userNotification	= functions.database.ref(
 
 exports.userPublicProfileSet	= functions.database.ref(
 	'{namespace}/users/{user}/publicProfile'
-).onWrite(async (data, {params}) => {
+).onWrite(async ({after: data}, {params}) => {
 	const username			= params.user;
 	const internalURL		= `${params.namespace}/users/${username}/internal`;
 	const nameRef			= database.ref(`${internalURL}/name`);
