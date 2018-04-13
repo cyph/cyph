@@ -20,7 +20,7 @@ import {map} from 'rxjs/operators/map';
 import {mergeMap} from 'rxjs/operators/mergeMap';
 import {skip} from 'rxjs/operators/skip';
 import {take} from 'rxjs/operators/take';
-import {SecurityModels} from '../account';
+import {AccountFile, SecurityModels} from '../account';
 import {Async} from '../async-type';
 import {StorageUnits} from '../enums/storage-units';
 import {IAsyncList} from '../iasync-list';
@@ -300,19 +300,19 @@ export class AccountFilesService {
 	}
 
 	/** @ignore */
-	private fileIsAppointment (file: IAppointment|IEhrApiKey|IForm|IQuillDelta|File) : boolean {
+	private fileIsAppointment (file: AccountFile) : boolean {
 		const maybeAppointment	= <any> file;
 		return maybeAppointment.calendarInvite !== undefined;
 	}
 
 	/** @ignore */
-	private fileIsDelta (file: IAppointment|IEhrApiKey|IForm|IQuillDelta|File) : boolean {
+	private fileIsDelta (file: AccountFile) : boolean {
 		const maybeDelta	= <any> file;
 		return typeof maybeDelta.chop === 'function' || maybeDelta.ops instanceof Array;
 	}
 
 	/** @ignore */
-	private fileIsEhrApiKey (file: IAppointment|IEhrApiKey|IForm|IQuillDelta|File) : boolean {
+	private fileIsEhrApiKey (file: AccountFile) : boolean {
 		const maybeEhrApiKey	= <any> file;
 		return (
 			typeof maybeEhrApiKey.apiKey === 'string' &&
@@ -865,11 +865,7 @@ export class AccountFilesService {
 	 * Uploads new file.
 	 * @param shareWithUser Username of another user to optionally share this file with.
 	 */
-	public upload (
-		name: string,
-		file: IQuillDelta|IQuillDelta[]|File|IAppointment|IEhrApiKey|IForm,
-		shareWithUser?: string
-	) : {
+	public upload (name: string, file: AccountFile, shareWithUser?: string) : {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {

@@ -1,3 +1,4 @@
+export * from './account-file-type';
 export * from './enums';
 export * from './icontact-list-item';
 export * from './icurrent-user';
