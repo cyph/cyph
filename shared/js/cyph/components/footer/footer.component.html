@@ -28,7 +28,7 @@
 				{{stringsService.footerMessageAPI}}
 			</strong>
 			<ng-template #proMessage>
-				<strong *ngIf='envService.environment.customBuild?.config.pro'>
+				<strong *ngIf='envService.environment.customBuild?.config.pro; else defaultMessage'>
 					{{stringsService.footerMessagePro}}
 				</strong>
 			</ng-template>
