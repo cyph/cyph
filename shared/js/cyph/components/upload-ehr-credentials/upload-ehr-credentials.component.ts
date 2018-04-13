@@ -30,6 +30,7 @@ export class UploadEhrCredentialsComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		try {
+			this.accountService.resolveUiReady();
 			this.accountService.transitionEnd();
 
 			const {cyphAdminKey, redoxApiKey, redoxSecret, username}	= <{

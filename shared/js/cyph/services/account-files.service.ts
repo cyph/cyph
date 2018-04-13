@@ -730,6 +730,10 @@ export class AccountFilesService {
 			)
 		);
 
+		if (accountFileReferenceContainer.anonymousShare) {
+			return;
+		}
+
 		await this.accountDatabaseService.notify(username, NotificationTypes.File, await fileType);
 	}
 
