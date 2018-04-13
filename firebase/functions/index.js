@@ -376,16 +376,16 @@ exports.userPublicProfileSet	= functions.database.ref(
 });
 
 
-exports.userRegister	= functionsUser.onCreate(async (data, {params}) => {
-	const emailSplit	= (data.email || '').split('@');
+exports.userRegister	= functionsUser.onCreate(async (userRecord, {params}) => {
+	const emailSplit	= (userRecord.email || '').split('@');
 
 	if (emailSplit.length !== 2 || (
-		data.providerData && (
-			data.providerData.length !== 1 ||
-			data.providerData[0].providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID
+		userRecord.providerData && userRecord.providerData.find(o =>
+			o.providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID
 		)
 	)) {
-		return auth.deleteUser(data.uid);
+		console.error(`Deleting user: ${JSON.stringify(userRecord)}`);
+		return auth.deleteUser(userRecord.uid);
 	}
 
 	const username	= emailSplit[0];
@@ -393,7 +393,7 @@ exports.userRegister	= functionsUser.onCreate(async (data, {params}) => {
 
 	return database.ref(`${namespace}/pendingSignups/${username}`).set({
 		timestamp: admin.database.ServerValue.TIMESTAMP,
-		uid: data.uid
+		uid: userRecord.uid
 	});
 });
 
