@@ -352,7 +352,7 @@ export class AccountFilesService {
 	}
 
 	/** @ignore */
-	private fileIsForm (file: IAppointment|IEhrApiKey|IForm|IQuillDelta|IWallet|File) : boolean {
+	private fileIsForm (file: AccountFile) : boolean {
 		const maybeForm	= <any> file;
 		return maybeForm.components instanceof Array;
 	}
