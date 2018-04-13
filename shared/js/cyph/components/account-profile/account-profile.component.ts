@@ -241,10 +241,10 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 		public readonly accountFilesService: AccountFilesService,
 
 		/** @see AccountOrganizationsService */
-		public readonly accountSettingsService: AccountSettingsService,
-
-		/** @see AccountOrganizationsService */
 		public readonly accountOrganizationsService: AccountOrganizationsService,
+
+		/** @see AccountSettingsService */
+		public readonly accountSettingsService: AccountSettingsService,
 
 		/** @see AccountUserLookupService */
 		public readonly accountUserLookupService: AccountUserLookupService,
