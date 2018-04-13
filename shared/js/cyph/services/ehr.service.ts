@@ -16,8 +16,8 @@ export class EHRService {
 				apiKey,
 				masterAPIKey: masterApiKey
 			},
-			method: 'DELETE',
-			url: this.envService.baseUrl + 'redox/apikey'
+			method: 'POST',
+			url: this.envService.baseUrl + 'redox/deleteapikey'
 		});
 	}
 
@@ -29,7 +29,7 @@ export class EHRService {
 				username
 			},
 			method: 'POST',
-			url: this.envService.baseUrl + 'redox/apikey'
+			url: this.envService.baseUrl + 'redox/newapikey'
 		});
 	}
 

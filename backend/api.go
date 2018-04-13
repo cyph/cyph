@@ -24,8 +24,9 @@ func init() {
 	handleFuncs("/geolocation/{language}", Handlers{methods.GET: getGeolocation})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
 	handleFuncs("/preauth/{id}", Handlers{methods.POST: preAuth})
-	handleFuncs("/redox/apikey", Handlers{methods.DELETE: redoxDeleteAPIKey, methods.POST: redoxNewAPIKey})
 	handleFuncs("/redox/credentials", Handlers{methods.PUT: redoxAddCredentials})
+	handleFuncs("/redox/deleteapikey", Handlers{methods.POST: redoxDeleteAPIKey})
+	handleFuncs("/redox/newapikey", Handlers{methods.POST: redoxNewAPIKey})
 	handleFuncs("/redox/execute", Handlers{methods.POST: redoxRunCommand})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
 	handleFuncs("/timestamp", Handlers{methods.GET: getTimestamp})
@@ -518,7 +519,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 	/* Get Redox API credentials */
 
 	apiKeyOrMasterAPIKey := sanitize(h.Request.PostFormValue("apiKeyOrMasterAPIKey"))
-	redoxCommand := sanitize(h.Request.PostFormValue("redoxCommand"))
+	redoxCommand := h.Request.PostFormValue("redoxCommand")
 	timestamp := time.Now().Unix()
 
 	redoxCredentials := &RedoxCredentials{}
@@ -688,8 +689,8 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 		h.Context,
 		datastore.NewKey(h.Context, "RedoxRequestLog", "", 0, nil),
 		&RedoxRequestLog{
-			RedoxCommand: redoxCommand,
-			Response:     responseBody,
+			RedoxCommand: sanitize(redoxCommand),
+			Response:     sanitize(responseBody),
 			Timestamp:    timestamp,
 			Username:     username,
 		},

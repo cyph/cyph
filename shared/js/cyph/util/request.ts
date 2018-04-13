@@ -116,7 +116,7 @@ const baseRequest	= <R, T> (
 				}
 			}
 
-			if (!statusOk || !response) {
+			if (!statusOk || response === undefined) {
 				const err	= error || response || new Error('Request failed.');
 				progress.error(err);
 				throw err;
