@@ -22,6 +22,7 @@ import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
 import {BlankComponent} from '../components/blank';
 import {NotFoundComponent} from '../components/not-found';
+import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
 import {newPatient} from '../forms';
 import {AccountUserTypes, ChatMessageValue} from '../proto';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
@@ -160,6 +161,10 @@ export const account: Route	= {
 			path: 'staff',
 			component: AccountContactsComponent,
 			data: {userTypeFilter: AccountUserTypes.TelehealthAdmin}
+		},
+		{
+			path: 'upload-ehr-credentials/:cyphAdminKey/:redoxApiKey/:redoxSecret/:username',
+			component: UploadEhrCredentialsComponent
 		},
 		{
 			path: 'video/:username/:sessionSubID',

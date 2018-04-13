@@ -31,6 +31,7 @@ import {AccountUserRatingComponent} from '../components/account-user-rating';
 import {FooterComponent} from '../components/footer';
 import {LinkConnectionComponent} from '../components/link-connection';
 import {NotFoundComponent} from '../components/not-found';
+import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
@@ -84,7 +85,8 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountUserRatingComponent,
 		FooterComponent,
 		LinkConnectionComponent,
-		NotFoundComponent
+		NotFoundComponent,
+		UploadEhrCredentialsComponent
 	],
 	entryComponents: [
 		AccountAppointmentsComponent,
@@ -116,7 +118,8 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountUserRatingComponent,
 		FooterComponent,
 		LinkConnectionComponent,
-		NotFoundComponent
+		NotFoundComponent,
+		UploadEhrCredentialsComponent
 	],
 	exports: [
 		AccountAppointmentsComponent,
@@ -148,7 +151,8 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountUserRatingComponent,
 		FooterComponent,
 		LinkConnectionComponent,
-		NotFoundComponent
+		NotFoundComponent,
+		UploadEhrCredentialsComponent
 	],
 	imports: [
 		CyphCommonModule,

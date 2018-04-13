@@ -24,9 +24,10 @@ func init() {
 	handleFuncs("/geolocation/{language}", Handlers{methods.GET: getGeolocation})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
 	handleFuncs("/preauth/{id}", Handlers{methods.POST: preAuth})
+	handleFuncs("/redox/apikey/delete", Handlers{methods.POST: redoxDeleteAPIKey})
+	handleFuncs("/redox/apikey/generate", Handlers{methods.POST: redoxGenerateAPIKey})
+	handleFuncs("/redox/apikey/verify", Handlers{methods.POST: redoxVerifyAPIKey})
 	handleFuncs("/redox/credentials", Handlers{methods.PUT: redoxAddCredentials})
-	handleFuncs("/redox/deleteapikey", Handlers{methods.POST: redoxDeleteAPIKey})
-	handleFuncs("/redox/newapikey", Handlers{methods.POST: redoxNewAPIKey})
 	handleFuncs("/redox/execute", Handlers{methods.POST: redoxRunCommand})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
 	handleFuncs("/timestamp", Handlers{methods.GET: getTimestamp})
@@ -489,7 +490,7 @@ func redoxDeleteAPIKey(h HandlerArgs) (interface{}, int) {
 	return "", http.StatusOK
 }
 
-func redoxNewAPIKey(h HandlerArgs) (interface{}, int) {
+func redoxGenerateAPIKey(h HandlerArgs) (interface{}, int) {
 	masterAPIKey := sanitize(h.Request.PostFormValue("masterAPIKey"))
 	username := sanitize(h.Request.PostFormValue("username"))
 
@@ -513,6 +514,32 @@ func redoxNewAPIKey(h HandlerArgs) (interface{}, int) {
 	}
 
 	return apiKey, http.StatusOK
+}
+
+func redoxVerifyAPIKey(h HandlerArgs) (interface{}, int) {
+	apiKeyOrMasterAPIKey := sanitize(h.Request.PostFormValue("apiKeyOrMasterAPIKey"))
+
+	redoxCredentials := &RedoxCredentials{}
+
+	err := datastore.Get(
+		h.Context,
+		datastore.NewKey(
+			h.Context,
+			"RedoxCredentials",
+			apiKeyOrMasterAPIKey,
+			0,
+			nil,
+		),
+		redoxCredentials,
+	)
+
+	if err != nil {
+		return `{"isMaster": false, "isValid": false}`, http.StatusOK
+	} else if redoxCredentials.MasterAPIKey != "" {
+		return `{"isMaster": false, "isValid": true}`, http.StatusOK
+	} else {
+		return `{"isMaster": true, "isValid": true}`, http.StatusOK
+	}
 }
 
 func redoxRunCommand(h HandlerArgs) (interface{}, int) {

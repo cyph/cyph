@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {request, requestMaybeJSON} from '../util/request';
+import {request, requestJSON, requestMaybeJSON} from '../util/request';
 import {stringify} from '../util/serialization';
 import {EnvService} from './env.service';
 
@@ -9,6 +9,25 @@ import {EnvService} from './env.service';
  */
 @Injectable()
 export class EHRService {
+	/** Uploads EHR credentials and returns master API key. */
+	public async addCredentials (
+		cyphAdminKey: string,
+		redoxApiKey: string,
+		redoxSecret: string,
+		username: string
+	) : Promise<string> {
+		return request({
+			data: {
+				cyphAdminKey,
+				redoxAPIKey: redoxApiKey,
+				redoxSecret,
+				username
+			},
+			method: 'PUT',
+			url: this.envService.baseUrl + 'redox/credentials'
+		});
+	}
+
 	/** Deletes an API key issued with this master API key. */
 	public async deleteApiKey (apiKey: string, masterApiKey: string) : Promise<void> {
 		await request({
@@ -17,7 +36,7 @@ export class EHRService {
 				masterAPIKey: masterApiKey
 			},
 			method: 'POST',
-			url: this.envService.baseUrl + 'redox/deleteapikey'
+			url: this.envService.baseUrl + 'redox/apikey/delete'
 		});
 	}
 
@@ -29,7 +48,7 @@ export class EHRService {
 				username
 			},
 			method: 'POST',
-			url: this.envService.baseUrl + 'redox/newapikey'
+			url: this.envService.baseUrl + 'redox/apikey/generate'
 		});
 	}
 
@@ -43,6 +62,22 @@ export class EHRService {
 			method: 'POST',
 			url: this.envService.baseUrl + 'redox/execute'
 		});
+	}
+
+	/** Verifies an API key. */
+	public async verifyApiKey (apiKey: string) : Promise<{isMaster: boolean; isValid: boolean}> {
+		const response	= await requestJSON({
+			data: {
+				apiKeyOrMasterAPIKey: apiKey
+			},
+			method: 'POST',
+			url: this.envService.baseUrl + 'redox/apikey/verify'
+		});
+
+		return {
+			isMaster: (response && response.isMaster) === true,
+			isValid: (response && response.isValid) === true
+		};
 	}
 
 	constructor (

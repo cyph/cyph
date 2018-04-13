@@ -36,11 +36,13 @@ import {
 	BinaryProto,
 	BlobProto,
 	DataURIProto,
+	EhrApiKey,
 	Form,
 	IAccountFileRecord,
 	IAccountFileReference,
 	IAccountFileReferenceContainer,
 	IAppointment,
+	IEhrApiKey,
 	IForm,
 	NotificationTypes
 } from '../proto';
@@ -298,15 +300,24 @@ export class AccountFilesService {
 	}
 
 	/** @ignore */
-	private fileIsAppointment (file: IAppointment|IForm|IQuillDelta|File) : boolean {
+	private fileIsAppointment (file: IAppointment|IEhrApiKey|IForm|IQuillDelta|File) : boolean {
 		const maybeAppointment	= <any> file;
 		return maybeAppointment.calendarInvite !== undefined;
 	}
 
 	/** @ignore */
-	private fileIsDelta (file: IAppointment|IForm|IQuillDelta|File) : boolean {
+	private fileIsDelta (file: IAppointment|IEhrApiKey|IForm|IQuillDelta|File) : boolean {
 		const maybeDelta	= <any> file;
 		return typeof maybeDelta.chop === 'function' || maybeDelta.ops instanceof Array;
+	}
+
+	/** @ignore */
+	private fileIsEhrApiKey (file: IAppointment|IEhrApiKey|IForm|IQuillDelta|File) : boolean {
+		const maybeEhrApiKey	= <any> file;
+		return (
+			typeof maybeEhrApiKey.apiKey === 'string' &&
+			typeof maybeEhrApiKey.isMaster === 'boolean'
+		);
 	}
 
 	/** @ignore */
@@ -852,7 +863,7 @@ export class AccountFilesService {
 	 */
 	public upload (
 		name: string,
-		file: IQuillDelta|IQuillDelta[]|File|IAppointment|IForm,
+		file: IQuillDelta|IQuillDelta[]|File|IAppointment|IEhrApiKey|IForm,
 		shareWithUser?: string
 	) : {
 		progress: Observable<number>;
@@ -917,13 +928,21 @@ export class AccountFilesService {
 							undefined,
 							key
 						) :
-						this.accountDatabaseService.uploadItem(
-							url,
-							Form,
-							<Form> file,
-							SecurityModels.privateSigned,
-							key
-						)
+						this.fileIsEhrApiKey(file) ?
+							this.accountDatabaseService.uploadItem(
+								url,
+								EhrApiKey,
+								<EhrApiKey> file,
+								undefined,
+								key
+							) :
+							this.accountDatabaseService.uploadItem(
+								url,
+								Form,
+								<Form> file,
+								SecurityModels.privateSigned,
+								key
+							)
 		;
 
 		return {
@@ -939,7 +958,9 @@ export class AccountFilesService {
 								'cyph/note' :
 								this.fileIsAppointment(file) ?
 									'cyph/appointment' :
-									'cyph/form'
+									this.fileIsEhrApiKey(file) ?
+										'cyph/ehr-api-key' :
+										'cyph/form'
 					,
 					name,
 					recordType: file instanceof Blob ?
@@ -950,7 +971,9 @@ export class AccountFilesService {
 								AccountFileRecord.RecordTypes.Note :
 								this.fileIsAppointment(file) ?
 									AccountFileRecord.RecordTypes.Appointment :
-									AccountFileRecord.RecordTypes.Form
+									this.fileIsEhrApiKey(file) ?
+										AccountFileRecord.RecordTypes.EhrApiKey :
+										AccountFileRecord.RecordTypes.Form
 					,
 					size: file instanceof Blob ?
 						file.size :
