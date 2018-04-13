@@ -24,6 +24,11 @@ func init() {
 	handleFuncs("/geolocation/{language}", Handlers{methods.GET: getGeolocation})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
 	handleFuncs("/preauth/{id}", Handlers{methods.POST: preAuth})
+	handleFuncs("/redox/apikey/delete", Handlers{methods.POST: redoxDeleteAPIKey})
+	handleFuncs("/redox/apikey/generate", Handlers{methods.POST: redoxGenerateAPIKey})
+	handleFuncs("/redox/apikey/verify", Handlers{methods.POST: redoxVerifyAPIKey})
+	handleFuncs("/redox/credentials", Handlers{methods.PUT: redoxAddCredentials})
+	handleFuncs("/redox/execute", Handlers{methods.POST: redoxRunCommand})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
 	handleFuncs("/timestamp", Handlers{methods.GET: getTimestamp})
 
@@ -432,6 +437,295 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	return "", http.StatusOK
 }
 
+func redoxAddCredentials(h HandlerArgs) (interface{}, int) {
+	if sanitize(h.Request.PostFormValue("cyphAdminKey")) != cyphAdminKey {
+		return "", http.StatusForbidden
+	}
+
+	redoxAPIKey := sanitize(h.Request.PostFormValue("redoxAPIKey"))
+	redoxSecret := sanitize(h.Request.PostFormValue("redoxSecret"))
+	username := sanitize(h.Request.PostFormValue("username"))
+
+	masterAPIKey, err := generateAPIKey()
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	_, err = datastore.Put(
+		h.Context,
+		datastore.NewKey(h.Context, "RedoxCredentials", masterAPIKey, 0, nil),
+		&RedoxCredentials{
+			APIKey:      masterAPIKey,
+			RedoxAPIKey: redoxAPIKey,
+			RedoxSecret: redoxSecret,
+			Username:    username,
+		},
+	)
+
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return masterAPIKey, http.StatusOK
+}
+
+func redoxDeleteAPIKey(h HandlerArgs) (interface{}, int) {
+	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
+	masterAPIKey := sanitize(h.Request.PostFormValue("masterAPIKey"))
+
+	redoxCredentials := &RedoxCredentials{}
+	redoxCredentialsKey := datastore.NewKey(h.Context, "RedoxCredentials", apiKey, 0, nil)
+
+	if err := datastore.Get(h.Context, redoxCredentialsKey, redoxCredentials); err != nil {
+		return "Invalid API key.", http.StatusNotFound
+	}
+	if redoxCredentials.MasterAPIKey != masterAPIKey {
+		return "Invalid master API key.", http.StatusForbidden
+	}
+
+	if err := datastore.Delete(h.Context, redoxCredentialsKey); err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return "", http.StatusOK
+}
+
+func redoxGenerateAPIKey(h HandlerArgs) (interface{}, int) {
+	masterAPIKey := sanitize(h.Request.PostFormValue("masterAPIKey"))
+	username := sanitize(h.Request.PostFormValue("username"))
+
+	apiKey, err := generateAPIKey()
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	_, err = datastore.Put(
+		h.Context,
+		datastore.NewKey(h.Context, "RedoxCredentials", apiKey, 0, nil),
+		&RedoxCredentials{
+			APIKey:       apiKey,
+			MasterAPIKey: masterAPIKey,
+			Username:     username,
+		},
+	)
+
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return apiKey, http.StatusOK
+}
+
+func redoxVerifyAPIKey(h HandlerArgs) (interface{}, int) {
+	apiKeyOrMasterAPIKey := sanitize(h.Request.PostFormValue("apiKeyOrMasterAPIKey"))
+
+	redoxCredentials := &RedoxCredentials{}
+
+	err := datastore.Get(
+		h.Context,
+		datastore.NewKey(
+			h.Context,
+			"RedoxCredentials",
+			apiKeyOrMasterAPIKey,
+			0,
+			nil,
+		),
+		redoxCredentials,
+	)
+
+	if err != nil {
+		return `{"isMaster": false, "isValid": false}`, http.StatusOK
+	} else if redoxCredentials.MasterAPIKey != "" {
+		return `{"isMaster": false, "isValid": true}`, http.StatusOK
+	} else {
+		return `{"isMaster": true, "isValid": true}`, http.StatusOK
+	}
+}
+
+func redoxRunCommand(h HandlerArgs) (interface{}, int) {
+	/* Get Redox API credentials */
+
+	apiKeyOrMasterAPIKey := sanitize(h.Request.PostFormValue("apiKeyOrMasterAPIKey"))
+	redoxCommand := h.Request.PostFormValue("redoxCommand")
+	timestamp := time.Now().Unix()
+
+	redoxCredentials := &RedoxCredentials{}
+
+	err := datastore.Get(
+		h.Context,
+		datastore.NewKey(
+			h.Context,
+			"RedoxCredentials",
+			apiKeyOrMasterAPIKey,
+			0,
+			nil,
+		),
+		redoxCredentials,
+	)
+
+	if err != nil {
+		return "Invalid API key.", http.StatusNotFound
+	}
+
+	username := redoxCredentials.Username
+
+	if redoxCredentials.RedoxAPIKey == "" || redoxCredentials.RedoxSecret == "" {
+		if redoxCredentials.MasterAPIKey == "" {
+			return "Retired API key.", http.StatusNotFound
+		}
+
+		err := datastore.Get(
+			h.Context,
+			datastore.NewKey(
+				h.Context,
+				"RedoxCredentials",
+				redoxCredentials.MasterAPIKey,
+				0,
+				nil,
+			),
+			redoxCredentials,
+		)
+
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
+
+		if redoxCredentials.RedoxAPIKey == "" || redoxCredentials.RedoxSecret == "" {
+			return "Redox credentials not found.", http.StatusInternalServerError
+		}
+	}
+
+	/* Get Redox API auth token */
+
+	redoxAuth := &RedoxAuth{}
+	redoxAuthKey := datastore.NewKey(h.Context, "RedoxAuth", redoxCredentials.RedoxAPIKey, 0, nil)
+
+	err = datastore.Get(h.Context, redoxAuthKey, redoxAuth)
+
+	if err != nil || redoxAuth.AccessToken == "" || redoxAuth.Expires < (timestamp+3600) {
+		var req *http.Request
+
+		if redoxAuth.RefreshToken == "" {
+			req, err = http.NewRequest(
+				methods.POST,
+				"https://api.redoxengine.com/auth/authenticate",
+				bytes.NewBuffer([]byte(
+					`{"apiKey": "`+
+						redoxCredentials.RedoxAPIKey+
+						`", "secret": "`+
+						redoxCredentials.RedoxSecret+
+						`"}`,
+				)),
+			)
+		} else {
+			req, err = http.NewRequest(
+				methods.POST,
+				"https://api.redoxengine.com/auth/refreshToken",
+				bytes.NewBuffer([]byte(
+					`{"apiKey": "`+
+						redoxCredentials.RedoxAPIKey+
+						`", "refreshToken": "`+
+						redoxAuth.RefreshToken+
+						`"}`,
+				)),
+			)
+		}
+
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
+
+		req.Header.Add("Content-type", "application/json")
+
+		client := urlfetch.Client(h.Context)
+		resp, err := client.Do(req)
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
+
+		jsonBody, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
+
+		var body map[string]interface{}
+		err = json.Unmarshal(jsonBody, &body)
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
+
+		accessTokenDynamic, _ := body["accessToken"]
+		switch accessToken := accessTokenDynamic.(type) {
+		case string:
+			redoxAuth.AccessToken = accessToken
+		default:
+			return "Invalid Redox auth data.", http.StatusInternalServerError
+		}
+
+		expiresDynamic, _ := body["expires"]
+		switch expires := expiresDynamic.(type) {
+		case string:
+			expiryTimestamp, _ := time.Parse(time.RFC3339, expires)
+			redoxAuth.Expires = expiryTimestamp.Unix()
+		default:
+			return "Invalid Redox auth data.", http.StatusInternalServerError
+		}
+
+		refreshTokenDynamic, _ := body["refreshToken"]
+		switch refreshToken := refreshTokenDynamic.(type) {
+		case string:
+			redoxAuth.RefreshToken = refreshToken
+		default:
+			return "Invalid Redox auth data.", http.StatusInternalServerError
+		}
+
+		redoxAuth.RedoxAPIKey = redoxCredentials.RedoxAPIKey
+
+		datastore.Put(h.Context, redoxAuthKey, redoxAuth)
+	}
+
+	/* Make and log request */
+
+	req, err := http.NewRequest(
+		methods.POST,
+		"https://api.redoxengine.com/endpoint",
+		bytes.NewBuffer([]byte(redoxCommand)),
+	)
+
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	req.Header.Add("Authorization", "Bearer "+redoxAuth.AccessToken)
+	req.Header.Add("Content-type", "application/json")
+
+	client := urlfetch.Client(h.Context)
+	resp, err := client.Do(req)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	responseBody := string(responseBodyBytes)
+
+	datastore.Put(
+		h.Context,
+		datastore.NewKey(h.Context, "RedoxRequestLog", "", 0, nil),
+		&RedoxRequestLog{
+			RedoxCommand: sanitize(redoxCommand),
+			Response:     sanitize(responseBody),
+			Timestamp:    timestamp,
+			Username:     username,
+		},
+	)
+
+	return responseBody, http.StatusOK
+}
+
 func signup(h HandlerArgs) (interface{}, int) {
 	signup := getSignupFromRequest(h)
 	email := signup["email"].(string)
@@ -451,22 +745,35 @@ func signup(h HandlerArgs) (interface{}, int) {
 		method = methods.PUT
 	}
 
-	req, _ := http.NewRequest(
+	req, err := http.NewRequest(
 		method,
 		"https://cyph.prefinery.com/api/v2/betas/9034/testers"+resource+".json?api_key="+prefineryKey,
 		bytes.NewBuffer(jsonSignup),
 	)
 
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-type", "application/json")
 
 	client := urlfetch.Client(h.Context)
-	resp, _ := client.Do(req)
+	resp, err := client.Do(req)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
 
-	jsonBody, _ := ioutil.ReadAll(resp.Body)
+	jsonBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
 
 	var body map[string]interface{}
-	json.Unmarshal(jsonBody, &body)
+	err = json.Unmarshal(jsonBody, &body)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
 
 	useridDynamic, _ := body["id"]
 	switch userid := useridDynamic.(type) {

@@ -70,6 +70,8 @@ var orgdb, _ = geoip2.Open("GeoIP2-ISP.mmdb")
 
 var isProd = len(os.Getenv("PROD")) > 0
 
+var cyphAdminKey = os.Getenv("CYPH_ADMIN_KEY")
+
 var twilioSID = os.Getenv("TWILIO_SID")
 var twilioAuthToken = os.Getenv("TWILIO_AUTH_TOKEN")
 

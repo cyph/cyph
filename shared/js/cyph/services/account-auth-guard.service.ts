@@ -12,6 +12,7 @@ export class AccountAuthGuardService implements CanActivate, CanActivateChild {
 		'logout',
 		'profile',
 		'register',
+		'upload-ehr-credentials',
 		'welcome'
 	];
 

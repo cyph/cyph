@@ -11,6 +11,7 @@ import {AccountUserTypes} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';
+import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -241,6 +242,9 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 		/** @see AccountOrganizationsService */
 		public readonly accountOrganizationsService: AccountOrganizationsService,
+
+		/** @see AccountSettingsService */
+		public readonly accountSettingsService: AccountSettingsService,
 
 		/** @see AccountUserLookupService */
 		public readonly accountUserLookupService: AccountUserLookupService,

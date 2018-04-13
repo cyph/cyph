@@ -7,7 +7,7 @@ import {
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {MaybePromise} from '../maybe-promise-type';
-import {stringify, toQueryString} from './serialization';
+import {parse, stringify, toQueryString} from './serialization';
 import {staticHttpClient} from './static-services';
 
 
@@ -116,7 +116,7 @@ const baseRequest	= <R, T> (
 				}
 			}
 
-			if (!statusOk || !response) {
+			if (!statusOk || response === undefined) {
 				const err	= error || response || new Error('Request failed.');
 				progress.error(err);
 				throw err;
@@ -159,6 +159,35 @@ export const requestByteStream	= (o: {
 };
 
 /** Performs HTTP request. */
+export const requestBytes	= async (o: {
+	contentType?: string;
+	data?: any;
+	method?: string;
+	retries?: number;
+	url: string;
+}) : Promise<Uint8Array> => {
+	return requestByteStream(o).result;
+};
+
+/** Performs HTTP request. */
+export const requestMaybeJSON	= async (o: {
+	contentType?: string;
+	data?: any;
+	method?: string;
+	retries?: number;
+	url: string;
+}) : Promise<any> => {
+	const response	= await request(o);
+
+	try {
+		return parse(response);
+	}
+	catch (_) {
+		return response;
+	}
+};
+
+/** Performs HTTP request. */
 export const requestJSON	= async (o: {
 	contentType?: string;
 	data?: any;
@@ -169,15 +198,4 @@ export const requestJSON	= async (o: {
 	return (await baseRequest<any, any>({contentType: 'application/json', ...o}, 'json', res =>
 		res.body
 	)).result;
-};
-
-/** Performs HTTP request. */
-export const requestBytes	= async (o: {
-	contentType?: string;
-	data?: any;
-	method?: string;
-	retries?: number;
-	url: string;
-}) : Promise<Uint8Array> => {
-	return requestByteStream(o).result;
 };

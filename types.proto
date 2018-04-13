@@ -8,9 +8,10 @@ message AccountFileRecord {
 		Appointment = 0;
 		File = 1;
 		Doc = 2;
-		Form = 3;
-		Note = 4;
-		Wallet = 5;
+		EhrApiKey = 3;
+		Form = 4;
+		Note = 5;
+		Wallet = 6;
 	}
 
 	/** File ID. */
@@ -509,6 +510,15 @@ enum Currencies {
 	TWD = 21;
 }
 
+/** An EHR integration API key. */
+message EhrApiKey {
+	/** API key. */
+	required string apiKey = 1;
+
+	/** Indicates whether this is a master API key. */
+	required bool isMaster = 2;
+}
+
 /** Angular CLI environment configuration. */
 message Environment {
 	/** Custom build environment data. */
@@ -829,7 +839,7 @@ message PatientInfo {
 		/** The patient's address. */
 		Address address = 1;
 
-		/** Reference: http:/** www.nationsonline.org/oneworld/country_code_list.htm */
+		/** Reference: http: http://www.nationsonline.org/oneworld/country_code_list.htm */
 		repeated string citizenship = 2;
 
 		/** Date and Time the patient was proclaimed deceased. (Redox: ISO 8601 Format) */

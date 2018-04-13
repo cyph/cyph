@@ -36,11 +36,13 @@ import {
 	BinaryProto,
 	BlobProto,
 	DataURIProto,
+	EhrApiKey,
 	Form,
 	IAccountFileRecord,
 	IAccountFileReference,
 	IAccountFileReferenceContainer,
 	IAppointment,
+	IEhrApiKey,
 	IForm,
 	IWallet,
 	NotificationTypes,
@@ -329,19 +331,28 @@ export class AccountFilesService {
 	}
 
 	/** @ignore */
-	private fileIsAppointment (file: IAppointment|IForm|IQuillDelta|IWallet|File) : boolean {
+	private fileIsAppointment (file: IAppointment|IEhrApiKey|IForm|IQuillDelta|IWallet|File) : boolean {
 		const maybeAppointment	= <any> file;
 		return maybeAppointment.calendarInvite !== undefined;
 	}
 
 	/** @ignore */
-	private fileIsDelta (file: IAppointment|IForm|IQuillDelta|IWallet|File) : boolean {
+	private fileIsDelta (file: IAppointment|IEhrApiKey|IForm|IQuillDelta|IWallet|File) : boolean {
 		const maybeDelta	= <any> file;
 		return typeof maybeDelta.chop === 'function' || maybeDelta.ops instanceof Array;
 	}
 
 	/** @ignore */
-	private fileIsForm (file: IAppointment|IForm|IQuillDelta|IWallet|File) : boolean {
+	private fileIsEhrApiKey (file: IAppointment|IEhrApiKey|IForm|IQuillDelta|IWallet|File) : boolean {
+		const maybeEhrApiKey	= <any> file;
+		return (
+			typeof maybeEhrApiKey.apiKey === 'string' &&
+			typeof maybeEhrApiKey.isMaster === 'boolean'
+		);
+	}
+
+	/** @ignore */
+	private fileIsForm (file: IAppointment|IEhrApiKey|IForm|IQuillDelta|IWallet|File) : boolean {
 		const maybeForm	= <any> file;
 		return maybeForm.components instanceof Array;
 	}
@@ -812,6 +823,10 @@ export class AccountFilesService {
 			)
 		);
 
+		if (accountFileReferenceContainer.anonymousShare) {
+			return;
+		}
+
 		await this.accountDatabaseService.notify(username, NotificationTypes.File, await fileType);
 	}
 
@@ -945,7 +960,7 @@ export class AccountFilesService {
 	 */
 	public upload (
 		name: string,
-		file: IQuillDelta|IQuillDelta[]|File|IAppointment|IForm|IWallet,
+		file: IQuillDelta|IQuillDelta[]|File|IAppointment|IEhrApiKey|IForm|IWallet,
 		shareWithUser?: string
 	) : {
 		progress: Observable<number>;
@@ -1010,21 +1025,29 @@ export class AccountFilesService {
 							undefined,
 							key
 						) :
-						this.fileIsForm(file) ?
+						this.fileIsEhrApiKey(file) ?
 							this.accountDatabaseService.uploadItem(
 								url,
-								Form,
-								<Form> file,
-								SecurityModels.privateSigned,
-								key
-							) :
-							this.accountDatabaseService.uploadItem(
-								url,
-								Wallet,
-								<Wallet> file,
+								EhrApiKey,
+								<EhrApiKey> file,
 								undefined,
 								key
-							)
+							) :
+							this.fileIsForm(file) ?
+								this.accountDatabaseService.uploadItem(
+									url,
+									Form,
+									<Form> file,
+									SecurityModels.privateSigned,
+									key
+								) :
+								this.accountDatabaseService.uploadItem(
+									url,
+									Wallet,
+									<Wallet> file,
+									undefined,
+									key
+								)
 		;
 
 		return {
@@ -1040,9 +1063,11 @@ export class AccountFilesService {
 								'cyph/note' :
 								this.fileIsAppointment(file) ?
 									'cyph/appointment' :
-									this.fileIsForm(file) ?
-										'cyph/form' :
-										'cyph/wallet'
+									this.fileIsEhrApiKey(file) ?
+										'cyph/ehr-api-key' :
+										this.fileIsForm(file) ?
+											'cyph/form' :
+											'cyph/wallet'
 					,
 					name,
 					recordType: file instanceof Blob ?
@@ -1053,9 +1078,11 @@ export class AccountFilesService {
 								AccountFileRecord.RecordTypes.Note :
 								this.fileIsAppointment(file) ?
 									AccountFileRecord.RecordTypes.Appointment :
-									this.fileIsForm(file) ?
-										AccountFileRecord.RecordTypes.Form :
-										AccountFileRecord.RecordTypes.Wallet
+									this.fileIsEhrApiKey(file) ?
+										AccountFileRecord.RecordTypes.EhrApiKey :
+										this.fileIsForm(file) ?
+											AccountFileRecord.RecordTypes.Form :
+											AccountFileRecord.RecordTypes.Wallet
 					,
 					size: file instanceof Blob ?
 						file.size :

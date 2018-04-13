@@ -30,8 +30,8 @@ import {BinaryProto, NotificationTypes, StringProto} from '../proto';
 import {compareArrays} from '../util/compare';
 import {getOrSetDefault, getOrSetDefaultObservable} from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
-import {request, requestByteStream} from '../util/request';
-import {deserialize, parse, serialize, stringify} from '../util/serialization';
+import {requestByteStream, requestMaybeJSON} from '../util/request';
+import {deserialize, serialize, stringify} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful, sleep, waitForValue} from '../util/wait';
@@ -187,7 +187,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async callFunction (name: string, data: any) : Promise<any> {
-		const result	= await request({
+		return requestMaybeJSON({
 			contentType: 'application/json',
 			data: stringify(data),
 			method: 'POST',
@@ -197,13 +197,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 					this.envService.firebaseConfig.projectId
 				}.cloudfunctions.net/${name}`
 		});
-
-		try {
-			return parse(result);
-		}
-		catch {
-			return result;
-		}
 	}
 
 	/** @inheritDoc */

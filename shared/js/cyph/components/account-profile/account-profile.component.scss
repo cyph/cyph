@@ -74,6 +74,19 @@ mat-card {
 	@include transition(opacity 0.35s ease-in-out);
 }
 
+.change-avatar {
+	opacity: 0;
+	position: absolute;
+	font-size: 3em;
+	width: 6em;
+	height: 6em;
+
+	&:hover {
+		opacity: 1;
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+}
+
 @media (max-height: 600px) {
 	:host > .editing .edit-hide {
 		opacity: 0;
