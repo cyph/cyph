@@ -212,6 +212,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	;
 
 	/** @ignore */
+	private readonly toggleLock: LockFunction		= lockFunction();
+
+	/** @ignore */
 	private readonly webRTC: BehaviorSubject<any>	= new BehaviorSubject(undefined);
 
 	/** @inheritDoc */
@@ -599,45 +602,47 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @inheritDoc */
 	public async toggle (medium?: 'audio'|'video', shouldPause?: boolean) : Promise<void> {
-		const webRTC	= await this.getWebRTC();
+		return this.toggleLock(async () => {
+			const webRTC	= await this.getWebRTC();
 
-		if (medium === 'audio' || medium === undefined) {
-			const oldAudio	= this.outgoingStream.audio;
+			if (medium === 'audio' || medium === undefined) {
+				const oldAudio	= this.outgoingStream.audio;
 
-			this.outgoingStream.audio	=
-				shouldPause === false ||
-				(shouldPause === undefined && !this.outgoingStream.audio)
-			;
+				this.outgoingStream.audio	=
+					shouldPause === false ||
+					(shouldPause === undefined && !this.outgoingStream.audio)
+				;
 
-			if (oldAudio !== this.outgoingStream.audio) {
-				if (this.outgoingStream.audio) {
-					webRTC.unmute();
-				}
-				else {
-					webRTC.mute();
-				}
-			}
-		}
-
-		if (medium === 'video' || medium === undefined) {
-			const oldVideo	= this.outgoingStream.video;
-
-			this.outgoingStream.video	=
-				shouldPause === false ||
-				(shouldPause === undefined && !this.outgoingStream.video)
-			;
-
-			if (oldVideo !== this.outgoingStream.video) {
-				if (this.outgoingStream.video) {
-					webRTC.resumeVideo();
-				}
-				else {
-					webRTC.pauseVideo();
+				if (oldAudio !== this.outgoingStream.audio) {
+					if (this.outgoingStream.audio) {
+						webRTC.unmute();
+					}
+					else {
+						webRTC.mute();
+					}
 				}
 			}
-		}
 
-		webRTC.connection.emit('streamUpdate', this.outgoingStream);
+			if (medium === 'video' || medium === undefined) {
+				const oldVideo	= this.outgoingStream.video;
+
+				this.outgoingStream.video	=
+					shouldPause === false ||
+					(shouldPause === undefined && !this.outgoingStream.video)
+				;
+
+				if (oldVideo !== this.outgoingStream.video) {
+					if (this.outgoingStream.video) {
+						webRTC.resumeVideo();
+					}
+					else {
+						webRTC.pauseVideo();
+					}
+				}
+			}
+
+			webRTC.connection.emit('streamUpdate', this.outgoingStream);
+		});
 	}
 
 	constructor (

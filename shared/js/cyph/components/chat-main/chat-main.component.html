@@ -203,12 +203,12 @@
 						p2pService.voiceCallButton() :
 						undefined
 				'
-				(mouseenter)='
+				(pointerenter)='
 					chatService.walkieTalkieMode ?
 						p2pWebRTCService.toggle("audio", false) :
 						undefined
 				'
-				(mouseleave)='
+				(pointerout)='
 					chatService.walkieTalkieMode ?
 						p2pWebRTCService.toggle("audio", true) :
 						undefined
