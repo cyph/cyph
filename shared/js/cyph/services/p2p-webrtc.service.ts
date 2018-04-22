@@ -417,13 +417,17 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 					return o;
 				}).
-				filter(o => o.urls && o.urls.length > 0).
+				filter(o =>
+					o.urls &&
+					o.urls.length > 0 &&
+					o.urls !== 'turn:global.turn.twilio.com:3478?transport=tcp'
+				).
 				concat(
 					!this.sessionService.apiFlags.disableP2P ?
 						{urls: 'stun:stun.l.google.com:19302'} :
 						[]
 				).
-				slice(0, 4)
+				slice(0, 3)
 			;
 
 			log({iceServers, p2pSessionData});
