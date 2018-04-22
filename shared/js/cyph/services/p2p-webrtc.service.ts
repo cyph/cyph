@@ -489,7 +489,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			}
 		);
 
-		webRTC.on('localMediaError', async () => {
+		webRTC.on('localMediaError', () => {
 			this.localMediaError	= true;
 		});
 
