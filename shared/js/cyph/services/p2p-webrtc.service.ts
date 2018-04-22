@@ -13,6 +13,7 @@ import {ISessionCommand} from '../proto';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {lockFunction} from '../util/lock';
+import {log} from '../util/log';
 import {request} from '../util/request';
 import {parse} from '../util/serialization';
 import {uuid} from '../util/uuid';
@@ -390,6 +391,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		const $localVideo	= await waitForIterable<JQuery>(await this.localVideo);
 		const $remoteVideo	= await waitForIterable<JQuery>(await this.remoteVideo);
+
+		log({p2pSessionData});
 
 		const webRTC	= new SimpleWebRTC({
 			adjustPeerVolume: false,
