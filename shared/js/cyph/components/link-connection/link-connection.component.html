@@ -112,7 +112,11 @@
 	<br />
 	<br />
 
-	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='enableAdvancedFeatures'>
+	<div
+		fxLayout='row'
+		fxLayoutAlign='center center'
+		*ngIf='envService.environment.customBuild?.config.pro'
+	>
 		<div fxFlex fxFlex.gt-md='50' fxLayout='column'>
 			<div fxLayout='row' fxLayoutAlign='center center'>
 				<mat-slide-toggle [(ngModel)]='advancedFeatures' cyphTranslate>
@@ -135,12 +139,14 @@
 						<button
 							mat-icon-button
 							matTooltip='Save'
+							cyphTranslate
 							(click)='chatService.setQueuedMessage(queuedMessageDraft)'
 						>
 							<mat-icon>save</mat-icon>
 						</button>
 						<mat-button-toggle
-							matTooltip='Self-destruct'
+							matTooltip='Self-Destruct'
+							cyphTranslate
 							[checked]='chatService.chatSelfDestruct'
 							(change)='chatService.chatSelfDestruct = !chatService.chatSelfDestruct'
 						>
@@ -163,6 +169,16 @@
 						&nbsp;
 						<span cyphTranslate>Seconds</span>
 					</div>
+				</div>
+				<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
+					<mat-button-toggle
+						matTooltip='Walkie Talkie Mode'
+						cyphTranslate
+						[checked]='chatService.walkieTalkieMode'
+						(change)='chatService.walkieTalkieMode = !chatService.walkieTalkieMode'
+					>
+						<mat-icon svgIcon='walkie-talkie'></mat-icon>
+					</mat-button-toggle>
 				</div>
 			</div>
 		</div>

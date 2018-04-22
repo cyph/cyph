@@ -23,6 +23,7 @@ import {EnvService} from './env.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {ScrollService} from './scroll.service';
+import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
@@ -142,6 +143,7 @@ export class AccountChatService extends ChatService {
 		p2pWebRTCService: P2PWebRTCService,
 		scrollService: ScrollService,
 		sessionService: SessionService,
+		sessionCapabilitiesService: SessionCapabilitiesService,
 		sessionInitService: SessionInitService,
 		stringsService: StringsService,
 
@@ -167,6 +169,7 @@ export class AccountChatService extends ChatService {
 			p2pWebRTCService,
 			scrollService,
 			sessionService,
+			sessionCapabilitiesService,
 			sessionInitService,
 			stringsService
 		);

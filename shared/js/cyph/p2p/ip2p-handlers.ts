@@ -12,6 +12,9 @@ export interface IP2PHandlers {
 		isAccepted: boolean
 	) => Promise<boolean>;
 
+	/** Indicates whether audio should be enabled by default. */
+	audioDefaultEnabled: () => boolean;
+
 	/** Canceled handler. */
 	canceled: () => MaybePromise<void>;
 

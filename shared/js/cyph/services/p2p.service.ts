@@ -38,6 +38,7 @@ export class P2PService {
 				title: this.stringsService.p2pTitle
 			});
 		},
+		audioDefaultEnabled: () => !this.chatService.walkieTalkieMode,
 		canceled: () => {
 			this.dialogService.alert({
 				content: this.stringsService.p2pCanceled,
