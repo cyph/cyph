@@ -392,7 +392,34 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		const $localVideo	= await waitForIterable<JQuery>(await this.localVideo);
 		const $remoteVideo	= await waitForIterable<JQuery>(await this.remoteVideo);
 
-		log({p2pSessionData});
+		const iceServers	= parse<RTCIceServer[]>(p2pSessionData.iceServers).
+			map(o => {
+				if ((<any> o).url !== undefined) {
+					o.urls	= (<any> o).url;
+					delete (<any> o).url;
+				}
+
+				if (this.sessionService.apiFlags.disableP2P) {
+					o.urls	= typeof o.urls === 'string' && o.urls.indexOf('stun:') !== 0 ?
+						o.urls :
+						o.urls instanceof Array ?
+							o.urls.filter((url: string) => url.indexOf('stun:') !== 0) :
+							undefined
+					;
+				}
+
+				return o;
+			}).
+			filter(o => o.urls && o.urls.length > 0).
+			concat(
+				!this.sessionService.apiFlags.disableP2P ?
+					{urls: 'stun:stun.l.google.com:19302'} :
+					[]
+			).
+			slice(0, 4)
+		;
+
+		log({iceServers, p2pSessionData});
 
 		const webRTC	= new SimpleWebRTC({
 			adjustPeerVolume: false,
@@ -450,33 +477,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			debug: env.environment.local,
 			localVideoEl: $localVideo[0],
 			media: this.outgoingStream,
-			peerConnectionConfig: {
-				iceServers: parse<RTCIceServer[]>(p2pSessionData.iceServers).
-					map(o => {
-						if ((<any> o).url !== undefined) {
-							o.urls	= (<any> o).url;
-							delete (<any> o).url;
-						}
-
-						if (this.sessionService.apiFlags.disableP2P) {
-							o.urls	= typeof o.urls === 'string' && o.urls.indexOf('stun:') !== 0 ?
-								o.urls :
-								o.urls instanceof Array ?
-									o.urls.filter((url: string) => url.indexOf('stun:') !== 0) :
-									undefined
-							;
-						}
-
-						return o;
-					}).
-					filter(o => o.urls && o.urls.length > 0).
-					concat(
-						!this.sessionService.apiFlags.disableP2P ?
-							{urls: 'stun:stun.l.google.com:19302'} :
-							[]
-					).
-					slice(0, 4)
-			},
+			peerConnectionConfig: {iceServers},
 			remoteVideosEl: $remoteVideo[0]
 		});
 
