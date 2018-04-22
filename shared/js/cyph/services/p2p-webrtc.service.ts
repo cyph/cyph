@@ -464,6 +464,13 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 							;
 						}
 
+						if (
+							typeof o.urls === 'string' &&
+							!!o.urls.match(/^turn:.*?:443\?transport=tcp/)
+						) {
+							o.urls	= [`turns:${o.urls.slice(5)}`, o.urls];
+						}
+
 						return o;
 					}).
 					filter(o => o.urls && o.urls.length > 0).
@@ -472,7 +479,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 							{urls: 'stun:stun.l.google.com:19302'} :
 							[]
 					).
-					slice(0, 2)
+					slice(0, 4)
 			},
 			remoteVideosEl: $remoteVideo[0]
 		});
@@ -545,7 +552,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		this.p2pSessionData	= isPassive && !this.sessionService.state.isAlice ?
 			undefined :
 			{
-				iceServers: await request({retries: 5, url: env.baseUrl + 'iceservers'}),
+				iceServers: await request({retries: 5, url: env.baseUrl + 'iceservers'}).catch(
+					() => '[]'
+				),
 				id: uuid(),
 				isAlice: true
 			}
