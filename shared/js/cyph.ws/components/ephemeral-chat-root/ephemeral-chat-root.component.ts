@@ -156,10 +156,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		}
 
 		/* If unsupported, warn and then close window */
-		if (
-			this.sessionInitService.callType &&
-			!(await this.sessionCapabilitiesService.localCapabilities).p2p
-		) {
+		if (this.sessionInitService.callType && !P2PWebRTCService.isSupported) {
 			await this.dialogService.alert({
 				content: this.envService.isIOS ?
 					this.stringsService.p2pDisabledLocalIOS :
@@ -265,9 +262,6 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 
 		/** @ignore */
 		private readonly router: Router,
-
-		/** @ignore */
-		private readonly sessionCapabilitiesService: SessionCapabilitiesService,
 
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService,

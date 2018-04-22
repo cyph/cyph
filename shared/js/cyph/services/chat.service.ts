@@ -35,6 +35,7 @@ import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {ScrollService} from './scroll.service';
+import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
@@ -98,6 +99,9 @@ export class ChatService {
 
 	/** Indicates whether the chat is ready to be displayed. */
 	public initiated: boolean				= false;
+
+	/** Indicates whether "walkie talkie" mode is enabled for calls. */
+	public walkieTalkieMode: boolean		= false;
 
 	/** @ignore */
 	private async addTextMessage (o: ISessionMessageData) : Promise<void> {
@@ -589,6 +593,9 @@ export class ChatService {
 		protected readonly sessionService: SessionService,
 
 		/** @ignore */
+		protected readonly sessionCapabilitiesService: SessionCapabilitiesService,
+
+		/** @ignore */
 		protected readonly sessionInitService: SessionInitService,
 
 		/** @ignore */
@@ -630,6 +637,8 @@ export class ChatService {
 			);
 
 			this.sessionService.connected.then(async () => {
+				this.sessionCapabilitiesService.resolveWalkieTalkieMode(this.walkieTalkieMode);
+
 				if (callType !== undefined) {
 					this.sessionService.yt().then(async () => {
 						await this.sessionService.freezePong.pipe(
@@ -733,6 +742,10 @@ export class ChatService {
 				await Promise.race([this.sessionService.closed, lockData.stillOwner.toPromise()]);
 				this.sessionService.off(rpcEvents.text, f);
 			});
+		});
+
+		this.sessionCapabilitiesService.capabilities.then(capabilities => {
+			this.walkieTalkieMode	= capabilities.walkieTalkieMode;
 		});
 	}
 }

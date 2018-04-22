@@ -161,5 +161,10 @@ export class CyphWebModule {
 			'medical-forms',
 			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/medical-forms.svg')
 		);
+
+		matIconRegistry.addSvgIcon(
+			'walkie-talkie',
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/walkie-talkie.svg')
+		);
 	}
 }

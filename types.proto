@@ -1028,6 +1028,9 @@ message Review {
 message SessionCapabilities {
 	/** P2P networking / WebRTC. */
 	required bool p2p = 1;
+
+	/** Walkie talkie mode active by default. */
+	required bool walkieTalkieMode = 2;
 }
 
 /** Misc information about the state of a chat. */

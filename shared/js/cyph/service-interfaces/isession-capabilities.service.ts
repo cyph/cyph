@@ -13,4 +13,7 @@ export interface ISessionCapabilitiesService {
 
 	/** Sets localCapabilities.p2p. */
 	resolveP2PSupport: (isSupported: boolean) => void;
+
+	/** Sets localCapabilities.walkieTalkieMode. */
+	resolveWalkieTalkieMode: (walkieTalkieMode: boolean) => void;
 }
