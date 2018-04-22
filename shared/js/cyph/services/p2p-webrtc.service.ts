@@ -76,9 +76,9 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @ignore */
 	private readonly commands	= {
-		accept: () : void => {
-			this.join();
-		},
+		accept: async () : Promise<void> =>
+			this.join()
+		,
 
 		decline: async () : Promise<void> => {
 			this.isAccepted		= false;
@@ -123,7 +123,14 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			}
 		},
 
-		webRTC: (data: {args: any[]; event: string}) : void => {
+		webRTC: async (
+			data: {args: any[]; event: string},
+			waitForWebRTC: boolean = true
+		) : Promise<void> => {
+			if (waitForWebRTC) {
+				await this.getWebRTC();
+			}
+
 			eventManager.trigger(P2PWebRTCService.constants.webRTC + data.event, data.args);
 		}
 	};
@@ -238,6 +245,11 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	public videoEnabled								= false;
 
 	/** @ignore */
+	private async getWebRTC () : Promise<any> {
+		return this.webRTC.pipe(filterUndefinedOperator(), take(1)).toPromise();
+	}
+
+	/** @ignore */
 	private async handleLoadingEvent (
 		webRTC: {on: (event: string, f: () => void) => void},
 		event: {name: string; occurred: boolean},
@@ -277,7 +289,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		if (this.isAccepted && method) {
 			if (this.p2pSessionData && command.additionalData === this.p2pSessionData.id) {
-				method(
+				await method(
 					command.argument && command.argument.length > 0 ?
 						msgpack.decode(command.argument) :
 						undefined
@@ -384,6 +396,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			if (this.webRTC.value || !this.p2pSessionData) {
 				return;
 			}
+
+			this.webRTC.next(undefined);
 
 			this.loading				= true;
 			this.incomingStream.audio	= this.outgoingStream.audio;
@@ -532,7 +546,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			webRTC.startLocalVideo();
 
 			if (!p2pSessionData.isAlice) {
-				this.commands.webRTC({args: [p2pSessionData.id], event: 'connect'});
+				await this.commands.webRTC({args: [p2pSessionData.id], event: 'connect'}, false);
 			}
 
 			(await this.handlers).connected(true);
@@ -595,7 +609,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @inheritDoc */
 	public async toggle (medium?: 'audio'|'video', shouldPause?: boolean) : Promise<void> {
-		const webRTC	= await this.webRTC.pipe(filterUndefinedOperator(), take(1)).toPromise();
+		const webRTC	= await this.getWebRTC();
 
 		if (medium === 'audio' || medium === undefined) {
 			const oldAudio	= this.outgoingStream.audio;
