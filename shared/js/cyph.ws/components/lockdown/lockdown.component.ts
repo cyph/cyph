@@ -50,7 +50,11 @@ export class LockdownComponent implements OnInit {
 		else if (password) {
 			const owner	= await this.databaseService.callFunction('environmentUnlock', {
 				id: this.potassiumService.toHex(
-					await this.potassiumService.hash.hash(password)
+					(await this.potassiumService.passwordHash.hash(
+						password,
+						this.databaseService.namespace +
+						'Eaf60vuVWm67dNISjm6qdTGqgEhIW4Oes+BTsiuNjvs='
+					)).hash
 				),
 				namespace: this.databaseService.namespace
 			}).catch(

@@ -59,6 +59,7 @@ const databaseService	= {
 	database,
 	functionsUser,
 	messaging,
+	processURL,
 	async getItem (namespace, url, proto, skipSignature, decompress) {
 		url	= processURL(namespace, url);
 
