@@ -383,6 +383,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		this.videoEnabled			= this.outgoingStream.video;
 		this.isActive				= true;
 
+		let audioSetUp				= false;
+
 		const p2pSessionData			= this.p2pSessionData;
 		const webRTCEvents: string[]	= [];
 
@@ -487,6 +489,15 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			this.localMediaError	= true;
 		});
 
+		webRTC.on('videoAdded', async () => {
+			if (audioSetUp) {
+				return;
+			}
+			audioSetUp	= true;
+
+			this.toggle('audio', !(await this.handlers).audioDefaultEnabled());
+		});
+
 		this.handleLoadingEvent(webRTC, this.loadingEvents.readyToCall, () => {
 			webRTC.joinRoom(P2PWebRTCService.constants.webRTC);
 		});
@@ -504,8 +515,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		});
 
 		webRTC.startLocalVideo();
-
-		this.toggle('audio', !(await this.handlers).audioDefaultEnabled());
 
 		if (!p2pSessionData.isAlice) {
 			this.commands.webRTC({args: [p2pSessionData.id], event: 'connect'});
