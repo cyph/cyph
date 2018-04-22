@@ -464,13 +464,6 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 							;
 						}
 
-						if (
-							typeof o.urls === 'string' &&
-							!!o.urls.match(/^turn:.*?:443\?transport=tcp/)
-						) {
-							o.urls	= [`turns:${o.urls.slice(5)}`, o.urls];
-						}
-
 						return o;
 					}).
 					filter(o => o.urls && o.urls.length > 0).
