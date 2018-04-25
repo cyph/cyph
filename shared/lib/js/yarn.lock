@@ -7186,9 +7186,9 @@ loader-utils@1.1.0, loader-utils@^0.2.15, loader-utils@^0.2.16, loader-utils@^1.
     emojis-list "^2.0.0"
     json5 "^0.5.0"
 
-localforage@^1.7.1:
+"localforage@https://github.com/buu700/localforage-tmp":
   version "1.7.1"
-  resolved "https://registry.yarnpkg.com/localforage/-/localforage-1.7.1.tgz#e4927e042302b864db30f3211f13b5c6f0de965d"
+  resolved "https://github.com/buu700/localforage-tmp#7f70aa6e872a327e4cb25027ee3b641f30bfdc2c"
   dependencies:
     lie "3.1.1"
 
