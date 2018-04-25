@@ -499,7 +499,7 @@
     "libsodium-sumo": "https://github.com/buu700/libsodium.js",
     "libsodium-wrappers": "https://github.com/buu700/libsodium.js",
     "libsodium-wrappers-sumo": "https://github.com/buu700/libsodium.js",
-    "localforage": "^1.7.1",
+    "localforage": "https://github.com/buu700/localforage-tmp",
     "lodash-es": "^4.17.8",
     "long": "^4.0.0",
     "lunr": "^2.1.6",
