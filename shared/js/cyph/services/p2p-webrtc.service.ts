@@ -503,7 +503,11 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				debug: env.environment.local,
 				localVideoEl: $localVideo[0],
 				media: this.outgoingStream,
-				peerConnectionConfig: {iceServers},
+				peerConnectionConfig:
+					!this.sessionService.apiFlags.disableP2P ?
+						{iceServers} :
+						{iceServers, iceTransportPolicy: 'relay'}
+				,
 				remoteVideosEl: $remoteVideo[0]
 			});
 
