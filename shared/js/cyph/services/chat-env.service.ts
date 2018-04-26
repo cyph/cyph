@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {env} from '../env';
+import {ISessionService} from '../service-interfaces/isession.service';
 import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
@@ -12,12 +13,23 @@ import {SessionInitService} from './session-init.service';
 @Injectable()
 export class ChatEnvService extends EnvService {
 	/** @ignore */
+	private sessionService?: ISessionService;
+
+	/** @ignore */
 	private newCyphUrlHelper (base: boolean) : string {
-		if (!this.configService) {
+		const sessionService	= this.sessionService;
+
+		if (!this.configService || !sessionService) {
 			return base ? env.newCyphBaseUrl : env.newCyphUrl;
 		}
 
-		return (
+		const flags		=
+			this.configService.apiFlags.map(flag =>
+				flag.get(sessionService) ? flag.character : ''
+			).join('')
+		;
+
+		const baseURL	= (
 			this.callType === this.sessionInitService.callType ?
 				undefined :
 				this.sessionInitService.callType === 'audio' ?
@@ -28,6 +40,10 @@ export class ChatEnvService extends EnvService {
 		) || (
 			base ? env.newCyphBaseUrl : env.newCyphUrl
 		);
+
+		const divider	= baseURL.indexOf('#') < 0 ? '#' : '';
+
+		return flags.length > 0 ? `${baseURL}${divider}${flags}` : baseURL;
 	}
 
 	/** EnvService.newCyphBaseUrl adjusted for session API flags and initial call type. */
@@ -56,5 +72,9 @@ export class ChatEnvService extends EnvService {
 		private readonly sessionInitService: SessionInitService
 	) {
 		super(localStorageService);
+
+		this.sessionInitService.sessionService.promise.then(sessionService => {
+			this.sessionService	= sessionService;
+		});
 	}
 }

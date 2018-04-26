@@ -18,6 +18,7 @@ import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
+import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
@@ -249,6 +250,7 @@ export class AccountSessionService extends SessionService {
 		envService: EnvService,
 		errorService: ErrorService,
 		potassiumService: PotassiumService,
+		sessionInitService: SessionInitService,
 		stringsService: StringsService,
 
 		/** @ignore */
@@ -270,6 +272,7 @@ export class AccountSessionService extends SessionService {
 			envService,
 			errorService,
 			potassiumService,
+			sessionInitService,
 			stringsService
 		);
 

@@ -131,13 +131,11 @@ export class EphemeralSessionService extends SessionService {
 		envService: EnvService,
 		errorService: ErrorService,
 		potassiumService: PotassiumService,
+		sessionInitService: SessionInitService,
 		stringsService: StringsService,
 
 		/** @ignore */
-		private readonly configService: ConfigService,
-
-		/** @ignore */
-		private readonly sessionInitService: SessionInitService
+		private readonly configService: ConfigService
 	) {
 		super(
 			analyticsService,
@@ -146,6 +144,7 @@ export class EphemeralSessionService extends SessionService {
 			envService,
 			errorService,
 			potassiumService,
+			sessionInitService,
 			stringsService
 		);
 

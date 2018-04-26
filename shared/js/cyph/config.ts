@@ -11,6 +11,9 @@ export class Config {
 		{
 			analEvent: 'modest-branding',
 			character: '!',
+			get: (sessionService: ISessionService) =>
+				sessionService.apiFlags.modestBranding
+			,
 			set: (sessionService: ISessionService) => {
 				sessionService.apiFlags.modestBranding	= true;
 			}
@@ -18,6 +21,9 @@ export class Config {
 		{
 			analEvent: 'force-turn',
 			character: '$',
+			get: (sessionService: ISessionService) =>
+				sessionService.apiFlags.disableP2P
+			,
 			set: (sessionService: ISessionService) => {
 				sessionService.apiFlags.disableP2P		= true;
 			}
