@@ -78,6 +78,10 @@ else
 	cacheBustedProjects="$(echo "${cacheBustedProjects}" | sed "s|${webSignedProject}||")"
 fi
 
+if [ "${websign}" ] || [ "${simpleProdBuild}" ] ; then
+	pack=true
+fi
+
 if [ "${websign}" ] || [ "${site}" == 'firebase' ] ; then
 	./commands/keycache.sh
 fi
@@ -422,7 +426,7 @@ touch .build.done
 
 
 # WebSign packaging
-if [ "${websign}" ] || [ "${pack}" ] ; then
+if [ "${pack}" ] ; then
 	log "Pack ${package}"
 
 	cd "${webSignedProject}"
