@@ -253,6 +253,10 @@ if [ "${test}" ] ; then
 		newCyphURL="https://${version}-dot-cyph-ws-dot-cyphme.appspot.com"
 	fi
 
+	if [ "${simpleProdBuild}" ] ; then
+		sed -i 's|useBaseUrl: boolean\s*= .*;|useBaseUrl: boolean = true;|g' shared/js/cyph/env-deploy.ts
+	fi
+
 	sed -i "s|staging|${version}|g" backend/config.go
 	sed -i "s|http://localhost:42000|https://${version}-dot-cyphme.appspot.com|g" backend/config.go
 	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" %
