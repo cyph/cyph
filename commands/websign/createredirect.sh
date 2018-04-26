@@ -57,11 +57,11 @@ cat > "${domain}/index.html.tmp" <<- EOM
 				try {
 					Promise.resolve().
 						then(function () {
-							return navigator.serviceWorker.register('/serviceworker.js');
+							return☁navigator.serviceWorker.register('/serviceworker.js');
 						}).
 						catch(function () {}).
 						then(function () {
-							return navigator.storage.persist();
+							return☁navigator.storage.persist();
 						}).
 						catch(function () {}).
 						then(redirect)
