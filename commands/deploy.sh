@@ -19,6 +19,7 @@ pack=''
 environment=''
 firebaseBackup=''
 customBuild=''
+saveBuildArtifacts=''
 test=true
 websign=true
 
@@ -44,6 +45,11 @@ elif [ "${1}" == '--simple-prod-build' ] ; then
 	shift
 elif [ "${1}" == '--no-simple' ] ; then
 	noSimple=true
+	shift
+fi
+
+if [ "${1}" == '--save-build-artifacts' ] ; then
+	saveBuildArtifacts=true
 	shift
 fi
 
@@ -645,14 +651,15 @@ if [ "${site}" != 'firebase' ] ; then
 fi
 
 cd "${dir}"
-rm -rf .build 2> /dev/null
+
+if [ "${saveBuildArtifacts}" ] ; then rm -rf .build 2> /dev/null ; fi
 
 if [ ! "${noSimple}" ] && [ "${test}" ] && [ ! "${simple}" ] && [ "${site}" != 'firebase' ] ; then
 	mv ~/.build ~/.build.original
 	./commands/deploy.sh --simple $originalArgs
-elif [ -d ~/.build.original ] ; then
+elif [ "${saveBuildArtifacts}" ] && [ -d ~/.build.original ] ; then
 	mv ~/.build  ~/.build.original/simplebuild
 	cp -rf ~/.build.original .build
-else
+elif [ "${saveBuildArtifacts}" ] ; then
 	cp -rf ~/.build ./
 fi
