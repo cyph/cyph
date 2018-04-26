@@ -39,6 +39,7 @@ import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
+import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
 
 
@@ -534,6 +535,11 @@ export abstract class SessionService implements ISessionService {
 		protected readonly potassiumService: PotassiumService,
 
 		/** @ignore */
+		protected readonly sessionInitService: SessionInitService,
+
+		/** @ignore */
 		protected readonly stringsService: StringsService
-	) {}
+	) {
+		this.sessionInitService.sessionService.resolve(this);
+	}
 }

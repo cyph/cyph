@@ -6,6 +6,7 @@ import {ISessionMessage} from '../cyph/proto';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {EnvService} from '../cyph/services/env.service';
 import {ErrorService} from '../cyph/services/error.service';
+import {SessionInitService} from '../cyph/services/session-init.service';
 import {SessionService} from '../cyph/services/session.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {
@@ -120,6 +121,7 @@ export class LocalSessionService extends SessionService {
 		analyticsService: AnalyticsService,
 		envService: EnvService,
 		errorService: ErrorService,
+		sessionInitService: SessionInitService,
 		stringsService: StringsService
 	) {
 		super(
@@ -129,6 +131,7 @@ export class LocalSessionService extends SessionService {
 			envService,
 			errorService,
 			<any> undefined,
+			sessionInitService,
 			stringsService
 		);
 	}

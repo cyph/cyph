@@ -1,4 +1,7 @@
 import {Injectable} from '@angular/core';
+import {IResolvable} from '../iresolvable';
+import {ISessionService} from '../service-interfaces/isession.service';
+import {resolvable} from '../util/wait';
 
 
 /**
@@ -14,6 +17,9 @@ export class SessionInitService {
 
 	/** ID for initiating new Session. */
 	public readonly id: string			= '';
+
+	/** @see ISessionService */
+	public readonly sessionService: IResolvable<ISessionService>	= resolvable();
 
 	constructor () {}
 }

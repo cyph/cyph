@@ -1,6 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {env} from '../env';
+import {IResolvable} from '../iresolvable';
+import {ISessionService} from '../service-interfaces/isession.service';
+import {resolvable} from '../util/wait';
 import {SessionInitService} from './session-init.service';
 
 
@@ -17,6 +20,9 @@ export class UrlSessionInitService implements SessionInitService {
 
 	/** @inheritDoc */
 	public readonly id: string;
+
+	/** @inheritDoc */
+	public readonly sessionService: IResolvable<ISessionService>	= resolvable();
 
 	constructor (router: Router) {
 		const urlSegmentPaths	=
