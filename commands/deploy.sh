@@ -216,7 +216,7 @@ if [ -d test ] ; then
 	sed -i "s|setOnerror()|$(cat test/setonerror.js | tr '\n' ' ')|g" test/test.js
 fi
 
-if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] || [ "${websign}" ] ; then
+if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] || [ "${simpleWebSignBuild}" ] ; then
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat shared/headers)"
 	ls */*.yaml | xargs -I% sed -ri "s/  ${defaultHeadersString}(.*)/\
@@ -265,11 +265,10 @@ if [ "${test}" ] ; then
 
 	if [ "${simple}" ] ; then
 		newCyphURL="https://${version}-dot-cyph-ws-dot-cyphme.appspot.com"
-
-		if [ "${websign}" ] ; then
-			simpleWebSignPackageName="$(echo "${newCyphURL}" | perl -pe 's/.*?\/\///')"
-			newCyphURL="https://${version}-dot-websign-dot-cyphme.appspot.com"
-		fi
+	fi
+	if [ "${simpleWebSignBuild}" ] ; then
+		simpleWebSignPackageName="$(echo "${newCyphURL}" | perl -pe 's/^.*?:\/\///')"
+		newCyphURL="https://${version}-dot-websign-dot-cyphme.appspot.com"
 	fi
 
 	if [ "${simpleProdBuild}" ] ; then
@@ -690,10 +689,14 @@ if [ "${waitingForWpstatic}" ] ; then
 	rm .wpstatic.done .wpstatic.output
 fi
 
+if [ "${simpleWebSignBuild}" ] ; then
+	rm -rf "${webSignedProject}" 2> /dev/null
+fi
+
 if [ "${site}" != 'firebase' ] ; then
 	gcloud app deploy --quiet --no-promote --project cyphme --version "${version}" $(
 		if [ "${site}" ] ; then
-			ls ${site}/*.yaml
+			ls ${site}/*.yaml 2> /dev/null
 
 			if [ "${websign}" ] && [ -d websign ] ; then
 				ls websign/*.yaml
