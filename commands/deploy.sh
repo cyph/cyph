@@ -15,10 +15,12 @@ site=''
 noSimple=''
 simple=''
 simpleProdBuild=''
+simpleWebSignBuild=''
 pack=''
 environment=''
 firebaseBackup=''
 customBuild=''
+saveBuildArtifacts=''
 test=true
 websign=true
 
@@ -42,8 +44,20 @@ elif [ "${1}" == '--simple-prod-build' ] ; then
 	simple=true
 	simpleProdBuild=true
 	shift
+elif [ "${1}" == '--simple-websign-build' ] ; then
+	simpleWebSignBuild=true
+	shift
+elif [ "${1}" == '--simple-websign-prod-build' ] ; then
+	simpleProdBuild=true
+	simpleWebSignBuild=true
+	shift
 elif [ "${1}" == '--no-simple' ] ; then
 	noSimple=true
+	shift
+fi
+
+if [ "${1}" == '--save-build-artifacts' ] ; then
+	saveBuildArtifacts=true
 	shift
 fi
 
@@ -76,6 +90,15 @@ if [ "${simple}" ] ; then
 	websign=''
 else
 	cacheBustedProjects="$(echo "${cacheBustedProjects}" | sed "s|${webSignedProject}||")"
+fi
+
+if [ "${simpleWebSignBuild}" ] ; then
+	simple=true
+	prodOnlyProjects="$(echo "${prodOnlyProjects}" | sed 's| websign||')"
+fi
+
+if [ "${websign}" ] || [ "${simpleProdBuild}" ] ; then
+	pack=true
 fi
 
 if [ "${websign}" ] || [ "${site}" == 'firebase' ] ; then
@@ -193,7 +216,7 @@ if [ -d test ] ; then
 	sed -i "s|setOnerror()|$(cat test/setonerror.js | tr '\n' ' ')|g" test/test.js
 fi
 
-if [ ! "${simple}" ] ; then
+if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] || [ "${websign}" ] ; then
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat shared/headers)"
 	ls */*.yaml | xargs -I% sed -ri "s/  ${defaultHeadersString}(.*)/\
@@ -235,12 +258,22 @@ if [ ! "${simple}" ] ; then
 fi
 
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
+simpleWebSignPackageName=''
 
 if [ "${test}" ] ; then
 	newCyphURL="https://${version}.cyph.ws"
 
 	if [ "${simple}" ] ; then
 		newCyphURL="https://${version}-dot-cyph-ws-dot-cyphme.appspot.com"
+
+		if [ "${websign}" ] ; then
+			simpleWebSignPackageName="$(echo "${newCyphURL}" | perl -pe 's/.*?\/\///')"
+			newCyphURL="https://${version}-dot-websign-dot-cyphme.appspot.com"
+		fi
+	fi
+
+	if [ "${simpleProdBuild}" ] ; then
+		sed -i 's|useBaseUrl: boolean\s*= .*;|useBaseUrl: boolean = true;|g' shared/js/cyph/env-deploy.ts
 	fi
 
 	sed -i "s|staging|${version}|g" backend/config.go
@@ -338,7 +371,22 @@ fi
 # WebSign project
 if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedProject}" ] ) ; then
 	cd websign
-	websignHashWhitelist="$(cat hashwhitelist.json)"
+
+	if [ ! "${simple}" ] ; then
+		rm js/keys.test.js
+		websignHashWhitelist="$(cat hashwhitelist.json)"
+	else
+		mv js/keys.test.js js/keys.js
+
+		sed -i "s|location\.host\s*= .*;||g" js/main.js
+		sed -i "s|location\.host|'${simpleWebSignPackageName}'|g" js/main.js
+		sed -i "s|cdnUrlBase +|cdnUrlBase + 'websign/test/' +|" js/main.js
+		sed -i "s|localStorage\.webSignWWWPinned|true|g" js/main.js
+		sed -i "s|true\s*= true;||g" js/main.js
+
+		websignHashWhitelist="{\"$(../commands/websign/bootstraphash.sh)\": true}"
+	fi
+
 	cp -rf ../shared/favicon.ico ../shared/assets/img ./
 	../commands/websign/pack.js index.html index.html
 	cd ..
@@ -422,7 +470,7 @@ touch .build.done
 
 
 # WebSign packaging
-if [ "${websign}" ] || [ "${pack}" ] ; then
+if [ "${pack}" ] ; then
 	log "Pack ${package}"
 
 	cd "${webSignedProject}"
@@ -461,11 +509,15 @@ if [ "${websign}" ] ; then
 
 	notify 'Starting signing process'
 
-	./commands/websign/codesign.js "${websignHashWhitelist}" $(
-		for p in ${packages} ; do
-			echo -n "pkg/${p}=cdn/${p} "
-		done
-	) || exit 1
+	./commands/websign/codesign.js \
+		$(if [ "${simple}" ] ; then echo '--test' ; fi) \
+		"${websignHashWhitelist}" \
+		$(
+			for p in ${packages} ; do
+				echo -n "pkg/${p}=cdn/${p} "
+			done
+		) \
+	|| exit 1
 
 	log 'Compressing resources for deployment to CDN'
 
@@ -494,6 +546,13 @@ if [ "${websign}" ] ; then
 	cd cdn
 
 	for p in ${packages} ; do
+		if [ "${simple}" ] ; then
+			mkdir -p websign/test
+			rm -rf websign/test/${p} 2> /dev/null
+			mv ${p} websign/test/
+			cd websign/test
+		fi
+
 		plink=$(echo ${p} | sed 's/\.ws$//')
 		if (echo ${p} | grep -P '\.ws$' > /dev/null) && ! [ -L ${plink} ] ; then
 			ln -s ${p} ${plink}
@@ -513,6 +572,10 @@ if [ "${websign}" ] ; then
 			git add {}.gz {}.br; \
 			git commit -S -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz {}.br > /dev/null 2>&1; \
 		' \;
+
+		if [ "${simple}" ] ; then
+			cd ../..
+		fi
 	done
 
 	git push
@@ -631,6 +694,10 @@ if [ "${site}" != 'firebase' ] ; then
 	gcloud app deploy --quiet --no-promote --project cyphme --version "${version}" $(
 		if [ "${site}" ] ; then
 			ls ${site}/*.yaml
+
+			if [ "${websign}" ] && [ -d websign ] ; then
+				ls websign/*.yaml
+			fi
 		else
 			ls */*.yaml | grep -v '\.src/'
 		fi
@@ -641,14 +708,15 @@ if [ "${site}" != 'firebase' ] ; then
 fi
 
 cd "${dir}"
-rm -rf .build 2> /dev/null
+
+if [ "${saveBuildArtifacts}" ] ; then rm -rf .build 2> /dev/null ; fi
 
 if [ ! "${noSimple}" ] && [ "${test}" ] && [ ! "${simple}" ] && [ "${site}" != 'firebase' ] ; then
 	mv ~/.build ~/.build.original
 	./commands/deploy.sh --simple $originalArgs
-elif [ -d ~/.build.original ] ; then
+elif [ "${saveBuildArtifacts}" ] && [ -d ~/.build.original ] ; then
 	mv ~/.build  ~/.build.original/simplebuild
 	cp -rf ~/.build.original .build
-else
+elif [ "${saveBuildArtifacts}" ] ; then
 	cp -rf ~/.build ./
 fi

@@ -54,7 +54,9 @@ const args	= {
 	simple:
 		process.argv.indexOf('--simple') > -1 ||
 		process.argv.indexOf('--simple-custom-build') > -1 ||
-		process.argv.indexOf('--simple-prod-build') > -1
+		process.argv.indexOf('--simple-prod-build') > -1 ||
+		process.argv.indexOf('--simple-websign-build') > -1 ||
+		process.argv.indexOf('--simple-websign-prod-build') > -1
 	,
 	site: process.argv[(process.argv.indexOf('--site') + 1) || undefined]
 };
@@ -191,7 +193,7 @@ const shellScripts			= {
 			process.argv.
 				slice(3).
 				filter(s => s !== '--background' && s !== '--no-updates').
-				map(s => s.indexOf("'") ? `"${s}"` : `'${s}'`).
+				map(s => s.indexOf("'") ? `"${s.replace(/"/g, '\\"')}"` : `'${s}'`).
 				join(' ')
 		}
 		notify 'Command complete: ${args.command}' &> /dev/null

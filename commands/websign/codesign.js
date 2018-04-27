@@ -9,9 +9,12 @@ const {sign}		= require('../sign');
 (async () => {
 
 
+const argv			= process.argv.slice(2).filter(s => s && s !== '--test');
+
 const args			= {
-	hashWhitelist: JSON.parse(process.argv[2]),
-	inputs: process.argv.slice(3).filter(s => s)
+	hashWhitelist: JSON.parse(argv[0]),
+	inputs: argv.slice(1),
+	test: process.argv.indexOf('--test') > -1
 };
 
 
@@ -32,7 +35,8 @@ const inputs		= args.inputs.map(s => s.split('=')).map(arr => ({
 
 try {
 	const {rsaIndex, signedInputs, sphincsIndex}	= await sign(
-		inputs.map(({message}) => ({message}))
+		inputs.map(({message}) => ({message})),
+		args.test
 	);
 
 	for (let i = 0 ; i < inputs.length ; ++i) {
