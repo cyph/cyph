@@ -94,8 +94,6 @@ fi
 
 if [ "${simpleWebSignBuild}" ] ; then
 	simple=true
-	websign=true
-
 	prodOnlyProjects="$(echo "${prodOnlyProjects}" | sed 's| websign||')"
 fi
 
