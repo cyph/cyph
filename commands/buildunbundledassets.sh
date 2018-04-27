@@ -4,6 +4,12 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
+serviceWorker=''
+if [ "${1}" == '--service-worker' ] ; then
+	serviceWorker=true
+	shift
+fi
+
 test=''
 if [ "${1}" == '--test' ] ; then
 	test=true
@@ -61,7 +67,7 @@ scssAssets="$(
 		uniq
 )"
 
-hash="${test}$(
+hash="${serviceWorker}${test}$(
 	cat \
 		commands/buildunbundledassets.sh \
 		types.proto \
@@ -90,7 +96,7 @@ mkdir node_modules js css
 
 ../../commands/protobuf.sh
 
-if [ "${test}" ] ; then
+if [ "${serviceWorker}" ] || [ "${test}" ] ; then
 	node -e 'console.log(
 		fs.readFileSync("../../websign/serviceworker.js").toString().
 			split("/*** Non-WebSign-specific ***/")
