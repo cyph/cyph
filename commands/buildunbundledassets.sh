@@ -185,20 +185,30 @@ for f in ${typescriptAssets} ; do
 			plugins: [
 				$(test "${test}" || echo "
 					new UglifyJsPlugin({
+						cache: true,
+						extractComments: false,
+						parallel: true,
+						sourceMap: false,
 						uglifyOptions: {
 							compress: {
+								inline: 3,
 								passes: 3,
 								pure_getters: true,
-								sequences: false
+								sequences: false,
+								typeofs: false
 							},
 							ecma: 5,
+							ie8: false,
 							mangle: {
-								reserved: mangleExceptions
+								reserved: mangleExceptions,
+								safari10: true
 							},
 							output: {
 								ascii_only: true,
-								comments: false
-							}
+								comments: false,
+								webkit: true
+							},
+							warnings: false
 						}
 					})
 				")
