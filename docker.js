@@ -191,7 +191,7 @@ const shellScripts			= {
 			process.argv.
 				slice(3).
 				filter(s => s !== '--background' && s !== '--no-updates').
-				map(s => s.indexOf("'") ? `"${s}"` : `'${s}'`).
+				map(s => s.indexOf("'") ? `"${s.replace(/"/g, '\\"')}"` : `'${s}'`).
 				join(' ')
 		}
 		notify 'Command complete: ${args.command}' &> /dev/null
