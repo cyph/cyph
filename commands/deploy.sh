@@ -47,6 +47,10 @@ elif [ "${1}" == '--simple-prod-build' ] ; then
 elif [ "${1}" == '--simple-websign-build' ] ; then
 	simpleWebSignBuild=true
 	shift
+elif [ "${1}" == '--simple-websign-prod-build' ] ; then
+	simpleProdBuild=true
+	simpleWebSignBuild=true
+	shift
 elif [ "${1}" == '--no-simple' ] ; then
 	noSimple=true
 	shift
@@ -90,7 +94,6 @@ fi
 
 if [ "${simpleWebSignBuild}" ] ; then
 	simple=true
-	simpleProdBuild=true
 	websign=true
 
 	prodOnlyProjects="$(echo "${prodOnlyProjects}" | sed 's| websign||')"
@@ -215,7 +218,7 @@ if [ -d test ] ; then
 	sed -i "s|setOnerror()|$(cat test/setonerror.js | tr '\n' ' ')|g" test/test.js
 fi
 
-if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
+if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] || [ "${websign}" ] ; then
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat shared/headers)"
 	ls */*.yaml | xargs -I% sed -ri "s/  ${defaultHeadersString}(.*)/\
