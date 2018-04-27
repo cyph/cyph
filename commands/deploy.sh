@@ -97,7 +97,10 @@ if [ "${simpleWebSignBuild}" ] ; then
 	prodOnlyProjects="$(echo "${prodOnlyProjects}" | sed 's| websign||')"
 fi
 
-if [ "${websign}" ] || [ "${simpleProdBuild}" ] ; then
+if \
+	( [ "${websign}" ] || [ "${simpleProdBuild}" ] ) && \
+	( [ ! "${site}" ] || [ "${site}" == "${webSignedProject}" ] )
+then
 	pack=true
 fi
 
