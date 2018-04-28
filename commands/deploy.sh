@@ -591,6 +591,12 @@ if [ "${websign}" ] ; then
 
 	git push
 	cd ..
+
+	# Publish internal prod branch to public repo
+	if [ ! "${test}" ] ; then
+		git remote add public git@github.com:cyph/cyph.git 2> /dev/null
+		git push public HEAD:master
+	fi
 fi
 
 # WebSign redirects
