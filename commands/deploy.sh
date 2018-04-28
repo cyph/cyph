@@ -108,7 +108,6 @@ if [ "${websign}" ] || [ "${site}" == 'firebase' ] ; then
 	./commands/keycache.sh
 fi
 
-# Compile + translate + minify
 if [ "${compiledProjects}" ] && [ ! "${test}" ] ; then
 	./commands/lint.sh || exit 1
 fi
