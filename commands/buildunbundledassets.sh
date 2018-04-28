@@ -190,13 +190,13 @@ for f in ${typescriptAssets} ; do
 						parallel: true,
 						sourceMap: false,
 						uglifyOptions: {
-							compress: {
+							compress: false /* {
 								inline: 3,
 								passes: 3,
 								pure_getters: true,
 								sequences: false,
 								typeofs: false
-							},
+							} */,
 							ecma: 5,
 							ie8: false,
 							mangle: {
