@@ -192,8 +192,14 @@
 				matTooltipPosition='above'
 				*ngIf='p2pWebRTCService.videoEnabled'
 			>
-				<mat-icon *ngIf='!p2pWebRTCService.outgoingStream.video'>videocam</mat-icon>
-				<mat-icon *ngIf='p2pWebRTCService.outgoingStream.video'>videocam_off</mat-icon>
+				<mat-icon>
+					<ng-container *ngIf='!p2pWebRTCService.outgoingStream.video; else videocamOff'>
+						videocam
+					</ng-container>
+					<ng-template #videocamOff>
+						videocam_off
+					</ng-template>
+				</mat-icon>
 			</button>
 			<button
 				mat-icon-button
@@ -208,7 +214,7 @@
 						p2pWebRTCService.toggle("audio", false) :
 						undefined
 				'
-				(pointerout)='
+				(pointerleave)='
 					chatService.walkieTalkieMode ?
 						p2pWebRTCService.toggle("audio", true) :
 						undefined
@@ -220,8 +226,14 @@
 				'
 				matTooltipPosition='above'
 			>
-				<mat-icon *ngIf='!p2pWebRTCService.outgoingStream.audio'>mic</mat-icon>
-				<mat-icon *ngIf='p2pWebRTCService.outgoingStream.audio'>mic_off</mat-icon>
+				<mat-icon>
+					<ng-container *ngIf='!p2pWebRTCService.outgoingStream.audio; else micOff'>
+						mic
+					</ng-container>
+					<ng-template #micOff>
+						mic_off
+					</ng-template>
+				</mat-icon>
 			</button>
 			<button
 				mat-icon-button
