@@ -8,7 +8,7 @@ import {EnvService} from './env.service';
  * Angular service for EHR/EMR system integration.
  */
 @Injectable()
-export class EHRService {
+export class EHRIntegrationService {
 	/** Uploads EHR credentials and returns master API key. */
 	public async addCredentials (
 		cyphAdminKey: string,

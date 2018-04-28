@@ -4,7 +4,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {take} from 'rxjs/operators/take';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
-import {EHRService} from '../../services/ehr.service';
+import {EHRIntegrationService} from '../../services/ehr-integration.service';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -42,7 +42,7 @@ export class UploadEhrCredentialsComponent implements OnInit {
 				await this.activatedRoute.params.pipe(take(1)).toPromise()
 			;
 
-			const apiKey	= await this.ehrService.addCredentials(
+			const apiKey	= await this.ehrIntegrationService.addCredentials(
 				cyphAdminKey,
 				redoxApiKey,
 				redoxSecret,
@@ -71,7 +71,7 @@ export class UploadEhrCredentialsComponent implements OnInit {
 		private readonly accountFilesService: AccountFilesService,
 
 		/** @ignore */
-		private readonly ehrService: EHRService,
+		private readonly ehrIntegrationService: EHRIntegrationService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

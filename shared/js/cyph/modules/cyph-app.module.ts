@@ -43,7 +43,7 @@ import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {DatabaseService} from '../services/database.service';
 import {DOMPurifyHtmlSanitizerService} from '../services/dompurify-html-sanitizer.service';
-import {EHRService} from '../services/ehr.service';
+import {EHRIntegrationService} from '../services/ehr-integration.service';
 import {FirebaseDatabaseService} from '../services/firebase-database.service';
 import {HtmlSanitizerService} from '../services/html-sanitizer.service';
 import {WorkerService} from '../services/worker.service';
@@ -168,7 +168,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountService,
 		AccountSettingsService,
 		AccountUserLookupService,
-		EHRService,
+		EHRIntegrationService,
 		WorkerService,
 		{
 			provide: DatabaseService,
