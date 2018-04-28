@@ -11,6 +11,7 @@ e2e=''
 localSeleniumServer=''
 site=''
 prod=''
+prodBuild=''
 environment='local'
 if [ "${1}" == '--environment' ] ; then
 	shift
@@ -27,6 +28,11 @@ if [ "${1}" == '--firebase-backup' ] ; then
 fi
 if [ "${1}" == '--prod' ] ; then
 	prod=true
+	shift
+fi
+if [ "${1}" == '--prod-build' ] ; then
+	prodBuild=true
+	echo 'Warning: prod build mode currently OOMs'
 	shift
 fi
 if [ "${1}" == '--local-selenium-server' ] ; then
@@ -88,10 +94,10 @@ ngserve () {
 		--environment "${environment}" \
 		--host '0.0.0.0' \
 		--live-reload false \
-		--no-aot \
 		--no-sourcemaps \
 		--port "${port}" \
 		--public-host "localhost:${port}" \
+		$(if [ "${prodBuild}" ] ; then echo '--aot --prod --watch false' ; else echo '--no-aot' ; fi) \
 		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
 		$(if [ "${localSeleniumServer}" ] ; then
 			echo '--config protractor.local-selenium-server.js'
@@ -126,7 +132,9 @@ dev_appserver.py \
 	backend/.build.yaml \
 &
 
-./commands/buildunbundledassets.sh $(if [ ! "${CIRCLECI}" ] ; then echo -n '--test' ; fi)
+./commands/buildunbundledassets.sh \
+	$(if [ ! "${CIRCLECI}" ] && [ ! "${prodBuild}" ] ; then echo -n '--test' ; fi)
+
 cp -f shared/assets/serviceworker.js websign/manifest.json "cyph.ws/src/" 2> /dev/null
 
 log 'Starting ng serve'

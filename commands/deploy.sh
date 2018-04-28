@@ -401,7 +401,16 @@ fi
 
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
-	./commands/buildunbundledassets.sh $(if [ "${simple}" ] ; then echo '--test' ; fi) || exit 1
+	./commands/buildunbundledassets.sh $(
+		if [ "${simple}" ] ; then
+			if [ "${simpleProdBuild}" ] ; then
+				echo '--service-worker'
+			else
+				echo '--test'
+			fi
+		fi
+	) || exit 1
+
 	rm -rf "${dir}/shared/assets"
 	cp -a shared/assets "${dir}/shared/"
 	touch shared/assets/frozen
