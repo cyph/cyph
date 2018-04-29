@@ -159,7 +159,7 @@ read -r -d '' modules <<- EOM
 	libsodium-sumo@https://github.com/jedisct1/libsodium.js
 	libsodium-wrappers@https://github.com/jedisct1/libsodium.js
 	libsodium-wrappers-sumo@https://github.com/jedisct1/libsodium.js
-	localforage
+	localforage@https://github.com/buu700/localforage-tmp
 	lodash-es
 	long
 	lunr
