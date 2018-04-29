@@ -1,4 +1,4 @@
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {BehaviorSubject} from 'rxjs';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {IChannelHandlers} from '../session';

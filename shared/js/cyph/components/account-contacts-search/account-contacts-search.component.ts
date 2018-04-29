@@ -6,10 +6,8 @@ import {
 	ViewChild
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {map} from 'rxjs/operators/map';
-import {mergeMap} from 'rxjs/operators/mergeMap';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {map, mergeMap} from 'rxjs/operators';
 import {IContactListItem, User} from '../../account';
 import {ISearchOptions} from '../../isearch-options';
 import {AccountUserProfileExtra} from '../../proto';

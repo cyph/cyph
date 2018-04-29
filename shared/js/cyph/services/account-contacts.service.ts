@@ -1,11 +1,7 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {map} from 'rxjs/operators/map';
-import {mergeMap} from 'rxjs/operators/mergeMap';
-import {skip} from 'rxjs/operators/skip';
-import {take} from 'rxjs/operators/take';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {map, mergeMap, skip, take} from 'rxjs/operators';
 import {IContactListItem, User} from '../account';
 import {StringProto} from '../proto';
 import {filterDuplicatesOperator, filterUndefined} from '../util/filter';

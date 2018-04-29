@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {BehaviorSubject} from 'rxjs';
 import {ITimeRange} from '../../itime-range';
 import {CalendarInvite, CallTypes, ICalendarInvite} from '../../proto';
 import {EnvService} from '../../services/env.service';

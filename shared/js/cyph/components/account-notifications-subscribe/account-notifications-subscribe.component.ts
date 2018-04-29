@@ -1,8 +1,7 @@
 import {Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
-import {combineLatest} from 'rxjs/observable/combineLatest';
-import {mergeMap} from 'rxjs/operators/mergeMap';
+import {Observable, combineLatest} from 'rxjs';
+import {mergeMap} from 'rxjs/operators';
 import {SecurityModels} from '../../account/enums';
 import {IAsyncValue} from '../../iasync-value';
 import {StringProto} from '../../proto';

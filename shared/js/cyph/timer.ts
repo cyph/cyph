@@ -1,5 +1,4 @@
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Subject} from 'rxjs/Subject';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {staticNgZone} from './util/static-services';
 import {getTimestamp} from './util/time';
 import {sleep} from './util/wait';

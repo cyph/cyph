@@ -19,9 +19,8 @@ import {
 	Reference as StorageReference,
 	UploadTaskSnapshot
 } from '@firebase/storage-types';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {skip} from 'rxjs/operators/skip';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {skip} from 'rxjs/operators';
 import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';

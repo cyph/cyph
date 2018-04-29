@@ -1,4 +1,4 @@
-import {Subject} from 'rxjs/Subject';
+import {Subject} from 'rxjs';
 import {ISessionMessage, ISessionMessageData} from '../cyph/proto';
 import {resolvable} from '../cyph/util/wait';
 

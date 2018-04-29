@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {take} from 'rxjs/operators/take';
+import {take} from 'rxjs/operators';
 import {
 	HandshakeSteps,
 	PairwiseSession,

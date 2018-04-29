@@ -1,9 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {combineLatest} from 'rxjs/observable/combineLatest';
-import {map} from 'rxjs/operators/map';
+import {BehaviorSubject, Observable, combineLatest} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {User} from '../account';
 import {translate} from '../util/translate';
 import {resolvable, sleep} from '../util/wait';

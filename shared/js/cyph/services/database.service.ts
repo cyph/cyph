@@ -1,11 +1,7 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {map} from 'rxjs/operators/map';
-import {mergeMap} from 'rxjs/operators/mergeMap';
-import {take} from 'rxjs/operators/take';
-import {Subscription} from 'rxjs/Subscription';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {map, mergeMap, take} from 'rxjs/operators';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncMap} from '../iasync-map';

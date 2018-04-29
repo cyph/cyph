@@ -1,4 +1,4 @@
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {BehaviorSubject} from 'rxjs';
 import {LockFunction} from '../lock-function-type';
 import {uuid} from './uuid';
 import {resolvable} from './wait';

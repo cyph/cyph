@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {BehaviorSubject} from 'rxjs';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {LockFunction} from '../cyph/lock-function-type';
 import {ISessionMessage} from '../cyph/proto';

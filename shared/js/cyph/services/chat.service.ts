@@ -2,15 +2,8 @@
 
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {combineLatest} from 'rxjs/observable/combineLatest';
-import {interval} from 'rxjs/observable/interval';
-import {filter} from 'rxjs/operators/filter';
-import {map} from 'rxjs/operators/map';
-import {take} from 'rxjs/operators/take';
-import {takeWhile} from 'rxjs/operators/takeWhile';
-import {Subscription} from 'rxjs/Subscription';
+import {BehaviorSubject, Observable, combineLatest, interval, Subscription} from 'rxjs';
+import {filter, map, take, takeWhile} from 'rxjs/operators';
 import {ChatMessage, IChatData, IChatMessageLiveValue, States} from '../chat';
 import {HelpComponent} from '../components/help';
 import {LocalAsyncList} from '../local-async-list';

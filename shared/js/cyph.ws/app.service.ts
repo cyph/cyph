@@ -7,7 +7,7 @@ import {
 	RouterStateSnapshot
 } from '@angular/router';
 import * as $ from 'jquery';
-import {first} from 'rxjs/operators/first';
+import {first} from 'rxjs/operators';
 import {config} from '../cyph/config';
 import {AccountService} from '../cyph/services/account.service';
 import {AccountAuthService} from '../cyph/services/crypto/account-auth.service';

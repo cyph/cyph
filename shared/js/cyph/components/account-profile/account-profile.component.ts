@@ -1,10 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
-import {combineLatest} from 'rxjs/observable/combineLatest';
-import {of} from 'rxjs/observable/of';
-import {map} from 'rxjs/operators/map';
-import {take} from 'rxjs/operators/take';
+import {Observable, combineLatest, of} from 'rxjs';
+import {map, take} from 'rxjs/operators';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
 import {AccountUserTypes} from '../../proto';

@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {ChatMessage} from './chat-message';
 import {UiStyles} from './enums';
 

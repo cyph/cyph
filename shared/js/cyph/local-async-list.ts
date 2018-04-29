@@ -1,7 +1,5 @@
-import {Observable} from 'rxjs/Observable';
-import {map} from 'rxjs/operators/map';
-import {ReplaySubject} from 'rxjs/ReplaySubject';
-import {Subscription} from 'rxjs/Subscription';
+import {Observable, ReplaySubject, Subscription} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {IAsyncList} from './iasync-list';
 import {LocalAsyncValue} from './local-async-value';
 import {MaybePromise} from './maybe-promise-type';
