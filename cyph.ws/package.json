@@ -11,6 +11,7 @@
 		"e2e": "ng e2e"
 	},
 	"devDependencies": {
-		"@angular/cli": "*"
+		"@angular/cli": "*",
+		"@angular-devkit/build-angular": "*"
 	}
 }
