@@ -13,31 +13,31 @@ cd ~/tmplib/js
 
 read -r -d '' modules <<- EOM
 	@agm/core
-	@angular/animations
-	@angular/cdk
-	@angular/cli
-	@angular/common
-	@angular/compiler
-	@angular/compiler-cli
-	@angular/core
-	@angular/flex-layout
-	@angular/forms
-	@angular/http
-	@angular/material
-	@angular/platform-browser
-	@angular/platform-browser-dynamic
-	@angular/platform-server
-	@angular/platform-webworker
-	@angular/platform-webworker-dynamic
-	@angular/router
-	@angular/service-worker
+	@angular/animations@next
+	@angular/cdk@next
+	@angular/cli@next
+	@angular/common@next
+	@angular/compiler@next
+	@angular/compiler-cli@next
+	@angular/core@next
+	@angular/flex-layout@next
+	@angular/forms@next
+	@angular/http@next
+	@angular/material@next
+	@angular/platform-browser@next
+	@angular/platform-browser-dynamic@next
+	@angular/platform-server@next
+	@angular/platform-webworker@next
+	@angular/platform-webworker-dynamic@next
+	@angular/router@next
+	@angular/service-worker@next
 	@asymmetrik/ngx-leaflet
 	@compodoc/compodoc
-	@covalent/core
-	@covalent/dynamic-forms
-	@covalent/highlight
-	@covalent/http
-	@covalent/markdown
+	@covalent/core@next
+	@covalent/dynamic-forms@next
+	@covalent/highlight@next
+	@covalent/http@next
+	@covalent/markdown@next
 	@firebase/app
 	@firebase/app-types
 	@firebase/auth
