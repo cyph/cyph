@@ -228,7 +228,7 @@ export const title		= (titleText: string) : Form.IElementRow => {
 };
 
 /** Phone number element row. */
-export const phone		= (id: string = 'phoneNumbers.phoneNumbers[0].home') : Form.IElement => {
+export const phone		= (id: string = 'PhoneNumber.Home') : Form.IElement => {
 	return input({
 		id,
 		label: 'Phone Number',
@@ -245,37 +245,37 @@ export const phone		= (id: string = 'phoneNumbers.phoneNumbers[0].home') : Form.
 };
 
 /** Email address element row. */
-export const email		= (id: string = 'emails[0]') : Form.IElement => {
+export const email		= (id: string = 'EmailAddresses[0]') : Form.IElement => {
 	return emailInput({id, label: 'Email', required: true});
 };
 
 /** Name element row. */
-export const name		= (id: string = 'fullName') : Form.IElementRow => {
+export const name		= (id?: string) : Form.IElementRow => {
 	return newFormRow(
 		[
-			input({id: 'firstName', label: 'First Name', required: true}),
-			input({id: 'middleName', label: 'Middle Name'}),
-			input({id: 'lastName', label: 'Last Name', required: true})
+			input({id: 'FirstName', label: 'First Name', required: true}),
+			input({id: 'MiddleName', label: 'Middle Name'}),
+			input({id: 'LastName', label: 'Last Name', required: true})
 		],
 		id
 	);
 };
 
 /** Address element row. */
-export const address	= (id: string = 'address') : Form.IElementRow => {
+export const address	= (id: string = 'Address') : Form.IElementRow => {
 	return newFormRow(
 		[
-			input({id: 'streetAddress', label: 'Address'}),
-			input({id: 'city', label: 'City'}),
-			input({id: 'state', label: 'State', width: 10}),
-			input({id: 'zip', label: 'Zip', width: 25})
+			input({id: 'StreetAddress', label: 'Address'}),
+			input({id: 'City', label: 'City'}),
+			input({id: 'State', label: 'State', width: 10}),
+			input({id: 'ZIP', label: 'Zip', width: 25})
 		],
 		id
 	);
 };
 
 /** SSN element row. */
-export const ssn		= (id: string = 'ssn') : Form.IElement => {
+export const ssn		= (id: string = 'SSN') : Form.IElement => {
 	return input({
 		id,
 		label: 'Social Security Number',
@@ -313,10 +313,10 @@ export const basicInfo			= (id?: string) : Form.IComponent => {
 	return newFormComponent(
 		[
 			newFormRow([
-				datepicker({id: 'dob', label: 'Date of Birth', width: 20, required: true}),
-				radio({id: 'sex', label: 'Sex', options: ['Male', 'Female'], required: true}),
+				datepicker({id: 'DOB', label: 'Date of Birth', width: 20, required: true}),
+				radio({id: 'Sex', label: 'Sex', options: ['Male', 'Female'], required: true}),
 				radio({
-					id: 'maritalStatus',
+					id: 'MaritalStatus',
 					label: 'Marital Status',
 					options: ['Single', 'Married']
 				}),
@@ -370,8 +370,8 @@ export const optInOut			= () : Form.IComponent => newFormComponent([
 export const newPatient			= () : IForm => newForm(
 	[
 		newFormComponent([title('Basic Information')]),
-		contact('demographics'),
-		basicInfo('demographics'),
+		contact('redoxPatient.Demographics'),
+		basicInfo('redoxPatient.Demographics'),
 		insuranceComponent(),
 		optInOut()
 	],
