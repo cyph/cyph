@@ -242,7 +242,7 @@ read -r -d '' modules <<- EOM
 	tslint-microsoft-contrib
 	tsutils
 	typedoc
-	typescript@2.6
+	typescript@2.7
 	u2f-api-polyfill
 	uglify-es
 	uglifyjs-webpack-plugin
