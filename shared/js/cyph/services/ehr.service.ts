@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {RedoxPatient, RedoxTypes} from '../proto';
+import {RedoxAppointment, RedoxPatient, RedoxTypes} from '../proto';
 import {deserialize, serialize} from '../util/serialization';
 import {EHRIntegrationService} from './ehr-integration.service';
 
@@ -33,6 +33,20 @@ export class EHRService {
 		}
 
 		return deserialize(RedoxPatient, await serialize(RedoxPatient, response.Patient));
+	}
+
+	/** Schedules a new appointment. */
+	public async scheduleAppointment (
+		apiKey: string,
+		appointment: RedoxAppointment
+	) : Promise<void> {
+		await this.ehrIntegrationService.runCommand(apiKey, {
+			Meta: {
+				DataModel: 'Scheduling',
+				EventType: 'New'
+			},
+			...appointment
+		});
 	}
 
 	constructor (

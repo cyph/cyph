@@ -239,7 +239,10 @@ message Appointment {
 		Yes = 2;
 	}
 
-	/** EHR data for the appointment. */
+	/**
+	 * EHR data for the appointment.
+	 * TODO: Reconcile with Redox types.
+	 */
 	message EHR {
 		/**
 		 * An ID that can span several visits often related to the same issue -
@@ -286,7 +289,7 @@ message Appointment {
 		/** Reason for the visit. */
 		string reason = 11;
 
-		/** DateTime of visit or the arrival time of the admission. (ISO 8601) */
+		/** Datetime of visit or the arrival time of the admission. (ISO 8601) */
 		double visitDateTime = 12;
 
 		/** Unique ID of a single visit. */
@@ -721,6 +724,30 @@ message PatientInfo {
 	RedoxPatient redoxPatient = 2;
 }
 
+/** @see https://developer.redoxengine.com/data-models/Scheduling.html#New */
+message RedoxAppointment {
+	/** Patient data. */
+	message PatientType {
+		/** @see RedoxPatient.Demographics */
+		RedoxTypes.Demographics Demographics = 1;
+
+		/** @see RedoxPatient.Identifiers */
+		repeated RedoxTypes.Identifier Identifiers = 2;
+
+		/** @see RedoxPatient.Notes */
+		repeated string Notes = 3;
+	}
+
+	/** @see RedoxTypes.AppointmentInfo */
+	repeated RedoxTypes.AppointmentInfo AppointmentInfo = 1;
+
+	/** @see PatientType */
+	PatientType Patient = 2;
+
+	/** @see RedoxTypes.Visit */
+	repeated RedoxTypes.Visit Visit = 3;
+}
+
 /**
  * @see https://developer.redoxengine.com/data-models/ClinicalSummary.html#PatientQueryResponse
  * TODO: Finish this.
@@ -844,6 +871,36 @@ message RedoxTypes {
 
 		/** Describes the type of allergy intolerance this is (food, drug, etc.). */
 		CodedValue Type = 9;
+	}
+
+	/** List of supplementary clinical information associated with the appointment. */
+	message AppointmentInfo {
+		/** Code for the information element. */
+		string Code = 1;
+
+		/** Code set used to identify the information element. */
+		string Codeset = 2;
+
+		/** Description of the information element. */
+		string Description = 3;
+
+		/** The value of the corresponding AppointmentInfo code. */
+		string Value = 4;
+	}
+
+	/** A value represented by some code and codeset. */
+	message CodesetValue {
+		/** Code for the information element. */
+		string Code = 1;
+
+		/** Code set used to identify the information element. */
+		string Codeset = 2;
+
+		/** Name. */
+		string Name = 3;
+
+		/** Type. */
+		string Type = 4;
 	}
 
 	/** Emergency Contact for the patient. */
@@ -1038,23 +1095,53 @@ message RedoxTypes {
 		string PolicyNumber = 11;
 	}
 
+	/** Location details. */
+	message Location {
+		/** Department. */
+		string Department = 1;
+
+		/** e.g. Community Hospital. */
+		string Facility = 2;
+
+		/** e.g. 136. */
+		string Room = 3;
+
+		/** e.g. Clinic, Department, Home, Nursing Unit, Provider's Office, Phone. */
+		string Type = 4;
+	}
+
 	/** Primary Care Provider for the Patient. */
 	message PCP {
-		/** Location details. */
-		message LocationType {
-			/** Department. */
-			string Department = 1;
+		/** @see Provider.Address */
+		Address Address = 1;
 
-			/** e.g. Community Hospital. */
-			string Facility = 2;
+		/** @see Provider.Credentials */
+		repeated string Credentials = 2;
 
-			/** e.g. 136. */
-			string Room = 3;
+		/** @see Provider.FirstName */
+		string FirstName = 3;
 
-			/** e.g. Clinic, Department, Home, Nursing Unit, Provider's Office, Phone. */
-			string Type = 4;
-		}
+		/** @see Provider.ID */
+		required string ID = 4;
 
+		/** @see Provider.IDType */
+		required string IDType = 5;
+
+		/** @see Provider.LastName */
+		string LastName = 6;
+
+		/** @see Provider.Location */
+		Location Location = 7;
+
+		/** National Provider Identifier for the primary care provider. */
+		string NPI = 8;
+
+		/** @see Provider.PhoneNumber */
+		PhoneNumber PhoneNumber = 9;
+	}
+
+	/** A care provider. */
+	message Provider {
 		/** @see Address */
 		Address Address = 1;
 
@@ -1073,14 +1160,11 @@ message RedoxTypes {
 		/** Last name. */
 		string LastName = 6;
 
-		/** @see LocationType */
-		LocationType Location = 7;
-
-		/** National Provider Identifier for the primary care provider. */
-		string NPI = 8;
+		/** @see Location */
+		Location Location = 7;
 
 		/** @see PhoneNumber */
-		PhoneNumber PhoneNumber = 9;
+		PhoneNumber PhoneNumber = 8;
 	}
 
 	/** Someone's phone number. */
@@ -1093,6 +1177,60 @@ message RedoxTypes {
 
 		/** Office phone number. */
 		string Office = 3;
+	}
+
+	/** Visit metadata. */
+	message Visit {
+		/**
+		 * An ID that can span several visits often related to the same issue.
+		 * (Pregnancy, surgeries, research study, etc.)
+		 */
+		string AccountNumber = 1;
+
+		/** Attending provider. */
+		Provider AttendingProvider = 2;
+
+		/** Consulting provider. */
+		Provider ConsultingProvider = 3;
+
+		/** List of diagnoses associated with this visit. */
+		repeated CodesetValue Diagnoses = 4;
+
+		/** Duration in minutes. */
+		uint32 Duration = 5;
+
+		/** Appointment instructions. */
+		repeated string Instructions = 6;
+
+		/** Location. */
+		Location Location = 7;
+
+		/**
+		 * Patient class is used in many EHRs to determine where to put the patient.
+		 * e.g. Outpatient, Hosptial Outpatient Department.
+		 */
+		string PatientClass = 8;
+
+		/** Reason for appointment. */
+		string Reason = 9;
+
+		/** Referring provider. */
+		Provider ReferringProvider = 10;
+
+		/**
+		 * One of the following: Scheduled, Arrived, Completed, Canceled,
+		 * Left without being seen, No show.
+		 */
+		string Status = 11;
+
+		/** Datetime. (ISO 8601) */
+		string VisitDateTime = 12;
+
+		/** Unique ID of a single visit. */
+		string VisitNumber = 13;
+
+		/** Visit provider. */
+		Provider VisitProvider = 14;
 	}
 }
 
