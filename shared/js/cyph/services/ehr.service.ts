@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {RedoxPatient} from '../proto';
+import {RedoxPatient, RedoxTypes} from '../proto';
 import {deserialize, serialize} from '../util/serialization';
 import {EHRIntegrationService} from './ehr-integration.service';
 
@@ -11,7 +11,7 @@ export class EHRService {
 	/** Gets patient based on SSN or other identifier(s). */
 	public async getPatient (
 		apiKey: string,
-		id: string|RedoxPatient.Identifier|RedoxPatient.Identifier[]
+		id: string|RedoxTypes.IIdentifier|RedoxTypes.IIdentifier[]
 	) : Promise<RedoxPatient> {
 		const response	= await this.ehrIntegrationService.runCommand(apiKey, {
 			Meta: {

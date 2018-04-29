@@ -286,7 +286,7 @@ message Appointment {
 		/** Reason for the visit. */
 		string reason = 11;
 
-		/** DateTime of visit or the arrival time of the admission. (Redox: ISO 8601 Format) */
+		/** DateTime of visit or the arrival time of the admission. (ISO 8601) */
 		double visitDateTime = 12;
 
 		/** Unique ID of a single visit. */
@@ -705,36 +705,6 @@ enum NotificationTypes {
 
 /** Patient information for Telehealth. */
 message PatientInfo {
-	/** An allergy to a medication, food, or substance. */
-	message Allergy {
-		/** A reaction that occurs when the allergen is introduced. */
-		message Reaction {
-			/** Code for the reaction, based on codeset. */
-			string code = 1;
-
-			/** Code set used to identify the reaction. */
-			string codeset = 2;
-
-			/** Name of the reaction. */
-			string name = 3;
-		}
-
-		/** Code for the allergy, based on codeset. */
-		string code = 1;
-
-		/** Code set used to identify the allergy. Typically RxNorm or SNOMED. */
-		string codeset = 2;
-
-		/** Name of the allergy. */
-		string name = 3;
-
-		/** Date the allergy was identified. */
-		string onsetDateTime = 4;
-
-		/** List of reactions that occur when the allergen is introduced. */
-		repeated Reaction reactions = 5;
-	}
-
 	/** Additional data for a contact. */
 	message ContactAdditionalData {
 		/** Whether there is consent to share medical information with the contact. */
@@ -744,18 +714,45 @@ message PatientInfo {
 		string cyphAccount = 2;
 	}
 
-	/** List of patient's allergies. */
-	repeated Allergy allergies = 1;
-
 	/** Mapping of contact email addresses to ContactAdditionalData objects. */
-	map<string, ContactAdditionalData> contactAdditionalData = 2;
+	map<string, ContactAdditionalData> contactAdditionalData = 1;
 
 	/** Patient record as synced to/from EHR systems. */
-	RedoxPatient redoxPatient = 3;
+	RedoxPatient redoxPatient = 2;
 }
 
-/** @see {@link https://developer.redoxengine.com/data-models/PatientSearch.html#Response} */
+/**
+ * @see https://developer.redoxengine.com/data-models/ClinicalSummary.html#PatientQueryResponse
+ * TODO: Finish this.
+ */
+message RedoxClinicalSummary {
+	/** List of patient's allergies. */
+	repeated RedoxTypes.Allergy allergies = 1;
+}
+
+/** @see https://developer.redoxengine.com/data-models/PatientSearch.html#Response */
 message RedoxPatient {
+	/** List of (emergency) contacts for the patient. */
+	repeated RedoxTypes.Contact Contacts = 1;
+
+	/** Descriptive patient information - modeled from Redox. */
+	RedoxTypes.Demographics Demographics = 2;
+
+	/** Patient identifiers. */
+	repeated RedoxTypes.Identifier Identifiers = 3;
+
+	/** List of insurance(s) for the patient. */
+	repeated RedoxTypes.Insurance Insurances = 4;
+
+	/** List of patient-level notes. */
+	repeated string Notes = 5;
+
+	/** Patient's Primary Care Provider. */
+	RedoxTypes.PCP PCP = 6;
+}
+
+/** Redox data types. */
+message RedoxTypes {
 	/** Address / Physical Location. */
 	message Address {
 		/** City for the address, e.g. McLean. */
@@ -775,6 +772,78 @@ message RedoxPatient {
 
 		/** 5 digit zip code for the address, e.g. 22101. */
 		string ZIP = 6;
+	}
+
+	/** An allergy to a medication, food, or substance. */
+	message Allergy {
+		/** A value represented by some code. */
+		message CodedValue {
+			/** Code value. */
+			string Code = 1;
+
+			/** ID of the coding system to which the code belongs in OID format. */
+			string CodeSystem = 2;
+
+			/**
+			 * Coding system to which the code belogs.
+			 * (e.g. SNOMED CT, LOINC, RxNorm, CVX, ICD9, ICD10)
+			 */
+			string CodeSystemName = 3;
+
+			/** Name of the code value. */
+			string Name = 4;
+		}
+
+		/** A reaction that occurs when the allergen is introduced. */
+		message ReactionType {
+			/** @see CodedValue.Code */
+			string Code = 1;
+
+			/** @see CodedValue.CodeSystem */
+			string CodeSystem = 2;
+
+			/** @see CodedValue.CodeSystemName */
+			string CodeSystemName = 3;
+
+			/** @see CodedValue.Name */
+			string Name = 4;
+
+			/** Severity. */
+			CodedValue Severity = 5;
+
+			/**
+			 * Free text form of reactions to this substance.
+			 * Includes information that cannot be captured by coded value.
+			 */
+			string Text = 6;
+		}
+
+		/** Free text comment about the allergy. */
+		string Comment = 1;
+
+		/** Represents the gravity of potential risk for future life-threatening reactions. */
+		CodedValue Criticality = 2;
+
+		/** When the allergy was no longer a problem (if applicable). (ISO 8601) */
+		string EndDate = 3;
+
+		/** List of reactions that occur when the allergen is introduced. */
+		repeated ReactionType Reaction = 4;
+
+		/** Describes the severity of the reaction. */
+		CodedValue Severity = 5;
+
+		/** Date the allergy was identified. (ISO 8601) */
+		string StartDate = 6;
+
+		/** Describes the current status of the allergy (active, historic, etc.). */
+		CodedValue Status = 7;
+
+		/** Describes the substance that causes the allergy. Typically RxNorm or SNOMED. */
+		CodedValue Substance = 8;
+
+		/** Describes the type of allergy intolerance this is (food, drug, etc.). */
+		CodedValue Type = 9;
 	}
 
 	/** Emergency Contact for the patient. */
@@ -805,17 +874,17 @@ message RedoxPatient {
 	}
 
 	/** Descriptive patient information - modeled from Redox. */
-	message DemographicsType {
+	message Demographics {
 		/** The patient's address. */
 		Address Address = 1;
 
 		/** Reference: http://www.nationsonline.org/oneworld/country_code_list.htm */
 		repeated string Citizenship = 2;
 
-		/** Date and Time the patient was proclaimed deceased. (Redox: ISO 8601 Format) */
+		/** Date and time the patient was proclaimed deceased. (ISO 8601) */
 		string DeathDateTime = 3;
 
-		/** Patient's date of birth. (Redox: In ISO 8601 format) */
+		/** Patient's date of birth. (ISO 8601) */
 		string DOB = 4;
 
 		/** List of emails for the patient. */
@@ -892,7 +961,7 @@ message RedoxPatient {
 			/** @see Address */
 			Address Address = 1;
 
-			/** Insurance policy holder's date of birth. (Redox: In ISO 8601 format) */
+			/** Insurance policy holder's date of birth. (ISO 8601) */
 			string DOB = 2;
 
 			/** First name. */
@@ -908,9 +977,9 @@ message RedoxPatient {
 			string Relationship = 5;
 
 			/**
-			* Insurance policy holder's sex.
-			* One of the following: "Female", "Male", "Unknown", "Other" (Redox).
-			*/
+			 * Insurance policy holder's sex.
+			 * One of the following: "Female", "Male", "Unknown", "Other" (Redox).
+			 */
 			string Sex = 6;
 		}
 
@@ -970,7 +1039,7 @@ message RedoxPatient {
 	}
 
 	/** Primary Care Provider for the Patient. */
-	message PCPType {
+	message PCP {
 		/** Location details. */
 		message LocationType {
 			/** Department. */
@@ -1025,24 +1094,6 @@ message RedoxPatient {
 		/** Office phone number. */
 		string Office = 3;
 	}
-
-	/** List of (emergency) contacts for the patient. */
-	repeated Contact Contacts = 1;
-
-	/** Descriptive patient information - modeled from Redox. */
-	DemographicsType Demographics = 2;
-
-	/** Patient identifiers. */
-	repeated Identifier Identifiers = 3;
-
-	/** List of insurance(s) for the patient. */
-	repeated Insurance Insurances = 4;
-
-	/** List of patient-level notes. */
-	repeated string Notes = 5;
-
-	/** Patient's Primary Care Provider. */
-	PCPType PCP = 6;
 }
 
 /** A review of something. */
