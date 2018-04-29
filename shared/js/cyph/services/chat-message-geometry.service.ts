@@ -115,6 +115,7 @@ export class ChatMessageGeometryService {
 		containerChild.appendChild(messageElement);
 
 		await Promise.all([
+			/* tslint:disable-next-line:no-life-cycle-call */
 			componentRef.instance.ngOnChanges({message: {
 				currentValue: message,
 				firstChange: true,
