@@ -58,7 +58,7 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
-	@ngtools/webpack@1
+	@ngtools/webpack
 	@ngxs/devtools-plugin
 	@ngxs/logger-plugin
 	@ngxs/storage-plugin
@@ -249,7 +249,7 @@ read -r -d '' modules <<- EOM
 	unsemantic
 	url-loader
 	web-animations-js
-	webpack@3
+	webpack
 	webpack-closure-compiler
 	webpack-sources
 	webrtc-adapter
