@@ -1,6 +1,6 @@
 import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
-import {FlexLayoutModule} from '@angular/flex-layout';
+import {ADD_FLEX_STYLES, FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatButtonModule} from '@angular/material/button';
@@ -138,6 +138,10 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		VirtualScrollModule
 	],
 	providers: [
+		{
+			provide: ADD_FLEX_STYLES,
+			useValue: true
+		},
 		{
 			provide: DialogService,
 			useClass: MaterialDialogService
