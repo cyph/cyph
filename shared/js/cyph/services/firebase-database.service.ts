@@ -16,8 +16,7 @@ import {FirebaseMessaging} from '@firebase/messaging-types';
 import '@firebase/storage';
 import {
 	FirebaseStorage,
-	Reference as StorageReference,
-	UploadTaskSnapshot
+	Reference as StorageReference
 } from '@firebase/storage-types';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {skip} from 'rxjs/operators';
@@ -930,7 +929,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					'state_changed',
 					o => {
 						if (o) {
-							const snapshot	= <UploadTaskSnapshot> o;
+							const snapshot	= o;
 							this.ngZone.run(() => {
 								progress.next(
 									snapshot.bytesTransferred / snapshot.totalBytes * 100

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
-import {BehaviorSubject, Observable, combineLatest} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {User} from '../account';
 import {translate} from '../util/translate';

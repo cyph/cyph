@@ -9,7 +9,7 @@ import {uuid} from '../util/uuid';
 })
 export class DropZoneDirective implements OnInit {
 	/** File drop event emitter. */
-	@Output() public fileDrop: EventEmitter<File>	= new EventEmitter<File>();
+	@Output() public readonly fileDrop: EventEmitter<File>	= new EventEmitter<File>();
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {

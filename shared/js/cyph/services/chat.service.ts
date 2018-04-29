@@ -2,7 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject, Observable, combineLatest, interval, Subscription} from 'rxjs';
+import {BehaviorSubject, combineLatest, interval, Observable, Subscription} from 'rxjs';
 import {filter, map, take, takeWhile} from 'rxjs/operators';
 import {ChatMessage, IChatData, IChatMessageLiveValue, States} from '../chat';
 import {HelpComponent} from '../components/help';

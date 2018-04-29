@@ -1,8 +1,8 @@
 /* tslint:disable:max-file-line-count */
 
 import {Injectable} from '@angular/core';
-import {skip} from 'rxjs/operators';
 import {Subscription} from 'rxjs';
+import {skip} from 'rxjs/operators';
 import {RegistrationErrorCodes} from '../../account';
 import {IProto} from '../../iproto';
 import {

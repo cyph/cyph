@@ -12,7 +12,7 @@ import {SafeStyle} from '@angular/platform-browser';
 import * as $ from 'jquery';
 import {IVirtualScrollOptions} from 'od-virtualscroll';
 import ResizeObserver from 'resize-observer-polyfill';
-import {BehaviorSubject, Observable, combineLatest, of} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {fadeInOut} from '../../animations';

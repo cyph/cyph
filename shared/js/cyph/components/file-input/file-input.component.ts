@@ -19,7 +19,7 @@ export class FileInputComponent implements AfterViewInit {
 	@Input() public accept?: string;
 
 	/** Handler for uploaded files. */
-	@Output() public fileChange: EventEmitter<File>	= new EventEmitter<File>();
+	@Output() public readonly fileChange: EventEmitter<File>	= new EventEmitter<File>();
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {

@@ -2,7 +2,7 @@ import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
 import {Options} from 'fullcalendar';
 import memoize from 'lodash-es/memoize';
 import {CalendarComponent} from 'ng-fullcalendar';
-import {Observable, combineLatest, of, Subscription} from 'rxjs';
+import {combineLatest, Observable, of, Subscription} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {AccountUserTypes, CallTypes, IAccountFileRecord, IAppointment} from '../../proto';
