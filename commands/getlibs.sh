@@ -257,12 +257,6 @@ cp -f simplewebrtc/out/simplewebrtc-with-adapter.bundle.js simplewebrtc/src/simp
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
-# Temporary workarounds for https://github.com/angular/angular-cli/issues/10525
-
-sed -i 's|^\s*compress,|compress: compress === true ? {sequences: false} : typeof compress === "object" ? {...compress, sequences: false} : compress,|g' uglifyjs-webpack-plugin/dist/uglify/minify.js
-
-sed -i 's/mangle:.*,/mangle: mangle === false ? false : {reserved: require("\/cyph\/commands\/mangleexceptions").mangleExceptions},/g' uglifyjs-webpack-plugin/dist/uglify/minify.js
-
 # Temporary workaround for https://github.com/werk85/node-html-to-text/issues/151
 for f in $(grep -rl lodash html-to-text) ; do
 	cat ${f} | perl -pe "s/(require\(['\"])lodash(\/.*?['\"]\))/\1lodash-es\2.default/g" > ${f}.new

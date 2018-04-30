@@ -1,6 +1,31 @@
 #!/bin/bash
 
 
+onexit () {
+	mv /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js.bak /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js 2> /dev/null
+}
+trap onexit EXIT
+
+cp /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js.bak
+
+
+# Temporary workarounds for https://github.com/angular/angular-cli/issues/10525
+
+commandsDir="$(cd "$(dirname "$0")" ; pwd)"
+
+sed -i "s|^\s*compress,|compress: compress === true ? {sequences: false} : typeof compress === 'object' ? {...compress, sequences: false} : compress,|g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
+
+sed -i "s/mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
+
+
+ng build --prod "${@}"
+
+exit
+
+
+
+# Skipping everything after this Angular CLI >=6.x support
+
 dependencyModules="$(
 	grep -roP "(import|from) '[@A-Za-z0-9][^' ]*';" src/js |
 		perl -pe "s/.*?'(.*)';/\1/g" |
