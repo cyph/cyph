@@ -93,7 +93,7 @@ read -r -d '' modules <<- EOM
 	@yaga/leaflet-ng2
 	angular-infinite-list
 	angular-material-clock-time-picker
-	angular-speed-dial
+	angular-speed-dial@next
 	angular-ssr
 	angular2-cool-infinite-grid
 	angular2-template-loader
