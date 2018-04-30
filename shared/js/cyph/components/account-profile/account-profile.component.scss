@@ -274,7 +274,7 @@ mat-card {
 	}
 }
 
-::ng-deep od-virtualscroll {
+::ng-deep .contact-list {
 	overflow-y: auto !important;
 	min-height: 125px;
 }
