@@ -15,6 +15,8 @@ if [ "${1}" != '--angular-only' ] ; then
 
 	./commands/lint.sh
 	checkfail
+else
+	./commands/protobuf.sh
 fi
 
 log 'Starting Angular AOT build'
