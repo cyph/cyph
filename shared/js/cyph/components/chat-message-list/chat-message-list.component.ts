@@ -10,9 +10,9 @@ import {
 } from '@angular/core';
 import {SafeStyle} from '@angular/platform-browser';
 import * as $ from 'jquery';
-import {IVirtualScrollOptions} from 'od-virtualscroll';
+/* import {IVirtualScrollOptions} from 'od-virtualscroll'; */
 import ResizeObserver from 'resize-observer-polyfill';
-import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {fadeInOut} from '../../animations';
@@ -21,7 +21,7 @@ import {IChatMessage} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
-import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service';
+/* import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service'; */
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {P2PService} from '../../services/p2p.service';
@@ -44,11 +44,12 @@ import {urlToSafeStyle} from '../../util/safe-values';
 	templateUrl: './chat-message-list.component.html'
 })
 export class ChatMessageListComponent implements AfterViewInit, OnChanges {
-	/** @ignore */
+	/** @ignore
 	private currentMaxWidth: number			= 0;
 
-	/** @ignore */
+	/** @ignore
 	private currentViewportWidth: number	= 0;
+	*/
 
 	/** @ignore */
 	private readonly maxWidthWatcher: Observable<void>	= new Observable(observer => {
@@ -59,11 +60,13 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		}
 
 		const resizeObserver	= new ResizeObserver(async () => {
+			/*
 			this.currentMaxWidth		=
 				await this.chatMessageGeometryService.getMaxWidth(this.elementRef.nativeElement)
 			;
 
 			this.currentViewportWidth	= document.body.clientWidth;
+			*/
 
 			observer.next();
 		});
@@ -127,7 +130,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** Data formatted for virtual scrolling. */
 	public readonly vsData: BehaviorSubject<IVsItem[]>	= new BehaviorSubject<IVsItem[]>([]);
 
-	/** Equality function for virtual scrolling. */
+	/** Equality function for virtual scrolling.
 	public readonly vsEqualsFunc: (a: number, b: number) => boolean	= (() => {
 		/*
 		const vsData	= this.vsData;
@@ -137,12 +140,13 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			vsData.value.length > b &&
 			vsData.value[a].message.id === vsData.value[b].message.id
 		;
-		*/
+		*
 
 		return () => false;
 	})();
+	*/
 
-	/** Options for virtual scrolling. */
+	/** Options for virtual scrolling.
 	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
 		itemHeight: async ({message}: IVsItem) =>
 			message === undefined ? 0 : this.chatMessageGeometryService.getHeight(
@@ -153,6 +157,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		,
 		numLimitColumns: 1
 	});
+	*/
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
@@ -314,8 +319,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		@Inject(AccountUserLookupService) @Optional()
 		private readonly accountUserLookupService: AccountUserLookupService|undefined,
 
-		/** @ignore */
+		/** @ignore
 		private readonly chatMessageGeometryService: ChatMessageGeometryService,
+		*/
 
 		/** @ignore */
 		private readonly envService: EnvService,
