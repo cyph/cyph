@@ -18,13 +18,13 @@ sed -i "s|^\s*compress,|compress: compress === true ? {sequences: false} : typeo
 sed -i "s/mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
 
 
-ng build --prod "${@}"
+ng build --prod --output-hashing none "${@}"
 
 exit
 
 
 
-# Skipping everything after this Angular CLI >=6.x support
+# Skipping everything after this pending Angular CLI >=6.x eject support
 
 dependencyModules="$(
 	grep -roP "(import|from) '[@A-Za-z0-9][^' ]*';" src/js |
@@ -34,10 +34,9 @@ dependencyModules="$(
 		tr '\n' ' '
 )"
 
-ng eject --aot --prod --no-sourcemaps "${@}"
+ng eject --prod --output-hashing none "${@}"
 
 cat > webpack.js <<- EOM
-	const ExtractTextPlugin		= require('extract-text-webpack-plugin');
 	const HtmlWebpackPlugin		= require('html-webpack-plugin');
 	const path					= require('path');
 	const UglifyJsPlugin		= require('uglifyjs-webpack-plugin');
@@ -83,20 +82,6 @@ cat > webpack.js <<- EOM
 				minChunks: o => o.resource && o.resource.startsWith(
 					path.join(process.cwd(), chunk.path)
 				)
-			})
-		);
-	}
-
-	const extractTextIndex	= config.plugins.indexOf(
-		config.plugins.find(o => o instanceof ExtractTextPlugin)
-	);
-
-	if (extractTextIndex > -1) {
-		config.plugins.splice(
-			extractTextIndex,
-			1,
-			new ExtractTextPlugin({
-				filename: '[name].css'
 			})
 		);
 	}

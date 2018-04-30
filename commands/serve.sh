@@ -76,9 +76,18 @@ fi
 ngserve () {
 	ngserveInternal () {
 		if [ "${e2e}" ] ; then
-			ng e2e "${@}"
+			ng e2e \
+				$(if [ "${localSeleniumServer}" ] ; then
+					echo '--protractor-config protractor.local-selenium-server.js'
+				fi) \
+				"${@}"
 		else
-			ng serve "${@}"
+			ng serve \
+				--live-reload false \
+				--source-map false \
+				--public-host "localhost:${port}" \
+				$(if [ "${prodBuild}" ] ; then echo '--watch false' ; fi) \
+				"${@}"
 		fi
 	}
 
@@ -91,17 +100,11 @@ ngserve () {
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
 	ngserveInternal \
-		--environment "${environment}" \
+		--configuration "${environment}" \
 		--host '0.0.0.0' \
-		--live-reload false \
-		--no-sourcemaps \
 		--port "${port}" \
-		--public-host "localhost:${port}" \
-		$(if [ "${prodBuild}" ] ; then echo '--aot --prod --watch false' ; else echo '--no-aot' ; fi) \
-		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
-		$(if [ "${localSeleniumServer}" ] ; then
-			echo '--config protractor.local-selenium-server.js'
-		fi) \
+		$(if [ "${prodBuild}" ] ; then echo '--prod' ; fi) \
+		\ # $(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
 		${args} \
 		"${@}"
 }
