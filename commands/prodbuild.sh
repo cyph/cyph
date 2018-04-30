@@ -124,8 +124,6 @@ cat > webpack.js <<- EOM
 		options.uglifyOptions.compress.sequences	= false;
 		options.uglifyOptions.mangle				= {reserved: mangleExceptions};
 
-		options.uglifyOptions.compress.sequences	= false;
-
 		config.plugins.splice(uglifyJsIndex, 1, new UglifyJsPlugin(options));
 	}
 
