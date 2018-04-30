@@ -31,6 +31,15 @@ read -r -d '' modules <<- EOM
 	@angular/platform-webworker-dynamic@next
 	@angular/router@next
 	@angular/service-worker@next
+	@angular-devkit/architect
+	@angular-devkit/architect-cli
+	@angular-devkit/build-ng-packagr
+	@angular-devkit/core
+	@angular-devkit/build-angular
+	@angular-devkit/build-optimizer
+	@angular-devkit/build-webpack
+	@angular-devkit/schematics
+	@angular-devkit/schematics-cli
 	@asymmetrik/ngx-leaflet
 	@compodoc/compodoc
 	@covalent/core@next
