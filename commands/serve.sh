@@ -104,7 +104,7 @@ ngserve () {
 		--host '0.0.0.0' \
 		--port "${port}" \
 		$(if [ "${prodBuild}" ] ; then echo '--prod' ; fi) \
-		\ # $(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
+		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
 		${args} \
 		"${@}"
 }
