@@ -168,6 +168,7 @@ for f in ${typescriptAssets} ; do
 			entry: {
 				app: '../../js/${f}'
 			},
+			mode: '$(if [ "${test}" ] ; then echo -n development ; else echo -n production ; fi)',
 			module: {
 				rules: [
 					{
