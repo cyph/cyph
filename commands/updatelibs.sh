@@ -117,6 +117,7 @@ read -r -d '' modules <<- EOM
 	comlinkjs
 	copy-webpack-plugin
 	core-js
+	crypto-browserify
 	css-loader
 	d3
 	datauri
@@ -212,6 +213,7 @@ read -r -d '' modules <<- EOM
 	quill-delta-to-html
 	raw-loader
 	read
+	readable-stream
 	reflect-metadata
 	request
 	resize-observer-polyfill

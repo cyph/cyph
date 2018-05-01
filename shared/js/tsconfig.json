@@ -20,6 +20,7 @@
 		"paths": {
 			"_stream_duplex": ["js/externals/_stream_duplex"],
 			"_stream_writable": ["js/externals/_stream_writable"],
+			"crypto": ["js/externals/crypto"],
 			"faye-websocket": ["js/externals/faye-websocket"],
 			"fs": ["js/externals/fs"],
 			"lodash/*": ["node_modules/@types/lodash-es/*"],

@@ -231,6 +231,19 @@ do
 	" > "@types/${anyType}/index.d.ts"
 done
 
+for anyType in \
+	crypto-browserify \
+	readable-stream
+do
+	mkdir -p "@types/${anyType}"
+	echo "
+		declare module '${anyType}' {
+			const balls: any;
+			export default balls;
+		}
+	" > "@types/${anyType}/index.d.ts"
+done
+
 mkdir -p @types/fg-loadcss
 echo "
 	declare module 'fg-loadcss' {

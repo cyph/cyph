@@ -3,4 +3,4 @@
 /** @file stream external. */
 
 
-export default undefined;
+export * from 'readable-stream';
