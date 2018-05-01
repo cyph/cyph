@@ -18,7 +18,12 @@ sed -i "s|^\s*compress,|compress: compress === true ? {sequences: false} : typeo
 sed -i "s/mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
 
 
-ng build --prod --output-hashing none "${@}"
+# Workaround for https://github.com/angular/angular-cli/issues/10529
+
+node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build \
+	--prod \
+	--output-hashing none \
+	"${@}"
 
 exit
 
