@@ -21,8 +21,15 @@ sed -i "s/mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === '
 # Workaround for https://github.com/angular/angular-cli/issues/10529
 
 node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build \
-	--prod \
+	--aot true \
+	--build-optimizer true \
+	--extract-css true \
+	--extract-licenses true \
+	--named-chunks false \
+	--optimization true \
 	--output-hashing none \
+	--source-map false \
+	--vendor-chunk false \
 	"${@}"
 
 exit
