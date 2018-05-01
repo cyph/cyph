@@ -1,10 +1,20 @@
 #!/bin/bash
 
 
+noBuild=''
+if [ "${1}" == '--no-build' ] ; then
+	noBuild=true
+	shift
+fi
+
+
 onexit () {
 	mv /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js.bak /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js 2> /dev/null
 }
-trap onexit EXIT
+
+if [ ! "${noBuild}" ] ; then
+	trap onexit EXIT
+fi
 
 cp /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js.bak
 
@@ -15,22 +25,28 @@ commandsDir="$(cd "$(dirname "$0")" ; pwd)"
 
 sed -i "s|^\s*compress,|compress: compress === true ? {sequences: false} : typeof compress === 'object' ? {...compress, sequences: false} : compress,|g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
 
-sed -i "s/mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
+sed -i "s/mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions, safari10: true},/g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
 
 
 # Workaround for https://github.com/angular/angular-cli/issues/10529
 
-node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build \
-	--aot true \
-	--build-optimizer true \
-	--extract-css true \
-	--extract-licenses true \
-	--named-chunks false \
-	--optimization true \
-	--output-hashing none \
-	--source-map false \
-	--vendor-chunk false \
-	"${@}"
+ngProdFlags='
+	--aot true
+	--build-optimizer true
+	--extract-css true
+	--extract-licenses true
+	--named-chunks false
+	--optimization true
+	--output-hashing none
+	--source-map false
+	--vendor-chunk false
+'
+
+if [ ! "${noBuild}" ] ; then
+	node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build ${ngProdFlags} "${@}"
+else
+	echo "${ngProdFlags}"
+fi
 
 exit
 
