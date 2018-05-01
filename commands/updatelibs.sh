@@ -260,6 +260,7 @@ read -r -d '' modules <<- EOM
 	url-loader
 	web-animations-js
 	webpack
+	webpack-cli
 	webpack-closure-compiler
 	webpack-sources
 	webrtc-adapter
