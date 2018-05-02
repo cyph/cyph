@@ -41,7 +41,7 @@ ngProdFlags='
 	--optimization true
 	--output-hashing none
 	--source-map false
-	--vendor-chunk false
+	--vendor-chunk true
 '
 
 if [ ! "${noBuild}" ] ; then
