@@ -64,10 +64,9 @@ mat-card {
 }
 
 .edit-buttons {
-	position: relative;
-	float: right;
-	bottom: 80px;
-	right: 10px;
+	position: fixed;
+	bottom: 25px;
+	right: 25px;
 }
 
 .edit-hide {
