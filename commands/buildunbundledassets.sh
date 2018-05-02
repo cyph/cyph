@@ -201,14 +201,14 @@ for f in ${typescriptAssets} ; do
 							ecma: 5,
 							ie8: false,
 							mangle: {
-								reserved: mangleExceptions,
-								safari10: true
+								reserved: mangleExceptions
 							},
 							output: {
 								ascii_only: true,
 								comments: false,
 								webkit: true
 							},
+							safari10: true,
 							warnings: false
 						}
 					})
