@@ -116,7 +116,7 @@ for f in ${nodeModulesAssets} ; do
 		path="/node_modules/${f}.min.js"
 	fi
 
-	uglifyjs "${path}" -mo "${f}.js"
+	uglifyjs "${path}" -cmo "${f}.js"
 done
 
 
