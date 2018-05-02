@@ -114,6 +114,9 @@ export abstract class SessionService implements ISessionService {
 	public readonly connected: Promise<void>				= this.one<void>(events.connect);
 
 	/** @inheritDoc */
+	public readonly cyphNotFound: Promise<void>				= this.one<void>(events.cyphNotFound);
+
+	/** @inheritDoc */
 	public readonly freezePong: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
 	/** @inheritDoc */

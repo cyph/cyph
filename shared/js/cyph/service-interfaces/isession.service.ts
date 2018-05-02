@@ -29,6 +29,9 @@ export interface ISessionService {
 	/** Resolves when this session is connected. */
 	readonly connected: Promise<void>;
 
+	/** Resolves when this session 404s. */
+	readonly cyphNotFound: Promise<void>;
+
 	/** When true, blocks responding to pings. */
 	readonly freezePong: BehaviorSubject<boolean>;
 
