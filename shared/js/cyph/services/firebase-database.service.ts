@@ -2,7 +2,7 @@
 
 import {Injectable, NgZone} from '@angular/core';
 import {firebase} from '@firebase/app';
-import {FirebaseApp, FirebaseNamespace} from '@firebase/app-types';
+import {FirebaseApp} from '@firebase/app-types';
 import '@firebase/auth';
 import {FirebaseAuth} from '@firebase/auth-types';
 import {ServerValue} from '@firebase/database';
@@ -87,22 +87,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 				'FCM',
 				this.envService.firebaseConfig,
 				/* tslint:disable-next-line:no-shadowed-variable */
-				(config, firebase: FirebaseNamespace) => {
+				config => {
 					importScripts('/assets/node_modules/firebase/firebase-app.js');
 					importScripts('/assets/node_modules/firebase/firebase-messaging.js');
 
-					if (firebase) {
-						(<any> self).firebase	= firebase;
-					}
-					else {
-						firebase				= (<any> self).firebase;
-					}
-
-					firebase.initializeApp(config);
-
-					if (firebase.messaging) {
-						(<any> self).messaging	= firebase.messaging();
-					}
+					(<any> self).firebase.initializeApp(config);
+					(<any> self).messaging	= (<any> self).firebase.messaging();
 				}
 			);
 
