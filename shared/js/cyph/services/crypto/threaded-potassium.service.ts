@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count max-func-body-length */
+/* tslint:disable:max-file-line-count max-func-body-length promise-function-async */
 
 import {Injectable} from '@angular/core';
 import {IBox} from '../../crypto/potassium/ibox';
@@ -332,7 +332,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 
 		this.workerService.createThread(
 			/* tslint:disable-next-line:only-arrow-functions */
-			async function () : Promise<void> {
+			function () {
 				importScripts('/assets/js/cyph/crypto/potassium/index.js');
 
 				/* tslint:disable-next-line:no-shadowed-variable */
@@ -398,367 +398,423 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 					}
 				};
 
-				/* Box */
+				Promise.all([
+					Promise.all([
+						potassium.box.privateKeyBytes,
+						potassium.box.publicKeyBytes,
+						potassium.ephemeralKeyExchange.privateKeyBytes,
+						potassium.ephemeralKeyExchange.publicKeyBytes,
+						potassium.ephemeralKeyExchange.secretBytes,
+						potassium.hash.bytes,
+						potassium.oneTimeAuth.bytes,
+						potassium.oneTimeAuth.keyBytes,
+						potassium.passwordHash.memLimitInteractive,
+						potassium.passwordHash.memLimitSensitive,
+						potassium.passwordHash.opsLimitInteractive,
+						potassium.passwordHash.opsLimitSensitive,
+						potassium.passwordHash.saltBytes,
+						potassium.secretBox.aeadBytes,
+						potassium.secretBox.keyBytes,
+						potassium.sign.bytes,
+						potassium.sign.privateKeyBytes,
+						potassium.sign.publicKeyBytes
+					]),
+					potassium.passwordHash.algorithm
+				]).then(([
+					[
+						boxPrivateKeyBytes,
+						boxPublicKeyBytes,
+						ephemeralKeyExchangePrivateKeyBytes,
+						ephemeralKeyExchangePublicKeyBytes,
+						ephemeralKeyExchangeSecretBytes,
+						hashBytes,
+						oneTimeAuthBytes,
+						oneTimeAuthKeyBytes,
+						passwordHashMemLimitInteractive,
+						passwordHashMemLimitSensitive,
+						passwordHashOpsLimitInteractive,
+						passwordHashOpsLimitSensitive,
+						passwordHashSaltBytes,
+						secretBoxAeadBytes,
+						secretBoxKeyBytes,
+						signBytes,
+						signPrivateKeyBytes,
+						signPublicKeyBytes
+					],
+					passwordHashAlgorithm
+				]) => {
+					/* Box */
 
-				eventManager.rpcOn(
-					threadEvents.box.keyPair,
-					async () =>
-						<Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>>
-						potassium.box.keyPair()
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.box.keyPair,
+						() =>
+							<Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>>
+							potassium.box.keyPair()
+						,
+						clearData
+					);
 
-				eventManager.rpcOn(
-					threadEvents.box.open,
-					async (o: {
-						cyphertext: Uint8Array;
-						keyPair: {privateKey: Uint8Array; publicKey: Uint8Array};
-					}) =>
-						potassium.box.open(o.cyphertext, o.keyPair)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.box.open,
+						(o: {
+							cyphertext: Uint8Array;
+							keyPair: {privateKey: Uint8Array; publicKey: Uint8Array};
+						}) =>
+							potassium.box.open(o.cyphertext, o.keyPair)
+						,
+						clearData
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.box.privateKeyBytes,
-					await potassium.box.privateKeyBytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.box.privateKeyBytes,
+						boxPrivateKeyBytes,
+						true
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.box.publicKeyBytes,
-					await potassium.box.publicKeyBytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.box.publicKeyBytes,
+						boxPublicKeyBytes,
+						true
+					);
 
-				eventManager.rpcOn(
-					threadEvents.box.seal,
-					async (o: {
-						plaintext: Uint8Array;
-						publicKey: Uint8Array;
-					}) =>
-						potassium.box.seal(o.plaintext, o.publicKey)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.box.seal,
+						(o: {
+							plaintext: Uint8Array;
+							publicKey: Uint8Array;
+						}) =>
+							potassium.box.seal(o.plaintext, o.publicKey)
+						,
+						clearData
+					);
 
-				/* EphemeralKeyExchange */
+					/* EphemeralKeyExchange */
 
-				eventManager.rpcOn(
-					threadEvents.ephemeralKeyExchange.aliceKeyPair,
-					async () =>
-						<Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>>
-						potassium.ephemeralKeyExchange.aliceKeyPair()
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.ephemeralKeyExchange.aliceKeyPair,
+						() =>
+							<Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>>
+							potassium.ephemeralKeyExchange.aliceKeyPair()
+						,
+						clearData
+					);
 
-				eventManager.rpcOn(
-					threadEvents.ephemeralKeyExchange.aliceSecret,
-					async (o: {
-						privateKey: Uint8Array;
-						publicKey: Uint8Array;
-					}) =>
-						potassium.ephemeralKeyExchange.aliceSecret(o.publicKey, o.privateKey)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.ephemeralKeyExchange.aliceSecret,
+						(o: {
+							privateKey: Uint8Array;
+							publicKey: Uint8Array;
+						}) =>
+							potassium.ephemeralKeyExchange.aliceSecret(o.publicKey, o.privateKey)
+						,
+						clearData
+					);
 
-				eventManager.rpcOn(
-					threadEvents.ephemeralKeyExchange.bobSecret,
-					async (o: {
-						alicePublicKey: Uint8Array;
-					}) =>
-						potassium.ephemeralKeyExchange.bobSecret(o.alicePublicKey)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.ephemeralKeyExchange.bobSecret,
+						(o: {
+							alicePublicKey: Uint8Array;
+						}) =>
+							potassium.ephemeralKeyExchange.bobSecret(o.alicePublicKey)
+						,
+						clearData
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.ephemeralKeyExchange.privateKeyBytes,
-					await potassium.ephemeralKeyExchange.privateKeyBytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.ephemeralKeyExchange.privateKeyBytes,
+						ephemeralKeyExchangePrivateKeyBytes,
+						true
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.ephemeralKeyExchange.publicKeyBytes,
-					await potassium.ephemeralKeyExchange.publicKeyBytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.ephemeralKeyExchange.publicKeyBytes,
+						ephemeralKeyExchangePublicKeyBytes,
+						true
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.ephemeralKeyExchange.secretBytes,
-					await potassium.ephemeralKeyExchange.secretBytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.ephemeralKeyExchange.secretBytes,
+						ephemeralKeyExchangeSecretBytes,
+						true
+					);
 
-				/* Hash */
+					/* Hash */
 
-				eventManager.trigger<number>(
-					threadEvents.hash.bytes,
-					await potassium.hash.bytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.hash.bytes,
+						hashBytes,
+						true
+					);
 
-				eventManager.rpcOn(
-					threadEvents.hash.deriveKey,
-					async (o: {
-						input: Uint8Array;
-						outputBytes?: number;
-					}) =>
-						potassium.hash.deriveKey(o.input, o.outputBytes)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.hash.deriveKey,
+						(o: {
+							input: Uint8Array;
+							outputBytes?: number;
+						}) =>
+							potassium.hash.deriveKey(o.input, o.outputBytes)
+						,
+						clearData
+					);
 
-				eventManager.rpcOn(
-					threadEvents.hash.hash,
-					async (o: {
-						plaintext: Uint8Array;
-					}) =>
-						potassium.hash.hash(o.plaintext)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.hash.hash,
+						(o: {
+							plaintext: Uint8Array;
+						}) =>
+							potassium.hash.hash(o.plaintext)
+						,
+						clearData
+					);
 
-				/* OneTimeAuth */
+					/* OneTimeAuth */
 
-				eventManager.trigger<number>(
-					threadEvents.oneTimeAuth.bytes,
-					await potassium.oneTimeAuth.bytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.oneTimeAuth.bytes,
+						oneTimeAuthBytes,
+						true
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.oneTimeAuth.keyBytes,
-					await potassium.oneTimeAuth.keyBytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.oneTimeAuth.keyBytes,
+						oneTimeAuthKeyBytes,
+						true
+					);
 
-				eventManager.rpcOn(
-					threadEvents.oneTimeAuth.sign,
-					async (o: {
-						key: Uint8Array;
-						message: Uint8Array;
-					}) =>
-						potassium.oneTimeAuth.sign(o.message, o.key)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.oneTimeAuth.sign,
+						(o: {
+							key: Uint8Array;
+							message: Uint8Array;
+						}) =>
+							potassium.oneTimeAuth.sign(o.message, o.key)
+						,
+						clearData
+					);
 
-				eventManager.rpcOn(
-					threadEvents.oneTimeAuth.verify,
-					async (o: {
-						key: Uint8Array;
-						mac: Uint8Array;
-						message: Uint8Array;
-					}) =>
-						potassium.oneTimeAuth.verify(o.mac, o.message, o.key)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.oneTimeAuth.verify,
+						(o: {
+							key: Uint8Array;
+							mac: Uint8Array;
+							message: Uint8Array;
+						}) =>
+							potassium.oneTimeAuth.verify(o.mac, o.message, o.key)
+						,
+						clearData
+					);
 
-				/* PasswordHash */
+					/* PasswordHash */
 
-				eventManager.trigger<string>(
-					threadEvents.passwordHash.algorithm,
-					await potassium.passwordHash.algorithm,
-					true
-				);
+					eventManager.trigger<string>(
+						threadEvents.passwordHash.algorithm,
+						passwordHashAlgorithm,
+						true
+					);
 
-				eventManager.rpcOn(
-					threadEvents.passwordHash.hash,
-					async (o: {
-						memLimit?: number;
-						opsLimit?: number;
-						outputBytes?: number;
-						plaintext: Uint8Array|string;
-						salt?: Uint8Array;
-					}) =>
-						potassium.passwordHash.hash(
-							o.plaintext,
-							o.salt,
-							o.outputBytes,
-							o.opsLimit,
-							o.memLimit
-						)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.passwordHash.hash,
+						(o: {
+							memLimit?: number;
+							opsLimit?: number;
+							outputBytes?: number;
+							plaintext: Uint8Array|string;
+							salt?: Uint8Array;
+						}) =>
+							potassium.passwordHash.hash(
+								o.plaintext,
+								o.salt,
+								o.outputBytes,
+								o.opsLimit,
+								o.memLimit
+							)
+						,
+						clearData
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.passwordHash.memLimitInteractive,
-					await potassium.passwordHash.memLimitInteractive,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.passwordHash.memLimitInteractive,
+						passwordHashMemLimitInteractive,
+						true
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.passwordHash.memLimitSensitive,
-					await potassium.passwordHash.memLimitSensitive,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.passwordHash.memLimitSensitive,
+						passwordHashMemLimitSensitive,
+						true
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.passwordHash.opsLimitInteractive,
-					await potassium.passwordHash.opsLimitInteractive,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.passwordHash.opsLimitInteractive,
+						passwordHashOpsLimitInteractive,
+						true
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.passwordHash.opsLimitSensitive,
-					await potassium.passwordHash.opsLimitSensitive,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.passwordHash.opsLimitSensitive,
+						passwordHashOpsLimitSensitive,
+						true
+					);
 
-				eventManager.rpcOn(
-					threadEvents.passwordHash.parseMetadata,
-					async (o: {
-						metadata: Uint8Array;
-					}) =>
-						potassium.passwordHash.parseMetadata(o.metadata)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.passwordHash.parseMetadata,
+						(o: {
+							metadata: Uint8Array;
+						}) =>
+							potassium.passwordHash.parseMetadata(o.metadata)
+						,
+						clearData
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.passwordHash.saltBytes,
-					await potassium.passwordHash.saltBytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.passwordHash.saltBytes,
+						passwordHashSaltBytes,
+						true
+					);
 
-				/* SecretBox */
+					/* SecretBox */
 
-				eventManager.trigger<number>(
-					threadEvents.secretBox.aeadBytes,
-					await potassium.secretBox.aeadBytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.secretBox.aeadBytes,
+						secretBoxAeadBytes,
+						true
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.secretBox.keyBytes,
-					await potassium.secretBox.keyBytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.secretBox.keyBytes,
+						secretBoxKeyBytes,
+						true
+					);
 
-				eventManager.rpcOn(
-					threadEvents.secretBox.open,
-					async (o: {
-						additionalData?: Uint8Array|string;
-						cyphertext: Uint8Array;
-						key: Uint8Array;
-					}) =>
-						potassium.secretBox.open(o.cyphertext, o.key, o.additionalData)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.secretBox.open,
+						(o: {
+							additionalData?: Uint8Array|string;
+							cyphertext: Uint8Array;
+							key: Uint8Array;
+						}) =>
+							potassium.secretBox.open(o.cyphertext, o.key, o.additionalData)
+						,
+						clearData
+					);
 
-				eventManager.rpcOn(
-					threadEvents.secretBox.seal,
-					async (o: {
-						additionalData?: Uint8Array|string;
-						key: Uint8Array;
-						plaintext: Uint8Array;
-					}) =>
-						potassium.secretBox.seal(o.plaintext, o.key, o.additionalData)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.secretBox.seal,
+						(o: {
+							additionalData?: Uint8Array|string;
+							key: Uint8Array;
+							plaintext: Uint8Array;
+						}) =>
+							potassium.secretBox.seal(o.plaintext, o.key, o.additionalData)
+						,
+						clearData
+					);
 
-				/* Sign */
+					/* Sign */
 
-				eventManager.trigger<number>(
-					threadEvents.sign.bytes,
-					await potassium.sign.bytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.sign.bytes,
+						signBytes,
+						true
+					);
 
-				eventManager.rpcOn(
-					threadEvents.sign.importSuperSphincsPublicKeys,
-					async (o: {rsa: string; sphincs: string}) =>
-						potassium.sign.importSuperSphincsPublicKeys(o.rsa, o.sphincs)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.sign.importSuperSphincsPublicKeys,
+						(o: {rsa: string; sphincs: string}) =>
+							potassium.sign.importSuperSphincsPublicKeys(o.rsa, o.sphincs)
+						,
+						clearData
+					);
 
-				eventManager.rpcOn(
-					threadEvents.sign.keyPair,
-					async () =>
-						<Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>>
-						potassium.sign.keyPair()
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.sign.keyPair,
+						() =>
+							<Promise<{privateKey: Uint8Array; publicKey: Uint8Array}>>
+							potassium.sign.keyPair()
+						,
+						clearData
+					);
 
-				eventManager.rpcOn(
-					threadEvents.sign.open,
-					async (o: {
-						additionalData?: Uint8Array|string;
-						decompress?: boolean;
-						publicKey: Uint8Array;
-						signed: Uint8Array|string;
-					}) =>
-						potassium.sign.open(o.signed, o.publicKey, o.additionalData, o.decompress)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.sign.open,
+						(o: {
+							additionalData?: Uint8Array|string;
+							decompress?: boolean;
+							publicKey: Uint8Array;
+							signed: Uint8Array|string;
+						}) =>
+							potassium.sign.open(
+								o.signed,
+								o.publicKey,
+								o.additionalData,
+								o.decompress
+							)
+						,
+						clearData
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.sign.privateKeyBytes,
-					await potassium.sign.privateKeyBytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.sign.privateKeyBytes,
+						signPrivateKeyBytes,
+						true
+					);
 
-				eventManager.trigger<number>(
-					threadEvents.sign.publicKeyBytes,
-					await potassium.sign.publicKeyBytes,
-					true
-				);
+					eventManager.trigger<number>(
+						threadEvents.sign.publicKeyBytes,
+						signPublicKeyBytes,
+						true
+					);
 
-				eventManager.rpcOn(
-					threadEvents.sign.sign,
-					async (o: {
-						additionalData?: Uint8Array|string;
-						compress?: boolean;
-						message: Uint8Array|string;
-						privateKey: Uint8Array;
-					}) =>
-						potassium.sign.sign(o.message, o.privateKey, o.additionalData, o.compress)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.sign.sign,
+						(o: {
+							additionalData?: Uint8Array|string;
+							compress?: boolean;
+							message: Uint8Array|string;
+							privateKey: Uint8Array;
+						}) =>
+							potassium.sign.sign(
+								o.message,
+								o.privateKey,
+								o.additionalData,
+								o.compress
+							)
+						,
+						clearData
+					);
 
-				eventManager.rpcOn(
-					threadEvents.sign.signDetached,
-					async (o: {
-						additionalData?: Uint8Array|string;
-						message: Uint8Array|string;
-						privateKey: Uint8Array;
-					}) =>
-						potassium.sign.signDetached(o.message, o.privateKey, o.additionalData)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.sign.signDetached,
+						(o: {
+							additionalData?: Uint8Array|string;
+							message: Uint8Array|string;
+							privateKey: Uint8Array;
+						}) =>
+							potassium.sign.signDetached(o.message, o.privateKey, o.additionalData)
+						,
+						clearData
+					);
 
-				eventManager.rpcOn(
-					threadEvents.sign.verifyDetached,
-					async (o: {
-						additionalData?: Uint8Array|string;
-						message: Uint8Array|string;
-						publicKey: Uint8Array;
-						signature: Uint8Array|string;
-					}) =>
-						potassium.sign.verifyDetached(
-							o.signature,
-							o.message,
-							o.publicKey,
-							o.additionalData
-						)
-					,
-					clearData
-				);
+					eventManager.rpcOn(
+						threadEvents.sign.verifyDetached,
+						(o: {
+							additionalData?: Uint8Array|string;
+							message: Uint8Array|string;
+							publicKey: Uint8Array;
+							signature: Uint8Array|string;
+						}) =>
+							potassium.sign.verifyDetached(
+								o.signature,
+								o.message,
+								o.publicKey,
+								o.additionalData
+							)
+						,
+						clearData
+					);
 
-				eventManager.trigger<void>(locals.eventID, undefined, true);
+					eventManager.trigger<void>(locals.eventID, undefined, true);
+				});
 			},
 			(async () => ({
 				eventID: this.eventID,
