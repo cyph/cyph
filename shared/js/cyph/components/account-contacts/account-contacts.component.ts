@@ -119,7 +119,7 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence							= UserPresence;
 
-	/** Equality function for virtual scrolling.
+	/* Equality function for virtual scrolling.
 	public readonly vsEqualsFunc: (a: number, b: number) => boolean				= (() => {
 		/*
 		const contactList	= this.contactList;
@@ -135,7 +135,7 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 	})();
 	*/
 
-	/** Options for virtual scrolling.
+	/* Options for virtual scrolling.
 	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
 		itemHeight: 123,
 		numLimitColumns: 1

@@ -332,7 +332,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 
 		this.workerService.createThread(
 			/* tslint:disable-next-line:only-arrow-functions */
-			function () {
+			function () : void {
 				importScripts('/assets/js/cyph/crypto/potassium/index.js');
 
 				/* tslint:disable-next-line:no-shadowed-variable */
