@@ -41,14 +41,19 @@
 
 			<br />
 
-			<div class='contact-list' fxLayout='column' fxLayoutGap='16px'>
-				<ng-container *ngFor='
-					let item of filteredContactList | async; trackBy: trackByUser
-				'>
-					<ng-container *ngTemplateOutlet='
-						listItem; context: {item: item}
-					'></ng-container>
-				</ng-container>
+			<div fxFlex>
+				<div cyphNanoScroller>
+					<div class='contact-list'>
+						<ng-container *ngFor='
+							let item of filteredContactList | async; trackBy: trackByUser
+						'>
+							<ng-container *ngTemplateOutlet='
+								listItem; context: {item: item}
+							'></ng-container>
+							<br />
+						</ng-container>
+					</div>
+				</div>
 			</div>
 
 			<!--
