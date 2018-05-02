@@ -11,7 +11,7 @@ import {
 import {SafeStyle} from '@angular/platform-browser';
 import * as $ from 'jquery';
 /* import {IVirtualScrollOptions} from 'od-virtualscroll'; */
-import ResizeObserver from 'resize-observer-polyfill';
+/* import ResizeObserver from 'resize-observer-polyfill'; */
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account/user';
@@ -46,27 +46,26 @@ import {urlToSafeStyle} from '../../util/safe-values';
 export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** @ignore
 	private currentMaxWidth: number			= 0;
+	*/
 
 	/** @ignore
 	private currentViewportWidth: number	= 0;
 	*/
 
-	/** @ignore */
+	/** @ignore
 	private readonly maxWidthWatcher: Observable<void>	= new Observable(observer => {
 		if (!this.envService.isWeb) {
-			/* TODO: HANDLE NATIVE */
+			/* TODO: HANDLE NATIVE
 			observer.next();
 			return;
 		}
 
 		const resizeObserver	= new ResizeObserver(async () => {
-			/*
 			this.currentMaxWidth		=
 				await this.chatMessageGeometryService.getMaxWidth(this.elementRef.nativeElement)
 			;
 
 			this.currentViewportWidth	= document.body.clientWidth;
-			*/
 
 			observer.next();
 		});
@@ -75,6 +74,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 		return () => { resizeObserver.disconnect(); };
 	});
+	*/
 
 	/** @ignore */
 	private readonly messageCache: Map<string, {message: ChatMessage; pending: boolean}>	=
@@ -280,10 +280,13 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			unconfirmedMessages: chat.unconfirmedMessages
 		}));
 
+		/*
 		combineLatest(
 			observables.messages,
 			this.maxWidthWatcher
-		).pipe(map(([messages]) => (
+		)
+		*/
+		observables.messages.pipe(map(messages => (
 			<({message?: ChatMessage; pending: boolean})[]>
 			(messages.length < 1 ? [{pending: false}] : messages)
 		).map(({message, pending}, i, arr) => ({
