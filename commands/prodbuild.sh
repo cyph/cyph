@@ -45,7 +45,7 @@ ngProdFlags='
 '
 
 if [ ! "${noBuild}" ] ; then
-	node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build ${ngProdFlags} "${@}"
+	ng build ${ngProdFlags} "${@}"
 else
 	echo "${ngProdFlags}"
 fi

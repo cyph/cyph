@@ -32,7 +32,6 @@ if [ "${1}" == '--prod' ] ; then
 fi
 if [ "${1}" == '--prod-build' ] ; then
 	prodBuild=true
-	echo 'Warning: prod build mode currently OOMs'
 	shift
 fi
 if [ "${1}" == '--local-selenium-server' ] ; then
@@ -103,7 +102,10 @@ ngserve () {
 		--configuration "${environment}" \
 		--host '0.0.0.0' \
 		--port "${port}" \
-		$(if [ "${prodBuild}" ] ; then ../commands/prodbuild.sh --no-build ; fi) \
+		$(if [ "${prodBuild}" ] ; then
+			../commands/prodbuild.sh --no-build |
+				grep -vP '(build-optimizer|extract-css|extract-licenses|named-chunks|output-hashing)'
+		fi) \
 		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
 		${args} \
 		"${@}"
