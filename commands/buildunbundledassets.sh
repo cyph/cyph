@@ -110,13 +110,13 @@ cd node_modules
 
 for f in ${nodeModulesAssets} ; do
 	mkdir -p "$(echo "${f}" | perl -pe 's/(.*)\/[^\/]+$/\1/')" 2> /dev/null
+
+	path="/node_modules/${f}.js"
 	if [ -f "/node_modules/${f}.min.js" ] ; then
-		cp "/node_modules/${f}.min.js" "${f}.js"
-	elif [[ "${f}" == libsodium/* ]] ; then
-		cp "/node_modules/${f}.js" "${f}.js"
-	else
-		uglifyjs "/node_modules/${f}.js" -cmo "${f}.js"
+		path="/node_modules/${f}.min.js"
 	fi
+
+	uglifyjs "${path}" -mo "${f}.js"
 done
 
 
