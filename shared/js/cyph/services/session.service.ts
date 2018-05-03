@@ -240,7 +240,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected async getSessionMessageAuthor (
-		message: ISessionMessageDataInternal
+		_MESSAGE: ISessionMessageDataInternal
 	) : Promise<Observable<string>|void> {}
 
 	/** @ignore */
