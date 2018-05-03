@@ -161,6 +161,9 @@ message AccountUserProfileExtra {
 	/** Educational history. */
 	repeated Position education = 2;
 
+	/** Forms. */
+	repeated Form forms = 10;
+
 	/** Gender. */
 	string gender = 3;
 
