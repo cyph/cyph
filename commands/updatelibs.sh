@@ -13,24 +13,24 @@ cd ~/tmplib/js
 
 read -r -d '' modules <<- EOM
 	@agm/core
-	@angular/animations@next
-	@angular/cdk@next
-	@angular/cli@next
-	@angular/common@next
-	@angular/compiler@next
-	@angular/compiler-cli@next
-	@angular/core@next
-	@angular/flex-layout@next
-	@angular/forms@next
-	@angular/http@next
-	@angular/material@next
-	@angular/platform-browser@next
-	@angular/platform-browser-dynamic@next
-	@angular/platform-server@next
-	@angular/platform-webworker@next
-	@angular/platform-webworker-dynamic@next
-	@angular/router@next
-	@angular/service-worker@next
+	@angular/animations
+	@angular/cdk
+	@angular/cli
+	@angular/common
+	@angular/compiler
+	@angular/compiler-cli
+	@angular/core
+	@angular/flex-layout
+	@angular/forms
+	@angular/http
+	@angular/material
+	@angular/platform-browser
+	@angular/platform-browser-dynamic
+	@angular/platform-server
+	@angular/platform-webworker
+	@angular/platform-webworker-dynamic
+	@angular/router
+	@angular/service-worker
 	@angular-devkit/architect
 	@angular-devkit/architect-cli
 	@angular-devkit/build-ng-packagr
@@ -42,11 +42,11 @@ read -r -d '' modules <<- EOM
 	@angular-devkit/schematics-cli
 	@asymmetrik/ngx-leaflet
 	@compodoc/compodoc
-	@covalent/core@next
-	@covalent/dynamic-forms@next
-	@covalent/highlight@next
-	@covalent/http@next
-	@covalent/markdown@next
+	@covalent/core
+	@covalent/dynamic-forms
+	@covalent/highlight
+	@covalent/http
+	@covalent/markdown
 	@firebase/app
 	@firebase/app-types
 	@firebase/auth
@@ -93,7 +93,7 @@ read -r -d '' modules <<- EOM
 	@yaga/leaflet-ng2
 	angular-infinite-list
 	angular-material-clock-time-picker
-	angular-speed-dial@next
+	angular-speed-dial
 	angular-ssr
 	angular2-cool-infinite-grid
 	angular2-template-loader
