@@ -16,7 +16,7 @@
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitReturns": true,
 		"noUnusedLocals": true,
-		/* Pending Angular AOT fix: "noUnusedParameters": true, */
+		"noUnusedParameters": true,
 		"paths": {
 			"_stream_duplex": ["js/externals/_stream_duplex"],
 			"_stream_writable": ["js/externals/_stream_writable"],
