@@ -1,5 +1,5 @@
-import {Observable} from 'rxjs/Observable';
-import {map} from 'rxjs/operators/map';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {IAsyncMap} from './iasync-map';
 import {LocalAsyncValue} from './local-async-value';
 

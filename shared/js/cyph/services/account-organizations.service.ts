@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import {of} from 'rxjs/observable/of';
-import {mergeMap} from 'rxjs/operators/mergeMap';
+import {Observable, of} from 'rxjs';
+import {mergeMap} from 'rxjs/operators';
 import {User} from '../account';
 import {AccountUserTypes} from '../proto';
 import {filterUndefined} from '../util/filter';

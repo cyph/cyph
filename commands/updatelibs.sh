@@ -20,7 +20,7 @@ read -r -d '' modules <<- EOM
 	@angular/compiler
 	@angular/compiler-cli
 	@angular/core
-	@angular/flex-layout@5.0.0-beta.13
+	@angular/flex-layout
 	@angular/forms
 	@angular/http
 	@angular/material
@@ -31,6 +31,15 @@ read -r -d '' modules <<- EOM
 	@angular/platform-webworker-dynamic
 	@angular/router
 	@angular/service-worker
+	@angular-devkit/architect
+	@angular-devkit/architect-cli
+	@angular-devkit/build-ng-packagr
+	@angular-devkit/core
+	@angular-devkit/build-angular
+	@angular-devkit/build-optimizer
+	@angular-devkit/build-webpack
+	@angular-devkit/schematics
+	@angular-devkit/schematics-cli
 	@asymmetrik/ngx-leaflet
 	@compodoc/compodoc
 	@covalent/core
@@ -58,7 +67,7 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
-	@ngtools/webpack@1
+	@ngtools/webpack
 	@ngxs/devtools-plugin
 	@ngxs/logger-plugin
 	@ngxs/storage-plugin
@@ -108,6 +117,7 @@ read -r -d '' modules <<- EOM
 	comlinkjs
 	copy-webpack-plugin
 	core-js
+	crypto-browserify
 	css-loader
 	d3
 	datauri
@@ -159,7 +169,7 @@ read -r -d '' modules <<- EOM
 	libsodium-sumo@https://github.com/jedisct1/libsodium.js
 	libsodium-wrappers@https://github.com/jedisct1/libsodium.js
 	libsodium-wrappers-sumo@https://github.com/jedisct1/libsodium.js
-	localforage
+	localforage@https://github.com/buu700/localforage-tmp
 	lodash-es
 	long
 	lunr
@@ -203,6 +213,7 @@ read -r -d '' modules <<- EOM
 	quill-delta-to-html
 	raw-loader
 	read
+	readable-stream
 	reflect-metadata
 	request
 	resize-observer-polyfill
@@ -211,6 +222,7 @@ read -r -d '' modules <<- EOM
 	rlwe
 	rsvp
 	rxjs
+	rxjs-tslint
 	rxjs-tslint-rules
 	sass-loader
 	script-ext-html-webpack-plugin
@@ -242,14 +254,15 @@ read -r -d '' modules <<- EOM
 	tslint-microsoft-contrib
 	tsutils
 	typedoc
-	typescript@2.6
+	typescript@2.7
 	u2f-api-polyfill
 	uglify-es
 	uglifyjs-webpack-plugin
 	unsemantic
 	url-loader
 	web-animations-js
-	webpack@3
+	webpack
+	webpack-cli
 	webpack-closure-compiler
 	webpack-sources
 	webrtc-adapter

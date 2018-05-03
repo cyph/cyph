@@ -1,5 +1,5 @@
 import {Component, Input, ViewChild} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {User} from '../../account/user';
 import {ChatMessageValue} from '../../proto';
 import {AccountService} from '../../services/account.service';

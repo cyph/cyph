@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {ChatService} from '../services/chat.service';
 

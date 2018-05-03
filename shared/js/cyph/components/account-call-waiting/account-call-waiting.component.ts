@@ -1,9 +1,6 @@
 import {AfterViewInit, Component, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {combineLatest} from 'rxjs/observable/combineLatest';
-import {of} from 'rxjs/observable/of';
-import {map} from 'rxjs/operators/map';
-import {mergeMap} from 'rxjs/operators/mergeMap';
+import {BehaviorSubject, combineLatest, of} from 'rxjs';
+import {map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {AccountUserTypes, CallTypes, IAppointment} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';

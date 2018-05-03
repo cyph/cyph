@@ -10,16 +10,8 @@ import * as msgpack from 'msgpack-lite';
 import {DeltaOperation, DeltaStatic} from 'quill';
 import * as Delta from 'quill-delta';
 import * as QuillDeltaToHtml from 'quill-delta-to-html';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {combineLatest} from 'rxjs/observable/combineLatest';
-import {of} from 'rxjs/observable/of';
-import {concat} from 'rxjs/operators/concat';
-import {filter} from 'rxjs/operators/filter';
-import {map} from 'rxjs/operators/map';
-import {mergeMap} from 'rxjs/operators/mergeMap';
-import {skip} from 'rxjs/operators/skip';
-import {take} from 'rxjs/operators/take';
+import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
+import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
 import {AccountFile, SecurityModels} from '../account';
 import {Async} from '../async-type';
 import {StorageUnits} from '../enums/storage-units';
@@ -486,20 +478,21 @@ export class AccountFilesService {
 			const pushes	= docAsyncList.watchPushes().pipe(skip(deltas.length));
 
 			return {
-				deltas: <Observable<IQuillDelta>> of({
-					clientID: '',
-					ops: deltas.length < 1 ? [] : deltas.
-						filter(o => o && typeof (<any> o).index !== 'number').
-						map<DeltaOperation[]|undefined>(o => (<any> o).ops).
-						reduce<DeltaStatic>(
-							(delta, ops) => ops ? delta.compose(new Delta(ops)) : delta,
-							new Delta()
-						).ops || []
-				}).pipe(concat(pushes.pipe(
-					filter((o: any) =>
+				deltas: <Observable<IQuillDelta>> concat(
+					of({
+						clientID: '',
+						ops: deltas.length < 1 ? [] : deltas.
+							filter(o => o && typeof (<any> o).index !== 'number').
+							map<DeltaOperation[]|undefined>(o => (<any> o).ops).
+							reduce<DeltaStatic>(
+								(delta, ops) => ops ? delta.compose(new Delta(ops)) : delta,
+								new Delta()
+							).ops || []
+					}),
+					pushes.pipe(filter((o: any) =>
 						o && typeof o.index !== 'number' && o.ops !== undefined
-					)
-				))),
+					))
+				),
 				selections: <Observable<IQuillRange>> pushes.pipe(
 					filter((o: any) =>
 						o && typeof o.index === 'number' && typeof o.length === 'number'

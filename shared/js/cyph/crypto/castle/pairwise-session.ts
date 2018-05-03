@@ -1,8 +1,5 @@
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {filter} from 'rxjs/operators/filter';
-import {take} from 'rxjs/operators/take';
-import {Subject} from 'rxjs/Subject';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {filter, take} from 'rxjs/operators';
 import {config} from '../../config';
 import {denullifyAsyncValue} from '../../denullify-async-value';
 import {IAsyncList} from '../../iasync-list';

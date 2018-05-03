@@ -1,6 +1,4 @@
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {User} from '../account/user';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {

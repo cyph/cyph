@@ -1,6 +1,4 @@
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
+import {BehaviorSubject, Observable, Observer} from 'rxjs';
 
 
 /** A possibly-async Observable. */

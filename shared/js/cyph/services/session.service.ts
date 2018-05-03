@@ -1,10 +1,8 @@
 /* tslint:disable:max-file-line-count */
 
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {of} from 'rxjs/observable/of';
-import {take} from 'rxjs/operators/take';
+import {BehaviorSubject, Observable, of} from 'rxjs';
+import {take} from 'rxjs/operators';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {eventManager} from '../event-manager';
 import {IAsyncList} from '../iasync-list';
@@ -114,6 +112,9 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public readonly connected: Promise<void>				= this.one<void>(events.connect);
+
+	/** @inheritDoc */
+	public readonly cyphNotFound: Promise<void>				= this.one<void>(events.cyphNotFound);
 
 	/** @inheritDoc */
 	public readonly freezePong: BehaviorSubject<boolean>	= new BehaviorSubject(false);
@@ -239,7 +240,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected async getSessionMessageAuthor (
-		message: ISessionMessageDataInternal
+		_MESSAGE: ISessionMessageDataInternal
 	) : Promise<Observable<string>|void> {}
 
 	/** @ignore */

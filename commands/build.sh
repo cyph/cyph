@@ -15,13 +15,15 @@ if [ "${1}" != '--angular-only' ] ; then
 
 	./commands/lint.sh
 	checkfail
+else
+	./commands/protobuf.sh
 fi
 
 log 'Starting Angular AOT build'
 for d in cyph.com cyph.ws ; do
 	cd "${d}"
 	../commands/ngprojectinit.sh
-	ng build --aot --sourcemaps=false --environment=prod
+	ng build --prod
 	checkfail
 	cd ..
 done

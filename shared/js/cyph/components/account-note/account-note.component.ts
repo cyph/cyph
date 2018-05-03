@@ -1,9 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as Delta from 'quill-delta';
-import {Observable} from 'rxjs/Observable';
-import {filter} from 'rxjs/operators/filter';
-import {take} from 'rxjs/operators/take';
+import {Observable} from 'rxjs';
+import {filter, take} from 'rxjs/operators';
 import {IAsyncList} from '../../iasync-list';
 import {IQuillDelta} from '../../iquill-delta';
 import {IQuillRange} from '../../iquill-range';

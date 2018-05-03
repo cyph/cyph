@@ -41,20 +41,36 @@
 
 			<br />
 
+			<div fxFlex>
+				<div cyphNanoScroller>
+					<div class='contact-list'>
+						<ng-container *ngFor='
+							let item of filteredContactList | async; trackBy: trackByUser
+						'>
+							<ng-container *ngTemplateOutlet='
+								listItem; context: {item: item}
+							'></ng-container>
+							<br />
+						</ng-container>
+					</div>
+				</div>
+			</div>
+
+			<!--
 			<od-virtualscroll
+				class='contact-list'
 				[vsData]='filteredContactList'
 				[vsEqualsFunc]='vsEqualsFunc'
 				[vsOptions]='vsOptions'
 				*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
 			>
 				<ng-template let-item>
-					<cyph-account-contact
-						[contact]='item'
-						class='animated slideInDown'
-						[class.cyph-inverted-theme]='invertedTheme'
-					></cyph-account-contact>
+					<ng-container *ngTemplateOutlet='
+						listItem; context: {item: item}
+					'></ng-container>
 				</ng-template>
 			</od-virtualscroll>
+			-->
 		</ng-template>
 	</div>
 
@@ -63,3 +79,11 @@
 		*ngIf='accountContactsService.showSpinner | async'
 	></mat-progress-spinner>
 </div>
+
+<ng-template #listItem let-item='item'>
+	<cyph-account-contact
+		[contact]='item'
+		class='animated slideInDown'
+		[class.cyph-inverted-theme]='invertedTheme'
+	></cyph-account-contact>
+</ng-template>

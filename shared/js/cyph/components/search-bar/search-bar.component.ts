@@ -8,10 +8,7 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {of} from 'rxjs/observable/of';
-import {Subscription} from 'rxjs/Subscription';
+import {BehaviorSubject, Observable, of, Subscription} from 'rxjs';
 import {ISearchOptions} from '../../isearch-options';
 import {StringsService} from '../../services/strings.service';
 import {trackByValue} from '../../track-by/track-by-value';

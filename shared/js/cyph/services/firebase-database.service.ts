@@ -2,7 +2,7 @@
 
 import {Injectable, NgZone} from '@angular/core';
 import {firebase} from '@firebase/app';
-import {FirebaseApp, FirebaseNamespace} from '@firebase/app-types';
+import {FirebaseApp} from '@firebase/app-types';
 import '@firebase/auth';
 import {FirebaseAuth} from '@firebase/auth-types';
 import {ServerValue} from '@firebase/database';
@@ -16,12 +16,10 @@ import {FirebaseMessaging} from '@firebase/messaging-types';
 import '@firebase/storage';
 import {
 	FirebaseStorage,
-	Reference as StorageReference,
-	UploadTaskSnapshot
+	Reference as StorageReference
 } from '@firebase/storage-types';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {skip} from 'rxjs/operators/skip';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {skip} from 'rxjs/operators';
 import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
@@ -89,28 +87,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 				'FCM',
 				this.envService.firebaseConfig,
 				/* tslint:disable-next-line:no-shadowed-variable */
-				(config, firebase: FirebaseNamespace) => {
+				config => {
 					importScripts('/assets/node_modules/firebase/firebase-app.js');
 					importScripts('/assets/node_modules/firebase/firebase-messaging.js');
 
-					if (firebase) {
-						(<any> self).firebase	= firebase;
-					}
-					else {
-						firebase				= (<any> self).firebase;
-					}
-
-					firebase.initializeApp(config);
-
-					if (firebase.messaging) {
-						(<any> self).messaging	= firebase.messaging();
-					}
+					(<any> self).firebase.initializeApp(config);
+					(<any> self).messaging	= (<any> self).firebase.messaging();
 				}
 			);
 
 			messaging.useServiceWorker(serviceWorkerRegistration);
 			await messaging.requestPermission();
-			return messaging.getToken();
+			return (await messaging.getToken()) || undefined;
 		}).catch(() =>
 			undefined
 		)
@@ -931,7 +919,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					'state_changed',
 					o => {
 						if (o) {
-							const snapshot	= <UploadTaskSnapshot> o;
+							const snapshot	= o;
 							this.ngZone.run(() => {
 								progress.next(
 									snapshot.bytesTransferred / snapshot.totalBytes * 100

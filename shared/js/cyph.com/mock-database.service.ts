@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {IProto} from '../cyph/iproto';
 import {ITimedValue} from '../cyph/itimed-value';
 import {DatabaseService} from '../cyph/services/database.service';

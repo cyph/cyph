@@ -362,6 +362,10 @@ const removeImage		= (name, opts) => {
 };
 
 const updateCircleCI	= () => {
+	if (args.noUpdates) {
+		return Promise.resolve();
+	}
+
 	fs.writeFileSync(
 		'Dockerfile.tmp',
 		fs.readFileSync('Dockerfile').
@@ -389,7 +393,7 @@ const updateCircleCI	= () => {
 			))
 	);
 
-	spawnAsync('docker', [
+	return spawnAsync('docker', [
 		'build',
 		'-t',
 		'cyph/circleci:latest',

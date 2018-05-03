@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import * as $ from 'jquery';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {filter} from 'rxjs/operators/filter';
-import {take} from 'rxjs/operators/take';
+import {BehaviorSubject} from 'rxjs';
+import {filter, take} from 'rxjs/operators';
 import {EnvService} from './env.service';
 
 

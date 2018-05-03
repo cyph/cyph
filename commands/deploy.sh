@@ -438,9 +438,9 @@ for d in $compiledProjects ; do
 	`.trim())' > src/js/standalone/translations.ts
 
 	if [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ; then
-		ng build --no-aot --no-sourcemaps --environment "${environment}" || exit 1
+		ng build --source-map false --configuration "${environment}" || exit 1
 	else
-		../commands/prodbuild.sh --environment "${environment}" || exit 1
+		../commands/prodbuild.sh --configuration "${environment}" || exit 1
 	fi
 
 	if [ "${d}" == 'cyph.com' ] ; then node -e '

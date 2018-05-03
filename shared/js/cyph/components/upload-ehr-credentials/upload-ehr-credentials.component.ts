@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {take} from 'rxjs/operators/take';
+import {BehaviorSubject} from 'rxjs';
+import {take} from 'rxjs/operators';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {EHRIntegrationService} from '../../services/ehr-integration.service';

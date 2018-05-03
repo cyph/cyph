@@ -1,11 +1,10 @@
 import {
-	HttpEvent,
 	HttpEventType,
 	HttpHeaders,
+	HttpRequest,
 	HttpResponse
 } from '@angular/common/http';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {MaybePromise} from '../maybe-promise-type';
 import {parse, stringify, toQueryString} from './serialization';
 import {staticHttpClient} from './static-services';
@@ -73,15 +72,12 @@ const baseRequest	= <R, T> (
 				try {
 					progress.next(0);
 
-					const req: Observable<HttpEvent<T>>	= <any> httpClient.request(method, url, {
-						body: data,
-						headers: contentType ?
-							new HttpHeaders({'Content-Type': contentType}) :
-							undefined
-						,
-						observe: 'events',
+					const req	= httpClient.request<T>(new HttpRequest(method, url, data, {
+						headers: new HttpHeaders({
+							...(contentType ? {'Content-Type': contentType} : {})
+						}),
 						responseType
-					});
+					}));
 
 					const res	= await new Promise<HttpResponse<T>>((resolve, reject) => {
 						let last: HttpResponse<T>;

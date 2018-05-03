@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Set as ImmutableSet} from 'immutable';
-import {Observable} from 'rxjs/Observable';
-import {of} from 'rxjs/observable/of';
+import {Observable, of} from 'rxjs';
 import {eventManager} from '../event-manager';
 import {ISessionTransfer, SessionTransfer, SessionTransferAnswers} from '../files';
 import {BinaryProto} from '../proto';

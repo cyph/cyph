@@ -1,5 +1,5 @@
-import {Observable} from 'rxjs/Observable';
-import {take} from 'rxjs/operators/take';
+import {Observable} from 'rxjs';
+import {take} from 'rxjs/operators';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {IRemoteUser} from './iremote-user';
 

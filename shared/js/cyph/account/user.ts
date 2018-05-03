@@ -1,8 +1,7 @@
 import {SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
-import {Observable} from 'rxjs/Observable';
-import {map} from 'rxjs/operators/map';
-import {mergeMap} from 'rxjs/operators/mergeMap';
+import {Observable} from 'rxjs';
+import {map, mergeMap} from 'rxjs/operators';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {

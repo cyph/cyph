@@ -1,12 +1,8 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {IVirtualScrollOptions} from 'od-virtualscroll';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {combineLatest} from 'rxjs/observable/combineLatest';
-import {of} from 'rxjs/observable/of';
-import {map} from 'rxjs/operators/map';
-import {mergeMap} from 'rxjs/operators/mergeMap';
+/* import {IVirtualScrollOptions} from 'od-virtualscroll'; */
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {map, mergeMap} from 'rxjs/operators';
 import {IContactListItem, User, UserPresence} from '../../account';
 import {AccountUserTypes} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -14,6 +10,7 @@ import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
+import {trackByUser} from '../../track-by/track-by-user';
 import {filterUndefined} from '../../util/index';
 import {AccountContactsSearchComponent} from '../account-contacts-search';
 
@@ -116,10 +113,13 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 	/** @see AccountContactsSearchComponent.searchProfileExtra */
 	@Input() public searchProfileExtra: boolean									= false;
 
+	/** @see trackByUser */
+	public readonly trackByUser: typeof trackByUser								= trackByUser;
+
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence							= UserPresence;
 
-	/** Equality function for virtual scrolling. */
+	/* Equality function for virtual scrolling.
 	public readonly vsEqualsFunc: (a: number, b: number) => boolean				= (() => {
 		/*
 		const contactList	= this.contactList;
@@ -129,16 +129,18 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 			contactList.value.length > b &&
 			contactList.value[a].username === contactList.value[b].username
 		;
-		*/
+		*
 
 		return () => false;
 	})();
+	*/
 
-	/** Options for virtual scrolling. */
+	/* Options for virtual scrolling.
 	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
 		itemHeight: 123,
 		numLimitColumns: 1
 	});
+	*/
 
 	/** @inheritDoc */
 	public ngOnChanges (changes: SimpleChanges) : void {

@@ -3,6 +3,7 @@ import * as $ from 'jquery';
 import {fadeIn} from '../../animations';
 import {States, UiStyles} from '../../chat/enums';
 import {ChatMessageValue} from '../../proto';
+import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service';
 import {ChatService} from '../../services/chat.service';
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
@@ -78,6 +79,9 @@ export class ChatMainComponent implements AfterViewInit {
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,
+
+		/** @see ChatMessageGeometryService */
+		public readonly chatMessageGeometryService: ChatMessageGeometryService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

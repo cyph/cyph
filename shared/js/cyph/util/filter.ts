@@ -1,5 +1,5 @@
-import {Observable} from 'rxjs/Observable';
-import {filter} from 'rxjs/operators/filter';
+import {Observable} from 'rxjs';
+import {filter} from 'rxjs/operators';
 import {compareValues} from './compare';
 
 

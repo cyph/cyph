@@ -2,10 +2,8 @@
 
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {take} from 'rxjs/operators/take';
-import {Subject} from 'rxjs/Subject';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {take} from 'rxjs/operators';
 import * as SimpleWebRTC from 'simplewebrtc';
 import {env} from '../env';
 import {eventManager} from '../event-manager';

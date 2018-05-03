@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {map} from 'rxjs/operators/map';
+import {map} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {
 	AccountUserPresence,
