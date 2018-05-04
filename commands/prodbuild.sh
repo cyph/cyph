@@ -34,7 +34,7 @@ sed -i "s/safari10 = .*;/safari10 = true;/g" /node_modules/uglifyjs-webpack-plug
 
 ngProdFlags='
 	--aot true
-	--build-optimizer true
+	--build-optimizer false
 	--extract-css true
 	--extract-licenses true
 	--named-chunks false
