@@ -410,6 +410,8 @@ if [ "${compiledProjects}" ] ; then
 		fi
 	) || exit 1
 
+	./commands/ngassets.sh
+
 	rm -rf "${dir}/shared/assets"
 	cp -a shared/assets "${dir}/shared/"
 	touch shared/assets/frozen
@@ -423,11 +425,6 @@ for d in $compiledProjects ; do
 	log "Build $(projectname "${d}")"
 
 	cd "${d}"
-
-	cp -f ../shared/favicon.ico src/
-	if [ "${d}" == "${webSignedProject}" ] ; then
-		cp -f ../shared/assets/serviceworker.js ../websign/manifest.json src/
-	fi
 
 	if [ "${websign}" ] && [ "${d}" == "${webSignedProject}" ] ; then
 		# Merge in base64'd images, fonts, video, and audio

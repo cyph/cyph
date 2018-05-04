@@ -19,6 +19,8 @@ else
 	./commands/protobuf.sh
 fi
 
+./commands/ngassets.sh
+
 log 'Starting Angular AOT build'
 for d in cyph.com cyph.ws ; do
 	cd "${d}"
