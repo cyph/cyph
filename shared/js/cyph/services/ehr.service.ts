@@ -1,87 +1,56 @@
 import {Injectable} from '@angular/core';
-import {request, requestJSON, requestMaybeJSON} from '../util/request';
-import {stringify} from '../util/serialization';
-import {EnvService} from './env.service';
-
+import {RedoxAppointment, RedoxPatient, RedoxTypes} from '../proto';
+import {deserialize, serialize} from '../util/serialization';
+import {EHRIntegrationService} from './ehr-integration.service';
 
 /**
- * Angular service for EHR/EMR system integration.
+ * Angular service for EHR/EMR system usage.
  */
 @Injectable()
 export class EHRService {
-	/** Uploads EHR credentials and returns master API key. */
-	public async addCredentials (
-		cyphAdminKey: string,
-		redoxApiKey: string,
-		redoxSecret: string,
-		username: string
-	) : Promise<string> {
-		return request({
-			data: {
-				cyphAdminKey,
-				redoxAPIKey: redoxApiKey,
-				redoxSecret,
-				username
+	/** Gets patient based on SSN or other identifier(s). */
+	public async getPatient (
+		apiKey: string,
+		id: string|RedoxTypes.IIdentifier|RedoxTypes.IIdentifier[]
+	) : Promise<RedoxPatient> {
+		const response	= await this.ehrIntegrationService.runCommand(apiKey, {
+			Meta: {
+				DataModel: 'PatientSearch',
+				EventType: 'Query'
 			},
-			method: 'PUT',
-			url: this.envService.baseUrl + 'redox/credentials'
+			Patient: typeof id === 'string' ?
+				{Demographics: {SSN: id}} :
+				{Identifiers: id instanceof Array ? id : [id]}
 		});
+
+		if (
+			typeof response !== 'object' ||
+			typeof response.Patient !== 'object' ||
+			!(response.Patient.Identifiers instanceof Array) ||
+			response.Patient.Identifiers.length < 1
+		) {
+			throw new Error('Patient not found.');
+		}
+
+		return deserialize(RedoxPatient, await serialize(RedoxPatient, response.Patient));
 	}
 
-	/** Deletes an API key issued with this master API key. */
-	public async deleteApiKey (apiKey: string, masterApiKey: string) : Promise<void> {
-		await request({
-			data: {
-				apiKey,
-				masterAPIKey: masterApiKey
+	/** Schedules a new appointment. */
+	public async scheduleAppointment (
+		apiKey: string,
+		appointment: RedoxAppointment
+	) : Promise<void> {
+		await this.ehrIntegrationService.runCommand(apiKey, {
+			Meta: {
+				DataModel: 'Scheduling',
+				EventType: 'New'
 			},
-			method: 'POST',
-			url: this.envService.baseUrl + 'redox/apikey/delete'
+			...appointment
 		});
-	}
-
-	/** Generates a new API key for the specified user using a master API key. */
-	public async generateApiKey (username: string, masterApiKey: string) : Promise<string> {
-		return request({
-			data: {
-				masterAPIKey: masterApiKey,
-				username
-			},
-			method: 'POST',
-			url: this.envService.baseUrl + 'redox/apikey/generate'
-		});
-	}
-
-	/** Runs a command against the EHR system integration. */
-	public async runCommand (apiKey: string, command: any) : Promise<any> {
-		return requestMaybeJSON({
-			data: {
-				apiKeyOrMasterAPIKey: apiKey,
-				redoxCommand: stringify(command)
-			},
-			method: 'POST',
-			url: this.envService.baseUrl + 'redox/execute'
-		});
-	}
-
-	/** Verifies an API key. */
-	public async verifyApiKey (apiKey: string) : Promise<{isMaster: boolean; isValid: boolean}> {
-		const response	= await requestJSON({
-			data: {
-				apiKeyOrMasterAPIKey: apiKey
-			},
-			method: 'POST',
-			url: this.envService.baseUrl + 'redox/apikey/verify'
-		});
-
-		return {
-			isMaster: (response && response.isMaster) === true,
-			isValid: (response && response.isValid) === true
-		};
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly envService: EnvService
+		private readonly ehrIntegrationService: EHRIntegrationService
 	) {}
 }

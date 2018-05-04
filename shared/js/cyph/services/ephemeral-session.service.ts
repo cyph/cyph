@@ -150,6 +150,12 @@ export class EphemeralSessionService extends SessionService {
 
 		let id	= this.sessionInitService.id;
 
+		if (id === '404') {
+			this.state.startingNewCyph	= true;
+			this.trigger(events.cyphNotFound);
+			return;
+		}
+
 		/* API flags */
 		for (const flag of this.configService.apiFlags) {
 			if (id[0] !== flag.character) {

@@ -64,10 +64,9 @@ mat-card {
 }
 
 .edit-buttons {
-	position: relative;
-	float: right;
-	bottom: 80px;
-	right: 10px;
+	position: fixed;
+	bottom: 25px;
+	right: 25px;
 }
 
 .edit-hide {
@@ -274,7 +273,7 @@ mat-card {
 	}
 }
 
-::ng-deep od-virtualscroll {
+::ng-deep .contact-list {
 	overflow-y: auto !important;
 	min-height: 125px;
 }

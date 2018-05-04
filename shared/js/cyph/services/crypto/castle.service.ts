@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {first} from 'rxjs/operators/first';
-import {take} from 'rxjs/operators/take';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {first, take} from 'rxjs/operators';
 import {PairwiseSession} from '../../crypto/castle/pairwise-session';
 import {ICastle} from '../../crypto/icastle';
 import {LockFunction} from '../../lock-function-type';

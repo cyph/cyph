@@ -1,6 +1,61 @@
 #!/bin/bash
 
 
+noBuild=''
+if [ "${1}" == '--no-build' ] ; then
+	noBuild=true
+	shift
+fi
+
+
+onexit () {
+	mv /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js.bak /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js 2> /dev/null
+}
+
+if [ ! "${noBuild}" ] ; then
+	trap onexit EXIT
+fi
+
+cp /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js.bak
+
+
+# Temporary workarounds for https://github.com/angular/angular-cli/issues/10525
+
+commandsDir="$(cd "$(dirname "$0")" ; pwd)"
+
+sed -i "s|^\s*compress,|compress: compress === true ? {sequences: false} : typeof compress === 'object' ? {...compress, sequences: false} : compress,|g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
+
+sed -i "s/mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
+
+sed -i "s/safari10 = .*;/safari10 = true;/g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
+
+
+# Workaround for https://github.com/angular/angular-cli/issues/10529
+
+ngProdFlags='
+	--aot true
+	--build-optimizer true
+	--extract-css true
+	--extract-licenses true
+	--named-chunks false
+	--optimization true
+	--output-hashing none
+	--source-map false
+	--vendor-chunk true
+'
+
+if [ ! "${noBuild}" ] ; then
+	ng build ${ngProdFlags} "${@}"
+else
+	echo "${ngProdFlags}"
+fi
+
+exit
+
+
+
+# Skipping everything after this pending Angular CLI >=6.x eject support
+
 dependencyModules="$(
 	grep -roP "(import|from) '[@A-Za-z0-9][^' ]*';" src/js |
 		perl -pe "s/.*?'(.*)';/\1/g" |
@@ -9,10 +64,9 @@ dependencyModules="$(
 		tr '\n' ' '
 )"
 
-ng eject --aot --prod --no-sourcemaps "${@}"
+ng eject --prod --output-hashing none "${@}"
 
 cat > webpack.js <<- EOM
-	const ExtractTextPlugin		= require('extract-text-webpack-plugin');
 	const HtmlWebpackPlugin		= require('html-webpack-plugin');
 	const path					= require('path');
 	const UglifyJsPlugin		= require('uglifyjs-webpack-plugin');
@@ -58,20 +112,6 @@ cat > webpack.js <<- EOM
 				minChunks: o => o.resource && o.resource.startsWith(
 					path.join(process.cwd(), chunk.path)
 				)
-			})
-		);
-	}
-
-	const extractTextIndex	= config.plugins.indexOf(
-		config.plugins.find(o => o instanceof ExtractTextPlugin)
-	);
-
-	if (extractTextIndex > -1) {
-		config.plugins.splice(
-			extractTextIndex,
-			1,
-			new ExtractTextPlugin({
-				filename: '[name].css'
 			})
 		);
 	}
@@ -123,8 +163,6 @@ cat > webpack.js <<- EOM
 
 		options.uglifyOptions.compress.sequences	= false;
 		options.uglifyOptions.mangle				= {reserved: mangleExceptions};
-
-		options.uglifyOptions.compress.sequences	= false;
 
 		config.plugins.splice(uglifyJsIndex, 1, new UglifyJsPlugin(options));
 	}

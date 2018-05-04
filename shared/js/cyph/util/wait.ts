@@ -1,5 +1,5 @@
-import {Observable} from 'rxjs/Observable';
-import {take} from 'rxjs/operators/take';
+import {Observable} from 'rxjs';
+import {take} from 'rxjs/operators';
 import {Async} from '../async-type';
 import {config} from '../config';
 import {IResolvable} from '../iresolvable';

@@ -110,13 +110,13 @@ cd node_modules
 
 for f in ${nodeModulesAssets} ; do
 	mkdir -p "$(echo "${f}" | perl -pe 's/(.*)\/[^\/]+$/\1/')" 2> /dev/null
+
+	path="/node_modules/${f}.js"
 	if [ -f "/node_modules/${f}.min.js" ] ; then
-		cp "/node_modules/${f}.min.js" "${f}.js"
-	elif [[ "${f}" == libsodium/* ]] ; then
-		cp "/node_modules/${f}.js" "${f}.js"
-	else
-		uglifyjs "/node_modules/${f}.js" -cmo "${f}.js"
+		path="/node_modules/${f}.min.js"
 	fi
+
+	uglifyjs "${path}" -cmo "${f}.js"
 done
 
 
@@ -168,6 +168,7 @@ for f in ${typescriptAssets} ; do
 			entry: {
 				app: '../../js/${f}'
 			},
+			mode: 'none',
 			module: {
 				rules: [
 					{
@@ -200,14 +201,14 @@ for f in ${typescriptAssets} ; do
 							ecma: 5,
 							ie8: false,
 							mangle: {
-								reserved: mangleExceptions,
-								safari10: true
+								reserved: mangleExceptions
 							},
 							output: {
 								ascii_only: true,
 								comments: false,
 								webkit: true
 							},
+							safari10: true,
 							warnings: false
 						}
 					})

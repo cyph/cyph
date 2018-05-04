@@ -38,6 +38,10 @@ log () {
 	echo -e "\n\n\n${*} ($(date))\n"
 }
 
+ng () {
+	node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng "${@}"
+}
+
 notify () {
 	/node_modules/.bin/notify --text "${*}" > /dev/null
 	log "${*}"
@@ -62,6 +66,7 @@ export -f download
 export -f easyoptions
 export -f fail
 export -f log
+export -f ng
 export -f notify
 export -f pass
 export -f unbindmount

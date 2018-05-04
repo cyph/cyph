@@ -94,9 +94,6 @@ if [ ! "${htmlOnly}" ] ; then
 				join('\n')
 		);
 
-		/* Pending Angular AOT fix */
-		tsconfig.compilerOptions.noUnusedParameters	= true;
-
 		tsconfig.compilerOptions.paths	= undefined;
 
 		tsconfig.files	=

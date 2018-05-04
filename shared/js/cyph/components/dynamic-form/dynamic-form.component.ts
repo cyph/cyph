@@ -49,25 +49,25 @@ export class DynamicFormComponent implements OnInit {
 	);
 
 	/** Indicates whether input is disabled. */
-	@Input() public isDisabled: boolean						= false;
+	@Input() public isDisabled: boolean							= false;
 
 	/** Indicates whether mobile version should be displayed. */
-	@Input() public mobile: boolean							= this.envService.isMobile;
+	@Input() public mobile: boolean								= this.envService.isMobile;
 
 	/** @see Form */
-	@Output() public submitForm: EventEmitter<IForm>		= new EventEmitter<IForm>();
+	@Output() public readonly submitForm: EventEmitter<IForm>	= new EventEmitter<IForm>();
 
 	/** @see timestampToDate */
-	public readonly timestampToDate: typeof timestampToDate	= timestampToDate;
+	public readonly timestampToDate: typeof timestampToDate		= timestampToDate;
 
 	/** @see trackByIndex */
-	public readonly trackByIndex: typeof trackByIndex		= trackByIndex;
+	public readonly trackByIndex: typeof trackByIndex			= trackByIndex;
 
 	/** @see trackBySelf */
-	public readonly trackBySelf: typeof trackBySelf			= trackBySelf;
+	public readonly trackBySelf: typeof trackBySelf				= trackBySelf;
 
 	/** @see Form.FormElement.Types */
-	public readonly types: typeof Form.Element.Types		= Form.Element.Types;
+	public readonly types: typeof Form.Element.Types			= Form.Element.Types;
 
 	private async getDataSource () : Promise<IAsyncValue<any>|undefined> {
 		return this.dataSource instanceof Promise ?
@@ -189,7 +189,7 @@ export class DynamicFormComponent implements OnInit {
 
 		if (dataSource) {
 			await dataSource.updateValue(value => {
-				this.iterateFormValues((id, segments, element) => {
+				this.iterateFormValues((_ID, segments, element) => {
 					const elementValue	=
 						element.valueBoolean !== undefined ?
 							element.valueBoolean :

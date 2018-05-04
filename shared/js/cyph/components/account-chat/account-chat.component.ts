@@ -1,12 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router, UrlSegment} from '@angular/router';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {combineLatest} from 'rxjs/observable/combineLatest';
-import {concat} from 'rxjs/observable/concat';
-import {of} from 'rxjs/observable/of';
-import {filter} from 'rxjs/operators/filter';
-import {mergeMap} from 'rxjs/operators/mergeMap';
-import {take} from 'rxjs/operators/take';
+import {BehaviorSubject, combineLatest, concat, of} from 'rxjs';
+import {filter, mergeMap, take} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
 import {UiStyles} from '../../chat/enums';
 import {CallTypes, ChatMessageValue, IAppointment} from '../../proto';

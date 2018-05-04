@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
-import {take} from 'rxjs/operators/take';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {take} from 'rxjs/operators';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {LocalAsyncList} from '../local-async-list';
 import {

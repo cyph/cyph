@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {BehaviorSubject} from 'rxjs';
 import {IContactListItem, User, UserPresence} from '../../account';
 import {AccountUserTypes} from '../../proto';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';

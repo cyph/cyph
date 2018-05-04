@@ -11,9 +11,8 @@ import {
 } from '@angular/core';
 import * as $ from 'jquery';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {filter} from 'rxjs/operators/filter';
-import {take} from 'rxjs/operators/take';
+import {BehaviorSubject} from 'rxjs';
+import {filter, take} from 'rxjs/operators';
 import {ChatMessage, UiStyles} from '../../chat';
 import {IQuillDelta} from '../../iquill-delta';
 import {ChatService} from '../../services/chat.service';

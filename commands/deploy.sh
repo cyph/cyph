@@ -108,7 +108,6 @@ if [ "${websign}" ] || [ "${site}" == 'firebase' ] ; then
 	./commands/keycache.sh
 fi
 
-# Compile + translate + minify
 if [ "${compiledProjects}" ] && [ ! "${test}" ] ; then
 	./commands/lint.sh || exit 1
 fi
@@ -439,9 +438,9 @@ for d in $compiledProjects ; do
 	`.trim())' > src/js/standalone/translations.ts
 
 	if [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ; then
-		ng build --no-aot --no-sourcemaps --environment "${environment}" || exit 1
+		ng build --source-map false --configuration "${environment}" || exit 1
 	else
-		../commands/prodbuild.sh --environment "${environment}" || exit 1
+		../commands/prodbuild.sh --configuration "${environment}" || exit 1
 	fi
 
 	if [ "${d}" == 'cyph.com' ] ; then node -e '
@@ -591,6 +590,12 @@ if [ "${websign}" ] ; then
 
 	git push
 	cd ..
+
+	# Publish internal prod branch to public repo
+	if [ ! "${test}" ] ; then
+		git remote add public git@github.com:cyph/cyph.git 2> /dev/null
+		git push public HEAD:master
+	fi
 fi
 
 # WebSign redirects

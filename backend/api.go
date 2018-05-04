@@ -688,7 +688,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 
 	req, err := http.NewRequest(
 		methods.POST,
-		"https://api.redoxengine.com/endpoint",
+		"https://api.redoxengine.com/query",
 		bytes.NewBuffer([]byte(redoxCommand)),
 	)
 

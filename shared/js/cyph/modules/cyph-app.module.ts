@@ -45,6 +45,7 @@ import {AccountDatabaseService} from '../services/crypto/account-database.servic
 import {CryptocurrencyService} from '../services/cryptocurrency.service';
 import {DatabaseService} from '../services/database.service';
 import {DOMPurifyHtmlSanitizerService} from '../services/dompurify-html-sanitizer.service';
+import {EHRIntegrationService} from '../services/ehr-integration.service';
 import {EHRService} from '../services/ehr.service';
 import {FirebaseDatabaseService} from '../services/firebase-database.service';
 import {HtmlSanitizerService} from '../services/html-sanitizer.service';
@@ -175,6 +176,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountSettingsService,
 		AccountUserLookupService,
 		CryptocurrencyService,
+		EHRIntegrationService,
 		EHRService,
 		QRService,
 		WorkerService,

@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {ISessionService} from '../../service-interfaces/isession.service';
 import {CastleEvents, events} from '../../session/enums';
 import {potassiumUtil} from '../potassium/potassium-util';

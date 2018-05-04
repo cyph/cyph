@@ -218,7 +218,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 			this.appService.chatRootState	= ChatRootStates.chat;
 		});
 
-		this.sessionService.one(events.cyphNotFound).then(() => {
+		this.sessionService.cyphNotFound.then(() => {
 			if (this.destroyed) {
 				return;
 			}
