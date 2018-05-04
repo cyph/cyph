@@ -21,7 +21,8 @@ $header-size: 135px;
 		border-width: 10px !important;
 	}
 
-	.member-list:not(.doctor-list-only) {
+	/* .member-list:not(.doctor-list-only) { */
+	.member-list {
 		height: 340px;
 	}
 
@@ -241,9 +242,11 @@ mat-card {
 				&.doctor-list-only {
 					@include calc('max-height', '95vh - #{$header-size}');
 
+					/*
 					.member-list {
 						@include calc('max-height', '75vh - #{$header-size}');
 					}
+					*/
 
 					&.lt-md {
 						@include calc('height', '100vh - #{$header-size}');
@@ -273,7 +276,9 @@ mat-card {
 	}
 }
 
+/*
 ::ng-deep .contact-list {
 	overflow-y: auto !important;
 	min-height: 125px;
 }
+*/
