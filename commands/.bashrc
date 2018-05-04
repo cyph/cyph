@@ -38,6 +38,7 @@ log () {
 	echo -e "\n\n\n${*} ($(date))\n"
 }
 
+# Workaround for https://github.com/angular/angular-cli/issues/10529
 ng () {
 	node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng "${@}"
 }

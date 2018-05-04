@@ -30,7 +30,7 @@ sed -i "s/mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === '
 sed -i "s/safari10 = .*;/safari10 = true;/g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
 
 
-# Workaround for https://github.com/angular/angular-cli/issues/10529
+# Workaround for https://github.com/angular/angular-cli/issues/10612
 
 ngProdFlags='
 	--aot true
