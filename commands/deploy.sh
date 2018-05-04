@@ -218,7 +218,7 @@ if [ -d test ] ; then
 	sed -i "s|setOnerror()|$(cat test/setonerror.js | tr '\n' ' ')|g" test/test.js
 fi
 
-if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] || [ "${simpleWebSignBuild}" ] ; then
+if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat shared/headers)"
 	ls */*.yaml | xargs -I% sed -ri "s/  ${defaultHeadersString}(.*)/\
