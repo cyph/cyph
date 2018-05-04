@@ -446,6 +446,10 @@ for d in $compiledProjects ; do
 		ng build --source-map false --configuration "${environment}" || exit 1
 	else
 		../commands/prodbuild.sh --configuration "${environment}" || exit 1
+
+		if [ "${simple}" ] && [ ! "${simpleWebSignBuild}" ] ; then
+			ls dist/*.js | xargs -I% uglifyjs % -bo %
+		fi
 	fi
 
 	if [ "${d}" == 'cyph.com' ] ; then node -e '
