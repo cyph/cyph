@@ -140,7 +140,9 @@ dev_appserver.py \
 ./commands/buildunbundledassets.sh \
 	$(if [ ! "${CIRCLECI}" ] && [ ! "${prodBuild}" ] ; then echo -n '--test' ; fi)
 
-cp -f shared/assets/serviceworker.js websign/manifest.json "cyph.ws/src/" 2> /dev/null
+cp -f shared/favicon.ico cyph.com/src/ 2> /dev/null
+cp -f shared/favicon.ico cyph.ws/src/ 2> /dev/null
+cp -f shared/assets/serviceworker.js websign/manifest.json cyph.ws/src/ 2> /dev/null
 
 log 'Starting ng serve'
 

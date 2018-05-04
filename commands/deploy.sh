@@ -424,6 +424,11 @@ for d in $compiledProjects ; do
 
 	cd "${d}"
 
+	cp -f ../shared/favicon.ico src/
+	if [ "${d}" == "${webSignedProject}" ] ; then
+		cp -f ../shared/assets/serviceworker.js ../websign/manifest.json src/
+	fi
+
 	if [ "${websign}" ] && [ "${d}" == "${webSignedProject}" ] ; then
 		# Merge in base64'd images, fonts, video, and audio
 		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
@@ -471,10 +476,6 @@ for d in $compiledProjects ; do
 
 	mv "${d}" "${d}.src"
 	mv "${d}.src/dist" "${d}"
-
-	if [ "${simple}" ] && [ "${d}" == "${webSignedProject}" ] ; then
-		cp -f shared/assets/serviceworker.js websign/manifest.json "${d}/"
-	fi
 done
 touch .build.done
 
