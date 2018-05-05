@@ -8,6 +8,10 @@ fi
 rm src/favicon.ico 2> /dev/null
 cp ../shared/favicon.ico src/
 
+if [ ! -d src/js.old ] ; then
+	mv src/js src/js.old
+fi
+
 for arr in \
 	'/node_modules node_modules' \
 	'../shared/assets src/assets' \

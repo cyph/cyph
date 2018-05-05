@@ -218,7 +218,7 @@ if [ -d test ] ; then
 	sed -i "s|setOnerror()|$(cat test/setonerror.js | tr '\n' ' ')|g" test/test.js
 fi
 
-if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] || [ "${simpleWebSignBuild}" ] ; then
+if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat shared/headers)"
 	ls */*.yaml | xargs -I% sed -ri "s/  ${defaultHeadersString}(.*)/\
@@ -410,6 +410,8 @@ if [ "${compiledProjects}" ] ; then
 		fi
 	) || exit 1
 
+	./commands/ngassets.sh
+
 	rm -rf "${dir}/shared/assets"
 	cp -a shared/assets "${dir}/shared/"
 	touch shared/assets/frozen
@@ -441,6 +443,10 @@ for d in $compiledProjects ; do
 		ng build --source-map false --configuration "${environment}" || exit 1
 	else
 		../commands/prodbuild.sh --configuration "${environment}" || exit 1
+
+		if [ "${simple}" ] && [ ! "${simpleWebSignBuild}" ] ; then
+			ls dist/*.js | xargs -I% uglifyjs % -bo %
+		fi
 	fi
 
 	if [ "${d}" == 'cyph.com' ] ; then node -e '
@@ -471,10 +477,6 @@ for d in $compiledProjects ; do
 
 	mv "${d}" "${d}.src"
 	mv "${d}.src/dist" "${d}"
-
-	if [ "${simple}" ] && [ "${d}" == "${webSignedProject}" ] ; then
-		cp -f shared/assets/serviceworker.js websign/manifest.json "${d}/"
-	fi
 done
 touch .build.done
 

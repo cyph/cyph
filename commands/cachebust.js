@@ -48,7 +48,7 @@ for (let file of filesToModify) {
 		const hash	= (await superSphincs.hash(fs.readFileSync(subresource))).hex;
 		content		= content.replace(
 			new RegExp(subresource + '(?!\.map)', 'g'),
-			`${subresource}?${hash}`
+			(s, i) => `${s}${content.slice(i - 2, i).match(/[a-zA-Z0-9_\-]/) ? '' : `?${hash}`}`
 		);
 	}
 

@@ -11550,15 +11550,15 @@ simple-swizzle@^0.2.2:
   dependencies:
     is-arrayish "^0.3.1"
 
-simplebtc@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/simplebtc/-/simplebtc-1.1.0.tgz#69bea2172c4b0ae596a5255675f43a8b61b39093"
+simplebtc@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/simplebtc/-/simplebtc-1.2.0.tgz#71efafa3dc2145f3eb8d6c0c934ffc5cc12f6c6c"
   dependencies:
     "@types/bitcore-lib" "0"
-    bitcore-lib "0"
+    bitcore-lib "^0"
     form-data "*"
     node-fetch "*"
-    rxjs "5"
+    rxjs "^6"
     socket.io-client "*"
     whatwg-fetch "*"
 

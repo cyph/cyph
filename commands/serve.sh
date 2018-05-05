@@ -82,6 +82,7 @@ ngserve () {
 				"${@}"
 		else
 			ng serve \
+				--configuration "${environment}" \
 				--live-reload false \
 				--source-map false \
 				--public-host "localhost:${port}" \
@@ -99,7 +100,6 @@ ngserve () {
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
 	ngserveInternal \
-		--configuration "${environment}" \
 		--host '0.0.0.0' \
 		--port "${port}" \
 		$(if [ "${prodBuild}" ] ; then
@@ -140,7 +140,7 @@ dev_appserver.py \
 ./commands/buildunbundledassets.sh \
 	$(if [ ! "${CIRCLECI}" ] && [ ! "${prodBuild}" ] ; then echo -n '--test' ; fi)
 
-cp -f shared/assets/serviceworker.js websign/manifest.json "cyph.ws/src/" 2> /dev/null
+./commands/ngassets.sh
 
 log 'Starting ng serve'
 
@@ -150,6 +150,14 @@ for arr in 'cyph.ws 42002' 'cyph.com 42001' ; do
 	if [ ! "${site}" ] || [ "${site}" == "${arr[0]}" ] ; then
 		if [ "${e2e}" ] ; then
 			ngserve "${arr[0]}" "${arr[1]}"
+
+			for d in cyph.com cyph.ws ; do
+				if [ -d ${d}/src/js.old ] ; then
+					unbindmount ${d}/src/js
+					mv ${d}/src/js.old ${d}/src/js
+				fi
+			done
+
 			exit $?
 		else
 			ngserve "${arr[0]}" "${arr[1]}" &

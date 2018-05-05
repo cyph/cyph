@@ -258,7 +258,7 @@
 					"builder": "@angular-devkit/build-angular:protractor",
 					"options": {
 						"protractorConfig": "./protractor.conf.js",
-						"devServerTarget": "cyph.ws:serve"
+						"devServerTarget": "cyph.ws:serve:e2e"
 					}
 				},
 				"lint": {

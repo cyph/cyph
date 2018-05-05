@@ -42,7 +42,7 @@ cd cyph.ws
 ../commands/ngprojectinit.sh
 
 if [ "${unit}" ] ; then
-	ng test --browsers ChromeHeadless --single-run
+	ng test --browsers ChromeHeadless --watch false
 	checkfail
 	echo -e '\n\n\n'
 fi

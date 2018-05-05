@@ -48,7 +48,10 @@ export class DynamicFormComponent implements OnInit {
 		uuid()
 	);
 
-	/** Indicates whether input is disabled. */
+	/** Hides all elements with empty values when isDisabled is true. */
+	@Input() public hideEmptyElements: boolean					= false;
+
+	/** Indicates whether input is disabled/read-only. */
 	@Input() public isDisabled: boolean							= false;
 
 	/** Indicates whether mobile version should be displayed. */
@@ -134,6 +137,17 @@ export class DynamicFormComponent implements OnInit {
 			() => maskBytes !== this.maskDefaultKey ?
 				msgpack.decode(maskBytes) :
 				{mask: false}
+		);
+	}
+
+	/** Indicates whether element should be displayed. */
+	public isVisible (element: Form.IElement) : boolean {
+		return !!(
+			!this.hideEmptyElements ||
+			!this.isDisabled ||
+			element.valueBoolean ||
+			element.valueNumber ||
+			element.valueString
 		);
 	}
 
