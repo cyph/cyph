@@ -6,9 +6,9 @@ message AccountFileRecord {
 	/** Possible file record types. */
 	enum RecordTypes {
 		Appointment = 0;
-		File = 1;
 		Doc = 2;
 		EhrApiKey = 3;
+		File = 1;
 		Form = 4;
 		Note = 5;
 		RedoxPatient = 6;

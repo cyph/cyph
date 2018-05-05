@@ -651,18 +651,21 @@ export class AccountFilesService {
 				content: `${this.stringsService.deleteMessage} ${file.name}?`,
 				title: this.stringsService.deleteConfirm
 			})) {
-				this.router.navigate([
-					accountRoot,
+				const route	= 
 					file.recordType === AccountFileRecord.RecordTypes.Appointment ?
 						'appointments' :
-						file.recordType === AccountFileRecord.RecordTypes.Doc ?
-							'docs' :
-							file.recordType === AccountFileRecord.RecordTypes.File ?
-								'files' :
-								file.recordType === AccountFileRecord.RecordTypes.Form ?
-									'forms' :
-									'notes'
-				]);
+					file.recordType === AccountFileRecord.RecordTypes.Doc ?
+						'docs' :
+					file.recordType === AccountFileRecord.RecordTypes.File ?
+						'files' :
+					file.recordType === AccountFileRecord.RecordTypes.Form ?
+						'forms' :
+						'notes'
+				;
+
+				if (route) {
+					this.router.navigate([accountRoot, route]);
+				}
 
 				await sleep();
 			}
