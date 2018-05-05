@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {Observable} from 'rxjs/Observable';
-import {timer} from 'rxjs/observable/timer';
-import {mergeMap} from 'rxjs/operators/mergeMap';
+import {Observable, timer} from 'rxjs';
+import {mergeMap} from 'rxjs/operators';
 import {getExchangeRates, Transaction, Wallet as SimpleBTCWallet} from 'simplebtc';
 import {GenericCurrency} from '../generic-currency-type';
 import {Cryptocurrencies, Currencies, IWallet} from '../proto';

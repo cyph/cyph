@@ -8,7 +8,7 @@ import * as $ from 'jquery';
 })
 export class EnterPressDirective implements OnInit {
 	/** Enter press event emitter. */
-	@Output() public cyphEnterPress: EventEmitter<void>	= new EventEmitter<void>();
+	@Output() public readonly cyphEnterPress: EventEmitter<void>	= new EventEmitter<void>();
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
