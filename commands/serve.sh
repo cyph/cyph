@@ -82,6 +82,7 @@ ngserve () {
 				"${@}"
 		else
 			ng serve \
+				--configuration "${environment}" \
 				--live-reload false \
 				--source-map false \
 				--public-host "localhost:${port}" \
@@ -99,7 +100,6 @@ ngserve () {
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
 	ngserveInternal \
-		--configuration "${environment}" \
 		--host '0.0.0.0' \
 		--port "${port}" \
 		$(if [ "${prodBuild}" ] ; then
