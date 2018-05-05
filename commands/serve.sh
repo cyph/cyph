@@ -109,6 +109,11 @@ ngserve () {
 		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
 		${args} \
 		"${@}"
+
+	if [ -d ../${project}.js.old ] ; then
+		unbindmount src/js
+		mv ../${project}.js.old src/js
+	fi
 }
 
 
@@ -150,14 +155,6 @@ for arr in 'cyph.ws 42002' 'cyph.com 42001' ; do
 	if [ ! "${site}" ] || [ "${site}" == "${arr[0]}" ] ; then
 		if [ "${e2e}" ] ; then
 			ngserve "${arr[0]}" "${arr[1]}"
-
-			for d in cyph.com cyph.ws ; do
-				if [ -d ${d}/src/js.old ] ; then
-					unbindmount ${d}/src/js
-					mv ${d}/src/js.old ${d}/src/js
-				fi
-			done
-
 			exit $?
 		else
 			ngserve "${arr[0]}" "${arr[1]}" &

@@ -9,9 +9,9 @@ onexit () {
 	cd ${dir}
 
 	for d in cyph.com cyph.ws ; do
-		if [ -d ${d}/src/js.old ] ; then
+		if [ -d ${d}.js.old ] ; then
 			unbindmount ${d}/src/js
-			mv ${d}/src/js.old ${d}/src/js
+			mv ${d}.js.old ${d}/src/js
 		fi
 	done
 }
