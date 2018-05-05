@@ -8,6 +8,39 @@ import {EHRIntegrationService} from './ehr-integration.service';
  */
 @Injectable()
 export class EHRService {
+	/** @ignore */
+	private throwErrors (response: any) : void {
+		if (
+			typeof response === 'object' &&
+			response.Errors instanceof Array
+		) {
+			throw response.Errors;
+		}
+	}
+
+	/** Adds new patient. */
+	public async addPatient (apiKey: string, patient: RedoxPatient) : Promise<void> {
+		const response	= await this.ehrIntegrationService.runCommand(apiKey, {
+			Meta: {
+				DataModel: 'PatientAdmin',
+				EventType: 'NewPatient'
+			},
+			Patient: patient
+		});
+
+		this.throwErrors(response);
+	}
+
+	/** Adds or updates patient. */
+	public async addOrUpdatePatient (apiKey: string, patient: RedoxPatient) : Promise<void> {
+		try {
+			await this.updatePatient(apiKey, patient);
+		}
+		catch {
+			await this.addPatient(apiKey, patient);
+		}
+	}
+
 	/** Gets patient based on SSN or other identifier(s). */
 	public async getPatient (
 		apiKey: string,
@@ -22,6 +55,8 @@ export class EHRService {
 				{Demographics: {SSN: id}} :
 				{Identifiers: id instanceof Array ? id : [id]}
 		});
+
+		this.throwErrors(response);
 
 		if (
 			typeof response !== 'object' ||
@@ -48,12 +83,20 @@ export class EHRService {
 			}
 		});
 
-		if (
-			typeof response === 'object' &&
-			response.Errors instanceof Array
-		) {
-			throw response.Errors;
-		}
+		this.throwErrors(response);
+	}
+
+	/** Updates existing patient. */
+	public async updatePatient (apiKey: string, patient: RedoxPatient) : Promise<void> {
+		const response	= await this.ehrIntegrationService.runCommand(apiKey, {
+			Meta: {
+				DataModel: 'PatientAdmin',
+				EventType: 'PatientUpdate'
+			},
+			Patient: patient
+		});
+
+		this.throwErrors(response);
 	}
 
 	constructor (
