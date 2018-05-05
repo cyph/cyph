@@ -36,7 +36,9 @@ import {
 	IAppointment,
 	IEhrApiKey,
 	IForm,
-	NotificationTypes
+	IRedoxPatient,
+	NotificationTypes,
+	RedoxPatient
 } from '../proto';
 import {filterUndefined} from '../util/filter';
 import {flattenObservable} from '../util/flatten-observable';
@@ -313,6 +315,19 @@ export class AccountFilesService {
 	}
 
 	/** @ignore */
+	private fileIsForm (file: AccountFile) : boolean {
+		const maybeForm	= <any> file;
+		return maybeForm.components instanceof Array;
+	}
+
+	/** @ignore
+	private fileIsRedoxPatient (file: AccountFile) : boolean {
+		const maybeRedoxPatient	= <any> file;
+		return typeof maybeRedoxPatient.Demographics === 'object';
+	}
+	*/
+
+	/** @ignore */
 	private filterFiles<T extends {owner: string}> (
 		filesList: Observable<(IAccountFileRecord&T)[]>,
 		filterRecordTypes: AccountFileRecord.RecordTypes
@@ -425,6 +440,14 @@ export class AccountFilesService {
 		result: Promise<IForm>;
 	} {
 		return this.downloadItem(id, Form, SecurityModels.privateSigned);
+	}
+
+	/** Downloads and returns RedoxPatient object. */
+	public downloadRedoxPatient (id: string|IAccountFileRecord) : {
+		progress: Observable<number>;
+		result: Promise<IRedoxPatient>;
+	} {
+		return this.downloadItem(id, RedoxPatient);
 	}
 
 	/** Downloads file and returns as data URI. */
@@ -890,8 +913,9 @@ export class AccountFilesService {
 		))();
 		const url	= `users/${username}/files/${id}`;
 
-		const {progress, result}	= file instanceof Blob ?
-			this.accountDatabaseService.uploadItem(url, BlobProto, file, undefined, key) :
+		const {progress, result}	=
+			file instanceof Blob ?
+				this.accountDatabaseService.uploadItem(url, BlobProto, file, undefined, key) :
 			file instanceof Array ?
 				(() => {
 					const docProgress	= new BehaviorSubject(0);
@@ -913,37 +937,45 @@ export class AccountFilesService {
 						return {hash: '', url: ''};
 					})()};
 				})() :
-				this.fileIsDelta(file) ?
-					this.accountDatabaseService.uploadItem(
-						url,
-						BinaryProto,
-						msgpack.encode(<IQuillDelta> file),
-						undefined,
-						key
-					) :
-					this.fileIsAppointment(file) ?
-						this.accountDatabaseService.uploadItem(
-							url,
-							Appointment,
-							<Appointment> file,
-							undefined,
-							key
-						) :
-						this.fileIsEhrApiKey(file) ?
-							this.accountDatabaseService.uploadItem(
-								url,
-								EhrApiKey,
-								<EhrApiKey> file,
-								undefined,
-								key
-							) :
-							this.accountDatabaseService.uploadItem(
-								url,
-								Form,
-								<Form> file,
-								SecurityModels.privateSigned,
-								key
-							)
+			this.fileIsDelta(file) ?
+				this.accountDatabaseService.uploadItem(
+					url,
+					BinaryProto,
+					msgpack.encode(<IQuillDelta> file),
+					undefined,
+					key
+				) :
+			this.fileIsAppointment(file) ?
+				this.accountDatabaseService.uploadItem(
+					url,
+					Appointment,
+					<IAppointment> file,
+					undefined,
+					key
+				) :
+			this.fileIsEhrApiKey(file) ?
+				this.accountDatabaseService.uploadItem(
+					url,
+					EhrApiKey,
+					<IEhrApiKey> file,
+					undefined,
+					key
+				) :
+			this.fileIsForm(file) ?
+				this.accountDatabaseService.uploadItem(
+					url,
+					Form,
+					<IForm> file,
+					SecurityModels.privateSigned,
+					key
+				) :
+				this.accountDatabaseService.uploadItem(
+					url,
+					RedoxPatient,
+					<IRedoxPatient> file,
+					undefined,
+					key
+				)
 		;
 
 		return {
@@ -951,30 +983,36 @@ export class AccountFilesService {
 			result: result.then(async () => {
 				const accountFileRecord	= {
 					id,
-					mediaType: file instanceof Blob ?
-						file.type :
+					mediaType:
+						file instanceof Blob ?
+							file.type :
 						file instanceof Array ?
 							'cyph/doc' :
-							this.fileIsDelta(file) ?
-								'cyph/note' :
-								this.fileIsAppointment(file) ?
-									'cyph/appointment' :
-									this.fileIsEhrApiKey(file) ?
-										'cyph/ehr-api-key' :
-										'cyph/form'
+						this.fileIsDelta(file) ?
+							'cyph/note' :
+						this.fileIsAppointment(file) ?
+							'cyph/appointment' :
+						this.fileIsEhrApiKey(file) ?
+							'cyph/ehr-api-key' :
+						this.fileIsForm(file) ?
+							'cyph/form' :
+							'cyph/redox-patient'
 					,
 					name,
-					recordType: file instanceof Blob ?
-						AccountFileRecord.RecordTypes.File :
+					recordType:
+						file instanceof Blob ?
+							AccountFileRecord.RecordTypes.File :
 						file instanceof Array ?
 							AccountFileRecord.RecordTypes.Doc :
-							this.fileIsDelta(file) ?
-								AccountFileRecord.RecordTypes.Note :
-								this.fileIsAppointment(file) ?
-									AccountFileRecord.RecordTypes.Appointment :
-									this.fileIsEhrApiKey(file) ?
-										AccountFileRecord.RecordTypes.EhrApiKey :
-										AccountFileRecord.RecordTypes.Form
+						this.fileIsDelta(file) ?
+							AccountFileRecord.RecordTypes.Note :
+						this.fileIsAppointment(file) ?
+							AccountFileRecord.RecordTypes.Appointment :
+						this.fileIsEhrApiKey(file) ?
+							AccountFileRecord.RecordTypes.EhrApiKey :
+						this.fileIsForm(file) ?
+							AccountFileRecord.RecordTypes.Form :
+							AccountFileRecord.RecordTypes.RedoxPatient
 					,
 					size: file instanceof Blob ?
 						file.size :
