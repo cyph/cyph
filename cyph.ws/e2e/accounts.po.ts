@@ -1,6 +1,6 @@
 import * as path from 'path';
 import {browser, by, element, ElementFinder, ExpectedConditions} from 'protractor';
-import * as util from '../../modules/util';
+import * as util from '../src/js/cyph/util';
 
 
 export class AccountsPage {
