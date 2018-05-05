@@ -1,3 +1,5 @@
+import '../src/js/standalone/global';
+
 import * as path from 'path';
 import {browser, by, element, ElementFinder, ExpectedConditions} from 'protractor';
 import * as util from '../src/js/cyph/util';
@@ -38,19 +40,16 @@ export class AccountsPage {
 				by.css('mat-progress-spinner')
 			),
 			upload: () => element(by.js(() => {
-				try {
-					const elem: HTMLInputElement	= (<any> document).
-						querySelector("cyph-account-files .file-upload").
-						dropzone.
-						hiddenFileInput
-					;
-					elem.style.height		= '1px';
-					elem.style.opacity		= '1';
-					elem.style.visibility	= 'visible';
-					elem.style.width		= '1px';
-					return elem;
-				}
-				catch {}
+				const elem: HTMLInputElement	= (<any> document).
+					querySelector("cyph-account-files .file-upload").
+					dropzone.
+					hiddenFileInput
+				;
+				elem.style.height		= '1px';
+				elem.style.opacity		= '1';
+				elem.style.visibility	= 'visible';
+				elem.style.width		= '1px';
+				return elem;
 			}))
 		},
 
