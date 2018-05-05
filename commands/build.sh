@@ -2,6 +2,21 @@
 
 
 cd $(cd "$(dirname "$0")" ; pwd)/..
+dir="$DIR"
+
+
+onexit () {
+	cd ${dir}
+
+	for d in cyph.com cyph.ws ; do
+		if [ -d ${d}/src/js.old ] ; then
+			unbindmount ${d}/src/js
+			mv ${d}/src/js.old ${d}/src/js
+		fi
+	done
+}
+
+trap onexit EXIT
 
 
 if [ "${1}" != '--angular-only' ] ; then

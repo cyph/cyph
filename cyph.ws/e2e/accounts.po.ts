@@ -2,7 +2,7 @@ import '../src/js/standalone/global';
 
 import * as path from 'path';
 import {browser, by, element, ElementFinder, ExpectedConditions} from 'protractor';
-import * as util from '../src/js/cyph/util';
+import {sleep} from '../src/js/cyph/util/wait';
 
 
 export class AccountsPage {
@@ -119,7 +119,7 @@ export class AccountsPage {
 				await this.clickElement(this.elements.dialogConfirm.ok);
 
 				while (true) {
-					await util.sleep();
+					await sleep();
 					if (fileCount !== (await this.elements.files.allFiles()).length) {
 						break;
 					}
