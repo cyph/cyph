@@ -320,7 +320,7 @@ export class AccountFilesService {
 		return maybeForm.components instanceof Array;
 	}
 
-	/** @ignore
+	/* @ignore
 	private fileIsRedoxPatient (file: AccountFile) : boolean {
 		const maybeRedoxPatient	= <any> file;
 		return typeof maybeRedoxPatient.Demographics === 'object';
@@ -651,7 +651,7 @@ export class AccountFilesService {
 				content: `${this.stringsService.deleteMessage} ${file.name}?`,
 				title: this.stringsService.deleteConfirm
 			})) {
-				const route	= 
+				const route	=
 					file.recordType === AccountFileRecord.RecordTypes.Appointment ?
 						'appointments' :
 					file.recordType === AccountFileRecord.RecordTypes.Doc ?
