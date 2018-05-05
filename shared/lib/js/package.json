@@ -610,7 +610,7 @@
     "script-ext-html-webpack-plugin": "^2.0.1",
     "sidh": "^4.1.4",
     "simple-peer": "^9.1.1",
-    "simplebtc": "^1.1.0",
+    "simplebtc": "^1.2.0",
     "simplewebrtc": "^3.0.1",
     "sodiumutil": "^2.0.1",
     "sphincs": "^2.1.5",
