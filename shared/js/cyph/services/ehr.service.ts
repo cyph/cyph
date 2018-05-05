@@ -40,13 +40,20 @@ export class EHRService {
 		apiKey: string,
 		appointment: RedoxAppointment
 	) : Promise<void> {
-		await this.ehrIntegrationService.runCommand(apiKey, {
+		const response	= await this.ehrIntegrationService.runCommand(apiKey, {
+			...appointment,
 			Meta: {
 				DataModel: 'Scheduling',
 				EventType: 'New'
-			},
-			...appointment
+			}
 		});
+
+		if (
+			typeof response === 'object' &&
+			response.Errors instanceof Array
+		) {
+			throw response.Errors;
+		}
 	}
 
 	constructor (
