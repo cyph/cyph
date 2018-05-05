@@ -19,12 +19,17 @@ else
 	./commands/protobuf.sh
 fi
 
-./commands/ngassets.sh
+projects='cyph.com cyph.ws'
 
 log 'Starting Angular AOT build'
-for d in cyph.com cyph.ws ; do
+for d in ${projects} ; do
 	cd "${d}"
 	../commands/ngprojectinit.sh
+	cd ..
+done
+./commands/ngassets.sh
+for d in ${projects} ; do
+	cd "${d}"
 	ng build --prod
 	checkfail
 	cd ..
