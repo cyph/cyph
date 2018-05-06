@@ -546,10 +546,10 @@ export class AccountFilesService {
 		const ehrApiKeys	= await this.filesListFiltered.ehrApiKeys.pipe(take(1)).toPromise();
 
 		if (ehrApiKeys.length < 1) {
-			throw new Error('No EHR API keys.')
+			throw new Error('No EHR API keys.');
 		}
 		else if (ehrApiKeys.length > 1) {
-			throw new Error('More than one EHR API key.')
+			throw new Error('More than one EHR API key.');
 		}
 
 		return this.downloadEhrApiKey(ehrApiKeys[0]).result;
