@@ -50,7 +50,7 @@
 	</div>
 </ng-template>
 
-<ng-template #emailLikeButtons>
+<ng-template #emailLikeButtons let-patientData='patientData'>
 	<div fxLayout='row' fxLayoutGap='16px'>
 		<button
 			mat-mini-fab
@@ -72,6 +72,20 @@
 			'
 		>
 			<mat-icon>message</mat-icon>
+		</button>
+
+		<button
+			mat-mini-fab
+			[matTooltip]='stringsService.shareEhrDataTitle'
+			(click)='shareEhrData()'
+			*ngIf='
+				patientData &&
+				(
+					accountDatabaseService.currentUser.value?.user.userType | async
+				) === accountUserTypes.TelehealthDoctor
+			'
+		>
+			<mat-icon svgIcon='doctor'></mat-icon>
 		</button>
 	</div>
 </ng-template>
@@ -348,7 +362,9 @@
 								></textarea>
 							</mat-form-field>
 							<div fxLayout='row' fxLayoutAlign='center center'>
-								<ng-container *ngTemplateOutlet='emailLikeButtons'></ng-container>
+								<ng-container *ngTemplateOutlet='
+									emailLikeButtons; context: {patientData: true}
+								'></ng-container>
 							</div>
 						</div>
 					</mat-card-content>

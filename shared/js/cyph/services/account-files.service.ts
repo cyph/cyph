@@ -145,9 +145,11 @@ export class AccountFilesService {
 	public readonly filesListFiltered	= {
 		appointments: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Appointment),
 		docs: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Doc),
+		ehrApiKeys: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.EhrApiKey),
 		files: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.File),
 		forms: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Form),
-		notes: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Note)
+		notes: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Note),
+		redoxPatients: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.RedoxPatient)
 	};
 
 	/** Total size of all files in list. */
@@ -253,9 +255,14 @@ export class AccountFilesService {
 			AccountFileRecord.RecordTypes.Appointment
 		),
 		docs: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Doc),
+		ehrApiKeys: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.EhrApiKey),
 		files: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.File),
 		forms: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Form),
-		notes: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Note)
+		notes: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Note),
+		redoxPatients: this.filterFiles(
+			this.incomingFiles,
+			AccountFileRecord.RecordTypes.RedoxPatient
+		)
 	};
 
 	/** Indicates whether the first load has completed. */
@@ -529,6 +536,23 @@ export class AccountFilesService {
 			deltas: flattenObservable(watchers.then(o => o.deltas)),
 			selections: flattenObservable(watchers.then(o => o.selections))
 		};
+	}
+
+	/**
+	 * Returns EHR API key.
+	 * TODO: Support cases where user has multiple EHR API keys to choose from.
+	 */
+	public async getEhrApiKey () : Promise<IEhrApiKey> {
+		const ehrApiKeys	= await this.filesListFiltered.ehrApiKeys.pipe(take(1)).toPromise();
+
+		if (ehrApiKeys.length < 1) {
+			throw new Error('No EHR API keys.')
+		}
+		else if (ehrApiKeys.length > 1) {
+			throw new Error('More than one EHR API key.')
+		}
+
+		return this.downloadEhrApiKey(ehrApiKeys[0]).result;
 	}
 
 	/** Gets the specified file record. */

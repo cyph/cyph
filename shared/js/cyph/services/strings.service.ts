@@ -554,6 +554,26 @@ export class StringsService {
 	public readonly session: string						= `${this.internalSession}`;
 
 	/** @see StringsService */
+	public readonly shareEhrData: string				=
+		`You are about to request data about this patient from your organization's EHR system ` +
+		`and share it with this patient. If accepted, it will be used to auto-fill forms on ` +
+		`their behalf. Continue?`
+	;
+
+	/** @see StringsService */
+	public readonly shareEhrDataFailure: string			=
+		`Sharing medical data failed.`
+	;
+
+	/** @see StringsService */
+	public readonly shareEhrDataSuccess: string			=
+		`Medical data has been shared.`
+	;
+
+	/** @see StringsService */
+	public readonly shareEhrDataTitle: string			= `Share Medical Data from EHR`;
+
+	/** @see StringsService */
 	public readonly signupFailed: string				=
 		`Signup failed. Please try again later.`
 	;

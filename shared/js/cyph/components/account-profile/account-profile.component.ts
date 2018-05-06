@@ -13,6 +13,8 @@ import {AccountUserLookupService} from '../../services/account-user-lookup.servi
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {DialogService} from '../../services/dialog.service';
+import {EHRService} from '../../services/ehr.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
@@ -215,12 +217,74 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 		this.editMode						= false;
 	}
 
+	/** Shares medical data from EHR system with the patient. */
+	public async shareEhrData () : Promise<void> {
+		const user	= this.user;
+
+		if (!user || !(await this.dialogService.confirm({
+			content: this.stringsService.shareEhrData,
+			title: this.stringsService.shareEhrDataTitle
+		}))) {
+			return;
+		}
+
+		this.accountService.interstitial	= true;
+
+		let alertPromise	= Promise.resolve();
+
+		try {
+			/* TODO: Allow doctor to use PatientInfo for this. */
+			const [{apiKey}, accountUserProfile]	= await Promise.all([
+				this.accountFilesService.getEhrApiKey(),
+				user.accountUserProfile.getValue()
+			]);
+
+			const firstSpaceIndex	= accountUserProfile.name.indexOf(' ');
+			const lastSpaceIndex	= accountUserProfile.name.lastIndexOf(' ');
+
+			const redoxPatient	= await this.ehrService.getPatient(apiKey, {
+				Demographics: {
+					FirstName: accountUserProfile.name.slice(0, firstSpaceIndex),
+					MiddleName: accountUserProfile.name.slice(firstSpaceIndex + 1, lastSpaceIndex),
+					LastName: accountUserProfile.name.slice(lastSpaceIndex + 1)
+				}
+			});
+
+			await this.accountFilesService.upload(
+				accountUserProfile.name,
+				redoxPatient,
+				user.username
+			).result;
+
+			alertPromise	= this.dialogService.alert({
+				content: this.stringsService.shareEhrDataSuccess,
+				title: this.stringsService.shareEhrDataTitle
+			});
+		}
+		catch (_) {
+			alertPromise	= this.dialogService.alert({
+				content: this.stringsService.shareEhrDataFailure,
+				title: this.stringsService.shareEhrDataTitle
+			});
+		}
+		finally {
+			this.accountService.interstitial	= false;
+			await alertPromise;
+		}
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
 
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly ehrService: EHRService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
