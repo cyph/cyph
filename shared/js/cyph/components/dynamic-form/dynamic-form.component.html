@@ -214,8 +214,8 @@
 		</div>
 	</div>
 	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isDisabled'>
-		<button mat-raised-button matTooltip='Submit' color='accent' type='submit' cyphTranslate>
-			Submit
+		<button mat-raised-button [matTooltip]='isProfile ? "Save" : "Submit"' color='accent' type='submit' cyphTranslate>
+			{{isProfile ? 'Save' : 'Submit'}}
 		</button>
 	</div>
 </form>

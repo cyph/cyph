@@ -314,14 +314,14 @@ export const basicInfo			= (id?: string) : Form.IComponent => {
 		[
 			newFormRow([
 				datepicker({id: 'DOB', label: 'Date of Birth', width: 20, required: true}),
-				radio({id: 'Sex', label: 'Sex', options: ['Male', 'Female'], required: true}),
-				radio({
+				select({id: 'Sex', label: 'Sex', options: ['Male', 'Female'], required: true}),
+				select({
 					id: 'MaritalStatus',
 					label: 'Marital Status',
 					options: ['Single', 'Married']
 				}),
-				numberInput({label: 'Height (in)', min: 20, max: 108, width: 15, required: true}),
-				numberInput({label: 'Weight (lbs)', max: 1500, width: 15, required: true})
+				numberInput({label: 'Height (in)', min: 20, max: 108, width: 15, required: false}),
+				numberInput({label: 'Weight (lbs)', max: 1500, width: 15, required: false})
 			])
 		],
 		id
@@ -366,6 +366,25 @@ export const optInOut			= () : Form.IComponent => newFormComponent([
 	])
 ]);
 
+export const height		= (id: string = 'height') : Form.IElement[] => [
+	numberInput({
+		id,
+		label: 'Feet',
+		min: 0,
+		max: 11,
+		width: 5,
+		required: false
+	}),
+	numberInput({
+		id,
+		label: 'Inches',
+		min: 0,
+		max: 11,
+		width: 5,
+		required: false
+	})
+];
+
 /** New patient form. */
 export const newPatient			= () : IForm => newForm(
 	[
@@ -376,4 +395,55 @@ export const newPatient			= () : IForm => newForm(
 		optInOut()
 	],
 	'patient'
+);
+
+export const patientProfile		= () : IForm => newForm(
+	[
+		contact('redoxPatient.Demographics'),
+		newFormComponent(
+			[
+				newFormRow(
+					[
+						datepicker({id: 'DOB', label: 'Date of Birth', width: 20, required: true}),
+						select({
+							id: 'Sex',
+							label: 'Sex',
+							options: ['Male', 'Female'],
+							width: 10
+						}),
+						select({
+							id: 'MaritalStatus',
+							label: 'Marital Status',
+							options: ['Single', 'Married'],
+							width: 13
+						}),
+						numberInput({label: 'Weight (lbs)', max: 1500, width: 10, required: false})
+					]
+				),
+				newFormRow([height()])
+			]
+		),
+	],
+	'redoxPatient.Demographics'
+);
+
+export const doctorProfile		= () : IForm => newForm(
+	[
+		newFormComponent([title('Doctor Profile')])
+	],
+	'doctor-profile'
+);
+
+export const orgProfile		= () : IForm => newForm(
+	[
+		newFormComponent([title('Org Profile')])
+	],
+	'org-profile'
+);
+
+export const staffProfile		= () : IForm => newForm(
+	[
+		newFormComponent([title('Staff Profile')])
+	],
+	'staff-profile'
 );

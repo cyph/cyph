@@ -23,6 +23,7 @@ import {uuid} from '../../util/uuid';
 	templateUrl: './dynamic-form.component.html'
 })
 export class DynamicFormComponent implements OnInit {
+	@Input() public isProfile: Boolean						= false;
 	/** @ignore */
 	private readonly maskDefaultKey: Uint8Array				= new Uint8Array(0);
 

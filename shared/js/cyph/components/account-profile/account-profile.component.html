@@ -105,7 +105,7 @@
 		</button>
 		<button
 			mat-fab
-			cyphTranslate
+			*ngIf='!editMode'
 			[matTooltip]='editMode ? "Save" : "Edit"'
 			matTooltipPosition='above'
 			(click)='editMode ? saveUserDescription() : editMode = true'
@@ -341,32 +341,21 @@
 					<mat-card-content
 						*ngIf='(user?.userType | async) === accountUserTypes.Standard'
 					>
-						<div fxLayout='column' fxLayoutGap='16px'>
-							<h1 cyphTranslate>Patient Info</h1>
-							<h2>
-								<span cyphTranslate>Gender:</span>
-								&ngsp;
-								<span>{{extra.gender || ''}}</span>
-							</h2>
-							<div class='description' *ngIf='user?.description && !editMode'>
-								<span>{{user?.description | async}}</span>
-							</div>
-							<mat-form-field class='description' *ngIf='editMode && user'>
-								<textarea
-									matInput
-									(blur)='isEditorFocused = false'
-									(focus)='isEditorFocused = true'
-									[maxlength]='maxDescriptionLength'
-									[ngModel]='user?.description | async'
-									(ngModelChange)='descriptionDraft = $event'
-								></textarea>
-							</mat-form-field>
-							<div fxLayout='row' fxLayoutAlign='center center'>
-								<ng-container *ngTemplateOutlet='
-									emailLikeButtons; context: {patientData: true}
-								'></ng-container>
-							</div>
+					<div fxLayout='column' fxLayoutGap='16px'>
+						<div fxLayout='row' fxLayoutAlign='center center'>
+							<ng-container *ngTemplateOutlet='
+								emailLikeButtons; context: {patientData: true}
+							'></ng-container>
 						</div>
+					</div>
+					<ng-container *ngFor='let form of extra.forms'>
+						<cyph-dynamic-form
+							[form]='form'
+							[isDisabled]='!editMode'
+							[isProfile]='true'
+							(submitForm)='editMode = false'
+						></cyph-dynamic-form>
+					</ng-container>
 					</mat-card-content>
 					<mat-card-content *ngIf='(user?.userType | async) === accountUserTypes.Org'>
 						<div fxLayout='column'>
