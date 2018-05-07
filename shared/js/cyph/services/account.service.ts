@@ -86,24 +86,14 @@ export class AccountService {
 
 	/** @ignore */
 	private get routePath () : string[] {
-		let route	= (
+		const route	= (
 			this.activatedRoute.snapshot.firstChild &&
-			this.activatedRoute.snapshot.firstChild.url.length > 0
+			this.activatedRoute.snapshot.firstChild.firstChild &&
+			this.activatedRoute.snapshot.firstChild.firstChild.url.length > 0
 		) ?
-			this.activatedRoute.snapshot.firstChild.url :
+			this.activatedRoute.snapshot.firstChild.firstChild.url :
 			undefined
 		;
-
-		if (route && route[0].path === accountRoot) {
-			route	= (
-				this.activatedRoute.snapshot.firstChild &&
-				this.activatedRoute.snapshot.firstChild.firstChild &&
-				this.activatedRoute.snapshot.firstChild.firstChild.url.length > 0
-			) ?
-				this.activatedRoute.snapshot.firstChild.firstChild.url :
-				undefined
-			;
-		}
 
 		return route ? route.map(o => o.path) : [];
 	}
