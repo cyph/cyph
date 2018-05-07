@@ -27,7 +27,7 @@ export class TranslateDirective {
 		}
 
 		if ($children.length > 0) {
-			for (const child of $children.not('[cyphTranslate]').toArray()) {
+			for (const child of $children.not('mat-icon, [cyphTranslate]').toArray()) {
 				this.handleElement(child, renderer);
 			}
 		}

@@ -216,7 +216,7 @@
 		<button
 			mat-button
 			cyphTranslate
-			class='Staff'
+			class='staff'
 			matTooltip='Staff'
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "staff"'
@@ -238,6 +238,33 @@
 			*ngIf='(accountService.menuExpanded | async) === false'
 		>
 			<mat-icon>people</mat-icon>
+		</button>
+
+		<button
+			mat-button
+			cyphTranslate
+			class='ehr-access'
+			matTooltip='EHR Access'
+			matTooltipPosition='right'
+			[routerLink]='accountService.routeRoot + "ehr-access"'
+			(click)='click()'
+			*ngIf='accountService.menuExpanded | async'
+		>
+			<mat-icon>vpn_key</mat-icon>
+			&ngsp;
+			<span>EHR Access</span>
+		</button>
+		<button
+			mat-icon-button
+			cyphTranslate
+			class='ehr-access'
+			matTooltip='EHR Access'
+			matTooltipPosition='right'
+			[routerLink]='accountService.routeRoot + "ehr-access"'
+			(click)='click()'
+			*ngIf='(accountService.menuExpanded | async) === false'
+		>
+			<mat-icon>vpn_key</mat-icon>
 		</button>
 	</ng-container>
 

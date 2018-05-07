@@ -170,6 +170,7 @@ export class AccountService {
 					'appointments',
 					'contacts',
 					'docs',
+					'ehr-access',
 					'files',
 					'forms',
 					'notes',
@@ -187,7 +188,9 @@ export class AccountService {
 				;
 			}
 
-			return header || translate(route[0].toUpperCase() + route.slice(1));
+			return header || translate(
+				route.split('-').map(s => s[0].toUpperCase() + s.slice(1)).join(' ')
+			);
 		}));
 
 		this.menuExpandable	= combineLatest(

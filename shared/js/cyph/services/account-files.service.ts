@@ -12,7 +12,7 @@ import * as Delta from 'quill-delta';
 import * as QuillDeltaToHtml from 'quill-delta-to-html';
 import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
 import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
-import {AccountFile, SecurityModels} from '../account';
+import {AccountFile, AccountFileShare, SecurityModels} from '../account';
 import {Async} from '../async-type';
 import {StorageUnits} from '../enums/storage-units';
 import {IAsyncList} from '../iasync-list';
@@ -68,7 +68,7 @@ export class AccountFilesService {
 	public static accountFileSharingComponent	=
 		resolvable<ComponentType<{
 			closeFunction?: IResolvable<() => void>;
-			file?: IAccountFileRecord;
+			file?: AccountFileShare;
 		}>>()
 	;
 
@@ -878,7 +878,7 @@ export class AccountFilesService {
 	}
 
 	/** Creates a dialog to share a file with another user. */
-	public async shareFilePrompt (file: IAccountFileRecord) : Promise<void> {
+	public async shareFilePrompt (file: AccountFileShare) : Promise<void> {
 		const closeFunction	= resolvable<() => void>();
 
 		await this.dialogService.baseDialog(

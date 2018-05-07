@@ -1,0 +1,112 @@
+<div
+	fxFlexFill
+	fxLayout='row'
+	fxLayoutAlign='center start'
+	class='card-list'
+	[class.initiating]='accountFilesService.showSpinner'
+>
+	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
+		<ng-container *ngFor='
+			let ehrApiKey of accountFilesService.filesListFiltered.ehrApiKeys | async;
+			trackBy: trackByID;
+			let i = index;
+		'>
+			<mat-card
+				class='ehr-api-key animated slideInDown'
+				*ngIf='
+					accountFilesService.downloadFile(
+						ehrApiKey,
+						recordTypes.EhrApiKey
+					).result | async as ehrApiKeyData
+				'
+				[attr.data-index]='i'
+				[class.bounceInRight]='!accountFilesService.initiated'
+				[ngClass]='"_" + i'
+			>
+				<mat-card-header fxLayout='row'>
+					<mat-card-title>
+						{{ehrApiKey.name}}
+					</mat-card-title>
+					<div fxFlex fxLayoutAlign='end center'>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip='Share'
+							(click)='
+								share(ehrApiKeyData);
+								$event.stopPropagation();
+							'
+							*ngIf='ehrApiKeyData.isMaster'
+						>
+							<mat-icon>share</mat-icon>
+						</button>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip='Delete'
+							(click)='
+								accountFilesService.remove(ehrApiKey);
+								$event.stopPropagation();
+							'
+						>
+							<mat-icon>delete</mat-icon>
+						</button>
+					</div>
+				</mat-card-header>
+			</mat-card>
+		</ng-container>
+
+		<h2
+			cyphTranslate
+			*ngIf='(accountFilesService.incomingFilesFiltered.ehrApiKeys | async)?.length > 0'
+		>
+			Incoming EHR API keys
+		</h2>
+
+		<mat-card
+			class='ehr-api-key animated'
+			*ngFor='
+				let ehrApiKey of accountFilesService.incomingFilesFiltered.ehrApiKeys | async;
+				trackBy: trackByID;
+				let i = index;
+			'
+			[attr.data-index]='i'
+			[class.bounceInRight]='!accountFilesService.initiated'
+			[ngClass]='"_" + i'
+		>
+			<mat-card-header fxLayout='row'>
+				<mat-card-title>
+					<div *ngIf='!ehrApiKey.wasAnonymousShare'>
+						@{{ehrApiKey.owner}}
+					</div>
+					<div *ngIf='ehrApiKey.wasAnonymousShare'>
+						{{getDateTimeString(ehrApiKey.timestamp)}}
+					</div>
+				</mat-card-title>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Accept'
+						(click)='accept(ehrApiKey)'
+					>
+						<mat-icon>check</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Reject'
+						(click)='accountFilesService.acceptIncomingFile(ehrApiKey, false)'
+					>
+						<mat-icon>close</mat-icon>
+					</button>
+				</div>
+			</mat-card-header>
+		</mat-card>
+	</div>
+
+	<mat-progress-spinner
+		mode='indeterminate'
+		*ngIf='accountFilesService.showSpinner'
+	></mat-progress-spinner>
+</div>
