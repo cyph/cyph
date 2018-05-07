@@ -387,10 +387,10 @@ export class AccountFilesService {
 	/** Accepts or rejects incoming file. */
 	public async acceptIncomingFile (
 		incomingFile: IAccountFileRecord&IAccountFileReference,
-		options: boolean|{accept?: boolean; copy?: boolean; name?: string} = true
+		options: boolean|{copy?: boolean; name?: string; reject?: boolean} = true
 	) : Promise<void> {
 		if (typeof options === 'boolean') {
-			options	= {accept: options};
+			options	= {reject: !options};
 		}
 
 		const fileConfig				= this.fileTypeConfig[incomingFile.recordType];
@@ -407,7 +407,7 @@ export class AccountFilesService {
 			options.copy	= true;
 		}
 
-		if (options.accept && !options.copy) {
+		if (!options.reject && !options.copy) {
 			promises.push(this.accountDatabaseService.setItem<IAccountFileReference>(
 				`fileReferences/${incomingFile.id}`,
 				AccountFileReference,
@@ -444,7 +444,7 @@ export class AccountFilesService {
 				*/
 			}
 		}
-		else if (options.accept && options.copy) {
+		else if (!options.reject && options.copy) {
 			const file	=
 				incomingFile.recordType === AccountFileRecord.RecordTypes.Doc ?
 					(await this.getDoc(incomingFile.id).asyncList.getValue()) :
