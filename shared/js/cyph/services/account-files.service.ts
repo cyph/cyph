@@ -514,7 +514,7 @@ export class AccountFilesService {
 	};
 	public downloadFile (
 		id: string|IAccountFileRecord,
-		recordType: AccountFileRecord.RecordTypes.File
+		recordType: AccountFileRecord.RecordTypes.File|AccountFileRecord.RecordTypes.Note
 	) : {
 		progress: Observable<number>;
 		result: Promise<Uint8Array>;
@@ -525,13 +525,6 @@ export class AccountFilesService {
 	) : {
 		progress: Observable<number>;
 		result: Promise<IForm>;
-	};
-	public downloadFile (
-		id: string|IAccountFileRecord,
-		recordType: AccountFileRecord.RecordTypes.Note
-	) : {
-		progress: Observable<number>;
-		result: Promise<Uint8Array>;
 	};
 	public downloadFile (
 		id: string|IAccountFileRecord,
