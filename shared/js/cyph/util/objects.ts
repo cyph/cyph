@@ -21,7 +21,7 @@ const mergeObjectsInternal	= (o: any, objects: any[]) => {
 			}
 		}
 	}
-}
+};
 
 
 /** Merges objects, with values from earlier ones taking priority. */

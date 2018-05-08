@@ -48,6 +48,7 @@ export const serialize	= async <T> (proto: IProto<T>, data: T) : Promise<Uint8Ar
 };
 
 /** @see JSON.stringify */
+/* tslint:disable-next-line:no-unnecessary-callback-wrapper */
 export const stringify	= <T> (value: T) : string =>
 	stringifyInternal(value)
 ;
