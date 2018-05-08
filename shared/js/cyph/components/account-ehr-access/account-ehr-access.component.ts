@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import memoize from 'lodash-es/memoize';
 import {
 	AccountFileRecord,
 	IAccountFileRecord,
@@ -27,15 +28,18 @@ import {getDateTimeString, getTimestamp} from '../../util/time';
 })
 export class AccountEhrAccessComponent implements OnInit {
 	/** @see getDateTimeString */
-	public readonly getDateTimeString: typeof getDateTimeString			= getDateTimeString;
+	public readonly getDateTimeString: typeof getDateTimeString	= getDateTimeString;
 
-	/** @see AccountFileRecord.RecordTypes */
-	public readonly recordTypes: typeof AccountFileRecord.RecordTypes	=
-		AccountFileRecord.RecordTypes
-	;
+	/** Downloads EHR API key. */
+	public readonly getEhrApiKey								= memoize(async ehrApiKey =>
+		this.accountFilesService.downloadFile(
+			ehrApiKey,
+			AccountFileRecord.RecordTypes.EhrApiKey
+		).result
+	);
 
 	/** @see trackByID */
-	public readonly trackByID: typeof trackByID							= trackByID;
+	public readonly trackByID: typeof trackByID					= trackByID;
 
 	/** Accepts incoming EHR API key. */
 	public async accept (ehrApiKey: IAccountFileRecord&IAccountFileReference) : Promise<void> {

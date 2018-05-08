@@ -13,15 +13,10 @@
 		'>
 			<mat-card
 				class='ehr-api-key animated slideInDown'
-				*ngIf='
-					accountFilesService.downloadFile(
-						ehrApiKey,
-						recordTypes.EhrApiKey
-					).result | async as ehrApiKeyData
-				'
 				[attr.data-index]='i'
 				[class.bounceInRight]='!accountFilesService.initiated'
 				[ngClass]='"_" + i'
+				*ngIf='getEhrApiKey(ehrApiKey) | async as ehrApiKeyData'
 			>
 				<mat-card-header fxLayout='row'>
 					<mat-card-title>
