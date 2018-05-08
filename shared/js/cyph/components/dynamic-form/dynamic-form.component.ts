@@ -23,7 +23,7 @@ import {uuid} from '../../util/uuid';
 	templateUrl: './dynamic-form.component.html'
 })
 export class DynamicFormComponent implements OnInit {
-	@Input() public isProfile: Boolean						= false;
+	@Input() public isProfile: boolean						= false;
 	/** @ignore */
 	private readonly maskDefaultKey: Uint8Array				= new Uint8Array(0);
 
@@ -45,7 +45,8 @@ export class DynamicFormComponent implements OnInit {
 	@Input() public form?: IForm;
 
 	/** Gets a random unique name for the specified Form item. */
-	public readonly getName	= memoize((_O: IForm|Form.IComponent|Form.IElement|Form.IElementRow) =>
+	public readonly getName	= memoize(
+		(_O: IForm|Form.IComponent|Form.IElement|Form.IElementContainer) =>
 		uuid()
 	);
 
@@ -89,11 +90,11 @@ export class DynamicFormComponent implements OnInit {
 		}
 
 		for (const component of this.form.components) {
-			if (!component.rows) {
+			if (!component.containers) {
 				continue;
 			}
 
-			for (const row of component.rows) {
+			for (const row of component.containers) {
 				if (!row.elements) {
 					continue;
 				}

@@ -1,7 +1,6 @@
 import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
 
-
 const newForm			= (
 	components: Form.IComponent[],
 	id?: string
@@ -11,23 +10,27 @@ const newForm			= (
 });
 
 const newFormComponent	= (
-	rows: (Form.IElementRow|Form.IElementRow[])[],
+	containers: (Form.IElementContainer|Form.IElementContainer[])[],
 	id?: string,
-	idSeparator?: string
+	idSeparator?: string,
+	isColumn?: boolean
 ) : Form.IComponent => ({
+	containers: containers.reduce<Form.IElementContainer[]>((a, b) => a.concat(b), []),
 	id,
 	idSeparator,
-	rows: rows.reduce<Form.IElementRow[]>((a, b) => a.concat(b), [])
+	isColumn
 });
 
-const newFormRow		= (
+const newFormContainer		= (
 	elements: (Form.IElement|Form.IElement[])[],
 	id?: string,
-	idSeparator?: string
-) : Form.IElementRow => ({
+	idSeparator?: string,
+	isColumn?: boolean
+) : Form.IElementContainer => ({
 	elements: elements.reduce<Form.IElement[]>((a, b) => a.concat(b), []),
 	id,
-	idSeparator
+	idSeparator,
+	isColumn
 });
 
 
@@ -223,8 +226,8 @@ export const urlInput		= newFormElement<{
 }>(Form.Element.Types.URL);
 
 /** Form title element row. */
-export const title		= (titleText: string) : Form.IElementRow => {
-	return newFormRow([text({label: titleText, width: 100})]);
+export const title		= (titleText: string) : Form.IElementContainer => {
+	return newFormContainer([text({label: titleText, width: 100})]);
 };
 
 /** Phone number element row. */
@@ -250,8 +253,8 @@ export const email		= (id: string = 'EmailAddresses[0]') : Form.IElement => {
 };
 
 /** Name element row. */
-export const name		= (id?: string) : Form.IElementRow => {
-	return newFormRow(
+export const name		= (id?: string) : Form.IElementContainer => {
+	return newFormContainer(
 		[
 			input({id: 'FirstName', label: 'First Name', required: true}),
 			input({id: 'MiddleName', label: 'Middle Name'}),
@@ -262,15 +265,42 @@ export const name		= (id?: string) : Form.IElementRow => {
 };
 
 /** Address element row. */
-export const address	= (id: string = 'Address') : Form.IElementRow => {
-	return newFormRow(
+export const address	= (id: string = 'Address') : Form.IElementContainer => {
+	return newFormContainer(
 		[
 			input({id: 'StreetAddress', label: 'Address'}),
 			input({id: 'City', label: 'City'}),
 			input({id: 'State', label: 'State', width: 10}),
 			input({id: 'ZIP', label: 'Zip', width: 25})
 		],
-		id
+		id,
+		undefined,
+		false
+	);
+};
+
+/** Address element row. */
+export const streetAddress	= (id: string = 'StreetAddress') : Form.IElementContainer => {
+	return newFormContainer(
+		[
+			input({id: 'StreetAddress', label: 'Address', width: 50})
+		],
+		id,
+		undefined,
+		false
+	);
+};
+
+export const addressDetails	= (id: string = 'AddressDetails') : Form.IElementContainer => {
+	return newFormContainer(
+		[
+			input({id: 'City', label: 'City', width: 15}),
+			input({id: 'State', label: 'State', width: 10}),
+			input({id: 'ZIP', label: 'Zip', width: 25})
+		],
+		id,
+		undefined,
+		false
 	);
 };
 
@@ -288,7 +318,7 @@ export const ssn		= (id: string = 'SSN') : Form.IElement => {
 			placeholderChar: '#',
 			showMask: true
 		},
-		width: 20
+		width: 15
 	});
 };
 
@@ -297,14 +327,16 @@ export const contact			= (id?: string) : Form.IComponent => {
 	return newFormComponent(
 		[
 			name(),
-			newFormRow([
+			newFormContainer([
 				email(),
 				phone(),
 				ssn()
 			]),
 			address()
 		],
-		id
+		id,
+		undefined,
+		false
 	);
 };
 
@@ -312,7 +344,7 @@ export const contact			= (id?: string) : Form.IComponent => {
 export const basicInfo			= (id?: string) : Form.IComponent => {
 	return newFormComponent(
 		[
-			newFormRow([
+			newFormContainer([
 				datepicker({id: 'DOB', label: 'Date of Birth', width: 20, required: true}),
 				select({id: 'Sex', label: 'Sex', options: ['Male', 'Female'], required: true}),
 				select({
@@ -329,8 +361,8 @@ export const basicInfo			= (id?: string) : Form.IComponent => {
 };
 
 /** Insurance information element row. */
-export const insurance			= (id?: string) : Form.IElementRow => {
-	return newFormRow(
+export const insurance			= (id?: string) : Form.IElementContainer => {
+	return newFormContainer(
 		[
 			input({label: "Insured's name"}),
 			input({label: 'Relationship'}),
@@ -348,11 +380,11 @@ export const insuranceComponent	= (id?: string) : Form.IComponent => {
 			title('Primary Insurance'),
 			insurance(),
 			address(),
-			newFormRow([input({label: 'Insurance Company'})]),
+			newFormContainer([input({label: 'Insurance Company'})]),
 			title('Secondary Insurance'),
 			insurance(),
 			address(),
-			newFormRow([input({label: 'Insurance Company'})])
+			newFormContainer([input({label: 'Insurance Company'})])
 		],
 		id
 	);
@@ -360,7 +392,7 @@ export const insuranceComponent	= (id?: string) : Form.IComponent => {
 
 /** Opt in or out of Cyph as preferred contact method & contact list */
 export const optInOut			= () : Form.IComponent => newFormComponent([
-	newFormRow([
+	newFormContainer([
 		checkbox({label: 'Use Cyph as preferred contact method', noGrow: true, value: true}),
 		checkbox({label: 'Opt-In to receive updates & tips from Cyph', noGrow: true})
 	])
@@ -370,18 +402,16 @@ export const height		= (id: string = 'height') : Form.IElement[] => [
 	numberInput({
 		id,
 		label: 'Feet',
-		min: 0,
 		max: 11,
-		width: 5,
-		required: false
+		min: 0,
+		width: 10
 	}),
 	numberInput({
 		id,
 		label: 'Inches',
-		min: 0,
 		max: 11,
-		width: 5,
-		required: false
+		min: 0,
+		width: 10
 	})
 ];
 
@@ -402,27 +432,35 @@ export const patientProfile		= () : IForm => newForm(
 		contact('redoxPatient.Demographics'),
 		newFormComponent(
 			[
-				newFormRow(
+				newFormContainer(
 					[
-						datepicker({id: 'DOB', label: 'Date of Birth', width: 20, required: true}),
+						datepicker({id: 'DOB', label: 'Date of Birth', width: 10, required: true}),
 						select({
 							id: 'Sex',
 							label: 'Sex',
 							options: ['Male', 'Female'],
-							width: 10
+							width:20
 						}),
 						select({
 							id: 'MaritalStatus',
 							label: 'Marital Status',
 							options: ['Single', 'Married'],
-							width: 13
+							width: 20
 						}),
-						numberInput({label: 'Weight (lbs)', max: 1500, width: 10, required: false})
-					]
-				),
-				newFormRow([height()])
-			]
-		),
+						numberInput(
+							{label: 'Weight (lbs)', max: 1500, width: 15, required: false}
+						),
+						height()
+					],
+					undefined,
+					undefined,
+					false
+				)
+			],
+			undefined,
+			undefined,
+			true
+		)
 	],
 	'redoxPatient.Demographics'
 );

@@ -1,28 +1,30 @@
 <form
 	ngNativeValidate
-	fxLayout='column'
-	fxLayoutGap='32px'
+	fxLayoutGap='16px'
 	(submit)='onSubmit()'
 	*ngIf='form'
 >
 	<div
-		fxLayout='row'
+		fxLayout='column'
+		fxLayoutAlign='center'
 		class='component'
 		*ngFor='let component of form?.components; trackBy: trackByIndex'
 	>
-		<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+		<div
+			[fxLayout]='component.isColumn ? "column" : "row"'
+			fxLayoutAlign='center'
+			[class]='component.isColumn ? "column" : "row"'
+			*ngFor='let container of component.containers; trackBy: trackByIndex'
+		>
 			<div
-				fxLayout='row'
-				fxLayout.lt-md='column'
-				fxLayoutAlign.gt-sm='center center'
+				[fxLayout]='container.isColumn ? "column" : "row"'
 				fxLayoutGap='16px'
-				class='row'
-				*ngFor='let row of component.rows; trackBy: trackByIndex'
+				[class]='container.isColumn ? "column" : "row"'
 			>
 				<div
 					[fxFlex]='o.noGrow ? "nogrow" : (o.width || 100)'
 					fxLayout='column'
-					*ngFor='let o of row.elements; trackBy: trackByIndex'
+					*ngFor='let o of container.elements; trackBy: trackByIndex'
 				>
 					<ng-container *ngIf='isVisible(o)'>
 
@@ -214,7 +216,13 @@
 		</div>
 	</div>
 	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isDisabled'>
-		<button mat-raised-button [matTooltip]='isProfile ? "Save" : "Submit"' color='accent' type='submit' cyphTranslate>
+		<button
+			mat-raised-button
+			[matTooltip]='isProfile ? "Save" : "Submit"'
+			color='accent'
+			type='submit'
+			cyphTranslate
+		>
 			{{isProfile ? 'Save' : 'Submit'}}
 		</button>
 	</div>

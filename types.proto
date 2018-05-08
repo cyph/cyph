@@ -607,14 +607,16 @@ message Environment {
 message Form {
 	/** Reusable building block consisting of multiple forms. */
 	message Component {
-		/** @see ElementRow */
-		repeated ElementRow rows = 1;
+		/** @see ElementContainer */
+		repeated ElementContainer containers = 1;
 
 		/** @see Form.id */
 		string id = 2;
 
 		/** Separator for concatenating element values when sending to another system. */
 		string idSeparator = 3;
+
+		bool isColumn = 4;
 	}
 
 	/** One element of a Form, and one column of an ElementRow. */
@@ -675,8 +677,9 @@ message Form {
 		uint32 width = 13;
 	}
 
-	/** Row of elements. */
-	message ElementRow {
+
+	/** Row or Column of elements. */
+	message ElementContainer {
 		/** @see Element */
 		repeated Element elements = 1;
 
@@ -685,6 +688,8 @@ message Form {
 
 		/** @see Component.idSeparator */
 		string idSeparator = 3;
+
+		bool isColumn = 4;
 	}
 
 	/** @see Component */
