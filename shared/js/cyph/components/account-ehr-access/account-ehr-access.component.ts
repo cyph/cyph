@@ -15,7 +15,7 @@ import {EHRIntegrationService} from '../../services/ehr-integration.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
-import {getDateTimeString, getTimestamp} from '../../util/time';
+import {getDateTimeString} from '../../util/time';
 
 
 /**
@@ -47,7 +47,7 @@ export class AccountEhrAccessComponent implements OnInit {
 			copy: true,
 			name: !ehrApiKey.wasAnonymousShare ?
 				ehrApiKey.owner :
-				getDateTimeString(await getTimestamp())
+				getDateTimeString(ehrApiKey.timestamp)
 		});
 	}
 

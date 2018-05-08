@@ -565,6 +565,9 @@ export class StringsService {
 	public readonly session: string						= `${this.internalSession}`;
 
 	/** @see StringsService */
+	public readonly share: string						= `Share`;
+
+	/** @see StringsService */
 	public readonly shareEhrData: string				=
 		`You are about to request data about this patient from your organization's EHR system ` +
 		`and share it with this patient. If accepted, it will be used to auto-fill forms on ` +

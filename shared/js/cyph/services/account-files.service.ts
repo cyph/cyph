@@ -166,51 +166,65 @@ export class AccountFilesService {
 	public readonly fileTypeConfig	= {
 		[AccountFileRecord.RecordTypes.Appointment]: {
 			blockAnonymous: true,
+			description: 'Appointment',
 			mediaType: 'cyph/appointment',
 			proto: Appointment,
 			recordType: AccountFileRecord.RecordTypes.Appointment,
+			route: 'appointments',
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.Doc]: {
 			blockAnonymous: false,
+			description: 'Doc',
 			mediaType: 'cyph/doc',
 			proto: undefined,
 			recordType: AccountFileRecord.RecordTypes.Doc,
+			route: 'docs',
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.EhrApiKey]: {
 			blockAnonymous: false,
+			description: 'EHR Access',
 			mediaType: 'cyph/ehr-api-key',
 			proto: EhrApiKey,
 			recordType: AccountFileRecord.RecordTypes.EhrApiKey,
+			route: 'ehr-access',
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.File]: {
 			blockAnonymous: false,
+			description: 'File',
 			mediaType: undefined,
 			proto: BinaryProto,
 			recordType: AccountFileRecord.RecordTypes.File,
+			route: 'files',
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.Form]: {
 			blockAnonymous: false,
+			description: 'Form',
 			mediaType: 'cyph/form',
 			proto: Form,
 			recordType: AccountFileRecord.RecordTypes.Form,
+			route: 'forms',
 			securityModel: SecurityModels.privateSigned
 		},
 		[AccountFileRecord.RecordTypes.Note]: {
 			blockAnonymous: false,
+			description: 'Note',
 			mediaType: 'cyph/note',
 			proto: BinaryProto,
 			recordType: AccountFileRecord.RecordTypes.Note,
+			route: 'notes',
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.RedoxPatient]: {
 			blockAnonymous: true,
+			description: 'Patient Info',
 			mediaType: 'cyph/redox-patient',
 			proto: RedoxPatient,
 			recordType: AccountFileRecord.RecordTypes.RedoxPatient,
+			route: 'incoming-patient-info',
 			securityModel: undefined
 		}
 	};
@@ -428,7 +442,7 @@ export class AccountFilesService {
 		else if (!options.reject && options.copy) {
 			const file	=
 				incomingFile.recordType === AccountFileRecord.RecordTypes.Doc ?
-					(await this.getDoc(incomingFile.id).asyncList.getValue()) :
+					(await this.getDoc(incomingFile).asyncList.getValue()) :
 				fileConfig.proto ?
 					await this.downloadItem<any>(
 						incomingFile,
@@ -446,7 +460,7 @@ export class AccountFilesService {
 		}
 
 		if (incomingFile.wasAnonymousShare) {
-			promises.push(this.remove(incomingFile.id));
+			promises.push(this.remove(incomingFile, false));
 		}
 
 		await Promise.all(promises);
@@ -537,18 +551,24 @@ export class AccountFilesService {
 	}
 
 	/** Gets a doc in the form of an async list. */
-	public getDoc (id: string) : {
+	public getDoc (id: string|Async<IAccountFileRecord>) : {
 		asyncList: IAsyncList<IQuillDelta|IQuillRange>;
 		deltas: Observable<IQuillDelta>;
 		selections: Observable<IQuillRange>;
 	} {
-		const file		= this.getFile(id);
+		const file	= typeof id === 'string' ?
+			Promise.all([id, this.getFile(id)]) :
+			awaitAsync(id).then(
+				async (o) : Promise<[string, IAccountFileRecord&IAccountFileReference]> =>
+					[o.id, await this.getFile(o)]
+			)
+		;
 
 		const asyncList	= this.accountDatabaseService.getAsyncList(
-			file.then(({owner}) => `users/${owner}/docs/${id}`),
+			file.then(([fileID, {owner}]) => `users/${owner}/docs/${fileID}`),
 			BinaryProto,
 			undefined,
-			file.then(({key}) => key)
+			file.then(([_, {key}]) => key)
 		);
 
 		const docAsyncList: IAsyncList<IQuillDelta|IQuillRange>	= {
@@ -782,32 +802,21 @@ export class AccountFilesService {
 		confirmAndRedirect: boolean = true
 	) : Promise<void> {
 		if (typeof id !== 'string') {
-			id	= (await awaitAsync(id)).id;
+			id	= await awaitAsync(id);
 		}
 
 		const file	= await this.getFile(id);
+
+		if (typeof id !== 'string') {
+			id	= id.id;
+		}
 
 		if (confirmAndRedirect) {
 			if (await this.dialogService.confirm({
 				content: `${this.stringsService.deleteMessage} ${file.name}?`,
 				title: this.stringsService.deleteConfirm
 			})) {
-				const route	=
-					file.recordType === AccountFileRecord.RecordTypes.Appointment ?
-						'appointments' :
-					file.recordType === AccountFileRecord.RecordTypes.Doc ?
-						'docs' :
-					file.recordType === AccountFileRecord.RecordTypes.File ?
-						'files' :
-					file.recordType === AccountFileRecord.RecordTypes.Form ?
-						'forms' :
-						'notes'
-				;
-
-				if (route) {
-					this.router.navigate([accountRoot, route]);
-				}
-
+				this.router.navigate([accountRoot, this.fileTypeConfig[file.recordType].route]);
 				await sleep();
 			}
 			else {

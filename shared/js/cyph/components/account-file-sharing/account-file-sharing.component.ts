@@ -50,6 +50,7 @@ export class AccountFileSharingComponent {
 		return {
 			file,
 			fileConfig,
+			mediaType: fileConfig.mediaType || (file instanceof Blob ? file.type : ''),
 			size: 'size' in file ?
 				file.size :
 				await this.accountFilesService.getFileSize(file.data, fileConfig)
