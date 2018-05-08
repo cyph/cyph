@@ -84,6 +84,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'ehr-access',
 			'files',
 			'forms',
+			'incoming-patient-info',
 			'messages',
 			'new-patient',
 			'notes',

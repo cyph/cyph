@@ -50,6 +50,16 @@ button {
 		}
 	}
 
+	&.emphasis {
+		font-weight: bold;
+
+		@include filter(contrast(2));
+
+		mat-icon {
+			@include icon-size(42px);
+		}
+	}
+
 	mat-icon {
 		@include icon-size(32px);
 	}

@@ -15,6 +15,7 @@ import {AccountFilesComponent} from '../components/account-files';
 import {AccountFormComponent} from '../components/account-form';
 import {AccountFormsComponent} from '../components/account-forms';
 import {AccountHomeComponent} from '../components/account-home';
+import {AccountIncomingPatientInfoComponent} from '../components/account-incoming-patient-info';
 import {AccountLoginComponent} from '../components/account-login';
 import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountMenuComponent} from '../components/account-menu';
@@ -74,6 +75,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountFormComponent,
 		AccountFormsComponent,
 		AccountHomeComponent,
+		AccountIncomingPatientInfoComponent,
 		AccountLoginComponent,
 		AccountLogoutComponent,
 		AccountMenuComponent,
@@ -108,6 +110,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountFormComponent,
 		AccountFormsComponent,
 		AccountHomeComponent,
+		AccountIncomingPatientInfoComponent,
 		AccountLoginComponent,
 		AccountLogoutComponent,
 		AccountMenuComponent,
@@ -142,6 +145,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountFormComponent,
 		AccountFormsComponent,
 		AccountHomeComponent,
+		AccountIncomingPatientInfoComponent,
 		AccountLoginComponent,
 		AccountLogoutComponent,
 		AccountMenuComponent,

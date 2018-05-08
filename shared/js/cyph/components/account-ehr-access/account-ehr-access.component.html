@@ -4,6 +4,7 @@
 	fxLayoutAlign='center start'
 	class='card-list'
 	[class.initiating]='accountFilesService.showSpinner'
+	*ngIf='envService.isTelehealth'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<ng-container *ngFor='
@@ -72,7 +73,9 @@
 			<mat-card-header fxLayout='row'>
 				<mat-card-title>
 					<div *ngIf='!ehrApiKey.wasAnonymousShare'>
-						@{{ehrApiKey.owner}}
+						<a [routerLink]='accountService.routeRoot + "profile/" + ehrApiKey.owner'>
+							@{{ehrApiKey.owner}}
+						</a>
 					</div>
 					<div *ngIf='ehrApiKey.wasAnonymousShare'>
 						{{getDateTimeString(ehrApiKey.timestamp)}}

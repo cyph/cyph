@@ -11,6 +11,7 @@ import {AccountFilesComponent} from '../components/account-files';
 import {AccountFormComponent} from '../components/account-form';
 import {AccountFormsComponent} from '../components/account-forms';
 import {AccountHomeComponent} from '../components/account-home';
+import {AccountIncomingPatientInfoComponent} from '../components/account-incoming-patient-info';
 import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
@@ -99,6 +100,7 @@ export const account: Route	= {
 		{path: 'forms', component: AccountFormsComponent},
 		{path: 'forms/:id', component: AccountFormComponent},
 		{path: 'home', redirectTo: ''},
+		{path: 'incoming-patient-info', component: AccountIncomingPatientInfoComponent},
 		{path: 'logout', component: AccountLogoutComponent},
 		{path: 'messages/:username', component: AccountChatComponent},
 		{path: 'messages/:username/:sessionSubID', component: AccountChatComponent},

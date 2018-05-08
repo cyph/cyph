@@ -173,6 +173,7 @@ export class AccountService {
 					'ehr-access',
 					'files',
 					'forms',
+					'incoming-patient-info',
 					'notes',
 					'patients',
 					'settings',

@@ -165,42 +165,49 @@ export class AccountFilesService {
 	/** File type configurations. */
 	public readonly fileTypeConfig	= {
 		[AccountFileRecord.RecordTypes.Appointment]: {
+			blockAnonymous: true,
 			mediaType: 'cyph/appointment',
 			proto: Appointment,
 			recordType: AccountFileRecord.RecordTypes.Appointment,
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.Doc]: {
+			blockAnonymous: false,
 			mediaType: 'cyph/doc',
 			proto: undefined,
 			recordType: AccountFileRecord.RecordTypes.Doc,
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.EhrApiKey]: {
+			blockAnonymous: false,
 			mediaType: 'cyph/ehr-api-key',
 			proto: EhrApiKey,
 			recordType: AccountFileRecord.RecordTypes.EhrApiKey,
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.File]: {
+			blockAnonymous: false,
 			mediaType: undefined,
 			proto: BinaryProto,
 			recordType: AccountFileRecord.RecordTypes.File,
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.Form]: {
+			blockAnonymous: false,
 			mediaType: 'cyph/form',
 			proto: Form,
 			recordType: AccountFileRecord.RecordTypes.Form,
 			securityModel: SecurityModels.privateSigned
 		},
 		[AccountFileRecord.RecordTypes.Note]: {
+			blockAnonymous: false,
 			mediaType: 'cyph/note',
 			proto: BinaryProto,
 			recordType: AccountFileRecord.RecordTypes.Note,
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.RedoxPatient]: {
+			blockAnonymous: true,
 			mediaType: 'cyph/redox-patient',
 			proto: RedoxPatient,
 			recordType: AccountFileRecord.RecordTypes.RedoxPatient,
@@ -327,7 +334,7 @@ export class AccountFilesService {
 
 	/** @ignore */
 	private downloadItem<T> (
-		id: string|IAccountFileRecord,
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		proto: IProto<T>,
 		securityModel?: SecurityModels
 	) : {
@@ -351,8 +358,12 @@ export class AccountFilesService {
 		filesList: Observable<(IAccountFileRecord&T)[]>,
 		filterRecordTypes: AccountFileRecord.RecordTypes
 	) : Observable<(IAccountFileRecord&T)[]> {
-		return filesList.pipe(map(files => files.filter(({owner, recordType}) =>
-			!!owner && recordType === filterRecordTypes
+		const fileConfig	= this.fileTypeConfig[filterRecordTypes];
+
+		return filesList.pipe(map(files => files.filter(({owner, recordType, wasAnonymousShare}) =>
+			!!owner &&
+			recordType === filterRecordTypes &&
+			!(fileConfig.blockAnonymous && wasAnonymousShare)
 		)));
 	}
 
@@ -421,12 +432,11 @@ export class AccountFilesService {
 				incomingFile.recordType === AccountFileRecord.RecordTypes.Doc ?
 					(await this.getDoc(incomingFile.id).asyncList.getValue()) :
 				fileConfig.proto ?
-					await this.accountDatabaseService.getItem<any>(
-						`users/${incomingFile.owner}/files/${incomingFile.id}`,
+					await this.downloadItem<any>(
+						incomingFile,
 						fileConfig.proto,
-						fileConfig.securityModel,
-						incomingFile.key
-					) :
+						fileConfig.securityModel
+					).result :
 					undefined
 			;
 
@@ -467,46 +477,46 @@ export class AccountFilesService {
 
 	/** Downloads and returns file. */
 	public downloadFile (
-		id: string|IAccountFileRecord,
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.Appointment
 	) : {
 		progress: Observable<number>;
 		result: Promise<IAppointment>;
 	};
 	public downloadFile (
-		id: string|IAccountFileRecord,
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.Doc
 	) : never;
 	public downloadFile (
-		id: string|IAccountFileRecord,
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.EhrApiKey
 	) : {
 		progress: Observable<number>;
 		result: Promise<IEhrApiKey>;
 	};
 	public downloadFile (
-		id: string|IAccountFileRecord,
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.File|AccountFileRecord.RecordTypes.Note
 	) : {
 		progress: Observable<number>;
 		result: Promise<Uint8Array>;
 	};
 	public downloadFile (
-		id: string|IAccountFileRecord,
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.Form
 	) : {
 		progress: Observable<number>;
 		result: Promise<IForm>;
 	};
 	public downloadFile (
-		id: string|IAccountFileRecord,
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.RedoxPatient
 	) : {
 		progress: Observable<number>;
 		result: Promise<IRedoxPatient>;
 	};
 	public downloadFile (
-		id: string|IAccountFileRecord,
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes
 	) : any {
 		const fileConfig	= this.fileTypeConfig[recordType];

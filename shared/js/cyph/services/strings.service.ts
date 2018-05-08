@@ -259,6 +259,17 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
+	public readonly incomingPatientInfo: string			=
+		`Your doctor has shared this medical data to be saved in your account to auto-fill ` +
+		`forms on your behalf in the future. Continue?`
+	;
+
+	/** @see StringsService */
+	public readonly incomingPatientInfoTitle: string	=
+		`Saving Incoming Patient Info`
+	;
+
+	/** @see StringsService */
 	public readonly introductoryMessage: string			=
 		`You may now speak.`
 	;

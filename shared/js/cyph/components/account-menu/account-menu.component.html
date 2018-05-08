@@ -117,6 +117,42 @@
 </div>
 
 <ng-template #buttons>
+	<ng-container *ngIf='
+		envService.isTelehealth &&
+		(
+			accountDatabaseService.currentUser.value?.user.userType | async
+		) === accountUserTypes.Standard &&
+		(accountFilesService.incomingFilesFiltered.redoxPatients | async)?.length > 0
+	'>
+
+		<button
+			mat-button
+			cyphTranslate
+			class='incoming-patient-info emphasis'
+			matTooltip='Incoming Patient Info'
+			matTooltipPosition='right'
+			[routerLink]='accountService.routeRoot + "incoming-patient-info"'
+			(click)='click()'
+			*ngIf='accountService.menuExpanded | async'
+		>
+			<mat-icon>local_hospital</mat-icon>
+			&ngsp;
+			<span>Incoming Patient Info</span>
+		</button>
+		<button
+			mat-icon-button
+			cyphTranslate
+			class='incoming-patient-info emphasis'
+			matTooltip='Incoming Patient Info'
+			matTooltipPosition='right'
+			[routerLink]='accountService.routeRoot + "incoming-patient-info"'
+			(click)='click()'
+			*ngIf='(accountService.menuExpanded | async) === false'
+		>
+			<mat-icon>local_hospital</mat-icon>
+		</button>
+	</ng-container>
+
 	<ng-container *ngIf='envService.isTelehealth'>
 		<button
 			mat-button
