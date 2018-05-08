@@ -165,6 +165,10 @@ export class AccountService {
 			const routePath	= this.routePath;
 			const route		= routePath[0];
 
+			const specialCases: {[k: string]: string}	= {
+				ehr: 'EHR'
+			};
+
 			if (
 				[
 					'appointments',
@@ -189,8 +193,10 @@ export class AccountService {
 				;
 			}
 
-			return header || translate(
-				route.split('-').map(s => s[0].toUpperCase() + s.slice(1)).join(' ')
+			return header || translate(route.
+				split('-').
+				map(s => specialCases[s] || (s[0].toUpperCase() + s.slice(1))).
+				join(' ')
 			);
 		}));
 

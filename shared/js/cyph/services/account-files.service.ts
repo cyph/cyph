@@ -358,12 +358,10 @@ export class AccountFilesService {
 		filesList: Observable<(IAccountFileRecord&T)[]>,
 		filterRecordTypes: AccountFileRecord.RecordTypes
 	) : Observable<(IAccountFileRecord&T)[]> {
-		const fileConfig	= this.fileTypeConfig[filterRecordTypes];
-
 		return filesList.pipe(map(files => files.filter(({owner, recordType, wasAnonymousShare}) =>
 			!!owner &&
 			recordType === filterRecordTypes &&
-			!(fileConfig.blockAnonymous && wasAnonymousShare)
+			!(this.fileTypeConfig[recordType].blockAnonymous && wasAnonymousShare)
 		)));
 	}
 
