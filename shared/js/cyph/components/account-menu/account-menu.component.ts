@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {UserPresence} from '../../account/enums';
 import {AccountUserTypes} from '../../proto';
+import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
@@ -36,6 +37,9 @@ export class AccountMenuComponent {
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see AccountFilesService */
+		public readonly accountFilesService: AccountFilesService,
 
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,

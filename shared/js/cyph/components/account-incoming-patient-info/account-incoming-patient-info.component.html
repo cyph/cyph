@@ -1,0 +1,60 @@
+<div
+	fxFlexFill
+	fxLayout='row'
+	fxLayoutAlign='center start'
+	class='card-list'
+	[class.initiating]='accountFilesService.showSpinner'
+	*ngIf='envService.isTelehealth'
+>
+	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
+		<ng-container *ngFor='
+			let redoxPatient of accountFilesService.incomingFilesFiltered.redoxPatients | async;
+			trackBy: trackByID;
+			let i = index;
+		'>
+			<mat-card
+				class='redox-patient animated'
+				*ngIf='getRedoxPatient(redoxPatient) | async as redoxPatientData'
+				[attr.data-index]='i'
+				[class.bounceInRight]='!accountFilesService.initiated'
+				[ngClass]='"_" + i'
+			>
+				<mat-card-header fxLayout='row'>
+					<mat-card-title>
+						<a [routerLink]='
+							accountService.routeRoot + "profile/" + redoxPatient.owner
+						'>
+							@{{redoxPatient.owner}}
+						</a>
+					</mat-card-title>
+					<div fxFlex fxLayoutAlign='end center'>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip='Accept'
+							(click)='accept(redoxPatient)'
+						>
+							<mat-icon>check</mat-icon>
+						</button>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip='Reject'
+							(click)='accountFilesService.acceptIncomingFile(redoxPatient, false)'
+						>
+							<mat-icon>close</mat-icon>
+						</button>
+					</div>
+				</mat-card-header>
+				<mat-card-content>
+					<pre>{{prettyPrint(redoxPatientData)}}</pre>
+				</mat-card-content>
+			</mat-card>
+		</ng-container>
+	</div>
+
+	<mat-progress-spinner
+		mode='indeterminate'
+		*ngIf='accountFilesService.showSpinner'
+	></mat-progress-spinner>
+</div>

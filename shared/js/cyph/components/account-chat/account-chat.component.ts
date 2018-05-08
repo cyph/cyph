@@ -4,7 +4,7 @@ import {BehaviorSubject, combineLatest, concat, of} from 'rxjs';
 import {filter, mergeMap, take} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
 import {UiStyles} from '../../chat/enums';
-import {CallTypes, ChatMessageValue, IAppointment} from '../../proto';
+import {AccountFileRecord, CallTypes, ChatMessageValue, IAppointment} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -148,8 +148,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 				if (appointmentID) {
 					appointment	= {
 						id: appointmentID,
-						...(await this.accountFilesService.downloadAppointment(
-							appointmentID
+						...(await this.accountFilesService.downloadFile(
+							appointmentID,
+							AccountFileRecord.RecordTypes.Appointment
 						).result)
 					};
 

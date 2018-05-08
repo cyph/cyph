@@ -12,7 +12,7 @@ import * as Delta from 'quill-delta';
 import * as QuillDeltaToHtml from 'quill-delta-to-html';
 import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
 import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
-import {AccountFile, SecurityModels} from '../account';
+import {AccountFile, AccountFileShare, SecurityModels} from '../account';
 import {Async} from '../async-type';
 import {StorageUnits} from '../enums/storage-units';
 import {IAsyncList} from '../iasync-list';
@@ -68,7 +68,7 @@ export class AccountFilesService {
 	public static accountFileSharingComponent	=
 		resolvable<ComponentType<{
 			closeFunction?: IResolvable<() => void>;
-			file?: IAccountFileRecord;
+			file?: AccountFileShare;
 		}>>()
 	;
 
@@ -161,6 +161,59 @@ export class AccountFilesService {
 
 	/** Total storage limit. */
 	public readonly fileStorageLimit: number	= convertStorageUnitsToBytes(1, StorageUnits.gb);
+
+	/** File type configurations. */
+	public readonly fileTypeConfig	= {
+		[AccountFileRecord.RecordTypes.Appointment]: {
+			blockAnonymous: true,
+			mediaType: 'cyph/appointment',
+			proto: Appointment,
+			recordType: AccountFileRecord.RecordTypes.Appointment,
+			securityModel: undefined
+		},
+		[AccountFileRecord.RecordTypes.Doc]: {
+			blockAnonymous: false,
+			mediaType: 'cyph/doc',
+			proto: undefined,
+			recordType: AccountFileRecord.RecordTypes.Doc,
+			securityModel: undefined
+		},
+		[AccountFileRecord.RecordTypes.EhrApiKey]: {
+			blockAnonymous: false,
+			mediaType: 'cyph/ehr-api-key',
+			proto: EhrApiKey,
+			recordType: AccountFileRecord.RecordTypes.EhrApiKey,
+			securityModel: undefined
+		},
+		[AccountFileRecord.RecordTypes.File]: {
+			blockAnonymous: false,
+			mediaType: undefined,
+			proto: BinaryProto,
+			recordType: AccountFileRecord.RecordTypes.File,
+			securityModel: undefined
+		},
+		[AccountFileRecord.RecordTypes.Form]: {
+			blockAnonymous: false,
+			mediaType: 'cyph/form',
+			proto: Form,
+			recordType: AccountFileRecord.RecordTypes.Form,
+			securityModel: SecurityModels.privateSigned
+		},
+		[AccountFileRecord.RecordTypes.Note]: {
+			blockAnonymous: false,
+			mediaType: 'cyph/note',
+			proto: BinaryProto,
+			recordType: AccountFileRecord.RecordTypes.Note,
+			securityModel: undefined
+		},
+		[AccountFileRecord.RecordTypes.RedoxPatient]: {
+			blockAnonymous: true,
+			mediaType: 'cyph/redox-patient',
+			proto: RedoxPatient,
+			recordType: AccountFileRecord.RecordTypes.RedoxPatient,
+			securityModel: undefined
+		}
+	};
 
 	/** Incoming files. */
 	public readonly incomingFiles: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=
@@ -281,7 +334,7 @@ export class AccountFilesService {
 
 	/** @ignore */
 	private downloadItem<T> (
-		id: string|IAccountFileRecord,
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		proto: IProto<T>,
 		securityModel?: SecurityModels
 	) : {
@@ -301,74 +354,46 @@ export class AccountFilesService {
 	}
 
 	/** @ignore */
-	private fileIsAppointment (file: AccountFile) : boolean {
-		const maybeAppointment	= <any> file;
-		return maybeAppointment.calendarInvite !== undefined;
-	}
-
-	/** @ignore */
-	private fileIsDelta (file: AccountFile) : boolean {
-		const maybeDelta	= <any> file;
-		return typeof maybeDelta.chop === 'function' || maybeDelta.ops instanceof Array;
-	}
-
-	/** @ignore */
-	private fileIsEhrApiKey (file: AccountFile) : boolean {
-		const maybeEhrApiKey	= <any> file;
-		return (
-			typeof maybeEhrApiKey.apiKey === 'string' &&
-			typeof maybeEhrApiKey.isMaster === 'boolean'
-		);
-	}
-
-	/** @ignore */
-	private fileIsForm (file: AccountFile) : boolean {
-		const maybeForm	= <any> file;
-		return maybeForm.components instanceof Array;
-	}
-
-	/* @ignore
-	private fileIsRedoxPatient (file: AccountFile) : boolean {
-		const maybeRedoxPatient	= <any> file;
-		return typeof maybeRedoxPatient.Demographics === 'object';
-	}
-	*/
-
-	/** @ignore */
 	private filterFiles<T extends {owner: string}> (
 		filesList: Observable<(IAccountFileRecord&T)[]>,
 		filterRecordTypes: AccountFileRecord.RecordTypes
 	) : Observable<(IAccountFileRecord&T)[]> {
-		return filesList.pipe(map(files => files.filter(({owner, recordType}) =>
-			!!owner && recordType === filterRecordTypes
+		return filesList.pipe(map(files => files.filter(({owner, recordType, wasAnonymousShare}) =>
+			!!owner &&
+			recordType === filterRecordTypes &&
+			!(this.fileTypeConfig[recordType].blockAnonymous && wasAnonymousShare)
 		)));
 	}
 
 	/** Accepts or rejects incoming file. */
 	public async acceptIncomingFile (
 		incomingFile: IAccountFileRecord&IAccountFileReference,
-		shouldAccept: boolean = true
+		options: boolean|{copy?: boolean; name?: string; reject?: boolean} = true
 	) : Promise<void> {
+		if (typeof options === 'boolean') {
+			options	= {reject: !options};
+		}
+
+		const fileConfig				= this.fileTypeConfig[incomingFile.recordType];
+
 		const promises: Promise<any>[]	= [
 			this.accountDatabaseService.removeItem(`incomingFiles/${incomingFile.id}`)
 		];
 
-		if (shouldAccept) {
+		if (options.name) {
+			incomingFile.name	= options.name;
+		}
+
+		if (incomingFile.wasAnonymousShare) {
+			options.copy	= true;
+		}
+
+		if (!options.reject && !options.copy) {
 			promises.push(this.accountDatabaseService.setItem<IAccountFileReference>(
 				`fileReferences/${incomingFile.id}`,
 				AccountFileReference,
 				incomingFile
 			));
-
-			if (incomingFile.wasAnonymousShare) {
-				promises.push(this.accountDatabaseService.setItem<IAccountFileRecord>(
-					`fileRecords/${incomingFile.id}`,
-					AccountFileRecord,
-					incomingFile,
-					undefined,
-					incomingFile.key
-				));
-			}
 
 			if (incomingFile.recordType === AccountFileRecord.RecordTypes.Appointment) {
 				/*
@@ -400,6 +425,29 @@ export class AccountFilesService {
 				*/
 			}
 		}
+		else if (!options.reject && options.copy) {
+			const file	=
+				incomingFile.recordType === AccountFileRecord.RecordTypes.Doc ?
+					(await this.getDoc(incomingFile.id).asyncList.getValue()) :
+				fileConfig.proto ?
+					await this.downloadItem<any>(
+						incomingFile,
+						fileConfig.proto,
+						fileConfig.securityModel
+					).result :
+					undefined
+			;
+
+			if (!file) {
+				throw new Error('Cannot get file for copying.');
+			}
+
+			promises.push(this.upload(incomingFile.name, file).result);
+		}
+
+		if (incomingFile.wasAnonymousShare) {
+			promises.push(this.remove(incomingFile.id));
+		}
 
 		await Promise.all(promises);
 	}
@@ -425,36 +473,59 @@ export class AccountFilesService {
 		};
 	}
 
-	/** Downloads and returns appointment. */
-	public downloadAppointment (id: string|IAccountFileRecord) : {
+	/** Downloads and returns file. */
+	public downloadFile (
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		recordType: AccountFileRecord.RecordTypes.Appointment
+	) : {
 		progress: Observable<number>;
 		result: Promise<IAppointment>;
-	} {
-		return this.downloadItem(id, Appointment);
-	}
-
-	/** Downloads and returns EHR API key. */
-	public downloadEhrApiKey (id: string|IAccountFileRecord) : {
+	};
+	public downloadFile (
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		recordType: AccountFileRecord.RecordTypes.Doc
+	) : never;
+	public downloadFile (
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		recordType: AccountFileRecord.RecordTypes.EhrApiKey
+	) : {
 		progress: Observable<number>;
 		result: Promise<IEhrApiKey>;
-	} {
-		return this.downloadItem(id, EhrApiKey);
-	}
-
-	/** Downloads file and returns form. */
-	public downloadForm (id: string|IAccountFileRecord) : {
+	};
+	public downloadFile (
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		recordType: AccountFileRecord.RecordTypes.File|AccountFileRecord.RecordTypes.Note
+	) : {
+		progress: Observable<number>;
+		result: Promise<Uint8Array>;
+	};
+	public downloadFile (
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		recordType: AccountFileRecord.RecordTypes.Form
+	) : {
 		progress: Observable<number>;
 		result: Promise<IForm>;
-	} {
-		return this.downloadItem(id, Form, SecurityModels.privateSigned);
-	}
-
-	/** Downloads and returns RedoxPatient object. */
-	public downloadRedoxPatient (id: string|IAccountFileRecord) : {
+	};
+	public downloadFile (
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		recordType: AccountFileRecord.RecordTypes.RedoxPatient
+	) : {
 		progress: Observable<number>;
 		result: Promise<IRedoxPatient>;
-	} {
-		return this.downloadItem(id, RedoxPatient);
+	};
+	public downloadFile (
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		recordType: AccountFileRecord.RecordTypes
+	) : any {
+		const fileConfig	= this.fileTypeConfig[recordType];
+
+		if (!fileConfig || !fileConfig.proto) {
+			throw new Error(
+				`Cannot download file ${id} of type ${AccountFileRecord.RecordTypes[recordType]}`
+			);
+		}
+
+		return this.downloadItem<any>(id, fileConfig.proto, fileConfig.securityModel);
 	}
 
 	/** Downloads file and returns as data URI. */
@@ -552,7 +623,7 @@ export class AccountFilesService {
 			throw new Error('More than one EHR API key.');
 		}
 
-		return this.downloadEhrApiKey(ehrApiKeys[0]).result;
+		return this.downloadFile(ehrApiKeys[0], AccountFileRecord.RecordTypes.EhrApiKey).result;
 	}
 
 	/** Gets the specified file record. */
@@ -588,16 +659,62 @@ export class AccountFilesService {
 			throw new Error('Specified file does not exist.');
 		}
 
-		return {
-			id,
-			key: reference.key,
-			mediaType: record.mediaType,
-			name: record.name,
-			owner: reference.owner,
-			recordType: record.recordType,
-			size: record.size,
-			timestamp: record.timestamp
-		};
+		return {...record, ...reference};
+	}
+
+	/** Gets file size. */
+	public async getFileSize (
+		file: AccountFile,
+		{recordType}: {recordType: AccountFileRecord.RecordTypes}
+	) : Promise<number> {
+		const fileConfig	= this.fileTypeConfig[recordType];
+
+		return (
+			fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
+				(
+					file instanceof Array ?
+						file.map(o => msgpack.encode(o).length).reduce((a, b) => a + b, 0) :
+						0
+				) :
+			fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
+				(file instanceof Blob ? file.size : NaN) :
+			fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
+				msgpack.encode(<IQuillDelta> file).length :
+			fileConfig.proto ?
+				(await serialize<any>(fileConfig.proto, file)).length :
+				NaN
+		);
+	}
+
+	/** Gets file type. */
+	public getFileType (file: AccountFile|IAccountFileRecord) : AccountFileRecord.RecordTypes {
+		const anyFile	= <any> file;
+
+		const recordType	=
+			'recordType' in file ?
+				file.recordType :
+			file instanceof Blob ?
+				AccountFileRecord.RecordTypes.File :
+			file instanceof Array ?
+				AccountFileRecord.RecordTypes.Doc :
+			typeof anyFile.chop === 'function' || anyFile.ops instanceof Array ?
+				AccountFileRecord.RecordTypes.Note :
+			anyFile.calendarInvite !== undefined ?
+				AccountFileRecord.RecordTypes.Appointment :
+			typeof anyFile.apiKey === 'string' && typeof anyFile.isMaster === 'boolean' ?
+				AccountFileRecord.RecordTypes.EhrApiKey :
+			anyFile.components instanceof Array ?
+				AccountFileRecord.RecordTypes.Form :
+			typeof anyFile.Demographics === 'object' ?
+				AccountFileRecord.RecordTypes.RedoxPatient :
+				undefined
+		;
+
+		if (recordType === undefined) {
+			throw new Error('Cannot detect record type.');
+		}
+
+		return recordType;
 	}
 
 	/** Gets the Material icon name for the file default thumbnail. */
@@ -789,7 +906,7 @@ export class AccountFilesService {
 	}
 
 	/** Creates a dialog to share a file with another user. */
-	public async shareFilePrompt (file: IAccountFileRecord) : Promise<void> {
+	public async shareFilePrompt (file: AccountFileShare) : Promise<void> {
 		const closeFunction	= resolvable<() => void>();
 
 		await this.dialogService.baseDialog(
@@ -934,27 +1051,28 @@ export class AccountFilesService {
 			throw new Error('Invalid AccountFilesService.upload input.');
 		}
 
-		const id	= uuid();
-		const key	= (async () => this.potassiumService.randomBytes(
+		const id			= uuid();
+		const key			= (async () => this.potassiumService.randomBytes(
 			await this.potassiumService.secretBox.keyBytes
 		))();
-		const url	= `users/${username}/files/${id}`;
+		const url			= `users/${username}/files/${id}`;
+
+		const fileConfig	= this.fileTypeConfig[this.getFileType(file)];
 
 		const {progress, result}	=
-			file instanceof Blob ?
-				this.accountDatabaseService.uploadItem(url, BlobProto, file, undefined, key) :
-			file instanceof Array ?
+			fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
 				(() => {
+					const doc			= file instanceof Array ? file : [];
 					const docProgress	= new BehaviorSubject(0);
 
 					return {progress: docProgress, result: (async () => {
-						for (let i = 0 ; i < file.length ; ++i) {
-							docProgress.next(Math.round(i / file.length * 100));
+						for (let i = 0 ; i < doc.length ; ++i) {
+							docProgress.next(Math.round(i / doc.length * 100));
 
 							await this.accountDatabaseService.pushItem(
 								`users/${username}/docs/${id}`,
 								BinaryProto,
-								msgpack.encode(file[i]),
+								msgpack.encode(doc[i]),
 								undefined,
 								key
 							);
@@ -964,7 +1082,15 @@ export class AccountFilesService {
 						return {hash: '', url: ''};
 					})()};
 				})() :
-			this.fileIsDelta(file) ?
+			fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
+				this.accountDatabaseService.uploadItem(
+					url,
+					BlobProto,
+					file instanceof Blob ? file : new Blob(),
+					undefined,
+					key
+				) :
+			fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
 				this.accountDatabaseService.uploadItem(
 					url,
 					BinaryProto,
@@ -972,35 +1098,11 @@ export class AccountFilesService {
 					undefined,
 					key
 				) :
-			this.fileIsAppointment(file) ?
 				this.accountDatabaseService.uploadItem(
 					url,
-					Appointment,
-					<IAppointment> file,
-					undefined,
-					key
-				) :
-			this.fileIsEhrApiKey(file) ?
-				this.accountDatabaseService.uploadItem(
-					url,
-					EhrApiKey,
-					<IEhrApiKey> file,
-					undefined,
-					key
-				) :
-			this.fileIsForm(file) ?
-				this.accountDatabaseService.uploadItem(
-					url,
-					Form,
-					<IForm> file,
-					SecurityModels.privateSigned,
-					key
-				) :
-				this.accountDatabaseService.uploadItem(
-					url,
-					RedoxPatient,
-					<IRedoxPatient> file,
-					undefined,
+					<any> fileConfig.proto,
+					file,
+					fileConfig.securityModel,
 					key
 				)
 		;
@@ -1010,45 +1112,10 @@ export class AccountFilesService {
 			result: result.then(async () => {
 				const accountFileRecord	= {
 					id,
-					mediaType:
-						file instanceof Blob ?
-							file.type :
-						file instanceof Array ?
-							'cyph/doc' :
-						this.fileIsDelta(file) ?
-							'cyph/note' :
-						this.fileIsAppointment(file) ?
-							'cyph/appointment' :
-						this.fileIsEhrApiKey(file) ?
-							'cyph/ehr-api-key' :
-						this.fileIsForm(file) ?
-							'cyph/form' :
-							'cyph/redox-patient'
-					,
+					mediaType: fileConfig.mediaType || (file instanceof Blob ? file.type : ''),
 					name,
-					recordType:
-						file instanceof Blob ?
-							AccountFileRecord.RecordTypes.File :
-						file instanceof Array ?
-							AccountFileRecord.RecordTypes.Doc :
-						this.fileIsDelta(file) ?
-							AccountFileRecord.RecordTypes.Note :
-						this.fileIsAppointment(file) ?
-							AccountFileRecord.RecordTypes.Appointment :
-						this.fileIsEhrApiKey(file) ?
-							AccountFileRecord.RecordTypes.EhrApiKey :
-						this.fileIsForm(file) ?
-							AccountFileRecord.RecordTypes.Form :
-							AccountFileRecord.RecordTypes.RedoxPatient
-					,
-					size: file instanceof Blob ?
-						file.size :
-						!(file instanceof Array) && this.fileIsDelta(file) ?
-							this.potassiumService.fromString(
-								this.deltaToString(<IQuillDelta> file)
-							).length :
-							NaN
-					,
+					recordType: fileConfig.recordType,
+					size: await this.getFileSize(file, fileConfig),
 					timestamp: await getTimestamp()
 				};
 

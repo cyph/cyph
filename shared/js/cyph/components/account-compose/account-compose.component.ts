@@ -4,7 +4,7 @@ import {BehaviorSubject, combineLatest, concat, of} from 'rxjs';
 import {filter, map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account';
 import {States} from '../../chat/enums';
-import {AccountUserTypes, ChatMessageValue, IForm} from '../../proto';
+import {AccountFileRecord, AccountUserTypes, ChatMessageValue, IForm} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -117,7 +117,13 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 		if (this.appointmentFormData.value !== undefined) {
 			const {id, form}	= this.appointmentFormData.value;
-			const appointment	= await this.accountFilesService.downloadAppointment(id).result;
+
+			const appointment	=
+				await this.accountFilesService.downloadFile(
+					id,
+					AccountFileRecord.RecordTypes.Appointment
+				).result
+			;
 
 			if (appointment.forms === undefined) {
 				appointment.forms	= [];
