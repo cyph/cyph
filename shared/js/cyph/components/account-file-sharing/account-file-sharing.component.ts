@@ -75,7 +75,12 @@ export class AccountFileSharingComponent {
 		}
 
 		if ('data' in file) {
-			await this.accountFilesService.upload(file.name, file.data, this.username);
+			await this.accountFilesService.upload(
+				file.name,
+				file.data,
+				this.username,
+				file.metadata
+			);
 		}
 		else {
 			await this.accountFilesService.shareFile(file.id, this.username);

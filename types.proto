@@ -44,6 +44,9 @@ message AccountFileReference {
 	/** Symmetric key used for encrypting file. */
 	required bytes key = 2;
 
+	/** Miscellaneous metadata about this file, specific to the current user. */
+	string metadata = 4;
+
 	/** Username of owner. */
 	required string owner = 3;
 }

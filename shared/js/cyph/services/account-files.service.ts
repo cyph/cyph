@@ -382,7 +382,8 @@ export class AccountFilesService {
 	/** Accepts or rejects incoming file. */
 	public async acceptIncomingFile (
 		incomingFile: IAccountFileRecord&IAccountFileReference,
-		options: boolean|{copy?: boolean; name?: string; reject?: boolean} = true
+		options: boolean|{copy?: boolean; name?: string; reject?: boolean} = true,
+		metadata?: string
 	) : Promise<void> {
 		if (typeof options === 'boolean') {
 			options	= {reject: !options};
@@ -406,7 +407,12 @@ export class AccountFilesService {
 			promises.push(this.accountDatabaseService.setItem<IAccountFileReference>(
 				`fileReferences/${incomingFile.id}`,
 				AccountFileReference,
-				incomingFile
+				{
+					id: incomingFile.id,
+					key: incomingFile.key,
+					metadata,
+					owner: incomingFile.owner
+				}
 			));
 
 			if (incomingFile.recordType === AccountFileRecord.RecordTypes.Appointment) {
@@ -456,7 +462,7 @@ export class AccountFilesService {
 				throw new Error('Cannot get file for copying.');
 			}
 
-			promises.push(this.upload(incomingFile.name, file).result);
+			promises.push(this.upload(incomingFile.name, file, undefined, metadata).result);
 		}
 
 		if (incomingFile.wasAnonymousShare) {
@@ -1042,7 +1048,7 @@ export class AccountFilesService {
 	 * Uploads new file.
 	 * @param shareWithUser Username of another user to optionally share this file with.
 	 */
-	public upload (name: string, file: AccountFile, shareWithUser?: string) : {
+	public upload (name: string, file: AccountFile, shareWithUser?: string, metadata?: string) : {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
@@ -1146,6 +1152,7 @@ export class AccountFilesService {
 						{
 							id,
 							key: await key,
+							metadata,
 							owner: username
 						}
 					);

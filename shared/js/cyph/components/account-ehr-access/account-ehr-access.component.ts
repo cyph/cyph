@@ -56,7 +56,19 @@ export class AccountEhrAccessComponent implements OnInit {
 		this.accountService.transitionEnd();
 	}
 
-	/** Creates and shares new EHR key. */
+	/** Removes an EHR API key. */
+	public async remove (ehrApiKey: IAccountFileRecord&IAccountFileReference) : Promise<void> {
+		const {apiKey}	= await this.getEhrApiKey(ehrApiKey);
+
+		await Promise.all([
+			this.accountFilesService.remove(ehrApiKey),
+			ehrApiKey.metadata ?
+				this.ehrIntegrationService.deleteApiKey(apiKey, ehrApiKey.metadata) :
+				undefined
+		]);
+	}
+
+	/** Creates and shares new EHR API key. */
 	public async share (ehrApiKey: IEhrApiKey) : Promise<void> {
 		await this.accountFilesService.shareFilePrompt(async username => ({
 			data: {
@@ -66,6 +78,7 @@ export class AccountEhrAccessComponent implements OnInit {
 				),
 				isMaster: false
 			},
+			metadata: ehrApiKey.apiKey,
 			name: username
 		}));
 	}
