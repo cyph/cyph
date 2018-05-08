@@ -22,31 +22,31 @@ export class StringsService {
 	;
 
 	/** @ignore */
-	private readonly internalCompany: string			=
+	private readonly internalCompany: string					=
 		this.customBuildStrings.internalCompany ||
 		`Cyph`
 	;
 
 	/** @ignore */
-	private readonly internalFriend: string				=
+	private readonly internalFriend: string						=
 		this.customBuildStrings.internalFriend ||
 		`friend`
 	;
 
 	/** @ignore */
-	private readonly internalProduct: string			=
+	private readonly internalProduct: string					=
 		this.customBuildStrings.internalProduct ||
 		`Cyph`
 	;
 
 	/** @ignore */
-	private readonly internalProductShort: string		=
+	private readonly internalProductShort: string				=
 		this.customBuildStrings.internalProductShort ||
 		`Cyph`
 	;
 
 	/** @ignore */
-	private readonly internalSession: string			=
+	private readonly internalSession: string					=
 		this.customBuildStrings.internalSession ||
 		`cyph`
 	;
