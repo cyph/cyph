@@ -41,25 +41,18 @@ export class AccountFileSharingComponent {
 			return {file: undefined, fileConfig: undefined};
 		}
 
-		const fileConfig	=
-			file === undefined ?
-				undefined :
-				this.accountFilesService.fileTypeConfig[
-					'recordType' in file ?
-						file.recordType :
-						this.accountFilesService.getFileType(file.data)
-				]
-		;
+		const fileConfig	= this.accountFilesService.fileTypeConfig[
+			'recordType' in file ?
+				file.recordType :
+				this.accountFilesService.getFileType(file.data)
+		];
 
 		return {
 			file,
 			fileConfig,
-			size:
-				'size' in file ?
-					file.size :
-				fileConfig !== undefined ?
-					await this.accountFilesService.getFileSize(file.data, fileConfig) :
-					NaN
+			size: 'size' in file ?
+				file.size :
+				await this.accountFilesService.getFileSize(file.data, fileConfig)
 		};
 	});
 
