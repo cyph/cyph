@@ -72,51 +72,6 @@ export class AccountFilesService {
 		}>>()
 	;
 
-	/** @ignore */
-	private readonly fileTypeConfig	= {
-		[AccountFileRecord.RecordTypes.Appointment]: {
-			mediaType: 'cyph/appointment',
-			proto: Appointment,
-			recordType: AccountFileRecord.RecordTypes.Appointment,
-			securityModel: undefined
-		},
-		[AccountFileRecord.RecordTypes.Doc]: {
-			mediaType: 'cyph/doc',
-			proto: undefined,
-			recordType: AccountFileRecord.RecordTypes.Doc,
-			securityModel: undefined
-		},
-		[AccountFileRecord.RecordTypes.EhrApiKey]: {
-			mediaType: 'cyph/ehr-api-key',
-			proto: EhrApiKey,
-			recordType: AccountFileRecord.RecordTypes.EhrApiKey,
-			securityModel: undefined
-		},
-		[AccountFileRecord.RecordTypes.File]: {
-			mediaType: undefined,
-			proto: BinaryProto,
-			recordType: AccountFileRecord.RecordTypes.File,
-			securityModel: undefined
-		},
-		[AccountFileRecord.RecordTypes.Form]: {
-			mediaType: 'cyph/form',
-			proto: Form,
-			recordType: AccountFileRecord.RecordTypes.Form,
-			securityModel: SecurityModels.privateSigned
-		},
-		[AccountFileRecord.RecordTypes.Note]: {
-			mediaType: 'cyph/note',
-			proto: BinaryProto,
-			recordType: AccountFileRecord.RecordTypes.Note,
-			securityModel: undefined
-		},
-		[AccountFileRecord.RecordTypes.RedoxPatient]: {
-			mediaType: 'cyph/redox-patient',
-			proto: RedoxPatient,
-			recordType: AccountFileRecord.RecordTypes.RedoxPatient,
-			securityModel: undefined
-		}
-	};
 
 	/** @ignore */
 	private readonly incomingFileCache: Map<
@@ -206,6 +161,52 @@ export class AccountFilesService {
 
 	/** Total storage limit. */
 	public readonly fileStorageLimit: number	= convertStorageUnitsToBytes(1, StorageUnits.gb);
+
+	/** File type configurations. */
+	public readonly fileTypeConfig	= {
+		[AccountFileRecord.RecordTypes.Appointment]: {
+			mediaType: 'cyph/appointment',
+			proto: Appointment,
+			recordType: AccountFileRecord.RecordTypes.Appointment,
+			securityModel: undefined
+		},
+		[AccountFileRecord.RecordTypes.Doc]: {
+			mediaType: 'cyph/doc',
+			proto: undefined,
+			recordType: AccountFileRecord.RecordTypes.Doc,
+			securityModel: undefined
+		},
+		[AccountFileRecord.RecordTypes.EhrApiKey]: {
+			mediaType: 'cyph/ehr-api-key',
+			proto: EhrApiKey,
+			recordType: AccountFileRecord.RecordTypes.EhrApiKey,
+			securityModel: undefined
+		},
+		[AccountFileRecord.RecordTypes.File]: {
+			mediaType: undefined,
+			proto: BinaryProto,
+			recordType: AccountFileRecord.RecordTypes.File,
+			securityModel: undefined
+		},
+		[AccountFileRecord.RecordTypes.Form]: {
+			mediaType: 'cyph/form',
+			proto: Form,
+			recordType: AccountFileRecord.RecordTypes.Form,
+			securityModel: SecurityModels.privateSigned
+		},
+		[AccountFileRecord.RecordTypes.Note]: {
+			mediaType: 'cyph/note',
+			proto: BinaryProto,
+			recordType: AccountFileRecord.RecordTypes.Note,
+			securityModel: undefined
+		},
+		[AccountFileRecord.RecordTypes.RedoxPatient]: {
+			mediaType: 'cyph/redox-patient',
+			proto: RedoxPatient,
+			recordType: AccountFileRecord.RecordTypes.RedoxPatient,
+			securityModel: undefined
+		}
+	};
 
 	/** Incoming files. */
 	public readonly incomingFiles: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=
@@ -353,35 +354,6 @@ export class AccountFilesService {
 		return filesList.pipe(map(files => files.filter(({owner, recordType}) =>
 			!!owner && recordType === filterRecordTypes
 		)));
-	}
-
-	/** @ignore */
-	private getFileType (file: AccountFile) : AccountFileRecord.RecordTypes {
-		const anyFile	= <any> file;
-
-		const recordType	=
-			file instanceof Blob ?
-				AccountFileRecord.RecordTypes.File :
-			file instanceof Array ?
-				AccountFileRecord.RecordTypes.Doc :
-			typeof anyFile.chop === 'function' || anyFile.ops instanceof Array ?
-				AccountFileRecord.RecordTypes.Note :
-			anyFile.calendarInvite !== undefined ?
-				AccountFileRecord.RecordTypes.Appointment :
-			typeof anyFile.apiKey === 'string' && typeof anyFile.isMaster === 'boolean' ?
-				AccountFileRecord.RecordTypes.EhrApiKey :
-			anyFile.components instanceof Array ?
-				AccountFileRecord.RecordTypes.Form :
-			typeof anyFile.Demographics === 'object' ?
-				AccountFileRecord.RecordTypes.RedoxPatient :
-				undefined
-		;
-
-		if (recordType === undefined) {
-			throw new Error('Cannot detect record type.');
-		}
-
-		return recordType;
 	}
 
 	/** Accepts or rejects incoming file. */
@@ -680,6 +652,61 @@ export class AccountFilesService {
 		}
 
 		return {...record, ...reference};
+	}
+
+	/** Gets file size. */
+	public async getFileSize (
+		file: AccountFile,
+		{recordType}: {recordType: AccountFileRecord.RecordTypes}
+	) : Promise<number> {
+		const fileConfig	= this.fileTypeConfig[recordType];
+
+		return (
+			fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
+				(
+					file instanceof Array ?
+						file.map(o => msgpack.encode(o).length).reduce((a, b) => a + b, 0) :
+						0
+				) :
+			fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
+				(file instanceof Blob ? file.size : NaN) :
+			fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
+				msgpack.encode(<IQuillDelta> file).length :
+			fileConfig.proto ?
+				(await serialize<any>(fileConfig.proto, file)).length :
+				NaN
+		);
+	}
+
+	/** Gets file type. */
+	public getFileType (file: AccountFile|IAccountFileRecord) : AccountFileRecord.RecordTypes {
+		const anyFile	= <any> file;
+
+		const recordType	=
+			'recordType' in file ?
+				file.recordType :
+			file instanceof Blob ?
+				AccountFileRecord.RecordTypes.File :
+			file instanceof Array ?
+				AccountFileRecord.RecordTypes.Doc :
+			typeof anyFile.chop === 'function' || anyFile.ops instanceof Array ?
+				AccountFileRecord.RecordTypes.Note :
+			anyFile.calendarInvite !== undefined ?
+				AccountFileRecord.RecordTypes.Appointment :
+			typeof anyFile.apiKey === 'string' && typeof anyFile.isMaster === 'boolean' ?
+				AccountFileRecord.RecordTypes.EhrApiKey :
+			anyFile.components instanceof Array ?
+				AccountFileRecord.RecordTypes.Form :
+			typeof anyFile.Demographics === 'object' ?
+				AccountFileRecord.RecordTypes.RedoxPatient :
+				undefined
+		;
+
+		if (recordType === undefined) {
+			throw new Error('Cannot detect record type.');
+		}
+
+		return recordType;
 	}
 
 	/** Gets the Material icon name for the file default thumbnail. */
@@ -1080,14 +1107,7 @@ export class AccountFilesService {
 					mediaType: fileConfig.mediaType || (file instanceof Blob ? file.type : ''),
 					name,
 					recordType: fileConfig.recordType,
-					size: file instanceof Blob ?
-						file.size :
-						fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
-							this.potassiumService.fromString(
-								this.deltaToString(<IQuillDelta> file)
-							).length :
-							NaN
-					,
+					size: await this.getFileSize(file, fileConfig),
 					timestamp: await getTimestamp()
 				};
 

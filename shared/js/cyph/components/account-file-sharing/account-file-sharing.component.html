@@ -10,24 +10,24 @@
 			(click)='accountContactsSearch?.searchBar?.clearFilter()'
 		></cyph-account-contact>
 	</div>
-	<mat-card class='file' *ngIf='file'>
+	<mat-card class='file' *ngIf='getFile() | async as o'>
 		<mat-card-header fxLayout='row'>
 			<mat-icon mat-card-avatar>
-				{{accountFilesService.getThumbnail(file?.mediaType)}}
+				{{accountFilesService.getThumbnail(o.fileConfig?.mediaType)}}
 			</mat-icon>
 			<mat-card-title>
-				{{file?.name}}
+				{{o.file?.name}}
 			</mat-card-title>
 			<mat-card-subtitle>
 				<div>
 					<span cyphTranslate>Type:</span>
 					&ngsp;
-					<span>{{file?.mediaType}}</span>
+					<span>{{o.fileConfig?.mediaType}}</span>
 				</div>
-				<div>
+				<div *ngIf='!isNaN(o?.size)'>
 					<span cyphTranslate>Size:</span>
 					&ngsp;
-					<span>{{readableByteLength(file?.size)}}</span>
+					<span>{{readableByteLength(o?.size)}}</span>
 				</div>
 			</mat-card-subtitle>
 		</mat-card-header>

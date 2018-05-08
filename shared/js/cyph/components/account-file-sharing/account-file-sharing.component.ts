@@ -1,4 +1,5 @@
 import {Component, Input, ViewChild} from '@angular/core';
+import memoize from 'lodash-es/memoize';
 import {AccountFileShare} from '../../account';
 import {IResolvable} from '../../iresolvable';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -29,40 +30,76 @@ export class AccountFileSharingComponent {
 	/** @see AccountFileShare */
 	@Input() public file?: AccountFileShare;
 
+	/** Gets file. */
+	public readonly getFile	= memoize(async (username: string = '') => {
+		let file	= await this.file;
+
+		if (typeof file === 'function') {
+			file	= await file(username);
+		}
+		if (file === undefined) {
+			return {file: undefined, fileConfig: undefined};
+		}
+
+		const fileConfig	=
+			file === undefined ?
+				undefined :
+				this.accountFilesService.fileTypeConfig[
+					'recordType' in file ?
+						file.recordType :
+						this.accountFilesService.getFileType(file.data)
+				]
+		;
+
+		return {
+			file,
+			fileConfig,
+			size:
+				'size' in file ?
+					file.size :
+				fileConfig !== undefined ?
+					await this.accountFilesService.getFileSize(file.data, fileConfig) :
+					NaN
+		};
+	});
+
+	/** @see isNaN */
+	public readonly isNaN: typeof isNaN								= isNaN;
+
 	/** @see readableByteLength */
 	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
 
 	/** Shares file. */
 	public async share () : Promise<void> {
-		const username	=
-			this.accountContactsSearch &&
-			this.accountContactsSearch.searchBar &&
-			this.accountContactsSearch.searchBar.filter.value &&
-			this.accountContactsSearch.searchBar.filter.value.username
-		;
-
-		if (!username) {
+		if (!this.username) {
 			return;
 		}
 
-		let file	= await this.file;
-		if (typeof file === 'function') {
-			file	= await file(username);
-		}
+		const {file}	= await this.getFile(this.username);
 		if (file === undefined) {
 			return;
 		}
 
 		if ('data' in file) {
-			await this.accountFilesService.upload(file.name, file.data, username);
+			await this.accountFilesService.upload(file.name, file.data, this.username);
 		}
 		else {
-			await this.accountFilesService.shareFile(file.id, username);
+			await this.accountFilesService.shareFile(file.id, this.username);
 		}
 
 		if (this.closeFunction) {
 			(await this.closeFunction.promise)();
 		}
+	}
+
+	/** Username to share with. */
+	public get username () : string|undefined {
+		return (
+			this.accountContactsSearch &&
+			this.accountContactsSearch.searchBar &&
+			this.accountContactsSearch.searchBar.filter.value &&
+			this.accountContactsSearch.searchBar.filter.value.username
+		);
 	}
 
 	constructor (
