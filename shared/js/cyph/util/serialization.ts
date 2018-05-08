@@ -2,6 +2,18 @@ import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IProto} from '../iproto';
 
 
+const stringifyInternal	= <T> (value: T, space?: string) : string => {
+	/* tslint:disable-next-line:ban */
+	return JSON.stringify(
+		value,
+		(_, v) => v instanceof Uint8Array ?
+			{data: potassiumUtil.toBase64(v), isUint8Array: true} :
+			v
+		,
+		space
+	);
+};
+
 /** Deserializes bytes to data. */
 export const deserialize	= async <T> (
 	proto: IProto<T>,
@@ -20,6 +32,11 @@ export const parse	= <T> (text: string) : T => {
 	);
 };
 
+/** Pretty prints an object. */
+export const prettyPrint	= <T> (value: T) : string =>
+	stringifyInternal(value, '\t')
+;
+
 /** Serializes data value to binary byte array. */
 export const serialize	= async <T> (proto: IProto<T>, data: T) : Promise<Uint8Array> => {
 	const err	= await proto.verify(data);
@@ -31,14 +48,9 @@ export const serialize	= async <T> (proto: IProto<T>, data: T) : Promise<Uint8Ar
 };
 
 /** @see JSON.stringify */
-export const stringify	= <T> (value: T) : string => {
-	/* tslint:disable-next-line:ban */
-	return JSON.stringify(value, (_, v) =>
-		v instanceof Uint8Array ?
-			{data: potassiumUtil.toBase64(v), isUint8Array: true} :
-			v
-	);
-};
+export const stringify	= <T> (value: T) : string =>
+	stringifyInternal(value)
+;
 
 /**
  * Serializes o to a query string (cf. jQuery.param).
