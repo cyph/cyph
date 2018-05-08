@@ -244,9 +244,17 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 			const redoxPatient	= await this.ehrService.getPatient(apiKey, {
 				Demographics: {
-					FirstName: accountUserProfile.name.slice(0, firstSpaceIndex),
-					LastName: accountUserProfile.name.slice(lastSpaceIndex + 1),
-					MiddleName: accountUserProfile.name.slice(firstSpaceIndex + 1, lastSpaceIndex)
+					FirstName: firstSpaceIndex > -1 ?
+						accountUserProfile.name.slice(0, firstSpaceIndex) :
+						accountUserProfile.name
+					,
+					LastName: firstSpaceIndex > -1 ?
+						accountUserProfile.name.slice(lastSpaceIndex + 1) :
+						''
+					,
+					MiddleName: firstSpaceIndex > -1 ?
+						accountUserProfile.name.slice(firstSpaceIndex + 1, lastSpaceIndex) :
+						''
 				}
 			});
 
