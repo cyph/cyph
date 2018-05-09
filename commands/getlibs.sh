@@ -233,7 +233,8 @@ done
 
 for anyType in \
 	crypto-browserify \
-	readable-stream
+	readable-stream \
+	stream-browserify
 do
 	mkdir -p "@types/${anyType}"
 	echo "

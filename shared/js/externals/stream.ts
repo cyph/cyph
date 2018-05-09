@@ -3,4 +3,4 @@
 /** @file stream external. */
 
 
-export * from 'readable-stream';
+export * from 'stream-browserify';

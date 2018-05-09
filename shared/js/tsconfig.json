@@ -27,7 +27,8 @@
 			"libsodium": ["js/externals/libsodium"],
 			"request": ["js/externals/request"],
 			"rsvp": ["js/externals/rsvp"],
-			"stream": ["js/externals/stream"]
+			"stream": ["js/externals/stream"],
+			"vm": ["js/externals/vm"]
 		},
 		"skipLibCheck": true,
 		"sourceMap": false,
