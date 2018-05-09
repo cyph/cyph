@@ -276,6 +276,7 @@ export class AccountFilesService {
 		[AccountFileRecord.RecordTypes.Wallet]: {
 			blockAnonymous: false,
 			description: 'Wallet',
+			isOfType: (file: any) => typeof file.cryptocurrency === 'number',
 			mediaType: 'cyph/wallet',
 			proto: Wallet,
 			recordType: AccountFileRecord.RecordTypes.Wallet,
@@ -292,7 +293,8 @@ export class AccountFilesService {
 		AccountFileRecord.RecordTypes.File,
 		AccountFileRecord.RecordTypes.Form,
 		AccountFileRecord.RecordTypes.Note,
-		AccountFileRecord.RecordTypes.RedoxPatient
+		AccountFileRecord.RecordTypes.RedoxPatient,
+		AccountFileRecord.RecordTypes.Wallet
 	];
 
 	/** Incoming files. */
