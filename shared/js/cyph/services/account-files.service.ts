@@ -165,10 +165,30 @@ export class AccountFilesService {
 	 * @see filesListFiltered
 	 */
 	public readonly filesListFilteredWithData	= {
-		appointments: this.getFiles(this.filesListFiltered.appointments, Appointment),
-		files: this.getFiles(this.filesListFiltered.files, BinaryProto),
-		forms: this.getFiles(this.filesListFiltered.forms, Form, SecurityModels.privateSigned),
-		wallets: this.getFiles(this.filesListFiltered.wallets, Wallet)
+		appointments: this.getFiles(
+			this.filesListFiltered.appointments,
+			AccountFileRecord.RecordTypes.Appointment
+		),
+		ehrApiKeys: this.getFiles(
+			this.filesListFiltered.ehrApiKeys,
+			AccountFileRecord.RecordTypes.EhrApiKey
+		),
+		files: this.getFiles(
+			this.filesListFiltered.files,
+			AccountFileRecord.RecordTypes.File
+		),
+		forms: this.getFiles(
+			this.filesListFiltered.forms,
+			AccountFileRecord.RecordTypes.Form
+		),
+		redoxPatients: this.getFiles(
+			this.filesListFiltered.ehrApiKeys,
+			AccountFileRecord.RecordTypes.EhrApiKey
+		),
+		wallets: this.getFiles(
+			this.filesListFiltered.wallets,
+			AccountFileRecord.RecordTypes.Wallet
+		)
 	};
 
 	/** Total size of all files in list. */
@@ -244,6 +264,15 @@ export class AccountFilesService {
 			proto: RedoxPatient,
 			recordType: AccountFileRecord.RecordTypes.RedoxPatient,
 			route: 'incoming-patient-info',
+			securityModel: undefined
+		},
+		[AccountFileRecord.RecordTypes.Wallet]: {
+			blockAnonymous: false,
+			description: 'Wallet',
+			mediaType: 'cyph/wallet',
+			proto: Wallet,
+			recordType: AccountFileRecord.RecordTypes.Wallet,
+			route: 'wallets',
 			securityModel: undefined
 		}
 	};
@@ -357,10 +386,30 @@ export class AccountFilesService {
 	 * @see incomingFilesFiltered
 	 */
 	public readonly incomingFilesFilteredWithData	= {
-		appointments: this.getFiles(this.incomingFilesFiltered.appointments, Appointment),
-		files: this.getFiles(this.incomingFilesFiltered.files, BinaryProto),
-		forms: this.getFiles(this.incomingFilesFiltered.forms, Form, SecurityModels.privateSigned),
-		wallets: this.getFiles(this.incomingFilesFiltered.wallets, Wallet)
+		appointments: this.getFiles(
+			this.incomingFilesFiltered.appointments,
+			AccountFileRecord.RecordTypes.Appointment
+		),
+		ehrApiKeys: this.getFiles(
+			this.incomingFilesFiltered.ehrApiKeys,
+			AccountFileRecord.RecordTypes.EhrApiKey
+		),
+		files: this.getFiles(
+			this.incomingFilesFiltered.files,
+			AccountFileRecord.RecordTypes.File
+		),
+		forms: this.getFiles(
+			this.incomingFilesFiltered.forms,
+			AccountFileRecord.RecordTypes.Form
+		),
+		redoxPatients: this.getFiles(
+			this.incomingFilesFiltered.redoxPatients,
+			AccountFileRecord.RecordTypes.RedoxPatient
+		),
+		wallets: this.getFiles(
+			this.incomingFilesFiltered.wallets,
+			AccountFileRecord.RecordTypes.Wallet
+		)
 	};
 
 	/** Indicates whether the first load has completed. */
@@ -413,15 +462,14 @@ export class AccountFilesService {
 	/** @ignore */
 	private getFiles<T, TRecord extends {owner: string}> (
 		filesList: Observable<(IAccountFileRecord&TRecord)[]>,
-		proto: IProto<T>,
-		securityModel?: SecurityModels
+		recordType: AccountFileRecord.RecordTypes
 	) : () => Observable<{
 		data: T;
 		record: IAccountFileRecord;
 	}[]> {
 		return memoize(() => filesList.pipe(
 			mergeMap(records => combineLatest(records.map(record =>
-				this.watchFileData(record, proto, securityModel).pipe(map(data => ({
+				this.watchFileData(record, recordType).pipe(map(data => ({
 					data,
 					record
 				})))
@@ -435,9 +483,10 @@ export class AccountFilesService {
 	/** @ignore */
 	private watchFileData<T> (
 		id: string|IAccountFileRecord,
-		proto: IProto<T>,
-		securityModel?: SecurityModels
+		recordType: AccountFileRecord.RecordTypes
 	) : Observable<T|undefined> {
+		const {proto, securityModel}	= this.fileTypeConfig[recordType];
+
 		return getOrSetDefault(
 			this.watchFileDataCache,
 			typeof id === 'string' ? id : id.id,
@@ -446,7 +495,7 @@ export class AccountFilesService {
 
 				return this.accountDatabaseService.watch(
 					filePromise.then(file => `users/${file.owner}/files/${file.id}`),
-					proto,
+					<any> proto,
 					securityModel,
 					filePromise.then(file => file.key)
 				).pipe(map(o =>
