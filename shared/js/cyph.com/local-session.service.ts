@@ -61,8 +61,6 @@ export class LocalSessionService extends SessionService {
 					return;
 				}
 
-				(<any> message.data).author	= this.remoteUsername;
-
 				if (message.event === events.cyphertext) {
 					this.trigger(events.cyphertext, {
 						author: (<any> message.data).author,
