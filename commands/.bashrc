@@ -1,9 +1,8 @@
 # Sourced by bashrc within Docker
 
 bindmount () {
-	rm -rf "${2}" 2> /dev/null
-
 	if [ "${CIRCLECI}" ] ; then
+		rm -rf "${2}" 2> /dev/null
 		cp -a "${1}" "${2}"
 	else
 		mkdir "${2}" 2> /dev/null

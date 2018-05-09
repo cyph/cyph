@@ -6,12 +6,13 @@ message AccountFileRecord {
 	/** Possible file record types. */
 	enum RecordTypes {
 		Appointment = 0;
-		File = 1;
 		Doc = 2;
-		EhrApiKey = 3;
-		Form = 4;
-		Note = 5;
-		Wallet = 6;
+		EhrApiKey = 5;
+		File = 1;
+		Form = 3;
+		Note = 4;
+		RedoxPatient = 6;
+		Wallet = 7;
 	}
 
 	/** File ID. */
@@ -43,6 +44,9 @@ message AccountFileReference {
 
 	/** Symmetric key used for encrypting file. */
 	required bytes key = 2;
+
+	/** Miscellaneous metadata about this file, specific to the current user. */
+	string metadata = 4;
 
 	/** Username of owner. */
 	required string owner = 3;
@@ -1147,7 +1151,7 @@ message RedoxTypes {
 	/** Location details. */
 	message Location {
 		/** Department. */
-		string Department = 1;
+		required string Department = 1;
 
 		/** e.g. Community Hospital. */
 		string Facility = 2;
@@ -1246,7 +1250,7 @@ message RedoxTypes {
 		repeated CodesetValue Diagnoses = 4;
 
 		/** Duration in minutes. */
-		uint32 Duration = 5;
+		required uint32 Duration = 5;
 
 		/** Appointment instructions. */
 		repeated string Instructions = 6;
@@ -1273,10 +1277,10 @@ message RedoxTypes {
 		string Status = 11;
 
 		/** Datetime. (ISO 8601) */
-		string VisitDateTime = 12;
+		required string VisitDateTime = 12;
 
 		/** Unique ID of a single visit. */
-		string VisitNumber = 13;
+		required string VisitNumber = 13;
 
 		/** Visit provider. */
 		Provider VisitProvider = 14;

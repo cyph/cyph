@@ -89,24 +89,14 @@ export class AccountService {
 
 	/** @ignore */
 	private get routePath () : string[] {
-		let route	= (
+		const route	= (
 			this.activatedRoute.snapshot.firstChild &&
-			this.activatedRoute.snapshot.firstChild.url.length > 0
+			this.activatedRoute.snapshot.firstChild.firstChild &&
+			this.activatedRoute.snapshot.firstChild.firstChild.url.length > 0
 		) ?
-			this.activatedRoute.snapshot.firstChild.url :
+			this.activatedRoute.snapshot.firstChild.firstChild.url :
 			undefined
 		;
-
-		if (route && route[0].path === accountRoot) {
-			route	= (
-				this.activatedRoute.snapshot.firstChild &&
-				this.activatedRoute.snapshot.firstChild.firstChild &&
-				this.activatedRoute.snapshot.firstChild.firstChild.url.length > 0
-			) ?
-				this.activatedRoute.snapshot.firstChild.firstChild.url :
-				undefined
-			;
-		}
 
 		return route ? route.map(o => o.path) : [];
 	}
@@ -178,13 +168,19 @@ export class AccountService {
 			const routePath	= this.routePath;
 			const route		= routePath[0];
 
+			const specialCases: {[k: string]: string}	= {
+				ehr: 'EHR'
+			};
+
 			if (
 				[
 					'appointments',
 					'contacts',
 					'docs',
+					'ehr-access',
 					'files',
 					'forms',
+					'incoming-patient-info',
 					'notes',
 					'patients',
 					'settings',
@@ -201,7 +197,11 @@ export class AccountService {
 				;
 			}
 
-			return header || translate(route[0].toUpperCase() + route.slice(1));
+			return header || translate(route.
+				split('-').
+				map(s => specialCases[s] || (s[0].toUpperCase() + s.slice(1))).
+				join(' ')
+			);
 		}));
 
 		this.menuExpandable	= combineLatest(

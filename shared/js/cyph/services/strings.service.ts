@@ -22,31 +22,31 @@ export class StringsService {
 	;
 
 	/** @ignore */
-	private readonly internalCompany: string			=
+	private readonly internalCompany: string					=
 		this.customBuildStrings.internalCompany ||
 		`Cyph`
 	;
 
 	/** @ignore */
-	private readonly internalFriend: string				=
+	private readonly internalFriend: string						=
 		this.customBuildStrings.internalFriend ||
 		`friend`
 	;
 
 	/** @ignore */
-	private readonly internalProduct: string			=
+	private readonly internalProduct: string					=
 		this.customBuildStrings.internalProduct ||
 		`Cyph`
 	;
 
 	/** @ignore */
-	private readonly internalProductShort: string		=
+	private readonly internalProductShort: string				=
 		this.customBuildStrings.internalProductShort ||
 		`Cyph`
 	;
 
 	/** @ignore */
-	private readonly internalSession: string			=
+	private readonly internalSession: string					=
 		this.customBuildStrings.internalSession ||
 		`cyph`
 	;
@@ -259,6 +259,17 @@ export class StringsService {
 	/** @see StringsService */
 	public readonly incomingFileSaveError: string		=
 		`Failed to save the following file:`
+	;
+
+	/** @see StringsService */
+	public readonly incomingPatientInfo: string			=
+		`Your doctor has shared this medical data to be saved in your account to auto-fill ` +
+		`forms on your behalf in the future. Would you like to accept it?`
+	;
+
+	/** @see StringsService */
+	public readonly incomingPatientInfoTitle: string	=
+		`Saving Incoming Patient Info`
 	;
 
 	/** @see StringsService */
@@ -597,6 +608,29 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly session: string						= `${this.internalSession}`;
+
+	/** @see StringsService */
+	public readonly share: string						= `Share`;
+
+	/** @see StringsService */
+	public readonly shareEhrData: string				=
+		`You are about to request data about this patient from your organization's EHR system ` +
+		`and share it with this patient. If accepted, it will be used to auto-fill forms on ` +
+		`their behalf. Continue?`
+	;
+
+	/** @see StringsService */
+	public readonly shareEhrDataFailure: string			=
+		`Sharing medical data failed.`
+	;
+
+	/** @see StringsService */
+	public readonly shareEhrDataSuccess: string			=
+		`Medical data has been shared.`
+	;
+
+	/** @see StringsService */
+	public readonly shareEhrDataTitle: string			= `Share Medical Data from EHR`;
 
 	/** @see StringsService */
 	public readonly signupFailed: string				=

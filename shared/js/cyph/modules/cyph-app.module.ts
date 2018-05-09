@@ -9,11 +9,13 @@ import {AccountComposeNoProvidersComponent} from '../components/account-compose-
 import {AccountContactComponent} from '../components/account-contact';
 import {AccountContactsComponent} from '../components/account-contacts';
 import {AccountContactsSearchComponent} from '../components/account-contacts-search';
+import {AccountEhrAccessComponent} from '../components/account-ehr-access';
 import {AccountFileSharingComponent} from '../components/account-file-sharing';
 import {AccountFilesComponent} from '../components/account-files';
 import {AccountFormComponent} from '../components/account-form';
 import {AccountFormsComponent} from '../components/account-forms';
 import {AccountHomeComponent} from '../components/account-home';
+import {AccountIncomingPatientInfoComponent} from '../components/account-incoming-patient-info';
 import {AccountLoginComponent} from '../components/account-login';
 import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountMenuComponent} from '../components/account-menu';
@@ -70,11 +72,13 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountContactComponent,
 		AccountContactsComponent,
 		AccountContactsSearchComponent,
+		AccountEhrAccessComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
 		AccountFormComponent,
 		AccountFormsComponent,
 		AccountHomeComponent,
+		AccountIncomingPatientInfoComponent,
 		AccountLoginComponent,
 		AccountLogoutComponent,
 		AccountMenuComponent,
@@ -104,11 +108,13 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountContactComponent,
 		AccountContactsComponent,
 		AccountContactsSearchComponent,
+		AccountEhrAccessComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
 		AccountFormComponent,
 		AccountFormsComponent,
 		AccountHomeComponent,
+		AccountIncomingPatientInfoComponent,
 		AccountLoginComponent,
 		AccountLogoutComponent,
 		AccountMenuComponent,
@@ -138,11 +144,13 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountContactComponent,
 		AccountContactsComponent,
 		AccountContactsSearchComponent,
+		AccountEhrAccessComponent,
 		AccountFilesComponent,
 		AccountFileSharingComponent,
 		AccountFormComponent,
 		AccountFormsComponent,
 		AccountHomeComponent,
+		AccountIncomingPatientInfoComponent,
 		AccountLoginComponent,
 		AccountLogoutComponent,
 		AccountMenuComponent,

@@ -1,4 +1,4 @@
-<div fxLayout='column' fxLayoutAlign='center' fxLayoutGap='16px'>
+<div fxLayout='column' fxLayoutAlign='center' fxLayoutGap='16px' *ngIf='getFile() | async as o'>
 	<cyph-account-contacts-search
 		#accountContactsSearch
 		[placeholder]='stringsService.to'
@@ -10,28 +10,30 @@
 			(click)='accountContactsSearch?.searchBar?.clearFilter()'
 		></cyph-account-contact>
 	</div>
-	<mat-card class='file' *ngIf='file'>
+	<mat-card class='file'>
 		<mat-card-header fxLayout='row'>
 			<mat-icon mat-card-avatar>
-				{{accountFilesService.getThumbnail(file?.mediaType)}}
+				{{accountFilesService.getThumbnail(o.mediaType)}}
 			</mat-icon>
 			<mat-card-title>
-				{{file?.name}}
+				{{o.file?.name}}
 			</mat-card-title>
 			<mat-card-subtitle>
 				<div>
 					<span cyphTranslate>Type:</span>
 					&ngsp;
-					<span>{{file?.mediaType}}</span>
+					<span>{{o.fileConfig?.mediaType}}</span>
 				</div>
-				<div>
+				<div *ngIf='!isNaN(o?.size)'>
 					<span cyphTranslate>Size:</span>
 					&ngsp;
-					<span>{{readableByteLength(file?.size)}}</span>
+					<span>{{readableByteLength(o?.size)}}</span>
 				</div>
 			</mat-card-subtitle>
 		</mat-card-header>
 	</mat-card>
 
-	<button (click)='share()' mat-raised-button>Share File</button>
+	<button (click)='share()' mat-raised-button>
+		{{stringsService.share}} {{o.fileConfig?.description}}
+	</button>
 </div>

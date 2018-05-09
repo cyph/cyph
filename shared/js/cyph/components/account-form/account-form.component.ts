@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {IAccountFileRecord, IForm} from '../../proto';
+import {AccountFileRecord, IAccountFileRecord, IForm} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
@@ -41,9 +41,10 @@ export class AccountFormComponent implements OnInit {
 
 				if (appointmentID && id) {
 					const i				= Number.parseInt(id, 10);
-					const downloadTask	=
-						this.accountFilesService.downloadAppointment(appointmentID)
-					;
+					const downloadTask	= this.accountFilesService.downloadFile(
+						appointmentID,
+						AccountFileRecord.RecordTypes.Appointment
+					);
 
 					this.form.next({
 						data: downloadTask.result.then(o => {
@@ -61,7 +62,10 @@ export class AccountFormComponent implements OnInit {
 					});
 				}
 				else if (id) {
-					const downloadTask	= this.accountFilesService.downloadForm(id);
+					const downloadTask	= this.accountFilesService.downloadFile(
+						id,
+						AccountFileRecord.RecordTypes.Form
+					);
 
 					this.form.next({
 						data: downloadTask.result,

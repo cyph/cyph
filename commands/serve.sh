@@ -109,11 +109,6 @@ ngserve () {
 		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
 		${args} \
 		"${@}"
-
-	if [ -d ../${project}.js.old ] ; then
-		unbindmount src/js
-		mv ../${project}.js.old src/js
-	fi
 }
 
 

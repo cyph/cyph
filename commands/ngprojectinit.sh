@@ -8,11 +8,6 @@ fi
 rm src/favicon.ico 2> /dev/null
 cp ../shared/favicon.ico src/
 
-d="${PWD##*/}"
-if [ ! -d ../${d}.js.old ] ; then
-	mv src/js ../${d}.js.old
-fi
-
 for arr in \
 	'/node_modules node_modules' \
 	'../shared/assets src/assets' \
