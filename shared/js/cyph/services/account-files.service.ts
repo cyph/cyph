@@ -167,6 +167,7 @@ export class AccountFilesService {
 		[AccountFileRecord.RecordTypes.Appointment]: {
 			blockAnonymous: true,
 			description: 'Appointment',
+			isOfType: (file: any) => typeof file.calendarInvite === 'object',
 			mediaType: 'cyph/appointment',
 			proto: Appointment,
 			recordType: AccountFileRecord.RecordTypes.Appointment,
@@ -176,6 +177,7 @@ export class AccountFilesService {
 		[AccountFileRecord.RecordTypes.Doc]: {
 			blockAnonymous: false,
 			description: 'Doc',
+			isOfType: (file: any) => file instanceof Array,
 			mediaType: 'cyph/doc',
 			proto: undefined,
 			recordType: AccountFileRecord.RecordTypes.Doc,
@@ -185,6 +187,7 @@ export class AccountFilesService {
 		[AccountFileRecord.RecordTypes.EhrApiKey]: {
 			blockAnonymous: false,
 			description: 'EHR Access',
+			isOfType: (file: any) => file.apiKey === 'string' && typeof file.isMaster === 'boolean',
 			mediaType: 'cyph/ehr-api-key',
 			proto: EhrApiKey,
 			recordType: AccountFileRecord.RecordTypes.EhrApiKey,
@@ -194,6 +197,7 @@ export class AccountFilesService {
 		[AccountFileRecord.RecordTypes.File]: {
 			blockAnonymous: false,
 			description: 'File',
+			isOfType: (file: any) => file instanceof Blob,
 			mediaType: undefined,
 			proto: BinaryProto,
 			recordType: AccountFileRecord.RecordTypes.File,
@@ -203,6 +207,7 @@ export class AccountFilesService {
 		[AccountFileRecord.RecordTypes.Form]: {
 			blockAnonymous: false,
 			description: 'Form',
+			isOfType: (file: any) => file.components instanceof Array,
 			mediaType: 'cyph/form',
 			proto: Form,
 			recordType: AccountFileRecord.RecordTypes.Form,
@@ -212,6 +217,7 @@ export class AccountFilesService {
 		[AccountFileRecord.RecordTypes.Note]: {
 			blockAnonymous: false,
 			description: 'Note',
+			isOfType: (file: any) => typeof file.chop === 'function' || file.ops instanceof Array,
 			mediaType: 'cyph/note',
 			proto: BinaryProto,
 			recordType: AccountFileRecord.RecordTypes.Note,
@@ -221,6 +227,7 @@ export class AccountFilesService {
 		[AccountFileRecord.RecordTypes.RedoxPatient]: {
 			blockAnonymous: true,
 			description: 'Patient Info',
+			isOfType: (file: any) => typeof file.Demographics === 'object',
 			mediaType: 'cyph/redox-patient',
 			proto: RedoxPatient,
 			recordType: AccountFileRecord.RecordTypes.RedoxPatient,
@@ -228,6 +235,17 @@ export class AccountFilesService {
 			securityModel: undefined
 		}
 	};
+
+	/** List of file record types. */
+	public readonly fileTypes: AccountFileRecord.RecordTypes[]	= [
+		AccountFileRecord.RecordTypes.Appointment,
+		AccountFileRecord.RecordTypes.Doc,
+		AccountFileRecord.RecordTypes.EhrApiKey,
+		AccountFileRecord.RecordTypes.File,
+		AccountFileRecord.RecordTypes.Form,
+		AccountFileRecord.RecordTypes.Note,
+		AccountFileRecord.RecordTypes.RedoxPatient
+	];
 
 	/** Incoming files. */
 	public readonly incomingFiles: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=
@@ -714,33 +732,17 @@ export class AccountFilesService {
 
 	/** Gets file type. */
 	public getFileType (file: AccountFile|IAccountFileRecord) : AccountFileRecord.RecordTypes {
-		const anyFile	= <any> file;
-
-		const recordType	=
-			'recordType' in file ?
-				file.recordType :
-			file instanceof Blob ?
-				AccountFileRecord.RecordTypes.File :
-			file instanceof Array ?
-				AccountFileRecord.RecordTypes.Doc :
-			typeof anyFile.chop === 'function' || anyFile.ops instanceof Array ?
-				AccountFileRecord.RecordTypes.Note :
-			anyFile.calendarInvite !== undefined ?
-				AccountFileRecord.RecordTypes.Appointment :
-			typeof anyFile.apiKey === 'string' && typeof anyFile.isMaster === 'boolean' ?
-				AccountFileRecord.RecordTypes.EhrApiKey :
-			anyFile.components instanceof Array ?
-				AccountFileRecord.RecordTypes.Form :
-			typeof anyFile.Demographics === 'object' ?
-				AccountFileRecord.RecordTypes.RedoxPatient :
-				undefined
-		;
-
-		if (recordType === undefined) {
-			throw new Error('Cannot detect record type.');
+		if ('recordType' in file) {
+			return file.recordType;
 		}
 
-		return recordType;
+		for (const recordType of this.fileTypes) {
+			if (this.fileTypeConfig[recordType].isOfType(file)) {
+				return recordType;
+			}
+		}
+
+		throw new Error('Cannot detect record type.');
 	}
 
 	/** Gets the Material icon name for the file default thumbnail. */
