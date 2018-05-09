@@ -7,10 +7,10 @@ message AccountFileRecord {
 	enum RecordTypes {
 		Appointment = 0;
 		Doc = 2;
-		EhrApiKey = 3;
+		EhrApiKey = 5;
 		File = 1;
-		Form = 4;
-		Note = 5;
+		Form = 3;
+		Note = 4;
 		RedoxPatient = 6;
 	}
 
