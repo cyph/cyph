@@ -4,10 +4,16 @@
  * @file Normalizes global namespace across varying runtime environments.
  */
 
+import {Buffer} from 'buffer';
+import * as process from 'process';
+
 
 if (typeof self === 'undefined' && typeof global !== 'undefined') {
 	(<any> global).self	= global;
 }
+
+(<any> self).Buffer		= Buffer;
+(<any> self).process	= process;
 
 try {
 	if (!self.crypto && (<any> self).msCrypto) {

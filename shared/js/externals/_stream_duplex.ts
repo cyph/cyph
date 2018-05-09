@@ -3,4 +3,5 @@
 /** @file _stream_duplex external. */
 
 
-export default undefined;
+import * as stream from 'stream-browserify';
+export default (<any> stream).Duplex;
