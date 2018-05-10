@@ -404,14 +404,14 @@ export const height		= (id: string = 'height') : Form.IElement[] => [
 		label: 'Feet',
 		max: 11,
 		min: 0,
-		width: 10
+		width: 5
 	}),
 	numberInput({
 		id,
 		label: 'Inches',
 		max: 11,
 		min: 0,
-		width: 10
+		width: 5
 	})
 ];
 
@@ -439,16 +439,15 @@ export const patientProfile		= () : IForm => newForm(
 							id: 'Sex',
 							label: 'Sex',
 							options: ['Male', 'Female'],
-							width:20
+							width: 20
 						}),
 						select({
 							id: 'MaritalStatus',
 							label: 'Marital Status',
-							options: ['Single', 'Married'],
-							width: 20
+							options: ['Single', 'Married']
 						}),
 						numberInput(
-							{label: 'Weight (lbs)', max: 1500, width: 15, required: false}
+							{label: 'Weight (lbs)', max: 1500, width: 10, required: false}
 						),
 						height()
 					],
@@ -461,8 +460,7 @@ export const patientProfile		= () : IForm => newForm(
 			undefined,
 			true
 		)
-	],
-	'redoxPatient.Demographics'
+	]
 );
 
 export const doctorProfile		= () : IForm => newForm(
