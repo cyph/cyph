@@ -3,7 +3,7 @@
 /// <reference path="../typings/index.d.ts" />
 
 import '../standalone/global';
-import '../standalone/global';
+import '../standalone/node-polyfills';
 
 import 'hammerjs';
 import '../standalone/init';
