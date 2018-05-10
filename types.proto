@@ -781,38 +781,38 @@ message RedoxMeta {
 	bool Test = 4;
 
 	/** Where the message originated. Included in messages from Redox */
-	Source Source = 5;
+	RedoxSource Source = 5;
 
 	/**
 	 * List of destinations to send your message to. All messages must have at least one
 	 * destination. Queries accept only one destination.
 	 * Required when sending data to Redox
 	 */
-	repeated Source Destinations = 6;
+	repeated RedoxSource Destinations = 6;
 
 	/**
 	 * Record in Redox that corresponds to the communication sent from the source to Redox.
 	 * Included in messages from Redox
 	 */
-	Message Message = 7;
+	RedoxMessage Message = 7;
 
 	/**
 	 * Record in Redox that corresponds to the communication sent from Redox to your destination.
 	 * Included in messages from Redox
 	 */
-	Transmission Transmission = 8;
+	RedoxTransmission Transmission = 8;
 
-	message Message {
+	message RedoxMessage {
 		string ID = 1;
 	}
 
-	message Source {
+	message RedoxSource {
 		required string ID = 1;
 
 		string Name = 2;
 	}
 
-	message Transmission {
+	message RedoxTransmission {
 		string ID = 1;
 	}
 }
@@ -1257,22 +1257,22 @@ message RedoxTypes {
 			string StartDate = 5;
 
 			/** End date of the qualification. ISO 8601 format, e.g. 2001-09-11*/
-			string EndDate = 5;
+			string EndDate = 6;
 
 		}
 
 		message Roles {
 			Identifier ID = 1;
 
-			Organization Organization = 2;
+			Organization Org = 2;
 
-			Specialties Specialties = 3;
+			RedoxSpecialties Specialties = 3;
 
-			Locations Locations = 4;
+			RedoxLocations Locations = 4;
 
-			Services Services = 5;
+			RedoxServices Services = 5;
 
-			Availability Availability = 6;
+			LocationAvailability Availability = 6;
 
 			message Organization {
 				Identifier ID = 1;
@@ -1288,7 +1288,7 @@ message RedoxTypes {
 				Address Address = 6;
 			}
 
-			message Specialties {
+			message RedoxSpecialties {
 				string Code = 1;
 
 				/** E.g. SnomedCT */
@@ -1298,7 +1298,7 @@ message RedoxTypes {
 				string Description = 3;
 			}
 
-			message Locations {
+			message RedoxLocations {
 				Identifier ID = 1;
 
 				/** One of Active, Suspended, Inactive*/
@@ -1317,7 +1317,7 @@ message RedoxTypes {
 
 			}
 
-			message Services {
+			message RedoxServices {
 				Identifier ID = 1;
 
 				/** Type of service that may be delivered or performed, e.g. Nutrition */
@@ -1331,7 +1331,7 @@ message RedoxTypes {
 			}
 
 			/** Times the service location is available */
-			message Availability {
+			message LocationAvailability {
 				/** List of days that this availability schedule applies to.
 					One of: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday **/
 				repeated string Days = 1;
