@@ -3,6 +3,7 @@
 /// <reference path="../typings/index.d.ts" />
 
 import '../standalone/global';
+import '../standalone/global';
 
 import 'hammerjs';
 import '../standalone/init';

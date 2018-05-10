@@ -51,6 +51,7 @@ export class Thread implements IThread {
 
 		importScripts('/assets/node_modules/core-js/client/shim.js');
 		importScripts('/assets/js/standalone/global.js');
+		/* Uncomment when needed: importScripts('/assets/js/standalone/node-polyfills.js'); */
 
 
 		/* Allow destroying the Thread object from within the thread */
