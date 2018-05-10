@@ -352,8 +352,8 @@
 						<cyph-dynamic-form
 							[form]='form'
 							[isDisabled]='!editMode'
-							[isProfile]='true'
-							(submitForm)='editMode = false'
+							[submitText]='stringsService.saveUpperCase'
+							(submitForm)='saveUserDescription(extra.forms)'
 						></cyph-dynamic-form>
 					</ng-container>
 					</mat-card-content>

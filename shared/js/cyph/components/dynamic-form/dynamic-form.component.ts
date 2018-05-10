@@ -23,7 +23,6 @@ import {uuid} from '../../util/uuid';
 	templateUrl: './dynamic-form.component.html'
 })
 export class DynamicFormComponent implements OnInit {
-	@Input() public isProfile: boolean						= false;
 	/** @ignore */
 	private readonly maskDefaultKey: Uint8Array				= new Uint8Array(0);
 
@@ -46,8 +45,7 @@ export class DynamicFormComponent implements OnInit {
 
 	/** Gets a random unique name for the specified Form item. */
 	public readonly getName	= memoize(
-		(_O: IForm|Form.IComponent|Form.IElement|Form.IElementContainer) =>
-		uuid()
+		(_O: IForm|Form.IComponent|Form.IElement|Form.IElementContainer) => uuid()
 	);
 
 	/** Hides all elements with empty values when isDisabled is true. */
@@ -61,6 +59,9 @@ export class DynamicFormComponent implements OnInit {
 
 	/** @see Form */
 	@Output() public readonly submitForm: EventEmitter<IForm>	= new EventEmitter<IForm>();
+
+	/** Submit button text. */
+	@Input() public submitText: string							= this.stringsService.submit;
 
 	/** @see timestampToDate */
 	public readonly timestampToDate: typeof timestampToDate		= timestampToDate;
@@ -94,19 +95,19 @@ export class DynamicFormComponent implements OnInit {
 				continue;
 			}
 
-			for (const row of component.containers) {
-				if (!row.elements) {
+			for (const container of component.containers) {
+				if (!container.elements) {
 					continue;
 				}
 
-				for (const element of row.elements) {
+				for (const element of container.elements) {
 					if (!element.id) {
 						continue;
 					}
 
 					const id	=
 						(component.id ? `${component.id}.` : '') +
-						(row.id ? `${row.id}.` : '') +
+						(container.id ? `${container.id}.` : '') +
 						element.id
 					;
 

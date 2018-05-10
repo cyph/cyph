@@ -1,6 +1,7 @@
 import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
 
+
 const newForm			= (
 	components: Form.IComponent[],
 	id?: string
@@ -279,7 +280,7 @@ export const address	= (id: string = 'Address') : Form.IElementContainer => {
 	);
 };
 
-/** Address element row. */
+/** Street address element row. */
 export const streetAddress	= (id: string = 'StreetAddress') : Form.IElementContainer => {
 	return newFormContainer(
 		[
@@ -291,6 +292,7 @@ export const streetAddress	= (id: string = 'StreetAddress') : Form.IElementConta
 	);
 };
 
+/** Address details element row. */
 export const addressDetails	= (id: string = 'AddressDetails') : Form.IElementContainer => {
 	return newFormContainer(
 		[
@@ -398,6 +400,7 @@ export const optInOut			= () : Form.IComponent => newFormComponent([
 	])
 ]);
 
+/** Height. */
 export const height		= (id: string = 'height') : Form.IElement[] => [
 	numberInput({
 		id,
@@ -427,6 +430,7 @@ export const newPatient			= () : IForm => newForm(
 	'patient'
 );
 
+/** Patient profile form. */
 export const patientProfile		= () : IForm => newForm(
 	[
 		contact('redoxPatient.Demographics'),
@@ -463,21 +467,24 @@ export const patientProfile		= () : IForm => newForm(
 	]
 );
 
-export const doctorProfile		= () : IForm => newForm(
+/** Doctor profile form. */
+export const doctorProfile				= () : IForm => newForm(
 	[
 		newFormComponent([title('Doctor Profile')])
 	],
 	'doctor-profile'
 );
 
-export const orgProfile		= () : IForm => newForm(
+/** Telehealth organization profile form. */
+export const telehealthOrgProfile		= () : IForm => newForm(
 	[
 		newFormComponent([title('Org Profile')])
 	],
 	'org-profile'
 );
 
-export const staffProfile		= () : IForm => newForm(
+/** Telehealth staff profile form. */
+export const telehealthStaffProfile		= () : IForm => newForm(
 	[
 		newFormComponent([title('Staff Profile')])
 	],

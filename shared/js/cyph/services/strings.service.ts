@@ -549,6 +549,9 @@ export class StringsService {
 	public readonly save: string						= `save`;
 
 	/** @see StringsService */
+	public readonly saveUpperCase: string				= `save`;
+
+	/** @see StringsService */
 	public readonly search: string						= `Search`;
 
 	/** @see StringsService */
@@ -604,6 +607,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly startTime: string					= `Start Time`;
+
+	/** @see StringsService */
+	public readonly submit: string						= `Submit`;
 
 	/** @see StringsService */
 	public readonly submitPatientForms: string			= `Submit Patient Forms`;
