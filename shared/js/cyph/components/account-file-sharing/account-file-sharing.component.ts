@@ -50,6 +50,7 @@ export class AccountFileSharingComponent {
 		return {
 			file,
 			fileConfig,
+			mediaType: fileConfig.mediaType || (file instanceof Blob ? file.type : ''),
 			size: 'size' in file ?
 				file.size :
 				await this.accountFilesService.getFileSize(file.data, fileConfig)
@@ -74,7 +75,12 @@ export class AccountFileSharingComponent {
 		}
 
 		if ('data' in file) {
-			await this.accountFilesService.upload(file.name, file.data, this.username);
+			await this.accountFilesService.upload(
+				file.name,
+				file.data,
+				this.username,
+				file.metadata
+			);
 		}
 		else {
 			await this.accountFilesService.shareFile(file.id, this.username);

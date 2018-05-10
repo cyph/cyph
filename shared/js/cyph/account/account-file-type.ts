@@ -10,6 +10,6 @@ export type AccountFile	=
 	IForm|
 	IQuillDelta|
 	IQuillDelta[]|
-	File|
-	IRedoxPatient
+	IRedoxPatient|
+	File
 ;

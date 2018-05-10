@@ -41,9 +41,10 @@
 							cyphTranslate
 							matTooltip='Delete'
 							(click)='
-								accountFilesService.remove(ehrApiKey);
+								remove(ehrApiKey);
 								$event.stopPropagation();
 							'
+							*ngIf='!ehrApiKeyData.isMaster'
 						>
 							<mat-icon>delete</mat-icon>
 						</button>

@@ -47,7 +47,16 @@
 					</div>
 				</mat-card-header>
 				<mat-card-content>
-					<pre>{{prettyPrint(redoxPatientData)}}</pre>
+					<mat-accordion>
+						<mat-expansion-panel>
+							<mat-expansion-panel-header>
+								<mat-panel-title>
+									<div cyphTranslate>View Contents</div>
+								</mat-panel-title>
+							</mat-expansion-panel-header>
+							<pre>{{prettyPrint(redoxPatientData)}}</pre>
+						</mat-expansion-panel>
+					</mat-accordion>
 				</mat-card-content>
 			</mat-card>
 		</ng-container>

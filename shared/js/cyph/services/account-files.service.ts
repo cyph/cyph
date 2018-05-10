@@ -166,54 +166,86 @@ export class AccountFilesService {
 	public readonly fileTypeConfig	= {
 		[AccountFileRecord.RecordTypes.Appointment]: {
 			blockAnonymous: true,
+			description: 'Appointment',
+			isOfType: (file: any) => typeof file.calendarInvite === 'object',
 			mediaType: 'cyph/appointment',
 			proto: Appointment,
 			recordType: AccountFileRecord.RecordTypes.Appointment,
+			route: 'appointments',
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.Doc]: {
 			blockAnonymous: false,
+			description: 'Doc',
+			isOfType: (file: any) => file instanceof Array,
 			mediaType: 'cyph/doc',
 			proto: undefined,
 			recordType: AccountFileRecord.RecordTypes.Doc,
+			route: 'docs',
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.EhrApiKey]: {
 			blockAnonymous: false,
+			description: 'EHR Access',
+			isOfType: (file: any) => file.apiKey === 'string' && typeof file.isMaster === 'boolean',
 			mediaType: 'cyph/ehr-api-key',
 			proto: EhrApiKey,
 			recordType: AccountFileRecord.RecordTypes.EhrApiKey,
+			route: 'ehr-access',
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.File]: {
 			blockAnonymous: false,
+			description: 'File',
+			isOfType: (file: any) => file instanceof Blob,
 			mediaType: undefined,
 			proto: BinaryProto,
 			recordType: AccountFileRecord.RecordTypes.File,
+			route: 'files',
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.Form]: {
 			blockAnonymous: false,
+			description: 'Form',
+			isOfType: (file: any) => file.components instanceof Array,
 			mediaType: 'cyph/form',
 			proto: Form,
 			recordType: AccountFileRecord.RecordTypes.Form,
+			route: 'forms',
 			securityModel: SecurityModels.privateSigned
 		},
 		[AccountFileRecord.RecordTypes.Note]: {
 			blockAnonymous: false,
+			description: 'Note',
+			isOfType: (file: any) => typeof file.chop === 'function' || file.ops instanceof Array,
 			mediaType: 'cyph/note',
 			proto: BinaryProto,
 			recordType: AccountFileRecord.RecordTypes.Note,
+			route: 'notes',
 			securityModel: undefined
 		},
 		[AccountFileRecord.RecordTypes.RedoxPatient]: {
 			blockAnonymous: true,
+			description: 'Patient Info',
+			isOfType: (file: any) => typeof file.Demographics === 'object',
 			mediaType: 'cyph/redox-patient',
 			proto: RedoxPatient,
 			recordType: AccountFileRecord.RecordTypes.RedoxPatient,
+			route: 'incoming-patient-info',
 			securityModel: undefined
 		}
 	};
+
+	/** List of file record types. */
+	public readonly fileTypes: AccountFileRecord.RecordTypes[]	= [
+		AccountFileRecord.RecordTypes.Appointment,
+		AccountFileRecord.RecordTypes.Doc,
+		AccountFileRecord.RecordTypes.EhrApiKey,
+		AccountFileRecord.RecordTypes.File,
+		AccountFileRecord.RecordTypes.Form,
+		AccountFileRecord.RecordTypes.Note,
+		AccountFileRecord.RecordTypes.RedoxPatient
+	];
 
 	/** Incoming files. */
 	public readonly incomingFiles: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=
@@ -368,7 +400,8 @@ export class AccountFilesService {
 	/** Accepts or rejects incoming file. */
 	public async acceptIncomingFile (
 		incomingFile: IAccountFileRecord&IAccountFileReference,
-		options: boolean|{copy?: boolean; name?: string; reject?: boolean} = true
+		options: boolean|{copy?: boolean; name?: string; reject?: boolean} = true,
+		metadata?: string
 	) : Promise<void> {
 		if (typeof options === 'boolean') {
 			options	= {reject: !options};
@@ -392,7 +425,12 @@ export class AccountFilesService {
 			promises.push(this.accountDatabaseService.setItem<IAccountFileReference>(
 				`fileReferences/${incomingFile.id}`,
 				AccountFileReference,
-				incomingFile
+				{
+					id: incomingFile.id,
+					key: incomingFile.key,
+					metadata,
+					owner: incomingFile.owner
+				}
 			));
 
 			if (incomingFile.recordType === AccountFileRecord.RecordTypes.Appointment) {
@@ -428,7 +466,7 @@ export class AccountFilesService {
 		else if (!options.reject && options.copy) {
 			const file	=
 				incomingFile.recordType === AccountFileRecord.RecordTypes.Doc ?
-					(await this.getDoc(incomingFile.id).asyncList.getValue()) :
+					(await this.getDoc(incomingFile).asyncList.getValue()) :
 				fileConfig.proto ?
 					await this.downloadItem<any>(
 						incomingFile,
@@ -442,11 +480,11 @@ export class AccountFilesService {
 				throw new Error('Cannot get file for copying.');
 			}
 
-			promises.push(this.upload(incomingFile.name, file).result);
+			promises.push(this.upload(incomingFile.name, file, undefined, metadata).result);
 		}
 
 		if (incomingFile.wasAnonymousShare) {
-			promises.push(this.remove(incomingFile.id));
+			promises.push(this.remove(incomingFile, false));
 		}
 
 		await Promise.all(promises);
@@ -537,18 +575,24 @@ export class AccountFilesService {
 	}
 
 	/** Gets a doc in the form of an async list. */
-	public getDoc (id: string) : {
+	public getDoc (id: string|Async<IAccountFileRecord>) : {
 		asyncList: IAsyncList<IQuillDelta|IQuillRange>;
 		deltas: Observable<IQuillDelta>;
 		selections: Observable<IQuillRange>;
 	} {
-		const file		= this.getFile(id);
+		const file	= typeof id === 'string' ?
+			Promise.all([id, this.getFile(id)]) :
+			awaitAsync(id).then(
+				async (o) : Promise<[string, IAccountFileRecord&IAccountFileReference]> =>
+					[o.id, await this.getFile(o)]
+			)
+		;
 
 		const asyncList	= this.accountDatabaseService.getAsyncList(
-			file.then(({owner}) => `users/${owner}/docs/${id}`),
+			file.then(([fileID, {owner}]) => `users/${owner}/docs/${fileID}`),
 			BinaryProto,
 			undefined,
-			file.then(({key}) => key)
+			file.then(([_, {key}]) => key)
 		);
 
 		const docAsyncList: IAsyncList<IQuillDelta|IQuillRange>	= {
@@ -688,33 +732,17 @@ export class AccountFilesService {
 
 	/** Gets file type. */
 	public getFileType (file: AccountFile|IAccountFileRecord) : AccountFileRecord.RecordTypes {
-		const anyFile	= <any> file;
-
-		const recordType	=
-			'recordType' in file ?
-				file.recordType :
-			file instanceof Blob ?
-				AccountFileRecord.RecordTypes.File :
-			file instanceof Array ?
-				AccountFileRecord.RecordTypes.Doc :
-			typeof anyFile.chop === 'function' || anyFile.ops instanceof Array ?
-				AccountFileRecord.RecordTypes.Note :
-			anyFile.calendarInvite !== undefined ?
-				AccountFileRecord.RecordTypes.Appointment :
-			typeof anyFile.apiKey === 'string' && typeof anyFile.isMaster === 'boolean' ?
-				AccountFileRecord.RecordTypes.EhrApiKey :
-			anyFile.components instanceof Array ?
-				AccountFileRecord.RecordTypes.Form :
-			typeof anyFile.Demographics === 'object' ?
-				AccountFileRecord.RecordTypes.RedoxPatient :
-				undefined
-		;
-
-		if (recordType === undefined) {
-			throw new Error('Cannot detect record type.');
+		if ('recordType' in file) {
+			return file.recordType;
 		}
 
-		return recordType;
+		for (const recordType of this.fileTypes) {
+			if (this.fileTypeConfig[recordType].isOfType(file)) {
+				return recordType;
+			}
+		}
+
+		throw new Error('Cannot detect record type.');
 	}
 
 	/** Gets the Material icon name for the file default thumbnail. */
@@ -782,32 +810,21 @@ export class AccountFilesService {
 		confirmAndRedirect: boolean = true
 	) : Promise<void> {
 		if (typeof id !== 'string') {
-			id	= (await awaitAsync(id)).id;
+			id	= await awaitAsync(id);
 		}
 
 		const file	= await this.getFile(id);
+
+		if (typeof id !== 'string') {
+			id	= id.id;
+		}
 
 		if (confirmAndRedirect) {
 			if (await this.dialogService.confirm({
 				content: `${this.stringsService.deleteMessage} ${file.name}?`,
 				title: this.stringsService.deleteConfirm
 			})) {
-				const route	=
-					file.recordType === AccountFileRecord.RecordTypes.Appointment ?
-						'appointments' :
-					file.recordType === AccountFileRecord.RecordTypes.Doc ?
-						'docs' :
-					file.recordType === AccountFileRecord.RecordTypes.File ?
-						'files' :
-					file.recordType === AccountFileRecord.RecordTypes.Form ?
-						'forms' :
-						'notes'
-				;
-
-				if (route) {
-					this.router.navigate([accountRoot, route]);
-				}
-
+				this.router.navigate([accountRoot, this.fileTypeConfig[file.recordType].route]);
 				await sleep();
 			}
 			else {
@@ -1033,7 +1050,7 @@ export class AccountFilesService {
 	 * Uploads new file.
 	 * @param shareWithUser Username of another user to optionally share this file with.
 	 */
-	public upload (name: string, file: AccountFile, shareWithUser?: string) : {
+	public upload (name: string, file: AccountFile, shareWithUser?: string, metadata?: string) : {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
@@ -1137,6 +1154,7 @@ export class AccountFilesService {
 						{
 							id,
 							key: await key,
+							metadata,
 							owner: username
 						}
 					);

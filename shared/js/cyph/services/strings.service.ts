@@ -22,31 +22,31 @@ export class StringsService {
 	;
 
 	/** @ignore */
-	private readonly internalCompany: string			=
+	private readonly internalCompany: string					=
 		this.customBuildStrings.internalCompany ||
 		`Cyph`
 	;
 
 	/** @ignore */
-	private readonly internalFriend: string				=
+	private readonly internalFriend: string						=
 		this.customBuildStrings.internalFriend ||
 		`friend`
 	;
 
 	/** @ignore */
-	private readonly internalProduct: string			=
+	private readonly internalProduct: string					=
 		this.customBuildStrings.internalProduct ||
 		`Cyph`
 	;
 
 	/** @ignore */
-	private readonly internalProductShort: string		=
+	private readonly internalProductShort: string				=
 		this.customBuildStrings.internalProductShort ||
 		`Cyph`
 	;
 
 	/** @ignore */
-	private readonly internalSession: string			=
+	private readonly internalSession: string					=
 		this.customBuildStrings.internalSession ||
 		`cyph`
 	;
@@ -261,7 +261,7 @@ export class StringsService {
 	/** @see StringsService */
 	public readonly incomingPatientInfo: string			=
 		`Your doctor has shared this medical data to be saved in your account to auto-fill ` +
-		`forms on your behalf in the future. Continue?`
+		`forms on your behalf in the future. Would you like to accept it?`
 	;
 
 	/** @see StringsService */
@@ -563,6 +563,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly session: string						= `${this.internalSession}`;
+
+	/** @see StringsService */
+	public readonly share: string						= `Share`;
 
 	/** @see StringsService */
 	public readonly shareEhrData: string				=

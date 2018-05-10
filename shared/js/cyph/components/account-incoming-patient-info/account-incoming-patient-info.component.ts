@@ -45,7 +45,7 @@ export class AccountIncomingPatientInfoComponent implements OnInit {
 
 	/** Accepts incoming patient data. */
 	public async accept (redoxPatient: IAccountFileRecord&IAccountFileReference) : Promise<void> {
-		if (!(this.dialogService.confirm({
+		if (!(await this.dialogService.confirm({
 			content: this.stringsService.incomingPatientInfo,
 			title: this.stringsService.incomingPatientInfoTitle
 		}))) {
