@@ -766,6 +766,53 @@ message RedoxClinicalSummary {
 	repeated RedoxTypes.Allergy allergies = 1;
 }
 
+message RedoxMeta {
+	/** E.g. Scheduling, Results */
+	required string DataModel = 1;
+
+	/** E.g. New, Update, Activate, Deactivate */
+	required string EventType = 2;
+
+	string EventDateTime = 3;
+
+	bool Test = 4;
+
+	/** Where the message originated. Included in messages from Redox */
+	Source Source = 5;
+
+	/**
+	 * List of destinations to send your message to. All messages must have at least one
+	 * destination. Queries accept only one destination.
+	 * Required when sending data to Redox
+	 */
+	repeated Source Destinations = 6;
+
+	/**
+	 * Record in Redox that corresponds to the communication sent from the source to Redox.
+	 * Included in messages from Redox
+	 */
+	Message Message = 7;
+
+	/**
+	 * Record in Redox that corresponds to the communication sent from Redox to your destination.
+	 * Included in messages from Redox
+	 */
+	Transmission Transmission = 8;
+
+	message Message {
+		string ID = 1;
+	}
+
+	message Source {
+		required string ID = 1;
+
+		string Name = 2;
+	}
+
+	message Transmission {
+		string ID = 1;
+	}
+}
 /** @see https://developer.redoxengine.com/data-models/PatientSearch.html#Response */
 message RedoxPatient {
 	/** List of (emergency) contacts for the patient. */
@@ -1163,6 +1210,8 @@ message RedoxTypes {
 		/** Unique ID value. */
 		required string ID = 4;
 
+		bool IsActive = 9;
+
 		/** Type of ID. e.g. MRN, EPI. */
 		required string IDType = 5;
 
@@ -1186,6 +1235,111 @@ message RedoxTypes {
 
 		/** Office phone number. */
 		string Office = 3;
+	}
+
+	message Providers {
+		// TODO: separate Patient & Provider Demographics 
+		message Qualifications {
+			Identifier ID = 1;
+
+			/** E.g. MD */
+			string Code = 2;
+
+			//** E.g. http://hl7.org/fhir/v2/0360/2.7" */
+			string Codeset = 3;
+
+			string Description = 4;
+
+			/** Start date of the qualification. ISO 8601 format, e.g. 2001-09-11*/
+			string StartDate = 5;
+
+			/** End date of the qualification. ISO 8601 format, e.g. 2001-09-11*/
+			string EndDate = 5;
+
+		}
+
+		message Roles {
+			Identifier ID = 1;
+
+			Organization Organization = 2;
+
+			Specialties Specialties = 3;
+
+			Locations Locations = 4;
+
+			Services Services = 5;
+
+			Availability Availability = 6;
+
+			message Organization {
+				Identifier ID = 1;
+
+				string IsActive = 2;
+
+				/** E.g. Provider */
+				string Type = 4;
+
+				/** E.g. Redox Clinic */
+				string Name = 5;
+
+				Address Address = 6;
+			}
+
+			message Specialties {
+				string Code = 1;
+
+				/** E.g. SnomedCT */
+				string Codeset = 2;
+
+				/** E.g. General Medicine */
+				string Description = 3;
+			}
+
+			message Locations {
+				Identifier ID = 1;
+
+				/** One of Active, Suspended, Inactive*/
+				string Status = 2;
+
+				/** Location Name, e.g. Redox Clinic */
+				string Name = 3;
+
+				string Description = 4;
+
+				Address Address = 5;
+
+				repeated string EmailAddresses = 6;
+
+				repeated PhoneNumber PhoneNumber = 7;
+
+			}
+
+			message Services {
+				Identifier ID = 1;
+
+				/** Type of service that may be delivered or performed, e.g. Nutrition */
+				string Type = 2;
+
+				/** Description of the service */
+				string Description = 3;
+
+				PhoneNumber PhoneNumber = 4;
+
+			}
+
+			/** Times the service location is available */
+			message Availability {
+				/** List of days that this availability schedule applies to.
+					One of: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday **/
+				repeated string Days = 1;
+
+				/** Opening time of day. ISO 8601 Format */
+				string AvailableStartTime = 2;
+
+				/** Closing time of day. ISO 8601 Format */
+				string AvailableEndTime = 3;
+			}
+		}
 	}
 
 	/** Visit metadata. */
