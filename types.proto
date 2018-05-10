@@ -619,6 +619,7 @@ message Form {
 		/** Separator for concatenating element values when sending to another system. */
 		string idSeparator = 3;
 
+		/** Indicates whether this is a column or a row. */
 		bool isColumn = 4;
 	}
 
@@ -680,8 +681,7 @@ message Form {
 		uint32 width = 13;
 	}
 
-
-	/** Row or Column of elements. */
+	/** Row or column of elements. */
 	message ElementContainer {
 		/** @see Element */
 		repeated Element elements = 1;
@@ -692,6 +692,7 @@ message Form {
 		/** @see Component.idSeparator */
 		string idSeparator = 3;
 
+		/** @see Component.isColumn */
 		bool isColumn = 4;
 	}
 
@@ -741,7 +742,7 @@ message RedoxAppointment {
 	/** Patient data. */
 	message PatientType {
 		/** @see RedoxPatient.Demographics */
-		RedoxTypes.Demographics Demographics = 1;
+		RedoxTypes.Patient.Demographics Demographics = 1;
 
 		/** @see RedoxPatient.Identifiers */
 		repeated RedoxTypes.Identifier Identifiers = 2;
@@ -769,60 +770,71 @@ message RedoxClinicalSummary {
 	repeated RedoxTypes.Allergy allergies = 1;
 }
 
+/** Redox message metadata. */
 message RedoxMeta {
-	/** E.g. Scheduling, Results */
+	/**
+	 * Record in Redox that corresponds to the communication sent from the source to Redox.
+	 * Included in messages from Redox.
+	 */
+	message RedoxMessage {
+		/** ID. */
+		string ID = 1;
+	}
+
+	/** Redox source or destination. */
+	message RedoxSource {
+		/** ID. */
+		required string ID = 1;
+
+		/** Name. */
+		string Name = 2;
+	}
+
+	/**
+	 * Record in Redox that corresponds to the communication sent from Redox to your destination.
+	 * Included in messages from Redox.
+	 */
+	message RedoxTransmission {
+		/** ID. */
+		string ID = 1;
+	}
+
+	/** e.g. Scheduling, Results */
 	required string DataModel = 1;
 
-	/** E.g. New, Update, Activate, Deactivate */
+	/** e.g. New, Update, Activate, Deactivate */
 	required string EventType = 2;
 
+	/** ISO 8601 timestamp. */
 	string EventDateTime = 3;
 
+	/** Indicates whether message was from a test environment. */
 	bool Test = 4;
 
-	/** Where the message originated. Included in messages from Redox */
+	/** Where the message originated. Included in messages from Redox. */
 	RedoxSource Source = 5;
 
 	/**
 	 * List of destinations to send your message to. All messages must have at least one
 	 * destination. Queries accept only one destination.
-	 * Required when sending data to Redox
+	 * Required when sending data to Redox.
 	 */
 	repeated RedoxSource Destinations = 6;
 
-	/**
-	 * Record in Redox that corresponds to the communication sent from the source to Redox.
-	 * Included in messages from Redox
-	 */
+	/** @see RedoxMessage */
 	RedoxMessage Message = 7;
 
-	/**
-	 * Record in Redox that corresponds to the communication sent from Redox to your destination.
-	 * Included in messages from Redox
-	 */
+	/** @see RedoxTransmission */
 	RedoxTransmission Transmission = 8;
-
-	message RedoxMessage {
-		string ID = 1;
-	}
-
-	message RedoxSource {
-		required string ID = 1;
-
-		string Name = 2;
-	}
-
-	message RedoxTransmission {
-		string ID = 1;
-	}
 }
+
 /** @see https://developer.redoxengine.com/data-models/PatientSearch.html#Response */
 message RedoxPatient {
 	/** List of (emergency) contacts for the patient. */
 	repeated RedoxTypes.Contact Contacts = 1;
 
 	/** Descriptive patient information - modeled from Redox. */
-	RedoxTypes.Demographics Demographics = 2;
+	RedoxTypes.Patient.Demographics Demographics = 2;
 
 	/** Patient identifiers. */
 	repeated RedoxTypes.Identifier Identifiers = 3;
@@ -967,7 +979,7 @@ message RedoxTypes {
 		/** @see Address */
 		Address Address = 1;
 
-		/** List of emails for the contact. */
+		/** List of email addresses for the contact. */
 		repeated string EmailAddresses = 2;
 
 		/** First name. */
@@ -987,60 +999,6 @@ message RedoxTypes {
 
 		/** Role of this contact for the patient. e.g. Employer, Emergency Contact. */
 		repeated string Roles = 8;
-	}
-
-	/** Descriptive patient information - modeled from Redox. */
-	message Demographics {
-		/** The patient's address. */
-		Address Address = 1;
-
-		/** Reference: http://www.nationsonline.org/oneworld/country_code_list.htm */
-		repeated string Citizenship = 2;
-
-		/** Date and time the patient was proclaimed deceased. (ISO 8601) */
-		string DeathDateTime = 3;
-
-		/** Patient's date of birth. (ISO 8601) */
-		string DOB = 4;
-
-		/** List of emails for the patient. */
-		repeated string EmailAddresses = 5;
-
-		/** First name. */
-		string FirstName = 6;
-
-		/** He's dead, Jim. */
-		bool IsDeceased = 7;
-
-		/** Is the patient hispanic? */
-		bool IsHispanic = 8;
-
-		/** Patient's primary spoken language. In ISO 639-1 alpha values (e.g. 'en'). */
-		string Language = 9;
-
-		/** Last name. */
-		string LastName = 10;
-
-		/** Supported values: http://www.hl7.org/FHIR/v2/0002/index.html */
-		string MaritalStatus = 11;
-
-		/** Middle name - multiple middle names concatenated into this field. */
-		string MiddleName = 12;
-
-		/** @see PhoneNumber */
-		PhoneNumber PhoneNumber = 13;
-
-		/** The patient's race. */
-		string Race = 14;
-
-		/**
-		 * The patient's sex.
-		 * One of the following: "Female", "Male", "Unknown", "Other" (Redox).
-		 */
-		string Sex = 15;
-
-		/** The patient's social security number. */
-		string SSN = 16;
 	}
 
 	/** Identifiers - from Redox. */
@@ -1199,35 +1157,6 @@ message RedoxTypes {
 		PhoneNumber PhoneNumber = 9;
 	}
 
-	/** A care provider. */
-	message Provider {
-		/** @see Address */
-		Address Address = 1;
-
-		/** e.g. M.D., Psy.D. */
-		repeated string Credentials = 2;
-
-		/** First name. */
-		string FirstName = 3;
-
-		/** Unique ID value. */
-		required string ID = 4;
-
-		bool IsActive = 9;
-
-		/** Type of ID. e.g. MRN, EPI. */
-		required string IDType = 5;
-
-		/** Last name. */
-		string LastName = 6;
-
-		/** @see Location */
-		Location Location = 7;
-
-		/** @see PhoneNumber */
-		PhoneNumber PhoneNumber = 8;
-	}
-
 	/** Someone's phone number. */
 	message PhoneNumber {
 		/** Home phone number. */
@@ -1240,109 +1169,220 @@ message RedoxTypes {
 		string Office = 3;
 	}
 
-	message Providers {
-		// TODO: separate Patient & Provider Demographics 
-		message Qualifications {
-			Identifier ID = 1;
+	/** A patient. */
+	message Patient {
+		/** Descriptive patient information. */
+		message Demographics {
+			/** The patient's address. */
+			Address Address = 1;
 
-			/** E.g. MD */
+			/** Reference: http://www.nationsonline.org/oneworld/country_code_list.htm */
+			repeated string Citizenship = 2;
+
+			/** Date and time the patient was proclaimed deceased. (ISO 8601) */
+			string DeathDateTime = 3;
+
+			/** Patient's date of birth. (ISO 8601) */
+			string DOB = 4;
+
+			/** List of email addresses for the patient. */
+			repeated string EmailAddresses = 5;
+
+			/** First name. */
+			string FirstName = 6;
+
+			/** He's dead, Jim. */
+			bool IsDeceased = 7;
+
+			/** Is the patient hispanic? */
+			bool IsHispanic = 8;
+
+			/** Patient's primary spoken language. In ISO 639-1 alpha values (e.g. 'en'). */
+			string Language = 9;
+
+			/** Last name. */
+			string LastName = 10;
+
+			/** Supported values: http://www.hl7.org/FHIR/v2/0002/index.html */
+			string MaritalStatus = 11;
+
+			/** Middle name - multiple middle names concatenated into this field. */
+			string MiddleName = 12;
+
+			/** @see PhoneNumber */
+			PhoneNumber PhoneNumber = 13;
+
+			/** The patient's race. */
+			string Race = 14;
+
+			/**
+			* The patient's sex.
+			* One of the following: "Female", "Male", "Unknown", "Other" (Redox).
+			*/
+			string Sex = 15;
+
+			/** The patient's social security number. */
+			string SSN = 16;
+		}
+	}
+
+	/** A care provider. */
+	message Provider {
+		/** Provider's qualifications obtained by training and certification. */
+		message Qualifications {
+			/** e.g. MD */
 			string Code = 2;
 
-			//** E.g. http://hl7.org/fhir/v2/0360/2.7" */
+			/** e.g. http://hl7.org/fhir/v2/0360/2.7" */
 			string Codeset = 3;
 
+			/** Description. */
 			string Description = 4;
 
-			/** Start date of the qualification. ISO 8601 format, e.g. 2001-09-11*/
-			string StartDate = 5;
-
-			/** End date of the qualification. ISO 8601 format, e.g. 2001-09-11*/
+			/** End date of the qualification. ISO 8601 format, e.g. 2001-09-11 */
 			string EndDate = 6;
 
-		}
-
-		message Roles {
+			/** @see Identifier */
 			Identifier ID = 1;
 
-			Organization Org = 2;
+			/** Start date of the qualification. ISO 8601 format, e.g. 2001-09-11 */
+			string StartDate = 5;
+		}
 
-			RedoxSpecialties Specialties = 3;
-
-			RedoxLocations Locations = 4;
-
-			RedoxServices Services = 5;
-
-			LocationAvailability Availability = 6;
-
-			message Organization {
-				Identifier ID = 1;
-
-				string IsActive = 2;
-
-				/** E.g. Provider */
-				string Type = 4;
-
-				/** E.g. Redox Clinic */
-				string Name = 5;
-
-				Address Address = 6;
-			}
-
-			message RedoxSpecialties {
-				string Code = 1;
-
-				/** E.g. SnomedCT */
-				string Codeset = 2;
-
-				/** E.g. General Medicine */
-				string Description = 3;
-			}
-
-			message RedoxLocations {
-				Identifier ID = 1;
-
-				/** One of Active, Suspended, Inactive*/
-				string Status = 2;
-
-				/** Location Name, e.g. Redox Clinic */
-				string Name = 3;
-
-				string Description = 4;
-
-				Address Address = 5;
-
-				repeated string EmailAddresses = 6;
-
-				repeated PhoneNumber PhoneNumber = 7;
-
-			}
-
-			message RedoxServices {
-				Identifier ID = 1;
-
-				/** Type of service that may be delivered or performed, e.g. Nutrition */
-				string Type = 2;
-
-				/** Description of the service */
-				string Description = 3;
-
-				PhoneNumber PhoneNumber = 4;
-
-			}
-
+		/** Roles that the provider is associated with. */
+		message Roles {
 			/** Times the service location is available */
 			message LocationAvailability {
-				/** List of days that this availability schedule applies to.
-					One of: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday **/
-				repeated string Days = 1;
+				/** Closing time of day. ISO 8601 Format. */
+				string AvailableEndTime = 3;
 
-				/** Opening time of day. ISO 8601 Format */
+				/** Opening time of day. ISO 8601 Format. */
 				string AvailableStartTime = 2;
 
-				/** Closing time of day. ISO 8601 Format */
-				string AvailableEndTime = 3;
+				/**
+				 * List of days that this availability schedule applies to.
+				 * One of: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday.
+				 */
+				repeated string Days = 1;
 			}
+
+			/** Organization where the role is available. */
+			message Organization {
+				/** @see Address */
+				Address Address = 6;
+
+				/** @see Identifier */
+				Identifier ID = 1;
+
+				/** Whether this role is in active use. */
+				string IsActive = 2;
+
+				/** e.g. Redox Clinic */
+				string Name = 5;
+
+				/** e.g. Provider */
+				string Type = 4;
+			}
+
+			/** The location(s) at which the provider provides care. */
+			message RedoxLocations {
+				/** @see Address */
+				Address Address = 5;
+
+				/** Description. */
+				string Description = 4;
+
+				/** List of email addresses for the location. */
+				repeated string EmailAddresses = 6;
+
+				/** @see Identifier */
+				Identifier ID = 1;
+
+				/** Location Name, e.g. Redox Clinic. */
+				string Name = 3;
+
+				/** @see PhoneNumber */
+				repeated PhoneNumber PhoneNumber = 7;
+
+				/** One of Active, Suspended, Inactive. */
+				string Status = 2;
+			}
+
+			/**
+			 * The list of healthcare services that this worker provides
+			 * for this role's Organization/Location(s).
+			 */
+			message RedoxServices {
+				/** Description of the service. */
+				string Description = 3;
+
+				/** @see Identifier */
+				Identifier ID = 1;
+
+				/** @see PhoneNumber */
+				PhoneNumber PhoneNumber = 4;
+
+				/** Type of service that may be delivered or performed, e.g. Nutrition. */
+				string Type = 2;
+			}
+
+			/** Coded representation of the specialty. */
+			message RedoxSpecialties {
+				/** Code. */
+				string Code = 1;
+
+				/** e.g. SnomedCT. */
+				string Codeset = 2;
+
+				/** e.g. General Medicine. */
+				string Description = 3;
+			}
+
+			/** @see LocationAvailability */
+			LocationAvailability Availability = 6;
+
+			/** @see Identifier */
+			Identifier ID = 1;
+
+			/** @see RedoxLocations */
+			RedoxLocations Locations = 4;
+
+			/** @see Organization */
+			Organization Org = 2;
+
+			/** @see RedoxServices */
+			RedoxServices Services = 5;
+
+			/** @see RedoxSpecialties */
+			RedoxSpecialties Specialties = 3;
 		}
+
+		/** @see Address */
+		Address Address = 1;
+
+		/** e.g. M.D., Psy.D. */
+		repeated string Credentials = 2;
+
+		/** First name. */
+		string FirstName = 3;
+
+		/** Unique ID value. */
+		required string ID = 4;
+
+		/** Type of ID. e.g. MRN, EPI. */
+		required string IDType = 5;
+
+		/** Whether the entry for this provider is active or inactive. */
+		bool IsActive = 9;
+
+		/** Last name. */
+		string LastName = 6;
+
+		/** @see Location */
+		Location Location = 7;
+
+		/** @see PhoneNumber */
+		PhoneNumber PhoneNumber = 8;
 	}
 
 	/** Visit metadata. */
