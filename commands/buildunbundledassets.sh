@@ -47,6 +47,7 @@ typescriptAssets="$(
 		echo cyph/proto/index;
 		echo cyph/util/index;
 		echo standalone/analytics;
+		echo standalone/node-polyfills;
 		grep -roP "importScripts\('/assets/js/.*?\.js'\)" shared/js |
 			perl -pe "s/^.*?'\/assets\/js\/(.*?)\.js'.*/\1/g" |
 			grep -vP '^standalone/global$' \
