@@ -114,6 +114,23 @@
 								}
 							]
 						},
+						"prod": {
+							"optimization": true,
+							"outputHashing": "all",
+							"sourceMap": false,
+							"extractCss": true,
+							"namedChunks": false,
+							"aot": true,
+							"extractLicenses": true,
+							"vendorChunk": false,
+							"buildOptimizer": true,
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.prod.ts"
+								}
+							]
+						},
 						"production": {
 							"optimization": true,
 							"outputHashing": "all",
@@ -196,6 +213,9 @@
 						},
 						"master": {
 							"browserTarget": "cyph.com:build:master"
+						},
+						"prod": {
+							"browserTarget": "cyph.com:build:prod"
 						},
 						"production": {
 							"browserTarget": "cyph.com:build:production"
