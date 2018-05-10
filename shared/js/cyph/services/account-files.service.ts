@@ -187,7 +187,10 @@ export class AccountFilesService {
 		[AccountFileRecord.RecordTypes.EhrApiKey]: {
 			blockAnonymous: false,
 			description: 'EHR Access',
-			isOfType: (file: any) => file.apiKey === 'string' && typeof file.isMaster === 'boolean',
+			isOfType: (file: any) =>
+				typeof file.apiKey === 'string' &&
+				typeof file.isMaster === 'boolean'
+			,
 			mediaType: 'cyph/ehr-api-key',
 			proto: EhrApiKey,
 			recordType: AccountFileRecord.RecordTypes.EhrApiKey,
