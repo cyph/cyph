@@ -112,75 +112,78 @@
 	<br />
 	<br />
 
-	<div
-		fxLayout='row'
-		fxLayoutAlign='center center'
-		*ngIf='envService.environment.customBuild?.config.pro'
-	>
-		<div fxFlex fxFlex.gt-md='50' fxLayout='column'>
-			<div fxLayout='row' fxLayoutAlign='center center'>
-				<mat-slide-toggle [(ngModel)]='advancedFeatures' cyphTranslate>
-					Advanced Features
-				</mat-slide-toggle>
-			</div>
+	<div fxLayout='row' fxLayoutAlign='center center'>
+		<ng-container *ngIf='!envService.environment.customBuild?.config.pro; else proContent'>
+			<ng-content></ng-content>
+		</ng-container>
+		<ng-template #proContent>
+			<div fxFlex fxFlex.gt-md='50' fxLayout='column'>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<mat-slide-toggle [(ngModel)]='advancedFeatures' cyphTranslate>
+						Advanced Features
+					</mat-slide-toggle>
+				</div>
 
-			<div fxLayout='row' fxLayoutGap='16px' *ngIf='advancedFeatures'>
-				<mat-form-field fxFlex fxLayout='column'>
-					<textarea
-						matInput
-						cyphTranslate
-						[(ngModel)]='queuedMessageDraft'
-						placeholder='Queue up first message'
-						rows='3'
-					></textarea>
-				</mat-form-field>
-				<div fxLayout='row'>
+				<div fxLayout='row' fxLayoutGap='16px' *ngIf='advancedFeatures'>
+					<mat-form-field fxFlex fxLayout='column'>
+						<textarea
+							matInput
+							cyphTranslate
+							[(ngModel)]='queuedMessageDraft'
+							placeholder='Queue up first message'
+							rows='3'
+						></textarea>
+					</mat-form-field>
+					<div fxLayout='row'>
+						<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
+							<button
+								mat-icon-button
+								matTooltip='Save'
+								cyphTranslate
+								(click)='chatService.setQueuedMessage(queuedMessageDraft)'
+							>
+								<mat-icon>save</mat-icon>
+							</button>
+							<mat-button-toggle
+								matTooltip='Self-Destruct'
+								cyphTranslate
+								[checked]='chatService.chatSelfDestruct'
+								(change)='
+									chatService.chatSelfDestruct = !chatService.chatSelfDestruct
+								'
+							>
+								<mat-icon>timer</mat-icon>
+							</mat-button-toggle>
+						</div>
+						<div
+							*ngIf='chatService.chatSelfDestruct'
+							class='self-destruct-timer'
+						>
+							<mat-form-field>
+								<input
+									matInput
+									[(ngModel)]='chatService.chatSelfDestructTimeout'
+									name='timer'
+									max='9999'
+									type='number'
+								/>
+							</mat-form-field>
+							&nbsp;
+							<span cyphTranslate>Seconds</span>
+						</div>
+					</div>
 					<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
-						<button
-							mat-icon-button
-							matTooltip='Save'
-							cyphTranslate
-							(click)='chatService.setQueuedMessage(queuedMessageDraft)'
-						>
-							<mat-icon>save</mat-icon>
-						</button>
 						<mat-button-toggle
-							matTooltip='Self-Destruct'
+							matTooltip='Walkie Talkie Mode'
 							cyphTranslate
-							[checked]='chatService.chatSelfDestruct'
-							(change)='chatService.chatSelfDestruct = !chatService.chatSelfDestruct'
+							[checked]='chatService.walkieTalkieMode'
+							(change)='chatService.walkieTalkieMode = !chatService.walkieTalkieMode'
 						>
-							<mat-icon>timer</mat-icon>
+							<mat-icon svgIcon='walkie-talkie'></mat-icon>
 						</mat-button-toggle>
 					</div>
-					<div
-						*ngIf='chatService.chatSelfDestruct'
-						class='self-destruct-timer'
-					>
-						<mat-form-field>
-							<input
-								matInput
-								[(ngModel)]='chatService.chatSelfDestructTimeout'
-								name='timer'
-								max='9999'
-								type='number'
-							/>
-						</mat-form-field>
-						&nbsp;
-						<span cyphTranslate>Seconds</span>
-					</div>
-				</div>
-				<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
-					<mat-button-toggle
-						matTooltip='Walkie Talkie Mode'
-						cyphTranslate
-						[checked]='chatService.walkieTalkieMode'
-						(change)='chatService.walkieTalkieMode = !chatService.walkieTalkieMode'
-					>
-						<mat-icon svgIcon='walkie-talkie'></mat-icon>
-					</mat-button-toggle>
 				</div>
 			</div>
-		</div>
+		</ng-template>
 	</div>
 </div>
