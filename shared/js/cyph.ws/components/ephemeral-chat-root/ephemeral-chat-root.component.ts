@@ -5,6 +5,7 @@ import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
 import {fadeIn} from '../../../cyph/animations';
 import {States as ChatStates} from '../../../cyph/chat/enums';
+import {AffiliateService} from '../../../cyph/services/affiliate.service';
 import {ChannelService} from '../../../cyph/services/channel.service';
 import {ChatEnvService} from '../../../cyph/services/chat-env.service';
 import {ChatMessageGeometryService} from '../../../cyph/services/chat-message-geometry.service';
@@ -38,6 +39,7 @@ import {ChatRootStates} from '../../enums';
 @Component({
 	animations: [fadeIn],
 	providers: [
+		AffiliateService,
 		ChannelService,
 		ChatMessageGeometryService,
 		ChatService,
@@ -267,6 +269,9 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService,
+
+		/** @see StringsService */
+		public readonly affiliateService: AffiliateService,
 
 		/** @see AppService */
 		public readonly appService: AppService,

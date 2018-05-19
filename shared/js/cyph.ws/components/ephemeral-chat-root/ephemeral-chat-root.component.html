@@ -42,8 +42,8 @@
 			*ngIf='appService.chatRootState === chatRootStates.waitingForFriend'
 			[@fadeIn]='"in"'
 		>
-			<a href='https://go.nordvpn.net/SH1F8'>
-				Get Cyph's recommended VPN service - NordVPN.
+			<a [href]='affiliateService.nordVPN.links.threeyear'>
+				{{affiliateService.nordVPN.copy.recommended}}
 			</a>
 		</cyph-link-connection>
 
