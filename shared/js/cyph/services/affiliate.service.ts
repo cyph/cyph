@@ -8,20 +8,16 @@ import {Injectable} from '@angular/core';
  */
 @Injectable()
 export class AffiliateService {
-	/** @see AffiliateService */
-	public readonly accept: string						= `accept`;
-
+	/** NordVPN Affiliate Links & Ad Copy */
 	public readonly nordVPN			= {
 		copy: {
-			recommended: "Get Cyph's recommended VPN service - NordVPN",
-			doublevpn: 'Double VPN Encryption'
+			doublevpn: 'Double VPN Encryption',
+			recommended: "Get Cyph's recommended VPN service - NordVPN"
 		},
-		
 		links: {
-			threeyear: 'https://go.nordvpn.net/SH1F8',
-			doublevpn: 'https://go.nordvpn.net/SH1FK'
+			doublevpn: 'https://go.nordvpn.net/SH1FK',
+			threeyear: 'https://go.nordvpn.net/SH1F8'
 		}
 	};
-
 	constructor () {}
 }
