@@ -13,10 +13,13 @@ export class AffiliateService {
 
 	public readonly nordVPN			= {
 		copy: {
-			recommended: "Get Cyph's recommended VPN service - NordVPN."
+			recommended: "Get Cyph's recommended VPN service - NordVPN",
+			doublevpn: 'Double VPN Encryption'
 		},
+		
 		links: {
 			threeyear: 'https://go.nordvpn.net/SH1F8',
+			doublevpn: 'https://go.nordvpn.net/SH1FK'
 		}
 	};
 

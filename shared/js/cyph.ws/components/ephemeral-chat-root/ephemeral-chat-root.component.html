@@ -42,8 +42,18 @@
 			*ngIf='appService.chatRootState === chatRootStates.waitingForFriend'
 			[@fadeIn]='"in"'
 		>
-			<a class='affiliate' [href]='affiliateService.nordVPN.links.threeyear'>
+			<a
+				*ngIf='splitTestingService.groupA'
+				class='affiliate'
+				[href]='affiliateService.nordVPN.links.threeyear'
+			>
 				{{affiliateService.nordVPN.copy.recommended}}
+			</a>
+			<a *ngIf='splitTestingService.groupB'
+				class='affiliate'
+				[href]='affiliateService.nordVPN.links.doublevpn'
+			>
+				{{affiliateService.nordVPN.copy.doublevpn}}
 			</a>
 		</cyph-link-connection>
 
