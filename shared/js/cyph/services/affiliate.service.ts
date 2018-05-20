@@ -1,6 +1,5 @@
-/* tslint:disable:max-file-line-count */
-
 import {Injectable} from '@angular/core';
+import {translate} from '../util/translate';
 
 
 /**
@@ -8,16 +7,17 @@ import {Injectable} from '@angular/core';
  */
 @Injectable()
 export class AffiliateService {
-	/** NordVPN Affiliate Links & Ad Copy */
-	public readonly nordVPN			= {
+	/** NordVPN affiliate links & ad copy. */
+	public readonly nordVPN	= {
 		copy: {
-			doublevpn: 'Double VPN Encryption',
-			recommended: "Get Cyph's recommended VPN service - NordVPN"
+			doublevpn: translate('Double VPN Encryption'),
+			recommended: translate("Get Cyph's recommended VPN service - NordVPN")
 		},
 		links: {
 			doublevpn: 'https://go.nordvpn.net/SH1FK',
 			threeyear: 'https://go.nordvpn.net/SH1F8'
 		}
 	};
+
 	constructor () {}
 }
