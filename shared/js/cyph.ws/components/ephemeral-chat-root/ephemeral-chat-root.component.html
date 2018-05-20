@@ -29,10 +29,15 @@
 			*ngIf='appService.chatRootState === chatRootStates.chat'
 			[@fadeIn]='"in"'
 		>
-			<cyph-contact to='feedback' *ngIf='splitTestingService.groupA'></cyph-contact>
-			<cyph-signup-form *ngIf='splitTestingService.groupB'>
-				{{stringsService.signupMessage}}
-			</cyph-signup-form>
+			<cyph-contact
+				to='feedback'
+				*ngIf='splitTestingService.getValue("chatendmessage"); else signupForm'
+			></cyph-contact>
+			<ng-template #signupForm>
+				<cyph-signup-form>
+					{{stringsService.signupMessage}}
+				</cyph-signup-form>
+			</ng-template>
 		</cyph-chat-main>
 
 		<cyph-link-connection
@@ -42,18 +47,8 @@
 			*ngIf='appService.chatRootState === chatRootStates.waitingForFriend'
 			[@fadeIn]='"in"'
 		>
-			<a
-				*ngIf='splitTestingService.groupA'
-				class='affiliate'
-				[href]='affiliateService.nordVPN.links.threeyear'
-			>
-				{{affiliateService.nordVPN.copy.recommended}}
-			</a>
-			<a *ngIf='splitTestingService.groupB'
-				class='affiliate'
-				[href]='affiliateService.nordVPN.links.doublevpn'
-			>
-				{{affiliateService.nordVPN.copy.doublevpn}}
+			<a class='affiliate' [href]='affiliateService.vpnLink.href'>
+				{{affiliateService.vpnLink.text}}
 			</a>
 		</cyph-link-connection>
 

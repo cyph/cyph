@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {translate} from '../util/translate';
+import {SplitTestingService} from './split-testing.service';
 
 
 /**
@@ -7,8 +8,8 @@ import {translate} from '../util/translate';
  */
 @Injectable()
 export class AffiliateService {
-	/** NordVPN affiliate links & ad copy. */
-	public readonly nordVPN	= {
+	/** @ignore */
+	private readonly nordVPN	= {
 		copy: {
 			doublevpn: translate('Double VPN Encryption'),
 			recommended: translate("Get Cyph's recommended VPN service - NordVPN")
@@ -19,5 +20,14 @@ export class AffiliateService {
 		}
 	};
 
-	constructor () {}
+	/** VPN affiliate link and ad copy. */
+	public readonly vpnLink	= this.splitTestingService.getValue('affiliatevpn', [
+		{href: this.nordVPN.links.doublevpn, text: this.nordVPN.copy.doublevpn},
+		{href: this.nordVPN.links.threeyear, text: this.nordVPN.copy.recommended}
+	]);
+
+	constructor (
+		/** @ignore */
+		private readonly splitTestingService: SplitTestingService
+	) {}
 }
