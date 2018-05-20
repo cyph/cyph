@@ -23,7 +23,6 @@
  */
 
 import 'core-js/client/shim';
-import 'web-animations-js';
 import 'zone.js/dist/zone';
 
 

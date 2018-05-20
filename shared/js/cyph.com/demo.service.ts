@@ -14,7 +14,7 @@ import {ChatData} from './chat-data';
 @Injectable()
 export class DemoService {
 	/** Desktop chat UI data. */
-	public desktop: ChatData;
+	public readonly desktop: ChatData;
 
 	/** Data URI to use for placeholder for Facebook joke. */
 	public readonly facebookPicDataUri: Promise<string>		= (
@@ -109,7 +109,7 @@ export class DemoService {
 	])();
 
 	/** Mobile chat UI data. */
-	public mobile: ChatData;
+	public readonly mobile: ChatData;
 
 	/** Runs the demo. */
 	public async run (facebookJoke: () => void) : Promise<void> {
