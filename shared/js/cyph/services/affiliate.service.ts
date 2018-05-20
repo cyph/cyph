@@ -3,16 +3,14 @@ import {translate} from '../util/translate';
 import {SplitTestingService} from './split-testing.service';
 
 
-/**
- * URLs and copy for affiliate programs
- */
+/** URLs and copy for affiliate programs. */
 @Injectable()
 export class AffiliateService {
 	/** @ignore */
 	private readonly nordVPN	= {
 		copy: {
 			doublevpn: translate('Double VPN Encryption'),
-			recommended: translate("Get Cyph's recommended VPN service - NordVPN")
+			recommended: translate("Get Cyph's recommended VPN service — NordVPN")
 		},
 		links: {
 			doublevpn: 'https://go.nordvpn.net/SH1FK',

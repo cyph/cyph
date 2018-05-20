@@ -270,7 +270,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService,
 
-		/** @see StringsService */
+		/** @see AffiliateService */
 		public readonly affiliateService: AffiliateService,
 
 		/** @see AppService */

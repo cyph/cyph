@@ -24,6 +24,7 @@ import {SearchBarComponent} from '../components/search-bar';
 import {SignupFormComponent} from '../components/signup-form';
 import {RouterLinkDirective} from '../directives/router-link.directive';
 import {TranslateDirective} from '../directives/translate.directive';
+import {AffiliateService} from '../services/affiliate.service';
 import {AnalyticsService} from '../services/analytics.service';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
@@ -121,6 +122,7 @@ import {CyphWebModule} from './cyph-web.module';
 		CyphWebModule
 	],
 	providers: [
+		AffiliateService,
 		AnalyticsService,
 		ConfigService,
 		EnvService,
