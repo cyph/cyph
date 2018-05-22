@@ -17,7 +17,7 @@ export class SplitTestingService {
 			throw new Error('No values.');
 		}
 
-		const index	= Math.floor(values.length * this.group);
+		const index	= Math.floor(values.length * random());
 
 		this.analyticsService.sendEvent({
 			eventAction: index.toString(),
@@ -28,9 +28,6 @@ export class SplitTestingService {
 
 		return values[index];
 	});
-
-	/** @ignore */
-	private readonly group: number		= random();
 
 	/**
 	 * Gets value based on split testing group and logs analytics event.
