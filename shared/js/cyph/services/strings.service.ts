@@ -549,7 +549,7 @@ export class StringsService {
 	public readonly save: string						= `save`;
 
 	/** @see StringsService */
-	public readonly saveUpperCase: string				= `save`;
+	public readonly saveUpperCase: string				= `Save`;
 
 	/** @see StringsService */
 	public readonly search: string						= `Search`;
