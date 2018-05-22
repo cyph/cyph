@@ -1,6 +1,7 @@
 <form
 	ngNativeValidate
-	fxLayoutGap='16px'
+	fxLayout='column'
+	fxLayoutGap='32px'
 	(submit)='onSubmit()'
 	*ngIf='form'
 >
@@ -17,7 +18,9 @@
 			*ngFor='let container of component.containers; trackBy: trackByIndex'
 		>
 			<div
+				fxFlex
 				[fxLayout]='container.isColumn ? "column" : "row"'
+				fxLayoutAlign='center'
 				fxLayoutGap='16px'
 				[class]='container.isColumn ? "column" : "row"'
 			>
@@ -215,6 +218,7 @@
 			</div>
 		</div>
 	</div>
+	<br />
 	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isDisabled'>
 		<button
 			mat-raised-button
