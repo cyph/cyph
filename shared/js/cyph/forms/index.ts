@@ -323,7 +323,7 @@ export const ssn		= (id: string = 'SSN') : Form.IElement => {
 			placeholderChar: '#',
 			showMask: true
 		},
-		width: 15
+		width: 20
 	});
 };
 
