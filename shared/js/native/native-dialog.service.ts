@@ -82,6 +82,10 @@ export class NativeDialogService implements DialogService {
 		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<boolean> {
+		if (closeFunction) {
+			throw new Error('NativeDialogService.confirm closeFunction is unsupported.');
+		}
+
 		return this.lock(async () => {
 			return !!(await confirm({
 				cancelButtonText: o.ok !== undefined ? o.cancel : this.stringsService.cancel,
