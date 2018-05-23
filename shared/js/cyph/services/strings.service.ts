@@ -97,6 +97,9 @@ export class StringsService {
 	public readonly continueDialogAction: string		= `continue`;
 
 	/** @see StringsService */
+	public readonly continuePrompt: string				= `Continue?`;
+
+	/** @see StringsService */
 	public readonly currentAppointment: string			= `Current Appointment`;
 
 	/** @see StringsService */
@@ -478,9 +481,15 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly p2pWarning: string					=
-		`This will involve sharing your IP address with your ${this.internalFriend} ` +
-		`(which isn't a problem unless you're actively hiding ` +
-		`your current location from them). Continue?`
+		`This may involve sharing your IP address with your ${this.internalFriend}. ` +
+		`Proceed if you trust your ${this.internalFriend}. `
+	;
+
+	/** @see StringsService */
+	public readonly p2pWarningVPN: string				=
+		`This may involve sharing your IP address with your ${this.internalFriend}. ` +
+		`Proceed if you trust your ${this.internalFriend} or hide your IP by` +
+		` [connecting through a VPN](https://go.nordvpn.net/SH1F4). `
 	;
 
 	/** @see StringsService */

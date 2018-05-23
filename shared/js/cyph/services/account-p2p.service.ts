@@ -6,6 +6,7 @@ import {sleep} from '../util/wait';
 import {AccountSessionService} from './account-session.service';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
+import {EnvService} from './env.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {P2PService} from './p2p.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
@@ -61,6 +62,7 @@ export class AccountP2PService extends P2PService {
 	constructor (
 		chatService: ChatService,
 		dialogService: DialogService,
+		envService: EnvService,
 		p2pWebRTCService: P2PWebRTCService,
 		sessionCapabilitiesService: SessionCapabilitiesService,
 		sessionInitService: SessionInitService,
@@ -75,6 +77,7 @@ export class AccountP2PService extends P2PService {
 		super(
 			chatService,
 			dialogService,
+			envService,
 			p2pWebRTCService,
 			sessionCapabilitiesService,
 			sessionInitService,
