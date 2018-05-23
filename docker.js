@@ -61,6 +61,13 @@ const args	= {
 	site: process.argv[(process.argv.indexOf('--site') + 1) || undefined]
 };
 
+const shellCommandArgs		= process.argv.
+	slice(3).
+	filter(s => s !== '--background' && s !== '--no-updates').
+	map(s => s.indexOf("'") ? `"${s.replace(/"/g, '\\"')}"` : `'${s}'`).
+	join(' ')
+;
+
 const isWindows				= process.platform === 'win32';
 const homeDir				= os.homedir();
 const backupDir				= path.join(homeDir, '.cyphbackup');
@@ -189,13 +196,7 @@ const shellScripts			= {
 	command: `
 		source ~/.bashrc
 		${windowsWorkaround}
-		/cyph/commands/${commandScript} ${
-			process.argv.
-				slice(3).
-				filter(s => s !== '--background' && s !== '--no-updates').
-				map(s => s.indexOf("'") ? `"${s.replace(/"/g, '\\"')}"` : `'${s}'`).
-				join(' ')
-		}
+		/cyph/commands/${commandScript} ${shellCommandArgs}
 		notify 'Command complete: ${args.command}' &> /dev/null
 	`,
 	libUpdate: {
@@ -433,6 +434,10 @@ switch (args.command) {
 
 		exitCleanup	= () => fs.appendFileSync(agseTempFile);
 		initPromise	= runScript(shellScripts.agseInit);
+		break;
+
+	case 'editimage':
+		editImage(shellCommandArgs);
 		break;
 
 	case 'kill':
