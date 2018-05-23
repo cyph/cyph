@@ -25,7 +25,7 @@
 				[class]='container.isColumn ? "column" : "row"'
 			>
 				<div
-					[fxFlex]='o.noGrow ? "nogrow" : (o.width || 100)'
+					[fxFlex]='o.noGrow ? "nogrow" : (o.width || "")'
 					fxLayout='column'
 					*ngFor='let o of container.elements; trackBy: trackByIndex'
 				>
