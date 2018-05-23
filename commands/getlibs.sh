@@ -308,7 +308,7 @@ cd @types
 for d in * ; do if [ ! -f ${d}/package.json ] ; then
 cat > ${d}/package.json << EOM
 {
-	"name": "${d}",
+	"name": "@types/${d}",
 	"version": "1.0.0",
 	"license": "Ms-RSL"
 }
