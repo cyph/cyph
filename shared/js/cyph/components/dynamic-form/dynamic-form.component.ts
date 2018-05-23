@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '@angular/core';
 import memoize from 'lodash-es/memoize';
+import * as mexp from 'math-expression-evaluator';
 import * as msgpack from 'msgpack-lite';
 import {IAsyncValue} from '../../iasync-value';
 import {MaybePromise} from '../../maybe-promise-type';
@@ -10,6 +11,7 @@ import {StringsService} from '../../services/strings.service';
 import {trackByIndex} from '../../track-by/track-by-index';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {getOrSetDefault} from '../../util/get-or-set-default';
+import {parse} from '../../util/serialization';
 import {timestampToDate} from '../../util/time';
 import {uuid} from '../../util/uuid';
 
@@ -28,6 +30,40 @@ export class DynamicFormComponent implements OnInit {
 
 	/** @ignore */
 	private readonly maskCache: Map<Uint8Array, any>		= new Map<Uint8Array, any>();
+
+	/** @ignore */
+	private readonly processCalcs	= memoize((formula: string) : string => {
+		return formula.replace(/calc\([^\s]+\)/g, s => {
+			let calcEnd	= Array.from(s).slice(5).concat(' ').reduce(
+				(o: {left: number; right: number}|number, c, i) =>
+					typeof o === 'number' ?
+						o :
+					o.left === o.right ?
+						i :
+						{
+							left: o.left + (c === '(' ? 1 : 0),
+							right: o.right + (c === ')' ? 1 : 0)
+						}
+				,
+				{left: 1, right: 0}
+			);
+
+			if (typeof calcEnd === 'number') {
+				calcEnd	+= 5;
+			}
+			else {
+				calcEnd	= s.length;
+			}
+
+			let result	= 0;
+			try {
+				result	= mexp.eval(s.slice(5, calcEnd - 1));
+			}
+			catch {}
+
+			return result.toString() + s.slice(calcEnd);
+		});
+	});
 
 	/** Data source to pull data from on init and save data to on submit. */
 	@Input() public dataSource?: MaybePromise<IAsyncValue<any>|undefined>	=
@@ -75,6 +111,7 @@ export class DynamicFormComponent implements OnInit {
 	/** @see Form.FormElement.Types */
 	public readonly types: typeof Form.Element.Types			= Form.Element.Types;
 
+	/** @ignore */
 	private async getDataSource () : Promise<IAsyncValue<any>|undefined> {
 		return this.dataSource instanceof Promise ?
 			this.dataSource.catch(() => undefined) :
@@ -83,8 +120,26 @@ export class DynamicFormComponent implements OnInit {
 	}
 
 	/** @ignore */
+	private getElementValue (element: Form.IElement) : boolean|number|string|undefined {
+		return (
+			element.valueBoolean !== undefined ?
+				element.valueBoolean :
+			element.valueNumber !== undefined ?
+				element.valueNumber :
+				element.valueString
+		);
+	}
+
+	/** @ignore */
 	private iterateFormValues (
-		f: (id: string, segments: (number|string)[], element: Form.IElement) => void
+		f: (
+			hasOwnID: boolean,
+			id: string,
+			segments: (number|string)[],
+			element: Form.IElement|undefined,
+			elementValue: boolean|number|string|undefined,
+			getElementValue: ((val: string) => (boolean|number|string)[])|undefined
+		) => void
 	) : void {
 		if (!this.form || !this.form.components) {
 			return;
@@ -100,16 +155,86 @@ export class DynamicFormComponent implements OnInit {
 					continue;
 				}
 
-				for (const element of container.elements) {
-					if (!element.id) {
+				const containerID		= !container.id ?
+					undefined :
+					(component.id ? `${component.id}.` : '') + container.id
+				;
+
+				const containerFormula	= containerID && container.formula ?
+					container.formula :
+					undefined
+				;
+
+				const containerValue	= !containerFormula ?
+					undefined :
+					this.processCalcs(
+						container.elements.
+							map(element =>
+								this.getElementValue(element)
+							).
+							reduce(
+								(s: string, elementValue, i) => s.replace(
+									new RegExp(`\\\$\\{${i}\\}`, 'g'),
+									(elementValue || '').toString()
+								),
+								containerFormula.split('\n')[0]
+							)
+					)
+				;
+
+				const reverseContainerFormula	= memoize((val: string) => {
+					const arr	= !containerFormula ?
+						undefined :
+						parse<any>(
+							this.processCalcs(
+								containerFormula.split('\n')[1].replace(/\$\{val\}/g, val)
+							)
+						)
+					;
+
+					return (
+						arr instanceof Array &&
+						arr.reduce(
+							(b, o) => b && (
+								typeof o === 'boolean' ||
+								typeof o === 'number' ||
+								typeof o === 'string'
+							),
+							true
+						)
+					) ?
+						arr :
+						[]
+					;
+				});
+
+				const elements	= [
+					...container.elements.map(element => ({
+						element,
+						elementValue: this.getElementValue(element),
+						hasOwnID: !!element.id,
+						id: !element.id ?
+							containerID :
+							(
+								(component.id ? `${component.id}.` : '') +
+								(container.id ? `${container.id}.` : '') +
+								element.id
+							)
+					})),
+					...(!containerFormula ? [] : [{
+						element: undefined,
+						elementValue: containerValue,
+						hasOwnID: true,
+						id: containerID
+					}])
+				];
+
+				for (let i = 0 ; i < elements.length ; ++i) {
+					const {element, elementValue, hasOwnID, id}	= elements[i];
+
+					if (!id) {
 						continue;
 					}
-
-					const id	=
-						(component.id ? `${component.id}.` : '') +
-						(container.id ? `${container.id}.` : '') +
-						element.id
-					;
 
 					const segments	= id.split('.').
 						map(s => {
@@ -124,7 +249,16 @@ export class DynamicFormComponent implements OnInit {
 						)
 					;
 
-					f(id, segments, element);
+					f(
+						hasOwnID,
+						id,
+						segments,
+						element,
+						elementValue,
+						!(containerFormula && element) ?
+							undefined :
+							val => reverseContainerFormula(val)[i]
+					);
 				}
 			}
 		}
@@ -164,8 +298,12 @@ export class DynamicFormComponent implements OnInit {
 
 		const value	= await dataSource.getValue();
 
-		this.iterateFormValues((id, segments, element) => {
-			const elementValue	= segments.reduce(
+		this.iterateFormValues((_, id, segments, element, _ELEMENT_VALUE, getElementValue) => {
+			if (element === undefined) {
+				return;
+			}
+
+			let elementValue	= segments.reduce(
 				(v, segment) =>
 					(
 						(typeof segment === 'number' && v instanceof Array) ||
@@ -176,6 +314,10 @@ export class DynamicFormComponent implements OnInit {
 				,
 				value
 			);
+
+			if (elementValue !== undefined && getElementValue) {
+				elementValue	= getElementValue(elementValue.toString());
+			}
 
 			if (elementValue === undefined) {
 				return;
@@ -206,14 +348,10 @@ export class DynamicFormComponent implements OnInit {
 
 		if (dataSource) {
 			await dataSource.updateValue(value => {
-				this.iterateFormValues((_ID, segments, element) => {
-					const elementValue	=
-						element.valueBoolean !== undefined ?
-							element.valueBoolean :
-							element.valueNumber !== undefined ?
-								element.valueNumber :
-								element.valueString
-					;
+				this.iterateFormValues((hasOwnID, _ID, segments, _, elementValue) => {
+					if (!hasOwnID) {
+						return;
+					}
 
 					const lastSegment	= segments.length > 0 ? segments.slice(-1)[0] : undefined;
 

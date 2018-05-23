@@ -177,6 +177,7 @@ read -r -d '' modules <<- EOM
 	markdown-it
 	markdown-it-emoji
 	markdown-it-sup
+	math-expression-evaluator
 	mceliece
 	microlight-string
 	mkdirp

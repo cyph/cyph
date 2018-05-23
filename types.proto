@@ -616,9 +616,6 @@ message Form {
 		/** @see Form.id */
 		string id = 2;
 
-		/** Separator for concatenating element values when sending to another system. */
-		string idSeparator = 3;
-
 		/** Indicates whether this is a column or a row. */
 		bool isColumn = 4;
 	}
@@ -686,11 +683,19 @@ message Form {
 		/** @see Element */
 		repeated Element elements = 1;
 
+		/**
+		 * String-encoded function for collapsing element values when sending to another system.
+		 * Element values are referenced by index (e.g. '${0}') and arithmetic operations can be
+		 * performed using a CSS-like calc syntax (e.g. 'calc(4+5)' or 'calc(${0}+${1})').
+		 *
+		 * Must be two lines: the first line collapses the element values (returns string) and
+		 * the second line reverses the transformation (returns JSON array). In the latter case,
+		 * ${val} will refer to the input value.
+		 */
+		string formula = 3;
+
 		/** @see Form.id */
 		string id = 2;
-
-		/** @see Component.idSeparator */
-		string idSeparator = 3;
 
 		/** @see Component.isColumn */
 		bool isColumn = 4;

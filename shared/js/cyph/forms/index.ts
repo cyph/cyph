@@ -13,24 +13,22 @@ const newForm			= (
 const newFormComponent	= (
 	containers: (Form.IElementContainer|Form.IElementContainer[])[],
 	id?: string,
-	idSeparator?: string,
 	isColumn?: boolean
 ) : Form.IComponent => ({
 	containers: containers.reduce<Form.IElementContainer[]>((a, b) => a.concat(b), []),
 	id,
-	idSeparator,
 	isColumn
 });
 
 const newFormContainer		= (
 	elements: (Form.IElement|Form.IElement[])[],
 	id?: string,
-	idSeparator?: string,
-	isColumn?: boolean
+	isColumn?: boolean,
+	formula?: string
 ) : Form.IElementContainer => ({
 	elements: elements.reduce<Form.IElement[]>((a, b) => a.concat(b), []),
+	formula,
 	id,
-	idSeparator,
 	isColumn
 });
 
@@ -275,7 +273,6 @@ export const address	= (id: string = 'Address') : Form.IElementContainer => {
 			input({id: 'ZIP', label: 'Zip', width: 25})
 		],
 		id,
-		undefined,
 		false
 	);
 };
@@ -287,7 +284,6 @@ export const streetAddress	= (id: string = 'StreetAddress') : Form.IElementConta
 			input({id: 'StreetAddress', label: 'Address', width: 50})
 		],
 		id,
-		undefined,
 		false
 	);
 };
@@ -301,7 +297,6 @@ export const addressDetails	= (id: string = 'AddressDetails') : Form.IElementCon
 			input({id: 'ZIP', label: 'Zip', width: 25})
 		],
 		id,
-		undefined,
 		false
 	);
 };
@@ -337,12 +332,11 @@ export const contact			= (id?: string) : Form.IComponent => {
 			address()
 		],
 		id,
-		undefined,
 		false
 	);
 };
 
-/** Basic patient info for Telehealth Patients */
+/** Basic patient info for telehealth patients. */
 export const basicInfo			= (id?: string) : Form.IComponent => {
 	return newFormComponent(
 		[
@@ -354,9 +348,9 @@ export const basicInfo			= (id?: string) : Form.IComponent => {
 					label: 'Marital Status',
 					options: ['Single', 'Married']
 				}),
-				numberInput({label: 'Height (in)', min: 20, max: 108, width: 15, required: false}),
 				numberInput({label: 'Weight (lbs)', max: 1500, width: 15, required: false})
-			])
+			]),
+			height()
 		],
 		id
 	);
@@ -392,7 +386,7 @@ export const insuranceComponent	= (id?: string) : Form.IComponent => {
 	);
 };
 
-/** Opt in or out of Cyph as preferred contact method & contact list */
+/** Opt in or out of Cyph as preferred contact method & mailing list. */
 export const optInOut			= () : Form.IComponent => newFormComponent([
 	newFormContainer([
 		checkbox({label: 'Use Cyph as preferred contact method', noGrow: true, value: true}),
@@ -401,22 +395,27 @@ export const optInOut			= () : Form.IComponent => newFormComponent([
 ]);
 
 /** Height. */
-export const height		= (id: string = 'height') : Form.IElement[] => [
-	numberInput({
-		id,
-		label: 'Height: ft',
-		max: 11,
-		min: 0,
-		width: 10
-	}),
-	numberInput({
-		id,
-		label: 'Height: in',
-		max: 11,
-		min: 0,
-		width: 10
-	})
-];
+export const height		= (id: string = 'height') : Form.IElementContainer => newFormContainer(
+	[
+		numberInput({
+			label: 'Height: ft',
+			max: 11,
+			min: 0,
+			width: 10
+		}),
+		numberInput({
+			label: 'Height: in',
+			max: 11,
+			min: 0,
+			width: 10
+		})
+	],
+	id,
+	false,
+	/* ${val}/12-((${val}/12)Mod1)) is a workaround pending mexp support for floor(${val}/12) */
+	'calc(${0}*12+${1})\n' +
+		'[calc(${val}/12-((${val}/12)Mod1)), calc(${val}Mod12)]'
+);
 
 /** New patient form. */
 export const newPatient			= () : IForm => newForm(
@@ -452,15 +451,13 @@ export const patientProfile		= () : IForm => newForm(
 						}),
 						numberInput(
 							{label: 'Weight (lbs)', max: 1500, width: 10, required: false}
-						),
-						height()
+						)
 					],
 					undefined,
-					undefined,
 					false
-				)
+				),
+				height()
 			],
-			undefined,
 			undefined,
 			true
 		)

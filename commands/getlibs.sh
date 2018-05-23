@@ -215,6 +215,7 @@ for anyType in \
 	konami-code.js \
 	markdown-it-emoji \
 	markdown-it-sup \
+	math-expression-evaluator \
 	quill-delta \
 	quill-delta-to-html \
 	simplewebrtc \
