@@ -11,7 +11,7 @@ import {IResolvable} from '../iresolvable';
 export class DialogService {
 	/** Displays alert. */
 	public async alert (
-		_O: {content: string; ok?: string; title?: string},
+		_O: {content: string; markdown?: boolean; ok?: string; title?: string},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
 	) : Promise<void> {
 		throw new Error('Must provide an implementation of DialogService.alert.');
@@ -31,6 +31,7 @@ export class DialogService {
 		_O: {
 			cancel?: string;
 			content: string;
+			markdown?: boolean;
 			ok?: string;
 			timeout?: number;
 			title: string;
