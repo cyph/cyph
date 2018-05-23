@@ -344,6 +344,29 @@ export const contact			= (id?: string) : Form.IComponent => {
 	);
 };
 
+/** Height. */
+export const height		= (id: string = 'height') : Form.IElementContainer => newFormContainer(
+	[
+		numberInput({
+			label: 'Height: ft',
+			max: 11,
+			min: 0,
+			width: 10
+		}),
+		numberInput({
+			label: 'Height: in',
+			max: 11,
+			min: 0,
+			width: 10
+		})
+	],
+	id,
+	false,
+	/* ${val}/12-((${val}/12)Mod1)) is a workaround pending mexp support for floor(${val}/12) */
+	/* tslint:disable-next-line:no-invalid-template-strings */
+	'calc(${0}*12+${1})\n[calc(${val}/12-((${val}/12)Mod1)), calc(${val}Mod12)]'
+);
+
 /** Basic patient info for telehealth patients. */
 export const basicInfo			= (id?: string) : Form.IComponent => {
 	return newFormComponent(
@@ -401,29 +424,6 @@ export const optInOut			= () : Form.IComponent => newFormComponent([
 		checkbox({label: 'Opt-In to receive updates & tips from Cyph', noGrow: true})
 	])
 ]);
-
-/** Height. */
-export const height		= (id: string = 'height') : Form.IElementContainer => newFormContainer(
-	[
-		numberInput({
-			label: 'Height: ft',
-			max: 11,
-			min: 0,
-			width: 10
-		}),
-		numberInput({
-			label: 'Height: in',
-			max: 11,
-			min: 0,
-			width: 10
-		})
-	],
-	id,
-	false,
-	/* ${val}/12-((${val}/12)Mod1)) is a workaround pending mexp support for floor(${val}/12) */
-	'calc(${0}*12+${1})\n' +
-		'[calc(${val}/12-((${val}/12)Mod1)), calc(${val}Mod12)]'
-);
 
 /** New patient form. */
 export const newPatient			= () : IForm => newForm(
