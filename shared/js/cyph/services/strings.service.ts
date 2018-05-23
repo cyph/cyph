@@ -55,6 +55,9 @@ export class StringsService {
 	public readonly accept: string						= `accept`;
 
 	/** @see StringsService */
+	public readonly affTooltip: string					= `Opens in new tab`;
+
+	/** @see StringsService */
 	public readonly appointmentCalendar: string			= `Appointment Calendar`;
 
 	/** @see StringsService */
