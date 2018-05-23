@@ -10,6 +10,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByIndex} from '../../track-by/track-by-index';
 import {trackBySelf} from '../../track-by/track-by-self';
+import {filterUndefined} from '../../util/filter';
 import {getOrSetDefault} from '../../util/get-or-set-default';
 import {parse} from '../../util/serialization';
 import {timestampToDate} from '../../util/time';
@@ -150,8 +151,24 @@ export class DynamicFormComponent implements OnInit {
 				continue;
 			}
 
-			for (const container of component.containers) {
-				if (!container.elements) {
+			const getContainers	=
+				(containers: Form.IElementContainer[]) : Form.IElementContainer[] =>
+					containers.length < 1 ?
+						containers :
+						containers.concat(getContainers(containers.map(o =>
+							filterUndefined((o.elements || []).map(elem => elem.elementContainer))
+						).reduce(
+							(a, b) => a.concat(b),
+							[]
+						)))
+			;
+
+			for (const container of getContainers(component.containers)) {
+				const containerElements	=
+					filterUndefined((container.elements || []).map(elem => elem.element))
+				;
+
+				if (containerElements.length < 1) {
 					continue;
 				}
 
@@ -168,7 +185,7 @@ export class DynamicFormComponent implements OnInit {
 				const containerValue	= !containerFormula ?
 					undefined :
 					this.processCalcs(
-						container.elements.
+						containerElements.
 							map(element =>
 								this.getElementValue(element)
 							).
@@ -209,7 +226,7 @@ export class DynamicFormComponent implements OnInit {
 				});
 
 				const elements	= [
-					...container.elements.map(element => ({
+					...containerElements.map(element => ({
 						element,
 						elementValue: this.getElementValue(element),
 						hasOwnID: !!element.id,

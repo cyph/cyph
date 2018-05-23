@@ -680,8 +680,8 @@ message Form {
 
 	/** Row or column of elements. */
 	message ElementContainer {
-		/** @see Element */
-		repeated Element elements = 1;
+		/** @see ElementOrElementContainer */
+		repeated ElementOrElementContainer elements = 1;
 
 		/**
 		 * String-encoded function for collapsing element values when sending to another system.
@@ -699,6 +699,18 @@ message Form {
 
 		/** @see Component.isColumn */
 		bool isColumn = 4;
+	}
+
+	/** Either an Element or ElementContainer. */
+	message ElementOrElementContainer {
+		/** Value. */
+		oneof value {
+			/** @see Element */
+			Element element = 1;
+
+			/** @see ElementContainer */
+			ElementContainer elementContainer = 2;
+		}
 	}
 
 	/** @see Component */

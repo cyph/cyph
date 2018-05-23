@@ -21,12 +21,20 @@ const newFormComponent	= (
 });
 
 const newFormContainer		= (
-	elements: (Form.IElement|Form.IElement[])[],
+	elements: (Form.IElement|Form.IElement[]|Form.IElementContainer)[],
 	id?: string,
 	isColumn?: boolean,
 	formula?: string
 ) : Form.IElementContainer => ({
-	elements: elements.reduce<Form.IElement[]>((a, b) => a.concat(b), []),
+	elements: elements.reduce<Form.IElementOrElementContainer[]>(
+		(arr, elem) => arr.concat(
+			'type' in elem ?
+				{element: elem} :
+			elem instanceof Array ?
+				elem.map(element => ({element})) :
+				{elementContainer: elem}),
+		[]
+	),
 	formula,
 	id,
 	isColumn
@@ -348,9 +356,9 @@ export const basicInfo			= (id?: string) : Form.IComponent => {
 					label: 'Marital Status',
 					options: ['Single', 'Married']
 				}),
-				numberInput({label: 'Weight (lbs)', max: 1500, width: 15, required: false})
-			]),
-			height()
+				numberInput({label: 'Weight (lbs)', max: 1500, width: 15, required: false}),
+				height()
+			])
 		],
 		id
 	);
@@ -451,12 +459,12 @@ export const patientProfile		= () : IForm => newForm(
 						}),
 						numberInput(
 							{label: 'Weight (lbs)', max: 1500, width: 10, required: false}
-						)
+						),
+						height()
 					],
 					undefined,
 					false
-				),
-				height()
+				)
 			],
 			undefined,
 			true

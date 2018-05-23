@@ -24,197 +24,9 @@
 				fxLayoutGap='16px'
 				[class]='container.isColumn ? "column" : "row"'
 			>
-				<div
-					[fxFlex]='o.noGrow ? "nogrow" : (o.width || "")'
-					fxLayout='column'
-					*ngFor='let o of container.elements; trackBy: trackByIndex'
-				>
-					<ng-container *ngIf='isVisible(o)'>
-
-						<h3 class='label' *ngIf='o.type === types.Text'>{{o.label}}</h3>
-						<div *ngIf='o.type === types.Text'>{{o.valueString}}</div>
-
-						<mat-checkbox
-							[(ngModel)]='o.valueBoolean'
-							[disabled]='isDisabled'
-							[name]='getName(o)'
-							[required]='o.required'
-							*ngIf='o.type === types.Checkbox'
-						>
-							{{o.label}}
-						</mat-checkbox>
-
-						<ng-container *ngIf='o.type === types.Datepicker'>
-							<mat-form-field>
-								<input
-									matInput
-									[matDatepicker]='datepicker'
-									[ngModel]='timestampToDate(o.valueNumber, true)'
-									(ngModelChange)='o.valueNumber = $event ? $event.getTime() : 0'
-									[disabled]='isDisabled'
-									[name]='getName(o)'
-									[placeholder]='o.label'
-									[required]='o.required'
-								/>
-								<mat-datepicker-toggle
-									matSuffix
-									[for]='datepicker'
-								></mat-datepicker-toggle>
-							</mat-form-field>
-							<mat-datepicker [touchUi]='mobile' #datepicker></mat-datepicker>
-						</ng-container>
-
-						<mat-form-field *ngIf='o.type === types.Email'>
-							<input
-								matInput
-								[textMask]='getMask(o)'
-								[(ngModel)]='o.valueString'
-								[name]='getName(o)'
-								type='email'
-								[disabled]='isDisabled'
-								[placeholder]='o.label'
-								[required]='o.required'
-							/>
-						</mat-form-field>
-
-						<mat-form-field *ngIf='o.type === types.Input'>
-							<input
-								matInput
-								[textMask]='getMask(o)'
-								[(ngModel)]='o.valueString'
-								[name]='getName(o)'
-								type='text'
-								[disabled]='isDisabled'
-								[placeholder]='o.label'
-								[required]='o.required'
-							/>
-						</mat-form-field>
-
-						<mat-form-field *ngIf='o.type === types.Number'>
-							<input
-								matInput
-								[textMask]='getMask(o)'
-								[ngModel]='o.valueNumber'
-								(ngModelChange)='o.valueNumber = parseInt($event)'
-								[max]='o.max'
-								[min]='o.min'
-								[name]='getName(o)'
-								type='number'
-								[disabled]='isDisabled'
-								[placeholder]='o.label'
-								[required]='o.required'
-							/>
-						</mat-form-field>
-
-						<mat-form-field *ngIf='o.type === types.Password'>
-							<input
-								matInput
-								[textMask]='getMask(o)'
-								[(ngModel)]='o.valueString'
-								[name]='getName(o)'
-								[type]='isDisabled ? "text" : "password"'
-								[disabled]='isDisabled'
-								[placeholder]='o.label'
-								[required]='o.required'
-							/>
-						</mat-form-field>
-
-						<h3 class='label' *ngIf='o.type === types.Radio'>{{o.label}}</h3>
-						<mat-radio-group
-							fxFlex
-							[(ngModel)]='o.valueString'
-							[name]='getName(o)'
-							[disabled]='isDisabled'
-							[required]='o.required'
-							*ngIf='o.type === types.Radio'
-						>
-							<mat-radio-button
-								*ngFor='let option of o.options; trackBy: trackBySelf'
-								[value]='option'
-							>
-								{{option}}
-							</mat-radio-button>
-						</mat-radio-group>
-
-						<mat-form-field fxFlex *ngIf='o.type === types.Select'>
-							<mat-select
-								fxFlex
-								[(ngModel)]='o.valueString'
-								[name]='getName(o)'
-								[disabled]='isDisabled'
-								[placeholder]='o.label'
-								[required]='o.required'
-							>
-								<mat-option
-									*ngFor='let option of o.options; trackBy: trackBySelf'
-									[value]='option'
-								>
-									{{option}}
-								</mat-option>
-							</mat-select>
-						</mat-form-field>
-
-						<h3 *ngIf='o.type === types.Slider'>{{o.label}}</h3>
-						<mat-slider
-							[(ngModel)]='o.valueNumber'
-							[max]='o.max'
-							[min]='o.min'
-							[name]='getName(o)'
-							*ngIf='o.type === types.Slider'
-						></mat-slider>
-
-						<mat-slide-toggle
-							[(ngModel)]='o.valueBoolean'
-							[name]='getName(o)'
-							[disabled]='isDisabled'
-							[required]='o.required'
-							*ngIf='o.type === types.SlideToggle'
-						>
-							{{o.label}}
-						</mat-slide-toggle>
-
-						<mat-form-field *ngIf='o.type === types.Textarea'>
-							<textarea
-								matInput
-								matTextareaAutosize
-								matAutosizeMinRows='4'
-								[textMask]='getMask(o)'
-								[(ngModel)]='o.valueString'
-								[name]='getName(o)'
-								[disabled]='isDisabled'
-								[placeholder]='o.label'
-								[required]='o.required'
-							></textarea>
-						</mat-form-field>
-
-						<mat-form-field *ngIf='o.type === types.Time'>
-							<input
-								matInput
-								[textMask]='getMask(o)'
-								[(ngModel)]='o.valueString'
-								[name]='getName(o)'
-								type='time'
-								[disabled]='isDisabled'
-								[placeholder]='o.label'
-								[required]='o.required'
-							/>
-						</mat-form-field>
-
-						<mat-form-field *ngIf='o.type === types.URL'>
-							<input
-								matInput
-								[textMask]='getMask(o)'
-								[(ngModel)]='o.valueString'
-								[name]='getName(o)'
-								type='url'
-								[disabled]='isDisabled'
-								[placeholder]='o.label'
-								[required]='o.required'
-							/>
-						</mat-form-field>
-
-					</ng-container>
-				</div>
+				<ng-container *ngTemplateOutlet='
+					elementContainerView; context: {container: container}
+				'></ng-container>
 			</div>
 		</div>
 	</div>
@@ -230,3 +42,209 @@
 		</button>
 	</div>
 </form>
+
+
+<ng-template #elementContainerView let-container='container'>
+	<ng-container *ngFor='let element of container.elements; trackBy: trackByIndex'>
+		<ng-container *ngIf='element.element'>
+			<ng-container *ngTemplateOutlet='
+				elementView; context: {o: element.element}
+			'></ng-container>
+		</ng-container>
+		<ng-container *ngIf='element.elementContainer'>
+			<ng-container *ngTemplateOutlet='
+				elementContainerView; context: {container: element.elementContainer}
+			'></ng-container>
+		</ng-container>
+	</ng-container>
+</ng-template>
+
+<ng-template #elementView let-o='o'>
+	<div
+		[fxFlex]='o.noGrow ? "nogrow" : (o.width || "")'
+		fxLayout='column'
+		*ngIf='isVisible(o)'
+	>
+		<h3 class='label' *ngIf='o.type === types.Text'>{{o.label}}</h3>
+		<div *ngIf='o.type === types.Text'>{{o.valueString}}</div>
+
+		<mat-checkbox
+			[(ngModel)]='o.valueBoolean'
+			[disabled]='isDisabled'
+			[name]='getName(o)'
+			[required]='o.required'
+			*ngIf='o.type === types.Checkbox'
+		>
+			{{o.label}}
+		</mat-checkbox>
+
+		<ng-container *ngIf='o.type === types.Datepicker'>
+			<mat-form-field>
+				<input
+					matInput
+					[matDatepicker]='datepicker'
+					[ngModel]='timestampToDate(o.valueNumber, true)'
+					(ngModelChange)='o.valueNumber = $event ? $event.getTime() : 0'
+					[disabled]='isDisabled'
+					[name]='getName(o)'
+					[placeholder]='o.label'
+					[required]='o.required'
+				/>
+				<mat-datepicker-toggle
+					matSuffix
+					[for]='datepicker'
+				></mat-datepicker-toggle>
+			</mat-form-field>
+			<mat-datepicker [touchUi]='mobile' #datepicker></mat-datepicker>
+		</ng-container>
+
+		<mat-form-field *ngIf='o.type === types.Email'>
+			<input
+				matInput
+				[textMask]='getMask(o)'
+				[(ngModel)]='o.valueString'
+				[name]='getName(o)'
+				type='email'
+				[disabled]='isDisabled'
+				[placeholder]='o.label'
+				[required]='o.required'
+			/>
+		</mat-form-field>
+
+		<mat-form-field *ngIf='o.type === types.Input'>
+			<input
+				matInput
+				[textMask]='getMask(o)'
+				[(ngModel)]='o.valueString'
+				[name]='getName(o)'
+				type='text'
+				[disabled]='isDisabled'
+				[placeholder]='o.label'
+				[required]='o.required'
+			/>
+		</mat-form-field>
+
+		<mat-form-field *ngIf='o.type === types.Number'>
+			<input
+				matInput
+				[textMask]='getMask(o)'
+				[ngModel]='o.valueNumber'
+				(ngModelChange)='o.valueNumber = parseInt($event)'
+				[max]='o.max'
+				[min]='o.min'
+				[name]='getName(o)'
+				type='number'
+				[disabled]='isDisabled'
+				[placeholder]='o.label'
+				[required]='o.required'
+			/>
+		</mat-form-field>
+
+		<mat-form-field *ngIf='o.type === types.Password'>
+			<input
+				matInput
+				[textMask]='getMask(o)'
+				[(ngModel)]='o.valueString'
+				[name]='getName(o)'
+				[type]='isDisabled ? "text" : "password"'
+				[disabled]='isDisabled'
+				[placeholder]='o.label'
+				[required]='o.required'
+			/>
+		</mat-form-field>
+
+		<h3 class='label' *ngIf='o.type === types.Radio'>{{o.label}}</h3>
+		<mat-radio-group
+			fxFlex
+			[(ngModel)]='o.valueString'
+			[name]='getName(o)'
+			[disabled]='isDisabled'
+			[required]='o.required'
+			*ngIf='o.type === types.Radio'
+		>
+			<mat-radio-button
+				*ngFor='let option of o.options; trackBy: trackBySelf'
+				[value]='option'
+			>
+				{{option}}
+			</mat-radio-button>
+		</mat-radio-group>
+
+		<mat-form-field fxFlex *ngIf='o.type === types.Select'>
+			<mat-select
+				fxFlex
+				[(ngModel)]='o.valueString'
+				[name]='getName(o)'
+				[disabled]='isDisabled'
+				[placeholder]='o.label'
+				[required]='o.required'
+			>
+				<mat-option
+					*ngFor='let option of o.options; trackBy: trackBySelf'
+					[value]='option'
+				>
+					{{option}}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<h3 *ngIf='o.type === types.Slider'>{{o.label}}</h3>
+		<mat-slider
+			[(ngModel)]='o.valueNumber'
+			[max]='o.max'
+			[min]='o.min'
+			[name]='getName(o)'
+			*ngIf='o.type === types.Slider'
+		></mat-slider>
+
+		<mat-slide-toggle
+			[(ngModel)]='o.valueBoolean'
+			[name]='getName(o)'
+			[disabled]='isDisabled'
+			[required]='o.required'
+			*ngIf='o.type === types.SlideToggle'
+		>
+			{{o.label}}
+		</mat-slide-toggle>
+
+		<mat-form-field *ngIf='o.type === types.Textarea'>
+			<textarea
+				matInput
+				matTextareaAutosize
+				matAutosizeMinRows='4'
+				[textMask]='getMask(o)'
+				[(ngModel)]='o.valueString'
+				[name]='getName(o)'
+				[disabled]='isDisabled'
+				[placeholder]='o.label'
+				[required]='o.required'
+			></textarea>
+		</mat-form-field>
+
+		<mat-form-field *ngIf='o.type === types.Time'>
+			<input
+				matInput
+				[textMask]='getMask(o)'
+				[(ngModel)]='o.valueString'
+				[name]='getName(o)'
+				type='time'
+				[disabled]='isDisabled'
+				[placeholder]='o.label'
+				[required]='o.required'
+			/>
+		</mat-form-field>
+
+		<mat-form-field *ngIf='o.type === types.URL'>
+			<input
+				matInput
+				[textMask]='getMask(o)'
+				[(ngModel)]='o.valueString'
+				[name]='getName(o)'
+				type='url'
+				[disabled]='isDisabled'
+				[placeholder]='o.label'
+				[required]='o.required'
+			/>
+		</mat-form-field>
+	</div>
+</ng-template>
