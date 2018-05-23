@@ -7,6 +7,16 @@ import {SplitTestingService} from './split-testing.service';
 @Injectable()
 export class AffiliateService {
 	/** @ignore */
+	private readonly amazon		= {
+		copy: {
+			webcam4k: translate('Recommended 4K Webcam')
+		},
+		links: {
+			webcam4k: 'https://amzn.to/2KOInzc'
+		}
+	};
+
+	/** @ignore */
 	private readonly nordVPN	= {
 		copy: {
 			doublevpn: translate('Double VPN Encryption'),
@@ -20,17 +30,7 @@ export class AffiliateService {
 		}
 	};
 
-		/** @ignore */
-		private readonly amazon	= {
-			copy: {
-				webcam4k: translate('Recommended 4k Webcam')
-			},
-			links: {
-				webcam4k: 'https://amzn.to/2KOInzc'
-			}
-		};
-
-	/** VPN affiliate link and ad copy. */
+	/** Affiliate link and ad copy. */
 	public readonly link	= this.splitTestingService.getValue('affiliatelink', [
 		{href: this.nordVPN.links.doublevpn, text: this.nordVPN.copy.doublevpn},
 		{href: this.nordVPN.links.threeyear, text: this.nordVPN.copy.recommended},
