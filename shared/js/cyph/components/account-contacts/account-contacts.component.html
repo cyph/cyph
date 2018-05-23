@@ -47,9 +47,9 @@
 						<ng-container *ngFor='
 							let item of filteredContactList | async; trackBy: trackByUser
 						'>
-							<ng-container *ngTemplateOutlet='
-								listItem; context: {item: item}
-							'></ng-container>
+							<ng-container *ngTemplateOutlet='listItem; context: {
+								item: item
+							}'></ng-container>
 							<br />
 						</ng-container>
 					</div>
@@ -65,9 +65,9 @@
 				*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
 			>
 				<ng-template let-item>
-					<ng-container *ngTemplateOutlet='
-						listItem; context: {item: item}
-					'></ng-container>
+					<ng-container *ngTemplateOutlet='listItem; context: {
+						item: item
+					}'></ng-container>
 				</ng-template>
 			</od-virtualscroll>
 			-->

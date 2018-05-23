@@ -22,9 +22,9 @@
 					{{message?.author | async}}:
 				</strong>
 				&ngsp;
-				<ng-container
-					*ngTemplateOutlet='messageContent; context: {value: value}'
-				></ng-container>
+				<ng-container *ngTemplateOutlet='messageContent; context: {
+					value: value
+				}'></ng-container>
 			</div>
 			<div fxFlex fxLayoutAlign='end center' class='message-timestamp'>
 				<div fxLayout='row'>
@@ -86,9 +86,9 @@
 					</mat-card-header>
 					<div class='email-divider' mat-card-image></div>
 					<mat-card-content>
-						<ng-container
-							*ngTemplateOutlet='messageContent; context: {value: value}'
-						></ng-container>
+						<ng-container *ngTemplateOutlet='messageContent; context: {
+							value: value
+						}'></ng-container>
 					</mat-card-content>
 				</mat-card>
 			</div>

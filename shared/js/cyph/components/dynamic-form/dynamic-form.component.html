@@ -24,9 +24,9 @@
 				fxLayoutGap='16px'
 				[class]='container.isColumn ? "column" : "row"'
 			>
-				<ng-container *ngTemplateOutlet='
-					elementContainerView; context: {container: container}
-				'></ng-container>
+				<ng-container *ngTemplateOutlet='elementContainerView; context: {
+					container: container
+				}'></ng-container>
 			</div>
 		</div>
 	</div>
@@ -47,14 +47,14 @@
 <ng-template #elementContainerView let-container='container'>
 	<ng-container *ngFor='let element of container.elements; trackBy: trackByIndex'>
 		<ng-container *ngIf='element.element'>
-			<ng-container *ngTemplateOutlet='
-				elementView; context: {o: element.element}
-			'></ng-container>
+			<ng-container *ngTemplateOutlet='elementView; context: {
+				o: element.element
+			}'></ng-container>
 		</ng-container>
 		<ng-container *ngIf='element.elementContainer'>
-			<ng-container *ngTemplateOutlet='
-				elementContainerView; context: {container: element.elementContainer}
-			'></ng-container>
+			<ng-container *ngTemplateOutlet='elementContainerView; context: {
+				container: element.elementContainer
+			}'></ng-container>
 		</ng-container>
 	</ng-container>
 </ng-template>
