@@ -50,7 +50,7 @@ export class SplitTestingService {
 	/**
 	 * Gets value based on split testing group and logs analytics event.
 	 * analEvent must be unique for any given call to this method.
-	 * 
+	 *
 	 * @param values If unspecified, returns true or false.
 	 * If number, returns a positive integer less than its value.
 	 * If array, randomly returns one of its values.
