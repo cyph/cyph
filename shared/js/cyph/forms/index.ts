@@ -404,17 +404,17 @@ export const optInOut			= () : Form.IComponent => newFormComponent([
 export const height		= (id: string = 'height') : Form.IElement[] => [
 	numberInput({
 		id,
-		label: 'Feet',
+		label: 'Height: ft',
 		max: 11,
 		min: 0,
-		width: 5
+		width: 10
 	}),
 	numberInput({
 		id,
-		label: 'Inches',
+		label: 'Height: in',
 		max: 11,
 		min: 0,
-		width: 5
+		width: 10
 	})
 ];
 
@@ -438,12 +438,12 @@ export const patientProfile		= () : IForm => newForm(
 			[
 				newFormContainer(
 					[
-						datepicker({id: 'DOB', label: 'Date of Birth', width: 10, required: true}),
+						datepicker({id: 'DOB', label: 'Date of Birth', width: 20, required: true}),
 						select({
 							id: 'Sex',
 							label: 'Sex',
 							options: ['Male', 'Female'],
-							width: 20
+							width: 15
 						}),
 						select({
 							id: 'MaritalStatus',
