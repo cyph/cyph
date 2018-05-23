@@ -26,10 +26,11 @@ export class NativeDialogService implements DialogService {
 
 	/**
 	 * @inheritDoc
+	 * @param o.markdown Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async alert (
-		o: {content: string; ok?: string; title?: string},
+		o: {content: string; markdown?: boolean; ok?: string; title?: string},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (closeFunction) {
@@ -69,6 +70,7 @@ export class NativeDialogService implements DialogService {
 
 	/**
 	 * @inheritDoc
+	 * @param o.markdown Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
@@ -76,12 +78,17 @@ export class NativeDialogService implements DialogService {
 		o: {
 			cancel?: string;
 			content: string;
+			markdown?: boolean;
 			ok?: string;
 			timeout?: number;
 			title?: string;
 		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<boolean> {
+		if (closeFunction) {
+			throw new Error('NativeDialogService.confirm closeFunction is unsupported.');
+		}
+
 		return this.lock(async () => {
 			return !!(await confirm({
 				cancelButtonText: o.ok !== undefined ? o.cancel : this.stringsService.cancel,

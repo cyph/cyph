@@ -36,11 +36,14 @@ import {FullCalendarModule} from 'ng-fullcalendar';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogImageComponent} from '../components/dialog-image';
+import {MarkdownComponent} from '../components/markdown';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 import {DialogService} from '../services/dialog.service';
+import {EnvService} from '../services/env.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {MaterialDialogService} from '../services/material-dialog.service';
+import {StringsService} from '../services/strings.service';
 import {WebLocalStorageService} from '../services/web-local-storage.service';
 
 
@@ -53,12 +56,14 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogConfirmComponent,
 		DialogImageComponent,
 		DropZoneDirective,
+		MarkdownComponent,
 		NanoScrollerDirective
 	],
 	entryComponents: [
 		DialogAlertComponent,
 		DialogConfirmComponent,
-		DialogImageComponent
+		DialogImageComponent,
+		MarkdownComponent
 	],
 	exports: [
 		BrowserAnimationsModule,
@@ -70,6 +75,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		FlexLayoutModule,
 		FormsModule,
 		FullCalendarModule,
+		MarkdownComponent,
 		MatAutocompleteModule,
 		MatButtonModule,
 		MatButtonToggleModule,
@@ -136,6 +142,8 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		TextMaskModule
 	],
 	providers: [
+		EnvService,
+		StringsService,
 		{
 			provide: ADD_FLEX_STYLES,
 			useValue: true
