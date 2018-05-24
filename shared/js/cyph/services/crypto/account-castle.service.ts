@@ -221,6 +221,14 @@ export class AccountCastleService extends CastleService {
 		});
 	}
 
+	/** @inheritDoc */
+	public spawn () : AccountCastleService {
+		return new AccountCastleService(
+			this.accountContactsService,
+			this.accountDatabaseService
+		);
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly accountContactsService: AccountContactsService,

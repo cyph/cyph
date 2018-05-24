@@ -509,6 +509,11 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
+	public spawn () : SessionService {
+		throw new Error('Must provide an implementation of SessionService.spawn.');
+	}
+
+	/** @inheritDoc */
 	public trigger (event: string, data?: any) : void {
 		eventManager.trigger(event + this.eventID, data);
 	}

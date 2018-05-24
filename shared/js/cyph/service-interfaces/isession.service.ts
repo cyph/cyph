@@ -100,6 +100,9 @@ export interface ISessionService {
 		...messages: [string, ISessionMessageAdditionalData][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]>;
 
+	/** Creates and returns a new instance. */
+	spawn () : ISessionService;
+
 	/** Trigger event, passing in optional data. */
 	trigger (event: string, data?: any) : void;
 

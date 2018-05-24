@@ -33,6 +33,9 @@ export class AccountSessionService extends SessionService {
 	private readonly _READY						= resolvable();
 
 	/** @ignore */
+	private group?: AccountSessionService[];
+
+	/** @ignore */
 	private initiated: boolean					= false;
 
 	/** @ignore */
@@ -64,6 +67,10 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {
+		if (this.group) {
+			throw new Error('Master channelOnClose should not be used in a group session.');
+		}
+
 		if (this.ephemeralSubSession) {
 			await super.channelOnClose();
 		}
@@ -71,6 +78,10 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
+		if (this.group) {
+			throw new Error('Master channelOnOpen should not be used in a group session.');
+		}
+
 		await super.channelOnOpen(isAlice, false);
 		this.stateResolver.resolve();
 	}
@@ -92,11 +103,23 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
-		await this.castleSendMessages(messages);
+		if (!this.group) {
+			await this.castleSendMessages(messages);
+			return;
+		}
+
+		throw new Error('Group plaintextSendHandler not implemented.');
 	}
 
 	/** @inheritDoc */
 	public close () : void {
+		if (this.group) {
+			for (const session of this.group) {
+				session.close();
+			}
+			return;
+		}
+
 		if (this.ephemeralSubSession) {
 			super.close();
 		}
@@ -104,9 +127,10 @@ export class AccountSessionService extends SessionService {
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
-		username: string,
+		username: string|string[],
 		sessionSubID?: string,
-		ephemeralSubSession: boolean = false
+		ephemeralSubSession: boolean = false,
+		setHeader: boolean = true
 	) : Promise<void> {
 		if (this.initiated) {
 			throw new Error('User already set.');
@@ -114,6 +138,21 @@ export class AccountSessionService extends SessionService {
 
 		this.initiated		= true;
 		this.sessionSubID	= sessionSubID;
+
+		if (username instanceof Array) {
+			this.group	= await Promise.all(username.map(async groupMember => {
+				const service	= this.spawn();
+				await service.setUser(groupMember, sessionSubID, ephemeralSubSession, false);
+				return service;
+			}));
+
+			/* TODO: Handle events on group sessions to grab incoming messages. */
+
+			this.resolveReady();
+
+			return;
+		}
+
 
 		(async () => {
 			const contactID			= await this.accountContactsService.getContactID(username);
@@ -217,7 +256,10 @@ export class AccountSessionService extends SessionService {
 
 		if (user) {
 			user.realUsername.subscribe(this.remoteUsername);
-			await this.accountService.setHeader(user);
+
+			if (setHeader) {
+				await this.accountService.setHeader(user);
+			}
 		}
 
 		this.remoteUser.next(user);
@@ -225,7 +267,30 @@ export class AccountSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
+	public spawn () : AccountSessionService {
+		return new AccountSessionService(
+			this.analyticsService,
+			this.castleService.spawn(),
+			this.channelService.spawn(),
+			this.envService,
+			this.errorService,
+			this.potassiumService,
+			this.sessionInitService.spawn(),
+			this.stringsService,
+			this.accountService,
+			this.accountContactsService,
+			this.accountDatabaseService,
+			this.accountUserLookupService
+		);
+	}
+
+	/** @inheritDoc */
 	public async yt () : Promise<void> {
+		if (this.group) {
+			await Promise.all(this.group.map(async session => session.yt()));
+			return;
+		}
+
 		return new Promise<void>(resolve => {
 			const id	= uuid();
 
