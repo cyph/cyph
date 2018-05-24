@@ -24,7 +24,7 @@ export class P2PService {
 
 			return this.dialogService.confirm({
 				cancel: this.stringsService.decline,
-				content: 
+				content:
 					`${
 						this.stringsService.p2pRequest
 					} ${
@@ -32,13 +32,11 @@ export class P2PService {
 							(<any> this.stringsService)[callType + 'Call'] ||
 							''
 						)
-					}.` + !(this.envService.environment.customBuild &&
+					}. ${!(this.envService.environment.customBuild &&
 						this.envService.environment.customBuild.config.pro) ?
-						`${this.stringsService.p2pWarningVPN}` +
-						`${this.stringsService.continuePrompt}`
+						this.stringsService.p2pWarningVPN + this.stringsService.continuePrompt
 						:
-						`${this.stringsService.p2pWarning}` +
-						`${this.stringsService.continuePrompt}`
+						this.stringsService.p2pWarning + this.stringsService.continuePrompt}`
 					,
 				ok: this.stringsService.continueDialogAction,
 				timeout,
@@ -97,13 +95,11 @@ export class P2PService {
 						(<any> this.stringsService)[callType + 'Call'] ||
 						''
 					)
-				}.` + !(this.envService.environment.customBuild &&
+				}. ${!(this.envService.environment.customBuild &&
 					this.envService.environment.customBuild.config.pro) ?
-					`${this.stringsService.p2pWarningVPN}` +
-					`${this.stringsService.continuePrompt}`
+					this.stringsService.p2pWarningVPN + this.stringsService.continuePrompt
 					:
-					`${this.stringsService.p2pWarning}` +
-					`${this.stringsService.continuePrompt}`,
+					this.stringsService.p2pWarning + this.stringsService.continuePrompt}`,
 				ok: this.stringsService.continueDialogAction,
 				title: this.stringsService.p2pTitle
 			});
