@@ -11,9 +11,18 @@
 	word-break: break-all;
 }
 
-.connect-link-mobile .divider {
-	width: 21px;
-	display: inline-block;
+.description.mobile {
+	font-size: 0.9em;
+}
+
+.connect-link-mobile {
+	.connect-link-link{
+		font-size: 100%;
+	}
+	.divider {
+		width: 21px;
+		display: inline-block;
+	}
 }
 
 .countdown {
