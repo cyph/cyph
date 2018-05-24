@@ -482,14 +482,14 @@ export class StringsService {
 	/** @see StringsService */
 	public readonly p2pWarning: string					=
 		`This may involve sharing your IP address with your ${this.internalFriend}. ` +
-		`Proceed if you trust your ${this.internalFriend}. `
+		`Proceed if you trust your ${this.internalFriend}.`
 	;
 
 	/** @see StringsService */
 	public readonly p2pWarningVPN: string				=
 		`This may involve sharing your IP address with your ${this.internalFriend}. ` +
-		`Proceed if you trust your ${this.internalFriend} or hide your IP by` +
-		` [connecting through a VPN](https://go.nordvpn.net/SH1F4). `
+		`Proceed if you trust your ${this.internalFriend} or hide your IP by ` +
+		`[connecting through a VPN](https://go.nordvpn.net/SH1F4).`
 	;
 
 	/** @see StringsService */
