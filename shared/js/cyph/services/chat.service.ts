@@ -82,12 +82,21 @@ export class ChatService {
 	;
 
 	/** Global map of message IDs to values. */
-	protected readonly messageValues: EncryptedAsyncMap<string, IChatMessageValue>	=
+	protected readonly messageValues: EncryptedAsyncMap<string, IChatMessageValue>		=
 		new EncryptedAsyncMap<string, IChatMessageValue>(
 			this.potassiumService,
 			this.messageValuesURL,
 			ChatMessageValue,
 			this.databaseService.getAsyncMap(this.messageValuesURL, BinaryProto)
+		)
+	;
+
+	/** Local version of messageValues (ephemeral chat optimization). */
+	protected readonly messageValuesLocal: EncryptedAsyncMap<string, IChatMessageValue>	=
+		new EncryptedAsyncMap<string, IChatMessageValue>(
+			this.potassiumService,
+			this.messageValuesURL,
+			ChatMessageValue
 		)
 	;
 
@@ -266,6 +275,12 @@ export class ChatService {
 		hash?: Uint8Array,
 		key?: Uint8Array
 	) : Promise<void> {
+		const messageValues	=
+			this.sessionInitService.ephemeral && author === this.sessionService.appUsername ?
+				this.messageValuesLocal :
+				this.messageValues
+		;
+
 		if (typeof value === 'string') {
 			value	= {text: value};
 		}
@@ -312,7 +327,7 @@ export class ChatService {
 		const [authorID]	= await Promise.all([
 			this.getAuthorID(author),
 			!value ? undefined : (async () => {
-				const o	= await this.messageValues.setItemEasy(id, value);
+				const o	= await messageValues.setItemEasy(id, value);
 				hash	= o.hash;
 				key		= o.encryptionKey;
 			})()
@@ -446,19 +461,23 @@ export class ChatService {
 
 	/** Gets message value if not already set. */
 	public async getMessageValue (message: IChatMessage) : Promise<IChatMessage> {
-		if (
-			message.value === undefined &&
-			(message.hash && message.hash.length > 0) &&
-			(message.key && message.key.length > 0)
-		) {
-			message.value	= await this.messageValues.getItem(
-				message.id,
-				message.key,
-				message.hash
-			);
+		for (const messageValues of [this.messageValuesLocal, this.messageValues]) {
+			if (
+				message.value === undefined &&
+				(message.hash && message.hash.length > 0) &&
+				(message.key && message.key.length > 0)
+			) {
+				message.value	= await messageValues.getItem(
+					message.id,
+					message.key,
+					message.hash
+				).catch(
+					() => undefined
+				);
 
-			if (message instanceof ChatMessage) {
-				message.valueWatcher.next(message.value);
+				if (message.value !== undefined && message instanceof ChatMessage) {
+					message.valueWatcher.next(message.value);
+				}
 			}
 		}
 
