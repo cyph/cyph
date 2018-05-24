@@ -47,7 +47,12 @@
 			*ngIf='appService.chatRootState === chatRootStates.waitingForFriend'
 			[@fadeIn]='"in"'
 		>
-			<a class='affiliate' [href]='affiliateService.link.href'>
+			<a
+				class='affiliate'
+				[href]='affiliateService.link.href'
+				target='_blank'
+				[matTooltip]='stringsService.affTooltip'
+			>
 				{{affiliateService.link.text}}
 			</a>
 		</cyph-link-connection>
