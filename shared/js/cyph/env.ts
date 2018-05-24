@@ -157,7 +157,10 @@ export class Env extends EnvDeploy {
 	public readonly realLanguage: string		= Env.language;
 
 	/** Indicates whether Granim gradient canvases should be displayed. */
-	public readonly showGranim: boolean			= !this.isOldFirefox;
+	public readonly showGranim: boolean			=
+		!this.isOldFirefox &&
+		!this.isMobile
+	;
 
 	/** Base URI for sending an SMS. */
 	public readonly smsUriBase: string			= `sms:${this.isIOS ? '&' : '?'}body=`;

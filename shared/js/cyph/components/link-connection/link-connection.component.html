@@ -25,7 +25,12 @@
 				Send the link below to the patient. When they open it,
 				your telehealth session will begin.
 			</span>
-			<span *ngIf='!envService.isTelehealth' cyphTranslate>
+			<span
+				class='description'
+				[class.mobile]='envService.isMobile'
+				*ngIf='!envService.isTelehealth'
+				cyphTranslate
+			>
 				Send the link below to another user. When they open it,
 				you'll be securely connected.
 			</span>
@@ -109,8 +114,8 @@
 		</div>
 	</div>
 
-	<br />
-	<br />
+	<br *ngIf='!envService.isMobile' />
+	<br *ngIf='!envService.isMobile' />
 
 	<div fxLayout='row' fxLayoutAlign='center center'>
 		<ng-container *ngIf='!envService.environment.customBuild?.config.pro; else proContent'>
