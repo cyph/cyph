@@ -24,20 +24,19 @@ export class P2PService {
 
 			return this.dialogService.confirm({
 				cancel: this.stringsService.decline,
-				content:
-					`${
-						this.stringsService.p2pRequest
-					} ${
-						<string> (
-							(<any> this.stringsService)[callType + 'Call'] ||
-							''
-						)
-					}. ${!(this.envService.environment.customBuild &&
-						this.envService.environment.customBuild.config.pro) ?
-						this.stringsService.p2pWarningVPN + this.stringsService.continuePrompt
-						:
-						this.stringsService.p2pWarning + this.stringsService.continuePrompt}`
-					,
+				content: `${
+					this.stringsService.p2pRequest
+				} ${
+					<string> (
+						(<any> this.stringsService)[callType + 'Call'] ||
+						''
+					)
+				}. ${
+					this.p2pWarning
+				} ${
+					this.stringsService.continuePrompt
+				}`,
+				markdown: true,
 				ok: this.stringsService.continueDialogAction,
 				timeout,
 				title: this.stringsService.p2pTitle
@@ -95,11 +94,12 @@ export class P2PService {
 						(<any> this.stringsService)[callType + 'Call'] ||
 						''
 					)
-				}. ${!(this.envService.environment.customBuild &&
-					this.envService.environment.customBuild.config.pro) ?
-					this.stringsService.p2pWarningVPN + this.stringsService.continuePrompt
-					:
-					this.stringsService.p2pWarning + this.stringsService.continuePrompt}`,
+				}. ${
+					this.p2pWarning
+				} ${
+					this.stringsService.continuePrompt
+				}`,
+				markdown: true,
 				ok: this.stringsService.continueDialogAction,
 				title: this.stringsService.p2pTitle
 			});
@@ -126,6 +126,17 @@ export class P2PService {
 
 	/** Indicates whether sidebar is open. */
 	public isSidebarOpen: boolean	= false;
+
+	/** @ignore */
+	private get p2pWarning () : string {
+		return (
+			this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.config.pro
+		) ?
+			this.stringsService.p2pWarning :
+			this.stringsService.p2pWarningVPN
+		;
+	}
 
 	/** @see P2PWebRTCService.request */
 	protected async request (callType: 'audio'|'video') : Promise<void> {
