@@ -142,6 +142,40 @@
 				}
 			},
 
+			"messageValues": {
+				"$messageValue": {
+					".read": true,
+					".write": true,
+
+					"data": {
+						".validate": "newData.isString()"
+					},
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				}
+			},
+
+			"messageValuesEphemeral": {
+				"$messageValue": {
+					".read": true,
+					".write": true,
+
+					"data": {
+						".validate": "newData.isString()"
+					},
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				}
+			},
+
 			"inviteCodes": {
 				"$code": {
 					".validate": "newData.isString()"
@@ -300,19 +334,6 @@
 								},
 								"timestamp": {
 									".validate": "newData.val() === now"
-								}
-							},
-							"messageValues": {
-								"$messageValue": {
-									"data": {
-										".validate": "newData.isString()"
-									},
-									"hash": {
-										".validate": "newData.isString()"
-									},
-									"timestamp": {
-										".validate": "newData.val() === now"
-									}
 								}
 							},
 							"session": {

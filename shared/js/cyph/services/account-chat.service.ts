@@ -17,6 +17,8 @@ import {AccountSessionService} from './account-session.service';
 import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {PotassiumService} from './crypto/potassium.service';
+import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {NotificationService} from './notification.service';
@@ -82,7 +84,7 @@ export class AccountChatService extends ChatService {
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
-		username: string,
+		username: string|string[],
 		keepCurrentMessage: boolean = false,
 		callType?: 'audio'|'video',
 		sessionSubID?: string,
@@ -98,38 +100,44 @@ export class AccountChatService extends ChatService {
 				isConnected: true,
 				state: States.chat
 			} :
-			getOrSetDefault(this.chats, username, () => ({
-				currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
-				initProgress: new BehaviorSubject(0),
-				isConnected: true,
-				isDisconnected: false,
-				isFriendTyping: new BehaviorSubject(false),
-				isMessageChanged: false,
-				lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
-					`${contactURL}/lastConfirmedMessage`,
-					ChatLastConfirmedMessage
-				),
-				messages: this.accountDatabaseService.getAsyncList(
-					`${contactURL}/messages`,
-					ChatMessage,
-					undefined,
-					undefined,
-					undefined,
-					true
-				),
-				/* See https://github.com/palantir/tslint/issues/3541 */
-				/* tslint:disable-next-line:object-literal-sort-keys */
-				messageValues: this.accountDatabaseService.getAsyncMap(
-					`${contactURL}/messageValues`,
-					ChatMessageValue
-				),
-				pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
-				receiveTextLock: this.accountDatabaseService.lockFunction(
-					`${contactURL}/receiveTextLock`
-				),
-				state: States.chat,
-				unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
-			}))
+			getOrSetDefault(
+				this.chats,
+				username instanceof Array ? username.join('\n') : username,
+				() => ({
+					currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
+					futureMessages: this.accountDatabaseService.getAsyncMap(
+						`${contactURL}/futureMessages`,
+						ChatMessage,
+						undefined,
+						undefined,
+						undefined,
+						true
+					),
+					initProgress: new BehaviorSubject(0),
+					isConnected: true,
+					isDisconnected: false,
+					isFriendTyping: new BehaviorSubject(false),
+					isMessageChanged: false,
+					lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
+						`${contactURL}/lastConfirmedMessage`,
+						ChatLastConfirmedMessage
+					),
+					messages: this.accountDatabaseService.getAsyncList(
+						`${contactURL}/messages`,
+						ChatMessage,
+						undefined,
+						undefined,
+						undefined,
+						true
+					),
+					pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
+					receiveTextLock: this.accountDatabaseService.lockFunction(
+						`${contactURL}/receiveTextLock`
+					),
+					state: States.chat,
+					unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
+				})
+			)
 		;
 
 		await this.accountSessionService.setUser(username, sessionSubID, ephemeralSubSession);
@@ -137,9 +145,11 @@ export class AccountChatService extends ChatService {
 
 	constructor (
 		analyticsService: AnalyticsService,
+		databaseService: DatabaseService,
 		dialogService: DialogService,
 		notificationService: NotificationService,
 		p2pWebRTCService: P2PWebRTCService,
+		potassiumService: PotassiumService,
 		scrollService: ScrollService,
 		sessionService: SessionService,
 		sessionCapabilitiesService: SessionCapabilitiesService,
@@ -163,9 +173,11 @@ export class AccountChatService extends ChatService {
 	) {
 		super(
 			analyticsService,
+			databaseService,
 			dialogService,
 			notificationService,
 			p2pWebRTCService,
+			potassiumService,
 			scrollService,
 			sessionService,
 			sessionCapabilitiesService,

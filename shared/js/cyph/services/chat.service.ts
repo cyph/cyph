@@ -6,11 +6,13 @@ import {BehaviorSubject, combineLatest, interval, Observable, Subscription} from
 import {filter, map, take, takeWhile} from 'rxjs/operators';
 import {ChatMessage, IChatData, IChatMessageLiveValue, States} from '../chat';
 import {HelpComponent} from '../components/help';
+import {EncryptedAsyncMap} from '../crypto/encrypted-async-map';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncMap} from '../local-async-map';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {
+	BinaryProto,
 	ChatMessageValue,
 	IChatLastConfirmedMessage,
 	IChatMessage,
@@ -24,6 +26,8 @@ import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {resolvable, sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
+import {PotassiumService} from './crypto/potassium.service';
+import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
@@ -55,6 +59,11 @@ export class ChatService {
 	private readonly messageChangeLock: LockFunction	= lockFunction();
 
 	/** @ignore */
+	private readonly messageValuesURL: string			= 'messageValues' + (
+		this.sessionInitService.ephemeral ? 'Ephemeral' : ''
+	);
+
+	/** @ignore */
 	private readonly resolveChatMessageGeometryService: (chatMessageGeometryService: {
 		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
 	/* tslint:disable-next-line:semicolon */
@@ -70,6 +79,16 @@ export class ChatService {
 		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
 	}>	=
 		this._CHAT_GEOMETRY_SERVICE.promise
+	;
+
+	/** Global map of message IDs to values. */
+	protected readonly messageValues: EncryptedAsyncMap<string, IChatMessageValue>	=
+		new EncryptedAsyncMap<string, IChatMessageValue>(
+			this.potassiumService,
+			this.messageValuesURL,
+			ChatMessageValue,
+			this.databaseService.getAsyncMap(this.messageValuesURL, BinaryProto)
+		)
 	;
 
 	/** @see IChatData */
@@ -128,13 +147,15 @@ export class ChatService {
 		}
 
 		await this.addMessage(
-			o.text.value,
+			undefined,
 			o.author,
 			o.timestamp,
 			undefined,
 			selfDestructChat ? undefined : o.text.selfDestructTimeout,
 			o.text.dimensions,
-			o.id
+			o.id,
+			o.text.hash,
+			o.text.key
 		);
 
 		if (selfDestructChat) {
@@ -196,6 +217,7 @@ export class ChatService {
 	protected getDefaultChatData () : IChatData {
 		return {
 			currentMessage: {},
+			futureMessages: new LocalAsyncMap<string, IChatMessage>(),
 			initProgress: new BehaviorSubject(0),
 			isConnected: false,
 			isDisconnected: false,
@@ -203,14 +225,20 @@ export class ChatService {
 			isMessageChanged: false,
 			lastConfirmedMessage: new LocalAsyncValue({id: '', index: 0}),
 			messages: new LocalAsyncList<IChatMessage>(),
-			/* See https://github.com/palantir/tslint/issues/3541 */
-			/* tslint:disable-next-line:object-literal-sort-keys */
-			messageValues: new LocalAsyncMap<string, IChatMessageValue>(),
 			pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
 			receiveTextLock: lockFunction(),
 			state: States.none,
 			unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
 		};
+	}
+
+	/** Gets unique message ID. */
+	protected async getUUID () : Promise<string> {
+		let id: string;
+		do {
+			id	= uuid();
+		} while (await this.messageValues.hasItem(id));
+		return id;
 	}
 
 	/** Aborts the process of chat initialisation and authentication. */
@@ -228,24 +256,29 @@ export class ChatService {
 	 */
 	/* tslint:disable-next-line:cyclomatic-complexity */
 	public async addMessage (
-		value: IChatMessageValue|string,
+		value: IChatMessageValue|string|undefined,
 		author: Observable<string> = this.sessionService.appUsername,
 		timestamp?: number,
 		shouldNotify: boolean = author !== this.sessionService.localUsername,
 		selfDestructTimeout?: number,
 		dimensions?: IChatMessageLine[],
-		id: string = uuid()
+		id?: string,
+		hash?: Uint8Array,
+		key?: Uint8Array
 	) : Promise<void> {
 		if (typeof value === 'string') {
 			value	= {text: value};
 		}
 
 		if (
-			!(
-				value.calendarInvite ||
-				value.form ||
-				(value.quill && value.quill.length > 0) ||
-				value.text
+			(
+				value !== undefined &&
+				!(
+					value.calendarInvite ||
+					value.form ||
+					(value.quill && value.quill.length > 0) ||
+					value.text
+				)
 			) ||
 			this.chat.state === States.aborted ||
 			(author !== this.sessionService.appUsername && this.chat.isDisconnected)
@@ -267,53 +300,62 @@ export class ChatService {
 					this.notificationService.notify(this.stringsService.newMessageNotification);
 				}
 			}
-			else if (value.text) {
+			else if (value && value.text) {
 				this.notificationService.notify(value.text);
 			}
 		}
 
-		await Promise.all([
-			this.chat.messageValues.setItem(id, value),
-			(async () => {
-				const chatMessage	= {
-					authorID: await this.getAuthorID(author),
-					authorType:
-						author === this.sessionService.appUsername ?
-							ChatMessage.AuthorTypes.App :
-							author === this.sessionService.localUsername ?
-								ChatMessage.AuthorTypes.Local :
-								ChatMessage.AuthorTypes.Remote
-					,
-					dimensions,
-					id,
-					selfDestructTimeout,
-					sessionSubID: this.sessionService.sessionSubID,
-					timestamp
-				};
+		if (!id) {
+			id	= await this.getUUID();
+		}
 
-				if (this.sessionInitService.ephemeral) {
-					await this.chat.messages.pushValue(chatMessage);
-				}
-				else {
-					await this.chat.pendingMessages.pushValue({
-						...chatMessage,
-						pending: true,
-						value
-					});
-				}
-
-				if (author === this.sessionService.localUsername) {
-					await this.scrollService.scrollDown();
-				}
-				else if (author === this.sessionService.remoteUsername) {
-					await this.scrollService.trackItem(id);
-				}
-
-				if (!this.sessionInitService.ephemeral) {
-					await this.chat.messages.pushValue(chatMessage);
-				}
+		const [authorID]	= await Promise.all([
+			this.getAuthorID(author),
+			!value ? undefined : (async () => {
+				const o	= await this.messageValues.setItemEasy(id, value);
+				hash	= o.hash;
+				key		= o.encryptionKey;
 			})()
 		]);
+
+		const chatMessage	= {
+			authorID,
+			authorType:
+				author === this.sessionService.appUsername ?
+					ChatMessage.AuthorTypes.App :
+				author === this.sessionService.localUsername ?
+					ChatMessage.AuthorTypes.Local :
+					ChatMessage.AuthorTypes.Remote
+			,
+			dimensions,
+			hash,
+			id,
+			key,
+			selfDestructTimeout,
+			sessionSubID: this.sessionService.sessionSubID,
+			timestamp
+		};
+
+		if (this.sessionInitService.ephemeral) {
+			await this.chat.messages.pushValue(chatMessage);
+		}
+		else {
+			await this.chat.pendingMessages.pushValue({
+				...chatMessage,
+				pending: true
+			});
+		}
+
+		if (author === this.sessionService.localUsername) {
+			await this.scrollService.scrollDown();
+		}
+		else if (author === this.sessionService.remoteUsername) {
+			await this.scrollService.trackItem(id);
+		}
+
+		if (!this.sessionInitService.ephemeral) {
+			await this.chat.messages.pushValue(chatMessage);
+		}
 
 		if (
 			selfDestructTimeout !== undefined &&
@@ -404,8 +446,16 @@ export class ChatService {
 
 	/** Gets message value if not already set. */
 	public async getMessageValue (message: IChatMessage) : Promise<IChatMessage> {
-		if (message.value === undefined) {
-			message.value	= await this.chat.messageValues.getItem(message.id);
+		if (
+			message.value === undefined &&
+			(message.hash && message.hash.length > 0) &&
+			(message.key && message.key.length > 0)
+		) {
+			message.value	= await this.messageValues.getItem(
+				message.id,
+				message.key,
+				message.hash
+			);
 
 			if (message instanceof ChatMessage) {
 				message.valueWatcher.next(message.value);
@@ -541,22 +591,31 @@ export class ChatService {
 				throw new Error('Invalid ChatMessageValue.Types value.');
 		}
 
-		const dimensions	= (
-			await (await this.chatMessageGeometryService).getDimensions(new ChatMessage(
-				{
-					authorID: '',
-					authorType: ChatMessage.AuthorTypes.Local,
-					id: '',
-					timestamp: 0,
-					value
-				},
-				this.sessionService.localUsername
-			))
-		).dimensions || [];
+		const [dimensions, {hash, id, key}]	= await Promise.all([
+			(async () =>
+				(
+					await (await this.chatMessageGeometryService).getDimensions(new ChatMessage(
+						{
+							authorID: '',
+							authorType: ChatMessage.AuthorTypes.Local,
+							id: '',
+							timestamp: 0,
+							value
+						},
+						this.sessionService.localUsername
+					))
+				).dimensions || []
+			)(),
+			(async () => {
+				const messageID	= await this.getUUID();
+				const o			= await this.messageValues.setItemEasy(messageID, value);
+				return {hash: o.hash, id: messageID, key: o.encryptionKey};
+			})()
+		]);
 
 		await this.addTextMessage((await this.sessionService.send([
 			rpcEvents.text,
-			{text: {dimensions, selfDestructChat, selfDestructTimeout, value}}
+			{id, text: {dimensions, hash, key, selfDestructChat, selfDestructTimeout}}
 		]))[0].data);
 	}
 
@@ -571,6 +630,9 @@ export class ChatService {
 		protected readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
+		protected readonly databaseService: DatabaseService,
+
+		/** @ignore */
 		protected readonly dialogService: DialogService,
 
 		/** @ignore */
@@ -578,6 +640,9 @@ export class ChatService {
 
 		/** @ignore */
 		protected readonly p2pWebRTCService: P2PWebRTCService,
+
+		/** @ignore */
+		protected readonly potassiumService: PotassiumService,
 
 		/** @ignore */
 		protected readonly scrollService: ScrollService,

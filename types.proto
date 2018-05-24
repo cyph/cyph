@@ -422,8 +422,17 @@ message ChatMessage {
 	/** Metadata used to estimate message's size for virtual scrolling. */
 	repeated ChatMessageLine dimensions = 3;
 
+	/** Hash of value. */
+	bytes hash = 9;
+
 	/** @see SessionMessageData.id */
 	required string id = 4;
+
+	/** Key to decrypt an externally contained message value. */
+	bytes key = 10;
+
+	/** If specified, this message will be ignored until the described predecessor is found. */
+	ChatMessagePredecessor predecessor = 11;
 
 	/** @see SessionText.selfDestructTimeout */
 	uint32 selfDestructTimeout = 5;
@@ -451,6 +460,15 @@ message ChatMessageLine {
 
 	/** Line width on a small screen. */
 	required uint32 smallScreenWidth = 4;
+}
+
+/** Description of a predecessor message. */
+message ChatMessagePredecessor {
+	/** @see ChatMessage.hash */
+	required bytes hash = 1;
+
+	/** @see ChatMessage.id */
+	required string id = 2;
 }
 
 /** Possible values of a chat text message. */
@@ -1591,14 +1609,20 @@ message SessionText {
 	/** @see ChatMessage.dimensions */
 	repeated ChatMessageLine dimensions = 1;
 
+	/** @see ChatMessage.hash */
+	required bytes hash = 5;
+
+	/** @see ChatMessage.key */
+	required bytes key = 6;
+
+	/** @see ChatMessage.predecessor */
+	ChatMessagePredecessor predecessor = 7;
+
 	/** Indicates whether entire chat should be self-destructed (only valid for first message). */
 	bool selfDestructChat = 2;
 
 	/** Self-destruction timeout. */
 	uint32 selfDestructTimeout = 3;
-
-	/** @see ChatMessageValue */
-	required ChatMessageValue value = 4;
 }
 
 /** Receipt confirmation for a SessionText. */

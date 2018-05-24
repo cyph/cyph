@@ -77,7 +77,12 @@ export class AccountContactsService {
 	 * Adds contact.
 	 * @returns Contact ID.
 	 */
-	public async addContact (username: string) : Promise<string> {
+	public async addContact (username: string|string[]) : Promise<string> {
+		if (username instanceof Array) {
+			await Promise.all(username.map(async groupMember => this.addContact(groupMember)));
+			return this.getContactID(username);
+		}
+
 		const id	= await this.getContactID(username);
 		const url	= `contactUsernames/${id}`;
 
@@ -89,7 +94,7 @@ export class AccountContactsService {
 	}
 
 	/** Gets contact ID based on username. */
-	public async getContactID (username: string) : Promise<string> {
+	public async getContactID (username: string|string[]) : Promise<string> {
 		const currentUserUsername	=
 			(await this.accountDatabaseService.getCurrentUser()).user.username
 		;
@@ -100,9 +105,9 @@ export class AccountContactsService {
 				currentUserUsername,
 				() => new Map<string, string>()
 			),
-			username,
+			username instanceof Array ? username.join('\n') : username,
 			async () => this.potassiumService.toHex(await this.potassiumService.hash.hash(
-				[currentUserUsername, username].map(normalize).sort().join(' ')
+				[currentUserUsername].concat(username).map(normalize).sort().join(' ')
 			))
 		);
 	}

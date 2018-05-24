@@ -22,6 +22,9 @@ export interface ISessionMessageAdditionalData {
 	/** @see ISessionMessageData.command */
 	command?: ISessionCommand;
 
+	/** @see ISessionMessageData.id */
+	id?: string;
+
 	/** @see ISessionMessageData.text */
 	text?: ISessionText;
 

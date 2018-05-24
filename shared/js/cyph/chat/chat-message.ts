@@ -5,6 +5,7 @@ import {
 	ChatMessage as ChatMessageInternal,
 	IChatMessage,
 	IChatMessageLine,
+	IChatMessagePredecessor,
 	IChatMessageValue
 } from '../proto';
 import {Timer} from '../timer';
@@ -36,7 +37,16 @@ export class ChatMessage implements IChatMessage {
 	public dimensions?: IChatMessageLine[]				= this.message.dimensions;
 
 	/** @inheritDoc */
+	public hash?: Uint8Array							= this.message.hash;
+
+	/** @inheritDoc */
 	public id: string									= this.message.id;
+
+	/** @inheritDoc */
+	public key?: Uint8Array								= this.message.key;
+
+	/** @inheritDoc */
+	public predecessor?: IChatMessagePredecessor		= this.message.predecessor;
 
 	/** @inheritDoc */
 	public selfDestructTimeout?: number					= this.message.selfDestructTimeout;

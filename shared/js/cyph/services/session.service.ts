@@ -258,7 +258,7 @@ export abstract class SessionService implements ISessionService {
 				capabilities: additionalData.capabilities,
 				chatState: additionalData.chatState,
 				command: additionalData.command,
-				id: uuid(),
+				id: additionalData.id || uuid(),
 				sessionSubID: this.sessionSubID,
 				text: additionalData.text,
 				textConfirmation: additionalData.textConfirmation,

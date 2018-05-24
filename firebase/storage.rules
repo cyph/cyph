@@ -31,6 +31,16 @@ service firebase.storage {
 				allow write: if request.resource == null || request.resource.size < 300000000;
 			}
 
+			match /messageValues/{messageValue}/{hash} {
+				allow read;
+				allow write: if request.resource == null || request.resource.size < 300000000;
+			}
+
+			match /messageValuesEphemeral/{messageValue}/{hash} {
+				allow read;
+				allow write: if request.resource == null || request.resource.size < 300000000;
+			}
+
 			match /users/{user} {
 				match /{all=**} {
 					allow read, write: if
@@ -60,7 +70,6 @@ service firebase.storage {
 				// 	match /lastConfirmedMessage/{hash} {}
 				// 	match /messages/{message}/{hash} {}
 				// 	match /messages-head/{hash} {}
-				// 	match /messageValues/{messageValue}/{hash} {}
 				// 	match /session {
 				// 		/asymmetricRatchetState {
 				// 			/privateKey/{hash} {}

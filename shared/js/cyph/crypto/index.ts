@@ -1,3 +1,4 @@
+export * from './encrypted-async-map';
 export * from './icastle';
 export * from './potassium';
 
