@@ -118,7 +118,7 @@
 	<br *ngIf='!envService.isMobile' />
 
 	<div fxLayout='row' fxLayoutAlign='center center'>
-		<ng-container *ngIf='!envService.environment.customBuild?.config.pro; else proContent'>
+		<ng-container *ngIf='!envService.showAds; else proContent'>
 			<ng-content></ng-content>
 		</ng-container>
 		<ng-template #proContent>
