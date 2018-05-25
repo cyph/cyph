@@ -475,7 +475,7 @@ export class AccountDatabaseService {
 			return this.databaseService.getAsyncMap(
 				url,
 				BinaryProto,
-				url => this.lockFunction(url),
+				k => this.lockFunction(k),
 				noBlobStorage
 			);
 		})();
@@ -576,7 +576,7 @@ export class AccountDatabaseService {
 			return this.databaseService.getAsyncValue(
 				url,
 				BinaryProto,
-				url => this.lockFunction(url),
+				k => this.lockFunction(k),
 				blockGetValue,
 				noBlobStorage
 			);

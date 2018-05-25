@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count no-import-side-effect */
+
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
@@ -78,7 +80,7 @@ export class DatabaseService extends DataManagerService {
 	public getAsyncList<T> (
 		url: string,
 		proto: IProto<T>,
-		lockFactory: (url: string) => LockFunction = url => this.lockFunction(url),
+		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
 		noBlobStorage: boolean = false
 	) : IAsyncList<T> {
 		const lock		= lockFactory(url);
@@ -115,7 +117,7 @@ export class DatabaseService extends DataManagerService {
 	public getAsyncMap<T> (
 		url: string,
 		proto: IProto<T>,
-		lockFactory: (url: string) => LockFunction = url => this.lockFunction(url),
+		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
 		noBlobStorage: boolean = false
 	) : IAsyncMap<string, T> {
 		const lock				= lockFactory(url);
@@ -186,7 +188,7 @@ export class DatabaseService extends DataManagerService {
 	public getAsyncValue<T> (
 		url: string,
 		proto: IProto<T>,
-		lockFactory: (url: string) => LockFunction = url => this.lockFunction(url),
+		lockFactory: (k: string) => LockFunction = k => this.lockFunction(k),
 		blockGetValue: boolean = false,
 		noBlobStorage: boolean = false
 	) : IAsyncValue<T> {
