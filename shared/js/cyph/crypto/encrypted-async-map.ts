@@ -87,13 +87,7 @@ export class EncryptedAsyncMap<K, V> {
 	}
 
 	/** @see IAsyncMap.setItem */
-	public async setItem (key: K, value: V, encryptionKey: Uint8Array) : Promise<void> {
-		const {cyphertext}	= await this.seal(key, value, encryptionKey);
-		return this.map.setItem(key, cyphertext);
-	}
-
-	/** @see IAsyncMap.setItem */
-	public async setItemEasy (key: K, value: V) : Promise<{
+	public async setItem (key: K, value: V) : Promise<{
 		encryptionKey: Uint8Array;
 		hash: Uint8Array;
 	}> {
@@ -107,6 +101,12 @@ export class EncryptedAsyncMap<K, V> {
 			encryptionKey,
 			hash: await this.potassium.hash.hash(plaintext)
 		};
+	}
+
+	/** Sets an item with a custom encryption key. */
+	public async setItemManual (key: K, value: V, encryptionKey: Uint8Array) : Promise<void> {
+		const {cyphertext}	= await this.seal(key, value, encryptionKey);
+		return this.map.setItem(key, cyphertext);
 	}
 
 	/** @see IAsyncMap.size */

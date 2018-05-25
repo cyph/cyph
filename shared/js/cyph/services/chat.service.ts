@@ -327,7 +327,7 @@ export class ChatService {
 		const [authorID]	= await Promise.all([
 			this.getAuthorID(author),
 			!value ? undefined : (async () => {
-				const o	= await messageValues.setItemEasy(id, value);
+				const o	= await messageValues.setItem(id, value);
 				hash	= o.hash;
 				key		= o.encryptionKey;
 			})()
@@ -638,7 +638,7 @@ export class ChatService {
 			)(),
 			(async () => {
 				const messageID	= await this.getUUID();
-				const o			= await this.messageValues.setItemEasy(messageID, value);
+				const o			= await this.messageValues.setItem(messageID, value);
 				return {hash: o.hash, id: messageID, key: o.encryptionKey};
 			})()
 		]);
