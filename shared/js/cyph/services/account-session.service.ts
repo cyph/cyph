@@ -190,7 +190,7 @@ export class AccountSessionService extends SessionService {
 			}
 
 			for (const session of group) {
-				session.on(rpcEvents.text, o => this.trigger(rpcEvents.text, o));
+				session.on(rpcEvents.text, o => { this.trigger(rpcEvents.text, o); });
 
 				session.on(rpcEvents.confirm, (o: ISessionMessageData) => {
 					if (!o.textConfirmation || !o.textConfirmation.id) {
