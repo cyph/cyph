@@ -1,6 +1,6 @@
 import {BehaviorSubject, Observable} from 'rxjs';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
-import {ISessionMessage} from '../proto';
+import {ISessionMessage, ISessionMessageData as ISessionMessageDataInternal} from '../proto';
 import {
 	CastleEvents,
 	ISessionMessageAdditionalData,
@@ -89,6 +89,11 @@ export interface ISessionService {
 
 	/** Returns first occurrence of event. */
 	one<T> (event: string) : Promise<T>;
+
+	/** Converts an ISessionMessageDataInternal into an ISessionMessageData. */
+	processMessageData (
+		data: ISessionMessageDataInternal
+	) : Promise<ISessionMessageData>;
 
 	/** Send at least one message through the session. */
 	send (

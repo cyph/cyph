@@ -17,7 +17,9 @@ import {
 	IChatLastConfirmedMessage,
 	IChatMessage,
 	IChatMessageLine,
-	IChatMessageValue
+	IChatMessagePredecessor,
+	IChatMessageValue,
+	ISessionMessageDataList
 } from '../proto';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
@@ -85,8 +87,8 @@ export class ChatService {
 	;
 
 	/** Global map of message IDs to values. */
-	protected readonly messageValues: EncryptedAsyncMap<string, IChatMessageValue>		=
-		new EncryptedAsyncMap<string, IChatMessageValue>(
+	protected readonly messageValues: EncryptedAsyncMap<IChatMessageValue>		=
+		new EncryptedAsyncMap<IChatMessageValue>(
 			this.potassiumService,
 			this.messageValuesURL,
 			ChatMessageValue,
@@ -95,8 +97,8 @@ export class ChatService {
 	;
 
 	/** Local version of messageValues (ephemeral chat optimization). */
-	protected readonly messageValuesLocal: EncryptedAsyncMap<string, IChatMessageValue>	=
-		new EncryptedAsyncMap<string, IChatMessageValue>(
+	protected readonly messageValuesLocal: EncryptedAsyncMap<IChatMessageValue>	=
+		new EncryptedAsyncMap<IChatMessageValue>(
 			this.potassiumService,
 			this.messageValuesURL,
 			ChatMessageValue
@@ -131,6 +133,17 @@ export class ChatService {
 	private async addTextMessage (o: ISessionMessageData) : Promise<void> {
 		if (!o.text) {
 			return;
+		}
+
+		if (
+			o.text.predecessor &&
+			!(await this.messageHasValidHash(o.text.predecessor.id, o.text.predecessor.hash))
+		) {
+			return this.chat.futureMessages.updateItem(o.text.predecessor.id, async futureMessages => ({
+				messages: futureMessages && futureMessages.messages ?
+					futureMessages.messages.concat(o) :
+					[o]
+			}));
 		}
 
 		if (o.author !== this.sessionService.localUsername) {
@@ -172,6 +185,18 @@ export class ChatService {
 			o.text.hash,
 			o.text.key
 		);
+
+		await this.chat.futureMessages.updateItem(o.id, async futureMessages => {
+			if (futureMessages && futureMessages.messages) {
+				await Promise.all(futureMessages.messages.map(async futureMessage =>
+					this.addTextMessage(
+						await this.sessionService.processMessageData(futureMessage)
+					)
+				));
+			}
+
+			return {messages: []};
+		});
 
 		if (selfDestructChat) {
 			this.chatSelfDestructed		=
@@ -223,6 +248,27 @@ export class ChatService {
 		}
 	}
 
+	/** @ignore */
+	private async messageHasValidHash (
+		message: IChatMessage|string,
+		expectedHash?: Uint8Array
+	) : Promise<boolean> {
+		if (typeof message === 'string') {
+			message	= await this.chat.messages.getItem(message);
+		}
+
+		if (message.id && message.hash && message.hash.length > 0) {
+			await this.getMessageValue(message);
+
+			return message.value !== undefined && (
+				expectedHash === undefined ||
+				this.potassiumService.compareMemory(message.hash, expectedHash)
+			);
+		}
+
+		return false;
+	}
+
 	/** Gets author ID for including in message list item. */
 	protected async getAuthorID (_AUTHOR: Observable<string>) : Promise<string|undefined> {
 		return undefined;
@@ -232,7 +278,7 @@ export class ChatService {
 	protected getDefaultChatData () : IChatData {
 		return {
 			currentMessage: {},
-			futureMessages: new LocalAsyncMap<string, string>(),
+			futureMessages: new LocalAsyncMap<string, ISessionMessageDataList>(),
 			initProgress: new BehaviorSubject(0),
 			isConnected: false,
 			isDisconnected: false,
@@ -636,7 +682,8 @@ export class ChatService {
 
 		const promises: [
 			Promise<IChatMessageLine[]>,
-			Promise<{hash: Uint8Array; id: string; key: Uint8Array}>
+			Promise<{hash: Uint8Array; id: string; key: Uint8Array}>,
+			Promise<IChatMessagePredecessor|undefined>
 		]	= [
 			(async () =>
 				(
@@ -656,16 +703,42 @@ export class ChatService {
 				const messageID	= await this.getUUID();
 				const o			= await this.messageValues.setItem(messageID, value);
 				return {hash: o.hash, id: messageID, key: o.encryptionKey};
+			})(),
+			(async () => {
+				const messageIDs	= await this.chat.messageList.getValue();
+
+				for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
+					const o	= await this.chat.messages.getItem(messageIDs[i]);
+
+					if (
+						o.id &&
+						(o.hash && o.hash.length > 0) &&
+						(await this.messageHasValidHash(o))
+					) {
+						return {hash: o.hash, id: o.id};
+					}
+				}
+
+				return;
 			})()
 		];
 
 		await this.messageSendLock(async () => {
-			const [dimensions, {hash, id, key}]	= await Promise.all(promises);
+			const [dimensions, {hash, id, key}, predecessor]	= await Promise.all(promises);
 
-			await this.addTextMessage((await this.sessionService.send([
-				rpcEvents.text,
-				{id, text: {dimensions, hash, key, selfDestructChat, selfDestructTimeout}}
-			]))[0].data);
+			await this.addTextMessage(
+				(await this.sessionService.send([rpcEvents.text, {
+					id,
+					text: {
+						dimensions,
+						hash,
+						key,
+						predecessor,
+						selfDestructChat,
+						selfDestructTimeout
+					}
+				}]))[0].data
+			);
 		});
 	}
 

@@ -214,10 +214,7 @@ export abstract class SessionService implements ISessionService {
 			return;
 		}
 
-		const author	= await this.getSessionMessageAuthor(message.data);
-		if (author) {
-			(<any> message.data).author	= author;
-		}
+		message.data	= await this.processMessageData(message.data);
 
 		this.receivedMessages.add(message.data.id);
 
@@ -483,6 +480,17 @@ export abstract class SessionService implements ISessionService {
 	public async one<T> (event: string) : Promise<T> {
 		this.openEvents.add(event);
 		return eventManager.one<T>(event + this.eventID);
+	}
+
+	/** @inheritDoc */
+	public async processMessageData (
+		data: ISessionMessageDataInternal
+	) : Promise<ISessionMessageData> {
+		const author	= await this.getSessionMessageAuthor(data);
+		if (author) {
+			(<any> data).author	= author;
+		}
+		return <any> data;
 	}
 
 	/** @inheritDoc */

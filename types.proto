@@ -1604,6 +1604,12 @@ message SessionMessageList {
 	repeated SessionMessage messages = 1;
 }
 
+/** Array of session message data objectss. */
+message SessionMessageDataList {
+	/** Message data objects. */
+	repeated SessionMessageData messages = 1;
+}
+
 /** Contains an actual chat text message. */
 message SessionText {
 	/** @see ChatMessage.dimensions */

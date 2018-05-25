@@ -2,12 +2,18 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {IAsyncMap} from './iasync-map';
 import {LocalAsyncValue} from './local-async-value';
+import {LockFunction} from './lock-function-type';
+import {getOrSetDefault} from './util/get-or-set-default';
+import {lockFunction} from './util/lock';
 
 
 /**
  * IAsyncMap implementation that wraps a local value.
  */
 export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>> implements IAsyncMap<K, V> {
+	/** @inheritDoc */
+	private readonly locks: Map<K, LockFunction>	= new Map<K, LockFunction>();
+
 	/** @inheritDoc */
 	public async clear () : Promise<void> {
 		this.value.clear();
@@ -45,6 +51,21 @@ export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>> implements I
 	/** @inheritDoc */
 	public async size () : Promise<number> {
 		return this.value.size;
+	}
+
+	/** @inheritDoc */
+	public async updateItem (key: K, f: (value?: V) => Promise<V>) : Promise<void> {
+		await getOrSetDefault(this.locks, key, lockFunction)(async () => {
+			const value	= await this.getItem(key).catch(() => undefined);
+			let newValue: V;
+			try {
+				newValue	= await f(value);
+			}
+			catch {
+				return;
+			}
+			await this.setItem(key, newValue);
+		});
 	}
 
 	/** @inheritDoc */

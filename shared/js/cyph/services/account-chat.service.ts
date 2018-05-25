@@ -9,6 +9,7 @@ import {
 	ChatMessageValue,
 	IChatMessage,
 	NotificationTypes,
+	SessionMessageDataList,
 	StringProto
 } from '../proto';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -108,7 +109,7 @@ export class AccountChatService extends ChatService {
 					currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
 					futureMessages: this.accountDatabaseService.getAsyncMap(
 						`${contactURL}/futureMessages`,
-						StringProto,
+						SessionMessageDataList,
 						undefined,
 						undefined,
 						undefined,

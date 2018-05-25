@@ -4,7 +4,7 @@ import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {LocalAsyncList} from '../local-async-list';
 import {LockFunction} from '../lock-function-type';
-import {IChatLastConfirmedMessage, IChatMessage} from '../proto';
+import {IChatLastConfirmedMessage, IChatMessage, ISessionMessageDataList} from '../proto';
 import {States} from './enums';
 import {IChatMessageLiveValue} from './ichat-message-live-value';
 
@@ -20,7 +20,7 @@ export interface IChatData {
 	 * Queued up incoming messages whose predecessors have yet to appear.
 	 * Map keys are predecessor message IDs.
 	 */
-	futureMessages: IAsyncMap<string, string>;
+	futureMessages: IAsyncMap<string, ISessionMessageDataList>;
 
 	/** Percentage complete of initial handshake or other loading process. */
 	initProgress: BehaviorSubject<number>;
