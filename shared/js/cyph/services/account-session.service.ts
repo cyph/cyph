@@ -3,7 +3,8 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {User} from '../account/user';
 import {BinaryProto, ISessionMessage, SessionMessage, StringProto} from '../proto';
-import {ISessionMessageData, rpcEvents} from '../session';
+import {events, ISessionMessageData, rpcEvents} from '../session';
+import {getOrSetDefault} from '../util/get-or-set-default';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
@@ -103,12 +104,14 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
-		if (!this.group) {
-			await this.castleSendMessages(messages);
+		if (this.group) {
+			await Promise.all(this.group.map(async session =>
+				session.plaintextSendHandler(messages)
+			));
 			return;
 		}
 
-		throw new Error('Group plaintextSendHandler not implemented.');
+		await this.castleSendMessages(messages);
 	}
 
 	/** @inheritDoc */
@@ -139,7 +142,12 @@ export class AccountSessionService extends SessionService {
 		this.initiated		= true;
 		this.sessionSubID	= sessionSubID;
 
+
+		/* Group session init */
+
 		if (username instanceof Array) {
+			/* Create N pairwise sessions, one for each other group member */
+
 			const groupSessionSubID	=
 				`group-${
 					await this.accountContactsService.getContactID(username)
@@ -148,19 +156,68 @@ export class AccountSessionService extends SessionService {
 				}`
 			;
 
-			this.group	= await Promise.all(username.map(async groupMember => {
+			const group	= await Promise.all(username.map(async groupMember => {
 				const session	= this.spawn();
 				await session.setUser(groupMember, groupSessionSubID, ephemeralSubSession, false);
 				return session;
 			}));
 
-			/* TODO: Handle events on group sessions to grab incoming messages. */
+			this.group	= group;
+
+			/*
+				Handle events on individual pairwise sessions and perform equivalent behavior.
+				Note: rpcEvents.typing is ignored for now.
+			*/
+
+			const confirmations	= new Map<string, Set<AccountSessionService>>();
+
+			for (const {event, all} of [
+				{all: true, event: events.beginChat},
+				{all: false, event: events.closeChat},
+				{all: true, event: events.connect},
+				{all: false, event: events.connectFailure},
+				{all: false, event: events.cyphNotFound}
+			]) {
+				const promises	= group.map(async session => session.one(event));
+				const callback	= () => { this.trigger(event); };
+
+				if (all) {
+					Promise.all(promises).then(callback);
+				}
+				else {
+					Promise.race(promises).then(callback);
+				}
+			}
+
+			for (const session of group) {
+				session.on(rpcEvents.text, o => this.trigger(rpcEvents.text, o));
+
+				session.on(rpcEvents.confirm, (o: ISessionMessageData) => {
+					if (!o.textConfirmation || !o.textConfirmation.id) {
+						return;
+					}
+
+					const confirmedSessions	= getOrSetDefault(
+						confirmations,
+						o.textConfirmation.id,
+						() => new Set<AccountSessionService>()
+					);
+
+					confirmedSessions.add(session);
+
+					if (confirmedSessions.size === group.length) {
+						confirmations.delete(o.textConfirmation.id);
+						this.trigger(rpcEvents.confirm, o);
+					}
+				});
+			}
 
 			this.resolveReady();
-
 			return;
 		}
 
+
+		/* Pairwise session init */
 
 		(async () => {
 			const contactID			= await this.accountContactsService.getContactID(username);

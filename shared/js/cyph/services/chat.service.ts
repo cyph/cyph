@@ -720,7 +720,7 @@ export class ChatService {
 
 			beginChat.then(() => { this.begin(); });
 
-			this.sessionService.one(events.closeChat).then(async () =>
+			this.sessionService.closed.then(async () =>
 				this.close()
 			);
 
