@@ -36,6 +36,7 @@ html, body {
 	> .transition {
 		@media (min-width: 376px) {
 			opacity: 0;
+
 			@include animation(preloadfadeout 2s linear);
 		}
 
