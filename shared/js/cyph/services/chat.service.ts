@@ -59,6 +59,9 @@ export class ChatService {
 	private readonly messageChangeLock: LockFunction	= lockFunction();
 
 	/** @ignore */
+	private readonly messageSendLock: LockFunction		= lockFunction();
+
+	/** @ignore */
 	private readonly messageValuesURL: string			= 'messageValues' + (
 		this.sessionInitService.ephemeral ? 'Ephemeral' : ''
 	);
@@ -631,7 +634,10 @@ export class ChatService {
 				throw new Error('Invalid ChatMessageValue.Types value.');
 		}
 
-		const [dimensions, {hash, id, key}]	= await Promise.all([
+		const promises: [
+			Promise<IChatMessageLine[]>,
+			Promise<{hash: Uint8Array; id: string; key: Uint8Array}>
+		]	= [
 			(async () =>
 				(
 					await (await this.chatMessageGeometryService).getDimensions(new ChatMessage(
@@ -651,12 +657,16 @@ export class ChatService {
 				const o			= await this.messageValues.setItem(messageID, value);
 				return {hash: o.hash, id: messageID, key: o.encryptionKey};
 			})()
-		]);
+		];
 
-		await this.addTextMessage((await this.sessionService.send([
-			rpcEvents.text,
-			{id, text: {dimensions, hash, key, selfDestructChat, selfDestructTimeout}}
-		]))[0].data);
+		await this.messageSendLock(async () => {
+			const [dimensions, {hash, id, key}]	= await Promise.all(promises);
+
+			await this.addTextMessage((await this.sessionService.send([
+				rpcEvents.text,
+				{id, text: {dimensions, hash, key, selfDestructChat, selfDestructTimeout}}
+			]))[0].data);
+		});
 	}
 
 	/** Sets queued message to be sent after handshake. */
