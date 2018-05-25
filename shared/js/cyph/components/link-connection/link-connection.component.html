@@ -114,15 +114,22 @@
 		</div>
 	</div>
 
-	<br *ngIf='!envService.isMobile' />
-	<br *ngIf='!envService.isMobile' />
+	<ng-container *ngIf='!envService.isMobile'>
+		<br />
+		<br />
+	</ng-container>
 
 	<div fxLayout='row' fxLayoutAlign='center center'>
-		<ng-container *ngIf='!envService.showAds; else proContent'>
+		<ng-container *ngIf='envService.showAds; else proContent'>
 			<ng-content></ng-content>
 		</ng-container>
 		<ng-template #proContent>
-			<div fxFlex fxFlex.gt-md='50' fxLayout='column'>
+			<div
+				fxFlex
+				fxFlex.gt-md='50'
+				fxLayout='column'
+				*ngIf='envService.environment.customBuild?.config.pro'
+			>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<mat-slide-toggle [(ngModel)]='advancedFeatures' cyphTranslate>
 						Advanced Features
