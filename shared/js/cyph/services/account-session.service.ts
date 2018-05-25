@@ -140,10 +140,18 @@ export class AccountSessionService extends SessionService {
 		this.sessionSubID	= sessionSubID;
 
 		if (username instanceof Array) {
+			const groupSessionSubID	=
+				`group-${
+					await this.accountContactsService.getContactID(username)
+				}${
+					this.sessionSubID ? `-${this.sessionSubID}` : ''
+				}`
+			;
+
 			this.group	= await Promise.all(username.map(async groupMember => {
-				const service	= this.spawn();
-				await service.setUser(groupMember, sessionSubID, ephemeralSubSession, false);
-				return service;
+				const session	= this.spawn();
+				await session.setUser(groupMember, groupSessionSubID, ephemeralSubSession, false);
+				return session;
 			}));
 
 			/* TODO: Handle events on group sessions to grab incoming messages. */
