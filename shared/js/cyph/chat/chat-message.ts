@@ -61,7 +61,7 @@ export class ChatMessage implements IChatMessage {
 	public readonly timeString: string					= getTimeString(this.message.timestamp);
 
 	/** @ignore */
-	public value?: IChatMessageValue					= this.message.value && {
+	public value?: IChatMessageValue&{failure?: boolean}	= this.message.value && {
 		calendarInvite: this.message.value.calendarInvite,
 		form: this.message.value.form,
 		quill: this.message.value.quill,
@@ -69,8 +69,8 @@ export class ChatMessage implements IChatMessage {
 	};
 
 	/** Observable of value. */
-	public readonly valueWatcher: Subject<IChatMessageValue|undefined>	=
-		new BehaviorSubject<IChatMessageValue|undefined>(this.value)
+	public readonly valueWatcher: Subject<(IChatMessageValue&{failure?: boolean})|undefined>	=
+		new BehaviorSubject<(IChatMessageValue&{failure?: boolean})|undefined>(this.value)
 	;
 
 	constructor (

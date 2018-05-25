@@ -461,6 +461,10 @@ export class ChatService {
 
 	/** Gets message value if not already set. */
 	public async getMessageValue (message: IChatMessage) : Promise<IChatMessage> {
+		if (message.value !== undefined) {
+			return message;
+		}
+
 		for (const messageValues of [this.messageValuesLocal, this.messageValues]) {
 			if (
 				message.value === undefined &&
@@ -474,11 +478,18 @@ export class ChatService {
 				).catch(
 					() => undefined
 				);
-
-				if (message.value !== undefined && message instanceof ChatMessage) {
-					message.valueWatcher.next(message.value);
-				}
 			}
+		}
+
+		if (message instanceof ChatMessage) {
+			if (message.value === undefined) {
+				message.value	= {
+					failure: true,
+					text: this.stringsService.getMessageValueFailure
+				};
+			}
+
+			message.valueWatcher.next(message.value);
 		}
 
 		return message;
