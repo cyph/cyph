@@ -126,7 +126,7 @@ export class EncryptedAsyncMap<T> {
 	}
 
 	/** @see IAsyncMap.updateItem */
-	public async updateItem (key: string, f: (value: T) => Promise<T>) : Promise<{
+	public async updateItem (key: string, f: (value?: T) => Promise<T>) : Promise<{
 		encryptionKey: Uint8Array;
 		hash: Uint8Array;
 	}> {
@@ -138,7 +138,10 @@ export class EncryptedAsyncMap<T> {
 			const newValue	= (await this.seal(
 				key,
 				await f(
-					await deserialize(this.proto, await this.open(key, cyphertext, encryptionKey))
+					!cyphertext ? undefined : await deserialize(
+						this.proto,
+						await this.open(key, cyphertext, encryptionKey)
+					)
 				),
 				encryptionKey
 			));
