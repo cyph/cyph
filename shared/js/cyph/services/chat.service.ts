@@ -142,10 +142,13 @@ export class ChatService {
 				o.text.selfDestructTimeout > 0
 			) &&
 			await (async () => {
-				const messages	= await this.chat.messages.getValue();
-				return messages.length === 0 || (
-					messages.length === 1 &&
-					messages[0].authorType === ChatMessage.AuthorTypes.App
+				const messageIDs	= await this.chat.messageList.getValue();
+
+				return messageIDs.length === 0 || (
+					messageIDs.length === 1 &&
+					(
+						await this.chat.messages.getItem(messageIDs[0])
+					).authorType === ChatMessage.AuthorTypes.App
 				);
 			})()
 		;
@@ -169,7 +172,7 @@ export class ChatService {
 
 		if (selfDestructChat) {
 			this.chatSelfDestructed		=
-				this.chat.messages.watch().pipe(map(messages => messages.length === 0))
+				this.chat.messageList.watch().pipe(map(messageIDs => messageIDs.length === 0))
 			;
 			this.chatSelfDestructTimer	= new Timer(this.chatSelfDestructTimeout * 1000);
 			await this.chatSelfDestructTimer.start();
@@ -226,14 +229,15 @@ export class ChatService {
 	protected getDefaultChatData () : IChatData {
 		return {
 			currentMessage: {},
-			futureMessages: new LocalAsyncMap<string, IChatMessage>(),
+			futureMessages: new LocalAsyncMap<string, string>(),
 			initProgress: new BehaviorSubject(0),
 			isConnected: false,
 			isDisconnected: false,
 			isFriendTyping: new BehaviorSubject(false),
 			isMessageChanged: false,
 			lastConfirmedMessage: new LocalAsyncValue({id: '', index: 0}),
-			messages: new LocalAsyncList<IChatMessage>(),
+			messageList: new LocalAsyncList<string>(),
+			messages: new LocalAsyncMap<string, IChatMessage>(),
 			pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
 			receiveTextLock: lockFunction(),
 			state: States.none,
@@ -271,7 +275,7 @@ export class ChatService {
 		shouldNotify: boolean = author !== this.sessionService.localUsername,
 		selfDestructTimeout?: number,
 		dimensions?: IChatMessageLine[],
-		id?: string,
+		messageID?: string,
 		hash?: Uint8Array,
 		key?: Uint8Array
 	) : Promise<void> {
@@ -320,9 +324,7 @@ export class ChatService {
 			}
 		}
 
-		if (!id) {
-			id	= await this.getUUID();
-		}
+		const id	= messageID || (await this.getUUID());
 
 		const [authorID]	= await Promise.all([
 			this.getAuthorID(author),
@@ -351,8 +353,13 @@ export class ChatService {
 			timestamp
 		};
 
+		const pushMessage	= async () => {
+			await this.chat.messages.setItem(id, chatMessage);
+			await this.chat.messageList.pushValue(id);
+		};
+
 		if (this.sessionInitService.ephemeral) {
-			await this.chat.messages.pushValue(chatMessage);
+			await pushMessage();
 		}
 		else {
 			await this.chat.pendingMessages.pushValue({
@@ -369,7 +376,7 @@ export class ChatService {
 		}
 
 		if (!this.sessionInitService.ephemeral) {
-			await this.chat.messages.pushValue(chatMessage);
+			await pushMessage();
 		}
 
 		if (
@@ -379,13 +386,16 @@ export class ChatService {
 		) {
 			await sleep(selfDestructTimeout + 10000);
 
-			await this.chat.messages.updateValue(async messages => {
-				const i	= messages.findIndex(o => o.id === id);
+			/* TODO: Decide whether to remove this and preserve locations of destroyed messages. */
+			await this.chat.messageList.updateValue(async messageIDs => {
+				const i	= messageIDs.findIndex(s => s === id);
 				if (i >= 0) {
-					messages.splice(i, 1);
+					messageIDs.splice(i, 1);
 				}
-				return messages;
+				return messageIDs;
 			});
+
+			await this.chat.messages.removeItem(id);
 		}
 	}
 
@@ -699,12 +709,13 @@ export class ChatService {
 
 			this.unconfirmedMessagesSubscription		= combineLatest(
 				this.chat.lastConfirmedMessage.watch(),
-				this.chat.messages.watch()
-			).pipe(map(([lastConfirmedMessage, messages]) => {
+				this.chat.messageList.watch()
+			).pipe(map(([lastConfirmedMessage, messageIDs]) => {
 				const unconfirmedMessages: {[id: string]: boolean}	= {};
 
-				for (let i = messages.length - 1 ; i >= 0 ; --i) {
-					const id	= messages[i].id;
+				for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
+					const id	= messageIDs[i];
+
 					if (id === lastConfirmedMessage.id) {
 						break;
 					}
@@ -790,12 +801,12 @@ export class ChatService {
 					return;
 				}
 
-				const id		= o.textConfirmation.id;
-				const messages	= await this.chat.messages.getValue();
+				const id			= o.textConfirmation.id;
+				const messageIDs	= await this.chat.messageList.getValue();
 
 				let newLastConfirmedMessage: IChatLastConfirmedMessage|undefined;
-				for (let i = messages.length - 1 ; i >= 0 ; --i) {
-					if (messages[i].id === id) {
+				for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
+					if (messageIDs[i] === id) {
 						newLastConfirmedMessage	= {id, index: i};
 						break;
 					}

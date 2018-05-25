@@ -8,7 +8,8 @@ import {
 	ChatMessage,
 	ChatMessageValue,
 	IChatMessage,
-	NotificationTypes
+	NotificationTypes,
+	StringProto
 } from '../proto';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {AccountContactsService} from './account-contacts.service';
@@ -107,7 +108,7 @@ export class AccountChatService extends ChatService {
 					currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
 					futureMessages: this.accountDatabaseService.getAsyncMap(
 						`${contactURL}/futureMessages`,
-						ChatMessage,
+						StringProto,
 						undefined,
 						undefined,
 						undefined,
@@ -122,7 +123,15 @@ export class AccountChatService extends ChatService {
 						`${contactURL}/lastConfirmedMessage`,
 						ChatLastConfirmedMessage
 					),
-					messages: this.accountDatabaseService.getAsyncList(
+					messageList: this.accountDatabaseService.getAsyncList(
+						`${contactURL}/messageList`,
+						StringProto,
+						undefined,
+						undefined,
+						undefined,
+						true
+					),
+					messages: this.accountDatabaseService.getAsyncMap(
 						`${contactURL}/messages`,
 						ChatMessage,
 						undefined,

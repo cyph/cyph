@@ -20,7 +20,7 @@ export interface IChatData {
 	 * Queued up incoming messages whose predecessors have yet to appear.
 	 * Map keys are predecessor message IDs.
 	 */
-	futureMessages: IAsyncMap<string, IChatMessage>;
+	futureMessages: IAsyncMap<string, string>;
 
 	/** Percentage complete of initial handshake or other loading process. */
 	initProgress: BehaviorSubject<number>;
@@ -40,8 +40,11 @@ export interface IChatData {
 	/** Last outgoing message whose receipt has been confirmed. */
 	lastConfirmedMessage: IAsyncValue<IChatLastConfirmedMessage>;
 
-	/** Message list. */
-	messages: IAsyncList<IChatMessage>;
+	/** Ordered message list of messge IDs. */
+	messageList: IAsyncList<string>;
+
+	/** Messages. Map keys are message IDs. */
+	messages: IAsyncMap<string, IChatMessage>;
 
 	/** Local message outbox. */
 	pendingMessages: LocalAsyncList<IChatMessage&{pending: true}>;

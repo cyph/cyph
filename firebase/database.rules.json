@@ -301,7 +301,44 @@
 
 					"contacts": {
 						"$contact": {
+							"futureMessages": {
+								"$messageID": {
+									"data": {
+										".validate": "newData.isString()"
+									},
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								}
+							},
 							"lastConfirmedMessage": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							},
+							"messageList": {
+								"$messageID": {
+									"data": {
+										".validate": "newData.isString()"
+									},
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								}
+							},
+							"messageList-head": {
 								"data": {
 									".validate": "newData.isString()"
 								},
@@ -323,17 +360,6 @@
 									"timestamp": {
 										".validate": "newData.val() === now"
 									}
-								}
-							},
-							"messages-head": {
-								"data": {
-									".validate": "newData.isString()"
-								},
-								"hash": {
-									".validate": "newData.isString()"
-								},
-								"timestamp": {
-									".validate": "newData.val() === now"
 								}
 							},
 							"session": {

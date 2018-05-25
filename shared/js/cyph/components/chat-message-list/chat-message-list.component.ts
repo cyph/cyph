@@ -189,7 +189,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 		const observables	= getOrSetDefault(this.observableCache, chat, () => ({
 			messages: combineLatest(
-				chat.messages.watch(),
+				chat.messageList.watch().pipe(mergeMap(async messageIDs => Promise.all(
+					messageIDs.map(async id => chat.messages.getItem(id))
+				))),
 				chat.pendingMessages.watch()
 			).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
 				if (onlineMessages.length < 1) {

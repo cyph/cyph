@@ -67,9 +67,11 @@ service firebase.storage {
 				// match /contactUsernames/{username}/{hash} {}
 
 				// match /contacts/{contact} {
+				// 	match /futureMessages/{messageID}/{hash} {}
 				// 	match /lastConfirmedMessage/{hash} {}
+				// 	match /messageList/{messageID}/{hash} {}
+				// 	match /messageList-head/{hash} {}
 				// 	match /messages/{message}/{hash} {}
-				// 	match /messages-head/{hash} {}
 				// 	match /session {
 				// 		/asymmetricRatchetState {
 				// 			/privateKey/{hash} {}
