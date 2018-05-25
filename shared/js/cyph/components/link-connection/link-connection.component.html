@@ -25,7 +25,12 @@
 				Send the link below to the patient. When they open it,
 				your telehealth session will begin.
 			</span>
-			<span *ngIf='!envService.isTelehealth' cyphTranslate>
+			<span
+				class='description'
+				[class.mobile]='envService.isMobile'
+				*ngIf='!envService.isTelehealth'
+				cyphTranslate
+			>
 				Send the link below to another user. When they open it,
 				you'll be securely connected.
 			</span>
@@ -109,15 +114,22 @@
 		</div>
 	</div>
 
-	<br />
-	<br />
+	<ng-container *ngIf='!envService.isMobile'>
+		<br />
+		<br />
+	</ng-container>
 
 	<div fxLayout='row' fxLayoutAlign='center center'>
-		<ng-container *ngIf='!envService.environment.customBuild?.config.pro; else proContent'>
+		<ng-container *ngIf='envService.showAds; else proContent'>
 			<ng-content></ng-content>
 		</ng-container>
 		<ng-template #proContent>
-			<div fxFlex fxFlex.gt-md='50' fxLayout='column'>
+			<div
+				fxFlex
+				fxFlex.gt-md='50'
+				fxLayout='column'
+				*ngIf='envService.environment.customBuild?.config.pro'
+			>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<mat-slide-toggle [(ngModel)]='advancedFeatures' cyphTranslate>
 						Advanced Features

@@ -129,10 +129,7 @@ export class P2PService {
 
 	/** @ignore */
 	private get p2pWarning () : string {
-		return (
-			this.envService.environment.customBuild &&
-			this.envService.environment.customBuild.config.pro
-		) ?
+		return this.envService.showAds ?
 			this.stringsService.p2pWarning :
 			this.stringsService.p2pWarningVPN
 		;
