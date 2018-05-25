@@ -47,7 +47,7 @@ html, body {
 }
 
 @media (max-width: 375px) {
-	.loading {
+	#pre-load > .loading {
 		display: none;
 	}
 }
