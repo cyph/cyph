@@ -250,14 +250,14 @@ export class ChatService {
 
 	/** @ignore */
 	private async messageHasValidHash (
-		message: IChatMessage|string,
+		message: IChatMessage|string|undefined,
 		expectedHash?: Uint8Array
 	) : Promise<boolean> {
 		if (typeof message === 'string') {
-			message	= await this.chat.messages.getItem(message);
+			message	= await this.chat.messages.getItem(message).catch(() => undefined);
 		}
 
-		if (message.id && message.hash && message.hash.length > 0) {
+		if (message && message.id && message.hash && message.hash.length > 0) {
 			await this.getMessageValue(message);
 
 			return message.value !== undefined && (
@@ -711,6 +711,7 @@ export class ChatService {
 					const o	= await this.chat.messages.getItem(messageIDs[i]);
 
 					if (
+						o.authorType === ChatMessage.AuthorTypes.Remote &&
 						o.id &&
 						(o.hash && o.hash.length > 0) &&
 						(await this.messageHasValidHash(o))
