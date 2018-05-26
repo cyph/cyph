@@ -56,9 +56,6 @@ export abstract class SessionService implements ISessionService {
 	private readonly openEvents: Set<string>	= new Set();
 
 	/** @ignore */
-	private readonly resolveOpened: () => void	= this._OPENED.resolve;
-
-	/** @ignore */
 	protected readonly eventID: string									= uuid();
 
 	/** @ignore */
@@ -81,6 +78,9 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string>					= new Set<string>();
+
+	/** @ignore */
+	protected readonly resolveOpened: () => void						= this._OPENED.resolve;
 
 	/** @ignore */
 	protected resolveSymmetricKey?: (symmetricKey: Uint8Array) => void	=
@@ -214,10 +214,7 @@ export abstract class SessionService implements ISessionService {
 			return;
 		}
 
-		const author	= await this.getSessionMessageAuthor(message.data);
-		if (author) {
-			(<any> message.data).author	= author;
-		}
+		message.data	= await this.processMessageData(message.data);
 
 		this.receivedMessages.add(message.data.id);
 
@@ -258,7 +255,7 @@ export abstract class SessionService implements ISessionService {
 				capabilities: additionalData.capabilities,
 				chatState: additionalData.chatState,
 				command: additionalData.command,
-				id: uuid(),
+				id: additionalData.id || uuid(),
 				sessionSubID: this.sessionSubID,
 				text: additionalData.text,
 				textConfirmation: additionalData.textConfirmation,
@@ -486,6 +483,17 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
+	public async processMessageData (
+		data: ISessionMessageDataInternal
+	) : Promise<ISessionMessageData> {
+		const author	= await this.getSessionMessageAuthor(data);
+		if (author) {
+			(<any> data).author	= author;
+		}
+		return <any> data;
+	}
+
+	/** @inheritDoc */
 	public get proFeatures () : ProFeatures {
 		return new ProFeatures();
 	}
@@ -506,6 +514,11 @@ export abstract class SessionService implements ISessionService {
 		const newMessages	= await this.newMessages(messages);
 		await this.plaintextSendHandler(newMessages);
 		return newMessages;
+	}
+
+	/** @inheritDoc */
+	public spawn () : SessionService {
+		throw new Error('Must provide an implementation of SessionService.spawn.');
 	}
 
 	/** @inheritDoc */

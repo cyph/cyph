@@ -115,6 +115,17 @@ export class LocalSessionService extends SessionService {
 		return newMessages;
 	}
 
+	/** @inheritDoc */
+	public spawn () : LocalSessionService {
+		return new LocalSessionService(
+			this.analyticsService,
+			this.envService,
+			this.errorService,
+			this.sessionInitService.spawn(),
+			this.stringsService
+		);
+	}
+
 	constructor (
 		analyticsService: AnalyticsService,
 		envService: EnvService,

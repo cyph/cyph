@@ -124,6 +124,21 @@ export class EphemeralSessionService extends SessionService {
 		);
 	}
 
+	/** @inheritDoc */
+	public spawn () : EphemeralSessionService {
+		return new EphemeralSessionService(
+			this.analyticsService,
+			this.castleService.spawn(),
+			this.channelService.spawn(),
+			this.envService,
+			this.errorService,
+			this.potassiumService,
+			this.sessionInitService.spawn(),
+			this.stringsService,
+			this.configService
+		);
+	}
+
 	constructor (
 		analyticsService: AnalyticsService,
 		castleService: CastleService,

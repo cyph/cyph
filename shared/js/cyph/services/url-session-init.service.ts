@@ -24,10 +24,18 @@ export class UrlSessionInitService implements SessionInitService {
 	/** @inheritDoc */
 	public readonly sessionService: IResolvable<ISessionService>	= resolvable();
 
-	constructor (router: Router) {
+	/** @inheritDoc */
+	public spawn () : UrlSessionInitService {
+		return new UrlSessionInitService(this.router);
+	}
+
+	constructor (
+		/** @ignore */
+		private readonly router: Router
+	) {
 		const urlSegmentPaths	=
-			router.routerState.snapshot.root.firstChild ?
-				router.routerState.snapshot.root.firstChild.url.map(o => o.path) :
+			this.router.routerState.snapshot.root.firstChild ?
+				this.router.routerState.snapshot.root.firstChild.url.map(o => o.path) :
 				[]
 		;
 

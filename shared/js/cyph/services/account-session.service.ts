@@ -3,7 +3,8 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {User} from '../account/user';
 import {BinaryProto, ISessionMessage, SessionMessage, StringProto} from '../proto';
-import {ISessionMessageData, rpcEvents} from '../session';
+import {events, ISessionMessageData, rpcEvents} from '../session';
+import {getOrSetDefault} from '../util/get-or-set-default';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
@@ -31,6 +32,9 @@ export class AccountSessionService extends SessionService {
 
 	/** @ignore */
 	private readonly _READY						= resolvable();
+
+	/** @ignore */
+	private group?: AccountSessionService[];
 
 	/** @ignore */
 	private initiated: boolean					= false;
@@ -64,6 +68,10 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {
+		if (this.group) {
+			throw new Error('Master channelOnClose should not be used in a group session.');
+		}
+
 		if (this.ephemeralSubSession) {
 			await super.channelOnClose();
 		}
@@ -71,6 +79,10 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
+		if (this.group) {
+			throw new Error('Master channelOnOpen should not be used in a group session.');
+		}
+
 		await super.channelOnOpen(isAlice, false);
 		this.stateResolver.resolve();
 	}
@@ -92,11 +104,25 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
+		if (this.group) {
+			await Promise.all(this.group.map(async session =>
+				session.plaintextSendHandler(messages)
+			));
+			return;
+		}
+
 		await this.castleSendMessages(messages);
 	}
 
 	/** @inheritDoc */
 	public close () : void {
+		if (this.group) {
+			for (const session of this.group) {
+				session.close();
+			}
+			return;
+		}
+
 		if (this.ephemeralSubSession) {
 			super.close();
 		}
@@ -104,16 +130,102 @@ export class AccountSessionService extends SessionService {
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
-		username: string,
+		username: string|string[],
 		sessionSubID?: string,
-		ephemeralSubSession: boolean = false
+		ephemeralSubSession: boolean = false,
+		setHeader: boolean = true
 	) : Promise<void> {
 		if (this.initiated) {
 			throw new Error('User already set.');
 		}
 
+		if (username instanceof Array && username.length === 1) {
+			username	= username[0];
+		}
+
 		this.initiated		= true;
 		this.sessionSubID	= sessionSubID;
+
+
+		/* Group session init */
+
+		if (username instanceof Array) {
+			/* Create N pairwise sessions, one for each other group member */
+
+			this.sessionSubID	=
+				`group-${
+					await this.accountContactsService.getContactID(username)
+				}${
+					this.sessionSubID ? `-${this.sessionSubID}` : ''
+				}`
+			;
+
+			const group	= await Promise.all(username.map(async groupMember => {
+				const session	= this.spawn();
+				await session.setUser(groupMember, this.sessionSubID, ephemeralSubSession, false);
+				return session;
+			}));
+
+			this.group	= group;
+
+			/*
+				Handle events on individual pairwise sessions and perform equivalent behavior.
+				Note: rpcEvents.typing is ignored for now.
+			*/
+
+			const confirmations	= new Map<string, Set<AccountSessionService>>();
+
+			Promise.all(group.map(async session => session.opened)).then(() => {
+				this.resolveOpened();
+			});
+
+			for (const {event, all} of [
+				{all: true, event: events.beginChat},
+				{all: false, event: events.closeChat},
+				{all: true, event: events.connect},
+				{all: false, event: events.connectFailure},
+				{all: false, event: events.cyphNotFound}
+			]) {
+				const promises	= group.map(async session => session.one(event));
+				const callback	= () => { this.trigger(event); };
+
+				if (all) {
+					Promise.all(promises).then(callback);
+				}
+				else {
+					Promise.race(promises).then(callback);
+				}
+			}
+
+			for (const session of group) {
+				session.on(rpcEvents.text, o => { this.trigger(rpcEvents.text, o); });
+
+				session.on(rpcEvents.confirm, (o: ISessionMessageData) => {
+					if (!o.textConfirmation || !o.textConfirmation.id) {
+						return;
+					}
+
+					const confirmedSessions	= getOrSetDefault(
+						confirmations,
+						o.textConfirmation.id,
+						() => new Set<AccountSessionService>()
+					);
+
+					confirmedSessions.add(session);
+
+					if (confirmedSessions.size === group.length) {
+						confirmations.delete(o.textConfirmation.id);
+						this.trigger(rpcEvents.confirm, o);
+					}
+				});
+			}
+
+			this.resolveReady();
+			return;
+		}
+
+
+		/* Pairwise session init */
 
 		(async () => {
 			const contactID			= await this.accountContactsService.getContactID(username);
@@ -217,7 +329,10 @@ export class AccountSessionService extends SessionService {
 
 		if (user) {
 			user.realUsername.subscribe(this.remoteUsername);
-			await this.accountService.setHeader(user);
+
+			if (setHeader) {
+				await this.accountService.setHeader(user);
+			}
 		}
 
 		this.remoteUser.next(user);
@@ -225,7 +340,30 @@ export class AccountSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
+	public spawn () : AccountSessionService {
+		return new AccountSessionService(
+			this.analyticsService,
+			this.castleService.spawn(),
+			this.channelService.spawn(),
+			this.envService,
+			this.errorService,
+			this.potassiumService,
+			this.sessionInitService.spawn(),
+			this.stringsService,
+			this.accountService,
+			this.accountContactsService,
+			this.accountDatabaseService,
+			this.accountUserLookupService
+		);
+	}
+
+	/** @inheritDoc */
 	public async yt () : Promise<void> {
+		if (this.group) {
+			await Promise.all(this.group.map(async session => session.yt()));
+			return;
+		}
+
 		return new Promise<void>(resolve => {
 			const id	= uuid();
 

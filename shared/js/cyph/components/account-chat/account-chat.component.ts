@@ -186,7 +186,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 				}
 
 				await this.accountChatService.setUser(
-					username,
+					username.split(','),
 					undefined,
 					callType,
 					sessionSubID,

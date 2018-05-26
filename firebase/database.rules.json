@@ -142,6 +142,40 @@
 				}
 			},
 
+			"messageValues": {
+				"$messageValue": {
+					".read": true,
+					".write": true,
+
+					"data": {
+						".validate": "newData.isString()"
+					},
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				}
+			},
+
+			"messageValuesEphemeral": {
+				"$messageValue": {
+					".read": true,
+					".write": true,
+
+					"data": {
+						".validate": "newData.isString()"
+					},
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				}
+			},
+
 			"inviteCodes": {
 				"$code": {
 					".validate": "newData.isString()"
@@ -267,7 +301,44 @@
 
 					"contacts": {
 						"$contact": {
+							"futureMessages": {
+								"$messageID": {
+									"data": {
+										".validate": "newData.isString()"
+									},
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								}
+							},
 							"lastConfirmedMessage": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							},
+							"messageList": {
+								"$messageID": {
+									"data": {
+										".validate": "newData.isString()"
+									},
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								}
+							},
+							"messageList-head": {
 								"data": {
 									".validate": "newData.isString()"
 								},
@@ -280,30 +351,6 @@
 							},
 							"messages": {
 								"$message": {
-									"data": {
-										".validate": "newData.isString()"
-									},
-									"hash": {
-										".validate": "newData.isString()"
-									},
-									"timestamp": {
-										".validate": "newData.val() === now"
-									}
-								}
-							},
-							"messages-head": {
-								"data": {
-									".validate": "newData.isString()"
-								},
-								"hash": {
-									".validate": "newData.isString()"
-								},
-								"timestamp": {
-									".validate": "newData.val() === now"
-								}
-							},
-							"messageValues": {
-								"$messageValue": {
 									"data": {
 										".validate": "newData.isString()"
 									},

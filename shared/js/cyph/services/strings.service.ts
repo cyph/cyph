@@ -229,6 +229,11 @@ export class StringsService {
 	public readonly futureAppointments: string			= `Future Appointments`;
 
 	/** @see StringsService */
+	public readonly getMessageValueFailure: string		=
+		`\`[Failed to fetch the contents of this message]\``
+	;
+
+	/** @see StringsService */
 	public readonly hasInvitedYouToA: string			= `has invited you to a`;
 
 	/** @see StringsService */

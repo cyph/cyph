@@ -21,5 +21,10 @@ export class SessionInitService {
 	/** @see ISessionService */
 	public readonly sessionService: IResolvable<ISessionService>	= resolvable();
 
+	/** Creates and returns a new instance. */
+	public spawn () : SessionInitService {
+		return new SessionInitService();
+	}
+
 	constructor () {}
 }

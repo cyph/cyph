@@ -96,6 +96,10 @@
 			position: relative;
 		}
 
+		&.get-value-failure {
+			opacity: 0.5;
+		}
+
 		.self-destruct-timer {
 			font-size: 2.3rem;
 			text-align: center;

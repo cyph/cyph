@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count no-import-side-effect */
+
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
@@ -12,6 +14,7 @@ import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
 import {NotificationTypes} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
+import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {EnvService} from './env.service';
 
@@ -77,9 +80,10 @@ export class DatabaseService extends DataManagerService {
 	public getAsyncList<T> (
 		url: string,
 		proto: IProto<T>,
-		lock: LockFunction = this.lockFunction(url),
+		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
 		noBlobStorage: boolean = false
 	) : IAsyncList<T> {
+		const lock		= lockFactory(url);
 		const localLock	= lockFunction();
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
@@ -113,10 +117,12 @@ export class DatabaseService extends DataManagerService {
 	public getAsyncMap<T> (
 		url: string,
 		proto: IProto<T>,
-		lock: LockFunction = this.lockFunction(url),
+		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
 		noBlobStorage: boolean = false
 	) : IAsyncMap<string, T> {
+		const lock				= lockFactory(url);
 		const localLock			= lockFunction();
+		const updateItemLocks	= new Map<string, LockFunction>();
 
 		const getItem			= async (key: string) => this.getItem(`${url}/${key}`, proto);
 
@@ -147,6 +153,26 @@ export class DatabaseService extends DataManagerService {
 				));
 			}),
 			size: async () => (await asyncMap.getKeys()).length,
+			updateItem: async (key, f) => getOrSetDefault(
+				updateItemLocks,
+				key,
+				() => lockFactory(`${url}/${key}`)
+			)(async () => {
+				const value	= await asyncMap.getItem(key).catch(() => undefined);
+				let newValue: T|undefined;
+				try {
+					newValue	= await f(value);
+				}
+				catch {
+					return;
+				}
+				if (newValue === undefined) {
+					await asyncMap.removeItem(key);
+				}
+				else {
+					await asyncMap.setItem(key, newValue);
+				}
+			}),
 			updateValue: async f => asyncMap.lock(async () =>
 				asyncMap.setValue(await f(await asyncMap.getValue()))
 			),
@@ -167,15 +193,15 @@ export class DatabaseService extends DataManagerService {
 	public getAsyncValue<T> (
 		url: string,
 		proto: IProto<T>,
-		lock: LockFunction = this.lockFunction(url),
+		lockFactory: (k: string) => LockFunction = k => this.lockFunction(k),
 		blockGetValue: boolean = false,
 		noBlobStorage: boolean = false
 	) : IAsyncValue<T> {
-		const defaultValue	= proto.create();
+		const lock			= lockFactory(url);
 		const localLock		= lockFunction();
 
 		let currentHash: string|undefined;
-		let currentValue	= defaultValue;
+		let currentValue	= proto.create();
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
@@ -204,7 +230,7 @@ export class DatabaseService extends DataManagerService {
 				return currentValue;
 			}).catch(async () => blockGetValue ?
 				asyncValue.watch().pipe(take(2)).toPromise() :
-				defaultValue
+				proto.create()
 			),
 			lock,
 			setValue: async value => localLock(async () => {

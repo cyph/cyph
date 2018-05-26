@@ -59,5 +59,10 @@ export class CastleService implements ICastle {
 		return (await this.getPairwiseSession()).send(plaintext, timestamp);
 	}
 
+	/** Creates and returns a new instance. */
+	public spawn () : CastleService {
+		return new CastleService();
+	}
+
 	constructor () {}
 }

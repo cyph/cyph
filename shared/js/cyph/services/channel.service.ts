@@ -191,6 +191,11 @@ export class ChannelService implements IChannelService {
 		));
 	}
 
+	/** @inheritDoc */
+	public spawn () : ChannelService {
+		return new ChannelService(this.databaseService);
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly databaseService: DatabaseService

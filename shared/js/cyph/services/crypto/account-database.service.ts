@@ -23,6 +23,7 @@ import {
 import {filterUndefinedOperator} from '../../util/filter';
 import {cacheObservable, flattenObservable} from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
+import {getOrSetDefault} from '../../util/get-or-set-default';
 import {lockFunction} from '../../util/lock';
 import {deserialize, serialize} from '../../util/serialization';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
@@ -466,6 +467,7 @@ export class AccountDatabaseService {
 		noBlobStorage: boolean = false
 	) : IAsyncMap<string, T> {
 		const localLock			= lockFunction();
+		const updateItemLocks	= new Map<string, LockFunction>();
 
 		const baseAsyncMap		= (async () => {
 			url	= await this.normalizeURL(url);
@@ -473,7 +475,7 @@ export class AccountDatabaseService {
 			return this.databaseService.getAsyncMap(
 				url,
 				BinaryProto,
-				this.lockFunction(url),
+				k => this.lockFunction(k),
 				noBlobStorage
 			);
 		})();
@@ -531,6 +533,26 @@ export class AccountDatabaseService {
 				));
 			}),
 			size: async () => (await baseAsyncMap).size(),
+			updateItem: async (key, f) => getOrSetDefault(
+				updateItemLocks,
+				key,
+				() => this.lockFunction(`${url}/${key}`)
+			)(async () => {
+				const value	= await asyncMap.getItem(key).catch(() => undefined);
+				let newValue: T|undefined;
+				try {
+					newValue	= await f(value);
+				}
+				catch {
+					return;
+				}
+				if (newValue === undefined) {
+					await asyncMap.removeItem(key);
+				}
+				else {
+					await asyncMap.setItem(key, newValue);
+				}
+			}),
 			updateValue: async f => asyncMap.lock(async () =>
 				asyncMap.setValue(await f(await asyncMap.getValue()))
 			),
@@ -551,7 +573,6 @@ export class AccountDatabaseService {
 		blockGetValue: boolean = false,
 		noBlobStorage: boolean = false
 	) : IAsyncValue<T> {
-		const defaultValue	= proto.create();
 		const localLock		= lockFunction();
 
 		const asyncValue	= (async () => {
@@ -560,7 +581,7 @@ export class AccountDatabaseService {
 			return this.databaseService.getAsyncValue(
 				url,
 				BinaryProto,
-				this.lockFunction(url),
+				k => this.lockFunction(k),
 				blockGetValue,
 				noBlobStorage
 			);
@@ -591,7 +612,7 @@ export class AccountDatabaseService {
 				);
 			}).catch(async () => blockGetValue ?
 				watch().pipe(take(2)).toPromise() :
-				defaultValue
+				proto.create()
 			),
 			lock: async (f, reason) =>
 				(await asyncValue).lock(f, reason)
@@ -603,8 +624,9 @@ export class AccountDatabaseService {
 				url,
 				proto,
 				await f(
-					await this.open(url, proto, securityModel, value, customKey).
-						catch(() => defaultValue)
+					await this.open(url, proto, securityModel, value, customKey).catch(() =>
+						proto.create()
+					)
 				),
 				securityModel,
 				customKey

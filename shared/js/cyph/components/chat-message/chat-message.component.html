@@ -6,6 +6,7 @@
 	[class.author-app]='message?.authorType === authorTypes.App'
 	[class.author-local]='message?.authorType === authorTypes.Local'
 	[class.author-remote]='message?.authorType === authorTypes.Remote'
+	[class.get-value-failure]='message?.value?.failure'
 	[class.self-destruct]='chatService.chatSelfDestruct'
 	[class.self-destructed]='message?.selfDestructTimer?.isComplete | async'
 	[class.visibility-hidden]='(viewReady | async) === false'

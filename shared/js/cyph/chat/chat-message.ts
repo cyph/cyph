@@ -5,6 +5,7 @@ import {
 	ChatMessage as ChatMessageInternal,
 	IChatMessage,
 	IChatMessageLine,
+	IChatMessagePredecessor,
 	IChatMessageValue
 } from '../proto';
 import {Timer} from '../timer';
@@ -36,7 +37,16 @@ export class ChatMessage implements IChatMessage {
 	public dimensions?: IChatMessageLine[]				= this.message.dimensions;
 
 	/** @inheritDoc */
+	public hash?: Uint8Array							= this.message.hash;
+
+	/** @inheritDoc */
 	public id: string									= this.message.id;
+
+	/** @inheritDoc */
+	public key?: Uint8Array								= this.message.key;
+
+	/** @inheritDoc */
+	public predecessor?: IChatMessagePredecessor		= this.message.predecessor;
 
 	/** @inheritDoc */
 	public selfDestructTimeout?: number					= this.message.selfDestructTimeout;
@@ -51,7 +61,7 @@ export class ChatMessage implements IChatMessage {
 	public readonly timeString: string					= getTimeString(this.message.timestamp);
 
 	/** @ignore */
-	public value?: IChatMessageValue					= this.message.value && {
+	public value?: IChatMessageValue&{failure?: boolean}	= this.message.value && {
 		calendarInvite: this.message.value.calendarInvite,
 		form: this.message.value.form,
 		quill: this.message.value.quill,
@@ -59,8 +69,8 @@ export class ChatMessage implements IChatMessage {
 	};
 
 	/** Observable of value. */
-	public readonly valueWatcher: Subject<IChatMessageValue|undefined>	=
-		new BehaviorSubject<IChatMessageValue|undefined>(this.value)
+	public readonly valueWatcher: Subject<(IChatMessageValue&{failure?: boolean})|undefined>	=
+		new BehaviorSubject<(IChatMessageValue&{failure?: boolean})|undefined>(this.value)
 	;
 
 	constructor (

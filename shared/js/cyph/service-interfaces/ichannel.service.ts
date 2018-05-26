@@ -39,4 +39,7 @@ export interface IChannelService {
 
 	/** Sends a message through the channel. */
 	send (cyphertext: Uint8Array) : Promise<void>;
+
+	/** Creates and returns a new instance. */
+	spawn () : IChannelService;
 }
