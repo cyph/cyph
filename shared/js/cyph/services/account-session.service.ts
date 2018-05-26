@@ -266,7 +266,7 @@ export class AccountSessionService extends SessionService {
 			this.init(contactID, await this.accountDatabaseService.getOrSetDefault(
 				`${sessionURL}/channelUserID`,
 				StringProto,
-				uuid
+				() => uuid(true)
 			));
 
 

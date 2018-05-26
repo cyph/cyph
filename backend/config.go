@@ -151,7 +151,7 @@ var config = struct {
 
 	"max-age=31536000; includeSubdomains; preload",
 
-	90,
+	150,
 
 	/* Max length of a valid email address, but also happened
 	to seem like a sane limit for the other values */

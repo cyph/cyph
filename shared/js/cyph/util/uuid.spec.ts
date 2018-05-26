@@ -4,10 +4,12 @@ import {uuid} from './uuid';
 
 describe('uuid', () => {
 	it('can be decoded', () => {
-		const id		= uuid();
-		const idBytes	= potassiumUtil.fromHex(id);
+		for (const {long, size} of [{long: false, size: 16}, {long: true, size: 68}]) {
+			const id		= uuid(long);
+			const idBytes	= potassiumUtil.fromHex(id);
 
-		expect(idBytes instanceof Uint8Array).toBe(true);
-		expect(idBytes.length).toBe(16);
+			expect(idBytes instanceof Uint8Array).toBe(true);
+			expect(idBytes.length).toBe(size);
+		}
 	});
 });

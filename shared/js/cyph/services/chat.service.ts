@@ -297,15 +297,6 @@ export class ChatService {
 		};
 	}
 
-	/** Gets unique message ID. */
-	protected async getUUID () : Promise<string> {
-		let id: string;
-		do {
-			id	= uuid();
-		} while (await this.messageValues.hasItem(id));
-		return id;
-	}
-
 	/** Aborts the process of chat initialisation and authentication. */
 	public async abortSetup () : Promise<void> {
 		this.chat.state	= States.aborted;
@@ -376,7 +367,7 @@ export class ChatService {
 			}
 		}
 
-		const id	= messageID || (await this.getUUID());
+		const id	= messageID || uuid(true);
 
 		const [authorID]	= await Promise.all([
 			this.getAuthorID(author),
@@ -703,7 +694,7 @@ export class ChatService {
 				).dimensions || []
 			)(),
 			(async () => {
-				const messageID	= await this.getUUID();
+				const messageID	= uuid(true);
 				const o			= await this.messageValues.setItem(messageID, value);
 				return {hash: o.hash, id: messageID, key: o.encryptionKey};
 			})(),
