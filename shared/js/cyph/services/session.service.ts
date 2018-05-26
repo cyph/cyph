@@ -10,6 +10,7 @@ import {IAsyncValue} from '../iasync-value';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
+import {MaybePromise} from '../maybe-promise-type';
 import {
 	BinaryProto,
 	ISessionMessage,
@@ -86,6 +87,9 @@ export abstract class SessionService implements ISessionService {
 	protected resolveSymmetricKey?: (symmetricKey: Uint8Array) => void	=
 		this._SYMMETRIC_KEY.resolve
 	;
+
+	/** @ignore */
+	protected sendLock: LockFunction									= lockFunction();
 
 	/**
 	 * Session key for misc stuff like locking.
@@ -242,12 +246,23 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected async newMessages (
-		messages: [string, ISessionMessageAdditionalData][]
+		messages: [
+			string,
+			ISessionMessageAdditionalData|(
+				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
+			)
+		][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
 		const newMessages: (ISessionMessage&{data: ISessionMessageData})[]	= [];
 
 		for (const message of messages) {
-			const [event, additionalData]	= message;
+			const timestamp		= await getTimestamp();
+			const event			= message[0];
+			let additionalData	= message[1];
+
+			if (typeof additionalData === 'function') {
+				additionalData	= await additionalData(timestamp);
+			}
 
 			const data: ISessionMessageData	= {
 				author: this.localUsername,
@@ -259,10 +274,7 @@ export abstract class SessionService implements ISessionService {
 				sessionSubID: this.sessionSubID,
 				text: additionalData.text,
 				textConfirmation: additionalData.textConfirmation,
-				timestamp: additionalData.timestamp !== undefined ?
-					additionalData.timestamp :
-					await getTimestamp()
-				,
+				timestamp,
 				transfer: additionalData.transfer
 			};
 
@@ -503,20 +515,39 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public async send (
-		...messages: [string, ISessionMessageAdditionalData][]
+		...messages: [
+			string,
+			ISessionMessageAdditionalData|(
+				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
+			)
+		][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
-		const newMessages	= await this.newMessages(messages);
-		this.plaintextSendHandler(newMessages);
-		return newMessages;
+		return this.sendLock(async () => {
+			const newMessages	= await this.newMessages(messages);
+			this.plaintextSendHandler(newMessages);
+			return newMessages;
+		});
 	}
 
 	/** @inheritDoc */
 	public async sendAndAwaitConfirmation (
-		...messages: [string, ISessionMessageAdditionalData][]
+		...messages: [
+			string,
+			ISessionMessageAdditionalData|(
+				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
+			)
+		][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
-		const newMessages	= await this.newMessages(messages);
-		await this.plaintextSendHandler(newMessages);
-		return newMessages;
+		let confirmPromise: Promise<void>|undefined;
+
+		const result	= await this.sendLock(async () => {
+			const newMessages	= await this.newMessages(messages);
+			confirmPromise		= this.plaintextSendHandler(newMessages);
+			return newMessages;
+		});
+
+		await confirmPromise;
+		return result;
 	}
 
 	/** @inheritDoc */

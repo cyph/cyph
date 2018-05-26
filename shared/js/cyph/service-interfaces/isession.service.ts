@@ -1,5 +1,6 @@
 import {BehaviorSubject, Observable} from 'rxjs';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
+import {MaybePromise} from '../maybe-promise-type';
 import {ISessionMessage, ISessionMessageData as ISessionMessageDataInternal} from '../proto';
 import {
 	CastleEvents,
@@ -97,12 +98,22 @@ export interface ISessionService {
 
 	/** Send at least one message through the session. */
 	send (
-		...messages: [string, ISessionMessageAdditionalData][]
+		...messages: [
+			string,
+			ISessionMessageAdditionalData|(
+				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
+			)
+		][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]>;
 
 	/** Variant of send that waits for confirmation. */
 	sendAndAwaitConfirmation (
-		...messages: [string, ISessionMessageAdditionalData][]
+		...messages: [
+			string,
+			ISessionMessageAdditionalData|(
+				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
+			)
+		][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]>;
 
 	/** Creates and returns a new instance. */

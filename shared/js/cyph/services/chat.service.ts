@@ -728,53 +728,44 @@ export class ChatService {
 			return;
 		})();
 
-		const timestampPromise	= getTimestamp();
+		const id	= uuid(true);
 
-		const valueSetPromise	= (async () => {
-			const id	= uuid(true);
-
-			const [authorID, dimensions, timestamp]	= await Promise.all([
+		await this.addTextMessage(await this.messageSendLock(async () => {
+			const [authorID, dimensions, predecessor]	= await Promise.all([
 				this.getAuthorID(this.sessionService.localUsername),
 				dimensionsPromise,
-				timestampPromise
+				predecessorPromise
 			]);
 
-			const o		= await this.messageValues.setItem(id, value, this.messageValueHasher({
-				authorID,
-				authorType: ChatMessage.AuthorTypes.App,
-				dimensions,
-				id,
-				selfDestructTimeout,
-				sessionSubID: this.sessionService.sessionSubID,
-				timestamp
-			}));
+			return (await this.sessionService.send([rpcEvents.text, async timestamp => {
+				const {encryptionKey, hash}	= await this.messageValues.setItem(
+					id,
+					value,
+					this.messageValueHasher({
+						authorID,
+						authorType: ChatMessage.AuthorTypes.App,
+						dimensions,
+						id,
+						selfDestructTimeout,
+						sessionSubID: this.sessionService.sessionSubID,
+						timestamp
+					})
+				);
 
-			return {hash: o.hash, id, key: o.encryptionKey};
-		})();
-
-		await this.messageSendLock(async () => {
-			const [dimensions, predecessor, timestamp, {hash, id, key}]	= await Promise.all([
-				dimensionsPromise,
-				predecessorPromise,
-				timestampPromise,
-				valueSetPromise
-			]);
-
-			await this.addTextMessage(
-				(await this.sessionService.send([rpcEvents.text, {
+				return {
 					id,
 					text: {
 						dimensions,
 						hash,
-						key,
+						key: encryptionKey,
 						predecessor,
 						selfDestructChat,
 						selfDestructTimeout
 					},
 					timestamp
-				}]))[0].data
-			);
-		});
+				};
+			}]))[0].data;
+		}));
 	}
 
 	/** Sets queued message to be sent after handshake. */
