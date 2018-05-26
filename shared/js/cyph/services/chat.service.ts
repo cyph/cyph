@@ -139,11 +139,14 @@ export class ChatService {
 			o.text.predecessor &&
 			!(await this.messageHasValidHash(o.text.predecessor.id, o.text.predecessor.hash))
 		) {
-			return this.chat.futureMessages.updateItem(o.text.predecessor.id, async futureMessages => ({
-				messages: futureMessages && futureMessages.messages ?
-					futureMessages.messages.concat(o) :
-					[o]
-			}));
+			return this.chat.futureMessages.updateItem(
+				o.text.predecessor.id,
+				async futureMessages => ({
+					messages: futureMessages && futureMessages.messages ?
+						futureMessages.messages.concat(o) :
+						[o]
+				})
+			);
 		}
 
 		if (o.author !== this.sessionService.localUsername) {
