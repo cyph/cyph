@@ -175,6 +175,10 @@ export class AccountSessionService extends SessionService {
 
 			const confirmations	= new Map<string, Set<AccountSessionService>>();
 
+			Promise.all(group.map(async session => session.opened)).then(() => {
+				this.resolveOpened();
+			});
+
 			for (const {event, all} of [
 				{all: true, event: events.beginChat},
 				{all: false, event: events.closeChat},

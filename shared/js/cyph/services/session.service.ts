@@ -56,9 +56,6 @@ export abstract class SessionService implements ISessionService {
 	private readonly openEvents: Set<string>	= new Set();
 
 	/** @ignore */
-	private readonly resolveOpened: () => void	= this._OPENED.resolve;
-
-	/** @ignore */
 	protected readonly eventID: string									= uuid();
 
 	/** @ignore */
@@ -81,6 +78,9 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string>					= new Set<string>();
+
+	/** @ignore */
+	protected readonly resolveOpened: () => void						= this._OPENED.resolve;
 
 	/** @ignore */
 	protected resolveSymmetricKey?: (symmetricKey: Uint8Array) => void	=
