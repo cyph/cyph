@@ -108,7 +108,7 @@ export class AccountChatService extends ChatService {
 			} :
 			getOrSetDefault(
 				this.chats,
-				username instanceof Array ? username.join('\n') : username,
+				username instanceof Array ? username.join(' ') : username,
 				() => ({
 					currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
 					futureMessages: this.accountDatabaseService.getAsyncMap(

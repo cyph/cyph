@@ -105,7 +105,7 @@ export class AccountContactsService {
 				currentUserUsername,
 				() => new Map<string, string>()
 			),
-			username instanceof Array ? username.join('\n') : username,
+			username instanceof Array ? username.join(' ') : username,
 			async () => this.potassiumService.toHex(await this.potassiumService.hash.hash(
 				[currentUserUsername].concat(username).map(normalize).sort().join(' ')
 			))
