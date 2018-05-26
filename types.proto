@@ -422,7 +422,10 @@ message ChatMessage {
 	/** Metadata used to estimate message's size for virtual scrolling. */
 	repeated ChatMessageLine dimensions = 3;
 
-	/** Hash of value. */
+	/**
+	 * Hash of this entire object.
+	 * Includes value. Excludes authorType, hash, key, and predecessor.
+	 */
 	bytes hash = 9;
 
 	/** @see SessionMessageData.id */

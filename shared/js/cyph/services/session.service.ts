@@ -259,7 +259,10 @@ export abstract class SessionService implements ISessionService {
 				sessionSubID: this.sessionSubID,
 				text: additionalData.text,
 				textConfirmation: additionalData.textConfirmation,
-				timestamp: await getTimestamp(),
+				timestamp: additionalData.timestamp !== undefined ?
+					additionalData.timestamp :
+					await getTimestamp()
+				,
 				transfer: additionalData.transfer
 			};
 

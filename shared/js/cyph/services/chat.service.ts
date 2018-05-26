@@ -7,17 +7,18 @@ import {filter, map, take, takeWhile} from 'rxjs/operators';
 import {ChatMessage, IChatData, IChatMessageLiveValue, States} from '../chat';
 import {HelpComponent} from '../components/help';
 import {EncryptedAsyncMap} from '../crypto/encrypted-async-map';
+import {IProto} from '../iproto';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncMap} from '../local-async-map';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {
 	BinaryProto,
+	ChatMessage as ChatMessageProto,
 	ChatMessageValue,
 	IChatLastConfirmedMessage,
 	IChatMessage,
 	IChatMessageLine,
-	IChatMessagePredecessor,
 	IChatMessageValue,
 	ISessionMessageDataList
 } from '../proto';
@@ -62,6 +63,23 @@ export class ChatService {
 
 	/** @ignore */
 	private readonly messageSendLock: LockFunction		= lockFunction();
+
+	/** @ignore */
+	private readonly messageValueHasher: (message: IChatMessage) => {
+		proto: IProto<IChatMessage>;
+		transform: (value: IChatMessageValue) => IChatMessage;
+	}	= (message: IChatMessage) => ({
+		proto: ChatMessageProto,
+		transform: (value: IChatMessageValue) : IChatMessage => ({
+			...message,
+			authorType: ChatMessage.AuthorTypes.App,
+			hash: undefined,
+			key: undefined,
+			predecessor: undefined,
+			selfDestructTimeout: message.selfDestructTimeout || 0,
+			value
+		})
+	});
 
 	/** @ignore */
 	private readonly messageValuesURL: string			= 'messageValues' + (
@@ -369,16 +387,9 @@ export class ChatService {
 
 		const id	= messageID || uuid(true);
 
-		const [authorID]	= await Promise.all([
-			this.getAuthorID(author),
-			!value ? undefined : (async () => {
-				const o	= await messageValues.setItem(id, value);
-				hash	= o.hash;
-				key		= o.encryptionKey;
-			})()
-		]);
+		const authorID	= await this.getAuthorID(author);
 
-		const chatMessage	= {
+		const chatMessage: IChatMessage	= {
 			authorID,
 			authorType:
 				author === this.sessionService.appUsername ?
@@ -388,13 +399,20 @@ export class ChatService {
 					ChatMessage.AuthorTypes.Remote
 			,
 			dimensions,
-			hash,
 			id,
-			key,
 			selfDestructTimeout,
 			sessionSubID: this.sessionService.sessionSubID,
 			timestamp
 		};
+
+		if (value) {
+			const o	= await messageValues.setItem(id, value, this.messageValueHasher(chatMessage));
+			hash	= o.hash;
+			key		= o.encryptionKey;
+		}
+
+		chatMessage.hash	= hash;
+		chatMessage.key		= key;
 
 		const pushMessage	= async () => {
 			await this.chat.messages.setItem(id, chatMessage);
@@ -527,7 +545,8 @@ export class ChatService {
 				message.value	= await messageValues.getItem(
 					message.id,
 					message.key,
-					message.hash
+					message.hash,
+					this.messageValueHasher(message)
 				).catch(
 					() => undefined
 				);
@@ -674,52 +693,71 @@ export class ChatService {
 				throw new Error('Invalid ChatMessageValue.Types value.');
 		}
 
-		const promises: [
-			Promise<IChatMessageLine[]>,
-			Promise<{hash: Uint8Array; id: string; key: Uint8Array}>,
-			Promise<IChatMessagePredecessor|undefined>
-		]	= [
-			(async () =>
-				(
-					await (await this.chatMessageGeometryService).getDimensions(new ChatMessage(
-						{
-							authorID: '',
-							authorType: ChatMessage.AuthorTypes.Local,
-							id: '',
-							timestamp: 0,
-							value
-						},
-						this.sessionService.localUsername
-					))
-				).dimensions || []
-			)(),
-			(async () => {
-				const messageID	= uuid(true);
-				const o			= await this.messageValues.setItem(messageID, value);
-				return {hash: o.hash, id: messageID, key: o.encryptionKey};
-			})(),
-			(async () => {
-				const messageIDs	= await this.chat.messageList.getValue();
+		const dimensionsPromise	= (async () =>
+			(
+				await (await this.chatMessageGeometryService).getDimensions(new ChatMessage(
+					{
+						authorID: '',
+						authorType: ChatMessage.AuthorTypes.Local,
+						id: '',
+						timestamp: 0,
+						value
+					},
+					this.sessionService.localUsername
+				))
+			).dimensions || []
+		)();
 
-				for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
-					const o	= await this.chat.messages.getItem(messageIDs[i]);
+		const predecessorPromise	= (async () => {
+			const messageIDs	= await this.chat.messageList.getValue();
 
-					if (
-						o.authorType === ChatMessage.AuthorTypes.Remote &&
-						o.id &&
-						(o.hash && o.hash.length > 0) &&
-						(await this.messageHasValidHash(o))
-					) {
-						return {hash: o.hash, id: o.id};
-					}
+			for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
+				const o	= await this.chat.messages.getItem(messageIDs[i]);
+
+				if (
+					o.authorType === ChatMessage.AuthorTypes.Remote &&
+					o.id &&
+					(o.hash && o.hash.length > 0) &&
+					(await this.messageHasValidHash(o))
+				) {
+					return {hash: o.hash, id: o.id};
 				}
+			}
 
-				return;
-			})()
-		];
+			return;
+		})();
+
+		const timestampPromise	= getTimestamp();
+
+		const valueSetPromise	= (async () => {
+			const id	= uuid(true);
+
+			const [authorID, dimensions, timestamp]	= await Promise.all([
+				this.getAuthorID(this.sessionService.localUsername),
+				dimensionsPromise,
+				timestampPromise
+			]);
+
+			const o		= await this.messageValues.setItem(id, value, this.messageValueHasher({
+				authorID,
+				authorType: ChatMessage.AuthorTypes.App,
+				dimensions,
+				id,
+				selfDestructTimeout,
+				sessionSubID: this.sessionService.sessionSubID,
+				timestamp
+			}));
+
+			return {hash: o.hash, id, key: o.encryptionKey};
+		})();
 
 		await this.messageSendLock(async () => {
-			const [dimensions, {hash, id, key}, predecessor]	= await Promise.all(promises);
+			const [dimensions, predecessor, timestamp, {hash, id, key}]	= await Promise.all([
+				dimensionsPromise,
+				predecessorPromise,
+				timestampPromise,
+				valueSetPromise
+			]);
 
 			await this.addTextMessage(
 				(await this.sessionService.send([rpcEvents.text, {
@@ -731,7 +769,8 @@ export class ChatService {
 						predecessor,
 						selfDestructChat,
 						selfDestructTimeout
-					}
+					},
+					timestamp
 				}]))[0].data
 			);
 		});

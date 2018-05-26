@@ -31,6 +31,9 @@ export interface ISessionMessageAdditionalData {
 	/** @see ISessionMessageData.textConfirmation */
 	textConfirmation?: ISessionTextConfirmation;
 
+	/** @see ISessionMessageData.timestamp */
+	timestamp?: number;
+
 	/** @see ISessionMessageData.transfer */
 	transfer?: ISessionTransfer;
 }
