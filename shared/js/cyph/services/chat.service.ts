@@ -475,7 +475,8 @@ export class ChatService {
 				{text: this.chat.queuedMessage},
 				this.chatSelfDestruct ?
 					this.chatSelfDestructTimeout * 1000 :
-					undefined,
+					undefined
+				,
 				this.chatSelfDestruct
 			);
 		}
