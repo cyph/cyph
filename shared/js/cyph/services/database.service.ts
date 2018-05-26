@@ -159,14 +159,19 @@ export class DatabaseService extends DataManagerService {
 				() => lockFactory(`${url}/${key}`)
 			)(async () => {
 				const value	= await asyncMap.getItem(key).catch(() => undefined);
-				let newValue: T;
+				let newValue: T|undefined;
 				try {
 					newValue	= await f(value);
 				}
 				catch {
 					return;
 				}
-				await asyncMap.setItem(key, newValue);
+				if (newValue === undefined) {
+					await asyncMap.removeItem(key);
+				}
+				else {
+					await asyncMap.setItem(key, newValue);
+				}
 			}),
 			updateValue: async f => asyncMap.lock(async () =>
 				asyncMap.setValue(await f(await asyncMap.getValue()))

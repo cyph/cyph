@@ -54,17 +54,22 @@ export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>> implements I
 	}
 
 	/** @inheritDoc */
-	public async updateItem (key: K, f: (value?: V) => Promise<V>) : Promise<void> {
+	public async updateItem (key: K, f: (value?: V) => Promise<V|undefined>) : Promise<void> {
 		await getOrSetDefault(this.locks, key, lockFunction)(async () => {
 			const value	= await this.getItem(key).catch(() => undefined);
-			let newValue: V;
+			let newValue: V|undefined;
 			try {
 				newValue	= await f(value);
 			}
 			catch {
 				return;
 			}
-			await this.setItem(key, newValue);
+			if (newValue === undefined) {
+				await this.removeItem(key);
+			}
+			else {
+				await this.setItem(key, newValue);
+			}
 		});
 	}
 

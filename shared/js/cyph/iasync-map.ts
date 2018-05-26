@@ -39,7 +39,7 @@ export interface IAsyncMap<K, V> {
 	size () : Promise<number>;
 
 	/** Uses a function to transform one value. Throwing aborts modification. */
-	updateItem (key: K, f: (value?: V) => Promise<V>) : Promise<void>;
+	updateItem (key: K, f: (value?: V) => Promise<V|undefined>) : Promise<void>;
 
 	/** Uses a function to transform entire map value. Throwing aborts modification. */
 	updateValue (f: (map: Map<K, V>) => Promise<Map<K, V>>) : Promise<void>;

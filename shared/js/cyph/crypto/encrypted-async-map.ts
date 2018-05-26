@@ -126,40 +126,42 @@ export class EncryptedAsyncMap<T> {
 	}
 
 	/** @see IAsyncMap.updateItem */
-	public async updateItem (key: string, f: (value?: T) => Promise<T>) : Promise<{
-		encryptionKey: Uint8Array;
-		hash: Uint8Array;
+	public async updateItem (
+		key: string,
+		encryptionKey: Uint8Array,
+		f: (value?: T) => Promise<T|undefined>
+	) : Promise<{
+		hash: Uint8Array|undefined;
 	}> {
-		const encryptionKey	= this.potassium.randomBytes(await this.potassium.secretBox.keyBytes);
-
 		let plaintext: Uint8Array|undefined;
 
 		await this.map.updateItem(key, async cyphertext => {
-			const newValue	= (await this.seal(
-				key,
-				await f(
-					!cyphertext ? undefined : await deserialize(
-						this.proto,
-						await this.open(key, cyphertext, encryptionKey)
-					)
-				),
-				encryptionKey
-			));
+			const newValue	= await f(
+				!cyphertext ? undefined : await deserialize(
+					this.proto,
+					await this.open(key, cyphertext, encryptionKey)
+				)
+			);
 
-			plaintext	= newValue.plaintext;
+			if (newValue === undefined) {
+				return undefined;
+			}
 
-			return newValue.cyphertext;
+			const newBytes	= await this.seal(key, newValue, encryptionKey);
+			plaintext		= newBytes.plaintext;
+
+			return newBytes.cyphertext;
 		});
 
 		if (!plaintext) {
-			throw new Error('EncryptedAsyncMap.updateItem failed.');
+			return {hash: undefined};
 		}
 
 		const hash	= await this.potassium.hash.hash(plaintext);
 
 		this.potassium.clearMemory(plaintext);
 
-		return {encryptionKey, hash};
+		return {hash};
 	}
 
 	/** @see IAsyncMap.watchSize */

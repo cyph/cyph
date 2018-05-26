@@ -198,7 +198,7 @@ export class ChatService {
 				));
 			}
 
-			return {messages: []};
+			return undefined;
 		});
 
 		if (selfDestructChat) {
