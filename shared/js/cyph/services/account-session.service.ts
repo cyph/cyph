@@ -152,7 +152,7 @@ export class AccountSessionService extends SessionService {
 		if (username instanceof Array) {
 			/* Create N pairwise sessions, one for each other group member */
 
-			const groupSessionSubID	=
+			this.sessionSubID	=
 				`group-${
 					await this.accountContactsService.getContactID(username)
 				}${
@@ -162,7 +162,7 @@ export class AccountSessionService extends SessionService {
 
 			const group	= await Promise.all(username.map(async groupMember => {
 				const session	= this.spawn();
-				await session.setUser(groupMember, groupSessionSubID, ephemeralSubSession, false);
+				await session.setUser(groupMember, this.sessionSubID, ephemeralSubSession, false);
 				return session;
 			}));
 
