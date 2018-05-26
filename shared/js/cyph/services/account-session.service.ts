@@ -139,6 +139,10 @@ export class AccountSessionService extends SessionService {
 			throw new Error('User already set.');
 		}
 
+		if (username instanceof Array && username.length === 1) {
+			username	= username[0];
+		}
+
 		this.initiated		= true;
 		this.sessionSubID	= sessionSubID;
 
