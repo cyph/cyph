@@ -5,6 +5,7 @@ import {
 	HttpResponse
 } from '@angular/common/http';
 import {BehaviorSubject, Observable} from 'rxjs';
+import {timeout} from 'rxjs/operators';
 import {MaybePromise} from '../maybe-promise-type';
 import {parse, stringify, toQueryString} from './serialization';
 import {staticHttpClient} from './static-services';
@@ -18,6 +19,7 @@ const baseRequest	= <R, T> (
 		discardErrors?: boolean;
 		method?: string;
 		retries?: number;
+		timeout?: number;
 		url: string;
 	},
 	responseType: 'arraybuffer'|'blob'|'json'|'text',
@@ -72,12 +74,16 @@ const baseRequest	= <R, T> (
 				try {
 					progress.next(0);
 
-					const req	= httpClient.request<T>(new HttpRequest(method, url, data, {
+					let req	= httpClient.request<T>(new HttpRequest(method, url, data, {
 						headers: new HttpHeaders({
 							...(contentType ? {'Content-Type': contentType} : {})
 						}),
 						responseType
 					}));
+
+					if (o.timeout) {
+						req	= req.pipe(timeout(o.timeout));
+					}
 
 					const res	= await new Promise<HttpResponse<T>>((resolve, reject) => {
 						let last: HttpResponse<T>;
@@ -131,6 +137,7 @@ export const request	= async (o: {
 	data?: any;
 	method?: string;
 	retries?: number;
+	timeout?: number;
 	url: string;
 }) : Promise<string> => {
 	return (await baseRequest<string, string>(o, 'text', res =>
@@ -144,6 +151,7 @@ export const requestByteStream	= (o: {
 	data?: any;
 	method?: string;
 	retries?: number;
+	timeout?: number;
 	url: string;
 }) : {
 	progress: Observable<number>;
@@ -160,6 +168,7 @@ export const requestBytes	= async (o: {
 	data?: any;
 	method?: string;
 	retries?: number;
+	timeout?: number;
 	url: string;
 }) : Promise<Uint8Array> => {
 	return requestByteStream(o).result;
@@ -171,6 +180,7 @@ export const requestMaybeJSON	= async (o: {
 	data?: any;
 	method?: string;
 	retries?: number;
+	timeout?: number;
 	url: string;
 }) : Promise<any> => {
 	const response	= await request(o);
@@ -189,6 +199,7 @@ export const requestJSON	= async (o: {
 	data?: any;
 	method?: string;
 	retries?: number;
+	timeout?: number;
 	url: string;
 }) : Promise<any> => {
 	return (await baseRequest<any, any>({contentType: 'application/json', ...o}, 'json', res =>
