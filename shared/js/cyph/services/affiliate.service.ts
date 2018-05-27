@@ -9,10 +9,15 @@ export class AffiliateService {
 	/** @ignore */
 	private readonly amazon		= {
 		copy: {
-			webcam4k: translate('Recommended 4K Webcam')
+			webcam4k: translate('Recommended 4K Webcam'),
+			webcam1080p: translate('Recommended 1080p Webcam'),
+			snowden: translate('Watch Snowden (2016) on Prime Video')
 		},
 		links: {
-			webcam4k: 'https://amzn.to/2KOInzc'
+			webcam4k: 'https://amzn.to/2KOInzc',
+			webcam1080p: 'https://amzn.to/2J6phHx',
+			snowden: 'https://amzn.to/2KWiTjl'
+
 		}
 	};
 
@@ -35,7 +40,9 @@ export class AffiliateService {
 		{href: this.nordVPN.links.doublevpn, text: this.nordVPN.copy.doublevpn},
 		{href: this.nordVPN.links.threeyear, text: this.nordVPN.copy.recommended},
 		{href: this.nordVPN.links.default, text: this.nordVPN.copy.protect},
-		{href: this.amazon.links.webcam4k, text: this.amazon.copy.webcam4k}
+		{href: this.amazon.links.webcam4k, text: this.amazon.copy.webcam4k},
+		{href: this.amazon.links.webcam1080p, text: this.amazon.copy.webcam1080p},
+		{href: this.amazon.links.snowden, text: this.amazon.copy.snowden}
 	]);
 
 	constructor (
