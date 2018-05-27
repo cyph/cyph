@@ -38,18 +38,7 @@
 								".validate": "newData.val() === now"
 							}
 						},
-						"initialSecretAliceCyphertext": {
-							"data": {
-								".validate": "newData.isString()"
-							},
-							"hash": {
-								".validate": "newData.isString()"
-							},
-							"timestamp": {
-								".validate": "newData.val() === now"
-							}
-						},
-						"initialSecretBobCyphertext": {
+						"initialSecretCyphertext": {
 							"data": {
 								".validate": "newData.isString()"
 							},

@@ -12,31 +12,42 @@ export class AnonymousRemoteUser implements IRemoteUser {
 	/** @ignore */
 	private publicKey?: Promise<Uint8Array>;
 
-	/** @ignore */
-	private readonly sharedSecret: Promise<Uint8Array>;
-
 	/** @inheritDoc */
-	public async getPublicKey () : Promise<Uint8Array> {
-		if (this.publicKey) {
-			return this.publicKey;
+	public async getPublicEncryptionKey () : Promise<Uint8Array> {
+		if (!this.publicKey) {
+			this.publicKey	= (async () => {
+				const [encryptedPublicBoxKey, sharedSecret]	= await Promise.all([
+					this.handshakeState.remotePublicKey.getValue(),
+					(async () => {
+						const {hash}	= await this.potassium.passwordHash.hash(
+							this.sharedSecret,
+							AnonymousLocalUser.handshakeSalt
+						);
+
+						this.sharedSecret	= '';
+
+						return hash;
+					})()
+				]);
+
+				const publicKey	= await this.potassium.secretBox.open(
+					encryptedPublicBoxKey,
+					sharedSecret
+				);
+
+				this.potassium.clearMemory(encryptedPublicBoxKey);
+				this.potassium.clearMemory(sharedSecret);
+
+				return publicKey;
+			})();
 		}
 
-		this.publicKey	= (async () => {
-			const encryptedPublicBoxKey	= await this.handshakeState.remotePublicKey.getValue();
-			const sharedSecret			= await this.sharedSecret;
-
-			const publicKey	= await this.potassium.secretBox.open(
-				encryptedPublicBoxKey,
-				sharedSecret
-			);
-
-			this.potassium.clearMemory(encryptedPublicBoxKey);
-			this.potassium.clearMemory(sharedSecret);
-
-			return publicKey;
-		})();
-
 		return this.publicKey;
+	}
+
+	/** @inheritDoc */
+	public async getPublicSigningKey () : Promise<undefined> {
+		return undefined;
 	}
 
 	constructor (
@@ -46,16 +57,10 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		/** @ignore */
 		private readonly handshakeState: IHandshakeState,
 
-		sharedSecret: string,
+		/** @ignore */
+		private sharedSecret: string,
 
 		/** @inheritDoc */
 		public readonly username: Observable<string>
-	) {
-		this.sharedSecret			= (async () =>
-			(await this.potassium.passwordHash.hash(
-				sharedSecret,
-				AnonymousLocalUser.handshakeSalt
-			)).hash
-		)();
-	}
+	) {}
 }

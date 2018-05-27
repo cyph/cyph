@@ -405,27 +405,29 @@ export abstract class SessionService implements ISessionService {
 	) : Promise<IHandshakeState> {
 		await this.opened;
 
+		/* First person to join ephemeral session is "Bob" as optimization for Castle handshake */
+		const isAlice	=
+			this.sessionInitService.ephemeral ?
+				!this.state.isAlice :
+				this.state.isAlice
+		;
+
 		return {
 			currentStep,
 			initialSecret,
-			initialSecretAliceCyphertext: await this.channelService.getAsyncValue(
-				'handshake/initialSecretAliceCyphertext',
+			initialSecretCyphertext: await this.channelService.getAsyncValue(
+				'handshake/initialSecretCyphertext',
 				BinaryProto,
 				true
 			),
-			initialSecretBobCyphertext: await this.channelService.getAsyncValue(
-				'handshake/initialSecretBobCyphertext',
-				BinaryProto,
-				true
-			),
-			isAlice: this.state.isAlice,
+			isAlice,
 			localPublicKey: await this.channelService.getAsyncValue(
-				`handshake/${this.state.isAlice ? 'alice' : 'bob'}PublicKey`,
+				`handshake/${isAlice ? 'alice' : 'bob'}PublicKey`,
 				BinaryProto,
 				true
 			),
 			remotePublicKey: await this.channelService.getAsyncValue(
-				`handshake/${this.state.isAlice ? 'bob' : 'alice'}PublicKey`,
+				`handshake/${isAlice ? 'bob' : 'alice'}PublicKey`,
 				BinaryProto,
 				true
 			)

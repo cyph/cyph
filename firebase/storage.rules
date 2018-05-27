@@ -13,8 +13,7 @@ service firebase.storage {
 				// match /handshake {
 				// 	match /alicePublicKey/{hash} {}
 				// 	match /bobPublicKey/{hash} {}
-				// 	match /initialSecretAliceCyphertext/{hash} {}
-				// 	match /initialSecretBobCyphertext/{hash} {}
+				// 	match /initialSecretCyphertext/{hash} {}
 				// }
 
 				// match /messages/{message}/{hash} {}

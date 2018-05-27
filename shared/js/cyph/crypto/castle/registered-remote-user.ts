@@ -1,5 +1,6 @@
 import {Observable} from 'rxjs';
 import {take} from 'rxjs/operators';
+import {IAccountUserPublicKeys} from '../../proto';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {IRemoteUser} from './iremote-user';
 
@@ -9,17 +10,29 @@ import {IRemoteUser} from './iremote-user';
  */
 export class RegisteredRemoteUser implements IRemoteUser {
 	/** @ignore */
-	private readonly publicKey: Promise<Uint8Array>	= (async () =>
-		(
-			await this.accountDatabaseService.getUserPublicKeys(
-				await this.username.pipe(take(1)).toPromise()
-			)
-		).encryption
-	)();
+	private keys?: Promise<IAccountUserPublicKeys>;
+
+	/** @ignore */
+	private async getKeys () : Promise<IAccountUserPublicKeys> {
+		if (!this.keys) {
+			this.keys	= (async () =>
+				this.accountDatabaseService.getUserPublicKeys(
+					await this.username.pipe(take(1)).toPromise()
+				)
+			)();
+		}
+
+		return this.keys;
+	}
 
 	/** @inheritDoc */
-	public async getPublicKey () : Promise<Uint8Array> {
-		return this.publicKey;
+	public async getPublicEncryptionKey () : Promise<Uint8Array> {
+		return (await this.getKeys()).encryption;
+	}
+
+	/** @inheritDoc */
+	public async getPublicSigningKey () : Promise<Uint8Array> {
+		return (await this.getKeys()).signing;
 	}
 
 	constructor (

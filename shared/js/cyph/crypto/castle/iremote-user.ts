@@ -9,5 +9,12 @@ export interface IRemoteUser {
 	readonly username: Observable<string>;
 
 	/** Public Potassium.Box key. */
-	getPublicKey () : Promise<Uint8Array>;
+	getPublicEncryptionKey () : Promise<Uint8Array>;
+
+	/**
+	 * Public Potassium.Sign key. If undefined, handshake will be unsigned.
+	 * If a signed handshake is expected and a public signing key cannot be found,
+	 * this method should throw an exception.
+	 */
+	getPublicSigningKey () : Promise<Uint8Array|undefined>;
 }
