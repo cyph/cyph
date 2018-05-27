@@ -55,6 +55,9 @@ export class ChatMessage implements IChatMessage {
 	public readonly selfDestructTimer?: Timer;
 
 	/** @inheritDoc */
+	public sessionSubID?: string						= this.message.sessionSubID;
+
+	/** @inheritDoc */
 	public timestamp: number							= this.message.timestamp;
 
 	/** Human-readable time. */
