@@ -9,15 +9,14 @@ export class AffiliateService {
 	/** @ignore */
 	private readonly amazon		= {
 		copy: {
-			webcam4k: translate('Recommended 4K Webcam'),
+			snowden: translate('Watch Snowden (2016) on Prime Video'),
 			webcam1080p: translate('Recommended 1080p Webcam'),
-			snowden: translate('Watch Snowden (2016) on Prime Video')
+			webcam4k: translate('Recommended 4K Webcam')
 		},
 		links: {
-			webcam4k: 'https://amzn.to/2KOInzc',
+			snowden: 'https://amzn.to/2KWiTjl',
 			webcam1080p: 'https://amzn.to/2J6phHx',
-			snowden: 'https://amzn.to/2KWiTjl'
-
+			webcam4k: 'https://amzn.to/2KOInzc'
 		}
 	};
 
