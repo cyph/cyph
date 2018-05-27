@@ -32,14 +32,15 @@ const baseRequest	= <R, T> (
 
 	return {
 		progress,
+		/* tslint:disable-next-line:cyclomatic-complexity */
 		result: (async () => {
 			const httpClient	= await staticHttpClient;
 
-			const method: string			= o.method || 'GET';
-			const retries: number			= o.retries === undefined ? 0 : o.retries;
-			let contentType: string			= o.contentType || '';
-			let data: any					= o.data;
-			let url: string					= o.url;
+			const method: string	= o.method || 'GET';
+			const retries: number	= o.retries === undefined ? 0 : o.retries;
+			let contentType: string	= o.contentType || '';
+			let data: any			= o.data;
+			let url: string			= o.url;
 
 			if (!contentType) {
 				if (url.slice(-5) === '.json') {
