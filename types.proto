@@ -424,7 +424,7 @@ message ChatMessage {
 
 	/**
 	 * Hash of this entire object.
-	 * Includes value. Excludes authorType, hash, key, and predecessor.
+	 * Includes value. Excludes authorType, hash, and key.
 	 */
 	bytes hash = 9;
 

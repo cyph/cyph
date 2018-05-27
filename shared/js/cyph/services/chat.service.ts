@@ -19,6 +19,7 @@ import {
 	IChatLastConfirmedMessage,
 	IChatMessage,
 	IChatMessageLine,
+	IChatMessagePredecessor,
 	IChatMessageValue,
 	ISessionMessageDataList
 } from '../proto';
@@ -187,7 +188,8 @@ export class ChatService {
 			o.text.dimensions,
 			o.id,
 			o.text.hash,
-			o.text.key
+			o.text.key,
+			o.text.predecessor
 		);
 
 		await this.chat.futureMessages.updateItem(o.id, async futureMessages => {
@@ -285,7 +287,6 @@ export class ChatService {
 				authorType: ChatMessage.AuthorTypes.App,
 				hash: undefined,
 				key: undefined,
-				predecessor: undefined,
 				selfDestructTimeout: message.selfDestructTimeout || 0,
 				value
 			})
@@ -340,7 +341,8 @@ export class ChatService {
 		dimensions?: IChatMessageLine[],
 		messageID?: string,
 		hash?: Uint8Array,
-		key?: Uint8Array
+		key?: Uint8Array,
+		predecessor?: IChatMessagePredecessor
 	) : Promise<void> {
 		const messageValues	=
 			this.sessionInitService.ephemeral && author === this.sessionService.appUsername ?
@@ -402,6 +404,7 @@ export class ChatService {
 			,
 			dimensions,
 			id,
+			predecessor,
 			selfDestructTimeout,
 			sessionSubID: this.sessionService.sessionSubID,
 			timestamp
@@ -748,6 +751,7 @@ export class ChatService {
 						authorType: ChatMessage.AuthorTypes.App,
 						dimensions,
 						id,
+						predecessor,
 						selfDestructTimeout,
 						sessionSubID: this.sessionService.sessionSubID,
 						timestamp
