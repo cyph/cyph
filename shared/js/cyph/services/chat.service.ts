@@ -65,23 +65,6 @@ export class ChatService {
 	private readonly messageSendLock: LockFunction		= lockFunction();
 
 	/** @ignore */
-	private readonly messageValueHasher: (message: IChatMessage) => {
-		proto: IProto<IChatMessage>;
-		transform: (value: IChatMessageValue) => IChatMessage;
-	}	= (message: IChatMessage) => ({
-		proto: ChatMessageProto,
-		transform: (value: IChatMessageValue) : IChatMessage => ({
-			...message,
-			authorType: ChatMessage.AuthorTypes.App,
-			hash: undefined,
-			key: undefined,
-			predecessor: undefined,
-			selfDestructTimeout: message.selfDestructTimeout || 0,
-			value
-		})
-	});
-
-	/** @ignore */
 	private readonly messageValuesURL: string			= 'messageValues' + (
 		this.sessionInitService.ephemeral ? 'Ephemeral' : ''
 	);
@@ -288,6 +271,25 @@ export class ChatService {
 		}
 
 		return false;
+	}
+
+	/** @ignore */
+	private messageValueHasher (message: IChatMessage) : {
+		proto: IProto<IChatMessage>;
+		transform: (value: IChatMessageValue) => IChatMessage;
+	} {
+		return {
+			proto: ChatMessageProto,
+			transform: (value: IChatMessageValue) : IChatMessage => ({
+				...message,
+				authorType: ChatMessage.AuthorTypes.App,
+				hash: undefined,
+				key: undefined,
+				predecessor: undefined,
+				selfDestructTimeout: message.selfDestructTimeout || 0,
+				value
+			})
+		};
 	}
 
 	/** Gets author ID for including in message list item. */

@@ -15,7 +15,7 @@ export class EncryptedAsyncMap<T> {
 	private async hash <H> (
 		value: T|undefined,
 		plaintext: Uint8Array,
-		hasher?: {proto: IProto<H>, transform: (value: T) => MaybePromise<H>},
+		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>},
 		clearPlaintext: boolean = false
 	) : Promise<Uint8Array> {
 		if (hasher) {
@@ -79,7 +79,7 @@ export class EncryptedAsyncMap<T> {
 		key: string,
 		encryptionKey: Uint8Array,
 		hash: Uint8Array,
-		hasher?: {proto: IProto<H>, transform: (value: T) => MaybePromise<H>}
+		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>}
 	) : Promise<T> {
 		return deserialize(this.proto, await this.getItemBytes(key, encryptionKey, hash, hasher));
 	}
@@ -89,7 +89,7 @@ export class EncryptedAsyncMap<T> {
 		key: string,
 		encryptionKey: Uint8Array,
 		hash: Uint8Array,
-		hasher?: {proto: IProto<H>, transform: (value: T) => MaybePromise<H>}
+		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>}
 	) : Promise<Uint8Array> {
 		const plaintext	= await this.getItemBytesUnsafe(key, encryptionKey);
 
@@ -109,7 +109,7 @@ export class EncryptedAsyncMap<T> {
 	public async getItemHash <H = never> (
 		key: string,
 		encryptionKey: Uint8Array,
-		hasher?: {proto: IProto<H>, transform: (value: T) => MaybePromise<H>}
+		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>}
 	) : Promise<Uint8Array> {
 		return this.hash(
 			undefined,
@@ -143,7 +143,7 @@ export class EncryptedAsyncMap<T> {
 	public async setItem <H = never> (
 		key: string,
 		value: T,
-		hasher?: {proto: IProto<H>, transform: (value: T) => MaybePromise<H>}
+		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>}
 	) : Promise<{
 		encryptionKey: Uint8Array;
 		hash: Uint8Array;
@@ -176,7 +176,7 @@ export class EncryptedAsyncMap<T> {
 		key: string,
 		encryptionKey: Uint8Array,
 		f: (value?: T) => Promise<T|undefined>,
-		hasher?: {proto: IProto<H>, transform: (value: T) => MaybePromise<H>}
+		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>}
 	) : Promise<{
 		hash: Uint8Array|undefined;
 	}> {
