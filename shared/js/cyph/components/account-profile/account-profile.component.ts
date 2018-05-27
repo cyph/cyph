@@ -4,7 +4,7 @@ import {combineLatest, Observable, of} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
-import {AccountUserTypes} from '../../proto';
+import {AccountUserTypes, IForm} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';
@@ -199,19 +199,36 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	}
 
 	/** Publishes new user description. */
-	public async saveUserDescription () : Promise<void> {
-		if (!this.user || !this.isCurrentUser) {
+	public async saveUserDescription (forms?: IForm[]) : Promise<void> {
+		const user	= this.user;
+
+		if (!user || !this.isCurrentUser) {
 			throw new Error("Cannot modify another user's description.");
 		}
 
-		const draft		= this.descriptionDraft.trim();
-		const profile	= await this.user.accountUserProfile.getValue();
+		this.accountService.interstitial	= true;
 
-		if (profile.description !== draft) {
-			this.accountService.interstitial	= true;
-			profile.description					= draft;
-			await this.user.accountUserProfile.setValue(profile);
-		}
+		await Promise.all([
+			(async () => {
+				const draft		= this.descriptionDraft.trim();
+				const profile	= await user.accountUserProfile.getValue();
+
+				if (profile.description !== draft) {
+					profile.description	= draft;
+					await user.accountUserProfile.setValue(profile);
+				}
+			})(),
+			(async () => {
+				if (!forms) {
+					return;
+				}
+
+				user.accountUserProfileExtra.updateValue(async o => ({
+					...o,
+					forms
+				}));
+			})()
+		]);
 
 		this.accountService.interstitial	= false;
 		this.editMode						= false;
