@@ -288,6 +288,7 @@ export class ChatService {
 				hash: undefined,
 				key: undefined,
 				selfDestructTimeout: message.selfDestructTimeout || 0,
+				sessionSubID: message.sessionSubID || '',
 				value
 			})
 		};
