@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {map} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
+import {LockFunction} from '../lock-function-type';
 import {
 	AccountUserPresence,
 	AccountUserProfile,
@@ -12,6 +13,7 @@ import {
 } from '../proto';
 import {normalize} from '../util/formatting';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
+import {lockFunction} from '../util/lock';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 import {EnvService} from './env.service';
@@ -22,6 +24,9 @@ import {EnvService} from './env.service';
  */
 @Injectable()
 export class AccountUserLookupService {
+	/** @ignore */
+	private readonly downloadLock: LockFunction			= lockFunction();
+
 	/** @ignore */
 	private readonly existsCache: Set<string>			= new Set<string>();
 
@@ -53,13 +58,13 @@ export class AccountUserLookupService {
 			(confirmedOnly ? this.existsConfirmedCache : this.existsCache).has(username) ||
 			this.userCache.has(username) ||
 			await (confirmedOnly ?
-				this.accountDatabaseService.getItem(
+				this.downloadLock(async () => this.accountDatabaseService.getItem(
 					`${url}/publicProfile`,
 					AccountUserProfile,
 					SecurityModels.public,
 					undefined,
 					true
-				).then(
+				)).then(
 					() => true
 				).catch(
 					() => false

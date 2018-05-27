@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
+import {LockFunction} from '../lock-function-type';
 import {
 	AccountUserTypes,
 	IAccountUserPresence,
@@ -13,7 +14,7 @@ import {
 } from '../proto';
 import {cacheObservable} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
-import {lockTryOnce} from '../util/lock';
+import {lockFunction, lockTryOnce} from '../util/lock';
 import {staticDomSanitizer} from '../util/static-services';
 import {UserPresence} from './enums';
 import {reviewMax} from './review-max';
@@ -36,6 +37,9 @@ export class User {
 			domSanitizer.bypassSecurityTrustUrl('/assets/img/coverimage.png')
 		)
 	;
+
+	/** @ignore */
+	private static readonly fetchLock: LockFunction				= lockFunction();
 
 
 	/** @ignore */
@@ -137,7 +141,7 @@ export class User {
 		}
 
 		await lockTryOnce(this.fetchLock, async () => {
-			await this.accountUserProfile.getValue();
+			await User.fetchLock(async () => this.accountUserProfile.getValue());
 			this.ready	= true;
 		});
 	}
