@@ -11,8 +11,32 @@ import {lockFunction} from './util/lock';
  * IAsyncMap implementation that wraps a local value.
  */
 export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>> implements IAsyncMap<K, V> {
-	/** @inheritDoc */
-	private readonly locks: Map<K, LockFunction>	= new Map<K, LockFunction>();
+	/** @ignore */
+	private readonly itemLocks: Map<K, LockFunction>	= new Map<K, LockFunction>();
+
+	/** @ignore */
+	private lockItem (key: K) : LockFunction {
+		return getOrSetDefault(this.itemLocks, key, lockFunction);
+	}
+
+	/** @ignore */
+	private async getItemInternal (key: K) : Promise<V> {
+		if (!this.value.has(key)) {
+			throw new Error(`No item ${key} in async map.`);
+		}
+
+		return <V> this.value.get(key);
+	}
+
+	/** @ignore */
+	private async removeItemInternal (key: K) : Promise<void> {
+		await this.value.delete(key);
+	}
+
+	/** @ignore */
+	private async setItemInternal (key: K, value: V) : Promise<void> {
+		this.value.set(key, value);
+	}
 
 	/** @inheritDoc */
 	public async clear () : Promise<void> {
@@ -21,11 +45,7 @@ export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>> implements I
 
 	/** @inheritDoc */
 	public async getItem (key: K) : Promise<V> {
-		if (!this.value.has(key)) {
-			throw new Error(`No item ${key} in async map.`);
-		}
-
-		return <V> this.value.get(key);
+		return this.lockItem(key)(async () => this.getItemInternal(key));
 	}
 
 	/** @inheritDoc */
@@ -35,17 +55,19 @@ export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>> implements I
 
 	/** @inheritDoc */
 	public async hasItem (key: K) : Promise<boolean> {
-		return this.value.has(key);
+		return this.lockItem(key)(async () =>
+			this.value.has(key)
+		);
 	}
 
 	/** @inheritDoc */
 	public async removeItem (key: K) : Promise<void> {
-		this.value.delete(key);
+		await this.lockItem(key)(async () => this.removeItemInternal(key));
 	}
 
 	/** @inheritDoc */
 	public async setItem (key: K, value: V) : Promise<void> {
-		this.value.set(key, value);
+		await this.lockItem(key)(async () => this.setItemInternal(key, value));
 	}
 
 	/** @inheritDoc */
@@ -55,8 +77,8 @@ export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>> implements I
 
 	/** @inheritDoc */
 	public async updateItem (key: K, f: (value?: V) => Promise<V|undefined>) : Promise<void> {
-		await getOrSetDefault(this.locks, key, lockFunction)(async () => {
-			const value	= await this.getItem(key).catch(() => undefined);
+		await this.lockItem(key)(async () => {
+			const value	= await this.getItemInternal(key).catch(() => undefined);
 			let newValue: V|undefined;
 			try {
 				newValue	= await f(value);
@@ -65,10 +87,10 @@ export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>> implements I
 				return;
 			}
 			if (newValue === undefined) {
-				await this.removeItem(key);
+				await this.removeItemInternal(key);
 			}
 			else {
-				await this.setItem(key, newValue);
+				await this.setItemInternal(key, newValue);
 			}
 		});
 	}

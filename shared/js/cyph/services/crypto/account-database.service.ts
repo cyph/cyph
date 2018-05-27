@@ -194,7 +194,8 @@ export class AccountDatabaseService {
 		securityModel: SecurityModels,
 		customKey: MaybePromise<Uint8Array>|undefined,
 		anonymous: boolean = false,
-		moreAdditionalData?: string
+		moreAdditionalData?: string,
+		noWaitForUnlock: boolean = false
 	) : Promise<{
 		progress: Observable<number>;
 		result: ITimedValue<T>;
@@ -203,7 +204,10 @@ export class AccountDatabaseService {
 
 		if (!anonymous && this.currentUser.value) {
 			url	= await this.normalizeURL(url);
-			await this.waitForUnlock(url);
+
+			if (!noWaitForUnlock) {
+				await this.waitForUnlock(url);
+			}
 		}
 
 		const downloadTask	= this.databaseService.downloadItem(url, BinaryProto);
@@ -347,6 +351,23 @@ export class AccountDatabaseService {
 		}
 	}
 
+	/** @ignore */
+	public async setItemInternal<T> (
+		url: MaybePromise<string>,
+		proto: IProto<T>,
+		value: T,
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: MaybePromise<Uint8Array>,
+		noBlobStorage: boolean = false
+	) : Promise<{hash: string; url: string}> {
+		return this.databaseService.setItem(
+			await this.normalizeURL(url),
+			BinaryProto,
+			await this.seal(url, proto, value, securityModel, customKey),
+			noBlobStorage
+		);
+	}
+
 	/** @see DatabaseService.downloadItem */
 	public downloadItem<T> (
 		url: MaybePromise<string>,
@@ -466,8 +487,14 @@ export class AccountDatabaseService {
 		anonymous: boolean = false,
 		noBlobStorage: boolean = false
 	) : IAsyncMap<string, T> {
-		const localLock			= lockFunction();
-		const updateItemLocks	= new Map<string, LockFunction>();
+		const localLock	= lockFunction();
+		const itemLocks	= new Map<string, LockFunction>();
+
+		const lockItem			= (key: string) => getOrSetDefault(
+			itemLocks,
+			key,
+			() => this.lockFunction(`${url}/${key}`)
+		);
 
 		const baseAsyncMap		= (async () => {
 			url	= await this.normalizeURL(url);
@@ -480,12 +507,24 @@ export class AccountDatabaseService {
 			);
 		})();
 
-		const getItem			= async (key: string) => this.getItem(
-			`${url}/${key}`,
-			proto,
-			securityModel,
-			customKey,
-			anonymous
+		const getItemInternal	= async (key: string) =>
+			(
+				await (
+					await this.getItemInternal(
+						`${url}/${key}`,
+						proto,
+						securityModel,
+						customKey,
+						anonymous,
+						undefined,
+						true
+					)
+				).result
+			).value
+		;
+
+		const getItem			= async (key: string) => lockItem(key)(async () =>
+			getItemInternal(key)
 		);
 
 		const getValueHelper	= async (keys: string[]) => new Map<string, T>(
@@ -494,6 +533,19 @@ export class AccountDatabaseService {
 				await getItem(key)
 			]))
 		);
+
+		const removeItemInternal	= async (key: string) => this.removeItem(`${url}/${key}`);
+
+		const setItemInternal		= async (key: string, value: T) => {
+			await this.setItemInternal(
+				`${url}/${key}`,
+				proto,
+				value,
+				securityModel,
+				customKey,
+				noBlobStorage
+			);
+		};
 
 		const usernamePromise	= this.getUsernameFromURL(url);
 
@@ -515,17 +567,8 @@ export class AccountDatabaseService {
 			getValue: async () => localLock(async () => getValueHelper(await asyncMap.getKeys())),
 			hasItem: async key => (await baseAsyncMap).hasItem(key),
 			lock: async (f, reason) => (await baseAsyncMap).lock(f, reason),
-			removeItem: async key => (await baseAsyncMap).removeItem(key),
-			setItem: async (key, value) => {
-				await this.setItem(
-					`${url}/${key}`,
-					proto,
-					value,
-					securityModel,
-					customKey,
-					noBlobStorage
-				);
-			},
+			removeItem: async key => lockItem(key)(async () => removeItemInternal(key)),
+			setItem: async (key, value) => lockItem(key)(async () => setItemInternal(key, value)),
 			setValue: async (mapValue: Map<string, T>) => localLock(async () => {
 				await asyncMap.clear();
 				await Promise.all(Array.from(mapValue.entries()).map(async ([key, value]) =>
@@ -533,12 +576,8 @@ export class AccountDatabaseService {
 				));
 			}),
 			size: async () => (await baseAsyncMap).size(),
-			updateItem: async (key, f) => getOrSetDefault(
-				updateItemLocks,
-				key,
-				() => this.lockFunction(`${url}/${key}`)
-			)(async () => {
-				const value	= await asyncMap.getItem(key).catch(() => undefined);
+			updateItem: async (key, f) => lockItem(key)(async () => {
+				const value	= await getItemInternal(key).catch(() => undefined);
 				let newValue: T|undefined;
 				try {
 					newValue	= await f(value);
@@ -547,10 +586,10 @@ export class AccountDatabaseService {
 					return;
 				}
 				if (newValue === undefined) {
-					await asyncMap.removeItem(key);
+					await removeItemInternal(key);
 				}
 				else {
-					await asyncMap.setItem(key, newValue);
+					await setItemInternal(key, newValue);
 				}
 			}),
 			updateValue: async f => asyncMap.lock(async () =>
@@ -946,10 +985,12 @@ export class AccountDatabaseService {
 		customKey?: MaybePromise<Uint8Array>,
 		noBlobStorage: boolean = false
 	) : Promise<{hash: string; url: string}> {
-		return this.lock(url, async () => this.databaseService.setItem(
-			await this.normalizeURL(url),
-			BinaryProto,
-			await this.seal(url, proto, value, securityModel, customKey),
+		return this.lock(url, async () => this.setItemInternal(
+			url,
+			proto,
+			value,
+			securityModel,
+			customKey,
 			noBlobStorage
 		));
 	}

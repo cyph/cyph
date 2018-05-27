@@ -120,18 +120,34 @@ export class DatabaseService extends DataManagerService {
 		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
 		noBlobStorage: boolean = false
 	) : IAsyncMap<string, T> {
-		const lock				= lockFactory(url);
-		const localLock			= lockFunction();
-		const updateItemLocks	= new Map<string, LockFunction>();
+		const lock		= lockFactory(url);
+		const localLock	= lockFunction();
+		const itemLocks	= new Map<string, LockFunction>();
 
-		const getItem			= async (key: string) => this.getItem(`${url}/${key}`, proto);
+		const lockItem				= (key: string) => getOrSetDefault(
+			itemLocks,
+			key,
+			() => lockFactory(`${url}/${key}`)
+		);
 
-		const getValueHelper	= async (keys: string[]) => new Map<string, T>(
+		const getItemInternal		= async (key: string) => this.getItem(`${url}/${key}`, proto);
+
+		const getItem				= async (key: string) => lockItem(key)(async () =>
+			getItemInternal(key)
+		);
+
+		const getValueHelper		= async (keys: string[]) => new Map<string, T>(
 			await Promise.all(keys.map(async (key) : Promise<[string, T]> => [
 				key,
 				await getItem(key)
 			]))
 		);
+
+		const removeItemInternal	= async (key: string) => this.removeItem(`${url}/${key}`);
+
+		const setItemInternal		= async (key: string, value: T) => {
+			await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);
+		};
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
@@ -140,12 +156,10 @@ export class DatabaseService extends DataManagerService {
 			getItem,
 			getKeys: async () => this.getListKeys(url),
 			getValue: async () => localLock(async () => getValueHelper(await asyncMap.getKeys())),
-			hasItem: async key => this.hasItem(`${url}/${key}`),
+			hasItem: async key => lockItem(key)(async () => this.hasItem(`${url}/${key}`)),
 			lock,
-			removeItem: async key => this.removeItem(`${url}/${key}`),
-			setItem: async (key, value) => {
-				await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);
-			},
+			removeItem: async key => lockItem(key)(async () => removeItemInternal(key)),
+			setItem: async (key, value) => lockItem(key)(async () => setItemInternal(key, value)),
 			setValue: async (mapValue: Map<string, T>) => localLock(async () => {
 				await asyncMap.clear();
 				await Promise.all(Array.from(mapValue.entries()).map(async ([key, value]) =>
@@ -153,12 +167,8 @@ export class DatabaseService extends DataManagerService {
 				));
 			}),
 			size: async () => (await asyncMap.getKeys()).length,
-			updateItem: async (key, f) => getOrSetDefault(
-				updateItemLocks,
-				key,
-				() => lockFactory(`${url}/${key}`)
-			)(async () => {
-				const value	= await asyncMap.getItem(key).catch(() => undefined);
+			updateItem: async (key, f) => lockItem(key)(async () => {
+				const value	= await getItemInternal(key).catch(() => undefined);
 				let newValue: T|undefined;
 				try {
 					newValue	= await f(value);
@@ -167,10 +177,10 @@ export class DatabaseService extends DataManagerService {
 					return;
 				}
 				if (newValue === undefined) {
-					await asyncMap.removeItem(key);
+					await removeItemInternal(key);
 				}
 				else {
-					await asyncMap.setItem(key, newValue);
+					await setItemInternal(key, newValue);
 				}
 			}),
 			updateValue: async f => asyncMap.lock(async () =>
