@@ -18,7 +18,6 @@ import {User} from '../../account/user';
 import {fadeInOut} from '../../animations';
 import {ChatMessage, IChatData, IVsItem, UiStyles} from '../../chat';
 import {IChatMessage} from '../../proto';
-import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 /* import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service'; */
@@ -249,14 +248,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 							}
 							else {
 								try {
-									authorUser	= (
-										this.accountContactsService &&
-										this.accountUserLookupService
-									) ?
+									authorUser	= this.accountUserLookupService ?
 										await this.accountUserLookupService.getUser(
-											await this.accountContactsService.getContactUsername(
-												message.authorID
-											)
+											message.authorID
 										) :
 										undefined
 									;
@@ -311,10 +305,6 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	constructor (
 		/** @ignore */
 		private readonly elementRef: ElementRef,
-
-		/** @ignore */
-		@Inject(AccountContactsService) @Optional()
-		private readonly accountContactsService: AccountContactsService|undefined,
 
 		/** @ignore */
 		@Inject(AccountDatabaseService) @Optional()

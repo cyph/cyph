@@ -12,6 +12,7 @@ import {
 	SessionMessageDataList,
 	StringProto
 } from '../proto';
+import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionInitService} from './account-session-init.service';
@@ -43,16 +44,12 @@ export class AccountChatService extends ChatService {
 	/** @inheritDoc */
 	protected async getAuthorID (author: Observable<string>) : Promise<string|undefined> {
 		return (
-			author === this.sessionService.appUsername ||
-			author === this.sessionService.localUsername
-		) ?
-			undefined :
-			(async () =>
-				this.accountContactsService.getContactID(await author.pipe(take(1)).toPromise())
-			)().catch(
-				() => undefined
-			)
-		;
+			author === this.sessionService.appUsername ?
+				undefined :
+			author === this.sessionService.localUsername ?
+				(await this.accountDatabaseService.getCurrentUser()).user.username :
+				author.pipe(take(1)).toPromise().then(normalize).catch(() => undefined)
+		);
 	}
 
 	/** @inheritDoc */
