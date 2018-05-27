@@ -5,10 +5,10 @@ import {
 	HttpResponse
 } from '@angular/common/http';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {timeout} from 'rxjs/operators';
 import {MaybePromise} from '../maybe-promise-type';
 import {parse, stringify, toQueryString} from './serialization';
 import {staticHttpClient} from './static-services';
+import {sleep} from './wait';
 
 
 /** Performs HTTP request. */
@@ -74,40 +74,41 @@ const baseRequest	= <R, T> (
 				try {
 					progress.next(0);
 
-					let req	= httpClient.request<T>(new HttpRequest(method, url, data, {
+					const req	= httpClient.request<T>(new HttpRequest(method, url, data, {
 						headers: new HttpHeaders({
 							...(contentType ? {'Content-Type': contentType} : {})
 						}),
 						responseType
 					}));
 
-					if (o.timeout) {
-						req	= req.pipe(timeout(o.timeout));
-					}
+					const res	= await Promise.race([
+						new Promise<HttpResponse<T>>((resolve, reject) => {
+							let last: HttpResponse<T>;
 
-					const res	= await new Promise<HttpResponse<T>>((resolve, reject) => {
-						let last: HttpResponse<T>;
-
-						req.subscribe(
-							e => {
-								if (e.type === HttpEventType.DownloadProgress) {
-									progress.next(e.loaded / (e.total || e.loaded) * 100);
+							req.subscribe(
+								e => {
+									if (e.type === HttpEventType.DownloadProgress) {
+										progress.next(e.loaded / (e.total || e.loaded) * 100);
+									}
+									else if (e.type === HttpEventType.Response) {
+										last	= e;
+									}
+								},
+								reject,
+								() => {
+									if (last) {
+										resolve(last);
+									}
+									else {
+										reject();
+									}
 								}
-								else if (e.type === HttpEventType.Response) {
-									last	= e;
-								}
-							},
-							reject,
-							() => {
-								if (last) {
-									resolve(last);
-								}
-								else {
-									reject();
-								}
-							}
-						);
-					});
+							);
+						}),
+						...(!o.timeout ? [] : [
+							sleep(o.timeout).then(async () => Promise.reject('Request timeout.'))
+						])
+					]);
 
 					statusOk	= res.ok;
 					response	= await getResponseData(res);
