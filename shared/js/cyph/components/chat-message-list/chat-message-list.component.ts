@@ -272,7 +272,11 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 						}
 					)
 				))).sort((a, b) =>
-					a.message.timestamp - b.message.timestamp
+					a.pending && !b.pending ?
+						1 :
+					!a.pending && b.pending ?
+						-1 :
+						a.message.timestamp - b.message.timestamp
 				);
 			})),
 			unconfirmedMessages: chat.unconfirmedMessages
