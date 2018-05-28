@@ -142,7 +142,7 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 			this.unconfirmedMessages &&
 			(
 				this.message.authorType !== ChatMessage.AuthorTypes.Local ||
-				!(this.message.id && this.unconfirmedMessages[this.message.id])
+				!(this.message.id in this.unconfirmedMessages)
 			)
 		);
 	}
