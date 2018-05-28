@@ -760,18 +760,30 @@ export class AccountDatabaseService {
 		return this.databaseService.getListKeys(await this.normalizeURL(url));
 	}
 
-	/** @see DatabaseService.getOrSetDefault */
+	/** Gets a value and sets a default value if none had previously been set. */
 	public async getOrSetDefault<T> (
 		url: MaybePromise<string>,
 		proto: IProto<T>,
-		defaultValue: () => MaybePromise<T>
+		defaultValue: () => MaybePromise<T>,
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: MaybePromise<Uint8Array>,
+		noBlobStorage: boolean = false
 	) : Promise<T> {
 		try {
 			return await this.getItem(url, proto);
 		}
 		catch {
 			const value	= await defaultValue();
-			this.setItem(url, proto, value).catch(() => {});
+			this.setItem(
+				url,
+				proto,
+				value,
+				securityModel,
+				customKey,
+				noBlobStorage
+			).catch(
+				() => {}
+			);
 			return value;
 		}
 	}
