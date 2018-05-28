@@ -5,7 +5,7 @@ import {map, mergeMap, skip, take} from 'rxjs/operators';
 import {IContactListItem, User} from '../account';
 import {StringProto} from '../proto';
 import {filterDuplicatesOperator, filterUndefined} from '../util/filter';
-import {cacheObservable} from '../util/flatten-observable';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {AccountUserLookupService} from './account-user-lookup.service';
@@ -24,7 +24,7 @@ export class AccountContactsService {
 	;
 
 	/** List of contacts for current user, sorted alphabetically by username. */
-	public readonly contactList: Observable<(IContactListItem|User)[]>	= cacheObservable(
+	public readonly contactList: Observable<(IContactListItem|User)[]>	= toBehaviorSubject(
 		this.accountDatabaseService.watchListKeys('contactUsernames').pipe(
 			mergeMap(async keys =>
 				(await Promise.all(
@@ -58,7 +58,7 @@ export class AccountContactsService {
 	/** Fully loads contact list. */
 	public readonly fullyLoadContactList	= memoize(
 		(contactList: Observable<(IContactListItem|User)[]>) : Observable<User[]> =>
-			cacheObservable(
+			toBehaviorSubject(
 				contactList.pipe(mergeMap(async contacts =>
 					filterUndefined(await Promise.all(
 						contacts.map(async contact =>
@@ -164,7 +164,7 @@ export class AccountContactsService {
 			}
 		});
 
-		this.contactList.pipe(skip(2), take(1)).toPromise().then(() => {
+		this.contactList.pipe(skip(1), take(1)).toPromise().then(() => {
 			this.showSpinner.next(false);
 		});
 	}

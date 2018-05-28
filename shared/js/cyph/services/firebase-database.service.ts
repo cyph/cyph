@@ -998,6 +998,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	) : Observable<ITimedValue<T>> {
 		return this.ngZone.runOutsideAngular(() => new Observable<ITimedValue<T>>(observer => {
 			let cleanup: Function;
+			let lastValue: T|undefined;
 
 			/* tslint:disable-next-line:no-null-keyword */
 			const onValue	= async (snapshot: DataSnapshot|null) => {
@@ -1011,7 +1012,22 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}
 				else {
 					const result	= await (await this.downloadItem(url, proto)).result;
-					this.ngZone.run(() => { observer.next(result); });
+
+					if (
+						result.value !== lastValue &&
+						!(
+							ArrayBuffer.isView(result.value) &&
+							ArrayBuffer.isView(lastValue) &&
+							this.potassiumService.compareMemory(
+								result.value,
+								lastValue
+							)
+						)
+					) {
+						this.ngZone.run(() => { observer.next(result); });
+					}
+
+					lastValue		= result.value;
 				}
 			};
 
@@ -1055,8 +1071,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				return async () => {
 					(await waitForValue(() => cleanup))();
 				};
-			})),
-			false
+			}))
 		);
 	}
 
@@ -1236,8 +1251,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				return async () => {
 					(await waitForValue(() => cleanup))();
 				};
-			})),
-			{key: ''}
+			}))
 		);
 	}
 
@@ -1290,8 +1304,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				return async () => {
 					(await waitForValue(() => cleanup))();
 				};
-			})),
-			[]
+			}))
 		);
 	}
 

@@ -15,7 +15,7 @@ import {EnvService} from '../../services/env.service';
 import {ScrollService} from '../../services/scroll.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
-import {cacheObservable} from '../../util/flatten-observable';
+import {toBehaviorSubject} from '../../util/flatten-observable';
 import {uuid} from '../../util/uuid';
 
 
@@ -51,7 +51,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	protected readonly hasOwnProviders: boolean								= true;
 
 	/** @see AccountChatMessageBoxComponent.messageType */
-	public readonly messageType: BehaviorSubject<ChatMessageValue.Types>	= cacheObservable(
+	public readonly messageType: BehaviorSubject<ChatMessageValue.Types>	= toBehaviorSubject(
 		concat(
 			of(undefined),
 			this.router.events.pipe(filter(event => event instanceof NavigationEnd))

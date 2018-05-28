@@ -12,7 +12,7 @@ import {
 	IAccountUserProfileExtra,
 	IReview
 } from '../proto';
-import {cacheObservable} from '../util/flatten-observable';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {lockFunction, lockTryOnce} from '../util/lock';
 import {staticDomSanitizer} from '../util/static-services';
@@ -46,7 +46,7 @@ export class User {
 	private readonly fetchLock: {}	= {};
 
 	/** Image URI for avatar / profile picture. */
-	public readonly avatar: Observable<SafeUrl|undefined>	= cacheObservable(
+	public readonly avatar: Observable<SafeUrl|undefined>	= toBehaviorSubject(
 		this.avatarInternal.pipe(
 			mergeMap(async avatar => avatar || User.defaultAvatar)
 		),
@@ -54,7 +54,7 @@ export class User {
 	);
 
 	/** Image URI for cover image. */
-	public readonly coverImage: Observable<SafeUrl|undefined>	= cacheObservable(
+	public readonly coverImage: Observable<SafeUrl|undefined>	= toBehaviorSubject(
 		this.coverImageInternal.pipe(
 			mergeMap(async coverImage => coverImage || User.defaultCoverImage)
 		),
@@ -62,14 +62,14 @@ export class User {
 	);
 
 	/** @see IAccountUserProfile.description */
-	public readonly description: Observable<string>	= cacheObservable(
+	public readonly description: Observable<string>	= toBehaviorSubject(
 		this.accountUserProfile.watch().pipe(map(({description}) => description)),
 		''
 	);
 
 	/** @see IAccountUserProfile.externalUsernames */
 	public readonly externalUsernames: Observable<{[k: string]: string}|undefined>	=
-		cacheObservable(
+		toBehaviorSubject(
 			this.accountUserProfile.watch().pipe(
 				map(({externalUsernames}) => externalUsernames || {})
 			),
@@ -79,26 +79,26 @@ export class User {
 
 	/** @see IAccountUserProfileExtra */
 	public readonly extra: () => Observable<IAccountUserProfileExtra|undefined>	=
-		memoize(() => cacheObservable(
+		memoize(() => toBehaviorSubject(
 			this.accountUserProfileExtra.watch(),
 			undefined
 		))
 	;
 
 	/** @see IAccountUserProfile.hasPremium */
-	public readonly hasPremium: Observable<boolean|undefined>	= cacheObservable(
+	public readonly hasPremium: Observable<boolean|undefined>	= toBehaviorSubject(
 		this.accountUserProfile.watch().pipe(map(({hasPremium}) => hasPremium)),
 		undefined
 	);
 
 	/** @see IAccountUserProfile.name */
-	public readonly name: Observable<string>	= cacheObservable(
+	public readonly name: Observable<string>	= toBehaviorSubject(
 		this.accountUserProfile.watch().pipe(map(({name}) => name)),
 		''
 	);
 
 	/** Average rating. */
-	public readonly rating: () => Observable<number|undefined>	= memoize(() => cacheObservable(
+	public readonly rating: () => Observable<number|undefined>	= memoize(() => toBehaviorSubject(
 		this.reviews.watch().pipe(map(reviews =>
 			reviews.size < 1 ?
 				undefined :
@@ -115,7 +115,7 @@ export class User {
 	public ready: boolean	= false;
 
 	/** @see IAccountUserProfile.realUsername */
-	public readonly realUsername: Observable<string>	= cacheObservable(
+	public readonly realUsername: Observable<string>	= toBehaviorSubject(
 		this.accountUserProfile.watch().pipe(map(({realUsername}) =>
 			normalize(realUsername) === this.username ? realUsername : this.username
 		)),
@@ -123,13 +123,13 @@ export class User {
 	);
 
 	/** @see IAccountUserProfile.status */
-	public readonly status: Observable<UserPresence>	= cacheObservable(
+	public readonly status: Observable<UserPresence>	= toBehaviorSubject(
 		this.accountUserPresence.watch().pipe(map(({status}) => status)),
 		UserPresence.Offline
 	);
 
 	/** @see IAccountUserProfile.userType */
-	public readonly userType: Observable<AccountUserTypes|undefined>	= cacheObservable(
+	public readonly userType: Observable<AccountUserTypes|undefined>	= toBehaviorSubject(
 		this.accountUserProfile.watch().pipe(map(({userType}) => userType)),
 		undefined
 	);

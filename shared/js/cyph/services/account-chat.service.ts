@@ -114,6 +114,7 @@ export class AccountChatService extends ChatService {
 						undefined,
 						undefined,
 						undefined,
+						true,
 						true
 					),
 					initProgress: new BehaviorSubject(0),
@@ -139,6 +140,7 @@ export class AccountChatService extends ChatService {
 						undefined,
 						undefined,
 						undefined,
+						true,
 						true
 					),
 					pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
@@ -146,7 +148,10 @@ export class AccountChatService extends ChatService {
 						`${contactURL}/receiveTextLock`
 					),
 					state: States.chat,
-					unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
+					unconfirmedMessages:
+						new BehaviorSubject<{[id: string]: boolean|undefined}|undefined>(
+							undefined
+						)
 				})
 			)
 		;

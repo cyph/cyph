@@ -14,20 +14,28 @@ export class EncryptedAsyncMap<T> {
 	/** @ignore */
 	private async hash <H> (
 		value: T|undefined,
-		plaintext: Uint8Array,
+		plaintext?: Uint8Array,
 		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>},
 		clearPlaintext: boolean = false
 	) : Promise<Uint8Array> {
 		if (hasher) {
-			if (value === undefined) {
-				value	= await deserialize(this.proto, plaintext);
+			if (plaintext) {
+				if (value === undefined) {
+					value	= await deserialize(this.proto, plaintext);
+				}
+
+				if (clearPlaintext) {
+					this.potassium.clearMemory(plaintext);
+				}
 			}
 
-			if (clearPlaintext) {
-				this.potassium.clearMemory(plaintext);
+			if (value !== undefined) {
+				plaintext	= await serialize(hasher.proto, await hasher.transform(value));
 			}
+		}
 
-			plaintext	= await serialize(hasher.proto, await hasher.transform(value));
+		if (plaintext === undefined) {
+			throw new Error('No plaintext to hash.');
 		}
 
 		const hash	= await this.potassium.hash.hash(plaintext);
@@ -109,11 +117,15 @@ export class EncryptedAsyncMap<T> {
 	public async getItemHash <H = never> (
 		key: string,
 		encryptionKey: Uint8Array,
-		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>}
+		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>},
+		value?: T
 	) : Promise<Uint8Array> {
 		return this.hash(
-			undefined,
-			await this.getItemBytesUnsafe(key, encryptionKey),
+			value,
+			hasher && value !== undefined ?
+				undefined :
+				await this.getItemBytesUnsafe(key, encryptionKey)
+			,
 			hasher,
 			true
 		);

@@ -45,8 +45,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** @see AccountProfileComponent.doctorListOnly */
 	public readonly doctorListOnly: Observable<boolean>			= cacheObservable(
-		this.activatedRoute.data.pipe(map(o => o.doctorListOnly === true)),
-		false
+		this.activatedRoute.data.pipe(map(o => o.doctorListOnly === true))
 	);
 
 	/** Profile edit mode. */

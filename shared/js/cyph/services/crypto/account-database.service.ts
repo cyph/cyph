@@ -2,7 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, combineLatest, Observable, of, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {ICurrentUser, publicSigningKeys, SecurityModels} from '../../account';
 import {IAsyncList} from '../../iasync-list';
@@ -23,7 +23,7 @@ import {
 import {filterUndefinedOperator} from '../../util/filter';
 import {cacheObservable, flattenObservable} from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
-import {getOrSetDefault} from '../../util/get-or-set-default';
+import {getOrSetDefault, getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {lockFunction} from '../../util/lock';
 import {deserialize, serialize} from '../../util/serialization';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
@@ -491,10 +491,12 @@ export class AccountDatabaseService {
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
-		noBlobStorage: boolean = false
+		noBlobStorage: boolean = false,
+		staticValues: boolean = false
 	) : IAsyncMap<string, T> {
 		const localLock	= lockFunction();
 		const itemLocks	= new Map<string, LockFunction>();
+		const itemCache	= staticValues ? new Map<string, T>() : undefined;
 
 		const lockItem			= (key: string) => getOrSetDefault(
 			itemLocks,
@@ -509,12 +511,15 @@ export class AccountDatabaseService {
 				url,
 				BinaryProto,
 				k => this.lockFunction(k),
-				noBlobStorage
+				noBlobStorage,
+				staticValues
 			);
 		})();
 
-		const getItemInternal	= async (key: string) =>
-			(
+		const getItemInternal	= async (key: string) => getOrSetDefaultAsync(
+			itemCache,
+			key,
+			async () => (
 				await (
 					await this.getItemInternal(
 						`${url}/${key}`,
@@ -527,11 +532,12 @@ export class AccountDatabaseService {
 					)
 				).result
 			).value
-		;
-
-		const getItem			= async (key: string) => lockItem(key)(async () =>
-			getItemInternal(key)
 		);
+
+		const getItem			= staticValues ?
+			getItemInternal :
+			async (key: string) => lockItem(key)(async () => getItemInternal(key))
+		;
 
 		const getValueHelper	= async (keys: string[]) => new Map<string, T>(
 			await Promise.all(keys.map(async (key) : Promise<[string, T]> => [
@@ -956,7 +962,7 @@ export class AccountDatabaseService {
 						key,
 						securityModel,
 						customKey,
-						noBlobStorage
+						true
 					).then(
 						() => {}
 					);
@@ -1146,8 +1152,7 @@ export class AccountDatabaseService {
 				mergeMap(
 					o => o
 				)
-			),
-			{timestamp: NaN, value: proto.create()}
+			)
 		);
 	}
 
@@ -1172,17 +1177,27 @@ export class AccountDatabaseService {
 	) : Observable<ITimedValue<T>[]> {
 		const cache: {head?: string; keys: number; value: ITimedValue<T>[]}	= {keys: 0, value: []};
 
+		const keysWatcher	= () => this.watchListKeys(url);
+		const headWatcher	= () => this.watch(
+			`${url}-head`,
+			StringProto,
+			securityModel,
+			customKey,
+			anonymous
+		);
+
+		const watcher	= immutable ?
+			headWatcher().pipe(mergeMap(
+				async (head) : Promise<[string[], ITimedValue<string>]> =>
+					[await this.getListKeys(url), head]
+			)) :
+			keysWatcher().pipe(map((keys) : [string[], ITimedValue<string>] =>
+				[keys, {timestamp: NaN, value: ''}]
+			))
+		;
+
 		return cacheObservable(
-			combineLatest(
-				this.watchListKeys(url),
-				!immutable ? of({timestamp: NaN, value: ''}) : this.watch(
-					`${url}-head`,
-					StringProto,
-					securityModel,
-					customKey,
-					anonymous
-				)
-			).pipe(
+			watcher.pipe(
 				mergeMap(async ([keys, head]) => {
 					const headValue	= !isNaN(head.timestamp) ? head.value : undefined;
 
@@ -1211,8 +1226,7 @@ export class AccountDatabaseService {
 
 					return cache.value;
 				})
-			),
-			[]
+			)
 		);
 	}
 
@@ -1241,8 +1255,7 @@ export class AccountDatabaseService {
 				mergeMap(
 					o => o
 				)
-			),
-			[]
+			)
 		);
 	}
 
@@ -1279,8 +1292,7 @@ export class AccountDatabaseService {
 				mergeMap(
 					o => o
 				)
-			),
-			{timestamp: NaN, value: proto.create()}
+			)
 		);
 	}
 

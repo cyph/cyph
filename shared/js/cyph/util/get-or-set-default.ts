@@ -12,11 +12,11 @@ const getOrSetDefaultAsyncLocks: Map<any, LockFunction>	=
 
 /** Gets a value from a map and sets a default value if none had previously been set. */
 export const getOrSetDefault	= <K, V> (
-	map: Map<K, V>,
+	map: Map<K, V>|undefined,
 	key: K|undefined,
 	defaultValue: () => V
 ) : V => {
-	if (key === undefined) {
+	if (map === undefined || key === undefined) {
 		return defaultValue();
 	}
 
@@ -35,43 +35,43 @@ export const getOrSetDefault	= <K, V> (
 
 /** Async variant of getOrSetDefault. */
 export const getOrSetDefaultAsync	= async <K, V> (
-	map: MaybePromise<Map<K, V>>,
+	map: MaybePromise<Map<K, V>|undefined>,
 	key: MaybePromise<K|undefined>,
 	defaultValue: () => MaybePromise<V>
 ) : Promise<V> => {
-	return getOrSetDefault(
-		getOrSetDefaultAsyncLocks,
-		await key,
-		lockFunction
-	)(async () => {
-		key	= await key;
-		map	= await map;
+	const k	= await key;
+	const m	= await map;
 
-		if (key === undefined) {
-			return defaultValue();
-		}
+	if (m === undefined || k === undefined) {
+		return defaultValue();
+	}
 
-		if (!map.has(key)) {
-			map.set(key, await defaultValue());
-		}
+	if (!m.has(k)) {
+		await getOrSetDefault(
+			getOrSetDefaultAsyncLocks,
+			k,
+			lockFunction
+		)(async () => {
+			if (!m.has(k)) {
+				m.set(k, await defaultValue());
+			}
+		});
+	}
 
-		const value	= map.get(key);
+	const value	= m.get(k);
 
-		if (value === undefined) {
-			throw new Error("util/getOrSetDefaultAsync doesn't support nullable types.");
-		}
+	if (value === undefined) {
+		throw new Error("util/getOrSetDefaultAsync doesn't support nullable types.");
+	}
 
-		return value;
-	});
+	return value;
 };
 
 /** Observable variant of getOrSetDefault. */
 export const getOrSetDefaultObservable	= <K, V> (
 	map: MaybePromise<Map<K, Observable<V>>>,
 	key: MaybePromise<K>,
-	defaultValue: () => MaybePromise<Observable<V>>,
-	defaultObservableValue: V
+	defaultValue: () => MaybePromise<Observable<V>>
 ) : Observable<V> => cacheObservable(
-	getOrSetDefaultAsync(map, key, defaultValue),
-	defaultObservableValue
+	getOrSetDefaultAsync(map, key, defaultValue)
 );

@@ -137,11 +137,13 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
-		return (
-			this.message === undefined ||
-			this.unconfirmedMessages === undefined ||
-			this.message.authorType !== ChatMessage.AuthorTypes.Local ||
-			!(this.message.id && this.unconfirmedMessages[this.message.id])
+		return !!(
+			this.message &&
+			this.unconfirmedMessages &&
+			(
+				this.message.authorType !== ChatMessage.AuthorTypes.Local ||
+				!(this.message.id && this.unconfirmedMessages[this.message.id])
+			)
 		);
 	}
 

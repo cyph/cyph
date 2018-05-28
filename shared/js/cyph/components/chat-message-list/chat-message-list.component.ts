@@ -83,7 +83,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** @ignore */
 	private readonly observableCache	= new Map<IChatData, {
 		messages: Observable<{message: ChatMessage; pending: boolean}[]>;
-		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>;
+		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}|undefined>;
 	}>();
 
 	/** Indicates whether this is the accounts UI. */

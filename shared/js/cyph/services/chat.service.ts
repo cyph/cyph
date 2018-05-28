@@ -318,7 +318,9 @@ export class ChatService {
 			pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
 			receiveTextLock: lockFunction(),
 			state: States.none,
-			unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
+			unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}|undefined>(
+				undefined
+			)
 		};
 	}
 
@@ -692,6 +694,8 @@ export class ChatService {
 				throw new Error('Invalid ChatMessageValue.Types value.');
 		}
 
+		const id	= uuid(true);
+
 		const dimensionsPromise	= (async () =>
 			(
 				await (await this.chatMessageGeometryService).getDimensions(new ChatMessage(
@@ -714,7 +718,7 @@ export class ChatService {
 				const o	= await this.chat.messages.getItem(messageIDs[i]);
 
 				if (
-					o.authorType === ChatMessage.AuthorTypes.Remote &&
+					o.authorType !== ChatMessage.AuthorTypes.App &&
 					o.id &&
 					(o.hash && o.hash.length > 0) &&
 					(await this.messageHasValidHash(o))
@@ -726,7 +730,9 @@ export class ChatService {
 			return;
 		})();
 
-		const id	= uuid(true);
+		const uploadPromise	= (async () =>
+			(await this.messageValues.setItem(id, value)).encryptionKey
+		)();
 
 		const chatMessagePromise	= Promise.all([
 			this.getAuthorID(this.sessionService.localUsername),
@@ -742,7 +748,7 @@ export class ChatService {
 			timestamp
 		}));
 
-		const pendingPromise	= chatMessagePromise.then(async chatMessage => {
+		chatMessagePromise.then(async chatMessage => {
 			await this.chat.pendingMessages.pushValue({
 				...chatMessage,
 				pending: true,
@@ -753,25 +759,26 @@ export class ChatService {
 		});
 
 		await this.messageSendLock(async () => {
-			const [chatMessage, dimensions, predecessor]	= await Promise.all([
+			const [chatMessage, dimensions, predecessor, key]	= await Promise.all([
 				chatMessagePromise,
 				dimensionsPromise,
 				predecessorPromise,
-				pendingPromise
+				uploadPromise
 			]);
 
 			const {confirmPromise, newMessages}	= await this.sessionService.send([
 				rpcEvents.text,
 				async timestamp => {
-					const {encryptionKey, hash}	= await this.messageValues.setItem(
+					const hash	= await this.messageValues.getItemHash(
 						id,
-						value,
+						key,
 						this.messageValueHasher({
 							...chatMessage,
 							authorType: ChatMessage.AuthorTypes.App,
 							predecessor,
 							timestamp
-						})
+						}),
+						value
 					);
 
 					return {
@@ -779,7 +786,7 @@ export class ChatService {
 						text: {
 							dimensions,
 							hash,
-							key: encryptionKey,
+							key,
 							predecessor,
 							selfDestructChat,
 							selfDestructTimeout

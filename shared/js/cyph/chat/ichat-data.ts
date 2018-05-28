@@ -62,5 +62,5 @@ export interface IChatData {
 	state: States;
 
 	/** List of unconfirmed outgoing message IDs, based on lastConfirmedMessage. */
-	unconfirmedMessages: BehaviorSubject<{[id: string]: boolean|undefined}>;
+	unconfirmedMessages: BehaviorSubject<{[id: string]: boolean|undefined}|undefined>;
 }

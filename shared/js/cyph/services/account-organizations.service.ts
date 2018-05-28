@@ -4,7 +4,7 @@ import {mergeMap} from 'rxjs/operators';
 import {User} from '../account';
 import {AccountUserTypes} from '../proto';
 import {filterUndefined} from '../util/filter';
-import {cacheObservable} from '../util/flatten-observable';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {AccountUserLookupService} from './account-user-lookup.service';
@@ -23,7 +23,7 @@ export class AccountOrganizationsService {
 		return getOrSetDefault(
 			this.membersCache,
 			typeof org === 'string' ? normalize(org) : org.username,
-			() => cacheObservable(
+			() => toBehaviorSubject(
 				async () => {
 					if (typeof org === 'string') {
 						const maybeOrg	= await this.accountUserLookupService.getUser(org);

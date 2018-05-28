@@ -14,7 +14,7 @@ import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
 import {NotificationTypes} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
-import {getOrSetDefault} from '../util/get-or-set-default';
+import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {EnvService} from './env.service';
 
@@ -113,16 +113,21 @@ export class DatabaseService extends DataManagerService {
 		return asyncList;
 	}
 
-	/** Gets an IAsyncMap wrapper for a map. */
+	/**
+	 * Gets an IAsyncMap wrapper for a map.
+	 * @param staticValues If true, values will be assumed to never change once set.
+	 */
 	public getAsyncMap<T> (
 		url: string,
 		proto: IProto<T>,
 		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
-		noBlobStorage: boolean = false
+		noBlobStorage: boolean = false,
+		staticValues: boolean = false
 	) : IAsyncMap<string, T> {
 		const lock		= lockFactory(url);
 		const localLock	= lockFunction();
 		const itemLocks	= new Map<string, LockFunction>();
+		const itemCache	= staticValues ? new Map<string, T>() : undefined;
 
 		const lockItem				= (key: string) => getOrSetDefault(
 			itemLocks,
@@ -130,11 +135,16 @@ export class DatabaseService extends DataManagerService {
 			() => lockFactory(`${url}/${key}`)
 		);
 
-		const getItemInternal		= async (key: string) => this.getItem(`${url}/${key}`, proto);
-
-		const getItem				= async (key: string) => lockItem(key)(async () =>
-			getItemInternal(key)
+		const getItemInternal		= async (key: string) => getOrSetDefaultAsync(
+			itemCache,
+			key,
+			async () => this.getItem(`${url}/${key}`, proto)
 		);
+
+		const getItem				= staticValues ?
+			getItemInternal :
+			async (key: string) => lockItem(key)(async () => getItemInternal(key))
+		;
 
 		const getValueHelper		= async (keys: string[]) => new Map<string, T>(
 			await Promise.all(keys.map(async (key) : Promise<[string, T]> => [
