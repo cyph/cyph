@@ -121,7 +121,7 @@
 		[class.sidebar-open]='p2pService.isSidebarOpen'
 		*ngIf='p2pWebRTCService && chatService.chat.state === states.chat'
 	>
-		<a class='logo' rel='noopener noreferrer' [href]='envService.homeUrl'>
+		<a class='logo' [href]='envService.homeUrl'>
 			<cyph-logo alignment='left' video></cyph-logo>
 		</a>
 		<div
