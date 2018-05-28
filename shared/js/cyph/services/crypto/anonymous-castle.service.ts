@@ -20,8 +20,6 @@ export class AnonymousCastleService extends CastleService {
 		potassiumService: PotassiumService,
 		sessionService: SessionService
 	) : Promise<void> {
-		await sessionService.connected;
-
 		const transport			= new Transport(sessionService);
 
 		const handshakeState	= await sessionService.handshakeState();
@@ -46,8 +44,6 @@ export class AnonymousCastleService extends CastleService {
 			remoteUser,
 			handshakeState
 		));
-
-		sessionService.state.sharedSecret	= '';
 	}
 
 	constructor () {

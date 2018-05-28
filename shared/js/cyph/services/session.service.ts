@@ -298,11 +298,13 @@ export abstract class SessionService implements ISessionService {
 	) : Promise<void> {
 		switch (event) {
 			case CastleEvents.abort:
+				this.state.sharedSecret	= '';
 				this.errorService.log('CYPH AUTHENTICATION FAILURE');
 				this.trigger(events.connectFailure);
 				break;
 
 			case CastleEvents.connect:
+				this.state.sharedSecret	= '';
 				this.trigger(events.beginChat);
 
 				if (!this.resolveSymmetricKey) {
