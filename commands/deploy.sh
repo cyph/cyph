@@ -625,6 +625,14 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; the
 		if [ "${environment}" != 'dev' ] ; then
 			firebaseProjects="${firebaseProjects} cyph-test-${branch}"
 		fi
+
+		# Workaround for https://stackoverflow.com/q/50513374/459881
+		cat firebase/functions/index.js |
+			tr '\n' '☁' |
+			perl -pe 's/exports\.itemRemoved\s.*?exports\./exports\./g' |
+			tr '☁' '\n' \
+		> firebase/functions/index.new.js
+		mv firebase/functions/index.new.js firebase/functions/index.js
 	fi
 
 	./commands/buildunbundledassets.sh
