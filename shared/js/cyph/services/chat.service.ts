@@ -63,6 +63,9 @@ export class ChatService {
 	private readonly messageChangeLock: LockFunction	= lockFunction();
 
 	/** @ignore */
+	private readonly messageSendInnerLock: LockFunction	= lockFunction();
+
+	/** @ignore */
 	private readonly messageSendLock: LockFunction		= lockFunction();
 
 	/** @ignore */
@@ -420,31 +423,12 @@ export class ChatService {
 		chatMessage.hash	= hash;
 		chatMessage.key		= key;
 
-		const pushMessage	= async () => {
-			await this.chat.messages.setItem(id, chatMessage);
-			await this.chat.messageList.pushValue(id);
-		};
-
-		if (this.sessionInitService.ephemeral) {
-			await pushMessage();
-		}
-		else {
-			await this.chat.pendingMessages.pushValue({
-				...chatMessage,
-				pending: true
-			});
-		}
-
-		if (author === this.sessionService.localUsername) {
-			await this.scrollService.scrollDown();
-		}
-		else if (author === this.sessionService.remoteUsername) {
+		if (author === this.sessionService.remoteUsername) {
 			await this.scrollService.trackItem(id);
 		}
 
-		if (!this.sessionInitService.ephemeral) {
-			await pushMessage();
-		}
+		await this.chat.messages.setItem(id, chatMessage);
+		await this.chat.messageList.pushValue(id);
 
 		if (
 			selfDestructTimeout !== undefined &&
@@ -744,43 +728,71 @@ export class ChatService {
 
 		const id	= uuid(true);
 
-		await this.addTextMessage(await this.messageSendLock(async () => {
-			const [authorID, dimensions, predecessor]	= await Promise.all([
-				this.getAuthorID(this.sessionService.localUsername),
+		const chatMessagePromise	= Promise.all([
+			this.getAuthorID(this.sessionService.localUsername),
+			dimensionsPromise,
+			getTimestamp()
+		]).then(async ([authorID, dimensions, timestamp]) => ({
+			authorID,
+			authorType: ChatMessage.AuthorTypes.Local,
+			dimensions,
+			id,
+			selfDestructTimeout,
+			sessionSubID: this.sessionService.sessionSubID,
+			timestamp
+		}));
+
+		const pendingPromise	= chatMessagePromise.then(async chatMessage => {
+			await this.chat.pendingMessages.pushValue({
+				...chatMessage,
+				pending: true,
+				value
+			});
+
+			await this.scrollService.scrollDown();
+		});
+
+		await this.messageSendLock(async () => {
+			const [chatMessage, dimensions, predecessor]	= await Promise.all([
+				chatMessagePromise,
 				dimensionsPromise,
-				predecessorPromise
+				predecessorPromise,
+				pendingPromise
 			]);
 
-			return (await this.sessionService.send([rpcEvents.text, async timestamp => {
-				const {encryptionKey, hash}	= await this.messageValues.setItem(
-					id,
-					value,
-					this.messageValueHasher({
-						authorID,
-						authorType: ChatMessage.AuthorTypes.App,
-						dimensions,
+			const {confirmPromise, newMessages}	= await this.sessionService.send([
+				rpcEvents.text,
+				async timestamp => {
+					const {encryptionKey, hash}	= await this.messageValues.setItem(
 						id,
-						predecessor,
-						selfDestructTimeout,
-						sessionSubID: this.sessionService.sessionSubID,
-						timestamp
-					})
-				);
+						value,
+						this.messageValueHasher({
+							...chatMessage,
+							authorType: ChatMessage.AuthorTypes.App,
+							predecessor,
+							timestamp
+						})
+					);
 
-				return {
-					id,
-					text: {
-						dimensions,
-						hash,
-						key: encryptionKey,
-						predecessor,
-						selfDestructChat,
-						selfDestructTimeout
-					},
-					timestamp
-				};
-			}]))[0].data;
-		}));
+					return {
+						id,
+						text: {
+							dimensions,
+							hash,
+							key: encryptionKey,
+							predecessor,
+							selfDestructChat,
+							selfDestructTimeout
+						},
+						timestamp
+					};
+				}
+			]);
+
+			this.messageSendInnerLock(async () => confirmPromise.then(async () =>
+				this.addTextMessage(newMessages[0].data)
+			));
+		});
 	}
 
 	/** Sets queued message to be sent after handshake. */

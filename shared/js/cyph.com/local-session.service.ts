@@ -91,7 +91,10 @@ export class LocalSessionService extends SessionService {
 	/** @inheritDoc */
 	public async send (
 		...messages: [string, ISessionMessageAdditionalData][]
-	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
+	) : Promise<{
+		confirmPromise: Promise<void>;
+		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
+	}> {
 		while (!this.chatData) {
 			await sleep();
 		}
@@ -112,7 +115,7 @@ export class LocalSessionService extends SessionService {
 			this.chatData.channelOutgoing.next(message);
 		}
 
-		return newMessages;
+		return {confirmPromise: Promise.resolve(), newMessages};
 	}
 
 	/** @inheritDoc */

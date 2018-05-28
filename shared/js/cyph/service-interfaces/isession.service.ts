@@ -104,17 +104,10 @@ export interface ISessionService {
 				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
 			)
 		][]
-	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]>;
-
-	/** Variant of send that waits for confirmation. */
-	sendAndAwaitConfirmation (
-		...messages: [
-			string,
-			ISessionMessageAdditionalData|(
-				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
-			)
-		][]
-	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]>;
+	) : Promise<{
+		confirmPromise: Promise<void>;
+		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
+	}>;
 
 	/** Creates and returns a new instance. */
 	spawn () : ISessionService;

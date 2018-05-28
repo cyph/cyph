@@ -36,13 +36,13 @@ export class AccountP2PService extends P2PService {
 		const id		= uuid();
 		const username	= this.accountSessionService.remoteUser.value.username;
 
-		await this.accountSessionService.sendAndAwaitConfirmation([
+		await (await this.accountSessionService.send([
 			rpcEvents.accountP2P,
 			{command: {
 				additionalData: id,
 				method: callType
 			}}
-		]);
+		])).confirmPromise;
 
 		await this.accountSessionService.remoteUser.value.accountUserProfile.getValue().then(
 			async ({realUsername}) => this.chatService.addMessage(

@@ -29,7 +29,7 @@ export class ChatMessage implements IChatMessage {
 	public authorType: ChatMessageInternal.AuthorTypes	= this.message.authorType;
 
 	/** Human-readable date + time. */
-	public readonly dateTimeString: string				= getDateTimeString(
+	public dateTimeString: string						= getDateTimeString(
 		this.message.timestamp
 	);
 
@@ -61,7 +61,7 @@ export class ChatMessage implements IChatMessage {
 	public timestamp: number							= this.message.timestamp;
 
 	/** Human-readable time. */
-	public readonly timeString: string					= getTimeString(this.message.timestamp);
+	public timeString: string							= getTimeString(this.message.timestamp);
 
 	/** @ignore */
 	public value?: IChatMessageValue&{failure?: boolean}	= this.message.value && {
@@ -75,6 +75,14 @@ export class ChatMessage implements IChatMessage {
 	public readonly valueWatcher: Subject<(IChatMessageValue&{failure?: boolean})|undefined>	=
 		new BehaviorSubject<(IChatMessageValue&{failure?: boolean})|undefined>(this.value)
 	;
+
+	/** Updates timestamp. */
+	public updateTimestamp (timestamp: number) : void {
+		this.message.timestamp	= timestamp;
+		this.timestamp			= timestamp;
+		this.dateTimeString		= getDateTimeString(timestamp);
+		this.timeString			= getTimeString(this.message.timestamp);
+	}
 
 	constructor (
 		/** @ignore */

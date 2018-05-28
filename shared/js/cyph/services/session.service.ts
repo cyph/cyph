@@ -523,33 +523,18 @@ export abstract class SessionService implements ISessionService {
 				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
 			)
 		][]
-	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
+	) : Promise<{
+		confirmPromise: Promise<void>;
+		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
+	}> {
 		return this.sendLock(async () => {
 			const newMessages	= await this.newMessages(messages);
-			this.plaintextSendHandler(newMessages);
-			return newMessages;
+
+			return {
+				confirmPromise: this.plaintextSendHandler(newMessages),
+				newMessages
+			};
 		});
-	}
-
-	/** @inheritDoc */
-	public async sendAndAwaitConfirmation (
-		...messages: [
-			string,
-			ISessionMessageAdditionalData|(
-				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
-			)
-		][]
-	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
-		let confirmPromise: Promise<void>|undefined;
-
-		const result	= await this.sendLock(async () => {
-			const newMessages	= await this.newMessages(messages);
-			confirmPromise		= this.plaintextSendHandler(newMessages);
-			return newMessages;
-		});
-
-		await confirmPromise;
-		return result;
 	}
 
 	/** @inheritDoc */

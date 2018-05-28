@@ -199,8 +199,12 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 				for (let i = pendingMessages.length - 1 ; i >= 0 ; --i) {
 					const pendingMessage	= pendingMessages[i];
-					if (onlineMessages.find(o => o.id === pendingMessage.id)) {
-						pendingMessages.splice(i, 1);
+
+					for (let j = onlineMessages.length - 1 ; j >= 0 ; --j) {
+						if (onlineMessages[j].id === pendingMessage.id) {
+							pendingMessages.splice(i, 1);
+							break;
+						}
 					}
 				}
 
@@ -219,10 +223,8 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 							if (!message.pending) {
 								const cached	= this.messageCache.get(message.id + 'pending');
 								if (cached) {
-									return {
-										message: cached.message,
-										pending: false
-									};
+									cached.message.updateTimestamp(message.timestamp);
+									return {message: cached.message, pending: false};
 								}
 							}
 
