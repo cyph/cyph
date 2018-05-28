@@ -133,7 +133,7 @@ export class AccountAppointmentsComponent implements AfterViewInit, OnDestroy {
 	/** Gets user. */
 	public readonly getUser: (username: string) => Promise<User|undefined>	=
 		memoize(async (username: string) =>
-			this.accountUserLookupService.getUser(username)
+			this.accountUserLookupService.getUser(username, false)
 		)
 	;
 

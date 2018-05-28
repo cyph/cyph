@@ -100,7 +100,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 		try {
 			if (username) {
 				this.isContact	= this.accountContactsService.watchIfContact(username);
-				this.user		= await this.accountUserLookupService.getUser(username);
+				this.user		= await this.accountUserLookupService.getUser(username, false);
 			}
 			else if (this.accountDatabaseService.currentUser.value) {
 				if (this.envService.isTelehealth) {

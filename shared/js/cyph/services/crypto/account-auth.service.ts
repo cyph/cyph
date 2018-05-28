@@ -181,7 +181,11 @@ export class AccountAuthService {
 
 			errorLogMessage	= 'getting user';
 
-			const user		= await this.accountUserLookupService.getUser(username);
+			const user		= await this.accountUserLookupService.getUser(
+				username,
+				undefined,
+				false
+			);
 
 			if (!user) {
 				throw new Error('Nonexistent user.');

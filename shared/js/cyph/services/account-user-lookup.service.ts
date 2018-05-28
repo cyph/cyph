@@ -85,7 +85,11 @@ export class AccountUserLookupService {
 	}
 
 	/** Tries to to get User object for the specified user. */
-	public async getUser (user: string|User, preFetch: boolean = false) : Promise<User|undefined> {
+	public async getUser (
+		user: string|User,
+		preFetch: boolean = false,
+		lock: boolean = true
+	) : Promise<User|undefined> {
 		const userValue	= await (async () => {
 			if (!user) {
 				return;
@@ -97,7 +101,7 @@ export class AccountUserLookupService {
 			const username	= normalize(user);
 			const url		= `users/${username}`;
 
-			return getOrSetDefaultAsync(this.userCache, username, async () => {
+			const getUser	= async () => {
 				if (!(await this.exists(username))) {
 					throw new Error('User does not exist.');
 				}
@@ -162,10 +166,12 @@ export class AccountUserLookupService {
 					),
 					preFetch
 				);
-			}).catch(
-				() => undefined
-			);
-		})();
+			};
+
+			return lock ? getOrSetDefaultAsync(this.userCache, username, getUser) : getUser();
+		})().catch(
+			() => undefined
+		);
 
 		if (!userValue) {
 			return;

@@ -95,7 +95,7 @@ export class AccountSessionService extends SessionService {
 			return;
 		}
 
-		const user	= await this.accountUserLookupService.getUser(message.authorID);
+		const user	= await this.accountUserLookupService.getUser(message.authorID, false);
 
 		if (user) {
 			return user.realUsername;
@@ -325,7 +325,7 @@ export class AccountSessionService extends SessionService {
 			}
 		})();
 
-		const user	= await this.accountUserLookupService.getUser(username);
+		const user	= await this.accountUserLookupService.getUser(username, false);
 
 		if (user) {
 			user.realUsername.subscribe(this.remoteUsername);

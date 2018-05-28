@@ -252,7 +252,8 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 								try {
 									authorUser	= this.accountUserLookupService ?
 										await this.accountUserLookupService.getUser(
-											message.authorID
+											message.authorID,
+											false
 										) :
 										undefined
 									;
