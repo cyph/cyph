@@ -31,7 +31,10 @@ checkfail
 
 
 # Limit full CircleCI test runs to beta and prod
-if [ "${CIRCLECI}" ] && [ "${CIRCLE_BRANCH}" != 'prod' ] && [ "${CIRCLE_BRANCH}" != 'beta' ] ; then
+if [ "${CIRCLECI}" ] && ( \
+	[ "${CIRCLE_USERNAME}" != 'cyph' ] ||
+	( [ "${CIRCLE_BRANCH}" != 'prod' ] && [ "${CIRCLE_BRANCH}" != 'beta' ] )
+) ; then
 	pass
 fi
 
