@@ -46,19 +46,19 @@ export class User {
 	private readonly fetchLock: {}	= {};
 
 	/** Image URI for avatar / profile picture. */
-	public readonly avatar: Observable<SafeUrl|undefined>	= toBehaviorSubject(
-		this.avatarInternal.pipe(
-			mergeMap(async avatar => avatar || User.defaultAvatar)
-		),
+	public readonly avatar: Observable<SafeUrl>					= toBehaviorSubject(
+		this.avatarInternal,
 		undefined
+	).pipe(
+		mergeMap(async avatar => avatar || User.defaultAvatar)
 	);
 
 	/** Image URI for cover image. */
-	public readonly coverImage: Observable<SafeUrl|undefined>	= toBehaviorSubject(
-		this.coverImageInternal.pipe(
-			mergeMap(async coverImage => coverImage || User.defaultCoverImage)
-		),
+	public readonly coverImage: Observable<SafeUrl>				= toBehaviorSubject(
+		this.coverImageInternal,
 		undefined
+	).pipe(
+		mergeMap(async coverImage => coverImage || User.defaultCoverImage)
 	);
 
 	/** @see IAccountUserProfile.description */
