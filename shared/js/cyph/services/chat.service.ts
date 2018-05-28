@@ -60,6 +60,9 @@ export class ChatService {
 	}>();
 
 	/** @ignore */
+	private lastConfirmedMessageID?: string;
+
+	/** @ignore */
 	private readonly messageChangeLock: LockFunction	= lockFunction();
 
 	/** @ignore */
@@ -155,7 +158,13 @@ export class ChatService {
 		}
 
 		if (o.author !== this.sessionService.localUsername) {
-			this.sessionService.send([rpcEvents.confirm, {textConfirmation: {id: o.id}}]);
+			this.lastConfirmedMessageID	= o.id;
+
+			sleep(3000).then(async () =>
+				this.lastConfirmedMessageID === o.id ?
+					this.sessionService.send([rpcEvents.confirm, {textConfirmation: {id: o.id}}]) :
+					undefined
+			);
 		}
 
 		const selfDestructChat	=
