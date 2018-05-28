@@ -4,6 +4,7 @@ import {filter, take} from 'rxjs/operators';
 import {User} from '../account/user';
 import {BinaryProto, ISessionMessage, SessionMessage, StringProto} from '../proto';
 import {events, ISessionMessageData, rpcEvents} from '../session';
+import {normalizeArray} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
@@ -128,6 +129,24 @@ export class AccountSessionService extends SessionService {
 		}
 	}
 
+	/** Normalizes username or username list. */
+	public normalizeUsername (username: string|string[]) : string|string[] {
+		if (username instanceof Array) {
+			username	= normalizeArray(username);
+
+			if (this.accountDatabaseService.currentUser.value) {
+				const {user}	= this.accountDatabaseService.currentUser.value;
+				username		= username.filter(s => s !== user.username);
+			}
+
+			if (username.length === 1) {
+				username	= username[0];
+			}
+		}
+
+		return username;
+	}
+
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
 		username: string|string[],
@@ -139,10 +158,7 @@ export class AccountSessionService extends SessionService {
 			throw new Error('User already set.');
 		}
 
-		if (username instanceof Array && username.length === 1) {
-			username	= username[0];
-		}
-
+		username			= this.normalizeUsername(username);
 		this.initiated		= true;
 		this.sessionSubID	= sessionSubID;
 

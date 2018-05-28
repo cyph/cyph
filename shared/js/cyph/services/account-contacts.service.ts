@@ -6,7 +6,7 @@ import {IContactListItem, User} from '../account';
 import {StringProto} from '../proto';
 import {filterDuplicatesOperator, filterUndefined} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
-import {normalize} from '../util/formatting';
+import {normalize, normalizeArray} from '../util/formatting';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -107,7 +107,7 @@ export class AccountContactsService {
 			),
 			username instanceof Array ? username.join(' ') : username,
 			async () => this.potassiumService.toHex(await this.potassiumService.hash.hash(
-				[currentUserUsername].concat(username).map(normalize).sort().join(' ')
+				normalizeArray([currentUserUsername].concat(username)).join(' ')
 			))
 		);
 	}

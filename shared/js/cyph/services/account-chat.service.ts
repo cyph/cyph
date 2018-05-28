@@ -89,10 +89,7 @@ export class AccountChatService extends ChatService {
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false
 	) : Promise<void> {
-		if (username instanceof Array && username.length === 1) {
-			username	= username[0];
-		}
-
+		username			= this.accountSessionService.normalizeUsername(username);
 		const contactURL	= `contacts/${await this.accountContactsService.addContact(username)}`;
 
 		this.accountSessionInitService.callType	= callType || this.envService.callType;

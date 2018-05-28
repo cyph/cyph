@@ -1,3 +1,4 @@
+import memoize from 'lodash-es/memoize';
 import {StorageUnits} from '../enums/storage-units';
 
 
@@ -22,14 +23,19 @@ export const convertStorageUnitsToBytes	=
 ;
 
 /** Strips non-alphanumeric-or-underscore characters and converts to lowercase. */
-export const normalize	= (s: string) : string => {
-	return s.toLowerCase().replace(/[^0-9a-z_]/g, '');
-};
+export const normalize	= memoize((s: string) : string =>
+	s.toLowerCase().replace(/[^0-9a-z_]/g, '')
+);
+
+/** @see normalize */
+export const normalizeArray	= memoize((arr: string[]) : string[] =>
+	Array.from(new Set(arr)).map(normalize).sort()
+);
 
 /** Converts number to readable string. */
-export const numberToString	= (n: number) : string =>
+export const numberToString	= memoize((n: number) : string =>
 	n.toFixed(2).replace(/\.?0+$/, '')
-;
+);
 
 /**
  * Converts n into a human-readable representation.

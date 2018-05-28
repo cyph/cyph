@@ -25,7 +25,7 @@ const timestampData	= {
 		const server	= parseFloat(await request({
 			retries: 1,
 			timeout: 1000,
-			url: env.baseUrl + 'timestamp'
+			url: env.baseUrl + 'timestamp?' + start
 		}));
 		/* tslint:disable-next-line:ban */
 		const end		= Date.now();
