@@ -265,6 +265,7 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 					if (this.content) {
 						this.setQuillContent();
 					}
+
 					break;
 
 				case 'deltas':
@@ -286,6 +287,7 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 							);
 						}
 					});
+
 					break;
 
 				case 'isDisabled':
@@ -303,6 +305,7 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 						}
 						this.quill.enable();
 					}
+
 					break;
 
 				case 'selections':

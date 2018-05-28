@@ -660,17 +660,21 @@ export class ChatService {
 					this.chat.currentMessage.calendarInvite
 				;
 				currentMessage.calendarInvite	= undefined;
+
 				if (!value.calendarInvite) {
 					return;
 				}
+
 				break;
 
 			case ChatMessageValue.Types.Form:
 				value.form	= (message && message.form) || this.chat.currentMessage.form;
 				currentMessage.form	= undefined;
+
 				if (!value.form) {
 					return;
 				}
+
 				break;
 
 			case ChatMessageValue.Types.Quill:
@@ -682,18 +686,22 @@ export class ChatService {
 							undefined
 				;
 				currentMessage.quill	= undefined;
+
 				if (!value.quill) {
 					return;
 				}
+
 				break;
 
 			case ChatMessageValue.Types.Text:
 				value.text	= (message && message.text) || this.chat.currentMessage.text;
 				currentMessage.text	= '';
 				this.messageChange();
+
 				if (!value.text) {
 					return;
 				}
+
 				break;
 
 			default:

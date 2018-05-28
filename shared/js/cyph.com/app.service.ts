@@ -142,6 +142,7 @@ export class AppService {
 
 					this.disableNextScroll	= true;
 					this.router.navigate(['']);
+
 					break;
 
 				default:

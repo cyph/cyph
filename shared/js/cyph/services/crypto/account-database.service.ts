@@ -293,12 +293,14 @@ export class AccountDatabaseService {
 			switch (securityModel) {
 				case SecurityModels.private:
 					return this.openHelpers.secretBox(data, url, customKey);
+
 				case SecurityModels.privateSigned:
 					return this.openHelpers.sign(
 						await this.openHelpers.secretBox(data, url, customKey),
 						url,
 						false
 					);
+
 				default:
 					throw new Error('Invalid security model.');
 			}
@@ -335,17 +337,21 @@ export class AccountDatabaseService {
 		switch (securityModel) {
 			case SecurityModels.private:
 				return this.sealHelpers.secretBox(data, url, customKey);
+
 			case SecurityModels.privateSigned:
 				return this.sealHelpers.secretBox(
 					await this.sealHelpers.sign(data, url, false),
 					url,
 					customKey
 				);
+
 			case SecurityModels.public:
 			case SecurityModels.publicFromOtherUsers:
 				return this.sealHelpers.sign(data, url, true);
+
 			case SecurityModels.unprotected:
 				return data;
+
 			default:
 				throw new Error('Invalid security model.');
 		}

@@ -297,12 +297,12 @@ export abstract class SessionService implements ISessionService {
 		data?: Uint8Array|{author: Observable<string>; plaintext: Uint8Array; timestamp: number}
 	) : Promise<void> {
 		switch (event) {
-			case CastleEvents.abort: {
+			case CastleEvents.abort:
 				this.errorService.log('CYPH AUTHENTICATION FAILURE');
 				this.trigger(events.connectFailure);
 				break;
-			}
-			case CastleEvents.connect: {
+
+			case CastleEvents.connect:
 				this.trigger(events.beginChat);
 
 				if (!this.resolveSymmetricKey) {
@@ -325,8 +325,8 @@ export abstract class SessionService implements ISessionService {
 				}
 
 				break;
-			}
-			case CastleEvents.receive: {
+
+			case CastleEvents.receive:
 				if (!data || data instanceof Uint8Array) {
 					break;
 				}
@@ -362,15 +362,15 @@ export abstract class SessionService implements ISessionService {
 
 					await this.incomingMessageQueue.pushValue(message);
 				}
+
 				break;
-			}
-			case CastleEvents.send: {
+
+			case CastleEvents.send:
 				if (!data || !(data instanceof Uint8Array)) {
 					break;
 				}
 
 				await this.cyphertextSendHandler(data);
-			}
 		}
 	}
 
