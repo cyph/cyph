@@ -63,6 +63,7 @@ var config = struct {
 	AllowedHosts               map[string]none
 	AnalID                     string
 	APIKeyByteLength           int
+	CacheControlHeader         string
 	Continents                 map[string]none
 	DefaultContinent           string
 	DefaultContinentCode       string
@@ -122,6 +123,8 @@ var config = struct {
 	"UA-56220601-1",
 
 	24,
+
+	"no-cache",
 
 	map[string]none{
 		"af": empty,
