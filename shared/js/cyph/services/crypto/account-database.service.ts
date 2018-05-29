@@ -519,19 +519,23 @@ export class AccountDatabaseService {
 		const getItemInternal	= async (key: string) => getOrSetDefaultAsync(
 			itemCache,
 			key,
-			async () => (
-				await (
-					await this.getItemInternal(
-						`${url}/${key}`,
-						proto,
-						securityModel,
-						customKey,
-						anonymous,
-						undefined,
-						true
-					)
-				).result
-			).value
+			async () => this.localStorageService.getOrSetDefault(
+				`AccountDatabaseService.getAsyncMap/${url}/${key}`,
+				proto,
+				async () => (
+					await (
+						await this.getItemInternal(
+							`${url}/${key}`,
+							proto,
+							securityModel,
+							customKey,
+							anonymous,
+							undefined,
+							true
+						)
+					).result
+				).value
+			)
 		);
 
 		const getItem			= staticValues ?

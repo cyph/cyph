@@ -17,6 +17,7 @@ import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {EnvService} from './env.service';
+import {LocalStorageService} from './local-storage.service';
 
 
 /**
@@ -138,7 +139,11 @@ export class DatabaseService extends DataManagerService {
 		const getItemInternal		= async (key: string) => getOrSetDefaultAsync(
 			itemCache,
 			key,
-			async () => this.getItem(`${url}/${key}`, proto)
+			async () => this.localStorageService.getOrSetDefault(
+				`DatabaseService.getAsyncMap/${url}/${key}`,
+				proto,
+				async () => this.getItem(`${url}/${key}`, proto)
+			)
 		);
 
 		const getItem				= staticValues ?
@@ -530,7 +535,10 @@ export class DatabaseService extends DataManagerService {
 
 	constructor (
 		/** @see EnvService */
-		protected readonly envService: EnvService
+		protected readonly envService: EnvService,
+
+		/** @see LocalStorageService */
+		protected readonly localStorageService: LocalStorageService
 	) {
 		super();
 	}

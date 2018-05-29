@@ -1397,12 +1397,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	constructor (
 		envService: EnvService,
+		localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly ngZone: NgZone,
-
-		/** @ignore */
-		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService,
@@ -1410,6 +1408,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 		/** @ignore */
 		private readonly workerService: WorkerService
 	) {
-		super(envService);
+		super(
+			envService,
+			localStorageService
+		);
 	}
 }

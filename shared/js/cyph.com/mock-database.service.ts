@@ -81,6 +81,6 @@ export class MockDatabaseService extends DatabaseService {
 	}
 
 	constructor (envService: EnvService) {
-		super(envService);
+		super(envService, <any> undefined);
 	}
 }
