@@ -770,7 +770,7 @@ export class AccountDatabaseService {
 		noBlobStorage: boolean = false
 	) : Promise<T> {
 		try {
-			return await this.getItem(url, proto);
+			return await this.getItem(url, proto, securityModel, customKey);
 		}
 		catch {
 			const value	= await defaultValue();
