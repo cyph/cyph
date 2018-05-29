@@ -50,24 +50,33 @@ export class FileTransferService {
 		);
 	}
 
-	/** @ignore */
+	/** TODO: Get rid of this and add upload and download methods to EncryptedAsyncMap. */
 	private async encryptFile (plaintext: Uint8Array) : Promise<{
 		cyphertext: Uint8Array;
+		hash: Uint8Array;
 		key: Uint8Array;
 	}> {
 		try {
-			const key: Uint8Array	= this.potassiumService.randomBytes(
-				await this.potassiumService.secretBox.keyBytes
-			);
+			const [hash, {cyphertext, key}]	= await Promise.all([
+				this.potassiumService.hash.hash(plaintext),
+				(async () => {
+					const k	= this.potassiumService.randomBytes(
+						await this.potassiumService.secretBox.keyBytes
+					);
 
-			return {
-				cyphertext: await this.potassiumService.secretBox.seal(plaintext, key),
-				key
-			};
+					return {
+						cyphertext: await this.potassiumService.secretBox.seal(plaintext, k),
+						key: k
+					};
+				})()
+			]);
+
+			return {cyphertext, hash, key};
 		}
 		catch {
 			return {
 				cyphertext: new Uint8Array(0),
+				hash: new Uint8Array(0),
 				key: new Uint8Array(0)
 			};
 		}
@@ -97,7 +106,17 @@ export class FileTransferService {
 			);
 
 			this.potassiumService.clearMemory(transfer.key);
-			this.uiSave(transfer, plaintext);
+
+			this.uiSave(
+				transfer,
+				plaintext && this.potassiumService.compareMemory(
+					transfer.hash,
+					await this.potassiumService.hash.hash(plaintext)
+				) ?
+					plaintext :
+					undefined
+			);
+
 			this.transfers	= this.transfers.delete(transferSetItem);
 		}
 		else {
@@ -250,9 +269,9 @@ export class FileTransferService {
 
 		this.transfers	= this.transfers.add(transferSetPlaceholder);
 
-		const url					= `fileTransfers/${uuid()}`;
-		const plaintext				= await this.fileService.getBytes(file, image);
-		const {cyphertext, key}		= await this.encryptFile(plaintext);
+		const url						= `fileTransfers/${uuid(true)}`;
+		const plaintext					= await this.fileService.getBytes(file, image);
+		const {cyphertext, hash, key}	= await this.encryptFile(plaintext);
 
 		const uploadTask	= await this.databaseService.uploadItem(url, BinaryProto, cyphertext);
 
@@ -263,6 +282,7 @@ export class FileTransferService {
 			image,
 			imageSelfDestructTimeout,
 			cyphertext.length,
+			hash,
 			key,
 			true,
 			url

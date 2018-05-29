@@ -1652,6 +1652,9 @@ message SessionTransfer {
 	/** Indicates a non-response to, acceptance of, or rejection of a file transfer. */
 	required Answers answer = 1;
 
+	/** Plaintext hash. */
+	required bytes hash = 12;
+
 	/** Unique ID to represent this file transfer. */
 	required string id = 2;
 

@@ -26,6 +26,9 @@ export class SessionTransfer implements ISessionTransfer {
 		public readonly size: number = 0,
 
 		/** @inheritDoc */
+		public readonly hash: Uint8Array = new Uint8Array(0),
+
+		/** @inheritDoc */
 		public readonly key: Uint8Array = new Uint8Array(0),
 
 		/** @inheritDoc */
