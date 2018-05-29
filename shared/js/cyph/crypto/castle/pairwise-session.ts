@@ -317,7 +317,8 @@ export class PairwiseSession {
 				const currentStep	= await this.handshakeState.currentStep.getValue();
 
 				if (currentStep === HandshakeSteps.Aborted) {
-					throw new Error('Session is already aborted.');
+					this.abort();
+					return;
 				}
 
 				/* Bootstrap asymmetric ratchet */
