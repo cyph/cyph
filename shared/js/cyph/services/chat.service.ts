@@ -48,7 +48,7 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class ChatService {
 	/** @ignore */
-	private static readonly approximateKeyExchangeTime: number	= 18000;
+	private static readonly approximateKeyExchangeTime: number	= 9000;
 
 	/** @ignore */
 	private static readonly p2pPassiveConnectTime: number		= 5000;
