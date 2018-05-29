@@ -442,22 +442,21 @@ export class ChatService {
 		await this.chat.messageList.pushValue(id);
 
 		if (
+			chatMessage.hash &&
+			chatMessage.key &&
 			selfDestructTimeout !== undefined &&
 			!isNaN(selfDestructTimeout) &&
 			selfDestructTimeout > 0
 		) {
 			await sleep(selfDestructTimeout + 10000);
 
-			/* TODO: Decide whether to remove this and preserve locations of destroyed messages. */
-			await this.chat.messageList.updateValue(async messageIDs => {
-				const i	= messageIDs.findIndex(s => s === id);
-				if (i >= 0) {
-					messageIDs.splice(i, 1);
-				}
-				return messageIDs;
-			});
+			this.potassiumService.clearMemory(chatMessage.hash);
+			this.potassiumService.clearMemory(chatMessage.key);
 
-			await this.chat.messages.removeItem(id);
+			chatMessage.hash	= undefined;
+			chatMessage.key		= undefined;
+
+			await this.chat.messages.setItem(id, chatMessage);
 		}
 	}
 
@@ -538,11 +537,17 @@ export class ChatService {
 			return message;
 		}
 
+		const referencesValue	=
+			(message.hash && message.hash.length > 0) &&
+			(message.key && message.key.length > 0)
+		;
+
 		for (const messageValues of [this.messageValuesLocal, this.messageValues]) {
 			if (
+				referencesValue &&
 				message.value === undefined &&
-				(message.hash && message.hash.length > 0) &&
-				(message.key && message.key.length > 0)
+				message.hash !== undefined &&
+				message.key !== undefined
 			) {
 				message.value	= await messageValues.getItem(
 					message.id,
@@ -556,7 +561,7 @@ export class ChatService {
 		}
 
 		if (message instanceof ChatMessage) {
-			if (message.value === undefined) {
+			if (referencesValue && message.value === undefined) {
 				message.value	= {
 					failure: true,
 					text: this.stringsService.getMessageValueFailure
