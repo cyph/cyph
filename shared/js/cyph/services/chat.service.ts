@@ -296,6 +296,7 @@ export class ChatService {
 			proto: ChatMessageProto,
 			transform: (value: IChatMessageValue) : IChatMessage => ({
 				...message,
+				authorID: message.authorID || '',
 				authorType: ChatMessage.AuthorTypes.App,
 				hash: undefined,
 				key: undefined,
