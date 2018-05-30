@@ -138,6 +138,7 @@ export class DatabaseService extends DataManagerService {
 		const localLock	= lockFunction();
 		const itemLocks	= new Map<string, LockFunction>();
 		const itemCache	= staticValues ? new Map<string, T>() : undefined;
+		const method	= 'DatabaseService.getAsyncMap';
 
 		const lockItem				= (key: string) => getOrSetDefault(
 			itemLocks,
@@ -149,7 +150,7 @@ export class DatabaseService extends DataManagerService {
 			itemCache,
 			key,
 			async () => this.localStorageService.getOrSetDefault(
-				`DatabaseService.getAsyncMap/${url}/${key}`,
+				`${method}/${url}/${key}`,
 				proto,
 				async () => this.getItem(`${url}/${key}`, proto)
 			)
@@ -167,10 +168,26 @@ export class DatabaseService extends DataManagerService {
 			]))
 		);
 
-		const removeItemInternal	= async (key: string) => this.removeItem(`${url}/${key}`);
+		const removeItemInternal	= async (key: string) => {
+			if (itemCache) {
+				itemCache.delete(key);
+			}
+
+			await Promise.all([
+				this.removeItem(`${url}/${key}`),
+				this.localStorageService.removeItem(`${method}/${url}/${key}`)
+			]);
+		};
 
 		const setItemInternal		= async (key: string, value: T) => {
-			await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);
+			if (itemCache) {
+				itemCache.set(key, value);
+			}
+
+			await Promise.all([
+				this.setItem(`${url}/${key}`, proto, value, noBlobStorage),
+				this.localStorageService.setItem(`${method}/${url}/${key}`, proto, value)
+			]);
 		};
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */

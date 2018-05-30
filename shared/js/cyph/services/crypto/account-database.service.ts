@@ -504,6 +504,7 @@ export class AccountDatabaseService {
 		const localLock	= lockFunction();
 		const itemLocks	= new Map<string, LockFunction>();
 		const itemCache	= staticValues ? new Map<string, T>() : undefined;
+		const method	= 'AccountDatabaseService.getAsyncMap';
 
 		const lockItem			= (key: string) => getOrSetDefault(
 			itemLocks,
@@ -527,7 +528,7 @@ export class AccountDatabaseService {
 			itemCache,
 			key,
 			async () => this.localStorageService.getOrSetDefault(
-				`AccountDatabaseService.getAsyncMap/${url}/${key}`,
+				`${method}/${url}/${key}`,
 				proto,
 				async () => (
 					await (
@@ -557,17 +558,33 @@ export class AccountDatabaseService {
 			]))
 		);
 
-		const removeItemInternal	= async (key: string) => this.removeItem(`${url}/${key}`);
+		const removeItemInternal	= async (key: string) => {
+			if (itemCache) {
+				itemCache.delete(key);
+			}
+
+			await Promise.all([
+				this.removeItem(`${url}/${key}`),
+				this.localStorageService.removeItem(`${method}/${url}/${key}`)
+			]);
+		};
 
 		const setItemInternal		= async (key: string, value: T) => {
-			await this.setItemInternal(
-				`${url}/${key}`,
-				proto,
-				value,
-				securityModel,
-				customKey,
-				noBlobStorage
-			);
+			if (itemCache) {
+				itemCache.set(key, value);
+			}
+
+			await Promise.all([
+				this.setItemInternal(
+					`${url}/${key}`,
+					proto,
+					value,
+					securityModel,
+					customKey,
+					noBlobStorage
+				),
+				this.localStorageService.setItem(`${method}/${url}/${key}`, proto, value)
+			]);
 		};
 
 		const usernamePromise	= this.getUsernameFromURL(url);
