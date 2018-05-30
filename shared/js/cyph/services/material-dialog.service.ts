@@ -140,13 +140,14 @@ export class MaterialDialogService implements DialogService {
 
 	/** @inheritDoc */
 	public async image (
-		src: SafeUrl|string,
+		o: {src: SafeUrl|string; title?: string},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(DialogImageComponent);
 
-			matDialogRef.componentInstance.src	= src;
+			matDialogRef.componentInstance.src		= o.src;
+			matDialogRef.componentInstance.title	= o.title;
 
 			if (closeFunction) {
 				closeFunction.resolve(() => { matDialogRef.close(); });

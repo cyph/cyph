@@ -800,7 +800,7 @@ export class AccountFilesService {
 		const file	= await this.getFile(id);
 
 		if (file.mediaType.startsWith('image/') && !file.mediaType.startsWith('image/svg')) {
-			this.dialogService.image(await this.downloadURI(id).result);
+			this.dialogService.image({src: await this.downloadURI(id).result, title: file.name});
 		}
 		else {
 			this.downloadAndSave(id);

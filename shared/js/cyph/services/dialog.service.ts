@@ -48,7 +48,7 @@ export class DialogService {
 
 	/** Displays image. */
 	public async image (
-		_SRC: SafeUrl|string,
+		_O: {src: SafeUrl|string; title?: string},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
 	) : Promise<void> {
 		throw new Error('Must provide an implementation of DialogService.image.');

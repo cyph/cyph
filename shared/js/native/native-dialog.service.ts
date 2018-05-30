@@ -109,19 +109,19 @@ export class NativeDialogService implements DialogService {
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async image (
-		src: SafeUrl|string,
+		o: {src: SafeUrl|string; title?: string},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (closeFunction) {
 			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
 		}
 
-		if (typeof src !== 'string') {
+		if (typeof o.src !== 'string') {
 			throw new Error('Unsupported src type.');
 		}
 
 		return this.lock(async () => {
-			await this.modalDialogService.showModal(DialogImageComponent, {context: src});
+			await this.modalDialogService.showModal(DialogImageComponent, {context: o});
 		});
 	}
 

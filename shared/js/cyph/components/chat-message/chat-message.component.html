@@ -160,7 +160,10 @@
 									class='image-message'
 									[src]='image.uri'
 									[alt]='value.fileTransfer.name'
-									(click)='dialogService.image(image.uri)'
+									(click)='dialogService.image({
+										src: image.uri,
+										title: value.fileTransfer.name
+									})'
 								/>
 								<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
 							</div>
