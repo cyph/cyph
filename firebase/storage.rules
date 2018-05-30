@@ -73,20 +73,7 @@ service firebase.storage {
 					allow read;
 				}
 
-				match /coverImage/{hash} {
-					allow read;
-				}
-
-				match /certificate/{hash} {
-					allow read;
-					allow write: if false;
-				}
-
-				// match /certificateRequest/{hash} {}
-
-				// match /contactUsernames/{username}/{hash} {}
-
-				// match /contacts/{contact} {
+				// match /castleSessions/{contact} {
 				// 	match /futureMessages/{messageID}/{hash} {}
 				// 	match /lastConfirmedMessage/{hash} {}
 				// 	match /messageList/{messageID}/{hash} {}
@@ -121,6 +108,19 @@ service firebase.storage {
 				// 		}
 				// 	}
 				// }
+
+				match /certificate/{hash} {
+					allow read;
+					allow write: if false;
+				}
+
+				// match /certificateRequest/{hash} {}
+
+				// match /contactUsernames/{username}/{hash} {}
+
+				match /coverImage/{hash} {
+					allow read;
+				}
 
 				match /docs/{all=**} {
 					allow read;

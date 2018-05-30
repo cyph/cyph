@@ -262,7 +262,7 @@ export class AccountSessionService extends SessionService {
 				return;
 			}
 
-			const sessionURL		= `contacts/${contactID}/session`;
+			const sessionURL		= `castleSessions/${contactID}/session`;
 			const symmetricKeyURL	= `${sessionURL}/symmetricKey`;
 
 			this.incomingMessageQueue		= this.accountDatabaseService.getAsyncList(

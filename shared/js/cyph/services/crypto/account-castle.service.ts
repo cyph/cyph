@@ -57,7 +57,7 @@ export class AccountCastleService extends CastleService {
 					this.pairwiseSessions,
 					accountSessionService.ephemeralSubSession ? undefined : user.username,
 					async () => {
-						const sessionURL		= `contacts/${contactID}/session`;
+						const sessionURL		= `castleSessions/${contactID}/session`;
 
 						const localUser			= new RegisteredLocalUser(
 							this.accountDatabaseService

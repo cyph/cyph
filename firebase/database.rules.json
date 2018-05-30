@@ -229,68 +229,7 @@
 						}
 					},
 
-					"coverImage": {
-						".read": true,
-
-						"data": {
-							".validate": "newData.isString()"
-						},
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					},
-
-					"certificate": {
-						".read": true,
-						".write": false,
-
-						"data": {
-							".validate": "newData.isString()"
-						},
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					},
-
-					"certificateRequest": {
-						"data": {
-							".validate": "newData.isString()"
-						},
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					},
-
-					"clientConnections": {
-						"$clientConnection": {
-							".validate": "newData.val() === now"
-						}
-					},
-
-					"contactUsernames": {
-						"$username": {
-							"data": {
-								".validate": "newData.isString()"
-							},
-							"hash": {
-								".validate": "newData.isString()"
-							},
-							"timestamp": {
-								".validate": "newData.val() === now"
-							}
-						}
-					},
-
-					"contacts": {
+					"castleSessions": {
 						"$contact": {
 							"futureMessages": {
 								"$messageID": {
@@ -543,6 +482,67 @@
 									}
 								}
 							}
+						}
+					},
+
+					"certificate": {
+						".read": true,
+						".write": false,
+
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"certificateRequest": {
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"clientConnections": {
+						"$clientConnection": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"contactUsernames": {
+						"$username": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"coverImage": {
+						".read": true,
+
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
 						}
 					},
 

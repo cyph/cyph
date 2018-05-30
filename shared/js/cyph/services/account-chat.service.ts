@@ -89,8 +89,8 @@ export class AccountChatService extends ChatService {
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false
 	) : Promise<void> {
-		username			= this.accountSessionService.normalizeUsername(username);
-		const contactURL	= `contacts/${await this.accountContactsService.addContact(username)}`;
+		username	= this.accountSessionService.normalizeUsername(username);
+		const url	= `castleSessions/${await this.accountContactsService.addContact(username)}`;
 
 		this.accountSessionInitService.callType	= callType || this.envService.callType;
 
@@ -106,7 +106,7 @@ export class AccountChatService extends ChatService {
 				() => ({
 					currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
 					futureMessages: this.accountDatabaseService.getAsyncMap(
-						`${contactURL}/futureMessages`,
+						`${url}/futureMessages`,
 						SessionMessageDataList,
 						undefined,
 						undefined,
@@ -120,11 +120,11 @@ export class AccountChatService extends ChatService {
 					isFriendTyping: new BehaviorSubject(false),
 					isMessageChanged: false,
 					lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
-						`${contactURL}/lastConfirmedMessage`,
+						`${url}/lastConfirmedMessage`,
 						ChatLastConfirmedMessage
 					),
 					messageList: this.accountDatabaseService.getAsyncList(
-						`${contactURL}/messageList`,
+						`${url}/messageList`,
 						StringProto,
 						undefined,
 						undefined,
@@ -132,7 +132,7 @@ export class AccountChatService extends ChatService {
 						true
 					),
 					messages: this.accountDatabaseService.getAsyncMap(
-						`${contactURL}/messages`,
+						`${url}/messages`,
 						ChatMessage,
 						undefined,
 						undefined,
@@ -142,7 +142,7 @@ export class AccountChatService extends ChatService {
 					),
 					pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
 					receiveTextLock: this.accountDatabaseService.lockFunction(
-						`${contactURL}/receiveTextLock`
+						`${url}/receiveTextLock`
 					),
 					state: States.chat,
 					unconfirmedMessages:
