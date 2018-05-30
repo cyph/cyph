@@ -246,15 +246,12 @@ export class StringsService {
 	public readonly incomingAppointments: string		= `Incoming Appointment Requests`;
 
 	/** @see StringsService */
-	public readonly incomingFile: string				= `Incoming File:`;
-
-	/** @see StringsService */
-	public readonly incomingFileDownload: string		= `Download File`;
+	public readonly incomingFile: string				= `Download File`;
 
 	/** @see StringsService */
 	public readonly incomingFileSave: string			=
-		`Your ${this.internalFriend} has sent you a file. It has not been scanned for malware; ` +
-		`you may choose to accept it AT YOUR OWN RISK. Save this file?`
+		`This file has not been scanned for malware; ` +
+		`you may download it _at your own risk_. Save this file?`
 	;
 
 	/** @see StringsService */

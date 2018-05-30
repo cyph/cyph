@@ -122,8 +122,9 @@ export class FileTransferService {
 	public async saveFile (fileTransfer: IFileTransfer) : Promise<void> {
 		if (!(await this.dialogService.confirm({
 			content: this.stringsService.incomingFileSave,
+			markdown: true,
 			ok: this.stringsService.save,
-			title: `${this.stringsService.incomingFile} ${fileTransfer.name} (${
+			title: `${this.stringsService.incomingFile}: ${fileTransfer.name} (${
 				readableByteLength(fileTransfer.size)
 			})`
 		}))) {
@@ -214,7 +215,7 @@ export class FileTransferService {
 		}
 		catch {
 			await this.chatService.addMessage(
-				`${this.stringsService.incomingFileSaveError} ${fileTransfer.name}`,
+				`${this.stringsService.incomingFileUploadError} ${fileTransfer.name}`,
 				undefined,
 				undefined,
 				false

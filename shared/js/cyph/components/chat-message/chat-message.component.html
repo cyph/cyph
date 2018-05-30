@@ -203,7 +203,7 @@
 						mat-raised-button
 						class='centered'
 						(click)='fileTransferService.saveFile(value.fileTransfer)'
-						[matTooltip]='stringsService.incomingFileDownload'
+						[matTooltip]='stringsService.incomingFile'
 					>
 						{{value.fileTransfer.name}}
 						({{readableByteLength(value.fileTransfer.size)}})
