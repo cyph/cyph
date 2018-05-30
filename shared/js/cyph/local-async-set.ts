@@ -29,7 +29,7 @@ export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>> {
 	}
 
 	/** @see Set.forEach */
-	public async forEach (callback: (a: T, b: T, set: Set<T>) => void) : Promise<void> {
+	public async forEach (callback: (a: T, b: T, value: Set<T>) => void) : Promise<void> {
 		this.value.forEach(callback);
 	}
 
