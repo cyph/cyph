@@ -36,8 +36,8 @@ import {sleep, waitForIterable} from '../../util/wait';
 export class ChatMessageComponent implements OnChanges, OnDestroy {
 	/** Temporary workaround pending ACCOUNTS-36. */
 	public static appeared: BehaviorSubject<Set<string>>	= (() => {
-		const ids			= new Set<string>();
-		const subject		= new BehaviorSubject(ids);
+		const ids		= new Set<string>();
+		const subject	= new BehaviorSubject(ids);
 
 		(async () => {
 			while (true) {
