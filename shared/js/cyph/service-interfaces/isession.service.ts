@@ -61,7 +61,12 @@ export interface ISessionService {
 	/** Castle event handler called by Castle.Transport. */
 	castleHandler (
 		event: CastleEvents,
-		data?: Uint8Array|{author: Observable<string>; plaintext: Uint8Array; timestamp: number}
+		data?: Uint8Array|{
+			author: Observable<string>;
+			instanceID: string;
+			plaintext: Uint8Array;
+			timestamp: number;
+		}
 	) : Promise<void>;
 
 	/** This kills the cyph. */

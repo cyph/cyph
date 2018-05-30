@@ -43,6 +43,9 @@ export class PairwiseSession {
 	}>();
 
 	/** @ignore */
+	private readonly instanceID: Uint8Array					= this.potassium.randomBytes(16);
+
+	/** @ignore */
 	private readonly isReceiving: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
 	/** @ignore */
@@ -250,11 +253,20 @@ export class PairwiseSession {
 			timestamp	= await getTimestamp();
 		}
 
-		await this.outgoingMessageQueue.pushItem(this.potassium.concatMemory(
-			true,
-			new Float64Array([timestamp]),
-			this.potassium.fromString(plaintext)
-		));
+		const plaintextBytes	= this.potassium.fromString(plaintext);
+		const timestampBytes	= new Float64Array([timestamp]);
+
+		const outgoingMessage	= this.potassium.concatMemory(
+			false,
+			timestampBytes,
+			this.instanceID,
+			plaintextBytes
+		);
+
+		this.potassium.clearMemory(plaintextBytes);
+		this.potassium.clearMemory(timestampBytes);
+
+		await this.outgoingMessageQueue.pushItem(outgoingMessage);
 	}
 
 	constructor (

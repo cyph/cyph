@@ -66,7 +66,7 @@ export abstract class SessionService implements ISessionService {
 	protected incomingMessageQueueLock: LockFunction					= lockFunction();
 
 	/** @ignore */
-	protected lastIncomingMessageTimestamp: number						= 0;
+	protected lastIncomingMessageTimestamps: Map<string, number>		= new Map();
 
 	/** @ignore */
 	protected readonly plaintextSendInterval: number					= 1776;
@@ -293,7 +293,12 @@ export abstract class SessionService implements ISessionService {
 	/** @inheritDoc */
 	public async castleHandler (
 		event: CastleEvents,
-		data?: Uint8Array|{author: Observable<string>; plaintext: Uint8Array; timestamp: number}
+		data?: Uint8Array|{
+			author: Observable<string>;
+			instanceID: string;
+			plaintext: Uint8Array;
+			timestamp: number;
+		}
 	) : Promise<void> {
 		switch (event) {
 			case CastleEvents.abort:
@@ -332,7 +337,8 @@ export abstract class SessionService implements ISessionService {
 					break;
 				}
 
-				const cyphertextTimestamp	= data.timestamp;
+				const castleInstanceID	= data.instanceID;
+				const castleTimestamp	= data.timestamp;
 
 				const messages	=
 					(
@@ -351,13 +357,19 @@ export abstract class SessionService implements ISessionService {
 					/* Discard messages without valid timestamps */
 					if (
 						isNaN(message.data.timestamp) ||
-						message.data.timestamp > cyphertextTimestamp ||
-						message.data.timestamp < this.lastIncomingMessageTimestamp
+						message.data.timestamp > castleTimestamp ||
+						message.data.timestamp < (
+							this.lastIncomingMessageTimestamps.get(castleInstanceID) || 0
+						)
 					) {
 						continue;
 					}
 
-					this.lastIncomingMessageTimestamp	= message.data.timestamp;
+					this.lastIncomingMessageTimestamps.set(
+						castleInstanceID,
+						message.data.timestamp
+					);
+
 					(<any> message.data).author			= data.author;
 					message.data.authorID				= authorID;
 
