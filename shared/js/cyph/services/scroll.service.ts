@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
-import {Set as ImmutableSet} from 'immutable';
+import {LocalAsyncSet} from '../local-async-set';
 import {lockTryOnce} from '../util/lock';
 import {resolvable, sleep} from '../util/wait';
 import {WindowWatcherService} from './window-watcher.service';
@@ -31,21 +31,23 @@ export class ScrollService {
 	/** @ignore */
 	private readonly scrollDownLock: {}	= {};
 
-	/** @ignore */
-	private unreadItems: ImmutableSet<string>	= ImmutableSet<string>();
+	/** Unread item IDs. */
+	public readonly unreadItems: LocalAsyncSet<string>	= new LocalAsyncSet<string>();
 
 	/** @ignore */
-	private updateTitle () : void {
-		if (!this.itemCountInTitle || this.unreadItemCount === this.lastUnreadItemCount) {
+	private async updateTitle () : Promise<void> {
+		const unreadItemCount	= await this.unreadItems.size();
+
+		if (!this.itemCountInTitle || unreadItemCount === this.lastUnreadItemCount) {
 			return;
 		}
 
 		this.titleService.setTitle(
-			(this.unreadItemCount > 0 ? `(${this.unreadItemCount.toString()}) ` : '') +
+			(unreadItemCount > 0 ? `(${unreadItemCount.toString()}) ` : '') +
 			this.titleService.getTitle().replace(/^\(\d+\) /, '')
 		);
 
-		this.lastUnreadItemCount	= this.unreadItemCount;
+		this.lastUnreadItemCount	= unreadItemCount;
 	}
 
 	/** Initializes service. */
@@ -55,8 +57,8 @@ export class ScrollService {
 	}
 
 	/** Indicates whether item has been read. */
-	public isRead (id: string) : boolean {
-		return !this.unreadItems.has(id);
+	public async isRead (id: string) : Promise<boolean> {
+		return !(await this.unreadItems.hasItem(id));
 	}
 
 	/** Scrolls to bottom. */
@@ -67,8 +69,8 @@ export class ScrollService {
 		}
 
 		await lockTryOnce(this.scrollDownLock, async () => {
-			this.unreadItems	= this.unreadItems.clear();
-			this.updateTitle();
+			await this.unreadItems.clear();
+			await this.updateTitle();
 
 			await sleep();
 			await rootElement.animate(
@@ -80,8 +82,8 @@ export class ScrollService {
 
 	/** Set item as read. */
 	public async setRead (id: string) : Promise<void> {
-		this.unreadItems	= this.unreadItems.delete(id);
-		this.updateTitle();
+		await this.unreadItems.deleteItem(id);
+		await this.updateTitle();
 	}
 
 	/** Process new item. */
@@ -101,20 +103,15 @@ export class ScrollService {
 
 		if (
 			this.windowWatcherService.visibility.value &&
-			this.unreadItemCount < 1 &&
+			(await this.unreadItems.size()) < 1 &&
 			scrollPosition < 150
 		) {
 			this.scrollDown();
 			return;
 		}
 
-		this.unreadItems	= this.unreadItems.add(id);
-		this.updateTitle();
-	}
-
-	/** Number of items that haven't appeared in viewport. */
-	public get unreadItemCount () : number {
-		return this.unreadItems.size;
+		await this.unreadItems.addItem(id);
+		await this.updateTitle();
 	}
 
 	constructor (

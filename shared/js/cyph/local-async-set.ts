@@ -1,3 +1,5 @@
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {LocalAsyncValue} from './local-async-value';
 
 
@@ -50,9 +52,19 @@ export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>> {
 		this.subject.next(this.value);
 	}
 
+	/** @see Set.size */
+	public async size () : Promise<number> {
+		return this.value.size;
+	}
+
 	/** @see Set.values */
 	public async values () : Promise<IterableIterator<T>> {
 		return this.value.values();
+	}
+
+	/** Watches size. */
+	public watchSize () : Observable<number> {
+		return this.watch().pipe(map(value => value.size));
 	}
 
 	constructor (value?: Set<T>) {

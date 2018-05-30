@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {List} from 'immutable';
 import {ChatMessage} from '../../chat';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
@@ -19,7 +18,7 @@ export class ChatCyphertextListComponent {
 	@Input() public accounts: boolean	= false;
 
 	/** @see CyphertextService.messages */
-	@Input() public messages?: List<ChatMessage>;
+	@Input() public messages?: ChatMessage[];
 
 	/** @see trackByID */
 	public readonly trackByID: typeof trackByID	= trackByID;
