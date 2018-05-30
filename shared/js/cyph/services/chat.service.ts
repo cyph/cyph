@@ -440,7 +440,7 @@ export class ChatService {
 		}
 
 		await this.chat.messages.setItem(id, chatMessage);
-		await this.chat.messageList.pushValue(id);
+		await this.chat.messageList.pushItem(id);
 
 		if (
 			chatMessage.hash &&
@@ -778,7 +778,7 @@ export class ChatService {
 		}));
 
 		chatMessagePromise.then(async chatMessage => {
-			await this.chat.pendingMessages.pushValue({
+			await this.chat.pendingMessages.pushItem({
 				...chatMessage,
 				pending: true,
 				value

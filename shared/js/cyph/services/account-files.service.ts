@@ -602,7 +602,7 @@ export class AccountFilesService {
 			clear: async () => asyncList.clear(),
 			getValue: async () => (await asyncList.getValue()).map(bytes => msgpack.decode(bytes)),
 			lock: async (f, reason) => asyncList.lock(f, reason),
-			pushValue: async delta => asyncList.pushValue(msgpack.encode(delta)),
+			pushItem: async delta => asyncList.pushItem(msgpack.encode(delta)),
 			setValue: async deltas =>
 				asyncList.setValue(deltas.map(delta => msgpack.encode(delta)))
 			,

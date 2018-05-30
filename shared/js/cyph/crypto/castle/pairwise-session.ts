@@ -250,7 +250,7 @@ export class PairwiseSession {
 			timestamp	= await getTimestamp();
 		}
 
-		await this.outgoingMessageQueue.pushValue(this.potassium.concatMemory(
+		await this.outgoingMessageQueue.pushItem(this.potassium.concatMemory(
 			true,
 			new Float64Array([timestamp]),
 			this.potassium.fromString(plaintext)

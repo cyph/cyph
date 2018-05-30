@@ -435,7 +435,7 @@ export class AccountDatabaseService {
 				this.getList(url, proto, securityModel, customKey, anonymous, immutable)
 			),
 			lock: async (f, reason) => this.lock(url, f, reason),
-			pushValue: async value => localLock(async () => {
+			pushItem: async value => localLock(async () => {
 				await this.pushItem(
 					url,
 					proto,

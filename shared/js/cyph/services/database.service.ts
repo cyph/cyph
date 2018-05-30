@@ -102,7 +102,7 @@ export class DatabaseService extends DataManagerService {
 			clear: async () => this.removeItem(url),
 			getValue: async () => localLock(async () => this.getList(url, proto)),
 			lock,
-			pushValue: async value => localLock(async () => {
+			pushItem: async value => localLock(async () => {
 				await this.pushItem(url, proto, value, noBlobStorage);
 			}),
 			setValue: async value => localLock(async () =>

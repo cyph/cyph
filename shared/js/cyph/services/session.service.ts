@@ -361,7 +361,7 @@ export abstract class SessionService implements ISessionService {
 					(<any> message.data).author			= data.author;
 					message.data.authorID				= authorID;
 
-					await this.incomingMessageQueue.pushValue(message);
+					await this.incomingMessageQueue.pushItem(message);
 				}
 
 				break;
