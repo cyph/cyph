@@ -42,7 +42,11 @@ export class AccountUserLookupService {
 	 * when a user cert fails to verify. Otherwise, simply checks that the server has
 	 * a record of either an account with this username or a pending registration request.
 	 */
-	public async exists (username: string, confirmedOnly: boolean = true) : Promise<boolean> {
+	public async exists (
+		username: string,
+		lock: boolean = true,
+		confirmedOnly: boolean = true
+	) : Promise<boolean> {
 		if (!username) {
 			return false;
 		}
@@ -54,17 +58,19 @@ export class AccountUserLookupService {
 			return false;
 		}
 
+		const getProfile	= async () => this.accountDatabaseService.getItem(
+			`${url}/publicProfile`,
+			AccountUserProfile,
+			SecurityModels.public,
+			undefined,
+			true
+		);
+
 		const exists	= username.length > 0 && (
 			(confirmedOnly ? this.existsConfirmedCache : this.existsCache).has(username) ||
 			this.userCache.has(username) ||
 			await (confirmedOnly ?
-				this.downloadLock(async () => this.accountDatabaseService.getItem(
-					`${url}/publicProfile`,
-					AccountUserProfile,
-					SecurityModels.public,
-					undefined,
-					true
-				)).then(
+				(lock ? this.downloadLock(getProfile) : getProfile()).then(
 					() => true
 				).catch(
 					() => false
@@ -87,8 +93,8 @@ export class AccountUserLookupService {
 	/** Tries to to get User object for the specified user. */
 	public async getUser (
 		user: string|User,
-		preFetch: boolean = false,
-		lock: boolean = true
+		lock: boolean = true,
+		preFetch: boolean = false
 	) : Promise<User|undefined> {
 		const userValue	= await (async () => {
 			if (!user) {
@@ -101,77 +107,80 @@ export class AccountUserLookupService {
 			const username	= normalize(user);
 			const url		= `users/${username}`;
 
-			const getUser	= async () => {
-				if (!(await this.exists(username))) {
-					throw new Error('User does not exist.');
-				}
+			return getOrSetDefaultAsync(
+				this.userCache,
+				username,
+				async () => {
+					if (!(await this.exists(username, lock))) {
+						throw new Error('User does not exist.');
+					}
 
-				return new User(
-					username,
-					this.accountDatabaseService.watch(
-						`${url}/avatar`,
-						DataURIProto,
-						SecurityModels.public,
-						undefined,
-						true
-					).pipe(map(({value}) =>
-						/* tslint:disable-next-line:strict-type-predicates */
-						typeof value === 'string' || Object.keys(value).length > 0 ?
-							value :
-							undefined
-					)),
-					this.accountDatabaseService.watch(
-						`${url}/coverImage`,
-						DataURIProto,
-						SecurityModels.public,
-						undefined,
-						true
-					).pipe(map(({value}) =>
-						/* tslint:disable-next-line:strict-type-predicates */
-						typeof value === 'string' || Object.keys(value).length > 0 ?
-							value :
-							undefined
-					)),
-					this.databaseService.getAsyncValue(
-						`${url}/presence`,
-						AccountUserPresence
-					),
-					this.accountDatabaseService.getAsyncValue(
-						`${url}/publicProfile`,
-						AccountUserProfile,
-						SecurityModels.public,
-						undefined,
-						true
-					),
-					this.accountDatabaseService.getAsyncValue(
-						`${url}/publicProfileExtra`,
-						AccountUserProfileExtra,
-						SecurityModels.public,
-						undefined,
-						true
-					),
-					this.accountDatabaseService.getAsyncValue(
-						`${url}/organizationMembers`,
-						BooleanMapProto,
-						SecurityModels.public,
-						undefined,
-						true
-					),
-					this.accountDatabaseService.getAsyncMap(
-						`${url}/reviews`,
-						Review,
-						SecurityModels.publicFromOtherUsers,
-						undefined,
-						true
-					),
-					preFetch
-				);
-			};
-
-			return lock ? getOrSetDefaultAsync(this.userCache, username, getUser) : getUser();
-		})().catch(
-			() => undefined
-		);
+					return new User(
+						username,
+						this.accountDatabaseService.watch(
+							`${url}/avatar`,
+							DataURIProto,
+							SecurityModels.public,
+							undefined,
+							true
+						).pipe(map(({value}) =>
+							/* tslint:disable-next-line:strict-type-predicates */
+							typeof value === 'string' || Object.keys(value).length > 0 ?
+								value :
+								undefined
+						)),
+						this.accountDatabaseService.watch(
+							`${url}/coverImage`,
+							DataURIProto,
+							SecurityModels.public,
+							undefined,
+							true
+						).pipe(map(({value}) =>
+							/* tslint:disable-next-line:strict-type-predicates */
+							typeof value === 'string' || Object.keys(value).length > 0 ?
+								value :
+								undefined
+						)),
+						this.databaseService.getAsyncValue(
+							`${url}/presence`,
+							AccountUserPresence
+						),
+						this.accountDatabaseService.getAsyncValue(
+							`${url}/publicProfile`,
+							AccountUserProfile,
+							SecurityModels.public,
+							undefined,
+							true
+						),
+						this.accountDatabaseService.getAsyncValue(
+							`${url}/publicProfileExtra`,
+							AccountUserProfileExtra,
+							SecurityModels.public,
+							undefined,
+							true
+						),
+						this.accountDatabaseService.getAsyncValue(
+							`${url}/organizationMembers`,
+							BooleanMapProto,
+							SecurityModels.public,
+							undefined,
+							true
+						),
+						this.accountDatabaseService.getAsyncMap(
+							`${url}/reviews`,
+							Review,
+							SecurityModels.publicFromOtherUsers,
+							undefined,
+							true
+						),
+						preFetch
+					);
+				},
+				lock
+			).catch(
+				() => undefined
+			);
+		})();
 
 		if (!userValue) {
 			return;

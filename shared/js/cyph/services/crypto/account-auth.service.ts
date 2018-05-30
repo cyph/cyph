@@ -183,7 +183,6 @@ export class AccountAuthService {
 
 			const user		= await this.accountUserLookupService.getUser(
 				username,
-				undefined,
 				false
 			);
 

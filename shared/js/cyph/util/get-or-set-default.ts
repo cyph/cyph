@@ -1,13 +1,18 @@
 import {Observable} from 'rxjs';
+import {IResolvable} from '../iresolvable';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
 import {cacheObservable} from './flatten-observable';
 import {lockFunction} from './lock';
+import {resolvable} from './wait';
 
 
 /** @ignore */
-const getOrSetDefaultAsyncLocks: Map<any, LockFunction>	=
-	new Map<any, LockFunction>()
+const getOrSetDefaultAsyncData: Map<Map<any, any>, Map<any, {
+	setLock: LockFunction;
+	setResolver: IResolvable<void>;
+}>>				=
+	new Map()
 ;
 
 /** Gets a value from a map and sets a default value if none had previously been set. */
@@ -37,7 +42,8 @@ export const getOrSetDefault	= <K, V> (
 export const getOrSetDefaultAsync	= async <K, V> (
 	map: MaybePromise<Map<K, V>|undefined>,
 	key: MaybePromise<K|undefined>,
-	defaultValue: () => MaybePromise<V>
+	defaultValue: () => MaybePromise<V>,
+	lock: boolean = true
 ) : Promise<V> => {
 	const k	= await key;
 	const m	= await map;
@@ -47,15 +53,46 @@ export const getOrSetDefaultAsync	= async <K, V> (
 	}
 
 	if (!m.has(k)) {
-		await getOrSetDefault(
-			getOrSetDefaultAsyncLocks,
+		const {setLock, setResolver}	= getOrSetDefault(
+			getOrSetDefault(
+				getOrSetDefaultAsyncData,
+				m,
+				() => new Map<any, {
+					setLock: LockFunction;
+					setResolver: IResolvable<void>;
+				}>()
+			),
 			k,
-			lockFunction
-		)(async () => {
-			if (!m.has(k)) {
-				m.set(k, await defaultValue());
-			}
-		});
+			() => ({
+				setLock: lockFunction(),
+				setResolver: resolvable()
+			})
+		);
+
+		const setValue		= (v: V) => {
+			m.set(k, v);
+			setResolver.resolve();
+		};
+
+		if (lock) {
+			await setLock(async () => {
+				if (!m.has(k)) {
+					const v	= await Promise.race([
+						defaultValue(),
+						setResolver.promise
+					]);
+
+					if (v !== undefined && !m.has(k)) {
+						setValue(v);
+					}
+				}
+			}).catch(
+				() => {}
+			);
+		}
+		else {
+			setValue(await defaultValue());
+		}
 	}
 
 	const value	= m.get(k);
