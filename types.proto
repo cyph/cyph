@@ -479,6 +479,7 @@ message ChatMessageValue {
 	/** Possible types of a chat text message value. */
 	enum Types {
 		CalendarInvite = 0;
+		FileTransfer = 5;
 		Form = 1;
 		Quill = 2;
 		RSVP = 3;
@@ -488,6 +489,7 @@ message ChatMessageValue {
 	/** Value. */
 	oneof value {
 		CalendarInvite calendarInvite = 1;
+		FileTransfer fileTransfer = 6;
 		Form form = 2;
 		bytes quill = 3;
 		Appointment.RSVP rsvp = 4;
@@ -625,6 +627,33 @@ message Environment {
 
 	/** Indicates whether production AGSE-PKI signing keys should be used. */
 	bool useProdSigningKeys = 6;
+}
+
+/** Represents a transferred file. */
+message FileTransfer {
+	/** Plaintext hash. */
+	bytes hash = 1;
+
+	/** Unique ID to represent this file transfer. */
+	required string id = 2;
+
+	/** Indicates whether file should be handled as an image. */
+	required bool image = 3;
+
+	/** Indicates whether file is being sent from this Cyph instance. */
+	bool isOutgoing = 4;
+
+	/** Symmetric key used for encrypting file over the wire. */
+	bytes key = 5;
+
+	/** MIME type. */
+	required string mediaType = 6;
+
+	/** File name. */
+	required string name = 7;
+
+	/** File size in bytes. */
+	required uint32 size = 8;
 }
 
 /** Represents a form that a user can submit responses to. */
@@ -1596,9 +1625,6 @@ message SessionMessageData {
 
 	/** @see SessionTextConfirmation */
 	SessionTextConfirmation textConfirmation = 10;
-
-	/** @see SessionTransfer */
-	SessionTransfer transfer = 11;
 }
 
 /** Array of session messages. */
@@ -1638,52 +1664,6 @@ message SessionText {
 message SessionTextConfirmation {
 	/** SessionText ID to be confirmed. */
 	required string id = 1;
-}
-
-/** Represents an active file transfer. */
-message SessionTransfer {
-	/** Possible responses to a transfer request. */
-	enum Answers {
-		Empty = 0;
-		Accepted = 1;
-		Rejected = 2;
-	}
-
-	/** Indicates a non-response to, acceptance of, or rejection of a file transfer. */
-	required Answers answer = 1;
-
-	/** Plaintext hash. */
-	required bytes hash = 12;
-
-	/** Unique ID to represent this file transfer. */
-	required string id = 2;
-
-	/** Indicates whether file should be handled as an image. */
-	required bool image = 3;
-
-	/** If image is true, this will be used as a self-destruct timeout for the message. */
-	required uint32 imageSelfDestructTimeout = 4;
-
-	/** Indicates whether file is being sent from this Cyph instance. */
-	required bool isOutgoing = 5;
-
-	/** Symmetric key used for encrypting file over the wire. */
-	required bytes key = 6;
-
-	/** MIME type. */
-	required string mediaType = 7;
-
-	/** File name. */
-	required string name = 8;
-
-	/** Indicates the time at which the file was received. */
-	double receiptTimestamp = 9;
-
-	/** File size in bytes. */
-	required uint32 size = 10;
-
-	/** File URL. */
-	required string url = 11;
 }
 
 

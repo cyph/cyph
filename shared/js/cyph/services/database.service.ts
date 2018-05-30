@@ -16,6 +16,7 @@ import {NotificationTypes} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
+import {PotassiumService} from './crypto/potassium.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 
@@ -45,6 +46,13 @@ export class DatabaseService extends DataManagerService {
 			'cyph.ws'
 	;
 
+	/** Gets lock URL. */
+	protected async lockURL (urlPromise: MaybePromise<string>, global: boolean) : Promise<string> {
+		return !global ? urlPromise : `locks/${this.potassiumService.toHex(
+			await this.potassiumService.hash.hash(await urlPromise)
+		)}`;
+	}
+
 	/** Adds namespace to URL. */
 	protected processURL (url: string) : string {
 		return `${this.namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`;
@@ -71,6 +79,7 @@ export class DatabaseService extends DataManagerService {
 
 	/** Downloads value and gives progress. */
 	public downloadItem<T> (_URL: MaybePromise<string>, _PROTO: IProto<T>) : {
+		alreadyCached: Promise<boolean>;
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
@@ -315,18 +324,19 @@ export class DatabaseService extends DataManagerService {
 	public async lock<T> (
 		_URL: MaybePromise<string>,
 		_F: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
-		_REASON?: string
+		_REASON?: string,
+		_GLOBAL?: boolean
 	) : Promise<T> {
 		throw new Error('Must provide an implementation of DatabaseService.lock.');
 	}
 
 	/** Creates and returns a lock function that uses DatabaseService.lock. */
-	public lockFunction (url: string) : LockFunction {
+	public lockFunction (url: string, global?: boolean) : LockFunction {
 		return async <T> (
 			f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
 			reason?: string
 		) =>
-			this.lock(url, f, reason)
+			this.lock(url, f, reason, global)
 		;
 	}
 
@@ -538,7 +548,10 @@ export class DatabaseService extends DataManagerService {
 		protected readonly envService: EnvService,
 
 		/** @see LocalStorageService */
-		protected readonly localStorageService: LocalStorageService
+		protected readonly localStorageService: LocalStorageService,
+
+		/** @ignore */
+		protected readonly potassiumService: PotassiumService
 	) {
 		super();
 	}

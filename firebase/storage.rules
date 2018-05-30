@@ -27,17 +27,38 @@ service firebase.storage {
 
 			match /fileTransfers/{file}/{hash} {
 				allow read;
-				allow write: if request.resource == null || request.resource.size < 300000000;
+				allow write: if
+					resource == null &&
+					request.resource.size > 0 &&
+					request.resource.size < 300000000
+				;
+			}
+
+			match /fileTransfersEphemeral/{file}/{hash} {
+				allow read;
+				allow write: if
+					resource == null &&
+					request.resource.size > 0 &&
+					request.resource.size < 300000000
+				;
 			}
 
 			match /messageValues/{messageValue}/{hash} {
 				allow read;
-				allow write: if request.resource == null || request.resource.size < 300000000;
+				allow write: if
+					resource == null &&
+					request.resource.size > 0 &&
+					request.resource.size < 300000000
+				;
 			}
 
 			match /messageValuesEphemeral/{messageValue}/{hash} {
 				allow read;
-				allow write: if request.resource == null || request.resource.size < 300000000;
+				allow write: if
+					resource == null &&
+					request.resource.size > 0 &&
+					request.resource.size < 300000000
+				;
 			}
 
 			match /users/{user} {

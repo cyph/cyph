@@ -225,12 +225,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public downloadItem<T> (urlPromise: MaybePromise<string>, proto: IProto<T>) : {
+		alreadyCached: Promise<boolean>;
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
-		const progress	= new BehaviorSubject(0);
+		const progress		= new BehaviorSubject(0);
+		const alreadyCached	= resolvable<boolean>();
 
 		return {
+			alreadyCached: alreadyCached.promise,
 			progress,
 			result: this.ngZone.runOutsideAngular(async () => {
 				const url	= await urlPromise;
@@ -247,6 +250,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 					const localValue	= await deserialize(proto, localData);
 
+					alreadyCached.resolve(true);
 					this.ngZone.run(() => {
 						progress.next(100);
 						progress.complete();
@@ -256,6 +260,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}
 				catch {}
 
+				alreadyCached.resolve(false);
 				this.ngZone.run(() => { progress.next(0); });
 
 				const req	= requestByteStream({
@@ -358,9 +363,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public async lock<T> (
 		urlPromise: MaybePromise<string>,
 		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
-		reason?: string
+		reason?: string,
+		global: boolean = true
 	) : Promise<T> {
-		const url	= await urlPromise;
+		const url	= await this.lockURL(urlPromise, global);
 
 		return this.ngZone.runOutsideAngular(async () => lock(
 			getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
@@ -1398,19 +1404,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 	constructor (
 		envService: EnvService,
 		localStorageService: LocalStorageService,
+		potassiumService: PotassiumService,
 
 		/** @ignore */
 		private readonly ngZone: NgZone,
-
-		/** @ignore */
-		private readonly potassiumService: PotassiumService,
 
 		/** @ignore */
 		private readonly workerService: WorkerService
 	) {
 		super(
 			envService,
-			localStorageService
+			localStorageService,
+			potassiumService
 		);
 	}
 }

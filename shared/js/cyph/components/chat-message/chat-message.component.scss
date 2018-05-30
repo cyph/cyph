@@ -46,10 +46,6 @@
 }
 
 :host ::ng-deep {
-	img:not(.avatar-image) {
-		cursor: pointer;
-	}
-
 	.message-item {
 		word-wrap: break-word;
 		word-break: break-word;
@@ -85,15 +81,38 @@
 			text-decoration: none;
 		}
 
-		img:not(.avatar-image), .image-frame {
-			max-width: 25%;
-			margin-top: 10px;
-			margin-bottom: 10px;
-			margin-left: 10vw;
-			margin-right: auto;
+		.image-message {
+			cursor: pointer;
+			width: 200px;
+			height: auto;
+			margin: 10px auto;
 			display: block;
 			box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.4);
 			position: relative;
+		}
+
+		h4.image-title {
+			text-align: center;
+			width: 100%;
+		}
+
+		h4.image-title, .mat-button-wrapper {
+			text-overflow: ellipsis;
+			overflow-x: hidden;
+			display: block;
+		}
+
+		.centered {
+			@include center();
+		}
+
+		.centered, .centered-fake {
+			max-width: 50%;
+			max-height: 75%;
+
+			&.image-container {
+				height: 100%;
+			}
 		}
 
 		&.get-value-failure {
@@ -167,9 +186,11 @@
 		}
 
 		&:not(.mobile) {
-			.message-item {
-				border-radius: 1px;
-			}
+			border-radius: 1px;
+		}
+
+		&.mobile.file-transfer {
+			width: 100%;
 		}
 
 		/* Temporary workaround for matTooltip issue */

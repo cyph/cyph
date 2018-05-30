@@ -74,6 +74,10 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 						this.accountChatService.chat.currentMessage.calendarInvite	= value;
 						break;
 
+					case ChatMessageValue.Types.FileTransfer:
+						this.accountChatService.chat.currentMessage.fileTransfer	= value;
+						break;
+
 					case ChatMessageValue.Types.Form:
 						this.accountChatService.chat.currentMessage.form			= value;
 

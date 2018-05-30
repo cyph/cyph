@@ -197,6 +197,7 @@ export class AccountDatabaseService {
 		moreAdditionalData?: string,
 		noWaitForUnlock: boolean = false
 	) : Promise<{
+		alreadyCached: boolean;
 		progress: Observable<number>;
 		result: ITimedValue<T>;
 	}> {
@@ -214,6 +215,7 @@ export class AccountDatabaseService {
 		const result		= await downloadTask.result;
 
 		return {
+			alreadyCached: await downloadTask.alreadyCached,
 			progress: downloadTask.progress,
 			result: {
 				timestamp: result.timestamp,
@@ -382,12 +384,13 @@ export class AccountDatabaseService {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : {
+		alreadyCached: Promise<boolean>;
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
 		const progress	= new BehaviorSubject(0);
 
-		const result	= (async () => {
+		const downloadTaskResult	= (async () => {
 			const downloadTask	= await this.getItemInternal(
 				url,
 				proto,
@@ -402,10 +405,14 @@ export class AccountDatabaseService {
 				() => { progress.complete(); }
 			);
 
-			return downloadTask.result;
+			return downloadTask;
 		})();
 
-		return {progress, result};
+		return {
+			alreadyCached: downloadTaskResult.then(o => o.alreadyCached),
+			progress,
+			result: downloadTaskResult.then(o => o.result)
+		};
 	}
 
 	/** @see DatabaseService.getAsyncList */
@@ -893,6 +900,8 @@ export class AccountDatabaseService {
 						url
 					)
 				)
+			,
+			false
 		);
 	}
 

@@ -3,8 +3,7 @@ import {
 	ISessionChatState,
 	ISessionCommand,
 	ISessionText,
-	ISessionTextConfirmation,
-	ISessionTransfer
+	ISessionTextConfirmation
 } from '../proto';
 
 
@@ -30,7 +29,4 @@ export interface ISessionMessageAdditionalData {
 
 	/** @see ISessionMessageData.textConfirmation */
 	textConfirmation?: ISessionTextConfirmation;
-
-	/** @see ISessionMessageData.transfer */
-	transfer?: ISessionTransfer;
 }

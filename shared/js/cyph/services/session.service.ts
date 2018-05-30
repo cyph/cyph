@@ -274,8 +274,7 @@ export abstract class SessionService implements ISessionService {
 				sessionSubID: this.sessionSubID,
 				text: additionalData.text,
 				textConfirmation: additionalData.textConfirmation,
-				timestamp,
-				transfer: additionalData.transfer
+				timestamp
 			};
 
 			newMessages.push({event, data});

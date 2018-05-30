@@ -42,22 +42,27 @@ export const numberToString	= memoize((n: number) : string =>
  * @param n Number of specified storage unit (bytes by default).
  * @example 32483478 -> "30.97 MB".
  */
-export const readableByteLength	= (n: number, storageUnit?: StorageUnits) : string => {
-	const b	= convertStorageUnitsToBytes(n, storageUnit);
+export const readableByteLength	= memoize(
+	(n: number, storageUnit?: StorageUnits) : string => {
+		const b	= convertStorageUnitsToBytes(n, storageUnit);
 
-	const gb	= b / byteConversions.gb;
-	const mb	= b / byteConversions.mb;
-	const kb	= b / byteConversions.kb;
+		const gb	= b / byteConversions.gb;
+		const mb	= b / byteConversions.mb;
+		const kb	= b / byteConversions.kb;
 
-	const o	=
-		gb >= 1 ?
-			{n: gb, s: 'G'} :
-			mb >= 1 ?
-				{n: mb, s: 'M'} :
-				kb >= 1 ?
-					{n: kb, s: 'K'} :
-					{n: b, s: ''}
-	;
+		const o	=
+			gb >= 1 ?
+				{n: gb, s: 'G'} :
+				mb >= 1 ?
+					{n: mb, s: 'M'} :
+					kb >= 1 ?
+						{n: kb, s: 'K'} :
+						{n: b, s: ''}
+		;
 
-	return `${numberToString(o.n)} ${o.s}B`;
-};
+		return `${numberToString(o.n)} ${o.s}B`;
+	},
+	(n: number, storageUnit?: StorageUnits) : string =>
+		n.toString() +
+		(storageUnit === undefined ? '' : '\n' + storageUnit.toString())
+);

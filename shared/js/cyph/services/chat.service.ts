@@ -642,6 +642,7 @@ export class ChatService {
 	}
 
 	/** Sends a message. */
+	/* tslint:disable-next-line:cyclomatic-complexity */
 	public async send (
 		messageType: ChatMessageValue.Types = ChatMessageValue.Types.Text,
 		message: IChatMessageLiveValue = {},
@@ -663,6 +664,19 @@ export class ChatService {
 				currentMessage.calendarInvite	= undefined;
 
 				if (!value.calendarInvite) {
+					return;
+				}
+
+				break;
+
+			case ChatMessageValue.Types.FileTransfer:
+				value.fileTransfer	=
+					(message && message.fileTransfer) ||
+					this.chat.currentMessage.fileTransfer
+				;
+				currentMessage.fileTransfer	= undefined;
+
+				if (!value.fileTransfer) {
 					return;
 				}
 

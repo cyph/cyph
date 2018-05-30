@@ -17,9 +17,11 @@ import {ChatMessage, UiStyles} from '../../chat';
 import {IQuillDelta} from '../../iquill-delta';
 import {ChatService} from '../../services/chat.service';
 import {DialogService} from '../../services/dialog.service';
+import {FileTransferService} from '../../services/file-transfer.service';
 import {ScrollService} from '../../services/scroll.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
+import {readableByteLength} from '../../util/formatting';
 import {sleep, waitForIterable} from '../../util/wait';
 
 
@@ -110,6 +112,9 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 		new BehaviorSubject<IQuillDelta|undefined>(undefined)
 	;
 
+	/** @see readableByteLength */
+	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
+
 	/** If true, will scroll into view. */
 	@Input() public scrollIntoView: boolean							= false;
 
@@ -127,13 +132,6 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 	/** Indicates whether view is ready. */
 	public readonly viewReady: BehaviorSubject<boolean>	= new BehaviorSubject(false);
-
-	/** Handle clicks to display image dialogs when needed. */
-	public click (event: MouseEvent) : void {
-		if (event.target instanceof HTMLImageElement) {
-			this.dialogService.image(event.target.src);
-		}
-	}
 
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
@@ -242,9 +240,6 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 		private readonly renderer: Renderer2,
 
 		/** @ignore */
-		private readonly dialogService: DialogService,
-
-		/** @ignore */
 		private readonly scrollService: ScrollService,
 
 		/** @ignore */
@@ -252,6 +247,12 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,
+
+		/** @see DialogService */
+		public readonly dialogService: DialogService,
+
+		/** @see FileTransferService */
+		public readonly fileTransferService: FileTransferService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

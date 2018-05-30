@@ -249,14 +249,7 @@ export class StringsService {
 	public readonly incomingFile: string				= `Incoming File:`;
 
 	/** @see StringsService */
-	public readonly incomingFileDownload: string		=
-		`Your ${this.internalFriend} would like to send you a file. Accept the file transfer?`
-	;
-
-	/** @see StringsService */
-	public readonly incomingFileRejected: string		=
-		`You have rejected the following file transfer:`
-	;
+	public readonly incomingFileDownload: string		= `Download File`;
 
 	/** @see StringsService */
 	public readonly incomingFileSave: string			=
@@ -267,6 +260,16 @@ export class StringsService {
 	/** @see StringsService */
 	public readonly incomingFileSaveError: string		=
 		`Failed to save the following file:`
+	;
+
+	/** @see StringsService */
+	public readonly incomingFileSaveImageError: string	=
+		`Failed to download this image.`
+	;
+
+	/** @see StringsService */
+	public readonly incomingFileUploadError: string		=
+		`Failed to upload the following file:`
 	;
 
 	/** @see StringsService */

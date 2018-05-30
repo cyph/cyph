@@ -66,6 +66,7 @@ export class ChatMessage implements IChatMessage {
 	/** @ignore */
 	public value?: IChatMessageValue&{failure?: boolean}	= this.message.value && {
 		calendarInvite: this.message.value.calendarInvite,
+		fileTransfer: this.message.value.fileTransfer,
 		form: this.message.value.form,
 		quill: this.message.value.quill,
 		text: this.message.value.text
@@ -114,6 +115,10 @@ export class ChatMessage implements IChatMessage {
 			if (this.value.calendarInvite) {
 				this.message.value.calendarInvite	= undefined;
 				this.value.calendarInvite			= undefined;
+			}
+			if (this.value.fileTransfer) {
+				this.message.value.fileTransfer		= undefined;
+				this.value.fileTransfer				= undefined;
 			}
 			if (this.value.form) {
 				this.message.value.form				= undefined;

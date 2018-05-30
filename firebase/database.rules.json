@@ -51,23 +51,6 @@
 						}
 					},
 
-					"lock": {
-						"$contender": {
-							"claimTimestamp": {
-								".validate": "newData.val() === now"
-							},
-							"id": {
-								".validate": "newData.isString()"
-							},
-							"reason": {
-								".validate": "newData.isString()"
-							},
-							"timestamp": {
-								".validate": "newData.val() === now"
-							}
-						}
-					},
-
 					"messages": {
 						"$message": {
 							"data": {
@@ -117,7 +100,7 @@
 			"fileTransfers": {
 				"$file": {
 					".read": true,
-					".write": true,
+					".write": "!data.exists() && newData.exists()",
 
 					"data": {
 						".validate": "newData.isString()"
@@ -131,27 +114,10 @@
 				}
 			},
 
-			"messageValues": {
-				"$messageValue": {
+			"fileTransfersEphemeral": {
+				"$file": {
 					".read": true,
-					".write": true,
-
-					"data": {
-						".validate": "newData.isString()"
-					},
-					"hash": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					}
-				}
-			},
-
-			"messageValuesEphemeral": {
-				"$messageValue": {
-					".read": true,
-					".write": true,
+					".write": "!data.exists() && newData.exists()",
 
 					"data": {
 						".validate": "newData.isString()"
@@ -177,6 +143,62 @@
 				}
 			},
 
+			"locks": {
+				".read": true,
+				".write": true,
+
+				"$lock": {
+					"$contender": {
+						"claimTimestamp": {
+							".validate": "newData.val() === now"
+						},
+						"id": {
+							".validate": "newData.isString()"
+						},
+						"reason": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				}
+			},
+
+			"messageValues": {
+				"$messageValue": {
+					".read": true,
+					".write": "!data.exists() && newData.exists()",
+
+					"data": {
+						".validate": "newData.isString()"
+					},
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				}
+			},
+
+			"messageValuesEphemeral": {
+				"$messageValue": {
+					".read": true,
+					".write": "!data.exists() && newData.exists()",
+
+					"data": {
+						".validate": "newData.isString()"
+					},
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				}
+			},
+
 			"pendingSignups": {
 				"$username": {
 					"timestamp": {
@@ -184,26 +206,6 @@
 					},
 					"uid": {
 						".validate": "newData.isString()"
-					}
-				}
-			},
-
-			"pushlocks": {
-				"$contender": {
-					".read": true,
-					".write": true,
-
-					"claimTimestamp": {
-						".validate": "newData.val() === now"
-					},
-					"id": {
-						".validate": "newData.isString()"
-					},
-					"reason": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
 					}
 				}
 			},

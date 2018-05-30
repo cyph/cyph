@@ -42,6 +42,7 @@ export class MockDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public downloadItem<T> (url: string, proto: IProto<T>) : {
+		alreadyCached: Promise<boolean>;
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
@@ -59,7 +60,7 @@ export class MockDatabaseService extends DatabaseService {
 			};
 		})();
 
-		return {progress, result};
+		return {alreadyCached: Promise.resolve(false), progress, result};
 	}
 
 	/** @inheritDoc */
@@ -81,6 +82,6 @@ export class MockDatabaseService extends DatabaseService {
 	}
 
 	constructor (envService: EnvService) {
-		super(envService, <any> undefined);
+		super(envService, <any> undefined, <any> undefined);
 	}
 }
