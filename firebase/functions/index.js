@@ -110,7 +110,7 @@ exports.environmentUnlock	= functions.https.onRequest((req, res) => cors(req, re
 			throw new Error('Invalid data.');
 		}
 
-		const ref	= database.ref(`${namespace}/lockdownIds/${id}`);
+		const ref	= database.ref(`${namespace}/lockdownIDs/${id}`);
 		res.send((await ref.once('value')).val() || '');
 	}
 	catch (err) {

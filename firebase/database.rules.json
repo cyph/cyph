@@ -137,8 +137,8 @@
 				}
 			},
 
-			"lockdownIds": {
-				"$lockdownId": {
+			"lockdownIDs": {
+				"$lockdownID": {
 					".validate": "newData.isString()"
 				}
 			},
