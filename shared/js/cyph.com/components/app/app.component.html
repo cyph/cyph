@@ -678,38 +678,40 @@
 						<div class='text'>
 							<p>
 								<span cyphTranslate>
-									Cyph is end-to-end encrypted using our patent-pending
+									Cyph is end-to-end encrypted using our patented
 								</span>
 								&ngsp;
+								<!-- TODO: Make an up-to-date version of this doc in WordPress -->
 								<a
 									target='_blank'
 									href='https://cyph.team/castleprotocoldoc'
 									cyphTranslate
 								>Castle messaging protocol</a>.
+							</p>
+							<p>
+								<span cyphTranslate>
+									Castle is a derivative of Signal Protocol, with the
+									unique enhancement of resistance to
+								</span>
+								<a
+									target='_blank'
+									[href]='
+										"https://www.zdnet.com/article/ibm-warns-of-instant-" +
+										"breaking-of-encryption-by-quantum-computers-move-your-" +
+										"data-today"
+									'
+									cyphTranslate
+								>quantum computing attacks</a>.
 								&ngsp;
 								<span cyphTranslate>
-									Castle is an encryption protocol inspired by the classic
+									Castle's quantum-resistant security is built around
 								</span>
 								&ngsp;
 								<a
 									target='_blank'
-									href='https://en.wikipedia.org/wiki/Off-the-Record_Messaging'
-								>Off-the-Record (OTR)</a>,
-								&ngsp;
-								<span cyphTranslate>
-									with a number of architectural details influenced by
-									Open Whisper Systems' Signal Protocol &mdash; such as
-									the use of elliptic curves (ECDH/Curve25519).
-								</span>
-							</p>
-							<p>
-								<span cyphTranslate>
-									The major departure that Castle takes from these other
-									solutions is that it's been designed to theoretically
-									withstand an attack from a quantum computer running
-									Shor's algorithm (50 - 100 years from now). This is thanks to
-								</span>
-								&ngsp;
+									href='https://en.wikipedia.org/wiki/McEliece_cryptosystem'
+									cyphTranslate
+								>McEliece</a>,
 								<a
 									target='_blank'
 									[href]='
@@ -717,14 +719,24 @@
 										"chat-communication-platform"
 									'
 									cyphTranslate
-								>our incorporation of the post-quantum cipher NTRU</a>,
+								>NTRU</a>,
+								<a
+									target='_blank'
+									href='https://en.wikipedia.org/wiki/Ring_learning_with_errors'
+									cyphTranslate
+								>RLWE</a>,
+								&ngsp;
+								<span cyphTranslate>and</span>
+								&ngsp;
+								<a
+									target='_blank'
+									href='https://sphincs.cr.yp.to'
+									cyphTranslate
+								>SPHINCS</a>.
 								&ngsp;
 								<span cyphTranslate>
-									along with lower-level details such as a unique public key
-									authentication technique that mitigates the theoretical
-									strengths of a quantum computer. This helps ensure that your
-									now-private conversations won't one day suddenly become
-									public after an accident of science.
+									This helps ensure that your now-private conversations won't
+									one day suddenly become public after an accident of science.
 								</span>
 							</p>
 							<p>
@@ -788,11 +800,6 @@
 									assured by means of a fingerprint exchange via WebRTC
 									signaling within the original Castle session.
 								</span>
-							</p>
-							<p cyphTranslate>
-								File transfers are encrypted symmetrically using a one-time
-								XSalsa20 key, which is distributed from the sender to any
-								recipients through Castle.
 							</p>
 							<p cyphTranslate>
 								Important note: unlike file transfers and standard Cyph messages,
