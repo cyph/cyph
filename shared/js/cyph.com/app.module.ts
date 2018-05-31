@@ -27,6 +27,7 @@ import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {HtmlSanitizerService} from '../cyph/services/html-sanitizer.service';
+import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {NotificationService} from '../cyph/services/notification.service';
 import {resolveStaticServices} from '../cyph/util/static-services';
 import {appRoutes} from './app-routes';
@@ -69,6 +70,7 @@ import {SilentNotificationService} from './silent-notification.service';
 	providers: [
 		AppService,
 		DemoService,
+		LocalStorageService,
 		{
 			provide: DatabaseService,
 			useClass: MockDatabaseService

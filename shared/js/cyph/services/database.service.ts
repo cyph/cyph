@@ -438,15 +438,15 @@ export class DatabaseService extends DataManagerService {
 	 * @returns Item database hash and URL.
 	 */
 	public async setItem<T> (
-		_URL: MaybePromise<string>,
-		_PROTO: IProto<T>,
-		_VALUE: T,
-		_NO_BLOB_STORAGE?: boolean
+		url: MaybePromise<string>,
+		proto: IProto<T>,
+		value: T,
+		noBlobStorage?: boolean
 	) : Promise<{
 		hash: string;
 		url: string;
 	}> {
-		throw new Error('Must provide an implementation of DatabaseService.setItem.');
+		return this.uploadItem(url, proto, value, noBlobStorage).result;
 	}
 
 	/** Sets a list's value. */
