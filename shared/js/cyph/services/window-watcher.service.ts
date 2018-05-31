@@ -26,7 +26,7 @@ export class WindowWatcherService {
 	);
 
 	/** Indicates whether the window is currently visible. */
-	public readonly visibility: BehaviorSubject<boolean>	= new BehaviorSubject(true);
+	public readonly visibility: BehaviorSubject<boolean>	= new BehaviorSubject(!document.hidden);
 
 	/** Window width. */
 	public readonly width: BehaviorSubject<number>			= new BehaviorSubject(
