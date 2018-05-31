@@ -309,6 +309,10 @@ pre, code {
 	}
 }
 
+mat-icon.gdpr {
+	@include icon-size(42px);
+}
+
 @include keyframes(breathe) {
 	0%, 100% {
 		@include filter(brightness(1));

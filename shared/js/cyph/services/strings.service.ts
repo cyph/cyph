@@ -243,6 +243,23 @@ export class StringsService {
 	public readonly here: string						= `here`;
 
 	/** @see StringsService */
+	public readonly gdprContactForm: string				=
+		`I understand that this form is email-based (NOT ${this.internalProduct} encryption) ` +
+		`and provide consent for ${this.internalCompany} to store any information submitted herein.`
+	;
+
+	/** @see StringsService */
+	public readonly gdprContactFormShort: string		=
+		`Data Collection Consent`
+	;
+
+	/** @see StringsService */
+	public readonly gdprSignupForm: string				=
+		`By submitting your email address and/or name to the waitlist, you consent ` +
+		`for ${this.internalCompany} to view and store this data.`
+	;
+
+	/** @see StringsService */
 	public readonly incomingAppointments: string		= `Incoming Appointment Requests`;
 
 	/** @see StringsService */
