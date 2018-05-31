@@ -78,13 +78,13 @@ export class DemoChatRootComponent implements OnInit {
 			}
 		});
 
-		this.data.scrollDown.subscribe(async () => {
-			this.scrollService.scrollDown();
-		});
+		this.data.scrollDown.subscribe(async () =>
+			this.scrollService.scrollDown()
+		);
 
-		this.data.showCyphertext.subscribe(() => {
-			this.cyphertextService.show();
-		});
+		this.data.showCyphertext.subscribe(async () =>
+			this.cyphertextService.show()
+		);
 
 		/* Cyphertext easter egg */
 		if (this.cyphertextService.isEnabled) {

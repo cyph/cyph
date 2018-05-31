@@ -189,7 +189,7 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 		if (
 			this.unconfirmedMessages === undefined ||
 			this.message !== changes.message.currentValue ||
-			this.scrollService.isRead(this.message.id)
+			(await this.scrollService.isRead(this.message.id))
 		) {
 			return;
 		}
@@ -200,7 +200,7 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 		await ChatMessageComponent.appeared.pipe(filter(arr => arr.has(id)), take(1)).toPromise();
 
 		if (this.message === changes.message.currentValue) {
-			this.scrollService.setRead(this.message.id);
+			await this.scrollService.setRead(this.message.id);
 		}
 	}
 
