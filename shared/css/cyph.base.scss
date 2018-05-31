@@ -203,6 +203,7 @@ mat-card-title {
 /* Temporary workaround for Material bug */
 mat-progress-bar > svg.mat-progress-bar-background {
 	visibility: hidden;
+	pointer-events: none;
 }
 
 od-virtualscroll, od-virtualrow {
@@ -251,6 +252,7 @@ button, [mat-button], [mat-raised-button] {
 
 .visibility-hidden {
 	visibility: hidden;
+	pointer-events: none;
 }
 
 blockquote {
