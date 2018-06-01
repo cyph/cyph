@@ -4,6 +4,18 @@
 		".write": false,
 
 		"$namespace": {
+			"certificateHistory": {
+				"data": {
+					".validate": "newData.isString()"
+				},
+				"hash": {
+					".validate": "newData.isString()"
+				},
+				"timestamp": {
+					".validate": "newData.val() === now"
+				}
+			},
+
 			"channels": {
 				"$channel": {
 					".read": true,
