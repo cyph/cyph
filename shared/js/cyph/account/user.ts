@@ -151,7 +151,7 @@ export class User {
 		public readonly username: string,
 
 		/** Contact ID. */
-		public readonly contactID: string,
+		public readonly contactID: Promise<string>,
 
 		/** @ignore */
 		private readonly avatarInternal: Observable<SafeUrl|string|undefined>,

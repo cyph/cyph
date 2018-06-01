@@ -66,7 +66,7 @@
 							<a [routerLink]='
 								accountService.routeRoot +
 								"messages/" +
-								(recipient | async)?.contactID
+								((recipient | async)?.contactID | async)
 							'>
 								{{(recipient | async)?.name | async}}
 								(@{{(recipient | async)?.realUsername | async}})

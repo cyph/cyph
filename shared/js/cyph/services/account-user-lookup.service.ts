@@ -118,7 +118,7 @@ export class AccountUserLookupService {
 
 					return new User(
 						username,
-						await this.accountContactsService.getContactID(username),
+						this.accountContactsService.getContactID(username),
 						this.accountDatabaseService.watch(
 							`${url}/avatar`,
 							DataURIProto,
