@@ -125,7 +125,11 @@ service firebase.storage {
 
 				// match /certificateRequest/{hash} {}
 
-				// match /contactUsernames/{username}/{hash} {}
+				// match /contactIDs/{username}/{hash} {}
+
+				// match /contacts/{username}/{hash} {}
+
+				// match /contactUsernames/{id}/{hash} {}
 
 				match /coverImage/{hash} {
 					allow read;

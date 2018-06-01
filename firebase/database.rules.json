@@ -549,8 +549,36 @@
 						}
 					},
 
-					"contactUsernames": {
+					"contactIDs": {
 						"$username": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"contacts": {
+						"$username": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"contactUsernames": {
+						"$id": {
 							"data": {
 								".validate": "newData.isString()"
 							},
