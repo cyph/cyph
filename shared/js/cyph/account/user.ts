@@ -150,6 +150,9 @@ export class User {
 		/** Username (all lowercase). */
 		public readonly username: string,
 
+		/** Contact ID. */
+		public readonly contactID: string,
+
 		/** @ignore */
 		private readonly avatarInternal: Observable<SafeUrl|string|undefined>,
 

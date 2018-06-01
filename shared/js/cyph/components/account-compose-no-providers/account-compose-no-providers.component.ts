@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AccountChatService} from '../../services/account-chat.service';
+import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service';
@@ -28,6 +29,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 		activatedRoute: ActivatedRoute,
 		router: Router,
 		accountChatService: AccountChatService,
+		accountContactsService: AccountContactsService,
 		accountFilesService: AccountFilesService,
 		chatMessageGeometryService: ChatMessageGeometryService,
 		scrollService: ScrollService,
@@ -41,6 +43,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 			activatedRoute,
 			router,
 			accountChatService,
+			accountContactsService,
 			accountFilesService,
 			chatMessageGeometryService,
 			scrollService,

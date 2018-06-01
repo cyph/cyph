@@ -1,13 +1,15 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {map, mergeMap, skip, take} from 'rxjs/operators';
+import {mergeMap, skip, take} from 'rxjs/operators';
 import {IContactListItem, SecurityModels, User} from '../account';
+import {IResolvable} from '../iresolvable';
 import {BinaryProto, StringProto} from '../proto';
 import {filterUndefined} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
 import {uuid} from '../util/uuid';
+import {resolvable} from '../util/wait';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
@@ -19,14 +21,21 @@ import {DatabaseService} from './database.service';
  */
 @Injectable()
 export class AccountContactsService {
+	/** @ignore */
+	private readonly accountUserLookupService: IResolvable<AccountUserLookupService>	=
+		resolvable()
+	;
+
 	/** List of contacts for current user, sorted alphabetically by username. */
 	public readonly contactList: Observable<(IContactListItem|User)[]>	= toBehaviorSubject(
-		this.accountDatabaseService.watchListKeys('contacts').pipe(map(usernames =>
-			normalizeArray(usernames).map(username => ({
-				user: this.accountUserLookupService.getUser(username),
+		this.accountDatabaseService.watchListKeys('contacts').pipe(mergeMap(async usernames => {
+			const accountUserLookupService	= await this.accountUserLookupService.promise;
+
+			return normalizeArray(usernames).map(username => ({
+				user: accountUserLookupService.getUser(username),
 				username
-			}))
-		)),
+			}));
+		})),
 		[]
 	);
 
@@ -93,7 +102,7 @@ export class AccountContactsService {
 	);
 
 	/** Gets contact username based on ID. */
-	public readonly getContactUsername	= memoize(async (id: string) : Promise<string> => {
+	public readonly getContactUsername	= memoize(async (id?: string) : Promise<string> => {
 		return this.accountDatabaseService.getItem(
 			`contactUsernames/${id}`,
 			StringProto,
@@ -121,6 +130,11 @@ export class AccountContactsService {
 				SecurityModels.unprotected
 			);
 		}
+	}
+
+	/** Initializes service. */
+	public init (accountUserLookupService: AccountUserLookupService) : void {
+		this.accountUserLookupService.resolve(accountUserLookupService);
 	}
 
 	/** Indicates whether the user is already a contact. */
@@ -151,9 +165,6 @@ export class AccountContactsService {
 	constructor (
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
-
-		/** @ignore */
-		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService,

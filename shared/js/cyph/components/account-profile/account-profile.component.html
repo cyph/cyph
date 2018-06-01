@@ -33,7 +33,7 @@
 			cyphTranslate
 			class='animated flipInX _4'
 			matTooltip='New Message'
-			[routerLink]='accountService.routeRoot + "compose/" + user?.username'
+			[routerLink]='accountService.routeRoot + "compose/" + user?.contactID'
 		>
 			<mat-icon>email</mat-icon>
 		</button>
@@ -43,7 +43,7 @@
 			cyphTranslate
 			class='animated flipInX _4'
 			matTooltip='Open Messages'
-			[routerLink]='accountService.routeRoot + "messages/" + user?.username'
+			[routerLink]='accountService.routeRoot + "messages/" + user?.contactID'
 		>
 			<mat-icon>message</mat-icon>
 		</button>
@@ -57,7 +57,7 @@
 			cyphTranslate
 			matTooltip='New Message'
 			[routerLink]='
-				accountService.routeRoot + "compose/" + user?.username
+				accountService.routeRoot + "compose/" + user?.contactID
 			'
 		>
 			<mat-icon>email</mat-icon>
@@ -68,7 +68,7 @@
 			cyphTranslate
 			matTooltip='Open Messages'
 			[routerLink]='
-				accountService.routeRoot + "messages/" + user?.username
+				accountService.routeRoot + "messages/" + user?.contactID
 			'
 		>
 			<mat-icon>message</mat-icon>
@@ -416,7 +416,7 @@
 								[routerLink]='
 									accountService.routeRoot +
 									"request-appointment/" +
-									user?.username
+									user?.contactID
 								'
 								matTooltip='Request Appointment'
 							>

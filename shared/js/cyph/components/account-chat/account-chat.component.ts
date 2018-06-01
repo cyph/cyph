@@ -39,7 +39,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	private initiatedAppointmentID?: string;
 
 	/** @ignore */
-	private initiatedUsername?: string;
+	private initiatedContactID?: string;
 
 	/** Appointment data, when applicable. */
 	public readonly appointment: BehaviorSubject<(IAppointment&{id: string})|undefined>	=
@@ -115,11 +115,11 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 				this.activatedRoute.url
 		))).subscribe(async ([
 			{callType, ephemeralSubSession, promptFollowup},
-			{appointmentID, sessionSubID, username},
+			{appointmentID, contactID, sessionSubID},
 			[{path}]
 		]: [
 			{callType?: 'audio'|'video'; ephemeralSubSession?: boolean; promptFollowup?: boolean},
-			{appointmentID?: string; sessionSubID?: string; username?: string},
+			{appointmentID?: string; contactID?: string; sessionSubID?: string},
 			UrlSegment[]
 		]) => lock(async () => {
 			if (this.destroyed) {
@@ -135,9 +135,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 					return;
 				}
 
-				if (this.initiatedUsername) {
-					if (username && this.initiatedUsername !== username) {
-						await this.navigate(path, username);
+				if (this.initiatedContactID) {
+					if (contactID && this.initiatedContactID !== contactID) {
+						await this.navigate(path, contactID);
 					}
 
 					return;
@@ -166,27 +166,29 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 					sessionSubID	= appointmentID;
 
-					username		= appointment.participants === undefined ?
-						undefined :
-						appointment.participants.find(participant =>
-							this.accountDatabaseService.currentUser.value !== undefined &&
-							this.accountDatabaseService.currentUser.value.user.username !==
-								normalize(participant)
-						)
-					;
+					contactID		= await this.accountContactsService.getContactID(
+						appointment.participants === undefined ?
+							undefined :
+							appointment.participants.find(participant =>
+								this.accountDatabaseService.currentUser.value !== undefined &&
+								(
+									this.accountDatabaseService.currentUser.value.user.username
+								) !== normalize(participant)
+							)
+					);
 
 					this.appointment.next(appointment);
 				}
 
 				this.initiatedAppointmentID	= appointmentID;
-				this.initiatedUsername		= username;
+				this.initiatedContactID		= contactID;
 
-				if (!username) {
+				if (!contactID) {
 					return;
 				}
 
 				await this.accountChatService.setUser(
-					username.split(','),
+					contactID.split(','),
 					undefined,
 					callType,
 					sessionSubID,
@@ -202,7 +204,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 						this.router.navigate(
 							appointmentID ?
 								[accountRoot, 'appointments', appointmentID, 'end'] :
-								[accountRoot, 'messages', username]
+								[accountRoot, 'messages', contactID]
 						);
 
 						if (appointment && appointmentID) {
@@ -220,7 +222,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			}
 			finally {
 				if (promptFollowup) {
-					this.promptFollowup.next(username || this.initiatedUsername);
+					this.promptFollowup.next(contactID || this.initiatedContactID);
 				}
 				else {
 					this.promptFollowup.next(undefined);

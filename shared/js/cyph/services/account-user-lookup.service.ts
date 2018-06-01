@@ -14,6 +14,7 @@ import {
 import {normalize} from '../util/formatting';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
+import {AccountContactsService} from './account-contacts.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 import {EnvService} from './env.service';
@@ -117,6 +118,7 @@ export class AccountUserLookupService {
 
 					return new User(
 						username,
+						await this.accountContactsService.getContactID(username),
 						this.accountDatabaseService.watch(
 							`${url}/avatar`,
 							DataURIProto,
@@ -229,6 +231,9 @@ export class AccountUserLookupService {
 
 	constructor (
 		/** @ignore */
+		private readonly accountContactsService: AccountContactsService,
+
+		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
@@ -236,5 +241,7 @@ export class AccountUserLookupService {
 
 		/** @ignore */
 		private readonly envService: EnvService
-	) {}
+	) {
+		this.accountContactsService.init(this);
+	}
 }

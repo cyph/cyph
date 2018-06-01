@@ -111,7 +111,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** Overrides showDisconnectMessage and always displays the end message. */
 	@Input() public persistentEndMessage: boolean		= false;
 
-	/** Username for follow-up appointment button. */
+	/** Contact ID for follow-up appointment button. */
 	@Input() public promptFollowup?: string;
 
 	/** Indicates whether disconnect message should be displayed. */

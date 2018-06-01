@@ -65,7 +65,7 @@ export const account: Route	= {
 		},
 		{path: 'appointments/:appointmentID/forms/:id', component: AccountFormComponent},
 		{
-			path: 'audio/:username/:sessionSubID',
+			path: 'audio/:contactID/:sessionSubID',
 			component: AccountChatComponent,
 			data: {
 				callType: 'audio',
@@ -79,7 +79,7 @@ export const account: Route	= {
 			data: {messageType: ChatMessageValue.Types.Quill}
 		},
 		{
-			path: 'compose/:username',
+			path: 'compose/:contactID',
 			component: AccountComposeComponent,
 			data: {messageType: ChatMessageValue.Types.Quill}
 		},
@@ -102,10 +102,10 @@ export const account: Route	= {
 		{path: 'home', redirectTo: ''},
 		{path: 'incoming-patient-info', component: AccountIncomingPatientInfoComponent},
 		{path: 'logout', component: AccountLogoutComponent},
-		{path: 'messages/:username', component: AccountChatComponent},
-		{path: 'messages/:username/:sessionSubID', component: AccountChatComponent},
+		{path: 'messages/:contactID', component: AccountChatComponent},
+		{path: 'messages/:contactID/:sessionSubID', component: AccountChatComponent},
 		{
-			path: 'messages/ephemeral/:username/:sessionSubID',
+			path: 'messages/ephemeral/:contactID/:sessionSubID',
 			component: AccountChatComponent,
 			data: {ephemeralSubSession: true}
 		},
@@ -151,12 +151,12 @@ export const account: Route	= {
 			data: {messageType: ChatMessageValue.Types.CalendarInvite}
 		},
 		{
-			path: 'request-appointment/:username',
+			path: 'request-appointment/:contactID',
 			component: AccountComposeComponent,
 			data: {messageType: ChatMessageValue.Types.CalendarInvite}
 		},
 		{
-			path: 'request-followup/:username',
+			path: 'request-followup/:contactID',
 			component: AccountComposeComponent,
 			data: {messageType: ChatMessageValue.Types.CalendarInvite, appointmentFollowUp: true}
 		},
@@ -171,7 +171,7 @@ export const account: Route	= {
 			component: UploadEhrCredentialsComponent
 		},
 		{
-			path: 'video/:username/:sessionSubID',
+			path: 'video/:contactID/:sessionSubID',
 			component: AccountChatComponent,
 			data: {
 				callType: 'video',
