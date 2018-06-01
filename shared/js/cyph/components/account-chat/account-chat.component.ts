@@ -188,7 +188,10 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 				}
 
 				await this.accountChatService.setUser(
-					contactID.split(','),
+					contactID.indexOf(',') > -1 ?
+						contactID.split(',') :
+						await this.accountContactsService.getContactUsername(contactID)
+					,
 					undefined,
 					callType,
 					sessionSubID,
