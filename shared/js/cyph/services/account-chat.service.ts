@@ -90,7 +90,9 @@ export class AccountChatService extends ChatService {
 		ephemeralSubSession: boolean = false
 	) : Promise<void> {
 		username	= this.accountSessionService.normalizeUsername(username);
-		const url	= `castleSessions/${await this.accountContactsService.addContact(username)}`;
+		const url	= `castleSessions/${
+			await this.accountContactsService.getCastleSessionID(username)
+		}`;
 
 		this.accountSessionInitService.callType	= callType || this.envService.callType;
 

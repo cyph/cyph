@@ -8,9 +8,11 @@ import {filterDuplicatesOperator, filterUndefined} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
+import {uuid} from '../util/uuid';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {DatabaseService} from './database.service';
 
 
 /**
@@ -93,6 +95,30 @@ export class AccountContactsService {
 		return id;
 	}
 
+	/**
+	 * Gets Castle session ID based on username.
+	 * Note: string array parameter is temporary/deprecated.
+	 */
+	public async getCastleSessionID (username: string|string[]) : Promise<string> {
+		const currentUserUsername	=
+			(await this.accountDatabaseService.getCurrentUser()).user.username
+		;
+
+		if (username instanceof Array) {
+			return this.potassiumService.toHex(await this.potassiumService.hash.hash(
+				normalizeArray([currentUserUsername, ...username]).join(' ')
+			));
+		}
+
+		const [userA, userB]		= normalizeArray([currentUserUsername, username]);
+
+		return this.databaseService.getOrSetDefault(
+			`castleSessionIDs/${userA}/${userB}`,
+			StringProto,
+			() => uuid(true)
+		);
+	}
+
 	/** Gets contact ID based on username. */
 	public async getContactID (username: string|string[]) : Promise<string> {
 		const currentUserUsername	=
@@ -156,7 +182,10 @@ export class AccountContactsService {
 		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
-		private readonly potassiumService: PotassiumService
+		private readonly potassiumService: PotassiumService,
+
+		/** @ignore */
+		private readonly databaseService: DatabaseService
 	) {
 		this.accountDatabaseService.getListKeys('contactUsernames').then(keys => {
 			if (keys.length < 1) {

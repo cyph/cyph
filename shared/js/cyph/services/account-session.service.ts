@@ -170,7 +170,8 @@ export class AccountSessionService extends SessionService {
 
 			this.sessionSubID	=
 				`group-${
-					await this.accountContactsService.getContactID(username)
+					/* TODO: Kill username-based group chat route and share a file with a UUID */
+					await this.accountContactsService.getCastleSessionID(username)
 				}${
 					this.sessionSubID ? `-${this.sessionSubID}` : ''
 				}`
@@ -186,7 +187,7 @@ export class AccountSessionService extends SessionService {
 
 			/*
 				Handle events on individual pairwise sessions and perform equivalent behavior.
-				Note: rpcEvents.typing is ignored for now.
+				Note: rpcEvents.typing is ignored because it's unsupported in accounts.
 			*/
 
 			const confirmations	= new Map<string, Set<AccountSessionService>>();
@@ -244,7 +245,9 @@ export class AccountSessionService extends SessionService {
 		/* Pairwise session init */
 
 		(async () => {
-			const contactID			= await this.accountContactsService.getContactID(username);
+			const castleSessionID	=
+				await this.accountContactsService.getCastleSessionID(username)
+			;
 
 			if (ephemeralSubSession) {
 				if (!this.sessionSubID) {
@@ -255,14 +258,14 @@ export class AccountSessionService extends SessionService {
 
 				this.init(this.potassiumService.toHex(
 					await this.potassiumService.hash.hash(
-						`${contactID}-${this.sessionSubID}`
+						`${castleSessionID}-${this.sessionSubID}`
 					)
 				));
 
 				return;
 			}
 
-			const sessionURL		= `castleSessions/${contactID}/session`;
+			const sessionURL		= `castleSessions/${castleSessionID}/session`;
 			const symmetricKeyURL	= `${sessionURL}/symmetricKey`;
 
 			this.incomingMessageQueue		= this.accountDatabaseService.getAsyncList(
@@ -279,7 +282,7 @@ export class AccountSessionService extends SessionService {
 				`${sessionURL}/incomingMessageQueueLock${sessionSubID ? `/${sessionSubID}` : ''}`
 			);
 
-			this.init(contactID, await this.accountDatabaseService.getOrSetDefault(
+			this.init(castleSessionID, await this.accountDatabaseService.getOrSetDefault(
 				`${sessionURL}/channelUserID`,
 				StringProto,
 				() => uuid(true),
