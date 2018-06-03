@@ -99,9 +99,10 @@ mkdir node_modules js css
 
 if [ "${serviceWorker}" ] || [ "${test}" ] ; then
 	node -e 'console.log(
-		fs.readFileSync("../../websign/serviceworker.js").toString().
-			split("/*** Non-WebSign-specific ***/")
-		[1]
+		fs.readFileSync("../../websign/serviceworker.js").toString().replace(
+			"/* Redirect non-whitelisted paths in this origin */",
+			"if (url.indexOf(\".\") > -1) { urls[url] = true; }"
+		)
 	)' \
 		> serviceworker.js
 fi

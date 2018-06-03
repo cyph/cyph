@@ -25,6 +25,8 @@ var files	= [
 	return new Request(file);
 });
 
+var urls	= files.reduce(function (o, file) { o[file.url] = true; return o; }, {});
+
 var root	= files[0].url.replace(/(.*)\/$/, '$1');
 
 
@@ -52,13 +54,9 @@ self.addEventListener('fetch', function (e) {
 		return;
 	}
 
-	/* Block non-whitelisted paths in this origin */
-	if (
-		files.filter(function (file) {
-			return url === file.url;
-		}).length < 1
-	) {
-		return e.respondWith(new Response('', {status: 404}));
+	/* Redirect non-whitelisted paths in this origin */
+	if (!(url in urls)) {
+		return e.respondWith(Response.redirect(root + '/#' + url.slice(root.length + 1), 301));
 	}
 
 	return e.respondWith(
@@ -81,9 +79,6 @@ self.addEventListener('fetch', function (e) {
 		})
 	);
 });
-
-
-/*** Non-WebSign-specific ***/
 
 self.addEventListener('install', function (e) {
 	e.waitUntil(self.skipWaiting());

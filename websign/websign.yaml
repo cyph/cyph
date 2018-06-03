@@ -20,10 +20,18 @@ handlers:
   # default_headers Strict-Transport-Security
 
 
-# Else
+# Subresources
 
 - url: /(.*)
   static_files: \1
   upload: .*
+  secure: always
+  # default_headers Strict-Transport-Security
+
+
+# Else
+
+- url: /.*
+  script: redirect.py
   secure: always
   # default_headers Strict-Transport-Security
