@@ -1633,7 +1633,7 @@ message SessionMessageList {
 	repeated SessionMessage messages = 1;
 }
 
-/** Array of session message data objectss. */
+/** Array of session message data objects. */
 message SessionMessageDataList {
 	/** Message data objects. */
 	repeated SessionMessageData messages = 1;
