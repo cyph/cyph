@@ -45,6 +45,10 @@ function webSignSRI_Process (baseUrl) {
 		var isDataResource	= getAndRemoveAttribute(elem, 'websign-sri-data') !== null;
 		var localStorageKey	= 'websign-sri-cache/' + expectedHash;
 
+		if (!expectedHash || !path) {
+			return;
+		}
+
 		var fetchContent	= function (retries) {
 			return fetch(
 				baseUrl +
