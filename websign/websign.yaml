@@ -22,9 +22,9 @@ handlers:
 
 # Subresources
 
-- url: /(.*)
-  static_files: \1
-  upload: .*
+- url: /SUBRESOURCE
+  static_files: SUBRESOURCE
+  upload: SUBRESOURCE
   secure: always
   # default_headers Strict-Transport-Security
 
@@ -32,6 +32,5 @@ handlers:
 # Else
 
 - url: /.*
-  script: redirect.py
+  script: redirect.app
   secure: always
-  # default_headers Strict-Transport-Security
