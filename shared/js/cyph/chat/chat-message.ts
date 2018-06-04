@@ -46,7 +46,7 @@ export class ChatMessage implements IChatMessage {
 	public key?: Uint8Array								= this.message.key;
 
 	/** @inheritDoc */
-	public predecessor?: IChatMessagePredecessor		= this.message.predecessor;
+	public predecessors?: IChatMessagePredecessor[]		= this.message.predecessors;
 
 	/** @inheritDoc */
 	public selfDestructTimeout?: number					= this.message.selfDestructTimeout;

@@ -434,8 +434,8 @@ message ChatMessage {
 	/** Key to decrypt an externally contained message value. */
 	bytes key = 10;
 
-	/** If specified, this message will be ignored until the described predecessor is found. */
-	ChatMessagePredecessor predecessor = 11;
+	/** If specified, this message will be ignored until the described predecessors are found. */
+	repeated ChatMessagePredecessor predecessors = 12;
 
 	/** @see SessionText.selfDestructTimeout */
 	uint32 selfDestructTimeout = 5;
@@ -1650,8 +1650,8 @@ message SessionText {
 	/** @see ChatMessage.key */
 	required bytes key = 6;
 
-	/** @see ChatMessage.predecessor */
-	ChatMessagePredecessor predecessor = 7;
+	/** @see ChatMessage.predecessors */
+	repeated ChatMessagePredecessor predecessors = 8;
 
 	/** Indicates whether entire chat should be self-destructed (only valid for first message). */
 	bool selfDestructChat = 2;

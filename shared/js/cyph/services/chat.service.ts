@@ -124,7 +124,7 @@ export class ChatService {
 		messagePromises: [
 			Promise<IChatMessage>,
 			Promise<IChatMessageLine[]>,
-			Promise<IChatMessagePredecessor|undefined>,
+			Promise<IChatMessagePredecessor[]|undefined>,
 			Promise<Uint8Array>
 		];
 		resolve: () => void;
@@ -160,12 +160,20 @@ export class ChatService {
 			return;
 		}
 
-		if (
-			o.text.predecessor &&
-			!(await this.messageHasValidHash(o.text.predecessor.id, o.text.predecessor.hash))
-		) {
+		const unobservedPredecessors	= o.text.predecessors && o.text.predecessors.length > 0 ?
+			(await Promise.all(o.text.predecessors.map(async predecessor => ({
+				hasValidHash: await this.messageHasValidHash(predecessor.id, predecessor.hash),
+				predecessor
+			})))).
+				filter(unobservedPredecessor => !unobservedPredecessor.hasValidHash).
+				map(unobservedPredecessor => unobservedPredecessor.predecessor)
+			:
+			undefined
+		;
+
+		if (unobservedPredecessors && unobservedPredecessors.length > 0) {
 			return this.chat.futureMessages.updateItem(
-				o.text.predecessor.id,
+				unobservedPredecessors[0].id,
 				async futureMessages => ({
 					messages: futureMessages && futureMessages.messages ?
 						futureMessages.messages.concat(o) :
@@ -223,7 +231,7 @@ export class ChatService {
 			o.id,
 			o.text.hash,
 			o.text.key,
-			o.text.predecessor
+			o.text.predecessors
 		);
 
 		await this.chat.futureMessages.updateItem(o.id, async futureMessages => {
@@ -380,7 +388,7 @@ export class ChatService {
 		messageID?: string,
 		hash?: Uint8Array,
 		key?: Uint8Array,
-		predecessor?: IChatMessagePredecessor
+		predecessors?: IChatMessagePredecessor[]
 	) : Promise<void> {
 		const messageValues	=
 			this.sessionInitService.ephemeral && author === this.sessionService.appUsername ?
@@ -442,7 +450,7 @@ export class ChatService {
 			,
 			dimensions,
 			id,
-			predecessor,
+			predecessors,
 			selfDestructTimeout,
 			sessionSubID: this.sessionService.sessionSubID,
 			timestamp
@@ -760,23 +768,34 @@ export class ChatService {
 			).dimensions || []
 		)();
 
-		const predecessorPromise	= (async () : Promise<IChatMessagePredecessor|undefined> => {
+		const predecessorsPromise	= (async () : Promise<IChatMessagePredecessor[]|undefined> => {
+			let lastLocal: IChatMessagePredecessor|undefined;
+			let lastRemote: IChatMessagePredecessor|undefined;
+
 			const messageIDs	= await this.chat.messageList.getValue();
 
 			for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
 				const o	= await this.chat.messages.getItem(messageIDs[i]);
 
+				const isLocal	= !lastLocal && o.authorType === ChatMessage.AuthorTypes.Local;
+				const isRemote	= !lastRemote && o.authorType === ChatMessage.AuthorTypes.Remote;
+
 				if (
-					o.authorType !== ChatMessage.AuthorTypes.App &&
+					(isLocal || isRemote) &&
 					o.id &&
 					(o.hash && o.hash.length > 0) &&
 					(await this.messageHasValidHash(o))
 				) {
-					return {hash: o.hash, id: o.id};
+					if (isLocal) {
+						lastLocal	= {hash: o.hash, id: o.id};
+					}
+					else if (isRemote) {
+						lastRemote	= {hash: o.hash, id: o.id};
+					}
 				}
 			}
 
-			return;
+			return [...(lastLocal ? [lastLocal] : []), ...(lastRemote ? [lastRemote] : [])];
 		})();
 
 		const uploadPromise	= (async () =>
@@ -813,7 +832,7 @@ export class ChatService {
 			messagePromises: [
 				chatMessagePromise,
 				dimensionsPromise,
-				predecessorPromise,
+				predecessorsPromise,
 				uploadPromise
 			],
 			resolve: resolver.resolve
@@ -836,7 +855,7 @@ export class ChatService {
 				] => [
 					rpcEvents.text,
 					async timestamp => {
-						const [chatMessage, dimensions, predecessor, key]	=
+						const [chatMessage, dimensions, predecessors, key]	=
 							await Promise.all(messagePromises)
 						;
 
@@ -846,7 +865,7 @@ export class ChatService {
 							this.messageValueHasher({
 								...chatMessage,
 								authorType: ChatMessage.AuthorTypes.App,
-								predecessor,
+								predecessors,
 								timestamp
 							}),
 							value
@@ -858,7 +877,7 @@ export class ChatService {
 								dimensions,
 								hash,
 								key,
-								predecessor,
+								predecessors,
 								selfDestructChat,
 								selfDestructTimeout
 							}
