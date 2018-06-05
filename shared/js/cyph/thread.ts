@@ -37,6 +37,9 @@ export class Thread implements IThread {
 					(<any> self).locationData.host
 				}${
 					script
+				}?${
+					/* tslint:disable-next-line:ban */
+					Date.now().toString()
 				}`);
 			};
 		}
