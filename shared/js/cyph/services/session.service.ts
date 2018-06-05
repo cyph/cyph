@@ -31,7 +31,7 @@ import {lockFunction} from '../util/lock';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {resolvable, sleep} from '../util/wait';
+import {resolvable} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';
@@ -67,15 +67,6 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected lastIncomingMessageTimestamps: Map<string, number>		= new Map();
-
-	/** @ignore */
-	protected readonly plaintextSendInterval: number					= 1776;
-
-	/** @ignore */
-	protected readonly plaintextSendQueue: {
-		messages: ISessionMessage[];
-		resolve: () => void;
-	}[]	= [];
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string>					= new Set<string>();
@@ -175,37 +166,9 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @see IChannelHandlers.onOpen */
-	protected async channelOnOpen (isAlice: boolean, sendLoop: boolean = true) : Promise<void> {
+	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
 		this.state.isAlice	= isAlice;
 		this.resolveOpened();
-
-		if (!sendLoop) {
-			return;
-		}
-
-		while (this.state.isAlive) {
-			await sleep(this.plaintextSendInterval);
-
-			if (this.plaintextSendQueue.length < 1) {
-				continue;
-			}
-
-			const messageGroups	= this.plaintextSendQueue.splice(
-				0,
-				this.plaintextSendQueue.length
-			);
-
-			const messages		= messageGroups.
-				map(o => o.messages).
-				reduce((a, b) => a.concat(b), [])
-			;
-
-			await this.castleSendMessages(messages);
-
-			for (const {resolve} of messageGroups) {
-				resolve();
-			}
-		}
 	}
 
 	/** @ignore */
@@ -285,9 +248,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
-		const {promise, resolve}	= resolvable();
-		this.plaintextSendQueue.push({messages, resolve});
-		return promise;
+		await this.castleSendMessages(messages);
 	}
 
 	/** @inheritDoc */

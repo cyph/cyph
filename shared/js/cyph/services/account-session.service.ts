@@ -84,7 +84,7 @@ export class AccountSessionService extends SessionService {
 			throw new Error('Master channelOnOpen should not be used in a group session.');
 		}
 
-		await super.channelOnOpen(isAlice, false);
+		await super.channelOnOpen(isAlice);
 		this.stateResolver.resolve();
 	}
 
@@ -112,7 +112,7 @@ export class AccountSessionService extends SessionService {
 			return;
 		}
 
-		await this.castleSendMessages(messages);
+		await super.plaintextSendHandler(messages);
 	}
 
 	/** @inheritDoc */

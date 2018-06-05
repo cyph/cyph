@@ -23,7 +23,7 @@ import {
 	IChatMessageValue,
 	ISessionMessageDataList
 } from '../proto';
-import {events, ISessionMessageData, rpcEvents} from '../session';
+import {events, ISessionMessageAdditionalData, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
 import {lockFunction, lockTryOnce} from '../util/lock';
 import {getTimestamp} from '../util/time';
@@ -115,6 +115,20 @@ export class ChatService {
 			ChatMessageValue
 		)
 	;
+
+	/** Batch messages together that were sent within this interval. */
+	protected readonly outgoingMessageBatchDelay: number						= 1776;
+
+	/** Queue of messages to be sent. */
+	protected readonly outgoingMessageQueue: {
+		messagePromises: [
+			Promise<IChatMessage>,
+			Promise<IChatMessageLine[]>,
+			Promise<IChatMessagePredecessor|undefined>,
+			Promise<Uint8Array>
+		];
+		resolve: () => void;
+	}[]	= [];
 
 	/** @see IChatData */
 	public chat: IChatData;
@@ -747,7 +761,7 @@ export class ChatService {
 			).dimensions || []
 		)();
 
-		const predecessorPromise	= (async () => {
+		const predecessorPromise	= (async () : Promise<IChatMessagePredecessor|undefined> => {
 			const messageIDs	= await this.chat.messageList.getValue();
 
 			for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
@@ -774,7 +788,7 @@ export class ChatService {
 			this.getAuthorID(this.sessionService.localUsername),
 			dimensionsPromise,
 			getTimestamp()
-		]).then(async ([authorID, dimensions, timestamp]) => ({
+		]).then(async ([authorID, dimensions, timestamp]) : Promise<IChatMessage> => ({
 			authorID,
 			authorType: ChatMessage.AuthorTypes.Local,
 			dimensions,
@@ -794,48 +808,80 @@ export class ChatService {
 			await this.scrollService.scrollDown();
 		});
 
-		await this.messageSendLock(async () => {
-			const [chatMessage, dimensions, predecessor, key]	= await Promise.all([
+		const resolver	= resolvable();
+
+		this.outgoingMessageQueue.push({
+			messagePromises: [
 				chatMessagePromise,
 				dimensionsPromise,
 				predecessorPromise,
 				uploadPromise
-			]);
-
-			const {confirmPromise, newMessages}	= await this.sessionService.send([
-				rpcEvents.text,
-				async timestamp => {
-					const hash	= await this.messageValues.getItemHash(
-						id,
-						key,
-						this.messageValueHasher({
-							...chatMessage,
-							authorType: ChatMessage.AuthorTypes.App,
-							predecessor,
-							timestamp
-						}),
-						value
-					);
-
-					return {
-						id,
-						text: {
-							dimensions,
-							hash,
-							key,
-							predecessor,
-							selfDestructChat,
-							selfDestructTimeout
-						},
-						timestamp
-					};
-				}
-			]);
-
-			this.messageSendInnerLock(async () => confirmPromise.then(async () =>
-				this.addTextMessage(newMessages[0].data)
-			));
+			],
+			resolve: resolver.resolve
 		});
+
+		this.messageSendLock(async () => {
+			if (this.outgoingMessageQueue.length < 1) {
+				return;
+			}
+
+			const outgoingMessages	= this.outgoingMessageQueue.splice(
+				0,
+				this.outgoingMessageQueue.length
+			);
+
+			const {confirmPromise, newMessages}	= await this.sessionService.send(
+				...outgoingMessages.map(({messagePromises}) : [
+					string,
+					(timestamp: number) => Promise<ISessionMessageAdditionalData>
+				] => [
+					rpcEvents.text,
+					async timestamp => {
+						const [chatMessage, dimensions, predecessor, key]	=
+							await Promise.all(messagePromises)
+						;
+
+						const hash	= await this.messageValues.getItemHash(
+							id,
+							key,
+							this.messageValueHasher({
+								...chatMessage,
+								authorType: ChatMessage.AuthorTypes.App,
+								predecessor,
+								timestamp
+							}),
+							value
+						);
+
+						return {
+							id,
+							text: {
+								dimensions,
+								hash,
+								key,
+								predecessor,
+								selfDestructChat,
+								selfDestructTimeout
+							}
+						};
+					}
+				])
+			);
+
+			this.messageSendInnerLock(async () => confirmPromise.then(async () => {
+				await Promise.all(newMessages.map(async newMessage =>
+					this.addTextMessage(newMessage.data)
+				));
+
+				for (const outgoingMessage of outgoingMessages) {
+					outgoingMessage.resolve();
+				}
+			}));
+
+			await sleep(this.outgoingMessageBatchDelay);
+		});
+
+		return resolver.promise;
 	}
 
 	/** Sets queued message to be sent after handshake. */
