@@ -642,23 +642,21 @@ export class ChatService {
 	 */
 	public async messageChange () : Promise<void> {
 		return this.messageChangeLock(async () => {
-			for (let i = 0 ; i < 2 ; ++i) {
-				const isMessageChanged: boolean	=
-					this.chat.currentMessage.text !== '' &&
-					this.chat.currentMessage.text !== this.chat.previousMessage
-				;
+			this.chat.previousMessage	= this.chat.currentMessage.text;
 
-				this.chat.previousMessage	= this.chat.currentMessage.text;
+			await sleep(this.outgoingMessageBatchDelay);
 
-				if (this.chat.isMessageChanged !== isMessageChanged) {
-					this.chat.isMessageChanged	= isMessageChanged;
-					this.sessionService.send([
-						rpcEvents.typing,
-						{chatState: {isTyping: this.chat.isMessageChanged}}
-					]);
+			const isMessageChanged	=
+				this.chat.currentMessage.text !== '' &&
+				this.chat.currentMessage.text !== this.chat.previousMessage
+			;
 
-					await sleep(1000);
-				}
+			if (this.chat.isMessageChanged !== isMessageChanged) {
+				this.chat.isMessageChanged	= isMessageChanged;
+				this.sessionService.send([
+					rpcEvents.typing,
+					{chatState: {isTyping: this.chat.isMessageChanged}}
+				]);
 			}
 		});
 	}
