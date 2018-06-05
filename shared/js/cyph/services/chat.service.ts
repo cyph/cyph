@@ -337,6 +337,70 @@ export class ChatService {
 		};
 	}
 
+	/** @ignore */
+	private async processOutgoingMessages () : Promise<void> {
+		await this.messageSendLock(async () => {
+			if (this.outgoingMessageQueue.length < 1) {
+				return;
+			}
+
+			const outgoingMessages	= this.outgoingMessageQueue.splice(
+				0,
+				this.outgoingMessageQueue.length
+			);
+
+			const {confirmPromise, newMessages}	= await this.sessionService.send(
+				...outgoingMessages.map(({messagePromises}) : [
+					string,
+					(timestamp: number) => Promise<ISessionMessageAdditionalData>
+				] => [
+					rpcEvents.text,
+					async timestamp => {
+						const [chatMessage, dimensions, predecessors, key]	=
+							await Promise.all(messagePromises)
+						;
+
+						const hash	= await this.messageValues.getItemHash(
+							id,
+							key,
+							this.messageValueHasher({
+								...chatMessage,
+								authorType: ChatMessage.AuthorTypes.App,
+								predecessors,
+								timestamp
+							}),
+							value
+						);
+
+						return {
+							id,
+							text: {
+								dimensions,
+								hash,
+								key,
+								predecessors,
+								selfDestructChat,
+								selfDestructTimeout
+							}
+						};
+					}
+				])
+			);
+
+			this.messageSendInnerLock(async () => confirmPromise.then(async () => {
+				await Promise.all(newMessages.map(async newMessage =>
+					this.addTextMessage(newMessage.data)
+				));
+
+				for (const outgoingMessage of outgoingMessages) {
+					outgoingMessage.resolve();
+				}
+			}));
+
+			await sleep(this.outgoingMessageBatchDelay);
+		});
+	}
+
 	/** Gets author ID for including in message list item. */
 	protected async getAuthorID (_AUTHOR: Observable<string>) : Promise<string|undefined> {
 		return undefined;
@@ -838,66 +902,7 @@ export class ChatService {
 			resolve: resolver.resolve
 		});
 
-		this.messageSendLock(async () => {
-			if (this.outgoingMessageQueue.length < 1) {
-				return;
-			}
-
-			const outgoingMessages	= this.outgoingMessageQueue.splice(
-				0,
-				this.outgoingMessageQueue.length
-			);
-
-			const {confirmPromise, newMessages}	= await this.sessionService.send(
-				...outgoingMessages.map(({messagePromises}) : [
-					string,
-					(timestamp: number) => Promise<ISessionMessageAdditionalData>
-				] => [
-					rpcEvents.text,
-					async timestamp => {
-						const [chatMessage, dimensions, predecessors, key]	=
-							await Promise.all(messagePromises)
-						;
-
-						const hash	= await this.messageValues.getItemHash(
-							id,
-							key,
-							this.messageValueHasher({
-								...chatMessage,
-								authorType: ChatMessage.AuthorTypes.App,
-								predecessors,
-								timestamp
-							}),
-							value
-						);
-
-						return {
-							id,
-							text: {
-								dimensions,
-								hash,
-								key,
-								predecessors,
-								selfDestructChat,
-								selfDestructTimeout
-							}
-						};
-					}
-				])
-			);
-
-			this.messageSendInnerLock(async () => confirmPromise.then(async () => {
-				await Promise.all(newMessages.map(async newMessage =>
-					this.addTextMessage(newMessage.data)
-				));
-
-				for (const outgoingMessage of outgoingMessages) {
-					outgoingMessage.resolve();
-				}
-			}));
-
-			await sleep(this.outgoingMessageBatchDelay);
-		});
+		this.processOutgoingMessages();
 
 		return resolver.promise;
 	}
