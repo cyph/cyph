@@ -121,11 +121,15 @@ export class ChatService {
 
 	/** Queue of messages to be sent. */
 	protected readonly outgoingMessageQueue: {
-		messagePromises: [
+		messageData: [
 			Promise<IChatMessage>,
 			Promise<IChatMessageLine[]>,
+			string,
 			Promise<IChatMessagePredecessor[]|undefined>,
-			Promise<Uint8Array>
+			Promise<Uint8Array>,
+			boolean|undefined,
+			number|undefined,
+			IChatMessageValue
 		];
 		resolve: () => void;
 	}[]	= [];
@@ -350,14 +354,23 @@ export class ChatService {
 			);
 
 			const {confirmPromise, newMessages}	= await this.sessionService.send(
-				...outgoingMessages.map(({messagePromises}) : [
+				...outgoingMessages.map(({messageData}) : [
 					string,
 					(timestamp: number) => Promise<ISessionMessageAdditionalData>
 				] => [
 					rpcEvents.text,
 					async timestamp => {
-						const [chatMessage, dimensions, predecessors, key]	=
-							await Promise.all(messagePromises)
+						const [
+							chatMessage,
+							dimensions,
+							id,
+							predecessors,
+							key,
+							selfDestructChat,
+							selfDestructTimeout,
+							value
+						]	=
+							await Promise.all(messageData)
 						;
 
 						const hash	= await this.messageValues.getItemHash(
@@ -893,11 +906,15 @@ export class ChatService {
 		const resolver	= resolvable();
 
 		this.outgoingMessageQueue.push({
-			messagePromises: [
+			messageData: [
 				chatMessagePromise,
 				dimensionsPromise,
+				id,
 				predecessorsPromise,
-				uploadPromise
+				uploadPromise,
+				selfDestructChat,
+				selfDestructTimeout,
+				value
 			],
 			resolve: resolver.resolve
 		});
