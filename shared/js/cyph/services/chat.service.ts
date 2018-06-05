@@ -164,29 +164,33 @@ export class ChatService {
 			return;
 		}
 
-		const unobservedPredecessors	= o.text.predecessors && o.text.predecessors.length > 0 ?
-			(await Promise.all(o.text.predecessors.map(async predecessor => ({
-				hasValidHash: await this.messageHasValidHash(predecessor.id, predecessor.hash),
-				predecessor
-			})))).
-				filter(unobservedPredecessor => !unobservedPredecessor.hasValidHash).
-				map(unobservedPredecessor => unobservedPredecessor.predecessor)
-			:
-			undefined
-		;
-
-		if (unobservedPredecessors && unobservedPredecessors.length > 0) {
-			return this.chat.futureMessages.updateItem(
-				unobservedPredecessors[0].id,
-				async futureMessages => ({
-					messages: futureMessages && futureMessages.messages ?
-						futureMessages.messages.concat(o) :
-						[o]
-				})
-			);
-		}
-
 		if (o.author !== this.sessionService.localUsername) {
+			const unobservedPredecessors	=
+				o.text.predecessors && o.text.predecessors.length > 0 ?
+					(await Promise.all(o.text.predecessors.map(async predecessor => ({
+						hasValidHash: await this.messageHasValidHash(
+							predecessor.id,
+							predecessor.hash
+						),
+						predecessor
+					})))).
+						filter(unobservedPredecessor => !unobservedPredecessor.hasValidHash).
+						map(unobservedPredecessor => unobservedPredecessor.predecessor)
+					:
+					undefined
+			;
+
+			if (unobservedPredecessors && unobservedPredecessors.length > 0) {
+				return this.chat.futureMessages.updateItem(
+					unobservedPredecessors[0].id,
+					async futureMessages => ({
+						messages: futureMessages && futureMessages.messages ?
+							futureMessages.messages.concat(o) :
+							[o]
+					})
+				);
+			}
+
 			this.lastConfirmedMessageID	= o.id;
 
 			this.messageConfirmLock(async () => {
@@ -238,17 +242,19 @@ export class ChatService {
 			o.text.predecessors
 		);
 
-		await this.chat.futureMessages.updateItem(o.id, async futureMessages => {
-			if (futureMessages && futureMessages.messages) {
-				await Promise.all(futureMessages.messages.map(async futureMessage =>
-					this.addTextMessage(
-						await this.sessionService.processMessageData(futureMessage)
-					)
-				));
-			}
+		if (o.author !== this.sessionService.localUsername) {
+			await this.chat.futureMessages.updateItem(o.id, async futureMessages => {
+				if (futureMessages && futureMessages.messages) {
+					await Promise.all(futureMessages.messages.map(async futureMessage =>
+						this.addTextMessage(
+							await this.sessionService.processMessageData(futureMessage)
+						)
+					));
+				}
 
-			return undefined;
-		});
+				return undefined;
+			});
+		}
 
 		if (selfDestructChat) {
 			this.chatSelfDestructed		=
