@@ -103,6 +103,9 @@ if [ "${serviceWorker}" ] || [ "${test}" ] ; then
 		fs.readFileSync("../../websign/serviceworker.js").toString().replace(
 			"/* Redirect non-whitelisted paths in this origin */",
 			"if (url.indexOf(\".\") > -1) { urls[url] = true; }"
+		).replace(
+			/\n\treturn e\.respondWith/,
+			"\n\treturn; e.respondWith"
 		)
 	)'
 fi
