@@ -25,7 +25,7 @@ import {
 } from '../proto';
 import {events, ISessionMessageAdditionalData, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
-import {lockFunction, lockTryOnce} from '../util/lock';
+import {lockFunction} from '../util/lock';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {resolvable, sleep} from '../util/wait';
@@ -66,7 +66,7 @@ export class ChatService {
 	private readonly messageChangeLock: LockFunction	= lockFunction();
 
 	/** @ignore */
-	private readonly messageConfirmLock: {}				= {};
+	private readonly messageConfirmLock: LockFunction	= lockFunction();
 
 	/** @ignore */
 	private readonly messageSendInnerLock: LockFunction	= lockFunction();
@@ -177,14 +177,15 @@ export class ChatService {
 		if (o.author !== this.sessionService.localUsername) {
 			this.lastConfirmedMessageID	= o.id;
 
-			lockTryOnce(this.messageConfirmLock, async () => {
-				await sleep(3000);
+			this.messageConfirmLock(async () => {
 				if (this.lastConfirmedMessageID === o.id) {
 					await this.sessionService.send([
 						rpcEvents.confirm,
 						{textConfirmation: {id: o.id}}
 					]);
 				}
+
+				await sleep(this.outgoingMessageBatchDelay);
 			});
 		}
 
