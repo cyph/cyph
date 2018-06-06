@@ -128,7 +128,6 @@ proxysite () {
 			proxy_pass ${1}/;
 			proxy_hide_header Public-Key-Pins;
 			proxy_hide_header Strict-Transport-Security;
-			proxy_set_header X-Host ${1};
 		}
 	EOM
 }
