@@ -1269,31 +1269,29 @@ export class FirebaseDatabaseService extends DatabaseService {
 					const listRef	= await this.getDatabaseRef(url);
 
 					/* tslint:disable-next-line:no-null-keyword */
-					const onChildAdded	= (
+					const onChildAdded	= async (
 						snapshot: DataSnapshot|null,
 						previousKey?: string|null
-					) => {
-						this.ngZone.run(async () => {
-							if (
-								snapshot &&
-								snapshot.key &&
-								typeof (snapshot.val() || {}).hash !== 'string'
-							) {
-								return onChildAdded(
-									await this.waitForValue(`${url}/${snapshot.key}`),
-									previousKey
-								);
-							}
-							else if (!snapshot || !snapshot.exists() || !snapshot.key) {
-								return;
-							}
+					) => this.ngZone.run(async () : Promise<void> => {
+						if (
+							snapshot &&
+							snapshot.key &&
+							typeof (snapshot.val() || {}).hash !== 'string'
+						) {
+							return onChildAdded(
+								await this.waitForValue(`${url}/${snapshot.key}`),
+								previousKey
+							);
+						}
+						else if (!snapshot || !snapshot.exists() || !snapshot.key) {
+							return;
+						}
 
-							observer.next({
-								key: snapshot.key,
-								previousKey: previousKey || undefined
-							});
+						observer.next({
+							key: snapshot.key,
+							previousKey: previousKey || undefined
 						});
-					};
+					});
 
 					listRef.on('child_added', onChildAdded);
 					cleanup	= () => { listRef.off('child_added', onChildAdded); };
