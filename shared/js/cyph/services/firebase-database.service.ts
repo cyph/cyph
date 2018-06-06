@@ -153,6 +153,27 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @ignore */
+	private getListKeysInternal (value: Map<string, any>|{[k: string]: any}) : string[] {
+		if (!value) {
+			return [];
+		}
+
+		const keys		=
+			(
+				value instanceof Map ? Array.from(value.keys()) : Object.keys(value)
+			).sort()
+		;
+
+		const endIndex	= keys.findIndex(
+			value instanceof Map ?
+				k => typeof value.get(k).hash !== 'string' :
+				k => typeof value[k].hash !== 'string'
+		);
+
+		return endIndex >= 0 ? keys.slice(0, endIndex) : keys;
+	}
+
+	/** @ignore */
 	private async getStorageRef (url: string, hash: string) : Promise<StorageReference> {
 		const fullURL	= `${url}/${hash}`;
 
@@ -166,6 +187,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @ignore */
 	private usernameToEmail (username: string) : string {
 		return `${username}@${this.namespace}`;
+	}
+
+	/** @ignore */
+	private async waitForValue (url: string) : Promise<DataSnapshot> {
+		return new Promise<DataSnapshot>(async resolve => {
+			(await this.getDatabaseRef(url)).on('value', snapshot => {
+				if (snapshot && snapshot.exists() && typeof snapshot.val().hash === 'string') {
+					resolve(snapshot);
+				}
+			});
+		});
 	}
 
 	/** @inheritDoc */
@@ -291,13 +323,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const url	= await urlPromise;
 
 			try {
-				const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
-
-				return !value ? [] : await Promise.all(
-					Object.keys(value).map(async k =>
-						this.getItem(`${url}/${k}`, proto)
-					)
-				);
+				return await Promise.all((await this.getListKeys(url)).map(async k =>
+					this.getItem(`${url}/${k}`, proto)
+				));
 			}
 			catch {
 				return [];
@@ -311,9 +339,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const url	= await urlPromise;
 
 			try {
-				const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
-
-				return !value ? [] : Object.keys(value);
+				return this.getListKeysInternal(
+					(await (await this.getDatabaseRef(url)).once('value')).val()
+				);
 			}
 			catch {
 				return [];
@@ -637,42 +665,49 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}> {
 		const url	= await urlPromise;
 
-		return this.ngZone.runOutsideAngular(async () =>
-			this.lock(`pushlocks/${url}`, async () => {
-				const listRef	= await this.getDatabaseRef(url);
-				const itemRef	= await listRef.push({timestamp: ServerValue.TIMESTAMP}).then();
-				const key		= itemRef.key;
+		return this.ngZone.runOutsideAngular(async () => {
+			const listRef	= await this.getDatabaseRef(url);
+			const itemRef	= await listRef.push({timestamp: ServerValue.TIMESTAMP}).then();
+			const key		= itemRef.key;
 
-				if (!key) {
-					throw new Error(`Failed to push item to ${url}.`);
-				}
+			if (!key) {
+				throw new Error(`Failed to push item to ${url}.`);
+			}
 
-				const previousKey	= async () : Promise<string|undefined> => listRef.
-					orderByKey().
-					endAt(key).
-					limitToLast(2).
-					once('child_added').
-					then(child => child.key && child.key !== key ? child.key : undefined).
-					catch(() => undefined)
-				;
+			const previousKey	= async () : Promise<string|undefined> =>
+				retryUntilSuccessful(async () => {
+					const listValueMap: {[k: string]: any}	=
+						(
+							await listRef.
+								orderByKey().
+								endAt(key).
+								limitToLast(2).
+								once('value')
+						).val()
+					;
 
-				const o: {callback?: () => Promise<void>}	= {};
+					if (!(key in listValueMap)) {
+						throw new Error(`Key ${key} not found in list at ${url}.`);
+					}
 
-				if (typeof value === 'function') {
-					value	= await value(key, previousKey, o);
-				}
+					return Object.keys(listValueMap).find(k => k !== key);
+				})
+			;
 
-				await itemRef.remove().then();
+			const o: {callback?: () => Promise<void>}	= {};
 
-				const result	= await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);
+			if (typeof value === 'function') {
+				value	= await value(key, previousKey, o);
+			}
 
-				if (o.callback) {
-					await o.callback();
-				}
+			const result	= await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);
 
-				return result;
-			})
-		);
+			if (o.callback) {
+				await o.callback();
+			}
+
+			return result;
+		});
 	}
 
 	/** @inheritDoc */
@@ -1121,7 +1156,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const publishList	= () => {
 					this.ngZone.run(() => {
 						observer.next(
-							Array.from(data.keys()).sort().map(k => {
+							this.getListKeysInternal(data).map(k => {
 								const o	= data.get(k);
 								if (!o) {
 									throw new Error('Corrupt Map.');
@@ -1133,8 +1168,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 				};
 
 				/* tslint:disable-next-line:no-null-keyword */
-				const onChildAdded		= async (snapshot: DataSnapshot|null) => {
+				const onChildAdded		= async (snapshot: DataSnapshot|null) : Promise<void> => {
 					if (
+						snapshot &&
+						snapshot.key &&
+						typeof (snapshot.val() || {}).hash !== 'string'
+					) {
+						return onChildAdded(await this.waitForValue(`${url}/${snapshot.key}`));
+					}
+					else if (
 						!snapshot ||
 						!snapshot.key ||
 						data.has(snapshot.key) ||
@@ -1231,13 +1273,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 						snapshot: DataSnapshot|null,
 						previousKey?: string|null
 					) => {
-						this.ngZone.run(() => {
+						this.ngZone.run(async () => {
 							if (
-								!snapshot ||
-								!snapshot.exists() ||
-								!snapshot.key ||
+								snapshot &&
+								snapshot.key &&
 								typeof (snapshot.val() || {}).hash !== 'string'
 							) {
+								return onChildAdded(
+									await this.waitForValue(`${url}/${snapshot.key}`),
+									previousKey
+								);
+							}
+							else if (!snapshot || !snapshot.exists() || !snapshot.key) {
 								return;
 							}
 
@@ -1283,7 +1330,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						}
 
 						const val: any	= snapshot.val() || {};
-						const newKeys	= Object.keys(val);
+						const newKeys	= this.getListKeysInternal(val);
 
 						for (let i = newKeys.length - 1 ; i >= 0 ; --i) {
 							const o	= val[newKeys[i]];
@@ -1339,12 +1386,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 					const onChildAdded	= async (
 						snapshot: DataSnapshot|null,
 						previousKey?: string|null
-					) => {
+					) : Promise<void> => {
 						if (
-							!snapshot ||
-							!snapshot.key ||
+							snapshot &&
+							snapshot.key &&
 							typeof (snapshot.val() || {}).hash !== 'string'
 						) {
+							return onChildAdded(
+								await this.waitForValue(`${url}/${snapshot.key}`),
+								previousKey
+							);
+						}
+						else if (!snapshot || !snapshot.exists() || !snapshot.key) {
 							return;
 						}
 
