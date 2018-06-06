@@ -6,21 +6,19 @@ const {normalize}	= require('./util');
 
 module.exports	= (database, messaging) => ({
 	notify: async (namespace, username, subject, text, preferPush) => {
-		const url	= `${namespace}/users/${normalize(username)}`;
-
 		subject	= sanitize(subject);
 		text	= sanitize(text);
 
 		if (!preferPush) {
 			await Promise.all([
-				sendMail(database, namespace, url, subject, text),
-				sendMessage(database, messaging, url, subject)
+				sendMail(database, namespace, username, subject, text),
+				sendMessage(database, messaging, username, subject)
 			]);
 			return;
 		}
 
-		if (!(await sendMessage(database, messaging, url, subject))) {
-			await sendMail(database, namespace, url, subject, text);
+		if (!(await sendMessage(database, messaging, username, subject))) {
+			await sendMail(database, namespace, username, subject, text);
 		}
 	}
 });
