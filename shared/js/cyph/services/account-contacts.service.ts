@@ -107,6 +107,8 @@ export class AccountContactsService {
 			`contactUsernames/${id}`,
 			StringProto,
 			SecurityModels.unprotected
+		).catch(
+			() => ''
 		);
 	});
 
