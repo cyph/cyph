@@ -300,7 +300,6 @@ exports.userNotification	= functions.database.ref(
 						subject: `New Message from ${senderUsername}`,
 						text: `${targetName}, ${senderName} has sent you a message.`
 					} :
-				/* else */
 					{
 						subject: `Sup Dog, it's ${senderUsername}`,
 						text: `${targetName}, ${senderName} says yo.`
@@ -324,7 +323,6 @@ exports.userNotification	= functions.database.ref(
 					:
 				notification.type === NotificationTypes.Message ?
 					`unreadMessageCounts/${username}` :
-				/* else */
 					undefined
 			;
 
