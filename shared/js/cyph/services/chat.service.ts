@@ -199,9 +199,9 @@ export class ChatService {
 						rpcEvents.confirm,
 						{textConfirmation: {id: o.id}}
 					]);
-				}
 
-				await sleep(this.outgoingMessageBatchDelay);
+					await sleep(this.outgoingMessageBatchDelay);
+				}
 			});
 		}
 
