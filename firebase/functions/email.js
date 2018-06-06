@@ -19,7 +19,7 @@ const template		= new Promise((resolve, reject) => {
 	});
 });
 
-const getEmailAddress	= async (namespace, username) => {
+const getEmailAddress	= async (database, namespace, username) => {
 	const internalURL	= `${namespace}/users/${normalize(username)}/internal`;
 
 	const [email, name]	= (await Promise.all(['email', 'name'].map(async k =>
@@ -40,7 +40,7 @@ const sendMailInternal	= async (
 	subject,
 	text,
 	eventDetails,
-	eventInvitee,
+	eventinviter,
 	accountsURL
 ) => transporter.sendMail({
 	from: `Cyph <${auth.user}>`,
@@ -49,11 +49,11 @@ const sendMailInternal	= async (
 		content: ical({
 			domain: 'cyph.com',
 			events: [{
-				attendees: [eventInvitee, to],
+				attendees: [to, eventinviter],
 				description: eventDetails.description,
 				end: new Date(eventDetails.endTime),
 				location: eventDetails.location,
-				organizer: to,
+				organizer: eventinviter,
 				start: new Date(eventDetails.startTime),
 				summary: eventDetails.summary
 			}],
@@ -64,30 +64,30 @@ const sendMailInternal	= async (
 	},
 	subject,
 	text,
-	to: !eventInvitee || !eventInvitee.formatted ?
+	to: !eventinviter || !eventinviter.formatted ?
 		to.formatted :
-		[eventInvitee.formatted, to.formatted]
+		[to.formatted, eventinviter.formatted]
 });
 
 /**
  * @param {{
  *     description: string;
  *     endTime: number;
- *     inviteeUsername: string;
+ *     inviterUsername: string;
  *     location: string;
  *     startTime: number;
  *     summary: string;
  * }} eventDetails
  */
 const sendMail			= async (database, namespace, username, subject, text, eventDetails) => {
-	const to	= await getEmailAddress(namespace, username);
+	const to	= await getEmailAddress(database, namespace, username);
 
 	if (!to.formatted) {
 		return;
 	}
 
-	const eventInvitee	= eventDetails && typeof eventDetails.inviteeUsername === 'string' ?
-		await getEmailAddress(namespace, eventDetails.inviteeUsername) :
+	const eventinviter	= eventDetails && typeof eventDetails.inviterUsername === 'string' ?
+		await getEmailAddress(database, namespace, eventDetails.inviterUsername) :
 		undefined
 	;
 
@@ -96,7 +96,7 @@ const sendMail			= async (database, namespace, username, subject, text, eventDet
 		subject,
 		text,
 		eventDetails,
-		eventInvitee,
+		eventinviter,
 		namespaces[namespace].accountsURL
 	);
 };

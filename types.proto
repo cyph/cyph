@@ -782,6 +782,7 @@ message KeyPair {
 /** Push notification types. */
 enum NotificationTypes {
 	Yo = 0;
+	CalendarEvent = 3;
 	File = 1;
 	Message = 2;
 }

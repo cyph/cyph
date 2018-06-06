@@ -971,13 +971,13 @@ export class AccountDatabaseService {
 	public async notify (
 		username: MaybePromise<string>,
 		notificationType: NotificationTypes,
-		subType?: number
+		metadata?: any
 	) : Promise<void> {
 		await this.databaseService.notify(
 			await this.normalizeURL('notifications'),
 			username,
 			notificationType,
-			subType
+			metadata
 		);
 	}
 

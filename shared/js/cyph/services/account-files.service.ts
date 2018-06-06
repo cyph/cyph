@@ -922,7 +922,11 @@ export class AccountFilesService {
 			return;
 		}
 
-		await this.accountDatabaseService.notify(username, NotificationTypes.File, await fileType);
+		await this.accountDatabaseService.notify(
+			username,
+			NotificationTypes.File,
+			{fileType: await fileType}
+		);
 	}
 
 	/** Creates a dialog to share a file with another user. */

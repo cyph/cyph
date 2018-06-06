@@ -1,4 +1,4 @@
-const sendMessage	= async (database, messaging, username, body) => {
+const sendMessage	= async (database, messaging, namespace, username, body) => {
 	const ref		= database.ref(`${namespace}/users/${normalize(username)}/messagingTokens`);
 	const tokens	= Object.keys((await ref.once('value')).val() || {});
 

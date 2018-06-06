@@ -851,8 +851,8 @@
 
 					"notifications": {
 						"$notification": {
-							"subType": {
-								".validate": "newData.isNumber()"
+							"metadata": {
+								".validate": "newData.hasChildren()"
 							},
 							"target": {
 								".validate": "newData.isString()"
