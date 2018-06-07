@@ -29,12 +29,7 @@
 									<span cyphTranslate>Welcome</span>
 								</ng-template>
 
-								<div
-									fxFlex
-									*ngIf='!envService.isTelehealth'
-									fxLayout='column'
-									fxLayoutGap='48px'
-								>
+								<div fxFlex fxLayout='column' fxLayoutGap='48px'>
 									<div
 										fxLayout='row'
 										fxLayoutAlign='center center'
@@ -42,7 +37,7 @@
 									>
 										<ng-container *ngIf='
 											envService.coBranded && !envService.whiteLabel;
-											else mainBasicWelcomeMessage
+											else telehealthWelcomeMessage
 										'>
 											<span cyphTranslate>Welcome to</span>
 											&nbsp;
@@ -50,6 +45,16 @@
 											&nbsp;
 											<span cyphTranslate>powered by Cyph!</span>
 										</ng-container>
+										<ng-template #telehealthWelcomeMessage>
+											<ng-container *ngIf='
+												envService.isTelehealth;
+												else mainBasicWelcomeMessage
+											'>
+												<span cyphTranslate>
+													Welcome to Cyph Telehealth!
+												</span>
+											</ng-container>
+										</ng-template>
 										<ng-template #mainBasicWelcomeMessage>
 											<span cyphTranslate>
 												Congratulations on securing your
@@ -81,13 +86,6 @@
 										telehealth appointments, and more.
 									</div>
 								</div>
-
-								<div
-									fxFlex
-									*ngIf='envService.isTelehealth'
-									fxLayout='column'
-									fxLayoutGap='48px'
-								></div>
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
