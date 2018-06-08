@@ -360,7 +360,7 @@
 		"rxjs-no-subject-value": false,
 		"rxjs-no-tap": true,
 		"rxjs-no-unsafe-catch": true,
-		"rxjs-no-unsafe-scope": true,
+		"rxjs-no-unsafe-scope": false,
 		"rxjs-no-unsafe-switchmap": true,
 		"rxjs-no-unsafe-takeuntil": true,
 		"rxjs-no-unused-add": false,
