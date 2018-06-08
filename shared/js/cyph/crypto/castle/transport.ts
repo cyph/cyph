@@ -50,14 +50,17 @@ export class Transport {
 	) : Promise<void> {
 		this.logCyphertext(author, cyphertext);
 
-		const timestamp	= potassiumUtil.toDataView(plaintext).getFloat64(0, true);
-		const data		= potassiumUtil.toBytes(plaintext, 8);
+		const timestamp		= potassiumUtil.toDataView(plaintext).getFloat64(0, true);
+		const instanceID	= potassiumUtil.toBytes(plaintext, 8, 16);
+		const data			= potassiumUtil.toBytes(plaintext, 24);
 
 		if (data.length > 0) {
-			await this.sessionService.castleHandler(
-				CastleEvents.receive,
-				{author, plaintext: data, timestamp}
-			);
+			await this.sessionService.castleHandler(CastleEvents.receive, {
+				author,
+				instanceID: potassiumUtil.toHex(instanceID),
+				plaintext: data,
+				timestamp
+			});
 		}
 	}
 

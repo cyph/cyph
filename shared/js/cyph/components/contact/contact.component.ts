@@ -23,6 +23,9 @@ export class ContactComponent implements OnInit {
 	/** Sender name. */
 	@Input() public fromName: string		= '';
 
+	/** Indicates whether data collection is consented to under the GDPR. */
+	public gdprConsent: boolean				= false;
+
 	/** Email body. */
 	@Input() public message: string			= '';
 

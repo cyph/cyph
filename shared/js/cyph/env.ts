@@ -156,8 +156,14 @@ export class Env extends EnvDeploy {
 	/** Complete (original case) language code, e.g. "en-US". */
 	public readonly realLanguage: string		= Env.language;
 
+	/** Indicates whether minimal affiliate advertising should be displayed. */
+	public readonly showAds: boolean			= !this.environment.customBuild;
+
 	/** Indicates whether Granim gradient canvases should be displayed. */
-	public readonly showGranim: boolean			= !this.isOldFirefox;
+	public readonly showGranim: boolean			=
+		!this.isOldFirefox &&
+		!this.isMobile
+	;
 
 	/** Base URI for sending an SMS. */
 	public readonly smsUriBase: string			= `sms:${this.isIOS ? '&' : '?'}body=`;

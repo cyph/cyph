@@ -78,7 +78,7 @@ export class AccountRegisterComponent implements OnInit {
 	/** Username. */
 	public username: FormControl						= new FormControl('', undefined, [
 		async control =>
-			await this.accountUserLookupService.exists(control.value, false) ?
+			await this.accountUserLookupService.exists(control.value, false, false) ?
 				{usernameTaken: {value: control.value}} :
 				/* tslint:disable-next-line:no-null-keyword */
 				null

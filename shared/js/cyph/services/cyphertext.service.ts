@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {List} from 'immutable';
 import {Observable} from 'rxjs';
 import {ChatMessage} from '../chat';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
+import {LocalAsyncList} from '../local-async-list';
 import {events} from '../session/enums';
 import {getTimestamp} from '../util/time';
 import {AnalyticsService} from './analytics.service';
@@ -27,7 +27,7 @@ export class CyphertextService {
 	public isVisible: boolean	= false;
 
 	/** Cyphertext message list. */
-	public messages: List<ChatMessage>	= List<ChatMessage>();
+	public readonly messages: LocalAsyncList<ChatMessage>	= new LocalAsyncList<ChatMessage>();
 
 	/** Logs new cyphertext message. */
 	private async log (author: Observable<string>, text: string) : Promise<void> {
@@ -37,13 +37,14 @@ export class CyphertextService {
 
 		const timestamp	= await getTimestamp();
 
-		this.messages	= this.messages.withMutations(messages =>
-			(
+		await this.messages.updateValue(async messages => [
+			...(
 				/* Mobile performance optimisation */
-				messages.size > (this.envService.isMobile ? 5 : 50) ?
-					messages.shift() :
+				messages.length > (this.envService.isMobile ? 5 : 50) ?
+					messages.slice(1) :
 					messages
-			).push(new ChatMessage(
+			),
+			new ChatMessage(
 				{
 					authorID: '',
 					authorType: ChatMessage.AuthorTypes.App,
@@ -52,8 +53,8 @@ export class CyphertextService {
 					value: {text}
 				},
 				author
-			))
-		);
+			)
+		]);
 	}
 
 	/** Hides cyphertext UI. */

@@ -226,7 +226,10 @@ export class AccountFilesService {
 		[AccountFileRecord.RecordTypes.EhrApiKey]: {
 			blockAnonymous: false,
 			description: 'EHR Access',
-			isOfType: (file: any) => file.apiKey === 'string' && typeof file.isMaster === 'boolean',
+			isOfType: (file: any) =>
+				typeof file.apiKey === 'string' &&
+				typeof file.isMaster === 'boolean'
+			,
 			mediaType: 'cyph/ehr-api-key',
 			proto: EhrApiKey,
 			recordType: AccountFileRecord.RecordTypes.EhrApiKey,
@@ -735,7 +738,7 @@ export class AccountFilesService {
 			clear: async () => asyncList.clear(),
 			getValue: async () => (await asyncList.getValue()).map(bytes => msgpack.decode(bytes)),
 			lock: async (f, reason) => asyncList.lock(f, reason),
-			pushValue: async delta => asyncList.pushValue(msgpack.encode(delta)),
+			pushItem: async delta => asyncList.pushItem(msgpack.encode(delta)),
 			setValue: async deltas =>
 				asyncList.setValue(deltas.map(delta => msgpack.encode(delta)))
 			,
@@ -933,7 +936,7 @@ export class AccountFilesService {
 		const file	= await this.getFile(id);
 
 		if (file.mediaType.startsWith('image/') && !file.mediaType.startsWith('image/svg')) {
-			this.dialogService.image(await this.downloadURI(id).result);
+			this.dialogService.image({src: await this.downloadURI(id).result, title: file.name});
 		}
 		else {
 			this.downloadAndSave(id);
@@ -1055,7 +1058,11 @@ export class AccountFilesService {
 			return;
 		}
 
-		await this.accountDatabaseService.notify(username, NotificationTypes.File, await fileType);
+		await this.accountDatabaseService.notify(
+			username,
+			NotificationTypes.File,
+			{fileType: await fileType}
+		);
 	}
 
 	/** Creates a dialog to share a file with another user. */

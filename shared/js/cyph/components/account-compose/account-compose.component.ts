@@ -7,6 +7,7 @@ import {States} from '../../chat/enums';
 import {AccountFileRecord, AccountUserTypes, ChatMessageValue, IForm} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
+import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service';
@@ -15,7 +16,7 @@ import {EnvService} from '../../services/env.service';
 import {ScrollService} from '../../services/scroll.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
-import {cacheObservable} from '../../util/flatten-observable';
+import {toBehaviorSubject} from '../../util/flatten-observable';
 import {uuid} from '../../util/uuid';
 
 
@@ -51,7 +52,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	protected readonly hasOwnProviders: boolean								= true;
 
 	/** @see AccountChatMessageBoxComponent.messageType */
-	public readonly messageType: BehaviorSubject<ChatMessageValue.Types>	= cacheObservable(
+	public readonly messageType: BehaviorSubject<ChatMessageValue.Types>	= toBehaviorSubject(
 		concat(
 			of(undefined),
 			this.router.events.pipe(filter(event => event instanceof NavigationEnd))
@@ -72,6 +73,10 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 				switch (messageType) {
 					case ChatMessageValue.Types.CalendarInvite:
 						this.accountChatService.chat.currentMessage.calendarInvite	= value;
+						break;
+
+					case ChatMessageValue.Types.FileTransfer:
+						this.accountChatService.chat.currentMessage.fileTransfer	= value;
 						break;
 
 					case ChatMessageValue.Types.Form:
@@ -206,7 +211,11 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 		this.sessionService.state.isAlive	= true;
 
 		this.activatedRoute.params.subscribe(async o => {
-			const username: string|undefined	= o.username;
+			const username: string|undefined	=
+				await this.accountContactsService.getContactUsername(o.contactID).catch(() =>
+					undefined
+				)
+			;
 
 			if (!username) {
 				return;
@@ -229,6 +238,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,
+
+		/** @ignore */
+		private readonly accountContactsService: AccountContactsService,
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,

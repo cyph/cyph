@@ -325,6 +325,7 @@ func initHandler(w http.ResponseWriter, r *http.Request) {
 	_, ok := config.AllowedHosts[r.Host]
 	origin := r.Header.Get("Origin")
 
+	w.Header().Set("Cache-Control", config.CacheControlHeader)
 	w.Header().Set("Public-Key-Pins", config.HPKPHeader)
 	w.Header().Set("Strict-Transport-Security", config.HSTSHeader)
 

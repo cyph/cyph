@@ -15,6 +15,9 @@ export class DialogImageComponent {
 	/** Image src. */
 	public src?: SafeUrl|string;
 
+	/** Image title. */
+	public title?: string;
+
 	constructor (
 		/** @see StringsService */
 		public readonly stringsService: StringsService

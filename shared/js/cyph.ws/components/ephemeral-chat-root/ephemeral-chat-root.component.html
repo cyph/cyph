@@ -29,10 +29,15 @@
 			*ngIf='appService.chatRootState === chatRootStates.chat'
 			[@fadeIn]='"in"'
 		>
-			<cyph-contact to='feedback' *ngIf='splitTestingService.groupA'></cyph-contact>
-			<cyph-signup-form *ngIf='splitTestingService.groupB'>
-				{{stringsService.signupMessage}}
-			</cyph-signup-form>
+			<cyph-contact
+				to='feedback'
+				*ngIf='splitTestingService.getValue("chatendmessage"); else signupForm'
+			></cyph-contact>
+			<ng-template #signupForm>
+				<cyph-signup-form>
+					{{stringsService.signupMessage}}
+				</cyph-signup-form>
+			</ng-template>
 		</cyph-chat-main>
 
 		<cyph-link-connection
@@ -41,7 +46,16 @@
 			fxLayout='column'
 			*ngIf='appService.chatRootState === chatRootStates.waitingForFriend'
 			[@fadeIn]='"in"'
-		></cyph-link-connection>
+		>
+			<a
+				class='affiliate'
+				[href]='affiliateService.link.href'
+				target='_blank'
+				[matTooltip]='stringsService.affTooltip'
+			>
+				{{affiliateService.link.text}}
+			</a>
+		</cyph-link-connection>
 
 		<cyph-not-found
 			fxFlex

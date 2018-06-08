@@ -1,5 +1,5 @@
-const sendMessage	= async (database, messaging, url, body) => {
-	const ref		= database.ref(`${url}/messagingTokens`);
+const sendMessage	= async (database, messaging, namespace, username, body) => {
+	const ref		= database.ref(`${namespace}/users/${normalize(username)}/messagingTokens`);
 	const tokens	= Object.keys((await ref.once('value')).val() || {});
 
 	if (tokens.length < 1) {

@@ -34,13 +34,21 @@ html, body {
 	}
 
 	> .transition {
-		opacity: 0;
+		@media (min-width: 376px) {
+			opacity: 0;
 
-		@include animation(preloadfadeout 2s linear);
+			@include animation(preloadfadeout 2s linear);
+		}
 
 		+ .loading > .logo-animation * {
 			@include animation-delay(2s);
 		}
+	}
+}
+
+@media (max-width: 375px) {
+	#pre-load > .loading {
+		display: none;
 	}
 }
 

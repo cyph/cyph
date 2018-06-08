@@ -29,6 +29,7 @@ export class MaterialDialogService implements DialogService {
 			cancel?: string;
 			content: string;
 			ok?: string;
+			markdown?: boolean;
 			placeholder?: string;
 			timeout?: number;
 			title?: string;
@@ -45,6 +46,8 @@ export class MaterialDialogService implements DialogService {
 				o.cancel :
 				this.stringsService.cancel
 			;
+
+			matDialogRef.componentInstance.markdown				= !!o.markdown;
 
 			matDialogRef.componentInstance.ok					= o.ok !== undefined ?
 				o.ok :
@@ -94,13 +97,15 @@ export class MaterialDialogService implements DialogService {
 
 	/** @inheritDoc */
 	public async alert (
-		o: {content: string; ok?: string; title?: string},
+		o: {content: string; markdown?: boolean; ok?: string; title?: string},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(DialogAlertComponent);
 
 			matDialogRef.componentInstance.content	= o.content;
+
+			matDialogRef.componentInstance.markdown	= !!o.markdown;
 
 			matDialogRef.componentInstance.ok		= o.ok !== undefined ?
 				o.ok :
@@ -146,6 +151,7 @@ export class MaterialDialogService implements DialogService {
 		o: {
 			cancel?: string;
 			content: string;
+			markdown?: boolean;
 			ok?: string;
 			timeout?: number;
 			title?: string;
@@ -162,13 +168,14 @@ export class MaterialDialogService implements DialogService {
 
 	/** @inheritDoc */
 	public async image (
-		src: SafeUrl|string,
+		o: {src: SafeUrl|string; title?: string},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(DialogImageComponent);
 
-			matDialogRef.componentInstance.src	= src;
+			matDialogRef.componentInstance.src		= o.src;
+			matDialogRef.componentInstance.title	= o.title;
 
 			if (closeFunction) {
 				closeFunction.resolve(() => { matDialogRef.close(); });
@@ -183,6 +190,7 @@ export class MaterialDialogService implements DialogService {
 		o: {
 			cancel?: string;
 			content: string;
+			markdown?: boolean;
 			ok?: string;
 			placeholder?: string;
 			timeout?: number;

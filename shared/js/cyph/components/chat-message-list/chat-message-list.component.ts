@@ -18,7 +18,6 @@ import {User} from '../../account/user';
 import {fadeInOut} from '../../animations';
 import {ChatMessage, IChatData, IVsItem, UiStyles} from '../../chat';
 import {IChatMessage} from '../../proto';
-import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 /* import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service'; */
@@ -84,7 +83,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** @ignore */
 	private readonly observableCache	= new Map<IChatData, {
 		messages: Observable<{message: ChatMessage; pending: boolean}[]>;
-		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}>;
+		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}|undefined>;
 	}>();
 
 	/** Indicates whether this is the accounts UI. */
@@ -112,7 +111,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** Overrides showDisconnectMessage and always displays the end message. */
 	@Input() public persistentEndMessage: boolean		= false;
 
-	/** Username for follow-up appointment button. */
+	/** Contact ID for follow-up appointment button. */
 	@Input() public promptFollowup?: string;
 
 	/** Indicates whether disconnect message should be displayed. */
@@ -189,7 +188,13 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 		const observables	= getOrSetDefault(this.observableCache, chat, () => ({
 			messages: combineLatest(
-				chat.messages.watch(),
+				chat.messageList.watch().pipe(mergeMap(async messageIDs =>
+					Promise.all(messageIDs.map(async id =>
+						chat.messages.getItem(id)
+					)).catch(() : IChatMessage[] =>
+						[]
+					)
+				)),
 				chat.pendingMessages.watch()
 			).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
 				if (onlineMessages.length < 1) {
@@ -198,8 +203,12 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 				for (let i = pendingMessages.length - 1 ; i >= 0 ; --i) {
 					const pendingMessage	= pendingMessages[i];
-					if (onlineMessages.find(o => o.id === pendingMessage.id)) {
-						pendingMessages.splice(i, 1);
+
+					for (let j = onlineMessages.length - 1 ; j >= 0 ; --j) {
+						if (onlineMessages[j].id === pendingMessage.id) {
+							pendingMessages.splice(i, 1);
+							break;
+						}
 					}
 				}
 
@@ -218,10 +227,8 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 							if (!message.pending) {
 								const cached	= this.messageCache.get(message.id + 'pending');
 								if (cached) {
-									return {
-										message: cached.message,
-										pending: false
-									};
+									cached.message.updateTimestamp(message.timestamp);
+									return {message: cached.message, pending: false};
 								}
 							}
 
@@ -247,14 +254,10 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 							}
 							else {
 								try {
-									authorUser	= (
-										this.accountContactsService &&
-										this.accountUserLookupService
-									) ?
+									authorUser	= this.accountUserLookupService ?
 										await this.accountUserLookupService.getUser(
-											await this.accountContactsService.getContactUsername(
-												message.authorID
-											)
+											message.authorID,
+											false
 										) :
 										undefined
 									;
@@ -274,7 +277,11 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 						}
 					)
 				))).sort((a, b) =>
-					a.message.timestamp - b.message.timestamp
+					a.pending && !b.pending ?
+						1 :
+					!a.pending && b.pending ?
+						-1 :
+						a.message.timestamp - b.message.timestamp
 				);
 			})),
 			unconfirmedMessages: chat.unconfirmedMessages
@@ -309,10 +316,6 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	constructor (
 		/** @ignore */
 		private readonly elementRef: ElementRef,
-
-		/** @ignore */
-		@Inject(AccountContactsService) @Optional()
-		private readonly accountContactsService: AccountContactsService|undefined,
 
 		/** @ignore */
 		@Inject(AccountDatabaseService) @Optional()

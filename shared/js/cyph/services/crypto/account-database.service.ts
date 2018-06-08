@@ -2,7 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, combineLatest, Observable, of, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {ICurrentUser, publicSigningKeys, SecurityModels} from '../../account';
 import {IAsyncList} from '../../iasync-list';
@@ -23,6 +23,7 @@ import {
 import {filterUndefinedOperator} from '../../util/filter';
 import {cacheObservable, flattenObservable} from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
+import {getOrSetDefault, getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {lockFunction} from '../../util/lock';
 import {deserialize, serialize} from '../../util/serialization';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
@@ -193,8 +194,10 @@ export class AccountDatabaseService {
 		securityModel: SecurityModels,
 		customKey: MaybePromise<Uint8Array>|undefined,
 		anonymous: boolean = false,
-		moreAdditionalData?: string
+		moreAdditionalData?: string,
+		noWaitForUnlock: boolean = false
 	) : Promise<{
+		alreadyCached: boolean;
 		progress: Observable<number>;
 		result: ITimedValue<T>;
 	}> {
@@ -202,13 +205,17 @@ export class AccountDatabaseService {
 
 		if (!anonymous && this.currentUser.value) {
 			url	= await this.normalizeURL(url);
-			await this.waitForUnlock(url);
+
+			if (!noWaitForUnlock) {
+				await this.waitForUnlock(url);
+			}
 		}
 
 		const downloadTask	= this.databaseService.downloadItem(url, BinaryProto);
 		const result		= await downloadTask.result;
 
 		return {
+			alreadyCached: await downloadTask.alreadyCached,
 			progress: downloadTask.progress,
 			result: {
 				timestamp: result.timestamp,
@@ -288,12 +295,14 @@ export class AccountDatabaseService {
 			switch (securityModel) {
 				case SecurityModels.private:
 					return this.openHelpers.secretBox(data, url, customKey);
+
 				case SecurityModels.privateSigned:
 					return this.openHelpers.sign(
 						await this.openHelpers.secretBox(data, url, customKey),
 						url,
 						false
 					);
+
 				default:
 					throw new Error('Invalid security model.');
 			}
@@ -330,20 +339,41 @@ export class AccountDatabaseService {
 		switch (securityModel) {
 			case SecurityModels.private:
 				return this.sealHelpers.secretBox(data, url, customKey);
+
 			case SecurityModels.privateSigned:
 				return this.sealHelpers.secretBox(
 					await this.sealHelpers.sign(data, url, false),
 					url,
 					customKey
 				);
+
 			case SecurityModels.public:
 			case SecurityModels.publicFromOtherUsers:
 				return this.sealHelpers.sign(data, url, true);
+
 			case SecurityModels.unprotected:
 				return data;
+
 			default:
 				throw new Error('Invalid security model.');
 		}
+	}
+
+	/** @ignore */
+	public async setItemInternal<T> (
+		url: MaybePromise<string>,
+		proto: IProto<T>,
+		value: T,
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: MaybePromise<Uint8Array>,
+		noBlobStorage: boolean = false
+	) : Promise<{hash: string; url: string}> {
+		return this.databaseService.setItem(
+			await this.normalizeURL(url),
+			BinaryProto,
+			await this.seal(url, proto, value, securityModel, customKey),
+			noBlobStorage
+		);
 	}
 
 	/** @see DatabaseService.downloadItem */
@@ -354,12 +384,13 @@ export class AccountDatabaseService {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : {
+		alreadyCached: Promise<boolean>;
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
 		const progress	= new BehaviorSubject(0);
 
-		const result	= (async () => {
+		const downloadTaskResult	= (async () => {
 			const downloadTask	= await this.getItemInternal(
 				url,
 				proto,
@@ -374,10 +405,14 @@ export class AccountDatabaseService {
 				() => { progress.complete(); }
 			);
 
-			return downloadTask.result;
+			return downloadTask;
 		})();
 
-		return {progress, result};
+		return {
+			alreadyCached: downloadTaskResult.then(o => o.alreadyCached),
+			progress,
+			result: downloadTaskResult.then(o => o.result)
+		};
 	}
 
 	/** @see DatabaseService.getAsyncList */
@@ -400,7 +435,7 @@ export class AccountDatabaseService {
 				this.getList(url, proto, securityModel, customKey, anonymous, immutable)
 			),
 			lock: async (f, reason) => this.lock(url, f, reason),
-			pushValue: async value => localLock(async () => {
+			pushItem: async value => localLock(async () => {
 				await this.pushItem(
 					url,
 					proto,
@@ -463,9 +498,19 @@ export class AccountDatabaseService {
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
-		noBlobStorage: boolean = false
+		noBlobStorage: boolean = false,
+		staticValues: boolean = false
 	) : IAsyncMap<string, T> {
-		const localLock			= lockFunction();
+		const localLock	= lockFunction();
+		const itemLocks	= new Map<string, LockFunction>();
+		const itemCache	= staticValues ? new Map<string, T>() : undefined;
+		const method	= 'AccountDatabaseService.getAsyncMap';
+
+		const lockItem			= (key: string) => getOrSetDefault(
+			itemLocks,
+			key,
+			() => this.lockFunction(`${url}/${key}`)
+		);
 
 		const baseAsyncMap		= (async () => {
 			url	= await this.normalizeURL(url);
@@ -473,18 +518,38 @@ export class AccountDatabaseService {
 			return this.databaseService.getAsyncMap(
 				url,
 				BinaryProto,
-				this.lockFunction(url),
-				noBlobStorage
+				k => this.lockFunction(k),
+				noBlobStorage,
+				staticValues
 			);
 		})();
 
-		const getItem			= async (key: string) => this.getItem(
-			`${url}/${key}`,
-			proto,
-			securityModel,
-			customKey,
-			anonymous
+		const getItemInternal	= async (key: string) => getOrSetDefaultAsync(
+			itemCache,
+			key,
+			async () => this.localStorageService.getOrSetDefault(
+				`${method}/${url}/${key}`,
+				proto,
+				async () => (
+					await (
+						await this.getItemInternal(
+							`${url}/${key}`,
+							proto,
+							securityModel,
+							customKey,
+							anonymous,
+							undefined,
+							true
+						)
+					).result
+				).value
+			)
 		);
+
+		const getItem			= staticValues ?
+			getItemInternal :
+			async (key: string) => lockItem(key)(async () => getItemInternal(key))
+		;
 
 		const getValueHelper	= async (keys: string[]) => new Map<string, T>(
 			await Promise.all(keys.map(async (key) : Promise<[string, T]> => [
@@ -492,6 +557,35 @@ export class AccountDatabaseService {
 				await getItem(key)
 			]))
 		);
+
+		const removeItemInternal	= async (key: string) => {
+			if (itemCache) {
+				itemCache.delete(key);
+			}
+
+			await Promise.all([
+				this.removeItem(`${url}/${key}`),
+				this.localStorageService.removeItem(`${method}/${url}/${key}`)
+			]);
+		};
+
+		const setItemInternal		= async (key: string, value: T) => {
+			if (itemCache) {
+				itemCache.set(key, value);
+			}
+
+			await Promise.all([
+				this.setItemInternal(
+					`${url}/${key}`,
+					proto,
+					value,
+					securityModel,
+					customKey,
+					noBlobStorage
+				),
+				this.localStorageService.setItem(`${method}/${url}/${key}`, proto, value)
+			]);
+		};
 
 		const usernamePromise	= this.getUsernameFromURL(url);
 
@@ -513,17 +607,8 @@ export class AccountDatabaseService {
 			getValue: async () => localLock(async () => getValueHelper(await asyncMap.getKeys())),
 			hasItem: async key => (await baseAsyncMap).hasItem(key),
 			lock: async (f, reason) => (await baseAsyncMap).lock(f, reason),
-			removeItem: async key => (await baseAsyncMap).removeItem(key),
-			setItem: async (key, value) => {
-				await this.setItem(
-					`${url}/${key}`,
-					proto,
-					value,
-					securityModel,
-					customKey,
-					noBlobStorage
-				);
-			},
+			removeItem: async key => lockItem(key)(async () => removeItemInternal(key)),
+			setItem: async (key, value) => lockItem(key)(async () => setItemInternal(key, value)),
 			setValue: async (mapValue: Map<string, T>) => localLock(async () => {
 				await asyncMap.clear();
 				await Promise.all(Array.from(mapValue.entries()).map(async ([key, value]) =>
@@ -531,6 +616,22 @@ export class AccountDatabaseService {
 				));
 			}),
 			size: async () => (await baseAsyncMap).size(),
+			updateItem: async (key, f) => lockItem(key)(async () => {
+				const value	= await getItemInternal(key).catch(() => undefined);
+				let newValue: T|undefined;
+				try {
+					newValue	= await f(value);
+				}
+				catch {
+					return;
+				}
+				if (newValue === undefined) {
+					await removeItemInternal(key);
+				}
+				else {
+					await setItemInternal(key, newValue);
+				}
+			}),
 			updateValue: async f => asyncMap.lock(async () =>
 				asyncMap.setValue(await f(await asyncMap.getValue()))
 			),
@@ -551,7 +652,6 @@ export class AccountDatabaseService {
 		blockGetValue: boolean = false,
 		noBlobStorage: boolean = false
 	) : IAsyncValue<T> {
-		const defaultValue	= proto.create();
 		const localLock		= lockFunction();
 
 		const asyncValue	= (async () => {
@@ -560,7 +660,7 @@ export class AccountDatabaseService {
 			return this.databaseService.getAsyncValue(
 				url,
 				BinaryProto,
-				this.lockFunction(url),
+				k => this.lockFunction(k),
 				blockGetValue,
 				noBlobStorage
 			);
@@ -591,7 +691,7 @@ export class AccountDatabaseService {
 				);
 			}).catch(async () => blockGetValue ?
 				watch().pipe(take(2)).toPromise() :
-				defaultValue
+				proto.create()
 			),
 			lock: async (f, reason) =>
 				(await asyncValue).lock(f, reason)
@@ -603,8 +703,9 @@ export class AccountDatabaseService {
 				url,
 				proto,
 				await f(
-					await this.open(url, proto, securityModel, value, customKey).
-						catch(() => defaultValue)
+					await this.open(url, proto, securityModel, value, customKey).catch(() =>
+						proto.create()
+					)
 				),
 				securityModel,
 				customKey
@@ -687,18 +788,30 @@ export class AccountDatabaseService {
 		return this.databaseService.getListKeys(await this.normalizeURL(url));
 	}
 
-	/** @see DatabaseService.getOrSetDefault */
+	/** Gets a value and sets a default value if none had previously been set. */
 	public async getOrSetDefault<T> (
 		url: MaybePromise<string>,
 		proto: IProto<T>,
-		defaultValue: () => MaybePromise<T>
+		defaultValue: () => MaybePromise<T>,
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: MaybePromise<Uint8Array>,
+		noBlobStorage: boolean = false
 	) : Promise<T> {
 		try {
-			return await this.getItem(url, proto);
+			return await this.getItem(url, proto, securityModel, customKey);
 		}
 		catch {
 			const value	= await defaultValue();
-			this.setItem(url, proto, value).catch(() => {});
+			this.setItem(
+				url,
+				proto,
+				value,
+				securityModel,
+				customKey,
+				noBlobStorage
+			).catch(
+				() => {}
+			);
 			return value;
 		}
 	}
@@ -804,6 +917,8 @@ export class AccountDatabaseService {
 						url
 					)
 				)
+			,
+			false
 		);
 	}
 
@@ -856,13 +971,13 @@ export class AccountDatabaseService {
 	public async notify (
 		username: MaybePromise<string>,
 		notificationType: NotificationTypes,
-		subType?: number
+		metadata?: any
 	) : Promise<void> {
 		await this.databaseService.notify(
 			await this.normalizeURL('notifications'),
 			username,
 			notificationType,
-			subType
+			metadata
 		);
 	}
 
@@ -889,7 +1004,7 @@ export class AccountDatabaseService {
 						key,
 						securityModel,
 						customKey,
-						noBlobStorage
+						true
 					).then(
 						() => {}
 					);
@@ -924,10 +1039,12 @@ export class AccountDatabaseService {
 		customKey?: MaybePromise<Uint8Array>,
 		noBlobStorage: boolean = false
 	) : Promise<{hash: string; url: string}> {
-		return this.lock(url, async () => this.databaseService.setItem(
-			await this.normalizeURL(url),
-			BinaryProto,
-			await this.seal(url, proto, value, securityModel, customKey),
+		return this.lock(url, async () => this.setItemInternal(
+			url,
+			proto,
+			value,
+			securityModel,
+			customKey,
 			noBlobStorage
 		));
 	}
@@ -1077,8 +1194,7 @@ export class AccountDatabaseService {
 				mergeMap(
 					o => o
 				)
-			),
-			{timestamp: NaN, value: proto.create()}
+			)
 		);
 	}
 
@@ -1103,17 +1219,27 @@ export class AccountDatabaseService {
 	) : Observable<ITimedValue<T>[]> {
 		const cache: {head?: string; keys: number; value: ITimedValue<T>[]}	= {keys: 0, value: []};
 
+		const keysWatcher	= () => this.watchListKeys(url);
+		const headWatcher	= () => this.watch(
+			`${url}-head`,
+			StringProto,
+			securityModel,
+			customKey,
+			anonymous
+		);
+
+		const watcher	= immutable ?
+			headWatcher().pipe(mergeMap(
+				async (head) : Promise<[string[], ITimedValue<string>]> =>
+					[await this.getListKeys(url), head]
+			)) :
+			keysWatcher().pipe(map((keys) : [string[], ITimedValue<string>] =>
+				[keys, {timestamp: NaN, value: ''}]
+			))
+		;
+
 		return cacheObservable(
-			combineLatest(
-				this.watchListKeys(url),
-				!immutable ? of({timestamp: NaN, value: ''}) : this.watch(
-					`${url}-head`,
-					StringProto,
-					securityModel,
-					customKey,
-					anonymous
-				)
-			).pipe(
+			watcher.pipe(
 				mergeMap(async ([keys, head]) => {
 					const headValue	= !isNaN(head.timestamp) ? head.value : undefined;
 
@@ -1142,8 +1268,7 @@ export class AccountDatabaseService {
 
 					return cache.value;
 				})
-			),
-			[]
+			)
 		);
 	}
 
@@ -1172,8 +1297,7 @@ export class AccountDatabaseService {
 				mergeMap(
 					o => o
 				)
-			),
-			[]
+			)
 		);
 	}
 
@@ -1210,8 +1334,7 @@ export class AccountDatabaseService {
 				mergeMap(
 					o => o
 				)
-			),
-			{timestamp: NaN, value: proto.create()}
+			)
 		);
 	}
 

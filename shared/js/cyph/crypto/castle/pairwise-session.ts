@@ -43,6 +43,9 @@ export class PairwiseSession {
 	}>();
 
 	/** @ignore */
+	private readonly instanceID: Uint8Array					= this.potassium.randomBytes(16);
+
+	/** @ignore */
 	private readonly isReceiving: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
 	/** @ignore */
@@ -160,50 +163,63 @@ export class PairwiseSession {
 	}
 
 	/** @ignore */
-	private async ratchetBootstrapComplete (
-		initialSecretAlice: Uint8Array,
-		initialSecretBob: Uint8Array
-	) : Promise<void> {
+	private async ratchetBootstrapIncoming () : Promise<void> {
+		const [
+			encryptionKeyPair,
+			publicSigningKey,
+			cyphertext
+		]	= await Promise.all([
+			this.localUser.getEncryptionKeyPair(),
+			this.remoteUser.getPublicSigningKey(),
+			this.handshakeState.initialSecretCyphertext.getValue()
+		]);
+
+		const maybeSignedSecret	= await this.potassium.box.open(cyphertext, encryptionKeyPair);
+
 		await this.handshakeState.initialSecret.setValue(
-			await this.potassium.hash.deriveKey(
-				this.potassium.concatMemory(
-					true,
-					initialSecretAlice,
-					initialSecretBob
-				),
-				await this.potassium.ephemeralKeyExchange.secretBytes
-			)
+			publicSigningKey ?
+				await this.potassium.sign.open(maybeSignedSecret, publicSigningKey) :
+				maybeSignedSecret
 		);
 
 		await this.handshakeState.currentStep.setValue(HandshakeSteps.PostBootstrap);
 	}
 
 	/** @ignore */
-	private async ratchetBootstrapIncoming (
-		initialSecretCyphertext: IAsyncValue<Uint8Array>
-	) : Promise<Uint8Array> {
-		const cyphertext	= await initialSecretCyphertext.getValue();
-		const keyPair		= await this.localUser.getKeyPair();
+	private async ratchetBootstrapOutgoing () : Promise<void> {
+		const [
+			signingKeyPair,
+			publicEncryptionKey,
+			initialSecret
+		]	= await Promise.all([
+			this.localUser.getSigningKeyPair(),
+			this.remoteUser.getPublicEncryptionKey(),
+			(async () => {
+				let secret	= await this.handshakeState.initialSecret.getValue();
 
-		return this.potassium.box.open(cyphertext, keyPair);
-	}
+				if (!secret) {
+					secret	= this.potassium.randomBytes(
+						await this.potassium.ephemeralKeyExchange.secretBytes
+					);
 
-	/** @ignore */
-	private async ratchetBootstrapOutgoing (
-		initialSecretCyphertext: IAsyncValue<Uint8Array>
-	) : Promise<Uint8Array> {
-		const initialSecretPart	= this.potassium.randomBytes(
-			await this.potassium.ephemeralKeyExchange.secretBytes
-		);
+					await this.handshakeState.initialSecret.setValue(secret);
+				}
 
-		await initialSecretCyphertext.setValue(
+				return secret;
+			})()
+		]);
+
+		await this.handshakeState.initialSecretCyphertext.setValue(
 			await this.potassium.box.seal(
-				initialSecretPart,
-				await this.remoteUser.getPublicKey()
+				signingKeyPair ?
+					await this.potassium.sign.sign(initialSecret, signingKeyPair.privateKey) :
+					initialSecret
+				,
+				publicEncryptionKey
 			)
 		);
 
-		return initialSecretPart;
+		await this.handshakeState.currentStep.setValue(HandshakeSteps.PostBootstrap);
 	}
 
 	/** Receive/decrypt incoming message. */
@@ -237,11 +253,20 @@ export class PairwiseSession {
 			timestamp	= await getTimestamp();
 		}
 
-		await this.outgoingMessageQueue.pushValue(this.potassium.concatMemory(
-			true,
-			new Float64Array([timestamp]),
-			this.potassium.fromString(plaintext)
-		));
+		const plaintextBytes	= this.potassium.fromString(plaintext);
+		const timestampBytes	= new Float64Array([timestamp]);
+
+		const outgoingMessage	= this.potassium.concatMemory(
+			false,
+			timestampBytes,
+			this.instanceID,
+			plaintextBytes
+		);
+
+		this.potassium.clearMemory(plaintextBytes);
+		this.potassium.clearMemory(timestampBytes);
+
+		await this.outgoingMessageQueue.pushItem(outgoingMessage);
 	}
 
 	constructor (
@@ -300,48 +325,35 @@ export class PairwiseSession {
 		}
 	) {
 		retryUntilSuccessful(async () => {
-			await this.localUser.getKeyPair();
-
 			while (true) {
-				const initialSecret			=
-					await this.handshakeState.initialSecret.getValue()
-				;
+				const currentStep	= await this.handshakeState.currentStep.getValue();
 
-				const symmetricRatchetReady	=
-					(await symmetricRatchetState.current.incoming.getValue()) !== undefined
-				;
-
-				/* Start bootstrapping asymmetric ratchet */
-				if (initialSecret === undefined) {
-					await this.handshakeState.initialSecret.setValue(
-						this.handshakeState.isAlice ?
-							await this.ratchetBootstrapOutgoing(
-								this.handshakeState.initialSecretAliceCyphertext
-							) :
-							await this.ratchetBootstrapIncoming(
-								this.handshakeState.initialSecretAliceCyphertext
-							)
-					);
+				if (currentStep === HandshakeSteps.Aborted) {
+					this.abort();
+					return;
 				}
 
-				/* Second half of ratchet bootstrap for mutual public key verification */
-				else if (
-					(await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Start
-				) {
-					await this.ratchetBootstrapComplete(
-						initialSecret,
-						this.handshakeState.isAlice ?
-							await this.ratchetBootstrapIncoming(
-								this.handshakeState.initialSecretBobCyphertext
-							) :
-							await this.ratchetBootstrapOutgoing(
-								this.handshakeState.initialSecretBobCyphertext
-							)
-					);
+				/* Bootstrap asymmetric ratchet */
+				else if (currentStep === HandshakeSteps.Start) {
+					if (this.handshakeState.isAlice) {
+						await this.ratchetBootstrapOutgoing();
+					}
+					else {
+						await this.ratchetBootstrapIncoming();
+					}
 				}
 
 				/* Initialize symmetric ratchet */
-				else if (!symmetricRatchetReady) {
+				else if (
+					currentStep === HandshakeSteps.PostBootstrap &&
+					(await symmetricRatchetState.current.incoming.getValue()) === undefined
+				) {
+					const initialSecret	= await this.handshakeState.initialSecret.getValue();
+
+					if (!initialSecret) {
+						throw new Error('Invalid HandshakeSteps.PostBootstrap state.');
+					}
+
 					const symmetricKeys	= await Core.newSymmetricKeys(
 						this.potassium,
 						this.handshakeState.isAlice,

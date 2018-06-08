@@ -1,6 +1,13 @@
 <h1 matDialogTitle>{{title}}</h1>
 <div mat-dialog-content>
-	<div>{{content}}</div>
+	<cyph-markdown
+		[markdown]='content'
+		[targetSelf]='true'
+		*ngIf='true; else text'
+	></cyph-markdown>
+	<ng-template #text>
+		<div>{{content}}</div>
+	</ng-template>
 	<ng-container *ngIf='prompt !== undefined'>
 		<br />
 		<mat-form-field>

@@ -26,6 +26,11 @@ export class EphemeralSessionService extends SessionService {
 	/** @ignore */
 	private pingPongTimeouts: number	= 0;
 
+	/** @ignore */
+	private get lastIncomingMessageTimestamp () : number {
+		return this.lastIncomingMessageTimestamps.values().next().value || 0;
+	}
+
 	/**
 	 * @ignore
 	 * Intermittent check to verify chat is still alive and send fake encrypted chatter.
@@ -124,6 +129,21 @@ export class EphemeralSessionService extends SessionService {
 		);
 	}
 
+	/** @inheritDoc */
+	public spawn () : EphemeralSessionService {
+		return new EphemeralSessionService(
+			this.analyticsService,
+			this.castleService.spawn(),
+			this.channelService.spawn(),
+			this.envService,
+			this.errorService,
+			this.potassiumService,
+			this.sessionInitService.spawn(),
+			this.stringsService,
+			this.configService
+		);
+	}
+
 	constructor (
 		analyticsService: AnalyticsService,
 		castleService: CastleService,
@@ -196,7 +216,7 @@ export class EphemeralSessionService extends SessionService {
 		const channelID: string	=
 			this.state.startingNewCyph === false ?
 				'' :
-				uuid()
+				uuid(true)
 		;
 
 		(async () => {

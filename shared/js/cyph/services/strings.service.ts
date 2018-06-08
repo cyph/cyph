@@ -55,6 +55,9 @@ export class StringsService {
 	public readonly accept: string						= `accept`;
 
 	/** @see StringsService */
+	public readonly affTooltip: string					= `Opens in new tab`;
+
+	/** @see StringsService */
 	public readonly appointmentCalendar: string			= `Appointment Calendar`;
 
 	/** @see StringsService */
@@ -92,6 +95,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly continueDialogAction: string		= `continue`;
+
+	/** @see StringsService */
+	public readonly continuePrompt: string				= `Continue?`;
 
 	/** @see StringsService */
 	public readonly currentAppointment: string			= `Current Appointment`;
@@ -223,6 +229,11 @@ export class StringsService {
 	public readonly futureAppointments: string			= `Future Appointments`;
 
 	/** @see StringsService */
+	public readonly getMessageValueFailure: string		=
+		`\`[Failed to fetch the contents of this message]\``
+	;
+
+	/** @see StringsService */
 	public readonly hasInvitedYouToA: string			= `has invited you to a`;
 
 	/** @see StringsService */
@@ -232,33 +243,50 @@ export class StringsService {
 	public readonly here: string						= `here`;
 
 	/** @see StringsService */
+	public readonly gdprContactForm: string				=
+		`I understand that this form is email-based (NOT ${this.internalProduct} encryption) ` +
+		`and provide consent for ${this.internalCompany} to store any information submitted herein.`
+	;
+
+	/** @see StringsService */
+	public readonly gdprContactFormShort: string		=
+		`Data Collection Consent`
+	;
+
+	/** @see StringsService */
+	public readonly gdprSignupForm: string				=
+		`By submitting your email address and/or name to the waitlist, you consent ` +
+		`for ${this.internalCompany} to view and store this data.`
+	;
+
+	/** @see StringsService */
 	public readonly incoming: string					= `Incoming`;
 
 	/** @see StringsService */
 	public readonly incomingAppointments: string		= `Incoming Appointment Requests`;
 
 	/** @see StringsService */
-	public readonly incomingFile: string				= `Incoming File:`;
-
-	/** @see StringsService */
-	public readonly incomingFileDownload: string		=
-		`Your ${this.internalFriend} would like to send you a file. Accept the file transfer?`
-	;
-
-	/** @see StringsService */
-	public readonly incomingFileRejected: string		=
-		`You have rejected the following file transfer:`
-	;
+	public readonly incomingFile: string				= `Download File`;
 
 	/** @see StringsService */
 	public readonly incomingFileSave: string			=
-		`Your ${this.internalFriend} has sent you a file. It has not been scanned for malware; ` +
-		`you may choose to accept it AT YOUR OWN RISK. Save this file?`
+		`This file has not been scanned for malware; ` +
+		`you may download it _at your own risk_. Save this file?`
 	;
 
 	/** @see StringsService */
 	public readonly incomingFileSaveError: string		=
 		`Failed to save the following file:`
+	;
+
+	/** @see StringsService */
+	public readonly incomingFileSaveImageError: string	=
+		`Failed to download this image.`
+	;
+
+	/** @see StringsService */
+	public readonly incomingFileUploadError: string		=
+		`Failed to upload the following file:`
 	;
 
 	/** @see StringsService */
@@ -517,9 +545,15 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly p2pWarning: string					=
-		`This will involve sharing your IP address with your ${this.internalFriend} ` +
-		`(which isn't a problem unless you're actively hiding ` +
-		`your current location from them). Continue?`
+		`This may involve sharing your IP address with your ${this.internalFriend}. ` +
+		`Proceed if you trust your ${this.internalFriend}.`
+	;
+
+	/** @see StringsService */
+	public readonly p2pWarningVPN: string				=
+		`This may involve sharing your IP address with your ${this.internalFriend}. ` +
+		`Proceed if you trust your ${this.internalFriend} or hide your IP by ` +
+		`[connecting through a VPN](https://go.nordvpn.net/SH1F4).`
 	;
 
 	/** @see StringsService */
@@ -594,6 +628,9 @@ export class StringsService {
 	public readonly save: string						= `save`;
 
 	/** @see StringsService */
+	public readonly saveUpperCase: string				= `Save`;
+
+	/** @see StringsService */
 	public readonly search: string						= `Search`;
 
 	/** @see StringsService */
@@ -649,6 +686,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly startTime: string					= `Start Time`;
+
+	/** @see StringsService */
+	public readonly submit: string						= `Submit`;
 
 	/** @see StringsService */
 	public readonly submitPatientForms: string			= `Submit Patient Forms`;

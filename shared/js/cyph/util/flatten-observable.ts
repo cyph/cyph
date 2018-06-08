@@ -1,4 +1,4 @@
-import {BehaviorSubject, Observable, Observer} from 'rxjs';
+import {BehaviorSubject, Observable, Observer, ReplaySubject} from 'rxjs';
 
 
 /** A possibly-async Observable. */
@@ -18,8 +18,16 @@ const subscribeFactory	= <T> (observable: AsyncObservable<T>) => async (observer
 	)
 ;
 
-/** Wraps an possibly-async Observable with a synchronously created BehaviorSubject. */
-export const cacheObservable	= <T> (
+/** Wraps a possibly-async Observable with a synchronously created ReplaySubject. */
+export const cacheObservable	= <T> (observable: AsyncObservable<T>) : Observable<T> => {
+	const subscribe	= subscribeFactory(observable);
+	const subject	= new ReplaySubject<T>();
+	subscribe(subject);
+	return subject;
+};
+
+/** Wraps a possibly-async Observable with a synchronously created BehaviorSubject. */
+export const toBehaviorSubject	= <T> (
 	observable: AsyncObservable<T>,
 	initialValue: T
 ) : BehaviorSubject<T> => {

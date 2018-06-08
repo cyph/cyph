@@ -7,6 +7,7 @@ import {Time} from '../time-type';
 import {random} from './random';
 import {request} from './request';
 import {translate} from './translate';
+import {sleep} from './wait';
 
 
 /** @ignore */
@@ -18,10 +19,14 @@ const stringFormats	= {
 /** @ignore */
 const timestampData	= {
 	last: 0,
-	offset: (async () => {
+	offset: sleep(0).then(async () => {
 		/* tslint:disable-next-line:ban */
 		const start		= Date.now();
-		const server	= parseFloat(await request({url: env.baseUrl + 'timestamp'}));
+		const server	= parseFloat(await request({
+			retries: 1,
+			timeout: 1000,
+			url: env.baseUrl + 'timestamp?' + start.toString()
+		}));
 		/* tslint:disable-next-line:ban */
 		const end		= Date.now();
 
@@ -31,7 +36,7 @@ const timestampData	= {
 		else {
 			return server - end;
 		}
-	})().catch(
+	}).catch(
 		() => 0
 	),
 	subtime: 0

@@ -227,20 +227,24 @@
 			</smd-fab-actions>
 		</smd-fab-speed-dial>
 
-		<h3
-			fxFlex
-			class='new-messages cyph-banner emphasis'
-			*ngIf='showUnreadCount && scrollService.unreadItemCount > 0'
-			(click)='scrollService.scrollDown()'
-		>
-			↓&nbsp;
-			{{scrollService.unreadItemCount}}
-			{{stringsService.newString}}
-			{{
-				scrollService.unreadItemCount === 1 ?
-					stringsService.message :
-					stringsService.messages
-			}}
-		</h3>
+		<ng-container *ngIf='showUnreadCount'>
+			<ng-container *ngIf='scrollService.unreadItems.watchSize() | async as unreadItemCount'>
+				<h3
+					fxFlex
+					class='new-messages cyph-banner emphasis'
+					(click)='scrollService.scrollDown()'
+					*ngIf='unreadItemCount > 0'
+				>
+					↓&nbsp;
+					{{unreadItemCount}}
+					{{stringsService.newString}}
+					{{
+						unreadItemCount === 1 ?
+							stringsService.message :
+							stringsService.messages
+					}}
+				</h3>
+			</ng-container>
+		</ng-container>
 	</div>
 </div>

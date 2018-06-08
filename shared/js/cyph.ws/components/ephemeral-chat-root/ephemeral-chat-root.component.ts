@@ -5,6 +5,7 @@ import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
 import {fadeIn} from '../../../cyph/animations';
 import {States as ChatStates} from '../../../cyph/chat/enums';
+import {AffiliateService} from '../../../cyph/services/affiliate.service';
 import {ChannelService} from '../../../cyph/services/channel.service';
 import {ChatEnvService} from '../../../cyph/services/chat-env.service';
 import {ChatMessageGeometryService} from '../../../cyph/services/chat-message-geometry.service';
@@ -25,6 +26,7 @@ import {SessionService} from '../../../cyph/services/session.service';
 import {SplitTestingService} from '../../../cyph/services/split-testing.service';
 import {StringsService} from '../../../cyph/services/strings.service';
 import {UrlSessionInitService} from '../../../cyph/services/url-session-init.service';
+import {WindowWatcherService} from '../../../cyph/services/window-watcher.service';
 import {events} from '../../../cyph/session/enums';
 import {random} from '../../../cyph/util/random';
 import {sleep} from '../../../cyph/util/wait';
@@ -38,6 +40,7 @@ import {ChatRootStates} from '../../enums';
 @Component({
 	animations: [fadeIn],
 	providers: [
+		AffiliateService,
 		ChannelService,
 		ChatMessageGeometryService,
 		ChatService,
@@ -133,12 +136,14 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		if (granim) {
 			(async () => {
 				await sleep(random(5000));
+				await this.windowWatcherService.waitUntilVisible();
 
 				if (granimStates.paused) {
 					granim.changeState('paused');
 				}
 
 				await sleep(3000);
+				await this.windowWatcherService.waitUntilVisible();
 				granim.pause();
 			})();
 		}
@@ -267,6 +272,12 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService,
+
+		/** @ignore */
+		private readonly windowWatcherService: WindowWatcherService,
+
+		/** @see AffiliateService */
+		public readonly affiliateService: AffiliateService,
 
 		/** @see AppService */
 		public readonly appService: AppService,

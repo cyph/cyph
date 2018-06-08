@@ -17,9 +17,11 @@ import {ChatMessage, UiStyles} from '../../chat';
 import {IQuillDelta} from '../../iquill-delta';
 import {ChatService} from '../../services/chat.service';
 import {DialogService} from '../../services/dialog.service';
+import {FileTransferService} from '../../services/file-transfer.service';
 import {ScrollService} from '../../services/scroll.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
+import {readableByteLength} from '../../util/formatting';
 import {sleep, waitForIterable} from '../../util/wait';
 
 
@@ -34,8 +36,8 @@ import {sleep, waitForIterable} from '../../util/wait';
 export class ChatMessageComponent implements OnChanges, OnDestroy {
 	/** Temporary workaround pending ACCOUNTS-36. */
 	public static appeared: BehaviorSubject<Set<string>>	= (() => {
-		const ids			= new Set<string>();
-		const subject		= new BehaviorSubject(ids);
+		const ids		= new Set<string>();
+		const subject	= new BehaviorSubject(ids);
 
 		(async () => {
 			while (true) {
@@ -110,6 +112,9 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 		new BehaviorSubject<IQuillDelta|undefined>(undefined)
 	;
 
+	/** @see readableByteLength */
+	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
+
 	/** If true, will scroll into view. */
 	@Input() public scrollIntoView: boolean							= false;
 
@@ -128,20 +133,15 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 	/** Indicates whether view is ready. */
 	public readonly viewReady: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
-	/** Handle clicks to display image dialogs when needed. */
-	public click (event: MouseEvent) : void {
-		if (event.target instanceof HTMLImageElement) {
-			this.dialogService.image(event.target.src);
-		}
-	}
-
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
-		return (
-			this.message === undefined ||
-			this.unconfirmedMessages === undefined ||
-			this.message.authorType !== ChatMessage.AuthorTypes.Local ||
-			!(this.message.id && this.unconfirmedMessages[this.message.id])
+		return !!(
+			this.message &&
+			this.unconfirmedMessages &&
+			(
+				this.message.authorType !== ChatMessage.AuthorTypes.Local ||
+				!(this.message.id in this.unconfirmedMessages)
+			)
 		);
 	}
 
@@ -189,7 +189,7 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 		if (
 			this.unconfirmedMessages === undefined ||
 			this.message !== changes.message.currentValue ||
-			this.scrollService.isRead(this.message.id)
+			(await this.scrollService.isRead(this.message.id))
 		) {
 			return;
 		}
@@ -200,7 +200,7 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 		await ChatMessageComponent.appeared.pipe(filter(arr => arr.has(id)), take(1)).toPromise();
 
 		if (this.message === changes.message.currentValue) {
-			this.scrollService.setRead(this.message.id);
+			await this.scrollService.setRead(this.message.id);
 		}
 	}
 
@@ -227,7 +227,7 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 			});
 
 			this.renderer.addClass(element, 'transitionend');
-			await promise;
+			await Promise.race([promise, sleep(3000)]);
 			this.renderer.removeClass(element, 'transitionend');
 		}));
 	}
@@ -240,9 +240,6 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 		private readonly renderer: Renderer2,
 
 		/** @ignore */
-		private readonly dialogService: DialogService,
-
-		/** @ignore */
 		private readonly scrollService: ScrollService,
 
 		/** @ignore */
@@ -250,6 +247,12 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,
+
+		/** @see DialogService */
+		public readonly dialogService: DialogService,
+
+		/** @see FileTransferService */
+		public readonly fileTransferService: FileTransferService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

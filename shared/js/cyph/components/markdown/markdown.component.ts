@@ -70,7 +70,10 @@ export class MarkdownComponent implements OnChanges {
 						img.src	= value;
 						return img.outerHTML;
 					}
-				)
+				).
+
+				/* Gracefully handle protocol-less links */
+				replace(/(href=")(((?!:\/\/).)*?")/g, (_, a, b) => `${a}http://${b}`)
 		);
 
 		if (this.targetSelf) {

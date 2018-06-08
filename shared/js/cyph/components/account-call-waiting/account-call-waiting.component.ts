@@ -60,7 +60,7 @@ export class AccountCallWaitingComponent implements AfterViewInit, OnChanges {
 			}
 
 			const users	= await Promise.all(this.appointment.participants.map(async username => {
-				const user	= await this.accountUserLookupService.getUser(username);
+				const user	= await this.accountUserLookupService.getUser(username, false);
 				if (!user) {
 					return user;
 				}

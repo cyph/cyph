@@ -3,6 +3,7 @@ import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {sleep} from '../util/wait';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
+import {EnvService} from './env.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
@@ -31,8 +32,11 @@ export class P2PService {
 						''
 					)
 				}. ${
-					this.stringsService.p2pWarning
+					this.p2pWarning
+				} ${
+					this.stringsService.continuePrompt
 				}`,
+				markdown: true,
 				ok: this.stringsService.continueDialogAction,
 				timeout,
 				title: this.stringsService.p2pTitle
@@ -91,8 +95,11 @@ export class P2PService {
 						''
 					)
 				}. ${
-					this.stringsService.p2pWarning
+					this.p2pWarning
+				} ${
+					this.stringsService.continuePrompt
 				}`,
+				markdown: true,
 				ok: this.stringsService.continueDialogAction,
 				title: this.stringsService.p2pTitle
 			});
@@ -119,6 +126,14 @@ export class P2PService {
 
 	/** Indicates whether sidebar is open. */
 	public isSidebarOpen: boolean	= false;
+
+	/** @ignore */
+	private get p2pWarning () : string {
+		return this.envService.showAds ?
+			this.stringsService.p2pWarningVPN :
+			this.stringsService.p2pWarning
+		;
+	}
 
 	/** @see P2PWebRTCService.request */
 	protected async request (callType: 'audio'|'video') : Promise<void> {
@@ -211,6 +226,9 @@ export class P2PService {
 
 		/** @ignore */
 		protected readonly dialogService: DialogService,
+
+		/** @ignore */
+		protected readonly envService: EnvService,
 
 		/** @ignore */
 		protected readonly p2pWebRTCService: P2PWebRTCService,

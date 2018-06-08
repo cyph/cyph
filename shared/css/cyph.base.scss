@@ -9,11 +9,6 @@ mat-dialog-container mat-tab-body {
 	max-height: 70vh;
 }
 
-/* Temporary workaround for https://github.com/angular/flex-layout/issues/689 */
-*[fxlayout='column'] > *[fxFlex] {
-	@include flex-basis(0.000000001px !important);
-}
-
 /* Workaround for mobile Chrome vh bug */
 .cdk-global-overlay-wrapper, .cdk-overlay-container {
 	height: 100%;
@@ -205,6 +200,7 @@ mat-card-title {
 /* Temporary workaround for Material bug */
 mat-progress-bar > svg.mat-progress-bar-background {
 	visibility: hidden;
+	pointer-events: none;
 }
 
 od-virtualscroll, od-virtualrow {
@@ -253,6 +249,7 @@ button, [mat-button], [mat-raised-button] {
 
 .visibility-hidden {
 	visibility: hidden;
+	pointer-events: none;
 }
 
 blockquote {
@@ -307,6 +304,10 @@ pre, code {
 
 		@include filter(brightness(1.05));
 	}
+}
+
+mat-icon.gdpr {
+	@include icon-size(42px);
 }
 
 @include keyframes(breathe) {

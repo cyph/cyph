@@ -1,6 +1,15 @@
 service firebase.storage {
 	match /b/{bucket}/o {
 		match /{namespace} {
+			match /castleSessionIDs/{userA}/{userB}/{hash} {
+				allow read, write: if
+					request.auth != null && (
+						(userA + '@' + DOMAIN) == request.auth.token.email ||
+						(userB + '@' + DOMAIN) == request.auth.token.email
+					)
+				;
+			}
+
 			match /certificateHistory/{hash} {
 				allow read, write: if false;
 			}
@@ -13,8 +22,7 @@ service firebase.storage {
 				// match /handshake {
 				// 	match /alicePublicKey/{hash} {}
 				// 	match /bobPublicKey/{hash} {}
-				// 	match /initialSecretAliceCyphertext/{hash} {}
-				// 	match /initialSecretBobCyphertext/{hash} {}
+				// 	match /initialSecretCyphertext/{hash} {}
 				// }
 
 				// match /messages/{message}/{hash} {}
@@ -28,7 +36,38 @@ service firebase.storage {
 
 			match /fileTransfers/{file}/{hash} {
 				allow read;
-				allow write: if request.resource == null || request.resource.size < 300000000;
+				allow write: if
+					resource == null &&
+					request.resource.size > 0 &&
+					request.resource.size < 300000000
+				;
+			}
+
+			match /fileTransfersEphemeral/{file}/{hash} {
+				allow read;
+				allow write: if
+					resource == null &&
+					request.resource.size > 0 &&
+					request.resource.size < 300000000
+				;
+			}
+
+			match /messageValues/{messageValue}/{hash} {
+				allow read;
+				allow write: if
+					resource == null &&
+					request.resource.size > 0 &&
+					request.resource.size < 300000000
+				;
+			}
+
+			match /messageValuesEphemeral/{messageValue}/{hash} {
+				allow read;
+				allow write: if
+					resource == null &&
+					request.resource.size > 0 &&
+					request.resource.size < 300000000
+				;
 			}
 
 			match /users/{user} {
@@ -43,24 +82,12 @@ service firebase.storage {
 					allow read;
 				}
 
-				match /coverImage/{hash} {
-					allow read;
-				}
-
-				match /certificate/{hash} {
-					allow read;
-					allow write: if false;
-				}
-
-				// match /certificateRequest/{hash} {}
-
-				// match /contactUsernames/{username}/{hash} {}
-
-				// match /contacts/{contact} {
+				// match /castleSessions/{contact} {
+				// 	match /futureMessages/{messageID}/{hash} {}
 				// 	match /lastConfirmedMessage/{hash} {}
+				// 	match /messageList/{messageID}/{hash} {}
+				// 	match /messageList-head/{hash} {}
 				// 	match /messages/{message}/{hash} {}
-				// 	match /messages-head/{hash} {}
-				// 	match /messageValues/{messageValue}/{hash} {}
 				// 	match /session {
 				// 		/asymmetricRatchetState {
 				// 			/privateKey/{hash} {}
@@ -90,6 +117,23 @@ service firebase.storage {
 				// 		}
 				// 	}
 				// }
+
+				match /certificate/{hash} {
+					allow read;
+					allow write: if false;
+				}
+
+				// match /certificateRequest/{hash} {}
+
+				// match /contactIDs/{username}/{hash} {}
+
+				// match /contacts/{username}/{hash} {}
+
+				// match /contactUsernames/{id}/{hash} {}
+
+				match /coverImage/{hash} {
+					allow read;
+				}
 
 				match /docs/{all=**} {
 					allow read;

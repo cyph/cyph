@@ -4,6 +4,37 @@
 		".write": false,
 
 		"$namespace": {
+			"castleSessionIDs": {
+				"$userA": {
+					"$userB": {
+						".read": "($userA + '@' + $DOMAIN) === auth.token.email || ($userB + '@' + $DOMAIN) === auth.token.email",
+						".write": "($userA + '@' + $DOMAIN) === auth.token.email || ($userB + '@' + $DOMAIN) === auth.token.email",
+
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				}
+			},
+
+			"certificateHistory": {
+				"data": {
+					".validate": "newData.isString()"
+				},
+				"hash": {
+					".validate": "newData.isString()"
+				},
+				"timestamp": {
+					".validate": "newData.val() === now"
+				}
+			},
+
 			"channels": {
 				"$channel": {
 					".read": true,
@@ -38,39 +69,11 @@
 								".validate": "newData.val() === now"
 							}
 						},
-						"initialSecretAliceCyphertext": {
+						"initialSecretCyphertext": {
 							"data": {
 								".validate": "newData.isString()"
 							},
 							"hash": {
-								".validate": "newData.isString()"
-							},
-							"timestamp": {
-								".validate": "newData.val() === now"
-							}
-						},
-						"initialSecretBobCyphertext": {
-							"data": {
-								".validate": "newData.isString()"
-							},
-							"hash": {
-								".validate": "newData.isString()"
-							},
-							"timestamp": {
-								".validate": "newData.val() === now"
-							}
-						}
-					},
-
-					"lock": {
-						"$contender": {
-							"claimTimestamp": {
-								".validate": "newData.val() === now"
-							},
-							"id": {
-								".validate": "newData.isString()"
-							},
-							"reason": {
 								".validate": "newData.isString()"
 							},
 							"timestamp": {
@@ -128,7 +131,24 @@
 			"fileTransfers": {
 				"$file": {
 					".read": true,
-					".write": true,
+					".write": "!data.exists() && newData.exists()",
+
+					"data": {
+						".validate": "newData.isString()"
+					},
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				}
+			},
+
+			"fileTransfersEphemeral": {
+				"$file": {
+					".read": true,
+					".write": "!data.exists() && newData.exists()",
 
 					"data": {
 						".validate": "newData.isString()"
@@ -148,9 +168,65 @@
 				}
 			},
 
-			"lockdownIds": {
-				"$lockdownId": {
+			"lockdownIDs": {
+				"$lockdownID": {
 					".validate": "newData.isString()"
+				}
+			},
+
+			"locks": {
+				".read": true,
+				".write": true,
+
+				"$lock": {
+					"$contender": {
+						"claimTimestamp": {
+							".validate": "newData.val() === now"
+						},
+						"id": {
+							".validate": "newData.isString()"
+						},
+						"reason": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				}
+			},
+
+			"messageValues": {
+				"$messageValue": {
+					".read": true,
+					".write": "!data.exists() && newData.exists()",
+
+					"data": {
+						".validate": "newData.isString()"
+					},
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				}
+			},
+
+			"messageValuesEphemeral": {
+				"$messageValue": {
+					".read": true,
+					".write": "!data.exists() && newData.exists()",
+
+					"data": {
+						".validate": "newData.isString()"
+					},
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
 				}
 			},
 
@@ -161,26 +237,6 @@
 					},
 					"uid": {
 						".validate": "newData.isString()"
-					}
-				}
-			},
-
-			"pushlocks": {
-				"$contender": {
-					".read": true,
-					".write": true,
-
-					"claimTimestamp": {
-						".validate": "newData.val() === now"
-					},
-					"id": {
-						".validate": "newData.isString()"
-					},
-					"reason": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
 					}
 				}
 			},
@@ -204,70 +260,46 @@
 						}
 					},
 
-					"coverImage": {
-						".read": true,
-
-						"data": {
-							".validate": "newData.isString()"
-						},
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					},
-
-					"certificate": {
-						".read": true,
-						".write": false,
-
-						"data": {
-							".validate": "newData.isString()"
-						},
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					},
-
-					"certificateRequest": {
-						"data": {
-							".validate": "newData.isString()"
-						},
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					},
-
-					"clientConnections": {
-						"$clientConnection": {
-							".validate": "newData.val() === now"
-						}
-					},
-
-					"contactUsernames": {
-						"$username": {
-							"data": {
-								".validate": "newData.isString()"
-							},
-							"hash": {
-								".validate": "newData.isString()"
-							},
-							"timestamp": {
-								".validate": "newData.val() === now"
-							}
-						}
-					},
-
-					"contacts": {
+					"castleSessions": {
 						"$contact": {
+							"futureMessages": {
+								"$messageID": {
+									"data": {
+										".validate": "newData.isString()"
+									},
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								}
+							},
 							"lastConfirmedMessage": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							},
+							"messageList": {
+								"$messageID": {
+									"data": {
+										".validate": "newData.isString()"
+									},
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								}
+							},
+							"messageList-head": {
 								"data": {
 									".validate": "newData.isString()"
 								},
@@ -280,30 +312,6 @@
 							},
 							"messages": {
 								"$message": {
-									"data": {
-										".validate": "newData.isString()"
-									},
-									"hash": {
-										".validate": "newData.isString()"
-									},
-									"timestamp": {
-										".validate": "newData.val() === now"
-									}
-								}
-							},
-							"messages-head": {
-								"data": {
-									".validate": "newData.isString()"
-								},
-								"hash": {
-									".validate": "newData.isString()"
-								},
-								"timestamp": {
-									".validate": "newData.val() === now"
-								}
-							},
-							"messageValues": {
-								"$messageValue": {
 									"data": {
 										".validate": "newData.isString()"
 									},
@@ -505,6 +513,95 @@
 									}
 								}
 							}
+						}
+					},
+
+					"certificate": {
+						".read": true,
+						".write": false,
+
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"certificateRequest": {
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"clientConnections": {
+						"$clientConnection": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"contactIDs": {
+						"$username": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"contacts": {
+						"$username": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"contactUsernames": {
+						"$id": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"coverImage": {
+						".read": true,
+
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
 						}
 					},
 
@@ -754,8 +851,8 @@
 
 					"notifications": {
 						"$notification": {
-							"subType": {
-								".validate": "newData.isNumber()"
+							"metadata": {
+								".validate": "newData.hasChildren()"
 							},
 							"target": {
 								".validate": "newData.isString()"

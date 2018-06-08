@@ -18,6 +18,9 @@ export class DialogConfirmComponent {
 	/** Content. */
 	public content?: string;
 
+	/** Indicates whether content is Markdown. */
+	public markdown: boolean	= false;
+
 	/** OK button text. */
 	public ok?: string;
 

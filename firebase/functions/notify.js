@@ -5,22 +5,25 @@ const {normalize}	= require('./util');
 
 
 module.exports	= (database, messaging) => ({
-	notify: async (namespace, username, subject, text, preferPush) => {
-		const url	= `${namespace}/users/${normalize(username)}`;
-
+	notify: async (namespace, username, subject, text, eventDetails, preferPush) => {
 		subject	= sanitize(subject);
 		text	= sanitize(text);
 
-		if (!preferPush) {
-			await Promise.all([
-				sendMail(database, namespace, url, subject, text),
-				sendMessage(database, messaging, url, subject)
-			]);
+		const notifyMail	= async () =>
+			sendMail(database, namespace, username, subject, text, eventDetails)
+		;
+
+		const notifyMessage	= async () =>
+			sendMessage(database, messaging, namespace, username, subject)
+		;
+
+		if (!preferPush || eventDetails) {
+			await Promise.all([notifyMail(), notifyMessage()]);
 			return;
 		}
 
-		if (!(await sendMessage(database, messaging, url, subject))) {
-			await sendMail(database, namespace, url, subject, text);
+		if (!(await notifyMessage())) {
+			await notifyMail();
 		}
 	}
 });

@@ -44,12 +44,12 @@ export class AccountCastleService extends CastleService {
 			take(1)
 		).subscribe(user => {
 			this.pairwiseSessionLock(async () => {
-				const contactID	= await this.accountContactsService.
-					getContactID(user.username).
+				const castleSessionID	= await this.accountContactsService.
+					getCastleSessionID(user.username).
 					catch(() => undefined)
 				;
 
-				if (!contactID) {
+				if (!castleSessionID) {
 					return;
 				}
 
@@ -57,7 +57,7 @@ export class AccountCastleService extends CastleService {
 					this.pairwiseSessions,
 					accountSessionService.ephemeralSubSession ? undefined : user.username,
 					async () => {
-						const sessionURL		= `contacts/${contactID}/session`;
+						const sessionURL		= `castleSessions/${castleSessionID}/session`;
 
 						const localUser			= new RegisteredLocalUser(
 							this.accountDatabaseService
@@ -219,6 +219,14 @@ export class AccountCastleService extends CastleService {
 				));
 			});
 		});
+	}
+
+	/** @inheritDoc */
+	public spawn () : AccountCastleService {
+		return new AccountCastleService(
+			this.accountContactsService,
+			this.accountDatabaseService
+		);
 	}
 
 	constructor (

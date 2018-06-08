@@ -11,23 +11,33 @@ const newForm			= (
 });
 
 const newFormComponent	= (
-	rows: (Form.IElementRow|Form.IElementRow[])[],
+	containers: (Form.IElementContainer|Form.IElementContainer[])[],
 	id?: string,
-	idSeparator?: string
+	isColumn?: boolean
 ) : Form.IComponent => ({
+	containers: containers.reduce<Form.IElementContainer[]>((a, b) => a.concat(b), []),
 	id,
-	idSeparator,
-	rows: rows.reduce<Form.IElementRow[]>((a, b) => a.concat(b), [])
+	isColumn
 });
 
-const newFormRow		= (
-	elements: (Form.IElement|Form.IElement[])[],
+const newFormContainer		= (
+	elements: (Form.IElement|Form.IElement[]|Form.IElementContainer)[],
 	id?: string,
-	idSeparator?: string
-) : Form.IElementRow => ({
-	elements: elements.reduce<Form.IElement[]>((a, b) => a.concat(b), []),
+	isColumn?: boolean,
+	formula?: string
+) : Form.IElementContainer => ({
+	elements: elements.reduce<Form.IElementOrElementContainer[]>(
+		(arr, elem) => arr.concat(
+			'type' in elem ?
+				{element: elem} :
+			elem instanceof Array ?
+				elem.map(element => ({element})) :
+				{elementContainer: elem}),
+		[]
+	),
+	formula,
 	id,
-	idSeparator
+	isColumn
 });
 
 
@@ -223,8 +233,8 @@ export const urlInput		= newFormElement<{
 }>(Form.Element.Types.URL);
 
 /** Form title element row. */
-export const title		= (titleText: string) : Form.IElementRow => {
-	return newFormRow([text({label: titleText, width: 100})]);
+export const title		= (titleText: string) : Form.IElementContainer => {
+	return newFormContainer([text({label: titleText, width: 100})]);
 };
 
 /** Phone number element row. */
@@ -250,8 +260,8 @@ export const email		= (id: string = 'EmailAddresses[0]') : Form.IElement => {
 };
 
 /** Name element row. */
-export const name		= (id?: string) : Form.IElementRow => {
-	return newFormRow(
+export const name		= (id?: string) : Form.IElementContainer => {
+	return newFormContainer(
 		[
 			input({id: 'FirstName', label: 'First Name', required: true}),
 			input({id: 'MiddleName', label: 'Middle Name'}),
@@ -262,15 +272,40 @@ export const name		= (id?: string) : Form.IElementRow => {
 };
 
 /** Address element row. */
-export const address	= (id: string = 'Address') : Form.IElementRow => {
-	return newFormRow(
+export const address	= (id: string = 'Address') : Form.IElementContainer => {
+	return newFormContainer(
 		[
 			input({id: 'StreetAddress', label: 'Address'}),
 			input({id: 'City', label: 'City'}),
 			input({id: 'State', label: 'State', width: 10}),
 			input({id: 'ZIP', label: 'Zip', width: 25})
 		],
-		id
+		id,
+		false
+	);
+};
+
+/** Street address element row. */
+export const streetAddress	= (id: string = 'StreetAddress') : Form.IElementContainer => {
+	return newFormContainer(
+		[
+			input({id: 'StreetAddress', label: 'Address', width: 50})
+		],
+		id,
+		false
+	);
+};
+
+/** Address details element row. */
+export const addressDetails	= (id: string = 'AddressDetails') : Form.IElementContainer => {
+	return newFormContainer(
+		[
+			input({id: 'City', label: 'City', width: 15}),
+			input({id: 'State', label: 'State', width: 10}),
+			input({id: 'ZIP', label: 'Zip', width: 25})
+		],
+		id,
+		false
 	);
 };
 
@@ -297,31 +332,55 @@ export const contact			= (id?: string) : Form.IComponent => {
 	return newFormComponent(
 		[
 			name(),
-			newFormRow([
+			newFormContainer([
 				email(),
 				phone(),
 				ssn()
 			]),
 			address()
 		],
-		id
+		id,
+		false
 	);
 };
 
-/** Basic patient info for Telehealth Patients */
+/** Height. */
+export const height		= (id: string = 'height') : Form.IElementContainer => newFormContainer(
+	[
+		numberInput({
+			label: 'Height: ft',
+			max: 11,
+			min: 0,
+			width: 10
+		}),
+		numberInput({
+			label: 'Height: in',
+			max: 11,
+			min: 0,
+			width: 10
+		})
+	],
+	id,
+	false,
+	/* ${val}/12-((${val}/12)Mod1)) is a workaround pending mexp support for floor(${val}/12) */
+	/* tslint:disable-next-line:no-invalid-template-strings */
+	'calc(${0}*12+${1})\n[calc(${val}/12-((${val}/12)Mod1)), calc(${val}Mod12)]'
+);
+
+/** Basic patient info for telehealth patients. */
 export const basicInfo			= (id?: string) : Form.IComponent => {
 	return newFormComponent(
 		[
-			newFormRow([
+			newFormContainer([
 				datepicker({id: 'DOB', label: 'Date of Birth', width: 20, required: true}),
-				radio({id: 'Sex', label: 'Sex', options: ['Male', 'Female'], required: true}),
-				radio({
+				select({id: 'Sex', label: 'Sex', options: ['Male', 'Female'], required: true}),
+				select({
 					id: 'MaritalStatus',
 					label: 'Marital Status',
 					options: ['Single', 'Married']
 				}),
-				numberInput({label: 'Height (in)', min: 20, max: 108, width: 15, required: true}),
-				numberInput({label: 'Weight (lbs)', max: 1500, width: 15, required: true})
+				numberInput({label: 'Weight (lbs)', max: 1500, width: 15, required: false}),
+				height()
 			])
 		],
 		id
@@ -329,8 +388,8 @@ export const basicInfo			= (id?: string) : Form.IComponent => {
 };
 
 /** Insurance information element row. */
-export const insurance			= (id?: string) : Form.IElementRow => {
-	return newFormRow(
+export const insurance			= (id?: string) : Form.IElementContainer => {
+	return newFormContainer(
 		[
 			input({label: "Insured's name"}),
 			input({label: 'Relationship'}),
@@ -348,19 +407,19 @@ export const insuranceComponent	= (id?: string) : Form.IComponent => {
 			title('Primary Insurance'),
 			insurance(),
 			address(),
-			newFormRow([input({label: 'Insurance Company'})]),
+			newFormContainer([input({label: 'Insurance Company'})]),
 			title('Secondary Insurance'),
 			insurance(),
 			address(),
-			newFormRow([input({label: 'Insurance Company'})])
+			newFormContainer([input({label: 'Insurance Company'})])
 		],
 		id
 	);
 };
 
-/** Opt in or out of Cyph as preferred contact method & contact list */
+/** Opt in or out of Cyph as preferred contact method & mailing list. */
 export const optInOut			= () : Form.IComponent => newFormComponent([
-	newFormRow([
+	newFormContainer([
 		checkbox({label: 'Use Cyph as preferred contact method', noGrow: true, value: true}),
 		checkbox({label: 'Opt-In to receive updates & tips from Cyph', noGrow: true})
 	])
@@ -376,4 +435,63 @@ export const newPatient			= () : IForm => newForm(
 		optInOut()
 	],
 	'patient'
+);
+
+/** Patient profile form. */
+export const patientProfile		= () : IForm => newForm(
+	[
+		contact('redoxPatient.Demographics'),
+		newFormComponent(
+			[
+				newFormContainer(
+					[
+						datepicker({id: 'DOB', label: 'Date of Birth', width: 20, required: true}),
+						select({
+							id: 'Sex',
+							label: 'Sex',
+							options: ['Male', 'Female'],
+							width: 15
+						}),
+						select({
+							id: 'MaritalStatus',
+							label: 'Marital Status',
+							options: ['Single', 'Married']
+						}),
+						numberInput(
+							{label: 'Weight (lbs)', max: 1500, width: 10, required: false}
+						),
+						height()
+					],
+					undefined,
+					false
+				)
+			],
+			undefined,
+			true
+		)
+	]
+);
+
+/** Doctor profile form. */
+export const doctorProfile				= () : IForm => newForm(
+	[
+		newFormComponent([title('Doctor Profile')])
+	],
+	'doctor-profile'
+);
+
+/** Telehealth organization profile form. */
+export const telehealthOrgProfile		= () : IForm => newForm(
+	[
+		newFormComponent([title('Org Profile')])
+	],
+	'org-profile'
+);
+
+/** Telehealth staff profile form. */
+export const telehealthStaffProfile		= () : IForm => newForm(
+	[
+		newFormComponent([title('Staff Profile')])
+	],
+	'staff-profile'
 );

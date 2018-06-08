@@ -6,6 +6,8 @@
 	[class.author-app]='message?.authorType === authorTypes.App'
 	[class.author-local]='message?.authorType === authorTypes.Local'
 	[class.author-remote]='message?.authorType === authorTypes.Remote'
+	[class.file-transfer]='message?.value?.fileTransfer !== undefined'
+	[class.get-value-failure]='message?.value?.failure'
 	[class.self-destruct]='chatService.chatSelfDestruct'
 	[class.self-destructed]='message?.selfDestructTimer?.isComplete | async'
 	[class.visibility-hidden]='(viewReady | async) === false'
@@ -22,9 +24,9 @@
 					{{message?.author | async}}:
 				</strong>
 				&ngsp;
-				<ng-container
-					*ngTemplateOutlet='messageContent; context: {value: value}'
-				></ng-container>
+				<ng-container *ngTemplateOutlet='messageContent; context: {
+					value: value
+				}'></ng-container>
 			</div>
 			<div fxFlex fxLayoutAlign='end center' class='message-timestamp'>
 				<div fxLayout='row'>
@@ -86,9 +88,9 @@
 					</mat-card-header>
 					<div class='email-divider' mat-card-image></div>
 					<mat-card-content>
-						<ng-container
-							*ngTemplateOutlet='messageContent; context: {value: value}'
-						></ng-container>
+						<ng-container *ngTemplateOutlet='messageContent; context: {
+							value: value
+						}'></ng-container>
 					</mat-card-content>
 				</mat-card>
 			</div>
@@ -138,13 +140,85 @@
 </ng-template>
 
 <ng-template #messageContent let-value='value'>
-	<span (click)='click($event)'>
+	<span>
 		<cyph-calendar-invite
 			[isDisabled]='true'
 			[mobile]='mobile'
 			[ngModel]='value.calendarInvite'
-			*ngIf='value.calendarInvite; else formValue'
+			*ngIf='value.calendarInvite; else fileTransferValue'
 		></cyph-calendar-invite>
+		<ng-template #fileTransferValue>
+			<div *ngIf='value.fileTransfer; else formValue'>
+				<ng-container *ngIf='value.fileTransfer.image; else saveFile'>
+					<ng-container *ngIf='
+						fileTransferService.getImage(value.fileTransfer) | async as image;
+						else imageLoading
+					'>
+						<ng-container *ngIf='image.success; else imageFailure'>
+							<div class='centered image-container'>
+								<img
+									class='image-message'
+									[src]='image.uri'
+									[alt]='value.fileTransfer.name'
+									(click)='dialogService.image({
+										src: image.uri,
+										title: value.fileTransfer.name
+									})'
+								/>
+								<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
+							</div>
+							<div class='centered-fake image-container visibility-hidden'>
+								<img
+									class='image-message'
+									[src]='image.uri'
+									[alt]='value.fileTransfer.name'
+								/>
+								<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
+							</div>
+							<br />
+							<br />
+						</ng-container>
+						<ng-template #imageFailure>
+							<div class='centered'>
+								<span>{{stringsService.incomingFileSaveImageError}}</span>
+								<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
+							</div>
+							<br />
+							<br />
+						</ng-template>
+					</ng-container>
+					<ng-template #imageLoading>
+						<div
+							[class.centered]='active'
+							[class.visibility-hidden]='!active'
+							*ngFor='let active of [true, false]'
+						>
+							<mat-progress-spinner
+								mode='indeterminate'
+								diameter='50'
+								strokeWidth='5'
+							></mat-progress-spinner>
+						</div>
+						<br />
+						<br />
+					</ng-template>
+				</ng-container>
+				<ng-template #saveFile>
+					<button
+						mat-raised-button
+						class='centered'
+						(click)='fileTransferService.saveFile(value.fileTransfer)'
+						[matTooltip]='stringsService.incomingFile'
+					>
+						{{value.fileTransfer.name}}
+						({{readableByteLength(value.fileTransfer.size)}})
+					</button>
+					<br />
+					<br />
+					<br />
+				</ng-template>
+			</div>
+		</ng-template>
 		<ng-template #formValue>
 			<cyph-dynamic-form
 				[form]='value.form'

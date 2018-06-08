@@ -43,7 +43,10 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 			this.activatedRoute.snapshot
 		;
 
-		const username: string	= snapshot.params.username;
+		const username: string	=
+			snapshot.params.username ||
+			(await this.accountContactsService.getContactUsername(snapshot.params.contactID))
+		;
 
 		let userTypeFilter: AccountUserTypes|undefined	= data.userTypeFilter;
 		let userTypeFilterOut: boolean					= data.userTypeFilterOut === true;
@@ -89,7 +92,7 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 	}));
 
 	/** @see AccountContactsSearchComponent */
-	@ViewChild(AccountContactsComponent)
+	@ViewChild(AccountContactsSearchComponent)
 	public accountContactsSearch?: AccountContactsSearchComponent;
 
 	/** Full contact list with active contact filtered out. */

@@ -146,7 +146,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 		if (this.envService.isMobile) {
 			$textarea.on('focus', async () => {
 				await sleep(750);
-				this.scrollService.scrollDown();
+				await this.scrollService.scrollDown();
 			});
 		}
 		else {

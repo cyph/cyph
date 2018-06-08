@@ -53,6 +53,7 @@
 							]
 						},
 						"e2e": {
+							"outputHashing": "all",
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
@@ -61,6 +62,7 @@
 							]
 						},
 						"local": {
+							"outputHashing": "all",
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
@@ -69,6 +71,7 @@
 							]
 						},
 						"localBackup": {
+							"outputHashing": "all",
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
@@ -77,6 +80,7 @@
 							]
 						},
 						"localBeta": {
+							"outputHashing": "all",
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
@@ -85,6 +89,7 @@
 							]
 						},
 						"localDev": {
+							"outputHashing": "all",
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
@@ -93,6 +98,7 @@
 							]
 						},
 						"localMaster": {
+							"outputHashing": "all",
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
@@ -101,6 +107,7 @@
 							]
 						},
 						"localStaging": {
+							"outputHashing": "all",
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",

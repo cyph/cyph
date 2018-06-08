@@ -6,6 +6,7 @@ import {sleep} from '../util/wait';
 import {AccountSessionService} from './account-session.service';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
+import {EnvService} from './env.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {P2PService} from './p2p.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
@@ -35,13 +36,13 @@ export class AccountP2PService extends P2PService {
 		const id		= uuid();
 		const username	= this.accountSessionService.remoteUser.value.username;
 
-		await this.accountSessionService.sendAndAwaitConfirmation([
+		await (await this.accountSessionService.send([
 			rpcEvents.accountP2P,
 			{command: {
 				additionalData: id,
 				method: callType
 			}}
-		]);
+		])).confirmPromise;
 
 		await this.accountSessionService.remoteUser.value.accountUserProfile.getValue().then(
 			async ({realUsername}) => this.chatService.addMessage(
@@ -61,6 +62,7 @@ export class AccountP2PService extends P2PService {
 	constructor (
 		chatService: ChatService,
 		dialogService: DialogService,
+		envService: EnvService,
 		p2pWebRTCService: P2PWebRTCService,
 		sessionCapabilitiesService: SessionCapabilitiesService,
 		sessionInitService: SessionInitService,
@@ -75,6 +77,7 @@ export class AccountP2PService extends P2PService {
 		super(
 			chatService,
 			dialogService,
+			envService,
 			p2pWebRTCService,
 			sessionCapabilitiesService,
 			sessionInitService,

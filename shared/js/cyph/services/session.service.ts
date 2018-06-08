@@ -10,6 +10,7 @@ import {IAsyncValue} from '../iasync-value';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
+import {MaybePromise} from '../maybe-promise-type';
 import {
 	BinaryProto,
 	ISessionMessage,
@@ -30,7 +31,7 @@ import {lockFunction} from '../util/lock';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {resolvable, sleep} from '../util/wait';
+import {resolvable} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';
@@ -56,9 +57,6 @@ export abstract class SessionService implements ISessionService {
 	private readonly openEvents: Set<string>	= new Set();
 
 	/** @ignore */
-	private readonly resolveOpened: () => void	= this._OPENED.resolve;
-
-	/** @ignore */
 	protected readonly eventID: string									= uuid();
 
 	/** @ignore */
@@ -68,24 +66,21 @@ export abstract class SessionService implements ISessionService {
 	protected incomingMessageQueueLock: LockFunction					= lockFunction();
 
 	/** @ignore */
-	protected lastIncomingMessageTimestamp: number						= 0;
-
-	/** @ignore */
-	protected readonly plaintextSendInterval: number					= 1776;
-
-	/** @ignore */
-	protected readonly plaintextSendQueue: {
-		messages: ISessionMessage[];
-		resolve: () => void;
-	}[]	= [];
+	protected lastIncomingMessageTimestamps: Map<string, number>		= new Map();
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string>					= new Set<string>();
 
 	/** @ignore */
+	protected readonly resolveOpened: () => void						= this._OPENED.resolve;
+
+	/** @ignore */
 	protected resolveSymmetricKey?: (symmetricKey: Uint8Array) => void	=
 		this._SYMMETRIC_KEY.resolve
 	;
+
+	/** @ignore */
+	protected sendLock: LockFunction									= lockFunction();
 
 	/**
 	 * Session key for misc stuff like locking.
@@ -171,37 +166,9 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @see IChannelHandlers.onOpen */
-	protected async channelOnOpen (isAlice: boolean, sendLoop: boolean = true) : Promise<void> {
+	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
 		this.state.isAlice	= isAlice;
 		this.resolveOpened();
-
-		if (!sendLoop) {
-			return;
-		}
-
-		while (this.state.isAlive) {
-			await sleep(this.plaintextSendInterval);
-
-			if (this.plaintextSendQueue.length < 1) {
-				continue;
-			}
-
-			const messageGroups	= this.plaintextSendQueue.splice(
-				0,
-				this.plaintextSendQueue.length
-			);
-
-			const messages		= messageGroups.
-				map(o => o.messages).
-				reduce((a, b) => a.concat(b), [])
-			;
-
-			await this.castleSendMessages(messages);
-
-			for (const {resolve} of messageGroups) {
-				resolve();
-			}
-		}
 	}
 
 	/** @ignore */
@@ -214,10 +181,7 @@ export abstract class SessionService implements ISessionService {
 			return;
 		}
 
-		const author	= await this.getSessionMessageAuthor(message.data);
-		if (author) {
-			(<any> message.data).author	= author;
-		}
+		message.data	= await this.processMessageData(message.data);
 
 		this.receivedMessages.add(message.data.id);
 
@@ -245,12 +209,23 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected async newMessages (
-		messages: [string, ISessionMessageAdditionalData][]
+		messages: [
+			string,
+			ISessionMessageAdditionalData|(
+				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
+			)
+		][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
 		const newMessages: (ISessionMessage&{data: ISessionMessageData})[]	= [];
 
 		for (const message of messages) {
-			const [event, additionalData]	= message;
+			const timestamp		= await getTimestamp();
+			const event			= message[0];
+			let additionalData	= message[1];
+
+			if (typeof additionalData === 'function') {
+				additionalData	= await additionalData(timestamp);
+			}
 
 			const data: ISessionMessageData	= {
 				author: this.localUsername,
@@ -258,12 +233,11 @@ export abstract class SessionService implements ISessionService {
 				capabilities: additionalData.capabilities,
 				chatState: additionalData.chatState,
 				command: additionalData.command,
-				id: uuid(),
+				id: additionalData.id || uuid(),
 				sessionSubID: this.sessionSubID,
 				text: additionalData.text,
 				textConfirmation: additionalData.textConfirmation,
-				timestamp: await getTimestamp(),
-				transfer: additionalData.transfer
+				timestamp
 			};
 
 			newMessages.push({event, data});
@@ -274,23 +248,28 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
-		const {promise, resolve}	= resolvable();
-		this.plaintextSendQueue.push({messages, resolve});
-		return promise;
+		await this.castleSendMessages(messages);
 	}
 
 	/** @inheritDoc */
 	public async castleHandler (
 		event: CastleEvents,
-		data?: Uint8Array|{author: Observable<string>; plaintext: Uint8Array; timestamp: number}
+		data?: Uint8Array|{
+			author: Observable<string>;
+			instanceID: string;
+			plaintext: Uint8Array;
+			timestamp: number;
+		}
 	) : Promise<void> {
 		switch (event) {
-			case CastleEvents.abort: {
+			case CastleEvents.abort:
+				this.state.sharedSecret	= '';
 				this.errorService.log('CYPH AUTHENTICATION FAILURE');
 				this.trigger(events.connectFailure);
 				break;
-			}
-			case CastleEvents.connect: {
+
+			case CastleEvents.connect:
+				this.state.sharedSecret	= '';
 				this.trigger(events.beginChat);
 
 				if (!this.resolveSymmetricKey) {
@@ -313,13 +292,14 @@ export abstract class SessionService implements ISessionService {
 				}
 
 				break;
-			}
-			case CastleEvents.receive: {
+
+			case CastleEvents.receive:
 				if (!data || data instanceof Uint8Array) {
 					break;
 				}
 
-				const cyphertextTimestamp	= data.timestamp;
+				const castleInstanceID	= data.instanceID;
+				const castleTimestamp	= data.timestamp;
 
 				const messages	=
 					(
@@ -338,27 +318,33 @@ export abstract class SessionService implements ISessionService {
 					/* Discard messages without valid timestamps */
 					if (
 						isNaN(message.data.timestamp) ||
-						message.data.timestamp > cyphertextTimestamp ||
-						message.data.timestamp < this.lastIncomingMessageTimestamp
+						message.data.timestamp > castleTimestamp ||
+						message.data.timestamp < (
+							this.lastIncomingMessageTimestamps.get(castleInstanceID) || 0
+						)
 					) {
 						continue;
 					}
 
-					this.lastIncomingMessageTimestamp	= message.data.timestamp;
+					this.lastIncomingMessageTimestamps.set(
+						castleInstanceID,
+						message.data.timestamp
+					);
+
 					(<any> message.data).author			= data.author;
 					message.data.authorID				= authorID;
 
-					await this.incomingMessageQueue.pushValue(message);
+					await this.incomingMessageQueue.pushItem(message);
 				}
+
 				break;
-			}
-			case CastleEvents.send: {
+
+			case CastleEvents.send:
 				if (!data || !(data instanceof Uint8Array)) {
 					break;
 				}
 
 				await this.cyphertextSendHandler(data);
-			}
 		}
 	}
 
@@ -393,27 +379,29 @@ export abstract class SessionService implements ISessionService {
 	) : Promise<IHandshakeState> {
 		await this.opened;
 
+		/* First person to join ephemeral session is "Bob" as optimization for Castle handshake */
+		const isAlice	=
+			this.sessionInitService.ephemeral ?
+				!this.state.isAlice :
+				this.state.isAlice
+		;
+
 		return {
 			currentStep,
 			initialSecret,
-			initialSecretAliceCyphertext: await this.channelService.getAsyncValue(
-				'handshake/initialSecretAliceCyphertext',
+			initialSecretCyphertext: await this.channelService.getAsyncValue(
+				'handshake/initialSecretCyphertext',
 				BinaryProto,
 				true
 			),
-			initialSecretBobCyphertext: await this.channelService.getAsyncValue(
-				'handshake/initialSecretBobCyphertext',
-				BinaryProto,
-				true
-			),
-			isAlice: this.state.isAlice,
+			isAlice,
 			localPublicKey: await this.channelService.getAsyncValue(
-				`handshake/${this.state.isAlice ? 'alice' : 'bob'}PublicKey`,
+				`handshake/${isAlice ? 'alice' : 'bob'}PublicKey`,
 				BinaryProto,
 				true
 			),
 			remotePublicKey: await this.channelService.getAsyncValue(
-				`handshake/${this.state.isAlice ? 'bob' : 'alice'}PublicKey`,
+				`handshake/${isAlice ? 'bob' : 'alice'}PublicKey`,
 				BinaryProto,
 				true
 			)
@@ -486,26 +474,46 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
+	public async processMessageData (
+		data: ISessionMessageDataInternal
+	) : Promise<ISessionMessageData> {
+		const author	= await this.getSessionMessageAuthor(data);
+		if (author) {
+			(<any> data).author	= author;
+		}
+		return <any> data;
+	}
+
+	/** @inheritDoc */
 	public get proFeatures () : ProFeatures {
 		return new ProFeatures();
 	}
 
 	/** @inheritDoc */
 	public async send (
-		...messages: [string, ISessionMessageAdditionalData][]
-	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
-		const newMessages	= await this.newMessages(messages);
-		this.plaintextSendHandler(newMessages);
-		return newMessages;
+		...messages: [
+			string,
+			ISessionMessageAdditionalData|(
+				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
+			)
+		][]
+	) : Promise<{
+		confirmPromise: Promise<void>;
+		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
+	}> {
+		return this.sendLock(async () => {
+			const newMessages	= await this.newMessages(messages);
+
+			return {
+				confirmPromise: this.plaintextSendHandler(newMessages),
+				newMessages
+			};
+		});
 	}
 
 	/** @inheritDoc */
-	public async sendAndAwaitConfirmation (
-		...messages: [string, ISessionMessageAdditionalData][]
-	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
-		const newMessages	= await this.newMessages(messages);
-		await this.plaintextSendHandler(newMessages);
-		return newMessages;
+	public spawn () : SessionService {
+		throw new Error('Must provide an implementation of SessionService.spawn.');
 	}
 
 	/** @inheritDoc */

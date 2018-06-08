@@ -1,41 +1,28 @@
 import {BehaviorSubject} from 'rxjs';
 import {LockFunction} from '../lock-function-type';
-import {uuid} from './uuid';
-import {resolvable} from './wait';
 
 
 /** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 export const lock	= async <T> (
-	mutex: {promise?: Promise<any>; queue?: string[]; reason?: string},
+	mutex: {isOwned?: boolean; promise?: Promise<string|undefined>},
 	f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
 	reason?: string
 ) : Promise<T> => {
-	if (mutex.queue === undefined) {
-		mutex.queue	= [];
+	if (!mutex.promise) {
+		mutex.promise	= Promise.resolve(undefined);
 	}
 
-	const queue	= mutex.queue;
-	const id	= uuid();
+	const promise	= mutex.promise.then(async lastReason => {
+		mutex.isOwned	= true;
+		return f({reason: lastReason, stillOwner: new BehaviorSubject(true)});
+	});
 
-	queue.push(id);
+	mutex.promise	= promise.catch(() => {}).then(() => {
+		mutex.isOwned	= false;
+		return reason;
+	});
 
-	while (queue[0] !== id) {
-		await mutex.promise;
-	}
-
-	const lastReason	= mutex.reason;
-	mutex.reason		= reason;
-
-	const releaseLock	= resolvable();
-	mutex.promise		= releaseLock.promise;
-
-	try {
-		return await f({reason: lastReason, stillOwner: new BehaviorSubject(true)});
-	}
-	finally {
-		queue.shift();
-		releaseLock.resolve();
-	}
+	return promise;
 };
 
 /** Creates and returns a lock function that uses util/lock. */
@@ -55,10 +42,10 @@ export const lockFunction	= () : LockFunction => {
  * @returns Whether or not the lock was obtained.
  */
 export const lockTryOnce	= async (
-	mutex: {queue?: string[]},
+	mutex: {isOwned?: boolean; promise?: Promise<string|undefined>},
 	f: () => Promise<void>
 ) : Promise<boolean> => {
-	if (mutex.queue === undefined || mutex.queue.length < 1) {
+	if (!mutex.isOwned) {
 		await lock(mutex, f);
 		return true;
 	}

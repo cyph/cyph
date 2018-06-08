@@ -7,9 +7,29 @@ import {ILocalUser} from './ilocal-user';
  * A registered user with a long-lived key pair, authenticated via AGSE-PKI.
  */
 export class RegisteredLocalUser implements ILocalUser {
+	/** @ignore */
+	private keyPairs?: Promise<{encryption: IKeyPair; signing: IKeyPair}>;
+
+	/** @ignore */
+	private async getKeyPairs () : Promise<{encryption: IKeyPair; signing: IKeyPair}> {
+		if (!this.keyPairs) {
+			this.keyPairs	= this.accountDatabaseService.getCurrentUser().then(({keys}) => ({
+				encryption: keys.encryptionKeyPair,
+				signing: keys.signingKeyPair
+			}));
+		}
+
+		return this.keyPairs;
+	}
+
 	/** @inheritDoc */
-	public async getKeyPair () : Promise<IKeyPair> {
-		return (await this.accountDatabaseService.getCurrentUser()).keys.encryptionKeyPair;
+	public async getEncryptionKeyPair () : Promise<IKeyPair> {
+		return (await this.getKeyPairs()).encryption;
+	}
+
+	/** @inheritDoc */
+	public async getSigningKeyPair () : Promise<IKeyPair> {
+		return (await this.getKeyPairs()).signing;
 	}
 
 	constructor (

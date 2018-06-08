@@ -177,6 +177,7 @@ read -r -d '' modules <<- EOM
 	markdown-it
 	markdown-it-emoji
 	markdown-it-sup
+	math-expression-evaluator
 	mceliece
 	microlight-string
 	mkdirp
@@ -254,7 +255,7 @@ read -r -d '' modules <<- EOM
 	tslint-microsoft-contrib
 	tsutils
 	typedoc
-	typescript@2.7
+	typescript@2.8
 	u2f-api-polyfill
 	uglify-es
 	uglifyjs-webpack-plugin

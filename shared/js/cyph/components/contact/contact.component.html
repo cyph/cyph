@@ -86,8 +86,23 @@
 				</mat-form-field>
 			</div>
 			<div fxLayout='row'>
-				<mat-checkbox [(ngModel)]='responseRequested' name='response'>
+				<mat-checkbox [(ngModel)]='responseRequested' name='response' cyphTranslate>
 					Response Requested
+				</mat-checkbox>
+			</div>
+			<div fxLayout='row'>
+				<mat-checkbox
+					[(ngModel)]='gdprConsent'
+					name='gdpr'
+					[matTooltip]='stringsService.gdprContactForm'
+					required
+				>
+					<div fxLayout='row' fxLayoutAlign='start center'>
+						<span>{{stringsService.gdprContactFormShort}}</span>
+						&nbsp;
+						&nbsp;
+						<mat-icon class='gdpr' svgIcon='gdpr'></mat-icon>
+					</div>
 				</mat-checkbox>
 			</div>
 			<div fxLayout='row'>

@@ -5,7 +5,7 @@
 	[routerLink]='!clickable ? undefined : (
 		accountService.routeRoot +
 		(envService.isTelehealth ? "profile" : "messages") + "/" +
-		(username || "")
+		(((user | async)?.contactID | async) || "")
 	)'
 	fxFlex
 	*ngIf='!!username'

@@ -44,12 +44,17 @@ if (!HTMLElement.prototype.click) {
 }
 
 $(async () => {
-	if (!env.environment.local && !env.isHomeSite) {
-		/* In WebSigned environments, perform CSP Meta-Hardening */
-		await sleep(10000);
-		$(document.head).append(
-			`<meta http-equiv="Content-Security-Policy" content="${env.CSP}" />`
-		);
+	if (!env.isHomeSite) {
+		if (!env.environment.local) {
+			/* In WebSigned environments, perform CSP Meta-Hardening */
+			await sleep(10000);
+			$(document.head).append(
+				`<meta http-equiv="Content-Security-Policy" content="${env.CSP}" />`
+			);
+		}
+		else if (location.pathname !== '/') {
+			location.replace('/#' + location.pathname.slice(1));
+		}
 	}
 
 	/* Try again if page takes too long to initialize */

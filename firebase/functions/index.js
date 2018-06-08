@@ -110,7 +110,7 @@ exports.environmentUnlock	= functions.https.onRequest((req, res) => cors(req, re
 			throw new Error('Invalid data.');
 		}
 
-		const ref	= database.ref(`${namespace}/lockdownIds/${id}`);
+		const ref	= database.ref(`${namespace}/lockdownIDs/${id}`);
 		res.send((await ref.once('value')).val() || '');
 	}
 	catch (err) {
@@ -276,6 +276,8 @@ exports.userNotification	= functions.database.ref(
 ).onCreate(async (data, {params}) => {
 	const username		= params.user;
 	const notification	= data.val();
+	const metadata		= typeof notification.metadata === 'object' ? notification.metadata : {};
+	const now			= Date.now();
 
 	if (!notification || !notification.target || isNaN(notification.type)) {
 		return;
@@ -289,7 +291,22 @@ exports.userNotification	= functions.database.ref(
 				getName(params.namespace, notification.target)
 			]);
 
-			const {subject, text}	=
+			const {eventDetails, subject, text}	=
+				notification.type === NotificationTypes.CalendarEvent ?
+					{
+						eventDetails: {
+							description: metadata.description,
+							endTime: isNaN(metadata.endTime) ? now + 3600000 : metadata.endTime,
+							inviterUsername: senderUsername,
+							location: metadata.location,
+							startTime:
+								isNaN(metadata.startTime) ? now + 1800000 : metadata.startTime
+							,
+							summary: metadata.summary || 'Cyph Appointment'
+						},
+						subject: `Calendar Invite from ${senderUsername}`,
+						text: `${targetName}, ${senderName} has sent an appointment request.`
+					} :
 				notification.type === NotificationTypes.File ?
 					{
 						subject: `Incoming Data from ${senderUsername}`,
@@ -300,14 +317,20 @@ exports.userNotification	= functions.database.ref(
 						subject: `New Message from ${senderUsername}`,
 						text: `${targetName}, ${senderName} has sent you a message.`
 					} :
-				/* else */
 					{
 						subject: `Sup Dog, it's ${senderUsername}`,
 						text: `${targetName}, ${senderName} says yo.`
 					}
 			;
 
-			await notify(params.namespace, notification.target, subject, text, true);
+			await notify(
+				params.namespace,
+				notification.target,
+				subject,
+				text,
+				eventDetails,
+				true
+			);
 		})(),
 		(async () => {
 			const path	=
@@ -315,16 +338,15 @@ exports.userNotification	= functions.database.ref(
 					'unreadFileCounts/' +
 						(
 							(
-								!isNaN(notification.subType) &&
-								notification.subType in AccountFileRecord.RecordTypes
+								!isNaN(metadata.fileType) &&
+								metadata.fileType in AccountFileRecord.RecordTypes
 							) ?
-								notification.subType :
+								metadata.fileType :
 								AccountFileRecord.RecordTypes.File
 						).toString()
 					:
 				notification.type === NotificationTypes.Message ?
 					`unreadMessageCounts/${username}` :
-				/* else */
 					undefined
 			;
 

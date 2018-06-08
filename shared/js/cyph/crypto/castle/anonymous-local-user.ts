@@ -16,28 +16,37 @@ export class AnonymousLocalUser implements ILocalUser {
 
 
 	/** @ignore */
-	private readonly keyPair: Promise<IKeyPair>	= (async () => {
-		const keyPair		= await this.potassium.box.keyPair();
-
-		const sharedSecret	= (await this.potassium.passwordHash.hash(
-			this.sharedSecret,
-			AnonymousLocalUser.handshakeSalt
-		)).hash;
-
-		await this.handshakeState.localPublicKey.setValue(
-			await this.potassium.secretBox.seal(keyPair.publicKey, sharedSecret)
-		);
-
-		this.potassium.clearMemory(sharedSecret);
-
-		this.sharedSecret	= '';
-
-		return keyPair;
-	})();
+	private keyPair?: Promise<IKeyPair>;
 
 	/** @inheritDoc */
-	public async getKeyPair () : Promise<IKeyPair> {
+	public async getEncryptionKeyPair () : Promise<IKeyPair> {
+		if (!this.keyPair) {
+			this.keyPair	= (async () => {
+				const keyPair		= await this.potassium.box.keyPair();
+
+				const sharedSecret	= (await this.potassium.passwordHash.hash(
+					this.sharedSecret,
+					AnonymousLocalUser.handshakeSalt
+				)).hash;
+
+				await this.handshakeState.localPublicKey.setValue(
+					await this.potassium.secretBox.seal(keyPair.publicKey, sharedSecret)
+				);
+
+				this.potassium.clearMemory(sharedSecret);
+
+				this.sharedSecret	= '';
+
+				return keyPair;
+			})();
+		}
+
 		return this.keyPair;
+	}
+
+	/** @inheritDoc */
+	public async getSigningKeyPair () : Promise<undefined> {
+		return undefined;
 	}
 
 	constructor (

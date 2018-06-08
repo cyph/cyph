@@ -1,6 +1,7 @@
 import {BehaviorSubject, Observable} from 'rxjs';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
-import {ISessionMessage} from '../proto';
+import {MaybePromise} from '../maybe-promise-type';
+import {ISessionMessage, ISessionMessageData as ISessionMessageDataInternal} from '../proto';
 import {
 	CastleEvents,
 	ISessionMessageAdditionalData,
@@ -60,7 +61,12 @@ export interface ISessionService {
 	/** Castle event handler called by Castle.Transport. */
 	castleHandler (
 		event: CastleEvents,
-		data?: Uint8Array|{author: Observable<string>; plaintext: Uint8Array; timestamp: number}
+		data?: Uint8Array|{
+			author: Observable<string>;
+			instanceID: string;
+			plaintext: Uint8Array;
+			timestamp: number;
+		}
 	) : Promise<void>;
 
 	/** This kills the cyph. */
@@ -90,15 +96,26 @@ export interface ISessionService {
 	/** Returns first occurrence of event. */
 	one<T> (event: string) : Promise<T>;
 
+	/** Converts an ISessionMessageDataInternal into an ISessionMessageData. */
+	processMessageData (
+		data: ISessionMessageDataInternal
+	) : Promise<ISessionMessageData>;
+
 	/** Send at least one message through the session. */
 	send (
-		...messages: [string, ISessionMessageAdditionalData][]
-	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]>;
+		...messages: [
+			string,
+			ISessionMessageAdditionalData|(
+				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
+			)
+		][]
+	) : Promise<{
+		confirmPromise: Promise<void>;
+		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
+	}>;
 
-	/** Variant of send that waits for confirmation. */
-	sendAndAwaitConfirmation (
-		...messages: [string, ISessionMessageAdditionalData][]
-	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]>;
+	/** Creates and returns a new instance. */
+	spawn () : ISessionService;
 
 	/** Trigger event, passing in optional data. */
 	trigger (event: string, data?: any) : void;

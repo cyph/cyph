@@ -26,10 +26,11 @@ export class NativeDialogService implements DialogService {
 
 	/**
 	 * @inheritDoc
+	 * @param o.markdown Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async alert (
-		o: {content: string; ok?: string; title?: string},
+		o: {content: string; markdown?: boolean; ok?: string; title?: string},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (closeFunction) {
@@ -69,6 +70,7 @@ export class NativeDialogService implements DialogService {
 
 	/**
 	 * @inheritDoc
+	 * @param o.markdown Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
@@ -76,6 +78,7 @@ export class NativeDialogService implements DialogService {
 		o: {
 			cancel?: string;
 			content: string;
+			markdown?: boolean;
 			ok?: string;
 			timeout?: number;
 			title?: string;
@@ -83,7 +86,7 @@ export class NativeDialogService implements DialogService {
 		closeFunction?: IResolvable<() => void>
 	) : Promise<boolean> {
 		if (closeFunction) {
-			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
+			throw new Error('NativeDialogService.confirm closeFunction is unsupported.');
 		}
 
 		return this.lock(async () => {
@@ -106,24 +109,25 @@ export class NativeDialogService implements DialogService {
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async image (
-		src: SafeUrl|string,
+		o: {src: SafeUrl|string; title?: string},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (closeFunction) {
 			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
 		}
 
-		if (typeof src !== 'string') {
+		if (typeof o.src !== 'string') {
 			throw new Error('Unsupported src type.');
 		}
 
 		return this.lock(async () => {
-			await this.modalDialogService.showModal(DialogImageComponent, {context: src});
+			await this.modalDialogService.showModal(DialogImageComponent, {context: o});
 		});
 	}
 
 	/**
 	 * @inheritDoc
+	 * @param o.markdown Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
@@ -131,6 +135,7 @@ export class NativeDialogService implements DialogService {
 		o: {
 			cancel?: string;
 			content: string;
+			markdown?: boolean;
 			ok?: string;
 			placeholder?: string;
 			timeout?: number;

@@ -2,8 +2,14 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {IProto} from '../cyph/iproto';
 import {ITimedValue} from '../cyph/itimed-value';
+import {LockFunction} from '../cyph/lock-function-type';
+import {MaybePromise} from '../cyph/maybe-promise-type';
+import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {EnvService} from '../cyph/services/env.service';
+import {LocalStorageService} from '../cyph/services/local-storage.service';
+import {getOrSetDefault} from '../cyph/util/get-or-set-default';
+import {lockFunction} from '../cyph/util/lock';
 import {random} from '../cyph/util/random';
 import {deserialize, serialize} from '../cyph/util/serialization';
 import {getTimestamp} from '../cyph/util/time';
@@ -15,6 +21,9 @@ import {sleep} from '../cyph/util/wait';
  */
 @Injectable()
 export class MockDatabaseService extends DatabaseService {
+	/** @ignore */
+	private readonly locks: Map<string, LockFunction>	= new Map();
+
 	/** @ignore */
 	private readonly uploadedItems: Map<string, Uint8Array>	= new Map<string, Uint8Array>();
 
@@ -42,6 +51,7 @@ export class MockDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public downloadItem<T> (url: string, proto: IProto<T>) : {
+		alreadyCached: Promise<boolean>;
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
@@ -59,11 +69,26 @@ export class MockDatabaseService extends DatabaseService {
 			};
 		})();
 
-		return {progress, result};
+		return {alreadyCached: Promise.resolve(false), progress, result};
 	}
 
 	/** @inheritDoc */
-	public uploadItem<T> (url: string, proto: IProto<T>, value: T) : {
+	public async lock<T> (
+		url: MaybePromise<string>,
+		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		reason?: string,
+		_GLOBAL?: boolean
+	) : Promise<T> {
+		return getOrSetDefault(this.locks, await url, lockFunction)(f, reason);
+	}
+
+	/** @inheritDoc */
+	public uploadItem<T> (
+		url: string,
+		proto: IProto<T>,
+		value: T,
+		_NO_BLOB_STORAGE?: boolean
+	) : {
 		cancel: () => void;
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
@@ -80,7 +105,11 @@ export class MockDatabaseService extends DatabaseService {
 		return {cancel: () => {}, progress, result};
 	}
 
-	constructor (envService: EnvService) {
-		super(envService);
+	constructor (
+		envService: EnvService,
+		localStorageService: LocalStorageService,
+		potassiumService: PotassiumService
+	) {
+		super(envService, localStorageService, potassiumService);
 	}
 }

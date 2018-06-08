@@ -14,6 +14,9 @@ export class DialogImageComponent {
 	/** Image src. */
 	public src: string;
 
+	/** Image title. */
+	public title?: string;
+
 	constructor (params: ModalDialogParams) {
 		this.src	= params.context;
 	}

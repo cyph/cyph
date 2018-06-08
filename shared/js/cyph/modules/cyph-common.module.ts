@@ -16,23 +16,22 @@ import {DynamicFormComponent} from '../components/dynamic-form';
 import {FileInputComponent} from '../components/file-input';
 import {HelpComponent} from '../components/help';
 import {LogoComponent} from '../components/logo';
-import {MarkdownComponent} from '../components/markdown';
 import {PinInputComponent} from '../components/pin-input';
 import {QuillComponent} from '../components/quill';
 import {RedirectComponent} from '../components/redirect';
 import {SearchBarComponent} from '../components/search-bar';
 import {SignupFormComponent} from '../components/signup-form';
+import {AnchorDirective} from '../directives/anchor.directive';
 import {RouterLinkDirective} from '../directives/router-link.directive';
 import {TranslateDirective} from '../directives/translate.directive';
+import {AffiliateService} from '../services/affiliate.service';
 import {AnalyticsService} from '../services/analytics.service';
 import {ConfigService} from '../services/config.service';
-import {EnvService} from '../services/env.service';
 import {ErrorService} from '../services/error.service';
 import {FileService} from '../services/file.service';
 import {NotificationService} from '../services/notification.service';
 import {SignupService} from '../services/signup.service';
 import {SplitTestingService} from '../services/split-testing.service';
-import {StringsService} from '../services/strings.service';
 import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
 import {WindowWatcherService} from '../services/window-watcher.service';
 import {CyphWebModule} from './cyph-web.module';
@@ -43,6 +42,7 @@ import {CyphWebModule} from './cyph-web.module';
  */
 @NgModule({
 	declarations: [
+		AnchorDirective,
 		BlankComponent,
 		CalendarInviteComponent,
 		CalendarInviteInheritNgFormComponent,
@@ -58,7 +58,6 @@ import {CyphWebModule} from './cyph-web.module';
 		FileInputComponent,
 		HelpComponent,
 		LogoComponent,
-		MarkdownComponent,
 		PinInputComponent,
 		QuillComponent,
 		RedirectComponent,
@@ -83,7 +82,6 @@ import {CyphWebModule} from './cyph-web.module';
 		FileInputComponent,
 		HelpComponent,
 		LogoComponent,
-		MarkdownComponent,
 		PinInputComponent,
 		QuillComponent,
 		RedirectComponent,
@@ -91,6 +89,7 @@ import {CyphWebModule} from './cyph-web.module';
 		SignupFormComponent
 	],
 	exports: [
+		AnchorDirective,
 		BlankComponent,
 		CalendarInviteComponent,
 		CalendarInviteInheritNgFormComponent,
@@ -107,7 +106,6 @@ import {CyphWebModule} from './cyph-web.module';
 		FileInputComponent,
 		HelpComponent,
 		LogoComponent,
-		MarkdownComponent,
 		PinInputComponent,
 		QuillComponent,
 		RedirectComponent,
@@ -121,15 +119,14 @@ import {CyphWebModule} from './cyph-web.module';
 		CyphWebModule
 	],
 	providers: [
+		AffiliateService,
 		AnalyticsService,
 		ConfigService,
-		EnvService,
 		ErrorService,
 		FileService,
 		NotificationService,
 		SignupService,
 		SplitTestingService,
-		StringsService,
 		Title,
 		VirtualKeyboardWatcherService,
 		WindowWatcherService,

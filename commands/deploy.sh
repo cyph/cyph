@@ -219,6 +219,27 @@ if [ -d test ] ; then
 fi
 
 if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
+	cd websign
+	node -e "
+		fs.writeFileSync(
+			'websign.yaml',
+			fs.readFileSync('websign.yaml').toString().
+				replace(/\n/g, '☁').
+				replace(/([^☁]+SUBRESOURCE.*?☁☁)/, yaml =>
+					fs.readFileSync('appcache.appcache').toString().
+						split('CACHE:')[1].
+						split('NETWORK:')[0].
+						replace(/\n\//g, '\n').
+						split('\n').
+						filter(s => s.trim() && s !== 'unsupportedbrowser').
+						map(subresource => yaml.replace(/SUBRESOURCE/g, subresource)).
+						join('')
+				).
+				replace(/☁/g, '\n')
+		)
+	"
+	cd ..
+
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat shared/headers)"
 	ls */*.yaml | xargs -I% sed -ri "s/  ${defaultHeadersString}(.*)/\
@@ -625,6 +646,14 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; the
 		if [ "${environment}" != 'dev' ] ; then
 			firebaseProjects="${firebaseProjects} cyph-test-${branch}"
 		fi
+
+		# Workaround for https://stackoverflow.com/q/50513374/459881
+		cat firebase/functions/index.js |
+			tr '\n' '☁' |
+			perl -pe 's/exports\.itemRemoved\s.*?exports\./exports\./g' |
+			tr '☁' '\n' \
+		> firebase/functions/index.new.js
+		mv firebase/functions/index.new.js firebase/functions/index.js
 	fi
 
 	./commands/buildunbundledassets.sh

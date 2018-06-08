@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {IPotassium} from '../cyph/crypto/potassium/ipotassium';
-import {PotassiumUtil} from '../cyph/crypto/potassium/potassium-util';
+import {PotassiumUtil, potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 
 
 /**
@@ -15,7 +15,18 @@ export class MockPotassiumService extends PotassiumUtil implements IPotassium {
 	public readonly ephemeralKeyExchange: any;
 
 	/** @inheritDoc */
-	public readonly hash: any;
+	public readonly hash	= {
+		bytes: Promise.resolve(1),
+		deriveKey: async (
+			input: Uint8Array|string,
+			_OUTPUT_BYTES?: number,
+			_CLEAR_INPUT?: boolean
+		) =>
+			new Uint8Array(potassiumUtil.fromString(input))
+		,
+		hash: async (plaintext: Uint8Array|string ) =>
+			new Uint8Array(potassiumUtil.fromString(plaintext))
+	};
 
 	/** @inheritDoc */
 	public readonly oneTimeAuth: any;
@@ -31,12 +42,15 @@ export class MockPotassiumService extends PotassiumUtil implements IPotassium {
 			cyphertext: Uint8Array,
 			_KEY: Uint8Array,
 			_ADDITIONAL_DATA?: Uint8Array
-		) => cyphertext,
+		) =>
+			new Uint8Array(cyphertext)
+		,
 		seal: async (
 			plaintext: Uint8Array,
 			_KEY: Uint8Array,
 			_ADDITIONAL_DATA?: Uint8Array
-		) => plaintext
+		) =>
+			new Uint8Array(plaintext)
 	};
 
 	/** @inheritDoc */

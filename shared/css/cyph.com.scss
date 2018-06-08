@@ -759,6 +759,7 @@ body:not(.mobile) .section-content-container:not(.full) {
 
 	> *:not(.bounceInLeft):not(.bounceInRight) {
 		visibility: hidden;
+		pointer-events: none;
 	}
 }
 

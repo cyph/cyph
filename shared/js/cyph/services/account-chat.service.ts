@@ -8,8 +8,11 @@ import {
 	ChatMessage,
 	ChatMessageValue,
 	IChatMessage,
-	NotificationTypes
+	NotificationTypes,
+	SessionMessageDataList,
+	StringProto
 } from '../proto';
+import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionInitService} from './account-session-init.service';
@@ -17,6 +20,8 @@ import {AccountSessionService} from './account-session.service';
 import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {PotassiumService} from './crypto/potassium.service';
+import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {NotificationService} from './notification.service';
@@ -39,16 +44,12 @@ export class AccountChatService extends ChatService {
 	/** @inheritDoc */
 	protected async getAuthorID (author: Observable<string>) : Promise<string|undefined> {
 		return (
-			author === this.sessionService.appUsername ||
-			author === this.sessionService.localUsername
-		) ?
-			undefined :
-			(async () =>
-				this.accountContactsService.getContactID(await author.pipe(take(1)).toPromise())
-			)().catch(
-				() => undefined
-			)
-		;
+			author === this.sessionService.appUsername ?
+				undefined :
+			author === this.sessionService.localUsername ?
+				(await this.accountDatabaseService.getCurrentUser()).user.username :
+				author.pipe(take(1)).toPromise().then(normalize).catch(() => undefined)
+		);
 	}
 
 	/** @inheritDoc */
@@ -82,13 +83,16 @@ export class AccountChatService extends ChatService {
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
-		username: string,
+		username: string|string[],
 		keepCurrentMessage: boolean = false,
 		callType?: 'audio'|'video',
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false
 	) : Promise<void> {
-		const contactURL	= `contacts/${await this.accountContactsService.addContact(username)}`;
+		username	= this.accountSessionService.normalizeUsername(username);
+		const url	= `castleSessions/${
+			await this.accountContactsService.getCastleSessionID(username)
+		}`;
 
 		this.accountSessionInitService.callType	= callType || this.envService.callType;
 
@@ -98,38 +102,57 @@ export class AccountChatService extends ChatService {
 				isConnected: true,
 				state: States.chat
 			} :
-			getOrSetDefault(this.chats, username, () => ({
-				currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
-				initProgress: new BehaviorSubject(0),
-				isConnected: true,
-				isDisconnected: false,
-				isFriendTyping: new BehaviorSubject(false),
-				isMessageChanged: false,
-				lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
-					`${contactURL}/lastConfirmedMessage`,
-					ChatLastConfirmedMessage
-				),
-				messages: this.accountDatabaseService.getAsyncList(
-					`${contactURL}/messages`,
-					ChatMessage,
-					undefined,
-					undefined,
-					undefined,
-					true
-				),
-				/* See https://github.com/palantir/tslint/issues/3541 */
-				/* tslint:disable-next-line:object-literal-sort-keys */
-				messageValues: this.accountDatabaseService.getAsyncMap(
-					`${contactURL}/messageValues`,
-					ChatMessageValue
-				),
-				pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
-				receiveTextLock: this.accountDatabaseService.lockFunction(
-					`${contactURL}/receiveTextLock`
-				),
-				state: States.chat,
-				unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}>({})
-			}))
+			getOrSetDefault(
+				this.chats,
+				username instanceof Array ? username.join(' ') : username,
+				() => ({
+					currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
+					futureMessages: this.accountDatabaseService.getAsyncMap(
+						`${url}/futureMessages`,
+						SessionMessageDataList,
+						undefined,
+						undefined,
+						undefined,
+						true,
+						true
+					),
+					initProgress: new BehaviorSubject(0),
+					isConnected: true,
+					isDisconnected: false,
+					isFriendTyping: new BehaviorSubject(false),
+					isMessageChanged: false,
+					lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
+						`${url}/lastConfirmedMessage`,
+						ChatLastConfirmedMessage
+					),
+					messageList: this.accountDatabaseService.getAsyncList(
+						`${url}/messageList`,
+						StringProto,
+						undefined,
+						undefined,
+						undefined,
+						true
+					),
+					messages: this.accountDatabaseService.getAsyncMap(
+						`${url}/messages`,
+						ChatMessage,
+						undefined,
+						undefined,
+						undefined,
+						true,
+						true
+					),
+					pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
+					receiveTextLock: this.accountDatabaseService.lockFunction(
+						`${url}/receiveTextLock`
+					),
+					state: States.chat,
+					unconfirmedMessages:
+						new BehaviorSubject<{[id: string]: boolean|undefined}|undefined>(
+							undefined
+						)
+				})
+			)
 		;
 
 		await this.accountSessionService.setUser(username, sessionSubID, ephemeralSubSession);
@@ -137,9 +160,11 @@ export class AccountChatService extends ChatService {
 
 	constructor (
 		analyticsService: AnalyticsService,
+		databaseService: DatabaseService,
 		dialogService: DialogService,
 		notificationService: NotificationService,
 		p2pWebRTCService: P2PWebRTCService,
+		potassiumService: PotassiumService,
 		scrollService: ScrollService,
 		sessionService: SessionService,
 		sessionCapabilitiesService: SessionCapabilitiesService,
@@ -163,9 +188,11 @@ export class AccountChatService extends ChatService {
 	) {
 		super(
 			analyticsService,
+			databaseService,
 			dialogService,
 			notificationService,
 			p2pWebRTCService,
+			potassiumService,
 			scrollService,
 			sessionService,
 			sessionCapabilitiesService,

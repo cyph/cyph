@@ -22,5 +22,10 @@ export class AccountSessionInitService implements SessionInitService {
 	/** @inheritDoc */
 	public readonly sessionService: IResolvable<ISessionService>	= resolvable();
 
+	/** @inheritDoc */
+	public spawn () : AccountSessionInitService {
+		return new AccountSessionInitService();
+	}
+
 	constructor () {}
 }

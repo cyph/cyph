@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count no-import-side-effect */
+
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
@@ -12,8 +14,11 @@ import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
 import {NotificationTypes} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
+import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
+import {PotassiumService} from './crypto/potassium.service';
 import {EnvService} from './env.service';
+import {LocalStorageService} from './local-storage.service';
 
 
 /**
@@ -41,6 +46,13 @@ export class DatabaseService extends DataManagerService {
 			'cyph.ws'
 	;
 
+	/** Gets lock URL. */
+	protected async lockURL (urlPromise: MaybePromise<string>, global: boolean) : Promise<string> {
+		return !global ? urlPromise : `locks/${this.potassiumService.toHex(
+			await this.potassiumService.hash.hash(await urlPromise)
+		)}`;
+	}
+
 	/** Adds namespace to URL. */
 	protected processURL (url: string) : string {
 		return `${this.namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`;
@@ -67,6 +79,7 @@ export class DatabaseService extends DataManagerService {
 
 	/** Downloads value and gives progress. */
 	public downloadItem<T> (_URL: MaybePromise<string>, _PROTO: IProto<T>) : {
+		alreadyCached: Promise<boolean>;
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
@@ -77,9 +90,10 @@ export class DatabaseService extends DataManagerService {
 	public getAsyncList<T> (
 		url: string,
 		proto: IProto<T>,
-		lock: LockFunction = this.lockFunction(url),
+		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
 		noBlobStorage: boolean = false
 	) : IAsyncList<T> {
+		const lock		= lockFactory(url);
 		const localLock	= lockFunction();
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
@@ -88,7 +102,7 @@ export class DatabaseService extends DataManagerService {
 			clear: async () => this.removeItem(url),
 			getValue: async () => localLock(async () => this.getList(url, proto)),
 			lock,
-			pushValue: async value => localLock(async () => {
+			pushItem: async value => localLock(async () => {
 				await this.pushItem(url, proto, value, noBlobStorage);
 			}),
 			setValue: async value => localLock(async () =>
@@ -109,23 +123,72 @@ export class DatabaseService extends DataManagerService {
 		return asyncList;
 	}
 
-	/** Gets an IAsyncMap wrapper for a map. */
+	/**
+	 * Gets an IAsyncMap wrapper for a map.
+	 * @param staticValues If true, values will be assumed to never change once set.
+	 */
 	public getAsyncMap<T> (
 		url: string,
 		proto: IProto<T>,
-		lock: LockFunction = this.lockFunction(url),
-		noBlobStorage: boolean = false
+		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
+		noBlobStorage: boolean = false,
+		staticValues: boolean = false
 	) : IAsyncMap<string, T> {
-		const localLock			= lockFunction();
+		const lock		= lockFactory(url);
+		const localLock	= lockFunction();
+		const itemLocks	= new Map<string, LockFunction>();
+		const itemCache	= staticValues ? new Map<string, T>() : undefined;
+		const method	= 'DatabaseService.getAsyncMap';
 
-		const getItem			= async (key: string) => this.getItem(`${url}/${key}`, proto);
+		const lockItem				= (key: string) => getOrSetDefault(
+			itemLocks,
+			key,
+			() => lockFactory(`${url}/${key}`)
+		);
 
-		const getValueHelper	= async (keys: string[]) => new Map<string, T>(
+		const getItemInternal		= async (key: string) => getOrSetDefaultAsync(
+			itemCache,
+			key,
+			async () => this.localStorageService.getOrSetDefault(
+				`${method}/${url}/${key}`,
+				proto,
+				async () => this.getItem(`${url}/${key}`, proto)
+			)
+		);
+
+		const getItem				= staticValues ?
+			getItemInternal :
+			async (key: string) => lockItem(key)(async () => getItemInternal(key))
+		;
+
+		const getValueHelper		= async (keys: string[]) => new Map<string, T>(
 			await Promise.all(keys.map(async (key) : Promise<[string, T]> => [
 				key,
 				await getItem(key)
 			]))
 		);
+
+		const removeItemInternal	= async (key: string) => {
+			if (itemCache) {
+				itemCache.delete(key);
+			}
+
+			await Promise.all([
+				this.removeItem(`${url}/${key}`),
+				this.localStorageService.removeItem(`${method}/${url}/${key}`)
+			]);
+		};
+
+		const setItemInternal		= async (key: string, value: T) => {
+			if (itemCache) {
+				itemCache.set(key, value);
+			}
+
+			await Promise.all([
+				this.setItem(`${url}/${key}`, proto, value, noBlobStorage),
+				this.localStorageService.setItem(`${method}/${url}/${key}`, proto, value)
+			]);
+		};
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
@@ -134,12 +197,10 @@ export class DatabaseService extends DataManagerService {
 			getItem,
 			getKeys: async () => this.getListKeys(url),
 			getValue: async () => localLock(async () => getValueHelper(await asyncMap.getKeys())),
-			hasItem: async key => this.hasItem(`${url}/${key}`),
+			hasItem: async key => lockItem(key)(async () => this.hasItem(`${url}/${key}`)),
 			lock,
-			removeItem: async key => this.removeItem(`${url}/${key}`),
-			setItem: async (key, value) => {
-				await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);
-			},
+			removeItem: async key => lockItem(key)(async () => removeItemInternal(key)),
+			setItem: async (key, value) => lockItem(key)(async () => setItemInternal(key, value)),
 			setValue: async (mapValue: Map<string, T>) => localLock(async () => {
 				await asyncMap.clear();
 				await Promise.all(Array.from(mapValue.entries()).map(async ([key, value]) =>
@@ -147,6 +208,22 @@ export class DatabaseService extends DataManagerService {
 				));
 			}),
 			size: async () => (await asyncMap.getKeys()).length,
+			updateItem: async (key, f) => lockItem(key)(async () => {
+				const value	= await getItemInternal(key).catch(() => undefined);
+				let newValue: T|undefined;
+				try {
+					newValue	= await f(value);
+				}
+				catch {
+					return;
+				}
+				if (newValue === undefined) {
+					await removeItemInternal(key);
+				}
+				else {
+					await setItemInternal(key, newValue);
+				}
+			}),
 			updateValue: async f => asyncMap.lock(async () =>
 				asyncMap.setValue(await f(await asyncMap.getValue()))
 			),
@@ -167,15 +244,15 @@ export class DatabaseService extends DataManagerService {
 	public getAsyncValue<T> (
 		url: string,
 		proto: IProto<T>,
-		lock: LockFunction = this.lockFunction(url),
+		lockFactory: (k: string) => LockFunction = k => this.lockFunction(k),
 		blockGetValue: boolean = false,
 		noBlobStorage: boolean = false
 	) : IAsyncValue<T> {
-		const defaultValue	= proto.create();
+		const lock			= lockFactory(url);
 		const localLock		= lockFunction();
 
 		let currentHash: string|undefined;
-		let currentValue	= defaultValue;
+		let currentValue	= proto.create();
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
@@ -204,7 +281,7 @@ export class DatabaseService extends DataManagerService {
 				return currentValue;
 			}).catch(async () => blockGetValue ?
 				asyncValue.watch().pipe(take(2)).toPromise() :
-				defaultValue
+				proto.create()
 			),
 			lock,
 			setValue: async value => localLock(async () => {
@@ -264,18 +341,19 @@ export class DatabaseService extends DataManagerService {
 	public async lock<T> (
 		_URL: MaybePromise<string>,
 		_F: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
-		_REASON?: string
+		_REASON?: string,
+		_GLOBAL?: boolean
 	) : Promise<T> {
 		throw new Error('Must provide an implementation of DatabaseService.lock.');
 	}
 
 	/** Creates and returns a lock function that uses DatabaseService.lock. */
-	public lockFunction (url: string) : LockFunction {
+	public lockFunction (url: string, global?: boolean) : LockFunction {
 		return async <T> (
 			f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
 			reason?: string
 		) =>
-			this.lock(url, f, reason)
+			this.lock(url, f, reason, global)
 		;
 	}
 
@@ -302,7 +380,7 @@ export class DatabaseService extends DataManagerService {
 		_URL: MaybePromise<string>,
 		_TARGET: MaybePromise<string>,
 		_NOTIFICATION_TYPE: NotificationTypes,
-		_SUB_TYPE?: number
+		_METADATA?: any
 	) : Promise<void> {
 		throw new Error('Must provide an implementation of DatabaseService.notify.');
 	}
@@ -360,15 +438,15 @@ export class DatabaseService extends DataManagerService {
 	 * @returns Item database hash and URL.
 	 */
 	public async setItem<T> (
-		_URL: MaybePromise<string>,
-		_PROTO: IProto<T>,
-		_VALUE: T,
-		_NO_BLOB_STORAGE?: boolean
+		url: MaybePromise<string>,
+		proto: IProto<T>,
+		value: T,
+		noBlobStorage?: boolean
 	) : Promise<{
 		hash: string;
 		url: string;
 	}> {
-		throw new Error('Must provide an implementation of DatabaseService.setItem.');
+		return this.uploadItem(url, proto, value, noBlobStorage).result;
 	}
 
 	/** Sets a list's value. */
@@ -484,7 +562,13 @@ export class DatabaseService extends DataManagerService {
 
 	constructor (
 		/** @see EnvService */
-		protected readonly envService: EnvService
+		protected readonly envService: EnvService,
+
+		/** @see LocalStorageService */
+		protected readonly localStorageService: LocalStorageService,
+
+		/** @ignore */
+		protected readonly potassiumService: PotassiumService
 	) {
 		super();
 	}

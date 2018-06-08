@@ -423,8 +423,20 @@ message ChatMessage {
 	/** Metadata used to estimate message's size for virtual scrolling. */
 	repeated ChatMessageLine dimensions = 3;
 
+	/**
+	 * Hash of this entire object.
+	 * Includes value. Excludes authorType, hash, and key.
+	 */
+	bytes hash = 9;
+
 	/** @see SessionMessageData.id */
 	required string id = 4;
+
+	/** Key to decrypt an externally contained message value. */
+	bytes key = 10;
+
+	/** If specified, this message will be ignored until the described predecessors are found. */
+	repeated ChatMessagePredecessor predecessors = 12;
 
 	/** @see SessionText.selfDestructTimeout */
 	uint32 selfDestructTimeout = 5;
@@ -454,11 +466,21 @@ message ChatMessageLine {
 	required uint32 smallScreenWidth = 4;
 }
 
+/** Description of a predecessor message. */
+message ChatMessagePredecessor {
+	/** @see ChatMessage.hash */
+	required bytes hash = 1;
+
+	/** @see ChatMessage.id */
+	required string id = 2;
+}
+
 /** Possible values of a chat text message. */
 message ChatMessageValue {
 	/** Possible types of a chat text message value. */
 	enum Types {
 		CalendarInvite = 0;
+		FileTransfer = 5;
 		Form = 1;
 		Quill = 2;
 		RSVP = 3;
@@ -468,6 +490,7 @@ message ChatMessageValue {
 	/** Value. */
 	oneof value {
 		CalendarInvite calendarInvite = 1;
+		FileTransfer fileTransfer = 6;
 		Form form = 2;
 		bytes quill = 3;
 		Appointment.RSVP rsvp = 4;
@@ -652,18 +675,45 @@ message Environment {
 	bool useProdSigningKeys = 6;
 }
 
+/** Represents a transferred file. */
+message FileTransfer {
+	/** Plaintext hash. */
+	bytes hash = 1;
+
+	/** Unique ID to represent this file transfer. */
+	required string id = 2;
+
+	/** Indicates whether file should be handled as an image. */
+	required bool image = 3;
+
+	/** Indicates whether file is being sent from this Cyph instance. */
+	bool isOutgoing = 4;
+
+	/** Symmetric key used for encrypting file over the wire. */
+	bytes key = 5;
+
+	/** MIME type. */
+	required string mediaType = 6;
+
+	/** File name. */
+	required string name = 7;
+
+	/** File size in bytes. */
+	required uint32 size = 8;
+}
+
 /** Represents a form that a user can submit responses to. */
 message Form {
 	/** Reusable building block consisting of multiple forms. */
 	message Component {
-		/** @see ElementRow */
-		repeated ElementRow rows = 1;
+		/** @see ElementContainer */
+		repeated ElementContainer containers = 1;
 
 		/** @see Form.id */
 		string id = 2;
 
-		/** Separator for concatenating element values when sending to another system. */
-		string idSeparator = 3;
+		/** Indicates whether this is a column or a row. */
+		bool isColumn = 4;
 	}
 
 	/** One element of a Form, and one column of an ElementRow. */
@@ -724,16 +774,39 @@ message Form {
 		uint32 width = 13;
 	}
 
-	/** Row of elements. */
-	message ElementRow {
-		/** @see Element */
-		repeated Element elements = 1;
+	/** Row or column of elements. */
+	message ElementContainer {
+		/** @see ElementOrElementContainer */
+		repeated ElementOrElementContainer elements = 1;
+
+		/**
+		 * String-encoded function for collapsing element values when sending to another system.
+		 * Element values are referenced by index (e.g. '${0}') and arithmetic operations can be
+		 * performed using a CSS-like calc syntax (e.g. 'calc(4+5)' or 'calc(${0}+${1})').
+		 *
+		 * Must be two lines: the first line collapses the element values (returns string) and
+		 * the second line reverses the transformation (returns JSON array). In the latter case,
+		 * ${val} will refer to the input value.
+		 */
+		string formula = 3;
 
 		/** @see Form.id */
 		string id = 2;
 
-		/** @see Component.idSeparator */
-		string idSeparator = 3;
+		/** @see Component.isColumn */
+		bool isColumn = 4;
+	}
+
+	/** Either an Element or ElementContainer. */
+	message ElementOrElementContainer {
+		/** Value. */
+		oneof value {
+			/** @see Element */
+			Element element = 1;
+
+			/** @see ElementContainer */
+			ElementContainer elementContainer = 2;
+		}
 	}
 
 	/** @see Component */
@@ -755,6 +828,7 @@ message KeyPair {
 /** Push notification types. */
 enum NotificationTypes {
 	Yo = 0;
+	CalendarEvent = 3;
 	File = 1;
 	Message = 2;
 }
@@ -782,7 +856,7 @@ message RedoxAppointment {
 	/** Patient data. */
 	message PatientType {
 		/** @see RedoxPatient.Demographics */
-		RedoxTypes.Demographics Demographics = 1;
+		RedoxTypes.Patient.Demographics Demographics = 1;
 
 		/** @see RedoxPatient.Identifiers */
 		repeated RedoxTypes.Identifier Identifiers = 2;
@@ -810,13 +884,71 @@ message RedoxClinicalSummary {
 	repeated RedoxTypes.Allergy allergies = 1;
 }
 
+/** Redox message metadata. */
+message RedoxMeta {
+	/**
+	 * Record in Redox that corresponds to the communication sent from the source to Redox.
+	 * Included in messages from Redox.
+	 */
+	message RedoxMessage {
+		/** ID. */
+		string ID = 1;
+	}
+
+	/** Redox source or destination. */
+	message RedoxSource {
+		/** ID. */
+		required string ID = 1;
+
+		/** Name. */
+		string Name = 2;
+	}
+
+	/**
+	 * Record in Redox that corresponds to the communication sent from Redox to your destination.
+	 * Included in messages from Redox.
+	 */
+	message RedoxTransmission {
+		/** ID. */
+		string ID = 1;
+	}
+
+	/** e.g. Scheduling, Results */
+	required string DataModel = 1;
+
+	/** e.g. New, Update, Activate, Deactivate */
+	required string EventType = 2;
+
+	/** ISO 8601 timestamp. */
+	string EventDateTime = 3;
+
+	/** Indicates whether message was from a test environment. */
+	bool Test = 4;
+
+	/** Where the message originated. Included in messages from Redox. */
+	RedoxSource Source = 5;
+
+	/**
+	 * List of destinations to send your message to. All messages must have at least one
+	 * destination. Queries accept only one destination.
+	 * Required when sending data to Redox.
+	 */
+	repeated RedoxSource Destinations = 6;
+
+	/** @see RedoxMessage */
+	RedoxMessage Message = 7;
+
+	/** @see RedoxTransmission */
+	RedoxTransmission Transmission = 8;
+}
+
 /** @see https://developer.redoxengine.com/data-models/PatientSearch.html#Response */
 message RedoxPatient {
 	/** List of (emergency) contacts for the patient. */
 	repeated RedoxTypes.Contact Contacts = 1;
 
 	/** Descriptive patient information - modeled from Redox. */
-	RedoxTypes.Demographics Demographics = 2;
+	RedoxTypes.Patient.Demographics Demographics = 2;
 
 	/** Patient identifiers. */
 	repeated RedoxTypes.Identifier Identifiers = 3;
@@ -961,7 +1093,7 @@ message RedoxTypes {
 		/** @see Address */
 		Address Address = 1;
 
-		/** List of emails for the contact. */
+		/** List of email addresses for the contact. */
 		repeated string EmailAddresses = 2;
 
 		/** First name. */
@@ -981,60 +1113,6 @@ message RedoxTypes {
 
 		/** Role of this contact for the patient. e.g. Employer, Emergency Contact. */
 		repeated string Roles = 8;
-	}
-
-	/** Descriptive patient information - modeled from Redox. */
-	message Demographics {
-		/** The patient's address. */
-		Address Address = 1;
-
-		/** Reference: http://www.nationsonline.org/oneworld/country_code_list.htm */
-		repeated string Citizenship = 2;
-
-		/** Date and time the patient was proclaimed deceased. (ISO 8601) */
-		string DeathDateTime = 3;
-
-		/** Patient's date of birth. (ISO 8601) */
-		string DOB = 4;
-
-		/** List of emails for the patient. */
-		repeated string EmailAddresses = 5;
-
-		/** First name. */
-		string FirstName = 6;
-
-		/** He's dead, Jim. */
-		bool IsDeceased = 7;
-
-		/** Is the patient hispanic? */
-		bool IsHispanic = 8;
-
-		/** Patient's primary spoken language. In ISO 639-1 alpha values (e.g. 'en'). */
-		string Language = 9;
-
-		/** Last name. */
-		string LastName = 10;
-
-		/** Supported values: http://www.hl7.org/FHIR/v2/0002/index.html */
-		string MaritalStatus = 11;
-
-		/** Middle name - multiple middle names concatenated into this field. */
-		string MiddleName = 12;
-
-		/** @see PhoneNumber */
-		PhoneNumber PhoneNumber = 13;
-
-		/** The patient's race. */
-		string Race = 14;
-
-		/**
-		 * The patient's sex.
-		 * One of the following: "Female", "Male", "Unknown", "Other" (Redox).
-		 */
-		string Sex = 15;
-
-		/** The patient's social security number. */
-		string SSN = 16;
 	}
 
 	/** Identifiers - from Redox. */
@@ -1193,8 +1271,245 @@ message RedoxTypes {
 		PhoneNumber PhoneNumber = 9;
 	}
 
+	/** Someone's phone number. */
+	message PhoneNumber {
+		/** Home phone number. */
+		string Home = 1;
+
+		/** Mobile phone number. */
+		string Mobile = 2;
+
+		/** Office phone number. */
+		string Office = 3;
+	}
+
+	/** A patient. */
+	message Patient {
+		/** Descriptive patient information. */
+		message Demographics {
+			/** The patient's address. */
+			Address Address = 1;
+
+			/** Reference: http://www.nationsonline.org/oneworld/country_code_list.htm */
+			repeated string Citizenship = 2;
+
+			/** Date and time the patient was proclaimed deceased. (ISO 8601) */
+			string DeathDateTime = 3;
+
+			/** Patient's date of birth. (ISO 8601) */
+			string DOB = 4;
+
+			/** List of email addresses for the patient. */
+			repeated string EmailAddresses = 5;
+
+			/** First name. */
+			string FirstName = 6;
+
+			/** He's dead, Jim. */
+			bool IsDeceased = 7;
+
+			/** Is the patient hispanic? */
+			bool IsHispanic = 8;
+
+			/** Patient's primary spoken language. In ISO 639-1 alpha values (e.g. 'en'). */
+			string Language = 9;
+
+			/** Last name. */
+			string LastName = 10;
+
+			/** Supported values: http://www.hl7.org/FHIR/v2/0002/index.html */
+			string MaritalStatus = 11;
+
+			/** Middle name - multiple middle names concatenated into this field. */
+			string MiddleName = 12;
+
+			/** @see PhoneNumber */
+			PhoneNumber PhoneNumber = 13;
+
+			/** The patient's race. */
+			string Race = 14;
+
+			/**
+			* The patient's sex.
+			* One of the following: "Female", "Male", "Unknown", "Other" (Redox).
+			*/
+			string Sex = 15;
+
+			/** The patient's social security number. */
+			string SSN = 16;
+		}
+	}
+
 	/** A care provider. */
 	message Provider {
+		/** Descriptive provider information. */
+		message Demographics {
+			/** The provider's addresses. */
+			repeated Address Addresses = 1;
+
+			/** e.g. M.D., Psy.D. */
+			repeated string Credentials = 2;
+
+			/** Provider's date of birth. (ISO 8601) */
+			string DOB = 3;
+
+			/** List of email addresses for the provider. */
+			repeated string EmailAddresses = 4;
+
+			/** First name. */
+			string FirstName = 5;
+
+			/**
+			 * Languages the provider is able to use in patient communication.
+			 * In ISO 639-1 alpha values (e.g. 'en').
+			 */
+			repeated string Languages = 6;
+
+			/** Last name. */
+			string LastName = 7;
+
+			/** Middle name - multiple middle names concatenated into this field. */
+			string MiddleName = 8;
+
+			/** @see PhoneNumber */
+			PhoneNumber PhoneNumber = 9;
+
+			/**
+			* The provider's sex.
+			* One of the following: "Female", "Male", "Unknown", "Other" (Redox).
+			*/
+			string Sex = 10;
+		}
+
+		/** Provider's qualifications obtained by training and certification. */
+		message Qualifications {
+			/** e.g. MD */
+			string Code = 2;
+
+			/** e.g. http://hl7.org/fhir/v2/0360/2.7" */
+			string Codeset = 3;
+
+			/** Description. */
+			string Description = 4;
+
+			/** End date of the qualification. ISO 8601 format, e.g. 2001-09-11 */
+			string EndDate = 6;
+
+			/** @see Identifier */
+			Identifier ID = 1;
+
+			/** Start date of the qualification. ISO 8601 format, e.g. 2001-09-11 */
+			string StartDate = 5;
+		}
+
+		/** Roles that the provider is associated with. */
+		message Roles {
+			/** Times the service location is available */
+			message LocationAvailability {
+				/** Closing time of day. ISO 8601 Format. */
+				string AvailableEndTime = 3;
+
+				/** Opening time of day. ISO 8601 Format. */
+				string AvailableStartTime = 2;
+
+				/**
+				 * List of days that this availability schedule applies to.
+				 * One of: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday.
+				 */
+				repeated string Days = 1;
+			}
+
+			/** Organization where the role is available. */
+			message Organization {
+				/** @see Address */
+				Address Address = 6;
+
+				/** @see Identifier */
+				Identifier ID = 1;
+
+				/** Whether this role is in active use. */
+				string IsActive = 2;
+
+				/** e.g. Redox Clinic */
+				string Name = 5;
+
+				/** e.g. Provider */
+				string Type = 4;
+			}
+
+			/** The location(s) at which the provider provides care. */
+			message RedoxLocations {
+				/** @see Address */
+				Address Address = 5;
+
+				/** Description. */
+				string Description = 4;
+
+				/** List of email addresses for the location. */
+				repeated string EmailAddresses = 6;
+
+				/** @see Identifier */
+				Identifier ID = 1;
+
+				/** Location Name, e.g. Redox Clinic. */
+				string Name = 3;
+
+				/** @see PhoneNumber */
+				repeated PhoneNumber PhoneNumber = 7;
+
+				/** One of Active, Suspended, Inactive. */
+				string Status = 2;
+			}
+
+			/**
+			 * The list of healthcare services that this worker provides
+			 * for this role's Organization/Location(s).
+			 */
+			message RedoxServices {
+				/** Description of the service. */
+				string Description = 3;
+
+				/** @see Identifier */
+				Identifier ID = 1;
+
+				/** @see PhoneNumber */
+				PhoneNumber PhoneNumber = 4;
+
+				/** Type of service that may be delivered or performed, e.g. Nutrition. */
+				string Type = 2;
+			}
+
+			/** Coded representation of the specialty. */
+			message RedoxSpecialties {
+				/** Code. */
+				string Code = 1;
+
+				/** e.g. SnomedCT. */
+				string Codeset = 2;
+
+				/** e.g. General Medicine. */
+				string Description = 3;
+			}
+
+			/** @see LocationAvailability */
+			LocationAvailability Availability = 6;
+
+			/** @see Identifier */
+			Identifier ID = 1;
+
+			/** @see RedoxLocations */
+			RedoxLocations Locations = 4;
+
+			/** @see Organization */
+			Organization Org = 2;
+
+			/** @see RedoxServices */
+			RedoxServices Services = 5;
+
+			/** @see RedoxSpecialties */
+			RedoxSpecialties Specialties = 3;
+		}
+
 		/** @see Address */
 		Address Address = 1;
 
@@ -1210,6 +1525,9 @@ message RedoxTypes {
 		/** Type of ID. e.g. MRN, EPI. */
 		required string IDType = 5;
 
+		/** Whether the entry for this provider is active or inactive. */
+		bool IsActive = 9;
+
 		/** Last name. */
 		string LastName = 6;
 
@@ -1218,18 +1536,6 @@ message RedoxTypes {
 
 		/** @see PhoneNumber */
 		PhoneNumber PhoneNumber = 8;
-	}
-
-	/** Someone's phone number. */
-	message PhoneNumber {
-		/** Home phone number. */
-		string Home = 1;
-
-		/** Mobile phone number. */
-		string Mobile = 2;
-
-		/** Office phone number. */
-		string Office = 3;
 	}
 
 	/** Visit metadata. */
@@ -1366,9 +1672,6 @@ message SessionMessageData {
 
 	/** @see SessionTextConfirmation */
 	SessionTextConfirmation textConfirmation = 10;
-
-	/** @see SessionTransfer */
-	SessionTransfer transfer = 11;
 }
 
 /** Array of session messages. */
@@ -1377,68 +1680,37 @@ message SessionMessageList {
 	repeated SessionMessage messages = 1;
 }
 
+/** Array of session message data objects. */
+message SessionMessageDataList {
+	/** Message data objects. */
+	repeated SessionMessageData messages = 1;
+}
+
 /** Contains an actual chat text message. */
 message SessionText {
 	/** @see ChatMessage.dimensions */
 	repeated ChatMessageLine dimensions = 1;
+
+	/** @see ChatMessage.hash */
+	required bytes hash = 5;
+
+	/** @see ChatMessage.key */
+	required bytes key = 6;
+
+	/** @see ChatMessage.predecessors */
+	repeated ChatMessagePredecessor predecessors = 8;
 
 	/** Indicates whether entire chat should be self-destructed (only valid for first message). */
 	bool selfDestructChat = 2;
 
 	/** Self-destruction timeout. */
 	uint32 selfDestructTimeout = 3;
-
-	/** @see ChatMessageValue */
-	required ChatMessageValue value = 4;
 }
 
 /** Receipt confirmation for a SessionText. */
 message SessionTextConfirmation {
 	/** SessionText ID to be confirmed. */
 	required string id = 1;
-}
-
-/** Represents an active file transfer. */
-message SessionTransfer {
-	/** Possible responses to a transfer request. */
-	enum Answers {
-		Empty = 0;
-		Accepted = 1;
-		Rejected = 2;
-	}
-
-	/** Indicates a non-response to, acceptance of, or rejection of a file transfer. */
-	required Answers answer = 1;
-
-	/** Unique ID to represent this file transfer. */
-	required string id = 2;
-
-	/** Indicates whether file should be handled as an image. */
-	required bool image = 3;
-
-	/** If image is true, this will be used as a self-destruct timeout for the message. */
-	required uint32 imageSelfDestructTimeout = 4;
-
-	/** Indicates whether file is being sent from this Cyph instance. */
-	required bool isOutgoing = 5;
-
-	/** Symmetric key used for encrypting file over the wire. */
-	required bytes key = 6;
-
-	/** MIME type. */
-	required string mediaType = 7;
-
-	/** File name. */
-	required string name = 8;
-
-	/** Indicates the time at which the file was received. */
-	double receiptTimestamp = 9;
-
-	/** File size in bytes. */
-	required uint32 size = 10;
-
-	/** File URL. */
-	required string url = 11;
 }
 
 /** A cryptocurrency wallet. */

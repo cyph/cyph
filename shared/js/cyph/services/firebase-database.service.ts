@@ -153,6 +153,27 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @ignore */
+	private getListKeysInternal (value: Map<string, any>|{[k: string]: any}) : string[] {
+		if (!value) {
+			return [];
+		}
+
+		const keys		=
+			(
+				value instanceof Map ? Array.from(value.keys()) : Object.keys(value)
+			).sort()
+		;
+
+		const endIndex	= keys.findIndex(
+			value instanceof Map ?
+				k => typeof value.get(k).hash !== 'string' :
+				k => typeof value[k].hash !== 'string'
+		);
+
+		return endIndex >= 0 ? keys.slice(0, endIndex) : keys;
+	}
+
+	/** @ignore */
 	private async getStorageRef (url: string, hash: string) : Promise<StorageReference> {
 		const fullURL	= `${url}/${hash}`;
 
@@ -166,6 +187,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @ignore */
 	private usernameToEmail (username: string) : string {
 		return `${username}@${this.namespace}`;
+	}
+
+	/** @ignore */
+	private async waitForValue (url: string) : Promise<DataSnapshot> {
+		return new Promise<DataSnapshot>(async resolve => {
+			(await this.getDatabaseRef(url)).on('value', snapshot => {
+				if (snapshot && snapshot.exists() && typeof snapshot.val().hash === 'string') {
+					resolve(snapshot);
+				}
+			});
+		});
 	}
 
 	/** @inheritDoc */
@@ -225,12 +257,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public downloadItem<T> (urlPromise: MaybePromise<string>, proto: IProto<T>) : {
+		alreadyCached: Promise<boolean>;
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
-		const progress	= new BehaviorSubject(0);
+		const progress		= new BehaviorSubject(0);
+		const alreadyCached	= resolvable<boolean>();
 
 		return {
+			alreadyCached: alreadyCached.promise,
 			progress,
 			result: this.ngZone.runOutsideAngular(async () => {
 				const url	= await urlPromise;
@@ -247,6 +282,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 					const localValue	= await deserialize(proto, localData);
 
+					alreadyCached.resolve(true);
 					this.ngZone.run(() => {
 						progress.next(100);
 						progress.complete();
@@ -256,6 +292,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}
 				catch {}
 
+				alreadyCached.resolve(false);
 				this.ngZone.run(() => { progress.next(0); });
 
 				const req	= requestByteStream({
@@ -286,13 +323,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const url	= await urlPromise;
 
 			try {
-				const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
-
-				return !value ? [] : await Promise.all(
-					Object.keys(value).map(async k =>
-						this.getItem(`${url}/${k}`, proto)
-					)
-				);
+				return await Promise.all((await this.getListKeys(url)).map(async k =>
+					this.getItem(`${url}/${k}`, proto)
+				));
 			}
 			catch {
 				return [];
@@ -306,9 +339,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const url	= await urlPromise;
 
 			try {
-				const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
-
-				return !value ? [] : Object.keys(value);
+				return this.getListKeysInternal(
+					(await (await this.getDatabaseRef(url)).once('value')).val()
+				);
 			}
 			catch {
 				return [];
@@ -358,9 +391,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public async lock<T> (
 		urlPromise: MaybePromise<string>,
 		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
-		reason?: string
+		reason?: string,
+		global: boolean = true
 	) : Promise<T> {
-		const url	= await urlPromise;
+		const url	= await this.lockURL(urlPromise, global);
 
 		return this.ngZone.runOutsideAngular(async () => lock(
 			getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
@@ -601,16 +635,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 		urlPromise: MaybePromise<string>,
 		targetPromise: MaybePromise<string>,
 		notificationType: NotificationTypes,
-		subType?: number
+		metadata?: any
 	) : Promise<void> {
 		const url		= await urlPromise;
 		const target	= await targetPromise;
 
 		await this.ngZone.runOutsideAngular(async () =>
 			(await this.getDatabaseRef(url)).push(
-				subType === undefined ?
-					{target, type: notificationType} :
-					{subType, target, type: notificationType}
+				{target, type: notificationType, ...(metadata ? {metadata} : {})}
 			).then()
 		);
 	}
@@ -631,42 +663,49 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}> {
 		const url	= await urlPromise;
 
-		return this.ngZone.runOutsideAngular(async () =>
-			this.lock(`pushlocks/${url}`, async () => {
-				const listRef	= await this.getDatabaseRef(url);
-				const itemRef	= await listRef.push({timestamp: ServerValue.TIMESTAMP}).then();
-				const key		= itemRef.key;
+		return this.ngZone.runOutsideAngular(async () => {
+			const listRef	= await this.getDatabaseRef(url);
+			const itemRef	= await listRef.push({timestamp: ServerValue.TIMESTAMP}).then();
+			const key		= itemRef.key;
 
-				if (!key) {
-					throw new Error(`Failed to push item to ${url}.`);
-				}
+			if (!key) {
+				throw new Error(`Failed to push item to ${url}.`);
+			}
 
-				const previousKey	= async () : Promise<string|undefined> => listRef.
-					orderByKey().
-					endAt(key).
-					limitToLast(2).
-					once('child_added').
-					then(child => child.key && child.key !== key ? child.key : undefined).
-					catch(() => undefined)
-				;
+			const previousKey	= async () : Promise<string|undefined> =>
+				retryUntilSuccessful(async () => {
+					const listValueMap: {[k: string]: any}	=
+						(
+							await listRef.
+								orderByKey().
+								endAt(key).
+								limitToLast(2).
+								once('value')
+						).val()
+					;
 
-				const o: {callback?: () => Promise<void>}	= {};
+					if (!(key in listValueMap)) {
+						throw new Error(`Key ${key} not found in list at ${url}.`);
+					}
 
-				if (typeof value === 'function') {
-					value	= await value(key, previousKey, o);
-				}
+					return Object.keys(listValueMap).find(k => k !== key);
+				})
+			;
 
-				await itemRef.remove().then();
+			const o: {callback?: () => Promise<void>}	= {};
 
-				const result	= await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);
+			if (typeof value === 'function') {
+				value	= await value(key, previousKey, o);
+			}
 
-				if (o.callback) {
-					await o.callback();
-				}
+			const result	= await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);
 
-				return result;
-			})
-		);
+			if (o.callback) {
+				await o.callback();
+			}
+
+			return result;
+		});
 	}
 
 	/** @inheritDoc */
@@ -998,6 +1037,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	) : Observable<ITimedValue<T>> {
 		return this.ngZone.runOutsideAngular(() => new Observable<ITimedValue<T>>(observer => {
 			let cleanup: Function;
+			let lastValue: T|undefined;
 
 			/* tslint:disable-next-line:no-null-keyword */
 			const onValue	= async (snapshot: DataSnapshot|null) => {
@@ -1011,7 +1051,22 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}
 				else {
 					const result	= await (await this.downloadItem(url, proto)).result;
-					this.ngZone.run(() => { observer.next(result); });
+
+					if (
+						result.value !== lastValue &&
+						!(
+							ArrayBuffer.isView(result.value) &&
+							ArrayBuffer.isView(lastValue) &&
+							this.potassiumService.compareMemory(
+								result.value,
+								lastValue
+							)
+						)
+					) {
+						this.ngZone.run(() => { observer.next(result); });
+					}
+
+					lastValue		= result.value;
 				}
 			};
 
@@ -1055,8 +1110,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				return async () => {
 					(await waitForValue(() => cleanup))();
 				};
-			})),
-			false
+			}))
 		);
 	}
 
@@ -1100,7 +1154,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const publishList	= () => {
 					this.ngZone.run(() => {
 						observer.next(
-							Array.from(data.keys()).sort().map(k => {
+							this.getListKeysInternal(data).map(k => {
 								const o	= data.get(k);
 								if (!o) {
 									throw new Error('Corrupt Map.');
@@ -1112,8 +1166,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 				};
 
 				/* tslint:disable-next-line:no-null-keyword */
-				const onChildAdded		= async (snapshot: DataSnapshot|null) => {
+				const onChildAdded		= async (snapshot: DataSnapshot|null) : Promise<void> => {
 					if (
+						snapshot &&
+						snapshot.key &&
+						typeof (snapshot.val() || {}).hash !== 'string'
+					) {
+						return onChildAdded(await this.waitForValue(`${url}/${snapshot.key}`));
+					}
+					else if (
 						!snapshot ||
 						!snapshot.key ||
 						data.has(snapshot.key) ||
@@ -1206,26 +1267,29 @@ export class FirebaseDatabaseService extends DatabaseService {
 					const listRef	= await this.getDatabaseRef(url);
 
 					/* tslint:disable-next-line:no-null-keyword */
-					const onChildAdded	= (
+					const onChildAdded	= async (
 						snapshot: DataSnapshot|null,
 						previousKey?: string|null
-					) => {
-						this.ngZone.run(() => {
-							if (
-								!snapshot ||
-								!snapshot.exists() ||
-								!snapshot.key ||
-								typeof (snapshot.val() || {}).hash !== 'string'
-							) {
-								return;
-							}
+					) => this.ngZone.run(async () : Promise<void> => {
+						if (
+							snapshot &&
+							snapshot.key &&
+							typeof (snapshot.val() || {}).hash !== 'string'
+						) {
+							return onChildAdded(
+								await this.waitForValue(`${url}/${snapshot.key}`),
+								previousKey
+							);
+						}
+						else if (!snapshot || !snapshot.exists() || !snapshot.key) {
+							return;
+						}
 
-							observer.next({
-								key: snapshot.key,
-								previousKey: previousKey || undefined
-							});
+						observer.next({
+							key: snapshot.key,
+							previousKey: previousKey || undefined
 						});
-					};
+					});
 
 					listRef.on('child_added', onChildAdded);
 					cleanup	= () => { listRef.off('child_added', onChildAdded); };
@@ -1236,8 +1300,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				return async () => {
 					(await waitForValue(() => cleanup))();
 				};
-			})),
-			{key: ''}
+			}))
 		);
 	}
 
@@ -1263,7 +1326,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						}
 
 						const val: any	= snapshot.val() || {};
-						const newKeys	= Object.keys(val);
+						const newKeys	= this.getListKeysInternal(val);
 
 						for (let i = newKeys.length - 1 ; i >= 0 ; --i) {
 							const o	= val[newKeys[i]];
@@ -1290,8 +1353,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				return async () => {
 					(await waitForValue(() => cleanup))();
 				};
-			})),
-			[]
+			}))
 		);
 	}
 
@@ -1320,12 +1382,18 @@ export class FirebaseDatabaseService extends DatabaseService {
 					const onChildAdded	= async (
 						snapshot: DataSnapshot|null,
 						previousKey?: string|null
-					) => {
+					) : Promise<void> => {
 						if (
-							!snapshot ||
-							!snapshot.key ||
+							snapshot &&
+							snapshot.key &&
 							typeof (snapshot.val() || {}).hash !== 'string'
 						) {
+							return onChildAdded(
+								await this.waitForValue(`${url}/${snapshot.key}`),
+								previousKey
+							);
+						}
+						else if (!snapshot || !snapshot.exists() || !snapshot.key) {
 							return;
 						}
 
@@ -1384,19 +1452,19 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	constructor (
 		envService: EnvService,
+		localStorageService: LocalStorageService,
+		potassiumService: PotassiumService,
 
 		/** @ignore */
 		private readonly ngZone: NgZone,
 
 		/** @ignore */
-		private readonly localStorageService: LocalStorageService,
-
-		/** @ignore */
-		private readonly potassiumService: PotassiumService,
-
-		/** @ignore */
 		private readonly workerService: WorkerService
 	) {
-		super(envService);
+		super(
+			envService,
+			localStorageService,
+			potassiumService
+		);
 	}
 }

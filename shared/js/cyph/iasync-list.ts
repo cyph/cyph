@@ -19,7 +19,7 @@ export interface IAsyncList<T> {
 	) : Promise<L>;
 
 	/** Pushes value to list. */
-	pushValue (value: T) : Promise<void>;
+	pushItem (value: T) : Promise<void>;
 
 	/** Sets value. */
 	setValue (value: T[]) : Promise<void>;

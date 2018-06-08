@@ -8,6 +8,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {MaybePromise} from '../maybe-promise-type';
 import {parse, stringify, toQueryString} from './serialization';
 import {staticHttpClient} from './static-services';
+import {sleep} from './wait';
 
 
 /** Performs HTTP request. */
@@ -18,6 +19,7 @@ const baseRequest	= <R, T> (
 		discardErrors?: boolean;
 		method?: string;
 		retries?: number;
+		timeout?: number;
 		url: string;
 	},
 	responseType: 'arraybuffer'|'blob'|'json'|'text',
@@ -30,14 +32,15 @@ const baseRequest	= <R, T> (
 
 	return {
 		progress,
+		/* tslint:disable-next-line:cyclomatic-complexity */
 		result: (async () => {
 			const httpClient	= await staticHttpClient;
 
-			const method: string			= o.method || 'GET';
-			const retries: number			= o.retries === undefined ? 0 : o.retries;
-			let contentType: string			= o.contentType || '';
-			let data: any					= o.data;
-			let url: string					= o.url;
+			const method: string	= o.method || 'GET';
+			const retries: number	= o.retries === undefined ? 0 : o.retries;
+			let contentType: string	= o.contentType || '';
+			let data: any			= o.data;
+			let url: string			= o.url;
 
 			if (!contentType) {
 				if (url.slice(-5) === '.json') {
@@ -79,29 +82,34 @@ const baseRequest	= <R, T> (
 						responseType
 					}));
 
-					const res	= await new Promise<HttpResponse<T>>((resolve, reject) => {
-						let last: HttpResponse<T>;
+					const res	= await Promise.race([
+						new Promise<HttpResponse<T>>((resolve, reject) => {
+							let last: HttpResponse<T>;
 
-						req.subscribe(
-							e => {
-								if (e.type === HttpEventType.DownloadProgress) {
-									progress.next(e.loaded / (e.total || e.loaded) * 100);
+							req.subscribe(
+								e => {
+									if (e.type === HttpEventType.DownloadProgress) {
+										progress.next(e.loaded / (e.total || e.loaded) * 100);
+									}
+									else if (e.type === HttpEventType.Response) {
+										last	= e;
+									}
+								},
+								reject,
+								() => {
+									if (last) {
+										resolve(last);
+									}
+									else {
+										reject();
+									}
 								}
-								else if (e.type === HttpEventType.Response) {
-									last	= e;
-								}
-							},
-							reject,
-							() => {
-								if (last) {
-									resolve(last);
-								}
-								else {
-									reject();
-								}
-							}
-						);
-					});
+							);
+						}),
+						...(!o.timeout ? [] : [
+							sleep(o.timeout).then(async () => Promise.reject('Request timeout.'))
+						])
+					]);
 
 					statusOk	= res.ok;
 					response	= await getResponseData(res);
@@ -131,6 +139,7 @@ export const request	= async (o: {
 	data?: any;
 	method?: string;
 	retries?: number;
+	timeout?: number;
 	url: string;
 }) : Promise<string> => {
 	return (await baseRequest<string, string>(o, 'text', res =>
@@ -144,6 +153,7 @@ export const requestByteStream	= (o: {
 	data?: any;
 	method?: string;
 	retries?: number;
+	timeout?: number;
 	url: string;
 }) : {
 	progress: Observable<number>;
@@ -160,6 +170,7 @@ export const requestBytes	= async (o: {
 	data?: any;
 	method?: string;
 	retries?: number;
+	timeout?: number;
 	url: string;
 }) : Promise<Uint8Array> => {
 	return requestByteStream(o).result;
@@ -171,6 +182,7 @@ export const requestMaybeJSON	= async (o: {
 	data?: any;
 	method?: string;
 	retries?: number;
+	timeout?: number;
 	url: string;
 }) : Promise<any> => {
 	const response	= await request(o);
@@ -189,6 +201,7 @@ export const requestJSON	= async (o: {
 	data?: any;
 	method?: string;
 	retries?: number;
+	timeout?: number;
 	url: string;
 }) : Promise<any> => {
 	return (await baseRequest<any, any>({contentType: 'application/json', ...o}, 'json', res =>

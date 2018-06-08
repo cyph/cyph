@@ -86,7 +86,7 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 					const doc	= this.note.doc;
 
 					if (doc.deltaSendQueue.length > 0) {
-						await doc.asyncList.pushValue({
+						await doc.asyncList.pushItem({
 							clientID: doc.deltaSendQueue[0].clientID,
 							ops: doc.deltaSendQueue.splice(
 								0,
@@ -99,7 +99,7 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 					}
 
 					if (doc.selectionSendQueue) {
-						await doc.asyncList.pushValue(doc.selectionSendQueue);
+						await doc.asyncList.pushItem(doc.selectionSendQueue);
 					}
 
 					await sleep(500);

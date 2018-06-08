@@ -5,6 +5,7 @@ import {
 	ChatMessage as ChatMessageInternal,
 	IChatMessage,
 	IChatMessageLine,
+	IChatMessagePredecessor,
 	IChatMessageValue
 } from '../proto';
 import {Timer} from '../timer';
@@ -28,7 +29,7 @@ export class ChatMessage implements IChatMessage {
 	public authorType: ChatMessageInternal.AuthorTypes	= this.message.authorType;
 
 	/** Human-readable date + time. */
-	public readonly dateTimeString: string				= getDateTimeString(
+	public dateTimeString: string						= getDateTimeString(
 		this.message.timestamp
 	);
 
@@ -36,7 +37,16 @@ export class ChatMessage implements IChatMessage {
 	public dimensions?: IChatMessageLine[]				= this.message.dimensions;
 
 	/** @inheritDoc */
+	public hash?: Uint8Array							= this.message.hash;
+
+	/** @inheritDoc */
 	public id: string									= this.message.id;
+
+	/** @inheritDoc */
+	public key?: Uint8Array								= this.message.key;
+
+	/** @inheritDoc */
+	public predecessors?: IChatMessagePredecessor[]		= this.message.predecessors;
 
 	/** @inheritDoc */
 	public selfDestructTimeout?: number					= this.message.selfDestructTimeout;
@@ -45,23 +55,35 @@ export class ChatMessage implements IChatMessage {
 	public readonly selfDestructTimer?: Timer;
 
 	/** @inheritDoc */
+	public sessionSubID?: string						= this.message.sessionSubID;
+
+	/** @inheritDoc */
 	public timestamp: number							= this.message.timestamp;
 
 	/** Human-readable time. */
-	public readonly timeString: string					= getTimeString(this.message.timestamp);
+	public timeString: string							= getTimeString(this.message.timestamp);
 
 	/** @ignore */
-	public value?: IChatMessageValue					= this.message.value && {
+	public value?: IChatMessageValue&{failure?: boolean}	= this.message.value && {
 		calendarInvite: this.message.value.calendarInvite,
+		fileTransfer: this.message.value.fileTransfer,
 		form: this.message.value.form,
 		quill: this.message.value.quill,
 		text: this.message.value.text
 	};
 
 	/** Observable of value. */
-	public readonly valueWatcher: Subject<IChatMessageValue|undefined>	=
-		new BehaviorSubject<IChatMessageValue|undefined>(this.value)
+	public readonly valueWatcher: Subject<(IChatMessageValue&{failure?: boolean})|undefined>	=
+		new BehaviorSubject<(IChatMessageValue&{failure?: boolean})|undefined>(this.value)
 	;
+
+	/** Updates timestamp. */
+	public updateTimestamp (timestamp: number) : void {
+		this.message.timestamp	= timestamp;
+		this.timestamp			= timestamp;
+		this.dateTimeString		= getDateTimeString(timestamp);
+		this.timeString			= getTimeString(this.message.timestamp);
+	}
 
 	constructor (
 		/** @ignore */
@@ -93,6 +115,10 @@ export class ChatMessage implements IChatMessage {
 			if (this.value.calendarInvite) {
 				this.message.value.calendarInvite	= undefined;
 				this.value.calendarInvite			= undefined;
+			}
+			if (this.value.fileTransfer) {
+				this.message.value.fileTransfer		= undefined;
+				this.value.fileTransfer				= undefined;
 			}
 			if (this.value.form) {
 				this.message.value.form				= undefined;

@@ -63,6 +63,7 @@ var config = struct {
 	AllowedHosts               map[string]none
 	AnalID                     string
 	APIKeyByteLength           int
+	CacheControlHeader         string
 	Continents                 map[string]none
 	DefaultContinent           string
 	DefaultContinentCode       string
@@ -123,6 +124,8 @@ var config = struct {
 
 	24,
 
+	"no-cache",
+
 	map[string]none{
 		"af": empty,
 		/* "an": empty, */
@@ -151,7 +154,7 @@ var config = struct {
 
 	"max-age=31536000; includeSubdomains; preload",
 
-	90,
+	150,
 
 	/* Max length of a valid email address, but also happened
 	to seem like a sane limit for the other values */

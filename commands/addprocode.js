@@ -43,7 +43,7 @@ const {
 const salt			= namespace + 'Eaf60vuVWm67dNISjm6qdTGqgEhIW4Oes+BTsiuNjvs=';
 const passwordHash	= potassium.toHex((await potassium.passwordHash.hash(password, salt)).hash);
 
-await database.ref(processURL(namespace, `lockdownIds/${passwordHash}`)).set(name);
+await database.ref(processURL(namespace, `lockdownIDs/${passwordHash}`)).set(name);
 
 
 return {name, password};

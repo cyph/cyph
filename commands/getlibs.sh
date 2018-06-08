@@ -215,6 +215,7 @@ for anyType in \
 	konami-code.js \
 	markdown-it-emoji \
 	markdown-it-sup \
+	math-expression-evaluator \
 	quill-delta \
 	quill-delta-to-html \
 	simplewebrtc \
@@ -297,8 +298,6 @@ done
 ./.bin/pbjs --help &> /dev/null
 ./.bin/pbts --help &> /dev/null
 
-rm grpc/node_modules/protobufjs/src/bower.json
-
 find firebase @firebase -type f -name '*.node.js' -exec bash -c '
 	cp -f {} $(echo "{}" | sed "s|\.node\.js$|.js|")
 ' \;
@@ -307,7 +306,7 @@ cd @types
 for d in * ; do if [ ! -f ${d}/package.json ] ; then
 cat > ${d}/package.json << EOM
 {
-	"name": "${d}",
+	"name": "@types/${d}",
 	"version": "1.0.0",
 	"license": "Ms-RSL"
 }
