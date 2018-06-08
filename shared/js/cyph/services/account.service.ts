@@ -44,6 +44,9 @@ export class AccountService {
 		)
 	;
 
+	/** Indicates whether Wallets is enabled. */
+	public readonly enableWallets: boolean				= true;
+
 	/** Indicates the status of the interstitial. */
 	public interstitial: boolean						= false;
 
@@ -181,7 +184,8 @@ export class AccountService {
 					'notes',
 					'patients',
 					'settings',
-					'staff'
+					'staff',
+					'wallets'
 				].indexOf(route) < 0 ||
 				(
 					routePath.length > 1

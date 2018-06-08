@@ -7,6 +7,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatCardModule} from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatChipsModule} from '@angular/material/chips';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatDialogModule} from '@angular/material/dialog';
@@ -16,6 +17,7 @@ import {MatIconModule, MatIconRegistry} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
 import {MatListModule} from '@angular/material/list';
 import {MatMenuModule} from '@angular/material/menu';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatRadioModule} from '@angular/material/radio';
@@ -23,6 +25,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatTableModule} from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
@@ -38,6 +41,7 @@ import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogImageComponent} from '../components/dialog-image';
 import {MarkdownComponent} from '../components/markdown';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
+import {EnterPressDirective} from '../directives/enter-press.directive';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
@@ -56,6 +60,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogConfirmComponent,
 		DialogImageComponent,
 		DropZoneDirective,
+		EnterPressDirective,
 		MarkdownComponent,
 		NanoScrollerDirective
 	],
@@ -72,6 +77,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogConfirmComponent,
 		DialogImageComponent,
 		DropZoneDirective,
+		EnterPressDirective,
 		FlexLayoutModule,
 		FormsModule,
 		FullCalendarModule,
@@ -81,6 +87,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatButtonToggleModule,
 		MatCardModule,
 		MatCheckboxModule,
+		MatChipsModule,
 		MatDatepickerModule,
 		MatDialogModule,
 		MatExpansionModule,
@@ -90,6 +97,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatListModule,
 		MatMenuModule,
 		MatNativeDateModule,
+		MatPaginatorModule,
 		MatProgressBarModule,
 		MatProgressSpinnerModule,
 		MatRadioModule,
@@ -97,6 +105,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatSliderModule,
 		MatSlideToggleModule,
 		MatSnackBarModule,
+		MatTableModule,
 		MatTabsModule,
 		MatToolbarModule,
 		MatTooltipModule,
@@ -117,6 +126,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatButtonModule,
 		MatCardModule,
 		MatCheckboxModule,
+		MatChipsModule,
 		MatDatepickerModule,
 		MatDialogModule,
 		MatExpansionModule,
@@ -126,6 +136,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatListModule,
 		MatMenuModule,
 		MatNativeDateModule,
+		MatPaginatorModule,
 		MatProgressBarModule,
 		MatProgressSpinnerModule,
 		MatRadioModule,
@@ -133,6 +144,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatSliderModule,
 		MatSlideToggleModule,
 		MatSnackBarModule,
+		MatTableModule,
 		MatTabsModule,
 		MatToolbarModule,
 		MatTooltipModule,
@@ -159,13 +171,13 @@ export class CyphWebModule {
 		/* Custom Icons */
 
 		matIconRegistry.addSvgIcon(
-			'doctor',
-			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg')
+			'bitcoin',
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/cryptocurrencies/BTC.svg')
 		);
 
 		matIconRegistry.addSvgIcon(
-			'gdpr',
-			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/gdpr.svg')
+			'doctor',
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg')
 		);
 
 		matIconRegistry.addSvgIcon(

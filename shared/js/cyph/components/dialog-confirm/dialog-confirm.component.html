@@ -6,8 +6,21 @@
 		*ngIf='true; else text'
 	></cyph-markdown>
 	<ng-template #text>
-		{{content}}
+		<div>{{content}}</div>
 	</ng-template>
+	<ng-container *ngIf='prompt !== undefined'>
+		<br />
+		<mat-form-field>
+			<input
+				matInput
+				cyphTranslate
+				[(ngModel)]='prompt'
+				[placeholder]='promptPlaceholder || stringsService.response'
+				(cyphEnterPress)='matDialogRef.close(true)'
+				type='text'
+			/>
+		</mat-form-field>
+	</ng-container>
 </div>
 <div mat-dialog-actions fxLayoutAlign='end center'>
 	<button mat-button class='cancel' (click)='matDialogRef.close(false)'>{{cancel}}</button>

@@ -48,12 +48,21 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	}
 
 	/** Indicates whether section should take up 100% height. */
-	public get fill () : boolean {
+	public get fullHeight () : boolean {
 		return this.accountDatabaseService.currentUser.value !== undefined && [
 			'',
 			'contacts',
 			'patients',
 			'staff'
+		].find(
+			path => this.route === path
+		) !== undefined;
+	}
+
+	/** Indicates whether section should take up 100% width. */
+	public get fullWidth () : boolean {
+		return this.accountDatabaseService.currentUser.value !== undefined && [
+			'wallets'
 		].find(
 			path => this.route === path
 		) !== undefined;
@@ -95,7 +104,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'request-followup',
 			'settings',
 			'staff',
-			'video'
+			'video',
+			'wallets'
 		].find(
 			path => this.route === path
 		) !== undefined;

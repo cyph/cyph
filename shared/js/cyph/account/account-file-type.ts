@@ -1,6 +1,6 @@
 
 import {IQuillDelta} from '../iquill-delta';
-import {IAppointment, IEhrApiKey, IForm, IRedoxPatient} from '../proto';
+import {IAppointment, IEhrApiKey, IForm, IRedoxPatient, IWallet} from '../proto';
 
 
 /** Any type of account "file". */
@@ -11,5 +11,6 @@ export type AccountFile	=
 	IQuillDelta|
 	IQuillDelta[]|
 	IRedoxPatient|
+	IWallet|
 	File
 ;

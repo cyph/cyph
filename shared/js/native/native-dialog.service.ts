@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {SnackBar} from 'nativescript-snackbar';
-import {alert, confirm} from 'tns-core-modules/ui/dialogs/dialogs';
+import {alert, confirm, prompt} from 'tns-core-modules/ui/dialogs/dialogs';
 import {DialogImageComponent} from './components/dialog-image';
 import {IResolvable} from './js/cyph/iresolvable';
 import {LockFunction} from './js/cyph/lock-function-type';
@@ -122,6 +122,43 @@ export class NativeDialogService implements DialogService {
 
 		return this.lock(async () => {
 			await this.modalDialogService.showModal(DialogImageComponent, {context: o});
+		});
+	}
+
+	/**
+	 * @inheritDoc
+	 * @param o.markdown Currently unsupported (ignored).
+	 * @param o.timeout Currently unsupported (ignored).
+	 * @param closeFunction Currently unsupported (not implemented exception).
+	 */
+	public async prompt (
+		o: {
+			cancel?: string;
+			content: string;
+			markdown?: boolean;
+			ok?: string;
+			placeholder?: string;
+			timeout?: number;
+			title?: string;
+		},
+		closeFunction?: IResolvable<() => void>
+	) : Promise<string|undefined> {
+		if (closeFunction) {
+			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
+		}
+
+		return this.lock(async () => {
+			const {result, text}	= await prompt({
+				cancelButtonText: o.ok !== undefined ? o.cancel : this.stringsService.cancel,
+				defaultText:
+					o.placeholder !== undefined ? o.placeholder : this.stringsService.response
+				,
+				message: o.content,
+				okButtonText: o.ok !== undefined ? o.ok : this.stringsService.ok,
+				title: o.title
+			});
+
+			return result ? text : undefined;
 		});
 	}
 

@@ -128,11 +128,13 @@ a {
 	}
 }
 
-[mat-fab].fixed-fab {
-	position: fixed;
-	right: 42px;
-	bottom: 42px;
-	z-index: 50;
+[mat-fab], smd-fab-speed-dial {
+	&.fixed-fab {
+		position: fixed;
+		right: 42px;
+		bottom: 42px;
+		z-index: 50;
+	}
 }
 
 mat-option img {

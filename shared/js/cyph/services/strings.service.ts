@@ -260,6 +260,9 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
+	public readonly incoming: string					= `Incoming`;
+
+	/** @see StringsService */
 	public readonly incomingAppointments: string		= `Incoming Appointment Requests`;
 
 	/** @see StringsService */
@@ -399,6 +402,36 @@ export class StringsService {
 	public readonly newString: string					= `new`;
 
 	/** @see StringsService */
+	public readonly newWalletGenerate: string			= `Generate New Wallet`;
+
+	/** @see StringsService */
+	public readonly newWalletGenerateText: string		=
+		`This will generate a brand new wallet. Proceed?`
+	;
+
+	/** @see StringsService */
+	public readonly newWalletImportAddress: string		= `Watch Wallet Address`;
+
+	/** @see StringsService */
+	public readonly newWalletImportAddressInput: string	= `Address`;
+
+	/** @see StringsService */
+	public readonly newWalletImportAddressText: string	=
+		`Add a read-only wallet to track the following public address:`
+	;
+
+	/** @see StringsService */
+	public readonly newWalletImportKey: string			= `Import Wallet Key`;
+
+	/** @see StringsService */
+	public readonly newWalletImportKeyInput: string		= `WIF Key`;
+
+	/** @see StringsService */
+	public readonly newWalletImportKeyText: string		=
+		`Import existing wallet private key in WIF format:`
+	;
+
+	/** @see StringsService */
 	public readonly no: string							= `no`;
 
 	/** @see StringsService */
@@ -421,6 +454,12 @@ export class StringsService {
 	public readonly notFound: string					= `404 page not found`;
 
 	/** @see StringsService */
+	public readonly noTransactions: string				= `No transaction history`;
+
+	/** @see StringsService */
+	public readonly noWallets: string					= `You have no wallets`;
+
+	/** @see StringsService */
 	public readonly ok: string							= `ok`;
 
 	/** @see StringsService */
@@ -434,6 +473,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly openProfile: string					= `Open Profile`;
+
+	/** @see StringsService */
+	public readonly outgoing: string					= `Outgoing`;
 
 	/** @see StringsService */
 	public readonly outgoingFileError: string			=
@@ -571,6 +613,9 @@ export class StringsService {
 	public readonly requestFollowUpAppointment: string	= `Request Follow-Up Appointment`;
 
 	/** @see StringsService */
+	public readonly response: string					= `Response`;
+
+	/** @see StringsService */
 	public readonly review: string						= `review`;
 
 	/** @see StringsService */
@@ -687,6 +732,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly totalSpace: string					= `Total Space Used:`;
+
+	/** @see StringsService */
+	public readonly transactionHistory: string			= `Transaction History`;
 
 	/** @see StringsService */
 	public readonly unknown: string						= `Unknown`;

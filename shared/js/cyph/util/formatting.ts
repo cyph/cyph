@@ -37,13 +37,8 @@ export const numberToString	= memoize((n: number) : string =>
 	n.toFixed(2).replace(/\.?0+$/, '')
 );
 
-/**
- * Converts n into a human-readable representation.
- * @param n Number of specified storage unit (bytes by default).
- * @example 32483478 -> "30.97 MB".
- */
-export const readableByteLength	= memoize(
-	(n: number, storageUnit?: StorageUnits) : string => {
+const readableByteLengthInternal	= memoize((n: number) =>
+	memoize((storageUnit?: StorageUnits) : string => {
 		const b	= convertStorageUnitsToBytes(n, storageUnit);
 
 		const gb	= b / byteConversions.gb;
@@ -61,8 +56,14 @@ export const readableByteLength	= memoize(
 		;
 
 		return `${numberToString(o.n)} ${o.s}B`;
-	},
-	(n: number, storageUnit?: StorageUnits) : string =>
-		n.toString() +
-		(storageUnit === undefined ? '' : '\n' + storageUnit.toString())
+	})
 );
+
+/**
+ * Converts n into a human-readable representation.
+ * @param n Number of specified storage unit (bytes by default).
+ * @example 32483478 -> "30.97 MB".
+ */
+export const readableByteLength	= (n: number, storageUnit?: StorageUnits) : string =>
+	readableByteLengthInternal(n)(storageUnit)
+;
