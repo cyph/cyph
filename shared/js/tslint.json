@@ -232,6 +232,7 @@
 		"prefer-method-signature": false,
 		"prefer-switch": [true, {"min-cases": 4}],
 		"prefer-template": false,
+		"prefer-while": true,
 		"quotemark": [true, "single", "avoid-escape"],
 		"return-undefined": false,
 		"semicolon": [true, "always"],
