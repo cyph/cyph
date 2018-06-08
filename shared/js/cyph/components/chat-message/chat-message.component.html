@@ -191,7 +191,7 @@
 						<div
 							[class.centered]='active'
 							[class.visibility-hidden]='!active'
-							*ngFor='let active of [true, false]'
+							*ngFor='let active of [true, false]; trackBy: trackBySelf'
 						>
 							<mat-progress-spinner
 								mode='indeterminate'

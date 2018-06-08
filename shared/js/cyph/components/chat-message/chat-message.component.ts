@@ -21,6 +21,7 @@ import {FileTransferService} from '../../services/file-transfer.service';
 import {ScrollService} from '../../services/scroll.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
+import {trackBySelf} from '../../track-by/track-by-self';
 import {readableByteLength} from '../../util/formatting';
 import {sleep, waitForIterable} from '../../util/wait';
 
@@ -120,6 +121,9 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 	/** Fires after scrolling into view. */
 	@Output() public readonly scrolledIntoView: EventEmitter<void>	= new EventEmitter<void>();
+
+	/** @see trackBySelf */
+	public readonly trackBySelf: typeof trackBySelf					= trackBySelf;
 
 	/** @see ChatMainComponent.uiStyle */
 	@Input() public uiStyle: UiStyles			= UiStyles.default;

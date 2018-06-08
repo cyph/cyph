@@ -52,7 +52,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		messaging: () => FirebaseMessaging;
 		storage: (storageBucket?: string) => FirebaseStorage;
 	}>	= this.ngZone.runOutsideAngular(async () => retryUntilSuccessful(() => {
-		const app	= firebase.apps[0] || firebase.initializeApp(env.firebaseConfig);
+		const app: any	= firebase.apps[0] || firebase.initializeApp(env.firebaseConfig);
 
 		if (app.auth === undefined) {
 			throw new Error('No Firebase Auth module.');
@@ -67,7 +67,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			throw new Error('No Firebase Storage module.');
 		}
 
-		return <any> app;
+		return app;
 	}));
 
 	/** Mapping of URLs to last known good hashes. */

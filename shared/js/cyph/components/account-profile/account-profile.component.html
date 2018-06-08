@@ -348,7 +348,7 @@
 							}'></ng-container>
 						</div>
 					</div>
-					<ng-container *ngFor='let form of extra.forms'>
+					<ng-container *ngFor='let form of extra.forms; trackBy: trackBySelf'>
 						<cyph-dynamic-form
 							[form]='form'
 							[isDisabled]='!editMode'
