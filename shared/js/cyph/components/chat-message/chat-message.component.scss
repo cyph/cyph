@@ -103,7 +103,7 @@
 		}
 
 		.centered {
-			@include center();
+			@include center;
 		}
 
 		.centered, .centered-fake {
