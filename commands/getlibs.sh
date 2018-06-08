@@ -298,8 +298,6 @@ done
 ./.bin/pbjs --help &> /dev/null
 ./.bin/pbts --help &> /dev/null
 
-rm grpc/node_modules/protobufjs/src/bower.json
-
 find firebase @firebase -type f -name '*.node.js' -exec bash -c '
 	cp -f {} $(echo "{}" | sed "s|\.node\.js$|.js|")
 ' \;
