@@ -610,35 +610,38 @@ message Environment {
 		/** Indicates whether docs will be enabled. */
 		bool enableDocs = 7;
 
+		/** Indicates whether wallets will be enabled. */
+		bool enableWallets = 8;
+
 		/** Optional custom foreground color. */
-		string foregroundColor = 8;
+		string foregroundColor = 9;
 
 		/** If true, locked down with server-stored password. */
-		bool lockedDown = 9;
+		bool lockedDown = 10;
 
 		/** Indicates whether native crypto will be used. */
-		bool nativeCrypto = 10;
+		bool nativeCrypto = 11;
 
 		/** Organization username to associate with this custom build. */
-		string organization = 11;
+		string organization = 12;
 
 		/** Optional password to lock down environment (not a security feature). */
-		string password = 12;
+		string password = 13;
 
 		/** Indicates whether this is a Cyph Pro environment. */
-		bool pro = 13;
+		bool pro = 14;
 
 		/** Indicates whether this is the telehealth version. */
-		bool telehealth = 14;
+		bool telehealth = 15;
 
 		/** Page title of this Cyph instance. */
-		string title = 15;
+		string title = 16;
 
 		/** Indicates whether this environment should share the main Cyph database namespace. */
-		bool usePrimaryNamespace = 16;
+		bool usePrimaryNamespace = 17;
 
 		/** If true, environment will be full white label, with no "Powered by Cyph" notices. */
-		bool whiteLabel = 17;
+		bool whiteLabel = 18;
 	}
 
 	/** Firebase configuration. */
