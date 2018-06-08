@@ -124,6 +124,7 @@ export class Thread implements IThread {
 	/** @inheritDoc */
 	public postMessage (o: any) : void {
 		if (this.worker) {
+			/* tslint:disable-next-line:deprecation */
 			this.worker.postMessage(o);
 		}
 	}
@@ -225,6 +226,7 @@ export class Thread implements IThread {
 				}
 				catch {}
 
+				/* tslint:disable-next-line:deprecation */
 				worker.postMessage(locals);
 			}
 			else if (e.data === 'close') {
