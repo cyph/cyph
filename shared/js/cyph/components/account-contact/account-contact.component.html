@@ -2,11 +2,19 @@
 	class='contact animated'
 	[class.non-clickable]='!clickable'
 	[class.telehealth]='envService.isTelehealth'
-	[routerLink]='!clickable ? undefined : (
-		accountService.routeRoot +
-		(envService.isTelehealth ? "profile" : "messages") + "/" +
-		(((user | async)?.contactID | async) || "")
-	)'
+	[routerLink]='
+		!clickable ?
+			undefined :
+		envService.isTelehealth ?
+			accountService.routeRoot + "profile/" + (username || "") :
+		((user | async)?.contactID | async) ?
+			(
+				accountService.routeRoot +
+				"messages/" +
+				(((user | async)?.contactID | async) || "")
+			) :
+			undefined
+	'
 	fxFlex
 	*ngIf='!!username'
 >
