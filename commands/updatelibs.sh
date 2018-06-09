@@ -280,36 +280,60 @@ EOM
 # Temporary workaround for flat dependencies pending https://github.com/yarnpkg/yarn/issues/1658
 
 cd ..
-yarn add compare-versions
+yarn add semver
 cd -
 
 echo {} > package.json
 
 script -fc "
 	while true ; do
-		answer=\"\$(node -e 'console.log(
-			(
+		answer=\"\$(node -e '
+			const semver			= require(\"semver\");
+
+			const modules			= \`${modules}\`;
+
+			const getPinnedVersion	= package =>
+				(modules.match(new RegExp(
+					\`(^|\\\\s+)\${package}@((\\\\d|\\\\.)+)(\n|\$)\`
+				)) || [])[2]
+			;
+
+			console.log(
 				(
-					fs.readFileSync(\"yarn.out\").
-						toString().
-						split(\"Unable to find a suitable version\")[1]
-					|| \"\"
+					(
+						fs.readFileSync(\"yarn.out\").
+							toString().
+							split(\"Unable to find a suitable version\")[1]
+						|| \"\"
+					).
+						match(/\"[^\\s]+\" which resolved to \".*?\"/g)
+					|| []
 				).
-					match(/resolved to \".*?\"/g)
-				|| []
-			).
-				map((s, i) => ({index: i + 1, version: s.split(\"\\\"\")[1]})).
-				reduce(
-					(a, b) => require(\"compare-versions\")(
-						a.version,
-						b.version
-					) === 1 ?
-						a :
-						b
-					,
-					{index: \"\", version: \"0\"}
-				).index
-		)')\"
+					map((s, i) => {
+						const split			= s.split(\"\\\"\");
+						const version		= split[3];
+						const pinnedVersion	= getPinnedVersion(split[1].split(\"@\")[0]);
+
+						return {
+							index: i + 1,
+							isPinned: !!pinnedVersion && semver.satisfies(version, pinnedVersion),
+							version
+						};
+					}).
+					reduce(
+						(a, b) =>
+							a.isPinned && !b.isPinned ?
+								a :
+							b.isPinned && !a.isPinned ?
+								b :
+							semver.gt(a.version, b.version) ?
+								a :
+								b
+						,
+						{index: \"\", version: \"0.0.0\"}
+					).index
+			);
+		')\"
 
 		if [ \"\${answer}\" ] ; then
 			echo > yarn.out
