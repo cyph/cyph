@@ -388,7 +388,7 @@
     "winreg": "1.2.2",
     "xml2js": "0.4.19",
     "xmlbuilder": "10.0.0",
-    "bplist-parser": "0.2.0",
+    "bplist-parser": "https://github.com/telerik/node-bplist-parser/tarball/master",
     "lodash.assign": "4.2.0",
     "global": "4.3.2",
     "global-modules-path": "2.1.0",
