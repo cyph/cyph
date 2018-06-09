@@ -15,7 +15,7 @@ read -r -d '' modules <<- EOM
 	@agm/core
 	@angular/animations
 	@angular/cdk
-	@angular/cli
+	@angular/cli@next
 	@angular/common
 	@angular/compiler
 	@angular/compiler-cli
@@ -31,15 +31,15 @@ read -r -d '' modules <<- EOM
 	@angular/platform-webworker-dynamic
 	@angular/router
 	@angular/service-worker
-	@angular-devkit/architect
-	@angular-devkit/architect-cli
-	@angular-devkit/build-ng-packagr
-	@angular-devkit/core
-	@angular-devkit/build-angular
-	@angular-devkit/build-optimizer
-	@angular-devkit/build-webpack
-	@angular-devkit/schematics
-	@angular-devkit/schematics-cli
+	@angular-devkit/architect@next
+	@angular-devkit/architect-cli@next
+	@angular-devkit/build-ng-packagr@next
+	@angular-devkit/core@next
+	@angular-devkit/build-angular@next
+	@angular-devkit/build-optimizer@next
+	@angular-devkit/build-webpack@next
+	@angular-devkit/schematics@next
+	@angular-devkit/schematics-cli@next
 	@asymmetrik/ngx-leaflet
 	@compodoc/compodoc
 	@covalent/core
