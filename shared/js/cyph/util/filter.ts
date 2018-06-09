@@ -15,11 +15,12 @@ export const filterDuplicatesOperator	= <T> () : (source: Observable<T>) => Obse
 };
 
 /** Filters out undefined values. */
-export const filterUndefined			= <T> (arr: (T|undefined)[]) : T[] =>
+export const filterUndefined			= <T> (arr: (T|undefined|void)[]) : T[] =>
 	<T[]> arr.filter(t => t !== undefined)
 ;
 
 /** rxjs operator that filters out undefined values. */
 export const filterUndefinedOperator	=
-	<T> () => <(source: Observable<T|undefined>) => Observable<T>> filter<T>(t => t !== undefined)
+	<T> () => <(source: Observable<T|undefined|void>) =>
+		Observable<T>> filter<T>(t => t !== undefined)
 ;

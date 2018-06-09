@@ -160,118 +160,129 @@ export class ChatService {
 	public walkieTalkieMode: boolean		= false;
 
 	/** @ignore */
-	private async addTextMessage (o: ISessionMessageData) : Promise<void> {
-		if (!o.text) {
+	private async addTextMessage (...textMessageInputs: ISessionMessageData[]) : Promise<void> {
+		const messageInputs	= filterUndefined(await Promise.all(textMessageInputs.map(async o => {
+			if (!o.text) {
+				return;
+			}
+
+			if (o.author !== this.sessionService.localUsername) {
+				const unobservedPredecessors	=
+					o.text.predecessors && o.text.predecessors.length > 0 ?
+						(await Promise.all(o.text.predecessors.map(async predecessor => ({
+							hasValidHash: await this.messageHasValidHash(
+								predecessor.id,
+								predecessor.hash
+							),
+							predecessor
+						})))).
+							filter(unobservedPredecessor => !unobservedPredecessor.hasValidHash).
+							map(unobservedPredecessor => unobservedPredecessor.predecessor)
+						:
+						undefined
+				;
+
+				if (unobservedPredecessors && unobservedPredecessors.length > 0) {
+					return this.chat.futureMessages.updateItem(
+						unobservedPredecessors[0].id,
+						async futureMessages => ({
+							messages: futureMessages && futureMessages.messages ?
+								futureMessages.messages.concat(o) :
+								[o]
+						})
+					);
+				}
+
+				this.lastConfirmedMessageID	= o.id;
+
+				this.messageConfirmLock(async () => {
+					if (this.lastConfirmedMessageID === o.id) {
+						await this.sessionService.send([
+							rpcEvents.confirm,
+							{textConfirmation: {id: o.id}}
+						]);
+
+						await sleep(this.outgoingMessageBatchDelay);
+					}
+				});
+			}
+
+			const selfDestructChat	= !!(
+				o.text.selfDestructChat &&
+				(
+					o.text.selfDestructTimeout !== undefined &&
+					!isNaN(o.text.selfDestructTimeout) &&
+					o.text.selfDestructTimeout > 0
+				) &&
+				await (async () => {
+					const messageIDs	= await this.chat.messageList.getFlatValue();
+
+					return messageIDs.length === 0 || (
+						messageIDs.length === 1 &&
+						(
+							await this.chat.messages.getItem(messageIDs[0])
+						).authorType === ChatMessage.AuthorTypes.App
+					);
+				})()
+			);
+
+			if (selfDestructChat) {
+				this.chatSelfDestruct	= true;
+				await this.chat.messages.clear();
+			}
+
+			return {
+				author: o.author,
+				dimensions: o.text.dimensions,
+				hash: o.text.hash,
+				id: o.id,
+				key: o.text.key,
+				predecessors: o.text.predecessors,
+				selfDestructChat,
+				selfDestructTimeout: selfDestructChat ? undefined : o.text.selfDestructTimeout,
+				timestamp: o.timestamp
+			};
+		})));
+
+		if (messageInputs.length < 1) {
 			return;
 		}
 
-		if (o.author !== this.sessionService.localUsername) {
-			const unobservedPredecessors	=
-				o.text.predecessors && o.text.predecessors.length > 0 ?
-					(await Promise.all(o.text.predecessors.map(async predecessor => ({
-						hasValidHash: await this.messageHasValidHash(
-							predecessor.id,
-							predecessor.hash
-						),
-						predecessor
-					})))).
-						filter(unobservedPredecessor => !unobservedPredecessor.hasValidHash).
-						map(unobservedPredecessor => unobservedPredecessor.predecessor)
-					:
-					undefined
-			;
+		await this.addMessage(...messageInputs);
 
-			if (unobservedPredecessors && unobservedPredecessors.length > 0) {
-				return this.chat.futureMessages.updateItem(
-					unobservedPredecessors[0].id,
-					async futureMessages => ({
-						messages: futureMessages && futureMessages.messages ?
-							futureMessages.messages.concat(o) :
-							[o]
-					})
-				);
-			}
-
-			this.lastConfirmedMessageID	= o.id;
-
-			this.messageConfirmLock(async () => {
-				if (this.lastConfirmedMessageID === o.id) {
-					await this.sessionService.send([
-						rpcEvents.confirm,
-						{textConfirmation: {id: o.id}}
-					]);
-
-					await sleep(this.outgoingMessageBatchDelay);
-				}
-			});
-		}
-
-		const selfDestructChat	=
-			o.text.selfDestructChat &&
-			(
-				o.text.selfDestructTimeout !== undefined &&
-				!isNaN(o.text.selfDestructTimeout) &&
-				o.text.selfDestructTimeout > 0
-			) &&
-			await (async () => {
-				const messageIDs	= await this.chat.messageList.getFlatValue();
-
-				return messageIDs.length === 0 || (
-					messageIDs.length === 1 &&
-					(
-						await this.chat.messages.getItem(messageIDs[0])
-					).authorType === ChatMessage.AuthorTypes.App
-				);
-			})()
-		;
-
-		if (selfDestructChat) {
-			this.chatSelfDestruct	= true;
-			await this.chat.messages.clear();
-		}
-
-		await this.addMessage({
-			author: o.author,
-			dimensions: o.text.dimensions,
-			hash: o.text.hash,
-			id: o.id,
-			key: o.text.key,
-			predecessors: o.text.predecessors,
-			selfDestructTimeout: selfDestructChat ? undefined : o.text.selfDestructTimeout,
-			timestamp: o.timestamp
-		});
-
-		if (o.author !== this.sessionService.localUsername) {
-			await this.chat.futureMessages.updateItem(o.id, async futureMessages => {
-				if (futureMessages && futureMessages.messages) {
-					await Promise.all(futureMessages.messages.map(async futureMessage =>
-						this.addTextMessage(
-							await this.sessionService.processMessageData(futureMessage)
-						)
-					));
-				}
-
-				return undefined;
-			});
-		}
-
-		if (selfDestructChat) {
-			this.chatSelfDestructed		=
-				this.chat.messageList.watchFlat().pipe(map(messageIDs => messageIDs.length === 0))
-			;
-			this.chatSelfDestructTimer	= new Timer(this.chatSelfDestructTimeout * 1000);
-			await this.chatSelfDestructTimer.start();
-			this.chatSelfDestructEffect	= true;
-			await sleep(500);
-			await this.chat.messages.clear();
-			await sleep(1000);
-			this.chatSelfDestructEffect	= false;
-
+		await Promise.all(messageInputs.map(async o => {
 			if (o.author !== this.sessionService.localUsername) {
-				await sleep(10000);
-				await this.close();
+				await this.chat.futureMessages.updateItem(o.id, async futureMessages => {
+					if (futureMessages && futureMessages.messages) {
+						await Promise.all(futureMessages.messages.map(async futureMessage =>
+							this.addTextMessage(
+								await this.sessionService.processMessageData(futureMessage)
+							)
+						));
+					}
+
+					return undefined;
+				});
 			}
-		}
+
+			if (o.selfDestructChat) {
+				this.chatSelfDestructed		= this.chat.messageList.watchFlat().pipe(
+					map(messageIDs => messageIDs.length === 0)
+				);
+				this.chatSelfDestructTimer	= new Timer(this.chatSelfDestructTimeout * 1000);
+				await this.chatSelfDestructTimer.start();
+				this.chatSelfDestructEffect	= true;
+				await sleep(500);
+				await this.chat.messages.clear();
+				await sleep(1000);
+				this.chatSelfDestructEffect	= false;
+
+				if (o.author !== this.sessionService.localUsername) {
+					await sleep(10000);
+					await this.close();
+				}
+			}
+		}));
 	}
 
 	/** This kills the chat. */
@@ -406,9 +417,7 @@ export class ChatService {
 			);
 
 			this.messageSendInnerLock(async () => confirmPromise.then(async () => {
-				await Promise.all(newMessages.map(async newMessage =>
-					this.addTextMessage(newMessage.data)
-				));
+				await this.addTextMessage(...newMessages.map(({data}) => data));
 
 				for (const outgoingMessage of outgoingMessages) {
 					outgoingMessage.resolve();
