@@ -306,7 +306,7 @@ script -fc "
 							split(\"Unable to find a suitable version\")[1]
 						|| \"\"
 					).
-						match(/\"[^\\s]+\" which resolved to \".*?\"/g)
+						match(/\"[^\\n]+\" which resolved to \".*?\"/g)
 					|| []
 				).
 					map((s, i) => {
