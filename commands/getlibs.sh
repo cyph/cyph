@@ -88,6 +88,17 @@ cd js
 mv ~/node_modules ./
 cd node_modules
 
+for arr in \
+	'localforage https://github.com/buu700/localforage-tmp' \
+	'webrtcsupport https://github.com/buu700/webrtcsupport'
+do
+	read -ra arr <<< "${arr}"
+	mv "${arr[0]}" ".${arr[0]}.old"
+	git clone --depth 1 "${arr[1]}" "${arr[0]}"
+	mv ".${arr[0]}.old/node_modules" "${arr[0]}/" 2> /dev/null
+	rm -rf ".${arr[0]}.old"
+done
+
 mkdir -p @types/libsodium
 cat > @types/libsodium/index.d.ts << EOM
 declare module 'libsodium' {

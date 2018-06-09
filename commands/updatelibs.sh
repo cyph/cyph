@@ -169,7 +169,7 @@ read -r -d '' modules <<- EOM
 	libsodium-sumo@https://github.com/jedisct1/libsodium.js
 	libsodium-wrappers@https://github.com/jedisct1/libsodium.js
 	libsodium-wrappers-sumo@https://github.com/jedisct1/libsodium.js
-	localforage@https://github.com/buu700/localforage-tmp
+	localforage
 	lodash-es
 	long
 	lunr
@@ -199,7 +199,7 @@ read -r -d '' modules <<- EOM
 	node-sass
 	notify-cli
 	ntru
-	od-virtualscroll@https://github.com/buu700/od-virtualscroll-tmp
+	od-virtualscroll
 	opentok
 	parchment
 	pdfkit
@@ -267,7 +267,7 @@ read -r -d '' modules <<- EOM
 	webpack-closure-compiler
 	webpack-sources
 	webrtc-adapter
-	webrtcsupport@https://github.com/buu700/webrtcsupport
+	webrtcsupport
 	whatwg-fetch
 	wowjs
 	xkcd-passphrase
@@ -314,15 +314,12 @@ script -fc "
 
 						return {
 							index: i + 1,
-							isGit: s.indexOf(\"@https://github.com/\") > -1,
 							isPinned: !!pinnedVersion && semver.satisfies(version, pinnedVersion),
 							version
 						};
 					}).
 					reduce(
 						(a, b) =>
-							semver.eq(a.version, b.version) ?
-								(a.isGit ? a : b) :
 							a.isPinned && !b.isPinned ?
 								a :
 							b.isPinned && !a.isPinned ?
