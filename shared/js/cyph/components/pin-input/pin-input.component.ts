@@ -55,6 +55,10 @@ export class PinInputComponent implements ControlValueAccessor {
 		/* x3 to account for spaces in pinMask */
 		const index	= this.valueExternal.length * 3;
 
+		if (!e.target) {
+			return;
+		}
+
 		const $elem	= $(e.target).find('input');
 		const elem	= <HTMLInputElement> $elem[0];
 
