@@ -331,9 +331,11 @@ mv package.json.new package.json
 yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
 cd ..
 
-cd firebase-tools
-yarn install --ignore-engines --ignore-platform --non-interactive
-cd ..
+for d in firebase-tools nativescript ; do
+	cd ${d}
+	yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
+	cd ..
+done
 
 cd ../..
 
