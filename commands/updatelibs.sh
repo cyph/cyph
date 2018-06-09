@@ -316,12 +316,15 @@ script -fc "
 
 						return {
 							index: i + 1,
+							isGit: s.indexOf(\"@https://github.com/\") > -1,
 							isPinned: !!pinnedVersion && semver.satisfies(version, pinnedVersion),
 							version
 						};
 					}).
 					reduce(
 						(a, b) =>
+							semver.eq(a.version, b.version) ?
+								(a.isGit ? a : b) :
 							a.isPinned && !b.isPinned ?
 								a :
 							b.isPinned && !a.isPinned ?
@@ -330,7 +333,7 @@ script -fc "
 								a :
 								b
 						,
-						{index: \"\", version: \"0.0.0\"}
+						{index: \"1\", version: \"0.0.0\"}
 					).index
 			);
 		')\"
