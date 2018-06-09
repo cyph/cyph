@@ -41,7 +41,7 @@ export interface IChatData {
 	lastConfirmedMessage: IAsyncValue<IChatLastConfirmedMessage>;
 
 	/** Ordered message list of messge IDs. */
-	messageList: IAsyncList<string>;
+	messageList: IAsyncList<string[]>;
 
 	/** Messages. Map keys are message IDs. */
 	messages: IAsyncMap<string, IChatMessage>;

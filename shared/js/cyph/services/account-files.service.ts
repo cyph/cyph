@@ -736,6 +736,7 @@ export class AccountFilesService {
 
 		const docAsyncList: IAsyncList<IQuillDelta|IQuillRange>	= {
 			clear: async () => asyncList.clear(),
+			getFlatValue: async () => docAsyncList.getValue(),
 			getValue: async () => (await asyncList.getValue()).map(bytes => msgpack.decode(bytes)),
 			lock: async (f, reason) => asyncList.lock(f, reason),
 			pushItem: async delta => asyncList.pushItem(msgpack.encode(delta)),
@@ -751,6 +752,7 @@ export class AccountFilesService {
 			watch: memoize(() =>
 				asyncList.watch().pipe(map(deltas => deltas.map(delta => msgpack.decode(delta))))
 			),
+			watchFlat: () => docAsyncList.watch(),
 			watchPushes: memoize(() =>
 				asyncList.watchPushes().pipe(skip(1), map(delta =>
 					delta.length > 0 ? msgpack.decode(delta) : {}

@@ -19,6 +19,11 @@ export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncLis
 	}
 
 	/** @inheritDoc */
+	public async getFlatValue () : Promise<T extends any[] ? T : T[]> {
+		return (await this.getValue()).reduce<any>((a, b) => a.concat(b), []);
+	}
+
+	/** @inheritDoc */
 	public async pushItem (value: T) : Promise<void> {
 		this.pushes.next({index: this.value.push(value), value});
 		this.subject.next(this.value);
@@ -42,6 +47,13 @@ export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncLis
 			}
 			catch {}
 		});
+	}
+
+	/** @inheritDoc */
+	public watchFlat () : Observable<T extends any[] ? T : T[]> {
+		return this.watch().pipe(map(arr =>
+			arr.reduce<any>((a, b) => a.concat(b), [])
+		));
 	}
 
 	/** @inheritDoc */

@@ -9,6 +9,9 @@ export interface IAsyncList<T> {
 	/** Deletes all values and resets this to an empty list. */
 	clear () : Promise<void>;
 
+	/** Gets flattened value. */
+	getFlatValue () : Promise<T extends any[] ? T : T[]>;
+
 	/** Gets value. */
 	getValue () : Promise<T[]>;
 
@@ -35,6 +38,9 @@ export interface IAsyncList<T> {
 
 	/** Subscribes to value. */
 	watch () : Observable<T[]>;
+
+	/** Subscribes to flattened value. */
+	watchFlat () : Observable<T extends any[] ? T : T[]>;
 
 	/** Subscribes to pushed values. */
 	watchPushes () : Observable<T>;

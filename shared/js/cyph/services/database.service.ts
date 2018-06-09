@@ -100,6 +100,9 @@ export class DatabaseService extends DataManagerService {
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
 		const asyncList: IAsyncList<T>	= {
 			clear: async () => this.removeItem(url),
+			getFlatValue: async () =>
+				(await asyncList.getValue()).reduce<any>((a, b) => a.concat(b), [])
+			,
 			getValue: async () => localLock(async () => this.getList(url, proto)),
 			lock,
 			pushItem: async value => localLock(async () => {
@@ -115,6 +118,9 @@ export class DatabaseService extends DataManagerService {
 			watch: memoize(() => this.watchList(url, proto).pipe(
 				map<ITimedValue<T>[], T[]>(arr => arr.map(o => o.value))
 			)),
+			watchFlat: memoize(() => asyncList.watch().pipe(map(arr =>
+				arr.reduce<any>((a, b) => a.concat(b), [])
+			))),
 			watchPushes: memoize(() =>
 				this.watchListPushes(url, proto).pipe(map<ITimedValue<T>, T>(o => o.value))
 			)

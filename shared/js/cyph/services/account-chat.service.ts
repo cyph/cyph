@@ -10,7 +10,7 @@ import {
 	IChatMessage,
 	NotificationTypes,
 	SessionMessageDataList,
-	StringProto
+	StringArrayProto
 } from '../proto';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -127,7 +127,7 @@ export class AccountChatService extends ChatService {
 					),
 					messageList: this.accountDatabaseService.getAsyncList(
 						`${url}/messageList`,
-						StringProto,
+						StringArrayProto,
 						undefined,
 						undefined,
 						undefined,

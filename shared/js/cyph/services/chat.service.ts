@@ -63,6 +63,9 @@ export class ChatService {
 	private lastConfirmedMessageID?: string;
 
 	/** @ignore */
+	private readonly messageAddLock: LockFunction		= lockFunction();
+
+	/** @ignore */
 	private readonly messageChangeLock: LockFunction	= lockFunction();
 
 	/** @ignore */
@@ -89,6 +92,9 @@ export class ChatService {
 
 	/** @ignore */
 	private unconfirmedMessagesSubscription?: Subscription;
+
+	/** Queue of message IDs to be added. */
+	protected readonly addMessageQueue: string[]	= [];
 
 	/** @see ChatMessageGeometryService */
 	protected readonly chatMessageGeometryService: Promise<{
@@ -213,7 +219,7 @@ export class ChatService {
 				o.text.selfDestructTimeout > 0
 			) &&
 			await (async () => {
-				const messageIDs	= await this.chat.messageList.getValue();
+				const messageIDs	= await this.chat.messageList.getFlatValue();
 
 				return messageIDs.length === 0 || (
 					messageIDs.length === 1 &&
@@ -258,7 +264,7 @@ export class ChatService {
 
 		if (selfDestructChat) {
 			this.chatSelfDestructed		=
-				this.chat.messageList.watch().pipe(map(messageIDs => messageIDs.length === 0))
+				this.chat.messageList.watchFlat().pipe(map(messageIDs => messageIDs.length === 0))
 			;
 			this.chatSelfDestructTimer	= new Timer(this.chatSelfDestructTimeout * 1000);
 			await this.chatSelfDestructTimer.start();
@@ -436,7 +442,7 @@ export class ChatService {
 			isFriendTyping: new BehaviorSubject(false),
 			isMessageChanged: false,
 			lastConfirmedMessage: new LocalAsyncValue({id: '', index: 0}),
-			messageList: new LocalAsyncList<string>(),
+			messageList: new LocalAsyncList<string[]>(),
 			messages: new LocalAsyncMap<string, IChatMessage>(),
 			pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
 			receiveTextLock: lockFunction(),
@@ -553,7 +559,20 @@ export class ChatService {
 		}
 
 		await this.chat.messages.setItem(id, chatMessage);
-		await this.chat.messageList.pushItem(id);
+		this.addMessageQueue.push(id);
+
+		await this.messageAddLock(async () => {
+			if (this.addMessageQueue.length < 1) {
+				return;
+			}
+
+			await this.chat.messageList.pushItem(this.addMessageQueue.splice(
+				0,
+				this.addMessageQueue.length
+			));
+
+			await sleep(this.outgoingMessageBatchDelay);
+		});
 
 		if (
 			chatMessage.hash &&
@@ -855,7 +874,7 @@ export class ChatService {
 			let lastLocal: IChatMessagePredecessor|undefined;
 			let lastRemote: IChatMessagePredecessor|undefined;
 
-			const messageIDs	= await this.chat.messageList.getValue();
+			const messageIDs	= await this.chat.messageList.getFlatValue();
 
 			for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
 				const o	= await this.chat.messages.getItem(messageIDs[i]);
@@ -980,7 +999,7 @@ export class ChatService {
 
 			this.unconfirmedMessagesSubscription		= combineLatest(
 				this.chat.lastConfirmedMessage.watch(),
-				this.chat.messageList.watch()
+				this.chat.messageList.watchFlat()
 			).pipe(map(([lastConfirmedMessage, messageIDs]) => {
 				const unconfirmedMessages: {[id: string]: boolean}	= {};
 
@@ -1073,7 +1092,7 @@ export class ChatService {
 				}
 
 				const id			= o.textConfirmation.id;
-				const messageIDs	= await this.chat.messageList.getValue();
+				const messageIDs	= await this.chat.messageList.getFlatValue();
 
 				let newLastConfirmedMessage: IChatLastConfirmedMessage|undefined;
 				for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
