@@ -129,10 +129,10 @@
     rxjs "^6.0.0"
 
 "@angular/animations@^5.0.4", "@angular/animations@^6.1.0-beta.0":
-  version "5.2.11"
-  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-5.2.11.tgz#2bd3fe9e72916ca28de9bfaaddf0cb936565a0b8"
+  version "6.1.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-6.1.0-beta.0.tgz#ccf663a2e55651e71fddbc6efd6d8c0fb5b28d24"
   dependencies:
-    tslib "^1.7.1"
+    tslib "^1.9.0"
 
 "@angular/cdk@^5.0.0-rc.2", "@angular/cdk@^6", "@angular/cdk@^6.2.1":
   version "6.2.1"
@@ -7215,9 +7215,9 @@ loader-utils@^0.2.15, loader-utils@^0.2.16, loader-utils@^1.0.0, loader-utils@^1
     emojis-list "^2.0.0"
     json5 "^0.5.0"
 
-"localforage@https://github.com/buu700/localforage-tmp":
+localforage@^1.7.1:
   version "1.7.1"
-  resolved "https://github.com/buu700/localforage-tmp#7f70aa6e872a327e4cb25027ee3b641f30bfdc2c"
+  resolved "https://registry.yarnpkg.com/localforage/-/localforage-1.7.1.tgz#e4927e042302b864db30f3211f13b5c6f0de965d"
   dependencies:
     lie "3.1.1"
 
@@ -8885,9 +8885,9 @@ obuf@^1.0.0, obuf@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.2.tgz#09bea3343d41859ebd446292d11c9d4db619084e"
 
-"od-virtualscroll@https://github.com/buu700/od-virtualscroll-tmp":
-  version "1.0.1"
-  resolved "https://github.com/buu700/od-virtualscroll-tmp#ea12a89b44f2da560e35e0677882ee9cc5096cf8"
+od-virtualscroll@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/od-virtualscroll/-/od-virtualscroll-1.0.2.tgz#82d6a67abb8e969b2fb09b8f1e4c6bff1953cacb"
 
 omggif@1.0.7:
   version "1.0.7"
@@ -13194,9 +13194,9 @@ webrtc-adapter@^6.2.1:
     rtcpeerconnection-shim "^1.2.10"
     sdp "^2.7.0"
 
-webrtcsupport@^2.2.0, "webrtcsupport@https://github.com/buu700/webrtcsupport":
+webrtcsupport@^2.2.0:
   version "2.2.0"
-  resolved "https://github.com/buu700/webrtcsupport#10b090f449c02b109e4b4303a02a0d495ea275c4"
+  resolved "https://registry.yarnpkg.com/webrtcsupport/-/webrtcsupport-2.2.0.tgz#32d8c9608725ada352af0ab6abf21acab5182aa6"
 
 websocket-driver@>=0.5.1:
   version "0.7.0"
