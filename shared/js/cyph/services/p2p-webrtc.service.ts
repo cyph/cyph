@@ -658,9 +658,11 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	) {
 		this.sessionService.on(events.closeChat, () => { this.close(); });
 
-		this.sessionService.on(rpcEvents.p2p, (o: ISessionMessageData) => {
-			if (o.command && o.command.method) {
-				this.receiveCommand(o.command);
+		this.sessionService.on(rpcEvents.p2p, (newEvents: ISessionMessageData[]) => {
+			for (const o of newEvents) {
+				if (o.command && o.command.method) {
+					this.receiveCommand(o.command);
+				}
 			}
 		});
 

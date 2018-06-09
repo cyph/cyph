@@ -1093,47 +1093,54 @@ export class ChatService {
 				this.abortSetup()
 			);
 
-			this.sessionService.on(rpcEvents.confirm, async (o: ISessionMessageData) => {
-				if (!o.textConfirmation || !o.textConfirmation.id) {
-					return;
-				}
-
-				const id			= o.textConfirmation.id;
-				const messageIDs	= await this.chat.messageList.getFlatValue();
-
-				let newLastConfirmedMessage: IChatLastConfirmedMessage|undefined;
-				for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
-					if (messageIDs[i] === id) {
-						newLastConfirmedMessage	= {id, index: i};
-						break;
-					}
-				}
-
-				if (!newLastConfirmedMessage) {
-					return;
-				}
-
-				this.chat.lastConfirmedMessage.updateValue(async lastConfirmedMessage => {
-					if (
-						!newLastConfirmedMessage ||
-						lastConfirmedMessage.id === newLastConfirmedMessage.id ||
-						lastConfirmedMessage.index > newLastConfirmedMessage.index
-					) {
-						throw newLastConfirmedMessage;
+			this.sessionService.on(rpcEvents.confirm, async (newEvents: ISessionMessageData[]) => {
+				for (const o of newEvents) {
+					if (!o.textConfirmation || !o.textConfirmation.id) {
+						continue;
 					}
 
-					return newLastConfirmedMessage;
-				});
+					const id			= o.textConfirmation.id;
+					const messageIDs	= await this.chat.messageList.getFlatValue();
+
+					let newLastConfirmedMessage: IChatLastConfirmedMessage|undefined;
+					for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
+						if (messageIDs[i] === id) {
+							newLastConfirmedMessage	= {id, index: i};
+							break;
+						}
+					}
+
+					if (!newLastConfirmedMessage) {
+						continue;
+					}
+
+					this.chat.lastConfirmedMessage.updateValue(async lastConfirmedMessage => {
+						if (
+							!newLastConfirmedMessage ||
+							lastConfirmedMessage.id === newLastConfirmedMessage.id ||
+							lastConfirmedMessage.index > newLastConfirmedMessage.index
+						) {
+							throw newLastConfirmedMessage;
+						}
+
+						return newLastConfirmedMessage;
+					});
+				}
 			});
 
-			this.sessionService.on(rpcEvents.typing, (o: ISessionMessageData) => {
-				if (o.chatState) {
-					this.chat.isFriendTyping.next(o.chatState.isTyping);
+			this.sessionService.on(rpcEvents.typing, (newEvents: ISessionMessageData[]) => {
+				for (const o of newEvents) {
+					if (o.chatState) {
+						this.chat.isFriendTyping.next(o.chatState.isTyping);
+					}
 				}
 			});
 
 			this.chat.receiveTextLock(async lockData => {
-				const f	= async (o: ISessionMessageData) => this.addTextMessage(o);
+				const f	= async (newEvents: ISessionMessageData[]) =>
+					this.addTextMessage(...newEvents)
+				;
+
 				this.sessionService.on(rpcEvents.text, f);
 				await Promise.race([this.sessionService.closed, lockData.stillOwner.toPromise()]);
 				this.sessionService.off(rpcEvents.text, f);

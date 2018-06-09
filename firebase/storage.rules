@@ -99,7 +99,6 @@ service firebase.storage {
 				// 			/initialSecret/{hash} {}
 				// 		}
 				// 		/incomingMessageID/{hash} {}
-				// 		/incomingMessageQueue/{hash} {}
 				// 		/incomingMessages/{hash} {}
 				// 		/incomingMessagesMax/{hash} {}
 				// 		/outgoingMessageID/{hash} {}

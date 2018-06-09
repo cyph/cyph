@@ -2,8 +2,9 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {User} from '../account/user';
-import {BinaryProto, ISessionMessage, SessionMessage, StringProto} from '../proto';
+import {BinaryProto, ISessionMessage, StringProto} from '../proto';
 import {events, ISessionMessageData, rpcEvents} from '../session';
+import {filterUndefined} from '../util/filter';
 import {normalizeArray} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {uuid} from '../util/uuid';
@@ -215,25 +216,31 @@ export class AccountSessionService extends SessionService {
 			}
 
 			for (const session of group) {
-				session.on(rpcEvents.text, o => { this.trigger(rpcEvents.text, o); });
+				session.on(rpcEvents.text, newEvents => {
+					this.trigger(rpcEvents.text, newEvents);
+				});
 
-				session.on(rpcEvents.confirm, (o: ISessionMessageData) => {
-					if (!o.textConfirmation || !o.textConfirmation.id) {
+				session.on(rpcEvents.confirm, (newEvents: ISessionMessageData[]) => {
+					this.trigger(rpcEvents.confirm, filterUndefined(newEvents.map(o => {
+						if (!o.textConfirmation || !o.textConfirmation.id) {
+							return;
+						}
+
+						const confirmedSessions	= getOrSetDefault(
+							confirmations,
+							o.textConfirmation.id,
+							() => new Set<AccountSessionService>()
+						);
+
+						confirmedSessions.add(session);
+
+						if (confirmedSessions.size === group.length) {
+							confirmations.delete(o.textConfirmation.id);
+							return o;
+						}
+
 						return;
-					}
-
-					const confirmedSessions	= getOrSetDefault(
-						confirmations,
-						o.textConfirmation.id,
-						() => new Set<AccountSessionService>()
-					);
-
-					confirmedSessions.add(session);
-
-					if (confirmedSessions.size === group.length) {
-						confirmations.delete(o.textConfirmation.id);
-						this.trigger(rpcEvents.confirm, o);
-					}
+					})));
 				});
 			}
 
@@ -267,20 +274,6 @@ export class AccountSessionService extends SessionService {
 
 			const sessionURL		= `castleSessions/${castleSessionID}/session`;
 			const symmetricKeyURL	= `${sessionURL}/symmetricKey`;
-
-			this.incomingMessageQueue		= this.accountDatabaseService.getAsyncList(
-				`${sessionURL}/incomingMessageQueue`,
-				SessionMessage,
-				undefined,
-				undefined,
-				undefined,
-				false,
-				true
-			);
-
-			this.incomingMessageQueueLock	= this.accountDatabaseService.lockFunction(
-				`${sessionURL}/incomingMessageQueueLock${sessionSubID ? `/${sessionSubID}` : ''}`
-			);
 
 			this.init(castleSessionID, await this.accountDatabaseService.getOrSetDefault(
 				`${sessionURL}/channelUserID`,
@@ -336,11 +329,11 @@ export class AccountSessionService extends SessionService {
 				]);
 			}
 			else {
-				this.one<ISessionMessageData>(rpcEvents.symmetricKey).then(async ({bytes}) =>
+				this.one<ISessionMessageData[]>(rpcEvents.symmetricKey).then(async newEvents =>
 					this.accountDatabaseService.setItem(
 						symmetricKeyURL,
 						BinaryProto,
-						bytes || new Uint8Array(0)
+						(newEvents[0] || {bytes: undefined}).bytes || new Uint8Array(0)
 					)
 				);
 
@@ -390,10 +383,13 @@ export class AccountSessionService extends SessionService {
 		return new Promise<void>(resolve => {
 			const id	= uuid();
 
-			const f		= (o: ISessionMessageData) => {
-				if (o.command && o.command.method === id) {
-					this.off(rpcEvents.pong, f);
-					resolve();
+			const f		= (newEvents: ISessionMessageData[]) => {
+				for (const o of newEvents) {
+					if (o.command && o.command.method === id) {
+						this.off(rpcEvents.pong, f);
+						resolve();
+						return;
+					}
 				}
 			};
 
@@ -435,10 +431,12 @@ export class AccountSessionService extends SessionService {
 			stringsService
 		);
 
-		this.on(rpcEvents.ping, async (o: ISessionMessageData) => {
-			if (o.command && o.command.method) {
-				await this.freezePong.pipe(filter(b => !b), take(1)).toPromise();
-				this.send([rpcEvents.pong, {command: {method: o.command.method}}]);
+		this.on(rpcEvents.ping, async (newEvents: ISessionMessageData[]) => {
+			for (const o of newEvents) {
+				if (o.command && o.command.method) {
+					await this.freezePong.pipe(filter(b => !b), take(1)).toPromise();
+					this.send([rpcEvents.pong, {command: {method: o.command.method}}]);
+				}
 			}
 		});
 	}

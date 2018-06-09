@@ -20,8 +20,11 @@ export class SessionCapabilitiesService implements ISessionCapabilitiesService {
 
 	/** @ignore */
 	private readonly remoteCapabilities: Promise<ISessionCapabilities>	=
-		this.sessionService.one<ISessionMessageData>(rpcEvents.capabilities).then(o =>
-			o.capabilities || {p2p: false, walkieTalkieMode: false}
+		this.sessionService.one<ISessionMessageData[]>(rpcEvents.capabilities).then(newEvents =>
+			(newEvents[0] || {capabilities: undefined}).capabilities || {
+				p2p: false,
+				walkieTalkieMode: false
+			}
 		)
 	;
 

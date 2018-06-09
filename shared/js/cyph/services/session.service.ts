@@ -5,9 +5,7 @@ import {BehaviorSubject, Observable, of} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {eventManager} from '../event-manager';
-import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
-import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
@@ -26,7 +24,9 @@ import {
 	ProFeatures,
 	rpcEvents
 } from '../session';
+import {filterUndefined} from '../util/filter';
 import {normalize} from '../util/formatting';
+import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -58,12 +58,6 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected readonly eventID: string									= uuid();
-
-	/** @ignore */
-	protected incomingMessageQueue: IAsyncList<ISessionMessage>			= new LocalAsyncList();
-
-	/** @ignore */
-	protected incomingMessageQueueLock: LockFunction					= lockFunction();
 
 	/** @ignore */
 	protected lastIncomingMessageTimestamps: Map<string, number>		= new Map();
@@ -172,21 +166,29 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @ignore */
-	protected async cyphertextReceiveHandler (message: ISessionMessage) : Promise<void> {
-		if ((message.data.sessionSubID || undefined) !== this.sessionSubID) {
-			throw new Error('Different sub-session.');
-		}
+	protected async cyphertextReceiveHandler (messages: ISessionMessage[]) : Promise<void> {
+		const messageGroups	= new Map<string, ISessionMessageDataInternal[]>();
 
-		if (!message.data.id || this.receivedMessages.has(message.data.id)) {
-			return;
-		}
+		await Promise.all(messages.map(async message => {
+			if ((message.data.sessionSubID || undefined) !== this.sessionSubID) {
+				throw new Error('Different sub-session.');
+			}
 
-		message.data	= await this.processMessageData(message.data);
+			if (!message.data.id || this.receivedMessages.has(message.data.id)) {
+				return;
+			}
 
-		this.receivedMessages.add(message.data.id);
+			message.data	= await this.processMessageData(message.data);
 
-		if (message.event && message.event in rpcEvents) {
-			this.trigger(message.event, message.data);
+			this.receivedMessages.add(message.data.id);
+
+			if (message.event && message.event in rpcEvents) {
+				getOrSetDefault(messageGroups, message.event, () => []).push(message.data);
+			}
+		}));
+
+		for (const [event, data] of Array.from(messageGroups.entries())) {
+			this.trigger(event, data);
 		}
 	}
 
@@ -286,7 +288,10 @@ export abstract class SessionService implements ISessionService {
 				}
 				else {
 					this.resolveSymmetricKey(
-						(await this.one<ISessionMessageData>(rpcEvents.symmetricKey)).bytes ||
+						(
+							(await this.one<ISessionMessageData[]>(rpcEvents.symmetricKey))[0] ||
+							{bytes: undefined}
+						).bytes ||
 						new Uint8Array(0)
 					);
 				}
@@ -314,7 +319,7 @@ export abstract class SessionService implements ISessionService {
 
 				const authorID	= normalize(await data.author.pipe(take(1)).toPromise());
 
-				for (const message of messages) {
+				await this.cyphertextReceiveHandler(filterUndefined(messages.map(message => {
 					/* Discard messages without valid timestamps */
 					if (
 						isNaN(message.data.timestamp) ||
@@ -323,7 +328,7 @@ export abstract class SessionService implements ISessionService {
 							this.lastIncomingMessageTimestamps.get(castleInstanceID) || 0
 						)
 					) {
-						continue;
+						return;
 					}
 
 					this.lastIncomingMessageTimestamps.set(
@@ -334,8 +339,8 @@ export abstract class SessionService implements ISessionService {
 					(<any> message.data).author			= data.author;
 					message.data.authorID				= authorID;
 
-					await this.incomingMessageQueue.pushItem(message);
-				}
+					return message;
+				})));
 
 				break;
 
@@ -410,14 +415,6 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public async init (channelID?: string, userID?: string) : Promise<void> {
-		this.incomingMessageQueueLock(async o => {
-			this.incomingMessageQueue.subscribeAndPop(async message =>
-				this.cyphertextReceiveHandler(message)
-			);
-
-			await Promise.race([this.closed, o.stillOwner.toPromise()]);
-		});
-
 		await Promise.all([
 			this.castleService.init(this.potassiumService, this),
 			this.channelService.init(channelID, userID, {

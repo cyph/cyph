@@ -68,7 +68,7 @@ export class LocalSessionService extends SessionService {
 					});
 				}
 				else if (message.event in rpcEvents) {
-					this.trigger(message.event, message.data);
+					this.trigger(message.event, [message.data]);
 				}
 			},
 			undefined,

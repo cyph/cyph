@@ -84,33 +84,38 @@ export class AccountP2PService extends P2PService {
 			stringsService
 		);
 
-		this.accountSessionService.on(rpcEvents.accountP2P, async (o: ISessionMessageData) => {
-			if (!(
-				o.command &&
-				o.command.additionalData &&
-				(o.command.method === 'audio' || o.command.method === 'video') &&
-				this.accountSessionService.remoteUser.value
-			)) {
-				return;
+		this.accountSessionService.on(
+			rpcEvents.accountP2P,
+			async (newEvents: ISessionMessageData[]) => {
+				for (const o of newEvents) {
+					if (!(
+						o.command &&
+						o.command.additionalData &&
+						(o.command.method === 'audio' || o.command.method === 'video') &&
+						this.accountSessionService.remoteUser.value
+					)) {
+						continue;
+					}
+
+					const id				= o.command.additionalData;
+					const callType			= o.command.method;
+					const username			= this.accountSessionService.remoteUser.value.username;
+					const {realUsername}	= await this.accountSessionService.remoteUser.value.
+						accountUserProfile.
+						getValue()
+					;
+
+					this.chatService.addMessage({
+						value: `${realUsername} ${this.stringsService.hasInvitedYouToA} ${
+							callType === 'video' ?
+								this.stringsService.videoCall :
+								this.stringsService.audioCall
+						}. [${this.stringsService.clickHere}](${
+							this.getCallURL(callType, username, id)
+						}) ${this.stringsService.toJoin}.`
+					});
+				}
 			}
-
-			const id				= o.command.additionalData;
-			const callType			= o.command.method;
-			const username			= this.accountSessionService.remoteUser.value.username;
-			const {realUsername}	= await this.accountSessionService.remoteUser.value.
-				accountUserProfile.
-				getValue()
-			;
-
-			this.chatService.addMessage({
-				value: `${realUsername} ${this.stringsService.hasInvitedYouToA} ${
-					callType === 'video' ?
-						this.stringsService.videoCall :
-						this.stringsService.audioCall
-				}. [${this.stringsService.clickHere}](${
-					this.getCallURL(callType, username, id)
-				}) ${this.stringsService.toJoin}.`
-			});
-		});
+		);
 	}
 }
