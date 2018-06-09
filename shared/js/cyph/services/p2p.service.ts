@@ -52,12 +52,10 @@ export class P2PService {
 		},
 		connected: (isConnected: boolean) => {
 			if (isConnected) {
-				this.chatService.addMessage(
-					this.stringsService.p2pConnect,
-					undefined,
-					undefined,
-					false
-				);
+				this.chatService.addMessage({
+					shouldNotify: false,
+					value: this.stringsService.p2pConnect
+				});
 			}
 			else {
 				this.dialogService.alert({
@@ -66,12 +64,10 @@ export class P2PService {
 					title: this.stringsService.p2pTitle
 				});
 
-				this.chatService.addMessage(
-					this.stringsService.p2pDisconnect,
-					undefined,
-					undefined,
-					false
-				);
+				this.chatService.addMessage({
+					shouldNotify: false,
+					value: this.stringsService.p2pDisconnect
+				});
 			}
 		},
 		loaded: async () => {
@@ -105,12 +101,10 @@ export class P2PService {
 			});
 		},
 		requestConfirmation: () => {
-			this.chatService.addMessage(
-				this.stringsService.p2pRequestConfirmation,
-				undefined,
-				undefined,
-				false
-			);
+			this.chatService.addMessage({
+				shouldNotify: false,
+				value: this.stringsService.p2pRequestConfirmation
+			});
 		},
 		requestRejection: () => {
 			this.dialogService.alert({

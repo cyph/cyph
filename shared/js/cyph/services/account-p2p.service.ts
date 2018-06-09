@@ -45,15 +45,15 @@ export class AccountP2PService extends P2PService {
 		])).confirmPromise;
 
 		await this.accountSessionService.remoteUser.value.accountUserProfile.getValue().then(
-			async ({realUsername}) => this.chatService.addMessage(
-				`${this.stringsService.youInvited} ${realUsername} ${
+			async ({realUsername}) => this.chatService.addMessage({
+				value: `${this.stringsService.youInvited} ${realUsername} ${
 					this.stringsService.toA
 				} ${
 					callType === 'video' ?
 						this.stringsService.videoCall :
 						this.stringsService.audioCall
 				}.`
-			)
+			})
 		);
 
 		await this.router.navigate([accountRoot, callType, username, id]);
@@ -102,15 +102,15 @@ export class AccountP2PService extends P2PService {
 				getValue()
 			;
 
-			this.chatService.addMessage(
-				`${realUsername} ${this.stringsService.hasInvitedYouToA} ${
+			this.chatService.addMessage({
+				value: `${realUsername} ${this.stringsService.hasInvitedYouToA} ${
 					callType === 'video' ?
 						this.stringsService.videoCall :
 						this.stringsService.audioCall
 				}. [${this.stringsService.clickHere}](${
 					this.getCallURL(callType, username, id)
 				}) ${this.stringsService.toJoin}.`
-			);
+			});
 		});
 	}
 }

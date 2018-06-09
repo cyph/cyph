@@ -136,12 +136,10 @@ export class FileTransferService {
 			await saveFile(plaintext, fileTransfer.name, fileTransfer.mediaType);
 		}
 		catch {
-			await this.chatService.addMessage(
-				`${this.stringsService.incomingFileSaveError} ${fileTransfer.name}`,
-				undefined,
-				undefined,
-				false
-			);
+			await this.chatService.addMessage({
+				shouldNotify: false,
+				value: `${this.stringsService.incomingFileSaveError} ${fileTransfer.name}`
+			});
 		}
 	}
 
@@ -214,12 +212,10 @@ export class FileTransferService {
 			);
 		}
 		catch {
-			await this.chatService.addMessage(
-				`${this.stringsService.incomingFileUploadError} ${fileTransfer.name}`,
-				undefined,
-				undefined,
-				false
-			);
+			await this.chatService.addMessage({
+				shouldNotify: false,
+				value: `${this.stringsService.incomingFileUploadError} ${fileTransfer.name}`
+			});
 		}
 		finally {
 			await this.transfers.deleteItem(transfer);
