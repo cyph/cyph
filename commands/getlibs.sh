@@ -331,6 +331,10 @@ mv package.json.new package.json
 yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
 cd ..
 
+cd firebase-tools
+yarn install --ignore-engines --ignore-platform --non-interactive
+cd ..
+
 cd ../..
 
 mv js/node_modules .js.tmp/
