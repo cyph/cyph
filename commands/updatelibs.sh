@@ -300,14 +300,12 @@ script -fc "
 
 			console.log(
 				(
-					(
-						fs.readFileSync(\"yarn.out\").
-							toString().
-							split(\"Unable to find a suitable version\")[1]
-						|| \"\"
-					).
-						match(/\"[^\\n]+\" which resolved to \".*?\"/g)
-					|| []
+					fs.readFileSync(\"yarn.out\").
+						toString().
+						split(\"Unable to find a suitable version\").
+						slice(1)
+				).map(section => (
+					section.match(/\"[^\\n]+\" which resolved to \"[^\\n]+\"/g) || []
 				).
 					map((s, i) => {
 						const split			= s.split(\"\\\"\");
@@ -335,6 +333,10 @@ script -fc "
 						,
 						{index: \"1\", version: \"0.0.0\"}
 					).index
+				).reduce(
+					(a, b) => a ? \`\${a}\\n\${b}\` : b,
+					\"\"
+				)
 			);
 		')\"
 
