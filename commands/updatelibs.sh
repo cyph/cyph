@@ -386,4 +386,4 @@ mv ~/lib shared/
 rm -rf ~/tmplib
 
 ./commands/getlibs.sh
-./commands/commit.sh --gc updatelibs
+./commands/commit.sh --gc "${@}" updatelibs

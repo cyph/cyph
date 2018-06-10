@@ -6,12 +6,17 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 blockFailingBuild=''
 gc=''
+noCleanup=''
 if [ "${1}" == '--block-failing-build' ] ; then
 	blockFailingBuild=true
 	shift
 fi
 if [ "${1}" == '--gc' ] ; then
 	gc=true
+	shift
+fi
+if [ "${1}" == '--no-cleanup' ] ; then
+	noCleanup=true
 	shift
 fi
 
@@ -24,10 +29,16 @@ rm .git/index.lock 2> /dev/null
 
 ./commands/keycache.sh
 
+git fetch --all
 git pull
 chmod -R 700 .
 git add .
 git commit -S -a -m "${comment}"
+
+if [ "${noCleanup}" ] ; then
+	git push
+	exit
+fi
 
 # Automated cleanup and beautification
 
