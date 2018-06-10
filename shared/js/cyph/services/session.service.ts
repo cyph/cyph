@@ -5,7 +5,9 @@ import {BehaviorSubject, Observable, of} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {eventManager} from '../event-manager';
+import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
+import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
@@ -13,6 +15,7 @@ import {
 	BinaryProto,
 	ISessionMessage,
 	ISessionMessageData as ISessionMessageDataInternal,
+	ISessionMessageList,
 	SessionMessageList
 } from '../proto';
 import {ISessionService} from '../service-interfaces/isession.service';
@@ -54,10 +57,21 @@ export abstract class SessionService implements ISessionService {
 	private readonly _SYMMETRIC_KEY				= resolvable<Uint8Array>();
 
 	/** @ignore */
+	private readonly correctSubSession			= (message: ISessionMessage) : boolean =>
+		(message.data.sessionSubID || undefined) === this.sessionSubID
+	;
+
+	/** @ignore */
 	private readonly openEvents: Set<string>	= new Set();
 
 	/** @ignore */
 	protected readonly eventID: string									= uuid();
+
+	/** @ignore */
+	protected incomingMessageQueue: IAsyncList<ISessionMessageList>		= new LocalAsyncList();
+
+	/** @ignore */
+	protected incomingMessageQueueLock: LockFunction					= lockFunction();
 
 	/** @ignore */
 	protected lastIncomingMessageTimestamps: Map<string, number>		= new Map();
@@ -167,13 +181,17 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected async cyphertextReceiveHandler (messages: ISessionMessage[]) : Promise<void> {
-		const messageGroups	= new Map<string, ISessionMessageDataInternal[]>();
+		const messageGroups				= new Map<string, ISessionMessageDataInternal[]>();
 
-		await Promise.all(messages.map(async message => {
-			if ((message.data.sessionSubID || undefined) !== this.sessionSubID) {
-				throw new Error('Different sub-session.');
-			}
+		const otherSubSessionMessages	=
+			messages.filter(message => !this.correctSubSession(message))
+		;
 
+		if (otherSubSessionMessages.length > 0) {
+			this.incomingMessageQueue.pushItem({messages: otherSubSessionMessages});
+		}
+
+		await Promise.all(messages.filter(this.correctSubSession).map(async message => {
 			if (!message.data.id || this.receivedMessages.has(message.data.id)) {
 				return;
 			}
@@ -415,6 +433,22 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public async init (channelID?: string, userID?: string) : Promise<void> {
+		this.incomingMessageQueueLock(async o => {
+			this.incomingMessageQueue.subscribeAndPop(async ({messages}) => {
+				if (!messages || messages.length < 1) {
+					return;
+				}
+				else if (!this.correctSubSession(messages[0])) {
+					throw new Error('Different sub-session.');
+				}
+				else {
+					await this.cyphertextReceiveHandler(messages);
+				}
+			});
+
+			await Promise.race([this.closed, o.stillOwner.toPromise()]);
+		});
+
 		await Promise.all([
 			this.castleService.init(this.potassiumService, this),
 			this.channelService.init(channelID, userID, {

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {User} from '../account/user';
-import {BinaryProto, ISessionMessage, StringProto} from '../proto';
+import {BinaryProto, ISessionMessage, SessionMessageList, StringProto} from '../proto';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {filterUndefined} from '../util/filter';
 import {normalizeArray} from '../util/formatting';
@@ -274,6 +274,20 @@ export class AccountSessionService extends SessionService {
 
 			const sessionURL		= `castleSessions/${castleSessionID}/session`;
 			const symmetricKeyURL	= `${sessionURL}/symmetricKey`;
+
+			this.incomingMessageQueue		= this.accountDatabaseService.getAsyncList(
+				`${sessionURL}/incomingMessageQueue`,
+				SessionMessageList,
+				undefined,
+				undefined,
+				undefined,
+				false,
+				true
+			);
+
+			this.incomingMessageQueueLock	= this.accountDatabaseService.lockFunction(
+				`${sessionURL}/incomingMessageQueueLock${sessionSubID ? `/${sessionSubID}` : ''}`
+			);
 
 			this.init(castleSessionID, await this.accountDatabaseService.getOrSetDefault(
 				`${sessionURL}/channelUserID`,
