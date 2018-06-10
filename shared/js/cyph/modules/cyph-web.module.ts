@@ -181,6 +181,11 @@ export class CyphWebModule {
 		);
 
 		matIconRegistry.addSvgIcon(
+			'gdpr',
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/gdpr.svg')
+		);
+
+		matIconRegistry.addSvgIcon(
 			'medical-forms',
 			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/medical-forms.svg')
 		);
