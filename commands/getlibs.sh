@@ -340,6 +340,8 @@ cd ..
 # 	cd ..
 # done
 
+find . -type d -path '*/node_modules/@angular' -exec rm -rf {} \; 2> /dev/null
+
 cd ../..
 
 mv js/node_modules .js.tmp/
