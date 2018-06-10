@@ -61,9 +61,12 @@ const args	= {
 	site: process.argv[(process.argv.indexOf('--site') + 1) || undefined]
 };
 
-const shellCommandArgs		= process.argv.
+const baseShellCommandArgs	= process.argv.
 	slice(3).
-	filter(s => s !== '--background' && s !== '--no-updates').
+	filter(s => s !== '--background' && s !== '--no-updates')
+;
+
+const shellCommandArgs		= baseShellCommandArgs.
 	map(s => s.indexOf("'") ? `"${s.replace(/"/g, '\\"')}"` : `'${s}'`).
 	join(' ')
 ;
@@ -437,7 +440,7 @@ switch (args.command) {
 		break;
 
 	case 'editimage':
-		editImage(shellCommandArgs);
+		editImage(baseShellCommandArgs[0]);
 		break;
 
 	case 'kill':
