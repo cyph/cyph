@@ -810,19 +810,11 @@
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@ngrx/store/-/store-6.0.1.tgz#02c806ce20c698b997e81f5671e0edc07d32cf86"
 
-"@ngtools/webpack@6.1.0-beta.2":
+"@ngtools/webpack@6.1.0-beta.2", "@ngtools/webpack@^6.1.0-beta.2":
   version "6.1.0-beta.2"
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-6.1.0-beta.2.tgz#a90f994905e17636c050c347d2b45285de2e08ef"
   dependencies:
     "@angular-devkit/core" "0.7.0-beta.2"
-    tree-kill "^1.0.0"
-    webpack-sources "^1.1.0"
-
-"@ngtools/webpack@^6.0.8":
-  version "6.0.8"
-  resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-6.0.8.tgz#a05bce526aee9da62bb230a95fba83fee99d0bca"
-  dependencies:
-    "@angular-devkit/core" "0.6.8"
     tree-kill "^1.0.0"
     webpack-sources "^1.1.0"
 

@@ -55,7 +55,7 @@
     "@ngrx/router-store": "^6.0.1",
     "@ngrx/store": "^6.0.1",
     "@ngrx/store-devtools": "^6.0.1",
-    "@ngtools/webpack": "^6.0.8",
+    "@ngtools/webpack": "^6.1.0-beta.2",
     "@ngxs/devtools-plugin": "^3.1.3",
     "@ngxs/logger-plugin": "^3.1.3",
     "@ngxs/storage-plugin": "^3.1.3",
