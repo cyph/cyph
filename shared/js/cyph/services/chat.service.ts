@@ -464,8 +464,8 @@ export class ChatService {
 	}
 
 	/** Adds a message to the chat. */
-	/* tslint:disable-next-line:cyclomatic-complexity */
 	public async addMessage (...messageInputs: IChatMessageInput[]) : Promise<void> {
+		/* tslint:disable-next-line:cyclomatic-complexity */
 		const newMessages	= filterUndefined(await Promise.all(messageInputs.map(async ({
 			author,
 			dimensions,
