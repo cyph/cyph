@@ -334,11 +334,11 @@ mv package.json.new package.json
 yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
 cd ..
 
-for d in @google-cloud/* firebase-admin firebase-tools nativescript ; do
-	cd ${d}
-	yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
-	cd ..
-done
+# for d in @google-cloud/* firebase-admin firebase-tools nativescript ; do
+# 	cd ${d}
+# 	yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
+# 	cd ..
+# done
 
 cd ../..
 

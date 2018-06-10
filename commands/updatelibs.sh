@@ -278,91 +278,100 @@ EOM
 
 
 # Temporary workaround for flat dependencies pending https://github.com/yarnpkg/yarn/issues/1658
+#
+# cd ..
+# yarn add semver
+# cd -
+#
+# echo {} > package.json
+#
+# script -fc "
+# 	while true ; do
+# 		answer=\"\$(node -e '
+# 			const semver			= require(\"semver\");
+# 
+# 			const modules			= \`${modules}\`;
+# 
+# 			const getPinnedVersion	= package =>
+# 				(modules.match(new RegExp(
+# 					\`(^|\\\\s+)\${package}@((\\\\d|\\\\.)+)(\n|\$)\`
+# 				)) || [])[2]
+# 			;
+#
+# 			console.log(
+# 				(
+# 					fs.readFileSync(\"yarn.out\").
+# 						toString().
+# 						split(\"Unable to find a suitable version\").
+# 						slice(1)
+# 				).map(section => (
+# 					section.match(/\"[^\\n]+\" which resolved to \"[^\\n]+\"/g) || []
+# 				).
+# 					map((s, i) => {
+# 						const split			= s.split(\"\\\"\");
+# 						const version		= split[3];
+# 						const pinnedVersion	= getPinnedVersion(split[1].split(\"@\")[0]);
+#
+# 						return {
+# 							index: i + 1,
+# 							isPinned: !!pinnedVersion && semver.satisfies(version, pinnedVersion),
+# 							version
+# 						};
+# 					}).
+# 					reduce(
+# 						(a, b) =>
+# 							a.isPinned && !b.isPinned ?
+# 								a :
+# 							b.isPinned && !a.isPinned ?
+# 								b :
+# 							semver.gt(a.version, b.version) ?
+# 								a :
+# 								b
+# 						,
+# 						{index: \"1\", version: \"0.0.0\"}
+# 					).index
+# 				).reduce(
+# 					(a, b) => a ? \`\${a}\\n\${b}\` : b,
+# 					\"\"
+# 				)
+# 			);
+# 		')\"
+#
+# 		if [ \"\${answer}\" ] ; then
+# 			echo > yarn.out
+# 			echo \"\${answer}\"
+# 		fi
+#
+# 		if [ \"\$(cat yarn.out | grep -P 'Done in \d+' 2> /dev/null)\" ] ; then
+# 			break
+# 		fi
+# 	done | bash -c '
+# 		yarn add \
+# 			--flat \
+# 			--ignore-engines \
+# 			--ignore-platform \
+# 			--ignore-scripts \
+# 			--non-interactive \
+# 			$(echo "${modules}" | tr '\n' ' ') \
+# 		|| \
+# 			touch yarn.failure
+# 	'
+# " yarn.out
+#
+# if [ -f yarn.failure ] ; then
+# 	exit 1
+# fi
 
-cd ..
-yarn add semver
-cd -
-
-echo {} > package.json
-
-script -fc "
-	while true ; do
-		answer=\"\$(node -e '
-			const semver			= require(\"semver\");
-
-			const modules			= \`${modules}\`;
-
-			const getPinnedVersion	= package =>
-				(modules.match(new RegExp(
-					\`(^|\\\\s+)\${package}@((\\\\d|\\\\.)+)(\n|\$)\`
-				)) || [])[2]
-			;
-
-			console.log(
-				(
-					fs.readFileSync(\"yarn.out\").
-						toString().
-						split(\"Unable to find a suitable version\").
-						slice(1)
-				).map(section => (
-					section.match(/\"[^\\n]+\" which resolved to \"[^\\n]+\"/g) || []
-				).
-					map((s, i) => {
-						const split			= s.split(\"\\\"\");
-						const version		= split[3];
-						const pinnedVersion	= getPinnedVersion(split[1].split(\"@\")[0]);
-
-						return {
-							index: i + 1,
-							isPinned: !!pinnedVersion && semver.satisfies(version, pinnedVersion),
-							version
-						};
-					}).
-					reduce(
-						(a, b) =>
-							a.isPinned && !b.isPinned ?
-								a :
-							b.isPinned && !a.isPinned ?
-								b :
-							semver.gt(a.version, b.version) ?
-								a :
-								b
-						,
-						{index: \"1\", version: \"0.0.0\"}
-					).index
-				).reduce(
-					(a, b) => a ? \`\${a}\\n\${b}\` : b,
-					\"\"
-				)
-			);
-		')\"
-
-		if [ \"\${answer}\" ] ; then
-			echo > yarn.out
-			echo \"\${answer}\"
-		fi
-
-		if [ \"\$(cat yarn.out | grep -P 'Done in \d+' 2> /dev/null)\" ] ; then
-			break
-		fi
-	done | bash -c '
-		yarn add \
-			--flat \
-			--ignore-engines \
-			--ignore-platform \
-			--ignore-scripts \
-			--non-interactive \
-			$(echo "${modules}" | tr '\n' ' ') \
-		|| \
-			touch yarn.failure
-	'
-" yarn.out
-
-if [ -f yarn.failure ] ; then
+yarn add \
+	--ignore-engines \
+	--ignore-platform \
+	--ignore-scripts \
+	--non-interactive \
+	$(echo "${modules}" | tr '\n' ' ') \
+|| \
 	exit 1
-fi
 
-rm -rf ../node_modules ../package.json ../yarn.lock yarn.failure yarn.out
+rm -rf ../node_modules ../package.json ../yarn.lock yarn.failure yarn.out 2> /dev/null
 
 
 cp yarn.lock package.json ~/lib/js/
