@@ -31,6 +31,7 @@ read -r -d '' modules <<- EOM
 	@angular/platform-webworker-dynamic@next
 	@angular/router@next
 	@angular/service-worker@next
+	@angular/tsc-wrapped@next
 	@angular-devkit/architect@next
 	@angular-devkit/architect-cli@next
 	@angular-devkit/build-ng-packagr@next
@@ -87,6 +88,7 @@ read -r -d '' modules <<- EOM
 	@types/markdown-it
 	@types/msgpack-lite
 	@types/node
+	@types/pdfjs-dist
 	@types/pdfkit
 	@types/quill
 	@types/stacktrace-js
@@ -146,6 +148,7 @@ read -r -d '' modules <<- EOM
 	html-loader
 	html-minifier
 	html-to-text
+	html-webpack-plugin
 	htmlencode
 	htmllint
 	image-type
@@ -191,6 +194,7 @@ read -r -d '' modules <<- EOM
 	nativescript-dev-webpack
 	nativescript-theme-core
 	ng-fullcalendar
+	ng-packagr@next
 	ng2-fittext
 	ng2-pdf-viewer
 	ng2-truncate
@@ -202,6 +206,7 @@ read -r -d '' modules <<- EOM
 	od-virtualscroll
 	opentok
 	parchment
+	pdfjs-dist
 	pdfkit
 	prepack
 	prepack-webpack-plugin
@@ -265,6 +270,7 @@ read -r -d '' modules <<- EOM
 	webpack
 	webpack-cli
 	webpack-closure-compiler
+	webpack-dev-server
 	webpack-sources
 	webrtc-adapter
 	webrtcsupport
