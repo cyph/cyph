@@ -67,7 +67,7 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
-	@ngtools/webpack
+	@ngtools/webpack@next
 	@ngxs/devtools-plugin
 	@ngxs/logger-plugin
 	@ngxs/storage-plugin
