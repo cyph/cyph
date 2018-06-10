@@ -59,6 +59,7 @@ export abstract class SessionService implements ISessionService {
 	/** @ignore */
 	private readonly correctSubSession			= (message: ISessionMessage) : boolean =>
 		(message.data.sessionSubID || undefined) === this.sessionSubID
+	/* tslint:disable-next-line:semicolon */
 	;
 
 	/** @ignore */
