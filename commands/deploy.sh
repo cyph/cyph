@@ -721,8 +721,6 @@ fi
 
 if [ "${test}" ] ; then
 	rm -rf ${prodOnlyProjects}
-elif [ ! "${site}" ] || [ "${site}" == 'test' ] ; then
-	gcloud app services delete --quiet --project cyphme test
 fi
 
 if [ "${waitingForWpstatic}" ] ; then
@@ -741,8 +739,14 @@ if [ "${simpleWebSignBuild}" ] ; then
 	rm -rf "${webSignedProject}" 2> /dev/null
 fi
 
+gcloudDeploy () {
+	gcloud app deploy --quiet --no-promote --project cyphme --version "${version}" "${@}"
+}
+
 if [ "${site}" != 'firebase' ] ; then
-	gcloud app deploy --quiet --no-promote --project cyphme --version "${version}" $(
+	mv test .test 2> /dev/null
+
+	gcloudDeploy $(
 		if [ "${site}" ] ; then
 			ls ${site}/*.yaml 2> /dev/null
 
@@ -756,6 +760,12 @@ if [ "${site}" != 'firebase' ] ; then
 			echo dispatch.yaml
 		fi
 	)
+
+	mv .test test 2> /dev/null
+	if [ -d test ] && ( [ ! "${site}" ] || [ "${site}" == 'test' ] ) ; then
+		gcloud app services delete --quiet --project cyphme test
+		gcloudDeploy test/*.yaml
+	fi
 fi
 
 cd "${dir}"
