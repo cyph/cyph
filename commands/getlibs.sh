@@ -228,7 +228,6 @@ for anyType in \
 	markdown-it-sup \
 	math-expression-evaluator \
 	quill-delta \
-	quill-delta-to-html \
 	simplewebrtc \
 	tab-indent \
 	u2f-api-polyfill \
