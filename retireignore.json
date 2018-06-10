@@ -1,5 +1,9 @@
 [
 	{
+		"path": "@google-cloud",
+		"justification": "Dev dependencies"
+	},
+	{
 		"path": "@compodoc/compodoc",
 		"justification": "Dev dependency"
 	},
