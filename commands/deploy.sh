@@ -762,10 +762,10 @@ if [ "${site}" != 'firebase' ] ; then
 	)
 
 	mv .test test 2> /dev/null
-	if [ -d test ] && ( [ ! "${site}" ] || [ "${site}" == 'test' ] ) ; then
-		gcloud app services delete --quiet --project cyphme test
-		gcloudDeploy test/*.yaml
-	fi
+	# if [ -d test ] && ( [ ! "${site}" ] || [ "${site}" == 'test' ] ) ; then
+	# 	gcloud app services delete --quiet --project cyphme test
+	# 	gcloudDeploy test/*.yaml
+	# fi
 fi
 
 cd "${dir}"
