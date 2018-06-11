@@ -186,6 +186,26 @@ export class CyphWebModule {
 		);
 
 		matIconRegistry.addSvgIcon(
+			'key-add-color',
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-add-color.svg')
+		);
+
+		matIconRegistry.addSvgIcon(
+			'key-add-light',
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-add-light.svg')
+		);
+
+		matIconRegistry.addSvgIcon(
+			'key-upload',
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-upload.svg')
+		);
+
+		matIconRegistry.addSvgIcon(
+			'key-upload-color',
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-upload-color.svg')
+		);
+
+		matIconRegistry.addSvgIcon(
 			'medical-forms',
 			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/medical-forms.svg')
 		);
