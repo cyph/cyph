@@ -58,7 +58,7 @@ then(function (continent) {
 		;
 
 		return new Promise(function (resolve, reject) {
-			setTimeout(reject, 2000);
+			setTimeout(reject, 30000);
 
 			fetch(
 				cdnUrl + 'current?' + Date.now()
@@ -98,6 +98,10 @@ then(function (continent) {
 
 /* Get package */
 then(function (downloadMetadata) {
+	if (!downloadMetadata.cdnUrl || isNaN(downloadMetadata.packageTimestamp)) {
+		throw new Error('Could not get a valid package URL.');
+	}
+
 	return Promise.all([
 		downloadMetadata,
 		cachingFetch(
