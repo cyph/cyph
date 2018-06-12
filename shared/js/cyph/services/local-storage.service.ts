@@ -50,7 +50,7 @@ export class LocalStorageService extends DataManagerService {
 	/** Wipes all local data. */
 	public async clear (waitForReady: boolean = true) : Promise<void> {
 		this.cache.clear();
-		await this.clearInternal(waitForReady);
+		await this.clearInternal(waitForReady).catch(() => {});
 	}
 
 	/** @inheritDoc */
@@ -78,7 +78,7 @@ export class LocalStorageService extends DataManagerService {
 	/** @inheritDoc */
 	public async removeItem (url: string, waitForReady: boolean = true) : Promise<void> {
 		this.cache.delete(url);
-		await this.removeItemInternal(url, waitForReady);
+		await this.removeItemInternal(url, waitForReady).catch(() => {});
 	}
 
 	/** @inheritDoc */
