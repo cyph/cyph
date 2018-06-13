@@ -161,6 +161,7 @@
 			width: 1000px;
 			margin-top: -55px;
 			margin-left: 608px;
+			border: none !important;
 
 			@include transform(scale(2.25));
 		}

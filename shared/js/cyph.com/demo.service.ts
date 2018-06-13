@@ -32,6 +32,7 @@ export class DemoService {
 				src='https://www.facebook.com/plugins/comments.php?href=https://www.${
 					readableID(random(20, 5))
 				}.com&width=1000'
+				frameBorder='0'
 			></iframe>
 		</div>
 	`;
