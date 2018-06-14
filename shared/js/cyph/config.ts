@@ -80,6 +80,7 @@ export class Config {
 				id: number;
 				items: {
 					[item: string]: {
+						amount?: number;
 						id: number;
 						subscriptionType?: SubscriptionTypes;
 					};
@@ -104,6 +105,7 @@ export class Config {
 				id: 2,
 				items: {
 					basics: {
+						amount: 99,
 						id: 1,
 						subscriptionType: SubscriptionTypes.monthly
 					},
@@ -140,10 +142,12 @@ export class Config {
 				id: 3,
 				items: {
 					singlePractitioner: {
+						amount: 250,
 						id: 0,
 						subscriptionType: SubscriptionTypes.monthly
 					},
 					smallPractice: {
+						amount: 1000,
 						id: 1,
 						subscriptionType: SubscriptionTypes.monthly
 					}

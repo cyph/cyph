@@ -175,10 +175,14 @@ export class AppService {
 					/-(.)/g,
 					(_, s) => s.toUpperCase()
 				);
-				const amount		= parseFloat(urlSegmentPaths[3]);
 
 				const category	= this.configService.pricingConfig.categories[categoryID];
 				const item		= category && category.items ? category.items[itemID] : undefined;
+
+				const amount	= item && item.amount !== undefined ?
+					item.amount :
+					parseFloat(urlSegmentPaths[3])
+				;
 
 				if (isNaN(amount) || amount < 0 || item === undefined) {
 					throw new Error('Invalid checkout arguments.');
