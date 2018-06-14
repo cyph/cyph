@@ -15,11 +15,13 @@ read -r -d '' modules <<- EOM
 	@agm/core
 	@angular/animations@next
 	@angular/cdk
+	@angular/cdk-experimental
 	@angular/cli@next
 	@angular/common@next
 	@angular/compiler@next
 	@angular/compiler-cli@next
 	@angular/core@next
+	@angular/elements@next
 	@angular/flex-layout
 	@angular/forms@next
 	@angular/http@next
