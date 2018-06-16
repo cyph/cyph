@@ -861,6 +861,15 @@ message KeyPair {
 	required bytes publicKey = 2;
 }
 
+/** Local storage lock claim value. */
+message LocalStorageLockMetadata {
+	/** ID. */
+	string id = 1;
+
+	/** Reason. */
+	string reason = 2;
+}
+
 /** Local storage value. */
 message LocalStorageValue {
 	/** Timestamp. */

@@ -16,7 +16,7 @@ export class NativeLocalStorageService extends LocalStorageService {
 	private readonly keysURL: string		= 'NativeLocalStorageService-keys';
 
 	/** @ignore */
-	private readonly lock: LockFunction		= lockFunction();
+	private readonly setLock: LockFunction	= lockFunction();
 
 	/** @ignore */
 	private readonly storage: SecureStorage	= new SecureStorage();
@@ -33,7 +33,7 @@ export class NativeLocalStorageService extends LocalStorageService {
 
 	/** @inheritDoc */
 	protected async clearInternal (_WAIT_FOR_READY: boolean) : Promise<void> {
-		await this.lock(async () => {
+		await this.setLock(async () => {
 			await this.storage.set({
 				key: this.keysURL,
 				value: stringify({})
@@ -48,7 +48,7 @@ export class NativeLocalStorageService extends LocalStorageService {
 		url: string,
 		_WAIT_FOR_READY: boolean
 	) : Promise<Uint8Array> {
-		return this.lock(async () => {
+		return this.setLock(async () => {
 			const value	= await this.storage.get({key: url});
 
 			if (typeof value !== 'string') {
@@ -61,12 +61,12 @@ export class NativeLocalStorageService extends LocalStorageService {
 
 	/** @inheritDoc */
 	protected async getKeysInternal (_WAIT_FOR_READY: boolean) : Promise<string[]> {
-		return this.lock(async () => Object.keys(await this.getKeysObject()));
+		return this.setLock(async () => Object.keys(await this.getKeysObject()));
 	}
 
 	/** @inheritDoc */
 	protected async removeItemInternal (url: string, _WAIT_FOR_READY: boolean) : Promise<void> {
-		await this.lock(async () => {
+		await this.setLock(async () => {
 			await this.storage.set({
 				key: this.keysURL,
 				value: stringify({
@@ -85,7 +85,7 @@ export class NativeLocalStorageService extends LocalStorageService {
 		value: Uint8Array,
 		_WAIT_FOR_READY: boolean
 	) : Promise<void> {
-		await this.lock(async () => {
+		await this.setLock(async () => {
 			await this.storage.set({
 				key: url,
 				value: potassiumUtil.toBase64(value)
