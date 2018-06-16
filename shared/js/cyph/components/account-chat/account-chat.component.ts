@@ -70,7 +70,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	/** @ignore */
 	private async navigate (...url: string[]) : Promise<void> {
 		this.destroyed	= true;
-		this.router.navigate([accountRoot, 'chat-transition']);
+		this.router.navigate([accountRoot, 'chat-transition'], {skipLocationChange: true});
 		await sleep(0);
 		this.router.navigate([accountRoot, ...url]);
 	}
