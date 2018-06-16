@@ -62,14 +62,16 @@ export class AccountChatService extends ChatService {
 		message?: IChatMessageLiveValue,
 		selfDestructTimeout?: number,
 		selfDestructChat?: boolean,
-		keepCurrentMessage?: boolean
+		keepCurrentMessage?: boolean,
+		oldLocalStorageKey?: string
 	) : Promise<void> {
 		await super.send(
 			messageType,
 			message,
 			selfDestructTimeout,
 			selfDestructChat,
-			keepCurrentMessage
+			keepCurrentMessage,
+			oldLocalStorageKey
 		);
 
 		if (!this.accountSessionService.remoteUser.value) {

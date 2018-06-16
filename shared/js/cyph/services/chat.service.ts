@@ -792,7 +792,8 @@ export class ChatService {
 		message: IChatMessageLiveValue = {},
 		selfDestructTimeout?: number,
 		selfDestructChat: boolean = false,
-		keepCurrentMessage: boolean = false
+		keepCurrentMessage: boolean = false,
+		oldLocalStorageKey?: string
 	) : Promise<void> {
 		const id	= uuid(true);
 
@@ -817,7 +818,8 @@ export class ChatService {
 					selfDestructChat,
 					selfDestructTimeout
 				}
-			).then(() =>
+			).then(() => oldLocalStorageKey ?
+				this.localStorageService.removeItem(oldLocalStorageKey) :
 				undefined
 			)
 		;
@@ -1077,10 +1079,10 @@ export class ChatService {
 									undefined
 							},
 							pendingMessage.selfDestructTimeout,
-							pendingMessage.selfDestructChat
+							pendingMessage.selfDestructChat,
+							undefined,
+							key
 						);
-
-						this.localStorageService.removeItem(key);
 					}
 				});
 			}
