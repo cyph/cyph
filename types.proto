@@ -466,6 +466,24 @@ message ChatMessageLine {
 	required uint32 smallScreenWidth = 4;
 }
 
+/** @see IChatMessageLiveValue */
+message ChatMessageLiveValueSerialized {
+	/** @see ChatMessageValue.calendarInvite */
+	CalendarInvite calendarInvite = 1;
+
+	/** @see ChatMessageValue.fileTransfer */
+	FileTransfer fileTransfer = 2;
+
+	/** @see ChatMessageValue.form */
+	Form form = 3;
+
+	/** @see ChatMessageValue.quill */
+	bytes quill = 4;
+
+	/** @see ChatMessageValue.text */
+	string text = 5;
+}
+
 /** Description of a predecessor message. */
 message ChatMessagePredecessor {
 	/** @see ChatMessage.hash */
@@ -496,6 +514,21 @@ message ChatMessageValue {
 		Appointment.RSVP rsvp = 4;
 		string text = 5;
 	}
+}
+
+/** Pending message data. */
+message ChatPendingMessage {
+	/** @see ChatMessageLiveValueSerialized */
+	required ChatMessageLiveValueSerialized message = 1;
+
+	/** @see ChatMessageValue.Types */
+	required ChatMessageValue.Types messageType = 2;
+
+	/** @see SessionText.selfDestructChat */
+	required bool selfDestructChat = 3;
+
+	/** @see ChatMessage.selfDestructTimeout */
+	uint32 selfDestructTimeout = 4;
 }
 
 /** Cryptocurrencies. */
@@ -826,6 +859,15 @@ message KeyPair {
 
 	/** Public key. */
 	required bytes publicKey = 2;
+}
+
+/** Local storage value. */
+message LocalStorageValue {
+	/** Timestamp. */
+	required double timestamp = 1;
+
+	/** Value. */
+	required bytes value = 2;
 }
 
 /** Push notification types. */

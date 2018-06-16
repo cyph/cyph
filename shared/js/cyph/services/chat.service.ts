@@ -16,11 +16,13 @@ import {
 	BinaryProto,
 	ChatMessage as ChatMessageProto,
 	ChatMessageValue,
+	ChatPendingMessage,
 	IChatLastConfirmedMessage,
 	IChatMessage,
 	IChatMessageLine,
 	IChatMessagePredecessor,
 	IChatMessageValue,
+	IChatPendingMessage,
 	ISessionMessageDataList
 } from '../proto';
 import {events, ISessionMessageAdditionalData, ISessionMessageData, rpcEvents} from '../session';
@@ -34,6 +36,7 @@ import {AnalyticsService} from './analytics.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
+import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {ScrollService} from './scroll.service';
@@ -571,6 +574,10 @@ export class ChatService {
 
 			await this.chat.messages.setItem(id, chatMessage);
 
+			if (author === this.sessionService.localUsername && this.chat.pendingMessageRoot) {
+				this.localStorageService.removeItem(`${this.chat.pendingMessageRoot}/${id}`);
+			}
+
 			return chatMessage;
 		})));
 
@@ -787,9 +794,32 @@ export class ChatService {
 		selfDestructChat: boolean = false,
 		keepCurrentMessage: boolean = false
 	) : Promise<void> {
+		const id	= uuid(true);
+
 		const value: IChatMessageValue				= {};
 		const currentMessage: IChatMessageLiveValue	=
 			keepCurrentMessage ? {} : this.chat.currentMessage
+		;
+
+		const localStoragePromise	= !this.chat.pendingMessageRoot ?
+			Promise.resolve() :
+			this.localStorageService.setItem<IChatPendingMessage>(
+				`${this.chat.pendingMessageRoot}/${id}`,
+				ChatPendingMessage,
+				{
+					message: {
+						...currentMessage,
+						quill: currentMessage.quill ?
+							msgpack.encode(currentMessage.quill) :
+							undefined
+					},
+					messageType,
+					selfDestructChat,
+					selfDestructTimeout
+				}
+			).then(() =>
+				undefined
+			)
 		;
 
 		switch (messageType) {
@@ -860,8 +890,6 @@ export class ChatService {
 				throw new Error('Invalid ChatMessageValue.Types value.');
 		}
 
-		const id	= uuid(true);
-
 		const dimensionsPromise	= (async () =>
 			(
 				await (await this.chatMessageGeometryService).getDimensions(new ChatMessage(
@@ -914,7 +942,8 @@ export class ChatService {
 		const chatMessagePromise	= Promise.all([
 			this.getAuthorID(this.sessionService.localUsername),
 			dimensionsPromise,
-			getTimestamp()
+			getTimestamp(),
+			localStoragePromise
 		]).then(async ([authorID, dimensions, timestamp]) : Promise<IChatMessage> => ({
 			authorID,
 			authorType: ChatMessage.AuthorTypes.Local,
@@ -973,6 +1002,9 @@ export class ChatService {
 		protected readonly dialogService: DialogService,
 
 		/** @ignore */
+		protected readonly localStorageService: LocalStorageService,
+
+		/** @ignore */
 		protected readonly notificationService: NotificationService,
 
 		/** @ignore */
@@ -1025,6 +1057,33 @@ export class ChatService {
 			})).subscribe(
 				this.chat.unconfirmedMessages
 			);
+
+			if (this.chat.pendingMessageRoot) {
+				this.localStorageService.getValues(
+					this.chat.pendingMessageRoot,
+					ChatPendingMessage,
+					true
+				).then(pendingMessages => {
+					for (const [key, pendingMessage] of pendingMessages) {
+						this.send(
+							pendingMessage.messageType,
+							{
+								...pendingMessage.message,
+								quill: (
+									pendingMessage.message.quill &&
+									pendingMessage.message.quill.length > 0
+								) ?
+									msgpack.decode(pendingMessage.message.quill) :
+									undefined
+							},
+							pendingMessage.selfDestructTimeout,
+							pendingMessage.selfDestructChat
+						);
+
+						this.localStorageService.removeItem(key);
+					}
+				});
+			}
 
 			beginChat.then(() => { this.begin(); });
 

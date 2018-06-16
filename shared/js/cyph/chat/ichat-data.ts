@@ -46,6 +46,9 @@ export interface IChatData {
 	/** Messages. Map keys are message IDs. */
 	messages: IAsyncMap<string, IChatMessage>;
 
+	/** Root of local storage path for pending message storage. */
+	pendingMessageRoot?: string;
+
 	/** Local message outbox. */
 	pendingMessages: LocalAsyncList<IChatMessage&{pending: true}>;
 

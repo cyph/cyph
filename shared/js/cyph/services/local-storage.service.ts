@@ -1,7 +1,9 @@
 import {Injectable} from '@angular/core';
 import {IProto} from '../iproto';
+import {LocalStorageValue} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {deserialize, serialize} from '../util/serialization';
+import {getTimestamp} from '../util/time';
 
 
 /**
@@ -18,6 +20,30 @@ export class LocalStorageService extends DataManagerService {
 	/** If true, localForage failed and we should stop bugging the user for permission. */
 	private setInternalFailed: boolean							= false;
 
+	/** @ignore */
+	private async getItemHelper<T> (
+		url: string,
+		proto: IProto<T>,
+		waitForReady: boolean
+	) : Promise<[T, number]> {
+		await this.pendingSets.get(url);
+
+		try {
+			this.cache.set(url, await this.getItemInternal(url, waitForReady));
+		}
+		catch {}
+
+		const data	= this.cache.get(url);
+
+		if (!(data instanceof Uint8Array)) {
+			throw new Error(`Item ${url} not found.`);
+		}
+
+		const {timestamp, value}	= await deserialize(LocalStorageValue, data);
+
+		return [await deserialize(proto, value), timestamp];
+	}
+
 	/** Interface to platform-specific clear functionality. */
 	protected async clearInternal (_WAIT_FOR_READY: boolean) : Promise<void> {
 		throw new Error('Must provide an implementation of LocalStorageService.clearInternal.');
@@ -29,6 +55,11 @@ export class LocalStorageService extends DataManagerService {
 		_WAIT_FOR_READY: boolean
 	) : Promise<Uint8Array> {
 		throw new Error('Must provide an implementation of LocalStorageService.getItemInternal.');
+	}
+
+	/** Interface to platform-specific getKeys functionality. */
+	protected async getKeysInternal (_WAIT_FOR_READY: boolean) : Promise<string[]> {
+		throw new Error('Must provide an implementation of LocalStorageService.getKeysInternal.');
 	}
 
 	/** Interface to platform-specific removeItem functionality. */
@@ -59,20 +90,44 @@ export class LocalStorageService extends DataManagerService {
 		proto: IProto<T>,
 		waitForReady: boolean = true
 	) : Promise<T> {
-		await this.pendingSets.get(url);
+		return (await this.getItemHelper(url, proto, waitForReady))[0];
+	}
 
-		try {
-			this.cache.set(url, await this.getItemInternal(url, waitForReady));
-		}
-		catch {}
+	/** Gets items. */
+	public async getItems <T> (
+		root: string|undefined,
+		proto: IProto<T>,
+		sortByTimestamp: boolean = false,
+		waitForReady: boolean = true
+	) : Promise<T[]> {
+		return (await this.getValues(root, proto, sortByTimestamp, waitForReady)).map(o => o[1]);
+	}
 
-		const value	= this.cache.get(url);
+	/** Gets keys. */
+	public async getKeys (root?: string, waitForReady: boolean = true) : Promise<string[]> {
+		const keys	= Array.from(new Set([
+			...Array.from(this.cache.keys()),
+			...(await this.getKeysInternal(waitForReady).catch(() => []))
+		]));
 
-		if (!(value instanceof Uint8Array)) {
-			throw new Error(`Item ${url} not found.`);
-		}
+		return root ? keys.filter(k => k.startsWith(`${root}/`)) : keys;
+	}
 
-		return deserialize(proto, value);
+	/** Gets values in the form [key, item, timestamp]. */
+	public async getValues <T> (
+		root: string|undefined,
+		proto: IProto<T>,
+		sortByTimestamp: boolean = false,
+		waitForReady: boolean = true
+	) : Promise<[string, T, number][]> {
+		const values	= await Promise.all((await this.getKeys(root, waitForReady)).map(
+			async (url) : Promise<[string, T, number]> => {
+				const [item, timestamp]	= await this.getItemHelper(url, proto, waitForReady);
+				return [url, item, timestamp];
+			}
+		));
+
+		return !sortByTimestamp ? values : values.sort((a, b) => a[2] - b[2]);
 	}
 
 	/** @inheritDoc */
@@ -89,7 +144,10 @@ export class LocalStorageService extends DataManagerService {
 		waitForReady: boolean = true
 	) : Promise<{url: string}> {
 		const promise	= (async () => {
-			const data	= await serialize(proto, value);
+			const data	= await serialize(LocalStorageValue, {
+				timestamp: await getTimestamp(),
+				value: await serialize(proto, value)
+			});
 
 			this.cache.set(url, data);
 
