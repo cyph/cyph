@@ -29,7 +29,7 @@ import {UrlSessionInitService} from '../../../cyph/services/url-session-init.ser
 import {WindowWatcherService} from '../../../cyph/services/window-watcher.service';
 import {events} from '../../../cyph/session/enums';
 import {random} from '../../../cyph/util/random';
-import {sleep} from '../../../cyph/util/wait';
+import {sleep, waitForIterable} from '../../../cyph/util/wait';
 import {AppService} from '../../app.service';
 import {ChatRootStates} from '../../enums';
 
@@ -118,7 +118,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 
 		const granim	= !this.envService.isWeb ?
 			undefined :
-			<{
+			await waitForIterable(() => $('#main-chat-gradient')).then(() => <{
 				changeState: (state: string) => void;
 				clear: () => void;
 				pause: () => void;
@@ -130,7 +130,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 				name: 'basic-gradient',
 				opacity: [1, 1],
 				states: granimStates
-			})
+			}))
 		;
 
 		if (granim) {
