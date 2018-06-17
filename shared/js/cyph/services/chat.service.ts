@@ -575,7 +575,7 @@ export class ChatService {
 			await this.chat.messages.setItem(id, chatMessage);
 
 			if (author === this.sessionService.localUsername && this.chat.pendingMessageRoot) {
-				this.localStorageService.removeItem(`${this.chat.pendingMessageRoot}/${id}`);
+				await this.localStorageService.removeItem(`${this.chat.pendingMessageRoot}/${id}`);
 			}
 
 			return chatMessage;
@@ -802,27 +802,7 @@ export class ChatService {
 			keepCurrentMessage ? {} : this.chat.currentMessage
 		;
 
-		const localStoragePromise	= !this.chat.pendingMessageRoot ?
-			Promise.resolve() :
-			this.localStorageService.setItem<IChatPendingMessage>(
-				`${this.chat.pendingMessageRoot}/${id}`,
-				ChatPendingMessage,
-				{
-					message: {
-						...currentMessage,
-						quill: currentMessage.quill ?
-							msgpack.encode(currentMessage.quill) :
-							undefined
-					},
-					messageType,
-					selfDestructChat,
-					selfDestructTimeout
-				}
-			).then(() => oldLocalStorageKey ?
-				this.localStorageService.removeItem(oldLocalStorageKey) :
-				undefined
-			)
-		;
+		let emptyValue	= false;
 
 		switch (messageType) {
 			case ChatMessageValue.Types.CalendarInvite:
@@ -833,7 +813,7 @@ export class ChatService {
 				currentMessage.calendarInvite	= undefined;
 
 				if (!value.calendarInvite) {
-					return;
+					emptyValue	= true;
 				}
 
 				break;
@@ -846,7 +826,7 @@ export class ChatService {
 				currentMessage.fileTransfer	= undefined;
 
 				if (!value.fileTransfer) {
-					return;
+					emptyValue	= true;
 				}
 
 				break;
@@ -856,7 +836,7 @@ export class ChatService {
 				currentMessage.form	= undefined;
 
 				if (!value.form) {
-					return;
+					emptyValue	= true;
 				}
 
 				break;
@@ -872,7 +852,7 @@ export class ChatService {
 				currentMessage.quill	= undefined;
 
 				if (!value.quill) {
-					return;
+					emptyValue	= true;
 				}
 
 				break;
@@ -883,7 +863,7 @@ export class ChatService {
 				this.messageChange();
 
 				if (!value.text) {
-					return;
+					emptyValue	= true;
 				}
 
 				break;
@@ -891,6 +871,29 @@ export class ChatService {
 			default:
 				throw new Error('Invalid ChatMessageValue.Types value.');
 		}
+
+		const removeOldStorageItem	= () => oldLocalStorageKey ?
+			this.localStorageService.removeItem(oldLocalStorageKey) :
+			undefined
+		;
+
+		if (emptyValue) {
+			return removeOldStorageItem();
+		}
+
+		const localStoragePromise	= !this.chat.pendingMessageRoot ?
+			Promise.resolve() :
+			this.localStorageService.setItem<IChatPendingMessage>(
+				`${this.chat.pendingMessageRoot}/${id}`,
+				ChatPendingMessage,
+				{
+					message: value,
+					messageType,
+					selfDestructChat,
+					selfDestructTimeout
+				}
+			).then(removeOldStorageItem)
+		;
 
 		const dimensionsPromise	= (async () =>
 			(
@@ -1033,8 +1036,9 @@ export class ChatService {
 		this.chat	= this.getDefaultChatData();
 
 		this.sessionService.ready.then(() => {
-			const beginChat	= this.sessionService.one(events.beginChat);
-			const callType	= this.sessionInitService.callType;
+			const beginChat				= this.sessionService.one(events.beginChat);
+			const callType				= this.sessionInitService.callType;
+			const pendingMessageRoot	= this.chat.pendingMessageRoot;
 
 			this.p2pWebRTCService.initialCallPending	= callType !== undefined;
 
@@ -1060,13 +1064,15 @@ export class ChatService {
 				this.chat.unconfirmedMessages
 			);
 
-			if (this.chat.pendingMessageRoot) {
-				this.localStorageService.getValues(
-					this.chat.pendingMessageRoot,
-					ChatPendingMessage,
-					true
-				).then(pendingMessages => {
-					for (const [key, pendingMessage] of pendingMessages) {
+			if (pendingMessageRoot) {
+				this.localStorageService.lock(pendingMessageRoot, async () => {
+					const pendingMessages	= await this.localStorageService.getValues(
+						pendingMessageRoot,
+						ChatPendingMessage,
+						true
+					);
+
+					await Promise.all(pendingMessages.map(async ([key, pendingMessage]) =>
 						this.send(
 							pendingMessage.messageType,
 							{
@@ -1082,8 +1088,8 @@ export class ChatService {
 							pendingMessage.selfDestructChat,
 							undefined,
 							key
-						);
-					}
+						)
+					));
 				});
 			}
 

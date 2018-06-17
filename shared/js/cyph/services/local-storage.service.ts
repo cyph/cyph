@@ -20,10 +20,10 @@ export class LocalStorageService extends DataManagerService {
 
 	/** Lock configuration settings. */
 	private readonly lockConfig									= {
-		claimDelay: 1000,
-		interval: 250,
+		claimDelay: 2500,
+		interval: 1000,
 		root: 'LocalStorageService-locks',
-		timeout: 5000
+		timeout: 60000
 	};
 
 	/** Used to prevent race condition getItem failures. */
