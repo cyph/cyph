@@ -45,7 +45,7 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 
 		const username: string	=
 			snapshot.params.username ||
-			(await this.accountContactsService.getContactUsername(snapshot.params.contactID))
+			(await this.accountContactsService.getContactUsername(snapshot.params.contactID).catch(() => undefined))
 		;
 
 		let userTypeFilter: AccountUserTypes|undefined	= data.userTypeFilter;

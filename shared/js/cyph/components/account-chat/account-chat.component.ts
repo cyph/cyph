@@ -187,16 +187,22 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 					return;
 				}
 
-				await this.accountChatService.setUser(
-					contactID.indexOf(',') > -1 ?
-						contactID.split(',') :
-						await this.accountContactsService.getContactUsername(contactID)
-					,
-					undefined,
-					callType,
-					sessionSubID,
-					ephemeralSubSession
-				);
+				try {
+					await this.accountChatService.setUser(
+						contactID.indexOf(',') > -1 ?
+							contactID.split(',') :
+							await this.accountContactsService.getContactUsername(contactID)
+						,
+						undefined,
+						callType,
+						sessionSubID,
+						ephemeralSubSession
+					);
+				}
+				catch {
+					this.router.navigate([accountRoot, '404']);
+					return;
+				}
 
 				if (callType === undefined) {
 					return;

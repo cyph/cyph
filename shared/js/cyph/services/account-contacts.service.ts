@@ -103,12 +103,14 @@ export class AccountContactsService {
 
 	/** Gets contact username based on ID. */
 	public readonly getContactUsername	= memoize(async (id?: string) : Promise<string> => {
-		return !id ? '' : this.accountDatabaseService.getItem(
+		if (!id) {
+			throw new Error('Invalid contact ID.');
+		}
+
+		return this.accountDatabaseService.getItem(
 			`contactUsernames/${id}`,
 			StringProto,
 			SecurityModels.unprotected
-		).catch(
-			() => ''
 		);
 	});
 
