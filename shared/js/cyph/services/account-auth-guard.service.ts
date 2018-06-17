@@ -58,8 +58,7 @@ export class AccountAuthGuardService implements CanActivate, CanActivateChild {
 		private readonly router: Router,
 
 		/** @ignore */
-		private readonly accountAuthService: AccountAuthService
-,
+		private readonly accountAuthService: AccountAuthService,
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService
