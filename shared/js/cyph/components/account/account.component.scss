@@ -109,6 +109,7 @@
 
 		&, > div > router-outlet ~ * {
 			height: 100%;
+			display: block;
 		}
 	}
 }
