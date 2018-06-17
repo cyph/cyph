@@ -24,6 +24,7 @@ import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
+import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {ScrollService} from './scroll.service';
@@ -53,22 +54,21 @@ export class AccountChatService extends ChatService {
 	}
 
 	/** @inheritDoc */
-	public async messageChange () : Promise<void> {}
-
-	/** @inheritDoc */
 	public async send (
 		messageType?: ChatMessageValue.Types,
 		message?: IChatMessageLiveValue,
 		selfDestructTimeout?: number,
 		selfDestructChat?: boolean,
-		keepCurrentMessage?: boolean
+		keepCurrentMessage?: boolean,
+		oldLocalStorageKey?: string
 	) : Promise<void> {
 		await super.send(
 			messageType,
 			message,
 			selfDestructTimeout,
 			selfDestructChat,
-			keepCurrentMessage
+			keepCurrentMessage,
+			oldLocalStorageKey
 		);
 
 		if (!this.accountSessionService.remoteUser.value) {
@@ -142,6 +142,7 @@ export class AccountChatService extends ChatService {
 						true,
 						true
 					),
+					pendingMessageRoot: `${url}/pendingMessages`,
 					pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
 					receiveTextLock: this.accountDatabaseService.lockFunction(
 						`${url}/receiveTextLock`
@@ -162,6 +163,7 @@ export class AccountChatService extends ChatService {
 		analyticsService: AnalyticsService,
 		databaseService: DatabaseService,
 		dialogService: DialogService,
+		localStorageService: LocalStorageService,
 		notificationService: NotificationService,
 		p2pWebRTCService: P2PWebRTCService,
 		potassiumService: PotassiumService,
@@ -190,6 +192,7 @@ export class AccountChatService extends ChatService {
 			analyticsService,
 			databaseService,
 			dialogService,
+			localStorageService,
 			notificationService,
 			p2pWebRTCService,
 			potassiumService,

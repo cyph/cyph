@@ -15,12 +15,16 @@ import {LockFunction} from '../lock-function-type';
 import {
 	BinaryProto,
 	ChatMessage as ChatMessageProto,
+	ChatMessageLiveValueSerialized,
 	ChatMessageValue,
+	ChatPendingMessage,
 	IChatLastConfirmedMessage,
 	IChatMessage,
 	IChatMessageLine,
+	IChatMessageLiveValueSerialized,
 	IChatMessagePredecessor,
 	IChatMessageValue,
+	IChatPendingMessage,
 	ISessionMessageDataList
 } from '../proto';
 import {events, ISessionMessageAdditionalData, ISessionMessageData, rpcEvents} from '../session';
@@ -34,6 +38,7 @@ import {AnalyticsService} from './analytics.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
+import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {ScrollService} from './scroll.service';
@@ -580,25 +585,34 @@ export class ChatService {
 
 		await this.chat.messageList.pushItem(newMessages.map(chatMessage => chatMessage.id));
 
-		await Promise.all(newMessages.map(async chatMessage => {
-			if (
-				chatMessage.hash &&
-				chatMessage.key &&
-				chatMessage.selfDestructTimeout !== undefined &&
-				!isNaN(chatMessage.selfDestructTimeout) &&
-				chatMessage.selfDestructTimeout > 0
-			) {
-				await sleep(chatMessage.selfDestructTimeout + 10000);
+		const pendingMessageRoot	= this.chat.pendingMessageRoot;
 
-				this.potassiumService.clearMemory(chatMessage.hash);
-				this.potassiumService.clearMemory(chatMessage.key);
+		await Promise.all([
+			...(!pendingMessageRoot ? [] : messageInputs.map(async ({author, id}) => {
+				if (author === this.sessionService.localUsername && pendingMessageRoot) {
+					await this.localStorageService.removeItem(`${pendingMessageRoot}/${id}`);
+				}
+			})),
+			...newMessages.map(async chatMessage => {
+				if (
+					chatMessage.hash &&
+					chatMessage.key &&
+					chatMessage.selfDestructTimeout !== undefined &&
+					!isNaN(chatMessage.selfDestructTimeout) &&
+					chatMessage.selfDestructTimeout > 0
+				) {
+					await sleep(chatMessage.selfDestructTimeout + 10000);
 
-				chatMessage.hash	= undefined;
-				chatMessage.key		= undefined;
+					this.potassiumService.clearMemory(chatMessage.hash);
+					this.potassiumService.clearMemory(chatMessage.key);
 
-				await this.chat.messages.setItem(chatMessage.id, chatMessage);
-			}
-		}));
+					chatMessage.hash	= undefined;
+					chatMessage.key		= undefined;
+
+					await this.chat.messages.setItem(chatMessage.id, chatMessage);
+				}
+			})
+		]);
 	}
 
 	/** Begins chat. */
@@ -754,11 +768,32 @@ export class ChatService {
 	}
 
 	/**
-	 * Checks for change to current message, and sends appropriate
-	 * typing indicator signals through session.
+	 * Handler for message change.
+	 *
+	 * In accounts, syncs current message to local storage.
+	 *
+	 * In ephemeral chat, checks for change to current message and
+	 * sends appropriate typing indicator signals through session.
 	 */
-	public async messageChange () : Promise<void> {
+	public async messageChange (isText: boolean = false) : Promise<void> {
 		return this.messageChangeLock(async () => {
+			if (this.chat.pendingMessageRoot) {
+				await this.localStorageService.setItem<IChatMessageLiveValueSerialized>(
+					`${this.chat.pendingMessageRoot}-live`,
+					ChatMessageLiveValueSerialized,
+					{
+						...this.chat.currentMessage,
+						quill: this.chat.currentMessage.quill ?
+							msgpack.encode({ops: this.chat.currentMessage.quill.ops}) :
+							undefined
+					}
+				);
+			}
+
+			if (!this.sessionInitService.ephemeral || !isText) {
+				return;
+			}
+
 			this.chat.previousMessage	= this.chat.currentMessage.text;
 
 			await sleep(this.outgoingMessageBatchDelay);
@@ -782,15 +817,24 @@ export class ChatService {
 	/* tslint:disable-next-line:cyclomatic-complexity */
 	public async send (
 		messageType: ChatMessageValue.Types = ChatMessageValue.Types.Text,
-		message: IChatMessageLiveValue = {},
+		message?: IChatMessageLiveValue,
 		selfDestructTimeout?: number,
 		selfDestructChat: boolean = false,
-		keepCurrentMessage: boolean = false
+		keepCurrentMessage?: boolean,
+		oldLocalStorageKey?: string
 	) : Promise<void> {
+		if (keepCurrentMessage === undefined) {
+			keepCurrentMessage	= message !== undefined;
+		}
+
+		const id	= uuid(true);
+
 		const value: IChatMessageValue				= {};
 		const currentMessage: IChatMessageLiveValue	=
 			keepCurrentMessage ? {} : this.chat.currentMessage
 		;
+
+		let emptyValue	= false;
 
 		switch (messageType) {
 			case ChatMessageValue.Types.CalendarInvite:
@@ -801,7 +845,7 @@ export class ChatService {
 				currentMessage.calendarInvite	= undefined;
 
 				if (!value.calendarInvite) {
-					return;
+					emptyValue	= true;
 				}
 
 				break;
@@ -814,7 +858,7 @@ export class ChatService {
 				currentMessage.fileTransfer	= undefined;
 
 				if (!value.fileTransfer) {
-					return;
+					emptyValue	= true;
 				}
 
 				break;
@@ -824,7 +868,7 @@ export class ChatService {
 				currentMessage.form	= undefined;
 
 				if (!value.form) {
-					return;
+					emptyValue	= true;
 				}
 
 				break;
@@ -840,7 +884,7 @@ export class ChatService {
 				currentMessage.quill	= undefined;
 
 				if (!value.quill) {
-					return;
+					emptyValue	= true;
 				}
 
 				break;
@@ -851,7 +895,7 @@ export class ChatService {
 				this.messageChange();
 
 				if (!value.text) {
-					return;
+					emptyValue	= true;
 				}
 
 				break;
@@ -860,7 +904,30 @@ export class ChatService {
 				throw new Error('Invalid ChatMessageValue.Types value.');
 		}
 
-		const id	= uuid(true);
+		const removeOldStorageItem	= () => oldLocalStorageKey ?
+			this.localStorageService.removeItem(oldLocalStorageKey) :
+			undefined
+		;
+
+		if (emptyValue) {
+			return removeOldStorageItem();
+		}
+
+		const localStoragePromise	= !this.chat.pendingMessageRoot ?
+			Promise.resolve() :
+			this.localStorageService.setItem<IChatPendingMessage>(
+				`${this.chat.pendingMessageRoot}/${id}`,
+				ChatPendingMessage,
+				{
+					message: value,
+					messageType,
+					selfDestructChat,
+					selfDestructTimeout
+				}
+			).then(
+				removeOldStorageItem
+			)
+		;
 
 		const dimensionsPromise	= (async () =>
 			(
@@ -914,7 +981,8 @@ export class ChatService {
 		const chatMessagePromise	= Promise.all([
 			this.getAuthorID(this.sessionService.localUsername),
 			dimensionsPromise,
-			getTimestamp()
+			getTimestamp(),
+			localStoragePromise
 		]).then(async ([authorID, dimensions, timestamp]) : Promise<IChatMessage> => ({
 			authorID,
 			authorType: ChatMessage.AuthorTypes.Local,
@@ -973,6 +1041,9 @@ export class ChatService {
 		protected readonly dialogService: DialogService,
 
 		/** @ignore */
+		protected readonly localStorageService: LocalStorageService,
+
+		/** @ignore */
 		protected readonly notificationService: NotificationService,
 
 		/** @ignore */
@@ -999,8 +1070,9 @@ export class ChatService {
 		this.chat	= this.getDefaultChatData();
 
 		this.sessionService.ready.then(() => {
-			const beginChat	= this.sessionService.one(events.beginChat);
-			const callType	= this.sessionInitService.callType;
+			const beginChat				= this.sessionService.one(events.beginChat);
+			const callType				= this.sessionInitService.callType;
+			const pendingMessageRoot	= this.chat.pendingMessageRoot;
 
 			this.p2pWebRTCService.initialCallPending	= callType !== undefined;
 
@@ -1025,6 +1097,72 @@ export class ChatService {
 			})).subscribe(
 				this.chat.unconfirmedMessages
 			);
+
+			if (pendingMessageRoot) {
+				this.localStorageService.getItem(
+					`${this.chat.pendingMessageRoot}-live`,
+					ChatMessageLiveValueSerialized
+				).then(messageLiveValue => {
+					this.chat.currentMessage.calendarInvite	=
+						this.chat.currentMessage.calendarInvite ||
+						messageLiveValue.calendarInvite
+					;
+
+					this.chat.currentMessage.fileTransfer	=
+						this.chat.currentMessage.fileTransfer ||
+						messageLiveValue.fileTransfer
+					;
+
+					this.chat.currentMessage.form			=
+						this.chat.currentMessage.form ||
+						messageLiveValue.form
+					;
+
+					this.chat.currentMessage.quill			=
+						this.chat.currentMessage.quill ||
+						(
+							messageLiveValue.quill &&
+							messageLiveValue.quill.length > 0
+						) ?
+							{ops: msgpack.decode(messageLiveValue.quill)} :
+							undefined
+					;
+
+					this.chat.currentMessage.text			=
+						this.chat.currentMessage.text ||
+						messageLiveValue.text
+					;
+				}).catch(
+					() => {}
+				);
+
+				this.localStorageService.lock(pendingMessageRoot, async () => {
+					const pendingMessages	= await this.localStorageService.getValues(
+						pendingMessageRoot,
+						ChatPendingMessage,
+						true
+					);
+
+					await Promise.all(pendingMessages.map(async ([key, pendingMessage]) =>
+						this.send(
+							pendingMessage.messageType,
+							{
+								...pendingMessage.message,
+								quill: (
+									pendingMessage.message.quill &&
+									pendingMessage.message.quill.length > 0
+								) ?
+									{ops: msgpack.decode(pendingMessage.message.quill)} :
+									undefined
+							},
+							pendingMessage.selfDestructTimeout,
+							pendingMessage.selfDestructChat,
+							true,
+							key
+						)
+					));
+				});
+			}
 
 			beginChat.then(() => { this.begin(); });
 

@@ -18,6 +18,7 @@
 			fxFlexFill
 			name='calendar-invite-message'
 			[(ngModel)]='chatService.chat.currentMessage.calendarInvite'
+			(ngModelChange)='chatService.messageChange()'
 			[followUp]='calendarInviteFollowUp'
 			[reasons]='calendarInviteReasons'
 			*ngIf='!inheritsNgForm'
@@ -26,6 +27,7 @@
 			fxFlexFill
 			name='calendar-invite-message'
 			[(ngModel)]='chatService.chat.currentMessage.calendarInvite'
+			(ngModelChange)='chatService.messageChange()'
 			[followUp]='calendarInviteFollowUp'
 			[reasons]='calendarInviteReasons'
 			*ngIf='inheritsNgForm'
@@ -63,6 +65,7 @@
 			fxFlexFill
 			name='quill-message'
 			[(ngModel)]='chatService.chat.currentMessage.quill'
+			(ngModelChange)='chatService.messageChange()'
 		></cyph-quill>
 	</div>
 
@@ -78,7 +81,7 @@
 				class='message-box tabIndent'
 				name='text-message'
 				[(ngModel)]='chatService.chat.currentMessage.text'
-				(ngModelChange)='chatService.messageChange()'
+				(ngModelChange)='chatService.messageChange(true)'
 				placeholder='Send a secure message...'
 				cyphTranslate
 			></textarea>

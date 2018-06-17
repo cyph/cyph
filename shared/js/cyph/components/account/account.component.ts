@@ -61,11 +61,14 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 	/** Indicates whether section should take up 100% width. */
 	public get fullWidth () : boolean {
-		return this.accountDatabaseService.currentUser.value !== undefined && [
-			'wallets'
-		].find(
-			path => this.route === path
-		) !== undefined;
+		return this.envService.isMobile || (
+			this.accountDatabaseService.currentUser.value !== undefined && [
+				'messages',
+				'wallets'
+			].find(
+				path => this.route === path
+			) !== undefined
+		);
 	}
 
 	/** Indicates whether menu should be displayed. */

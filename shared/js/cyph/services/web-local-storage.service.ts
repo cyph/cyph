@@ -50,6 +50,15 @@ export class WebLocalStorageService extends LocalStorageService {
 	}
 
 	/** @inheritDoc */
+	protected async getKeysInternal (waitForReady: boolean) : Promise<string[]> {
+		if (waitForReady) {
+			await this.ready;
+		}
+
+		return localforage.keys();
+	}
+
+	/** @inheritDoc */
 	protected async removeItemInternal (url: string, waitForReady: boolean) : Promise<void> {
 		if (waitForReady) {
 			await this.ready;

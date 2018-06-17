@@ -4,6 +4,7 @@ import {usernameMask} from '../../account';
 import {BinaryProto, BooleanProto, StringProto} from '../../proto';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
+import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {PotassiumService} from '../../services/crypto/potassium.service';
 import {EnvService} from '../../services/env.service';
 import {LocalStorageService} from '../../services/local-storage.service';
@@ -74,6 +75,13 @@ export class AccountLoginComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		if (
+			this.accountDatabaseService.currentUser.value &&
+			this.accountDatabaseService.currentUser.value.user
+		) {
+			return this.postLogin();
+		}
+
 		try {
 			this.pinIsCustom	= await this.localStorageService.getItem(
 				'pinIsCustom',
@@ -161,6 +169,9 @@ export class AccountLoginComponent implements OnInit {
 
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,

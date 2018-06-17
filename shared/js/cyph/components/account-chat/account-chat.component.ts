@@ -70,7 +70,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	/** @ignore */
 	private async navigate (...url: string[]) : Promise<void> {
 		this.destroyed	= true;
-		this.router.navigate([accountRoot, 'chat-transition']);
+		this.router.navigate([accountRoot, 'chat-transition'], {skipLocationChange: true});
 		await sleep(0);
 		this.router.navigate([accountRoot, ...url]);
 	}
@@ -187,16 +187,22 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 					return;
 				}
 
-				await this.accountChatService.setUser(
-					contactID.indexOf(',') > -1 ?
-						contactID.split(',') :
-						await this.accountContactsService.getContactUsername(contactID)
-					,
-					undefined,
-					callType,
-					sessionSubID,
-					ephemeralSubSession
-				);
+				try {
+					await this.accountChatService.setUser(
+						contactID.indexOf(',') > -1 ?
+							contactID.split(',') :
+							await this.accountContactsService.getContactUsername(contactID)
+						,
+						undefined,
+						callType,
+						sessionSubID,
+						ephemeralSubSession
+					);
+				}
+				catch {
+					this.router.navigate([accountRoot, '404']);
+					return;
+				}
 
 				if (callType === undefined) {
 					return;

@@ -664,9 +664,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const url	= await urlPromise;
 
 		return this.ngZone.runOutsideAngular(async () => {
-			const listRef	= await this.getDatabaseRef(url);
-			const itemRef	= await listRef.push({timestamp: ServerValue.TIMESTAMP}).then();
-			const key		= itemRef.key;
+			const listRef				= await this.getDatabaseRef(url);
+
+			const initialItemRef		= listRef.push({timestamp: ServerValue.TIMESTAMP});
+			const itemRefOnDisconnect	= initialItemRef.onDisconnect();
+
+			itemRefOnDisconnect.remove();
+
+			const itemRef				= await initialItemRef.then();
+			const key					= itemRef.key;
 
 			if (!key) {
 				throw new Error(`Failed to push item to ${url}.`);
@@ -699,6 +705,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			}
 
 			const result	= await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);
+			await itemRefOnDisconnect.cancel();
 
 			if (o.callback) {
 				await o.callback();

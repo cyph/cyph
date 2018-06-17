@@ -2,7 +2,7 @@ import {IQuillDelta} from '../iquill-delta';
 import {ICalendarInvite, IFileTransfer, IForm} from '../proto';
 
 
-/** @inheritDoc */
+/** Message value for live editing. */
 export interface IChatMessageLiveValue {
 	/** @see IChatMessageValue.calendarInvite */
 	calendarInvite?: ICalendarInvite;
