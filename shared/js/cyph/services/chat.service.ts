@@ -15,11 +15,13 @@ import {LockFunction} from '../lock-function-type';
 import {
 	BinaryProto,
 	ChatMessage as ChatMessageProto,
+	ChatMessageLiveValueSerialized,
 	ChatMessageValue,
 	ChatPendingMessage,
 	IChatLastConfirmedMessage,
 	IChatMessage,
 	IChatMessageLine,
+	IChatMessageLiveValueSerialized,
 	IChatMessagePredecessor,
 	IChatMessageValue,
 	IChatPendingMessage,
@@ -574,10 +576,6 @@ export class ChatService {
 
 			await this.chat.messages.setItem(id, chatMessage);
 
-			if (author === this.sessionService.localUsername && this.chat.pendingMessageRoot) {
-				await this.localStorageService.removeItem(`${this.chat.pendingMessageRoot}/${id}`);
-			}
-
 			return chatMessage;
 		})));
 
@@ -587,25 +585,34 @@ export class ChatService {
 
 		await this.chat.messageList.pushItem(newMessages.map(chatMessage => chatMessage.id));
 
-		await Promise.all(newMessages.map(async chatMessage => {
-			if (
-				chatMessage.hash &&
-				chatMessage.key &&
-				chatMessage.selfDestructTimeout !== undefined &&
-				!isNaN(chatMessage.selfDestructTimeout) &&
-				chatMessage.selfDestructTimeout > 0
-			) {
-				await sleep(chatMessage.selfDestructTimeout + 10000);
+		const pendingMessageRoot	= this.chat.pendingMessageRoot;
 
-				this.potassiumService.clearMemory(chatMessage.hash);
-				this.potassiumService.clearMemory(chatMessage.key);
+		await Promise.all([
+			...(!pendingMessageRoot ? [] : messageInputs.map(async ({author, id}) => {
+				if (author === this.sessionService.localUsername && pendingMessageRoot) {
+					await this.localStorageService.removeItem(`${pendingMessageRoot}/${id}`);
+				}
+			})),
+			...newMessages.map(async chatMessage => {
+				if (
+					chatMessage.hash &&
+					chatMessage.key &&
+					chatMessage.selfDestructTimeout !== undefined &&
+					!isNaN(chatMessage.selfDestructTimeout) &&
+					chatMessage.selfDestructTimeout > 0
+				) {
+					await sleep(chatMessage.selfDestructTimeout + 10000);
 
-				chatMessage.hash	= undefined;
-				chatMessage.key		= undefined;
+					this.potassiumService.clearMemory(chatMessage.hash);
+					this.potassiumService.clearMemory(chatMessage.key);
 
-				await this.chat.messages.setItem(chatMessage.id, chatMessage);
-			}
-		}));
+					chatMessage.hash	= undefined;
+					chatMessage.key		= undefined;
+
+					await this.chat.messages.setItem(chatMessage.id, chatMessage);
+				}
+			})
+		]);
 	}
 
 	/** Begins chat. */
@@ -761,11 +768,32 @@ export class ChatService {
 	}
 
 	/**
-	 * Checks for change to current message, and sends appropriate
-	 * typing indicator signals through session.
+	 * Handler for message change.
+	 *
+	 * In accounts, syncs current message to local storage.
+	 *
+	 * In ephemeral chat, checks for change to current message and
+	 * sends appropriate typing indicator signals through session.
 	 */
-	public async messageChange () : Promise<void> {
+	public async messageChange (isText: boolean = false) : Promise<void> {
 		return this.messageChangeLock(async () => {
+			if (this.chat.pendingMessageRoot) {
+				await this.localStorageService.setItem<IChatMessageLiveValueSerialized>(
+					`${this.chat.pendingMessageRoot}-live`,
+					ChatMessageLiveValueSerialized,
+					{
+						...this.chat.currentMessage,
+						quill: this.chat.currentMessage.quill ?
+							msgpack.encode({ops: this.chat.currentMessage.quill.ops}) :
+							undefined
+					}
+				);
+			}
+
+			if (!this.sessionInitService.ephemeral || !isText) {
+				return;
+			}
+
 			this.chat.previousMessage	= this.chat.currentMessage.text;
 
 			await sleep(this.outgoingMessageBatchDelay);
@@ -789,12 +817,16 @@ export class ChatService {
 	/* tslint:disable-next-line:cyclomatic-complexity */
 	public async send (
 		messageType: ChatMessageValue.Types = ChatMessageValue.Types.Text,
-		message: IChatMessageLiveValue = {},
+		message?: IChatMessageLiveValue,
 		selfDestructTimeout?: number,
 		selfDestructChat: boolean = false,
-		keepCurrentMessage: boolean = false,
+		keepCurrentMessage?: boolean,
 		oldLocalStorageKey?: string
 	) : Promise<void> {
+		if (keepCurrentMessage === undefined) {
+			keepCurrentMessage	= message !== undefined;
+		}
+
 		const id	= uuid(true);
 
 		const value: IChatMessageValue				= {};
@@ -892,7 +924,9 @@ export class ChatService {
 					selfDestructChat,
 					selfDestructTimeout
 				}
-			).then(removeOldStorageItem)
+			).then(
+				removeOldStorageItem
+			)
 		;
 
 		const dimensionsPromise	= (async () =>
@@ -1065,6 +1099,43 @@ export class ChatService {
 			);
 
 			if (pendingMessageRoot) {
+				this.localStorageService.getItem(
+					`${this.chat.pendingMessageRoot}-live`,
+					ChatMessageLiveValueSerialized
+				).then(messageLiveValue => {
+					this.chat.currentMessage.calendarInvite	=
+						this.chat.currentMessage.calendarInvite ||
+						messageLiveValue.calendarInvite
+					;
+
+					this.chat.currentMessage.fileTransfer	=
+						this.chat.currentMessage.fileTransfer ||
+						messageLiveValue.fileTransfer
+					;
+
+					this.chat.currentMessage.form			=
+						this.chat.currentMessage.form ||
+						messageLiveValue.form
+					;
+
+					this.chat.currentMessage.quill			=
+						this.chat.currentMessage.quill ||
+						(
+							messageLiveValue.quill &&
+							messageLiveValue.quill.length > 0
+						) ?
+							{ops: msgpack.decode(messageLiveValue.quill)} :
+							undefined
+					;
+
+					this.chat.currentMessage.text			=
+						this.chat.currentMessage.text ||
+						messageLiveValue.text
+					;
+				}).catch(
+					() => {}
+				);
+
 				this.localStorageService.lock(pendingMessageRoot, async () => {
 					const pendingMessages	= await this.localStorageService.getValues(
 						pendingMessageRoot,
@@ -1081,12 +1152,12 @@ export class ChatService {
 									pendingMessage.message.quill &&
 									pendingMessage.message.quill.length > 0
 								) ?
-									msgpack.decode(pendingMessage.message.quill) :
+									{ops: msgpack.decode(pendingMessage.message.quill)} :
 									undefined
 							},
 							pendingMessage.selfDestructTimeout,
 							pendingMessage.selfDestructChat,
-							undefined,
+							true,
 							key
 						)
 					));
