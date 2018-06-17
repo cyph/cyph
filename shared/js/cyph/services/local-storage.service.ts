@@ -3,6 +3,7 @@ import {BehaviorSubject} from 'rxjs';
 import {IProto} from '../iproto';
 import {BinaryProto, LocalStorageLockMetadata, LocalStorageValue} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
+import {filterUndefined} from '../util/filter';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -136,11 +137,11 @@ export class LocalStorageService extends DataManagerService {
 		sortByTimestamp: boolean = false,
 		waitForReady: boolean = true
 	) : Promise<[string, T, number][]> {
-		const values	= await Promise.all(
+		const values	= filterUndefined(await Promise.all(
 			(await this.getKeys(root, waitForReady)).map(async url =>
-				this.getValue(url, proto, waitForReady)
+				this.getValue(url, proto, waitForReady).catch(() => undefined)
 			)
-		);
+		));
 
 		return !sortByTimestamp ? values : values.sort((a, b) => a[2] - b[2]);
 	}
