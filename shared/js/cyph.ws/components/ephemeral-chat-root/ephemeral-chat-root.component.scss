@@ -5,3 +5,7 @@ a.affiliate {
 	font-weight: 200;
 	font-size: 0.9em;
 }
+
+:host > span.initiating > cyph-chat-cyphertext {
+	display: none;
+}

@@ -157,6 +157,7 @@ export class AccountChatService extends ChatService {
 		;
 
 		await this.accountSessionService.setUser(username, sessionSubID, ephemeralSubSession);
+		this.resolvers.chatConnected.resolve();
 	}
 
 	constructor (

@@ -161,6 +161,24 @@ export class ChatService {
 	/** Indicates whether the chat is ready to be displayed. */
 	public initiated: boolean				= false;
 
+	/** Sub-resolvables of uiReady. */
+	public readonly resolvers				= {
+		chatConnected: resolvable(),
+		currentMessageSynced: resolvable(),
+		messageListLoaded: resolvable()
+	};
+
+	/** Resolves when UI is ready to be displayed. */
+	public readonly uiReady: Promise<true>	=
+		Promise.all([
+			this.resolvers.chatConnected.promise,
+			this.resolvers.currentMessageSynced.promise,
+			this.resolvers.messageListLoaded.promise
+		]).then<true>(() =>
+			true
+		)
+	;
+
 	/** Indicates whether "walkie talkie" mode is enabled for calls. */
 	public walkieTalkieMode: boolean		= false;
 
@@ -668,6 +686,7 @@ export class ChatService {
 			}
 
 			this.initiated	= true;
+			this.resolvers.chatConnected.resolve();
 		}
 
 		this.chat.isConnected	= true;
@@ -1134,7 +1153,9 @@ export class ChatService {
 					;
 				}).catch(
 					() => {}
-				);
+				).then(() => {
+					this.resolvers.currentMessageSynced.resolve();
+				});
 
 				this.localStorageService.lock(pendingMessageRoot, async () => {
 					const pendingMessages	= await this.localStorageService.getValues(
@@ -1162,6 +1183,9 @@ export class ChatService {
 						)
 					));
 				});
+			}
+			else {
+				this.resolvers.currentMessageSynced.resolve();
 			}
 
 			beginChat.then(() => { this.begin(); });

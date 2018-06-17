@@ -1,4 +1,12 @@
-<div fxFlexFill fxLayoutAlign='center center' class='cyph-foreground'>
+<div
+	fxFlexFill
+	fxLayoutAlign='center center'
+	class='cyph-foreground'
+	[class.initiating]='
+		accountChatService.chat.state === states.chat &&
+		(accountChatService.uiReady | async) !== true
+	'
+>
 	<div
 		[fxFlex]='envService.isMobile ? 100 : 95'
 		fxFlexFill
@@ -49,4 +57,12 @@
 			</cyph-chat-main>
 		</ng-template>
 	</div>
+
+	<mat-progress-spinner
+		mode='indeterminate'
+		*ngIf='
+			accountChatService.chat.state === states.chat &&
+			(accountChatService.uiReady | async) !== true
+		'
+	></mat-progress-spinner>
 </div>

@@ -13,7 +13,7 @@ import * as $ from 'jquery';
 /* import {IVirtualScrollOptions} from 'od-virtualscroll'; */
 /* import ResizeObserver from 'resize-observer-polyfill'; */
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {fadeInOut} from '../../animations';
 import {ChatMessage, IChatData, IVsItem, UiStyles} from '../../chat';
@@ -21,6 +21,7 @@ import {IChatMessage} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 /* import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service'; */
+import {ChatService} from '../../services/chat.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {P2PService} from '../../services/p2p.service';
@@ -160,6 +161,10 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
+		this.initialScrollDown.pipe(filter(b => !b), take(1)).toPromise().then(() => {
+			this.chatService.resolvers.messageListLoaded.resolve();
+		});
+
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
@@ -328,6 +333,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		/* @ignore
 		private readonly chatMessageGeometryService: ChatMessageGeometryService,
 		*/
+
+		/** @ignore */
+		private readonly chatService: ChatService,
 
 		/** @ignore */
 		private readonly envService: EnvService,

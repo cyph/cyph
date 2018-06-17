@@ -77,14 +77,17 @@ section {
 
 .initiating {
 	overflow-y: hidden !important;
-	pointer-events: none !important;
 
-	> :first-child {
+	> :first-child:not(mat-progress-spinner) {
 		opacity: 0.5 !important;
+
+		&, * {
+			pointer-events: none !important;
+		}
 	}
 
 	> mat-progress-spinner:not(.custom) {
-		z-index: 1;
+		z-index: 10;
 
 		@include spinner-center;
 	}

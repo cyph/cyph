@@ -78,6 +78,9 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 	/** @see ChatRootStates */
 	public readonly chatRootStates: typeof ChatRootStates	= ChatRootStates;
 
+	/** @see ChatStates */
+	public readonly chatStates: typeof ChatStates			= ChatStates;
+
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
 		await sleep(0);

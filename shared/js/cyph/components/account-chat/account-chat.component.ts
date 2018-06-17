@@ -3,7 +3,7 @@ import {ActivatedRoute, NavigationEnd, Router, UrlSegment} from '@angular/router
 import {BehaviorSubject, combineLatest, concat, of} from 'rxjs';
 import {filter, mergeMap, take} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
-import {UiStyles} from '../../chat/enums';
+import {States, UiStyles} from '../../chat/enums';
 import {AccountFileRecord, CallTypes, ChatMessageValue, IAppointment} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
@@ -60,6 +60,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	public readonly promptFollowup: BehaviorSubject<string|undefined>	=
 		new BehaviorSubject<string|undefined>(undefined)
 	;
+
+	/** @see States */
+	public readonly states: typeof States								= States;
 
 	/** @see UiStyles */
 	public readonly uiStyles: typeof UiStyles							= UiStyles;
@@ -248,9 +251,6 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		private readonly router: Router,
 
 		/** @ignore */
-		private readonly accountChatService: AccountChatService,
-
-		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
 
 		/** @see AccountService */
@@ -258,6 +258,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
+
+		/** @see AccountChatService */
+		public readonly accountChatService: AccountChatService,
 
 		/** @see AccountContactsService */
 		public readonly accountContactsService: AccountContactsService,
