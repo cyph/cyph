@@ -83,20 +83,6 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** @ignore */
 	private async setUser (username?: string) : Promise<void> {
-		if (
-			!this.accountDatabaseService.currentUser.value &&
-			await this.accountAuthService.hasSavedCredentials()
-		) {
-			this.router.navigate(username ?
-				[accountRoot, 'login'].
-					concat(accountRoot ? [accountRoot] : []).
-					concat(['profile', username])
-				:
-				[accountRoot, 'login'].concat(this.home ? [] : ['profile'])
-			);
-			return;
-		}
-
 		try {
 			if (username) {
 				this.isContact	= this.accountContactsService.watchIfContact(username);
