@@ -111,6 +111,27 @@ export class Config {
 					works: {id: 2}
 				}
 			},
+			ephemeral: {
+				id: 4,
+				items: {
+					businessAnnual: {
+						id: 4,
+						subscriptionType: SubscriptionTypes.annual
+					},
+					businessMonthly: {
+						id: 3,
+						subscriptionType: SubscriptionTypes.monthly
+					},
+					proAnnual: {
+						id: 2,
+						subscriptionType: SubscriptionTypes.annual
+					},
+					proMonthly: {
+						id: 1,
+						subscriptionType: SubscriptionTypes.monthly
+					}
+				}
+			},
 			individual: {
 				id: 1,
 				items: {
