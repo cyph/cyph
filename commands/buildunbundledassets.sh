@@ -31,6 +31,7 @@ uglify () {
 
 		uglifyjs "${@}" -b
 	elif [ "${1}" == '-cm' ] ; then
+		shift
 		uglifyjs "${@}" -cm
 	else
 		uglifyjs "${@}"
