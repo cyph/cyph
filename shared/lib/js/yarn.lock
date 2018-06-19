@@ -175,7 +175,7 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/cdk@^6", "@angular/cdk@^6.3.0":
+"@angular/cdk@^6.3.0":
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-6.3.0.tgz#fd914e4e145e48db1d51f38012178b97ddb78772"
   dependencies:
@@ -219,12 +219,6 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/common@^6":
-  version "6.0.5"
-  resolved "https://registry.yarnpkg.com/@angular/common/-/common-6.0.5.tgz#7960e1cfc180afb4a1bd56371c48840173cc5a92"
-  dependencies:
-    tslib "^1.9.0"
-
 "@angular/common@^6.1.0-beta.1":
   version "6.1.0-beta.1"
   resolved "https://registry.yarnpkg.com/@angular/common/-/common-6.1.0-beta.1.tgz#d32a49e127e0b51a229fc4d2fb17a5c7b44a7932"
@@ -258,12 +252,6 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/core@^6":
-  version "6.0.5"
-  resolved "https://registry.yarnpkg.com/@angular/core/-/core-6.0.5.tgz#5846f1b3143f43657dc704fe4bcf9e75b94ec325"
-  dependencies:
-    tslib "^1.9.0"
-
 "@angular/core@^6.1.0-beta.1":
   version "6.1.0-beta.1"
   resolved "https://registry.yarnpkg.com/@angular/core/-/core-6.1.0-beta.1.tgz#c3beabba35dc2d784cc90e23d901229dff131c30"
@@ -287,12 +275,6 @@
   resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-5.2.11.tgz#712534fa317e194caa452d0c1a8efc72f5e040d6"
   dependencies:
     tslib "^1.7.1"
-
-"@angular/forms@^6":
-  version "6.0.5"
-  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-6.0.5.tgz#d3ec7886d8b61a97b2c0b7501b304b449a2dcae6"
-  dependencies:
-    tslib "^1.9.0"
 
 "@angular/forms@^6.1.0-beta.1":
   version "6.1.0-beta.1"
@@ -318,7 +300,7 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/material@^6", "@angular/material@^6.3.0":
+"@angular/material@^6.3.0":
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/@angular/material/-/material-6.3.0.tgz#c78ca3c0d9651d4d8786b9693a83dca0916cfe01"
   dependencies:
@@ -341,12 +323,6 @@
   resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-5.2.11.tgz#5be379f96d74b4ebe84a447633ed5279cb7e641e"
   dependencies:
     tslib "^1.7.1"
-
-"@angular/platform-browser@^6":
-  version "6.0.5"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-6.0.5.tgz#b6b15424a7aa9342284ce7fba6a700f7aad2fd9c"
-  dependencies:
-    tslib "^1.9.0"
 
 "@angular/platform-browser@^6.1.0-beta.1":
   version "6.1.0-beta.1"
@@ -1758,16 +1734,9 @@ angular-material-clock-time-picker@^0.0.12:
     rxjs "^5.4.2"
     zone.js "^0.8.14"
 
-angular-speed-dial@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/angular-speed-dial/-/angular-speed-dial-6.0.0.tgz#7ad520844a5f9aa0de11f757de56b09e1167b68f"
-  dependencies:
-    "@angular/cdk" "^6"
-    "@angular/common" "^6"
-    "@angular/core" "^6"
-    "@angular/forms" "^6"
-    "@angular/material" "^6"
-    "@angular/platform-browser" "^6"
+angular-speed-dial@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/angular-speed-dial/-/angular-speed-dial-6.1.0.tgz#419c5fcf3ec4493d22125e0b031bf1ca5fa90856"
 
 angular-ssr@^0.10.40:
   version "0.10.40"
@@ -2249,9 +2218,9 @@ autoprefixer@^8.0.0, autoprefixer@^8.4.1:
     postcss "^6.0.22"
     postcss-value-parser "^3.2.3"
 
-awesome-typescript-loader@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/awesome-typescript-loader/-/awesome-typescript-loader-5.1.0.tgz#36879ced2b16311dfa1e1e4200a583cea7a03671"
+awesome-typescript-loader@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/awesome-typescript-loader/-/awesome-typescript-loader-5.1.1.tgz#8669c3d64d4c910e6df36b40c45cba6c0a926d57"
   dependencies:
     chalk "^2.4.1"
     enhanced-resolve "^4.0.0"
@@ -2260,6 +2229,7 @@ awesome-typescript-loader@^5.1.0:
     micromatch "^3.1.9"
     mkdirp "^0.5.1"
     source-map-support "^0.5.3"
+    webpack-log "^1.2.0"
 
 aws-sign2@~0.6.0:
   version "0.6.0"
@@ -5551,8 +5521,8 @@ errno@^0.1.1, errno@^0.1.3, errno@~0.1.7:
     prr "~1.0.1"
 
 error-ex@^1.2.0, error-ex@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/error-ex/-/error-ex-1.3.1.tgz#f855a86ce61adc4e8621c3cda21e7a7612c3a8dc"
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/error-ex/-/error-ex-1.3.2.tgz#b4ac40648107fdcdcfae242f428bea8a14d4f1bf"
   dependencies:
     is-arrayish "^0.2.1"
 
@@ -8215,9 +8185,9 @@ invert-kv@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-1.0.0.tgz#104a8e4aaca6d3d8cd157a8ef8bfab2d7a3ffdb6"
 
-ios-device-lib@0.4.13:
-  version "0.4.13"
-  resolved "https://registry.yarnpkg.com/ios-device-lib/-/ios-device-lib-0.4.13.tgz#8d899a6e1887e5f20c35aa651ea21b18e36891d8"
+ios-device-lib@0.4.14:
+  version "0.4.14"
+  resolved "https://registry.yarnpkg.com/ios-device-lib/-/ios-device-lib-0.4.14.tgz#85e5fce2497be53a93b67f615032b0453227a8a1"
   dependencies:
     bufferpack "0.0.6"
     node-uuid "1.4.7"
@@ -8230,9 +8200,9 @@ ios-mobileprovision-finder@1.0.10:
     plist "^2.0.1"
     yargs "^6.5.0"
 
-ios-sim-portable@3.4.4:
-  version "3.4.4"
-  resolved "https://registry.yarnpkg.com/ios-sim-portable/-/ios-sim-portable-3.4.4.tgz#e48e355a4bf2de208615d14023205db05313cfe8"
+ios-sim-portable@3.4.5:
+  version "3.4.5"
+  resolved "https://registry.yarnpkg.com/ios-sim-portable/-/ios-sim-portable-3.4.5.tgz#d60e87c5d6a5e61420addb6b5247acc6431bce2a"
   dependencies:
     bplist-parser "https://github.com/telerik/node-bplist-parser/tarball/master"
     colors "0.6.2"
@@ -8297,8 +8267,8 @@ is-arrayish@^0.2.1:
   resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.2.1.tgz#77c99840527aa8ecb1a8ba697b80645a7a926a9d"
 
 is-arrayish@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.3.1.tgz#c2dfc386abaa0c3e33c48db3fe87059e69065efd"
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.3.2.tgz#4574a2ae56f7ab206896fb431eaeed066fdf8f03"
 
 is-binary-path@^1.0.0:
   version "1.0.1"
@@ -10079,9 +10049,9 @@ mathml-tag-names@^2.0.1:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/mathml-tag-names/-/mathml-tag-names-2.1.0.tgz#490b70e062ee24636536e3d9481e333733d00f2c"
 
-mceliece@^3.1.6:
-  version "3.1.6"
-  resolved "https://registry.yarnpkg.com/mceliece/-/mceliece-3.1.6.tgz#2df694ee4f865b7c11ca538f18d7c2a3227e1f73"
+mceliece@^3.1.7:
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/mceliece/-/mceliece-3.1.7.tgz#6e1f6afad8402e36de15a098b4cccaffdcd18d14"
 
 md5.js@^1.3.4:
   version "1.3.4"
@@ -10669,9 +10639,9 @@ nativescript-intl@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/nativescript-intl/-/nativescript-intl-3.0.0.tgz#82ee9be7d377172b3c4295734723037628e186a7"
 
-nativescript-local-notifications@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/nativescript-local-notifications/-/nativescript-local-notifications-2.0.3.tgz#1fdd944366241ca61c68233fb2a9b55f1177b088"
+nativescript-local-notifications@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/nativescript-local-notifications/-/nativescript-local-notifications-2.0.4.tgz#cf678fede41ca1cc542906b14e2ce24f3b35f11a"
 
 nativescript-material-icons@^1.0.3:
   version "1.0.3"
@@ -10731,9 +10701,9 @@ nativescript-websockets@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/nativescript-websockets/-/nativescript-websockets-1.5.0.tgz#54977c3f9765d9afad4230b4a9abc3c8b3f76b2e"
 
-nativescript@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/nativescript/-/nativescript-4.1.0.tgz#e42a48613bcb3b437b33a5637ebfe85ef0bb3316"
+nativescript@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/nativescript/-/nativescript-4.1.1.tgz#09073289529dc974fc4153179394bbe68fc00ccf"
   dependencies:
     byline "4.2.1"
     chalk "1.1.0"
@@ -10746,9 +10716,9 @@ nativescript@^4.1.0:
     gaze "1.1.0"
     iconv-lite "0.4.11"
     inquirer "0.9.0"
-    ios-device-lib "0.4.13"
+    ios-device-lib "0.4.14"
     ios-mobileprovision-finder "1.0.10"
-    ios-sim-portable "3.4.4"
+    ios-sim-portable "3.4.5"
     jimp "0.2.28"
     lockfile "1.0.3"
     lodash "4.13.1"
@@ -11412,9 +11382,9 @@ nth-check@~1.0.1:
   dependencies:
     boolbase "~1.0.0"
 
-ntru@^3.1.6:
-  version "3.1.6"
-  resolved "https://registry.yarnpkg.com/ntru/-/ntru-3.1.6.tgz#c2e20209b85cf5e1a2e6c5b362a4502b02b63273"
+ntru@^3.1.7:
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/ntru/-/ntru-3.1.7.tgz#9a9f065820d6c002030f061b763c4e2ce012b1b3"
 
 null-check@^1.0.0:
   version "1.0.0"
@@ -12826,10 +12796,9 @@ promzard@^0.3.0:
     read "1"
 
 prop-types@^15.5.10:
-  version "15.6.1"
-  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.1.tgz#36644453564255ddda391191fb3a125cbdf654ca"
+  version "15.6.2"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   dependencies:
-    fbjs "^0.8.16"
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
 
@@ -14004,9 +13973,9 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
-rlwe@^3.1.5:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/rlwe/-/rlwe-3.1.5.tgz#f94fc9c777a48b936c8edd86bb2d5a9e233e8054"
+rlwe@^3.1.6:
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/rlwe/-/rlwe-3.1.6.tgz#a143b5bd0cbfe9a4f077cde6116744b99f61ead2"
 
 rollup-plugin-commonjs@^9.1.3:
   version "9.1.3"
@@ -14065,8 +14034,8 @@ rsa-keygen@*:
     nan "~2.3.3"
 
 rsasign@*:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.1.6.tgz#6b8ec238f50c29d5f4e448952098cb3a28ee6ca5"
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.1.7.tgz#ed560f4c98e24239ea9b8e7f859598c29a5facb3"
   dependencies:
     pem-jwk-norecompute "*"
     rsa-keygen "*"
@@ -14558,9 +14527,9 @@ showdown@1.6.4:
   dependencies:
     yargs "^6.6.0"
 
-sidh@^4.1.5:
-  version "4.1.5"
-  resolved "https://registry.yarnpkg.com/sidh/-/sidh-4.1.5.tgz#ef0b0caf0d94468aa240d31188a5b6da7793920c"
+sidh@^4.1.6:
+  version "4.1.6"
+  resolved "https://registry.yarnpkg.com/sidh/-/sidh-4.1.6.tgz#7e8dcf3c1d4bebc4693573e440e6d47f79836b7f"
 
 sigmund@~1.0.0:
   version "1.0.1"
@@ -14995,9 +14964,9 @@ specificity@^0.3.1:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/specificity/-/specificity-0.3.2.tgz#99e6511eceef0f8d9b57924937aac2cb13d13c42"
 
-sphincs@*, sphincs@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/sphincs/-/sphincs-2.2.0.tgz#243841629f4a8f6d499246f87384eb183244a508"
+sphincs@*, sphincs@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/sphincs/-/sphincs-2.2.1.tgz#f23c0349bf00c16547600b7c3a03d30671bb8ce4"
 
 split-array-stream@^1.0.0:
   version "1.0.3"
@@ -15474,9 +15443,9 @@ sugarss@^1.0.0:
   dependencies:
     postcss "^6.0.14"
 
-supersphincs@^6.1.1:
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-6.1.1.tgz#ad5e78a620eac83976e35cb0da99dfef2559d053"
+supersphincs@^6.1.2:
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-6.1.2.tgz#a96b9bf1b30ad53636e931692552431ce5e57ef9"
   dependencies:
     rsasign "*"
     sodiumutil "*"
@@ -15818,9 +15787,9 @@ tns-core-modules@^4.1.0:
   dependencies:
     tns-core-modules-widgets "4.1.0"
 
-tns-ios@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/tns-ios/-/tns-ios-4.1.0.tgz#6530724659e729b303a30829017dc5a035da5555"
+tns-ios@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/tns-ios/-/tns-ios-4.1.1.tgz#7b07464043e017ac83acf84dc16f95a148adcb88"
 
 tns-platform-declarations@^4.1.0:
   version "4.1.0"
@@ -16196,8 +16165,8 @@ uglify-js@^2.6:
     uglify-to-browserify "~1.0.0"
 
 uglify-js@^3.0.7:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.0.tgz#796762282b5b5f0eafe7d5c8c708d1d7bd5ba11d"
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.1.tgz#006da540dc25e9319d106a99a5ef1d24ae04ce60"
   dependencies:
     commander "~2.15.0"
     source-map "~0.6.1"
@@ -16968,7 +16937,7 @@ webpack-dev-server@^3.1.4:
     webpack-log "^1.1.2"
     yargs "11.0.0"
 
-webpack-log@^1.0.1, webpack-log@^1.1.2:
+webpack-log@^1.0.1, webpack-log@^1.1.2, webpack-log@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/webpack-log/-/webpack-log-1.2.0.tgz#a4b34cda6b22b518dbb0ab32e567962d5c72a43d"
   dependencies:
@@ -17369,9 +17338,9 @@ xhr@^2.0.1:
     parse-headers "^2.0.0"
     xtend "^4.0.0"
 
-xkcd-passphrase@^3.2.5:
-  version "3.2.5"
-  resolved "https://registry.yarnpkg.com/xkcd-passphrase/-/xkcd-passphrase-3.2.5.tgz#8805510f7f0d24d84e79dc2a5c30fefe93d235b3"
+xkcd-passphrase@^3.2.6:
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/xkcd-passphrase/-/xkcd-passphrase-3.2.6.tgz#021de9cf0f101cc9f86980ec39ed01c7fabc3dd1"
 
 "xml-name-validator@>= 2.0.1 < 3.0.0", xml-name-validator@^2.0.1:
   version "2.0.1"
