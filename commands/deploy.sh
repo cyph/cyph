@@ -424,7 +424,7 @@ if [ "${compiledProjects}" ] ; then
 	./commands/buildunbundledassets.sh $(
 		if [ "${simple}" ] ; then
 			if [ "${simpleProdBuild}" ] ; then
-				echo '--service-worker'
+				echo '--prod-test --service-worker'
 			else
 				echo '--test'
 			fi

@@ -4,6 +4,12 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
+prodTest=''
+if [ "${1}" == '--prod-test' ] ; then
+	prodTest=true
+	shift
+fi
+
 serviceWorker=''
 if [ "${1}" == '--service-worker' ] ; then
 	serviceWorker=true
@@ -304,4 +310,5 @@ done
 
 cd ..
 find . -type f -name '*.js' -exec sed -i 's|use strict||g' {} \;
+if [ "${prodTest}" ] ; then find . -type f -name '*.js' -exec uglifyjs {} -bo {} \; ; fi
 echo "${hash}" > unbundled.hash
