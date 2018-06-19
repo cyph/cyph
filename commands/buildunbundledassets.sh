@@ -4,6 +4,12 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
+prodTest=''
+if [ "${1}" == '--prod-test' ] ; then
+	prodTest=true
+	shift
+fi
+
 serviceWorker=''
 if [ "${1}" == '--service-worker' ] ; then
 	serviceWorker=true
@@ -20,6 +26,21 @@ fi
 checkfail () {
 	if (( $? )) ; then
 		exit 1
+	fi
+}
+
+uglify () {
+	if [ "${test}" ] ; then
+		if [ "${1}" == '-cm' ] ; then
+			shift
+		fi
+
+		uglifyjs "${@}" -b
+	elif [ "${1}" == '-cm' ] ; then
+		shift
+		uglifyjs "${@}" -cm
+	else
+		uglifyjs "${@}"
 	fi
 }
 
@@ -117,11 +138,11 @@ for f in ${nodeModulesAssets} ; do
 	mkdir -p "$(echo "${f}" | perl -pe 's/(.*)\/[^\/]+$/\1/')" 2> /dev/null
 
 	path="/node_modules/${f}.js"
-	if [ -f "/node_modules/${f}.min.js" ] ; then
+	if [ ! "${test}" ] && [ -f "/node_modules/${f}.min.js" ] ; then
 		path="/node_modules/${f}.min.js"
 	fi
 
-	uglifyjs "${path}" -cmo "${f}.js"
+	uglify -cm "${path}" -o "${f}.js"
 done
 
 
@@ -157,7 +178,7 @@ node -e "
 
 tsc -p .
 checkfail
-uglifyjs standalone/global.js -o standalone/global.js
+uglify standalone/global.js -o standalone/global.js
 checkfail
 
 for f in ${typescriptAssets} ; do
@@ -189,35 +210,43 @@ for f in ${typescriptAssets} ; do
 				path: '${PWD}'
 			},
 			plugins: [
-				$(test "${test}" || echo "
-					new UglifyJsPlugin({
-						cache: true,
-						extractComments: false,
-						parallel: true,
-						sourceMap: false,
-						uglifyOptions: {
-							compress: false /* {
-								inline: 3,
-								passes: 3,
-								pure_getters: true,
-								sequences: false,
-								typeofs: false
-							} */,
-							ecma: 5,
-							ie8: false,
-							mangle: {
-								reserved: mangleExceptions
-							},
-							output: {
-								ascii_only: true,
-								comments: false,
-								webkit: true
-							},
-							safari10: true,
-							warnings: false
-						}
-					})
-				")
+				new UglifyJsPlugin({
+					cache: true,
+					extractComments: false,
+					parallel: true,
+					sourceMap: false,
+					uglifyOptions: {
+						ecma: 5,
+						ie8: false,
+						output: {
+							ascii_only: true,
+							webkit: true,
+							$(if [ "${test}" ] ; then
+								echo "beautify: true, comments: true"
+							else
+								echo "comments: false"
+							fi)
+						},
+						safari10: true,
+						warnings: false,
+						$(if [ "${test}" ] ; then
+							echo "compress: false, mangle: false"
+						else
+							echo "
+								compress: false /* {
+									inline: 3,
+									passes: 3,
+									pure_getters: true,
+									sequences: false,
+									typeofs: false
+								} */,
+								mangle: {
+									reserved: mangleExceptions
+								}
+							"
+						fi)
+					}
+				})
 			],
 			resolve: {
 				alias: {
@@ -250,7 +279,7 @@ for f in ${typescriptAssets} ; do
 				self[key]	= ${m}[key];
 			}
 		" |
-			uglifyjs \
+			uglify \
 		;
 		echo '})();';
 	} \
@@ -281,4 +310,5 @@ done
 
 cd ..
 find . -type f -name '*.js' -exec sed -i 's|use strict||g' {} \;
+if [ "${prodTest}" ] ; then find . -type f -name '*.js' -exec uglifyjs {} -bo {} \; ; fi
 echo "${hash}" > unbundled.hash

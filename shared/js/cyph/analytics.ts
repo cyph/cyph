@@ -118,7 +118,9 @@ export class Analytics {
 
 			await new Promise<void>(resolve => $(() => { resolve(); }));
 			await new Promise<void>(resolve => {
-				$(this.analFrame).one('load', () => { resolve(); });
+				if (this.analFrame) {
+					$(this.analFrame).one('load', () => { resolve(); });
+				}
 			});
 			await sleep();
 
