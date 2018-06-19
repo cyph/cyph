@@ -117,18 +117,22 @@ export class Config {
 				id: 4,
 				items: {
 					businessAnnual: {
+						amount: 420,
 						id: 4,
 						subscriptionType: SubscriptionTypes.annual
 					},
 					businessMonthly: {
+						amount: 50,
 						id: 3,
 						subscriptionType: SubscriptionTypes.monthly
 					},
 					proAnnual: {
+						amount: 168,
 						id: 2,
 						subscriptionType: SubscriptionTypes.annual
 					},
 					proMonthly: {
+						amount: 20,
 						id: 1,
 						subscriptionType: SubscriptionTypes.monthly
 					}
