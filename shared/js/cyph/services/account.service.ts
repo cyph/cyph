@@ -38,7 +38,7 @@ export class AccountService {
 
 	/** Indicates whether real-time Docs is enabled. */
 	public readonly enableDocs: boolean					=
-		this.envService.environment.local || (
+		this.envService.debug || (
 			!!this.envService.environment.customBuild &&
 			this.envService.environment.customBuild.config.enableDocs === true
 		)
@@ -46,7 +46,7 @@ export class AccountService {
 
 	/** Indicates whether Wallets is enabled. */
 	public readonly enableWallets: boolean				=
-		this.envService.environment.local || (
+		this.envService.debug || (
 			!!this.envService.environment.customBuild &&
 			this.envService.environment.customBuild.config.enableWallets === true
 		)

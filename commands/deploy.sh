@@ -21,6 +21,7 @@ environment=''
 firebaseBackup=''
 customBuild=''
 saveBuildArtifacts=''
+debug=''
 test=true
 websign=true
 
@@ -31,6 +32,10 @@ fi
 
 if [ "${1}" == '--prod' ] ; then
 	test=''
+	shift
+elif [ "${1}" == '--debug-prod' ] ; then
+	test=''
+	debug=true
 	shift
 elif [ "${1}" == '--simple' ] ; then
 	simple=true
@@ -121,18 +126,28 @@ staging=''
 if [ "${branch}" == 'prod' ] ; then
 	branch='staging'
 
-	if [ "${test}" -a ! "$simple" ] ; then
+	if [ "${test}" ] && [ ! "${simple}" ] ; then
 		staging=true
 	fi
 elif [ ! "${test}" ] ; then
 	fail 'Cannot do prod deploy from test branch'
 fi
 version="${branch}"
-if [ "${test}" -a "${username}" != cyph ] ; then
+if [ "${test}" ] && [ "${username}" != cyph ] ; then
 	version="${username}-${version}"
 fi
 if [ "${simple}" ] ; then
 	version="simple-${version}"
+fi
+if [ ! "${test}" ] ; then
+	version=prod
+fi
+if [ "${debug}" ] ; then
+	if [ "${test}" ] ; then
+		version="debug-${version}"
+	else
+		version=debug
+	fi
 fi
 
 processEnvironmentName () {
@@ -150,7 +165,11 @@ if [ "${firebaseBackup}" ] ; then
 
 	environment="$(processEnvironmentName backup)"
 elif [ ! "${test}" ] ; then
-	environment="$(processEnvironmentName prod)"
+	if [ "${debug}" ] ; then
+		environment="$(processEnvironmentName debugProd)"
+	else
+		environment="$(processEnvironmentName prod)"
+	fi
 elif \
 	[ "${branch}" == 'staging' ] || \
 	[ "${branch}" == 'beta' ] || \
@@ -204,7 +223,7 @@ fi
 projectname () {
 	if [ "${simple}" ] || [ "${1}" == 'cyph.com' ] ; then
 		echo "${version}-dot-$(echo "${1}" | tr '.' '-')-dot-cyphme.appspot.com"
-	elif [ "${test}" ] ; then
+	elif [ "${test}" ] || [ "${debug}" ] ; then
 		echo "${version}.${1}"
 	else
 		echo "${1}"
@@ -338,8 +357,6 @@ else
 	sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
 
 	homeURL='https://www.cyph.com'
-
-	version=prod
 fi
 
 if [ -d nakedredirect ] ; then
@@ -422,7 +439,7 @@ fi
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
 	./commands/buildunbundledassets.sh $(
-		if [ "${simple}" ] ; then
+		if [ "${simple}" ] || [ "${debug}" ] ; then
 			if [ "${simpleProdBuild}" ] ; then
 				echo '--prod-test --service-worker'
 			else
@@ -460,7 +477,7 @@ for d in $compiledProjects ; do
 		)};
 	`.trim())' > src/js/standalone/translations.ts
 
-	if [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ; then
+	if [ "${debug}" ] || ( [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ) ; then
 		ng build --source-map false --configuration "${environment}" || exit 1
 	else
 		../commands/prodbuild.sh --configuration "${environment}" || exit 1
@@ -523,7 +540,7 @@ if [ "${websign}" ] ; then
 
 	customBuilds=''
 
-	if [ "${username}" == 'cyph' ] && [ "${branch}" == 'staging' ] ; then
+	if [ "${username}" == 'cyph' ] && [ "${branch}" == 'staging' ] && [ ! "${debug}" ] ; then
 		./commands/websign/custombuilds.js pkg/cyph.ws pkg "${version}"
 		checkfail
 		customBuilds="$(cat pkg/custombuilds.list)"
@@ -532,7 +549,7 @@ if [ "${websign}" ] ; then
 
 	packages="${package} ${customBuilds}"
 
-	if [ $test ] ; then
+	if [ "${test}" ] || [ "${debug}" ] ; then
 		mv pkg/cyph.ws "pkg/${package}"
 	fi
 
@@ -615,7 +632,7 @@ if [ "${websign}" ] ; then
 	cd ..
 
 	# Publish internal prod branch to public repo
-	if [ ! "${test}" ] ; then
+	if [ ! "${test}" ] && [ ! "${debug}" ] ; then
 		git remote add public git@github.com:cyph/cyph.git 2> /dev/null
 		git push public HEAD:master
 	fi
@@ -638,7 +655,7 @@ fi
 
 
 # Firebase deployment
-if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; then
+if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ ! "${debug}" ] ; then
 	if [ ! "${test}" ] ; then
 		firebaseProjects='cyphme'
 	else
@@ -719,7 +736,9 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] ; the
 	cd ..
 fi
 
-if [ "${test}" ] ; then
+if [ "${debug}" ] ; then
+	rm -rf ${prodOnlyProjects} backend
+elif [ "${test}" ] ; then
 	rm -rf ${prodOnlyProjects}
 fi
 
@@ -756,7 +775,7 @@ if [ "${site}" != 'firebase' ] ; then
 		else
 			ls */*.yaml | grep -v '\.src/'
 		fi
-		if [ ! "${test}" ] ; then
+		if [ ! "${test}" ] && [ ! "${debug}" ] ; then
 			echo dispatch.yaml
 		fi
 	)

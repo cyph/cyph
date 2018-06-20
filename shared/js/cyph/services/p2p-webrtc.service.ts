@@ -498,7 +498,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 						);
 					}
 				},
-				debug: env.environment.local,
+				debug: env.debug,
 				localVideoEl: $localVideo[0],
 				media: this.outgoingStream,
 				peerConnectionConfig:

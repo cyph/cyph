@@ -41,6 +41,13 @@ export class Env extends EnvDeploy {
 		this.environment.customBuild.favicon !== undefined
 	;
 
+	/** Debug mode (true by default in local env). */
+	public readonly debug: boolean				=
+		typeof this.environment.debug === 'boolean' ?	
+			this.environment.debug :
+			this.environment.local
+	;
+
 	/** Complete (lowercase) language code, e.g. "en-us". */
 	public readonly fullLanguage: string		= Env.language.toLowerCase();
 

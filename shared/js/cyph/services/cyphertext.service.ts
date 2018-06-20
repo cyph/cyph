@@ -20,7 +20,7 @@ export class CyphertextService {
 	/** Indicates whether cyphertext UI should be enabled. */
 	public readonly isEnabled: boolean	=
 		!this.envService.isTelehealth &&
-		(this.envService.environment.local || this.envService.isHomeSite)
+		(this.envService.debug || this.envService.isHomeSite)
 	;
 
 	/** Indicates whether cyphertext should be displayed. */

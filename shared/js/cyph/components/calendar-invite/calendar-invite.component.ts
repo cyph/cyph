@@ -230,7 +230,7 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 	/** Disable all validation and set appointment to now. Local environments only. */
 	public async setNow () : Promise<void> {
-		if (!this.envService.environment.local || !this.value) {
+		if (!this.envService.debug || !this.value) {
 			return;
 		}
 

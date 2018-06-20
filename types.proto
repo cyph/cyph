@@ -695,20 +695,23 @@ message Environment {
 	 */
 	CustomBuild customBuild = 1;
 
+	/** Debug mode. */
+	bool debug = 2;
+
 	/** Name of this environment. */
-	required string envName = 2;
+	required string envName = 3;
 
 	/** @see Firebase */
-	required Firebase firebase = 3;
+	required Firebase firebase = 4;
 
 	/** Indicates whether this is local development environment. */
-	required bool local = 4;
+	required bool local = 5;
 
 	/** Indicates whether this is prod. */
-	required bool production = 5;
+	required bool production = 6;
 
 	/** Indicates whether production AGSE-PKI signing keys should be used. */
-	bool useProdSigningKeys = 6;
+	bool useProdSigningKeys = 7;
 }
 
 /** Represents a transferred file. */
