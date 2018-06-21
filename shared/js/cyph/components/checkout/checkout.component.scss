@@ -9,6 +9,15 @@
 	> .braintree {
 		min-height: 150px;
 	}
+
+	h2 {
+		margin-top: 5px;
+		text-align: center;
+		font-family: Ubuntu;
+		font-weight: 500;
+		color: #ffffffe0;
+	}
+
 	::ng-deep {
 		.braintree-option__card svg {
 			color: #663ab7;
