@@ -497,7 +497,7 @@ const relativeDateStringInternal	= memoize((now: number) =>
 				noToday ? undefined : strings.today :
 			compareDates(date, now - 86400000, true) ?
 				strings.yesterday :
-			date.getUTCFullYear() === timestampToDate(now).getUTCFullYear() ?
+			date.getFullYear() === timestampToDate(now).getFullYear() ?
 				`${
 					date.toLocaleDateString(undefined, {weekday: 'long'})
 				}, ${

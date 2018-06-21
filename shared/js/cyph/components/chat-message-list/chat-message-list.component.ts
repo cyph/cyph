@@ -299,21 +299,18 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 						-1 :
 						a.message.timestamp - b.message.timestamp
 				).reduce(
-					async (acc, o) => {
-						const {last, messageList}	= await acc;
-
-						if (
-							last === undefined ||
-							(!o.pending && !compareDates(last, o.message.timestamp, true))
-						) {
-							o.dateChange	= await relativeDateString(
-								o.message.timestamp,
-								last === undefined
-							);
-						}
-
-						return {last: o.message.timestamp, messageList: messageList.concat(o)};
-					},
+					async (acc, o) => Promise.resolve(acc).then(async ({last, messageList}) => ({
+						last: o.message.timestamp,
+						messageList: messageList.concat({
+							...o,
+							dateChange: (
+								last === undefined ||
+								(!o.pending && !compareDates(last, o.message.timestamp, true))
+							) ?
+								await relativeDateString(o.message.timestamp, last === undefined) :
+								undefined
+						})
+					})),
 					<MaybePromise<{
 						last?: number;
 						messageList: {
