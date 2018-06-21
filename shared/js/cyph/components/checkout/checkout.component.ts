@@ -78,7 +78,15 @@ export class CheckoutComponent implements AfterViewInit {
 		braintreeDropIn.create(
 			{
 				authorization,
-				selector: `#${this.containerID}`
+				selector: `#${this.containerID}`,
+				paypal: {
+					flow: 'vault',
+					buttonStyle: {
+						color: 'blue',
+						shape: 'pill',
+						size: 'responsive'
+					}
+			}
 			},
 			(err: any, instance: any) => {
 				if (err) {

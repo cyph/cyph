@@ -4,10 +4,62 @@
 	margin: 8px 10px;
 	padding: 0px 12px 10px 9px;
 	opacity: 0.95;
-	background-color: white;
+	background-color: #663ab7;
 
 	> .braintree {
 		min-height: 150px;
+	}
+	::ng-deep {
+		.braintree-option__card svg {
+			color: #663ab7;
+		}
+		.braintree-placeholder {
+			display: none;
+		}
+		.mat-form-field:not(.mat-form-field-invalid), .mat-form-field.mat-focused {
+			.mat-form-field-label {
+				color: rgba(255, 255, 255, 0.54) !important;
+			}
+			.mat-form-field-underline, .mat-form-field-ripple {
+				background-color: rgba(255, 255, 255, 0.54) !important;
+			}
+		}
+		label {
+			color: white;
+		}
+		[data-braintree-id="choose-a-way-to-pay"] {
+			position: relative;
+			text-align: center;
+			margin-bottom: 1em;
+			color: rgba(255, 255, 255, 0.54) !important;
+			font-family: roboto;
+			font-weight: 500;
+		}
+		.braintree-options-list {
+			background-color: #663ab7;
+
+			.braintree-option {
+				background-color: #EDE7F6;
+				margin-top: 0.66em;
+				border-radius: 5px;
+				box-shadow: 0px 2px rgba(0, 0, 0, 0.25);
+				border-color: transparent;
+
+				.braintree-sheet__header .braintree-sheet__label {
+					color: black !important;
+				}
+				.braintree-option__label {
+					color: #462fa0;
+					font-family: roboto;
+					font-weight: 500;
+
+					&:hover {
+						font-weight: 700;
+					}
+				}
+
+			}
+		}
 	}
 }
 
