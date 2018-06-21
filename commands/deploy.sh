@@ -348,13 +348,24 @@ else
 
 	sed -i "s|http://localhost:42000|https://api.cyph.com|g" backend/config.go
 	sed -i "s|${defaultHost}42000|https://api.cyph.com|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|${defaultHost}42001|https://www.cyph.com|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|${defaultHost}42002|https://cyph.ws|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|CYPH-IM|https://cyph.im|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|CYPH-IO|https://cyph.io|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|CYPH-ME|https://cyph.me|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|CYPH-VIDEO|https://cyph.video|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
+
+	if [ "${debug}" ] ; then
+		sed -i "s|${defaultHost}42001|https://debug-dot-cyph-com-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|${defaultHost}42002|https://debug.cyph.ws|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-IM|https://debug.cyph.ws|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-IO|https://debug.cyph.ws/#io|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-ME|https://debug.cyph.ws/#account|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-VIDEO|https://debug.cyph.ws/#video|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-AUDIO|https://debug.cyph.ws/#audio|g" shared/js/cyph/env-deploy.ts
+	else
+		sed -i "s|${defaultHost}42001|https://www.cyph.com|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|${defaultHost}42002|https://cyph.ws|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-IM|https://cyph.im|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-IO|https://cyph.io|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-ME|https://cyph.me|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-VIDEO|https://cyph.video|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
+	fi
 
 	homeURL='https://www.cyph.com'
 fi
