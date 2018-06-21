@@ -363,6 +363,7 @@
 		"rxjs-no-unsafe-scope": false,
 		"rxjs-no-unsafe-switchmap": true,
 		"rxjs-no-unsafe-takeuntil": true,
+		"rxjs-no-unsafe-takewhile": false,
 		"rxjs-no-unused-add": false,
 		"rxjs-no-wholesale": false,
 		"rxjs-prefer-add": false,
