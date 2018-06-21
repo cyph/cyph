@@ -2,8 +2,8 @@
 
 import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
 import * as braintreeDropIn from 'braintree-web-drop-in';
-import {SubscriptionTypes} from '../../checkout';
 import {AppService} from '../../../cyph.com/app.service';
+import {SubscriptionTypes} from '../../checkout';
 import {ConfigService} from '../../services/config.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -83,15 +83,15 @@ export class CheckoutComponent implements AfterViewInit {
 		braintreeDropIn.create(
 			{
 				authorization,
-				selector: `#${this.containerID}`,
 				paypal: {
-					flow: 'vault',
 					buttonStyle: {
 						color: 'blue',
 						shape: 'pill',
 						size: 'responsive'
-					}
-			}
+					},
+					flow: 'vault'
+				},
+				selector: `#${this.containerID}`
 			},
 			(err: any, instance: any) => {
 				if (err) {
