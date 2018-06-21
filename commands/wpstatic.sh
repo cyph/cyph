@@ -218,7 +218,7 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 		).toArray().concat([
 			/* Workaround for plugin scripts dynamically generating these client-side */
 			\$('<link href=\"https://fonts.googleapis.com/css?family=Ubuntu\" />'),
-			\$('<link href=\"https://fonts.googleapis.com/css?family=Material+Icons\" />')
+			\$('<link href=\"https://fonts.googleapis.com/css?family=Material+Icons\" />').appendTo('head')
 		]).map(async elem => {
 			elem	= \$(elem);
 
@@ -308,7 +308,7 @@ done
 
 cd css
 ls | xargs -I% sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/Zephyr2/framework/fonts|g" %
-for type in eot svg ttf woff woff2 ; do
+for type in eot svg ttf woff2 woff ; do
 	grep -r "\.${type}" |
 		grep -oP "(http)?(s)?(:)?//[A-Za-z0-9\./:?=_-]*?\.${type}" |
 		sort |
@@ -344,7 +344,7 @@ find . -type f -name logo-amp.png -exec cp -f "${dir}/shared/assets/img/logo.amp
 rm -rf blog/amp root/index.html
 find root -type d -name amp -exec rm -rf '{}' \; 2> /dev/null
 grep -rl http://localhost:42001 . | xargs -I% sed -i 's|http://localhost:42001||g' %
-grep -rl /blog/root root | xargs -I% sed -i 's|/blog/root||g' %
+grep -rl /blog/root . | xargs -I% sed -i 's|/blog/root||g' %
 
 # One-off edge cases; should find a better general solution later
 for page in checkout contact ; do
