@@ -2,12 +2,13 @@
 <form ngNativeValidate (submit)='submit()'>
 	<div fxLayout='column' fxLayoutGap='16px' *ngIf='!complete'>
 		<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui'>
-			<div [id]='containerID' class='braintree'></div>
+			<h2 *ngIf='itemName'>{{ itemName }} SUBSCRIPTION</h2>
 			<div>
 				<div fxLayout='column' fxLayout.gt-md='row' fxLayoutGap='16px'>
 					<mat-form-field fxFlex>
 						<input
 							matInput
+							color='warn'
 							cyphTranslate
 							[(ngModel)]='name'
 							name='name'
@@ -15,9 +16,10 @@
 							required
 						/>
 					</mat-form-field>
-					<mat-form-field fxFlex>
+					<mat-form-field color='accent' fxFlex>
 						<input
 							matInput
+							color='accent'
 							cyphTranslate
 							[(ngModel)]='email'
 							name='email'
@@ -32,16 +34,20 @@
 				<mat-form-field fxFlex>
 					<input
 						matInput
+						color='primary'
 						cyphTranslate
 						[(ngModel)]='company'
 						name='company'
-						placeholder='Company (optional)'
+						[placeholder]='itemName?.includes("BUSINESS") ?
+							"Company" : "Company (Optional)"'
+						[required]='itemName?.includes("BUSINESS")'
 					/>
 				</mat-form-field>
 			</div>
+			<div [id]='containerID' class='braintree'></div>
 		</div>
 		<div fxLayoutAlign='center center'>
-			<button mat-button type='submit'>
+			<button mat-raised-button type='submit'>
 				<span cyphTranslate>Confirm</span>
 				&ngsp;
 				<span>${{amount}}</span>

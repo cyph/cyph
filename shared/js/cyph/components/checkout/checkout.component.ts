@@ -2,6 +2,7 @@
 
 import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
 import * as braintreeDropIn from 'braintree-web-drop-in';
+import {AppService} from '../../../cyph.com/app.service';
 import {SubscriptionTypes} from '../../checkout';
 import {ConfigService} from '../../services/config.service';
 import {EnvService} from '../../services/env.service';
@@ -50,6 +51,10 @@ export class CheckoutComponent implements AfterViewInit {
 	/** Indicates whether payment is pending. */
 	public pending: boolean				= false;
 
+	public itemName: string | undefined	=
+		this.appService.cart ? this.appService.cart.itemName.replace(/([A-Z])/g, ' $1')
+		.toUpperCase() : undefined;
+
 	/** @see SubscriptionTypes */
 	@Input() public subscriptionType?: SubscriptionTypes;
 
@@ -78,6 +83,14 @@ export class CheckoutComponent implements AfterViewInit {
 		braintreeDropIn.create(
 			{
 				authorization,
+				paypal: {
+					buttonStyle: {
+						color: 'blue',
+						shape: 'pill',
+						size: 'responsive'
+					},
+					flow: 'vault'
+				},
 				selector: `#${this.containerID}`
 			},
 			(err: any, instance: any) => {
@@ -143,6 +156,9 @@ export class CheckoutComponent implements AfterViewInit {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly appService: AppService,
+
 		/** @ignore */
 		private readonly elementRef: ElementRef,
 
