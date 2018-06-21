@@ -215,10 +215,11 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 			'img[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
 			'script[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
 			'link[rel=\"stylesheet\"][href]:not([href^=\"/blog\"]):not([href^=\"${fullDestinationURL}\"])'
-		).toArray().concat(
-			/* Workaround for Supsystic table plugin dynamically generating this client-side */
-			\$('<link href=\"https://fonts.googleapis.com/css?family=Ubuntu\" />')
-		).map(async elem => {
+		).toArray().concat([
+			/* Workaround for plugin scripts dynamically generating these client-side */
+			\$('<link href=\"https://fonts.googleapis.com/css?family=Ubuntu\" />'),
+			\$('<link href=\"https://fonts.googleapis.com/css?family=Material+Icons\" />')
+		]).map(async elem => {
 			elem	= \$(elem);
 
 			const tagName	= elem.prop('tagName').toLowerCase();
@@ -306,7 +307,7 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 done
 
 cd css
-ls | xargs -I% sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/cedar/assets/fonts|g" %
+ls | xargs -I% sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/Zephyr2/framework/fonts|g" %
 for type in eot svg ttf woff woff2 ; do
 	grep -r "\.${type}" |
 		grep -oP "(http)?(s)?(:)?//[A-Za-z0-9\./:?=_-]*?\.${type}" |
