@@ -355,6 +355,11 @@ for page in checkout contact ; do
 done
 { grep -rlP '/blog/?"' root; echo index.html; } | xargs -I% sed -i 's|/blog/*"|/"|g' %
 
+for f in $(find . -type f -name '*.html') ; do
+	cat "${f}" | perl -pe "s/\"${escapedRootURL}\/([^\"]*)\?/\"\/\1\?/g" > "${f}.new"
+	mv "${f}.new" "${f}"
+done
+
 if [ "${getRoot}" ] ; then
 	yamlFile="../.build.yaml"
 	if [ ! -f "${yamlFile}" ] ; then
@@ -374,10 +379,5 @@ if [ "${getRoot}" ] ; then
 else
 	rm -rf root
 fi
-
-for f in $(find . -type f -name '*.html') ; do
-	cat "${f}" | perl -pe "s/\"${escapedRootURL}\/([^\"]*)\?/\"\/\1\?/g" > "${f}.new"
-	mv "${f}.new" "${f}"
-done
 
 sshkill
