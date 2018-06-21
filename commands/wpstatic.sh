@@ -215,11 +215,10 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 			'img[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
 			'script[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
 			'link[rel=\"stylesheet\"][href]:not([href^=\"/blog\"]):not([href^=\"${fullDestinationURL}\"])'
-		).toArray().concat([
-			/* Workaround for plugin scripts dynamically generating these client-side */
-			\$('<link href=\"https://fonts.googleapis.com/css?family=Ubuntu\" />'),
-			\$('<link href=\"https://fonts.googleapis.com/css?family=Material+Icons\" />').appendTo('head')
-		]).map(async elem => {
+		).toArray().concat(
+			/* Workaround for Supsystic table plugin dynamically generating this client-side */
+			\$('<link href=\"https://fonts.googleapis.com/css?family=Ubuntu\" />')
+		).map(async elem => {
 			elem	= \$(elem);
 
 			const tagName	= elem.prop('tagName').toLowerCase();
