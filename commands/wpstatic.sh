@@ -349,12 +349,6 @@ find root -type d -name amp -exec rm -rf '{}' \; 2> /dev/null
 grep -rl http://localhost:42001 . | xargs -I% sed -i 's|http://localhost:42001||g' %
 grep -rl /blog/root . | xargs -I% sed -i 's|/blog/root||g' %
 
-# One-off edge cases; should find a better general solution later
-for page in checkout contact ; do
-	grep -rl /blog/${page} root | xargs -I% sed -i "s|/blog/${page}|/${page}|g" %
-done
-{ grep -rlP '/blog/?"' root; echo index.html; } | xargs -I% sed -i 's|/blog/*"|/"|g' %
-
 for f in $(find . -type f -name '*.html') ; do
 	cat "${f}" | perl -pe "s/\"${escapedRootURL}\/([^\"]*)\?/\"\/\1\?/g" > "${f}.new"
 	mv "${f}.new" "${f}"
