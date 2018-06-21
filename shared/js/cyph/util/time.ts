@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import memoize from 'lodash-es/memoize';
 import {interval} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';

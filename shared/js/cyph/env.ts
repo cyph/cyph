@@ -43,7 +43,7 @@ export class Env extends EnvDeploy {
 
 	/** Debug mode (true by default in local env). */
 	public readonly debug: boolean				=
-		typeof this.environment.debug === 'boolean' ?	
+		typeof this.environment.debug === 'boolean' ?
 			this.environment.debug :
 			this.environment.local
 	;
