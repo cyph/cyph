@@ -1089,9 +1089,9 @@
 						cyphTranslate
 						class='donate-button'
 						(click)='appService.updateCart(
-							appService.donationAmount,
-							configService.pricingConfig.categories.donation.id,
-							configService.pricingConfig.categories.donation.items.generic.id
+							"donation",
+							"generic",
+							appService.donationAmount
 						)'
 					>
 						Confirm Donation Amount
@@ -1156,15 +1156,15 @@
 						</div>
 						<cyph-checkout
 							[amount]='appService.cart?.amount'
-							[category]='appService.cart?.category'
-							[item]='appService.cart?.item'
+							[category]='appService.cart?.categoryID'
+							[item]='appService.cart?.itemID'
 							[subscriptionType]='appService.cart?.subscriptionType'
 							*ngIf='appService.cart'
 						>
 							<div
 								cyphTranslate
 								*ngIf='
-									appService.cart?.category ===
+									appService.cart?.categoryID ===
 									configService.pricingConfig.categories.donation.id
 								'
 							>
@@ -1173,7 +1173,7 @@
 							<div
 								cyphTranslate
 								*ngIf='
-									appService.cart?.category !==
+									appService.cart?.categoryID !==
 									configService.pricingConfig.categories.donation.id
 								'
 							>

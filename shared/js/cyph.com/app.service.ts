@@ -27,8 +27,10 @@ export class AppService {
 	/** Amount, category, and item in cart. */
 	public cart?: {
 		amount: number;
-		category: number;
-		item: number;
+		categoryID: number;
+		categoryName: string;
+		itemID: number;
+		itemName: string;
 		subscriptionType?: SubscriptionTypes;
 	};
 
@@ -170,25 +172,14 @@ export class AppService {
 
 		if (state === States.checkout) {
 			try {
-				const categoryID	= urlSegmentPaths[1];
-				const itemID		= urlSegmentPaths[2].replace(
-					/-(.)/g,
-					(_, s) => s.toUpperCase()
-				);
-
-				const category	= this.configService.pricingConfig.categories[categoryID];
-				const item		= category && category.items ? category.items[itemID] : undefined;
-
-				const amount	= item && item.amount !== undefined ?
-					item.amount :
+				this.updateCart(
+					urlSegmentPaths[1],
+					urlSegmentPaths[2].replace(
+						/-(.)/g,
+						(_, s) => s.toUpperCase()
+					),
 					parseFloat(urlSegmentPaths[3])
-				;
-
-				if (isNaN(amount) || amount < 0 || item === undefined) {
-					throw new Error('Invalid checkout arguments.');
-				}
-
-				this.updateCart(amount, category.id, item.id, item.subscriptionType);
+				);
 			}
 			catch {
 				this.router.navigate(['404']);
@@ -249,16 +240,29 @@ export class AppService {
 
 	/** Update cart and open checkout screen. */
 	public updateCart (
-		amount: number,
-		category: number,
-		item: number,
-		subscriptionType?: SubscriptionTypes
+		categoryName: string,
+		itemName: string,
+		customAmount?: number
 	) : void {
+		const category	= this.configService.pricingConfig.categories[categoryName];
+		const item		= category && category.items ? category.items[itemName] : undefined;
+
+		const amount	= item && item.amount !== undefined ?
+			item.amount :
+			customAmount
+		;
+
+		if (amount === undefined || isNaN(amount) || amount < 0 || item === undefined) {
+			throw new Error('Invalid updateCart arguments.');
+		}
+
 		this.cart	= {
 			amount,
-			category,
-			item,
-			subscriptionType
+			categoryID: category.id,
+			categoryName,
+			itemID: item.id,
+			itemName,
+			subscriptionType: item.subscriptionType
 		};
 
 		this.state	= States.checkout;
