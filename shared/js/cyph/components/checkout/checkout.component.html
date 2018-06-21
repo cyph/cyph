@@ -38,7 +38,9 @@
 						cyphTranslate
 						[(ngModel)]='company'
 						name='company'
-						placeholder='Company (optional)'
+						[placeholder]='itemName?.includes("BUSINESS") ?
+							"Company" : "Company (Optional)"'
+						[required]='itemName?.includes("BUSINESS")'
 					/>
 				</mat-form-field>
 			</div>
