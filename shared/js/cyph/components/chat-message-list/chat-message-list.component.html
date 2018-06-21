@@ -37,6 +37,15 @@
 				</div>
 			</div>
 
+			<div class='date-change' fxLayout='row' *ngIf='
+				item.uiStyle !== uiStyles.email &&
+				item.dateChange !== undefined
+			'>
+				<div class='line' fxFlex><hr /></div>
+				<h3 class='text'>{{item.dateChange}}</h3>
+				<div class='line' fxFlex><hr /></div>
+			</div>
+
 			<cyph-chat-message
 				fxLayout='row'
 				[accounts]='item.accounts'

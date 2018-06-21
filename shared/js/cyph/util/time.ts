@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import memoize from 'lodash-es/memoize';
 import {interval} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
@@ -14,6 +16,12 @@ import {sleep} from './wait';
 const stringFormats	= {
 	date: {day: 'numeric', hour: 'numeric', minute: 'numeric', month: 'short', year: 'numeric'},
 	time: {hour: 'numeric', minute: 'numeric'}
+};
+
+/** @ignore */
+const strings	= {
+	today: translate('Today'),
+	yesterday: translate('Yesterday')
 };
 
 /** @ignore */
@@ -41,6 +49,19 @@ const timestampData	= {
 	),
 	subtime: 0
 };
+
+/**
+ * Fork of https://stackoverflow.com/a/44418732/459881
+ * TODO: translations?
+ */
+const getOrdinal	= memoize((n: number) : string => {
+	const nAbs	= Math.abs(n);
+
+	return n.toString() + (nAbs > 0 ?
+		['th', 'st', 'nd', 'rd'][(nAbs > 3 && nAbs < 21) || nAbs % 10 > 3 ? 0 : nAbs % 10] :
+		'th'
+	);
+});
 
 /** Gets hour and minute of a Time or string of the form "hh:mm". */
 export const getHourAndMinuteOfTime	= (time: Time|string) : {hour: number; minute: number} => {
@@ -131,8 +152,24 @@ const getTimesInternalWrapper	=
 ;
 
 /** @ignore */
+const timestampToDateInternal	=
+	memoize((noZero: boolean) =>
+		memoize((timestamp?: number) : Date =>
+			timestamp === undefined || isNaN(timestamp) || (noZero && timestamp === 0) ?
+				new Date() :
+				new Date(timestamp)
+		)
+	)
+;
+
+/** Converts a timestamp into a Date. */
+export const timestampToDate	= (timestamp?: number|Date, noZero: boolean = false) : Date =>
+	timestamp instanceof Date ? timestamp : timestampToDateInternal(noZero)(timestamp)
+;
+
+/** @ignore */
 const getTimeStringInternal	= (timestamp: number|Date, includeDate: boolean) : string =>
-	(typeof timestamp === 'number' ? new Date(timestamp) : timestamp).toLocaleString(
+	timestampToDate(timestamp).toLocaleString(
 		undefined,
 		includeDate ? stringFormats.date : stringFormats.time
 	).replace(
@@ -145,48 +182,38 @@ const getTimeStringInternal	= (timestamp: number|Date, includeDate: boolean) : s
 ;
 
 /** @ignore */
-const timestampToDateInternal	=
-	memoize((noZero: boolean) =>
-		memoize((timestamp?: number) : Date =>
-			timestamp === undefined || isNaN(timestamp) || (noZero && timestamp === 0) ?
-				new Date() :
-				new Date(timestamp)
-		)
-	)
-;
+const compareDatesInternal	=
+	memoize((a: Date|number) => memoize((b: Date|number) => memoize((local: boolean) : boolean => {
+		if (typeof a === 'number') {
+			if (isNaN(a)) {
+				return false;
+			}
 
-/** Converts a timestamp into a Date. */
-export const timestampToDate	= (timestamp?: number, noZero: boolean = false) : Date =>
-	timestampToDateInternal(noZero)(timestamp)
-;
+			a	= timestampToDate(a);
+		}
+		if (typeof b === 'number') {
+			if (isNaN(b)) {
+				return false;
+			}
 
-/** @ignore */
-const compareDatesInternal	= memoize((a: Date|number) => memoize((b: Date|number) : boolean => {
-	if (typeof a === 'number') {
-		if (isNaN(a)) {
-			return false;
+			b	= timestampToDate(b);
 		}
 
-		a	= timestampToDate(a);
-	}
-	if (typeof b === 'number') {
-		if (isNaN(b)) {
-			return false;
-		}
-
-		b	= timestampToDate(b);
-	}
-
-	return (
-		a.getUTCFullYear() === b.getUTCFullYear() &&
-		a.getUTCMonth() === b.getUTCMonth() &&
-		a.getUTCDate() === b.getUTCDate()
-	);
-}));
+		return local ? (
+			a.getFullYear() === b.getFullYear() &&
+			a.getMonth() === b.getMonth() &&
+			a.getDate() === b.getDate()
+		) : (
+			a.getUTCFullYear() === b.getUTCFullYear() &&
+			a.getUTCMonth() === b.getUTCMonth() &&
+			a.getUTCDate() === b.getUTCDate()
+		);
+	})))
+;
 
 /** Returns true if both Dates/timestamps represent the same year, month, and day. */
-export const compareDates	= (a: Date|number, b: Date|number) : boolean =>
-	compareDatesInternal(a)(b)
+export const compareDates	= (a: Date|number, b: Date|number, local: boolean = false) : boolean =>
+	compareDatesInternal(a)(b)(local)
 ;
 
 /** @ignore */
@@ -449,3 +476,56 @@ export const watchTimestamp	= memoize((msInterval: number = 1000) =>
 
 /** @see getTimestamp */
 export const getDate	= async () => timestampToDate(await getTimestamp());
+
+/** Gets timestamp of current date with time set to midnight local time. */
+export const getMidnightTimestamp	= async () : Promise<number> => {
+	const date	= await getDate();
+
+	date.setHours(0);
+	date.setMinutes(0);
+	date.setSeconds(0);
+	date.setMilliseconds(0);
+
+	return date.getTime();
+};
+
+/** @ignore */
+const relativeDateStringInternal	= memoize((now: number) =>
+	memoize((date: number|Date) =>
+		memoize((noToday: boolean) : string|undefined => {
+			date	= timestampToDate(date);
+
+			return compareDates(date, now, true) ?
+				noToday ? undefined : strings.today :
+			compareDates(date, now - 86400000, true) ?
+				strings.yesterday :
+			date.getFullYear() === timestampToDate(now).getFullYear() ?
+				`${
+					date.toLocaleDateString(undefined, {weekday: 'long'})
+				}, ${
+					date.toLocaleDateString(undefined, {month: 'long'})
+				} ${
+					getOrdinal(date.getDate())
+				}` :
+				`${
+					date.toLocaleDateString(undefined, {month: 'long'})
+				} ${
+					getOrdinal(date.getDate())
+				}, ${
+					date.getFullYear()
+				}`
+			;
+		})
+	)
+);
+
+/**
+ * Returns a human-readable representation of the date relative to today.
+ * @example Today
+ * @example Yesterday
+ * @example Monday, June 18th
+ * @example December 31, 2017
+ */
+export const relativeDateString	= async (date: number|Date, noToday: boolean = false) =>
+	relativeDateStringInternal(await getMidnightTimestamp())(date)(noToday)
+;

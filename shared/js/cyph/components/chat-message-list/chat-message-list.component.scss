@@ -23,6 +23,27 @@
 	@include shadow;
 }
 
+.date-change {
+	> .text {
+		margin: 20px;
+	}
+
+	> .line {
+		position: relative;
+
+		> hr {
+			position: absolute;
+			height: 0px;
+			width: 100%;
+			margin: 0px;
+			top: calc(50% + 2px);
+			opacity: 0.5;
+
+			@include transform(translateY(-100%));
+		}
+	}
+}
+
 button.follow-up {
 	margin-bottom: 25px;
 }

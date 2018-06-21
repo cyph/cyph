@@ -66,11 +66,11 @@
 							<a
 								mat-icon-button
 								cyphTranslate
-								matTooltip='GitHub'
-								href='https://github.com/cyph/cyph'
+								matTooltip='Facebook'
+								href='https://www.facebook.com/cyph'
 								target='_blank'
 							>
-								<img src='/assets/img/iconfinder/github.png' alt='GitHub icon' />
+								<img src='/assets/img/iconfinder/facebook.png' alt='Facebook icon' />
 							</a>
 							<a
 								mat-icon-button
@@ -84,11 +84,11 @@
 							<a
 								mat-icon-button
 								cyphTranslate
-								matTooltip='Facebook'
-								href='https://www.facebook.com/cyph'
+								matTooltip='GitHub'
+								href='https://github.com/cyph/cyph'
 								target='_blank'
 							>
-								<img src='/assets/img/iconfinder/facebook.png' alt='Facebook icon' />
+								<img src='/assets/img/iconfinder/github.png' alt='GitHub icon' />
 							</a>
 						</div>
 
@@ -210,12 +210,12 @@
 						mat-button
 						fxFlex
 						cyphTranslate
-						href='https://github.com/cyph/cyph'
+						href='https://www.facebook.com/cyph'
 						target='_blank'
 						(click)='sidenav.close()'
 					>
-						<img src='/assets/img/iconfinder/github.png' alt='GitHub icon' />
-						<span>GitHub</span>
+						<img src='/assets/img/iconfinder/facebook.png' alt='Facebook icon' />
+						<span>Facebook</span>
 					</a>
 				</div>
 				<div fxLayout='row'>
@@ -236,12 +236,12 @@
 						mat-button
 						fxFlex
 						cyphTranslate
-						href='https://www.facebook.com/cyph'
+						href='https://github.com/cyph/cyph'
 						target='_blank'
 						(click)='sidenav.close()'
 					>
-						<img src='/assets/img/iconfinder/facebook.png' alt='Facebook icon' />
-						<span>Facebook</span>
+						<img src='/assets/img/iconfinder/github.png' alt='GitHub icon' />
+						<span>GitHub</span>
 					</a>
 				</div>
 			</div>
@@ -1089,9 +1089,9 @@
 						cyphTranslate
 						class='donate-button'
 						(click)='appService.updateCart(
-							appService.donationAmount,
-							configService.pricingConfig.categories.donation.id,
-							configService.pricingConfig.categories.donation.items.generic.id
+							"donation",
+							"generic",
+							appService.donationAmount
 						)'
 					>
 						Confirm Donation Amount
@@ -1156,15 +1156,15 @@
 						</div>
 						<cyph-checkout
 							[amount]='appService.cart?.amount'
-							[category]='appService.cart?.category'
-							[item]='appService.cart?.item'
+							[category]='appService.cart?.categoryID'
+							[item]='appService.cart?.itemID'
 							[subscriptionType]='appService.cart?.subscriptionType'
 							*ngIf='appService.cart'
 						>
 							<div
 								cyphTranslate
 								*ngIf='
-									appService.cart?.category ===
+									appService.cart?.categoryID ===
 									configService.pricingConfig.categories.donation.id
 								'
 							>
@@ -1173,7 +1173,7 @@
 							<div
 								cyphTranslate
 								*ngIf='
-									appService.cart?.category !==
+									appService.cart?.categoryID !==
 									configService.pricingConfig.categories.donation.id
 								'
 							>

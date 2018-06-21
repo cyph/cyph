@@ -8,6 +8,9 @@ export interface IVsItem {
 	/** @see ChatMessageListComponent.accounts */
 	accounts: boolean;
 
+	/** Human-readable change in date. */
+	dateChange?: string;
+
 	/** Indicates whether this is the last message. */
 	isEnd: boolean;
 
