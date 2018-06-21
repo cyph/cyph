@@ -17,6 +17,7 @@ import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {fadeInOut} from '../../animations';
 import {ChatMessage, IChatData, IVsItem, UiStyles} from '../../chat';
+import {MaybePromise} from '../../maybe-promise-type';
 import {IChatMessage} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -31,6 +32,7 @@ import {StringsService} from '../../services/strings.service';
 import {trackByVsItem} from '../../track-by/track-by-vs-item';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {urlToSafeStyle} from '../../util/safe-values';
+import {compareDates, relativeDateString} from '../../util/time';
 
 
 /**
@@ -77,13 +79,17 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	*/
 
 	/** @ignore */
-	private readonly messageCache: Map<string, {message: ChatMessage; pending: boolean}>	=
+	private readonly messageCache: Map<string, {
+		dateChange?: string;
+		message: ChatMessage;
+		pending: boolean;
+	}>	=
 		new Map()
 	;
 
 	/** @ignore */
 	private readonly observableCache	= new Map<IChatData, {
-		messages: Observable<{message: ChatMessage; pending: boolean}[]>;
+		messages: Observable<{dateChange?: string; message: ChatMessage; pending: boolean}[]>;
 		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}|undefined>;
 	}>();
 
@@ -221,7 +227,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 					onlineMessages.concat(pendingMessages)
 				;
 
-				return (await Promise.all(messages.
+				return (await (await Promise.all(messages.
 					filter(message =>
 						(message.sessionSubID || undefined) === this.sessionService.sessionSubID
 					).
@@ -233,7 +239,11 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 								const cached	= this.messageCache.get(message.id + 'pending');
 								if (cached) {
 									cached.message.updateTimestamp(message.timestamp);
-									return {message: cached.message, pending: false};
+									return {
+										dateChange: undefined,
+										message: cached.message,
+										pending: false
+									};
 								}
 							}
 
@@ -276,6 +286,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 							}
 
 							return {
+								dateChange: undefined,
 								message: new ChatMessage(message, author, authorUser),
 								pending: message.pending === true
 							};
@@ -287,7 +298,32 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 					!a.pending && b.pending ?
 						-1 :
 						a.message.timestamp - b.message.timestamp
-				);
+				).reduce(
+					async (acc, o) => {
+						const {last, messageList}	= await acc;
+
+						if (
+							last === undefined ||
+							(!o.pending && !compareDates(last, o.message.timestamp, true))
+						) {
+							o.dateChange	= await relativeDateString(
+								o.message.timestamp,
+								last === undefined
+							);
+						}
+
+						return {last: o.message.timestamp, messageList: messageList.concat(o)};
+					},
+					<MaybePromise<{
+						last?: number;
+						messageList: {
+							dateChange?: string;
+							message: ChatMessage;
+							pending: boolean;
+						}[];
+					}>>
+					{last: undefined, messageList: []}
+				)).messageList;
 			})),
 			unconfirmedMessages: chat.unconfirmedMessages
 		}));
@@ -299,10 +335,11 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		)
 		*/
 		observables.messages.pipe(map(messages => (
-			<({message?: ChatMessage; pending: boolean})[]>
+			<({dateChange?: string; message?: ChatMessage; pending: boolean})[]>
 			(messages.length < 1 ? [{pending: false}] : messages)
-		).map(({message, pending}, i, arr) => ({
+		).map(({dateChange, message, pending}, i, arr) => ({
 			accounts: this.accounts,
+			dateChange,
 			isEnd: (i + 1) === arr.length,
 			isFriendTyping: chat.isFriendTyping,
 			isStart: i === 0,
