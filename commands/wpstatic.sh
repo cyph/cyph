@@ -272,8 +272,10 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 	process.exit(1);
 })" ; done
 
-sed -i "s|https://fonts.googleapis.com/css|${fullDestinationURL}/$(grep -rl 'local(.Ubuntu.)')|g" \
-	wp-content/plugins/pricing-table-by-supsystic/js/table.min.js
+if [ -f wp-content/plugins/pricing-table-by-supsystic/js/table.min.js ] ; then
+	sed -i "s|https://fonts.googleapis.com/css|${fullDestinationURL}/$(grep -rl 'local(.Ubuntu.)')|g" \
+		wp-content/plugins/pricing-table-by-supsystic/js/table.min.js
+fi
 
 grep -rl "'//' + disqus_shortname" |
 	xargs -I% sed -i "s|'//' + disqus_shortname|'/blog/js/' + disqus_shortname|g" %
@@ -300,31 +302,32 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 			console.log(\`\${a[k]}.\${b[k]}.js\`);
 		}
 	" |
-		xargs -I% download "https://platform.twitter.com/js/%" "js/platform.twitter.com/js/%"
+		xargs -I% bash -c 'download "https://platform.twitter.com/js/%" "js/platform.twitter.com/js/%"'
 
 	sed -i 's|https://platform.twitter.com|/blog/js/platform.twitter.com|g' ${f}
 done
 
-cd css
-ls | xargs -I% sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/Zephyr2/framework/fonts|g" %
-for type in eot svg ttf woff2 woff ; do
-	grep -r "\.${type}" |
-		grep -oP "(http)?(s)?(:)?//[A-Za-z0-9\./:?=_-]*?\.${type}" |
-		sort |
-		uniq |
-		xargs -I% bash -c "
-			url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${sourceURL}|g')\";
-			path=\"fonts/\$(node -e \"(async () => { \
-				console.log((await require('supersphincs').hash('%')).hex); \
-			})().catch(err => {
-				console.error(err);
-				process.exit(1);
-			})\").${type}\";
-			download \"\${url}\" \"../\${path}\";
-			grep -rl '%' | xargs -I{} sed -i \"s|%|/blog/\${path}|g\" {};
-		"
+for f in $(find . -type f -name '*.css') ; do
+	sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/Zephyr2/framework/fonts|g" "${f}"
+
+	for type in eot svg ttf woff2 woff ; do
+		grep "\.${type}" "${f}" |
+			grep -oP "(http)?(s)?(:)?//[A-Za-z0-9\./:?=_-]*?\.${type}" |
+			sort |
+			uniq |
+			xargs -I% bash -c "
+				url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${sourceURL}|g')\";
+				path=\"fonts/\$(node -e \"(async () => { \
+					console.log((await require('supersphincs').hash('%')).hex); \
+				})().catch(err => {
+					console.error(err);
+					process.exit(1);
+				})\").${type}\";
+				download \"\${url}\" \"\${path}\";
+				grep -rl '%' | xargs -I{} sed -i \"s|%|/blog/\${path}|g\" {};
+			"
+	done
 done
-cd ..
 
 for path in $(
 	grep -hroP "${fullDestinationURL}([A-Za-z0-9]|/|-|_)+\.(jpg|jpeg|png|gif|webp|svg)" |

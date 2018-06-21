@@ -17,6 +17,7 @@ checkfail () {
 }
 
 download () {
+	log "Downloading: ${*}"
 	curl -s --compressed --retry 50 ${1} > ${2}
 }
 
