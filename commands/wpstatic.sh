@@ -12,6 +12,7 @@ if [ "${1}" == '--no-root' ] ; then
 fi
 
 rootURL="${1}"
+escapedRootURL="$(echo "${rootURL}" | sed 's|/|\\/|g')"
 fullDestinationURL="${rootURL}/blog"
 destinationProtocol="$(echo "${fullDestinationURL}" | perl -pe 's/(.*?:\/\/).*/\1/')"
 destinationURL="$(echo "${fullDestinationURL}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
@@ -272,8 +273,10 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 	process.exit(1);
 })" ; done
 
-sed -i "s|https://fonts.googleapis.com/css|${fullDestinationURL}/$(grep -rl 'local(.Ubuntu.)')|g" \
-	wp-content/plugins/pricing-table-by-supsystic/js/table.min.js
+if [ -f wp-content/plugins/pricing-table-by-supsystic/js/table.min.js ] ; then
+	sed -i "s|https://fonts.googleapis.com/css|${fullDestinationURL}/$(grep -rl 'local(.Ubuntu.)')|g" \
+		wp-content/plugins/pricing-table-by-supsystic/js/table.min.js
+fi
 
 grep -rl "'//' + disqus_shortname" |
 	xargs -I% sed -i "s|'//' + disqus_shortname|'/blog/js/' + disqus_shortname|g" %
@@ -300,31 +303,32 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 			console.log(\`\${a[k]}.\${b[k]}.js\`);
 		}
 	" |
-		xargs -I% download "https://platform.twitter.com/js/%" "js/platform.twitter.com/js/%"
+		xargs -I% bash -c 'download "https://platform.twitter.com/js/%" "js/platform.twitter.com/js/%"'
 
 	sed -i 's|https://platform.twitter.com|/blog/js/platform.twitter.com|g' ${f}
 done
 
-cd css
-ls | xargs -I% sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/cedar/assets/fonts|g" %
-for type in eot svg ttf woff woff2 ; do
-	grep -r "\.${type}" |
-		grep -oP "(http)?(s)?(:)?//[A-Za-z0-9\./:?=_-]*?\.${type}" |
-		sort |
-		uniq |
-		xargs -I% bash -c "
-			url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${sourceURL}|g')\";
-			path=\"fonts/\$(node -e \"(async () => { \
-				console.log((await require('supersphincs').hash('%')).hex); \
-			})().catch(err => {
-				console.error(err);
-				process.exit(1);
-			})\").${type}\";
-			download \"\${url}\" \"../\${path}\";
-			grep -rl '%' | xargs -I{} sed -i \"s|%|/blog/\${path}|g\" {};
-		"
+for f in $(find . -type f -name '*.css') ; do
+	sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/Zephyr2/framework/fonts|g" "${f}"
+
+	for type in eot svg ttf woff2 woff ; do
+		grep "\.${type}" "${f}" |
+			grep -oP "(http)?(s)?(:)?//[A-Za-z0-9\./:?=_-]*?\.${type}" |
+			sort |
+			uniq |
+			xargs -I% bash -c "
+				url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${sourceURL}|g')\";
+				path=\"fonts/\$(node -e \"(async () => { \
+					console.log((await require('supersphincs').hash('%')).hex); \
+				})().catch(err => {
+					console.error(err);
+					process.exit(1);
+				})\").${type}\";
+				download \"\${url}\" \"\${path}\";
+				grep -rl '%' | xargs -I{} sed -i \"s|%|/blog/\${path}|g\" {};
+			"
+	done
 done
-cd ..
 
 for path in $(
 	grep -hroP "${fullDestinationURL}([A-Za-z0-9]|/|-|_)+\.(jpg|jpeg|png|gif|webp|svg)" |
@@ -340,16 +344,15 @@ done
 
 find . -type f -name logo-amp.png -exec cp -f "${dir}/shared/assets/img/logo.amp.png" "{}" \;
 
-rm -rf blog/amp root/index.html
+rm -rf blog/amp root/index.html root/blog
 find root -type d -name amp -exec rm -rf '{}' \; 2> /dev/null
-grep -rl http://localhost:42001 root | xargs -I% sed -i 's|http://localhost:42001||g' %
-grep -rl /blog/root root | xargs -I% sed -i 's|/blog/root||g' %
+grep -rl http://localhost:42001 . | xargs -I% sed -i 's|http://localhost:42001||g' %
+grep -rl /blog/root . | xargs -I% sed -i 's|/blog/root||g' %
 
-# One-off edge cases; should find a better general solution later
-for page in checkout contact ; do
-	grep -rl /blog/${page} root | xargs -I% sed -i "s|/blog/${page}|/${page}|g" %
+for f in $(find . -type f -name '*.html') ; do
+	cat "${f}" | perl -pe "s/\"${escapedRootURL}\/([^\"]*)\?/\"\/\1\?/g" > "${f}.new"
+	mv "${f}.new" "${f}"
 done
-{ grep -rlP '/blog/?"' root; echo index.html; } | xargs -I% sed -i 's|/blog/*"|/"|g' %
 
 if [ "${getRoot}" ] ; then
 	yamlFile="../.build.yaml"

@@ -273,7 +273,7 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 	defaultCSPString='DEFAULT_CSP'
 	fullCSP="$(cat shared/csp | tr -d '\n')"
 	webSignCSP="$(cat websign/csp | tr -d '\n')"
-	cyphComCSP="$(cat shared/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com https://*.braintreegateway.com|g' | sed 's|connect-src|connect-src blob:|g')"
+	cyphComCSP="$(cat shared/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com https://*.braintreegateway.com|g' | sed 's|connect-src|connect-src blob:|g' | sed "s|script-src|script-src 'unsafe-inline'|g")"
 	ls cyph.com/*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
 	ls */*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${webSignCSP}\"|g" %
 	sed -i "s|${defaultCSPString}|${fullCSP}|g" shared/js/cyph/env-deploy.ts
@@ -301,6 +301,7 @@ fi
 
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
 simpleWebSignPackageName=''
+homeURL=''
 
 if [ "${test}" ] ; then
 	newCyphURL="https://${version}.cyph.ws"
@@ -346,11 +347,9 @@ if [ "${test}" ] ; then
 else
 	echo > shared/js/standalone/test-environment-setup.ts
 
-	sed -i "s|http://localhost:42000|https://api.cyph.com|g" backend/config.go
-	sed -i "s|${defaultHost}42000|https://api.cyph.com|g" shared/js/cyph/env-deploy.ts
-
 	if [ "${debug}" ] ; then
-		sed -i "s|${defaultHost}42001|https://debug-dot-cyph-com-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+		homeURL='https://debug-dot-cyph-com-dot-cyphme.appspot.com'
+
 		sed -i "s|${defaultHost}42002|https://debug.cyph.ws|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IM|https://debug.cyph.ws|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IO|https://debug.cyph.ws/#io|g" shared/js/cyph/env-deploy.ts
@@ -358,7 +357,8 @@ else
 		sed -i "s|CYPH-VIDEO|https://debug.cyph.ws/#video|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-AUDIO|https://debug.cyph.ws/#audio|g" shared/js/cyph/env-deploy.ts
 	else
-		sed -i "s|${defaultHost}42001|https://www.cyph.com|g" shared/js/cyph/env-deploy.ts
+		homeURL='https://www.cyph.com'
+
 		sed -i "s|${defaultHost}42002|https://cyph.ws|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IM|https://cyph.im|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IO|https://cyph.io|g" shared/js/cyph/env-deploy.ts
@@ -367,7 +367,9 @@ else
 		sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
 	fi
 
-	homeURL='https://www.cyph.com'
+	sed -i "s|http://localhost:42000|https://api.cyph.com|g" backend/config.go
+	sed -i "s|${defaultHost}42000|https://api.cyph.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|${defaultHost}42001|${homeURL}|g" shared/js/cyph/env-deploy.ts
 fi
 
 if [ -d nakedredirect ] ; then

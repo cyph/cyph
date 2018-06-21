@@ -250,7 +250,7 @@ for f in ${typescriptAssets} ; do
 			],
 			resolve: {
 				alias: {
-					jquery: path.resolve(__dirname, '../../js/native/externals/jquery.ts')
+					jquery: path.resolve(__dirname, '../../js/externals/jquery.ts')
 				},
 				extensions: ['.js', '.ts'],
 				plugins: [

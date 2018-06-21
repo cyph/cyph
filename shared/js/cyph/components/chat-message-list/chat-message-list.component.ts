@@ -32,7 +32,7 @@ import {StringsService} from '../../services/strings.service';
 import {trackByVsItem} from '../../track-by/track-by-vs-item';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {urlToSafeStyle} from '../../util/safe-values';
-import {compareDates, relativeDateString} from '../../util/time';
+import {compareDates, relativeDateString, watchDateChange} from '../../util/time';
 
 
 /**
@@ -206,7 +206,8 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 						[]
 					)
 				)),
-				chat.pendingMessages.watch()
+				chat.pendingMessages.watch(),
+				watchDateChange()
 			).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
 				if (onlineMessages.length < 1) {
 					this.initialScrollDown.next(false);
