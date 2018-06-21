@@ -7,6 +7,7 @@
 	background-color: #663ab7;
 
 	> .braintree {
+		margin-top: 2em;
 		min-height: 150px;
 	}
 
@@ -26,7 +27,7 @@
 			display: none;
 		}
 		.mat-form-field:not(.mat-form-field-invalid), .mat-form-field.mat-focused {
-			.mat-form-field-label {
+			.mat-form-field-label, input {
 				color: rgba(255, 255, 255, 0.54) !important;
 			}
 			.mat-form-field-underline, .mat-form-field-ripple {
@@ -36,13 +37,17 @@
 		label {
 			color: white;
 		}
-		[data-braintree-id="choose-a-way-to-pay"] {
-			position: relative;
-			text-align: center;
-			margin-bottom: 1em;
-			color: rgba(255, 255, 255, 0.54) !important;
-			font-family: roboto;
-			font-weight: 500;
+		[data-braintree-id="choose-a-way-to-pay"], [data-braintree-id="methods-label"] {
+				position: absolute;
+				text-align: center;
+				margin-left: auto;
+				margin-right: auto;
+				left: 0;
+				right: 0;
+				top: -2em;
+				color: rgba(255, 255, 255, 0.54) !important;
+				font-family: roboto;
+				font-weight: 500;
 		}
 		.braintree-options-list {
 			background-color: #663ab7;
