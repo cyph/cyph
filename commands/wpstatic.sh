@@ -12,6 +12,7 @@ if [ "${1}" == '--no-root' ] ; then
 fi
 
 rootURL="${1}"
+escapedRootURL="$(echo "${rootURL}" | sed 's|/|\\/|g')"
 fullDestinationURL="${rootURL}/blog"
 destinationProtocol="$(echo "${fullDestinationURL}" | perl -pe 's/(.*?:\/\/).*/\1/')"
 destinationURL="$(echo "${fullDestinationURL}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
@@ -373,5 +374,10 @@ if [ "${getRoot}" ] ; then
 else
 	rm -rf root
 fi
+
+for f in $(find . -type f -name '*.html') ; do
+	cat "${f}" | perl -pe "s/\"${escapedRootURL}\/([^\"]*)\?/\"\/\1\?/g" > "${f}.new"
+	mv "${f}.new" "${f}"
+done
 
 sshkill
