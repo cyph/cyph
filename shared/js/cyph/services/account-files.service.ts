@@ -1274,7 +1274,11 @@ export class AccountFilesService {
 			result: result.then(async () => {
 				const accountFileRecord	= {
 					id,
-					mediaType: fileConfig.mediaType || (file instanceof Blob ? file.type : ''),
+					mediaType:
+						fileConfig.mediaType ||
+						(file instanceof Blob ? file.type : undefined) ||
+						'application/octet-stream'
+					,
 					name,
 					recordType: fileConfig.recordType,
 					size: await this.getFileSize(file, fileConfig),
