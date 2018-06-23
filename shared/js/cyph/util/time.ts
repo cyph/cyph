@@ -1,7 +1,7 @@
 /* tslint:disable:max-file-line-count */
 
 import memoize from 'lodash-es/memoize';
-import {interval, timer} from 'rxjs';
+import {concat, interval, of, timer} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {env} from '../env';
 import {ITimeRange} from '../itime-range';
@@ -491,14 +491,18 @@ export const getMidnightTimestamp	= async () : Promise<number> => {
 };
 
 /** Watches for date changes. */
-export const watchDateChange	= memoize(() => flattenObservable(async () =>
-	timer(
-		86400000 - ((await getTimestamp()) - (await getMidnightTimestamp())),
-		86400000
-	).pipe(
-		map(() => {})
-	)
-));
+export const watchDateChange	= memoize((emitImmediately: boolean = false) =>
+	flattenObservable(async () => {
+		const dateChanges	= timer(
+			86400000 - ((await getTimestamp()) - (await getMidnightTimestamp())),
+			86400000
+		).pipe(
+			map(() => {})
+		);
+
+		return !emitImmediately ? dateChanges : concat(of(undefined), dateChanges);
+	})
+);
 
 /** @ignore */
 const relativeDateStringInternal	= memoize((now: number) =>

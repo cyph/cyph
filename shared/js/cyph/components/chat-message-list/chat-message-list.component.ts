@@ -207,7 +207,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 					)
 				)),
 				chat.pendingMessages.watch(),
-				watchDateChange()
+				watchDateChange(true)
 			).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
 				if (onlineMessages.length < 1) {
 					this.initialScrollDown.next(false);
