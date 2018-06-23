@@ -295,9 +295,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 				alreadyCached.resolve(false);
 				this.ngZone.run(() => { progress.next(0); });
 
+				const storageRef	= await this.getStorageRef(url, hash);
+
 				const req	= requestByteStream({
 					retries: 3,
-					url: await (await this.getStorageRef(url, hash)).getDownloadURL()
+					url: await retryUntilSuccessful(async () => storageRef.getDownloadURL())
 				});
 
 				req.progress.subscribe(
