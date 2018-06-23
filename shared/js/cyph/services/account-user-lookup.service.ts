@@ -9,6 +9,7 @@ import {
 	AccountUserTypes,
 	BooleanMapProto,
 	DataURIProto,
+	NumberProto,
 	Review
 } from '../proto';
 import {normalize} from '../util/formatting';
@@ -175,6 +176,13 @@ export class AccountUserLookupService {
 							undefined,
 							true
 						),
+						this.accountDatabaseService.watch(
+							`unreadMessageCounts/${username}`,
+							NumberProto,
+							SecurityModels.unprotected
+						).pipe(map(o =>
+							o.value
+						)),
 						preFetch
 					);
 				},

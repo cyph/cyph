@@ -174,6 +174,9 @@ export class User {
 		/** @see IReview */
 		public readonly reviews: IAsyncMap<string, IReview>,
 
+		/** Unread incoming message count from this user. */
+		public readonly unreadMessageCount: Observable<number>,
+
 		/** Indicates whether we should immediately start fetching this user's data. */
 		preFetch: boolean = false
 	) {
