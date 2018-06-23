@@ -92,7 +92,7 @@ export class AccountChatService extends ChatService {
 		selfDestructChat?: boolean,
 		keepCurrentMessage?: boolean,
 		oldLocalStorageKey?: string
-	) : Promise<string> {
+	) : Promise<string|void> {
 		const id	= await super.send(
 			messageType,
 			message,
@@ -101,6 +101,10 @@ export class AccountChatService extends ChatService {
 			keepCurrentMessage,
 			oldLocalStorageKey
 		);
+
+		if (!id) {
+			return;
+		}
 
 		const notificationData	= await this.notificationData.promise;
 

@@ -849,7 +849,7 @@ export class ChatService {
 		selfDestructChat: boolean = false,
 		keepCurrentMessage?: boolean,
 		oldLocalStorageKey?: string
-	) : Promise<string> {
+	) : Promise<string|void> {
 		if (keepCurrentMessage === undefined) {
 			keepCurrentMessage	= message !== undefined;
 		}
@@ -937,8 +937,7 @@ export class ChatService {
 		;
 
 		if (emptyValue) {
-			await removeOldStorageItem();
-			return id;
+			return removeOldStorageItem();
 		}
 
 		const localStoragePromise	= !this.chat.pendingMessageRoot ?
