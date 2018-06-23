@@ -386,7 +386,7 @@ export class DatabaseService extends DataManagerService {
 		_URL: MaybePromise<string>,
 		_TARGET: MaybePromise<string>,
 		_NOTIFICATION_TYPE: NotificationTypes,
-		_METADATA?: any
+		_METADATA?: {id: string}&{[k: string]: any}
 	) : Promise<void> {
 		throw new Error('Must provide an implementation of DatabaseService.notify.');
 	}

@@ -3,6 +3,7 @@ import {NgModule} from '@angular/core';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatBadgeModule} from '@angular/material/badge';
 import {MatButtonModule} from '@angular/material/button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatCardModule} from '@angular/material/card';
@@ -83,6 +84,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		FullCalendarModule,
 		MarkdownComponent,
 		MatAutocompleteModule,
+		MatBadgeModule,
 		MatButtonModule,
 		MatButtonToggleModule,
 		MatCardModule,
@@ -123,6 +125,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		FullCalendarModule,
 		HttpClientModule,
 		MatAutocompleteModule,
+		MatBadgeModule,
 		MatButtonModule,
 		MatCardModule,
 		MatCheckboxModule,

@@ -231,7 +231,9 @@
 		</smd-fab-speed-dial>
 
 		<ng-container *ngIf='showUnreadCount'>
-			<ng-container *ngIf='scrollService.unreadItems.watchSize() | async as unreadItemCount'>
+			<ng-container *ngIf='
+				(scrollService.unreadItems | async)?.watchSize() | async as unreadItemCount
+			'>
 				<h3
 					fxFlex
 					class='new-messages cyph-banner emphasis'

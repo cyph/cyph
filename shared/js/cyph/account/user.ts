@@ -5,6 +5,7 @@ import {map, mergeMap} from 'rxjs/operators';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {LockFunction} from '../lock-function-type';
+import {MaybePromise} from '../maybe-promise-type';
 import {
 	AccountUserTypes,
 	IAccountUserPresence,
@@ -128,6 +129,12 @@ export class User {
 		UserPresence.Offline
 	);
 
+	/** Unread incoming message count from this user. */
+	public readonly unreadMessageCount: Observable<number>	= toBehaviorSubject(
+		async () => (await this.unreadMessages).watchSize(),
+		0
+	);
+
 	/** @see IAccountUserProfile.userType */
 	public readonly userType: Observable<AccountUserTypes|undefined>	= toBehaviorSubject(
 		this.accountUserProfile.watch().pipe(map(({userType}) => userType)),
@@ -174,8 +181,8 @@ export class User {
 		/** @see IReview */
 		public readonly reviews: IAsyncMap<string, IReview>,
 
-		/** Unread incoming message count from this user. */
-		public readonly unreadMessageCount: Observable<number>,
+		/** Unread incoming messages from this user. */
+		private readonly unreadMessages: MaybePromise<IAsyncMap<string, never>>,
 
 		/** Indicates whether we should immediately start fetching this user's data. */
 		preFetch: boolean = false

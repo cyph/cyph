@@ -1,19 +1,24 @@
 import {Injectable} from '@angular/core';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {take} from 'rxjs/operators';
+import {SecurityModels} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
+import {IAsyncSet} from '../iasync-set';
 import {LocalAsyncList} from '../local-async-list';
 import {
 	ChatLastConfirmedMessage,
 	ChatMessage,
 	ChatMessageValue,
 	IChatMessage,
+	NeverProto,
 	NotificationTypes,
 	SessionMessageDataList,
 	StringArrayProto
 } from '../proto';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
+import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionInitService} from './account-session-init.service';
 import {AccountSessionService} from './account-session.service';
@@ -40,7 +45,13 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountChatService extends ChatService {
 	/** @ignore */
-	private readonly chats	= new Map<string, IChatData>();
+	private readonly chats				= new Map<string, IChatData>();
+
+	/** @ignore */
+	private readonly notificationData	= resolvable<{
+		castleSessionID: string;
+		usernames: string[];
+	}>();
 
 	/** @inheritDoc */
 	protected async getAuthorID (author: Observable<string>) : Promise<string|undefined> {
@@ -53,6 +64,26 @@ export class AccountChatService extends ChatService {
 		);
 	}
 
+	/** Gets async set for scrollService.unreadMessages. */
+	protected async getScrollServiceUnreadMessages () : Promise<IAsyncSet<string>> {
+		const notificationData	= await this.notificationData.promise;
+
+		const asyncMap			= this.accountDatabaseService.getAsyncMap(
+			`unreadMessages/${notificationData.castleSessionID}`,
+			NeverProto,
+			SecurityModels.unprotected
+		);
+
+		return {
+			addItem: async (_VALUE: string) => {},
+			clear: async () => asyncMap.clear(),
+			deleteItem: async (value: string) => asyncMap.removeItem(value),
+			hasItem: async (value: string) => asyncMap.hasItem(value),
+			size: async () => asyncMap.size(),
+			watchSize: memoize(() => asyncMap.watchSize())
+		};
+	}
+
 	/** @inheritDoc */
 	public async send (
 		messageType?: ChatMessageValue.Types,
@@ -61,8 +92,8 @@ export class AccountChatService extends ChatService {
 		selfDestructChat?: boolean,
 		keepCurrentMessage?: boolean,
 		oldLocalStorageKey?: string
-	) : Promise<void> {
-		await super.send(
+	) : Promise<string> {
+		const id	= await super.send(
 			messageType,
 			message,
 			selfDestructTimeout,
@@ -71,14 +102,17 @@ export class AccountChatService extends ChatService {
 			oldLocalStorageKey
 		);
 
-		if (!this.accountSessionService.remoteUser.value) {
-			return;
-		}
+		const notificationData	= await this.notificationData.promise;
 
-		await this.accountDatabaseService.notify(
-			this.accountSessionService.remoteUser.value.username,
-			NotificationTypes.Message
-		);
+		await Promise.all(notificationData.usernames.map(async username =>
+			this.accountDatabaseService.notify(
+				username,
+				NotificationTypes.Message,
+				{castleSessionID: notificationData.castleSessionID, id}
+			)
+		));
+
+		return id;
 	}
 
 	/** Sets the remote user we're chatting with. */
@@ -89,10 +123,16 @@ export class AccountChatService extends ChatService {
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false
 	) : Promise<void> {
-		username	= this.accountSessionService.normalizeUsername(username);
-		const url	= `castleSessions/${
-			await this.accountContactsService.getCastleSessionID(username)
-		}`;
+		username				= this.accountSessionService.normalizeUsername(username);
+
+		const notificationData	= {
+			castleSessionID: await this.accountContactsService.getCastleSessionID(username),
+			usernames: username instanceof Array ? username : [username]
+		};
+
+		this.notificationData.resolve(notificationData);
+
+		const url	= `castleSessions/${notificationData.castleSessionID}`;
 
 		this.accountSessionInitService.callType	= callType || this.envService.callType;
 

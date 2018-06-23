@@ -21,6 +21,12 @@
 	<mat-card-header
 		fxLayout='row'
 		fxLayoutAlign='stretch center'
+		[matBadge]='(((user | async)?.unreadMessageCount | async) || 0).toString()'
+		[matBadgeHidden]='!(
+			showUnreadMessageCount &&
+			((user | async)?.unreadMessageCount | async) > 0
+		)'
+		matBadgePosition='above before'
 		*ngIf='(user | async)?.ready; else loading'
 	>
 		<img

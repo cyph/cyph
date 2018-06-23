@@ -1063,7 +1063,7 @@ export class AccountFilesService {
 		await this.accountDatabaseService.notify(
 			username,
 			NotificationTypes.File,
-			{fileType: await fileType}
+			{fileType: await fileType, id}
 		);
 	}
 

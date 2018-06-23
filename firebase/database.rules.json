@@ -1012,6 +1012,35 @@
 						}
 					},
 
+					"unreadFiles": {
+						"$unreadFileType": {
+							"$unreadFileID": {
+								"hash": {
+									".validate": "newData.val() === ''"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						}
+					},
+
+					"unreadMessages": {
+						"$unreadMessageSender": {
+							"$unreadMessageID": {
+								"data": {
+									".validate": "newData.val() === ''"
+								},
+								"hash": {
+									".validate": "newData.val() === ''"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						}
+					},
+
 					"$other": {
 						".validate": false
 					}

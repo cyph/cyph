@@ -34,6 +34,9 @@ export class AccountContactComponent implements OnChanges {
 		)
 	;
 
+	/** Indicates whether unread message count should be displayed. */
+	@Input() public showUnreadMessageCount: boolean			= false;
+
 	/** This user. */
 	public readonly user: BehaviorSubject<User|undefined>	=
 		new BehaviorSubject<User|undefined>(undefined)

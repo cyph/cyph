@@ -977,7 +977,7 @@ export class AccountDatabaseService {
 	public async notify (
 		username: MaybePromise<string>,
 		notificationType: NotificationTypes,
-		metadata?: any
+		metadata?: {id: string}&{[k: string]: any}
 	) : Promise<void> {
 		await this.databaseService.notify(
 			await this.normalizeURL('notifications'),

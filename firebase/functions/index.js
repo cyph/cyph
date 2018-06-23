@@ -279,7 +279,7 @@ exports.userNotification	= functions.database.ref(
 	const metadata		= typeof notification.metadata === 'object' ? notification.metadata : {};
 	const now			= Date.now();
 
-	if (!notification || !notification.target || isNaN(notification.type)) {
+	if (!notification || !notification.target || isNaN(notification.type) || !metadata.id) {
 		return;
 	}
 
@@ -335,7 +335,7 @@ exports.userNotification	= functions.database.ref(
 		(async () => {
 			const path	=
 				notification.type === NotificationTypes.File ?
-					'unreadFileCounts/' +
+					'unreadFiles/' +
 						(
 							(
 								!isNaN(metadata.fileType) &&
@@ -345,8 +345,8 @@ exports.userNotification	= functions.database.ref(
 								AccountFileRecord.RecordTypes.File
 						).toString()
 					:
-				notification.type === NotificationTypes.Message ?
-					`unreadMessageCounts/${username}` :
+				notification.type === NotificationTypes.Message && metadata.castleSessionID ?
+					`unreadMessages/${metadata.castleSessionID}` :
 					undefined
 			;
 
@@ -354,12 +354,13 @@ exports.userNotification	= functions.database.ref(
 				return;
 			}
 
-			const url	= `users/${notification.target}/${path}`;
-			const count	= await getItem(params.namespace, url, NumberProto).
-				catch(() => 0)
-			;
-
-			await setItem(params.namespace, url, NumberProto, count + 1);
+			await database.ref(
+				`${params.namespace}/users/${notification.target}/${path}/${metadata.id}`
+			).set({
+				data: '',
+				hash: '',
+				timestamp: admin.database.ServerValue.TIMESTAMP
+			});
 		})()
 	]);
 });

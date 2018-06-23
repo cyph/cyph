@@ -1,25 +1,26 @@
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
+import {IAsyncSet} from './iasync-set';
 import {LocalAsyncValue} from './local-async-value';
 
 
 /**
  * Local async Set implementation.
  */
-export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>> {
-	/** @see Set.add */
+export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>> implements IAsyncSet<T> {
+	/** @inheritDoc */
 	public async addItem (value: T) : Promise<void> {
 		this.value.add(value);
 		this.subject.next(this.value);
 	}
 
-	/** @see Set.clear */
+	/** @inheritDoc */
 	public async clear () : Promise<void> {
 		this.value.clear();
 		this.subject.next(this.value);
 	}
 
-	/** @see Set.delete */
+	/** @inheritDoc */
 	public async deleteItem (value: T) : Promise<void> {
 		this.value.delete(value);
 		this.subject.next(this.value);
@@ -35,7 +36,7 @@ export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>> {
 		this.value.forEach(callback);
 	}
 
-	/** @see Set.has */
+	/** @inheritDoc */
 	public async hasItem (value: T) : Promise<boolean> {
 		return this.value.has(value);
 	}
@@ -52,7 +53,7 @@ export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>> {
 		this.subject.next(this.value);
 	}
 
-	/** @see Set.size */
+	/** @inheritDoc */
 	public async size () : Promise<number> {
 		return this.value.size;
 	}
@@ -62,7 +63,7 @@ export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>> {
 		return this.value.values();
 	}
 
-	/** Watches size. */
+	/** @inheritDoc */
 	public watchSize () : Observable<number> {
 		return this.watch().pipe(map(value => value.size));
 	}

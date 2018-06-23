@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
-import {LocalAsyncSet} from '../local-async-set';
+import {IAsyncSet} from '../iasync-set';
+import {MaybePromise} from '../maybe-promise-type';
 import {lockTryOnce} from '../util/lock';
 import {resolvable, sleep} from '../util/wait';
 import {WindowWatcherService} from './window-watcher.service';
@@ -13,6 +14,9 @@ import {WindowWatcherService} from './window-watcher.service';
 export class ScrollService {
 	/** @ignore */
 	private readonly _ROOT_ELEMENT		= resolvable<JQuery|undefined>();
+
+	/** @ignore */
+	private readonly _UNREAD_ITEMS		= resolvable<IAsyncSet<string>>();
 
 	/** @ignore */
 	private itemCountInTitle: boolean	= false;
@@ -31,12 +35,17 @@ export class ScrollService {
 	/** @ignore */
 	private readonly scrollDownLock: {}	= {};
 
+	/** Resolves unreadItems. */
+	public readonly resolveUnreadItems: (rootElement: MaybePromise<IAsyncSet<string>>) => void	=
+		this._UNREAD_ITEMS.resolve
+	;
+
 	/** Unread item IDs. */
-	public readonly unreadItems: LocalAsyncSet<string>	= new LocalAsyncSet<string>();
+	public readonly unreadItems: Promise<IAsyncSet<string>>	= this._UNREAD_ITEMS.promise;
 
 	/** @ignore */
 	private async updateTitle () : Promise<void> {
-		const unreadItemCount	= await this.unreadItems.size();
+		const unreadItemCount	= await (await this.unreadItems).size();
 
 		if (!this.itemCountInTitle || unreadItemCount === this.lastUnreadItemCount) {
 			return;
@@ -58,7 +67,7 @@ export class ScrollService {
 
 	/** Indicates whether item has been read. */
 	public async isRead (id: string) : Promise<boolean> {
-		return !(await this.unreadItems.hasItem(id));
+		return !(await (await this.unreadItems).hasItem(id));
 	}
 
 	/** Scrolls to bottom. */
@@ -69,7 +78,7 @@ export class ScrollService {
 		}
 
 		await lockTryOnce(this.scrollDownLock, async () => {
-			await this.unreadItems.clear();
+			await (await this.unreadItems).clear();
 			await this.updateTitle();
 
 			await sleep();
@@ -82,7 +91,7 @@ export class ScrollService {
 
 	/** Set item as read. */
 	public async setRead (id: string) : Promise<void> {
-		await this.unreadItems.deleteItem(id);
+		await (await this.unreadItems).deleteItem(id);
 		await this.updateTitle();
 	}
 
@@ -92,6 +101,8 @@ export class ScrollService {
 		if (!rootElement) {
 			return;
 		}
+
+		const unreadItems		= await this.unreadItems;
 
 		const scrollPosition	=
 			rootElement[0].scrollHeight -
@@ -103,14 +114,14 @@ export class ScrollService {
 
 		if (
 			this.windowWatcherService.visibility.value &&
-			(await this.unreadItems.size()) < 1 &&
+			(await unreadItems.size()) < 1 &&
 			scrollPosition < 150
 		) {
 			this.scrollDown();
 			return;
 		}
 
-		await this.unreadItems.addItem(id);
+		await unreadItems.addItem(id);
 		await this.updateTitle();
 	}
 

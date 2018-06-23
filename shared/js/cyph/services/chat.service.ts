@@ -7,11 +7,14 @@ import {filter, map, take, takeWhile} from 'rxjs/operators';
 import {ChatMessage, IChatData, IChatMessageInput, IChatMessageLiveValue, States} from '../chat';
 import {HelpComponent} from '../components/help';
 import {EncryptedAsyncMap} from '../crypto/encrypted-async-map';
+import {IAsyncSet} from '../iasync-set';
 import {IProto} from '../iproto';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncMap} from '../local-async-map';
+import {LocalAsyncSet} from '../local-async-set';
 import {LocalAsyncValue} from '../local-async-value';
 import {LockFunction} from '../lock-function-type';
+import {MaybePromise} from '../maybe-promise-type';
 import {
 	BinaryProto,
 	ChatMessage as ChatMessageProto,
@@ -478,6 +481,11 @@ export class ChatService {
 		};
 	}
 
+	/** Gets async set for scrollService.unreadMessages. */
+	protected getScrollServiceUnreadMessages () : MaybePromise<IAsyncSet<string>> {
+		return new LocalAsyncSet<string>();
+	}
+
 	/** Aborts the process of chat initialisation and authentication. */
 	public async abortSetup () : Promise<void> {
 		this.chat.state	= States.aborted;
@@ -841,7 +849,7 @@ export class ChatService {
 		selfDestructChat: boolean = false,
 		keepCurrentMessage?: boolean,
 		oldLocalStorageKey?: string
-	) : Promise<void> {
+	) : Promise<string> {
 		if (keepCurrentMessage === undefined) {
 			keepCurrentMessage	= message !== undefined;
 		}
@@ -929,7 +937,8 @@ export class ChatService {
 		;
 
 		if (emptyValue) {
-			return removeOldStorageItem();
+			await removeOldStorageItem();
+			return id;
 		}
 
 		const localStoragePromise	= !this.chat.pendingMessageRoot ?
@@ -1040,7 +1049,8 @@ export class ChatService {
 
 		this.processOutgoingMessages();
 
-		return resolver.promise;
+		await resolver.promise;
+		return id;
 	}
 
 	/** Sets queued message to be sent after handshake. */
@@ -1094,6 +1104,8 @@ export class ChatService {
 			const pendingMessageRoot	= this.chat.pendingMessageRoot;
 
 			this.p2pWebRTCService.initialCallPending	= callType !== undefined;
+
+			this.scrollService.resolveUnreadItems(this.getScrollServiceUnreadMessages());
 
 			this.unconfirmedMessagesSubscription		= combineLatest(
 				this.chat.lastConfirmedMessage.watch(),

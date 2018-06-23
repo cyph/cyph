@@ -232,10 +232,6 @@ service firebase.storage {
 				// match /settings/{hash} {}
 
 				// match /signingKeyPair/{hash} {}
-
-				// match /unreadFileCounts/{fileType}/{hash} {}
-
-				// match /unreadMessageCounts/{username}/{hash} {}
 			}
 		}
 	}

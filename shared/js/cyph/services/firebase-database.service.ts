@@ -637,7 +637,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		urlPromise: MaybePromise<string>,
 		targetPromise: MaybePromise<string>,
 		notificationType: NotificationTypes,
-		metadata?: any
+		metadata?: {id: string}&{[k: string]: any}
 	) : Promise<void> {
 		const url		= await urlPromise;
 		const target	= await targetPromise;
@@ -1331,6 +1331,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 					/* tslint:disable-next-line:no-null-keyword */
 					const onValue	= (snapshot: DataSnapshot|null) => {
 						if (!snapshot) {
+							keys	= undefined;
+							this.ngZone.run(() => { observer.next([]); });
 							return;
 						}
 

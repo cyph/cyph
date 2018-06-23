@@ -9,7 +9,7 @@ import {
 	AccountUserTypes,
 	BooleanMapProto,
 	DataURIProto,
-	NumberProto,
+	NeverProto,
 	Review
 } from '../proto';
 import {normalize} from '../util/formatting';
@@ -176,13 +176,13 @@ export class AccountUserLookupService {
 							undefined,
 							true
 						),
-						this.accountDatabaseService.watch(
-							`unreadMessageCounts/${username}`,
-							NumberProto,
+						(async () => this.accountDatabaseService.getAsyncMap(
+							`unreadMessages/${
+								await this.accountContactsService.getCastleSessionID(username)
+							}`,
+							NeverProto,
 							SecurityModels.unprotected
-						).pipe(map(o =>
-							o.value
-						)),
+						))(),
 						preFetch
 					);
 				},
