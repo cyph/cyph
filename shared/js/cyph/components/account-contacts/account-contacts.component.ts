@@ -1,8 +1,8 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 /* import {IVirtualScrollOptions} from 'od-virtualscroll'; */
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
+import {filter, map, mergeMap} from 'rxjs/operators';
 import {IContactListItem, User, UserPresence} from '../../account';
 import {AccountUserTypes} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -36,7 +36,10 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 	}>	= combineLatest(
 		this.contactListInternal,
 		this.activatedRoute.data,
-		this.activatedRoute.url
+		concat(
+			of(undefined),
+			this.router.events.pipe(filter(event => event instanceof NavigationEnd))
+		)
 	).pipe(mergeMap(async ([contactList, data]) => {
 		const snapshot			= this.activatedRoute.snapshot.firstChild ?
 			this.activatedRoute.snapshot.firstChild :
@@ -169,6 +172,9 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
+
+		/** @ignore */
+		private readonly router: Router,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
