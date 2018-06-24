@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {ISessionMessageData, rpcEvents} from '../session';
 import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
+import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionService} from './account-session.service';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
@@ -20,8 +21,8 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountP2PService extends P2PService {
 	/** @ignore */
-	private getCallURL (callType: 'audio'|'video', username: string, id: string) : string {
-		return `#${accountRoot}${accountRoot === '' ? '' : '/'}${callType}/${username}/${id}`;
+	private getCallURL (callType: 'audio'|'video', contactID: string, id: string) : string {
+		return `#${accountRoot}${accountRoot === '' ? '' : '/'}${callType}/${contactID}/${id}`;
 	}
 
 	/** @ignore */
@@ -34,7 +35,9 @@ export class AccountP2PService extends P2PService {
 		await sleep(0);
 
 		const id		= uuid();
-		const username	= this.accountSessionService.remoteUser.value.username;
+		const contactID	= await this.accountContactsService.getContactID(
+			this.accountSessionService.remoteUser.value.username
+		);
 
 		await (await this.accountSessionService.send([
 			rpcEvents.accountP2P,
@@ -56,7 +59,7 @@ export class AccountP2PService extends P2PService {
 			})
 		);
 
-		await this.router.navigate([accountRoot, callType, username, id]);
+		await this.router.navigate([accountRoot, callType, contactID, id]);
 	}
 
 	constructor (
@@ -70,6 +73,9 @@ export class AccountP2PService extends P2PService {
 
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly accountContactsService: AccountContactsService,
 
 		/** @ignore */
 		private readonly accountSessionService: AccountSessionService
@@ -99,7 +105,9 @@ export class AccountP2PService extends P2PService {
 
 					const id				= o.command.additionalData;
 					const callType			= o.command.method;
-					const username			= this.accountSessionService.remoteUser.value.username;
+					const contactID			= await this.accountContactsService.getContactID(
+						this.accountSessionService.remoteUser.value.username
+					);
 					const {realUsername}	= await this.accountSessionService.remoteUser.value.
 						accountUserProfile.
 						getValue()
@@ -111,7 +119,7 @@ export class AccountP2PService extends P2PService {
 								this.stringsService.videoCall :
 								this.stringsService.audioCall
 						}. [${this.stringsService.clickHere}](${
-							this.getCallURL(callType, username, id)
+							this.getCallURL(callType, contactID, id)
 						}) ${this.stringsService.toJoin}.`
 					});
 				}
