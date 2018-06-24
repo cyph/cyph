@@ -1320,8 +1320,8 @@ export class ChatService {
 			});
 		});
 
-		this.sessionCapabilitiesService.capabilities.then(capabilities => {
-			this.walkieTalkieMode	= capabilities.walkieTalkieMode;
+		this.sessionCapabilitiesService.capabilities.walkieTalkieMode.then(walkieTalkieMode => {
+			this.walkieTalkieMode	= walkieTalkieMode;
 		});
 	}
 }

@@ -162,7 +162,7 @@ export class P2PService {
 	) : Promise<void> {
 		this.p2pWebRTCService.init(this.chatService, this.handlers, localVideo, remoteVideo);
 
-		this.isEnabled	= (await this.sessionCapabilitiesService.capabilities).p2p;
+		this.isEnabled	= await this.sessionCapabilitiesService.capabilities.p2p;
 	}
 
 	/** @see P2PWebRTCService.isActive */

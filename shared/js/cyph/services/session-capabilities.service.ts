@@ -19,6 +19,12 @@ export class SessionCapabilitiesService implements ISessionCapabilitiesService {
 	private readonly _WALKIE_TALKIE	= resolvable<boolean>();
 
 	/** @ignore */
+	private readonly localCapabilities: Promise<ISessionCapabilities>	= (async () => ({
+		p2p: await this._P2P_SUPPORT.promise,
+		walkieTalkieMode: await this._WALKIE_TALKIE.promise
+	}))();
+
+	/** @ignore */
 	private readonly remoteCapabilities: Promise<ISessionCapabilities>	=
 		this.sessionService.one<ISessionMessageData[]>(rpcEvents.capabilities).then(newEvents =>
 			(newEvents[0] || {capabilities: undefined}).capabilities || {
@@ -34,15 +40,10 @@ export class SessionCapabilitiesService implements ISessionCapabilitiesService {
 	;
 
 	/** @inheritDoc */
-	public readonly capabilities: Promise<ISessionCapabilities>			=
-		this._CAPABILITIES.promise
-	;
-
-	/** @inheritDoc */
-	public readonly localCapabilities: Promise<ISessionCapabilities>	= (async () => ({
-		p2p: await this._P2P_SUPPORT.promise,
-		walkieTalkieMode: await this._WALKIE_TALKIE.promise
-	}))();
+	public readonly capabilities										= {
+		p2p: this._CAPABILITIES.promise.then(o => o.p2p),
+		walkieTalkieMode: this._CAPABILITIES.promise.then(o => o.walkieTalkieMode)
+	};
 
 	/** @inheritDoc */
 	public readonly resolveP2PSupport: (isSupported: boolean) => void	=
