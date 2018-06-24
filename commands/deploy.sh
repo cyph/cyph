@@ -22,6 +22,7 @@ firebaseBackup=''
 customBuild=''
 saveBuildArtifacts=''
 debug=''
+debugProdBuild=''
 test=true
 websign=true
 
@@ -36,6 +37,11 @@ if [ "${1}" == '--prod' ] ; then
 elif [ "${1}" == '--debug-prod' ] ; then
 	test=''
 	debug=true
+	shift
+elif [ "${1}" == '--debug-prod-prod-build' ] ; then
+	test=''
+	debug=true
+	debugProdBuild=true
 	shift
 elif [ "${1}" == '--simple' ] ; then
 	simple=true
@@ -452,7 +458,7 @@ fi
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
 	./commands/buildunbundledassets.sh $(
-		if [ "${simple}" ] || [ "${debug}" ] ; then
+		if [ "${simple}" ] || ( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) ; then
 			if [ "${simpleProdBuild}" ] ; then
 				echo '--prod-test --service-worker'
 			else
@@ -490,7 +496,10 @@ for d in $compiledProjects ; do
 		)};
 	`.trim())' > src/js/standalone/translations.ts
 
-	if [ "${debug}" ] || ( [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ) ; then
+	if \
+		( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) || \
+		( [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ) \
+	; then
 		ng build --source-map false --configuration "${environment}" || exit 1
 	else
 		../commands/prodbuild.sh --configuration "${environment}" || exit 1
