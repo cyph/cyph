@@ -185,6 +185,7 @@
 							]
 						},
 						"tmp": {
+							"outputHashing": "all",
 							"fileReplacements": [
 								{
 									"replace": "src/js/environments/environment.ts",
