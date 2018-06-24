@@ -119,7 +119,7 @@ if [ "${websign}" ] || [ "${site}" == 'firebase' ] ; then
 	./commands/keycache.sh
 fi
 
-if [ "${compiledProjects}" ] && [ ! "${test}" ] ; then
+if [ "${compiledProjects}" ] && [ ! "${test}" ] && [ ! "${debug}" ] ; then
 	./commands/lint.sh || exit 1
 fi
 
