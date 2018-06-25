@@ -119,7 +119,7 @@ export class AccountContactsSearchComponent {
 						const externalUser	= (
 							this.externalUsers &&
 							(results.length < 1 || results[0].user.username !== query) &&
-							(await this.accountUserLookupService.exists(query))
+							(await this.accountUserLookupService.exists(query, false))
 						) ?
 							query :
 							undefined
@@ -169,7 +169,7 @@ export class AccountContactsSearchComponent {
 	/** @see SearchBarComponent.filterTransform */
 	public readonly userFilterTransform: (username: string) => Promise<User|undefined>			=
 		async username => {
-			return this.accountUserLookupService.getUser(username);
+			return this.accountUserLookupService.getUser(username, false);
 		}
 	/* tslint:disable-next-line:semicolon */
 	;
