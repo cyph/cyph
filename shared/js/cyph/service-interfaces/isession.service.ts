@@ -118,7 +118,7 @@ export interface ISessionService {
 	spawn () : ISessionService;
 
 	/** Trigger event, passing in optional data. */
-	trigger (event: string, data?: any) : void;
+	trigger (event: string, data?: any) : Promise<void>;
 
 	/** Resolves when other user is online. */
 	yt () : Promise<void>;

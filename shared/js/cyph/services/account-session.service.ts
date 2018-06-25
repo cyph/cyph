@@ -205,7 +205,7 @@ export class AccountSessionService extends SessionService {
 				{all: false, event: events.cyphNotFound}
 			]) {
 				const promises	= group.map(async session => session.one(event));
-				const callback	= () => { this.trigger(event); };
+				const callback	= async () => this.trigger(event);
 
 				if (all) {
 					Promise.all(promises).then(callback);
@@ -216,11 +216,11 @@ export class AccountSessionService extends SessionService {
 			}
 
 			for (const session of group) {
-				session.on(rpcEvents.text, newEvents => {
-					this.trigger(rpcEvents.text, newEvents);
-				});
+				session.on(rpcEvents.text, async newEvents =>
+					this.trigger(rpcEvents.text, newEvents)
+				);
 
-				session.on(rpcEvents.confirm, (newEvents: ISessionMessageData[]) => {
+				session.on(rpcEvents.confirm, async (newEvents: ISessionMessageData[]) =>
 					this.trigger(rpcEvents.confirm, filterUndefined(newEvents.map(o => {
 						if (!o.textConfirmation || !o.textConfirmation.id) {
 							return;
@@ -240,8 +240,8 @@ export class AccountSessionService extends SessionService {
 						}
 
 						return;
-					})));
-				});
+					})))
+				);
 			}
 
 			this.resolveReady();

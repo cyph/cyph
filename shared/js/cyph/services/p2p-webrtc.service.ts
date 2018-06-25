@@ -129,7 +129,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				await this.getWebRTC();
 			}
 
-			eventManager.trigger(P2PWebRTCService.constants.webRTC + data.event, data.args);
+			await eventManager.trigger(P2PWebRTCService.constants.webRTC + data.event, data.args);
 		}
 	};
 

@@ -92,7 +92,7 @@ export class EventManager {
 		;
 
 		await init;
-		this.trigger(event, {data, eventID}, true);
+		await this.trigger(event, {data, eventID}, true);
 
 		const response	= await responsePromise;
 
@@ -108,7 +108,11 @@ export class EventManager {
 	 * Triggers event.
 	 * @param crossThread Indicates whether event should be propagated to other threads.
 	 */
-	public trigger<T> (event: string, data?: T, crossThread: boolean = false) : void {
+	public async trigger<T> (
+		event: string,
+		data?: T,
+		crossThread: boolean = false
+	) : Promise<void> {
 		if (crossThread) {
 			if (env.isMainThread) {
 				for (const thread of Array.from(this.threads)) {
@@ -130,15 +134,15 @@ export class EventManager {
 			return;
 		}
 
-		for (const handler of Array.from(eventMapping)) {
+		await Promise.all(Array.from(eventMapping).map(async handler => {
 			try {
-				handler(data);
+				await handler(data);
 			}
 			catch (err) {
 				/* tslint:disable-next-line:ban */
 				setTimeout(() => { throw err; }, 0);
 			}
-		}
+		}));
 	}
 
 	constructor () {

@@ -164,7 +164,7 @@ export abstract class SessionService implements ISessionService {
 
 	/** @see IChannelHandlers.onConnect */
 	protected async channelOnConnect () : Promise<void> {
-		this.trigger(events.connect);
+		await this.trigger(events.connect);
 	}
 
 	/** @see IChannelHandlers.onMessage */
@@ -206,9 +206,9 @@ export abstract class SessionService implements ISessionService {
 			}
 		}));
 
-		for (const [event, data] of Array.from(messageGroups.entries())) {
-			this.trigger(event, data);
-		}
+		await Promise.all(Array.from(messageGroups.entries()).map(async ([event, data]) =>
+			this.trigger(event, data)
+		));
 	}
 
 	/** @ignore */
@@ -549,8 +549,8 @@ export abstract class SessionService implements ISessionService {
 	}
 
 	/** @inheritDoc */
-	public trigger (event: string, data?: any) : void {
-		eventManager.trigger(event + this.eventID, data);
+	public async trigger (event: string, data?: any) : Promise<void> {
+		await eventManager.trigger(event + this.eventID, data);
 	}
 
 	/** @inheritDoc */
