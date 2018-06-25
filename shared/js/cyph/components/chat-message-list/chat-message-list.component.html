@@ -52,7 +52,7 @@
 				[message]='item.message'
 				[mobile]='item.mobile'
 				[pending]='item.pending'
-				[scrollIntoView]='item.isEnd && (initialScrollDown | async)'
+				[scrollIntoView]='item.scrollIntoView'
 				[uiStyle]='item.uiStyle'
 				[unconfirmedMessages]='item.unconfirmedMessages | async'
 				(scrolledIntoView)='initialScrollDown.next(false)'

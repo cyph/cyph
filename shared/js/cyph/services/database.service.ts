@@ -324,6 +324,11 @@ export class DatabaseService extends DataManagerService {
 		return (await (await this.downloadItem(url, proto)).result).value;
 	}
 
+	/** Gets most recently added key of a list/map. */
+	public async getLatestKey (_URL: MaybePromise<string>) : Promise<string|undefined> {
+		throw new Error('Must provide an implementation of DatabaseService.getLatestKey.');
+	}
+
 	/** Gets a list of values. */
 	public async getList<T> (_URL: MaybePromise<string>, _PROTO: IProto<T>) : Promise<T[]> {
 		throw new Error('Must provide an implementation of DatabaseService.getList.');

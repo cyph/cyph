@@ -320,6 +320,26 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public async getLatestKey (urlPromise: MaybePromise<string>) : Promise<string|undefined> {
+		return this.ngZone.runOutsideAngular(async () => {
+			const url	= await urlPromise;
+
+			try {
+				const value	= (await (await this.getDatabaseRef(url)).once('value')).val();
+				const keys	= await this.getListKeysInternal(value);
+
+				return keys.
+					filter(k => !isNaN(value[k].timestamp)).
+					sort((a, b) => value[b].timestamp - value[a].timestamp)
+				[0];
+			}
+			catch {
+				return undefined;
+			}
+		});
+	}
+
+	/** @inheritDoc */
 	public async getList<T> (urlPromise: MaybePromise<string>, proto: IProto<T>) : Promise<T[]> {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;

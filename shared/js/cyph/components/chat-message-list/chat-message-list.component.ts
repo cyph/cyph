@@ -195,9 +195,11 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 			this.initialScrollDown.next(false);
 		}
 
-		const chat	= this.chat;
+		const chat				= this.chat;
 
-		const observables	= getOrSetDefault(this.observableCache, chat, () => ({
+		const lastUnreadMessage	= await chat.lastUnreadMessage;
+
+		const observables		= getOrSetDefault(this.observableCache, chat, () => ({
 			messages: combineLatest(
 				chat.messageList.watchFlat().pipe(mergeMap(async messageIDs =>
 					Promise.all(messageIDs.map(async id =>
@@ -209,7 +211,11 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 				chat.pendingMessages.watch(),
 				watchDateChange(true)
 			).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
-				if (onlineMessages.length < 1) {
+				if (
+					this.initialScrollDown.value &&
+					onlineMessages.length < 1 &&
+					!lastUnreadMessage
+				) {
 					this.initialScrollDown.next(false);
 				}
 
@@ -335,20 +341,29 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		observables.messages.pipe(map(messages => (
 			<({dateChange?: string; message?: ChatMessage; pending: boolean})[]>
 			(messages.length < 1 ? [{pending: false}] : messages)
-		).map(({dateChange, message, pending}, i, arr) => ({
-			accounts: this.accounts,
-			dateChange,
-			isEnd: (i + 1) === arr.length,
-			isFriendTyping: chat.isFriendTyping,
-			isStart: i === 0,
-			message,
-			mobile: this.mobile,
-			pending,
-			persistentEndMessage: this.persistentEndMessage,
-			showDisconnectMessage: this.showDisconnectMessage,
-			uiStyle: this.uiStyle,
-			unconfirmedMessages: observables.unconfirmedMessages
-		})))).subscribe(
+		).map(({dateChange, message, pending}, i, arr) => {
+			const isEnd	= (i + 1) === arr.length;
+
+			return {
+				accounts: this.accounts,
+				dateChange,
+				isEnd,
+				isFriendTyping: chat.isFriendTyping,
+				isStart: i === 0,
+				message,
+				mobile: this.mobile,
+				pending,
+				persistentEndMessage: this.persistentEndMessage,
+				scrollIntoView: this.initialScrollDown.value && (
+					lastUnreadMessage ?
+						((message && message.id) === lastUnreadMessage) :
+						isEnd
+				),
+				showDisconnectMessage: this.showDisconnectMessage,
+				uiStyle: this.uiStyle,
+				unconfirmedMessages: observables.unconfirmedMessages
+			};
+		}))).subscribe(
 			this.vsData
 		);
 	}

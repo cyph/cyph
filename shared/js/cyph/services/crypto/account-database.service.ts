@@ -749,6 +749,11 @@ export class AccountDatabaseService {
 		).value;
 	}
 
+	/** @see DatabaseService.getLatestKey */
+	public async getLatestKey (url: MaybePromise<string>) : Promise<string|undefined> {
+		return this.databaseService.getLatestKey(this.normalizeURL(url));
+	}
+
 	/** @see DatabaseService.getList */
 	public async getList<T> (
 		url: MaybePromise<string>,

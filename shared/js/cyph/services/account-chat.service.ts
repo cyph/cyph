@@ -169,6 +169,9 @@ export class AccountChatService extends ChatService {
 						`${url}/lastConfirmedMessage`,
 						ChatLastConfirmedMessage
 					),
+					lastUnreadMessage: this.accountDatabaseService.getLatestKey(
+						`unreadMessages/${notificationData.castleSessionID}`
+					),
 					messageList: this.accountDatabaseService.getAsyncList(
 						`${url}/messageList`,
 						StringArrayProto,

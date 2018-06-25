@@ -470,6 +470,7 @@ export class ChatService {
 			isFriendTyping: new BehaviorSubject(false),
 			isMessageChanged: false,
 			lastConfirmedMessage: new LocalAsyncValue({id: '', index: 0}),
+			lastUnreadMessage: Promise.resolve(undefined),
 			messageList: new LocalAsyncList<string[]>(),
 			messages: new LocalAsyncMap<string, IChatMessage>(),
 			pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),

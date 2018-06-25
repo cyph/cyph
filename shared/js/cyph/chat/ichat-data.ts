@@ -40,6 +40,9 @@ export interface IChatData {
 	/** Last outgoing message whose receipt has been confirmed. */
 	lastConfirmedMessage: IAsyncValue<IChatLastConfirmedMessage>;
 
+	/** ID of most recent unread message. */
+	lastUnreadMessage: Promise<string|undefined>;
+
 	/** Ordered message list of messge IDs. */
 	messageList: IAsyncList<string[]>;
 
