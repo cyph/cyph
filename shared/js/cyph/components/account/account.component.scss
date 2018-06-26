@@ -17,14 +17,6 @@
 		overflow-y: auto;
 	}
 
-	.telehealth .cyph-gradient {
-		opacity: 0.5;
-	}
-
-	.mobile .cyph-gradient {
-		opacity: 0.15;
-	}
-
 	.cyph-gradient {
 		display: block;
 		width: 100%;
@@ -122,7 +114,12 @@ cyph-account-menu.mobile {
 	position: fixed;
 }
 
-:not(.mobile) .header {
+:host > .mobile .cyph-gradient {
+	opacity: 0.15;
+}
+
+:host > :not(.mobile) .header {
+	bottom: 10px;
 	height: 100px;
 	min-height: 100px;
 	margin-bottom: 2px;
@@ -136,20 +133,14 @@ cyph-account-menu.mobile {
 	}
 }
 
-.mobile .header {
-	height: 70px;
-	min-height: 70px;
-
-	&:after {
-		height: 5px;
-		width: 100%;
-		content: no-close-quote;
-	}
+:host > .mobile .header {
+	height: 50px;
+	min-height: 50px;
+	font-size: 12px;
+	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
 }
 
 .header {
-	bottom: 10px;
-
 	.mat-icon-button {
 		.mat-icon {
 			font-size: 35px;
