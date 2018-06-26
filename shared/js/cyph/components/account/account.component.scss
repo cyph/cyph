@@ -128,6 +128,12 @@
 }
 
 :host > .mobile {
+	::ng-deep {
+		cyph-account-profile, .card-list {
+			padding: 20px 5px;
+		}
+	}
+
 	.cyph-gradient {
 		opacity: 0.15;
 	}

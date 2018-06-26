@@ -4,10 +4,13 @@ cyph-account-contact.active ::ng-deep .contact {
 	@include filter(brightness(1.2));
 }
 
-.card-list > div {
-	padding-bottom: 0px;
+.card-list {
+	&, > div {
+		padding-bottom: 0px !important;
+		padding-top: 0px !important;
+	}
 
-	> cyph-account-contact {
+	> div > cyph-account-contact {
 		margin: 16px 0px;
 	}
 }
