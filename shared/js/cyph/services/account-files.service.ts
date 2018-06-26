@@ -940,7 +940,7 @@ export class AccountFilesService {
 	}
 
 	/** Opens an image file. */
-	public async openImage (id: string, ) : Promise<void> {
+	public async openImage (id: string) : Promise<void> {
 		if (await this.isImage(id)) {
 			this.dialogService.image({
 				src: await this.downloadURI(id).result,
