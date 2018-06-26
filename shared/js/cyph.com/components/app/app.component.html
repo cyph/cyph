@@ -22,10 +22,18 @@
 						fxHide.lt-lg class='link-wrapper-outer right'
 					>
 						<div class='link-wrapper-inner' cyphTranslate>
-							<a mat-button routerLink='/intro'>Intro</a>
-							<a mat-button routerLink='/features'>Features</a>
-							<a mat-button routerLink='/about'>About</a>
-							<a mat-button routerLink='/gettingstarted'>Getting Started</a>
+							<a mat-button routerLink='/intro'>
+								Intro
+							</a>
+							<a mat-button routerLink='/features'>
+								Features
+							</a>
+							<a mat-button routerLink='/about'>
+								About
+							</a>
+							<a mat-button routerLink='/gettingstarted'>
+								Getting Started
+							</a>
 						</div>
 					</div>
 				</div>
@@ -52,10 +60,18 @@
 						class='link-wrapper-outer left'
 					>
 						<div class='link-wrapper-inner' cyphTranslate>
-							<a mat-button href='/blog'>Blog</a>
-							<a mat-button routerLink='/faq'>FAQ</a>
-							<a mat-button href='/pricing'>Pricing</a>
-							<a mat-button routerLink='/register'>Register</a>
+							<a mat-button [href]='envService.homeWordPressUrl + "/blog"'>
+								Blog
+							</a>
+							<a mat-button [href]='envService.homeWordPressUrl + "/faq"'>
+								FAQ
+							</a>
+							<a mat-button [href]='envService.homeWordPressUrl + "/pricing"'>
+								Pricing
+							</a>
+							<a mat-button routerLink='/register'>
+								Register
+							</a>
 						</div>
 					</div>
 
@@ -166,7 +182,7 @@
 						mat-button
 						fxFlex
 						cyphTranslate
-						href='/blog'
+						[href]='envService.homeWordPressUrl + "/blog"'
 						(click)='sidenav.close()'
 					>
 						Blog
@@ -177,7 +193,7 @@
 						mat-button
 						fxFlex
 						cyphTranslate
-						routerLink='/faq'
+						[href]='envService.homeWordPressUrl + "/faq"'
 						(click)='sidenav.close()'
 					>
 						FAQ
@@ -188,7 +204,7 @@
 						mat-button
 						fxFlex
 						cyphTranslate
-						href='/pricing'
+						[href]='envService.homeWordPressUrl + "/pricing"'
 						(click)='sidenav.close()'
 					>
 						Pricing
@@ -819,7 +835,10 @@
 									signing framework,
 								</span>
 								&ngsp;
-								<a target='_blank' href='/websign'>WebSign</a>.
+								<a
+									target='_blank'
+									[href]='envService.homeWordPressUrl + "/websign"'
+								>WebSign</a>.
 								&ngsp;
 								<span cyphTranslate>
 									WebSign will protect you even in the event that our servers
@@ -1148,7 +1167,9 @@
 							<br />
 							<span cyphTranslate>To add something to your cart go to</span>
 							&ngsp;
-							<a href='/pricing' cyphTranslate>Business Pricing</a>
+							<a [href]='envService.homeWordPressUrl + "/pricing"' cyphTranslate>
+								Business Pricing
+							</a>
 							&ngsp;
 							<span cyphTranslate>or</span>
 							&ngsp;
@@ -1276,7 +1297,7 @@
 								</span>
 								&ngsp;
 								<a
-									href='/pricing'
+									[href]='envService.homeWordPressUrl + "/pricing"'
 									cyphTranslate
 								>enterprise deployments of secure video and instant messaging</a>.
 							</p>

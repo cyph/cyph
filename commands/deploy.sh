@@ -378,6 +378,10 @@ else
 	sed -i "s|${defaultHost}42001|${homeURL}|g" shared/js/cyph/env-deploy.ts
 fi
 
+if [ ! "${simple}" ] ; then
+	sed -i "s|${defaultHost}43000/root/||g" shared/js/cyph/env-deploy.ts
+fi
+
 if [ -d nakedredirect ] ; then
 	cp backend/config.go nakedredirect/
 fi

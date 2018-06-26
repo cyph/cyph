@@ -33,6 +33,11 @@ export class EnvDeploy {
 		`${locationData.protocol}//${locationData.hostname}:42001/`
 	;
 
+	/** URL for Cyph WordPress website (same as homeUrl except in local env). */
+	public readonly homeWordPressUrl: string	=
+		`${locationData.protocol}//${locationData.hostname}:43000/root/` || this.homeUrl
+	;
+
 	/** Base URL for a new cyph link ("https://cyph.ws/" or equivalent). */
 	public readonly newCyphBaseUrl: string		=
 		this.environment.customBuild && !this.environment.local ?
