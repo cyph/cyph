@@ -110,34 +110,38 @@
 	}
 }
 
-cyph-account-menu.mobile {
-	position: fixed;
-}
+:host > :not(.mobile) {
+	.header {
+		bottom: 10px;
+		height: 100px;
+		min-height: 100px;
+		margin-bottom: 2px;
 
-:host > .mobile .cyph-gradient {
-	opacity: 0.15;
-}
-
-:host > :not(.mobile) .header {
-	bottom: 10px;
-	height: 100px;
-	min-height: 100px;
-	margin-bottom: 2px;
-
-	&:after {
-		height: 20px;
-		width: 100%;
-		position: absolute;
-		bottom: -2px;
-		content: no-close-quote;
+		&:after {
+			height: 20px;
+			width: 100%;
+			position: absolute;
+			bottom: -2px;
+			content: no-close-quote;
+		}
 	}
 }
 
-:host > .mobile .header {
-	height: 50px;
-	min-height: 50px;
-	font-size: 12px;
-	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+:host > .mobile {
+	.cyph-gradient {
+		opacity: 0.15;
+	}
+
+	.header {
+		height: 50px;
+		min-height: 50px;
+		font-size: 12px;
+		box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+	}
+}
+
+cyph-account-menu.mobile {
+	position: fixed;
 }
 
 .header {
