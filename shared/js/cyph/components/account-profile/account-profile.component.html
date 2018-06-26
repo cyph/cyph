@@ -98,17 +98,17 @@
 			class='alt'
 			matTooltip='Close'
 			matTooltipPosition='above'
-			(click)='editMode = false'
+			(click)='setEditMode(false)'
 			*ngIf='editMode'
 		>
 			<mat-icon>close</mat-icon>
 		</button>
 		<button
 			mat-fab
-			*ngIf='!editMode'
+			*ngIf='!(envService.isTelehealth && editMode)'
 			[matTooltip]='editMode ? "Save" : "Edit"'
 			matTooltipPosition='above'
-			(click)='editMode ? saveUserDescription() : editMode = true'
+			(click)='editMode ? saveProfile() : setEditMode(true)'
 		>
 			<mat-icon *ngIf='editMode'>save</mat-icon>
 			<mat-icon *ngIf='!editMode'>edit</mat-icon>
@@ -149,7 +149,9 @@
 				<img
 					cyphTranslate
 					alt='Cover Image'
-					[src]='user?.coverImage | async'
+					[src]='(getDataURI(draft.coverImage) | async) || (user?.coverImage | async)'
+					[cyphDropZone]='editMode'
+					(fileDrop)='draft.coverImage = $event'
 				/>
 			</div>
 			<div fxLayoutAlign='center center'>
@@ -157,10 +159,13 @@
 					<div fxLayoutAlign='center center'>
 						<img
 							cyphTranslate
-							class='avatar animated jackInTheBox _1'
+							class='avatar jackInTheBox _1'
+							[class.animated]='!editMode'
 							[ngClass]='userPresence[(user?.status | async) || 0]'
 							alt='Profile Picture'
-							[src]='user?.avatar | async'
+							[src]='(getDataURI(draft.avatar) | async) || (user?.avatar | async)'
+							[cyphDropZone]='editMode'
+							(fileDrop)='draft.avatar = $event'
 						/>
 					</div>
 					<div></div>
@@ -184,7 +189,7 @@
 							(focus)='isEditorFocused = true'
 							[maxlength]='maxDescriptionLength'
 							[ngModel]='user?.description | async'
-							(ngModelChange)='descriptionDraft = $event'
+							(ngModelChange)='draft.description = $event'
 						/>
 					</mat-form-field>
 				</div>
@@ -269,11 +274,14 @@
 				>
 					<img
 						cyphTranslate
-						class='avatar animated _1'
+						class='avatar _1'
+						[class.animated]='!editMode'
 						[ngClass]='userPresence[(user?.status | async) || 0]'
 						ngClass.xs='xs'
 						alt='Profile Picture'
-						[src]='user?.avatar | async'
+						[src]='(getDataURI(draft.avatar) | async) || (user?.avatar | async)'
+						[cyphDropZone]='editMode'
+						(fileDrop)='draft.avatar = $event'
 						*ngIf='(doctorListOnly | async) !== true'
 						fxHide.xs
 					/>
@@ -360,7 +368,7 @@
 							[form]='form'
 							[isDisabled]='!editMode'
 							[submitText]='stringsService.saveUpperCase'
-							(submitForm)='saveUserDescription(extra.forms)'
+							(submitForm)='saveProfile({forms: extra.forms})'
 						></cyph-dynamic-form>
 					</ng-container>
 					</mat-card-content>
@@ -377,7 +385,7 @@
 										(focus)='isEditorFocused = true'
 										[maxlength]='maxDescriptionLength'
 										[ngModel]='user?.description | async'
-										(ngModelChange)='descriptionDraft = $event'
+										(ngModelChange)='draft.description = $event'
 									></textarea>
 								</mat-form-field>
 								<h2 cyphTranslate>Address</h2>
@@ -444,7 +452,7 @@
 								(focus)='isEditorFocused = true'
 								[maxlength]='maxDescriptionLength'
 								[ngModel]='user?.description | async'
-								(ngModelChange)='descriptionDraft = $event'
+								(ngModelChange)='draft.description = $event'
 							></textarea>
 						</mat-form-field>
 						<br />

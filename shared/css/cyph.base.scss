@@ -103,6 +103,14 @@ a {
 	text-decoration: underline;
 }
 
+.cyph-drop-zone {
+	cursor: pointer;
+
+	&:hover {
+		@include filter(brightness(1.5));
+	}
+}
+
 .pre-spaced {
 	white-space: pre;
 }

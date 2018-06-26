@@ -14,11 +14,14 @@ $header-size: 135px;
 	}
 
 	.avatar {
-		cursor: auto;
 		width: 18em;
 		height: 18em;
 		box-shadow: 0px 20px 42px 0px rgba(0, 0, 0, 0.3);
 		border-width: 10px !important;
+
+		&:not(.cyph-drop-zone) {
+			cursor: auto;
+		}
 	}
 
 	.cover-image {
@@ -44,6 +47,10 @@ $header-size: 135px;
 
 			@include transform(translate(-50%, -50%));
 		}
+	}
+
+	img.cyph-drop-zone:not(:hover) {
+		opacity: 0.75;
 	}
 
 	/* .member-list:not(.doctor-list-only) { */
@@ -97,19 +104,6 @@ mat-card {
 
 .edit-hide {
 	@include transition(opacity 0.35s ease-in-out);
-}
-
-.change-avatar {
-	opacity: 0;
-	position: absolute;
-	font-size: 3em;
-	width: 6em;
-	height: 6em;
-
-	&:hover {
-		opacity: 1;
-		background-color: rgba(0, 0, 0, 0.5);
-	}
 }
 
 @media (max-height: 600px) {

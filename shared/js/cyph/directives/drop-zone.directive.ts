@@ -1,4 +1,13 @@
-import {Directive, ElementRef, EventEmitter, OnInit, Output, Renderer2} from '@angular/core';
+import {
+	Directive,
+	ElementRef,
+	EventEmitter,
+	Input,
+	OnChanges,
+	OnInit,
+	Output,
+	Renderer2
+} from '@angular/core';
 import * as Dropzone from 'dropzone';
 import {uuid} from '../util/uuid';
 
@@ -7,12 +16,37 @@ import {uuid} from '../util/uuid';
 @Directive({
 	selector: '[cyphDropZone]'
 })
-export class DropZoneDirective implements OnInit {
+export class DropZoneDirective implements OnChanges, OnInit {
+	/** @ignore */
+	private readonly className: string	= 'cyph-drop-zone';
+
+	/** @ignore */
+	private dropZone?: Dropzone;
+
+	/** Indicates whether directive should be active. */
+	@Input() public cyphDropZone?: boolean;
+
 	/** File drop event emitter. */
 	@Output() public readonly fileDrop: EventEmitter<File>	= new EventEmitter<File>();
 
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
+	public ngOnChanges () : void {
+		if (!this.dropZone) {
+			return;
+		}
+
+		if (this.cyphDropZone === false) {
+			this.dropZone.disable();
+			this.renderer.removeClass(this.elementRef.nativeElement, this.className);
+		}
+		else {
+			this.dropZone.enable();
+			this.renderer.addClass(this.elementRef.nativeElement, this.className);
+		}
+	}
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
 		const id	= `id-${uuid()}`;
 
 		this.renderer.addClass(this.elementRef.nativeElement, id);
@@ -25,6 +59,15 @@ export class DropZoneDirective implements OnInit {
 			},
 			url: 'data:text/plain;ascii,'
 		});
+
+		if (this.cyphDropZone === false) {
+			dropZone.disable();
+		}
+		else {
+			this.renderer.addClass(this.elementRef.nativeElement, this.className);
+		}
+
+		this.dropZone	= dropZone;
 	}
 
 	constructor (

@@ -1,10 +1,11 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import memoize from 'lodash-es/memoize';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
-import {AccountUserTypes, IForm} from '../../proto';
+import {AccountUserTypes, BlobProto, DataURIProto, IForm} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';
@@ -20,6 +21,7 @@ import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
 import {cacheObservable} from '../../util/flatten-observable';
+import {deserialize, serialize} from '../../util/serialization';
 
 
 /**
@@ -40,8 +42,13 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
-	/** Current draft of user profile description. */
-	public descriptionDraft: string	= '';
+	/** Current draft of user profile. */
+	public draft: {
+		avatar?: File;
+		coverImage?: File;
+		description?: string;
+		forms?: IForm[];
+	}	= {};
 
 	/** @see AccountProfileComponent.doctorListOnly */
 	public readonly doctorListOnly: Observable<boolean>			= cacheObservable(
@@ -50,6 +57,11 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** Profile edit mode. */
 	public editMode: boolean		= false;
+
+	/** Gets data URI of file. */
+	public readonly getDataURI 		= memoize(async (file?: File) =>
+		!file ? undefined : deserialize(DataURIProto, await serialize(BlobProto, file))
+	);
 
 	/** Indicates whether this is home component. */
 	@Input() public home: boolean	= false;
@@ -184,7 +196,12 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	}
 
 	/** Publishes new user description. */
-	public async saveUserDescription (forms?: IForm[]) : Promise<void> {
+	public async saveProfile (draft?: {
+		avatar?: File;
+		coverImage?: File;
+		description?: string;
+		forms?: IForm[];
+	}) : Promise<void> {
 		const user	= this.user;
 
 		if (!user || !this.isCurrentUser) {
@@ -193,30 +210,53 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 		this.accountService.interstitial	= true;
 
-		await Promise.all([
-			(async () => {
-				const draft		= this.descriptionDraft.trim();
-				const profile	= await user.accountUserProfile.getValue();
+		const {
+			avatar,
+			coverImage,
+			description,
+			forms
+		}	= !draft ?
+			this.draft :
+			{...this.draft, ...draft}
+		;
 
-				if (profile.description !== draft) {
-					profile.description	= draft;
-					await user.accountUserProfile.setValue(profile);
-				}
-			})(),
+		await Promise.all([
+			avatar === undefined ?
+				undefined :
+				this.accountSettingsService.setAvatar(avatar)
+			,
+			coverImage === undefined ?
+				undefined :
+				this.accountSettingsService.setCoverImage(coverImage)
+			,
 			(async () => {
-				if (!forms) {
+				if (description === undefined) {
 					return;
 				}
 
-				user.accountUserProfileExtra.updateValue(async o => ({
-					...o,
-					forms
-				}));
-			})()
+				const descriptionTrimmed	= description.trim();
+
+				await user.accountUserProfile.updateValue(async o => {
+					if (o.description === descriptionTrimmed) {
+						throw new Error();
+					}
+
+					return {...o, description: descriptionTrimmed};
+				});
+			})(),
+			forms === undefined ?
+				undefined :
+				user.accountUserProfileExtra.updateValue(async o => ({...o, forms}))
 		]);
 
 		this.accountService.interstitial	= false;
-		this.editMode						= false;
+		this.setEditMode(false);
+	}
+
+	/** Sets edit mode. */
+	public setEditMode (editMode: boolean) : void {
+		this.draft		= {};
+		this.editMode	= editMode;
 	}
 
 	/** Shares medical data from EHR system with the patient. */
