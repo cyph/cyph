@@ -118,6 +118,10 @@
 	}
 }
 
+cyph-account-menu.mobile {
+	position: fixed;
+}
+
 :not(.mobile) .header {
 	height: 100px;
 	min-height: 100px;
