@@ -8,7 +8,6 @@ export enum States {
 	donate,
 	home,
 	error,
-	faq,
 	privacypolicy,
 	termsofservice,
 	waitlisttrack

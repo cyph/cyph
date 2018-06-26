@@ -51,11 +51,6 @@ export class PageTitles {
 	);
 
 	/** @see PageTitles */
-	public readonly faq: string				= translate(
-		`Frequently Asked Questions`
-	);
-
-	/** @see PageTitles */
 	public readonly features: string		= translate(
 		`Cyph's Features`
 	);

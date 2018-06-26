@@ -18,7 +18,6 @@ export const appRoutes: Routes	= [
 	{path: 'contact/:email', component: AppComponent},
 	{path: 'disrupt', component: AppComponent},
 	{path: 'donate', component: AppComponent},
-	{path: 'faq', component: AppComponent},
 	{path: 'features', component: AppComponent},
 	{path: 'gettingstarted', component: AppComponent},
 	{path: 'intro', component: AppComponent},
