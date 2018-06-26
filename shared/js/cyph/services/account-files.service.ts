@@ -438,6 +438,12 @@ export class AccountFilesService {
 	/** Indicates whether the first load has completed. */
 	public initiated: boolean				= false;
 
+	/** Determines whether file should be treated as an image. */
+	public readonly isImage	= memoize(async (id: string) => {
+		const file	= await this.getFile(id);
+		return file.mediaType.startsWith('image/') && !file.mediaType.startsWith('image/svg');
+	});
+
 	/** Maximum number of characters in a file name. */
 	public readonly maxNameLength: number	= 80;
 
@@ -933,15 +939,13 @@ export class AccountFilesService {
 		return this.noteSnippets.get(id) || '';
 	}
 
-	/** Opens a file. */
-	public async openFile (id: string) : Promise<void> {
-		const file	= await this.getFile(id);
-
-		if (file.mediaType.startsWith('image/') && !file.mediaType.startsWith('image/svg')) {
-			this.dialogService.image({src: await this.downloadURI(id).result, title: file.name});
-		}
-		else {
-			this.downloadAndSave(id);
+	/** Opens an image file. */
+	public async openImage (id: string, ) : Promise<void> {
+		if (await this.isImage(id)) {
+			this.dialogService.image({
+				src: await this.downloadURI(id).result,
+				title: (await this.getFile(id)).name
+			});
 		}
 	}
 
