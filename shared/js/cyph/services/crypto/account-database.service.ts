@@ -642,6 +642,7 @@ export class AccountDatabaseService {
 				asyncMap.setValue(await f(await asyncMap.getValue()))
 			),
 			watch: memoize(() => this.watchListKeys(url).pipe(mergeMap(getValueHelper))),
+			watchKeys: () => flattenObservable(async () => (await baseAsyncMap).watchKeys()),
 			watchSize: () => flattenObservable(async () => (await baseAsyncMap).watchSize())
 		};
 

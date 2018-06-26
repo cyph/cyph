@@ -597,7 +597,10 @@ export class ChatService {
 			chatMessage.hash	= hash;
 			chatMessage.key		= key;
 
-			if (author === this.sessionService.remoteUsername) {
+			if (
+				this.sessionInitService.ephemeral &&
+				author === this.sessionService.remoteUsername
+			) {
 				await this.scrollService.trackItem(id);
 			}
 

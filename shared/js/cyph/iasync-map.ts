@@ -47,6 +47,9 @@ export interface IAsyncMap<K, V> {
 	/** Subscribes to entire map. */
 	watch () : Observable<Map<K, V>>;
 
+	/** Subscribes to map keys. */
+	watchKeys () : Observable<K[]>;
+
 	/** Subscribes to map size. */
 	watchSize () : Observable<number>;
 }

@@ -96,6 +96,11 @@ export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>> implements I
 	}
 
 	/** @inheritDoc */
+	public watchKeys () : Observable<K[]> {
+		return this.watch().pipe(map(value => Array.from(value.keys())));
+	}
+
+	/** @inheritDoc */
 	public watchSize () : Observable<number> {
 		return this.watch().pipe(map(value => value.size));
 	}

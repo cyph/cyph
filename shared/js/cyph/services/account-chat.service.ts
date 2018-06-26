@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {take} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {IAsyncSet} from '../iasync-set';
@@ -80,6 +80,7 @@ export class AccountChatService extends ChatService {
 			deleteItem: async (value: string) => asyncMap.removeItem(value),
 			hasItem: async (value: string) => asyncMap.hasItem(value),
 			size: async () => asyncMap.size(),
+			watch: memoize(() => asyncMap.watchKeys().pipe(map(keys => new Set(keys)))),
 			watchSize: memoize(() => asyncMap.watchSize())
 		};
 	}

@@ -21,6 +21,9 @@ export interface IAsyncSet<T> {
 	/** @see Set.size */
 	size () : Promise<number>;
 
+	/** Watches value. */
+	watch () : Observable<Set<T>>;
+
 	/** Watches size. */
 	watchSize () : Observable<number>;
 }

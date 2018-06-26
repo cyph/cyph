@@ -234,6 +234,7 @@ export class DatabaseService extends DataManagerService {
 				asyncMap.setValue(await f(await asyncMap.getValue()))
 			),
 			watch: memoize(() => this.watchListKeys(url).pipe(mergeMap(getValueHelper))),
+			watchKeys: memoize(() => this.watchListKeys(url)),
 			watchSize: memoize(() => this.watchListKeys(url).pipe(
 				mergeMap(async keys => keys.length)
 			))

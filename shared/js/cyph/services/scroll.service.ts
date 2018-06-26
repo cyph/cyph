@@ -1,7 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
+import {map} from 'rxjs/operators';
+import memoize from 'lodash-es/memoize';
 import {IAsyncSet} from '../iasync-set';
 import {MaybePromise} from '../maybe-promise-type';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {lockTryOnce} from '../util/lock';
 import {resolvable, sleep} from '../util/wait';
 import {WindowWatcherService} from './window-watcher.service';
@@ -13,16 +16,19 @@ import {WindowWatcherService} from './window-watcher.service';
 @Injectable()
 export class ScrollService {
 	/** @ignore */
-	private readonly _ROOT_ELEMENT		= resolvable<JQuery|undefined>();
+	private readonly _ROOT_ELEMENT			= resolvable<JQuery|undefined>();
 
 	/** @ignore */
-	private readonly _UNREAD_ITEMS		= resolvable<IAsyncSet<string>>();
+	private readonly _UNREAD_ITEMS			= resolvable<IAsyncSet<string>>();
 
 	/** @ignore */
-	private itemCountInTitle: boolean	= false;
+	private itemCountInTitle: boolean		= false;
 
 	/** @ignore */
-	private lastUnreadItemCount: number	= 0;
+	private lastUnreadItemCount: number		= 0;
+
+	/** @ignore */
+	private readonly readItems: Set<string>	= new Set();
 
 	/** @ignore */
 	private readonly resolveRootElement: (rootElement?: JQuery) => void	=
@@ -42,6 +48,25 @@ export class ScrollService {
 
 	/** Unread item IDs. */
 	public readonly unreadItems: Promise<IAsyncSet<string>>	= this._UNREAD_ITEMS.promise;
+
+	/** Watches unread item count. */
+	public readonly watchUnreadCount	= memoize(() => toBehaviorSubject(
+		async () => {
+			const unreadItems	= await this.unreadItems;
+
+			return unreadItems.watch().pipe(map(ids =>
+				Array.from(ids).filter(id => {
+					if (!this.readItems.has(id)) {
+						return true;
+					}
+
+					unreadItems.deleteItem(id);
+					return false;
+				}).length
+			));
+		},
+		0
+	));
 
 	/** @ignore */
 	private async updateTitle () : Promise<void> {
@@ -67,7 +92,18 @@ export class ScrollService {
 
 	/** Indicates whether item has been read. */
 	public async isRead (id: string) : Promise<boolean> {
-		return !(await (await this.unreadItems).hasItem(id));
+		const unreadItems		= await this.unreadItems;
+		const isReadRemotely	= !(await unreadItems.hasItem(id));
+		const isReadLocally		= this.readItems.has(id);
+
+		if (isReadLocally && !isReadRemotely) {
+			unreadItems.deleteItem(id);
+		}
+		else if (!isReadLocally && isReadRemotely) {
+			this.readItems.add(id);
+		}
+
+		return isReadLocally || isReadRemotely;
 	}
 
 	/** Scrolls to bottom. */
@@ -91,6 +127,7 @@ export class ScrollService {
 
 	/** Set item as read. */
 	public async setRead (id: string) : Promise<void> {
+		this.readItems.add(id);
 		await (await this.unreadItems).deleteItem(id);
 		await this.updateTitle();
 	}
