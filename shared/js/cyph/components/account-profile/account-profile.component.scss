@@ -21,6 +21,24 @@ $header-size: 135px;
 		border-width: 10px !important;
 	}
 
+	.cover-image {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		width: 100%;
+		height: 27em;
+		overflow: hidden;
+
+		> img {
+			position: absolute;
+			top: 50%;
+			width: 100%;
+			height: auto;
+
+			@include transform(translateY(-50%));
+		}
+	}
+
 	/* .member-list:not(.doctor-list-only) { */
 	.member-list {
 		height: 340px;

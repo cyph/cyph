@@ -145,6 +145,13 @@
 			[class.mobile]='envService.isMobile'
 			*ngIf='user'
 		>
+			<div fxLayoutAlign='start stretch' class='cover-image'>
+				<img
+					cyphTranslate
+					alt='Cover Image'
+					[src]='user?.coverImage | async'
+				/>
+			</div>
 			<div fxLayoutAlign='center center'>
 				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch' fxLayoutGap='16px'>
 					<div fxLayoutAlign='center center'>
