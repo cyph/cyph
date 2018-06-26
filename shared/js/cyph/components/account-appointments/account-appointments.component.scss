@@ -7,7 +7,7 @@
 	}
 }
 
-::ng-deep {
+:host ::ng-deep {
 	.fc-divider {
 		background: #666;
 	}

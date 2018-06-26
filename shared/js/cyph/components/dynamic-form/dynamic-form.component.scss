@@ -4,7 +4,7 @@ h3.label {
 	text-align: center;
 }
 
-::ng-deep .mat-form-field-infix {
+:host ::ng-deep .mat-form-field-infix {
 	width: auto;
 }
 

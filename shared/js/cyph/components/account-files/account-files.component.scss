@@ -8,7 +8,7 @@
 	cursor: auto;
 }
 
-::ng-deep .free-space {
+:host ::ng-deep .free-space {
 	max-width: 33%;
 	text-align: center;
 	position: relative;

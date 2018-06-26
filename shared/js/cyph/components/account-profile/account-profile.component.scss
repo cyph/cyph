@@ -302,7 +302,7 @@ mat-card {
 }
 
 /*
-::ng-deep .contact-list {
+:host ::ng-deep .contact-list {
 	overflow-y: auto !important;
 	min-height: 125px;
 }

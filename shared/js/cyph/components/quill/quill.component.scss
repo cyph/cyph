@@ -8,7 +8,7 @@
 	min-height: 200px;
 }
 
-::ng-deep {
+:host ::ng-deep {
 	.ql-toolbar, .ql-container {
 		border: none !important;
 	}
