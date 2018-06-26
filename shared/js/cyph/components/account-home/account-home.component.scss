@@ -1,1 +1,5 @@
 @import '../../../../css/mixins';
+
+:host ::ng-deep .cover-image {
+	display: none !important;
+}

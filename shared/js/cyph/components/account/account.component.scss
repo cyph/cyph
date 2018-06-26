@@ -112,6 +112,10 @@
 			display: block;
 		}
 	}
+
+	.header, .sidebar {
+		z-index: 1;
+	}
 }
 
 :not(.mobile) .header {
