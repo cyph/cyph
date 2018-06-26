@@ -109,6 +109,10 @@
 				background-color: map-get($cyph-accent, 300);
 			}
 		}
+
+		.interstitial {
+			background-color: rgba(map-get($cyph-accent, 400), 0.69) !important;
+		}
 	}
 
 	cyph-account-menu {
