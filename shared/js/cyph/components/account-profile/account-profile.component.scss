@@ -26,7 +26,7 @@ $header-size: 135px;
 		z-index: 0;
 		top: 0px;
 		left: 0px;
-		width: 100%;
+		width: calc(100% + 1px);
 		height: 20em;
 		overflow: hidden;
 		opacity: 0.95;
