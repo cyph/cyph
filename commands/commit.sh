@@ -47,6 +47,15 @@ find . -type f -name '*.go' | grep -v github.com | xargs -I% gofmt -w "%"
 find shared/css shared/js \
 	-type f \
 	-name '*.scss' \
+	-exec bash -c '
+		cat {} | perl -pe "s/([^\d]0)px/\1/g" > {}.new
+		mv {}.new {}
+	' \
+\;
+
+find shared/css shared/js \
+	-type f \
+	-name '*.scss' \
 	-not -name theme.scss \
 	-not -name mixins.scss \
 	-not -path 'shared/css/themes/*' \
