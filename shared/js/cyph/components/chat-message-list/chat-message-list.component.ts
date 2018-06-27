@@ -312,7 +312,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 							...o,
 							dateChange: (
 								last === undefined ||
-								(!o.pending && !compareDates(last, o.message.timestamp, true))
+								!compareDates(last, o.message.timestamp, true)
 							) ?
 								await relativeDateString(o.message.timestamp, last === undefined) :
 								undefined
