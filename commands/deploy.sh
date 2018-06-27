@@ -552,7 +552,7 @@ if [ "${pack}" ] ; then
 	cd "${webSignedProject}"
 
 	# Merge imported libraries into threads
-	find . -type f -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
+	find . -type f -name '*.js' | xargs -I% ../commands/websign/threadpack.js % || fail
 
 	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.ws
 

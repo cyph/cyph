@@ -63,7 +63,7 @@ node -e 'console.log(`
 `)' >> starter.js
 cat app/starter.js >> starter.js
 
-${dir}/commands/websign/threadpack.js starter.js
+${dir}/commands/websign/threadpack.js starter.js || fail
 mv bundle.js starter.js app/
 
 pass
