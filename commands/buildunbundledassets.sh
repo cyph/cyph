@@ -23,12 +23,6 @@ if [ "${1}" == '--test' ] ; then
 fi
 
 
-checkfail () {
-	if (( $? )) ; then
-		exit 1
-	fi
-}
-
 uglify () {
 	if [ "${test}" ] ; then
 		if [ "${1}" == '-cm' ] ; then

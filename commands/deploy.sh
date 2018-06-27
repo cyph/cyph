@@ -120,7 +120,7 @@ if [ "${websign}" ] || [ "${site}" == 'firebase' ] ; then
 fi
 
 if [ "${compiledProjects}" ] && [ ! "${test}" ] && [ ! "${debug}" ] ; then
-	./commands/lint.sh || exit 1
+	./commands/lint.sh || fail
 fi
 
 log 'Initial setup'
@@ -469,7 +469,7 @@ if [ "${compiledProjects}" ] ; then
 				echo '--test'
 			fi
 		fi
-	) || exit 1
+	) || fail
 
 	./commands/ngassets.sh
 
@@ -504,9 +504,9 @@ for d in $compiledProjects ; do
 		( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) || \
 		( [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ) \
 	; then
-		ng build --source-map false --configuration "${environment}" || exit 1
+		ng build --source-map false --configuration "${environment}" || fail
 	else
-		../commands/prodbuild.sh --configuration "${environment}" || exit 1
+		../commands/prodbuild.sh --configuration "${environment}" || fail
 
 		if [ "${simple}" ] && [ ! "${simpleWebSignBuild}" ] ; then
 			ls dist/*.js | xargs -I% uglifyjs % -bo %
@@ -593,7 +593,7 @@ if [ "${websign}" ] ; then
 				echo -n "pkg/${p}=cdn/${p} "
 			done
 		) \
-	|| exit 1
+	|| fail
 
 	log 'Compressing resources for deployment to CDN'
 

@@ -84,7 +84,7 @@ if [ ! "${htmlOnly}" ] ; then
 	unbindmount node_modules
 	cd ..
 
-	tsc --skipLibCheck js/tslint-rules/*.ts || exit 1
+	tsc --skipLibCheck js/tslint-rules/*.ts || fail
 
 	node -e "
 		const tsconfig	= JSON.parse(

@@ -187,8 +187,7 @@ files="${file}"
 
 else
 
-echo fak u gooby
-exit 1
+fail 'fak u gooby'
 
 fi
 

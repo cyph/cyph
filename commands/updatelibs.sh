@@ -368,7 +368,7 @@ EOM
 # " yarn.out
 #
 # if [ -f yarn.failure ] ; then
-# 	exit 1
+# 	fail
 # fi
 
 yarn add \
@@ -378,7 +378,7 @@ yarn add \
 	--non-interactive \
 	$(echo "${modules}" | tr '\n' ' ') \
 || \
-	exit 1
+	fail
 
 rm -rf ../node_modules ../package.json ../yarn.lock yarn.failure yarn.out 2> /dev/null
 

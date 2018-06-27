@@ -76,7 +76,7 @@ chmod -R 700 .
 git commit -S -a -m "cleanup: ${comment}"
 
 if [ "${blockFailingBuild}" ] ; then
-	./commands/build.sh || exit 1
+	./commands/build.sh || fail
 fi
 if [ "${gc}" ] ; then
 	git gc --aggressive --prune
