@@ -498,34 +498,32 @@
 		</button>
 	</ng-container>
 
-	<ng-container *ngIf='false'>
-		<button
-			mat-button
-			cyphTranslate
-			class='settings'
-			matTooltip='Settings'
-			matTooltipPosition='right'
-			[routerLink]='accountService.routeRoot + "settings"'
-			(click)='click()'
-			*ngIf='accountService.menuExpanded | async'
-		>
-			<mat-icon>settings</mat-icon>
-			&ngsp;
-			<span>Settings</span>
-		</button>
-		<button
-			mat-icon-button
-			cyphTranslate
-			class='settings'
-			matTooltip='Settings'
-			matTooltipPosition='right'
-			[routerLink]='accountService.routeRoot + "settings"'
-			(click)='click()'
-			*ngIf='(accountService.menuExpanded | async) === false'
-		>
-			<mat-icon>settings</mat-icon>
-		</button>
-	</ng-container>
+	<button
+		mat-button
+		cyphTranslate
+		class='settings'
+		matTooltip='Settings'
+		matTooltipPosition='right'
+		[routerLink]='accountService.routeRoot + "settings"'
+		(click)='click()'
+		*ngIf='accountService.menuExpanded | async'
+	>
+		<mat-icon>settings</mat-icon>
+		&ngsp;
+		<span>Settings</span>
+	</button>
+	<button
+		mat-icon-button
+		cyphTranslate
+		class='settings'
+		matTooltip='Settings'
+		matTooltipPosition='right'
+		[routerLink]='accountService.routeRoot + "settings"'
+		(click)='click()'
+		*ngIf='(accountService.menuExpanded | async) === false'
+	>
+		<mat-icon>settings</mat-icon>
+	</button>
 
 	<div fxFlex></div>
 

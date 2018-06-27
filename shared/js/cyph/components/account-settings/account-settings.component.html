@@ -1,33 +1,85 @@
 <div
-	fxFlex='50'
-	fxLayout='column'
-	class='settings-wrapper'
-	*ngIf='accountDatabaseService.currentUser.value'
+	fxFlexFill
+	fxLayout='row'
+	fxLayoutAlign='center center'
+	[class.initiating]='loading | async'
 >
-	<div class='name'>
-		<h3>
-			<span cyphTranslate>Your Name:</span>
-			&ngsp;
-			<span>{{accountDatabaseService.currentUser.value?.user.name | async}}</span>
-		</h3>
-	</div>
-	<div class='email'>
-		<h3>
-			<span cyphTranslate>Your Email:</span>
-			&ngsp;
-			<span>{{(email.watch() | async) || stringsService.unknown}}</span>
-		</h3>
-	</div>
-	<div class='premium-status'>
-		<h3>
-			<span cyphTranslate>Premium Status:</span>
-			&ngsp;
-			<span>{{
-				(accountDatabaseService.currentUser.value?.user.hasPremium | async) ?
-					stringsService.enabled :
-					stringsService.disabled
-			}}</span>
-		</h3>
-	</div>
-	<cyph-account-storage-analytics></cyph-account-storage-analytics>
+	<form
+		ngNativeValidate
+		fxFlex
+		fxFlex.gt-md='75'
+		fxFlex.gt-lg='50'
+		fxLayout='column'
+		fxLayoutGap='16px'
+		(submit)='save()'
+	>
+		<mat-form-field>
+			<input
+				matInput
+				cyphTranslate
+				[(ngModel)]='data.modified.name'
+				name='name'
+				placeholder='Name'
+				required
+			/>
+		</mat-form-field>
+		<mat-form-field>
+			<input
+				matInput
+				cyphTranslate
+				[(ngModel)]='data.modified.realUsername'
+				name='realUsername'
+				placeholder='Username Capitalization'
+				required
+			/>
+		</mat-form-field>
+		<mat-form-field>
+			<input
+				matInput
+				cyphTranslate
+				[(ngModel)]='data.modified.email'
+				name='email'
+				type='email'
+				placeholder='Email'
+			/>
+		</mat-form-field>
+
+		<div></div>
+		<div>
+			<strong cyphTranslate>Premium Status:</strong>
+			&nbsp;
+			&nbsp;
+			<span *ngIf='
+				accountDatabaseService.currentUser.value?.user.hasPremium | async; else getPremium
+			'>
+				{{stringsService.enabled}}
+			</span>
+			<ng-template #getPremium>
+				<span>{{stringsService.disabled}}</span>
+				&ngsp;
+				(<a
+					[href]='envService.homeWordPressUrl + "pricing#account"'
+					cyphTranslate
+					target='_blank'
+				>upgrade now</a>)
+			</ng-template>
+		</div>
+
+		<div></div>
+		<cyph-account-storage-analytics></cyph-account-storage-analytics>
+		<div></div>
+		<div></div>
+		<div></div>
+
+		<div fxLayout='row' fxLayoutAlign='center'>
+			<button mat-raised-button cyphTranslate type='submit' [disabled]='!ready'>
+				Save
+			</button>
+		</div>
+	</form>
+
+	<mat-progress-spinner
+		mode='indeterminate'
+		*ngIf='loading | async'
+	></mat-progress-spinner>
 </div>
