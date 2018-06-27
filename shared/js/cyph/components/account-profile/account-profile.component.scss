@@ -16,7 +16,7 @@ $header-size: 135px;
 	.avatar {
 		width: 18em;
 		height: 18em;
-		box-shadow: 0px 20px 42px 0px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 20px 42px 0 rgba(0, 0, 0, 0.3);
 		border-width: 10px !important;
 
 		&:not(.cyph-drop-zone) {
@@ -27,8 +27,8 @@ $header-size: 135px;
 	.cover-image {
 		position: absolute;
 		z-index: 0;
-		top: 0px;
-		left: 0px;
+		top: 0;
+		left: 0;
 		width: calc(100% + 1px);
 		height: 20em;
 		overflow: hidden;
@@ -87,8 +87,8 @@ $header-size: 135px;
 .header {
 	position: absolute;
 	width: 100%;
-	left: 0px;
-	top: 0px;
+	left: 0;
+	top: 0;
 }
 
 mat-card {
@@ -180,7 +180,7 @@ mat-card {
 
 				.practice {
 					font-size: 12px;
-					height: 0px;
+					height: 0;
 
 					mat-icon {
 						font-size: 16px;
@@ -198,7 +198,7 @@ mat-card {
 			}
 
 			.mat-card {
-				top: 0px !important;
+				top: 0 !important;
 				max-width: 100% !important;
 				overflow: auto;
 			}
@@ -284,7 +284,7 @@ mat-card {
 
 		.name {
 			margin-top: 3px;
-			margin-bottom: 0px;
+			margin-bottom: 0;
 		}
 
 		.description {

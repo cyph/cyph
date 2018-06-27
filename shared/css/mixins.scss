@@ -226,7 +226,7 @@
 				}
 
 				&:focus {
-					box-shadow: 0px 0px 10px map-get($cyph-message-box-colors, desktopGlow);
+					box-shadow: 0 0 10px map-get($cyph-message-box-colors, desktopGlow);
 					border: 1px solid map-get($cyph-message-box-colors, desktopGlow);
 				}
 			}
@@ -237,7 +237,7 @@
 				}
 
 				&:focus {
-					box-shadow: 0px 0px 10px map-get($cyph-message-box-colors, mobileGlow);
+					box-shadow: 0 0 10px map-get($cyph-message-box-colors, mobileGlow);
 					border: 1px solid map-get($cyph-message-box-colors, mobileGlow);
 				}
 			}

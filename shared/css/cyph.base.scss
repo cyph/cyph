@@ -33,7 +33,7 @@ body.load-complete #pre-load {
 }
 
 html, body, #main, .cyph-foreground {
-	margin: 0px;
+	margin: 0;
 }
 
 html, body {
@@ -46,7 +46,7 @@ section {
 }
 
 #footer, .footer {
-	margin-top: 0px;
+	margin-top: 0;
 	position: relative;
 	text-align: center;
 	z-index: 2;
@@ -173,8 +173,8 @@ mat-card {
 		height: 100% !important;
 		max-width: 100% !important;
 		max-height: 100% !important;
-		top: 0px !important;
-		left: 0px !important;
+		top: 0 !important;
+		left: 0 !important;
 
 		mat-card-title {
 			text-align: center !important;
@@ -185,7 +185,7 @@ mat-card {
 		position: absolute;
 		height: 2em;
 		top: 24px;
-		right: 0px;
+		right: 0;
 
 		> div {
 			background-position-x: calc(100% - 24px);
@@ -311,7 +311,7 @@ pre, code {
 	text-align: center;
 
 	&.emphasis {
-		box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.16);
+		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.16);
 
 		@include filter(brightness(1.05));
 	}
@@ -371,8 +371,8 @@ $nanoScrollbarWidth: 17px;
 			position: absolute;
 			height: 100%;
 			width: 100%;
-			top: 0px;
-			left: 0px;
+			top: 0;
+			left: 0;
 			overflow: scroll;
 			overflow-x: hidden;
 		}
@@ -464,7 +464,7 @@ $nanoScrollbarWidth: 17px;
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 
 .ellipsis-spinner {
-	margin: 100px auto 0px;
+	margin: 100px auto 0;
 	width: 70px;
 	text-align: center;
 

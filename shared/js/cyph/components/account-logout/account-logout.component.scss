@@ -10,9 +10,9 @@
 		overflow: hidden;
 		display: inline-block;
 		vertical-align: bottom;
-		width: 0px;
+		width: 0;
 		position: absolute;
-		bottom: 0px;
+		bottom: 0;
 		left: calc(100% + 10px);
 
 		@include animation(ellipsis steps(4, end) 1200ms infinite);

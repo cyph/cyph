@@ -48,8 +48,8 @@ body:not(.load-complete) {
 
 .hero-background-wrapper {
 	position: absolute;
-	top: 0px;
-	left: 0px;
+	top: 0;
+	left: 0;
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
@@ -66,10 +66,10 @@ body:not(.load-complete) {
 		> * {
 			position: absolute;
 			z-index: 0;
-			top: 0px;
-			left: 0px;
-			bottom: 0px;
-			right: 0px;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
 			height: auto !important;
 			width: auto !important;
 			min-height: 50%;
@@ -83,7 +83,7 @@ body:not(.load-complete) {
 			background-color: rgba(57, 40, 89, 0.85);
 			width: 100%;
 			height: 100%;
-			left: 0px;
+			left: 0;
 			bottom: 3px;
 			content: '';
 			display: block;
@@ -103,7 +103,7 @@ body:not(.load-complete) {
 	font-weight: 300;
 	border-radius: 1px;
 	width: 10.7em;
-	margin: 0px 10px;
+	margin: 0 10px;
 	padding: 0.25em;
 	background-color: #7d4fd3 !important;
 
@@ -150,7 +150,7 @@ body:not(.load-complete) {
 	width: 100%;
 	text-align: center;
 	margin-top: 25px;
-	margin-bottom: 0px;
+	margin-bottom: 0;
 	font-size: 3em;
 	font-weight: 100;
 
@@ -178,7 +178,7 @@ body:not(.load-complete) {
 			@include transform(translateY(-50%));
 
 			> :first-child {
-				margin-top: 0px;
+				margin-top: 0;
 			}
 		}
 	}
@@ -217,7 +217,7 @@ body:not(.mobile) #hero-section {
 
 		.hero-foreground-main {
 			top: 50%;
-			left: 0px;
+			left: 0;
 			width: 100%;
 			position: absolute;
 
@@ -248,8 +248,8 @@ body.mobile #hero-section {
 		height: auto;
 		font-size: 1.3em;
 		position: absolute;
-		bottom: 0px;
-		left: 0px;
+		bottom: 0;
+		left: 0;
 		width: 100%;
 
 		> div {
@@ -304,8 +304,8 @@ body.mobile #hero-section {
 
 	.hero-container {
 		.screenshot {
-			padding: 0px;
-			margin: 0px;
+			padding: 0;
+			margin: 0;
 			margin-bottom: 50px;
 		}
 	}
@@ -315,9 +315,9 @@ body.mobile #hero-section {
 	font-family: Ubuntu;
 	font-size: 90%;
 	border: 1px solid $cyph-foreground !important;
-	border-top: 0px !important;
-	border-left: 0px !important;
-	border-right: 0px !important;
+	border-top: 0 !important;
+	border-left: 0 !important;
+	border-right: 0 !important;
 	display: inline-block;
 	width: 6.85em;
 
@@ -327,10 +327,10 @@ body.mobile #hero-section {
 #main-toolbar {
 	position: fixed;
 	z-index: 11;
-	top: 0px;
-	left: 0px;
+	top: 0;
+	left: 0;
 	background-color: rgba(97, 51, 163, 0.75);
-	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
 
 	&, mat-toolbar-row {
 		height: 2.5em !important;
@@ -367,7 +367,7 @@ mat-sidenav.disabled {
 
 .carousel {
 	position: relative;
-	padding: 25px 0px;
+	padding: 25px 0;
 
 	&, * {
 		@include transition(opacity 0.35s linear);
@@ -414,7 +414,7 @@ mat-sidenav.disabled {
 			img {
 				max-width: 68px;
 				border-radius: 100% !important;
-				padding: 0px;
+				padding: 0;
 			}
 
 			> * {
@@ -462,8 +462,8 @@ body.mobile .carousel {
 	.logo {
 		pointer-events: none;
 		position: absolute;
-		top: 0px;
-		left: 0px;
+		top: 0;
+		left: 0;
 		width: 100%;
 
 		&:not(.active) {
@@ -474,7 +474,7 @@ body.mobile .carousel {
 			& + div {
 				position: absolute;
 				top: 50%;
-				left: 0px;
+				left: 0;
 				width: 100%;
 				text-align: center;
 
@@ -586,19 +586,19 @@ body.mobile #testimonials-section .carousel {
 }
 
 #intro-section {
-	padding-bottom: 0px !important;
+	padding-bottom: 0 !important;
 
 	.hero-text {
 		padding-bottom: 25px;
-		margin-top: 0px;
+		margin-top: 0;
 	}
 }
 
 #features-section {
-	padding-top: 0px !important;
+	padding-top: 0 !important;
 
 	.carousel {
-		padding: 0px;
+		padding: 0;
 		padding-left: 2.5vw;
 
 		.logo {
@@ -645,7 +645,7 @@ body.mobile .demo-root {
 	> .mobile {
 		height: 40em;
 		width: calc(100% + 100px);
-		top: 0px;
+		top: 0;
 		left: -50px;
 		margin: auto;
 
@@ -670,7 +670,7 @@ body.mobile .demo-root {
 		position: absolute !important;
 		background-color: rgba(38, 38, 56, 0.75);
 		padding: 5px 10px;
-		margin: 0px;
+		margin: 0;
 		text-align: center;
 		top: 50%;
 		left: 50%;
@@ -696,12 +696,12 @@ body.mobile #gettingstarted-section {
 	background-color: rgb(108, 63, 176);
 
 	section {
-		min-height: 0px;
+		min-height: 0;
 		height: auto;
 	}
 
 	.footer-info, .footer-links {
-		padding: 0px 5%;
+		padding: 0 5%;
 		line-height: 30px;
 	}
 
@@ -753,7 +753,7 @@ body:not(.mobile) .section-content-container:not(.full) {
 			max-width: 200px;
 			margin-bottom: 20px;
 			border-radius: 100%;
-			box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
+			box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
 		}
 	}
 

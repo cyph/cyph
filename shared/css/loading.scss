@@ -17,8 +17,8 @@ html, body {
 		height: 100%;
 		width: 100%;
 		position: absolute;
-		top: 0px;
-		left: 0px;
+		top: 0;
+		left: 0;
 	}
 
 	> .loading > .logo-animation {
@@ -121,8 +121,8 @@ html, body {
 			height: 40%;
 			width: 40%;
 			top: 60%;
-			left: 0%;
-			background-position: 0% 100%;
+			left: 0;
+			background-position: 0 100%;
 
 			@include animation(logo1 1890ms step-end);
 		}
@@ -141,8 +141,8 @@ html, body {
 			height: 25%;
 			width: 65%;
 			top: 35%;
-			left: 0%;
-			background-position: 0% 47%;
+			left: 0;
+			background-position: 0 47%;
 
 			@include animation(logo3 1890ms step-end);
 		}
@@ -150,9 +150,9 @@ html, body {
 		> :nth-child(5) {
 			height: 35%;
 			width: 100%;
-			top: 0%;
-			left: 0%;
-			background-position: 0% 0%;
+			top: 0;
+			left: 0;
+			background-position: 0 0;
 
 			@include animation(logo4 1890ms step-end);
 		}

@@ -19,7 +19,7 @@
 	}
 
 	.chat-main.mobile .transfer-list {
-		padding: 0px 5px;
+		padding: 0 5px;
 	}
 
 	.chat-main:not(.mobile):not(.video) .friend-is-typing {
@@ -66,7 +66,7 @@
 			.message {
 				width: 100%;
 				max-width: 100%;
-				padding-bottom: 0px;
+				padding-bottom: 0;
 			}
 
 			img:not(.avatar-image), .image-frame {
@@ -101,8 +101,8 @@
 				position: absolute;
 				right: -12px;
 				border-style: solid;
-				border-width: 18px 0px 0px 12px;
-				bottom: 0px;
+				border-width: 18px 0 0 12px;
+				bottom: 0;
 			}
 		}
 
@@ -114,8 +114,8 @@
 				position: absolute;
 				left: -12px;
 				border-style: solid;
-				border-width: 0px 12px 18px 0px;
-				top: 0px;
+				border-width: 0 12px 18px 0;
+				top: 0;
 			}
 
 			.message {
@@ -136,7 +136,7 @@
 				&, > div, > div > div {
 					text-align: center;
 					width: 100%;
-					left: 0px;
+					left: 0;
 				}
 			}
 		}
@@ -154,8 +154,8 @@
 
 				> video {
 					position: absolute;
-					top: 0px;
-					left: 0px;
+					top: 0;
+					left: 0;
 					width: 100%;
 					height: 100%;
 				}
@@ -163,8 +163,8 @@
 
 			.me {
 				position: absolute;
-				bottom: 0px;
-				right: 0px;
+				bottom: 0;
+				right: 0;
 			}
 
 			mat-progress-spinner {
@@ -233,7 +233,7 @@
 	}
 
 	.chat-end-message {
-		padding: 10px 0px;
+		padding: 10px 0;
 	}
 
 	/*** New fullscreen video UI ***/
@@ -241,8 +241,8 @@
 	.chat-main.video .video-call {
 		position: fixed;
 		z-index: 10000;
-		top: 0px;
-		left: 0px;
+		top: 0;
+		left: 0;
 		height: 100%;
 		width: 100%;
 
@@ -268,10 +268,10 @@
 		.friend {
 			position: absolute;
 			z-index: 0;
-			top: 0px;
-			left: 0px;
-			bottom: 0px;
-			right: 0px;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
 			height: auto !important;
 			width: auto !important;
 			min-height: 50%;
@@ -280,9 +280,9 @@
 		}
 
 		img.friend {
-			min-width: 0px;
-			min-height: 0px;
-			margin: 0px;
+			min-width: 0;
+			min-height: 0;
+			margin: 0;
 
 			@include center;
 
@@ -305,7 +305,7 @@
 
 		button {
 			background-color: rgba(0, 0, 0, 0.2);
-			box-shadow: transparent 0px 0px 0px 0px, rgba(255, 255, 255, 0.5) 0px 1px 2px 0px;
+			box-shadow: transparent 0 0 0 0, rgba(255, 255, 255, 0.5) 0 1px 2px 0;
 
 			&:hover {
 				@include transform(scale(1.1));
@@ -320,7 +320,7 @@
 			position: fixed;
 			z-index: 2;
 			bottom: 25px;
-			left: 0px;
+			left: 0;
 			width: 100%;
 
 			button {
@@ -340,14 +340,14 @@
 			display: block;
 			position: fixed;
 			left: 100%;
-			top: 0px;
+			top: 0;
 			height: 100% !important;
 			max-height: 100% !important;
 			z-index: 10001;
 			width: 300px;
 			background-color: rgba(255, 255, 255, 0.5);
 
-			@include transform(translateX(0px));
+			@include transform(translateX(0));
 
 			.message-item.ui-style-default {
 				&.author-app {
@@ -360,7 +360,7 @@
 		~ .video-call-message-box {
 			position: fixed;
 			z-index: 10002;
-			bottom: 0px;
+			bottom: 0;
 			right: -310px;
 			width: 310px;
 
@@ -368,8 +368,8 @@
 				.message-box {
 					width: 100%;
 					height: 48px;
-					margin-left: 0px;
-					margin-bottom: 0px;
+					margin-left: 0;
+					margin-bottom: 0;
 				}
 			}
 		}
@@ -432,7 +432,7 @@
 		}
 
 		&.sidebar-open cyph-logo {
-			@include transform(translateX(0px) !important);
+			@include transform(translateX(0) !important);
 		}
 	}
 
@@ -475,7 +475,7 @@
 		position: absolute;
 		z-index: 10;
 		top: 50%;
-		left: 0px;
+		left: 0;
 		width: 100%;
 
 		@include transform(translateY(-50%));

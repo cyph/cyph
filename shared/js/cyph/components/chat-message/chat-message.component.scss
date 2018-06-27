@@ -51,7 +51,7 @@
 		word-break: break-word;
 		padding: 7.5px 10px 5px 10px;
 		margin: 2.5px;
-		min-height: 0px;
+		min-height: 0;
 		position: relative;
 
 		@include transition(opacity 0.25s linear);
@@ -89,7 +89,7 @@
 			max-height: 200px;
 			margin: 10px auto;
 			display: block;
-			box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.4);
+			box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.4);
 			position: relative;
 		}
 
@@ -142,8 +142,8 @@
 			content: ' ';
 			height: 100%;
 			width: 100%;
-			top: 0px;
-			left: 0px;
+			top: 0;
+			left: 0;
 			background-color: black;
 			position: absolute;
 			z-index: 5;
