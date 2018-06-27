@@ -181,6 +181,7 @@ export const account: Route	= {
 		},
 		{path: 'wallets', component: AccountWalletsComponent},
 		{path: 'welcome', component: AccountPostRegisterComponent},
-		{path: ':username', redirectTo: 'profile/:username'}
+		{path: ':username', redirectTo: 'profile/:username'},
+		{path: '**', redirectTo: '404'}
 	]
 };
