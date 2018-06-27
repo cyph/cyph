@@ -391,7 +391,7 @@ exports.userPublicProfileSet	= functions.database.ref(
 				username
 		),
 		realUsernameRef.set(
-			publicProfile && normalize(publicProfile.realUsername) === username ?
+			publicProfile && publicProfile.realUsername.toLowerCase() === username ?
 				publicProfile.realUsername :
 				username
 		)

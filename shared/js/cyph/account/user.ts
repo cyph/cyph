@@ -14,7 +14,6 @@ import {
 	IReview
 } from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
-import {normalize} from '../util/formatting';
 import {lockFunction, lockTryOnce} from '../util/lock';
 import {staticDomSanitizer} from '../util/static-services';
 import {UserPresence} from './enums';
@@ -118,7 +117,7 @@ export class User {
 	/** @see IAccountUserProfile.realUsername */
 	public readonly realUsername: Observable<string>	= toBehaviorSubject(
 		this.accountUserProfile.watch().pipe(map(({realUsername}) =>
-			normalize(realUsername) === this.username ? realUsername : this.username
+			realUsername.toLowerCase() === this.username ? realUsername : this.username
 		)),
 		''
 	);

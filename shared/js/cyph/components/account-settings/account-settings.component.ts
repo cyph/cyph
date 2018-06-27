@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {SecurityModels, User} from '../../account';
+import {SecurityModels, User, usernameMask} from '../../account';
 import {IAsyncValue} from '../../iasync-value';
 import {StringProto} from '../../proto';
 import {AccountSettingsService} from '../../services/account-settings.service';
@@ -8,7 +8,6 @@ import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
-import {normalize} from '../../util/formatting';
 
 
 /**
@@ -47,6 +46,9 @@ export class AccountSettingsComponent implements OnInit {
 	/** User. */
 	public user?: User;
 
+	/** @see usernameMask */
+	public readonly usernameMask: typeof usernameMask	= usernameMask;
+
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		this.accountService.transitionEnd();
@@ -58,7 +60,14 @@ export class AccountSettingsComponent implements OnInit {
 			this.user.accountUserProfile.getValue()
 		]);
 
-		this.data.current	= {email, name, realUsername};
+		this.data.current	= {
+			email,
+			name,
+			realUsername: realUsername.toLowerCase() === this.user.username ?
+				realUsername :
+				this.user.username
+		};
+
 		this.data.modified	= {...this.data.current};
 
 		this.loading.next(false);
@@ -74,7 +83,7 @@ export class AccountSettingsComponent implements OnInit {
 				this.data.current.realUsername !== this.data.modified.realUsername
 			) &&
 			!!this.data.modified.name &&
-			normalize(this.data.modified.realUsername) === this.user.username
+			this.data.modified.realUsername.toLowerCase() === this.user.username
 		);
 	}
 
