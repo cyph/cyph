@@ -41,6 +41,7 @@
 		border-width: 5px;
 		border-style: solid;
 		cursor: pointer;
+		background-color: white;
 
 		@include transition(border 0.75s ease);
 

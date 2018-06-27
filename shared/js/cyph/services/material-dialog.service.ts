@@ -10,7 +10,7 @@ import {DialogImageComponent} from '../components/dialog-image';
 import {IResolvable} from '../iresolvable';
 import {LockFunction} from '../lock-function-type';
 import {lockFunction} from '../util/lock';
-import {sleep} from '../util/wait';
+import {resolvable, sleep} from '../util/wait';
 import {DialogService} from './dialog.service';
 import {StringsService} from './strings.service';
 
@@ -159,6 +159,28 @@ export class MaterialDialogService implements DialogService {
 		closeFunction?: IResolvable<() => void>
 	) : Promise<boolean> {
 		return (await this.confirmHelper(o, closeFunction)).ok;
+	}
+
+	/** @inheritDoc */
+	public async cropImage (o: {
+		aspectRatio?: number;
+		src: SafeUrl|string;
+		title?: string;
+	}) : Promise<SafeUrl|undefined> {
+		return this.lock(async () => {
+			const matDialogRef	= this.matDialog.open(DialogImageComponent);
+			const cropResult	= resolvable<SafeUrl|undefined>();
+
+			matDialogRef.componentInstance.cropAspectRatio	= o.aspectRatio;
+			matDialogRef.componentInstance.cropResult		= cropResult;
+			matDialogRef.componentInstance.src				= o.src;
+			matDialogRef.componentInstance.title			= o.title;
+
+			return Promise.race([
+				cropResult.promise,
+				matDialogRef.afterClosed().toPromise()
+			]);
+		});
 	}
 
 	/** @inheritDoc */

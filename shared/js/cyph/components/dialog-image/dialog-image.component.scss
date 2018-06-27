@@ -10,3 +10,11 @@ img {
 [mat-dialog-actions] {
 	margin-bottom: -64px;
 }
+
+.crop-container {
+	overflow: hidden;
+
+	> image-cropper {
+		width: calc(100% - 10px);
+	}
+}

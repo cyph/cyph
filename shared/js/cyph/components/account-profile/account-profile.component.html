@@ -165,7 +165,7 @@
 							alt='Profile Picture'
 							[src]='(getDataURI(draft.avatar) | async) || (user?.avatar | async)'
 							[cyphDropZone]='editMode'
-							(fileDrop)='draft.avatar = $event'
+							(fileDrop)='setAvatar($event)'
 						/>
 					</div>
 					<div></div>
@@ -281,7 +281,7 @@
 						alt='Profile Picture'
 						[src]='(getDataURI(draft.avatar) | async) || (user?.avatar | async)'
 						[cyphDropZone]='editMode'
-						(fileDrop)='draft.avatar = $event'
+						(fileDrop)='setAvatar($event)'
 						*ngIf='(doctorListOnly | async) !== true'
 						fxHide.xs
 					/>

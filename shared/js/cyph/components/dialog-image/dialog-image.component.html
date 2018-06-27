@@ -1,4 +1,4 @@
-<div mat-dialog-actions fxLayoutAlign='end center'>
+<div mat-dialog-actions fxLayoutAlign='end center' *ngIf='!cropResult'>
 	<button
 		matDialogClose
 		mat-icon-button
@@ -10,11 +10,28 @@
 </div>
 <h1 matDialogTitle *ngIf='title'>{{title}}</h1>
 <div mat-dialog-content>
-	<div fxFlex>
+	<div fxFlex [class.crop-container]='!!cropResult'>
 		<img
 			cyphTranslate
 			alt='Full size image'
 			[src]='src'
+			*ngIf='!cropResult'
 		/>
+
+		<ng-container *ngIf='!!cropResult'>
+			<image-cropper
+				format='png'
+				[aspectRatio]='cropAspectRatio'
+				[imageBase64]='imageBase64'
+				[maintainAspectRatio]='!!cropAspectRatio'
+				(imageCropped)='cropped = $event'
+				(loadImageFailed)='crop()'
+				*ngIf='safeUrlToString(src) | async as imageBase64'
+			></image-cropper>
+		</ng-container>
 	</div>
+</div>
+<div mat-dialog-actions fxLayoutAlign='end center' *ngIf='!!cropResult'>
+	<button mat-button class='cancel' (click)='crop(false)'>{{stringsService.cancel}}</button>
+	<button mat-button class='ok' (click)='crop(true)'>{{stringsService.ok}}</button>
 </div>

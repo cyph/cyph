@@ -41,6 +41,15 @@ export class DialogService {
 		throw new Error('Must provide an implementation of DialogService.confirm.');
 	}
 
+	/** Allows a user to crop an image and returns the result. */
+	public async cropImage (_O: {
+		aspectRatio?: number;
+		src: SafeUrl|string;
+		title?: string;
+	}) : Promise<SafeUrl|undefined> {
+		throw new Error('Must provide an implementation of DialogService.cropImage.');
+	}
+
 	/** If applicable, dismisses active toast. */
 	public async dismissToast () : Promise<void> {
 		throw new Error('Must provide an implementation of DialogService.dismissToast.');

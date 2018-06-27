@@ -36,6 +36,7 @@ import {RouterModule} from '@angular/router';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {TextMaskModule} from 'angular2-text-mask';
 import {FullCalendarModule} from 'ng-fullcalendar';
+import {ImageCropperModule} from 'ngx-image-cropper';
 /* import {VirtualScrollModule} from 'od-virtualscroll'; */
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
@@ -82,6 +83,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		FlexLayoutModule,
 		FormsModule,
 		FullCalendarModule,
+		ImageCropperModule,
 		MarkdownComponent,
 		MatAutocompleteModule,
 		MatBadgeModule,
@@ -124,6 +126,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		FormsModule,
 		FullCalendarModule,
 		HttpClientModule,
+		ImageCropperModule,
 		MatAutocompleteModule,
 		MatBadgeModule,
 		MatButtonModule,

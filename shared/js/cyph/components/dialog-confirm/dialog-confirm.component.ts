@@ -34,7 +34,7 @@ export class DialogConfirmComponent {
 	public title?: string;
 
 	constructor (
-		/** Dialog instance */
+		/** Dialog instance. */
 		public readonly matDialogRef: MatDialogRef<DialogConfirmComponent>,
 
 		/** @see StringsService */

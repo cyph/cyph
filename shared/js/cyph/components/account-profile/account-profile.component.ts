@@ -44,8 +44,8 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** Current draft of user profile. */
 	public draft: {
-		avatar?: File;
-		coverImage?: File;
+		avatar?: Blob;
+		coverImage?: Blob;
 		description?: string;
 		forms?: IForm[];
 	}	= {};
@@ -197,8 +197,8 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** Publishes new user description. */
 	public async saveProfile (draft?: {
-		avatar?: File;
-		coverImage?: File;
+		avatar?: Blob;
+		coverImage?: Blob;
 		description?: string;
 		forms?: IForm[];
 	}) : Promise<void> {
@@ -251,6 +251,34 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 		this.accountService.interstitial	= false;
 		this.setEditMode(false);
+	}
+
+	/** Crops and sets avatar. */
+	public async setAvatar (avatar?: File) : Promise<void> {
+		if (!avatar || !this.editMode) {
+			return;
+		}
+
+		const title	= avatar.name;
+		const src	= await this.getDataURI(avatar);
+
+		if (!src || !this.editMode) {
+			return;
+		}
+
+		const dataURI	= await this.dialogService.cropImage({aspectRatio: 1, src, title});
+
+		if (!dataURI || !this.editMode) {
+			return;
+		}
+
+		const cropped	= await deserialize(BlobProto, await serialize(DataURIProto, dataURI));
+
+		if (!this.editMode) {
+			return;
+		}
+
+		this.draft.avatar	= cropped;
 	}
 
 	/** Sets edit mode. */

@@ -99,6 +99,18 @@ export class NativeDialogService implements DialogService {
 		});
 	}
 
+	/**
+	 * @inheritDoc
+	 * Currently unsupported (just returns the original image).
+	 */
+	public async cropImage (o: {
+		aspectRatio?: number;
+		src: SafeUrl|string;
+		title?: string;
+	}) : Promise<SafeUrl> {
+		return <SafeUrl> o.src;
+	}
+
 	/** @inheritDoc */
 	public async dismissToast () : Promise<void> {
 		await this.snackbar.dismiss();

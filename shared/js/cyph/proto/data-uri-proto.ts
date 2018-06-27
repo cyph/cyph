@@ -14,8 +14,16 @@ export class DataURIProto {
 		DataURIProto.prefix
 	);
 
-	/** @ignore */
-	private static async safeUrlToString (data: SafeUrl|string) : Promise<string> {
+	/** Replaces prefix with DataURIProto.prefix. */
+	public static async normalize (data: SafeUrl|string) : Promise<string> {
+		return (
+			DataURIProto.prefix +
+			(await DataURIProto.safeUrlToString(data)).split(';base64,')[1]
+		);
+	}
+
+	/** Converts possible-SafeUrl to string. */
+	public static async safeUrlToString (data: SafeUrl|string) : Promise<string> {
 		if (typeof data === 'string') {
 			return data;
 		}

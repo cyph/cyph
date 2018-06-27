@@ -200,6 +200,7 @@ read -r -d '' modules <<- EOM
 	ng2-fittext
 	ng2-pdf-viewer
 	ng2-truncate
+	ngx-image-cropper
 	ngx-infinite-scroll
 	node-fetch
 	node-sass
