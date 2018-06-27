@@ -33,7 +33,7 @@ export class DataURIProto {
 		}
 
 		const sanitized	= (await staticDomSanitizer).sanitize(
-			SecurityContext.RESOURCE_URL,
+			SecurityContext.URL,
 			data
 		);
 
