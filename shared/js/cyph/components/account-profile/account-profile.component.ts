@@ -59,7 +59,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	public editMode: boolean		= false;
 
 	/** Gets data URI of file. */
-	public readonly getDataURI		= memoize(async (file?: File) =>
+	public readonly getDataURI		= memoize(async (file?: Blob) =>
 		!file ? undefined : deserialize(DataURIProto, await serialize(BlobProto, file))
 	);
 

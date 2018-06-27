@@ -26,8 +26,8 @@ export class DialogImageComponent {
 	public cropped?: string;
 
 	/** @see DataURIProto.safeUrlToString */
-	public readonly safeUrlToString	= memoize(async (data: SafeUrl|string) =>
-		DataURIProto.safeUrlToString(data).catch(() => undefined)
+	public readonly safeUrlToString	= memoize(async (data?: SafeUrl|string) =>
+		!data ? undefined : DataURIProto.safeUrlToString(data).catch(() => undefined)
 	);
 
 	/** Image src. */
