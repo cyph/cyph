@@ -34,8 +34,6 @@ $header-size: 135px;
 		overflow: hidden;
 		opacity: 0.95;
 
-		@include filter(brightness(0.5));
-
 		> img {
 			position: absolute;
 			top: 50%;
@@ -45,7 +43,13 @@ $header-size: 135px;
 			width: auto;
 			height: auto;
 
+			@include filter(brightness(0.5));
+
 			@include transform(translate(-50%, -50%));
+
+			&.cyph-drop-zone:hover {
+				@include filter(none);
+			}
 		}
 	}
 
