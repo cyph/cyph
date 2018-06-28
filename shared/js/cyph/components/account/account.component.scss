@@ -131,8 +131,8 @@
 
 :host > .mobile {
 	::ng-deep {
-		cyph-account-profile, .card-list {
-			padding: 20px 5px;
+		cyph-account-profile .profile, .card-list {
+			padding: 32px 8px;
 		}
 	}
 
