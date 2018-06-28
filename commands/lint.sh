@@ -148,6 +148,7 @@ if [ "${htmlOnly}" ] || [ "${fast}" ] ; then
 			-exec node -e '(async () => {
 				const result	= await require("htmllint")(
 					fs.readFileSync("{}").toString().
+						replace(/accept='"'"'[^'"'"']+'"'"'/g, "").
 						replace(/\[([A-Za-z0-9]+)\.([A-Za-z0-9]+)\]='"'"'[^'"'"']+'"'"'/g, "").
 						// replace(/\[([A-Za-z0-9\.]+)\]='"'"'[^'"'"']+'"'"'/g, "$1='"'"'balls'"'"'").
 						replace(/\(([A-Za-z0-9\.]+)\)/g, "$1").
