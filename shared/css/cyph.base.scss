@@ -111,6 +111,12 @@ a {
 	}
 }
 
+.cyph-drop-zone, button {
+	mat-icon, .mat-button-wrapper {
+		pointer-events: none;
+	}
+}
+
 .pre-spaced {
 	white-space: pre;
 }

@@ -72,8 +72,6 @@
 		cursor: pointer;
 
 		mat-icon {
-			pointer-events: none;
-
 			@include icon-size(42px);
 
 			@include vertical-align;

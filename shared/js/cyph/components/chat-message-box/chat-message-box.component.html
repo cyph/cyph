@@ -130,13 +130,13 @@
 				<button
 					mat-icon-button
 					matTooltip='Send File or Photo'
+					cyphDropZone
 					cyphTranslate
+					[accept]='fileAccept'
+					[cyphDropZoneClass]='false'
+					(fileDrop)='mobileButtonHandlers.fileTransfer($event)'
 				>
 					<mat-icon>attach_file</mat-icon>
-					<cyph-file-input
-						[accept]='fileAccept'
-						(fileChange)='mobileButtonHandlers.fileTransfer($event)'
-					></cyph-file-input>
 				</button>
 			</div>
 
@@ -174,15 +174,15 @@
 			<smd-fab-actions>
 				<button
 					mat-mini-fab
+					cyphDropZone
 					cyphTranslate
 					matTooltip='Send File or Photo'
 					matTooltipPosition='left'
+					[accept]='fileAccept'
+					[cyphDropZoneClass]='false'
+					(fileDrop)='fileTransferService.send($event)'
 				>
 					<mat-icon>attach_file</mat-icon>
-					<cyph-file-input
-						[accept]='fileAccept'
-						(fileChange)='fileTransferService.send($event)'
-					></cyph-file-input>
 				</button>
 				<button
 					mat-mini-fab

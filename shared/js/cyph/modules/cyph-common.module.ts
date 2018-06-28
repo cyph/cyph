@@ -13,7 +13,6 @@ import {ChatMessageBoxInheritNgFormComponent} from '../components/chat-message-b
 import {ChatMessageListComponent} from '../components/chat-message-list';
 import {ContactComponent} from '../components/contact';
 import {DynamicFormComponent} from '../components/dynamic-form';
-import {FileInputComponent} from '../components/file-input';
 import {HelpComponent} from '../components/help';
 import {LogoComponent} from '../components/logo';
 import {PinInputComponent} from '../components/pin-input';
@@ -55,7 +54,6 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageListComponent,
 		ContactComponent,
 		DynamicFormComponent,
-		FileInputComponent,
 		HelpComponent,
 		LogoComponent,
 		PinInputComponent,
@@ -79,7 +77,6 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageListComponent,
 		ContactComponent,
 		DynamicFormComponent,
-		FileInputComponent,
 		HelpComponent,
 		LogoComponent,
 		PinInputComponent,
@@ -103,7 +100,6 @@ import {CyphWebModule} from './cyph-web.module';
 		CommonModule,
 		ContactComponent,
 		DynamicFormComponent,
-		FileInputComponent,
 		HelpComponent,
 		LogoComponent,
 		PinInputComponent,
