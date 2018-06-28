@@ -2,4 +2,8 @@
 
 .search-bar {
 	padding-top: 1em;
+
+	::ng-deep .mat-form-field-flex {
+		padding: 0 5px;
+	}
 }
