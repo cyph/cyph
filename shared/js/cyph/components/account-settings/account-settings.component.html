@@ -14,8 +14,6 @@
 		(submit)='save()'
 		*ngIf='state === states.default; else changePassword'
 	>
-		<div></div>
-
 		<mat-form-field>
 			<input
 				matInput
@@ -103,8 +101,6 @@
 				Save
 			</button>
 		</div>
-
-		<div></div>
 	</form>
 
 	<ng-template #changePassword>
