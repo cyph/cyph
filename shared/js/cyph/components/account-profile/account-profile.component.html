@@ -4,7 +4,7 @@
 		fxLayout='row'
 		fxLayoutAlign='center center'
 		fxLayoutGap='16px'
-		*ngIf='!isCurrentUser'
+		*ngIf='!isCurrentUser && !!accountDatabaseService.currentUser.value'
 	>
 		<button
 			mat-mini-fab
@@ -51,7 +51,7 @@
 </ng-template>
 
 <ng-template #emailLikeButtons let-patientData='patientData'>
-	<div fxLayout='row' fxLayoutGap='16px'>
+	<div fxLayout='row' fxLayoutGap='16px' *ngIf='!!accountDatabaseService.currentUser.value'>
 		<button
 			mat-mini-fab
 			cyphTranslate
