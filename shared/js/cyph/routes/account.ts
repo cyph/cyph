@@ -162,6 +162,8 @@ export const account: Route	= {
 			data: {messageType: ChatMessageValue.Types.CalendarInvite, appointmentFollowUp: true}
 		},
 		{path: 'settings', component: AccountSettingsComponent},
+		{path: 'settings/master-key', component: AccountSettingsComponent, data: {state: 2}},
+		{path: 'settings/pin', component: AccountSettingsComponent, data: {state: 3}},
 		{
 			path: 'staff',
 			component: AccountContactsComponent,

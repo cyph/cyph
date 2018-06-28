@@ -3,6 +3,7 @@
 	fxLayout='row'
 	fxLayoutAlign='center center'
 	[class.initiating]='loading | async'
+	*ngIf='state | async as stateValue'
 >
 	<form
 		ngNativeValidate
@@ -12,7 +13,7 @@
 		fxLayout='column'
 		fxLayoutGap='16px'
 		(submit)='save()'
-		*ngIf='state === states.default; else changePassword'
+		*ngIf='stateValue === states.default; else changePassword'
 	>
 		<mat-form-field>
 			<input
@@ -53,7 +54,7 @@
 			&nbsp;
 			<span>&#xfe61;&#xfe61;&#xfe61;&#xfe61;</span>
 			&ngsp;
-			(<a (click)='state = states.pin' cyphTranslate>change</a>)
+			(<a routerLink='pin' cyphTranslate>change</a>)
 		</div>
 		<div>
 			<strong>{{stringsService.masterKey}}:</strong>
@@ -64,7 +65,7 @@
 			<span>&#xfe61;&#xfe61;&#xfe61;&#xfe61;&#xfe61;</span>
 			<span>&#xfe61;&#xfe61;&#xfe61;&#xfe61;&#xfe61;</span>
 			&ngsp;
-			(<a (click)='state = states.masterKey' cyphTranslate>change</a>)
+			(<a routerLink='master-key' cyphTranslate>change</a>)
 		</div>
 
 		<div></div>
@@ -105,9 +106,9 @@
 		<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 			<div fxLayout='row' fxLayoutAlign='center center' class='password-title'>
 				<h2>{{
-					state === states.masterKey ?
+					stateValue === states.masterKey ?
 						stringsService.changeMasterKeyTitle :
-					state === states.pin ?
+					stateValue === states.pin ?
 						stringsService.changePinTitle :
 						''
 				}}</h2>
@@ -115,15 +116,15 @@
 					mat-icon-button
 					cyphTranslate
 					matTooltip='Back'
-					(click)='state = states.default'
+					routerLink='..'
 				>
 					<mat-icon>arrow_back</mat-icon>
 				</button>
 			</div>
 
 			<cyph-account-register
-				[getMasterKeyOnly]='state === states.masterKey'
-				[getPinOnly]='state === states.pin'
+				[getMasterKeyOnly]='stateValue === states.masterKey'
+				[getPinOnly]='stateValue === states.pin'
 				(submitMasterKey)='changeMasterKey($event)'
 				(submitPIN)='changePIN($event)'
 			></cyph-account-register>

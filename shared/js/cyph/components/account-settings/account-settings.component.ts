@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {ActivatedRoute, Router} from '@angular/router';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {map, take} from 'rxjs/operators';
 import {SecurityModels, User, usernameMask} from '../../account';
 import {IAsyncValue} from '../../iasync-value';
 import {StringProto} from '../../proto';
@@ -46,7 +48,9 @@ export class AccountSettingsComponent implements OnInit {
 	public readonly loading: BehaviorSubject<boolean>	= new BehaviorSubject(true);
 
 	/** UI state. */
-	public state: number;
+	public state: Observable<number>	= this.activatedRoute.data.pipe(map(o =>
+		typeof o.state === 'number' ? o.state : this.states.default
+	));
 
 	/** UI states. */
 	public readonly states	= {
@@ -69,7 +73,10 @@ export class AccountSettingsComponent implements OnInit {
 		changePassword: (password: T) => Promise<void>
 	) : Promise<void> {
 		const user	= this.user;
-		if (!user || this.state !== requiredState) {
+		if (
+			!user ||
+			(await this.state.pipe(take(1)).toPromise()) !== requiredState
+		) {
 			return;
 		}
 
@@ -94,7 +101,7 @@ export class AccountSettingsComponent implements OnInit {
 			});
 		}
 
-		this.state	= this.states.default;
+		this.router.navigate([accountRoot, 'settings']);
 		this.loading.next(false);
 	}
 
@@ -194,6 +201,12 @@ export class AccountSettingsComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
+		private readonly activatedRoute: ActivatedRoute,
+
+		/** @ignore */
+		private readonly router: Router,
+
+		/** @ignore */
 		private readonly accountAuthService: AccountAuthService,
 
 		/** @ignore */
@@ -213,7 +226,5 @@ export class AccountSettingsComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {
-		this.state	= this.states.default;
-	}
+	) {}
 }
