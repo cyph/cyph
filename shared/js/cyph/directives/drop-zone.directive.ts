@@ -4,7 +4,6 @@ import {
 	EventEmitter,
 	Input,
 	OnChanges,
-	OnInit,
 	Output,
 	Renderer2
 } from '@angular/core';
@@ -16,7 +15,7 @@ import {uuid} from '../util/uuid';
 @Directive({
 	selector: '[cyphDropZone]'
 })
-export class DropZoneDirective implements OnChanges, OnInit {
+export class DropZoneDirective implements OnChanges {
 	/** @ignore */
 	private readonly className: string	= 'cyph-drop-zone';
 
@@ -38,8 +37,10 @@ export class DropZoneDirective implements OnChanges, OnInit {
 	/** File drop event emitter. */
 	@Output() public readonly fileDrop: EventEmitter<File>	= new EventEmitter<File>();
 
-	/** @ignore */
-	private init () : void {
+	/** @inheritDoc */
+	public ngOnChanges () : void {
+		this.renderer.addClass(this.elementRef.nativeElement, this.id);
+
 		if (this.dropZone) {
 			this.dropZone.destroy();
 		}
@@ -64,17 +65,6 @@ export class DropZoneDirective implements OnChanges, OnInit {
 		}
 
 		this.dropZone	= dropZone;
-	}
-
-	/** @inheritDoc */
-	public ngOnChanges () : void {
-		this.init();
-	}
-
-	/** @inheritDoc */
-	public ngOnInit () : void {
-		this.renderer.addClass(this.elementRef.nativeElement, this.id);
-		this.init();
 	}
 
 	constructor (
