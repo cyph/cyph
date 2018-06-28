@@ -4,9 +4,12 @@
 		fxLayout='column'
 		fxLayoutGap='32px'
 		ngNativeValidate
-		(submit)='getMasterKeyOnly ?
-			submitMasterKey.emit(useXkcdPassphrase ? xkcd : masterKey) :
-			submitPIN.emit({isCustom: !useLockScreenPIN, value: lockScreenPassword})
+		(submit)='
+			getMasterKeyOnly && masterKeyReady ?
+				submitMasterKey.emit(useXkcdPassphrase ? xkcd : masterKey) :
+			getPinOnly && lockScreenPasswordReady ?
+				submitPIN.emit({isCustom: !useLockScreenPIN, value: lockScreenPassword}) :
+				undefined
 		'
 		*ngIf='xkcdPassphrase | async as xkcd'
 	>
@@ -17,8 +20,10 @@
 		</div>
 
 		<div fxLayoutAlign='center center'>
-			<button mat-raised-button type='submit'>
-				<span cyphTranslate>Submit</span>
+			<button mat-raised-button type='submit' [disabled]='!(
+				getMasterKeyOnly ? masterKeyReady : lockScreenPasswordReady
+			)'>
+				{{stringsService.submit}}
 			</button>
 		</div>
 
@@ -489,7 +494,10 @@
 					<div
 						class='spoiler'
 						[class.revealed]='!spoiler'
-						(click)='spoiler = !spoiler'
+						(click)='
+							spoiler = !spoiler;
+							xkcdPassphraseHasBeenViewed = true;
+						'
 					>
 						<div class='xkcd-passphrase animated fadeIn'>
 							<span

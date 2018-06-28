@@ -115,6 +115,39 @@ export class AccountRegisterComponent implements OnInit {
 	/** Auto-generated password option. */
 	public xkcdPassphrase: Promise<string>				= xkcdPassphrase.generate();
 
+	/** Indicates whether xkcdPassphrase has been viewed. */
+	public xkcdPassphraseHasBeenViewed: boolean			= false;
+
+	/**
+	 * Indicates whether the lock screen password is viable.
+	 * TODO: Investigate hardening this against timing attacks.
+	 */
+	public get lockScreenPasswordReady () : boolean {
+		return (
+			this.useLockScreenPIN ?
+				this.lockScreenPIN.length === this.lockScreenPasswordLength :
+				(
+					this.lockScreenPassword === this.lockScreenPasswordConfirm &&
+					this.lockScreenPassword.length >= this.lockScreenPasswordLength
+				)
+		)
+	}
+
+	/**
+	 * Indicates whether the master key is viable.
+	 * TODO: Investigate hardening this against timing attacks.
+	 */
+	public get masterKeyReady () : boolean {
+		return (
+			this.useXkcdPassphrase ?
+				this.xkcdPassphraseHasBeenViewed :
+				(
+					this.masterKey === this.masterKeyConfirm &&
+					this.masterKey.length >= this.masterKeyLength
+				)
+		)
+	}
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
@@ -150,20 +183,8 @@ export class AccountRegisterComponent implements OnInit {
 			this.username.errors ||
 			!this.name ||
 			!this.inviteCode ||
-			(
-				this.useLockScreenPIN ?
-					this.lockScreenPIN.length !== this.lockScreenPasswordLength :
-					(
-						this.lockScreenPassword !== this.lockScreenPasswordConfirm ||
-						this.lockScreenPassword.length < this.lockScreenPasswordLength
-					)
-			) ||
-			(
-				!this.useXkcdPassphrase && (
-					this.masterKey !== this.masterKeyConfirm ||
-					this.masterKey.length < this.masterKeyLength
-				)
-			)
+			!this.lockScreenPasswordReady ||
+			!this.masterKeyReady
 		);
 	}
 
