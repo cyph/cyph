@@ -110,6 +110,20 @@
 	.header, .sidebar {
 		z-index: 3;
 	}
+
+	.sidebar.contacts {
+		mat-card {
+			padding: 18px 24px;
+
+			mat-card-subtitle {
+				margin-bottom: 0px;
+			}
+		}
+
+		.contact-list > br:last-child {
+			display: none;
+		}
+	}
 }
 
 :host > :not(.mobile) {

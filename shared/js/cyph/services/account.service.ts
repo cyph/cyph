@@ -113,7 +113,7 @@ export class AccountService {
 
 	/** Minimum expanded menu width. */
 	public get menuExpandedMinWidth () : number {
-		return this.envService.isTelehealth ? 325 : 250;
+		return this.envService.isTelehealth ? 325 : 275;
 	}
 
 	/** Sets custom header text. */

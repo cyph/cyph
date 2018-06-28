@@ -19,16 +19,17 @@
 	<canvas [fxShow]='envService.showGranim' class='cyph-gradient animated fadeIn'></canvas>
 
 	<cyph-account-menu
-		fxLayout='column'
+		fxFlex
 		fxHide.lt-md
+		fxLayout='column'
 		class='sidebar animated slideInLeft _0'
 		[style.max-width]='accountService.menuMaxWidth | async'
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
 	<cyph-account-menu
-		fxLayout='column'
 		fxFlexFill
+		fxLayout='column'
 		fxShow.lt-md
 		class='sidebar mobile animated _0'
 		[@slideInOutRight]='accountService.mobileMenuOpen | async'
@@ -85,9 +86,10 @@
 	</div>
 
 	<div
-		fxFlex='25'
+		fxFlex
 		fxHide.xs
 		fxLayout='column'
+		[style.max-width]='accountService.menuExpandedMinWidth.toString() + "px"'
 		class='sidebar contacts'
 		*ngIf='sidebarVisible'
 	>
