@@ -15,7 +15,7 @@ As to the level of security provided:
 
 1. The research that led to our patented in-browser
 [code signing](https://en.wikipedia.org/wiki/Code_signing) technology,
-WebSign, was recently validated by the security industry in the course of our
+WebSign, was validated by the security industry in the course of our
 successful talks at Black Hat 2016 and DEF CON 24. Before these talks, code
 signing a web application was considered an
 [intractable problem](https://news.ycombinator.com/item?id=7903720) — at the time
