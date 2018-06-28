@@ -145,15 +145,17 @@
 			[class.mobile]='envService.isMobile'
 			*ngIf='user'
 		>
-			<div fxLayoutAlign='start stretch' class='cover-image'>
-				<img
-					cyphTranslate
-					alt='Cover Image'
-					[src]='(getDataURI(draft.coverImage) | async) || (user?.coverImage | async)'
-					[cyphDropZone]='editMode'
-					(fileDrop)='draft.coverImage = $event'
-				/>
-			</div>
+			<div
+				class='cover-image'
+				cyphTranslate
+				aria-label='Cover Image'
+				[style.background-image]='urlToSafeStyle(
+					(getDataURI(draft.coverImage) | async) || (user?.coverImage | async)
+				) | async'
+				[cyphDropZone]='editMode'
+				(fileDrop)='draft.coverImage = $event'
+			></div>
+
 			<div fxLayoutAlign='center center'>
 				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch' fxLayoutGap='16px'>
 					<div fxLayoutAlign='center center'>

@@ -15,6 +15,7 @@
 	.router-content, .content {
 		scroll-behavior: smooth;
 		overflow-y: auto;
+		overflow-x: hidden;
 	}
 
 	.cyph-gradient {

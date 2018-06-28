@@ -1,12 +1,13 @@
 import {SecurityContext} from '@angular/core';
 import {SafeStyle, SafeUrl} from '@angular/platform-browser';
+import memoize from 'lodash-es/memoize';
 import {MaybePromise} from '../maybe-promise-type';
 import {staticDomSanitizer} from './static-services';
 
 
 /** Converts a URL into a `url()` SafeStyle. */
 export const urlToSafeStyle	=
-	async (url: MaybePromise<string|SafeUrl>) : Promise<SafeStyle> => {
+	memoize(async (url: MaybePromise<string|SafeUrl>) : Promise<SafeStyle> => {
 		const domSanitizer	= await staticDomSanitizer;
 
 		const urlValue	= await url;
@@ -15,10 +16,6 @@ export const urlToSafeStyle	=
 			domSanitizer.sanitize(SecurityContext.URL, urlValue)
 		;
 
-		if (!urlString) {
-			throw new Error('Unsafe URL.');
-		}
-
-		return domSanitizer.bypassSecurityTrustStyle(`url(${urlString})`);
-	}
+		return domSanitizer.bypassSecurityTrustStyle(urlString ? `url(${urlString})` : '');
+	})
 ;

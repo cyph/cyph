@@ -21,6 +21,7 @@ import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
 import {cacheObservable} from '../../util/flatten-observable';
+import {urlToSafeStyle} from '../../util/safe-values';
 import {deserialize, serialize} from '../../util/serialization';
 
 
@@ -76,10 +77,13 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
 
 	/** @see trackBySelf */
-	public readonly trackBySelf: typeof trackBySelf		= trackBySelf;
+	public readonly trackBySelf: typeof trackBySelf				= trackBySelf;
 
 	/** @see trackByValue */
-	public readonly trackByValue: typeof trackByValue	= trackByValue;
+	public readonly trackByValue: typeof trackByValue			= trackByValue;
+
+	/** @see urlToSafeStyle */
+	public readonly urlToSafeStyle: typeof urlToSafeStyle		= urlToSafeStyle;
 
 	/** User profile. */
 	public user?: User;

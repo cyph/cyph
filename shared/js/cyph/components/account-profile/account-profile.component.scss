@@ -33,28 +33,20 @@ $header-size: 135px;
 		height: 20em;
 		overflow: hidden;
 		opacity: 0.95;
+		background-size: cover;
+		background-position: center;
 
-		> img {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			min-width: 100%;
-			min-height: 100%;
-			width: auto;
-			height: auto;
+		@include filter(brightness(0.5));
 
-			@include filter(brightness(0.5));
-
-			@include transform(translate(-50%, -50%));
-
-			&.cyph-drop-zone:hover {
-				@include filter(none);
-			}
+		&.cyph-drop-zone:hover {
+			@include filter(none);
 		}
 	}
 
-	img.cyph-drop-zone:not(:hover) {
-		opacity: 0.75;
+	img, .cover-image {
+		&.cyph-drop-zone:not(:hover) {
+			opacity: 0.75;
+		}
 	}
 
 	/* .member-list:not(.doctor-list-only) { */
