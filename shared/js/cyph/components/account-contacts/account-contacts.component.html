@@ -50,9 +50,17 @@
 							let item of filteredContactList | async; trackBy: trackByUser
 						'>
 							<ng-container *ngTemplateOutlet='listItem; context: {
-								item: item
+								item: item,
+								unreadMessages: true
 							}'></ng-container>
-							<br />
+						</ng-container>
+						<ng-container *ngFor='
+							let item of filteredContactList | async; trackBy: trackByUser
+						'>
+							<ng-container *ngTemplateOutlet='listItem; context: {
+								item: item,
+								unreadMessages: false
+							}'></ng-container>
 						</ng-container>
 					</div>
 				</div>
@@ -82,11 +90,14 @@
 	></mat-progress-spinner>
 </div>
 
-<ng-template #listItem let-item='item'>
-	<cyph-account-contact
-		[contact]='item'
-		[showUnreadMessageCount]='true'
-		class='animated slideInDown'
-		[class.cyph-inverted-theme]='invertedTheme'
-	></cyph-account-contact>
+<ng-template #listItem let-item='item' let-unreadMessages='unreadMessages'>
+	<ng-container *ngIf='unreadMessages === (((item.unreadMessageCount | async) || 0) > 0)'>
+		<cyph-account-contact
+			[contact]='item'
+			[showUnreadMessageCount]='true'
+			class='animated slideInDown'
+			[class.cyph-inverted-theme]='invertedTheme'
+		></cyph-account-contact>
+		<br />
+	</ng-container>
 </ng-template>

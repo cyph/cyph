@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {mergeMap, skip, take} from 'rxjs/operators';
 import {IContactListItem, SecurityModels, User} from '../account';
 import {IResolvable} from '../iresolvable';
@@ -31,10 +31,18 @@ export class AccountContactsService {
 		this.accountDatabaseService.watchListKeys('contacts').pipe(mergeMap(async usernames => {
 			const accountUserLookupService	= await this.accountUserLookupService.promise;
 
-			return normalizeArray(usernames).map(username => ({
-				user: accountUserLookupService.getUser(username),
-				username
-			}));
+			return normalizeArray(usernames).map(username => {
+				const user	= accountUserLookupService.getUser(username);
+
+				return {
+					unreadMessageCount: toBehaviorSubject(
+						async () => user.then(async o => o ? o.unreadMessageCount : of(0)),
+						0
+					),
+					user,
+					username
+				};
+			});
 		})),
 		[]
 	);
