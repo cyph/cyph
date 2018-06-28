@@ -8,7 +8,10 @@
 			getMasterKeyOnly && masterKeyReady ?
 				submitMasterKey.emit(useXkcdPassphrase ? xkcd : masterKey) :
 			getPinOnly && lockScreenPasswordReady ?
-				submitPIN.emit({isCustom: !useLockScreenPIN, value: lockScreenPassword}) :
+				submitPIN.emit({
+					isCustom: !useLockScreenPIN,
+					value: useLockScreenPIN ? lockScreenPIN : lockScreenPassword
+				}) :
 				undefined
 		'
 		*ngIf='xkcdPassphrase | async as xkcd'
