@@ -178,47 +178,47 @@ export class CyphWebModule {
 
 		matIconRegistry.addSvgIcon(
 			'bitcoin',
-			sanitizer.bypassSecurityTrustUrl('/assets/img/icons/cryptocurrencies/BTC.svg')
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/cryptocurrencies/BTC.svg')
 		);
 
 		matIconRegistry.addSvgIcon(
 			'doctor',
-			sanitizer.bypassSecurityTrustUrl('/assets/img/iconfinder/doctor.svg')
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg')
 		);
 
 		matIconRegistry.addSvgIcon(
 			'gdpr',
-			sanitizer.bypassSecurityTrustUrl('/assets/img/iconfinder/gdpr.svg')
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/gdpr.svg')
 		);
 
 		matIconRegistry.addSvgIcon(
 			'key-add-color',
-			sanitizer.bypassSecurityTrustUrl('/assets/img/icons/key-add-color.svg')
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-add-color.svg')
 		);
 
 		matIconRegistry.addSvgIcon(
 			'key-add-light',
-			sanitizer.bypassSecurityTrustUrl('/assets/img/icons/key-add-light.svg')
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-add-light.svg')
 		);
 
 		matIconRegistry.addSvgIcon(
 			'key-upload',
-			sanitizer.bypassSecurityTrustUrl('/assets/img/icons/key-upload.svg')
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-upload.svg')
 		);
 
 		matIconRegistry.addSvgIcon(
 			'key-upload-color',
-			sanitizer.bypassSecurityTrustUrl('/assets/img/icons/key-upload-color.svg')
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-upload-color.svg')
 		);
 
 		matIconRegistry.addSvgIcon(
 			'medical-forms',
-			sanitizer.bypassSecurityTrustUrl('/assets/img/iconfinder/medical-forms.svg')
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/medical-forms.svg')
 		);
 
 		matIconRegistry.addSvgIcon(
 			'walkie-talkie',
-			sanitizer.bypassSecurityTrustUrl('/assets/img/iconfinder/walkie-talkie.svg')
+			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/walkie-talkie.svg')
 		);
 	}
 }
