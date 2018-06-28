@@ -41,6 +41,10 @@ $header-size: 135px;
 		&.cyph-drop-zone:hover {
 			@include filter(none);
 		}
+
+		&:not(.cyph-drop-zone) {
+			pointer-events: none;
+		}
 	}
 
 	img, .cover-image {
