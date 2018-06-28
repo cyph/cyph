@@ -92,7 +92,7 @@ export class AccountSettingsComponent implements OnInit {
 				content: this.stringsService.changeMasterKeyContent,
 				title: this.stringsService.changeMasterKeyTitle
 			},
-			p => this.accountAuthService.changeMasterKey(p)
+			async p => this.accountAuthService.changeMasterKey(p)
 		);
 	}
 
@@ -105,7 +105,7 @@ export class AccountSettingsComponent implements OnInit {
 				content: this.stringsService.changePinContent,
 				title: this.stringsService.changePinTitle
 			},
-			p => this.accountAuthService.changePIN(p)
+			async p => this.accountAuthService.changePIN(p)
 		);
 	}
 
