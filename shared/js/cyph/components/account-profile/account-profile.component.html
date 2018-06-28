@@ -148,6 +148,7 @@
 			<div
 				class='cover-image'
 				cyphTranslate
+				accept='image/*'
 				aria-label='Cover Image'
 				[style.background-image]='urlToSafeStyle(
 					(getDataURI(draft.coverImage) | async) || (user?.coverImage | async)
@@ -164,6 +165,7 @@
 							class='avatar jackInTheBox _1'
 							[class.animated]='!editMode'
 							[ngClass]='userPresence[(user?.status | async) || 0]'
+							accept='image/*'
 							alt='Profile Picture'
 							[src]='(getDataURI(draft.avatar) | async) || (user?.avatar | async)'
 							[cyphDropZone]='editMode'
@@ -280,6 +282,7 @@
 						[class.animated]='!editMode'
 						[ngClass]='userPresence[(user?.status | async) || 0]'
 						ngClass.xs='xs'
+						accept='image/*'
 						alt='Profile Picture'
 						[src]='(getDataURI(draft.avatar) | async) || (user?.avatar | async)'
 						[cyphDropZone]='editMode'

@@ -23,51 +23,53 @@ export class DropZoneDirective implements OnChanges, OnInit {
 	/** @ignore */
 	private dropZone?: Dropzone;
 
+	/** @ignore */
+	private readonly id: string	= `id-${uuid()}`;
+
+	/** Optional file type restriction. */
+	@Input() public accept?: string;
+
 	/** Indicates whether directive should be active. */
 	@Input() public cyphDropZone?: boolean;
 
 	/** File drop event emitter. */
 	@Output() public readonly fileDrop: EventEmitter<File>	= new EventEmitter<File>();
 
-	/** @inheritDoc */
-	public ngOnChanges () : void {
-		if (!this.dropZone) {
-			return;
+	/** @ignore */
+	private init () : void {
+		if (this.dropZone) {
+			this.dropZone.destroy();
 		}
 
 		if (this.cyphDropZone === false) {
-			this.dropZone.disable();
 			this.renderer.removeClass(this.elementRef.nativeElement, this.className);
+			return;
 		}
-		else {
-			this.dropZone.enable();
-			this.renderer.addClass(this.elementRef.nativeElement, this.className);
-		}
-	}
 
-	/** @inheritDoc */
-	public ngOnInit () : void {
-		const id	= `id-${uuid()}`;
-
-		this.renderer.addClass(this.elementRef.nativeElement, id);
-
-		const dropZone	= new Dropzone(`.${id}`, {
+		const dropZone	= new Dropzone(`.${this.id}`, {
 			accept: (file, done) => {
 				done('ignore');
 				dropZone.removeAllFiles();
 				this.fileDrop.emit(file);
 			},
+			acceptedFiles: this.accept,
 			url: 'data:text/plain;ascii,'
 		});
 
-		if (this.cyphDropZone === false) {
-			dropZone.disable();
-		}
-		else {
-			this.renderer.addClass(this.elementRef.nativeElement, this.className);
-		}
+		this.renderer.addClass(this.elementRef.nativeElement, this.className);
 
 		this.dropZone	= dropZone;
+	}
+
+	/** @inheritDoc */
+	public ngOnChanges () : void {
+		this.init();
+	}
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.renderer.addClass(this.elementRef.nativeElement, this.id);
+		this.init();
 	}
 
 	constructor (
