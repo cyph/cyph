@@ -6,12 +6,13 @@ import {staticDomSanitizer} from './static-services';
 
 
 /** Converts a URL into a `url()` SafeStyle. */
+/* tslint:disable-next-line:no-null-keyword */
 export const urlToSafeStyle	=
-	memoize(async (url: MaybePromise<string|SafeUrl>) : Promise<SafeStyle> => {
+	memoize(async (url: MaybePromise<string|SafeUrl|null|undefined>) : Promise<SafeStyle> => {
 		const domSanitizer	= await staticDomSanitizer;
 
 		const urlValue	= await url;
-		const urlString	= typeof urlValue === 'string' ?
+		const urlString	= typeof urlValue === 'string' || !urlValue ?
 			urlValue :
 			domSanitizer.sanitize(SecurityContext.URL, urlValue)
 		;
