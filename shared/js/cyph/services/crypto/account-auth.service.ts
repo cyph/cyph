@@ -118,15 +118,59 @@ export class AccountAuthService {
 			return;
 		}
 
+		const url			= `users/${currentUser.user.username}/loginData`;
+		const symmetricKey	= await this.passwordHash(currentUser.user.username, masterKey);
+
+		const newLoginData	= {
+			...currentUser.loginData,
+			oldSecondaryPassword: currentUser.loginData.secondaryPassword,
+			secondaryPassword: this.potassiumService.toBase64(
+				this.potassiumService.randomBytes(64)
+			)
+		};
+
 		await Promise.all([
-			this.setItem(
-				`users/${currentUser.user.username}/loginData`,
-				AccountLoginData,
-				currentUser.loginData,
-				await this.passwordHash(currentUser.user.username, masterKey)
-			),
+			this.setItem(url, AccountLoginData, newLoginData, symmetricKey),
 			this.removeSavedCredentials()
 		]);
+
+		try {
+			try {
+				await this.databaseService.changePassword(
+					currentUser.user.username,
+					currentUser.loginData.secondaryPassword,
+					newLoginData.secondaryPassword
+				);
+			}
+			catch (err) {
+				if (currentUser.loginData.oldSecondaryPassword) {
+					await this.databaseService.changePassword(
+						currentUser.user.username,
+						currentUser.loginData.oldSecondaryPassword,
+						newLoginData.secondaryPassword
+					);
+
+					newLoginData.oldSecondaryPassword	=
+						currentUser.loginData.oldSecondaryPassword
+					;
+
+					await this.setItem(url, AccountLoginData, newLoginData, symmetricKey);
+				}
+				else {
+					throw err;
+				}
+			}
+
+			currentUser.loginData	= newLoginData;
+		}
+		catch (err) {
+			try {
+				await this.setItem(url, AccountLoginData, currentUser.loginData, symmetricKey);
+			}
+			catch {
+				throw err;
+			}
+		}
 	}
 
 	/** Changes lock screen password. */
@@ -249,7 +293,17 @@ export class AccountAuthService {
 			catch {
 				errorLogMessage	= 'database service login';
 
-				await this.databaseService.login(username, loginData.secondaryPassword);
+				try {
+					await this.databaseService.login(username, loginData.secondaryPassword);
+				}
+				catch (err) {
+					if (loginData.oldSecondaryPassword) {
+						await this.databaseService.login(username, loginData.oldSecondaryPassword);
+					}
+					else {
+						throw err;
+					}
+				}
 			}
 
 			errorLogMessage	= 'getting signingKeyPair';

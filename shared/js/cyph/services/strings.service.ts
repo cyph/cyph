@@ -87,6 +87,11 @@ export class StringsService {
 	;
 
 	/** @see StringsService */
+	public readonly changeMasterKeyFailure: string		=
+		`Changing the master key failed. Please try again later.`
+	;
+
+	/** @see StringsService */
 	public readonly changeMasterKeyTitle: string		= `Change Master Key`;
 
 	/** @see StringsService */
@@ -95,6 +100,11 @@ export class StringsService {
 		`to lock your account while you're away.\n\n` +
 		`You will be required to log in again from scratch next time you open ` +
 		`${this.internalProduct}. Continue?`
+	;
+
+	/** @see StringsService */
+	public readonly changePinFailure: string			=
+		`Changing the PIN failed. Please try again later.`
 	;
 
 	/** @see StringsService */

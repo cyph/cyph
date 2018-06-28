@@ -63,6 +63,15 @@ export class DatabaseService extends DataManagerService {
 		throw new Error('Must provide an implementation of DatabaseService.callFunction.');
 	}
 
+	/** Changes password. */
+	public async changePassword (
+		_USERNAME: string,
+		_OLD_PASSWORD: string,
+		_NEW_PASSWORD: string
+	) : Promise<void> {
+		throw new Error('Must provide an implementation of DatabaseService.changePassword.');
+	}
+
 	/**
 	 * Checks whether a disconnect is registered at the specified URL.
 	 * @returns True if disconnected.

@@ -65,7 +65,7 @@ export class AccountSettingsComponent implements OnInit {
 	private async changePasswordInternal <T> (
 		password: T,
 		requiredState: number,
-		dialogConfig: {content: string; title: string},
+		dialogConfig: {content: string; failureContent: string; title: string},
 		changePassword: (password: T) => Promise<void>
 	) : Promise<void> {
 		const user	= this.user;
@@ -73,12 +73,27 @@ export class AccountSettingsComponent implements OnInit {
 			return;
 		}
 
-		if (!(await this.dialogService.confirm({...dialogConfig, markdown: true}))) {
+		if (!(await this.dialogService.confirm({
+			content: dialogConfig.content,
+			markdown: true,
+			title: dialogConfig.title
+		}))) {
 			return;
 		}
 
 		this.loading.next(true);
-		await changePassword(password);
+
+		try {
+			await changePassword(password);
+		}
+		catch {
+			await this.dialogService.alert({
+				content: dialogConfig.failureContent,
+				markdown: true,
+				title: dialogConfig.title
+			});
+		}
+
 		this.state	= this.states.default;
 		this.loading.next(false);
 	}
@@ -90,6 +105,7 @@ export class AccountSettingsComponent implements OnInit {
 			this.states.masterKey,
 			{
 				content: this.stringsService.changeMasterKeyContent,
+				failureContent: this.stringsService.changeMasterKeyFailure,
 				title: this.stringsService.changeMasterKeyTitle
 			},
 			async p => this.accountAuthService.changeMasterKey(p)
@@ -103,6 +119,7 @@ export class AccountSettingsComponent implements OnInit {
 			this.states.pin,
 			{
 				content: this.stringsService.changePinContent,
+				failureContent: this.stringsService.changePinFailure,
 				title: this.stringsService.changePinTitle
 			},
 			async p => this.accountAuthService.changePIN(p)

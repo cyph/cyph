@@ -220,6 +220,30 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
+	public async changePassword (
+		username: string,
+		oldPassword: string,
+		newPassword: string
+	) : Promise<void> {
+		return this.ngZone.runOutsideAngular(async () => {
+			await this.login(username, oldPassword);
+
+			const auth	= await (await this.app).auth();
+
+			if (
+				!auth.currentUser ||
+				!auth.currentUser.email ||
+				auth.currentUser.email.split('@')[0].toLowerCase() !== username.toLowerCase()
+			) {
+				throw new Error('Failed to change password.');
+			}
+
+			await auth.currentUser.updatePassword(newPassword);
+			await this.login(username, newPassword);
+		});
+	}
+
+	/** @inheritDoc */
 	public async checkDisconnected (urlPromise: MaybePromise<string>) : Promise<boolean> {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
