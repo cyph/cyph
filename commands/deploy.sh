@@ -726,15 +726,15 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 			reduce(
 				(namespaces, {accountsOnly, domain}) => {
 					namespaces[domain]	= {
-						accountsURL: `https://${domain}/#${accountsOnly ? "" : "account/"}`,
+						accountsURL: `https://${domain}/${accountsOnly ? "" : "account/"}`,
 						domain
 					};
 					namespaces[domain.replace(/\./g, "_")]	= namespaces[domain];
 					return namespaces;
 				},
 				{
-					"cyph.ws": {accountsURL: "https://cyph.me/#", domain: "cyph.me"},
-					"cyph_ws": {accountsURL: "https://cyph.me/#", domain: "cyph.me"}
+					"cyph.ws": {accountsURL: "https://cyph.me/", domain: "cyph.me"},
+					"cyph_ws": {accountsURL: "https://cyph.me/", domain: "cyph.me"}
 				}
 			)
 	)};`)'
