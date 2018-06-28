@@ -130,7 +130,7 @@ export class AccountRegisterComponent implements OnInit {
 					this.lockScreenPassword === this.lockScreenPasswordConfirm &&
 					this.lockScreenPassword.length >= this.lockScreenPasswordLength
 				)
-		)
+		);
 	}
 
 	/**
@@ -145,7 +145,7 @@ export class AccountRegisterComponent implements OnInit {
 					this.masterKey === this.masterKeyConfirm &&
 					this.masterKey.length >= this.masterKeyLength
 				)
-		)
+		);
 	}
 
 	/** @inheritDoc */
