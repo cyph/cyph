@@ -5,6 +5,14 @@
 		chatService.chat.state === chatStates.chat &&
 		(chatService.uiReady | async) !== true
 	'
+
+	[cyphDropZone]='
+		appService.chatRootState === chatRootStates.chat &&
+		chatService.chat.state === chatStates.chat &&
+		(chatService.uiReady | async) === true
+	'
+	[cyphDropZoneClass]='false'
+	(fileDrop)='fileTransferService.send($event)'
 >
 	<section fxFlexFill fxLayout='column' id='main' class='cyph-foreground'>
 		<canvas [fxShow]='envService.showGranim' id='main-chat-gradient'></canvas>

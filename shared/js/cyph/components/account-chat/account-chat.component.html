@@ -6,6 +6,12 @@
 		accountChatService.chat.state === states.chat &&
 		(accountChatService.uiReady | async) !== true
 	'
+	[cyphDropZone]='
+		accountChatService.chat.state === states.chat &&
+		(accountChatService.uiReady | async) === true
+	'
+	[cyphDropZoneClass]='false'
+	(fileDrop)='fileTransferService.send($event)'
 >
 	<div
 		fxFlex

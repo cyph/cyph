@@ -32,6 +32,9 @@ export class DropZoneDirective implements OnChanges, OnInit {
 	/** Indicates whether directive should be active. */
 	@Input() public cyphDropZone?: boolean;
 
+	/** Indicates whether cyph-drop-zone class should be added. */
+	@Input() public cyphDropZoneClass: boolean	= true;
+
 	/** File drop event emitter. */
 	@Output() public readonly fileDrop: EventEmitter<File>	= new EventEmitter<File>();
 
@@ -56,7 +59,9 @@ export class DropZoneDirective implements OnChanges, OnInit {
 			url: 'data:text/plain;ascii,'
 		});
 
-		this.renderer.addClass(this.elementRef.nativeElement, this.className);
+		if (this.cyphDropZoneClass) {
+			this.renderer.addClass(this.elementRef.nativeElement, this.className);
+		}
 
 		this.dropZone	= dropZone;
 	}

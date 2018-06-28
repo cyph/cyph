@@ -14,6 +14,7 @@ import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
+import {FileTransferService} from '../../services/file-transfer.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {P2PService} from '../../services/p2p.service';
 import {StringsService} from '../../services/strings.service';
@@ -273,6 +274,9 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see FileTransferService */
+		public readonly fileTransferService: FileTransferService,
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,
