@@ -18,6 +18,7 @@ import {IQuillDelta} from '../../iquill-delta';
 import {ChatService} from '../../services/chat.service';
 import {DialogService} from '../../services/dialog.service';
 import {FileTransferService} from '../../services/file-transfer.service';
+import {P2PService} from '../../services/p2p.service';
 import {ScrollService} from '../../services/scroll.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
@@ -36,7 +37,7 @@ import {sleep, waitForIterable} from '../../util/wait';
 })
 export class ChatMessageComponent implements OnChanges, OnDestroy {
 	/** Temporary workaround pending ACCOUNTS-36. */
-	public static appeared: BehaviorSubject<Set<string>>	= (() => {
+	private static readonly appeared: BehaviorSubject<Set<string>>	= (() => {
 		const ids		= new Set<string>();
 		const subject	= new BehaviorSubject(ids);
 
@@ -44,11 +45,18 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 			while (true) {
 				await sleep(500);
 
-				if (!ChatMessageComponent.visibilityWatcherService) {
+				if (!ChatMessageComponent.services) {
 					continue;
 				}
 
-				await ChatMessageComponent.visibilityWatcherService.waitUntilVisible();
+				await ChatMessageComponent.services.windowWatcherService.waitUntilVisible();
+
+				if (
+					ChatMessageComponent.services.p2pService.isActive &&
+					!ChatMessageComponent.services.p2pService.isSidebarOpen
+				) {
+					continue;
+				}
 
 				const idCount	= ids.size;
 				const elements	= document.querySelectorAll(
@@ -90,7 +98,10 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 	})();
 
 	/** Temporary workaround pending ACCOUNTS-36. */
-	public static visibilityWatcherService?: {waitUntilVisible: () => Promise<void>};
+	private static services?: {
+		p2pService: {isActive: boolean; isSidebarOpen: boolean};
+		windowWatcherService: {waitUntilVisible: () => Promise<void>};
+	};
 
 
 	/** Indicates whether this is the accounts UI. */
@@ -151,8 +162,11 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 	/** @inheritDoc */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
-		if (!ChatMessageComponent.visibilityWatcherService) {
-			ChatMessageComponent.visibilityWatcherService	= this.windowWatcherService;
+		if (!ChatMessageComponent.services) {
+			ChatMessageComponent.services	= {
+				p2pService: this.p2pService,
+				windowWatcherService: this.windowWatcherService
+			};
 		}
 
 		if (!changes.message || this.message === undefined) {
@@ -245,6 +259,9 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 		/** @ignore */
 		private readonly scrollService: ScrollService,
+
+		/** @ignore */
+		private readonly p2pService: P2PService,
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService,

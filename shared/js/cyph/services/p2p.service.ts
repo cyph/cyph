@@ -235,5 +235,7 @@ export class P2PService {
 
 		/** @ignore */
 		protected readonly stringsService: StringsService
-	) {}
+	) {
+		this.chatService.p2pService.resolve(this);
+	}
 }

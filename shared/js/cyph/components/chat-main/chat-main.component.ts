@@ -9,6 +9,7 @@ import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {P2PService} from '../../services/p2p.service';
+import {ScrollService} from '../../services/scroll.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByTransfer} from '../../track-by/track-by-transfer';
@@ -94,6 +95,9 @@ export class ChatMainComponent implements AfterViewInit {
 
 		/** @see P2PWebRTCService */
 		public readonly p2pWebRTCService: P2PWebRTCService,
+
+		/** @see ScrollService */
+		public readonly scrollService: ScrollService,
 
 		/** @see SessionService */
 		public readonly sessionService: SessionService,

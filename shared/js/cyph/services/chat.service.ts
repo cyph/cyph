@@ -164,6 +164,12 @@ export class ChatService {
 	/** Indicates whether the chat is ready to be displayed. */
 	public initiated: boolean				= false;
 
+	/** @see P2PService */
+	public readonly p2pService				= resolvable<{
+		isActive: boolean;
+		isSidebarOpen: boolean;
+	}>();
+
 	/** Sub-resolvables of uiReady. */
 	public readonly resolvers				= {
 		chatConnected: resolvable(),
@@ -601,7 +607,12 @@ export class ChatService {
 				this.sessionInitService.ephemeral &&
 				author === this.sessionService.remoteUsername
 			) {
-				await this.scrollService.trackItem(id);
+				const p2pService	= await this.p2pService.promise;
+
+				await this.scrollService.trackItem(
+					id,
+					p2pService.isActive && !p2pService.isSidebarOpen
+				);
 			}
 
 			await this.chat.messages.setItem(id, chatMessage);

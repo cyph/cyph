@@ -159,6 +159,11 @@
 		<button
 			mat-icon-button
 			cyphTranslate
+			[matBadge]='((scrollService.watchUnreadCount() | async) || 0).toString()'
+			[matBadgeHidden]='!(
+				((scrollService.watchUnreadCount() | async) || 0) > 0
+			)'
+			matBadgePosition='above before'
 			class='sidebar'
 			matTooltip='Toggle Chat Sidebar'
 			(click)='p2pService.toggleSidebar()'

@@ -133,7 +133,7 @@ export class ScrollService {
 	}
 
 	/** Process new item. */
-	public async trackItem (id: string) : Promise<void> {
+	public async trackItem (id: string, noScrollDown: boolean = false) : Promise<void> {
 		const rootElement	= await this.rootElement;
 		if (!rootElement) {
 			return;
@@ -150,6 +150,7 @@ export class ScrollService {
 		;
 
 		if (
+			!noScrollDown &&
 			this.windowWatcherService.visibility.value &&
 			(await unreadItems.size()) < 1 &&
 			scrollPosition < 150
