@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {xkcdPassphrase} from 'xkcd-passphrase';
@@ -27,6 +27,12 @@ export class AccountRegisterComponent implements OnInit {
 
 	/** Indicates whether the last registration attempt has failed. */
 	public error: boolean								= false;
+
+	/** If true, will display only the master key UI and output value upon submission. */
+	@Input() public getMasterKeyOnly: boolean			= false;
+
+	/** If true, will display only the lock screen password UI and output value upon submission. */
+	@Input() public getPinOnly: boolean					= false;
 
 	/** Password visibility settings. */
 	public readonly hidePassword						= {
@@ -66,6 +72,22 @@ export class AccountRegisterComponent implements OnInit {
 	/** Sets a spoiler on generated master key. */
 	public spoiler: boolean								= true;
 
+	/**
+	 * Master key submission.
+	 * @see getMasterKeyOnly
+	 */
+	@Output() public readonly submitMasterKey: EventEmitter<string>	=
+		new EventEmitter<string>()
+	;
+
+	/**
+	 * Lock screen password submission.
+	 * @see getPinOnly
+	 */
+	@Output() public readonly submitPIN: EventEmitter<{isCustom: boolean; value: string}>	=
+		new EventEmitter<{isCustom: boolean; value: string}>()
+	;
+
 	/** Form tab index. */
 	public tabIndex: number								= 3;
 
@@ -95,6 +117,13 @@ export class AccountRegisterComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		this.accountService.transitionEnd();
+		this.accountService.resolveUiReady();
+
+		if (this.getMasterKeyOnly || this.getPinOnly) {
+			return;
+		}
+
 		this.activatedRoute.params.subscribe(async o => {
 			try {
 				const step	= Number.parseInt(o.step, 10);
@@ -112,9 +141,6 @@ export class AccountRegisterComponent implements OnInit {
 
 			this.router.navigate([accountRoot, 'register', '1']);
 		});
-
-		this.accountService.transitionEnd();
-		this.accountService.resolveUiReady();
 	}
 
 	/** Indicates whether we're ready to initiate a registration attempt. */

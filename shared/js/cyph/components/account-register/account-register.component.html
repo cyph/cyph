@@ -1,6 +1,35 @@
+<ng-container *ngIf='getMasterKeyOnly || getPinOnly'>
+	<form
+		fxFlex
+		fxLayout='column'
+		fxLayoutGap='32px'
+		ngNativeValidate
+		(submit)='getMasterKeyOnly ?
+			submitMasterKey.emit(useXkcdPassphrase ? xkcd : masterKey) :
+			submitPIN.emit({isCustom: !useLockScreenPIN, value: lockScreenPassword})
+		'
+		*ngIf='xkcdPassphrase | async as xkcd'
+	>
+		<div>
+			<ng-container *ngTemplateOutlet='
+				getMasterKeyOnly ? masterKeyUI : pinUI
+			'></ng-container>
+		</div>
+
+		<div fxLayoutAlign='center center'>
+			<button mat-raised-button type='submit'>
+				<span cyphTranslate>Submit</span>
+			</button>
+		</div>
+
+		<div></div>
+	</form>
+</ng-container>
+
 <div
 	class='login-form'
 	[class.checking]='checking'
+	*ngIf='!getMasterKeyOnly && !getPinOnly'
 >
 	<mat-card fxFlex class='fullscreen'>
 		<cyph-logo cardHeader></cyph-logo>
@@ -261,196 +290,7 @@
 									<span cyphTranslate>Master Key</span>
 								</ng-template>
 
-								<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
-									<div
-										fxLayout='row'
-										fxLayoutAlign='center center'
-										class='description'
-									>
-										<span cyphTranslate>This is your</span>
-										&nbsp;
-										<span>{{stringsService.product}}</span>
-										&nbsp;
-										<span cyphTranslate>
-											master key. It's like a normal password, but must also
-											be mathematically strong enough to encrypt your data.
-										</span>
-									</div>
-
-									<div fxLayout='row' fxLayoutAlign='center center' cyphTranslate>
-										We've automatically generated a secure master key for you.
-										You may pick your own instead, but to ensure your privacy
-										it must be at least 20 characters and very difficult to
-										guess.
-									</div>
-
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<div
-											fxLayout='column'
-											fxLayoutGap='16px'
-											class='cyph-banner warn'
-										>
-											<div
-												fxLayout='row'
-												fxLayoutAlign='center center'
-											>
-												<span cyphTranslate>
-													<strong>WARNING:</strong>
-													&ngsp;
-													<span>
-														If you lose this key, you will not
-														be able to recover your data,
-														initialize new devices, or access
-														your account in any way.
-													</span>
-													&ngsp;
-													<span>Keep it somewhere safe and</span>
-													&ngsp;
-													<i>offline</i>.
-													&ngsp;
-													<span>
-														For example, write it down on paper
-														and hide it or lock it in a vault.
-													</span>
-												</span>
-											</div>
-											<div
-												fxLayout='row'
-												fxLayoutAlign='center center'
-											>
-												<span cyphTranslate>
-													<span>And</span>
-													&ngsp;
-													<strong>DO NOT</strong>
-													&ngsp;
-													<span>
-														reuse this as a password for any
-														other service, or store it in a
-														third-party encrypted password
-														management service.
-													</span>
-												</span>
-											</div>
-										</div>
-									</div>
-
-									<div
-										fxLayout='row'
-										(click)='useXkcdPassphrase = true'
-										class='password-option'
-										[class.deselected]='!useXkcdPassphrase'
-									>
-										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3 cyphTranslate>
-													Option #1: Securely Generated Master Key
-												</h3>
-											</div>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<div
-													class='spoiler'
-													[class.revealed]='!spoiler'
-													(click)='spoiler = !spoiler'
-												>
-													<div class='xkcd-passphrase animated fadeIn'>
-														<span
-															*ngIf='spoiler'
-															class='animated fadeIn'
-														>
-															Click to Reveal
-														</span>
-														<span
-															*ngIf='!spoiler'
-															class='animated fadeIn'
-														>
-															{{xkcdPassphrase | async}}
-														</span>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-
-									<div
-										fxLayout='row'
-										cyphTranslate
-										(click)='useXkcdPassphrase = false'
-										class='password-option'
-										[class.deselected]='useXkcdPassphrase'
-									>
-										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3 cyphTranslate>
-													Option #2: Custom Master Key
-												</h3>
-											</div>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<mat-form-field fxFlex='60'>
-													<input
-														matInput
-														cyphTranslate
-														[(ngModel)]='masterKey'
-														name='masterKey'
-														[type]='hidePassword.masterKey ?
-															"password" :
-															"text"
-														'
-														placeholder='Master Key'
-														[required]='!useXkcdPassphrase'
-														[pattern]='".{" + masterKeyLength + ",}"'
-														data-lpignore='true'
-													/>
-													<mat-icon
-														matSuffix
-														class='suffix-button'
-														(click)='
-															hidePassword.masterKey =
-																!hidePassword.masterKey
-														'
-													>
-														{{
-															hidePassword.masterKey ?
-																'visibility' :
-																'visibility_off'
-														}}
-													</mat-icon>
-												</mat-form-field>
-											</div>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<mat-form-field fxFlex='60'>
-													<input
-														matInput
-														cyphTranslate
-														[(ngModel)]='masterKeyConfirm'
-														name='masterKeyConfirm'
-														[type]='hidePassword.masterKeyConfirm ?
-															"password" :
-															"text"
-														'
-														placeholder='Confirm Master Key'
-														[required]='!useXkcdPassphrase'
-														[pattern]='masterKey'
-														data-lpignore='true'
-													/>
-													<mat-icon
-														matSuffix
-														class='suffix-button'
-														(click)='
-															hidePassword.masterKeyConfirm =
-																!hidePassword.masterKeyConfirm
-														'
-													>
-														{{
-															hidePassword.masterKeyConfirm ?
-																'visibility' :
-																'visibility_off'
-														}}
-													</mat-icon>
-												</mat-form-field>
-											</div>
-										</div>
-									</div>
-								</div>
+								<ng-container *ngTemplateOutlet='masterKeyUI'></ng-container>
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
@@ -464,131 +304,7 @@
 									<span cyphTranslate>PIN</span>
 								</ng-template>
 
-								<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
-									<div
-										fxLayout='row'
-										fxLayoutAlign='center center'
-										class='description'
-									>
-										This is a simple passcode used to lock your
-										account when you're away.
-									</div>
-
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<span cyphTranslate>
-											A four-digit number is fine in most cases. However,
-											you may choose to use a longer custom password, which
-											well be more secure if you plan to sign in to
-										</span>
-										&nbsp;
-										<span>{{stringsService.product}}</span>
-										&nbsp;
-										<span cyphTranslate>on a shared device.</span>
-									</div>
-
-									<div
-										fxLayout='row'
-										(click)='useLockScreenPIN = true'
-										class='password-option'
-										[class.deselected]='!useLockScreenPIN'
-									>
-										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3 cyphTranslate>
-													Option #1: Four-Digit Number
-												</h3>
-											</div>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<cyph-pin-input
-													fxFlex
-													[(ngModel)]='lockScreenPIN'
-													name='lockScreenPIN'
-													[required]='useLockScreenPIN'
-												></cyph-pin-input>
-											</div>
-										</div>
-									</div>
-
-									<div
-										fxLayout='row'
-										cyphTranslate
-										(click)='useLockScreenPIN = false'
-										class='password-option'
-										[class.deselected]='useLockScreenPIN'
-									>
-										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3 cyphTranslate>
-													Option #2: Custom Password
-												</h3>
-											</div>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<mat-form-field fxFlex='60'>
-													<input
-														matInput
-														cyphTranslate
-														[(ngModel)]='lockScreenPassword'
-														name='lockScreenPassword'
-														[type]='hidePassword.lockScreen ?
-															"password" :
-															"text"
-														'
-														placeholder='Lock Screen Password'
-														[required]='!useLockScreenPIN'
-														[pattern]='".{" + lockScreenPasswordLength + ",}"'
-														data-lpignore='true'
-													/>
-													<mat-icon
-														matSuffix
-														class='suffix-button'
-														(click)='
-															hidePassword.lockScreen =
-																!hidePassword.lockScreen
-														'
-													>
-														{{
-															hidePassword.lockScreen ?
-																'visibility' :
-																'visibility_off'
-														}}
-													</mat-icon>
-												</mat-form-field>
-											</div>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<mat-form-field fxFlex='60'>
-													<input
-														matInput
-														cyphTranslate
-														[(ngModel)]='lockScreenPasswordConfirm'
-														name='lockScreenPasswordConfirm'
-														[type]='hidePassword.lockScreenConfirm ?
-															"password" :
-															"text"
-														'
-														placeholder='Confirm Lock Screen Password'
-														[required]='!useLockScreenPIN'
-														[pattern]='lockScreenPassword'
-														data-lpignore='true'
-													/>
-													<mat-icon
-														matSuffix
-														class='suffix-button'
-														(click)='
-															hidePassword.lockScreenConfirm =
-																!hidePassword.lockScreenConfirm
-														'
-													>
-														{{
-															hidePassword.lockScreenConfirm ?
-																'visibility' :
-																'visibility_off'
-														}}
-													</mat-icon>
-												</mat-form-field>
-											</div>
-										</div>
-									</div>
-								</div>
+								<ng-container *ngTemplateOutlet='pinUI'></ng-container>
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
@@ -649,7 +365,9 @@
 												<span *ngIf='useLockScreenPIN'>
 													{{lockScreenPIN}}
 												</span>
-												<span *ngIf='!useLockScreenPIN'>****</span>
+												<span *ngIf='!useLockScreenPIN'>
+													&#xfe61;&#xfe61;&#xfe61;&#xfe61;
+												</span>
 											</div>
 										</div>
 									</div>
@@ -678,3 +396,328 @@
 		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
 	</mat-card>
 </div>
+
+<ng-template #masterKeyUI>
+	<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
+		<div
+			fxLayout='row'
+			fxLayoutAlign='center center'
+			class='description'
+		>
+			<span>
+				<span cyphTranslate>This is your</span>
+				&ngsp;
+				<span>{{stringsService.product}}</span>
+				&ngsp;
+				<span cyphTranslate>
+					master key. It's like a normal password, but must also
+					be mathematically strong enough to encrypt your data.
+				</span>
+			</span>
+		</div>
+
+		<div fxLayout='row' fxLayoutAlign='center center' cyphTranslate>
+			We've automatically generated a secure master key for you.
+			You may pick your own instead, but to ensure your privacy
+			it must be at least 20 characters and very difficult to
+			guess.
+		</div>
+
+		<div fxLayout='row' fxLayoutAlign='center center'>
+			<div
+				fxLayout='column'
+				fxLayoutGap='16px'
+				class='cyph-banner warn'
+			>
+				<div
+					fxLayout='row'
+					fxLayoutAlign='center center'
+				>
+					<span cyphTranslate>
+						<strong>WARNING:</strong>
+						&ngsp;
+						<span>
+							If you lose this key, you will not
+							be able to recover your data,
+							initialize new devices, or access
+							your account in any way.
+						</span>
+						&ngsp;
+						<span>Keep it somewhere safe and</span>
+						&ngsp;
+						<i>offline</i>.
+						&ngsp;
+						<span>
+							For example, write it down on paper
+							and hide it or lock it in a vault.
+						</span>
+					</span>
+				</div>
+				<div
+					fxLayout='row'
+					fxLayoutAlign='center center'
+				>
+					<span cyphTranslate>
+						<span>And</span>
+						&ngsp;
+						<strong>DO NOT</strong>
+						&ngsp;
+						<span>
+							reuse this as a password for any
+							other service, or store it in a
+							third-party encrypted password
+							management service.
+						</span>
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<div
+			fxLayout='row'
+			(click)='useXkcdPassphrase = true'
+			class='password-option'
+			[class.deselected]='!useXkcdPassphrase'
+		>
+			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<h3 cyphTranslate>
+						Option #1: Securely Generated Master Key
+					</h3>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<div
+						class='spoiler'
+						[class.revealed]='!spoiler'
+						(click)='spoiler = !spoiler'
+					>
+						<div class='xkcd-passphrase animated fadeIn'>
+							<span
+								*ngIf='spoiler'
+								class='animated fadeIn'
+							>
+								Click to Reveal
+							</span>
+							<span
+								*ngIf='!spoiler'
+								class='animated fadeIn'
+							>
+								{{xkcdPassphrase | async}}
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			fxLayout='row'
+			cyphTranslate
+			(click)='useXkcdPassphrase = false'
+			class='password-option'
+			[class.deselected]='useXkcdPassphrase'
+		>
+			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<h3 cyphTranslate>
+						Option #2: Custom Master Key
+					</h3>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<mat-form-field fxFlex='60'>
+						<input
+							matInput
+							cyphTranslate
+							[(ngModel)]='masterKey'
+							name='masterKey'
+							[type]='hidePassword.masterKey ?
+								"password" :
+								"text"
+							'
+							placeholder='Master Key'
+							[required]='!useXkcdPassphrase'
+							[pattern]='".{" + masterKeyLength + ",}"'
+							data-lpignore='true'
+						/>
+						<mat-icon
+							matSuffix
+							class='suffix-button'
+							(click)='
+								hidePassword.masterKey =
+									!hidePassword.masterKey
+							'
+						>
+							{{
+								hidePassword.masterKey ?
+									'visibility' :
+									'visibility_off'
+							}}
+						</mat-icon>
+					</mat-form-field>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<mat-form-field fxFlex='60'>
+						<input
+							matInput
+							cyphTranslate
+							[(ngModel)]='masterKeyConfirm'
+							name='masterKeyConfirm'
+							[type]='hidePassword.masterKeyConfirm ?
+								"password" :
+								"text"
+							'
+							placeholder='Confirm Master Key'
+							[required]='!useXkcdPassphrase'
+							[pattern]='masterKey'
+							data-lpignore='true'
+						/>
+						<mat-icon
+							matSuffix
+							class='suffix-button'
+							(click)='
+								hidePassword.masterKeyConfirm =
+									!hidePassword.masterKeyConfirm
+							'
+						>
+							{{
+								hidePassword.masterKeyConfirm ?
+									'visibility' :
+									'visibility_off'
+							}}
+						</mat-icon>
+					</mat-form-field>
+				</div>
+			</div>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #pinUI>
+	<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
+		<div
+			fxLayout='row'
+			fxLayoutAlign='center center'
+			class='description'
+		>
+			This is a simple passcode used to lock your
+			account when you're away.
+		</div>
+
+		<div fxLayout='row' fxLayoutAlign='center center'>
+			<span>
+				<span cyphTranslate>
+					A four-digit number is fine in most cases. However,
+					you may choose to use a longer custom password, which
+					well be more secure if you plan to sign in to
+				</span>
+				&ngsp;
+				<span>{{stringsService.product}}</span>
+				&ngsp;
+				<span cyphTranslate>on a shared device.</span>
+			</span>
+		</div>
+
+		<div
+			fxLayout='row'
+			(click)='useLockScreenPIN = true'
+			class='password-option'
+			[class.deselected]='!useLockScreenPIN'
+		>
+			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<h3 cyphTranslate>
+						Option #1: Four-Digit Number
+					</h3>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<cyph-pin-input
+						fxFlex
+						[(ngModel)]='lockScreenPIN'
+						name='lockScreenPIN'
+						[required]='useLockScreenPIN'
+					></cyph-pin-input>
+				</div>
+			</div>
+		</div>
+
+		<div
+			fxLayout='row'
+			cyphTranslate
+			(click)='useLockScreenPIN = false'
+			class='password-option'
+			[class.deselected]='useLockScreenPIN'
+		>
+			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<h3 cyphTranslate>
+						Option #2: Custom Password
+					</h3>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<mat-form-field fxFlex='60'>
+						<input
+							matInput
+							cyphTranslate
+							[(ngModel)]='lockScreenPassword'
+							name='lockScreenPassword'
+							[type]='hidePassword.lockScreen ?
+								"password" :
+								"text"
+							'
+							placeholder='Lock Screen Password'
+							[required]='!useLockScreenPIN'
+							[pattern]='".{" + lockScreenPasswordLength + ",}"'
+							data-lpignore='true'
+						/>
+						<mat-icon
+							matSuffix
+							class='suffix-button'
+							(click)='
+								hidePassword.lockScreen =
+									!hidePassword.lockScreen
+							'
+						>
+							{{
+								hidePassword.lockScreen ?
+									'visibility' :
+									'visibility_off'
+							}}
+						</mat-icon>
+					</mat-form-field>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<mat-form-field fxFlex='60'>
+						<input
+							matInput
+							cyphTranslate
+							[(ngModel)]='lockScreenPasswordConfirm'
+							name='lockScreenPasswordConfirm'
+							[type]='hidePassword.lockScreenConfirm ?
+								"password" :
+								"text"
+							'
+							placeholder='Confirm Lock Screen Password'
+							[required]='!useLockScreenPIN'
+							[pattern]='lockScreenPassword'
+							data-lpignore='true'
+						/>
+						<mat-icon
+							matSuffix
+							class='suffix-button'
+							(click)='
+								hidePassword.lockScreenConfirm =
+									!hidePassword.lockScreenConfirm
+							'
+						>
+							{{
+								hidePassword.lockScreenConfirm ?
+									'visibility' :
+									'visibility_off'
+							}}
+						</mat-icon>
+					</mat-form-field>
+				</div>
+			</div>
+		</div>
+	</div>
+</ng-template>

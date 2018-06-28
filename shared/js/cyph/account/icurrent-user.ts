@@ -1,4 +1,4 @@
-import {IKeyPair} from '../proto';
+import {IAccountLoginData, IKeyPair} from '../proto';
 import {User} from './user';
 
 
@@ -10,6 +10,9 @@ export interface ICurrentUser {
 		signingKeyPair: IKeyPair;
 		symmetricKey: Uint8Array;
 	};
+
+	/** @see IAccountLoginData */
+	loginData: IAccountLoginData;
 
 	/** @see User */
 	user: User;

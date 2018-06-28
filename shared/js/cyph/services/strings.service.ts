@@ -79,6 +79,28 @@ export class StringsService {
 	public readonly cancel: string						= `cancel`;
 
 	/** @see StringsService */
+	public readonly changeMasterKeyContent: string		=
+		`You are about to change your **master key**. This is not reversible. ` +
+		`If you lose the new master key, **your account cannot be recovered**.\n\n` +
+		`You will be required to log in again from scratch next time you open ` +
+		`${this.internalProduct}. Continue?`
+	;
+
+	/** @see StringsService */
+	public readonly changeMasterKeyTitle: string		= `Change Master Key`;
+
+	/** @see StringsService */
+	public readonly changePinContent: string			=
+		`You are about to change your **PIN**. The PIN is a simple passcode used ` +
+		`to lock your account while you're away.\n\n` +
+		`You will be required to log in again from scratch next time you open ` +
+		`${this.internalProduct}. Continue?`
+	;
+
+	/** @see StringsService */
+	public readonly changePinTitle: string				= `Change PIN`;
+
+	/** @see StringsService */
 	public readonly clickHere: string					= `Click here`;
 
 	/** @see StringsService */

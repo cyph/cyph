@@ -110,6 +110,50 @@ export class AccountAuthService {
 		);
 	}
 
+	/** Changes master key. */
+	public async changeMasterKey (masterKey: string) : Promise<void> {
+		const currentUser	= await this.accountDatabaseService.getCurrentUser();
+
+		if (!currentUser.user.username || !masterKey) {
+			return;
+		}
+
+		await Promise.all([
+			this.setItem(
+				`users/${currentUser.user.username}/loginData`,
+				AccountLoginData,
+				currentUser.loginData,
+				await this.passwordHash(currentUser.user.username, masterKey)
+			),
+			this.removeSavedCredentials()
+		]);
+	}
+
+	/** Changes lock screen password. */
+	public async changePIN (pin: {isCustom: boolean; value: string}) : Promise<void> {
+		const currentUser	= await this.accountDatabaseService.getCurrentUser();
+
+		if (!currentUser.user.username || !pin.value) {
+			return;
+		}
+
+		await Promise.all([
+			this.setItem(
+				`users/${currentUser.user.username}/pin/hash`,
+				BinaryProto,
+				await this.passwordHash(currentUser.user.username, pin.value),
+				currentUser.keys.symmetricKey
+			),
+			this.setItem(
+				`users/${currentUser.user.username}/pin/isCustom`,
+				BooleanProto,
+				pin.isCustom,
+				currentUser.keys.symmetricKey
+			),
+			this.removeSavedCredentials()
+		]);
+	}
+
 	/** Tries to get saved PIN hash. */
 	public async getSavedPIN () : Promise<Uint8Array|undefined> {
 		try {
@@ -235,6 +279,7 @@ export class AccountAuthService {
 					signingKeyPair,
 					symmetricKey: loginData.symmetricKey
 				},
+				loginData,
 				user
 			});
 
