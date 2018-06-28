@@ -27,9 +27,22 @@ export const normalize	= memoize((s: string) : string =>
 	s.toLowerCase().replace(/[^0-9a-z_]/g, '')
 );
 
-/** Normalizes and sorts array. */
-export const normalizeArray	= memoize((arr: string[]) : string[] =>
-	Array.from(new Set(arr)).map(normalize).sort()
+const normalizeArrayInternal	= memoize((arr: string[]) =>
+	memoize((compareFn?: ((a: string, b: string) => number)|false) => {
+		const result	= Array.from(new Set(arr)).map(normalize);
+		return compareFn === false ? result : result.sort(compareFn);
+	})
+);
+
+/**
+ * Normalizes and sorts array.
+ * @param compareFn Optional comparison function for sorting. If false, result will be unsorted.
+ */
+export const normalizeArray	= memoize((
+	arr: string[],
+	compareFn?: ((a: string, b: string) => number)|false
+) : string[] =>
+	normalizeArrayInternal(arr)(compareFn)
 );
 
 /** Converts number to readable string. */
