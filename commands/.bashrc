@@ -49,7 +49,11 @@ notify () {
 }
 
 pass () {
-	log 'PASS'
+	if [ "${*}" ] ; then
+		log "${*}\n\nPASS"
+	else
+		log 'PASS'
+	fi
 	exit 0
 }
 
