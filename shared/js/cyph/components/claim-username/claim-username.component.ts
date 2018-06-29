@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {usernameMask} from '../../account';
+import {emailPattern} from '../../email-pattern';
 import {StringsService} from '../../services/strings.service';
 import {email} from '../../util/email';
 import {stringify} from '../../util/serialization';
@@ -15,19 +16,22 @@ import {stringify} from '../../util/serialization';
 })
 export class ClaimUsernameComponent {
 	/** User's email address. */
-	@Input() public email: string				= '';
+	@Input() public email: string						= '';
+
+	/** @see emailPattern */
+	public readonly emailPattern: typeof emailPattern	= emailPattern;
 
 	/** Indicates whether form has been submitted. */
-	public submitted: boolean					= false;
+	public submitted: boolean							= false;
 
 	/** Requested username. */
-	@Input() public username: string			= '';
+	@Input() public username: string					= '';
 
 	/** Requested username alternate/backup. */
-	@Input() public usernameAlternate: string	= '';
+	@Input() public usernameAlternate: string			= '';
 
 	/** @see usernameMask */
-	public readonly usernameMask: any			= usernameMask;
+	public readonly usernameMask: any					= usernameMask;
 
 	/** Submits form. */
 	public submit () : void {

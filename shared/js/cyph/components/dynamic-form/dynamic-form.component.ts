@@ -2,6 +2,7 @@ import {Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '
 import memoize from 'lodash-es/memoize';
 import * as mexp from 'math-expression-evaluator';
 import * as msgpack from 'msgpack-lite';
+import {emailPattern} from '../../email-pattern';
 import {IAsyncValue} from '../../iasync-value';
 import {MaybePromise} from '../../maybe-promise-type';
 import {Form, IForm, PatientInfo} from '../../proto';
@@ -76,6 +77,9 @@ export class DynamicFormComponent implements OnInit {
 			) :
 			undefined
 	;
+
+	/** @see emailPattern */
+	public readonly emailPattern: typeof emailPattern	= emailPattern;
 
 	/** @see Form */
 	@Input() public form?: IForm;

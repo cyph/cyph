@@ -3,6 +3,7 @@ import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
+import {emailPattern} from '../../email-pattern';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -24,6 +25,9 @@ export class AccountRegisterComponent implements OnInit {
 
 	/** Email addres. */
 	public email: string								= '';
+
+	/** @see emailPattern */
+	public readonly emailPattern: typeof emailPattern	= emailPattern;
 
 	/** Indicates whether the last registration attempt has failed. */
 	public error: boolean								= false;

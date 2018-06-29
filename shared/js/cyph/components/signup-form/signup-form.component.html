@@ -24,6 +24,7 @@
 							[(ngModel)]='signupService.data.email'
 							name='email'
 							type='email'
+							[pattern]='emailPattern'
 							placeholder='Email'
 						/>
 					</mat-form-field>
@@ -114,6 +115,7 @@
 							[(ngModel)]='signupService.data.email'
 							name='email'
 							type='email'
+							[pattern]='emailPattern'
 							placeholder='Email'
 							required
 						/>

@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {emailPattern} from '../../email-pattern';
 import {ConfigService} from '../../services/config.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
@@ -14,6 +15,9 @@ import {email} from '../../util/email';
 	templateUrl: './contact.component.html'
 })
 export class ContactComponent implements OnInit {
+	/** @see emailPattern */
+	public readonly emailPattern: typeof emailPattern	= emailPattern;
+
 	/** Indicates whether the feedback form UI should be displayed. */
 	public feedbackForm: boolean			= false;
 

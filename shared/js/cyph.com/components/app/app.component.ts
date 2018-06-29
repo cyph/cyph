@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {emailPattern} from '../../../cyph/email-pattern';
 import {ConfigService} from '../../../cyph/services/config.service';
 import {EnvService} from '../../../cyph/services/env.service';
 import {SignupService} from '../../../cyph/services/signup.service';
@@ -16,11 +17,14 @@ import {Promos, States} from '../../enums';
 	templateUrl: './app.component.html'
 })
 export class AppComponent {
+	/** @see emailPattern */
+	public readonly emailPattern: typeof emailPattern	= emailPattern;
+
 	/** @see Promos */
-	public promos: typeof Promos	= Promos;
+	public readonly promos: typeof Promos				= Promos;
 
 	/** @see States */
-	public states: typeof States	= States;
+	public readonly states: typeof States				= States;
 
 	constructor (
 		/** @see AppService */

@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {SecurityModels, User, usernameMask} from '../../account';
+import {emailPattern} from '../../email-pattern';
 import {IAsyncValue} from '../../iasync-value';
 import {StringProto} from '../../proto';
 import {AccountSettingsService} from '../../services/account-settings.service';
@@ -43,6 +44,9 @@ export class AccountSettingsComponent implements OnInit {
 		StringProto,
 		SecurityModels.unprotected
 	);
+
+	/** @see emailPattern */
+	public readonly emailPattern: typeof emailPattern	= emailPattern;
 
 	/** Indicates whether page is loading. */
 	public readonly loading: BehaviorSubject<boolean>	= new BehaviorSubject(true);

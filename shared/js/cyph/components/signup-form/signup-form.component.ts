@@ -1,5 +1,6 @@
 import {Component, ElementRef, Input} from '@angular/core';
 import * as $ from 'jquery';
+import {emailPattern} from '../../email-pattern';
 import {EnvService} from '../../services/env.service';
 import {SignupService} from '../../services/signup.service';
 import {StringsService} from '../../services/strings.service';
@@ -15,6 +16,9 @@ import {sleep} from '../../util/wait';
 	templateUrl: './signup-form.component.html'
 })
 export class SignupFormComponent {
+	/** @see emailPattern */
+	public readonly emailPattern: typeof emailPattern	= emailPattern;
+
 	/** Indicates whether or not to display invite-code-related UI. */
 	@Input() public invite: boolean	= false;
 

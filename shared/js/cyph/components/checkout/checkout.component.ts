@@ -4,6 +4,7 @@ import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
 import * as braintreeDropIn from 'braintree-web-drop-in';
 import {AppService} from '../../../cyph.com/app.service';
 import {SubscriptionTypes} from '../../checkout';
+import {emailPattern} from '../../email-pattern';
 import {ConfigService} from '../../services/config.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -41,6 +42,9 @@ export class CheckoutComponent implements AfterViewInit {
 
 	/** Email address. */
 	@Input() public email?: string;
+
+	/** @see emailPattern */
+	public readonly emailPattern: typeof emailPattern	= emailPattern;
 
 	/** Item ID number. */
 	@Input() public item?: number;

@@ -234,6 +234,7 @@
 														[(ngModel)]='email'
 														name='email'
 														type='email'
+														[pattern]='emailPattern'
 														[placeholder]='envService.isTelehealth ?
 															stringsService.email :
 															stringsService.emailOptional
