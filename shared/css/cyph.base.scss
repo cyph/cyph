@@ -5,8 +5,12 @@
 @include cyph-apply-theme(true);
 
 /* Temporary workaround */
-mat-dialog-container mat-tab-body {
-	max-height: 70vh;
+mat-dialog-container {
+	max-height: 90vh !important;
+
+	mat-tab-body {
+		max-height: 70vh;
+	}
 }
 
 /* Workaround for mobile Chrome vh bug */
