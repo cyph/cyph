@@ -6,6 +6,7 @@
 		accountChatService.chat.state === states.chat &&
 		(accountChatService.uiReady | async) !== true
 	'
+	[class.mobile]='envService.isMobile'
 	[cyphDropZone]='false && (
 		accountChatService.chat.state === states.chat &&
 		(accountChatService.uiReady | async) === true
@@ -36,7 +37,6 @@
 			></cyph-chat-main>
 
 			<cyph-account-chat-message-box
-				[class.padding]='!envService.isMobile'
 				[messageType]='chatMessageValueTypes.Text'
 				*ngIf='!p2pService.isActiveOrInitialCall'
 				[class.visibility-hidden]='initialCallPending'

@@ -2,11 +2,14 @@
 
 :host > div {
 	background-color: initial !important;
-	padding: 0px 16px;
-}
 
-.padding {
-	padding-bottom: 1em;
+	&:not(.mobile) {
+		padding: 0px 16px;
+
+		cyph-account-chat-message-box {
+			padding-bottom: 1em;
+		}
+	}
 }
 
 .chat-end-margin ::ng-deep .chat-end-message mat-card {
