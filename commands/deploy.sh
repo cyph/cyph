@@ -659,8 +659,10 @@ if [ "${websign}" ] ; then
 
 	# Publish internal prod branch to public repo
 	if [ ! "${test}" ] && [ ! "${debug}" ] ; then
+		cd "${dir}"
 		git remote add public git@github.com:cyph/cyph.git 2> /dev/null
 		git push public HEAD:master
+		cd -
 	fi
 fi
 
