@@ -124,6 +124,10 @@
 		.contact-list > br:last-child {
 			display: none;
 		}
+
+		cyph-search-bar .search-bar .mat-form-field-flex {
+			padding: 0 5px;
+		}
 	}
 }
 
