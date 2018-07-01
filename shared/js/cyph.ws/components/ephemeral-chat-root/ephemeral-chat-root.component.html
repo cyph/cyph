@@ -6,11 +6,11 @@
 		(chatService.uiReady | async) !== true
 	'
 
-	[cyphDropZone]='
+	[cyphDropZone]='false && (
 		appService.chatRootState === chatRootStates.chat &&
 		chatService.chat.state === chatStates.chat &&
 		(chatService.uiReady | async) === true
-	'
+	)'
 	[cyphDropZoneClass]='false'
 	(fileDrop)='fileTransferService.send($event)'
 >

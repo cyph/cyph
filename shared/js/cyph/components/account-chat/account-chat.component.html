@@ -6,10 +6,10 @@
 		accountChatService.chat.state === states.chat &&
 		(accountChatService.uiReady | async) !== true
 	'
-	[cyphDropZone]='
+	[cyphDropZone]='false && (
 		accountChatService.chat.state === states.chat &&
 		(accountChatService.uiReady | async) === true
-	'
+	)'
 	[cyphDropZoneClass]='false'
 	(fileDrop)='fileTransferService.send($event)'
 >

@@ -166,7 +166,7 @@ export const account: Route	= {
 			children: [
 				{path: '', component: AccountSettingsComponent, data: {state: 1}},
 				{path: 'master-key', component: AccountSettingsComponent, data: {state: 2}},
-				{path: 'pin', component: AccountSettingsComponent, data: {state: 3}},
+				{path: 'pin', component: AccountSettingsComponent, data: {state: 3}}
 			]
 		},
 		{
