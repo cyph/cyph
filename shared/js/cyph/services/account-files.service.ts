@@ -1017,7 +1017,7 @@ export class AccountFilesService {
 					AccountFileReference
 				).then(async o =>
 					this.accountDatabaseService.getItem(
-						`fileRecords/${id}`,
+						`users/${o.owner}/fileRecords/${id}`,
 						AccountFileRecord,
 						undefined,
 						o.key
