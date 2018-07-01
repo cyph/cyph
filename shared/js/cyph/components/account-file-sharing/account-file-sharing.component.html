@@ -1,15 +1,10 @@
 <div fxLayout='column' fxLayoutAlign='center' fxLayoutGap='16px' *ngIf='getFile() | async as o'>
 	<cyph-account-contacts-search
 		#accountContactsSearch
+		[chipInput]='true'
 		[placeholder]='stringsService.to'
 	></cyph-account-contacts-search>
-	<div>
-		<cyph-account-contact
-			class='active animated slideInDown'
-			[contact]='accountContactsSearch?.searchBar?.filterSingle | async'
-			(click)='accountContactsSearch?.searchBar?.clearFilter()'
-		></cyph-account-contact>
-	</div>
+
 	<mat-card class='file'>
 		<mat-card-header fxLayout='row'>
 			<mat-icon mat-card-avatar>
@@ -33,7 +28,11 @@
 		</mat-card-header>
 	</mat-card>
 
-	<button (click)='share()' mat-raised-button>
-		{{stringsService.share}} {{o.fileConfig?.description}}
-	</button>
+	<div></div>
+
+	<div fxLayoutAlign='center'>
+		<button (click)='share()' mat-raised-button>
+			{{stringsService.share}} {{o.fileConfig?.description}}
+		</button>
+	</div>
 </div>

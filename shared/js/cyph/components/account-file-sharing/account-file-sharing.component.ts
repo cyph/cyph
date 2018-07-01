@@ -65,39 +65,40 @@ export class AccountFileSharingComponent {
 
 	/** Shares file. */
 	public async share () : Promise<void> {
-		if (!this.username) {
-			return;
-		}
+		await Promise.all(this.usernames.map(async username => {
+			const {file}	= await this.getFile(username);
+			if (file === undefined) {
+				return;
+			}
 
-		const {file}	= await this.getFile(this.username);
-		if (file === undefined) {
-			return;
-		}
+			if ('data' in file) {
+				await this.accountFilesService.upload(
+					file.name,
+					file.data,
+					username,
+					file.metadata
+				);
+			}
+			else {
+				await this.accountFilesService.shareFile(file.id, username);
+			}
 
-		if ('data' in file) {
-			await this.accountFilesService.upload(
-				file.name,
-				file.data,
-				this.username,
-				file.metadata
-			);
-		}
-		else {
-			await this.accountFilesService.shareFile(file.id, this.username);
-		}
-
-		if (this.closeFunction) {
-			(await this.closeFunction.promise)();
-		}
+			if (this.closeFunction) {
+				(await this.closeFunction.promise)();
+			}
+		}));
 	}
 
-	/** Username to share with. */
-	public get username () : string|undefined {
-		return (
-			this.accountContactsSearch &&
-			this.accountContactsSearch.searchBar &&
-			this.accountContactsSearch.searchBar.filterSingle.value &&
-			this.accountContactsSearch.searchBar.filterSingle.value.username
+	/** Usernames to share with. */
+	public get usernames () : string[] {
+		return Array.from(
+			(
+				this.accountContactsSearch &&
+				this.accountContactsSearch.searchBar &&
+				this.accountContactsSearch.searchBar.filter.value
+			) || []
+		).map(o =>
+			o.username
 		);
 	}
 
