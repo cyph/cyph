@@ -6,7 +6,7 @@
 	<div>
 		<cyph-account-contact
 			class='active animated slideInDown'
-			[contact]='accountContactsSearch?.searchBar?.filter | async'
+			[contact]='accountContactsSearch?.searchBar?.filterSingle | async'
 			(click)='accountContactsSearch?.searchBar?.clearFilter()'
 		></cyph-account-contact>
 	</div>

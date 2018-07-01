@@ -109,8 +109,16 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	);
 
 	/** @see SearchBarComponent.filter */
-	public readonly recipient: BehaviorSubject<User|undefined>			=
-		new BehaviorSubject<User|undefined>(undefined)
+	public readonly recipient: BehaviorSubject<Set<User>>				=
+		new BehaviorSubject<Set<User>>(new Set())
+	;
+
+	/** @see SearchBarComponent.filterSingle */
+	public readonly recipientSingle: BehaviorSubject<User|undefined>	=
+		toBehaviorSubject(
+			() => this.recipient.pipe(map(o => o.values().next().value)),
+			undefined
+		)
 	;
 
 	/** @see AccountContactsSearchComponent.searchUsername */
@@ -138,7 +146,9 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 			await this.accountFilesService.updateAppointment(id, appointment);
 		}
 		else {
-			if (!this.recipient.value || !this.accountDatabaseService.currentUser.value) {
+			const recipient	= this.recipientSingle.value;
+
+			if (!recipient || !this.accountDatabaseService.currentUser.value) {
 				this.sent.next(false);
 				return;
 			}
@@ -159,16 +169,16 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 					{
 						calendarInvite: this.accountChatService.chat.currentMessage.calendarInvite,
 						participants: [
-							this.recipient.value.username,
+							recipient.username,
 							this.accountDatabaseService.currentUser.value.user.username
 						],
 						rsvpSessionSubID: uuid()
 					},
-					this.recipient.value.username
+					recipient.username
 				).result);
 			}
 			else {
-				await this.accountChatService.setUser(this.recipient.value.username, true);
+				await this.accountChatService.setUser(recipient.username, true);
 				await this.accountChatService.send(
 					this.messageType.value,
 					undefined,

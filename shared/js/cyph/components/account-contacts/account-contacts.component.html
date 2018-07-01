@@ -26,10 +26,10 @@
 				<cyph-account-contact
 					class='active animated slideInDown'
 					[class.cyph-inverted-theme]='invertedTheme'
-					[contact]='accountContactsSearch?.searchBar?.filter | async'
+					[contact]='accountContactsSearch?.searchBar?.filterSingle | async'
 					[showUnreadMessageCount]='true'
 					(click)='accountContactsSearch?.searchBar?.clearFilter()'
-					*ngIf='(accountContactsSearch?.searchBar?.filter | async) !== undefined'
+					*ngIf='(accountContactsSearch?.searchBar?.filterSingle | async) !== undefined'
 				></cyph-account-contact>
 
 				<cyph-account-contact
@@ -37,7 +37,7 @@
 					[class.cyph-inverted-theme]='invertedTheme'
 					[contact]='activeUser | async'
 					[showUnreadMessageCount]='true'
-					*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
+					*ngIf='(accountContactsSearch?.searchBar?.filterSingle | async) === undefined'
 				></cyph-account-contact>
 			</div>
 
@@ -72,7 +72,7 @@
 				[vsData]='filteredContactList'
 				[vsEqualsFunc]='vsEqualsFunc'
 				[vsOptions]='vsOptions'
-				*ngIf='(accountContactsSearch?.searchBar?.filter | async) === undefined'
+				*ngIf='(accountContactsSearch?.searchBar?.filterSingle | async) === undefined'
 			>
 				<ng-template let-item>
 					<ng-container *ngTemplateOutlet='listItem; context: {

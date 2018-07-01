@@ -44,7 +44,7 @@
 						[customSendFunction]='send'
 						[calendarInviteFollowUp]='appointmentFollowUp | async'
 						[messageType]='messageType | async'
-						[recipient]='recipient'
+						[recipient]='recipientSingle'
 						[showHeader]='true'
 						[showUnreadCount]='false'
 					></cyph-account-chat-message-box>
@@ -66,10 +66,10 @@
 							<a [routerLink]='
 								accountService.routeRoot +
 								"messages/" +
-								((recipient | async)?.contactID | async)
+								((recipientSingle | async)?.contactID | async)
 							'>
-								{{(recipient | async)?.name | async}}
-								(@{{(recipient | async)?.realUsername | async}})
+								{{(recipientSingle | async)?.name | async}}
+								(@{{(recipientSingle | async)?.realUsername | async}})
 							</a>
 						</div>
 					</ng-template>

@@ -96,8 +96,8 @@ export class AccountFileSharingComponent {
 		return (
 			this.accountContactsSearch &&
 			this.accountContactsSearch.searchBar &&
-			this.accountContactsSearch.searchBar.filter.value &&
-			this.accountContactsSearch.searchBar.filter.value.username
+			this.accountContactsSearch.searchBar.filterSingle.value &&
+			this.accountContactsSearch.searchBar.filterSingle.value.username
 		);
 	}
 

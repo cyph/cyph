@@ -1,10 +1,42 @@
-<mat-form-field fxFlex class='search-bar'>
+<mat-form-field fxFlex class='search-bar' *ngIf='filter | async as values'>
+	<mat-chip-list #chipList *ngIf='chipInput'>
+		<ng-container *ngFor='let value of values'>
+			<mat-chip
+				[selectable]='true'
+				[removable]='true'
+				(removed)='removeFromFilter(value)'
+				*ngIf='getChip(value) | async as chip'
+			>
+				<span *ngIf='chip.text | async as chipText'>
+					{{chipText}}
+				</span>
+				<ng-container *ngIf='chip.smallText | async as chipSmallText'>
+					&nbsp;
+					<small>&lt;{{chipSmallText}}&gt;</small>
+				</ng-container>
+				<mat-icon matChipRemove>cancel</mat-icon>
+			</mat-chip>
+		</ng-container>
+
+		<input
+			#searchInput
+			matInput
+			[formControl]='control'
+			[placeholder]='placeholder'
+			[matAutocomplete]='autoComplete'
+			[matChipInputFor]='chipList'
+		/>
+	</mat-chip-list>
+
 	<input
+		#searchInput
 		matInput
 		[formControl]='control'
 		[placeholder]='placeholder'
 		[matAutocomplete]='autoComplete'
+		*ngIf='!chipInput'
 	/>
+
 	<mat-progress-spinner
 		matSuffix
 		class='custom'
@@ -17,7 +49,7 @@
 		matSuffix
 		class='suffix-button'
 		(click)='clearFilter()'
-		*ngIf='(spinner | async) === false && (control.value || (filter | async))'
+		*ngIf='(spinner | async) === false && (control.value || values.size > 0)'
 	>
 		close
 	</mat-icon>
@@ -25,7 +57,7 @@
 
 <mat-autocomplete
 	#autoComplete='matAutocomplete'
-	(optionSelected)='setFilter($event.option.value)'
+	(optionSelected)='pushToFilter($event.option.value.toString())'
 >
 	<ng-container *ngIf='options === undefined ? undefined : options | async as search'>
 		<mat-option

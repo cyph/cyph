@@ -9,6 +9,7 @@ import {FormControl} from '@angular/forms';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {IContactListItem, User} from '../../account';
+import {Async} from '../../async-type';
 import {ISearchOptions} from '../../isearch-options';
 import {AccountUserProfileExtra} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -29,6 +30,9 @@ import {SearchBarComponent} from '../search-bar';
 	templateUrl: './account-contacts-search.component.html'
 })
 export class AccountContactsSearchComponent {
+	/** @see SearchBarComponent.chipInput */
+	@Input() public chipInput: boolean		= false;
+
 	/** List of users to search. */
 	@Input() public contactList: Observable<(IContactListItem|User)[]>	=
 		this.accountContactsService.contactList
@@ -161,16 +165,25 @@ export class AccountContactsSearchComponent {
 	/** @see SearchBarComponent.query */
 	@Input() public searchUsername?: Observable<string>;
 
+	/** @see SearchBarComponent.chipTransform */
+	public readonly userChipTransform: (user?: User) => Async<{
+		smallText?: Async<string>;
+		text: Async<string|undefined>;
+	}>	=
+		async user => !user ?
+			{text: Promise.resolve('')} :
+			{smallText: user.realUsername.pipe(map(s => `@${s}`)), text: user.name}
+	/* tslint:disable-next-line:semicolon */
+	;
+
 	/** @see SearchBarComponent.filterChange */
-	@Output() public readonly userFilterChange: EventEmitter<BehaviorSubject<User|undefined>>	=
-		new EventEmitter<BehaviorSubject<User|undefined>>()
+	@Output() public readonly userFilterChange: EventEmitter<BehaviorSubject<Set<User>>>	=
+		new EventEmitter<BehaviorSubject<Set<User>>>()
 	;
 
 	/** @see SearchBarComponent.filterTransform */
-	public readonly userFilterTransform: (username: string) => Promise<User|undefined>			=
-		async username => {
-			return this.accountUserLookupService.getUser(username, false);
-		}
+	public readonly userFilterTransform: (username: string) => Promise<User|undefined>		=
+		async username => this.accountUserLookupService.getUser(username, false)
 	/* tslint:disable-next-line:semicolon */
 	;
 

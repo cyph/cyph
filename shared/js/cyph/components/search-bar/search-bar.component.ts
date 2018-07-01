@@ -1,17 +1,23 @@
 import {
 	Component,
+	ElementRef,
 	EventEmitter,
 	Input,
 	OnChanges,
 	OnInit,
 	Output,
-	SimpleChanges
+	SimpleChanges,
+	ViewChild
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable, of, Subscription} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {Async} from '../../async-type';
 import {ISearchOptions} from '../../isearch-options';
 import {StringsService} from '../../services/strings.service';
 import {trackByValue} from '../../track-by/track-by-value';
+import {toBehaviorSubject} from '../../util/flatten-observable';
 
 
 /**
@@ -26,20 +32,42 @@ export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
 	/** @ignore */
 	private querySubscription?: Subscription;
 
+	/** If true, will use a chip input and return multiple items in filter. */
+	@Input() public chipInput: boolean						= false;
+
+	/** Transforms filter value to chip value. */
+	@Input() public chipTransform: (value?: T) => Async<{
+		smallText?: Async<string|undefined>;
+		text: Async<string|undefined>;
+	}>	=
+		value => ({text: <any> value})
+	;
+
 	/** Search bar control. */
 	@Input() public control: FormControl					= new FormControl();
 
-	/** Single item to display instead of list. */
-	public readonly filter: BehaviorSubject<T|undefined>	=
-		new BehaviorSubject<T|undefined>(undefined)
+	/** Item(s) to display instead of list. */
+	public readonly filter: BehaviorSubject<Set<T>>			=
+		new BehaviorSubject<Set<T>>(new Set())
+	;
+
+	/** First filter item. */
+	public readonly filterSingle: BehaviorSubject<T|undefined>						=
+		toBehaviorSubject(
+			() => this.filter.pipe(map(items => items.values().next().value)),
+			undefined
+		)
 	;
 
 	/** Filter change event. */
-	@Output() public readonly filterChange: EventEmitter<BehaviorSubject<T|undefined>>	=
-		new EventEmitter<BehaviorSubject<T|undefined>>()
+	@Output() public readonly filterChange: EventEmitter<BehaviorSubject<Set<T>>>	=
+		new EventEmitter<BehaviorSubject<Set<T>>>()
 	;
 
-	/** @see SearchBarComponent.filterTransform */
+	/** Gets chip from filter value. */
+	public readonly getChip	= memoize((value?: T) => this.chipTransform(value));
+
+	/** Transforms string value to filter value. */
 	@Input() public filterTransform: (value?: string) => T	= value => <any> value;
 
 	/** Search bar autocomplete options list length. */
@@ -51,6 +79,9 @@ export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
 	/** Placeholder string. */
 	@Input() public placeholder: string						= this.stringsService.search;
 
+	/** Search bar input element. */
+	@ViewChild('searchInput') public searchInput?: ElementRef;
+
 	/** Indicates whether spinner should be displayed in search bar. */
 	@Input() public spinner: Observable<boolean>			= of(false);
 
@@ -60,10 +91,19 @@ export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
 	/** @see trackByValue */
 	public readonly trackByValue: typeof trackByValue		= trackByValue;
 
+	/** @ignore */
+	private clearInput () : void {
+		this.control.setValue('');
+
+		if (this.searchInput && this.searchInput.nativeElement) {
+			this.searchInput.nativeElement.value	= '';
+		}
+	}
+
 	/** Clears filter. */
 	public clearFilter () : void {
-		this.filter.next(undefined);
-		this.control.setValue('');
+		this.filter.next(new Set());
+		this.clearInput();
 	}
 
 	/** @inheritDoc */
@@ -79,7 +119,7 @@ export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
 		if (this.query) {
 			this.querySubscription	= this.query.subscribe(value => {
 				this.control.setValue(value);
-				this.setFilter(value);
+				this.pushToFilter(value);
 			});
 		}
 	}
@@ -89,9 +129,37 @@ export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
 		this.filterChange.emit(this.filter);
 	}
 
-	/** Sets filter based on search query. */
-	public async setFilter (value?: string) : Promise<void> {
-		this.filter.next(await this.filterTransform(value));
+	/** Pushes to filter based on search query. */
+	public async pushToFilter (value?: string) : Promise<void> {
+		const o	= await this.filterTransform(value);
+
+		if (this.chipInput) {
+			if (o !== undefined) {
+				const set	= new Set(this.filter.value);
+				this.filter.next(set.add(o));
+				this.clearInput();
+			}
+		}
+		else {
+			if (o !== undefined) {
+				this.filter.next(new Set([o]));
+			}
+			else {
+				this.clearFilter();
+			}
+		}
+	}
+
+	/** Removes item from filter. */
+	public removeFromFilter (value: T) : void {
+		if (this.chipInput) {
+			const set	= new Set(this.filter.value);
+			set.delete(value);
+			this.filter.next(set);
+		}
+		else {
+			this.clearFilter();
+		}
 	}
 
 	constructor (
