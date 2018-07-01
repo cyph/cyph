@@ -5,7 +5,7 @@
 				[selectable]='true'
 				[removable]='true'
 				(removed)='removeFromFilter(value)'
-				*ngIf='getChip(value) | async as chip'
+				*ngIf='getChip(value) as chip'
 			>
 				<span *ngIf='chip.text | async as chipText'>
 					{{chipText}}

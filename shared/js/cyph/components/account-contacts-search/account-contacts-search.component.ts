@@ -166,11 +166,11 @@ export class AccountContactsSearchComponent {
 	@Input() public searchUsername?: Observable<string>;
 
 	/** @see SearchBarComponent.chipTransform */
-	public readonly userChipTransform: (user?: User) => Async<{
+	public readonly userChipTransform: (user?: User) => {
 		smallText?: Async<string>;
-		text: Async<string|undefined>;
-	}>	=
-		async user => !user ?
+		text: Async<string>;
+	}	=
+		user => !user ?
 			{text: Promise.resolve('')} :
 			{smallText: user.realUsername.pipe(map(s => `@${s}`)), text: user.name}
 	/* tslint:disable-next-line:semicolon */
@@ -182,7 +182,7 @@ export class AccountContactsSearchComponent {
 	;
 
 	/** @see SearchBarComponent.filterTransform */
-	public readonly userFilterTransform: (username: string) => Promise<User|undefined>		=
+	public readonly userFilterTransform: (username: string) => Async<User|undefined>		=
 		async username => this.accountUserLookupService.getUser(username, false)
 	/* tslint:disable-next-line:semicolon */
 	;

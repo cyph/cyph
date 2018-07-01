@@ -36,11 +36,12 @@ export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
 	@Input() public chipInput: boolean						= false;
 
 	/** Transforms filter value to chip value. */
-	@Input() public chipTransform: (value?: T) => Async<{
+	@Input() public chipTransform: (value?: T) => {
 		smallText?: Async<string|undefined>;
-		text: Async<string|undefined>;
-	}>	=
+		text: Async<string>;
+	}	=
 		value => ({text: <any> value})
+	/* tslint:disable-next-line:semicolon */
 	;
 
 	/** Search bar control. */
@@ -135,8 +136,8 @@ export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
 
 		if (this.chipInput) {
 			if (o !== undefined) {
-				const set	= new Set(this.filter.value);
-				this.filter.next(set.add(o));
+				const newFilterValue	= new Set(this.filter.value);
+				this.filter.next(newFilterValue.add(o));
 				this.clearInput();
 			}
 		}
@@ -153,9 +154,9 @@ export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
 	/** Removes item from filter. */
 	public removeFromFilter (value: T) : void {
 		if (this.chipInput) {
-			const set	= new Set(this.filter.value);
-			set.delete(value);
-			this.filter.next(set);
+			const newFilterValue	= new Set(this.filter.value);
+			newFilterValue.delete(value);
+			this.filter.next(newFilterValue);
 		}
 		else {
 			this.clearFilter();
