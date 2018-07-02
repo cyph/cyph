@@ -1,75 +1,76 @@
-<div fxFlex fxLayout='row' fxLayoutAlign='center center' class='footer'>
-	<div fxFlex></div>
+<div fxFlex fxLayout='row wrap' fxLayoutAlign='center center' fxLayoutGap='32px' class='footer'>
+	<div fxFlex *ngIf='envService.isTelehealth'></div>
 
-	<div
-		fxLayout='row'
-		fxLayoutGap='32px'
-		*ngIf='!envService.coBranded && !envService.isTelehealth'
-	>
-		<div fxFlex='nogrow'>
+	<ng-container *ngIf='!envService.coBranded && !envService.isTelehealth'>
+		<div fxFlex='nogrow' fxLayoutAlign='center center'>
 			<a [href]='envService.homeUrl'>
-				<span>&copy; Cyph 2018</span>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span>&copy; {{stringsService.company}} 2018</span>
+					&nbsp;&nbsp;&nbsp;
 				<span class='pre-spaced'>{{stringsService.patents}}</span>
 			</a>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		</div>
 
-		<div fxFlex='nogrow'>
+		<div>&nbsp;&nbsp;</div>
+
+		<div fxFlex='nogrow' fxLayoutAlign='center center'>
 			<a [href]='envService.homeUrl + "contact"' cyphTranslate>
 				Contact
 			</a>
 		</div>
 
-		<div fxFlex='nogrow'>
+		<div fxFlex='nogrow' fxLayoutAlign='center center' *ngIf='!limited'>
 			<strong>-</strong>
-			&ngsp;
-			<strong *ngIf='sessionService.state.wasInitiatedByAPI; else proMessage'>
-				{{stringsService.footerMessageAPI}}
-			</strong>
-			<ng-template #proMessage>
-				<strong *ngIf='envService.environment.customBuild?.config.pro; else defaultMessage'>
-					{{stringsService.footerMessagePro}}
+			&nbsp;
+			<div>
+				<strong *ngIf='sessionService?.state.wasInitiatedByAPI; else proMessage'>
+					{{stringsService.footerMessageAPI}}
 				</strong>
-			</ng-template>
-			<ng-template #defaultMessage>
-				<strong>
-					{{stringsService.footerMessageDefault}}
-				</strong>
-			</ng-template>
-			&ngsp;
+				<ng-template #proMessage>
+					<strong *ngIf='
+						envService.environment.customBuild?.config.pro; else defaultMessage
+					'>
+						{{stringsService.footerMessagePro}}
+					</strong>
+				</ng-template>
+				<ng-template #defaultMessage>
+					<strong>
+						{{stringsService.footerMessageDefault}}
+					</strong>
+				</ng-template>
+			</div>
+			&nbsp;
 			<strong>-</strong>
 		</div>
 
-		<div fxFlex='nogrow'>
+		<div fxFlex='nogrow' fxLayoutAlign='center center' *ngIf='!limited'>
 			<a [href]='envService.homeWordPressUrl + "pricing"' cyphTranslate>
 				Business Pricing
 			</a>
 		</div>
 
-		<div fxFlex='nogrow'>
+		<div fxFlex='nogrow' fxLayoutAlign='center center'>
 			<a [href]='envService.homeUrl + "donate"' cyphTranslate>
 				Donate
 			</a>
 		</div>
 
-		<div fxFlex='nogrow'>
+		<div fxFlex='nogrow' fxLayoutAlign='center center'>
 			<a [href]='envService.homeUrl + "privacypolicy"' cyphTranslate>
 				Privacy Policy
 			</a>
 		</div>
 
-		<div fxFlex='nogrow'>
+		<div fxFlex='nogrow' fxLayoutAlign='center center'>
 			<a [href]='envService.homeUrl + "termsofservice"' cyphTranslate>
 				Terms of Service
 			</a>
 		</div>
-	</div>
+	</ng-container>
 
-	<div fxLayout='row' *ngIf='
+	<ng-container *ngIf='
 		(envService.coBranded && !envService.whiteLabel) || envService.isTelehealth
 	'>
-		<div class='powered-by-cyph'>
+		<div class='powered-by-cyph' fxLayoutAlign='center center'>
 			<a [href]='envService.homeUrl' class='small-font'>
 				<span *ngIf='envService.isTelehealth' cyphTranslate>
 					Telehealth Session
@@ -80,12 +81,14 @@
 				</span>
 			</a>
 		</div>
-	</div>
+	</ng-container>
 
-	<div fxFlex fxLayout='row' fxLayoutAlign='end center'>
-		<div cyphTranslate *ngIf='envService.isTelehealth'>
-			<img src='/assets/img/websign.icon.png' alt='WebSign Validated' />
-			<img src='/assets/img/hipaa.icon.png' alt='HIPAA-Compliant' />
+	<ng-container *ngIf='envService.isTelehealth'>
+		<div fxFlex fxLayoutAlign='end center'>
+			<div cyphTranslate fxLayout='row'>
+				<img src='/assets/img/websign.icon.png' alt='WebSign Validated' />
+				<img src='/assets/img/hipaa.icon.png' alt='HIPAA-Compliant' />
+			</div>
 		</div>
-	</div>
+	</ng-container>
 </div>

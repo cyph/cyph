@@ -3,7 +3,8 @@
 $height: 60px;
 
 .footer {
-	height: $height;
+	line-height: $height/2;
+	min-height: $height;
 	font-size: 1rem;
 	padding-top: 16px;
 
