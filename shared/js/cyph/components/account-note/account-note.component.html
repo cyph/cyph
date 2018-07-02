@@ -27,15 +27,6 @@
 					<button
 						mat-icon-button
 						cyphTranslate
-						matTooltip='Edit'
-						routerLink='edit'
-						*ngIf='!editable'
-					>
-						<mat-icon>edit</mat-icon>
-					</button>
-					<button
-						mat-icon-button
-						cyphTranslate
 						matTooltip='Close Editor'
 						[routerLink]='newNote ? ".." : "."'
 						*ngIf='editable'
@@ -45,9 +36,48 @@
 					<button
 						mat-icon-button
 						cyphTranslate
+						matTooltip='Back'
+						routerLink='..'
+						*ngIf='!editable'
+					>
+						<mat-icon>arrow_back</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Edit'
+						routerLink='edit'
+						*ngIf='
+							!editable &&
+							accountDatabaseService.currentUser.value?.user.username ===
+								noteData.owner
+						'
+					>
+						<mat-icon>edit</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Share'
+						(click)='
+							accountFilesService.shareFilePrompt(metadata);
+							$event.stopPropagation();
+						'
+						*ngIf='note?.metadata | async as metadata'
+					>
+						<mat-icon>share</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
 						matTooltip='Save'
 						(click)='saveNote()'
-						*ngIf='editable && !realTime'
+						*ngIf='
+							editable &&
+							!realTime &&
+							accountDatabaseService.currentUser.value?.user.username ===
+								noteData.owner
+						'
 					>
 						<mat-icon>save</mat-icon>
 					</button>

@@ -1356,7 +1356,9 @@ export class AccountFilesService {
 	}
 
 	/** Watches file record. */
-	public watchMetadata (id: string|IAccountFileRecord) : Observable<IAccountFileRecord> {
+	public watchMetadata (id: string|IAccountFileRecord) : Observable<
+		IAccountFileRecord&IAccountFileReference
+	> {
 		const filePromise	= this.getFile(id);
 
 		return this.accountDatabaseService.watch(
@@ -1364,8 +1366,9 @@ export class AccountFilesService {
 			AccountFileRecord,
 			undefined,
 			filePromise.then(file => file.key)
-		).pipe(map(o => ({
+		).pipe(mergeMap(async o => ({
 			...o.value,
+			...(await filePromise),
 			name: o.value.name.slice(0, this.maxNameLength)
 		})));
 	}

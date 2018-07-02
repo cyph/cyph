@@ -9,6 +9,7 @@ import {IQuillRange} from '../../iquill-range';
 import {LockFunction} from '../../lock-function-type';
 import {IAccountFileRecord} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {AccountService} from '../../services/account.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
@@ -53,6 +54,7 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 		content?: IQuillDelta;
 		id?: string;
 		nameChange?: string;
+		owner?: string;
 	}	= {};
 
 	/** Indicates whether or not the real-time doc UI is enabled. */
@@ -73,6 +75,7 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 		const metadataValue	= await metadata.pipe(filter(o => !!o.id), take(1)).toPromise();
 
 		this.noteData.id	= metadataValue.id;
+		this.noteData.owner	= metadataValue.owner;
 		this.note			= {metadata};
 
 		if (this.realTime) {
@@ -276,6 +279,9 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,

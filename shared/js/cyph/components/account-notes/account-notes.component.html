@@ -44,7 +44,6 @@
 						matTooltip='Edit'
 						[routerLink]='note.id + "/edit"'
 						*ngIf='
-							accountDatabaseService.currentUser.value &&
 							accountDatabaseService.currentUser.value?.user.username === note.owner
 						'
 					>
