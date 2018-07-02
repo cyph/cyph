@@ -50,6 +50,40 @@
 	</div>
 </ng-template>
 
+<ng-template #description let-divider='divider' let-readViewClasses='readViewClasses'>
+	<div
+		fxLayoutAlign='center center'
+		class='description'
+		[ngClass]='readViewClasses'
+		*ngIf='!editMode'
+	>
+		<div>
+			{{user?.description | async | slice:0:maxDescriptionLength}}
+		</div>
+	</div>
+	<div *ngIf='divider'></div>
+	<mat-form-field class='description' *ngIf='editMode && user'>
+		<textarea
+			matInput
+			#descriptionEditor
+			(blur)='isEditorFocused = false'
+			(focus)='isEditorFocused = true'
+			[ngModel]='user?.description | async'
+			(ngModelChange)='draft.description = $event'
+		></textarea>
+		<mat-hint align='end' *ngIf='
+			descriptionEditor.value.length <= maxDescriptionLength; else descriptionEditError
+		'>
+			{{maxDescriptionLength - descriptionEditor.value.length}}
+		</mat-hint>
+		<ng-template #descriptionEditError>
+			<mat-error align='end'>
+				{{maxDescriptionLength - descriptionEditor.value.length}}
+			</mat-error>
+		</ng-template>
+	</mat-form-field>
+</ng-template>
+
 <ng-template #emailLikeButtons let-patientData='patientData'>
 	<div fxLayout='row' fxLayoutGap='16px' *ngIf='!!accountDatabaseService.currentUser.value'>
 		<button
@@ -109,6 +143,7 @@
 			[matTooltip]='editMode ? "Save" : "Edit"'
 			matTooltipPosition='above'
 			(click)='editMode ? saveProfile() : setEditMode(true)'
+			[disabled]='editMode && !readyToSave'
 		>
 			<mat-icon *ngIf='editMode'>save</mat-icon>
 			<mat-icon *ngIf='!editMode'>edit</mat-icon>
@@ -176,26 +211,10 @@
 					<div class='name animated flipInX _2'>{{user?.name | async}}</div>
 					<div class='username animated flipInX _2'>@{{user?.realUsername | async}}</div>
 					<div></div>
-					<div
-						fxLayoutAlign='center center'
-						class='description animated flipInX _3'
-						*ngIf='!editMode'
-					>
-						<div>
-							{{user?.description | async | slice:0:maxDescriptionLength}}
-						</div>
-					</div>
-					<div></div>
-					<mat-form-field class='description' *ngIf='editMode && user'>
-						<input
-							matInput
-							(blur)='isEditorFocused = false'
-							(focus)='isEditorFocused = true'
-							[maxlength]='maxDescriptionLength'
-							[ngModel]='user?.description | async'
-							(ngModelChange)='draft.description = $event'
-						/>
-					</mat-form-field>
+					<ng-container *ngTemplateOutlet='description; context: {
+						divider: true,
+						readViewClasses: "animated flipInX _3"
+					}'></ng-container>
 				</div>
 			</div>
 
@@ -380,19 +399,7 @@
 					<mat-card-content *ngIf='(user?.userType | async) === accountUserTypes.Org'>
 						<div fxLayout='column'>
 							<div fxLayout='column' *ngIf='(doctorListOnly | async) !== true'>
-								<div class='description' *ngIf='user?.description && !editMode'>
-									<span>{{user?.description | async}}</span>
-								</div>
-								<mat-form-field class='description' *ngIf='editMode && user'>
-									<textarea
-										matInput
-										(blur)='isEditorFocused = false'
-										(focus)='isEditorFocused = true'
-										[maxlength]='maxDescriptionLength'
-										[ngModel]='user?.description | async'
-										(ngModelChange)='draft.description = $event'
-									></textarea>
-								</mat-form-field>
+								<ng-container *ngTemplateOutlet='description'></ng-container>
 								<h2 cyphTranslate>Address</h2>
 								<mat-list>
 									<mat-list-item>
@@ -447,19 +454,7 @@
 
 							<ng-container *ngTemplateOutlet='emailLikeButtons'></ng-container>
 						</div>
-						<div class='description' *ngIf='user?.description && !editMode'>
-							<span>{{user?.description | async}}</span>
-						</div>
-						<mat-form-field class='description' *ngIf='editMode && user'>
-							<textarea
-								matInput
-								(blur)='isEditorFocused = false'
-								(focus)='isEditorFocused = true'
-								[maxlength]='maxDescriptionLength'
-								[ngModel]='user?.description | async'
-								(ngModelChange)='draft.description = $event'
-							></textarea>
-						</mat-form-field>
+						<ng-container *ngTemplateOutlet='description'></ng-container>
 						<br />
 						<br />
 						<div class='cyph-inverted-theme'>

@@ -71,7 +71,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	public isContact?: Observable<boolean>;
 
 	/** Maximum length of profile description. */
-	public readonly maxDescriptionLength: number	= 140;
+	public readonly maxDescriptionLength: number	= 1000;
 
 	/** @see UserPresence */
 	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
@@ -199,6 +199,19 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 		});
 	}
 
+	/** Indicates whether profile is ready to save. */
+	public get readyToSave () : boolean {
+		return (
+			this.draft.avatar !== undefined ||
+			this.draft.coverImage !== undefined ||
+			this.draft.description !== undefined ||
+			this.draft.forms !== undefined
+		) && (
+			this.draft.description === undefined ||
+			this.draft.description.length <= this.maxDescriptionLength
+		);
+	}
+
 	/** Publishes new user description. */
 	public async saveProfile (draft?: {
 		avatar?: Blob;
@@ -238,7 +251,9 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 					return;
 				}
 
-				const descriptionTrimmed	= description.trim();
+				const descriptionTrimmed	=
+					description.trim().slice(0, this.maxDescriptionLength)
+				;
 
 				await user.accountUserProfile.updateValue(async o => {
 					if (o.description === descriptionTrimmed) {
