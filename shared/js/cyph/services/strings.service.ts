@@ -787,6 +787,12 @@ export class StringsService {
 	public readonly userAvatar: string					= `User Avatar`;
 
 	/** @see StringsService */
+	public readonly usernameCapitalizationHelp: string	=
+		`You may change the casing of your username. For example, ` +
+		`@johntitor could become @JohnTitor or @JOHNTITOR.`
+	;
+
+	/** @see StringsService */
 	public readonly video: string						= `Video`;
 
 	/** @see StringsService */

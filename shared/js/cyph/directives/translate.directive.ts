@@ -31,7 +31,7 @@ export class TranslateDirective {
 				this.handleElement(child, renderer);
 			}
 		}
-		else {
+		else if ($element.is(':not(mat-icon)')) {
 			this.translate(
 				$element.text(),
 				translation => {

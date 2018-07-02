@@ -28,17 +28,6 @@
 				<input
 					matInput
 					cyphTranslate
-					[(ngModel)]='data.modified.realUsername'
-					[textMask]='usernameMask'
-					name='realUsername'
-					placeholder='Username Capitalization'
-					required
-				/>
-			</mat-form-field>
-			<mat-form-field>
-				<input
-					matInput
-					cyphTranslate
 					[(ngModel)]='data.modified.email'
 					name='email'
 					type='email'
@@ -91,6 +80,39 @@
 
 			<div></div>
 			<cyph-account-storage-analytics></cyph-account-storage-analytics>
+			<div></div>
+			<div></div>
+			<div></div>
+
+			<mat-accordion>
+				<mat-expansion-panel>
+					<mat-expansion-panel-header>
+						<span cyphTranslate>Advanced</span>
+					</mat-expansion-panel-header>
+					<div fxFlex fxLayout='column'>
+						<mat-form-field>
+							<input
+								matInput
+								cyphTranslate
+								[(ngModel)]='data.modified.realUsername'
+								[pattern]='data.usernamePattern'
+								[textMask]='usernameMask'
+								name='realUsername'
+								placeholder='Username Capitalization'
+								required
+							/>
+							<mat-icon
+								matSuffix
+								[matTooltip]='stringsService.usernameCapitalizationHelp'
+								matTooltipPosition='above'
+							>
+								help
+							</mat-icon>
+						</mat-form-field>
+					</div>
+				</mat-expansion-panel>
+			</mat-accordion>
+
 			<div></div>
 			<div></div>
 			<div></div>

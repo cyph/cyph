@@ -35,7 +35,8 @@ export class AccountSettingsComponent implements OnInit {
 			email: '',
 			name: '',
 			realUsername: ''
-		}
+		},
+		usernamePattern: ''
 	};
 
 	/** Email address. */
@@ -148,7 +149,7 @@ export class AccountSettingsComponent implements OnInit {
 			this.user.accountUserProfile.getValue()
 		]);
 
-		this.data.current	= {
+		this.data.current			= {
 			email,
 			name,
 			realUsername: realUsername.toLowerCase() === this.user.username ?
@@ -156,7 +157,11 @@ export class AccountSettingsComponent implements OnInit {
 				this.user.username
 		};
 
-		this.data.modified	= {...this.data.current};
+		this.data.modified			= {...this.data.current};
+
+		this.data.usernamePattern	=
+			this.user.username.split('').map(c => `[${c.toUpperCase()}${c}]`).join('')
+		;
 
 		this.loading.next(false);
 	}
