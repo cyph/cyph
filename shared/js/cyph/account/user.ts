@@ -48,7 +48,7 @@ export class User {
 	/** Image URI for avatar / profile picture. */
 	public readonly avatar: Observable<SafeUrl>					= toBehaviorSubject(
 		this.avatarInternal,
-		undefined
+		User.defaultAvatar
 	).pipe(
 		mergeMap(async avatar => avatar || User.defaultAvatar)
 	);
@@ -56,7 +56,7 @@ export class User {
 	/** Image URI for cover image. */
 	public readonly coverImage: Observable<SafeUrl>				= toBehaviorSubject(
 		this.coverImageInternal,
-		undefined
+		User.defaultCoverImage
 	).pipe(
 		mergeMap(async coverImage => coverImage || User.defaultCoverImage)
 	);
@@ -73,7 +73,7 @@ export class User {
 			this.accountUserProfile.watch().pipe(
 				map(({externalUsernames}) => externalUsernames || {})
 			),
-			undefined
+			{}
 		)
 	;
 
