@@ -31,7 +31,11 @@
 	<div></div>
 
 	<div fxLayoutAlign='center'>
-		<button (click)='share()' mat-raised-button>
+		<button
+			(click)='share()'
+			mat-raised-button
+			[disabled]='(accountContactsSearch.searchBar?.filter | async)?.size < 1'
+		>
 			{{stringsService.share}} {{o.fileConfig?.description}}
 		</button>
 	</div>

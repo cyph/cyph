@@ -1,5 +1,6 @@
 import {Component, Input, ViewChild} from '@angular/core';
 import memoize from 'lodash-es/memoize';
+import once from 'lodash-es/once';
 import {AccountFileShare} from '../../account';
 import {IResolvable} from '../../iresolvable';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -64,8 +65,8 @@ export class AccountFileSharingComponent {
 	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
 
 	/** Shares file. */
-	public async share () : Promise<void> {
-		await Promise.all(this.usernames.map(async username => {
+	public readonly share	= once(async () =>
+		Promise.all(this.usernames.map(async username => {
 			const {file}	= await this.getFile(username);
 			if (file === undefined) {
 				return;
@@ -86,8 +87,8 @@ export class AccountFileSharingComponent {
 			if (this.closeFunction) {
 				(await this.closeFunction.promise)();
 			}
-		}));
-	}
+		}))
+	);
 
 	/** Usernames to share with. */
 	public get usernames () : string[] {
