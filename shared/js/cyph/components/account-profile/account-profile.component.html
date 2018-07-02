@@ -58,7 +58,7 @@
 		*ngIf='!editMode'
 	>
 		<div>
-			{{user?.description | async | slice:0:maxDescriptionLength}}
+			{{user?.description | async | slice:0:accountService.maxDescriptionLength}}
 		</div>
 	</div>
 	<div *ngIf='divider'></div>
@@ -72,15 +72,38 @@
 			(ngModelChange)='draft.description = $event'
 		></textarea>
 		<mat-hint align='end' *ngIf='
-			descriptionEditor.value.length <= maxDescriptionLength; else descriptionEditError
+			descriptionEditor.value.length <= accountService.maxDescriptionLength;
+			else descriptionEditError
 		'>
-			{{maxDescriptionLength - descriptionEditor.value.length}}
+			{{accountService.maxDescriptionLength - descriptionEditor.value.length}}
 		</mat-hint>
 		<ng-template #descriptionEditError>
 			<mat-error align='end'>
-				{{maxDescriptionLength - descriptionEditor.value.length}}
+				{{accountService.maxDescriptionLength - descriptionEditor.value.length}}
 			</mat-error>
 		</ng-template>
+	</mat-form-field>
+</ng-template>
+
+<ng-template #name let-prefix='prefix' let-readViewClasses='readViewClasses'>
+	<div
+		class='name'
+		[ngClass]='readViewClasses'
+		*ngIf='!editMode'
+	>
+		{{prefix || ''}}
+		{{user?.name | async | slice:0:accountService.maxNameLength}}
+	</div>
+	<mat-form-field class='name' *ngIf='editMode && user'>
+		<input
+			matInput
+			#descriptionEditor
+			(blur)='isEditorFocused = false'
+			(focus)='isEditorFocused = true'
+			[maxlength]='accountService.maxNameLength'
+			[ngModel]='user?.name | async'
+			(ngModelChange)='draft.name = $event'
+		/>
 	</mat-form-field>
 </ng-template>
 
@@ -207,8 +230,10 @@
 							(fileDrop)='setAvatar($event)'
 						/>
 					</div>
-					<div></div>
-					<div class='name animated flipInX _2'>{{user?.name | async}}</div>
+					<div *ngIf='!editMode'></div>
+					<ng-container *ngTemplateOutlet='name; context: {
+						readViewClasses: "animated flipInX _2"
+					}'></ng-container>
 					<div class='username animated flipInX _2'>@{{user?.realUsername | async}}</div>
 					<div></div>
 					<ng-container *ngTemplateOutlet='description; context: {
@@ -312,17 +337,18 @@
 
 					<div fxLayout='row' fxLayout.xs='column' >
 						<div fxLayout='column' fxLayoutAlign='center center'>
-							<div
-								class='name animated _2'
-								*ngIf='(doctorListOnly | async) !== true'
-							>
-								{{
-									(user?.userType | async) === accountUserTypes.TelehealthDoctor ?
-										stringsService.dr :
-										''
-								}}
-								{{user?.name | async}}
-							</div>
+							<ng-container *ngIf='(doctorListOnly | async) !== true'>
+								<ng-container *ngTemplateOutlet='name; context: {
+									prefix:
+										(
+											user?.userType | async
+										) === accountUserTypes.TelehealthDoctor ?
+											stringsService.dr :
+											""
+									,
+									readViewClasses: "animated _2"
+								}'></ng-container>
+							</ng-container>
 							<div
 								class='name animated _2'
 								*ngIf='(doctorListOnly | async) === true'

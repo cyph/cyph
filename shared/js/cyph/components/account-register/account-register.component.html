@@ -215,6 +215,7 @@
 													<input
 														matInput
 														cyphTranslate
+														[maxlength]='accountService.maxNameLength'
 														[(ngModel)]='name'
 														name='name'
 														[placeholder]='envService.isTelehealth ?

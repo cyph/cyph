@@ -49,6 +49,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 		coverImage?: Blob;
 		description?: string;
 		forms?: IForm[];
+		name?: string;
 	}	= {};
 
 	/** @see AccountProfileComponent.doctorListOnly */
@@ -69,9 +70,6 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** @see AccountContactsService.watchIfContact */
 	public isContact?: Observable<boolean>;
-
-	/** Maximum length of profile description. */
-	public readonly maxDescriptionLength: number	= 1000;
 
 	/** @see UserPresence */
 	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
@@ -205,10 +203,14 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 			this.draft.avatar !== undefined ||
 			this.draft.coverImage !== undefined ||
 			this.draft.description !== undefined ||
-			this.draft.forms !== undefined
+			this.draft.forms !== undefined ||
+			this.draft.name !== undefined
 		) && (
 			this.draft.description === undefined ||
-			this.draft.description.length <= this.maxDescriptionLength
+			this.draft.description.length <= this.accountService.maxDescriptionLength
+		) && (
+			this.draft.name === undefined ||
+			this.draft.name.length <= this.accountService.maxNameLength
 		);
 	}
 
@@ -231,7 +233,8 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 			avatar,
 			coverImage,
 			description,
-			forms
+			forms,
+			name
 		}	= !draft ?
 			this.draft :
 			{...this.draft, ...draft}
@@ -247,20 +250,36 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 				this.accountSettingsService.setCoverImage(coverImage)
 			,
 			(async () => {
-				if (description === undefined) {
+				if (description === undefined && name === undefined) {
 					return;
 				}
 
-				const descriptionTrimmed	=
-					description.trim().slice(0, this.maxDescriptionLength)
+				let descriptionTrimmed	=
+					description !== undefined ?
+						description.trim().slice(0, this.accountService.maxDescriptionLength) :
+						undefined
+				;
+
+				let nameTrimmed			=
+					name !== undefined ?
+						name.trim().slice(0, this.accountService.maxNameLength) :
+						undefined
 				;
 
 				await user.accountUserProfile.updateValue(async o => {
-					if (o.description === descriptionTrimmed) {
+					if (descriptionTrimmed === undefined) {
+						descriptionTrimmed	= o.description;
+					}
+
+					if (nameTrimmed === undefined) {
+						nameTrimmed	= o.name;
+					}
+
+					if (o.description === descriptionTrimmed && o.name === nameTrimmed) {
 						throw new Error();
 					}
 
-					return {...o, description: descriptionTrimmed};
+					return {...o, description: descriptionTrimmed, name: nameTrimmed};
 				});
 			})(),
 			forms === undefined ?

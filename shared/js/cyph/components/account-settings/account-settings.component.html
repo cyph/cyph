@@ -18,6 +18,7 @@
 				<input
 					matInput
 					cyphTranslate
+					[maxlength]='accountService.maxNameLength'
 					[(ngModel)]='data.modified.name'
 					name='name'
 					placeholder='Name'

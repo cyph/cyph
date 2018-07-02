@@ -58,6 +58,12 @@ export class AccountService {
 	/** Indicates whether the UI is ready. */
 	public isUiReady: boolean							= false;
 
+	/** Maximum length of profile description. */
+	public readonly maxDescriptionLength: number		= 1000;
+
+	/** Maximum length of name. */
+	public readonly maxNameLength: number				= 250;
+
 	/** Indicates whether menu can be expanded. */
 	public readonly menuExpandable: Observable<boolean>;
 
