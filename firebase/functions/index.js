@@ -333,17 +333,28 @@ exports.userNotification	= functions.database.ref(
 			);
 		})(),
 		(async () => {
-			const path	=
+			const userPath	= `${params.namespace}/users/${notification.target}`;
+
+			const hasFile	= async () =>
+				(
+					await database.ref(`${userPath}/fileReferences/${metadata.id}`).once('value')
+				).exists()
+			;
+
+			const path		=
 				notification.type === NotificationTypes.File ?
-					'unreadFiles/' +
+					!(await hasFile()) ?
 						(
-							(
-								!isNaN(metadata.fileType) &&
-								metadata.fileType in AccountFileRecord.RecordTypes
-							) ?
-								metadata.fileType :
-								AccountFileRecord.RecordTypes.File
-						).toString()
+							'unreadFiles/' + (
+								(
+									!isNaN(metadata.fileType) &&
+									metadata.fileType in AccountFileRecord.RecordTypes
+								) ?
+									metadata.fileType :
+									AccountFileRecord.RecordTypes.File
+							).toString()
+						) :
+						undefined
 					:
 				notification.type === NotificationTypes.Message && metadata.castleSessionID ?
 					`unreadMessages/${metadata.castleSessionID}` :
@@ -354,9 +365,7 @@ exports.userNotification	= functions.database.ref(
 				return;
 			}
 
-			await database.ref(
-				`${params.namespace}/users/${notification.target}/${path}/${metadata.id}`
-			).set({
+			await database.ref(`${userPath}/${path}/${metadata.id}`).set({
 				data: '',
 				hash: '',
 				timestamp: admin.database.ServerValue.TIMESTAMP

@@ -361,7 +361,7 @@ export class AccountFilesService {
 								return this.nonexistentFile;
 							}
 
-							return {
+							const incomingFile	= {
 								id: record.id,
 								key: reference.key,
 								mediaType: record.mediaType,
@@ -372,6 +372,13 @@ export class AccountFilesService {
 								timestamp: record.timestamp,
 								wasAnonymousShare: record.wasAnonymousShare
 							};
+
+							if (await this.hasFile(incomingFile.id)) {
+								await this.acceptIncomingFile(incomingFile, false);
+								return this.nonexistentFile;
+							}
+
+							return incomingFile;
 						}
 						catch {
 							return this.nonexistentFile;
@@ -906,6 +913,11 @@ export class AccountFilesService {
 			default:
 				return 'insert_drive_file';
 		}
+	}
+
+	/** Indicates whether this user has a file with the specified id. */
+	public async hasFile (id: string) : Promise<boolean> {
+		return this.accountDatabaseService.hasItem(`fileReferences/${id}`);
 	}
 
 	/** Returns a snippet of a note to use as a preview. */
