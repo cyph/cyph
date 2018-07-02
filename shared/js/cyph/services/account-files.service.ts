@@ -1051,14 +1051,21 @@ export class AccountFilesService {
 			throw new Error('Invalid AccountFilesService.shareFile input.');
 		}
 
-		await this.databaseService.setItem(
-			`users/${username}/incomingFiles/${id}`,
-			BinaryProto,
-			await this.potassiumService.box.seal(
-				await serialize(AccountFileReferenceContainer, accountFileReferenceContainer),
-				(await this.accountDatabaseService.getUserPublicKeys(username)).encryption
-			)
-		);
+		try {
+			await this.databaseService.setItem(
+				`users/${username}/incomingFiles/${id}`,
+				BinaryProto,
+				await this.potassiumService.box.seal(
+					await serialize(AccountFileReferenceContainer, accountFileReferenceContainer),
+					(await this.accountDatabaseService.getUserPublicKeys(username)).encryption
+				)
+			);
+		}
+		catch {
+			/* setItem will fail with permission denied when
+				trying to share the same file more than once. */
+			return;
+		}
 
 		if (accountFileReferenceContainer.anonymousShare) {
 			return;
