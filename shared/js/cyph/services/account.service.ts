@@ -70,8 +70,19 @@ export class AccountService {
 	/** Indicates whether menu is expanded. */
 	public readonly menuExpanded: Observable<boolean>;
 
+	/** Minimum expanded menu width. */
+	public readonly menuExpandedMinWidth: number		= this.envService.isTelehealth ? 325 : 275;
+
+	/** Minimum expanded menu width pixels string. */
+	public readonly menuExpandedMinWidthPX: string		=
+		`${this.menuExpandedMinWidth.toString()}px`
+	;
+
 	/** Menu width. */
 	public readonly menuMaxWidth: Observable<string>;
+
+	/** Menu minimum width. */
+	public readonly menuMinWidth: number				= this.menuExpandedMinWidth * 2.5;
 
 	/** Indicates whether simplified menu should be displayed. */
 	public readonly menuReduced: Observable<boolean>	= combineLatest(
@@ -110,16 +121,6 @@ export class AccountService {
 		;
 
 		return route ? route.map(o => o.path) : [];
-	}
-
-	/** @ignore */
-	private get menuMinWidth () : number {
-		return this.menuExpandedMinWidth * 2.5;
-	}
-
-	/** Minimum expanded menu width. */
-	public get menuExpandedMinWidth () : number {
-		return this.envService.isTelehealth ? 325 : 275;
 	}
 
 	/** Sets custom header text. */
@@ -245,7 +246,7 @@ export class AccountService {
 					'6em' :
 					this.menuMinWidth > width ?
 						'100%' :
-						`${this.menuExpandedMinWidth}px`
+						this.menuExpandedMinWidthPX
 		));
 
 
