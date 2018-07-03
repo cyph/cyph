@@ -8,3 +8,11 @@ export const log	= (...args: any[]) : void => {
 		console.log(...args);
 	}
 };
+
+/** Logs error to console in local env. */
+export const logError	= (...args: any[]) : void => {
+	if (env.debug) {
+		/* tslint:disable-next-line:no-console */
+		console.error(...args);
+	}
+};
