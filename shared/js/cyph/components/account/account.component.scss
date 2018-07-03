@@ -62,8 +62,12 @@
 		}
 	}
 
-	.avatar, .cover-image {
+	.avatar, .cover-image[style*='background-image'] {
 		background-color: white;
+	}
+
+	.cover-image {
+		@include transition(background-color step-end 1s);
 	}
 
 	.file-upload {
