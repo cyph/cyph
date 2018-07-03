@@ -18,6 +18,35 @@
 		overflow-x: hidden;
 	}
 
+	.content-wrapper {
+		&.padding-large {
+			padding: 0px $accountPaddingLarge;
+
+			cyph-account-profile .cover-image {
+				left: -$accountPaddingLarge;
+				width: calc(100% + 1px + #{$accountPaddingLarge * 2});
+			}
+		}
+
+		&.padding-medium {
+			padding: 0px $accountPaddingMedium;
+
+			cyph-account-profile .cover-image {
+				left: -$accountPaddingMedium;
+				width: calc(100% + 1px + #{$accountPaddingMedium * 2});
+			}
+		}
+
+		&.padding-small {
+			padding: 0px $accountPaddingSmall;
+
+			cyph-account-profile .cover-image {
+				left: -$accountPaddingSmall;
+				width: calc(100% + 1px + #{$accountPaddingSmall * 2});
+			}
+		}
+	}
+
 	.cyph-gradient {
 		display: block;
 		width: 100%;

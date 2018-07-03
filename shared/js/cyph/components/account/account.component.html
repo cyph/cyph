@@ -71,13 +71,13 @@
 				<span></span>
 			</div>
 			<div
-				class='animated'
+				class='content-wrapper animated'
 				[class.fadeOutUp]='accountService.transition | async'
 				fxFlex
 				[style.height]='fullHeight ? "100%" : undefined'
-				[ngStyle.lt-md]='!fullWidth ? {padding: "0px 2.5vw"} : {}'
-				[ngStyle.md]='!fullWidth ? {padding: "0px 7.5vw"} : {}'
-				[ngStyle.gt-md]='!fullWidth ? {padding: "0px 12.5vw"} : {}'
+				[ngClass.lt-md]='!fullWidth ? "padding-small" : undefined'
+				[ngClass.md]='!fullWidth ? "padding-medium" : undefined'
+				[ngClass.gt-md]='!fullWidth ? "padding-large" : undefined'
 			>
 				<router-outlet></router-outlet>
 			</div>
