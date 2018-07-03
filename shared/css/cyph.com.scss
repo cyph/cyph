@@ -321,7 +321,6 @@ body.mobile #hero-section {
 }
 
 #main-toolbar {
-	position: fixed;
 	z-index: 11;
 	top: 0;
 	left: 0;
@@ -343,8 +342,18 @@ body.mobile #hero-section {
 }
 
 #main-toolbar, mat-sidenav {
+	position: fixed !important;
+
 	img {
 		height: 20px;
+	}
+}
+
+mat-sidenav img {
+	margin-right: 8px !important;
+
+	&.logo {
+		height: 2.5em;
 	}
 }
 

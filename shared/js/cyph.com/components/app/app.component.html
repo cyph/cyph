@@ -4,135 +4,21 @@
 	id='main'
 	[class.unisection-mode]='appService.state !== states.home'
 >
-	<mat-toolbar id='main-toolbar' class='wow animated fadeInDownBig' [fxHide]='sidenav.opened'>
-		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
-			<div fxFlex fxLayout='column'>
-				<div fxLayout='row'>
-					<div fxLayout='column' fxLayoutAlign='center center'>
-						<a cyphTranslate id='logo' routerLink='/'>
-							<img src='/assets/img/logo.white.horizontal.header.png' alt='Cyph logo' />
-						</a>
-					</div>
-
-					<div fxFlex fxLayout='column'></div>
-
-					<div
-						fxLayout='column'
-						fxLayoutAlign='center center'
-						fxHide.lt-lg class='link-wrapper-outer right'
-					>
-						<div class='link-wrapper-inner' cyphTranslate>
-							<a mat-button routerLink='/intro'>
-								Intro
-							</a>
-							<a mat-button routerLink='/features'>
-								Features
-							</a>
-							<a mat-button routerLink='/about'>
-								About
-							</a>
-							<a mat-button routerLink='/gettingstarted'>
-								Getting Started
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div fxFlexAlign='center' fxLayout='column' fxLayoutAlign='center center'>
-				<a
-					mat-raised-button
-					cyphTranslate
-					id='new-cyph'
-					class='breathe'
-					[href]='envService.newCyphUrl'
-				>
-					Start New Cyph
-				</a>
-			</div>
-
-			<div fxFlex fxLayout='column'>
-				<div fxLayout='row'>
-					<div
-						fxLayout='column'
-						fxLayoutAlign='center center'
-						fxHide.lt-lg
-						class='link-wrapper-outer left'
-					>
-						<div class='link-wrapper-inner' cyphTranslate>
-							<a mat-button [href]='envService.homeWordPressUrl + "/blog"'>
-								Blog
-							</a>
-							<a mat-button [href]='envService.homeWordPressUrl + "/faq"'>
-								FAQ
-							</a>
-							<a mat-button [href]='envService.homeWordPressUrl + "/pricing"'>
-								Pricing
-							</a>
-							<a mat-button routerLink='/register'>
-								Register
-							</a>
-						</div>
-					</div>
-
-					<div fxFlex fxLayout='column'></div>
-
-					<div fxLayout='column' fxLayoutAlign='center center'>
-						<div fxHide.lt-lg class='social-media'>
-							<a
-								mat-icon-button
-								cyphTranslate
-								matTooltip='Facebook'
-								href='https://www.facebook.com/cyph'
-								target='_blank'
-							>
-								<img src='/assets/img/iconfinder/facebook.png' alt='Facebook icon' />
-							</a>
-							<a
-								mat-icon-button
-								cyphTranslate
-								matTooltip='Twitter'
-								href='https://twitter.com/cyph'
-								target='_blank'
-							>
-								<img src='/assets/img/iconfinder/twitter.png' alt='Twitter icon' />
-							</a>
-							<a
-								mat-icon-button
-								cyphTranslate
-								matTooltip='GitHub'
-								href='https://github.com/cyph/cyph'
-								target='_blank'
-							>
-								<img src='/assets/img/iconfinder/github.png' alt='GitHub icon' />
-							</a>
-						</div>
-
-						<div fxHide.gt-md>
-							<button
-								mat-icon-button
-								cyphTranslate
-								matTooltip='Menu'
-								(click)='sidenav.toggle()'
-							>
-								<mat-icon>menu</mat-icon>
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</mat-toolbar>
-
 	<mat-sidenav-container (backdropClick)='sidenav.close()'>
 		<mat-sidenav #sidenav ngClass.gt-md='disabled' mode='push' position='end'>
 			<div fxLayout='column' fxLayoutGap='8px'>
 				<div fxLayout='row'></div>
 				<div fxLayout='row'>
 					<a mat-button fxFlex cyphTranslate routerLink='/' (click)='sidenav.close()'>
-						<img src='/assets/img/logo.white.horizontal.header.png' alt='Cyph logo' />
+						<img
+							class='logo'
+							src='/assets/img/logo.white.horizontal.header.png'
+							alt='Cyph logo'
+						/>
 					</a>
 				</div>
+				<div fxLayout='row'></div>
+				<div fxLayout='row'></div>
 				<div fxLayout='row'>
 					<a
 						mat-button
@@ -262,6 +148,126 @@
 				</div>
 			</div>
 		</mat-sidenav>
+
+		<mat-toolbar id='main-toolbar' class='wow animated fadeInDownBig'>
+			<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
+				<div fxFlex fxLayout='column'>
+					<div fxLayout='row'>
+						<div fxLayout='column' fxLayoutAlign='center center'>
+							<a cyphTranslate id='logo' routerLink='/'>
+								<img src='/assets/img/logo.white.horizontal.header.png' alt='Cyph logo' />
+							</a>
+						</div>
+
+						<div fxFlex fxLayout='column'></div>
+
+						<div
+							fxLayout='column'
+							fxLayoutAlign='center center'
+							fxHide.lt-lg class='link-wrapper-outer right'
+						>
+							<div class='link-wrapper-inner' cyphTranslate>
+								<a mat-button routerLink='/intro'>
+									Intro
+								</a>
+								<a mat-button routerLink='/features'>
+									Features
+								</a>
+								<a mat-button routerLink='/about'>
+									About
+								</a>
+								<a mat-button routerLink='/gettingstarted'>
+									Getting Started
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div fxFlexAlign='center' fxLayout='column' fxLayoutAlign='center center'>
+					<a
+						mat-raised-button
+						cyphTranslate
+						id='new-cyph'
+						class='breathe'
+						[href]='envService.newCyphUrl'
+					>
+						Start New Cyph
+					</a>
+				</div>
+
+				<div fxFlex fxLayout='column'>
+					<div fxLayout='row'>
+						<div
+							fxLayout='column'
+							fxLayoutAlign='center center'
+							fxHide.lt-lg
+							class='link-wrapper-outer left'
+						>
+							<div class='link-wrapper-inner' cyphTranslate>
+								<a mat-button [href]='envService.homeWordPressUrl + "/blog"'>
+									Blog
+								</a>
+								<a mat-button [href]='envService.homeWordPressUrl + "/faq"'>
+									FAQ
+								</a>
+								<a mat-button [href]='envService.homeWordPressUrl + "/pricing"'>
+									Pricing
+								</a>
+								<a mat-button routerLink='/register'>
+									Register
+								</a>
+							</div>
+						</div>
+
+						<div fxFlex fxLayout='column'></div>
+
+						<div fxLayout='column' fxLayoutAlign='center center'>
+							<div fxHide.lt-lg class='social-media'>
+								<a
+									mat-icon-button
+									cyphTranslate
+									matTooltip='Facebook'
+									href='https://www.facebook.com/cyph'
+									target='_blank'
+								>
+									<img src='/assets/img/iconfinder/facebook.png' alt='Facebook icon' />
+								</a>
+								<a
+									mat-icon-button
+									cyphTranslate
+									matTooltip='Twitter'
+									href='https://twitter.com/cyph'
+									target='_blank'
+								>
+									<img src='/assets/img/iconfinder/twitter.png' alt='Twitter icon' />
+								</a>
+								<a
+									mat-icon-button
+									cyphTranslate
+									matTooltip='GitHub'
+									href='https://github.com/cyph/cyph'
+									target='_blank'
+								>
+									<img src='/assets/img/iconfinder/github.png' alt='GitHub icon' />
+								</a>
+							</div>
+
+							<div fxHide.gt-md>
+								<button
+									mat-icon-button
+									cyphTranslate
+									matTooltip='Menu'
+									(click)='sidenav.toggle()'
+								>
+									<mat-icon>menu</mat-icon>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</mat-toolbar>
 
 		<section
 			id='hero-section'
