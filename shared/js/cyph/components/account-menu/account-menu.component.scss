@@ -42,7 +42,7 @@
 
 button {
 	font-family: Ubuntu;
-	font-size: 24px;
+	font-size: 22px;
 
 	&[mat-icon-button] {
 		height: 1.75em;
@@ -65,6 +65,8 @@ button {
 	}
 
 	mat-icon {
+		margin-right: 5px;
+
 		@include icon-size(32px);
 	}
 }
