@@ -4,7 +4,7 @@
 	*ngIf='accountService.enableWallets'
 >
 	<div
-		*ngIf='(accountFilesService.filesListFiltered.wallets | async)?.length < 1'
+		*ngIf='(accountFilesService.filesListFiltered.wallets | async)?.length < 1; else wallets'
 		class='no-wallets'
 		fxLayout='column'
 		fxLayoutAlign='center center'
@@ -45,160 +45,174 @@
 			</button>
 		</div>
 	</div>
-	<mat-tab-group ngClass.lt-md='lt-md'>
-		<mat-tab
-			class='wallet'
-			*ngFor='
-				let wallet of accountFilesService.filesListFilteredWithData.wallets() | async;
-				trackBy: trackByID;
-				let i = index;
-			'
-			[attr.data-index]='i'
-			[class.bounceInRight]='!accountFilesService.initiated'
-			[label]='wallet.record.name'
-			[ngClass]='"_" + i'
-		>
-			<mat-card fxLayout='column'>
-				<mat-chip-list ngClass.lt-md='lt-md'>
-					<mat-chip
-						class='mat-raised'
-						*ngIf='wallet.data.cryptocurrency === cryptocurrencies.BTC'
-					>
-						<mat-icon svgIcon='bitcoin'></mat-icon>
-						&ngsp;
-						<span cyphTranslate>Bitcoin</span>
-					</mat-chip>
-					<button mat-icon-button cyphTranslate matTooltip='Settings'>
-						<mat-icon>settings</mat-icon>
-					</button>
-				</mat-chip-list>
 
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<h2>{{wallet.record.name}}</h2>
-				</div>
+	<ng-template #wallets>
+		<mat-tab-group ngClass.lt-md='lt-md'>
+			<mat-tab
+				class='wallet'
+				*ngFor='
+					let wallet of accountFilesService.filesListFilteredWithData.wallets() | async;
+					trackBy: trackByID;
+					let i = index;
+				'
+				[attr.data-index]='i'
+				[class.bounceInRight]='!accountFilesService.initiated'
+				[label]='wallet.record.name'
+				[ngClass]='"_" + i'
+			>
+				<mat-card fxLayout='column'>
+					<mat-chip-list ngClass.lt-md='lt-md'>
+						<mat-chip
+							class='mat-raised'
+							*ngIf='wallet.data.cryptocurrency === cryptocurrencies.BTC'
+						>
+							<mat-icon svgIcon='bitcoin'></mat-icon>
+							&ngsp;
+							<span cyphTranslate>Bitcoin</span>
+						</mat-chip>
+						<button mat-icon-button cyphTranslate matTooltip='Settings'>
+							<mat-icon>settings</mat-icon>
+						</button>
+					</mat-chip-list>
 
-				<div fxLayout='row' fxLayout.lt-md='column' fxLayoutAlign='center center' fxLayoutGap='10%'>
-					<div fxLayout='column'>
-						<h3>
-							<span cyphTranslate>Wallet Address</span>:
-							&ngsp;
-							<span>{{cryptocurrencyService.getAddress(wallet.data) | async}}</span>
-						</h3>
-
-						<h3>
-							<span cyphTranslate>Current Balance</span>:
-							&ngsp;
-							<span>
-								{{(cryptocurrencyService.watchBalance(wallet.data) | async) || 0}}
-							</span>
-							&ngsp;
-							<span>{{cryptocurrencies[wallet.data.cryptocurrency]}}</span>
-							&ngsp; | &ngsp;
-							<span>
-								~${{numberToString(
-									(cryptocurrencyService.watchConversion(
-										(cryptocurrencyService.watchBalance(wallet.data) | async) || 0,
-										{cryptocurrency: cryptocurrencies.BTC},
-										{currency: currencies.USD}
-									) | async) || 0
-								)}}
-							</span>
-							&ngsp;
-							<span>USD</span>
-						</h3>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<h2>{{wallet.record.name}}</h2>
 					</div>
-					<img
-						class='qr'
-						alt='QR Code'
-						[src]='
-							(qrService.getQRCode({
-								dotScale: 0.75,
-								size: 250,
-								text:
-									"bitcoin:" +
-									(cryptocurrencyService.getAddress(wallet.data) | async)
-							}) | async) || ""
+
+					<div
+						fxLayout='row'
+						fxLayout.lt-md='column'
+						fxLayoutAlign='center center'
+						fxLayoutGap='10%'
+					>
+						<div fxLayout='column'>
+							<h3>
+								<span cyphTranslate>Wallet Address</span>:
+								&ngsp;
+								<span>
+									{{cryptocurrencyService.getAddress(wallet.data) | async}}
+								</span>
+							</h3>
+
+							<h3>
+								<span cyphTranslate>Current Balance</span>:
+								&ngsp;
+								<span>{{
+									(cryptocurrencyService.watchBalance(wallet.data) | async) ||
+									0
+								}}</span>
+								&ngsp;
+								<span>{{cryptocurrencies[wallet.data.cryptocurrency]}}</span>
+								&ngsp; | &ngsp;
+								<span>
+									~${{numberToString(
+										(cryptocurrencyService.watchConversion(
+											(
+												cryptocurrencyService.watchBalance(wallet.data) |
+												async
+											) || 0,
+											{cryptocurrency: cryptocurrencies.BTC},
+											{currency: currencies.USD}
+										) | async) || 0
+									)}}
+								</span>
+								&ngsp;
+								<span>USD</span>
+							</h3>
+						</div>
+						<img
+							class='qr'
+							alt='QR Code'
+							[src]='
+								(qrService.getQRCode({
+									dotScale: 0.75,
+									size: 250,
+									text:
+										"bitcoin:" +
+										(cryptocurrencyService.getAddress(wallet.data) | async)
+								}) | async) || ""
+							'
+						/>
+					</div>
+
+					<h2 class='centered'>{{stringsService.transactionHistory}}</h2>
+
+					<mat-table
+						#table
+						[dataSource]='cryptocurrencyService.watchTransactionHistory(wallet.data)'
+					>
+						<ng-container matColumnDef='amount'>
+							<mat-header-cell fxFlex='10' *matHeaderCellDef cyphTranslate>
+								Amount
+							</mat-header-cell>
+							<mat-cell fxFlex='10' *matCellDef='let transaction'>
+								{{transaction.amount}}
+								{{cryptocurrencies[wallet.data.cryptocurrency]}}
+							</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef='senders'>
+							<mat-header-cell *matHeaderCellDef cyphTranslate>
+								Senders
+							</mat-header-cell>
+							<mat-cell *matCellDef='let transaction'>
+								{{transaction.senders.join('\n')}}
+							</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef='wasSentByMe'>
+							<mat-header-cell fxFlex='48px' *matHeaderCellDef></mat-header-cell>
+							<mat-cell fxFlex='48px' *matCellDef='let transaction'>
+								<span
+									[class.outgoing]='transaction.wasSentByMe'
+									[class.incoming]='!transaction.wasSentByMe'
+									[matTooltip]='
+										transaction.wasSentByMe ?
+											stringsService.outgoing :
+											stringsService.incoming
+									'
+								>
+									<mat-icon>arrow_forward</mat-icon>
+								</span>
+							</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef='recipients'>
+							<mat-header-cell *matHeaderCellDef cyphTranslate>
+								Recipients
+							</mat-header-cell>
+							<mat-cell *matCellDef='let transaction'>
+								{{transaction.recipients.join('\n')}}
+							</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef='timestamp'>
+							<mat-header-cell fxFlex='20' *matHeaderCellDef cyphTranslate>
+								Date
+							</mat-header-cell>
+							<mat-cell fxFlex='20' *matCellDef='let transaction'>
+								{{getDateTimeString(transaction.timestamp)}}
+							</mat-cell>
+						</ng-container>
+
+						<mat-header-row *matHeaderRowDef='transactionListColumns'></mat-header-row>
+						<mat-row *matRowDef='let row; columns: transactionListColumns'></mat-row>
+
+					</mat-table>
+					<h3
+						class='centered'
+						*ngIf='
+							(
+								cryptocurrencyService.watchTransactionHistory(wallet.data) | async
+							)?.length < 1
 						'
-					/>
-				</div>
-
-				<h2 class='centered'>{{stringsService.transactionHistory}}</h2>
-
-				<mat-table
-					#table
-					[dataSource]='cryptocurrencyService.watchTransactionHistory(wallet.data)'
-				>
-					<ng-container matColumnDef='amount'>
-						<mat-header-cell fxFlex='10' *matHeaderCellDef cyphTranslate>
-							Amount
-						</mat-header-cell>
-						<mat-cell fxFlex='10' *matCellDef='let transaction'>
-							{{transaction.amount}}
-							{{cryptocurrencies[wallet.data.cryptocurrency]}}
-						</mat-cell>
-					</ng-container>
-
-					<ng-container matColumnDef='senders'>
-						<mat-header-cell *matHeaderCellDef cyphTranslate>
-							Senders
-						</mat-header-cell>
-						<mat-cell *matCellDef='let transaction'>
-							{{transaction.senders.join('\n')}}
-						</mat-cell>
-					</ng-container>
-
-					<ng-container matColumnDef='wasSentByMe'>
-						<mat-header-cell fxFlex='48px' *matHeaderCellDef></mat-header-cell>
-						<mat-cell fxFlex='48px' *matCellDef='let transaction'>
-							<span
-								[class.outgoing]='transaction.wasSentByMe'
-								[class.incoming]='!transaction.wasSentByMe'
-								[matTooltip]='
-									transaction.wasSentByMe ?
-										stringsService.outgoing :
-										stringsService.incoming
-								'
-							>
-								<mat-icon>arrow_forward</mat-icon>
-							</span>
-						</mat-cell>
-					</ng-container>
-
-					<ng-container matColumnDef='recipients'>
-						<mat-header-cell *matHeaderCellDef cyphTranslate>
-							Recipients
-						</mat-header-cell>
-						<mat-cell *matCellDef='let transaction'>
-							{{transaction.recipients.join('\n')}}
-						</mat-cell>
-					</ng-container>
-
-					<ng-container matColumnDef='timestamp'>
-						<mat-header-cell fxFlex='20' *matHeaderCellDef cyphTranslate>
-							Date
-						</mat-header-cell>
-						<mat-cell fxFlex='20' *matCellDef='let transaction'>
-							{{getDateTimeString(transaction.timestamp)}}
-						</mat-cell>
-					</ng-container>
-
-					<mat-header-row *matHeaderRowDef='transactionListColumns'></mat-header-row>
-					<mat-row *matRowDef='let row; columns: transactionListColumns'></mat-row>
-
-				</mat-table>
-				<h3
-					class='centered'
-					*ngIf='
-						(
-							cryptocurrencyService.watchTransactionHistory(wallet.data) | async
-						)?.length < 1
-					'
-				>
-					{{stringsService.noTransactions}}
-				</h3>
-			</mat-card>
-		</mat-tab>
-	</mat-tab-group>
+					>
+						{{stringsService.noTransactions}}
+					</h3>
+				</mat-card>
+			</mat-tab>
+		</mat-tab-group>
+	</ng-template>
 
 	<mat-progress-spinner
 		mode='indeterminate'
