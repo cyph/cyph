@@ -23,11 +23,13 @@ export class ErrorService implements ErrorHandler {
 	public async log (
 		subject: string,
 		err?: any,
-		requireErrorMessage: boolean = false
+		requireErrorMessage: boolean = false,
+		debugOnly: boolean = false
 	) : Promise<void> {
 		const errorMessage: string	= !err ? '' : err.message ? err.message : err.toString();
 
 		if (
+			(debugOnly && this.envService.debug) ||
 			(requireErrorMessage && !errorMessage) ||
 			/* Annoying useless iframe-related spam */
 			errorMessage === 'Script error.' ||
