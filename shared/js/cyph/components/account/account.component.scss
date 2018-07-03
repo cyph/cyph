@@ -24,7 +24,7 @@
 		}
 
 		&.padding-large {
-			padding: 0px $accountPaddingLarge;
+			padding: 0 $accountPaddingLarge;
 
 			cyph-account-profile .cover-image {
 				left: -$accountPaddingLarge;
@@ -33,7 +33,7 @@
 		}
 
 		&.padding-medium {
-			padding: 0px $accountPaddingMedium;
+			padding: 0 $accountPaddingMedium;
 
 			cyph-account-profile .cover-image {
 				left: -$accountPaddingMedium;
@@ -42,7 +42,7 @@
 		}
 
 		&.padding-small {
-			padding: 0px $accountPaddingSmall;
+			padding: 0 $accountPaddingSmall;
 
 			cyph-account-profile .cover-image {
 				left: -$accountPaddingSmall;
@@ -150,7 +150,7 @@
 			padding: 18px 24px;
 
 			mat-card-subtitle {
-				margin-bottom: 0px;
+				margin-bottom: 0;
 			}
 		}
 
