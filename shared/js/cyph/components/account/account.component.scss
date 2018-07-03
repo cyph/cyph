@@ -12,7 +12,7 @@
 		}
 	}
 
-	.router-content, .content {
+	.content {
 		scroll-behavior: smooth;
 		overflow-y: auto;
 		overflow-x: hidden;
@@ -130,15 +130,6 @@
 	.header {
 		position: relative;
 		text-align: center;
-	}
-
-	.router-content {
-		width: 100%;
-
-		&, > div > router-outlet ~ * {
-			height: 100%;
-			display: block;
-		}
 	}
 
 	.header, .sidebar {

@@ -50,6 +50,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		return this.accountDatabaseService.currentUser.value !== undefined && [
 			'',
 			'contacts',
+			'messages',
 			'patients',
 			'staff'
 		].find(
