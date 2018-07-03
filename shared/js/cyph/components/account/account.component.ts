@@ -1,12 +1,12 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import * as Granim from 'granim';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
+import {initGranim} from '../../util/granim';
 import {resolvable} from '../../util/wait';
 
 
@@ -125,32 +125,9 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		}
 
 		if (!this.envService.coBranded && !this.envService.isExtension) {
-			const selector	= '.cyph-gradient';
-
-			const started	= this.accountService.isUiReady ?
-				undefined :
-				new Promise<void>(resolve => {
-					const elem	= document.querySelector(selector);
-					const event	= 'granim:start';
-
-					if (!elem) {
-						resolve();
-						return;
-					}
-
-					const handler	= () => {
-						resolve();
-						(<HTMLElement> elem).removeEventListener(event, handler);
-					};
-
-					(<HTMLElement> elem).addEventListener(event, handler);
-				})
-			;
-
-			/* tslint:disable-next-line:no-unused-expression */
-			new Granim({
+			await initGranim({
 				direction: 'radial',
-				element: selector,
+				element: '.cyph-gradient',
 				isPausedWhenNotInView: true,
 				name: 'basic-gradient',
 				opacity: [1, 0.5, 0],
@@ -171,8 +148,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 					}
 				}
 			});
-
-			await started;
 		}
 	}
 

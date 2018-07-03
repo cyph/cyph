@@ -1,6 +1,5 @@
 import {AfterViewInit, Component, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
-import * as Granim from 'granim';
 import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
 import {fadeIn} from '../../../cyph/animations';
@@ -29,7 +28,8 @@ import {UrlSessionInitService} from '../../../cyph/services/url-session-init.ser
 import {WindowWatcherService} from '../../../cyph/services/window-watcher.service';
 import {events} from '../../../cyph/session/enums';
 import {random} from '../../../cyph/util/random';
-import {sleep, waitForIterable} from '../../../cyph/util/wait';
+import {initGranim} from '../../../cyph/util/granim';
+import {sleep} from '../../../cyph/util/wait';
 import {AppService} from '../../app.service';
 import {ChatRootStates} from '../../enums';
 
@@ -119,22 +119,14 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 				undefined
 		};
 
-		const granim	= !this.envService.isWeb ?
-			undefined :
-			await waitForIterable(() => $('#main-chat-gradient')).then(() => <{
-				changeState: (state: string) => void;
-				clear: () => void;
-				pause: () => void;
-				play: () => void;
-			}> new Granim({
-				direction: 'radial',
-				element: '#main-chat-gradient',
-				isPausedWhenNotInView: true,
-				name: 'basic-gradient',
-				opacity: [1, 1],
-				states: granimStates
-			}))
-		;
+		const granim	= await initGranim({
+			direction: 'radial',
+			element: '#main-chat-gradient',
+			isPausedWhenNotInView: true,
+			name: 'basic-gradient',
+			opacity: [1, 1],
+			states: granimStates
+		});
 
 		if (granim) {
 			(async () => {

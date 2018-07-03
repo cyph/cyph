@@ -4,6 +4,7 @@ export * from './filter';
 export * from './flatten-observable';
 export * from './formatting';
 export * from './get-or-set-default';
+export * from './granim';
 export * from './lock';
 export * from './log';
 export * from './objects';
