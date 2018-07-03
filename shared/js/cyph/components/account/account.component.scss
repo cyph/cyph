@@ -19,6 +19,10 @@
 	}
 
 	.content-wrapper {
+		&.full-height {
+			height: 100%;
+		}
+
 		&.padding-large {
 			padding: 0px $accountPaddingLarge;
 
@@ -174,6 +178,10 @@
 			bottom: -2px;
 			content: no-close-quote;
 		}
+
+		+ .content-wrapper.full-height {
+			height: calc(100% - 102px);
+		}
 	}
 }
 
@@ -195,6 +203,10 @@
 		min-height: 50px;
 		font-size: 12px;
 		box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
+
+		+ .content-wrapper.full-height {
+			height: calc(100% - 50px);
+		}
 	}
 }
 

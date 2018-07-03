@@ -71,10 +71,10 @@
 				<span></span>
 			</div>
 			<div
+				fxFlex
 				class='content-wrapper animated'
 				[class.fadeOutUp]='accountService.transition | async'
-				fxFlex
-				[style.height]='fullHeight ? "100%" : undefined'
+				[class.full-height]='fullHeight'
 				[ngClass.lt-md]='!fullWidth ? "padding-small" : undefined'
 				[ngClass.md]='!fullWidth ? "padding-medium" : undefined'
 				[ngClass.gt-md]='!fullWidth ? "padding-large" : undefined'
