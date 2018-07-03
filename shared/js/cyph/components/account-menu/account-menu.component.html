@@ -4,7 +4,6 @@
 	[class.collapsed]='(accountService.menuExpanded | async) === false'
 	[class.menu]='!sidenav'
 	[class.menu-root]='!sidenav'
-	[class.mobile]='envService.isMobile'
 	[class.sidenav]='sidenav'
 	*ngIf='accountDatabaseService.currentUser.value'
 >
@@ -24,15 +23,6 @@
 		<ng-container *ngIf='!sidenav'>
 			<div></div>
 			<div *ngIf='accountService.menuExpanded | async'></div>
-
-			<button
-				mat-icon-button
-				fxHide.gt-sm
-				class='menu-toggle-mobile'
-				(click)='click()'
-			>
-				<mat-icon>close</mat-icon>
-			</button>
 		</ng-container>
 
 		<button
