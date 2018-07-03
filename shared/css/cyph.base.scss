@@ -25,6 +25,29 @@ body:not(.enable-drop-shadow) {
 	}
 }
 
+/* Temporary workaround for Angular Material bug */
+mat-sidenav.disabled {
+	@include transform(none !important);
+}
+
+mat-sidenav .mat-button {
+	mat-icon, img {
+		margin-right: 5px;
+	}
+}
+
+mat-sidenav-container {
+	background-color: transparent !important;
+}
+
+.mat-sidenav-content {
+	overflow-x: hidden !important;
+}
+
+.mat-drawer-backdrop {
+	background-color: rgba(33, 33, 33, 0.48) !important;
+}
+
 * {
 	-webkit-font-smoothing: antialiased !important;
 	-moz-osx-font-smoothing: grayscale !important;

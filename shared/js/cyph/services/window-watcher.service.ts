@@ -12,12 +12,12 @@ import {EnvService} from './env.service';
 export class WindowWatcherService {
 	/** @ignore */
 	private get windowHeight () : number {
-		return Math.min(innerHeight, window.outerHeight);
+		return window.innerHeight;
 	}
 
 	/** @ignore */
 	private get windowWidth () : number {
-		return Math.min(window.innerWidth, window.outerWidth);
+		return window.innerWidth;
 	}
 
 	/** Window height. */

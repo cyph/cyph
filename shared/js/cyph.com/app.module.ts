@@ -14,7 +14,6 @@ import './sham';
 
 import {HttpClient} from '@angular/common/http';
 import {NgModule, NgZone} from '@angular/core';
-import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {DomSanitizer} from '@angular/platform-browser';
 import {RouterModule} from '@angular/router';
@@ -64,7 +63,6 @@ import {SilentNotificationService} from './silent-notification.service';
 		RouterModule.forRoot(appRoutes),
 		CyphCommonModule,
 		CyphWebModule,
-		MatSidenavModule,
 		MatToolbarModule
 	],
 	providers: [

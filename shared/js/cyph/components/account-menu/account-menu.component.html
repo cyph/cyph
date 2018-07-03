@@ -1,14 +1,16 @@
 <div
 	fxFlexFill
 	fxLayout='row'
-	class='menu menu-root'
 	[class.collapsed]='(accountService.menuExpanded | async) === false'
+	[class.menu]='!sidenav'
+	[class.menu-root]='!sidenav'
 	[class.mobile]='envService.isMobile'
+	[class.sidenav]='sidenav'
 	*ngIf='accountDatabaseService.currentUser.value'
 >
 	<div
 		[fxFlex]='(accountService.menuExpanded | async) ? "25px" : "10px"'
-		*ngIf='(accountService.menuReduced | async) === false'
+		*ngIf='!sidenav && (accountService.menuReduced | async) === false'
 	></div>
 
 	<div
@@ -17,19 +19,21 @@
 		[fxLayoutAlign]='
 			(accountService.menuExpanded | async) ? "center stretch" : "center center"
 		'
-		[fxLayoutGap]='(accountService.menuReduced | async) ? "2px" : "16px"'
+		[fxLayoutGap]='!sidenav && (accountService.menuReduced | async) ? "2px" : "16px"'
 	>
-		<div></div>
-		<div *ngIf='accountService.menuExpanded | async'></div>
+		<ng-container *ngIf='!sidenav'>
+			<div></div>
+			<div *ngIf='accountService.menuExpanded | async'></div>
 
-		<button
-			mat-icon-button
-			fxHide.gt-sm
-			class='menu-toggle-mobile'
-			(click)='click()'
-		>
-			<mat-icon>close</mat-icon>
-		</button>
+			<button
+				mat-icon-button
+				fxHide.gt-sm
+				class='menu-toggle-mobile'
+				(click)='click()'
+			>
+				<mat-icon>close</mat-icon>
+			</button>
+		</ng-container>
 
 		<button
 			mat-button
@@ -111,6 +115,7 @@
 	</button>
 
 	<div fxFlex='10px' *ngIf='
+		!sidenav &&
 		(accountService.menuExpandable | async) === false &&
 		(accountService.menuReduced | async) === false
 	'></div>

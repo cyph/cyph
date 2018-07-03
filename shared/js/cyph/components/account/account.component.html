@@ -26,17 +26,23 @@
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
-	<cyph-account-menu
-		fxFlexFill
-		fxLayout='column'
-		fxShow.lt-md
-		class='sidebar mobile animated _0'
-		[@slideInOutRight]='accountService.mobileMenuOpen | async'
-		*ngIf='accountService.mobileMenuOpen | async'
-	></cyph-account-menu>
-
 	<div class='content' fxFlex fxFlexFill fxLayout='column' fxLayout.xs='row'>
-		<div fxFlexFill fxLayout='column' class='router-content'>
+		<mat-sidenav-container
+			fxFlexFill
+			fxLayout='column'
+			class='router-content'
+			(backdropClick)='accountService.toggleMobileMenu(false)'
+		>
+			<mat-sidenav
+				#sidenav
+				ngClass.gt-sm='disabled'
+				mode='push'
+				position='end'
+				[opened]='accountService.mobileMenuOpen | async'
+			>
+				<cyph-account-menu [sidenav]='true'></cyph-account-menu>
+			</mat-sidenav>
+
 			<div
 				fxLayout='row'
 				class='header animated slideInDown'
@@ -70,6 +76,7 @@
 				</button>
 				<span></span>
 			</div>
+
 			<div
 				fxFlex
 				class='content-wrapper animated'
@@ -81,7 +88,7 @@
 			>
 				<router-outlet></router-outlet>
 			</div>
-		</div>
+		</mat-sidenav-container>
 	</div>
 
 	<div

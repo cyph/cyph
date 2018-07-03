@@ -29,6 +29,11 @@ export class AccountService {
 	;
 
 	/** @ignore */
+	private readonly mobileMenuOpenInternal: BehaviorSubject<boolean>	=
+		new BehaviorSubject(false)
+	;
+
+	/** @ignore */
 	private readonly transitionInternal: BehaviorSubject<boolean>		=
 		new BehaviorSubject(false)
 	;
@@ -93,7 +98,13 @@ export class AccountService {
 	));
 
 	/** Indicates whether mobile menu is open. */
-	public readonly mobileMenuOpen: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+	public readonly mobileMenuOpen: Observable<boolean>	= combineLatest(
+		this.mobileMenuOpenInternal,
+		this.windowWatcherService.width
+	).pipe(map(([mobileMenuOpen, width]) =>
+		mobileMenuOpen &&
+		width <= this.configService.responsiveMaxWidths.sm
+	));
 
 	/** Resolves ready promise. */
 	public readonly resolveUiReady: () => void			= this._UI_READY.resolve;
@@ -144,9 +155,9 @@ export class AccountService {
 
 	/** Toggles mobile account menu. */
 	public toggleMobileMenu (menuOpen?: boolean) : void {
-		this.mobileMenuOpen.next(typeof menuOpen === 'boolean' ?
+		this.mobileMenuOpenInternal.next(typeof menuOpen === 'boolean' ?
 			menuOpen :
-			!this.mobileMenuOpen.value
+			!this.mobileMenuOpenInternal.value
 		);
 	}
 

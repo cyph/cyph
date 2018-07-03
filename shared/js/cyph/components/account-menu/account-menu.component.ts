@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {UserPresence} from '../../account/enums';
 import {AccountUserTypes} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -20,8 +20,11 @@ export class AccountMenuComponent {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
+	/** If true, is inside a sidenav. */
+	@Input() public sidenav: boolean							= false;
+
 	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence	= UserPresence;
+	public readonly userPresence: typeof UserPresence			= UserPresence;
 
 	/** Handler for button clicks. */
 	public click () : void {

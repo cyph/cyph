@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import * as Granim from 'granim';
-import {slideInOutRight} from '../../animations';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -15,7 +14,6 @@ import {resolvable} from '../../util/wait';
  * Angular component for the Cyph account screen.
  */
 @Component({
-	animations: [slideInOutRight],
 	providers: [
 		{
 			provide: EnvService,
