@@ -254,27 +254,33 @@ export class AccountFilesService {
 	public readonly filesListFilteredWithData	= {
 		appointments: this.getFiles(
 			this.filesListFiltered.appointments,
-			AccountFileRecord.RecordTypes.Appointment
+			AccountFileRecord.RecordTypes.Appointment,
+			this.config[AccountFileRecord.RecordTypes.Appointment]
 		),
 		ehrApiKeys: this.getFiles(
 			this.filesListFiltered.ehrApiKeys,
-			AccountFileRecord.RecordTypes.EhrApiKey
+			AccountFileRecord.RecordTypes.EhrApiKey,
+			this.config[AccountFileRecord.RecordTypes.EhrApiKey]
 		),
 		files: this.getFiles(
 			this.filesListFiltered.files,
-			AccountFileRecord.RecordTypes.File
+			AccountFileRecord.RecordTypes.File,
+			this.config[AccountFileRecord.RecordTypes.File]
 		),
 		forms: this.getFiles(
 			this.filesListFiltered.forms,
-			AccountFileRecord.RecordTypes.Form
+			AccountFileRecord.RecordTypes.Form,
+			this.config[AccountFileRecord.RecordTypes.Form]
 		),
 		redoxPatients: this.getFiles(
 			this.filesListFiltered.ehrApiKeys,
-			AccountFileRecord.RecordTypes.EhrApiKey
+			AccountFileRecord.RecordTypes.RedoxPatient,
+			this.config[AccountFileRecord.RecordTypes.RedoxPatient]
 		),
 		wallets: this.getFiles(
 			this.filesListFiltered.wallets,
-			AccountFileRecord.RecordTypes.Wallet
+			AccountFileRecord.RecordTypes.Wallet,
+			this.config[AccountFileRecord.RecordTypes.Wallet]
 		)
 	};
 
@@ -418,27 +424,33 @@ export class AccountFilesService {
 	public readonly incomingFilesFilteredWithData	= {
 		appointments: this.getFiles(
 			this.incomingFilesFiltered.appointments,
-			AccountFileRecord.RecordTypes.Appointment
+			AccountFileRecord.RecordTypes.Appointment,
+			this.config[AccountFileRecord.RecordTypes.Appointment]
 		),
 		ehrApiKeys: this.getFiles(
 			this.incomingFilesFiltered.ehrApiKeys,
-			AccountFileRecord.RecordTypes.EhrApiKey
+			AccountFileRecord.RecordTypes.EhrApiKey,
+			this.config[AccountFileRecord.RecordTypes.EhrApiKey]
 		),
 		files: this.getFiles(
 			this.incomingFilesFiltered.files,
-			AccountFileRecord.RecordTypes.File
+			AccountFileRecord.RecordTypes.File,
+			this.config[AccountFileRecord.RecordTypes.File]
 		),
 		forms: this.getFiles(
 			this.incomingFilesFiltered.forms,
-			AccountFileRecord.RecordTypes.Form
+			AccountFileRecord.RecordTypes.Form,
+			this.config[AccountFileRecord.RecordTypes.Form]
 		),
 		redoxPatients: this.getFiles(
 			this.incomingFilesFiltered.redoxPatients,
-			AccountFileRecord.RecordTypes.RedoxPatient
+			AccountFileRecord.RecordTypes.RedoxPatient,
+			this.config[AccountFileRecord.RecordTypes.RedoxPatient]
 		),
 		wallets: this.getFiles(
 			this.incomingFilesFiltered.wallets,
-			AccountFileRecord.RecordTypes.Wallet
+			AccountFileRecord.RecordTypes.Wallet,
+			this.config[AccountFileRecord.RecordTypes.Wallet]
 		)
 	};
 
@@ -498,7 +510,8 @@ export class AccountFilesService {
 	/** @ignore */
 	private getFiles<T, TRecord extends {owner: string}> (
 		filesList: Observable<(IAccountFileRecord&TRecord)[]>,
-		recordType: AccountFileRecord.RecordTypes
+		recordType: AccountFileRecord.RecordTypes,
+		_CONFIG: {proto: IProto<T>}
 	) : () => Observable<{
 		data: T;
 		record: IAccountFileRecord;
