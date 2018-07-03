@@ -861,7 +861,7 @@ body:not(.mobile) .section-content-container:not(.full) {
 	.hero-text {
 		background-color: #e1e2e1;
 		padding-top: 25px;
-		font-family: ubuntu;
+		font-family: Ubuntu;
 		color: black;
 		margin-top: 50px;
 		margin-bottom: 40px;
@@ -878,5 +878,9 @@ body:not(.mobile) .section-content-container:not(.full) {
 		.empty {
 			font-size: 1.14rem;
 		}
+	}
+
+	mat-card {
+		margin-bottom: 40px;
 	}
 }
