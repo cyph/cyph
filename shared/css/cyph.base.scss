@@ -30,9 +30,14 @@ mat-sidenav.disabled {
 	@include transform(none !important);
 }
 
-mat-sidenav .mat-button {
-	mat-icon, img {
-		margin-right: 5px;
+mat-sidenav {
+	/* Temporary workaround for Angular Material bug */
+	visibility: hidden;
+
+	.mat-button {
+		mat-icon, img {
+			margin-right: 5px;
+		}
 	}
 }
 
