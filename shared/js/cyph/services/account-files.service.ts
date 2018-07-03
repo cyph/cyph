@@ -124,85 +124,8 @@ export class AccountFilesService {
 		new Map<string|IAccountFileRecord, Observable<any>>()
 	;
 
-	/** List of file records owned by current user, sorted by timestamp in descending order. */
-	public readonly filesList: Observable<(IAccountFileRecord&{owner: string})[]>	=
-		this.accountDatabaseService.watchList(
-			'fileReferences',
-			AccountFileReference,
-			undefined,
-			undefined,
-			undefined,
-			false
-		).pipe(
-			mergeMap(references => combineLatest(filterUndefined(references.map(({value}) =>
-				this.watchFile(value)
-			)))),
-			map(records => records.
-				filter(o => !isNaN(o.timestamp)).
-				sort((a, b) => b.timestamp - a.timestamp).
-				map(o => o.value)
-			)
-		)
-	;
-
-	/**
-	 * Files filtered by record type.
-	 * @see files
-	 */
-	public readonly filesListFiltered	= {
-		appointments: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Appointment),
-		docs: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Doc),
-		ehrApiKeys: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.EhrApiKey),
-		files: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.File),
-		forms: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Form),
-		notes: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Note),
-		redoxPatients: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.RedoxPatient),
-		wallets: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Wallet)
-	};
-
-	/**
-	 * Includes downloaded data, where applicable.
-	 * @see filesListFiltered
-	 */
-	public readonly filesListFilteredWithData	= {
-		appointments: this.getFiles(
-			this.filesListFiltered.appointments,
-			AccountFileRecord.RecordTypes.Appointment
-		),
-		ehrApiKeys: this.getFiles(
-			this.filesListFiltered.ehrApiKeys,
-			AccountFileRecord.RecordTypes.EhrApiKey
-		),
-		files: this.getFiles(
-			this.filesListFiltered.files,
-			AccountFileRecord.RecordTypes.File
-		),
-		forms: this.getFiles(
-			this.filesListFiltered.forms,
-			AccountFileRecord.RecordTypes.Form
-		),
-		redoxPatients: this.getFiles(
-			this.filesListFiltered.ehrApiKeys,
-			AccountFileRecord.RecordTypes.EhrApiKey
-		),
-		wallets: this.getFiles(
-			this.filesListFiltered.wallets,
-			AccountFileRecord.RecordTypes.Wallet
-		)
-	};
-
-	/** Total size of all files in list. */
-	public readonly filesTotalSize: Observable<number>	=
-		this.filesListFiltered.files.pipe(map(files =>
-			files.reduce((n, {size}) => n + size, 0)
-		))
-	;
-
-	/** Total storage limit. */
-	public readonly fileStorageLimit: number	= convertStorageUnitsToBytes(1, StorageUnits.gb);
-
 	/** File type configurations. */
-	public readonly fileTypeConfig	= {
+	public readonly config	= {
 		[AccountFileRecord.RecordTypes.Appointment]: {
 			blockAnonymous: true,
 			description: 'Appointment',
@@ -287,6 +210,83 @@ export class AccountFilesService {
 			securityModel: undefined
 		}
 	};
+
+	/** List of file records owned by current user, sorted by timestamp in descending order. */
+	public readonly filesList: Observable<(IAccountFileRecord&{owner: string})[]>	=
+		this.accountDatabaseService.watchList(
+			'fileReferences',
+			AccountFileReference,
+			undefined,
+			undefined,
+			undefined,
+			false
+		).pipe(
+			mergeMap(references => combineLatest(filterUndefined(references.map(({value}) =>
+				this.watchFile(value)
+			)))),
+			map(records => records.
+				filter(o => !isNaN(o.timestamp)).
+				sort((a, b) => b.timestamp - a.timestamp).
+				map(o => o.value)
+			)
+		)
+	;
+
+	/**
+	 * Files filtered by record type.
+	 * @see files
+	 */
+	public readonly filesListFiltered	= {
+		appointments: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Appointment),
+		docs: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Doc),
+		ehrApiKeys: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.EhrApiKey),
+		files: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.File),
+		forms: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Form),
+		notes: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Note),
+		redoxPatients: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.RedoxPatient),
+		wallets: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Wallet)
+	};
+
+	/**
+	 * Includes downloaded data, where applicable.
+	 * @see filesListFiltered
+	 */
+	public readonly filesListFilteredWithData	= {
+		appointments: this.getFiles(
+			this.filesListFiltered.appointments,
+			AccountFileRecord.RecordTypes.Appointment
+		),
+		ehrApiKeys: this.getFiles(
+			this.filesListFiltered.ehrApiKeys,
+			AccountFileRecord.RecordTypes.EhrApiKey
+		),
+		files: this.getFiles(
+			this.filesListFiltered.files,
+			AccountFileRecord.RecordTypes.File
+		),
+		forms: this.getFiles(
+			this.filesListFiltered.forms,
+			AccountFileRecord.RecordTypes.Form
+		),
+		redoxPatients: this.getFiles(
+			this.filesListFiltered.ehrApiKeys,
+			AccountFileRecord.RecordTypes.EhrApiKey
+		),
+		wallets: this.getFiles(
+			this.filesListFiltered.wallets,
+			AccountFileRecord.RecordTypes.Wallet
+		)
+	};
+
+	/** Total size of all files in list. */
+	public readonly filesTotalSize: Observable<number>	=
+		this.filesListFiltered.files.pipe(map(files =>
+			files.reduce((n, {size}) => n + size, 0)
+		))
+	;
+
+	/** Total storage limit. */
+	public readonly fileStorageLimit: number	= convertStorageUnitsToBytes(1, StorageUnits.gb);
 
 	/** List of file record types. */
 	public readonly fileTypes: AccountFileRecord.RecordTypes[]	= [
@@ -491,7 +491,7 @@ export class AccountFilesService {
 		return filesList.pipe(map(files => files.filter(({owner, recordType, wasAnonymousShare}) =>
 			!!owner &&
 			recordType === filterRecordTypes &&
-			!(this.fileTypeConfig[recordType].blockAnonymous && wasAnonymousShare)
+			!(this.config[recordType].blockAnonymous && wasAnonymousShare)
 		)));
 	}
 
@@ -521,7 +521,7 @@ export class AccountFilesService {
 		id: string|IAccountFileRecord,
 		recordType: AccountFileRecord.RecordTypes
 	) : Observable<T|undefined> {
-		const {proto, securityModel}	= this.fileTypeConfig[recordType];
+		const {proto, securityModel}	= this.config[recordType];
 
 		return getOrSetDefault(
 			this.watchFileDataCache,
@@ -551,7 +551,7 @@ export class AccountFilesService {
 			options	= {reject: !options};
 		}
 
-		const fileConfig				= this.fileTypeConfig[incomingFile.recordType];
+		const fileConfig				= this.config[incomingFile.recordType];
 
 		const promises: Promise<any>[]	= [
 			this.accountDatabaseService.removeItem(`incomingFiles/${incomingFile.id}`)
@@ -699,7 +699,7 @@ export class AccountFilesService {
 		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes
 	) : any {
-		const fileConfig	= this.fileTypeConfig[recordType];
+		const fileConfig	= this.config[recordType];
 
 		if (!fileConfig || !fileConfig.proto) {
 			throw new Error(
@@ -865,7 +865,7 @@ export class AccountFilesService {
 		file: AccountFile,
 		{recordType}: {recordType: AccountFileRecord.RecordTypes}
 	) : Promise<number> {
-		const fileConfig	= this.fileTypeConfig[recordType];
+		const fileConfig	= this.config[recordType];
 
 		return (
 			fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
@@ -891,7 +891,7 @@ export class AccountFilesService {
 		}
 
 		for (const recordType of this.fileTypes) {
-			if (this.fileTypeConfig[recordType].isOfType(file)) {
+			if (this.config[recordType].isOfType(file)) {
 				return recordType;
 			}
 		}
@@ -981,7 +981,7 @@ export class AccountFilesService {
 				content: `${this.stringsService.deleteMessage} ${file.name}?`,
 				title: this.stringsService.deleteConfirm
 			})) {
-				this.router.navigate([accountRoot, this.fileTypeConfig[file.recordType].route]);
+				this.router.navigate([accountRoot, this.config[file.recordType].route]);
 				await sleep();
 			}
 			else {
@@ -1242,7 +1242,7 @@ export class AccountFilesService {
 		))();
 		const url			= `users/${username}/files/${id}`;
 
-		const fileConfig	= this.fileTypeConfig[this.getFileType(file)];
+		const fileConfig	= this.config[this.getFileType(file)];
 
 		const {progress, result}	=
 			fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
