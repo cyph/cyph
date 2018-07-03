@@ -63,7 +63,9 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	public get fullWidth () : boolean {
 		return this.envService.isMobile || (
 			this.accountDatabaseService.currentUser.value !== undefined && [
+				'',
 				'messages',
+				'profile',
 				'wallets'
 			].find(
 				path => this.route === path

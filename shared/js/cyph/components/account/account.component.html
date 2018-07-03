@@ -16,7 +16,7 @@
 			</div>
 		</div>
 	</div>
-	<canvas [fxShow]='envService.showGranim' class='cyph-gradient animated fadeIn'></canvas>
+	<canvas fxHide class='cyph-gradient animated fadeIn'></canvas>
 
 	<cyph-account-menu
 		fxFlex
@@ -75,6 +75,7 @@
 				class='animated'
 				[class.fadeOutUp]='accountService.transition | async'
 				fxFlex
+				[class.spacing]='menuVisible && sidebarVisible'
 				[style.height]='fullHeight ? "100%" : undefined'
 				[ngStyle.lt-md]='!fullWidth ? {padding: "0px 2.5vw"} : {}'
 				[ngStyle.md]='!fullWidth ? {padding: "0px 7.5vw"} : {}'

@@ -5,6 +5,8 @@ $header-size: 135px;
 .profile {
 	text-align: center;
 	font-family: Ubuntu;
+	background-color: rgba(237, 231, 246, 0.95);
+	padding: 0 8% 0 8%;
 
 	&.mobile {
 		.avatar {
@@ -33,6 +35,7 @@ $header-size: 135px;
 		height: 20em;
 		overflow: hidden;
 		opacity: 0.95;
+		box-shadow: 0 14px 0px 0px rgba(69, 39, 160, 0.42);
 		background-size: cover;
 		background-position: center;
 

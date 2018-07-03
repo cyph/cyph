@@ -18,6 +18,30 @@
 		overflow-x: hidden;
 	}
 
+	&.spacing {
+		margin-left: 1em;
+		margin-right: 1em;
+		.profile {
+			.cover-image {
+				left: 1em !important;
+				width: calc(100% - 2em) !important;
+			}
+		}
+	}
+
+	/**.content {
+		background-color: rgba(237, 231, 246, 0.95);
+		color: #333;
+	}
+
+	.sidebar.contacts {
+		padding-left: 15px;
+	}
+
+	cyph-account-menu.sidebar {
+		padding-right: 15px;
+	}*/
+
 	.cyph-gradient {
 		display: block;
 		width: 100%;
