@@ -2,6 +2,7 @@ const cors										= require('cors')({origin: true});
 const firebase									= require('firebase');
 const admin										= require('firebase-admin');
 const functions									= require('firebase-functions');
+const {emailRegex}								= require('./email-regex');
 const namespaces								= require('./namespaces');
 const {normalize, retryUntilSuccessful, sleep}	= require('./util');
 
@@ -30,11 +31,6 @@ const {notify}	= require('./notify')(database, messaging);
 
 const channelDisconnectTimeout	= 5000;
 const cyphProTrialDuration		= 1209600000;
-
-/** @see https://emailregex.com */
-const emailRegex	=
-	/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-;
 
 const getRealUsername	= async (namespace, username) => {
 	try {
