@@ -53,9 +53,7 @@ export class PinInputComponent implements ControlValueAccessor, OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.value.subscribe(s => {
-			if (typeof s !== 'string') {
-				return;
-			}
+			s	= (s || '').trim();
 
 			if (this.onChange) {
 				this.onChange(s);
