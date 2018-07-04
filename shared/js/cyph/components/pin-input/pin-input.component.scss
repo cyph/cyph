@@ -1,16 +1,66 @@
 @import '../../../../css/mixins';
 
-:host {
-	.input-wrapper {
-		overflow: hidden;
-		font-size: 3em;
+$fontSize: 42px;
 
-		input {
+.input-wrapper-outer {
+	&, .input-wrapper-inner {
+		overflow: hidden;
+		position: relative;
+	}
+
+	.input-wrapper-inner {
+		font-size: $fontSize;
+
+		input, &:after {
 			font-family: 'Ubuntu Mono';
 			text-align: center;
-			letter-spacing: 1em;
+		}
 
-			@include transform(translateX(calc(0.5em + 10.5px)));
+		input {
+			letter-spacing: $fontSize;
+
+			&.text-security {
+				letter-spacing: 1.14 * $fontSize;
+			}
+
+			@for $i from 0 to 5 {
+				$translateX: -(2.5 * $fontSize) + ($i * 0.75 * $fontSize) + 10.5px;
+
+				&.length-#{$i} {
+					@include transform(translateX($translateX));
+
+					&.text-security {
+						@include transform(translate($translateX + 4.5px, -8px));
+					}
+				}
+			}
+		}
+
+		&:after {
+			content: '____';
+			position: absolute;
+			width: 100%;
+			left: (0.375 * $fontSize) + 10.5px;
+			bottom: -0.19 * $fontSize;
+			letter-spacing: 0.75 * $fontSize;
+			font-size: 1.5 * $fontSize;
+			pointer-events: none;
 		}
 	}
+
+	&:not(.mobile) {
+		width: calc(100% - #{$fontSize * 3});
+
+		.input-wrapper-inner {
+			width: calc(100% + #{$fontSize * 3});
+
+			input {
+				padding-left: 0.18 * $fontSize;
+			}
+		}
+	}
+}
+
+:host ::ng-deep .mat-form-field-underline {
+	visibility: hidden;
 }

@@ -2,6 +2,7 @@ import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
+import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -92,6 +93,9 @@ export class PinInputComponent implements ControlValueAccessor, OnInit {
 	}
 
 	constructor (
+		/** @see EnvService */
+		public readonly envService: EnvService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {}
