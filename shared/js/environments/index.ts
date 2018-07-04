@@ -26,7 +26,7 @@ accountRoot		= 'account';
 let altTheme	= false;
 
 /* tslint:disable-next-line:strict-type-predicates */
-if ($ !== undefined && typeof window === 'object') {
+if (typeof $ === 'function' && typeof window === 'object') {
 	if (environment.customBuild) {
 		for (const k of Object.keys(Object.getPrototypeOf(environment.customBuild))) {
 			const o	= (<any> environment.customBuild)[k];
