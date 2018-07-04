@@ -47,6 +47,22 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		;
 	}
 
+	/** Indicates whether light background should be used. */
+	public get lightBackground () : boolean {
+		return this.accountDatabaseService.currentUser.value !== undefined && [
+			'',
+			'contacts',
+			'docs',
+			'files',
+			'forms',
+			'notes',
+			'profile',
+			'settings'
+		].find(
+			path => this.route === path
+		) !== undefined;
+	}
+
 	/** Indicates whether section should take up 100% height. */
 	public get fullHeight () : boolean {
 		return this.accountDatabaseService.currentUser.value !== undefined && [

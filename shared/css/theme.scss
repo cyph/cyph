@@ -7,6 +7,7 @@ $cyph-accent: mat-palette($mat-deep-purple, 500, 400, 600);
 $cyph-warn: mat-palette($mat-red, 700, 600, 800);
 $cyph-is-dark: true;
 $cyph-background: #8b62d9;
+$cyph-background-light: rgba(237, 231, 246, 0.95);
 $cyph-foreground: #f1f1f1;
 $cyph-inverted: #444;
 $cyph-hyperlinks: #949fff;
@@ -15,6 +16,7 @@ $cyph-loading-animation-filter: null;
 $cyph-progress-foreground: $cyph-foreground;
 $cyph-speed-dial-action-alt-background: $cyph-inverted;
 $cyph-speed-dial-action-alt-foreground: $cyph-foreground;
+
 
 $cyph-message-box-colors: (
 	background: $cyph-foreground,

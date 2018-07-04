@@ -37,7 +37,12 @@
 	></cyph-account-menu>
 
 	<div class='content' fxFlex fxFlexFill fxLayout='column' fxLayout.xs='row'>
-		<div fxFlexFill fxLayout='column' class='router-content'>
+		<div
+			[class.cyph-light]='lightBackground && !(menuVisible && sidebarVisible)'
+			fxFlexFill
+			fxLayout='column'
+			class='router-content'
+		>
 			<div
 				fxLayout='row'
 				class='header animated slideInDown'
@@ -75,6 +80,7 @@
 				class='animated'
 				[class.fadeOutUp]='accountService.transition | async'
 				fxFlex
+				[class.cyph-inverted-theme]='lightBackground'
 				[class.spacing]='menuVisible && sidebarVisible'
 				[style.height]='fullHeight ? "100%" : undefined'
 				[ngStyle.lt-md]='!fullWidth ? {padding: "0px 2.5vw"} : {}'
