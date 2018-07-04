@@ -285,11 +285,16 @@ export class AccountFilesService {
 	};
 
 	/** Total size of all files in list. */
-	public readonly filesTotalSize: Observable<number>	=
-		this.filesListFiltered.files.pipe(map(files =>
-			files.reduce((n, {size}) => n + size, 0)
-		))
-	;
+	public readonly filesTotalSize: Observable<number>	= combineLatest(
+		this.filesListFiltered.files,
+		this.accountDatabaseService.currentUser
+	).pipe(map(([files, currentUser]) => files.reduce(
+		(n, {owner, size}) =>
+			n +
+			(currentUser && currentUser.user.username === owner ? 0 : size)
+		,
+		0
+	)));
 
 	/** Total storage limit. */
 	public readonly fileStorageLimit: number	= convertStorageUnitsToBytes(1, StorageUnits.gb);
