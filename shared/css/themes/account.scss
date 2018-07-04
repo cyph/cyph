@@ -1,0 +1,85 @@
+@import '../theme';
+
+$cyph-accent: mat-palette($mat-deep-purple, 400, 300, 500);
+$cyph-is-dark: false;
+$cyph-background: #eeecf1;
+$cyph-foreground: #4d5062;
+$cyph-inverted: #f1f1f1;
+$cyph-progress-foreground: #e7c447;
+$cyph-speed-dial-action-alt-background: $cyph-background;
+$cyph-speed-dial-action-alt-foreground: $cyph-foreground;
+
+$cyph-message-box-colors: map-merge($cyph-message-box-colors, (
+	desktopBackground: rgba(146, 149, 163, 0.5),
+	desktopGlow: $cyph-progress-foreground,
+	text: black
+));
+
+$cyph-message-colors: map-merge($cyph-message-colors, (
+	app: (
+		desktop: transparent,
+		mobile: transparent,
+		text: $cyph-foreground
+	),
+	me: (
+		desktop: transparent,
+		mobile: map-get($mat-amber, 400),
+		text: $cyph-foreground
+	),
+	other: (
+		desktop: transparent,
+		mobile: map-get($mat-yellow, 600),
+		text: $cyph-foreground
+	)
+));
+
+body.telehealth {
+	@include cyph-apply-theme;
+
+	font-weight: 400;
+
+	.telehealth-logo img {
+		width: 42vh;
+	}
+
+	.loading {
+		font-size: 1.43rem;
+
+		> .image, > .logo-animation {
+			height: 33vh;
+			width: 33vh;
+			min-height: 33vh;
+			min-width: 33vh;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 20px;
+			position: relative;
+
+			&:after, &:before {
+				content: '';
+				background-repeat: no-repeat;
+				background-size: 42.71vh 42.71vh;
+				height: 43.71vh;
+				width: 43.71vh;
+				top: -8.69vh;
+				left: -4.36vh;
+				position: absolute;
+				z-index: -1;
+			}
+			&:after {
+				background-image: url(/assets/img/telehealth.animated.background.a.png);
+			}
+			&:before {
+				background-image: url(/assets/img/telehealth.animated.background.b.png);
+			}
+			> * {
+				background-image: url(/assets/img/telehealth.animated.castle.png);
+			}
+		}
+	}
+
+
+	cyph-chat-message-list > .background-image, .chat-disconnect-message, .abort-screen .image {
+		display: none !important;
+	}
+}
