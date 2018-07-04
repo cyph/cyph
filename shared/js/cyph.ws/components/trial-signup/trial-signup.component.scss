@@ -1,0 +1,10 @@
+@import '../../../../css/mixins';
+
+.success {
+	font-size: 1.1em;
+	line-height: 1.5em;
+
+	.xkcd-passphrase {
+		padding: 40px 0;
+	}
+}

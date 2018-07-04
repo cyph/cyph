@@ -53,11 +53,14 @@ const processURL	= (namespace, url) => {
 	return `${namespace.replace(/\./g, '_')}/${url.replace(/^\//, '')}`;
 };
 
+const getHash		= bytes => crypto.createHash('sha512').update(bytes).digest('hex');
+
 const databaseService	= {
 	app,
 	auth,
 	database,
 	functionsUser,
+	getHash,
 	messaging,
 	processURL,
 	async getItem (namespace, url, proto, skipSignature, decompress) {
@@ -104,7 +107,7 @@ const databaseService	= {
 		url	= processURL(namespace, url);
 
 		const bytes	= await serialize(proto, value);
-		const hash	= crypto.createHash('sha512').update(bytes).digest('hex');
+		const hash	= getHash(bytes);
 
 		await retryUntilSuccessful(async () => storage.file(`${url}/${hash}`).save(bytes));
 		await retryUntilSuccessful(async () => database.ref(url).set({

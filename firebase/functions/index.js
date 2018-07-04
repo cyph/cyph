@@ -17,6 +17,7 @@ const {
 	auth,
 	database,
 	functionsUser,
+	getHash,
 	getItem,
 	messaging,
 	removeItem,
@@ -28,6 +29,12 @@ const {notify}	= require('./notify')(database, messaging);
 
 
 const channelDisconnectTimeout	= 5000;
+const cyphProTrialDuration		= 1209600000;
+
+/** @see https://emailregex.com */
+const emailRegex	=
+	/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+;
 
 const getRealUsername	= async (namespace, username) => {
 	try {
@@ -75,6 +82,25 @@ const getURL	= (adminRef, namespace) => {
 	return url;
 };
 
+const validateInput	= (input, regex) => {
+	if (!input || input.indexOf('/') > -1 || (regex && !regex.test(input))) {
+		throw new Error('Invalid data.');
+	}
+
+	return input;
+};
+
+const onRequest	= f => functions.https.onRequest((req, res) => cors(req, res, async () => {
+	try {
+		await f(req, res, validateInput(req.body.namespace.replace(/\./g, '_')));
+	}
+	catch (err) {
+		console.error(err);
+		res.status(500);
+		res.send({error: true});
+	}
+}));
+
 
 exports.channelDisconnect	= functions.database.ref(
 	'{namespace}/channels/{channel}/disconnects/{user}'
@@ -101,23 +127,51 @@ exports.channelDisconnect	= functions.database.ref(
 });
 
 
-exports.environmentUnlock	= functions.https.onRequest((req, res) => cors(req, res, async () => {
-	try {
-		let {id, namespace}	= req.body;
-		namespace			= namespace.replace(/\./g, '_');
+exports.environmentUnlock	= onRequest(async (req, res, namespace) => {
+	const id	= validateInput(req.body.id);
 
-		if (!id || !namespace || id.indexOf('/') > -1 || namespace.indexOf('/') > -1) {
-			throw new Error('Invalid data.');
-		}
+	const {email, name, timestamp, trial}	=
+		(await database.ref(`${namespace}/lockdownIDs/${id}`).once('value')).val()
+	;
 
-		const ref	= database.ref(`${namespace}/lockdownIDs/${id}`);
-		res.send((await ref.once('value')).val() || '');
+	if (isNaN(timestamp)) {
+		throw new Error('Invalid lockdown ID.');
 	}
-	catch (err) {
-		console.error(err);
-		res.send('');
+
+	if (trial && (Date.now() - timestamp) > cyphProTrialDuration) {
+		throw new Error('Expired trial code.');
 	}
-}));
+
+	res.send({name});
+});
+
+
+exports.proTrialSignup	= onRequest(async (req, res, namespace) => {
+	const email	= validateInput(req.body.email, emailRegex);
+	const id	= validateInput(req.body.id);
+	const name	= validateInput(req.body.name);
+
+	const emailHash	= getHash(email);
+
+	const lockdownRef	= database.ref(`${namespace}/lockdownIDs/${id}`);
+	const trialRef		= database.ref(`${namespace}/lockdownIdTrials/${emailHash}`);
+
+	if ((await trialRef.once('value')).exists()) {
+		throw new Error('Trial code already exists for this user.');
+	}
+	else if ((await lockdownRef.once('value')).exists()) {
+		return res.send({tryAgain: true});
+	}
+
+	await lockdownRef.set({
+		email,
+		name,
+		timestamp: admin.database.ServerValue.TIMESTAMP,
+		trial: true
+	});
+
+	res.send({});
+});
 
 
 /*
@@ -240,7 +294,7 @@ exports.userEmailSet	= functions.database.ref(
 		() => undefined
 	);
 
-	if (email) {
+	if (email && emailRegex.test(email)) {
 		await emailRef.set(email);
 	}
 	else {

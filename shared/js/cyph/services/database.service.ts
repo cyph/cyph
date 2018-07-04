@@ -46,6 +46,12 @@ export class DatabaseService extends DataManagerService {
 			'cyph.ws'
 	;
 
+	/** Salt used for miscellaneous server-stored password hashes. */
+	public readonly salt: string		=
+		this.namespace +
+		'Eaf60vuVWm67dNISjm6qdTGqgEhIW4Oes+BTsiuNjvs='
+	;
+
 	/** Gets lock URL. */
 	protected async lockURL (urlPromise: MaybePromise<string>, global: boolean) : Promise<string> {
 		return !global ? urlPromise : `locks/${this.potassiumService.toHex(

@@ -48,12 +48,11 @@ export class LockdownComponent implements OnInit {
 			}
 		}
 		else if (password) {
-			const owner	= await this.databaseService.callFunction('environmentUnlock', {
+			const {name}	= await this.databaseService.callFunction('environmentUnlock', {
 				id: this.potassiumService.toHex(
 					(await this.potassiumService.passwordHash.hash(
 						password,
-						this.databaseService.namespace +
-						'Eaf60vuVWm67dNISjm6qdTGqgEhIW4Oes+BTsiuNjvs='
+						this.databaseService.salt
 					)).hash
 				),
 				namespace: this.databaseService.namespace
@@ -61,12 +60,12 @@ export class LockdownComponent implements OnInit {
 				() => undefined
 			);
 
-			if (typeof owner === 'string' && owner) {
+			if (typeof name === 'string' && name) {
 				success	= true;
 
 				if (!passive) {
 					await this.dialogService.alert({
-						content: `${this.stringsService.welcomeComma} ${owner}.`,
+						content: `${this.stringsService.welcomeComma} ${name}.`,
 						title: this.stringsService.unlockedTitle
 					});
 				}
