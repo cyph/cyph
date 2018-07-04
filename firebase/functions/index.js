@@ -170,7 +170,7 @@ exports.proTrialSignup	= onRequest(async (req, res, namespace) => {
 		trial: true
 	});
 
-	res.send('');
+	res.send({});
 });
 
 

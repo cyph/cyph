@@ -49,13 +49,6 @@ export class AppService implements CanActivate {
 		)
 	;
 
-	/** @ignore */
-	private async loadComplete () : Promise<void> {
-		$(document.body).addClass('load-complete');
-		await sleep(5000);
-		$('#pre-load').remove();
-	}
-
 	/** @inheritDoc */
 	public canActivate (_: ActivatedRouteSnapshot, state: RouterStateSnapshot) : boolean {
 		if (this.isLockedDown) {
@@ -65,6 +58,13 @@ export class AppService implements CanActivate {
 		else {
 			return true;
 		}
+	}
+
+	/** Marks load as complete. */
+	public async loadComplete () : Promise<void> {
+		$(document.body).addClass('load-complete');
+		await sleep(5000);
+		$('#pre-load').remove();
 	}
 
 	/** Disables lockdown. */

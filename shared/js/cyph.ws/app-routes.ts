@@ -4,6 +4,7 @@ import {Routes} from '@angular/router';
 import {account, accountRedirect, login, retry} from '../cyph/routes';
 import {AppService} from './app.service';
 import {EphemeralChatRootComponent} from './components/ephemeral-chat-root';
+import {TrialSignupComponent} from './components/trial-signup';
 
 
 account.canActivate	= [AppService];
@@ -12,9 +13,8 @@ account.canActivate	= [AppService];
 export const appRoutes: Routes	= [
 	retry,
 	login,
-	account
-].concat(
-	accountRedirect
-).concat(
+	account,
+	...accountRedirect,
+	{path: 'trial-signup', component: TrialSignupComponent},
 	{path: '**', canActivate: [AppService], component: EphemeralChatRootComponent}
-);
+];

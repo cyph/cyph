@@ -1,0 +1,104 @@
+<section fxFlexFill fxLayout='column' id='main'>
+	<div
+		fxFlexFill
+		fxLayoutAlign='center center'
+		class='login-form'
+		[class.checking]='checking'
+	>
+		<mat-card fxFlex='95' fxFlex.gt-sm='75' fxFlex.gt-md='50' fxFlex.xs='100'>
+			<cyph-logo cardHeader></cyph-logo>
+			<mat-card-title>
+				{{stringsService.trialTitle}}
+			</mat-card-title>
+			<mat-card-subtitle>
+				<span cyphTranslate>Welcome to</span>
+				&ngsp;
+				<span>{{stringsService.product}}!</span>
+				&ngsp;
+				<span cyphTranslate>
+					You can sign up here for 14-day trial access.
+				</span>
+			</mat-card-subtitle>
+			<mat-card-content>
+				<form ngNativeValidate (submit)='submit()' *ngIf='!password'>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<h3
+							class='cyph-banner warn'
+							[style.visibility]='error ? "visible" : "hidden"'
+						>
+							<span cyphTranslate>
+								It looks like you've already signed up for a trial.
+								If you believe this message to be in error, please
+								refresh and try again or
+							</span>
+							&ngsp;
+							<a
+								[href]='envService.homeUrl + "contact/help"'
+								cyphTranslate
+							>contact us</a>.
+						</h3>
+					</div>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<mat-form-field fxFlex='60'>
+							<input
+								matInput
+								cyphTranslate
+								[(ngModel)]='name'
+								name='name'
+								type='text'
+								placeholder='Name'
+								required
+							/>
+						</mat-form-field>
+					</div>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<mat-form-field fxFlex='60'>
+							<input
+								matInput
+								cyphTranslate
+								[(ngModel)]='email'
+								[pattern]='emailPattern'
+								name='email'
+								type='email'
+								placeholder='Email'
+								required
+							/>
+						</mat-form-field>
+					</div>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<button mat-button type='submit' cyphTranslate>
+							Sign Up
+						</button>
+					</div>
+				</form>
+			</mat-card-content>
+			<div *ngIf='password'>
+				<br />
+				<h3 class='cyph-banner success'>
+					<div cyphTranslate>
+						Your trial account is now active. You can log in to this environment
+						using the following code:
+					</div>
+					<div class='xkcd-passphrase'>{{password}}</div>
+					<div>
+						<span cyphTranslate>
+							Don't lose it! If you need help at any time during your trial,
+							or you're just bored and need a friend, feel free to
+						</span>
+						&ngsp;
+						<a
+							[href]='envService.homeUrl + "contact"'
+							cyphTranslate
+						>reach out to us</a>
+						&ngsp;
+						<span cyphTranslate>
+							any time.
+						</span>
+					</div>
+				</h3>
+				<br />
+			</div>
+			<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
+		</mat-card>
+	</div>
+</section>

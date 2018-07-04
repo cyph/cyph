@@ -29,6 +29,7 @@ import {AppService} from './app.service';
 import {AppComponent} from './components/app';
 import {EphemeralChatRootComponent} from './components/ephemeral-chat-root';
 import {LockdownComponent} from './components/lockdown';
+import {TrialSignupComponent} from './components/trial-signup';
 import {CustomUrlSerializer} from './custom-url-serializer';
 
 
@@ -40,12 +41,14 @@ import {CustomUrlSerializer} from './custom-url-serializer';
 	declarations: [
 		AppComponent,
 		EphemeralChatRootComponent,
-		LockdownComponent
+		LockdownComponent,
+		TrialSignupComponent
 	],
 	entryComponents: [
 		AppComponent,
 		EphemeralChatRootComponent,
-		LockdownComponent
+		LockdownComponent,
+		TrialSignupComponent
 	],
 	imports: [
 		RouterModule.forRoot([], {onSameUrlNavigation: 'reload', useHash: true}),
