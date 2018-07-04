@@ -89,10 +89,11 @@
 				[class.cyph-inverted-theme]='lightBackground'
 				[class.fadeOutUp]='accountService.transition | async'
 				[class.full-height]='fullHeight'
+				[class.padding]='!fullWidth'
 				[class.spacing]='menuVisible && sidebarVisible'
-				[ngClass.lt-md]='!fullWidth ? "padding-small" : undefined'
-				[ngClass.md]='!fullWidth ? "padding-medium" : undefined'
-				[ngClass.gt-md]='!fullWidth ? "padding-large" : undefined'
+				ngClass.lt-md='small'
+				ngClass.md='medium'
+				ngClass.gt-md='large'
 			>
 				<router-outlet></router-outlet>
 			</div>

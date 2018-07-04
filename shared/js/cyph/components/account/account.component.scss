@@ -62,7 +62,7 @@
 			height: 100%;
 		}
 
-		&.padding-large {
+		&.padding.large {
 			padding: 0 $accountPaddingLarge;
 
 			cyph-account-profile .cover-image {
@@ -71,7 +71,7 @@
 			}
 		}
 
-		&.padding-medium {
+		&.padding.medium {
 			padding: 0 $accountPaddingMedium;
 
 			cyph-account-profile .cover-image {
@@ -80,7 +80,7 @@
 			}
 		}
 
-		&.padding-small {
+		&.padding.small {
 			padding: 0 $accountPaddingSmall;
 
 			cyph-account-profile .cover-image {
