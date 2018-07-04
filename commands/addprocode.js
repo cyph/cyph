@@ -9,7 +9,7 @@ const databaseService				= require('../modules/database-service');
 const potassium						= require('../modules/potassium');
 
 
-const addProCode	= async (projectId, name, password, namespace) => {
+const addProCode	= async (projectId, name, password, namespace, email) => {
 
 
 if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
@@ -43,7 +43,12 @@ const {
 const salt			= namespace + 'Eaf60vuVWm67dNISjm6qdTGqgEhIW4Oes+BTsiuNjvs=';
 const passwordHash	= potassium.toHex((await potassium.passwordHash.hash(password, salt)).hash);
 
-await database.ref(processURL(namespace, `lockdownIDs/${passwordHash}`)).set(name);
+await database.ref(processURL(namespace, `lockdownIDs/${passwordHash}`)).set({
+	email,
+	name,
+	timestamp: firebase.database.ServerValue.TIMESTAMP,
+	trial: false
+});
 
 
 return {name, password};
@@ -58,8 +63,9 @@ if (require.main === module) {
 		const name				= process.argv[3];
 		const password			= process.argv[4];
 		const namespace			= process.argv[5];
+		const email				= process.argv[6];
 
-		console.log(JSON.stringify(await addProCode(projectId, name, password, namespace)));
+		console.log(JSON.stringify(await addProCode(projectId, name, password, namespace, email)));
 		process.exit(0);
 	})().catch(err => {
 		console.error(err);

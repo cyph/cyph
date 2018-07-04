@@ -170,7 +170,26 @@
 
 			"lockdownIDs": {
 				"$lockdownID": {
-					".validate": "newData.isString()"
+					"email": {
+						".validate": "newData.isString()"
+					},
+					"name": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					},
+					"trial": {
+						".validate": "newData.isBoolean()"
+					}
+				}
+			},
+
+			"lockdownIdTrials": {
+				"$emailHash": {
+					"lockdownID": {
+						".validate": "newData.isString()"
+					}
 				}
 			},
 
