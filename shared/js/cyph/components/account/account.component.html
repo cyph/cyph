@@ -16,7 +16,7 @@
 			</div>
 		</div>
 	</div>
-	<canvas [fxShow]='envService.showGranim' class='cyph-gradient animated fadeIn'></canvas>
+	<canvas fxHide class='cyph-gradient animated fadeIn'></canvas>
 
 	<cyph-account-menu
 		[fxFlex]='accountService.menuMaxWidth | async'
@@ -26,7 +26,14 @@
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
-	<div class='content' fxFlex fxFlexFill fxLayout='column' fxLayout.xs='row'>
+	<div
+		class='content'
+		fxFlex
+		fxFlexFill
+		fxLayout='column'
+		fxLayout.xs='row'
+		[class.cyph-light]='lightBackground && !(menuVisible && sidebarVisible)'
+	>
 		<mat-sidenav-container
 			fxFlexFill
 			fxLayout='column'
@@ -79,8 +86,10 @@
 			<div
 				fxFlex
 				class='content-wrapper animated'
+				[class.cyph-inverted-theme]='lightBackground'
 				[class.fadeOutUp]='accountService.transition | async'
 				[class.full-height]='fullHeight'
+				[class.spacing]='menuVisible && sidebarVisible'
 				[ngClass.lt-md]='!fullWidth ? "padding-small" : undefined'
 				[ngClass.md]='!fullWidth ? "padding-medium" : undefined'
 				[ngClass.gt-md]='!fullWidth ? "padding-large" : undefined'

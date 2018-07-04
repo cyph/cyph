@@ -12,6 +12,45 @@
 		}
 	}
 
+	.cyph-light {
+		background-color: $cyph-background-light !important;
+
+		.file-upload {
+			border-color: #666;
+
+			&:hover{
+				border-color: #999;
+			}
+		}
+
+		.mat-card {
+			background-color: #5d37b1;
+			color: #f1f1f1;
+
+			&.editable {
+				background-color: #f1f1f1 !important;
+				* {
+					color: #333 !important;
+				}
+			}
+			.mat-card-subtitle, span, a {
+				color: #f1f1f1de !important;
+			}
+		}
+
+		.mat-progress-bar-buffer {
+			background-color: rgba(0, 0, 0, 0.20) !important;
+		}
+	}
+
+	.card-list {
+		margin-top: 2em !important;
+	}
+
+	.sidebar .card-list {
+		margin-top: 0 !important;
+	}
+
 	.content {
 		scroll-behavior: smooth;
 		overflow-y: auto;
@@ -50,6 +89,30 @@
 			}
 		}
 	}
+
+	&.spacing {
+		margin-left: 1em;
+		margin-right: 1em;
+		.profile {
+			.cover-image {
+				left: 1em !important;
+				width: calc(100% - 2em) !important;
+			}
+		}
+	}
+
+	/**.content {
+		background-color: rgba(237, 231, 246, 0.95);
+		color: #333;
+	}
+
+	.sidebar.contacts {
+		padding-left: 15px;
+	}
+
+	cyph-account-menu.sidebar {
+		padding-right: 15px;
+	}*/
 
 	.cyph-gradient {
 		display: block;
