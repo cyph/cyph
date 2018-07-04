@@ -1,20 +1,8 @@
 @import '../../../../css/mixins';
 
-$fontSize: 42px;
-
-.input-wrapper-outer {
-	&, .input-wrapper-inner {
-		overflow: hidden;
-		position: relative;
-	}
-
+@mixin setFontSize($fontSize) {
 	.input-wrapper-inner {
 		font-size: $fontSize;
-
-		input, &:after {
-			font-family: 'Ubuntu Mono';
-			text-align: center;
-		}
 
 		input {
 			letter-spacing: $fontSize;
@@ -37,15 +25,40 @@ $fontSize: 42px;
 		}
 
 		&:after {
+			left: (0.375 * $fontSize) + 10.5px;
+			bottom: -0.18 * $fontSize;
+			letter-spacing: 0.75 * $fontSize;
+			font-size: 1.5 * $fontSize;
+		}
+	}
+}
+
+.input-wrapper-outer {
+	&, .input-wrapper-inner {
+		overflow: hidden;
+		position: relative;
+	}
+
+	.input-wrapper-inner {
+		input, &:after {
+			font-family: 'Ubuntu Mono';
+			text-align: center;
+		}
+
+		&:after {
 			content: '____';
 			position: absolute;
 			width: 100%;
-			left: (0.375 * $fontSize) + 10.5px;
-			bottom: -0.19 * $fontSize;
-			letter-spacing: 0.75 * $fontSize;
-			font-size: 1.5 * $fontSize;
 			pointer-events: none;
 		}
+	}
+
+	&:not(.small) {
+		@include setFontSize(42px);
+	}
+
+	&.small {
+		@include setFontSize(28px);
 	}
 }
 
