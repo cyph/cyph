@@ -81,9 +81,10 @@
 				class='content-wrapper animated'
 				[class.fadeOutUp]='accountService.transition | async'
 				[class.full-height]='fullHeight'
-				[ngClass.lt-md]='!fullWidth ? "padding-small" : undefined'
-				[ngClass.md]='!fullWidth ? "padding-medium" : undefined'
-				[ngClass.gt-md]='!fullWidth ? "padding-large" : undefined'
+				[class.padding]='!fullWidth'
+				ngClass.lt-md='small'
+				ngClass.md='medium'
+				ngClass.gt-md='large'
 			>
 				<router-outlet></router-outlet>
 			</div>
