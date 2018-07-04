@@ -1,6 +1,7 @@
-import {Component, Input} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import * as $ from 'jquery';
+import memoize from 'lodash-es/memoize';
+import {BehaviorSubject} from 'rxjs';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -19,51 +20,53 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./pin-input.component.scss'],
 	templateUrl: './pin-input.component.html'
 })
-export class PinInputComponent implements ControlValueAccessor {
+export class PinInputComponent implements ControlValueAccessor, OnInit {
 	/** Change event callback. */
 	private onChange?: (s: string) => void;
 
-	/** @ignore */
-	private valueInternal: string		= '';
+	/** Hide PIN. */
+	@Input() public hide: boolean					= true;
 
 	/** Indicates whether input is disabled. */
-	public isDisabled: boolean			= false;
+	public isDisabled: boolean						= false;
 
-	/** PIN text mask. */
-	public readonly mask: any			= {
-		mask: [/\d/, ' ', ' ', /\d/, ' ', ' ', /\d/, ' ', ' ', /\d/],
-		placeholderChar: '_',
-		showMask: true
-	};
+	/** Input. */
+	@ViewChild('pinInput') public pinInput?: ElementRef;
 
 	/** Form name. */
-	@Input() public name: string		= '';
+	@Input() public name: string					= '';
 
 	/** Touch event callback. */
 	public onTouched?: () => void;
 
+	/** Removes extraneous characters from value. */
+	public readonly processValue					= memoize((value?: string|number) =>
+		value ? value.toString().replace(/[^\d]/g, '').slice(0, 4) : ''
+	);
+
 	/** Indicates whether input is required. */
-	@Input() public required: boolean	= false;
+	@Input() public required: boolean				= false;
 
-	/** @ignore */
-	private get valueExternal () : string {
-		return this.valueInternal.replace(/[^\d]/g, '');
-	}
+	/** PIN value. */
+	public readonly value: BehaviorSubject<string>	= new BehaviorSubject('');
 
-	/** Focuses PIN input. */
-	public async focusPIN (e: MouseEvent) : Promise<void> {
-		/* x3 to account for spaces in pinMask */
-		const index	= this.valueExternal.length * 3;
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.value.subscribe(s => {
+			if (typeof s !== 'string') {
+				return;
+			}
 
-		if (!e.target) {
-			return;
-		}
+			if (this.onChange) {
+				this.onChange(s);
+			}
 
-		const $elem	= $(e.target).find('input');
-		const elem	= <HTMLInputElement> $elem[0];
-
-		$elem.trigger('focus');
-		elem.setSelectionRange(index, index);
+			if (this.pinInput && this.pinInput.nativeElement) {
+				const input	= <HTMLInputElement> this.pinInput.nativeElement;
+				input.value	= '';
+				input.value	= s;
+			}
+		});
 	}
 
 	/** @inheritDoc */
@@ -83,28 +86,10 @@ export class PinInputComponent implements ControlValueAccessor {
 		}
 	}
 
-	/** PIN value. */
-	public get value () : string {
-		return this.valueInternal;
-	}
-
-	/** @ignore */
-	public set value (s: string) {
-		if (this.valueInternal === s) {
-			return;
-		}
-
-		this.valueInternal	= s;
-
-		if (this.onChange) {
-			this.onChange(this.valueExternal);
-		}
-	}
-
 	/** @inheritDoc */
 	public writeValue (s: string) : void {
-		if (this.valueInternal !== s) {
-			this.valueInternal	= s;
+		if (this.value.value !== s) {
+			this.value.next(s);
 		}
 	}
 

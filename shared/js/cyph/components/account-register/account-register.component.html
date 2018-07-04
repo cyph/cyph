@@ -642,9 +642,10 @@
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<cyph-pin-input
-						fxFlex
+						fxFlex='60'
 						[(ngModel)]='lockScreenPIN'
 						name='lockScreenPIN'
+						[hide]='false'
 						[required]='useLockScreenPIN'
 					></cyph-pin-input>
 				</div>

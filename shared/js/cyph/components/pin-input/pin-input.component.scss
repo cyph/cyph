@@ -1,12 +1,16 @@
 @import '../../../../css/mixins';
 
 :host {
-	cursor: text;
-	font-family: 'Ubuntu Mono';
-	font-size: 3em;
+	.input-wrapper {
+		overflow: hidden;
+		font-size: 3em;
 
-	input {
-		pointer-events: none;
-		text-align: center;
+		input {
+			font-family: 'Ubuntu Mono';
+			text-align: center;
+			letter-spacing: 1em;
+
+			@include transform(translateX(calc(0.5em + 10.5px)));
+		}
 	}
 }
