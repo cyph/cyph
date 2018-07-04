@@ -21,7 +21,9 @@ if (customBuildBase64) {
 	}
 }
 
-accountRoot	= 'account';
+accountRoot		= 'account';
+
+let altTheme	= false;
 
 /* tslint:disable-next-line:strict-type-predicates */
 if (environment.customBuild && $ !== undefined && typeof window === 'object') {
@@ -51,6 +53,7 @@ if (environment.customBuild && $ !== undefined && typeof window === 'object') {
 	}
 
 	if (environment.customBuild.config.telehealth) {
+		altTheme	= true;
 		$(document.body).addClass('telehealth');
 	}
 
@@ -59,6 +62,7 @@ if (environment.customBuild && $ !== undefined && typeof window === 'object') {
 	}
 
 	if (environment.customBuild.css) {
+		altTheme			= true;
 		const style			= document.createElement('style');
 		style.textContent	= environment.customBuild.css;
 		document.head.appendChild(style);
@@ -81,6 +85,10 @@ if (environment.customBuild && $ !== undefined && typeof window === 'object') {
 			}
 		});
 	}
+}
+
+if (!altTheme) {
+	$(document.body).addClass('primary-account-theme');
 }
 
 
