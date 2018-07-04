@@ -18,6 +18,15 @@
 				max='9999'
 				pattern='\d\d\d\d'
 				data-lpignore='true'
+				[style.padding-left]='
+					envService.isMobile ?
+						"" :
+					envService.isChrome ?
+						"9px" :
+					envService.isFirefox ?
+						"3.5px" :
+						""
+				'
 			/>
 		</div>
 	</div>

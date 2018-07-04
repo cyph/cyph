@@ -53,14 +53,16 @@ $fontSize: 42px;
 
 		.input-wrapper-inner {
 			width: calc(100% + #{$fontSize * 3});
-
-			input {
-				padding-left: 0.18 * $fontSize;
-			}
 		}
 	}
 }
 
-:host ::ng-deep .mat-form-field-underline {
-	visibility: hidden;
+:host ::ng-deep {
+	.mat-form-field-infix {
+		cursor: text;
+	}
+
+	.mat-form-field-underline {
+		visibility: hidden;
+	}
 }
