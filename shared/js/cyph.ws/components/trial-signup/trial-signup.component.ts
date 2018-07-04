@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {xkcdPassphrase} from 'xkcd-passphrase';
-import {emailPattern} from '../../../cyph/email-pattern'
+import {emailPattern} from '../../../cyph/email-pattern';
 import {PotassiumService} from '../../../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../../../cyph/services/database.service';
 import {EnvService} from '../../../cyph/services/env.service';
