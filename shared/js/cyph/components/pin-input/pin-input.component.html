@@ -1,5 +1,5 @@
 <mat-form-field fxFlex>
-	<div class='input-wrapper-outer' [class.mobile]='envService.isMobile'>
+	<div class='input-wrapper-outer'>
 		<div class='input-wrapper-inner'>
 			<input
 				#pinInput
@@ -11,22 +11,12 @@
 				[disabled]='isDisabled'
 				(blur)='onTouched && onTouched()'
 				[name]='name'
-				type='number'
+				type='tel'
 				placeholder='PIN'
 				[required]='required'
 				[class.text-security]='hide'
-				max='9999'
 				pattern='\d\d\d\d'
 				data-lpignore='true'
-				[style.padding-left]='
-					envService.isMobile ?
-						"" :
-					envService.isChrome ?
-						"9px" :
-					envService.isFirefox ?
-						"3.5px" :
-						""
-				'
 			/>
 		</div>
 	</div>

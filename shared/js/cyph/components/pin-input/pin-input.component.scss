@@ -47,14 +47,6 @@ $fontSize: 42px;
 			pointer-events: none;
 		}
 	}
-
-	&:not(.mobile) {
-		width: calc(100% - #{$fontSize * 3});
-
-		.input-wrapper-inner {
-			width: calc(100% + #{$fontSize * 3});
-		}
-	}
 }
 
 :host ::ng-deep {

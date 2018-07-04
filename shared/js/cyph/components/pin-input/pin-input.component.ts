@@ -2,7 +2,6 @@ import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
-import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -41,8 +40,8 @@ export class PinInputComponent implements ControlValueAccessor, OnInit {
 	public onTouched?: () => void;
 
 	/** Removes extraneous characters from value. */
-	public readonly processValue					= memoize((value?: string|number) =>
-		value ? value.toString().replace(/[^\d]/g, '').slice(0, 4) : ''
+	public readonly processValue					= memoize((value?: string) =>
+		value ? value.replace(/[^\d]/g, '').slice(0, 4) : ''
 	);
 
 	/** Indicates whether input is required. */
@@ -93,9 +92,6 @@ export class PinInputComponent implements ControlValueAccessor, OnInit {
 	}
 
 	constructor (
-		/** @see EnvService */
-		public readonly envService: EnvService,
-
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {}
