@@ -77,6 +77,11 @@ section {
 	display: block;
 }
 
+input.text-security {
+	-webkit-text-security: disc !important;
+	font-family: text-security-disc !important;
+}
+
 #footer, .footer {
 	margin-top: 0;
 	position: relative;

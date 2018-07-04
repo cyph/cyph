@@ -188,3 +188,10 @@ Since fonts are big, uncomment these as they actually get used.
 	-moz-osx-font-smoothing: grayscale;
 	font-feature-settings: 'liga';
 }
+
+/* From https://github.com/noppa/text-security */
+
+@font-face {
+	font-family: 'text-security-disc';
+	src: url('/assets/fonts/text-security/text-security-disc.woff') format('woff');
+}
