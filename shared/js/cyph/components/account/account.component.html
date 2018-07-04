@@ -26,14 +26,7 @@
 		*ngIf='menuVisible'
 	></cyph-account-menu>
 
-	<div
-		class='content'
-		fxFlex
-		fxFlexFill
-		fxLayout='column'
-		fxLayout.xs='row'
-		[class.cyph-light]='lightBackground && !(menuVisible && sidebarVisible)'
-	>
+	<div class='content' fxFlex fxFlexFill fxLayout='column' fxLayout.xs='row'>
 		<mat-sidenav-container
 			fxFlexFill
 			fxLayout='column'
@@ -86,7 +79,6 @@
 			<div
 				fxFlex
 				class='content-wrapper animated'
-				[class.cyph-inverted-theme]='lightBackground'
 				[class.fadeOutUp]='accountService.transition | async'
 				[class.full-height]='fullHeight'
 				[class.padding]='!fullWidth'

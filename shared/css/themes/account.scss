@@ -33,8 +33,6 @@ $cyph-message-colors: map-merge($cyph-message-colors, (
 	)
 ));
 
-/*
-body.primary-account-theme cyph-account {
+body.primary-account-theme cyph-account .content-wrapper {
 	@include cyph-apply-theme;
 }
-*/
