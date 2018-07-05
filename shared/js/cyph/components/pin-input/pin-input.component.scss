@@ -12,7 +12,7 @@
 			}
 
 			@for $i from 0 to 5 {
-				$translateX: -(2.5 * $fontSize) + ($i * 0.75 * $fontSize) + 10.5px;
+				$translateX: -(2.5 * $fontSize) + $i * 0.75 * $fontSize + 10.5px;
 
 				&.length-#{$i} {
 					@include transform(translateX($translateX));
@@ -25,7 +25,7 @@
 		}
 
 		&:after {
-			left: (0.375 * $fontSize) + 10.5px;
+			left: 0.375 * $fontSize + 10.5px;
 			bottom: -0.18 * $fontSize;
 			letter-spacing: 0.75 * $fontSize;
 			font-size: 1.5 * $fontSize;
