@@ -6,10 +6,10 @@
 	[class.mobile]='envService.isMobile'
 >
 	<mat-card
-		fxFlex='95'
-		fxFlex.gt-sm='75'
+		fxFlex
+		fxFlex.sm='95'
+		fxFlex.md='75'
 		fxFlex.gt-md='50'
-		fxFlex.xs='100'
 		*ngIf='pinUnlock !== undefined'
 	>
 		<cyph-logo cardHeader></cyph-logo>
