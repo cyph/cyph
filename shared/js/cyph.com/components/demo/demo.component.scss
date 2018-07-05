@@ -26,14 +26,6 @@
 		display: none;
 	}
 
-	.logo-animation.connected {
-		height: 8em;
-		width: 8em;
-		min-height: 8em;
-		min-width: 8em;
-		background-size: 8em 8em;
-	}
-
 	> .desktop {
 		height: calc((100vw - 60px) * 0.47 * 0.565);
 		width: calc(47% + 1px);

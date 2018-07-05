@@ -18,6 +18,7 @@ import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {VirtualKeyboardWatcherService} from '../../services/virtual-keyboard-watcher.service';
 import {lockTryOnce} from '../../util/lock';
+import {getTimestamp} from '../../util/time';
 import {sleep, waitForIterable} from '../../util/wait';
 
 
@@ -35,6 +36,9 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	private readonly $textarea: Promise<JQuery>	= waitForIterable(
 		() => $(this.elementRef.nativeElement).find('.text-message-box textarea')
 	);
+
+	/** @ignore */
+	private lastSendTimestamp?: number;
 
 	/** @ignore */
 	private readonly mobileButtonLock: {}		= {};
@@ -129,7 +133,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 
 		const $textarea	= await this.$textarea;
 
-		$textarea.on('keypress', e => {
+		$textarea.on('keypress', async e => {
 			if (
 				(this.envService.isMobile && this.virtualKeyboardWatcherService.isOpen) ||
 				e.keyCode !== 13 ||
@@ -139,8 +143,10 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 			}
 
 			e.preventDefault();
-			this.send();
-			$textarea.val('');
+
+			if (await this.send()) {
+				$textarea.val('');
+			}
 		});
 
 		if (this.envService.isMobile) {
@@ -166,9 +172,28 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 		}
 	}
 
-	/** Sends current message. */
-	public async send () : Promise<void> {
-		await (this.customSendFunction ? this.customSendFunction : this.defaultSendFunction)();
+	/**
+	 * Sends current message.
+	 * @returns Whether send was processed.
+	 */
+	public async send () : Promise<boolean> {
+		const timestamp	= await getTimestamp();
+
+		try {
+			if (
+				this.lastSendTimestamp !== undefined &&
+				(timestamp - this.lastSendTimestamp) < this.chatService.messageDebounce
+			) {
+				return false;
+			}
+		}
+		finally {
+			this.lastSendTimestamp	= timestamp;
+		}
+
+		(this.customSendFunction ? this.customSendFunction : this.defaultSendFunction)();
+
+		return true;
 	}
 
 	constructor (

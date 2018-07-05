@@ -113,7 +113,7 @@ export class DemoService {
 	public readonly mobile: ChatData;
 
 	/** Runs the demo. */
-	public async run (facebookJoke: () => void) : Promise<void> {
+	public async run (facebookJoke: () => Promise<void>) : Promise<void> {
 		this.desktop.resolveStart();
 		this.mobile.resolveStart();
 		await sleep(2500);
@@ -125,8 +125,8 @@ export class DemoService {
 			const chatData	= message.isMobile ? this.mobile : this.desktop;
 			const other		= message.isMobile ? this.desktop : this.mobile;
 			const text		= translate(message.text);
-			const maxDelay	= text.length > 15 ? 500 : 250;
-			const minDelay	= 125;
+			const maxDelay	= text.length > 15 ? 1000 : 700;
+			const minDelay	= text.length > 15 ? 500 : 350;
 
 			await sleep(random(maxDelay, minDelay));
 
@@ -135,7 +135,7 @@ export class DemoService {
 				other.scrollDown.next();
 
 				if (!this.envService.isMobile) {
-					facebookJoke();
+					await facebookJoke();
 					await sleep();
 				}
 			}

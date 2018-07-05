@@ -40,8 +40,8 @@ export class PinInputComponent implements ControlValueAccessor, OnInit {
 	public onTouched?: () => void;
 
 	/** Removes extraneous characters from value. */
-	public readonly processValue					= memoize((value?: string|number) =>
-		value ? value.toString().replace(/[^\d]/g, '').slice(0, 4) : ''
+	public readonly processValue					= memoize((value?: string) =>
+		value ? value.replace(/[^\d]/g, '').slice(0, 4) : ''
 	);
 
 	/** Indicates whether input is required. */

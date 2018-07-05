@@ -197,6 +197,14 @@ export class AccountService {
 
 			if (
 				[
+					'register'
+				].indexOf(route) > -1
+			) {
+				return undefined;
+			}
+
+			if (
+				[
 					'appointments',
 					'contacts',
 					'docs',

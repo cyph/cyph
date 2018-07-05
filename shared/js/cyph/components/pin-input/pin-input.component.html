@@ -1,22 +1,24 @@
 <mat-form-field fxFlex>
-	<div class='input-wrapper'>
-		<input
-			#pinInput
-			matInput
-			cyphTranslate
-			[ngModel]='value | async'
-			(ngModelChange)='value.next(processValue($event))'
-			[disabled]='isDisabled'
-			(blur)='onTouched && onTouched()'
-			[name]='name'
-			type='number'
-			placeholder='PIN'
-			[required]='required'
-			[class.text-security]='hide'
-			max='9999'
-			pattern='\d\d\d\d'
-			data-lpignore='true'
-		/>
+	<div class='input-wrapper-outer' ngClass.xs='small'>
+		<div class='input-wrapper-inner'>
+			<input
+				#pinInput
+				matInput
+				cyphTranslate
+				[ngModel]='value | async'
+				(ngModelChange)='value.next(processValue($event))'
+				[ngClass]='"length-" + ((value | async)?.length || 0).toString()'
+				[disabled]='isDisabled'
+				(blur)='onTouched && onTouched()'
+				[name]='name'
+				type='tel'
+				placeholder='PIN'
+				[required]='required'
+				[class.text-security]='hide'
+				pattern='\d\d\d\d'
+				data-lpignore='true'
+			/>
+		</div>
 	</div>
 	<mat-icon
 		matSuffix

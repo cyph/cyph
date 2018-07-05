@@ -53,6 +53,10 @@ mat-sidenav-container {
 	background-color: rgba(33, 33, 33, 0.48) !important;
 }
 
+mat-tab-header {
+	max-width: 100%;
+}
+
 * {
 	-webkit-font-smoothing: antialiased !important;
 	-moz-osx-font-smoothing: grayscale !important;

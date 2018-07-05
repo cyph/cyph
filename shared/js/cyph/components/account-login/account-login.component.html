@@ -6,10 +6,10 @@
 	[class.mobile]='envService.isMobile'
 >
 	<mat-card
-		fxFlex='95'
-		fxFlex.gt-sm='75'
+		fxFlex
+		fxFlex.sm='95'
+		fxFlex.md='75'
 		fxFlex.gt-md='50'
-		fxFlex.xs='100'
 		*ngIf='pinUnlock !== undefined'
 	>
 		<cyph-logo cardHeader></cyph-logo>
@@ -49,7 +49,7 @@
 					</h3>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!pinUnlock'>
-					<mat-form-field fxFlex='60'>
+					<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
 						<input
 							matInput
 							cyphTranslate
@@ -63,7 +63,7 @@
 					</mat-form-field>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!pinUnlock || pinIsCustom'>
-					<mat-form-field fxFlex='60' *ngIf='pinUnlock'>
+					<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60' *ngIf='pinUnlock'>
 						<input
 							matInput
 							[(ngModel)]='pin'
@@ -81,7 +81,7 @@
 							{{hidePassword ? 'visibility' : 'visibility_off'}}
 						</mat-icon>
 					</mat-form-field>
-					<mat-form-field fxFlex='60' *ngIf='!pinUnlock'>
+					<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60' *ngIf='!pinUnlock'>
 						<input
 							matInput
 							[(ngModel)]='masterKey'
@@ -102,7 +102,9 @@
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='pinUnlock && !pinIsCustom'>
 					<cyph-pin-input
-						fxFlex='60'
+						fxFlex
+						fxFlex.sm='80'
+						fxFlex.gt-sm='60'
 						[(ngModel)]='pin'
 						name='pin'
 						[required]='true'
