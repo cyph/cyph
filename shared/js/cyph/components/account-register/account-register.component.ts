@@ -9,6 +9,8 @@ import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
+import {uuid} from '../../util/uuid';
+import {sleep} from '../../util/wait';
 
 
 /**
@@ -20,6 +22,9 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './account-register.component.html'
 })
 export class AccountRegisterComponent implements OnInit {
+	/** @ignore */
+	private usernameDebounceLast?: string;
+
 	/** Indicates whether registration attempt is in progress. */
 	public checking: boolean							= false;
 
@@ -103,11 +108,21 @@ export class AccountRegisterComponent implements OnInit {
 
 	/** Username. */
 	public username: FormControl						= new FormControl('', undefined, [
-		async control =>
-			await this.accountUserLookupService.exists(control.value, false, false) ?
-				{usernameTaken: {value: control.value}} :
+		async control => {
+			const value					= control.value;
+			const id					= uuid();
+			this.usernameDebounceLast	= id;
+
+			return (await sleep(500).then(async () =>
+				this.usernameDebounceLast === id ?
+					this.accountUserLookupService.exists(value, false, false) :
+					true
+			)) ?
+				{usernameTaken: {value}} :
 				/* tslint:disable-next-line:no-null-keyword */
 				null
+			;
+		}
 	]);
 
 	/** @see usernameMask */
