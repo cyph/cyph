@@ -113,7 +113,7 @@ export class DemoService {
 	public readonly mobile: ChatData;
 
 	/** Runs the demo. */
-	public async run (facebookJoke: () => void) : Promise<void> {
+	public async run (facebookJoke: () => Promise<void>) : Promise<void> {
 		this.desktop.resolveStart();
 		this.mobile.resolveStart();
 		await sleep(2500);
@@ -135,7 +135,7 @@ export class DemoService {
 				other.scrollDown.next();
 
 				if (!this.envService.isMobile) {
-					facebookJoke();
+					await facebookJoke();
 					await sleep();
 				}
 			}

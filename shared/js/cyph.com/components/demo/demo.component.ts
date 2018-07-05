@@ -202,9 +202,9 @@ export class DemoComponent implements AfterViewInit {
 		const $desktopFacebookPic: JQuery	= $(this.demoService.facebookPicFrame);
 		const $mobileFacebookPic: JQuery	= $(this.demoService.facebookPicFrame);
 
-		this.demoService.run(() => {
-			this.facebookJoke($desktopFacebookPic, $mobileFacebookPic);
-		});
+		this.demoService.run(async () =>
+			this.facebookJoke($desktopFacebookPic, $mobileFacebookPic)
+		);
 
 		if (!this.envService.isMobile) {
 			await waitForIterable(elements.demoListDesktop);
