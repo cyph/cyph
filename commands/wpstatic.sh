@@ -200,6 +200,9 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 				path	= \`js/\${hash}.js\`;
 				elem.attr('src', \`/blog/\${path}\`);
 			}
+			else if (!content) {
+				return;
+			}
 			else {
 				path	= \`css/\${hash}.css\`;
 				elem.replaceWith(\`
