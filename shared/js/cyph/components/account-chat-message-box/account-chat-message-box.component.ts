@@ -58,7 +58,7 @@ export class AccountChatMessageBoxComponent {
 	/** Submits form. */
 	public async submit () : Promise<void> {
 		if (this.chatMessageBox) {
-			return this.chatMessageBox.send();
+			await this.chatMessageBox.send();
 		}
 	}
 
