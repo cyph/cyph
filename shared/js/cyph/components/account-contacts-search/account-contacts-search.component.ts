@@ -123,7 +123,7 @@ export class AccountContactsSearchComponent {
 						const externalUser	= (
 							this.externalUsers &&
 							(results.length < 1 || results[0].user.username !== query) &&
-							(await this.accountUserLookupService.exists(query, false))
+							(await this.accountUserLookupService.exists(query, false, false))
 						) ?
 							query :
 							undefined
