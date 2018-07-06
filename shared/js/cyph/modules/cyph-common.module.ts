@@ -21,6 +21,7 @@ import {RedirectComponent} from '../components/redirect';
 import {SearchBarComponent} from '../components/search-bar';
 import {SignupFormComponent} from '../components/signup-form';
 import {AnchorDirective} from '../directives/anchor.directive';
+import {EnableLastPassDirective} from '../directives/enable-last-pass.directive';
 import {RouterLinkDirective} from '../directives/router-link.directive';
 import {TranslateDirective} from '../directives/translate.directive';
 import {AffiliateService} from '../services/affiliate.service';
@@ -54,6 +55,7 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageListComponent,
 		ContactComponent,
 		DynamicFormComponent,
+		EnableLastPassDirective,
 		HelpComponent,
 		LogoComponent,
 		PinInputComponent,
@@ -100,6 +102,7 @@ import {CyphWebModule} from './cyph-web.module';
 		CommonModule,
 		ContactComponent,
 		DynamicFormComponent,
+		EnableLastPassDirective,
 		HelpComponent,
 		LogoComponent,
 		PinInputComponent,
