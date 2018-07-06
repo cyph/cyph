@@ -291,7 +291,7 @@ export class AccountFilesService {
 	).pipe(map(([files, currentUser]) => files.reduce(
 		(n, {owner, size}) =>
 			n +
-			(currentUser && currentUser.user.username === owner ? 0 : size)
+			(currentUser && currentUser.user.username === owner ? size : 0)
 		,
 		0
 	)));
