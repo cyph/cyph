@@ -31,6 +31,8 @@ mat-sidenav.disabled {
 }
 
 mat-sidenav {
+	min-width: 250px;
+
 	/* Temporary workaround for Angular Material bug */
 	visibility: hidden;
 
