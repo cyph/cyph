@@ -12,7 +12,7 @@
 		fxFlex.gt-md='50'
 		*ngIf='pinUnlock !== undefined'
 	>
-		<cyph-logo cardHeader></cyph-logo>
+		<cyph-logo cardHeader homeLink></cyph-logo>
 		<mat-card-title cyphTranslate>
 			<span *ngIf='!pinUnlock'>{{stringsService.logInTitle}}</span>
 			<span *ngIf='pinUnlock'>{{stringsService.unlockTitle}}</span>

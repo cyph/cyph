@@ -6,10 +6,11 @@
 	width: 100%;
 }
 
-div {
+* {
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
 	background-size: contain;
+	display: block;
 	height: 100%;
 	width: 100%;
 
