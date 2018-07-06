@@ -25,6 +25,6 @@ export class AnchorDirective implements OnInit {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private renderer: Renderer2
+		private readonly renderer: Renderer2
 	) {}
 }

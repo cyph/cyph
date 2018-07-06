@@ -23,7 +23,7 @@ export class AutofocusDirective implements OnInit {
 
 		const $elem	= $(<HTMLElement> this.elementRef.nativeElement);
 		await waitForIterable(() => $elem.filter(':visible'));
-		$elem.focus();
+		$elem.trigger('focus');
 	}
 
 	constructor (

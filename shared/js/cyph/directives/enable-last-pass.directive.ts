@@ -7,6 +7,7 @@ import {uuid} from '../util/uuid';
  * Attempts to block LastPass autofilling.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'form:not([cyphEnableLastPass]), input:not([cyphEnableLastPass])'
 })
 export class EnableLastPassDirective implements OnInit {
