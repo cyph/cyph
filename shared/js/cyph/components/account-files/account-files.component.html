@@ -15,10 +15,9 @@
 			'
 			[attr.data-index]='i'
 			[class.bounceInRight]='!accountFilesService.initiated'
-			[class.file-card]='(accountFilesService.isImage(file.id) | async) === false'
 			[ngClass]='"_" + i'
 			[routerLink]='accountService.routeRoot + "files"'
-			(click)='accountFilesService.openImage(file.id)'
+			(click)='accountFilesService.openFile(file.id)'
 		>
 			<mat-card-header fxLayout='row'>
 				<mat-icon mat-card-avatar>
@@ -71,7 +70,7 @@
 							accountFilesService.downloadAndSave(file.id);
 							$event.stopPropagation();
 						'
-						*ngIf='(accountFilesService.isImage(file.id) | async) === false'
+						*ngIf='accountFilesService.isImage(file.id) | async'
 					>
 						<mat-icon>cloud_download</mat-icon>
 					</button>
