@@ -24,6 +24,9 @@ export class PinInputComponent implements ControlValueAccessor, OnInit {
 	/** Change event callback. */
 	private onChange?: (s: string) => void;
 
+	/** Indicates whether input should autofocus. */
+	@Input() public autofocus: boolean				= false;
+
 	/** Hide PIN. */
 	@Input() public hide: boolean					= true;
 

@@ -165,6 +165,7 @@
 														[textMask]='usernameMask'
 														name='cyphUsername'
 														placeholder='Username'
+														cyphAutofocus
 														required
 													/>
 													<div
@@ -656,6 +657,7 @@
 						fxFlex.gt-sm='60'
 						[(ngModel)]='lockScreenPIN'
 						name='lockScreenPIN'
+						[autofocus]='true'
 						[hide]='false'
 						[required]='useLockScreenPIN'
 					></cyph-pin-input>

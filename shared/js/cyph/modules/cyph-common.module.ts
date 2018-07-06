@@ -21,6 +21,7 @@ import {RedirectComponent} from '../components/redirect';
 import {SearchBarComponent} from '../components/search-bar';
 import {SignupFormComponent} from '../components/signup-form';
 import {AnchorDirective} from '../directives/anchor.directive';
+import {AutofocusDirective} from '../directives/autofocus.directive';
 import {EnableLastPassDirective} from '../directives/enable-last-pass.directive';
 import {RouterLinkDirective} from '../directives/router-link.directive';
 import {TranslateDirective} from '../directives/translate.directive';
@@ -43,6 +44,7 @@ import {CyphWebModule} from './cyph-web.module';
 @NgModule({
 	declarations: [
 		AnchorDirective,
+		AutofocusDirective,
 		BlankComponent,
 		CalendarInviteComponent,
 		CalendarInviteInheritNgFormComponent,
@@ -89,6 +91,7 @@ import {CyphWebModule} from './cyph-web.module';
 	],
 	exports: [
 		AnchorDirective,
+		AutofocusDirective,
 		BlankComponent,
 		CalendarInviteComponent,
 		CalendarInviteInheritNgFormComponent,

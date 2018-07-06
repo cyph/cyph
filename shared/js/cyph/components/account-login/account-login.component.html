@@ -57,6 +57,7 @@
 							[textMask]='usernameMask'
 							name='cyphUsername'
 							placeholder='Username'
+							cyphAutofocus
 							required
 						/>
 					</mat-form-field>
@@ -69,6 +70,7 @@
 							name='lockScreenPIN'
 							[type]='hidePassword ? "password" : "text"'
 							[placeholder]='stringsService.pin'
+							cyphAutofocus
 							required
 						/>
 						<mat-icon
@@ -104,6 +106,7 @@
 						fxFlex.gt-sm='60'
 						[(ngModel)]='pin'
 						name='pin'
+						[autofocus]='true'
 						[required]='true'
 					></cyph-pin-input>
 				</div>
