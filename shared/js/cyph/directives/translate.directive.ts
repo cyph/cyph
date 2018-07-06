@@ -1,4 +1,4 @@
-import {Directive, ElementRef, Renderer2} from '@angular/core';
+import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
 import * as $ from 'jquery';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
@@ -11,9 +11,9 @@ import {translate} from '../util/translate';
 @Directive({
 	selector: '[cyphTranslate]'
 })
-export class TranslateDirective {
+export class TranslateDirective implements OnInit {
 	/** @ignore */
-	private handleElement (nativeElement: HTMLElement, renderer: Renderer2) : void {
+	private handleElement (nativeElement: HTMLElement) : void {
 		const $element	= $(nativeElement);
 		const $children	= $element.children();
 
@@ -21,21 +21,21 @@ export class TranslateDirective {
 			this.translate(
 				$element.attr(attr) || '',
 				translation => {
-					renderer.setAttribute(nativeElement, attr, translation);
+					this.renderer.setAttribute(nativeElement, attr, translation);
 				}
 			);
 		}
 
 		if ($children.length > 0) {
 			for (const child of $children.not('mat-icon, [cyphTranslate]').toArray()) {
-				this.handleElement(child, renderer);
+				this.handleElement(child);
 			}
 		}
 		else if ($element.is(':not(mat-icon)')) {
 			this.translate(
 				$element.text(),
 				translation => {
-					renderer.setValue(nativeElement, translation);
+					this.renderer.setValue(nativeElement, translation);
 				}
 			);
 		}
@@ -56,21 +56,31 @@ export class TranslateDirective {
 		callback(translation);
 	}
 
-	constructor (
-		elementRef: ElementRef,
-		renderer: Renderer2,
-		configService: ConfigService,
-		envService: EnvService
-	) {
-		if (envService.language === configService.defaultLanguage) {
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		if (this.envService.language === this.configService.defaultLanguage) {
 			return;
 		}
 
-		if (!elementRef.nativeElement || !envService.isWeb) {
+		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
 		}
 
-		this.handleElement(elementRef.nativeElement, renderer);
+		this.handleElement(this.elementRef.nativeElement);
 	}
+
+	constructor (
+		/** @ignore */
+		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly renderer: Renderer2,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly envService: EnvService
+	) {}
 }
