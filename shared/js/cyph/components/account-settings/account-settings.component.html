@@ -70,12 +70,14 @@
 				</span>
 				<ng-template #getPremium>
 					<span>{{stringsService.disabled}}</span>
-					&ngsp;
-					(<a
-						[href]='envService.homeWordPressUrl + "pricing/#accounts"'
-						cyphTranslate
-						target='_blank'
-					>upgrade now</a>)
+					<ng-container *ngIf='false'>
+						&ngsp;
+						(<a
+							[href]='envService.homeWordPressUrl + "pricing/#accounts"'
+							cyphTranslate
+							target='_blank'
+						>upgrade now</a>)
+					</ng-container>
 				</ng-template>
 			</div>
 
