@@ -1,4 +1,4 @@
-import {Directive, ElementRef, Renderer2} from '@angular/core';
+import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
 
 
 /**
@@ -8,10 +8,23 @@ import {Directive, ElementRef, Renderer2} from '@angular/core';
 	/* tslint:disable-next-line:directive-selector */
 	selector: 'a'
 })
-export class AnchorDirective {
-	constructor (elementRef: ElementRef, renderer: Renderer2) {
-		if (elementRef.nativeElement) {
-			renderer.setAttribute(elementRef.nativeElement, 'rel', 'noopener noreferrer');
+export class AnchorDirective implements OnInit {
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		if (this.elementRef.nativeElement) {
+			this.renderer.setAttribute(
+				this.elementRef.nativeElement,
+				'rel',
+				'noopener noreferrer'
+			);
 		}
 	}
+
+	constructor (
+		/** @ignore */
+		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly renderer: Renderer2
+	) {}
 }

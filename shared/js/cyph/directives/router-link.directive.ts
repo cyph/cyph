@@ -1,4 +1,4 @@
-import {Directive, ElementRef, Renderer2} from '@angular/core';
+import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
 
 
 /**
@@ -8,10 +8,19 @@ import {Directive, ElementRef, Renderer2} from '@angular/core';
 	/* tslint:disable-next-line:directive-selector */
 	selector: '[routerLink]'
 })
-export class RouterLinkDirective {
-	constructor (elementRef: ElementRef, renderer: Renderer2) {
-		if (elementRef.nativeElement) {
-			renderer.addClass(elementRef.nativeElement, 'router-link');
+export class RouterLinkDirective implements OnInit {
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		if (this.elementRef.nativeElement) {
+			this.renderer.addClass(this.elementRef.nativeElement, 'router-link');
 		}
 	}
+
+	constructor (
+		/** @ignore */
+		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly renderer: Renderer2
+	) {}
 }

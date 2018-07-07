@@ -63,9 +63,10 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 	/** Indicates whether section should take up 100% height. */
 	public get fullHeight () : boolean {
-		return this.accountDatabaseService.currentUser.value !== undefined && [
+		return [
 			'',
 			'contacts',
+			'logout',
 			'messages',
 			'patients',
 			'staff'
@@ -76,16 +77,13 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 	/** Indicates whether section should take up 100% width. */
 	public get fullWidth () : boolean {
-		return this.envService.isMobile || (
-			this.accountDatabaseService.currentUser.value !== undefined && [
-				'',
-				'messages',
-				'profile',
-				'wallets'
-			].find(
-				path => this.route === path
-			) !== undefined
-		);
+		return this.envService.isMobile || [
+			'messages',
+			'profile',
+			'wallets'
+		].find(
+			path => this.route === path
+		) !== undefined;
 	}
 
 	/** Indicates whether menu should be displayed. */

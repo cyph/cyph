@@ -16,10 +16,15 @@ name="${2}"
 
 
 if \
-	[ "${type}" != 'component' -a "${type}" != 'resolver' -a "${type}" != 'service' ] || \
+	( \
+		[ "${type}" != 'component' ] && \
+		[ "${type}" != 'directive' ] && \
+		[ "${type}" != 'resolver' ] && \
+		[ "${type}" != 'service' ] \
+	) || \
 	[ "${name}" == '' ] \
 ; then
-	echo 'Usage: docker.js generate [component|resolver|service] MyNewThing'
+	echo 'Usage: docker.js generate [component|directive|resolver|service] MyNewThing'
 	exit 1
 fi
 
@@ -129,6 +134,39 @@ fi
 files="${dir}"
 
 
+elif [ "${type}" == 'directive' ] ; then
+
+mkdir -p shared/js/cyph/directives
+
+file="shared/js/cyph/directives/${selector}.directive.ts"
+
+cat > ${file} << EOM
+import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
+
+
+/**
+ * Angular directive for ${genericDescription}.
+ */
+@Directive({
+	selector: '[cyph${name}]'
+})
+export class ${class} implements OnInit {
+	/** @inheritDoc */
+	public ngOnInit () : void {}
+
+	constructor (
+		/** @ignore */
+		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly renderer: Renderer2
+	) {}
+}
+EOM
+
+files="${file}"
+
+
 elif [ "${type}" == 'resolver' ] ; then
 
 mkdir -p shared/js/cyph/resolvers
@@ -149,9 +187,7 @@ export class ${class}Service implements Resolve<Balls> {
 	public resolve (
 		route: ActivatedRouteSnapshot,
 		state: RouterStateSnapshot
-	) : Observable<Balls> {
-
-	}
+	) : Observable<Balls> {}
 
 	constructor (
 		/** @ignore */

@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import * as Dropzone from 'dropzone';
 import {uuid} from '../util/uuid';
+import {waitUntilTrue} from '../util/wait';
 
 
 /** File drop zone. */
@@ -20,7 +21,7 @@ export class DropZoneDirective implements OnChanges {
 	private readonly className: string	= 'cyph-drop-zone';
 
 	/** @ignore */
-	private dropZone?: Dropzone;
+	private dropZone?: Promise<Dropzone>;
 
 	/** @ignore */
 	private readonly id: string	= `id-${uuid()}`;
@@ -38,11 +39,12 @@ export class DropZoneDirective implements OnChanges {
 	@Output() public readonly fileDrop: EventEmitter<File>	= new EventEmitter<File>();
 
 	/** @inheritDoc */
-	public ngOnChanges () : void {
+	public async ngOnChanges () : Promise<void> {
 		this.renderer.addClass(this.elementRef.nativeElement, this.id);
 
 		if (this.dropZone) {
-			this.dropZone.destroy();
+			(await this.dropZone).destroy();
+			this.dropZone	= undefined;
 		}
 
 		if (this.cyphDropZone === false) {
@@ -50,21 +52,29 @@ export class DropZoneDirective implements OnChanges {
 			return;
 		}
 
-		const dropZone	= new Dropzone(`.${this.id}`, {
-			accept: (file, done) => {
-				done('ignore');
-				dropZone.removeAllFiles();
-				this.fileDrop.emit(file);
-			},
-			acceptedFiles: this.accept,
-			url: 'data:text/plain;ascii,'
-		});
-
-		if (this.cyphDropZoneClass) {
-			this.renderer.addClass(this.elementRef.nativeElement, this.className);
+		if (!this.elementRef.nativeElement) {
+			return;
 		}
 
-		this.dropZone	= dropZone;
+		this.dropZone	= waitUntilTrue(() =>
+			document.body.contains(this.elementRef.nativeElement)
+		).then(() => {
+			const dropZone	= new Dropzone(`.${this.id}`, {
+				accept: (file, done) => {
+					done('ignore');
+					dropZone.removeAllFiles();
+					this.fileDrop.emit(file);
+				},
+				acceptedFiles: this.accept,
+				url: 'data:text/plain;ascii,'
+			});
+
+			if (this.cyphDropZoneClass) {
+				this.renderer.addClass(this.elementRef.nativeElement, this.className);
+			}
+
+			return dropZone;
+		});
 	}
 
 	constructor (

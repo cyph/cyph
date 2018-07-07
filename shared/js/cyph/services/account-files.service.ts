@@ -291,7 +291,7 @@ export class AccountFilesService {
 	).pipe(map(([files, currentUser]) => files.reduce(
 		(n, {owner, size}) =>
 			n +
-			(currentUser && currentUser.user.username === owner ? 0 : size)
+			(currentUser && currentUser.user.username === owner ? size : 0)
 		,
 		0
 	)));
@@ -969,14 +969,28 @@ export class AccountFilesService {
 		return this.noteSnippets.get(id) || '';
 	}
 
-	/** Opens an image file. */
-	public async openImage (id: string) : Promise<void> {
-		if (await this.isImage(id)) {
+	/** Opens a file. */
+	public async openFile (id: string) : Promise<void> {
+		if (!(await this.openImage(id))) {
+			await this.downloadAndSave(id).result;
+		}
+	}
+
+	/**
+	 * Opens an image file.
+	 * @returns Whether or not file is an image.
+	 */
+	public async openImage (id: string) : Promise<boolean> {
+		const isImage	= await this.isImage(id);
+
+		if (isImage) {
 			this.dialogService.image({
 				src: await this.downloadURI(id).result,
 				title: (await this.getFile(id)).name
 			});
 		}
+
+		return isImage;
 	}
 
 	/** Removes a file. */

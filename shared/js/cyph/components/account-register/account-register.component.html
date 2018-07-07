@@ -38,7 +38,7 @@
 	*ngIf='!getMasterKeyOnly && !getPinOnly'
 >
 	<mat-card fxFlex class='fullscreen'>
-		<cyph-logo cardHeader></cyph-logo>
+		<cyph-logo cardHeader homeLink></cyph-logo>
 		<mat-card-title>
 			{{stringsService.registerTitle}}
 		</mat-card-title>
@@ -49,7 +49,6 @@
 						fxFlex
 						fxLayout='column'
 						fxLayoutGap='32px'
-						autocomplete='off'
 						ngNativeValidate
 						(submit)='submit()'
 					>
@@ -166,8 +165,8 @@
 														[textMask]='usernameMask'
 														name='cyphUsername'
 														placeholder='Username'
+														cyphAutofocus
 														required
-														data-lpignore='true'
 													/>
 													<div
 														matSuffix
@@ -231,7 +230,6 @@
 															stringsService.nameOrPseudonym
 														'
 														required
-														data-lpignore='true'
 													/>
 												</mat-form-field>
 											</div>
@@ -253,7 +251,6 @@
 															stringsService.emailOptional
 														'
 														[required]='envService.isTelehealth'
-														data-lpignore='true'
 													/>
 												</mat-form-field>
 											</div>
@@ -274,7 +271,6 @@
 														type='inviteCode'
 														placeholder='Invite Code'
 														required
-														data-lpignore='true'
 													/>
 												</mat-form-field>
 											</div>
@@ -564,7 +560,6 @@
 							placeholder='Master Key'
 							[required]='!useXkcdPassphrase'
 							[pattern]='".{" + masterKeyLength + ",}"'
-							data-lpignore='true'
 						/>
 						<mat-icon
 							matSuffix
@@ -596,7 +591,6 @@
 							placeholder='Confirm Master Key'
 							[required]='!useXkcdPassphrase'
 							[pattern]='masterKey'
-							data-lpignore='true'
 						/>
 						<mat-icon
 							matSuffix
@@ -663,6 +657,7 @@
 						fxFlex.gt-sm='60'
 						[(ngModel)]='lockScreenPIN'
 						name='lockScreenPIN'
+						[autofocus]='true'
 						[hide]='false'
 						[required]='useLockScreenPIN'
 					></cyph-pin-input>
@@ -697,7 +692,6 @@
 							placeholder='Lock Screen Password'
 							[required]='!useLockScreenPIN'
 							[pattern]='".{" + lockScreenPasswordLength + ",}"'
-							data-lpignore='true'
 						/>
 						<mat-icon
 							matSuffix
@@ -729,7 +723,6 @@
 							placeholder='Confirm Lock Screen Password'
 							[required]='!useLockScreenPIN'
 							[pattern]='lockScreenPassword'
-							data-lpignore='true'
 						/>
 						<mat-icon
 							matSuffix

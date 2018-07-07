@@ -18,6 +18,9 @@ export class LogoComponent {
 	private cardHeaderInternal: boolean	= false;
 
 	/** @ignore */
+	private homeLinkInternal: boolean	= false;
+
+	/** @ignore */
 	private iconInternal: boolean		= false;
 
 	/** Possible logos. */
@@ -99,6 +102,15 @@ export class LogoComponent {
 		this.cardHeaderInternal	= (<any> value) === '' ? true : value;
 	}
 
+	/** Indicates whether to link to home URL. */
+	@Input()
+	public get homeLink () : boolean {
+		return this.homeLinkInternal;
+	}
+	public set homeLink (value: boolean) {
+		this.homeLinkInternal	= (<any> value) === '' ? true : value;
+	}
+
 	/** Indicates whether to use icon image. */
 	@Input()
 	public get icon () : boolean {
@@ -145,8 +157,8 @@ export class LogoComponent {
 		/** @ignore */
 		private readonly domSanitizer: DomSanitizer,
 
-		/** @ignore */
-		private readonly envService: EnvService,
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

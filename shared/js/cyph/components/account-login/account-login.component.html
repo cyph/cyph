@@ -12,7 +12,7 @@
 		fxFlex.gt-md='50'
 		*ngIf='pinUnlock !== undefined'
 	>
-		<cyph-logo cardHeader></cyph-logo>
+		<cyph-logo cardHeader homeLink></cyph-logo>
 		<mat-card-title cyphTranslate>
 			<span *ngIf='!pinUnlock'>{{stringsService.logInTitle}}</span>
 			<span *ngIf='pinUnlock'>{{stringsService.unlockTitle}}</span>
@@ -38,7 +38,7 @@
 			</p>
 		</mat-card-subtitle>
 		<mat-card-content>
-			<form autocomplete='off' ngNativeValidate (submit)='submit()'>
+			<form ngNativeValidate (submit)='submit()'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<h3 class='cyph-banner warn' [style.visibility]='error ? "visible" : "hidden"'>
 						{{
@@ -57,8 +57,8 @@
 							[textMask]='usernameMask'
 							name='cyphUsername'
 							placeholder='Username'
+							cyphAutofocus
 							required
-							data-lpignore='true'
 						/>
 					</mat-form-field>
 				</div>
@@ -70,8 +70,8 @@
 							name='lockScreenPIN'
 							[type]='hidePassword ? "password" : "text"'
 							[placeholder]='stringsService.pin'
+							cyphAutofocus
 							required
-							data-lpignore='true'
 						/>
 						<mat-icon
 							matSuffix
@@ -89,7 +89,6 @@
 							[type]='hidePassword ? "password" : "text"'
 							[placeholder]='stringsService.masterKey'
 							required
-							data-lpignore='true'
 						/>
 						<mat-icon
 							matSuffix
@@ -107,6 +106,7 @@
 						fxFlex.gt-sm='60'
 						[(ngModel)]='pin'
 						name='pin'
+						[autofocus]='true'
 						[required]='true'
 					></cyph-pin-input>
 				</div>

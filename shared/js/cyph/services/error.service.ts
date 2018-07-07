@@ -29,7 +29,7 @@ export class ErrorService implements ErrorHandler {
 		const errorMessage: string	= !err ? '' : err.message ? err.message : err.toString();
 
 		if (
-			(debugOnly && this.envService.debug) ||
+			(debugOnly && !this.envService.debug) ||
 			(requireErrorMessage && !errorMessage) ||
 			/* Annoying useless iframe-related spam */
 			errorMessage === 'Script error.' ||
