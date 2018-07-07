@@ -1,4 +1,6 @@
 import {Component, Input} from '@angular/core';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
 import {AccountUserTypes} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -19,6 +21,11 @@ import {StringsService} from '../../services/strings.service';
 export class AccountMenuComponent {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+
+	/** @see AccountService.menuExpanded */
+	public readonly menuExpanded: Observable<boolean>			=
+		this.accountService.menuExpanded.pipe(map(menuExpanded => this.sidenav || menuExpanded))
+	;
 
 	/** If true, is inside a sidenav. */
 	@Input() public sidenav: boolean							= false;

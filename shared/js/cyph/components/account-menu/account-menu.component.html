@@ -1,14 +1,14 @@
 <div
 	fxFlexFill
 	fxLayout='row'
-	[class.collapsed]='(accountService.menuExpanded | async) === false'
+	[class.collapsed]='(menuExpanded | async) === false'
 	[class.menu]='!sidenav'
 	[class.menu-root]='!sidenav'
 	[class.sidenav]='sidenav'
 	*ngIf='accountDatabaseService.currentUser.value'
 >
 	<div
-		[fxFlex]='(accountService.menuExpanded | async) ? "25px" : "10px"'
+		[fxFlex]='(menuExpanded | async) ? "25px" : "10px"'
 		*ngIf='!sidenav && (accountService.menuReduced | async) === false'
 	></div>
 
@@ -16,13 +16,13 @@
 		fxFlex
 		fxLayout='column'
 		[fxLayoutAlign]='
-			(accountService.menuExpanded | async) ? "center stretch" : "center center"
+			(menuExpanded | async) ? "center stretch" : "center center"
 		'
 		[fxLayoutGap]='!sidenav && (accountService.menuReduced | async) ? "2px" : "16px"'
 	>
 		<ng-container *ngIf='!sidenav'>
 			<div></div>
-			<div *ngIf='accountService.menuExpanded | async'></div>
+			<div *ngIf='menuExpanded | async'></div>
 		</ng-container>
 
 		<button
@@ -34,7 +34,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded | async'
+			*ngIf='menuExpanded | async'
 		>
 			<cyph-logo></cyph-logo>
 		</button>
@@ -46,7 +46,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot'
 			(click)='click()'
-			*ngIf='(accountService.menuExpanded | async) === false'
+			*ngIf='(menuExpanded | async) === false'
 		>
 			<cyph-logo icon></cyph-logo>
 		</button>
@@ -57,7 +57,7 @@
 			<div></div>
 			<div fxLayoutAlign='center center'>
 				<div
-					[fxFlex]='(accountService.menuExpanded | async) ? "60" : "6em"'
+					[fxFlex]='(menuExpanded | async) ? "60" : "6em"'
 					fxHide.lt-md
 					fxLayoutAlign='center center'
 				>
@@ -85,7 +85,7 @@
 		<ng-container *ngTemplateOutlet='buttons'></ng-container>
 
 		<div></div>
-		<div *ngIf='accountService.menuExpanded | async'></div>
+		<div *ngIf='menuExpanded | async'></div>
 	</div>
 
 	<button
@@ -99,7 +99,7 @@
 		(click)='accountService.toggleMenu()'
 		*ngIf='accountService.menuExpandable | async'
 	>
-		<mat-icon [class.flipped]='(accountService.menuExpanded | async) === false'>
+		<mat-icon [class.flipped]='(menuExpanded | async) === false'>
 			keyboard_arrow_left
 		</mat-icon>
 	</button>
@@ -127,7 +127,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "incoming-patient-info"'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded | async'
+			*ngIf='menuExpanded | async'
 		>
 			<mat-icon>local_hospital</mat-icon>
 			&ngsp;
@@ -141,7 +141,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "incoming-patient-info"'
 			(click)='click()'
-			*ngIf='(accountService.menuExpanded | async) === false'
+			*ngIf='(menuExpanded | async) === false'
 		>
 			<mat-icon>local_hospital</mat-icon>
 		</button>
@@ -156,7 +156,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "appointments"'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded | async'
+			*ngIf='menuExpanded | async'
 		>
 			<mat-icon>date_range</mat-icon>
 			&ngsp;
@@ -170,7 +170,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "appointments"'
 			(click)='click()'
-			*ngIf='(accountService.menuExpanded | async) === false'
+			*ngIf='(menuExpanded | async) === false'
 		>
 			<mat-icon>date_range</mat-icon>
 		</button>
@@ -190,7 +190,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "doctors"'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded | async'
+			*ngIf='menuExpanded | async'
 		>
 			<mat-icon svgIcon='doctor'></mat-icon>
 			&ngsp;
@@ -204,7 +204,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "doctors"'
 			(click)='click()'
-			*ngIf='(accountService.menuExpanded | async) === false'
+			*ngIf='(menuExpanded | async) === false'
 		>
 			<mat-icon svgIcon='doctor'></mat-icon>
 		</button>
@@ -224,7 +224,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "patients"'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded | async'
+			*ngIf='menuExpanded | async'
 		>
 			<mat-icon>local_hospital</mat-icon>
 			&ngsp;
@@ -238,7 +238,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "patients"'
 			(click)='click()'
-			*ngIf='(accountService.menuExpanded | async) === false'
+			*ngIf='(menuExpanded | async) === false'
 		>
 			<mat-icon>local_hospital</mat-icon>
 		</button>
@@ -251,7 +251,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "staff"'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded | async'
+			*ngIf='menuExpanded | async'
 		>
 			<mat-icon>people</mat-icon>
 			&ngsp;
@@ -265,7 +265,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "staff"'
 			(click)='click()'
-			*ngIf='(accountService.menuExpanded | async) === false'
+			*ngIf='(menuExpanded | async) === false'
 		>
 			<mat-icon>people</mat-icon>
 		</button>
@@ -278,7 +278,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "ehr-access"'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded | async'
+			*ngIf='menuExpanded | async'
 		>
 			<mat-icon>vpn_key</mat-icon>
 			&ngsp;
@@ -292,7 +292,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "ehr-access"'
 			(click)='click()'
-			*ngIf='(accountService.menuExpanded | async) === false'
+			*ngIf='(menuExpanded | async) === false'
 		>
 			<mat-icon>vpn_key</mat-icon>
 		</button>
@@ -307,7 +307,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "contacts"'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded | async'
+			*ngIf='menuExpanded | async'
 		>
 			<mat-icon>people</mat-icon>
 			&ngsp;
@@ -321,7 +321,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "contacts"'
 			(click)='click()'
-			*ngIf='(accountService.menuExpanded | async) === false'
+			*ngIf='(menuExpanded | async) === false'
 		>
 			<mat-icon>people</mat-icon>
 		</button>
@@ -341,7 +341,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "files"'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded | async'
+			*ngIf='menuExpanded | async'
 		>
 			<mat-icon>folder</mat-icon>
 			&ngsp;
@@ -355,7 +355,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "files"'
 			(click)='click()'
-			*ngIf='(accountService.menuExpanded | async) === false'
+			*ngIf='(menuExpanded | async) === false'
 		>
 			<mat-icon>folder</mat-icon>
 		</button>
@@ -368,7 +368,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "notes"'
 			(click)='click()'
-			*ngIf='accountService.menuExpanded | async'
+			*ngIf='menuExpanded | async'
 		>
 			<mat-icon>create</mat-icon>
 			&ngsp;
@@ -382,7 +382,7 @@
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "notes"'
 			(click)='click()'
-			*ngIf='(accountService.menuExpanded | async) === false'
+			*ngIf='(menuExpanded | async) === false'
 		>
 			<mat-icon>create</mat-icon>
 		</button>
@@ -397,7 +397,7 @@
 			(click)='click()'
 			*ngIf='
 				accountService.enableDocs &&
-				(accountService.menuExpanded | async)
+				(menuExpanded | async)
 			'
 		>
 			<mat-icon>library_books</mat-icon>
@@ -414,7 +414,7 @@
 			(click)='click()'
 			*ngIf='
 				accountService.enableDocs &&
-				(accountService.menuExpanded | async) === false
+				(menuExpanded | async) === false
 			'
 		>
 			<mat-icon>library_books</mat-icon>
@@ -434,7 +434,7 @@
 			(click)='click()'
 			*ngIf='
 				(!envService.environment.production || envService.isTelehealth) &&
-				(accountService.menuExpanded | async)
+				(menuExpanded | async)
 			'
 		>
 			<ng-container *ngIf='!envService.isTelehealth; else medicalFormsIcon'>
@@ -453,7 +453,7 @@
 			(click)='click()'
 			*ngIf='
 				(!envService.environment.production || envService.isTelehealth) &&
-				(accountService.menuExpanded | async) === false
+				(menuExpanded | async) === false
 			'
 		>
 			<mat-icon>content_paste</mat-icon>
@@ -469,7 +469,7 @@
 			(click)='click()'
 			*ngIf='
 				accountService.enableWallets &&
-				(accountService.menuExpanded | async)
+				(menuExpanded | async)
 			'
 		>
 			<mat-icon>account_balance_wallet</mat-icon>
@@ -486,7 +486,7 @@
 			(click)='click()'
 			*ngIf='
 				accountService.enableWallets &&
-				(accountService.menuExpanded | async) === false
+				(menuExpanded | async) === false
 			'
 		>
 			<mat-icon>account_balance_wallet</mat-icon>
@@ -501,7 +501,7 @@
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "settings"'
 		(click)='click()'
-		*ngIf='accountService.menuExpanded | async'
+		*ngIf='menuExpanded | async'
 	>
 		<mat-icon>settings</mat-icon>
 		&ngsp;
@@ -515,7 +515,7 @@
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "settings"'
 		(click)='click()'
-		*ngIf='(accountService.menuExpanded | async) === false'
+		*ngIf='(menuExpanded | async) === false'
 	>
 		<mat-icon>settings</mat-icon>
 	</button>
@@ -530,7 +530,7 @@
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "logout"'
 		(click)='click()'
-		*ngIf='accountService.menuExpanded | async'
+		*ngIf='menuExpanded | async'
 	>
 		<mat-icon>exit_to_app</mat-icon>
 		&ngsp;
@@ -544,7 +544,7 @@
 		matTooltipPosition='right'
 		[routerLink]='accountService.routeRoot + "logout"'
 		(click)='click()'
-		*ngIf='(accountService.menuExpanded | async) === false'
+		*ngIf='(menuExpanded | async) === false'
 	>
 		<mat-icon>exit_to_app</mat-icon>
 	</button>
