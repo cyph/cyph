@@ -12,7 +12,8 @@
 	&.deselected {
 		cursor: pointer;
 		opacity: 0.25;
-		border: dashed white 1.5px;
+		border-style: dashed;
+		border-width: 1.5px;
 		background-color: transparent;
 
 		* {

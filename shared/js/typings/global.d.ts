@@ -6,6 +6,12 @@ declare let accountRoot: string;
 
 /**
  * @global
+ * If true, primary accounts theme will be applied.
+ */
+declare let accountPrimaryTheme: boolean;
+
+/**
+ * @global
  * Message to return for beforeunload event.
  */
 declare let beforeUnloadMessage: string|undefined;

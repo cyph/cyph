@@ -1,16 +1,15 @@
 @import '../theme';
 
-$cyph-accent: mat-palette($mat-deep-purple, 400, 300, 500);
 $cyph-is-dark: false;
-$cyph-background: #eeecf1;
-$cyph-foreground: #4d5062;
-$cyph-inverted: #f1f1f1;
+$cyph-background: #f5f5f6;
+$cyph-foreground: #424242;
+$cyph-inverted: #eeecf1;
 $cyph-progress-foreground: #e7c447;
 $cyph-speed-dial-action-alt-background: $cyph-background;
 $cyph-speed-dial-action-alt-foreground: $cyph-foreground;
 
 $cyph-message-box-colors: map-merge($cyph-message-box-colors, (
-	desktopBackground: rgba(146, 149, 163, 0.5),
+	desktopBackground: white,
 	desktopGlow: $cyph-progress-foreground,
 	text: black
 ));
@@ -21,18 +20,30 @@ $cyph-message-colors: map-merge($cyph-message-colors, (
 		mobile: transparent,
 		text: $cyph-foreground
 	),
-	me: (
+	me: map-merge(map-get($cyph-message-colors, me), (
 		desktop: transparent,
-		mobile: map-get($mat-amber, 400),
+		mobile: rgba(map-get(map-get($cyph-message-colors, me), mobile), 0.9),
 		text: $cyph-foreground
-	),
-	other: (
+	)),
+	other: map-merge(map-get($cyph-message-colors, other), (
 		desktop: transparent,
-		mobile: map-get($mat-yellow, 600),
+		mobile: rgba(map-get(map-get($cyph-message-colors, other), mobile), 0.7),
 		text: $cyph-foreground
-	)
+	))
 ));
 
-body.primary-account-theme cyph-account .content-wrapper {
-	@include cyph-apply-theme;
+body.primary-account-theme {
+	@include cyph-apply-theme(false, true);
+
+	cyph-account-menu, mat-card, mat-dialog-container {
+		@include cyph-inverted-theme;
+	}
+
+	cyph-account-menu .menu {
+		background-color: map-get($cyph-accent, darker);
+	}
+
+	cyph-chat-message-list .background-image {
+		@include filter(brightness(0.75));
+	}
 }

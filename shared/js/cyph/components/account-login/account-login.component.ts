@@ -190,5 +190,9 @@ export class AccountLoginComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		if (typeof document === 'object' && typeof document.body === 'object') {
+			document.body.classList.remove('primary-account-theme');
+		}
+	}
 }

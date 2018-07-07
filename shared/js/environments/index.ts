@@ -21,9 +21,10 @@ if (customBuildBase64) {
 	}
 }
 
-accountRoot		= 'account';
+accountPrimaryTheme	= false;
+accountRoot			= 'account';
 
-let altTheme	= false;
+let altTheme		= false;
 
 /* tslint:disable-next-line:strict-type-predicates */
 if (typeof $ === 'function' && typeof window === 'object') {
@@ -89,7 +90,7 @@ if (typeof $ === 'function' && typeof window === 'object') {
 	}
 
 	if (!altTheme) {
-		$(document.body).addClass('primary-account-theme');
+		accountPrimaryTheme	= true;
 	}
 }
 

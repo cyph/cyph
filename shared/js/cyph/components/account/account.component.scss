@@ -114,12 +114,9 @@
 
 	.file-upload {
 		height: 75px;
-		border: dashed #666 1.5px;
+		border-style: dashed;
+		border-width: 1.5px;
 		cursor: pointer;
-
-		&:hover {
-			border-color: #999;
-		}
 
 		mat-icon {
 			@include icon-size(42px);

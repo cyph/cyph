@@ -51,10 +51,11 @@ $accountPaddingSmall: 2.5vw;
 	@include transform(translateY(-50%));
 }
 
-@mixin cyph-apply-theme($isRoot: false) {
-	$root: if($isRoot, 'html, body', '&');
+@mixin cyph-apply-theme($isRoot: false, $partialInversion: false) {
+	$root: if($isRoot, 'body', '&');
 
 	$cyph-theme: cyph-theme-default();
+	$cyph-theme-inverted: cyph-theme-inverted();
 
 	$cyph-speed-dial-action-palette: mat-palette($mat-grey, 50, 50, 100);
 
@@ -71,6 +72,14 @@ $accountPaddingSmall: 2.5vw;
 
 	@include cyph-main-theme;
 
+	@if $partialInversion {
+		@include theme-alt($cyph-theme-inverted);
+
+		.cyph-#{if($cyph-is-dark, 'dark', 'light')}-theme {
+			@include theme-alt($cyph-theme);
+		}
+	}
+
 	@if $cyph-loading-animation-filter != null {
 		.logo-animation *, .logo-animation:after, cyph-account .cyph-gradient {
 			@include filter($cyph-loading-animation-filter);
@@ -85,6 +94,10 @@ $accountPaddingSmall: 2.5vw;
 	#{$root}, #main, .cyph-foreground {
 		background-color: $cyph-background;
 		color: $cyph-foreground;
+	}
+
+	hr {
+		border-color: $cyph-foreground;
 	}
 
 	cyph-chat-message a[href], cyph-quill > .disabled .ql-snow a {
@@ -114,6 +127,14 @@ $accountPaddingSmall: 2.5vw;
 			}
 		}
 
+		.file-upload, .password-option.deselected {
+			border-color: $cyph-foreground;
+
+			&:hover {
+				border-color: rgba($cyph-foreground, 0.75);
+			}
+		}
+
 		.interstitial {
 			background-color: rgba(map-get($cyph-accent, 400), 0.69) !important;
 		}
@@ -121,7 +142,14 @@ $accountPaddingSmall: 2.5vw;
 
 	cyph-account-menu {
 		.menu {
-			background-color: if($cyph-is-dark, map-get($cyph-accent, darker), $cyph-background);
+			background-color: if(
+				(
+					($cyph-is-dark and not $partialInversion) or
+					(not $cyph-is-dark and $partialInversion)
+				),
+				map-get($cyph-accent, darker),
+				$cyph-background
+			);
 		}
 	}
 
@@ -147,10 +175,18 @@ $accountPaddingSmall: 2.5vw;
 		.chat-main.mobile, .chat-main.video .video-call ~ cyph-chat-message-list {
 			.message-item.ui-style-default.author-app {
 				background-color: map-get(map-get($cyph-message-colors, app), mobile);
+
+				@if map-has-key(map-get($cyph-message-colors, app), mobileText) {
+					color: map-get(map-get($cyph-message-colors, app), mobileText);
+				}
 			}
 
 			.message-item.ui-style-default.author-local {
 				background-color: map-get(map-get($cyph-message-colors, me), mobile);
+
+				@if map-has-key(map-get($cyph-message-colors, me), mobileText) {
+					color: map-get(map-get($cyph-message-colors, me), mobileText);
+				}
 
 				&:after {
 					border-color: transparent map-get(map-get($cyph-message-colors, me), mobile);
@@ -159,6 +195,10 @@ $accountPaddingSmall: 2.5vw;
 
 			.message-item.ui-style-default.author-remote {
 				background-color: map-get(map-get($cyph-message-colors, other), mobile);
+
+				@if map-has-key(map-get($cyph-message-colors, other), mobileText) {
+					color: map-get(map-get($cyph-message-colors, other), mobileText);
+				}
 
 				&:after {
 					border-color: transparent map-get(map-get($cyph-message-colors, other), mobile);
@@ -304,19 +344,31 @@ $accountPaddingSmall: 2.5vw;
 @mixin cyph-inverted-theme {
 	color: $cyph-inverted;
 
-	@include angular-material-theme(cyph-theme(
-		$cyph-primary,
-		$cyph-accent,
-		$cyph-warn,
-		$cyph-foreground,
-		$cyph-inverted,
-		not $cyph-is-dark
-	));
+	@include angular-material-theme(cyph-theme-inverted());
 
 	@if $cyph-is-dark {
 		mat-card {
 			background-color: rgba(255, 255, 255, 0.95);
 		}
+	}
+}
+
+@mixin theme-alt($theme) {
+	@include mat-autocomplete-theme($theme);
+	@include mat-card-theme($theme);
+	@include mat-dialog-theme($theme);
+	@include mat-option-theme($theme);
+	@include mat-sidenav-theme($theme);
+	@include mat-tabs-theme($theme);
+
+	$theme-accent: map-get(map-get($theme, accent), default);
+
+	.mat-tab-label-content {
+		color: $theme-accent;
+	}
+
+	.mat-tab-label-active {
+		background-color: rgba($theme-accent, 0.25);
 	}
 }
 
@@ -363,6 +415,17 @@ $accountPaddingSmall: 2.5vw;
 		$cyph-background,
 		$cyph-foreground,
 		$cyph-is-dark
+	);
+}
+
+@function cyph-theme-inverted() {
+	@return cyph-theme(
+		$cyph-primary,
+		$cyph-accent,
+		$cyph-warn,
+		$cyph-foreground,
+		$cyph-inverted,
+		not $cyph-is-dark
 	);
 }
 

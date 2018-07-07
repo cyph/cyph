@@ -30,16 +30,19 @@ $cyph-message-colors: (
 	app: (
 		desktop: transparent,
 		mobile: transparent,
+		mobileText: $cyph-foreground,
 		text: $cyph-foreground
 	),
 	me: (
 		desktop: rgba(139, 98, 217, 0.8),
 		mobile: rgba(139, 98, 217, 0.8),
+		mobileText: $cyph-foreground,
 		text: $cyph-foreground
 	),
 	other: (
 		desktop: rgba(97, 47, 192, 0.5),
 		mobile: rgba(97, 47, 192, 0.5),
+		mobileText: $cyph-foreground,
 		text: $cyph-foreground
 	)
 );

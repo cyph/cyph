@@ -186,5 +186,9 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		if (typeof document === 'object' && typeof document.body === 'object') {
+			document.body.classList.toggle('primary-account-theme', accountPrimaryTheme);
+		}
+	}
 }

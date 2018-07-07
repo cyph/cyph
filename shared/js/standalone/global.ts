@@ -31,6 +31,7 @@ for (const k of ['window', 'document']) {
 }
 
 for (const k of [
+	'accountPrimaryTheme',
 	'accountRoot',
 	'Audio',
 	'beforeUnloadMessage',

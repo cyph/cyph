@@ -22,10 +22,6 @@ mat-tab-group {
 
 	font-family: Roboto;
 
-	::ng-deep .mat-tab-label-active {
-		background-color: #673ab7;
-	}
-
 	mat-chip-list {
 		&:not(.lt-md) {
 			position: absolute;
