@@ -136,8 +136,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 					'default-state': {
 						gradients: !this.envService.isTelehealth ?
 							[
-								['#392859', '#624599'],
-								['#9368e6', '#624599']
+								['#f5f5f6', '#cccccc'],
+								['#cccccc', '#f5f5f6']
 							] :
 							[
 								['#eeecf1', '#b7bccb'],

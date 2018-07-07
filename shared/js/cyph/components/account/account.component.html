@@ -16,7 +16,8 @@
 			</div>
 		</div>
 	</div>
-	<canvas fxHide class='cyph-gradient animated fadeIn'></canvas>
+
+	<canvas [fxShow]='envService.showGranim' class='cyph-gradient animated fadeIn'></canvas>
 
 	<cyph-account-menu
 		[fxFlex]='accountService.menuMaxWidth | async'
