@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, UrlSegment} from '@angular/router';
 import {initGranim} from '../../granim';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountService} from '../../services/account.service';
@@ -35,38 +35,70 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	public readonly viewInitiated: Promise<void>		= this._VIEW_INITIATED.promise;
 
 	/** @ignore */
-	private get route () : string {
+	private get activatedRouteURL () : UrlSegment[] {
 		return (
 			this.activatedRoute.snapshot.firstChild &&
 			this.activatedRoute.snapshot.firstChild.url.length > 0
 		) ?
-			this.activatedRoute.snapshot.firstChild.url[0].path :
+			this.activatedRoute.snapshot.firstChild.url :
+			[]
+		;
+	}
+
+	/** @ignore */
+	private get route () : string {
+		const activatedRouteURL	= this.activatedRouteURL;
+
+		return activatedRouteURL.length > 0 ?
+			activatedRouteURL[0].path :
 			''
 		;
 	}
 
 	/** Indicates whether section should take up 100% height. */
 	public get fullHeight () : boolean {
-		return [
-			'contacts',
-			'logout',
-			'messages',
-			'patients',
-			'staff'
-		].find(
-			path => this.route === path
-		) !== undefined;
+		return (
+			[
+				'audio',
+				'contacts',
+				'logout',
+				'messages',
+				'patients',
+				'staff',
+				'video'
+			].find(
+				path => this.route === path
+			) !== undefined
+		) || (
+			this.activatedRouteURL.length > 1 &&
+			[
+				'appointments'
+			].find(
+				path => this.route === path
+			) !== undefined
+		);
 	}
 
 	/** Indicates whether section should take up 100% width. */
 	public get fullWidth () : boolean {
-		return this.envService.isMobile || [
-			'messages',
-			'profile',
-			'wallets'
-		].find(
-			path => this.route === path
-		) !== undefined;
+		return this.envService.isMobile || (
+			[
+				'audio',
+				'messages',
+				'profile',
+				'video',
+				'wallets'
+			].find(
+				path => this.route === path
+			) !== undefined
+		) || (
+			this.activatedRouteURL.length > 1 &&
+			[
+				'appointments'
+			].find(
+				path => this.route === path
+			) !== undefined
+		);
 	}
 
 	/** Indicates whether menu should be displayed. */
