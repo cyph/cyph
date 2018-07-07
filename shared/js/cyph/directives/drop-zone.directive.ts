@@ -57,7 +57,7 @@ export class DropZoneDirective implements OnChanges {
 		}
 
 		this.dropZone	= waitUntilTrue(() =>
-			!document.body.contains(this.elementRef.nativeElement)
+			document.body.contains(this.elementRef.nativeElement)
 		).then(() => {
 			const dropZone	= new Dropzone(`.${this.id}`, {
 				accept: (file, done) => {
