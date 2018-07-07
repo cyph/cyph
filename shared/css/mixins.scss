@@ -1,8 +1,8 @@
 @import '~@angular/material/theming';
 @import '~bourbon/app/assets/stylesheets/bourbon';
 
-$accountPaddingLarge: 12.5vw;
-$accountPaddingMedium: 7.5vw;
+$accountPaddingLarge: 7.5vw;
+$accountPaddingMedium: 5vw;
 $accountPaddingSmall: 2.5vw;
 
 @mixin breathe {

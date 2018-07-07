@@ -3,7 +3,7 @@
 	fxLayoutAlign='center start'
 	[class.initiating]='(sent | async) === undefined'
 >
-	<div fxFlex='90' class='cyph-light-theme'>
+	<div fxFlex class='cyph-light-theme'>
 		<mat-card class='animated slideInDown' fxFlex *ngIf='(sent | async) !== undefined'>
 			<mat-card-title>
 				<span *ngIf='(messageType | async) === chatMessageValueTypes.CalendarInvite'>

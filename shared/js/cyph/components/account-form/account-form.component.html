@@ -4,7 +4,7 @@
 		fxLayoutAlign='center start'
 		*ngIf='(form | async) as o'
 	>
-		<mat-card fxFlex='90' class='form'>
+		<mat-card fxFlex class='form'>
 			<mat-card-header fxLayout='row' *ngIf='!!o?.metadata; else nameHeader'>
 				<mat-card-title>{{(o?.metadata | async)?.name}}</mat-card-title>
 				<div fxFlex fxLayoutAlign='end center'>
