@@ -19,6 +19,7 @@ simpleWebSignBuild=''
 pack=''
 fast=''
 environment=''
+firebaseAll=''
 firebaseBackup=''
 customBuild=''
 saveBuildArtifacts=''
@@ -26,6 +27,11 @@ debug=''
 debugProdBuild=''
 test=true
 websign=true
+
+if [ "${1}" == '--firebase-all' ] ; then
+	firebaseAll=true
+	shift
+fi
 
 if [ "${1}" == '--firebase-backup' ] ; then
 	firebaseBackup=true
@@ -706,7 +712,10 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 		firebaseProjects='cyphme'
 	else
 		firebaseProjects='cyph-test cyph-test2 cyph-test-e2e cyph-test-local'
-		if [ "${environment}" != 'dev' ] ; then
+
+		if [ "${firebaseAll}" ] ; then
+			firebaseProjects="${firebaseProjects} cyph-test-staging cyph-test-beta cyph-test-master"
+		elif [ "${environment}" != 'dev' ] ; then
 			firebaseProjects="${firebaseProjects} cyph-test-${branch}"
 		fi
 
