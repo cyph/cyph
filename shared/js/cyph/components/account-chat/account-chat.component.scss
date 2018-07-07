@@ -16,6 +16,10 @@
 	margin-bottom: 1em;
 }
 
+cyph-chat-main ::ng-deep .chat-main.mobile cyph-chat-message-list .message-list-background {
+	padding-top: 8px;
+}
+
 cyph-chat-message-list ::ng-deep > .background-image {
 	display: none;
 }
