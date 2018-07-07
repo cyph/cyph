@@ -57,11 +57,6 @@
 				width: calc(100% + 1px + #{$accountPaddingSmall * 2});
 			}
 		}
-
-		&.spacing {
-			margin-left: 1em;
-			margin-right: 1em;
-		}
 	}
 
 	.cyph-gradient {
